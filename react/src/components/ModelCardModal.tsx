@@ -10,7 +10,6 @@ import {
   Card,
   Col,
   Descriptions,
-  Grid,
   Row,
   Tag,
   Typography,
@@ -19,12 +18,11 @@ import {
 import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
+import { Cog } from 'lucide-react';
 import Markdown from 'markdown-to-jsx';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
-
-const { Title, Paragraph } = Typography;
 
 interface ModelCardModalProps extends BAIModalProps {
   modelCardModalFrgmt?: ModelCardModalFragment$key | null;
@@ -40,7 +38,6 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
 
   const [visibleCloneModal, setVisibleCloneModal] = useState(false);
 
-  const screen = Grid.useBreakpoint();
   const [metadata] = useBackendAIImageMetaData();
   const model_card = useFragment(
     graphql`
@@ -85,12 +82,13 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
       centered
       onCancel={onRequestClose}
       destroyOnClose
-      width={screen.xxl ? '75%' : '90%'}
+      width={800}
       footer={[
         <Button
           onClick={() => {
             onRequestClose();
           }}
+          key="close"
         >
           {t('button.Close')}
         </Button>,
@@ -98,7 +96,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
     >
       <Flex
         direction="row"
-        align="center"
+        align="start"
         style={{ marginBottom: token.marginSM }}
         gap={'xs'}
         wrap="wrap"
@@ -152,6 +150,9 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
           >
             {t('button.Download')}
           </Button> */}
+          <Button disabled ghost size="small" icon={<Cog />}>
+            {t('modelStore.FinetuneModel')}
+          </Button>
           <Button
             type="primary"
             ghost
@@ -175,26 +176,12 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
         </Flex>
       </Flex>
       <Row gutter={[token.marginLG, token.marginLG]}>
-        <Col xs={{ span: 24 }} lg={{ span: 12 }}>
+        <Col xs={{ span: 24 }}>
           <Flex direction="column" align="stretch" gap={'xs'}>
-            <Title level={5} style={{ marginTop: 0 }}>
-              {t('modelStore.Description')}
-            </Title>
-            <Card
-              size="small"
-              style={{
-                whiteSpace: 'pre-wrap',
-                minHeight: screen.lg ? 100 : undefined,
-                height: screen.lg ? 'calc(100vh - 590px)' : undefined,
-                maxHeight: 'calc(100vh - 590px)',
-                overflow: 'auto',
-              }}
-            >
-              <Paragraph>{model_card?.description}</Paragraph>
-            </Card>
+            {model_card?.description}
             <Descriptions
               style={{ marginTop: token.marginMD }}
-              title={t('modelStore.Metadata')}
+              // title={t('modelStore.Metadata')}
               column={1}
               size="small"
               bordered
@@ -220,8 +207,11 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                   children: (
                     <Flex direction="row" gap={'xs'}>
                       {_.map(
-                        _.castArray(model_card?.framework),
-                        (framework) => {
+                        _.filter(
+                          _.castArray(model_card?.framework),
+                          (v) => !_.isEmpty(v),
+                        ),
+                        (framework, index) => {
                           const targetImageKey = framework?.replace(
                             /\s*\d+\s*$/,
                             '',
@@ -230,8 +220,9 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                             metadata?.imageInfo,
                             (imageInfo) => imageInfo?.name === targetImageKey,
                           );
+                          const uniqueKey = `${framework}-${index}`;
                           return imageInfo?.icon ? (
-                            <Flex gap={'xxs'}>
+                            <Flex gap={'xxs'} key={uniqueKey}>
                               <img
                                 style={{
                                   width: '1em',
@@ -243,7 +234,9 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                               {framework}
                             </Flex>
                           ) : (
-                            <Typography.Text>{framework}</Typography.Text>
+                            <Typography.Text key={uniqueKey}>
+                              {framework}
+                            </Typography.Text>
                           );
                         },
                       )}
@@ -286,25 +279,29 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
             />
           </Flex>
         </Col>
-        <Col xs={{ span: 24 }} lg={{ span: 12 }}>
-          <Card
-            size="small"
-            title={
-              <Flex direction="row" gap={'xs'}>
-                <FileOutlined />
-                README.md
-              </Flex>
-            }
-            bodyStyle={{
-              padding: token.paddingLG,
-              overflow: 'auto',
-              height: screen.lg ? 'calc(100vh - 243px)' : undefined,
-              minHeight: 200,
-            }}
-          >
-            <Markdown>{model_card?.readme || ''}</Markdown>
-          </Card>
-        </Col>
+        {!!model_card?.readme ? (
+          <Col xs={{ span: 24 }}>
+            <Card
+              size="small"
+              title={
+                <Flex direction="row" gap={'xs'}>
+                  <FileOutlined />
+                  README.md
+                </Flex>
+              }
+              styles={{
+                body: {
+                  padding: token.paddingLG,
+                  overflow: 'auto',
+                  // height: screen.lg ? 'calc(100vh - 243px)' : undefined,
+                  minHeight: 200,
+                },
+              }}
+            >
+              <Markdown>{model_card?.readme || ''}</Markdown>
+            </Card>
+          </Col>
+        ) : null}
       </Row>
       <Suspense>
         <ModelCloneModal

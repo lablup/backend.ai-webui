@@ -44,7 +44,7 @@ const SummaryPage: React.FC = () => {
       ? _.map(summaryItemsSetting, (item) => ({
           ...item,
           data: {
-            ...defaultSummaryElements[item.id],
+            ...defaultSummaryElements[item?.id],
           },
         }))
       : [

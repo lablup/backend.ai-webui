@@ -138,7 +138,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Number }) maxCountForPreopenPorts = 10;
   @property({ type: Boolean }) allowCustomResourceAllocation = true;
   @property({ type: Boolean }) isDirectorySizeVisible = true;
-  @property({ type: Boolean }) supportModelStore = false;
+  @property({ type: Boolean }) enableModelStore = false;
   @property({ type: String }) eduAppNamePrefix;
   @property({ type: String }) pluginPages;
   @property({ type: Array }) blockList = [] as string[];
@@ -842,10 +842,10 @@ export default class BackendAILogin extends BackendAIPage {
     } as ConfigValueObject) as string;
 
     // Enable model store support
-    this.supportModelStore = this._getConfigValueByExists(generalConfig, {
+    this.enableModelStore = this._getConfigValueByExists(generalConfig, {
       valueType: 'boolean',
       defaultValue: false,
-      value: generalConfig?.supportModelStore,
+      value: generalConfig?.enableModelStore,
     } as ConfigValueObject) as boolean;
   }
 
@@ -1837,8 +1837,8 @@ export default class BackendAILogin extends BackendAIPage {
           this.allowCustomResourceAllocation;
         globalThis.backendaiclient._config.isDirectorySizeVisible =
           this.isDirectorySizeVisible;
-        globalThis.backendaiclient._config.supportModelStore =
-          this.supportModelStore;
+        globalThis.backendaiclient._config.enableModelStore =
+          this.enableModelStore;
         globalThis.backendaiclient._config.pluginPages = this.pluginPages;
         globalThis.backendaiclient._config.blockList = this.blockList;
         globalThis.backendaiclient._config.inactiveList = this.inactiveList;
@@ -2070,7 +2070,7 @@ export default class BackendAILogin extends BackendAIPage {
                     disabled
                   ></mwc-icon-button>
                   <mwc-textfield
-                    type="email"
+                    required
                     id="id_user_id"
                     maxlength="64"
                     autocomplete="username"

@@ -75,7 +75,7 @@ const ProjectSelector: React.FC<Props> = ({
         email: currentUser.email,
         type:
           (userRole === 'admin' || userRole === 'superadmin') &&
-          baiClient._config.supportModelStore
+          baiClient._config.enableModelStore
             ? ['GENERAL', 'MODEL_STORE']
             : ['GENERAL'],
       },

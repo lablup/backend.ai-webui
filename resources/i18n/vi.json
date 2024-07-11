@@ -116,7 +116,8 @@
     "WarboyEnabled": "NPU Warboy đã được kích hoạt",
     "DownloadWebUIApp": "Tải xuống ứng dụng giao diện người dùng web Backend.AI",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "Đã bật LPU Hyperaccel"
+    "HyperaccelLPUEnabled": "Đã bật LPU Hyperaccel",
+    "ATOMPlusEnabled": "Đã bật NPU ATOM+"
   },
   "session": {
     "launcher": {
@@ -243,7 +244,7 @@
       "preopen": "mở trước",
       "Network": "Mạng",
       "Enable": "Cho phép",
-      "FolderAliasInvalid": "Chỉ cho phép các ký tự chữ và số, dấu gạch dưới (_), dấu gạch chéo (/) và dấu gạch ngang (-).",
+      "FolderAliasInvalid": "Chỉ cho phép các ký tự chữ và số, dấu gạch dưới (_), dấu gạch chéo (/), dấu chấm (.) và dấu gạch ngang (-).",
       "StartTimeMustBeInTheFuture": "Thời gian bắt đầu phải sau thời gian hiện tại.",
       "EnqueueComputeSessionWarning": "Nguồn lực không đủ. \nPhiên có thể đang chờ xử lý.",
       "SessionName": "Tên phiên",
@@ -274,7 +275,10 @@
       "EnvironmentVariableValueRequired": "Vui lòng nhập một giá trị.",
       "PleaseCompleteForm": "Biểu mẫu không đầy đủ hoặc có lỗi. \nVui lòng kiểm tra đầu vào của bạn.",
       "FailedToStartNewSession": "Tạo phiên không thành công. \nVui lòng kiểm tra tab 'Đã kết thúc' trên trang phiên.",
-      "ProxyDirectTCPNotSupported": "Kết nối TCP trực tiếp proxy chưa được hỗ trợ"
+      "ProxyDirectTCPNotSupported": "Kết nối TCP trực tiếp proxy chưa được hỗ trợ",
+      "InvalidPortFormat": "Định dạng số cổng không chính xác.",
+      "DuplicatedPort": "Có cổng trùng lặp.",
+      "FolderAliasOverlappingToAutoMount": "Đã tồn tại một thư mục tự động gắn kết có cùng tên."
     },
     "Preparing": "Đang chuẩn bị ...",
     "PreparingSession": "Đang chuẩn bị phiên ...",
@@ -406,7 +410,11 @@
     "EnvironmentAndVersion": "Môi trường và phiên bản",
     "Tags": "Thẻ",
     "fGPU": "fGPU",
-    "ATOMPlusEnabled": "ATOM+ NPU Đã bật"
+    "ForceTerminateWarningMsg": "Hành động này sẽ chấm dứt hoặc hủy phiên bất kể trạng thái hiện tại của nó. \nBạn có chắc không?",
+    "WarningForceTerminateSessions": "Cảnh báo: Buộc chấm dứt (các) phiên",
+    "ForceTerminateWarningMsg2": "Chỉ thực hiện khi trạng thái không thay đổi trong một khoảng thời gian dài không hợp lý.",
+    "ForceTerminateWarningMsg3": "Hành động này không xóa các vùng chứa thực tế trên (các) tác nhân. \nCó thể cần phải dọn dẹp thủ công.",
+    "ContainerToCleanUp": "(Các) thùng chứa để dọn dẹp"
   },
   "button": {
     "Cancel": "Huỷ bỏ",
@@ -443,7 +451,8 @@
     "Config": "Cấu hình",
     "Next": "Kế tiếp",
     "Previous": "Trước",
-    "PushToImage": "Đẩy phiên sang hình ảnh tùy chỉnh"
+    "PushToImage": "Đẩy phiên sang hình ảnh tùy chỉnh",
+    "SaveWithoutClose": "Lưu mà không đóng"
   },
   "agent": {
     "Endpoint": "Điểm cuối",
@@ -914,7 +923,9 @@
     "LightMode": "Chế độ sáng",
     "UseSystemSetting": "Sử dụng cài đặt hệ thống",
     "DescThemeMode": "Tùy chỉnh giao diện Backend.AI WebUI trên thiết bị của bạn.",
-    "ThemeMode": "Chế độ chủ đề"
+    "ThemeMode": "Chế độ chủ đề",
+    "BootstrapScriptEmpty": "Kịch bản trống rỗng. \nVui lòng nhập kịch bản.",
+    "BootstrapScriptDeleted": "Tập lệnh Bootstrap đã bị xóa"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Sử dụng đầu cuối web nâng cao: Sao chép nội dung đầu cuối",
@@ -1558,7 +1569,10 @@
     "NoExtraMounts": "Không có gắn kết bổ sung",
     "SyncRoutes": "Đồng bộ hóa tuyến đường",
     "SyncRoutesFailed": "Yêu cầu đồng bộ hóa tuyến đường không thành công.",
-    "SyncRoutesRequested": "Đồng bộ hóa tuyến đường đã được yêu cầu."
+    "SyncRoutesRequested": "Đồng bộ hóa tuyến đường đã được yêu cầu.",
+    "UpdateService": "Dịch vụ cập nhật",
+    "StartNewService": "Bắt đầu dịch vụ mới",
+    "RuntimeVariant": "Biến thể thời gian chạy suy luận"
   },
   "totp": {
     "TotpSetupCompleted": "Đã bật 2FA",
@@ -1606,7 +1620,8 @@
     "CloneInfo": "Nó sẽ được sao chép thành thư mục loại người dùng của bạn.",
     "category": "Loại",
     "CloneToFolder": "Sao chép vào một thư mục",
-    "FolderAlreadyExists": "Một thư mục có tên này đã tồn tại."
+    "FolderAlreadyExists": "Một thư mục có tên này đã tồn tại.",
+    "FinetuneModel": "Mô hình Finetune"
   },
   "table": {
     "SettingTable": "Cài đặt bảng",
@@ -1628,5 +1643,11 @@
   "propertyFilter": {
     "placeHolder": "Tìm kiếm",
     "ResetFilter": "Đặt lại bộ lọc"
+  },
+  "interactiveLogin": {
+    "InteractiveLoginWithBackendAI": "Đăng nhập bằng tài khoản Backend.AI của bạn",
+    "confirmLoginMessage": "Bạn có muốn đăng nhập bằng tài khoản {{username}} ({{email}}) không?",
+    "ServiceName": "Tên dịch vụ",
+    "useAnotherAccount": "Đăng nhập bằng tài khoản khác"
   }
 }

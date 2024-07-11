@@ -1,10 +1,13 @@
 import EndpointOwnerInfo from '../components/EndpointOwnerInfo';
 import EndpointStatusTag from '../components/EndpointStatusTag';
 import Flex from '../components/Flex';
-import ServiceLauncherModal from '../components/ServiceLauncherModal';
 import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
 import { baiSignedRequestWithPromise } from '../helper';
-import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import {
+  useSuspendedBackendaiClient,
+  useUpdatableState,
+  useWebUINavigate,
+} from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 // import { getSortOrderByName } from '../hooks/reactPaginationQueryOptions';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -59,12 +62,10 @@ export type Endpoint = NonNullable<
 const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
+  const webuiNavigate = useWebUINavigate();
   const { token } = theme.useToken();
   const curProject = useCurrentProjectValue();
-  const [isOpenServiceLauncher, setIsOpenServiceLauncher] = useState(false);
   const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
-  const [editingModelService, setEditingModelService] =
-    useState<Endpoint | null>(null);
   const [terminatingModelService, setTerminatingModelService] =
     useState<Endpoint | null>(null);
 
@@ -151,8 +152,7 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 row.created_user_email !== currentUser.email)
             }
             onClick={() => {
-              setIsOpenServiceLauncher(!isOpenServiceLauncher);
-              setEditingModelService(row);
+              webuiNavigate('/service/update/' + row.endpoint_id);
             }}
           />
           <Popconfirm
@@ -339,8 +339,11 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 traffic_ratio
                 status
               }
+              runtime_variant @since(version: "24.03.5") {
+                name
+                human_readable_name
+              }
               created_user_email @since(version: "23.09.8")
-              ...ServiceLauncherModalFragment
               ...EndpointOwnerInfoFragment
               ...EndpointStatusTagFragment
             }
@@ -431,7 +434,7 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
               <Button
                 type="primary"
                 onClick={() => {
-                  setIsOpenServiceLauncher(true);
+                  webuiNavigate('/service/start');
                 }}
               >
                 {t('modelService.StartService')}
@@ -560,19 +563,6 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
           </Suspense> */}
         </Flex>
       </Flex>
-      <ServiceLauncherModal
-        open={isOpenServiceLauncher}
-        endpointFrgmt={editingModelService || null}
-        onRequestClose={(success) => {
-          setEditingModelService(null);
-          setIsOpenServiceLauncher(!isOpenServiceLauncher);
-          if (success) {
-            startRefetchTransition(() => {
-              updateServicesFetchKey();
-            });
-          }
-        }}
-      />
       <TableColumnsSettingModal
         open={isOpenColumnsSetting}
         onRequestClose={(values) => {

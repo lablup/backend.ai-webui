@@ -116,7 +116,8 @@
     "WarboyEnabled": "启用 Warboy NPU",
     "DownloadWebUIApp": "下载 Backend.AI Web UI 应用程序",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "Hyperaccel LPU 已啟用。"
+    "HyperaccelLPUEnabled": "Hyperaccel LPU 已啟用。",
+    "ATOMPlusEnabled": "ATOM+ NPU 啟用"
   },
   "session": {
     "launcher": {
@@ -243,7 +244,7 @@
       "preopen": "預開放埠",
       "Network": "網路",
       "Enable": "啟用",
-      "FolderAliasInvalid": "只能輸入大小寫字母、數字、底線 (_)、斜線 (/) 和破折號 (-)。",
+      "FolderAliasInvalid": "僅允許使用字母數字字元、底線 (_)、斜線 (/)、點 (.) 和破折號 (-)。",
       "PreOpenPortMaxCountLimit": "您最多可以设置 {{count}} 个预开放端口。",
       "StartTimeMustBeInTheFuture": "开始时间必须在当前时间之后。",
       "EnqueueComputeSessionWarning": "資源不足。\n會話可能處於待處理狀態。",
@@ -274,7 +275,10 @@
       "EnvironmentVariableValueRequired": "请输入数值。",
       "PleaseCompleteForm": "表格不完整或包含错误。请检查输入内容。",
       "FailedToStartNewSession": "會話創建失敗。\n請檢查會話頁面上的「已完成」標籤。",
-      "ProxyDirectTCPNotSupported": "尚不支援代理直接 TCP 連接"
+      "ProxyDirectTCPNotSupported": "尚不支援代理直接 TCP 連接",
+      "InvalidPortFormat": "端口号格式不正确。",
+      "DuplicatedPort": "有重复的端口。",
+      "FolderAliasOverlappingToAutoMount": "存在同名的自动挂载文件夹。"
     },
     "Preparing": "正在準備...",
     "PreparingSession": "正在準備會議...",
@@ -406,7 +410,11 @@
     "EnvironmentAndVersion": "環境及版本",
     "Tags": "標籤",
     "fGPU": "GPU",
-    "ATOMPlusEnabled": "ATOM+ NPU 啟用"
+    "ForceTerminateWarningMsg": "無論會話目前狀態如何，此操作都會終止或取消會話。\n你確定嗎？",
+    "WarningForceTerminateSessions": "警告：強制終止會話",
+    "ForceTerminateWarningMsg2": "僅當狀態在不合理的長時間內沒有發生變化時才執行。",
+    "ForceTerminateWarningMsg3": "此操作不會刪除代理程式上的實際容器。\n可能需要手動清潔。",
+    "ContainerToCleanUp": "需要清理的容器"
   },
   "button": {
     "Cancel": "取消",
@@ -443,7 +451,8 @@
     "Config": "配置",
     "Next": "下一页",
     "Previous": "上一页",
-    "PushToImage": "將會話推送到自訂鏡像"
+    "PushToImage": "將會話推送到自訂鏡像",
+    "SaveWithoutClose": "儲存而不關閉"
   },
   "agent": {
     "Endpoint": "端點",
@@ -914,7 +923,9 @@
     "LightMode": "燈光模式",
     "UseSystemSetting": "使用系統設定",
     "DescThemeMode": "自訂 Backend.AI WebUI 在您裝置上的外觀。",
-    "ThemeMode": "主題模式"
+    "ThemeMode": "主題模式",
+    "BootstrapScriptEmpty": "腳本是空的。\n請輸入腳本。",
+    "BootstrapScriptDeleted": "引導腳本已刪除"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "高級 Web 終端使用：複製終端內容",
@@ -1558,7 +1569,10 @@
     "NoExtraMounts": "沒有額外的安裝座",
     "SyncRoutes": "同步路线",
     "SyncRoutesFailed": "路由同步请求失败。",
-    "SyncRoutesRequested": "已請求路由同步。"
+    "SyncRoutesRequested": "已請求路由同步。",
+    "UpdateService": "更新服務",
+    "StartNewService": "開始新服務",
+    "RuntimeVariant": "推理运行时变量"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",
@@ -1606,7 +1620,8 @@
     "CloneInfo": "它将被克隆为用户类型文件夹。",
     "category": "類別",
     "CloneToFolder": "克隆到文件夹",
-    "FolderAlreadyExists": "该名称的文件夹已经存在。"
+    "FolderAlreadyExists": "该名称的文件夹已经存在。",
+    "FinetuneModel": "微調模型"
   },
   "table": {
     "SettingTable": "桌面設定",
@@ -1628,5 +1643,11 @@
   "propertyFilter": {
     "placeHolder": "搜索",
     "ResetFilter": "重置過濾器"
+  },
+  "interactiveLogin": {
+    "InteractiveLoginWithBackendAI": "使用 Backend.AI 账户登录",
+    "confirmLoginMessage": "您想用 {{username}} 登录吗？({{email}})账户登录？",
+    "ServiceName": "服务名称",
+    "useAnotherAccount": "使用其他账户登录"
   }
 }

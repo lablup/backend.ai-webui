@@ -47,8 +47,26 @@ const ResourcesPage = React.lazy(() => import('./pages/ResourcesPage'));
 const FolderExplorerOpener = React.lazy(
   () => import('./components/FolderExplorerOpener'),
 );
+const ServiceLauncherCreatePage = React.lazy(
+  () => import('./components/ServiceLauncherPageContent'),
+);
+const ServiceLauncherUpdatePage = React.lazy(
+  () => import('./pages/ServiceLauncherPage'),
+);
+const InteractiveLoginPage = React.lazy(
+  () => import('./pages/InteractiveLoginPage'),
+);
 
 const router = createBrowserRouter([
+  {
+    path: '/interactive-login',
+    errorElement: <ErrorView />,
+    element: (
+      <QueryParamProvider adapter={ReactRouter6Adapter}>
+        <InteractiveLoginPage />
+      </QueryParamProvider>
+    ),
+  },
   {
     path: '/',
     errorElement: <ErrorView />,
@@ -131,6 +149,34 @@ const router = createBrowserRouter([
           </BAIErrorBoundary>
         ),
         handle: { labelKey: 'modelService.RoutingInfo' },
+      },
+      {
+        path: '/service',
+        handle: { labelKey: 'webui.menu.Serving' },
+        children: [
+          {
+            path: '',
+            element: <Navigate to="/serving" replace />,
+          },
+          {
+            path: 'start',
+            handle: { labelKey: 'modelService.StartNewService' },
+            element: (
+              <BAIErrorBoundary>
+                <ServiceLauncherCreatePage />
+              </BAIErrorBoundary>
+            ),
+          },
+          {
+            path: 'update/:endpointId',
+            handle: { labelKey: 'modelService.UpdateService' },
+            element: (
+              <BAIErrorBoundary>
+                <ServiceLauncherUpdatePage />
+              </BAIErrorBoundary>
+            ),
+          },
+        ],
       },
       {
         path: '/import',

@@ -13,28 +13,59 @@ export interface PortSelectFormValues {
 
 const MIN_PORT = 1024;
 const MAX_PORT = 65535;
-const PortSelectFormItem: React.FC<Props> = ({ ...formItemProps }) => {
+const PortSelectFormItem: React.FC<Props> = ({
+  name = 'ports',
+  ...formItemProps
+}) => {
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
+  const form = Form.useFormInstance();
   return (
     <Form.Item
       label={t('session.launcher.PreOpenPortTitle')}
-      name="ports"
+      name={name}
       tooltip={<Trans i18nKey="session.launcher.DescSetPreOpenPort" />}
       extra={t('session.launcher.PreOpenPortRangeGuide')}
       rules={[
-        {
-          max: baiClient._config.maxCountForPreopenPorts,
-          type: 'array',
-          message: t('session.launcher.PreOpenPortMaxCountLimit', {
-            count: baiClient._config.maxCountForPreopenPorts,
-          }),
-        },
-        ({ getFieldValue }) => ({
+        () => ({
+          validator(rule, values) {
+            if (
+              transformPortValuesToNumbers(values).length <=
+              baiClient._config.maxCountForPreopenPorts
+            ) {
+              return Promise.resolve();
+            } else {
+              return Promise.reject(
+                new Error(
+                  t('session.launcher.PreOpenPortMaxCountLimit', {
+                    count: baiClient._config.maxCountForPreopenPorts,
+                  }),
+                ),
+              );
+            }
+          },
+        }),
+        () => ({
+          // To check if the port range is not start <= end
           validator(rule, values) {
             if (
               _.every(values, (v) => {
-                const port = parseInt(v);
+                return parseInt(v).toString() === v || isPortRangeStr(v);
+              })
+            ) {
+              return Promise.resolve();
+            } else {
+              return Promise.reject(
+                new Error(t('session.launcher.InvalidPortFormat')),
+              );
+            }
+          },
+        }),
+        () => ({
+          validator(rule, values) {
+            const allPorts = transformPortValuesToNumbers(values);
+            if (
+              _.every(allPorts, (port) => {
                 return port >= MIN_PORT && port <= MAX_PORT;
               })
             ) {
@@ -45,14 +76,32 @@ const PortSelectFormItem: React.FC<Props> = ({ ...formItemProps }) => {
             );
           },
         }),
+        () => ({
+          validator(rule, values) {
+            // To check if the port is duplicated
+            const allPorts = transformPortValuesToNumbers(values);
+            if (_.uniq(allPorts).length === allPorts.length) {
+              return Promise.resolve();
+            }
+            return Promise.reject(
+              new Error(t('session.launcher.DuplicatedPort')),
+            );
+          },
+        }),
       ]}
       {...formItemProps}
     >
       <Select
         mode="tags"
         tagRender={(props) => {
+          const hasDuplicated =
+            _.filter(
+              transformPortValuesToNumbers(form.getFieldValue(name)),
+              (v) => v === parseInt(props.value),
+            ).length > 1;
           return (
             <PortTag
+              inValid={hasDuplicated}
               closable={props.closable}
               onClose={props.onClose}
               onMouseDown={(e) => {
@@ -81,13 +130,61 @@ const PortSelectFormItem: React.FC<Props> = ({ ...formItemProps }) => {
 
 interface PortTagProps extends TagProps {
   value: string;
+  inValid?: boolean;
 }
-export const PortTag: React.FC<PortTagProps> = ({ value, ...tagProps }) => {
-  const port = parseInt(value);
-  const isValid = port >= MIN_PORT && port <= MAX_PORT;
-  return <Tag color={isValid ? undefined : 'red'} {...tagProps} />;
+
+export const PortTag: React.FC<PortTagProps> = ({
+  inValid,
+  value,
+  ...tagProps
+}) => {
+  return (
+    <Tag
+      color={!inValid && isValidPortStr(value) ? undefined : 'red'}
+      {...tagProps}
+    />
+  );
 };
 
+export const isValidPortStr = (portStr: string) => {
+  // consider range as valid
+  if (isPortRangeStr(portStr)) {
+    const splitPortRange = portStr.split(':');
+    const [start, end] = splitPortRange.map((v) => parseInt(v));
+    return start >= MIN_PORT && end <= MAX_PORT;
+  } else if (
+    portStr === parseInt(portStr).toString() &&
+    parseInt(portStr) >= MIN_PORT &&
+    parseInt(portStr) <= MAX_PORT
+  ) {
+    return true;
+  }
+  return false;
+};
+
+export const isPortRangeStr = (portRange: string) => {
+  const splitPortRange = portRange.split(':');
+  if (splitPortRange.length === 2) {
+    const [start, end] = splitPortRange.map((v) => parseInt(v));
+    return start <= end;
+  }
+  return false;
+};
+
+export const parsePortRangeToNumbers = (portRange: string) => {
+  const [start, end] = portRange.split(':').map((v) => parseInt(v));
+  return _.range(start, end + 1);
+};
+
+export const transformPortValuesToNumbers = (
+  values: PortSelectFormValues['ports'],
+) => {
+  return _.flatten(
+    _.map(values, (v) =>
+      isPortRangeStr(v) ? parsePortRangeToNumbers(v) : parseInt(v),
+    ),
+  );
+};
 // const portGuides = {
 //   '5432': 'PostgreSQL',
 //   '3306': 'MySQL',
