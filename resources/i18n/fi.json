@@ -552,7 +552,8 @@
     "ReadyToImport": "Valmis tuomaan",
     "RepoWillBeFolder": "Tuodut GitHub-arkistot muunnetaan kansioiksi ja ne voidaan asentaa istunnon alkaessa.",
     "WrongURLType": "Väärä URL-tyyppi",
-    "YouCanCreateNotebookCode": "Kirjoita muistikirjan URL-osoite luodaksesi alla olevan kaltaisen merkkikoodin, jonka voit suorittaa suoraan Backend.AI:ssa."
+    "YouCanCreateNotebookCode": "Kirjoita muistikirjan URL-osoite luodaksesi alla olevan kaltaisen merkkikoodin, jonka voit suorittaa suoraan Backend.AI:ssa.",
+    "InvalidNotebookURL": "Virheellinen Notbookin URL-osoite."
   },
   "information": {
     "APIVersion": "API-versio",

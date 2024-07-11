@@ -5,13 +5,15 @@ import {
   RoutingEventHandler,
 } from './components/DefaultProviders';
 import Flex from './components/Flex';
+import LocationStateBreadCrumb from './components/LocationStateBreadCrumb';
 import MainLayout from './components/MainLayout/MainLayout';
 import { useSuspendedBackendaiClient, useWebUINavigate } from './hooks';
+import { useBAISettingUserState } from './hooks/useBAISetting';
 import Page401 from './pages/Page401';
 import Page404 from './pages/Page404';
 import VFolderListPage from './pages/VFolderListPage';
-import { theme } from 'antd';
-import React from 'react';
+import { Skeleton, theme } from 'antd';
+import React, { Suspense } from 'react';
 import { FC } from 'react';
 import {
   Navigate,
@@ -56,6 +58,7 @@ const ServiceLauncherUpdatePage = React.lazy(
 const InteractiveLoginPage = React.lazy(
   () => import('./pages/InteractiveLoginPage'),
 );
+const ImportAndRunPage = React.lazy(() => import('./pages/ImportAndRunPage'));
 
 const router = createBrowserRouter([
   {
@@ -181,6 +184,27 @@ const router = createBrowserRouter([
       {
         path: '/import',
         handle: { labelKey: 'webui.menu.Import&Run' },
+        Component: () => {
+          const { token } = theme.useToken();
+          const [is2409Launcher] = useBAISettingUserState(
+            'use_2409_session_launcher',
+          );
+          return (
+            <BAIErrorBoundary>
+              <NeoSessionLauncherSwitchAlert
+                style={{ marginBottom: token.paddingContentVerticalLG }}
+              />
+              {is2409Launcher ? null : <ImportAndRunPage />}
+              {/* @ts-ignore */}
+              <backend-ai-import-view
+                active
+                class="page"
+                name="import"
+                sessionLauncherType={is2409Launcher ? 'classic' : 'neo'}
+              />
+            </BAIErrorBoundary>
+          );
+        },
       },
       {
         path: '/data',
@@ -289,7 +313,16 @@ const router = createBrowserRouter([
                   }
                 }}
               />
-              <SessionLauncherPage />
+              <LocationStateBreadCrumb />
+              <Suspense
+                fallback={
+                  <Flex direction="column" style={{ maxWidth: 700 }}>
+                    <Skeleton active />
+                  </Flex>
+                }
+              >
+                <SessionLauncherPage />
+              </Suspense>
             </Flex>
           );
         },

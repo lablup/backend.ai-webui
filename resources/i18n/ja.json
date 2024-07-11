@@ -1389,7 +1389,8 @@
     "ImportGitlabRepo": "GitLabリポジトリのインポート",
     "GitlabRepoWillBeFolder": "インポートしたGitLabリポジトリはフォルダに変換され、セッション開始時にマウントすることができます。",
     "GitlabURL": "GitLabアドレス",
-    "GitlabDefaultBranch": "GitLab ブランチ名"
+    "GitlabDefaultBranch": "GitLab ブランチ名",
+    "InvalidNotebookURL": "無効なNotbook URLです。"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "今月の統計",

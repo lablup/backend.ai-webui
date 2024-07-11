@@ -552,7 +552,8 @@
     "ReadyToImport": "Listo para importar",
     "RepoWillBeFolder": "Los repositorios de GitHub importados se convierten en carpetas y se pueden montar al iniciar la sesión.",
     "WrongURLType": "Tipo de URL incorrecto",
-    "YouCanCreateNotebookCode": "Introduce la URL del cuaderno para crear un código de insignia como el siguiente que puedes ejecutar directamente en Backend.AI."
+    "YouCanCreateNotebookCode": "Introduce la URL del cuaderno para crear un código de insignia como el siguiente que puedes ejecutar directamente en Backend.AI.",
+    "InvalidNotebookURL": "URL de Notbook no válida."
   },
   "information": {
     "APIVersion": "Versión API",

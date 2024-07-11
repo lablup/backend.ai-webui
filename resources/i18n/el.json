@@ -1389,7 +1389,8 @@
     "ImportGitlabRepo": "Εισαγωγή αποθετηρίου GitLab",
     "GitlabRepoWillBeFolder": "Τα εισαγόμενα αποθετήρια GitLab μετατρέπονται σε φακέλους και μπορούν να προσαρτηθούν κατά την έναρξη της συνεδρίας.",
     "GitlabURL": "URL του GitLab",
-    "GitlabDefaultBranch": "Όνομα υποκαταστήματος GitLab"
+    "GitlabDefaultBranch": "Όνομα υποκαταστήματος GitLab",
+    "InvalidNotebookURL": "Μη έγκυρη διεύθυνση URL του Notbook."
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Στατιστικά για αυτόν τον μήνα",

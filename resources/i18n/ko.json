@@ -1500,7 +1500,8 @@
     "ImportGitlabRepo": "GitLab 저장소 가져오기",
     "GitlabRepoWillBeFolder": "가져온 GitLab 저장소는 폴더로 변환되며, 세션을 시작할 때 마운트할 수 있습니다.",
     "GitlabURL": "GitLab 주소",
-    "GitlabDefaultBranch": "GitLab 브랜치 이름"
+    "GitlabDefaultBranch": "GitLab 브랜치 이름",
+    "InvalidNotebookURL": "유효하지 않은 노트북 URL입니다."
   },
   "usagepanel": {
     "StatisticsForThisMonth": "이번달 통계",

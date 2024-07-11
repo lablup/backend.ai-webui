@@ -1389,7 +1389,8 @@
     "ImportGitlabRepo": "Importer le dépôt GitLab",
     "GitlabRepoWillBeFolder": "Les dépôts GitLab importés sont convertis en dossiers et peuvent être montés au démarrage de la session.",
     "GitlabURL": "URL GitLab",
-    "GitlabDefaultBranch": "Nom de la branche GitLab"
+    "GitlabDefaultBranch": "Nom de la branche GitLab",
+    "InvalidNotebookURL": "L'URL de Notbook n'est pas valide."
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistiques pour ce mois",

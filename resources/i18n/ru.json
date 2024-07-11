@@ -1389,7 +1389,8 @@
     "ImportGitlabRepo": "Импорт репозитория GitLab",
     "GitlabRepoWillBeFolder": "Импортированные репозитории GitLab преобразуются в папки и могут быть смонтированы при запуске сессии.",
     "GitlabURL": "URL-адрес GitLab",
-    "GitlabDefaultBranch": "Имя филиала GitLab"
+    "GitlabDefaultBranch": "Имя филиала GitLab",
+    "InvalidNotebookURL": "Неверный URL-адрес Notbook."
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Статистика за этот месяц",

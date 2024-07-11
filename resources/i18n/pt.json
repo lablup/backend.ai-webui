@@ -1389,7 +1389,8 @@
     "ImportGitlabRepo": "Importar o repositório GitLab",
     "GitlabRepoWillBeFolder": "Os repositórios GitLab importados são convertidos em pastas e podem ser montados quando a sessão é iniciada.",
     "GitlabURL": "URL do GitLab",
-    "GitlabDefaultBranch": "Nome do ramo do GitLab"
+    "GitlabDefaultBranch": "Nome do ramo do GitLab",
+    "InvalidNotebookURL": "URL inválido do Notbook."
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Estatísticas para este mês",

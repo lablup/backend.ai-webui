@@ -1389,7 +1389,8 @@
     "ImportGitlabRepo": "Importowanie repozytorium GitLab",
     "GitlabRepoWillBeFolder": "Zaimportowane repozytoria GitLab są konwertowane do folderów i mogą być montowane podczas uruchamiania sesji.",
     "GitlabURL": "Adres URL GitLab",
-    "GitlabDefaultBranch": "Nazwa oddziału GitLab"
+    "GitlabDefaultBranch": "Nazwa oddziału GitLab",
+    "InvalidNotebookURL": "Nieprawidłowy adres URL Notbook."
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statystyki za ten miesiąc",
