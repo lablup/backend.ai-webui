@@ -482,6 +482,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                   name: values.serviceName,
                   resource_group: values.resourceGroup,
                   model_definition_path: values.modelDefinitionPath,
+                  runtime_variant: values.runtimeVariant,
                 },
               };
             if (baiClient.supports('modify-endpoint-environ')) {
