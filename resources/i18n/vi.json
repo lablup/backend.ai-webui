@@ -505,7 +505,8 @@
     "All": "toàn bộ",
     "InProgress": "Đang tiến hành",
     "Session": "Phiên họp",
-    "General": "Tổng quan"
+    "General": "Tổng quan",
+    "Extend": "Mở rộng"
   },
   "credential": {
     "Permission": "Sự cho phép",

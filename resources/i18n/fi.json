@@ -520,7 +520,8 @@
     "All": "Kaikki",
     "InProgress": "Käynnissä",
     "Session": "Istunto",
-    "General": "Yleistä"
+    "General": "Yleistä",
+    "Extend": "Laajenna"
   },
   "import": {
     "CleanUpImportTask": "Tuontitehtävän siivous...",

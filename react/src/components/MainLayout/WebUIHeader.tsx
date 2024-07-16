@@ -1,4 +1,5 @@
 import { useCurrentDomainValue } from '../../hooks';
+import { useSuspendedBackendaiClient } from '../../hooks';
 import {
   useCurrentProjectValue,
   useSetCurrentProject,
@@ -7,6 +8,7 @@ import { useScrollBreakPoint } from '../../hooks/useScrollBreackPoint';
 import BAINotificationButton from '../BAINotificationButton';
 import Flex, { FlexProps } from '../Flex';
 import ProjectSelect from '../ProjectSelect';
+import TimeContainer from '../TimeContainer';
 import UserDropdownMenu from '../UserDropdownMenu';
 import WEBUIHelpButton from '../WEBUIHelpButton';
 import WebUIThemeToggleButton from '../WebUIThemeToggleButton';
@@ -34,6 +36,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
   const currentDomainName = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
   const setCurrentProject = useSetCurrentProject();
+  const baiClient = useSuspendedBackendaiClient();
   const matches = useMatches();
   const { y: scrolled } = useScrollBreakPoint(
     {
@@ -112,6 +115,9 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
           <BAINotificationButton />
           <WebUIThemeToggleButton />
           <WEBUIHelpButton />
+          {baiClient.isManagerVersionCompatibleWith('24.03.7') && (
+            <TimeContainer format="HH:mm:ss" />
+          )}
           <UserDropdownMenu />
         </Flex>
       </Flex>

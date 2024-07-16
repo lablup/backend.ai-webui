@@ -505,7 +505,8 @@
     "All": "全部",
     "InProgress": "进行中",
     "Session": "会话",
-    "General": "一般情况"
+    "General": "一般情况",
+    "Extend": "延长"
   },
   "credential": {
     "Permission": "允许",

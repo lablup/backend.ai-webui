@@ -520,7 +520,8 @@
     "All": "Todos",
     "InProgress": "En curso",
     "Session": "Sesión",
-    "General": "General"
+    "General": "General",
+    "Extend": "Extender"
   },
   "import": {
     "CleanUpImportTask": "Tarea de importación de limpieza...",

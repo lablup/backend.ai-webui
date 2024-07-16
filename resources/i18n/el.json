@@ -505,7 +505,8 @@
     "All": "Όλα",
     "InProgress": "Σε εξέλιξη",
     "Session": "Σύνοδος",
-    "General": "Γενικά"
+    "General": "Γενικά",
+    "Extend": "Επεκτείνω"
   },
   "credential": {
     "Permission": "Αδεια",
