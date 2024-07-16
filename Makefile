@@ -27,13 +27,13 @@ BYELLOW := \033[1;93m
 NC := \033[0m
 
 test_web:
-	@npm run server:d
+	@pnpm run server:d
 test_electron:
-	@npx electron . --dev
+	@pnpm dlx electron . --dev
 proxy:
 	@node ./src/wsproxy/local_proxy.js
 run_tests:
-	@npx testcafe chrome tests
+	@pnpm dlx testcafe chrome tests
 versiontag:
 	@printf "$(GREEN)Tagging version number / index...$(NC)\n"
 	@echo '{ "package": "${BUILD_VERSION}", "buildNumber": "${BUILD_NUMBER}", "buildDate": "${BUILD_DATE}.${BUILD_TIME}", "revision": "${REVISION_INDEX}" }' > version.json
@@ -44,11 +44,11 @@ versiontag:
 	@sed -i -E 's/\<small class="sidebar-footer" style="font-size:9px;"\>\([^"]*\)\<\/small\>/\<small class="sidebar-footer" style="font-size:9px;"\>${BUILD_VERSION}.${BUILD_NUMBER}\<\/small\>/g' ./src/components/backend-ai-webui.ts
 	@printf "$(YELLOW)Finished$(NC)\n"
 compile_keepversion:
-	@npm run build
+	@pnpm run build
 compile: versiontag
-	@npm run build
+	@pnpm run build
 compile_wsproxy:
-	@cd ./src/wsproxy; npx webpack --config webpack.config.js
+	@cd ./src/wsproxy; pnpm dlx webpack-cli --config webpack.config.js
 	#cd ./src/wsproxy; rollup -c rollup.config.ts
 all: dep
 	@make mac_x64
@@ -72,14 +72,13 @@ dep:
 		cp -Rp build/rollup build/electron-app/app; \
 		cp -Rp build/rollup/resources build/electron-app; \
 		cp -Rp build/rollup/manifest build/electron-app; \
-		BUILD_TARGET=electron npm run build:react-only; \
+		BUILD_TARGET=electron pnpm run build:react-only; \
 		cp -Rp react/build/* build/electron-app/app/; \
 		sed -i -E 's/\.\/dist\/components\/backend-ai-webui.js/es6:\/\/dist\/components\/backend-ai-webui.js/g' build/electron-app/app/index.html; \
 		mkdir -p ./build/electron-app/app/wsproxy; \
 		cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy/wsproxy.js; \
 		mkdir -p ./build/electron-app/node_modules/markty; \
 		mkdir -p ./build/electron-app/node_modules/markty-toml; \
-		mkdir -p ./build/electron-app/node_modules/@vanillawc/wc-codemirror/theme; \
 		mkdir -p ./build/electron-app/node_modules/mime-types; \
 		mkdir -p ./build/electron-app/node_modules/mime-db; \
 		mkdir -p ./build/electron-app/node_modules/@vanillawc/wc-codemirror/theme; \
@@ -121,7 +120,7 @@ endif  # BAI_APP_SIGN_KEYCHAIN_B64
 endif  # BAI_APP_SIGN_KEYCHAIN
 compile_localproxy:
 	@rm -rf ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix)
-	@npx pkg ./src/wsproxy/local_proxy.js --targets node18-$(os)-$(arch) --output ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix) --compress Brotli
+	@pnpm dlx pkg ./src/wsproxy/local_proxy.js --targets node18-$(os)-$(arch) --output ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix) --compress Brotli
 	@rm -rf ./app/backend.ai-local-proxy$(local_proxy_postfix); cp ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix) ./app/backend.ai-local-proxy$(local_proxy_postfix)
 	@cd app; zip -r -9 ./backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch).zip "./backend.ai-local-proxy$(local_proxy_postfix)"
 	@rm -rf ./app/backend.ai-local-proxy$(local_proxy_postfix)
@@ -145,7 +144,7 @@ ifdef BAI_APP_SIGN_KEYCHAIN
 endif
 	@rm -rf ./app/backend.ai-desktop-$(os)-$(arch)
 	@cd app; mv "Backend.AI Desktop-darwin-$(arch)" backend.ai-desktop-$(os)-$(arch);
-	@npx electron-installer-dmg './app/backend.ai-desktop-$(os)-$(arch)/Backend.AI Desktop.app' ./app/backend.ai-desktop-$(arch)-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
+	@pnpm dlx electron-installer-dmg './app/backend.ai-desktop-$(os)-$(arch)/Backend.AI Desktop.app' ./app/backend.ai-desktop-$(arch)-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
 ifeq ($(site),main)
 	@mv ./app/backend.ai-desktop-$(arch)-$(BUILD_DATE).dmg ./app/backend.ai-desktop-$(BUILD_VERSION)-$(os)-$(arch).dmg
 else
@@ -203,7 +202,7 @@ linux_arm64: dep compile_localproxy package_zip
 build_docker: compile
 	docker build -t backend.ai-webui:$(BUILD_DATE) .
 i18n:
-	@npx i18next-scanner --config ./i18n.config.js
+	@pnpm dlx i18next-scanner --config ./i18n.config.js
 clean:
 	@cd app;	rm -rf ./backend*; rm -rf ./Backend*
 	@cd build;rm -rf ./unbundle ./bundle ./rollup ./electron-app

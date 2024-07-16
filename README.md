@@ -135,7 +135,7 @@ You can debug the app.
 Backend.AI Web UI is built with
  * `lit-element` as webcomponent framework
  * `react` as library for web UI
- * `npm` as package manager
+ * `pnpm` as package manager
  * `rollup` as bundler
  * `electron` as app shell
  * `watchman` as file change watcher for development
@@ -147,7 +147,7 @@ View [Code of conduct](https://github.com/lablup/backend.ai-webui/blob/main/CODE
 ### Initializing
 
 ```console
-$ npm i
+$ pnpm i
 ```
 
 If this is not your first-time compilation, please clean the temporary directories with this command:
@@ -162,21 +162,21 @@ You must perform first-time compilation for testing. Some additional mandatory p
 $ make compile_wsproxy
 ```
 
-To run `relay-compiler` with the watch option(`npm run relay -- --watch`) on a React project, you need to install `watchman`. If you use Homebrew on Linux, it's a great way to get a recent Watchman build. Please refer to [the official installation guide](https://facebook.github.io/watchman/docs/install).
+To run `relay-compiler` with the watch option(`pnpm run relay -- --watch`) on a React project, you need to install `watchman`. If you use Homebrew on Linux, it's a great way to get a recent Watchman build. Please refer to [the official installation guide](https://facebook.github.io/watchman/docs/install).
 
 ### Developing / testing without bundling
 
 On a terminal:
 ```console
-$ npm run build:d   # To watch source changes
+$ pnpm run build:d   # To watch source changes
 ```
 On another terminal:
 ```console
-$ npm run server:d  # To run dev. web server
+$ pnpm run server:d  # To run dev. web server
 ```
 On yet another terminal:
 ```console
-$ npm run wsproxy  # To run websocket proxy
+$ pnpm run wsproxy  # To run websocket proxy
 ```
 
 If you want to change port for your development environment, Add your configuration to `/react/.env.development` file in the project:
@@ -188,7 +188,7 @@ Defaultly, `PORT` is `9081`
 
 ### Lint Checking
 ```console
-$ npm run lint  # To check lints
+$ pnpm run lint  # To check lints
 ```
 
 ### Unit Testing
@@ -198,11 +198,11 @@ To perform functional tests, you must run complete Backend.AI cluster before sta
 
 On a terminal:
 ```console
-$ npm run server:d  # To run dev. web server
+$ pnpm run server:d  # To run dev. web server
 ```
 On another terminal:
 ```console
-$ npm run test      # Run tests (tests are located in `tests` directory)
+$ pnpm run test      # Run tests (tests are located in `tests` directory)
 ```
 
 ### Electron (app mode) development / testing
@@ -211,16 +211,16 @@ $ npm run test      # Run tests (tests are located in `tests` directory)
 
 On a terminal:
 ```console
-$ npm run server:d    # To run test server
+$ pnpm run server:d    # To run test server
 ```
 OR
 ```console
-$ npm run server:p    # To run compiled source
+$ pnpm run server:p    # To run compiled source
 ```
 
 On another terminal:
 ```console
-$ npm run electron:d  # Run Electron as dev mode.
+$ pnpm run electron:d  # Run Electron as dev mode.
 ```
 
 ## Serving Guide
@@ -345,7 +345,7 @@ $ git submodule update --init --checkout --recursive
 This is only needed with pure ES6 dev. environment / browser. Websocket proxy is embedded in Electron and automatically starts.
 
 ```console
-$ npm run wsproxy
+$ pnpm run wsproxy
 ```
 
 If webui app is behind an external http proxy, and you have to pass through
@@ -457,13 +457,13 @@ Note: There are two Electron configuration files, `main.js` and `main.electron-p
 
 ```console
 $ make dep            # Compile with app dependencies
-$ npm run electron:d  # OR, ./node_modules/electron/cli.js .
+$ pnpm run electron:d  # OR, ./node_modules/electron/cli.js .
 ```
 
 The electron app reads the configuration from `./build/electron-app/app/config.toml`, which is copied from the root `config.toml` file during `make clean && make dep`.
 
 If you configure `[server].webServerURL`, the electron app will load the web contents (including `config.toml`) from the designated server.
-The server may be either a `npm run server:d` instance or a `./py -m ai.backend.web.server` daemon from the mono-repo.
+The server may be either a `pnpm run server:d` instance or a `./py -m ai.backend.web.server` daemon from the mono-repo.
 This is known as the "web shell" mode and allows live edits of the web UI while running it inside the electron app.
 
 ### Localization
