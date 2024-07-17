@@ -10,6 +10,7 @@ import {
   Card,
   Col,
   Descriptions,
+  Grid,
   Row,
   Tag,
   Typography,
@@ -39,6 +40,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
   const [visibleCloneModal, setVisibleCloneModal] = useState(false);
 
   const [metadata] = useBackendAIImageMetaData();
+  const screen = Grid.useBreakpoint();
   const model_card = useFragment(
     graphql`
       fragment ModelCardModalFragment on ModelCard {
@@ -75,6 +77,17 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
     `,
     modelCardModalFrgmt,
   );
+
+  const colSize = {
+    xs: { span: 24 },
+    lg: {
+      span:
+        _.compact([model_card?.description, model_card?.readme]).length === 2
+          ? 12
+          : 24,
+    },
+  };
+
   return (
     <BAIModal
       {...props}
@@ -82,7 +95,13 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
       centered
       onCancel={onRequestClose}
       destroyOnClose
-      width={800}
+      width={
+        _.isEmpty(model_card?.readme) || _.isEmpty(model_card?.description)
+          ? 800
+          : screen.xxl
+            ? '75%'
+            : '90%'
+      }
       footer={[
         <Button
           onClick={() => {
@@ -176,21 +195,39 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
         </Flex>
       </Flex>
       <Row gutter={[token.marginLG, token.marginLG]}>
-        <Col xs={{ span: 24 }}>
+        <Col {...colSize}>
           <Flex direction="column" align="stretch" gap={'xs'}>
-            <Typography.Paragraph
-              ellipsis={{
-                rows: 3,
-                expandable: 'collapsible',
-                symbol: (expanded) => (
-                  <Button size="small" type="link">
-                    {expanded ? t('button.Collapse') : t('button.Expand')}
-                  </Button>
-                ),
-              }}
-            >
-              {model_card?.description}
-            </Typography.Paragraph>
+            {!!model_card?.description ? (
+              <>
+                <Typography.Title level={5} style={{ marginTop: 0 }}>
+                  {t('modelStore.Description')}
+                </Typography.Title>
+                <Card
+                  size="small"
+                  style={{
+                    whiteSpace: 'pre-wrap',
+                    minHeight: screen.lg ? 100 : undefined,
+                    height: screen.lg ? 'calc(100vh - 590px)' : undefined,
+                    maxHeight: 'calc(100vh - 590px)',
+                    overflow: 'auto',
+                  }}
+                >
+                  <Typography.Paragraph
+                    ellipsis={{
+                      rows: screen.lg ? 11 : 3,
+                      expandable: 'collapsible',
+                      symbol: (expanded) => (
+                        <Button size="small" type="link">
+                          {expanded ? t('button.Collapse') : t('button.Expand')}
+                        </Button>
+                      ),
+                    }}
+                  >
+                    {model_card?.description}
+                  </Typography.Paragraph>
+                </Card>
+              </>
+            ) : null}
             <Descriptions
               style={{ marginTop: token.marginMD }}
               // title={t('modelStore.Metadata')}
@@ -292,7 +329,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
           </Flex>
         </Col>
         {!!model_card?.readme ? (
-          <Col xs={{ span: 24 }}>
+          <Col {...colSize}>
             <Card
               size="small"
               title={
@@ -305,7 +342,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                 body: {
                   padding: token.paddingLG,
                   overflow: 'auto',
-                  // height: screen.lg ? 'calc(100vh - 243px)' : undefined,
+                  height: screen.lg ? 'calc(100vh - 287px)' : undefined,
                   minHeight: 200,
                 },
               }}
