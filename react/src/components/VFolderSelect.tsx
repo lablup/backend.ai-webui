@@ -96,7 +96,7 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
     : undefined;
   // TODO: use controllable value
 
-  const [value, setValue] = useControllableValue({
+  const [value, setValue] = useControllableValue<string | undefined>({
     value: selectProps.value,
     onChange: selectProps.onChange,
   });
