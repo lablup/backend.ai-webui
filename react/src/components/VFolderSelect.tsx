@@ -2,6 +2,7 @@ import { useBaiSignedRequestWithPromise } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useControllableValue } from 'ahooks';
 import { Select, SelectProps } from 'antd';
 import _ from 'lodash';
 import React, { startTransition, useEffect } from 'react';
@@ -94,16 +95,25 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
       }
     : undefined;
   // TODO: use controllable value
+
+  const [value, setValue] = useControllableValue({
+    value: selectProps.value,
+    onChange: selectProps.onChange,
+  });
+
   useEffect(() => {
     if (autoSelectDefault && autoSelectedOption) {
-      selectProps.onChange?.(autoSelectedOption.value, autoSelectedOption);
+      setValue(autoSelectedOption.value);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoSelectDefault]);
+
   return (
     <Select
       showSearch
       {...selectProps}
+      value={value}
+      onChange={setValue}
       onDropdownVisibleChange={(open) => {
         if (open) {
           startTransition(() => {
