@@ -1,6 +1,6 @@
 {
   "name": "backend-ai-webui-react",
-  "version": "24.03.7-alpha.1",
+  "version": "24.03.7+post.1",
   "private": true,
   "dependencies": {
     "@ant-design/cssinjs": "^1.21.0",
