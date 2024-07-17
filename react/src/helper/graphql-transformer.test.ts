@@ -140,11 +140,9 @@ describe('graphql-transformer', () => {
         }
       },
     );
-    expect(result).toBe(`query MyQuery {
-  testQuery(props: {name: "asdf", age: 32}) {
-    deprecatedField3
-  }
-}
-`);
+    console.log(JSON.stringify(result));
+    expect(result).toBe(
+      'query MyQuery {\n  testQuery(props: {name: "asdf", age: 32}) {\n    deprecatedField3\n  }\n}',
+    );
   });
 });

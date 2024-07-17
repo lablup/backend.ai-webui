@@ -5,7 +5,16 @@ import { ModelCardModalFragment$key } from '../components/__generated__/ModelCar
 import { useUpdatableState } from '../hooks';
 import { ModelStoreListPageQuery } from './__generated__/ModelStoreListPageQuery.graphql';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
-import { Button, Card, Input, List, Select, Tag, theme } from 'antd';
+import {
+  Button,
+  Card,
+  Input,
+  List,
+  Select,
+  Tag,
+  theme,
+  Typography,
+} from 'antd';
 import { createStyles } from 'antd-style';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
@@ -166,7 +175,6 @@ const ModelStoreListPage: React.FC = () => {
             popupMatchSelectWidth={false}
             value={selectedTasks}
             onChange={(value) => {
-              console.log(value);
               setSelectedTasks(value as string[]);
             }}
             allowClear
@@ -198,6 +206,7 @@ const ModelStoreListPage: React.FC = () => {
             if (search) {
               const searchLower = search.toLowerCase();
               passSearchFilter =
+                info?.description?.toLowerCase().includes(searchLower) ||
                 info?.title?.toLowerCase().includes(searchLower) ||
                 info?.task?.toLowerCase().includes(searchLower) ||
                 info?.category?.toLowerCase().includes(searchLower) ||
@@ -239,6 +248,15 @@ const ModelStoreListPage: React.FC = () => {
               size="small"
             >
               <Flex direction="row" wrap="wrap" gap={'xs'}>
+                {item?.description && (
+                  <Typography.Paragraph
+                    ellipsis={{ rows: 3, expandable: false }}
+                  >
+                    <TextHighlighter keyword={search}>
+                      {item?.description}
+                    </TextHighlighter>
+                  </Typography.Paragraph>
+                )}
                 {item?.category && (
                   <Tag bordered={false}>
                     <TextHighlighter keyword={search}>

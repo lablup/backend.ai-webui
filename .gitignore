@@ -5,6 +5,8 @@ logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+pnpm-error.log*
 
 # Runtime data
 pids
@@ -128,3 +130,8 @@ src/plugins/*
 
 #
 !.vscode/i18n-ally-*
+
+
+# Ignore all other lock files
+package-lock.json
+yarn.lock

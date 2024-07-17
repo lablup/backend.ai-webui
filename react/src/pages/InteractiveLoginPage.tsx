@@ -61,7 +61,7 @@ const Children = () => {
               // },
               {
                 label: 'URL',
-                children: callback,
+                children: callback ? new URL(callback).origin : '-',
               },
             ]}
           />
