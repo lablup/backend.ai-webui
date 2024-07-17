@@ -5,6 +5,7 @@ import EndpointTokenGenerationModal from '../components/EndpointTokenGenerationM
 import Flex from '../components/Flex';
 import ImageMetaIcon from '../components/ImageMetaIcon';
 import InferenceSessionErrorModal from '../components/InferenceSessionErrorModal';
+import ModelEditModal from '../components/ModelEditModal';
 import ResourceNumber from '../components/ResourceNumber';
 import VFolderLazyView from '../components/VFolderLazyView';
 import { InferenceSessionErrorModalFragment$key } from '../components/__generated__/InferenceSessionErrorModalFragment.graphql';
@@ -24,6 +25,7 @@ import {
   ArrowRightOutlined,
   CheckOutlined,
   CloseOutlined,
+  CommentOutlined,
   FolderOutlined,
   LoadingOutlined,
   PlusOutlined,
@@ -33,6 +35,7 @@ import {
   SyncOutlined,
   WarningOutlined,
 } from '@ant-design/icons';
+import { useToggle } from 'ahooks';
 import {
   App,
   Breadcrumb,
@@ -100,6 +103,8 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     useState<InferenceSessionErrorModalFragment$key | null>(null);
   const [isOpenTokenGenerationModal, setIsOpenTokenGenerationModal] =
     useState(false);
+  const [isOpenModelEditModal, { toggle: toggleOpenModelEditModal }] =
+    useToggle(false);
   const [currentUser] = useCurrentUserInfo();
   // const curProject = useCurrentProjectValue();
   const [paginationState] = useState<{
@@ -290,7 +295,10 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     {
       label: t('modelService.ServiceEndpoint'),
       children: endpoint?.url ? (
-        <Typography.Text copyable>{endpoint?.url}</Typography.Text>
+        <>
+          <Typography.Text copyable>{endpoint?.url}</Typography.Text>
+          <Button type="link" icon={<CommentOutlined />} />
+        </>
       ) : (
         <Typography.Text type="secondary">
           {t('modelService.NoServiceEndpoint')}
@@ -676,6 +684,15 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         }}
         endpoint_id={endpoint?.endpoint_id || ''}
       ></EndpointTokenGenerationModal>
+      <ModelEditModal
+        open={isOpenModelEditModal}
+        onCancel={() => {
+          toggleOpenModelEditModal();
+        }}
+        onOk={() => {
+          toggleOpenModelEditModal();
+        }}
+      />
     </Flex>
   );
 };
