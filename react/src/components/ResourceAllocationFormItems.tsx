@@ -470,6 +470,9 @@ const ResourceAllocationFormItems: React.FC<
       <Card
         style={{
           marginBottom: token.margin,
+          display: baiClient._config.allowCustomResourceAllocation
+            ? 'block'
+            : 'none',
         }}
       >
         <Form.Item
