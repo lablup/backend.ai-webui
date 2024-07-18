@@ -52,11 +52,6 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
   return (
     <BAIModal
       {...modalProps}
-      styles={{
-        body: {
-          padding: 0,
-        },
-      }}
       centered
       title={`${t('agent.DetailedInformation')}: ${agent?.id}`}
       onCancel={onRequestClose}
