@@ -1652,5 +1652,8 @@
     "confirmLoginMessage": "Θα θέλατε να συνδεθείτε με {{όνομα χρήστη}} ({{email}}) λογαριασμό?",
     "ServiceName": "Όνομα υπηρεσίας",
     "useAnotherAccount": "Συνδεθείτε με διαφορετικό λογαριασμό"
+  },
+  "chatui": {
+    "OpenChatModal": "LLM Chat"
   }
 }

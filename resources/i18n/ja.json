@@ -1652,5 +1652,8 @@
     "confirmLoginMessage": "ユーザー名}}でサインインしますか？({{email}}) アカウントでサインインしますか？",
     "ServiceName": "サービス名",
     "useAnotherAccount": "別のアカウントでサインインする"
+  },
+  "chatui": {
+    "OpenChatModal": "LLM Chat"
   }
 }

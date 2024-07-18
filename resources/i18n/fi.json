@@ -1652,5 +1652,8 @@
     "confirmLoginMessage": "Haluatko kirjautua sisään {{käyttäjätunnus}} ({{email}}) tilille?",
     "ServiceName": "Palvelun nimi",
     "useAnotherAccount": "Kirjaudu sisään eri tilillä"
+  },
+  "chatui": {
+    "OpenChatModal": "LLM Chat"
   }
 }

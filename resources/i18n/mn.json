@@ -1653,5 +1653,8 @@
     "confirmLoginMessage": "Та {{username}} ({{email}}) бүртгэлээр нэвтрэхийг хүсэж байна уу?",
     "ServiceName": "Үйлчилгээний нэр",
     "useAnotherAccount": "Өөр бүртгэлээр нэвтэрнэ үү"
+  },
+  "chatui": {
+    "OpenChatModal": "LLM Chat"
   }
 }

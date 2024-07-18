@@ -1652,5 +1652,8 @@
     "confirmLoginMessage": "Apakah Anda ingin masuk dengan akun {{nama pengguna}} ({{email}})?",
     "ServiceName": "Nama layanan",
     "useAnotherAccount": "Masuk dengan akun yang berbeda"
+  },
+  "chatui": {
+    "OpenChatModal": "LLM Chat"
   }
 }

@@ -1652,5 +1652,8 @@
     "confirmLoginMessage": "{{kullanıcı adı}} ile giriş yapmak ister misiniz? ({{email}}) hesabınız var mı?",
     "ServiceName": "Hizmet adı",
     "useAnotherAccount": "Farklı bir hesapla oturum açın"
+  },
+  "chatui": {
+    "OpenChatModal": "LLM Chat"
   }
 }

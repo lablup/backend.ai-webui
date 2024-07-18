@@ -1652,5 +1652,8 @@
     "confirmLoginMessage": "Bạn có muốn đăng nhập bằng tài khoản {{username}} ({{email}}) không?",
     "ServiceName": "Tên dịch vụ",
     "useAnotherAccount": "Đăng nhập bằng tài khoản khác"
+  },
+  "chatui": {
+    "OpenChatModal": "LLM Chat"
   }
 }

@@ -1652,5 +1652,8 @@
     "confirmLoginMessage": "Вы хотите войти в систему под {{имя пользователя}} ({{email}}) учетной записи?",
     "ServiceName": "Название услуги",
     "useAnotherAccount": "Войдите в систему под другой учетной записью"
+  },
+  "chatui": {
+    "OpenChatModal": "LLM Chat"
   }
 }

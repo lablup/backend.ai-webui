@@ -1652,5 +1652,8 @@
     "confirmLoginMessage": "Vuoi accedere con l'account {{username}} ({{email}})?",
     "ServiceName": "Nome del servizio",
     "useAnotherAccount": "Accedere con un altro account"
+  },
+  "chatui": {
+    "OpenChatModal": "LLM Chat"
   }
 }

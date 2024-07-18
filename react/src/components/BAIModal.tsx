@@ -6,6 +6,7 @@ import { Modal, ModalProps, theme } from 'antd';
 import React, { useState, useRef } from 'react';
 import type { DraggableData, DraggableEvent } from 'react-draggable';
 import Draggable from 'react-draggable';
+import style from 'react-syntax-highlighter/dist/esm/styles/hljs/a11y-dark';
 
 export const DEFAULT_BAI_MODAL_Z_INDEX = 1001;
 export interface BAIModalProps extends ModalProps {
@@ -67,9 +68,11 @@ const BAIModal: React.FC<BAIModalProps> = ({ styles, ...modalProps }) => {
             overflow: 'auto',
             paddingTop: token.paddingMD,
             paddingBottom: token.paddingMD,
+            ...styles?.body,
           },
           content: {
             padding: `var(--general-modal-content-padding, 0)`,
+            ...styles?.content,
           },
           footer: {
             borderTop: '1px solid',
@@ -78,6 +81,7 @@ const BAIModal: React.FC<BAIModalProps> = ({ styles, ...modalProps }) => {
             paddingLeft: token.paddingMD,
             paddingRight: token.paddingMD,
             marginTop: 0,
+            ...styles?.footer,
           },
         }}
         title={

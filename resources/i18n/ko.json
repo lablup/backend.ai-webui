@@ -1653,5 +1653,8 @@
     "confirmLoginMessage": "{{username}} ({{email}}) 계정으로 로그인하시겠습니까?",
     "ServiceName": "서비스 이름",
     "useAnotherAccount": "다른 계정으로 로그인"
+  },
+  "chatui": {
+    "OpenChatModal": "LLM Chat"
   }
 }

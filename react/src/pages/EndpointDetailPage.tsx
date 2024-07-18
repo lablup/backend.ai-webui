@@ -8,6 +8,7 @@ import InferenceSessionErrorModal from '../components/InferenceSessionErrorModal
 import ResourceNumber from '../components/ResourceNumber';
 import VFolderLazyView from '../components/VFolderLazyView';
 import { InferenceSessionErrorModalFragment$key } from '../components/__generated__/InferenceSessionErrorModalFragment.graphql';
+import ChatUIModal from '../components/lablupTalkativotUI/ChatUIModal';
 import { baiSignedRequestWithPromise, filterNonNullItems } from '../helper';
 import {
   useSuspendedBackendaiClient,
@@ -51,6 +52,7 @@ import { DescriptionsItemType } from 'antd/es/descriptions';
 import graphql from 'babel-plugin-relay/macro';
 import { default as dayjs } from 'dayjs';
 import _ from 'lodash';
+import { BotMessageSquareIcon } from 'lucide-react';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
@@ -100,6 +102,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     useState<InferenceSessionErrorModalFragment$key | null>(null);
   const [isOpenTokenGenerationModal, setIsOpenTokenGenerationModal] =
     useState(false);
+  const [openChatModal, setOpenChatModal] = useState(false);
   const [currentUser] = useCurrentUserInfo();
   // const curProject = useCurrentProjectValue();
   const [paginationState] = useState<{
@@ -290,7 +293,18 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     {
       label: t('modelService.ServiceEndpoint'),
       children: endpoint?.url ? (
-        <Typography.Text copyable>{endpoint?.url}</Typography.Text>
+        <>
+          <Typography.Text copyable>{endpoint?.url}</Typography.Text>
+          <Tooltip title={t('chatui.OpenChatModal')}>
+            <Button
+              type="link"
+              icon={<BotMessageSquareIcon />}
+              onClick={() => {
+                setOpenChatModal(true);
+              }}
+            />
+          </Tooltip>
+        </>
       ) : (
         <Typography.Text type="secondary">
           {t('modelService.NoServiceEndpoint')}
@@ -676,6 +690,13 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         }}
         endpoint_id={endpoint?.endpoint_id || ''}
       ></EndpointTokenGenerationModal>
+      <ChatUIModal
+        endpoint={endpoint?.url || undefined}
+        open={openChatModal}
+        onCancel={() => {
+          setOpenChatModal(false);
+        }}
+      />
     </Flex>
   );
 };
