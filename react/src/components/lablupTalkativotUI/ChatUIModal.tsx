@@ -1,11 +1,10 @@
 import { useTanQuery } from '../../hooks/reactQueryAlias';
-import BAIModal from '../BAIModal';
 import Flex from '../Flex';
 import LLMChatCard from './LLMChatCard';
-import { GetProp, Modal, ModalProps, Skeleton } from 'antd';
+import { Alert, Modal, ModalProps, Skeleton, theme } from 'antd';
 import _ from 'lodash';
-import { min } from 'lodash';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface ChatUIBasicProps {
   endpoint?: string;
@@ -20,12 +19,13 @@ const ChatUIModal: React.FC<ChatUIModalProps> = ({
   // models,
   ...props
 }) => {
+  const { token } = theme.useToken();
   return (
     <Modal
       {...props}
       styles={{
         body: {
-          height: 500,
+          height: '80vh',
           display: 'flex',
         },
         content: {
@@ -34,6 +34,8 @@ const ChatUIModal: React.FC<ChatUIModalProps> = ({
       }}
       footer={null}
       centered
+      width={'80%'}
+      style={{ maxWidth: token.screenLGMax }}
     >
       <Flex direction="column" align="stretch" style={{ flex: 1 }}>
         <EndpointChatContent basePath={basePath} endpoint={endpoint} />
@@ -46,9 +48,10 @@ const EndpointChatContent: React.FC<ChatUIBasicProps> = ({
   basePath = 'v1',
   endpoint,
 }) => {
+  const { t } = useTranslation();
   const {
     data: ModelsResult,
-    error,
+    // error,
     isFetching,
   } = useTanQuery<{
     data: Array<Model>;
@@ -73,6 +76,17 @@ const EndpointChatContent: React.FC<ChatUIBasicProps> = ({
       }))}
       fetchOnClient
       style={{ flex: 1 }}
+      allowManualModel={_.isEmpty(ModelsResult?.data)}
+      alert={
+        _.isEmpty(ModelsResult?.data) && (
+          <Alert
+            type="warning"
+            showIcon
+            message={t('chatui.CannotFindModel')}
+          />
+        )
+      }
+      modelId={ModelsResult?.data?.[0].id ?? 'custom'}
     />
   );
 };

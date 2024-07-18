@@ -75,6 +75,7 @@ const ChatMessage: React.FC<{
               message.role !== 'user'
                 ? token.colorBgContainer
                 : token.colorBgContainerDisabled,
+            width: '100%',
           }}
         >
           <ChatMessageContent>

@@ -454,7 +454,8 @@
     "PushToImage": "Oturumu özelleştirilmiş resme aktarın",
     "SaveWithoutClose": "Kapatmadan Kaydet",
     "Collapse": "Yıkılmak",
-    "Expand": "Genişletmek"
+    "Expand": "Genişletmek",
+    "Clear": "Silmek"
   },
   "agent": {
     "Endpoint": "uç nokta",
@@ -1654,6 +1655,8 @@
     "useAnotherAccount": "Farklı bir hesapla oturum açın"
   },
   "chatui": {
-    "OpenChatModal": "LLM Chat"
+    "OpenChatModal": "LLM Chat",
+    "CannotFindModel": "LLM modelleri bulunamıyor. \nLütfen modeli özelleştirin.",
+    "DeleteChatHistory": "Sohbet Geçmişini Sil"
   }
 }

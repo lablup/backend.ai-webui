@@ -5,11 +5,23 @@ import ChatInput from './ChatInput';
 import VirtualChatMessageList from './VirtualChatMessageList';
 import { createOpenAI } from '@ai-sdk/openai';
 import { useChat } from '@ai-sdk/react';
+import { DeleteOutlined, MoreOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
 import { streamText } from 'ai';
-import { Card, CardProps, Form, Input, Select, theme } from 'antd';
+import {
+  Button,
+  Card,
+  CardProps,
+  Dropdown,
+  Form,
+  Input,
+  MenuProps,
+  Select,
+  theme,
+} from 'antd';
 import _ from 'lodash';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 export type BAIModel = {
   id: string;
@@ -33,6 +45,7 @@ interface LLMChatCardProps extends CardProps {
   credentials?: RequestCredentials;
   fetchOnClient?: boolean;
   allowManualModel?: boolean;
+  alert?: React.ReactNode;
 }
 
 const LLMChatCard: React.FC<LLMChatCardProps> = ({
@@ -43,6 +56,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
   apiKey,
   fetchOnClient,
   allowManualModel: allowCustomModel,
+  alert,
   ...cardProps
 }) => {
   const [modelId, setModelId] = useControllableValue(cardProps, {
@@ -72,6 +86,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
     stop,
     isLoading,
     append,
+    setMessages,
   } = useChat({
     api: baseURL,
     headers,
@@ -108,6 +123,19 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
     },
   });
   const { token } = theme.useToken();
+  const { t } = useTranslation();
+
+  const items: MenuProps['items'] = [
+    {
+      key: 'clear',
+      danger: true,
+      label: t('chatui.DeleteChatHistory'),
+      icon: <DeleteOutlined />,
+      onClick: () => {
+        setMessages([]);
+      },
+    },
+  ];
 
   return (
     <Card
@@ -160,6 +188,14 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
               onChange={setModelId}
               popupMatchSelectWidth={false}
             />
+            <Dropdown menu={{ items }} trigger={['click']}>
+              <Button
+                type="link"
+                onClick={(e) => e.preventDefault()}
+                icon={<MoreOutlined />}
+                style={{ color: token.colorTextSecondary, width: token.sizeMS }}
+              />
+            </Dropdown>
           </Flex>
         </Flex>
       }
@@ -194,6 +230,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
       actions={[
         <form key="input" onSubmit={handleSubmit}>
           <ChatInput
+            autoFocus
             value={input}
             placeholder="Say something..."
             onChange={handleInputChange}
@@ -230,6 +267,9 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
           requiredMark="optional"
           style={{ flex: 1 }}
         >
+          {alert ? (
+            <div style={{ marginBottom: token.size }}>{alert}</div>
+          ) : null}
           <Form.Item
             label="baseURL"
             name="baseURL"

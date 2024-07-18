@@ -455,7 +455,8 @@
     "PushToImage": "Push della sessione all'immagine personalizzata",
     "SaveWithoutClose": "Salva senza chiudere",
     "Collapse": "Crollo",
-    "Expand": "Espandere"
+    "Expand": "Espandere",
+    "Clear": "Eliminare"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -1654,6 +1655,8 @@
     "useAnotherAccount": "Accedere con un altro account"
   },
   "chatui": {
-    "OpenChatModal": "LLM Chat"
+    "OpenChatModal": "LLM Chat",
+    "CannotFindModel": "Impossibile trovare i modelli LLM. \nSi prega di personalizzare il modello.",
+    "DeleteChatHistory": "Elimina cronologia chat"
   }
 }

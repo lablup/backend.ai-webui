@@ -454,7 +454,8 @@
     "PushToImage": "Отправить сеанс на настроенное изображение",
     "SaveWithoutClose": "Сохранить без закрытия",
     "Collapse": "Крах",
-    "Expand": "Расширять"
+    "Expand": "Расширять",
+    "Clear": "Удалить"
   },
   "agent": {
     "Endpoint": "Конечная точка",
@@ -1654,6 +1655,8 @@
     "useAnotherAccount": "Войдите в систему под другой учетной записью"
   },
   "chatui": {
-    "OpenChatModal": "LLM Chat"
+    "OpenChatModal": "LLM Chat",
+    "CannotFindModel": "Модели LLM не могут быть найдены. \nПожалуйста, настройте модель.",
+    "DeleteChatHistory": "Удалить историю чата"
   }
 }

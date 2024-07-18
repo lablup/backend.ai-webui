@@ -1,23 +1,32 @@
 import { Button, Input, Space } from 'antd';
-import { InputProps, TextAreaProps } from 'antd/es/input';
-import { SendIcon, SquareIcon, StopCircleIcon } from 'lucide-react';
-import React from 'react';
+import { InputProps, InputRef } from 'antd/es/input';
+import { SendIcon, SquareIcon } from 'lucide-react';
+import React, { useRef, useEffect } from 'react';
 
-const { TextArea } = Input;
 const { Compact } = Space;
 
 interface ChatInputProps extends InputProps {
   loading?: boolean;
+  autoFocus?: boolean;
   onClickStop?: () => void;
   onClickSubmit?: () => void;
 }
 const ChatInput: React.FC<ChatInputProps> = ({
   style,
   loading,
+  autoFocus,
   onClickStop,
   onClickSubmit,
   ...inputProps
 }) => {
+  const inputRef = useRef<InputRef>(null);
+
+  useEffect(() => {
+    if (autoFocus && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [autoFocus]);
+
   return (
     <Compact
       style={{
@@ -26,6 +35,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
       }}
     >
       <Input
+        ref={inputRef}
         {...inputProps}
         onPressEnter={(e) => {
           if (!loading) {

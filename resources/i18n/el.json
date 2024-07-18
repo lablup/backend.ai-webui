@@ -454,7 +454,8 @@
     "PushToImage": "Σπρώξτε τη συνεδρία σε προσαρμοσμένη εικόνα",
     "SaveWithoutClose": "Αποθήκευση χωρίς κλείσιμο",
     "Collapse": "Κατάρρευση",
-    "Expand": "Επεκτείνουν"
+    "Expand": "Επεκτείνουν",
+    "Clear": "Διαγράφω"
   },
   "agent": {
     "Endpoint": "Τελικό σημείο",
@@ -1654,6 +1655,8 @@
     "useAnotherAccount": "Συνδεθείτε με διαφορετικό λογαριασμό"
   },
   "chatui": {
-    "OpenChatModal": "LLM Chat"
+    "OpenChatModal": "LLM Chat",
+    "CannotFindModel": "Δεν μπορούν να βρεθούν μοντέλα LLM. \nΠροσαρμόστε το μοντέλο.",
+    "DeleteChatHistory": "Διαγραφή ιστορικού συνομιλίας"
   }
 }

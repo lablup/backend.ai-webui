@@ -141,7 +141,8 @@
     "PushToImage": "Työnnä istunto mukautettuun kuvaan",
     "SaveWithoutClose": "Tallenna ilman sulkemista",
     "Collapse": "Romahdus",
-    "Expand": "Laajentaa"
+    "Expand": "Laajentaa",
+    "Clear": "Poistaa"
   },
   "credential": {
     "AccessKeyOptional": "Pääsyavain (valinnainen)",
@@ -1654,6 +1655,8 @@
     "useAnotherAccount": "Kirjaudu sisään eri tilillä"
   },
   "chatui": {
-    "OpenChatModal": "LLM Chat"
+    "OpenChatModal": "LLM Chat",
+    "CannotFindModel": "LLM-malleja ei löydy. \nMukauta mallia.",
+    "DeleteChatHistory": "Poista keskusteluhistoria"
   }
 }
