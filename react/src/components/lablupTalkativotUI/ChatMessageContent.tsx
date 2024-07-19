@@ -1,7 +1,6 @@
 import CopyButton from './CopyButton';
 import { Card, Typography } from 'antd';
 import React from 'react';
-import { PropsWithChildren } from 'react';
 import Markdown from 'react-markdown';
 import {
   Prism as SyntaxHighlighter,

@@ -2,7 +2,6 @@ import Flex, { FlexProps } from '../Flex';
 import ChatMessage from './ChatMessage';
 import CopyButton from './CopyButton';
 import { Message } from 'ai';
-import { Button } from 'antd';
 import Compact from 'antd/es/space/Compact';
 import React from 'react';
 
