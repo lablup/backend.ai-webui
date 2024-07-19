@@ -879,7 +879,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         //   });
                         // }}
                         />
-                        <ResourceAllocationFormItems />
+                        <ResourceAllocationFormItems enableResourcePresets />
                         <Form.Item
                           label={t('session.launcher.EnvironmentVariable')}
                         >
