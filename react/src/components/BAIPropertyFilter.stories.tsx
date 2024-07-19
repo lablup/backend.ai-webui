@@ -36,3 +36,27 @@ export const Default: Story = {
     onChange: fn(),
   },
 };
+
+export const DefaultValue: Story = {
+  name: 'with default value',
+  args: {
+    filterProperties: [
+      {
+        key: 'property1',
+        defaultOperator: '==',
+        propertyLabel: 'Property 1',
+      },
+      {
+        key: 'property2',
+        defaultOperator: '!=',
+        propertyLabel: 'Property 2',
+      },
+      {
+        key: 'property3',
+        propertyLabel: 'Property 3',
+      },
+    ],
+    defaultValue: 'property1 == "value"',
+    onChange: fn(),
+  },
+};

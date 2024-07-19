@@ -64,11 +64,17 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
 }) => {
   const [search, setSearch] = useControllableValue({});
 
-  const [value, setValue] = useControllableValue<string | undefined>({
-    value: propValue,
-    defaultValue: defaultValue,
-    onChange: propOnChange,
-  });
+  const [value, setValue] = useControllableValue<string | undefined>(
+    _.omitBy(
+      {
+        value: propValue,
+        defaultValue: defaultValue,
+        onChange: propOnChange,
+      },
+      _.isUndefined,
+    ),
+  );
+
   const filtersFromValue = useMemo(() => {
     if (value === undefined) return [];
     const filters = value.split('&').map((filter) => filter.trim());
