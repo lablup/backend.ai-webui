@@ -4321,7 +4321,6 @@ ${rowData.item[this.sessionNameField]}</pre
             this._isRunning
               ? html`
                   <vaadin-grid-column
-                    frozen
                     width="60px"
                     flex-grow="0"
                     text-align="center"
@@ -4330,14 +4329,13 @@ ${rowData.item[this.sessionNameField]}</pre
                 `
               : html``
           }
-          <vaadin-grid-column frozen width="40px" flex-grow="0" header="#" .renderer="${
+          <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${
             this._indexRenderer
           }"></vaadin-grid-column>
           ${
             this.is_admin
               ? html`
                   <lablup-grid-sort-filter-column
-                    frozen
                     path="${this._connectionMode === 'API'
                       ? 'access_key'
                       : 'user_email'}"
@@ -4350,7 +4348,7 @@ ${rowData.item[this.sessionNameField]}</pre
                 `
               : html``
           }
-          <lablup-grid-sort-filter-column frozen path="${this.sessionNameField}" 
+          <lablup-grid-sort-filter-column path="${this.sessionNameField}" 
             width="260px"
             header="${_t('session.SessionInfo')}" 
             resizable
