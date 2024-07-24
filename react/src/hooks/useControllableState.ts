@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { SetStateAction } from 'react';
 
-export interface Options {
+export interface Options<T> {
+  defaultValue?: T;
   defaultValuePropName?: string;
   valuePropName?: string;
   trigger?: string;
@@ -19,19 +20,21 @@ export interface StandardProps<T> {
  * useControllableState is based on useControllableValue.
  * However if the value is undefined, the component is treated as an uncontrolled component
  */
+// params 설명 더 작성하기
 
 function useControllableState<T = any>(
   props: StandardProps<T>,
 ): [T, (v: SetStateAction<T>) => void];
 function useControllableState<T = any>(
   props?: Props,
-  options?: Options,
+  options?: Options<T>,
 ): [T, (v: SetStateAction<T>, ...args: any[]) => void];
 function useControllableState<T = any>(
   props: Props = {},
-  options: Options = {},
+  options: Options<T> = {},
 ) {
   const {
+    defaultValue,
     defaultValuePropName = 'defaultValue',
     valuePropName = 'value',
     trigger = 'onChange',
@@ -61,7 +64,7 @@ function useControllableState<T = any>(
     if (Object.prototype.hasOwnProperty.call(props, defaultValuePropName)) {
       return props[defaultValuePropName];
     }
-    return undefined;
+    return defaultValue;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
