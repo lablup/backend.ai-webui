@@ -4,7 +4,7 @@ import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 
 describe('useControllableState', () => {
-  const setUp = (props?: Props, options?: Options): any =>
+  const setUp = (props?: Props, options?: Options<any>): any =>
     renderHook(() => useControllableState(props, options));
 
   it('defaultValue should work', () => {
