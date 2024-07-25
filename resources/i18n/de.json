@@ -454,7 +454,8 @@
     "PushToImage": "Push-Sitzung auf benutzerdefiniertes Bild",
     "SaveWithoutClose": "Speichern ohne Schließen",
     "Collapse": "Zusammenbruch",
-    "Expand": "Expandieren"
+    "Expand": "Expandieren",
+    "Clear": "Löschen"
   },
   "agent": {
     "Endpoint": "Endpunkt",
@@ -1652,5 +1653,10 @@
     "confirmLoginMessage": "Möchten Sie sich mit {{Benutzername}} anmelden ({{E-Mail}}) Konto anmelden?",
     "ServiceName": "Name des Dienstes",
     "useAnotherAccount": "Mit einem anderen Konto anmelden"
+  },
+  "chatui": {
+    "OpenChatModal": "LLM Chat",
+    "CannotFindModel": "LLM-Modelle können nicht gefunden werden. \nBitte passen Sie das Modell an.",
+    "DeleteChatHistory": "Chatverlauf löschen"
   }
 }

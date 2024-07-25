@@ -454,7 +454,8 @@
     "PushToImage": "Prześlij sesję do spersonalizowanego obrazu",
     "SaveWithoutClose": "Zapisz bez zamykania",
     "Collapse": "Zawalić się",
-    "Expand": "Zwiększać"
+    "Expand": "Zwiększać",
+    "Clear": "Usuwać"
   },
   "agent": {
     "Endpoint": "Punkt końcowy",
@@ -1652,5 +1653,10 @@
     "confirmLoginMessage": "Czy chcesz zalogować się przy użyciu konta {{username}} ({{email}})?",
     "ServiceName": "Nazwa usługi",
     "useAnotherAccount": "Zaloguj się przy użyciu innego konta"
+  },
+  "chatui": {
+    "OpenChatModal": "LLM Chat",
+    "CannotFindModel": "Nie można znaleźć modeli LLM. \nProszę dostosować model.",
+    "DeleteChatHistory": "Usuń historię czatów"
   }
 }

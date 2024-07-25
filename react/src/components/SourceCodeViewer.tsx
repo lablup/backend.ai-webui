@@ -5,7 +5,6 @@ import { Button, Tooltip, theme } from 'antd';
 import _ from 'lodash';
 import { Highlight, themes } from 'prism-react-renderer';
 import { useRef, useState } from 'react';
-// @ts-ignore
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useTranslation } from 'react-i18next';
 

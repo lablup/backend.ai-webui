@@ -456,7 +456,8 @@
     "PushToImage": "Тохируулсан зураг руу түлхэх сесс",
     "SaveWithoutClose": "Хаахгүйгээр хадгалах",
     "Collapse": "Нурах",
-    "Expand": "Өргөтгөх"
+    "Expand": "Өргөтгөх",
+    "Clear": "Устгах"
   },
   "agent": {
     "Endpoint": "Төгсгөлийн цэг",
@@ -1653,5 +1654,10 @@
     "confirmLoginMessage": "Та {{username}} ({{email}}) бүртгэлээр нэвтрэхийг хүсэж байна уу?",
     "ServiceName": "Үйлчилгээний нэр",
     "useAnotherAccount": "Өөр бүртгэлээр нэвтэрнэ үү"
+  },
+  "chatui": {
+    "OpenChatModal": "LLM Chat",
+    "CannotFindModel": "LLM загвар олдохгүй байна. \nЗагвараа тохируулна уу.",
+    "DeleteChatHistory": "Чатын түүхийг устгах"
   }
 }

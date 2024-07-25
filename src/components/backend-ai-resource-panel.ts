@@ -301,7 +301,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
         if (this.active == true) {
           setTimeout(() => {
             this._refreshAgentInformation(status);
-          }, 15000);
+          }, 30000);
         }
       })
       .catch((err) => {

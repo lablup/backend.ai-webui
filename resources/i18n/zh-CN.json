@@ -454,7 +454,8 @@
     "PushToImage": "将会话推送到自定义镜像",
     "SaveWithoutClose": "保存而不关闭",
     "Collapse": "坍塌",
-    "Expand": "扩张"
+    "Expand": "扩张",
+    "Clear": "删除"
   },
   "agent": {
     "Endpoint": "端点",
@@ -1653,5 +1654,10 @@
     "confirmLoginMessage": "您想用 {{username}} 登录吗？({{email}})账户登录？",
     "ServiceName": "服务名称",
     "useAnotherAccount": "使用其他账户登录"
+  },
+  "chatui": {
+    "OpenChatModal": "LLM Chat",
+    "CannotFindModel": "找不到 LLM 模型。\n请定制型号。",
+    "DeleteChatHistory": "删除聊天记录"
   }
 }

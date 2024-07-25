@@ -454,7 +454,8 @@
     "PushToImage": "Đẩy phiên sang hình ảnh tùy chỉnh",
     "SaveWithoutClose": "Lưu mà không đóng",
     "Collapse": "Sụp đổ",
-    "Expand": "Mở rộng"
+    "Expand": "Mở rộng",
+    "Clear": "Xóa bỏ"
   },
   "agent": {
     "Endpoint": "Điểm cuối",
@@ -1652,5 +1653,10 @@
     "confirmLoginMessage": "Bạn có muốn đăng nhập bằng tài khoản {{username}} ({{email}}) không?",
     "ServiceName": "Tên dịch vụ",
     "useAnotherAccount": "Đăng nhập bằng tài khoản khác"
+  },
+  "chatui": {
+    "OpenChatModal": "LLM Chat",
+    "CannotFindModel": "Không thể tìm thấy mô hình LLM. \nVui lòng tùy chỉnh mô hình.",
+    "DeleteChatHistory": "Xóa lịch sử trò chuyện"
   }
 }

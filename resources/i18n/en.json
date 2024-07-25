@@ -543,7 +543,8 @@
     "PushToImage": "Push session to customized image",
     "SaveWithoutClose": "Save Without Close",
     "Collapse": "Collapse",
-    "Expand": "Expand"
+    "Expand": "Expand",
+    "Clear": "Clear"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -1654,5 +1655,10 @@
     "confirmLoginMessage": "Would you like to sign in with {{username}} ({{email}}) account?",
     "ServiceName": "Service name",
     "useAnotherAccount": "Sign in with a different account"
+  },
+  "chatui": {
+    "OpenChatModal": "LLM Chat",
+    "CannotFindModel": "LLM models cannot be found. Please customize the model.",
+    "DeleteChatHistory": "Delete Chat History"
   }
 }

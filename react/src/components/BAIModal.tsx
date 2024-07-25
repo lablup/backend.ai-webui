@@ -67,9 +67,11 @@ const BAIModal: React.FC<BAIModalProps> = ({ styles, ...modalProps }) => {
             overflow: 'auto',
             paddingTop: token.paddingMD,
             paddingBottom: token.paddingMD,
+            ...styles?.body,
           },
           content: {
             padding: `var(--general-modal-content-padding, 0)`,
+            ...styles?.content,
           },
           footer: {
             borderTop: '1px solid',
@@ -78,6 +80,7 @@ const BAIModal: React.FC<BAIModalProps> = ({ styles, ...modalProps }) => {
             paddingLeft: token.paddingMD,
             paddingRight: token.paddingMD,
             marginTop: 0,
+            ...styles?.footer,
           },
         }}
         title={

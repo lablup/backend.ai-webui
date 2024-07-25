@@ -530,7 +530,8 @@
     "PushToImage": "세션을 사용자 정의된 이미지로 푸시",
     "SaveWithoutClose": "저장 후 유지",
     "Collapse": "접기",
-    "Expand": "펼치기"
+    "Expand": "펼치기",
+    "Clear": "삭제"
   },
   "agent": {
     "Endpoint": "엔드포인트",
@@ -1653,5 +1654,10 @@
     "confirmLoginMessage": "{{username}} ({{email}}) 계정으로 로그인하시겠습니까?",
     "ServiceName": "서비스 이름",
     "useAnotherAccount": "다른 계정으로 로그인"
+  },
+  "chatui": {
+    "OpenChatModal": "LLM Chat",
+    "CannotFindModel": "LLM 모델을 찾을 수 없습니다. 사용자 정의 모델을 설정해주세요.",
+    "DeleteChatHistory": "채팅 기록 삭제"
   }
 }

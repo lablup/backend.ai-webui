@@ -141,7 +141,8 @@
     "PushToImage": "Enviar sesión a una imagen personalizada",
     "SaveWithoutClose": "Guardar sin cerrar",
     "Collapse": "Colapsar",
-    "Expand": "Expandir"
+    "Expand": "Expandir",
+    "Clear": "Borrar"
   },
   "credential": {
     "AccessKeyOptional": "Clave de acceso (opcional)",
@@ -1654,5 +1655,10 @@
     "confirmLoginMessage": "¿Desea iniciar sesión con {{username}} ({{email}}) cuenta?",
     "ServiceName": "Nombre del servicio",
     "useAnotherAccount": "Iniciar sesión con otra cuenta"
+  },
+  "chatui": {
+    "OpenChatModal": "LLM Chat",
+    "CannotFindModel": "No se pueden encontrar modelos LLM. \nPersonaliza el modelo.",
+    "DeleteChatHistory": "Eliminar historial de chat"
   }
 }

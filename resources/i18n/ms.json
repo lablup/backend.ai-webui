@@ -454,7 +454,8 @@
     "PushToImage": "Sesi tolak ke imej tersuai",
     "SaveWithoutClose": "Simpan Tanpa Tutup",
     "Collapse": "Runtuh",
-    "Expand": "Kembangkan"
+    "Expand": "Kembangkan",
+    "Clear": "Padam"
   },
   "agent": {
     "Endpoint": "Titik Akhir",
@@ -1652,5 +1653,10 @@
     "confirmLoginMessage": "Adakah anda ingin melog masuk dengan akaun {{username}} ({{email}})?",
     "ServiceName": "Nama perkhidmatan",
     "useAnotherAccount": "Log masuk dengan akaun lain"
+  },
+  "chatui": {
+    "OpenChatModal": "LLM Chat",
+    "CannotFindModel": "Model LLM tidak ditemui. \nSila sesuaikan model.",
+    "DeleteChatHistory": "Padamkan Sejarah Sembang"
   }
 }

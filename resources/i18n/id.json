@@ -455,7 +455,8 @@
     "PushToImage": "Sesi dorong ke gambar yang disesuaikan",
     "SaveWithoutClose": "Simpan Tanpa Tutup",
     "Collapse": "Runtuh",
-    "Expand": "Memperluas"
+    "Expand": "Memperluas",
+    "Clear": "Menghapus"
   },
   "agent": {
     "Endpoint": "Titik akhir",
@@ -1652,5 +1653,10 @@
     "confirmLoginMessage": "Apakah Anda ingin masuk dengan akun {{nama pengguna}} ({{email}})?",
     "ServiceName": "Nama layanan",
     "useAnotherAccount": "Masuk dengan akun yang berbeda"
+  },
+  "chatui": {
+    "OpenChatModal": "LLM Chat",
+    "CannotFindModel": "Model LLM tidak dapat ditemukan. \nSilakan sesuaikan modelnya.",
+    "DeleteChatHistory": "Hapus Riwayat Obrolan"
   }
 }

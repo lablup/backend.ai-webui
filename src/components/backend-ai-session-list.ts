@@ -857,7 +857,7 @@ export default class BackendAISessionList extends BackendAIPage {
         this.session_page_limit,
         (this.current_page - 1) * this.session_page_limit,
         group_id,
-        10 * 1000,
+        20 * 1000,
       )
       .then((response) => {
         this.total_session_count =
@@ -1283,8 +1283,8 @@ export default class BackendAISessionList extends BackendAIPage {
               'system',
               'running',
             ].includes(this.condition)
-              ? 7000
-              : 30000;
+              ? 15000
+              : 45000;
             this.refreshTimer = setTimeout(() => {
               this._refreshJobData();
             }, refreshTime);
@@ -3853,13 +3853,12 @@ ${rowData.item[this.sessionNameField]}</pre
       html`
         <div class="layout vertical" style="padding:3px auto;">
           <span>${rowData.item.created_at_hr}</span>
-          <lablup-shields
-            app="${_t('session.ElapsedTime')}"
-            color="darkgreen"
-            style="margin:3px 0;"
-            description="${rowData.item.elapsed}"
-            ui="round"
-          ></lablup-shields>
+          <backend-ai-session-reservation-timer
+            value="${JSON.stringify({
+              created_at: rowData.item.created_at,
+              terminated_at: rowData.item.terminated_at,
+            })}"
+          />
         </div>
       `,
       root,
@@ -4381,9 +4380,8 @@ ${rowData.item[this.sessionNameField]}</pre
           <vaadin-grid-sort-column resizable width="180px" flex-grow="0" header="${_t(
             'session.Reservation',
           )}"
-                                   path="created_at" .renderer="${
-                                     this._boundReservationRenderer
-                                   }">
+            path="created_at" 
+            .renderer="${this._boundReservationRenderer}">
           </vaadin-grid-sort-column>
           ${
             globalThis.backendaiclient.supports('idle-checks') &&

@@ -111,7 +111,7 @@ interface ServiceLauncherInput extends ImageEnvironmentFormInput {
   modelMountDestination: string;
   modelDefinitionPath: string;
   vfoldersAliasMap: Record<string, string>;
-  mounts: Array<string>;
+  mounts?: Array<string>;
   envvars: EnvVarFormListValue[];
   runtimeVariant: string;
 }
@@ -399,8 +399,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             supported_accelerators
           }
           name
-          model_definition_path
-          model_mount_destination
+          model_definition_path @since(version: "24.03.4")
+          model_mount_destination @since(version: "24.03.4")
           extra_mounts @since(version: "24.03.4") {
             id
             host
@@ -471,7 +471,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                     ),
                     values,
                   ),
-                  extra_mounts: (values.mounts || []).map((vfolder) => {
+                  extra_mounts: _.map(values.mounts, (vfolder) => {
                     return {
                       vfolder_id: vfolder,
                       ...(values.vfoldersAliasMap[vfolder] && {
@@ -879,7 +879,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         //   });
                         // }}
                         />
-                        <ResourceAllocationFormItems />
+                        <ResourceAllocationFormItems enableResourcePresets />
                         <Form.Item
                           label={t('session.launcher.EnvironmentVariable')}
                         >

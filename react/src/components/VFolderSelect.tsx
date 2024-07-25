@@ -103,6 +103,7 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
   return (
     <Select
       showSearch
+      optionFilterProp={'label'}
       {...selectProps}
       onDropdownVisibleChange={(open) => {
         if (open) {

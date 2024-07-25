@@ -454,7 +454,8 @@
     "PushToImage": "セッションをカスタマイズされたイメージにプッシュする",
     "SaveWithoutClose": "閉じずに保存",
     "Collapse": "崩壊",
-    "Expand": "拡大する"
+    "Expand": "拡大する",
+    "Clear": "消去"
   },
   "agent": {
     "Endpoint": "終点",
@@ -1652,5 +1653,10 @@
     "confirmLoginMessage": "ユーザー名}}でサインインしますか？({{email}}) アカウントでサインインしますか？",
     "ServiceName": "サービス名",
     "useAnotherAccount": "別のアカウントでサインインする"
+  },
+  "chatui": {
+    "OpenChatModal": "LLM Chat",
+    "CannotFindModel": "LLM モデルが見つかりません。\nモデルをカスタマイズしてください。",
+    "DeleteChatHistory": "チャット履歴を削除する"
   }
 }
