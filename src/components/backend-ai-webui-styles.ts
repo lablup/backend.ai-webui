@@ -273,7 +273,7 @@ export const BackendAIWebUIStyles = [
     }
 
     .sidepanel-drawer {
-      border-right: 1px solid #cccccc;
+      border-right: 1px solid var(--token-colorBorder, #ccc);
       height: 100vh;
       overflow-y: auto;
       overflow-x: hidden;
@@ -503,7 +503,7 @@ export const BackendAIWebUIStyles = [
       overflow: visible;
       --mdc-theme-on-primary: black;
       --mdc-theme-primary: rgba(247, 246, 246, 1);
-      border-bottom: 1px solid #dbdbdb;
+      border-bottom: 1px solid var(--token-colorBorder, #ccc);
       position: sticky;
     }
 

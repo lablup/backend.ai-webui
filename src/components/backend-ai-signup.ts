@@ -81,7 +81,7 @@ export default class BackendAiSignup extends BackendAIPage {
         fieldset input {
           width: 100%;
           border: 0;
-          border-bottom: 1px solid #aaa;
+          border-bottom: 1px solid var(--token-colorBorder, #ccc);
           margin: 15px 0;
           font: inherit;
           font-size: 16px;
@@ -89,7 +89,7 @@ export default class BackendAiSignup extends BackendAIPage {
         }
 
         fieldset input:focus {
-          border-bottom: 1.5px solid #0d47a1;
+          border-bottom: 1.5px solid var(--token-colorLink, #0d47a1);
         }
 
         #signup-panel {
