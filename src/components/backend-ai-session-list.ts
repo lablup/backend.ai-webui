@@ -857,7 +857,7 @@ export default class BackendAISessionList extends BackendAIPage {
         this.session_page_limit,
         (this.current_page - 1) * this.session_page_limit,
         group_id,
-        10 * 1000,
+        20 * 1000,
       )
       .then((response) => {
         this.total_session_count =
@@ -1283,8 +1283,8 @@ export default class BackendAISessionList extends BackendAIPage {
               'system',
               'running',
             ].includes(this.condition)
-              ? 7000
-              : 30000;
+              ? 15000
+              : 45000;
             this.refreshTimer = setTimeout(() => {
               this._refreshJobData();
             }, refreshTime);

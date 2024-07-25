@@ -487,12 +487,17 @@ const SessionLauncherPage = () => {
                 return res;
               })
               .catch((err: any) => {
-                throw err;
+                if (err?.message?.includes('The session already exists')) {
+                  throw new Error(t('session.launcher.SessionAlreadyExists'));
+                } else {
+                  throw err;
+                }
               });
           },
         );
         // console.log('##', values.mounts);
         // console.log(sessionInfo);
+        const backupTo = window.location.pathname + window.location.search;
         webuiNavigate(redirectTo || '/job');
         upsertNotification({
           key: 'session-launcher:' + sessionName,
@@ -562,6 +567,11 @@ const SessionLauncherPage = () => {
             }
           })
           .catch(() => {
+            upsertNotification({
+              key: 'session-launcher:' + sessionName,
+              to: backupTo,
+              toText: '수정',
+            });
             // this.metadata_updating = false;
             // console.log(err);
             // if (err && err.message) {
