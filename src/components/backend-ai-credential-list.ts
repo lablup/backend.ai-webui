@@ -765,17 +765,6 @@ export default class BackendAICredentialList extends BackendAIPage {
                   inverted
                   @click="${(e) => this._revokeKey(e)}"
                 ></mwc-icon-button>
-                <mwc-icon-button
-                  class="fg red"
-                  icon="delete_forever"
-                  fab
-                  ?disabled=${this._mainAccessKeyList.includes(
-                    rowData.item?.access_key,
-                  )}
-                  flat
-                  inverted
-                  @click="${(e) => this._deleteKeyPairDialog(e)}"
-                ></mwc-icon-button>
               `
             : html``}
           ${this._isActive() === false
@@ -787,6 +776,21 @@ export default class BackendAICredentialList extends BackendAIPage {
                   flat
                   inverted
                   @click="${(e) => this._reuseKey(e)}"
+                ></mwc-icon-button>
+              `
+            : html``}
+          ${this.isAdmin && !this._isActive()
+            ? html`
+                <mwc-icon-button
+                  class="fg red"
+                  icon="delete_forever"
+                  fab
+                  ?disabled=${this._mainAccessKeyList.includes(
+                    rowData.item?.access_key,
+                  )}
+                  flat
+                  inverted
+                  @click="${(e) => this._deleteKeyPairDialog(e)}"
                 ></mwc-icon-button>
               `
             : html``}
