@@ -521,7 +521,7 @@ export default class BackendAISummary extends BackendAIPage {
                           this._moveTo('/credential', '?action=add');
                         }}"
                         class="vertical center center-justified layout start-menu-items link-button"
-                        style="border-left:1px solid #ccc;"
+                        style="border-left:1px solid var(--token-colorBorder, #ccc);"
                       >
                         <i class="fas fa-key fa-2x"></i>
                         <span>${_t('summary.CreateANewKeypair')}</span>
@@ -531,7 +531,7 @@ export default class BackendAISummary extends BackendAIPage {
                           this._moveTo('/credential', '?action=manage');
                         }}"
                         class="vertical center center-justified layout start-menu-items link-button"
-                        style="border-left:1px solid #ccc;"
+                        style="border-left:1px solid var(--token-colorBorder, #ccc);"
                       >
                         <i class="fas fa-cogs fa-2x"></i>
                         <span>${_t('summary.MaintainKeypairs')}</span>
