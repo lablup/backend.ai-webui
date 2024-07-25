@@ -30,9 +30,6 @@ const BAICodeEditor: React.FC<BAICodeEditorProps> = ({
 
   return (
     <CodeMirror
-      {...CodeMirrorProps}
-      value={script}
-      onChange={(value, viewUpdate) => setScript(value)}
       theme={'dark'}
       extensions={
         lineWrapping ? [EditorView.lineWrapping, ...extensions] : extensions
@@ -42,6 +39,9 @@ const BAICodeEditor: React.FC<BAICodeEditorProps> = ({
       basicSetup={{
         lineNumbers: showLineNumbers,
       }}
+      {...CodeMirrorProps}
+      value={script}
+      onChange={(value, viewUpdate) => setScript(value)}
     />
   );
 };
