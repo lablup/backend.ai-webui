@@ -1,6 +1,7 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
+import useControllableState from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { Select, SelectProps } from 'antd';
 import _ from 'lodash';
@@ -43,6 +44,7 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
 }) => {
   const currentProject = useCurrentProjectValue();
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
+  const [value, setValue] = useControllableState(selectProps);
   // const { vfolder_list } = useLazyLoadQuery<VFolderSelectQuery>(
   //   graphql`
   //     # query VFolderSelectQuery($group_id: UUID) {
@@ -93,10 +95,9 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
         value: _.first(filteredVFolders)?.[valuePropName],
       }
     : undefined;
-  // TODO: use controllable value
   useEffect(() => {
     if (autoSelectDefault && autoSelectedOption) {
-      selectProps.onChange?.(autoSelectedOption.value, autoSelectedOption);
+      setValue(autoSelectedOption.value, autoSelectedOption);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoSelectDefault]);
@@ -104,6 +105,8 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
     <Select
       showSearch
       {...selectProps}
+      value={value}
+      onChange={setValue}
       onDropdownVisibleChange={(open) => {
         if (open) {
           startTransition(() => {

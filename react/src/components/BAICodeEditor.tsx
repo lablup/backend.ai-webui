@@ -1,10 +1,10 @@
+import useControllableState from '../hooks/useControllableState';
 import { loadLanguage, LanguageName } from '@uiw/codemirror-extensions-langs';
 import CodeMirror, { ReactCodeMirrorProps } from '@uiw/react-codemirror';
 import { EditorView } from '@uiw/react-codemirror';
-import { useControllableValue } from 'ahooks';
 
 interface BAICodeEditorProps extends Omit<ReactCodeMirrorProps, 'language'> {
-  children: string;
+  value: string;
   onChange: (value: string) => void;
   language: LanguageName;
   editable?: boolean;
@@ -13,7 +13,7 @@ interface BAICodeEditorProps extends Omit<ReactCodeMirrorProps, 'language'> {
 }
 
 const BAICodeEditor: React.FC<BAICodeEditorProps> = ({
-  children,
+  value,
   onChange,
   language = 'shell',
   editable = false,
@@ -21,15 +21,16 @@ const BAICodeEditor: React.FC<BAICodeEditorProps> = ({
   lineWrapping = false,
   ...CodeMirrorProps
 }) => {
-  const [script, setScript] = useControllableValue<string>({
+  const [script, setScript] = useControllableState<string>({
     defaultValue: '',
-    value: children,
+    value,
     onChange,
   });
   const extensions = [loadLanguage(language)!];
 
   return (
     <CodeMirror
+      {...CodeMirrorProps}
       value={script}
       onChange={(value, viewUpdate) => setScript(value)}
       theme={'dark'}
@@ -41,7 +42,6 @@ const BAICodeEditor: React.FC<BAICodeEditorProps> = ({
       basicSetup={{
         lineNumbers: showLineNumbers,
       }}
-      {...CodeMirrorProps}
     />
   );
 };

@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { SetStateAction } from 'react';
 
@@ -20,7 +21,6 @@ export interface StandardProps<T> {
  * useControllableState is based on useControllableValue.
  * However if the value is undefined, the component is treated as an uncontrolled component
  */
-// params 설명 더 작성하기
 
 function useControllableState<T = any>(
   props: StandardProps<T>,
@@ -76,7 +76,7 @@ function useControllableState<T = any>(
   const update = useUpdate();
 
   function setState(v: SetStateAction<T>, ...args: any[]) {
-    const r = isFunction(v) ? v(stateRef.current) : v;
+    const r = _.isFunction(v) ? v(stateRef.current) : v;
 
     if (!isControlled) {
       stateRef.current = r;
@@ -92,10 +92,6 @@ function useControllableState<T = any>(
 
 export default useControllableState;
 
-function isFunction(value: unknown): value is (...args: any) => any {
-  return typeof value === 'function';
-}
-
 type noop = (this: any, ...args: any[]) => any;
 
 type PickFunction<T extends noop> = (
@@ -107,7 +103,7 @@ function useMemoizedFn<T extends noop>(fn: T) {
   const isDev =
     process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test';
   if (isDev) {
-    if (!isFunction(fn)) {
+    if (!_.isFunction(fn)) {
       console.error(
         `useMemoizedFn expected parameter is a function, got ${typeof fn}`,
       );

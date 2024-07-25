@@ -2,6 +2,7 @@ import { useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useKeyPairLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import { useTanQuery } from '../hooks/reactQueryAlias';
+import useControllableState from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useEventNotStable } from '../hooks/useEventNotStable';
 import { useShadowRoot } from './DefaultProviders';
@@ -15,7 +16,6 @@ import {
   ReloadOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { useControllableValue } from 'ahooks';
 import {
   Button,
   Descriptions,
@@ -91,7 +91,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     };
   }, [rowKey]);
 
-  const [selectedRowKeys, setSelectedRowKeys] = useControllableValue<
+  const [selectedRowKeys, setSelectedRowKeys] = useControllableState<
     VFolderKey[]
   >(
     {
@@ -103,7 +103,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     },
   );
 
-  const [aliasMap, setAliasMap] = useControllableValue<AliasMap>(
+  const [aliasMap, setAliasMap] = useControllableState<AliasMap>(
     {
       value: controlledAliasMap,
       onChange: onChangeAliasMap,

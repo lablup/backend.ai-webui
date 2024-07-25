@@ -1,9 +1,9 @@
 import { usageIndicatorColor } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
+import useControllableState from '../hooks/useControllableState';
 import { useShadowRoot } from './DefaultProviders';
 import Flex from './Flex';
 import TextHighlighter from './TextHighlighter';
-import { useControllableValue } from 'ahooks';
 import { Select, SelectProps, Badge, Tooltip } from 'antd';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
@@ -58,13 +58,13 @@ const StorageSelect: React.FC<Props> = ({
     return baiClient.vfolder.list_hosts();
   });
 
-  const [controllableState, setControllableState] = useControllableValue(
-    _.omitBy({ value, onChange, defaultValue }, _.isUndefined),
-  );
+  const [controllableState, setControllableState] = useControllableState({
+    value,
+    onChange,
+    defaultValue,
+  });
   const [controllableSearchValue, setControllableSearchValue] =
-    useControllableValue(
-      _.omitBy({ value: searchValue, onChange: onSearch }, _.isUndefined),
-    );
+    useControllableState({ value: searchValue, onChange: onSearch });
   useEffect(() => {
     if (!autoSelectType) return;
     let nextHost = vhostInfo?.default ?? vhostInfo?.allowed[0] ?? '';
