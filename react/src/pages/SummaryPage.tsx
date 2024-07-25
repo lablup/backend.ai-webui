@@ -1,4 +1,5 @@
 import BAIBoard from '../components/BAIBoard';
+import BAIResourcePanel from '../components/BAIResourcePanel';
 import SummaryItemDownloadApp from '../components/SummaryPageItems/SummaryItemDownloadApp';
 import SummaryItemInvitation from '../components/SummaryPageItems/SummaryItemInvitation';
 import SummaryItemStartMenu from '../components/SummaryPageItems/SummaryItemStartMenu';
@@ -70,16 +71,21 @@ const SummaryPage: React.FC = () => {
   );
 
   return (
-    <BAIBoard
-      items={items}
-      onItemsChange={(event) => {
-        const changedItems = event.detail.items as typeof items;
-        setItems(changedItems);
-        setSummaryItemsSetting(
-          _.map(changedItems, (item) => _.omit(item, 'data')),
-        );
-      }}
-    />
+    <>
+      <BAIBoard
+        items={items}
+        onItemsChange={(event) => {
+          const changedItems = event.detail.items as typeof items;
+          setItems(changedItems);
+          setSummaryItemsSetting(
+            _.map(changedItems, (item) => _.omit(item, 'data')),
+          );
+        }}
+      />
+      <BAIResourcePanel />
+      {/* @ts-ignore */}
+      <backend-ai-summary-view active></backend-ai-summary-view>
+    </>
   );
 };
 export default SummaryPage;
