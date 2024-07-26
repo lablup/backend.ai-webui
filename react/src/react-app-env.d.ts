@@ -25,3 +25,9 @@ type DeepPartial<T> = {
         ? DeepPartial<T[P]>
         : T[P];
 };
+
+type NonNullableItem<T> = NonNullable<NonNullable<NonNullable<T>['items']>>[0];
+
+type NonNullableNodeOnEdges<T extends RelayConnection | null> = NonNullable<
+  NonNullable<NonNullable<NonNullable<T>['edges'][0]>>['node']
+>;

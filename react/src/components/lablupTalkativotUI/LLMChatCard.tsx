@@ -2,6 +2,7 @@
 
 import Flex from '../Flex';
 import ChatInput from './ChatInput';
+import ModelSelect from './ModelSelect';
 import VirtualChatMessageList from './VirtualChatMessageList';
 import { createOpenAI } from '@ai-sdk/openai';
 import { useChat } from '@ai-sdk/react';
@@ -16,10 +17,8 @@ import {
   Form,
   Input,
   MenuProps,
-  Select,
   theme,
 } from 'antd';
-import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -32,7 +31,7 @@ export type BAIModel = {
   description?: string;
 };
 type BAIAgent = {};
-interface LLMChatCardProps extends CardProps {
+export interface LLMChatCardProps extends CardProps {
   models?: Array<BAIModel>;
   agents?: Array<BAIAgent>;
   modelId?: string;
@@ -44,8 +43,9 @@ interface LLMChatCardProps extends CardProps {
   headers?: Record<string, string> | Headers;
   credentials?: RequestCredentials;
   fetchOnClient?: boolean;
-  allowManualModel?: boolean;
+  allowCustomModel?: boolean;
   alert?: React.ReactNode;
+  leftExtra?: React.ReactNode;
 }
 
 const LLMChatCard: React.FC<LLMChatCardProps> = ({
@@ -55,14 +55,15 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
   credentials,
   apiKey,
   fetchOnClient,
-  allowManualModel: allowCustomModel,
+  allowCustomModel,
   alert,
+  leftExtra,
   ...cardProps
 }) => {
   const [modelId, setModelId] = useControllableValue(cardProps, {
     valuePropName: 'modelId',
     trigger: 'onModelChange',
-    defaultValue: models[0]?.name,
+    defaultValue: models[0]?.id,
   });
 
   const [customModelForm] = Form.useForm();
@@ -140,6 +141,12 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
   return (
     <Card
       bordered
+      extra={
+        [
+          // <Checkbox key="sync">Sync</Checkbox>,
+          // <Button key="setting" type="text" icon={<SlidersHorizontalIcon/>}></Button>,
+        ]
+      }
       {...cardProps}
       title={
         <Flex direction="column" align="stretch" gap={'sm'}>
@@ -154,39 +161,12 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
             value={"default"}
             popupMatchSelectWidth={false}
           ></Select> */}
-            <Select
-              placeholder={'Select model'}
-              style={{
-                fontWeight: 'normal',
-              }}
-              showSearch
-              options={_.concat(
-                allowCustomModel
-                  ? [
-                      {
-                        label: 'Custom',
-                        // @ts-ignore
-                        value: 'custom',
-                      },
-                    ]
-                  : [],
-                _.chain(models)
-                  .groupBy('group')
-                  .mapValues((ms) =>
-                    _.map(ms, (m) => ({
-                      label: m.label,
-                      value: m.name,
-                    })),
-                  )
-                  .map((v, k) => ({
-                    label: k === 'undefined' ? 'Others' : k,
-                    options: v,
-                  }))
-                  .value(),
-              )}
+            {leftExtra}
+            <ModelSelect
+              models={models}
               value={modelId}
               onChange={setModelId}
-              popupMatchSelectWidth={false}
+              allowCustomModel={allowCustomModel}
             />
             <Dropdown menu={{ items }} trigger={['click']}>
               <Button
@@ -221,12 +201,6 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
           paddingRight: token.paddingContentHorizontal,
         },
       }}
-      extra={
-        [
-          // <Checkbox key="sync">Sync</Checkbox>,
-          // <Button key="setting" type="text" icon={<SlidersHorizontalIcon/>}></Button>,
-        ]
-      }
       actions={[
         <form key="input" onSubmit={handleSubmit}>
           <ChatInput
@@ -266,6 +240,9 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
           size="small"
           requiredMark="optional"
           style={{ flex: 1 }}
+          initialValues={{
+            baseURL: baseURL,
+          }}
         >
           {alert ? (
             <div style={{ marginBottom: token.size }}>{alert}</div>

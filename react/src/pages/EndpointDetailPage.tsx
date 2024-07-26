@@ -295,7 +295,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       children: endpoint?.url ? (
         <>
           <Typography.Text copyable>{endpoint?.url}</Typography.Text>
-          <Tooltip title={t('chatui.OpenChatModal')}>
+          <Tooltip title={'LLM Playground'}>
             <Button
               type="link"
               icon={<BotMessageSquareIcon />}

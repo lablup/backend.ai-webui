@@ -1577,7 +1577,8 @@
     "SyncRoutesRequested": "已请求路由同步。",
     "UpdateService": "更新服务",
     "StartNewService": "开始新服务",
-    "RuntimeVariant": "推理运行时变量"
+    "RuntimeVariant": "推理运行时变量",
+    "Chatting": "聊天"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",
@@ -1656,8 +1657,12 @@
     "useAnotherAccount": "使用其他账户登录"
   },
   "chatui": {
-    "OpenChatModal": "LLM Chat",
     "CannotFindModel": "找不到 LLM 模型。\n请定制型号。",
-    "DeleteChatHistory": "删除聊天记录"
+    "NewChat": "新聊天",
+    "DeleteChatHistory": "删除聊天记录",
+    "SelectModel": "选择型号",
+    "DeleteChattingSession": "删除聊天会话",
+    "DeleteChattingSessionDescription": "您即将删除该主题。\n一旦删除，就无法恢复。\n请谨慎行事。",
+    "SelectEndpoint": "选择端点"
   }
 }

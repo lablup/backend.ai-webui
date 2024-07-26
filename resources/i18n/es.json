@@ -787,7 +787,8 @@
     "SyncRoutesRequested": "Se ha solicitado sincronización de ruta.",
     "UpdateService": "Servicio de actualización",
     "StartNewService": "Iniciar nuevo servicio",
-    "RuntimeVariant": "Variante de tiempo de ejecución de la inferencia"
+    "RuntimeVariant": "Variante de tiempo de ejecución de la inferencia",
+    "Chatting": "Charlando"
   },
   "notification": {
     "Initializing": "Inicializando...",
@@ -1657,8 +1658,12 @@
     "useAnotherAccount": "Iniciar sesión con otra cuenta"
   },
   "chatui": {
-    "OpenChatModal": "LLM Chat",
     "CannotFindModel": "No se pueden encontrar modelos LLM. \nPersonaliza el modelo.",
-    "DeleteChatHistory": "Eliminar historial de chat"
+    "NewChat": "Nueva conversación",
+    "DeleteChatHistory": "Eliminar historial de chat",
+    "SelectModel": "Seleccionar modelo",
+    "DeleteChattingSession": "Eliminar sesión de chat",
+    "DeleteChattingSessionDescription": "Estás a punto de eliminar este tema. \nUna vez eliminado, no se puede recuperar. \nProceda con precaución.",
+    "SelectEndpoint": "Seleccionar punto final"
   }
 }

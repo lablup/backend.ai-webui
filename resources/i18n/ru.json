@@ -1588,7 +1588,8 @@
     "SyncRoutesRequested": "Запрошена синхронизация маршрутов.",
     "UpdateService": "Служба обновлений",
     "StartNewService": "Запустить новую услугу",
-    "RuntimeVariant": "Вариант времени выполнения вывода"
+    "RuntimeVariant": "Вариант времени выполнения вывода",
+    "Chatting": "Общение"
   },
   "ErrorBoundary": {
     "title": "Произошла ошибка.",
@@ -1655,8 +1656,12 @@
     "useAnotherAccount": "Войдите в систему под другой учетной записью"
   },
   "chatui": {
-    "OpenChatModal": "LLM Chat",
     "CannotFindModel": "Модели LLM не могут быть найдены. \nПожалуйста, настройте модель.",
-    "DeleteChatHistory": "Удалить историю чата"
+    "NewChat": "Новый чат",
+    "DeleteChatHistory": "Удалить историю чата",
+    "SelectModel": "Выберите модель",
+    "DeleteChattingSession": "Удалить сеанс чата",
+    "DeleteChattingSessionDescription": "Вы собираетесь удалить эту тему. \nПосле удаления его невозможно восстановить. \nПожалуйста, действуйте осторожно.",
+    "SelectEndpoint": "Выберите конечную точку"
   }
 }

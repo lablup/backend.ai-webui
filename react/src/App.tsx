@@ -24,7 +24,7 @@ import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 
 const Information = React.lazy(() => import('./components/Information'));
-const EndpointListPage = React.lazy(() => import('./pages/EndpointListPage'));
+const ServingPage = React.lazy(() => import('./pages/ServingPage'));
 const EndpointDetailPage = React.lazy(
   () => import('./pages/EndpointDetailPage'),
 );
@@ -139,7 +139,7 @@ const router = createBrowserRouter([
         path: '/serving',
         element: (
           <BAIErrorBoundary>
-            <EndpointListPage />
+            <ServingPage />
           </BAIErrorBoundary>
         ),
         handle: { labelKey: 'webui.menu.Serving' },

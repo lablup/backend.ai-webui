@@ -1535,7 +1535,8 @@
     "SyncRoutesRequested": "Routensynchronisierung wurde angefordert.",
     "UpdateService": "Update-Service",
     "StartNewService": "Neuen Dienst starten",
-    "RuntimeVariant": "Inferenz Laufzeitvariante"
+    "RuntimeVariant": "Inferenz Laufzeitvariante",
+    "Chatting": "Chatten"
   },
   "ErrorBoundary": {
     "title": "Es ist ein Fehler aufgetreten.",
@@ -1655,8 +1656,12 @@
     "useAnotherAccount": "Mit einem anderen Konto anmelden"
   },
   "chatui": {
-    "OpenChatModal": "LLM Chat",
     "CannotFindModel": "LLM-Modelle können nicht gefunden werden. \nBitte passen Sie das Modell an.",
-    "DeleteChatHistory": "Chatverlauf löschen"
+    "NewChat": "Neuer Chat",
+    "DeleteChatHistory": "Chatverlauf löschen",
+    "SelectModel": "Wählen Sie Modell aus",
+    "DeleteChattingSession": "Chatsitzung löschen",
+    "DeleteChattingSessionDescription": "Sie sind dabei, dieses Thema zu löschen. \nEinmal gelöscht, kann es nicht wiederhergestellt werden. \nBitte gehen Sie vorsichtig vor.",
+    "SelectEndpoint": "Wählen Sie Endpunkt aus"
   }
 }

@@ -490,7 +490,8 @@
     "SyncRoutesRequested": "라우트 동기화를 요청하였습니다.",
     "UpdateService": "서비스 업데이트",
     "StartNewService": "새로운 서비스 시작",
-    "RuntimeVariant": "인퍼런스 런타임 종류"
+    "RuntimeVariant": "인퍼런스 런타임 종류",
+    "Chatting": "채팅"
   },
   "button": {
     "Cancel": "취소",
@@ -1656,8 +1657,12 @@
     "useAnotherAccount": "다른 계정으로 로그인"
   },
   "chatui": {
-    "OpenChatModal": "LLM Chat",
     "CannotFindModel": "LLM 모델을 찾을 수 없습니다. 사용자 정의 모델을 설정해주세요.",
-    "DeleteChatHistory": "채팅 기록 삭제"
+    "NewChat": "새로운 채팅",
+    "DeleteChatHistory": "채팅 기록 삭제",
+    "SelectModel": "모델 선택",
+    "DeleteChattingSession": "채팅 세션 삭제",
+    "DeleteChattingSessionDescription": "이 주제를 삭제하려고 합니다. \n삭제한 후에는 복구할 수 없습니다. \n주의해서 진행하시기 바랍니다.",
+    "SelectEndpoint": "엔드포인트 선택"
   }
 }

@@ -1535,7 +1535,8 @@
     "SyncRoutesRequested": "Ζητήθηκε συγχρονισμός διαδρομής.",
     "UpdateService": "Υπηρεσία ενημέρωσης",
     "StartNewService": "Ξεκινήστε τη Νέα Υπηρεσία",
-    "RuntimeVariant": "Παραλλαγή χρόνου εκτέλεσης εξαγωγής συμπερασμάτων"
+    "RuntimeVariant": "Παραλλαγή χρόνου εκτέλεσης εξαγωγής συμπερασμάτων",
+    "Chatting": "Συζήτηση"
   },
   "ErrorBoundary": {
     "title": "Εμφανίστηκε σφάλμα.",
@@ -1655,8 +1656,12 @@
     "useAnotherAccount": "Συνδεθείτε με διαφορετικό λογαριασμό"
   },
   "chatui": {
-    "OpenChatModal": "LLM Chat",
     "CannotFindModel": "Δεν μπορούν να βρεθούν μοντέλα LLM. \nΠροσαρμόστε το μοντέλο.",
-    "DeleteChatHistory": "Διαγραφή ιστορικού συνομιλίας"
+    "NewChat": "Νέα συνομιλία",
+    "DeleteChatHistory": "Διαγραφή ιστορικού συνομιλίας",
+    "SelectModel": "Επιλέξτε Μοντέλο",
+    "DeleteChattingSession": "Διαγραφή συνεδρίας συνομιλίας",
+    "DeleteChattingSessionDescription": "Πρόκειται να διαγράψετε αυτό το θέμα. \nΑφού διαγραφεί, δεν μπορεί να ανακτηθεί. \nΠαρακαλούμε προχωρήστε με προσοχή.",
+    "SelectEndpoint": "Επιλέξτε Τελικό σημείο"
   }
 }

@@ -1535,7 +1535,8 @@
     "SyncRoutesRequested": "Zażądano synchronizacji tras.",
     "UpdateService": "Aktualizuj usługę",
     "StartNewService": "Uruchom nową usługę",
-    "RuntimeVariant": "Inference Runtime Variant"
+    "RuntimeVariant": "Inference Runtime Variant",
+    "Chatting": "Czatowanie"
   },
   "ErrorBoundary": {
     "title": "Wystąpił błąd.",
@@ -1655,8 +1656,12 @@
     "useAnotherAccount": "Zaloguj się przy użyciu innego konta"
   },
   "chatui": {
-    "OpenChatModal": "LLM Chat",
     "CannotFindModel": "Nie można znaleźć modeli LLM. \nProszę dostosować model.",
-    "DeleteChatHistory": "Usuń historię czatów"
+    "NewChat": "Nowy czat",
+    "DeleteChatHistory": "Usuń historię czatów",
+    "SelectModel": "Wybierz Model",
+    "DeleteChattingSession": "Usuń sesję czatu",
+    "DeleteChattingSessionDescription": "Zamierzasz usunąć ten temat. \nRaz usuniętego nie można odzyskać. \nProszę postępować ostrożnie.",
+    "SelectEndpoint": "Wybierz Punkt końcowy"
   }
 }

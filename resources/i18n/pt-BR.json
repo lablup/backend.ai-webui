@@ -1576,7 +1576,8 @@
     "SyncRoutesRequested": "A sincronização de rota foi solicitada.",
     "UpdateService": "Serviço de atualização",
     "StartNewService": "Iniciar novo serviço",
-    "RuntimeVariant": "Variante de tempo de execução de inferência"
+    "RuntimeVariant": "Variante de tempo de execução de inferência",
+    "Chatting": "Conversando"
   },
   "totp": {
     "TotpSetupCompleted": "Ativado 2FA",
@@ -1655,8 +1656,12 @@
     "useAnotherAccount": "Iniciar sessão com uma conta diferente"
   },
   "chatui": {
-    "OpenChatModal": "LLM Chat",
     "CannotFindModel": "Os modelos LLM não podem ser encontrados. \nPersonalize o modelo.",
-    "DeleteChatHistory": "Excluir histórico de bate-papo"
+    "NewChat": "Novo chat",
+    "DeleteChatHistory": "Excluir histórico de bate-papo",
+    "SelectModel": "Selecione o modelo",
+    "DeleteChattingSession": "Excluir sessão de bate-papo",
+    "DeleteChattingSessionDescription": "Você está prestes a excluir este tópico. \nUma vez excluído, ele não pode ser recuperado. \nPor favor, proceda com cautela.",
+    "SelectEndpoint": "Selecione o ponto final"
   }
 }

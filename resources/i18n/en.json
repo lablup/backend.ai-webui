@@ -503,7 +503,8 @@
     "SyncRoutesRequested": "The route synchronization requested.",
     "StartNewService": "Start New Service",
     "UpdateService": "Update Service",
-    "RuntimeVariant": "Inference Runtime Variant"
+    "RuntimeVariant": "Inference Runtime Variant",
+    "Chatting": "Chatting"
   },
   "button": {
     "Cancel": "Cancel",
@@ -1657,8 +1658,14 @@
     "useAnotherAccount": "Sign in with a different account"
   },
   "chatui": {
-    "OpenChatModal": "LLM Chat",
+    
     "CannotFindModel": "LLM models cannot be found. Please customize the model.",
-    "DeleteChatHistory": "Delete Chat History"
+    "NewChat": "New Chat",
+    "DeleteChatHistory": "Delete Chat History",
+    "SelectModel": "Select Model",
+    "SelectEndpoint": "Select Endpoint",
+    "DeleteChatSession": "",
+    "DeleteChattingSession": "Delete chatting session",
+    "DeleteChattingSessionDescription": "You are about to delete this topic. Once deleted, it cannot be recovered. Please proceed with caution."
   }
 }

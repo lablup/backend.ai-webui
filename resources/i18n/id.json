@@ -1588,7 +1588,8 @@
     "SyncRoutesRequested": "Sinkronisasi rute telah diminta.",
     "UpdateService": "Layanan Pembaruan",
     "StartNewService": "Mulai Layanan Baru",
-    "RuntimeVariant": "Varian Runtime Inferensi"
+    "RuntimeVariant": "Varian Runtime Inferensi",
+    "Chatting": "Mengobrol"
   },
   "ErrorBoundary": {
     "title": "Telah terjadi kesalahan.",
@@ -1655,8 +1656,12 @@
     "useAnotherAccount": "Masuk dengan akun yang berbeda"
   },
   "chatui": {
-    "OpenChatModal": "LLM Chat",
     "CannotFindModel": "Model LLM tidak dapat ditemukan. \nSilakan sesuaikan modelnya.",
-    "DeleteChatHistory": "Hapus Riwayat Obrolan"
+    "NewChat": "Obrolan Baru",
+    "DeleteChatHistory": "Hapus Riwayat Obrolan",
+    "SelectModel": "Pilih Model",
+    "DeleteChattingSession": "Hapus sesi obrolan",
+    "DeleteChattingSessionDescription": "Anda akan menghapus topik ini. \nSetelah dihapus, itu tidak dapat dipulihkan. \nSilakan lanjutkan dengan hati-hati.",
+    "SelectEndpoint": "Pilih Titik Akhir"
   }
 }

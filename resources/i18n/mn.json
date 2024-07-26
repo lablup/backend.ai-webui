@@ -1589,7 +1589,8 @@
     "SyncRoutesRequested": "Маршрутыг синхрончлох хүсэлт тавьсан.",
     "UpdateService": "Үйлчилгээг шинэчлэх",
     "StartNewService": "Шинэ үйлчилгээг эхлүүлэх",
-    "RuntimeVariant": "Дүгнэлт Runtime Variant"
+    "RuntimeVariant": "Дүгнэлт Runtime Variant",
+    "Chatting": "Чатлаж байна"
   },
   "ErrorBoundary": {
     "title": "Алдаа гарсан байна.",
@@ -1656,8 +1657,12 @@
     "useAnotherAccount": "Өөр бүртгэлээр нэвтэрнэ үү"
   },
   "chatui": {
-    "OpenChatModal": "LLM Chat",
     "CannotFindModel": "LLM загвар олдохгүй байна. \nЗагвараа тохируулна уу.",
-    "DeleteChatHistory": "Чатын түүхийг устгах"
+    "NewChat": "Шинэ чат",
+    "DeleteChatHistory": "Чатын түүхийг устгах",
+    "SelectModel": "Загвар сонгоно уу",
+    "DeleteChattingSession": "Чатлах сессийг устгах",
+    "DeleteChattingSessionDescription": "Та энэ сэдвийг устгах гэж байна. \nУстгасны дараа сэргээх боломжгүй. \nБолгоомжтой үргэлжлүүлнэ үү.",
+    "SelectEndpoint": "Төгсгөлийн цэгийг сонгоно уу"
   }
 }

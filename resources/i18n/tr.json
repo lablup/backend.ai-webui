@@ -1535,7 +1535,8 @@
     "SyncRoutesRequested": "Rota senkronizasyonu talep edildi.",
     "UpdateService": "Güncelleme Hizmeti",
     "StartNewService": "Yeni Hizmeti Başlat",
-    "RuntimeVariant": "Çıkarım Çalışma Zamanı Varyantı"
+    "RuntimeVariant": "Çıkarım Çalışma Zamanı Varyantı",
+    "Chatting": "Sohbet"
   },
   "ErrorBoundary": {
     "title": "Bir hata oluştu.",
@@ -1655,8 +1656,12 @@
     "useAnotherAccount": "Farklı bir hesapla oturum açın"
   },
   "chatui": {
-    "OpenChatModal": "LLM Chat",
     "CannotFindModel": "LLM modelleri bulunamıyor. \nLütfen modeli özelleştirin.",
-    "DeleteChatHistory": "Sohbet Geçmişini Sil"
+    "NewChat": "Yeni sohbet",
+    "DeleteChatHistory": "Sohbet Geçmişini Sil",
+    "SelectModel": "Modeli Seçin",
+    "DeleteChattingSession": "Sohbet oturumunu sil",
+    "DeleteChattingSessionDescription": "Bu konuyu silmek üzeresiniz. \nBir kere silindikten sonra geri getirilemez. \nLütfen dikkatli bir şekilde ilerleyin.",
+    "SelectEndpoint": "Uç Noktayı Seçin"
   }
 }

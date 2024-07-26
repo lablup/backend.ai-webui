@@ -1655,8 +1655,11 @@
     "useAnotherAccount": "Kirjaudu sisään eri tilillä"
   },
   "chatui": {
-    "OpenChatModal": "LLM Chat",
     "CannotFindModel": "LLM-malleja ei löydy. \nMukauta mallia.",
-    "DeleteChatHistory": "Poista keskusteluhistoria"
+    "SelectEndpoint": "Valitse Päätepiste",
+    "DeleteChattingSession": "Poista chat-istunto",
+    "DeleteChattingSessionDescription": "Olet poistamassa tätä aihetta. \nKun se on poistettu, sitä ei voi palauttaa. \nOle hyvä ja jatka varoen.",
+    "DeleteChatHistory": "Poista keskusteluhistoria",
+    "SelectModel": "Valitse Malli"
   }
 }

@@ -1535,7 +1535,8 @@
     "SyncRoutesRequested": "È stata richiesta la sincronizzazione del percorso.",
     "UpdateService": "Servizio di aggiornamento",
     "StartNewService": "Avvia nuovo servizio",
-    "RuntimeVariant": "Variante di runtime dell'inferenza"
+    "RuntimeVariant": "Variante di runtime dell'inferenza",
+    "Chatting": "Chiacchierando"
   },
   "ErrorBoundary": {
     "title": "Si è verificato un errore.",
@@ -1655,8 +1656,12 @@
     "useAnotherAccount": "Accedere con un altro account"
   },
   "chatui": {
-    "OpenChatModal": "LLM Chat",
     "CannotFindModel": "Impossibile trovare i modelli LLM. \nSi prega di personalizzare il modello.",
-    "DeleteChatHistory": "Elimina cronologia chat"
+    "NewChat": "Nuova chiacchierata",
+    "DeleteChatHistory": "Elimina cronologia chat",
+    "SelectModel": "Seleziona modello",
+    "DeleteChattingSession": "Elimina la sessione di chat",
+    "DeleteChattingSessionDescription": "Stai per eliminare questo argomento. \nUna volta eliminato, non può essere recuperato. \nSi prega di procedere con cautela.",
+    "SelectEndpoint": "Seleziona punto finale"
   }
 }

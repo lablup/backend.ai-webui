@@ -1576,7 +1576,8 @@
     "SyncRoutesRequested": "Đồng bộ hóa tuyến đường đã được yêu cầu.",
     "UpdateService": "Dịch vụ cập nhật",
     "StartNewService": "Bắt đầu dịch vụ mới",
-    "RuntimeVariant": "Biến thể thời gian chạy suy luận"
+    "RuntimeVariant": "Biến thể thời gian chạy suy luận",
+    "Chatting": "Trò chuyện"
   },
   "totp": {
     "TotpSetupCompleted": "Đã bật 2FA",
@@ -1655,8 +1656,12 @@
     "useAnotherAccount": "Đăng nhập bằng tài khoản khác"
   },
   "chatui": {
-    "OpenChatModal": "LLM Chat",
     "CannotFindModel": "Không thể tìm thấy mô hình LLM. \nVui lòng tùy chỉnh mô hình.",
-    "DeleteChatHistory": "Xóa lịch sử trò chuyện"
+    "NewChat": "Cuộc trò truyện mới",
+    "DeleteChatHistory": "Xóa lịch sử trò chuyện",
+    "SelectModel": "Chọn mẫu",
+    "DeleteChattingSession": "Xóa phiên trò chuyện",
+    "DeleteChattingSessionDescription": "Bạn sắp xóa chủ đề này. \nMột khi đã xóa, nó không thể được phục hồi. \nHãy tiến hành thận trọng.",
+    "SelectEndpoint": "Chọn điểm cuối"
   }
 }

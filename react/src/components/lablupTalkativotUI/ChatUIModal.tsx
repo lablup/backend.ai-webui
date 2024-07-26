@@ -50,7 +50,7 @@ const EndpointChatContent: React.FC<ChatUIBasicProps> = ({
 }) => {
   const { t } = useTranslation();
   const {
-    data: ModelsResult,
+    data: modelsResult,
     // error,
     isFetching,
   } = useTanQuery<{
@@ -70,15 +70,15 @@ const EndpointChatContent: React.FC<ChatUIBasicProps> = ({
   ) : (
     <LLMChatCard
       baseURL={new URL(basePath, endpoint).toString()}
-      models={_.map(ModelsResult?.data, (m) => ({
+      models={_.map(modelsResult?.data, (m) => ({
         id: m.id,
         name: m.id,
       }))}
       fetchOnClient
       style={{ flex: 1 }}
-      allowManualModel={_.isEmpty(ModelsResult?.data)}
+      allowCustomModel={_.isEmpty(modelsResult?.data)}
       alert={
-        _.isEmpty(ModelsResult?.data) && (
+        _.isEmpty(modelsResult?.data) && (
           <Alert
             type="warning"
             showIcon
@@ -86,7 +86,7 @@ const EndpointChatContent: React.FC<ChatUIBasicProps> = ({
           />
         )
       }
-      modelId={ModelsResult?.data?.[0].id ?? 'custom'}
+      modelId={modelsResult?.data?.[0].id ?? 'custom'}
     />
   );
 };
@@ -108,7 +108,7 @@ interface ModelPermission {
   is_blocking: boolean;
 }
 
-interface Model {
+export interface Model {
   id: string;
   object: string;
   created: number;

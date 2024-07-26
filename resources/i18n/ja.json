@@ -1535,7 +1535,8 @@
     "SyncRoutesRequested": "ルート同期をリクエストしました。",
     "UpdateService": "アップデートサービス",
     "StartNewService": "新しいサービスを開始する",
-    "RuntimeVariant": "推論ランタイム・バリアント"
+    "RuntimeVariant": "推論ランタイム・バリアント",
+    "Chatting": "おしゃべり"
   },
   "ErrorBoundary": {
     "title": "エラーが発生しました。",
@@ -1655,8 +1656,12 @@
     "useAnotherAccount": "別のアカウントでサインインする"
   },
   "chatui": {
-    "OpenChatModal": "LLM Chat",
     "CannotFindModel": "LLM モデルが見つかりません。\nモデルをカスタマイズしてください。",
-    "DeleteChatHistory": "チャット履歴を削除する"
+    "NewChat": "新しいチャット",
+    "DeleteChatHistory": "チャット履歴を削除する",
+    "SelectModel": "モデルの選択",
+    "DeleteChattingSession": "チャットセッションを削除する",
+    "DeleteChattingSessionDescription": "このトピックを削除しようとしています。\n一度削除すると復元することはできません。\n慎重に進めてください。",
+    "SelectEndpoint": "エンドポイントの選択"
   }
 }
