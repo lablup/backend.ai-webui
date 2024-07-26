@@ -1662,6 +1662,7 @@
     "SelectModel": "Pilih Model",
     "DeleteChattingSession": "Padamkan sesi berbual",
     "DeleteChattingSessionDescription": "Anda akan memadamkan topik ini. \nSetelah dipadam, ia tidak boleh dipulihkan. \nSila teruskan dengan berhati-hati.",
-    "SelectEndpoint": "Pilih Titik Akhir"
+    "SelectEndpoint": "Pilih Titik Akhir",
+    "Sync": "Segerakkan"
   }
 }

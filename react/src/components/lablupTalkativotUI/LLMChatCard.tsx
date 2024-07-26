@@ -10,6 +10,7 @@ import { DeleteOutlined, MoreOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
 import { streamText } from 'ai';
 import {
+  Alert,
   Button,
   Card,
   CardProps,
@@ -20,7 +21,8 @@ import {
   MenuProps,
   theme,
 } from 'antd';
-import React, { useRef } from 'react';
+import _ from 'lodash';
+import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export type BAIModel = {
@@ -37,8 +39,6 @@ export interface LLMChatCardProps extends CardProps {
   agents?: Array<BAIAgent>;
   modelId?: string;
   agentId?: string;
-  onAgentChange?: (agentId: string) => void;
-  onModelChange?: (modelId: string) => void;
   baseURL?: string;
   apiKey?: string;
   headers?: Record<string, string> | Headers;
@@ -47,6 +47,12 @@ export interface LLMChatCardProps extends CardProps {
   allowCustomModel?: boolean;
   alert?: React.ReactNode;
   leftExtra?: React.ReactNode;
+  inputMessage?: string;
+  submitKey?: string;
+  onAgentChange?: (agentId: string) => void;
+  onModelChange?: (modelId: string) => void;
+  onInputChange?: (input: string) => void;
+  onSubmitChange?: () => void;
 }
 
 const LLMChatCard: React.FC<LLMChatCardProps> = ({
@@ -59,12 +65,16 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
   allowCustomModel,
   alert,
   leftExtra,
+  inputMessage,
+  submitKey,
+  onInputChange,
+  onSubmitChange,
   ...cardProps
 }) => {
   const [modelId, setModelId] = useControllableValue(cardProps, {
     valuePropName: 'modelId',
     trigger: 'onModelChange',
-    defaultValue: models[0]?.id,
+    defaultValue: models?.[0]?.id,
   });
 
   const customModelFormRef = useRef<FormInstance>(null);
@@ -81,14 +91,15 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
 
   const {
     messages,
+    error,
     input,
     setInput,
     handleInputChange,
-    handleSubmit,
     stop,
     isLoading,
     append,
     setMessages,
+    // ...chatHelpers
   } = useChat({
     api: baseURL,
     headers,
@@ -110,6 +121,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
               : apiKey) || 'dummy',
         });
         return streamText({
+          abortSignal: init?.signal || undefined,
           model: provider(
             allowCustomModel
               ? customModelFormRef.current?.getFieldValue('modelId')
@@ -126,6 +138,23 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
   });
   const { token } = theme.useToken();
   const { t } = useTranslation();
+
+  // If the `inputMessage` prop exists, the `input` state has to follow it.
+  useEffect(() => {
+    if (!_.isUndefined(inputMessage)) {
+      setInput(inputMessage);
+    }
+  }, [inputMessage, setInput]);
+
+  useEffect(() => {
+    if (!_.isUndefined(submitKey) && input) {
+      append({
+        role: 'user',
+        content: input,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [submitKey]);
 
   const items: MenuProps['items'] = [
     {
@@ -188,7 +217,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
       }}
       styles={{
         body: {
-          backgroundColor: '#f5f5f5',
+          backgroundColor: token.colorFillQuaternary,
           borderRadius: 0,
           flex: 1,
           display: 'flex',
@@ -201,17 +230,27 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
           paddingLeft: token.paddingContentHorizontal,
           paddingRight: token.paddingContentHorizontal,
         },
+        header: {
+          zIndex: 1,
+        },
       }}
       actions={[
-        <form key="input" onSubmit={handleSubmit}>
-          <ChatInput
-            autoFocus
-            value={input}
-            placeholder="Say something..."
-            onChange={handleInputChange}
-            loading={isLoading}
-            onClickStop={stop}
-            onClickSubmit={() => {
+        <ChatInput
+          autoFocus
+          value={input}
+          placeholder="Say something..."
+          onChange={(v) => {
+            handleInputChange(v);
+            if (onInputChange) {
+              onInputChange(v.target.value);
+            }
+          }}
+          loading={isLoading}
+          onStop={() => {
+            stop();
+          }}
+          onSend={() => {
+            if (input) {
               append({
                 role: 'user',
                 content: input,
@@ -219,9 +258,12 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
               setTimeout(() => {
                 setInput('');
               }, 0);
-            }}
-          />
-        </form>,
+              if (onSubmitChange) {
+                onSubmitChange();
+              }
+            }
+          }}
+        />,
       ]}
     >
       <Flex
@@ -280,6 +322,17 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
         </Form>
       </Flex>
       {/* <ChatMessageList messages={messages}  /> */}
+      {!_.isEmpty((error as any)?.responseBody) ? (
+        <Alert
+          message={(error as any)?.responseBody}
+          type="error"
+          showIcon
+          style={{
+            margin: token.marginSM,
+          }}
+          closable
+        />
+      ) : null}
       <VirtualChatMessageList messages={messages} isStreaming={isLoading} />
     </Card>
   );

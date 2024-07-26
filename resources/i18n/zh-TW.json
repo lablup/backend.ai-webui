@@ -1662,6 +1662,7 @@
     "SelectModel": "選擇型號",
     "DeleteChattingSession": "刪除聊天會話",
     "DeleteChattingSessionDescription": "您即將刪除該主題。\n一旦刪除，就無法恢復。\n請謹慎行事。",
-    "SelectEndpoint": "選擇端點"
+    "SelectEndpoint": "選擇端點",
+    "Sync": "同步"
   }
 }

@@ -6,16 +6,23 @@ import { EndpointLLMChatCard_endpoint$key } from './__generated__/EndpointLLMCha
 import { CloseOutlined } from '@ant-design/icons';
 import { Alert, Button, CardProps, Popconfirm, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
+import { atom, useAtom } from 'jotai';
 import _ from 'lodash';
-import React, { startTransition, useState } from 'react';
+import React, { startTransition, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
+
+const synchronizedMessageState = atom<string>('');
+const chatSubmitKeyInfoState = atom<{ id: string; key: string } | undefined>(
+  undefined,
+);
 
 interface EndpointLLMChatCardProps extends CardProps {
   basePath?: string;
   closable?: boolean;
   defaultEndpoint?: EndpointLLMChatCard_endpoint$key;
   fetchKey?: string;
+  isSynchronous?: boolean;
   onRequestClose?: () => void;
   onModelChange?: (modelId: string) => void;
 }
@@ -24,13 +31,15 @@ const EndpointLLMChatCard: React.FC<EndpointLLMChatCardProps> = ({
   basePath = 'v1',
   closable,
   defaultEndpoint,
+  fetchKey,
+  isSynchronous,
   onRequestClose,
   onModelChange,
-  fetchKey,
   ...cardProps
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
+
   const [endpointFrgmt, setEndpointFrgmt] =
     useState<EndpointLLMChatCard_endpoint$key | null>(defaultEndpoint || null);
   const endpoint = useFragment(
@@ -43,6 +52,14 @@ const EndpointLLMChatCard: React.FC<EndpointLLMChatCardProps> = ({
     endpointFrgmt,
   );
   const [promisingEndpoint, setPromisingEndpoint] = useState(endpoint);
+
+  const [synchronizedMessage, setSynchronizedMessage] = useAtom(
+    synchronizedMessageState,
+  );
+
+  const [chatSubmitKeyInfo, setChatSubmitKeyInfo] = useAtom(
+    chatSubmitKeyInfoState,
+  );
 
   const { data: modelsResult } = useTanQuery<{
     data: Array<Model>;
@@ -68,6 +85,8 @@ const EndpointLLMChatCard: React.FC<EndpointLLMChatCardProps> = ({
     name: m.id,
   })) as BAIModel[];
 
+  const submitId = useId();
+
   return (
     <LLMChatCard
       {...cardProps}
@@ -89,10 +108,10 @@ const EndpointLLMChatCard: React.FC<EndpointLLMChatCardProps> = ({
           loading={promisingEndpoint?.endpoint_id !== endpoint?.endpoint_id}
           onChange={(v, endpoint) => {
             // TODO: fix type definitions
-            // @ts-ignore'
+            // @ts-ignore
             setPromisingEndpoint(endpoint);
             startTransition(() => {
-              // @ts-ignore'
+              // @ts-ignore
               setEndpointFrgmt(endpoint);
             });
           }}
@@ -130,6 +149,22 @@ const EndpointLLMChatCard: React.FC<EndpointLLMChatCardProps> = ({
           />
         )
       }
+      inputMessage={isSynchronous ? synchronizedMessage : undefined}
+      onInputChange={(v) => {
+        setSynchronizedMessage(v);
+      }}
+      submitKey={
+        chatSubmitKeyInfo?.id === submitId ? undefined : chatSubmitKeyInfo?.key
+      }
+      onSubmitChange={() => {
+        setSynchronizedMessage('');
+        if (isSynchronous) {
+          setChatSubmitKeyInfo({
+            id: submitId,
+            key: new Date().toString(),
+          });
+        }
+      }}
     />
   );
 };

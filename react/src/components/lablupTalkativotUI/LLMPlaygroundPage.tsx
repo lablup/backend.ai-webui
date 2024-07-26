@@ -3,17 +3,22 @@ import EndpointLLMChatCard from './EndpointLLMChatCard';
 import { LLMPlaygroundPageQuery } from './__generated__/LLMPlaygroundPageQuery.graphql';
 import { PlusOutlined } from '@ant-design/icons';
 import { useDynamicList } from 'ahooks';
-import { Button, Card, Skeleton, theme, Typography } from 'antd';
+import { Button, Card, Skeleton, Switch, theme, Typography } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React, { Suspense } from 'react';
+import React, { Suspense, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
 interface LLMPlaygroundPageProps {}
 
 const LLMPlaygroundPage: React.FC<LLMPlaygroundPageProps> = ({ ...props }) => {
   const { token } = theme.useToken();
+  const { t } = useTranslation();
+  // Set the initial list to have two items
   const { list, remove, getKey, push } = useDynamicList(['0', '1']);
+
+  const [isSynchronous, setSynchronous] = useState(false);
 
   const { endpoint_list } = useLazyLoadQuery<LLMPlaygroundPageQuery>(
     graphql`
@@ -53,6 +58,15 @@ const LLMPlaygroundPage: React.FC<LLMPlaygroundPageProps> = ({ ...props }) => {
             style={{ flexShrink: 1 }}
           >
             <Flex gap={'xs'}>
+              <Typography.Text type="secondary">
+                {t('chatui.Sync')}
+              </Typography.Text>
+              <Switch
+                value={isSynchronous}
+                onClick={(v) => {
+                  setSynchronous(v);
+                }}
+              />
               <Button
                 onClick={() => {
                   push(new Date().toString());
@@ -72,22 +86,24 @@ const LLMPlaygroundPage: React.FC<LLMPlaygroundPageProps> = ({ ...props }) => {
           }}
           align="stretch"
         >
-          {_.map(list, (item, index) => (
+          {_.map(list, (__, index) => (
             <Suspense
               fallback={
                 <Card style={{ flex: 1 }}>
                   <Skeleton active />
                 </Card>
               }
+              key={getKey(index)}
             >
               <EndpointLLMChatCard
-                defaultEndpoint={endpoint_list?.items[0] || undefined}
+                defaultEndpoint={endpoint_list?.items?.[0] || undefined}
                 key={getKey(index)}
                 style={{ flex: 1 }}
                 onRequestClose={() => {
                   remove(index);
                 }}
                 closable={list.length > 1}
+                isSynchronous={isSynchronous}
               />
             </Suspense>
           ))}

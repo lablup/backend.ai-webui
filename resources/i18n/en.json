@@ -1658,7 +1658,6 @@
     "useAnotherAccount": "Sign in with a different account"
   },
   "chatui": {
-    
     "CannotFindModel": "LLM models cannot be found. Please customize the model.",
     "NewChat": "New Chat",
     "DeleteChatHistory": "Delete Chat History",
@@ -1666,6 +1665,7 @@
     "SelectEndpoint": "Select Endpoint",
     "DeleteChatSession": "",
     "DeleteChattingSession": "Delete chatting session",
-    "DeleteChattingSessionDescription": "You are about to delete this topic. Once deleted, it cannot be recovered. Please proceed with caution."
+    "DeleteChattingSessionDescription": "You are about to delete this topic. Once deleted, it cannot be recovered. Please proceed with caution.",
+    "Sync": "Sync"
   }
 }

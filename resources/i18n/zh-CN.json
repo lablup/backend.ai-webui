@@ -1663,6 +1663,7 @@
     "SelectModel": "选择型号",
     "DeleteChattingSession": "删除聊天会话",
     "DeleteChattingSessionDescription": "您即将删除该主题。\n一旦删除，就无法恢复。\n请谨慎行事。",
-    "SelectEndpoint": "选择端点"
+    "SelectEndpoint": "选择端点",
+    "Sync": "同步"
   }
 }

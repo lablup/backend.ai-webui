@@ -8,15 +8,15 @@ const { Compact } = Space;
 interface ChatInputProps extends InputProps {
   loading?: boolean;
   autoFocus?: boolean;
-  onClickStop?: () => void;
-  onClickSubmit?: () => void;
+  onStop?: () => void;
+  onSend?: () => void;
 }
 const ChatInput: React.FC<ChatInputProps> = ({
   style,
   loading,
   autoFocus,
-  onClickStop,
-  onClickSubmit,
+  onStop,
+  onSend,
   ...inputProps
 }) => {
   const inputRef = useRef<InputRef>(null);
@@ -39,17 +39,19 @@ const ChatInput: React.FC<ChatInputProps> = ({
         {...inputProps}
         onPressEnter={(e) => {
           if (!loading) {
-            onClickSubmit && onClickSubmit();
+            onSend && onSend();
           }
-          e.preventDefault();
+          // e.preventDefault();
         }}
       />
       <Button
-        htmlType={loading ? 'button' : 'submit'}
+        htmlType={'button'}
         icon={loading ? <SquareIcon /> : <SendIcon />}
-        onClick={(e) => {
+        onClick={() => {
           if (loading) {
-            onClickStop && onClickStop();
+            onStop && onStop();
+          } else {
+            onSend && onSend();
           }
         }}
       />

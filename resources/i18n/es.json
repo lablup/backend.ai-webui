@@ -1664,6 +1664,7 @@
     "SelectModel": "Seleccionar modelo",
     "DeleteChattingSession": "Eliminar sesión de chat",
     "DeleteChattingSessionDescription": "Estás a punto de eliminar este tema. \nUna vez eliminado, no se puede recuperar. \nProceda con precaución.",
-    "SelectEndpoint": "Seleccionar punto final"
+    "SelectEndpoint": "Seleccionar punto final",
+    "Sync": "Sincronizar"
   }
 }

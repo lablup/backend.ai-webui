@@ -59,8 +59,8 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
   // useEffect(() => {
   //   if (autoSelectDefault && _.isEmpty(controllableValue)) {
   //     setControllableValue(
-  //       endpoint_list?.items[0]?.endpoint_id,
-  //       endpoint_list?.items[0],
+  //       endpoint_list?.items?.[0]?.endpoint_id,
+  //       endpoint_list?.items?.[0],
   //     );
   //   }
   // }, []);
