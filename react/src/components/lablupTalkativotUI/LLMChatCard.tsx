@@ -15,11 +15,12 @@ import {
   CardProps,
   Dropdown,
   Form,
+  FormInstance,
   Input,
   MenuProps,
   theme,
 } from 'antd';
-import React from 'react';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export type BAIModel = {
@@ -66,7 +67,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
     defaultValue: models[0]?.id,
   });
 
-  const [customModelForm] = Form.useForm();
+  const customModelFormRef = useRef<FormInstance>(null);
 
   // const [userInput, setUserInput] = useControllableValue(cardProps,{
   //   valuePropName: "userInput",
@@ -101,17 +102,17 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
         const body = JSON.parse(init?.body as string);
         const provider = createOpenAI({
           baseURL: allowCustomModel
-            ? customModelForm.getFieldValue('baseURL')
+            ? customModelFormRef.current?.getFieldValue('baseURL')
             : baseURL,
           apiKey:
             (allowCustomModel
-              ? customModelForm.getFieldValue('token')
+              ? customModelFormRef.current?.getFieldValue('token')
               : apiKey) || 'dummy',
         });
         return streamText({
           model: provider(
             allowCustomModel
-              ? customModelForm.getFieldValue('modelId')
+              ? customModelFormRef.current?.getFieldValue('modelId')
               : modelId,
           ),
           messages: body?.messages,
@@ -235,11 +236,12 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
         }}
       >
         <Form
-          form={customModelForm}
+          ref={customModelFormRef}
           layout="horizontal"
           size="small"
           requiredMark="optional"
           style={{ flex: 1 }}
+          key={baseURL}
           initialValues={{
             baseURL: baseURL,
           }}

@@ -74,4 +74,4 @@ const X: React.FC<SyntaxHighlighterProps> = ({ children, ...props }) => {
 };
 const CodeBlock = React.memo(X);
 
-export default ChatMessageContent;
+export default React.memo(ChatMessageContent);

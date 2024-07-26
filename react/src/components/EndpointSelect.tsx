@@ -11,7 +11,7 @@ import React from 'react';
 import { useLazyLoadQuery } from 'react-relay';
 
 interface EndpointSelectProps extends Omit<SelectProps, 'options'> {
-  autoSelectDefault?: boolean;
+  fetchKey?: string;
 }
 
 export type Endpoint = NonNullableItem<
@@ -19,7 +19,7 @@ export type Endpoint = NonNullableItem<
 >;
 
 const EndpointSelect: React.FC<EndpointSelectProps> = ({
-  autoSelectDefault,
+  fetchKey,
   ...selectProps
 }) => {
   const { baiPaginationOption } = useBAIPaginationOptionState({
@@ -40,6 +40,7 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
             name
             endpoint_id
             url
+            ...EndpointLLMChatCard_endpoint
           }
         }
       }
@@ -48,19 +49,26 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
       limit: baiPaginationOption.limit,
       offset: baiPaginationOption.offset,
     },
+    {
+      fetchKey: fetchKey,
+    },
   );
-  const [controllableValue, setControllableValue] = useControllableValue(
-    selectProps,
-    autoSelectDefault
-      ? {
-          defaultValue: endpoint_list?.items?.[0]?.endpoint_id,
-        }
-      : undefined,
-  );
+  const [controllableValue, setControllableValue] =
+    useControllableValue(selectProps);
+
+  // useEffect(() => {
+  //   if (autoSelectDefault && _.isEmpty(controllableValue)) {
+  //     setControllableValue(
+  //       endpoint_list?.items[0]?.endpoint_id,
+  //       endpoint_list?.items[0],
+  //     );
+  //   }
+  // }, []);
 
   return (
     <Select
       showSearch
+      optionFilterProp="label"
       {...selectProps}
       options={_.map(endpoint_list?.items, (item) => {
         return {

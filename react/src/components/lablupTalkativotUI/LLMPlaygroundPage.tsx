@@ -1,10 +1,13 @@
 import Flex from '../Flex';
 import EndpointLLMChatCard from './EndpointLLMChatCard';
+import { LLMPlaygroundPageQuery } from './__generated__/LLMPlaygroundPageQuery.graphql';
 import { PlusOutlined } from '@ant-design/icons';
 import { useDynamicList } from 'ahooks';
-import { Button, theme, Typography } from 'antd';
+import { Button, Card, Skeleton, theme, Typography } from 'antd';
+import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React from 'react';
+import React, { Suspense } from 'react';
+import { useLazyLoadQuery } from 'react-relay';
 
 interface LLMPlaygroundPageProps {}
 
@@ -12,6 +15,18 @@ const LLMPlaygroundPage: React.FC<LLMPlaygroundPageProps> = ({ ...props }) => {
   const { token } = theme.useToken();
   const { list, remove, getKey, push } = useDynamicList(['0', '1']);
 
+  const { endpoint_list } = useLazyLoadQuery<LLMPlaygroundPageQuery>(
+    graphql`
+      query LLMPlaygroundPageQuery {
+        endpoint_list(limit: 1, offset: 0, filter: "name != 'koalpaca-test'") {
+          items {
+            ...EndpointLLMChatCard_endpoint
+          }
+        }
+      }
+    `,
+    {},
+  );
   return (
     <>
       <Flex direction="column" align="stretch">
@@ -58,14 +73,23 @@ const LLMPlaygroundPage: React.FC<LLMPlaygroundPageProps> = ({ ...props }) => {
           align="stretch"
         >
           {_.map(list, (item, index) => (
-            <EndpointLLMChatCard
-              key={getKey(index)}
-              style={{ flex: 1 }}
-              onRequestClose={() => {
-                remove(index);
-              }}
-              closable={list.length > 1}
-            />
+            <Suspense
+              fallback={
+                <Card style={{ flex: 1 }}>
+                  <Skeleton active />
+                </Card>
+              }
+            >
+              <EndpointLLMChatCard
+                defaultEndpoint={endpoint_list?.items[0] || undefined}
+                key={getKey(index)}
+                style={{ flex: 1 }}
+                onRequestClose={() => {
+                  remove(index);
+                }}
+                closable={list.length > 1}
+              />
+            </Suspense>
           ))}
         </Flex>
       </Flex>
