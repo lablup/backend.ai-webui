@@ -19,7 +19,6 @@ import './lablup-grid-sort-filter-column';
 import './lablup-progress-bar';
 import '@material/mwc-button';
 import '@material/mwc-checkbox';
-import { Checkbox } from '@material/mwc-checkbox';
 import '@material/mwc-icon';
 import '@material/mwc-icon-button';
 import '@material/mwc-icon-button-toggle';
@@ -134,8 +133,6 @@ export default class BackendAISessionList extends BackendAIPage {
     this.sessionInfoRenderer.bind(this);
   @property({ type: Object }) _boundArchitectureRenderer =
     this.architectureRenderer.bind(this);
-  @property({ type: Object }) _boundCheckboxRenderer =
-    this.checkboxRenderer.bind(this);
   @property({ type: Object }) _boundUserInfoRenderer =
     this.userInfoRenderer.bind(this);
   @property({ type: Object }) _boundStatusRenderer =
@@ -598,6 +595,14 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   firstUpdated() {
+    this._grid.addEventListener('selected-items-changed', () => {
+      this._selected_items = this._grid.selectedItems;
+      if (this._selected_items.length > 0) {
+        this.multipleActionButtons.style.display = 'flex';
+      } else {
+        this.multipleActionButtons.style.display = 'none';
+      }
+    });
     this.imageInfo = globalThis.backendaimetadata.imageInfo;
     this.kernel_icons = globalThis.backendaimetadata.icons;
     this.kernel_labels = globalThis.backendaimetadata.kernel_labels;
@@ -1290,6 +1295,7 @@ export default class BackendAISessionList extends BackendAIPage {
             }, refreshTime);
           }
         }
+        this._handleSelectedItems();
       })
       .catch((err) => {
         this.refreshing = false;
@@ -2051,14 +2057,18 @@ export default class BackendAISessionList extends BackendAIPage {
    * Clear checked attributes.
    * */
   _clearCheckboxes() {
-    const elm = Array.from(
-      this.shadowRoot?.querySelectorAll<Checkbox>(
-        'mwc-checkbox.list-check',
-      ) as NodeListOf<Checkbox>,
+    this._grid.selectedItems = [];
+    this._selected_items = [];
+  }
+
+  _handleSelectedItems() {
+    if (this._selected_items.length === 0) return;
+
+    const selectedItems = this.compute_sessions.filter((item) =>
+      this._selected_items.some((selectedItem) => selectedItem.id === item.id),
     );
-    [...elm].forEach((checkbox) => {
-      checkbox.removeAttribute('checked');
-    });
+
+    this._grid.selectedItems = selectedItems;
   }
 
   _terminateSelectedSessionsWithCheck(forced = false) {
@@ -3993,22 +4003,6 @@ ${rowData.item[this.sessionNameField]}</pre
     );
   }
 
-  _toggleCheckbox(object) {
-    const exist = this._selected_items.findIndex(
-      (x) => x['session_id'] == object['session_id'],
-    );
-    if (exist === -1) {
-      this._selected_items.push(object);
-    } else {
-      this._selected_items.splice(exist, 1);
-    }
-    if (this._selected_items.length > 0) {
-      this.multipleActionButtons.style.display = 'block';
-    } else {
-      this.multipleActionButtons.style.display = 'none';
-    }
-  }
-
   /**
    * Aggregate shared memory allocated in session
    *
@@ -4022,34 +4016,6 @@ ${rowData.item[this.sessionNameField]}</pre
       shmem += Number(sharedMemoryObj[item]?.shmem ?? 0);
     });
     return BackendAISessionList.bytesToGiB(shmem);
-  }
-
-  /**
-   * Render a checkbox
-   *
-   * @param {Element} root - the row details content DOM element
-   * @param {Element} column - the column element that controls the state of the host element
-   * @param {Object} rowData - the object with the properties related with the rendered item
-   * */
-  checkboxRenderer(root, column?, rowData?) {
-    if (
-      (this._isRunning && !this._isPreparing(rowData.item.status)) ||
-      this._APIMajorVersion > 4
-    ) {
-      render(
-        html`
-          <mwc-checkbox
-            class="list-check"
-            style="display:contents;"
-            ?checked="${rowData.item.checked === true}"
-            @click="${() => this._toggleCheckbox(rowData.item)}"
-          ></mwc-checkbox>
-        `,
-        root,
-      );
-    } else {
-      render(html``, root);
-    }
   }
 
   /**
@@ -4319,13 +4285,10 @@ ${rowData.item[this.sessionNameField]}</pre
           ${
             this._isRunning
               ? html`
-                  <vaadin-grid-column
+                  <vaadin-grid-selection-column
                     frozen
-                    width="60px"
-                    flex-grow="0"
-                    text-align="center"
-                    .renderer="${this._boundCheckboxRenderer}"
-                  ></vaadin-grid-column>
+                    auto-select
+                  ></vaadin-grid-selection-column>
                 `
               : html``
           }
