@@ -144,28 +144,6 @@ describe('useControllableState', () => {
     expect(trigger).toHaveBeenCalled();
   });
 
-  it('warning is logged when changed from uncontrolled to controlled', () => {
-    const consoleWarnSpy = jest
-      .spyOn(console, 'warn')
-      .mockImplementation(() => {});
-
-    const props: any = {
-      value: undefined,
-      onChange: () => {
-        props.value = 3;
-      },
-    };
-
-    const { result, rerender } = setUp(props);
-    const [, setValue] = result.current;
-    act(() => setValue());
-    rerender(props);
-
-    expect(consoleWarnSpy).toHaveBeenCalledWith(
-      'WARN: A component changed from uncontrolled to controlled.',
-    );
-  });
-
   it('defaultValue should be applied when value is undefined', () => {
     const { result } = setUp({ value: undefined, defaultValue: 1 });
     expect(result.current[0]).toBe(1);

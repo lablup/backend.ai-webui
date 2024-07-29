@@ -42,18 +42,10 @@ function useControllableState<T = any>(
 
   const value = props[valuePropName] as T;
 
-  let isControlledRef = useRef(value !== undefined);
-  let isControlled = value !== undefined;
+  const isControlledRef = useRef(value !== undefined);
+  const isControlled = value !== undefined;
 
   useEffect(() => {
-    let wasControlled = isControlledRef.current;
-    if (wasControlled !== isControlled) {
-      console.warn(
-        `WARN: A component changed from ${wasControlled ? 'controlled' : 'uncontrolled'} to ${
-          isControlled ? 'controlled' : 'uncontrolled'
-        }.`,
-      );
-    }
     isControlledRef.current = isControlled;
   }, [isControlled]);
 
