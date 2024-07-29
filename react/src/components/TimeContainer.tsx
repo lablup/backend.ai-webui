@@ -6,7 +6,7 @@ import Flex from './Flex';
 import { ClockCircleOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { default as dayjs } from 'dayjs';
-import React, { useEffect, useMemo, useTransition } from 'react';
+import React, { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface TimeContainerProps {
@@ -41,9 +41,9 @@ const TimeContainer: React.FC<TimeContainerProps> = ({
       <ClockCircleOutlined />
       <BAIIntervalText
         callback={() => {
-          return dayjs
-            .duration(dayjs(data?.expires).diff(dayjs()))
-            .format(format);
+          const diff = dayjs(data?.expires).diff(dayjs(), 'seconds');
+          const duration = dayjs.duration(Math.max(0, diff), 'seconds');
+          return duration.format(format);
         }}
         delay={1000}
       ></BAIIntervalText>
