@@ -1,37 +1,53 @@
 import ContainerRegistryList from '../components/ContainerRegistryList';
 import Flex from '../components/Flex';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { theme } from 'antd';
 import Card from 'antd/es/card/Card';
-import { useState, Suspense } from 'react';
+import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
+import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
-type TabKey = 'imageList' | 'presetList' | 'registryList';
+const tabParam = withDefault(StringParam, 'image');
+
 const EnvironmentPage = () => {
   const { t } = useTranslation();
-  const [curTabKey, setCurTabKey] = useState<TabKey>('imageList');
+  const webUINavigate = useWebUINavigate();
+  const [curTabKey] = useQueryParam('tab', tabParam);
   const baiClient = useSuspendedBackendaiClient();
   const isSupportContainerRegistryGraphQL = baiClient.supports(
     'container-registry-gql',
   );
   const { token } = theme.useToken();
+
   return (
     <Card
       activeTabKey={curTabKey}
-      onTabChange={(key) => setCurTabKey(key as TabKey)}
+      onTabChange={(key) => {
+        webUINavigate(
+          {
+            pathname: '/environment',
+            search: `?tab=${key}`,
+          },
+          {
+            params: {
+              tab: key,
+            },
+          },
+        );
+      }}
       tabList={[
         {
-          key: 'imageList',
+          key: 'image',
           label: t('environment.Images'),
         },
         {
-          key: 'presetList',
+          key: 'preset',
           label: t('environment.ResourcePresets'),
         },
         ...(baiClient.is_superadmin
           ? [
               {
-                key: 'registryList',
+                key: 'registry',
                 label: t('environment.Registries'),
               },
             ]
@@ -47,36 +63,34 @@ const EnvironmentPage = () => {
     >
       <Flex
         style={{
-          display: curTabKey === 'imageList' ? 'block' : 'none',
+          display: curTabKey === 'image' ? 'block' : 'none',
           paddingTop: token.paddingContentVerticalSM,
         }}
       >
         {/* @ts-ignore */}
-        <backend-ai-environment-list active={curTabKey === 'imageList'} />
+        <backend-ai-environment-list active={curTabKey === 'image'} />
       </Flex>
       <Flex
         style={{
-          display: curTabKey === 'presetList' ? 'block' : 'none',
+          display: curTabKey === 'preset' ? 'block' : 'none',
           paddingTop: token.paddingContentVerticalSM,
         }}
       >
         {/* @ts-ignore */}
-        <backend-ai-resource-preset-list active={curTabKey === 'presetList'} />
+        <backend-ai-resource-preset-list active={curTabKey === 'preset'} />
       </Flex>
 
       <Flex
         style={{
-          display: curTabKey === 'registryList' ? 'block' : 'none',
+          display: curTabKey === 'registry' ? 'block' : 'none',
           height: 'calc(100vh - 145px)',
           // height: 'calc(100vh - 175px)',
         }}
       >
         {isSupportContainerRegistryGraphQL ? (
-          curTabKey === 'registryList' ? (
-            <Suspense>
-              <ContainerRegistryList />
-            </Suspense>
-          ) : null
+          <Suspense>
+            <ContainerRegistryList />
+          </Suspense>
         ) : (
           // @ts-ignore
           <backend-ai-registry-list active={curTabKey === 'registryList'} />
