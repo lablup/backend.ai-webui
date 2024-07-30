@@ -11,6 +11,7 @@ import { useSuspendedBackendaiClient, useWebUINavigate } from './hooks';
 import { useBAISettingUserState } from './hooks/useBAISetting';
 import Page401 from './pages/Page401';
 import Page404 from './pages/Page404';
+import SummaryPage from './pages/SummaryPage';
 import VFolderListPage from './pages/VFolderListPage';
 import { Skeleton, theme } from 'antd';
 import React, { Suspense } from 'react';
@@ -130,7 +131,7 @@ const router = createBrowserRouter([
                 style={{ marginBottom: token.paddingContentVerticalLG }}
                 closable
               />
-              {/* <SummaryPage /> */}
+              <SummaryPage />
             </>
           );
         },

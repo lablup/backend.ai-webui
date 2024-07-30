@@ -6,7 +6,7 @@ import { useResourceSlots } from '../hooks/backendai';
 import { useTanQuery } from './reactQueryAlias';
 import _ from 'lodash';
 
-interface MergedResourceLimits {
+export interface MergedResourceLimits {
   accelerators: {
     [key: string]:
       | {
@@ -29,7 +29,7 @@ interface MergedResourceLimits {
   };
 }
 
-type ResourceLimits = {
+export type ResourceLimits = {
   cpu: string | 'Infinity' | 'NaN';
   mem: string | 'Infinity' | 'NaN';
   'cuda.device': string | 'Infinity' | 'NaN';

@@ -1,5 +1,6 @@
 import App from './App';
 import BAIIntervalText from './components/BAIIntervalText';
+import BAIResourcePanel from './components/BAIResourcePanel';
 import { jotaiStore, useWebComponentInfo } from './components/DefaultProviders';
 import Flex from './components/Flex';
 import FlexActivityIndicator from './components/FlexActivityIndicator';
@@ -318,6 +319,28 @@ customElements.define(
     );
   }),
 );
+
+customElements.define(
+  'backend-ai-react-resource-panel',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <ReactResourcePanel {...props} />
+      </DefaultProviders>
+    );
+  }),
+);
+
+const ReactResourcePanel = (props: ReactWebComponentProps) => {
+  const { parsedValue } = useWebComponentInfo<{
+    width?: number;
+    height?: number;
+  }>();
+
+  return (
+    <BAIResourcePanel width={parsedValue.width} height={parsedValue.height} />
+  );
+};
 
 customElements.define(
   'backend-ai-session-reservation-timer',

@@ -82,7 +82,7 @@ const SummaryPage: React.FC = () => {
           );
         }}
       />
-      <BAIResourcePanel />
+      <BAIResourcePanel width={350} height={'420px'} />
       {/* @ts-ignore */}
       <backend-ai-summary-view active></backend-ai-summary-view>
     </>
