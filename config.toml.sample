@@ -31,6 +31,7 @@ maxCountForPreopenPorts = 10            # The maximum allowed number of preopen 
 allowCustomResourceAllocation = true    # If true, display the custom allocation on the session launcher.
 eduAppNamePrefix = ""                   # The prefix of edu applauncher's app name. If the app name starts with this prefix, split it by '-' and use the tail as the name of image.
 enableModelStore = false		        # Enable model store feature. (From Backend.AI 24.03)
+enableExtendLoginSession = false        # If true, enables login session extension UI. (From Backend.AI 24.03.7)
 
 [wsproxy]
 proxyURL = "[Proxy URL]"

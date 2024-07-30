@@ -115,9 +115,10 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
           <BAINotificationButton />
           <WebUIThemeToggleButton />
           <WEBUIHelpButton />
-          {baiClient.isManagerVersionCompatibleWith('24.03.7') && (
-            <TimeContainer format="HH:mm:ss" />
-          )}
+          {baiClient.supports('extend-login-session') &&
+            baiClient._config.enableExtendLoginSession && (
+              <TimeContainer format="HH:mm:ss" />
+            )}
           <UserDropdownMenu />
         </Flex>
       </Flex>

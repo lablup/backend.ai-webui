@@ -708,6 +708,7 @@ class Client {
     }
     if (this.isManagerVersionCompatibleWith('24.03.7')) {
       this._features['per-kernel-logs'] = true;
+      this._features['extend-login-session'] = true;
     }
   }
 
