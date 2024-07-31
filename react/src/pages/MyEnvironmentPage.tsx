@@ -256,7 +256,10 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
               type="text"
               icon={<DeleteOutlined />}
               danger
-              loading={inFlightImageId === row?.id + myEnvironmentFetchKey}
+              loading={
+                isInflightForgetAndUntag &&
+                inFlightImageId === row?.id + myEnvironmentFetchKey
+              }
               disabled={
                 isInflightForgetAndUntag &&
                 inFlightImageId !== row?.id + myEnvironmentFetchKey

@@ -502,8 +502,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                   return;
                 }
                 if (errors && errors?.length > 0) {
-                  const errorMsgList = errors.map((error) => error.message);
-                  for (let error of errorMsgList) {
+                  const errorMsgList = _.map(errors, (error) => error.message);
+                  for (const error of errorMsgList) {
                     message.error(error, 2.5);
                   }
                 } else {

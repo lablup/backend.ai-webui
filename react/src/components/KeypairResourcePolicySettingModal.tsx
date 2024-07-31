@@ -214,8 +214,16 @@ const KeypairResourcePolicySettingModal: React.FC<
               props: props as CreateKeyPairResourcePolicyInput,
             },
             onCompleted: (res, errors) => {
-              if (!res?.create_keypair_resource_policy?.ok || errors) {
+              if (!res?.create_keypair_resource_policy?.ok) {
                 message.error(res?.create_keypair_resource_policy?.msg);
+                onRequestClose();
+                return;
+              }
+              if (errors && errors?.length > 0) {
+                const errorMsgList = _.map(errors, (error) => error.message);
+                for (const error of errorMsgList) {
+                  message.error(error, 2.5);
+                }
                 onRequestClose();
               } else {
                 message.success(t('resourcePolicy.SuccessfullyCreated'));
@@ -233,8 +241,16 @@ const KeypairResourcePolicySettingModal: React.FC<
               props: props as ModifyKeyPairResourcePolicyInput,
             },
             onCompleted: (res, errors) => {
-              if (!res?.modify_keypair_resource_policy?.ok || errors) {
+              if (!res?.modify_keypair_resource_policy?.ok) {
                 message.error(res?.modify_keypair_resource_policy?.msg);
+                onRequestClose();
+                return;
+              }
+              if (errors && errors?.length > 0) {
+                const errorMsgList = _.map(errors, (error) => error.message);
+                for (const error of errorMsgList) {
+                  message.error(error, 2.5);
+                }
                 onRequestClose();
               } else {
                 message.success(t('resourcePolicy.SuccessfullyUpdated'));

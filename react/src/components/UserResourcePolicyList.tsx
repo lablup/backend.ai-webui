@@ -187,9 +187,16 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
                   variables: {
                     name: row.name,
                   },
-                  onCompleted: (data, errors) => {
-                    if (errors) {
-                      message.error(errors[0]?.message);
+                  onCompleted: (res, errors) => {
+                    if (!res?.delete_user_resource_policy?.ok) {
+                      message.error(res?.delete_user_resource_policy?.msg);
+                      return;
+                    }
+                    if (errors && errors.length > 0) {
+                      const errorMsgList = errors.map((error) => error.message);
+                      for (const error of errorMsgList) {
+                        message.error(error, 2.5);
+                      }
                       return;
                     }
                     startRefetchTransition(() =>
@@ -214,8 +221,9 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
                 />
               }
               loading={
+                isInflightDelete &&
                 inFlightResourcePolicyName ===
-                row?.name + userResourcePolicyFetchKey
+                  row?.name + userResourcePolicyFetchKey
               }
               disabled={
                 isInflightDelete &&
