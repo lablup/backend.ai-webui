@@ -48,7 +48,7 @@ const SummaryItemDownloadApp: React.FC = () => {
       direction="column"
       justify="between"
       align="start"
-      style={{ width: '100%', gap: token.paddingMD }}
+      style={{ gap: token.paddingMD }}
     >
       <Select
         defaultValue={OS}
