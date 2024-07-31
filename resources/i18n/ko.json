@@ -1527,7 +1527,7 @@
     "QueryingExisitingComputeSession": "기존 연산 세션 조회중 ...",
     "PleaseReload": "잠시 후에 다시 시도해 보십시오.",
     "FoundExistingComputeSession": "실행 중인 계산 세션이 발견되었습니다.",
-    "FindingSessionTemplate": "세션 템플릿 탐석 중 ...",
+    "FindingSessionTemplate": "세션 템플릿 탐색 중 ...",
     "NoSessionTemplate": "사용 가능한 세션 템플릿이 없습니다",
     "CreatingComputeSession": "연산 세션 생성 중 ...",
     "SessionStillPreparing": "연산 세션이 계속 준비중입니다. 잠시 후 리로드 하십시오.",
