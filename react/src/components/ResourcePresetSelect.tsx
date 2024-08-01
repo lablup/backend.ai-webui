@@ -1,6 +1,7 @@
 import { localeCompare } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useResourceSlots } from '../hooks/backendai';
+import useControllableState from '../hooks/useControllableState';
 import Flex from './Flex';
 import ResourceNumber from './ResourceNumber';
 import {
@@ -8,7 +9,7 @@ import {
   ResourcePresetSelectQuery$data,
 } from './__generated__/ResourcePresetSelectQuery.graphql';
 import { EditOutlined, InfoCircleOutlined } from '@ant-design/icons';
-import { useControllableValue, useThrottleFn } from 'ahooks';
+import { useThrottleFn } from 'ahooks';
 import { Select, Tooltip, theme } from 'antd';
 import { SelectProps } from 'antd/lib';
 import graphql from 'babel-plugin-relay/macro';
@@ -54,7 +55,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   const { token } = theme.useToken();
   const [isPendingUpdate, _startTransition] = useTransition();
   const [controllableValue, setControllableValue] =
-    useControllableValue(selectProps);
+    useControllableState(selectProps);
   const updateFetchKeyUnderTransition = () => {
     _startTransition(() => {
       updateFetchKeyThrottled();

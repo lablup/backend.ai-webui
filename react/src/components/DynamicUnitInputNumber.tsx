@@ -1,5 +1,6 @@
 import { iSizeToSize, parseUnit } from '../helper';
-import { useControllableValue, usePrevious } from 'ahooks';
+import useControllableState from '../hooks/useControllableState';
+import { usePrevious } from 'ahooks';
 import { InputNumber, InputNumberProps, Select, Typography } from 'antd';
 import _ from 'lodash';
 import React, { useEffect, useRef } from 'react';
@@ -28,7 +29,7 @@ const DynamicUnitInputNumber: React.FC<DynamicUnitInputNumberProps> = ({
   roundStep,
   ...inputNumberProps
 }) => {
-  const [value, setValue] = useControllableValue<string | null | undefined>(
+  const [value, setValue] = useControllableState<string | null | undefined>(
     inputNumberProps,
     {
       defaultValue: '0g',
