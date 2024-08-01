@@ -8,7 +8,7 @@ import { ThemeModeProvider, useThemeMode } from '../hooks/useThemeMode';
 import indexCss from '../index.css?raw';
 import { StyleProvider, createCache } from '@ant-design/cssinjs';
 import { useUpdateEffect } from 'ahooks';
-import { App, AppProps, ConfigProvider, theme } from 'antd';
+import { App, AppProps, ConfigProvider, theme, Typography } from 'antd';
 import en_US from 'antd/locale/en_US';
 import ko_KR from 'antd/locale/ko_KR';
 import dayjs from 'dayjs';
@@ -23,6 +23,7 @@ import weekday from 'dayjs/plugin/weekday';
 import i18n from 'i18next';
 import Backend from 'i18next-http-backend';
 import { createStore, Provider as JotaiProvider } from 'jotai';
+import { GlobeIcon } from 'lucide-react';
 import React, {
   Suspense,
   useEffect,
@@ -84,13 +85,43 @@ export interface DefaultProvidersProps extends ReactWebComponentProps {
   children?: React.ReactNode;
 }
 
+let isDebugModeByParam = false;
+if (process.env.NODE_ENV === 'development') {
+  const urlParams = new URLSearchParams(window.location.search);
+  isDebugModeByParam = urlParams.get('debug') === 'true';
+}
+
 i18n
   .use(initReactI18next) // passes i18n down to react-i18next
   .use(Backend)
+  .use({
+    type: 'postProcessor',
+    name: 'copyableI18nKey',
+    process: function (value: any, key: any, options: any, translator: any) {
+      // @ts-ignore
+      if (globalThis?.backendaiwebui?.debug || isDebugModeByParam) {
+        return (
+          <Typography.Text
+            copyable={{
+              text: key,
+              tooltips: key,
+              icon: <GlobeIcon />,
+            }}
+          >
+            {value}
+          </Typography.Text>
+        );
+      } else {
+        return value;
+      }
+    },
+  })
   .init({
     backend: {
       loadPath: '/resources/i18n/{{lng}}.json',
     },
+    postProcess:
+      process.env.NODE_ENV === 'development' ? ['copyableI18nKey'] : [],
     lng:
       //@ts-ignore
       globalThis?.backendaioptions?.get('language', 'default', 'general') ||

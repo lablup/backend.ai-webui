@@ -167,7 +167,7 @@ const AgentList: React.FC<AgentListProps> = ({
       rowScope: 'row',
     },
     {
-      title: `ID / ${t('agent.Endpoint')}`,
+      title: <>ID / {t('agent.Endpoint')}</>,
       key: 'id',
       dataIndex: 'id',
       fixed: 'left',
