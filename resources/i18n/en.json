@@ -292,7 +292,10 @@
       "ProxyDirectTCPNotSupported": "Proxy direct TCP connection is not supported yet",
       "InvalidPortFormat": "The port number format is incorrect.",
       "DuplicatedPort": "There are duplicate ports.",
-      "FolderAliasOverlappingToAutoMount": "An auto-mount folder with the same name exists."
+      "FolderAliasOverlappingToAutoMount": "An auto-mount folder with the same name exists.",
+      "SelectAgent": "Select Agent",
+      "autoSelect": "Auto Select",
+      "DescSelectAgent": "The resources displayed on the right side of the agent represent the actual amount of available resources. Currently, agent selection is only available in a single-node single-container environment. The default setting is agent allocation by the scheduler."
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",

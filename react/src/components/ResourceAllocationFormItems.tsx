@@ -3,7 +3,7 @@ import {
   compareNumberWithUnits,
   iSizeToSize,
 } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import {
@@ -12,6 +12,7 @@ import {
 } from '../hooks/useCurrentProject';
 import { useEventNotStable } from '../hooks/useEventNotStable';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
+import AgentSelector from './AgentSelect';
 import DynamicUnitInputNumberWithSlider from './DynamicUnitInputNumberWithSlider';
 import Flex from './Flex';
 import { ImageEnvironmentFormInput } from './ImageEnvironmentSelectFormItems';
@@ -19,8 +20,9 @@ import InputNumberWithSlider from './InputNumberWithSlider';
 import ResourceGroupSelectForCurrentProject from './ResourceGroupSelectForCurrentProject';
 import { ACCELERATOR_UNIT_MAP } from './ResourceNumber';
 import ResourcePresetSelect from './ResourcePresetSelect';
-import { CaretDownOutlined } from '@ant-design/icons';
+import { CaretDownOutlined, ReloadOutlined } from '@ant-design/icons';
 import {
+  Button,
   Card,
   Col,
   Divider,
@@ -30,9 +32,10 @@ import {
   Select,
   Switch,
   theme,
+  Typography,
 } from 'antd';
 import _ from 'lodash';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 export const AUTOMATIC_DEFAULT_SHMEM = '64m';
@@ -47,6 +50,7 @@ export const RESOURCE_ALLOCATION_INITIAL_FORM_VALUES = {
   cluster_mode: 'single-node',
   cluster_size: 1,
   enabledAutomaticShmem: true,
+  agent: 'auto',
 };
 
 export interface ResourceAllocationFormValue {
@@ -92,6 +96,9 @@ const ResourceAllocationFormItems: React.FC<
 
   const [{ keypairResourcePolicy, sessionLimitAndRemaining }] =
     useCurrentKeyPairResourcePolicyLazyLoadQuery();
+
+  const [agentFetchKey, updateAgentFetchKey] = useUpdatableState('first');
+  const [isPendingAgentList, startAgentListTransition] = useTransition();
 
   const currentProject = useCurrentProjectValue();
   const currentResourceGroup = useCurrentResourceGroupValue(); // use global state
@@ -1130,6 +1137,28 @@ const ResourceAllocationFormItems: React.FC<
         </Card>
       ) : null}
       {/* TODO: Support cluster mode */}
+      {!baiClient._config.hideAgents && (
+        <Form.Item
+          label={t('session.launcher.SelectAgent')}
+          required
+          tooltip={<Trans i18nKey={'session.launcher.DescSelectAgent'} />}
+        >
+          <Flex gap={'xs'}>
+            <Form.Item required noStyle style={{ flex: 1 }} name="agent">
+              <AgentSelector fetchKey={agentFetchKey}></AgentSelector>
+            </Form.Item>
+            <Form.Item noStyle>
+              <Button
+                loading={isPendingAgentList}
+                onClick={() => {
+                  startAgentListTransition(() => updateAgentFetchKey());
+                }}
+                icon={<ReloadOutlined />}
+              ></Button>
+            </Form.Item>
+          </Flex>
+        </Form.Item>
+      )}
       {baiClient.supports('multi-container') && (
         // {false && (
         <Form.Item
