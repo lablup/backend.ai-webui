@@ -1277,7 +1277,7 @@ export default class BackendAISessionList extends BackendAIPage {
         }
 
         this.compute_sessions = sessions;
-        this._grid.recalculateColumnWidths();
+        this._grid?.recalculateColumnWidths();
         // this._grid.clearCache();
         this.requestUpdate();
         let refreshTime;
@@ -1652,6 +1652,7 @@ export default class BackendAISessionList extends BackendAIPage {
           this.notification.show(true, err);
         } else if (err && err.title) {
           this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = '';
           this.notification.show(true, err);
         }
       });
@@ -1685,6 +1686,7 @@ export default class BackendAISessionList extends BackendAIPage {
           this.notification.show(true, err);
         } else if (err && err.title) {
           this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = '';
           this.notification.show(true, err);
         }
       });
@@ -1720,6 +1722,7 @@ export default class BackendAISessionList extends BackendAIPage {
           this.notification.show(true, err);
         } else if (err && err.title) {
           this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = '';
           this.notification.show(true, err);
         }
       });
@@ -1960,6 +1963,7 @@ export default class BackendAISessionList extends BackendAIPage {
 
     if (this.terminationQueue.includes(sessionId)) {
       this.notification.text = _text('session.AlreadyTerminatingSession');
+      this.notification.detail = '';
       this.notification.show();
       return false;
     }
@@ -1970,6 +1974,7 @@ export default class BackendAISessionList extends BackendAIPage {
     // TODO define extended type for custom properties
     if (this.terminationQueue.includes(this.terminateSessionDialog.sessionId)) {
       this.notification.text = _text('session.AlreadyTerminatingSession');
+      this.notification.detail = '';
       this.notification.show();
       return false;
     }
@@ -1985,6 +1990,7 @@ export default class BackendAISessionList extends BackendAIPage {
         this._clearCheckboxes();
         this.terminateSessionDialog.hide();
         this.notification.text = _text('session.SessionTerminated');
+        this.notification.detail = '';
         this.notification.show();
         const event = new CustomEvent('backend-ai-resource-refreshed', {
           detail: 'running',
@@ -2095,6 +2101,7 @@ export default class BackendAISessionList extends BackendAIPage {
         this._clearCheckboxes();
         this.multipleActionButtons.style.display = 'none';
         this.notification.text = _text('session.SessionsTerminated');
+        this.notification.detail = '';
         this.notification.show();
       })
       .catch(() => {
@@ -2120,6 +2127,7 @@ export default class BackendAISessionList extends BackendAIPage {
         this._clearCheckboxes();
         this.multipleActionButtons.style.display = 'none';
         this.notification.text = _text('session.SessionsTerminated');
+        this.notification.detail = '';
         this.notification.show();
       })
       .catch(() => {
@@ -2155,6 +2163,7 @@ export default class BackendAISessionList extends BackendAIPage {
             'Problem occurred during termination.',
           );
         }
+        this.notification.detail = '';
         this.notification.show(true, err);
       });
   }
@@ -2648,6 +2657,7 @@ export default class BackendAISessionList extends BackendAIPage {
           .then((req) => {
             this.refreshList();
             this.notification.text = _text('session.SessionRenamed');
+            this.notification.detail = '';
             this.notification.show();
           })
           .catch((err) => {
