@@ -733,6 +733,15 @@ export default class BackendAISessionList extends BackendAIPage {
    * @param {boolean} repeat - repeat the job data reading. Set refreshTime to 5000 for running list else 30000
    * */
   async _refreshJobData(refresh = false, repeat = true) {
+    this._grid?.addEventListener('selected-items-changed', () => {
+      this._selected_items = this._grid.selectedItems;
+      if (this._selected_items.length > 0) {
+        this.multipleActionButtons.style.display = 'flex';
+      } else {
+        this.multipleActionButtons.style.display = 'none';
+      }
+    });
+
     await this.updateComplete;
     if (this.active !== true) {
       return;
@@ -1321,6 +1330,7 @@ export default class BackendAISessionList extends BackendAIPage {
           this.notification.show(true, err);
         }
       });
+    this._clearCheckboxes();
   }
 
   /**
@@ -2059,6 +2069,7 @@ export default class BackendAISessionList extends BackendAIPage {
   _clearCheckboxes() {
     this._grid.selectedItems = [];
     this._selected_items = [];
+    this._grid.clearCache();
   }
 
   _handleSelectedItems() {
@@ -4292,13 +4303,10 @@ ${rowData.item[this.sessionNameField]}</pre
                 >
                   ${this._isRunning
                     ? html`
-                        <vaadin-grid-column
+                        <vaadin-grid-selection-column
                           frozen
-                          width="60px"
-                          flex-grow="0"
-                          text-align="center"
-                          .renderer="${this._boundCheckboxRenderer}"
-                        ></vaadin-grid-column>
+                          auto-select
+                        ></vaadin-grid-selection-column>
                       `
                     : html``}
                   <vaadin-grid-column
