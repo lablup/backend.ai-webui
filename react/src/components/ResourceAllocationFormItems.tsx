@@ -32,7 +32,6 @@ import {
   Select,
   Switch,
   theme,
-  Typography,
 } from 'antd';
 import _ from 'lodash';
 import React, { useEffect, useMemo, useTransition } from 'react';
@@ -1145,7 +1144,18 @@ const ResourceAllocationFormItems: React.FC<
         >
           <Flex gap={'xs'}>
             <Form.Item required noStyle style={{ flex: 1 }} name="agent">
-              <AgentSelector fetchKey={agentFetchKey}></AgentSelector>
+              <AgentSelector
+                fetchKey={agentFetchKey}
+                onChange={(value, option) => {
+                  if (value !== 'auto') {
+                    form.setFieldsValue({
+                      cluster_mode: 'single-node',
+                      cluster_size: 1,
+                    });
+                  }
+                  // TODO: set cluster mode to single node and cluster size to 1 when agent value is not "auto"
+                }}
+              ></AgentSelector>
             </Form.Item>
             <Form.Item noStyle>
               <Button
@@ -1173,123 +1183,132 @@ const ResourceAllocationFormItems: React.FC<
             </Flex>
           }
           required
+          dependencies={['agent']}
         >
-          <Card
-            style={{
-              marginBottom: token.margin,
-            }}
-          >
-            <Row gutter={token.marginMD}>
-              <Col xs={24}>
-                {/* <Col xs={24} lg={12}> */}
-                <Form.Item name={'cluster_mode'} required>
-                  <Radio.Group
-                    onChange={(e) => {
-                      form.validateFields().catch(() => {});
-                    }}
-                  >
-                    <Radio.Button value="single-node">
-                      {t('session.launcher.SingleNode')}
-                    </Radio.Button>
-                    <Radio.Button value="multi-node">
-                      {t('session.launcher.MultiNode')}
-                    </Radio.Button>
-                  </Radio.Group>
-                </Form.Item>
-              </Col>
-              <Col xs={24}>
-                <Form.Item
-                  noStyle
-                  shouldUpdate={(prev, next) =>
-                    prev.cluster_mode !== next.cluster_mode
-                  }
-                >
-                  {() => {
-                    const derivedClusterSizeMaxLimit = _.min([
-                      resourceLimits.cpu?.max,
-                      keypairResourcePolicy.max_containers_per_session,
-                    ]);
-                    const clusterUnit =
-                      form.getFieldValue('cluster_mode') === 'single-node'
-                        ? t('session.launcher.Container')
-                        : t('session.launcher.Node');
-                    return (
-                      <Form.Item
-                        name={'cluster_size'}
-                        label={t('session.launcher.ClusterSize')}
-                        required
-                        rules={[
-                          {
-                            warningOnly: true,
-                            validator: async (rule, value: number) => {
-                              if (showRemainingWarning) {
-                                const minCPU = _.min([
-                                  remaining.cpu,
-                                  keypairResourcePolicy.max_containers_per_session,
-                                ]);
-                                if (_.isNumber(minCPU) && value > minCPU) {
-                                  return Promise.reject(
-                                    t(
-                                      'session.launcher.EnqueueComputeSessionWarning',
-                                    ),
-                                  );
-                                }
-                              }
-                              return Promise.resolve();
-                            },
-                          },
-                        ]}
+          {({ getFieldValue }) => {
+            return (
+              <Card
+                style={{
+                  marginBottom: token.margin,
+                }}
+              >
+                <Row gutter={token.marginMD}>
+                  <Col xs={24}>
+                    {/* <Col xs={24} lg={12}> */}
+                    <Form.Item name={'cluster_mode'} required>
+                      <Radio.Group
+                        onChange={(e) => {
+                          form.validateFields().catch(() => {});
+                        }}
+                        disabled={getFieldValue('agent') !== 'auto'}
                       >
-                        <InputNumberWithSlider
-                          min={1}
-                          step={1}
-                          // TODO: max cluster size
-                          max={
-                            _.isNumber(derivedClusterSizeMaxLimit)
-                              ? derivedClusterSizeMaxLimit
-                              : undefined
-                          }
-                          disabled={derivedClusterSizeMaxLimit === 1}
-                          sliderProps={{
-                            marks: {
-                              1: '1',
-                              // remaining mark code should be located before max mark code to prevent overlapping when it is same value
-                              ...(remaining.cpu
-                                ? {
-                                    [remaining.cpu]: {
-                                      label: <RemainingMark />,
-                                    },
+                        <Radio.Button value="single-node">
+                          {t('session.launcher.SingleNode')}
+                        </Radio.Button>
+                        <Radio.Button value="multi-node">
+                          {t('session.launcher.MultiNode')}
+                        </Radio.Button>
+                      </Radio.Group>
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24}>
+                    <Form.Item
+                      noStyle
+                      shouldUpdate={(prev, next) =>
+                        prev.cluster_mode !== next.cluster_mode
+                      }
+                    >
+                      {() => {
+                        const derivedClusterSizeMaxLimit = _.min([
+                          resourceLimits.cpu?.max,
+                          keypairResourcePolicy.max_containers_per_session,
+                        ]);
+                        const clusterUnit =
+                          form.getFieldValue('cluster_mode') === 'single-node'
+                            ? t('session.launcher.Container')
+                            : t('session.launcher.Node');
+                        return (
+                          <Form.Item
+                            name={'cluster_size'}
+                            label={t('session.launcher.ClusterSize')}
+                            required
+                            rules={[
+                              {
+                                warningOnly: true,
+                                validator: async (rule, value: number) => {
+                                  if (showRemainingWarning) {
+                                    const minCPU = _.min([
+                                      remaining.cpu,
+                                      keypairResourcePolicy.max_containers_per_session,
+                                    ]);
+                                    if (_.isNumber(minCPU) && value > minCPU) {
+                                      return Promise.reject(
+                                        t(
+                                          'session.launcher.EnqueueComputeSessionWarning',
+                                        ),
+                                      );
+                                    }
                                   }
-                                : {}),
-                              ...(_.isNumber(derivedClusterSizeMaxLimit)
-                                ? {
-                                    [derivedClusterSizeMaxLimit]:
-                                      derivedClusterSizeMaxLimit,
-                                  }
-                                : {}),
-                            },
-                            tooltip: {
-                              formatter: (value = 0) => {
-                                return `${value} ${clusterUnit}`;
+                                  return Promise.resolve();
+                                },
                               },
-                            },
-                          }}
-                          inputNumberProps={{
-                            addonAfter: clusterUnit,
-                          }}
-                          onChange={(value) => {
-                            if (value > 1) {
-                              form.setFieldValue('num_of_sessions', 1);
-                            }
-                          }}
-                        />
-                      </Form.Item>
-                    );
-                  }}
-                </Form.Item>
-              </Col>
-            </Row>
-          </Card>
+                            ]}
+                          >
+                            <InputNumberWithSlider
+                              min={1}
+                              step={1}
+                              // TODO: max cluster size
+                              max={
+                                _.isNumber(derivedClusterSizeMaxLimit)
+                                  ? derivedClusterSizeMaxLimit
+                                  : undefined
+                              }
+                              disabled={
+                                derivedClusterSizeMaxLimit === 1 ||
+                                getFieldValue('agent') !== 'auto'
+                              }
+                              sliderProps={{
+                                marks: {
+                                  1: '1',
+                                  // remaining mark code should be located before max mark code to prevent overlapping when it is same value
+                                  ...(remaining.cpu
+                                    ? {
+                                        [remaining.cpu]: {
+                                          label: <RemainingMark />,
+                                        },
+                                      }
+                                    : {}),
+                                  ...(_.isNumber(derivedClusterSizeMaxLimit)
+                                    ? {
+                                        [derivedClusterSizeMaxLimit]:
+                                          derivedClusterSizeMaxLimit,
+                                      }
+                                    : {}),
+                                },
+                                tooltip: {
+                                  formatter: (value = 0) => {
+                                    return `${value} ${clusterUnit}`;
+                                  },
+                                },
+                              }}
+                              inputNumberProps={{
+                                addonAfter: clusterUnit,
+                              }}
+                              onChange={(value) => {
+                                if (value > 1) {
+                                  form.setFieldValue('num_of_sessions', 1);
+                                }
+                              }}
+                            />
+                          </Form.Item>
+                        );
+                      }}
+                    </Form.Item>
+                  </Col>
+                </Row>
+              </Card>
+            );
+          }}
         </Form.Item>
       )}
     </>

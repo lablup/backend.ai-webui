@@ -10,22 +10,12 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
-type AgentInfo = {
-  label: string;
-  value: string;
-};
-
 interface Props extends SelectProps {
-  onSelectAgent?: (agentInfo: AgentInfo) => void;
   autoSelectDefault?: boolean;
   fetchKey?: string;
 }
 
-const AgentSelector: React.FC<Props> = ({
-  onSelectAgent,
-  fetchKey,
-  ...selectProps
-}) => {
+const AgentSelector: React.FC<Props> = ({ fetchKey, ...selectProps }) => {
   const { t } = useTranslation();
   const [value, setValue] = useControllableValue(selectProps);
 
@@ -116,8 +106,7 @@ const AgentSelector: React.FC<Props> = ({
   return (
     <Select
       onChange={(value, option) => {
-        setValue(value);
-        onSelectAgent?.(option as AgentInfo);
+        setValue(value, option);
       }}
       {...selectProps}
       value={value}
