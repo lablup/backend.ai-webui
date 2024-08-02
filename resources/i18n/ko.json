@@ -543,7 +543,7 @@
     "Terminated": "종료됨",
     "Maintaining": "보수중",
     "Status": "상태",
-    "Schedulable": "스케쥴링 가능 여부",
+    "Schedulable": "스케쥴링 가능",
     "AgentSetting": "에이전트 설정",
     "AgentSettingUpdated": "에이전트 설정이 변경되었습니다.",
     "NoChanges": "변경 사항이 없습니다.",
@@ -610,14 +610,15 @@
     "ConfirmPassword": "비밀번호 (확인)",
     "Control": "제어",
     "NewPassword": "새 비밀번호",
-    "Enabled": "활성화됨",
+    "Enabled": "활성화",
     "StorageProxies": "스토리지",
     "None": "없음",
     "Image": "이미지",
     "All": "전체",
     "InProgress": "진행중",
     "Session": "세션",
-    "General": "일반"
+    "General": "일반",
+    "Disabled": "비활성화"
   },
   "credential": {
     "Permission": "권한",

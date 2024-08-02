@@ -630,7 +630,8 @@
     "All": "All",
     "InProgress": "In progress",
     "Session": "Session",
-    "General": "General"
+    "General": "General",
+    "Disabled": "Disabled"
   },
   "credential": {
     "Permission": "Permission",

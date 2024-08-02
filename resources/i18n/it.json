@@ -506,7 +506,8 @@
     "All": "Tutti",
     "InProgress": "In corso",
     "Session": "Sessione",
-    "General": "Generale"
+    "General": "Generale",
+    "Disabled": "Disabili"
   },
   "credential": {
     "Permission": "Autorizzazione",

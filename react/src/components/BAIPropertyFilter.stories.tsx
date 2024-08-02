@@ -21,18 +21,22 @@ export const Default: Story = {
       {
         key: 'property1',
         defaultOperator: '==',
-        propertyLabel: 'Property 1',
+        propertyLabel: 'Property String',
+        type: 'string',
       },
       {
         key: 'property2',
-        defaultOperator: '!=',
-        propertyLabel: 'Property 2',
+        propertyLabel: 'Property String',
+        type: 'string',
       },
       {
-        key: 'property3',
-        propertyLabel: 'Property 3',
+        key: 'booleanProperty',
+        propertyLabel: 'Property Boolean',
+        type: 'boolean',
       },
     ],
+
     onChange: fn(),
+    value: 'property2 ilike %ㅁㄴㅇㄹㅁㄴㅇㄹ% & booleanProperty == true',
   },
 };

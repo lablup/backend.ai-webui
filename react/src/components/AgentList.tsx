@@ -773,15 +773,33 @@ const AgentList: React.FC<AgentListProps> = ({
               });
             }}
           />
+
           <BAIPropertyFilter
             filterProperties={[
               {
                 key: 'id',
                 propertyLabel: 'ID',
+                type: 'string',
               },
               {
                 key: 'addr',
                 propertyLabel: t('agent.Endpoint'),
+                type: 'string',
+              },
+              {
+                key: 'schedulable',
+                propertyLabel: t('agent.Schedulable'),
+                type: 'boolean',
+                options: [
+                  {
+                    label: t('general.Enabled'),
+                    value: 'true',
+                  },
+                  {
+                    label: t('general.Disabled'),
+                    value: 'false',
+                  },
+                ],
               },
             ]}
             value={filterString}
