@@ -3883,13 +3883,15 @@ ${rowData.item[this.sessionNameField]}</pre
       // language=HTML
       html`
         <div class="layout vertical" style="padding:3px auto;">
-          <span>${rowData.item.created_at_hr}</span>
+          <span>
+            ${rowData.item.starts_at_hr || rowData.item.created_at_hr}
+          </span>
           <backend-ai-session-reservation-timer
             value="${JSON.stringify({
-              created_at: rowData.item.created_at,
+              starts_at: rowData.item.starts_at || rowData.item.created_at,
               terminated_at: rowData.item.terminated_at,
             })}"
-          />
+          ></backend-ai-session-reservation-timer>
         </div>
       `,
       root,
