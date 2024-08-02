@@ -66,6 +66,7 @@ export interface ResourceAllocationFormValue {
   cluster_size: number;
   enabledAutomaticShmem: boolean;
   allocationPreset?: string;
+  agent?: string;
 }
 
 type MergedResourceAllocationFormValue = ResourceAllocationFormValue &
@@ -1145,6 +1146,7 @@ const ResourceAllocationFormItems: React.FC<
           <Flex gap={'xs'}>
             <Form.Item required noStyle style={{ flex: 1 }} name="agent">
               <AgentSelector
+                resourceGroup={currentResourceGroup}
                 fetchKey={agentFetchKey}
                 onChange={(value, option) => {
                   if (value !== 'auto') {

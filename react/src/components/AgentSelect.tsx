@@ -13,9 +13,14 @@ import { useLazyLoadQuery } from 'react-relay';
 interface Props extends SelectProps {
   autoSelectDefault?: boolean;
   fetchKey?: string;
+  resourceGroup?: string | null;
 }
 
-const AgentSelector: React.FC<Props> = ({ fetchKey, ...selectProps }) => {
+const AgentSelector: React.FC<Props> = ({
+  fetchKey,
+  resourceGroup,
+  ...selectProps
+}) => {
   const { t } = useTranslation();
   const [value, setValue] = useControllableValue(selectProps);
 
@@ -31,12 +36,14 @@ const AgentSelector: React.FC<Props> = ({ fetchKey, ...selectProps }) => {
         $offset: Int!
         $status: String
         $filter: String
+        $scaling_group: String
       ) {
         agent_summary_list(
           limit: $limit
           offset: $offset
           status: $status
           filter: $filter
+          scaling_group: $scaling_group
         ) {
           items {
             id
@@ -55,6 +62,7 @@ const AgentSelector: React.FC<Props> = ({ fetchKey, ...selectProps }) => {
       offset: baiPaginationOption.offset,
       status: 'ALIVE',
       filter: 'schedulable is true', // true, false, null
+      scaling_group: resourceGroup,
     },
     {
       fetchPolicy: 'network-only',
@@ -74,9 +82,9 @@ const AgentSelector: React.FC<Props> = ({ fetchKey, ...selectProps }) => {
     } = _.chain(availableSlotsInfo)
       .mapValues((value, key) => {
         if (key.endsWith('.shares')) {
-          return parseFloat(value) - parseFloat(occupiedSlotsInfo[key]);
+          return parseFloat(value) - parseFloat(occupiedSlotsInfo[key] ?? 0);
         } else {
-          return parseInt(value) - parseInt(occupiedSlotsInfo[key]);
+          return parseInt(value) - parseInt(occupiedSlotsInfo[key] ?? 0);
         }
       })
       .value();
@@ -102,6 +110,8 @@ const AgentSelector: React.FC<Props> = ({ fetchKey, ...selectProps }) => {
       value: agent?.id,
     };
   });
+
+  console.log(agentOptions);
 
   return (
     <Select
