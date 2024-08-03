@@ -174,7 +174,7 @@
     "workbox-routing": "^7.1.0",
     "workbox-strategies": "^7.1.0",
     "workbox-sw": "^7.1.0",
-    "ws": "^8.17.0"
+    "ws": "^8.17.1"
   },
   "overrides": {
     "eslint": "^8.57.0"
