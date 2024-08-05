@@ -413,6 +413,7 @@ const AgentList: React.FC<AgentListProps> = ({
       dataIndex: 'live_stat',
       render: (value, record) => {
         const parsedValue = JSON.parse(value || '{}');
+        const available_slots = JSON.parse(record?.available_slots || '{}');
         if (record?.status === 'ALIVE') {
           const liveStat = {
             cpu_util: { capacity: 0, current: 0, ratio: 0 },
@@ -432,7 +433,7 @@ const AgentList: React.FC<AgentListProps> = ({
                 numCores) *
                 100 || 0;
             liveStat.mem_util.capacity = _.toInteger(
-              parsedValue.node.mem.capacity,
+              available_slots.mem || parsedValue.node.mem.capacity,
             );
             liveStat.mem_util.current = _.toInteger(
               parsedValue.node.mem.current,
