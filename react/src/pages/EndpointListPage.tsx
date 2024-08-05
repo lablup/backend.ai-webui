@@ -300,12 +300,7 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
           $limit: Int!
           $projectID: UUID
         ) {
-          endpoint_list(
-            offset: $offset
-            limit: $limit
-            project: $projectID
-            filter: "name != 'koalpaca-test'"
-          ) {
+          endpoint_list(offset: $offset, limit: $limit, project: $projectID) {
             total_count
             items {
               name

@@ -23,7 +23,7 @@ const LLMPlaygroundPage: React.FC<LLMPlaygroundPageProps> = ({ ...props }) => {
   const { endpoint_list } = useLazyLoadQuery<LLMPlaygroundPageQuery>(
     graphql`
       query LLMPlaygroundPageQuery {
-        endpoint_list(limit: 1, offset: 0, filter: "name != 'koalpaca-test'") {
+        endpoint_list(limit: 1, offset: 0) {
           items {
             ...EndpointLLMChatCard_endpoint
           }
