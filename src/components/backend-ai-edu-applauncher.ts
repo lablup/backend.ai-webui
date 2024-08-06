@@ -157,7 +157,6 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
   async _initClient(apiEndpoint: string) {
     this.notification = globalThis.lablupNotification;
     const webUIShell: any = document.querySelector('#webui-shell');
-    // webUIShell.appBody.style.visibility = 'visible';
     if (apiEndpoint === '') {
       const api_endpoint: any = localStorage.getItem(
         'backendaiwebui.api_endpoint',

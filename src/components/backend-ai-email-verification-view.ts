@@ -66,7 +66,6 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
    */
   _initClient(apiEndpoint: string) {
     this.webUIShell = document.querySelector('#webui-shell');
-    this.webUIShell.appBody.style.visibility = 'visible';
     this.notification = globalThis.lablupNotification;
     this.successDialog = this.shadowRoot?.querySelector(
       '#verification-success-dialog',
