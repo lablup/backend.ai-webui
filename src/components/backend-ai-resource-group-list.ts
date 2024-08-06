@@ -78,11 +78,15 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
   @query('#resource-group-active') resourceGroupActiveSwitch!: Switch;
   @query('#resource-group-public') resourceGroupPublicSwitch!: Switch;
   @query('#resource-group-wsproxy-address')
-  resourceGroupWSProxyaddressInput!: TextField;
+  resourceGroupWSProxyAddressInput!: TextField;
   @query('#allowed-session-types') private allowedSessionTypesSelect;
   @query('#num-retries-to-skip') numberOfRetriesToSkip!: TextField;
   @query('#pending-timeout') timeoutInput!: TextField;
   @query('#delete-resource-group') deleteResourceGroupInput!: TextField;
+  @query('#modify-resource-group')
+  modifyResourceGroupButton!: HTMLButtonElement;
+  @query('#create-resource-group')
+  createResourceGroupButton!: HTMLButtonElement;
 
   constructor() {
     super();
@@ -411,7 +415,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
         input['scheduler_opts'] = JSON.stringify(this.schedulerOpts);
       }
       if (this.enableWSProxyAddr) {
-        const wsproxyAddress = this.resourceGroupWSProxyaddressInput.value;
+        const wsproxyAddress = this.resourceGroupWSProxyAddressInput.value;
         input['wsproxy_addr'] = wsproxyAddress;
       }
       if (this.enableIsPublic) {
@@ -485,7 +489,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
       input['is_active'] = isActive;
     }
     if (this.enableWSProxyAddr) {
-      let wsproxy_addr: string = this.resourceGroupWSProxyaddressInput.value;
+      let wsproxy_addr: string = this.resourceGroupWSProxyAddressInput.value;
       if (wsproxy_addr.endsWith('/')) {
         wsproxy_addr = wsproxy_addr.slice(0, wsproxy_addr.length - 1);
       }
@@ -716,6 +720,13 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
     this._launchDialogById('#resource-group-dialog');
   }
 
+  _validateWsproxyAddress(obj: any) {
+    const submitButton =
+      this.modifyResourceGroupButton || this.createResourceGroupButton;
+
+    submitButton.disabled = !obj.checkValidity();
+  }
+
   render() {
     // languate=HTML
     return html`
@@ -888,6 +899,12 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                   label="${_t('resourceGroup.WsproxyAddress')}"
                   placeholder="http://localhost:10200"
                   value="${this.resourceGroupInfo?.wsproxy_addr ?? ''}"
+                  autoValidate
+                  validationMessage="${_t('registry.DescURLFormat')}"
+                  @input="${(e) => {
+                    this._addInputValidator(e.target);
+                    this._validateWsproxyAddress(e.target);
+                  }}"
                 ></mwc-textfield>
               `
             : html``}
@@ -958,6 +975,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           ${Object.keys(this.resourceGroupInfo).length > 0
             ? html`
                 <mwc-button
+                  id="modify-resource-group"
                   class="full"
                   unelevated
                   icon="save"
@@ -967,6 +985,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
               `
             : html`
                 <mwc-button
+                  id="create-resource-group"
                   class="full"
                   unelevated
                   icon="add"
