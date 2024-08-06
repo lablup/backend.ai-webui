@@ -278,7 +278,10 @@
       "ProxyDirectTCPNotSupported": "尚不支持代理直接 TCP 连接",
       "InvalidPortFormat": "端口号格式不正确。",
       "DuplicatedPort": "有重复的端口。",
-      "FolderAliasOverlappingToAutoMount": "存在同名的自动挂载文件夹。"
+      "FolderAliasOverlappingToAutoMount": "存在同名的自动挂载文件夹。",
+      "SelectAgent": "选择代理",
+      "autoSelect": "自动选择",
+      "DescSelectAgent": "代理右侧显示的资源代表实际可用资源量。\n目前，代理选择仅适用于单节点单容器环境。\n默认设置是由调度程序分配代理。"
     },
     "Preparing": "正在准备...",
     "PreparingSession": "正在准备会议...",

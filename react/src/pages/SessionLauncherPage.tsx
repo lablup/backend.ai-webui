@@ -119,6 +119,7 @@ interface SessionConfig {
   startsAt?: string;
   startupCommand?: string;
   bootstrap_script?: string;
+  agent_list?: string;
 }
 
 interface CreateSessionInfo {
@@ -452,6 +453,9 @@ const SessionLauncherPage = () => {
               ..._.omit(values.hpcOptimization, 'autoEnabled'),
             },
             preopen_ports: transformPortValuesToNumbers(values.ports),
+            ...(!baiClient?._config?.hideAgents && values.agent !== 'auto'
+              ? { agent_list: values.agent }
+              : undefined),
           },
         };
 

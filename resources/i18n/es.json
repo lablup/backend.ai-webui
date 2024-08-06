@@ -1250,7 +1250,10 @@
       "ProxyDirectTCPNotSupported": "La conexión TCP directa de proxy aún no es compatible",
       "InvalidPortFormat": "El formato del número de puerto es incorrecto.",
       "DuplicatedPort": "Hay puertos duplicados.",
-      "FolderAliasOverlappingToAutoMount": "Existe una carpeta de montaje automático con el mismo nombre."
+      "FolderAliasOverlappingToAutoMount": "Existe una carpeta de montaje automático con el mismo nombre.",
+      "SelectAgent": "Seleccionar Agente",
+      "autoSelect": "Selección automática",
+      "DescSelectAgent": "Los recursos que se muestran en el lado derecho del agente representan la cantidad real de recursos disponibles. \nActualmente, la selección de agentes solo está disponible en un entorno de un solo nodo y un solo contenedor. \nLa configuración predeterminada es la asignación de agentes por parte del programador."
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",

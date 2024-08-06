@@ -278,7 +278,10 @@
       "ProxyDirectTCPNotSupported": "プロキシ直接 TCP 接続はまだサポートされていません",
       "InvalidPortFormat": "ポート番号の形式が正しくない。",
       "DuplicatedPort": "ポートが重複している。",
-      "FolderAliasOverlappingToAutoMount": "同名の自動マウントフォルダが存在する。"
+      "FolderAliasOverlappingToAutoMount": "同名の自動マウントフォルダが存在する。",
+      "SelectAgent": "エージェントの選択",
+      "autoSelect": "自動選択",
+      "DescSelectAgent": "エージェントの右側に表示されるリソースは、使用可能なリソースの実際の量を表します。\n現在、エージェントの選択は、単一ノード、単一コンテナー環境でのみ使用できます。\nデフォルト設定は、スケジューラによるエージェント割り当てです。"
     },
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",

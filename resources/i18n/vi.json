@@ -278,7 +278,10 @@
       "ProxyDirectTCPNotSupported": "Kết nối TCP trực tiếp proxy chưa được hỗ trợ",
       "InvalidPortFormat": "Định dạng số cổng không chính xác.",
       "DuplicatedPort": "Có cổng trùng lặp.",
-      "FolderAliasOverlappingToAutoMount": "Đã tồn tại một thư mục tự động gắn kết có cùng tên."
+      "FolderAliasOverlappingToAutoMount": "Đã tồn tại một thư mục tự động gắn kết có cùng tên.",
+      "SelectAgent": "Chọn đại lý",
+      "autoSelect": "Tự động lựa chọn",
+      "DescSelectAgent": "Các tài nguyên được hiển thị ở phía bên phải của tác nhân thể hiện số lượng tài nguyên sẵn có thực tế. \nHiện tại, lựa chọn tác nhân chỉ khả dụng trong môi trường vùng chứa đơn một nút. \nCài đặt mặc định là phân bổ nhân viên theo lịch trình."
     },
     "Preparing": "Đang chuẩn bị ...",
     "PreparingSession": "Đang chuẩn bị phiên ...",
