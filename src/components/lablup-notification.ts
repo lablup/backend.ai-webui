@@ -217,6 +217,7 @@ export default class LablupNotification extends LitElement {
       document.dispatchEvent(event);
       this._spawnDesktopNotification('Backend.AI', this.text, '');
     }
+    this.detail = ''; // Reset the temporary detail scripts
   }
 
   // /**
