@@ -994,7 +994,10 @@
     "MaxCustomizedImageCount": "Jumlah Gambar Khusus Maksimum",
     "CreatedAt": "Dibuat di",
     "MaxFolderCount": "Jumlah Folder Maks",
-    "ProjectResourcePolicy": "Kebijakan Sumber Daya Proyek"
+    "ProjectResourcePolicy": "Kebijakan Sumber Daya Proyek",
+    "NoDataToExport": "Data untuk ekstrak CSV tidak ada.",
+    "ExportCSV": "ekspor CSV",
+    "Tools": "Peralatan"
   },
   "registry": {
     "Hostname": "Nama host",

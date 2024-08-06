@@ -993,7 +993,10 @@
     "MaxCustomizedImageCount": "Maximale Anzahl benutzerdefinierter Bilder",
     "CreatedAt": "Hergestellt in",
     "MaxFolderCount": "Maximale Ordneranzahl",
-    "ProjectResourcePolicy": "Projektressourcenrichtlinie"
+    "ProjectResourcePolicy": "Projektressourcenrichtlinie",
+    "NoDataToExport": "Die Daten für den CSV-Extrakt sind nicht vorhanden.",
+    "ExportCSV": "CSV exportieren",
+    "Tools": "Werkzeuge"
   },
   "registry": {
     "Hostname": "Hostname",

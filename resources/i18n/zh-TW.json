@@ -993,7 +993,10 @@
     "MaxCustomizedImageCount": "最大自訂圖像數量",
     "CreatedAt": "創建於",
     "MaxFolderCount": "最大資料夾數",
-    "ProjectResourcePolicy": "專案資源政策"
+    "ProjectResourcePolicy": "專案資源政策",
+    "NoDataToExport": "CSV 擷取的資料不存在。",
+    "ExportCSV": "匯出 CSV",
+    "Tools": "工具"
   },
   "registry": {
     "Hostname": "主機名",

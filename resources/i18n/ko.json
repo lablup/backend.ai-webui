@@ -1105,7 +1105,10 @@
     "MaxCustomizedImageCount": "최대 사용자 정의 이미지 수",
     "CreatedAt": "생성 날짜",
     "MaxFolderCount": "최대 폴더 수",
-    "ProjectResourcePolicy": "프로젝트 자원 정책"
+    "ProjectResourcePolicy": "프로젝트 자원 정책",
+    "NoDataToExport": "CSV 추출을 위한 데이터가 존재하지 않습니다. ",
+    "ExportCSV": "CSV로 내보내기",
+    "Tools": "도구"
   },
   "registry": {
     "Hostname": "호스트명",

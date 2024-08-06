@@ -993,7 +993,10 @@
     "MaxCustomizedImageCount": "Maksymalna dostosowana liczba obrazów",
     "CreatedAt": "Utworzono o godz",
     "MaxFolderCount": "Maksymalna liczba folderów",
-    "ProjectResourcePolicy": "Polityka zasobów projektu"
+    "ProjectResourcePolicy": "Polityka zasobów projektu",
+    "NoDataToExport": "Dane do ekstraktu CSV nie istnieją.",
+    "ExportCSV": "eksportuj plik CSV",
+    "Tools": "Narzędzia"
   },
   "registry": {
     "Hostname": "Nazwa hosta",

@@ -993,7 +993,10 @@
     "MaxCustomizedImageCount": "Kiraan Imej Tersuai Maks",
     "CreatedAt": "Dicipta Pada",
     "MaxFolderCount": "Kiraan Folder Maks",
-    "ProjectResourcePolicy": "Dasar Sumber Projek"
+    "ProjectResourcePolicy": "Dasar Sumber Projek",
+    "NoDataToExport": "Data untuk ekstrak CSV tidak wujud.",
+    "ExportCSV": "eksport CSV",
+    "Tools": "Alatan"
   },
   "registry": {
     "Hostname": "Nama Hos",

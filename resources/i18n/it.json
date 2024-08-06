@@ -993,7 +993,10 @@
     "MaxQuotaScopeSize": "Dimensione massima ambito quota (GB)",
     "MaxCustomizedImageCount": "Conteggio massimo di immagini personalizzate",
     "CreatedAt": "Creato a",
-    "MaxFolderCount": "Conteggio massimo cartelle"
+    "MaxFolderCount": "Conteggio massimo cartelle",
+    "NoDataToExport": "I dati per l'estrazione CSV non esistono.",
+    "ExportCSV": "esportare CSV",
+    "Tools": "Utensili"
   },
   "registry": {
     "Hostname": "Nome host",

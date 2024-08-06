@@ -943,7 +943,10 @@
     "MaxCustomizedImageCount": "Suurin mukautettu kuvien määrä",
     "CreatedAt": "Luotu klo",
     "MaxFolderCount": "Kansioiden enimmäismäärä",
-    "ProjectResourcePolicy": "Projektin resurssipolitiikka"
+    "ProjectResourcePolicy": "Projektin resurssipolitiikka",
+    "NoDataToExport": "CSV-otteen tietoja ei ole olemassa.",
+    "ExportCSV": "vie CSV",
+    "Tools": "Työkalut"
   },
   "resourcePreset": {
     "AboutToDeletePreset": "Olet poistamassa tätä esiasetusta:",

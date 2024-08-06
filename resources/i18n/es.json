@@ -946,7 +946,10 @@
     "MaxCustomizedImageCount": "Número máximo de imágenes personalizadas",
     "CreatedAt": "Creado en",
     "MaxFolderCount": "Número máximo de carpetas",
-    "ProjectResourcePolicy": "Política de recursos del proyecto"
+    "ProjectResourcePolicy": "Política de recursos del proyecto",
+    "NoDataToExport": "Los datos para el extracto CSV no existen.",
+    "ExportCSV": "exportar CSV",
+    "Tools": "Herramientas"
   },
   "resourcePreset": {
     "AboutToDeletePreset": "Está a punto de borrar este preajuste:",

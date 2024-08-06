@@ -1,5 +1,6 @@
 import {
   bytesToGB,
+  exportCSVWithFormattingRules,
   filterEmptyItem,
   localeCompare,
   numberSorterWithInfinityValue,
@@ -16,12 +17,21 @@ import {
 import { ProjectResourcePolicySettingModalFragment$key } from './__generated__/ProjectResourcePolicySettingModalFragment.graphql';
 import {
   DeleteOutlined,
+  DownOutlined,
   PlusOutlined,
   ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 import { useLocalStorageState } from 'ahooks';
-import { Button, message, Popconfirm, Table, theme, Typography } from 'antd';
+import {
+  Button,
+  Dropdown,
+  message,
+  Popconfirm,
+  Space,
+  Table,
+  theme,
+} from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
@@ -106,6 +116,7 @@ const ProjectResourcePolicyList: React.FC<
     supportMaxVfolderCount && {
       title: t('resourcePolicy.MaxVFolderCount'),
       dataIndex: 'max_vfolder_count',
+      key: 'max_vfolder_count',
       render: (text: ProjectResourcePolicies) =>
         _.toNumber(text) === 0 ? '∞' : text,
       sorter: (a, b) =>
@@ -118,6 +129,7 @@ const ProjectResourcePolicyList: React.FC<
     supportMaxQuotaScopeSize && {
       title: t('resourcePolicy.MaxQuotaScopeSize'),
       dataIndex: 'max_quota_scope_size',
+      key: 'max_quota_scope_size',
       render: (text) => (text === -1 ? '∞' : bytesToGB(text)),
       sorter: (a, b) =>
         numberSorterWithInfinityValue(
@@ -129,17 +141,20 @@ const ProjectResourcePolicyList: React.FC<
     {
       title: 'ID',
       dataIndex: 'id',
+      key: 'id',
       sorter: (a, b) => localeCompare(a?.id, b?.id),
     },
     {
       title: t('resourcePolicy.CreatedAt'),
       dataIndex: 'created_at',
+      key: 'created_at',
       render: (text) => dayjs(text).format('lll'),
       sorter: (a, b) => localeCompare(a?.created_at, b?.created_at),
     },
     {
       title: t('general.Control'),
       fixed: 'right',
+      key: 'control',
       render: (text: any, row: ProjectResourcePolicies) => (
         <Flex direction="row" align="stretch">
           <Button
@@ -226,6 +241,30 @@ const ProjectResourcePolicyList: React.FC<
     },
   );
 
+  const handleExportCSV = () => {
+    if (!project_resource_policies) {
+      message.error(t('resourcePolicy.NoDataToExport'));
+      return;
+    }
+
+    const columnkeys = _.without(displayedColumnKeys, 'control');
+    const responseData = _.map(project_resource_policies, (policy) => {
+      return _.pick(
+        policy,
+        columnkeys.map((key) => key as keyof ProjectResourcePolicies),
+      );
+    });
+    exportCSVWithFormattingRules(
+      responseData as ProjectResourcePolicies[],
+      {
+        max_vfolder_count: (text: ProjectResourcePolicies) =>
+          _.toNumber(text) === 0 ? '-' : text,
+        max_quota_scope_size: (text) => (text === -1 ? '-' : bytesToGB(text)),
+      },
+      'project_resource_polices',
+    );
+  };
+
   return (
     <Flex direction="column" align="stretch">
       <Flex
@@ -240,9 +279,30 @@ const ProjectResourcePolicyList: React.FC<
         }}
       >
         <Flex direction="column" align="start">
-          <Typography.Text style={{ margin: 0, padding: 0 }}>
-            {t('resourcePolicy.ProjectResourcePolicy')}
-          </Typography.Text>
+          <Dropdown
+            menu={{
+              items: [
+                {
+                  key: 'exportCSV',
+                  label: t('resourcePolicy.ExportCSV'),
+                  onClick: () => {
+                    handleExportCSV();
+                  },
+                },
+              ],
+            }}
+          >
+            <Button
+              type="link"
+              style={{ padding: 0 }}
+              onClick={(e) => e.preventDefault()}
+            >
+              <Space style={{ color: token.colorLinkHover }}>
+                {t('resourcePolicy.Tools')}
+                <DownOutlined />
+              </Space>
+            </Button>
+          </Dropdown>
         </Flex>
         <Flex direction="row" gap={'xs'} wrap="wrap" style={{ flexShrink: 1 }}>
           <Flex gap={'xs'}>

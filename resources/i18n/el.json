@@ -993,7 +993,10 @@
     "MaxCustomizedImageCount": "Μέγιστος προσαρμοσμένος αριθμός εικόνων",
     "CreatedAt": "Δημιουργήθηκε στο",
     "MaxFolderCount": "Μέγιστος αριθμός φακέλων",
-    "ProjectResourcePolicy": "Πολιτική πόρων έργου"
+    "ProjectResourcePolicy": "Πολιτική πόρων έργου",
+    "NoDataToExport": "Τα δεδομένα για το απόσπασμα CSV δεν υπάρχουν.",
+    "ExportCSV": "εξαγωγή CSV",
+    "Tools": "Εργαλεία"
   },
   "registry": {
     "Hostname": "Όνομα κεντρικού υπολογιστή",

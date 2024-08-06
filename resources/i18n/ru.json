@@ -993,7 +993,10 @@
     "MaxCustomizedImageCount": "Максимальное количество индивидуальных изображений",
     "CreatedAt": "Создан в",
     "MaxFolderCount": "Максимальное количество папок",
-    "ProjectResourcePolicy": "Ресурсная политика проекта"
+    "ProjectResourcePolicy": "Ресурсная политика проекта",
+    "NoDataToExport": "Данные для извлечения CSV не существуют.",
+    "ExportCSV": "экспортировать CSV",
+    "Tools": "Инструменты"
   },
   "registry": {
     "Hostname": "Имя хоста",

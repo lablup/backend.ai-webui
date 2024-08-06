@@ -993,7 +993,10 @@
     "MaxCustomizedImageCount": "Contagem máxima de imagens personalizadas",
     "CreatedAt": "Criado em",
     "MaxFolderCount": "Contagem máxima de pastas",
-    "ProjectResourcePolicy": "Política de Recursos do Projeto"
+    "ProjectResourcePolicy": "Política de Recursos do Projeto",
+    "NoDataToExport": "Os dados para a extração CSV não existem.",
+    "ExportCSV": "exportar CSV",
+    "Tools": "Ferramentas"
   },
   "registry": {
     "Hostname": "nome de anfitrião",

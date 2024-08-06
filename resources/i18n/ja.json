@@ -993,7 +993,10 @@
     "MaxCustomizedImageCount": "カスタマイズされた画像の最大数",
     "CreatedAt": "作成日",
     "MaxFolderCount": "最大フォルダ数",
-    "ProjectResourcePolicy": "プロジェクトリソースポリシー"
+    "ProjectResourcePolicy": "プロジェクトリソースポリシー",
+    "NoDataToExport": "CSV抽出用のデータが存在しません。",
+    "ExportCSV": "CSVエクスポート",
+    "Tools": "ツール"
   },
   "registry": {
     "Hostname": "ホスト名",

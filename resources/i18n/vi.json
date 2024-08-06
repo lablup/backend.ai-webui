@@ -993,7 +993,10 @@
     "MaxCustomizedImageCount": "Số lượng hình ảnh tùy chỉnh tối đa",
     "CreatedAt": "Được tạo tại",
     "MaxFolderCount": "Số lượng thư mục tối đa",
-    "ProjectResourcePolicy": "Chính sách tài nguyên dự án"
+    "ProjectResourcePolicy": "Chính sách tài nguyên dự án",
+    "NoDataToExport": "Dữ liệu cho bản trích xuất CSV không tồn tại.",
+    "ExportCSV": "xuất CSV",
+    "Tools": "Công cụ"
   },
   "registry": {
     "Hostname": "Tên máy chủ",

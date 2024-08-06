@@ -1118,7 +1118,10 @@
     "MaxCustomizedImageCount": "Max Customized Image Count",
     "CreatedAt": "Created At",
     "MaxFolderCount": "Max Folder Count",
-    "ProjectResourcePolicy": "Project Resource Policy"
+    "ProjectResourcePolicy": "Project Resource Policy",
+    "NoDataToExport": "The data for the CSV extract does not exist.",
+    "ExportCSV": "export CSV",
+    "Tools": "Tools"
   },
   "registry": {
     "Hostname": "Hostname",

@@ -1,5 +1,6 @@
 import {
   bytesToGB,
+  exportCSVWithFormattingRules,
   filterEmptyItem,
   localeCompare,
   numberSorterWithInfinityValue,
@@ -16,12 +17,13 @@ import {
 import { UserResourcePolicySettingModalFragment$key } from './__generated__/UserResourcePolicySettingModalFragment.graphql';
 import {
   DeleteOutlined,
+  DownOutlined,
   PlusOutlined,
   ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 import { useLocalStorageState } from 'ahooks';
-import { App, Button, Popconfirm, Table, theme, Typography } from 'antd';
+import { App, Button, Dropdown, Popconfirm, Space, Table, theme } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
@@ -92,7 +94,6 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
         fetchKey: userResourcePolicyFetchKey,
       },
     );
-
   const [commitDelete, isInflightDelete] =
     useMutation<UserResourcePolicyListMutation>(graphql`
       mutation UserResourcePolicyListMutation($name: String!) {
@@ -114,6 +115,7 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
     supportMaxVfolderCount && {
       title: t('resourcePolicy.MaxVFolderCount'),
       dataIndex: 'max_vfolder_count',
+      key: 'max_vfolder_count',
       render: (text) => (_.toNumber(text) === 0 ? '∞' : text),
       sorter: (a, b) =>
         numberSorterWithInfinityValue(
@@ -125,6 +127,7 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
     supportMaxSessionCountPerModelSession && {
       title: t('resourcePolicy.MaxSessionCountPerModelSession'),
       dataIndex: 'max_session_count_per_model_session',
+      key: 'max_session_count_per_model_session',
       sorter: (a, b) =>
         (a?.max_session_count_per_model_session ?? 0) -
         (b?.max_session_count_per_model_session ?? 0),
@@ -132,6 +135,7 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
     supportMaxQuotaScopeSize && {
       title: t('resourcePolicy.MaxQuotaScopeSize'),
       dataIndex: 'max_quota_scope_size',
+      key: 'max_quota_scope_size',
       render: (text) => (text === -1 ? '∞' : bytesToGB(text)),
       sorter: (a, b) =>
         numberSorterWithInfinityValue(
@@ -142,6 +146,7 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
     },
     supportMaxCustomizedImageCount && {
       title: t('resourcePolicy.MaxCustomizedImageCount'),
+      key: 'max_customized_image_count',
       dataIndex: 'max_customized_image_count',
       sorter: (a, b) =>
         (a?.max_customized_image_count ?? 0) -
@@ -150,17 +155,20 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
     {
       title: 'ID',
       dataIndex: 'id',
+      key: 'id',
       sorter: (a, b) => localeCompare(a?.id, b?.id),
     },
     {
       title: t('resourcePolicy.CreatedAt'),
       dataIndex: 'created_at',
+      key: 'created_at',
       render: (text) => dayjs(text).format('lll'),
       sorter: (a, b) => localeCompare(a?.created_at, b?.created_at),
     },
     {
       title: t('general.Control'),
       fixed: 'right',
+      key: 'control',
       render: (text: any, row: UserResourcePolicies) => (
         <Flex direction="row" align="stretch">
           <Button
@@ -244,6 +252,30 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
     },
   );
 
+  const handleExportCSV = () => {
+    if (!user_resource_policies || !displayedColumnKeys) {
+      message.error(t('resourcePolicy.NoDataToExport'));
+      return;
+    }
+
+    const columnKeys = _.without(displayedColumnKeys, 'control');
+    const responseData = _.map(user_resource_policies, (policy) => {
+      return _.pick(
+        policy,
+        columnKeys.map((key) => key as keyof UserResourcePolicies),
+      );
+    });
+
+    exportCSVWithFormattingRules(
+      responseData as UserResourcePolicies[],
+      {
+        max_vfolder_count: (text) => (_.toNumber(text) === 0 ? '-' : text),
+        max_quota_scope_size: (text) => (text === -1 ? '-' : bytesToGB(text)),
+      },
+      'user-resource-policies',
+    );
+  };
+
   return (
     <Flex direction="column" align="stretch">
       <Flex
@@ -258,9 +290,30 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
         }}
       >
         <Flex direction="column" align="start">
-          <Typography.Text style={{ margin: 0, padding: 0 }}>
-            {t('resourcePolicy.UserResourcePolicy')}
-          </Typography.Text>
+          <Dropdown
+            menu={{
+              items: [
+                {
+                  key: 'exportCSV',
+                  label: t('resourcePolicy.ExportCSV'),
+                  onClick: () => {
+                    handleExportCSV();
+                  },
+                },
+              ],
+            }}
+          >
+            <Button
+              type="link"
+              style={{ padding: 0 }}
+              onClick={(e) => e.preventDefault()}
+            >
+              <Space style={{ color: token.colorLinkHover }}>
+                {t('resourcePolicy.Tools')}
+                <DownOutlined />
+              </Space>
+            </Button>
+          </Dropdown>
         </Flex>
         <Flex direction="row" gap={'xs'} wrap="wrap" style={{ flexShrink: 1 }}>
           <Flex gap={'xs'}>

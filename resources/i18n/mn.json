@@ -994,7 +994,10 @@
     "MaxQuotaScopeSize": "Хамгийн их квот хамрах хүрээний хэмжээ (ГБ)",
     "MaxCustomizedImageCount": "Хамгийн их тохируулсан зургийн тоо",
     "CreatedAt": "Үүсгэсэн",
-    "MaxFolderCount": "Хамгийн их хавтасны тоо"
+    "MaxFolderCount": "Хамгийн их хавтасны тоо",
+    "NoDataToExport": "CSV хандалтын өгөгдөл байхгүй байна.",
+    "ExportCSV": "CSV экспортлох",
+    "Tools": "Багаж хэрэгсэл"
   },
   "registry": {
     "Hostname": "Хостын нэр",
