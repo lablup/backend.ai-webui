@@ -191,9 +191,19 @@ export function iSizeToSize(
 }
 
 //
-function toFixedFloorWithoutTrailingZeros(num: number, fixed: number) {
-  var re = new RegExp('^-?\\d+(?:.\\d{0,' + (fixed || -1) + '})?');
-  return num.toString().match(re)?.[0] || '0';
+export function toFixedFloorWithoutTrailingZeros(
+  num: number | string,
+  fixed: number,
+) {
+  return typeof num === 'number'
+    ? parseFloat(num.toFixed(fixed)).toString()
+    : parseFloat(parseFloat(num).toFixed(fixed)).toString();
+}
+
+export function toFixedWithTypeValidation(num: number | string, fixed: number) {
+  return typeof num === 'number'
+    ? num.toFixed(fixed)
+    : parseFloat(num).toFixed(fixed);
 }
 
 export function compareNumberWithUnits(size1: string, size2: string) {

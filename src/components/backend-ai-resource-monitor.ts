@@ -88,12 +88,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           height: 5px;
           --mdc-theme-primary: #98be5a;
         }
-
-        .horizontal-panel lablup-progress-bar {
-          --progress-bar-width: 90px;
-        }
-
-        .vertical-panel lablup-progress-bar {
+        .lablup-progress-bar {
           --progress-bar-width: 186px;
         }
 
@@ -312,10 +307,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         @media screen and (max-width: 1015px) {
-          .horizontal-panel lablup-progress-bar {
-            --progress-bar-width: 8rem;
-          }
-
           div#resource-gauges {
             justify-content: center;
           }
@@ -604,6 +595,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       return parseInt(str) + postfix;
     }
   }
+  _prefixFormatWithTrailingZeros(num: string | number = '0', fixed: number) {
+    const number = typeof num === 'string' ? parseFloat(num) : num;
+    return parseFloat(number.toFixed(fixed)).toString();
+  }
+  _prefixFormat(num: string | number = '0;', fixed: number) {
+    return typeof num === 'string'
+      ? parseFloat(num)?.toFixed(fixed)
+      : num?.toFixed(fixed);
+  }
 
   render() {
     // language=HTML
@@ -643,25 +643,45 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                   class="start"
                   progress="${this.used_resource_group_slot_percent.cpu /
                   100.0}"
-                  description="${this.used_resource_group_slot.cpu}/${this
-                    .total_resource_group_slot.cpu}"
+                  description="${this._prefixFormatWithTrailingZeros(
+                    this.used_resource_group_slot.cpu,
+                    0,
+                  )} / ${this._prefixFormatWithTrailingZeros(
+                    this.total_resource_group_slot.cpu,
+                    0,
+                  )} Cores"
                 ></lablup-progress-bar>
                 <lablup-progress-bar
                   id="cpu-usage-bar-2"
                   class="end"
                   progress="${this.used_slot_percent.cpu / 100.0}"
-                  description="${this.used_slot.cpu}/${this.total_slot.cpu}"
+                  description="${this._prefixFormatWithTrailingZeros(
+                    this.used_slot.cpu,
+                    0,
+                  )} / ${this._prefixFormatWithTrailingZeros(
+                    this.total_slot.cpu,
+                    0,
+                  )} Cores"
                 ></lablup-progress-bar>
               </div>
               <div class="layout vertical center center-justified">
                 <span class="percentage start-bar">
                   ${this._numberWithPostfix(
-                    this.used_resource_group_slot_percent.cpu,
+                    this._prefixFormatWithTrailingZeros(
+                      this.used_resource_group_slot_percent.cpu,
+                      1,
+                    ),
                     '%',
                   )}
                 </span>
                 <span class="percentage end-bar">
-                  ${this._numberWithPostfix(this.used_slot_percent.cpu, '%')}
+                  ${this._numberWithPostfix(
+                    this._prefixFormatWithTrailingZeros(
+                      this.used_slot_percent.cpu,
+                      1,
+                    ),
+                    '%',
+                  )}
                 </span>
               </div>
             </div>
@@ -677,25 +697,45 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                   class="start"
                   progress="${this.used_resource_group_slot_percent.mem /
                   100.0}"
-                  description="${this.used_resource_group_slot.mem}/${this
-                    .total_resource_group_slot.mem}GiB"
+                  description="${this._prefixFormatWithTrailingZeros(
+                    this.used_resource_group_slot.mem,
+                    2,
+                  )} / ${this._prefixFormatWithTrailingZeros(
+                    this.total_resource_group_slot.mem,
+                    2,
+                  )} GiB"
                 ></lablup-progress-bar>
                 <lablup-progress-bar
                   id="mem-usage-bar-2"
                   class="end"
                   progress="${this.used_slot_percent.mem / 100.0}"
-                  description="${this.used_slot.mem}/${this.total_slot.mem}GiB"
+                  description="${this._prefixFormatWithTrailingZeros(
+                    this.used_slot.mem,
+                    2,
+                  )} / ${this._prefixFormatWithTrailingZeros(
+                    this.total_slot.mem,
+                    2,
+                  )} GiB"
                 ></lablup-progress-bar>
               </div>
               <div class="layout vertical center center-justified">
                 <span class="percentage start-bar">
                   ${this._numberWithPostfix(
-                    this.used_resource_group_slot_percent.mem,
+                    this._prefixFormatWithTrailingZeros(
+                      this.used_resource_group_slot_percent.mem,
+                      1,
+                    ),
                     '%',
                   )}
                 </span>
                 <span class="percentage end-bar">
-                  ${this._numberWithPostfix(this.used_slot_percent.mem, '%')}
+                  ${this._numberWithPostfix(
+                    this._prefixFormatWithTrailingZeros(
+                      this.used_slot_percent.mem,
+                      1,
+                    ),
+                    '%',
+                  )}
                 </span>
               </div>
             </div>
@@ -713,29 +753,42 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                         class="start"
                         progress="${this.used_resource_group_slot.cuda_device /
                         this.total_resource_group_slot.cuda_device}"
-                        description="${this.used_resource_group_slot
-                          .cuda_device}/${this.total_resource_group_slot
-                          .cuda_device}"
+                        description="${this.used_resource_group_slot.cuda_device.toFixed(
+                          2,
+                        )} / ${this.total_resource_group_slot.cuda_device.toFixed(
+                          2,
+                        )} CUDA GPUs"
                       ></lablup-progress-bar>
                       <lablup-progress-bar
                         id="gpu-usage-bar-2"
                         class="end"
                         progress="${this.used_slot.cuda_device}/${this
                           .total_slot.cuda_device}"
-                        description="${this.used_slot.cuda_device}/${this
-                          .total_slot.cuda_device}"
+                        description="${this._prefixFormat(
+                          this.used_slot.cuda_device,
+                          2,
+                        )} / ${this._prefixFormat(
+                          this.total_slot.cuda_device,
+                          2,
+                        )} CUDA GPUs"
                       ></lablup-progress-bar>
                     </div>
                     <div class="layout vertical center center-justified">
                       <span class="percentage start-bar">
                         ${this._numberWithPostfix(
-                          this.used_resource_group_slot_percent.cuda_device,
+                          this._prefixFormatWithTrailingZeros(
+                            this.used_resource_group_slot_percent.cuda_device,
+                            1,
+                          ),
                           '%',
                         )}
                       </span>
                       <span class="percentage end-bar">
                         ${this._numberWithPostfix(
-                          this.used_slot_percent.cuda_device,
+                          this._prefixFormatWithTrailingZeros(
+                            this.used_slot_percent.cuda_device,
+                            1,
+                          ),
                           '%',
                         )}
                       </span>
@@ -758,29 +811,45 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                         class="start"
                         progress="${this.used_resource_group_slot.cuda_shares /
                         this.total_resource_group_slot.cuda_shares}"
-                        description="${this.used_resource_group_slot
-                          .cuda_shares}/${this.total_resource_group_slot
-                          .cuda_shares}"
+                        description="${this._prefixFormat(
+                          this.used_resource_group_slot.cuda_shares,
+                          2,
+                        )} / ${this._prefixFormat(
+                          this.total_resource_group_slot.cuda_shares,
+                          2,
+                        )} CUDA FGPUs"
                       ></lablup-progress-bar>
                       <lablup-progress-bar
                         id="fgpu-usage-bar-2"
                         class="end"
                         progress="${this.used_slot.cuda_shares /
                         this.total_slot.cuda_shares}"
-                        description="${this.used_slot.cuda_shares}/${this
-                          .total_slot.cuda_shares}"
+                        description="${this._prefixFormat(
+                          this.used_slot.cuda_shares,
+                          2,
+                        )} /
+                        ${this._prefixFormat(
+                          this.total_slot.cuda_shares,
+                          2,
+                        )} CUDA FGPUs"
                       ></lablup-progress-bar>
                     </div>
                     <div class="layout vertical center center-justified">
                       <span class="percentage start-bar">
                         ${this._numberWithPostfix(
-                          this.used_resource_group_slot_percent.cuda_shares,
+                          this._prefixFormatWithTrailingZeros(
+                            this.used_resource_group_slot_percent.cuda_shares,
+                            1,
+                          ),
                           '%',
                         )}
                       </span>
                       <span class="percentage end-bar">
                         ${this._numberWithPostfix(
-                          this.used_slot_percent.cuda_shares,
+                          this._prefixFormatWithTrailingZeros(
+                            this.used_slot_percent.cuda_shares,
+                            1,
+                          ),
                           '%',
                         )}
                       </span>
@@ -806,29 +875,44 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                         class="start"
                         progress="${this.used_resource_group_slot_percent
                           .rocm_device / 100.0}"
-                        description="${this.used_resource_group_slot
-                          .rocm_device}/${this.total_resource_group_slot
-                          .rocm_device}"
+                        description="${this._prefixFormat(
+                          this.used_resource_group_slot.rocm_device,
+                          2,
+                        )} / ${this._prefixFormat(
+                          this.total_resource_group_slot.rocm_device,
+                          2,
+                        )} ROCm GPUs"
                       ></lablup-progress-bar>
                       <lablup-progress-bar
                         id="rocm-gpu-usage-bar-2"
                         class="end"
                         progress="${this.used_slot_percent.rocm_device / 100.0}"
                         buffer="${this.used_slot_percent.rocm_device / 100.0}"
-                        description="${this.used_slot.rocm_device}/${this
-                          .total_slot.rocm_device}"
+                        description="${this._prefixFormat(
+                          this.used_slot.rocm_device,
+                          2,
+                        )} / ${this._prefixFormat(
+                          this.total_slot.rocm_device,
+                          2,
+                        )} ROCm GPUs"
                       ></lablup-progress-bar>
                     </div>
                     <div class="layout vertical center center-justified">
                       <span class="percentage start-bar">
                         ${this._numberWithPostfix(
-                          this.used_resource_group_slot_percent.rocm_device,
+                          this._prefixFormatWithTrailingZeros(
+                            this.used_resource_group_slot_percent.rocm_device,
+                            1,
+                          ),
                           '%',
                         )}
                       </span>
                       <span class="percentage end-bar">
                         ${this._numberWithPostfix(
-                          this.used_slot_percent.rocm_device,
+                          this._prefixFormatWithTrailingZeros(
+                            this.used_slot_percent.rocm_device,
+                            1,
+                          ),
                           '%',
                         )}
                       </span>
@@ -850,29 +934,44 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                         class="start"
                         progress="${this.used_resource_group_slot_percent
                           .tpu_device / 100.0}"
-                        description="${this.used_resource_group_slot
-                          .tpu_device}/${this.total_resource_group_slot
-                          .tpu_device}"
+                        description="${this._prefixFormatWithTrailingZeros(
+                          this.used_resource_group_slot.tpu_device,
+                          2,
+                        )} / ${this._prefixFormatWithTrailingZeros(
+                          this.total_resource_group_slot.tpu_device,
+                          2,
+                        )} TPUs"
                       ></lablup-progress-bar>
                       <lablup-progress-bar
                         id="tpu-usage-bar-2"
                         class="end"
                         progress="${this.used_slot_percent.tpu_device / 100.0}"
                         buffer="${this.used_slot_percent.tpu_device / 100.0}"
-                        description="${this.used_slot.tpu_device}/${this
-                          .total_slot.tpu_device}"
+                        description="${this._prefixFormatWithTrailingZeros(
+                          this.used_slot.tpu_device,
+                          2,
+                        )}/${this._prefixFormatWithTrailingZeros(
+                          this.total_slot.tpu_device,
+                          2,
+                        )} TPUs"
                       ></lablup-progress-bar>
                     </div>
                     <div class="layout vertical center center-justified">
                       <span class="percentage start-bar">
                         ${this._numberWithPostfix(
-                          this.used_resource_group_slot_percent.tpu_device,
+                          this._prefixFormatWithTrailingZeros(
+                            this.used_resource_group_slot_percent.tpu_device,
+                            1,
+                          ),
                           '%',
                         )}
                       </span>
                       <span class="percentage end-bar">
                         ${this._numberWithPostfix(
-                          this.used_slot_percent.tpu_device,
+                          this._prefixFormatWithTrailingZeros(
+                            this.used_slot_percent.tpu_device,
+                            1,
+                          ),
                           '%',
                         )}
                       </span>
@@ -894,29 +993,44 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                         class="start"
                         progress="${this.used_resource_group_slot_percent
                           .ipu_device / 100.0}"
-                        description="${this.used_resource_group_slot
-                          .ipu_device}/${this.total_resource_group_slot
-                          .ipu_device}"
+                        description="${this._prefixFormatWithTrailingZeros(
+                          this.used_resource_group_slot.ipu_device,
+                          2,
+                        )} / ${this._prefixFormatWithTrailingZeros(
+                          this.total_resource_group_slot.ipu_device,
+                          2,
+                        )} IPUs"
                       ></lablup-progress-bar>
                       <lablup-progress-bar
                         id="ipu-usage-bar-2"
                         class="end"
                         progress="${this.used_slot_percent.ipu_device / 100.0}"
                         buffer="${this.used_slot_percent.ipu_device / 100.0}"
-                        description="${this.used_slot.ipu_device}/${this
-                          .total_slot.ipu_device}"
+                        description="${this._prefixFormatWithTrailingZeros(
+                          this.used_slot.ipu_device,
+                          2,
+                        )} / ${this._prefixFormatWithTrailingZeros(
+                          this.total_slot.ipu_device,
+                          2,
+                        )} "
                       ></lablup-progress-bar>
                     </div>
                     <div class="layout vertical center center-justified">
                       <span class="percentage start-bar">
                         ${this._numberWithPostfix(
-                          this.used_resource_group_slot_percent.ipu_device,
+                          this._prefixFormatWithTrailingZeros(
+                            this.used_resource_group_slot_percent.ipu_device,
+                            1,
+                          ),
                           '%',
                         )}
                       </span>
                       <span class="percentage end-bar">
                         ${this._numberWithPostfix(
-                          this.used_slot_percent.ipu_device,
+                          this._prefixFormatWithTrailingZeros(
+                            this.used_slot_percent.ipu_device,
+                            1,
+                          ),
                           '%',
                         )}
                       </span>
@@ -938,29 +1052,44 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                         class="start"
                         progress="${this.used_resource_group_slot_percent
                           .atom_device / 100.0}"
-                        description="${this.used_resource_group_slot
-                          .atom_device}/${this.total_resource_group_slot
-                          .atom_device}"
+                        description="${this._prefixFormatWithTrailingZeros(
+                          this.used_resource_group_slot.atom_device,
+                          2,
+                        )} / ${this._prefixFormatWithTrailingZeros(
+                          this.total_resource_group_slot.atom_device,
+                          2,
+                        )} ATOMs"
                       ></lablup-progress-bar>
                       <lablup-progress-bar
                         id="atom-usage-bar-2"
                         class="end"
                         progress="${this.used_slot_percent.atom_device / 100.0}"
                         buffer="${this.used_slot_percent.atom_device / 100.0}"
-                        description="${this.used_slot.atom_device}/${this
-                          .total_slot.atom_device}"
+                        description="${this._prefixFormatWithTrailingZeros(
+                          this.used_slot.atom_device,
+                          2,
+                        )} / ${this._prefixFormatWithTrailingZeros(
+                          this.total_slot.atom_device,
+                          2,
+                        )} ATOMs"
                       ></lablup-progress-bar>
                     </div>
                     <div class="layout vertical center center-justified">
                       <span class="percentage start-bar">
                         ${this._numberWithPostfix(
-                          this.used_resource_group_slot_percent.atom_device,
+                          this._prefixFormatWithTrailingZeros(
+                            this.used_resource_group_slot_percent.atom_device,
+                            1,
+                          ),
                           '%',
                         )}
                       </span>
                       <span class="percentage end-bar">
                         ${this._numberWithPostfix(
-                          this.used_slot_percent.atom_device,
+                          this._prefixFormatWithTrailingZeros(
+                            this.used_slot_percent.atom_device,
+                            1,
+                          ),
                           '%',
                         )}
                       </span>
@@ -982,9 +1111,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                         class="start"
                         progress="${this.used_resource_group_slot_percent
                           .atom_plus_device / 100.0}"
-                        description="${this.used_resource_group_slot
-                          .atom_plus_device}/${this.total_resource_group_slot
-                          .atom_plus_device}"
+                        description="${this._prefixFormatWithTrailingZeros(
+                          this.used_resource_group_slot.atom_plus_device,
+                          2,
+                        )} / ${this._prefixFormatWithTrailingZeros(
+                          this.total_resource_group_slot.atom_plus_device,
+                          2,
+                        )} ATOM+"
                       ></lablup-progress-bar>
                       <lablup-progress-bar
                         id="atom-plus-usage-bar-2"
@@ -993,8 +1126,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                         100.0}"
                         buffer="${this.used_slot_percent.atom_plus_device /
                         100.0}"
-                        description="${this.used_slot.atom_plus_device}/${this
-                          .total_slot.atom_plus_device}"
+                        description="${this._prefixFormatWithTrailingZeros(
+                          this.used_slot.atom_plus_device,
+                          2,
+                        )} / ${this._prefixFormatWithTrailingZeros(
+                          this.total_slot.atom_plus_device,
+                          2,
+                        )} ATOM+"
                       ></lablup-progress-bar>
                     </div>
                     <div class="layout vertical center center-justified">
@@ -1004,8 +1142,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                       "
                       >
                         ${this._numberWithPostfix(
-                          this.used_resource_group_slot_percent
-                            .atom_plus_device,
+                          this._prefixFormatWithTrailingZeros(
+                            this.used_resource_group_slot_percent
+                              .atom_plus_device,
+                            1,
+                          ),
                           '%',
                         )}
                       </span>
@@ -1015,7 +1156,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                       "
                       >
                         ${this._numberWithPostfix(
-                          this.used_slot_percent.atom_plus_device,
+                          this._prefixFormatWithTrailingZeros(
+                            this.used_slot_percent.atom_plus_device,
+                            1,
+                          ),
                           '%',
                         )}
                       </span>
@@ -1037,9 +1181,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                         class="start"
                         progress="${this.used_resource_group_slot_percent
                           .warboy_device / 100.0}"
-                        description="${this.used_resource_group_slot
-                          .warboy_device}/${this.total_resource_group_slot
-                          .warboy_device}"
+                        description="${this._prefixFormatWithTrailingZeros(
+                          this.used_resource_group_slot.warboy_device,
+                          2,
+                        )} / ${this._prefixFormatWithTrailingZeros(
+                          this.total_resource_group_slot.warboy_device,
+                          2,
+                        )} Warboys"
                       ></lablup-progress-bar>
                       <lablup-progress-bar
                         id="warboy-usage-bar-2"
@@ -1047,20 +1195,31 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                         progress="${this.used_slot_percent.warboy_device /
                         100.0}"
                         buffer="${this.used_slot_percent.warboy_device / 100.0}"
-                        description="${this.used_slot.warboy_device}/${this
-                          .total_slot.warboy_device}"
+                        description="${this._prefixFormatWithTrailingZeros(
+                          this.used_slot.warboy_device,
+                          2,
+                        )} / ${this._prefixFormatWithTrailingZeros(
+                          this.total_slot.warboy_device,
+                          2,
+                        )} Warboys"
                       ></lablup-progress-bar>
                     </div>
                     <div class="layout vertical center center-justified">
                       <span class="percentage start-bar">
                         ${this._numberWithPostfix(
-                          this.used_resource_group_slot_percent.warboy_device,
+                          this._prefixFormatWithTrailingZeros(
+                            this.used_resource_group_slot_percent.warboy_device,
+                            1,
+                          ),
                           '%',
                         )}
                       </span>
                       <span class="percentage end-bar">
                         ${this._numberWithPostfix(
-                          this.used_slot_percent.warboy_device,
+                          this._prefixFormatWithTrailingZeros(
+                            this.used_slot_percent.warboy_device,
+                            1,
+                          ),
                           '%',
                         )}
                       </span>
@@ -1082,9 +1241,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                         class="start"
                         progress="${this.used_resource_group_slot_percent
                           .hyperaccel_lpu_device / 100.0}"
-                        description="${this.used_resource_group_slot
-                          .hyperaccel_lpu_device}/${this
-                          .total_resource_group_slot.hyperaccel_lpu_device}"
+                        description="${this._prefixFormatWithTrailingZeros(
+                          this.used_resource_group_slot.hyperaccel_lpu_device,
+                          2,
+                        )} / ${this._prefixFormatWithTrailingZeros(
+                          this.total_resource_group_slot.hyperaccel_lpu_device,
+                          2,
+                        )} Hyperaccel LPUs"
                       ></lablup-progress-bar>
                       <lablup-progress-bar
                         id="hyperaccel-lpu-usage-bar-2"
@@ -1093,22 +1256,32 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                           .hyperaccel_lpu_device / 100.0}"
                         buffer="${this.used_slot_percent.hyperaccel_lpu_device /
                         100.0}"
-                        description="${this.used_slot
-                          .hyperaccel_lpu_device}/${this.total_slot
-                          .hyperaccel_lpu_device}"
+                        description="${this._prefixFormatWithTrailingZeros(
+                          this.used_slot.hyperaccel_lpu_device,
+                          2,
+                        )} / ${this._prefixFormatWithTrailingZeros(
+                          this.total_slot.hyperaccel_lpu_device,
+                          2,
+                        )} Hyperaccel LPUs"
                       ></lablup-progress-bar>
                     </div>
                     <div class="layout vertical center center-justified">
                       <span class="percentage start-bar">
                         ${this._numberWithPostfix(
-                          this.used_resource_group_slot_percent
-                            .hyperaccel_lpu_device,
+                          this._prefixFormatWithTrailingZeros(
+                            this.used_resource_group_slot_percent
+                              .hyperaccel_lpu_device,
+                            1,
+                          ),
                           '%',
                         )}
                       </span>
                       <span class="percentage end-bar">
                         ${this._numberWithPostfix(
-                          this.used_slot_percent.hyperaccel_lpu_device,
+                          this._prefixFormatWithTrailingZeros(
+                            this.used_slot_percent.hyperaccel_lpu_device,
+                            1,
+                          ),
                           '%',
                         )}
                       </span>
@@ -1129,16 +1302,24 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                   id="concurrency-usage-bar"
                   class="start"
                   progress="${this.used_slot_percent.concurrency / 100.0}"
-                  description="${this.concurrency_used}/${this
-                    .concurrency_max === 1000000
+                  description="${this._prefixFormatWithTrailingZeros(
+                    this.concurrency_used,
+                    0,
+                  )} / ${this.concurrency_max === 1000000
                     ? '∞'
-                    : parseInt(this.concurrency_max)}"
+                    : this._prefixFormatWithTrailingZeros(
+                        this.concurrency_max,
+                        2,
+                      )}"
                 ></lablup-progress-bar>
               </div>
               <div class="layout vertical center center-justified">
                 <span class="percentage end-bar" style="margin-top:0px;">
                   ${this._numberWithPostfix(
-                    this.used_slot_percent.concurrency,
+                    this._prefixFormatWithTrailingZeros(
+                      this.used_slot_percent.concurrency,
+                      1,
+                    ),
                     '%',
                   )}
                 </span>
@@ -1222,21 +1403,32 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                       id="cpu-project-usage-bar"
                       class="start"
                       progress="${this.used_project_slot_percent.cpu / 100.0}"
-                      description="${this.used_project_slot.cpu}/${this
-                        .total_project_slot.cpu === Infinity
+                      description="${this._prefixFormatWithTrailingZeros(
+                        this.used_project_slot.cpu,
+                        0,
+                      )} / ${this.total_project_slot.cpu === Infinity
                         ? '∞'
-                        : this.total_project_slot.cpu}"
+                        : this._prefixFormatWithTrailingZeros(
+                            this.total_project_slot.cpu,
+                            0,
+                          )} Cores"
                     ></lablup-progress-bar>
                     <div class="layout vertical center center-justified">
                       <span class="percentage start-bar">
                         ${this._numberWithPostfix(
-                          this.used_project_slot_percent.cpu,
+                          this._prefixFormatWithTrailingZeros(
+                            this.used_project_slot_percent.cpu,
+                            1,
+                          ),
                           '%',
                         )}
                       </span>
                       <span class="percentage end-bar">
                         ${this._numberWithPostfix(
-                          this.total_project_slot.cpu,
+                          this._prefixFormatWithTrailingZeros(
+                            this.total_project_slot.cpu,
+                            1,
+                          ),
                           '%',
                         )}
                       </span>
@@ -1250,21 +1442,30 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                       id="mem-project-usage-bar"
                       class="end"
                       progress="${this.used_project_slot_percent.mem / 100.0}"
-                      description=">${this.used_project_slot.mem}/${this
+                      description=">${this.used_project_slot.mem} / ${this
                         .total_project_slot.mem === Infinity
                         ? '∞'
-                        : this.total_project_slot.mem}"
+                        : this._prefixFormatWithTrailingZeros(
+                            this.total_project_slot.mem,
+                            2,
+                          )} GiB"
                     ></lablup-progress-bar>
                     <div class="layout vertical center center-justified">
                       <span class="percentage start-bar">
                         ${this._numberWithPostfix(
-                          this.used_project_slot_percent.mem,
+                          this._prefixFormatWithTrailingZeros(
+                            this.used_project_slot_percent.mem,
+                            1,
+                          ),
                           '%',
                         )}
                       </span>
                       <span class="percentage end-bar">
                         ${this._numberWithPostfix(
-                          this.total_project_slot.mem,
+                          this._prefixFormatWithTrailingZeros(
+                            this.total_project_slot.mem,
+                            1,
+                          ),
                           '%',
                         )}
                       </span>
@@ -1283,22 +1484,33 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                             class="end"
                             progress="${this.used_project_slot_percent
                               .cuda_device / 100.0}"
-                            description="${this.used_project_slot
-                              .cuda_device}/${this.total_project_slot
-                              .cuda_device === 'Infinity'
+                            description="${this._prefixFormatWithTrailingZeros(
+                              this.used_project_slot.cuda_device,
+                              2,
+                            )} / ${this.total_project_slot.cuda_device ===
+                            'Infinity'
                               ? '∞'
-                              : this.total_project_slot.cuda_device}"
+                              : this._prefixFormatWithTrailingZeros(
+                                  this.total_project_slot.cuda_device,
+                                  2,
+                                )} CUDA GPUs"
                           ></lablup-progress-bar>
                           <div class="layout vertical center center-justified">
                             <span class="percentage start-bar">
                               ${this._numberWithPostfix(
-                                this.used_project_slot_percent.cuda_device,
+                                this._prefixFormatWithTrailingZeros(
+                                  this.used_project_slot_percent.cuda_device,
+                                  1,
+                                ),
                                 '%',
                               )}
                             </span>
                             <span class="percentage end-bar">
                               ${this._numberWithPostfix(
-                                this.total_project_slot.cuda_device,
+                                this._prefixFormatWithTrailingZeros(
+                                  this.total_project_slot.cuda_device,
+                                  1,
+                                ),
                                 '%',
                               )}
                             </span>
@@ -1323,18 +1535,27 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                               .cuda_shares}/${this.total_project_slot
                               .cuda_shares === 'Infinity'
                               ? '∞'
-                              : this.total_project_slot.cuda_shares}"
+                              : this._prefixFormatWithTrailingZeros(
+                                  this.total_project_slot.cuda_shares,
+                                  2,
+                                )} CUDA FGPUs"
                           ></lablup-progress-bar>
                           <div class="layout vertical center center-justified">
                             <span class="percentage start-bar">
                               ${this._numberWithPostfix(
-                                this.used_project_slot_percent.cuda_shares,
+                                this._prefixFormatWithTrailingZeros(
+                                  this.used_project_slot_percent.cuda_shares,
+                                  1,
+                                ),
                                 '%',
                               )}
                             </span>
                             <span class="percentage end-bar">
                               ${this._numberWithPostfix(
-                                this.total_project_slot.cuda_shares,
+                                this._prefixFormatWithTrailingZeros(
+                                  this.total_project_slot.cuda_shares,
+                                  1,
+                                ),
                                 '%',
                               )}
                             </span>
@@ -1359,18 +1580,27 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                               .rocm_device}/${this.total_project_slot
                               .rocm_device === 'Infinity'
                               ? '∞'
-                              : this.total_project_slot.rocm_device}"
+                              : this._prefixFormatWithTrailingZeros(
+                                  this.total_project_slot.rocm_device,
+                                  2,
+                                )} ROCm GPUs"
                           ></lablup-progress-bar>
                           <div class="layout vertical center center-justified">
                             <span class="percentage start-bar">
                               ${this._numberWithPostfix(
-                                this.used_project_slot_percent.rocm_device,
+                                this._prefixFormatWithTrailingZeros(
+                                  this.used_project_slot_percent.rocm_device,
+                                  1,
+                                ),
                                 '%',
                               )}
                             </span>
                             <span class="percentage end-bar">
                               ${this._numberWithPostfix(
-                                this.total_project_slot.rocm_device,
+                                this._prefixFormatWithTrailingZeros(
+                                  this.total_project_slot.rocm_device,
+                                  1,
+                                ),
                                 '%',
                               )}
                             </span>
@@ -1395,18 +1625,27 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                               .tpu_device}/${this.total_project_slot
                               .tpu_device === 'Infinity'
                               ? '∞'
-                              : this.total_project_slot.tpu_device}"
+                              : this._prefixFormatWithTrailingZeros(
+                                  this.total_project_slot.tpu_device,
+                                  2,
+                                )} TPUs"
                           ></lablup-progress-bar>
                           <div class="layout vertical center center-justified">
                             <span class="percentage start-bar">
                               ${this._numberWithPostfix(
-                                this.used_project_slot_percent.tpu_device,
+                                this._prefixFormatWithTrailingZeros(
+                                  this.used_project_slot_percent.tpu_device,
+                                  1,
+                                ),
                                 '%',
                               )}
                             </span>
                             <span class="percentage end-bar">
                               ${this._numberWithPostfix(
-                                this.total_project_slot.tpu_device,
+                                this._prefixFormatWithTrailingZeros(
+                                  this.total_project_slot.tpu_device,
+                                  1,
+                                ),
                                 '%',
                               )}
                             </span>
@@ -1431,18 +1670,27 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                               .ipu_device}/${this.total_project_slot
                               .ipu_device === 'Infinity'
                               ? '∞'
-                              : this.total_project_slot.ipu_device}"
+                              : this._prefixFormatWithTrailingZeros(
+                                  this.total_project_slot.ipu_device,
+                                  2,
+                                )} IPUs"
                           ></lablup-progress-bar>
                           <div class="layout vertical center center-justified">
                             <span class="percentage start-bar">
                               ${this._numberWithPostfix(
-                                this.used_project_slot_percent.ipu_device,
+                                this._prefixFormatWithTrailingZeros(
+                                  this.used_project_slot_percent.ipu_device,
+                                  1,
+                                ),
                                 '%',
                               )}
                             </span>
                             <span class="percentage end-bar">
                               ${this._numberWithPostfix(
-                                this.total_project_slot.ipu_device,
+                                this._prefixFormatWithTrailingZeros(
+                                  this.total_project_slot.ipu_device,
+                                  1,
+                                ),
                                 '%',
                               )}
                             </span>
@@ -1467,18 +1715,27 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                               .atom_device}/${this.total_project_slot
                               .atom_device === 'Infinity'
                               ? '∞'
-                              : this.total_project_slot.atom_device}"
+                              : this._prefixFormatWithTrailingZeros(
+                                  this.total_project_slot.atom_device,
+                                  2,
+                                )} ATOMs"
                           ></lablup-progress-bar>
                           <div class="layout vertical center center-justified">
                             <span class="percentage start-bar">
                               ${this._numberWithPostfix(
-                                this.used_project_slot_percent.atom_device,
+                                this._prefixFormatWithTrailingZeros(
+                                  this.used_project_slot_percent.atom_device,
+                                  1,
+                                ),
                                 '%',
                               )}
                             </span>
                             <span class="percentage end-bar">
                               ${this._numberWithPostfix(
-                                this.total_project_slot.atom_device,
+                                this._prefixFormatWithTrailingZeros(
+                                  this.total_project_slot.atom_device,
+                                  1,
+                                ),
                                 '%',
                               )}
                             </span>
@@ -1503,18 +1760,27 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                               .warboy_device}/${this.total_project_slot
                               .warboy_device === 'Infinity'
                               ? '∞'
-                              : this.total_project_slot.warboy_device}"
+                              : this._prefixFormatWithTrailingZeros(
+                                  this.total_project_slot.warboy_device,
+                                  2,
+                                )} Warboys"
                           ></lablup-progress-bar>
                           <div class="layout vertical center center-justified">
                             <span class="percentage start-bar">
                               ${this._numberWithPostfix(
-                                this.used_project_slot_percent.warboy_device,
+                                this._prefixFormatWithTrailingZeros(
+                                  this.used_project_slot_percent.warboy_device,
+                                  1,
+                                ),
                                 '%',
                               )}
                             </span>
                             <span class="percentage end-bar">
                               ${this._numberWithPostfix(
-                                this.total_project_slot.warboy_device,
+                                this._prefixFormatWithTrailingZeros(
+                                  this.total_project_slot.warboy_device,
+                                  1,
+                                ),
                                 '%',
                               )}
                             </span>
@@ -1539,19 +1805,28 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                               .hyperaccel_lpu_device}/${this.total_project_slot
                               .hyperaccel_lpu_device === 'Infinity'
                               ? '∞'
-                              : this.total_project_slot.hyperaccel_lpu_device}"
+                              : this._prefixFormatWithTrailingZeros(
+                                  this.total_project_slot.hyperaccel_lpu_device,
+                                  2,
+                                )} Hyperaccel LPUs"
                           ></lablup-progress-bar>
                           <div class="layout vertical center center-justified">
                             <span class="percentage start-bar">
                               ${this._numberWithPostfix(
-                                this.used_project_slot_percent
-                                  .hyperaccel_lpu_device,
+                                this._prefixFormatWithTrailingZeros(
+                                  this.used_project_slot_percent
+                                    .hyperaccel_lpu_device,
+                                  1,
+                                ),
                                 '%',
                               )}
                             </span>
                             <span class="percentage end-bar">
                               ${this._numberWithPostfix(
-                                this.total_project_slot.hyperaccel_lpu_device,
+                                this._prefixFormatWithTrailingZeros(
+                                  this.total_project_slot.hyperaccel_lpu_device,
+                                  1,
+                                ),
                                 '%',
                               )}
                             </span>
