@@ -666,14 +666,15 @@
       "ShareFolder": "Kongsi folder",
       "ModifyPermissions": "Ubah suai kebenaran",
       "LeaveFolder": "Tinggalkan folder",
-      "MoveToTrashBin": "Pindah ke tong sampah",
+      "MoveToTrash": "Pindah ke tong sampah",
       "MovedToTrashBin": "Folder {{ folderName }} telah dialihkan ke tong sampah.",
       "DeleteForever": "Padam selama-lamanya",
       "Restore": "Pulihkan",
       "FolderRestored": "Folder {{ folderName }} telah dipulihkan.",
       "FolderDeletedForever": "Folder {{ folderName }} telah dipadamkan selama-lamanya.",
       "FolderCloneFailed": "Gagal mengklon folder.",
-      "FolderClonePending": "Pengklonan folder sedang dijalankan."
+      "FolderClonePending": "Pengklonan folder sedang dijalankan.",
+      "MoveToTrashDescription": "Adakah anda pasti mahu mengalihkan \"{{ folderName }}\" ke sampah?"
     },
     "explorer": {
       "Delete": "Padamkan ...",

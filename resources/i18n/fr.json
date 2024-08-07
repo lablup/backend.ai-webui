@@ -670,10 +670,11 @@
       "DeleteForever": "Supprimer pour toujours",
       "FolderRestored": "Le dossier {{ folderName }} a été restauré.",
       "FolderDeletedForever": "Le dossier {{ folderName }} a été supprimé définitivement.",
-      "MoveToTrashBin": "Déplacer vers la poubelle",
+      "MoveToTrash": "Mettre à la corbeille",
       "MovedToTrashBin": "Le dossier {{ folderName }} a été déplacé vers la corbeille.",
       "FolderCloneFailed": "Échec du clonage du dossier.",
-      "FolderClonePending": "Le clonage du dossier est en cours."
+      "FolderClonePending": "Le clonage du dossier est en cours.",
+      "MoveToTrashDescription": "Êtes-vous sûr de vouloir déplacer \"{{ folderName }}\" vers la corbeille ?"
     },
     "explorer": {
       "Delete": "Effacer...",

@@ -670,10 +670,11 @@
       "Restore": "Restaurar",
       "FolderRestored": "A pasta {{ folderName }} foi restaurada.",
       "FolderDeletedForever": "A pasta {{ folderName }} foi excluída definitivamente.",
-      "MoveToTrashBin": "Mover para a lixeira",
+      "MoveToTrash": "Mover para lixeira",
       "MovedToTrashBin": "A pasta {{ folderName }} foi movida para a lixeira.",
       "FolderCloneFailed": "Falha ao clonar a pasta.",
-      "FolderClonePending": "A clonagem da pasta está a decorrer."
+      "FolderClonePending": "A clonagem da pasta está a decorrer.",
+      "MoveToTrashDescription": "Tem certeza de que deseja mover \"{{ folderName }}\" para a lixeira?"
     },
     "explorer": {
       "Delete": "Excluir...",

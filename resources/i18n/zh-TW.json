@@ -670,10 +670,11 @@
       "DeleteForever": "永久刪除",
       "FolderRestored": "{{ folderName }} 資料夾已恢復。",
       "FolderDeletedForever": "{{ folderName }} 資料夾已永久刪除。",
-      "MoveToTrashBin": "移至垃圾箱",
+      "MoveToTrash": "移到廢紙簍",
       "MovedToTrashBin": "{{ folderName }} 資料夾已移至垃圾箱。",
       "FolderCloneFailed": "克隆文件夹失败。",
-      "FolderClonePending": "正在克隆文件夹。"
+      "FolderClonePending": "正在克隆文件夹。",
+      "MoveToTrashDescription": "您確定要將 \"{{ folderName }}\" 移至回收站嗎？"
     },
     "explorer": {
       "Delete": "刪除...",

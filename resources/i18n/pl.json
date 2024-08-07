@@ -670,10 +670,11 @@
       "DeleteForever": "Usuń na zawsze",
       "FolderRestored": "Folder {{ folderName }} został przywrócony.",
       "FolderDeletedForever": "Folder {{ folderName }} został usunięty na zawsze.",
-      "MoveToTrashBin": "Przenieś do kosza",
+      "MoveToTrash": "Przenieść do kosza",
       "MovedToTrashBin": "Folder {{ folderName }} został przeniesiony do kosza.",
       "FolderCloneFailed": "Nie udało się sklonować folderu.",
-      "FolderClonePending": "Klonowanie folderu jest w toku."
+      "FolderClonePending": "Klonowanie folderu jest w toku.",
+      "MoveToTrashDescription": "Czy na pewno chcesz przenieść folder \"{{ folderName }}\" do kosza?"
     },
     "explorer": {
       "Delete": "Kasować...",
