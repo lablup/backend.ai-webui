@@ -42,6 +42,7 @@ export default function ImageList() {
   const [environmentFetchKey, updateEnvironmentFetchKey] =
     useUpdatableState('initial-fetch');
   const [, startRefetchTransition] = useTransition();
+  const [installingImages, setInstallingImages] = useState<string[]>([]);
 
   const onSelectChange = (newSelectedRowKeys: Key[]) => {
     setSelectedRowKeys(newSelectedRowKeys);
@@ -118,10 +119,13 @@ export default function ImageList() {
       dataIndex: 'installed',
       key: 'installed',
       sorter: sortBasedOnInstalled,
-      render: (text, row) =>
-        row?.installed ? (
+      render: (text, row) => {
+        if (row?.id && installingImages.includes(row.id))
+          return <Tag color="gold">{t('environment.Installing')}</Tag>;
+        return row?.installed ? (
           <Tag color="gold">{t('environment.Installed')}</Tag>
-        ) : null,
+        ) : null;
+      },
     },
     {
       title: t('environment.Registry'),
@@ -328,11 +332,13 @@ export default function ImageList() {
       />
       <ImageInstallModal
         open={isOpenInstallModal}
-        onRequestClose={(success) => {
+        onRequestClose={() => {
           setIsOpenInstallModal(false);
         }}
         selectedRowKeys={selectedRowKeys}
         images={images as EnvironmentImage[]}
+        setInstallingImages={setInstallingImages}
+        setSelectedRowKeys={setSelectedRowKeys}
       />
     </>
   );

@@ -1,33 +1,42 @@
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useSetBAINotification } from '../hooks/useBAINotification';
+import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import { EnvironmentImage } from './ImageList';
 import { App, List } from 'antd';
+import { SetStateAction } from 'jotai';
 import _ from 'lodash';
-import { Key } from 'react';
+import { Dispatch, Key } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface ImageInstallModalInterface extends BAIModalProps {
   open: boolean;
-  onRequestClose: (success: boolean) => void;
+  onRequestClose: () => void;
   selectedRowKeys: Key[];
   images: EnvironmentImage[];
+  setInstallingImages: Dispatch<SetStateAction<string[]>>;
+  setSelectedRowKeys: Dispatch<SetStateAction<Key[]>>;
 }
 export default function ImageInstallModal({
   open,
   onRequestClose,
   selectedRowKeys,
   images,
+  setInstallingImages,
+  setSelectedRowKeys,
 }: ImageInstallModalInterface) {
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
   const { message } = App.useApp();
+  const { upsertNotification } = useSetBAINotification();
+  const painKiller = usePainKiller();
 
   if (!open) return null;
 
   if (selectedRowKeys.length === 0) {
     message.warning(t('environment.NoImagesAreSelected'));
-    onRequestClose(false);
+    onRequestClose();
     return null;
   }
 
@@ -48,20 +57,13 @@ export default function ImageInstallModal({
 
   if (imagesToInstall.length === 0) {
     message.warning(t('environment.AlreadyInstalledImage'));
-    onRequestClose(false);
+    onRequestClose();
     return null;
   }
 
   const handleClick = () => {
+    onRequestClose();
     imagesToInstall.forEach(async (image) => {
-      const selectedImageLabel =
-        '[id="' +
-        image?.registry?.replace(/\./gi, '-') +
-        '-' +
-        image?.name?.replace('/', '-') +
-        '-' +
-        image?.tag?.replace(/\./gi, '-') +
-        '"]';
       const imageName = image?.registry + '/' + image?.name + ':' + image?.tag;
       let isGPURequired = false;
       const imageResource = {} as { [key: string]: any };
@@ -122,8 +124,45 @@ export default function ImageInstallModal({
       imageResource.type = 'batch';
       imageResource.startupCommand = 'echo "Image is installed"';
 
-      // const imageInstallPromise = baiClient.image.install(imageName,image?.architecture,imageResource);
+      upsertNotification({
+        message: `${t('environment.InstallingImage')}${imageName}${t('environment.TakesTime')}`,
+        open: true,
+        duration: 2,
+      });
+
+      //@ts-ignore
+      const indicator = await globalThis.lablupIndicator.start('indeterminate');
+      indicator.set(10, t('import.Downloading'));
+      baiClient.image
+        .install(imageName, image?.architecture, imageResource)
+        .then(() => {
+          indicator.end(1000);
+        })
+        .catch((error: any) => {
+          setInstallingImages(
+            imagesToInstall
+              .map((item) => item?.id)
+              .filter(
+                (id): id is string =>
+                  id !== null && id !== undefined && id !== image?.id,
+              ),
+          );
+          // @ts-ignore
+          globalThis.lablupNotification.text = painKiller.relieve(error.title);
+          // @ts-ignore
+          globalThis.lablupNotification.detail = error.message;
+          // @ts-ignore
+          globalThis.lablupNotification.show(true, error);
+          indicator.set(100, t('environment.DescProblemOccurred'));
+          indicator.end(1000);
+        });
     });
+    setInstallingImages(
+      imagesToInstall
+        .map((item) => item?.id)
+        .filter((id): id is string => id !== null && id !== undefined),
+    );
+    setSelectedRowKeys([]);
   };
 
   return (
@@ -131,7 +170,7 @@ export default function ImageInstallModal({
       destroyOnClose
       open={open}
       maskClosable={false}
-      onCancel={() => onRequestClose(false)}
+      onCancel={() => onRequestClose()}
       title={t('dialog.title.LetsDouble-Check')}
       okText={t('environment.Install')}
       onOk={handleClick}
