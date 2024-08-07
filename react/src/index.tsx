@@ -36,12 +36,6 @@ const UserInfoModal = React.lazy(() => import('./components/UserInfoModal'));
 const UserSettingsModal = React.lazy(
   () => import('./components/UserSettingModal'),
 );
-const ManageAppsModal = React.lazy(
-  () => import('./components/ManageAppsModal'),
-);
-const ManageImageResourceLimitModal = React.lazy(
-  () => import('./components/ManageImageResourceLimitModal'),
-);
 const UserDropdownMenu = React.lazy(
   () => import('./components/UserDropdownMenu'),
 );
@@ -113,28 +107,6 @@ customElements.define(
     return (
       <DefaultProviders {...props}>
         <UserSettingsModal draggable />
-      </DefaultProviders>
-    );
-  }),
-);
-
-customElements.define(
-  'backend-ai-react-manage-app-dialog',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <ManageAppsModal />
-      </DefaultProviders>
-    );
-  }),
-);
-
-customElements.define(
-  'backend-ai-react-manage-resource-dialog',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <ManageImageResourceLimitModal />
       </DefaultProviders>
     );
   }),
@@ -283,13 +255,11 @@ const root = ReactDOM.createRoot(
   document.getElementById('react-root') as HTMLElement,
 );
 root.render(
-  <React.StrictMode>
-    <JotaiProvider store={jotaiStore}>
-      <ThemeModeProvider>
-        <App />
-      </ThemeModeProvider>
-    </JotaiProvider>
-  </React.StrictMode>,
+  <JotaiProvider store={jotaiStore}>
+    <ThemeModeProvider>
+      <App />
+    </ThemeModeProvider>
+  </JotaiProvider>,
 );
 
 customElements.define(

@@ -1,3 +1,4 @@
+
 {
   "webui": {
     "menu": {
@@ -968,7 +969,10 @@
     "CustomizedImageSuccessfullyDeleted": "Customized image successfully deleted.",
     "DescImageResourceModified": "Resource limit successfully modified",
     "DescImagePortsModified": "Image Ports successfully modified",
-    "ModifyImageResourceLimitReinstallRequired": "<p>If you modify an image that has already been installed, you will need to reinstall the image.</p><p>Modifications will not be applied until the image is reinstalled. \n</p>"
+    "ModifyImageResourceLimitReinstallRequired": "<p>If you modify an image that has already been installed, you will need to reinstall the image.</p><p>Modifications will not be applied until the image is reinstalled. \n</p>",
+    "NoImagesAreSelected":"No images are selected",
+    "AlreadyInstalledImage":"Already installed image",
+    "ExcludesImagesThatAreAlreadyInstalled":"Excludes images that are already installed" 
   },
   "resourcePreset": {
     "ResourcePresets": "Resource Presets",

@@ -1,4 +1,5 @@
 import { Image } from '../components/ImageEnvironmentSelectFormItems';
+import { EnvironmentImage } from '../components/ImageList';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { CommittedImage } from '../pages/MyEnvironmentPage';
 import { SorterResult } from 'antd/es/table/interface';
@@ -301,7 +302,9 @@ export const isOutsideRangeWithUnits = (
   return false;
 };
 
-export const getImageFullName = (image: Image | CommittedImage) => {
+export const getImageFullName = (
+  image: Image | CommittedImage | EnvironmentImage,
+) => {
   return image
     ? `${image.registry}/${image.name}:${image.tag}@${image.architecture}`
     : undefined;
