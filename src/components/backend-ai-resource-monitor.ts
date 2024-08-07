@@ -599,7 +599,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     const number = typeof num === 'string' ? parseFloat(num) : num;
     return parseFloat(number.toFixed(fixed)).toString();
   }
-  _prefixFormat(num: string | number = '0;', fixed: number) {
+  _prefixFormat(num: string | number = '0', fixed: number) {
     return typeof num === 'string'
       ? parseFloat(num)?.toFixed(fixed)
       : num?.toFixed(fixed);
@@ -753,9 +753,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                         class="start"
                         progress="${this.used_resource_group_slot.cuda_device /
                         this.total_resource_group_slot.cuda_device}"
-                        description="${this.used_resource_group_slot.cuda_device.toFixed(
+                        description="${this._prefixFormat(
+                          this.used_resource_group_slot.cuda_device,
                           2,
-                        )} / ${this.total_resource_group_slot.cuda_device.toFixed(
+                        )} / ${this._prefixFormat(
+                          this.total_resource_group_slot.cuda_device,
                           2,
                         )} CUDA GPUs"
                       ></lablup-progress-bar>
