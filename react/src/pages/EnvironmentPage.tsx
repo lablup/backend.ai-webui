@@ -1,5 +1,6 @@
 import ContainerRegistryList from '../components/ContainerRegistryList';
 import Flex from '../components/Flex';
+import ImageList from '../components/ImageList';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { theme } from 'antd';
 import Card from 'antd/es/card/Card';
@@ -61,15 +62,19 @@ const EnvironmentPage = () => {
         },
       }}
     >
-      <Flex
-        style={{
-          display: curTabKey === 'image' ? 'block' : 'none',
-          paddingTop: token.paddingContentVerticalSM,
-        }}
-      >
-        {/* @ts-ignore */}
-        <backend-ai-environment-list active={curTabKey === 'image'} />
-      </Flex>
+      {curTabKey === 'image' ? (
+        <Flex
+          style={{
+            display: 'block',
+            paddingTop: token.paddingContentVerticalSM,
+          }}
+        >
+          <Suspense>
+            <ImageList />
+          </Suspense>
+        </Flex>
+      ) : null}
+
       <Flex
         style={{
           display: curTabKey === 'preset' ? 'block' : 'none',

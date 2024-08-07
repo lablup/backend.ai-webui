@@ -107,26 +107,28 @@ export const ConstraintTags: React.FC<ConstraintTagsProps> = ({
   const [, { getFilteredRequirementsTags, getCustomTag, tagAlias }] =
     useBackendAIImageMetaData();
   return (
-    <Flex>
+    <Flex direction="column" align="start">
       {_.map(getFilteredRequirementsTags(image), (tag, index) => (
         <Tag key={index} color="blue" {...props}>
           {tagAlias(tag || '')}
         </Tag>
       ))}
-      <DoubleTag
-        color="cyan"
-        values={[
-          {
-            label: 'Customized',
-            color: 'cyan',
-          },
-          {
-            label: getCustomTag(labels),
-            color: 'cyan',
-          },
-        ]}
-        {...props}
-      />
+      {getCustomTag(labels) ? (
+        <DoubleTag
+          color="cyan"
+          values={[
+            {
+              label: 'Customized',
+              color: 'cyan',
+            },
+            {
+              label: getCustomTag(labels),
+              color: 'cyan',
+            },
+          ]}
+          {...props}
+        />
+      ) : null}
     </Flex>
   );
 };
