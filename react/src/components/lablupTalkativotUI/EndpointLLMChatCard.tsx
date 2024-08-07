@@ -134,7 +134,7 @@ const EndpointLLMChatCard: React.FC<EndpointLLMChatCardProps> = ({
             <Button
               icon={<CloseOutlined />}
               type="text"
-              style={{ color: token.colorBgMask }}
+              style={{ color: token.colorIcon }}
             />
           </Popconfirm>
         ) : undefined
