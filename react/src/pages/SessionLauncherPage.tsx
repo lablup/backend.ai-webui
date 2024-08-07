@@ -1733,13 +1733,15 @@ const SessionLauncherPage = () => {
           setSelectedFolderName(undefined);
         }}
       /> */}
-      <SessionLauncherValidationTour
-        open={validationTourOpen}
-        onClose={() => {
-          setValidationTourOpen(false);
-        }}
-        scrollIntoViewOptions
-      />
+      {currentStep === steps.length - 1 ? (
+        <SessionLauncherValidationTour
+          open={validationTourOpen}
+          onClose={() => {
+            setValidationTourOpen(false);
+          }}
+          scrollIntoViewOptions
+        />
+      ) : undefined}
     </Flex>
   );
 };
