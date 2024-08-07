@@ -121,9 +121,16 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
                   : null,
               },
             },
-            onCompleted: (res, err) => {
-              if (err || !res.modify_image?.ok) {
-                message.error(t('dialog.ErrorOccurred'));
+            onCompleted: (res, errors) => {
+              if (!res?.modify_image?.ok) {
+                message.error(res?.modify_image?.msg);
+                return;
+              }
+              if (errors && errors?.length > 0) {
+                const errorMsgList = _.map(errors, (error) => error.message);
+                for (const error of errorMsgList) {
+                  message.error(error, 2.5);
+                }
               } else {
                 message.success(t('environment.DescImagePortsModified'));
                 onRequestClose(true);

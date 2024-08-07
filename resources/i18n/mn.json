@@ -673,9 +673,10 @@
       "FolderRestored": "{{ folderName }} хавтас сэргээгдсэн.",
       "FolderDeletedForever": "{{ folderName }} хавтас бүрмөсөн устгагдсан.",
       "MovedToTrashBin": "{{ folderName }} фолдерыг хогийн сав руу зөөв.",
-      "MoveToTrashBin": "Хогийн сав руу шилжүүлнэ үү",
+      "MoveToTrash": "Хогийн сав руу шилжүүлэх",
       "FolderCloneFailed": "Фолдерыг хуулбарлаж чадсангүй.",
-      "FolderClonePending": "Фолдерыг хуулбарлаж байна."
+      "FolderClonePending": "Фолдерыг хуулбарлаж байна.",
+      "MoveToTrashDescription": "Та \"{{ folderName }}\"-г хогийн сав руу зөөхдөө итгэлтэй байна уу?"
     },
     "explorer": {
       "Delete": "Устгах ...",
@@ -994,7 +995,10 @@
     "MaxQuotaScopeSize": "Хамгийн их квот хамрах хүрээний хэмжээ (ГБ)",
     "MaxCustomizedImageCount": "Хамгийн их тохируулсан зургийн тоо",
     "CreatedAt": "Үүсгэсэн",
-    "MaxFolderCount": "Хамгийн их хавтасны тоо"
+    "MaxFolderCount": "Хамгийн их хавтасны тоо",
+    "NoDataToExport": "CSV хандалтын өгөгдөл байхгүй байна.",
+    "ExportCSV": "CSV экспортлох",
+    "Tools": "Багаж хэрэгсэл"
   },
   "registry": {
     "Hostname": "Хостын нэр",

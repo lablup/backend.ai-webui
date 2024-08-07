@@ -670,10 +670,11 @@
       "DeleteForever": "Xóa vĩnh viễn",
       "FolderRestored": "Thư mục {{ folderName }} đã được khôi phục.",
       "FolderDeletedForever": "Thư mục {{ folderName }} đã bị xóa vĩnh viễn.",
-      "MoveToTrashBin": "Di chuyển vào thùng rác",
+      "MoveToTrash": "Di chuyển vào thùng rác",
       "MovedToTrashBin": "Thư mục {{ folderName }} đã được chuyển vào thùng rác.",
       "FolderCloneFailed": "Không sao chép được thư mục.",
-      "FolderClonePending": "Đang nhân bản thư mục."
+      "FolderClonePending": "Đang nhân bản thư mục.",
+      "MoveToTrashDescription": "Bạn có chắc chắn muốn chuyển \"{{ folderName }}\" vào thùng rác không?"
     },
     "explorer": {
       "Delete": "Xóa bỏ...",
@@ -993,7 +994,10 @@
     "MaxCustomizedImageCount": "Số lượng hình ảnh tùy chỉnh tối đa",
     "CreatedAt": "Được tạo tại",
     "MaxFolderCount": "Số lượng thư mục tối đa",
-    "ProjectResourcePolicy": "Chính sách tài nguyên dự án"
+    "ProjectResourcePolicy": "Chính sách tài nguyên dự án",
+    "NoDataToExport": "Dữ liệu cho bản trích xuất CSV không tồn tại.",
+    "ExportCSV": "xuất CSV",
+    "Tools": "Công cụ"
   },
   "registry": {
     "Hostname": "Tên máy chủ",

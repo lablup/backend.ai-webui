@@ -884,6 +884,32 @@ export default class BackendAiStorageList extends BackendAIPage {
           </mwc-button>
         </div>
       </backend-ai-dialog>
+      <backend-ai-dialog id="delete-folder-without-confirm-dialog">
+        <span slot="title">${_t('data.folders.MoveToTrash')}</span>
+        <div slot="content">
+          <div>
+            ${_t('data.folders.MoveToTrashDescription', {
+              folderName: this.deleteFolderName || '',
+            })}
+          </div>
+        </div>
+        <div slot="footer" class="horizontal center-justified flex layout">
+          <mwc-button
+            raised
+            fullwidth
+            class="warning fg red"
+            type="submit"
+            icon="delete"
+            id="delete-without-confirm-button"
+            @click="${() => {
+              this._deleteFolder(this.deleteFolderID);
+              this.closeDialog('delete-folder-without-confirm-dialog');
+            }}"
+          >
+            ${_t('data.folders.MoveToTrash')}
+          </mwc-button>
+        </div>
+      </backend-ai-dialog>
 
       <backend-ai-dialog id="delete-folder-dialog" fixed backdrop>
         <span slot="title">${_t('data.folders.DeleteAFolder')}</span>
@@ -2124,7 +2150,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 ></mwc-icon-button>
                 <vaadin-tooltip
                   for="${rowData.item.id + '-delete'}"
-                  text="${_t('data.folders.MoveToTrashBin')}"
+                  text="${_t('data.folders.MoveToTrash')}"
                   position="top-start"
                 ></vaadin-tooltip>
               `
@@ -3015,7 +3041,8 @@ export default class BackendAiStorageList extends BackendAIPage {
     // let isDelible = await this._checkVfolderMounted(deleteFolderId);
     // if (isDelible) {
     if (this.enableVfolderTrashBin) {
-      this._deleteFolder(this.deleteFolderID);
+      // this._deleteFolder(this.deleteFolderID);
+      this.openDialog('delete-folder-without-confirm-dialog');
     } else {
       this.openDialog('delete-folder-dialog');
     }

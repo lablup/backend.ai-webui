@@ -366,14 +366,15 @@
       "TypeFolderNameToLeave": "Escriba el nombre de la carpeta que desea abandonar",
       "TypeNewFolderName": "Escriba el nombre de la nueva carpeta",
       "View": "Ver",
-      "MoveToTrashBin": "Mover a la papelera",
+      "MoveToTrash": "Mover a la papelera",
       "MovedToTrashBin": "La carpeta {{ folderName }} se ha movido a la papelera.",
       "DeleteForever": "Borrar para siempre",
       "Restore": "Restaurar",
       "FolderRestored": "La carpeta {{ folderName }} ha sido restaurada.",
       "FolderDeletedForever": "La carpeta {{ folderName }} se ha eliminado para siempre.",
       "FolderCloneFailed": "Error al clonar la carpeta.",
-      "FolderClonePending": "La clonación de la carpeta está en curso."
+      "FolderClonePending": "La clonación de la carpeta está en curso.",
+      "MoveToTrashDescription": "¿Estás seguro de que quieres mover \"{{ folderName }}\" a la papelera?"
     },
     "invitation": {
       "FolderSharingNotAvailableToUser": "El uso compartido de carpetas no está disponible para los usuarios solicitados:",
@@ -946,7 +947,10 @@
     "MaxCustomizedImageCount": "Número máximo de imágenes personalizadas",
     "CreatedAt": "Creado en",
     "MaxFolderCount": "Número máximo de carpetas",
-    "ProjectResourcePolicy": "Política de recursos del proyecto"
+    "ProjectResourcePolicy": "Política de recursos del proyecto",
+    "NoDataToExport": "Los datos para el extracto CSV no existen.",
+    "ExportCSV": "exportar CSV",
+    "Tools": "Herramientas"
   },
   "resourcePreset": {
     "AboutToDeletePreset": "Está a punto de borrar este preajuste:",

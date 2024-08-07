@@ -1,10 +1,10 @@
 import { useSuspendedBackendaiClient } from '../hooks';
+import useControllableState from '../hooks/useControllableState';
 import {
   useCurrentResourceGroupState,
   useResourceGroupsForCurrentProject,
 } from '../hooks/useCurrentProject';
 import TextHighlighter from './TextHighlighter';
-import { useControllableValue } from 'ahooks';
 import { Select, SelectProps } from 'antd';
 import _ from 'lodash';
 import React, { useEffect, useState, useTransition } from 'react';
@@ -27,15 +27,10 @@ const ResourceGroupSelectForCurrentProject: React.FC<
 }) => {
   useSuspendedBackendaiClient(); // To make sure the client is ready
   const [controllableSearchValue, setControllableSearchValue] =
-    useControllableValue<string>(
-      _.omitBy(
-        {
-          value: searchValue,
-          onChange: onSearch,
-        },
-        _.isUndefined,
-      ),
-    );
+    useControllableState<string>({
+      value: searchValue,
+      onChange: onSearch,
+    });
   const [currentResourceGroup, setCurrentResourceGroup] =
     useCurrentResourceGroupState();
 

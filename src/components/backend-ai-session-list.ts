@@ -733,6 +733,15 @@ export default class BackendAISessionList extends BackendAIPage {
    * @param {boolean} repeat - repeat the job data reading. Set refreshTime to 5000 for running list else 30000
    * */
   async _refreshJobData(refresh = false, repeat = true) {
+    this._grid?.addEventListener('selected-items-changed', () => {
+      this._selected_items = this._grid.selectedItems;
+      if (this._selected_items.length > 0) {
+        this.multipleActionButtons.style.display = 'flex';
+      } else {
+        this.multipleActionButtons.style.display = 'none';
+      }
+    });
+
     await this.updateComplete;
     if (this.active !== true) {
       return;
@@ -1268,7 +1277,7 @@ export default class BackendAISessionList extends BackendAIPage {
         }
 
         this.compute_sessions = sessions;
-        this._grid.recalculateColumnWidths();
+        this._grid?.recalculateColumnWidths();
         // this._grid.clearCache();
         this.requestUpdate();
         let refreshTime;
@@ -1321,6 +1330,7 @@ export default class BackendAISessionList extends BackendAIPage {
           this.notification.show(true, err);
         }
       });
+    this._clearCheckboxes();
   }
 
   /**
@@ -1642,6 +1652,7 @@ export default class BackendAISessionList extends BackendAIPage {
           this.notification.show(true, err);
         } else if (err && err.title) {
           this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = '';
           this.notification.show(true, err);
         }
       });
@@ -1675,6 +1686,7 @@ export default class BackendAISessionList extends BackendAIPage {
           this.notification.show(true, err);
         } else if (err && err.title) {
           this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = '';
           this.notification.show(true, err);
         }
       });
@@ -1710,6 +1722,7 @@ export default class BackendAISessionList extends BackendAIPage {
           this.notification.show(true, err);
         } else if (err && err.title) {
           this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = '';
           this.notification.show(true, err);
         }
       });
@@ -1950,6 +1963,7 @@ export default class BackendAISessionList extends BackendAIPage {
 
     if (this.terminationQueue.includes(sessionId)) {
       this.notification.text = _text('session.AlreadyTerminatingSession');
+      this.notification.detail = '';
       this.notification.show();
       return false;
     }
@@ -1960,6 +1974,7 @@ export default class BackendAISessionList extends BackendAIPage {
     // TODO define extended type for custom properties
     if (this.terminationQueue.includes(this.terminateSessionDialog.sessionId)) {
       this.notification.text = _text('session.AlreadyTerminatingSession');
+      this.notification.detail = '';
       this.notification.show();
       return false;
     }
@@ -1975,6 +1990,7 @@ export default class BackendAISessionList extends BackendAIPage {
         this._clearCheckboxes();
         this.terminateSessionDialog.hide();
         this.notification.text = _text('session.SessionTerminated');
+        this.notification.detail = '';
         this.notification.show();
         const event = new CustomEvent('backend-ai-resource-refreshed', {
           detail: 'running',
@@ -2059,6 +2075,7 @@ export default class BackendAISessionList extends BackendAIPage {
   _clearCheckboxes() {
     this._grid.selectedItems = [];
     this._selected_items = [];
+    this._grid.clearCache();
   }
 
   _handleSelectedItems() {
@@ -2084,6 +2101,7 @@ export default class BackendAISessionList extends BackendAIPage {
         this._clearCheckboxes();
         this.multipleActionButtons.style.display = 'none';
         this.notification.text = _text('session.SessionsTerminated');
+        this.notification.detail = '';
         this.notification.show();
       })
       .catch(() => {
@@ -2109,6 +2127,7 @@ export default class BackendAISessionList extends BackendAIPage {
         this._clearCheckboxes();
         this.multipleActionButtons.style.display = 'none';
         this.notification.text = _text('session.SessionsTerminated');
+        this.notification.detail = '';
         this.notification.show();
       })
       .catch(() => {
@@ -2144,6 +2163,7 @@ export default class BackendAISessionList extends BackendAIPage {
             'Problem occurred during termination.',
           );
         }
+        this.notification.detail = '';
         this.notification.show(true, err);
       });
   }
@@ -2637,6 +2657,7 @@ export default class BackendAISessionList extends BackendAIPage {
           .then((req) => {
             this.refreshList();
             this.notification.text = _text('session.SessionRenamed');
+            this.notification.detail = '';
             this.notification.show();
           })
           .catch((err) => {
@@ -3862,13 +3883,15 @@ ${rowData.item[this.sessionNameField]}</pre
       // language=HTML
       html`
         <div class="layout vertical" style="padding:3px auto;">
-          <span>${rowData.item.created_at_hr}</span>
+          <span>
+            ${rowData.item.starts_at_hr || rowData.item.created_at_hr}
+          </span>
           <backend-ai-session-reservation-timer
             value="${JSON.stringify({
-              created_at: rowData.item.created_at,
+              starts_at: rowData.item.starts_at || rowData.item.created_at,
               terminated_at: rowData.item.terminated_at,
             })}"
-          />
+          ></backend-ai-session-reservation-timer>
         </div>
       `,
       root,
@@ -4292,13 +4315,10 @@ ${rowData.item[this.sessionNameField]}</pre
                 >
                   ${this._isRunning
                     ? html`
-                        <vaadin-grid-column
+                        <vaadin-grid-selection-column
                           frozen
-                          width="60px"
-                          flex-grow="0"
-                          text-align="center"
-                          .renderer="${this._boundCheckboxRenderer}"
-                        ></vaadin-grid-column>
+                          auto-select
+                        ></vaadin-grid-selection-column>
                       `
                     : html``}
                   <vaadin-grid-column

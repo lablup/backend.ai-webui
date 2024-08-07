@@ -73,7 +73,6 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
    */
   _initClient(apiEndpoint: string) {
     this.webUIShell = document.querySelector('#webui-shell');
-    this.webUIShell.appBody.style.visibility = 'visible';
     this.notification = globalThis.lablupNotification;
     this.passwordChangeDialog = this.shadowRoot?.querySelector(
       '#update-password-dialog',

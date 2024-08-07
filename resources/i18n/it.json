@@ -671,10 +671,11 @@
       "DeleteForever": "Elimina per sempre",
       "FolderRestored": "La cartella {{ folderName }} è stata ripristinata.",
       "FolderDeletedForever": "La cartella {{ folderName }} è stata eliminata per sempre.",
-      "MoveToTrashBin": "Sposta nel cestino",
+      "MoveToTrash": "Sposta nel cestino",
       "MovedToTrashBin": "La cartella {{ folderName }} è stata spostata nel cestino.",
       "FolderCloneFailed": "Non è stato possibile clonare la cartella.",
-      "FolderClonePending": "La clonazione della cartella è in corso."
+      "FolderClonePending": "La clonazione della cartella è in corso.",
+      "MoveToTrashDescription": "Sei sicuro di voler spostare \"{{ folderName }}\" nel cestino?"
     },
     "explorer": {
       "Delete": "Elimina...",
@@ -993,7 +994,10 @@
     "MaxQuotaScopeSize": "Dimensione massima ambito quota (GB)",
     "MaxCustomizedImageCount": "Conteggio massimo di immagini personalizzate",
     "CreatedAt": "Creato a",
-    "MaxFolderCount": "Conteggio massimo cartelle"
+    "MaxFolderCount": "Conteggio massimo cartelle",
+    "NoDataToExport": "I dati per l'estrazione CSV non esistono.",
+    "ExportCSV": "esportare CSV",
+    "Tools": "Utensili"
   },
   "registry": {
     "Hostname": "Nome host",

@@ -6,6 +6,7 @@ import { useUpdatableState } from '../hooks';
 import { ModelStoreListPageQuery } from './__generated__/ModelStoreListPageQuery.graphql';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import {
+  Alert,
   Button,
   Card,
   Input,
@@ -18,6 +19,7 @@ import {
 import { createStyles } from 'antd-style';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
+import { FolderX } from 'lucide-react';
 import React, { useMemo, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
@@ -58,6 +60,7 @@ const ModelStoreListPage: React.FC = () => {
             cursor
             node {
               id
+              row_id @since(version: "24.03.7")
               name
               author
               title
@@ -67,6 +70,7 @@ const ModelStoreListPage: React.FC = () => {
               label
               license
               min_resource
+              error_msg @since(version: "24.03.7")
               ...ModelCardModalFragment
             }
           }
@@ -238,9 +242,22 @@ const ModelStoreListPage: React.FC = () => {
             <Card
               hoverable
               title={
-                <TextHighlighter keyword={search}>
-                  {item?.title}
-                </TextHighlighter>
+                item?.title ? (
+                  <TextHighlighter keyword={search}>
+                    {item?.title}
+                  </TextHighlighter>
+                ) : (
+                  <Typography.Text type="secondary">
+                    <FolderX
+                      style={{
+                        marginLeft: token.marginXXS,
+                        marginRight: token.marginXXS,
+                        fontSize: token.fontSize,
+                      }}
+                    />
+                    {item?.name}
+                  </Typography.Text>
+                )
               }
               style={{
                 height: '100%',
@@ -279,6 +296,17 @@ const ModelStoreListPage: React.FC = () => {
                       </TextHighlighter>
                     </Tag>
                   ))}
+                {item?.error_msg && (
+                  <Alert
+                    message={
+                      <Typography.Paragraph ellipsis={{ rows: 6 }}>
+                        {item.error_msg}
+                      </Typography.Paragraph>
+                    }
+                    type="error"
+                    showIcon
+                  />
+                )}
               </Flex>
             </Card>
           </List.Item>

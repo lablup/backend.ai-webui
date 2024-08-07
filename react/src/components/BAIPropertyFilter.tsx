@@ -1,6 +1,7 @@
+import useControllableState from '../hooks/useControllableState';
 import Flex from './Flex';
 import { CloseCircleOutlined } from '@ant-design/icons';
-import { useControllableValue, useDynamicList } from 'ahooks';
+import { useDynamicList } from 'ahooks';
 import { Button, Input, Select, Tag, Tooltip, theme } from 'antd';
 import _ from 'lodash';
 import React, { ComponentProps, useEffect, useMemo, useState } from 'react';
@@ -62,9 +63,9 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
   defaultValue,
   ...otherProps
 }) => {
-  const [search, setSearch] = useControllableValue({});
+  const [search, setSearch] = useControllableState({});
 
-  const [value, setValue] = useControllableValue<string | undefined>({
+  const [value, setValue] = useControllableState<string | undefined>({
     value: propValue,
     defaultValue: defaultValue,
     onChange: propOnChange,

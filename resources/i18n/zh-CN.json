@@ -670,10 +670,11 @@
       "DeleteForever": "永久删除",
       "FolderRestored": "{{ folderName }} 文件夹已恢复。",
       "FolderDeletedForever": "{{ folderName }} 文件夹已被永久删除。",
-      "MoveToTrashBin": "移至垃圾箱",
+      "MoveToTrash": "移到废纸篓",
       "MovedToTrashBin": "{{ folderName }} 文件夹已移至垃圾箱。",
       "FolderCloneFailed": "克隆文件夹失败。",
-      "FolderClonePending": "正在克隆文件夹。"
+      "FolderClonePending": "正在克隆文件夹。",
+      "MoveToTrashDescription": "您确定要将 \"{{ folderName }}\" 移至回收站吗？"
     },
     "explorer": {
       "Delete": "删除...",
@@ -993,7 +994,10 @@
     "MaxCustomizedImageCount": "最大自定义图像数量",
     "CreatedAt": "创建于",
     "MaxFolderCount": "最大文件夹数",
-    "ProjectResourcePolicy": "项目资源政策"
+    "ProjectResourcePolicy": "项目资源政策",
+    "NoDataToExport": "CSV 提取的数据不存在。",
+    "ExportCSV": "导出 CSV",
+    "Tools": "工具"
   },
   "registry": {
     "Hostname": "主机名",

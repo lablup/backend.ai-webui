@@ -670,10 +670,11 @@
       "DeleteForever": "永久に削除",
       "FolderRestored": "{{ folderName }} フォルダが復元されました。",
       "FolderDeletedForever": "{{ folderName }} フォルダは完全に削除されました。",
-      "MoveToTrashBin": "ゴミ箱に移動",
+      "MoveToTrash": "ゴミ箱に移動",
       "MovedToTrashBin": "{{ folderName }} フォルダーはゴミ箱に移動されました。",
       "FolderCloneFailed": "フォルダのクローンに失敗しました。",
-      "FolderClonePending": "フォルダのクローンを作成中です。"
+      "FolderClonePending": "フォルダのクローンを作成中です。",
+      "MoveToTrashDescription": "\"{{ folderName }}\" をゴミ箱に移動してもよろしいですか?"
     },
     "explorer": {
       "Delete": "削除...",
@@ -993,7 +994,10 @@
     "MaxCustomizedImageCount": "カスタマイズされた画像の最大数",
     "CreatedAt": "作成日",
     "MaxFolderCount": "最大フォルダ数",
-    "ProjectResourcePolicy": "プロジェクトリソースポリシー"
+    "ProjectResourcePolicy": "プロジェクトリソースポリシー",
+    "NoDataToExport": "CSV抽出用のデータが存在しません。",
+    "ExportCSV": "CSVエクスポート",
+    "Tools": "ツール"
   },
   "registry": {
     "Hostname": "ホスト名",

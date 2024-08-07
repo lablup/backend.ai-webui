@@ -13,6 +13,7 @@ import { useSuspendedBackendaiClient } from './hooks';
 import { useCurrentResourceGroupValue } from './hooks/useCurrentProject';
 import { ThemeModeProvider } from './hooks/useThemeMode';
 import { Tag, theme } from 'antd';
+import dayjs from 'dayjs';
 import { Provider as JotaiProvider } from 'jotai';
 import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
@@ -304,11 +305,14 @@ const ReservationTimeCounter = (props: ReactWebComponentProps) => {
   const { token } = theme.useToken();
 
   const { parsedValue } = useWebComponentInfo<{
-    created_at: string;
+    starts_at: string;
     terminated_at: string;
   }>();
 
   const baiClient = useSuspendedBackendaiClient();
+
+  if (dayjs(parsedValue.starts_at).isAfter(dayjs())) return null;
+
   return (
     <Flex>
       <Tag
@@ -331,7 +335,7 @@ const ReservationTimeCounter = (props: ReactWebComponentProps) => {
         <BAIIntervalText
           callback={() => {
             return baiClient.utils.elapsedTime(
-              parsedValue.created_at,
+              parsedValue.starts_at,
               parsedValue.terminated_at || null,
             );
           }}

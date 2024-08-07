@@ -671,9 +671,10 @@
       "FolderRestored": "Ο φάκελος {{ folderName }} έχει αποκατασταθεί.",
       "FolderDeletedForever": "Ο φάκελος {{ folderName }} έχει διαγραφεί οριστικά.",
       "MovedToTrashBin": "Ο φάκελος {{ folderName }} έχει μετακινηθεί στον κάδο απορριμμάτων.",
-      "MoveToTrashBin": "Μετακίνηση στον κάδο απορριμμάτων",
+      "MoveToTrash": "Μετακίνηση στον κάδο απορριμμάτων",
       "FolderCloneFailed": "Απέτυχε η κλωνοποίηση του φακέλου.",
-      "FolderClonePending": "Η κλωνοποίηση του φακέλου βρίσκεται σε εξέλιξη."
+      "FolderClonePending": "Η κλωνοποίηση του φακέλου βρίσκεται σε εξέλιξη.",
+      "MoveToTrashDescription": "Είστε βέβαιοι ότι θέλετε να μετακινήσετε το \"{{ folderName }}\" στον κάδο απορριμμάτων;"
     },
     "explorer": {
       "Delete": "Διαγράφω...",
@@ -993,7 +994,10 @@
     "MaxCustomizedImageCount": "Μέγιστος προσαρμοσμένος αριθμός εικόνων",
     "CreatedAt": "Δημιουργήθηκε στο",
     "MaxFolderCount": "Μέγιστος αριθμός φακέλων",
-    "ProjectResourcePolicy": "Πολιτική πόρων έργου"
+    "ProjectResourcePolicy": "Πολιτική πόρων έργου",
+    "NoDataToExport": "Τα δεδομένα για το απόσπασμα CSV δεν υπάρχουν.",
+    "ExportCSV": "εξαγωγή CSV",
+    "Tools": "Εργαλεία"
   },
   "registry": {
     "Hostname": "Όνομα κεντρικού υπολογιστή",

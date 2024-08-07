@@ -1,7 +1,7 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
+import useControllableState from '../hooks/useControllableState';
 import { ProjectSelectorQuery } from './__generated__/ProjectSelectorQuery.graphql';
-import { useControllableValue } from 'ahooks';
 import { Select, SelectProps } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
@@ -32,7 +32,7 @@ const ProjectSelector: React.FC<Props> = ({
   const [currentUser] = useCurrentUserInfo();
   const baiClient = useSuspendedBackendaiClient();
 
-  const [value, setValue] = useControllableValue(selectProps);
+  const [value, setValue] = useControllableState(selectProps);
   const userRole = useCurrentUserRole();
   const { projectsSince2403, projectsBefore2403, user } =
     useLazyLoadQuery<ProjectSelectorQuery>(

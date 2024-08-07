@@ -70,7 +70,6 @@ export default class BackendAIWebUI extends BackendAIWebUI_base {
   _offlineIndicatorOpened: boolean;
   _offline: boolean;
   config: any;
-  appBody: any;
   appPage: any;
   contentBody: any;
   mainToolbar: any;

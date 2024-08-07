@@ -1179,7 +1179,7 @@ export const BackendAiStyles = [
       mwc-select {
         --mdc-select-fill-color: var(--token-colorBgElevated, transparent);
         --mdc-select-disabled-fill-color: var(
-          --token-colorBgElevated,
+          --token-colorTextDisabled,
           transparent
         );
         --mdc-theme-surface: var(--token-colorBgElevated, #f1f1f1);
@@ -1190,6 +1190,7 @@ export const BackendAiStyles = [
         --mdc-text-field-fill-color: var(--token-colorBgElevated);
         --mdc-typography-font-family: var(--token-fontFamily);
         --mdc-theme-primary: var(--token-colorPrimary);
+        --mdc-text-field-label-ink-color: var(--token-colorTextSecondary);
       }
 
       vaadin-grid[theme~='dark'] {

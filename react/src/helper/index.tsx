@@ -192,9 +192,19 @@ export function iSizeToSize(
 }
 
 //
-function toFixedFloorWithoutTrailingZeros(num: number, fixed: number) {
-  var re = new RegExp('^-?\\d+(?:.\\d{0,' + (fixed || -1) + '})?');
-  return num.toString().match(re)?.[0] || '0';
+export function toFixedFloorWithoutTrailingZeros(
+  num: number | string,
+  fixed: number,
+) {
+  return typeof num === 'number'
+    ? parseFloat(num.toFixed(fixed)).toString()
+    : parseFloat(parseFloat(num).toFixed(fixed)).toString();
+}
+
+export function toFixedWithTypeValidation(num: number | string, fixed: number) {
+  return typeof num === 'number'
+    ? num.toFixed(fixed)
+    : parseFloat(num).toFixed(fixed);
 }
 
 export function compareNumberWithUnits(size1: string, size2: string) {
@@ -375,4 +385,75 @@ export const generateRandomString = (n = 3) => {
   }
 
   return randStr;
+};
+
+/**
+ * make a CSV file from the given data and download it.
+ * @param {Array<string>} columns
+ * A single array of strings that represents the columns of the CSV file.
+ * It will be used to devide the content into rows.
+ * @param {Array<Array<string>>} content
+ * A single array of strings that represents the content of the CSV file.
+ * It will be devided into rows by the number of columns.
+ * @param {string} filename - The name of the CSV file.
+ */
+export const exportAsCSV = (
+  columnsTitle: Array<string>,
+  content: Array<Array<string>>,
+  filename: string,
+) => {
+  const escapeCSV = (value: string) => {
+    if (typeof value === 'string') {
+      return `"${value.replace(/"/g, '""')}"`;
+    }
+    return value;
+  };
+
+  const csvContent = content
+    .map((row) => row.map(escapeCSV).join(','))
+    .join('\n');
+  const csvData = [columnsTitle.map(escapeCSV).join(','), csvContent].join(
+    '\n',
+  );
+  const blob = new Blob([csvData], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+
+  a.href = url;
+  a.download = `${filename}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+/**
+ * For the GQL data, displayedColumnKeys, and format rules, return a CSV string.
+ *
+ * @param {readonly T[]} data
+ * @param {object} format_rules
+ * - Each key should be the key of the data object.
+ * @param {string[]} displayedColumnKeys
+ * - The keys of the data object to be displayed.
+ * - If not provided, all keys will be displayed and order by the data object.
+ */
+export const exportCSVWithFormattingRules = <T,>(
+  data: T[],
+  format_rules: Record<keyof T, (value: any) => any>,
+  filename: string,
+) => {
+  const displayedData = _.map(data, (row) => {
+    return _.omit(row as object, '__fragments', '__fragmentOwner', '__id');
+  });
+
+  const CSVTitle = _.keys(displayedData[0]);
+  const CSVData = _.map(displayedData, (row) => {
+    return _.map(row, (value, key) => {
+      if (format_rules[key as keyof T]) {
+        const v = format_rules[key as keyof T](value);
+        return typeof v === 'string' ? v : JSON.stringify(v);
+      }
+      return typeof value === 'string' ? value : JSON.stringify(value);
+    });
+  });
+
+  exportAsCSV(CSVTitle, CSVData, filename);
 };

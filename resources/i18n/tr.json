@@ -670,10 +670,11 @@
       "DeleteForever": "Tamamen sil",
       "FolderRestored": "{{ klasörAdı }} klasörü geri yüklendi.",
       "FolderDeletedForever": "{{ folderName }} klasörü kalıcı olarak silindi.",
-      "MoveToTrashBin": "Çöp kutusuna taşı",
+      "MoveToTrash": "Çöp kutusuna taşıyın",
       "MovedToTrashBin": "{{ folderName }} klasörü çöp kutusuna taşındı.",
       "FolderCloneFailed": "Klasör klonlanamadı.",
-      "FolderClonePending": "Klasörün klonlanması devam ediyor."
+      "FolderClonePending": "Klasörün klonlanması devam ediyor.",
+      "MoveToTrashDescription": "\"{{ folderName }}\" dosyasını çöp kutusuna taşımak istediğinizden emin misiniz?"
     },
     "explorer": {
       "Delete": "Sil...",
@@ -993,7 +994,10 @@
     "MaxCustomizedImageCount": "Maksimum Özelleştirilmiş Görüntü Sayısı",
     "CreatedAt": "Oluşturulma Tarihi",
     "MaxFolderCount": "Maksimum Klasör Sayısı",
-    "ProjectResourcePolicy": "Proje Kaynak Politikası"
+    "ProjectResourcePolicy": "Proje Kaynak Politikası",
+    "NoDataToExport": "CSV ekstresine ilişkin veriler mevcut değil.",
+    "ExportCSV": "CSV'yi dışa aktar",
+    "Tools": "Aletler"
   },
   "registry": {
     "Hostname": "ana bilgisayar adı",
