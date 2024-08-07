@@ -2,15 +2,7 @@ import BAIModal, { BAIModalProps } from './BAIModal';
 import { ContainerRegistryEditorModalCreateMutation } from './__generated__/ContainerRegistryEditorModalCreateMutation.graphql';
 import { ContainerRegistryEditorModalFragment$key } from './__generated__/ContainerRegistryEditorModalFragment.graphql';
 import { ContainerRegistryEditorModalModifyMutation } from './__generated__/ContainerRegistryEditorModalModifyMutation.graphql';
-import {
-  message,
-  Form,
-  Input,
-  Select,
-  Modal,
-  Checkbox,
-  FormInstance,
-} from 'antd';
+import { Form, Input, Select, Checkbox, FormInstance, App } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useRef } from 'react';
@@ -34,8 +26,7 @@ const ContainerRegistryEditorModal: React.FC<
   const { t } = useTranslation();
   const formRef = useRef<FormInstance>(null);
 
-  const [messageAPI, contextHolder] = message.useMessage();
-  const [modal, modalContextHolder] = Modal.useModal();
+  const { message, modal } = App.useApp();
 
   const containerRegistry = useFragment(
     graphql`
@@ -128,29 +119,47 @@ const ContainerRegistryEditorModal: React.FC<
           }
           commitModifyRegistry({
             variables: mutationVariables,
-            onCompleted: (res, error) => {
-              if (error) {
-                messageAPI.error(t('dialog.ErrorOccurred'));
+            onCompleted: (res, errors) => {
+              if (
+                _.isEmpty(res.modify_container_registry?.container_registry)
+              ) {
+                message.error(t('dialog.ErrorOccurred'));
+                return;
+              }
+              if (errors && errors.length > 0) {
+                const errorMsgList = _.map(errors, (error) => error.message);
+                for (const error of errorMsgList) {
+                  message.error(error, 2.5);
+                }
               } else {
                 onOk && onOk('modify');
               }
             },
             onError: (error) => {
-              messageAPI.error(t('dialog.ErrorOccurred'));
+              message.error(t('dialog.ErrorOccurred'));
             },
           });
         } else {
           commitCreateRegistry({
             variables: mutationVariables,
-            onCompleted: (res, error) => {
-              if (error) {
-                messageAPI.error(t('dialog.ErrorOccurred'));
+            onCompleted: (res, errors) => {
+              if (
+                _.isEmpty(res?.create_container_registry?.container_registry)
+              ) {
+                message.error(t('dialog.ErrorOccurred'));
+                return;
+              }
+              if (errors && errors?.length > 0) {
+                const errorMsgList = _.map(errors, (error) => error.message);
+                for (const error of errorMsgList) {
+                  message.error(error, 2.5);
+                }
               } else {
                 onOk && onOk('create');
               }
             },
             onError(error) {
-              messageAPI.error(t('dialog.ErrorOccurred'));
+              message.error(t('dialog.ErrorOccurred'));
             },
           });
         }
@@ -194,8 +203,6 @@ const ContainerRegistryEditorModal: React.FC<
       {...modalProps}
       destroyOnClose
     >
-      {contextHolder}
-      {modalContextHolder}
       <Form
         ref={formRef}
         layout="vertical"

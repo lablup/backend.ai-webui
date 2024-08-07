@@ -35,8 +35,6 @@ const ChatMessageList: React.FC<ChatMessageListProps> = ({
                     text: m.content,
                   }}
                 />
-                {/* <Button/> */}
-                {/* <Button/> */}
               </Compact>
             ) : undefined
           }

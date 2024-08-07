@@ -7,6 +7,7 @@ import {
   isOutsideRangeWithUnits,
   localeCompare,
   numberSorterWithInfinityValue,
+  toFixedFloorWithoutTrailingZeros,
   transformSorterToOrderString,
 } from './index';
 
@@ -291,5 +292,31 @@ describe('filterEmptyItem', () => {
     const input = ['item1', 'item2', 'item3'];
     const output = filterEmptyItem(input);
     expect(output).toEqual(['item1', 'item2', 'item3']);
+  });
+});
+
+describe('toFixedFloorWithoutTrailingZeros', () => {
+  it('should return the number with trailing zeros', () => {
+    expect(toFixedFloorWithoutTrailingZeros(1.1, 2)).toEqual('1.1');
+    expect(toFixedFloorWithoutTrailingZeros(1.01, 2)).toEqual('1.01');
+    expect(toFixedFloorWithoutTrailingZeros(1.001, 2)).toEqual('1');
+    expect(toFixedFloorWithoutTrailingZeros(1.0001, 2)).toEqual('1');
+    expect(toFixedFloorWithoutTrailingZeros(1.0010001, 2)).toEqual('1');
+    expect(toFixedFloorWithoutTrailingZeros(1.0010001, 3)).toEqual('1.001');
+    expect(toFixedFloorWithoutTrailingZeros(1.0010001, 4)).toEqual('1.001');
+    expect(toFixedFloorWithoutTrailingZeros(1.006, 2)).toEqual('1.01');
+    expect(toFixedFloorWithoutTrailingZeros(1.097, 2)).toEqual('1.1');
+  });
+
+  it('should work incase of string type input', () => {
+    expect(toFixedFloorWithoutTrailingZeros('1.1', 2)).toEqual('1.1');
+    expect(toFixedFloorWithoutTrailingZeros('1.01', 2)).toEqual('1.01');
+    expect(toFixedFloorWithoutTrailingZeros('1.001', 2)).toEqual('1');
+    expect(toFixedFloorWithoutTrailingZeros('1.0001', 2)).toEqual('1');
+    expect(toFixedFloorWithoutTrailingZeros('1.0010001', 2)).toEqual('1');
+    expect(toFixedFloorWithoutTrailingZeros('1.0010001', 3)).toEqual('1.001');
+    expect(toFixedFloorWithoutTrailingZeros('1.0010001', 4)).toEqual('1.001');
+    expect(toFixedFloorWithoutTrailingZeros('1.006', 2)).toEqual('1.01');
+    expect(toFixedFloorWithoutTrailingZeros('1.097', 2)).toEqual('1.1');
   });
 });

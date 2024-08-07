@@ -1,10 +1,10 @@
 import { compareNumberWithUnits, iSizeToSize } from '../helper';
 import { useUpdatableState } from '../hooks';
+import useControllableState from '../hooks/useControllableState';
 import DynamicUnitInputNumber, {
   DynamicUnitInputNumberProps,
 } from './DynamicUnitInputNumber';
 import Flex from './Flex';
-import { useControllableValue } from 'ahooks';
 import { Slider, theme } from 'antd';
 import { SliderMarks } from 'antd/es/slider';
 import _ from 'lodash';
@@ -29,7 +29,7 @@ const DynamicUnitInputNumberWithSlider: React.FC<
   step = 0.05,
   ...otherProps
 }) => {
-  const [value, setValue] = useControllableValue<string | undefined | null>(
+  const [value, setValue] = useControllableState<string | undefined | null>(
     otherProps,
     {
       defaultValue: '0g',

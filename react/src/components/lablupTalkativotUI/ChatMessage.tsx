@@ -70,7 +70,8 @@ const ChatMessage: React.FC<{
             borderColor: token.colorBorderSecondary,
             borderWidth: token.lineWidth,
             padding: '1em',
-            paddingBottom: '0em',
+            paddingTop: 0,
+            paddingBottom: 0,
             backgroundColor:
               message.role !== 'user'
                 ? token.colorBgContainer

@@ -41,19 +41,24 @@ type Queries {
     """Added in 24.03.1"""
     id: String
     reference: String
-    architecture: String = "aarch64"
+    architecture: String = "x86_64"
   ): Image
   images(
     """
     Added in 19.09.0. If it is specified, fetch images installed on at least one agent.
     """
     is_installed: Boolean
-    is_operation: Boolean @deprecated(reason: "Deprecated since 24.03.4. This field is ignored if `image_filters` is specified and is not null.")
+    is_operation: Boolean @deprecated(reason: "Deprecated since 24.03.4. This field is ignored if `load_filters` is specified and is not null.")
 
     """
-    Added in 24.03.4. Allowed values are: [operational, customized]. When superuser queries with `customized` option set the resolver will return every customized images (including those not owned by callee). To resolve images owned by user only call `customized_images`.
+    Added in 24.03.8. Allowed values are: [general, operational, customized]. When superuser queries with `customized` option set the resolver will return every customized images (including those not owned by callee). To resolve images owned by user only call `customized_images`.
     """
-    image_filters: [String] = null
+    load_filters: [String] = null
+
+    """
+    Added in 24.03.4. Allowed values are: [general, operational, customized]. When superuser queries with `customized` option set the resolver will return every customized images (including those not owned by caller). To list the owned images only call `customized_images`.
+    """
+    image_filters: [String] = null @deprecated(reason: "Deprecated since 24.03.8. Use `load_filters` instead.")
   ): [Image]
 
   """Added in 24.03.1"""
@@ -311,6 +316,9 @@ type Domain {
 type GroupNode implements Node {
   """The ID of the object"""
   id: ID!
+
+  """Added in 24.03.7. The undecoded id value stored in DB."""
+  row_id: UUID
   name: String
   description: String
   is_active: Boolean
@@ -321,6 +329,12 @@ type GroupNode implements Node {
   allowed_vfolder_hosts: JSONString
   integration_id: String
   resource_policy: String
+
+  """Added in 24.03.7. One of ['GENERAL', 'MODEL_STORE']."""
+  type: String
+
+  """Added in 24.03.7."""
+  container_registry: JSONString
   scaling_groups: [String]
   user_nodes(filter: String, order: String, offset: Int, before: String, after: String, first: Int, last: Int): UserConnection
 }
@@ -507,6 +521,9 @@ type KeyPair implements Item {
   last_used: DateTime
   rate_limit: Int
   num_queries: Int
+
+  """Added in 24.09.0."""
+  rolling_count: Int
   user: UUID
   projects: [String]
   ssh_public_key: String
@@ -527,6 +544,9 @@ type VirtualFolder implements Item {
   group: UUID
   group_name: String
   creator: String
+
+  """Added in 24.09.0."""
+  domain_name: String
   unmanaged_path: String
   usage_mode: String
   permission: String
@@ -693,6 +713,22 @@ type ScalingGroup {
   scheduler: String
   scheduler_opts: JSONString
   use_host_network: Boolean
+
+  """Added in 24.03.7."""
+  agent_count_by_status(
+    """
+    Possible states of an agent. Should be one of ['ALIVE', 'LOST', 'RESTARTING', 'TERMINATED']. Default is 'ALIVE'.
+    """
+    status: String = "ALIVE"
+  ): Int
+
+  """Added in 24.03.7."""
+  agent_total_resource_slots_by_status(
+    """
+    Possible states of an agent. Should be one of ['ALIVE', 'LOST', 'RESTARTING', 'TERMINATED']. Default is 'ALIVE'.
+    """
+    status: String = "ALIVE"
+  ): JSONString
 }
 
 type StorageVolume implements Item {
@@ -722,7 +758,7 @@ type VirtualFolderNode implements Node {
   """The ID of the object"""
   id: ID!
 
-  """Added in 24.03.4. UUID type id of DB vfolders row"""
+  """Added in 24.03.4. ID of VFolder."""
   row_id: UUID
   host: String
   quota_scope_id: String
@@ -1004,6 +1040,9 @@ type ModelCard implements Node {
   """The ID of the object"""
   id: ID!
   name: String
+
+  """Added in 24.03.8. ID of VFolder."""
+  row_id: UUID
   vfolder: VirtualFolder
 
   """Added in 24.09.0."""
@@ -1033,6 +1072,9 @@ type ModelCard implements Node {
   Type (mostly extension of the filename) of the README file. e.g. md, rst, txt, ...
   """
   readme_filetype: String
+
+  """Added in 24.03.8."""
+  error_msg: String
 }
 
 type ModelCardConnection {
@@ -1116,15 +1158,15 @@ type Mutations {
   rescan_images(registry: String): RescanImages
   preload_image(references: [String]!, target_agents: [String]!): PreloadImage
   unload_image(references: [String]!, target_agents: [String]!): UnloadImage
-  modify_image(architecture: String = "aarch64", props: ModifyImageInput!, target: String!): ModifyImage
+  modify_image(architecture: String = "x86_64", props: ModifyImageInput!, target: String!): ModifyImage
 
   """Added in 24.03.0"""
   forget_image_by_id(image_id: String!): ForgetImageById
-  forget_image(architecture: String = "aarch64", reference: String!): ForgetImage
+  forget_image(architecture: String = "x86_64", reference: String!): ForgetImage
 
   """Added in 24.03.1"""
   untag_image_from_registry(image_id: String!): UntagImageFromRegistry
-  alias_image(alias: String!, architecture: String = "aarch64", target: String!): AliasImage
+  alias_image(alias: String!, architecture: String = "x86_64", target: String!): AliasImage
   dealias_image(alias: String!): DealiasImage
   clear_images(registry: String): ClearImages
   create_keypair_resource_policy(name: String!, props: CreateKeyPairResourcePolicyInput!): CreateKeyPairResourcePolicy

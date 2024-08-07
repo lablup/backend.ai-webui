@@ -20,19 +20,12 @@ import {
   CheckOutlined,
   CloseOutlined,
   DeleteOutlined,
+  ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 import { useRafInterval } from 'ahooks';
 import { useLocalStorageState } from 'ahooks';
-import {
-  Button,
-  Card,
-  Table,
-  Typography,
-  theme,
-  message,
-  Popconfirm,
-} from 'antd';
+import { Button, Table, Typography, theme, message, Popconfirm } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import { default as dayjs } from 'dayjs';
@@ -47,9 +40,6 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 import { Link } from 'react-router-dom';
-
-// FIXME: need to apply filtering type of service later
-type TabKey = 'services'; //  "running" | "finished" | "others";
 
 export type Endpoint = NonNullable<
   NonNullable<
@@ -81,8 +71,6 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const [isRefetchPending, startRefetchTransition] = useTransition();
   const [servicesFetchKey, updateServicesFetchKey] =
     useUpdatableState('initial-fetch');
-  // FIXME: need to apply filtering type of service later
-  const [selectedTab] = useState<TabKey>('services');
   const [optimisticDeletingId, setOptimisticDeletingId] = useState<
     string | null
   >();
@@ -406,31 +394,41 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <>
-      <Flex direction="column" align="stretch" gap={'xs'}>
+      <Flex direction="column" align="stretch">
         {/* <Card bordered title={t("summary.ResourceStatistics")}>
           <p>SessionList</p>
         </Card> */}
         {/* <Card bodyStyle={{ paddingTop: 0 }}> */}
-        <Flex direction="column" align="stretch">
-          <Card
-            tabList={[
-              { key: 'services', label: t('modelService.Services') },
-              // FIXME: need to apply filtering type of service later
-              // {
-              //   key: "running",
-              //   label: t("session.Running"),
-              // },
-              // {
-              //   key: "finished",
-              //   label: t("session.Finished"),
-              // },
-              // {
-              //   key: "others",
-              //   label: t("session.Others"),
-              // },
-            ]}
-            activeTabKey={selectedTab}
-            tabBarExtraContent={
+        <Flex
+          direction="row"
+          justify="between"
+          wrap="wrap"
+          gap={'xs'}
+          style={{
+            padding: token.paddingContentVertical,
+            paddingLeft: token.paddingContentHorizontalSM,
+            paddingRight: token.paddingContentHorizontalSM,
+          }}
+        >
+          <Flex direction="column" align="start">
+            <Typography.Text style={{ margin: 0, padding: 0 }}>
+              {t('modelService.Services')}
+            </Typography.Text>
+          </Flex>
+          <Flex
+            direction="row"
+            gap={'xs'}
+            wrap="wrap"
+            style={{ flexShrink: 1 }}
+          >
+            <Flex gap={'xs'}>
+              <Button
+                icon={<ReloadOutlined />}
+                loading={isRefetchPending}
+                onClick={() => {
+                  startRefetchTransition(() => updateServicesFetchKey());
+                }}
+              />
               <Button
                 type="primary"
                 onClick={() => {
@@ -439,62 +437,52 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
               >
                 {t('modelService.StartService')}
               </Button>
-            }
-            styles={{
-              body: {
-                padding: 0,
-                paddingTop: 1,
-              },
-            }}
-            // tabProps={{
-            //   size: 'middle',
+            </Flex>
+          </Flex>
+        </Flex>
+        <Suspense fallback={<div>loading..</div>}>
+          <Table
+            loading={isRefetchPending}
+            scroll={{ x: 'max-content' }}
+            rowKey={'endpoint_id'}
+            dataSource={(sortedEndpointList || []) as Endpoint[]}
+            columns={columns.filter((column) =>
+              displayedColumnKeys?.includes(_.toString(column.key)),
+            )}
+            // pagination={{
+            //   pageSize: paginationState.pageSize,
+            //   current: paginationState.current,
+            //   total: modelServiceList?.total_count || 0,
+            //   showSizeChanger: true,
+            //   // showTotal(total, range) {
+            //   //   return `${range[0]}-${range[1]} of ${total}`;
+            //   // },
+            //   onChange(page, pageSize) {
+            //     startRefetchTransition(() => {
+            //       setPaginationState({
+            //         current: page,
+            //         pageSize: pageSize || 100,
+            //       });
+            //     });
+            //   },
             // }}
+          />
+          <Flex
+            justify="end"
+            style={{
+              padding: token.paddingXXS,
+            }}
           >
-            <Suspense fallback={<div>loading..</div>}>
-              <Table
-                loading={isRefetchPending}
-                scroll={{ x: 'max-content' }}
-                rowKey={'endpoint_id'}
-                dataSource={(sortedEndpointList || []) as Endpoint[]}
-                columns={columns.filter((column) =>
-                  displayedColumnKeys?.includes(_.toString(column.key)),
-                )}
-
-                // pagination={{
-                //   pageSize: paginationState.pageSize,
-                //   current: paginationState.current,
-                //   total: modelServiceList?.total_count || 0,
-                //   showSizeChanger: true,
-                //   // showTotal(total, range) {
-                //   //   return `${range[0]}-${range[1]} of ${total}`;
-                //   // },
-                //   onChange(page, pageSize) {
-                //     startRefetchTransition(() => {
-                //       setPaginationState({
-                //         current: page,
-                //         pageSize: pageSize || 100,
-                //       });
-                //     });
-                //   },
-                // }}
-              />
-              <Flex
-                justify="end"
-                style={{
-                  padding: token.paddingXXS,
-                }}
-              >
-                <Button
-                  type="text"
-                  icon={<SettingOutlined />}
-                  onClick={() => {
-                    setIsOpenColumnsSetting(true);
-                  }}
-                />
-              </Flex>
-            </Suspense>
-          </Card>
-          {/* <Tabs
+            <Button
+              type="text"
+              icon={<SettingOutlined />}
+              onClick={() => {
+                setIsOpenColumnsSetting(true);
+              }}
+            />
+          </Flex>
+        </Suspense>
+        {/* <Tabs
             // type="card"
             activeKey={selectedTab}
             onChange={(key) => setSelectedTab(key as TabKey)}
@@ -561,7 +549,6 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
               // }}
             />
           </Suspense> */}
-        </Flex>
       </Flex>
       <TableColumnsSettingModal
         open={isOpenColumnsSetting}

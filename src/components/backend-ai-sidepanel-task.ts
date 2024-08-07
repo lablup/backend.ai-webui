@@ -56,7 +56,7 @@ export default class BackendAiSidepanelTask extends BackendAIPage {
           width: 100%;
           height: 25px;
           padding: 5px 15px;
-          border-bottom: 1px solid #cccccc;
+          border-bottom: 1px solid var(--token-colorBorder, #ccc);
         }
 
         mwc-list {

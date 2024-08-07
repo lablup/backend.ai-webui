@@ -1,9 +1,9 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
+import useControllableState from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import TextHighlighter from './TextHighlighter';
-import { useControllableValue } from 'ahooks';
 import { Select, SelectProps } from 'antd';
 import _ from 'lodash';
 import React, { useEffect, useTransition } from 'react';
@@ -27,18 +27,13 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
   const currentProject = useCurrentProjectValue();
   const [key, checkUpdate] = useUpdatableState('first');
   const [controllableSearchValue, setControllableSearchValue] =
-    useControllableValue<string>(
-      _.omitBy(
-        {
-          value: searchValue,
-          onChange: onSearch,
-        },
-        _.isUndefined,
-      ),
-    );
+    useControllableState<string>({
+      value: searchValue,
+      onChange: onSearch,
+    });
 
   const [controllableValue, setControllableValue] =
-    useControllableValue(selectProps);
+    useControllableState(selectProps);
 
   const [isPendingLoading, startLoadingTransition] = useTransition();
   const { data: resourceGroupSelectQueryResult } = useTanQuery<

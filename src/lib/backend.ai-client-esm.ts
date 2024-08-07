@@ -1484,7 +1484,7 @@ class Client {
     };
     const q = new URLSearchParams(params).toString();
     let rqst = this.newSignedRequest(
-      'GET',
+      this.isManagerVersionCompatibleWith('23.09') ? 'POST' : 'GET',
       `${this.kernelPrefix}/${sessionId}/download?${q}`,
       null,
       null,
@@ -1498,7 +1498,7 @@ class Client {
     };
     const q = new URLSearchParams(params).toString();
     let rqst = this.newSignedRequest(
-      'GET',
+      this.isManagerVersionCompatibleWith('23.09') ? 'POST' : 'GET',
       `${this.kernelPrefix}/${sessionId}/download_single?${q}`,
       null,
       null,

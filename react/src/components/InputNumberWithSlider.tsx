@@ -1,6 +1,6 @@
 import { useUpdatableState } from '../hooks';
+import useControllableState from '../hooks/useControllableState';
 import Flex from './Flex';
-import { useControllableValue } from 'ahooks';
 import { InputNumber, Slider, InputNumberProps, SliderSingleProps } from 'antd';
 import { SliderRangeProps } from 'antd/es/slider';
 import _ from 'lodash';
@@ -29,7 +29,7 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
   sliderProps,
   ...otherProps
 }) => {
-  const [value, setValue] = useControllableValue(otherProps);
+  const [value, setValue] = useControllableState(otherProps);
   const inputRef = React.useRef<HTMLInputElement>(null);
   useEffect(() => {
     // when step is 1, make sure the value is integer

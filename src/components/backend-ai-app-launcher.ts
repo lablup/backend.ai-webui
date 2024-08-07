@@ -1653,7 +1653,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                 ${item.category === 'divider'
                   ? html`
                       <h3
-                        style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;"
+                        style="width:100%;padding-left:15px;border-bottom:1px solid var(--token-colorBorder, #ccc);"
                       >
                         ${item.title}
                       </h3>

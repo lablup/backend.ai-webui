@@ -309,9 +309,8 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
           onChange={(value) => setScript(value)}
           language="shell"
           editable
-        >
-          {script}
-        </BAICodeEditor>
+          value={script}
+        />
       </Flex>
     </BAIModal>
   );

@@ -1,5 +1,5 @@
 import { useUpdatableState } from '../hooks';
-import { useControllableValue } from 'ahooks';
+import useControllableState from '../hooks/useControllableState';
 import { InputNumber, InputNumberProps } from 'antd';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
@@ -21,7 +21,7 @@ const DynamicInputNumber: React.FC<DynamicInputNumberProps> = ({
   // onChange,
   ...inputNumberProps
 }) => {
-  const [value, setValue] = useControllableValue<number>(inputNumberProps, {
+  const [value, setValue] = useControllableState<number>(inputNumberProps, {
     defaultValue: dynamicSteps[0],
   });
 

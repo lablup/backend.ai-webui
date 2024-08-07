@@ -670,10 +670,11 @@
       "DeleteForever": "Tamamen sil",
       "FolderRestored": "{{ klasörAdı }} klasörü geri yüklendi.",
       "FolderDeletedForever": "{{ folderName }} klasörü kalıcı olarak silindi.",
-      "MoveToTrashBin": "Çöp kutusuna taşı",
+      "MoveToTrash": "Çöp kutusuna taşıyın",
       "MovedToTrashBin": "{{ folderName }} klasörü çöp kutusuna taşındı.",
       "FolderCloneFailed": "Klasör klonlanamadı.",
-      "FolderClonePending": "Klasörün klonlanması devam ediyor."
+      "FolderClonePending": "Klasörün klonlanması devam ediyor.",
+      "MoveToTrashDescription": "\"{{ folderName }}\" dosyasını çöp kutusuna taşımak istediğinizden emin misiniz?"
     },
     "explorer": {
       "Delete": "Sil...",
@@ -993,7 +994,10 @@
     "MaxCustomizedImageCount": "Maksimum Özelleştirilmiş Görüntü Sayısı",
     "CreatedAt": "Oluşturulma Tarihi",
     "MaxFolderCount": "Maksimum Klasör Sayısı",
-    "ProjectResourcePolicy": "Proje Kaynak Politikası"
+    "ProjectResourcePolicy": "Proje Kaynak Politikası",
+    "NoDataToExport": "CSV ekstresine ilişkin veriler mevcut değil.",
+    "ExportCSV": "CSV'yi dışa aktar",
+    "Tools": "Aletler"
   },
   "registry": {
     "Hostname": "ana bilgisayar adı",
@@ -1535,7 +1539,8 @@
     "SyncRoutesRequested": "Rota senkronizasyonu talep edildi.",
     "UpdateService": "Güncelleme Hizmeti",
     "StartNewService": "Yeni Hizmeti Başlat",
-    "RuntimeVariant": "Çıkarım Çalışma Zamanı Varyantı"
+    "RuntimeVariant": "Çıkarım Çalışma Zamanı Varyantı",
+    "Chatting": "Sohbet"
   },
   "ErrorBoundary": {
     "title": "Bir hata oluştu.",
@@ -1655,8 +1660,13 @@
     "useAnotherAccount": "Farklı bir hesapla oturum açın"
   },
   "chatui": {
-    "OpenChatModal": "LLM Chat",
     "CannotFindModel": "LLM modelleri bulunamıyor. \nLütfen modeli özelleştirin.",
-    "DeleteChatHistory": "Sohbet Geçmişini Sil"
+    "NewChat": "Yeni sohbet",
+    "DeleteChatHistory": "Sohbet Geçmişini Sil",
+    "SelectModel": "Modeli Seçin",
+    "DeleteChattingSession": "Sohbet oturumunu sil",
+    "DeleteChattingSessionDescription": "Bu konuyu silmek üzeresiniz. \nBir kere silindikten sonra geri getirilemez. \nLütfen dikkatli bir şekilde ilerleyin.",
+    "SelectEndpoint": "Uç Noktayı Seçin",
+    "Sync": "Senkronizasyon"
   }
 }

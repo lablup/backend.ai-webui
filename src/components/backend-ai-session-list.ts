@@ -19,7 +19,6 @@ import './lablup-grid-sort-filter-column';
 import './lablup-progress-bar';
 import '@material/mwc-button';
 import '@material/mwc-checkbox';
-import { Checkbox } from '@material/mwc-checkbox';
 import '@material/mwc-icon';
 import '@material/mwc-icon-button';
 import '@material/mwc-icon-button-toggle';
@@ -134,8 +133,6 @@ export default class BackendAISessionList extends BackendAIPage {
     this.sessionInfoRenderer.bind(this);
   @property({ type: Object }) _boundArchitectureRenderer =
     this.architectureRenderer.bind(this);
-  @property({ type: Object }) _boundCheckboxRenderer =
-    this.checkboxRenderer.bind(this);
   @property({ type: Object }) _boundUserInfoRenderer =
     this.userInfoRenderer.bind(this);
   @property({ type: Object }) _boundStatusRenderer =
@@ -598,6 +595,14 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   firstUpdated() {
+    this._grid.addEventListener('selected-items-changed', () => {
+      this._selected_items = this._grid.selectedItems;
+      if (this._selected_items.length > 0) {
+        this.multipleActionButtons.style.display = 'flex';
+      } else {
+        this.multipleActionButtons.style.display = 'none';
+      }
+    });
     this.imageInfo = globalThis.backendaimetadata.imageInfo;
     this.kernel_icons = globalThis.backendaimetadata.icons;
     this.kernel_labels = globalThis.backendaimetadata.kernel_labels;
@@ -728,6 +733,15 @@ export default class BackendAISessionList extends BackendAIPage {
    * @param {boolean} repeat - repeat the job data reading. Set refreshTime to 5000 for running list else 30000
    * */
   async _refreshJobData(refresh = false, repeat = true) {
+    this._grid?.addEventListener('selected-items-changed', () => {
+      this._selected_items = this._grid.selectedItems;
+      if (this._selected_items.length > 0) {
+        this.multipleActionButtons.style.display = 'flex';
+      } else {
+        this.multipleActionButtons.style.display = 'none';
+      }
+    });
+
     await this.updateComplete;
     if (this.active !== true) {
       return;
@@ -1263,7 +1277,7 @@ export default class BackendAISessionList extends BackendAIPage {
         }
 
         this.compute_sessions = sessions;
-        this._grid.recalculateColumnWidths();
+        this._grid?.recalculateColumnWidths();
         // this._grid.clearCache();
         this.requestUpdate();
         let refreshTime;
@@ -1290,6 +1304,7 @@ export default class BackendAISessionList extends BackendAIPage {
             }, refreshTime);
           }
         }
+        this._handleSelectedItems();
       })
       .catch((err) => {
         this.refreshing = false;
@@ -1315,6 +1330,7 @@ export default class BackendAISessionList extends BackendAIPage {
           this.notification.show(true, err);
         }
       });
+    this._clearCheckboxes();
   }
 
   /**
@@ -1636,6 +1652,7 @@ export default class BackendAISessionList extends BackendAIPage {
           this.notification.show(true, err);
         } else if (err && err.title) {
           this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = '';
           this.notification.show(true, err);
         }
       });
@@ -1669,6 +1686,7 @@ export default class BackendAISessionList extends BackendAIPage {
           this.notification.show(true, err);
         } else if (err && err.title) {
           this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = '';
           this.notification.show(true, err);
         }
       });
@@ -1704,6 +1722,7 @@ export default class BackendAISessionList extends BackendAIPage {
           this.notification.show(true, err);
         } else if (err && err.title) {
           this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = '';
           this.notification.show(true, err);
         }
       });
@@ -1944,6 +1963,7 @@ export default class BackendAISessionList extends BackendAIPage {
 
     if (this.terminationQueue.includes(sessionId)) {
       this.notification.text = _text('session.AlreadyTerminatingSession');
+      this.notification.detail = '';
       this.notification.show();
       return false;
     }
@@ -1954,6 +1974,7 @@ export default class BackendAISessionList extends BackendAIPage {
     // TODO define extended type for custom properties
     if (this.terminationQueue.includes(this.terminateSessionDialog.sessionId)) {
       this.notification.text = _text('session.AlreadyTerminatingSession');
+      this.notification.detail = '';
       this.notification.show();
       return false;
     }
@@ -1969,6 +1990,7 @@ export default class BackendAISessionList extends BackendAIPage {
         this._clearCheckboxes();
         this.terminateSessionDialog.hide();
         this.notification.text = _text('session.SessionTerminated');
+        this.notification.detail = '';
         this.notification.show();
         const event = new CustomEvent('backend-ai-resource-refreshed', {
           detail: 'running',
@@ -2051,14 +2073,19 @@ export default class BackendAISessionList extends BackendAIPage {
    * Clear checked attributes.
    * */
   _clearCheckboxes() {
-    const elm = Array.from(
-      this.shadowRoot?.querySelectorAll<Checkbox>(
-        'mwc-checkbox.list-check',
-      ) as NodeListOf<Checkbox>,
+    this._grid.selectedItems = [];
+    this._selected_items = [];
+    this._grid.clearCache();
+  }
+
+  _handleSelectedItems() {
+    if (this._selected_items.length === 0) return;
+
+    const selectedItems = this.compute_sessions.filter((item) =>
+      this._selected_items.some((selectedItem) => selectedItem.id === item.id),
     );
-    [...elm].forEach((checkbox) => {
-      checkbox.removeAttribute('checked');
-    });
+
+    this._grid.selectedItems = selectedItems;
   }
 
   _terminateSelectedSessionsWithCheck(forced = false) {
@@ -2074,6 +2101,7 @@ export default class BackendAISessionList extends BackendAIPage {
         this._clearCheckboxes();
         this.multipleActionButtons.style.display = 'none';
         this.notification.text = _text('session.SessionsTerminated');
+        this.notification.detail = '';
         this.notification.show();
       })
       .catch(() => {
@@ -2099,6 +2127,7 @@ export default class BackendAISessionList extends BackendAIPage {
         this._clearCheckboxes();
         this.multipleActionButtons.style.display = 'none';
         this.notification.text = _text('session.SessionsTerminated');
+        this.notification.detail = '';
         this.notification.show();
       })
       .catch(() => {
@@ -2134,6 +2163,7 @@ export default class BackendAISessionList extends BackendAIPage {
             'Problem occurred during termination.',
           );
         }
+        this.notification.detail = '';
         this.notification.show(true, err);
       });
   }
@@ -2627,6 +2657,7 @@ export default class BackendAISessionList extends BackendAIPage {
           .then((req) => {
             this.refreshList();
             this.notification.text = _text('session.SessionRenamed');
+            this.notification.detail = '';
             this.notification.show();
           })
           .catch((err) => {
@@ -3852,13 +3883,15 @@ ${rowData.item[this.sessionNameField]}</pre
       // language=HTML
       html`
         <div class="layout vertical" style="padding:3px auto;">
-          <span>${rowData.item.created_at_hr}</span>
+          <span>
+            ${rowData.item.starts_at_hr || rowData.item.created_at_hr}
+          </span>
           <backend-ai-session-reservation-timer
             value="${JSON.stringify({
-              created_at: rowData.item.created_at,
+              starts_at: rowData.item.starts_at || rowData.item.created_at,
               terminated_at: rowData.item.terminated_at,
             })}"
-          />
+          ></backend-ai-session-reservation-timer>
         </div>
       `,
       root,
@@ -3993,22 +4026,6 @@ ${rowData.item[this.sessionNameField]}</pre
     );
   }
 
-  _toggleCheckbox(object) {
-    const exist = this._selected_items.findIndex(
-      (x) => x['session_id'] == object['session_id'],
-    );
-    if (exist === -1) {
-      this._selected_items.push(object);
-    } else {
-      this._selected_items.splice(exist, 1);
-    }
-    if (this._selected_items.length > 0) {
-      this.multipleActionButtons.style.display = 'block';
-    } else {
-      this.multipleActionButtons.style.display = 'none';
-    }
-  }
-
   /**
    * Aggregate shared memory allocated in session
    *
@@ -4022,34 +4039,6 @@ ${rowData.item[this.sessionNameField]}</pre
       shmem += Number(sharedMemoryObj[item]?.shmem ?? 0);
     });
     return BackendAISessionList.bytesToGiB(shmem);
-  }
-
-  /**
-   * Render a checkbox
-   *
-   * @param {Element} root - the row details content DOM element
-   * @param {Element} column - the column element that controls the state of the host element
-   * @param {Object} rowData - the object with the properties related with the rendered item
-   * */
-  checkboxRenderer(root, column?, rowData?) {
-    if (
-      (this._isRunning && !this._isPreparing(rowData.item.status)) ||
-      this._APIMajorVersion > 4
-    ) {
-      render(
-        html`
-          <mwc-checkbox
-            class="list-check"
-            style="display:contents;"
-            ?checked="${rowData.item.checked === true}"
-            @click="${() => this._toggleCheckbox(rowData.item)}"
-          ></mwc-checkbox>
-        `,
-        root,
-      );
-    } else {
-      render(html``, root);
-    }
   }
 
   /**
@@ -4314,124 +4303,138 @@ ${rowData.item[this.sessionNameField]}</pre
         </div>
       </div>
       <div class="list-wrapper">
-        <vaadin-grid id="list-grid" theme="row-stripes column-borders compact dark" aria-label="Session list"
-          .items="${this.compute_sessions}" height-by-rows>
-          ${
-            this._isRunning
-              ? html`
+        ${
+          this.active
+            ? html`
+                <vaadin-grid
+                  id="list-grid"
+                  theme="row-stripes column-borders compact dark"
+                  aria-label="Session list"
+                  .items="${this.compute_sessions}"
+                  height-by-rows
+                >
+                  ${this._isRunning
+                    ? html`
+                        <vaadin-grid-selection-column
+                          frozen
+                          auto-select
+                        ></vaadin-grid-selection-column>
+                      `
+                    : html``}
                   <vaadin-grid-column
                     frozen
-                    width="60px"
+                    width="40px"
                     flex-grow="0"
-                    text-align="center"
-                    .renderer="${this._boundCheckboxRenderer}"
+                    header="#"
+                    .renderer="${this._indexRenderer}"
                   ></vaadin-grid-column>
-                `
-              : html``
-          }
-          <vaadin-grid-column frozen width="40px" flex-grow="0" header="#" .renderer="${
-            this._indexRenderer
-          }"></vaadin-grid-column>
-          ${
-            this.is_admin
-              ? html`
+                  ${this.is_admin
+                    ? html`
+                        <lablup-grid-sort-filter-column
+                          frozen
+                          path="${this._connectionMode === 'API'
+                            ? 'access_key'
+                            : 'user_email'}"
+                          header="${this._connectionMode === 'API'
+                            ? 'API Key'
+                            : 'User ID'}"
+                          resizable
+                          .renderer="${this._boundUserInfoRenderer}"
+                        ></lablup-grid-sort-filter-column>
+                      `
+                    : html``}
                   <lablup-grid-sort-filter-column
                     frozen
-                    path="${this._connectionMode === 'API'
-                      ? 'access_key'
-                      : 'user_email'}"
-                    header="${this._connectionMode === 'API'
-                      ? 'API Key'
-                      : 'User ID'}"
+                    path="${this.sessionNameField}"
+                    width="260px"
+                    header="${_t('session.SessionInfo')}"
                     resizable
-                    .renderer="${this._boundUserInfoRenderer}"
+                    .renderer="${this._boundSessionInfoRenderer}"
                   ></lablup-grid-sort-filter-column>
-                `
-              : html``
-          }
-          <lablup-grid-sort-filter-column frozen path="${this.sessionNameField}" 
-            width="260px"
-            header="${_t('session.SessionInfo')}" 
-            resizable
-            .renderer="${this._boundSessionInfoRenderer}"
-          >
-          </lablup-grid-sort-filter-column>
-          <lablup-grid-sort-filter-column width="120px" path="status" header="${_t('session.Status')}" 
-            resizable
-            .renderer="${this._boundStatusRenderer}">
-          </lablup-grid-sort-filter-column>
-          <vaadin-grid-column width=${
-            this._isContainerCommitEnabled ? '260px' : '210px'
-          } flex-grow="0" resizable header="${_t('general.Control')}"
-                              .renderer="${
-                                this._boundControlRenderer
-                              }"></vaadin-grid-column>
-          <vaadin-grid-column width="200px" flex-grow="0" resizable header="${_t(
-            'session.Configuration',
-          )}"
-                              .renderer="${
-                                this._boundConfigRenderer
-                              }"></vaadin-grid-column>
-          <vaadin-grid-column width="140px" flex-grow="0" resizable header="${_t(
-            'session.Usage',
-          )}"
-                              .renderer="${this._boundUsageRenderer}">
-          </vaadin-grid-column>
-          <vaadin-grid-sort-column resizable width="180px" flex-grow="0" header="${_t(
-            'session.Reservation',
-          )}"
-            path="created_at" 
-            .renderer="${this._boundReservationRenderer}">
-          </vaadin-grid-sort-column>
-          ${
-            globalThis.backendaiclient.supports('idle-checks') &&
-            this.activeIdleCheckList.size > 0
-              ? html`
+                  <lablup-grid-sort-filter-column
+                    width="120px"
+                    path="status"
+                    header="${_t('session.Status')}"
+                    resizable
+                    .renderer="${this._boundStatusRenderer}"
+                  ></lablup-grid-sort-filter-column>
                   <vaadin-grid-column
+                    width=${this._isContainerCommitEnabled ? '260px' : '210px'}
+                    flex-grow="0"
+                    resizable
+                    header="${_t('general.Control')}"
+                    .renderer="${this._boundControlRenderer}"
+                  ></vaadin-grid-column>
+                  <vaadin-grid-column
+                    width="200px"
+                    flex-grow="0"
+                    resizable
+                    header="${_t('session.Configuration')}"
+                    .renderer="${this._boundConfigRenderer}"
+                  ></vaadin-grid-column>
+                  <vaadin-grid-column
+                    width="140px"
+                    flex-grow="0"
+                    resizable
+                    header="${_t('session.Usage')}"
+                    .renderer="${this._boundUsageRenderer}"
+                  ></vaadin-grid-column>
+                  <vaadin-grid-sort-column
                     resizable
                     width="180px"
                     flex-grow="0"
-                    .headerRenderer="${this._boundIdleChecksHeaderderer}"
-                    .renderer="${this._boundIdleChecksRenderer}"
-                  ></vaadin-grid-column>
-                `
-              : html``
-          }
-          <lablup-grid-sort-filter-column width="110px" path="architecture" header="${_t(
-            'session.Architecture',
-          )}" resizable
-                                     .renderer="${
-                                       this._boundArchitectureRenderer
-                                     }">
-          </lablup-grid-sort-filter-column>
-          ${
-            this._isIntegratedCondition
-              ? html`
+                    header="${_t('session.Reservation')}"
+                    path="created_at"
+                    .renderer="${this._boundReservationRenderer}"
+                  ></vaadin-grid-sort-column>
+                  ${globalThis.backendaiclient.supports('idle-checks') &&
+                  this.activeIdleCheckList.size > 0
+                    ? html`
+                        <vaadin-grid-column
+                          resizable
+                          width="180px"
+                          flex-grow="0"
+                          .headerRenderer="${this._boundIdleChecksHeaderderer}"
+                          .renderer="${this._boundIdleChecksRenderer}"
+                        ></vaadin-grid-column>
+                      `
+                    : html``}
                   <lablup-grid-sort-filter-column
-                    path="type"
-                    width="140px"
-                    flex-grow="0"
-                    header="${_t('session.launcher.SessionType')}"
+                    width="110px"
+                    path="architecture"
+                    header="${_t('session.Architecture')}"
                     resizable
-                    .renderer="${this._boundSessionTypeRenderer}"
+                    .renderer="${this._boundArchitectureRenderer}"
                   ></lablup-grid-sort-filter-column>
-                `
-              : html``
-          }
-          ${
-            this.is_superadmin || !globalThis.backendaiclient._config.hideAgents
-              ? html`
-                  <lablup-grid-sort-filter-column
-                    width="140px"
-                    flex-grow="0"
-                    resizable
-                    header="${_t('session.Agents')}"
-                    .renderer="${this._boundAgentListRenderer}"
-                  ></lablup-grid-sort-filter-column>
-                `
-              : html``
-          }
-          </vaadin-grid>
+                  ${this._isIntegratedCondition
+                    ? html`
+                        <lablup-grid-sort-filter-column
+                          path="type"
+                          width="140px"
+                          flex-grow="0"
+                          header="${_t('session.launcher.SessionType')}"
+                          resizable
+                          .renderer="${this._boundSessionTypeRenderer}"
+                        ></lablup-grid-sort-filter-column>
+                      `
+                    : html``}
+                  ${this.is_superadmin ||
+                  !globalThis.backendaiclient._config.hideAgents
+                    ? html`
+                        <lablup-grid-sort-filter-column
+                          width="140px"
+                          flex-grow="0"
+                          resizable
+                          header="${_t('session.Agents')}"
+                          .renderer="${this._boundAgentListRenderer}"
+                        ></lablup-grid-sort-filter-column>
+                      `
+                    : html``}
+                </vaadin-grid>
+              `
+            : html``
+        }
+        
           <backend-ai-list-status id="list-status" statusCondition="${
             this.listCondition
           }" message="${_text(

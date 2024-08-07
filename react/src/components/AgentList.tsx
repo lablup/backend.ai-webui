@@ -1,6 +1,7 @@
 import {
   bytesToGB,
   iSizeToSize,
+  toFixedFloorWithoutTrailingZeros,
   transformSorterToOrderString,
 } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
@@ -167,7 +168,7 @@ const AgentList: React.FC<AgentListProps> = ({
       rowScope: 'row',
     },
     {
-      title: `ID / ${t('agent.Endpoint')}`,
+      title: <>ID / {t('agent.Endpoint')}</>,
       key: 'id',
       dataIndex: 'id',
       fixed: 'left',
@@ -279,8 +280,15 @@ const AgentList: React.FC<AgentListProps> = ({
                     <Flex gap="xxs">
                       <ResourceTypeIcon key={key} type={key} />
                       <Typography.Text>
-                        {parsedOccupiedSlots[key] ?? 0}/
-                        {parsedAvailableSlots[key] ?? 0}
+                        {toFixedFloorWithoutTrailingZeros(
+                          parsedOccupiedSlots[key],
+                          0,
+                        )}
+                        /
+                        {toFixedFloorWithoutTrailingZeros(
+                          parsedAvailableSlots[key],
+                          0,
+                        )}
                       </Typography.Text>
                       <Typography.Text
                         type="secondary"
@@ -303,11 +311,14 @@ const AgentList: React.FC<AgentListProps> = ({
                       }
                       width={120}
                       valueLabel={
-                        _.toFinite(
-                          (parsedOccupiedSlots[key] /
-                            parsedAvailableSlots[key]) *
-                            100,
-                        ).toFixed(2) + ' %'
+                        toFixedFloorWithoutTrailingZeros(
+                          _.toFinite(
+                            (parsedOccupiedSlots[key] /
+                              parsedAvailableSlots[key]) *
+                              100,
+                          ),
+                          1,
+                        ) + ' %'
                       }
                     />
                   </Flex>
@@ -319,10 +330,10 @@ const AgentList: React.FC<AgentListProps> = ({
                       <ResourceTypeIcon key={key} type={key} />
                       <Typography.Text>
                         {iSizeToSize(parsedOccupiedSlots[key], 'g', 0)
-                          ?.numberFixed ?? 0}
+                          ?.numberFixed ?? 2}
                         /
                         {iSizeToSize(parsedAvailableSlots[key], 'g', 0)
-                          ?.numberFixed ?? 0}
+                          ?.numberFixed ?? 2}
                       </Typography.Text>
                       <Typography.Text
                         type="secondary"
@@ -345,11 +356,14 @@ const AgentList: React.FC<AgentListProps> = ({
                       }
                       width={120}
                       valueLabel={
-                        _.toFinite(
-                          (parsedOccupiedSlots[key] /
-                            parsedAvailableSlots[key]) *
-                            100,
-                        ).toFixed(2) + ' %'
+                        toFixedFloorWithoutTrailingZeros(
+                          _.toFinite(
+                            (parsedOccupiedSlots[key] /
+                              parsedAvailableSlots[key]) *
+                              100,
+                          ),
+                          1,
+                        ) + ' %'
                       }
                     />
                   </Flex>
@@ -368,8 +382,15 @@ const AgentList: React.FC<AgentListProps> = ({
                     <Flex gap="xxs">
                       <ResourceTypeIcon key={key} type={key} />
                       <Typography.Text>
-                        {parsedOccupiedSlots[key] ?? 0}/
-                        {parsedAvailableSlots[key] ?? 0}
+                        {toFixedFloorWithoutTrailingZeros(
+                          parsedOccupiedSlots[key],
+                          2,
+                        )}
+                        /
+                        {toFixedFloorWithoutTrailingZeros(
+                          parsedAvailableSlots[key],
+                          2,
+                        )}
                       </Typography.Text>
                       <Typography.Text
                         type="secondary"
@@ -392,11 +413,14 @@ const AgentList: React.FC<AgentListProps> = ({
                       }
                       width={120}
                       valueLabel={
-                        _.toFinite(
-                          (parsedOccupiedSlots[key] /
-                            parsedAvailableSlots[key]) *
-                            100,
-                        ).toFixed(2) + ' %'
+                        toFixedFloorWithoutTrailingZeros(
+                          _.toFinite(
+                            (parsedOccupiedSlots[key] /
+                              parsedAvailableSlots[key]) *
+                              100,
+                          ),
+                          1,
+                        ) + ' %'
                       }
                     />
                   </Flex>
@@ -413,6 +437,7 @@ const AgentList: React.FC<AgentListProps> = ({
       dataIndex: 'live_stat',
       render: (value, record) => {
         const parsedValue = JSON.parse(value || '{}');
+        const available_slots = JSON.parse(record?.available_slots || '{}');
         if (record?.status === 'ALIVE') {
           const liveStat = {
             cpu_util: { capacity: 0, current: 0, ratio: 0 },
@@ -432,7 +457,7 @@ const AgentList: React.FC<AgentListProps> = ({
                 numCores) *
                 100 || 0;
             liveStat.mem_util.capacity = _.toInteger(
-              parsedValue.node.mem.capacity,
+              available_slots.mem || parsedValue.node.mem.capacity,
             );
             liveStat.mem_util.current = _.toInteger(
               parsedValue.node.mem.current,
@@ -475,7 +500,10 @@ const AgentList: React.FC<AgentListProps> = ({
                   percent={liveStat.cpu_util.ratio}
                   width={120}
                   valueLabel={
-                    _.toFinite(liveStat.cpu_util.ratio.toFixed(1)) + ' %'
+                    toFixedFloorWithoutTrailingZeros(
+                      _.toFinite(liveStat.cpu_util.ratio),
+                      1,
+                    ) + ' %'
                   }
                 />
               </Flex>
@@ -522,9 +550,10 @@ const AgentList: React.FC<AgentListProps> = ({
                         }
                         valueLabel={
                           _.toFinite(
-                            liveStat[
-                              statKey as keyof typeof liveStat
-                            ].ratio.toFixed(1),
+                            toFixedFloorWithoutTrailingZeros(
+                              liveStat[statKey as keyof typeof liveStat].ratio,
+                              1,
+                            ),
                           ) + ' %'
                         }
                       />
@@ -588,12 +617,12 @@ const AgentList: React.FC<AgentListProps> = ({
         const parsedDisk =
           JSON.parse(record?.live_stat || '{}')?.node?.disk ?? {};
         const pctValue = parseFloat(parsedDisk.pct) || 0;
-        const pct = parseFloat(pctValue.toFixed(1));
+        const pct = parseFloat(toFixedFloorWithoutTrailingZeros(pctValue, 2));
         const color = pct > 80 ? token.colorError : token.colorSuccess;
         return (
           <Flex direction="column">
             <BAIProgressWithLabel
-              valueLabel={pct + ' %'}
+              valueLabel={toFixedFloorWithoutTrailingZeros(pct, 1) + ' %'}
               percent={pct}
               strokeColor={color}
               width={120}

@@ -503,7 +503,8 @@
     "SyncRoutesRequested": "The route synchronization requested.",
     "StartNewService": "Start New Service",
     "UpdateService": "Update Service",
-    "RuntimeVariant": "Inference Runtime Variant"
+    "RuntimeVariant": "Inference Runtime Variant",
+    "Chatting": "Chatting"
   },
   "button": {
     "Cancel": "Cancel",
@@ -803,9 +804,10 @@
       "FolderRestored": "The {{ folderName }} folder has been restored.",
       "FolderDeletedForever": "The {{ folderName }} folder has been deleted forever.",
       "MovedToTrashBin": "The {{ folderName }} folder has been moved to the trash bin.",
-      "MoveToTrashBin": "Move to trash bin",
+      "MoveToTrash": "Move to trash",
       "FolderCloneFailed": "Failed to clone the folder.",
-      "FolderClonePending": "Cloning the folder is in progress."
+      "FolderClonePending": "Cloning the folder is in progress.",
+      "MoveToTrashDescription": "Are you sure you want to move \"{{ folderName }}\" to trash?"
     },
     "explorer": {
       "Delete": "Delete",
@@ -1117,7 +1119,10 @@
     "MaxCustomizedImageCount": "Max Customized Image Count",
     "CreatedAt": "Created At",
     "MaxFolderCount": "Max Folder Count",
-    "ProjectResourcePolicy": "Project Resource Policy"
+    "ProjectResourcePolicy": "Project Resource Policy",
+    "NoDataToExport": "The data for the CSV extract does not exist.",
+    "ExportCSV": "export CSV",
+    "Tools": "Tools"
   },
   "registry": {
     "Hostname": "Hostname",
@@ -1657,8 +1662,14 @@
     "useAnotherAccount": "Sign in with a different account"
   },
   "chatui": {
-    "OpenChatModal": "LLM Chat",
     "CannotFindModel": "LLM models cannot be found. Please customize the model.",
-    "DeleteChatHistory": "Delete Chat History"
+    "NewChat": "New Chat",
+    "DeleteChatHistory": "Delete Chat History",
+    "SelectModel": "Select Model",
+    "SelectEndpoint": "Select Endpoint",
+    "DeleteChatSession": "",
+    "DeleteChattingSession": "Delete chatting session",
+    "DeleteChattingSessionDescription": "You are about to delete this topic. Once deleted, it cannot be recovered. Please proceed with caution.",
+    "Sync": "Sync"
   }
 }

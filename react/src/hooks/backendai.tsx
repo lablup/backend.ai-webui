@@ -66,7 +66,7 @@ export const useResourceSlotsDetails = (resourceGroupName?: string) => {
   const [key, checkUpdate] = useUpdatableState('first');
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const baiClient = useSuspendedBackendaiClient();
-  let { data: resourceSlots } = useTanQuery<{
+  const { data: resourceSlots } = useTanQuery<{
     [key: string]: ResourceSlotDetail | undefined;
   }>({
     queryKey: ['useResourceSlots', resourceGroupName, key],
@@ -103,10 +103,9 @@ export const useResourceSlotsDetails = (resourceGroupName?: string) => {
     },
     staleTime: 1000 * 60 * 60 * 24,
   });
-  resourceSlots = resourceSlots || deviceMetadata;
 
   return [
-    resourceSlots,
+    _.merge(deviceMetadata, resourceSlots),
     {
       refresh: () => checkUpdate(),
     },

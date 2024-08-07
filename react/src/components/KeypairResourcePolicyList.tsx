@@ -1,4 +1,8 @@
-import { localeCompare, numberSorterWithInfinityValue } from '../helper';
+import {
+  exportCSVWithFormattingRules,
+  localeCompare,
+  numberSorterWithInfinityValue,
+} from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import Flex from './Flex';
 import KeypairResourcePolicySettingModal, {
@@ -15,12 +19,22 @@ import {
 import { KeypairResourcePolicySettingModalFragment$key } from './__generated__/KeypairResourcePolicySettingModalFragment.graphql';
 import {
   DeleteOutlined,
+  DownOutlined,
   PlusOutlined,
   ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 import { useLocalStorageState } from 'ahooks';
-import { App, Button, Popconfirm, Table, Tag, theme, Typography } from 'antd';
+import {
+  App,
+  Button,
+  Dropdown,
+  Popconfirm,
+  Space,
+  Table,
+  Tag,
+  theme,
+} from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
@@ -212,15 +226,25 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
                   variables: {
                     name: row.name,
                   },
-                  onCompleted: (data, errors) => {
-                    if (errors) {
-                      message.error(errors[0]?.message);
+                  onCompleted: (res, errors) => {
+                    if (!res?.delete_keypair_resource_policy?.ok) {
+                      message.error(res?.delete_keypair_resource_policy?.msg);
                       return;
                     }
-                    startRefetchTransition(() =>
-                      updateKeypairResourcePolicyFetchKey(),
-                    );
-                    message.success(t('resourcePolicy.SuccessfullyDeleted'));
+                    if (errors && errors?.length > 0) {
+                      const errorMsgList = _.map(
+                        errors,
+                        (error) => error.message,
+                      );
+                      for (const error of errorMsgList) {
+                        message.error(error, 2.5);
+                      }
+                    } else {
+                      startRefetchTransition(() =>
+                        updateKeypairResourcePolicyFetchKey(),
+                      );
+                      message.success(t('resourcePolicy.SuccessfullyDeleted'));
+                    }
                   },
                   onError(err) {
                     message.error(err?.message);
@@ -239,8 +263,9 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
                 />
               }
               loading={
+                isInflightDelete &&
                 inFlightResourcePolicyName ===
-                row?.name + keypairResourcePolicyFetchKey
+                  row?.name + keypairResourcePolicyFetchKey
               }
               disabled={
                 isInflightDelete &&
@@ -261,6 +286,38 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
     },
   );
 
+  const handleExportCSV = () => {
+    if (!keypair_resource_policies) {
+      message.error(t('resourcePolicy.NoDataToExport'));
+      return;
+    }
+
+    const columnkeys = _.without(displayedColumnKeys, 'control');
+    const responseData = _.map(keypair_resource_policies, (policy) => {
+      return _.pick(
+        policy,
+        columnkeys.map((key) => key as keyof KeypairResourcePolicies),
+      );
+    });
+
+    exportCSVWithFormattingRules(
+      responseData as KeypairResourcePolicies[],
+      {
+        total_resource_slots: (text) =>
+          _.isEmpty(text) ? '-' : JSON.stringify(text),
+        max_concurrent_sessions: (text) =>
+          text === UNLIMITED_MAX_CONCURRENT_SESSIONS ? '-' : text,
+        max_containers_per_session: (text) =>
+          text === UNLIMITED_MAX_CONTAINERS_PER_SESSIONS ? '-' : text,
+        idle_timeout: (text) => (text ? text : '-'),
+        max_session_lifetime: (text) => (text ? text : '-'),
+        allowed_vfolder_hosts: (text) =>
+          _.isEmpty(text) ? '-' : _.keys(JSON.parse(text)).join(', '),
+      },
+      'keypair_resource_policies',
+    );
+  };
+
   return (
     <Flex direction="column" align="stretch">
       <Flex
@@ -275,9 +332,30 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         }}
       >
         <Flex direction="column" align="start">
-          <Typography.Text style={{ margin: 0, padding: 0 }}>
-            {t('resourcePolicy.KeypairResourcePolicy')}
-          </Typography.Text>
+          <Dropdown
+            menu={{
+              items: [
+                {
+                  key: 'exportCSV',
+                  label: t('resourcePolicy.ExportCSV'),
+                  onClick: () => {
+                    handleExportCSV();
+                  },
+                },
+              ],
+            }}
+          >
+            <Button
+              type="link"
+              style={{ padding: 0 }}
+              onClick={(e) => e.preventDefault()}
+            >
+              <Space style={{ color: token.colorLinkHover }}>
+                {t('resourcePolicy.Tools')}
+                <DownOutlined />
+              </Space>
+            </Button>
+          </Dropdown>
         </Flex>
         <Flex direction="row" gap={'xs'} wrap="wrap" style={{ flexShrink: 1 }}>
           <Flex gap={'xs'}>
