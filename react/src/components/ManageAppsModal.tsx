@@ -86,7 +86,6 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
   };
   const servicePorts = getServicePorts();
 
-  console.log(image);
   const handleOnClick = () => {
     formRef.current
       ?.validateFields()
