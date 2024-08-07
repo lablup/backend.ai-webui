@@ -1,6 +1,6 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import { useWebComponentInfo } from './DefaultProviders';
+import { EnvironmentImage } from './ImageList';
 import ImageResourceFormItem from './ImageResourceFormItem';
 import {
   ManageImageResourceLimitModalMutation,
@@ -12,22 +12,14 @@ import React, { useRef } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useMutation } from 'react-relay';
 
-// TODO: This is not 100% same with Image type of GraphQL.
-// This type is modified version based on backend-ai-environment-list.ts
-export type ImageFromEnvironment = {
-  resource_limits: ResourceLimitInput[];
-  registry: string;
-  name: string;
-  tag: string;
-  architecture: string;
-  installed: boolean;
-  labels: {
-    [key: string]: string;
-  };
-};
-const ManageImageResourceLimitModal: React.FC<BAIModalProps> = ({
-  ...BAIModalProps
-}) => {
+interface ManageImageResourceLimitModalProps extends BAIModalProps {
+  image: EnvironmentImage | null;
+  open: boolean;
+  onRequestClose: (success: boolean) => void;
+}
+const ManageImageResourceLimitModal: React.FC<
+  ManageImageResourceLimitModalProps
+> = ({ image, open, onRequestClose, ...BAIModalProps }) => {
   const baiClient = useSuspendedBackendaiClient();
   // Differentiate default max value based on manager version.
   // The difference between validating a variable type as undefined or none for an unsupplied field value.
@@ -36,14 +28,6 @@ const ManageImageResourceLimitModal: React.FC<BAIModalProps> = ({
   const { t } = useTranslation();
   const formRef = useRef<FormInstance>(null);
   const app = App.useApp();
-
-  const {
-    parsedValue: { image, open },
-    dispatchEvent,
-  } = useWebComponentInfo<{
-    image: ImageFromEnvironment; //TODO: This is not 100% same with Image type, after implementing the image list with a relay query, the type should be changed.
-    open?: boolean;
-  }>();
 
   const [commitModifyImageInput, isInFlightModifyImageInput] =
     useMutation<ManageImageResourceLimitModalMutation>(graphql`
@@ -71,8 +55,8 @@ const ManageImageResourceLimitModal: React.FC<BAIModalProps> = ({
       key,
       min: value.toString() ?? '0',
       max:
-        image.resource_limits?.find((item) => item?.key === key)?.max ??
-        baiClient.isManagerVersionCompatibleWith('24.03.4.*')
+        (image?.resource_limits?.find((item) => item?.key === key)?.max ??
+        baiClient.isManagerVersionCompatibleWith('24.03.4.*'))
           ? undefined
           : null,
     }));
@@ -80,8 +64,8 @@ const ManageImageResourceLimitModal: React.FC<BAIModalProps> = ({
     const commitRequest = () =>
       commitModifyImageInput({
         variables: {
-          target: `${image.registry}/${image.name}:${image.tag}`,
-          architecture: image.architecture,
+          target: `${image?.registry}/${image?.name}:${image?.tag}`,
+          architecture: image?.architecture,
           props: {
             resource_limits,
           },
@@ -91,7 +75,7 @@ const ManageImageResourceLimitModal: React.FC<BAIModalProps> = ({
             message.error(t('dialog.ErrorOccurred'));
           } else {
             message.success(t('environment.DescImageResourceModified'));
-            dispatchEvent('ok', null);
+            onRequestClose(true);
           }
         },
         onError: (err) => {
@@ -124,16 +108,18 @@ const ManageImageResourceLimitModal: React.FC<BAIModalProps> = ({
       open={open}
       maskClosable={false}
       onOk={handleOnclick}
-      onCancel={() => dispatchEvent('cancel', null)}
+      onCancel={() => onRequestClose(false)}
       confirmLoading={isInFlightModifyImageInput}
       centered
       title={t('environment.ModifyImageResourceLimit')}
       {...BAIModalProps}
     >
       <Form ref={formRef} layout="vertical">
-        {image?.resource_limits?.map(({ key, min, max }) => {
+        {image?.resource_limits?.map((resource_limit) => {
           // TODO: After implementing the image list with a relay query, the key transformation should not be needed.
-          const keyUsingDot = key?.replace(/_/g, '.');
+          // @ts-ignore
+          const { key, min, max } = resource_limit;
+          const keyUsingDot = key.replace(/_/g, '.');
           return (
             <ImageResourceFormItem
               key={keyUsingDot}
