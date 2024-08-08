@@ -59,7 +59,7 @@ const LLMPlaygroundPage: React.FC<LLMPlaygroundPageProps> = ({ ...props }) => {
           >
             <Flex gap={'xs'}>
               <Typography.Text type="secondary">
-                {t('chatui.Sync')}
+                {t('chatui.SyncInput')}
               </Typography.Text>
               <Switch
                 value={isSynchronous}
