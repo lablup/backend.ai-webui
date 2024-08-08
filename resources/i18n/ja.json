@@ -505,7 +505,8 @@
     "All": "全体",
     "InProgress": "進行中",
     "Session": "セッション",
-    "General": "一般"
+    "General": "一般",
+    "Extend": "伸ばす"
   },
   "credential": {
     "Permission": "許可",

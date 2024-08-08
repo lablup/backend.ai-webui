@@ -617,7 +617,8 @@
     "All": "전체",
     "InProgress": "진행중",
     "Session": "세션",
-    "General": "일반"
+    "General": "일반",
+    "Extend": "연장"
   },
   "credential": {
     "Permission": "권한",

@@ -505,7 +505,8 @@
     "All": "keseluruhan",
     "InProgress": "Prosiding",
     "Session": "Sesi",
-    "General": "Umum"
+    "General": "Umum",
+    "Extend": "Panjangkan"
   },
   "credential": {
     "Permission": "Kebenaran",
