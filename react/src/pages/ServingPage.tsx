@@ -1,5 +1,6 @@
 import Flex from '../components/Flex';
 import { filterEmptyItem } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { Card, Skeleton, theme } from 'antd';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -23,6 +24,7 @@ const ServingPage: React.FC<ServingPageProps> = ({ ...props }) => {
   const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam, {
     updateType: 'replace',
   });
+  const baiClient = useSuspendedBackendaiClient();
 
   const tabList = filterEmptyItem([
     { key: 'services', label: t('modelService.Services') },
@@ -39,7 +41,10 @@ const ServingPage: React.FC<ServingPageProps> = ({ ...props }) => {
     //   key: "others",
     //   label: t("session.Others"),
     // },
-    { key: 'chatting', label: 'LLM Playground' },
+    baiClient._config.enableLLMPlayground && {
+      key: 'chatting',
+      label: 'LLM Playground',
+    },
   ]);
   return (
     <Flex direction="column" align="stretch" gap={'md'}>
@@ -64,7 +69,7 @@ const ServingPage: React.FC<ServingPageProps> = ({ ...props }) => {
             <EndpointListPage />
           </Suspense>
         ) : null}
-        {curTabKey === 'chatting' ? (
+        {curTabKey === 'chatting' && baiClient._config.enableLLMPlayground ? (
           <Suspense
             fallback={<Skeleton active style={{ padding: token.paddingMD }} />}
           >
