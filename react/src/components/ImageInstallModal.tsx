@@ -5,9 +5,8 @@ import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import { EnvironmentImage } from './ImageList';
 import { App, List } from 'antd';
-import { SetStateAction } from 'jotai';
 import _ from 'lodash';
-import { Dispatch, Key } from 'react';
+import { Dispatch, Key, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface ImageInstallModalInterface extends BAIModalProps {
