@@ -43,6 +43,20 @@ const ResourcePolicyPage = React.lazy(
 );
 const ResourcesPage = React.lazy(() => import('./pages/ResourcesPage'));
 
+const RedirectToSummary = () => {
+  useSuspendedBackendaiClient();
+  const pathName = '/summary';
+  document.dispatchEvent(
+    new CustomEvent('move-to-from-react', {
+      detail: {
+        path: pathName,
+        // params: options?.params,
+      },
+    }),
+  );
+  return <Navigate to="/summary" replace />;
+};
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -65,17 +79,17 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <Navigate to="/summary" replace />,
+        element: <RedirectToSummary />,
       },
       {
         //for electron dev mode
         path: '/build/electron-app/app/index.html',
-        element: <Navigate to="/summary" replace />,
+        element: <RedirectToSummary />,
       },
       {
         //for electron prod mode
         path: '/app/index.html',
-        element: <Navigate to="/summary" replace />,
+        element: <RedirectToSummary />,
       },
       {
         path: '/summary',
