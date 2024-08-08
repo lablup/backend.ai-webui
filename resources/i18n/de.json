@@ -505,7 +505,8 @@
     "All": "Alle",
     "InProgress": "In Arbeit",
     "Session": "Sitzung",
-    "General": "Allgemein"
+    "General": "Allgemein",
+    "Disabled": "Behinderte"
   },
   "credential": {
     "Permission": "Genehmigung",

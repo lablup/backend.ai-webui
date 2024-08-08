@@ -506,7 +506,8 @@
     "All": "Semua",
     "InProgress": "Sedang Berlangsung",
     "Session": "Sesi",
-    "General": "Umum"
+    "General": "Umum",
+    "Disabled": "Dinonaktifkan"
   },
   "credential": {
     "Permission": "Izin",

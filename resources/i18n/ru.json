@@ -505,7 +505,8 @@
     "All": "Все",
     "InProgress": "В процессе",
     "Session": "Сессия",
-    "General": "Общие сведения"
+    "General": "Общие сведения",
+    "Disabled": "Инвалид"
   },
   "credential": {
     "Permission": "Разрешение",

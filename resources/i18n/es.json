@@ -521,7 +521,8 @@
     "All": "Todos",
     "InProgress": "En curso",
     "Session": "Sesión",
-    "General": "General"
+    "General": "General",
+    "Disabled": "Discapacitados"
   },
   "import": {
     "CleanUpImportTask": "Tarea de importación de limpieza...",

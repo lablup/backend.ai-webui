@@ -505,7 +505,8 @@
     "All": "Tümü",
     "InProgress": "Devam Ediyor",
     "Session": "Oturum",
-    "General": "Genel"
+    "General": "Genel",
+    "Disabled": "Engelli"
   },
   "credential": {
     "Permission": "izin",

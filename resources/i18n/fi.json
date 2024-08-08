@@ -521,7 +521,8 @@
     "All": "Kaikki",
     "InProgress": "Käynnissä",
     "Session": "Istunto",
-    "General": "Yleistä"
+    "General": "Yleistä",
+    "Disabled": "Vammaiset"
   },
   "import": {
     "CleanUpImportTask": "Tuontitehtävän siivous...",
