@@ -4,8 +4,9 @@ import { useWebComponentInfo } from './DefaultProviders';
 import Flex from './Flex';
 import { useToggle } from 'ahooks';
 import { Typography, Checkbox, theme } from 'antd';
+import { GetRef } from 'antd/lib';
 import dayjs from 'dayjs';
-import React from 'react';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface Props extends DatePickerISOProps {}
@@ -24,6 +25,8 @@ const BatchSessionScheduledTimeSetting: React.FC<Props> = ({
     dispatchEvent('change', value);
   };
 
+  const datePickerRef = useRef<GetRef<typeof DatePickerISO>>(null);
+
   return (
     <>
       <Typography.Text type="secondary" style={{ fontSize: token.fontSizeSM }}>
@@ -32,7 +35,7 @@ const BatchSessionScheduledTimeSetting: React.FC<Props> = ({
       <Flex align="start" gap="sm">
         <Checkbox
           checked={isChecked}
-          onClick={(v) => {
+          onChange={(v) => {
             toggleChecked();
             const newScheduleTime = v
               ? dayjs().add(2, 'minutes').toISOString()
@@ -44,10 +47,11 @@ const BatchSessionScheduledTimeSetting: React.FC<Props> = ({
         </Checkbox>
         <Flex direction="column" align="end">
           <DatePickerISO
+            ref={datePickerRef}
             {...datePickerISOProps}
             popupStyle={{ position: 'fixed' }}
             disabledDate={(date) => {
-              return date.isBefore(dayjs().startOf('minute'));
+              return date.isBefore(dayjs().startOf('day'));
             }}
             disabled={!isChecked}
             showTime={{
@@ -57,8 +61,11 @@ const BatchSessionScheduledTimeSetting: React.FC<Props> = ({
             onChange={(value) => {
               dispatchAndSetScheduleTime(value);
             }}
-            onBlur={() => {
-              dispatchAndSetScheduleTime(scheduleTime);
+            onCalendarChange={() => {
+              datePickerRef.current?.focus();
+            }}
+            onPanelChange={() => {
+              datePickerRef.current?.focus();
             }}
             status={
               isChecked && !scheduleTime
@@ -67,6 +74,8 @@ const BatchSessionScheduledTimeSetting: React.FC<Props> = ({
                   ? 'error'
                   : undefined
             }
+            needConfirm={false}
+            showNow={false}
           />
           {isChecked && scheduleTime && (
             <Typography.Text
