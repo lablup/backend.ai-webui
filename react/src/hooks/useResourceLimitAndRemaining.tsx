@@ -81,6 +81,7 @@ interface Props {
   currentProjectName: string;
   currentImage?: Image;
   currentResourceGroup?: string;
+  ignorePerContainerConfig?: boolean;
 }
 
 // determine resource limits and remaining for current resource group and current image in current project
@@ -88,6 +89,7 @@ export const useResourceLimitAndRemaining = ({
   currentImage,
   currentResourceGroup = '',
   currentProjectName,
+  ignorePerContainerConfig = false,
 }: Props) => {
   const baiClient = useSuspendedBackendaiClient();
   const [resourceSlots] = useResourceSlots();
@@ -207,7 +209,9 @@ export const useResourceLimitAndRemaining = ({
               ),
             ]),
             max: _.min([
-              baiClient._config.maxCPUCoresPerContainer,
+              ignorePerContainerConfig
+                ? undefined
+                : baiClient._config.maxCPUCoresPerContainer,
               limitParser(checkPresetInfo?.keypair_limits.cpu),
               limitParser(checkPresetInfo?.group_limits.cpu),
               resourceGroupResourceSize?.cpu,
@@ -232,7 +236,9 @@ export const useResourceLimitAndRemaining = ({
             max:
               //handled by 'g(GiB)' unit
               _.min([
-                baiClient._config.maxMemoryPerContainer,
+                ignorePerContainerConfig
+                  ? undefined
+                  : baiClient._config.maxMemoryPerContainer,
                 limitParser(checkPresetInfo?.keypair_limits.mem) &&
                   iSizeToSize(
                     limitParser(checkPresetInfo?.keypair_limits.mem) + '',
