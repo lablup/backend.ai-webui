@@ -53,6 +53,7 @@ const BatchSessionScheduledTimeSetting: React.FC<Props> = ({
             disabledDate={(date) => {
               return date.isBefore(dayjs().startOf('day'));
             }}
+            localFormat
             disabled={!isChecked}
             showTime={{
               hideDisabledOptions: true,
@@ -77,28 +78,23 @@ const BatchSessionScheduledTimeSetting: React.FC<Props> = ({
             needConfirm={false}
             showNow={false}
           />
-          {isChecked && scheduleTime && (
-            <Typography.Text
-              type="secondary"
-              style={{ fontSize: token.fontSizeSM - 2 }}
-            >
-              ({t('session.launcher.StartAfter')}
-              <BAIIntervalText
-                callback={() => {
-                  // Add 2 minutes if the schedule time is in the past
-                  const leftTime = dayjs(scheduleTime).diff(dayjs());
-                  if (leftTime < 0) {
-                    dispatchAndSetScheduleTime(
-                      dayjs(scheduleTime).add(2, 'minutes').toISOString(),
-                    );
-                  }
-                  return dayjs(scheduleTime).fromNow();
-                }}
-                delay={1000}
-              />
-              )
-            </Typography.Text>
-          )}
+          {isChecked &&
+            scheduleTime &&
+            !dayjs(scheduleTime).isBefore(dayjs()) && (
+              <Typography.Text
+                type="secondary"
+                style={{ fontSize: token.fontSizeSM - 2 }}
+              >
+                ({t('session.launcher.StartAfter')}
+                <BAIIntervalText
+                  callback={() => {
+                    return dayjs(scheduleTime).fromNow();
+                  }}
+                  delay={1000}
+                />
+                )
+              </Typography.Text>
+            )}
           {isChecked && !scheduleTime && (
             <Typography.Text
               type="warning"
@@ -107,6 +103,16 @@ const BatchSessionScheduledTimeSetting: React.FC<Props> = ({
               {t('session.launcher.StartTimeDoesNotApply')}
             </Typography.Text>
           )}
+          {isChecked &&
+            scheduleTime &&
+            dayjs(scheduleTime).isBefore(dayjs()) && (
+              <Typography.Text
+                type="danger"
+                style={{ fontSize: token.fontSizeSM - 2 }}
+              >
+                {t('session.launcher.StartTimeMustBeInTheFuture')}
+              </Typography.Text>
+            )}
         </Flex>
       </Flex>
     </>
