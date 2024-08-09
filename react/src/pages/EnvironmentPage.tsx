@@ -66,7 +66,6 @@ const EnvironmentPage = () => {
         <Flex
           style={{
             display: 'block',
-            paddingTop: token.paddingContentVerticalSM,
           }}
         >
           <Suspense>

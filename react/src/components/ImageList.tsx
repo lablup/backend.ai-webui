@@ -28,7 +28,7 @@ export type EnvironmentImage = NonNullable<
   ImageListQuery$data['images']
 >[number];
 
-export default function ImageList() {
+export default function ImageList({ style }: { style?: React.CSSProperties }) {
   const { t } = useTranslation();
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
   const [
@@ -136,6 +136,9 @@ export default function ImageList() {
         a?.architecture && b?.architecture
           ? a.architecture.localeCompare(b.architecture)
           : 0,
+      render: (text, row) => (
+        <div style={{ padding: token.paddingXS }}>{row?.architecture}</div>
+      ),
     },
     {
       title: t('environment.Namespace'),
@@ -149,7 +152,9 @@ export default function ImageList() {
           : 0;
       },
       render: (text, row) => (
-        <span>{getNamespace(getImageFullName(row) || '')}</span>
+        <div style={{ padding: token.paddingSM }}>
+          {getNamespace(getImageFullName(row) || '')}
+        </div>
       ),
     },
     {
@@ -296,26 +301,37 @@ export default function ImageList() {
   ];
   return (
     <>
-      <Flex justify="end" style={{ height: '3rem', padding: '.5rem 1rem' }}>
-        <Button
-          size="middle"
-          icon={<VerticalAlignBottomOutlined />}
-          style={{ backgroundColor: token.colorPrimary, color: 'white' }}
-          onClick={() => {
-            setIsOpenInstallModal(true);
+      <Flex
+        direction="column"
+        align="stretch"
+        style={{
+          flex: 1,
+          ...style,
+        }}
+      >
+        <Flex justify="end" style={{ padding: token.paddingSM }}>
+          <Button
+            icon={<VerticalAlignBottomOutlined />}
+            style={{ backgroundColor: token.colorPrimary, color: 'white' }}
+            onClick={() => {
+              setIsOpenInstallModal(true);
+            }}
+          >
+            {t('environment.Install')}
+          </Button>
+        </Flex>
+        <Table
+          rowKey="id"
+          scroll={{
+            x: 'max-content',
+            y: 'calc(100vh - (9.0625rem + 3rem + 4.5rem))',
           }}
-        >
-          {t('environment.Install')}
-        </Button>
+          pagination={false}
+          dataSource={sortedImages}
+          columns={columns as ColumnType<AnyObject>[]}
+          rowSelection={rowSelection}
+        />
       </Flex>
-      <Table
-        rowKey="id"
-        scroll={{ x: '100vw', y: 'calc(100vh - (9.0625rem + 3rem + 4.5rem))' }}
-        pagination={false}
-        dataSource={sortedImages}
-        columns={columns as ColumnType<AnyObject>[]}
-        rowSelection={rowSelection}
-      />
       <ManageImageResourceLimitModal
         open={!!managingResourceLimit}
         onRequestClose={(success) => {

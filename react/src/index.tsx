@@ -256,11 +256,13 @@ const root = ReactDOM.createRoot(
   document.getElementById('react-root') as HTMLElement,
 );
 root.render(
-  <JotaiProvider store={jotaiStore}>
-    <ThemeModeProvider>
-      <App />
-    </ThemeModeProvider>
-  </JotaiProvider>,
+  <React.StrictMode>
+    <JotaiProvider store={jotaiStore}>
+      <ThemeModeProvider>
+        <App />
+      </ThemeModeProvider>
+    </JotaiProvider>
+  </React.StrictMode>,
 );
 
 customElements.define(
