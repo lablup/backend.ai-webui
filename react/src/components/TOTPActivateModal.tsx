@@ -1,5 +1,5 @@
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useTanMutation } from '../hooks/reactQueryAlias';
+import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import { TOTPActivateModalFragment$key } from './__generated__/TOTPActivateModalFragment.graphql';
@@ -16,7 +16,6 @@ import {
 import graphql from 'babel-plugin-relay/macro';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQuery } from 'react-query';
 import { useFragment } from 'react-relay';
 
 type TOTPActivateFormInput = {
@@ -48,7 +47,8 @@ const TOTPActivateModal: React.FC<Props> = ({
   );
 
   const baiClient = useSuspendedBackendaiClient();
-  let initializedTotp = useQuery<{
+
+  const initializedTotp = useTanQuery<{
     totp_key: string;
     totp_uri: string;
   }>({
@@ -60,7 +60,6 @@ const TOTPActivateModal: React.FC<Props> = ({
         ? baiClient.initialize_totp()
         : null;
     },
-    suspense: false,
     staleTime: 1000,
   });
 
@@ -94,7 +93,7 @@ const TOTPActivateModal: React.FC<Props> = ({
     <BAIModal
       title={t('webui.menu.SetupTotp')}
       maskClosable={false}
-      confirmLoading={mutationToActivateTotp.isLoading}
+      confirmLoading={mutationToActivateTotp.isPending}
       onOk={_onOk}
       onCancel={() => {
         onRequestClose();

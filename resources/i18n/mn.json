@@ -507,7 +507,8 @@
     "All": "бүхэлд нь",
     "InProgress": "Ажиллаж байна",
     "Session": "Сессия",
-    "General": "Генерал"
+    "General": "Генерал",
+    "Disabled": "Идэвхгүй"
   },
   "credential": {
     "Permission": "Зөвшөөрөл",
@@ -1668,6 +1669,6 @@
     "DeleteChattingSession": "Чатлах сессийг устгах",
     "DeleteChattingSessionDescription": "Та энэ сэдвийг устгах гэж байна. \nУстгасны дараа сэргээх боломжгүй. \nБолгоомжтой үргэлжлүүлнэ үү.",
     "SelectEndpoint": "Төгсгөлийн цэгийг сонгоно уу",
-    "Sync": "Синк хийх"
+    "SyncInput": "Синкийн оролт"
   }
 }

@@ -12,8 +12,7 @@ const tabParam = withDefault(StringParam, 'image');
 
 const EnvironmentPage = () => {
   const { t } = useTranslation();
-  const webUINavigate = useWebUINavigate();
-  const [curTabKey] = useQueryParam('tab', tabParam);
+  const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
   const baiClient = useSuspendedBackendaiClient();
   const isSupportContainerRegistryGraphQL = baiClient.supports(
     'container-registry-gql',
@@ -23,19 +22,7 @@ const EnvironmentPage = () => {
   return (
     <Card
       activeTabKey={curTabKey}
-      onTabChange={(key) => {
-        webUINavigate(
-          {
-            pathname: '/environment',
-            search: `?tab=${key}`,
-          },
-          {
-            params: {
-              tab: key,
-            },
-          },
-        );
-      }}
+      onTabChange={setCurTabKey}
       tabList={[
         {
           key: 'image',
@@ -76,6 +63,15 @@ const EnvironmentPage = () => {
 
       <Flex
         style={{
+          display: curTabKey === 'image' ? 'block' : 'none',
+          paddingTop: token.paddingContentVerticalSM,
+        }}
+      >
+        {/* @ts-ignore */}
+        <backend-ai-environment-list active={curTabKey === 'image'} />
+      </Flex>
+      <Flex
+        style={{
           display: curTabKey === 'preset' ? 'block' : 'none',
           paddingTop: token.paddingContentVerticalSM,
         }}
@@ -92,12 +88,14 @@ const EnvironmentPage = () => {
         }}
       >
         {isSupportContainerRegistryGraphQL ? (
-          <Suspense>
-            <ContainerRegistryList />
-          </Suspense>
+          curTabKey === 'registry' ? (
+            <Suspense>
+              <ContainerRegistryList />
+            </Suspense>
+          ) : null
         ) : (
           // @ts-ignore
-          <backend-ai-registry-list active={curTabKey === 'registryList'} />
+          <backend-ai-registry-list active={curTabKey === 'registry'} />
         )}
       </Flex>
     </Card>

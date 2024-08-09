@@ -89,7 +89,7 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
       destroyOnClose
       {...props}
       okText={t('button.Clone')}
-      confirmLoading={mutationToClone.isLoading}
+      confirmLoading={mutationToClone.isPending}
       onOk={(e) => {
         formRef.current
           ?.validateFields()

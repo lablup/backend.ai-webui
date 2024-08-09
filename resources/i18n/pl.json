@@ -505,7 +505,8 @@
     "All": "Wszystkie",
     "InProgress": "W toku",
     "Session": "Sesja",
-    "General": "Ogólne"
+    "General": "Ogólne",
+    "Disabled": "Wyłączony"
   },
   "credential": {
     "Permission": "Pozwolenie",
@@ -1667,6 +1668,6 @@
     "DeleteChattingSession": "Usuń sesję czatu",
     "DeleteChattingSessionDescription": "Zamierzasz usunąć ten temat. \nRaz usuniętego nie można odzyskać. \nProszę postępować ostrożnie.",
     "SelectEndpoint": "Wybierz Punkt końcowy",
-    "Sync": "Synchronizuj"
+    "SyncInput": "Synchronizuj wejście"
   }
 }

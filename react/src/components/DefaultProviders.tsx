@@ -7,6 +7,7 @@ import { ThemeModeProvider, useThemeMode } from '../hooks/useThemeMode';
 // @ts-ignore
 import indexCss from '../index.css?raw';
 import { StyleProvider, createCache } from '@ant-design/cssinjs';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useUpdateEffect } from 'ahooks';
 import { App, AppProps, ConfigProvider, theme, Typography } from 'antd';
 import en_US from 'antd/locale/en_US';
@@ -32,7 +33,6 @@ import React, {
   useState,
 } from 'react';
 import { useTranslation, initReactI18next } from 'react-i18next';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { BrowserRouter, useLocation, useNavigate } from 'react-router-dom';
 import { QueryParamProvider } from 'use-query-params';
@@ -74,7 +74,6 @@ export const useWebComponentInfo = <ParsedType extends any>() => {
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      suspense: true,
       refetchOnWindowFocus: false,
       retry: false,
     },

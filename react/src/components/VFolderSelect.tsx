@@ -1,7 +1,7 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useUpdatableState } from '../hooks';
-import { useTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState from '../hooks/useControllableState';
+import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { Select, SelectProps } from 'antd';
 import _ from 'lodash';
@@ -74,7 +74,7 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
   // );
   const [key, checkUpdate] = useUpdatableState('first');
 
-  const { data } = useTanQuery({
+  const { data } = useSuspenseTanQuery({
     queryKey: ['VFolderSelectQuery', key],
     queryFn: () => {
       const search = new URLSearchParams();

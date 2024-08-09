@@ -31,7 +31,6 @@ const SSHKeypairGenerationModal: React.FC<SSHKeypairGenerationModalProps> = ({
     queryFn: () => {
       return baiModalProps.open ? baiClient.refreshSSHKeypair() : null;
     },
-    suspense: false,
   });
 
   const mutationToPostSSHKeypair = useTanMutation({

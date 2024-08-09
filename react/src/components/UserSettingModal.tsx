@@ -343,7 +343,7 @@ const UserSettingModal: React.FC<Props> = ({
           >
             <Switch
               loading={
-                isLoadingManagerSupportingTOTP || mutationToRemoveTotp.isLoading
+                isLoadingManagerSupportingTOTP || mutationToRemoveTotp.isPending
               }
               disabled={
                 user?.email !== baiClient?.email && !user?.totp_activated

@@ -505,7 +505,8 @@
     "All": "全部",
     "InProgress": "进行中",
     "Session": "會話",
-    "General": "一般情况"
+    "General": "一般情况",
+    "Disabled": "残疾"
   },
   "credential": {
     "Permission": "允許",
@@ -1667,6 +1668,6 @@
     "DeleteChattingSession": "刪除聊天會話",
     "DeleteChattingSessionDescription": "您即將刪除該主題。\n一旦刪除，就無法恢復。\n請謹慎行事。",
     "SelectEndpoint": "選擇端點",
-    "Sync": "同步"
+    "SyncInput": "同步輸入"
   }
 }

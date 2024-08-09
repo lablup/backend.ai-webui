@@ -23,7 +23,7 @@ const LLMPlaygroundPage: React.FC<LLMPlaygroundPageProps> = ({ ...props }) => {
   const { endpoint_list } = useLazyLoadQuery<LLMPlaygroundPageQuery>(
     graphql`
       query LLMPlaygroundPageQuery {
-        endpoint_list(limit: 1, offset: 0, filter: "name != 'koalpaca-test'") {
+        endpoint_list(limit: 1, offset: 0) {
           items {
             ...EndpointLLMChatCard_endpoint
           }
@@ -59,7 +59,7 @@ const LLMPlaygroundPage: React.FC<LLMPlaygroundPageProps> = ({ ...props }) => {
           >
             <Flex gap={'xs'}>
               <Typography.Text type="secondary">
-                {t('chatui.Sync')}
+                {t('chatui.SyncInput')}
               </Typography.Text>
               <Switch
                 value={isSynchronous}

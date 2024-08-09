@@ -505,7 +505,8 @@
     "All": "Tümü",
     "InProgress": "Devam Ediyor",
     "Session": "Oturum",
-    "General": "Genel"
+    "General": "Genel",
+    "Disabled": "Engelli"
   },
   "credential": {
     "Permission": "izin",
@@ -1667,6 +1668,6 @@
     "DeleteChattingSession": "Sohbet oturumunu sil",
     "DeleteChattingSessionDescription": "Bu konuyu silmek üzeresiniz. \nBir kere silindikten sonra geri getirilemez. \nLütfen dikkatli bir şekilde ilerleyin.",
     "SelectEndpoint": "Uç Noktayı Seçin",
-    "Sync": "Senkronizasyon"
+    "SyncInput": "Senkronizasyon girişi"
   }
 }

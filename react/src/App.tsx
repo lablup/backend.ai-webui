@@ -60,6 +60,20 @@ const InteractiveLoginPage = React.lazy(
 );
 const ImportAndRunPage = React.lazy(() => import('./pages/ImportAndRunPage'));
 
+const RedirectToSummary = () => {
+  useSuspendedBackendaiClient();
+  const pathName = '/summary';
+  document.dispatchEvent(
+    new CustomEvent('move-to-from-react', {
+      detail: {
+        path: pathName,
+        // params: options?.params,
+      },
+    }),
+  );
+  return <Navigate to="/summary" replace />;
+};
+
 const router = createBrowserRouter([
   {
     path: '/interactive-login',
@@ -91,17 +105,17 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <Navigate to="/summary" replace />,
+        element: <RedirectToSummary />,
       },
       {
         //for electron dev mode
         path: '/build/electron-app/app/index.html',
-        element: <Navigate to="/summary" replace />,
+        element: <RedirectToSummary />,
       },
       {
         //for electron prod mode
         path: '/app/index.html',
-        element: <Navigate to="/summary" replace />,
+        element: <RedirectToSummary />,
       },
       {
         path: '/summary',

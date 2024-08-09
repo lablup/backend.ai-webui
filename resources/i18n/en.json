@@ -631,7 +631,8 @@
     "All": "All",
     "InProgress": "In progress",
     "Session": "Session",
-    "General": "General"
+    "General": "General",
+    "Disabled": "Disabled"
   },
   "credential": {
     "Permission": "Permission",
@@ -1674,6 +1675,6 @@
     "DeleteChatSession": "",
     "DeleteChattingSession": "Delete chatting session",
     "DeleteChattingSessionDescription": "You are about to delete this topic. Once deleted, it cannot be recovered. Please proceed with caution.",
-    "Sync": "Sync"
+    "SyncInput": "Sync input"
   }
 }

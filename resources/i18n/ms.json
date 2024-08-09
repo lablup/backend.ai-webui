@@ -505,7 +505,8 @@
     "All": "keseluruhan",
     "InProgress": "Prosiding",
     "Session": "Sesi",
-    "General": "Umum"
+    "General": "Umum",
+    "Disabled": "Dilumpuhkan"
   },
   "credential": {
     "Permission": "Kebenaran",
@@ -1667,6 +1668,6 @@
     "DeleteChattingSession": "Padamkan sesi berbual",
     "DeleteChattingSessionDescription": "Anda akan memadamkan topik ini. \nSetelah dipadam, ia tidak boleh dipulihkan. \nSila teruskan dengan berhati-hati.",
     "SelectEndpoint": "Pilih Titik Akhir",
-    "Sync": "Segerakkan"
+    "SyncInput": "Input penyegerakan"
   }
 }
