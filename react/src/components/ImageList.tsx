@@ -191,9 +191,9 @@ export default function ImageList({ style }: { style?: React.CSSProperties }) {
       dataIndex: 'baseimage',
       sorter: (a, b) => {
         const baseimageA =
-          !a?.tag || !a?.name ? '' : getBaseImages(a?.tag, a?.name)[0];
+          !a?.tag || !a?.name ? '' : getBaseImages(a?.tag, a?.name)[0] || '';
         const baseimageB =
-          !b?.tag || !b?.name ? '' : getBaseImages(b?.tag, b?.name)[0];
+          !b?.tag || !b?.name ? '' : getBaseImages(b?.tag, b?.name)[0] || '';
         if (baseimageA === '' && baseimageB === '') return 0;
         if (baseimageA === '') return -1;
         if (baseimageB === '') return 1;
@@ -217,14 +217,14 @@ export default function ImageList({ style }: { style?: React.CSSProperties }) {
             ? getConstraints(
                 a?.tag,
                 a?.labels as { key: string; value: string }[],
-              )[0]
+              )[0] || ''
             : '';
         const requirementB =
           b?.tag && b?.labels
             ? getConstraints(
                 b?.tag,
                 b?.labels as { key: string; value: string }[],
-              )[0]
+              )[0] || ''
             : '';
         if (requirementA === '' && requirementB === '') return 0;
         if (requirementA === '') return -1;
