@@ -1234,7 +1234,13 @@
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Sử dụng bộ tăng tốc LPU Hyperaccel.",
     "RequireHyperaccelLPUPlugin": "Yêu cầu Plugin LPU Backend.AI Hyperaccel.",
-    "SearchPlaceholder": "Tìm kiếm"
+    "SearchPlaceholder": "Tìm kiếm",
+    "Gaudi2Support": "Hỗ trợ Gaudi 2",
+    "RequireGaudi2Plugin": "Yêu cầu Plugin Backend.AI Gaudi 2.",
+    "DescGaudi2Support": "Sử dụng bộ tăng tốc intel Gaudi 2",
+    "ATOMPlusSupport": "Hỗ trợ ATOM+",
+    "RequireATOMPlusPlugin": "Yêu cầu Plugin Backend.AI ATOM+.",
+    "DescATOMPlusSupport": "Sử dụng máy gia tốc ATOM+ của Rebellions."
   },
   "notification": {
     "SuccessfullyUpdated": "Cập nhật thành công",

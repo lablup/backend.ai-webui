@@ -72,8 +72,8 @@ const ManageImageResourceLimitModal: React.FC<BAIModalProps> = ({
       key,
       min: value.toString() ?? '0',
       max:
-        image.resource_limits?.find((item) => item?.key === key)?.max ??
-        baiClient.isManagerVersionCompatibleWith('24.03.4.*')
+        (image.resource_limits?.find((item) => item?.key === key)?.max ??
+        baiClient.isManagerVersionCompatibleWith('24.03.4.*'))
           ? undefined
           : null,
     }));

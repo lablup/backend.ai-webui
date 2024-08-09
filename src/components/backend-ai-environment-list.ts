@@ -766,7 +766,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    * Decode backend.ai service ports.
    */
   _decodeServicePort() {
-    if (this.modifiedImage.labels['ai.backend.service-ports'] === '') {
+    if (
+      this.modifiedImage?.labels?.['ai.backend.service-ports'] === '' ||
+      this.modifiedImage?.labels?.['ai.backend.service-ports'] === undefined
+    ) {
       this.servicePorts = [];
     } else {
       this.servicePorts = this.modifiedImage.labels['ai.backend.service-ports']

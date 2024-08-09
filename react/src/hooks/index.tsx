@@ -303,6 +303,8 @@ type BackendAIConfig = {
   maxTPUDevicesPerContainer: number;
   maxIPUDevicesPerContainer: number;
   maxATOMDevicesPerContainer: number;
+  maxATOMPlusDevicesPerContainer: number;
+  maxGaudi2DevicesPerContainer: number;
   maxWarboyDevicesPerContainer: number;
   maxShmPerContainer: number;
   maxFileUploadSize: number;

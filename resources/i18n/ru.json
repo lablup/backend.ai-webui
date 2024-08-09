@@ -1234,7 +1234,13 @@
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Используйте ускоритель Hyperaccel LPU.",
     "RequireHyperaccelLPUPlugin": "Требуется плагин Backend.AI Hyperaccel LPU.",
-    "SearchPlaceholder": "Поиск"
+    "SearchPlaceholder": "Поиск",
+    "Gaudi2Support": "Поддержка Гауди 2",
+    "RequireGaudi2Plugin": "Требуется плагин Backend.AI Gaudi 2.",
+    "DescGaudi2Support": "Используйте ускоритель Intel Gaudi 2",
+    "ATOMPlusSupport": "Поддержка АТОМ+",
+    "RequireATOMPlusPlugin": "Требуется плагин Backend.AI ATOM+.",
+    "DescATOMPlusSupport": "Используйте ускоритель Rebellions ATOM+."
   },
   "notification": {
     "SuccessfullyUpdated": "Успешно обновлено",

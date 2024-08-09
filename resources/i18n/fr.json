@@ -1234,7 +1234,13 @@
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Utilisez l'accélérateur Hyperaccel LPU.",
     "RequireHyperaccelLPUPlugin": "Nécessite le plugin LPU Backend.AI Hyperaccel.",
-    "SearchPlaceholder": "Recherche"
+    "SearchPlaceholder": "Recherche",
+    "Gaudi2Support": "Assistance Gaudi 2",
+    "RequireGaudi2Plugin": "Nécessite le plugin Backend.AI Gaudi 2.",
+    "DescGaudi2Support": "Utiliser l'accélérateur Intel Gaudi 2",
+    "ATOMPlusSupport": "Prise en charge ATOM+",
+    "RequireATOMPlusPlugin": "Nécessite le plugin Backend.AI ATOM+.",
+    "DescATOMPlusSupport": "Utilisez l’accélérateur Rebellions ATOM+."
   },
   "notification": {
     "SuccessfullyUpdated": "Mise à jour réussie",

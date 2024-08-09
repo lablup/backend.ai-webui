@@ -53,8 +53,8 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
   @property({ type: Object }) agentSettingDialog = Object();
   @property({ type: Object }) _boundEndpointRenderer =
     this.endpointRenderer.bind(this);
-  @property({ type: Object }) _boundResourceRenderer =
-    this.resourceRenderer.bind(this);
+  @property({ type: Object }) _boundAllocationRenderer =
+    this.allocationRenderer.bind(this);
   @property({ type: Object }) _boundSchedulableRenderer =
     this.schedulableRenderer.bind(this);
   @property({ type: String }) filter = '';
@@ -263,12 +263,12 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
                   agents[objectKey].cpu_slots;
                 agents[objectKey].total_cpu_percent = (
                   agents[objectKey].cpu_total_usage_ratio * 100
-                )?.toFixed(2);
+                )?.toFixed(1);
               } else {
                 agents[objectKey].cpu_total_usage_ratio = 0;
                 agents[objectKey].total_cpu_percent = (
                   agents[objectKey].cpu_total_usage_ratio * 100
-                )?.toFixed(2);
+                )?.toFixed(1);
               }
               agents[objectKey].mem_slots = parseInt(
                 globalThis.backendaiclient.utils.changeBinaryUnit(
@@ -286,7 +286,7 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
                 agents[objectKey].used_mem_slots / agents[objectKey].mem_slots;
               agents[objectKey].total_mem_percent = (
                 agents[objectKey].mem_total_usage_ratio * 100
-              )?.toFixed(2);
+              )?.toFixed(1);
               if ('cuda.device' in available_slots) {
                 agents[objectKey].cuda_gpu_slots = parseInt(
                   available_slots['cuda.device'],
@@ -303,7 +303,7 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
                   agents[objectKey].cuda_gpu_slots;
                 agents[objectKey].total_cuda_gpu_percent = (
                   agents[objectKey].used_cuda_gpu_slots_ratio * 100
-                )?.toFixed(2);
+                )?.toFixed(1);
               }
               if ('cuda.shares' in available_slots) {
                 agents[objectKey].cuda_fgpu_slots = parseFloat(
@@ -321,7 +321,7 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
                   agents[objectKey].cuda_fgpu_slots;
                 agents[objectKey].total_cuda_fgpu_percent = (
                   agents[objectKey].used_cuda_fgpu_slots_ratio * 100
-                )?.toFixed(2);
+                )?.toFixed(1);
               }
               if ('rocm.device' in available_slots) {
                 agents[objectKey].rocm_gpu_slots = parseInt(
@@ -339,7 +339,7 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
                   agents[objectKey].rocm_gpu_slots;
                 agents[objectKey].total_rocm_gpu_percent = (
                   agents[objectKey].used_rocm_gpu_slots_ratio * 100
-                )?.toFixed(2);
+                )?.toFixed(1);
               }
               if ('tpu.device' in available_slots) {
                 agents[objectKey].tpu_slots = parseInt(
@@ -357,7 +357,7 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
                   agents[objectKey].tpu_slots;
                 agents[objectKey].total_tpu_percent = (
                   agents[objectKey].used_tpu_slots_ratio * 100
-                )?.toFixed(2);
+                )?.toFixed(1);
               }
               if ('ipu.device' in available_slots) {
                 agents[objectKey].ipu_slots = parseInt(
@@ -375,7 +375,7 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
                   agents[objectKey].ipu_slots;
                 agents[objectKey].total_ipu_percent = (
                   agents[objectKey].used_ipu_slots_ratio * 100
-                )?.toFixed(2);
+                )?.toFixed(1);
               }
               if ('atom.device' in available_slots) {
                 agents[objectKey].atom_slots = parseInt(
@@ -411,7 +411,7 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
                   agents[objectKey].atom_plus_slots;
                 agents[objectKey].total_atom_plus_percent = (
                   agents[objectKey].used_atom_plus_slots_ratio * 100
-                )?.toFixed(2);
+                )?.toFixed(1);
               }
               if ('gaudi2.device' in available_slots) {
                 agents[objectKey].gaudi2_slots = parseInt(
@@ -429,7 +429,7 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
                   agents[objectKey].gaudi2_slots;
                 agents[objectKey].total_gaudi2_percent = (
                   agents[objectKey].used_gaudi2_slots_ratio * 100
-                )?.toFixed(2);
+                )?.toFixed(1);
               }
               if ('warboy.device' in available_slots) {
                 agents[objectKey].warboy_slots = parseInt(
@@ -447,7 +447,7 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
                   agents[objectKey].warboy_slots;
                 agents[objectKey].total_warboy_percent = (
                   agents[objectKey].used_warboy_slots_ratio * 100
-                )?.toFixed(2);
+                )?.toFixed(1);
               }
               if ('hyperaccel-lpu.device' in available_slots) {
                 agents[objectKey].hyperaccel_lpu_slots = parseInt(
@@ -465,7 +465,7 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
                   agents[objectKey].hyperaccel_lpu_slots;
                 agents[objectKey].total_hyperaccel_lpu_percent = (
                   agents[objectKey].used_hyperaccel_lpu_slots_ratio * 100
-                )?.toFixed(2);
+                )?.toFixed(1);
               }
               if ('schedulable' in agent) {
                 agents[objectKey].schedulable = agent.schedulable;
@@ -547,13 +547,13 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
   }
 
   /**
-   * Render a resource.
+   * Render a allocation.
    *
    * @param {DOMelement} root
    * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
-  resourceRenderer(root, column?, rowData?) {
+  allocationRenderer(root, column?, rowData?) {
     render(
       // language=HTML
       html`
@@ -645,7 +645,7 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
                   <lablup-progress-bar
                     id="vgpu-bar"
                     progress="${rowData.item.used_cuda_fgpu_slots_ratio}"
-                    description="${rowData.item.used_cuda_fgpu_slots}"
+                    description="${rowData.item.total_cuda_fgpu_percent}%"
                   ></lablup-progress-bar>
                 </div>
               `
@@ -670,7 +670,7 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
                   <lablup-progress-bar
                     id="rocm-gpu-bar"
                     progress="${rowData.item.used_rocm_gpu_slots_ratio}"
-                    description="${rowData.item.used_rocm_gpu_slots}"
+                    description="${rowData.item.total_rocm_gpu_percent}%"
                   ></lablup-progress-bar>
                 </div>
               `
@@ -694,7 +694,7 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
                   <lablup-progress-bar
                     id="tpu-bar"
                     progress="${rowData.item.used_tpu_slots_ratio}"
-                    description="${rowData.item.used_tpu_slots}"
+                    description="${rowData.item.total_tpu_percent}%"
                   ></lablup-progress-bar>
                 </div>
               `
@@ -718,7 +718,7 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
                   <lablup-progress-bar
                     id="ipu-bar"
                     progress="${rowData.item.used_ipu_slots_ratio}"
-                    description="${rowData.item.used_ipu_slots}"
+                    description="${rowData.item.total_ipu_percent}%"
                   ></lablup-progress-bar>
                 </div>
               `
@@ -742,7 +742,57 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
                   <lablup-progress-bar
                     id="atom-bar"
                     progress="${rowData.item.used_atom_slots_ratio}"
-                    description="${rowData.item.used_atom_slots}"
+                    description="${rowData.item.total_atom_percent}%"
+                  ></lablup-progress-bar>
+                </div>
+              `
+            : html``}
+          ${rowData.item.gaudi2_slots
+            ? html`
+                <div
+                  class="layout horizontal center-justified flex progress-bar-section"
+                >
+                  <div class="layout horizontal start resource-indicator">
+                    <img
+                      class="indicator-icon fg green"
+                      src="/resources/icons/npu_generic.svg"
+                    />
+                    <span class="monospace" style="padding-left:5px;">
+                      ${rowData.item.used_gaudi2_slots}/${rowData.item
+                        .gaudi2_slots}
+                    </span>
+                    <span class="indicator">Gaudi 2</span>
+                  </div>
+                  <span class="flex"></span>
+                  <lablup-progress-bar
+                    id="gaudi-2-bar"
+                    progress="${rowData.item.used_gaudi2_slots_ratio}"
+                    description="${rowData.item.total_gaudi2_percent}%"
+                  ></lablup-progress-bar>
+                </div>
+              `
+            : html``}
+          ${rowData.item.atom_plus_slots
+            ? html`
+                <div
+                  class="layout horizontal center-justified flex progress-bar-section"
+                >
+                  <div class="layout horizontal start resource-indicator">
+                    <img
+                      class="indicator-icon fg green"
+                      src="/resources/icons/tpu.svg"
+                    />
+                    <span class="monospace" style="padding-left:5px;">
+                      ${rowData.item.used_atom_plus_slots}/${rowData.item
+                        .atom_plus_slots}
+                    </span>
+                    <span class="indicator">ATOM+</span>
+                  </div>
+                  <span class="flex"></span>
+                  <lablup-progress-bar
+                    id="atom-plus-bar"
+                    progress="${rowData.item.used_atom_plus_slots_ratio}"
+                    description="${rowData.item.total_atom_plus_percent}%"
                   ></lablup-progress-bar>
                 </div>
               `
@@ -767,7 +817,7 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
                   <lablup-progress-bar
                     id="warboy-bar"
                     progress="${rowData.item.used_warboy_slots_ratio}"
-                    description="${rowData.item.used_warboy_slots}"
+                    description="${rowData.item.total_warboy_percent}%"
                   ></lablup-progress-bar>
                 </div>
               `
@@ -792,7 +842,7 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
                   <lablup-progress-bar
                     id="hyperaccel-lpu-bar"
                     progress="${rowData.item.used_hyperaccel_lpu_slots_ratio}"
-                    description="${rowData.item.used_hyperaccel_lpu_slots}"
+                    description="${rowData.item.total_hyperaccel_lpu_percent}%"
                   ></lablup-progress-bar>
                 </div>
               `
@@ -861,7 +911,7 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
             resizable
             auto-width
             header="${_t('agent.Allocation')}"
-            .renderer="${this._boundResourceRenderer}"
+            .renderer="${this._boundAllocationRenderer}"
           ></vaadin-grid-column>
           ${this._enableAgentSchedulable
             ? html`

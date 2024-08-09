@@ -435,6 +435,8 @@ export default class BackendAICredentialList extends BackendAIPage {
               'tpu_device',
               'ipu_device',
               'atom_device',
+              'atom_plus_device',
+              'gaudi2_device',
               'warboy_device',
               'hyperaccel_lpu_device',
             ].forEach((slot) => {

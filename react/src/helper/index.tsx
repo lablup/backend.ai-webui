@@ -62,7 +62,7 @@ export const humanReadableDecimalSize = (bytes = 0, decimalPoint = 2) => {
   let i = Math.floor(Math.log(Math.round(bytes)) / Math.log(k));
   i = i < 0 ? 0 : i; // avoid negative value
   return (
-    parseFloat((bytes / Math.pow(k, i)).toFixed(decimalPoint)) + ' ' + sizes[i]
+    _.toFinite((bytes / Math.pow(k, i)).toFixed(decimalPoint)) + ' ' + sizes[i]
   );
 };
 
@@ -85,7 +85,7 @@ export const humanReadableBinarySize = (
     unitList = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB'];
   }
   return (
-    parseFloat((bytes / Math.pow(k, i)).toFixed(decimalPoint)) +
+    _.toFinite((bytes / Math.pow(k, i)).toFixed(decimalPoint)) +
     ' ' +
     unitList[i]
   );
@@ -106,7 +106,7 @@ export function bytesToBinarySize(
     };
   const i = Math.floor(Math.log(bytes) / Math.log(1024));
   return {
-    number: parseFloat((bytes / Math.pow(1024, i)).toFixed(2)),
+    number: _.toFinite((bytes / Math.pow(1024, i)).toFixed(2)),
     unit: sizes[i],
   };
 }
@@ -190,20 +190,19 @@ export function iSizeToSize(
   };
 }
 
-//
 export function toFixedFloorWithoutTrailingZeros(
   num: number | string,
   fixed: number,
 ) {
   return typeof num === 'number'
-    ? parseFloat(num.toFixed(fixed)).toString()
-    : parseFloat(parseFloat(num).toFixed(fixed)).toString();
+    ? _.toFinite(num.toFixed(fixed)).toString()
+    : _.toFinite(_.toFinite(num).toFixed(fixed)).toString();
 }
 
 export function toFixedWithTypeValidation(num: number | string, fixed: number) {
   return typeof num === 'number'
     ? num.toFixed(fixed)
-    : parseFloat(num).toFixed(fixed);
+    : _.toFinite(num).toFixed(fixed);
 }
 
 export function compareNumberWithUnits(size1: string, size2: string) {
@@ -282,9 +281,9 @@ export function parseUnit(str: string): [number, string] {
   const match = str?.match(/^(\d+(?:\.\d+)?)([a-zA-Z]*)$/);
   if (!match) {
     // If the input doesn't match the pattern, assume it's in bytes
-    return [parseFloat(str), 'b'];
+    return [_.toFinite(str), 'b'];
   }
-  const num = parseFloat(match[1]);
+  const num = _.toFinite(match[1]);
   const unit = match[2];
   return [num, unit.toLowerCase() || 'b'];
 }

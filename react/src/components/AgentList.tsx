@@ -368,10 +368,7 @@ const AgentList: React.FC<AgentListProps> = ({
                     />
                   </Flex>
                 );
-              } else if (
-                parsedOccupiedSlots[key] &&
-                parsedAvailableSlots[key]
-              ) {
+              } else if (parsedAvailableSlots[key]) {
                 return (
                   <Flex
                     key={key}

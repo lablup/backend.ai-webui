@@ -1183,9 +1183,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                         class="start"
                         progress="${this.used_resource_group_slot_percent
                           .gaudi2_device / 100.0}"
-                        description="${this.used_resource_group_slot
-                          .gaudi2_device}/${this.total_resource_group_slot
-                          .gaudi2_device}"
+                        description="${this._prefixFormatWithTrailingZeros(
+                          this.used_resource_group_slot.gaudi2_device,
+                          2,
+                        )} / ${this._prefixFormatWithTrailingZeros(
+                          this.total_resource_group_slot.gaudi2_device,
+                          2,
+                        )}"
                       ></lablup-progress-bar>
                       <lablup-progress-bar
                         id="gaudi-2-usage-bar-2"
@@ -1204,7 +1208,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                       "
                       >
                         ${this._numberWithPostfix(
-                          this.used_resource_group_slot_percent.gaudi2_device,
+                          this._prefixFormatWithTrailingZeros(
+                            this.used_resource_group_slot_percent.gaudi2_device,
+                            1,
+                          ),
                           '%',
                         )}
                       </span>
@@ -1214,7 +1221,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                       "
                       >
                         ${this._numberWithPostfix(
-                          this.used_slot_percent.gaudi2_device,
+                          this._prefixFormatWithTrailingZeros(
+                            this.used_slot_percent.gaudi2_device,
+                            1,
+                          ),
                           '%',
                         )}
                       </span>

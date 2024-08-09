@@ -422,14 +422,12 @@ export default class BackendAiSettingsView extends BackendAIPage {
                       </div>
                       <div class="description-shrink">
                         ${_tr('settings.DescCUDAGPUsupport')}
-                        ${
-                          this.options['cuda_fgpu']
-                            ? html`
-                                <br />
-                                ${_t('settings.CUDAGPUdisabledByFGPUsupport')}
-                              `
-                            : html``
-                        }
+                        ${this.options['cuda_fgpu']
+                          ? html`
+                              <br />
+                              ${_t('settings.CUDAGPUdisabledByFGPUsupport')}
+                            `
+                          : html``}
                       </div>
                     </div>
                     <div
@@ -595,6 +593,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                         ?selected="${this.options['atom_plus']}"
                         disabled
                       ></mwc-switch>
+                    </div>
                   </div>
                   <div class="horizontal layout setting-item">
                     <div
@@ -615,6 +614,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                         ?selected="${this.options['gaudi2']}"
                         disabled
                       ></mwc-switch>
+                    </div>
                   </div>
                   <div class="horizontal layout setting-item">
                     <div
@@ -979,9 +979,6 @@ export default class BackendAiSettingsView extends BackendAIPage {
       }
       if ('atom-plus.device' in response) {
         this.options['atom_plus'] = true;
-      }
-      if ('gaudi2.device' in response) {
-        this.options['gaudi2'] = true;
       }
       if ('warboy.device' in response) {
         this.options['warboy'] = true;

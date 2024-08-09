@@ -845,22 +845,23 @@ export default class BackendAiResourceBroker extends BackendAIPage {
               occupied: { cpu: 0, mem: 0, cuda_device: 0, cuda_shares: 0 },
             },
           );
-        resourceGroupSlots.remaining = {};
-        Object.keys(resourceGroupSlots.available).forEach((key) => {
-          resourceGroupSlots.remaining[key] =
-            resourceGroupSlots.available[key] -
-            resourceGroupSlots.occupied[key];
-        });
-
-        this.total_resource_group_slot = this._roundResourceDecimalPlaces(
-          resourceGroupSlots.available,
-        );
-        // This value is purposely set to the remaining resource group slots
-        // when `hideAgents` is `true`.  There are some cases it is more useful
-        // to display the remaining slots.
-        this.used_resource_group_slot = this._roundResourceDecimalPlaces(
-          resourceGroupSlots.remaining,
-        );
+        if (resourceGroupSlots !== undefined) {
+          resourceGroupSlots.remaining = {};
+          Object.keys(resourceGroupSlots.available).forEach((key) => {
+            resourceGroupSlots.remaining[key] =
+              resourceGroupSlots.available[key] -
+              resourceGroupSlots.occupied[key];
+          });
+          this.total_resource_group_slot = this._roundResourceDecimalPlaces(
+            resourceGroupSlots.available,
+          );
+          // This value is purposely set to the remaining resource group slots
+          // when `hideAgents` is `true`.  There are some cases it is more useful
+          // to display the remaining slots.
+          this.used_resource_group_slot = this._roundResourceDecimalPlaces(
+            resourceGroupSlots.remaining,
+          );
+        }
       } else {
         this.total_resource_group_slot = this._roundResourceDecimalPlaces(
           total_resource_group_slot,

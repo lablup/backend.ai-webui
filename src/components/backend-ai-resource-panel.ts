@@ -1031,7 +1031,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                         class="end"
                                         progress="0"
                                         description="${_t(
-                                          'summary.Gaudi2Enabled',
+                                          'session.Gaudi2Enabled',
                                         )}."
                                       ></lablup-progress-bar>
                                     </div>

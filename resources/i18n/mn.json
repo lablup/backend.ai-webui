@@ -1235,7 +1235,13 @@
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Hyperaccel LPU хурдасгуурыг ашигла.",
     "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU Plugin шаардлагатай.",
-    "SearchPlaceholder": "Хайх"
+    "SearchPlaceholder": "Хайх",
+    "Gaudi2Support": "Gaudi 2 дэмжлэг",
+    "RequireGaudi2Plugin": "Backend.AI Gaudi 2 Plugin шаардлагатай.",
+    "DescGaudi2Support": "Intel Gaudi 2 хурдасгуурыг ашигла",
+    "ATOMPlusSupport": "ATOM+ дэмжлэг",
+    "RequireATOMPlusPlugin": "Backend.AI ATOM+ Plugin шаардлагатай.",
+    "DescATOMPlusSupport": "Rebellions ATOM+ хурдасгуурыг ашигла."
   },
   "notification": {
     "SuccessfullyUpdated": "Амжилттай шинэчлэгдсэн",

@@ -1233,7 +1233,13 @@
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Hyperaccel LPU アクセラレータを使用します。",
     "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU プラグインが必要です。",
-    "SearchPlaceholder": "検索"
+    "SearchPlaceholder": "検索",
+    "Gaudi2Support": "Gaudi 2 のサポート",
+    "RequireGaudi2Plugin": "Backend.AI Gaudi 2 プラグインが必要です。",
+    "DescGaudi2Support": "Intel Gaudi 2 アクセラレータを使用する",
+    "ATOMPlusSupport": "アトムのサポート",
+    "RequireATOMPlusPlugin": "Backend.AI ATOM+プラグインが必要です。",
+    "DescATOMPlusSupport": "Rebellions ATOM+ アクセラレータを使用します。"
   },
   "notification": {
     "SuccessfullyUpdated": "正常に更新されました",

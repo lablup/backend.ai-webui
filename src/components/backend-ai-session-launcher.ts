@@ -2742,7 +2742,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           this._NPUDeviceNameOnSlider = 'ATOM+';
           this.npu_device_metric = atom_plus_device_metric;
         }
-        if (item.key === 'gaudi2.device') {
+        if (item.key === 'gaudi2.device' || item.key === 'gaudi.device') {
           const gaudi2_device_metric = { ...item };
           gaudi2_device_metric.min = parseInt(gaudi2_device_metric.min);
           if ('gaudi2.device' in this.userResourceLimit) {
@@ -2843,7 +2843,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             }
             this.npuResourceSlider.disabled = true;
           }
-          console.log(warboy_device_metric);
           this._NPUDeviceNameOnSlider = 'Warboy';
           this.npu_device_metric = warboy_device_metric;
         }
@@ -2904,7 +2903,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             }
             this.npuResourceSlider.disabled = true;
           }
-          console.log(hyperaccel_lpu_device_metric);
           this._NPUDeviceNameOnSlider = 'Hyperaccel LPU';
           this.npu_device_metric = hyperaccel_lpu_device_metric;
         }

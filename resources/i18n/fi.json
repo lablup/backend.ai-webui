@@ -1340,7 +1340,13 @@
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Käytä Hyperaccel LPU -kiihdytintä.",
     "RequireHyperaccelLPUPlugin": "Vaatii Backend.AI Hyperaccel LPU -laajennuksen.",
-    "SearchPlaceholder": "Etsi"
+    "SearchPlaceholder": "Etsi",
+    "Gaudi2Support": "Gaudi 2 -tuki",
+    "RequireGaudi2Plugin": "Vaatii Backend.AI Gaudi 2-laajennuksen.",
+    "DescGaudi2Support": "Käytä Intel Gaudi 2 -kiihdytintä",
+    "ATOMPlusSupport": "ATOM+-tuki",
+    "RequireATOMPlusPlugin": "Vaatii Backend.AI ATOM+ laajennuksen.",
+    "DescATOMPlusSupport": "Käytä Rebellions ATOM+ -kiihdytintä."
   },
   "sidepanel": {
     "BackgroundTasks": "Tehtävien suorittaminen",

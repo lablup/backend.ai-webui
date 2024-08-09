@@ -1234,7 +1234,13 @@
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Χρησιμοποιήστε τον επιταχυντή Hyperaccel LPU.",
     "RequireHyperaccelLPUPlugin": "Απαιτεί το πρόσθετο Backend.AI Hyperaccel LPU.",
-    "SearchPlaceholder": "Αναζήτηση"
+    "SearchPlaceholder": "Αναζήτηση",
+    "Gaudi2Support": "Υποστήριξη Gaudi 2",
+    "RequireGaudi2Plugin": "Απαιτεί το πρόσθετο Backend.AI Gaudi 2.",
+    "DescGaudi2Support": "Χρησιμοποιήστε τον επιταχυντή intel Gaudi 2",
+    "ATOMPlusSupport": "Υποστήριξη ATOM+",
+    "RequireATOMPlusPlugin": "Απαιτεί πρόσθετο Backend.AI ATOM+.",
+    "DescATOMPlusSupport": "Χρησιμοποιήστε τον επιταχυντή Rebellions ATOM+."
   },
   "notification": {
     "SuccessfullyUpdated": "Ενημερώθηκε με επιτυχία",
