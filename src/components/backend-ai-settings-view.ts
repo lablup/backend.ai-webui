@@ -44,6 +44,7 @@ interface Options {
   tpu: boolean;
   ipu: boolean;
   atom: boolean;
+  gaudi2: boolean;
   atom_plus: boolean;
   warboy: boolean;
   hyperaccel_lpu: boolean;
@@ -104,6 +105,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
       tpu: false,
       ipu: false,
       atom: false,
+      gaudi2: false,
       atom_plus: false,
       warboy: false,
       hyperaccel_lpu: false,
@@ -578,6 +580,26 @@ export default class BackendAiSettingsView extends BackendAIPage {
                     <div
                       class="vertical center-justified layout setting-desc-shrink"
                     >
+                      <div class="title">${_t('settings.Gaudi2Support')}</div>
+                      <div class="description-shrink">
+                        ${_tr('settings.DescGaudi2Support')}
+                        <br />
+                        ${_t('settings.RequireGaudi2Plugin')}
+                      </div>
+                    </div>
+                    <div
+                      class="vertical center-justified layout setting-button"
+                    >
+                      <mwc-switch
+                        id="gaudi-2-support-switch"
+                        ?selected="${this.options['gaudi2']}"
+                        disabled
+                      ></mwc-switch>
+                  </div>
+                  <div class="horizontal layout setting-item">
+                    <div
+                      class="vertical center-justified layout setting-desc-shrink"
+                    >
                       <div class="title">${_t('settings.ATOMPlusSupport')}</div>
                       <div class="description-shrink">
                         ${_tr('settings.DescATOMPlusSupport')}
@@ -954,6 +976,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
       }
       if ('atom.device' in response) {
         this.options['atom'] = true;
+      }
+      if ('gaudi2.device' in response) {
+        this.options['gaudi2'] = true;
       }
       if ('atom-plus.device' in response) {
         this.options['atom_plus'] = true;

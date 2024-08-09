@@ -85,6 +85,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @query('#modify-image-tpu') modifyImageTpu!: Button;
   @query('#modify-image-ipu') modifyImageIpu!: Button;
   @query('#modify-image-atom') modifyImageAtom!: Button;
+  @query('#modify-image-gaudi-2') modifyImageGaudi2!: Button;
   @query('#modify-image-atom-plus') modifyImageAtomPlus!: Button;
   @query('#modify-image-warboy') modifyImageWarboy!: Button;
   @query('#modify-image-hyperaccel-lpu') modifyImageHyperaccelLPU!: Button;
@@ -904,6 +905,26 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                     ${this._markIfUnlimited(rowData.item.atom_device_limit_max)}
                   </span>
                   <span class="indicator">ATOM</span>
+                </div>
+              </div>
+            `
+          : html``}
+        ${rowData.item.gaudi2_device_limit_min
+          ? html`
+              <div class="layout horizontal center flex">
+                <div class="layout horizontal configuration">
+                  <img
+                    class="indicator-icon fg green"
+                    src="/resources/icons/rebel.svg"
+                  />
+                  <span>${rowData.item.gaudi2_device_limit_min}</span>
+                  ~
+                  <span>
+                    ${this._markIfUnlimited(
+                      rowData.item.gaudi2_device_limit_max,
+                    )}
+                  </span>
+                  <span class="indicator">Gaudi 2</span>
                 </div>
               </div>
             `

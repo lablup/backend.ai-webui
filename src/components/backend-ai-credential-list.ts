@@ -384,6 +384,16 @@ export default class BackendAICredentialList extends BackendAIPage {
             ) {
               keypair['total_resource_slots'].atom_device = '-';
             }
+            if ('gaudi2.device' in keypair['total_resource_slots']) {
+              keypair['total_resource_slots'].gaudi2_device =
+                keypair['total_resource_slots']['gaudi2.device'];
+            }
+            if (
+              'gaudi2.device' in keypair['total_resource_slots'] === false &&
+              keypair['default_for_unspecified'] === 'UNLIMITED'
+            ) {
+              keypair['total_resource_slots'].gaudi2_device = '-';
+            }
             if ('atom-plus.device' in keypair['total_resource_slots']) {
               keypair['total_resource_slots'].atom_plus_device =
                 keypair['total_resource_slots']['atom-plus.device'];
@@ -425,6 +435,7 @@ export default class BackendAICredentialList extends BackendAIPage {
               'tpu_device',
               'ipu_device',
               'atom_device',
+              'gaudi2_device',
               'atom_plus_device',
               'warboy_device',
               'hyperaccel_lpu_device',

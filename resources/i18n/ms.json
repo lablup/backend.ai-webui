@@ -410,6 +410,7 @@
     "EnvironmentAndVersion": "Persekitaran dan Versi",
     "Tags": "Tag",
     "fGPU": "fGPU",
+    "Gaudi2Enabled": "Gaudi 2 NPU Didayakan",
     "ForceTerminateWarningMsg": "Tindakan ini akan menamatkan atau membatalkan sesi tanpa mengira status semasanya. \nAdakah anda pasti?",
     "WarningForceTerminateSessions": "Amaran: Tamatkan Sesi Paksa",
     "ForceTerminateWarningMsg2": "Laksanakan hanya apabila keadaan tidak berubah untuk tempoh masa yang tidak munasabah.",

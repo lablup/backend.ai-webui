@@ -410,6 +410,7 @@
     "EnvironmentAndVersion": "环境及版本",
     "Tags": "标签",
     "fGPU": "GPU",
+    "Gaudi2Enabled": "Gaudi 2 NPU 启用",
     "ForceTerminateWarningMsg": "无论会话当前状态如何，此操作都将终止或取消会话。\n你确定吗？",
     "WarningForceTerminateSessions": "警告：强制终止会话",
     "ForceTerminateWarningMsg2": "仅当状态在不合理的长时间内没有发生变化时才执行。",

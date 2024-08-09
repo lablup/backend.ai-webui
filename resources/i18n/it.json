@@ -411,6 +411,7 @@
     "EnvironmentAndVersion": "Ambiente e versione",
     "Tags": "Tag",
     "fGPU": "fGPU",
+    "Gaudi2Enabled": "Gaudi 2 NPU Abilitato",
     "ForceTerminateWarningMsg": "Questa azione terminerà o annullerà la sessione indipendentemente dal suo stato attuale. \nSei sicuro?",
     "WarningForceTerminateSessions": "Avviso: forza la chiusura delle sessioni",
     "ForceTerminateWarningMsg2": "Eseguire solo quando lo stato non cambia per un periodo di tempo irragionevolmente lungo.",

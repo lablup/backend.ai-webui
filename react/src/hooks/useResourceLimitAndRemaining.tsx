@@ -274,6 +274,7 @@ export const useResourceLimitAndRemaining = ({
             'tpu.device': 'maxTPUDevicesPerContainer',
             'ipu.device': 'maxIPUDevicesPerContainer',
             'atom.device': 'maxATOMDevicesPerContainer',
+            'gaudi2.device': 'maxGaudi2DevicesPerContainer',
             'atom-plus.device': 'maxATOMPlusDevicesPerContainer',
             'warboy.device': 'maxWarboyDevicesPerContainer',
             'hyperaccel-lpu.device': 'maxHyperaccelLPUDevicesPerContainer', // FIXME: add maxLPUDevicesPerContainer to config
