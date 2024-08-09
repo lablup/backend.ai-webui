@@ -1,8 +1,8 @@
 /* eslint-disable testing-library/render-result-naming-convention */
 import { useBackendAIImageMetaData } from '.';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { ReactNode } from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
 
 describe('useBackendAIImageMetaData', () => {
   const queryClient = new QueryClient();
