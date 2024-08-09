@@ -141,9 +141,8 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
         const langB = getImageLang(getImageFullName(b) || '');
         return langA && langB ? langA.localeCompare(langB) : 0;
       },
-      render: (text, row) => (
-        <LangTags image={getImageFullName(row) || ''} color="green" />
-      ),
+      render: (text, row) =>
+        row?.name ? <LangTags image={row?.name} color="green" /> : '',
     },
     {
       title: t('environment.Version'),
@@ -192,12 +191,13 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
           ? constraintA.localeCompare(constraintB)
           : 0;
       },
-      render: (text, row) => (
-        <ConstraintTags
-          image={getImageFullName(row) || ''}
-          labels={row?.labels as { key: string; value: string }[]}
-        />
-      ),
+      render: (text, row) =>
+        row?.tag ? (
+          <ConstraintTags
+            tag={row.tag}
+            labels={row?.labels as { key: string; value: string }[]}
+          />
+        ) : null,
     },
     {
       title: t('environment.Digest'),

@@ -2,7 +2,6 @@ import { useBackendAIImageMetaData } from '../hooks';
 import DoubleTag, { DoubleTagObjectValue } from './DoubleTag';
 import Flex from './Flex';
 import { Tag, TagProps } from 'antd';
-import _ from 'lodash';
 import React from 'react';
 
 interface ImageAliasNameAndBaseVersionTagsProps
@@ -85,35 +84,34 @@ interface LangTagsProps extends TagProps {
 }
 export const LangTags: React.FC<LangTagsProps> = ({ image, ...props }) => {
   image = image || '';
-  const [, { getImageLang, tagAlias }] = useBackendAIImageMetaData();
+  const [, { getImageLang }] = useBackendAIImageMetaData();
   return (
     <Tag color="green" {...props}>
-      {tagAlias(getImageLang(image))}
+      {getImageLang(image)}
     </Tag>
   );
 };
 
 interface ConstraintTagsProps extends TagProps {
-  image: string | null;
+  tag: string;
   labels: { key: string; value: string }[];
 }
 export const ConstraintTags: React.FC<ConstraintTagsProps> = ({
-  image,
+  tag,
   labels,
   ...props
 }) => {
-  image = image || '';
   labels = labels || [];
-  const [, { getFilteredRequirementsTags, getCustomTag, tagAlias }] =
-    useBackendAIImageMetaData();
+  const [, { getConstraints }] = useBackendAIImageMetaData();
+  const constraints = getConstraints(tag, labels);
   return (
     <Flex direction="column" align="start">
-      {_.map(getFilteredRequirementsTags(image), (tag, index) => (
-        <Tag key={index} color="blue" {...props}>
-          {tagAlias(tag || '')}
+      {constraints[0] ? (
+        <Tag color="blue" {...props}>
+          {constraints[0]}
         </Tag>
-      ))}
-      {getCustomTag(labels) ? (
+      ) : null}
+      {constraints[1] ? (
         <DoubleTag
           color="cyan"
           values={[
@@ -122,7 +120,7 @@ export const ConstraintTags: React.FC<ConstraintTagsProps> = ({
               color: 'cyan',
             },
             {
-              label: getCustomTag(labels),
+              label: constraints[1],
               color: 'cyan',
             },
           ]}

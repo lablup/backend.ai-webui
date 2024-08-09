@@ -20,7 +20,6 @@ import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType } from 'antd/es/table';
 import { ColumnType } from 'antd/lib/table';
 import graphql from 'babel-plugin-relay/macro';
-import _ from 'lodash';
 import { Key, useMemo, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
@@ -32,8 +31,16 @@ export type EnvironmentImage = NonNullable<
 export default function ImageList() {
   const { t } = useTranslation();
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
-  const [metadata] = useBackendAIImageMetaData();
-  const [, { getNamespace, getBaseVersion }] = useBackendAIImageMetaData();
+  const [
+    ,
+    {
+      getNamespace,
+      getBaseVersion,
+      getImageLang,
+      getBaseImages,
+      getConstraints,
+    },
+  ] = useBackendAIImageMetaData();
   const { token } = theme.useToken();
   const [managingApp, setManagingApp] = useState<EnvironmentImage | null>(null);
   const [managingResourceLimit, setManagingResourceLimit] =
@@ -51,18 +58,6 @@ export default function ImageList() {
   const rowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
-  };
-
-  const getEnvironmentLang = (image: EnvironmentImage) => {
-    const environmentName = image?.registry + '/' + image?.name;
-    const imageKey = environmentName.split('/')?.[2];
-    const displayName = imageKey && metadata?.imageInfo[imageKey]?.name;
-    return displayName || _.last(environmentName.split('/'));
-  };
-
-  const getEnvironmentBaseImage = (image: EnvironmentImage) => {
-    const [, tag] = image?.tag?.split('-') || ['', ''];
-    return metadata?.tagAlias[tag];
   };
 
   const sortBasedOnInstalled = (a: EnvironmentImage, b: EnvironmentImage) => {
@@ -105,7 +100,6 @@ export default function ImageList() {
       fetchKey: environmentFetchKey,
     },
   );
-
   const sortedImages = useMemo(
     () =>
       images
@@ -163,12 +157,12 @@ export default function ImageList() {
       key: 'lang',
       dataIndex: 'lang',
       sorter: (a, b) => {
-        const langA = getEnvironmentLang(a);
-        const langB = getEnvironmentLang(b);
+        const langA = a?.name ? getImageLang(a?.name) : '';
+        const langB = b?.name ? getImageLang(b?.name) : '';
         return langA && langB ? langA.localeCompare(langB) : 0;
       },
       render: (text, row) => {
-        return <span>{getEnvironmentLang(row)}</span>;
+        return row?.name ? <span>{getImageLang(row.name)}</span> : null;
       },
     },
     {
@@ -191,17 +185,21 @@ export default function ImageList() {
       key: 'baseimage',
       dataIndex: 'baseimage',
       sorter: (a, b) => {
-        const baseimageA = getEnvironmentBaseImage(a) || '';
-        const baseimageB = getEnvironmentBaseImage(b) || '';
+        const baseimageA =
+          !a?.tag || !a?.name ? '' : getBaseImages(a?.tag, a?.name)[0];
+        const baseimageB =
+          !b?.tag || !b?.name ? '' : getBaseImages(b?.tag, b?.name)[0];
         if (baseimageA === '' && baseimageB === '') return 0;
         if (baseimageA === '') return -1;
         if (baseimageB === '') return 1;
         return baseimageA.localeCompare(baseimageB);
       },
       render: (text, row) => {
-        const baseImage = getEnvironmentBaseImage(row);
-        if (!baseImage) return null;
-        return <Tag color="green">{getEnvironmentBaseImage(row)}</Tag>;
+        if (!row?.tag || !row?.name) return null;
+        const baseImage = getBaseImages(row?.tag, row?.name);
+        return baseImage.map((baseImage) => (
+          <Tag color="green">{baseImage}</Tag>
+        ));
       },
     },
     {
@@ -209,21 +207,32 @@ export default function ImageList() {
       key: 'constraint',
       dataIndex: 'constraint',
       sorter: (a, b) => {
-        const [, , ...requirementsA] = a?.tag?.split('-') || ['', '', ''];
-        const [, , ...requirementsB] = b?.tag?.split('-') || ['', '', ''];
-        const requirementA = requirementsA.join('');
-        const requirementB = requirementsB.join('');
+        const requirementA =
+          a?.tag && b?.labels
+            ? getConstraints(
+                a?.tag,
+                a?.labels as { key: string; value: string }[],
+              )[0]
+            : '';
+        const requirementB =
+          b?.tag && b?.labels
+            ? getConstraints(
+                b?.tag,
+                b?.labels as { key: string; value: string }[],
+              )[0]
+            : '';
         if (requirementA === '' && requirementB === '') return 0;
         if (requirementA === '') return -1;
         if (requirementB === '') return 1;
         return requirementA.localeCompare(requirementB);
       },
-      render: (text, row) => (
-        <ConstraintTags
-          image={getImageFullName(row) || ''}
-          labels={row?.labels as { key: string; value: string }[]}
-        />
-      ),
+      render: (text, row) =>
+        row?.tag ? (
+          <ConstraintTags
+            tag={row?.tag}
+            labels={row?.labels as { key: string; value: string }[]}
+          />
+        ) : null,
     },
     {
       title: t('environment.Digest'),
@@ -285,7 +294,6 @@ export default function ImageList() {
       },
     },
   ];
-
   return (
     <>
       <Flex justify="end" style={{ height: '3rem', padding: '.5rem 1rem' }}>
