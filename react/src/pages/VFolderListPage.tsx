@@ -1,8 +1,15 @@
 import Flex from '../components/Flex';
+import ImportFromHuggingFaceModal from '../components/ImportFromHuggingFaceModal';
 import { filterEmptyItem } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  ImportOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
+import { useToggle } from 'ahooks';
 import { Alert, Button, Card, Skeleton, theme } from 'antd';
+import _ from 'lodash';
 import React, { Suspense, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
@@ -37,6 +44,10 @@ const VFolderListPage: React.FC<VFolderListPageProps> = (props) => {
   const baiClient = useSuspendedBackendaiClient();
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const dataViewRef = useRef(null);
+  const [
+    isVisibleImportFromHuggingFaceModal,
+    { toggle: toggleImportFromHuggingFaceModal },
+  ] = useToggle(false);
 
   const { token } = theme.useToken();
 
@@ -102,16 +113,28 @@ const VFolderListPage: React.FC<VFolderListPageProps> = (props) => {
           },
         }}
         tabBarExtraContent={
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => {
-              // @ts-ignore
-              dataViewRef.current?.openAddFolderDialog();
-            }}
-          >
-            {t('data.Add')}
-          </Button>
+          <Flex gap="xs">
+            {_.includes(['model', 'model-store'], curTabKey) ? (
+              <Button
+                icon={<ImportOutlined />}
+                onClick={toggleImportFromHuggingFaceModal}
+                // Remove this line to test
+                style={{ display: 'none' }}
+              >
+                {t('data.modelStore.ImportFromHuggingFace')}
+              </Button>
+            ) : null}
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => {
+                // @ts-ignore
+                dataViewRef.current?.openAddFolderDialog();
+              }}
+            >
+              {t('data.Add')}
+            </Button>
+          </Flex>
         }
       >
         {tabBannerText ? (
@@ -127,6 +150,12 @@ const VFolderListPage: React.FC<VFolderListPageProps> = (props) => {
         {/* @ts-ignore  */}
         <backend-ai-data-view ref={dataViewRef} active _activeTab={curTabKey} />
       </Card>
+      <ImportFromHuggingFaceModal
+        open={isVisibleImportFromHuggingFaceModal}
+        onRequestClose={() => {
+          toggleImportFromHuggingFaceModal();
+        }}
+      />
     </Flex>
   );
 };
