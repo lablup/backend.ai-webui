@@ -405,7 +405,8 @@
     "SessionId": "Identyfikator sesji",
     "EnvironmentAndVersion": "Środowisko i wersja",
     "Tags": "Tagi",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "Gaudi2Enabled": "Gaudi 2 NPU Włączony"
   },
   "button": {
     "Cancel": "Anuluj",

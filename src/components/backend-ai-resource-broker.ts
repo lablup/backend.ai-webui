@@ -404,6 +404,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'tpu.device': 'tpu_device',
         'ipu.device': 'ipu_device',
         'atom.device': 'atom_device',
+        'gaudi2.device': 'gaudi2_device',
         'warboy.device': 'warboy_device',
         'hyperaccel-lpu.device': 'hyperaccel_lpu_device',
       };
@@ -559,6 +560,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'tpu.device': 'tpu_device',
         'ipu.device': 'ipu_device',
         'atom.device': 'atom_device',
+        'gaudi2.device': 'gaudi2_device',
         'warboy.device': 'warboy_device',
         'hyperaccel-lpu.device': 'hyperaccel_lpu_device',
       };
@@ -571,6 +573,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'tpu.device': 'tpu_device',
         'ipu.device': 'ipu_device',
         'atom.device': 'atom_device',
+        'gaudi2.device': 'gaudi2_device',
         'warboy.device': 'warboy_device',
         'hyperaccel-lpu.device': 'hyperaccel_lpu_device',
       };

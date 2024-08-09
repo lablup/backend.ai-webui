@@ -475,19 +475,23 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
     const name = this.resourceGroupInfo.name;
 
     const input = {};
-    if (description !== this.resourceGroupInfo.description)
+    if (description !== this.resourceGroupInfo.description) {
       input['description'] = description;
-    if (scheduler !== this.resourceGroupInfo.scheduler)
+    }
+    if (scheduler !== this.resourceGroupInfo.scheduler) {
       input['scheduler'] = scheduler;
-    if (isActive !== this.resourceGroupInfo.is_active)
+    }
+    if (isActive !== this.resourceGroupInfo.is_active) {
       input['is_active'] = isActive;
+    }
     if (this.enableWSProxyAddr) {
       let wsproxy_addr: string = this.resourceGroupWSProxyaddressInput.value;
       if (wsproxy_addr.endsWith('/')) {
         wsproxy_addr = wsproxy_addr.slice(0, wsproxy_addr.length - 1);
       }
-      if (wsproxy_addr !== this.resourceGroupInfo.wsproxy_addr)
+      if (wsproxy_addr !== this.resourceGroupInfo.wsproxy_addr) {
         input['wsproxy_addr'] = wsproxy_addr;
+      }
     }
 
     if (this.enableSchedulerOpts) {
@@ -498,8 +502,9 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
 
     if (this.enableIsPublic) {
       const isPublic = this.resourceGroupPublicSwitch?.selected;
-      if (isPublic !== this.resourceGroupInfo.is_public)
+      if (isPublic !== this.resourceGroupInfo.is_public) {
         input['is_public'] = isPublic;
+      }
     }
 
     if (Object.keys(input).length === 0) {

@@ -413,12 +413,15 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     const name = this.scalingGroups[this.selectedIndex].name;
 
     const input = {};
-    if (description !== this.scalingGroups[this.selectedIndex].description)
+    if (description !== this.scalingGroups[this.selectedIndex].description) {
       input['description'] = description;
-    if (scheduler !== this.scalingGroups[this.selectedIndex].scheduler)
+    }
+    if (scheduler !== this.scalingGroups[this.selectedIndex].scheduler) {
       input['scheduler'] = scheduler;
-    if (is_active !== this.scalingGroups[this.selectedIndex].is_active)
+    }
+    if (is_active !== this.scalingGroups[this.selectedIndex].is_active) {
       input['is_active'] = is_active;
+    }
 
     if (Object.keys(input).length === 0) {
       this.notification.text = _text('resourceGroup.NochangesMade');

@@ -405,7 +405,8 @@
     "SessionId": "Идентификатор сессии",
     "EnvironmentAndVersion": "Окружающая среда и версия",
     "Tags": "Теги",
-    "fGPU": "фГПУ"
+    "fGPU": "фГПУ",
+    "Gaudi2Enabled": "Gaudi 2 NPU Включено"
   },
   "button": {
     "Cancel": "Отмена",

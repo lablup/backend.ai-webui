@@ -15,6 +15,7 @@ export const ACCELERATOR_UNIT_MAP: {
   'tpu.device': 'TPU',
   'ipu.device': 'IPU',
   'atom.device': 'ATOM',
+  'gaudi2.device': 'Gaudi 2',
   'warboy.device': 'Warboy',
   'hyperaccel-lpu.device': 'Hyperaccel LPU',
 };
@@ -128,6 +129,7 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
     'tpu.device': [<MWCIconWrap size={size}>view_module</MWCIconWrap>, 'TPU'],
     'ipu.device': [<MWCIconWrap size={size}>view_module</MWCIconWrap>, 'IPU'],
     'atom.device': ['/resources/icons/rebel.svg', 'ATOM'],
+    'gaudi2.device': ['/resources/icons/npu_generic.svg', 'Gaudi 2'],
     'warboy.device': ['/resources/icons/furiosa.svg', 'Warboy'],
     'hyperaccel-lpu.device': [
       '/resources/icons/npu_generic.svg',

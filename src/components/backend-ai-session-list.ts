@@ -1137,6 +1137,11 @@ export default class BackendAISessionList extends BackendAIPage {
                 occupiedSlots['atom.device'],
               );
             }
+            if ('gaudi2.device' in occupiedSlots) {
+              sessions[objectKey].gaudi2_slot = parseInt(
+                occupiedSlots['gaudi2.device'],
+              );
+            }
             if ('warboy.device' in occupiedSlots) {
               sessions[objectKey].warboy_slot = parseInt(
                 occupiedSlots['warboy.device'],
@@ -3337,6 +3342,16 @@ ${rowData.item[this.sessionNameField]}</pre
                     <span class="indicator">ATOM</span>
                   `
                 : html``}
+              ${rowData.item.gaudi2_slot
+                ? html`
+                    <img
+                      class="indicator-icon fg green"
+                      src="/resources/icons/rebel.svg"
+                    />
+                    <span>${rowData.item.gaudi2_slot}</span>
+                    <span class="indicator">Gaudi 2</span>
+                  `
+                : html``}
               ${rowData.item.warboy_slot
                 ? html`
                     <img
@@ -3363,6 +3378,7 @@ ${rowData.item[this.sessionNameField]}</pre
               !rowData.item.tpu_slot &&
               !rowData.item.ipu_slot &&
               !rowData.item.atom_slot &&
+              !rowData.item.gaudi2_slot &&
               !rowData.item.warboy_slot &&
               !rowData.item.hyperaccel_lpu_slot
                 ? html`
