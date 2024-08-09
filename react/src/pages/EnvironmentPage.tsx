@@ -1,7 +1,6 @@
 import ContainerRegistryList from '../components/ContainerRegistryList';
 import Flex from '../components/Flex';
-import ImageList from '../components/ImageList';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { theme } from 'antd';
 import Card from 'antd/es/card/Card';
 import { Suspense } from 'react';
@@ -49,18 +48,6 @@ const EnvironmentPage = () => {
         },
       }}
     >
-      {curTabKey === 'image' ? (
-        <Flex
-          style={{
-            display: 'block',
-          }}
-        >
-          <Suspense>
-            <ImageList />
-          </Suspense>
-        </Flex>
-      ) : null}
-
       <Flex
         style={{
           display: curTabKey === 'image' ? 'block' : 'none',
