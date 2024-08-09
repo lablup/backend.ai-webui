@@ -1266,6 +1266,7 @@
     "EnvironmentAndVersion": "Ympäristö ja versio",
     "Tags": "Tunnisteet",
     "fGPU": "fGPU",
+    "Gaudi2Enabled": "Gaudi 2 NPU Käytössä",
     "ForceTerminateWarningMsg": "Tämä toiminto lopettaa tai peruuttaa istunnon riippumatta sen nykyisestä tilasta. \nOletko varma?",
     "WarningForceTerminateSessions": "Varoitus: pakota lopettamaan istunnot",
     "ForceTerminateWarningMsg2": "Suorita vain, kun tila ei muutu kohtuuttoman pitkään.",

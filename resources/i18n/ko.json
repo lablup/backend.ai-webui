@@ -411,6 +411,7 @@
     "EnvironmentAndVersion": "환경 및 버전",
     "Tags": "태그",
     "fGPU": "fGPU",
+    "Gaudi2Enabled": "Gaudi 2 NPU 사용중",
     "ForceTerminateWarningMsg": "실제 컨테이너 상태와 상관 없이 세션을 종료 또는 취소 처리합니다. 계속하시겠습니까?",
     "WarningForceTerminateSessions": "경고: 세션 강제 종료",
     "ForceTerminateWarningMsg2": "세션을 생성하거나 종료했는데 비정상적으로 오랫동안 상태가 변하지 않을 경우에만 사용하십시오.",

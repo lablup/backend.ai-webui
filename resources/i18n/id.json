@@ -411,6 +411,7 @@
     "Tags": "Tag",
     "Agents": "Agen",
     "fGPU": "fGPU",
+    "Gaudi2Enabled": "Gaudi 2 NPU Diaktifkan",
     "ForceTerminateWarningMsg": "Tindakan ini akan mengakhiri atau membatalkan sesi terlepas dari statusnya saat ini. \nApa kamu yakin?",
     "WarningForceTerminateSessions": "Peringatan: Paksa Mengakhiri Sesi",
     "ForceTerminateWarningMsg2": "Jalankan hanya ketika keadaan tidak berubah dalam jangka waktu yang terlalu lama.",
