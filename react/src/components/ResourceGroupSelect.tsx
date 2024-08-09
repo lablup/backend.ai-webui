@@ -154,7 +154,7 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
       optionRender={(option) => {
         return (
           <TextHighlighter keyword={controllableSearchValue}>
-            {option.data.value}
+            {option.data.value?.toString()}
           </TextHighlighter>
         );
       }}

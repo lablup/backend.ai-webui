@@ -2,7 +2,7 @@ import Flex from '../Flex';
 import ChatMessage from './ChatMessage';
 import CopyButton from './CopyButton';
 import ScrollBottomHandlerButton from './ScrollBottomHandlerButton';
-import { Message } from 'ai';
+import { Message } from '@ai-sdk/react';
 import { theme } from 'antd';
 import Compact from 'antd/es/space/Compact';
 import React, { useRef, useState } from 'react';
