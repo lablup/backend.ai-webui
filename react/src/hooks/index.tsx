@@ -220,7 +220,7 @@ export const useBackendAIImageMetaData = () => {
       getImageLang: (imageName: string) => {
         const names = imageName.split('/');
         const langs =
-          names.length < 3 ? '' : names[2].split(':')[0]?.split('-') ?? '';
+          names.length < 3 ? '' : (names[2].split(':')[0]?.split('-') ?? '');
         return langs[langs.length - 1];
       },
       getImageTags: (imageName: string) => {
@@ -311,6 +311,7 @@ type BackendAIConfig = {
   singleSignOnVendors: string[];
   ssoRealmName: string;
   enableModelStore: boolean;
+  enableLLMPlayground: boolean;
   enableContainerCommit: boolean;
   appDownloadUrl: string;
   systemSSHImage: string;
