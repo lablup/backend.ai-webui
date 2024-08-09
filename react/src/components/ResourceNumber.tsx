@@ -29,6 +29,8 @@ interface ResourceNumberProps {
   opts?: ResourceOpts;
   value: string;
   hideTooltip?: boolean;
+  max?: string | null | undefined;
+  range?: boolean;
 }
 
 type ResourceTypeInfo<V> = {
@@ -40,12 +42,22 @@ const ResourceNumber: React.FC<ResourceNumberProps> = ({
   extra,
   opts,
   hideTooltip = false,
+  max,
+  range,
 }) => {
   const { token } = theme.useToken();
   const currentGroup = useCurrentResourceGroupValue();
   const [resourceSlotsDetails] = useResourceSlotsDetails(
     currentGroup || undefined,
   );
+
+  const formatAmount = (amount: string) => {
+    return resourceSlotsDetails?.[type]?.number_format.binary
+      ? Number(iSizeToSize(amount, 'g', 3, true)?.numberFixed).toString()
+      : (resourceSlotsDetails?.[type]?.number_format.round_length || 0) > 0
+        ? parseFloat(amount).toFixed(2)
+        : amount;
+  };
 
   return (
     <Flex direction="row" gap="xxs">
@@ -56,11 +68,8 @@ const ResourceNumber: React.FC<ResourceNumberProps> = ({
       )}
 
       <Typography.Text>
-        {resourceSlotsDetails?.[type]?.number_format.binary
-          ? Number(iSizeToSize(amount, 'g', 3, true)?.numberFixed).toString()
-          : (resourceSlotsDetails?.[type]?.number_format.round_length || 0) > 0
-            ? parseFloat(amount).toFixed(2)
-            : amount}
+        {formatAmount(amount)}
+        {range && max ? `~${formatAmount(max)}` : '~∞'}
       </Typography.Text>
       <Typography.Text type="secondary">
         {resourceSlotsDetails?.[type]?.display_unit || ''}
@@ -164,4 +173,4 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
   );
 };
 
-export default ResourceNumber;
+export default React.memo(ResourceNumber);
