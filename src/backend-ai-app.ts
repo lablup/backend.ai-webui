@@ -114,6 +114,7 @@ const loadPage =
         break;
       case 'data':
         import('./components/backend-ai-data-view.js');
+        import('./components/backend-ai-folder-explorer.js');
         break;
       case 'agent':
       case 'resource':

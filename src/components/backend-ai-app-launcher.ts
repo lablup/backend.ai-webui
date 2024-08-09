@@ -1807,7 +1807,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </div>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="ssh-dialog" fixed backdrop>
+      <backend-ai-dialog id="ssh-dialog" fixed backdrop style="z-index: 1002; position: fixed;">
         <span slot="title">SSH / SFTP connection</span>
         <div slot="content">
           <section class="vertical layout wrap start start-justified">

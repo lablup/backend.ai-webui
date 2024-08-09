@@ -631,7 +631,6 @@
       "Delete": "Löschen",
       "FolderOptionUpdate": "Ordneroption aktualisieren",
       "Leave": "Verlassen",
-      "RenameAFolder": "Einen Ordner umbenennen",
       "TypeNewFolderName": "Geben Sie einen neuen Ordnernamen ein",
       "FolderCreated": "Ordner erstellt",
       "FolderCloned": "Ordner geklont",
@@ -711,7 +710,6 @@
       "FileExtensionChanged": "Möchten Sie die Dateierweiterung ändern?",
       "KeepFileExtension": "Behalten",
       "UseNewFileExtension": "Benutzen",
-      "RemoveFileExtension": "Dateierweiterung entfernen",
       "ExecutingFileBrowser": "Dateibrowser wird ausgeführt...",
       "ExecuteFileBrowser": "Dateibrowser ausführen",
       "NotEnoughResourceForFileBrowserSession": "Nicht genügend Ressourcen (CPU: 1 Core, Speicher: 0,5 GB), um die Sitzung für den Dateibrowser zu erstellen. Bitte überprüfen Sie die verfügbaren Ressourcen.",
@@ -727,7 +725,10 @@
       "StartingSSH/SFTPSession": "SFTP-Sitzung starten...",
       "NumberOfSFTPSessionsExceededTitle": "Limit der laufenden Upload-Session erreicht",
       "NumberOfSFTPSessionsExceededBody": "Sie führen alle verfügbaren Upload-Sitzungen aus, die Sie erstellen können. Bitte beenden Sie ungenutzte Upload-Sitzungen, bevor Sie eine neue Sitzung starten.",
-      "DownloadNotAllowed": "Das Herunterladen von Dateien/Ordnern ist in diesem Ordner nicht gestattet."
+      "DownloadNotAllowed": "Das Herunterladen von Dateien/Ordnern ist in diesem Ordner nicht gestattet.",
+      "RenameAFolder": "Ordner umbenennen",
+      "Filename": "Dateiname",
+      "RemoveFileExtension": "Entfernen "
     },
     "invitation": {
       "NoValidEmails": "Es wurden keine gültigen E-Mails eingegeben",

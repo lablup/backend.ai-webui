@@ -31903,8 +31903,8 @@
             null == i && (i = this.name), null == e && (e = !1);
             let r = { files: t, recursive: e },
               n = this.client.newSignedRequest(
-                'DELETE',
-                `${this.urlPrefix}/${i}/delete_files`,
+                'POST',
+                `${this.urlPrefix}/${i}/delete-files`,
                 r,
               );
             return this.client._wrapWithPromise(n);

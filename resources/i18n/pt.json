@@ -631,7 +631,6 @@
       "Delete": "Excluir",
       "FolderOptionUpdate": "Opção de atualização de pasta",
       "Leave": "Sair",
-      "RenameAFolder": "Renomear uma pasta",
       "TypeNewFolderName": "Digite o nome da nova pasta",
       "FolderCreated": "Pasta criada",
       "FolderCloned": "Pasta clonada",
@@ -711,7 +710,6 @@
       "FileExtensionChanged": "Você gostaria de mudar a extensão do arquivo?",
       "KeepFileExtension": "Manter",
       "UseNewFileExtension": "Usar",
-      "RemoveFileExtension": "remover extensão de arquivo",
       "ExecutingFileBrowser": "Executando o navegador de arquivos ...",
       "ExecuteFileBrowser": "Executar o navegador de arquivos",
       "NotEnoughResourceForFileBrowserSession": "Sem recursos suficientes (cpu: 1 Core, mem: 0,5 GB) para criar a sessão para o navegador de arquivos. verifique os recursos disponíveis.",
@@ -727,7 +725,10 @@
       "StartingSSH/SFTPSession": "Iniciando a sessão SFTP...",
       "NumberOfSFTPSessionsExceededTitle": "Atingiu o limite da contagem de sessões de carregamento em execução",
       "NumberOfSFTPSessionsExceededBody": "Está a executar todas as sessões de carregamento disponíveis que tem permissão para criar. Termine as sessões de carregamento não utilizadas antes de iniciar uma nova sessão.",
-      "DownloadNotAllowed": "O download de arquivo/pasta não é permitido nesta pasta."
+      "DownloadNotAllowed": "O download de arquivo/pasta não é permitido nesta pasta.",
+      "RenameAFolder": "Renomear pasta",
+      "Filename": "Nome do arquivo",
+      "RemoveFileExtension": "Remover "
     },
     "invitation": {
       "NoValidEmails": "Nenhum e-mail válido foi inserido",
