@@ -117,7 +117,7 @@ export default class PipelineJobView extends BackendAIPage {
         }
 
         #pipeline-list {
-          border: 1px solid #ccc;
+          border: 1px solid var(--token-colorBorder, #ccc);
           margin-right: 20px;
         }
 

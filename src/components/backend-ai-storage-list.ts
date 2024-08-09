@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
+import { navigate } from '../backend-ai-app';
 import tus from '../lib/tus';
 import '../plastics/lablup-shields/lablup-shields';
 import {
@@ -9,6 +10,7 @@ import {
   IronFlexAlignment,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
+import { store } from '../store';
 import './backend-ai-dialog';
 import BackendAIDialog from './backend-ai-dialog';
 import { BackendAiStyles } from './backend-ai-general-styles';
@@ -1533,7 +1535,11 @@ export default class BackendAiStorageList extends BackendAIPage {
             fullwidth
             @click="${(e) => this._keepFileExtension()}"
           >
-            ${globalThis.backendaioptions.get('language') !== 'ko'
+            ${globalThis.backendaioptions.get(
+              'language',
+              'default',
+              'general',
+            ) !== 'ko'
               ? html`
                   ${_text('data.explorer.KeepFileExtension') +
                   this.oldFileExtension}
@@ -1544,7 +1550,11 @@ export default class BackendAiStorageList extends BackendAIPage {
                 `}
           </mwc-button>
           <mwc-button unelevated fullwidth @click="${() => this._renameFile()}">
-            ${globalThis.backendaioptions.get('language') !== 'ko'
+            ${globalThis.backendaioptions.get(
+              'language',
+              'default',
+              'general',
+            ) !== 'ko'
               ? html`
                   ${this.newFileExtension
                     ? _text('data.explorer.UseNewFileExtension') +
@@ -1704,6 +1714,22 @@ export default class BackendAiStorageList extends BackendAIPage {
       'delete-error',
       'deleting', // deprecated since 24.03.0;
     ].includes(status);
+  }
+
+  /**
+   *
+   * @param {string} url - page to redirect from the current page.
+   */
+  _moveTo(url = '') {
+    const page = url !== '' ? url : 'summary';
+    // globalThis.history.pushState({}, '', page);
+    store.dispatch(navigate(decodeURIComponent(page), {}));
+
+    document.dispatchEvent(
+      new CustomEvent('react-navigate', {
+        detail: url,
+      }),
+    );
   }
 
   /**
@@ -1970,7 +1996,8 @@ export default class BackendAiStorageList extends BackendAIPage {
                 <mwc-icon-button
                   class="fg green controls-running"
                   icon="play_arrow"
-                  @click="${(e) => this._inferModel(e)}"
+                  @click="${(e) =>
+                    this._moveTo('/service/start?model=' + rowData.item.id)}"
                   ?disabled="${this._isUncontrollableStatus(
                     rowData.item.status,
                   )}"

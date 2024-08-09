@@ -4,6 +4,8 @@ import rawFixAntCss from '../fix_antd.css?raw';
 import { useCustomThemeConfig } from '../helper/customThemeConfig';
 import { ReactWebComponentProps } from '../helper/react-to-webcomponent';
 import { ThemeModeProvider, useThemeMode } from '../hooks/useThemeMode';
+// @ts-ignore
+import indexCss from '../index.css?raw';
 import { StyleProvider, createCache } from '@ant-design/cssinjs';
 import { useUpdateEffect } from 'ahooks';
 import { App, AppProps, ConfigProvider, theme } from 'antd';
@@ -11,6 +13,7 @@ import en_US from 'antd/locale/en_US';
 import ko_KR from 'antd/locale/ko_KR';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
+import duration from 'dayjs/plugin/duration';
 import localeData from 'dayjs/plugin/localeData';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -41,6 +44,7 @@ dayjs.extend(localizedFormat);
 dayjs.extend(relativeTime);
 dayjs.extend(utc);
 dayjs.extend(timezone);
+dayjs.extend(duration);
 
 interface WebComponentContextType {
   value?: ReactWebComponentProps['value'];
@@ -87,8 +91,10 @@ i18n
     backend: {
       loadPath: '/resources/i18n/{{lng}}.json',
     },
-    //@ts-ignore
-    lng: globalThis?.backendaioptions?.get('current_language') || 'en',
+    lng:
+      //@ts-ignore
+      globalThis?.backendaioptions?.get('language', 'default', 'general') ||
+      'en',
     fallbackLng: 'en',
     interpolation: {
       escapeValue: false, // react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape
@@ -102,7 +108,7 @@ i18n
 export const useCurrentLanguage = () => {
   const [lang, _setLang] = useState(
     //@ts-ignore
-    globalThis?.backendaioptions?.get('current_language'),
+    globalThis?.backendaioptions?.get('language', 'default', 'general') || 'en',
   );
   const { i18n } = useTranslation();
 
@@ -173,6 +179,7 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
             <style>
               {styles}
               {rawFixAntCss}
+              {indexCss}
             </style>
             <QueryClientProvider client={queryClient}>
               <ShadowRootContext.Provider value={shadowRoot}>
@@ -271,6 +278,7 @@ export const DefaultProvidersForReactRoot: React.FC<
 
   return (
     <>
+      <style>{indexCss}</style>
       {RelayEnvironment && (
         <RelayEnvironmentProvider environment={RelayEnvironment}>
           <QueryClientProvider client={queryClient}>

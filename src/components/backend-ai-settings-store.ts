@@ -27,10 +27,10 @@ export default class BackendAiSettingsStore extends BackendAIPage {
       'user.desktop_notification': true,
       'user.compact_sidebar': false,
       'user.preserve_login': false,
-      'user.language': 'default',
       'user.automatic_update_check': true,
       'user.custom_ssh_port': '',
       'user.beta_feature': false,
+      'general.language': 'en',
     };
     this.readSettings();
   }

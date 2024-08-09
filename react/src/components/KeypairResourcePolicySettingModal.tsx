@@ -15,10 +15,19 @@ import {
   ModifyKeyPairResourcePolicyInput,
 } from './__generated__/KeypairResourcePolicySettingModalModifyMutation.graphql';
 // import { KeypairResourcePolicySettingModalQuery } from './__generated__/KeypairResourcePolicySettingModalQuery.graphql';
-import { App, Card, Col, Form, Input, InputNumber, Row } from 'antd';
+import {
+  App,
+  Card,
+  Col,
+  Form,
+  FormInstance,
+  Input,
+  InputNumber,
+  Row,
+} from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   useFragment, // useLazyLoadQuery,
@@ -44,7 +53,7 @@ const KeypairResourcePolicySettingModal: React.FC<
 }) => {
   const { t } = useTranslation();
   const { message } = App.useApp();
-  const [form] = Form.useForm();
+  const formRef = useRef<FormInstance>(null);
   const [resourceSlotsDetails] = useResourceSlotsDetails();
   const baiClient = useSuspendedBackendaiClient();
   const isDeprecatedMaxVfolderCountInKeypairResourcePolicy =
@@ -147,8 +156,8 @@ const KeypairResourcePolicySettingModal: React.FC<
   ]);
 
   const handleOk = () => {
-    return form
-      .validateFields()
+    return formRef?.current
+      ?.validateFields()
       .then((values) => {
         let totalResourceSlots = _.mapValues(
           values?.parsedTotalResourceSlots,
@@ -205,8 +214,16 @@ const KeypairResourcePolicySettingModal: React.FC<
               props: props as CreateKeyPairResourcePolicyInput,
             },
             onCompleted: (res, errors) => {
-              if (!res?.create_keypair_resource_policy?.ok || errors) {
+              if (!res?.create_keypair_resource_policy?.ok) {
                 message.error(res?.create_keypair_resource_policy?.msg);
+                onRequestClose();
+                return;
+              }
+              if (errors && errors?.length > 0) {
+                const errorMsgList = _.map(errors, (error) => error.message);
+                for (const error of errorMsgList) {
+                  message.error(error, 2.5);
+                }
                 onRequestClose();
               } else {
                 message.success(t('resourcePolicy.SuccessfullyCreated'));
@@ -224,8 +241,16 @@ const KeypairResourcePolicySettingModal: React.FC<
               props: props as ModifyKeyPairResourcePolicyInput,
             },
             onCompleted: (res, errors) => {
-              if (!res?.modify_keypair_resource_policy?.ok || errors) {
+              if (!res?.modify_keypair_resource_policy?.ok) {
                 message.error(res?.modify_keypair_resource_policy?.msg);
+                onRequestClose();
+                return;
+              }
+              if (errors && errors?.length > 0) {
+                const errorMsgList = _.map(errors, (error) => error.message);
+                for (const error of errorMsgList) {
+                  message.error(error, 2.5);
+                }
                 onRequestClose();
               } else {
                 message.success(t('resourcePolicy.SuccessfullyUpdated'));
@@ -257,7 +282,7 @@ const KeypairResourcePolicySettingModal: React.FC<
       {...props}
     >
       <Form
-        form={form}
+        ref={formRef}
         layout="vertical"
         requiredMark="optional"
         initialValues={initialValues}
@@ -299,12 +324,12 @@ const KeypairResourcePolicySettingModal: React.FC<
                 <FormItemWithUnlimited
                   name={['parsedTotalResourceSlots', 'cpu']}
                   unlimitedValue={undefined}
-                  label={resourceSlotsDetails?.cpu.description}
+                  label={resourceSlotsDetails?.cpu?.description}
                 >
                   <InputNumber
                     min={0}
                     max={512}
-                    addonAfter={resourceSlotsDetails?.cpu.display_unit}
+                    addonAfter={resourceSlotsDetails?.cpu?.display_unit}
                   />
                 </FormItemWithUnlimited>
               </Col>
@@ -312,7 +337,7 @@ const KeypairResourcePolicySettingModal: React.FC<
                 <FormItemWithUnlimited
                   name={['parsedTotalResourceSlots', 'mem']}
                   unlimitedValue={undefined}
-                  label={resourceSlotsDetails?.mem.description}
+                  label={resourceSlotsDetails?.mem?.description}
                 >
                   <DynamicUnitInputNumber />
                 </FormItemWithUnlimited>
@@ -323,13 +348,13 @@ const KeypairResourcePolicySettingModal: React.FC<
                 <FormItemWithUnlimited
                   name={['parsedTotalResourceSlots', 'cuda.device']}
                   unlimitedValue={undefined}
-                  label={resourceSlotsDetails?.['cuda.device'].description}
+                  label={resourceSlotsDetails?.['cuda.device']?.description}
                 >
                   <InputNumber
                     min={0}
                     max={64}
                     addonAfter={
-                      resourceSlotsDetails?.['cuda.device'].display_unit
+                      resourceSlotsDetails?.['cuda.device']?.display_unit
                     }
                   />
                 </FormItemWithUnlimited>
@@ -338,14 +363,14 @@ const KeypairResourcePolicySettingModal: React.FC<
                 <FormItemWithUnlimited
                   name={['parsedTotalResourceSlots', 'cuda.shares']}
                   unlimitedValue={undefined}
-                  label={resourceSlotsDetails?.['cuda.shares'].description}
+                  label={resourceSlotsDetails?.['cuda.shares']?.description}
                 >
                   <InputNumber
                     min={0}
                     max={256}
                     step={0.1}
                     addonAfter={
-                      resourceSlotsDetails?.['cuda.shares'].display_unit
+                      resourceSlotsDetails?.['cuda.shares']?.display_unit
                     }
                   />
                 </FormItemWithUnlimited>

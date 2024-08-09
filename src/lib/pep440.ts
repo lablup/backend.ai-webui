@@ -1,13 +1,13 @@
 export function normalizePEP440Version(version: string) {
   // Replace -, _, and whitespace with .
-  let normalizedVersion = version.replace(/[-_\s]/g, '.');
+  let normalizedVersion = version?.replace(/[-_\s]/g, '.');
 
   // Ensure that dev, a, b, rc, post are followed by . if directly followed by a digit
-  normalizedVersion = normalizedVersion.replace(
+  normalizedVersion = normalizedVersion?.replace(
     /(\.?)(dev|a|b|c|rc|post)(?=\d+)/g,
     '$1.$2.',
   );
-  normalizedVersion = normalizedVersion.replace(/\.+/g, '.');
+  normalizedVersion = normalizedVersion?.replace(/\.+/g, '.');
 
   return normalizedVersion;
 }

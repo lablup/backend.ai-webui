@@ -6,9 +6,9 @@ import Flex from '../components/Flex';
 import ImageMetaIcon from '../components/ImageMetaIcon';
 import InferenceSessionErrorModal from '../components/InferenceSessionErrorModal';
 import ResourceNumber from '../components/ResourceNumber';
-import ServiceLauncherModal from '../components/ServiceLauncherModal';
 import VFolderLazyView from '../components/VFolderLazyView';
 import { InferenceSessionErrorModalFragment$key } from '../components/__generated__/InferenceSessionErrorModalFragment.graphql';
+import ChatUIModal from '../components/lablupTalkativotUI/ChatUIModal';
 import { baiSignedRequestWithPromise, filterNonNullItems } from '../helper';
 import {
   useSuspendedBackendaiClient,
@@ -52,6 +52,7 @@ import { DescriptionsItemType } from 'antd/es/descriptions';
 import graphql from 'babel-plugin-relay/macro';
 import { default as dayjs } from 'dayjs';
 import _ from 'lodash';
+import { BotMessageSquareIcon } from 'lucide-react';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
@@ -99,10 +100,9 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   const [isPendingClearError, startClearErrorTransition] = useTransition();
   const [selectedSessionErrorForModal, setSelectedSessionErrorForModal] =
     useState<InferenceSessionErrorModalFragment$key | null>(null);
-  const [isOpenServiceLauncherModal, setIsOpenServiceLauncherModal] =
-    useState(false);
   const [isOpenTokenGenerationModal, setIsOpenTokenGenerationModal] =
     useState(false);
+  const [openChatModal, setOpenChatModal] = useState(false);
   const [currentUser] = useCurrentUserInfo();
   // const curProject = useCurrentProjectValue();
   const [paginationState] = useState<{
@@ -155,6 +155,9 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               ...InferenceSessionErrorModalFragment
             }
             retries
+            runtime_variant @since(version: "24.03.5") {
+              human_readable_name
+            }
             model
             model_mount_destiation @deprecatedSince(version: "24.03.4")
             model_mount_destination @since(version: "24.03.4")
@@ -163,6 +166,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               row_id
               name
             }
+            environ
             resource_group
             resource_slots
             resource_opts
@@ -174,7 +178,6 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               status
             }
             created_user_email @since(version: "23.09.8")
-            ...ServiceLauncherModalFragment
             ...EndpointOwnerInfoFragment
             ...EndpointStatusTagFragment
           }
@@ -290,7 +293,18 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     {
       label: t('modelService.ServiceEndpoint'),
       children: endpoint?.url ? (
-        <Typography.Text copyable>{endpoint?.url}</Typography.Text>
+        <>
+          <Typography.Text copyable>{endpoint?.url}</Typography.Text>
+          <Tooltip title={'LLM Playground'}>
+            <Button
+              type="link"
+              icon={<BotMessageSquareIcon />}
+              onClick={() => {
+                setOpenChatModal(true);
+              }}
+            />
+          </Tooltip>
+        </>
       ) : (
         <Typography.Text type="secondary">
           {t('modelService.NoServiceEndpoint')}
@@ -382,6 +396,18 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   }
 
   items.push({
+    label: t('session.launcher.EnvironmentVariable'),
+    children: (
+      <Typography.Text style={{ fontFamily: 'monospace' }}>
+        {_.isEmpty(JSON.parse(endpoint?.environ)) ? '-' : endpoint?.environ}
+      </Typography.Text>
+    ),
+    span: {
+      sm: 1,
+    },
+  });
+
+  items.push({
     label: t('modelService.Image'),
     children: (baiClient.supports('modify-endpoint')
       ? endpoint?.image_object
@@ -389,6 +415,9 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       <Flex direction="row" gap={'xs'}>
         <ImageMetaIcon image={fullImageString} />
         <CopyableCodeText>{fullImageString}</CopyableCodeText>
+        {endpoint?.runtime_variant?.human_readable_name ? (
+          <Tag>{endpoint?.runtime_variant?.human_readable_name}</Tag>
+        ) : null}
       </Flex>
     ),
     span: {
@@ -464,7 +493,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                 endpoint?.created_user_email !== currentUser.email)
             }
             onClick={() => {
-              setIsOpenServiceLauncherModal(true);
+              webuiNavigate('/service/update/' + serviceId);
             }}
           >
             {t('button.Edit')}
@@ -649,18 +678,6 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         inferenceSessionErrorFrgmt={selectedSessionErrorForModal}
         onRequestClose={() => setSelectedSessionErrorForModal(null)}
       />
-      <ServiceLauncherModal
-        endpointFrgmt={endpoint}
-        open={isOpenServiceLauncherModal}
-        onRequestClose={(success) => {
-          setIsOpenServiceLauncherModal(!isOpenServiceLauncherModal);
-          if (success) {
-            startRefetchTransition(() => {
-              updateFetchKey();
-            });
-          }
-        }}
-      ></ServiceLauncherModal>
       <EndpointTokenGenerationModal
         open={isOpenTokenGenerationModal}
         onRequestClose={(success) => {
@@ -673,6 +690,13 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         }}
         endpoint_id={endpoint?.endpoint_id || ''}
       ></EndpointTokenGenerationModal>
+      <ChatUIModal
+        endpoint={endpoint?.url || undefined}
+        open={openChatModal}
+        onCancel={() => {
+          setOpenChatModal(false);
+        }}
+      />
     </Flex>
   );
 };

@@ -212,15 +212,25 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
                   variables: {
                     name: row.name,
                   },
-                  onCompleted: (data, errors) => {
-                    if (errors) {
-                      message.error(errors[0]?.message);
+                  onCompleted: (res, errors) => {
+                    if (!res?.delete_keypair_resource_policy?.ok) {
+                      message.error(res?.delete_keypair_resource_policy?.msg);
                       return;
                     }
-                    startRefetchTransition(() =>
-                      updateKeypairResourcePolicyFetchKey(),
-                    );
-                    message.success(t('resourcePolicy.SuccessfullyDeleted'));
+                    if (errors && errors?.length > 0) {
+                      const errorMsgList = _.map(
+                        errors,
+                        (error) => error.message,
+                      );
+                      for (const error of errorMsgList) {
+                        message.error(error, 2.5);
+                      }
+                    } else {
+                      startRefetchTransition(() =>
+                        updateKeypairResourcePolicyFetchKey(),
+                      );
+                      message.success(t('resourcePolicy.SuccessfullyDeleted'));
+                    }
                   },
                   onError(err) {
                     message.error(err?.message);
@@ -239,8 +249,9 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
                 />
               }
               loading={
+                isInflightDelete &&
                 inFlightResourcePolicyName ===
-                row?.name + keypairResourcePolicyFetchKey
+                  row?.name + keypairResourcePolicyFetchKey
               }
               disabled={
                 isInflightDelete &&

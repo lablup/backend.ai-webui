@@ -28,6 +28,7 @@ export const useResourceSlots = () => {
     'ipu.device'?: string;
     'atom.device'?: string;
     'gaudi2.device'?: string;
+    'atom-plus.device'?: string;
     'warboy.device'?: string;
     'hyperaccel-lpu.device'?: string;
   }>({
@@ -66,23 +67,25 @@ export const useResourceSlotsDetails = (resourceGroupName?: string) => {
   const [key, checkUpdate] = useUpdatableState('first');
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const baiClient = useSuspendedBackendaiClient();
-  let { data: resourceSlots } = useTanQuery<{
-    [key: string]: ResourceSlotDetail;
+  const { data: resourceSlots } = useTanQuery<{
+    [key: string]: ResourceSlotDetail | undefined;
   }>({
     queryKey: ['useResourceSlots', resourceGroupName, key],
     queryFn: () => {
       // return baiClient.get_resource_slots();
       if (
-        _.isEmpty(resourceGroupName) ||
+        !resourceGroupName ||
         !baiClient.isManagerVersionCompatibleWith('23.09.0')
       ) {
         return undefined;
       } else {
         // `/resource-slots/details` is available since 23.09
         // https://github.com/lablup/backend.ai/issues/1589
+        const search = new URLSearchParams();
+        search.set('sgroup', resourceGroupName);
         return baiRequestWithPromise({
           method: 'GET',
-          url: `/config/resource-slots/details?sgroup=${resourceGroupName}`,
+          url: `/config/resource-slots/details?${search.toString()}`,
         });
       }
     },
@@ -91,7 +94,7 @@ export const useResourceSlotsDetails = (resourceGroupName?: string) => {
 
   // TODO: improve waterfall loading
   const { data: deviceMetadata } = useTanQuery<{
-    [key: string]: ResourceSlotDetail;
+    [key: string]: ResourceSlotDetail | undefined;
   }>({
     queryKey: ['backendai-metadata-device', key],
     queryFn: () => {
@@ -101,10 +104,9 @@ export const useResourceSlotsDetails = (resourceGroupName?: string) => {
     },
     staleTime: 1000 * 60 * 60 * 24,
   });
-  resourceSlots = resourceSlots || deviceMetadata;
 
   return [
-    resourceSlots,
+    _.merge(deviceMetadata, resourceSlots),
     {
       refresh: () => checkUpdate(),
     },

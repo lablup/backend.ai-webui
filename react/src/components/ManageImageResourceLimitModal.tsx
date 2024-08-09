@@ -8,6 +8,7 @@ import {
 } from './__generated__/ManageImageResourceLimitModalMutation.graphql';
 import { App, Form, FormInstance, message } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
+import _ from 'lodash';
 import React, { useRef } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useMutation } from 'react-relay';
@@ -86,9 +87,16 @@ const ManageImageResourceLimitModal: React.FC<BAIModalProps> = ({
             resource_limits,
           },
         },
-        onCompleted: (res, err) => {
-          if (err) {
-            message.error(t('dialog.ErrorOccurred'));
+        onCompleted: (res, errors) => {
+          if (!res?.modify_image?.ok) {
+            message.error(res?.modify_image?.msg);
+            return;
+          }
+          if (errors && errors?.length > 0) {
+            const errorMsgList = _.map(errors, (error) => error.message);
+            for (const error of errorMsgList) {
+              message.error(error, 2.5);
+            }
           } else {
             message.success(t('environment.DescImageResourceModified'));
             dispatchEvent('ok', null);

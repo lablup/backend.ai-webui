@@ -70,6 +70,7 @@ export default class BackendAIImport extends BackendAIPage {
   @property({ type: String }) _helpDescription = '';
   @property({ type: String }) _helpDescriptionTitle = '';
   @property({ type: String }) _helpDescriptionIcon = '';
+  @property({ type: String }) sessionLauncherType = 'neo';
   @query('#loading-spinner') spinner!: LablupLoadingSpinner;
   @query('#resource-monitor') resourceMonitor!: BackendAiResourceMonitor;
   @query('#session-launcher') sessionLauncher!: BackendAiSessionLauncher;
@@ -228,10 +229,12 @@ export default class BackendAIImport extends BackendAIPage {
       this.requestUpdate();
     }
     // Given URL via URL path parameter.
-    this.requestURL = globalThis.currentPageParams.requestURL;
-    let queryString = globalThis.currentPageParams.queryString;
-    queryString = queryString.substring(queryString.indexOf('?') + 1);
-    this.queryString = queryString;
+    const currentUrl = window.location.href;
+    const url = new URL(currentUrl);
+    this.queryString = url.search;
+    const queryString = this.queryString.substring(
+      this.queryString.indexOf('?') + 1,
+    );
     this.importNotebookMessage = this.queryString;
     this.environment = this.guessEnvironment(this.queryString);
     if (queryString !== '') {
@@ -687,42 +690,46 @@ export default class BackendAIImport extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/custom.css" />
-      <div class="horizontal wrap layout" style="margin-bottom:24px;">
-        <lablup-activity-panel
-          title="${_t('import.ImportNotebook')}"
-          elevation="1"
-          horizontalsize="2x"
-        >
-          <div slot="message">
-            <div class="horizontal wrap layout center">
-              <mwc-textfield
-                id="notebook-url"
-                label="${_t('import.NotebookURL')}"
-                autoValidate
-                validationMessage="${_text('import.WrongURLType')}"
-                pattern="^(https?)://([\\w./-]{1,}).ipynb$"
-                maxLength="2048"
-                placeholder="${_t('maxLength.2048chars')}"
-                @change="${(e) =>
-                  this.urlTextfieldChanged(
-                    e,
-                    'import-notebook-button',
-                    'importNotebookMessage',
-                  )}"
-              ></mwc-textfield>
-              <mwc-button
-                id="import-notebook-button"
-                disabled
-                icon="cloud_download"
-                @click="${() => this.getNotebookFromURL()}"
+      ${this.sessionLauncherType !== 'neo'
+        ? html`
+            <div class="horizontal wrap layout" style="margin-bottom:24px;">
+              <lablup-activity-panel
+                title="${_t('import.ImportNotebook')}"
+                elevation="1"
+                horizontalsize="2x"
               >
-                <span>${_t('import.GetAndRunNotebook')}</span>
-              </mwc-button>
+                <div slot="message">
+                  <div class="horizontal wrap layout center">
+                    <mwc-textfield
+                      id="notebook-url"
+                      label="${_t('import.NotebookURL')}"
+                      autoValidate
+                      validationMessage="${_text('import.WrongURLType')}"
+                      pattern="^(https?)://([\\w./-]{1,}).ipynb$"
+                      maxLength="2048"
+                      placeholder="${_t('maxLength.2048chars')}"
+                      @change="${(e) =>
+                        this.urlTextfieldChanged(
+                          e,
+                          'import-notebook-button',
+                          'importNotebookMessage',
+                        )}"
+                    ></mwc-textfield>
+                    <mwc-button
+                      id="import-notebook-button"
+                      disabled
+                      icon="cloud_download"
+                      @click="${() => this.getNotebookFromURL()}"
+                    >
+                      <span>${_t('import.GetAndRunNotebook')}</span>
+                    </mwc-button>
+                  </div>
+                  ${this.importNotebookMessage}
+                </div>
+              </lablup-activity-panel>
             </div>
-            ${this.importNotebookMessage}
-          </div>
-        </lablup-activity-panel>
-      </div>
+          `
+        : html``}
       <backend-ai-session-launcher
         mode="import"
         location="import"

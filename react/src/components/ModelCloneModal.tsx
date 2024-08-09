@@ -123,7 +123,9 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
                   },
                   onError(error) {
                     if (
-                      error.type === 'https://api.backend.ai/probs/server-error'
+                      error.message?.includes(
+                        'The virtual folder already exists with the same name',
+                      )
                     ) {
                       setExtraNameError({
                         validateStatus: 'error',

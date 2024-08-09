@@ -1,4 +1,5 @@
 import App from './App';
+import BAIIntervalText from './components/BAIIntervalText';
 import { jotaiStore, useWebComponentInfo } from './components/DefaultProviders';
 import Flex from './components/Flex';
 import FlexActivityIndicator from './components/FlexActivityIndicator';
@@ -11,6 +12,7 @@ import reactToWebComponent, {
 import { useSuspendedBackendaiClient } from './hooks';
 import { useCurrentResourceGroupValue } from './hooks/useCurrentProject';
 import { ThemeModeProvider } from './hooks/useThemeMode';
+import { Tag, theme } from 'antd';
 import { Provider as JotaiProvider } from 'jotai';
 import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
@@ -315,3 +317,57 @@ customElements.define(
     );
   }),
 );
+
+customElements.define(
+  'backend-ai-session-reservation-timer',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <ReservationTimeCounter {...props} />
+      </DefaultProviders>
+    );
+  }),
+);
+
+const ReservationTimeCounter = (props: ReactWebComponentProps) => {
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
+
+  const { parsedValue } = useWebComponentInfo<{
+    created_at: string;
+    terminated_at: string;
+  }>();
+
+  const baiClient = useSuspendedBackendaiClient();
+  return (
+    <Flex>
+      <Tag
+        color={token.colorTextDisabled}
+        style={{
+          margin: 0,
+          borderTopLeftRadius: token.borderRadiusSM,
+          borderBottomLeftRadius: token.borderRadiusSM,
+        }}
+      >
+        {t('session.ElapsedTime')}
+      </Tag>
+      <Tag
+        color={token['green-7']}
+        style={{
+          borderTopRightRadius: token.borderRadiusSM,
+          borderBottomRightRadius: token.borderRadiusSM,
+        }}
+      >
+        <BAIIntervalText
+          callback={() => {
+            return baiClient.utils.elapsedTime(
+              parsedValue.created_at,
+              parsedValue.terminated_at || null,
+            );
+          }}
+          delay={1000}
+        />
+      </Tag>
+    </Flex>
+  );
+};

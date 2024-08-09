@@ -3,17 +3,21 @@ import KeypairInfoModal from '../components/KeypairInfoModal';
 import SSHKeypairManagementModal from '../components/SSHKeypairManagementModal';
 import { SettingItemProps } from '../components/SettingItem';
 import SettingList from '../components/SettingList';
-import { useBAISettingUserState } from '../hooks/useBAISetting';
+import ShellScriptEditModal from '../components/ShellScriptEditModal';
+import {
+  useBAISettingGeneralState,
+  useBAISettingUserState,
+} from '../hooks/useBAISetting';
 import { SettingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Button } from 'antd';
 import Card from 'antd/es/card/Card';
-import { useRef } from 'react';
+import { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 type TabKey = 'general' | 'logs';
-type ShellScriptType = 'bootstrap' | 'userconfig';
+export type ShellScriptType = 'bootstrap' | 'userconfig' | undefined;
 
 const tabParam = withDefault(StringParam, 'general');
 
@@ -26,7 +30,9 @@ const UserPreferencesPage = () => {
   );
   const [compactSidebar, setCompactSidebar] =
     useBAISettingUserState('compact_sidebar');
-  const [language, setLanguage] = useBAISettingUserState('language');
+  const [selectedLanguage, setSelectedLanguage] =
+    useBAISettingUserState('selected_language');
+  const [, setLanguage] = useBAISettingGeneralState('language');
   const [autoAutomaticUpdateCheck, setAutoAutomaticUpdateCheck] =
     useBAISettingUserState('automatic_update_check');
   const [autoLogout, setAutoLogout] = useBAISettingUserState('auto_logout');
@@ -38,17 +44,9 @@ const UserPreferencesPage = () => {
   ] = useToggle(false);
   const [preserveLogin, setPreserveLogin] =
     useBAISettingUserState('preserve_login');
-
-  // Use Lit Element's method to open modify shell script dialog in backend-ai-usersettings-general-list
-  const modifyShellScriptModal = useRef<any>(null);
-  const openModifyShellScriptModal = ({ type }: { type: ShellScriptType }) => {
-    if (type === 'bootstrap') {
-      modifyShellScriptModal.current._launchBootstrapScriptDialog();
-    }
-    if (type === 'userconfig') {
-      modifyShellScriptModal.current._launchUserConfigDialog();
-    }
-  };
+  const [shellInfo, setShellInfo] = useState<ShellScriptType>('bootstrap');
+  const [isOpenShellScriptEditModal, { toggle: toggleShellScriptEditModal }] =
+    useToggle(false);
 
   const settingGroup: { title: string; settingItems: SettingItemProps[] }[] = [
     {
@@ -109,14 +107,20 @@ const UserPreferencesPage = () => {
             showSearch: true,
           },
           defaultValue: 'default',
-          value: language,
-          setValue: setLanguage,
+          value: selectedLanguage || 'default',
+          setValue: setSelectedLanguage,
           onChange: (value) => {
-            setLanguage(value);
+            setSelectedLanguage(value);
+            const defaultLanguage = globalThis.navigator.language.split('-')[0];
             const event = new CustomEvent('language-changed', {
-              detail: { language: value },
+              detail: {
+                language: value === 'default' ? defaultLanguage : value,
+              },
             });
+            setLanguage(value === 'default' ? defaultLanguage : value);
             document.dispatchEvent(event);
+            //@ts-ignore
+            console.log(globalThis.backendaioptions.get('selected_language'));
           },
         },
         ...[
@@ -196,7 +200,10 @@ const UserPreferencesPage = () => {
           children: (
             <Button
               icon={<SettingOutlined />}
-              onClick={() => openModifyShellScriptModal({ type: 'bootstrap' })}
+              onClick={() => {
+                setShellInfo('bootstrap');
+                toggleShellScriptEditModal();
+              }}
             >
               {t('button.Config')}
             </Button>
@@ -208,7 +215,10 @@ const UserPreferencesPage = () => {
           children: (
             <Button
               icon={<SettingOutlined />}
-              onClick={() => openModifyShellScriptModal({ type: 'userconfig' })}
+              onClick={() => {
+                setShellInfo('userconfig');
+                toggleShellScriptEditModal();
+              }}
             >
               {t('button.Config')}
             </Button>
@@ -248,12 +258,18 @@ const UserPreferencesPage = () => {
         open={isOpenSSHKeypairManagementModal}
         onRequestClose={toggleSSHKeypairManagementModal}
       />
-      {/* @ts-ignore */}
-      <backend-ai-usersettings-general-list
-        ref={modifyShellScriptModal}
-        id="backend-ai-general-list"
-        active="true"
-      />
+      {shellInfo && (
+        <ShellScriptEditModal
+          open={isOpenShellScriptEditModal}
+          shellInfo={shellInfo}
+          onRequestClose={() => {
+            toggleShellScriptEditModal();
+          }}
+          afterClose={() => {
+            setShellInfo(undefined);
+          }}
+        />
+      )}
     </>
   );
 };

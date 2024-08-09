@@ -144,7 +144,7 @@ export default class BackendAIDialog extends LitElement {
           margin: 0 0 10px 0;
           display: block;
           height: 20px;
-          border-bottom: 1px solid #ddd !important;
+          border-bottom: 1px solid var(--token-colorBorder, #ccc) !important;
         }
 
         mwc-icon-button {

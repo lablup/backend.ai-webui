@@ -312,10 +312,12 @@ export const useBAIPaginationOptionState = (
       current: options.current,
     },
     setTablePaginationOption: (pagination) => {
-      setOptions((current) => ({
-        ...current,
-        ...pagination,
-      }));
+      if (!_.isEqual(pagination, options)) {
+        setOptions((current) => ({
+          ...current,
+          ...pagination,
+        }));
+      }
     },
   };
 };

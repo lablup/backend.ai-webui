@@ -323,6 +323,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
     <>
       <style>{cssRaw}</style>
       <Form.Item
+        className="image-environment-select-form-item"
         name={['environments', 'environment']}
         label={`${t('session.launcher.Environments')} / ${t(
           'session.launcher.Version',
@@ -515,6 +516,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
           });
           return (
             <Form.Item
+              className="image-environment-select-form-item"
               name={['environments', 'version']}
               rules={[{ required: _.isEmpty(environments?.manual) }]}
             >

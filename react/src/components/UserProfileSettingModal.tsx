@@ -3,7 +3,7 @@
  Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useCurrentUserInfo } from '../hooks/backendai';
+import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal from './BAIModal';
 import { passwordPattern } from './ResetPasswordRequired';
@@ -58,6 +58,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
   const [isOpenTOTPActivateModal, { toggle: toggleTOTPActivateModal }] =
     useToggle(false);
   const baiClient = useSuspendedBackendaiClient();
+  const userRole = useCurrentUserRole();
   const [userInfo, userMutations] = useCurrentUserInfo();
   // const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
 
@@ -196,7 +197,8 @@ const UserProfileSettingModal: React.FC<Props> = ({
               label={t('webui.menu.NewPassword')}
               rules={[
                 {
-                  pattern: passwordPattern,
+                  pattern:
+                    userRole === 'superadmin' ? undefined : passwordPattern,
                   message: t('webui.menu.InvalidPasswordMessage'),
                 },
               ]}

@@ -229,9 +229,13 @@ export default class LablupTermsOfService extends LitElement {
   _showTOSdialog(reuseDialog = false) {
     if (
       this.tosLanguage === 'default' &&
-      globalThis.backendaioptions.exists('current_language')
+      globalThis.backendaioptions.exists('language')
     ) {
-      this.tosLanguage = globalThis.backendaioptions.get('current_language');
+      this.tosLanguage = globalThis.backendaioptions.get(
+        'language',
+        'default',
+        'general',
+      );
     }
     if (!['ko', 'en'].includes(this.tosLanguage)) {
       this.tosLanguage = 'en';

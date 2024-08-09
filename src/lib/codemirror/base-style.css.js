@@ -23,7 +23,7 @@ export const CodemirrorBaseStyle = css`
   }
   /* GUTTER */
   .CodeMirror-gutters {
-    border-right: 1px solid #ddd;
+    border-right: 1px solid var(--token-colorBorder, #ccc);
     background-color: #f7f7f7;
     white-space: nowrap;
   }
@@ -117,7 +117,7 @@ export const CodemirrorBaseStyle = css`
     overflow: hidden;
   }
   .CodeMirror-ruler {
-    border-left: 1px solid #ccc;
+    border-left: 1px solid var(--token-colorBorder, #ccc);
     top: 0;
     bottom: 0;
     position: absolute;

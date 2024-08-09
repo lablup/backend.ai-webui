@@ -166,15 +166,25 @@ const ProjectResourcePolicyList: React.FC<
                   variables: {
                     name: row.name,
                   },
-                  onCompleted: (data, errors) => {
-                    if (errors) {
-                      message.error(errors[0]?.message);
+                  onCompleted: (res, errors) => {
+                    if (!res?.delete_project_resource_policy?.ok) {
+                      message.error(res?.delete_project_resource_policy?.msg);
                       return;
                     }
-                    startRefetchTransition(() =>
-                      updateProjectResourcePolicyFetchKey(),
-                    );
-                    message.success(t('resourcePolicy.SuccessfullyDeleted'));
+                    if (errors && errors?.length > 0) {
+                      const errorMsgList = _.map(
+                        errors,
+                        (error) => error.message,
+                      );
+                      for (const error of errorMsgList) {
+                        message.error(error, 2.5);
+                      }
+                    } else {
+                      startRefetchTransition(() =>
+                        updateProjectResourcePolicyFetchKey(),
+                      );
+                      message.success(t('resourcePolicy.SuccessfullyDeleted'));
+                    }
                   },
                   onError(err) {
                     message.error(err?.message);
@@ -193,8 +203,9 @@ const ProjectResourcePolicyList: React.FC<
                 />
               }
               loading={
+                isInflightDelete &&
                 inFlightResourcePolicyName ===
-                row?.name + projectResourcePolicyFetchKey
+                  row?.name + projectResourcePolicyFetchKey
               }
               disabled={
                 isInflightDelete &&

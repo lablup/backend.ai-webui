@@ -27,17 +27,17 @@ const ImageResourceFormItem: React.FC<ImageResourceFormItemProps> = ({
     return (
       {
         cpu: {
-          label: resourceSlotsDetails?.cpu.description,
+          label: resourceSlotsDetails?.cpu?.description,
           steps: _.map(
             ['0', '1', '2', '3', '4', '5', '6', '7', '8'],
             (value) => ({
               value,
-              label: `${value} ${resourceSlotsDetails?.cpu.display_unit}`,
+              label: `${value} ${resourceSlotsDetails?.cpu?.display_unit}`,
             }),
           ),
         },
         mem: {
-          label: resourceSlotsDetails?.mem.description,
+          label: resourceSlotsDetails?.mem?.description,
           steps: _.map(
             [
               '64m',
@@ -62,24 +62,24 @@ const ImageResourceFormItem: React.FC<ImageResourceFormItemProps> = ({
           ),
         },
         'cuda.device': {
-          label: resourceSlotsDetails?.['cuda.device'].description,
+          label: resourceSlotsDetails?.['cuda.device']?.description,
           steps: _.map(['0', '1', '2', '3', '4', '5', '6', '7', '8'], (v) => ({
             value: v,
-            label: `${v} ${resourceSlotsDetails?.['cuda.device'].display_unit}`,
+            label: `${v} ${resourceSlotsDetails?.['cuda.device']?.display_unit}`,
           })),
         },
         'cuda.shares': {
-          label: resourceSlotsDetails?.['cuda.shares'].description,
+          label: resourceSlotsDetails?.['cuda.shares']?.description,
           steps: _.map(
             ['0', '0.1', '0.2', '0.5', '1.0', '2.0', '4.0', '8.0'],
             (v) => ({
               value: v,
-              label: `${v} ${resourceSlotsDetails?.['cuda.shares'].display_unit}`,
+              label: `${v} ${resourceSlotsDetails?.['cuda.shares']?.display_unit}`,
             }),
           ),
         },
         'rocm.device': {
-          label: resourceSlotsDetails?.['rocm.device'].description,
+          label: resourceSlotsDetails?.['rocm.device']?.description,
           steps: ['0', '1', '2', '3', '4', '5', '6', '7', '8'],
         },
       }[type] || {

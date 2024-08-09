@@ -69,14 +69,14 @@ export interface VFolderTableProps extends Omit<TableProps<VFolder>, 'rowKey'> {
   showAutoMountedFoldersSection?: boolean;
 }
 
-export const vFolderAliasNameRegExp = /^[a-zA-Z0-9_/-]*$/;
-
+export const vFolderAliasNameRegExp = /^[a-zA-Z0-9_/.-]*$/;
+export const DEFAULT_ALIAS_BASE_PATH = '/home/work/';
 const VFolderTable: React.FC<VFolderTableProps> = ({
   filter,
   showAliasInput = false,
   selectedRowKeys: controlledSelectedRowKeys = [],
   onChangeSelectedRowKeys,
-  aliasBasePath = '/home/work/',
+  aliasBasePath = DEFAULT_ALIAS_BASE_PATH,
   aliasMap: controlledAliasMap,
   onChangeAliasMap,
   rowKey = 'name',
@@ -140,9 +140,11 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   const { data: allFolderList } = useTanQuery({
     queryKey: ['VFolderSelectQuery', fetchKey, currentProject.id],
     queryFn: () => {
+      const search = new URLSearchParams();
+      search.set('group_id', currentProject.id);
       return baiRequestWithPromise({
         method: 'GET',
-        url: `/folders?group_id=${currentProject.id}`,
+        url: `/folders?${search.toString()}`,
       }) as Promise<VFolder[]>;
     },
     staleTime: 1000,
@@ -231,7 +233,17 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     })
     .value();
 
-  const mapAliasToPath = useEventNotStable(
+  /**
+   * Converts the input path to an aliased path based on the provided name and input.
+   * If the input is empty, it appends the name to the alias base path.
+   * If the input starts with '/', it returns the input as is.
+   * Otherwise, it appends the input to the alias base path.
+   *
+   * @param name - The name of the VFolderKey.
+   * @param input - The input path to be converted.
+   * @returns The aliased path based on the name and input.
+   */
+  const inputToAliasPath = useEventNotStable(
     (name: VFolderKey, input?: string) => {
       if (_.isEmpty(input)) {
         return `${aliasBasePath}${name}`;
@@ -247,7 +259,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     setAliasMap(
       _.mapValues(
         _.pickBy(internalForm.getFieldsValue(), (v) => !!v), //remove empty
-        (v, k) => mapAliasToPath(k, v), // add alias base path
+        (v, k) => inputToAliasPath(k, v), // add alias base path
       ),
     );
     internalForm.validateFields().catch(() => {});
@@ -319,7 +331,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                   const allAliasPathMap = _(selectedRowKeys).reduce(
                     (result, name) => {
                       result[name] =
-                        aliasMap?.[name] || mapAliasToPath(name, undefined);
+                        aliasMap?.[name] || inputToAliasPath(name, undefined);
 
                       return result;
                     },
@@ -346,7 +358,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                                 (path, k) =>
                                   k !== getRowKey(record) && // not current row
                                   path ===
-                                    mapAliasToPath(getRowKey(record), value),
+                                    inputToAliasPath(getRowKey(record), value),
                               )
                             ) {
                               return Promise.reject(
@@ -356,9 +368,33 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                             return Promise.resolve();
                           },
                         },
+                        {
+                          type: 'string',
+                          validator: async (rule, value) => {
+                            const aliasPath = inputToAliasPath(
+                              getRowKey(record),
+                              value,
+                            );
+                            if (
+                              value &&
+                              _.map(
+                                autoMountedFolderNamesByPermission,
+                                // `n` is the name of the auto mounted folder. It cannot be empty.
+                                (n) => inputToAliasPath('', n),
+                              ).includes(aliasPath)
+                            ) {
+                              return Promise.reject(
+                                t(
+                                  'session.launcher.FolderAliasOverlappingToAutoMount',
+                                ),
+                              );
+                            }
+                            return Promise.resolve();
+                          },
+                        },
                       ]}
                       // dependencies={[getRowKey(record)]}
-                      extra={mapAliasToPath(
+                      extra={inputToAliasPath(
                         record.name,
                         internalForm.getFieldValue(getRowKey(record)),
                       )}

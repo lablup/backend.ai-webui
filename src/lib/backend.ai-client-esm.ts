@@ -702,6 +702,13 @@ class Client {
     if (this.isManagerVersionCompatibleWith('24.03.4')) {
       this._features['endpoint-extra-mounts'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('24.03.5')) {
+      this._features['modify-endpoint-environ'] = true;
+      this._features['endpoint-runtime-variant'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('24.03.7')) {
+      this._features['per-kernel-logs'] = true;
+    }
   }
 
   /**
@@ -1052,6 +1059,9 @@ class Client {
       if (resources['gaudi2.device']) {
         config['gaudi2.device'] = parseInt(resources['gaudi2.device']);
       }
+      if (resources['atom-plus.device']) {
+        config['atom-plus.device'] = parseInt(resources['atom-plus.device']);
+      }
       if (resources['warboy.device']) {
         config['warboy.device'] = parseInt(resources['warboy.device']);
       }
@@ -1282,10 +1292,17 @@ class Client {
    * @param {string | null} ownerKey - owner key to access
    * @param {number} timeout - timeout to wait log query. Set to 0 to use default value.
    */
-  async get_logs(sessionId, ownerKey = null, timeout = 0): Promise<any> {
-    let queryString = `${this.kernelPrefix}/${sessionId}/logs`;
+  async get_logs(sessionId, ownerKey = null, kernelId = null, timeout = 0): Promise<any> {
+    let queryParams: Array<string> = [];
     if (ownerKey != null) {
-      queryString = `${queryString}?owner_access_key=${ownerKey}`;
+      queryParams.push(`owner_access_key=${ownerKey}`);
+    }
+    if (this.supports('per-kernel-logs') && kernelId !== null) {
+      queryParams.push(`kernel_id=${kernelId}`);
+    }
+    let queryString = `${this.kernelPrefix}/${sessionId}/logs`;
+    if (queryParams.length > 0) {
+      queryString += `?${queryParams.join('&')}`;
     }
     let rqst = this.newSignedRequest('GET', queryString, null, null);
     return this._wrapWithPromise(rqst, false, null, timeout);
@@ -3946,6 +3963,9 @@ class Resources {
     this.resources['gaudi2.device'] = {};
     this.resources['gaudi2.device'].total = 0;
     this.resources['gaudi2.device'].used = 0;
+    this.resources['atom-plus.device'] = {};
+    this.resources['atom-plus.device'].total = 0;
+    this.resources['atom-plus.device'].used = 0;
     this.resources['warboy.device'] = {};
     this.resources['warboy.device'].total = 0;
     this.resources['warboy.device'].used = 0;
@@ -4086,6 +4106,16 @@ class Resources {
               this.resources['gaudi2.device'].used =
                 parseInt(this.resources['gaudi2.device'].used) +
                 Math.floor(Number(occupied_slots['gaudi2.device']));
+            }
+            if ('atom-plus.device' in available_slots) {
+              this.resources['atom-plus.device'].total =
+                parseInt(this.resources['atom-plus.device'].total) +
+                Math.floor(Number(available_slots['atom-plus.device']));
+            }
+            if ('atom-plus.device' in occupied_slots) {
+              this.resources['atom-plus.device'].used =
+                parseInt(this.resources['atom-plus.device'].used) +
+                Math.floor(Number(occupied_slots['atom-plus.device']));
             }
             if ('warboy.device' in available_slots) {
               this.resources['warboy.device'].total =

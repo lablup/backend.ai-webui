@@ -93,6 +93,11 @@
       "description": "Gaudi 2",
       "human_readable_name": "Gaudi 2 Device",
       "display_unit": "Gaudi 2",
+    "atom-plus.device" : {
+      "slot_name": "atom-plus.device",
+      "description": "ATOM+",
+      "human_readable_name": "ATOM+ Device",
+      "display_unit": "ATOM+",
       "number_format": {
         "binary": false,
         "round_length": 0

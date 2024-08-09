@@ -12,7 +12,6 @@ import {
   ApiOutlined,
   BarChartOutlined,
   BarsOutlined,
-  CaretRightOutlined,
   CloudUploadOutlined,
   ControlOutlined,
   DashboardOutlined,
@@ -29,6 +28,7 @@ import { useToggle } from 'ahooks';
 import { theme, MenuProps, Typography } from 'antd';
 import { ItemType } from 'antd/lib/menu/interface';
 import _ from 'lodash';
+import { PlayIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -87,7 +87,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     },
     {
       label: t('webui.menu.Import&Run'),
-      icon: <CaretRightOutlined />,
+      icon: <PlayIcon />,
       key: 'import',
     },
     {

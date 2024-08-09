@@ -33,6 +33,9 @@ import { customElement, property, query } from 'lit/decorators.js';
 type BackendAIResourceMonitor =
   HTMLElementTagNameMap['backend-ai-resource-monitor'];
 
+type BackendAIResourcePanel =
+  HTMLElementTagNameMap['backend-ai-resource-panel'];
+
 /**
  `<backend-ai-summary-view>` is a Summary panel of backend.ai web UI.
 
@@ -88,6 +91,7 @@ export default class BackendAISummary extends BackendAIPage {
   @property({ type: Boolean }) allowAppDownloadPanel = true;
   @property({ type: String }) downloadAppOS = '';
   @query('#resource-monitor') resourceMonitor!: BackendAIResourceMonitor;
+  @query('#resource-panel') resourcePanel!: BackendAIResourcePanel;
 
   constructor() {
     super();
@@ -295,9 +299,11 @@ export default class BackendAISummary extends BackendAIPage {
     await this.updateComplete;
     if (active === false) {
       this.resourceMonitor.removeAttribute('active');
+      this.resourcePanel.removeAttribute('active');
       return;
     }
     this.resourceMonitor.setAttribute('active', 'true');
+    this.resourcePanel.setAttribute('active', '');
     if (
       typeof globalThis.backendaiclient === 'undefined' ||
       globalThis.backendaiclient === null ||
@@ -521,7 +527,7 @@ export default class BackendAISummary extends BackendAIPage {
                           this._moveTo('/credential', '?action=add');
                         }}"
                         class="vertical center center-justified layout start-menu-items link-button"
-                        style="border-left:1px solid #ccc;"
+                        style="border-left:1px solid var(--token-colorBorder, #ccc);"
                       >
                         <i class="fas fa-key fa-2x"></i>
                         <span>${_t('summary.CreateANewKeypair')}</span>
@@ -531,7 +537,7 @@ export default class BackendAISummary extends BackendAIPage {
                           this._moveTo('/credential', '?action=manage');
                         }}"
                         class="vertical center center-justified layout start-menu-items link-button"
-                        style="border-left:1px solid #ccc;"
+                        style="border-left:1px solid var(--token-colorBorder, #ccc);"
                       >
                         <i class="fas fa-cogs fa-2x"></i>
                         <span>${_t('summary.MaintainKeypairs')}</span>
@@ -557,6 +563,7 @@ export default class BackendAISummary extends BackendAIPage {
             </div>
           </lablup-activity-panel>
           <backend-ai-resource-panel
+            id="resource-panel"
             ?active="${this.active === true}"
             height="500"
           ></backend-ai-resource-panel>

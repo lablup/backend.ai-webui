@@ -1499,8 +1499,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const content = this.terminalGuideDialog.children[1];
     const div: HTMLElement = document.createElement('div');
     div.setAttribute('class', 'vertical layout flex');
-    let lang = globalThis.backendaioptions.get('current_language');
-    // if current_language is OS default, then link to English docs
+    let lang = globalThis.backendaioptions.get(
+      'language',
+      'default',
+      'general',
+    );
+    // if language is OS default, then link to English docs
     if (!['en', 'ko', 'ru', 'fr', 'mn', 'id'].includes(lang)) {
       lang = 'en';
     }
@@ -1649,7 +1653,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                 ${item.category === 'divider'
                   ? html`
                       <h3
-                        style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;"
+                        style="width:100%;padding-left:15px;border-bottom:1px solid var(--token-colorBorder, #ccc);"
                       >
                         ${item.title}
                       </h3>

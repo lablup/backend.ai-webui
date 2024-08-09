@@ -52,7 +52,7 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
           font-weight: 100;
           font-size: 16px;
           padding-left: 20px;
-          border-bottom: 1px solid #ccc;
+          border-bottom: 1px solid var(--token-colorBorder, #ccc);
           width: 100%;
         }
 

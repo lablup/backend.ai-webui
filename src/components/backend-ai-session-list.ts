@@ -19,13 +19,13 @@ import './lablup-grid-sort-filter-column';
 import './lablup-progress-bar';
 import '@material/mwc-button';
 import '@material/mwc-checkbox';
-import { Checkbox } from '@material/mwc-checkbox';
 import '@material/mwc-icon';
 import '@material/mwc-icon-button';
 import '@material/mwc-icon-button-toggle';
 import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import { Menu } from '@material/mwc-menu';
+import { Select } from '@material/mwc-select';
 import '@material/mwc-textfield';
 import { TextField } from '@material/mwc-textfield';
 import '@vaadin/grid/vaadin-grid';
@@ -36,11 +36,7 @@ import '@vaadin/grid/vaadin-grid-tree-toggle';
 import '@vaadin/icons/vaadin-icons';
 import '@vaadin/tooltip';
 import { css, CSSResultGroup, TemplateResult, html, render } from 'lit';
-import {
-  get as _text,
-  translate as _t,
-  translateUnsafeHTML as _tr,
-} from 'lit-translate';
+import { get as _text, translate as _t } from 'lit-translate';
 import { customElement, property, query } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
@@ -110,7 +106,7 @@ export default class BackendAISessionList extends BackendAIPage {
   @property({ type: Boolean, reflect: true }) active = false;
   @property({ type: String }) condition = 'running';
   @property({ type: Object }) jobs = Object();
-  @property({ type: Array }) compute_sessions = [];
+  @property({ type: Array }) compute_sessions;
   @property({ type: Array }) terminationQueue;
   @property({ type: String }) filterAccessKey = '';
   @property({ type: String }) sessionNameField = 'name';
@@ -118,6 +114,7 @@ export default class BackendAISessionList extends BackendAIPage {
   @property({ type: Object }) appTemplate = Object();
   @property({ type: Object }) imageInfo = Object();
   @property({ type: Array }) _selected_items;
+  @property({ type: Array }) _manualCleanUpNeededContainers;
   @property({ type: Object }) _boundControlRenderer =
     this.controlRenderer.bind(this);
   @property({ type: Object }) _boundConfigRenderer =
@@ -136,8 +133,6 @@ export default class BackendAISessionList extends BackendAIPage {
     this.sessionInfoRenderer.bind(this);
   @property({ type: Object }) _boundArchitectureRenderer =
     this.architectureRenderer.bind(this);
-  @property({ type: Object }) _boundCheckboxRenderer =
-    this.checkboxRenderer.bind(this);
   @property({ type: Object }) _boundUserInfoRenderer =
     this.userInfoRenderer.bind(this);
   @property({ type: Object }) _boundStatusRenderer =
@@ -160,6 +155,8 @@ export default class BackendAISessionList extends BackendAIPage {
   @property({ type: String }) _helpDescriptionTitle = '';
   @property({ type: String }) _helpDescriptionIcon = '';
   @property({ type: Set }) activeIdleCheckList;
+  @property({ type: Array }) selectedKernels;
+  @property({ type: String }) selectedKernelId;
   @property({ type: Proxy }) statusColorTable = new Proxy(
     {
       'idle-timeout': 'green',
@@ -241,10 +238,13 @@ export default class BackendAISessionList extends BackendAIPage {
   @query('#terminate-session-dialog') terminateSessionDialog!: BackendAIDialog;
   @query('#terminate-selected-sessions-dialog')
   terminateSelectedSessionsDialog!: BackendAIDialog;
+  @query('#force-terminate-confirmation-dialog')
+  forceTerminateConfirmationDialog!: BackendAIDialog;
   @query('#status-detail-dialog') sessionStatusInfoDialog!: BackendAIDialog;
   @query('#work-dialog') workDialog!: BackendAIDialog;
   @query('#help-description') helpDescriptionDialog!: BackendAIDialog;
   private _isContainerCommitEnabled = false;
+  private _isPerKernelLogSupported = false;
 
   @query('#commit-session-dialog') commitSessionDialog;
   @query('#commit-current-session-path-input') commitSessionInput;
@@ -252,7 +252,10 @@ export default class BackendAISessionList extends BackendAIPage {
 
   constructor() {
     super();
+    this.compute_sessions = [];
+    this.selectedKernels = [];
     this._selected_items = [];
+    this._manualCleanUpNeededContainers = [];
     this.terminationQueue = [];
     this.activeIdleCheckList = new Set();
   }
@@ -372,6 +375,20 @@ export default class BackendAISessionList extends BackendAIPage {
         #terminate-selected-sessions-dialog,
         #terminate-session-dialog {
           --component-width: 390px;
+        }
+
+        #force-terminate-confirmation-dialog {
+          --component-width: 450px;
+        }
+
+        ul.force-terminate-confirmation {
+          padding-left: 1rem;
+        }
+
+        div.force-terminate-confirmation-container-list {
+          background-color: rgba(0, 0, 0, 0.2);
+          border-radius: 5px;
+          padding: 10px;
         }
 
         @media screen and (max-width: 899px) {
@@ -578,6 +595,14 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   firstUpdated() {
+    this._grid.addEventListener('selected-items-changed', () => {
+      this._selected_items = this._grid.selectedItems;
+      if (this._selected_items.length > 0) {
+        this.multipleActionButtons.style.display = 'flex';
+      } else {
+        this.multipleActionButtons.style.display = 'none';
+      }
+    });
     this.imageInfo = globalThis.backendaimetadata.imageInfo;
     this.kernel_icons = globalThis.backendaimetadata.icons;
     this.kernel_labels = globalThis.backendaimetadata.kernel_labels;
@@ -647,6 +672,9 @@ export default class BackendAISessionList extends BackendAIPage {
           this._isContainerCommitEnabled =
             globalThis.backendaiclient._config.enableContainerCommit &&
             globalThis.backendaiclient.supports('image-commit');
+          // check whether fetching per kernel log is available or not
+          this._isPerKernelLogSupported =
+            globalThis.backendaiclient.supports('per-kernel-logs');
           this._refreshJobData();
         },
         true,
@@ -681,6 +709,9 @@ export default class BackendAISessionList extends BackendAIPage {
       this._isContainerCommitEnabled =
         globalThis.backendaiclient._config.enableContainerCommit &&
         globalThis.backendaiclient.supports('image-commit');
+      // check whether fetching per kernel log is available or not
+      this._isPerKernelLogSupported =
+        globalThis.backendaiclient.supports('per-kernel-logs');
       this._refreshJobData();
     }
   }
@@ -812,7 +843,9 @@ export default class BackendAISessionList extends BackendAIPage {
       containerFields.push('agent');
     }
     if (globalThis.backendaiclient.supports('per-user-image')) {
-      containerFields.push('image_object { labels { key value } }');
+      containerFields.push(
+        'kernel_id role local_rank image_object { labels { key value } }',
+      );
     }
 
     if (this._isContainerCommitEnabled && status.includes('RUNNING')) {
@@ -829,7 +862,7 @@ export default class BackendAISessionList extends BackendAIPage {
         this.session_page_limit,
         (this.current_page - 1) * this.session_page_limit,
         group_id,
-        10 * 1000,
+        20 * 1000,
       )
       .then((response) => {
         this.total_session_count =
@@ -1019,7 +1052,8 @@ export default class BackendAISessionList extends BackendAIPage {
                   //   - {capacity: 1000, current: 6952.082, slots: 16}
                   //     -> ratio: 6.95 | pct: 695% | progressbar: 0.43 (== ratio / 16)
                   liveStat.cpu_util.ratio =
-                    liveStat.cpu_util.current / liveStat.cpu_util.capacity || 0;
+                    (liveStat.cpu_util.current / liveStat.cpu_util.capacity) *
+                      sessions[objectKey].containers.length || 0;
                   liveStat.cpu_util.slots = occupiedSlots.cpu;
                   // Memory is simple. It's just a ratio of current memory utilization.
                   liveStat.mem.ratio =
@@ -1064,6 +1098,15 @@ export default class BackendAISessionList extends BackendAIPage {
               } else {
                 sessions[objectKey].cpu_used_time =
                   this._automaticScaledTime(0);
+              }
+              if (this.is_superadmin) {
+                sessions[objectKey].agents_ids_with_container_ids = sessions[
+                  objectKey
+                ].containers?.map((c) => {
+                  const agentID = c.agent;
+                  const containerID = c.container_id?.slice(0, 4);
+                  return `${agentID}(${containerID})`;
+                });
               }
             }
 
@@ -1140,6 +1183,11 @@ export default class BackendAISessionList extends BackendAIPage {
             if ('gaudi2.device' in occupiedSlots) {
               sessions[objectKey].gaudi2_slot = parseInt(
                 occupiedSlots['gaudi2.device'],
+              );
+            }
+            if ('atom-plus.device' in occupiedSlots) {
+              sessions[objectKey].atom_plus_slot = parseInt(
+                occupiedSlots['atom-plus.device'],
               );
             }
             if ('warboy.device' in occupiedSlots) {
@@ -1245,13 +1293,14 @@ export default class BackendAISessionList extends BackendAIPage {
               'system',
               'running',
             ].includes(this.condition)
-              ? 7000
-              : 30000;
+              ? 15000
+              : 45000;
             this.refreshTimer = setTimeout(() => {
               this._refreshJobData();
             }, refreshTime);
           }
         }
+        this._handleSelectedItems();
       })
       .catch((err) => {
         this.refreshing = false;
@@ -1271,7 +1320,6 @@ export default class BackendAISessionList extends BackendAIPage {
           }, refreshTime);
         }
         this._listStatus?.hide();
-        console.log(err);
         if (err && err.message) {
           this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
@@ -1329,7 +1377,7 @@ export default class BackendAISessionList extends BackendAIPage {
         namespace = imageParts[1];
         langName = imageParts[2];
       } else if (imageParts.length > 3) {
-        namespace = imageParts.slice(2, imageParts.length - 1).join('/');
+        namespace = imageParts?.slice(2, imageParts.length - 1).join('/');
         langName = imageParts[imageParts.length - 1];
       } else {
         namespace = '';
@@ -1521,38 +1569,76 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   /**
-   * Show logs - work title, session logs, session name, and access key.
+   * Set selected session by event
    *
-   * @param {Event} e - click the assignment button
-   * */
-  _showLogs(e) {
+   * @param {Event} e
+   */
+  _setSelectedSession(e) {
     const controls = e.target.closest('#controls');
     const sessionUuid = controls['session-uuid'];
     const sessionName = controls['session-name'];
-    const sessionId =
-      globalThis.backendaiclient.APIMajorVersion < 5
-        ? sessionName
-        : sessionUuid;
     const accessKey = controls['access-key'];
+    this.workDialog.sessionUuid = sessionUuid;
+    this.workDialog.sessionName = sessionName;
+    this.workDialog.accessKey = accessKey;
+  }
 
+  /**
+   * Set selected kernel from selected session
+   *
+   * */
+  _setSelectedKernel() {
+    const selectedKernel = this.compute_sessions
+      .find((session) => session.session_id === this.workDialog.sessionUuid)
+      ?.containers.map((container, index) => {
+        if (container?.role) {
+          if (container?.role.includes('main')) {
+            container.role = 'main1';
+          } else {
+            container.role = `sub${container.local_rank}`;
+          }
+        } else {
+          // workaround for per-kernel log supported UI
+          if (index === 0) container.role = 'main1';
+        }
+        return container;
+      })
+      .sort((a, b) => a.role.localeCompare(b.role));
+    // only allow main1 kernel if per-kernel log is not supported
+    this.selectedKernels = this._isPerKernelLogSupported
+      ? selectedKernel
+      : selectedKernel.filter((kernel) => kernel.role.includes('main'));
+  }
+
+  _updateLogsByKernelId() {
+    this.selectedKernelId = this._isPerKernelLogSupported
+      ? (this.shadowRoot?.querySelector('#kernel-id-select') as Select)?.value
+      : null;
+  }
+
+  /**
+   * Show logs - work title, session logs, session name, and access key.
+   */
+  _showLogs() {
     globalThis.backendaiclient
-      .get_logs(sessionId, accessKey, 15000)
+      .get_logs(
+        this.workDialog.sessionUuid,
+        this.workDialog.accessKey,
+        this.selectedKernelId !== '' ? this.selectedKernelId : null,
+        15000,
+      )
       .then((req) => {
         const ansi_up = new AnsiUp();
         const logs = ansi_up.ansi_to_html(req.result.logs);
-        setTimeout(() => {
-          (
-            this.shadowRoot?.querySelector('#work-title') as HTMLSpanElement
-          ).innerHTML = `${sessionName} (${sessionUuid})`;
-          (
-            this.shadowRoot?.querySelector('#work-area') as HTMLDivElement
-          ).innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
-          // TODO define extended type for custom properties
-          this.workDialog.sessionUuid = sessionUuid;
-          this.workDialog.sessionName = sessionName;
-          this.workDialog.accessKey = accessKey;
-          this.workDialog.show();
-        }, 100);
+        (
+          this.shadowRoot?.querySelector('#work-title') as HTMLSpanElement
+        ).innerHTML =
+          `${this.workDialog.sessionName} (${this.workDialog.sessionUuid})`;
+        (
+          this.shadowRoot?.querySelector('#work-area') as HTMLDivElement
+        ).innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
+        // TODO define extended type for custom properties
+        this.workDialog.show();
       })
       .catch((err) => {
         if (err && err.message) {
@@ -1575,7 +1661,12 @@ export default class BackendAISessionList extends BackendAIPage {
         : sessionUuid;
     const accessKey = this.workDialog.accessKey;
     globalThis.backendaiclient
-      .get_logs(sessionId, accessKey, 15000)
+      .get_logs(
+        sessionId,
+        accessKey,
+        this.selectedKernelId !== '' ? this.selectedKernelId : null,
+        15000,
+      )
       .then((req) => {
         const logs = req.result.logs;
         globalThis.backendaiutils.exportToTxt(sessionName, logs);
@@ -1604,7 +1695,12 @@ export default class BackendAISessionList extends BackendAIPage {
         : sessionUuid;
     const accessKey = this.workDialog.accessKey;
     globalThis.backendaiclient
-      .get_logs(sessionId, accessKey, 15000)
+      .get_logs(
+        sessionId,
+        accessKey,
+        this.selectedKernelId !== '' ? this.selectedKernelId : null,
+        15000,
+      )
       .then((req) => {
         const ansi_up = new AnsiUp();
         const logs = ansi_up.ansi_to_html(req.result.logs);
@@ -1879,7 +1975,7 @@ export default class BackendAISessionList extends BackendAIPage {
       this.terminateSessionDialog.accessKey,
       forced,
     )
-      .then((response) => {
+      .then(() => {
         this._selected_items = [];
         this._clearCheckboxes();
         this.terminateSessionDialog.hide();
@@ -1890,22 +1986,74 @@ export default class BackendAISessionList extends BackendAIPage {
         });
         document.dispatchEvent(event);
       })
-      .catch((err) => {
+      .catch(() => {
         this._selected_items = [];
         this._clearCheckboxes();
         this.terminateSessionDialog.hide();
-        this.notification.text = PainKiller.relieve(
-          'Problem occurred during termination.',
-        );
-        this.notification.show(true, err);
-        const event = new CustomEvent('backend-ai-resource-refreshed', {
-          detail: 'running',
-        });
-        document.dispatchEvent(event);
       });
   }
 
-  // Multiple sessions closing
+  /**
+   * Returns agent-oriented array from session list by traversing
+   *
+   * @param sessionList
+   * @returns [{agent: '...', containers: ['...', '...']}]
+   */
+  static _parseAgentBasedContainers(sessionList) {
+    return Object.values(
+      sessionList.reduce((acc, item) => {
+        item.containers?.forEach((container) => {
+          if (container.agent && container.container_id) {
+            if (!acc[container.agent]) {
+              acc[container.agent] = {
+                agent: container.agent,
+                containers: [container.container_id],
+              };
+            } else {
+              if (
+                !acc[container.agent].containers.includes(
+                  container.container_id,
+                )
+              ) {
+                acc[container.agent].containers.push(container.container_id);
+              }
+            }
+          }
+        });
+        return acc;
+      }, {}),
+    );
+  }
+
+  /**
+   * Set manualCleanUpNeededContainers based on single-row or multiple-row session(s) termination
+   */
+  _getManualCleanUpNeededContainers() {
+    this._manualCleanUpNeededContainers =
+      BackendAISessionList._parseAgentBasedContainers(
+        this._selected_items.length > 0
+          ? this._selected_items
+          : this.compute_sessions.filter(
+              (item) =>
+                item?.session_id === this.terminateSessionDialog.sessionId,
+            ),
+      );
+  }
+
+  /**
+   * Open Force-terminate confirmation dialog
+   *
+   * @param {Event} e
+   */
+  _openForceTerminateConfirmationDialog(e?) {
+    this.forceTerminateConfirmationDialog.show();
+  }
+
+  /**
+   * Open Multiple selected session to terminate dialog
+   *
+   * @param {Event} e
+   */
   _openTerminateSelectedSessionsDialog(e?) {
     this.terminateSelectedSessionsDialog.show();
   }
@@ -1914,14 +2062,18 @@ export default class BackendAISessionList extends BackendAIPage {
    * Clear checked attributes.
    * */
   _clearCheckboxes() {
-    const elm = Array.from(
-      this.shadowRoot?.querySelectorAll<Checkbox>(
-        'mwc-checkbox.list-check',
-      ) as NodeListOf<Checkbox>,
+    this._grid.selectedItems = [];
+    this._selected_items = [];
+  }
+
+  _handleSelectedItems() {
+    if (this._selected_items.length === 0) return;
+
+    const selectedItems = this.compute_sessions.filter((item) =>
+      this._selected_items.some((selectedItem) => selectedItem.id === item.id),
     );
-    [...elm].forEach((checkbox) => {
-      checkbox.removeAttribute('checked');
-    });
+
+    this._grid.selectedItems = selectedItems;
   }
 
   _terminateSelectedSessionsWithCheck(forced = false) {
@@ -1932,20 +2084,16 @@ export default class BackendAISessionList extends BackendAIPage {
     });
     this._selected_items = [];
     return Promise.all(terminateSessionQueue)
-      .then((response) => {
+      .then(() => {
         this.terminateSelectedSessionsDialog.hide();
         this._clearCheckboxes();
         this.multipleActionButtons.style.display = 'none';
         this.notification.text = _text('session.SessionsTerminated');
         this.notification.show();
       })
-      .catch((err) => {
+      .catch(() => {
         this.terminateSelectedSessionsDialog.hide();
         this._clearCheckboxes();
-        this.notification.text = PainKiller.relieve(
-          'Problem occurred during termination.',
-        );
-        this.notification.show(true, err);
       });
   }
 
@@ -1961,25 +2109,17 @@ export default class BackendAISessionList extends BackendAIPage {
       return this._terminateKernel(item['session_id'], item.access_key);
     });
     return Promise.all(terminateSessionQueue)
-      .then((response) => {
+      .then(() => {
         this._selected_items = [];
         this._clearCheckboxes();
         this.multipleActionButtons.style.display = 'none';
         this.notification.text = _text('session.SessionsTerminated');
         this.notification.show();
       })
-      .catch((err) => {
+      .catch(() => {
         this._listStatus?.hide();
         this._selected_items = [];
         this._clearCheckboxes();
-        if ('description' in err) {
-          this.notification.text = PainKiller.relieve(err.description);
-        } else {
-          this.notification.text = PainKiller.relieve(
-            'Problem occurred during termination.',
-          );
-        }
-        this.notification.show(true, err);
       });
   }
 
@@ -2031,6 +2171,7 @@ export default class BackendAISessionList extends BackendAIPage {
             this.notification.show(true, err);
           }
         }
+        throw err;
       });
   }
 
@@ -3147,14 +3288,25 @@ ${rowData.item[this.sessionNameField]}</pre
             : html``}
           ${((this._isRunning && !this._isPreparing(rowData.item.status)) ||
             this._APIMajorVersion > 4) &&
-          !this._isPending(rowData.item.status)
+          !this._isPending(rowData.item.status) &&
+          !this._isPreparing(rowData.item.status)
             ? html`
                 <mwc-icon-button
                   class="fg blue controls-running"
                   id="${rowData.index + '-assignment'}"
                   icon="assignment"
                   ?disabled="${rowData.item.status === 'CANCELLED'}"
-                  @click="${(e) => this._showLogs(e)}"
+                  @click="${(e) => {
+                    this._setSelectedSession(e);
+                    this._setSelectedKernel();
+                    this.selectedKernelId = this.selectedKernels[0]?.kernel_id;
+                    (
+                      this.shadowRoot?.querySelector(
+                        '#kernel-id-select',
+                      ) as Select
+                    ).value = this.selectedKernelId;
+                    this._showLogs();
+                  }}"
                 ></mwc-icon-button>
                 <vaadin-tooltip
                   for="${rowData.index + '-assignment'}"
@@ -3352,6 +3504,16 @@ ${rowData.item[this.sessionNameField]}</pre
                     <span class="indicator">Gaudi 2</span>
                   `
                 : html``}
+              ${rowData.item.atom_plus_slot
+                ? html`
+                    <img
+                      class="indicator-icon fg green"
+                      src="/resources/icons/rebel.svg"
+                    />
+                    <span>${rowData.item.atom_plus_slot}</span>
+                    <span class="indicator">ATOM+</span>
+                  `
+                : html``}
               ${rowData.item.warboy_slot
                 ? html`
                     <img
@@ -3379,6 +3541,7 @@ ${rowData.item[this.sessionNameField]}</pre
               !rowData.item.ipu_slot &&
               !rowData.item.atom_slot &&
               !rowData.item.gaudi2_slot &&
+              !rowData.item.atom_plus_slot &&
               !rowData.item.warboy_slot &&
               !rowData.item.hyperaccel_lpu_slot
                 ? html`
@@ -3604,8 +3767,8 @@ ${rowData.item[this.sessionNameField]}</pre
                 style="font-size:10px;margin-left:5px;"
                 class="horizontal start-justified center layout"
               >
-                R: ${rowData.item?.live_stat?.io_read?.current} MB / W:
-                ${rowData.item?.live_stat?.io_write?.current} MB
+                R: ${rowData.item?.live_stat?.io_read?.current.toFixed(1)} MB /
+                W: ${rowData.item?.live_stat?.io_write?.current.toFixed(1)} MB
               </div>
             </div>
           </div>
@@ -3684,14 +3847,14 @@ ${rowData.item[this.sessionNameField]}</pre
             </mwc-icon>
             <div class="vertical start layout">
               <span style="font-size:9px">
-                ${rowData.item.live_stat?.io_read?.current}
+                ${rowData.item.live_stat?.io_read?.current.toFixed(1)}
                 <span class="indicator">MB</span>
               </span>
               <span class="indicator">READ</span>
             </div>
             <div class="vertical start layout">
               <span style="font-size:8px">
-                ${rowData.item.live_stat?.io_write?.current}
+                ${rowData.item.live_stat?.io_write?.current.toFixed(1)}
                 <span class="indicator">MB</span>
               </span>
               <span class="indicator">WRITE</span>
@@ -3716,13 +3879,12 @@ ${rowData.item[this.sessionNameField]}</pre
       html`
         <div class="layout vertical" style="padding:3px auto;">
           <span>${rowData.item.created_at_hr}</span>
-          <lablup-shields
-            app="${_t('session.ElapsedTime')}"
-            color="darkgreen"
-            style="margin:3px 0;"
-            description="${rowData.item.elapsed}"
-            ui="round"
-          ></lablup-shields>
+          <backend-ai-session-reservation-timer
+            value="${JSON.stringify({
+              created_at: rowData.item.created_at,
+              terminated_at: rowData.item.terminated_at,
+            })}"
+          />
         </div>
       `,
       root,
@@ -3850,34 +4012,11 @@ ${rowData.item[this.sessionNameField]}</pre
   agentListRenderer(root, column?, rowData?) {
     render(
       // language=HTML
-      // FIXME: temporally show allocated agent only, not in session-agent pair
       html`
-        <div class="layout vertical">
-          ${[...new Set(rowData.item.agents)]?.map(
-            (agent) => html`
-              <span>${agent}</span>
-            `,
-          )}
-        </div>
+        <pre>${rowData.item.agents_ids_with_container_ids?.join('\n')}</pre>
       `,
       root,
     );
-  }
-
-  _toggleCheckbox(object) {
-    const exist = this._selected_items.findIndex(
-      (x) => x['session_id'] == object['session_id'],
-    );
-    if (exist === -1) {
-      this._selected_items.push(object);
-    } else {
-      this._selected_items.splice(exist, 1);
-    }
-    if (this._selected_items.length > 0) {
-      this.multipleActionButtons.style.display = 'block';
-    } else {
-      this.multipleActionButtons.style.display = 'none';
-    }
   }
 
   /**
@@ -3893,34 +4032,6 @@ ${rowData.item[this.sessionNameField]}</pre
       shmem += Number(sharedMemoryObj[item]?.shmem ?? 0);
     });
     return BackendAISessionList.bytesToGiB(shmem);
-  }
-
-  /**
-   * Render a checkbox
-   *
-   * @param {Element} root - the row details content DOM element
-   * @param {Element} column - the column element that controls the state of the host element
-   * @param {Object} rowData - the object with the properties related with the rendered item
-   * */
-  checkboxRenderer(root, column?, rowData?) {
-    if (
-      (this._isRunning && !this._isPreparing(rowData.item.status)) ||
-      this._APIMajorVersion > 4
-    ) {
-      render(
-        html`
-          <mwc-checkbox
-            class="list-check"
-            style="display:contents;"
-            ?checked="${rowData.item.checked === true}"
-            @click="${() => this._toggleCheckbox(rowData.item)}"
-          ></mwc-checkbox>
-        `,
-        root,
-      );
-    } else {
-      render(html``, root);
-    }
   }
 
   /**
@@ -4185,125 +4296,141 @@ ${rowData.item[this.sessionNameField]}</pre
         </div>
       </div>
       <div class="list-wrapper">
-        <vaadin-grid id="list-grid" theme="row-stripes column-borders compact dark" aria-label="Session list"
-          .items="${this.compute_sessions}" height-by-rows >
-          ${
-            this._isRunning
-              ? html`
+        ${
+          this.active
+            ? html`
+                <vaadin-grid
+                  id="list-grid"
+                  theme="row-stripes column-borders compact dark"
+                  aria-label="Session list"
+                  .items="${this.compute_sessions}"
+                  height-by-rows
+                >
+                  ${this._isRunning
+                    ? html`
+                        <vaadin-grid-column
+                          frozen
+                          width="60px"
+                          flex-grow="0"
+                          text-align="center"
+                          .renderer="${this._boundCheckboxRenderer}"
+                        ></vaadin-grid-column>
+                      `
+                    : html``}
                   <vaadin-grid-column
                     frozen
-                    width="60px"
+                    width="40px"
                     flex-grow="0"
-                    text-align="center"
-                    .renderer="${this._boundCheckboxRenderer}"
+                    header="#"
+                    .renderer="${this._indexRenderer}"
                   ></vaadin-grid-column>
-                `
-              : html``
-          }
-          <vaadin-grid-column frozen width="40px" flex-grow="0" header="#" .renderer="${
-            this._indexRenderer
-          }"></vaadin-grid-column>
-          ${
-            this.is_admin
-              ? html`
+                  ${this.is_admin
+                    ? html`
+                        <lablup-grid-sort-filter-column
+                          frozen
+                          path="${this._connectionMode === 'API'
+                            ? 'access_key'
+                            : 'user_email'}"
+                          header="${this._connectionMode === 'API'
+                            ? 'API Key'
+                            : 'User ID'}"
+                          resizable
+                          .renderer="${this._boundUserInfoRenderer}"
+                        ></lablup-grid-sort-filter-column>
+                      `
+                    : html``}
                   <lablup-grid-sort-filter-column
                     frozen
-                    path="${this._connectionMode === 'API'
-                      ? 'access_key'
-                      : 'user_email'}"
-                    header="${this._connectionMode === 'API'
-                      ? 'API Key'
-                      : 'User ID'}"
+                    path="${this.sessionNameField}"
+                    width="260px"
+                    header="${_t('session.SessionInfo')}"
                     resizable
-                    .renderer="${this._boundUserInfoRenderer}"
+                    .renderer="${this._boundSessionInfoRenderer}"
                   ></lablup-grid-sort-filter-column>
-                `
-              : html``
-          }
-          <lablup-grid-sort-filter-column frozen path="${this.sessionNameField}" 
-            width="260px"
-            header="${_t('session.SessionInfo')}" 
-            resizable
-            .renderer="${this._boundSessionInfoRenderer}"
-          >
-          </lablup-grid-sort-filter-column>
-          <lablup-grid-sort-filter-column width="120px" path="status" header="${_t('session.Status')}" 
-            resizable
-            .renderer="${this._boundStatusRenderer}">
-          </lablup-grid-sort-filter-column>
-          <vaadin-grid-column width=${
-            this._isContainerCommitEnabled ? '260px' : '210px'
-          } flex-grow="0" resizable header="${_t('general.Control')}"
-                              .renderer="${
-                                this._boundControlRenderer
-                              }"></vaadin-grid-column>
-          <vaadin-grid-column width="200px" flex-grow="0" resizable header="${_t(
-            'session.Configuration',
-          )}"
-                              .renderer="${
-                                this._boundConfigRenderer
-                              }"></vaadin-grid-column>
-          <vaadin-grid-column width="140px" flex-grow="0" resizable header="${_t(
-            'session.Usage',
-          )}"
-                              .renderer="${this._boundUsageRenderer}">
-          </vaadin-grid-column>
-          <vaadin-grid-sort-column resizable width="180px" flex-grow="0" header="${_t(
-            'session.Reservation',
-          )}"
-                                   path="created_at" .renderer="${
-                                     this._boundReservationRenderer
-                                   }">
-          </vaadin-grid-sort-column>
-          ${
-            globalThis.backendaiclient.supports('idle-checks') &&
-            this.activeIdleCheckList.size > 0
-              ? html`
+                  <lablup-grid-sort-filter-column
+                    width="120px"
+                    path="status"
+                    header="${_t('session.Status')}"
+                    resizable
+                    .renderer="${this._boundStatusRenderer}"
+                  ></lablup-grid-sort-filter-column>
                   <vaadin-grid-column
+                    width=${this._isContainerCommitEnabled ? '260px' : '210px'}
+                    flex-grow="0"
+                    resizable
+                    header="${_t('general.Control')}"
+                    .renderer="${this._boundControlRenderer}"
+                  ></vaadin-grid-column>
+                  <vaadin-grid-column
+                    width="200px"
+                    flex-grow="0"
+                    resizable
+                    header="${_t('session.Configuration')}"
+                    .renderer="${this._boundConfigRenderer}"
+                  ></vaadin-grid-column>
+                  <vaadin-grid-column
+                    width="140px"
+                    flex-grow="0"
+                    resizable
+                    header="${_t('session.Usage')}"
+                    .renderer="${this._boundUsageRenderer}"
+                  ></vaadin-grid-column>
+                  <vaadin-grid-sort-column
                     resizable
                     width="180px"
                     flex-grow="0"
-                    .headerRenderer="${this._boundIdleChecksHeaderderer}"
-                    .renderer="${this._boundIdleChecksRenderer}"
-                  ></vaadin-grid-column>
-                `
-              : html``
-          }
-          <lablup-grid-sort-filter-column width="110px" path="architecture" header="${_t(
-            'session.Architecture',
-          )}" resizable
-                                     .renderer="${
-                                       this._boundArchitectureRenderer
-                                     }">
-          </lablup-grid-sort-filter-column>
-          ${
-            this._isIntegratedCondition
-              ? html`
+                    header="${_t('session.Reservation')}"
+                    path="created_at"
+                    .renderer="${this._boundReservationRenderer}"
+                  ></vaadin-grid-sort-column>
+                  ${globalThis.backendaiclient.supports('idle-checks') &&
+                  this.activeIdleCheckList.size > 0
+                    ? html`
+                        <vaadin-grid-column
+                          resizable
+                          width="180px"
+                          flex-grow="0"
+                          .headerRenderer="${this._boundIdleChecksHeaderderer}"
+                          .renderer="${this._boundIdleChecksRenderer}"
+                        ></vaadin-grid-column>
+                      `
+                    : html``}
                   <lablup-grid-sort-filter-column
-                    path="type"
-                    width="140px"
-                    flex-grow="0"
-                    header="${_t('session.launcher.SessionType')}"
+                    width="110px"
+                    path="architecture"
+                    header="${_t('session.Architecture')}"
                     resizable
-                    .renderer="${this._boundSessionTypeRenderer}"
+                    .renderer="${this._boundArchitectureRenderer}"
                   ></lablup-grid-sort-filter-column>
-                `
-              : html``
-          }
-          ${
-            this.is_superadmin || !globalThis.backendaiclient._config.hideAgents
-              ? html`
-                  <lablup-grid-sort-filter-column
-                    width="140px"
-                    flex-grow="0"
-                    resizable
-                    header="${_t('session.Agents')}"
-                    .renderer="${this._boundAgentListRenderer}"
-                  ></lablup-grid-sort-filter-column>
-                `
-              : html``
-          }
-          </vaadin-grid>
+                  ${this._isIntegratedCondition
+                    ? html`
+                        <lablup-grid-sort-filter-column
+                          path="type"
+                          width="140px"
+                          flex-grow="0"
+                          header="${_t('session.launcher.SessionType')}"
+                          resizable
+                          .renderer="${this._boundSessionTypeRenderer}"
+                        ></lablup-grid-sort-filter-column>
+                      `
+                    : html``}
+                  ${this.is_superadmin ||
+                  !globalThis.backendaiclient._config.hideAgents
+                    ? html`
+                        <lablup-grid-sort-filter-column
+                          width="140px"
+                          flex-grow="0"
+                          resizable
+                          header="${_t('session.Agents')}"
+                          .renderer="${this._boundAgentListRenderer}"
+                        ></lablup-grid-sort-filter-column>
+                      `
+                    : html``}
+                </vaadin-grid>
+              `
+            : html``
+        }
+        
           <backend-ai-list-status id="list-status" statusCondition="${
             this.listCondition
           }" message="${_text(
@@ -4333,8 +4460,30 @@ ${rowData.item[this.sessionNameField]}</pre
           @click="${(e) => this._updateSessionPage(e)}"></mwc-icon-button>
       </div>
       <backend-ai-dialog id="work-dialog" narrowLayout scrollable fixed backdrop>
-        <span slot="title" id="work-title"></span>
+        <span slot="title" id="work-title">
+        </span>
         <div slot="action" class="horizontal layout center">
+          <mwc-select
+            id="kernel-id-select"
+            label="Kernel Role"
+            style="display: ${this._isPerKernelLogSupported ? 'block' : 'none'}"
+            @selected=${() => {
+              this._updateLogsByKernelId();
+              this._showLogs();
+            }}
+          >
+            ${this.selectedKernels.map((item) => {
+              return html`
+                <mwc-list-item
+                  value=${item.kernel_id}
+                  label="${item.role}"
+                  ?selected=${item.role.includes('main')}
+                >
+                  ${item.role}
+                </mwc-list-item>
+              `;
+            })}
+          </mwc-select>
           <mwc-icon-button fab flat inverted icon="download" @click="${() =>
             this._downloadLogs()}">
           </mwc-icon-button>
@@ -4351,8 +4500,10 @@ ${rowData.item[this.sessionNameField]}</pre
           <p>${_t('usersettings.SessionTerminationDialog')}</p>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <mwc-button class="warning fg red" @click="${() =>
-            this._terminateSessionWithCheck(true)}">
+          <mwc-button class="warning fg red" @click="${() => {
+            this._getManualCleanUpNeededContainers();
+            this._openForceTerminateConfirmationDialog();
+          }}">
             ${_t('button.ForceTerminate')}
           </mwc-button>
           <span class="flex"></span>
@@ -4371,11 +4522,13 @@ ${rowData.item[this.sessionNameField]}</pre
           <p>${_t('usersettings.SessionTerminationDialog')}</p>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <mwc-button class="warning fg red"
-                      @click="${() =>
-                        this._terminateSelectedSessionsWithCheck(true)}">${_t(
-                        'button.ForceTerminate',
-                      )}
+          <mwc-button
+            class="warning fg red"
+            @click="${() => {
+              this._getManualCleanUpNeededContainers();
+              this._openForceTerminateConfirmationDialog();
+            }}">
+            ${_t('button.ForceTerminate')}
           </mwc-button>
           <span class="flex"></span>
           <mwc-button class="cancel" @click="${(e) =>
@@ -4384,6 +4537,68 @@ ${rowData.item[this.sessionNameField]}</pre
           <mwc-button class="ok" raised @click="${() =>
             this._terminateSelectedSessionsWithCheck()}">${_t('button.Okay')}
           </mwc-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="force-terminate-confirmation-dialog" fixed backdrop>
+        <span slot="title">${_t('session.WarningForceTerminateSessions')}</span>
+        <div slot="content">
+          <span>${_t('session.ForceTerminateWarningMsg')}</span>
+          <ul class="force-terminate-confirmation">
+            <li>${_t('session.ForceTerminateWarningMsg2')}</li>
+            <li>${_t('session.ForceTerminateWarningMsg3')}</li>
+          </ul>
+          ${
+            this._manualCleanUpNeededContainers.length > 0 && this.is_superadmin
+              ? html`
+                  <div
+                    class="vertical layout flex start-justified force-terminate-confirmation-container-list"
+                  >
+                    <div class="horizontal layout center flex start-justified">
+                      <h3 style="margin:0px;">
+                        ${_t('session.ContainerToCleanUp')}:
+                      </h3>
+                    </div>
+                    ${this._manualCleanUpNeededContainers.map((item) => {
+                      return html`
+                        <ul class="force-terminate-confirmation">
+                          <li>Agent ID: ${item.agent}</li>
+                          <ul class="force-terminate-confirmation">
+                            ${item.containers.map((container) => {
+                              return html`
+                                <li>
+                                  Container ID:
+                                  <span class="monospace">${container}</span>
+                                </li>
+                              `;
+                            })}
+                          </ul>
+                          <ul></ul>
+                        </ul>
+                      `;
+                    })}
+                  </div>
+                `
+              : html``
+          }
+        </div>
+        <div slot="footer" class="horizontal layout flex cetner-justified">
+            <mwc-button
+              raised
+              class="warning fg red"
+              style="width:100%;"
+              @click="${() => {
+                this.forceTerminateConfirmationDialog.hide();
+                // conditionally close dialog by opened dialog
+                if (this.terminateSessionDialog.open) {
+                  this.terminateSessionDialog.hide();
+                  this._terminateSessionWithCheck(true);
+                } else {
+                  this.terminateSelectedSessionsDialog.hide();
+                  this._terminateSelectedSessionsWithCheck(true);
+                }
+              }}">
+                ${_t('button.ForceTerminate')}
+            </mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="status-detail-dialog" narrowLayout fixed backdrop>

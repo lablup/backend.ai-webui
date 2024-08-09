@@ -161,7 +161,7 @@ export default class BackendAICredentialList extends BackendAIPage {
           margin: 0 0 10px 0;
           display: block;
           height: 20px;
-          border-bottom: 1px solid #ddd;
+          border-bottom: 1px solid var(--token-colorBorder, #ccc);
         }
 
         mwc-button,
@@ -394,6 +394,16 @@ export default class BackendAICredentialList extends BackendAIPage {
             ) {
               keypair['total_resource_slots'].gaudi2_device = '-';
             }
+            if ('atom-plus.device' in keypair['total_resource_slots']) {
+              keypair['total_resource_slots'].atom_plus_device =
+                keypair['total_resource_slots']['atom-plus.device'];
+            }
+            if (
+              'atom-plus.device' in keypair['total_resource_slots'] === false &&
+              keypair['default_for_unspecified'] === 'UNLIMITED'
+            ) {
+              keypair['total_resource_slots'].atom_plus_device = '-';
+            }
             if ('warboy.device' in keypair['total_resource_slots']) {
               keypair['total_resource_slots'].warboy_device =
                 keypair['total_resource_slots']['warboy.device'];
@@ -426,6 +436,7 @@ export default class BackendAICredentialList extends BackendAIPage {
               'ipu_device',
               'atom_device',
               'gaudi2_device',
+              'atom_plus_device',
               'warboy_device',
               'hyperaccel_lpu_device',
             ].forEach((slot) => {
@@ -765,17 +776,6 @@ export default class BackendAICredentialList extends BackendAIPage {
                   inverted
                   @click="${(e) => this._revokeKey(e)}"
                 ></mwc-icon-button>
-                <mwc-icon-button
-                  class="fg red"
-                  icon="delete_forever"
-                  fab
-                  ?disabled=${this._mainAccessKeyList.includes(
-                    rowData.item?.access_key,
-                  )}
-                  flat
-                  inverted
-                  @click="${(e) => this._deleteKeyPairDialog(e)}"
-                ></mwc-icon-button>
               `
             : html``}
           ${this._isActive() === false
@@ -787,6 +787,21 @@ export default class BackendAICredentialList extends BackendAIPage {
                   flat
                   inverted
                   @click="${(e) => this._reuseKey(e)}"
+                ></mwc-icon-button>
+              `
+            : html``}
+          ${this.isAdmin && !this._isActive()
+            ? html`
+                <mwc-icon-button
+                  class="fg red"
+                  icon="delete_forever"
+                  fab
+                  ?disabled=${this._mainAccessKeyList.includes(
+                    rowData.item?.access_key,
+                  )}
+                  flat
+                  inverted
+                  @click="${(e) => this._deleteKeyPairDialog(e)}"
                 ></mwc-icon-button>
               `
             : html``}

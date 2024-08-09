@@ -29,7 +29,7 @@ import {
   Tooltip,
   Typography,
   theme,
-  message,
+  App,
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
@@ -50,7 +50,7 @@ const ContainerRegistryList: React.FC<{
   const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
   const [isPendingReload, startReloadTransition] = useTransition();
   const painKiller = usePainKiller();
-  const [messageAPI, contextHolder] = message.useMessage();
+  const { message } = App.useApp();
   const { upsertNotification } = useSetBAINotification();
   const { container_registries, domain } =
     useLazyLoadQuery<ContainerRegistryListQuery>(
@@ -106,6 +106,7 @@ const ContainerRegistryList: React.FC<{
           props: { allowed_docker_registries: $allowed_docker_registries }
         ) {
           ok
+          msg
           # TODO: update domain when it supports relay global id
           # domain {
           #   name
@@ -241,7 +242,6 @@ const ContainerRegistryList: React.FC<{
         // height: 'calc(100vh - 183px)',
       }}
     >
-      {contextHolder}
       <Flex
         direction="row"
         justify="end"
@@ -322,7 +322,10 @@ const ContainerRegistryList: React.FC<{
                       : isEnabled
                   }
                   disabled={isPendingReload || isInFlightDomationMutation}
-                  loading={inFlightHostName === record.hostname + fetchKey}
+                  loading={
+                    (isPendingReload || isInFlightDomationMutation) &&
+                    inFlightHostName === record.hostname + fetchKey
+                  }
                   onChange={(isOn) => {
                     if (!_.isString(record.hostname)) return;
                     let newAllowedDockerRegistries = _.clone(
@@ -343,12 +346,26 @@ const ContainerRegistryList: React.FC<{
                         domain: baiClient._config.domainName,
                         allowed_docker_registries: newAllowedDockerRegistries,
                       },
-                      onCompleted: (data) => {
-                        startReloadTransition(() => {
-                          updateFetchKey();
-                        });
+                      onCompleted: (res, errors) => {
+                        if (!res?.modify_domain?.ok) {
+                          message.error(res?.modify_domain?.msg);
+                          return;
+                        }
+                        if (errors && errors?.length > 0) {
+                          const errorMsgList = _.map(
+                            errors,
+                            (error) => error.message,
+                          );
+                          for (const error of errorMsgList) {
+                            message.error(error, 2.5);
+                          }
+                        } else {
+                          startReloadTransition(() => {
+                            updateFetchKey();
+                          });
+                        }
 
-                        messageAPI.info({
+                        message.info({
                           key: 'registry-enabled',
                           content: isOn
                             ? t('registry.RegistryTurnedOn')
@@ -424,9 +441,9 @@ const ContainerRegistryList: React.FC<{
         onOk={(type) => {
           if (type === 'create') {
             updateFetchKey();
-            messageAPI.info(t('registry.RegistrySuccessfullyAdded'));
+            message.info(t('registry.RegistrySuccessfullyAdded'));
           } else if (type === 'modify') {
-            messageAPI.info(t('registry.RegistrySuccessfullyModified'));
+            message.info(t('registry.RegistrySuccessfullyModified'));
           }
           setEditingRegistry(null);
           setIsNewModalOpen(false);
@@ -459,10 +476,10 @@ const ContainerRegistryList: React.FC<{
               variables: {
                 hostname: deletingRegistry.hostname || '',
               },
-              onCompleted: (response, error) => {
+              onCompleted: (res, error) => {
                 if (error) {
                   setDeletingRegistry(null);
-                  messageAPI.error({
+                  message.error({
                     key: 'registry-deletion-failed',
                     content: t('dialog.ErrorOccurred'),
                   });
@@ -470,7 +487,7 @@ const ContainerRegistryList: React.FC<{
                   startReloadTransition(() => {
                     updateFetchKey();
                   });
-                  messageAPI.info({
+                  message.info({
                     key: 'registry-deleted',
                     content: t('registry.RegistrySuccessfullyDeleted'),
                   });
@@ -478,7 +495,7 @@ const ContainerRegistryList: React.FC<{
                 }
               },
               onError: (error) => {
-                messageAPI.error({
+                message.error({
                   key: 'registry-deletion-failed',
                   content: t('dialog.ErrorOccurred'),
                 });

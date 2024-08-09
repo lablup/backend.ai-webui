@@ -80,6 +80,8 @@ export default class BackendAIResourcePanel extends BackendAIPage {
   @property({ type: Number }) atom_used = 0;
   @property({ type: Number }) gaudi2_total = 0;
   @property({ type: Number }) gaudi2_used = 0;
+  @property({ type: Number }) atom_plus_total = 0;
+  @property({ type: Number }) atom_plus_used = 0;
   @property({ type: Number }) warboy_total = 0;
   @property({ type: Number }) warboy_used = 0;
   @property({ type: Number }) hyperaccel_lpu_total = 0;
@@ -301,7 +303,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
         if (this.active == true) {
           setTimeout(() => {
             this._refreshAgentInformation(status);
-          }, 15000);
+          }, 30000);
         }
       })
       .catch((err) => {
@@ -344,6 +346,9 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     this.resources.gaudi2 = {};
     this.resources.gaudi2.total = 0;
     this.resources.gaudi2.used = 0;
+    this.resources.atom_plus = {};
+    this.resources.atom_plus.total = 0;
+    this.resources.atom_plus.used = 0;
     this.resources.warboy = {};
     this.resources.warboy.total = 0;
     this.resources.warboy.used = 0;
@@ -406,6 +411,11 @@ export default class BackendAIResourcePanel extends BackendAIPage {
       this.gaudi2_total = 0;
     } else {
       this.gaudi2_total = this.resources['gaudi2.device'].total;
+    }
+    if (isNaN(this.resources['atom-plus.device'].total)) {
+      this.atom_plus_total = 0;
+    } else {
+      this.atom_plus_total = this.resources['atom-plus.device'].total;
     }
     if (isNaN(this.resources['warboy.device'].total)) {
       this.warboy_total = 0;
@@ -643,6 +653,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                   this.ipu_total ||
                   this.atom_total ||
                   this.gaudi2_total ||
+                  this.atom_plus_total ||
                   this.warboy_total ||
                   this.hyperaccel_lpu_total
                     ? html`
@@ -917,6 +928,43 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                     >
                                       <span class="percentage start-bar">
                                         ${this.gaudi2_used.toFixed(1) + '%'}
+                                      </span>
+                                      <span class="percentage end-bar"></span>
+                                    </div>
+                                  </div>
+                                `
+                              : html``}
+                            ${this.atom_plus_total
+                              ? html`
+                                  <div class="layout horizontal">
+                                    <div
+                                      class="layout vertical start-justified wrap"
+                                    >
+                                      <lablup-progress-bar
+                                        id="atom-plus-usage-bar"
+                                        class="start"
+                                        progress="${this.atom_plus_used /
+                                        100.0}"
+                                        description="${this
+                                          .atom_plus_used} / ${this
+                                          .atom_plus_total} ATOM+ ${_t(
+                                          'summary.reserved',
+                                        )}."
+                                      ></lablup-progress-bar>
+                                      <lablup-progress-bar
+                                        id="atom-plus-usage-bar-2"
+                                        class="end"
+                                        progress="0"
+                                        description="${_t(
+                                          'summary.ATOMPlusEnabled',
+                                        )}."
+                                      ></lablup-progress-bar>
+                                    </div>
+                                    <div
+                                      class="layout vertical center center-justified"
+                                    >
+                                      <span class="percentage start-bar">
+                                        ${this.atom_plus_used.toFixed(1) + '%'}
                                       </span>
                                       <span class="percentage end-bar"></span>
                                     </div>

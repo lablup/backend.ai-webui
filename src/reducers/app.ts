@@ -3,8 +3,6 @@
  Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import {
-  CLOSE_SNACKBAR,
-  OPEN_SNACKBAR,
   UPDATE_DRAWER_STATE,
   UPDATE_OFFLINE,
   UPDATE_PAGE,

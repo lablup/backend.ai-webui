@@ -359,7 +359,12 @@ const AgentList: React.FC<AgentListProps> = ({
                 parsedAvailableSlots[key]
               ) {
                 return (
-                  <Flex key={key} justify="between" style={{ minWidth: 220 }}>
+                  <Flex
+                    key={key}
+                    justify="between"
+                    style={{ minWidth: 220 }}
+                    gap="xxs"
+                  >
                     <Flex gap="xxs">
                       <ResourceTypeIcon key={key} type={key} />
                       <Typography.Text>
@@ -822,12 +827,7 @@ const AgentList: React.FC<AgentListProps> = ({
         }}
         onChange={({ pageSize, current }, filters, sorter) => {
           startPageChangeTransition(() => {
-            if (
-              _.isNumber(current) &&
-              _.isNumber(pageSize) &&
-              pageSize !== tablePaginationOption.pageSize &&
-              current !== tablePaginationOption.current
-            ) {
+            if (_.isNumber(current) && _.isNumber(pageSize)) {
               setTablePaginationOption({
                 current,
                 pageSize,

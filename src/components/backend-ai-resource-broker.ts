@@ -310,7 +310,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       // Reload number of sessions
       const fields = ['name'];
       await globalThis.backendaiclient?.computeSession
-        ?.list(fields, 'RUNNING', null, 1000)
+        ?.list(fields, 'RUNNING', null, 1)
         .then((res) => {
           if (!res.compute_session_list && res.legacy_compute_session_list) {
             res.compute_session_list = res.legacy_compute_session_list;
@@ -405,6 +405,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'ipu.device': 'ipu_device',
         'atom.device': 'atom_device',
         'gaudi2.device': 'gaudi2_device',
+        'atom-plus.device': 'atom_plus_device',
         'warboy.device': 'warboy_device',
         'hyperaccel-lpu.device': 'hyperaccel_lpu_device',
       };
@@ -493,7 +494,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     if (!globalThis.backendaiclient || this.aggregate_updating) {
       return Promise.resolve(false);
     }
-    if (Date.now() - this.lastQueryTime < 1000) {
+    if (Date.now() - this.lastQueryTime < 2000) {
       return Promise.resolve(false);
     }
     // console.log('aggregate from:', from);
@@ -561,6 +562,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'ipu.device': 'ipu_device',
         'atom.device': 'atom_device',
         'gaudi2.device': 'gaudi2_device',
+        'atom-plus.device': 'atom_plus_device',
         'warboy.device': 'warboy_device',
         'hyperaccel-lpu.device': 'hyperaccel_lpu_device',
       };
@@ -574,6 +576,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'ipu.device': 'ipu_device',
         'atom.device': 'atom_device',
         'gaudi2.device': 'gaudi2_device',
+        'atom-plus.device': 'atom_plus_device',
         'warboy.device': 'warboy_device',
         'hyperaccel-lpu.device': 'hyperaccel_lpu_device',
       };

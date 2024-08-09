@@ -66,10 +66,12 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
   >({
     queryKey: ['ResourceGroupSelectQuery', key, currentProject.name],
     queryFn: () => {
+      const search = new URLSearchParams();
+      search.set('group', currentProject.name);
       return Promise.all([
         baiRequestWithPromise({
           method: 'GET',
-          url: `/scaling-groups?group=${currentProject.name}`,
+          url: `/scaling-groups?${search.toString()}`,
         }),
         baiRequestWithPromise({
           method: 'GET',

@@ -16,6 +16,7 @@ export const ACCELERATOR_UNIT_MAP: {
   'ipu.device': 'IPU',
   'atom.device': 'ATOM',
   'gaudi2.device': 'Gaudi 2',
+  'atom-plus.device': 'ATOM+',
   'warboy.device': 'Warboy',
   'hyperaccel-lpu.device': 'Hyperaccel LPU',
 };
@@ -56,14 +57,14 @@ const ResourceNumber: React.FC<ResourceNumberProps> = ({
       )}
 
       <Typography.Text>
-        {resourceSlotsDetails?.[type].number_format.binary
+        {resourceSlotsDetails?.[type]?.number_format.binary
           ? Number(iSizeToSize(amount, 'g', 3, true)?.numberFixed).toString()
-          : (resourceSlotsDetails?.[type].number_format.round_length || 0) > 0
+          : (resourceSlotsDetails?.[type]?.number_format.round_length || 0) > 0
             ? parseFloat(amount).toFixed(2)
             : amount}
       </Typography.Text>
       <Typography.Text type="secondary">
-        {resourceSlotsDetails?.[type].display_unit || ''}
+        {resourceSlotsDetails?.[type]?.display_unit || ''}
       </Typography.Text>
       {type === 'mem' && opts?.shmem && opts?.shmem > 0 ? (
         <Typography.Text
@@ -130,6 +131,7 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
     'ipu.device': [<MWCIconWrap size={size}>view_module</MWCIconWrap>, 'IPU'],
     'atom.device': ['/resources/icons/rebel.svg', 'ATOM'],
     'gaudi2.device': ['/resources/icons/npu_generic.svg', 'Gaudi 2'],
+    'atom-plus.device': ['/resources/icons/rebel.svg', 'ATOM'],
     'warboy.device': ['/resources/icons/furiosa.svg', 'Warboy'],
     'hyperaccel-lpu.device': [
       '/resources/icons/npu_generic.svg',

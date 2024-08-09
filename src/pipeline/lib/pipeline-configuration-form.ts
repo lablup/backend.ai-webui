@@ -1516,7 +1516,7 @@ export default class PipelineConfigurationForm extends LitElement {
             ${item.clickable === false
               ? html`
                   <h5
-                    style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid #ccc;"
+                    style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid var(--token-colorBorder, #ccc);"
                     role="separator"
                     disabled="true"
                   >
@@ -1575,7 +1575,7 @@ export default class PipelineConfigurationForm extends LitElement {
       >
         <mwc-list-item selected style="display:none!important"></mwc-list-item>
         <h5
-          style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid #ccc;"
+          style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid var(--token-colorBorder, #ccc);"
           role="separator"
           disabled="true"
           class="horizontal layout"

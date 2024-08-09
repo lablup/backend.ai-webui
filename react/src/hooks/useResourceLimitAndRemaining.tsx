@@ -270,6 +270,7 @@ export const useResourceLimitAndRemaining = ({
             'ipu.device': 'maxIPUDevicesPerContainer',
             'atom.device': 'maxATOMDevicesPerContainer',
             'gaudi2.device': 'maxGaudi2DevicesPerContainer',
+            'atom-plus.device': 'maxATOMPlusDevicesPerContainer',
             'warboy.device': 'maxWarboyDevicesPerContainer',
             'hyperaccel-lpu.device': 'maxHyperaccelLPUDevicesPerContainer', // FIXME: add maxLPUDevicesPerContainer to config
           }[key] || 'cuda.device'; // FIXME: temporally `cuda.device` config, when undefined

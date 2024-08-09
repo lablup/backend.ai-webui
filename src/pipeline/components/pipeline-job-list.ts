@@ -145,7 +145,7 @@ export default class PipelineJobList extends BackendAIPage {
         }
 
         mwc-list.left-border mwc-list-item {
-          border-left: 1px solid #ccc;
+          border-left: 1px solid var(--token-colorBorder, #ccc);
         }
 
         /* Set width according to screen width (on mobile, tablet, and desktop) */
