@@ -116,7 +116,7 @@ const ResetPasswordRequired = () => {
           initialValues={{
             currentPassword: currentPassword,
           }}
-          disabled={mutation.isLoading}
+          disabled={mutation.isPending}
         >
           <Form.Item
             name="newPassword"
@@ -171,7 +171,7 @@ const ResetPasswordRequired = () => {
             <Input.Password onPressEnter={onSubmit} />
           </Form.Item>
         </Form>
-        <Button type="primary" onClick={onSubmit} loading={mutation.isLoading}>
+        <Button type="primary" onClick={onSubmit} loading={mutation.isPending}>
           {t('webui.menu.Update')}
         </Button>
       </Flex>

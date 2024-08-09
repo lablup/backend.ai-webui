@@ -145,7 +145,6 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
                   >
                     {_.map(
                       _.omitBy(slotsInfo, (slot, key) =>
-                        // @ts-ignore
                         _.isEmpty(resourceSlots[key]),
                       ),
                       (slot, key) => {

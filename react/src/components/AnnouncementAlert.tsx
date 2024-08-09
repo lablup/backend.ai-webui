@@ -1,5 +1,5 @@
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useTanQuery } from '../hooks/reactQueryAlias';
+import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { Alert, theme } from 'antd';
 import { AlertProps } from 'antd/lib';
 import _ from 'lodash';
@@ -10,7 +10,7 @@ interface Props extends AlertProps {}
 const AnnouncementAlert: React.FC<Props> = ({ style, ...otherProps }) => {
   const baiClient = useSuspendedBackendaiClient();
   const { token } = theme.useToken();
-  const { data: announcement } = useTanQuery({
+  const { data: announcement } = useSuspenseTanQuery({
     queryKey: ['baiClient', 'service', 'get_announcement'],
     queryFn: () => {
       return baiClient.service.get_announcement();

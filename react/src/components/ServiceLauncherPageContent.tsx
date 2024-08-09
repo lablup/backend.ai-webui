@@ -9,7 +9,7 @@ import {
   useSuspendedBackendaiClient,
   useWebUINavigate,
 } from '../hooks';
-import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
+import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { DEFAULT_BAI_MODAL_Z_INDEX } from './BAIModal';
 import EnvVarFormList, { EnvVarFormListValue } from './EnvVarFormList';
 import Flex from './Flex';
@@ -194,7 +194,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     endpointFrgmt,
   );
 
-  const { data: availableRuntimes } = useTanQuery<{
+  const { data: availableRuntimes } = useSuspenseTanQuery<{
     runtimes: { name: string; human_readable_name: string }[];
   }>({
     queryKey: ['baiClient.modelService.runtime.list'],
@@ -214,7 +214,6 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           });
     },
     staleTime: 1000,
-    suspense: true,
   });
 
   const checkManualImageAllowed = (
@@ -679,7 +678,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             <Suspense fallback={<FlexActivityIndicator />}>
               <Form
                 form={form}
-                disabled={mutationToCreateService.isLoading}
+                disabled={mutationToCreateService.isPending}
                 layout="vertical"
                 labelCol={{ span: 12 }}
                 initialValues={INITIAL_FORM_VALUES}

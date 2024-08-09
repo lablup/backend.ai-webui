@@ -62,7 +62,6 @@ const EndpointChatContent: React.FC<ChatUIBasicProps> = ({
         (res) => res.json(),
       );
     },
-    suspense: false,
   });
 
   return isFetching ? (

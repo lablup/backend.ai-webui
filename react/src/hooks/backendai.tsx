@@ -1,6 +1,10 @@
 import { useSuspendedBackendaiClient, useUpdatableState } from '.';
 import { maskString, useBaiSignedRequestWithPromise } from '../helper';
-import { useTanMutation, useTanQuery } from './reactQueryAlias';
+import {
+  useSuspenseTanQuery,
+  useTanMutation,
+  useTanQuery,
+} from './reactQueryAlias';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
 
@@ -18,7 +22,7 @@ export interface QuotaScope {
 export const useResourceSlots = () => {
   const [key, checkUpdate] = useUpdatableState('first');
   const baiClient = useSuspendedBackendaiClient();
-  const { data: resourceSlots } = useTanQuery<{
+  const { data: resourceSlots } = useSuspenseTanQuery<{
     cpu?: string;
     mem?: string;
     'cuda.shares'?: string;
@@ -30,6 +34,7 @@ export const useResourceSlots = () => {
     'atom-plus.device'?: string;
     'warboy.device'?: string;
     'hyperaccel-lpu.device'?: string;
+    [key: string]: string | undefined;
   }>({
     queryKey: ['useResourceSlots', key],
     queryFn: () => {
@@ -189,8 +194,8 @@ export const useCurrentUserInfo = () => {
       ...userInfo,
       username: getUsername(),
       isPendingMutation:
-        mutationToUpdateUserFullName.isLoading ||
-        mutationToUpdateUserPassword.isLoading,
+        mutationToUpdateUserFullName.isPending ||
+        mutationToUpdateUserPassword.isPending,
     },
     {
       updateFullName: (
@@ -249,16 +254,13 @@ export const useCurrentUserRole = () => {
     user: {
       role: 'superadmin' | 'admin' | 'user' | 'monitor';
     };
-  }>(
-    ['getUserRole', userInfo.email],
-    () => {
+  }>({
+    queryKey: ['getUserRole', userInfo.email],
+    queryFn: () => {
       return baiClient.user.get(userInfo.email, ['role']);
     },
-    {
-      suspense: false,
-      staleTime: Infinity,
-    },
-  );
+    staleTime: Infinity,
+  });
   const userRole = roleData?.user.role;
 
   return userRole;
@@ -266,16 +268,13 @@ export const useCurrentUserRole = () => {
 
 export const useTOTPSupported = () => {
   const baiClient = useSuspendedBackendaiClient();
-  const { data: isManagerSupportingTOTP, isLoading } = useTanQuery<boolean>(
-    'isManagerSupportingTOTP',
-    () => {
+  const { data: isManagerSupportingTOTP, isLoading } = useTanQuery<boolean>({
+    queryKey: ['isManagerSupportingTOTP'],
+    queryFn: () => {
       return baiClient.isManagerSupportingTOTP();
     },
-    {
-      suspense: false,
-      staleTime: 1000,
-    },
-  );
+    staleTime: 1000,
+  });
   const isTOTPSupported = baiClient.supports('2FA') && isManagerSupportingTOTP;
 
   return { isTOTPSupported, isLoading };
@@ -283,10 +282,13 @@ export const useTOTPSupported = () => {
 
 export const useAllowedHostNames = () => {
   const baiClient = useSuspendedBackendaiClient();
-  const { data: allowedHosts } = useTanQuery<{
+  const { data: allowedHosts } = useSuspenseTanQuery<{
     allowed: Array<string>;
-  }>(['useAllowedHostNames'], () => {
-    return baiClient.vfolder.list_all_hosts();
+  }>({
+    queryKey: ['useAllowedHostNames'],
+    queryFn: () => {
+      return baiClient.vfolder.list_all_hosts();
+    },
   });
   return allowedHosts?.allowed;
 };

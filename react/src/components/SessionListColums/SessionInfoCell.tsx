@@ -89,7 +89,7 @@ const SessionInfoCell: React.FC<{
       .catch(() => {});
   };
 
-  const isPendingRename = mutation.isLoading || optimisticName !== session.name;
+  const isPendingRename = mutation.isPending || optimisticName !== session.name;
 
   // sessions[objectKey].icon = this._getKernelIcon(session.image);
   //         sessions[objectKey].sessionTags = this._getKernelInfo(session.image);

@@ -4,11 +4,13 @@ import {
   useBaiSignedRequestWithPromise,
 } from '../../helper';
 import { useSuspendedBackendaiClient } from '../../hooks';
-import { useTanMutation, useTanQuery } from '../../hooks/reactQueryAlias';
+import {
+  useSuspenseTanQuery,
+  useTanMutation,
+} from '../../hooks/reactQueryAlias';
 import Flex from '../Flex';
 import { App, Button, Descriptions, Empty, Tag, Typography, theme } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { useQueryClient } from 'react-query';
 
 const SummaryItemInvitation: React.FC = () => {
   const { t } = useTranslation();
@@ -17,10 +19,10 @@ const SummaryItemInvitation: React.FC = () => {
 
   const baiClient = useSuspendedBackendaiClient();
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
-  const queryClient = useQueryClient();
   const {
     data: { invitations },
-  } = useTanQuery({
+    refetch,
+  } = useSuspenseTanQuery({
     queryKey: ['baiClient.invitation.list'],
     queryFn: () =>
       baiRequestWithPromise({
@@ -104,9 +106,7 @@ const SummaryItemInvitation: React.FC = () => {
                   onClick={() =>
                     terminateInvitationsMutation.mutate(invitation.id, {
                       onSuccess() {
-                        queryClient.invalidateQueries([
-                          'baiClient.invitation.list',
-                        ]);
+                        refetch();
                         app.message.success(
                           t('summary.DeclineSharedVFolder') +
                             invitation.vfolder_name,
@@ -136,9 +136,7 @@ const SummaryItemInvitation: React.FC = () => {
                   onClick={() =>
                     acceptInvitationsMutation.mutate(invitation.id, {
                       onSuccess() {
-                        queryClient.invalidateQueries([
-                          'baiClient.invitation.list',
-                        ]);
+                        refetch();
                         app.message.success(
                           t('summary.AcceptSharedVFolder') +
                             invitation.vfolder_name,

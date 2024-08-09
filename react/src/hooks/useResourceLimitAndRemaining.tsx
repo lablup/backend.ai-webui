@@ -3,7 +3,7 @@ import { Image } from '../components/ImageEnvironmentSelectFormItems';
 import { AUTOMATIC_DEFAULT_SHMEM } from '../components/ResourceAllocationFormItems';
 import { addNumberWithUnits, iSizeToSize } from '../helper';
 import { useResourceSlots } from '../hooks/backendai';
-import { useTanQuery } from './reactQueryAlias';
+import { useSuspenseTanQuery } from './reactQueryAlias';
 import _ from 'lodash';
 
 interface MergedResourceLimits {
@@ -99,7 +99,7 @@ export const useResourceLimitAndRemaining = ({
     data: checkPresetInfo,
     refetch,
     isRefetching,
-  } = useTanQuery<ResourceAllocation | undefined>({
+  } = useSuspenseTanQuery<ResourceAllocation | undefined>({
     queryKey: ['check-presets', currentProjectName, currentResourceGroup],
     queryFn: () => {
       if (currentResourceGroup) {
@@ -114,7 +114,6 @@ export const useResourceLimitAndRemaining = ({
       }
     },
     staleTime: 1000,
-    suspense: true,
     // suspense: !_.isEmpty(currentResourceGroup), //prevent flicking
   });
 

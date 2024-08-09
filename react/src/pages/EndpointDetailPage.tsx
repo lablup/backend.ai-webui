@@ -213,13 +213,15 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       },
     );
 
-  const mutationToClearError = useTanMutation(() => {
-    if (!endpoint) return;
-    return baiSignedRequestWithPromise({
-      method: 'POST',
-      url: `/services/${endpoint.endpoint_id}/errors/clear`,
-      client: baiClient,
-    });
+  const mutationToClearError = useTanMutation({
+    mutationFn: () => {
+      if (!endpoint) return;
+      return baiSignedRequestWithPromise({
+        method: 'POST',
+        url: `/services/${endpoint.endpoint_id}/errors/clear`,
+        client: baiClient,
+      });
+    },
   });
   const mutationToSyncRoutes = useTanMutation<
     {
@@ -227,12 +229,14 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     },
     unknown,
     string
-  >((endpoint_id) => {
-    return baiSignedRequestWithPromise({
-      method: 'POST',
-      url: `/services/${endpoint_id}/sync`,
-      client: baiClient,
-    });
+  >({
+    mutationFn: (endpoint_id) => {
+      return baiSignedRequestWithPromise({
+        method: 'POST',
+        url: `/services/${endpoint_id}/sync`,
+        client: baiClient,
+      });
+    },
   });
   const openSessionErrorModal = (session: string) => {
     if (endpoint === null) return;
@@ -597,7 +601,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           endpoint?.endpoint_id ? (
             <Button
               icon={<SyncOutlined />}
-              loading={mutationToSyncRoutes.isLoading}
+              loading={mutationToSyncRoutes.isPending}
               onClick={() => {
                 endpoint?.endpoint_id &&
                   mutationToSyncRoutes.mutateAsync(endpoint?.endpoint_id, {

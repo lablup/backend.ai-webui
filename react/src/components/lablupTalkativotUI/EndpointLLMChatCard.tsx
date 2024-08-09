@@ -1,4 +1,4 @@
-import { useTanQuery } from '../../hooks/reactQueryAlias';
+import { useSuspenseTanQuery } from '../../hooks/reactQueryAlias';
 import EndpointSelect from '../EndpointSelect';
 import { Model } from './ChatUIModal';
 import LLMChatCard, { BAIModel } from './LLMChatCard';
@@ -61,7 +61,7 @@ const EndpointLLMChatCard: React.FC<EndpointLLMChatCardProps> = ({
     chatSubmitKeyInfoState,
   );
 
-  const { data: modelsResult } = useTanQuery<{
+  const { data: modelsResult } = useSuspenseTanQuery<{
     data: Array<Model>;
   }>({
     queryKey: ['models', fetchKey, endpoint?.endpoint_id],
@@ -77,7 +77,6 @@ const EndpointLLMChatCard: React.FC<EndpointLLMChatCardProps> = ({
             .catch((e) => ({ data: [] }))
         : Promise.resolve({ data: [] });
     },
-    suspense: true,
   });
 
   const models = _.map(modelsResult?.data, (m) => ({

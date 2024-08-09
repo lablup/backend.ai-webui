@@ -38,9 +38,7 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
             .then((res: any) => res.keypairs)
         : null;
     },
-    suspense: false,
     staleTime: 0,
-    cacheTime: 0,
   });
 
   const supportMainAccessKey = baiClient?.supports('main-access-key');

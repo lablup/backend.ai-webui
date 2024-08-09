@@ -190,7 +190,7 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 />
               }
               loading={
-                terminateModelServiceMutation.isLoading &&
+                terminateModelServiceMutation.isPending &&
                 optimisticDeletingId === row.endpoint_id
               }
               disabled={
@@ -367,7 +367,7 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
       });
     },
   });
-  // const { data, refetch } = useTanQuery({
+  // const { data, refetch } = useSuspenseTanQuery({
   //   queryKey: "terminateModelService",
   //   queryFn: () => {
   //     return baiSignedRequestWithPromise({
@@ -384,7 +384,6 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
   //   },
   //   enabled: false,
   //   // for to render even this query fails
-  //   suspense: true,
   // });
 
   return (

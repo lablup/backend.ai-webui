@@ -1,5 +1,6 @@
 import { usageIndicatorColor } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState from '../hooks/useControllableState';
 import { useShadowRoot } from './DefaultProviders';
 import Flex from './Flex';
@@ -8,7 +9,6 @@ import { Select, SelectProps, Badge, Tooltip } from 'antd';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQuery } from 'react-query';
 
 export type VolumeInfo = {
   id: string;
@@ -41,22 +41,26 @@ const StorageSelect: React.FC<Props> = ({
   const shadowRoot = useShadowRoot();
   const baiClient = useSuspendedBackendaiClient();
 
-  const { data: vhostInfo, isLoading: isLoadingVhostInfo } = useQuery<{
-    default: string;
-    allowed: Array<string>;
-    volume_info?: {
-      [key: string]: {
-        backend: string;
-        capabilities: string[];
-        usage: {
-          percentage: number;
+  const { data: vhostInfo, isLoading: isLoadingVhostInfo } =
+    useSuspenseTanQuery<{
+      default: string;
+      allowed: Array<string>;
+      volume_info?: {
+        [key: string]: {
+          backend: string;
+          capabilities: string[];
+          usage: {
+            percentage: number;
+          };
+          sftp_scaling_groups: any[];
         };
-        sftp_scaling_groups: any[];
       };
-    };
-  }>('vhostInfo', () => {
-    return baiClient.vfolder.list_hosts();
-  });
+    }>({
+      queryKey: ['vhostInfo'],
+      queryFn: () => {
+        return baiClient.vfolder.list_hosts();
+      },
+    });
 
   const [controllableState, setControllableState] = useControllableState({
     value,
