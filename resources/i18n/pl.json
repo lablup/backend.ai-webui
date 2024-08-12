@@ -631,7 +631,6 @@
       "Delete": "Kasować",
       "FolderOptionUpdate": "Opcja folderu aktualizacji",
       "Leave": "Wychodzić",
-      "RenameAFolder": "Zmień nazwę folderu",
       "TypeNewFolderName": "Wpisz nową nazwę folderu",
       "FolderCreated": "Utworzono folder",
       "FolderCloned": "Sklonowany folder",
@@ -711,7 +710,6 @@
       "FileExtensionChanged": "Czy chcesz zmienić rozszerzenie pliku?",
       "KeepFileExtension": "Trzymać",
       "UseNewFileExtension": "Posługiwać się",
-      "RemoveFileExtension": "usuń rozszerzenie pliku",
       "ExecutingFileBrowser": "Uruchamiam przeglądarkę plików...",
       "ExecuteFileBrowser": "Uruchom przeglądarkę plików",
       "NotEnoughResourceForFileBrowserSession": "Brak wystarczających zasobów (cpu: 1 rdzeń, mem: 0,5 GB), aby utworzyć sesję dla przeglądarki plików. sprawdź dostępne zasoby.",
@@ -727,7 +725,10 @@
       "StartingSSH/SFTPSession": "Rozpoczęcie sesji SFTP...",
       "NumberOfSFTPSessionsExceededTitle": "Osiągnięto limit liczby uruchomionych sesji przesyłania",
       "NumberOfSFTPSessionsExceededBody": "Uruchomiono wszystkie dostępne sesje przesyłania, które można utworzyć. Przed rozpoczęciem nowej sesji zakończ nieużywane sesje przesyłania.",
-      "DownloadNotAllowed": "Pobieranie pliku/folderu w tym folderze jest niedozwolone."
+      "DownloadNotAllowed": "Pobieranie pliku/folderu w tym folderze jest niedozwolone.",
+      "RenameAFolder": "Zmień nazwę folderu",
+      "Filename": "Nazwa pliku",
+      "RemoveFileExtension": "Usunąć "
     },
     "invitation": {
       "NoValidEmails": "Nie wprowadzono poprawnych adresów e-mail",

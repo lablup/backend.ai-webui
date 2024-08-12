@@ -297,7 +297,6 @@
       "Permissions": "Permisos",
       "ReadOnlyFolderOnFileBrowser": "Abrir carpeta de sólo lectura en filebrowser, sólo se permite descargar archivo(s)/carpeta(s).",
       "ReadonlyFolder": "Carpeta de sólo lectura",
-      "RemoveFileExtension": "eliminar extensión de archivo",
       "RenameAFile": "Cambiar nombre de archivo",
       "RunSSH/SFTPserver": "Ejecutar servidor SFTP",
       "SFTPSessionNotAvailable": "SFTP Session no está disponible ahora",
@@ -312,7 +311,10 @@
       "ValueRequired": "Se requiere valor",
       "ValueShouldBeStarted": "La ruta debe empezar por .(punto) o letras, sólo números.",
       "WritePermissionRequiredInUploadFiles": "Se requiere permiso de escritura para cargar archivos.",
-      "DownloadNotAllowed": "No se permite descargar archivos/carpetas en esta carpeta."
+      "DownloadNotAllowed": "No se permite descargar archivos/carpetas en esta carpeta.",
+      "RenameAFolder": "Renombrar carpeta",
+      "Filename": "Nombre del archivo",
+      "RemoveFileExtension": "Eliminar "
     },
     "folders": {
       "CannotDeleteFolder": "No se puede eliminar la carpeta montada en una o más sesiones. Por favor, termine la sesión primero.",
@@ -355,7 +357,6 @@
       "Ownership": "Propiedad",
       "Permission": "Permiso",
       "Rename": "Cambie el nombre de",
-      "RenameAFolder": "Cambiar el nombre de una carpeta",
       "SameFileName": "El valor de entrada es el mismo que el nombre del archivo que se va a actualizar. Por favor, cámbielo por otro nombre.",
       "SelectPermission": "Seleccionar permiso",
       "Serve": "Modelo de servicio",

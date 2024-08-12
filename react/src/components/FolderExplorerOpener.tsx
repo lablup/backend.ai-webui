@@ -1,12 +1,11 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { jotaiStore } from './DefaultProviders';
+import LegacyFolderExplorer from './LegacyFolderExplorer';
 import { VFolder } from './VFolderSelect';
 import { atom, useAtomValue } from 'jotai';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { StringParam, useQueryParam } from 'use-query-params';
-
-// TODO: Separate Folder Explorer from `backend-ai-data-view` and make it opened directly on all pages.
 
 const isDataViewReadyAtom = atom(false);
 document.addEventListener('backend-ai-data-view:connected', () => {
@@ -18,6 +17,8 @@ document.addEventListener('backend-ai-data-view:disconnected', () => {
 
 const FolderExplorerOpener = () => {
   const [folderId] = useQueryParam('folder', StringParam) || '';
+  const [vfolderName, setVFolderName] = useState<string>('');
+  const [open, setOpen] = useState(false);
   const normalizedFolderId = folderId?.replaceAll('-', '');
   const currentProject = useCurrentProjectValue();
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
@@ -38,22 +39,25 @@ const FolderExplorerOpener = () => {
             // `id` of `/folders` API is not UUID, but UUID without `-`
             (vFolder) => vFolder.id === normalizedFolderId,
           );
-          document.dispatchEvent(
-            new CustomEvent('folderExplorer:open', {
-              detail: {
-                vFolder,
-              },
-            }),
-          );
+          setVFolderName(vFolder?.name || '');
         })
         .catch(() => {
           // do nothing
         });
+      setOpen(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDataViewReady, folderId]); // don't need to watch `folderId` because this used only once right after the backend-ai-data-view is ready
 
-  return null;
+  return (
+    <LegacyFolderExplorer
+      vfolderName={vfolderName}
+      vfolderID={normalizedFolderId || ''}
+      open={open}
+      onRequestClose={() => setOpen(false)}
+      destroyOnClose
+    />
+  );
 };
 
 export default FolderExplorerOpener;

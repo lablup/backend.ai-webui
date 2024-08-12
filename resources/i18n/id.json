@@ -632,7 +632,6 @@
       "Delete": "Hapus",
       "FolderOptionUpdate": "Opsi perbaruan folder",
       "Leave": "Tinggalkan",
-      "RenameAFolder": "Ganti nama folder",
       "TypeNewFolderName": "Ketik nama folder baru",
       "FolderCreated": "Folder dibuat",
       "FolderCloned": "Folder diklon",
@@ -712,7 +711,6 @@
       "FileExtensionChanged": "Apakah Anda ingin mengubah ekstensi file?",
       "KeepFileExtension": "Jaga",
       "UseNewFileExtension": "Gunakan",
-      "RemoveFileExtension": "hapus ekstensi file",
       "ExecutingFileBrowser": "Menjalankan file browser...",
       "ExecuteFileBrowser": "Jalankan file browser",
       "NotEnoughResourceForFileBrowserSession": "Tidak ada sumber daya yang cukup (cpu: 1 Core, mem: 0.5GB) untuk membuat sesi untuk filebrowser. Mohon periksa sumber daya yang tersedia.",
@@ -728,7 +726,10 @@
       "FolderAlreadyExists": "Folder yang akan diunggah sudah ada.",
       "NumberOfSFTPSessionsExceededTitle": "Mencapai batas jumlah sesi unggahan yang sedang berjalan",
       "NumberOfSFTPSessionsExceededBody": "Anda menjalankan semua sesi unggahan yang tersedia yang diizinkan untuk Anda buat. Hentikan sesi unggahan yang tidak terpakai sebelum memulai sesi baru.",
-      "DownloadNotAllowed": "Mengunduh file/folder tidak diperbolehkan di folder ini."
+      "DownloadNotAllowed": "Mengunduh file/folder tidak diperbolehkan di folder ini.",
+      "RenameAFolder": "Mengganti nama folder",
+      "Filename": "Nama file",
+      "RemoveFileExtension": "Menghapus "
     },
     "invitation": {
       "NoValidEmails": "Tidak ada email valid yang dimasukkan",
