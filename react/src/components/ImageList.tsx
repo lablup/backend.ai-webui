@@ -15,10 +15,10 @@ import {
   SettingOutlined,
   VerticalAlignBottomOutlined,
 } from '@ant-design/icons';
-import { App, Button, Table, Tag, theme } from 'antd';
+import { App, Button, Table, Tag, theme, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
-import { useMemo, useState, useTransition } from 'react';
+import { ReactNode, useMemo, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
@@ -26,7 +26,29 @@ export type EnvironmentImage = NonNullable<
   NonNullable<ImageListQuery$data['images']>[number]
 >;
 
-export default function ImageList({ style }: { style?: React.CSSProperties }) {
+const CellWrapper = ({
+  children,
+  style,
+}: {
+  children: ReactNode;
+  style?: React.CSSProperties;
+}) => {
+  if (!children) return null;
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        height: '100%',
+        ...style,
+      }}
+    >
+      {children}
+    </div>
+  );
+};
+
+const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   const { t } = useTranslation();
   const [selectedRows, setSelectedRows] = useState<EnvironmentImage[]>([]);
   const [
@@ -109,13 +131,15 @@ export default function ImageList({ style }: { style?: React.CSSProperties }) {
       dataIndex: 'installed',
       key: 'installed',
       sorter: sortBasedOnInstalled,
-      render: (text, row) => {
-        if (row?.id && installingImages.includes(row.id))
-          return <Tag color="gold">{t('environment.Installing')}</Tag>;
-        return row?.installed ? (
-          <Tag color="gold">{t('environment.Installed')}</Tag>
-        ) : null;
-      },
+      render: (text, row) => (
+        <CellWrapper>
+          {row?.id && installingImages.includes(row.id) ? (
+            <Tag color="gold">{t('environment.Installing')}</Tag>
+          ) : row?.installed ? (
+            <Tag color="gold">{t('environment.Installed')}</Tag>
+          ) : null}
+        </CellWrapper>
+      ),
     },
     {
       title: t('environment.Registry'),
@@ -123,6 +147,7 @@ export default function ImageList({ style }: { style?: React.CSSProperties }) {
       key: 'registry',
       sorter: (a, b) =>
         a?.registry && b?.registry ? a.registry.localeCompare(b.registry) : 0,
+      render: (text, row) => <CellWrapper>{row.registry}</CellWrapper>,
     },
     {
       title: t('environment.Architecture'),
@@ -132,9 +157,7 @@ export default function ImageList({ style }: { style?: React.CSSProperties }) {
         a?.architecture && b?.architecture
           ? a.architecture.localeCompare(b.architecture)
           : 0,
-      render: (text, row) => (
-        <div style={{ padding: token.paddingXS }}>{row?.architecture}</div>
-      ),
+      render: (text, row) => <CellWrapper>{row.architecture}</CellWrapper>,
     },
     {
       title: t('environment.Namespace'),
@@ -148,9 +171,7 @@ export default function ImageList({ style }: { style?: React.CSSProperties }) {
           : 0;
       },
       render: (text, row) => (
-        <div style={{ padding: token.paddingSM }}>
-          {getNamespace(getImageFullName(row) || '')}
-        </div>
+        <CellWrapper>{getNamespace(getImageFullName(row) || '')}</CellWrapper>
       ),
     },
     {
@@ -162,9 +183,9 @@ export default function ImageList({ style }: { style?: React.CSSProperties }) {
         const langB = b?.name ? getImageLang(b?.name) : '';
         return langA && langB ? langA.localeCompare(langB) : 0;
       },
-      render: (text, row) => {
-        return row?.name ? <span>{getImageLang(row.name)}</span> : null;
-      },
+      render: (text, row) => (
+        <CellWrapper>{row.name ? getImageLang(row.name) : null}</CellWrapper>
+      ),
     },
     {
       title: t('environment.Version'),
@@ -178,7 +199,7 @@ export default function ImageList({ style }: { style?: React.CSSProperties }) {
           : 0;
       },
       render: (text, row) => (
-        <span>{getBaseVersion(getImageFullName(row) || '')}</span>
+        <CellWrapper>{getBaseVersion(getImageFullName(row) || '')}</CellWrapper>
       ),
     },
     {
@@ -195,13 +216,15 @@ export default function ImageList({ style }: { style?: React.CSSProperties }) {
         if (baseimageB === '') return 1;
         return baseimageA.localeCompare(baseimageB);
       },
-      render: (text, row) => {
-        if (!row?.tag || !row?.name) return null;
-        const baseImage = getBaseImages(row?.tag, row?.name);
-        return baseImage.map((baseImage) => (
-          <Tag color="green">{baseImage}</Tag>
-        ));
-      },
+      render: (text, row) => (
+        <CellWrapper>
+          {row?.tag && row?.name
+            ? getBaseImages(row.tag, row.name).map((baseImage) => (
+                <Tag color="green">{baseImage}</Tag>
+              ))
+            : null}
+        </CellWrapper>
+      ),
     },
     {
       title: t('environment.Constraint'),
@@ -227,13 +250,16 @@ export default function ImageList({ style }: { style?: React.CSSProperties }) {
         if (requirementB === '') return 1;
         return requirementA.localeCompare(requirementB);
       },
-      render: (text, row) =>
-        row?.tag ? (
-          <ConstraintTags
-            tag={row?.tag}
-            labels={row?.labels as { key: string; value: string }[]}
-          />
-        ) : null,
+      render: (text, row) => (
+        <CellWrapper>
+          {row?.tag ? (
+            <ConstraintTags
+              tag={row?.tag}
+              labels={row?.labels as { key: string; value: string }[]}
+            />
+          ) : null}
+        </CellWrapper>
+      ),
     },
     {
       title: t('environment.Digest'),
@@ -241,6 +267,11 @@ export default function ImageList({ style }: { style?: React.CSSProperties }) {
       key: 'digest',
       sorter: (a, b) =>
         a?.digest && b?.digest ? a.digest.localeCompare(b.digest) : 0,
+      render: (text, row) => (
+        <CellWrapper>
+          <Typography.Text ellipsis> {row.digest}</Typography.Text>
+        </CellWrapper>
+      ),
     },
     {
       title: t('environment.ResourceLimit'),
@@ -260,38 +291,36 @@ export default function ImageList({ style }: { style?: React.CSSProperties }) {
       key: 'control',
       dataIndex: 'control',
       fixed: 'right',
-      render: (text, row) => {
-        return (
-          <>
-            <Flex direction="row" align="stretch" justify="center" gap="xxs">
-              <Button
-                type="text"
-                icon={
-                  <SettingOutlined
-                    style={{
-                      color: token.colorInfo,
-                    }}
-                  />
-                }
-                onClick={() => setManagingResourceLimit(row)}
-              />
-              <Button
-                type="text"
-                icon={
-                  <AppstoreOutlined
-                    style={{
-                      color: token.colorInfo,
-                    }}
-                  />
-                }
-                onClick={() => {
-                  setManagingApp(row);
-                }}
-              />
-            </Flex>
-          </>
-        );
-      },
+      render: (text, row) => (
+        <CellWrapper>
+          <Flex direction="row" align="stretch" justify="center" gap="xxs">
+            <Button
+              type="text"
+              icon={
+                <SettingOutlined
+                  style={{
+                    color: token.colorInfo,
+                  }}
+                />
+              }
+              onClick={() => setManagingResourceLimit(row)}
+            />
+            <Button
+              type="text"
+              icon={
+                <AppstoreOutlined
+                  style={{
+                    color: token.colorInfo,
+                  }}
+                />
+              }
+              onClick={() => {
+                setManagingApp(row);
+              }}
+            />
+          </Flex>
+        </CellWrapper>
+      ),
     },
   ];
 
@@ -327,14 +356,21 @@ export default function ImageList({ style }: { style?: React.CSSProperties }) {
         <Table<EnvironmentImage>
           rowKey="id"
           scroll={{
-            x: 'max-content',
-            y: 'calc(100vh - (9.0625rem + 3rem + 4.5rem))',
+            x: 1600,
+            y: window.innerHeight - 145 - 56 - 54,
           }}
+          virtual
           pagination={false}
           dataSource={sortedImages}
           columns={columns}
           rowSelection={{
             type: 'checkbox',
+            renderCell: (checked, record, index, originNode) => (
+              <CellWrapper style={{ justifyContent: 'center' }}>
+                {originNode}
+              </CellWrapper>
+            ),
+            columnWidth: 48,
             onChange: (_, selectedRows: EnvironmentImage[]) => {
               setSelectedRows(selectedRows);
             },
@@ -373,4 +409,6 @@ export default function ImageList({ style }: { style?: React.CSSProperties }) {
       />
     </>
   );
-}
+};
+
+export default ImageList;

@@ -1,5 +1,6 @@
 import ContainerRegistryList from '../components/ContainerRegistryList';
 import Flex from '../components/Flex';
+import FlexActivityIndicator from '../components/FlexActivityIndicator';
 import ImageList from '../components/ImageList';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { theme } from 'antd';
@@ -49,18 +50,18 @@ const EnvironmentPage = () => {
         },
       }}
     >
-      <Flex
-        style={{
-          display: 'block',
-        }}
-      >
-        {/* @ts-ignore */}
-        {curTabKey === 'image' ? (
-          <Suspense>
-            <ImageList />
-          </Suspense>
-        ) : null}
-      </Flex>
+      {curTabKey === 'image' ? (
+        <Suspense
+          fallback={
+            <FlexActivityIndicator
+              style={{ height: 'calc(100vh - 145px)' }}
+              spinSize="large"
+            />
+          }
+        >
+          <ImageList />
+        </Suspense>
+      ) : null}
       <Flex
         style={{
           display: curTabKey === 'preset' ? 'block' : 'none',

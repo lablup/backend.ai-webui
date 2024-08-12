@@ -13,12 +13,12 @@ interface ImageInstallModalInterface extends BAIModalProps {
   selectedRows: EnvironmentImage[];
   setInstallingImages: Dispatch<SetStateAction<string[]>>;
 }
-export default function ImageInstallModal({
+const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
   onRequestClose,
   selectedRows,
   setInstallingImages,
   ...modalProps
-}: ImageInstallModalInterface) {
+}) => {
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
   const { upsertNotification } = useSetBAINotification();
@@ -169,4 +169,5 @@ export default function ImageInstallModal({
       </Flex>
     </BAIModal>
   );
-}
+};
+export default ImageInstallModal;
