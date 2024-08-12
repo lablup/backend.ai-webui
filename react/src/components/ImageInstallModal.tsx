@@ -38,7 +38,7 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
 
   const handleClick = () => {
     onRequestClose();
-    imagesToInstall.forEach(async (image) => {
+    const installPromises = imagesToInstall.map(async (image) => {
       const imageName = image?.registry + '/' + image?.name + ':' + image?.tag;
       let isGPURequired = false;
       const imageResource = {} as { [key: string]: any };
@@ -108,35 +108,37 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
       //@ts-ignore
       const indicator = await globalThis.lablupIndicator.start('indeterminate');
       indicator.set(10, t('import.Downloading'));
-      baiClient.image
-        .install(imageName, image?.architecture, imageResource)
-        .then(() => {
-          indicator.end(1000);
-        })
-        .catch((error: any) => {
-          setInstallingImages(
-            imagesToInstall
-              .map((item) => item?.id)
-              .filter(
-                (id): id is string =>
-                  id !== null && id !== undefined && id !== image?.id,
-              ),
-          );
-          // @ts-ignore
-          globalThis.lablupNotification.text = painKiller.relieve(error.title);
-          // @ts-ignore
-          globalThis.lablupNotification.detail = error.message;
-          // @ts-ignore
-          globalThis.lablupNotification.show(true, error);
-          indicator.set(100, t('environment.DescProblemOccurred'));
-          indicator.end(1000);
-        });
+      try {
+        await baiClient.image.install(
+          imageName,
+          image?.architecture,
+          imageResource,
+        );
+        indicator.end(1000);
+        return image?.id;
+      } catch (error) {
+        // @ts-ignore
+        globalThis.lablupNotification.text = painKiller.relieve(error.title);
+        // @ts-ignore
+        globalThis.lablupNotification.detail = error.message;
+        // @ts-ignore
+        globalThis.lablupNotification.show(true, error);
+        indicator.set(100, t('environment.DescProblemOccurred'));
+        indicator.end(1000);
+        return null;
+      }
     });
-    setInstallingImages(
-      imagesToInstall
-        .map((item) => item?.id)
-        .filter((id): id is string => id !== null && id !== undefined),
-    );
+
+    Promise.allSettled(installPromises).then((results) => {
+      const installedImages = results
+        .filter(
+          (result): result is PromiseFulfilledResult<string> =>
+            result.status === 'fulfilled' && result.value !== null,
+        )
+        .map((result) => result.value);
+
+      setInstallingImages(installedImages);
+    });
   };
 
   return (
