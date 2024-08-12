@@ -4,61 +4,37 @@ import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import { EnvironmentImage } from './ImageList';
-import { App, List } from 'antd';
-import _ from 'lodash';
-import { Dispatch, Key, SetStateAction } from 'react';
+import { List } from 'antd';
+import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface ImageInstallModalInterface extends BAIModalProps {
-  open: boolean;
   onRequestClose: () => void;
-  selectedRowKeys: Key[];
-  images: EnvironmentImage[];
+  selectedRows: EnvironmentImage[];
   setInstallingImages: Dispatch<SetStateAction<string[]>>;
-  setSelectedRowKeys: Dispatch<SetStateAction<Key[]>>;
 }
 export default function ImageInstallModal({
-  open,
   onRequestClose,
-  selectedRowKeys,
-  images,
+  selectedRows,
   setInstallingImages,
-  setSelectedRowKeys,
+  ...modalProps
 }: ImageInstallModalInterface) {
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  const { message } = App.useApp();
   const { upsertNotification } = useSetBAINotification();
   const painKiller = usePainKiller();
-
-  if (!open) return null;
-
-  if (selectedRowKeys.length === 0) {
-    message.warning(t('environment.NoImagesAreSelected'));
-    onRequestClose();
-    return null;
-  }
+  if (!modalProps.open) return null;
 
   const mapImages = () => {
-    const imagesMappedToid = _.keyBy(images, 'id');
     let hasInstalledImage = false;
-
-    const imagesToInstall = selectedRowKeys
-      .map((id) => imagesMappedToid[_.toString(id)])
-      .filter((image) => {
-        if (image?.installed && !hasInstalledImage) hasInstalledImage = true;
-        return !image?.installed;
-      });
-
-    return { hasInstalledImage, imagesToInstall };
+    const imagesToInstall = selectedRows.filter((image) => {
+      if (image.installed) hasInstalledImage = true;
+      return !image.installed;
+    });
+    return { imagesToInstall, hasInstalledImage };
   };
-  const { hasInstalledImage, imagesToInstall } = mapImages();
 
-  if (imagesToInstall.length === 0) {
-    message.warning(t('environment.AlreadyInstalledImage'));
-    onRequestClose();
-    return null;
-  }
+  const { imagesToInstall, hasInstalledImage } = mapImages();
 
   const handleClick = () => {
     onRequestClose();
@@ -161,13 +137,12 @@ export default function ImageInstallModal({
         .map((item) => item?.id)
         .filter((id): id is string => id !== null && id !== undefined),
     );
-    setSelectedRowKeys([]);
   };
 
   return (
     <BAIModal
+      {...modalProps}
       destroyOnClose
-      open={open}
       maskClosable={false}
       onCancel={() => onRequestClose()}
       title={t('dialog.title.LetsDouble-Check')}

@@ -15,22 +15,20 @@ import {
   SettingOutlined,
   VerticalAlignBottomOutlined,
 } from '@ant-design/icons';
-import { Button, Table, Tag, theme } from 'antd';
-import { AnyObject } from 'antd/es/_util/type';
+import { App, Button, Table, Tag, theme } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import { ColumnType } from 'antd/lib/table';
 import graphql from 'babel-plugin-relay/macro';
-import { Key, useMemo, useState, useTransition } from 'react';
+import { useMemo, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
 export type EnvironmentImage = NonNullable<
-  ImageListQuery$data['images']
->[number];
+  NonNullable<ImageListQuery$data['images']>[number]
+>;
 
 export default function ImageList({ style }: { style?: React.CSSProperties }) {
   const { t } = useTranslation();
-  const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
+  const [selectedRows, setSelectedRows] = useState<EnvironmentImage[]>([]);
   const [
     ,
     {
@@ -50,15 +48,7 @@ export default function ImageList({ style }: { style?: React.CSSProperties }) {
     useUpdatableState('initial-fetch');
   const [, startRefetchTransition] = useTransition();
   const [installingImages, setInstallingImages] = useState<string[]>([]);
-
-  const onSelectChange = (newSelectedRowKeys: Key[]) => {
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
-
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
+  const { message } = App.useApp();
 
   const sortBasedOnInstalled = (a: EnvironmentImage, b: EnvironmentImage) => {
     return a?.installed && !b?.installed
@@ -100,11 +90,17 @@ export default function ImageList({ style }: { style?: React.CSSProperties }) {
       fetchKey: environmentFetchKey,
     },
   );
+
   const sortedImages = useMemo(
     () =>
       images
-        ? ([...images].sort(sortBasedOnInstalled) as readonly AnyObject[])
-        : undefined,
+        ? [...images]
+            .filter(
+              (image): image is EnvironmentImage =>
+                image !== null && image !== undefined,
+            )
+            .sort(sortBasedOnInstalled)
+        : [],
     [images],
   );
   const columns: ColumnsType<EnvironmentImage> = [
@@ -253,8 +249,7 @@ export default function ImageList({ style }: { style?: React.CSSProperties }) {
       render: (text, row) =>
         row?.resource_limits?.map((resource_limit) => (
           <ResourceNumber
-            // @ts-ignore
-            type={resource_limit.key}
+            type={resource_limit?.key || ''}
             value={resource_limit?.min || '0'}
             max={resource_limit?.max || ''}
           />
@@ -299,6 +294,7 @@ export default function ImageList({ style }: { style?: React.CSSProperties }) {
       },
     },
   ];
+
   return (
     <>
       <Flex
@@ -314,13 +310,21 @@ export default function ImageList({ style }: { style?: React.CSSProperties }) {
             icon={<VerticalAlignBottomOutlined />}
             style={{ backgroundColor: token.colorPrimary, color: 'white' }}
             onClick={() => {
-              setIsOpenInstallModal(true);
+              if (selectedRows.length === 0) {
+                message.warning(t('environment.NoImagesAreSelected'));
+                return;
+              }
+              if (selectedRows.some((image) => !image.installed)) {
+                setIsOpenInstallModal(true);
+                return;
+              }
+              message.warning(t('environment.AlreadyInstalledImage'));
             }}
           >
             {t('environment.Install')}
           </Button>
         </Flex>
-        <Table
+        <Table<EnvironmentImage>
           rowKey="id"
           scroll={{
             x: 'max-content',
@@ -328,8 +332,13 @@ export default function ImageList({ style }: { style?: React.CSSProperties }) {
           }}
           pagination={false}
           dataSource={sortedImages}
-          columns={columns as ColumnType<AnyObject>[]}
-          rowSelection={rowSelection}
+          columns={columns}
+          rowSelection={{
+            type: 'checkbox',
+            onChange: (_, selectedRows: EnvironmentImage[]) => {
+              setSelectedRows(selectedRows);
+            },
+          }}
         />
       </Flex>
       <ManageImageResourceLimitModal
@@ -359,10 +368,8 @@ export default function ImageList({ style }: { style?: React.CSSProperties }) {
         onRequestClose={() => {
           setIsOpenInstallModal(false);
         }}
-        selectedRowKeys={selectedRowKeys}
-        images={images as EnvironmentImage[]}
         setInstallingImages={setInstallingImages}
-        setSelectedRowKeys={setSelectedRowKeys}
+        selectedRows={selectedRows}
       />
     </>
   );
