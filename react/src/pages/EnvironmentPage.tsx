@@ -55,7 +55,11 @@ const EnvironmentPage = () => {
         }}
       >
         {/* @ts-ignore */}
-        {curTabKey === 'image' ? <ImageList /> : null}
+        {curTabKey === 'image' ? (
+          <Suspense>
+            <ImageList />
+          </Suspense>
+        ) : null}
       </Flex>
       <Flex
         style={{
