@@ -210,6 +210,23 @@ const ResourceAllocationFormItems: React.FC<
     currentImageAcceleratorLimits,
   ]);
 
+  const ensureValidAcceleratorType = useEventNotStable(() => {
+    const currentAcceleratorType = form.getFieldValue(
+      form.getFieldValue(['resource', 'acceleratorType']),
+    );
+    // If the current accelerator type is not available,
+    // change accelerator type to the first supported accelerator
+    const nextAcceleratorType: string = acceleratorSlots[currentAcceleratorType]
+      ? currentAcceleratorType
+      : _.keys(acceleratorSlots)[0];
+
+    form.setFieldsValue({
+      resource: {
+        acceleratorType: nextAcceleratorType || currentAcceleratorType,
+      },
+    });
+  });
+
   const updateAllocationPresetBasedOnResourceGroup = useEventNotStable(() => {
     if (
       _.includes(
@@ -217,6 +234,7 @@ const ResourceAllocationFormItems: React.FC<
         form.getFieldValue('allocationPreset'),
       )
     ) {
+      ensureValidAcceleratorType();
     } else {
       if (
         allocatablePresetNames.includes(form.getFieldValue('allocationPreset'))
@@ -229,6 +247,8 @@ const ResourceAllocationFormItems: React.FC<
         });
         updateResourceFieldsBasedOnPreset(autoSelectedPreset);
       } else {
+        // if the current preset is not available in the current resource group, set to custom
+        ensureValidAcceleratorType();
         form.setFieldsValue({
           allocationPreset: 'custom',
         });
