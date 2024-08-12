@@ -1,5 +1,8 @@
+import { formatToUUID } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
+import { LegacyFolderExplorerVFolderNameTitleQuery } from './__generated__/LegacyFolderExplorerVFolderNameTitleQuery.graphql';
 import {
   DeleteOutlined,
   FileAddOutlined,
@@ -11,14 +14,16 @@ import {
   Dropdown,
   Grid,
   Image,
+  Skeleton,
   Tooltip,
   Typography,
   theme,
 } from 'antd';
 import { createStyles } from 'antd-style';
-import { useEffect, useRef, useState } from 'react';
+import graphql from 'babel-plugin-relay/macro';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useLazyLoadQuery } from 'react-relay';
 
 const useStyles = createStyles(({ token, css }) => ({
   baiModalHeader: css`
@@ -30,13 +35,11 @@ const useStyles = createStyles(({ token, css }) => ({
 }));
 
 interface LegacyFolderExplorerProps extends BAIModalProps {
-  vfolderName: string;
   vfolderID: string;
   onRequestClose: () => void;
 }
 
 const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
-  vfolderName,
   vfolderID,
   onRequestClose,
   ...modalProps
@@ -50,8 +53,8 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
   // TODO: Events are sent and received as normal,
   // but the Lit Element is not rendered and the values inside are not available but ref is available.
   const folderExplorerRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
-
+  // ensure the client is connected
+  useSuspendedBackendaiClient();
   useEffect(() => {
     const handleConnected = (e: any) => {
       setIsWritable(e.detail || false);
@@ -85,15 +88,9 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
       title={
         <Flex justify="between" gap={token.marginMD} style={{ width: '100%' }}>
           <Flex gap={token.marginMD} style={{ flex: 1 }}>
-            <Tooltip title={vfolderName}>
-              <Typography.Title
-                level={3}
-                style={{ marginTop: token.marginSM }}
-                ellipsis
-              >
-                {vfolderName}
-              </Typography.Title>
-            </Tooltip>
+            <Suspense fallback={<Skeleton.Input active />}>
+              <VFolderNameTitle vfolderID={vfolderID} />
+            </Suspense>
           </Flex>
           <Flex justify="end" gap={token.marginSM} style={{ flex: lg ? 2 : 1 }}>
             <Button
@@ -181,17 +178,10 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
       }
       onCancel={() => {
         onRequestClose();
-        const queryParams = new URLSearchParams(window.location.search).get(
-          'tab',
-        );
-        if (queryParams) {
-          navigate(`?tab=${queryParams}`);
-        } else {
-          navigate('/data');
-        }
       }}
       {...modalProps}
     >
+      {/* <script type="module" src="./dist/components/backend-ai-folder-explorer.js"></script> */}
       {/* @ts-ignore */}
       <backend-ai-folder-explorer
         ref={folderExplorerRef}
@@ -200,6 +190,51 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
         style={{ width: '100%' }}
       />
     </BAIModal>
+  );
+};
+
+const VFolderNameTitle: React.FC<{
+  vfolderID: string;
+}> = ({ vfolderID }) => {
+  const { token } = theme.useToken();
+  const { vfolder, vfolder_node } =
+    useLazyLoadQuery<LegacyFolderExplorerVFolderNameTitleQuery>(
+      graphql`
+        query LegacyFolderExplorerVFolderNameTitleQuery(
+          $vfolderID: String!
+          $vfolderUUID: String!
+        ) {
+          # TODO: version compatibility
+          vfolder(id: $vfolderID) @deprecatedSince(version: "24.03.4") {
+            id
+            name
+          }
+          vfolder_node(id: $vfolderUUID) @since(version: "24.03.4") {
+            id
+            name
+          }
+        }
+      `,
+      {
+        vfolderID,
+        vfolderUUID: btoa('VirtualFolderNode:' + formatToUUID(vfolderID)),
+      },
+      {
+        fetchPolicy: 'store-and-network',
+      },
+    );
+
+  const vfolderName = vfolder?.name || vfolder_node?.name || '';
+  return (
+    <Tooltip title={vfolderName}>
+      <Typography.Title
+        level={3}
+        style={{ marginTop: token.marginSM }}
+        ellipsis
+      >
+        {vfolderName}
+      </Typography.Title>
+    </Tooltip>
   );
 };
 

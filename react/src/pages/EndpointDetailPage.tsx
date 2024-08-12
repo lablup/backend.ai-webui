@@ -3,6 +3,7 @@ import EndpointOwnerInfo from '../components/EndpointOwnerInfo';
 import EndpointStatusTag from '../components/EndpointStatusTag';
 import EndpointTokenGenerationModal from '../components/EndpointTokenGenerationModal';
 import Flex from '../components/Flex';
+import { useFolderExplorerOpener } from '../components/FolderExplorerOpener';
 import ImageMetaIcon from '../components/ImageMetaIcon';
 import InferenceSessionErrorModal from '../components/InferenceSessionErrorModal';
 import ResourceNumber from '../components/ResourceNumber';
@@ -114,6 +115,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   });
   const { message } = App.useApp();
   const webuiNavigate = useWebUINavigate();
+  const { open } = useFolderExplorerOpener();
   const { endpoint, endpoint_token_list } =
     useLazyLoadQuery<EndpointDetailPageQuery>(
       graphql`
@@ -383,10 +385,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               <Flex direction="row" gap={'xxs'} key={vfolder?.row_id}>
                 <Typography.Link
                   onClick={() => {
-                    webuiNavigate({
-                      pathname: '/data',
-                      search: `?folder=${vfolder?.row_id}`,
-                    });
+                    vfolder?.row_id && open(vfolder?.row_id);
                   }}
                 >
                   <FolderOutlined /> {vfolder?.name}

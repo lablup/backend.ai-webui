@@ -1,6 +1,7 @@
 import '../lib/backend.ai-client-es6';
 import './backend-ai-app-launcher';
 import './backend-ai-dialog';
+import './backend-ai-folder-explorer';
 import './backend-ai-indicator-pool';
 import './backend-ai-login';
 import './backend-ai-resource-broker';
