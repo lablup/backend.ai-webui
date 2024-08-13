@@ -1653,7 +1653,7 @@
   },
   "propertyFilter": {
     "placeHolder": "Поиск",
-    "ResetFilter": "СброситьФильтр"
+    "ResetFilter": "Сбросить фильтры"
   },
   "interactiveLogin": {
     "InteractiveLoginWithBackendAI": "Войдите в систему под своей учетной записью Backend.AI",

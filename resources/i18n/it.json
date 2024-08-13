@@ -1653,7 +1653,7 @@
   },
   "propertyFilter": {
     "placeHolder": "Ricerca",
-    "ResetFilter": "Reimposta filtro"
+    "ResetFilter": "Reimposta i filtri"
   },
   "interactiveLogin": {
     "InteractiveLoginWithBackendAI": "Accedere con il proprio account Backend.AI",

@@ -1653,7 +1653,7 @@
   },
   "propertyFilter": {
     "placeHolder": "Αναζήτηση",
-    "ResetFilter": "Επαναφορά φίλτρου"
+    "ResetFilter": "Επαναφορά φίλτρων"
   },
   "interactiveLogin": {
     "InteractiveLoginWithBackendAI": "Συνδεθείτε με το λογαριασμό σας Backend.AI",

@@ -1654,7 +1654,7 @@
   },
   "propertyFilter": {
     "placeHolder": "Хайх",
-    "ResetFilter": "Reset Filter"
+    "ResetFilter": "Шүүлтүүрийг дахин тохируулах"
   },
   "interactiveLogin": {
     "InteractiveLoginWithBackendAI": "Backend.AI бүртгэлээрээ нэвтэрнэ үү",

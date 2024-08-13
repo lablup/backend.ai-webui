@@ -1652,7 +1652,7 @@
   },
   "propertyFilter": {
     "placeHolder": "Etsi",
-    "ResetFilter": "ResetFilter"
+    "ResetFilter": "Nollaa suodattimet"
   },
   "interactiveLogin": {
     "InteractiveLoginWithBackendAI": "Kirjaudu sisään Backend.AI-tililläsi",

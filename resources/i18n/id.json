@@ -1653,7 +1653,7 @@
   },
   "propertyFilter": {
     "placeHolder": "Pencarian",
-    "ResetFilter": "Filter Ulang"
+    "ResetFilter": "Setel ulang filter"
   },
   "interactiveLogin": {
     "InteractiveLoginWithBackendAI": "Login dengan akun Backend.AI Anda",

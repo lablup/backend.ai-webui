@@ -1653,7 +1653,7 @@
   },
   "propertyFilter": {
     "placeHolder": "検索",
-    "ResetFilter": "リセットフィルター"
+    "ResetFilter": "フィルターをリセットする"
   },
   "interactiveLogin": {
     "InteractiveLoginWithBackendAI": "Backend.AIのアカウントでログイン",

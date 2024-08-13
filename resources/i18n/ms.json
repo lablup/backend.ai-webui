@@ -1653,7 +1653,7 @@
   },
   "propertyFilter": {
     "placeHolder": "Cari",
-    "ResetFilter": "ResetFilter"
+    "ResetFilter": "Tetapkan semula penapis"
   },
   "interactiveLogin": {
     "InteractiveLoginWithBackendAI": "Log masuk dengan akaun Backend.AI anda",

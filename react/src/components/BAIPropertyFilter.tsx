@@ -223,9 +223,8 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
             },
           )}
           placeholder={t('propertyFilter.placeHolder')}
-          allowClear
         >
-          <Input.Search onSearch={onSearch} />
+          <Input.Search onSearch={onSearch} allowClear />
         </AutoComplete>
       </Space.Compact>
       {list.length > 0 && (
