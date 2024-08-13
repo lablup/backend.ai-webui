@@ -2004,7 +2004,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             <span>${_t('session.VSCodeRemotePasswordTitle')}:</span>
             <backend-ai-react-copyable-code-text
               value="${this.vscodeDesktopPassword}"
-              style="width:max-content;margin-bottom:10px;"
+              style="max-width:420px;margin-bottom:10px;"
             ></backend-ai-react-copyable-code-text>
             <div class="horizontal wrap layout vscode-connection-example">
               <span>${_t('session.VSCodeRemoteNoticeSSHConfig')}</span>
