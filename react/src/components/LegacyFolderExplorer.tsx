@@ -187,7 +187,6 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
         ref={folderExplorerRef}
         active
         vfolderID={vfolderID}
-        style={{ width: '100%' }}
       />
     </BAIModal>
   );

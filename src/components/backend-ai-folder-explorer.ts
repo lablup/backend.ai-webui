@@ -1792,8 +1792,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
             .renderer="${this._boundSizeRenderer}"
           ></vaadin-grid-sort-column>
           <vaadin-grid-column
-            resizable
-            auto-width
+            width="130px"
             header="${_t('data.explorer.Actions')}"
             .renderer="${this._boundControlFileListRenderer}"
           ></vaadin-grid-column>
