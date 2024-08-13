@@ -67,8 +67,7 @@ describe('graphql-transformer', () => {
       }
     }
   }
-}
-`);
+}`);
   });
 
   it('@sinceMultiple(@versions:) should transform the GraphQL query correctly', () => {
@@ -89,8 +88,7 @@ describe('graphql-transformer', () => {
       oldQuery (name:"test") @sinceMultiple(versions: $versions2) {
         myValue
       }
-    }
-  `,
+    }`,
       {
         versions1: ['23.09.9'],
         versions2: ['23.09.9', '24.03.1'],
@@ -107,11 +105,10 @@ describe('graphql-transformer', () => {
   testQuery(props: {name: "asdf", age: 32}) {
     field31
   }
-}
-`);
+}`);
   });
 
-  it.only('@deprecatedSinceMultiple(@versions:) should transform the GraphQL query correctly', () => {
+  it('@deprecatedSinceMultiple(@versions:) should transform the GraphQL query correctly', () => {
     const result = manipulateGraphQLQueryWithClientDirectives(
       `
     query MyQuery ($versions1:[String!]!, $versions2:[String!]!) {
@@ -140,7 +137,6 @@ describe('graphql-transformer', () => {
         }
       },
     );
-    console.log(JSON.stringify(result));
     expect(result).toBe(
       'query MyQuery {\n  testQuery(props: {name: "asdf", age: 32}) {\n    deprecatedField3\n  }\n}',
     );
