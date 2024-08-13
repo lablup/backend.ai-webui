@@ -912,6 +912,26 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               </div>
             `
           : html``}
+        ${rowData.item.gaudi2_device_limit_min
+          ? html`
+              <div class="layout horizontal center flex">
+                <div class="layout horizontal configuration">
+                  <img
+                    class="indicator-icon fg green"
+                    src="/resources/icons/gaudi.svg"
+                  />
+                  <span>${rowData.item.gaudi2_device_limit_min}</span>
+                  ~
+                  <span>
+                    ${this._markIfUnlimited(
+                      rowData.item.gaudi2_device_limit_max,
+                    )}
+                  </span>
+                  <span class="indicator">Gaudi 2</span>
+                </div>
+              </div>
+            `
+          : html``}
         ${rowData.item.atom_plus_device_limit_min
           ? html`
               <div class="layout horizontal center flex">
@@ -928,26 +948,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                     )}
                   </span>
                   <span class="indicator">ATOM+</span>
-                </div>
-              </div>
-            `
-          : html``}
-        ${rowData.item.gaudi2_device_limit_min
-          ? html`
-              <div class="layout horizontal center flex">
-                <div class="layout horizontal configuration">
-                  <img
-                    class="indicator-icon fg green"
-                    src="/resources/icons/rebel.svg"
-                  />
-                  <span>${rowData.item.gaudi2_device_limit_min}</span>
-                  ~
-                  <span>
-                    ${this._markIfUnlimited(
-                      rowData.item.gaudi2_device_limit_max,
-                    )}
-                  </span>
-                  <span class="indicator">Gaudi 2</span>
                 </div>
               </div>
             `

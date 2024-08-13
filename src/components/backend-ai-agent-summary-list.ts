@@ -108,8 +108,11 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
         }
 
         img.indicator-icon {
-          width: 16px !important;
-          height: 16px !important;
+          max-width: 16px !important;
+          max-height: 16px !important;
+          width: auto;
+          height: auto;
+          align-self: center;
         }
 
         lablup-progress-bar {
@@ -755,7 +758,7 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
                   <div class="layout horizontal start resource-indicator">
                     <img
                       class="indicator-icon fg green"
-                      src="/resources/icons/npu_generic.svg"
+                      src="/resources/icons/gaudi.svg"
                     />
                     <span class="monospace" style="padding-left:5px;">
                       ${rowData.item.used_gaudi2_slots}/${rowData.item

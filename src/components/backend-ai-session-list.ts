@@ -305,8 +305,11 @@ export default class BackendAISessionList extends BackendAIPage {
         }
 
         img.indicator-icon {
-          width: 16px;
-          height: 16px;
+          max-width: 16px !important;
+          max-height: 16px !important;
+          width: auto;
+          height: auto;
+          align-self: center;
           padding-right: 5px;
         }
 
@@ -3515,6 +3518,16 @@ ${rowData.item[this.sessionNameField]}</pre
                     <span class="indicator">ATOM</span>
                   `
                 : html``}
+              ${rowData.item.gaudi2_slot
+                ? html`
+                    <img
+                      class="indicator-icon fg green"
+                      src="/resources/icons/gaudi.svg"
+                    />
+                    <span>${rowData.item.gaudi2_slot}</span>
+                    <span class="indicator">Gaudi 2</span>
+                  `
+                : html``}
               ${rowData.item.atom_plus_slot
                 ? html`
                     <img
@@ -3523,16 +3536,6 @@ ${rowData.item[this.sessionNameField]}</pre
                     />
                     <span>${rowData.item.atom_plus_slot}</span>
                     <span class="indicator">ATOM+</span>
-                  `
-                : html``}
-              ${rowData.item.gaudi2_slot
-                ? html`
-                    <img
-                      class="indicator-icon fg green"
-                      src="/resources/icons/rebel.svg"
-                    />
-                    <span>${rowData.item.gaudi2_slot}</span>
-                    <span class="indicator">Gaudi 2</span>
                   `
                 : html``}
               ${rowData.item.warboy_slot
