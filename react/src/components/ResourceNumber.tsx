@@ -129,7 +129,7 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
     'tpu.device': [<MWCIconWrap size={size}>view_module</MWCIconWrap>, 'TPU'],
     'ipu.device': [<MWCIconWrap size={size}>view_module</MWCIconWrap>, 'IPU'],
     'atom.device': ['/resources/icons/rebel.svg', 'ATOM'],
-    'atom-plus.device': ['/resources/icons/rebel.svg', 'ATOM'],
+    'atom-plus.device': ['/resources/icons/rebel.svg', 'ATOM+'],
     'warboy.device': ['/resources/icons/furiosa.svg', 'Warboy'],
     'hyperaccel-lpu.device': [
       '/resources/icons/npu_generic.svg',
