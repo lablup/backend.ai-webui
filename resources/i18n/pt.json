@@ -1145,8 +1145,8 @@
   "language": {
     "English": "English",
     "Korean": "한국어",
-    "Language": "Língua",
-    "OSDefault": "SO padrão",
+    "Language": "Language",
+    "OSDefault": "OS Default",
     "Russian": "русский",
     "French": "Français",
     "Mongolian": "Монгол",
@@ -1163,6 +1163,7 @@
     "Portuguese": "Português",
     "Spanish": "Español",
     "Turkish": "Türkçe",
+    "Thai": "ภาษาไทย",
     "Vietnamese": "Tiếng Việt"
   },
   "settings": {
