@@ -1,8 +1,5 @@
-import {
-  exportCSVWithFormattingRules,
-  localeCompare,
-  numberSorterWithInfinityValue,
-} from '../helper';
+import { localeCompare, numberSorterWithInfinityValue } from '../helper';
+import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import Flex from './Flex';
 import KeypairResourcePolicySettingModal, {
@@ -302,6 +299,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
 
     exportCSVWithFormattingRules(
       responseData as KeypairResourcePolicies[],
+      'keypair_resource_policies',
       {
         total_resource_slots: (text) =>
           _.isEmpty(text) ? '-' : JSON.stringify(text),
@@ -314,7 +312,6 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         allowed_vfolder_hosts: (text) =>
           _.isEmpty(text) ? '-' : _.keys(JSON.parse(text)).join(', '),
       },
-      'keypair_resource_policies',
     );
   };
 

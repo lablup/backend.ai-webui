@@ -1,10 +1,10 @@
 import {
   bytesToGB,
-  exportCSVWithFormattingRules,
   filterEmptyItem,
   localeCompare,
   numberSorterWithInfinityValue,
 } from '../helper';
+import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import Flex from './Flex';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
@@ -268,11 +268,11 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
 
     exportCSVWithFormattingRules(
       responseData as UserResourcePolicies[],
+      'user-resource-policies',
       {
         max_vfolder_count: (text) => (_.toNumber(text) === 0 ? '-' : text),
         max_quota_scope_size: (text) => (text === -1 ? '-' : bytesToGB(text)),
       },
-      'user-resource-policies',
     );
   };
 
