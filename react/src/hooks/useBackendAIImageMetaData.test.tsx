@@ -36,8 +36,8 @@ describe('useBackendAIImageMetaData', () => {
       expect(result.current).toBeDefined();
     });
 
-    const [, { getImageLang }] = result.current;
-    const lang = getImageLang('testing/ngc-pytorch');
+    const [, { getLang }] = result.current;
+    const lang = getLang('testing/ngc-pytorch');
     expect(lang).toBe('PyTorch');
   });
 
@@ -46,8 +46,8 @@ describe('useBackendAIImageMetaData', () => {
       expect(result.current).toBeDefined();
     });
 
-    const [, { getImageLang }] = result.current;
-    const lang = getImageLang('stable/r-base');
+    const [, { getLang }] = result.current;
+    const lang = getLang('stable/r-base');
     expect(lang).toBe('R');
   });
 

@@ -84,10 +84,10 @@ interface LangTagsProps extends TagProps {
 }
 export const LangTags: React.FC<LangTagsProps> = ({ image, ...props }) => {
   image = image || '';
-  const [, { getImageLang }] = useBackendAIImageMetaData();
+  const [, { getImageLang, tagAlias }] = useBackendAIImageMetaData();
   return (
     <Tag color="green" {...props}>
-      {getImageLang(image)}
+      {tagAlias(getImageLang(image))}
     </Tag>
   );
 };

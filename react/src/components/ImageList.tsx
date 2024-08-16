@@ -53,13 +53,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   const [selectedRows, setSelectedRows] = useState<EnvironmentImage[]>([]);
   const [
     ,
-    {
-      getNamespace,
-      getBaseVersion,
-      getImageLang,
-      getBaseImages,
-      getConstraints,
-    },
+    { getNamespace, getBaseVersion, getLang, getBaseImages, getConstraints },
   ] = useBackendAIImageMetaData();
   const { token } = theme.useToken();
   const [managingApp, setManagingApp] = useState<EnvironmentImage | null>(null);
@@ -179,12 +173,12 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
       key: 'lang',
       dataIndex: 'lang',
       sorter: (a, b) => {
-        const langA = a?.name ? getImageLang(a?.name) : '';
-        const langB = b?.name ? getImageLang(b?.name) : '';
+        const langA = a?.name ? getLang(a?.name) : '';
+        const langB = b?.name ? getLang(b?.name) : '';
         return langA && langB ? langA.localeCompare(langB) : 0;
       },
       render: (text, row) => (
-        <CellWrapper>{row.name ? getImageLang(row.name) : null}</CellWrapper>
+        <CellWrapper>{row.name ? getLang(row.name) : null}</CellWrapper>
       ),
     },
     {
@@ -218,11 +212,13 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
       },
       render: (text, row) => (
         <CellWrapper>
-          {row?.tag && row?.name
-            ? getBaseImages(row.tag, row.name).map((baseImage) => (
-                <Tag color="green">{baseImage}</Tag>
-              ))
-            : null}
+          <Flex direction="column" align="start">
+            {row?.tag && row?.name
+              ? getBaseImages(row.tag, row.name).map((baseImage) => (
+                  <Tag color="green">{baseImage}</Tag>
+                ))
+              : null}
+          </Flex>
         </CellWrapper>
       ),
     },
