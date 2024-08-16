@@ -101,6 +101,7 @@ const UserPreferencesPage = () => {
               { label: t('language.Portuguese'), value: 'pt' },
               { label: t('language.Russian'), value: 'ru' },
               { label: t('language.Spanish'), value: 'es' },
+              { label: t('language.Thai'), value: 'th' },
               { label: t('language.Turkish'), value: 'tr' },
               { label: t('language.Vietnamese'), value: 'vi' },
             ],

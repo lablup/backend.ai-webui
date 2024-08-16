@@ -132,6 +132,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     'pt',
     'pt-BR',
     'ru',
+    'th',
     'tr',
     'vi',
     'zh-CN',
