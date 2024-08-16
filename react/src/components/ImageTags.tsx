@@ -95,10 +95,12 @@ export const LangTags: React.FC<LangTagsProps> = ({ image, ...props }) => {
 interface ConstraintTagsProps extends TagProps {
   tag: string;
   labels: { key: string; value: string }[];
+  wrapper?: (constraint: unknown) => React.ReactNode;
 }
 export const ConstraintTags: React.FC<ConstraintTagsProps> = ({
   tag,
   labels,
+  wrapper,
   ...props
 }) => {
   labels = labels || [];
@@ -108,7 +110,7 @@ export const ConstraintTags: React.FC<ConstraintTagsProps> = ({
     <Flex direction="column" align="start">
       {constraints[0] ? (
         <Tag color="blue" {...props}>
-          {constraints[0]}
+          {wrapper ? wrapper(constraints[0]) : constraints[0]}
         </Tag>
       ) : null}
       {constraints[1] ? (
@@ -124,6 +126,7 @@ export const ConstraintTags: React.FC<ConstraintTagsProps> = ({
               color: 'cyan',
             },
           ]}
+          wrapper={wrapper}
           {...props}
         />
       ) : null}
