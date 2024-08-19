@@ -147,17 +147,12 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
       destroyOnClose
       maskClosable={false}
       onCancel={() => onRequestClose()}
-      title={t('dialog.title.LetsDouble-Check')}
+      title={t('environment.CheckImageInstallation')}
       okText={t('environment.Install')}
       onOk={handleClick}
     >
       <Flex direction="column" gap="md" align="start">
-        <Flex>
-          {t('environment.DescDownloadImage')}
-          {hasInstalledImage
-            ? t('environment.ExcludesImagesThatAreAlreadyInstalled')
-            : null}
-        </Flex>
+        {hasInstalledImage ? t('environment.InstalledImagesAreExcluded') : null}
         <Flex direction="column" align="start">
           <List
             size="small"
@@ -168,6 +163,8 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
             renderItem={(item) => <List.Item>{item}</List.Item>}
           />
         </Flex>
+        {t('environment.DescSignificantInstallTime')}
+        {t('dialog.ask.DoYouWantToProceed')}
       </Flex>
     </BAIModal>
   );

@@ -942,8 +942,7 @@
     "ResourceLimit": "Resource Limit",
     "DescDeleteAppInfo": "You are about to delete the app info: ",
     "DescDeleteImage": "You are about to delete the image(s): ",
-    "DescDownloadImage": "You are about to install the image(s): ",
-    "DescSignificantDownloadTime": "This process requires significant download time.",
+    "DescSignificantInstallTime": "This process requires significant install time.",
     "Install": "Install",
     "Delete": "Delete",
     "Installed": "installed",
@@ -974,7 +973,8 @@
     "ModifyImageResourceLimitReinstallRequired": "<p>If you modify an image that has already been installed, you will need to reinstall the image.</p><p>Modifications will not be applied until the image is reinstalled. \n</p>",
     "NoImagesAreSelected": "No images are selected",
     "AlreadyInstalledImage": "Already installed image",
-    "ExcludesImagesThatAreAlreadyInstalled": "Excludes images that are already installed"
+    "InstalledImagesAreExcluded": "Installed images are excluded." ,
+    "CheckImageInstallation": "Installing an image?"
   },
   "resourcePreset": {
     "ResourcePresets": "Resource Presets",

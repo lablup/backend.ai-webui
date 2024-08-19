@@ -18,24 +18,13 @@ import {
 import { App, Button, Table, Tag, theme, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
-import { Key, ReactNode, useMemo, useState, useTransition } from 'react';
+import { Key, useMemo, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
 export type EnvironmentImage = NonNullable<
   NonNullable<ImageListQuery$data['images']>[number]
 >;
-
-const CellWrapper = ({
-  children,
-  style,
-}: {
-  children: ReactNode;
-  style?: React.CSSProperties;
-}) => {
-  if (!children) return null;
-  return children;
-};
 
 const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   const { t } = useTranslation();
@@ -119,15 +108,12 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
       dataIndex: 'installed',
       key: 'installed',
       sorter: sortBasedOnInstalled,
-      render: (text, row) => (
-        <CellWrapper>
-          {row?.id && installingImages.includes(row.id) ? (
-            <Tag color="gold">{t('environment.Installing')}</Tag>
-          ) : row?.installed ? (
-            <Tag color="gold">{t('environment.Installed')}</Tag>
-          ) : null}
-        </CellWrapper>
-      ),
+      render: (text, row) =>
+        row?.id && installingImages.includes(row.id) ? (
+          <Tag color="gold">{t('environment.Installing')}</Tag>
+        ) : row?.installed ? (
+          <Tag color="gold">{t('environment.Installed')}</Tag>
+        ) : null,
     },
     {
       title: t('environment.Registry'),
@@ -135,7 +121,6 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
       key: 'registry',
       sorter: (a, b) =>
         a?.registry && b?.registry ? a.registry.localeCompare(b.registry) : 0,
-      render: (text, row) => <CellWrapper>{row.registry}</CellWrapper>,
     },
     {
       title: t('environment.Architecture'),
@@ -145,7 +130,6 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         a?.architecture && b?.architecture
           ? a.architecture.localeCompare(b.architecture)
           : 0,
-      render: (text, row) => <CellWrapper>{row.architecture}</CellWrapper>,
     },
     {
       title: t('environment.Namespace'),
@@ -159,7 +143,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           : 0;
       },
       render: (text, row) => (
-        <CellWrapper>{getNamespace(getImageFullName(row) || '')}</CellWrapper>
+        <span>{getNamespace(getImageFullName(row) || '')}</span>
       ),
     },
     {
@@ -171,9 +155,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         const langB = b?.name ? getLang(b?.name) : '';
         return langA && langB ? langA.localeCompare(langB) : 0;
       },
-      render: (text, row) => (
-        <CellWrapper>{row.name ? getLang(row.name) : null}</CellWrapper>
-      ),
+      render: (text, row) => <span>{row.name ? getLang(row.name) : null}</span>,
     },
     {
       title: t('environment.Version'),
@@ -187,7 +169,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           : 0;
       },
       render: (text, row) => (
-        <CellWrapper>{getBaseVersion(getImageFullName(row) || '')}</CellWrapper>
+        <span>{getBaseVersion(getImageFullName(row) || '')}</span>
       ),
     },
     {
@@ -205,15 +187,13 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         return baseimageA.localeCompare(baseimageB);
       },
       render: (text, row) => (
-        <CellWrapper>
-          <Flex direction="row" align="start">
-            {row?.tag && row?.name
-              ? getBaseImages(row.tag, row.name).map((baseImage) => (
-                  <Tag color="green">{baseImage}</Tag>
-                ))
-              : null}
-          </Flex>
-        </CellWrapper>
+        <Flex direction="row" align="start">
+          {row?.tag && row?.name
+            ? getBaseImages(row.tag, row.name).map((baseImage) => (
+                <Tag color="green">{baseImage}</Tag>
+              ))
+            : null}
+        </Flex>
       ),
     },
     {
@@ -240,16 +220,13 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         if (requirementB === '') return 1;
         return requirementA.localeCompare(requirementB);
       },
-      render: (text, row) => (
-        <CellWrapper>
-          {row?.tag ? (
-            <ConstraintTags
-              tag={row?.tag}
-              labels={row?.labels as { key: string; value: string }[]}
-            />
-          ) : null}
-        </CellWrapper>
-      ),
+      render: (text, row) =>
+        row?.tag ? (
+          <ConstraintTags
+            tag={row?.tag}
+            labels={row?.labels as { key: string; value: string }[]}
+          />
+        ) : null,
     },
     {
       title: t('environment.Digest'),
@@ -280,43 +257,41 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
       dataIndex: 'control',
       fixed: 'right',
       render: (text, row) => (
-        <CellWrapper>
-          <Flex
-            direction="row"
-            align="stretch"
-            justify="center"
-            gap="xxs"
-            onClick={(e) => {
-              // To prevent the click event from selecting the row
-              e.stopPropagation();
+        <Flex
+          direction="row"
+          align="stretch"
+          justify="center"
+          gap="xxs"
+          onClick={(e) => {
+            // To prevent the click event from selecting the row
+            e.stopPropagation();
+          }}
+        >
+          <Button
+            type="text"
+            icon={
+              <SettingOutlined
+                style={{
+                  color: token.colorInfo,
+                }}
+              />
+            }
+            onClick={() => setManagingResourceLimit(row)}
+          />
+          <Button
+            type="text"
+            icon={
+              <AppstoreOutlined
+                style={{
+                  color: token.colorInfo,
+                }}
+              />
+            }
+            onClick={() => {
+              setManagingApp(row);
             }}
-          >
-            <Button
-              type="text"
-              icon={
-                <SettingOutlined
-                  style={{
-                    color: token.colorInfo,
-                  }}
-                />
-              }
-              onClick={() => setManagingResourceLimit(row)}
-            />
-            <Button
-              type="text"
-              icon={
-                <AppstoreOutlined
-                  style={{
-                    color: token.colorInfo,
-                  }}
-                />
-              }
-              onClick={() => {
-                setManagingApp(row);
-              }}
-            />
-          </Flex>
-        </CellWrapper>
+          />
+        </Flex>
       ),
     },
   ];
@@ -372,11 +347,6 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           rowSelection={{
             type: 'checkbox',
             // hideSelectAll: true,
-            renderCell: (checked, record, index, originNode) => (
-              <CellWrapper style={{ justifyContent: 'center' }}>
-                {originNode}
-              </CellWrapper>
-            ),
             // columnWidth: 48,
             onChange: (_, selectedRows: EnvironmentImage[]) => {
               setSelectedRows(selectedRows);
