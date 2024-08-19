@@ -223,8 +223,9 @@ export const useBackendAIImageMetaData = () => {
           names.length < 3 ? '' : (names[2].split(':')[0]?.split('-') ?? '');
         return langs[langs.length - 1];
       },
-      getLang: (imageName: string) => {
-        const names = imageName.split('/');
+      getLang: (shortImageName: string) => {
+        // console.log(imageName);
+        const names = shortImageName.split('/');
         let lang = '';
         if (!_.isUndefined(names[1])) {
           lang = names.slice(1).join('');

@@ -618,7 +618,9 @@
     "InProgress": "진행중",
     "Session": "세션",
     "General": "일반",
-    "Disabled": "비활성화"
+    "Disabled": "비활성화",
+    "NSelected": "{{count}}개 선택됨",
+    "Reset": "초기화"
   },
   "credential": {
     "Permission": "권한",

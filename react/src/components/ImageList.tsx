@@ -1,5 +1,5 @@
 import Flex from '../components/Flex';
-import { getImageFullName } from '../helper';
+import { getImageFullName, localeCompare } from '../helper';
 import { useBackendAIImageMetaData, useUpdatableState } from '../hooks';
 import ImageInstallModal from './ImageInstallModal';
 import { ConstraintTags } from './ImageTags';
@@ -18,7 +18,7 @@ import {
 import { App, Button, Table, Tag, theme, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
-import { ReactNode, useMemo, useState, useTransition } from 'react';
+import { Key, ReactNode, useMemo, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
@@ -34,18 +34,7 @@ const CellWrapper = ({
   style?: React.CSSProperties;
 }) => {
   if (!children) return null;
-  return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        height: '100%',
-        ...style,
-      }}
-    >
-      {children}
-    </div>
-  );
+  return children;
 };
 
 const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
@@ -89,6 +78,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             key
             value
           }
+          humanized_name
           resource_limits {
             key
             min
@@ -115,7 +105,11 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
               (image): image is EnvironmentImage =>
                 image !== null && image !== undefined,
             )
-            .sort(sortBasedOnInstalled)
+            .sort(
+              (a, b) =>
+                sortBasedOnInstalled(a, b) ||
+                localeCompare(a.humanized_name, b.humanized_name),
+            )
         : [],
     [images],
   );
@@ -212,7 +206,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
       },
       render: (text, row) => (
         <CellWrapper>
-          <Flex direction="column" align="start">
+          <Flex direction="row" align="start">
             {row?.tag && row?.name
               ? getBaseImages(row.tag, row.name).map((baseImage) => (
                   <Tag color="green">{baseImage}</Tag>
@@ -263,24 +257,22 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
       key: 'digest',
       sorter: (a, b) =>
         a?.digest && b?.digest ? a.digest.localeCompare(b.digest) : 0,
-      render: (text, row) => (
-        <CellWrapper>
-          <Typography.Text ellipsis> {row.digest}</Typography.Text>
-        </CellWrapper>
-      ),
     },
     {
       title: t('environment.ResourceLimit'),
       dataIndex: 'resource_limits',
       key: 'resource_limits',
-      render: (text, row) =>
-        row?.resource_limits?.map((resource_limit) => (
-          <ResourceNumber
-            type={resource_limit?.key || ''}
-            value={resource_limit?.min || '0'}
-            max={resource_limit?.max || ''}
-          />
-        )),
+      render: (text, row) => (
+        <Flex direction="row" gap="xxs">
+          {row?.resource_limits?.map((resource_limit) => (
+            <ResourceNumber
+              type={resource_limit?.key || ''}
+              value={resource_limit?.min || '0'}
+              max={resource_limit?.max || ''}
+            />
+          ))}
+        </Flex>
+      ),
     },
     {
       title: t('general.Control'),
@@ -289,7 +281,16 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
       fixed: 'right',
       render: (text, row) => (
         <CellWrapper>
-          <Flex direction="row" align="stretch" justify="center" gap="xxs">
+          <Flex
+            direction="row"
+            align="stretch"
+            justify="center"
+            gap="xxs"
+            onClick={(e) => {
+              // To prevent the click event from selecting the row
+              e.stopPropagation();
+            }}
+          >
             <Button
               type="text"
               icon={
@@ -330,7 +331,14 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           ...style,
         }}
       >
-        <Flex justify="end" style={{ padding: token.paddingSM }}>
+        <Flex justify="end" style={{ padding: token.paddingSM }} gap={'xs'}>
+          {selectedRows.length > 0 ? (
+            <Typography.Text>
+              {t('general.NSelected', {
+                count: selectedRows.length,
+              })}
+            </Typography.Text>
+          ) : null}
           <Button
             icon={<VerticalAlignBottomOutlined />}
             style={{ backgroundColor: token.colorPrimary, color: 'white' }}
@@ -351,26 +359,42 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         </Flex>
         <Table<EnvironmentImage>
           rowKey="id"
-          scroll={{
-            x: 1600,
-            y: window.innerHeight - 145 - 56 - 54,
+          scroll={{ x: 'max-content' }}
+          pagination={{
+            showTotal(total, range) {
+              return `${range[0]}-${range[1]} of ${total} items`;
+            },
+            pageSizeOptions: ['10', '20', '50'],
+            style: { marginRight: token.marginXS },
           }}
-          virtual
-          pagination={false}
           dataSource={sortedImages}
           columns={columns}
           rowSelection={{
             type: 'checkbox',
+            // hideSelectAll: true,
             renderCell: (checked, record, index, originNode) => (
               <CellWrapper style={{ justifyContent: 'center' }}>
                 {originNode}
               </CellWrapper>
             ),
-            columnWidth: 48,
+            // columnWidth: 48,
             onChange: (_, selectedRows: EnvironmentImage[]) => {
               setSelectedRows(selectedRows);
             },
+            selectedRowKeys: selectedRows.map((row) => row.id) as Key[],
           }}
+          onRow={(record) => ({
+            onClick: (e) => {
+              // selected or deselect row
+              if (selectedRows.find((row) => row.id === record.id)) {
+                setSelectedRows((rows) =>
+                  rows.filter((row) => row.id !== record.id),
+                );
+              } else {
+                setSelectedRows((rows) => [...rows, record]);
+              }
+            },
+          })}
         />
       </Flex>
       <ManageImageResourceLimitModal
