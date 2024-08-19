@@ -809,6 +809,7 @@ export default class BackendAISessionList extends BackendAIPage {
       'mounts',
       'resource_opts',
       'occupied_slots',
+      'requested_slots',
       'access_key',
       'starts_at',
       'type',
@@ -907,14 +908,14 @@ export default class BackendAISessionList extends BackendAIPage {
           });
           Object.keys(sessions).map((objectKey, index) => {
             const session = sessions[objectKey];
-            const occupiedSlots = JSON.parse(session.occupied_slots);
+            const requestedSlots = JSON.parse(session.requested_slots);
             const kernelImage =
               sessions[objectKey].image.split('/')[2] ||
               sessions[objectKey].image.split('/')[1];
-            sessions[objectKey].cpu_slot = parseInt(occupiedSlots.cpu);
+            sessions[objectKey].cpu_slot = parseInt(requestedSlots.cpu);
             sessions[objectKey].mem_slot = parseFloat(
               globalThis.backendaiclient.utils.changeBinaryUnit(
-                occupiedSlots.mem,
+                requestedSlots.mem,
                 'g',
               ),
             );
@@ -994,7 +995,7 @@ export default class BackendAISessionList extends BackendAIPage {
                 // the container, so, we just replace with the value of occupied slot.
                 // NOTE: this assumes every containers in a session have the same
                 // amount of memory.
-                liveStat.mem.capacity = occupiedSlots.mem;
+                liveStat.mem.capacity = requestedSlots.mem;
 
                 liveStat.io_read.current += parseFloat(
                   BackendAISessionList.bytesToMB(
@@ -1063,7 +1064,7 @@ export default class BackendAISessionList extends BackendAIPage {
                   liveStat.cpu_util.ratio =
                     (liveStat.cpu_util.current / liveStat.cpu_util.capacity) *
                       sessions[objectKey].containers.length || 0;
-                  liveStat.cpu_util.slots = occupiedSlots.cpu;
+                  liveStat.cpu_util.slots = requestedSlots.cpu;
                   // Memory is simple. It's just a ratio of current memory utilization.
                   liveStat.mem.ratio =
                     liveStat.mem.current / liveStat.mem.capacity || 0;
@@ -1164,50 +1165,50 @@ export default class BackendAISessionList extends BackendAIPage {
             } else {
               sessions[objectKey].running = false;
             }
-            if ('cuda.device' in occupiedSlots) {
+            if ('cuda.device' in requestedSlots) {
               sessions[objectKey].cuda_gpu_slot = parseInt(
-                occupiedSlots['cuda.device'],
+                requestedSlots['cuda.device'],
               );
             }
-            if ('rocm.device' in occupiedSlots) {
+            if ('rocm.device' in requestedSlots) {
               sessions[objectKey].rocm_gpu_slot = parseInt(
-                occupiedSlots['rocm.device'],
+                requestedSlots['rocm.device'],
               );
             }
-            if ('tpu.device' in occupiedSlots) {
+            if ('tpu.device' in requestedSlots) {
               sessions[objectKey].tpu_slot = parseInt(
-                occupiedSlots['tpu.device'],
+                requestedSlots['tpu.device'],
               );
             }
-            if ('ipu.device' in occupiedSlots) {
+            if ('ipu.device' in requestedSlots) {
               sessions[objectKey].ipu_slot = parseInt(
-                occupiedSlots['ipu.device'],
+                requestedSlots['ipu.device'],
               );
             }
-            if ('atom.device' in occupiedSlots) {
+            if ('atom.device' in requestedSlots) {
               sessions[objectKey].atom_slot = parseInt(
-                occupiedSlots['atom.device'],
+                requestedSlots['atom.device'],
               );
             }
-            if ('atom-plus.device' in occupiedSlots) {
+            if ('atom-plus.device' in requestedSlots) {
               sessions[objectKey].atom_plus_slot = parseInt(
-                occupiedSlots['atom-plus.device'],
+                requestedSlots['atom-plus.device'],
               );
             }
-            if ('warboy.device' in occupiedSlots) {
+            if ('warboy.device' in requestedSlots) {
               sessions[objectKey].warboy_slot = parseInt(
-                occupiedSlots['warboy.device'],
+                requestedSlots['warboy.device'],
               );
             }
-            if ('hyperaccel-lpu.device' in occupiedSlots) {
+            if ('hyperaccel-lpu.device' in requestedSlots) {
               sessions[objectKey].hyperaccel_lpu_slot = parseInt(
-                occupiedSlots['hyperaccel-lpu.device'],
+                requestedSlots['hyperaccel-lpu.device'],
               );
             }
-            if ('cuda.shares' in occupiedSlots) {
+            if ('cuda.shares' in requestedSlots) {
               // sessions[objectKey].fgpu_slot = parseFloat(occupied_slots['cuda.shares']);
               sessions[objectKey].cuda_fgpu_slot = parseFloat(
-                occupiedSlots['cuda.shares'],
+                requestedSlots['cuda.shares'],
               ).toFixed(2);
             }
             sessions[objectKey].kernel_image = kernelImage;
