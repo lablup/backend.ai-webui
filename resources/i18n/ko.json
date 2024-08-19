@@ -962,7 +962,8 @@
     "NoImagesAreSelected":"선택된 이미지가 없습니다.",
     "AlreadyInstalledImage":"이미 설치된 이미지입니다.",
     "InstalledImagesAreExcluded":"설치된 이미지는 제외되었습니다.",
-    "CheckImageInstallation":"다음 이미지를 설치하시겠습니까?"
+    "CheckImageInstallation":"다음 이미지를 설치하시겠습니까?",
+    "SearchImages":"이미지 검색"
   },
   "resourcePreset": {
     "ResourcePresets": "자원 프리셋",

@@ -22,7 +22,7 @@ import { App, Button, Input, Table, Tag, theme, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import { ReactNode, useMemo, useState, useTransition } from 'react';
+import { Key, useMemo, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
@@ -92,22 +92,6 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
     },
   );
 
-  const sortedImages = useMemo(
-    () =>
-      images
-        ? [...images]
-            .filter(
-              (image): image is EnvironmentImage =>
-                image !== null && image !== undefined,
-            )
-            .sort(
-              (a, b) =>
-                sortBasedOnInstalled(a, b) ||
-                localeCompare(a.humanized_name, b.humanized_name),
-            )
-        : [],
-    [images],
-  );
   const columns: ColumnsType<EnvironmentImage> = [
     {
       title: t('environment.Status'),
@@ -116,9 +100,17 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
       sorter: sortBasedOnInstalled,
       render: (text, row) =>
         row?.id && installingImages.includes(row.id) ? (
-          <Tag color="gold">{t('environment.Installing')}</Tag>
+          <Tag color="gold">
+            <TextHighlighter keyword={imageSearch}>
+              {t('environment.Installing')}
+            </TextHighlighter>
+          </Tag>
         ) : row?.installed ? (
-          <Tag color="gold">{t('environment.Installed')}</Tag>
+          <Tag color="gold">
+            <TextHighlighter keyword={imageSearch}>
+              {t('environment.Installed')}
+            </TextHighlighter>
+          </Tag>
         ) : null,
     },
     {
@@ -127,6 +119,9 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
       key: 'registry',
       sorter: (a, b) =>
         a?.registry && b?.registry ? a.registry.localeCompare(b.registry) : 0,
+      render: (text, row) => (
+        <TextHighlighter keyword={imageSearch}>{row.registry}</TextHighlighter>
+      ),
     },
     {
       title: t('environment.Architecture'),
@@ -136,6 +131,11 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         a?.architecture && b?.architecture
           ? a.architecture.localeCompare(b.architecture)
           : 0,
+      render: (text, row) => (
+        <TextHighlighter keyword={imageSearch}>
+          {row.architecture}
+        </TextHighlighter>
+      ),
     },
     {
       title: t('environment.Namespace'),
@@ -149,7 +149,9 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           : 0;
       },
       render: (text, row) => (
-        <span>{getNamespace(getImageFullName(row) || '')}</span>
+        <TextHighlighter keyword={imageSearch}>
+          {getNamespace(getImageFullName(row) || '')}
+        </TextHighlighter>
       ),
     },
     {
@@ -161,7 +163,11 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         const langB = b?.name ? getLang(b?.name) : '';
         return langA && langB ? langA.localeCompare(langB) : 0;
       },
-      render: (text, row) => <span>{row.name ? getLang(row.name) : null}</span>,
+      render: (text, row) => (
+        <TextHighlighter keyword={imageSearch}>
+          {row.name ? getLang(row.name) : null}
+        </TextHighlighter>
+      ),
     },
     {
       title: t('environment.Version'),
@@ -175,7 +181,9 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           : 0;
       },
       render: (text, row) => (
-        <span>{getBaseVersion(getImageFullName(row) || '')}</span>
+        <TextHighlighter keyword={imageSearch}>
+          {getBaseVersion(getImageFullName(row) || '')}
+        </TextHighlighter>
       ),
     },
     {
@@ -196,7 +204,11 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         <Flex direction="row" align="start">
           {row?.tag && row?.name
             ? getBaseImages(row.tag, row.name).map((baseImage) => (
-                <Tag color="green">{baseImage}</Tag>
+                <Tag color="green">
+                  <TextHighlighter keyword={imageSearch}>
+                    {baseImage}
+                  </TextHighlighter>
+                </Tag>
               ))
             : null}
         </Flex>
@@ -231,6 +243,15 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           <ConstraintTags
             tag={row?.tag}
             labels={row?.labels as { key: string; value: string }[]}
+            wrapper={(constraint: unknown) =>
+              typeof constraint === 'string' ? (
+                <TextHighlighter keyword={imageSearch}>
+                  {constraint}
+                </TextHighlighter>
+              ) : (
+                <></>
+              )
+            }
           />
         ) : null,
     },
@@ -240,6 +261,9 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
       key: 'digest',
       sorter: (a, b) =>
         a?.digest && b?.digest ? a.digest.localeCompare(b.digest) : 0,
+      render: (text, row) => (
+        <TextHighlighter keyword={imageSearch}>{row.digest}</TextHighlighter>
+      ),
     },
     {
       title: t('environment.ResourceLimit'),
@@ -309,10 +333,16 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             (image): image is EnvironmentImage =>
               image !== null && image !== undefined,
           )
-          .sort(sortBasedOnInstalled)
+          .sort(
+            (a, b) =>
+              sortBasedOnInstalled(a, b) ||
+              localeCompare(a.humanized_name, b.humanized_name),
+          )
       : [];
+
     if (_.isEmpty(imageSearch)) return sortedImages;
     const regExp = new RegExp(`${_.escapeRegExp(imageSearch)}`, 'i');
+
     return _.filter(sortedImages, (image) => {
       return _.some(image, (value, key) => {
         if (key === 'id') return false;
@@ -363,7 +393,14 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           ...style,
         }}
       >
-        <Flex justify="end" style={{ padding: token.paddingSM, gap: 8 }}>
+        <Flex justify="end" style={{ padding: token.paddingSM }} gap={'xs'}>
+          {selectedRows.length > 0 ? (
+            <Typography.Text>
+              {t('general.NSelected', {
+                count: selectedRows.length,
+              })}
+            </Typography.Text>
+          ) : null}
           <Input
             allowClear
             prefix={<SearchOutlined />}
@@ -379,19 +416,13 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             icon={<ReloadOutlined />}
             loading={isPendingRefreshTransition}
             onClick={() => {
+              setSelectedRows([]);
               startRefreshTransition(() => updateEnvironmentFetchKey());
             }}
           >
             {t('button.Refresh')}
           </Button>
-        <Flex justify="end" style={{ padding: token.paddingSM }} gap={'xs'}>
-          {selectedRows.length > 0 ? (
-            <Typography.Text>
-              {t('general.NSelected', {
-                count: selectedRows.length,
-              })}
-            </Typography.Text>
-          ) : null}
+
           <Button
             icon={<VerticalAlignBottomOutlined />}
             style={{ backgroundColor: token.colorPrimary, color: 'white' }}
@@ -420,7 +451,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             pageSizeOptions: ['10', '20', '50'],
             style: { marginRight: token.marginXS },
           }}
-          dataSource={sortedImages}
+          dataSource={filteredImageData}
           columns={columns}
           rowSelection={{
             type: 'checkbox',

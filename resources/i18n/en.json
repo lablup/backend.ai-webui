@@ -974,7 +974,8 @@
     "NoImagesAreSelected": "No images are selected",
     "AlreadyInstalledImage": "Already installed image",
     "InstalledImagesAreExcluded": "Installed images are excluded." ,
-    "CheckImageInstallation": "Installing an image?"
+    "CheckImageInstallation": "Installing an image?",
+    "SearchImages":"Search images"
   },
   "resourcePreset": {
     "ResourcePresets": "Resource Presets",
