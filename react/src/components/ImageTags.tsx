@@ -107,7 +107,7 @@ export const ConstraintTags: React.FC<ConstraintTagsProps> = ({
   const [, { getConstraints }] = useBackendAIImageMetaData();
   const constraints = getConstraints(tag, labels);
   return (
-    <Flex direction="column" align="start">
+    <Flex direction="row" align="start">
       {constraints[0] ? (
         <Tag color="blue" {...props}>
           {wrapper ? wrapper(constraints[0]) : constraints[0]}
