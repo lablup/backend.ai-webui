@@ -908,14 +908,20 @@ export default class BackendAISessionList extends BackendAIPage {
           });
           Object.keys(sessions).map((objectKey, index) => {
             const session = sessions[objectKey];
+            const occupiedSlots = JSON.parse(session.occupied_slots);
             const requestedSlots = JSON.parse(session.requested_slots);
+            // only use requested slots when occupiedSlots are empty
+            const resourceSlots =
+              Object.keys(occupiedSlots).length > 0
+                ? occupiedSlots
+                : requestedSlots;
             const kernelImage =
               sessions[objectKey].image.split('/')[2] ||
               sessions[objectKey].image.split('/')[1];
-            sessions[objectKey].cpu_slot = parseInt(requestedSlots.cpu);
+            sessions[objectKey].cpu_slot = parseInt(resourceSlots.cpu);
             sessions[objectKey].mem_slot = parseFloat(
               globalThis.backendaiclient.utils.changeBinaryUnit(
-                requestedSlots.mem,
+                resourceSlots.mem,
                 'g',
               ),
             );
@@ -995,7 +1001,7 @@ export default class BackendAISessionList extends BackendAIPage {
                 // the container, so, we just replace with the value of occupied slot.
                 // NOTE: this assumes every containers in a session have the same
                 // amount of memory.
-                liveStat.mem.capacity = requestedSlots.mem;
+                liveStat.mem.capacity = resourceSlots.mem;
 
                 liveStat.io_read.current += parseFloat(
                   BackendAISessionList.bytesToMB(
@@ -1064,7 +1070,7 @@ export default class BackendAISessionList extends BackendAIPage {
                   liveStat.cpu_util.ratio =
                     (liveStat.cpu_util.current / liveStat.cpu_util.capacity) *
                       sessions[objectKey].containers.length || 0;
-                  liveStat.cpu_util.slots = requestedSlots.cpu;
+                  liveStat.cpu_util.slots = resourceSlots.cpu;
                   // Memory is simple. It's just a ratio of current memory utilization.
                   liveStat.mem.ratio =
                     liveStat.mem.current / liveStat.mem.capacity || 0;
@@ -1165,50 +1171,50 @@ export default class BackendAISessionList extends BackendAIPage {
             } else {
               sessions[objectKey].running = false;
             }
-            if ('cuda.device' in requestedSlots) {
+            if ('cuda.device' in resourceSlots) {
               sessions[objectKey].cuda_gpu_slot = parseInt(
-                requestedSlots['cuda.device'],
+                resourceSlots['cuda.device'],
               );
             }
-            if ('rocm.device' in requestedSlots) {
+            if ('rocm.device' in resourceSlots) {
               sessions[objectKey].rocm_gpu_slot = parseInt(
-                requestedSlots['rocm.device'],
+                resourceSlots['rocm.device'],
               );
             }
-            if ('tpu.device' in requestedSlots) {
+            if ('tpu.device' in resourceSlots) {
               sessions[objectKey].tpu_slot = parseInt(
-                requestedSlots['tpu.device'],
+                resourceSlots['tpu.device'],
               );
             }
-            if ('ipu.device' in requestedSlots) {
+            if ('ipu.device' in resourceSlots) {
               sessions[objectKey].ipu_slot = parseInt(
-                requestedSlots['ipu.device'],
+                resourceSlots['ipu.device'],
               );
             }
-            if ('atom.device' in requestedSlots) {
+            if ('atom.device' in resourceSlots) {
               sessions[objectKey].atom_slot = parseInt(
-                requestedSlots['atom.device'],
+                resourceSlots['atom.device'],
               );
             }
-            if ('atom-plus.device' in requestedSlots) {
+            if ('atom-plus.device' in resourceSlots) {
               sessions[objectKey].atom_plus_slot = parseInt(
-                requestedSlots['atom-plus.device'],
+                resourceSlots['atom-plus.device'],
               );
             }
-            if ('warboy.device' in requestedSlots) {
+            if ('warboy.device' in resourceSlots) {
               sessions[objectKey].warboy_slot = parseInt(
-                requestedSlots['warboy.device'],
+                resourceSlots['warboy.device'],
               );
             }
-            if ('hyperaccel-lpu.device' in requestedSlots) {
+            if ('hyperaccel-lpu.device' in resourceSlots) {
               sessions[objectKey].hyperaccel_lpu_slot = parseInt(
-                requestedSlots['hyperaccel-lpu.device'],
+                resourceSlots['hyperaccel-lpu.device'],
               );
             }
-            if ('cuda.shares' in requestedSlots) {
+            if ('cuda.shares' in resourceSlots) {
               // sessions[objectKey].fgpu_slot = parseFloat(occupied_slots['cuda.shares']);
               sessions[objectKey].cuda_fgpu_slot = parseFloat(
-                requestedSlots['cuda.shares'],
+                resourceSlots['cuda.shares'],
               ).toFixed(2);
             }
             sessions[objectKey].kernel_image = kernelImage;
@@ -3582,7 +3588,10 @@ ${rowData.item[this.sessionNameField]}</pre
             <div class="vertical start-justified layout">
               <div class="usage-items">
                 CPU
-                ${(rowData.item.live_stat?.cpu_util?.ratio * 100).toFixed(1)} %
+                ${rowData.item.live_stat
+                  ? (rowData.item.live_stat?.cpu_util?.ratio * 100).toFixed(1)
+                  : `-`}
+                %
               </div>
               <div class="horizontal start-justified center layout">
                 <lablup-progress-bar
@@ -3596,13 +3605,16 @@ ${rowData.item[this.sessionNameField]}</pre
             <div class="vertical start-justified layout">
               <div class="usage-items">
                 RAM
-                ${BackendAISessionList.bytesToGiB(
-                  rowData.item.live_stat?.mem?.current,
-                  1,
-                )}/${BackendAISessionList.bytesToGiB(
-                  rowData.item.live_stat?.mem?.capacity,
-                  1,
-                )}
+                ${rowData.item.live_stat
+                  ? BackendAISessionList.bytesToGiB(
+                      rowData.item.live_stat?.mem?.current,
+                      1,
+                    ) /
+                    BackendAISessionList.bytesToGiB(
+                      rowData.item.live_stat?.mem?.capacity,
+                      1,
+                    )
+                  : `-`}
                 GiB
               </div>
               <div class="horizontal start-justified center layout">
@@ -3619,9 +3631,11 @@ ${rowData.item[this.sessionNameField]}</pre
                   <div class="vertical start-justified center layout">
                     <div class="usage-items">
                       GPU(util)
-                      ${(
-                        rowData.item.live_stat?.cuda_util?.ratio * 100
-                      ).toFixed(1)}
+                      ${rowData.item.live_stat
+                        ? (
+                            rowData.item.live_stat?.cuda_util?.ratio * 100
+                          ).toFixed(1)
+                        : `-`}
                       %
                     </div>
                     <div class="horizontal start-justified center layout">
@@ -3641,9 +3655,11 @@ ${rowData.item[this.sessionNameField]}</pre
                   <div class="vertical start-justified layout">
                     <div class="usage-items">
                       GPU(util)
-                      ${(
-                        rowData.item.live_stat?.cuda_util?.ratio * 100
-                      ).toFixed(1)}
+                      ${rowData.item.live_stat
+                        ? (
+                            rowData.item.live_stat?.cuda_util?.ratio * 100
+                          ).toFixed(1)
+                        : `-`}
                       %
                     </div>
                     <div class="horizontal start-justified center layout">
@@ -3663,9 +3679,11 @@ ${rowData.item[this.sessionNameField]}</pre
                   <div class="vertical start-justified layout">
                     <div class="usage-items">
                       GPU(util)
-                      ${(
-                        rowData.item.live_stat?.rocm_util?.ratio * 100
-                      ).toFixed(1)}
+                      ${rowData.item.live_stat
+                        ? (
+                            rowData.item.live_stat?.rocm_util?.ratio * 100
+                          ).toFixed(1)
+                        : `-`}
                       %
                     </div>
                     <div class="horizontal start-justified center layout">
@@ -3684,13 +3702,16 @@ ${rowData.item[this.sessionNameField]}</pre
                   <div class="vertical start-justified layout">
                     <div class="usage-items">
                       GPU(mem)
-                      ${BackendAISessionList.bytesToGiB(
-                        rowData.item.live_stat?.cuda_mem?.current,
-                        1,
-                      )}/${BackendAISessionList.bytesToGiB(
-                        rowData.item.live_stat?.cuda_mem?.capacity,
-                        1,
-                      )}
+                      ${rowData.item.live_stat
+                        ? BackendAISessionList.bytesToGiB(
+                            rowData.item.live_stat?.cuda_mem?.current,
+                            1,
+                          ) /
+                          BackendAISessionList.bytesToGiB(
+                            rowData.item.live_stat?.cuda_mem?.capacity,
+                            1,
+                          )
+                        : `-`}
                       GiB
                     </div>
                     <div class="horizontal start-justified center layout">
@@ -3708,9 +3729,11 @@ ${rowData.item[this.sessionNameField]}</pre
                   <div class="vertical start-justified layout">
                     <div class="usage-items">
                       TPU(util)
-                      ${(rowData.item.live_stat?.tpu_util?.ratio * 100).toFixed(
-                        1,
-                      )}
+                      ${rowData.item.live_stat
+                        ? (
+                            rowData.item.live_stat?.tpu_util?.ratio * 100
+                          ).toFixed(1)
+                        : `-`}
                       %
                     </div>
                     <div class="horizontal start-justified center layout">
@@ -3729,9 +3752,11 @@ ${rowData.item[this.sessionNameField]}</pre
                   <div class="vertical start-justified layout">
                     <div class="usage-items">
                       IPU(util)
-                      ${(rowData.item.live_stat?.ipu_util?.ratio * 100).toFixed(
-                        1,
-                      )}
+                      ${rowData.item.live_stat
+                        ? (
+                            rowData.item.live_stat?.ipu_util?.ratio * 100
+                          ).toFixed(1)
+                        : `-`}
                       %
                     </div>
                     <div class="horizontal start-justified center layout">
@@ -3750,9 +3775,11 @@ ${rowData.item[this.sessionNameField]}</pre
                   <div class="vertical start-justified layout">
                     <div class="usage-items">
                       ATOM(util)
-                      ${(
-                        rowData.item.live_stat?.atom_util?.ratio * 100
-                      ).toFixed(1)}
+                      ${rowData.item.live_stat
+                        ? (
+                            rowData.item.live_stat?.atom_util?.ratio * 100
+                          ).toFixed(1)
+                        : `-`}
                       %
                     </div>
                     <div class="horizontal start-justified center layout">
@@ -3773,8 +3800,15 @@ ${rowData.item[this.sessionNameField]}</pre
                 style="font-size:10px;margin-left:5px;"
                 class="horizontal start-justified center layout"
               >
-                R: ${rowData.item?.live_stat?.io_read?.current.toFixed(1)} MB /
-                W: ${rowData.item?.live_stat?.io_write?.current.toFixed(1)} MB
+                R:
+                ${rowData.item.live_stat
+                  ? rowData.item?.live_stat?.io_read?.current.toFixed(1)
+                  : `-`}
+                MB / W:
+                ${rowData.item.live_stat
+                  ? rowData.item?.live_stat?.io_write?.current.toFixed(1)
+                  : `-`}
+                MB
               </div>
             </div>
           </div>
