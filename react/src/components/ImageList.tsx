@@ -49,6 +49,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   const { message } = App.useApp();
   const [imageSearch, setImageSearch] = useState('');
   const [isPendingRefreshTransition, startRefreshTransition] = useTransition();
+  const [isPendingSearchTransition, startSearchTransition] = useTransition();
 
   const sortBasedOnInstalled = (a: EnvironmentImage, b: EnvironmentImage) => {
     return a?.installed && !b?.installed
@@ -398,7 +399,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             prefix={<SearchOutlined />}
             placeholder={t('environment.SearchImages')}
             onChange={(e) => {
-              startTransition(() => setImageSearch(e.target.value));
+              startSearchTransition(() => setImageSearch(e.target.value));
             }}
             style={{
               width: 200,
@@ -445,6 +446,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           }}
           dataSource={filteredImageData}
           columns={columns}
+          loading={isPendingSearchTransition}
           rowSelection={{
             type: 'checkbox',
             // hideSelectAll: true,
