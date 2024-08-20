@@ -1734,6 +1734,54 @@ export default class BackendAiStorageList extends BackendAIPage {
     );
   }
 
+  private async _getCurrentKeypairResourcePolicy() {
+    const accessKey = globalThis.backendaiclient._config.accessKey;
+    const res = await globalThis.backendaiclient.keypair.info(accessKey, [
+      'resource_policy',
+    ]);
+    return res.keypair.resource_policy;
+  }
+
+  async _getAllowedVFolderHostsByCurrentUserInfo() {
+    const [vhostInfo, currentKeypairResourcePolicy] = await Promise.all([
+      globalThis.backendaiclient.vfolder.list_hosts(),
+      this._getCurrentKeypairResourcePolicy(),
+    ]);
+    const currentDomain = globalThis.backendaiclient._config.domainName;
+    const currentGroupId = globalThis.backendaiclient.current_group_id();
+    const mergedData =
+      await globalThis.backendaiclient.storageproxy.getAllowedVFolderHostsByCurrentUserInfo(
+        currentDomain,
+        currentGroupId,
+        currentKeypairResourcePolicy,
+      );
+
+    const allowedPermissionForDomainsByVolume = JSON.parse(
+      mergedData?.domain?.allowed_vfolder_hosts || '{}',
+    );
+    const allowedPermissionForGroupsByVolume = JSON.parse(
+      mergedData?.group?.allowed_vfolder_hosts || '{}',
+    );
+    const allowedPermissionForResourcePolicyByVolume = JSON.parse(
+      mergedData?.keypair_resource_policy.allowed_vfolder_hosts || '{}',
+    );
+
+    const _mergeDedupe = (arr) => [...new Set([].concat(...arr))];
+    this._unionedAllowedPermissionByVolume = Object.assign(
+      {},
+      ...vhostInfo.allowed.map((volume) => {
+        return {
+          [volume]: _mergeDedupe([
+            allowedPermissionForDomainsByVolume[volume],
+            allowedPermissionForGroupsByVolume[volume],
+            allowedPermissionForResourcePolicyByVolume[volume],
+          ]),
+        };
+      }),
+    );
+    this.folderListGrid.clearCache();
+  }
+
   _checkFolderSupportDirectoryBasedUsage(host: string) {
     if (
       !host ||
@@ -1874,6 +1922,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             !globalThis.backendaiclient.supports(
               'deprecated-max-quota-scope-in-keypair-resource-policy',
             );
+          this._getAllowedVFolderHostsByCurrentUserInfo();
           this._refreshFolderList(false, 'viewStatechanged');
         },
         true,
@@ -1892,6 +1941,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         !globalThis.backendaiclient.supports(
           'deprecated-max-quota-scope-in-keypair-resource-policy',
         );
+      this._getAllowedVFolderHostsByCurrentUserInfo();
       this._refreshFolderList(false, 'viewStatechanged');
     }
   }

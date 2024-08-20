@@ -825,38 +825,13 @@ export default class BackendAIData extends BackendAIPage {
     });
   }
 
-  openFolderExplorer = (e) => {
-    if (e?.detail?.vFolder) {
-      const activeStorageList =
-        this._activeTab === 'general'
-          ? this.generalFolderStorageListElement
-          : this._activeTab === 'model'
-            ? this.modelFolderStorageListElement
-            : this._activeTab === 'automount'
-              ? this.automountFolderStorageListElement
-              : this._activeTab === 'data'
-                ? this.dataFolderStorageListElement
-                : this._activeTab === 'trash-bin'
-                  ? this.trashBinFolderStorageListElement
-                  : null;
-      activeStorageList?._folderExplorer({
-        item: e?.detail?.vFolder,
-      });
-    }
-  };
-
   connectedCallback(): void {
     super.connectedCallback();
-    document.addEventListener('folderExplorer:open', this.openFolderExplorer);
     document.dispatchEvent(new CustomEvent('backend-ai-data-view:connected'));
   }
 
   disconnectedCallback(): void {
     super.disconnectedCallback();
-    document.removeEventListener(
-      'folderExplorer:open',
-      this.openFolderExplorer,
-    );
     document.dispatchEvent(
       new CustomEvent('backend-ai-data-view:disconnected'),
     );
