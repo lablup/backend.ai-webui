@@ -1,5 +1,5 @@
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
+import { useTanQuery } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -9,13 +9,11 @@ import { useTranslation } from 'react-i18next';
 
 interface SSHKeypairGenerationModalProps extends BAIModalProps {
   onRequestClose: () => void;
-  onRequestRefresh: () => void;
   isRefreshModalPending?: boolean;
 }
 
 const SSHKeypairGenerationModal: React.FC<SSHKeypairGenerationModalProps> = ({
   onRequestClose,
-  onRequestRefresh,
   isRefreshModalPending,
   ...baiModalProps
 }) => {
@@ -33,24 +31,6 @@ const SSHKeypairGenerationModal: React.FC<SSHKeypairGenerationModalProps> = ({
     },
   });
 
-  const mutationToPostSSHKeypair = useTanMutation({
-    mutationFn: () => {
-      return baiClient.postSSHKeypair({
-        pubkey: data?.ssh_public_key,
-        privkey: data?.ssh_private_key,
-      });
-    },
-  });
-
-  const _onConfirm = () => {
-    mutationToPostSSHKeypair.mutate(undefined, {
-      onSuccess: () => {
-        onRequestRefresh();
-      },
-    });
-    onRequestClose();
-  };
-
   return (
     <BAIModal
       title={t('usersettings.SSHKeypairGeneration')}
@@ -60,7 +40,7 @@ const SSHKeypairGenerationModal: React.FC<SSHKeypairGenerationModalProps> = ({
           key="close"
           title={t('button.Confirm')}
           description={t('usersettings.ClearSSHKeypairInput')}
-          onConfirm={_onConfirm}
+          onConfirm={onRequestClose}
         >
           <Button>{t('button.Close')}</Button>
         </Popconfirm>,

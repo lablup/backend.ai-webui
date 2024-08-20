@@ -94,8 +94,6 @@ const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
         isRefreshModalPending={isPendingRefreshModal}
         onRequestClose={() => {
           toggleSSHKeypairGenerationModal();
-        }}
-        onRequestRefresh={() => {
           startRefreshModalTransition(() => {
             updateFetchKey();
           });
