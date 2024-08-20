@@ -71,15 +71,20 @@ export default function reactToWebComponent(
     }
 
     attributeChangedCallback(name: any, oldValue: any, newValue: any) {
-      //re-render react component when attribute changes
-      if (name === 'value') {
-        this.reactRoot.render(
-          this.createReactElement(newValue, this.getAttribute('styles') || ''),
-        );
-      } else if (name === 'styles') {
-        this.reactRoot.render(
-          this.createReactElement(this.getAttribute('value') || '', newValue),
-        );
+      if (this.isConnected) {
+        //re-render react component when attribute changes
+        if (name === 'value') {
+          this.reactRoot.render(
+            this.createReactElement(
+              newValue,
+              this.getAttribute('styles') || '',
+            ),
+          );
+        } else if (name === 'styles') {
+          this.reactRoot.render(
+            this.createReactElement(this.getAttribute('value') || '', newValue),
+          );
+        }
       }
     }
   }
