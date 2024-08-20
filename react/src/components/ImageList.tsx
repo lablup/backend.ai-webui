@@ -243,15 +243,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           <ConstraintTags
             tag={row?.tag}
             labels={row?.labels as { key: string; value: string }[]}
-            wrapper={(constraint: unknown) =>
-              typeof constraint === 'string' ? (
-                <TextHighlighter keyword={imageSearch}>
-                  {constraint}
-                </TextHighlighter>
-              ) : (
-                <></>
-              )
-            }
+            highlightKeyword={imageSearch}
           />
         ) : null,
     },

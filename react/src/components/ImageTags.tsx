@@ -1,6 +1,7 @@
 import { useBackendAIImageMetaData } from '../hooks';
 import DoubleTag, { DoubleTagObjectValue } from './DoubleTag';
 import Flex from './Flex';
+import TextHighlighter from './TextHighlighter';
 import { Tag, TagProps } from 'antd';
 import React from 'react';
 
@@ -95,12 +96,12 @@ export const LangTags: React.FC<LangTagsProps> = ({ image, ...props }) => {
 interface ConstraintTagsProps extends TagProps {
   tag: string;
   labels: { key: string; value: string }[];
-  wrapper?: (constraint: unknown) => React.ReactNode;
+  highlightKeyword?: string;
 }
 export const ConstraintTags: React.FC<ConstraintTagsProps> = ({
   tag,
   labels,
-  wrapper,
+  highlightKeyword = '',
   ...props
 }) => {
   labels = labels || [];
@@ -110,7 +111,9 @@ export const ConstraintTags: React.FC<ConstraintTagsProps> = ({
     <Flex direction="row" align="start">
       {constraints[0] ? (
         <Tag color="blue" {...props}>
-          {wrapper ? wrapper(constraints[0]) : constraints[0]}
+          <TextHighlighter keyword={highlightKeyword}>
+            {constraints[0]}
+          </TextHighlighter>
         </Tag>
       ) : null}
       {constraints[1] ? (
@@ -118,15 +121,22 @@ export const ConstraintTags: React.FC<ConstraintTagsProps> = ({
           color="cyan"
           values={[
             {
-              label: 'Customized',
+              label: (
+                <TextHighlighter keyword={highlightKeyword}>
+                  Customized
+                </TextHighlighter>
+              ),
               color: 'cyan',
             },
             {
-              label: constraints[1],
+              label: (
+                <TextHighlighter keyword={highlightKeyword}>
+                  {constraints[1]}
+                </TextHighlighter>
+              ),
               color: 'cyan',
             },
           ]}
-          wrapper={wrapper}
           {...props}
         />
       ) : null}

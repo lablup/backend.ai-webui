@@ -11,8 +11,7 @@ export type DoubleTagObjectValue = {
 type ValueType = string | React.ReactNode;
 const DoubleTag: React.FC<{
   values?: ValueType[] | DoubleTagObjectValue[];
-  wrapper?: (value: unknown) => React.ReactNode;
-}> = ({ values = [], wrapper }) => {
+}> = ({ values = [] }) => {
   if (values.length === 0) return null;
   let objectValues: DoubleTagObjectValue[];
   if (
@@ -43,7 +42,7 @@ const DoubleTag: React.FC<{
             }
             color={objValue.color}
           >
-            {wrapper ? wrapper(objValue.label) : objValue.label}
+            {objValue.label}
           </Tag>
         );
       })}
