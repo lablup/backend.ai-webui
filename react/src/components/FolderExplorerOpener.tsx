@@ -12,7 +12,7 @@ const FolderExplorerOpener = () => {
       vfolderID={normalizedFolderId || ''}
       open={!!normalizedFolderId}
       onRequestClose={() => {
-        setFolderId(null, 'replace');
+        setFolderId(null, 'replaceIn');
       }}
       destroyOnClose
     />

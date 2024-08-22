@@ -17,7 +17,10 @@
     "vfolders",
     "webcomponent",
     "webui",
-    "wsproxy"
+    "wsproxy",
+    "vfolders",
+    "vfolder",
+    "filebrowser"
   ],
   "flagWords": [
     "데이터레이크",
