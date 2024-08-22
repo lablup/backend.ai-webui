@@ -298,8 +298,12 @@ const ModelStoreListPage: React.FC = () => {
                   ))}
                 {item?.error_msg && (
                   <Alert
+                    style={{ width: '100%' }}
                     message={
-                      <Typography.Paragraph ellipsis={{ rows: 6 }}>
+                      <Typography.Paragraph
+                        ellipsis={{ rows: 6 }}
+                        style={{ marginBottom: 0 }}
+                      >
                         {item.error_msg}
                       </Typography.Paragraph>
                     }
