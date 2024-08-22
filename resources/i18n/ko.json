@@ -279,7 +279,10 @@
       "ProxyDirectTCPNotSupported": "프록시 직접 TCP 연결은 아직 지원되지 않습니다.",
       "InvalidPortFormat": "포트 형식이 올바르지 않습니다.",
       "DuplicatedPort": "중복된 포트가 있습니다.",
-      "FolderAliasOverlappingToAutoMount": "동일한 이름의 자동 마운트 폴더가 존재합니다."
+      "FolderAliasOverlappingToAutoMount": "동일한 이름의 자동 마운트 폴더가 존재합니다.",
+      "SelectAgent": "에이전트 선택",
+      "autoSelect": "자동 선택",
+      "DescSelectAgent": "에이전트 오른쪽에 표시되는 자원은 실제 사용 가능한 자원의 양을 나타냅니다. \n현재 에이전트 선택은 단일 노드 단일 컨테이너 환경에서만 사용할 수 있습니다. \n기본 설정은 스케줄러에 의한 에이전트 할당입니다."
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",

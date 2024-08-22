@@ -278,7 +278,10 @@
       "ProxyDirectTCPNotSupported": "La connessione TCP diretta proxy non è ancora supportata",
       "InvalidPortFormat": "Il formato del numero di porta non è corretto.",
       "DuplicatedPort": "Ci sono porte duplicate.",
-      "FolderAliasOverlappingToAutoMount": "Esiste una cartella di montaggio automatico con lo stesso nome."
+      "FolderAliasOverlappingToAutoMount": "Esiste una cartella di montaggio automatico con lo stesso nome.",
+      "SelectAgent": "Seleziona Agente",
+      "autoSelect": "Auto selezione",
+      "DescSelectAgent": "Le risorse visualizzate sul lato destro dell'agente rappresentano la quantità effettiva di risorse disponibili. \nAttualmente, la selezione dell'agente è disponibile solo in un ambiente con contenitore singolo a nodo singolo. \nL'impostazione predefinita è l'allocazione dell'agente da parte dello scheduler."
     },
     "Preparing": "Preparazione...",
     "PreparingSession": "Preparazione della sessione...",
