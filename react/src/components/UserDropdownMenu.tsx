@@ -183,6 +183,7 @@ const UserDropdownMenu: React.FC = () => {
         <Button
           type="text"
           size="large"
+          data-testid="user-dropdown-button"
           // loading={isPendingInitializeSettingModal}
           onClick={(e) => e.preventDefault()}
           style={{

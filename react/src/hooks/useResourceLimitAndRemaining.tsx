@@ -3,10 +3,10 @@ import { Image } from '../components/ImageEnvironmentSelectFormItems';
 import { AUTOMATIC_DEFAULT_SHMEM } from '../components/ResourceAllocationFormItems';
 import { addNumberWithUnits, iSizeToSize } from '../helper';
 import { useResourceSlots } from '../hooks/backendai';
-import { useTanQuery } from './reactQueryAlias';
+import { useSuspenseTanQuery } from './reactQueryAlias';
 import _ from 'lodash';
 
-interface MergedResourceLimits {
+export interface MergedResourceLimits {
   accelerators: {
     [key: string]:
       | {
@@ -44,7 +44,6 @@ type ScalingGroup = {
 type ResourceSlots = {
   cpu: string;
   mem: string;
-  'cuda.device': string;
   [key: string]: string;
 };
 
@@ -81,6 +80,7 @@ interface Props {
   currentProjectName: string;
   currentImage?: Image;
   currentResourceGroup?: string;
+  ignorePerContainerConfig?: boolean;
 }
 
 // determine resource limits and remaining for current resource group and current image in current project
@@ -88,6 +88,7 @@ export const useResourceLimitAndRemaining = ({
   currentImage,
   currentResourceGroup = '',
   currentProjectName,
+  ignorePerContainerConfig = false,
 }: Props) => {
   const baiClient = useSuspendedBackendaiClient();
   const [resourceSlots] = useResourceSlots();
@@ -97,7 +98,7 @@ export const useResourceLimitAndRemaining = ({
     data: checkPresetInfo,
     refetch,
     isRefetching,
-  } = useTanQuery<ResourceAllocation | undefined>({
+  } = useSuspenseTanQuery<ResourceAllocation | undefined>({
     queryKey: ['check-presets', currentProjectName, currentResourceGroup],
     queryFn: () => {
       if (currentResourceGroup) {
@@ -112,7 +113,6 @@ export const useResourceLimitAndRemaining = ({
       }
     },
     staleTime: 1000,
-    suspense: true,
     // suspense: !_.isEmpty(currentResourceGroup), //prevent flicking
   });
 
@@ -207,7 +207,9 @@ export const useResourceLimitAndRemaining = ({
               ),
             ]),
             max: _.min([
-              baiClient._config.maxCPUCoresPerContainer,
+              ignorePerContainerConfig
+                ? undefined
+                : baiClient._config.maxCPUCoresPerContainer,
               limitParser(checkPresetInfo?.keypair_limits.cpu),
               limitParser(checkPresetInfo?.group_limits.cpu),
               resourceGroupResourceSize?.cpu,
@@ -232,7 +234,9 @@ export const useResourceLimitAndRemaining = ({
             max:
               //handled by 'g(GiB)' unit
               _.min([
-                baiClient._config.maxMemoryPerContainer,
+                ignorePerContainerConfig
+                  ? undefined
+                  : baiClient._config.maxMemoryPerContainer,
                 limitParser(checkPresetInfo?.keypair_limits.mem) &&
                   iSizeToSize(
                     limitParser(checkPresetInfo?.keypair_limits.mem) + '',

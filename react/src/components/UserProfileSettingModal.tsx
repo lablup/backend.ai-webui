@@ -231,7 +231,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
                 valuePropName="checked"
               >
                 <Switch
-                  loading={mutationToRemoveTotp.isLoading}
+                  loading={mutationToRemoveTotp.isPending}
                   onChange={(checked: boolean) => {
                     if (checked) {
                       toggleTOTPActivateModal();

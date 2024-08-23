@@ -281,7 +281,7 @@ const AgentList: React.FC<AgentListProps> = ({
                       <ResourceTypeIcon key={key} type={key} />
                       <Typography.Text>
                         {toFixedFloorWithoutTrailingZeros(
-                          parsedOccupiedSlots[key],
+                          parsedOccupiedSlots[key] || 0,
                           0,
                         )}
                         /
@@ -299,11 +299,13 @@ const AgentList: React.FC<AgentListProps> = ({
                     </Flex>
                     <BAIProgressWithLabel
                       percent={
-                        (parsedOccupiedSlots[key] / parsedAvailableSlots[key]) *
+                        ((parsedOccupiedSlots[key] || 0) /
+                          parsedAvailableSlots[key]) *
                         100
                       }
                       strokeColor={
-                        (parsedOccupiedSlots[key] / parsedAvailableSlots[key]) *
+                        ((parsedOccupiedSlots[key] || 0) /
+                          parsedAvailableSlots[key]) *
                           100 >
                         80
                           ? token.colorError
@@ -313,7 +315,7 @@ const AgentList: React.FC<AgentListProps> = ({
                       valueLabel={
                         toFixedFloorWithoutTrailingZeros(
                           _.toFinite(
-                            (parsedOccupiedSlots[key] /
+                            ((parsedOccupiedSlots[key] || 0) /
                               parsedAvailableSlots[key]) *
                               100,
                           ),
@@ -330,10 +332,10 @@ const AgentList: React.FC<AgentListProps> = ({
                       <ResourceTypeIcon key={key} type={key} />
                       <Typography.Text>
                         {iSizeToSize(parsedOccupiedSlots[key], 'g', 0)
-                          ?.numberFixed ?? 2}
+                          ?.numberFixed ?? 0}
                         /
                         {iSizeToSize(parsedAvailableSlots[key], 'g', 0)
-                          ?.numberFixed ?? 2}
+                          ?.numberFixed ?? 0}
                       </Typography.Text>
                       <Typography.Text
                         type="secondary"
@@ -344,11 +346,13 @@ const AgentList: React.FC<AgentListProps> = ({
                     </Flex>
                     <BAIProgressWithLabel
                       percent={
-                        (parsedOccupiedSlots[key] / parsedAvailableSlots[key]) *
+                        ((parsedOccupiedSlots[key] || 0) /
+                          parsedAvailableSlots[key]) *
                         100
                       }
                       strokeColor={
-                        (parsedOccupiedSlots[key] / parsedAvailableSlots[key]) *
+                        ((parsedOccupiedSlots[key] || 0) /
+                          parsedAvailableSlots[key]) *
                           100 >
                         80
                           ? token.colorError
@@ -358,7 +362,7 @@ const AgentList: React.FC<AgentListProps> = ({
                       valueLabel={
                         toFixedFloorWithoutTrailingZeros(
                           _.toFinite(
-                            (parsedOccupiedSlots[key] /
+                            ((parsedOccupiedSlots[key] || 0) /
                               parsedAvailableSlots[key]) *
                               100,
                           ),
@@ -452,10 +456,9 @@ const AgentList: React.FC<AgentListProps> = ({
               parsedValue.node.cpu_util.current,
             );
             liveStat.cpu_util.ratio =
-              (liveStat.cpu_util.current /
+              liveStat.cpu_util.current /
                 liveStat.cpu_util.capacity /
-                numCores) *
-                100 || 0;
+                numCores || 0;
             liveStat.mem_util.capacity = _.toInteger(
               available_slots.mem || parsedValue.node.mem.capacity,
             );
@@ -463,8 +466,7 @@ const AgentList: React.FC<AgentListProps> = ({
               parsedValue.node.mem.current,
             );
             liveStat.mem_util.ratio =
-              (liveStat.mem_util.current / liveStat.mem_util.capacity) * 100 ||
-              0;
+              liveStat.mem_util.current / liveStat.mem_util.capacity || 0;
           }
           _.forEach(_.keys(parsedValue?.node), (statKey) => {
             if (
@@ -497,11 +499,11 @@ const AgentList: React.FC<AgentListProps> = ({
                   {resourceSlotsDetails?.cpu?.human_readable_name}
                 </Typography.Text>
                 <BAIProgressWithLabel
-                  percent={liveStat.cpu_util.ratio}
+                  percent={liveStat.cpu_util.ratio * 100}
                   width={120}
                   valueLabel={
                     toFixedFloorWithoutTrailingZeros(
-                      _.toFinite(liveStat.cpu_util.ratio),
+                      _.toFinite(liveStat.cpu_util.ratio * 100),
                       1,
                     ) + ' %'
                   }
@@ -546,12 +548,16 @@ const AgentList: React.FC<AgentListProps> = ({
                       <BAIProgressWithLabel
                         width={120}
                         percent={
-                          liveStat[statKey as keyof typeof liveStat].ratio
+                          (liveStat[statKey as keyof typeof liveStat].current /
+                            liveStat[statKey as keyof typeof liveStat]
+                              .capacity) *
+                            100 || 0
                         }
                         valueLabel={
                           _.toFinite(
                             toFixedFloorWithoutTrailingZeros(
-                              liveStat[statKey as keyof typeof liveStat].ratio,
+                              liveStat[statKey as keyof typeof liveStat].ratio *
+                                100,
                               1,
                             ),
                           ) + ' %'
@@ -578,7 +584,10 @@ const AgentList: React.FC<AgentListProps> = ({
                       <BAIProgressWithLabel
                         width={120}
                         percent={
-                          liveStat[statKey as keyof typeof liveStat].ratio
+                          (liveStat[statKey as keyof typeof liveStat].current /
+                            liveStat[statKey as keyof typeof liveStat]
+                              .capacity) *
+                            100 || 0
                         }
                         valueLabel={
                           iSizeToSize(
@@ -616,8 +625,8 @@ const AgentList: React.FC<AgentListProps> = ({
       render: (value, record) => {
         const parsedDisk =
           JSON.parse(record?.live_stat || '{}')?.node?.disk ?? {};
-        const pctValue = parseFloat(parsedDisk.pct) || 0;
-        const pct = parseFloat(toFixedFloorWithoutTrailingZeros(pctValue, 2));
+        const pctValue = _.toFinite(parsedDisk.pct) || 0;
+        const pct = _.toFinite(toFixedFloorWithoutTrailingZeros(pctValue, 2));
         const color = pct > 80 ? token.colorError : token.colorSuccess;
         return (
           <Flex direction="column">
@@ -802,15 +811,33 @@ const AgentList: React.FC<AgentListProps> = ({
               });
             }}
           />
+
           <BAIPropertyFilter
             filterProperties={[
               {
                 key: 'id',
                 propertyLabel: 'ID',
+                type: 'string',
               },
               {
                 key: 'addr',
                 propertyLabel: t('agent.Endpoint'),
+                type: 'string',
+              },
+              {
+                key: 'schedulable',
+                propertyLabel: t('agent.Schedulable'),
+                type: 'boolean',
+                options: [
+                  {
+                    label: t('general.Enabled'),
+                    value: 'true',
+                  },
+                  {
+                    label: t('general.Disabled'),
+                    value: 'false',
+                  },
+                ],
               },
             ]}
             value={filterString}

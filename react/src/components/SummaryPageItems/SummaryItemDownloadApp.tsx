@@ -16,6 +16,9 @@ const SummaryItemDownloadApp: React.FC = () => {
 
   const baiClient = useSuspendedBackendaiClient();
   const url = baiClient._config.appDownloadUrl;
+  const windowOS = baiClient.supports('use-win-instead-of-win32')
+    ? 'win'
+    : 'win32';
 
   const appDownloadMap: Record<string, any> = {
     Linux: {
@@ -29,7 +32,7 @@ const SummaryItemDownloadApp: React.FC = () => {
       extension: 'dmg',
     },
     Windows: {
-      os: 'win',
+      os: windowOS,
       architecture: ['arm64', 'x64'],
       extension: 'zip',
     },

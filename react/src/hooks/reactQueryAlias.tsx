@@ -1,4 +1,3 @@
-import { useRef } from 'react';
 import {
   type QueryKey,
   useQuery,
@@ -6,7 +5,9 @@ import {
   UseQueryOptions,
   useQueryClient,
   QueryObserver,
-} from 'react-query';
+  useSuspenseQuery,
+} from '@tanstack/react-query';
+import { useRef } from 'react';
 
 export const useTanQuery = useQuery;
 export const useTanMutation = useMutation;
@@ -23,7 +24,7 @@ export const useTanMutation = useMutation;
  *
  * @returns {QueryResult<TQueryFnData, TError, TData>} The query result.
  */
-export const useSuspenseQuery = <
+export const useSuspenseTanQuery = <
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
@@ -39,9 +40,8 @@ export const useSuspenseQuery = <
 >) => {
   const queryClient = useQueryClient();
 
-  const queryResult = useQuery<TQueryFnData, TError, TData, TQueryKey>({
+  const queryResult = useSuspenseQuery<TQueryFnData, TError, TData, TQueryKey>({
     ...options,
-    suspense: true,
   });
 
   const promiseInfoRef = useRef<{

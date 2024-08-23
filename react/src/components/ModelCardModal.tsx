@@ -132,7 +132,12 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
     >
       {model_card?.error_msg ? (
         <Flex direction="column" wrap="wrap" align="stretch" gap={'sm'}>
-          <Alert message={model_card?.error_msg} type="error" showIcon />
+          <Alert
+            message={model_card?.error_msg}
+            type="error"
+            showIcon
+            style={{ width: '100%' }}
+          />
           <Empty
             style={{ width: '100%' }}
             image={Empty.PRESENTED_IMAGE_SIMPLE}

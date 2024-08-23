@@ -86,7 +86,7 @@ const EndpointTokenGenerationModal: React.FC<
       onOk={handleOk}
       onCancel={handleCancel}
       okText={t('modelService.Generate')}
-      confirmLoading={mutationToGenerateToken.isLoading}
+      confirmLoading={mutationToGenerateToken.isPending}
       centered
       title={t('modelService.GenerateNewToken')}
     >

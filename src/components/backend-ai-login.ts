@@ -139,6 +139,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Boolean }) allowCustomResourceAllocation = true;
   @property({ type: Boolean }) isDirectorySizeVisible = true;
   @property({ type: Boolean }) enableModelStore = false;
+  @property({ type: Boolean }) enableLLMPlayground = false;
   @property({ type: String }) eduAppNamePrefix;
   @property({ type: String }) pluginPages;
   @property({ type: Array }) blockList = [] as string[];
@@ -846,6 +847,13 @@ export default class BackendAILogin extends BackendAIPage {
       valueType: 'boolean',
       defaultValue: false,
       value: generalConfig?.enableModelStore,
+    } as ConfigValueObject) as boolean;
+
+    // Enable LLM Playground support
+    this.enableLLMPlayground = this._getConfigValueByExists(generalConfig, {
+      valueType: 'boolean',
+      defaultValue: false,
+      value: generalConfig?.enableLLMPlayground,
     } as ConfigValueObject) as boolean;
   }
 
@@ -1839,6 +1847,8 @@ export default class BackendAILogin extends BackendAIPage {
           this.isDirectorySizeVisible;
         globalThis.backendaiclient._config.enableModelStore =
           this.enableModelStore;
+        globalThis.backendaiclient._config.enableLLMPlayground =
+          this.enableLLMPlayground;
         globalThis.backendaiclient._config.pluginPages = this.pluginPages;
         globalThis.backendaiclient._config.blockList = this.blockList;
         globalThis.backendaiclient._config.inactiveList = this.inactiveList;

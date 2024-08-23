@@ -15,6 +15,7 @@ import { store } from '../store';
 import './backend-ai-app-launcher';
 import './backend-ai-common-utils';
 import BackendAICommonUtils from './backend-ai-common-utils';
+import './backend-ai-folder-explorer';
 import './backend-ai-indicator-pool';
 import './backend-ai-login';
 import BackendAIMetadataStore from './backend-ai-metadata-store';
@@ -131,6 +132,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     'pt',
     'pt-BR',
     'ru',
+    'th',
     'tr',
     'vi',
     'zh-CN',

@@ -1,7 +1,7 @@
+import { useSuspenseTanQuery } from './reactQueryAlias';
 import { useEventNotStable } from './useEventNotStable';
 import _ from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
-import { useQuery } from 'react-query';
 import { NavigateOptions, To, useNavigate } from 'react-router-dom';
 
 interface WebUINavigateOptions extends NavigateOptions {
@@ -85,8 +85,8 @@ export const useAnonymousBackendaiClient = ({
 };
 
 export const useSuspendedBackendaiClient = () => {
-  const { data: client } = useQuery<any>({
-    queryKey: 'backendai-client-for-suspense',
+  const { data: client } = useSuspenseTanQuery<any>({
+    queryKey: ['backendai-client-for-suspense'],
     queryFn: () =>
       new Promise((resolve) => {
         if (
@@ -110,7 +110,6 @@ export const useSuspendedBackendaiClient = () => {
       }),
     retry: false,
     // enabled: false,
-    suspense: true,
   });
 
   return client as {
@@ -143,8 +142,8 @@ interface ImageMetadata {
 }
 
 export const useBackendAIImageMetaData = () => {
-  const { data: metadata } = useQuery({
-    queryKey: 'backendai-metadata-for-suspense',
+  const { data: metadata } = useSuspenseTanQuery({
+    queryKey: ['backendai-metadata-for-suspense'],
     queryFn: () => {
       return fetch('resources/image_metadata.json')
         .then((response) => response.json())
@@ -164,7 +163,6 @@ export const useBackendAIImageMetaData = () => {
           },
         );
     },
-    suspense: true,
     retry: false,
   });
 
@@ -222,7 +220,7 @@ export const useBackendAIImageMetaData = () => {
       getImageLang: (imageName: string) => {
         const names = imageName.split('/');
         const langs =
-          names.length < 3 ? '' : names[2].split(':')[0]?.split('-') ?? '';
+          names.length < 3 ? '' : (names[2].split(':')[0]?.split('-') ?? '');
         return langs[langs.length - 1];
       },
       getImageTags: (imageName: string) => {
@@ -313,6 +311,7 @@ type BackendAIConfig = {
   singleSignOnVendors: string[];
   ssoRealmName: string;
   enableModelStore: boolean;
+  enableLLMPlayground: boolean;
   enableContainerCommit: boolean;
   appDownloadUrl: string;
   systemSSHImage: string;

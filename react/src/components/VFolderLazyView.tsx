@@ -1,6 +1,6 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useWebUINavigate } from '../hooks';
-import { useTanQuery } from '../hooks/reactQueryAlias';
+import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { VFolder } from './VFolderSelect';
 import { FolderOutlined } from '@ant-design/icons';
@@ -19,7 +19,7 @@ const VFolderLazyView: React.FC<VFolderLazyViewProps> = ({
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
 
   const webuiNavigate = useWebUINavigate();
-  const { data: vFolders } = useTanQuery({
+  const { data: vFolders } = useSuspenseTanQuery({
     queryKey: ['VFolderSelectQuery'],
     queryFn: () => {
       const search = new URLSearchParams();
@@ -30,7 +30,6 @@ const VFolderLazyView: React.FC<VFolderLazyViewProps> = ({
       }) as Promise<VFolder[]>;
     },
     staleTime: 1000,
-    suspense: true,
   });
 
   const vFolder = vFolders?.find(

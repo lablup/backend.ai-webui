@@ -1,10 +1,10 @@
 import {
   bytesToGB,
-  exportCSVWithFormattingRules,
   filterEmptyItem,
   localeCompare,
   numberSorterWithInfinityValue,
 } from '../helper';
+import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import Flex from './Flex';
 import ProjectResourcePolicySettingModal from './ProjectResourcePolicySettingModal';
@@ -256,12 +256,12 @@ const ProjectResourcePolicyList: React.FC<
     });
     exportCSVWithFormattingRules(
       responseData as ProjectResourcePolicies[],
+      'project_resource_polices',
       {
         max_vfolder_count: (text: ProjectResourcePolicies) =>
           _.toNumber(text) === 0 ? '-' : text,
         max_quota_scope_size: (text) => (text === -1 ? '-' : bytesToGB(text)),
       },
-      'project_resource_polices',
     );
   };
 

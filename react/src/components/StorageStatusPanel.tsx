@@ -1,5 +1,6 @@
 import { addQuotaScopeTypePrefix, usageIndicatorColor } from '../helper';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
+import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import Flex from './Flex';
 import FlexActivityIndicator from './FlexActivityIndicator';
@@ -25,7 +26,6 @@ import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQuery } from 'react-query';
 import { useLazyLoadQuery } from 'react-relay';
 
 const StorageStatusPanel: React.FC<{
@@ -56,12 +56,12 @@ const StorageStatusPanel: React.FC<{
     );
   };
 
-  const { data: vfolders } = useQuery(
-    ['vfolders', { deferredFetchKey }],
-    () => {
+  const { data: vfolders } = useSuspenseTanQuery({
+    queryKey: ['vfolders', { deferredFetchKey }],
+    queryFn: () => {
       return baiClient.vfolder.list(currentProject?.id);
     },
-  );
+  });
   const createdCount = vfolders?.filter(
     (item: any) =>
       item.is_owner &&

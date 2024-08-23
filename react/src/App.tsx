@@ -99,6 +99,9 @@ const router = createBrowserRouter([
       >
         <MainLayout />
         <RoutingEventHandler />
+        <Suspense fallback={null}>
+          <FolderExplorerOpener />
+        </Suspense>
       </QueryParamProvider>
     ),
     handle: { labelKey: 'webui.menu.Summary' },
@@ -225,7 +228,6 @@ const router = createBrowserRouter([
         handle: { labelKey: 'webui.menu.Data&Storage' },
         element: (
           <BAIErrorBoundary>
-            <FolderExplorerOpener />
             <VFolderListPage />
           </BAIErrorBoundary>
         ),

@@ -73,7 +73,7 @@ const ResourceGroupSelectForCurrentProject: React.FC<
       optionRender={(option) => {
         return (
           <TextHighlighter keyword={controllableSearchValue}>
-            {option.data.value}
+            {option.data.value?.toString()}
           </TextHighlighter>
         );
       }}

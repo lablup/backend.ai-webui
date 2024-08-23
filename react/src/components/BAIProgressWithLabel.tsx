@@ -46,7 +46,7 @@ const BAIProgressWithLabel: React.FC<BAIProgressWithLabelProps> = ({
       <Flex
         style={{
           height: '100%',
-          width: `${percent}%`,
+          width: `${percent > 100 ? 100 : percent}%`,
           position: 'absolute',
           left: 0,
           top: 0,

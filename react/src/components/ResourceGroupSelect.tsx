@@ -1,7 +1,7 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useUpdatableState } from '../hooks';
-import { useTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState from '../hooks/useControllableState';
+import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import TextHighlighter from './TextHighlighter';
 import { Select, SelectProps } from 'antd';
@@ -25,7 +25,7 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
 }) => {
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const currentProject = useCurrentProjectValue();
-  const [key, checkUpdate] = useUpdatableState('first');
+  const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [controllableSearchValue, setControllableSearchValue] =
     useControllableState<string>({
       value: searchValue,
@@ -36,7 +36,7 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
     useControllableState(selectProps);
 
   const [isPendingLoading, startLoadingTransition] = useTransition();
-  const { data: resourceGroupSelectQueryResult } = useTanQuery<
+  const { data: resourceGroupSelectQueryResult } = useSuspenseTanQuery<
     [
       {
         scaling_groups: {
@@ -59,7 +59,7 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
       },
     ]
   >({
-    queryKey: ['ResourceGroupSelectQuery', key, currentProject.name],
+    queryKey: ['ResourceGroupSelectQuery', currentProject.name],
     queryFn: () => {
       const search = new URLSearchParams();
       search.set('group', currentProject.name);
@@ -75,6 +75,7 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
       ]);
     },
     staleTime: 0,
+    fetchKey: fetchKey,
   });
 
   const sftpResourceGroups = _.flatMap(
@@ -143,7 +144,7 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
       onDropdownVisibleChange={(open) => {
         if (open) {
           startLoadingTransition(() => {
-            checkUpdate();
+            updateFetchKey();
           });
         }
       }}
@@ -154,7 +155,7 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
       optionRender={(option) => {
         return (
           <TextHighlighter keyword={controllableSearchValue}>
-            {option.data.value}
+            {option.data.value?.toString()}
           </TextHighlighter>
         );
       }}

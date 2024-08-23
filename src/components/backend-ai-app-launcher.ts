@@ -1807,7 +1807,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </div>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="ssh-dialog" fixed backdrop>
+      <backend-ai-dialog id="ssh-dialog" fixed backdrop style="z-index: 1002; position: fixed;">
         <span slot="title">SSH / SFTP connection</span>
         <div slot="content">
           <section class="vertical layout wrap start start-justified">
@@ -2004,7 +2004,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             <span>${_t('session.VSCodeRemotePasswordTitle')}:</span>
             <backend-ai-react-copyable-code-text
               value="${this.vscodeDesktopPassword}"
-              style="width:max-content;margin-bottom:10px;"
+              style="max-width:420px;margin-bottom:10px;"
             ></backend-ai-react-copyable-code-text>
             <div class="horizontal wrap layout vscode-connection-example">
               <span>${_t('session.VSCodeRemoteNoticeSSHConfig')}</span>

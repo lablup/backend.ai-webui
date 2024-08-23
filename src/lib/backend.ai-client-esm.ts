@@ -672,6 +672,7 @@ class Client {
     if (this.isManagerVersionCompatibleWith('23.09.4')) {
       this._features['deprecated-max-vfolder-count-in-keypair-resource-policy'] = true;
       this._features['deprecated-max-vfolder-size-in-keypair-resource-policy'] = true;
+      this._features['use-win-instead-of-win32'] = true;
     }
     if (this.isManagerVersionCompatibleWith('23.09.6')) {
       this._features['max-vfolder-count-in-user-and-project-resource-policy'] = true;
@@ -2434,8 +2435,8 @@ class VFolder {
       recursive: recursive,
     };
     let rqst = this.client.newSignedRequest(
-      'DELETE',
-      `${this.urlPrefix}/${name}/delete_files`,
+      this.client._managerVersion >= '24.03.7' ? 'POST' : 'DELETE',
+      `${this.urlPrefix}/${name}/delete-files`,
       body,
     );
     return this.client._wrapWithPromise(rqst);

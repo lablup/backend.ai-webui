@@ -1,6 +1,6 @@
 // import { filesState, VirtualFolder } from "../../hooks/backendai";
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useTanQuery } from '../hooks/reactQueryAlias';
+import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import Flex from './Flex';
 import FolderDownloadButton from './FolderDownloadButton';
 import { VFolder } from './VFolderSelect';
@@ -65,7 +65,7 @@ const FolderExplorer: React.FC<Props> = ({
 
   const baiClient = useSuspendedBackendaiClient();
 
-  const { data: fileList } = useTanQuery({
+  const { data: fileList } = useSuspenseTanQuery({
     queryKey: ['FolderExplorer', folderName, path.join('/')],
     queryFn: () => {
       if (!props.open || !folderName) {

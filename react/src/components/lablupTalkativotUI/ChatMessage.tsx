@@ -1,8 +1,8 @@
 import Flex from '../Flex';
 // ES 2015
 import ChatMessageContent from './ChatMessageContent';
+import { Message } from '@ai-sdk/react';
 import { useThrottle } from 'ahooks';
-import { Message } from 'ai';
 import { Avatar, theme } from 'antd';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';

@@ -11,8 +11,13 @@ export const DEFAULT_BAI_MODAL_Z_INDEX = 1001;
 export interface BAIModalProps extends ModalProps {
   okText?: string; // customize text of ok button with adequate content
   draggable?: boolean; // modal can be draggle
+  className?: string;
 }
-const BAIModal: React.FC<BAIModalProps> = ({ styles, ...modalProps }) => {
+const BAIModal: React.FC<BAIModalProps> = ({
+  className,
+  styles,
+  ...modalProps
+}) => {
   const { token } = theme.useToken();
   const [disabled, setDisabled] = useState(true);
   const [bounds, setBounds] = useState({
@@ -46,7 +51,7 @@ const BAIModal: React.FC<BAIModalProps> = ({ styles, ...modalProps }) => {
         keyboard={false}
         {...modalProps}
         centered={modalProps.centered ?? true}
-        className="bai-modal"
+        className={`bai-modal ${className ?? ''}`}
         wrapClassName={modalProps.draggable ? 'draggable' : ''}
         styles={{
           ...styles,

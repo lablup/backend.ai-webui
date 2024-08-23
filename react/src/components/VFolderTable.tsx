@@ -1,8 +1,8 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useKeyPairLazyLoadQuery } from '../hooks/hooksUsingRelay';
-import { useTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState from '../hooks/useControllableState';
+import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useEventNotStable } from '../hooks/useEventNotStable';
 import { useShadowRoot } from './DefaultProviders';
@@ -137,7 +137,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   const currentProject = useCurrentProjectValue();
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [isPendingRefetch, startRefetchTransition] = useTransition();
-  const { data: allFolderList } = useTanQuery({
+  const { data: allFolderList } = useSuspenseTanQuery({
     queryKey: ['VFolderSelectQuery', fetchKey, currentProject.id],
     queryFn: () => {
       const search = new URLSearchParams();
