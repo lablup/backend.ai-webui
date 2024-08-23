@@ -1366,7 +1366,9 @@ export default class BackendAISessionList extends BackendAIPage {
    */
   _humanReadableTime(d: any) {
     d = new Date(d);
-    return d.toLocaleString();
+    return d.toLocaleString(
+      globalThis.backendaioptions.get('language', null, 'general'),
+    );
   }
 
   /**
