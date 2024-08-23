@@ -672,6 +672,7 @@ class Client {
     if (this.isManagerVersionCompatibleWith('23.09.4')) {
       this._features['deprecated-max-vfolder-count-in-keypair-resource-policy'] = true;
       this._features['deprecated-max-vfolder-size-in-keypair-resource-policy'] = true;
+      this._features['use-win-instead-of-win32'] = true;
     }
     if (this.isManagerVersionCompatibleWith('23.09.6')) {
       this._features['max-vfolder-count-in-user-and-project-resource-policy'] = true;

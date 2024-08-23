@@ -108,7 +108,7 @@ export default class BackendAISummary extends BackendAIPage {
         extension: 'dmg',
       },
       Windows: {
-        os: 'win',
+        os: 'win32',
         architecture: ['arm64', 'x64'],
         extension: 'zip',
       },
@@ -321,6 +321,9 @@ export default class BackendAISummary extends BackendAIPage {
             globalThis.backendaiclient._config.appDownloadUrl;
           this.allowAppDownloadPanel =
             globalThis.backendaiclient._config.allowAppDownloadPanel;
+          if (globalThis.backendaiclient.supports('use-win-instead-of-win32')) {
+            this.appDownloadMap['Windows']['os'] = 'win';
+          }
 
           if (this.activeConnected) {
             this._refreshConsoleUpdateInformation();
@@ -338,6 +341,9 @@ export default class BackendAISummary extends BackendAIPage {
       this.appDownloadUrl = globalThis.backendaiclient._config.appDownloadUrl;
       this.allowAppDownloadPanel =
         globalThis.backendaiclient._config.allowAppDownloadPanel;
+      if (globalThis.backendaiclient.supports('use-win-instead-of-win32')) {
+        this.appDownloadMap['Windows']['os'] = 'win';
+      }
       this._refreshConsoleUpdateInformation();
       this._refreshInvitations();
       // let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
