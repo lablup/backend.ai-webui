@@ -861,7 +861,8 @@
       "DownloadNotAllowed": "Downloading file/folder is not allowed in this folder.",
       "RenameAFolder": "Rename Folder",
       "Filename": "File name",
-      "RemoveFileExtension": "Remove "
+      "RemoveFileExtension": "Remove ",
+      "NoSharedFolders": "No shared folders"
     },
     "invitation": {
       "NoValidEmails": "No valid emails were entered",
@@ -875,7 +876,8 @@
     },
     "permission": {
       "NoChanges": "No changes made",
-      "PermissionModified": "Permission updated"
+      "PermissionModified": "Permission updated",
+      "FailedToModifyPermission": "Failed to modify permission."
     },
     "NoStorageDescriptionFound": "No description.",
     "DialogModelFolder": "You can serve and manage models.",

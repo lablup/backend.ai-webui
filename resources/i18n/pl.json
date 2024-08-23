@@ -728,7 +728,8 @@
       "DownloadNotAllowed": "Pobieranie pliku/folderu w tym folderze jest niedozwolone.",
       "RenameAFolder": "Zmień nazwę folderu",
       "Filename": "Nazwa pliku",
-      "RemoveFileExtension": "Usunąć "
+      "RemoveFileExtension": "Usunąć ",
+      "NoSharedFolders": "Brak folderów udostępnionych"
     },
     "invitation": {
       "NoValidEmails": "Nie wprowadzono poprawnych adresów e-mail",
@@ -742,7 +743,8 @@
     },
     "permission": {
       "NoChanges": "Nie wprowadzono żadnych zmian",
-      "PermissionModified": "Zaktualizowano uprawnienia"
+      "PermissionModified": "Zaktualizowano uprawnienia",
+      "FailedToModifyPermission": "Nie udało się zmodyfikować uprawnień."
     },
     "NoStorageDescriptionFound": "Bez opisu.",
     "usage": {

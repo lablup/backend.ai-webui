@@ -314,7 +314,8 @@
       "DownloadNotAllowed": "No se permite descargar archivos/carpetas en esta carpeta.",
       "RenameAFolder": "Renombrar carpeta",
       "Filename": "Nombre del archivo",
-      "RemoveFileExtension": "Eliminar "
+      "RemoveFileExtension": "Eliminar ",
+      "NoSharedFolders": "Sin carpetas compartidas"
     },
     "folders": {
       "CannotDeleteFolder": "No se puede eliminar la carpeta montada en una o más sesiones. Por favor, termine la sesión primero.",
@@ -389,7 +390,8 @@
     },
     "permission": {
       "NoChanges": "No se han realizado cambios",
-      "PermissionModified": "Permiso actualizado"
+      "PermissionModified": "Permiso actualizado",
+      "FailedToModifyPermission": "No se pudo modificar el permiso."
     },
     "usage": {
       "Adequate": "Adecuado",

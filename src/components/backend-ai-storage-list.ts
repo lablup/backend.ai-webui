@@ -179,7 +179,6 @@ export default class BackendAiStorageList extends BackendAIPage {
   @query('#leave-folder-name') leaveFolderNameInput!: TextField;
   @query('#update-folder-permission') updateFolderPermissionSelect!: Select;
   @query('#update-folder-cloneable') updateFolderCloneableSwitch!: Switch;
-  @query('#modify-permission-dialog') modifyPermissionDialog!: BackendAIDialog;
   @query('#share-folder-dialog') shareFolderDialog!: BackendAIDialog;
   @query('#session-launcher') sessionLauncher!: BackendAiSessionLauncher;
   @state() private _unionedAllowedPermissionByVolume = Object();
@@ -368,10 +367,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           width: 147px; // default width
         }
 
-        #modify-permission-dialog {
-          --component-min-width: 600px;
-        }
-
         backend-ai-dialog {
           --component-min-width: 350px;
         }
@@ -391,9 +386,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           }
           mwc-button > span {
             display: none;
-          }
-          #modify-permission-dialog {
-            --component-min-width: 100%;
           }
         }
       `,
@@ -665,7 +657,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       </backend-ai-dialog>
 
       <backend-ai-dialog id="modify-folder-name-dialog" fixed backdrop>
-        <span slot="title">${_t('data.folders.RenameAFolder')}</span>
+        <span slot="title">${_t('data.explorer.RenameAFolder')}</span>
         <div slot="content" class="vertical layout flex">
           <mwc-textfield
             id="clone-folder-src"
@@ -1003,42 +995,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           </mwc-button>
         </div>
       </backend-ai-dialog>
-
-      <backend-ai-dialog id="modify-permission-dialog" fixed backdrop>
-        <span slot="title">${_t('data.explorer.ModifyPermissions')}</span>
-        <div slot="content" role="listbox" style="margin: 0; padding: 10px;">
-          <vaadin-grid
-            theme="row-stripes column-borders compact dark"
-            .items="${this.invitees}"
-          >
-            <vaadin-grid-column
-              width="30px"
-              flex-grow="0"
-              header="#"
-              .renderer="${this._boundIndexRenderer}"
-            ></vaadin-grid-column>
-            <vaadin-grid-column
-              header="${_t('data.explorer.InviteeEmail')}"
-              .renderer="${this._boundInviteeInfoRenderer}"
-            ></vaadin-grid-column>
-            <vaadin-grid-column
-              header="${_t('data.explorer.Permission')}"
-              .renderer="${this._boundPermissionRenderer}"
-            ></vaadin-grid-column>
-          </vaadin-grid>
-        </div>
-        <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button
-            icon="check"
-            type="button"
-            unelevated
-            fullwidth
-            @click=${() => this._modifySharedFolderPermissions()}
-          >
-            ${_t('button.SaveChanges')}
-          </mwc-button>
-        </div>
-      </backend-ai-dialog>
       <backend-ai-dialog id="delete-from-trash-bin-dialog" fixed backdrop>
         <span slot="title">${_t('dialog.title.DeleteForever')}</span>
         <div slot="content">
@@ -1092,35 +1048,6 @@ export default class BackendAiStorageList extends BackendAIPage {
     document.addEventListener('backend-ai-group-changed', (e) =>
       this._refreshFolderList(true, 'group-changed'),
     );
-  }
-
-  _modifySharedFolderPermissions() {
-    const selectNodeList = this.shadowRoot?.querySelectorAll(
-      '#modify-permission-dialog mwc-select',
-    );
-    const inputList = Array.prototype.filter
-      .call(
-        selectNodeList,
-        (pulldown, idx) =>
-          pulldown.value !== (this.invitees as inviteeData[])[idx].perm,
-      )
-      .map((pulldown, idx) => ({
-        perm: pulldown.value === 'kickout' ? null : pulldown.value,
-        user: this.invitees[idx].shared_to.uuid,
-        vfolder: this.invitees[idx].vfolder_id,
-      }));
-    const promiseArray = inputList.map((input) =>
-      globalThis.backendaiclient.vfolder.modify_invitee_permission(input),
-    );
-    Promise.all(promiseArray).then((response: any) => {
-      if (response.length === 0) {
-        this.notification.text = _text('data.permission.NoChanges');
-      } else {
-        this.notification.text = _text('data.permission.PermissionModified');
-      }
-      this.notification.show();
-      this.modifyPermissionDialog.hide();
-    });
   }
 
   _isUncontrollableStatus(status: VFolderOperationStatus) {
@@ -1184,7 +1111,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-list-item value="wd" ?selected="${rowData.item.perm === 'wd'}">
             ${_t('data.folders.EditDelete')}
           </mwc-list-item>
-          <mwc-list-item value="kickout"">
+          <mwc-list-item value="kickout">
             ${_t('data.folders.KickOut')}
           </mwc-list-item>
         </mwc-select>
@@ -1453,7 +1380,8 @@ export default class BackendAiStorageList extends BackendAIPage {
                 <mwc-icon-button
                   class="fg blue controls-running"
                   icon="perm_identity"
-                  @click=${(e) => this._modifyPermissionDialog(rowData.item.id)}
+                  @click=${(e) =>
+                    this._showPermissionSettingModal(rowData.item.id)}
                   ?disabled="${this._isUncontrollableStatus(
                     rowData.item.status,
                   )}"
@@ -2505,18 +2433,12 @@ export default class BackendAiStorageList extends BackendAIPage {
     this.openDialog('share-folder-dialog');
   }
 
-  /**
-   * Open modify-permission-dialog.
-   *
-   * @param {string} vfolder_id - vfolder id to modify
-   * */
-  _modifyPermissionDialog(vfolder_id) {
-    globalThis.backendaiclient.vfolder.list_invitees(vfolder_id).then((res) => {
-      this.invitees = res.shared;
-      this.modifyPermissionDialog.updateComplete.then(() => {
-        this.openDialog('modify-permission-dialog');
-      });
+  _showPermissionSettingModal(vfolderId) {
+    const event = new CustomEvent('show-invite-folder-permission-setting', {
+      detail: vfolderId,
+      bubbles: true,
     });
+    document.dispatchEvent(event);
   }
 
   /**

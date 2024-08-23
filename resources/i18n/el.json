@@ -728,7 +728,8 @@
       "DownloadNotAllowed": "Η λήψη αρχείου/φακέλου δεν επιτρέπεται σε αυτόν τον φάκελο.",
       "RenameAFolder": "Μετονομασία φακέλου",
       "Filename": "Ονομα αρχείου",
-      "RemoveFileExtension": "Αφαιρώ "
+      "RemoveFileExtension": "Αφαιρώ ",
+      "NoSharedFolders": "Δεν υπάρχουν κοινόχρηστοι φάκελοι"
     },
     "invitation": {
       "NoValidEmails": "Δεν καταχωρήθηκαν έγκυρα μηνύματα ηλεκτρονικού ταχυδρομείου",
@@ -742,7 +743,8 @@
     },
     "permission": {
       "NoChanges": "Δεν έγιναν αλλαγές",
-      "PermissionModified": "Η άδεια ενημερώθηκε"
+      "PermissionModified": "Η άδεια ενημερώθηκε",
+      "FailedToModifyPermission": "Αποτυχία τροποποίησης της άδειας."
     },
     "NoStorageDescriptionFound": "Χωρίς περιγραφή.",
     "usage": {

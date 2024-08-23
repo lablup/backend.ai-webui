@@ -728,7 +728,8 @@
       "DownloadNotAllowed": "Memuat turun fail/folder tidak dibenarkan dalam folder ini.",
       "RenameAFolder": "Namakan semula Folder",
       "Filename": "Nama fail",
-      "RemoveFileExtension": "Alih keluar "
+      "RemoveFileExtension": "Alih keluar ",
+      "NoSharedFolders": "Tiada folder kongsi"
     },
     "invitation": {
       "NoValidEmails": "Tidak ada e-mel yang sah dimasukkan",
@@ -742,7 +743,8 @@
     },
     "permission": {
       "NoChanges": "Tidak ada perubahan yang dibuat",
-      "PermissionModified": "Kebenaran dikemas kini"
+      "PermissionModified": "Kebenaran dikemas kini",
+      "FailedToModifyPermission": "Gagal mengubah suai kebenaran."
     },
     "NoStorageDescriptionFound": "Tiada deskripsi.",
     "SelectStorageHost": "Pilih hos storan",

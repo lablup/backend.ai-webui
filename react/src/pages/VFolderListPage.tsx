@@ -1,9 +1,10 @@
 import Flex from '../components/Flex';
+import InviteFolderPermissionSettingModal from '../components/InviteFolderPermissionSettingModal';
 import { filterEmptyItem } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { Alert, Button, Card, Skeleton, theme } from 'antd';
-import React, { Suspense, useEffect, useRef } from 'react';
+import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
@@ -37,6 +38,7 @@ const VFolderListPage: React.FC<VFolderListPageProps> = (props) => {
   const baiClient = useSuspendedBackendaiClient();
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const dataViewRef = useRef(null);
+  const [inviteFolderId, setInviteFolderId] = useState<string | null>(null);
 
   const { token } = theme.useToken();
 
@@ -49,6 +51,19 @@ const VFolderListPage: React.FC<VFolderListPageProps> = (props) => {
       document.removeEventListener('backend-ai-folder-list-changed', handler);
     };
   }, [updateFetchKey]);
+
+  useEffect(() => {
+    const handler = (event: any) => {
+      setInviteFolderId(event.detail);
+    };
+    document.addEventListener('show-invite-folder-permission-setting', handler);
+    return () => {
+      document.removeEventListener(
+        'show-invite-folder-permission-setting',
+        handler,
+      );
+    };
+  }, [setInviteFolderId]);
 
   const tabBannerText = {
     data: t('data.DialogDataFolder'),
@@ -127,6 +142,13 @@ const VFolderListPage: React.FC<VFolderListPageProps> = (props) => {
         {/* @ts-ignore  */}
         <backend-ai-data-view ref={dataViewRef} active _activeTab={curTabKey} />
       </Card>
+      <InviteFolderPermissionSettingModal
+        onRequestClose={() => {
+          setInviteFolderId(null);
+        }}
+        vfolderId={inviteFolderId}
+        open={inviteFolderId !== null}
+      />
     </Flex>
   );
 };

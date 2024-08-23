@@ -314,7 +314,8 @@
       "DownloadNotAllowed": "Tiedoston/kansion lataaminen ei ole sallittua tässä kansiossa.",
       "RenameAFolder": "Nimeä kansio uudelleen",
       "Filename": "Tiedoston nimi",
-      "RemoveFileExtension": "Poista "
+      "RemoveFileExtension": "Poista ",
+      "NoSharedFolders": "Ei jaettuja kansioita"
     },
     "folders": {
       "CannotDeleteFolder": "Yhdessä tai useammassa istunnossa asennettua kansiota ei voi poistaa. Lopeta istunto ensin.",
@@ -389,7 +390,8 @@
     },
     "permission": {
       "NoChanges": "Ei muutoksia",
-      "PermissionModified": "Lupa päivitetty"
+      "PermissionModified": "Lupa päivitetty",
+      "FailedToModifyPermission": "Luvan muokkaaminen epäonnistui."
     },
     "usage": {
       "Adequate": "Riittävästi",

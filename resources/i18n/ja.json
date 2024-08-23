@@ -728,7 +728,8 @@
       "DownloadNotAllowed": "このフォルダーではファイル/フォルダーのダウンロードは許可されていません。",
       "RenameAFolder": "フォルダー名の変更",
       "Filename": "ファイル名",
-      "RemoveFileExtension": "取り除く "
+      "RemoveFileExtension": "取り除く ",
+      "NoSharedFolders": "共有フォルダーはありません"
     },
     "invitation": {
       "NoValidEmails": "有効なメールが入力されていません",
@@ -742,7 +743,8 @@
     },
     "permission": {
       "NoChanges": "変更はありません",
-      "PermissionModified": "許可が更新されました"
+      "PermissionModified": "許可が更新されました",
+      "FailedToModifyPermission": "権限の変更に失敗しました。"
     },
     "NoStorageDescriptionFound": "説明はありません。",
     "usage": {

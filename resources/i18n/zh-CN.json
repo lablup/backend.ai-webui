@@ -728,7 +728,8 @@
       "DownloadNotAllowed": "不允许在此文件夹中下载文件/文件夹。",
       "RenameAFolder": "重命名文件夹",
       "Filename": "文件名",
-      "RemoveFileExtension": "消除 "
+      "RemoveFileExtension": "消除 ",
+      "NoSharedFolders": "没有共享文件夹"
     },
     "invitation": {
       "NoValidEmails": "没有输入有效的电子邮件",
@@ -742,7 +743,8 @@
     },
     "permission": {
       "NoChanges": "未做任何更改",
-      "PermissionModified": "权限已更新"
+      "PermissionModified": "权限已更新",
+      "FailedToModifyPermission": "修改权限失败。"
     },
     "NoStorageDescriptionFound": "没有说明。",
     "SelectStorageHost": "选择存储主机",

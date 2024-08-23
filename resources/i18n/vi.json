@@ -728,7 +728,8 @@
       "DownloadNotAllowed": "Không được phép tải xuống tập tin/thư mục trong thư mục này.",
       "RenameAFolder": "Đổi tên thư mục",
       "Filename": "Tên tập tin",
-      "RemoveFileExtension": "Di dời "
+      "RemoveFileExtension": "Di dời ",
+      "NoSharedFolders": "Không có thư mục chia sẻ"
     },
     "invitation": {
       "NoValidEmails": "Không có email hợp lệ nào được nhập",
@@ -742,7 +743,8 @@
     },
     "permission": {
       "NoChanges": "Không có thay đổi nào được thực hiện",
-      "PermissionModified": "Quyền đã được cập nhật"
+      "PermissionModified": "Quyền đã được cập nhật",
+      "FailedToModifyPermission": "Không thể sửa đổi quyền."
     },
     "NoStorageDescriptionFound": "Không có mô tả.",
     "SelectStorageHost": "Chọn máy chủ lưu trữ",

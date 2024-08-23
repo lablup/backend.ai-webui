@@ -728,7 +728,8 @@
       "DownloadNotAllowed": "Bu klasörde dosya/klasör indirmeye izin verilmiyor.",
       "RenameAFolder": "Dosyayı yeniden adlandır",
       "Filename": "Dosya adı",
-      "RemoveFileExtension": "Kaldırmak "
+      "RemoveFileExtension": "Kaldırmak ",
+      "NoSharedFolders": "Paylaşılan klasör yok"
     },
     "invitation": {
       "NoValidEmails": "Geçerli e-posta girilmedi",
@@ -742,7 +743,8 @@
     },
     "permission": {
       "NoChanges": "Değişiklik yapılmadı",
-      "PermissionModified": "İzin güncellendi"
+      "PermissionModified": "İzin güncellendi",
+      "FailedToModifyPermission": "İzin değiştirilemedi."
     },
     "NoStorageDescriptionFound": "Açıklama yok.",
     "usage": {

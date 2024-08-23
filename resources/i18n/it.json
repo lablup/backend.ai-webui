@@ -729,7 +729,8 @@
       "DownloadNotAllowed": "Il download di file/cartelle non è consentito in questa cartella.",
       "RenameAFolder": "Rinomina cartella",
       "Filename": "Nome del file",
-      "RemoveFileExtension": "Rimuovere "
+      "RemoveFileExtension": "Rimuovere ",
+      "NoSharedFolders": "Nessuna cartella condivisa"
     },
     "invitation": {
       "NoValidEmails": "Non sono state inserite email valide",
@@ -743,7 +744,8 @@
     },
     "permission": {
       "NoChanges": "Nessuna modifica effettuata",
-      "PermissionModified": "Autorizzazione aggiornata"
+      "PermissionModified": "Autorizzazione aggiornata",
+      "FailedToModifyPermission": "Impossibile modificare l'autorizzazione."
     },
     "NoStorageDescriptionFound": "Nessuna descrizione.",
     "usage": {

@@ -728,7 +728,8 @@
       "DownloadNotAllowed": "O download de arquivo/pasta não é permitido nesta pasta.",
       "RenameAFolder": "Renomear pasta",
       "Filename": "Nome do arquivo",
-      "RemoveFileExtension": "Remover "
+      "RemoveFileExtension": "Remover ",
+      "NoSharedFolders": "Nenhuma pasta compartilhada"
     },
     "invitation": {
       "NoValidEmails": "Nenhum e-mail válido foi inserido",
@@ -742,7 +743,8 @@
     },
     "permission": {
       "NoChanges": "Nenhuma mudança feita",
-      "PermissionModified": "Permissão atualizada"
+      "PermissionModified": "Permissão atualizada",
+      "FailedToModifyPermission": "Falha ao modificar a permissão."
     },
     "NoStorageDescriptionFound": "Sem descrição.",
     "SelectStorageHost": "Selecionar anfitrião de armazenamento",

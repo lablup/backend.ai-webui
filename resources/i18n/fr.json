@@ -728,7 +728,8 @@
       "DownloadNotAllowed": "Le téléchargement de fichiers/dossiers n'est pas autorisé dans ce dossier.",
       "RenameAFolder": "Renommer le dossier",
       "Filename": "Nom de fichier",
-      "RemoveFileExtension": "Retirer "
+      "RemoveFileExtension": "Retirer ",
+      "NoSharedFolders": "Aucun dossier partagé"
     },
     "invitation": {
       "NoValidEmails": "Aucun e-mail valide n'a été saisi",
@@ -742,7 +743,8 @@
     },
     "permission": {
       "NoChanges": "Aucune modification apportée",
-      "PermissionModified": "Autorisation mise à jour"
+      "PermissionModified": "Autorisation mise à jour",
+      "FailedToModifyPermission": "Échec de la modification de l'autorisation."
     },
     "NoStorageDescriptionFound": "Pas de description.",
     "DialogModelFolder": "Vous pouvez servir et gérer des modèles.",

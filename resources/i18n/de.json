@@ -728,7 +728,8 @@
       "DownloadNotAllowed": "Das Herunterladen von Dateien/Ordnern ist in diesem Ordner nicht gestattet.",
       "RenameAFolder": "Ordner umbenennen",
       "Filename": "Dateiname",
-      "RemoveFileExtension": "Entfernen "
+      "RemoveFileExtension": "Entfernen ",
+      "NoSharedFolders": "Keine freigegebenen Ordner"
     },
     "invitation": {
       "NoValidEmails": "Es wurden keine gültigen E-Mails eingegeben",
@@ -742,7 +743,8 @@
     },
     "permission": {
       "NoChanges": "Keine Änderungen vorgenommen",
-      "PermissionModified": "Berechtigung aktualisiert"
+      "PermissionModified": "Berechtigung aktualisiert",
+      "FailedToModifyPermission": "Die Berechtigung konnte nicht geändert werden."
     },
     "NoStorageDescriptionFound": "Keine Beschreibung.",
     "usage": {

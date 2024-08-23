@@ -730,7 +730,8 @@
       "DownloadNotAllowed": "Энэ фолдерт файл/хавтас татаж авахыг хориглоно.",
       "RenameAFolder": "Хавтасны нэрийг өөрчлөх",
       "Filename": "Файлын нэр",
-      "RemoveFileExtension": "Устгах "
+      "RemoveFileExtension": "Устгах ",
+      "NoSharedFolders": "Хуваалцсан фолдер байхгүй"
     },
     "invitation": {
       "NoValidEmails": "Хүчинтэй имэйл оруулаагүй болно",
@@ -744,7 +745,8 @@
     },
     "permission": {
       "NoChanges": "Өөрчлөлт оруулаагүй болно",
-      "PermissionModified": "Зөвшөөрөл шинэчлэгдсэн"
+      "PermissionModified": "Зөвшөөрөл шинэчлэгдсэн",
+      "FailedToModifyPermission": "Зөвшөөрлийг өөрчилж чадсангүй."
     },
     "NoStorageDescriptionFound": "Тайлбар алга.",
     "DialogModelFolder": "Та загварт үйлчилж, удирдаж болно.",

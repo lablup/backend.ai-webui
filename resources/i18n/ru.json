@@ -728,7 +728,8 @@
       "DownloadNotAllowed": "Загрузка файла/папки в этой папке запрещена.",
       "RenameAFolder": "Переименовать папку",
       "Filename": "Имя файла",
-      "RemoveFileExtension": "Удалять "
+      "RemoveFileExtension": "Удалять ",
+      "NoSharedFolders": "Нет общих папок"
     },
     "invitation": {
       "NoValidEmails": "Не введены действительные адреса электронной почты",
@@ -742,7 +743,8 @@
     },
     "permission": {
       "NoChanges": "Никаких изменений не внесено",
-      "PermissionModified": "Разрешение обновлено"
+      "PermissionModified": "Разрешение обновлено",
+      "FailedToModifyPermission": "Не удалось изменить разрешение."
     },
     "NoStorageDescriptionFound": "Нет описания.",
     "DialogModelFolder": "Вы можете обслуживать и управлять моделями.",

@@ -729,7 +729,8 @@
       "DownloadNotAllowed": "Mengunduh file/folder tidak diperbolehkan di folder ini.",
       "RenameAFolder": "Mengganti nama folder",
       "Filename": "Nama file",
-      "RemoveFileExtension": "Menghapus "
+      "RemoveFileExtension": "Menghapus ",
+      "NoSharedFolders": "Tidak ada folder bersama"
     },
     "invitation": {
       "NoValidEmails": "Tidak ada email valid yang dimasukkan",
@@ -743,7 +744,8 @@
     },
     "permission": {
       "NoChanges": "Tidak ada perubahan yang dilakukan",
-      "PermissionModified": "Izin diperbarui"
+      "PermissionModified": "Izin diperbarui",
+      "FailedToModifyPermission": "Gagal mengubah izin."
     },
     "NoStorageDescriptionFound": "Tidak ada deskripsi.",
     "DialogModelFolder": "Anda dapat melayani dan mengelola model.",
