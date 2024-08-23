@@ -6,7 +6,7 @@ import { useResourceSlots } from '../hooks/backendai';
 import { useSuspenseTanQuery } from './reactQueryAlias';
 import _ from 'lodash';
 
-interface MergedResourceLimits {
+export interface MergedResourceLimits {
   accelerators: {
     [key: string]:
       | {
@@ -44,7 +44,6 @@ type ScalingGroup = {
 type ResourceSlots = {
   cpu: string;
   mem: string;
-  'cuda.device': string;
   [key: string]: string;
 };
 

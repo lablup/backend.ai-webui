@@ -11,10 +11,17 @@ import {
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
 import { useEventNotStable } from '../hooks/useEventNotStable';
-import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
+import {
+  MergedResourceLimits,
+  ResourcePreset,
+  useResourceLimitAndRemaining,
+} from '../hooks/useResourceLimitAndRemaining';
 import DynamicUnitInputNumberWithSlider from './DynamicUnitInputNumberWithSlider';
 import Flex from './Flex';
-import { ImageEnvironmentFormInput } from './ImageEnvironmentSelectFormItems';
+import {
+  Image,
+  ImageEnvironmentFormInput,
+} from './ImageEnvironmentSelectFormItems';
 import InputNumberWithSlider from './InputNumberWithSlider';
 import ResourceGroupSelectForCurrentProject from './ResourceGroupSelectForCurrentProject';
 import { ACCELERATOR_UNIT_MAP } from './ResourceNumber';
@@ -122,10 +129,12 @@ const ResourceAllocationFormItems: React.FC<
     return false;
   });
 
-  const currentImageAcceleratorLimits = _.filter(
-    currentImage?.resource_limits,
-    (limit) =>
-      limit ? !_.includes(['cpu', 'mem', 'shmem'], limit.key) : false,
+  const currentImageAcceleratorLimits = useMemo(
+    () =>
+      _.filter(currentImage?.resource_limits, (limit) =>
+        limit ? !_.includes(['cpu', 'mem', 'shmem'], limit.key) : false,
+      ),
+    [currentImage?.resource_limits],
   );
 
   const sessionSliderLimitAndRemaining = {
@@ -135,80 +144,12 @@ const ResourceAllocationFormItems: React.FC<
   };
 
   const allocatablePresetNames = useMemo(() => {
-    const bySliderLimit = _.filter(checkPresetInfo?.presets, (preset) => {
-      if (
-        typeof preset.resource_slots.mem === 'string' &&
-        typeof resourceLimits.mem?.max === 'string' &&
-        compareNumberWithUnits(
-          preset.resource_slots.mem,
-          resourceLimits.mem?.max,
-        ) > 0
-      ) {
-        return false;
-      }
-      if (
-        typeof preset.resource_slots.cpu === 'number' &&
-        typeof resourceLimits.cpu?.max === 'number' &&
-        preset.resource_slots.cpu > resourceLimits.cpu?.max
-      ) {
-        return false;
-      }
-      const acceleratorKeys = _.keys(
-        _.omit(preset.resource_slots, ['mem', 'cpu', 'shmem']),
-      );
-      const isAvailable = _.every(acceleratorKeys, (key) => {
-        if (
-          key &&
-          typeof preset.resource_slots[key] === 'string' &&
-          typeof resourceLimits.accelerators[key]?.max === 'number' &&
-          _.toNumber(preset.resource_slots[key]) >
-            _.toNumber(resourceLimits.accelerators[key]?.max)
-        ) {
-          return false;
-        }
-        return true;
-      });
-      return isAvailable;
-    }).map((preset) => preset.name);
-
-    const byImageAcceleratorLimits = _.filter(
+    return getAllocatablePresetNames(
       checkPresetInfo?.presets,
-      (preset) => {
-        const acceleratorResourceOfPreset = _.omitBy(
-          preset.resource_slots,
-          (value, key) => {
-            if (['mem', 'cpu', 'shmem'].includes(key) || value === '0')
-              return true;
-          },
-        );
-        if (currentImageAcceleratorLimits.length === 0) {
-          if (_.isEmpty(acceleratorResourceOfPreset)) {
-            return true;
-          } else {
-            return false;
-          }
-        }
-
-        return _.some(currentImageAcceleratorLimits, (limit) => {
-          return _.some(acceleratorResourceOfPreset, (value, key) => {
-            return (
-              limit?.key === key && _.toNumber(value) >= _.toNumber(limit?.min)
-            );
-          });
-        });
-      },
-    ).map((preset) => preset.name);
-
-    return currentImageAcceleratorLimits.length > 0
-      ? bySliderLimit
-      : _.intersection(bySliderLimit, byImageAcceleratorLimits);
-  }, [
-    checkPresetInfo?.presets,
-    resourceLimits.accelerators,
-    resourceLimits.cpu?.max,
-    resourceLimits.mem?.max,
-    currentImageAcceleratorLimits,
-  ]);
+      resourceLimits,
+      currentImage,
+    );
+  }, [checkPresetInfo?.presets, resourceLimits, currentImage]);
 
   const ensureValidAcceleratorType = useEventNotStable(() => {
     const currentAcceleratorType = form.getFieldValue(
@@ -1309,3 +1250,90 @@ const MemoizedResourceAllocationFormItems = React.memo(
 );
 
 export default MemoizedResourceAllocationFormItems;
+
+export const getAllocatablePresetNames = (
+  presets: Array<ResourcePreset> | undefined,
+  resourceLimits: MergedResourceLimits,
+  currentImage: Image,
+) => {
+  const currentImageAcceleratorLimits = _.filter(
+    currentImage?.resource_limits,
+    (limit) =>
+      limit ? !_.includes(['cpu', 'mem', 'shmem'], limit.key) : false,
+  );
+
+  const bySliderLimit = _.filter(presets, (preset) => {
+    // After allow pending session, we don't need to check allocatable field.
+    // if (_.has(preset, 'allocatable')) {
+    //   return !!preset.allocatable;
+    // }
+
+    // Check if all resource slots in the preset are less than or equal to resourceLimits
+    // Be careful with the type of values in resourceLimits, they are string or number
+    return _.every(preset.resource_slots, (value, key) => {
+      if (key === 'mem') {
+        // if mem resource limit is not defined, it is UNLIMITED
+        const isNoLimit = typeof resourceLimits[key]?.max !== 'string';
+        return isNoLimit
+          ? true
+          : typeof preset.resource_slots[key] === 'string' &&
+              typeof resourceLimits[key]?.max === 'string' &&
+              compareNumberWithUnits(
+                preset.resource_slots[key],
+                resourceLimits[key]?.max,
+              ) <= 0;
+      } else if (key === 'shmem') {
+        // no need to check shmem
+        return true;
+      } else if (key === 'cpu') {
+        // if cpu resource limit is not defined, it is UNLIMITED
+        const isNoLimit = _.isNaN(_.toNumber(resourceLimits[key]?.max));
+        return isNoLimit
+          ? true
+          : (_.toNumber(preset.resource_slots[key]) || 0) <=
+              _.toNumber(resourceLimits[key]?.max);
+      } else {
+        // if accelerator resource limit is not defined, it is UNLIMITED
+        const isNoLimit = _.isNaN(
+          _.toNumber(resourceLimits.accelerators[key]?.max),
+        );
+        return isNoLimit
+          ? true
+          : (_.toNumber(preset.resource_slots[key]) || 0) <=
+              _.toNumber(resourceLimits.accelerators[key]?.max);
+      }
+    });
+  }).map((preset) => preset.name);
+
+  const byImageAcceleratorLimits = _.filter(presets, (preset) => {
+    const acceleratorResourceOfPreset = _.omitBy(
+      preset.resource_slots,
+      (value, key) => {
+        if (['mem', 'cpu', 'shmem'].includes(key)) return true;
+      },
+    );
+    if (currentImageAcceleratorLimits.length === 0) {
+      // When current image doesn't require any accelerator,
+      // It's available if the preset doesn't have any accelerator
+      if (_.isEmpty(acceleratorResourceOfPreset)) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      // When current image requires some accelerator,
+      // It's available if the preset has a required accelerator value that is larger than the current image's minimum value
+      return _.some(currentImageAcceleratorLimits, (limit) => {
+        return (
+          limit?.key &&
+          acceleratorResourceOfPreset[limit?.key] &&
+          _.toNumber(acceleratorResourceOfPreset[limit?.key]) >=
+            _.toNumber(limit?.min)
+        );
+      });
+    }
+  }).map((preset) => preset.name);
+  return currentImageAcceleratorLimits.length === 0
+    ? bySliderLimit
+    : _.intersection(bySliderLimit, byImageAcceleratorLimits);
+};
