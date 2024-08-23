@@ -59,7 +59,7 @@ export type ResourcePreset = {
   name: string;
   resource_slots: ResourceSlots;
   shared_memory: string | null;
-  allocatable?: boolean;
+  allocatable: boolean;
 };
 
 type ResourceAllocation = {

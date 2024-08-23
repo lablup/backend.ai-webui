@@ -1263,39 +1263,44 @@ export const getAllocatablePresetNames = (
   );
 
   const bySliderLimit = _.filter(presets, (preset) => {
-    // Check if the preset has `allocatable` field, use it.
-    if (_.has(preset, 'allocatable')) {
-      return !!preset.allocatable;
-    }
+    // After allow pending session, we don't need to check allocatable field.
+    // if (_.has(preset, 'allocatable')) {
+    //   return !!preset.allocatable;
+    // }
 
     // Check if all resource slots in the preset are less than or equal to resourceLimits
     // Be careful with the type of values in resourceLimits, they are string or number
     return _.every(preset.resource_slots, (value, key) => {
       if (key === 'mem') {
-        // mem is special case
-        return (
-          typeof preset.resource_slots[key] === 'string' &&
-          typeof resourceLimits[key]?.max === 'string' &&
-          compareNumberWithUnits(
-            preset.resource_slots[key],
-            resourceLimits[key]?.max,
-          ) <= 0
-        );
+        // if mem resource limit is not defined, it is UNLIMITED
+        const isNoLimit = typeof resourceLimits[key]?.max !== 'string';
+        return isNoLimit
+          ? true
+          : typeof preset.resource_slots[key] === 'string' &&
+              typeof resourceLimits[key]?.max === 'string' &&
+              compareNumberWithUnits(
+                preset.resource_slots[key],
+                resourceLimits[key]?.max,
+              ) <= 0;
       } else if (key === 'shmem') {
         // no need to check shmem
         return true;
       } else if (key === 'cpu') {
         // if cpu resource limit is not defined, it is UNLIMITED
-        return (
-          (_.toNumber(preset.resource_slots[key]) || 0) <=
-          (_.toNumber(resourceLimits[key]?.max) || Number.MAX_SAFE_INTEGER)
-        );
+        const isNoLimit = _.isNaN(_.toNumber(resourceLimits[key]?.max));
+        return isNoLimit
+          ? true
+          : (_.toNumber(preset.resource_slots[key]) || 0) <=
+              _.toNumber(resourceLimits[key]?.max);
       } else {
-        // if accelerator resource limit is not defined, it is NOT SUPPORTED
-        return (
-          (_.toNumber(preset.resource_slots[key]) || 0) <=
-          (_.toNumber(resourceLimits.accelerators[key]?.max) || 0)
+        // if accelerator resource limit is not defined, it is UNLIMITED
+        const isNoLimit = _.isNaN(
+          _.toNumber(resourceLimits.accelerators[key]?.max),
         );
+        return isNoLimit
+          ? true
+          : (_.toNumber(preset.resource_slots[key]) || 0) <=
+              _.toNumber(resourceLimits.accelerators[key]?.max);
       }
     });
   }).map((preset) => preset.name);

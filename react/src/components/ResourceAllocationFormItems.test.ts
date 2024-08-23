@@ -21,7 +21,7 @@ describe('getAllocatablePresetNames', () => {
       allocatable: false,
     },
     {
-      name: 'preset3',
+      name: 'cpu1_mem2g',
       resource_slots: { cpu: '1', mem: '2GB' },
       shared_memory: '1GB',
       allocatable: true,
@@ -46,23 +46,13 @@ describe('getAllocatablePresetNames', () => {
     resource_limits: [{ key: 'cuda.shares', min: '1', max: '1' }],
   };
 
-  it('should return presets when currentImage has accelerator limits(with allocatable property)', () => {
+  it('should return presets when currentImage has accelerator limits', () => {
     const result = getAllocatablePresetNames(
       presets,
       resourceLimits_cpu4_mem8g_cudashares1,
       image_has_cuda_shares_min1_max1,
     );
-    //  Without comparing the preset's resource slots with the resource limits.
-    expect(result).toEqual(['cuda_shares_prest_10']);
-  });
-
-  it('should return presets when currentImage has accelerator limits(without allocatable property)', () => {
-    const result = getAllocatablePresetNames(
-      _.map(presets, (p) => _.omit(p, 'allocatable')),
-      resourceLimits_cpu4_mem8g_cudashares1,
-      image_has_cuda_shares_min1_max1,
-    );
-    // Must compare the preset's resource slots with the resource limits.
+    //  must compare the preset's resource slots with the resource limits even `check-preset` result has allocatable.
     expect(result).toEqual(['cuda_shares_prest_1']);
   });
 
@@ -96,12 +86,14 @@ describe('getAllocatablePresetNames', () => {
     const result = getAllocatablePresetNames(
       presets,
       {
+        cpu: {},
+        mem: {},
         accelerators: {},
       },
       image_has_cuda_shares_min1_max1,
     );
     // Only presets that have cuda.shares minimum 1 should be returned.
-    expect(result).toEqual(['cuda_shares_prest_10']);
+    expect(result).toEqual(['cuda_shares_prest_10', 'cuda_shares_prest_1']);
   });
 
   it('should handle empty image', () => {
@@ -110,7 +102,20 @@ describe('getAllocatablePresetNames', () => {
       resourceLimits_cpu4_mem8g_cudashares1,
       undefined,
     );
-    // all `preset.allocatable === true` presets should be returned
-    expect(result).toEqual(['cuda_shares_prest_10', 'preset3']);
+    // Only compare with resource limits
+    expect(result).toEqual(['cuda_shares_prest_1', 'cpu1_mem2g']);
+  });
+
+  it('should handle empty image and small mem limit', () => {
+    const result = getAllocatablePresetNames(
+      presets,
+      {
+        ...resourceLimits_cpu4_mem8g_cudashares1,
+        mem: { max: '2GB' },
+      },
+      undefined,
+    );
+    // Only compare with resource limits
+    expect(result).toEqual(['cpu1_mem2g']);
   });
 });
