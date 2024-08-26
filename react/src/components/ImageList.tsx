@@ -319,7 +319,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
     },
   ];
 
-  const filteredImageData = useMemo(() => {
+  const processedImages = useMemo(() => {
     const sortedImages: EnvironmentImage[] = images
       ? [...images]
           .filter(
@@ -332,49 +332,68 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
               localeCompare(a.humanized_name, b.humanized_name),
           )
       : [];
+    return {
+      sortedImages,
+      imageFilterValues: sortedImages.map((image) => {
+        return {
+          namespace: getNamespace(getImageFullName(image) || ''),
+          lang: image.name ? getLang(image.name) : '',
+          baseversion: getBaseVersion(getImageFullName(image) || ''),
+          baseimage:
+            image.tag && image.name ? getBaseImages(image.tag, image.name) : [],
+          constraints:
+            image.tag && image.labels
+              ? getConstraints(
+                  image.tag,
+                  image.labels as { key: string; value: string }[],
+                )
+              : [],
+          isCustomized: image.tag
+            ? image.tag.indexOf('customized') !== -1
+            : false,
+        };
+      }),
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [images]);
 
+  const filteredImageData = useMemo(() => {
+    const { sortedImages, imageFilterValues } = processedImages;
     if (_.isEmpty(imageSearch)) return sortedImages;
     const regExp = new RegExp(`${_.escapeRegExp(imageSearch)}`, 'i');
 
-    return _.filter(sortedImages, (image) => {
+    return _.filter(sortedImages, (image, idx) => {
       return _.some(image, (value, key) => {
         if (key === 'id') return false;
         if (key === 'installed') return regExp.test(t('environment.Installed'));
         if (['digest', 'architecture', 'registry'].includes(key))
           return regExp.test(_.toString(value));
-        if (image.tag && image.name) {
-          const baseVersionMatch = regExp.test(
-            getBaseVersion(getImageFullName(image) || ''),
-          );
-          const baseImagesMatch = getBaseImages(image.tag, image.name).some(
-            (baseImage) => regExp.test(baseImage),
-          );
-          const constraintsMatch = getConstraints(
-            image.tag,
-            image.labels as { key: string; value: string }[],
-          ).some((constraint) => regExp.test(constraint));
-          const customizedMatch =
-            image.tag.indexOf('customized') !== -1
-              ? regExp.test('customized')
-              : false;
-          const langMatch = regExp.test(image.name ? getLang(image.name) : '');
-          const namespaceMatch = regExp.test(
-            getNamespace(getImageFullName(image) || ''),
-          );
-          return (
-            baseVersionMatch ||
-            baseImagesMatch ||
-            constraintsMatch ||
-            langMatch ||
-            namespaceMatch ||
-            customizedMatch
-          );
-        }
-        return false;
+        const baseVersionMatch = regExp.test(
+          imageFilterValues[idx].baseversion,
+        );
+        const baseImagesMatch = imageFilterValues[idx].baseimage.some((value) =>
+          regExp.test(value),
+        );
+        const constraintsMatch = imageFilterValues[idx].constraints.some(
+          (constraint) => regExp.test(constraint),
+        );
+        const customizedMatch = imageFilterValues[idx].isCustomized
+          ? regExp.test('customized')
+          : false;
+        const langMatch = regExp.test(imageFilterValues[idx].lang);
+        const namespaceMatch = regExp.test(imageFilterValues[idx].namespace);
+        return (
+          baseVersionMatch ||
+          baseImagesMatch ||
+          constraintsMatch ||
+          langMatch ||
+          namespaceMatch ||
+          customizedMatch
+        );
       });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [imageSearch, images]);
+  }, [imageSearch, processedImages]);
 
   return (
     <>
