@@ -1,5 +1,5 @@
 import Flex from '../components/Flex';
-import { getImageFullName, localeCompare } from '../helper';
+import { filterNonNullItems, getImageFullName, localeCompare } from '../helper';
 import { useBackendAIImageMetaData, useUpdatableState } from '../hooks';
 import ImageInstallModal from './ImageInstallModal';
 import { ConstraintTags } from './ImageTags';
@@ -51,14 +51,6 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   const [isPendingRefreshTransition, startRefreshTransition] = useTransition();
   const [isPendingSearchTransition, startSearchTransition] = useTransition();
 
-  const sortBasedOnInstalled = (a: EnvironmentImage, b: EnvironmentImage) => {
-    return a?.installed && !b?.installed
-      ? -1
-      : !a?.installed && b?.installed
-        ? 1
-        : 0;
-  };
-
   const { images } = useLazyLoadQuery<ImageListQuery>(
     graphql`
       query ImageListQuery {
@@ -93,12 +85,26 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
     },
   );
 
+  // Sort images by humanized_name to prevent the image list from jumping around when the images are updated
+  // TODO: after `images` query  supports sort order, we should remove this line
+  const defaultSortedImages = useMemo(
+    () => _.sortBy(images, (image) => image?.humanized_name),
+    [images],
+  );
+
   const columns: ColumnsType<EnvironmentImage> = [
     {
       title: t('environment.Status'),
       dataIndex: 'installed',
       key: 'installed',
-      sorter: sortBasedOnInstalled,
+      defaultSortOrder: 'ascend',
+      sorter: (a: EnvironmentImage, b: EnvironmentImage) => {
+        return a?.installed && !b?.installed
+          ? -1
+          : !a?.installed && b?.installed
+            ? 1
+            : 0;
+      },
       render: (text, row) =>
         row?.id && installingImages.includes(row.id) ? (
           <Tag color="gold">
@@ -319,53 +325,39 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
     },
   ];
 
-  const processedImages = useMemo(() => {
-    const sortedImages: EnvironmentImage[] = images
-      ? [...images]
-          .filter(
-            (image): image is EnvironmentImage =>
-              image !== null && image !== undefined,
-          )
-          .sort(
-            (a, b) =>
-              sortBasedOnInstalled(a, b) ||
-              localeCompare(a.humanized_name, b.humanized_name),
-          )
-      : [];
-    return {
-      sortedImages,
-      imageFilterValues: sortedImages.map((image) => {
-        return {
-          namespace: getNamespace(getImageFullName(image) || ''),
-          lang: image.name ? getLang(image.name) : '',
-          baseversion: getBaseVersion(getImageFullName(image) || ''),
-          baseimage:
-            image.tag && image.name ? getBaseImages(image.tag, image.name) : [],
-          constraints:
-            image.tag && image.labels
-              ? getConstraints(
-                  image.tag,
-                  image.labels as { key: string; value: string }[],
-                )
-              : [],
-          isCustomized: image.tag
-            ? image.tag.indexOf('customized') !== -1
-            : false,
-        };
-      }),
-    };
+  const imageFilterValues = useMemo(() => {
+    return defaultSortedImages?.map((image) => {
+      return {
+        installed: image?.installed ? t('environment.Installed') : '',
+        namespace: getNamespace(getImageFullName(image) || ''),
+        lang: image?.name ? getLang(image.name) : '',
+        baseversion: getBaseVersion(getImageFullName(image) || ''),
+        baseimage:
+          image?.tag && image?.name ? getBaseImages(image.tag, image.name) : [],
+        constraints:
+          image?.tag && image?.labels
+            ? getConstraints(
+                image.tag,
+                image.labels as { key: string; value: string }[],
+              )
+            : [],
+        isCustomized: image?.tag
+          ? image.tag.indexOf('customized') !== -1
+          : false,
+      };
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [images]);
+  }, [defaultSortedImages]);
 
   const filteredImageData = useMemo(() => {
-    const { sortedImages, imageFilterValues } = processedImages;
-    if (_.isEmpty(imageSearch)) return sortedImages;
+    if (_.isEmpty(imageSearch) || imageFilterValues === undefined)
+      return defaultSortedImages;
     const regExp = new RegExp(`${_.escapeRegExp(imageSearch)}`, 'i');
-
-    return _.filter(sortedImages, (image, idx) => {
+    return _.filter(defaultSortedImages, (image, idx) => {
       return _.some(image, (value, key) => {
         if (key === 'id') return false;
-        if (key === 'installed') return regExp.test(t('environment.Installed'));
+        if (key === 'installed')
+          return regExp.test(imageFilterValues[idx].installed);
         if (['digest', 'architecture', 'registry'].includes(key))
           return regExp.test(_.toString(value));
         const baseVersionMatch = regExp.test(
@@ -392,8 +384,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         );
       });
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [imageSearch, processedImages]);
+  }, [imageSearch, imageFilterValues, defaultSortedImages]);
 
   return (
     <>
@@ -463,7 +454,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             pageSizeOptions: ['10', '20', '50'],
             style: { marginRight: token.marginXS },
           }}
-          dataSource={filteredImageData}
+          dataSource={filterNonNullItems(filteredImageData)}
           columns={columns}
           loading={isPendingSearchTransition}
           rowSelection={{
