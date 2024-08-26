@@ -101,7 +101,7 @@ interface ConstraintTagsProps extends TagProps {
 export const ConstraintTags: React.FC<ConstraintTagsProps> = ({
   tag,
   labels,
-  highlightKeyword = '',
+  highlightKeyword,
   ...props
 }) => {
   labels = labels || [];
