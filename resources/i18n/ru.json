@@ -844,7 +844,8 @@
     "CustomizedImageSuccessfullyDeleted": "Персонализированное изображение успешно удалено.",
     "DescImageResourceModified": "Лимит ресурсов успешно изменен",
     "DescImagePortsModified": "Порты изображений успешно изменены",
-    "ModifyImageResourceLimitReinstallRequired": "<p>Если вы измените уже установленный образ, вам придется переустановить его.</p><p>Изменения не будут применены до тех пор, пока образ не будет переустановлен.\n\n</p>"
+    "ModifyImageResourceLimitReinstallRequired": "<p>Если вы измените уже установленный образ, вам придется переустановить его.</p><p>Изменения не будут применены до тех пор, пока образ не будет переустановлен.\n\n</p>",
+    "SearchImages": "Поисковые изображения"
   },
   "resourcePreset": {
     "ResourcePresets": "Предустановки ресурсов",

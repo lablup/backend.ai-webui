@@ -844,7 +844,8 @@
     "CustomizedImageSuccessfullyDeleted": "Image personnalisée supprimée avec succès.",
     "DescImageResourceModified": "La limite de ressources a été modifiée avec succès",
     "DescImagePortsModified": "Ports d'image modifiés avec succès",
-    "ModifyImageResourceLimitReinstallRequired": "<p>Si vous modifiez une image qui a déjà été installée, vous devrez réinstaller l'image.</p><p>Les modifications ne seront appliquées qu'une fois l'image réinstallée.\n\n</p>"
+    "ModifyImageResourceLimitReinstallRequired": "<p>Si vous modifiez une image qui a déjà été installée, vous devrez réinstaller l'image.</p><p>Les modifications ne seront appliquées qu'une fois l'image réinstallée.\n\n</p>",
+    "SearchImages": "Recherche d'images"
   },
   "resourcePreset": {
     "ResourcePresets": "Préréglages de ressources",

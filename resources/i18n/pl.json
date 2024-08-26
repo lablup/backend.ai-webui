@@ -844,7 +844,8 @@
     "CustomizedImageSuccessfullyDeleted": "Dostosowany obraz został pomyślnie usunięty.",
     "DescImageResourceModified": "Limit zasobów został pomyślnie zmodyfikowany",
     "DescImagePortsModified": "Pomyślnie zmodyfikowano porty obrazu",
-    "ModifyImageResourceLimitReinstallRequired": "<p>Jeśli zmodyfikujesz obraz, który został już zainstalowany, konieczne będzie jego ponowne zainstalowanie.</p><p>Modyfikacje nie zostaną zastosowane, dopóki obraz nie zostanie ponownie zainstalowany.\n\n</p>"
+    "ModifyImageResourceLimitReinstallRequired": "<p>Jeśli zmodyfikujesz obraz, który został już zainstalowany, konieczne będzie jego ponowne zainstalowanie.</p><p>Modyfikacje nie zostaną zastosowane, dopóki obraz nie zostanie ponownie zainstalowany.\n\n</p>",
+    "SearchImages": "Wyszukiwanie obrazów"
   },
   "resourcePreset": {
     "ResourcePresets": "Predefiniowane ustawienia zasobów",

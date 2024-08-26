@@ -844,7 +844,8 @@
     "CustomizedImageSuccessfullyDeleted": "Özelleştirilmiş resim başarıyla silindi.",
     "DescImageResourceModified": "Kaynak sınırı başarıyla değiştirildi",
     "DescImagePortsModified": "Görüntü Bağlantı Noktaları başarıyla değiştirildi",
-    "ModifyImageResourceLimitReinstallRequired": "<p>Daha önceden yüklenmiş bir görseli değiştirirseniz görseli yeniden yüklemeniz gerekir.</p><p>Resim yeniden yüklenene kadar değişiklikler uygulanmayacaktır.\n\n</p>"
+    "ModifyImageResourceLimitReinstallRequired": "<p>Daha önceden yüklenmiş bir görseli değiştirirseniz görseli yeniden yüklemeniz gerekir.</p><p>Resim yeniden yüklenene kadar değişiklikler uygulanmayacaktır.\n\n</p>",
+    "SearchImages": "Görselleri arayın"
   },
   "resourcePreset": {
     "ResourcePresets": "Kaynak Ön Ayarları",

@@ -845,7 +845,8 @@
     "CustomizedImageSuccessfullyDeleted": "Gambar yang disesuaikan berhasil dihapus.",
     "DescImageResourceModified": "Batas sumber daya berhasil diubah",
     "DescImagePortsModified": "Port Gambar berhasil dimodifikasi",
-    "ModifyImageResourceLimitReinstallRequired": "<p>Jika Anda memodifikasi gambar yang telah diinstal, Anda perlu menginstal ulang gambar tersebut.</p><p>Modifikasi tidak akan diterapkan sampai gambar tersebut diinstal ulang.\n\n</p>"
+    "ModifyImageResourceLimitReinstallRequired": "<p>Jika Anda memodifikasi gambar yang telah diinstal, Anda perlu menginstal ulang gambar tersebut.</p><p>Modifikasi tidak akan diterapkan sampai gambar tersebut diinstal ulang.\n\n</p>",
+    "SearchImages": "Cari gambar"
   },
   "resourcePreset": {
     "ResourcePresets": "Preset Sumber Daya",

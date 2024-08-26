@@ -493,7 +493,8 @@
     "CustomizedImageSuccessfullyDeleted": "Muokattu kuva poistettu onnistuneesti.",
     "DescImageResourceModified": "Resurssirajan muokkaus onnistui",
     "DescImagePortsModified": "Kuvaportteja on muokattu onnistuneesti",
-    "ModifyImageResourceLimitReinstallRequired": "<p>Jos muokkaat jo asennettua kuvaa, sinun on asennettava se uudelleen.</p><p>Muokkauksia ei tehdä ennen kuin kuva on asennettu uudelleen.\n\n</p>"
+    "ModifyImageResourceLimitReinstallRequired": "<p>Jos muokkaat jo asennettua kuvaa, sinun on asennettava se uudelleen.</p><p>Muokkauksia ei tehdä ennen kuin kuva on asennettu uudelleen.\n\n</p>",
+    "SearchImages": "Etsi kuvia"
   },
   "explorer": {
     "InputTooShort": "InputTooShort",

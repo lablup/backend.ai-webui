@@ -844,7 +844,8 @@
     "CustomizedImageSuccessfullyDeleted": "Imej tersuai berjaya dipadamkan.",
     "DescImageResourceModified": "Had sumber berjaya diubah suai",
     "DescImagePortsModified": "Port Imej berjaya diubah suai",
-    "ModifyImageResourceLimitReinstallRequired": "<p>Jika anda mengubah suai imej yang telah dipasang, anda perlu memasang semula imej tersebut.</p><p>Pengubahsuaian tidak akan digunakan sehingga imej dipasang semula.\n\n</p>"
+    "ModifyImageResourceLimitReinstallRequired": "<p>Jika anda mengubah suai imej yang telah dipasang, anda perlu memasang semula imej tersebut.</p><p>Pengubahsuaian tidak akan digunakan sehingga imej dipasang semula.\n\n</p>",
+    "SearchImages": "Cari imej"
   },
   "resourcePreset": {
     "ResourcePresets": "Pratetap Sumber",

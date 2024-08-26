@@ -844,7 +844,8 @@
     "CustomizedImageSuccessfullyDeleted": "カスタマイズされたイメージは正常に削除されました。",
     "DescImageResourceModified": "リソース制限が正常に変更されました",
     "DescImagePortsModified": "イメージポートが正常に変更されました",
-    "ModifyImageResourceLimitReinstallRequired": "<p>すでにインストールされているイメージを変更する場合は、イメージを再インストールする必要があります。</p><p>イメージが再インストールされるまで変更は適用されません。\n\n</p>"
+    "ModifyImageResourceLimitReinstallRequired": "<p>すでにインストールされているイメージを変更する場合は、イメージを再インストールする必要があります。</p><p>イメージが再インストールされるまで変更は適用されません。\n\n</p>",
+    "SearchImages": "画像検索"
   },
   "resourcePreset": {
     "ResourcePresets": "リソースプリセット",
