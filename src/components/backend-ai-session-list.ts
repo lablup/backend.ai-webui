@@ -595,7 +595,7 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this._grid.addEventListener('selected-items-changed', () => {
+    this._grid?.addEventListener('selected-items-changed', () => {
       this._selected_items = this._grid.selectedItems;
       if (this._selected_items.length > 0) {
         this.multipleActionButtons.style.display = 'flex';
@@ -733,15 +733,6 @@ export default class BackendAISessionList extends BackendAIPage {
    * @param {boolean} repeat - repeat the job data reading. Set refreshTime to 5000 for running list else 30000
    * */
   async _refreshJobData(refresh = false, repeat = true) {
-    this._grid?.addEventListener('selected-items-changed', () => {
-      this._selected_items = this._grid.selectedItems;
-      if (this._selected_items.length > 0) {
-        this.multipleActionButtons.style.display = 'flex';
-      } else {
-        this.multipleActionButtons.style.display = 'none';
-      }
-    });
-
     await this.updateComplete;
     if (this.active !== true) {
       return;
@@ -1339,7 +1330,6 @@ export default class BackendAISessionList extends BackendAIPage {
           this.notification.show(true, err);
         }
       });
-    this._clearCheckboxes();
   }
 
   /**
@@ -2090,6 +2080,14 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   _handleSelectedItems() {
+    this._grid?.addEventListener('selected-items-changed', () => {
+      this._selected_items = this._grid.selectedItems;
+      if (this._selected_items.length > 0) {
+        this.multipleActionButtons.style.display = 'flex';
+      } else {
+        this.multipleActionButtons.style.display = 'none';
+      }
+    });
     if (this._selected_items.length === 0) return;
 
     const selectedItems = this.compute_sessions.filter((item) =>
@@ -4356,7 +4354,6 @@ ${rowData.item[this.sessionNameField]}</pre
                     ? html`
                         <vaadin-grid-selection-column
                           frozen
-                          auto-select
                         ></vaadin-grid-selection-column>
                       `
                     : html``}
