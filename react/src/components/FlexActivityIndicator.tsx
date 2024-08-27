@@ -1,9 +1,17 @@
 import Flex, { FlexProps } from './Flex';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Spin } from 'antd';
+import { Spin, SpinProps } from 'antd';
 import React from 'react';
 
-const FlexActivityIndicator: React.FC<FlexProps> = ({ style, children }) => {
+interface FlexActivityIndicatorProps extends FlexProps {
+  spinSize?: SpinProps['size'];
+}
+
+const FlexActivityIndicator: React.FC<FlexActivityIndicatorProps> = ({
+  style,
+  children,
+  spinSize = 'default',
+}) => {
   return (
     <Flex
       direction="row"
@@ -11,7 +19,7 @@ const FlexActivityIndicator: React.FC<FlexProps> = ({ style, children }) => {
       align="center"
       style={{ width: '100%', height: '100%', ...style }}
     >
-      <Spin indicator={<LoadingOutlined spin />} />
+      <Spin indicator={<LoadingOutlined spin />} size={spinSize} />
       {children}
     </Flex>
   );

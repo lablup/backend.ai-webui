@@ -459,10 +459,9 @@
     "Delete": "Borrar",
     "DescDeleteAppInfo": "Estás a punto de borrar la información de la aplicación:",
     "DescDeleteImage": "Está a punto de borrar la(s) imagen(es):",
-    "DescDownloadImage": "Está a punto de instalar la(s) imagen(es):",
     "DescProblemOccurred": "Se ha producido un problema durante la instalación",
     "DescServicePortModified": "Puerto de servicio modificado correctamente",
-    "DescSignificantDownloadTime": "Este proceso requiere un tiempo de descarga considerable.",
+    "DescSignificantInstallTime": "Este proceso requiere un tiempo de descarga considerable.",
     "Digest": "Digerir",
     "Disabled": "desactivado",
     "Images": "Imágenes",
@@ -497,7 +496,12 @@
     "CustomizedImageSuccessfullyDeleted": "Imagen personalizada eliminada correctamente.",
     "DescImageResourceModified": "Límite de recursos modificado con éxito",
     "DescImagePortsModified": "Puertos de imagen modificados exitosamente",
-    "ModifyImageResourceLimitReinstallRequired": "<p>Si modifica una imagen que ya se ha instalado, deberá volver a instalarla.</p><p>Las modificaciones no se aplicarán hasta que se reinstale la imagen.\n\n</p>"
+    "ModifyImageResourceLimitReinstallRequired": "<p>Si modifica una imagen que ya se ha instalado, deberá volver a instalarla.</p><p>Las modificaciones no se aplicarán hasta que se reinstale la imagen.\n\n</p>",
+    "SearchImages": "Buscar imágenes",
+    "NoImagesAreSelected": "No hay imágenes seleccionadas",
+    "AlreadyInstalledImage": "Imagen ya instalada",
+    "CheckImageInstallation": "¿Instalar una imagen?",
+    "InstalledImagesAreExcluded": "Se excluyen las imágenes instaladas."
   },
   "explorer": {
     "InputTooShort": "InputTooShort",
@@ -525,7 +529,8 @@
     "InProgress": "En curso",
     "Session": "Sesión",
     "General": "General",
-    "Disabled": "Discapacitados"
+    "Disabled": "Discapacitados",
+    "NSelected": "Elemento(s) {{cuenta}} seleccionado(s)"
   },
   "import": {
     "CleanUpImportTask": "Tarea de importación de limpieza...",

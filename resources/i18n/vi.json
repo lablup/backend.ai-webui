@@ -506,7 +506,8 @@
     "InProgress": "Đang tiến hành",
     "Session": "Phiên họp",
     "General": "Tổng quan",
-    "Disabled": "Tàn tật"
+    "Disabled": "Tàn tật",
+    "NSelected": "Đã chọn {{count}} mục"
   },
   "credential": {
     "Permission": "Sự cho phép",
@@ -818,8 +819,7 @@
     "ResourceLimit": "Giới hạn tài nguyên",
     "DescDeleteAppInfo": "Bạn sắp xóa thông tin ứng dụng:",
     "DescDeleteImage": "Bạn sắp xóa (các) hình ảnh:",
-    "DescDownloadImage": "Bạn sắp cài đặt (các) hình ảnh:",
-    "DescSignificantDownloadTime": "Quá trình này yêu cầu thời gian tải xuống đáng kể.",
+    "DescSignificantInstallTime": "Quá trình này yêu cầu thời gian tải xuống đáng kể.",
     "Install": "Tải về",
     "Delete": "Xóa bỏ",
     "Installed": "Cài đặt",
@@ -848,7 +848,12 @@
     "CustomizedImageSuccessfullyDeleted": "Hình ảnh tùy chỉnh đã được xóa thành công.",
     "DescImageResourceModified": "Đã sửa đổi giới hạn tài nguyên thành công",
     "DescImagePortsModified": "Cổng hình ảnh được sửa đổi thành công",
-    "ModifyImageResourceLimitReinstallRequired": "<p>Nếu bạn sửa đổi một hình ảnh đã được cài đặt, bạn sẽ cần phải cài đặt lại hình ảnh đó.</p><p>Các sửa đổi sẽ không được áp dụng cho đến khi hình ảnh được cài đặt lại.\n\n</p>"
+    "ModifyImageResourceLimitReinstallRequired": "<p>Nếu bạn sửa đổi một hình ảnh đã được cài đặt, bạn sẽ cần phải cài đặt lại hình ảnh đó.</p><p>Các sửa đổi sẽ không được áp dụng cho đến khi hình ảnh được cài đặt lại.\n\n</p>",
+    "SearchImages": "Tìm kiếm hình ảnh",
+    "NoImagesAreSelected": "Không có hình ảnh nào được chọn",
+    "AlreadyInstalledImage": "Hình ảnh đã được cài đặt",
+    "CheckImageInstallation": "Cài đặt một hình ảnh?",
+    "InstalledImagesAreExcluded": "Hình ảnh được cài đặt được loại trừ."
   },
   "resourcePreset": {
     "ResourcePresets": "Cài đặt trước tài nguyên",

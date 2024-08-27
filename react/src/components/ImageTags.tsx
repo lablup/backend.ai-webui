@@ -1,8 +1,8 @@
 import { useBackendAIImageMetaData } from '../hooks';
 import DoubleTag, { DoubleTagObjectValue } from './DoubleTag';
 import Flex from './Flex';
+import TextHighlighter from './TextHighlighter';
 import { Tag, TagProps } from 'antd';
-import _ from 'lodash';
 import React from 'react';
 
 interface ImageAliasNameAndBaseVersionTagsProps
@@ -94,39 +94,52 @@ export const LangTags: React.FC<LangTagsProps> = ({ image, ...props }) => {
 };
 
 interface ConstraintTagsProps extends TagProps {
-  image: string | null;
+  tag: string;
   labels: { key: string; value: string }[];
+  highlightKeyword?: string;
 }
 export const ConstraintTags: React.FC<ConstraintTagsProps> = ({
-  image,
+  tag,
   labels,
+  highlightKeyword,
   ...props
 }) => {
-  image = image || '';
   labels = labels || [];
-  const [, { getFilteredRequirementsTags, getCustomTag, tagAlias }] =
-    useBackendAIImageMetaData();
+  const [, { getConstraints }] = useBackendAIImageMetaData();
+  const constraints = getConstraints(tag, labels);
   return (
-    <Flex>
-      {_.map(getFilteredRequirementsTags(image), (tag, index) => (
-        <Tag key={index} color="blue" {...props}>
-          {tagAlias(tag || '')}
+    <Flex direction="row" align="start">
+      {constraints[0] ? (
+        <Tag color="blue" {...props}>
+          <TextHighlighter keyword={highlightKeyword}>
+            {constraints[0]}
+          </TextHighlighter>
         </Tag>
-      ))}
-      <DoubleTag
-        color="cyan"
-        values={[
-          {
-            label: 'Customized',
-            color: 'cyan',
-          },
-          {
-            label: getCustomTag(labels),
-            color: 'cyan',
-          },
-        ]}
-        {...props}
-      />
+      ) : null}
+      {constraints[1] ? (
+        <DoubleTag
+          color="cyan"
+          values={[
+            {
+              label: (
+                <TextHighlighter keyword={highlightKeyword}>
+                  Customized
+                </TextHighlighter>
+              ),
+              color: 'cyan',
+            },
+            {
+              label: (
+                <TextHighlighter keyword={highlightKeyword}>
+                  {constraints[1]}
+                </TextHighlighter>
+              ),
+              color: 'cyan',
+            },
+          ]}
+          {...props}
+        />
+      ) : null}
     </Flex>
   );
 };

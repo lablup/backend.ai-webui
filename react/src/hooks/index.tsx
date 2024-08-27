@@ -223,6 +223,22 @@ export const useBackendAIImageMetaData = () => {
           names.length < 3 ? '' : (names[2].split(':')[0]?.split('-') ?? '');
         return langs[langs.length - 1];
       },
+      getLang: (shortImageName: string) => {
+        // console.log(imageName);
+        const names = shortImageName.split('/');
+        let lang = '';
+        if (!_.isUndefined(names[1])) {
+          lang = names.slice(1).join('');
+        } else {
+          lang = names[0];
+        }
+        const langs = lang.split('-');
+        if (!_.isUndefined(langs[1])) {
+          if (langs[0] === 'r') lang = langs[0];
+          else lang = langs[1];
+        }
+        return metadata?.tagAlias[lang] || lang;
+      },
       getImageTags: (imageName: string) => {
         // const { key, tags } = getImageMeta(imageName);
       },
@@ -249,7 +265,49 @@ export const useBackendAIImageMetaData = () => {
         const { tags } = getImageMeta(imageName);
         return tags[1];
       },
+      getBaseImages: (tag: string, name: string) => {
+        const tags = tag.split('-');
+        let baseImage;
+        let lang = '';
+        if (!_.isUndefined(tags[1])) {
+          baseImage = tags[1];
+        }
+        let baseImageArr = [];
+        if (!_.isUndefined(baseImage)) {
+          baseImageArr.push(metadata?.tagAlias[baseImage] || baseImage);
+        }
+        const names = name.split('/');
+        if (names[1] !== undefined) {
+          lang = names.slice(1).join('');
+        } else {
+          lang = names[0];
+        }
+        const langs = lang.split('-');
+        if (!_.isUndefined(langs[1])) {
+          baseImageArr.push(metadata?.tagAlias[langs[0]] || langs[0]);
+        }
+        return baseImageArr;
+      },
       getImageMeta,
+      getConstraints: (
+        tag: string,
+        labels: { key: string; value: string }[],
+      ) => {
+        const tags = tag.split('-');
+        if (!_.isUndefined(tags[1]) && !_.isUndefined(tag[2])) {
+          const additionalReq =
+            metadata?.tagAlias[
+              tags.slice(2, tags.indexOf('customized_')).join('-')
+            ] || tags.slice(2, tags.indexOf('customized_')).join('-');
+          const result = [additionalReq];
+          const customizedNameLabel = labels?.find(
+            (label) => label.key === 'ai.backend.customized-image.name',
+          )?.value;
+          if (customizedNameLabel) result.push(customizedNameLabel);
+          return result;
+        }
+        return [];
+      },
       getArchitecture: (imageName: string) => {
         let [, architecture] = imageName ? imageName.split('@') : ['', ''];
         return architecture;

@@ -54,8 +54,7 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
       getImageLang,
       getBaseVersion,
       getBaseImage,
-      getCustomTag,
-      getFilteredRequirementsTags,
+      getConstraints,
     },
   ] = useBackendAIImageMetaData();
 
@@ -177,27 +176,32 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
       title: t('environment.Constraint'),
       key: 'constraint',
       sorter: (a, b) => {
-        const getConstraint = (item: any) => {
-          const imageFullName = getImageFullName(item) || '';
-          const labels = _.get(item, 'labels', []);
-          return (
-            getFilteredRequirementsTags(imageFullName).join('') +
-            'Customized' +
-            getCustomTag(labels as { key: string; value: string }[])
-          );
-        };
-        const constraintA = getConstraint(a);
-        const constraintB = getConstraint(b);
-        return constraintA && constraintB
-          ? constraintA.localeCompare(constraintB)
-          : 0;
+        const requirementA =
+          a?.tag && b?.labels
+            ? getConstraints(
+                a?.tag,
+                a?.labels as { key: string; value: string }[],
+              )[0] || ''
+            : '';
+        const requirementB =
+          b?.tag && b?.labels
+            ? getConstraints(
+                b?.tag,
+                b?.labels as { key: string; value: string }[],
+              )[0] || ''
+            : '';
+        if (requirementA === '' && requirementB === '') return 0;
+        if (requirementA === '') return -1;
+        if (requirementB === '') return 1;
+        return requirementA.localeCompare(requirementB);
       },
-      render: (text, row) => (
-        <ConstraintTags
-          image={getImageFullName(row) || ''}
-          labels={row?.labels as { key: string; value: string }[]}
-        />
-      ),
+      render: (text, row) =>
+        row?.tag ? (
+          <ConstraintTags
+            tag={row.tag}
+            labels={row?.labels as { key: string; value: string }[]}
+          />
+        ) : null,
     },
     {
       title: t('environment.Digest'),

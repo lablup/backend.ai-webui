@@ -506,7 +506,8 @@
     "InProgress": "W toku",
     "Session": "Sesja",
     "General": "Ogólne",
-    "Disabled": "Wyłączony"
+    "Disabled": "Wyłączony",
+    "NSelected": "Wybrane elementy {{count}}"
   },
   "credential": {
     "Permission": "Pozwolenie",
@@ -818,8 +819,7 @@
     "ResourceLimit": "Limit zasobów",
     "DescDeleteAppInfo": "Zamierzasz usunąć informacje o aplikacji:",
     "DescDeleteImage": "Zamierzasz usunąć obraz(y):",
-    "DescDownloadImage": "Zamierzasz zainstalować obraz(y):",
-    "DescSignificantDownloadTime": "Ten proces wymaga znacznego czasu pobierania.",
+    "DescSignificantInstallTime": "Ten proces wymaga znacznego czasu pobierania.",
     "Install": "zainstalować",
     "Delete": "Kasować",
     "Installed": "zainstalowany",
@@ -848,7 +848,12 @@
     "CustomizedImageSuccessfullyDeleted": "Dostosowany obraz został pomyślnie usunięty.",
     "DescImageResourceModified": "Limit zasobów został pomyślnie zmodyfikowany",
     "DescImagePortsModified": "Pomyślnie zmodyfikowano porty obrazu",
-    "ModifyImageResourceLimitReinstallRequired": "<p>Jeśli zmodyfikujesz obraz, który został już zainstalowany, konieczne będzie jego ponowne zainstalowanie.</p><p>Modyfikacje nie zostaną zastosowane, dopóki obraz nie zostanie ponownie zainstalowany.\n\n</p>"
+    "ModifyImageResourceLimitReinstallRequired": "<p>Jeśli zmodyfikujesz obraz, który został już zainstalowany, konieczne będzie jego ponowne zainstalowanie.</p><p>Modyfikacje nie zostaną zastosowane, dopóki obraz nie zostanie ponownie zainstalowany.\n\n</p>",
+    "SearchImages": "Wyszukiwanie obrazów",
+    "NoImagesAreSelected": "Nie wybrano żadnych obrazów",
+    "AlreadyInstalledImage": "Już zainstalowany obraz",
+    "CheckImageInstallation": "Instalowanie obrazu?",
+    "InstalledImagesAreExcluded": "Zainstalowane obrazy są wykluczone."
   },
   "resourcePreset": {
     "ResourcePresets": "Predefiniowane ustawienia zasobów",

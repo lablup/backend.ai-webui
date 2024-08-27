@@ -506,7 +506,8 @@
     "InProgress": "Prosiding",
     "Session": "Sesi",
     "General": "Umum",
-    "Disabled": "Dilumpuhkan"
+    "Disabled": "Dilumpuhkan",
+    "NSelected": "{{count}} item yang dipilih"
   },
   "credential": {
     "Permission": "Kebenaran",
@@ -818,8 +819,7 @@
     "ResourceLimit": "Had Sumber",
     "DescDeleteAppInfo": "Anda akan memadamkan maklumat aplikasi:",
     "DescDeleteImage": "Anda akan memadamkan gambar:",
-    "DescDownloadImage": "Anda akan memasang gambar:",
-    "DescSignificantDownloadTime": "Proses ini memerlukan masa muat turun yang ketara.",
+    "DescSignificantInstallTime": "Proses ini memerlukan masa muat turun yang ketara.",
     "Install": "Pasang",
     "Delete": "Padam",
     "Installed": "dipasang",
@@ -848,7 +848,12 @@
     "CustomizedImageSuccessfullyDeleted": "Imej tersuai berjaya dipadamkan.",
     "DescImageResourceModified": "Had sumber berjaya diubah suai",
     "DescImagePortsModified": "Port Imej berjaya diubah suai",
-    "ModifyImageResourceLimitReinstallRequired": "<p>Jika anda mengubah suai imej yang telah dipasang, anda perlu memasang semula imej tersebut.</p><p>Pengubahsuaian tidak akan digunakan sehingga imej dipasang semula.\n\n</p>"
+    "ModifyImageResourceLimitReinstallRequired": "<p>Jika anda mengubah suai imej yang telah dipasang, anda perlu memasang semula imej tersebut.</p><p>Pengubahsuaian tidak akan digunakan sehingga imej dipasang semula.\n\n</p>",
+    "SearchImages": "Cari imej",
+    "NoImagesAreSelected": "Tiada imej dipilih",
+    "AlreadyInstalledImage": "Imej sudah dipasang",
+    "CheckImageInstallation": "Memasang imej?",
+    "InstalledImagesAreExcluded": "Imej yang dipasang dikecualikan."
   },
   "resourcePreset": {
     "ResourcePresets": "Pratetap Sumber",
