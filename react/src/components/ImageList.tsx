@@ -1,5 +1,5 @@
 import Flex from '../components/Flex';
-import { filterNonNullItems, getImageFullName, localeCompare } from '../helper';
+import { filterNonNullItems, getImageFullName } from '../helper';
 import { useBackendAIImageMetaData, useUpdatableState } from '../hooks';
 import ImageInstallModal from './ImageInstallModal';
 import { ConstraintTags } from './ImageTags';
@@ -350,30 +350,28 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   }, [defaultSortedImages]);
 
   const filteredImageData = useMemo(() => {
-    if (_.isEmpty(imageSearch) || imageFilterValues === undefined)
-      return defaultSortedImages;
+    if (_.isEmpty(imageSearch)) return defaultSortedImages;
     const regExp = new RegExp(`${_.escapeRegExp(imageSearch)}`, 'i');
     return _.filter(defaultSortedImages, (image, idx) => {
       return _.some(image, (value, key) => {
         if (key === 'id') return false;
-        if (key === 'installed')
-          return regExp.test(imageFilterValues[idx].installed);
         if (['digest', 'architecture', 'registry'].includes(key))
           return regExp.test(_.toString(value));
-        const baseVersionMatch = regExp.test(
-          imageFilterValues[idx].baseversion,
-        );
-        const baseImagesMatch = imageFilterValues[idx].baseimage.some((value) =>
+        const curFilterValues = imageFilterValues[idx] || {};
+        if (key === 'installed') return regExp.test(curFilterValues.installed);
+        const baseVersionMatch = regExp.test(curFilterValues.baseversion);
+        const baseImagesMatch = _.some(curFilterValues.baseimage, (value) =>
           regExp.test(value),
         );
-        const constraintsMatch = imageFilterValues[idx].constraints.some(
+        const constraintsMatch = _.some(
+          curFilterValues.constraints,
           (constraint) => regExp.test(constraint),
         );
-        const customizedMatch = imageFilterValues[idx].isCustomized
+        const customizedMatch = curFilterValues.isCustomized
           ? regExp.test('customized')
           : false;
-        const langMatch = regExp.test(imageFilterValues[idx].lang);
-        const namespaceMatch = regExp.test(imageFilterValues[idx].namespace);
+        const langMatch = regExp.test(curFilterValues.lang);
+        const namespaceMatch = regExp.test(curFilterValues.namespace);
         return (
           baseVersionMatch ||
           baseImagesMatch ||
