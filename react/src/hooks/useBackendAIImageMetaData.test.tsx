@@ -1,5 +1,6 @@
 /* eslint-disable testing-library/render-result-naming-convention */
 import { useBackendAIImageMetaData } from '.';
+import { getImageFullName } from '../helper';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { ReactNode } from 'react';
@@ -84,5 +85,52 @@ describe('useBackendAIImageMetaData', () => {
     );
     expect(baseImages[0]).toBe('');
     expect(baseImages[1]).toBe('test12');
+  });
+
+  it('`getImageMeta` function can handle images with more than two `/` in name.', async () => {
+    const [, { getImageMeta }] = result.current;
+
+    const { key, tags } = getImageMeta(
+      getImageFullName({
+        name: 'abc/def/training',
+        humanized_name: 'abc/def/training',
+        tag: '01-py3-abc-v1',
+        registry: '192.168.0.1:7080',
+        architecture: 'x86_64',
+        digest: 'sha256:123456',
+        id: 'sample id',
+        installed: true,
+        resource_limits: [
+          {
+            key: 'cpu',
+            min: '1',
+            max: null,
+          },
+          {
+            key: 'mem',
+            min: '1g',
+            max: null,
+          },
+          {
+            key: 'cuda.device',
+            min: '0',
+            max: null,
+          },
+          {
+            key: 'cuda.shares',
+            min: '0',
+            max: null,
+          },
+        ],
+        labels: [
+          {
+            key: 'maintainer',
+            value: 'NVIDIA CORPORATION <cudatools@nvidia.com>',
+          },
+        ],
+      }) || '',
+    );
+    expect(key).toBe('training');
+    expect(tags).toStrictEqual(['01', 'py3', 'abc', 'v1']);
   });
 });
