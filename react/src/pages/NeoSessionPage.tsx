@@ -2,8 +2,8 @@ import AllocatedResourcesCard from '../components/AllocatedResourcesCard';
 import BAIStartSimpleCard from '../components/BAIStartSimpleCard';
 import Flex from '../components/Flex';
 import NeoSessionList from '../components/NeoSessionList';
+import SessionsIcon from '../components/icons/SessionsIcon';
 import { useWebUINavigate } from '../hooks';
-import { ReactComponent as SessionIcon } from '../icons/session.svg';
 import { Card, Typography, Button, Tabs, Badge, theme } from 'antd';
 import { t } from 'i18next';
 import _ from 'lodash';
@@ -35,7 +35,7 @@ const NeoSessionPage: React.FC<NeoSessionPageProps> = (props) => {
     <Flex direction="column" align="stretch" gap={16}>
       <Flex align="start" gap={16}>
         <BAIStartSimpleCard
-          icon={<SessionIcon />}
+          icon={<SessionsIcon />}
           title={'Create a Session'}
           footerButtonProps={{
             onClick: () => {

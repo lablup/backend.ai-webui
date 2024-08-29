@@ -104,7 +104,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
         {
           label: t('webui.menu.Sessions'),
           icon: <BarsOutlined style={{ color: token.colorPrimaryBg }} />,
-          key: 'job',
+          key: 'session',
         },
         supportUserCommittedImage && {
           label: t('webui.menu.MyEnvironments'),
