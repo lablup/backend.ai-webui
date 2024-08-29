@@ -1,6 +1,5 @@
 import Flex from './Flex';
 import { Typography, Progress, theme } from 'antd';
-import _ from 'lodash';
 import React from 'react';
 
 export interface ResourceUnitProps {

@@ -14,11 +14,11 @@ import {
   BarsOutlined,
   CloudUploadOutlined,
   ControlOutlined,
-  DashboardOutlined,
   ExportOutlined,
   FileDoneOutlined,
   HddOutlined,
   InfoCircleOutlined,
+  PlayCircleOutlined,
   RocketOutlined,
   SolutionOutlined,
   ToolOutlined,
@@ -71,9 +71,9 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
 
   const generalMenu = filterEmptyItem<ItemType>([
     {
-      label: t('webui.menu.Summary'),
-      icon: <DashboardOutlined />,
-      key: 'summary',
+      label: 'Start', // t('webui.menu.Summary'),
+      icon: <PlayCircleOutlined style={{ color: token.colorPrimaryBg }} />,
+      key: 'start', // 'summary',
     },
     {
       label: t('webui.menu.Sessions'),
