@@ -21,7 +21,8 @@
       "colorSuccessBgHover": "#C9EFFF",
       "colorSuccessBorder": "#C9EFFF",
       "colorSuccessBorderHover": "#C9EFFF",
-      "colorSuccessHover": "#028DF2"
+      "colorSuccessHover": "#028DF2",
+      "colorIcon": "#FFFFFF"
     },
     "components": {
       "Tag": {
@@ -83,7 +84,7 @@
     }
   },
   "logo": {
-    "src": "/manifest/backend.ai-text.svg",
+    "src": "/manifest/backend.ai-white-text.svg",
     "srcCollapsed": "/manifest/backend.ai-brand-simple.svg",
     "srcDark": "/manifest/backend.ai-text-bgdark.svg",
     "srcCollapsedDark": "/manifest/backend.ai-brand-simple-bgdark.svg",
@@ -92,12 +93,12 @@
     "alt": "Backend.AI Logo",
     "href": "/summary",
     "size": {
-      "width": 191,
-      "height": 32
+      "width": 158.75,
+      "height": 24
     },
     "sizeCollapsed": {
       "width": 48,
-      "height": 32
+      "height": 24
     }
   },
   "sider": {
