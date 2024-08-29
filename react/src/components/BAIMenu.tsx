@@ -33,6 +33,11 @@ const BAIMenu: React.FC<MenuProps> = ({ ...props }) => {
             Menu: {
               itemBorderRadius: 20,
               itemMarginInline: 0,
+              colorPrimaryBorder: token.colorInfoHover,
+              itemHoverBg: token.colorInfoHover,
+              itemHoverColor: token.colorPrimaryBg,
+              itemSelectedBg: token.colorInfoHover,
+              itemSelectedColor: token.colorPrimaryBg,
             },
           },
         }}
