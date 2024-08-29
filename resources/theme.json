@@ -14,7 +14,6 @@
       "borderRadius": 5,
       "colorLinkHover": "#FF9D00",
       "colorBgBlur": "#FFE3B7",
-      "colorBorder": "#FF9D00",
       "colorBorderSecondary": "#E1E1E2",
       "colorSuccess": "#028DF2",
       "colorSuccessBg": "#C9EFFF",
@@ -27,6 +26,7 @@
     "components": {
       "Tag": {
         "borderRadiusSM": 100,
+        "colorSuccess": "#01A543",
         "colorSuccessBg": "none",
         "colorPreparingBg": "none",
         "colorWarningBg": "none"

@@ -1,4 +1,5 @@
 import Flex from './Flex';
+import { DRAWER_WIDTH } from './WEBUINotificationDrawer';
 import { ConfigProvider, Grid, SiderProps, Typography, theme } from 'antd';
 import Sider from 'antd/es/layout/Sider';
 import _ from 'lodash';
@@ -56,7 +57,7 @@ const BAISider: React.FC<BAISiderProps> = ({
         `}
       </style>
       <Sider
-        width={220}
+        width={DRAWER_WIDTH}
         breakpoint="md"
         style={{
           overflowX: 'hidden',
