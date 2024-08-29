@@ -29,6 +29,7 @@ const EndpointDetailPage = React.lazy(
   () => import('./pages/EndpointDetailPage'),
 );
 // const SummaryPage = React.lazy(() => import('./pages/SummaryPage'));
+const StartPage = React.lazy(() => import('./pages/StartPage'));
 const EnvironmentPage = React.lazy(() => import('./pages/EnvironmentPage'));
 const MyEnvironmentPage = React.lazy(() => import('./pages/MyEnvironmentPage'));
 const StorageHostSettingPage = React.lazy(
@@ -36,6 +37,7 @@ const StorageHostSettingPage = React.lazy(
 );
 const UserSettingsPage = React.lazy(() => import('./pages/UserSettingsPage'));
 const SessionListPage = React.lazy(() => import('./pages/SessionListPage'));
+const NeoSessionPage = React.lazy(() => import('./pages/NeoSessionPage'));
 const SessionLauncherPage = React.lazy(
   () => import('./pages/SessionLauncherPage'),
 );
@@ -134,6 +136,7 @@ const router = createBrowserRouter([
                 closable
               />
               {/* <SummaryPage /> */}
+              <StartPage />
             </>
           );
         },
@@ -307,7 +310,8 @@ const router = createBrowserRouter([
       {
         path: '/session',
         handle: { labelKey: 'webui.menu.Sessions' },
-        Component: SessionListPage,
+        Component: NeoSessionPage,
+        // Component: SessionListPage,
       },
       {
         path: '/session/start',

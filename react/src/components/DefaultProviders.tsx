@@ -229,6 +229,7 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
                         algorithm: isDarkMode
                           ? theme.darkAlgorithm
                           : theme.defaultAlgorithm,
+                        cssVar: true,
                       }}
                     >
                       <App {...commonAppProps}>

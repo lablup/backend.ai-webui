@@ -896,13 +896,13 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         <div id="loading-drag-area" class="loading-background-drag-area"></div>
       </div>
       <div id="app-page">
-        <backend-ai-summary-view
+        <!-- <backend-ai-summary-view
           class="page"
           name="summary"
           ?active="${this._page === 'summary'}"
         >
           <mwc-circular-progress indeterminate></mwc-circular-progress>
-        </backend-ai-summary-view>
+        </backend-ai-summary-view> -->
         <backend-ai-import-view
           class="page"
           name="import"
