@@ -3,24 +3,49 @@
   "light" : {
     "token": {
       "fontFamily": "'Ubuntu', Roboto, sans-serif",
-      "colorPrimary": "#37B076",
-      "colorLink": "#37B076",
-      "colorLinkHover": "#71b98c",
-      "colorSuccess": "#37B076",
+      "colorPrimary": "#FF7A00",
+      "colorLink": "#FF7A00",
+      "colorSuccess": "#01A543",
       "colorBorder": "#DEE1E7",
       "colorBorderSecondary": "#E1E1E2",
-      "colorWarning": "#f1a239"
+      "colorWarning": "#f1a239",
+      "colorError": "#EE585A",
+      "colorTextDescription": "#767676",
+      "borderRadius": 5
     },
     "components": {
       "Tag": {
-        "borderRadiusSM": 1
+        "borderRadiusSM": 100,
+        "colorSuccessBg": "none",
+        "colorPreparingBg": "none",
+        "colorWarningBg": "none"
       },
       "Table": {
-        "headerBorderRadius": 0
+        "headerBorderRadius": 0,
+        "headerBg": "#E3E3E3",
+        "cellPaddingBlock": 6
       },
       "Layout": {
         "lightSiderBg": "#F4F7FD",
         "siderBg": "#2A2C30"
+      },
+      "Typography": {
+        "algorithm": {
+          "colorText": "#333333"
+        }
+      },
+      "Radio": {
+        "buttonColor": "#999999",
+        "algorithm": {
+          "buttonSolidCheckedBg": "#FFE3B7",
+          "buttonSolidCheckedColor": "#FF7A00"
+        }
+      },
+      "Select": {
+        "colorTextPlaceholder": "#999999"
+      },
+      "Tabs": {
+        "itemColor": "#999999"
       }
     }
   },
@@ -32,10 +57,14 @@
     },
     "components": {
       "Tag": {
-        "borderRadiusSM": 1
+        "borderRadiusSM": 100,
+        "colorSuccessBg": "none",
+        "colorPreparingBg": "none",
+        "colorWarningBg": "none"
       },
       "Table": {
-        "headerBorderRadius": 0
+        "headerBorderRadius": 0,
+        "cellPaddingBlock": 6
       },
       "Layout": {
         "lightSiderBg": "#F4F7FD",
