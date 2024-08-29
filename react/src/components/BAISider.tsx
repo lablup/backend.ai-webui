@@ -53,23 +53,6 @@ const BAISider: React.FC<BAISiderProps> = ({
           .bai-sider .non-draggable {
             -webkit-app-region: no-drag;
           }
-          .bai-menu li.ant-menu-item.ant-menu-item-selected {
-            border-radius: 20px;
-            background-color: #FFE3B7 !important;
-          }
-          .bai-menu li.ant-menu-item.ant-menu-item-selected > span.ant-menu-title-content {
-            color: #FF7A00 !important;
-            font-weight: normal;
-          }
-          .bai-menu li.ant-menu-item.ant-menu-item-selected::before {
-          width: 0px !important;
-          }
-          .bai-menu li.ant-menu-item.ant-menu-item-selected > span.anticon.ant-menu-item-icon {
-            color: #FF7A00 !important;
-          }
-          .bai-menu span.ant-menu-title-content {
-            color: #333;
-          }
         `}
       </style>
       <Sider
