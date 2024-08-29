@@ -1,11 +1,12 @@
 import { ReactComponent as logo } from './Pipelines.svg';
 import Icon from '@ant-design/icons';
-import { IconComponentProps } from '@ant-design/icons/lib/components/Icon';
+import { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
 
-interface PipelinesIconProps extends IconComponentProps {}
+interface PipelinesIconProps
+  extends Omit<CustomIconComponentProps, 'width' | 'height' | 'fill'> {}
 
 const PipelinesIcon: React.FC<PipelinesIconProps> = (props) => {
-  return <Icon component={logo} />;
+  return <Icon component={logo} {...props} />;
 };
 
 export default PipelinesIcon;

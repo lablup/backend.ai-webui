@@ -1,11 +1,15 @@
 import { ReactComponent as logo } from './Sessions.svg';
 import Icon from '@ant-design/icons';
-import { IconComponentProps } from '@ant-design/icons/lib/components/Icon';
+import {
+  CustomIconComponentProps,
+  IconComponentProps,
+} from '@ant-design/icons/lib/components/Icon';
 
-interface SessionsIconProps extends IconComponentProps {}
+interface SessionsIconProps
+  extends Omit<CustomIconComponentProps, 'width' | 'height' | 'fill'> {}
 
 const SessionsIcon: React.FC<SessionsIconProps> = (props) => {
-  return <Icon component={logo} />;
+  return <Icon component={logo} {...props} />;
 };
 
 export default SessionsIcon;
