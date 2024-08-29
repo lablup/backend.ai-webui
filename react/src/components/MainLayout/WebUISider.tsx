@@ -76,12 +76,12 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const generalMenu = filterEmptyItem<ItemType>([
     {
       label: 'Start', // t('webui.menu.Summary'),
-      icon: <PlayCircleOutlined />,
+      icon: <PlayCircleOutlined style={{ color: token.colorPrimaryBg }} />,
       key: 'summary', // 'summary',
     },
     {
       label: 'Dashboard',
-      icon: <DashboardOutlined />,
+      icon: <DashboardOutlined style={{ color: token.colorPrimaryBg }} />,
       key: 'dashboard',
     },
     {
@@ -91,7 +91,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       children: [
         {
           label: t('webui.menu.Data&Storage'),
-          icon: <CloudUploadOutlined />,
+          icon: <CloudUploadOutlined style={{ color: token.colorPrimaryBg }} />,
           key: 'data',
         },
       ],
@@ -103,17 +103,17 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       children: [
         {
           label: t('webui.menu.Sessions'),
-          icon: <BarsOutlined />,
+          icon: <BarsOutlined style={{ color: token.colorPrimaryBg }} />,
           key: 'job',
         },
         supportUserCommittedImage && {
           label: t('webui.menu.MyEnvironments'),
-          icon: <FileDoneOutlined />,
+          icon: <FileDoneOutlined style={{ color: token.colorPrimaryBg }} />,
           key: 'my-environment',
         },
         {
           label: 'Examples',
-          icon: <ExamplesIcon />,
+          icon: <ExamplesIcon style={{ color: token.colorPrimaryBg }} />,
           key: 'examples',
         },
       ],
@@ -125,12 +125,12 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       children: [
         supportServing && {
           label: 'Endpoints', //t('webui.menu.Serving'),
-          icon: <EndpointsIcon />, // <RocketOutlined />,
+          icon: <EndpointsIcon style={{ color: token.colorPrimaryBg }} />, // <RocketOutlined />,
           key: 'serving',
         },
         {
           label: 'Models',
-          icon: <ModelsIcon />,
+          icon: <ModelsIcon style={{ color: token.colorPrimaryBg }} />,
           key: 'models',
         },
       ],
@@ -142,7 +142,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       children: [
         !!fasttrackEndpoint && {
           label: 'Pipelines', // t('webui.menu.FastTrack'),
-          icon: <ExportOutlined />, // TODO: change to custom Pipelines icon
+          icon: <ExportOutlined style={{ color: token.colorPrimaryBg }} />, // TODO: change to custom Pipelines icon
           key: 'pipeline',
           onClick: () => {
             window.open(fasttrackEndpoint, '_blank', 'noopener noreferrer');
@@ -150,7 +150,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
         },
         {
           label: 'Trails',
-          icon: <TrailsIcon />,
+          icon: <TrailsIcon style={{ color: token.colorPrimaryBg }} />,
           key: 'trails',
         },
       ],
@@ -174,18 +174,23 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
 
   const adminMenu: MenuProps['items'] = [
     {
+      label: 'System Dashboard',
+      icon: <DashboardOutlined style={{ color: token.colorSuccess }} />,
+      key: 'system_overview',
+    },
+    {
       label: t('webui.menu.Users'),
-      icon: <UserOutlined />,
+      icon: <UserOutlined style={{ color: token.colorSuccess }} />,
       key: 'credential',
     },
     {
       label: t('webui.menu.Environments'),
-      icon: <FileDoneOutlined />,
+      icon: <FileDoneOutlined style={{ color: token.colorSuccess }} />,
       key: 'environment',
     },
     {
       label: t('webui.menu.ResourcePolicy'),
-      icon: <SolutionOutlined />,
+      icon: <SolutionOutlined style={{ color: token.colorSuccess }} />,
       key: 'resource-policy',
     },
   ];
@@ -193,22 +198,22 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const superAdminMenu: MenuProps['items'] = [
     {
       label: t('webui.menu.Resources'),
-      icon: <HddOutlined />,
+      icon: <HddOutlined style={{ color: token.colorSuccess }} />,
       key: 'agent',
     },
     {
       label: t('webui.menu.Configurations'),
-      icon: <ControlOutlined />,
+      icon: <ControlOutlined style={{ color: token.colorSuccess }} />,
       key: 'settings',
     },
     {
       label: t('webui.menu.Maintenance'),
-      icon: <ToolOutlined />,
+      icon: <ToolOutlined style={{ color: token.colorSuccess }} />,
       key: 'maintenance',
     },
     {
       label: t('webui.menu.Information'),
-      icon: <InfoCircleOutlined />,
+      icon: <InfoCircleOutlined style={{ color: token.colorSuccess }} />,
       key: 'information',
     },
   ];
@@ -393,9 +398,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                 {
                   type: 'group',
                   label: (
-                    <Flex
-                      style={{ borderBottom: `1px solid ${token.colorBorder}` }}
-                    >
+                    <Flex>
                       {!props.collapsed && (
                         <Typography.Text type="secondary" ellipsis>
                           {t('webui.menu.Administration')}

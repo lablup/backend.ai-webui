@@ -5,18 +5,23 @@
       "fontFamily": "'Ubuntu', Roboto, sans-serif",
       "colorPrimary": "#FF7A00",
       "colorLink": "#FF7A00",
-      "colorSuccess": "#01A543",
-      "colorBorder": "#DEE1E7",
       "colorPrimaryBg": "#FF7A00",
       "colorFillContent": "#FF9D00",
       "colorInfoHover": "#FFE3B7",
-      "colorBorderSecondary": "#E1E1E2",
       "colorWarning": "#f1a239",
       "colorError": "#EE585A",
       "colorTextDescription": "#767676",
       "borderRadius": 5,
       "colorLinkHover": "#FF9D00",
-      "colorBgBlur": "#FFE3B7"
+      "colorBgBlur": "#FFE3B7",
+      "colorBorder": "#FF9D00",
+      "colorBorderSecondary": "#E1E1E2",
+      "colorSuccess": "#028DF2",
+      "colorSuccessBg": "#C9EFFF",
+      "colorSuccessBgHover": "#C9EFFF",
+      "colorSuccessBorder": "#C9EFFF",
+      "colorSuccessBorderHover": "#C9EFFF",
+      "colorSuccessHover": "#028DF2"
     },
     "components": {
       "Tag": {

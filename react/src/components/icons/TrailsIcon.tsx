@@ -1,11 +1,15 @@
 import { ReactComponent as logo } from './Trails.svg';
 import Icon from '@ant-design/icons';
-import { IconComponentProps } from '@ant-design/icons/lib/components/Icon';
+import {
+  CustomIconComponentProps,
+  IconComponentProps,
+} from '@ant-design/icons/lib/components/Icon';
 
-interface TrailsIconProps extends IconComponentProps {}
+interface TrailsIconProps
+  extends Omit<CustomIconComponentProps, 'width' | 'height' | 'fill'> {}
 
 const TrailsIcon: React.FC<TrailsIconProps> = (props) => {
-  return <Icon component={logo} />;
+  return <Icon component={logo} {...props} />;
 };
 
 export default TrailsIcon;

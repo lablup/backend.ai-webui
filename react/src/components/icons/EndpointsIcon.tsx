@@ -1,11 +1,12 @@
 import { ReactComponent as logo } from './Endpoints.svg';
 import Icon from '@ant-design/icons';
-import { IconComponentProps } from '@ant-design/icons/lib/components/Icon';
+import { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
 
-interface EndpointsIconProps extends IconComponentProps {}
+interface EndpointsIconProps
+  extends Omit<CustomIconComponentProps, 'width' | 'height' | 'fill'> {}
 
 const EndpointsIcon: React.FC<EndpointsIconProps> = (props) => {
-  return <Icon component={logo} />;
+  return <Icon component={logo} {...props} />;
 };
 
 export default EndpointsIcon;

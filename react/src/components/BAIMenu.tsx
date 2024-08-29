@@ -1,12 +1,28 @@
 import { ConfigProvider, Menu, MenuProps, theme } from 'antd';
+import _ from 'lodash';
 import React from 'react';
 
-// interface BAIMenuProps extends MenuProps {
+interface BAIMenuProps extends MenuProps {}
 
-// }
+// workaround for style change in user / admin menu
+const administratorMenu = [
+  'system_overview',
+  'credential',
+  'environment',
+  'resource-policy',
+  'agent',
+  'settings',
+  'maintenance',
+  'information',
+];
 
-const BAIMenu: React.FC<MenuProps> = ({ ...props }) => {
+const BAIMenu: React.FC<BAIMenuProps> = ({ ...props }) => {
   const { token } = theme.useToken();
+  const isAdminMenu = () => {
+    return _.some(props?.selectedKeys, (element) =>
+      _.includes(administratorMenu, element),
+    );
+  };
   return (
     <>
       <style>
@@ -33,11 +49,21 @@ const BAIMenu: React.FC<MenuProps> = ({ ...props }) => {
             Menu: {
               itemBorderRadius: 20,
               itemMarginInline: 0,
-              colorPrimaryBorder: token.colorInfoHover,
-              itemHoverBg: token.colorInfoHover,
-              itemHoverColor: token.colorPrimaryBg,
-              itemSelectedBg: token.colorInfoHover,
-              itemSelectedColor: token.colorPrimaryBg,
+              colorPrimaryBorder: isAdminMenu()
+                ? token.colorSuccess
+                : token.colorInfoHover,
+              itemHoverBg: isAdminMenu()
+                ? token.colorSuccessBgHover
+                : token.colorInfoHover,
+              itemHoverColor: isAdminMenu()
+                ? token.colorSuccessHover
+                : token.colorPrimaryBg,
+              itemSelectedBg: isAdminMenu()
+                ? token.colorSuccessBgHover
+                : token.colorInfoHover,
+              itemSelectedColor: isAdminMenu()
+                ? token.colorSuccessHover
+                : token.colorPrimaryBg,
             },
           },
         }}
