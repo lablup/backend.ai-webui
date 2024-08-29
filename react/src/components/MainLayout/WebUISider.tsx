@@ -23,6 +23,7 @@ import {
   HddOutlined,
   InfoCircleOutlined,
   PlayCircleOutlined,
+  RocketOutlined,
   SolutionOutlined,
   ToolOutlined,
   UserOutlined,
