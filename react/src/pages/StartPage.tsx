@@ -4,7 +4,6 @@ import BatchSessionIcon from '../components/icons/BatchSessionIcon';
 import ExampleStartIcon from '../components/icons/ExampleStart';
 import InteractiveSessionIcon from '../components/icons/InteractiveSession';
 import ModelServiceIcon from '../components/icons/ModelServiceIcon';
-import URLStartIcon from '../components/icons/URLStartIcon';
 import { useWebUINavigate } from '../hooks';
 import { FolderAddOutlined } from '@ant-design/icons';
 import React from 'react';
@@ -107,10 +106,7 @@ const StartPage: React.FC<StartPageProps> = (props) => {
           secondary
           icon={
             // FIXME: workaround for displaying proper icon
-            <img
-              src="react/src/components/icons/URLStart.svg"
-              alt="URL start"
-            ></img>
+            <img src="/resources/icons/URLStart.svg" alt="URL start"></img>
             // <URLStartIcon />
           }
           title={

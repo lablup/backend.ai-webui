@@ -145,7 +145,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({ type: Number }) sidepanelWidth = 250;
   @property({ type: Object }) supports = Object();
   @property({ type: Array }) availablePages = [
-    'summary',
+    // 'summary',
+    'start',
     'verify-email',
     'change-password',
     'job',
@@ -719,7 +720,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    */
   _loadPageElement() {
     if (this._page === 'index.html' || this._page === '') {
-      this._page = 'summary';
+      this._page = 'start';
       navigate(decodeURIComponent('/'));
     }
   }

@@ -1,5 +1,4 @@
 import { ConfigProvider, Menu, MenuProps, theme } from 'antd';
-import _ from 'lodash';
 import React from 'react';
 
 interface BAIMenuProps extends MenuProps {

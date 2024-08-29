@@ -477,7 +477,7 @@ export default class BackendAISummary extends BackendAIPage {
    * @param {string} search
    */
   _moveTo(url = '', search: string | undefined = undefined) {
-    const page = url !== '' ? url : 'summary';
+    const page = url !== '' ? url : 'start';
     // globalThis.history.pushState({}, '', page);
     store.dispatch(navigate(decodeURIComponent(page), {}));
 

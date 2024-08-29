@@ -37,12 +37,12 @@ const UserProfileSettingModal = React.lazy(
   () => import('./UserProfileSettingModal'),
 );
 
-interface UserDropdownMenu {
+interface UserDropdownMenuProps {
   iconColor?: string;
   color?: string;
 }
 
-const UserDropdownMenu: React.FC<UserDropdownMenu> = ({ ...props }) => {
+const UserDropdownMenu: React.FC<UserDropdownMenuProps> = ({ ...props }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [userInfo] = useCurrentUserInfo();

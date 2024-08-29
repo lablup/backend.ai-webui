@@ -1,9 +1,6 @@
 import { ReactComponent as logo } from './Trails.svg';
 import Icon from '@ant-design/icons';
-import {
-  CustomIconComponentProps,
-  IconComponentProps,
-} from '@ant-design/icons/lib/components/Icon';
+import { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
 
 interface TrailsIconProps
   extends Omit<CustomIconComponentProps, 'width' | 'height' | 'fill'> {}

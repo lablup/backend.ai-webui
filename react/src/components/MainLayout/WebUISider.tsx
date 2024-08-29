@@ -14,16 +14,15 @@ import TrailsIcon from '../icons/TrailsIcon';
 import { PluginPage, WebUIPluginType } from './MainLayout';
 import {
   ApiOutlined,
-  BarChartOutlined,
   BarsOutlined,
   CloudUploadOutlined,
   ControlOutlined,
+  DashboardOutlined,
   ExportOutlined,
   FileDoneOutlined,
   HddOutlined,
   InfoCircleOutlined,
   PlayCircleOutlined,
-  RocketOutlined,
   SolutionOutlined,
   ToolOutlined,
   UserOutlined,
@@ -32,7 +31,6 @@ import { useToggle } from 'ahooks';
 import { theme, MenuProps, Typography } from 'antd';
 import { ItemType } from 'antd/lib/menu/interface';
 import _ from 'lodash';
-import { PlayIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -62,7 +60,6 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const location = useLocation();
   const baiClient = useSuspendedBackendaiClient();
 
-  const isHideAgents = baiClient?._config?.hideAgents ?? true;
   const fasttrackEndpoint = baiClient?._config?.fasttrackEndpoint ?? null;
   const blockList = baiClient?._config?.blockList ?? null;
   const inactiveList = baiClient?._config?.inactiveList ?? null;
@@ -408,7 +405,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       <BAIMenu
         isAdminMenu={true}
         selectedKeys={[
-          location.pathname.split('/')[1] || 'summary',
+          location.pathname.split('/')[1] || 'start',
           // TODO: After matching first path of 'storage-settings' and 'agent', remove this code
           location.pathname.split('/')[1] === 'storage-settings' ? 'agent' : '',
           // TODO: After 'SessionListPage' is completed and used as the main page, remove this code
