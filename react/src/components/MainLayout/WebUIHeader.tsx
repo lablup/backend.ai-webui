@@ -69,7 +69,6 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
       style={{
         height: HEADER_HEIGHT,
         paddingRight: token.marginMD,
-        paddingLeft: token.marginMD,
         backgroundColor: token.colorFillContent,
         boxShadow: scrolled ? `0 5px 6px -6px ${token.colorBorder}` : 'none',
         transition: 'background-color 0.2s ease-in-out',
@@ -77,23 +76,34 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
       className={'webui-header-container'}
     >
       <style>{rawCss}</style>
-      <Flex align="center" justify="start" direction="row">
-        <img
-          className="logo-wide"
-          alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
-          src={
-            mergedSiderTheme === 'dark' && themeConfig?.logo?.srcDark
-              ? themeConfig?.logo?.srcDark ||
-                '/manifest/backend.ai-text-bgdark.svg'
-              : themeConfig?.logo?.src || '/manifest/backend.ai-text.svg'
-          }
+      <Flex align="center" justify="start" direction="row" gap={'lg'}>
+        <div
           style={{
-            width: themeConfig?.logo?.size?.width || 191,
-            height: themeConfig?.logo?.size?.height || 32,
-            cursor: 'pointer',
+            paddingTop: 18,
+            paddingBottom: 18,
+            paddingRight: 30,
+            paddingLeft: 30,
+            backgroundColor: token.colorPrimaryBg,
           }}
-          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
-        />
+        >
+          <img
+            className="logo-wide"
+            alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
+            src={
+              mergedSiderTheme === 'dark' && themeConfig?.logo?.srcDark
+                ? themeConfig?.logo?.srcDark ||
+                  '/manifest/backend.ai-text-bgdark.svg'
+                : themeConfig?.logo?.src || '/manifest/backend.ai-text.svg'
+            }
+            style={{
+              width: themeConfig?.logo?.size?.width || 158.75,
+              height: themeConfig?.logo?.size?.height || 24,
+              cursor: 'pointer',
+              backgroundColor: token.colorPrimaryBg,
+            }}
+            onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
+          />
+        </div>
         <Suspense>
           <Flex gap={md ? 'sm' : 'xs'}>
             <Typography.Text
@@ -129,11 +139,13 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
           </Flex>
         </Suspense>
       </Flex>
-      <Flex gap={md ? 'sm' : 'xs'}>
-        <Flex direction="row" className="non-draggable">
-          <BAINotificationButton />
-          <WebUIThemeToggleButton />
-          <WEBUIHelpButton />
+      <Flex gap={md ? 'lg' : 'xs'}>
+        <Flex direction="row" className="non-draggable" gap={'sm'}>
+          <div>
+            <BAINotificationButton iconColor={token.colorIcon} />
+            <WebUIThemeToggleButton iconColor={token.colorIcon} />
+            <WEBUIHelpButton iconColor={token.colorIcon} />
+          </div>
           <UserDropdownMenu />
         </Flex>
       </Flex>
