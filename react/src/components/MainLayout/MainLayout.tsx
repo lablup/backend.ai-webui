@@ -122,16 +122,9 @@ function MainLayout() {
           </>
         }
       >
-        <WebUISider
-          collapsed={sideCollapsed}
-          onBreakpoint={(broken) => {
-            if (broken) {
-              setSideCollapsed(true);
-            } else {
-              !compactSidebarActive && setSideCollapsed(false);
-            }
-          }}
-          webuiplugins={webUIPlugins}
+        <WebUIHeader
+          onClickMenuIcon={() => setSideCollapsed((v) => !v)}
+          containerElement={contentScrollFlexRef.current}
         />
       </Suspense>
       <Layout
@@ -145,8 +138,8 @@ function MainLayout() {
             direction="column"
             align="stretch"
             style={{
-              paddingLeft: token.paddingContentHorizontalLG,
-              paddingRight: token.paddingContentHorizontalLG,
+              // paddingLeft: token.paddingContentHorizontalLG,
+              // paddingRight: token.paddingContentHorizontalLG,
               paddingBottom: token.paddingContentVertical,
               height: '100vh',
               overflow: 'auto',
@@ -162,20 +155,19 @@ function MainLayout() {
                   </div>
                 }
               >
-                <div
-                  style={{
-                    margin: `0 -${token.paddingContentHorizontalLG}px 0 -${token.paddingContentHorizontalLG}px`,
-                    position: 'sticky',
-                    top: 0,
-                    zIndex: HEADER_Z_INDEX_IN_MAIN_LAYOUT,
-                  }}
-                >
-                  <NetworkStatusBanner />
-                  <WebUIHeader
-                    onClickMenuIcon={() => setSideCollapsed((v) => !v)}
-                    containerElement={contentScrollFlexRef.current}
+                <Flex>
+                  <WebUISider
+                    collapsed={sideCollapsed}
+                    onBreakpoint={(broken) => {
+                      if (broken) {
+                        setSideCollapsed(true);
+                      } else {
+                        !compactSidebarActive && setSideCollapsed(false);
+                      }
+                    }}
+                    webuiplugins={webUIPlugins}
                   />
-                </div>
+                </Flex>
               </Suspense>
               {/* <Flex direction="column"> */}
 

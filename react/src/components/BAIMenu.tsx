@@ -13,7 +13,6 @@ const BAIMenu: React.FC<MenuProps> = ({ ...props }) => {
         {`
           .bai-menu li.ant-menu-item.ant-menu-item-selected {
             overflow: visible;
-            font-weight: 600;
           }
           
           .bai-menu li.ant-menu-item.ant-menu-item-selected::before {
@@ -22,7 +21,6 @@ const BAIMenu: React.FC<MenuProps> = ({ ...props }) => {
             bottom: 0;
             position: absolute;
             right: auto;
-            border-right: 3px solid ${token.colorPrimary};
             transform: scaleY(1);
             opacity: 1;
             content: "";
@@ -33,7 +31,7 @@ const BAIMenu: React.FC<MenuProps> = ({ ...props }) => {
         theme={{
           components: {
             Menu: {
-              itemBorderRadius: 2,
+              itemBorderRadius: 20,
               itemMarginInline: 0,
             },
           },

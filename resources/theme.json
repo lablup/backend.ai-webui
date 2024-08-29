@@ -11,7 +11,10 @@
       "colorWarning": "#f1a239",
       "colorError": "#EE585A",
       "colorTextDescription": "#767676",
-      "borderRadius": 5
+      "borderRadius": 5,
+      "colorFillContent": "#FF9D00",
+      "colorLinkHover": "#FF9D00",
+      "colorBgBlur": "#FFE3B7"
     },
     "components": {
       "Tag": {
@@ -26,7 +29,7 @@
         "cellPaddingBlock": 6
       },
       "Layout": {
-        "lightSiderBg": "#F4F7FD",
+        "lightSiderBg": "#FFFFFF",
         "siderBg": "#2A2C30"
       },
       "Typography": {

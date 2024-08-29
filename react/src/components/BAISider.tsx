@@ -53,10 +53,27 @@ const BAISider: React.FC<BAISiderProps> = ({
           .bai-sider .non-draggable {
             -webkit-app-region: no-drag;
           }
+          .bai-menu li.ant-menu-item.ant-menu-item-selected {
+            border-radius: 20px;
+            background-color: #FFE3B7 !important;
+          }
+          .bai-menu li.ant-menu-item.ant-menu-item-selected > span.ant-menu-title-content {
+            color: #FF7A00 !important;
+            font-weight: normal;
+          }
+          .bai-menu li.ant-menu-item.ant-menu-item-selected::before {
+          width: 0px !important;
+          }
+          .bai-menu li.ant-menu-item.ant-menu-item-selected > span.anticon.ant-menu-item-icon {
+            color: #FF7A00 !important;
+          }
+          .bai-menu span.ant-menu-title-content {
+            color: #333;
+          }
         `}
       </style>
       <Sider
-        width={221}
+        width={220}
         breakpoint="md"
         style={{
           overflowX: 'hidden',
@@ -65,7 +82,7 @@ const BAISider: React.FC<BAISiderProps> = ({
           position: 'sticky',
           top: 0,
           left: 0,
-          borderRight: '1px solid',
+          background: '#FFF',
           borderColor: token.colorBorder,
           paddingTop: token.paddingContentVerticalSM,
           scrollbarColor: 'auto',
@@ -86,7 +103,7 @@ const BAISider: React.FC<BAISiderProps> = ({
             algorithm: siderTheme === 'dark' ? theme.darkAlgorithm : undefined,
           }}
         >
-          <Flex
+          {/* <Flex
             direction="column"
             justify="start"
             align="start"
@@ -120,7 +137,7 @@ const BAISider: React.FC<BAISiderProps> = ({
                 {otherProps.collapsed ? logoTitleCollapsed : logoTitle}
               </Typography.Text>
             </div>
-          </Flex>
+          </Flex> */}
           {children}
           {bottomText && (
             <>
