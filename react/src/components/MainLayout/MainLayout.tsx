@@ -11,7 +11,7 @@ import PasswordChangeRequestAlert from '../PasswordChangeRequestAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
-import { App, Layout, Space, theme } from 'antd';
+import { App, Button, Layout, Space, theme } from 'antd';
 import { atom, useSetAtom } from 'jotai';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
@@ -132,6 +132,25 @@ function MainLayout() {
           backgroundColor: 'transparent',
         }}
       >
+        <Suspense
+          fallback={
+            <div>
+              <Layout.Header style={{ visibility: 'hidden', height: 62 }} />
+            </div>
+          }
+        >
+          <WebUISider
+            collapsed={sideCollapsed}
+            onBreakpoint={(broken) => {
+              if (broken) {
+                setSideCollapsed(true);
+              } else {
+                !compactSidebarActive && setSideCollapsed(false);
+              }
+            }}
+            webuiplugins={webUIPlugins}
+          />
+        </Suspense>
         <BAIContentWithDrawerArea drawerWidth={DRAWER_WIDTH}>
           <Flex
             ref={contentScrollFlexRef}
@@ -141,33 +160,24 @@ function MainLayout() {
             style={{
               // paddingLeft: token.paddingContentHorizontalLG,
               // paddingRight: token.paddingContentHorizontalLG,
+              marginTop: 24,
               paddingBottom: token.paddingContentVertical,
               height: '100vh',
               overflow: 'auto',
             }}
           >
             <BAIErrorBoundary>
-              <Suspense
-                fallback={
-                  <div>
-                    <Layout.Header
-                      style={{ visibility: 'hidden', height: 62 }}
-                    />
-                  </div>
-                }
+              <Flex
+                direction="row"
+                align="stretch"
+                gap="lg"
+                style={{ marginTop: 100 }}
               >
-                <WebUISider
-                  collapsed={sideCollapsed}
-                  onBreakpoint={(broken) => {
-                    if (broken) {
-                      setSideCollapsed(true);
-                    } else {
-                      !compactSidebarActive && setSideCollapsed(false);
-                    }
-                  }}
-                  webuiplugins={webUIPlugins}
-                />
-              </Suspense>
+                <Suspense>
+                  {/* @ts-ignore */}
+                  <backend-ai-webui id="webui-shell" ref={webUIRef} />
+                </Suspense>
+              </Flex>
               {/* <Flex direction="column"> */}
 
               {/* TODO: Breadcrumb */}
@@ -210,10 +220,6 @@ function MainLayout() {
               <Suspense>
                 <Outlet />
               </Suspense>
-              <Flex direction="column" align="start" gap="lg">
-                {/* @ts-ignore */}
-                <backend-ai-webui id="webui-shell" ref={webUIRef} />
-              </Flex>
             </BAIErrorBoundary>
           </Flex>
         </BAIContentWithDrawerArea>
