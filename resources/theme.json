@@ -5,6 +5,7 @@
       "fontFamily": "'Ubuntu', Roboto, sans-serif",
       "colorPrimary": "#FF7A00",
       "colorLink": "#FF7A00",
+      "colorPrimaryText": "#E8FAF6",
       "colorPrimaryBg": "#FF7A00",
       "colorFillContent": "#FF9D00",
       "colorInfoHover": "#FFE3B7",

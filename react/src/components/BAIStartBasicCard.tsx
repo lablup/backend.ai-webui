@@ -35,7 +35,7 @@ const BAIStartBasicCard: React.FC<BAIStartBasicCardProps> = ({
           Button: {
             defaultBorderColor: 'none',
             defaultColor: secondary ? '#E8FAF6' : '#FFF6E8',
-            defaultBg: secondary ? '#00BD9B' : token.colorPrimary,
+            defaultBg: secondary ? '#00BD9B' : token.colorPrimaryBg,
             defaultHoverColor: secondary ? '#00BD9B' : token.colorPrimary,
             defaultHoverBorderColor: secondary ? '#00BD9B' : token.colorPrimary,
           },

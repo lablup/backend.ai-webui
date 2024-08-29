@@ -77,7 +77,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     {
       label: 'Start', // t('webui.menu.Summary'),
       icon: <PlayCircleOutlined style={{ color: token.colorPrimaryBg }} />,
-      key: 'summary', // 'summary',
+      key: 'start', // 'summary',
     },
     {
       label: 'Dashboard',

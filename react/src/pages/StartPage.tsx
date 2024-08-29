@@ -1,5 +1,10 @@
 import BAIStartBasicCard from '../components/BAIStartBasicCard';
 import Flex from '../components/Flex';
+import BatchSessionIcon from '../components/icons/BatchSessionIcon';
+import ExampleStartIcon from '../components/icons/ExampleStart';
+import InteractiveSessionIcon from '../components/icons/InteractiveSession';
+import ModelServiceIcon from '../components/icons/ModelServiceIcon';
+import URLStartIcon from '../components/icons/URLStartIcon';
 import { useWebUINavigate } from '../hooks';
 import { FolderAddOutlined } from '@ant-design/icons';
 import React from 'react';
@@ -30,12 +35,7 @@ const StartPage: React.FC<StartPageProps> = (props) => {
           }}
         />
         <BAIStartBasicCard
-          icon={
-            <img
-              src="/resources/icons/interactiveSession.svg"
-              alt="interactive session"
-            />
-          }
+          icon={<InteractiveSessionIcon />}
           title={
             <div>
               Start an
@@ -52,9 +52,7 @@ const StartPage: React.FC<StartPageProps> = (props) => {
           }}
         />
         <BAIStartBasicCard
-          icon={
-            <img src="/resources/icons/batchSession.svg" alt="batch session" />
-          }
+          icon={<BatchSessionIcon />}
           title={
             <div>
               Start a<br />
@@ -75,9 +73,7 @@ const StartPage: React.FC<StartPageProps> = (props) => {
       <Flex gap={16} wrap="wrap">
         <BAIStartBasicCard
           secondary
-          icon={
-            <img src="/resources/icons/modelService.svg" alt="model service" />
-          }
+          icon={<ModelServiceIcon />}
           title={
             <div>
               Start a
@@ -94,9 +90,7 @@ const StartPage: React.FC<StartPageProps> = (props) => {
         />
         <BAIStartBasicCard
           secondary
-          icon={
-            <img src="/resources/icons/exampleStart.svg" alt="example start" />
-          }
+          icon={<ExampleStartIcon />}
           title={
             <div>
               Start
@@ -111,7 +105,14 @@ const StartPage: React.FC<StartPageProps> = (props) => {
         />
         <BAIStartBasicCard
           secondary
-          icon={<img src="/resources/icons/URLStart.svg" alt="URL start" />}
+          icon={
+            // FIXME: workaround for displaying proper icon
+            <img
+              src="react/src/components/icons/URLStart.svg"
+              alt="URL start"
+            ></img>
+            // <URLStartIcon />
+          }
           title={
             <div>
               Start
@@ -125,6 +126,16 @@ const StartPage: React.FC<StartPageProps> = (props) => {
           }}
         />
       </Flex>
+      {/* <BAIStartSimpleCard
+        icon={<SessionsIcon />}
+        title={'Create a Session'}
+        footerButtonProps={{
+          onClick: () => {
+            webuiNavigate('/session/start');
+          },
+          children: 'Start Session',
+        }}
+      /> */}
     </Flex>
   );
 };
