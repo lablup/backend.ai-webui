@@ -77,12 +77,12 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     {
       label: 'Start', // t('webui.menu.Summary'),
       icon: <PlayCircleOutlined />,
-      key: 'start', // 'summary',
+      key: 'summary', // 'summary',
     },
     {
       label: 'Dashboard',
       icon: <DashboardOutlined />,
-      key: 'summary',
+      key: 'dashboard',
     },
     {
       key: 'storage',

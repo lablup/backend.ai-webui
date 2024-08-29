@@ -11,7 +11,7 @@ import PasswordChangeRequestAlert from '../PasswordChangeRequestAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
-import { App, Layout, theme } from 'antd';
+import { App, Layout, Space, theme } from 'antd';
 import { atom, useSetAtom } from 'jotai';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
@@ -135,8 +135,9 @@ function MainLayout() {
         <BAIContentWithDrawerArea drawerWidth={DRAWER_WIDTH}>
           <Flex
             ref={contentScrollFlexRef}
-            direction="column"
+            direction="row"
             align="stretch"
+            gap="lg"
             style={{
               // paddingLeft: token.paddingContentHorizontalLG,
               // paddingRight: token.paddingContentHorizontalLG,
@@ -155,19 +156,17 @@ function MainLayout() {
                   </div>
                 }
               >
-                <Flex>
-                  <WebUISider
-                    collapsed={sideCollapsed}
-                    onBreakpoint={(broken) => {
-                      if (broken) {
-                        setSideCollapsed(true);
-                      } else {
-                        !compactSidebarActive && setSideCollapsed(false);
-                      }
-                    }}
-                    webuiplugins={webUIPlugins}
-                  />
-                </Flex>
+                <WebUISider
+                  collapsed={sideCollapsed}
+                  onBreakpoint={(broken) => {
+                    if (broken) {
+                      setSideCollapsed(true);
+                    } else {
+                      !compactSidebarActive && setSideCollapsed(false);
+                    }
+                  }}
+                  webuiplugins={webUIPlugins}
+                />
               </Suspense>
               {/* <Flex direction="column"> */}
 
@@ -211,10 +210,10 @@ function MainLayout() {
               <Suspense>
                 <Outlet />
               </Suspense>
-              {/* To match paddig to 16 (2+14) */}
-              {/* </Flex> */}
-              {/* @ts-ignore */}
-              <backend-ai-webui id="webui-shell" ref={webUIRef} />
+              <Flex direction="column" align="start" gap="lg">
+                {/* @ts-ignore */}
+                <backend-ai-webui id="webui-shell" ref={webUIRef} />
+              </Flex>
             </BAIErrorBoundary>
           </Flex>
         </BAIContentWithDrawerArea>
