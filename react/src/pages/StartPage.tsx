@@ -4,10 +4,7 @@ import BatchSessionIcon from '../components/icons/BatchSessionIcon';
 import ExampleStartIcon from '../components/icons/ExampleStart';
 import InteractiveSessionIcon from '../components/icons/InteractiveSession';
 import ModelServiceIcon from '../components/icons/ModelServiceIcon';
-<<<<<<< HEAD
-=======
 // import URLStartIcon from '../components/icons/URLStartIcon';
->>>>>>> 2ea20af6b (refactor: replace svg as customIcon component)
 import { useWebUINavigate } from '../hooks';
 import { FolderAddOutlined } from '@ant-design/icons';
 import React from 'react';
