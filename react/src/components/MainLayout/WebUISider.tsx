@@ -7,6 +7,10 @@ import BAIMenu from '../BAIMenu';
 import BAISider, { BAISiderProps } from '../BAISider';
 import Flex from '../Flex';
 import SignoutModal from '../SignoutModal';
+import EndpointsIcon from '../icons/EndpointsIcon';
+import ExamplesIcon from '../icons/ExamplesIcon';
+import ModelsIcon from '../icons/ModelsIcon';
+import TrailsIcon from '../icons/TrailsIcon';
 import { PluginPage, WebUIPluginType } from './MainLayout';
 import {
   ApiOutlined,
@@ -72,52 +76,100 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const generalMenu = filterEmptyItem<ItemType>([
     {
       label: 'Start', // t('webui.menu.Summary'),
-      icon: <PlayCircleOutlined style={{ color: token.colorPrimaryBg }} />,
+      icon: <PlayCircleOutlined />,
       key: 'start', // 'summary',
     },
     {
-      label: t('webui.menu.Sessions'),
-      icon: <BarsOutlined />,
-      key: 'job',
-    },
-    supportServing && {
-      label: t('webui.menu.Serving'),
-      icon: <RocketOutlined />,
-      key: 'serving',
+      label: 'Dashboard',
+      icon: <DashboardOutlined />,
+      key: 'summary',
     },
     {
-      label: t('webui.menu.Import&Run'),
-      icon: <PlayIcon />,
-      key: 'import',
+      key: 'storage',
+      label: 'Storage',
+      type: 'group',
+      children: [
+        {
+          label: t('webui.menu.Data&Storage'),
+          icon: <CloudUploadOutlined />,
+          key: 'data',
+        },
+      ],
     },
     {
-      label: t('webui.menu.Data&Storage'),
-      icon: <CloudUploadOutlined />,
-      key: 'data',
-    },
-    supportUserCommittedImage && {
-      label: t('webui.menu.MyEnvironments'),
-      icon: <FileDoneOutlined />,
-      key: 'my-environment',
-    },
-    !isHideAgents && {
-      label: t('webui.menu.AgentSummary'),
-      icon: <HddOutlined />,
-      key: 'agent-summary',
+      key: 'workload',
+      label: 'Workload',
+      type: 'group',
+      children: [
+        {
+          label: t('webui.menu.Sessions'),
+          icon: <BarsOutlined />,
+          key: 'job',
+        },
+        supportUserCommittedImage && {
+          label: t('webui.menu.MyEnvironments'),
+          icon: <FileDoneOutlined />,
+          key: 'my-environment',
+        },
+        {
+          label: 'Examples',
+          icon: <ExamplesIcon />,
+          key: 'examples',
+        },
+      ],
     },
     {
-      label: t('webui.menu.Statistics'),
-      icon: <BarChartOutlined />,
-      key: 'statistics',
+      key: 'service',
+      label: 'Service',
+      type: 'group',
+      children: [
+        supportServing && {
+          label: 'Endpoints', //t('webui.menu.Serving'),
+          icon: <EndpointsIcon />, // <RocketOutlined />,
+          key: 'serving',
+        },
+        {
+          label: 'Models',
+          icon: <ModelsIcon />,
+          key: 'models',
+        },
+      ],
     },
-    !!fasttrackEndpoint && {
-      label: t('webui.menu.FastTrack'),
-      icon: <ExportOutlined />,
-      key: 'pipeline',
-      onClick: () => {
-        window.open(fasttrackEndpoint, '_blank', 'noopener noreferrer');
-      },
+    {
+      key: 'fasttrack',
+      label: 'FastTrack',
+      type: 'group',
+      children: [
+        !!fasttrackEndpoint && {
+          label: 'Pipelines', // t('webui.menu.FastTrack'),
+          icon: <ExportOutlined />, // TODO: change to custom Pipelines icon
+          key: 'pipeline',
+          onClick: () => {
+            window.open(fasttrackEndpoint, '_blank', 'noopener noreferrer');
+          },
+        },
+        {
+          label: 'Trails',
+          icon: <TrailsIcon />,
+          key: 'trails',
+        },
+      ],
     },
+    // {
+    //   label: t('webui.menu.Import&Run'),
+    //   icon: <PlayIcon />,
+    //   key: 'import',
+    // },
+    // !isHideAgents && {
+    //   label: t('webui.menu.AgentSummary'),
+    //   icon: <HddOutlined />,
+    //   key: 'agent-summary',
+    // },
+    // {
+    //   label: t('webui.menu.Statistics'),
+    //   icon: <BarChartOutlined />,
+    //   key: 'statistics',
+    // },
   ]);
 
   const adminMenu: MenuProps['items'] = [
