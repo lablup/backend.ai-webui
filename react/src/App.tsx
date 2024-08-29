@@ -36,7 +36,7 @@ const StorageHostSettingPage = React.lazy(
   () => import('./pages/StorageHostSettingPage'),
 );
 const UserSettingsPage = React.lazy(() => import('./pages/UserSettingsPage'));
-const SessionListPage = React.lazy(() => import('./pages/SessionListPage'));
+// const SessionListPage = React.lazy(() => import('./pages/SessionListPage'));
 const NeoSessionPage = React.lazy(() => import('./pages/NeoSessionPage'));
 const SessionLauncherPage = React.lazy(
   () => import('./pages/SessionLauncherPage'),
@@ -123,7 +123,7 @@ const router = createBrowserRouter([
         element: <RedirectToSummary />,
       },
       {
-        path: '/summary',
+        path: '/start',
         Component: () => {
           const { token } = theme.useToken();
           return (
