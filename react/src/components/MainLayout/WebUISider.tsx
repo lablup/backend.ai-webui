@@ -4,6 +4,7 @@ import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import BAIMenu from '../BAIMenu';
+import BAIModal from '../BAIModal';
 import BAISider, { BAISiderProps } from '../BAISider';
 import Flex from '../Flex';
 import SignoutModal from '../SignoutModal';
@@ -27,12 +28,13 @@ import {
   SolutionOutlined,
   ToolOutlined,
   UserOutlined,
+  WarningOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { theme, MenuProps, Typography } from 'antd';
+import { theme, MenuProps, Typography, Button, ConfigProvider } from 'antd';
 import { ItemType } from 'antd/lib/menu/interface';
 import _ from 'lodash';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
@@ -69,7 +71,26 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const supportUserCommittedImage =
     baiClient?.supports('user-committed-image') ?? false;
 
+  const menuInPreparation = [
+    'data',
+    'my-environment',
+    'examples',
+    'serving',
+    'models',
+    'pipeline',
+    'trails',
+    'credential',
+    'environment',
+    'resource-policy',
+    'agent',
+    'settings',
+    'maintenance',
+    'information',
+  ];
+
   const [isOpenSignoutModal, { toggle: toggleSignoutModal }] = useToggle(false);
+  const [isOpenPreparationMenuModal, setIsOpenPreparationMenuModal] =
+    useState(false);
 
   const generalMenu = filterEmptyItem<ItemType>([
     {
@@ -256,192 +277,180 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   });
 
   return (
-    <BAISider
-      logo={
-        <img
-          className="logo-wide"
-          alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
-          src={
-            mergedSiderTheme === 'dark' && themeConfig?.logo?.srcDark
-              ? themeConfig?.logo?.srcDark ||
-                '/manifest/backend.ai-text-bgdark.svg'
-              : themeConfig?.logo?.src || '/manifest/backend.ai-text.svg'
-          }
-          style={{
-            width: themeConfig?.logo?.size?.width || 191,
-            height: themeConfig?.logo?.size?.height || 32,
-            cursor: 'pointer',
+    <>
+      <BAISider
+        logo={
+          <img
+            className="logo-wide"
+            alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
+            src={
+              mergedSiderTheme === 'dark' && themeConfig?.logo?.srcDark
+                ? themeConfig?.logo?.srcDark ||
+                  '/manifest/backend.ai-text-bgdark.svg'
+                : themeConfig?.logo?.src || '/manifest/backend.ai-text.svg'
+            }
+            style={{
+              width: themeConfig?.logo?.size?.width || 191,
+              height: themeConfig?.logo?.size?.height || 32,
+              cursor: 'pointer',
+            }}
+            onClick={() => webuiNavigate(themeConfig?.logo?.href || '/start')} // '/summary')}
+          />
+        }
+        theme={mergedSiderTheme}
+        logoCollapsed={
+          <img
+            className="logo-collapsed"
+            alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
+            src={
+              mergedSiderTheme === 'dark' && themeConfig?.logo?.srcCollapsedDark
+                ? themeConfig?.logo?.srcCollapsedDark ||
+                  '/manifest/backend.ai-brand-simple-bgdark.svg'
+                : themeConfig?.logo?.srcCollapsed ||
+                  '/manifest/backend.ai-brand-simple.svg'
+            }
+            style={{
+              width: themeConfig?.logo?.sizeCollapsed?.width || 48,
+              height: themeConfig?.logo?.sizeCollapsed?.height || 32,
+              cursor: 'pointer',
+            }}
+            onClick={() => webuiNavigate(themeConfig?.logo?.href || '/start')} // '/summary')}
+          />
+        }
+        logoTitle={themeConfig?.logo?.logoTitle || siteDescription || 'WebUI'}
+        logoTitleCollapsed={
+          themeConfig?.logo?.logoTitleCollapsed || siteDescription || 'WebUI'
+        }
+        bottomText={
+          props.collapsed ? null : (
+            <>
+              <div className="terms-of-use">
+                <Flex
+                  wrap="wrap"
+                  style={{ fontSize: token.sizeXS }}
+                  justify="center"
+                >
+                  <Typography.Link
+                    type="secondary"
+                    style={{ fontSize: 11 }}
+                    onClick={() => {
+                      document.dispatchEvent(
+                        new CustomEvent('show-TOS-agreement'),
+                      );
+                    }}
+                  >
+                    {t('webui.menu.TermsOfService')}
+                  </Typography.Link>
+                  &nbsp;·&nbsp;
+                  <Typography.Link
+                    type="secondary"
+                    style={{ fontSize: 11 }}
+                    onClick={() => {
+                      document.dispatchEvent(
+                        new CustomEvent('show-PP-agreement'),
+                      );
+                    }}
+                  >
+                    {t('webui.menu.PrivacyPolicy')}
+                  </Typography.Link>
+                  &nbsp;·&nbsp;
+                  <Typography.Link
+                    type="secondary"
+                    style={{ fontSize: 11 }}
+                    onClick={() => {
+                      document.dispatchEvent(
+                        new CustomEvent('show-about-backendai'),
+                      );
+                    }}
+                  >
+                    {t('webui.menu.AboutBackendAI')}
+                  </Typography.Link>
+                  {!!baiClient?._config?.allowSignout && (
+                    <>
+                      &nbsp;·&nbsp;
+                      <Typography.Link
+                        type="secondary"
+                        style={{ fontSize: 11 }}
+                        onClick={toggleSignoutModal}
+                      >
+                        {t('webui.menu.LeaveService')}
+                      </Typography.Link>
+                      <SignoutModal
+                        open={isOpenSignoutModal}
+                        onRequestClose={toggleSignoutModal}
+                      />
+                    </>
+                  )}
+                </Flex>
+              </div>
+              <address>
+                <small className="sidebar-footer">
+                  {themeConfig?.branding?.companyName || 'Lablup Inc.'}
+                </small>
+                &nbsp;
+                <small
+                  className="sidebar-footer"
+                  style={{ fontSize: token.sizeXS }}
+                >
+                  {/* @ts-ignore */}
+                  {`${global.packageVersion}.${globalThis.buildNumber}`}
+                </small>
+              </address>
+            </>
+          )
+        }
+        {...props}
+      >
+        <BAIMenu
+          isAdminMenu={false}
+          selectedKeys={[
+            location.pathname.split('/')[1] || 'start',
+            // TODO: After matching first path of 'storage-settings' and 'agent', remove this code
+            location.pathname.split('/')[1] === 'storage-settings'
+              ? 'agent'
+              : '',
+            // TODO: After 'SessionListPage' is completed and used as the main page, remove this code
+            //       and change 'job' key to 'session'
+            location.pathname.split('/')[1] === 'session' ? 'job' : '',
+          ]}
+          items={[...generalMenu]}
+          /**
+           * Etc menu
+           */
+          // {
+          //   label: '404',
+          //   icon: <QuestionOutlined />,
+          //   key: '404',
+          // },
+          // ]}
+          onClick={({ key, keyPath }) => {
+            if (_.some(keyPath, (key) => menuInPreparation.includes(key))) {
+              setIsOpenPreparationMenuModal(true);
+            } else {
+              webuiNavigate('/' + keyPath.join('/'));
+            }
           }}
-          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
         />
-      }
-      theme={mergedSiderTheme}
-      logoCollapsed={
-        <img
-          className="logo-collapsed"
-          alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
-          src={
-            mergedSiderTheme === 'dark' && themeConfig?.logo?.srcCollapsedDark
-              ? themeConfig?.logo?.srcCollapsedDark ||
-                '/manifest/backend.ai-brand-simple-bgdark.svg'
-              : themeConfig?.logo?.srcCollapsed ||
-                '/manifest/backend.ai-brand-simple.svg'
-          }
-          style={{
-            width: themeConfig?.logo?.sizeCollapsed?.width || 48,
-            height: themeConfig?.logo?.sizeCollapsed?.height || 32,
-            cursor: 'pointer',
-          }}
-          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
-        />
-      }
-      logoTitle={themeConfig?.logo?.logoTitle || siteDescription || 'WebUI'}
-      logoTitleCollapsed={
-        themeConfig?.logo?.logoTitleCollapsed || siteDescription || 'WebUI'
-      }
-      bottomText={
-        props.collapsed ? null : (
-          <>
-            <div className="terms-of-use">
-              <Flex
-                wrap="wrap"
-                style={{ fontSize: token.sizeXS }}
-                justify="center"
-              >
-                <Typography.Link
-                  type="secondary"
-                  style={{ fontSize: 11 }}
-                  onClick={() => {
-                    document.dispatchEvent(
-                      new CustomEvent('show-TOS-agreement'),
-                    );
-                  }}
-                >
-                  {t('webui.menu.TermsOfService')}
-                </Typography.Link>
-                &nbsp;·&nbsp;
-                <Typography.Link
-                  type="secondary"
-                  style={{ fontSize: 11 }}
-                  onClick={() => {
-                    document.dispatchEvent(
-                      new CustomEvent('show-PP-agreement'),
-                    );
-                  }}
-                >
-                  {t('webui.menu.PrivacyPolicy')}
-                </Typography.Link>
-                &nbsp;·&nbsp;
-                <Typography.Link
-                  type="secondary"
-                  style={{ fontSize: 11 }}
-                  onClick={() => {
-                    document.dispatchEvent(
-                      new CustomEvent('show-about-backendai'),
-                    );
-                  }}
-                >
-                  {t('webui.menu.AboutBackendAI')}
-                </Typography.Link>
-                {!!baiClient?._config?.allowSignout && (
-                  <>
-                    &nbsp;·&nbsp;
-                    <Typography.Link
-                      type="secondary"
-                      style={{ fontSize: 11 }}
-                      onClick={toggleSignoutModal}
-                    >
-                      {t('webui.menu.LeaveService')}
-                    </Typography.Link>
-                    <SignoutModal
-                      open={isOpenSignoutModal}
-                      onRequestClose={toggleSignoutModal}
-                    />
-                  </>
-                )}
-              </Flex>
-            </div>
-            <address>
-              <small className="sidebar-footer">
-                {themeConfig?.branding?.companyName || 'Lablup Inc.'}
-              </small>
-              &nbsp;
-              <small
-                className="sidebar-footer"
-                style={{ fontSize: token.sizeXS }}
-              >
-                {/* @ts-ignore */}
-                {`${global.packageVersion}.${globalThis.buildNumber}`}
-              </small>
-            </address>
-          </>
-        )
-      }
-      {...props}
-    >
-      <BAIMenu
-        isAdminMenu={false}
-        selectedKeys={[
-          location.pathname.split('/')[1] || 'start',
-          // TODO: After matching first path of 'storage-settings' and 'agent', remove this code
-          location.pathname.split('/')[1] === 'storage-settings' ? 'agent' : '',
-          // TODO: After 'SessionListPage' is completed and used as the main page, remove this code
-          //       and change 'job' key to 'session'
-          location.pathname.split('/')[1] === 'session' ? 'job' : '',
-        ]}
-        items={[...generalMenu]}
-        /**
-         * Etc menu
-         */
-        // {
-        //   label: '404',
-        //   icon: <QuestionOutlined />,
-        //   key: '404',
-        // },
-        // ]}
-        onClick={({ key, keyPath }) => {
-          webuiNavigate('/' + keyPath.join('/'));
-        }}
-      />
-      <BAIMenu
-        isAdminMenu={true}
-        selectedKeys={[
-          location.pathname.split('/')[1] || 'start',
-          // TODO: After matching first path of 'storage-settings' and 'agent', remove this code
-          location.pathname.split('/')[1] === 'storage-settings' ? 'agent' : '',
-          // TODO: After 'SessionListPage' is completed and used as the main page, remove this code
-          //       and change 'job' key to 'session'
-          location.pathname.split('/')[1] === 'session' ? 'job' : '',
-        ]}
-        items={
-          // TODO: add plugin menu
-          currentUserRole === 'superadmin'
-            ? [
-                {
-                  type: 'group',
-                  label: (
-                    <Flex>
-                      {!props.collapsed && (
-                        <Typography.Text type="secondary" ellipsis>
-                          {t('webui.menu.Administration')}
-                        </Typography.Text>
-                      )}
-                    </Flex>
-                  ),
-                  children: [...adminMenu, ...superAdminMenu],
-                },
-              ]
-            : currentUserRole === 'admin'
+        <BAIMenu
+          isAdminMenu={true}
+          selectedKeys={[
+            location.pathname.split('/')[1] || 'start',
+            // TODO: After matching first path of 'storage-settings' and 'agent', remove this code
+            location.pathname.split('/')[1] === 'storage-settings'
+              ? 'agent'
+              : '',
+            // TODO: After 'SessionListPage' is completed and used as the main page, remove this code
+            //       and change 'job' key to 'session'
+            location.pathname.split('/')[1] === 'session' ? 'job' : '',
+          ]}
+          items={
+            // TODO: add plugin menu
+            currentUserRole === 'superadmin'
               ? [
-                  ...generalMenu,
                   {
                     type: 'group',
                     label: (
-                      <Flex
-                        style={{
-                          borderBottom: `1px solid ${token.colorBorder}`,
-                        }}
-                      >
+                      <Flex>
                         {!props.collapsed && (
                           <Typography.Text type="secondary" ellipsis>
                             {t('webui.menu.Administration')}
@@ -449,25 +458,94 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                         )}
                       </Flex>
                     ),
-                    children: [...adminMenu],
+                    children: [...adminMenu, ...superAdminMenu],
                   },
                 ]
-              : []
-        }
-        /**
-         * Etc menu
-         */
-        // {
-        //   label: '404',
-        //   icon: <QuestionOutlined />,
-        //   key: '404',
-        // },
-        // ]}
-        onClick={({ key, keyPath }) => {
-          webuiNavigate('/' + keyPath.join('/'));
+              : currentUserRole === 'admin'
+                ? [
+                    ...generalMenu,
+                    {
+                      type: 'group',
+                      label: (
+                        <Flex
+                          style={{
+                            borderBottom: `1px solid ${token.colorBorder}`,
+                          }}
+                        >
+                          {!props.collapsed && (
+                            <Typography.Text type="secondary" ellipsis>
+                              {t('webui.menu.Administration')}
+                            </Typography.Text>
+                          )}
+                        </Flex>
+                      ),
+                      children: [...adminMenu],
+                    },
+                  ]
+                : []
+          }
+          /**
+           * Etc menu
+           */
+          // {
+          //   label: '404',
+          //   icon: <QuestionOutlined />,
+          //   key: '404',
+          // },
+          // ]}
+          onClick={({ key, keyPath }) => {
+            if (_.some(keyPath, (key) => menuInPreparation.includes(key))) {
+              setIsOpenPreparationMenuModal(true);
+            } else {
+              webuiNavigate('/' + keyPath.join('/'));
+            }
+          }}
+        />
+      </BAISider>
+      <ConfigProvider
+        theme={{
+          components: {
+            Button: {
+              defaultBorderColor: 'none',
+              defaultColor: '#FFF6E8',
+              defaultBg: token.colorPrimaryBg,
+              defaultHoverColor: token.colorPrimary,
+              defaultHoverBorderColor: token.colorPrimary,
+            },
+          },
         }}
-      />
-    </BAISider>
+      >
+        <BAIModal
+          open={isOpenPreparationMenuModal}
+          title={
+            <Flex direction="row" align="center" gap="sm">
+              <WarningOutlined
+                style={{ fontSize: 24, color: token.colorPrimary }}
+              />
+              <Typography.Title level={4} style={{ margin: 0 }}>
+                {'Work In Progress'}
+              </Typography.Title>
+            </Flex>
+          }
+          footer={[
+            <Button
+              onClick={() => {
+                webuiNavigate('/start');
+                setIsOpenPreparationMenuModal(false);
+              }}
+            >
+              Go Back to Start Page
+            </Button>,
+          ]}
+        >
+          <Typography.Text>
+            {
+              'Currently this page is working in progress. Please click the button below.'
+            }
+          </Typography.Text>
+        </BAIModal>
+      </ConfigProvider>
+    </>
   );
 };
 export default WebUISider;

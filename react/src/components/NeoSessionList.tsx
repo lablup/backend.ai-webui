@@ -12,7 +12,7 @@ import { NeoSessionListQuery } from './__generated__/NeoSessionListQuery.graphql
 import { SearchOutlined } from '@ant-design/icons';
 import { Input, Progress, Radio, Table, Tag, theme, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
-import { TableRowSelection } from 'antd/es/table/interface';
+import { TableRowSelection } from 'antd/lib/table/interface';
 import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -130,8 +130,8 @@ const NeoSessionList: React.FC<NeoSessionListProps> = ({
   );
 
   return (
-    <Flex direction="column" align="stretch" gap={16}>
-      <Flex gap={16} direction="row">
+    <Flex direction="column" align="stretch" gap={'lg'}>
+      <Flex gap={'lg'} direction="row">
         <Radio.Group
           options={[
             { label: t('session.Running'), value: 'running' },
