@@ -1,6 +1,9 @@
+import {
+  createVFolderAndVerify,
+  deleteVFolderAndVerify,
+  loginAsUser,
+} from './test-util';
 import { test } from '@playwright/test';
-import { createVFolderAndVerify, deleteVFolderAndVerify, loginAsUser } from './test-util';
-
 
 test.describe('VFolder ', () => {
   test('User can create and delete vFolder', async ({ page }) => {

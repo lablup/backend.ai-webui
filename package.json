@@ -188,6 +188,9 @@
     ],
     "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
       "prettier --write"
+    ], 
+    "e2e/**/*.{js,ts}": [
+      "prettier --write"
     ]
   },
   "husky": {

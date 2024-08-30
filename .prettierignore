@@ -2,5 +2,6 @@
 src/lib/
 !/src
 !/react
+!/e2e
 **/__generated__/*.graphql.ts
 *.graphql
