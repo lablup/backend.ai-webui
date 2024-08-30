@@ -24,7 +24,7 @@ module.exports = {
   exclude: ['**/node_modules/**', '**/__mocks__/**', '**/__generated__/**'],
   // noFutureProofEnums: true,
   featureFlags: {
-    enable_relay_resolver_transform: true,
+    // enable_relay_resolver_transform: true,
   },
   customScalarTypes: {
     // Be careful, the value of this setting is a typescript type. It is not a `String`.
