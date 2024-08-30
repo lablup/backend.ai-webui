@@ -524,7 +524,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     return num.toString().replace(regexp, ',');
   }
 
-  _prefixFormatWithTrailingZeros(num: string | number = '0', fixed: number) {
+  _prefixFormatWithoutTrailingZeros(num: string | number = '0', fixed: number) {
     const number = typeof num === 'string' ? parseFloat(num) : num;
     return parseFloat(number.toFixed(fixed)).toString();
   }
@@ -575,9 +575,12 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                         class="start"
                         progress="${this.cpu_total_usage_ratio / 100.0}"
                         description="${this._addComma(
-                          this._prefixFormatWithTrailingZeros(this.cpu_used, 0),
+                          this._prefixFormatWithoutTrailingZeros(
+                            this.cpu_used,
+                            0,
+                          ),
                         )}/${this._addComma(
-                          this._prefixFormatWithTrailingZeros(
+                          this._prefixFormatWithoutTrailingZeros(
                             this.cpu_total,
                             0,
                           ),
@@ -589,10 +592,10 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                         progress="${this.cpu_current_usage_ratio / 100.0}"
                         description="${_t(
                           'summary.Using',
-                        )} ${this._prefixFormatWithTrailingZeros(
+                        )} ${this._prefixFormatWithoutTrailingZeros(
                           this.cpu_total_percent,
                           1,
-                        )} % (util. ${this._prefixFormatWithTrailingZeros(
+                        )} % (util. ${this._prefixFormatWithoutTrailingZeros(
                           this.cpu_percent,
                           1,
                         )} %)"
@@ -600,13 +603,13 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                     </div>
                     <div class="layout vertical center center-justified">
                       <span class="percentage start-bar">
-                        ${this._prefixFormatWithTrailingZeros(
+                        ${this._prefixFormatWithoutTrailingZeros(
                           this.cpu_total_percent,
                           1,
                         ) + '%'}
                       </span>
                       <span class="percentage end-bar">
-                        ${this._prefixFormatWithTrailingZeros(
+                        ${this._prefixFormatWithoutTrailingZeros(
                           this.cpu_percent,
                           1,
                         ) + '%'}
@@ -626,12 +629,12 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                         class="start"
                         progress="${this.mem_total_usage_ratio / 100.0}"
                         description="${this._addComma(
-                          this._prefixFormatWithTrailingZeros(
+                          this._prefixFormatWithoutTrailingZeros(
                             this.mem_allocated,
                             2,
                           ),
                         )} / ${this._addComma(
-                          this._prefixFormatWithTrailingZeros(
+                          this._prefixFormatWithoutTrailingZeros(
                             this.mem_total,
                             2,
                           ),
@@ -642,10 +645,13 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                         class="end"
                         progress="${this.mem_current_usage_ratio / 100.0}"
                         description="${_t('summary.Using')} ${this._addComma(
-                          this._prefixFormatWithTrailingZeros(this.mem_used, 2),
+                          this._prefixFormatWithoutTrailingZeros(
+                            this.mem_used,
+                            2,
+                          ),
                         )} GiB
                     (${parseInt(this.mem_used) !== 0
-                          ? this._prefixFormatWithTrailingZeros(
+                          ? this._prefixFormatWithoutTrailingZeros(
                               (parseInt(this.mem_used) /
                                 parseInt(this.mem_total)) *
                                 100,
@@ -656,14 +662,14 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                     </div>
                     <div class="layout vertical center center-justified">
                       <span class="percentage start-bar">
-                        ${this._prefixFormatWithTrailingZeros(
+                        ${this._prefixFormatWithoutTrailingZeros(
                           this.mem_total_usage_ratio,
                           1,
                         ) + '%'}
                       </span>
                       <span class="percentage end-bar">
                         ${(parseInt(this.mem_used) !== 0
-                          ? this._prefixFormatWithTrailingZeros(
+                          ? this._prefixFormatWithoutTrailingZeros(
                               (parseInt(this.mem_used) /
                                 parseInt(this.mem_total)) *
                                 100,
@@ -724,7 +730,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                     >
                                       <span class="percentage start-bar">
                                         ${this.cuda_gpu_used !== 0
-                                          ? this._prefixFormatWithTrailingZeros(
+                                          ? this._prefixFormatWithoutTrailingZeros(
                                               (this.cuda_gpu_used /
                                                 this.cuda_gpu_total) *
                                                 100,
@@ -774,7 +780,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                     >
                                       <span class="percentage start-bar">
                                         ${this.cuda_fgpu_used !== 0
-                                          ? this._prefixFormatWithTrailingZeros(
+                                          ? this._prefixFormatWithoutTrailingZeros(
                                               (this.cuda_fgpu_used /
                                                 this.cuda_fgpu_total) *
                                                 100,
@@ -820,7 +826,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                       class="layout vertical center center-justified"
                                     >
                                       <span class="percentage start-bar">
-                                        ${this._prefixFormatWithTrailingZeros(
+                                        ${this._prefixFormatWithoutTrailingZeros(
                                           this.rocm_gpu_used,
                                           1,
                                         ) + '%'}
@@ -842,10 +848,10 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                         id="tpu-usage-bar"
                                         class="start"
                                         progress="${this.tpu_used / 100.0}"
-                                        description="${this._prefixFormatWithTrailingZeros(
+                                        description="${this._prefixFormatWithoutTrailingZeros(
                                           this.tpu_used,
                                           2,
-                                        )} / ${this._prefixFormatWithTrailingZeros(
+                                        )} / ${this._prefixFormatWithoutTrailingZeros(
                                           this.tpu_total,
                                           2,
                                         )} TPUs ${_t('summary.reserved')}."
@@ -863,7 +869,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                       class="layout vertical center center-justified"
                                     >
                                       <span class="percentage start-bar">
-                                        ${this._prefixFormatWithTrailingZeros(
+                                        ${this._prefixFormatWithoutTrailingZeros(
                                           this.tpu_used,
                                           1,
                                         ) + '%'}
@@ -883,10 +889,10 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                         id="ipu-usage-bar"
                                         class="start"
                                         progress="${this.ipu_used / 100.0}"
-                                        description="${this._prefixFormatWithTrailingZeros(
+                                        description="${this._prefixFormatWithoutTrailingZeros(
                                           this.ipu_used,
                                           2,
-                                        )} / ${this._prefixFormatWithTrailingZeros(
+                                        )} / ${this._prefixFormatWithoutTrailingZeros(
                                           this.ipu_total,
                                           2,
                                         )} IPUs ${_t('summary.reserved')}."
@@ -904,7 +910,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                       class="layout vertical center center-justified"
                                     >
                                       <span class="percentage start-bar">
-                                        ${this._prefixFormatWithTrailingZeros(
+                                        ${this._prefixFormatWithoutTrailingZeros(
                                           this.ipu_used,
                                           1,
                                         ) + '%'}
@@ -924,10 +930,10 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                         id="atom-usage-bar"
                                         class="start"
                                         progress="${this.atom_used / 100.0}"
-                                        description="${this._prefixFormatWithTrailingZeros(
+                                        description="${this._prefixFormatWithoutTrailingZeros(
                                           this.atom_used,
                                           2,
-                                        )} / ${this._prefixFormatWithTrailingZeros(
+                                        )} / ${this._prefixFormatWithoutTrailingZeros(
                                           this.atom_total,
                                           2,
                                         )} ATOMs ${_t('summary.reserved')}."
@@ -945,7 +951,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                       class="layout vertical center center-justified"
                                     >
                                       <span class="percentage start-bar">
-                                        ${this._prefixFormatWithTrailingZeros(
+                                        ${this._prefixFormatWithoutTrailingZeros(
                                           this.atom_used,
                                           1,
                                         ) + '%'}
@@ -966,10 +972,10 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                         class="start"
                                         progress="${this.atom_plus_used /
                                         100.0}"
-                                        description="${this._prefixFormatWithTrailingZeros(
+                                        description="${this._prefixFormatWithoutTrailingZeros(
                                           this.atom_plus_used,
                                           2,
-                                        )} / ${this._prefixFormatWithTrailingZeros(
+                                        )} / ${this._prefixFormatWithoutTrailingZeros(
                                           this.atom_plus_total,
                                           2,
                                         )} ATOM+ ${_t('summary.reserved')}."
@@ -987,7 +993,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                       class="layout vertical center center-justified"
                                     >
                                       <span class="percentage start-bar">
-                                        ${this._prefixFormatWithTrailingZeros(
+                                        ${this._prefixFormatWithoutTrailingZeros(
                                           this.atom_plus_used,
                                           1,
                                         ) + '%'}
@@ -1007,10 +1013,10 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                         id="warboy-usage-bar"
                                         class="start"
                                         progress="${this.warboy_used / 100.0}"
-                                        description="${this._prefixFormatWithTrailingZeros(
+                                        description="${this._prefixFormatWithoutTrailingZeros(
                                           this.warboy_used,
                                           2,
-                                        )} / ${this._prefixFormatWithTrailingZeros(
+                                        )} / ${this._prefixFormatWithoutTrailingZeros(
                                           this.warboy_total,
                                           2,
                                         )} Warboys ${_t('summary.reserved')}."
@@ -1028,7 +1034,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                       class="layout vertical center center-justified"
                                     >
                                       <span class="percentage start-bar">
-                                        ${this._prefixFormatWithTrailingZeros(
+                                        ${this._prefixFormatWithoutTrailingZeros(
                                           this.warboy_used,
                                           1,
                                         ) + '%'}
@@ -1049,10 +1055,10 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                         class="start"
                                         progress="${this.hyperaccel_lpu_used /
                                         100.0}"
-                                        description="${this._prefixFormatWithTrailingZeros(
+                                        description="${this._prefixFormatWithoutTrailingZeros(
                                           this.hyperaccel_lpu_used,
                                           2,
-                                        )} / ${this._prefixFormatWithTrailingZeros(
+                                        )} / ${this._prefixFormatWithoutTrailingZeros(
                                           this.hyperaccel_lpu_total,
                                           2,
                                         )} Hyperaccel LPUs ${_t(
@@ -1072,7 +1078,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                       class="layout vertical center center-justified"
                                     >
                                       <span class="percentage start-bar">
-                                        ${this._prefixFormatWithTrailingZeros(
+                                        ${this._prefixFormatWithoutTrailingZeros(
                                           this.hyperaccel_lpu_used,
                                           1,
                                         ) + '%'}

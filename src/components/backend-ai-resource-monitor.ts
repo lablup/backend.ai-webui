@@ -595,7 +595,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       return parseInt(str) + postfix;
     }
   }
-  _prefixFormatWithTrailingZeros(num: string | number = '0', fixed: number) {
+  _prefixFormatWithoutTrailingZeros(num: string | number = '0', fixed: number) {
     const number = typeof num === 'string' ? parseFloat(num) : num;
     return parseFloat(number.toFixed(fixed)).toString();
   }
@@ -643,10 +643,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                   class="start"
                   progress="${this.used_resource_group_slot_percent.cpu /
                   100.0}"
-                  description="${this._prefixFormatWithTrailingZeros(
+                  description="${this._prefixFormatWithoutTrailingZeros(
                     this.used_resource_group_slot.cpu,
                     0,
-                  )} / ${this._prefixFormatWithTrailingZeros(
+                  )} / ${this._prefixFormatWithoutTrailingZeros(
                     this.total_resource_group_slot.cpu,
                     0,
                   )} Cores"
@@ -655,10 +655,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                   id="cpu-usage-bar-2"
                   class="end"
                   progress="${this.used_slot_percent.cpu / 100.0}"
-                  description="${this._prefixFormatWithTrailingZeros(
+                  description="${this._prefixFormatWithoutTrailingZeros(
                     this.used_slot.cpu,
                     0,
-                  )} / ${this._prefixFormatWithTrailingZeros(
+                  )} / ${this._prefixFormatWithoutTrailingZeros(
                     this.total_slot.cpu,
                     0,
                   )} Cores"
@@ -667,7 +667,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <div class="layout vertical center center-justified">
                 <span class="percentage start-bar">
                   ${this._numberWithPostfix(
-                    this._prefixFormatWithTrailingZeros(
+                    this._prefixFormatWithoutTrailingZeros(
                       this.used_resource_group_slot_percent.cpu,
                       1,
                     ),
@@ -676,7 +676,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 </span>
                 <span class="percentage end-bar">
                   ${this._numberWithPostfix(
-                    this._prefixFormatWithTrailingZeros(
+                    this._prefixFormatWithoutTrailingZeros(
                       this.used_slot_percent.cpu,
                       1,
                     ),
@@ -697,10 +697,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                   class="start"
                   progress="${this.used_resource_group_slot_percent.mem /
                   100.0}"
-                  description="${this._prefixFormatWithTrailingZeros(
+                  description="${this._prefixFormatWithoutTrailingZeros(
                     this.used_resource_group_slot.mem,
                     2,
-                  )} / ${this._prefixFormatWithTrailingZeros(
+                  )} / ${this._prefixFormatWithoutTrailingZeros(
                     this.total_resource_group_slot.mem,
                     2,
                   )} GiB"
@@ -709,10 +709,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                   id="mem-usage-bar-2"
                   class="end"
                   progress="${this.used_slot_percent.mem / 100.0}"
-                  description="${this._prefixFormatWithTrailingZeros(
+                  description="${this._prefixFormatWithoutTrailingZeros(
                     this.used_slot.mem,
                     2,
-                  )} / ${this._prefixFormatWithTrailingZeros(
+                  )} / ${this._prefixFormatWithoutTrailingZeros(
                     this.total_slot.mem,
                     2,
                   )} GiB"
@@ -721,7 +721,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <div class="layout vertical center center-justified">
                 <span class="percentage start-bar">
                   ${this._numberWithPostfix(
-                    this._prefixFormatWithTrailingZeros(
+                    this._prefixFormatWithoutTrailingZeros(
                       this.used_resource_group_slot_percent.mem,
                       1,
                     ),
@@ -730,7 +730,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 </span>
                 <span class="percentage end-bar">
                   ${this._numberWithPostfix(
-                    this._prefixFormatWithTrailingZeros(
+                    this._prefixFormatWithoutTrailingZeros(
                       this.used_slot_percent.mem,
                       1,
                     ),
@@ -778,7 +778,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     <div class="layout vertical center center-justified">
                       <span class="percentage start-bar">
                         ${this._numberWithPostfix(
-                          this._prefixFormatWithTrailingZeros(
+                          this._prefixFormatWithoutTrailingZeros(
                             this.used_resource_group_slot_percent.cuda_device,
                             1,
                           ),
@@ -787,7 +787,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                       </span>
                       <span class="percentage end-bar">
                         ${this._numberWithPostfix(
-                          this._prefixFormatWithTrailingZeros(
+                          this._prefixFormatWithoutTrailingZeros(
                             this.used_slot_percent.cuda_device,
                             1,
                           ),
@@ -839,7 +839,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     <div class="layout vertical center center-justified">
                       <span class="percentage start-bar">
                         ${this._numberWithPostfix(
-                          this._prefixFormatWithTrailingZeros(
+                          this._prefixFormatWithoutTrailingZeros(
                             this.used_resource_group_slot_percent.cuda_shares,
                             1,
                           ),
@@ -848,7 +848,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                       </span>
                       <span class="percentage end-bar">
                         ${this._numberWithPostfix(
-                          this._prefixFormatWithTrailingZeros(
+                          this._prefixFormatWithoutTrailingZeros(
                             this.used_slot_percent.cuda_shares,
                             1,
                           ),
@@ -902,7 +902,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     <div class="layout vertical center center-justified">
                       <span class="percentage start-bar">
                         ${this._numberWithPostfix(
-                          this._prefixFormatWithTrailingZeros(
+                          this._prefixFormatWithoutTrailingZeros(
                             this.used_resource_group_slot_percent.rocm_device,
                             1,
                           ),
@@ -911,7 +911,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                       </span>
                       <span class="percentage end-bar">
                         ${this._numberWithPostfix(
-                          this._prefixFormatWithTrailingZeros(
+                          this._prefixFormatWithoutTrailingZeros(
                             this.used_slot_percent.rocm_device,
                             1,
                           ),
@@ -936,10 +936,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                         class="start"
                         progress="${this.used_resource_group_slot_percent
                           .tpu_device / 100.0}"
-                        description="${this._prefixFormatWithTrailingZeros(
+                        description="${this._prefixFormatWithoutTrailingZeros(
                           this.used_resource_group_slot.tpu_device,
                           2,
-                        )} / ${this._prefixFormatWithTrailingZeros(
+                        )} / ${this._prefixFormatWithoutTrailingZeros(
                           this.total_resource_group_slot.tpu_device,
                           2,
                         )} TPUs"
@@ -949,10 +949,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                         class="end"
                         progress="${this.used_slot_percent.tpu_device / 100.0}"
                         buffer="${this.used_slot_percent.tpu_device / 100.0}"
-                        description="${this._prefixFormatWithTrailingZeros(
+                        description="${this._prefixFormatWithoutTrailingZeros(
                           this.used_slot.tpu_device,
                           2,
-                        )}/${this._prefixFormatWithTrailingZeros(
+                        )}/${this._prefixFormatWithoutTrailingZeros(
                           this.total_slot.tpu_device,
                           2,
                         )} TPUs"
@@ -961,7 +961,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     <div class="layout vertical center center-justified">
                       <span class="percentage start-bar">
                         ${this._numberWithPostfix(
-                          this._prefixFormatWithTrailingZeros(
+                          this._prefixFormatWithoutTrailingZeros(
                             this.used_resource_group_slot_percent.tpu_device,
                             1,
                           ),
@@ -970,7 +970,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                       </span>
                       <span class="percentage end-bar">
                         ${this._numberWithPostfix(
-                          this._prefixFormatWithTrailingZeros(
+                          this._prefixFormatWithoutTrailingZeros(
                             this.used_slot_percent.tpu_device,
                             1,
                           ),
@@ -995,10 +995,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                         class="start"
                         progress="${this.used_resource_group_slot_percent
                           .ipu_device / 100.0}"
-                        description="${this._prefixFormatWithTrailingZeros(
+                        description="${this._prefixFormatWithoutTrailingZeros(
                           this.used_resource_group_slot.ipu_device,
                           2,
-                        )} / ${this._prefixFormatWithTrailingZeros(
+                        )} / ${this._prefixFormatWithoutTrailingZeros(
                           this.total_resource_group_slot.ipu_device,
                           2,
                         )} IPUs"
@@ -1008,10 +1008,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                         class="end"
                         progress="${this.used_slot_percent.ipu_device / 100.0}"
                         buffer="${this.used_slot_percent.ipu_device / 100.0}"
-                        description="${this._prefixFormatWithTrailingZeros(
+                        description="${this._prefixFormatWithoutTrailingZeros(
                           this.used_slot.ipu_device,
                           2,
-                        )} / ${this._prefixFormatWithTrailingZeros(
+                        )} / ${this._prefixFormatWithoutTrailingZeros(
                           this.total_slot.ipu_device,
                           2,
                         )} "
@@ -1020,7 +1020,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     <div class="layout vertical center center-justified">
                       <span class="percentage start-bar">
                         ${this._numberWithPostfix(
-                          this._prefixFormatWithTrailingZeros(
+                          this._prefixFormatWithoutTrailingZeros(
                             this.used_resource_group_slot_percent.ipu_device,
                             1,
                           ),
@@ -1029,7 +1029,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                       </span>
                       <span class="percentage end-bar">
                         ${this._numberWithPostfix(
-                          this._prefixFormatWithTrailingZeros(
+                          this._prefixFormatWithoutTrailingZeros(
                             this.used_slot_percent.ipu_device,
                             1,
                           ),
@@ -1054,10 +1054,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                         class="start"
                         progress="${this.used_resource_group_slot_percent
                           .atom_device / 100.0}"
-                        description="${this._prefixFormatWithTrailingZeros(
+                        description="${this._prefixFormatWithoutTrailingZeros(
                           this.used_resource_group_slot.atom_device,
                           2,
-                        )} / ${this._prefixFormatWithTrailingZeros(
+                        )} / ${this._prefixFormatWithoutTrailingZeros(
                           this.total_resource_group_slot.atom_device,
                           2,
                         )} ATOMs"
@@ -1067,10 +1067,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                         class="end"
                         progress="${this.used_slot_percent.atom_device / 100.0}"
                         buffer="${this.used_slot_percent.atom_device / 100.0}"
-                        description="${this._prefixFormatWithTrailingZeros(
+                        description="${this._prefixFormatWithoutTrailingZeros(
                           this.used_slot.atom_device,
                           2,
-                        )} / ${this._prefixFormatWithTrailingZeros(
+                        )} / ${this._prefixFormatWithoutTrailingZeros(
                           this.total_slot.atom_device,
                           2,
                         )} ATOMs"
@@ -1079,7 +1079,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     <div class="layout vertical center center-justified">
                       <span class="percentage start-bar">
                         ${this._numberWithPostfix(
-                          this._prefixFormatWithTrailingZeros(
+                          this._prefixFormatWithoutTrailingZeros(
                             this.used_resource_group_slot_percent.atom_device,
                             1,
                           ),
@@ -1088,7 +1088,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                       </span>
                       <span class="percentage end-bar">
                         ${this._numberWithPostfix(
-                          this._prefixFormatWithTrailingZeros(
+                          this._prefixFormatWithoutTrailingZeros(
                             this.used_slot_percent.atom_device,
                             1,
                           ),
@@ -1113,10 +1113,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                         class="start"
                         progress="${this.used_resource_group_slot_percent
                           .atom_plus_device / 100.0}"
-                        description="${this._prefixFormatWithTrailingZeros(
+                        description="${this._prefixFormatWithoutTrailingZeros(
                           this.used_resource_group_slot.atom_plus_device,
                           2,
-                        )} / ${this._prefixFormatWithTrailingZeros(
+                        )} / ${this._prefixFormatWithoutTrailingZeros(
                           this.total_resource_group_slot.atom_plus_device,
                           2,
                         )} ATOM+"
@@ -1128,10 +1128,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                         100.0}"
                         buffer="${this.used_slot_percent.atom_plus_device /
                         100.0}"
-                        description="${this._prefixFormatWithTrailingZeros(
+                        description="${this._prefixFormatWithoutTrailingZeros(
                           this.used_slot.atom_plus_device,
                           2,
-                        )} / ${this._prefixFormatWithTrailingZeros(
+                        )} / ${this._prefixFormatWithoutTrailingZeros(
                           this.total_slot.atom_plus_device,
                           2,
                         )} ATOM+"
@@ -1144,7 +1144,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                       "
                       >
                         ${this._numberWithPostfix(
-                          this._prefixFormatWithTrailingZeros(
+                          this._prefixFormatWithoutTrailingZeros(
                             this.used_resource_group_slot_percent
                               .atom_plus_device,
                             1,
@@ -1158,7 +1158,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                       "
                       >
                         ${this._numberWithPostfix(
-                          this._prefixFormatWithTrailingZeros(
+                          this._prefixFormatWithoutTrailingZeros(
                             this.used_slot_percent.atom_plus_device,
                             1,
                           ),
@@ -1183,10 +1183,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                         class="start"
                         progress="${this.used_resource_group_slot_percent
                           .warboy_device / 100.0}"
-                        description="${this._prefixFormatWithTrailingZeros(
+                        description="${this._prefixFormatWithoutTrailingZeros(
                           this.used_resource_group_slot.warboy_device,
                           2,
-                        )} / ${this._prefixFormatWithTrailingZeros(
+                        )} / ${this._prefixFormatWithoutTrailingZeros(
                           this.total_resource_group_slot.warboy_device,
                           2,
                         )} Warboys"
@@ -1197,10 +1197,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                         progress="${this.used_slot_percent.warboy_device /
                         100.0}"
                         buffer="${this.used_slot_percent.warboy_device / 100.0}"
-                        description="${this._prefixFormatWithTrailingZeros(
+                        description="${this._prefixFormatWithoutTrailingZeros(
                           this.used_slot.warboy_device,
                           2,
-                        )} / ${this._prefixFormatWithTrailingZeros(
+                        )} / ${this._prefixFormatWithoutTrailingZeros(
                           this.total_slot.warboy_device,
                           2,
                         )} Warboys"
@@ -1209,7 +1209,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     <div class="layout vertical center center-justified">
                       <span class="percentage start-bar">
                         ${this._numberWithPostfix(
-                          this._prefixFormatWithTrailingZeros(
+                          this._prefixFormatWithoutTrailingZeros(
                             this.used_resource_group_slot_percent.warboy_device,
                             1,
                           ),
@@ -1218,7 +1218,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                       </span>
                       <span class="percentage end-bar">
                         ${this._numberWithPostfix(
-                          this._prefixFormatWithTrailingZeros(
+                          this._prefixFormatWithoutTrailingZeros(
                             this.used_slot_percent.warboy_device,
                             1,
                           ),
@@ -1243,10 +1243,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                         class="start"
                         progress="${this.used_resource_group_slot_percent
                           .hyperaccel_lpu_device / 100.0}"
-                        description="${this._prefixFormatWithTrailingZeros(
+                        description="${this._prefixFormatWithoutTrailingZeros(
                           this.used_resource_group_slot.hyperaccel_lpu_device,
                           2,
-                        )} / ${this._prefixFormatWithTrailingZeros(
+                        )} / ${this._prefixFormatWithoutTrailingZeros(
                           this.total_resource_group_slot.hyperaccel_lpu_device,
                           2,
                         )} Hyperaccel LPUs"
@@ -1258,10 +1258,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                           .hyperaccel_lpu_device / 100.0}"
                         buffer="${this.used_slot_percent.hyperaccel_lpu_device /
                         100.0}"
-                        description="${this._prefixFormatWithTrailingZeros(
+                        description="${this._prefixFormatWithoutTrailingZeros(
                           this.used_slot.hyperaccel_lpu_device,
                           2,
-                        )} / ${this._prefixFormatWithTrailingZeros(
+                        )} / ${this._prefixFormatWithoutTrailingZeros(
                           this.total_slot.hyperaccel_lpu_device,
                           2,
                         )} Hyperaccel LPUs"
@@ -1270,7 +1270,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     <div class="layout vertical center center-justified">
                       <span class="percentage start-bar">
                         ${this._numberWithPostfix(
-                          this._prefixFormatWithTrailingZeros(
+                          this._prefixFormatWithoutTrailingZeros(
                             this.used_resource_group_slot_percent
                               .hyperaccel_lpu_device,
                             1,
@@ -1280,7 +1280,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                       </span>
                       <span class="percentage end-bar">
                         ${this._numberWithPostfix(
-                          this._prefixFormatWithTrailingZeros(
+                          this._prefixFormatWithoutTrailingZeros(
                             this.used_slot_percent.hyperaccel_lpu_device,
                             1,
                           ),
@@ -1304,12 +1304,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                   id="concurrency-usage-bar"
                   class="start"
                   progress="${this.used_slot_percent.concurrency / 100.0}"
-                  description="${this._prefixFormatWithTrailingZeros(
+                  description="${this._prefixFormatWithoutTrailingZeros(
                     this.concurrency_used,
                     0,
                   )} / ${this.concurrency_max === 1000000
                     ? '∞'
-                    : this._prefixFormatWithTrailingZeros(
+                    : this._prefixFormatWithoutTrailingZeros(
                         this.concurrency_max,
                         2,
                       )}"
@@ -1318,7 +1318,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <div class="layout vertical center center-justified">
                 <span class="percentage end-bar" style="margin-top:0px;">
                   ${this._numberWithPostfix(
-                    this._prefixFormatWithTrailingZeros(
+                    this._prefixFormatWithoutTrailingZeros(
                       this.used_slot_percent.concurrency,
                       1,
                     ),
@@ -1405,12 +1405,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                       id="cpu-project-usage-bar"
                       class="start"
                       progress="${this.used_project_slot_percent.cpu / 100.0}"
-                      description="${this._prefixFormatWithTrailingZeros(
+                      description="${this._prefixFormatWithoutTrailingZeros(
                         this.used_project_slot.cpu,
                         0,
                       )} / ${this.total_project_slot.cpu === Infinity
                         ? '∞'
-                        : this._prefixFormatWithTrailingZeros(
+                        : this._prefixFormatWithoutTrailingZeros(
                             this.total_project_slot.cpu,
                             0,
                           )} Cores"
@@ -1418,7 +1418,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     <div class="layout vertical center center-justified">
                       <span class="percentage start-bar">
                         ${this._numberWithPostfix(
-                          this._prefixFormatWithTrailingZeros(
+                          this._prefixFormatWithoutTrailingZeros(
                             this.used_project_slot_percent.cpu,
                             1,
                           ),
@@ -1427,7 +1427,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                       </span>
                       <span class="percentage end-bar">
                         ${this._numberWithPostfix(
-                          this._prefixFormatWithTrailingZeros(
+                          this._prefixFormatWithoutTrailingZeros(
                             this.total_project_slot.cpu,
                             1,
                           ),
@@ -1447,7 +1447,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                       description=">${this.used_project_slot.mem} / ${this
                         .total_project_slot.mem === Infinity
                         ? '∞'
-                        : this._prefixFormatWithTrailingZeros(
+                        : this._prefixFormatWithoutTrailingZeros(
                             this.total_project_slot.mem,
                             2,
                           )} GiB"
@@ -1455,7 +1455,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     <div class="layout vertical center center-justified">
                       <span class="percentage start-bar">
                         ${this._numberWithPostfix(
-                          this._prefixFormatWithTrailingZeros(
+                          this._prefixFormatWithoutTrailingZeros(
                             this.used_project_slot_percent.mem,
                             1,
                           ),
@@ -1464,7 +1464,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                       </span>
                       <span class="percentage end-bar">
                         ${this._numberWithPostfix(
-                          this._prefixFormatWithTrailingZeros(
+                          this._prefixFormatWithoutTrailingZeros(
                             this.total_project_slot.mem,
                             1,
                           ),
@@ -1486,13 +1486,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                             class="end"
                             progress="${this.used_project_slot_percent
                               .cuda_device / 100.0}"
-                            description="${this._prefixFormatWithTrailingZeros(
+                            description="${this._prefixFormatWithoutTrailingZeros(
                               this.used_project_slot.cuda_device,
                               2,
                             )} / ${this.total_project_slot.cuda_device ===
                             'Infinity'
                               ? '∞'
-                              : this._prefixFormatWithTrailingZeros(
+                              : this._prefixFormatWithoutTrailingZeros(
                                   this.total_project_slot.cuda_device,
                                   2,
                                 )} CUDA GPUs"
@@ -1500,7 +1500,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                           <div class="layout vertical center center-justified">
                             <span class="percentage start-bar">
                               ${this._numberWithPostfix(
-                                this._prefixFormatWithTrailingZeros(
+                                this._prefixFormatWithoutTrailingZeros(
                                   this.used_project_slot_percent.cuda_device,
                                   1,
                                 ),
@@ -1509,7 +1509,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                             </span>
                             <span class="percentage end-bar">
                               ${this._numberWithPostfix(
-                                this._prefixFormatWithTrailingZeros(
+                                this._prefixFormatWithoutTrailingZeros(
                                   this.total_project_slot.cuda_device,
                                   1,
                                 ),
@@ -1537,7 +1537,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                               .cuda_shares}/${this.total_project_slot
                               .cuda_shares === 'Infinity'
                               ? '∞'
-                              : this._prefixFormatWithTrailingZeros(
+                              : this._prefixFormatWithoutTrailingZeros(
                                   this.total_project_slot.cuda_shares,
                                   2,
                                 )} CUDA FGPUs"
@@ -1545,7 +1545,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                           <div class="layout vertical center center-justified">
                             <span class="percentage start-bar">
                               ${this._numberWithPostfix(
-                                this._prefixFormatWithTrailingZeros(
+                                this._prefixFormatWithoutTrailingZeros(
                                   this.used_project_slot_percent.cuda_shares,
                                   1,
                                 ),
@@ -1554,7 +1554,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                             </span>
                             <span class="percentage end-bar">
                               ${this._numberWithPostfix(
-                                this._prefixFormatWithTrailingZeros(
+                                this._prefixFormatWithoutTrailingZeros(
                                   this.total_project_slot.cuda_shares,
                                   1,
                                 ),
@@ -1582,7 +1582,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                               .rocm_device}/${this.total_project_slot
                               .rocm_device === 'Infinity'
                               ? '∞'
-                              : this._prefixFormatWithTrailingZeros(
+                              : this._prefixFormatWithoutTrailingZeros(
                                   this.total_project_slot.rocm_device,
                                   2,
                                 )} ROCm GPUs"
@@ -1590,7 +1590,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                           <div class="layout vertical center center-justified">
                             <span class="percentage start-bar">
                               ${this._numberWithPostfix(
-                                this._prefixFormatWithTrailingZeros(
+                                this._prefixFormatWithoutTrailingZeros(
                                   this.used_project_slot_percent.rocm_device,
                                   1,
                                 ),
@@ -1599,7 +1599,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                             </span>
                             <span class="percentage end-bar">
                               ${this._numberWithPostfix(
-                                this._prefixFormatWithTrailingZeros(
+                                this._prefixFormatWithoutTrailingZeros(
                                   this.total_project_slot.rocm_device,
                                   1,
                                 ),
@@ -1627,7 +1627,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                               .tpu_device}/${this.total_project_slot
                               .tpu_device === 'Infinity'
                               ? '∞'
-                              : this._prefixFormatWithTrailingZeros(
+                              : this._prefixFormatWithoutTrailingZeros(
                                   this.total_project_slot.tpu_device,
                                   2,
                                 )} TPUs"
@@ -1635,7 +1635,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                           <div class="layout vertical center center-justified">
                             <span class="percentage start-bar">
                               ${this._numberWithPostfix(
-                                this._prefixFormatWithTrailingZeros(
+                                this._prefixFormatWithoutTrailingZeros(
                                   this.used_project_slot_percent.tpu_device,
                                   1,
                                 ),
@@ -1644,7 +1644,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                             </span>
                             <span class="percentage end-bar">
                               ${this._numberWithPostfix(
-                                this._prefixFormatWithTrailingZeros(
+                                this._prefixFormatWithoutTrailingZeros(
                                   this.total_project_slot.tpu_device,
                                   1,
                                 ),
@@ -1672,7 +1672,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                               .ipu_device}/${this.total_project_slot
                               .ipu_device === 'Infinity'
                               ? '∞'
-                              : this._prefixFormatWithTrailingZeros(
+                              : this._prefixFormatWithoutTrailingZeros(
                                   this.total_project_slot.ipu_device,
                                   2,
                                 )} IPUs"
@@ -1680,7 +1680,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                           <div class="layout vertical center center-justified">
                             <span class="percentage start-bar">
                               ${this._numberWithPostfix(
-                                this._prefixFormatWithTrailingZeros(
+                                this._prefixFormatWithoutTrailingZeros(
                                   this.used_project_slot_percent.ipu_device,
                                   1,
                                 ),
@@ -1689,7 +1689,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                             </span>
                             <span class="percentage end-bar">
                               ${this._numberWithPostfix(
-                                this._prefixFormatWithTrailingZeros(
+                                this._prefixFormatWithoutTrailingZeros(
                                   this.total_project_slot.ipu_device,
                                   1,
                                 ),
@@ -1717,7 +1717,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                               .atom_device}/${this.total_project_slot
                               .atom_device === 'Infinity'
                               ? '∞'
-                              : this._prefixFormatWithTrailingZeros(
+                              : this._prefixFormatWithoutTrailingZeros(
                                   this.total_project_slot.atom_device,
                                   2,
                                 )} ATOMs"
@@ -1725,7 +1725,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                           <div class="layout vertical center center-justified">
                             <span class="percentage start-bar">
                               ${this._numberWithPostfix(
-                                this._prefixFormatWithTrailingZeros(
+                                this._prefixFormatWithoutTrailingZeros(
                                   this.used_project_slot_percent.atom_device,
                                   1,
                                 ),
@@ -1734,7 +1734,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                             </span>
                             <span class="percentage end-bar">
                               ${this._numberWithPostfix(
-                                this._prefixFormatWithTrailingZeros(
+                                this._prefixFormatWithoutTrailingZeros(
                                   this.total_project_slot.atom_device,
                                   1,
                                 ),
@@ -1762,7 +1762,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                               .warboy_device}/${this.total_project_slot
                               .warboy_device === 'Infinity'
                               ? '∞'
-                              : this._prefixFormatWithTrailingZeros(
+                              : this._prefixFormatWithoutTrailingZeros(
                                   this.total_project_slot.warboy_device,
                                   2,
                                 )} Warboys"
@@ -1770,7 +1770,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                           <div class="layout vertical center center-justified">
                             <span class="percentage start-bar">
                               ${this._numberWithPostfix(
-                                this._prefixFormatWithTrailingZeros(
+                                this._prefixFormatWithoutTrailingZeros(
                                   this.used_project_slot_percent.warboy_device,
                                   1,
                                 ),
@@ -1779,7 +1779,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                             </span>
                             <span class="percentage end-bar">
                               ${this._numberWithPostfix(
-                                this._prefixFormatWithTrailingZeros(
+                                this._prefixFormatWithoutTrailingZeros(
                                   this.total_project_slot.warboy_device,
                                   1,
                                 ),
@@ -1807,7 +1807,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                               .hyperaccel_lpu_device}/${this.total_project_slot
                               .hyperaccel_lpu_device === 'Infinity'
                               ? '∞'
-                              : this._prefixFormatWithTrailingZeros(
+                              : this._prefixFormatWithoutTrailingZeros(
                                   this.total_project_slot.hyperaccel_lpu_device,
                                   2,
                                 )} Hyperaccel LPUs"
@@ -1815,7 +1815,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                           <div class="layout vertical center center-justified">
                             <span class="percentage start-bar">
                               ${this._numberWithPostfix(
-                                this._prefixFormatWithTrailingZeros(
+                                this._prefixFormatWithoutTrailingZeros(
                                   this.used_project_slot_percent
                                     .hyperaccel_lpu_device,
                                   1,
@@ -1825,7 +1825,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                             </span>
                             <span class="percentage end-bar">
                               ${this._numberWithPostfix(
-                                this._prefixFormatWithTrailingZeros(
+                                this._prefixFormatWithoutTrailingZeros(
                                   this.total_project_slot.hyperaccel_lpu_device,
                                   1,
                                 ),

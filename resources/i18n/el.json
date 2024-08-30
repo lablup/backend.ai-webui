@@ -506,7 +506,8 @@
     "InProgress": "Σε εξέλιξη",
     "Session": "Σύνοδος",
     "General": "Γενικά",
-    "Disabled": "Άτομα με ειδικές ανάγκες"
+    "Disabled": "Άτομα με ειδικές ανάγκες",
+    "NSelected": "Επιλεγμένο {{count}} στοιχείο(α)"
   },
   "credential": {
     "Permission": "Αδεια",
@@ -818,8 +819,7 @@
     "ResourceLimit": "Όριο πόρων",
     "DescDeleteAppInfo": "Πρόκειται να διαγράψετε τις πληροφορίες της εφαρμογής:",
     "DescDeleteImage": "Πρόκειται να διαγράψετε τις εικόνες:",
-    "DescDownloadImage": "Πρόκειται να εγκαταστήσετε τις εικόνες:",
-    "DescSignificantDownloadTime": "Αυτή η διαδικασία απαιτεί σημαντικό χρόνο λήψης.",
+    "DescSignificantInstallTime": "Αυτή η διαδικασία απαιτεί σημαντικό χρόνο λήψης.",
     "Install": "Εγκαθιστώ",
     "Delete": "Διαγράφω",
     "Installed": "εγκατεστημένο",
@@ -848,7 +848,12 @@
     "CustomizedImageSuccessfullyDeleted": "Η προσαρμοσμένη εικόνα διαγράφηκε επιτυχώς.",
     "DescImageResourceModified": "Το όριο πόρων τροποποιήθηκε επιτυχώς",
     "DescImagePortsModified": "Οι θύρες εικόνας τροποποιήθηκαν με επιτυχία",
-    "ModifyImageResourceLimitReinstallRequired": "<p>Εάν τροποποιήσετε μια εικόνα που έχει ήδη εγκατασταθεί, θα χρειαστεί να εγκαταστήσετε ξανά την εικόνα.</p><p>Οι τροποποιήσεις δεν θα εφαρμοστούν μέχρι να επανεγκατασταθεί η εικόνα.\n\n</p>"
+    "ModifyImageResourceLimitReinstallRequired": "<p>Εάν τροποποιήσετε μια εικόνα που έχει ήδη εγκατασταθεί, θα χρειαστεί να εγκαταστήσετε ξανά την εικόνα.</p><p>Οι τροποποιήσεις δεν θα εφαρμοστούν μέχρι να επανεγκατασταθεί η εικόνα.\n\n</p>",
+    "SearchImages": "Αναζήτηση εικόνων",
+    "NoImagesAreSelected": "Δεν έχουν επιλεγεί εικόνες",
+    "AlreadyInstalledImage": "Ήδη εγκατεστημένη εικόνα",
+    "CheckImageInstallation": "Εγκαθιστώντας μια εικόνα;",
+    "InstalledImagesAreExcluded": "Οι εγκατεστημένες εικόνες εξαιρούνται."
   },
   "resourcePreset": {
     "ResourcePresets": "Προεπιλογές πόρων",

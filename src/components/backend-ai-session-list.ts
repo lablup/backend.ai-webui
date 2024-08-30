@@ -595,7 +595,7 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this._grid.addEventListener('selected-items-changed', () => {
+    this._grid?.addEventListener('selected-items-changed', () => {
       this._selected_items = this._grid.selectedItems;
       if (this._selected_items.length > 0) {
         this.multipleActionButtons.style.display = 'flex';
@@ -733,15 +733,6 @@ export default class BackendAISessionList extends BackendAIPage {
    * @param {boolean} repeat - repeat the job data reading. Set refreshTime to 5000 for running list else 30000
    * */
   async _refreshJobData(refresh = false, repeat = true) {
-    this._grid?.addEventListener('selected-items-changed', () => {
-      this._selected_items = this._grid.selectedItems;
-      if (this._selected_items.length > 0) {
-        this.multipleActionButtons.style.display = 'flex';
-      } else {
-        this.multipleActionButtons.style.display = 'none';
-      }
-    });
-
     await this.updateComplete;
     if (this.active !== true) {
       return;
@@ -1339,7 +1330,6 @@ export default class BackendAISessionList extends BackendAIPage {
           this.notification.show(true, err);
         }
       });
-    this._clearCheckboxes();
   }
 
   /**
@@ -1474,6 +1464,14 @@ export default class BackendAISessionList extends BackendAIPage {
   static bytesToGiB(value, decimalPoint = 2) {
     if (!value) return value;
     return (value / 2 ** 30).toFixed(decimalPoint);
+  }
+
+  static _prefixFormatWithoutTrailingZeros(
+    num: string | number = '0',
+    fixed: number,
+  ) {
+    const number = typeof num === 'string' ? parseFloat(num) : num;
+    return parseFloat(number.toFixed(fixed)).toString();
   }
 
   /**
@@ -2090,6 +2088,14 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   _handleSelectedItems() {
+    this._grid?.addEventListener('selected-items-changed', () => {
+      this._selected_items = this._grid.selectedItems;
+      if (this._selected_items.length > 0) {
+        this.multipleActionButtons.style.display = 'flex';
+      } else {
+        this.multipleActionButtons.style.display = 'none';
+      }
+    });
     if (this._selected_items.length === 0) return;
 
     const selectedItems = this.compute_sessions.filter((item) =>
@@ -3315,8 +3321,7 @@ ${rowData.item[this.sessionNameField]}</pre
             : html``}
           ${((this._isRunning && !this._isPreparing(rowData.item.status)) ||
             this._APIMajorVersion > 4) &&
-          !this._isPending(rowData.item.status) &&
-          !this._isPreparing(rowData.item.status)
+          !['RESTARTING', 'PENDING', 'PULLING'].includes(rowData.item.status)
             ? html`
                 <mwc-icon-button
                   class="fg blue controls-running"
@@ -3610,13 +3615,16 @@ ${rowData.item[this.sessionNameField]}</pre
               <div class="usage-items">
                 RAM
                 ${rowData.item.live_stat
-                  ? BackendAISessionList.bytesToGiB(
-                      rowData.item.live_stat?.mem?.current,
-                      1,
-                    ) /
-                    BackendAISessionList.bytesToGiB(
-                      rowData.item.live_stat?.mem?.capacity,
-                      1,
+                  ? BackendAISessionList._prefixFormatWithoutTrailingZeros(
+                      BackendAISessionList.bytesToGiB(
+                        rowData.item.live_stat?.mem?.current,
+                        1,
+                      ) /
+                        BackendAISessionList.bytesToGiB(
+                          rowData.item.live_stat?.mem?.capacity,
+                          1,
+                        ),
+                      2,
                     )
                   : `-`}
                 GiB
@@ -3707,13 +3715,16 @@ ${rowData.item[this.sessionNameField]}</pre
                     <div class="usage-items">
                       GPU(mem)
                       ${rowData.item.live_stat
-                        ? BackendAISessionList.bytesToGiB(
-                            rowData.item.live_stat?.cuda_mem?.current,
-                            1,
-                          ) /
-                          BackendAISessionList.bytesToGiB(
-                            rowData.item.live_stat?.cuda_mem?.capacity,
-                            1,
+                        ? BackendAISessionList._prefixFormatWithoutTrailingZeros(
+                            BackendAISessionList.bytesToGiB(
+                              rowData.item.live_stat?.cuda_mem?.current,
+                              1,
+                            ) /
+                              BackendAISessionList.bytesToGiB(
+                                rowData.item.live_stat?.cuda_mem?.capacity,
+                                1,
+                              ),
+                            2,
                           )
                         : `-`}
                       GiB
@@ -4356,7 +4367,6 @@ ${rowData.item[this.sessionNameField]}</pre
                     ? html`
                         <vaadin-grid-selection-column
                           frozen
-                          auto-select
                         ></vaadin-grid-selection-column>
                       `
                     : html``}

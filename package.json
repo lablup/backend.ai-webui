@@ -31,7 +31,7 @@
     "copyindex": "cp index.html build/rollup",
     "docs": "jsdoc -c ./jsdoc.json",
     "update": "pnpm dlx tsc",
-    "postinstall": "concurrently -c \"auto\" --names \"react-dependencies,patch-package\" \"cd react && pnpm install\" \"patch-package\"",
+    "postinstall": "concurrently -c \"auto\" --names \"react-dependencies,patch-package\" \"pnpm recursive install --filter ./react\" \"patch-package\"",
     "patch:lit-translate": "unzip -o ./scripts/lit-translate.zip -d ./node_modules/lit-translate && cp -f ./scripts/lit-translate-index.js ./node_modules/lit-translate/index.js",
     "prepare": "husky",
     "theme-schema:update": "pnpm dlx typescript-json-schema \"./react/node_modules/antd/es/config-provider/context.d.ts\" ThemeConfig -o ./resources/antdThemeConfig.schema.json --esModuleInterop"

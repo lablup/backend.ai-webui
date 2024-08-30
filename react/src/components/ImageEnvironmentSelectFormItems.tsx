@@ -1,4 +1,4 @@
-import { getImageFullName } from '../helper';
+import { getImageFullName, localeCompare } from '../helper';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
@@ -274,12 +274,13 @@ const ImageEnvironmentSelectFormItems: React.FC<
                     .dropRight(1)
                     .join('/')
                     .value(),
-                  images: images.sort((a, b) =>
-                    compareVersions(
-                      // latest version comes first
-                      b?.tag?.split('-')?.[0] ?? '',
-                      a?.tag?.split('-')?.[0] ?? '',
-                    ),
+                  images: images.sort(
+                    (a, b) =>
+                      compareVersions(
+                        // latest version comes first
+                        b?.tag?.split('-')?.[0] ?? '',
+                        a?.tag?.split('-')?.[0] ?? '',
+                      ) || localeCompare(a?.architecture, b?.architecture),
                   ),
                 };
               })

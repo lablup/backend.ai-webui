@@ -1,8 +1,7 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import { useWebComponentInfo } from './DefaultProviders';
 import Flex from './Flex';
-import { ImageFromEnvironment } from './ManageImageResourceLimitModal';
+import { EnvironmentImage } from './ImageList';
 import { ManageAppsModalMutation } from './__generated__/ManageAppsModalMutation.graphql';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import {
@@ -21,22 +20,26 @@ import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useMutation } from 'react-relay';
 
-const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
+interface ManageAppsModalProps extends BAIModalProps {
+  open: boolean;
+  image: EnvironmentImage | null;
+  onRequestClose: (success: boolean) => void;
+}
+
+type ServicePort = { app: string; protocol: string; port: number };
+
+const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
+  open,
+  image,
+  onRequestClose,
+  ...baiModalProps
+}) => {
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
   const formRef = React.useRef<FormInstance>(null);
   const app = App.useApp();
 
   const { token } = theme.useToken();
-
-  const {
-    parsedValue: { open, image, servicePorts },
-    dispatchEvent,
-  } = useWebComponentInfo<{
-    open?: boolean;
-    image: NonNullable<ImageFromEnvironment>; //TODO: This is not 100% same with Image type
-    servicePorts?: any;
-  }>();
 
   const [commitModifyImageInput, isInFlightModifyImageInput] =
     useMutation<ManageAppsModalMutation>(graphql`
@@ -56,6 +59,33 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
       }
     `);
 
+  if (!image) return null;
+
+  const getServicePorts = () => {
+    let servicePorts: ServicePort[] = [];
+    if (image.labels) {
+      const servicePortsIdx = _.findIndex(
+        image.labels as { key: string; value: string }[],
+        (item: { [key: string]: string }) =>
+          item !== null && item?.key === 'ai.backend.service-ports',
+      );
+      if (servicePortsIdx !== -1) {
+        servicePorts = image?.labels[servicePortsIdx]
+          ?.value!?.split(',')
+          .map((e: string): ServicePort => {
+            const sp = e.split(':');
+            return {
+              app: sp[0],
+              protocol: sp[1],
+              port: Number(sp[2]),
+            };
+          });
+      }
+    }
+    return servicePorts;
+  };
+  const servicePorts = getServicePorts();
+
   const handleOnClick = () => {
     formRef.current
       ?.validateFields()
@@ -66,23 +96,21 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
             return `${item.app}:${item.protocol}:${item.port}`;
           })
           .join(',');
-
         const labels = _.map(
-          image.labels as { [key in string]: string },
-          (value, key) => {
-            if (key.includes('service-ports')) {
-              return { key: key, value: values };
+          image.labels as { key: string; value: string }[],
+          (label) => {
+            if (label.key.includes('service-ports')) {
+              return { key: label.key, value: values };
             } else {
-              return { key: key, value: value?.toString() || '' };
+              return { key: label.key, value: label.value?.toString() || '' };
             }
           },
         );
-
         const commitRequest = () =>
           commitModifyImageInput({
             variables: {
-              target: `${image.registry}/${image.name}:${image.tag}`,
-              architecture: image.architecture,
+              target: `${image?.registry}/${image?.name}:${image?.tag}`,
+              architecture: image?.architecture,
               props: {
                 labels: labels,
                 resource_limits: baiClient.isManagerVersionCompatibleWith(
@@ -104,7 +132,7 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
                 }
               } else {
                 message.success(t('environment.DescImagePortsModified'));
-                dispatchEvent('ok', null);
+                onRequestClose(true);
               }
               return;
             },
@@ -113,7 +141,7 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
             },
           });
 
-        if (image.installed) {
+        if (image?.installed) {
           app.modal.confirm({
             title: 'Image reinstallation required',
             content: (
@@ -141,7 +169,7 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
       destroyOnClose
       open={open}
       onOk={handleOnClick}
-      onCancel={() => dispatchEvent('cancel', null)}
+      onCancel={() => onRequestClose(false)}
       confirmLoading={isInFlightModifyImageInput}
       title={t('environment.ManageApps')}
       {...baiModalProps}
@@ -277,6 +305,7 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
                   onClick={() => add()}
                   block
                   icon={<PlusOutlined />}
+                  disabled={!image}
                 >
                   {t('button.Add')}
                 </Button>

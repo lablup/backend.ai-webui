@@ -507,7 +507,8 @@
     "InProgress": "Sedang Berlangsung",
     "Session": "Sesi",
     "General": "Umum",
-    "Disabled": "Dinonaktifkan"
+    "Disabled": "Dinonaktifkan",
+    "NSelected": "Item {{hitung}} yang dipilih"
   },
   "credential": {
     "Permission": "Izin",
@@ -819,8 +820,7 @@
     "ResourceLimit": "Batas Sumber Daya",
     "DescDeleteAppInfo": "Anda akan menghapus info aplikasi: ",
     "DescDeleteImage": "Anda akan menghapus image: ",
-    "DescDownloadImage": "Anda akan menginstal image: ",
-    "DescSignificantDownloadTime": "Proses ini membutuhkan waktu pengunduhan yang signifikan.",
+    "DescSignificantInstallTime": "Proses ini membutuhkan waktu pengunduhan yang signifikan.",
     "Install": "Instal",
     "Delete": "Hapus",
     "Installed": "Terinstal",
@@ -849,7 +849,12 @@
     "CustomizedImageSuccessfullyDeleted": "Gambar yang disesuaikan berhasil dihapus.",
     "DescImageResourceModified": "Batas sumber daya berhasil diubah",
     "DescImagePortsModified": "Port Gambar berhasil dimodifikasi",
-    "ModifyImageResourceLimitReinstallRequired": "<p>Jika Anda memodifikasi gambar yang telah diinstal, Anda perlu menginstal ulang gambar tersebut.</p><p>Modifikasi tidak akan diterapkan sampai gambar tersebut diinstal ulang.\n\n</p>"
+    "ModifyImageResourceLimitReinstallRequired": "<p>Jika Anda memodifikasi gambar yang telah diinstal, Anda perlu menginstal ulang gambar tersebut.</p><p>Modifikasi tidak akan diterapkan sampai gambar tersebut diinstal ulang.\n\n</p>",
+    "SearchImages": "Cari gambar",
+    "NoImagesAreSelected": "Tidak ada gambar yang dipilih",
+    "AlreadyInstalledImage": "Gambar yang sudah terpasang",
+    "CheckImageInstallation": "Memasang gambar?",
+    "InstalledImagesAreExcluded": "Gambar yang diinstal tidak termasuk."
   },
   "resourcePreset": {
     "ResourcePresets": "Preset Sumber Daya",

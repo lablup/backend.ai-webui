@@ -1,4 +1,5 @@
 import { Image } from '../components/ImageEnvironmentSelectFormItems';
+import { EnvironmentImage } from '../components/ImageList';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { CommittedImage } from '../pages/MyEnvironmentPage';
 import { SorterResult } from 'antd/es/table/interface';
@@ -195,9 +196,8 @@ export function toFixedFloorWithoutTrailingZeros(
   num: number | string,
   fixed: number,
 ) {
-  return typeof num === 'number'
-    ? parseFloat(num.toFixed(fixed)).toString()
-    : parseFloat(parseFloat(num).toFixed(fixed)).toString();
+  const number = typeof num === 'string' ? parseFloat(num) : num;
+  return parseFloat(number.toFixed(fixed)).toString();
 }
 
 export function toFixedWithTypeValidation(num: number | string, fixed: number) {
@@ -311,7 +311,9 @@ export const isOutsideRangeWithUnits = (
   return false;
 };
 
-export const getImageFullName = (image: Image | CommittedImage) => {
+export const getImageFullName = (
+  image: Image | CommittedImage | EnvironmentImage,
+) => {
   return image
     ? `${image.registry}/${image.name}:${image.tag}@${image.architecture}`
     : undefined;

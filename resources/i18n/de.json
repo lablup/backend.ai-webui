@@ -506,7 +506,8 @@
     "InProgress": "In Arbeit",
     "Session": "Sitzung",
     "General": "Allgemein",
-    "Disabled": "Behinderte"
+    "Disabled": "Behinderte",
+    "NSelected": "Ausgewählte(r) {{count}} Artikel"
   },
   "credential": {
     "Permission": "Genehmigung",
@@ -818,8 +819,7 @@
     "ResourceLimit": "Ressourcenlimit",
     "DescDeleteAppInfo": "Sie sind dabei, die App-Informationen zu löschen:",
     "DescDeleteImage": "Sie sind dabei, die Bilder zu löschen:",
-    "DescDownloadImage": "Sie sind dabei, das/die Image(s) zu installieren:",
-    "DescSignificantDownloadTime": "Dieser Vorgang erfordert eine beträchtliche Downloadzeit.",
+    "DescSignificantInstallTime": "Dieser Vorgang erfordert eine beträchtliche Downloadzeit.",
     "Install": "Installieren",
     "Delete": "Löschen",
     "Installed": "Eingerichtet",
@@ -848,7 +848,12 @@
     "CustomizedImageSuccessfullyDeleted": "Benutzerdefiniertes Bild erfolgreich gelöscht.",
     "DescImageResourceModified": "Ressourcenlimit erfolgreich geändert",
     "DescImagePortsModified": "Bildports erfolgreich geändert",
-    "ModifyImageResourceLimitReinstallRequired": "<p>Wenn Sie ein bereits installiertes Image ändern, müssen Sie das Image neu installieren.</p><p>Änderungen werden erst übernommen, wenn das Image erneut installiert wird.\n\n</p>"
+    "ModifyImageResourceLimitReinstallRequired": "<p>Wenn Sie ein bereits installiertes Image ändern, müssen Sie das Image neu installieren.</p><p>Änderungen werden erst übernommen, wenn das Image erneut installiert wird.\n\n</p>",
+    "SearchImages": "Bilder suchen",
+    "NoImagesAreSelected": "Es sind keine Bilder ausgewählt",
+    "AlreadyInstalledImage": "Bereits installiertes Bild",
+    "CheckImageInstallation": "Installieren Sie ein Image?",
+    "InstalledImagesAreExcluded": "Installierte Bilder sind davon ausgenommen."
   },
   "resourcePreset": {
     "ResourcePresets": "Ressourcenvoreinstellungen",
