@@ -3313,8 +3313,7 @@ ${rowData.item[this.sessionNameField]}</pre
             : html``}
           ${((this._isRunning && !this._isPreparing(rowData.item.status)) ||
             this._APIMajorVersion > 4) &&
-          !this._isPending(rowData.item.status) &&
-          !this._isPreparing(rowData.item.status)
+          !['RESTARTING', 'PENDING', 'PULLING'].includes(rowData.item.status)
             ? html`
                 <mwc-icon-button
                   class="fg blue controls-running"
