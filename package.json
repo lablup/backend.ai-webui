@@ -12,8 +12,7 @@
     "format": "prettier --check 'src/**/*.{js, ts}'",
     "format-fix": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
     "format-fix:all": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}' 'react/src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
-    "test": "testcafe chrome ./tests/*.js",
-    "jest": "jest",
+    "test": "jest",
     "test:react": "pnpm test --prefix ./react test",
     "wsproxy": "node ./src/wsproxy/local_proxy.js",
     "build": "rm -rf build/rollup && mkdir -p build/rollup/src/components && pnpm run copyindex && pnpm run copywc && pnpm run copywa && pnpm run copyresource && pnpm run copyconfig && rollup -c rollup.config.ts --configPlugin typescript && pnpm run --prefix ./react build:copy",
@@ -162,7 +161,6 @@
     "rollup": "^4.20.0",
     "rollup-plugin-workbox": "^8.1.0",
     "serve": "^14.2.3",
-    "testcafe": "^3.6.2",
     "tinyify": "^4.0.0",
     "ts-jest": "^29.2.4",
     "tslib": "^2.6.3",
@@ -211,5 +209,8 @@
       "node"
     ],
     "rootDir": "src"
+  },
+  "relay": {
+    "rootDirectory": "react"
   }
 }
