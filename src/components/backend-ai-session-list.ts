@@ -1466,6 +1466,14 @@ export default class BackendAISessionList extends BackendAIPage {
     return (value / 2 ** 30).toFixed(decimalPoint);
   }
 
+  static _prefixFormatWithoutTrailingZeros(
+    num: string | number = '0',
+    fixed: number,
+  ) {
+    const number = typeof num === 'string' ? parseFloat(num) : num;
+    return parseFloat(number.toFixed(fixed)).toString();
+  }
+
   /**
    * Return elapsed time
    *
@@ -3607,13 +3615,16 @@ ${rowData.item[this.sessionNameField]}</pre
               <div class="usage-items">
                 RAM
                 ${rowData.item.live_stat
-                  ? BackendAISessionList.bytesToGiB(
-                      rowData.item.live_stat?.mem?.current,
-                      1,
-                    ) /
-                    BackendAISessionList.bytesToGiB(
-                      rowData.item.live_stat?.mem?.capacity,
-                      1,
+                  ? BackendAISessionList._prefixFormatWithoutTrailingZeros(
+                      BackendAISessionList.bytesToGiB(
+                        rowData.item.live_stat?.mem?.current,
+                        1,
+                      ) /
+                        BackendAISessionList.bytesToGiB(
+                          rowData.item.live_stat?.mem?.capacity,
+                          1,
+                        ),
+                      2,
                     )
                   : `-`}
                 GiB
@@ -3704,13 +3715,16 @@ ${rowData.item[this.sessionNameField]}</pre
                     <div class="usage-items">
                       GPU(mem)
                       ${rowData.item.live_stat
-                        ? BackendAISessionList.bytesToGiB(
-                            rowData.item.live_stat?.cuda_mem?.current,
-                            1,
-                          ) /
-                          BackendAISessionList.bytesToGiB(
-                            rowData.item.live_stat?.cuda_mem?.capacity,
-                            1,
+                        ? BackendAISessionList._prefixFormatWithoutTrailingZeros(
+                            BackendAISessionList.bytesToGiB(
+                              rowData.item.live_stat?.cuda_mem?.current,
+                              1,
+                            ) /
+                              BackendAISessionList.bytesToGiB(
+                                rowData.item.live_stat?.cuda_mem?.capacity,
+                                1,
+                              ),
+                            2,
                           )
                         : `-`}
                       GiB
