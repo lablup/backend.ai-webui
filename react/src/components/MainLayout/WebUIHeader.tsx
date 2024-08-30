@@ -104,7 +104,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
               cursor: 'pointer',
               backgroundColor: token.colorPrimaryBg,
             }}
-            onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
+            onClick={() => webuiNavigate(themeConfig?.logo?.href || '/start')} // '/summary')}
           />
         </div>
         <Suspense>
@@ -144,9 +144,9 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
       </Flex>
       <Flex gap={md ? 'sm' : 'xs'}>
         <Flex direction="row" className="non-draggable">
-          <BAINotificationButton />
-          <WebUIThemeToggleButton />
-          <WEBUIHelpButton />
+          <BAINotificationButton iconColor={token.colorIcon} />
+          <WebUIThemeToggleButton iconColor={token.colorIcon} />
+          <WEBUIHelpButton iconColor={token.colorIcon} />
           {baiClient.supports('extend-login-session') &&
             baiClient._config.enableExtendLoginSession && (
               <Suspense>

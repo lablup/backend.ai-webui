@@ -537,7 +537,7 @@ const SessionLauncherPage = () => {
         // After sending a create request, navigate to job page and set current resource group
         setCurrentGlobalResourceGroup(values.resourceGroup);
         const backupTo = window.location.pathname + window.location.search;
-        webuiNavigate(redirectTo || '/job');
+        webuiNavigate(redirectTo || '/session');
         upsertNotification({
           key: 'session-launcher:' + sessionName,
           backgroundTask: {
