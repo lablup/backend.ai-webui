@@ -382,6 +382,31 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       {...props}
     >
       <BAIMenu
+        isAdminMenu={false}
+        selectedKeys={[
+          location.pathname.split('/')[1] || 'start',
+          // TODO: After matching first path of 'storage-settings' and 'agent', remove this code
+          location.pathname.split('/')[1] === 'storage-settings' ? 'agent' : '',
+          // TODO: After 'SessionListPage' is completed and used as the main page, remove this code
+          //       and change 'job' key to 'session'
+          location.pathname.split('/')[1] === 'session' ? 'job' : '',
+        ]}
+        items={[...generalMenu]}
+        /**
+         * Etc menu
+         */
+        // {
+        //   label: '404',
+        //   icon: <QuestionOutlined />,
+        //   key: '404',
+        // },
+        // ]}
+        onClick={({ key, keyPath }) => {
+          webuiNavigate('/' + keyPath.join('/'));
+        }}
+      />
+      <BAIMenu
+        isAdminMenu={true}
         selectedKeys={[
           location.pathname.split('/')[1] || 'summary',
           // TODO: After matching first path of 'storage-settings' and 'agent', remove this code
@@ -394,7 +419,6 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           // TODO: add plugin menu
           currentUserRole === 'superadmin'
             ? [
-                ...generalMenu,
                 {
                   type: 'group',
                   label: (
@@ -430,7 +454,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                     children: [...adminMenu],
                   },
                 ]
-              : [...generalMenu]
+              : []
         }
         /**
          * Etc menu
