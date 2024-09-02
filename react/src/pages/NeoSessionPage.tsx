@@ -1,4 +1,5 @@
 import AllocatedResourcesCard from '../components/AllocatedResourcesCard';
+import { parseFilterValue } from '../components/BAIPropertyFilter';
 import BAIStartSimpleCard from '../components/BAIStartSimpleCard';
 import Flex from '../components/Flex';
 import NeoSessionList from '../components/NeoSessionList';
@@ -7,7 +8,8 @@ import { useWebUINavigate } from '../hooks';
 import { Card, Typography, Button, Tabs, Badge, theme } from 'antd';
 import { t } from 'i18next';
 import _ from 'lodash';
-import React from 'react';
+import React, { Suspense, useState } from 'react';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 const TAB_ITEMS_MAP = {
   all: t('general.All'),
@@ -16,6 +18,8 @@ const TAB_ITEMS_MAP = {
   inference: t('session.Inference'),
   system: 'System',
 };
+
+type TypeKey = 'all' | 'interactive' | 'batch' | 'inference' | 'system';
 
 const MOCK_TOTAL_DATA = {
   all: '83',
@@ -30,6 +34,10 @@ interface NeoSessionPageProps {}
 const NeoSessionPage: React.FC<NeoSessionPageProps> = (props) => {
   const { token } = theme.useToken();
   const webuiNavigate = useWebUINavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [type, setType] = useState<TypeKey>(
+    (searchParams.get('type') as TypeKey) || 'all',
+  );
 
   return (
     <Flex direction="column" align="stretch" gap={16}>
@@ -77,8 +85,24 @@ const NeoSessionPage: React.FC<NeoSessionPageProps> = (props) => {
                   />
                 </Flex>
               ),
-              children: <NeoSessionList key={key} sessionType={key} />,
+              children: (
+                <Suspense>
+                  <NeoSessionList
+                    key={key}
+                    filter={
+                      ['interactive', 'batch', 'inference'].includes(type)
+                        ? `type == "${_.toUpper(type)}"`
+                        : null
+                    }
+                  />
+                </Suspense>
+              ),
             }))}
+            onChange={(key) => {
+              setSearchParams({ ...searchParams, type: key });
+              setType(key as TypeKey);
+            }}
+            defaultActiveKey={type}
           />
         </Card>
       </Flex>
