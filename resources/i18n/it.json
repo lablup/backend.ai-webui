@@ -509,7 +509,8 @@
     "General": "Generale",
     "Disabled": "Disabili",
     "NSelected": "Articolo/i selezionato/i {{count}}",
-    "Extend": "Estendere"
+    "Extend": "Estendere",
+    "RemainingLoginSessionTime": "Tempo fino alla disconnessione automatica"
   },
   "credential": {
     "Permission": "Autorizzazione",

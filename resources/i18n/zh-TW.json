@@ -508,7 +508,8 @@
     "General": "一般情况",
     "Disabled": "残疾",
     "NSelected": "已选择的 {{count}} 项目",
-    "Extend": "延長"
+    "Extend": "延長",
+    "RemainingLoginSessionTime": "自动注销前的时间"
   },
   "credential": {
     "Permission": "允許",

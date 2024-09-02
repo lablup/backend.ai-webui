@@ -531,7 +531,8 @@
     "General": "General",
     "Disabled": "Discapacitados",
     "NSelected": "Elemento(s) {{cuenta}} seleccionado(s)",
-    "Extend": "Extender"
+    "Extend": "Extender",
+    "RemainingLoginSessionTime": "Tiempo hasta el cierre de sesión automático"
   },
   "import": {
     "CleanUpImportTask": "Tarea de importación de limpieza...",

@@ -531,7 +531,8 @@
     "General": "Yleistä",
     "Disabled": "Vammaiset",
     "NSelected": "Valittu {{count}} kohde(t)",
-    "Extend": "Laajenna"
+    "Extend": "Laajenna",
+    "RemainingLoginSessionTime": "Aika automaattiseen uloskirjautumiseen asti"
   },
   "import": {
     "CleanUpImportTask": "Tuontitehtävän siivous...",

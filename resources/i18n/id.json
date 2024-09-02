@@ -509,7 +509,8 @@
     "General": "Umum",
     "Disabled": "Dinonaktifkan",
     "NSelected": "Item {{hitung}} yang dipilih",
-    "Extend": "Memperpanjang"
+    "Extend": "Memperpanjang",
+    "RemainingLoginSessionTime": "Waktu Hingga Keluar Otomatis"
   },
   "credential": {
     "Permission": "Izin",

@@ -510,7 +510,8 @@
     "General": "Генерал",
     "Disabled": "Идэвхгүй",
     "NSelected": "Сонгосон {{count}} зүйл(үүд)",
-    "Extend": "Сунгах"
+    "Extend": "Сунгах",
+    "RemainingLoginSessionTime": "Автоматаар гарах хүртэл хугацаа"
   },
   "credential": {
     "Permission": "Зөвшөөрөл",

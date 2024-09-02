@@ -508,7 +508,8 @@
     "General": "Geral",
     "Disabled": "Desativado",
     "NSelected": "Item(ns) {{contagem}} selecionado(s)",
-    "Extend": "Ampliar"
+    "Extend": "Ampliar",
+    "RemainingLoginSessionTime": "Tempo até ao encerramento automático da sessão"
   },
   "credential": {
     "Permission": "Permissão",

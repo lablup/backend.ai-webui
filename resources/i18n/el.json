@@ -508,7 +508,8 @@
     "General": "Γενικά",
     "Disabled": "Άτομα με ειδικές ανάγκες",
     "NSelected": "Επιλεγμένο {{count}} στοιχείο(α)",
-    "Extend": "Επεκτείνω"
+    "Extend": "Επεκτείνω",
+    "RemainingLoginSessionTime": "Χρόνος μέχρι την αυτόματη αποσύνδεση"
   },
   "credential": {
     "Permission": "Αδεια",

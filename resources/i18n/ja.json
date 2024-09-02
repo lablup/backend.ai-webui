@@ -508,7 +508,8 @@
     "General": "一般",
     "Disabled": "無効",
     "NSelected": "選択された{{count}}項目（複数可）",
-    "Extend": "伸ばす"
+    "Extend": "伸ばす",
+    "RemainingLoginSessionTime": "自動ログアウトまでの時間"
   },
   "credential": {
     "Permission": "許可",

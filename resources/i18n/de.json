@@ -508,7 +508,8 @@
     "General": "Allgemein",
     "Disabled": "Behinderte",
     "NSelected": "Ausgewählte(r) {{count}} Artikel",
-    "Extend": "Verlängern"
+    "Extend": "Verlängern",
+    "RemainingLoginSessionTime": "Zeit bis zur automatischen Abmeldung"
   },
   "credential": {
     "Permission": "Genehmigung",

@@ -508,7 +508,8 @@
     "General": "Général",
     "Disabled": "Handicapés",
     "NSelected": "Élément(s) sélectionné(s) {{count}}",
-    "Extend": "Étendre"
+    "Extend": "Étendre",
+    "RemainingLoginSessionTime": "Délai avant déconnexion automatique"
   },
   "credential": {
     "Permission": "Autorisation",

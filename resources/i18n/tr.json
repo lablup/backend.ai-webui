@@ -508,7 +508,8 @@
     "General": "Genel",
     "Disabled": "Engelli",
     "NSelected": "Seçilen {{count}} öğe(ler)",
-    "Extend": "Uzatmak"
+    "Extend": "Uzatmak",
+    "RemainingLoginSessionTime": "Otomatik Çıkışa Kadar Geçen Süre"
   },
   "credential": {
     "Permission": "izin",

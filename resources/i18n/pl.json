@@ -508,7 +508,8 @@
     "General": "Ogólne",
     "Disabled": "Wyłączony",
     "NSelected": "Wybrane elementy {{count}}",
-    "Extend": "Rozszerzyć"
+    "Extend": "Rozszerzyć",
+    "RemainingLoginSessionTime": "Czas do automatycznego wylogowania"
   },
   "credential": {
     "Permission": "Pozwolenie",

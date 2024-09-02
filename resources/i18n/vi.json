@@ -508,7 +508,8 @@
     "General": "Tổng quan",
     "Disabled": "Tàn tật",
     "NSelected": "Đã chọn {{count}} mục",
-    "Extend": "Mở rộng"
+    "Extend": "Mở rộng",
+    "RemainingLoginSessionTime": "Thời gian cho đến khi tự động đăng xuất"
   },
   "credential": {
     "Permission": "Sự cho phép",
