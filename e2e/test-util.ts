@@ -1,7 +1,7 @@
 import { Locator, Page, expect } from "@playwright/test";
 
-const webuiEndpoint = "http://127.0.0.1:9081";
-const webServerEndpoint = "http://127.0.0.1:8090";
+export const webuiEndpoint = 'http://127.0.0.1:9081';
+export const webServerEndpoint = 'http://127.0.0.1:8090';
 export async function login(
   page: Page,
   username: string,

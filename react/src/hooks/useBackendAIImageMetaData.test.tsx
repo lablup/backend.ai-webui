@@ -6,46 +6,56 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { ReactNode } from 'react';
 
 describe('useBackendAIImageMetaData', () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        gcTime: Infinity,
+      },
+    },
+  });
+
   const wrapper = ({ children }: { children: ReactNode }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 
-  (global as any).fetch = jest.fn(async () =>
-    Promise.resolve({
-      ok: true,
-      status: 200,
-      json: () =>
-        Promise.resolve({
-          imageInfo: {},
-          tagAlias: {
-            pytorch: 'PyTorch',
-            r: 'R',
-            'r-base': 'R',
-            py3: 'Python3',
-            ngc: 'Nvidia GPU Cloud',
-            py310: 'Python3',
-          },
-          tagReplace: {},
-        }),
-    }),
-  );
+  beforeEach(() => {
+    (global as any).fetch = jest.fn(async () =>
+      Promise.resolve({
+        ok: true,
+        status: 200,
+        json: () =>
+          Promise.resolve({
+            imageInfo: {},
+            tagAlias: {
+              pytorch: 'PyTorch',
+              r: 'R',
+              'r-base': 'R',
+              py3: 'Python3',
+              ngc: 'Nvidia GPU Cloud',
+              py310: 'Python3',
+            },
+            tagReplace: {},
+          }),
+      }),
+    );
+  });
 
-  const { result } = renderHook(() => useBackendAIImageMetaData(), { wrapper });
   it('get image lang data', async () => {
-    await waitFor(() => {
-      expect(result.current).toBeDefined();
+    const { result } = renderHook(() => useBackendAIImageMetaData(), {
+      wrapper,
     });
-
+    await waitFor(() => expect(result.current).toBeTruthy());
     const [, { getLang }] = result.current;
     const lang = getLang('testing/ngc-pytorch');
     expect(lang).toBe('PyTorch');
   });
 
   it('get image r lang data', async () => {
-    await waitFor(() => {
-      expect(result.current).toBeDefined();
+    const { result } = renderHook(() => useBackendAIImageMetaData(), {
+      wrapper,
     });
+    await waitFor(() => expect(result.current).toBeTruthy());
 
     const [, { getLang }] = result.current;
     const lang = getLang('stable/r-base');
@@ -53,9 +63,10 @@ describe('useBackendAIImageMetaData', () => {
   });
 
   it('get baseImage data', async () => {
-    await waitFor(() => {
-      expect(result.current).toBeDefined();
+    const { result } = renderHook(() => useBackendAIImageMetaData(), {
+      wrapper,
     });
+    await waitFor(() => expect(result.current).toBeTruthy());
 
     const [, { getBaseImages }] = result.current;
     const baseImages = getBaseImages('21.11-py3', 'testing/ngc-pytorc');
@@ -63,9 +74,10 @@ describe('useBackendAIImageMetaData', () => {
     expect(baseImages[1]).toBe('Nvidia GPU Cloud');
   });
   it('get constraint data', async () => {
-    await waitFor(() => {
-      expect(result.current).toBeDefined();
+    const { result } = renderHook(() => useBackendAIImageMetaData(), {
+      wrapper,
     });
+    await waitFor(() => expect(result.current).toBeTruthy());
 
     const [, { getConstraints }] = result.current;
     const baseImages = getConstraints('23.08-tf2.13-py310-cuda12.2', []);
@@ -74,9 +86,10 @@ describe('useBackendAIImageMetaData', () => {
   });
 
   it('get constraint customized data', async () => {
-    await waitFor(() => {
-      expect(result.current).toBeDefined();
+    const { result } = renderHook(() => useBackendAIImageMetaData(), {
+      wrapper,
     });
+    await waitFor(() => expect(result.current).toBeTruthy());
 
     const [, { getConstraints }] = result.current;
     const baseImages = getConstraints(
@@ -88,6 +101,9 @@ describe('useBackendAIImageMetaData', () => {
   });
 
   it('`getImageMeta` function can handle images with more than two `/` in name.', async () => {
+    const { result } = renderHook(() => useBackendAIImageMetaData(), {
+      wrapper,
+    });
     const [, { getImageMeta }] = result.current;
 
     const { key, tags } = getImageMeta(

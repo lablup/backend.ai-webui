@@ -142,26 +142,22 @@ interface ImageMetadata {
 }
 
 export const useBackendAIImageMetaData = () => {
-  const { data: metadata } = useSuspenseTanQuery({
+  const { data: metadata } = useSuspenseTanQuery<{
+    imageInfo: {
+      [key: string]: ImageMetadata | undefined;
+    };
+    tagAlias: {
+      [key: string]: string;
+    };
+    tagReplace: {
+      [key: string]: string;
+    };
+  }>({
     queryKey: ['backendai-metadata-for-suspense'],
     queryFn: () => {
-      return fetch('resources/image_metadata.json')
-        .then((response) => response.json())
-        .then(
-          (json: {
-            imageInfo: {
-              [key: string]: ImageMetadata | undefined;
-            };
-            tagAlias: {
-              [key: string]: string;
-            };
-            tagReplace: {
-              [key: string]: string;
-            };
-          }) => {
-            return json;
-          },
-        );
+      return fetch('resources/image_metadata.json').then((response) =>
+        response.json(),
+      );
     },
     retry: false,
   });
