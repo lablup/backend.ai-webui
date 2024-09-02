@@ -507,7 +507,8 @@
     "Session": "Session",
     "General": "Général",
     "Disabled": "Handicapés",
-    "NSelected": "Élément(s) sélectionné(s) {{count}}"
+    "NSelected": "Élément(s) sélectionné(s) {{count}}",
+    "Extend": "Étendre"
   },
   "credential": {
     "Permission": "Autorisation",

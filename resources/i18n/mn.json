@@ -509,7 +509,8 @@
     "Session": "Сессия",
     "General": "Генерал",
     "Disabled": "Идэвхгүй",
-    "NSelected": "Сонгосон {{count}} зүйл(үүд)"
+    "NSelected": "Сонгосон {{count}} зүйл(үүд)",
+    "Extend": "Сунгах"
   },
   "credential": {
     "Permission": "Зөвшөөрөл",

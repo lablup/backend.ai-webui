@@ -508,7 +508,8 @@
     "Session": "Sesi",
     "General": "Umum",
     "Disabled": "Dinonaktifkan",
-    "NSelected": "Item {{hitung}} yang dipilih"
+    "NSelected": "Item {{hitung}} yang dipilih",
+    "Extend": "Memperpanjang"
   },
   "credential": {
     "Permission": "Izin",

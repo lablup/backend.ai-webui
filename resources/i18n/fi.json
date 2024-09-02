@@ -530,7 +530,8 @@
     "Session": "Istunto",
     "General": "Yleistä",
     "Disabled": "Vammaiset",
-    "NSelected": "Valittu {{count}} kohde(t)"
+    "NSelected": "Valittu {{count}} kohde(t)",
+    "Extend": "Laajenna"
   },
   "import": {
     "CleanUpImportTask": "Tuontitehtävän siivous...",

@@ -380,5 +380,6 @@ type BackendAIConfig = {
   inactiveList: string[];
   allowSignout: boolean;
   allowNonAuthTCP: boolean;
+  enableExtendLoginSession: boolean;
   [key: string]: any;
 };

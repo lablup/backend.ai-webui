@@ -507,7 +507,8 @@
     "Session": "Сессия",
     "General": "Общие сведения",
     "Disabled": "Инвалид",
-    "NSelected": "Выбранный {{count}} элемент(ы)"
+    "NSelected": "Выбранный {{count}} элемент(ы)",
+    "Extend": "Продлевать"
   },
   "credential": {
     "Permission": "Разрешение",

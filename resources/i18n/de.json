@@ -507,7 +507,8 @@
     "Session": "Sitzung",
     "General": "Allgemein",
     "Disabled": "Behinderte",
-    "NSelected": "Ausgewählte(r) {{count}} Artikel"
+    "NSelected": "Ausgewählte(r) {{count}} Artikel",
+    "Extend": "Verlängern"
   },
   "credential": {
     "Permission": "Genehmigung",

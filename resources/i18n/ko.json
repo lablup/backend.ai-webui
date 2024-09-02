@@ -619,7 +619,8 @@
     "Session": "세션",
     "General": "일반",
     "Disabled": "비활성화",
-    "NSelected": "{{count}}개 선택됨"
+    "NSelected": "{{count}}개 선택됨",
+    "Extend": "연장"
   },
   "credential": {
     "Permission": "권한",

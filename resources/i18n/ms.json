@@ -507,7 +507,8 @@
     "Session": "Sesi",
     "General": "Umum",
     "Disabled": "Dilumpuhkan",
-    "NSelected": "{{count}} item yang dipilih"
+    "NSelected": "{{count}} item yang dipilih",
+    "Extend": "Panjangkan"
   },
   "credential": {
     "Permission": "Kebenaran",

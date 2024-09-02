@@ -507,7 +507,8 @@
     "Session": "Sesja",
     "General": "Ogólne",
     "Disabled": "Wyłączony",
-    "NSelected": "Wybrane elementy {{count}}"
+    "NSelected": "Wybrane elementy {{count}}",
+    "Extend": "Rozszerzyć"
   },
   "credential": {
     "Permission": "Pozwolenie",

@@ -508,7 +508,8 @@
     "Session": "Sessione",
     "General": "Generale",
     "Disabled": "Disabili",
-    "NSelected": "Articolo/i selezionato/i {{count}}"
+    "NSelected": "Articolo/i selezionato/i {{count}}",
+    "Extend": "Estendere"
   },
   "credential": {
     "Permission": "Autorizzazione",

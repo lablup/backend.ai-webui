@@ -530,7 +530,8 @@
     "Session": "Sesión",
     "General": "General",
     "Disabled": "Discapacitados",
-    "NSelected": "Elemento(s) {{cuenta}} seleccionado(s)"
+    "NSelected": "Elemento(s) {{cuenta}} seleccionado(s)",
+    "Extend": "Extender"
   },
   "import": {
     "CleanUpImportTask": "Tarea de importación de limpieza...",

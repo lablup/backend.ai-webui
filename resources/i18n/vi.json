@@ -507,7 +507,8 @@
     "Session": "Phiên họp",
     "General": "Tổng quan",
     "Disabled": "Tàn tật",
-    "NSelected": "Đã chọn {{count}} mục"
+    "NSelected": "Đã chọn {{count}} mục",
+    "Extend": "Mở rộng"
   },
   "credential": {
     "Permission": "Sự cho phép",

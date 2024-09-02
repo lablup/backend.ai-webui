@@ -507,7 +507,8 @@
     "Session": "セッション",
     "General": "一般",
     "Disabled": "無効",
-    "NSelected": "選択された{{count}}項目（複数可）"
+    "NSelected": "選択された{{count}}項目（複数可）",
+    "Extend": "伸ばす"
   },
   "credential": {
     "Permission": "許可",

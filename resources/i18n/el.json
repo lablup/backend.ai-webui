@@ -507,7 +507,8 @@
     "Session": "Σύνοδος",
     "General": "Γενικά",
     "Disabled": "Άτομα με ειδικές ανάγκες",
-    "NSelected": "Επιλεγμένο {{count}} στοιχείο(α)"
+    "NSelected": "Επιλεγμένο {{count}} στοιχείο(α)",
+    "Extend": "Επεκτείνω"
   },
   "credential": {
     "Permission": "Αδεια",

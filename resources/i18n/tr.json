@@ -507,7 +507,8 @@
     "Session": "Oturum",
     "General": "Genel",
     "Disabled": "Engelli",
-    "NSelected": "Seçilen {{count}} öğe(ler)"
+    "NSelected": "Seçilen {{count}} öğe(ler)",
+    "Extend": "Uzatmak"
   },
   "credential": {
     "Permission": "izin",
