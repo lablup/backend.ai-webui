@@ -8,15 +8,15 @@ export async function checkActiveTab(
   await expect(activeTab).toContainText(expectedTabName);
 }
 
-export async function getTableHeaders(page: Locator) {
-  return await page.locator('.ant-table-thead th');
+export async function getTableHeaders(locator: Locator) {
+  return await locator.locator(".ant-table-thead th");
 }
 
 export async function findColumnIndex(
   tableLocator: Locator,
   columnTitle: string,
 ) {
-  const headers = await tableLocator.locator('.ant-table-thead th');
+  const headers = await getTableHeaders(tableLocator);
   const columnIndex = await headers.evaluateAll((ths, title) => {
     return ths.findIndex((th) => th.textContent?.trim() === title);
   }, columnTitle);
