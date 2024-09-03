@@ -270,7 +270,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             <ResourceNumber
               type={resource_limit?.key || ''}
               value={resource_limit?.min || '0'}
-              max={resource_limit?.max || ''}
+              max={resource_limit?.max || 'Infinity'}
             />
           ))}
         </Flex>
