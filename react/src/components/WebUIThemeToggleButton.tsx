@@ -24,7 +24,8 @@ const WebUIThemeToggleButton: React.FC<WebUIThemeToggleButtonProps> = ({
         )
       }
       onClick={() => {
-        setIsDarkMode(!isDarkMode);
+        // comment out darkMode
+        // setIsDarkMode(!isDarkMode);
       }}
       {...props}
     />
