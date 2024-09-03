@@ -31,7 +31,14 @@ import {
   WarningOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { theme, MenuProps, Typography, Button, ConfigProvider } from 'antd';
+import {
+  theme,
+  MenuProps,
+  Typography,
+  Button,
+  ConfigProvider,
+  Tooltip,
+} from 'antd';
 import { ItemType } from 'antd/lib/menu/interface';
 import _ from 'lodash';
 import React, { useState } from 'react';
@@ -109,7 +116,15 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       type: 'group',
       children: [
         {
-          label: t('webui.menu.Data&Storage'),
+          label: (
+            <Tooltip
+              placement="right"
+              title="Work In Progress..."
+              color={'#333333'}
+            >
+              {t('webui.menu.Data&Storage')}
+            </Tooltip>
+          ),
           icon: <CloudUploadOutlined style={{ color: token.colorPrimaryBg }} />,
           key: 'data',
         },
@@ -126,12 +141,28 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           key: 'session',
         },
         supportUserCommittedImage && {
-          label: t('webui.menu.MyEnvironments'),
+          label: (
+            <Tooltip
+              placement="right"
+              title="Work In Progress..."
+              color={'#333333'}
+            >
+              {t('webui.menu.MyEnvironments')}
+            </Tooltip>
+          ),
           icon: <FileDoneOutlined style={{ color: token.colorPrimaryBg }} />,
           key: 'my-environment',
         },
         {
-          label: 'Examples',
+          label: (
+            <Tooltip
+              placement="right"
+              title="Work In Progress..."
+              color={'#333333'}
+            >
+              {'Examples'}
+            </Tooltip>
+          ),
           icon: <ExamplesIcon style={{ color: token.colorPrimaryBg }} />,
           key: 'examples',
         },
@@ -143,12 +174,28 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       type: 'group',
       children: [
         supportServing && {
-          label: 'Endpoints', //t('webui.menu.Serving'),
+          label: (
+            <Tooltip
+              placement="right"
+              title="Work In Progress..."
+              color={'#333'}
+            >
+              {'Endpoints'}
+            </Tooltip>
+          ),
           icon: <EndpointsIcon style={{ color: token.colorPrimaryBg }} />, // <RocketOutlined />,
           key: 'serving',
         },
         {
-          label: 'Models',
+          label: (
+            <Tooltip
+              placement="right"
+              title="Work In Progress..."
+              color={'#333333'}
+            >
+              {'Models'}
+            </Tooltip>
+          ),
           icon: <ModelsIcon style={{ color: token.colorPrimaryBg }} />,
           key: 'models',
         },
@@ -160,7 +207,15 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       type: 'group',
       children: [
         !!fasttrackEndpoint && {
-          label: 'Pipelines', // t('webui.menu.FastTrack'),
+          label: (
+            <Tooltip
+              placement="right"
+              title="Work In Progress..."
+              color={'#333333'}
+            >
+              {'Pipelines'}
+            </Tooltip>
+          ),
           icon: <ExportOutlined style={{ color: token.colorPrimaryBg }} />, // TODO: change to custom Pipelines icon
           key: 'pipeline',
           onClick: () => {
@@ -168,7 +223,15 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           },
         },
         {
-          label: 'Trails',
+          label: (
+            <Tooltip
+              placement="right"
+              title="Work In Progress..."
+              color={'#333333'}
+            >
+              {'Trails'}
+            </Tooltip>
+          ),
           icon: <TrailsIcon style={{ color: token.colorPrimaryBg }} />,
           key: 'trails',
         },
@@ -198,17 +261,41 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       key: 'system_overview',
     },
     {
-      label: t('webui.menu.Users'),
+      label: (
+        <Tooltip
+          placement="right"
+          title="Work In Progress..."
+          color={'#333333'}
+        >
+          {t('webui.menu.Users')}
+        </Tooltip>
+      ),
       icon: <UserOutlined style={{ color: token.colorSuccess }} />,
       key: 'credential',
     },
     {
-      label: t('webui.menu.Environments'),
+      label: (
+        <Tooltip
+          placement="right"
+          title="Work In Progress..."
+          color={'#333333'}
+        >
+          {t('webui.menu.Environments')}
+        </Tooltip>
+      ),
       icon: <FileDoneOutlined style={{ color: token.colorSuccess }} />,
       key: 'environment',
     },
     {
-      label: t('webui.menu.ResourcePolicy'),
+      label: (
+        <Tooltip
+          placement="right"
+          title="Work In Progress..."
+          color={'#333333'}
+        >
+          {t('webui.menu.ResourcePolicy')}
+        </Tooltip>
+      ),
       icon: <SolutionOutlined style={{ color: token.colorSuccess }} />,
       key: 'resource-policy',
     },
@@ -216,22 +303,54 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
 
   const superAdminMenu: MenuProps['items'] = [
     {
-      label: t('webui.menu.Resources'),
+      label: (
+        <Tooltip
+          placement="right"
+          title="Work In Progress..."
+          color={'#333333'}
+        >
+          {t('webui.menu.Resources')}
+        </Tooltip>
+      ),
       icon: <HddOutlined style={{ color: token.colorSuccess }} />,
       key: 'agent',
     },
     {
-      label: t('webui.menu.Configurations'),
+      label: (
+        <Tooltip
+          placement="right"
+          title="Work In Progress..."
+          color={'#333333'}
+        >
+          {t('webui.menu.Configurations')}
+        </Tooltip>
+      ),
       icon: <ControlOutlined style={{ color: token.colorSuccess }} />,
       key: 'settings',
     },
     {
-      label: t('webui.menu.Maintenance'),
+      label: (
+        <Tooltip
+          placement="right"
+          title="Work In Progress..."
+          color={'#333333'}
+        >
+          {t('webui.menu.Maintenance')}
+        </Tooltip>
+      ),
       icon: <ToolOutlined style={{ color: token.colorSuccess }} />,
       key: 'maintenance',
     },
     {
-      label: t('webui.menu.Information'),
+      label: (
+        <Tooltip
+          placement="right"
+          title="Work In Progress..."
+          color={'#333333'}
+        >
+          {t('webui.menu.Information')}
+        </Tooltip>
+      ),
       icon: <InfoCircleOutlined style={{ color: token.colorSuccess }} />,
       key: 'information',
     },
@@ -425,7 +544,8 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           // ]}
           onClick={({ key, keyPath }) => {
             if (_.some(keyPath, (key) => menuInPreparation.includes(key))) {
-              setIsOpenPreparationMenuModal(true);
+              // setIsOpenPreparationMenuModal(true);
+              // DO NOTHING
             } else {
               webuiNavigate('/' + keyPath.join('/'));
             }
@@ -495,7 +615,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           // ]}
           onClick={({ key, keyPath }) => {
             if (_.some(keyPath, (key) => menuInPreparation.includes(key))) {
-              setIsOpenPreparationMenuModal(true);
+              // DO NOTHING
             } else {
               webuiNavigate('/' + keyPath.join('/'));
             }
@@ -515,7 +635,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           },
         }}
       >
-        <BAIModal
+        {/* <BAIModal
           open={isOpenPreparationMenuModal}
           title={
             <Flex direction="row" align="center" gap="sm">
@@ -523,7 +643,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                 style={{ fontSize: 24, color: token.colorPrimary }}
               />
               <Typography.Title level={4} style={{ margin: 0 }}>
-                {'Work In Progress'}
+                {'Work In Progress...'}
               </Typography.Title>
             </Flex>
           }
@@ -543,7 +663,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
               'Currently this page is working in progress. Please click the button below.'
             }
           </Typography.Text>
-        </BAIModal>
+        </BAIModal> */}
       </ConfigProvider>
     </>
   );
