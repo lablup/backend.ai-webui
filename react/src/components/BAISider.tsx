@@ -1,6 +1,13 @@
 import Flex from './Flex';
 import { DRAWER_WIDTH } from './WEBUINotificationDrawer';
-import { ConfigProvider, Grid, SiderProps, Typography, theme } from 'antd';
+import {
+  ConfigProvider,
+  Grid,
+  SiderProps,
+  Tooltip,
+  Typography,
+  theme,
+} from 'antd';
 import Sider from 'antd/es/layout/Sider';
 import _ from 'lodash';
 import React from 'react';
