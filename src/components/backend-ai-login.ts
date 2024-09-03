@@ -116,6 +116,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Number }) maxIPUDevicesPerContainer = 8;
   @property({ type: Number }) maxATOMDevicesPerContainer = 8;
   @property({ type: Number }) maxWarboyDevicesPerContainer = 8;
+  @property({ type: Number }) maxGaudi2DevicesPerContainer = 8;
   @property({ type: Number }) maxShmPerContainer = 2;
   @property({ type: Number }) maxFileUploadSize = -1;
   @property({ type: Boolean }) maskUserInfo = false;
@@ -986,6 +987,16 @@ export default class BackendAILogin extends BackendAIPage {
       } as ConfigValueObject,
     ) as number;
 
+    // Max Gaudi 2 devices per container number
+    this.maxGaudi2DevicesPerContainer = this._getConfigValueByExists(
+      resourcesConfig,
+      {
+        valueType: 'number',
+        defaultValue: 8,
+        value: parseInt(resourcesConfig?.maxGaudi2DevicesPerContainer),
+      } as ConfigValueObject,
+    ) as number;
+
     // Max Warboy devices per container number
     this.maxWarboyDevicesPerContainer = this._getConfigValueByExists(
       resourcesConfig,
@@ -1825,6 +1836,8 @@ export default class BackendAILogin extends BackendAIPage {
           this.maxIPUDevicesPerContainer;
         globalThis.backendaiclient._config.maxATOMDevicesPerContainer =
           this.maxATOMDevicesPerContainer;
+        globalThis.backendaiclient._config.maxGaudi2DevicesPerContainer =
+          this.maxGaudi2DevicesPerContainer;
         globalThis.backendaiclient._config.maxWarboyDevicesPerContainer =
           this.maxWarboyDevicesPerContainer;
         globalThis.backendaiclient._config.maxShmPerContainer =
