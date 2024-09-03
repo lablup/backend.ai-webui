@@ -2742,7 +2742,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           this._NPUDeviceNameOnSlider = 'ATOM+';
           this.npu_device_metric = atom_plus_device_metric;
         }
-        if (item.key === 'gaudi2.device' || item.key === 'gaudi.device') {
+        if (item.key === 'gaudi2.device') {
           const gaudi2_device_metric = { ...item };
           gaudi2_device_metric.min = parseInt(gaudi2_device_metric.min);
           if ('gaudi2.device' in this.userResourceLimit) {
