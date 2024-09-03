@@ -20,13 +20,29 @@ import React, { useTransition } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
+import { useSearchParams } from 'react-router-dom';
+
+type StatusKey = 'running' | 'finished';
+
+const STATUS_MAP = {
+  running: [
+    'RUNNING',
+    'RESTARTING',
+    'TERMINATING',
+    'PENDING',
+    'SCHEDULED',
+    'PREPARING',
+    'PULLING',
+  ],
+  finished: ['TERMINATED', 'CANCELLED'],
+};
 
 interface NeoSessionListProps {
-  sessionType: string;
+  filter?: string | null;
 }
 
 const NeoSessionList: React.FC<NeoSessionListProps> = ({
-  sessionType: status,
+  filter,
   ...props
 }) => {
   const { t } = useTranslation();
@@ -51,6 +67,15 @@ const NeoSessionList: React.FC<NeoSessionListProps> = ({
     startPageChangeTransition,
   ] = useTransition();
   const [order, setOrder] = useState<string>();
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [status, setStatus] = useState<Array<string>>(
+    STATUS_MAP[(searchParams.get('status') as StatusKey) || 'running'],
+  );
+  const queryFilter = filter
+    ? `${filter} & status in ${JSON.stringify(status)}`
+    : `status in ${JSON.stringify(status)}`;
+
   // TODO: refactor with useControllableState
   const [selectedRowKeys, setSelectedRowKeys] = useState<Array<React.Key>>([]);
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
@@ -76,27 +101,20 @@ const NeoSessionList: React.FC<NeoSessionListProps> = ({
     //finished return undefined
   };
 
-  // if (
-  //   !baiClient.supports('avoid-hol-blocking') &&
-  //   status.includes('SCHEDULED')
-  // ) {
-  //   status = status?.filter((e) => e !== 'SCHEDULED');
-  // }
-
   const { compute_session_list } = useLazyLoadQuery<NeoSessionListQuery>(
     graphql`
       query NeoSessionListQuery(
         $limit: Int!
         $offset: Int!
+        $filter: String
         $group_id: String
-        $status: String
         $order: String
       ) {
         compute_session_list(
           limit: $limit
           offset: $offset
+          filter: $filter
           group_id: $group_id
-          status: $status
           order: $order
         ) {
           items {
@@ -117,6 +135,7 @@ const NeoSessionList: React.FC<NeoSessionListProps> = ({
     {
       limit: baiPaginationOption.limit,
       offset: baiPaginationOption.offset,
+      filter: queryFilter,
       group_id: projectId,
       order,
     },
@@ -137,6 +156,11 @@ const NeoSessionList: React.FC<NeoSessionListProps> = ({
             { label: t('session.Running'), value: 'running' },
             { label: t('session.Finished'), value: 'finished' },
           ]}
+          onChange={(e) => {
+            const status = e.target.value;
+            setSearchParams({ ...searchParams, status: status });
+            setStatus(STATUS_MAP[status as StatusKey]);
+          }}
           optionType="button"
           buttonStyle="solid"
           defaultValue="running"
