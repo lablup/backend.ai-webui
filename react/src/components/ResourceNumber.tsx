@@ -3,6 +3,7 @@ import { useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
 import Flex from './Flex';
 import { Tooltip, Typography, theme } from 'antd';
+import _ from 'lodash';
 import React, { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -29,8 +30,7 @@ interface ResourceNumberProps {
   opts?: ResourceOpts;
   value: string;
   hideTooltip?: boolean;
-  max?: string | null | undefined;
-  range?: boolean;
+  max?: string;
 }
 
 type ResourceTypeInfo<V> = {
@@ -43,7 +43,6 @@ const ResourceNumber: React.FC<ResourceNumberProps> = ({
   opts,
   hideTooltip = false,
   max,
-  range,
 }) => {
   const { token } = theme.useToken();
   const currentGroup = useCurrentResourceGroupValue();
@@ -69,7 +68,11 @@ const ResourceNumber: React.FC<ResourceNumberProps> = ({
 
       <Typography.Text>
         {formatAmount(amount)}
-        {range && max ? `~${formatAmount(max)}` : '~∞'}
+        {_.isUndefined(max)
+          ? null
+          : max === 'Infinity'
+            ? '~∞'
+            : `~${formatAmount(max)}`}
       </Typography.Text>
       <Typography.Text type="secondary">
         {resourceSlotsDetails?.[type]?.display_unit || ''}
