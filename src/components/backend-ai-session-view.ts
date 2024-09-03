@@ -395,6 +395,7 @@ export default class BackendAISessionView extends BackendAIPage {
       ipu_device: 'ipu.device',
       atom_device: 'atom.device',
       atom_plus_device: 'atom-plus.device',
+      gaudi2_device: 'gaudi2.device',
       warboy_device: 'warboy.device',
       hyperaccel_lpu_device: 'hyperaccel-lpu.device',
     };

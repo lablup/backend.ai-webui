@@ -1169,6 +1169,69 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                   </div>
                 `
               : html``}
+            ${this.total_slot.gaudi2_device
+              ? html`
+                  <div class="layout horizontal center-justified monitor">
+                    <div
+                      class="layout vertical center center-justified resource-name"
+                    >
+                      <span class="gauge-name">Gaudi 2</span>
+                    </div>
+                    <div class="layout vertical center-justified wrap">
+                      <lablup-progress-bar
+                        id="gaudi-2-usage-bar"
+                        class="start"
+                        progress="${this.used_resource_group_slot_percent
+                          .gaudi2_device / 100.0}"
+                        description="${this._prefixFormatWithoutTrailingZeros(
+                          this.used_resource_group_slot.gaudi2_device,
+                          2,
+                        )} / ${this._prefixFormatWithoutTrailingZeros(
+                          this.total_resource_group_slot.gaudi2_device,
+                          2,
+                        )}"
+                      ></lablup-progress-bar>
+                      <lablup-progress-bar
+                        id="gaudi-2-usage-bar-2"
+                        class="end"
+                        progress="${this.used_slot_percent.gaudi2_device /
+                        100.0}"
+                        buffer="${this.used_slot_percent.gaudi2_device / 100.0}"
+                        description="${this.used_slot.gaudi2_device}/${this
+                          .total_slot.gaudi2_device}"
+                      ></lablup-progress-bar>
+                    </div>
+                    <div class="layout vertical center center-justified">
+                      <span
+                        class="percentage
+                        start-bar
+                      "
+                      >
+                        ${this._numberWithPostfix(
+                          this._prefixFormatWithoutTrailingZeros(
+                            this.used_resource_group_slot_percent.gaudi2_device,
+                            1,
+                          ),
+                          '%',
+                        )}
+                      </span>
+                      <span
+                        class="percentage
+                        end-bar
+                      "
+                      >
+                        ${this._numberWithPostfix(
+                          this._prefixFormatWithoutTrailingZeros(
+                            this.used_slot_percent.gaudi2_device,
+                            1,
+                          ),
+                          '%',
+                        )}
+                      </span>
+                    </div>
+                  </div>
+                `
+              : html``}
             ${this.total_slot.warboy_device
               ? html`
                   <div class="layout horizontal center-justified monitor">

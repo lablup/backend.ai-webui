@@ -410,6 +410,7 @@
     "EnvironmentAndVersion": "環境及版本",
     "Tags": "標籤",
     "fGPU": "GPU",
+    "Gaudi2Enabled": "Gaudi 2 NPU 啟用",
     "ForceTerminateWarningMsg": "無論會話目前狀態如何，此操作都會終止或取消會話。\n你確定嗎？",
     "WarningForceTerminateSessions": "警告：強制終止會話",
     "ForceTerminateWarningMsg2": "僅當狀態在不合理的長時間內沒有發生變化時才執行。",
@@ -1241,7 +1242,13 @@
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "使用Hyperaccel LPU加速器。",
     "RequireHyperaccelLPUPlugin": "需要 Backend.AI Hyperaccel LPU 插件。",
-    "SearchPlaceholder": "搜索"
+    "SearchPlaceholder": "搜索",
+    "Gaudi2Support": "高第 2 支持",
+    "RequireGaudi2Plugin": "需要 Backend.AI Gaudi 2 插件。",
+    "DescGaudi2Support": "使用intel Gaudi 2加速器",
+    "ATOMPlusSupport": "ATOM+支持",
+    "RequireATOMPlusPlugin": "需要 Backend.AI ATOM+ 插件。",
+    "DescATOMPlusSupport": "Use Rebellions ATOM+ accelerator"
   },
   "notification": {
     "SuccessfullyUpdated": "成功更新",

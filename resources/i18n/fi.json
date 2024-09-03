@@ -1275,6 +1275,7 @@
     "EnvironmentAndVersion": "Ympäristö ja versio",
     "Tags": "Tunnisteet",
     "fGPU": "fGPU",
+    "Gaudi2Enabled": "Gaudi 2 NPU Käytössä",
     "ForceTerminateWarningMsg": "Tämä toiminto lopettaa tai peruuttaa istunnon riippumatta sen nykyisestä tilasta. \nOletko varma?",
     "WarningForceTerminateSessions": "Varoitus: pakota lopettamaan istunnot",
     "ForceTerminateWarningMsg2": "Suorita vain, kun tila ei muutu kohtuuttoman pitkään.",
@@ -1348,7 +1349,13 @@
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Käytä Hyperaccel LPU -kiihdytintä.",
     "RequireHyperaccelLPUPlugin": "Vaatii Backend.AI Hyperaccel LPU -laajennuksen.",
-    "SearchPlaceholder": "Etsi"
+    "SearchPlaceholder": "Etsi",
+    "Gaudi2Support": "Gaudi 2 -tuki",
+    "RequireGaudi2Plugin": "Vaatii Backend.AI Gaudi 2-laajennuksen.",
+    "DescGaudi2Support": "Käytä Intel Gaudi 2 -kiihdytintä",
+    "ATOMPlusSupport": "ATOM+-tuki",
+    "RequireATOMPlusPlugin": "Vaatii Backend.AI ATOM+ laajennuksen.",
+    "DescATOMPlusSupport": "Käytä Rebellions ATOM+ -kiihdytintä."
   },
   "sidepanel": {
     "BackgroundTasks": "Tehtävien suorittaminen",

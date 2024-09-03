@@ -412,6 +412,7 @@
     "EnvironmentAndVersion": "Хүрээлэн буй орчин ба хувилбар",
     "Tags": "Шошго",
     "fGPU": "fGPU",
+    "Gaudi2Enabled": "Gaudi 2 NPU Идэвхжүүлсэн",
     "ForceTerminateWarningMsg": "Энэ үйлдэл нь одоогийн байдлаас үл хамааран сессийг дуусгах эсвэл цуцлах болно. \nЧи итгэлтэй байна уу?",
     "WarningForceTerminateSessions": "Анхааруулга: Сешн(үүд)-ийг хүчээр зогсоох",
     "ForceTerminateWarningMsg2": "Үндэслэлгүй удаан хугацаанд төр өөрчлөгдөөгүй үед л гүйцэтгэнэ.",
@@ -1243,7 +1244,13 @@
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Hyperaccel LPU хурдасгуурыг ашигла.",
     "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU Plugin шаардлагатай.",
-    "SearchPlaceholder": "Хайх"
+    "SearchPlaceholder": "Хайх",
+    "Gaudi2Support": "Gaudi 2 дэмжлэг",
+    "RequireGaudi2Plugin": "Backend.AI Gaudi 2 Plugin шаардлагатай.",
+    "DescGaudi2Support": "Intel Gaudi 2 хурдасгуурыг ашигла",
+    "ATOMPlusSupport": "ATOM+ дэмжлэг",
+    "RequireATOMPlusPlugin": "Backend.AI ATOM+ Plugin шаардлагатай.",
+    "DescATOMPlusSupport": "Rebellions ATOM+ хурдасгуурыг ашигла."
   },
   "notification": {
     "SuccessfullyUpdated": "Амжилттай шинэчлэгдсэн",

@@ -1278,6 +1278,7 @@
     "EnvironmentAndVersion": "Entorno y versión",
     "Tags": "Etiquetas",
     "fGPU": "fGPU",
+    "Gaudi2Enabled": "Gaudi 2 NPU Activado",
     "ForceTerminateWarningMsg": "Esta acción terminará o cancelará la sesión independientemente de su estado actual. \n¿Está seguro?",
     "WarningForceTerminateSessions": "Advertencia: Forzar la finalización de sesiones",
     "ForceTerminateWarningMsg2": "Ejecutar solo cuando el estado no cambie durante un período de tiempo excesivamente largo.",
@@ -1351,7 +1352,13 @@
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Utilice el acelerador Hyperaccel LPU.",
     "RequireHyperaccelLPUPlugin": "Requiere el complemento LPU Backend.AI Hyperaccel.",
-    "SearchPlaceholder": "Buscar en"
+    "SearchPlaceholder": "Buscar en",
+    "Gaudi2Support": "Soporte Gaudí 2",
+    "RequireGaudi2Plugin": "Requiere el complemento Backend.AI Gaudi 2.",
+    "DescGaudi2Support": "Utilice el acelerador Intel Gaudí 2",
+    "ATOMPlusSupport": "Soporte ATOM+",
+    "RequireATOMPlusPlugin": "Requiere el complemento Backend.AI ATOM+.",
+    "DescATOMPlusSupport": "Usa el acelerador ATOM+ de Rebellions."
   },
   "sidepanel": {
     "BackgroundTasks": "Tareas en curso",

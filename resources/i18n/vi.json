@@ -410,6 +410,7 @@
     "EnvironmentAndVersion": "Môi trường và phiên bản",
     "Tags": "Thẻ",
     "fGPU": "fGPU",
+    "Gaudi2Enabled": "Gaudi 2 NPU Đã bật",
     "ForceTerminateWarningMsg": "Hành động này sẽ chấm dứt hoặc hủy phiên bất kể trạng thái hiện tại của nó. \nBạn có chắc không?",
     "WarningForceTerminateSessions": "Cảnh báo: Buộc chấm dứt (các) phiên",
     "ForceTerminateWarningMsg2": "Chỉ thực hiện khi trạng thái không thay đổi trong một khoảng thời gian dài không hợp lý.",
@@ -1242,7 +1243,13 @@
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Sử dụng bộ tăng tốc LPU Hyperaccel.",
     "RequireHyperaccelLPUPlugin": "Yêu cầu Plugin LPU Backend.AI Hyperaccel.",
-    "SearchPlaceholder": "Tìm kiếm"
+    "SearchPlaceholder": "Tìm kiếm",
+    "Gaudi2Support": "Hỗ trợ Gaudi 2",
+    "RequireGaudi2Plugin": "Yêu cầu Plugin Backend.AI Gaudi 2.",
+    "DescGaudi2Support": "Sử dụng bộ tăng tốc intel Gaudi 2",
+    "ATOMPlusSupport": "Hỗ trợ ATOM+",
+    "RequireATOMPlusPlugin": "Yêu cầu Plugin Backend.AI ATOM+.",
+    "DescATOMPlusSupport": "Sử dụng máy gia tốc ATOM+ của Rebellions."
   },
   "notification": {
     "SuccessfullyUpdated": "Cập nhật thành công",

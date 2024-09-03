@@ -1,7 +1,7 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useUpdatableState } from '../hooks';
-import useControllableState from '../hooks/useControllableState';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
+import useControllableState from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import TextHighlighter from './TextHighlighter';
 import { Select, SelectProps } from 'antd';

@@ -66,6 +66,8 @@ interface ServiceCreateConfigResourceType {
   'tpu.device'?: number | string;
   'ipu.device'?: number | string;
   'atom.device'?: number | string;
+  'gaudi2.device'?: number | string;
+  'atom-plus.device'?: number | string;
   'warboy.device'?: number | string;
   'hyperaccel-lpu.device'?: number | string;
 }

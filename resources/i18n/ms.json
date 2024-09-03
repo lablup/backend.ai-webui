@@ -410,6 +410,7 @@
     "EnvironmentAndVersion": "Persekitaran dan Versi",
     "Tags": "Tag",
     "fGPU": "fGPU",
+    "Gaudi2Enabled": "Gaudi 2 NPU Didayakan",
     "ForceTerminateWarningMsg": "Tindakan ini akan menamatkan atau membatalkan sesi tanpa mengira status semasanya. \nAdakah anda pasti?",
     "WarningForceTerminateSessions": "Amaran: Tamatkan Sesi Paksa",
     "ForceTerminateWarningMsg2": "Laksanakan hanya apabila keadaan tidak berubah untuk tempoh masa yang tidak munasabah.",
@@ -1241,7 +1242,13 @@
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Gunakan pemecut LPU Hyperaccel.",
     "RequireHyperaccelLPUPlugin": "Memerlukan Backend.AI Hyperaccel LPU Plugin.",
-    "SearchPlaceholder": "Cari"
+    "SearchPlaceholder": "Cari",
+    "Gaudi2Support": "Sokongan Gaudi 2",
+    "RequireGaudi2Plugin": "Memerlukan Backend.AI Gaudi 2 Plugin.",
+    "DescGaudi2Support": "Gunakan pemecut intel Gaudi 2",
+    "ATOMPlusSupport": "Sokongan ATOM+",
+    "RequireATOMPlusPlugin": "Memerlukan Plugin Backend.AI ATOM+.",
+    "DescATOMPlusSupport": "Gunakan pemecut ATOM+ Rebellions."
   },
   "notification": {
     "SuccessfullyUpdated": "Berjaya Dikemas kini",

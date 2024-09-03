@@ -411,6 +411,7 @@
     "Tags": "Tag",
     "Agents": "Agen",
     "fGPU": "fGPU",
+    "Gaudi2Enabled": "Gaudi 2 NPU Diaktifkan",
     "ForceTerminateWarningMsg": "Tindakan ini akan mengakhiri atau membatalkan sesi terlepas dari statusnya saat ini. \nApa kamu yakin?",
     "WarningForceTerminateSessions": "Peringatan: Paksa Mengakhiri Sesi",
     "ForceTerminateWarningMsg2": "Jalankan hanya ketika keadaan tidak berubah dalam jangka waktu yang terlalu lama.",
@@ -1243,7 +1244,13 @@
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Gunakan akselerator Hyperaccel LPU.",
     "RequireHyperaccelLPUPlugin": "Memerlukan Plugin LPU Backend.AI Hyperaccel.",
-    "SearchPlaceholder": "Pencarian"
+    "SearchPlaceholder": "Pencarian",
+    "Gaudi2Support": "Dukungan Gaudi 2",
+    "RequireGaudi2Plugin": "Membutuhkan Plugin Backend.AI Gaudi 2.",
+    "DescGaudi2Support": "Gunakan akselerator intel Gaudi 2",
+    "ATOMPlusSupport": "Dukungan ATOM+",
+    "RequireATOMPlusPlugin": "Membutuhkan Plugin Backend.AI ATOM+.",
+    "DescATOMPlusSupport": "Gunakan akselerator ATOM+ Rebellions."
   },
   "notification": {
     "SuccessfullyUpdated": "Berhasil Diperbarui",

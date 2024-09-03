@@ -410,6 +410,7 @@
     "EnvironmentAndVersion": "Ambiente e versão",
     "Tags": "Tag",
     "fGPU": "fGPU",
+    "Gaudi2Enabled": "Gaudi 2 NPU Habilitado",
     "ForceTerminateWarningMsg": "Esta ação encerrará ou cancelará a sessão independentemente de seu status atual. \nTem certeza?",
     "WarningForceTerminateSessions": "Aviso: forçar o encerramento de sessões",
     "ForceTerminateWarningMsg2": "Execute somente quando o estado não mudar por um período de tempo excessivamente longo.",
@@ -1242,7 +1243,13 @@
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Use o acelerador Hyperaccel LPU.",
     "RequireHyperaccelLPUPlugin": "Requer plug-in Backend.AI Hyperaccel LPU.",
-    "SearchPlaceholder": "Pesquisar"
+    "SearchPlaceholder": "Pesquisar",
+    "Gaudi2Support": "Apoio Gaudí 2",
+    "RequireGaudi2Plugin": "Requer plug-in Backend.AI Gaudi 2.",
+    "DescGaudi2Support": "Use o acelerador Intel Gaudi 2",
+    "ATOMPlusSupport": "Suporte ATOM+",
+    "RequireATOMPlusPlugin": "Requer plug-in Backend.AI ATOM+.",
+    "DescATOMPlusSupport": "Use o acelerador Rebellions ATOM+."
   },
   "notification": {
     "SuccessfullyUpdated": "Atualizado com sucesso",
