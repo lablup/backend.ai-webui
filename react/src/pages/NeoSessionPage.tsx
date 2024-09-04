@@ -61,7 +61,7 @@ const NeoSessionPage: React.FC<NeoSessionPageProps> = (props) => {
               type="primary"
               onClick={() => webuiNavigate('/session/start')}
             >
-              Session Start
+              Start Session
             </Button>
           </Flex>
           <Tabs
