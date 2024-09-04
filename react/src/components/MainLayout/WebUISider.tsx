@@ -7,10 +7,13 @@ import BAIMenu from '../BAIMenu';
 import BAISider, { BAISiderProps } from '../BAISider';
 import Flex from '../Flex';
 import SignoutModal from '../SignoutModal';
+import EndpointsIcon from '../icons/EndpointsIcon';
+import ExamplesIcon from '../icons/ExamplesIcon';
+import ModelsIcon from '../icons/ModelsIcon';
+import TrailsIcon from '../icons/TrailsIcon';
 import { PluginPage, WebUIPluginType } from './MainLayout';
 import {
   ApiOutlined,
-  BarChartOutlined,
   BarsOutlined,
   CloudUploadOutlined,
   ControlOutlined,
@@ -19,6 +22,7 @@ import {
   FileDoneOutlined,
   HddOutlined,
   InfoCircleOutlined,
+  PlayCircleOutlined,
   RocketOutlined,
   SolutionOutlined,
   ToolOutlined,
@@ -28,7 +32,6 @@ import { useToggle } from 'ahooks';
 import { theme, MenuProps, Typography } from 'antd';
 import { ItemType } from 'antd/lib/menu/interface';
 import _ from 'lodash';
-import { PlayIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -58,7 +61,6 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const location = useLocation();
   const baiClient = useSuspendedBackendaiClient();
 
-  const isHideAgents = baiClient?._config?.hideAgents ?? true;
   const fasttrackEndpoint = baiClient?._config?.fasttrackEndpoint ?? null;
   const blockList = baiClient?._config?.blockList ?? null;
   const inactiveList = baiClient?._config?.inactiveList ?? null;
@@ -71,69 +73,122 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
 
   const generalMenu = filterEmptyItem<ItemType>([
     {
-      label: t('webui.menu.Summary'),
-      icon: <DashboardOutlined />,
-      key: 'summary',
+      label: 'Start', // t('webui.menu.Summary'),
+      icon: <PlayCircleOutlined style={{ color: token.colorPrimaryBg }} />,
+      key: 'start', // 'summary',
     },
     {
-      label: t('webui.menu.Sessions'),
-      icon: <BarsOutlined />,
-      key: 'job',
-    },
-    supportServing && {
-      label: t('webui.menu.Serving'),
-      icon: <RocketOutlined />,
-      key: 'serving',
+      label: 'Dashboard',
+      icon: <DashboardOutlined style={{ color: token.colorPrimaryBg }} />,
+      key: 'dashboard',
     },
     {
-      label: t('webui.menu.Import&Run'),
-      icon: <PlayIcon />,
-      key: 'import',
+      key: 'storage',
+      label: 'Storage',
+      type: 'group',
+      children: [
+        {
+          label: t('webui.menu.Data&Storage'),
+          icon: <CloudUploadOutlined style={{ color: token.colorPrimaryBg }} />,
+          key: 'data',
+        },
+      ],
     },
     {
-      label: t('webui.menu.Data&Storage'),
-      icon: <CloudUploadOutlined />,
-      key: 'data',
-    },
-    supportUserCommittedImage && {
-      label: t('webui.menu.MyEnvironments'),
-      icon: <FileDoneOutlined />,
-      key: 'my-environment',
-    },
-    !isHideAgents && {
-      label: t('webui.menu.AgentSummary'),
-      icon: <HddOutlined />,
-      key: 'agent-summary',
+      key: 'workload',
+      label: 'Workload',
+      type: 'group',
+      children: [
+        {
+          label: t('webui.menu.Sessions'),
+          icon: <BarsOutlined style={{ color: token.colorPrimaryBg }} />,
+          key: 'session',
+        },
+        supportUserCommittedImage && {
+          label: t('webui.menu.MyEnvironments'),
+          icon: <FileDoneOutlined style={{ color: token.colorPrimaryBg }} />,
+          key: 'my-environment',
+        },
+        {
+          label: 'Examples',
+          icon: <ExamplesIcon style={{ color: token.colorPrimaryBg }} />,
+          key: 'examples',
+        },
+      ],
     },
     {
-      label: t('webui.menu.Statistics'),
-      icon: <BarChartOutlined />,
-      key: 'statistics',
+      key: 'service',
+      label: 'Service',
+      type: 'group',
+      children: [
+        supportServing && {
+          label: 'Endpoints', //t('webui.menu.Serving'),
+          icon: <EndpointsIcon style={{ color: token.colorPrimaryBg }} />, // <RocketOutlined />,
+          key: 'serving',
+        },
+        {
+          label: 'Models',
+          icon: <ModelsIcon style={{ color: token.colorPrimaryBg }} />,
+          key: 'models',
+        },
+      ],
     },
-    !!fasttrackEndpoint && {
-      label: t('webui.menu.FastTrack'),
-      icon: <ExportOutlined />,
-      key: 'pipeline',
-      onClick: () => {
-        window.open(fasttrackEndpoint, '_blank', 'noopener noreferrer');
-      },
+    {
+      key: 'fasttrack',
+      label: 'FastTrack',
+      type: 'group',
+      children: [
+        !!fasttrackEndpoint && {
+          label: 'Pipelines', // t('webui.menu.FastTrack'),
+          icon: <ExportOutlined style={{ color: token.colorPrimaryBg }} />, // TODO: change to custom Pipelines icon
+          key: 'pipeline',
+          onClick: () => {
+            window.open(fasttrackEndpoint, '_blank', 'noopener noreferrer');
+          },
+        },
+        {
+          label: 'Trails',
+          icon: <TrailsIcon style={{ color: token.colorPrimaryBg }} />,
+          key: 'trails',
+        },
+      ],
     },
+    // {
+    //   label: t('webui.menu.Import&Run'),
+    //   icon: <PlayIcon />,
+    //   key: 'import',
+    // },
+    // !isHideAgents && {
+    //   label: t('webui.menu.AgentSummary'),
+    //   icon: <HddOutlined />,
+    //   key: 'agent-summary',
+    // },
+    // {
+    //   label: t('webui.menu.Statistics'),
+    //   icon: <BarChartOutlined />,
+    //   key: 'statistics',
+    // },
   ]);
 
   const adminMenu: MenuProps['items'] = [
     {
+      label: 'System Dashboard',
+      icon: <DashboardOutlined style={{ color: token.colorSuccess }} />,
+      key: 'system_overview',
+    },
+    {
       label: t('webui.menu.Users'),
-      icon: <UserOutlined />,
+      icon: <UserOutlined style={{ color: token.colorSuccess }} />,
       key: 'credential',
     },
     {
       label: t('webui.menu.Environments'),
-      icon: <FileDoneOutlined />,
+      icon: <FileDoneOutlined style={{ color: token.colorSuccess }} />,
       key: 'environment',
     },
     {
       label: t('webui.menu.ResourcePolicy'),
-      icon: <SolutionOutlined />,
+      icon: <SolutionOutlined style={{ color: token.colorSuccess }} />,
       key: 'resource-policy',
     },
   ];
@@ -141,22 +196,22 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const superAdminMenu: MenuProps['items'] = [
     {
       label: t('webui.menu.Resources'),
-      icon: <HddOutlined />,
+      icon: <HddOutlined style={{ color: token.colorSuccess }} />,
       key: 'agent',
     },
     {
       label: t('webui.menu.Configurations'),
-      icon: <ControlOutlined />,
+      icon: <ControlOutlined style={{ color: token.colorSuccess }} />,
       key: 'settings',
     },
     {
       label: t('webui.menu.Maintenance'),
-      icon: <ToolOutlined />,
+      icon: <ToolOutlined style={{ color: token.colorSuccess }} />,
       key: 'maintenance',
     },
     {
       label: t('webui.menu.Information'),
-      icon: <InfoCircleOutlined />,
+      icon: <InfoCircleOutlined style={{ color: token.colorSuccess }} />,
       key: 'information',
     },
   ];
@@ -325,8 +380,33 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       {...props}
     >
       <BAIMenu
+        isAdminMenu={false}
         selectedKeys={[
-          location.pathname.split('/')[1] || 'summary',
+          location.pathname.split('/')[1] || 'start',
+          // TODO: After matching first path of 'storage-settings' and 'agent', remove this code
+          location.pathname.split('/')[1] === 'storage-settings' ? 'agent' : '',
+          // TODO: After 'SessionListPage' is completed and used as the main page, remove this code
+          //       and change 'job' key to 'session'
+          location.pathname.split('/')[1] === 'session' ? 'job' : '',
+        ]}
+        items={[...generalMenu]}
+        /**
+         * Etc menu
+         */
+        // {
+        //   label: '404',
+        //   icon: <QuestionOutlined />,
+        //   key: '404',
+        // },
+        // ]}
+        onClick={({ key, keyPath }) => {
+          webuiNavigate('/' + keyPath.join('/'));
+        }}
+      />
+      <BAIMenu
+        isAdminMenu={true}
+        selectedKeys={[
+          location.pathname.split('/')[1] || 'start',
           // TODO: After matching first path of 'storage-settings' and 'agent', remove this code
           location.pathname.split('/')[1] === 'storage-settings' ? 'agent' : '',
           // TODO: After 'SessionListPage' is completed and used as the main page, remove this code
@@ -337,13 +417,10 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           // TODO: add plugin menu
           currentUserRole === 'superadmin'
             ? [
-                ...generalMenu,
                 {
                   type: 'group',
                   label: (
-                    <Flex
-                      style={{ borderBottom: `1px solid ${token.colorBorder}` }}
-                    >
+                    <Flex>
                       {!props.collapsed && (
                         <Typography.Text type="secondary" ellipsis>
                           {t('webui.menu.Administration')}
@@ -375,7 +452,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                     children: [...adminMenu],
                   },
                 ]
-              : [...generalMenu]
+              : []
         }
         /**
          * Etc menu

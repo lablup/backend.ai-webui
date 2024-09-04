@@ -1,11 +1,10 @@
 import { ConfigProvider, Menu, MenuProps, theme } from 'antd';
 import React from 'react';
 
-// interface BAIMenuProps extends MenuProps {
-
-// }
-
-const BAIMenu: React.FC<MenuProps> = ({ ...props }) => {
+interface BAIMenuProps extends MenuProps {
+  isAdminMenu?: boolean;
+}
+const BAIMenu: React.FC<BAIMenuProps> = ({ ...props }) => {
   const { token } = theme.useToken();
   return (
     <>
@@ -13,7 +12,6 @@ const BAIMenu: React.FC<MenuProps> = ({ ...props }) => {
         {`
           .bai-menu li.ant-menu-item.ant-menu-item-selected {
             overflow: visible;
-            font-weight: 600;
           }
           
           .bai-menu li.ant-menu-item.ant-menu-item-selected::before {
@@ -22,7 +20,6 @@ const BAIMenu: React.FC<MenuProps> = ({ ...props }) => {
             bottom: 0;
             position: absolute;
             right: auto;
-            border-right: 3px solid ${token.colorPrimary};
             transform: scaleY(1);
             opacity: 1;
             content: "";
@@ -33,8 +30,23 @@ const BAIMenu: React.FC<MenuProps> = ({ ...props }) => {
         theme={{
           components: {
             Menu: {
-              itemBorderRadius: 2,
+              itemBorderRadius: 20,
               itemMarginInline: 0,
+              colorPrimaryBorder: props.isAdminMenu
+                ? token.colorSuccess
+                : token.colorInfoHover,
+              itemHoverBg: props.isAdminMenu
+                ? token.colorSuccessBgHover
+                : token.colorInfoHover,
+              itemHoverColor: props.isAdminMenu
+                ? token.colorSuccessHover
+                : token.colorPrimaryBg,
+              itemSelectedBg: props.isAdminMenu
+                ? token.colorSuccessBgHover
+                : token.colorInfoHover,
+              itemSelectedColor: props.isAdminMenu
+                ? token.colorSuccessHover
+                : token.colorPrimaryBg,
             },
           },
         }}

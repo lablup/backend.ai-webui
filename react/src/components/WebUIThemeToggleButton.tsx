@@ -3,7 +3,9 @@ import { MoonOutlined, SunOutlined } from '@ant-design/icons';
 import { Button, ButtonProps } from 'antd';
 import React from 'react';
 
-interface WebUIThemeToggleButtonProps extends ButtonProps {}
+interface WebUIThemeToggleButtonProps extends ButtonProps {
+  iconColor?: string;
+}
 
 const WebUIThemeToggleButton: React.FC<WebUIThemeToggleButtonProps> = ({
   ...props
@@ -14,7 +16,13 @@ const WebUIThemeToggleButton: React.FC<WebUIThemeToggleButtonProps> = ({
     <Button
       size="large"
       type="text"
-      icon={isDarkMode ? <SunOutlined /> : <MoonOutlined />}
+      icon={
+        isDarkMode ? (
+          <SunOutlined style={{ color: props.iconColor ?? 'inherit' }} />
+        ) : (
+          <MoonOutlined style={{ color: props.iconColor ?? 'inherit' }} />
+        )
+      }
       onClick={() => {
         setIsDarkMode(!isDarkMode);
       }}

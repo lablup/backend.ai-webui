@@ -1,70 +1,111 @@
 {
   "$schema": "./theme.schema.json",
-  "light" : {
-    "token": {
-      "fontFamily": "'Ubuntu', Roboto, sans-serif",
-      "colorPrimary": "#37B076",
-      "colorLink": "#37B076",
-      "colorLinkHover": "#71b98c",
-      "colorSuccess": "#37B076",
-      "colorBorder": "#DEE1E7",
-      "colorBorderSecondary": "#E1E1E2",
-      "colorWarning": "#f1a239"
-    },
-    "components": {
-      "Tag": {
-        "borderRadiusSM": 1
-      },
-      "Table": {
-        "headerBorderRadius": 0
-      },
-      "Layout": {
-        "lightSiderBg": "#F4F7FD",
-        "siderBg": "#2A2C30"
-      }
-    }
+  "light": {
+  "token": {
+  "fontFamily": "'Ubuntu', Roboto, sans-serif",
+  "colorPrimary": "#FF7A00",
+  "colorLink": "#FF7A00",
+  "colorPrimaryText": "#E8FAF6",
+  "colorPrimaryBg": "#FF7A00",
+  "colorInfoHover": "#FFE3B7",
+  "colorWarning": "#f1a239",
+  "colorError": "#EE585A",
+  "colorTextDescription": "#767676",
+  "borderRadius": 5,
+  "colorLinkHover": "#FF9D00",
+  "colorBgBlur": "#FFE3B7",
+  "colorBorderSecondary": "#E1E1E2",
+  "colorSuccess": "#028DF2",
+  "colorSuccessBg": "#C9EFFF",
+  "colorSuccessBgHover": "#C9EFFF",
+  "colorSuccessBorder": "#C9EFFF",
+  "colorSuccessBorderHover": "#C9EFFF",
+  "colorSuccessHover": "#028DF2",
+  "colorIcon": "#FFFFFF"
+  },
+  "components": {
+  "Tag": {
+  "borderRadiusSM": 100,
+  "colorSuccess": "#01A543",
+  "colorSuccessBorder": "#01A543",
+  "colorSuccessBg": "none",
+  "colorPreparingBg": "none",
+  "colorWarningBg": "none"
+  },
+  "Table": {
+  "headerBorderRadius": 0,
+  "headerBg": "#E3E3E3",
+  "cellPaddingBlock": 6,
+  "algorithm": true
+  },
+  "Layout": {
+  "lightSiderBg": "#FFFFFF",
+  "siderBg": "#2A2C30"
+  },
+  "Typography": {
+  "algorithm": {
+  "colorText": "#333333"
+  }
+  },
+  "Radio": {
+  "buttonColor": "#999999",
+  "algorithm": {
+  "buttonSolidCheckedBg": "#FFE3B7",
+  "buttonSolidCheckedColor": "#FF7A00"
+  }
+  },
+  "Select": {
+  "colorTextPlaceholder": "#999999"
+  },
+  "Tabs": {
+  "itemColor": "#999999"
+  }
+  }
   },
   "dark": {
-    "token": {
-      "fontFamily": "'Ubuntu', Roboto, sans-serif",
-      "colorPrimary": "#25C2A0",
-      "colorLink": "#25C2A0"
-    },
-    "components": {
-      "Tag": {
-        "borderRadiusSM": 1
-      },
-      "Table": {
-        "headerBorderRadius": 0
-      },
-      "Layout": {
-        "lightSiderBg": "#F4F7FD",
-        "siderBg": "#2A2C30"
-      }
-    }
+  "token": {
+  "fontFamily": "'Ubuntu', Roboto, sans-serif",
+  "colorPrimary": "#FF7A00",
+  "colorLink": "#FF7A00"
+  },
+  "components": {
+  "Tag": {
+  "borderRadiusSM": 100,
+  "colorSuccessBg": "none",
+  "colorPreparingBg": "none",
+  "colorWarningBg": "none"
+  },
+  "Table": {
+  "headerBorderRadius": 0,
+  "cellPaddingBlock": 6
+  },
+  "Layout": {
+  "lightSiderBg": "#F4F7FD",
+  "siderBg": "#2A2C30"
+  }
+  }
   },
   "logo": {
-    "src": "/manifest/backend.ai-text.svg",
-    "srcCollapsed": "/manifest/backend.ai-brand-simple.svg",
-    "srcDark": "/manifest/backend.ai-text-bgdark.svg",
-    "srcCollapsedDark": "/manifest/backend.ai-brand-simple-bgdark.svg",
-    "logoTitle": "WebUI",
-    "logoTitleCollapsed": "WebUI",
-    "alt": "Backend.AI Logo",
-    "href": "/summary",
-    "size": {
-      "width": 191,
-      "height": 32
-    },
-    "sizeCollapsed": {
-      "width": 48,
-      "height": 32
-    }
+  "src": "/manifest/backend.ai-white-text.svg",
+  "srcCollapsed": "/manifest/backend.ai-brand-simple.svg",
+  "srcDark": "/manifest/backend.ai-text-bgdark.svg",
+  "srcCollapsedDark": "/manifest/backend.ai-brand-simple-bgdark.svg",
+  "logoTitle": "WebUI",
+  "logoTitleCollapsed": "WebUI",
+  "alt": "Backend.AI Logo",
+  "href": "/summary",
+  "size": {
+  "width": 158.75,
+  "height": 24
   },
-  "sider": {
-  },
-  "branding": {
-    "companyName": "Lablup Inc.",
-    "brandName": "Backend.AI"
+  "sizeCollapsed": {
+  "width": 48,
+  "height": 24
   }
-}
+  },
+  "sider": {},
+  "branding": {
+  "companyName": "Lablup Inc.",
+  "brandName": "Backend.AI"
+  }
+  }
