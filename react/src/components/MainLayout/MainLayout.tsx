@@ -6,7 +6,6 @@ import BAIErrorBoundary from '../BAIErrorBoundary';
 import BAISider from '../BAISider';
 import Flex from '../Flex';
 import ForceTOTPChecker from '../ForceTOTPChecker';
-import NetworkStatusBanner from '../NetworkStatusBanner';
 import PasswordChangeRequestAlert from '../PasswordChangeRequestAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIHeader from './WebUIHeader';
@@ -122,16 +121,9 @@ function MainLayout() {
           </>
         }
       >
-        <WebUISider
-          collapsed={sideCollapsed}
-          onBreakpoint={(broken) => {
-            if (broken) {
-              setSideCollapsed(true);
-            } else {
-              !compactSidebarActive && setSideCollapsed(false);
-            }
-          }}
-          webuiplugins={webUIPlugins}
+        <WebUIHeader
+          onClickMenuIcon={() => setSideCollapsed((v) => !v)}
+          containerElement={contentScrollFlexRef.current}
         />
       </Suspense>
       <Layout
@@ -139,44 +131,52 @@ function MainLayout() {
           backgroundColor: 'transparent',
         }}
       >
+        <Suspense
+          fallback={
+            <div>
+              <Layout.Header style={{ visibility: 'hidden', height: 62 }} />
+            </div>
+          }
+        >
+          <WebUISider
+            collapsed={sideCollapsed}
+            onBreakpoint={(broken) => {
+              if (broken) {
+                setSideCollapsed(true);
+              } else {
+                !compactSidebarActive && setSideCollapsed(false);
+              }
+            }}
+            webuiplugins={webUIPlugins}
+          />
+        </Suspense>
         <BAIContentWithDrawerArea drawerWidth={DRAWER_WIDTH}>
           <Flex
             ref={contentScrollFlexRef}
-            direction="column"
+            direction="row"
             align="stretch"
+            gap="lg"
             style={{
-              paddingLeft: token.paddingContentHorizontalLG,
-              paddingRight: token.paddingContentHorizontalLG,
+              // paddingLeft: token.paddingContentHorizontalLG,
+              // paddingRight: token.paddingContentHorizontalLG,
+              marginTop: 24,
               paddingBottom: token.paddingContentVertical,
               height: '100vh',
               overflow: 'auto',
             }}
           >
             <BAIErrorBoundary>
-              <Suspense
-                fallback={
-                  <div>
-                    <Layout.Header
-                      style={{ visibility: 'hidden', height: 62 }}
-                    />
-                  </div>
-                }
+              <Flex
+                direction="row"
+                align="stretch"
+                gap="lg"
+                style={{ marginTop: 100 }}
               >
-                <div
-                  style={{
-                    margin: `0 -${token.paddingContentHorizontalLG}px 0 -${token.paddingContentHorizontalLG}px`,
-                    position: 'sticky',
-                    top: 0,
-                    zIndex: HEADER_Z_INDEX_IN_MAIN_LAYOUT,
-                  }}
-                >
-                  <NetworkStatusBanner />
-                  <WebUIHeader
-                    onClickMenuIcon={() => setSideCollapsed((v) => !v)}
-                    containerElement={contentScrollFlexRef.current}
-                  />
-                </div>
-              </Suspense>
+                <Suspense>
+                  {/* @ts-ignore */}
+                  <backend-ai-webui id="webui-shell" ref={webUIRef} />
+                </Suspense>
+              </Flex>
               {/* <Flex direction="column"> */}
 
               {/* TODO: Breadcrumb */}
@@ -219,10 +219,6 @@ function MainLayout() {
               <Suspense>
                 <Outlet />
               </Suspense>
-              {/* To match paddig to 16 (2+14) */}
-              {/* </Flex> */}
-              {/* @ts-ignore */}
-              <backend-ai-webui id="webui-shell" ref={webUIRef} />
             </BAIErrorBoundary>
           </Flex>
         </BAIContentWithDrawerArea>
