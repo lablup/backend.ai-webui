@@ -50,7 +50,7 @@ export type Endpoint = NonNullable<
   >[0]
 >;
 
-type LifecycleStage = 'created' | 'destroying' | 'destroyed';
+type LifecycleStage = 'created&destroying' | 'destroyed';
 
 const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation();
@@ -61,7 +61,7 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const curProject = useCurrentProjectValue();
   const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
   const [selectedLifecycleStage, setSelectedLifecycleStage] =
-    useState<LifecycleStage>('created');
+    useState<LifecycleStage>('created&destroying');
   const deferredSelectedLifecycleStage = useDeferredValue(
     selectedLifecycleStage,
   );
@@ -360,7 +360,10 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
           deferredPaginationState.pageSize,
         limit: deferredPaginationState.pageSize,
         projectID: curProject.id,
-        filter: `lifecycle_stage == "${deferredSelectedLifecycleStage}"`,
+        filter:
+          deferredSelectedLifecycleStage === 'created&destroying'
+            ? `lifecycle_stage == "created" | lifecycle_stage == "destroying"`
+            : `lifecycle_stage == "${deferredSelectedLifecycleStage}"`,
       },
       {
         fetchPolicy: 'network-only',
@@ -422,12 +425,8 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
             buttonStyle="solid"
             options={[
               {
-                label: 'Created',
-                value: 'created',
-              },
-              {
-                label: 'Destroying',
-                value: 'destroying',
+                label: 'Active',
+                value: 'created&destroying',
               },
               {
                 label: 'Destroyed',
