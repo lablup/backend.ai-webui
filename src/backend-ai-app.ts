@@ -50,7 +50,7 @@ export const navigate =
     }
     let page;
     if (['/', 'build', '/build', 'app', '/app'].includes(path)) {
-      page = 'summary';
+      page = 'start';
     } else if (path[0] === '/') {
       page = path.slice(1);
     } else {
@@ -85,7 +85,7 @@ const loadPage =
   (page, params: Record<string, unknown> = {}) =>
   (dispatch) => {
     switch (page) {
-      case 'summary':
+      case 'start':
         import('./components/backend-ai-summary-view.js').then((module) => {
           // TODO: after page changing?
         });

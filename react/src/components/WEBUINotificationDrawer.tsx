@@ -19,7 +19,7 @@ import { useTranslation } from 'react-i18next';
 type NotificationCategory = 'all' | 'in progress';
 interface Props extends DrawerProps {}
 
-export const DRAWER_WIDTH = 280;
+export const DRAWER_WIDTH = 220;
 const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();

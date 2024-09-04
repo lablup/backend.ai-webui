@@ -6,6 +6,7 @@ import {
 } from '../hooks/backendai';
 import { UserProfileQuery } from './UserProfileSettingModalQuery';
 import { UserProfileSettingModalQuery } from './__generated__/UserProfileSettingModalQuery.graphql';
+import UserOutlinedIcon from './icons/UserOutlinedIcon';
 import {
   UserOutlined,
   MailOutlined,
@@ -36,7 +37,12 @@ const UserProfileSettingModal = React.lazy(
   () => import('./UserProfileSettingModal'),
 );
 
-const UserDropdownMenu: React.FC = () => {
+interface UserDropdownMenuProps {
+  iconColor?: string;
+  color?: string;
+}
+
+const UserDropdownMenu: React.FC<UserDropdownMenuProps> = ({ ...props }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [userInfo] = useCurrentUserInfo();
@@ -194,17 +200,15 @@ const UserDropdownMenu: React.FC = () => {
             justifyContent: 'center',
             marginTop: -2,
             fontSize: token.fontSize,
+            color: token.colorIcon,
           }}
-          // icon={<UserOutlined />}
           icon={
             <Avatar
-              size={20}
-              icon={<UserOutlined style={{ fontSize: 13 }} />}
-              style={
-                {
-                  // border: 1,
-                }
-              }
+              size={17}
+              icon={<UserOutlinedIcon style={{ fontSize: 20 }} />}
+              style={{
+                border: 1,
+              }}
             ></Avatar>
           }
         >

@@ -145,7 +145,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({ type: Number }) sidepanelWidth = 250;
   @property({ type: Object }) supports = Object();
   @property({ type: Array }) availablePages = [
-    'summary',
+    // 'summary',
+    'start',
     'verify-email',
     'change-password',
     'job',
@@ -719,7 +720,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    */
   _loadPageElement() {
     if (this._page === 'index.html' || this._page === '') {
-      this._page = 'summary';
+      this._page = 'start';
       navigate(decodeURIComponent('/'));
     }
   }
@@ -896,13 +897,13 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         <div id="loading-drag-area" class="loading-background-drag-area"></div>
       </div>
       <div id="app-page">
-        <backend-ai-summary-view
+        <!-- <backend-ai-summary-view
           class="page"
           name="summary"
           ?active="${this._page === 'summary'}"
         >
           <mwc-circular-progress indeterminate></mwc-circular-progress>
-        </backend-ai-summary-view>
+        </backend-ai-summary-view> -->
         <backend-ai-import-view
           class="page"
           name="import"
