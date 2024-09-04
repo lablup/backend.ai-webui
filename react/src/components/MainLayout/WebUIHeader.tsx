@@ -1,4 +1,5 @@
 import { useCurrentDomainValue } from '../../hooks';
+import { useSuspendedBackendaiClient } from '../../hooks';
 import {
   useCurrentProjectValue,
   useSetCurrentProject,
@@ -6,6 +7,7 @@ import {
 import { useScrollBreakPoint } from '../../hooks/useScrollBreackPoint';
 import BAINotificationButton from '../BAINotificationButton';
 import Flex, { FlexProps } from '../Flex';
+import LoginSessionExtendButton from '../LoginSessionExtendButton';
 import ProjectSelect from '../ProjectSelect';
 import UserDropdownMenu from '../UserDropdownMenu';
 import WEBUIHelpButton from '../WEBUIHelpButton';
@@ -13,7 +15,7 @@ import WebUIThemeToggleButton from '../WebUIThemeToggleButton';
 // @ts-ignore
 import rawCss from './WebUIHeader.css?raw';
 import { MenuOutlined } from '@ant-design/icons';
-import { theme, Button, Typography, Grid } from 'antd';
+import { theme, Button, Typography, Grid, Divider } from 'antd';
 import _ from 'lodash';
 import { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -34,6 +36,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
   const currentDomainName = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
   const setCurrentProject = useSetCurrentProject();
+  const baiClient = useSuspendedBackendaiClient();
   const matches = useMatches();
   const { y: scrolled } = useScrollBreakPoint(
     {
@@ -112,6 +115,14 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
           <BAINotificationButton />
           <WebUIThemeToggleButton />
           <WEBUIHelpButton />
+          {baiClient.supports('extend-login-session') &&
+            baiClient._config.enableExtendLoginSession && (
+              <Suspense>
+                <Divider type="vertical" />
+                <LoginSessionExtendButton />
+                <Divider type="vertical" />
+              </Suspense>
+            )}
           <UserDropdownMenu />
         </Flex>
       </Flex>

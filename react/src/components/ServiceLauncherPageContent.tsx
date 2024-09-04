@@ -13,7 +13,6 @@ import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { DEFAULT_BAI_MODAL_Z_INDEX } from './BAIModal';
 import EnvVarFormList, { EnvVarFormListValue } from './EnvVarFormList';
 import Flex from './Flex';
-import FlexActivityIndicator from './FlexActivityIndicator';
 import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
@@ -66,6 +65,8 @@ interface ServiceCreateConfigResourceType {
   'tpu.device'?: number | string;
   'ipu.device'?: number | string;
   'atom.device'?: number | string;
+  'gaudi2.device'?: number | string;
+  'atom-plus.device'?: number | string;
   'warboy.device'?: number | string;
   'hyperaccel-lpu.device'?: number | string;
 }
@@ -675,260 +676,250 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             style={{ flex: 1, maxWidth: 700 }}
             wrap="nowrap"
           >
-            <Suspense fallback={<FlexActivityIndicator />}>
-              <Form
-                form={form}
-                disabled={mutationToCreateService.isPending}
-                layout="vertical"
-                labelCol={{ span: 12 }}
-                initialValues={INITIAL_FORM_VALUES}
-                requiredMark="optional"
-              >
-                <Flex direction="column" gap={'md'} align="stretch">
-                  <Card>
-                    {(baiClient.supports('modify-endpoint') || !endpoint) && (
-                      <>
+            <Form
+              form={form}
+              disabled={mutationToCreateService.isPending}
+              layout="vertical"
+              labelCol={{ span: 12 }}
+              initialValues={INITIAL_FORM_VALUES}
+              requiredMark="optional"
+            >
+              <Flex direction="column" gap={'md'} align="stretch">
+                <Card>
+                  {(baiClient.supports('modify-endpoint') || !endpoint) && (
+                    <>
+                      <Form.Item
+                        label={t('modelService.ServiceName')}
+                        name="serviceName"
+                        rules={[
+                          {
+                            pattern: /^(?=.{4,24}$)\w[\w.-]*\w$/,
+                            message: t('modelService.ServiceNameRule'),
+                          },
+                          {
+                            required: true,
+                          },
+                        ]}
+                      >
+                        <Input disabled={!!endpoint} />
+                      </Form.Item>
+                      <Form.Item
+                        name="openToPublic"
+                        label={t('modelService.OpenToPublic')}
+                        valuePropName="checked"
+                      >
+                        <Switch disabled={!!endpoint}></Switch>
+                      </Form.Item>
+                      {!endpoint ? (
                         <Form.Item
-                          label={t('modelService.ServiceName')}
-                          name="serviceName"
+                          name={'vFolderID'}
+                          label={t('session.launcher.ModelStorageToMount')}
                           rules={[
-                            {
-                              pattern: /^(?=.{4,24}$)\w[\w.-]*\w$/,
-                              message: t('modelService.ServiceNameRule'),
-                            },
                             {
                               required: true,
                             },
                           ]}
                         >
-                          <Input disabled={!!endpoint} />
+                          <VFolderSelect
+                            filter={(vf) =>
+                              vf.usage_mode === 'model' && vf.status === 'ready'
+                            }
+                            valuePropName="id"
+                            autoSelectDefault={!model}
+                            disabled={!!endpoint}
+                          />
                         </Form.Item>
-                        <Form.Item
-                          name="openToPublic"
-                          label={t('modelService.OpenToPublic')}
-                          valuePropName="checked"
-                        >
-                          <Switch disabled={!!endpoint}></Switch>
-                        </Form.Item>
-                        {!endpoint ? (
+                      ) : (
+                        endpoint?.model && (
                           <Form.Item
                             name={'vFolderID'}
                             label={t('session.launcher.ModelStorageToMount')}
-                            rules={[
-                              {
-                                required: true,
-                              },
-                            ]}
-                          >
-                            <VFolderSelect
-                              filter={(vf) =>
-                                vf.usage_mode === 'model' &&
-                                vf.status === 'ready'
-                              }
-                              valuePropName="id"
-                              autoSelectDefault={!model}
-                              disabled={!!endpoint}
-                            />
-                          </Form.Item>
-                        ) : (
-                          endpoint?.model && (
-                            <Form.Item
-                              name={'vFolderID'}
-                              label={t('session.launcher.ModelStorageToMount')}
-                              required
-                            >
-                              <Suspense fallback={<Skeleton.Input active />}>
-                                <VFolderLazyView uuid={endpoint?.model} />
-                              </Suspense>
-                            </Form.Item>
-                          )
-                        )}
-                        {baiClient.supports('endpoint-runtime-variant') ? (
-                          <Form.Item
-                            name={'runtimeVariant'}
                             required
-                            label={t('modelService.RuntimeVariant')}
                           >
-                            <Select
-                              defaultActiveFirstOption
-                              showSearch
-                              options={_.map(
-                                availableRuntimes?.runtimes,
-                                (runtime) => {
-                                  return {
-                                    value: runtime.name,
-                                    label: runtime.human_readable_name,
-                                  };
-                                },
-                              )}
-                            />
+                            <Suspense fallback={<Skeleton.Input active />}>
+                              <VFolderLazyView uuid={endpoint?.model} />
+                            </Suspense>
                           </Form.Item>
-                        ) : null}
-                        <Form.Item dependencies={['runtimeVariant']} noStyle>
-                          {({ getFieldValue }) =>
-                            getFieldValue('runtimeVariant') === 'custom' &&
-                            baiClient.supports('endpoint-extra-mounts') ? (
-                              <>
-                                <Flex
-                                  direction="row"
-                                  gap={'xxs'}
-                                  align="stretch"
-                                  justify="between"
-                                >
-                                  <Form.Item
-                                    name={'modelMountDestination'}
-                                    label={t(
-                                      'modelService.ModelMountDestination',
-                                    )}
-                                    style={{ width: '50%' }}
-                                    labelCol={{ style: { flex: 1 } }}
-                                  >
-                                    <Input
-                                      allowClear
-                                      placeholder={'/models'}
-                                      disabled={!!endpoint}
-                                    />
-                                  </Form.Item>
-                                  <MinusOutlined
-                                    style={{
-                                      fontSize: token.fontSizeXL,
-                                      color: token.colorTextDisabled,
-                                    }}
-                                    rotate={290}
-                                  />
-                                  <Form.Item
-                                    name={'modelDefinitionPath'}
-                                    label={t(
-                                      'modelService.ModelDefinitionPath',
-                                    )}
-                                    style={{ width: '50%' }}
-                                    labelCol={{ style: { flex: 1 } }}
-                                  >
-                                    <Input
-                                      allowClear
-                                      placeholder={
-                                        endpoint?.model_definition_path
-                                          ? endpoint?.model_definition_path
-                                          : 'model-definition.yaml'
-                                      }
-                                    />
-                                  </Form.Item>
-                                </Flex>
-                              </>
-                            ) : null
-                          }
-                        </Form.Item>
-                        {baiClient.supports('endpoint-extra-mounts') ? (
-                          <>
-                            <Form.Item noStyle dependencies={['vFolderID']}>
-                              {({ getFieldValue }) => {
-                                return (
-                                  <VFolderTableFormItem
-                                    rowKey={'id'}
-                                    label={t('modelService.AdditionalMounts')}
-                                    filter={(vf) =>
-                                      vf.name !== getFieldValue('vFolderID') &&
-                                      vf.status === 'ready' &&
-                                      vf.usage_mode !== 'model' &&
-                                      !vf.name?.startsWith('.')
-                                    }
-                                    tableProps={{
-                                      size: 'small',
-                                    }}
-                                  />
-                                );
-                              }}
-                            </Form.Item>
-                          </>
-                        ) : null}
-                      </>
-                    )}
-                    <Form.Item
-                      label={t('modelService.DesiredRoutingCount')}
-                      name="desiredRoutingCount"
-                      rules={[
-                        {
-                          required: true,
-                          min: 0,
-                          max: 10,
-                          type: 'number',
-                        },
-                      ]}
-                    >
-                      <InputNumberWithSlider
-                        min={0}
-                        max={10}
-                        inputNumberProps={{
-                          //TODO: change unit based on resource limit
-                          addonAfter: '#',
-                        }}
-                        step={1}
-                      />
-                    </Form.Item>
-                    {(baiClient.supports('modify-endpoint') || !endpoint) && (
-                      <>
-                        <ImageEnvironmentSelectFormItems
-                        // //TODO: test with real inference images
-                        // filter={(image) => {
-                        //   return !!_.find(image?.labels, (label) => {
-                        //     return (
-                        //       label?.key === "ai.backend.role" &&
-                        //       label.value === "INFERENCE" //['COMPUTE', 'INFERENCE', 'SYSTEM']
-                        //     );
-                        //   });
-                        // }}
-                        />
-                        <ResourceAllocationFormItems enableResourcePresets />
+                        )
+                      )}
+                      {baiClient.supports('endpoint-runtime-variant') ? (
                         <Form.Item
-                          label={t('session.launcher.EnvironmentVariable')}
+                          name={'runtimeVariant'}
+                          required
+                          label={t('modelService.RuntimeVariant')}
                         >
-                          <EnvVarFormList
-                            name={'envvars'}
-                            formItemProps={{
-                              validateTrigger: ['onChange', 'onBlur'],
-                            }}
+                          <Select
+                            defaultActiveFirstOption
+                            showSearch
+                            options={_.map(
+                              availableRuntimes?.runtimes,
+                              (runtime) => {
+                                return {
+                                  value: runtime.name,
+                                  label: runtime.human_readable_name,
+                                };
+                              },
+                            )}
                           />
                         </Form.Item>
-                      </>
-                    )}
-                  </Card>
-                  <Flex
-                    direction="row"
-                    justify="between"
-                    align="end"
-                    gap={'xs'}
-                  >
-                    <Flex>
-                      {baiClient.supports('model-service-validation') ? (
-                        <Button
-                          onClick={() => {
-                            form
-                              .validateFields()
-                              .then((values) => {
-                                setValidateServiceData(values);
-                                setIsOpenServiceValidationModal(true);
-                              })
-                              .catch((err) => {
-                                console.log(err.message);
-                                message.error(
-                                  t('modelService.FormValidationFailed'),
-                                );
-                              });
-                          }}
-                        >
-                          {t('modelService.Validate')}
-                        </Button>
                       ) : null}
-                    </Flex>
-                    <Flex gap={'sm'}>
-                      <Button type="primary" onClick={handleOk}>
-                        {endpoint ? t('button.Update') : t('button.Create')}
+                      <Form.Item dependencies={['runtimeVariant']} noStyle>
+                        {({ getFieldValue }) =>
+                          getFieldValue('runtimeVariant') === 'custom' &&
+                          baiClient.supports('endpoint-extra-mounts') ? (
+                            <>
+                              <Flex
+                                direction="row"
+                                gap={'xxs'}
+                                align="stretch"
+                                justify="between"
+                              >
+                                <Form.Item
+                                  name={'modelMountDestination'}
+                                  label={t(
+                                    'modelService.ModelMountDestination',
+                                  )}
+                                  style={{ width: '50%' }}
+                                  labelCol={{ style: { flex: 1 } }}
+                                >
+                                  <Input
+                                    allowClear
+                                    placeholder={'/models'}
+                                    disabled={!!endpoint}
+                                  />
+                                </Form.Item>
+                                <MinusOutlined
+                                  style={{
+                                    fontSize: token.fontSizeXL,
+                                    color: token.colorTextDisabled,
+                                  }}
+                                  rotate={290}
+                                />
+                                <Form.Item
+                                  name={'modelDefinitionPath'}
+                                  label={t('modelService.ModelDefinitionPath')}
+                                  style={{ width: '50%' }}
+                                  labelCol={{ style: { flex: 1 } }}
+                                >
+                                  <Input
+                                    allowClear
+                                    placeholder={
+                                      endpoint?.model_definition_path
+                                        ? endpoint?.model_definition_path
+                                        : 'model-definition.yaml'
+                                    }
+                                  />
+                                </Form.Item>
+                              </Flex>
+                            </>
+                          ) : null
+                        }
+                      </Form.Item>
+                      {baiClient.supports('endpoint-extra-mounts') ? (
+                        <>
+                          <Form.Item noStyle dependencies={['vFolderID']}>
+                            {({ getFieldValue }) => {
+                              return (
+                                <VFolderTableFormItem
+                                  rowKey={'id'}
+                                  label={t('modelService.AdditionalMounts')}
+                                  filter={(vf) =>
+                                    vf.name !== getFieldValue('vFolderID') &&
+                                    vf.status === 'ready' &&
+                                    vf.usage_mode !== 'model' &&
+                                    !vf.name?.startsWith('.')
+                                  }
+                                  tableProps={{
+                                    size: 'small',
+                                  }}
+                                />
+                              );
+                            }}
+                          </Form.Item>
+                        </>
+                      ) : null}
+                    </>
+                  )}
+                  <Form.Item
+                    label={t('modelService.DesiredRoutingCount')}
+                    name="desiredRoutingCount"
+                    rules={[
+                      {
+                        required: true,
+                        min: 0,
+                        max: 10,
+                        type: 'number',
+                      },
+                    ]}
+                  >
+                    <InputNumberWithSlider
+                      min={0}
+                      max={10}
+                      inputNumberProps={{
+                        //TODO: change unit based on resource limit
+                        addonAfter: '#',
+                      }}
+                      step={1}
+                    />
+                  </Form.Item>
+                  {(baiClient.supports('modify-endpoint') || !endpoint) && (
+                    <>
+                      <ImageEnvironmentSelectFormItems
+                      // //TODO: test with real inference images
+                      // filter={(image) => {
+                      //   return !!_.find(image?.labels, (label) => {
+                      //     return (
+                      //       label?.key === "ai.backend.role" &&
+                      //       label.value === "INFERENCE" //['COMPUTE', 'INFERENCE', 'SYSTEM']
+                      //     );
+                      //   });
+                      // }}
+                      />
+                      <ResourceAllocationFormItems enableResourcePresets />
+                      <Form.Item
+                        label={t('session.launcher.EnvironmentVariable')}
+                      >
+                        <EnvVarFormList
+                          name={'envvars'}
+                          formItemProps={{
+                            validateTrigger: ['onChange', 'onBlur'],
+                          }}
+                        />
+                      </Form.Item>
+                    </>
+                  )}
+                </Card>
+                <Flex direction="row" justify="between" align="end" gap={'xs'}>
+                  <Flex>
+                    {baiClient.supports('model-service-validation') ? (
+                      <Button
+                        onClick={() => {
+                          form
+                            .validateFields()
+                            .then((values) => {
+                              setValidateServiceData(values);
+                              setIsOpenServiceValidationModal(true);
+                            })
+                            .catch((err) => {
+                              console.log(err.message);
+                              message.error(
+                                t('modelService.FormValidationFailed'),
+                              );
+                            });
+                        }}
+                      >
+                        {t('modelService.Validate')}
                       </Button>
-                    </Flex>
+                    ) : null}
+                  </Flex>
+                  <Flex gap={'sm'}>
+                    <Button type="primary" onClick={handleOk}>
+                      {endpoint ? t('button.Update') : t('button.Create')}
+                    </Button>
                   </Flex>
                 </Flex>
-              </Form>
-            </Suspense>
+              </Flex>
+            </Form>
           </Flex>
         </Flex>
       </Flex>

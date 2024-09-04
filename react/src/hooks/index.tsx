@@ -142,26 +142,22 @@ interface ImageMetadata {
 }
 
 export const useBackendAIImageMetaData = () => {
-  const { data: metadata } = useSuspenseTanQuery({
+  const { data: metadata } = useSuspenseTanQuery<{
+    imageInfo: {
+      [key: string]: ImageMetadata | undefined;
+    };
+    tagAlias: {
+      [key: string]: string;
+    };
+    tagReplace: {
+      [key: string]: string;
+    };
+  }>({
     queryKey: ['backendai-metadata-for-suspense'],
     queryFn: () => {
-      return fetch('resources/image_metadata.json')
-        .then((response) => response.json())
-        .then(
-          (json: {
-            imageInfo: {
-              [key: string]: ImageMetadata | undefined;
-            };
-            tagAlias: {
-              [key: string]: string;
-            };
-            tagReplace: {
-              [key: string]: string;
-            };
-          }) => {
-            return json;
-          },
-        );
+      return fetch('resources/image_metadata.json').then((response) =>
+        response.json(),
+      );
     },
     retry: false,
   });
@@ -361,6 +357,8 @@ type BackendAIConfig = {
   maxTPUDevicesPerContainer: number;
   maxIPUDevicesPerContainer: number;
   maxATOMDevicesPerContainer: number;
+  maxATOMPlusDevicesPerContainer: number;
+  maxGaudi2DevicesPerContainer: number;
   maxWarboyDevicesPerContainer: number;
   maxShmPerContainer: number;
   maxFileUploadSize: number;
@@ -384,5 +382,6 @@ type BackendAIConfig = {
   inactiveList: string[];
   allowSignout: boolean;
   allowNonAuthTCP: boolean;
+  enableExtendLoginSession: boolean;
   [key: string]: any;
 };

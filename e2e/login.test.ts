@@ -1,9 +1,8 @@
-import { test, expect } from '@playwright/test';
 import { loginAsAdmin } from './test-util';
+import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
   await page.goto('http://127.0.0.1:9081');
-  
 });
 
 test.describe('Before login', () => {
@@ -24,4 +23,3 @@ test.describe('Login using the admin account', () => {
     await expect(page.getByRole('heading', { name: 'Summary' })).toBeVisible();
   });
 });
-

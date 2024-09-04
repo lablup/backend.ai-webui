@@ -20,22 +20,23 @@ import {
   CheckOutlined,
   CloseOutlined,
   DeleteOutlined,
+  LoadingOutlined,
   ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 import { useRafInterval } from 'ahooks';
 import { useLocalStorageState } from 'ahooks';
-import { Button, Table, Typography, theme, message, Popconfirm } from 'antd';
+import { Button, Table, Typography, theme, Radio, App } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import { default as dayjs } from 'dayjs';
 import _ from 'lodash';
 import React, {
   PropsWithChildren,
-  Suspense,
   useState,
   useTransition,
   startTransition as startTransitionWithoutPendingState,
+  useDeferredValue,
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
@@ -49,24 +50,33 @@ export type Endpoint = NonNullable<
   >[0]
 >;
 
+type LifecycleStage = 'created&destroying' | 'destroyed';
+
 const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation();
+  const { message, modal } = App.useApp();
   const baiClient = useSuspendedBackendaiClient();
   const webuiNavigate = useWebUINavigate();
   const { token } = theme.useToken();
   const curProject = useCurrentProjectValue();
   const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
-  const [terminatingModelService, setTerminatingModelService] =
-    useState<Endpoint | null>(null);
-
-  // const [paginationState, setPaginationState] = useState<{
-  const [paginationState] = useState<{
+  const [selectedLifecycleStage, setSelectedLifecycleStage] =
+    useState<LifecycleStage>('created&destroying');
+  const deferredSelectedLifecycleStage = useDeferredValue(
+    selectedLifecycleStage,
+  );
+  const [paginationState, setPaginationState] = useState<{
     current: number;
     pageSize: number;
   }>({
     current: 1,
-    pageSize: 100,
+    pageSize: 10,
   });
+
+  const deferredPaginationState = useDeferredValue(paginationState);
+  const isPendingPaginationAndFilter =
+    selectedLifecycleStage !== deferredSelectedLifecycleStage ||
+    paginationState !== deferredPaginationState;
 
   const [isRefetchPending, startRefetchTransition] = useTransition();
   const [servicesFetchKey, updateServicesFetchKey] =
@@ -143,65 +153,71 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
               webuiNavigate('/service/update/' + row.endpoint_id);
             }}
           />
-          <Popconfirm
-            title={t('dialog.ask.DoYouWantToDeleteSomething', {
-              name: row.name,
-            })}
-            description={t('dialog.warning.CannotBeUndone')}
-            okType="danger"
-            okText={t('button.Delete')}
-            onConfirm={() => {
-              setOptimisticDeletingId(row.endpoint_id);
-              // FIXME: any better idea for handling result?
-              terminateModelServiceMutation.mutate(
-                terminatingModelService?.endpoint_id || '',
-                {
-                  onSuccess: (res) => {
-                    startRefetchTransition(() => {
-                      updateServicesFetchKey();
-                    });
-                    // FIXME: temporally refer to mutate input to message
-                    message.success(
-                      t('modelService.ServiceTerminated', {
-                        name: terminatingModelService?.name,
-                      }),
-                    );
-                  },
-                  onError: (err) => {
-                    console.log(err);
-                    message.error(t('modelService.FailedToTerminateService'));
-                  },
+          <Button
+            type="text"
+            icon={
+              <DeleteOutlined
+                style={
+                  row.desired_session_count < 0 ||
+                  row.status?.toLowerCase() === 'destroying'
+                    ? undefined
+                    : {
+                        color: token.colorError,
+                      }
+                }
+              />
+            }
+            loading={
+              terminateModelServiceMutation.isPending &&
+              optimisticDeletingId === row.endpoint_id
+            }
+            disabled={
+              row.desired_session_count < 0 ||
+              row.status?.toLowerCase() === 'destroying'
+            }
+            onClick={() => {
+              modal.confirm({
+                title: t('dialog.ask.DoYouWantToDeleteSomething', {
+                  name: row.name,
+                }),
+                content: t('dialog.warning.CannotBeUndone'),
+                okText: t('button.Delete'),
+                okButtonProps: {
+                  danger: true,
+                  type: 'primary',
                 },
-              );
-            }}
-          >
-            <Button
-              type="text"
-              icon={
-                <DeleteOutlined
-                  style={
-                    row.desired_session_count < 0 ||
-                    row.status?.toLowerCase() === 'destroying'
-                      ? undefined
-                      : {
-                          color: token.colorError,
+                onOk: () => {
+                  setOptimisticDeletingId(row.endpoint_id);
+                  // FIXME: any better idea for handling result?
+                  row.endpoint_id &&
+                    terminateModelServiceMutation.mutate(row.endpoint_id, {
+                      onSuccess: (res) => {
+                        startRefetchTransition(() => {
+                          updateServicesFetchKey();
+                        });
+                        // FIXME: temporally refer to mutate input to message
+                        if (res.success) {
+                          message.success(
+                            t('modelService.ServiceTerminated', {
+                              name: row?.name,
+                            }),
+                          );
+                        } else {
+                          message.error(
+                            t('modelService.FailedToTerminateService'),
+                          );
                         }
-                  }
-                />
-              }
-              loading={
-                terminateModelServiceMutation.isPending &&
-                optimisticDeletingId === row.endpoint_id
-              }
-              disabled={
-                row.desired_session_count < 0 ||
-                row.status?.toLowerCase() === 'destroying'
-              }
-              onClick={() => {
-                setTerminatingModelService(row);
-              }}
-            />
-          </Popconfirm>
+                      },
+                      onError: (err) => {
+                        message.error(
+                          t('modelService.FailedToTerminateService'),
+                        );
+                      },
+                    });
+                },
+              });
+            }}
+          />
         </Flex>
       ),
     },
@@ -292,15 +308,20 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
   }, 7000);
 
   const { endpoint_list: modelServiceList } =
-    // TODO: need to convert LazyLoadQuery to pagination query with option
     useLazyLoadQuery<EndpointListPageQuery>(
       graphql`
         query EndpointListPageQuery(
           $offset: Int!
           $limit: Int!
           $projectID: UUID
+          $filter: String
         ) {
-          endpoint_list(offset: $offset, limit: $limit, project: $projectID) {
+          endpoint_list(
+            offset: $offset
+            limit: $limit
+            project: $projectID
+            filter: $filter
+          ) {
             total_count
             items {
               name
@@ -334,19 +355,21 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
         }
       `,
       {
-        offset: (paginationState.current - 1) * paginationState.pageSize,
-        limit: paginationState.pageSize,
+        offset:
+          (deferredPaginationState.current - 1) *
+          deferredPaginationState.pageSize,
+        limit: deferredPaginationState.pageSize,
         projectID: curProject.id,
+        filter:
+          deferredSelectedLifecycleStage === 'created&destroying'
+            ? `lifecycle_stage == "created" | lifecycle_stage == "destroying"`
+            : `lifecycle_stage == "${deferredSelectedLifecycleStage}"`,
       },
       {
-        fetchPolicy:
-          servicesFetchKey === 'initial-fetch'
-            ? 'store-and-network'
-            : 'network-only',
+        fetchPolicy: 'network-only',
         fetchKey: servicesFetchKey,
       },
     );
-
   const sortedEndpointList = _.sortBy(modelServiceList?.items, 'name');
 
   // FIXME: struggling with sending data when active tab changes!
@@ -358,8 +381,14 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
   //   (item: any) => item.desired_session_count < 0
   // );
 
-  const terminateModelServiceMutation = useTanMutation({
-    mutationFn: (endpoint_id: string) => {
+  const terminateModelServiceMutation = useTanMutation<
+    {
+      success?: boolean;
+    },
+    unknown,
+    string
+  >({
+    mutationFn: (endpoint_id) => {
       return baiSignedRequestWithPromise({
         method: 'DELETE',
         url: '/services/' + endpoint_id,
@@ -367,182 +396,104 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
       });
     },
   });
-  // const { data, refetch } = useSuspenseTanQuery({
-  //   queryKey: "terminateModelService",
-  //   queryFn: () => {
-  //     return baiSignedRequestWithPromise({
-  //       method: "DELETE",
-  //       url: "/services/" + editingModelService?.id,
-  //       client: baiClient,
-  //     });
-  //   },
-  //   onSuccess: (res: any) => {
-  //     console.log(res);
-  //   },
-  //   onError: (err: any) => {
-  //     console.log(err);
-  //   },
-  //   enabled: false,
-  //   // for to render even this query fails
-  // });
 
   return (
-    <>
-      <Flex direction="column" align="stretch">
-        {/* <Card bordered title={t("summary.ResourceStatistics")}>
-          <p>SessionList</p>
-        </Card> */}
-        {/* <Card bodyStyle={{ paddingTop: 0 }}> */}
-        <Flex
-          direction="row"
-          justify="between"
-          wrap="wrap"
-          gap={'xs'}
-          style={{
-            padding: token.paddingContentVertical,
-            paddingLeft: token.paddingContentHorizontalSM,
-            paddingRight: token.paddingContentHorizontalSM,
-          }}
-        >
-          <Flex direction="column" align="start">
-            <Typography.Text style={{ margin: 0, padding: 0 }}>
-              {t('modelService.Services')}
-            </Typography.Text>
-          </Flex>
-          <Flex
-            direction="row"
-            gap={'xs'}
-            wrap="wrap"
-            style={{ flexShrink: 1 }}
-          >
-            <Flex gap={'xs'}>
-              <Button
-                icon={<ReloadOutlined />}
-                loading={isRefetchPending}
-                onClick={() => {
-                  startRefetchTransition(() => updateServicesFetchKey());
-                }}
-              />
-              <Button
-                type="primary"
-                onClick={() => {
-                  webuiNavigate('/service/start');
-                }}
-              >
-                {t('modelService.StartService')}
-              </Button>
-            </Flex>
-          </Flex>
-        </Flex>
-        <Suspense fallback={<div>loading..</div>}>
-          <Table
-            loading={isRefetchPending}
-            scroll={{ x: 'max-content' }}
-            rowKey={'endpoint_id'}
-            dataSource={(sortedEndpointList || []) as Endpoint[]}
-            columns={columns.filter((column) =>
-              displayedColumnKeys?.includes(_.toString(column.key)),
-            )}
-            // pagination={{
-            //   pageSize: paginationState.pageSize,
-            //   current: paginationState.current,
-            //   total: modelServiceList?.total_count || 0,
-            //   showSizeChanger: true,
-            //   // showTotal(total, range) {
-            //   //   return `${range[0]}-${range[1]} of ${total}`;
-            //   // },
-            //   onChange(page, pageSize) {
-            //     startRefetchTransition(() => {
-            //       setPaginationState({
-            //         current: page,
-            //         pageSize: pageSize || 100,
-            //       });
-            //     });
-            //   },
-            // }}
-          />
-          <Flex
-            justify="end"
-            style={{
-              padding: token.paddingXXS,
+    <Flex direction="column" align="stretch">
+      <Flex
+        direction="row"
+        justify="between"
+        wrap="wrap"
+        gap={'xs'}
+        style={{
+          padding: token.paddingContentVertical,
+          paddingLeft: token.paddingContentHorizontalSM,
+          paddingRight: token.paddingContentHorizontalSM,
+        }}
+      >
+        <Flex direction="column" align="start">
+          <Radio.Group
+            value={selectedLifecycleStage}
+            onChange={(e) => {
+              setSelectedLifecycleStage(e.target?.value);
+              // reset pagination state when filter changes
+              setPaginationState({
+                current: 1,
+                pageSize: paginationState.pageSize,
+              });
             }}
-          >
+            optionType="button"
+            buttonStyle="solid"
+            options={[
+              {
+                label: 'Active',
+                value: 'created&destroying',
+              },
+              {
+                label: 'Destroyed',
+                value: 'destroyed',
+              },
+            ]}
+          />
+        </Flex>
+        <Flex direction="row" gap={'xs'} wrap="wrap" style={{ flexShrink: 1 }}>
+          <Flex gap={'xs'}>
             <Button
-              type="text"
-              icon={<SettingOutlined />}
+              icon={<ReloadOutlined />}
+              loading={isRefetchPending}
               onClick={() => {
-                setIsOpenColumnsSetting(true);
+                startRefetchTransition(() => updateServicesFetchKey());
               }}
             />
+            <Button
+              type="primary"
+              onClick={() => {
+                webuiNavigate('/service/start');
+              }}
+            >
+              {t('modelService.StartService')}
+            </Button>
           </Flex>
-        </Suspense>
-        {/* <Tabs
-            // type="card"
-            activeKey={selectedTab}
-            onChange={(key) => setSelectedTab(key as TabKey)}
-            tabBarStyle={{ marginBottom: 0 }}
-            style={{
-              width: '100%',
-            }}
-            items={[
-              { key: 'services', label: t('modelService.Services') },
-              // FIXME: need to apply filtering type of service later
-              // {
-              //   key: "running",
-              //   label: t("session.Running"),
-              // },
-              // {
-              //   key: "finished",
-              //   label: t("session.Finished"),
-              // },
-              // {
-              //   key: "others",
-              //   label: t("session.Others"),
-              // },
-            ]}
-            tabBarExtraContent={{
-              right: (
-                <Button
-                  type="primary"
-                  onClick={() => {
-                    setIsOpenServiceLauncher(true);
-                  }}
-                >
-                  {t('modelService.StartService')}
-                </Button>
-              ),
-            }}
-          />
-          <Suspense fallback={<div>loading..</div>}>
-            <Table
-              loading={isRefetchPending}
-              scroll={{ x: 'max-content' }}
-              rowKey={'endpoint_id'}
-              dataSource={(sortedEndpointList || []) as Endpoint[]}
-              columns={columns.filter(
-                (column) =>
-                  displayedColumnKeys?.includes(_.toString(column.key)),
-              )}
-              pagination={false}
-              // pagination={{
-              //   pageSize: paginationState.pageSize,
-              //   current: paginationState.current,
-              //   total: modelServiceList?.total_count || 0,
-              //   showSizeChanger: true,
-              //   // showTotal(total, range) {
-              //   //   return `${range[0]}-${range[1]} of ${total}`;
-              //   // },
-              //   onChange(page, pageSize) {
-              //     startRefetchTransition(() => {
-              //       setPaginationState({
-              //         current: page,
-              //         pageSize: pageSize || 100,
-              //       });
-              //     });
-              //   },
-              // }}
-            />
-          </Suspense> */}
+        </Flex>
+      </Flex>
+      <Table
+        loading={{
+          spinning: isPendingPaginationAndFilter,
+          indicator: <LoadingOutlined />,
+        }}
+        scroll={{ x: 'max-content' }}
+        rowKey={'endpoint_id'}
+        dataSource={(sortedEndpointList || []) as Endpoint[]}
+        columns={columns.filter((column) =>
+          displayedColumnKeys?.includes(_.toString(column.key)),
+        )}
+        pagination={{
+          pageSize: paginationState.pageSize,
+          current: paginationState.current,
+          pageSizeOptions: ['10', '20', '50'],
+          total: modelServiceList?.total_count || 0,
+          showSizeChanger: true,
+          onChange(page, pageSize) {
+            setPaginationState({
+              current: page,
+              pageSize: pageSize,
+            });
+          },
+          style: { marginRight: token.marginXS },
+        }}
+      />
+      <Flex
+        justify="end"
+        style={{
+          padding: token.paddingXXS,
+        }}
+      >
+        <Button
+          type="text"
+          icon={<SettingOutlined />}
+          onClick={() => {
+            setIsOpenColumnsSetting(true);
+          }}
+        />
       </Flex>
       <TableColumnsSettingModal
         open={isOpenColumnsSetting}
@@ -554,7 +505,7 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
         columns={columns}
         displayedColumnKeys={displayedColumnKeys ? displayedColumnKeys : []}
       />
-    </>
+    </Flex>
   );
 };
 

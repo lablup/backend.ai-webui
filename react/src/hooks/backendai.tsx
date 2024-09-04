@@ -32,6 +32,7 @@ export const useResourceSlots = () => {
     'ipu.device'?: string;
     'atom.device'?: string;
     'atom-plus.device'?: string;
+    'gaudi2.device'?: string;
     'warboy.device'?: string;
     'hyperaccel-lpu.device'?: string;
     [key: string]: string | undefined;

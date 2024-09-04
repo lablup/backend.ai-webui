@@ -191,7 +191,6 @@ export function iSizeToSize(
   };
 }
 
-//
 export function toFixedFloorWithoutTrailingZeros(
   num: number | string,
   fixed: number,

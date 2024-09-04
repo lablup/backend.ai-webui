@@ -193,9 +193,11 @@ $ pnpm run lint  # To check lints
 
 ### Unit Testing
 
-The project uses `testcafe` as testing framework.
-To perform functional tests, you must run complete Backend.AI cluster before starting test.
+The project uses `Playwright` as E2E testing framework and `Jest` as JavaScript testing framework.
 
+
+#### Playwright test
+To perform E2E tests, you must run complete Backend.AI cluster before starting test.
 On a terminal:
 ```console
 $ pnpm run server:d  # To run dev. web server
@@ -203,6 +205,14 @@ $ pnpm run server:d  # To run dev. web server
 On another terminal:
 ```console
 $ pnpm run test      # Run tests (tests are located in `tests` directory)
+```
+
+#### Jest test
+To perform JavaScript test,
+On a terminal;
+```console
+$ pnpm run test  # For ./src
+$ cd ./react && pnpm run test  # For ./react
 ```
 
 ### Electron (app mode) development / testing
@@ -221,6 +231,26 @@ $ pnpm run server:p    # To run compiled source
 On another terminal:
 ```console
 $ pnpm run electron:d  # Run Electron as dev mode.
+```
+
+### Development tools
+
+#### Recommended: VSCode Relay GraphQL Extension
+
+For developing with Relay in your React application, it is highly recommended to install the [VSCode Relay GraphQL extension](https://marketplace.visualstudio.com/items?itemName=meta.relay). This extension provides various features to enhance your development experience with Relay.
+
+**Installation Steps:**
+1. Open VSCode and navigate to the Extensions view.
+2. Search for `Relay` and find the `Relay - GraphQL` extension by Meta.
+3. Click the `Install` button to add the extension to your VSCode.
+
+**Configuration:**
+After installing the extension, add the following configuration to your `./vscode/settings.json` file:
+
+```json
+{
+  "relay.rootDirectory": "react"
+}
 ```
 
 ## Serving Guide

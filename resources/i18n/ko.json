@@ -411,6 +411,7 @@
     "EnvironmentAndVersion": "환경 및 버전",
     "Tags": "태그",
     "fGPU": "fGPU",
+    "Gaudi2Enabled": "Gaudi 2 NPU 사용중",
     "ForceTerminateWarningMsg": "실제 컨테이너 상태와 상관 없이 세션을 종료 또는 취소 처리합니다. 계속하시겠습니까?",
     "WarningForceTerminateSessions": "경고: 세션 강제 종료",
     "ForceTerminateWarningMsg2": "세션을 생성하거나 종료했는데 비정상적으로 오랫동안 상태가 변하지 않을 경우에만 사용하십시오.",
@@ -619,7 +620,9 @@
     "Session": "세션",
     "General": "일반",
     "Disabled": "비활성화",
-    "NSelected": "{{count}}개 선택됨"
+    "NSelected": "{{count}}개 선택됨",
+    "Extend": "연장",
+    "RemainingLoginSessionTime": "자동 로그아웃까지 남은 시간"
   },
   "credential": {
     "Permission": "권한",
@@ -961,11 +964,11 @@
     "DescImageResourceModified": "리소스 제한이 수정되었습니다.",
     "DescImagePortsModified": "이미지 포트가 수정되었습니다.",
     "ModifyImageResourceLimitReinstallRequired": "<p>이미 설치된 이미지를 수정하는 경우, 이미지 재설치가 필요합니다.</p><<p>수정내용은 이미지가 재설치되기 전까지 적용되지 않습니다. </p>",
-    "NoImagesAreSelected":"선택된 이미지가 없습니다.",
-    "AlreadyInstalledImage":"이미 설치된 이미지입니다.",
-    "InstalledImagesAreExcluded":"설치된 이미지는 제외되었습니다.",
-    "CheckImageInstallation":"다음 이미지를 설치하시겠습니까?",
-    "SearchImages":"이미지 검색"
+    "NoImagesAreSelected": "선택된 이미지가 없습니다.",
+    "AlreadyInstalledImage": "이미 설치된 이미지입니다.",
+    "InstalledImagesAreExcluded": "설치된 이미지는 제외되었습니다.",
+    "CheckImageInstallation": "다음 이미지를 설치하시겠습니까?",
+    "SearchImages": "이미지 검색"
   },
   "resourcePreset": {
     "ResourcePresets": "자원 프리셋",
@@ -1352,7 +1355,13 @@
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Hyperaccel LPU 가속기를 사용합니다.",
     "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU 플러그인이 필요합니다.",
-    "SearchPlaceholder": "검색"
+    "SearchPlaceholder": "검색",
+    "Gaudi2Support": "Gaudi 2 지원",
+    "RequireGaudi2Plugin": "Backend.AI Gaudi 2 플러그인이 필요합니다.",
+    "DescGaudi2Support": "Intel Gaudi 2 가속기 사용",
+    "ATOMPlusSupport": "ATOM+ 지원",
+    "RequireATOMPlusPlugin": "Backend.AI ATOM+ 플러그인이 필요합니다.",
+    "DescATOMPlusSupport": "Rebellions ATOM+ 가속기를 사용."
   },
   "notification": {
     "SuccessfullyUpdated": "성공적으로 수정되었습니다.",

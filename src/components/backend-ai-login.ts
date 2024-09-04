@@ -116,6 +116,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Number }) maxIPUDevicesPerContainer = 8;
   @property({ type: Number }) maxATOMDevicesPerContainer = 8;
   @property({ type: Number }) maxWarboyDevicesPerContainer = 8;
+  @property({ type: Number }) maxGaudi2DevicesPerContainer = 8;
   @property({ type: Number }) maxShmPerContainer = 2;
   @property({ type: Number }) maxFileUploadSize = -1;
   @property({ type: Boolean }) maskUserInfo = false;
@@ -140,6 +141,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Boolean }) isDirectorySizeVisible = true;
   @property({ type: Boolean }) enableModelStore = false;
   @property({ type: Boolean }) enableLLMPlayground = false;
+  @property({ type: Boolean }) enableExtendLoginSession = false;
   @property({ type: String }) eduAppNamePrefix;
   @property({ type: String }) pluginPages;
   @property({ type: Array }) blockList = [] as string[];
@@ -855,6 +857,16 @@ export default class BackendAILogin extends BackendAIPage {
       defaultValue: false,
       value: generalConfig?.enableLLMPlayground,
     } as ConfigValueObject) as boolean;
+
+    // Enable extend login session
+    this.enableExtendLoginSession = this._getConfigValueByExists(
+      generalConfig,
+      {
+        valueType: 'boolean',
+        defaultValue: false,
+        value: generalConfig?.enableExtendLoginSession,
+      } as ConfigValueObject,
+    ) as boolean;
   }
 
   /**
@@ -972,6 +984,16 @@ export default class BackendAILogin extends BackendAIPage {
         valueType: 'number',
         defaultValue: 8,
         value: parseInt(resourcesConfig?.maxATOMDevicesPerContainer),
+      } as ConfigValueObject,
+    ) as number;
+
+    // Max Gaudi 2 devices per container number
+    this.maxGaudi2DevicesPerContainer = this._getConfigValueByExists(
+      resourcesConfig,
+      {
+        valueType: 'number',
+        defaultValue: 8,
+        value: parseInt(resourcesConfig?.maxGaudi2DevicesPerContainer),
       } as ConfigValueObject,
     ) as number;
 
@@ -1814,6 +1836,8 @@ export default class BackendAILogin extends BackendAIPage {
           this.maxIPUDevicesPerContainer;
         globalThis.backendaiclient._config.maxATOMDevicesPerContainer =
           this.maxATOMDevicesPerContainer;
+        globalThis.backendaiclient._config.maxGaudi2DevicesPerContainer =
+          this.maxGaudi2DevicesPerContainer;
         globalThis.backendaiclient._config.maxWarboyDevicesPerContainer =
           this.maxWarboyDevicesPerContainer;
         globalThis.backendaiclient._config.maxShmPerContainer =
@@ -1849,6 +1873,8 @@ export default class BackendAILogin extends BackendAIPage {
           this.enableModelStore;
         globalThis.backendaiclient._config.enableLLMPlayground =
           this.enableLLMPlayground;
+        globalThis.backendaiclient._config.enableExtendLoginSession =
+          this.enableExtendLoginSession;
         globalThis.backendaiclient._config.pluginPages = this.pluginPages;
         globalThis.backendaiclient._config.blockList = this.blockList;
         globalThis.backendaiclient._config.inactiveList = this.inactiveList;
