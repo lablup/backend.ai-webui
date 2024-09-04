@@ -3615,17 +3615,20 @@ ${rowData.item[this.sessionNameField]}</pre
               <div class="usage-items">
                 RAM
                 ${rowData.item.live_stat
-                  ? BackendAISessionList._prefixFormatWithoutTrailingZeros(
+                  ? `${BackendAISessionList._prefixFormatWithoutTrailingZeros(
                       BackendAISessionList.bytesToGiB(
                         rowData.item.live_stat?.mem?.current,
-                        1,
-                      ) /
-                        BackendAISessionList.bytesToGiB(
-                          rowData.item.live_stat?.mem?.capacity,
-                          1,
-                        ),
+                        2,
+                      ),
                       2,
-                    )
+                    )} /
+                    ${BackendAISessionList._prefixFormatWithoutTrailingZeros(
+                      BackendAISessionList.bytesToGiB(
+                        rowData.item.live_stat?.mem?.capacity,
+                        2,
+                      ),
+                      2,
+                    )}`
                   : `-`}
                 GiB
               </div>
@@ -3715,17 +3718,20 @@ ${rowData.item[this.sessionNameField]}</pre
                     <div class="usage-items">
                       GPU(mem)
                       ${rowData.item.live_stat
-                        ? BackendAISessionList._prefixFormatWithoutTrailingZeros(
+                        ? `${BackendAISessionList._prefixFormatWithoutTrailingZeros(
                             BackendAISessionList.bytesToGiB(
                               rowData.item.live_stat?.cuda_mem?.current,
-                              1,
-                            ) /
-                              BackendAISessionList.bytesToGiB(
-                                rowData.item.live_stat?.cuda_mem?.capacity,
-                                1,
-                              ),
+                              2,
+                            ),
                             2,
-                          )
+                          )} /
+                          ${BackendAISessionList._prefixFormatWithoutTrailingZeros(
+                            BackendAISessionList.bytesToGiB(
+                              rowData.item.live_stat?.cuda_mem?.capacity,
+                              2,
+                            ),
+                            2,
+                          )}`
                         : `-`}
                       GiB
                     </div>
