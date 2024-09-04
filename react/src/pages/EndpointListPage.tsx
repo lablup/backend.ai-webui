@@ -25,7 +25,7 @@ import {
 } from '@ant-design/icons';
 import { useRafInterval } from 'ahooks';
 import { useLocalStorageState } from 'ahooks';
-import { Button, Table, Typography, theme, message, Popconfirm } from 'antd';
+import { Button, Table, Typography, theme, App } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import { default as dayjs } from 'dayjs';
@@ -51,13 +51,12 @@ export type Endpoint = NonNullable<
 
 const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation();
+  const { message, modal } = App.useApp();
   const baiClient = useSuspendedBackendaiClient();
   const webuiNavigate = useWebUINavigate();
   const { token } = theme.useToken();
   const curProject = useCurrentProjectValue();
   const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
-  const [terminatingModelService, setTerminatingModelService] =
-    useState<Endpoint | null>(null);
 
   // const [paginationState, setPaginationState] = useState<{
   const [paginationState] = useState<{
@@ -143,65 +142,66 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
               webuiNavigate('/service/update/' + row.endpoint_id);
             }}
           />
-          <Popconfirm
-            title={t('dialog.ask.DoYouWantToDeleteSomething', {
-              name: row.name,
-            })}
-            description={t('dialog.warning.CannotBeUndone')}
-            okType="danger"
-            okText={t('button.Delete')}
-            onConfirm={() => {
-              setOptimisticDeletingId(row.endpoint_id);
-              // FIXME: any better idea for handling result?
-              terminateModelServiceMutation.mutate(
-                terminatingModelService?.endpoint_id || '',
-                {
-                  onSuccess: (res) => {
-                    startRefetchTransition(() => {
-                      updateServicesFetchKey();
-                    });
-                    // FIXME: temporally refer to mutate input to message
-                    message.success(
-                      t('modelService.ServiceTerminated', {
-                        name: terminatingModelService?.name,
-                      }),
-                    );
-                  },
-                  onError: (err) => {
-                    console.log(err);
-                    message.error(t('modelService.FailedToTerminateService'));
-                  },
+          <Button
+            type="text"
+            icon={
+              <DeleteOutlined
+                style={
+                  row.desired_session_count < 0 ||
+                  row.status?.toLowerCase() === 'destroying'
+                    ? undefined
+                    : {
+                        color: token.colorError,
+                      }
+                }
+              />
+            }
+            loading={
+              terminateModelServiceMutation.isPending &&
+              optimisticDeletingId === row.endpoint_id
+            }
+            disabled={
+              row.desired_session_count < 0 ||
+              row.status?.toLowerCase() === 'destroying'
+            }
+            onClick={() => {
+              modal.confirm({
+                title: t('dialog.ask.DoYouWantToDeleteSomething', {
+                  name: row.name,
+                }),
+                content: t('dialog.warning.CannotBeUndone'),
+                okText: t('button.Delete'),
+                okButtonProps: {
+                  danger: true,
+                  type: 'primary',
                 },
-              );
+                onOk: () => {
+                  setOptimisticDeletingId(row.endpoint_id);
+                  // FIXME: any better idea for handling result?
+                  row.endpoint_id  && terminateModelServiceMutation.mutate(row.endpoint_id, {
+                    onSuccess: (res) => {
+                      startRefetchTransition(() => {
+                        updateServicesFetchKey();
+                      });
+                      // FIXME: temporally refer to mutate input to message
+                      if(res.success) {
+                        message.success(
+                          t('modelService.ServiceTerminated', {
+                            name: row?.name,
+                          }),
+                        );
+                      } else {
+                        message.error(t('modelService.FailedToTerminateService'));
+                      }
+                    },
+                    onError: (err) => {
+                      message.error(t('modelService.FailedToTerminateService'));
+                    },
+                  });
+                },
+              });
             }}
-          >
-            <Button
-              type="text"
-              icon={
-                <DeleteOutlined
-                  style={
-                    row.desired_session_count < 0 ||
-                    row.status?.toLowerCase() === 'destroying'
-                      ? undefined
-                      : {
-                          color: token.colorError,
-                        }
-                  }
-                />
-              }
-              loading={
-                terminateModelServiceMutation.isPending &&
-                optimisticDeletingId === row.endpoint_id
-              }
-              disabled={
-                row.desired_session_count < 0 ||
-                row.status?.toLowerCase() === 'destroying'
-              }
-              onClick={() => {
-                setTerminatingModelService(row);
-              }}
-            />
-          </Popconfirm>
+          />
         </Flex>
       ),
     },
