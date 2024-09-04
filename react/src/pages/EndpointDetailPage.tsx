@@ -639,28 +639,26 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             },
             {
               title: t('modelService.Status'),
-              render: (_, { session, status }) =>
-                status && (
+              render: (_, row) =>
+                row.status && (
                   <>
                     <Tag
-                      color={applyStatusColor(status)}
-                      key={status}
+                      color={applyStatusColor(row.status)}
+                      key={row.status}
                       style={{ marginRight: 0 }}
                     >
-                      {status.toUpperCase()}
+                      {row.status.toUpperCase()}
                     </Tag>
-                    {status === 'FAILED_TO_START' && (
-                      <Popover>
-                        <Button
-                          size="small"
-                          type="text"
-                          icon={<QuestionCircleOutlined />}
-                          style={{ color: token.colorTextSecondary }}
-                          onClick={() =>
-                            session && openSessionErrorModal(session)
-                          }
-                        />
-                      </Popover>
+                    {row.status === 'FAILED_TO_START' && row.session && (
+                      <Button
+                        size="small"
+                        type="text"
+                        icon={<QuestionCircleOutlined />}
+                        style={{ color: token.colorTextSecondary }}
+                        onClick={() => {
+                          row.session && openSessionErrorModal(row.session);
+                        }}
+                      />
                     )}
                   </>
                 ),
