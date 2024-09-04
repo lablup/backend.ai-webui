@@ -25,7 +25,7 @@ import {
 } from '@ant-design/icons';
 import { useRafInterval } from 'ahooks';
 import { useLocalStorageState } from 'ahooks';
-import { Button, Table, Typography, theme, App } from 'antd';
+import { Button, Table, Typography, theme, Radio, App } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import { default as dayjs } from 'dayjs';
@@ -49,6 +49,8 @@ export type Endpoint = NonNullable<
   >[0]
 >;
 
+type LifecycleStage = 'created' | 'destroying' | 'destroyed';
+
 const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation();
   const { message, modal } = App.useApp();
@@ -57,6 +59,9 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const { token } = theme.useToken();
   const curProject = useCurrentProjectValue();
   const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
+  const [lifecycleStage, setLifecycleStage] =
+    useState<LifecycleStage>('created');
+  const queryFilter = `lifecycle_stage == "${lifecycleStage}"`;
 
   // const [paginationState, setPaginationState] = useState<{
   const [paginationState] = useState<{
@@ -178,26 +183,31 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 onOk: () => {
                   setOptimisticDeletingId(row.endpoint_id);
                   // FIXME: any better idea for handling result?
-                  row.endpoint_id  && terminateModelServiceMutation.mutate(row.endpoint_id, {
-                    onSuccess: (res) => {
-                      startRefetchTransition(() => {
-                        updateServicesFetchKey();
-                      });
-                      // FIXME: temporally refer to mutate input to message
-                      if(res.success) {
-                        message.success(
-                          t('modelService.ServiceTerminated', {
-                            name: row?.name,
-                          }),
+                  row.endpoint_id &&
+                    terminateModelServiceMutation.mutate(row.endpoint_id, {
+                      onSuccess: (res) => {
+                        startRefetchTransition(() => {
+                          updateServicesFetchKey();
+                        });
+                        // FIXME: temporally refer to mutate input to message
+                        if (res.success) {
+                          message.success(
+                            t('modelService.ServiceTerminated', {
+                              name: row?.name,
+                            }),
+                          );
+                        } else {
+                          message.error(
+                            t('modelService.FailedToTerminateService'),
+                          );
+                        }
+                      },
+                      onError: (err) => {
+                        message.error(
+                          t('modelService.FailedToTerminateService'),
                         );
-                      } else {
-                        message.error(t('modelService.FailedToTerminateService'));
-                      }
-                    },
-                    onError: (err) => {
-                      message.error(t('modelService.FailedToTerminateService'));
-                    },
-                  });
+                      },
+                    });
                 },
               });
             }}
@@ -299,8 +309,14 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
           $offset: Int!
           $limit: Int!
           $projectID: UUID
+          $filter: String
         ) {
-          endpoint_list(offset: $offset, limit: $limit, project: $projectID) {
+          endpoint_list(
+            offset: $offset
+            limit: $limit
+            project: $projectID
+            filter: $filter
+          ) {
             total_count
             items {
               name
@@ -337,6 +353,7 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
         offset: (paginationState.current - 1) * paginationState.pageSize,
         limit: paginationState.pageSize,
         projectID: curProject.id,
+        filter: queryFilter,
       },
       {
         fetchPolicy:
@@ -358,8 +375,14 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
   //   (item: any) => item.desired_session_count < 0
   // );
 
-  const terminateModelServiceMutation = useTanMutation({
-    mutationFn: (endpoint_id: string) => {
+  const terminateModelServiceMutation = useTanMutation<
+    {
+      success?: boolean;
+    },
+    unknown,
+    string
+  >({
+    mutationFn: (endpoint_id) => {
       return baiSignedRequestWithPromise({
         method: 'DELETE',
         url: '/services/' + endpoint_id,
@@ -405,9 +428,26 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
           }}
         >
           <Flex direction="column" align="start">
-            <Typography.Text style={{ margin: 0, padding: 0 }}>
-              {t('modelService.Services')}
-            </Typography.Text>
+            <Radio.Group
+              value={lifecycleStage}
+              onChange={(e) => setLifecycleStage(e.target?.value)}
+              optionType="button"
+              buttonStyle="solid"
+              options={[
+                {
+                  label: 'Created',
+                  value: 'created',
+                },
+                {
+                  label: 'Destroying',
+                  value: 'destroying',
+                },
+                {
+                  label: 'Destroyed',
+                  value: 'destroyed',
+                },
+              ]}
+            />
           </Flex>
           <Flex
             direction="row"
