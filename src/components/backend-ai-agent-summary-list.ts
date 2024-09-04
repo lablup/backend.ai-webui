@@ -36,7 +36,7 @@ Example:
 </backend-ai-agent-summary-list>
 
 @group Backend.AI Web UI
-@element backend-ai-agent-list
+@element backend-ai-agent-summary-list
 */
 
 @customElement('backend-ai-agent-summary-list')
