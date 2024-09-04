@@ -29,7 +29,7 @@ export interface MergedResourceLimits {
   };
 }
 
-type ResourceLimits = {
+export type ResourceLimits = {
   cpu: string | 'Infinity' | 'NaN';
   mem: string | 'Infinity' | 'NaN';
   'cuda.device': string | 'Infinity' | 'NaN';
