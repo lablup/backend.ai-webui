@@ -62,6 +62,11 @@ const InteractiveLoginPage = React.lazy(
 );
 const ImportAndRunPage = React.lazy(() => import('./pages/ImportAndRunPage'));
 
+const AdminDashboardPage = React.lazy(
+  () => import('./pages/AdminDashboardPage'),
+);
+const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
+
 const RedirectToStart = () => {
   useSuspendedBackendaiClient();
   const pathName = '/start';
@@ -141,6 +146,28 @@ const router = createBrowserRouter([
           );
         },
         handle: { labelKey: 'start' },
+      },
+      {
+        path: '/dashboard',
+        Component: () => {
+          return (
+            <BAIErrorBoundary>
+              <DashboardPage />
+            </BAIErrorBoundary>
+          );
+        },
+      },
+      {
+        path: '/system_overview',
+        Component: () => {
+          const { token } = theme.useToken();
+          useSuspendedBackendaiClient(); // make sure the client is ready
+          return (
+            <BAIErrorBoundary>
+              <AdminDashboardPage />
+            </BAIErrorBoundary>
+          );
+        },
       },
       {
         path: '/job',

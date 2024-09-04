@@ -32,8 +32,8 @@ const NeoSessionPage: React.FC<NeoSessionPageProps> = (props) => {
   const webuiNavigate = useWebUINavigate();
 
   return (
-    <Flex direction="column" align="stretch" gap={16}>
-      <Flex align="start" gap={16}>
+    <Flex direction="column" align="stretch" gap={'lg'}>
+      <Flex align="start" gap={'lg'}>
         <BAIStartSimpleCard
           icon={<SessionsIcon />}
           title={'Create a Session'}
@@ -45,11 +45,11 @@ const NeoSessionPage: React.FC<NeoSessionPageProps> = (props) => {
           }}
           styles={{
             body: {
-              height: 240,
+              height: 192,
             },
           }}
         />
-        <AllocatedResourcesCard />
+        <AllocatedResourcesCard width={936} />
       </Flex>
       <Flex align="stretch" direction="column">
         <Card>
@@ -61,7 +61,7 @@ const NeoSessionPage: React.FC<NeoSessionPageProps> = (props) => {
               type="primary"
               onClick={() => webuiNavigate('/session/start')}
             >
-              Session Start
+              Start Session
             </Button>
           </Flex>
           <Tabs

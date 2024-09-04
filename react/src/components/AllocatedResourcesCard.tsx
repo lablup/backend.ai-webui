@@ -1,7 +1,8 @@
+import BAILayoutCard from './BAILayoutCard';
 import Flex from './Flex';
 import ResourceGroupSelect from './ResourceGroupSelect';
 import ResourceUnit, { ResourceUnitProps } from './ResourceUnit';
-import { SyncOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import {
   Button,
   Card,
@@ -16,9 +17,14 @@ import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface AllocatedResourcesCardProps extends CardProps {}
+interface AllocatedResourcesCardProps extends CardProps {
+  usingSwitch?: boolean;
+  width?: number;
+}
 
 const AllocatedResourcesCard: React.FC<AllocatedResourcesCardProps> = ({
+  usingSwitch,
+  width,
   ...cardProps
 }) => {
   const { token } = theme.useToken();
@@ -60,13 +66,61 @@ const AllocatedResourcesCard: React.FC<AllocatedResourcesCardProps> = ({
         },
       }}
     >
-      <Card
+      <BAILayoutCard
+        title={
+          <Flex direction="row" align="center" justify="start" gap={'xs'}>
+            <Typography.Title level={4} style={{ margin: 0 }}>
+              {'Allocated Resources'}
+            </Typography.Title>
+            <Button type="text" icon={<QuestionCircleOutlined />} />
+            {usingSwitch && <Switch defaultChecked />}
+          </Flex>
+        }
+        extra={
+          <>
+            <ResourceGroupSelect
+              placeholder={t('session.ResourceGroup')}
+              variant="borderless"
+              style={{ minWidth: 151, fontSize: token.fontSizeLG, padding: 0 }}
+              dropdownStyle={{ color: '#999999' }}
+            />
+            <Button
+              type="text"
+              icon={<SyncOutlined />}
+              style={{ color: 'inherit' }}
+            />
+          </>
+        }
+        style={{ width: width ?? 678, height: 192 }}
+      >
+        <Flex justify="between" style={{ maxWidth: 630 }}>
+          {_.map(
+            resourceUnitMockData,
+            (resourceUnit: ResourceUnitProps, index) => (
+              <>
+                <ResourceUnit
+                  key={index}
+                  name={resourceUnit.name}
+                  displayUnit={resourceUnit.displayUnit}
+                  value={resourceUnit.value}
+                  percentage={resourceUnit.percentage}
+                  color={'#00BD9B'}
+                />
+                {index < resourceUnitMockData.length - 1 && (
+                  <Divider type="vertical" style={{ height: 70 }} />
+                )}
+              </>
+            ),
+          )}
+        </Flex>
+      </BAILayoutCard>
+      {/* <Card
         {...cardProps}
         style={{
-          width: '100%',
-          height: 240,
-          // width: 936,
-          // height: 192,
+          // width: '100%',
+          // height: 240,
+          width: 936,
+          height: 192,
         }}
       >
         <Flex justify="between" style={{ marginBottom: 26 }}>
@@ -96,26 +150,7 @@ const AllocatedResourcesCard: React.FC<AllocatedResourcesCardProps> = ({
             />
           </Flex>
         </Flex>
-        <Flex justify="between" style={{ maxWidth: 630 }}>
-          {_.map(
-            resourceUnitMockData,
-            (resourceUnit: ResourceUnitProps, index) => (
-              <>
-                <ResourceUnit
-                  key={index}
-                  name={resourceUnit.name}
-                  displayUnit={resourceUnit.displayUnit}
-                  value={resourceUnit.value}
-                  percentage={resourceUnit.percentage}
-                />
-                {index < resourceUnitMockData.length - 1 && (
-                  <Divider type="vertical" style={{ height: 70 }} />
-                )}
-              </>
-            ),
-          )}
-        </Flex>
-      </Card>
+      </Card> */}
     </ConfigProvider>
   );
 };

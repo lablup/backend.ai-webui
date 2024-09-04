@@ -1,20 +1,222 @@
 import BAIStartBasicCard from '../components/BAIStartBasicCard';
+import { useWebComponentInfo } from '../components/DefaultProviders';
 import Flex from '../components/Flex';
 import BatchSessionIcon from '../components/icons/BatchSessionIcon';
 import ExampleStartIcon from '../components/icons/ExampleStart';
 import InteractiveSessionIcon from '../components/icons/InteractiveSession';
 import ModelServiceIcon from '../components/icons/ModelServiceIcon';
+// import RecalculateResourcesIcon from '../components/icons/RecalculateResourcesIcon';
+import UpdateEnvironmentImageIcon from '../components/icons/UpdateEnvironmentImageIcon';
 // import URLStartIcon from '../components/icons/URLStartIcon';
-import { useWebUINavigate } from '../hooks';
-import { FolderAddOutlined } from '@ant-design/icons';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useTanMutation } from '../hooks/reactQueryAlias';
+import { useSetBAINotification } from '../hooks/useBAINotification';
+import { FolderAddOutlined, HddOutlined } from '@ant-design/icons';
+import { App } from 'antd';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface StartPageProps {}
 
 const StartPage: React.FC<StartPageProps> = (props) => {
   const webuiNavigate = useWebUINavigate();
+  const baiClient = useSuspendedBackendaiClient();
+  const { t } = useTranslation();
+  const app = App.useApp();
+  const { upsertNotification } = useSetBAINotification();
 
-  return (
+  const recalculateUsage = useTanMutation({
+    mutationFn: () => {
+      return baiClient.recalculate_usage;
+    },
+  });
+
+  const rescanImage = async (hostname?: string) => {
+    // const indicator: any =
+    //   // @ts-ignore
+    //   await globalThis.lablupIndicator.start('indeterminate');
+
+    // indicator.set(10, t('registry.UpdatingRegistryInfo'));
+    const notiKey = upsertNotification({
+      // key: notiKey,
+      message: `${hostname} ${t('maintenance.RescanImages')}`,
+      description: t('registry.UpdatingRegistryInfo'),
+      open: true,
+      backgroundTask: {
+        status: 'pending',
+      },
+      duration: 0,
+    });
+    const handleReScanError = (err: any) => {
+      console.log(err);
+      upsertNotification({
+        key: notiKey,
+        backgroundTask: {
+          status: 'rejected',
+        },
+        duration: 1,
+      });
+      if (err && err.message) {
+        // @ts-ignore
+        globalThis.lablupNotification.text = painKiller.relieve(err.title);
+        // @ts-ignore
+        globalThis.lablupNotification.detail = err.message;
+        // @ts-ignore
+        globalThis.lablupNotification.show(true, err);
+      }
+    };
+    baiClient.maintenance
+      .rescan_images(hostname)
+      .then(({ rescan_images }: any) => {
+        if (rescan_images.ok) {
+          upsertNotification({
+            key: notiKey,
+            backgroundTask: {
+              status: 'pending',
+              percent: 0,
+              taskId: rescan_images.task_id,
+              statusDescriptions: {
+                pending: t('registry.RescanImages'),
+                resolved: t('registry.RegistryUpdateFinished'),
+                rejected: t('registry.RegistryUpdateFailed'),
+              },
+            },
+          });
+          // indicator.set(0, t('registry.RescanImages'));
+          // const sse: EventSource = baiClient.maintenance.attach_background_task(
+          //   rescan_images.task_id,
+          // );
+          // sse.addEventListener('bgtask_updated', (e) => {
+          //   const data = JSON.parse(e['data']);
+          //   const ratio = data.current_progress / data.total_progress;
+          //   indicator.set(100 * ratio, t('registry.RescanImages'));
+          // });
+          // sse.addEventListener('bgtask_done', () => {
+          //   const event = new CustomEvent('image-rescanned');
+          //   document.dispatchEvent(event);
+          //   indicator.set(100, t('registry.RegistryUpdateFinished'));
+          //   sse.close();
+          // });
+          // sse.addEventListener('bgtask_failed', (e) => {
+          //   console.log('bgtask_failed', e['data']);
+          //   sse.close();
+          //   handleReScanError(
+          //     new Error('Background Image scanning task has failed'),
+          //   );
+          // });
+          // sse.addEventListener('bgtask_cancelled', () => {
+          //   sse.close();
+          //   handleReScanError(
+          //     new Error('Background Image scanning task has been cancelled'),
+          //   );
+          // });
+        } else {
+          upsertNotification({
+            key: notiKey,
+            backgroundTask: {
+              status: 'rejected',
+            },
+            duration: 1,
+          });
+          // indicator.set(50, t('registry.RegistryUpdateFailed'));
+          // indicator.end(1000);
+          // TODO: handle notification in react side
+          // @ts-ignore
+          // globalThis.lablupNotification.text = painKiller.relieve(
+          //   rescan_images.msg,
+          // );
+          // @ts-ignore
+          // globalThis.lablupNotification.detail = rescan_images.msg;
+          // @ts-ignore
+          // globalThis.lablupNotification.show();
+        }
+      })
+      .catch(handleReScanError);
+  };
+  return baiClient.is_admin ? (
+    <Flex gap={'lg'} wrap="wrap" direction="row" align="start">
+      <BAIStartBasicCard
+        icon={<HddOutlined />}
+        title={
+          <div>
+            Monitor System
+            <br />
+            Resources
+          </div>
+        }
+        description={
+          'View how the system and agents are performing through the system dashboard.'
+        }
+        footerButtonProps={{
+          onClick: () => {
+            webuiNavigate('/system_overview');
+          },
+          children: 'View Resources',
+        }}
+      />
+      <BAIStartBasicCard
+        icon={
+          // FIXME: workaround for displaying proper icon
+          <img
+            src="/resources/icons/RecalculateResources.svg"
+            alt="Recalculate Resources"
+          ></img>
+          // <RecalculateResourcesIcon />
+        }
+        title={
+          <div>
+            Recalculate
+            <br />
+            Resources
+          </div>
+        }
+        description={
+          'Is there a difference between the resources allocated and the displayed amount? Please sync up the resources for accurate calculations.'
+        }
+        footerButtonProps={{
+          onClick: () => {
+            recalculateUsage.mutate(undefined, {
+              onSuccess: () => {
+                app.message.success(t('maintenance.RecalculationFinished'));
+              },
+              onError: (error) => {
+                console.log(error);
+                app.message.error(t('maintenance.RecalculationFailed'));
+              },
+            });
+          },
+          children: (
+            <>
+              <div style={{ lineHeight: 1 }}>
+                Recalculate
+                <br />
+                Resources
+              </div>
+            </>
+          ),
+        }}
+      />
+      <BAIStartBasicCard
+        icon={<UpdateEnvironmentImageIcon />}
+        title={
+          <div>
+            Update Environment
+            <br />
+            Images
+          </div>
+        }
+        description={
+          'Have you installed a new image or added a registry? Click the button to update the list of running images.'
+        }
+        footerButtonProps={{
+          onClick: () => {
+            rescanImage();
+          },
+          children: 'Update Images',
+        }}
+      />
+    </Flex>
+  ) : (
     <Flex gap={16} wrap="wrap" direction="column" align="start">
       <Flex gap={16} wrap="wrap">
         <BAIStartBasicCard

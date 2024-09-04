@@ -498,7 +498,7 @@ const SessionLauncherPage = () => {
         // console.log('##', values.mounts);
         // console.log(sessionInfo);
         const backupTo = window.location.pathname + window.location.search;
-        webuiNavigate(redirectTo || '/job');
+        webuiNavigate(redirectTo || '/session');
         upsertNotification({
           key: 'session-launcher:' + sessionName,
           backgroundTask: {

@@ -114,7 +114,7 @@ export default class BackendAIPermissionDeniedView extends BackendAIPage {
    */
   _moveTo(url = '') {
     const page = url !== '' ? url : 'start';
-    globalThis.history.pushState({}, '', '/summary');
+    globalThis.history.pushState({}, '', '/start');
     store.dispatch(navigate(decodeURIComponent('/' + page), {}));
   }
 
