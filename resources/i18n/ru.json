@@ -510,7 +510,8 @@
     "Disabled": "Инвалид",
     "NSelected": "Выбранный {{count}} элемент(ы)",
     "Extend": "Продлевать",
-    "RemainingLoginSessionTime": "Время до автоматического выхода из системы"
+    "RemainingLoginSessionTime": "Время до автоматического выхода из системы",
+    "Change": "Изменить"
   },
   "credential": {
     "Permission": "Разрешение",

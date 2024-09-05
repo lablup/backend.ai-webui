@@ -511,7 +511,8 @@
     "Disabled": "Disabili",
     "NSelected": "Articolo/i selezionato/i {{count}}",
     "Extend": "Estendere",
-    "RemainingLoginSessionTime": "Tempo fino alla disconnessione automatica"
+    "RemainingLoginSessionTime": "Tempo fino alla disconnessione automatica",
+    "Change": "Cambiamento"
   },
   "credential": {
     "Permission": "Autorizzazione",

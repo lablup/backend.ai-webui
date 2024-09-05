@@ -106,6 +106,10 @@ const ResourceAllocationFormItems: React.FC<
     form,
     preserve: true,
   });
+  const currentAllocationPreset = Form.useWatch(['allocationPreset'], {
+    form,
+    preserve: true,
+  });
   const [{ currentImageMinM, remaining, resourceLimits, checkPresetInfo }] =
     useResourceLimitAndRemaining({
       currentProjectName: currentProject.name,
@@ -202,6 +206,15 @@ const ResourceAllocationFormItems: React.FC<
       .catch(() => {});
   });
 
+  useEffect(() => {
+    if (currentAllocationPreset === 'auto-select') {
+      currentResourceGroup && updateAllocationPresetBasedOnResourceGroup();
+    }
+  }, [
+    currentResourceGroup,
+    updateAllocationPresetBasedOnResourceGroup,
+    currentAllocationPreset,
+  ]);
   // update allocation preset based on resource group and current image
   useEffect(() => {
     currentResourceGroup && updateAllocationPresetBasedOnResourceGroup();
