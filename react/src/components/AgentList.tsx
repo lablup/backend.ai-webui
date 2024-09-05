@@ -5,7 +5,7 @@ import {
   transformSorterToOrderString,
 } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
-import { useResourceSlotsDetails } from '../hooks/backendai';
+import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useThemeMode } from '../hooks/useThemeMode';
 import AgentDetailModal from './AgentDetailModal';
@@ -267,167 +267,149 @@ const AgentList: React.FC<AgentListProps> = ({
       title: t('agent.Allocation'),
       key: 'allocation',
       render: (value, record) => {
-        const parsedOccupiedSlots = JSON.parse(record?.occupied_slots || '{}');
-        const parsedAvailableSlots = JSON.parse(
-          record?.available_slots || '{}',
-        );
+        const parsedOccupiedSlots: {
+          [key in ResourceSlotName]: string | undefined;
+        } = JSON.parse(record?.occupied_slots || '{}');
+        const parsedAvailableSlots: {
+          [key in ResourceSlotName]: string | undefined;
+        } = JSON.parse(record?.available_slots || '{}');
         return (
           <Flex direction="column" gap="xxs">
-            {_.map(_.keys(parsedAvailableSlots), (key) => {
-              if (key === 'cpu') {
-                return (
-                  <Flex key={key} justify="between" style={{ minWidth: 220 }}>
-                    <Flex gap="xxs">
-                      <ResourceTypeIcon key={key} type={key} />
-                      <Typography.Text>
-                        {toFixedFloorWithoutTrailingZeros(
-                          parsedOccupiedSlots[key] || 0,
-                          0,
-                        )}
-                        /
-                        {toFixedFloorWithoutTrailingZeros(
-                          parsedAvailableSlots[key],
-                          0,
-                        )}
-                      </Typography.Text>
-                      <Typography.Text
-                        type="secondary"
-                        style={{ fontSize: token.sizeXS }}
-                      >
-                        {resourceSlotsDetails?.cpu?.display_unit}
-                      </Typography.Text>
+            {_.map(
+              parsedAvailableSlots,
+              (value: string | number, key: ResourceSlotName) => {
+                if (key === 'cpu') {
+                  const cpuPercent = _.toFinite(
+                    (_.toNumber(parsedOccupiedSlots.cpu) /
+                      _.toNumber(parsedAvailableSlots.cpu)) *
+                      100,
+                  );
+                  return (
+                    <Flex key={key} justify="between" style={{ minWidth: 220 }}>
+                      <Flex gap="xxs">
+                        <ResourceTypeIcon key={key} type={key} />
+                        <Typography.Text>
+                          {toFixedFloorWithoutTrailingZeros(
+                            parsedOccupiedSlots.cpu || 0,
+                            0,
+                          )}
+                          /
+                          {toFixedFloorWithoutTrailingZeros(
+                            parsedAvailableSlots.cpu || 0,
+                            0,
+                          )}
+                        </Typography.Text>
+                        <Typography.Text
+                          type="secondary"
+                          style={{ fontSize: token.sizeXS }}
+                        >
+                          {resourceSlotsDetails?.cpu?.display_unit}
+                        </Typography.Text>
+                      </Flex>
+                      <BAIProgressWithLabel
+                        percent={cpuPercent}
+                        strokeColor={
+                          cpuPercent > 80
+                            ? token.colorError
+                            : token.colorSuccess
+                        }
+                        width={120}
+                        valueLabel={
+                          toFixedFloorWithoutTrailingZeros(cpuPercent, 1) + ' %'
+                        }
+                      />
                     </Flex>
-                    <BAIProgressWithLabel
-                      percent={
-                        ((parsedOccupiedSlots[key] || 0) /
-                          parsedAvailableSlots[key]) *
-                        100
-                      }
-                      strokeColor={
-                        ((parsedOccupiedSlots[key] || 0) /
-                          parsedAvailableSlots[key]) *
-                          100 >
-                        80
-                          ? token.colorError
-                          : token.colorSuccess
-                      }
-                      width={120}
-                      valueLabel={
-                        toFixedFloorWithoutTrailingZeros(
-                          _.toFinite(
-                            ((parsedOccupiedSlots[key] || 0) /
-                              parsedAvailableSlots[key]) *
-                              100,
-                          ),
-                          1,
-                        ) + ' %'
-                      }
-                    />
-                  </Flex>
-                );
-              } else if (key === 'mem') {
-                return (
-                  <Flex key={key} justify="between" style={{ minWidth: 220 }}>
-                    <Flex gap="xxs">
-                      <ResourceTypeIcon key={key} type={key} />
-                      <Typography.Text>
-                        {iSizeToSize(parsedOccupiedSlots[key], 'g', 0)
-                          ?.numberFixed ?? 0}
-                        /
-                        {iSizeToSize(parsedAvailableSlots[key], 'g', 0)
-                          ?.numberFixed ?? 0}
-                      </Typography.Text>
-                      <Typography.Text
-                        type="secondary"
-                        style={{ fontSize: token.sizeXS }}
-                      >
-                        GiB
-                      </Typography.Text>
+                  );
+                } else if (key === 'mem') {
+                  const memPercent = _.toFinite(
+                    (_.toNumber(parsedOccupiedSlots.mem) /
+                      _.toNumber(parsedAvailableSlots.mem)) *
+                      100,
+                  );
+                  return (
+                    <Flex
+                      key={'mem'}
+                      justify="between"
+                      style={{ minWidth: 220 }}
+                    >
+                      <Flex gap="xxs">
+                        <ResourceTypeIcon type={'mem'} />
+                        <Typography.Text>
+                          {iSizeToSize(parsedOccupiedSlots.mem, 'g', 0)
+                            ?.numberFixed ?? 0}
+                          /
+                          {iSizeToSize(parsedAvailableSlots.mem, 'g', 0)
+                            ?.numberFixed ?? 0}
+                        </Typography.Text>
+                        <Typography.Text
+                          type="secondary"
+                          style={{ fontSize: token.sizeXS }}
+                        >
+                          GiB
+                        </Typography.Text>
+                      </Flex>
+                      <BAIProgressWithLabel
+                        percent={memPercent}
+                        strokeColor={
+                          memPercent > 80
+                            ? token.colorError
+                            : token.colorSuccess
+                        }
+                        width={120}
+                        valueLabel={
+                          toFixedFloorWithoutTrailingZeros(memPercent, 1) + ' %'
+                        }
+                      />
                     </Flex>
-                    <BAIProgressWithLabel
-                      percent={
-                        ((parsedOccupiedSlots[key] || 0) /
-                          parsedAvailableSlots[key]) *
-                        100
-                      }
-                      strokeColor={
-                        ((parsedOccupiedSlots[key] || 0) /
-                          parsedAvailableSlots[key]) *
-                          100 >
-                        80
-                          ? token.colorError
-                          : token.colorSuccess
-                      }
-                      width={120}
-                      valueLabel={
-                        toFixedFloorWithoutTrailingZeros(
-                          _.toFinite(
-                            ((parsedOccupiedSlots[key] || 0) /
-                              parsedAvailableSlots[key]) *
-                              100,
-                          ),
-                          1,
-                        ) + ' %'
-                      }
-                    />
-                  </Flex>
-                );
-              } else if (parsedAvailableSlots[key]) {
-                return (
-                  <Flex
-                    key={key}
-                    justify="between"
-                    style={{ minWidth: 220 }}
-                    gap="xxs"
-                  >
-                    <Flex gap="xxs">
-                      <ResourceTypeIcon key={key} type={key} />
-                      <Typography.Text>
-                        {toFixedFloorWithoutTrailingZeros(
-                          parsedOccupiedSlots[key],
-                          2,
-                        )}
-                        /
-                        {toFixedFloorWithoutTrailingZeros(
-                          parsedAvailableSlots[key],
-                          2,
-                        )}
-                      </Typography.Text>
-                      <Typography.Text
-                        type="secondary"
-                        style={{ fontSize: token.sizeXS }}
-                      >
-                        {resourceSlotsDetails?.[key]?.display_unit}
-                      </Typography.Text>
+                  );
+                } else if (parsedAvailableSlots[key]) {
+                  const percent = _.toFinite(
+                    (_.toNumber(parsedOccupiedSlots[key]) /
+                      _.toNumber(parsedAvailableSlots[key])) *
+                      100,
+                  );
+                  return (
+                    <Flex
+                      key={key}
+                      justify="between"
+                      style={{ minWidth: 220 }}
+                      gap="xxs"
+                    >
+                      <Flex gap="xxs">
+                        <ResourceTypeIcon key={key} type={key} />
+                        <Typography.Text>
+                          {toFixedFloorWithoutTrailingZeros(
+                            parsedOccupiedSlots[key] || 0,
+                            2,
+                          )}
+                          /
+                          {toFixedFloorWithoutTrailingZeros(
+                            parsedAvailableSlots[key],
+                            2,
+                          )}
+                        </Typography.Text>
+                        <Typography.Text
+                          type="secondary"
+                          style={{ fontSize: token.sizeXS }}
+                        >
+                          {resourceSlotsDetails?.[key]?.display_unit}
+                        </Typography.Text>
+                      </Flex>
+                      <BAIProgressWithLabel
+                        percent={percent}
+                        strokeColor={
+                          percent > 80 ? token.colorError : token.colorSuccess
+                        }
+                        width={120}
+                        valueLabel={
+                          toFixedFloorWithoutTrailingZeros(percent, 1) + ' %'
+                        }
+                      />
                     </Flex>
-                    <BAIProgressWithLabel
-                      percent={
-                        (parsedOccupiedSlots[key] / parsedAvailableSlots[key]) *
-                        100
-                      }
-                      strokeColor={
-                        (parsedOccupiedSlots[key] / parsedAvailableSlots[key]) *
-                          100 >
-                        80
-                          ? token.colorError
-                          : token.colorSuccess
-                      }
-                      width={120}
-                      valueLabel={
-                        toFixedFloorWithoutTrailingZeros(
-                          _.toFinite(
-                            (parsedOccupiedSlots[key] /
-                              parsedAvailableSlots[key]) *
-                              100,
-                          ),
-                          1,
-                        ) + ' %'
-                      }
-                    />
-                  </Flex>
-                );
-              }
-            })}
+                  );
+                }
+              },
+            )}
           </Flex>
         );
       },
