@@ -7,6 +7,7 @@ import {
   isOutsideRangeWithUnits,
   localeCompare,
   numberSorterWithInfinityValue,
+  parseUnit,
   toFixedFloorWithoutTrailingZeros,
   transformSorterToOrderString,
 } from './index';
@@ -81,6 +82,36 @@ describe('iSizeToSize', () => {
     const sizeWithUnit = undefined;
     const result = iSizeToSize(sizeWithUnit);
     expect(result).toBeUndefined();
+  });
+
+  it('should return 0 when input is zero', () => {
+    const result = iSizeToSize('0g', 'b');
+    expect(result?.number).toBe(0);
+    expect(result?.unit).toBe('B');
+  });
+});
+
+describe('parseUnit', () => {
+  test('parses a number with a unit', () => {
+    expect(parseUnit('123px')).toEqual([123, 'px']);
+    expect(parseUnit('45.67em')).toEqual([45.67, 'em']);
+    expect(parseUnit('100%')).toEqual([100, '%']);
+  });
+
+  test('parses a number without a unit', () => {
+    expect(parseUnit('123')).toEqual([123, 'b']);
+    expect(parseUnit('45.67')).toEqual([45.67, 'b']);
+  });
+
+  test('handles invalid input gracefully', () => {
+    expect(parseUnit('abc')).toEqual([NaN, 'b']);
+    expect(parseUnit('')).toEqual([NaN, 'b']);
+  });
+
+  test('handles edge cases', () => {
+    expect(parseUnit('0')).toEqual([0, 'b']);
+    expect(parseUnit('0px')).toEqual([0, 'px']);
+    expect(parseUnit('.5em')).toEqual([0.5, 'em']);
   });
 });
 
