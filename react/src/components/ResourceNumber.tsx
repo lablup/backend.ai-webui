@@ -1,32 +1,22 @@
 import { iSizeToSize } from '../helper';
-import { useResourceSlotsDetails } from '../hooks/backendai';
+import {
+  BaseResourceSlotName,
+  KnownAcceleratorResourceSlotName,
+  ResourceSlotName,
+  useResourceSlotsDetails,
+} from '../hooks/backendai';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
 import Flex from './Flex';
 import { Tooltip, Typography, theme } from 'antd';
 import _ from 'lodash';
+import { MicrochipIcon } from 'lucide-react';
 import React, { ReactElement } from 'react';
-import { useTranslation } from 'react-i18next';
-
-export const ACCELERATOR_UNIT_MAP: {
-  [key: string]: string;
-} = {
-  'cuda.device': 'GPU',
-  'cuda.shares': 'FGPU',
-  'rocm.device': 'GPU',
-  'tpu.device': 'TPU',
-  'ipu.device': 'IPU',
-  'atom.device': 'ATOM',
-  'atom-plus.device': 'ATOM+',
-  'gaudi2.device': 'Gaudi 2',
-  'warboy.device': 'Warboy',
-  'hyperaccel-lpu.device': 'Hyperaccel LPU',
-};
 
 export type ResourceOpts = {
   shmem?: number;
 };
 interface ResourceNumberProps {
-  type: string;
+  type: ResourceSlotName | string;
   extra?: ReactElement;
   opts?: ResourceOpts;
   value: string;
@@ -35,7 +25,9 @@ interface ResourceNumberProps {
 }
 
 type ResourceTypeInfo<V> = {
-  [key in string]: V;
+  [key in KnownAcceleratorResourceSlotName]: V;
+} & {
+  [key in BaseResourceSlotName]: V;
 };
 const ResourceNumber: React.FC<ResourceNumberProps> = ({
   type,
@@ -112,7 +104,7 @@ const MWCIconWrap: React.FC<{ size?: number; children: string }> = ({
 };
 interface AccTypeIconProps
   extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'src'> {
-  type: string;
+  type: ResourceSlotName | string;
   showIcon?: boolean;
   showUnit?: boolean;
   showTooltip?: boolean;
@@ -126,33 +118,27 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
   showTooltip = true,
   ...props
 }) => {
-  const { t } = useTranslation();
-
-  const resourceTypeIconSrcMap: ResourceTypeInfo<
-    [ReactElement | string, string]
-  > = {
-    cpu: [
-      <MWCIconWrap size={size}>developer_board</MWCIconWrap>,
-      t('session.core'),
-    ],
-    mem: [<MWCIconWrap size={size}>memory</MWCIconWrap>, 'GiB'],
-    'cuda.device': ['/resources/icons/file_type_cuda.svg', 'GPU'],
-    'cuda.shares': ['/resources/icons/file_type_cuda.svg', 'FGPU'],
-    'rocm.device': ['/resources/icons/rocm.svg', 'GPU'],
-    'tpu.device': [<MWCIconWrap size={size}>view_module</MWCIconWrap>, 'TPU'],
-    'ipu.device': [<MWCIconWrap size={size}>view_module</MWCIconWrap>, 'IPU'],
-    'atom.device': ['/resources/icons/rebel.svg', 'ATOM'],
-    'atom-plus.device': ['/resources/icons/rebel.svg', 'ATOM+'],
-    'gaudi2.device': ['/resources/icons/gaudi.svg', 'Gaudi 2'],
-    'warboy.device': ['/resources/icons/furiosa.svg', 'Warboy'],
-    'hyperaccel-lpu.device': [
-      '/resources/icons/npu_generic.svg',
-      'Hyperaccel LPU',
-    ],
+  const resourceTypeIconSrcMap: ResourceTypeInfo<ReactElement | string> = {
+    cpu: <MWCIconWrap size={size}>developer_board</MWCIconWrap>,
+    mem: <MWCIconWrap size={size}>memory</MWCIconWrap>,
+    'cuda.device': '/resources/icons/file_type_cuda.svg',
+    'cuda.shares': '/resources/icons/file_type_cuda.svg',
+    'rocm.device': '/resources/icons/rocm.svg',
+    'tpu.device': <MWCIconWrap size={size}>view_module</MWCIconWrap>,
+    'ipu.device': <MWCIconWrap size={size}>view_module</MWCIconWrap>,
+    'atom.device': '/resources/icons/rebel.svg',
+    'atom-plus.device': '/resources/icons/rebel.svg',
+    'gaudi2.device': '/resources/icons/gaudi.svg',
+    'warboy.device': '/resources/icons/furiosa.svg',
+    'hyperaccel-lpu.device': '/resources/icons/npu_generic.svg',
   };
 
+  const targetIcon = resourceTypeIconSrcMap[
+    type as KnownAcceleratorResourceSlotName
+  ] ?? <MicrochipIcon />;
+
   const content =
-    typeof resourceTypeIconSrcMap[type]?.[0] === 'string' ? (
+    typeof targetIcon === 'string' ? (
       <img
         {...props}
         style={{
@@ -161,17 +147,14 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
           ...(props.style || {}),
         }}
         // @ts-ignore
-        src={resourceTypeIconSrcMap[type]?.[0] || ''}
+        src={resourceTypeIconSrcMap[type] || ''}
         alt={type}
       />
     ) : (
-      <Flex style={{ width: 16, height: 16 }}>
-        {resourceTypeIconSrcMap[type]?.[0] || type}
-      </Flex>
+      <Flex style={{ width: 16, height: 16 }}>{targetIcon || type}</Flex>
     );
 
   return showTooltip ? (
-    // <Tooltip title={showTooltip ? `${type} (${resourceTypeIconSrcMap[type][1]})` : undefined}>
     <Tooltip title={type}>{content}</Tooltip>
   ) : (
     <Flex style={{ pointerEvents: 'none' }}>{content}</Flex>

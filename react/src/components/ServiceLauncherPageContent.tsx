@@ -9,6 +9,7 @@ import {
   useSuspendedBackendaiClient,
   useWebUINavigate,
 } from '../hooks';
+import { KnownAcceleratorResourceSlotName } from '../hooks/backendai';
 import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { DEFAULT_BAI_MODAL_Z_INDEX } from './BAIModal';
 import EnvVarFormList, { EnvVarFormListValue } from './EnvVarFormList';
@@ -56,20 +57,12 @@ interface ServiceCreateConfigResourceOptsType {
   shmem?: number | string;
 }
 
-interface ServiceCreateConfigResourceType {
+type ServiceCreateConfigResourceType = {
   cpu: number | string;
   mem: string;
-  'cuda.device'?: number | string;
-  'cuda.shares'?: number | string;
-  'rocm.device'?: number | string;
-  'tpu.device'?: number | string;
-  'ipu.device'?: number | string;
-  'atom.device'?: number | string;
-  'gaudi2.device'?: number | string;
-  'atom-plus.device'?: number | string;
-  'warboy.device'?: number | string;
-  'hyperaccel-lpu.device'?: number | string;
-}
+} & {
+  [key in KnownAcceleratorResourceSlotName]?: number | string;
+};
 export interface MountOptionType {
   mount_destination?: string;
   type?: string;

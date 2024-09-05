@@ -5,7 +5,24 @@ import { addNumberWithUnits, iSizeToSize } from '../helper';
 import { useResourceSlots } from '../hooks/backendai';
 import { useSuspenseTanQuery } from './reactQueryAlias';
 import _ from 'lodash';
+import { useMemo } from 'react';
 
+const maxPerContainerRegex = /^max([A-Za-z0-9]+)PerContainer$/;
+
+export const isMatchingMaxPerContainer = (configName: string, key: string) => {
+  const match = configName.match(maxPerContainerRegex);
+  if (match) {
+    const configLowerCase = match[1].toLowerCase();
+    const keyLowerCase = key.replaceAll(/[.-]/g, '').toLowerCase();
+    // Because some accelerator names are not the same as the config name, we need to check if the config name is a substring of the accelerator name
+    // cuda.shares => maxCUDASharesPerContainer
+    // cuda.device => maxCUDADevicesPerContainer (Not maxCUDADevicePerContainer)
+    return (
+      configLowerCase === keyLowerCase || configLowerCase === keyLowerCase + 's'
+    );
+  }
+  return false;
+};
 export interface MergedResourceLimits {
   accelerators: {
     [key: string]:
@@ -195,6 +212,14 @@ export const useResourceLimitAndRemaining = ({
       },
     ),
   };
+  const perContainerConfigs = useMemo(
+    () =>
+      _.omitBy(baiClient._config, (value, key) => {
+        return !maxPerContainerRegex.test(key);
+      }),
+    [baiClient._config],
+  );
+
   const resourceLimits: MergedResourceLimits = {
     cpu:
       resourceSlots?.cpu === undefined
@@ -265,19 +290,11 @@ export const useResourceLimitAndRemaining = ({
     accelerators: _.reduce(
       acceleratorSlots,
       (result, value, key) => {
-        const configName =
-          {
-            'cuda.device': 'maxCUDADevicesPerContainer',
-            'cuda.shares': 'maxCUDASharesPerContainer',
-            'rocm.device': 'maxROCMDevicesPerContainer',
-            'tpu.device': 'maxTPUDevicesPerContainer',
-            'ipu.device': 'maxIPUDevicesPerContainer',
-            'atom.device': 'maxATOMDevicesPerContainer',
-            'atom-plus.device': 'maxATOMPlusDevicesPerContainer',
-            'gaudi2.device': 'maxGaudi2DevicesPerContainer',
-            'warboy.device': 'maxWarboyDevicesPerContainer',
-            'hyperaccel-lpu.device': 'maxHyperaccelLPUDevicesPerContainer', // FIXME: add maxLPUDevicesPerContainer to config
-          }[key] || 'cuda.device'; // FIXME: temporally `cuda.device` config, when undefined
+        const perContainerLimit =
+          _.find(perContainerConfigs, (configValue, configName) => {
+            return isMatchingMaxPerContainer(configName, key);
+          }) ?? baiClient._config['cuda.device']; // FIXME: temporally `cuda.device` config, when undefined
+
         result[key] = {
           min: parseInt(
             _.filter(
@@ -288,7 +305,7 @@ export const useResourceLimitAndRemaining = ({
             )?.[0]?.min || '0',
           ),
           max: _.min([
-            baiClient._config[configName] || 8,
+            perContainerLimit || 8,
             // scaling group all cpu (using + remaining), string type
             resourceGroupResourceSize.accelerators[key],
           ]),
