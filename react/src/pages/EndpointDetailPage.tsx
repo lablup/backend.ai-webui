@@ -18,6 +18,7 @@ import {
 } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
+import { isDestroyingStatus } from './EndpointListPage';
 import {
   EndpointDetailPageQuery,
   EndpointDetailPageQuery$data,
@@ -300,7 +301,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       children: endpoint?.url ? (
         <>
           <Typography.Text copyable>{endpoint?.url}</Typography.Text>
-          <Tooltip title={'LLM Playground'}>
+          <Tooltip title={'LLM Chat Test'}>
             <Button
               type="link"
               icon={<BotMessageSquareIcon />}
@@ -472,6 +473,10 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           <Button
             loading={isPendingRefetch}
             icon={<ReloadOutlined />}
+            disabled={isDestroyingStatus(
+              endpoint?.desired_session_count,
+              endpoint?.status,
+            )}
             onClick={() => {
               startRefetchTransition(() => {
                 updateFetchKey();
@@ -489,8 +494,10 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             type="primary"
             icon={<SettingOutlined />}
             disabled={
-              (endpoint?.desired_session_count || 0) < 0 ||
-              endpoint?.status === 'DESTROYING' ||
+              isDestroyingStatus(
+                endpoint?.desired_session_count,
+                endpoint?.status,
+              ) ||
               (!!endpoint?.created_user_email &&
                 endpoint?.created_user_email !== currentUser.email)
             }
@@ -517,7 +524,10 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           <Button
             type="primary"
             icon={<PlusOutlined />}
-            disabled={endpoint?.status === 'DESTROYING'}
+            disabled={isDestroyingStatus(
+              endpoint?.desired_session_count,
+              endpoint?.status,
+            )}
             onClick={() => {
               setIsOpenTokenGenerationModal(true);
             }}
@@ -600,6 +610,10 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             <Button
               icon={<SyncOutlined />}
               loading={mutationToSyncRoutes.isPending}
+              disabled={isDestroyingStatus(
+                endpoint?.desired_session_count,
+                endpoint?.status,
+              )}
               onClick={() => {
                 endpoint?.endpoint_id &&
                   mutationToSyncRoutes.mutateAsync(endpoint?.endpoint_id, {

@@ -50,6 +50,16 @@ export type Endpoint = NonNullable<
   >[0]
 >;
 
+export const isDestroyingStatus = (
+  desiredSessionCount: number | null | undefined,
+  status: string | null | undefined,
+) => {
+  return (
+    (desiredSessionCount ?? 0) < 0 ||
+    _.includes(['DESTROYED', 'DESTROYING'], status ?? '')
+  );
+};
+
 type LifecycleStage = 'created&destroying' | 'destroyed';
 
 const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
@@ -137,8 +147,7 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
             type="text"
             icon={<SettingOutlined />}
             style={
-              row.desired_session_count < 0 ||
-              row.status?.toLowerCase() === 'destroying' ||
+              isDestroyingStatus(row?.desired_session_count, row?.status) ||
               (!!row.created_user_email &&
                 row.created_user_email !== currentUser.email)
                 ? {
@@ -149,8 +158,7 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   }
             }
             disabled={
-              row.desired_session_count < 0 ||
-              row.status?.toLowerCase() === 'destroying' ||
+              isDestroyingStatus(row?.desired_session_count, row?.status) ||
               (!!row.created_user_email &&
                 row.created_user_email !== currentUser.email)
             }
@@ -163,8 +171,7 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
             icon={
               <DeleteOutlined
                 style={
-                  row.desired_session_count < 0 ||
-                  row.status?.toLowerCase() === 'destroying'
+                  isDestroyingStatus(row?.desired_session_count, row?.status)
                     ? undefined
                     : {
                         color: token.colorError,
@@ -176,10 +183,10 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
               terminateModelServiceMutation.isPending &&
               optimisticDeletingId === row.endpoint_id
             }
-            disabled={
-              row.desired_session_count < 0 ||
-              row.status?.toLowerCase() === 'destroying'
-            }
+            disabled={isDestroyingStatus(
+              row?.desired_session_count,
+              row?.status,
+            )}
             onClick={() => {
               modal.confirm({
                 title: t('dialog.ask.DoYouWantToDeleteSomething', {
