@@ -5,7 +5,7 @@ import {
   transformSorterToOrderString,
 } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
-import { useResourceSlotsDetails } from '../hooks/backendai';
+import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useThemeMode } from '../hooks/useThemeMode';
 import AgentDetailModal from './AgentDetailModal';
@@ -268,16 +268,16 @@ const AgentList: React.FC<AgentListProps> = ({
       key: 'allocation',
       render: (value, record) => {
         const parsedOccupiedSlots: {
-          [key in string]: string | undefined;
+          [key in ResourceSlotName]: string | undefined;
         } = JSON.parse(record?.occupied_slots || '{}');
         const parsedAvailableSlots: {
-          [key in string]: string | undefined;
+          [key in ResourceSlotName]: string | undefined;
         } = JSON.parse(record?.available_slots || '{}');
         return (
           <Flex direction="column" gap="xxs">
             {_.map(
               parsedAvailableSlots,
-              (value: string | number, key: string) => {
+              (value: string | number, key: ResourceSlotName) => {
                 if (key === 'cpu') {
                   const cpuPercent = _.toFinite(
                     (_.toNumber(parsedOccupiedSlots.cpu) /

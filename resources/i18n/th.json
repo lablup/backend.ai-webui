@@ -633,7 +633,8 @@
     "General": "ทั่วไป",
     "Disabled": "ปิดใช้งาน",
     "Extend": "ขยาย",
-    "RemainingLoginSessionTime": "เวลาจนกระทั่งออกจากระบบอัตโนมัติ"
+    "RemainingLoginSessionTime": "เวลาจนกระทั่งออกจากระบบอัตโนมัติ",
+    "Change": "เปลี่ยน"
   },
   "credential": {
     "Permission": "สิทธิ์",

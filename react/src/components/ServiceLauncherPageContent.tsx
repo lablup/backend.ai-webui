@@ -9,6 +9,7 @@ import {
   useSuspendedBackendaiClient,
   useWebUINavigate,
 } from '../hooks';
+import { KnownAcceleratorResourceSlotName } from '../hooks/backendai';
 import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { DEFAULT_BAI_MODAL_Z_INDEX } from './BAIModal';
 import EnvVarFormList, { EnvVarFormListValue } from './EnvVarFormList';
@@ -22,6 +23,7 @@ import ResourceAllocationFormItems, {
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
   ResourceAllocationFormValue,
 } from './ResourceAllocationFormItems';
+import ResourceNumber from './ResourceNumber';
 import VFolderLazyView from './VFolderLazyView';
 import VFolderSelect from './VFolderSelect';
 import VFolderTableFormItem from './VFolderTableFormItem';
@@ -38,6 +40,8 @@ import {
   Select,
   Switch,
   theme,
+  Tooltip,
+  Tag,
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
@@ -56,20 +60,12 @@ interface ServiceCreateConfigResourceOptsType {
   shmem?: number | string;
 }
 
-interface ServiceCreateConfigResourceType {
+type ServiceCreateConfigResourceType = {
   cpu: number | string;
   mem: string;
-  'cuda.device'?: number | string;
-  'cuda.shares'?: number | string;
-  'rocm.device'?: number | string;
-  'tpu.device'?: number | string;
-  'ipu.device'?: number | string;
-  'atom.device'?: number | string;
-  'gaudi2.device'?: number | string;
-  'atom-plus.device'?: number | string;
-  'warboy.device'?: number | string;
-  'hyperaccel-lpu.device'?: number | string;
-}
+} & {
+  [key in KnownAcceleratorResourceSlotName]?: number | string;
+};
 export interface MountOptionType {
   mount_destination?: string;
   type?: string;
@@ -146,6 +142,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     useState(false);
 
   const [form] = Form.useForm<ServiceLauncherFormValue>();
+  const [wantToChangeResource, setWantToChangeResource] = useState(false);
 
   const endpoint = useFragment(
     graphql`
@@ -569,16 +566,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         }
       })
       .catch((err: any) => {
-        // error on input
-        if (err.errorFields?.length > 0) {
-          err.errorFields.forEach((error: any) => {
-            message.error(error.errors);
-          });
-        } else if (err.message) {
-          message.error(err.message);
-        } else {
-          message.error(t('modelService.FormValidationFailed'));
-        }
+        // this catch function only for form validation error and unhandled error in `form.validateFields()..then()`.
+        // It's not for error handling in mutation.
       });
   };
 
@@ -605,6 +594,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     ? {
         serviceName: endpoint?.name,
         resourceGroup: endpoint?.resource_group,
+        allocationPreset: 'custom',
         desiredRoutingCount: endpoint?.desired_session_count || 0,
         // FIXME: memory doesn't applied to resource allocation
         resource: {
@@ -875,7 +865,60 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                       //   });
                       // }}
                       />
-                      <ResourceAllocationFormItems enableResourcePresets />
+                      {endpoint &&
+                        !wantToChangeResource &&
+                        !baiClient._config.allowCustomResourceAllocation && (
+                          <Form.Item
+                            label={
+                              <>
+                                {t('modelService.resources')}
+                                <Button
+                                  type="link"
+                                  onClick={() => {
+                                    form.setFieldsValue({
+                                      allocationPreset: 'auto-select',
+                                    });
+                                    setWantToChangeResource(true);
+                                  }}
+                                >
+                                  {t('general.Change')}
+                                </Button>
+                              </>
+                            }
+                            required
+                          >
+                            <Flex gap={'xs'}>
+                              <Tooltip title={t('session.ResourceGroup')}>
+                                <Tag>{endpoint?.resource_group}</Tag>
+                              </Tooltip>
+                              {_.map(
+                                JSON.parse(endpoint?.resource_slots || '{}'),
+                                (value: string, type) => {
+                                  return (
+                                    <ResourceNumber
+                                      key={type}
+                                      type={type}
+                                      value={value}
+                                      opts={endpoint?.resource_opts}
+                                    />
+                                  );
+                                },
+                              )}
+                            </Flex>
+                          </Form.Item>
+                        )}
+                      <div
+                        style={{
+                          display:
+                            endpoint &&
+                            !wantToChangeResource &&
+                            !baiClient._config.allowCustomResourceAllocation
+                              ? 'none'
+                              : 'block',
+                        }}
+                      >
+                        <ResourceAllocationFormItems enableResourcePresets />
+                      </div>
                       <Form.Item
                         label={t('session.launcher.EnvironmentVariable')}
                       >

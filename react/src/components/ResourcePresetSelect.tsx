@@ -1,6 +1,6 @@
 import { localeCompare } from '../helper';
 import { useUpdatableState } from '../hooks';
-import { useResourceSlots } from '../hooks/backendai';
+import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
 import useControllableState from '../hooks/useControllableState';
 import Flex from './Flex';
 import ResourceNumber from './ResourceNumber';
@@ -123,7 +123,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
           // @ts-ignore
           options: _.map(resource_presets, (preset, index) => {
             const slotsInfo: {
-              [key in string]: string;
+              [key in ResourceSlotName]: string;
             } = JSON.parse(preset?.resource_slots);
             const disabled = allocatablePresetNames
               ? !allocatablePresetNames.includes(preset?.name || '')
@@ -145,7 +145,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
                   >
                     {_.map(
                       _.omitBy(slotsInfo, (slot, key) =>
-                        _.isEmpty(resourceSlots[key]),
+                        _.isEmpty(resourceSlots[key as ResourceSlotName]),
                       ),
                       (slot, key) => {
                         return (

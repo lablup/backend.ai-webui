@@ -8,6 +8,26 @@ import {
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
 
+export const baseResourceSlotNames = ['cpu', 'mem'] as const;
+export type BaseResourceSlotName = (typeof baseResourceSlotNames)[number];
+export const knownAcceleratorResourceSlotNames = [
+  'cuda.device',
+  'cuda.shares',
+  'rocm.device',
+  'tpu.device',
+  'ipu.device',
+  'atom.device',
+  'atom-plus.device',
+  'gaudi2.device',
+  'warboy.device',
+  'hyperaccel-lpu.device',
+] as const;
+export type KnownAcceleratorResourceSlotName =
+  (typeof knownAcceleratorResourceSlotNames)[number];
+
+export type ResourceSlotName =
+  | BaseResourceSlotName
+  | KnownAcceleratorResourceSlotName;
 export interface QuotaScope {
   id: string;
   quota_scope_id: string;
@@ -23,19 +43,7 @@ export const useResourceSlots = () => {
   const [key, checkUpdate] = useUpdatableState('first');
   const baiClient = useSuspendedBackendaiClient();
   const { data: resourceSlots } = useSuspenseTanQuery<{
-    cpu?: string;
-    mem?: string;
-    'cuda.shares'?: string;
-    'cuda.device'?: string;
-    'rocm.device'?: string;
-    'tpu.device'?: string;
-    'ipu.device'?: string;
-    'atom.device'?: string;
-    'atom-plus.device'?: string;
-    'gaudi2.device'?: string;
-    'warboy.device'?: string;
-    'hyperaccel-lpu.device'?: string;
-    [key: string]: string | undefined;
+    [key in ResourceSlotName]?: string;
   }>({
     queryKey: ['useResourceSlots', key],
     queryFn: () => {

@@ -509,7 +509,8 @@
     "General": "Umum",
     "Disabled": "Dilumpuhkan",
     "NSelected": "{{count}} item yang dipilih",
-    "Extend": "Panjangkan"
+    "Extend": "Panjangkan",
+    "Change": "Berubah"
   },
   "credential": {
     "Permission": "Kebenaran",

@@ -278,7 +278,7 @@ export function filterNonNullItems<T extends { [key: string]: any }>(
 }
 
 export function parseUnit(str: string): [number, string] {
-  const match = str?.match(/^(\d+(?:\.\d+)?)([a-zA-Z]*)$/);
+  const match = str?.match(/^(\d*\.?\d+)([a-zA-Z%]*)$/);
   if (!match) {
     // If the input doesn't match the pattern, assume it's in bytes
     return [parseFloat(str), 'b'];

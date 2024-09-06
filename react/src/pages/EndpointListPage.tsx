@@ -77,6 +77,10 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const isPendingPaginationAndFilter =
     selectedLifecycleStage !== deferredSelectedLifecycleStage ||
     paginationState !== deferredPaginationState;
+  const lifecycleStageFilter =
+    deferredSelectedLifecycleStage === 'created&destroying'
+      ? `lifecycle_stage == "created" | lifecycle_stage == "destroying"`
+      : `lifecycle_stage == "${deferredSelectedLifecycleStage}"`;
 
   const [isRefetchPending, startRefetchTransition] = useTransition();
   const [servicesFetchKey, updateServicesFetchKey] =
@@ -84,6 +88,7 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const [optimisticDeletingId, setOptimisticDeletingId] = useState<
     string | null
   >();
+
   const [currentUser] = useCurrentUserInfo();
 
   // const [selectedGeneration, setSelectedGeneration] = useState<
@@ -360,10 +365,9 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
           deferredPaginationState.pageSize,
         limit: deferredPaginationState.pageSize,
         projectID: curProject.id,
-        filter:
-          deferredSelectedLifecycleStage === 'created&destroying'
-            ? `lifecycle_stage == "created" | lifecycle_stage == "destroying"`
-            : `lifecycle_stage == "${deferredSelectedLifecycleStage}"`,
+        filter: baiClient.supports('endpoint-lifecycle-stage-filter')
+          ? lifecycleStageFilter
+          : undefined,
       },
       {
         fetchPolicy: 'network-only',
@@ -411,29 +415,31 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
         }}
       >
         <Flex direction="column" align="start">
-          <Radio.Group
-            value={selectedLifecycleStage}
-            onChange={(e) => {
-              setSelectedLifecycleStage(e.target?.value);
-              // reset pagination state when filter changes
-              setPaginationState({
-                current: 1,
-                pageSize: paginationState.pageSize,
-              });
-            }}
-            optionType="button"
-            buttonStyle="solid"
-            options={[
-              {
-                label: 'Active',
-                value: 'created&destroying',
-              },
-              {
-                label: 'Destroyed',
-                value: 'destroyed',
-              },
-            ]}
-          />
+          {baiClient.supports('endpoint-lifecycle-stage-filter') && (
+            <Radio.Group
+              value={selectedLifecycleStage}
+              onChange={(e) => {
+                setSelectedLifecycleStage(e.target?.value);
+                // reset pagination state when filter changes
+                setPaginationState({
+                  current: 1,
+                  pageSize: paginationState.pageSize,
+                });
+              }}
+              optionType="button"
+              buttonStyle="solid"
+              options={[
+                {
+                  label: 'Active',
+                  value: 'created&destroying',
+                },
+                {
+                  label: 'Destroyed',
+                  value: 'destroyed',
+                },
+              ]}
+            />
+          )}
         </Flex>
         <Flex direction="row" gap={'xs'} wrap="wrap" style={{ flexShrink: 1 }}>
           <Flex gap={'xs'}>

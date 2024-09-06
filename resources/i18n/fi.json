@@ -532,7 +532,8 @@
     "Disabled": "Vammaiset",
     "NSelected": "Valittu {{count}} kohde(t)",
     "Extend": "Laajenna",
-    "RemainingLoginSessionTime": "Aika automaattiseen uloskirjautumiseen asti"
+    "RemainingLoginSessionTime": "Aika automaattiseen uloskirjautumiseen asti",
+    "Change": "Muuta"
   },
   "import": {
     "CleanUpImportTask": "Tuontitehtävän siivous...",

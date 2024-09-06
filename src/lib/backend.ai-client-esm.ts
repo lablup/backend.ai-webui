@@ -710,6 +710,10 @@ class Client {
     if (this.isManagerVersionCompatibleWith('24.03.7')) {
       this._features['per-kernel-logs'] = true;
     }
+    // ignore next alpha version
+    if(this.isManagerVersionCompatibleWith(['24.03.10'])) {
+      this._features['endpoint-lifecycle-stage-filter'] = true;
+    }
     if (this.isManagerVersionCompatibleWith('24.09')) {
       this._features['extend-login-session'] = true;
     }

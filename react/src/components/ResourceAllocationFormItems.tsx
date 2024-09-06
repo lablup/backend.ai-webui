@@ -24,7 +24,6 @@ import {
 } from './ImageEnvironmentSelectFormItems';
 import InputNumberWithSlider from './InputNumberWithSlider';
 import ResourceGroupSelectForCurrentProject from './ResourceGroupSelectForCurrentProject';
-import { ACCELERATOR_UNIT_MAP } from './ResourceNumber';
 import ResourcePresetSelect from './ResourcePresetSelect';
 import { CaretDownOutlined } from '@ant-design/icons';
 import {
@@ -104,6 +103,10 @@ const ResourceAllocationFormItems: React.FC<
   const currentResourceGroup = useCurrentResourceGroupValue(); // use global state
 
   const currentImage = Form.useWatch(['environments', 'image'], {
+    form,
+    preserve: true,
+  });
+  const currentAllocationPreset = Form.useWatch(['allocationPreset'], {
     form,
     preserve: true,
   });
@@ -203,6 +206,15 @@ const ResourceAllocationFormItems: React.FC<
       .catch(() => {});
   });
 
+  useEffect(() => {
+    if (currentAllocationPreset === 'auto-select') {
+      currentResourceGroup && updateAllocationPresetBasedOnResourceGroup();
+    }
+  }, [
+    currentResourceGroup,
+    updateAllocationPresetBasedOnResourceGroup,
+    currentAllocationPreset,
+  ]);
   // update allocation preset based on resource group and current image
   useEffect(() => {
     currentResourceGroup && updateAllocationPresetBasedOnResourceGroup();
@@ -928,7 +940,7 @@ const ResourceAllocationFormItems: React.FC<
                             },
                             tooltip: {
                               formatter: (value = 0) => {
-                                return `${value} ${ACCELERATOR_UNIT_MAP[currentAcceleratorType]}`;
+                                return `${value} ${resourceSlotsDetails?.[currentAcceleratorType]?.display_unit || ''}`;
                               },
                               open:
                                 currentImageAcceleratorLimits.length <= 0
@@ -992,7 +1004,8 @@ const ResourceAllocationFormItems: React.FC<
                                       return {
                                         value: name,
                                         label:
-                                          ACCELERATOR_UNIT_MAP[name] || 'UNIT',
+                                          resourceSlotsDetails?.[name]
+                                            ?.display_unit || 'UNIT',
                                         disabled:
                                           currentImageAcceleratorLimits.length >
                                             0 &&
