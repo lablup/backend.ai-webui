@@ -634,7 +634,8 @@
     "Disabled": "ปิดใช้งาน",
     "Extend": "ขยาย",
     "RemainingLoginSessionTime": "เวลาจนกระทั่งออกจากระบบอัตโนมัติ",
-    "Change": "เปลี่ยน"
+    "Change": "เปลี่ยน",
+    "MaxValueNotification": "{{name}} ต้องมีค่าสูงสุด {{max}}"
   },
   "credential": {
     "Permission": "สิทธิ์",

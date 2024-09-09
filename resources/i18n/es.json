@@ -533,7 +533,8 @@
     "NSelected": "Elemento(s) {{cuenta}} seleccionado(s)",
     "Extend": "Extender",
     "RemainingLoginSessionTime": "Tiempo hasta el cierre de sesión automático",
-    "Change": "Cambia"
+    "Change": "Cambia",
+    "MaxValueNotification": "{{name}} debe ser máximo {{max}}"
   },
   "import": {
     "CleanUpImportTask": "Tarea de importación de limpieza...",

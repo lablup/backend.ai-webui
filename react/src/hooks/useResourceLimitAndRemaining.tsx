@@ -2,7 +2,7 @@ import { useSuspendedBackendaiClient } from '.';
 import { Image } from '../components/ImageEnvironmentSelectFormItems';
 import { AUTOMATIC_DEFAULT_SHMEM } from '../components/ResourceAllocationFormItems';
 import { addNumberWithUnits, iSizeToSize } from '../helper';
-import { useResourceSlots } from '../hooks/backendai';
+import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
 import { useSuspenseTanQuery } from './reactQueryAlias';
 import _ from 'lodash';
 import { useMemo } from 'react';
@@ -47,9 +47,7 @@ export interface MergedResourceLimits {
 }
 
 type ResourceLimits = {
-  cpu: string | 'Infinity' | 'NaN';
-  mem: string | 'Infinity' | 'NaN';
-  'cuda.device': string | 'Infinity' | 'NaN';
+  [key in ResourceSlotName]?: string | 'Infinity' | 'NaN';
 };
 type ResourceUsing = ResourceLimits;
 type ResourceRemaining = ResourceLimits;
@@ -237,7 +235,7 @@ export const useResourceLimitAndRemaining = ({
                 : baiClient._config.maxCPUCoresPerContainer,
               limitParser(checkPresetInfo?.keypair_limits.cpu),
               limitParser(checkPresetInfo?.group_limits.cpu),
-              resourceGroupResourceSize?.cpu,
+              // resourceGroupResourceSize?.cpu,
             ]),
           },
     mem:
@@ -273,20 +271,10 @@ export const useResourceLimitAndRemaining = ({
                     'g',
                   )?.number,
                 // scaling group all mem (using + remaining), string type
-                resourceGroupResourceSize?.mem &&
-                  iSizeToSize(resourceGroupResourceSize?.mem + '', 'g')?.number,
+                // resourceGroupResourceSize?.mem &&
+                //   iSizeToSize(resourceGroupResourceSize?.mem + '', 'g')?.number,
               ]) + 'g',
           },
-    // shmem:
-    //   resourceSlots?.mem === undefined
-    //     ? undefined
-    //     : {
-    //         min: _.max([
-    //           _.find(currentImage?.resource_limits, (i) => i?.key === 'shmem')
-    //             ?.min,
-    //           '64m',
-    //         ]),
-    //       },
     accelerators: _.reduce(
       acceleratorSlots,
       (result, value, key) => {
@@ -306,8 +294,12 @@ export const useResourceLimitAndRemaining = ({
           ),
           max: _.min([
             perContainerLimit || 8,
+            limitParser(
+              checkPresetInfo?.keypair_limits[key as ResourceSlotName],
+            ),
+            limitParser(checkPresetInfo?.group_limits[key as ResourceSlotName]),
             // scaling group all cpu (using + remaining), string type
-            resourceGroupResourceSize.accelerators[key],
+            // resourceGroupResourceSize.accelerators[key],
           ]),
         };
         return result;
@@ -321,12 +313,15 @@ export const useResourceLimitAndRemaining = ({
       (result, value, key) => {
         result[key] =
           _.min([
-            // @ts-ignore
-            _.toNumber(checkPresetInfo?.keypair_remaining[key]),
-            // @ts-ignore
-            _.toNumber(checkPresetInfo?.group_remaining[key]),
-            // @ts-ignore
-            _.toNumber(checkPresetInfo?.scaling_group_remaining[key]),
+            _.toNumber(
+              checkPresetInfo?.keypair_remaining[key as ResourceSlotName],
+            ),
+            _.toNumber(
+              checkPresetInfo?.group_remaining[key as ResourceSlotName],
+            ),
+            _.toNumber(
+              checkPresetInfo?.scaling_group_remaining[key as ResourceSlotName],
+            ),
           ]) ?? Number.MAX_SAFE_INTEGER;
         return result;
       },

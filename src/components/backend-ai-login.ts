@@ -142,6 +142,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Boolean }) enableModelStore = false;
   @property({ type: Boolean }) enableLLMPlayground = false;
   @property({ type: Boolean }) enableExtendLoginSession = false;
+  @property({ type: Boolean }) showNonInstalledImages = false;
   @property({ type: String }) eduAppNamePrefix;
   @property({ type: String }) pluginPages;
   @property({ type: Array }) blockList = [] as string[];
@@ -1038,6 +1039,16 @@ export default class BackendAILogin extends BackendAIPage {
         ? environmentsConfig?.allowlist.split(',').map((el) => el.trim())
         : [],
     } as ConfigValueObject) as string[];
+
+    // Enable show all images when creating session/service
+    this.showNonInstalledImages = this._getConfigValueByExists(
+      environmentsConfig,
+      {
+        valueType: 'boolean',
+        defaultValue: false,
+        value: environmentsConfig?.showNonInstalledImages,
+      } as ConfigValueObject,
+    ) as boolean;
   }
 
   /**
@@ -1846,6 +1857,8 @@ export default class BackendAILogin extends BackendAIPage {
           this.maxFileUploadSize;
         globalThis.backendaiclient._config.allow_image_list =
           this.allow_image_list;
+        globalThis.backendaiclient._config.showNonInstalledImages =
+          this.showNonInstalledImages;
         globalThis.backendaiclient._config.maskUserInfo = this.maskUserInfo;
         globalThis.backendaiclient._config.singleSignOnVendors =
           this.singleSignOnVendors;

@@ -155,9 +155,10 @@ const ResourceAllocationFormItems: React.FC<
   }, [checkPresetInfo?.presets, resourceLimits, currentImage]);
 
   const ensureValidAcceleratorType = useEventNotStable(() => {
-    const currentAcceleratorType = form.getFieldValue(
-      form.getFieldValue(['resource', 'acceleratorType']),
-    );
+    const currentAcceleratorType = form.getFieldValue([
+      'resource',
+      'acceleratorType',
+    ]);
     // If the current accelerator type is not available,
     // change accelerator type to the first supported accelerator
     const nextAcceleratorType: string = acceleratorSlots[currentAcceleratorType]
@@ -480,6 +481,10 @@ const ResourceAllocationFormItems: React.FC<
                         // TODO: set message
                       },
                       {
+                        type: 'number',
+                        max: resourceLimits.cpu?.max,
+                      },
+                      {
                         warningOnly: true,
                         validator: async (rule, value: number) => {
                           if (showRemainingWarning) {
@@ -585,6 +590,35 @@ const ResourceAllocationFormItems: React.FC<
                             rules={[
                               {
                                 required: true,
+                              },
+                              {
+                                validator: async (rule, value: string) => {
+                                  if (
+                                    _.isString(value) &&
+                                    resourceLimits.mem?.max &&
+                                    compareNumberWithUnits(
+                                      value,
+                                      resourceLimits.mem?.max,
+                                    ) > 0
+                                  ) {
+                                    return Promise.reject(
+                                      t('general.MaxValueNotification', {
+                                        name: t('session.launcher.Memory'),
+                                        max:
+                                          _.toUpper(
+                                            resourceLimits.mem?.max || '0g',
+                                          ) + 'iB',
+                                      }),
+                                      // t('session.launcher.MinMemory', {
+                                      //   size: _.toUpper(
+                                      //     resourceLimits.mem?.min || '0g',
+                                      //   ),
+                                      // }),
+                                    );
+                                  } else {
+                                    return Promise.resolve();
+                                  }
+                                },
                               },
                               {
                                 // TODO: min of mem should be shmem + image's mem limit??

@@ -1,0 +1,79 @@
+[general]
+# apiEndpoint = "http://127.0.0.1:8090"
+apiEndpointText = "Backend.AI Admin Training"
+
+defaultSessionEnvironment = "cr.backend.ai/stable/python-tensorflow"
+
+maxCountForPreOpenedPort = 1
+# siteDescription = ""
+connectionMode = "SESSION" #connectionMode = API
+allowChangeSigninMode = true
+signupSupport = true
+allowSignout = true
+allowAnonymousChangePassword = true
+allowProjectResourceMonitor = true
+allowManualImageNameForSession = true
+allowSignupWithoutConfirmation = true
+allowCustomResourceAllocation = false
+autoLogout = false
+# loginAttemptLimit = 1
+# loginBlockTime = 30
+debug = false
+maskUserInfo = true
+enableContainerCommit = true
+enablePipeline = true
+hideAgents = true
+alwaysEnqueueComputeSession = true
+# If false, show the `Agent Summary` menu in the sidebar.
+showCustomResourceAllocation = true
+enable2FA = true
+force2FA = false
+systemSSHImage = "cr.backend.ai/stable/python-tensorflow"
+isDirectorySizeVisible = false
+allowCustomResourceAllocation = true
+forceTerminateTimeThreshold = 259200
+enableModelStore = true
+enableExtendLoginSession = false
+
+[wsproxy]
+proxyURL = "http://127.0.0.1:5050/"
+autoPortSelection = true
+disableCertCheck = true
+
+[resources]
+openPortToPublic = true
+# Show option to open app proxy port to anyone.
+maxCPUCoresPerContainer = 256 # Maximum CPU per container.
+maxMemoryPerContainer = 64 # Maximum memory per container.
+maxCUDADevicesPerContainer = 16  # Maximum CUDA devices per container.
+maxCUDASharesPerContainer = 16  # Maximum CUDA shares per container.
+maxROCMDevicesPerContainer = 10     # Maximum ROCm devices per container.
+maxTPUDevicesPerContainer = 8       # Maximum TPU devices per container.
+maxIPUDevicesPerContainer = 8       # Maximum IPU devices per container.
+maxATOMDevicesPerContainer = 8      # Maximum ATOM devices per container.
+maxWarboyDevicesPerContainer = 8    # Maximum Warboy devices per container.
+maxShmPerContainer = 16 # Maximum shared memory per container.
+maxFileUploadSize = 4294967296 # Maximum size of single file upload. Set to -1 for unlimited upload.
+allowPreferredPort = true
+allowNonAuthTCP = true
+
+[menu]
+# blocklist = "pipeline,summary"
+#blocklist = "pipeline,serving" # "statistics"
+#blocklist = "" # Hide menus on the list which are separated by comma. please note that summary menu cannot be added to blocklist
+#inactivelist = "statistics,pipeline,serving" # Disable menus on the list which are separated by comma.
+
+[server]
+# webServerURL =
+
+[environments]
+#allowlist = ""
+showNonInstalledImages = true
+
+[plugin]
+# Reserved to load plugins
+
+[pipeline]
+#endpoint = "http://mlops.com:9500"   # FastTrack endpoint.
+frontendEndpoint = "http://127.0.0.1:9500"
+hideSideMenuButton = false

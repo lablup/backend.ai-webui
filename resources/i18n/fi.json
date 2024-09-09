@@ -533,7 +533,8 @@
     "NSelected": "Valittu {{count}} kohde(t)",
     "Extend": "Laajenna",
     "RemainingLoginSessionTime": "Aika automaattiseen uloskirjautumiseen asti",
-    "Change": "Muuta"
+    "Change": "Muuta",
+    "MaxValueNotification": "{{name}} on oltava maksimi {{max}}"
   },
   "import": {
     "CleanUpImportTask": "Tuontitehtävän siivous...",

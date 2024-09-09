@@ -512,7 +512,8 @@
     "NSelected": "Articolo/i selezionato/i {{count}}",
     "Extend": "Estendere",
     "RemainingLoginSessionTime": "Tempo fino alla disconnessione automatica",
-    "Change": "Cambiamento"
+    "Change": "Cambiamento",
+    "MaxValueNotification": "{{nome}} deve essere massimo {{max}}"
   },
   "credential": {
     "Permission": "Autorizzazione",

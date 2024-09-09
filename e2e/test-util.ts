@@ -1,4 +1,6 @@
-import { Locator, Page, expect } from "@playwright/test";
+import { Locator, Page, expect } from '@playwright/test';
+import fs from 'fs/promises';
+import path from 'path';
 
 export const webuiEndpoint = 'http://127.0.0.1:9081';
 export const webServerEndpoint = 'http://127.0.0.1:8090';
@@ -9,34 +11,34 @@ export async function login(
   endpoint: string,
 ) {
   await page.goto(webuiEndpoint);
-  await page.getByLabel("E-mail or Username").fill(username);
-  await page.getByRole("textbox", { name: "Password" }).fill(password);
-  await page.getByRole("textbox", { name: "Endpoint" }).fill(endpoint);
-  await page.getByLabel("Login", { exact: true }).click();
+  await page.getByLabel('E-mail or Username').fill(username);
+  await page.getByRole('textbox', { name: 'Password' }).fill(password);
+  await page.getByRole('textbox', { name: 'Endpoint' }).fill(endpoint);
+  await page.getByLabel('Login', { exact: true }).click();
   await page.waitForSelector('[data-testid="user-dropdown-button"]');
 }
 
 export const userInfo = {
   admin: {
-    email: "admin@lablup.com",
-    password: "wJalrXUt",
+    email: 'admin@lablup.com',
+    password: 'wJalrXUt',
   },
   user: {
-    email: "user@lablup.com",
-    password: "C8qnIo29",
+    email: 'user@lablup.com',
+    password: 'C8qnIo29',
   },
   user2: {
-    email: "user2@lablup.com",
-    password: "P7oxTDdz",
+    email: 'user2@lablup.com',
+    password: 'P7oxTDdz',
   },
   monitor: {
-    email: "monitor@lablup.com",
-    password: "7tuEwF1J",
+    email: 'monitor@lablup.com',
+    password: '7tuEwF1J',
   },
   domainAdmin: {
-    email: "domain-admin@lablup.com",
-    password: "cWbsM_vB",
-  }
+    email: 'domain-admin@lablup.com',
+    password: 'cWbsM_vB',
+  },
 };
 
 export async function loginAsAdmin(page: Page) {
@@ -52,7 +54,7 @@ export async function loginAsDomainAdmin(page: Page) {
     page,
     userInfo.domainAdmin.email,
     userInfo.domainAdmin.password,
-    "http://127.0.0.1:8090",
+    'http://127.0.0.1:8090',
   );
 }
 export async function loginAsUser(page: Page) {
@@ -72,12 +74,17 @@ export async function loginAsUser2(page: Page) {
   );
 }
 export async function loginAsMonitor(page: Page) {
-  await login(page, userInfo.monitor.email, userInfo.monitor.password, webServerEndpoint);
+  await login(
+    page,
+    userInfo.monitor.email,
+    userInfo.monitor.password,
+    webServerEndpoint,
+  );
 }
 
 export async function logout(page: Page) {
-  await page.getByTestId("user-dropdown-button").click();
-  await page.getByText("Log Out").click();
+  await page.getByTestId('user-dropdown-button').click();
+  await page.getByText('Log Out').click();
   await page.waitForTimeout(1000);
 }
 
@@ -87,76 +94,88 @@ export async function navigateTo(page: Page, path: string) {
   await page.goto(url.toString());
 }
 
-export async function fillOutVaadinGridCellFilter(gridWrap:Locator, columnTitle:string, inputValue:string ) {
-  const nameInput = gridWrap.locator("vaadin-grid-cell-content")
+export async function fillOutVaadinGridCellFilter(
+  gridWrap: Locator,
+  columnTitle: string,
+  inputValue: string,
+) {
+  const nameInput = gridWrap
+    .locator('vaadin-grid-cell-content')
     .filter({ hasText: columnTitle })
-    .locator("vaadin-text-field")
+    .locator('vaadin-text-field')
     .nth(1)
-    .locator("input");
+    .locator('input');
   await nameInput.click();
   await nameInput.fill(inputValue);
 }
 
 export async function createVFolderAndVerify(page: Page, folderName: string) {
-  await navigateTo(page, "data");
+  await navigateTo(page, 'data');
 
-  await page.getByRole("button", { name: "plus Add" }).click();
+  await page.getByRole('button', { name: 'plus Add' }).click();
   // TODO: wait for initial rendering without timeout
   await page.waitForTimeout(1000);
-  await page.getByRole("textbox", { name: "Folder name*" }).click();
-  await page.getByRole("textbox", { name: "Folder name*" }).fill(folderName);
-  await page.getByRole("button", { name: "Create", exact: true }).click();
+  await page.getByRole('textbox', { name: 'Folder name*' }).click();
+  await page.getByRole('textbox', { name: 'Folder name*' }).fill(folderName);
+  await page.getByRole('button', { name: 'Create', exact: true }).click();
 
   const nameInput = page
-    .locator("#general-folder-storage vaadin-grid-cell-content")
-    .filter({ hasText: "Name" })
-    .locator("vaadin-text-field")
+    .locator('#general-folder-storage vaadin-grid-cell-content')
+    .filter({ hasText: 'Name' })
+    .locator('vaadin-text-field')
     .nth(1)
-    .locator("input");
+    .locator('input');
   await nameInput.click();
   await nameInput.fill(folderName);
   await page.waitForSelector(`text=folder_open ${folderName}`);
-  await nameInput.fill("");
+  await nameInput.fill('');
 }
 
 export async function deleteVFolderAndVerify(page: Page, folderName: string) {
-  await navigateTo(page, "data");
+  await navigateTo(page, 'data');
   const nameInput = page
-    .locator("#general-folder-storage vaadin-grid-cell-content")
-    .filter({ hasText: "Name" })
-    .locator("vaadin-text-field")
+    .locator('#general-folder-storage vaadin-grid-cell-content')
+    .filter({ hasText: 'Name' })
+    .locator('vaadin-text-field')
     .nth(1)
-    .locator("input");
+    .locator('input');
   await nameInput.click();
   await nameInput.fill(folderName);
   await page.waitForTimeout(1000);
-  await page.getByRole("button", { name: "delete" }).first().click();
+  await page.getByRole('button', { name: 'delete' }).first().click();
   await page
-    .locator("#delete-without-confirm-button")
-    .getByLabel("delete")
+    .locator('#delete-without-confirm-button')
+    .getByLabel('delete')
     .click();
   await page.waitForLoadState('networkidle');
-  await page.getByRole("tab", { name: "delete" }).click();
+  await page.getByRole('tab', { name: 'delete' }).click();
   const nameInputInTrash = page
-    .locator("#trash-bin-folder-storage vaadin-grid-cell-content")
-    .filter({ hasText: "Name" })
-    .locator("vaadin-text-field")
+    .locator('#trash-bin-folder-storage vaadin-grid-cell-content')
+    .filter({ hasText: 'Name' })
+    .locator('vaadin-text-field')
     .nth(1)
-    .locator("input");
+    .locator('input');
   await nameInputInTrash.fill(folderName);
   // after filling the input, the vaadin-grid will be updated asynchronously. So we need to wait for the grid to be updated.
   await page.waitForTimeout(1000);
-  await page.locator("vaadin-grid-cell-content").filter({ hasText: folderName }).locator("//following-sibling::*[7]").getByRole('button', { name: 'delete_forever' }).click();
   await page
-    .getByRole("textbox", { name: "Type folder name to delete" })
+    .locator('vaadin-grid-cell-content')
+    .filter({ hasText: folderName })
+    .locator('//following-sibling::*[7]')
+    .getByRole('button', { name: 'delete_forever' })
+    .click();
+  await page
+    .getByRole('textbox', { name: 'Type folder name to delete' })
     .fill(folderName);
-  await page.getByRole("button", { name: "Delete forever" }).click();
+  await page.getByRole('button', { name: 'Delete forever' }).click();
   await expect(
-    page.locator("vaadin-grid-cell-content").filter({ hasText: folderName }).locator(':visible')
+    page
+      .locator('vaadin-grid-cell-content')
+      .filter({ hasText: folderName })
+      .locator(':visible'),
   ).toHaveCount(0);
-  await nameInputInTrash.fill("");
+  await nameInputInTrash.fill('');
 }
-
 
 export async function createSession(page: Page, sessionName: string) {
   await navigateTo(page, 'job');
@@ -208,4 +227,16 @@ export async function deleteSession(page: Page, sessionName: string) {
   // Verify session is cleared
   await searchSessionInfo.fill('');
   await expect(page.getByText(sessionName)).toBeHidden();
+}
+
+export async function mockConfigToml(page: Page, rawPath) {
+  const filePath = path.resolve(__dirname, rawPath);
+  const mockData = await fs.readFile(filePath, 'utf-8');
+  await page.route('http://127.0.0.1:9081/config.toml', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'text/plain',
+      body: mockData,
+    });
+  });
 }

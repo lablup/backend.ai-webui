@@ -510,7 +510,8 @@
     "Disabled": "Dilumpuhkan",
     "NSelected": "{{count}} item yang dipilih",
     "Extend": "Panjangkan",
-    "Change": "Berubah"
+    "Change": "Berubah",
+    "MaxValueNotification": "{{nama}} mestilah maksimum {{maks}}"
   },
   "credential": {
     "Permission": "Kebenaran",

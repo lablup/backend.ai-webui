@@ -66,6 +66,12 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
           onChange={setValue}
           onBlur={() => {
             if (_.isNumber(step) && step > 0) {
+              if (
+                _.isNumber(max) &&
+                max < _.toNumber(inputRef.current?.value || '0')
+              ) {
+                return; // do not update value if it is greater than max
+              }
               const decimalCount = step.toString().split('.')[1]?.length || 0;
               setValue(
                 _.max([
