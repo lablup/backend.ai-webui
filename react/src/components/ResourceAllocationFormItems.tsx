@@ -155,9 +155,10 @@ const ResourceAllocationFormItems: React.FC<
   }, [checkPresetInfo?.presets, resourceLimits, currentImage]);
 
   const ensureValidAcceleratorType = useEventNotStable(() => {
-    const currentAcceleratorType = form.getFieldValue(
-      form.getFieldValue(['resource', 'acceleratorType']),
-    );
+    const currentAcceleratorType = form.getFieldValue([
+      'resource',
+      'acceleratorType',
+    ]);
     // If the current accelerator type is not available,
     // change accelerator type to the first supported accelerator
     const nextAcceleratorType: string = acceleratorSlots[currentAcceleratorType]
