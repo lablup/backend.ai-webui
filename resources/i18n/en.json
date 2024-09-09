@@ -636,7 +636,8 @@
     "NSelected": "Selected {{count}} item(s)",
     "Extend": "Extend",
     "RemainingLoginSessionTime": "Time until auto logout",
-    "Change": "Change"
+    "Change": "Change",
+    "MaxValueNotification": "{{name}} must be maximum {{max}}"
   },
   "credential": {
     "Permission": "Permission",

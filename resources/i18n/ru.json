@@ -511,7 +511,8 @@
     "NSelected": "Выбранный {{count}} элемент(ы)",
     "Extend": "Продлевать",
     "RemainingLoginSessionTime": "Время до автоматического выхода из системы",
-    "Change": "Изменить"
+    "Change": "Изменить",
+    "MaxValueNotification": "{{name}} должен быть максимальным {{max}}"
   },
   "credential": {
     "Permission": "Разрешение",

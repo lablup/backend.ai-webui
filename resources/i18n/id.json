@@ -512,7 +512,8 @@
     "NSelected": "Item {{hitung}} yang dipilih",
     "Extend": "Memperpanjang",
     "RemainingLoginSessionTime": "Waktu Hingga Keluar Otomatis",
-    "Change": "Perubahan"
+    "Change": "Perubahan",
+    "MaxValueNotification": "{{nama}} harus maksimal {{max}}"
   },
   "credential": {
     "Permission": "Izin",

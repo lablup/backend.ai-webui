@@ -480,6 +480,10 @@ const ResourceAllocationFormItems: React.FC<
                         // TODO: set message
                       },
                       {
+                        type: 'number',
+                        max: resourceLimits.cpu?.max,
+                      },
+                      {
                         warningOnly: true,
                         validator: async (rule, value: number) => {
                           if (showRemainingWarning) {
@@ -585,6 +589,35 @@ const ResourceAllocationFormItems: React.FC<
                             rules={[
                               {
                                 required: true,
+                              },
+                              {
+                                validator: async (rule, value: string) => {
+                                  if (
+                                    _.isString(value) &&
+                                    resourceLimits.mem?.max &&
+                                    compareNumberWithUnits(
+                                      value,
+                                      resourceLimits.mem?.max,
+                                    ) > 0
+                                  ) {
+                                    return Promise.reject(
+                                      t('general.MaxValueNotification', {
+                                        name: t('session.launcher.Memory'),
+                                        max:
+                                          _.toUpper(
+                                            resourceLimits.mem?.max || '0g',
+                                          ) + 'iB',
+                                      }),
+                                      // t('session.launcher.MinMemory', {
+                                      //   size: _.toUpper(
+                                      //     resourceLimits.mem?.min || '0g',
+                                      //   ),
+                                      // }),
+                                    );
+                                  } else {
+                                    return Promise.resolve();
+                                  }
+                                },
                               },
                               {
                                 // TODO: min of mem should be shmem + image's mem limit??

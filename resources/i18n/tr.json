@@ -511,7 +511,8 @@
     "NSelected": "Seçilen {{count}} öğe(ler)",
     "Extend": "Uzatmak",
     "RemainingLoginSessionTime": "Otomatik Çıkışa Kadar Geçen Süre",
-    "Change": "Değişim"
+    "Change": "Değişim",
+    "MaxValueNotification": "{{name}} maksimum {{max}} olmalıdır"
   },
   "credential": {
     "Permission": "izin",
