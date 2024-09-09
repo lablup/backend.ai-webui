@@ -93,7 +93,10 @@ const ImageEnvironmentSelectFormItems: React.FC<
 
   const envSelectRef = useRef<RefSelectProps>(null);
   const versionSelectRef = useRef<RefSelectProps>(null);
-
+  const imageEnvironmentSelectFormItemsVariables = baiClient?._config
+    ?.showNonInstalledImages
+    ? {}
+    : { installed: true };
   const { images } = useLazyLoadQuery<ImageEnvironmentSelectFormItemsQuery>(
     graphql`
       query ImageEnvironmentSelectFormItemsQuery($installed: Boolean) {
@@ -117,9 +120,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
         }
       }
     `,
-    {
-      installed: true,
-    },
+    imageEnvironmentSelectFormItemsVariables,
     {
       fetchPolicy: 'store-and-network',
     },

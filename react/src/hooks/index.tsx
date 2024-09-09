@@ -383,5 +383,6 @@ type BackendAIConfig = {
   allowSignout: boolean;
   allowNonAuthTCP: boolean;
   enableExtendLoginSession: boolean;
+  showNonInstalledImages: boolean;
   [key: string]: any;
 };
