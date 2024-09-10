@@ -119,7 +119,7 @@ export const useResourceSlotsDetails = (resourceGroupName?: string) => {
   });
 
   return [
-    _.merge(deviceMetadata, resourceSlots),
+    _.merge({}, deviceMetadata, resourceSlots),
     {
       refresh: () => checkUpdate(),
     },
