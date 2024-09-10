@@ -274,7 +274,7 @@ const SessionLauncherPage = () => {
   }, []);
 
   const mergedInitialValues = useMemo(() => {
-    return _.merge(INITIAL_FORM_VALUES, formValuesFromQueryParams);
+    return _.merge({}, INITIAL_FORM_VALUES, formValuesFromQueryParams);
   }, [INITIAL_FORM_VALUES, formValuesFromQueryParams]);
 
   // ScrollTo top when step is changed

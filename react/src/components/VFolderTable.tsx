@@ -192,6 +192,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     );
 
     const mergedVFolderPermissions = _.merge(
+      {}, // start with empty object
       allowedVFolderHostsByDomain,
       allowedVFolderHostsByGroup,
       allowedVFolderHostsByKeypairResourcePolicy,
