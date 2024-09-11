@@ -101,6 +101,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
     graphql`
       query ImageEnvironmentSelectFormItemsQuery($installed: Boolean) {
         images(is_installed: $installed) {
+          id
           name
           humanized_name
           tag
@@ -562,7 +563,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                 }
               >
                 {_.map(
-                  _.uniqBy(selectedEnvironmentGroup?.images, 'digest'),
+                  _.uniqBy(selectedEnvironmentGroup?.images, 'id'),
 
                   (image) => {
                     const [version, tag, ...requirements] = image?.tag?.split(
@@ -658,7 +659,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                     }
                     return (
                       <Select.Option
-                        key={image?.digest}
+                        key={image?.id}
                         value={getImageFullName(image)}
                         filterValue={[
                           version,
