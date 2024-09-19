@@ -1,8 +1,8 @@
 /*
-Backend.AI API Library / SDK for Node.JS / Javascript ESModule (v23.3.0)
+Backend.AI API Library / SDK for Node.JS / Javascript ESModule (v24.9.0)
 =========================================================================
 
-(C) Copyright 2016-2023 Lablup Inc.
+(C) Copyright 2016-2024 Lablup Inc.
 Licensed under MIT
 */
 /*jshint esnext: true */
