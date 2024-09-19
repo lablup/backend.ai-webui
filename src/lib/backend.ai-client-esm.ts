@@ -1034,48 +1034,15 @@ class Client {
       if (resources['mem']) {
         config['mem'] = resources['mem'];
       }
-      if (resources['gpu']) {
-        // Legacy support (till 19.09)
-        config['cuda.device'] = parseInt(resources['gpu']);
-      }
-      if (resources['cuda.device']) {
-        // Generalized device information from 20.03
-        config['cuda.device'] = parseInt(resources['cuda.device']);
-      }
-      if (resources['vgpu']) {
-        // Legacy support (till 19.09)
-        config['cuda.shares'] = parseFloat(resources['vgpu']).toFixed(2); // under 19.03
-      } else if (resources['fgpu']) {
-        config['cuda.shares'] = parseFloat(resources['fgpu']).toFixed(2); // 19.09 and above
-      }
       if (resources['cuda.shares']) {
         // Generalized device information from 20.03
         config['cuda.shares'] = parseFloat(resources['cuda.shares']).toFixed(2);
       }
-      if (resources['rocm.device']) {
-        config['rocm.device'] = parseInt(resources['rocm.device']);
-      }
-      if (resources['tpu.device']) {
-        config['tpu.device'] = parseInt(resources['tpu.device']);
-      }
-      if (resources['ipu.device']) {
-        config['ipu.device'] = parseInt(resources['ipu.device']);
-      }
-      if (resources['atom.device']) {
-        config['atom.device'] = parseInt(resources['atom.device']);
-      }
-      if (resources['atom-plus.device']) {
-        config['atom-plus.device'] = parseInt(resources['atom-plus.device']);
-      }
-      if (resources['gaudi2.device']) {
-        config['gaudi2.device'] = parseInt(resources['gaudi2.device']);
-      }
-      if (resources['warboy.device']) {
-        config['warboy.device'] = parseInt(resources['warboy.device']);
-      }
-      if (resources['hyperaccel-lpu.device']) {
-        config['hyperaccel-lpu.device'] = parseInt(resources['hyperaccel-lpu.device']);
-      }
+      Object.keys(resources).forEach((key) => {
+        if (key.endsWith('.device')) {
+          config[key] = parseInt(resources[key]);
+        }
+      });
       if (resources['cluster_size']) {
         params['cluster_size'] = resources['cluster_size'];
       }
