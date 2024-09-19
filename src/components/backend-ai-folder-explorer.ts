@@ -215,6 +215,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
 
         mwc-textfield {
           width: 100%;
+          --mdc-theme-error: var(--token-colorError);
         }
       `,
     ];
