@@ -141,6 +141,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Boolean }) isDirectorySizeVisible = true;
   @property({ type: Boolean }) enableModelStore = false;
   @property({ type: Boolean }) enableLLMPlayground = false;
+  @property({ type: Boolean }) enableImportFromHuggingFace = false;
   @property({ type: Boolean }) enableExtendLoginSession = false;
   @property({ type: Boolean }) showNonInstalledImages = false;
   @property({ type: String }) eduAppNamePrefix;
@@ -858,6 +859,16 @@ export default class BackendAILogin extends BackendAIPage {
       defaultValue: false,
       value: generalConfig?.enableLLMPlayground,
     } as ConfigValueObject) as boolean;
+
+    // Enable importing from Hugging Face support
+    this.enableImportFromHuggingFace = this._getConfigValueByExists(
+      generalConfig,
+      {
+        valueType: 'boolean',
+        defaultValue: false,
+        value: generalConfig?.enableImportFromHuggingFace,
+      } as ConfigValueObject,
+    ) as boolean;
 
     // Enable extend login session
     this.enableExtendLoginSession = this._getConfigValueByExists(
@@ -1886,6 +1897,8 @@ export default class BackendAILogin extends BackendAIPage {
           this.enableModelStore;
         globalThis.backendaiclient._config.enableLLMPlayground =
           this.enableLLMPlayground;
+        globalThis.backendaiclient._config.enableImportFromHuggingFace =
+          this.enableImportFromHuggingFace;
         globalThis.backendaiclient._config.enableExtendLoginSession =
           this.enableExtendLoginSession;
         globalThis.backendaiclient._config.pluginPages = this.pluginPages;

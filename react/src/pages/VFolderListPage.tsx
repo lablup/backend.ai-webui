@@ -52,6 +52,8 @@ const VFolderListPage: React.FC<VFolderListPageProps> = (props) => {
   ] = useToggle(false);
 
   const { token } = theme.useToken();
+  const enableImportFromHuggingFace =
+    baiClient._config.enableImportFromHuggingFace;
 
   useEffect(() => {
     const handler = () => {
@@ -129,12 +131,11 @@ const VFolderListPage: React.FC<VFolderListPageProps> = (props) => {
         }}
         tabBarExtraContent={
           <Flex gap="xs">
-            {_.includes(['model', 'model-store'], curTabKey) ? (
+            {_.includes(['model', 'model-store'], curTabKey) &&
+            enableImportFromHuggingFace ? (
               <Button
                 icon={<ImportOutlined />}
                 onClick={toggleImportFromHuggingFaceModal}
-                // Remove this line to test
-                style={{ display: 'none' }}
               >
                 {t('data.modelStore.ImportFromHuggingFace')}
               </Button>
