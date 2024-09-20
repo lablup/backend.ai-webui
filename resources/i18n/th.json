@@ -900,7 +900,11 @@
     "Add": "เพิ่ม",
     "CloningIsOnlyPossibleSameHost": "ปัจจุบันการโคลนสามารถทำได้เฉพาะบนโฮสต์เดียวกัน",
     "userQuotaScopeId": "รหัสขอบเขตโควตาผู้ใช้",
-    "NewFolderName": "ชื่อโฟลเดอร์ใหม่"
+    "NewFolderName": "ชื่อโฟลเดอร์ใหม่",
+    "modelStore": {
+      "ImportFromHuggingFace": "นำเข้าจาก Hugging Face",
+      "ImportOnly": "นำเข้าเท่านั้น"
+    }
   },
   "dialog": {
     "warning": {

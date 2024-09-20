@@ -889,7 +889,17 @@
     "Add": "추가",
     "CloningIsOnlyPossibleSameHost": "현재 폴더 복사는 동일한 호스트간에만 가능합니다.",
     "userQuotaScopeId": "Quota Scope ID",
-    "NewFolderName": "새 폴더 이름"
+    "NewFolderName": "새 폴더 이름",
+    "modelStore": {
+      "ImportFromHuggingFace": "Hugging Face에서 가져오기",
+      "Import": "가져오기",
+      "StartService": "서비스 시작",
+      "InferenceEngineVersion": "추론 엔진 버전",
+      "ReplicaNumber": "복제 번호",
+      "ImportAndStartService": "가져오기 및 서비스 시작",
+      "huggingFaceUrlPlaceholder": "Hugging Face URL을 입력하세요.",
+      "ImportOnly": "가져오기만 허용"
+    }
   },
   "dialog": {
     "warning": {

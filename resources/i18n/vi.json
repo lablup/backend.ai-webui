@@ -777,7 +777,17 @@
     "Add": "Thêm vào",
     "CloningIsOnlyPossibleSameHost": "Hiện tại, việc nhân bản chỉ có thể thực hiện được trên cùng một máy chủ.",
     "userQuotaScopeId": "Quota Scope ID",
-    "NewFolderName": "Tên thư mục mới"
+    "NewFolderName": "Tên thư mục mới",
+    "modelStore": {
+      "ImportFromHuggingFace": "Nhập từ Hugging Face",
+      "Import": "Nhập khẩu",
+      "StartService": "Bắt đầu dịch vụ",
+      "InferenceEngineVersion": "Phiên bản công cụ suy luận",
+      "ReplicaNumber": "Số bản sao",
+      "ImportAndStartService": "Dịch vụ nhập và bắt đầu",
+      "huggingFaceUrlPlaceholder": "Nhập URL Hugging Face",
+      "ImportOnly": "Chỉ nhập khẩu"
+    }
   },
   "dialog": {
     "warning": {

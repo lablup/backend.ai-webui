@@ -777,7 +777,17 @@
     "Add": "Προσθέστε",
     "CloningIsOnlyPossibleSameHost": "Προς το παρόν, η κλωνοποίηση είναι δυνατή μόνο στον ίδιο κεντρικό υπολογιστή.",
     "userQuotaScopeId": "Quota Scope ID",
-    "NewFolderName": "Νέο όνομα φακέλου"
+    "NewFolderName": "Νέο όνομα φακέλου",
+    "modelStore": {
+      "ImportFromHuggingFace": "Εισαγωγή από το Hugging Face",
+      "Import": "Εισαγωγή",
+      "StartService": "Ξεκινήστε την υπηρεσία",
+      "InferenceEngineVersion": "Έκδοση Inference Engine",
+      "ReplicaNumber": "Αριθμός αντιγράφου",
+      "ImportAndStartService": "Εισαγωγή και έναρξη υπηρεσίας",
+      "huggingFaceUrlPlaceholder": "Εισαγάγετε τη διεύθυνση URL Hugging Face.",
+      "ImportOnly": "Μόνο εισαγωγή"
+    }
   },
   "dialog": {
     "warning": {

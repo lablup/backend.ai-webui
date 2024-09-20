@@ -779,7 +779,17 @@
     "Add": "Нэмэх",
     "CloningIsOnlyPossibleSameHost": "Одоогоор зөвхөн нэг хост дээр клон хийх боломжтой.",
     "userQuotaScopeId": "Quota Scope ID",
-    "NewFolderName": "Шинэ фолдерын нэр"
+    "NewFolderName": "Шинэ фолдерын нэр",
+    "modelStore": {
+      "ImportFromHuggingFace": "Hugging Face-ээс импортлох",
+      "Import": "Импорт",
+      "StartService": "Үйлчилгээг эхлүүлэх",
+      "InferenceEngineVersion": "Дүгнэлт хөдөлгүүрийн хувилбар",
+      "ReplicaNumber": "Хуулбарын дугаар",
+      "ImportAndStartService": "Импорт хийх ба эхлүүлэх үйлчилгээ",
+      "huggingFaceUrlPlaceholder": "Hugging Face URL-г оруулна уу",
+      "ImportOnly": "Зөвхөн импортлох"
+    }
   },
   "dialog": {
     "warning": {

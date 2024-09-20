@@ -407,7 +407,17 @@
     "CloningIsOnlyPossibleSameHost": "Tällä hetkellä kloonaus on mahdollista vain samassa isännässä.",
     "New": "Uusi",
     "userQuotaScopeId": "Quota Scope ID",
-    "NewFolderName": "Uusi kansion nimi"
+    "NewFolderName": "Uusi kansion nimi",
+    "modelStore": {
+      "ImportFromHuggingFace": "Tuo Hugging Facesta",
+      "Import": "Tuonti",
+      "StartService": "Aloita palvelu",
+      "InferenceEngineVersion": "Päättele moottorin versio",
+      "ReplicaNumber": "Replikan numero",
+      "ImportAndStartService": "Tuo ja käynnistä palvelu",
+      "huggingFaceUrlPlaceholder": "Syötä Hugging Face-URL-osoite",
+      "ImportOnly": "Vain tuonti"
+    }
   },
   "dialog": {
     "warning": {

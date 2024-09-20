@@ -776,7 +776,17 @@
     "Add": "添加",
     "CloningIsOnlyPossibleSameHost": "目前，克隆只能在同一主機上進行。",
     "userQuotaScopeId": "Quota Scope ID",
-    "NewFolderName": "新文件夹名称"
+    "NewFolderName": "新文件夹名称",
+    "modelStore": {
+      "ImportFromHuggingFace": "從 Hugging Face 匯入",
+      "Import": "進口",
+      "StartService": "啟動服務",
+      "InferenceEngineVersion": "推理引擎版本",
+      "ReplicaNumber": "副本號",
+      "ImportAndStartService": "導入並啟動服務",
+      "huggingFaceUrlPlaceholder": "輸入Hugging Face網址",
+      "ImportOnly": "僅導入"
+    }
   },
   "dialog": {
     "warning": {

@@ -777,7 +777,17 @@
     "Add": "Ekle",
     "CloningIsOnlyPossibleSameHost": "Şu anda klonlama yalnızca aynı ana bilgisayarda mümkündür.",
     "userQuotaScopeId": "Quota Scope ID",
-    "NewFolderName": "Yeni klasör adı"
+    "NewFolderName": "Yeni klasör adı",
+    "modelStore": {
+      "ImportFromHuggingFace": "Hugging Face'ten içe aktar",
+      "Import": "İçe aktarmak",
+      "StartService": "Hizmeti Başlat",
+      "InferenceEngineVersion": "Çıkarım Motoru Sürümü",
+      "ReplicaNumber": "Çoğaltma Numarası",
+      "ImportAndStartService": "Hizmeti İçe Aktarma ve Başlatma",
+      "huggingFaceUrlPlaceholder": "Hugging Face URL'sini girin",
+      "ImportOnly": "Yalnızca içe aktar"
+    }
   },
   "dialog": {
     "warning": {

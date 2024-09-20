@@ -95,6 +95,7 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
         value: _.first(filteredVFolders)?.[valuePropName],
       }
     : undefined;
+  // TODO: use controllable value
   useEffect(() => {
     if (autoSelectDefault && autoSelectedOption) {
       setValue(autoSelectedOption.value, autoSelectedOption);

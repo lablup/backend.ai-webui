@@ -777,7 +777,17 @@
     "Add": "Ajouter",
     "CloningIsOnlyPossibleSameHost": "Actuellement, le clonage n'est possible que sur le même hôte.",
     "userQuotaScopeId": "Quota Scope ID",
-    "NewFolderName": "Nouveau nom de dossier"
+    "NewFolderName": "Nouveau nom de dossier",
+    "modelStore": {
+      "ImportFromHuggingFace": "Importer depuis Hugging Face",
+      "Import": "Importer",
+      "StartService": "Démarrer le service",
+      "InferenceEngineVersion": "Version du moteur d'inférence",
+      "ReplicaNumber": "Numéro de réplique",
+      "ImportAndStartService": "Service d'importation et de démarrage",
+      "huggingFaceUrlPlaceholder": "Saisissez l'URL Hugging Face",
+      "ImportOnly": "Importer uniquement"
+    }
   },
   "dialog": {
     "warning": {
