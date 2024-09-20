@@ -5,6 +5,7 @@ import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import { useToggle } from 'ahooks';
 import {
+  App,
   Button,
   Form,
   FormInstance,
@@ -19,8 +20,8 @@ import { useTranslation } from 'react-i18next';
 
 type Service = {
   url: string;
-  inference_engine_version?: string;
-  replica_number?: number;
+  service_name?: string;
+  folder_name?: string;
 };
 
 interface ImportFromHuggingFaceModalProps extends BAIModalProps {
@@ -33,11 +34,11 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const baiClient = useSuspendedBackendaiClient();
   const formRef = useRef<FormInstance<Service>>(null);
   const [isImportOnly, { toggle: toggleIsImportOnly }] = useToggle(false);
-  const [huggingFaceURL, setHuggingFaceURL] = useState<string | undefined>();
-  const baiClient = useSuspendedBackendaiClient();
 
+  const [huggingFaceURL, setHuggingFaceURL] = useState<string | undefined>();
   const [isPendingCheck, startCheckTransition] = useTransition();
   const hugginFaceModelInfo = useSuspenseTanQuery<{
     author?: string;
@@ -46,7 +47,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
     isError?: boolean;
     url?: string;
   }>({
-    queryKey: ['huggingFaceReadme', huggingFaceURL],
+    queryKey: ['huggingFaceValidation', huggingFaceURL],
     queryFn: () => {
       if (_.isEmpty(huggingFaceURL)) return Promise.resolve({});
       return baiSignedRequestWithPromise({
@@ -81,13 +82,12 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
   }, [hugginFaceModelInfo.data.url]);
 
   const handleOnClick = () => {
+    startCheckTransition(() => {
+      setHuggingFaceURL(formRef.current?.getFieldValue('url'));
+    });
     formRef.current
       ?.validateFields()
       .then((values) => {
-        startCheckTransition(() => {
-          setHuggingFaceURL(values?.url);
-        });
-
         // TODO: Implement import from Hugging Face
         // onRequestClose();
       })
@@ -111,6 +111,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
         </Button>
       }
       onCancel={onRequestClose}
+      destroyOnClose
       {...baiModalProps}
     >
       <Form
