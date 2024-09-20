@@ -934,7 +934,8 @@
       "ImportOnlySuccessDesc": "The new model folder is ready. Start the service now and try the operation you want.",
       "ImportAndStartServiceSuccessDesc": "The new model folder and service are ready. Click the 'View service info' button to check the model details and start the desired operation.",
       "AddedItems": "Added items",
-      "ModelFolderName": "Model folder name"
+      "ModelFolderName": "Model folder name",
+      "OpenFolder": "Open folder"
     }
   },
   "dialog": {

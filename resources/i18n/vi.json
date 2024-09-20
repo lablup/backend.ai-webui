@@ -807,7 +807,8 @@
       "ImportOnlySuccessDesc": "Thư mục mô hình mới đã sẵn sàng. \nHãy bắt đầu dịch vụ ngay bây giờ và thử thao tác bạn muốn.",
       "ImportAndStartServiceSuccessDesc": "Thư mục mô hình và dịch vụ mới đã sẵn sàng. \nNhấp vào nút 'Xem thông tin dịch vụ' để kiểm tra chi tiết mẫu máy và bắt đầu thao tác mong muốn.",
       "AddedItems": "Các mục đã thêm",
-      "ModelFolderName": "Tên thư mục mẫu"
+      "ModelFolderName": "Tên thư mục mẫu",
+      "OpenFolder": "Mở thư mục"
     }
   },
   "dialog": {

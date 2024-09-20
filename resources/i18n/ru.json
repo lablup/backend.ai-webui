@@ -797,6 +797,7 @@
       "ServiceName": "Название службы",
       "NewModelStoreFolderHasBeenCreated": "Создана новая папка хранилища моделей.",
       "NewServiceHasBeenCreated": "Создан новый сервис",
+<<<<<<< HEAD
       "OpenModelFolder": "Открыть папку модели",
       "ViewServiceInfo": "Посмотреть информацию об услуге",
       "NotSupportedModel": "Модель не поддерживается. \nПожалуйста, используйте модель LLM.",
@@ -808,6 +809,13 @@
       "ImportAndStartServiceSuccessDesc": "Папка и сервис новой модели готовы. \nНажмите кнопку «Просмотреть информацию об услуге», чтобы проверить сведения о модели и начать нужную операцию.",
       "AddedItems": "Добавлены предметы",
       "ModelFolderName": "Имя папки модели"
+=======
+      "OpenFolder": "Открыть папку",
+      "ViewServiceInfo": "Посмотреть информацию об услуге",
+      "NotSupportedModel": "Модель не поддерживается. \nПожалуйста, используйте модель LLM.",
+      "NewModelFolderHasBeenCreated": "Создана новая папка модели.",
+      "ChangeTheCurrentProjectToModelStore": "Измените текущий проект на «магазин моделей»."
+>>>>>>> 961ca0bcc (feat: import and start service from hugging face)
     }
   },
   "dialog": {

@@ -15,7 +15,7 @@ export interface NotificationState
   key: React.Key;
   created?: string;
   toTextKey?: string;
-  toText?: string;
+  toText?: React.ReactNode;
   to?: string | To;
   open?: boolean;
   backgroundTask?: {
@@ -30,7 +30,7 @@ export interface NotificationState
     renderDataMessage?: (message?: string) => React.ReactNode;
     promise?: Promise<any>;
   };
-  extraDescription?: string;
+  extraDescription?: React.ReactNode;
 }
 
 export const notificationListState = atom<NotificationState[]>([]);

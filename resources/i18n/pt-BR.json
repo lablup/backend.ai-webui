@@ -807,7 +807,8 @@
       "ImportOnlySuccessDesc": "A nova pasta do modelo está pronta. \nInicie o serviço agora e experimente a operação desejada.",
       "ImportAndStartServiceSuccessDesc": "A pasta e o serviço do novo modelo estão prontos. \nClique no botão 'Ver informações de serviço' para verificar os detalhes do modelo e iniciar a operação desejada.",
       "AddedItems": "Itens adicionados",
-      "ModelFolderName": "Nome da pasta do modelo"
+      "ModelFolderName": "Nome da pasta do modelo",
+      "OpenFolder": "Abrir pasta"
     }
   },
   "dialog": {

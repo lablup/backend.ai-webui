@@ -437,7 +437,8 @@
       "ImportOnlySuccessDesc": "Uusi mallikansio on valmis. \nKäynnistä palvelu nyt ja kokeile haluamaasi toimintoa.",
       "ImportAndStartServiceSuccessDesc": "Uusi mallikansio ja palvelu ovat valmiina. \nNapsauta \"Näytä palvelutiedot\" -painiketta tarkistaaksesi mallin tiedot ja aloittaaksesi haluamasi toiminnon.",
       "AddedItems": "Lisätyt kohteet",
-      "ModelFolderName": "Mallin kansion nimi"
+      "ModelFolderName": "Mallin kansion nimi",
+      "OpenFolder": "Avaa kansio"
     }
   },
   "dialog": {

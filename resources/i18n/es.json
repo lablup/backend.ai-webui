@@ -437,7 +437,8 @@
       "ImportOnlySuccessDesc": "La carpeta del nuevo modelo está lista. \nInicie el servicio ahora y pruebe la operación que desee.",
       "ImportAndStartServiceSuccessDesc": "La carpeta del nuevo modelo y el servicio están listos. \nHaga clic en el botón 'Ver información de servicio' para verificar los detalles del modelo e iniciar la operación deseada.",
       "AddedItems": "Artículos agregados",
-      "ModelFolderName": "Nombre de la carpeta del modelo"
+      "ModelFolderName": "Nombre de la carpeta del modelo",
+      "OpenFolder": "Abrir carpeta"
     }
   },
   "dialog": {

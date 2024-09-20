@@ -807,7 +807,8 @@
       "ImportOnlySuccessDesc": "Folder nowego modelu jest gotowy. \nUruchom usługę teraz i wypróbuj żądaną operację.",
       "ImportAndStartServiceSuccessDesc": "Nowy folder modelu i usługa są gotowe. \nKliknij przycisk „Wyświetl informacje serwisowe”, aby sprawdzić szczegóły modelu i rozpocząć żądaną operację.",
       "AddedItems": "Dodane elementy",
-      "ModelFolderName": "Nazwa folderu modelu"
+      "ModelFolderName": "Nazwa folderu modelu",
+      "OpenFolder": "Otwórz folder"
     }
   },
   "dialog": {

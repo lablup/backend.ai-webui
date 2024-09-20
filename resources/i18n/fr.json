@@ -807,7 +807,8 @@
       "ImportOnlySuccessDesc": "Le nouveau dossier modèle est prêt. \nDémarrez le service maintenant et essayez l'opération souhaitée.",
       "ImportAndStartServiceSuccessDesc": "Le nouveau dossier modèle et le nouveau service sont prêts. \nCliquez sur le bouton « Afficher les informations de service » pour vérifier les détails du modèle et démarrer l'opération souhaitée.",
       "AddedItems": "Éléments ajoutés",
-      "ModelFolderName": "Nom du dossier modèle"
+      "ModelFolderName": "Nom du dossier modèle",
+      "OpenFolder": "Ouvrir le dossier"
     }
   },
   "dialog": {

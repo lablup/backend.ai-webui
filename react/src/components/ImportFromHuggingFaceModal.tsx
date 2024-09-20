@@ -1,16 +1,13 @@
 import { baiSignedRequestWithPromise } from '../helper';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { useTanMutation } from '../hooks/reactQueryAlias';
+import { useBAINotificationState } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import { ImportFromHuggingFaceModalQuery } from './__generated__/ImportFromHuggingFaceModalQuery.graphql';
-import {
-  CloudUploadOutlined,
-  FilterOutlined,
-  RocketOutlined,
-} from '@ant-design/icons';
+import { FilterOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
   App,
@@ -20,8 +17,6 @@ import {
   Form,
   FormInstance,
   Input,
-  Modal,
-  Result,
   Space,
   Switch,
   theme,
@@ -46,17 +41,6 @@ type Service = {
   url: string;
   service_name?: string;
   folder_name?: string;
-};
-
-type ImportFromHuggingFaceResult = {
-  folder: {
-    id: string;
-    name: string;
-  };
-  service?: {
-    endpoint_id: string;
-    name: string;
-  };
 };
 
 const ReadmeFallbackCard = () => {
@@ -97,14 +81,11 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
   const baiClient = useSuspendedBackendaiClient();
   const formRef = useRef<FormInstance<Service>>(null);
   const currentProject = useCurrentProjectValue();
-  const webuiNavigate = useWebUINavigate();
   const [isImportOnly, { toggle: toggleIsImportOnly }] = useToggle(false);
   const [huggingFaceURL, setHuggingFaceURL] = useState<string | undefined>();
   const [typedURL, setTypedURL] = useState<string>('');
+  const [, { upsertNotification }] = useBAINotificationState();
   const [isPendingCheck, startCheckTransition] = useTransition();
-  const [importResult, setImportResult] = useState<
-    ImportFromHuggingFaceResult | undefined
-  >();
 
   const { group } = useLazyLoadQuery<ImportFromHuggingFaceModalQuery>(
     graphql`
@@ -203,7 +184,49 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
           },
           {
             onSuccess(data: any) {
-              setImportResult(data);
+              if (data?.folder?.id && data?.folder?.name) {
+                upsertNotification({
+                  key: 'ImportFromHuggingFaceModal_folder' + data.folder.id,
+                  message: baiClient.is_admin
+                    ? t('data.modelStore.NewModelStoreFolderHasBeenCreated')
+                    : t('data.modelStore.NewModelFolderHasBeenCreated'),
+                  description: data.folder.name,
+                  open: true,
+                  duration: 0,
+                  toText: (
+                    <Tooltip
+                      title={t(
+                        'data.modelStore.ChangeTheCurrentProjectToModelStore',
+                      )}
+                      getPopupContainer={(trigger) =>
+                        trigger.parentElement as HTMLElement
+                      }
+                    >
+                      {/* TODO: update disable state when project id is changed */}
+                      <Button
+                        type="link"
+                        disabled={group?.type !== 'MODEL_STORE'}
+                      >
+                        {t('data.modelStore.OpenFolder')}
+                      </Button>
+                    </Tooltip>
+                  ),
+                  to: `/data?tab=model-store&folder=${data.folder.id}`,
+                });
+              }
+              if (data?.service?.endpoint_id && data?.service?.name) {
+                upsertNotification({
+                  key:
+                    'ImportFromHuggingFaceModal_service' +
+                    data.service.endpoint_id,
+                  message: t('data.modelStore.NewServiceHasBeenCreated'),
+                  description: data.service.name,
+                  open: true,
+                  duration: 0,
+                  toText: t('data.modelStore.ViewServiceInfo'),
+                  to: `/serving/${data.service.endpoint_id}`,
+                });
+              }
               onRequestClose();
             },
             onError(e) {
@@ -227,259 +250,152 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
   };
 
   return (
-    <>
-      <BAIModal
-        title={t('data.modelStore.ImportFromHuggingFace')}
-        centered
-        confirmLoading={importAndStartService.isPending}
-        okText={
-          isImportOnly
-            ? t('data.modelStore.Import')
-            : t('data.modelStore.ImportAndStartService')
-        }
-        onOk={handleOnClick}
-        okButtonProps={{
-          disabled:
-            !shouldSkipURLCheck ||
-            (!_.isEmpty(huggingFaceModelInfo.data?.pipeline_tag) &&
-              huggingFaceModelInfo.data?.pipeline_tag !== 'text-generation'),
-        }}
-        onCancel={onRequestClose}
-        destroyOnClose
-        {...baiModalProps}
+    <BAIModal
+      title={t('data.modelStore.ImportFromHuggingFace')}
+      centered
+      confirmLoading={importAndStartService.isPending}
+      okText={
+        isImportOnly
+          ? t('data.modelStore.Import')
+          : t('data.modelStore.ImportAndStartService')
+      }
+      onOk={handleOnClick}
+      okButtonProps={{
+        disabled:
+          !shouldSkipURLCheck ||
+          (!_.isEmpty(huggingFaceModelInfo.data?.pipeline_tag) &&
+            huggingFaceModelInfo.data?.pipeline_tag !== 'text-generation'),
+      }}
+      onCancel={onRequestClose}
+      destroyOnClose
+      {...baiModalProps}
+    >
+      <Form
+        ref={formRef}
+        preserve={false}
+        layout="vertical"
+        requiredMark="optional"
       >
-        <Form
-          ref={formRef}
-          preserve={false}
-          layout="vertical"
-          requiredMark="optional"
-        >
-          <Form.Item label="Hugging Face URL" required>
-            <Space.Compact style={{ width: '100%' }}>
-              <Form.Item
-                noStyle
-                name="url"
-                rules={[
-                  { required: true },
-                  {
-                    pattern: /^https:\/\/huggingface.co\/.*/,
-                    message: t('data.modelStore.StartWithHuggingFaceUrl'),
-                  },
-                ]}
-              >
-                <Input
-                  onPressEnter={() => {
-                    handleOnCheck();
-                  }}
-                  onChange={(e) => {
-                    setTypedURL(e.target.value);
-                  }}
-                />
-              </Form.Item>
-              <Button
-                type={!shouldSkipURLCheck ? 'primary' : 'default'}
-                disabled={shouldSkipURLCheck}
-                onClick={() => {
-                  handleOnCheck();
-                }}
-                loading={isPendingCheck}
-              >
-                {shouldSkipURLCheck ? (
-                  <CheckIcon />
-                ) : (
-                  t('data.modelStore.CheckHuggingFaceUrl')
-                )}
-              </Button>
-            </Space.Compact>
+        <Form.Item label="Hugging Face URL" required>
+          <Space.Compact style={{ width: '100%' }}>
             <Form.Item
               noStyle
-              name=""
+              name="url"
               rules={[
+                { required: true },
                 {
-                  validator: async () => {
-                    if (
-                      !isHuggingfaceURLExisted &&
-                      huggingFaceModelInfo.data?.isError &&
-                      huggingFaceModelInfo.data.url === typedURL
-                    ) {
+                  pattern: /^https:\/\/huggingface.co\/.*/,
+                  message: t('data.modelStore.StartWithHuggingFaceUrl'),
+                },
+              ]}
+            >
+              <Input
+                onPressEnter={() => {
+                  handleOnCheck();
+                }}
+                onChange={(e) => {
+                  setTypedURL(e.target.value);
+                }}
+              />
+            </Form.Item>
+            <Button
+              type={!shouldSkipURLCheck ? 'primary' : 'default'}
+              disabled={shouldSkipURLCheck}
+              onClick={() => {
+                handleOnCheck();
+              }}
+              loading={isPendingCheck}
+            >
+              {shouldSkipURLCheck ? (
+                <CheckIcon />
+              ) : (
+                t('data.modelStore.CheckHuggingFaceUrl')
+              )}
+            </Button>
+          </Space.Compact>
+          <Form.Item
+            noStyle
+            name=""
+            rules={[
+              {
+                validator: async () => {
+                  if (
+                    !isHuggingfaceURLExisted &&
+                    huggingFaceModelInfo.data?.isError &&
+                    huggingFaceModelInfo.data.url === typedURL
+                  ) {
+                    return Promise.reject(
+                      t('data.modelStore.InvalidHuggingFaceUrl'),
+                    );
+                  } else {
+                    if (!shouldSkipURLCheck) {
                       return Promise.reject(
                         t('data.modelStore.InvalidHuggingFaceUrl'),
                       );
-                    } else {
-                      if (!shouldSkipURLCheck) {
-                        return Promise.reject(
-                          t('data.modelStore.InvalidHuggingFaceUrl'),
-                        );
-                      } else if (
-                        !_.isEmpty(huggingFaceModelInfo.data?.pipeline_tag) &&
-                        huggingFaceModelInfo.data?.pipeline_tag !==
-                          'text-generation'
-                      ) {
-                        return Promise.reject(
-                          t('data.modelStore.NotSupportedModel'),
-                        );
-                      } else {
-                        return Promise.resolve();
-                      }
-                    }
-                  },
-                },
-              ]}
-            ></Form.Item>
-          </Form.Item>
-          <Form.Item
-            label={t('data.modelStore.ModelStoreFolderName')}
-            name="folder_name"
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label={t('data.modelStore.ServiceName')}
-            name="service_name"
-          >
-            <Input />
-          </Form.Item>
-          {huggingFaceURL && huggingFaceModelInfo.data?.markdown ? (
-            <Suspense fallback={<ReadmeFallbackCard />}>
-              <Card
-                size="small"
-                title={
-                  <Flex direction="row" gap="xs">
-                    <FilterOutlined />
-                    README.md
-                  </Flex>
-                }
-                styles={{
-                  body: {
-                    padding: token.paddingLG,
-                    overflow: 'auto',
-                    height: 200,
-                  },
-                }}
-              >
-                <Markdown>{huggingFaceModelInfo.data?.markdown}</Markdown>
-              </Card>
-            </Suspense>
-          ) : (
-            <ReadmeFallbackCard />
-          )}
-          <Flex
-            gap={'xs'}
-            style={{ marginTop: token.marginLG, marginBottom: token.marginLG }}
-          >
-            <Switch
-              checked={isImportOnly}
-              onChange={(e) => {
-                toggleIsImportOnly();
-              }}
-            />
-            <Typography.Text>{t('data.modelStore.ImportOnly')}</Typography.Text>
-          </Flex>
-        </Form>
-      </BAIModal>
-      <Modal
-        open={!_.isEmpty(importResult)}
-        onCancel={() => setImportResult(undefined)}
-        footer={null}
-      >
-        <Result
-          status={importAndStartService?.isSuccess ? 'success' : 'error'}
-          title={
-            importAndStartService?.isSuccess
-              ? t('data.modelStore.ImportSucceeded')
-              : t('dialog.ErrorOccurred')
-          }
-          subTitle={
-            importAndStartService?.isSuccess
-              ? isImportOnly
-                ? t('data.modelStore.ImportOnlySuccessDesc', {
-                    folderName: importResult?.folder?.name,
-                  })
-                : t('data.modelStore.ImportAndStartServiceSuccessDesc', {
-                    folderName: importResult?.folder?.name,
-                    serviceName: importResult?.service?.name,
-                  })
-              : importAndStartService?.error?.message
-          }
-          extra={
-            importAndStartService?.isSuccess && (
-              <Flex gap={'xs'} justify="center" align="center">
-                {importResult?.folder?.id && (
-                  <Tooltip
-                    title={
-                      baiClient?.is_admin && group?.type !== 'MODEL_STORE'
-                        ? t(
-                            'data.modelStore.ChangeTheCurrentProjectToModelStore',
-                          )
-                        : ''
-                    }
-                  >
-                    <Button
-                      disabled={
-                        baiClient?.is_admin && group?.type !== 'MODEL_STORE'
-                      }
-                      onClick={() => {
-                        webuiNavigate(
-                          `/data?tab=model&folder=${importResult.folder.id}`,
-                        );
-                      }}
-                    >
-                      {t('data.modelStore.OpenModelFolder')}
-                    </Button>
-                  </Tooltip>
-                )}
-                {importResult?.service?.endpoint_id && (
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      webuiNavigate(
-                        `/serving/${importResult.service?.endpoint_id}`,
+                    } else if (
+                      !_.isEmpty(huggingFaceModelInfo.data?.pipeline_tag) &&
+                      huggingFaceModelInfo.data?.pipeline_tag !==
+                        'text-generation'
+                    ) {
+                      return Promise.reject(
+                        t('data.modelStore.NotSupportedModel'),
                       );
-                    }}
-                  >
-                    {t('data.modelStore.ViewServiceInfo')}
-                  </Button>
-                )}
-              </Flex>
-            )
-          }
+                    } else {
+                      return Promise.resolve();
+                    }
+                  }
+                },
+              },
+            ]}
+          ></Form.Item>
+        </Form.Item>
+        <Form.Item
+          label={t('data.modelStore.ModelStoreFolderName')}
+          name="folder_name"
         >
-          {importAndStartService?.isSuccess && (
-            <div className="desc">
-              <Typography.Paragraph>
-                <Typography.Text strong>
-                  {t('data.modelStore.AddedItems')}
-                </Typography.Text>
-              </Typography.Paragraph>
-              {importResult?.folder?.name && (
-                <Typography.Paragraph>
-                  <Typography.Text>
-                    <CloudUploadOutlined
-                      style={{ marginRight: token.marginXXS }}
-                    />
-                    {t('data.modelStore.ModelFolderName')}:{' '}
-                    <Typography.Text copyable>
-                      {importResult?.folder?.name}
-                    </Typography.Text>
-                  </Typography.Text>
-                </Typography.Paragraph>
-              )}
-              {importResult?.service?.name && (
-                <Typography.Paragraph>
-                  <Typography.Text>
-                    <RocketOutlined style={{ marginRight: token.marginXXS }} />
-                    {t('data.modelStore.ServiceName')}:{' '}
-                    <Typography.Text copyable>
-                      {importResult?.service?.name}
-                    </Typography.Text>
-                  </Typography.Text>
-                </Typography.Paragraph>
-              )}
-            </div>
-          )}
-        </Result>
-      </Modal>
-    </>
+          <Input />
+        </Form.Item>
+        <Form.Item label={t('data.modelStore.ServiceName')} name="service_name">
+          <Input />
+        </Form.Item>
+        {huggingFaceURL && huggingFaceModelInfo.data?.markdown ? (
+          <Suspense fallback={<ReadmeFallbackCard />}>
+            <Card
+              size="small"
+              title={
+                <Flex direction="row" gap="xs">
+                  <FilterOutlined />
+                  README.md
+                </Flex>
+              }
+              styles={{
+                body: {
+                  padding: token.paddingLG,
+                  overflow: 'auto',
+                  height: 200,
+                },
+              }}
+            >
+              <Markdown>{huggingFaceModelInfo.data?.markdown}</Markdown>
+            </Card>
+          </Suspense>
+        ) : (
+          <ReadmeFallbackCard />
+        )}
+        <Flex
+          gap={'xs'}
+          style={{ marginTop: token.marginLG, marginBottom: token.marginLG }}
+        >
+          <Switch
+            checked={isImportOnly}
+            onChange={(e) => {
+              toggleIsImportOnly();
+            }}
+          />
+          <Typography.Text>{t('data.modelStore.ImportOnly')}</Typography.Text>
+        </Flex>
+      </Form>
+    </BAIModal>
   );
 };
 

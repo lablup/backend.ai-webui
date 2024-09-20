@@ -808,7 +808,8 @@
       "ImportOnlySuccessDesc": "La nuova cartella del modello è pronta. \nAvvia subito il servizio e prova l'operazione che desideri.",
       "ImportAndStartServiceSuccessDesc": "La nuova cartella modello e il servizio sono pronti. \nFare clic sul pulsante \"Visualizza informazioni servizio\" per verificare i dettagli del modello e avviare l'operazione desiderata.",
       "AddedItems": "Elementi aggiunti",
-      "ModelFolderName": "Nome della cartella del modello"
+      "ModelFolderName": "Nome della cartella del modello",
+      "OpenFolder": "Apri cartella"
     }
   },
   "dialog": {

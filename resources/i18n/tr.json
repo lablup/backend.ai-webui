@@ -807,7 +807,8 @@
       "ImportOnlySuccessDesc": "Yeni model klasörü hazır. \nŞimdi hizmeti başlatın ve istediğiniz işlemi deneyin.",
       "ImportAndStartServiceSuccessDesc": "Yeni model klasörü ve servisi hazır. \nModel ayrıntılarını kontrol etmek ve istediğiniz işlemi başlatmak için 'Servis bilgilerini görüntüle' düğmesine tıklayın.",
       "AddedItems": "Eklenen öğeler",
-      "ModelFolderName": "Model klasörü adı"
+      "ModelFolderName": "Model klasörü adı",
+      "OpenFolder": "Klasörü aç"
     }
   },
   "dialog": {

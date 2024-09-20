@@ -807,7 +807,8 @@
       "ImportOnlySuccessDesc": "新的模型文件夹已准备就绪。\n现在启动服务并尝试您想要的操作。",
       "ImportAndStartServiceSuccessDesc": "新的模型文件夹和服务已准备就绪。\n单击“查看服务信息”按钮以检查型号详细信息并开始所需的操作。",
       "AddedItems": "添加的项目",
-      "ModelFolderName": "模型文件夹名称"
+      "ModelFolderName": "模型文件夹名称",
+      "OpenFolder": "打开文件夹"
     }
   },
   "dialog": {

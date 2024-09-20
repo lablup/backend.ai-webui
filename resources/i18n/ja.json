@@ -807,7 +807,8 @@
       "ImportOnlySuccessDesc": "新しいモデルフォルダーの準備ができました。\n今すぐサービスを開始し、必要な操作を試してください。",
       "ImportAndStartServiceSuccessDesc": "新しいモデルのフォルダーとサービスが準備できました。 \n「サービス情報を見る」ボタンをクリックすると機種の詳細を確認し、必要な操作を開始します。",
       "AddedItems": "追加された項目",
-      "ModelFolderName": "モデルフォルダ名"
+      "ModelFolderName": "モデルフォルダ名",
+      "OpenFolder": "フォルダーを開く"
     }
   },
   "dialog": {

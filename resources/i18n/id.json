@@ -808,7 +808,8 @@
       "ImportOnlySuccessDesc": "Folder model baru sudah siap. \nMulai layanan sekarang dan coba operasi yang Anda inginkan.",
       "ImportAndStartServiceSuccessDesc": "Folder model baru dan layanan sudah siap. \nKlik tombol 'Lihat info layanan' untuk memeriksa detail model dan memulai pengoperasian yang diinginkan.",
       "AddedItems": "Item yang ditambahkan",
-      "ModelFolderName": "Nama folder model"
+      "ModelFolderName": "Nama folder model",
+      "OpenFolder": "Buka map"
     }
   },
   "dialog": {

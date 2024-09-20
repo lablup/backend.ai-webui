@@ -806,7 +806,8 @@
       "ImportOnlySuccessDesc": "新的模型資料夾已準備就緒。\n現在啟動服務並嘗試您想要的操作。",
       "ImportAndStartServiceSuccessDesc": "新的模型資料夾和服務已準備就緒。\n點擊“查看服務資訊”按鈕以檢查型號詳細資訊並開始所需的操作。",
       "AddedItems": "新增的項目",
-      "ModelFolderName": "模型資料夾名稱"
+      "ModelFolderName": "模型資料夾名稱",
+      "OpenFolder": "打開資料夾"
     }
   },
   "dialog": {
