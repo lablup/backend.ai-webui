@@ -787,7 +787,14 @@
       "ReplicaNumber": "Nomor Replika",
       "ImportAndStartService": "Impor dan Mulai Layanan",
       "huggingFaceUrlPlaceholder": "Masukkan URL Hugging Face",
-      "ImportOnly": "Impor saja"
+      "ImportOnly": "Impor saja",
+      "StartWithHuggingFaceUrl": "Ini harus dimulai dengan https://huggingface.co",
+      "CheckHuggingFaceUrl": "Periksa",
+      "ModelName": "Nama model",
+      "Author": "Penulis",
+      "InvalidHuggingFaceUrl": "URL Hugging Face tidak valid.",
+      "ModelStoreFolderName": "Nama folder penyimpanan model",
+      "ServiceName": "Nama layanan"
     }
   },
   "dialog": {
@@ -1484,7 +1491,8 @@
     "SmallerResourceThenImageRequires": "Permintaan sumber daya Anda lebih kecil dari jumlah minimum yang dibutuhkan oleh gambar. Coba lebih banyak sumber daya.",
     "APINotSupported": "API tidak didukung. Memerlukan versi terbaru dari manajer Backend.AI.",
     "WrongAPIServerAddress": "Alamat server API salah.",
-    "ReachedResourceLimitPleaseContact": "Mencapai batas sumber daya Anda. \nSilakan hubungi administrator."
+    "ReachedResourceLimitPleaseContact": "Mencapai batas sumber daya Anda. \nSilakan hubungi administrator.",
+    "InvalidUrl": "Ini bukan URL yang valid"
   },
   "maxLength": {
     "64chars": "(maksimum 64 karakter)",

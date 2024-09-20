@@ -786,7 +786,14 @@
       "ReplicaNumber": "Αριθμός αντιγράφου",
       "ImportAndStartService": "Εισαγωγή και έναρξη υπηρεσίας",
       "huggingFaceUrlPlaceholder": "Εισαγάγετε τη διεύθυνση URL Hugging Face.",
-      "ImportOnly": "Μόνο εισαγωγή"
+      "ImportOnly": "Μόνο εισαγωγή",
+      "StartWithHuggingFaceUrl": "Θα πρέπει να ξεκινά με https://huggingface.co",
+      "CheckHuggingFaceUrl": "Ελέγξτε το",
+      "ModelName": "Όνομα μοντέλου",
+      "Author": "Συγγραφέας",
+      "InvalidHuggingFaceUrl": "Μη έγκυρη διεύθυνση URL Hugging Face.",
+      "ModelStoreFolderName": "Όνομα φακέλου καταστήματος μοντέλου",
+      "ServiceName": "Όνομα υπηρεσίας"
     }
   },
   "dialog": {
@@ -1483,7 +1490,8 @@
     "SmallerResourceThenImageRequires": "Το αίτημα πόρων είναι μικρότερο από το ελάχιστο απαιτούμενο από την εικόνα. Δοκιμάστε περισσότερους πόρους.",
     "APINotSupported": "Το API δεν υποστηρίζεται. Απαιτείται η τελευταία έκδοση του διαχειριστή Backend.AI.",
     "WrongAPIServerAddress": "Λάθος διεύθυνση διακομιστή API.",
-    "ReachedResourceLimitPleaseContact": "Φτάσατε το όριο των πόρων σας. \nΕπικοινωνήστε με τον διαχειριστή."
+    "ReachedResourceLimitPleaseContact": "Φτάσατε το όριο των πόρων σας. \nΕπικοινωνήστε με τον διαχειριστή.",
+    "InvalidUrl": "Δεν είναι έγκυρη διεύθυνση URL"
   },
   "maxLength": {
     "64chars": "(έως 64 χαρακτήρες)",

@@ -1,10 +1,11 @@
+import { baiSignedRequestWithPromise } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
-import { FilterOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
   Button,
-  Card,
   Form,
   FormInstance,
   Input,
@@ -12,8 +13,8 @@ import {
   theme,
   Typography,
 } from 'antd';
-import Markdown from 'markdown-to-jsx';
-import React, { useRef } from 'react';
+import _ from 'lodash';
+import React, { useEffect, useRef, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type Service = {
@@ -34,13 +35,61 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
   const { token } = theme.useToken();
   const formRef = useRef<FormInstance<Service>>(null);
   const [isImportOnly, { toggle: toggleIsImportOnly }] = useToggle(false);
+  const [huggingFaceURL, setHuggingFaceURL] = useState<string | undefined>();
+  const baiClient = useSuspendedBackendaiClient();
+
+  const [isPendingCheck, startCheckTransition] = useTransition();
+  const hugginFaceModelInfo = useSuspenseTanQuery<{
+    author?: string;
+    model_name?: string;
+    markdown?: string;
+    isError?: boolean;
+    url?: string;
+  }>({
+    queryKey: ['huggingFaceReadme', huggingFaceURL],
+    queryFn: () => {
+      if (_.isEmpty(huggingFaceURL)) return Promise.resolve({});
+      return baiSignedRequestWithPromise({
+        method: 'GET',
+        url: `/services/_/huggingface/models?huggingface_url=${huggingFaceURL}`,
+        client: baiClient,
+      })
+        .then((result: any) => {
+          return {
+            ...result,
+            url: huggingFaceURL,
+          };
+        })
+        .catch(() => {
+          // TODO: handle error more gracefully
+          return {
+            isError: true,
+            url: huggingFaceURL,
+          };
+        });
+    },
+  });
+  const isHuggingfaceURLExisted = !_.isEmpty(
+    hugginFaceModelInfo.data.model_name,
+  );
+
+  // validate when huggingFaceModelInfo is updated
+  useEffect(() => {
+    if (hugginFaceModelInfo.data.url) {
+      formRef.current?.validateFields().catch(() => {});
+    }
+  }, [hugginFaceModelInfo.data.url]);
 
   const handleOnClick = () => {
     formRef.current
       ?.validateFields()
       .then((values) => {
+        startCheckTransition(() => {
+          setHuggingFaceURL(values?.url);
+        });
+
         // TODO: Implement import from Hugging Face
-        onRequestClose();
+        // onRequestClose();
       })
       .catch(() => {});
   };
@@ -50,7 +99,12 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
       title={t('data.modelStore.ImportFromHuggingFace')}
       centered
       footer={
-        <Button type="primary" htmlType="submit" onClick={handleOnClick}>
+        <Button
+          type="primary"
+          htmlType="submit"
+          onClick={handleOnClick}
+          loading={isPendingCheck}
+        >
           {isImportOnly
             ? t('data.modelStore.Import')
             : t('data.modelStore.ImportAndStartService')}
@@ -65,28 +119,43 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
         layout="vertical"
         requiredMark="optional"
       >
-        <Form.Item name="url" rules={[{ required: true }]}>
-          <Input placeholder={t('data.modelStore.huggingFaceUrlPlaceholder')} />
-        </Form.Item>
-        <Card
-          size="small"
-          title={
-            <Flex direction="row" gap="xs">
-              <FilterOutlined />
-              README.md
-            </Flex>
-          }
-          styles={{
-            body: {
-              padding: token.paddingLG,
-              overflow: 'auto',
-              minHeight: 200,
-              maxHeight: token.screenXS,
+        <Form.Item
+          label="Hugging Face URL"
+          name="url"
+          rules={[
+            { required: true },
+            {
+              pattern: /^https:\/\/huggingface.co\/.*/,
+              message: t('data.modelStore.StartWithHuggingFaceUrl'),
             },
-          }}
+            {
+              validator: async (_, value) => {
+                if (
+                  !isHuggingfaceURLExisted &&
+                  hugginFaceModelInfo.data?.isError &&
+                  hugginFaceModelInfo.data.url === value
+                ) {
+                  return Promise.reject(
+                    t('data.modelStore.InvalidHuggingFaceUrl'),
+                  );
+                } else {
+                  return Promise.resolve();
+                }
+              },
+            },
+          ]}
         >
-          <Markdown>{''}</Markdown>
-        </Card>
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label={t('data.modelStore.ModelStoreFolderName')}
+          name="folder_name"
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item label={t('data.modelStore.ServiceName')} name="service_name">
+          <Input />
+        </Form.Item>
         <Flex
           gap={'xs'}
           style={{ marginTop: token.marginLG, marginBottom: token.marginLG }}

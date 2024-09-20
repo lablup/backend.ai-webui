@@ -911,7 +911,15 @@
       "ReplicaNumber": "Replica Number",
       "ImportAndStartService": "Import & Start Service",
       "huggingFaceUrlPlaceholder": "Input Hugging Face URL",
-      "ImportOnly": "Import only"
+      "ImportOnly": "Import only",
+      "StartWithHuggingFaceUrl": "It should start with https://huggingface.co",
+      "CheckHuggingFaceUrl": "Check",
+      "ModelName": "Model name",
+      "Author": "Author",
+      "InvalidHuggingFaceUrl": "Invalid Hugging Face URL.",
+      "ModelStoreFolderName": "Model store folder name",
+      "ServiceName": "Service name",
+      "HuggingFaceURL": "Higging Face"
     }
   },
   "dialog": {
@@ -1610,7 +1618,8 @@
     "FolderSharingNotAvailableToUser": "Folder sharing is not available for requested user(s).",
     "APINotSupported": "API not supported. Requires latest version of Backend.AI manager.",
     "ErrorFetchingExternalContent": "Error fetching external content:",
-    "ReachedResourceLimitPleaseContact": "Reached your resource limit. Please contact the administrator."
+    "ReachedResourceLimitPleaseContact": "Reached your resource limit. Please contact the administrator.",
+    "InvalidUrl": "It is not a valid URL"
   },
   "maxLength": {
     "64chars": "(maximum 64 chars)",

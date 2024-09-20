@@ -786,7 +786,14 @@
       "ReplicaNumber": "Replikatnummer",
       "ImportAndStartService": "Dienst importieren und starten",
       "huggingFaceUrlPlaceholder": "Geben Sie die URL Hugging Face ein",
-      "ImportOnly": "Nur importieren"
+      "ImportOnly": "Nur importieren",
+      "StartWithHuggingFaceUrl": "Es sollte mit https://huggingface.co beginnen",
+      "CheckHuggingFaceUrl": "Siehe",
+      "ModelName": "Name des Modells",
+      "Author": "Autor",
+      "InvalidHuggingFaceUrl": "Ungültige Hugging Face URL.",
+      "ModelStoreFolderName": "Name des Modellspeicherordners",
+      "ServiceName": "Dienstname"
     }
   },
   "dialog": {

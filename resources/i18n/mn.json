@@ -788,7 +788,13 @@
       "ReplicaNumber": "Хуулбарын дугаар",
       "ImportAndStartService": "Импорт хийх ба эхлүүлэх үйлчилгээ",
       "huggingFaceUrlPlaceholder": "Hugging Face URL-г оруулна уу",
-      "ImportOnly": "Зөвхөн импортлох"
+      "ImportOnly": "Зөвхөн импортлох",
+      "StartWithHuggingFaceUrl": "Энэ нь https://huggingface.co-ээс эхлэх ёстой",
+      "CheckHuggingFaceUrl": "Шалгах",
+      "ModelName": "Загварын нэр",
+      "InvalidHuggingFaceUrl": "Хүчингүй Hugging Face URL.",
+      "ModelStoreFolderName": "Загварын дэлгүүрийн хавтасны нэр",
+      "ServiceName": "Үйлчилгээний нэр"
     }
   },
   "dialog": {
@@ -1484,7 +1490,8 @@
     "VirtualFolderAlreadyExist": "Ижил нэртэй виртуал хавтас аль хэдийн байна. \nӨөрийн фолдерыг устгах эсвэл урилгаас татгалзаарай.",
     "WrongAPIServerAddress": "API серверийн хаяг буруу байна.",
     "ResourceLimitExceed": "Нөөцийн хязгаар хэтэрсэн. \nБоломжтой нөөцийн хэмжээг шалгана уу.",
-    "ReachedResourceLimitPleaseContact": "Таны нөөцийн хязгаарт хүрсэн. \nАдминтай холбогдоно уу."
+    "ReachedResourceLimitPleaseContact": "Таны нөөцийн хязгаарт хүрсэн. \nАдминтай холбогдоно уу.",
+    "InvalidUrl": "Энэ нь хүчинтэй URL биш байна"
   },
   "maxLength": {
     "64chars": "(хамгийн ихдээ 64 тэмдэгт)",

@@ -786,7 +786,14 @@
       "ReplicaNumber": "Номер реплики",
       "ImportAndStartService": "Импортировать и запустить службу",
       "huggingFaceUrlPlaceholder": "Введите URL-адрес Hugging Face",
-      "ImportOnly": "Только импорт"
+      "ImportOnly": "Только импорт",
+      "StartWithHuggingFaceUrl": "Он должен начинаться с https://huggingface.co.",
+      "CheckHuggingFaceUrl": "Проверьте",
+      "ModelName": "Название модели",
+      "Author": "Автор",
+      "InvalidHuggingFaceUrl": "Неверный URL-адрес Hugging Face.",
+      "ModelStoreFolderName": "Имя папки хранилища моделей",
+      "ServiceName": "Название службы"
     }
   },
   "dialog": {
@@ -1483,7 +1490,8 @@
     "SmallerResourceThenImageRequires": "Ваш запрос ресурсов меньше, чем минимально требуется для изображения. Попробуйте использовать больше ресурсов.",
     "APINotSupported": "API не поддерживается. Требуется последняя версия менеджера Backend.AI.",
     "WrongAPIServerAddress": "Неверный адрес сервера API.",
-    "ReachedResourceLimitPleaseContact": "Достигнут лимит ресурсов. \nПожалуйста, свяжитесь с администратором."
+    "ReachedResourceLimitPleaseContact": "Достигнут лимит ресурсов. \nПожалуйста, свяжитесь с администратором.",
+    "InvalidUrl": "Это недействительный URL-адрес."
   },
   "maxLength": {
     "64chars": "(максимум 64 символа)",

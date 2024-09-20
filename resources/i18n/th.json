@@ -903,7 +903,14 @@
     "NewFolderName": "ชื่อโฟลเดอร์ใหม่",
     "modelStore": {
       "ImportFromHuggingFace": "นำเข้าจาก Hugging Face",
-      "ImportOnly": "นำเข้าเท่านั้น"
+      "ImportOnly": "นำเข้าเท่านั้น",
+      "StartWithHuggingFaceUrl": "ควรขึ้นต้นด้วย https://huggingface.co",
+      "CheckHuggingFaceUrl": "ตรวจสอบ",
+      "ModelName": "ชื่อรุ่น",
+      "Author": "ผู้เขียน",
+      "InvalidHuggingFaceUrl": "URL Hugging Face ไม่ถูกต้อง",
+      "ModelStoreFolderName": "ชื่อโฟลเดอร์ร้านค้าโมเดล",
+      "ServiceName": "ชื่อบริการ"
     }
   },
   "dialog": {
@@ -1592,7 +1599,8 @@
     "FolderSharingNotAvailableToUser": "การแชร์โฟลเดอร์ไม่สามารถใช้ได้สำหรับผู้ใช้ที่ร้องขอ",
     "APINotSupported": "ไม่รองรับ API นี้ ต้องใช้เวอร์ชันล่าสุดของผู้จัดการ Backend.AI",
     "ErrorFetchingExternalContent": "เกิดข้อผิดพลาดในการดึงเนื้อหาภายนอก:",
-    "ReachedResourceLimitPleaseContact": "ถึงขีดจำกัดทรัพยากรของคุณแล้ว กรุณาติดต่อผู้ดูแลระบบ"
+    "ReachedResourceLimitPleaseContact": "ถึงขีดจำกัดทรัพยากรของคุณแล้ว กรุณาติดต่อผู้ดูแลระบบ",
+    "InvalidUrl": "ไม่ใช่ URL ที่ถูกต้อง"
   },
   "maxLength": {
     "64chars": "(สูงสุด 64 ตัวอักษร)",
