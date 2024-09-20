@@ -1,4 +1,12 @@
-import { Locator, Page, expect } from '@playwright/test';
+import TOML from '@iarna/toml';
+import {
+  APIRequestContext,
+  Locator,
+  Page,
+  Request,
+  expect,
+  request,
+} from '@playwright/test';
 import fs from 'fs/promises';
 import path from 'path';
 
@@ -229,14 +237,32 @@ export async function deleteSession(page: Page, sessionName: string) {
   await expect(page.getByText(sessionName)).toBeHidden();
 }
 
-export async function mockConfigToml(page: Page, rawPath) {
-  const filePath = path.resolve(__dirname, rawPath);
-  const mockData = await fs.readFile(filePath, 'utf-8');
-  await page.route('http://127.0.0.1:9081/config.toml', async (route) => {
+/**
+ * Modify specific columns in the webui config.toml file
+ *
+ * @param page
+ * @param request
+ * @param configColumn
+ * The object to modify the config.toml file
+ *
+ * e.g. { "environments": { "showNonInstalledImages": "true" } }
+ */
+export async function modifyConfigToml(
+  page: Page,
+  request: APIRequestContext,
+  configColumn: Record<string, Record<string, any>>,
+) {
+  const configToml = await (
+    await request.get(`${webuiEndpoint}/config.toml`)
+  ).text();
+  const config = TOML.parse(configToml);
+  Object.assign(config, configColumn);
+
+  await page.route(`${webuiEndpoint}/config.toml`, async (route) => {
     await route.fulfill({
       status: 200,
       contentType: 'text/plain',
-      body: mockData,
+      body: TOML.stringify(config),
     });
   });
 }

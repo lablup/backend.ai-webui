@@ -36,6 +36,7 @@
     "theme-schema:update": "pnpm dlx typescript-json-schema \"./react/node_modules/antd/es/config-provider/context.d.ts\" ThemeConfig -o ./resources/antdThemeConfig.schema.json --esModuleInterop"
   },
   "dependencies": {
+    "@iarna/toml": "^2.2.5",
     "@lit/reactive-element": "^2.0.4",
     "@material/mwc-button": "^0.27.0",
     "@material/mwc-checkbox": "^0.27.0",
@@ -188,7 +189,7 @@
     ],
     "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
       "prettier --write"
-    ], 
+    ],
     "e2e/**/*.{js,ts}": [
       "prettier --write"
     ]
