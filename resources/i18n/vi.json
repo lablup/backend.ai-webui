@@ -791,7 +791,10 @@
       "CheckHuggingFaceUrl": "Kiểm tra",
       "ModelName": "Tên mẫu",
       "Author": "Tác giả",
-      "InvalidHuggingFaceUrl": "URL Hugging Face không hợp lệ."
+      "InvalidHuggingFaceUrl": "URL Hugging Face không hợp lệ.",
+      "ServiceName": "Tên dịch vụ",
+      "ModelStoreFolderName": "Tên thư mục lưu trữ mô hình",
+      "NotSupportedModel": "Mô hình không được hỗ trợ. \nVui lòng sử dụng mô hình LLM."
     }
   },
   "dialog": {

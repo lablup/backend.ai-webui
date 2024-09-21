@@ -790,7 +790,10 @@
       "CheckHuggingFaceUrl": "Semak",
       "ModelName": "Nama model",
       "Author": "Pengarang",
-      "InvalidHuggingFaceUrl": "URL Hugging Face tidak sah."
+      "InvalidHuggingFaceUrl": "URL Hugging Face tidak sah.",
+      "ServiceName": "Nama perkhidmatan",
+      "ModelStoreFolderName": "Nama folder kedai model",
+      "NotSupportedModel": "Model tidak disokong. \nSila gunakan model LLM."
     }
   },
   "dialog": {

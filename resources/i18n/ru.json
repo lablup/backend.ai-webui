@@ -791,7 +791,10 @@
       "CheckHuggingFaceUrl": "Проверьте",
       "ModelName": "Название модели",
       "Author": "Автор",
-      "InvalidHuggingFaceUrl": "Неверный URL-адрес Hugging Face."
+      "InvalidHuggingFaceUrl": "Неверный URL-адрес Hugging Face.",
+      "ServiceName": "Название службы",
+      "ModelStoreFolderName": "Имя папки хранилища моделей",
+      "NotSupportedModel": "Модель не поддерживается. \nПожалуйста, используйте модель LLM."
     }
   },
   "dialog": {

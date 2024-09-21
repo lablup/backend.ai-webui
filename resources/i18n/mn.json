@@ -792,7 +792,10 @@
       "StartWithHuggingFaceUrl": "Энэ нь https://huggingface.co-ээс эхлэх ёстой",
       "CheckHuggingFaceUrl": "Шалгах",
       "ModelName": "Загварын нэр",
-      "InvalidHuggingFaceUrl": "Хүчингүй Hugging Face URL."
+      "InvalidHuggingFaceUrl": "Хүчингүй Hugging Face URL.",
+      "ServiceName": "Үйлчилгээний нэр",
+      "ModelStoreFolderName": "Загварын дэлгүүрийн хавтасны нэр",
+      "NotSupportedModel": "Энэ загварыг дэмждэггүй. \nLLM загварыг ашиглана уу."
     }
   },
   "dialog": {

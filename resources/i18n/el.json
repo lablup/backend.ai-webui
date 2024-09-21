@@ -791,7 +791,10 @@
       "CheckHuggingFaceUrl": "Ελέγξτε το",
       "ModelName": "Όνομα μοντέλου",
       "Author": "Συγγραφέας",
-      "InvalidHuggingFaceUrl": "Μη έγκυρη διεύθυνση URL Hugging Face."
+      "InvalidHuggingFaceUrl": "Μη έγκυρη διεύθυνση URL Hugging Face.",
+      "ServiceName": "Όνομα υπηρεσίας",
+      "ModelStoreFolderName": "Όνομα φακέλου καταστήματος μοντέλου",
+      "NotSupportedModel": "Το μοντέλο δεν υποστηρίζεται. \nΧρησιμοποιήστε το μοντέλο LLM."
     }
   },
   "dialog": {

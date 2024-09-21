@@ -791,7 +791,10 @@
       "CheckHuggingFaceUrl": "Kontrol et",
       "ModelName": "Model adı",
       "Author": "Yazar",
-      "InvalidHuggingFaceUrl": "Geçersiz Hugging Face URL'si."
+      "InvalidHuggingFaceUrl": "Geçersiz Hugging Face URL'si.",
+      "ServiceName": "Hizmet adı",
+      "ModelStoreFolderName": "Model deposu klasör adı",
+      "NotSupportedModel": "Model desteklenmiyor. \nLütfen LLM modelini kullanın."
     }
   },
   "dialog": {

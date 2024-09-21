@@ -3,10 +3,12 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
+import { FilterOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
   Button,
-  Descriptions,
+  Card,
+  Empty,
   Form,
   FormInstance,
   Input,
@@ -17,13 +19,44 @@ import {
 } from 'antd';
 import _ from 'lodash';
 import { CheckIcon } from 'lucide-react';
-import React, { useEffect, useRef, useState, useTransition } from 'react';
+import Markdown from 'markdown-to-jsx';
+import React, {
+  Suspense,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 
 type Service = {
   url: string;
-  inference_engine_version?: string;
-  replica_number?: number;
+  service_name?: string;
+  folder_name?: string;
+};
+
+const ReadmeFallbackCard = () => {
+  const { token } = theme.useToken();
+  return (
+    <Card
+      size="small"
+      title={
+        <Flex direction="row" gap="xs">
+          <FilterOutlined />
+          README.md
+        </Flex>
+      }
+      styles={{
+        body: {
+          padding: token.paddingLG,
+          overflow: 'auto',
+          height: 200,
+        },
+      }}
+    >
+      <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+    </Card>
+  );
 };
 
 interface ImportFromHuggingFaceModalProps extends BAIModalProps {
@@ -43,10 +76,11 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
   const baiClient = useSuspendedBackendaiClient();
 
   const [isPendingCheck, startCheckTransition] = useTransition();
-  const hugginFaceModelInfo = useSuspenseTanQuery<{
+  const huggingFaceModelInfo = useSuspenseTanQuery<{
     author?: string;
     model_name?: string;
     markdown?: string;
+    pipeline_tag?: string;
     isError?: boolean;
     url?: string;
   }>({
@@ -74,7 +108,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
     },
   });
   const isHuggingfaceURLExisted = !_.isEmpty(
-    hugginFaceModelInfo.data.model_name,
+    huggingFaceModelInfo.data.model_name,
   );
   const shouldSkipURLCheck =
     isHuggingfaceURLExisted && huggingFaceURL === typedURL;
@@ -89,10 +123,10 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
 
   // validate when huggingFaceModelInfo is updated
   useEffect(() => {
-    if (hugginFaceModelInfo.data.url) {
+    if (huggingFaceModelInfo.data.url) {
       formRef.current?.validateFields().catch(() => {});
     }
-  }, [hugginFaceModelInfo.data.url]);
+  }, [huggingFaceModelInfo.data.url]);
 
   const handleOnClick = () => {
     formRef.current
@@ -124,7 +158,11 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
           type="primary"
           htmlType="submit"
           onClick={handleOnClick}
-          disabled={!shouldSkipURLCheck}
+          disabled={
+            !shouldSkipURLCheck ||
+            (!_.isEmpty(huggingFaceModelInfo.data?.pipeline_tag) &&
+              huggingFaceModelInfo.data?.pipeline_tag !== 'text-generation')
+          }
         >
           {isImportOnly
             ? t('data.modelStore.Import')
@@ -141,7 +179,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
         layout="vertical"
         requiredMark="optional"
       >
-        <Form.Item>
+        <Form.Item label="Hugging Face URL" required>
           <Space.Compact style={{ width: '100%' }}>
             <Form.Item
               noStyle
@@ -155,7 +193,6 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
               ]}
             >
               <Input
-                placeholder={t('data.modelStore.huggingFaceUrlPlaceholder')}
                 onPressEnter={() => {
                   handleOnCheck();
                 }}
@@ -184,22 +221,30 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
             name=""
             rules={[
               {
-                validator: async (_, value) => {
+                validator: async () => {
                   if (
                     !isHuggingfaceURLExisted &&
-                    hugginFaceModelInfo.data?.isError &&
-                    hugginFaceModelInfo.data.url === typedURL
+                    huggingFaceModelInfo.data?.isError &&
+                    huggingFaceModelInfo.data.url === typedURL
                   ) {
                     return Promise.reject(
                       t('data.modelStore.InvalidHuggingFaceUrl'),
                     );
                   } else {
-                    if (shouldSkipURLCheck) {
-                      return Promise.resolve();
-                    } else {
+                    if (!shouldSkipURLCheck) {
                       return Promise.reject(
                         t('data.modelStore.InvalidHuggingFaceUrl'),
                       );
+                    } else if (
+                      !_.isEmpty(huggingFaceModelInfo.data?.pipeline_tag) &&
+                      huggingFaceModelInfo.data?.pipeline_tag !==
+                        'text-generation'
+                    ) {
+                      return Promise.reject(
+                        t('data.modelStore.NotSupportedModel'),
+                      );
+                    } else {
+                      return Promise.resolve();
                     }
                   }
                 },
@@ -207,20 +252,39 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
             ]}
           ></Form.Item>
         </Form.Item>
-        <Descriptions
-          bordered
-          style={{
-            opacity: shouldSkipURLCheck ? 1 : 0.7,
-          }}
-          column={1}
+        <Form.Item
+          label={t('data.modelStore.ModelStoreFolderName')}
+          name="folder_name"
         >
-          <Descriptions.Item label={t('data.modelStore.ModelName')}>
-            {shouldSkipURLCheck && hugginFaceModelInfo.data?.model_name}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('data.modelStore.Author')}>
-            {shouldSkipURLCheck && hugginFaceModelInfo.data?.author}
-          </Descriptions.Item>
-        </Descriptions>
+          <Input />
+        </Form.Item>
+        <Form.Item label={t('data.modelStore.ServiceName')} name="service_name">
+          <Input />
+        </Form.Item>
+        {huggingFaceURL && huggingFaceModelInfo.data?.markdown ? (
+          <Suspense fallback={<ReadmeFallbackCard />}>
+            <Card
+              size="small"
+              title={
+                <Flex direction="row" gap="xs">
+                  <FilterOutlined />
+                  README.md
+                </Flex>
+              }
+              styles={{
+                body: {
+                  padding: token.paddingLG,
+                  overflow: 'auto',
+                  height: 200,
+                },
+              }}
+            >
+              <Markdown>{huggingFaceModelInfo.data?.markdown}</Markdown>
+            </Card>
+          </Suspense>
+        ) : (
+          <ReadmeFallbackCard />
+        )}
         <Flex
           gap={'xs'}
           style={{ marginTop: token.marginLG, marginBottom: token.marginLG }}

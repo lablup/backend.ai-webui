@@ -791,7 +791,10 @@
       "CheckHuggingFaceUrl": "检查",
       "ModelName": "型号名称",
       "Author": "作者",
-      "InvalidHuggingFaceUrl": "Hugging Face URL 无效。"
+      "InvalidHuggingFaceUrl": "Hugging Face URL 无效。",
+      "ServiceName": "服务名称",
+      "ModelStoreFolderName": "模型存储文件夹名称",
+      "NotSupportedModel": "不支持该型号。\n请使用LLM模型。"
     }
   },
   "dialog": {

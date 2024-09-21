@@ -792,7 +792,10 @@
       "CheckHuggingFaceUrl": "Periksa",
       "ModelName": "Nama model",
       "Author": "Penulis",
-      "InvalidHuggingFaceUrl": "URL Hugging Face tidak valid."
+      "InvalidHuggingFaceUrl": "URL Hugging Face tidak valid.",
+      "ServiceName": "Nama layanan",
+      "ModelStoreFolderName": "Nama folder penyimpanan model",
+      "NotSupportedModel": "Model ini tidak didukung. \nSilakan gunakan model LLM."
     }
   },
   "dialog": {

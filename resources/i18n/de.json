@@ -791,7 +791,10 @@
       "CheckHuggingFaceUrl": "Siehe",
       "ModelName": "Name des Modells",
       "Author": "Autor",
-      "InvalidHuggingFaceUrl": "Ungültige Hugging Face URL."
+      "InvalidHuggingFaceUrl": "Ungültige Hugging Face URL.",
+      "ServiceName": "Dienstname",
+      "ModelStoreFolderName": "Name des Modellspeicherordners",
+      "NotSupportedModel": "Das Modell wird nicht unterstützt. \nBitte nutzen Sie das LLM-Modell."
     }
   },
   "dialog": {

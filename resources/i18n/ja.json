@@ -791,7 +791,10 @@
       "CheckHuggingFaceUrl": "チェック",
       "ModelName": "モデル名",
       "Author": "著者",
-      "InvalidHuggingFaceUrl": "無効なHugging Face URLです。"
+      "InvalidHuggingFaceUrl": "無効なHugging Face URLです。",
+      "ServiceName": "サービス名",
+      "ModelStoreFolderName": "モデルストアフォルダー名",
+      "NotSupportedModel": "このモデルはサポートされていません。 \nLLMモデルを使用してください。"
     }
   },
   "dialog": {
