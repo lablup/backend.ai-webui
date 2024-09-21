@@ -786,7 +786,12 @@
       "ReplicaNumber": "Numéro de réplique",
       "ImportAndStartService": "Service d'importation et de démarrage",
       "huggingFaceUrlPlaceholder": "Saisissez l'URL Hugging Face",
-      "ImportOnly": "Importer uniquement"
+      "ImportOnly": "Importer uniquement",
+      "StartWithHuggingFaceUrl": "Cela devrait commencer par https://huggingface.co",
+      "CheckHuggingFaceUrl": "Vérifier",
+      "ModelName": "Nom du modèle",
+      "Author": "Auteur",
+      "InvalidHuggingFaceUrl": "URL Hugging Face non valide."
     }
   },
   "dialog": {
@@ -1483,7 +1488,8 @@
     "SmallerResourceThenImageRequires": "Votre demande de ressources est inférieure au minimum requis par l'image. Essayez d'autres ressources.",
     "APINotSupported": "L'API n'est pas prise en charge. Nécessite la dernière version du gestionnaire Backend.AI.",
     "WrongAPIServerAddress": "Mauvaise adresse du serveur API.",
-    "ReachedResourceLimitPleaseContact": "Vous avez atteint votre limite de ressources. \nVeuillez contacter l'administrateur."
+    "ReachedResourceLimitPleaseContact": "Vous avez atteint votre limite de ressources. \nVeuillez contacter l'administrateur.",
+    "InvalidUrl": "Ce n'est pas une URL valide"
   },
   "maxLength": {
     "64chars": "(maximum 64 caractères)",

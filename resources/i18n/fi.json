@@ -66,7 +66,8 @@
     "UserHasNoGroup": "Käyttäjällä ei ole ryhmää. Ota yhteyttä ylläpitäjään sen korjaamiseksi.",
     "UserNameAlreadyExist": "Käyttäjätunnus on jo olemassa. Sitä ei voi kopioida.",
     "VirtualFolderAlreadyExist": "Samanniminen virtuaalikansio on jo olemassa. Poista oma kansiosi tai hylkää kutsu.",
-    "ReachedResourceLimitPleaseContact": "Resurssiraja saavutettu. \nOta yhteyttä ylläpitäjään."
+    "ReachedResourceLimitPleaseContact": "Resurssiraja saavutettu. \nOta yhteyttä ylläpitäjään.",
+    "InvalidUrl": "Se ei ole kelvollinen URL-osoite"
   },
   "DownloadSSHKey": "Lataa SSH-avain",
   "ErrorBoundary": {
@@ -416,7 +417,12 @@
       "ReplicaNumber": "Replikan numero",
       "ImportAndStartService": "Tuo ja käynnistä palvelu",
       "huggingFaceUrlPlaceholder": "Syötä Hugging Face-URL-osoite",
-      "ImportOnly": "Vain tuonti"
+      "ImportOnly": "Vain tuonti",
+      "StartWithHuggingFaceUrl": "Sen pitäisi alkaa https://huggingface.co",
+      "CheckHuggingFaceUrl": "Tarkista",
+      "ModelName": "Mallin nimi",
+      "Author": "Kirjoittaja",
+      "InvalidHuggingFaceUrl": "Virheellinen Hugging Face URL-osoite."
     }
   },
   "dialog": {

@@ -786,7 +786,12 @@
       "ReplicaNumber": "レプリカ番号",
       "ImportAndStartService": "サービスのインポートと開始",
       "huggingFaceUrlPlaceholder": "Hugging Faceの URL を入力してください",
-      "ImportOnly": "輸入のみ"
+      "ImportOnly": "輸入のみ",
+      "StartWithHuggingFaceUrl": "https://huggingface.co で始まる必要があります",
+      "CheckHuggingFaceUrl": "チェック",
+      "ModelName": "モデル名",
+      "Author": "著者",
+      "InvalidHuggingFaceUrl": "無効なHugging Face URLです。"
     }
   },
   "dialog": {
@@ -1482,7 +1487,8 @@
     "SmallerResourceThenImageRequires": "リソース要求が画像に必要な最小値より小さい。より多くのリソースを試してください。",
     "APINotSupported": "APIはサポートされていません。最新バージョンのBackend.AIマネージャが必要です。",
     "WrongAPIServerAddress": "APIサーバーのアドレスが間違っています。",
-    "ReachedResourceLimitPleaseContact": "リソース制限に達しました。\n管理者にお問い合わせください。"
+    "ReachedResourceLimitPleaseContact": "リソース制限に達しました。\n管理者にお問い合わせください。",
+    "InvalidUrl": "有効な URL ではありません"
   },
   "maxLength": {
     "64chars": "（最大64文字）",

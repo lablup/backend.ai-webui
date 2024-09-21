@@ -898,7 +898,13 @@
       "ReplicaNumber": "복제 번호",
       "ImportAndStartService": "가져오기 및 서비스 시작",
       "huggingFaceUrlPlaceholder": "Hugging Face URL을 입력하세요.",
-      "ImportOnly": "가져오기만 허용"
+      "ImportOnly": "가져오기만 허용",
+      "StartWithHuggingFaceUrl": "https://huggingface.co로 시작해야 합니다.",
+      "CheckHuggingFaceUrl": "확인",
+      "ModelName": "모델 이름",
+      "Author": "작성자",
+      "InvalidHuggingFaceUrl": "유효한 Hugging Face URL을 입력해주세요",
+      "PleaseClickCheckButton": "확인 버튼을 클릭해주세요"
     }
   },
   "dialog": {
@@ -1595,7 +1601,8 @@
     "CannotSharePrivateAutomountFolder": "정책에 따라 자동마운트 폴더는 공유할 수 없습니다.",
     "FolderSharingNotAvailableToUser": "요청한 사용자는 폴더 공유가 불가능한 상태입니다.",
     "APINotSupported": "지원하지 않는 API입니다. 최신 버전의 Backend.AI 매니저가 필요합니다.",
-    "ReachedResourceLimitPleaseContact": "자원 제한에 도달했습니다. 관리자에게 문의하세요."
+    "ReachedResourceLimitPleaseContact": "자원 제한에 도달했습니다. 관리자에게 문의하세요.",
+    "InvalidUrl": "유효한 URL이 아닙니다."
   },
   "maxLength": {
     "64chars": "(최대 길이 64자)",

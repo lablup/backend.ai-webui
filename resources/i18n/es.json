@@ -66,7 +66,8 @@
     "UserHasNoGroup": "El usuario no tiene grupo. Póngase en contacto con el administrador para solucionarlo.",
     "UserNameAlreadyExist": "El nombre de usuario ya existe. No se puede duplicar.",
     "VirtualFolderAlreadyExist": "Ya existe una carpeta virtual con el mismo nombre. Elimine su propia carpeta o rechace la invitación.",
-    "ReachedResourceLimitPleaseContact": "Alcanzó su límite de recursos. \nPor favor contacte al administrador."
+    "ReachedResourceLimitPleaseContact": "Alcanzó su límite de recursos. \nPor favor contacte al administrador.",
+    "InvalidUrl": "No es una URL válida"
   },
   "DownloadSSHKey": "Descargar clave SSH",
   "ErrorBoundary": {
@@ -416,7 +417,12 @@
       "ReplicaNumber": "Número de réplica",
       "ImportAndStartService": "Servicio de importación e inicio",
       "huggingFaceUrlPlaceholder": "Introduzca la URL Hugging Face",
-      "ImportOnly": "Sólo importar"
+      "ImportOnly": "Sólo importar",
+      "StartWithHuggingFaceUrl": "Debería comenzar con https://huggingface.co",
+      "CheckHuggingFaceUrl": "Consulte",
+      "ModelName": "Nombre del modelo",
+      "Author": "Autor",
+      "InvalidHuggingFaceUrl": "URL Hugging Face no válida."
     }
   },
   "dialog": {

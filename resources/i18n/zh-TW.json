@@ -785,7 +785,12 @@
       "ReplicaNumber": "副本號",
       "ImportAndStartService": "導入並啟動服務",
       "huggingFaceUrlPlaceholder": "輸入Hugging Face網址",
-      "ImportOnly": "僅導入"
+      "ImportOnly": "僅導入",
+      "StartWithHuggingFaceUrl": "它應該以 https://huggingface.co 開頭",
+      "CheckHuggingFaceUrl": "检查",
+      "ModelName": "型号名称",
+      "Author": "作者",
+      "InvalidHuggingFaceUrl": "Hugging Face URL 无效。"
     }
   },
   "dialog": {
@@ -1482,7 +1487,8 @@
     "SmallerResourceThenImageRequires": "您的资源请求小于图像要求的最小值。尝试更多资源。",
     "APINotSupported": "不支持 API。需要最新版本的 Backend.AI 管理器。",
     "WrongAPIServerAddress": "错误的 API 服务器地址。",
-    "ReachedResourceLimitPleaseContact": "已達到您的資源限制。\n請聯絡管理員。"
+    "ReachedResourceLimitPleaseContact": "已達到您的資源限制。\n請聯絡管理員。",
+    "InvalidUrl": "這不是一個有效的 URL"
   },
   "maxLength": {
     "64chars": "（最多 64 個字符）",

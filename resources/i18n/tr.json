@@ -786,7 +786,12 @@
       "ReplicaNumber": "Çoğaltma Numarası",
       "ImportAndStartService": "Hizmeti İçe Aktarma ve Başlatma",
       "huggingFaceUrlPlaceholder": "Hugging Face URL'sini girin",
-      "ImportOnly": "Yalnızca içe aktar"
+      "ImportOnly": "Yalnızca içe aktar",
+      "StartWithHuggingFaceUrl": "https://huggingface.co ile başlamalıdır.",
+      "CheckHuggingFaceUrl": "Kontrol et",
+      "ModelName": "Model adı",
+      "Author": "Yazar",
+      "InvalidHuggingFaceUrl": "Geçersiz Hugging Face URL'si."
     }
   },
   "dialog": {
@@ -1483,7 +1488,8 @@
     "SmallerResourceThenImageRequires": "Kaynak isteğiniz görüntünün gerektirdiği minimum değerden daha küçük. Daha fazla kaynak deneyin.",
     "APINotSupported": "API desteklenmiyor. Backend.AI yöneticisinin en son sürümünü gerektirir.",
     "WrongAPIServerAddress": "Yanlış API sunucu adresi.",
-    "ReachedResourceLimitPleaseContact": "Kaynak sınırınıza ulaştınız. \nLütfen yöneticiyle iletişime geçin."
+    "ReachedResourceLimitPleaseContact": "Kaynak sınırınıza ulaştınız. \nLütfen yöneticiyle iletişime geçin.",
+    "InvalidUrl": "Geçerli bir URL değil"
   },
   "maxLength": {
     "64chars": "(maksimum 64 karakter)",
