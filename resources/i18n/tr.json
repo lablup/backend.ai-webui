@@ -285,17 +285,14 @@
       "RecentHistory": "Yakın Tarih",
       "CreatedAt": "Oluşturulma Tarihi",
       "Tags": "Etiketler",
-<<<<<<< HEAD
       "SelectAgent": "Temsilci Seçin",
       "autoSelect": "Otomatik seçim",
       "DescSelectAgent": "Aracının sağ tarafında görüntülenen kaynaklar, mevcut kaynakların gerçek miktarını temsil eder. \nŞu anda aracı seçimi yalnızca tek düğümlü, tek kapsayıcılı bir ortamda mümkündür. \nVarsayılan ayar, ajanın zamanlayıcı tarafından tahsis edilmesidir.",
       "AgentNode": "Ajan",
-      "AutoSelect": "otomatik seç"
-=======
+      "AutoSelect": "otomatik seç",
       "BatchJobTimeoutDuration": "Toplu İş Zaman Aşımı Süresi",
       "BatchJobTimeoutDurationDesc": "Toplu işler için maksimum yürütme süresini ayarlayın. \nBelirtilen sürenin aşılması durumunda oturum otomatik olarak sonlandırılacaktır.",
       "SetBatchJobTimeoutDuration": "Toplu iş zaman aşımı süresini ayarlama"
->>>>>>> 8c3cb7de3 (feat: batch session timeout)
     },
     "Preparing": "hazırlanıyor...",
     "PreparingSession": "Oturum hazırlanıyor...",
@@ -1772,5 +1769,10 @@
     "hour": "saat",
     "day": "day",
     "week": "hafta"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelList": "Model Listesi"
+    }
   }
 }

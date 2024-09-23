@@ -11,10 +11,16 @@
     },
     "components": {
       "Tag": {
-        "borderRadiusSM": 1
+        "borderRadiusSM": 100,
+        "colorSuccess": "#01A543",
+        "colorSuccessBg": "none",
+        "colorPreparingBg": "none",
+        "colorWarningBg": "none"
       },
       "Table": {
-        "headerBorderRadius": 0
+        "headerBorderRadius": 0,
+        "headerBg": "#E3E3E3",
+        "cellPaddingBlock": 6
       },
       "Layout": {
         "lightSiderBg": "#FFF",
@@ -37,10 +43,14 @@
     },
     "components": {
       "Tag": {
-        "borderRadiusSM": 1
+        "borderRadiusSM": 100,
+        "colorSuccessBg": "none",
+        "colorPreparingBg": "none",
+        "colorWarningBg": "none"
       },
       "Table": {
-        "headerBorderRadius": 0
+        "headerBorderRadius": 0,
+        "cellPaddingBlock": 6
       },
       "Layout": {
         "lightSiderBg": "#FFF",

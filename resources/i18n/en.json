@@ -1774,5 +1774,12 @@
     "hour": "hour",
     "day": "day",
     "week": "week"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelList": "Model List",
+      "Services": "Model Services",
+      "ModelServices": "Model Services"
+    }
   }
 }

@@ -1769,5 +1769,10 @@
     "hour": "heure",
     "day": "day",
     "week": "semaine"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelList": "Liste des modèles"
+    }
   }
 }

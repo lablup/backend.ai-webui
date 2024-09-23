@@ -17,6 +17,7 @@ import { PluginPage, WebUIPluginType } from './MainLayout';
 import {
   ApiOutlined,
   BarChartOutlined,
+  BarsOutlined,
   CloudUploadOutlined,
   ControlOutlined,
   DashboardOutlined,
@@ -24,6 +25,7 @@ import {
   FileDoneOutlined,
   HddOutlined,
   InfoCircleOutlined,
+  RocketOutlined,
   SolutionOutlined,
   ToolOutlined,
   UserOutlined,
@@ -85,117 +87,96 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const primaryColors = usePrimaryColors();
 
   const generalMenu = filterEmptyItem<ItemType>([
+    // {
+    //   label: t('webui.menu.Summary'),
+    //   icon: <DashboardOutlined />,
+    //   key: 'summary',
+    // },
+    // {
+    //   label: t('webui.menu.Sessions'),
+    //   icon: <BarsOutlined />,
+    //   key: 'job',
+    // },
     {
-      label: <WebUILink to="/summary">{t('webui.menu.Summary')}</WebUILink>,
-      icon: <DashboardOutlined style={{ color: token.colorPrimary }} />,
-      key: 'summary',
-    },
-    {
-      label: <WebUILink to="/job">{t('webui.menu.Sessions')}</WebUILink>,
-      icon: <SessionsIcon style={{ color: token.colorPrimary }} />,
-      key: 'job',
-    },
-    supportServing && {
-      label: <WebUILink to="/serving">{t('webui.menu.Serving')}</WebUILink>,
-      icon: <EndpointsIcon style={{ color: token.colorPrimary }} />,
-      key: 'serving',
-    },
-    {
-      label: <WebUILink to="/import">{t('webui.menu.Import&Run')}</WebUILink>,
-      icon: <PlayIcon style={{ color: token.colorPrimary }} />,
-      key: 'import',
-    },
-    {
-      label: <WebUILink to="/data">{t('webui.menu.Data&Storage')}</WebUILink>,
-      icon: <CloudUploadOutlined style={{ color: token.colorPrimary }} />,
+      label: t('modelserving.menu.ModelList'), //t('webui.menu.Data&Storage'),
+      icon: <BarsOutlined />, // <CloudUploadOutlined />,
       key: 'data',
     },
-    supportUserCommittedImage && {
-      label: (
-        <WebUILink to="/my-environment">
-          {t('webui.menu.MyEnvironments')}
-        </WebUILink>
-      ),
-      icon: <MyEnvironmentsIcon style={{ color: token.colorPrimary }} />,
-      key: 'my-environment',
+    supportServing && {
+      label: t('modelserving.menu.ModelServices'), //t('webui.menu.Serving'),
+      icon: <RocketOutlined />,
+      key: 'serving',
     },
-    !isHideAgents && {
-      label: (
-        <WebUILink to="/agent-summary">
-          {t('webui.menu.AgentSummary')}
-        </WebUILink>
-      ),
-      icon: <HddOutlined style={{ color: token.colorPrimary }} />,
-      key: 'agent-summary',
-    },
-    {
-      label: (
-        <WebUILink to="/statistics">{t('webui.menu.Statistics')}</WebUILink>
-      ),
-      icon: <BarChartOutlined style={{ color: token.colorPrimary }} />,
-      key: 'statistics',
-    },
-    !!fasttrackEndpoint && {
-      label: t('webui.menu.FastTrack'),
-      icon: <ExportOutlined style={{ color: token.colorPrimary }} />,
-      key: 'pipeline',
-      onClick: () => {
-        window.open(fasttrackEndpoint, '_blank', 'noopener noreferrer');
-      },
-    },
+    // {
+    //   label: t('webui.menu.Import&Run'),
+    //   icon: <PlayIcon />,
+    //   key: 'import',
+    // },
+
+    // supportUserCommittedImage && {
+    //   label: t('webui.menu.MyEnvironments'),
+    //   icon: <FileDoneOutlined />,
+    //   key: 'my-environment',
+    // },
+    // !isHideAgents && {
+    //   label: t('webui.menu.AgentSummary'),
+    //   icon: <HddOutlined />,
+    //   key: 'agent-summary',
+    // },
+    // {
+    //   label: t('webui.menu.Statistics'),
+    //   icon: <BarChartOutlined />,
+    //   key: 'statistics',
+    // },
+    // !!fasttrackEndpoint && {
+    //   label: t('webui.menu.FastTrack'),
+    //   icon: <ExportOutlined />,
+    //   key: 'pipeline',
+    //   onClick: () => {
+    //     window.open(fasttrackEndpoint, '_blank', 'noopener noreferrer');
+    //   },
+    // },
   ]);
 
   const adminMenu: MenuProps['items'] = [
-    {
-      label: <WebUILink to="/credential">{t('webui.menu.Users')}</WebUILink>,
-      icon: <UserOutlined style={{ color: token.colorInfo }} />,
-      key: 'credential',
-    },
-    {
-      label: (
-        <WebUILink to="/environment">{t('webui.menu.Environments')}</WebUILink>
-      ),
-      icon: <FileDoneOutlined style={{ color: token.colorInfo }} />,
-      key: 'environment',
-    },
-    {
-      label: (
-        <WebUILink to="/resource-policy">
-          {t('webui.menu.ResourcePolicy')}
-        </WebUILink>
-      ),
-      icon: <SolutionOutlined style={{ color: token.colorInfo }} />,
-      key: 'resource-policy',
-    },
+    // {
+    //   label: t('webui.menu.Users'),
+    //   icon: <UserOutlined />,
+    //   key: 'credential',
+    // },
+    // {
+    //   label: t('webui.menu.Environments'),
+    //   icon: <FileDoneOutlined />,
+    //   key: 'environment',
+    // },
+    // {
+    //   label: t('webui.menu.ResourcePolicy'),
+    //   icon: <SolutionOutlined />,
+    //   key: 'resource-policy',
+    // },
   ];
 
   const superAdminMenu: MenuProps['items'] = [
-    {
-      label: <WebUILink to="/agent">{t('webui.menu.Resources')}</WebUILink>,
-      icon: <HddOutlined style={{ color: token.colorInfo }} />,
-      key: 'agent',
-    },
-    {
-      label: (
-        <WebUILink to="/settings">{t('webui.menu.Configurations')}</WebUILink>
-      ),
-      icon: <ControlOutlined style={{ color: token.colorInfo }} />,
-      key: 'settings',
-    },
-    {
-      label: (
-        <WebUILink to="/maintenance">{t('webui.menu.Maintenance')}</WebUILink>
-      ),
-      icon: <ToolOutlined style={{ color: token.colorInfo }} />,
-      key: 'maintenance',
-    },
-    {
-      label: (
-        <WebUILink to="/information">{t('webui.menu.Information')}</WebUILink>
-      ),
-      icon: <InfoCircleOutlined style={{ color: token.colorInfo }} />,
-      key: 'information',
-    },
+    // {
+    //   label: t('webui.menu.Resources'),
+    //   icon: <HddOutlined />,
+    //   key: 'agent',
+    // },
+    // {
+    //   label: t('webui.menu.Configurations'),
+    //   icon: <ControlOutlined />,
+    //   key: 'settings',
+    // },
+    // {
+    //   label: t('webui.menu.Maintenance'),
+    //   icon: <ToolOutlined />,
+    //   key: 'maintenance',
+    // },
+    // {
+    //   label: t('webui.menu.Information'),
+    //   icon: <InfoCircleOutlined />,
+    //   key: 'information',
+    // },
   ];
 
   const pluginMap: Record<string, MenuProps['items']> = {
@@ -255,7 +236,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             height: themeConfig?.logo?.size?.height || 24,
             cursor: 'pointer',
           }}
-          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
+          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/serving')}
         />
       }
       theme={currentSiderTheme}
@@ -275,12 +256,16 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             height: themeConfig?.logo.sizeCollapsed?.height ?? 24,
             cursor: 'pointer',
           }}
-          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
+          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/data')}
         />
       }
-      logoTitle={themeConfig?.logo?.logoTitle || siteDescription || 'WebUI'}
+      logoTitle={
+        themeConfig?.logo?.logoTitle || siteDescription || 'Model Player'
+      }
       logoTitleCollapsed={
-        themeConfig?.logo?.logoTitleCollapsed || siteDescription || 'WebUI'
+        themeConfig?.logo?.logoTitleCollapsed ||
+        siteDescription ||
+        'Model Player'
       }
       {...props}
     >

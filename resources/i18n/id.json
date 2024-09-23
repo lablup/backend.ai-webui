@@ -1769,5 +1769,10 @@
     "hour": "jam",
     "day": "day",
     "week": "pekan"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelList": "Daftar Model"
+    }
   }
 }

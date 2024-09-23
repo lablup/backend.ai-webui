@@ -8,6 +8,7 @@ import Flex from './components/Flex';
 import LocationStateBreadCrumb from './components/LocationStateBreadCrumb';
 import MainLayout from './components/MainLayout/MainLayout';
 import WebUINavigate from './components/WebUINavigate';
+import { useSuspendedBackendaiClient } from './hooks';
 import { useBAISettingUserState } from './hooks/useBAISetting';
 import Page401 from './pages/Page401';
 import Page404 from './pages/Page404';
@@ -68,6 +69,19 @@ interface CustomHandle {
 export interface WebUIRouteObject extends IndexRouteObject {
   handle: CustomHandle;
 }
+const RedirectToSummary = () => {
+  useSuspendedBackendaiClient();
+  const pathName = '/serving';
+  document.dispatchEvent(
+    new CustomEvent('move-to-from-react', {
+      detail: {
+        path: pathName,
+        // params: options?.params,
+      },
+    }),
+  );
+  return <WebUINavigate to="/serving" replace />;
+};
 
 const router = createBrowserRouter([
   {
@@ -114,25 +128,25 @@ const router = createBrowserRouter([
         path: '/app/index.html',
         element: <WebUINavigate to="/summary" replace />,
       },
-      {
-        path: '/summary',
-        Component: () => {
-          const { token } = theme.useToken();
-          return (
-            <>
-              <AnnouncementAlert
-                showIcon
-                icon={undefined}
-                banner={false}
-                style={{ marginBottom: token.paddingContentVerticalLG }}
-                closable
-              />
-              {/* <SummaryPage /> */}
-            </>
-          );
-        },
-        handle: { labelKey: 'webui.menu.Summary' },
-      },
+      // {
+      //   path: '/data',
+      //   Component: () => {
+      //     const { token } = theme.useToken();
+      //     return (
+      //       <>
+      //         <AnnouncementAlert
+      //           showIcon
+      //           icon={undefined}
+      //           banner={false}
+      //           style={{ marginBottom: token.paddingContentVerticalLG }}
+      //           closable
+      //         />
+      //         {/* <SummaryPage /> */}
+      //       </>
+      //     );
+      //   },
+      //   handle: { labelKey: 'webui.menu.Summary' },
+      // },
       {
         path: '/job',
         handle: { labelKey: 'webui.menu.Sessions' },

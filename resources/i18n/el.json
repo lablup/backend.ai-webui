@@ -1769,5 +1769,10 @@
     "hour": "ώρα",
     "day": "day",
     "week": "εβδομάδα"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelList": "Λίστα μοντέλων"
+    }
   }
 }

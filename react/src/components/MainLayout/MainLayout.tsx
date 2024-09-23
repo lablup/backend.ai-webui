@@ -1,4 +1,5 @@
 import { useCustomThemeConfig } from '../../helper/customThemeConfig';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
 import { useThemeMode } from '../../hooks/useThemeMode';
@@ -44,6 +45,16 @@ function MainLayout() {
   const [compactSidebarActive] = useBAISettingUserState('compact_sidebar');
   const [sideCollapsed, setSideCollapsed] =
     useState<boolean>(!!compactSidebarActive);
+  const themeConfig = useCustomThemeConfig();
+  const { isDarkMode } = useThemeMode();
+  const mergedSiderTheme = themeConfig?.sider?.theme
+    ? themeConfig.sider.theme
+    : isDarkMode
+      ? 'dark'
+      : 'light';
+  const webuiNavigate = useWebUINavigate();
+  // const baiClient = useSuspendedBackendaiClient();
+  // const siteDescription = baiClient?._config?.siteDescription ?? null;
 
   useEffect(() => {
     if (sideCollapsed !== compactSidebarActive) {
@@ -136,19 +147,29 @@ function MainLayout() {
           </>
         }
       >
-        <WebUISider
-          collapsed={sideCollapsed}
-          onBreakpoint={(broken) => {
-            if (broken) {
-              setSideCollapsed(true);
-            } else {
-              !compactSidebarActive && setSideCollapsed(false);
-            }
-          }}
-          onCollapse={(collapsed) => {
-            setSideCollapsed(collapsed);
-          }}
-          webuiplugins={webUIPlugins}
+        <WebUIHeader
+          logo={
+            <img
+              className="logo-wide"
+              alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
+              src={
+                mergedSiderTheme === 'dark' && themeConfig?.logo?.srcDark
+                  ? themeConfig?.logo?.srcDark ||
+                    '/manifest/backend.ai-text-bgdark.svg'
+                  : themeConfig?.logo?.src || '/manifest/backend.ai-text.svg'
+              }
+              style={{
+                width: themeConfig?.logo?.size?.width || 191,
+                height: themeConfig?.logo?.size?.height || 32,
+                cursor: 'pointer',
+              }}
+              onClick={() =>
+                webuiNavigate(themeConfig?.logo?.href || '/serving')
+              }
+            />
+          }
+          onClickMenuIcon={() => setSideCollapsed((v) => !v)}
+          containerElement={contentScrollFlexRef.current}
         />
       </Suspense>
       <Layout
@@ -156,28 +177,46 @@ function MainLayout() {
           backgroundColor: 'transparent',
         }}
       >
+        <Suspense
+          fallback={
+            <div>
+              <Layout.Header style={{ visibility: 'hidden', height: 62 }} />
+            </div>
+          }
+        >
+          <WebUISider
+            collapsed={sideCollapsed}
+            onBreakpoint={(broken) => {
+              if (broken) {
+                setSideCollapsed(true);
+              } else {
+                !compactSidebarActive && setSideCollapsed(false);
+              }
+            }}
+            webuiplugins={webUIPlugins}
+          />
+        </Suspense>
         <BAIContentWithDrawerArea drawerWidth={DRAWER_WIDTH}>
           <Flex
             ref={contentScrollFlexRef}
-            direction="column"
+            direction="row"
             align="stretch"
+            gap="lg"
             style={{
-              paddingLeft: token.paddingContentHorizontalLG,
-              paddingRight: token.paddingContentHorizontalLG,
+              // paddingLeft: token.paddingContentHorizontalLG,
+              // paddingRight: token.paddingContentHorizontalLG,
+              marginTop: 24,
               paddingBottom: token.paddingContentVertical,
               height: '100vh',
               overflow: 'auto',
             }}
           >
             <BAIErrorBoundary>
-              <Suspense
-                fallback={
-                  <div>
-                    <Layout.Header
-                      style={{ visibility: 'hidden', height: 62 }}
-                    />
-                  </div>
-                }
+              <Flex
+                direction="row"
+                align="stretch"
+                gap="lg"
+                style={{ marginTop: 100 }}
               >
                 <div
                   style={{
@@ -193,7 +232,7 @@ function MainLayout() {
                     containerElement={contentScrollFlexRef.current}
                   />
                 </div>
-              </Suspense>
+              </Flex>
               <Suspense>
                 <PasswordChangeRequestAlert
                   showIcon
@@ -216,10 +255,6 @@ function MainLayout() {
                 />
                 <Outlet />
               </Suspense>
-              {/* To match paddig to 16 (2+14) */}
-              {/* </Flex> */}
-              {/* @ts-ignore */}
-              <backend-ai-webui id="webui-shell" ref={webUIRef} />
             </BAIErrorBoundary>
           </Flex>
         </BAIContentWithDrawerArea>

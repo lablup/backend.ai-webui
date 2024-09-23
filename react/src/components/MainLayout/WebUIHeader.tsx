@@ -11,6 +11,7 @@ import ProjectSelect from '../ProjectSelect';
 import ReverseThemeProvider from '../ReverseThemeProvider';
 import UserDropdownMenu from '../UserDropdownMenu';
 import WEBUIHelpButton from '../WEBUIHelpButton';
+import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIThemeToggleButton from '../WebUIThemeToggleButton';
 import { theme, Button, Typography, Grid, Divider } from 'antd';
 import { createStyles } from 'antd-style';
@@ -31,11 +32,13 @@ const useStyles = createStyles(({ css, token }) => ({
 }));
 
 export interface WebUIHeaderProps extends FlexProps {
+  logo?: React.ReactNode;
   onClickMenuIcon?: () => void;
   containerElement?: HTMLDivElement | null;
 }
 
 const WebUIHeader: React.FC<WebUIHeaderProps> = ({
+  logo,
   onClickMenuIcon,
   containerElement,
 }) => {

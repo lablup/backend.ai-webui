@@ -1769,5 +1769,10 @@
     "hour": "時間",
     "day": "日",
     "week": "週"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelList": "機種一覧"
+    }
   }
 }

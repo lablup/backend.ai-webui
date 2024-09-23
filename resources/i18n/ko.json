@@ -1771,5 +1771,11 @@
     "hour": "시간",
     "day": "일",
     "week": "주"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelList": "모델 리스트",
+      "ModelServices": "모델 서비스"
+    }
   }
 }
