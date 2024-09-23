@@ -1,3 +1,4 @@
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import {
   EndpointSelectQuery,
@@ -22,14 +23,25 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
   fetchKey,
   ...selectProps
 }) => {
+  const baiClient = useSuspendedBackendaiClient();
   const { baiPaginationOption } = useBAIPaginationOptionState({
     current: 1,
     pageSize: 100,
   });
   const { endpoint_list } = useLazyLoadQuery<EndpointSelectQuery>(
     graphql`
-      query EndpointSelectQuery($offset: Int!, $limit: Int!, $projectID: UUID) {
-        endpoint_list(offset: $offset, limit: $limit, project: $projectID) {
+      query EndpointSelectQuery(
+        $offset: Int!
+        $limit: Int!
+        $projectID: UUID
+        $filter: String
+      ) {
+        endpoint_list(
+          offset: $offset
+          limit: $limit
+          project: $projectID
+          filter: $filter
+        ) {
           total_count
           items {
             name
@@ -43,6 +55,9 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
     {
       limit: baiPaginationOption.limit,
       offset: baiPaginationOption.offset,
+      filter: baiClient.supports('endpoint-lifecycle-stage-filter')
+        ? `lifecycle_stage == "created"`
+        : undefined,
     },
     {
       fetchKey: fetchKey,
