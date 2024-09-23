@@ -1692,6 +1692,7 @@
     "DeleteChatSession": "ลบเซสชันการแชท",
     "DeleteChattingSession": "ลบเซสชันการแชท",
     "DeleteChattingSessionDescription": "คุณกำลังจะลบหัวข้อนี้ เมื่อลบแล้วจะไม่สามารถกู้คืนได้ กรุณาดำเนินการด้วยความระมัดระวัง",
-    "SyncInput": "ซิงค์อินพุต"
+    "SyncInput": "ซิงค์อินพุต",
+    "CompareWithOtherModels": "เปรียบเทียบกับรุ่นอื่นๆ"
   }
 }

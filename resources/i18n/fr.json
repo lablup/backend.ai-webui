@@ -1707,6 +1707,7 @@
     "DeleteChattingSession": "Supprimer la session de discussion",
     "DeleteChattingSessionDescription": "Vous êtes sur le point de supprimer ce sujet. \nUne fois supprimé, il ne peut pas être récupéré. \nVeuillez procéder avec prudence.",
     "SelectEndpoint": "Sélectionnez le point de terminaison",
-    "SyncInput": "Entrée de synchronisation"
+    "SyncInput": "Entrée de synchronisation",
+    "CompareWithOtherModels": "Comparez avec d'autres modèles"
   }
 }

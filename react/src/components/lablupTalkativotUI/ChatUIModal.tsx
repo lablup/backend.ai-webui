@@ -1,25 +1,29 @@
 import { useTanQuery } from '../../hooks/reactQueryAlias';
 import Flex from '../Flex';
 import LLMChatCard from './LLMChatCard';
+import { ChatUIModalFragment$key } from './__generated__/ChatUIModalFragment.graphql';
 import { Alert, Modal, ModalProps, Skeleton, theme } from 'antd';
+import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useFragment } from 'react-relay';
 
 interface ChatUIBasicProps {
-  endpoint?: string;
+  endpointFrgmt: ChatUIModalFragment$key | null | undefined;
   basePath?: string;
   // models?: GetProp<typeof LLMChatCard, 'models'>;
 }
 interface ChatUIModalProps extends ModalProps, ChatUIBasicProps {}
 
 const ChatUIModal: React.FC<ChatUIModalProps> = ({
+  endpointFrgmt = null,
   basePath,
-  endpoint,
   // models,
   ...props
 }) => {
   const { token } = theme.useToken();
+
   return (
     <Modal
       {...props}
@@ -38,17 +42,29 @@ const ChatUIModal: React.FC<ChatUIModalProps> = ({
       style={{ maxWidth: token.screenLGMax }}
     >
       <Flex direction="column" align="stretch" style={{ flex: 1 }}>
-        <EndpointChatContent basePath={basePath} endpoint={endpoint} />
+        <EndpointChatContent
+          basePath={basePath}
+          endpointFrgmt={endpointFrgmt}
+        />
       </Flex>
     </Modal>
   );
 };
 
 const EndpointChatContent: React.FC<ChatUIBasicProps> = ({
+  endpointFrgmt,
   basePath = 'v1',
-  endpoint,
 }) => {
   const { t } = useTranslation();
+  const endpoint = useFragment(
+    graphql`
+      fragment ChatUIModalFragment on Endpoint {
+        endpoint_id
+        url
+      }
+    `,
+    endpointFrgmt,
+  );
   const {
     data: modelsResult,
     // error,
@@ -56,11 +72,11 @@ const EndpointChatContent: React.FC<ChatUIBasicProps> = ({
   } = useTanQuery<{
     data: Array<Model>;
   }>({
-    queryKey: ['models', endpoint],
+    queryKey: ['models', endpoint?.url],
     queryFn: () => {
-      return fetch(new URL(basePath + '/models', endpoint).toString()).then(
-        (res) => res.json(),
-      );
+      return fetch(
+        new URL(basePath + '/models', endpoint?.url || '').toString(),
+      ).then((res) => res.json());
     },
   });
 
@@ -68,7 +84,8 @@ const EndpointChatContent: React.FC<ChatUIBasicProps> = ({
     <Skeleton active />
   ) : (
     <LLMChatCard
-      baseURL={new URL(basePath, endpoint).toString()}
+      endpointId={endpoint?.endpoint_id || ''}
+      baseURL={new URL(basePath, endpoint?.url || '').toString()}
       models={_.map(modelsResult?.data, (m) => ({
         id: m.id,
         name: m.id,

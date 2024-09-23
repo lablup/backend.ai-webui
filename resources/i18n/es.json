@@ -1709,6 +1709,7 @@
     "DeleteChattingSession": "Eliminar sesión de chat",
     "DeleteChattingSessionDescription": "Estás a punto de eliminar este tema. \nUna vez eliminado, no se puede recuperar. \nProceda con precaución.",
     "SelectEndpoint": "Seleccionar punto final",
-    "SyncInput": "Entrada de sincronización"
+    "SyncInput": "Entrada de sincronización",
+    "CompareWithOtherModels": "Comparar con otros modelos"
   }
 }

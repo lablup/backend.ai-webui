@@ -9,6 +9,7 @@ import _ from 'lodash';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
+import { StringParam, useQueryParam } from 'use-query-params';
 
 interface LLMPlaygroundPageProps {}
 
@@ -20,9 +21,20 @@ const LLMPlaygroundPage: React.FC<LLMPlaygroundPageProps> = ({ ...props }) => {
 
   const [isSynchronous, setSynchronous] = useState(false);
 
-  const { endpoint_list } = useLazyLoadQuery<LLMPlaygroundPageQuery>(
+  const [endpointId] = useQueryParam('endpointId', StringParam);
+  const [modelId] = useQueryParam('modelId', StringParam);
+  const isEmptyEndpointId = !endpointId;
+
+  const { endpoint, endpoint_list } = useLazyLoadQuery<LLMPlaygroundPageQuery>(
     graphql`
-      query LLMPlaygroundPageQuery {
+      query LLMPlaygroundPageQuery(
+        $endpointId: UUID!
+        $isEmptyEndpointId: Boolean!
+      ) {
+        endpoint(endpoint_id: $endpointId)
+          @skipOnClient(if: $isEmptyEndpointId) {
+          ...EndpointLLMChatCard_endpoint
+        }
         endpoint_list(limit: 1, offset: 0) {
           items {
             ...EndpointLLMChatCard_endpoint
@@ -30,7 +42,10 @@ const LLMPlaygroundPage: React.FC<LLMPlaygroundPageProps> = ({ ...props }) => {
         }
       }
     `,
-    {},
+    {
+      endpointId: endpointId || '',
+      isEmptyEndpointId: isEmptyEndpointId,
+    },
   );
   return (
     <>
@@ -96,7 +111,14 @@ const LLMPlaygroundPage: React.FC<LLMPlaygroundPageProps> = ({ ...props }) => {
               key={getKey(index)}
             >
               <EndpointLLMChatCard
-                defaultEndpoint={endpoint_list?.items?.[0] || undefined}
+                defaultModelId={
+                  index === 0 && endpoint && modelId ? modelId : undefined
+                }
+                defaultEndpoint={
+                  index === 0 && endpoint
+                    ? endpoint
+                    : endpoint_list?.items?.[0] || undefined
+                }
                 key={getKey(index)}
                 style={{ flex: 1 }}
                 onRequestClose={() => {

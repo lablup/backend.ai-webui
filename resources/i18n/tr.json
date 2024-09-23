@@ -1707,6 +1707,7 @@
     "DeleteChattingSession": "Sohbet oturumunu sil",
     "DeleteChattingSessionDescription": "Bu konuyu silmek üzeresiniz. \nBir kere silindikten sonra geri getirilemez. \nLütfen dikkatli bir şekilde ilerleyin.",
     "SelectEndpoint": "Uç Noktayı Seçin",
-    "SyncInput": "Senkronizasyon girişi"
+    "SyncInput": "Senkronizasyon girişi",
+    "CompareWithOtherModels": "Diğer modellerle karşılaştırın"
   }
 }

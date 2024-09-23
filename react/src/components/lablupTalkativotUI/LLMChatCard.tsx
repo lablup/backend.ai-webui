@@ -1,5 +1,6 @@
 'use client';
 
+import { useWebUINavigate } from '../../hooks';
 import Flex from '../Flex';
 import ChatInput from './ChatInput';
 import ModelSelect from './ModelSelect';
@@ -22,6 +23,7 @@ import {
   theme,
 } from 'antd';
 import _ from 'lodash';
+import { Scale } from 'lucide-react';
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -39,6 +41,7 @@ export interface LLMChatCardProps extends CardProps {
   agents?: Array<BAIAgent>;
   modelId?: string;
   agentId?: string;
+  endpointId?: string;
   baseURL?: string;
   apiKey?: string;
   headers?: Record<string, string> | Headers;
@@ -57,6 +60,7 @@ export interface LLMChatCardProps extends CardProps {
 
 const LLMChatCard: React.FC<LLMChatCardProps> = ({
   models = [],
+  endpointId,
   baseURL,
   headers,
   credentials,
@@ -71,6 +75,8 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
   onSubmitChange,
   ...cardProps
 }) => {
+  const webuiNavigate = useWebUINavigate();
+
   const [modelId, setModelId] = useControllableValue(cardProps, {
     valuePropName: 'modelId',
     trigger: 'onModelChange',
@@ -157,6 +163,19 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
   }, [submitKey]);
 
   const items: MenuProps['items'] = [
+    {
+      key: 'compare',
+      label: t('chatui.CompareWithOtherModels'),
+      icon: <Scale />,
+      onClick: () => {
+        webuiNavigate(
+          `/serving?tab=chatting&endpointId=${endpointId}&modelId=${modelId}`,
+        );
+      },
+    },
+    {
+      type: 'divider',
+    },
     {
       key: 'clear',
       danger: true,

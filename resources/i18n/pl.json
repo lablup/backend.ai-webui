@@ -1707,6 +1707,7 @@
     "DeleteChattingSession": "Usuń sesję czatu",
     "DeleteChattingSessionDescription": "Zamierzasz usunąć ten temat. \nRaz usuniętego nie można odzyskać. \nProszę postępować ostrożnie.",
     "SelectEndpoint": "Wybierz Punkt końcowy",
-    "SyncInput": "Synchronizuj wejście"
+    "SyncInput": "Synchronizuj wejście",
+    "CompareWithOtherModels": "Porównaj z innymi modelami"
   }
 }

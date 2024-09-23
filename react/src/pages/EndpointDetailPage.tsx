@@ -182,6 +182,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             created_user_email @since(version: "23.09.8")
             ...EndpointOwnerInfoFragment
             ...EndpointStatusTagFragment
+            ...ChatUIModalFragment
           }
           endpoint_token_list(
             offset: $tokenListOffset
@@ -705,7 +706,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         endpoint_id={endpoint?.endpoint_id || ''}
       ></EndpointTokenGenerationModal>
       <ChatUIModal
-        endpoint={endpoint?.url || undefined}
+        endpointFrgmt={endpoint}
         open={openChatModal}
         onCancel={() => {
           setOpenChatModal(false);

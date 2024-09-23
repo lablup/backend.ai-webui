@@ -1707,6 +1707,7 @@
     "DeleteChattingSession": "Excluir sessão de bate-papo",
     "DeleteChattingSessionDescription": "Você está prestes a excluir este tópico. \nUma vez excluído, ele não pode ser recuperado. \nPor favor, proceda com cautela.",
     "SelectEndpoint": "Selecione o ponto final",
-    "SyncInput": "Entrada de sincronização"
+    "SyncInput": "Entrada de sincronização",
+    "CompareWithOtherModels": "Compare com outros modelos"
   }
 }

@@ -20,6 +20,7 @@ const chatSubmitKeyInfoState = atom<{ id: string; key: string } | undefined>(
 interface EndpointLLMChatCardProps extends CardProps {
   basePath?: string;
   closable?: boolean;
+  defaultModelId?: string;
   defaultEndpoint?: EndpointLLMChatCard_endpoint$key;
   fetchKey?: string;
   isSynchronous?: boolean;
@@ -30,6 +31,7 @@ interface EndpointLLMChatCardProps extends CardProps {
 const EndpointLLMChatCard: React.FC<EndpointLLMChatCardProps> = ({
   basePath = 'v1',
   closable,
+  defaultModelId,
   defaultEndpoint,
   fetchKey,
   isSynchronous,
@@ -118,7 +120,12 @@ const EndpointLLMChatCard: React.FC<EndpointLLMChatCardProps> = ({
           popupMatchSelectWidth={false}
         />
       }
-      modelId={modelsResult?.data?.[0]?.id ?? 'custom'}
+      modelId={
+        defaultModelId &&
+        _.includes(_.map(modelsResult?.data, 'id'), defaultModelId)
+          ? defaultModelId
+          : (modelsResult?.data?.[0]?.id ?? 'custom')
+      }
       extra={
         closable ? (
           <Popconfirm

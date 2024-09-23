@@ -1707,6 +1707,7 @@
     "DeleteChattingSession": "Удалить сеанс чата",
     "DeleteChattingSessionDescription": "Вы собираетесь удалить эту тему. \nПосле удаления его невозможно восстановить. \nПожалуйста, действуйте осторожно.",
     "SelectEndpoint": "Выберите конечную точку",
-    "SyncInput": "Вход синхронизации"
+    "SyncInput": "Вход синхронизации",
+    "CompareWithOtherModels": "Сравнить с другими моделями"
   }
 }

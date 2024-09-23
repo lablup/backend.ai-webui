@@ -1706,6 +1706,7 @@
     "DeleteChattingSession": "チャットセッションを削除する",
     "DeleteChattingSessionDescription": "このトピックを削除しようとしています。\n一度削除すると復元することはできません。\n慎重に進めてください。",
     "SelectEndpoint": "エンドポイントの選択",
-    "SyncInput": "同期入力"
+    "SyncInput": "同期入力",
+    "CompareWithOtherModels": "他モデルとの比較"
   }
 }

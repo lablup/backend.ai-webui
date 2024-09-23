@@ -1709,6 +1709,7 @@
     "DeleteChattingSession": "채팅 세션 삭제",
     "DeleteChattingSessionDescription": "이 주제를 삭제하려고 합니다. \n삭제한 후에는 복구할 수 없습니다. \n주의해서 진행하시기 바랍니다.",
     "SelectEndpoint": "엔드포인트 선택",
-    "SyncInput": "입력 연동"
+    "SyncInput": "입력 연동",
+    "CompareWithOtherModels": "다른 모델과 비교하기"
   }
 }

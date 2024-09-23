@@ -1707,6 +1707,7 @@
     "DeleteChattingSession": "Чатлах сессийг устгах",
     "DeleteChattingSessionDescription": "Та энэ сэдвийг устгах гэж байна. \nУстгасны дараа сэргээх боломжгүй. \nБолгоомжтой үргэлжлүүлнэ үү.",
     "SelectEndpoint": "Төгсгөлийн цэгийг сонгоно уу",
-    "SyncInput": "Синкийн оролт"
+    "SyncInput": "Синкийн оролт",
+    "CompareWithOtherModels": "Бусад загваруудтай харьцуул"
   }
 }

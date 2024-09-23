@@ -1710,6 +1710,7 @@
     "DeleteChatSession": "",
     "DeleteChattingSession": "Delete chatting session",
     "DeleteChattingSessionDescription": "You are about to delete this topic. Once deleted, it cannot be recovered. Please proceed with caution.",
-    "SyncInput": "Sync input"
+    "SyncInput": "Sync input",
+    "CompareWithOtherModels": "Compare with other models"
   }
 }
