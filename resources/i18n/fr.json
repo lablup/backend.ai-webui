@@ -792,9 +792,21 @@
       "ModelName": "Nom du modèle",
       "Author": "Auteur",
       "InvalidHuggingFaceUrl": "URL Hugging Face non valide.",
-      "ServiceName": "Nom du service",
       "ModelStoreFolderName": "Nom du dossier du magasin de modèles",
-      "NotSupportedModel": "Le modèle n'est pas pris en charge. \nVeuillez utiliser le modèle LLM."
+      "ServiceName": "Nom du service",
+      "NewModelStoreFolderHasBeenCreated": "Un nouveau dossier de magasin de modèles a été créé",
+      "NewServiceHasBeenCreated": "Un nouveau service a été créé",
+      "OpenModelFolder": "Ouvrir le dossier modèle",
+      "ViewServiceInfo": "Afficher les informations sur les services",
+      "NotSupportedModel": "Le modèle n'est pas pris en charge. \nVeuillez utiliser le modèle LLM.",
+      "NewModelFolderHasBeenCreated": "Un nouveau dossier modèle a été créé",
+      "ChangeTheCurrentProjectToModelStore": "Changez le projet actuel en 'model-store'.",
+      "ImportSucceeded": "Le modèle a été importé avec succès",
+      "ImportAndStartServiceSucceeded": "Le modèle a été importé avec succès et le service a été exécuté",
+      "ImportOnlySuccessDesc": "Le nouveau dossier modèle est prêt. \nDémarrez le service maintenant et essayez l'opération souhaitée.",
+      "ImportAndStartServiceSuccessDesc": "Le nouveau dossier modèle et le nouveau service sont prêts. \nCliquez sur le bouton « Afficher les informations de service » pour vérifier les détails du modèle et démarrer l'opération souhaitée.",
+      "AddedItems": "Éléments ajoutés",
+      "ModelFolderName": "Nom du dossier modèle"
     }
   },
   "dialog": {

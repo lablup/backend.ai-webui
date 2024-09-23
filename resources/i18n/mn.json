@@ -793,9 +793,21 @@
       "CheckHuggingFaceUrl": "Шалгах",
       "ModelName": "Загварын нэр",
       "InvalidHuggingFaceUrl": "Хүчингүй Hugging Face URL.",
-      "ServiceName": "Үйлчилгээний нэр",
       "ModelStoreFolderName": "Загварын дэлгүүрийн хавтасны нэр",
-      "NotSupportedModel": "Энэ загварыг дэмждэггүй. \nLLM загварыг ашиглана уу."
+      "ServiceName": "Үйлчилгээний нэр",
+      "NewModelStoreFolderHasBeenCreated": "Шинэ загварын дэлгүүрийн хавтас үүсгэгдсэн",
+      "NewServiceHasBeenCreated": "Шинэ үйлчилгээ бий болсон",
+      "OpenModelFolder": "Загварын хавтсыг нээнэ үү",
+      "ViewServiceInfo": "Үйлчилгээний мэдээллийг харах",
+      "NotSupportedModel": "Энэ загварыг дэмждэггүй. \nLLM загварыг ашиглана уу.",
+      "NewModelFolderHasBeenCreated": "Шинэ загварын хавтас үүсгэсэн",
+      "ChangeTheCurrentProjectToModelStore": "Одоогийн төслийг \"загвар дэлгүүр\" болгон өөрчил.",
+      "ImportSucceeded": "Загварыг амжилттай оруулж ирлээ",
+      "ImportAndStartServiceSucceeded": "Загварыг амжилттай оруулж ирсэн бөгөөд үйлчилгээгээ гүйцэтгэсэн",
+      "ImportOnlySuccessDesc": "Шинэ загварын хавтас бэлэн боллоо. \nҮйлчилгээг яг одоо эхлүүлээд хүссэн үйлдлээ туршиж үзээрэй.",
+      "ImportAndStartServiceSuccessDesc": "Шинэ загварын хавтас, үйлчилгээ бэлэн боллоо. \nЗагварын дэлгэрэнгүй мэдээллийг шалгахын тулд \"Үйлчилгээний мэдээллийг харах\" товчийг дарж, хүссэн үйлдлийг эхлүүлнэ үү.",
+      "AddedItems": "Нэмэгдсэн зүйлс",
+      "ModelFolderName": "Загварын хавтасны нэр"
     }
   },
   "dialog": {

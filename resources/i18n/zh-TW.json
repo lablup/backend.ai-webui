@@ -793,7 +793,19 @@
       "InvalidHuggingFaceUrl": "Hugging Face URL 无效。",
       "ServiceName": "服務名稱",
       "ModelStoreFolderName": "模型儲存資料夾名稱",
-      "NotSupportedModel": "不支援該型號。\n請使用LLM模型。"
+      "NotSupportedModel": "不支援該型號。\n請使用LLM模型。",
+      "NewModelStoreFolderHasBeenCreated": "已建立新的模型儲存資料夾",
+      "NewServiceHasBeenCreated": "已建立新服務",
+      "OpenModelFolder": "打開模型資料夾",
+      "ViewServiceInfo": "查看服務資訊",
+      "NewModelFolderHasBeenCreated": "已建立一個新的模型資料夾",
+      "ChangeTheCurrentProjectToModelStore": "將目前項目變更為“model-store”。",
+      "ImportSucceeded": "模型已成功導入",
+      "ImportAndStartServiceSucceeded": "模型已成功導入，服務已執行",
+      "ImportOnlySuccessDesc": "新的模型資料夾已準備就緒。\n現在啟動服務並嘗試您想要的操作。",
+      "ImportAndStartServiceSuccessDesc": "新的模型資料夾和服務已準備就緒。\n點擊“查看服務資訊”按鈕以檢查型號詳細資訊並開始所需的操作。",
+      "AddedItems": "新增的項目",
+      "ModelFolderName": "模型資料夾名稱"
     }
   },
   "dialog": {

@@ -909,9 +909,21 @@
       "ModelName": "ชื่อรุ่น",
       "Author": "ผู้เขียน",
       "InvalidHuggingFaceUrl": "URL Hugging Face ไม่ถูกต้อง",
-      "ServiceName": "ชื่อบริการ",
       "ModelStoreFolderName": "ชื่อโฟลเดอร์ร้านค้าโมเดล",
-      "NotSupportedModel": "ไม่รองรับโมเดลนี้ \nกรุณาใช้แบบจำลอง LLM"
+      "ServiceName": "ชื่อบริการ",
+      "NewModelStoreFolderHasBeenCreated": "สร้างโฟลเดอร์ร้านค้าโมเดลใหม่แล้ว",
+      "NewServiceHasBeenCreated": "มีการสร้างบริการใหม่แล้ว",
+      "OpenModelFolder": "เปิดโฟลเดอร์โมเดล",
+      "ViewServiceInfo": "ดูข้อมูลบริการ",
+      "NotSupportedModel": "ไม่รองรับโมเดลนี้ \nกรุณาใช้แบบจำลอง LLM",
+      "NewModelFolderHasBeenCreated": "มีการสร้างโฟลเดอร์โมเดลใหม่แล้ว",
+      "ChangeTheCurrentProjectToModelStore": "เปลี่ยนโครงการปัจจุบันเป็น 'model-store'",
+      "ImportSucceeded": "นำเข้าแบบจำลองสำเร็จแล้ว",
+      "ImportAndStartServiceSucceeded": "นำเข้าแบบจำลองสำเร็จแล้วและดำเนินการบริการแล้ว",
+      "ImportOnlySuccessDesc": "โฟลเดอร์โมเดลใหม่พร้อมแล้ว \nเริ่มบริการทันทีและลองดำเนินการตามที่คุณต้องการ",
+      "ImportAndStartServiceSuccessDesc": "โฟลเดอร์และบริการรุ่นใหม่พร้อมแล้ว \nคลิกปุ่ม 'ดูข้อมูลบริการ' เพื่อตรวจสอบรายละเอียดรุ่นและเริ่มการดำเนินการที่ต้องการ",
+      "AddedItems": "เพิ่มรายการแล้ว",
+      "ModelFolderName": "ชื่อโฟลเดอร์โมเดล"
     }
   },
   "dialog": {

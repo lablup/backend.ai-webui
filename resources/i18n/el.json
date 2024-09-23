@@ -792,9 +792,21 @@
       "ModelName": "Όνομα μοντέλου",
       "Author": "Συγγραφέας",
       "InvalidHuggingFaceUrl": "Μη έγκυρη διεύθυνση URL Hugging Face.",
-      "ServiceName": "Όνομα υπηρεσίας",
       "ModelStoreFolderName": "Όνομα φακέλου καταστήματος μοντέλου",
-      "NotSupportedModel": "Το μοντέλο δεν υποστηρίζεται. \nΧρησιμοποιήστε το μοντέλο LLM."
+      "ServiceName": "Όνομα υπηρεσίας",
+      "NewModelStoreFolderHasBeenCreated": "Δημιουργήθηκε ένας νέος φάκελος καταστήματος μοντέλων",
+      "NewServiceHasBeenCreated": "Μια νέα υπηρεσία δημιουργήθηκε",
+      "OpenModelFolder": "Άνοιγμα φακέλου μοντέλου",
+      "ViewServiceInfo": "Προβολή πληροφοριών υπηρεσίας",
+      "NotSupportedModel": "Το μοντέλο δεν υποστηρίζεται. \nΧρησιμοποιήστε το μοντέλο LLM.",
+      "NewModelFolderHasBeenCreated": "Ένας νέος φάκελος μοντέλου δημιουργήθηκε",
+      "ChangeTheCurrentProjectToModelStore": "Αλλάξτε το τρέχον έργο σε «μοντέλο-κατάστημα».",
+      "ImportSucceeded": "Το μοντέλο έχει εισαχθεί με επιτυχία",
+      "ImportAndStartServiceSucceeded": "Το μοντέλο έχει εισαχθεί με επιτυχία και η υπηρεσία εκτελέστηκε",
+      "ImportOnlySuccessDesc": "Ο νέος φάκελος μοντέλου είναι έτοιμος. \nΞεκινήστε την υπηρεσία τώρα και δοκιμάστε τη λειτουργία που θέλετε.",
+      "ImportAndStartServiceSuccessDesc": "Ο νέος φάκελος μοντέλου και η υπηρεσία είναι έτοιμα. \nΚάντε κλικ στο κουμπί «Προβολή πληροφοριών υπηρεσίας» για να ελέγξετε τις λεπτομέρειες του μοντέλου και να ξεκινήσετε την επιθυμητή λειτουργία.",
+      "AddedItems": "Προστέθηκαν στοιχεία",
+      "ModelFolderName": "Όνομα φακέλου μοντέλου"
     }
   },
   "dialog": {

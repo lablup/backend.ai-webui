@@ -792,9 +792,21 @@
       "ModelName": "モデル名",
       "Author": "著者",
       "InvalidHuggingFaceUrl": "無効なHugging Face URLです。",
-      "ServiceName": "サービス名",
       "ModelStoreFolderName": "モデルストアフォルダー名",
-      "NotSupportedModel": "このモデルはサポートされていません。 \nLLMモデルを使用してください。"
+      "ServiceName": "サービス名",
+      "NewModelStoreFolderHasBeenCreated": "新しいモデル ストア フォルダーが作成されました",
+      "NewServiceHasBeenCreated": "新しいサービスが作成されました",
+      "OpenModelFolder": "モデルフォルダーを開く",
+      "ViewServiceInfo": "サービス情報を見る",
+      "NotSupportedModel": "このモデルはサポートされていません。 \nLLMモデルを使用してください。",
+      "NewModelFolderHasBeenCreated": "新しいモデルフォルダーが作成されました",
+      "ChangeTheCurrentProjectToModelStore": "現在のプロジェクトを「model-store」に変更します。",
+      "ImportSucceeded": "モデルは正常にインポートされました",
+      "ImportAndStartServiceSucceeded": "モデルは正常にインポートされ、サービスが実行されました。",
+      "ImportOnlySuccessDesc": "新しいモデルフォルダーの準備ができました。\n今すぐサービスを開始し、必要な操作を試してください。",
+      "ImportAndStartServiceSuccessDesc": "新しいモデルのフォルダーとサービスが準備できました。 \n「サービス情報を見る」ボタンをクリックすると機種の詳細を確認し、必要な操作を開始します。",
+      "AddedItems": "追加された項目",
+      "ModelFolderName": "モデルフォルダ名"
     }
   },
   "dialog": {

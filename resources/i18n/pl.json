@@ -792,9 +792,21 @@
       "ModelName": "Nazwa modelu",
       "Author": "Autor",
       "InvalidHuggingFaceUrl": "Nieprawidłowy adres URL Hugging Face.",
-      "ServiceName": "Nazwa usługi",
       "ModelStoreFolderName": "Nazwa folderu sklepu modelu",
-      "NotSupportedModel": "Model nie jest obsługiwany. \nProszę skorzystać z modelu LLM."
+      "ServiceName": "Nazwa usługi",
+      "NewModelStoreFolderHasBeenCreated": "Utworzono nowy folder sklepu z modelami",
+      "NewServiceHasBeenCreated": "Powstał nowy serwis",
+      "OpenModelFolder": "Otwórz folder modelu",
+      "ViewServiceInfo": "Wyświetl informacje o usłudze",
+      "NotSupportedModel": "Model nie jest obsługiwany. \nProszę skorzystać z modelu LLM.",
+      "NewModelFolderHasBeenCreated": "Utworzono nowy folder modelu",
+      "ChangeTheCurrentProjectToModelStore": "Zmień bieżący projekt na „sklep modelowy”.",
+      "ImportSucceeded": "Model został pomyślnie zaimportowany",
+      "ImportAndStartServiceSucceeded": "Model został pomyślnie zaimportowany, a usługa wykonana",
+      "ImportOnlySuccessDesc": "Folder nowego modelu jest gotowy. \nUruchom usługę teraz i wypróbuj żądaną operację.",
+      "ImportAndStartServiceSuccessDesc": "Nowy folder modelu i usługa są gotowe. \nKliknij przycisk „Wyświetl informacje serwisowe”, aby sprawdzić szczegóły modelu i rozpocząć żądaną operację.",
+      "AddedItems": "Dodane elementy",
+      "ModelFolderName": "Nazwa folderu modelu"
     }
   },
   "dialog": {

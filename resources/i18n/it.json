@@ -793,9 +793,21 @@
       "ModelName": "Nome del modello",
       "Author": "Autore",
       "InvalidHuggingFaceUrl": "URL Hugging Face non valido.",
-      "ServiceName": "Nome del servizio",
       "ModelStoreFolderName": "Nome della cartella dell'archivio modelli",
-      "NotSupportedModel": "Il modello non è supportato. \nSi prega di utilizzare il modello LLM."
+      "ServiceName": "Nome del servizio",
+      "NewModelStoreFolderHasBeenCreated": "È stata creata una nuova cartella dell'archivio modelli",
+      "NewServiceHasBeenCreated": "È stato creato un nuovo servizio",
+      "OpenModelFolder": "Apri la cartella del modello",
+      "ViewServiceInfo": "Visualizza le informazioni sul servizio",
+      "NotSupportedModel": "Il modello non è supportato. \nSi prega di utilizzare il modello LLM.",
+      "NewModelFolderHasBeenCreated": "È stata creata una nuova cartella del modello",
+      "ChangeTheCurrentProjectToModelStore": "Cambia il progetto corrente in 'model-store'.",
+      "ImportSucceeded": "Il modello è stato importato con successo",
+      "ImportAndStartServiceSucceeded": "Il modello è stato importato con successo e il servizio è stato eseguito",
+      "ImportOnlySuccessDesc": "La nuova cartella del modello è pronta. \nAvvia subito il servizio e prova l'operazione che desideri.",
+      "ImportAndStartServiceSuccessDesc": "La nuova cartella modello e il servizio sono pronti. \nFare clic sul pulsante \"Visualizza informazioni servizio\" per verificare i dettagli del modello e avviare l'operazione desiderata.",
+      "AddedItems": "Elementi aggiunti",
+      "ModelFolderName": "Nome della cartella del modello"
     }
   },
   "dialog": {

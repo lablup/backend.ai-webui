@@ -791,9 +791,21 @@
       "ModelName": "Nama model",
       "Author": "Pengarang",
       "InvalidHuggingFaceUrl": "URL Hugging Face tidak sah.",
-      "ServiceName": "Nama perkhidmatan",
       "ModelStoreFolderName": "Nama folder kedai model",
-      "NotSupportedModel": "Model tidak disokong. \nSila gunakan model LLM."
+      "ServiceName": "Nama perkhidmatan",
+      "NewModelStoreFolderHasBeenCreated": "Folder kedai model baharu telah dibuat",
+      "NewServiceHasBeenCreated": "Perkhidmatan baharu telah dibuat",
+      "OpenModelFolder": "Buka folder model",
+      "ViewServiceInfo": "Lihat maklumat perkhidmatan",
+      "NotSupportedModel": "Model tidak disokong. \nSila gunakan model LLM.",
+      "NewModelFolderHasBeenCreated": "Folder model baharu telah dibuat",
+      "ChangeTheCurrentProjectToModelStore": "Tukar projek semasa kepada 'model-store'.",
+      "ImportSucceeded": "Model telah berjaya diimport",
+      "ImportAndStartServiceSucceeded": "Model telah berjaya diimport dan perkhidmatan telah dilaksanakan",
+      "ImportOnlySuccessDesc": "Folder model baharu sudah sedia. \nMulakan perkhidmatan sekarang dan cuba operasi yang anda mahu.",
+      "ImportAndStartServiceSuccessDesc": "Folder dan perkhidmatan model baharu sudah sedia. \nKlik butang 'Lihat maklumat perkhidmatan' untuk menyemak butiran model dan memulakan operasi yang diingini.",
+      "AddedItems": "Item ditambah",
+      "ModelFolderName": "Nama folder model"
     }
   },
   "dialog": {

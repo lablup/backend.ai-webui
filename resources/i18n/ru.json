@@ -792,9 +792,21 @@
       "ModelName": "Название модели",
       "Author": "Автор",
       "InvalidHuggingFaceUrl": "Неверный URL-адрес Hugging Face.",
-      "ServiceName": "Название службы",
       "ModelStoreFolderName": "Имя папки хранилища моделей",
-      "NotSupportedModel": "Модель не поддерживается. \nПожалуйста, используйте модель LLM."
+      "ServiceName": "Название службы",
+      "NewModelStoreFolderHasBeenCreated": "Создана новая папка хранилища моделей.",
+      "NewServiceHasBeenCreated": "Создан новый сервис",
+      "OpenModelFolder": "Открыть папку модели",
+      "ViewServiceInfo": "Посмотреть информацию об услуге",
+      "NotSupportedModel": "Модель не поддерживается. \nПожалуйста, используйте модель LLM.",
+      "NewModelFolderHasBeenCreated": "Создана новая папка модели.",
+      "ChangeTheCurrentProjectToModelStore": "Измените текущий проект на «магазин моделей».",
+      "ImportSucceeded": "Модель успешно импортирована.",
+      "ImportAndStartServiceSucceeded": "Модель успешно импортирована и услуга выполнена.",
+      "ImportOnlySuccessDesc": "Папка новой модели готова. \nЗапустите службу сейчас и попробуйте выполнить нужную операцию.",
+      "ImportAndStartServiceSuccessDesc": "Папка и сервис новой модели готовы. \nНажмите кнопку «Просмотреть информацию об услуге», чтобы проверить сведения о модели и начать нужную операцию.",
+      "AddedItems": "Добавлены предметы",
+      "ModelFolderName": "Имя папки модели"
     }
   },
   "dialog": {

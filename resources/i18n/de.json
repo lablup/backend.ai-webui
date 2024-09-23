@@ -794,7 +794,19 @@
       "InvalidHuggingFaceUrl": "Ungültige Hugging Face URL.",
       "ServiceName": "Dienstname",
       "ModelStoreFolderName": "Name des Modellspeicherordners",
-      "NotSupportedModel": "Das Modell wird nicht unterstützt. \nBitte nutzen Sie das LLM-Modell."
+      "NotSupportedModel": "Das Modell wird nicht unterstützt. \nBitte nutzen Sie das LLM-Modell.",
+      "NewModelStoreFolderHasBeenCreated": "Ein neuer Modellspeicherordner wurde erstellt",
+      "NewServiceHasBeenCreated": "Ein neuer Dienst wurde erstellt",
+      "OpenModelFolder": "Modellordner öffnen",
+      "ViewServiceInfo": "Serviceinformationen anzeigen",
+      "NewModelFolderHasBeenCreated": "Ein neuer Modellordner wurde erstellt",
+      "ChangeTheCurrentProjectToModelStore": "Ändern Sie das aktuelle Projekt in „model-store“.",
+      "ImportSucceeded": "Das Modell wurde erfolgreich importiert",
+      "ImportAndStartServiceSucceeded": "Das Modell wurde erfolgreich importiert und der Dienst wurde ausgeführt",
+      "ImportOnlySuccessDesc": "Der neue Modellordner ist fertig. \nStarten Sie den Dienst jetzt und probieren Sie den gewünschten Vorgang aus.",
+      "ImportAndStartServiceSuccessDesc": "Die neue Modellmappe und der Service sind fertig. \nKlicken Sie auf die Schaltfläche „Serviceinformationen anzeigen“, um die Modelldetails zu überprüfen und den gewünschten Vorgang zu starten.",
+      "AddedItems": "Artikel hinzugefügt",
+      "ModelFolderName": "Name des Modellordners"
     }
   },
   "dialog": {

@@ -792,9 +792,21 @@
       "ModelName": "Model adı",
       "Author": "Yazar",
       "InvalidHuggingFaceUrl": "Geçersiz Hugging Face URL'si.",
-      "ServiceName": "Hizmet adı",
       "ModelStoreFolderName": "Model deposu klasör adı",
-      "NotSupportedModel": "Model desteklenmiyor. \nLütfen LLM modelini kullanın."
+      "ServiceName": "Hizmet adı",
+      "NewModelStoreFolderHasBeenCreated": "Yeni bir model mağazası klasörü oluşturuldu",
+      "NewServiceHasBeenCreated": "Yeni bir hizmet oluşturuldu",
+      "OpenModelFolder": "Model klasörünü aç",
+      "ViewServiceInfo": "Hizmet bilgilerini görüntüle",
+      "NotSupportedModel": "Model desteklenmiyor. \nLütfen LLM modelini kullanın.",
+      "NewModelFolderHasBeenCreated": "Yeni bir model klasörü oluşturuldu",
+      "ChangeTheCurrentProjectToModelStore": "Mevcut projeyi 'model mağazası' olarak değiştirin.",
+      "ImportSucceeded": "Model başarıyla içe aktarıldı",
+      "ImportAndStartServiceSucceeded": "Model başarıyla içe aktarıldı ve hizmet yürütüldü",
+      "ImportOnlySuccessDesc": "Yeni model klasörü hazır. \nŞimdi hizmeti başlatın ve istediğiniz işlemi deneyin.",
+      "ImportAndStartServiceSuccessDesc": "Yeni model klasörü ve servisi hazır. \nModel ayrıntılarını kontrol etmek ve istediğiniz işlemi başlatmak için 'Servis bilgilerini görüntüle' düğmesine tıklayın.",
+      "AddedItems": "Eklenen öğeler",
+      "ModelFolderName": "Model klasörü adı"
     }
   },
   "dialog": {

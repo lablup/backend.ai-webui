@@ -905,9 +905,21 @@
       "Author": "작성자",
       "InvalidHuggingFaceUrl": "유효한 Hugging Face URL을 입력해주세요",
       "PleaseClickCheckButton": "확인 버튼을 클릭해주세요",
-      "ServiceName": "서비스 이름",
       "ModelStoreFolderName": "모델 저장소 폴더 이름",
-      "NotSupportedModel": "해당 모델은 지원되지 않습니다. \nLLM 모델을 사용하세요."
+      "ServiceName": "서비스 이름",
+      "NewModelStoreFolderHasBeenCreated": "새 모델 저장소 폴더가 생성되었습니다.",
+      "NewServiceHasBeenCreated": "새로운 서비스가 생성되었습니다",
+      "OpenModelFolder": "모델 폴더 열기",
+      "ViewServiceInfo": "서비스 정보 보기",
+      "NotSupportedModel": "해당 모델은 지원되지 않습니다. \nLLM 모델을 사용하세요.",
+      "NewModelFolderHasBeenCreated": "새 모델 폴더가 생성되었습니다.",
+      "ChangeTheCurrentProjectToModelStore": "현재 프로젝트를 'model-store'로 변경하세요.",
+      "ImportSucceeded": "모델을 성공적으로 가져왔습니다.",
+      "ImportAndStartServiceSucceeded": "모델을 성공적으로 가져와 서비스를 실행했습니다.",
+      "ImportOnlySuccessDesc": "새 모델 폴더가 준비되었습니다. 지금 바로 서비스를 시작하여 원하는 작업을 해보세요.",
+      "ImportAndStartServiceSuccessDesc": "새로운 모델 폴더와 서비스가 준비되었습니다. \n'서비스 정보 보기' 버튼을 클릭하시면 모델 상세 정보를 확인하고 원하는 작업을 시작하실 수 있습니다.",
+      "AddedItems": "추가된 항목",
+      "ModelFolderName": "모델 폴더 이름"
     }
   },
   "dialog": {

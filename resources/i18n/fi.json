@@ -423,9 +423,21 @@
       "ModelName": "Mallin nimi",
       "Author": "Kirjoittaja",
       "InvalidHuggingFaceUrl": "Virheellinen Hugging Face URL-osoite.",
-      "ServiceName": "Palvelun nimi",
       "ModelStoreFolderName": "Mallin tallennuskansion nimi",
-      "NotSupportedModel": "Mallia ei tueta. \nKäytä LLM-mallia."
+      "ServiceName": "Palvelun nimi",
+      "NewModelStoreFolderHasBeenCreated": "Uusi mallikauppakansio on luotu",
+      "NewServiceHasBeenCreated": "Uusi palvelu on luotu",
+      "OpenModelFolder": "Avaa mallikansio",
+      "ViewServiceInfo": "Katso palvelutiedot",
+      "NotSupportedModel": "Mallia ei tueta. \nKäytä LLM-mallia.",
+      "NewModelFolderHasBeenCreated": "Uusi mallikansio on luotu",
+      "ChangeTheCurrentProjectToModelStore": "Muuta nykyinen projekti \"mallikauppaan\".",
+      "ImportSucceeded": "Mallin tuonti onnistui",
+      "ImportAndStartServiceSucceeded": "Malli on tuotu onnistuneesti ja palvelu suoritettu",
+      "ImportOnlySuccessDesc": "Uusi mallikansio on valmis. \nKäynnistä palvelu nyt ja kokeile haluamaasi toimintoa.",
+      "ImportAndStartServiceSuccessDesc": "Uusi mallikansio ja palvelu ovat valmiina. \nNapsauta \"Näytä palvelutiedot\" -painiketta tarkistaaksesi mallin tiedot ja aloittaaksesi haluamasi toiminnon.",
+      "AddedItems": "Lisätyt kohteet",
+      "ModelFolderName": "Mallin kansion nimi"
     }
   },
   "dialog": {

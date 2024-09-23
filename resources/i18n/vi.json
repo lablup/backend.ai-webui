@@ -792,9 +792,21 @@
       "ModelName": "Tên mẫu",
       "Author": "Tác giả",
       "InvalidHuggingFaceUrl": "URL Hugging Face không hợp lệ.",
-      "ServiceName": "Tên dịch vụ",
       "ModelStoreFolderName": "Tên thư mục lưu trữ mô hình",
-      "NotSupportedModel": "Mô hình không được hỗ trợ. \nVui lòng sử dụng mô hình LLM."
+      "ServiceName": "Tên dịch vụ",
+      "NewModelStoreFolderHasBeenCreated": "Một thư mục lưu trữ mô hình mới đã được tạo",
+      "NewServiceHasBeenCreated": "Một dịch vụ mới đã được tạo",
+      "OpenModelFolder": "Mở thư mục mô hình",
+      "ViewServiceInfo": "Xem thông tin dịch vụ",
+      "NotSupportedModel": "Mô hình không được hỗ trợ. \nVui lòng sử dụng mô hình LLM.",
+      "NewModelFolderHasBeenCreated": "Một thư mục mô hình mới đã được tạo",
+      "ChangeTheCurrentProjectToModelStore": "Thay đổi dự án hiện tại thành 'model-store'.",
+      "ImportSucceeded": "Mô hình đã được nhập thành công",
+      "ImportAndStartServiceSucceeded": "Mô hình đã được nhập thành công và dịch vụ đã được thực thi",
+      "ImportOnlySuccessDesc": "Thư mục mô hình mới đã sẵn sàng. \nHãy bắt đầu dịch vụ ngay bây giờ và thử thao tác bạn muốn.",
+      "ImportAndStartServiceSuccessDesc": "Thư mục mô hình và dịch vụ mới đã sẵn sàng. \nNhấp vào nút 'Xem thông tin dịch vụ' để kiểm tra chi tiết mẫu máy và bắt đầu thao tác mong muốn.",
+      "AddedItems": "Các mục đã thêm",
+      "ModelFolderName": "Tên thư mục mẫu"
     }
   },
   "dialog": {

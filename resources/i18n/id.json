@@ -793,9 +793,21 @@
       "ModelName": "Nama model",
       "Author": "Penulis",
       "InvalidHuggingFaceUrl": "URL Hugging Face tidak valid.",
-      "ServiceName": "Nama layanan",
       "ModelStoreFolderName": "Nama folder penyimpanan model",
-      "NotSupportedModel": "Model ini tidak didukung. \nSilakan gunakan model LLM."
+      "ServiceName": "Nama layanan",
+      "NewModelStoreFolderHasBeenCreated": "Folder penyimpanan model baru telah dibuat",
+      "NewServiceHasBeenCreated": "Layanan baru telah dibuat",
+      "OpenModelFolder": "Buka folder model",
+      "ViewServiceInfo": "Lihat info layanan",
+      "NotSupportedModel": "Model ini tidak didukung. \nSilakan gunakan model LLM.",
+      "NewModelFolderHasBeenCreated": "Folder model baru telah dibuat",
+      "ChangeTheCurrentProjectToModelStore": "Ubah proyek saat ini menjadi 'model-store'.",
+      "ImportSucceeded": "Model telah berhasil diimpor",
+      "ImportAndStartServiceSucceeded": "Model telah berhasil diimpor dan layanan dijalankan",
+      "ImportOnlySuccessDesc": "Folder model baru sudah siap. \nMulai layanan sekarang dan coba operasi yang Anda inginkan.",
+      "ImportAndStartServiceSuccessDesc": "Folder model baru dan layanan sudah siap. \nKlik tombol 'Lihat info layanan' untuk memeriksa detail model dan memulai pengoperasian yang diinginkan.",
+      "AddedItems": "Item yang ditambahkan",
+      "ModelFolderName": "Nama folder model"
     }
   },
   "dialog": {

@@ -919,7 +919,21 @@
       "InvalidHuggingFaceUrl": "Invalid Hugging Face URL.",
       "ModelStoreFolderName": "Model store folder name",
       "ServiceName": "Service name",
-      "NotSupportedModel": "The model is not supported. Please use the LLM model."
+      "HuggingFaceURL": "Higging Face",
+      "NewModelStoreFolderHasBeenCreated": "A new model store folder has been created",
+      "NewServiceHasBeenCreated": "A new service has been created",
+      "OpenModelFolder": "Open model folder",
+      "ViewServiceInfo": "View service info",
+      "NotSupportedModel": "The model is not supported. Please use the LLM model.",
+      "NewModelFolderHasBeenCreated": "A new model folder has been created",
+      "UpdateCurrentProject": "",
+      "ChangeTheCurrentProjectToModelStore": "Change the current project to 'model-store'.",
+      "ImportSucceeded": "The model has been successfully imported",
+      "ImportAndStartServiceSucceeded": "The model has been successfully imported and the service was executed",
+      "ImportOnlySuccessDesc": "The new model folder is ready. Start the service now and try the operation you want.",
+      "ImportAndStartServiceSuccessDesc": "The new model folder and service are ready. Click the 'View service info' button to check the model details and start the desired operation.",
+      "AddedItems": "Added items",
+      "ModelFolderName": "Model folder name"
     }
   },
   "dialog": {

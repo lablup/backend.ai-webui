@@ -792,9 +792,21 @@
       "ModelName": "Nome do modelo",
       "Author": "Autor",
       "InvalidHuggingFaceUrl": "URL Hugging Face inválido.",
-      "ServiceName": "Nome do serviço",
       "ModelStoreFolderName": "Nome da pasta de armazenamento de modelos",
-      "NotSupportedModel": "O modelo não é suportado. \nPor favor, use o modelo LLM."
+      "ServiceName": "Nome do serviço",
+      "NewModelStoreFolderHasBeenCreated": "Uma nova pasta de armazenamento de modelos foi criada",
+      "NewServiceHasBeenCreated": "Um novo serviço foi criado",
+      "OpenModelFolder": "Abra a pasta do modelo",
+      "ViewServiceInfo": "Ver informações de serviço",
+      "NotSupportedModel": "O modelo não é suportado. \nPor favor, use o modelo LLM.",
+      "NewModelFolderHasBeenCreated": "Uma nova pasta de modelo foi criada",
+      "ChangeTheCurrentProjectToModelStore": "Mude o projeto atual para 'model-store'.",
+      "ImportSucceeded": "O modelo foi importado com sucesso",
+      "ImportAndStartServiceSucceeded": "O modelo foi importado com sucesso e o serviço foi executado",
+      "ImportOnlySuccessDesc": "A nova pasta do modelo está pronta. \nInicie o serviço agora e experimente a operação desejada.",
+      "ImportAndStartServiceSuccessDesc": "A pasta e o serviço do novo modelo estão prontos. \nClique no botão 'Ver informações de serviço' para verificar os detalhes do modelo e iniciar a operação desejada.",
+      "AddedItems": "Itens adicionados",
+      "ModelFolderName": "Nome da pasta do modelo"
     }
   },
   "dialog": {
