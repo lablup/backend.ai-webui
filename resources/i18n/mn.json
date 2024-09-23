@@ -1721,5 +1721,10 @@
     "SelectEndpoint": "Төгсгөлийн цэгийг сонгоно уу",
     "SyncInput": "Синкийн оролт",
     "CompareWithOtherModels": "Бусад загваруудтай харьцуул"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelList": "Загварын жагсаалт"
+    }
   }
 }

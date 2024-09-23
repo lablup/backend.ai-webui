@@ -11,6 +11,7 @@ import LoginSessionExtendButton from '../LoginSessionExtendButton';
 import ProjectSelect from '../ProjectSelect';
 import UserDropdownMenu from '../UserDropdownMenu';
 import WEBUIHelpButton from '../WEBUIHelpButton';
+import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIThemeToggleButton from '../WebUIThemeToggleButton';
 // @ts-ignore
 import rawCss from './WebUIHeader.css?raw';
@@ -22,12 +23,14 @@ import { useTranslation } from 'react-i18next';
 import { useMatches } from 'react-router-dom';
 
 export interface WebUIHeaderProps extends FlexProps {
+  logo?: React.ReactNode;
   onClickMenuIcon?: () => void;
   containerElement?: HTMLDivElement | null;
 }
 
 export const HEADER_HEIGHT = 62;
 const WebUIHeader: React.FC<WebUIHeaderProps> = ({
+  logo,
   onClickMenuIcon,
   containerElement,
 }) => {
@@ -61,69 +64,79 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
       style={{
         height: HEADER_HEIGHT,
         paddingRight: token.marginMD,
-        paddingLeft: token.marginMD,
-        backgroundColor: scrolled ? token.colorBgElevated : 'transparent',
+        // paddingLeft: token.marginMD,
+        backgroundColor: token.colorFillContent,
         boxShadow: scrolled ? `0 5px 6px -6px ${token.colorBorder}` : 'none',
         transition: 'background-color 0.2s ease-in-out',
       }}
       className={'webui-header-container'}
     >
       <style>{rawCss}</style>
-      <Flex direction="row" gap={'sm'}>
-        <Button
+      <Flex
+        direction="column"
+        align="start"
+        justify="center"
+        style={{
+          width: DRAWER_WIDTH,
+          height: HEADER_HEIGHT,
+          backgroundColor: token.colorPrimary,
+        }}
+      >
+        <div className="logo-img-wrap non-draggable">{logo}</div>
+      </Flex>
+      <Flex direction="row" wrap={'wrap'} justify="between" gap={'sm'}>
+        {/* <Button
           icon={<MenuOutlined />}
           type="text"
           onClick={() => {
             onClickMenuIcon?.();
           }}
           className="non-draggable"
-        />
-        <Typography.Title level={5} style={{ margin: 0 }}>
-          {/* @ts-ignore */}
-          {t(_.last(matches)?.handle?.labelKey) || ''}
-        </Typography.Title>
-      </Flex>
-      <Flex gap={md ? 'sm' : 'xs'}>
-        <Typography.Text type="secondary">
-          {t('webui.menu.Project')}
-        </Typography.Text>
-        <Suspense>
-          <ProjectSelect
-            popupMatchSelectWidth={false}
-            style={{
-              minWidth: 100,
-              maxWidth: gridBreakpoint.lg ? undefined : 100,
-            }}
-            loading={isPendingProjectChanged}
-            disabled={isPendingProjectChanged}
-            className="non-draggable"
-            showSearch
-            domain={currentDomainName}
-            size={gridBreakpoint.lg ? 'large' : 'middle'}
-            value={
-              isPendingProjectChanged ? optimisticProjectId : currentProject?.id
-            }
-            onSelectProject={(projectInfo) => {
-              setOptimisticProjectId(projectInfo.projectId);
-              startProjectChangedTransition(() => {
-                setCurrentProject(projectInfo);
-              });
-            }}
-          />
-        </Suspense>
-        <Flex direction="row" className="non-draggable">
-          <BAINotificationButton />
-          <WebUIThemeToggleButton />
-          <WEBUIHelpButton />
-          {baiClient.supports('extend-login-session') &&
-            baiClient._config.enableExtendLoginSession && (
-              <Suspense>
-                <Divider type="vertical" />
-                <LoginSessionExtendButton />
-                <Divider type="vertical" />
-              </Suspense>
-            )}
-          <UserDropdownMenu />
+        /> */}
+        <Flex gap={md ? 'sm' : 'xs'}>
+          <Typography.Text type="secondary">
+            {t('webui.menu.Project')}
+          </Typography.Text>
+          <Suspense>
+            <ProjectSelect
+              popupMatchSelectWidth={false}
+              style={{
+                minWidth: 100,
+                maxWidth: gridBreakpoint.lg ? undefined : 100,
+              }}
+              loading={isPendingProjectChanged}
+              disabled={isPendingProjectChanged}
+              className="non-draggable"
+              showSearch
+              domain={currentDomainName}
+              size={gridBreakpoint.lg ? 'large' : 'middle'}
+              value={
+                isPendingProjectChanged
+                  ? optimisticProjectId
+                  : currentProject?.id
+              }
+              onSelectProject={(projectInfo) => {
+                setOptimisticProjectId(projectInfo.projectId);
+                startProjectChangedTransition(() => {
+                  setCurrentProject(projectInfo);
+                });
+              }}
+            />
+          </Suspense>
+          <Flex direction="row" className="non-draggable">
+            <BAINotificationButton />
+            <WebUIThemeToggleButton />
+            <WEBUIHelpButton />
+            {baiClient.supports('extend-login-session') &&
+              baiClient._config.enableExtendLoginSession && (
+                <Suspense>
+                  <Divider type="vertical" />
+                  <LoginSessionExtendButton />
+                  <Divider type="vertical" />
+                </Suspense>
+              )}
+            <UserDropdownMenu />
+          </Flex>
         </Flex>
       </Flex>
     </Flex>

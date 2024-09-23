@@ -1720,5 +1720,10 @@
     "SelectEndpoint": "エンドポイントの選択",
     "SyncInput": "同期入力",
     "CompareWithOtherModels": "他モデルとの比較"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelList": "機種一覧"
+    }
   }
 }

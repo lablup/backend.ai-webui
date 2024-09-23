@@ -119,7 +119,7 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
       title: t('modelService.EndpointId'),
       dataIndex: 'endpoint_id',
       key: 'endpoint_id',
-      width: 310,
+      width: 110,
       render: (endpoint_id) => (
         <Typography.Text code>{endpoint_id}</Typography.Text>
       ),

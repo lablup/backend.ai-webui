@@ -1722,5 +1722,10 @@
     "SelectEndpoint": "选择端点",
     "SyncInput": "同步输入",
     "CompareWithOtherModels": "与其他型号比较"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelList": "型号列表"
+    }
   }
 }

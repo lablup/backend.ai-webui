@@ -1726,5 +1726,12 @@
     "DeleteChattingSessionDescription": "You are about to delete this topic. Once deleted, it cannot be recovered. Please proceed with caution.",
     "SyncInput": "Sync input",
     "CompareWithOtherModels": "Compare with other models"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelList": "Model List",
+      "Services": "Model Services",
+      "ModelServices": "Model Services"
+    }
   }
 }

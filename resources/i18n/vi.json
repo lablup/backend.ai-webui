@@ -1721,5 +1721,10 @@
     "SelectEndpoint": "Chọn điểm cuối",
     "SyncInput": "Đồng bộ hóa đầu vào",
     "CompareWithOtherModels": "So sánh với các mô hình khác"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelList": "Danh sách mẫu"
+    }
   }
 }

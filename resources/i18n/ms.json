@@ -1720,5 +1720,10 @@
     "SelectEndpoint": "Pilih Titik Akhir",
     "SyncInput": "Input penyegerakan",
     "CompareWithOtherModels": "Bandingkan dengan model lain"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelList": "Senarai Model"
+    }
   }
 }

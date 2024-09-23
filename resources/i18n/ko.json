@@ -1723,5 +1723,11 @@
     "SelectEndpoint": "엔드포인트 선택",
     "SyncInput": "입력 연동",
     "CompareWithOtherModels": "다른 모델과 비교하기"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelList": "모델 리스트",
+      "ModelServices": "모델 서비스"
+    }
   }
 }
