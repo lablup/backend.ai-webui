@@ -108,7 +108,10 @@ export const useResourceLimitAndRemaining = ({
   const baiClient = useSuspendedBackendaiClient();
   const [resourceSlots] = useResourceSlots();
   const acceleratorSlots = _.omit(resourceSlots, ['cpu', 'mem', 'shmem']);
-
+  const currentImageSupportedAIAccelerator = _.filter(
+    _.map(currentImage?.resource_limits, 'key'),
+    (key) => !['cpu', 'mem', 'shmem'].includes(key),
+  );
   const {
     data: checkPresetInfo,
     refetch,
@@ -130,9 +133,27 @@ export const useResourceLimitAndRemaining = ({
     staleTime: 1000,
     // suspense: !_.isEmpty(currentResourceGroup), //prevent flicking
   });
-
   const currentImageMinM =
     _.find(currentImage?.resource_limits, (i) => i?.key === 'mem')?.min || '0g';
+
+  const currentResourceGroupSupportedAccelerators = useMemo(() => {
+    if (!checkPresetInfo?.scaling_groups[currentResourceGroup]) return [];
+
+    const { using, remaining } =
+      checkPresetInfo.scaling_groups[currentResourceGroup];
+    const filteredUsingKeys = _.omitBy(using, (value, key) => {
+      return ['cpu', 'mem', 'shmem'].includes(key) || _.toNumber(value) === 0;
+    });
+    const filteredRemainingKeys = _.omitBy(remaining, (value, key) => {
+      return ['cpu', 'mem', 'shmem'].includes(key) || _.toNumber(value) === 0;
+    });
+
+    const commonKeys = _.intersection(
+      _.keys(filteredUsingKeys),
+      _.keys(filteredRemainingKeys),
+    );
+    return commonKeys;
+  }, [checkPresetInfo, currentResourceGroup]);
 
   const resourceGroupResourceSize: {
     cpu?: number;
@@ -217,7 +238,6 @@ export const useResourceLimitAndRemaining = ({
       }),
     [baiClient._config],
   );
-
   const resourceLimits: MergedResourceLimits = {
     cpu:
       resourceSlots?.cpu === undefined
@@ -276,12 +296,20 @@ export const useResourceLimitAndRemaining = ({
               ]) + 'g',
           },
     accelerators: _.reduce(
-      acceleratorSlots,
+      _.pick(
+        acceleratorSlots,
+        _.intersection(
+          currentResourceGroupSupportedAccelerators,
+          currentImageSupportedAIAccelerator,
+        ),
+      ),
       (result, value, key) => {
         const perContainerLimit =
           _.find(perContainerConfigs, (configValue, configName) => {
             return isMatchingMaxPerContainer(configName, key);
           }) ?? baiClient._config['cuda.device']; // FIXME: temporally `cuda.device` config, when undefined
+
+        console.log(perContainerLimit);
 
         result[key] = {
           min: parseInt(
@@ -292,15 +320,22 @@ export const useResourceLimitAndRemaining = ({
               },
             )?.[0]?.min || '0',
           ),
-          max: _.min([
-            perContainerLimit || 8,
-            limitParser(
-              checkPresetInfo?.keypair_limits[key as ResourceSlotName],
+          max: _.min(
+            _.filter(
+              [
+                perContainerLimit || 8,
+                limitParser(
+                  checkPresetInfo?.keypair_limits[key as ResourceSlotName],
+                ) || perContainerLimit,
+                limitParser(
+                  checkPresetInfo?.group_limits[key as ResourceSlotName],
+                ) || perContainerLimit,
+                // scaling group all cpu (using + remaining), string type
+                // resourceGroupResourceSize.accelerators[key],
+              ],
+              (value) => value !== undefined,
             ),
-            limitParser(checkPresetInfo?.group_limits[key as ResourceSlotName]),
-            // scaling group all cpu (using + remaining), string type
-            // resourceGroupResourceSize.accelerators[key],
-          ]),
+          ),
         };
         return result;
       },

@@ -125,16 +125,7 @@ const ResourceAllocationFormItems: React.FC<
     currentResourceGroup || undefined,
   );
 
-  const acceleratorSlots = _.omitBy(resourceSlots, (value, key) => {
-    if (['cpu', 'mem', 'shmem'].includes(key)) return true;
-
-    if (
-      !resourceLimits.accelerators[key]?.max ||
-      resourceLimits.accelerators[key]?.max === 0
-    )
-      return true;
-    return false;
-  });
+  const acceleratorSlots = remaining.accelerators;
 
   const currentImageAcceleratorLimits = useMemo(
     () =>
@@ -348,7 +339,6 @@ const ResourceAllocationFormItems: React.FC<
       _.keys(acceleratorSlots),
       (value) => acceleratorObj[value] !== undefined,
     );
-
     let acceleratorSetting: {
       acceleratorType?: string;
       accelerator: number;
