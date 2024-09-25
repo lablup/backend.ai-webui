@@ -1293,7 +1293,8 @@
       "ProxyDirectTCPNotSupported": "Välityspalvelimen suoraa TCP-yhteyttä ei tueta vielä",
       "InvalidPortFormat": "Porttinumeron muoto on virheellinen.",
       "DuplicatedPort": "Portteja on päällekkäin.",
-      "FolderAliasOverlappingToAutoMount": "Samanniminen automaattinen kiinnityskansio on olemassa."
+      "FolderAliasOverlappingToAutoMount": "Samanniminen automaattinen kiinnityskansio on olemassa.",
+      "InsufficientAllocationOfResourcesWarning": "Allokoitavat resurssit jäävät alle valitussa kuvassa vaaditun vähimmäisresurssin."
     },
     "ExpiresAfter": "Jäljellä oleva aika",
     "CPU": "CPU",

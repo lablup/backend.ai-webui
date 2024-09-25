@@ -292,7 +292,8 @@
       "ProxyDirectTCPNotSupported": "Proxy direct TCP connection is not supported yet",
       "InvalidPortFormat": "The port number format is incorrect.",
       "DuplicatedPort": "There are duplicate ports.",
-      "FolderAliasOverlappingToAutoMount": "An auto-mount folder with the same name exists."
+      "FolderAliasOverlappingToAutoMount": "An auto-mount folder with the same name exists.",
+      "InsufficientAllocationOfResourcesWarning": "Allocatable resources falls below the minimum resource required in the selected image."
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",

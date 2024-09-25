@@ -278,7 +278,8 @@
       "ProxyDirectTCPNotSupported": "プロキシ直接 TCP 接続はまだサポートされていません",
       "InvalidPortFormat": "ポート番号の形式が正しくない。",
       "DuplicatedPort": "ポートが重複している。",
-      "FolderAliasOverlappingToAutoMount": "同名の自動マウントフォルダが存在する。"
+      "FolderAliasOverlappingToAutoMount": "同名の自動マウントフォルダが存在する。",
+      "InsufficientAllocationOfResourcesWarning": "割り当て可能なリソースが、選択したイメージに必要な最小リソースを下回ります。"
     },
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",

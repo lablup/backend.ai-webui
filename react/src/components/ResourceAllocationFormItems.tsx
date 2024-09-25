@@ -55,6 +55,10 @@ export const RESOURCE_ALLOCATION_INITIAL_FORM_VALUES = {
   enabledAutomaticShmem: true,
 };
 
+export const isMinOversMaxValue = (min: number, max: number) => {
+  return min >= max;
+};
+
 export interface ResourceAllocationFormValue {
   resource: {
     cpu: number;
@@ -487,6 +491,20 @@ const ResourceAllocationFormItems: React.FC<
                       {
                         warningOnly: true,
                         validator: async (rule, value: number) => {
+                          if (
+                            _.isNumber(resourceLimits.cpu?.min) &&
+                            _.isNumber(resourceLimits.cpu?.max) &&
+                            isMinOversMaxValue(
+                              resourceLimits.cpu?.min,
+                              resourceLimits.cpu?.max,
+                            )
+                          ) {
+                            return Promise.reject(
+                              t(
+                                'session.launcher.InsufficientAllocationOfResourcesWarning',
+                              ),
+                            );
+                          }
                           if (showRemainingWarning) {
                             if (
                               _.isNumber(remaining.cpu) &&
@@ -652,6 +670,18 @@ const ResourceAllocationFormItems: React.FC<
                               {
                                 warningOnly: true,
                                 validator: async (rule, value: string) => {
+                                  if (
+                                    compareNumberWithUnits(
+                                      resourceLimits.mem?.min as string,
+                                      resourceLimits.mem?.max as string,
+                                    ) > 0
+                                  ) {
+                                    return Promise.reject(
+                                      t(
+                                        'session.launcher.InsufficientAllocationOfResourcesWarning',
+                                      ),
+                                    );
+                                  }
                                   if (showRemainingWarning) {
                                     if (
                                       !_.isElement(value) &&
@@ -918,6 +948,32 @@ const ResourceAllocationFormItems: React.FC<
                           {
                             warningOnly: true,
                             validator: async (rule: any, value: number) => {
+                              if (
+                                _.isNumber(
+                                  resourceLimits.accelerators[
+                                    currentAcceleratorType
+                                  ]?.min,
+                                ) &&
+                                _.isNumber(
+                                  resourceLimits.accelerators[
+                                    currentAcceleratorType
+                                  ]?.max,
+                                ) &&
+                                isMinOversMaxValue(
+                                  resourceLimits.accelerators[
+                                    currentAcceleratorType
+                                  ]?.min,
+                                  resourceLimits.accelerators[
+                                    currentAcceleratorType
+                                  ]?.max,
+                                )
+                              ) {
+                                return Promise.reject(
+                                  t(
+                                    'session.launcher.InsufficientAllocationOfResourcesWarning',
+                                  ),
+                                );
+                              }
                               if (showRemainingWarning) {
                                 if (
                                   _.isNumber(

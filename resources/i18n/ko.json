@@ -279,7 +279,8 @@
       "ProxyDirectTCPNotSupported": "프록시 직접 TCP 연결은 아직 지원되지 않습니다.",
       "InvalidPortFormat": "포트 형식이 올바르지 않습니다.",
       "DuplicatedPort": "중복된 포트가 있습니다.",
-      "FolderAliasOverlappingToAutoMount": "동일한 이름의 자동 마운트 폴더가 존재합니다."
+      "FolderAliasOverlappingToAutoMount": "동일한 이름의 자동 마운트 폴더가 존재합니다.",
+      "InsufficientAllocationOfResourcesWarning": "할당 가능한 자원이 선택된 이미지에서 요구되는 최소 자원보다 부족합니다."
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",

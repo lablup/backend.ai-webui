@@ -278,7 +278,8 @@
       "ProxyDirectTCPNotSupported": "La connexion TCP directe par proxy n'est pas encore prise en charge",
       "InvalidPortFormat": "Le format du numéro de port est incorrect.",
       "DuplicatedPort": "Il y a des ports en double.",
-      "FolderAliasOverlappingToAutoMount": "Il existe un dossier de montage automatique portant le même nom."
+      "FolderAliasOverlappingToAutoMount": "Il existe un dossier de montage automatique portant le même nom.",
+      "InsufficientAllocationOfResourcesWarning": "Les ressources allouables sont inférieures à la ressource minimale requise dans l'image sélectionnée."
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",

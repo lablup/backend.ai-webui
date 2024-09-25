@@ -278,7 +278,8 @@
       "ProxyDirectTCPNotSupported": "Прямое TCP-соединение через прокси-сервер пока не поддерживается.",
       "InvalidPortFormat": "Неверный формат номера порта.",
       "DuplicatedPort": "Имеются дублирующиеся порты.",
-      "FolderAliasOverlappingToAutoMount": "Существует папка автомонтирования с таким же именем."
+      "FolderAliasOverlappingToAutoMount": "Существует папка автомонтирования с таким же именем.",
+      "InsufficientAllocationOfResourcesWarning": "Выделяемые ресурсы ниже минимального ресурса, необходимого для выбранного изображения."
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",

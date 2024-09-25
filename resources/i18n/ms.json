@@ -278,7 +278,8 @@
       "ProxyDirectTCPNotSupported": "Sambungan TCP langsung proksi belum disokong lagi",
       "InvalidPortFormat": "Format nombor port tidak betul.",
       "DuplicatedPort": "Terdapat port pendua.",
-      "FolderAliasOverlappingToAutoMount": "Folder auto-lekap dengan nama yang sama wujud."
+      "FolderAliasOverlappingToAutoMount": "Folder auto-lekap dengan nama yang sama wujud.",
+      "InsufficientAllocationOfResourcesWarning": "Sumber yang boleh diperuntukkan berada di bawah sumber minimum yang diperlukan dalam imej yang dipilih."
     },
     "Preparing": "Menyiapkan ...",
     "PreparingSession": "Menyiapkan sesi ...",

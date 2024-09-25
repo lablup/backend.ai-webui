@@ -5,6 +5,7 @@ import DynamicUnitInputNumber, {
   DynamicUnitInputNumberProps,
 } from './DynamicUnitInputNumber';
 import Flex from './Flex';
+import { isMinOversMaxValue } from './ResourceAllocationFormItems';
 import { Slider, theme } from 'antd';
 import { SliderMarks } from 'antd/es/slider';
 import _ from 'lodash';
@@ -69,7 +70,10 @@ const DynamicUnitInputNumberWithSlider: React.FC<
           min={min}
           max={max}
           units={units}
-          value={value}
+          // set value to 0mib when min value overs max value
+          value={
+            isMinOversMaxValue(_.parseInt(min), _.parseInt(max)) ? '0m' : value
+          }
           onChange={(nextValue) => {
             setValue(nextValue);
           }}
@@ -143,7 +147,15 @@ const DynamicUnitInputNumberWithSlider: React.FC<
             }}
             step={step}
             // min={minGiB.number}  // DO NOT use min, because slider left should be 0
-            value={valueGiB?.number}
+            // set value to 0 when min value overs max value
+            value={
+              isMinOversMaxValue(
+                minGiB?.number as number,
+                maxGiB?.number as number,
+              )
+                ? 0
+                : valueGiB?.number
+            }
             tooltip={{
               formatter: (value = 0) => {
                 return value < 1
@@ -176,8 +188,12 @@ const DynamicUnitInputNumberWithSlider: React.FC<
                       color: token.colorTextSecondary,
                     },
                     // if 0, without unit
-                    label:
-                      minGiB.number === 0
+                    label: isMinOversMaxValue(
+                      minGiB?.number as number,
+                      maxGiB?.number as number,
+                    )
+                      ? undefined
+                      : minGiB.number === 0
                         ? minGiB.number
                         : minGiB.number >= 1
                           ? minGiB.number + 'g'
@@ -195,8 +211,12 @@ const DynamicUnitInputNumberWithSlider: React.FC<
                   style: {
                     color: token.colorTextSecondary,
                   },
-                  label:
-                    maxGiB.number === 0
+                  label: isMinOversMaxValue(
+                    minGiB?.number as number,
+                    maxGiB?.number as number,
+                  )
+                    ? undefined
+                    : maxGiB.number === 0
                       ? maxGiB.number
                       : maxGiB.number >= 1
                         ? maxGiB.number + 'g'

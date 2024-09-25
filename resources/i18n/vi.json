@@ -278,7 +278,8 @@
       "ProxyDirectTCPNotSupported": "Kết nối TCP trực tiếp proxy chưa được hỗ trợ",
       "InvalidPortFormat": "Định dạng số cổng không chính xác.",
       "DuplicatedPort": "Có cổng trùng lặp.",
-      "FolderAliasOverlappingToAutoMount": "Đã tồn tại một thư mục tự động gắn kết có cùng tên."
+      "FolderAliasOverlappingToAutoMount": "Đã tồn tại một thư mục tự động gắn kết có cùng tên.",
+      "InsufficientAllocationOfResourcesWarning": "Tài nguyên có thể phân bổ giảm xuống dưới mức tài nguyên tối thiểu được yêu cầu trong hình ảnh đã chọn."
     },
     "Preparing": "Đang chuẩn bị ...",
     "PreparingSession": "Đang chuẩn bị phiên ...",

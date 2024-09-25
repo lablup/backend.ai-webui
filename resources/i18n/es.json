@@ -1296,7 +1296,8 @@
       "ProxyDirectTCPNotSupported": "La conexión TCP directa de proxy aún no es compatible",
       "InvalidPortFormat": "El formato del número de puerto es incorrecto.",
       "DuplicatedPort": "Hay puertos duplicados.",
-      "FolderAliasOverlappingToAutoMount": "Existe una carpeta de montaje automático con el mismo nombre."
+      "FolderAliasOverlappingToAutoMount": "Existe una carpeta de montaje automático con el mismo nombre.",
+      "InsufficientAllocationOfResourcesWarning": "Los recursos asignables están por debajo del recurso mínimo requerido en la imagen seleccionada."
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",

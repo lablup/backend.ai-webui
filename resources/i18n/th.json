@@ -292,7 +292,8 @@
       "ProxyDirectTCPNotSupported": "ยังไม่รองรับการเชื่อมต่อ TCP โดยตรงผ่านพร็อกซี",
       "InvalidPortFormat": "รูปแบบหมายเลขพอร์ตไม่ถูกต้อง",
       "DuplicatedPort": "มีพอร์ตที่ซ้ำกัน",
-      "FolderAliasOverlappingToAutoMount": "มีโฟลเดอร์ที่เมาท์อัตโนมัติที่มีชื่อเดียวกันอยู่แล้ว"
+      "FolderAliasOverlappingToAutoMount": "มีโฟลเดอร์ที่เมาท์อัตโนมัติที่มีชื่อเดียวกันอยู่แล้ว",
+      "InsufficientAllocationOfResourcesWarning": "ทรัพยากรที่จัดสรรได้อยู่ต่ำกว่าทรัพยากรขั้นต่ำที่จำเป็นในรูปภาพที่เลือก"
     },
     "Preparing": "กำลังเตรียมการ...",
     "PreparingSession": "กำลังเตรียมเซสชัน...",

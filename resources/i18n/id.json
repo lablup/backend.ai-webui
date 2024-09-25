@@ -279,7 +279,8 @@
       "ProxyDirectTCPNotSupported": "Koneksi TCP langsung proxy belum didukung",
       "InvalidPortFormat": "Format nomor port salah.",
       "DuplicatedPort": "Terdapat port ganda.",
-      "FolderAliasOverlappingToAutoMount": "Folder pemasangan otomatis dengan nama yang sama tersedia."
+      "FolderAliasOverlappingToAutoMount": "Folder pemasangan otomatis dengan nama yang sama tersedia.",
+      "InsufficientAllocationOfResourcesWarning": "Sumber daya yang dapat dialokasikan berada di bawah sumber daya minimum yang diperlukan pada gambar yang dipilih."
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",

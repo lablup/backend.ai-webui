@@ -278,7 +278,8 @@
       "ProxyDirectTCPNotSupported": "Eine direkte Proxy-TCP-Verbindung wird noch nicht unterstützt",
       "InvalidPortFormat": "Das Format der Anschlussnummer ist falsch.",
       "DuplicatedPort": "Es gibt doppelte Anschlüsse.",
-      "FolderAliasOverlappingToAutoMount": "Es existiert ein Auto-Mount-Ordner mit demselben Namen."
+      "FolderAliasOverlappingToAutoMount": "Es existiert ein Auto-Mount-Ordner mit demselben Namen.",
+      "InsufficientAllocationOfResourcesWarning": "Die zuweisbaren Ressourcen liegen unter der im ausgewählten Bild erforderlichen Mindestressource."
     },
     "Preparing": "Vorbereitung...",
     "PreparingSession": "Sitzung vorbereiten...",
