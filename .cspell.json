@@ -23,7 +23,9 @@
     "wsproxy",
     "vfolders",
     "vfolder",
-    "filebrowser"
+    "filebrowser",
+    "vaadin",
+    "textbox"
   ],
   "flagWords": [
     "데이터레이크",

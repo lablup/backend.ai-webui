@@ -408,16 +408,12 @@ export default class BackendAISummary extends BackendAIPage {
       this.notification.text =
         _text('summary.AcceptSharedVFolder') + `${invitation.vfolder_name}`;
       this.notification.show();
-      this._refreshInvitations();
     } catch (err) {
-      panel.setAttribute('disabled', 'false');
-      panel.querySelectorAll('mwc-button').forEach((btn) => {
-        btn.setAttribute('disabled', 'false');
-      });
       this.notification.text = PainKiller.relieve(err.title);
       this.notification.detail = err.message;
       this.notification.show(true, err);
     }
+    this._refreshInvitations();
   }
 
   /**
@@ -441,16 +437,12 @@ export default class BackendAISummary extends BackendAIPage {
       this.notification.text =
         _text('summary.DeclineSharedVFolder') + `${invitation.vfolder_name}`;
       this.notification.show();
-      this._refreshInvitations();
     } catch (err) {
-      panel.setAttribute('disabled', 'false');
-      panel.querySelectorAll('mwc-button').forEach((btn) => {
-        btn.setAttribute('disabled', 'false');
-      });
       this.notification.text = PainKiller.relieve(err.title);
       this.notification.detail = err.message;
       this.notification.show(true, err);
     }
+    this._refreshInvitations();
   }
 
   _stripHTMLTags(str) {
@@ -597,10 +589,10 @@ export default class BackendAISummary extends BackendAIPage {
                               <h3 style="padding-top:10px;">
                                 From ${invitation.inviter}
                               </h3>
-                              <span class="invitation_folder_name">
+                              <div class="invitation_folder_name">
                                 ${_t('summary.FolderName')}:
                                 ${invitation.vfolder_name}
-                              </span>
+                              </div>
                               <div class="horizontal center layout">
                                 ${_t('summary.Permission')}:
                                 ${[...invitation.perm].map(
