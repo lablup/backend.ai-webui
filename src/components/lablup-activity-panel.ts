@@ -154,7 +154,7 @@ export default class LablupActivityPanel extends LitElement {
             @click="${() => this._removePanel()}"
           ></mwc-icon-button>
         </h4>
-        <div class="${this.disabled ? `disabled` : `enabled`}">
+        <div class="content ${this.disabled ? `disabled` : `enabled`}">
           <slot name="message"></slot>
         </div>
       </div>
@@ -168,6 +168,9 @@ export default class LablupActivityPanel extends LitElement {
     }
 
     const card = this.shadowRoot?.querySelector('.card') as HTMLDivElement;
+    const content = this.shadowRoot?.querySelector(
+      '.content',
+    ) as HTMLDivElement;
     const header = this.shadowRoot?.querySelector(
       '#header',
     ) as HTMLHeadingElement;
@@ -208,9 +211,12 @@ export default class LablupActivityPanel extends LitElement {
     }
 
     if (this.height > 0) {
-      this.height == 130
-        ? (card.style.height = 'fit-content')
-        : (card.style.height = this.height + 'px');
+      if (this.height == 130) {
+        card.style.height = 'fit-content';
+      } else {
+        content.style.height = this.height - 70 + 'px';
+        card.style.height = this.height + 'px';
+      }
     }
 
     if (this.noheader) {
@@ -218,7 +224,8 @@ export default class LablupActivityPanel extends LitElement {
     }
 
     if (this.scrollableY) {
-      card.style.overflowY = 'auto';
+      content.style.overflowY = 'auto';
+      content.style.overflowX = 'hidden';
     }
   }
 

@@ -554,6 +554,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
         elevation="1"
         narrow
         height="${this.height}"
+        scrollableY="true"
       >
         <div slot="message">
           <div class="horizontal justified layout wrap indicators">
@@ -705,7 +706,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                           <div
                             class="layout vertical center center-justified resource-name"
                           >
-                            <div class="gauge-name">GPU/NPU</div>
+                            <div class="gauge-name">GPU / NPU</div>
                           </div>
                           <div class="layout vertical">
                             ${this.cuda_gpu_total

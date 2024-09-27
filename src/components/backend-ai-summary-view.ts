@@ -558,6 +558,7 @@ export default class BackendAISummary extends BackendAIPage {
             elevation="1"
             narrow
             height="500"
+            scrollableY="true"
           >
             <div slot="message">
               <backend-ai-resource-monitor
