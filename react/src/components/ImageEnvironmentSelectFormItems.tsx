@@ -14,7 +14,16 @@ import {
   ImageEnvironmentSelectFormItemsQuery,
   ImageEnvironmentSelectFormItemsQuery$data,
 } from './__generated__/ImageEnvironmentSelectFormItemsQuery.graphql';
-import { Divider, Form, Input, RefSelectProps, Select, Tag, theme } from 'antd';
+import {
+  Divider,
+  Form,
+  Input,
+  RefSelectProps,
+  Select,
+  Tag,
+  theme,
+  Typography,
+} from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -327,9 +336,18 @@ const ImageEnvironmentSelectFormItems: React.FC<
       <Form.Item
         className="image-environment-select-form-item"
         name={['environments', 'environment']}
-        label={`${t('session.launcher.Environments')} / ${t(
-          'session.launcher.Version',
-        )}`}
+        label={
+          <Typography.Text
+            copyable={{
+              text: getImageFullName(
+                form.getFieldValue(['environments', 'image']),
+              ),
+            }}
+          >
+            {t('session.launcher.Environments')} /
+            {t('session.launcher.Version')}
+          </Typography.Text>
+        }
         rules={[{ required: _.isEmpty(environments?.manual) }]}
         style={{ marginBottom: 10 }}
       >

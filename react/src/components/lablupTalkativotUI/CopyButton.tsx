@@ -8,8 +8,13 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 interface CopyButtonProps extends ButtonProps {
   copyable?: Omit<CopyConfig, 'text'> & { text: string };
+  defaultIcon?: React.ReactNode;
 }
-const CopyButton: React.FC<CopyButtonProps> = ({ copyable, ...props }) => {
+const CopyButton: React.FC<CopyButtonProps> = ({
+  copyable,
+  defaultIcon,
+  ...props
+}) => {
   const [isCopied, setIsCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -31,7 +36,12 @@ const CopyButton: React.FC<CopyButtonProps> = ({ copyable, ...props }) => {
       open={isCopied ? true : undefined}
     >
       <CopyToClipboard text={copyable?.text || ''} onCopy={handleCopy}>
-        <Button icon={isCopied ? <CheckIcon /> : <CopyIcon />} {...props} />
+        <Button
+          icon={
+            isCopied ? <CheckIcon /> : defaultIcon ? defaultIcon : <CopyIcon />
+          }
+          {...props}
+        />
       </CopyToClipboard>
     </Tooltip>
   );

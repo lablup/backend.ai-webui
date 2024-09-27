@@ -11,8 +11,10 @@ import {
   ImageListQuery,
   ImageListQuery$data,
 } from './__generated__/ImageListQuery.graphql';
+import CopyButton from './lablupTalkativotUI/CopyButton';
 import {
   AppstoreOutlined,
+  CopyOutlined,
   ReloadOutlined,
   SearchOutlined,
   SettingOutlined,
@@ -292,6 +294,14 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             e.stopPropagation();
           }}
         >
+          <CopyButton
+            type="text"
+            defaultIcon={<CopyOutlined />}
+            style={{ color: token.colorPrimary }}
+            copyable={{
+              text: getImageFullName(row) || '',
+            }}
+          ></CopyButton>
           <Button
             type="text"
             icon={
