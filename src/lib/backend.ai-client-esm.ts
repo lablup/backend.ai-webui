@@ -1,8 +1,8 @@
 /*
-Backend.AI API Library / SDK for Node.JS / Javascript ESModule (v23.3.0)
+Backend.AI API Library / SDK for Node.JS / Javascript ESModule (v24.9.0)
 =========================================================================
 
-(C) Copyright 2016-2023 Lablup Inc.
+(C) Copyright 2016-2024 Lablup Inc.
 Licensed under MIT
 */
 /*jshint esnext: true */
@@ -1034,48 +1034,15 @@ class Client {
       if (resources['mem']) {
         config['mem'] = resources['mem'];
       }
-      if (resources['gpu']) {
-        // Legacy support (till 19.09)
-        config['cuda.device'] = parseInt(resources['gpu']);
-      }
-      if (resources['cuda.device']) {
-        // Generalized device information from 20.03
-        config['cuda.device'] = parseInt(resources['cuda.device']);
-      }
-      if (resources['vgpu']) {
-        // Legacy support (till 19.09)
-        config['cuda.shares'] = parseFloat(resources['vgpu']).toFixed(2); // under 19.03
-      } else if (resources['fgpu']) {
-        config['cuda.shares'] = parseFloat(resources['fgpu']).toFixed(2); // 19.09 and above
-      }
       if (resources['cuda.shares']) {
         // Generalized device information from 20.03
         config['cuda.shares'] = parseFloat(resources['cuda.shares']).toFixed(2);
       }
-      if (resources['rocm.device']) {
-        config['rocm.device'] = parseInt(resources['rocm.device']);
-      }
-      if (resources['tpu.device']) {
-        config['tpu.device'] = parseInt(resources['tpu.device']);
-      }
-      if (resources['ipu.device']) {
-        config['ipu.device'] = parseInt(resources['ipu.device']);
-      }
-      if (resources['atom.device']) {
-        config['atom.device'] = parseInt(resources['atom.device']);
-      }
-      if (resources['atom-plus.device']) {
-        config['atom-plus.device'] = parseInt(resources['atom-plus.device']);
-      }
-      if (resources['gaudi2.device']) {
-        config['gaudi2.device'] = parseInt(resources['gaudi2.device']);
-      }
-      if (resources['warboy.device']) {
-        config['warboy.device'] = parseInt(resources['warboy.device']);
-      }
-      if (resources['hyperaccel-lpu.device']) {
-        config['hyperaccel-lpu.device'] = parseInt(resources['hyperaccel-lpu.device']);
-      }
+      Object.keys(resources).forEach((key) => {
+        if (key.endsWith('.device')) {
+          config[key] = parseInt(resources[key]);
+        }
+      });
       if (resources['cluster_size']) {
         params['cluster_size'] = resources['cluster_size'];
       }
@@ -2741,7 +2708,7 @@ class VFolder {
 
   /**
    * Restore vfolder from trash bin, by changing status.
-   * 
+   *
    * @param {string} vfolder_id - id of the vfolder.
    */
   async restore_from_trash_bin(vfolder_id): Promise<any> {
@@ -3944,7 +3911,7 @@ class Resources {
     this.resources.mem.total = 0;
     this.resources.mem.allocated = 0;
     this.resources.mem.used = 0;
-    this.resources.gpu = {};
+    /*this.resources.gpu = {};
     this.resources.gpu.total = 0;
     this.resources.gpu.used = 0;
     this.resources['cuda.device'] = {};
@@ -3979,7 +3946,7 @@ class Resources {
     this.resources['warboy.device'].used = 0;
     this.resources['hyperaccel-lpu.device'] = {};
     this.resources['hyperaccel-lpu.device'].total = 0;
-    this.resources['hyperaccel-lpu.device'].used = 0;
+    this.resources['hyperaccel-lpu.device'].used = 0;*/
 
     this.resources.agents = {};
     this.resources.agents.total = 0;
@@ -4044,134 +4011,41 @@ class Resources {
               parseInt(
                 this.client.utils.changeBinaryUnit(value.mem_cur_bytes, 'b'),
               );
-
-            if ('cuda.device' in available_slots) {
-              this.resources['cuda.device'].total =
-                parseInt(this.resources['cuda.device'].total) +
-                Math.floor(Number(available_slots['cuda.device']));
-            }
-            if ('cuda.device' in occupied_slots) {
-              this.resources['cuda.device'].used =
-                parseInt(this.resources['cuda.device'].used) +
-                Math.floor(Number(occupied_slots['cuda.device']));
-            }
-            if ('cuda.shares' in available_slots) {
-              this.resources['cuda.shares'].total =
-                parseFloat(this.resources['cuda.shares'].total) +
-                parseFloat(available_slots['cuda.shares']);
-            }
-            if ('cuda.shares' in occupied_slots) {
-              this.resources['cuda.shares'].used =
-                parseFloat(this.resources['cuda.shares'].used) +
-                parseFloat(occupied_slots['cuda.shares']);
-            }
-            if ('rocm.device' in available_slots) {
-              this.resources['rocm.device'].total =
-                parseInt(this.resources['rocm.device'].total) +
-                Math.floor(Number(available_slots['rocm.device']));
-            }
-            if ('rocm.device' in occupied_slots) {
-              this.resources['rocm.device'].used =
-                parseInt(this.resources['rocm.device'].used) +
-                Math.floor(Number(occupied_slots['rocm.device']));
-            }
-            if ('tpu.device' in available_slots) {
-              this.resources['tpu.device'].total =
-                parseInt(this.resources['tpu.device'].total) +
-                Math.floor(Number(available_slots['tpu.device']));
-            }
-            if ('tpu.device' in occupied_slots) {
-              this.resources['tpu.device'].used =
-                parseInt(this.resources['tpu.device'].used) +
-                Math.floor(Number(occupied_slots['tpu.device']));
-            }
-            if ('ipu.device' in available_slots) {
-              this.resources['ipu.device'].total =
-                parseInt(this.resources['ipu.device'].total) +
-                Math.floor(Number(available_slots['ipu.device']));
-            }
-            if ('ipu.device' in occupied_slots) {
-              this.resources['ipu.device'].used =
-                parseInt(this.resources['ipu.device'].used) +
-                Math.floor(Number(occupied_slots['ipu.device']));
-            }
-            if ('atom.device' in available_slots) {
-              this.resources['atom.device'].total =
-                parseInt(this.resources['atom.device'].total) +
-                Math.floor(Number(available_slots['atom.device']));
-            }
-            if ('atom.device' in occupied_slots) {
-              this.resources['atom.device'].used =
-                parseInt(this.resources['atom.device'].used) +
-                Math.floor(Number(occupied_slots['atom.device']));
-            }
-            if ('atom-plus.device' in available_slots) {
-              this.resources['atom-plus.device'].total =
-                parseInt(this.resources['atom-plus.device'].total) +
-                Math.floor(Number(available_slots['atom-plus.device']));
-            }
-            if ('atom-plus.device' in occupied_slots) {
-              this.resources['atom-plus.device'].used =
-                parseInt(this.resources['atom-plus.device'].used) +
-                Math.floor(Number(occupied_slots['atom-plus.device']));
-            }
-            if ('gaudi2.device' in available_slots) {
-              this.resources['gaudi2.device'].total =
-                parseInt(this.resources['gaudi2.device'].total) +
-                Math.floor(Number(available_slots['gaudi2.device']));
-            }
-            if ('gaudi2.device' in occupied_slots) {
-              this.resources['gaudi2.device'].used =
-                parseInt(this.resources['gaudi2.device'].used) +
-                Math.floor(Number(occupied_slots['gaudi2.device']));
-            }
-            if ('warboy.device' in available_slots) {
-              this.resources['warboy.device'].total =
-                parseInt(this.resources['warboy.device'].total) +
-                Math.floor(Number(available_slots['warboy.device']));
-            }
-            if ('warboy.device' in occupied_slots) {
-              this.resources['warboy.device'].used =
-                parseInt(this.resources['warboy.device'].used) +
-                Math.floor(Number(occupied_slots['warboy.device']));
-            }
-            if ('hyperaccel-lpu.device' in available_slots) {
-              this.resources['hyperaccel-lpu.device'].total =
-                parseInt(this.resources['hyperaccel-lpu.device'].total) +
-                Math.floor(Number(available_slots['hyperaccel-lpu.device']));
-            }
-            if ('hyperaccel-lpu.device' in occupied_slots) {
-              this.resources['hyperaccel-lpu.device'].used =
-                parseInt(this.resources['hyperaccel-lpu.device'].used) +
-                Math.floor(Number(occupied_slots['hyperaccel-lpu.device']));
-            }
-
+            Object.entries(available_slots).forEach(([device, value]) => {
+              if (!(device in this.resources)) {
+                this.resources[device] = {}; // TODO: change the code to refer resource-slots query result.
+                if (this.client.utils.numberType(available_slots[device]) == 'int') { // Integer. TODO: use server-side metadata query.
+                  this.resources[device]['unit_type'] = 'int';
+                } else { // Float
+                  this.resources[device]['unit_type'] = 'float';
+                }
+              }
+              if (!['cpu', 'mem'].includes(device)) {
+                if (this.resources[device]['unit_type'] == 'float') {
+                  this.resources[device]['total'] = parseFloat(this.resources[device]['total']) + parseFloat(available_slots[device]);
+                  this.resources[device]['used'] = 0.0;
+                } else {
+                  this.resources[device]['total'] = parseInt(this.resources[device]['total']) + Math.floor(Number(available_slots[device]));
+                  this.resources[device]['used'] = 0;
+                }
+              }
+            });
+            Object.entries(occupied_slots).forEach(([device, value]) => {
+              if(!['cpu', 'mem'].includes(device)) {
+                if (this.resources[device]['unit_type'] == 'float') {
+                  this.resources[device]['used'] = parseFloat(this.resources[device]['used']) + parseFloat(value as string);
+                } else {
+                  this.resources[device]['used'] = parseInt(this.resources[device]['used']) + Math.floor(Number(value as string));
+                }
+              }
+            });
             if (isNaN(this.resources.cpu.used)) {
               this.resources.cpu.used = 0;
             }
             if (isNaN(this.resources.mem.used)) {
               this.resources.mem.used = 0;
             }
-            if (isNaN(this.resources.gpu.used)) {
-              this.resources.gpu.used = 0;
-            }
-            if (isNaN(this.resources.fgpu.used)) {
-              this.resources.fgpu.used = 0;
-            }
           });
-          // Legacy code
-          this.resources.gpu.total = this.resources['cuda.device'].total;
-          this.resources.gpu.used = this.resources['cuda.device'].used;
-          this.resources.fgpu.used =
-            this.resources['cuda.shares'].used.toFixed(2);
-          this.resources.fgpu.total =
-            this.resources['cuda.shares'].total.toFixed(2);
-          this.resources.agents.total = Object.keys(this.agents).length; // TODO : remove terminated agents
-          this.resources.agents.using = Object.keys(this.agents).length;
-          return Promise.resolve(this.resources);
-        })
-        .catch((err) => {
-          throw err;
         });
     } else {
       return Promise.resolve(false);
@@ -5858,6 +5732,16 @@ class utils {
       result.push(element[key]);
     });
     return result;
+  }
+
+  numberType(value): "int" | "float" | "nonum" {
+    if (/^-?\d+$/.test(value)) {
+      return 'int';
+    } else if (/^-?\d+(\.\d+)?$/.test(value)) {
+      return 'float';
+    } else {
+      return 'nonum';
+    }
   }
 }
 
