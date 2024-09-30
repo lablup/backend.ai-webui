@@ -6,7 +6,7 @@ import {
   useTanQuery,
 } from './reactQueryAlias';
 import _ from 'lodash';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export const baseResourceSlotNames = ['cpu', 'mem'] as const;
 export type BaseResourceSlotName = (typeof baseResourceSlotNames)[number];
@@ -80,7 +80,7 @@ export const useResourceSlotsDetails = (resourceGroupName?: string) => {
   const [key, checkUpdate] = useUpdatableState('first');
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const baiClient = useSuspendedBackendaiClient();
-  const { data: resourceSlots } = useTanQuery<{
+  const { data: resourceSlotsInRG } = useTanQuery<{
     [key: string]: ResourceSlotDetail | undefined;
   }>({
     queryKey: ['useResourceSlots', resourceGroupName, key],
@@ -118,12 +118,15 @@ export const useResourceSlotsDetails = (resourceGroupName?: string) => {
     staleTime: 1000 * 60 * 60 * 24,
   });
 
-  return [
-    _.merge({}, deviceMetadata, resourceSlots),
-    {
-      refresh: () => checkUpdate(),
-    },
-  ] as const;
+  return {
+    resourceSlotsInRG,
+    deviceMetadata,
+    mergedResourceSlots: useMemo(
+      () => _.merge({}, deviceMetadata, resourceSlotsInRG),
+      [deviceMetadata, resourceSlotsInRG],
+    ),
+    refresh: useCallback(() => checkUpdate(), [checkUpdate]),
+  };
 };
 
 interface UserInfo {

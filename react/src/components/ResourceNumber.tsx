@@ -39,21 +39,21 @@ const ResourceNumber: React.FC<ResourceNumberProps> = ({
 }) => {
   const { token } = theme.useToken();
   const currentGroup = useCurrentResourceGroupValue();
-  const [resourceSlotsDetails] = useResourceSlotsDetails(
+  const { mergedResourceSlots } = useResourceSlotsDetails(
     currentGroup || undefined,
   );
 
   const formatAmount = (amount: string) => {
-    return resourceSlotsDetails?.[type]?.number_format.binary
+    return mergedResourceSlots?.[type]?.number_format.binary
       ? Number(iSizeToSize(amount, 'g', 3, true)?.numberFixed).toString()
-      : (resourceSlotsDetails?.[type]?.number_format.round_length || 0) > 0
+      : (mergedResourceSlots?.[type]?.number_format.round_length || 0) > 0
         ? parseFloat(amount).toFixed(2)
         : amount;
   };
 
   return (
     <Flex direction="row" gap="xxs">
-      {resourceSlotsDetails?.[type] ? (
+      {mergedResourceSlots?.[type] ? (
         <ResourceTypeIcon type={type} showTooltip={!hideTooltip} />
       ) : (
         type
@@ -68,7 +68,7 @@ const ResourceNumber: React.FC<ResourceNumberProps> = ({
             : `~${formatAmount(max)}`}
       </Typography.Text>
       <Typography.Text type="secondary">
-        {resourceSlotsDetails?.[type]?.display_unit || ''}
+        {mergedResourceSlots?.[type]?.display_unit || ''}
       </Typography.Text>
       {type === 'mem' && opts?.shmem && opts?.shmem > 0 ? (
         <Typography.Text

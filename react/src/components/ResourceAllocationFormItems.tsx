@@ -4,7 +4,7 @@ import {
   iSizeToSize,
 } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
+import { useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import {
   useCurrentProjectValue,
@@ -98,7 +98,6 @@ const ResourceAllocationFormItems: React.FC<
   const { token } = theme.useToken();
 
   const baiClient = useSuspendedBackendaiClient();
-  const [resourceSlots] = useResourceSlots();
 
   const [{ keypairResourcePolicy, sessionLimitAndRemaining }] =
     useCurrentKeyPairResourcePolicyLazyLoadQuery();
@@ -121,9 +120,8 @@ const ResourceAllocationFormItems: React.FC<
       currentImage: currentImage,
     });
 
-  const [resourceSlotsDetails] = useResourceSlotsDetails(
-    currentResourceGroup || undefined,
-  );
+  const { mergedResourceSlots, resourceSlotsInRG: resourceSlots } =
+    useResourceSlotsDetails(currentResourceGroup || undefined);
 
   const acceleratorSlots = _.omitBy(resourceSlots, (value, key) => {
     if (['cpu', 'mem', 'shmem'].includes(key)) return true;
@@ -183,7 +181,7 @@ const ResourceAllocationFormItems: React.FC<
         form.getFieldValue('allocationPreset'),
       )
     ) {
-      ensureValidAcceleratorType();
+      // if the current preset is custom or minimum-required, do nothing.
     } else {
       if (
         allocatablePresetNames.includes(form.getFieldValue('allocationPreset'))
@@ -197,13 +195,12 @@ const ResourceAllocationFormItems: React.FC<
         updateResourceFieldsBasedOnPreset(autoSelectedPreset);
       } else {
         // if the current preset is not available in the current resource group, set to custom
-        ensureValidAcceleratorType();
         form.setFieldsValue({
           allocationPreset: 'custom',
         });
       }
     }
-
+    ensureValidAcceleratorType();
     form
       .validateFields(['resource'], {
         recursive: true,
@@ -468,7 +465,7 @@ const ResourceAllocationFormItems: React.FC<
                     name={['resource', 'cpu']}
                     // initialValue={0}
                     label={
-                      resourceSlotsDetails?.cpu?.human_readable_name || 'CPU'
+                      mergedResourceSlots?.cpu?.human_readable_name || 'CPU'
                     }
                     tooltip={{
                       placement: 'right',
@@ -525,7 +522,7 @@ const ResourceAllocationFormItems: React.FC<
                     <InputNumberWithSlider
                       inputNumberProps={{
                         addonAfter:
-                          resourceSlotsDetails?.cpu?.display_unit ||
+                          mergedResourceSlots?.cpu?.display_unit ||
                           t('session.launcher.Core'),
                       }}
                       sliderProps={{
@@ -1030,7 +1027,7 @@ const ResourceAllocationFormItems: React.FC<
                             },
                             tooltip: {
                               formatter: (value = 0) => {
-                                return `${value} ${resourceSlotsDetails?.[currentAcceleratorType]?.display_unit || ''}`;
+                                return `${value} ${mergedResourceSlots?.[currentAcceleratorType]?.display_unit || ''}`;
                               },
                               open:
                                 currentImageAcceleratorLimits.length <= 0
@@ -1094,7 +1091,7 @@ const ResourceAllocationFormItems: React.FC<
                                       return {
                                         value: name,
                                         label:
-                                          resourceSlotsDetails?.[name]
+                                          mergedResourceSlots?.[name]
                                             ?.display_unit || 'UNIT',
                                         disabled:
                                           currentImageAcceleratorLimits.length >

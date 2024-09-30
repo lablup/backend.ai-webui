@@ -58,7 +58,7 @@ const KeypairResourcePolicySettingModal: React.FC<
   const { message } = App.useApp();
   const formRef = useRef<FormInstance>(null);
   const [resourceSlots] = useResourceSlots();
-  const [resourceSlotsDetails] = useResourceSlotsDetails();
+  const { mergedResourceSlots } = useResourceSlotsDetails();
   const baiClient = useSuspendedBackendaiClient();
   const isDeprecatedMaxVfolderCountInKeypairResourcePolicy =
     baiClient?.supports(
@@ -342,7 +342,7 @@ const KeypairResourcePolicySettingModal: React.FC<
                       <FormItemWithUnlimited
                         unlimitedValue={undefined}
                         label={
-                          _.get(resourceSlotsDetails, resourceSlotKey)
+                          _.get(mergedResourceSlots, resourceSlotKey)
                             ?.description || resourceSlotKey
                         }
                         name={['parsedTotalResourceSlots', resourceSlotKey]}
@@ -377,7 +377,7 @@ const KeypairResourcePolicySettingModal: React.FC<
                               _.includes(resourceSlotKey, '.shares') ? 0.1 : 1
                             }
                             addonAfter={
-                              _.get(resourceSlotsDetails, resourceSlotKey)
+                              _.get(mergedResourceSlots, resourceSlotKey)
                                 ?.display_unit
                             }
                           />

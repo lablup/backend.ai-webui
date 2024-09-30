@@ -35,7 +35,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
   const formRef = useRef<FormInstance>(null);
 
   const [resourceSlots] = useResourceSlots();
-  const [resourceSlotsDetails] = useResourceSlotsDetails();
+  const { mergedResourceSlots } = useResourceSlotsDetails();
 
   const resourcePreset = useFragment(
     graphql`
@@ -231,7 +231,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
                     >
                       <Form.Item
                         label={
-                          _.get(resourceSlotsDetails, resourceSlotKey)
+                          _.get(mergedResourceSlots, resourceSlotKey)
                             ?.description || resourceSlotKey
                         }
                         name={['resource_slots', resourceSlotKey]}
@@ -266,7 +266,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
                               _.includes(resourceSlotKey, '.shares') ? 0.1 : 1
                             }
                             addonAfter={
-                              _.get(resourceSlotsDetails, resourceSlotKey)
+                              _.get(mergedResourceSlots, resourceSlotKey)
                                 ?.display_unit
                             }
                           />

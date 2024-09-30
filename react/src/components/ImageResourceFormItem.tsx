@@ -21,23 +21,23 @@ const ImageResourceFormItem: React.FC<ImageResourceFormItemProps> = ({
 }) => {
   const { token } = theme.useToken();
 
-  const [resourceSlotsDetails] = useResourceSlotsDetails();
+  const { mergedResourceSlots } = useResourceSlotsDetails();
 
   const getResourceInfo = (type: string) => {
     return (
       {
         cpu: {
-          label: resourceSlotsDetails?.cpu?.description,
+          label: mergedResourceSlots?.cpu?.description,
           steps: _.map(
             ['0', '1', '2', '3', '4', '5', '6', '7', '8'],
             (value) => ({
               value,
-              label: `${value} ${resourceSlotsDetails?.cpu?.display_unit}`,
+              label: `${value} ${mergedResourceSlots?.cpu?.display_unit}`,
             }),
           ),
         },
         mem: {
-          label: resourceSlotsDetails?.mem?.description,
+          label: mergedResourceSlots?.mem?.description,
           steps: _.map(
             [
               '64m',
@@ -62,31 +62,31 @@ const ImageResourceFormItem: React.FC<ImageResourceFormItemProps> = ({
           ),
         },
         'cuda.device': {
-          label: resourceSlotsDetails?.['cuda.device']?.description,
+          label: mergedResourceSlots?.['cuda.device']?.description,
           steps: _.map(['0', '1', '2', '3', '4', '5', '6', '7', '8'], (v) => ({
             value: v,
-            label: `${v} ${resourceSlotsDetails?.['cuda.device']?.display_unit}`,
+            label: `${v} ${mergedResourceSlots?.['cuda.device']?.display_unit}`,
           })),
         },
         'cuda.shares': {
-          label: resourceSlotsDetails?.['cuda.shares']?.description,
+          label: mergedResourceSlots?.['cuda.shares']?.description,
           steps: _.map(
             ['0', '0.1', '0.2', '0.5', '1.0', '2.0', '4.0', '8.0'],
             (v) => ({
               value: v,
-              label: `${v} ${resourceSlotsDetails?.['cuda.shares']?.display_unit}`,
+              label: `${v} ${mergedResourceSlots?.['cuda.shares']?.display_unit}`,
             }),
           ),
         },
         'rocm.device': {
-          label: resourceSlotsDetails?.['rocm.device']?.description,
+          label: mergedResourceSlots?.['rocm.device']?.description,
           steps: ['0', '1', '2', '3', '4', '5', '6', '7', '8'],
         },
       }[type] || {
-        label: resourceSlotsDetails?.[type]?.description,
+        label: mergedResourceSlots?.[type]?.description,
         steps: _.map(['0', '1', '2', '3', '4'], (v) => ({
           value: v,
-          label: `${v} ${resourceSlotsDetails?.[type]?.display_unit || ''}`,
+          label: `${v} ${mergedResourceSlots?.[type]?.display_unit || ''}`,
         })),
       }
     );
