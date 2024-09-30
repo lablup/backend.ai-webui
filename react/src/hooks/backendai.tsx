@@ -6,7 +6,7 @@ import {
   useTanQuery,
 } from './reactQueryAlias';
 import _ from 'lodash';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export const baseResourceSlotNames = ['cpu', 'mem'] as const;
 export type BaseResourceSlotName = (typeof baseResourceSlotNames)[number];
@@ -121,7 +121,10 @@ export const useResourceSlotsDetails = (resourceGroupName?: string) => {
   return {
     resourceSlotsInRG,
     deviceMetadata,
-    mergedResourceSlots: deviceMetadata,
+    mergedResourceSlots: useMemo(
+      () => _.merge({}, deviceMetadata, resourceSlotsInRG),
+      [deviceMetadata, resourceSlotsInRG],
+    ),
     refresh: useCallback(() => checkUpdate(), [checkUpdate]),
   };
 };
