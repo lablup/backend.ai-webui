@@ -1042,7 +1042,8 @@
     "ProjectResourcePolicy": "Chính sách tài nguyên dự án",
     "NoDataToExport": "Dữ liệu cho bản trích xuất CSV không tồn tại.",
     "ExportCSV": "xuất CSV",
-    "Tools": "Công cụ"
+    "Tools": "Công cụ",
+    "MemorySizeExceedsLimit": "Kích thước bộ nhớ phải nhỏ hơn 300 PiB"
   },
   "registry": {
     "Hostname": "Tên máy chủ",

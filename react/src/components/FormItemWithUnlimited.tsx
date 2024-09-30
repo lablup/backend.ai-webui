@@ -1,7 +1,12 @@
 import Flex from './Flex';
 import { Form, Checkbox, FormItemProps } from 'antd';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
-import React, { cloneElement, useEffect, useState } from 'react';
+import React, {
+  cloneElement,
+  isValidElement,
+  useEffect,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface FormItemWithUnlimitedProps extends FormItemProps {
@@ -25,19 +30,19 @@ const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
   }, [form, name, unlimitedValue]);
 
   // Disable children when isUnlimited is true.
-  const childrenWithProps = React.isValidElement(children)
+  const childrenWithProps = isValidElement(children)
     ? cloneElement(children, {
         disabled: isUnlimited,
       } as React.Attributes & { disabled?: boolean })
     : children;
 
-  const childrenWithUndefinedValue =
-    isUnlimited && React.isValidElement(children)
+  const childrenWithNullValue =
+    isUnlimited && isValidElement(children)
       ? cloneElement(children, {
-          value: undefined,
+          value: null,
           disabled: isUnlimited,
         } as React.Attributes & { value?: any })
-      : undefined;
+      : null;
 
   return (
     <Flex direction="column" align="start">
@@ -54,7 +59,7 @@ const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
           style={{ margin: 0 }}
           {...formItemPropsWithoutNameAndChildren}
         >
-          {childrenWithUndefinedValue}
+          {childrenWithNullValue}
         </Form.Item>
       ) : null}
       <Checkbox

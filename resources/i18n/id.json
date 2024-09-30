@@ -1043,7 +1043,8 @@
     "ProjectResourcePolicy": "Kebijakan Sumber Daya Proyek",
     "NoDataToExport": "Data untuk ekstrak CSV tidak ada.",
     "ExportCSV": "ekspor CSV",
-    "Tools": "Peralatan"
+    "Tools": "Peralatan",
+    "MemorySizeExceedsLimit": "Ukuran memori harus kurang dari 300 PiB"
   },
   "registry": {
     "Hostname": "Nama host",

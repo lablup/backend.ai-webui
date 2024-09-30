@@ -992,7 +992,8 @@
     "ProjectResourcePolicy": "Projektin resurssipolitiikka",
     "NoDataToExport": "CSV-otteen tietoja ei ole olemassa.",
     "ExportCSV": "vie CSV",
-    "Tools": "Työkalut"
+    "Tools": "Työkalut",
+    "MemorySizeExceedsLimit": "Muistin koon tulee olla alle 300 PiB"
   },
   "resourcePreset": {
     "AboutToDeletePreset": "Olet poistamassa tätä esiasetusta:",

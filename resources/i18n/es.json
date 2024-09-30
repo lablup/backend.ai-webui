@@ -995,7 +995,8 @@
     "ProjectResourcePolicy": "Política de recursos del proyecto",
     "NoDataToExport": "Los datos para el extracto CSV no existen.",
     "ExportCSV": "exportar CSV",
-    "Tools": "Herramientas"
+    "Tools": "Herramientas",
+    "MemorySizeExceedsLimit": "El tamaño de la memoria debe ser inferior a 300 PiB"
   },
   "resourcePreset": {
     "AboutToDeletePreset": "Está a punto de borrar este preajuste:",

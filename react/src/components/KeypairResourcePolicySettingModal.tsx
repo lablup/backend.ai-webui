@@ -4,7 +4,7 @@ import {
   UNLIMITED_MAX_CONTAINERS_PER_SESSIONS,
 } from '../helper/const-vars';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useResourceSlotsDetails } from '../hooks/backendai';
+import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
 import AllowedHostNamesSelect from './AllowedHostNamesSelect';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import DynamicUnitInputNumber from './DynamicUnitInputNumber';
@@ -28,6 +28,7 @@ import {
   Input,
   InputNumber,
   Row,
+  theme,
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
@@ -53,8 +54,10 @@ const KeypairResourcePolicySettingModal: React.FC<
   ...props
 }) => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const { message } = App.useApp();
   const formRef = useRef<FormInstance>(null);
+  const [resourceSlots] = useResourceSlots();
   const [resourceSlotsDetails] = useResourceSlotsDetails();
   const baiClient = useSuspendedBackendaiClient();
   const isDeprecatedMaxVfolderCountInKeypairResourcePolicy =
@@ -163,7 +166,7 @@ const KeypairResourcePolicySettingModal: React.FC<
         let totalResourceSlots = _.mapValues(
           values?.parsedTotalResourceSlots,
           (value, key) => {
-            if (key === 'mem') {
+            if (_.includes(key, 'mem')) {
               return iSizeToSize(value, 'b', 0)?.numberFixed;
             }
             return value;
@@ -319,70 +322,87 @@ const KeypairResourcePolicySettingModal: React.FC<
           <Input disabled={!!keypairResourcePolicy} />
         </Form.Item>
         <Form.Item label={t('resourcePolicy.ResourcePolicy')} required>
-          <Card>
-            <Row gutter={16}>
-              <Col span={12}>
-                <FormItemWithUnlimited
-                  name={['parsedTotalResourceSlots', 'cpu']}
-                  unlimitedValue={undefined}
-                  label={resourceSlotsDetails?.cpu?.description}
-                >
-                  <InputNumber
-                    min={0}
-                    max={512}
-                    addonAfter={resourceSlotsDetails?.cpu?.display_unit}
-                  />
-                </FormItemWithUnlimited>
-              </Col>
-              <Col span={12}>
-                <FormItemWithUnlimited
-                  name={['parsedTotalResourceSlots', 'mem']}
-                  unlimitedValue={undefined}
-                  label={resourceSlotsDetails?.mem?.description}
-                >
-                  <DynamicUnitInputNumber />
-                </FormItemWithUnlimited>
-              </Col>
-            </Row>
-            <Row gutter={16} align="bottom">
-              <Col span={12}>
-                <FormItemWithUnlimited
-                  name={['parsedTotalResourceSlots', 'cuda.device']}
-                  unlimitedValue={undefined}
-                  label={resourceSlotsDetails?.['cuda.device']?.description}
-                >
-                  <InputNumber
-                    min={0}
-                    max={64}
-                    addonAfter={
-                      resourceSlotsDetails?.['cuda.device']?.display_unit
-                    }
-                  />
-                </FormItemWithUnlimited>
-              </Col>
-              <Col span={12}>
-                <FormItemWithUnlimited
-                  name={['parsedTotalResourceSlots', 'cuda.shares']}
-                  unlimitedValue={undefined}
-                  label={resourceSlotsDetails?.['cuda.shares']?.description}
-                >
-                  <InputNumber
-                    min={0}
-                    max={256}
-                    step={0.1}
-                    addonAfter={
-                      resourceSlotsDetails?.['cuda.shares']?.display_unit
-                    }
-                  />
-                </FormItemWithUnlimited>
-              </Col>
-            </Row>
+          <Card
+            styles={{
+              body: {
+                paddingBottom: 0,
+              },
+            }}
+          >
+            {_.map(
+              _.chunk(_.keys(resourceSlots), 2),
+              (resourceSlotKeys, index) => (
+                <Row gutter={[16, 16]} key={index}>
+                  {_.map(resourceSlotKeys, (resourceSlotKey) => (
+                    <Col
+                      span={12}
+                      key={resourceSlotKey}
+                      style={{ alignSelf: 'end', marginBottom: token.marginLG }}
+                    >
+                      <FormItemWithUnlimited
+                        unlimitedValue={undefined}
+                        label={
+                          _.get(resourceSlotsDetails, resourceSlotKey)
+                            ?.description || resourceSlotKey
+                        }
+                        name={['parsedTotalResourceSlots', resourceSlotKey]}
+                        rules={[
+                          {
+                            validator(__, value) {
+                              if (
+                                _.includes(resourceSlotKey, 'mem') &&
+                                value &&
+                                // @ts-ignore
+                                iSizeToSize(value, 'p').number >
+                                  // @ts-ignore
+                                  iSizeToSize('300p', 'p').number
+                              ) {
+                                return Promise.reject(
+                                  new Error(
+                                    t('resourcePolicy.MemorySizeExceedsLimit'),
+                                  ),
+                                );
+                              }
+                              return Promise.resolve();
+                            },
+                          },
+                        ]}
+                      >
+                        {_.includes(resourceSlotKey, 'mem') ? (
+                          <DynamicUnitInputNumber />
+                        ) : (
+                          <InputNumber
+                            min={0}
+                            step={
+                              _.includes(resourceSlotKey, '.shares') ? 0.1 : 1
+                            }
+                            addonAfter={
+                              _.get(resourceSlotsDetails, resourceSlotKey)
+                                ?.display_unit
+                            }
+                          />
+                        )}
+                      </FormItemWithUnlimited>
+                    </Col>
+                  ))}
+                </Row>
+              ),
+            )}
           </Card>
         </Form.Item>
         <Form.Item label={t('resourcePolicy.Sessions')} required>
-          <Card>
+          <Card
+            styles={{
+              body: {
+                paddingBottom: 0,
+              },
+            }}
+          >
             <Row gutter={16}>
-              <Col span={12}>
+              <Col
+                span={12}
+                style={{ alignSelf: 'end', marginBottom: token.marginLG }}
+              >
                 <FormItemWithUnlimited
                   name={'max_containers_per_session'}
                   unlimitedValue={UNLIMITED_MAX_CONCURRENT_SESSIONS}
@@ -391,7 +411,10 @@ const KeypairResourcePolicySettingModal: React.FC<
                   <InputNumber min={0} max={100} style={{ width: '100%' }} />
                 </FormItemWithUnlimited>
               </Col>
-              <Col span={12}>
+              <Col
+                span={12}
+                style={{ alignSelf: 'end', marginBottom: token.marginLG }}
+              >
                 <FormItemWithUnlimited
                   name={'max_session_lifetime'}
                   unlimitedValue={0}
@@ -402,7 +425,10 @@ const KeypairResourcePolicySettingModal: React.FC<
               </Col>
             </Row>
             <Row gutter={16}>
-              <Col span={12}>
+              <Col
+                span={12}
+                style={{ alignSelf: 'end', marginBottom: token.marginLG }}
+              >
                 <FormItemWithUnlimited
                   name={'max_concurrent_sessions'}
                   unlimitedValue={UNLIMITED_MAX_CONTAINERS_PER_SESSIONS}
@@ -411,7 +437,10 @@ const KeypairResourcePolicySettingModal: React.FC<
                   <InputNumber min={0} max={100} style={{ width: '100%' }} />
                 </FormItemWithUnlimited>
               </Col>
-              <Col span={12}>
+              <Col
+                span={12}
+                style={{ alignSelf: 'end', marginBottom: token.marginLG }}
+              >
                 <FormItemWithUnlimited
                   name={'idle_timeout'}
                   unlimitedValue={0}

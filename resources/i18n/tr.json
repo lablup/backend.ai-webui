@@ -1042,7 +1042,8 @@
     "ProjectResourcePolicy": "Proje Kaynak Politikası",
     "NoDataToExport": "CSV ekstresine ilişkin veriler mevcut değil.",
     "ExportCSV": "CSV'yi dışa aktar",
-    "Tools": "Aletler"
+    "Tools": "Aletler",
+    "MemorySizeExceedsLimit": "Bellek boyutu 300 PiB'den az olmalıdır"
   },
   "registry": {
     "Hostname": "ana bilgisayar adı",

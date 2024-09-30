@@ -1169,7 +1169,8 @@
     "ProjectResourcePolicy": "Project Resource Policy",
     "NoDataToExport": "The data for the CSV extract does not exist.",
     "ExportCSV": "export CSV",
-    "Tools": "Tools"
+    "Tools": "Tools",
+    "MemorySizeExceedsLimit": "Memory size should be less than 300 PiB"
   },
   "registry": {
     "Hostname": "Hostname",

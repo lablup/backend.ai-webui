@@ -1042,7 +1042,8 @@
     "MaxFolderCount": "Хамгийн их хавтасны тоо",
     "NoDataToExport": "CSV хандалтын өгөгдөл байхгүй байна.",
     "ExportCSV": "CSV экспортлох",
-    "Tools": "Багаж хэрэгсэл"
+    "Tools": "Багаж хэрэгсэл",
+    "MemorySizeExceedsLimit": "Санах ойн хэмжээ 300 PiB-ээс бага байх ёстой"
   },
   "registry": {
     "Hostname": "Хостын нэр",

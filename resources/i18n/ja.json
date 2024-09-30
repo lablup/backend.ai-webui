@@ -1042,7 +1042,8 @@
     "ProjectResourcePolicy": "プロジェクトリソースポリシー",
     "NoDataToExport": "CSV抽出用のデータが存在しません。",
     "ExportCSV": "CSVエクスポート",
-    "Tools": "ツール"
+    "Tools": "ツール",
+    "MemorySizeExceedsLimit": "メモリ サイズは 300 PiB 未満である必要があります"
   },
   "registry": {
     "Hostname": "ホスト名",

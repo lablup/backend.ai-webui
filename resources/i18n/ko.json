@@ -1155,7 +1155,8 @@
     "ProjectResourcePolicy": "프로젝트 자원 정책",
     "NoDataToExport": "CSV 추출을 위한 데이터가 존재하지 않습니다. ",
     "ExportCSV": "CSV로 내보내기",
-    "Tools": "도구"
+    "Tools": "도구",
+    "MemorySizeExceedsLimit": "메모리 크기는 300PiB 미만이어야 합니다."
   },
   "registry": {
     "Hostname": "호스트명",

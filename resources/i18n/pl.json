@@ -1042,7 +1042,8 @@
     "ProjectResourcePolicy": "Polityka zasobów projektu",
     "NoDataToExport": "Dane do ekstraktu CSV nie istnieją.",
     "ExportCSV": "eksportuj plik CSV",
-    "Tools": "Narzędzia"
+    "Tools": "Narzędzia",
+    "MemorySizeExceedsLimit": "Rozmiar pamięci powinien być mniejszy niż 300 PiB"
   },
   "registry": {
     "Hostname": "Nazwa hosta",

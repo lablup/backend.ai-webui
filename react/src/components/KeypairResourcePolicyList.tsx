@@ -37,7 +37,7 @@ import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React, { useState, useTransition } from 'react';
+import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery, useMutation } from 'react-relay';
 
@@ -416,23 +416,25 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         columns={columns}
         displayedColumnKeys={displayedColumnKeys ? displayedColumnKeys : []}
       />
-      <KeypairResourcePolicySettingModal
-        existingPolicyNames={_.map(
-          keypair_resource_policies,
-          (policy) => policy?.name || '',
-        )}
-        open={!!editingKeypairResourcePolicy || isCreatingPolicySetting}
-        keypairResourcePolicyFrgmt={editingKeypairResourcePolicy || null}
-        onRequestClose={(success) => {
-          setEditingKeypairResourcePolicy(null);
-          setIsCreatingPolicySetting(false);
-          if (success) {
-            startRefetchTransition(() => {
-              updateKeypairResourcePolicyFetchKey();
-            });
-          }
-        }}
-      />
+      <Suspense>
+        <KeypairResourcePolicySettingModal
+          existingPolicyNames={_.map(
+            keypair_resource_policies,
+            (policy) => policy?.name || '',
+          )}
+          open={!!editingKeypairResourcePolicy || isCreatingPolicySetting}
+          keypairResourcePolicyFrgmt={editingKeypairResourcePolicy || null}
+          onRequestClose={(success) => {
+            setEditingKeypairResourcePolicy(null);
+            setIsCreatingPolicySetting(false);
+            if (success) {
+              startRefetchTransition(() => {
+                updateKeypairResourcePolicyFetchKey();
+              });
+            }
+          }}
+        />
+      </Suspense>
     </Flex>
   );
 };
