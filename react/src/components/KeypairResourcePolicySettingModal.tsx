@@ -1,4 +1,8 @@
 import { iSizeToSize } from '../helper';
+import {
+  UNLIMITED_MAX_CONCURRENT_SESSIONS,
+  UNLIMITED_MAX_CONTAINERS_PER_SESSIONS,
+} from '../helper/const-vars';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import AllowedHostNamesSelect from './AllowedHostNamesSelect';
@@ -33,9 +37,6 @@ import {
   useFragment, // useLazyLoadQuery,
   useMutation,
 } from 'react-relay';
-
-export const UNLIMITED_MAX_CONTAINERS_PER_SESSIONS = 1000000;
-export const UNLIMITED_MAX_CONCURRENT_SESSIONS = 1000000;
 
 interface KeypairResourcePolicySettingModalProps extends BAIModalProps {
   existingPolicyNames?: string[];

@@ -1,11 +1,12 @@
 import { localeCompare, numberSorterWithInfinityValue } from '../helper';
+import {
+  UNLIMITED_MAX_CONCURRENT_SESSIONS,
+  UNLIMITED_MAX_CONTAINERS_PER_SESSIONS,
+} from '../helper/const-vars';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import Flex from './Flex';
-import KeypairResourcePolicySettingModal, {
-  UNLIMITED_MAX_CONCURRENT_SESSIONS,
-  UNLIMITED_MAX_CONTAINERS_PER_SESSIONS,
-} from './KeypairResourcePolicySettingModal';
+import KeypairResourcePolicySettingModal from './KeypairResourcePolicySettingModal';
 import ResourceNumber from './ResourceNumber';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import { KeypairResourcePolicyListMutation } from './__generated__/KeypairResourcePolicyListMutation.graphql';

@@ -1,4 +1,5 @@
 import { useSuspendedBackendaiClient, useUpdatableState } from '.';
+import { UNLIMITED_MAX_CONCURRENT_SESSIONS } from '../helper/const-vars';
 import { hooksUsingRelay_KeyPairQuery } from './__generated__/hooksUsingRelay_KeyPairQuery.graphql';
 import { hooksUsingRelay_KeyPairResourcePolicyQuery } from './__generated__/hooksUsingRelay_KeyPairResourcePolicyQuery.graphql';
 import graphql from 'babel-plugin-relay/macro';
@@ -51,7 +52,6 @@ export const useCurrentKeyPairResourcePolicyLazyLoadQuery = (
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const baiClient = useSuspendedBackendaiClient();
   const [keypair] = useKeyPairLazyLoadQuery(baiClient?._config.accessKey);
-  const UNLIMITED_MAX_CONCURRENT_SESSIONS = 1000000;
 
   const { keypair_resource_policy } =
     useLazyLoadQuery<hooksUsingRelay_KeyPairResourcePolicyQuery>(
