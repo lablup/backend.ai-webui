@@ -51,6 +51,7 @@ export const useCurrentKeyPairResourcePolicyLazyLoadQuery = (
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const baiClient = useSuspendedBackendaiClient();
   const [keypair] = useKeyPairLazyLoadQuery(baiClient?._config.accessKey);
+  const UNLIMITED_MAX_CONCURRENT_SESSIONS = 1000000;
 
   const { keypair_resource_policy } =
     useLazyLoadQuery<hooksUsingRelay_KeyPairResourcePolicyQuery>(
@@ -83,7 +84,8 @@ export const useCurrentKeyPairResourcePolicyLazyLoadQuery = (
       keypair: (keypair || {}) as NonNullable<typeof keypair>,
       sessionLimitAndRemaining: {
         max: _.min([
-          (keypair_resource_policy || {}).max_concurrent_sessions,
+          (keypair_resource_policy || {}).max_concurrent_sessions ||
+            UNLIMITED_MAX_CONCURRENT_SESSIONS,
           3, //BackendAiResourceBroker.DEFAULT_CONCURRENT_SESSION_COUNT
         ]) as number,
         remaining:
