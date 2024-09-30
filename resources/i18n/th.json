@@ -1025,7 +1025,9 @@
     "MinimumShmemUnit": "หน่วยต่ำสุดสำหรับหน่วยความจำร่วมคือ 0.01 GB",
     "RAM": "RAM (GB)",
     "SharedMemory": "หน่วยความจำร่วม (GB)",
-    "SHMEMShouldBeSmallerThanMemory": "หน่วยความจำร่วมต้องน้อยกว่าหน่วยความจำ"
+    "SHMEMShouldBeSmallerThanMemory": "หน่วยความจำร่วมต้องน้อยกว่าหน่วยความจำ",
+    "DeleteResourcePreset": "ลบการตั้งค่าทรัพยากรล่วงหน้า",
+    "PresetNameAlreadyExists": "มีทรัพยากรที่ตั้งไว้ล่วงหน้าซึ่งมีชื่อเดียวกันอยู่แล้ว"
   },
   "usersettings": {
     "General": "ทั่วไป",

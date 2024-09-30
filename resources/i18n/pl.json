@@ -912,7 +912,9 @@
     "SharedMemory": "Pamięć współdzielona (GB)",
     "NoResourcePresetToDisplay": "Brak ustawień wstępnych zasobów do wyświetlenia",
     "Deleted": "Ustawienie wstępne zasobu zostało pomyślnie usunięte.",
-    "SHMEMShouldBeSmallerThanMemory": "Pamięć współdzielona musi być mniejsza niż pamięć"
+    "SHMEMShouldBeSmallerThanMemory": "Pamięć współdzielona musi być mniejsza niż pamięć",
+    "DeleteResourcePreset": "Usuń ustawienie wstępne zasobu",
+    "PresetNameAlreadyExists": "Wstępne ustawienie zasobu o tej samej nazwie już istnieje."
   },
   "usersettings": {
     "General": "Generał",

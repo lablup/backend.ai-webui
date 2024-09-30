@@ -912,7 +912,9 @@
     "SharedMemory": "Paylaşılan bellek (GB)",
     "NoResourcePresetToDisplay": "Görüntülenecek Kaynak Ön Ayarı yok",
     "Deleted": "Kaynak ön ayarı başarıyla silindi.",
-    "SHMEMShouldBeSmallerThanMemory": "Paylaşılan bellek, bellekten daha küçük olmalıdır"
+    "SHMEMShouldBeSmallerThanMemory": "Paylaşılan bellek, bellekten daha küçük olmalıdır",
+    "DeleteResourcePreset": "Kaynak ön ayarını sil",
+    "PresetNameAlreadyExists": "Aynı ada sahip bir kaynak ön ayarı zaten mevcut."
   },
   "usersettings": {
     "General": "Genel",

@@ -913,7 +913,9 @@
     "SharedMemory": "Хуваалцсан санах ой (GB)",
     "Deleted": "Нөөцийн урьдчилсан тохируулгыг амжилттай устгалаа.",
     "NoResourcePresetToDisplay": "Харуулах нөөцийн урьдчилсан тохиргоо байхгүй",
-    "SHMEMShouldBeSmallerThanMemory": "Хуваалцсан санах ой санах ойноос бага байх ёстой"
+    "SHMEMShouldBeSmallerThanMemory": "Хуваалцсан санах ой санах ойноос бага байх ёстой",
+    "DeleteResourcePreset": "Урьдчилсан нөөцийг устгах",
+    "PresetNameAlreadyExists": "Ижил нэртэй нөөцийн урьдчилсан тохируулга аль хэдийн байна."
   },
   "usersettings": {
     "General": "Ерөнхий",

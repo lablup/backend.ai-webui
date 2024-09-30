@@ -1019,7 +1019,9 @@
     "Resources": "Recursos",
     "SharedMemory": "Memoria compartida (GB)",
     "Updated": "Preajuste de recursos actualizado",
-    "SHMEMShouldBeSmallerThanMemory": "La memoria compartida debe ser menor que la memoria"
+    "SHMEMShouldBeSmallerThanMemory": "La memoria compartida debe ser menor que la memoria",
+    "DeleteResourcePreset": "Eliminar recurso preestablecido",
+    "PresetNameAlreadyExists": "Ya existe un recurso preestablecido con el mismo nombre."
   },
   "session": {
     "Agent": "Agente",

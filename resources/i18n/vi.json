@@ -912,7 +912,9 @@
     "SharedMemory": "Bộ nhớ dùng chung (GB)",
     "NoResourcePresetToDisplay": "Không có cài đặt trước tài nguyên nào để hiển thị",
     "Deleted": "Cài đặt trước tài nguyên đã được xóa thành công.",
-    "SHMEMShouldBeSmallerThanMemory": "Bộ nhớ dùng chung phải nhỏ hơn bộ nhớ"
+    "SHMEMShouldBeSmallerThanMemory": "Bộ nhớ dùng chung phải nhỏ hơn bộ nhớ",
+    "DeleteResourcePreset": "Xóa cài đặt trước tài nguyên",
+    "PresetNameAlreadyExists": "Đã tồn tại một tài nguyên đặt trước có cùng tên."
   },
   "usersettings": {
     "General": "Chung",

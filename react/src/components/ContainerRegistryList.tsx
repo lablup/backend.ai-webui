@@ -246,7 +246,11 @@ const ContainerRegistryList: React.FC<{
         direction="row"
         justify="end"
         gap={'sm'}
-        style={{ padding: token.paddingSM }}
+        style={{
+          padding: token.paddingContentVertical,
+          paddingLeft: token.paddingContentHorizontalSM,
+          paddingRight: token.paddingContentHorizontalSM,
+        }}
       >
         <Tooltip title={t('button.Refresh')}>
           <Button

@@ -1016,7 +1016,9 @@
     "Resources": "Resurssit",
     "SharedMemory": "Jaettu muisti (GB)",
     "Updated": "Resurssien esiasetus päivitetty",
-    "SHMEMShouldBeSmallerThanMemory": "Jaetun muistin on oltava pienempi kuin muistin"
+    "SHMEMShouldBeSmallerThanMemory": "Jaetun muistin on oltava pienempi kuin muistin",
+    "DeleteResourcePreset": "Poista resurssin esiasetus",
+    "PresetNameAlreadyExists": "Resurssin esiasetus samalla nimellä on jo olemassa."
   },
   "session": {
     "Agent": "Agentti",

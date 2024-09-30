@@ -1039,7 +1039,9 @@
     "MinimumShmemUnit": "The minimum unit for shared memory is 0.01 GB.",
     "RAM": "RAM (GB)",
     "SharedMemory": "Shared memory (GB)",
-    "SHMEMShouldBeSmallerThanMemory": "Shared memory must be smaller than memory"
+    "SHMEMShouldBeSmallerThanMemory": "Shared memory must be smaller than memory",
+    "DeleteResourcePreset": "Delete resource preset",
+    "PresetNameAlreadyExists": "A resource preset with the same name already exists."
   },
   "usersettings": {
     "General": "General",

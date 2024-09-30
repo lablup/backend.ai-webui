@@ -912,7 +912,9 @@
     "SharedMemory": "Общая память (ГБ)",
     "Deleted": "Предварительная настройка ресурса успешно удалена.",
     "NoResourcePresetToDisplay": "Отсутствие отображения предустановок ресурсов",
-    "SHMEMShouldBeSmallerThanMemory": "Общая память должна быть меньше памяти"
+    "SHMEMShouldBeSmallerThanMemory": "Общая память должна быть меньше памяти",
+    "DeleteResourcePreset": "Удалить набор ресурсов",
+    "PresetNameAlreadyExists": "Предустановка ресурса с таким именем уже существует."
   },
   "usersettings": {
     "General": "Общий",

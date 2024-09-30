@@ -912,7 +912,9 @@
     "SharedMemory": "共有メモリ（GB）",
     "NoResourcePresetToDisplay": "リソースプリセット情報がありません。",
     "Deleted": "リソースプリセットの削除に成功しました",
-    "SHMEMShouldBeSmallerThanMemory": "共有メモリはメモリより小さくなければならない"
+    "SHMEMShouldBeSmallerThanMemory": "共有メモリはメモリより小さくなければならない",
+    "DeleteResourcePreset": "リソースプリセットの削除",
+    "PresetNameAlreadyExists": "同じ名前のリソース プリセットがすでに存在します。"
   },
   "usersettings": {
     "General": "一般",

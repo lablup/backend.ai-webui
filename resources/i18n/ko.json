@@ -1025,7 +1025,9 @@
     "MinimumShmemUnit": "공유메모리 최소 단위는 0.01 GB 입니다.",
     "RAM": "메모리 (GB)",
     "SharedMemory": "공유메모리 (GB)",
-    "Deleted": "자원 프리셋을 성공적으로 삭제하였습니다"
+    "Deleted": "자원 프리셋을 성공적으로 삭제하였습니다",
+    "DeleteResourcePreset": "자원 프리셋 삭제",
+    "PresetNameAlreadyExists": "동일한 이름의 자원 프리셋이 이미 존재합니다."
   },
   "usersettings": {
     "General": "일반",

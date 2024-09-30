@@ -912,7 +912,9 @@
     "SharedMemory": "Memória compartilhada (GB)",
     "NoResourcePresetToDisplay": "Não há predefinições de recursos a apresentar",
     "Deleted": "A predefinição de recurso foi eliminada com êxito.",
-    "SHMEMShouldBeSmallerThanMemory": "A memória partilhada deve ser mais pequena do que a memória"
+    "SHMEMShouldBeSmallerThanMemory": "A memória partilhada deve ser mais pequena do que a memória",
+    "DeleteResourcePreset": "Excluir predefinição de recurso",
+    "PresetNameAlreadyExists": "Já existe uma predefinição de recurso com o mesmo nome."
   },
   "usersettings": {
     "General": "Em geral",

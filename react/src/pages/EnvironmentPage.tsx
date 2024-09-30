@@ -1,9 +1,8 @@
 import ContainerRegistryList from '../components/ContainerRegistryList';
-import Flex from '../components/Flex';
 import FlexActivityIndicator from '../components/FlexActivityIndicator';
 import ImageList from '../components/ImageList';
+import ResourcePresetList from '../components/ResourcePresetList';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { theme } from 'antd';
 import Card from 'antd/es/card/Card';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -18,7 +17,6 @@ const EnvironmentPage = () => {
   const isSupportContainerRegistryGraphQL = baiClient.supports(
     'container-registry-gql',
   );
-  const { token } = theme.useToken();
 
   return (
     <Card
@@ -50,46 +48,25 @@ const EnvironmentPage = () => {
         },
       }}
     >
-      {curTabKey === 'image' ? (
-        <Suspense
-          fallback={
-            <FlexActivityIndicator
-              style={{ height: 'calc(100vh - 145px)' }}
-              spinSize="large"
-            />
-          }
-        >
-          <ImageList />
-        </Suspense>
-      ) : null}
-      <Flex
-        style={{
-          display: curTabKey === 'preset' ? 'block' : 'none',
-          paddingTop: token.paddingContentVerticalSM,
-        }}
+      <Suspense
+        fallback={
+          <FlexActivityIndicator
+            style={{ height: 'calc(100vh - 145px)' }}
+            spinSize="large"
+          />
+        }
       >
-        {/* @ts-ignore */}
-        <backend-ai-resource-preset-list active={curTabKey === 'preset'} />
-      </Flex>
-
-      <Flex
-        style={{
-          display: curTabKey === 'registry' ? 'block' : 'none',
-          height: 'calc(100vh - 145px)',
-          // height: 'calc(100vh - 175px)',
-        }}
-      >
-        {isSupportContainerRegistryGraphQL ? (
-          curTabKey === 'registry' ? (
-            <Suspense>
-              <ContainerRegistryList />
-            </Suspense>
-          ) : null
-        ) : (
-          // @ts-ignore
-          <backend-ai-registry-list active={curTabKey === 'registry'} />
-        )}
-      </Flex>
+        {curTabKey === 'image' && <ImageList />}
+        {curTabKey === 'preset' && <ResourcePresetList />}
+        {curTabKey === 'registry' ? (
+          isSupportContainerRegistryGraphQL ? (
+            <ContainerRegistryList />
+          ) : (
+            // @ts-ignore
+            <backend-ai-registry-list active />
+          )
+        ) : null}
+      </Suspense>
     </Card>
   );
 };

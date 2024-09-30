@@ -913,7 +913,9 @@
     "SharedMemory": "Memori bersama (GB)",
     "Deleted": "Preset sumber daya berhasil dihapus.",
     "NoResourcePresetToDisplay": "Tidak ada Preset Sumber Daya yang akan ditampilkan",
-    "SHMEMShouldBeSmallerThanMemory": "Memori bersama harus lebih kecil dari memori"
+    "SHMEMShouldBeSmallerThanMemory": "Memori bersama harus lebih kecil dari memori",
+    "DeleteResourcePreset": "Hapus preset sumber daya",
+    "PresetNameAlreadyExists": "Prasetel sumber daya dengan nama yang sama sudah ada."
   },
   "usersettings": {
     "General": "Umum",

@@ -911,7 +911,9 @@
     "SharedMemory": "Memori bersama (GB)",
     "NoResourcePresetToDisplay": "Tiada Pratetap Sumber untuk dipaparkan",
     "Deleted": "Pratetap sumber berjaya dipadamkan.",
-    "SHMEMShouldBeSmallerThanMemory": "Memori yang dikongsi mestilah lebih kecil daripada memori"
+    "SHMEMShouldBeSmallerThanMemory": "Memori yang dikongsi mestilah lebih kecil daripada memori",
+    "DeleteResourcePreset": "Padamkan pratetap sumber",
+    "PresetNameAlreadyExists": "Pratetap sumber dengan nama yang sama sudah wujud."
   },
   "usersettings": {
     "General": "Am",

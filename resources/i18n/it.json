@@ -913,7 +913,9 @@
     "SharedMemory": "Memoria condivisa (GB)",
     "NoResourcePresetToDisplay": "Nessuna preimpostazione di risorse da visualizzare",
     "Deleted": "La preimpostazione della risorsa è stata eliminata con successo.",
-    "SHMEMShouldBeSmallerThanMemory": "La memoria condivisa deve essere più piccola della memoria"
+    "SHMEMShouldBeSmallerThanMemory": "La memoria condivisa deve essere più piccola della memoria",
+    "DeleteResourcePreset": "Elimina la preimpostazione della risorsa",
+    "PresetNameAlreadyExists": "Esiste già una risorsa preimpostata con lo stesso nome."
   },
   "usersettings": {
     "General": "Generale",

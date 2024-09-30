@@ -911,7 +911,9 @@
     "SharedMemory": "共享內存 (GB)",
     "NoResourcePresetToDisplay": "无资源预置显示",
     "Deleted": "资源预置已成功删除。",
-    "SHMEMShouldBeSmallerThanMemory": "共享内存必须小于内存"
+    "SHMEMShouldBeSmallerThanMemory": "共享内存必须小于内存",
+    "DeleteResourcePreset": "刪除資源預設",
+    "PresetNameAlreadyExists": "已存在同名的資源預設。"
   },
   "usersettings": {
     "General": "一般的",

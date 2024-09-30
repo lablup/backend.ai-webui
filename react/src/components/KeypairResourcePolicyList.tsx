@@ -202,6 +202,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         <Flex direction="row" align="stretch">
           <Button
             type="text"
+            size="large"
             icon={<SettingOutlined />}
             style={{
               color: token.colorInfo,
@@ -253,6 +254,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
           >
             <Button
               type="text"
+              size="large"
               icon={
                 <DeleteOutlined
                   style={{

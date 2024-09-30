@@ -912,7 +912,9 @@
     "SharedMemory": "Κοινή μνήμη (GB)",
     "NoResourcePresetToDisplay": "Δεν εμφανίζονται Προεπιλογές πόρων",
     "Deleted": "Η προεπιλογή πόρων διαγράφηκε επιτυχώς.",
-    "SHMEMShouldBeSmallerThanMemory": "Η κοινόχρηστη μνήμη πρέπει να είναι μικρότερη από τη μνήμη"
+    "SHMEMShouldBeSmallerThanMemory": "Η κοινόχρηστη μνήμη πρέπει να είναι μικρότερη από τη μνήμη",
+    "DeleteResourcePreset": "Διαγραφή προκαθορισμένων πόρων",
+    "PresetNameAlreadyExists": "Υπάρχει ήδη μια προεπιλογή πόρων με το ίδιο όνομα."
   },
   "usersettings": {
     "General": "Γενικός",

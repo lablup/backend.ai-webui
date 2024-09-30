@@ -912,7 +912,9 @@
     "SharedMemory": "Gemeinsamer Speicher (GB)",
     "NoResourcePresetToDisplay": "Keine Ressourcenvoreinstellungen anzeigen",
     "Deleted": "Die Ressourcenvoreinstellung wurde erfolgreich gelöscht.",
-    "SHMEMShouldBeSmallerThanMemory": "Gemeinsamer Speicher muss kleiner sein als der Speicher"
+    "SHMEMShouldBeSmallerThanMemory": "Gemeinsamer Speicher muss kleiner sein als der Speicher",
+    "DeleteResourcePreset": "Ressourcenvoreinstellung löschen",
+    "PresetNameAlreadyExists": "Eine Ressourcenvoreinstellung mit demselben Namen ist bereits vorhanden."
   },
   "usersettings": {
     "General": "Allgemeines",
