@@ -181,7 +181,7 @@ const ResourceAllocationFormItems: React.FC<
         form.getFieldValue('allocationPreset'),
       )
     ) {
-      ensureValidAcceleratorType();
+      // if the current preset is custom or minimum-required, do nothing.
     } else {
       if (
         allocatablePresetNames.includes(form.getFieldValue('allocationPreset'))
@@ -195,13 +195,12 @@ const ResourceAllocationFormItems: React.FC<
         updateResourceFieldsBasedOnPreset(autoSelectedPreset);
       } else {
         // if the current preset is not available in the current resource group, set to custom
-        ensureValidAcceleratorType();
         form.setFieldsValue({
           allocationPreset: 'custom',
         });
       }
     }
-
+    ensureValidAcceleratorType();
     form
       .validateFields(['resource'], {
         recursive: true,
