@@ -29,6 +29,8 @@ import VFolderSelect from './VFolderSelect';
 import VFolderTableFormItem from './VFolderTableFormItem';
 import { ServiceLauncherPageContentFragment$key } from './__generated__/ServiceLauncherPageContentFragment.graphql';
 import { ServiceLauncherPageContentModifyMutation } from './__generated__/ServiceLauncherPageContentModifyMutation.graphql';
+import { ServiceLauncherPageContent_UserInfoQuery } from './__generated__/ServiceLauncherPageContent_UserInfoQuery.graphql';
+import { ServiceLauncherPageContent_UserResourcePolicyQuery } from './__generated__/ServiceLauncherPageContent_UserResourcePolicyQuery.graphql';
 import { MinusOutlined } from '@ant-design/icons';
 import {
   App,
@@ -47,7 +49,7 @@ import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment, useMutation } from 'react-relay';
+import { useFragment, useLazyLoadQuery, useMutation } from 'react-relay';
 import { StringParam, useQueryParams } from 'use-query-params';
 
 const ServiceValidationView = React.lazy(
@@ -354,6 +356,41 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     },
   });
 
+  const { user } = useLazyLoadQuery<ServiceLauncherPageContent_UserInfoQuery>(
+    graphql`
+      query ServiceLauncherPageContent_UserInfoQuery(
+        $domain_name: String
+        $email: String
+      ) {
+        user(domain_name: $domain_name, email: $email) {
+          id
+          # https://github.com/lablup/backend.ai/pull/1354
+          resource_policy @since(version: "23.09.0")
+        }
+      }
+    `,
+    {
+      domain_name: useCurrentDomainValue(),
+      email: baiClient?.email,
+    },
+  );
+
+  const { user_resource_policy } =
+    useLazyLoadQuery<ServiceLauncherPageContent_UserResourcePolicyQuery>(
+      graphql`
+        query ServiceLauncherPageContent_UserResourcePolicyQuery(
+          $user_RP_name: String
+        ) {
+          user_resource_policy(name: $user_RP_name) @since(version: "23.09.6") {
+            max_session_count_per_model_session
+          }
+        }
+      `,
+      {
+        user_RP_name: user?.resource_policy,
+      },
+    );
+
   const [
     commitModifyEndpoint,
     // inInFlightCommitModifyEndpoint
@@ -565,7 +602,13 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           });
         }
       })
-      .catch((err: any) => {
+      .catch((err) => {
+        // Form has `scrollToFirstError` prop, but it doesn't work. So, we need to scroll manually.
+        err?.errorFields?.[0]?.name &&
+          form.scrollToField(err.errorFields[0].name, {
+            behavior: 'smooth',
+            block: 'center',
+          });
         // this catch function only for form validation error and unhandled error in `form.validateFields()..then()`.
         // It's not for error handling in mutation.
       });
@@ -595,7 +638,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         serviceName: endpoint?.name,
         resourceGroup: endpoint?.resource_group,
         allocationPreset: 'custom',
-        desiredRoutingCount: endpoint?.desired_session_count || 0,
+        desiredRoutingCount: endpoint?.desired_session_count || 1,
         // FIXME: memory doesn't applied to resource allocation
         resource: {
           cpu: parseInt(JSON.parse(endpoint?.resource_slots)?.cpu),
@@ -836,15 +879,25 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                     rules={[
                       {
                         required: true,
-                        min: 0,
-                        max: 10,
+                      },
+                      {
                         type: 'number',
+                        min: 0,
+                      },
+                      {
+                        type: 'number',
+                        max:
+                          user_resource_policy?.max_session_count_per_model_session ??
+                          0,
                       },
                     ]}
                   >
                     <InputNumberWithSlider
                       min={0}
-                      max={10}
+                      max={
+                        user_resource_policy?.max_session_count_per_model_session ??
+                        0
+                      }
                       inputNumberProps={{
                         //TODO: change unit based on resource limit
                         addonAfter: '#',
