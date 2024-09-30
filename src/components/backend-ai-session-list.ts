@@ -3707,8 +3707,41 @@ ${rowData.item[this.sessionNameField]}</pre
                   </div>
                 `
               : html``}
+            ${rowData.item.cuda_fgpu_slot
+              ? html`
+                  <div class="vertical start-justified layout">
+                    <div class="usage-items">
+                      GPU(mem)
+                      ${rowData.item.live_stat
+                        ? `${BackendAISessionList._prefixFormatWithoutTrailingZeros(
+                            BackendAISessionList.bytesToGiB(
+                              rowData.item.live_stat?.cuda_mem?.current,
+                              2,
+                            ),
+                            2,
+                          )} /
+                            ${BackendAISessionList._prefixFormatWithoutTrailingZeros(
+                              BackendAISessionList.bytesToGiB(
+                                rowData.item.live_stat?.cuda_mem?.capacity,
+                                2,
+                              ),
+                              2,
+                            )}`
+                        : `-`}
+                      GiB
+                    </div>
+                    <div class="horizontal start-justified center layout">
+                      <lablup-progress-bar
+                        class="usage"
+                        progress="${rowData.item.live_stat?.cuda_mem?.ratio}"
+                        description=""
+                      ></lablup-progress-bar>
+                    </div>
+                  </div>
+                `
+              : html``}
             ${rowData.item.rocm_gpu_slot &&
-            parseFloat(rowData.item.cuda_rocm_gpu_slot) > 0
+            parseFloat(rowData.item.rocm_gpu_slot) > 0
               ? html`
                   <div class="vertical start-justified layout">
                     <div class="usage-items">
@@ -3731,7 +3764,7 @@ ${rowData.item[this.sessionNameField]}</pre
                   </div>
                 `
               : html``}
-            ${rowData.item.cuda_fgpu_slot || rowData.item.rocm_gpu_slot
+            ${rowData.item.rocm_gpu_slot
               ? html`
                   <div class="vertical start-justified layout">
                     <div class="usage-items">
@@ -3739,14 +3772,14 @@ ${rowData.item[this.sessionNameField]}</pre
                       ${rowData.item.live_stat
                         ? `${BackendAISessionList._prefixFormatWithoutTrailingZeros(
                             BackendAISessionList.bytesToGiB(
-                              rowData.item.live_stat?.cuda_mem?.current,
+                              rowData.item.live_stat?.rocm_mem?.current,
                               2,
                             ),
                             2,
                           )} /
                           ${BackendAISessionList._prefixFormatWithoutTrailingZeros(
                             BackendAISessionList.bytesToGiB(
-                              rowData.item.live_stat?.cuda_mem?.capacity,
+                              rowData.item.live_stat?.rocm_mem?.capacity,
                               2,
                             ),
                             2,
@@ -3757,7 +3790,7 @@ ${rowData.item[this.sessionNameField]}</pre
                     <div class="horizontal start-justified center layout">
                       <lablup-progress-bar
                         class="usage"
-                        progress="${rowData.item.live_stat?.cuda_mem?.ratio}"
+                        progress="${rowData.item.live_stat?.rocm_mem?.ratio}"
                         description=""
                       ></lablup-progress-bar>
                     </div>
