@@ -32,7 +32,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const [resourceSlotsDetails] = useResourceSlotsDetails();
+  const { mergedResourceSlots } = useResourceSlotsDetails();
   const agent = useFragment(
     graphql`
       fragment AgentDetailModalFragment on Agent {
@@ -64,7 +64,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
             {parsedLiveStat?.devices?.cpu_util ? (
               <Flex direction="column" gap="xxs" align="stretch">
                 <Typography.Title level={5} style={{ marginTop: 0 }}>
-                  {resourceSlotsDetails?.cpu?.human_readable_name}
+                  {mergedResourceSlots?.cpu?.human_readable_name}
                 </Typography.Title>
                 {_.map(parsedLiveStat?.devices?.cpu_util, (value, key) => (
                   <Flex justify="between">
@@ -73,7 +73,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                       type="secondary"
                       style={{ flex: 0.5 }}
                     >
-                      {resourceSlotsDetails?.cpu?.human_readable_name}
+                      {mergedResourceSlots?.cpu?.human_readable_name}
                       {key}
                     </Typography.Text>
                     <BAIProgressWithLabel
@@ -89,7 +89,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
             {parsedAvailableSlots?.mem ? (
               <Flex direction="column" gap="xxs" align="stretch">
                 <Typography.Title level={5} style={{ marginTop: 0 }}>
-                  {resourceSlotsDetails?.mem?.human_readable_name}
+                  {mergedResourceSlots?.mem?.human_readable_name}
                 </Typography.Title>
                 <BAIProgressWithLabel
                   percent={
@@ -145,7 +145,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                 <Col xs={24} sm={12}>
                   <Flex direction="column" gap="xxs" align="stretch">
                     <Typography.Title level={5} style={{ marginTop: 0 }}>
-                      {resourceSlotsDetails?.[deviceName]?.human_readable_name}{' '}
+                      {mergedResourceSlots?.[deviceName]?.human_readable_name}{' '}
                       {t('session.Utilization')}
                     </Typography.Title>
                     {_.map(
@@ -158,7 +158,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                             style={{ flex: 0.5 }}
                           >
                             {
-                              resourceSlotsDetails?.[deviceName]
+                              mergedResourceSlots?.[deviceName]
                                 ?.human_readable_name
                             }
                             {index}
@@ -179,7 +179,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                 <Col xs={24} sm={12}>
                   <Flex direction="column" gap="xxs" align="stretch">
                     <Typography.Title level={5} style={{ marginTop: 0 }}>
-                      {resourceSlotsDetails?.[deviceName]?.human_readable_name}{' '}
+                      {mergedResourceSlots?.[deviceName]?.human_readable_name}{' '}
                       {t('session.launcher.Memory')}
                     </Typography.Title>
                     {_.map(
@@ -192,7 +192,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                             style={{ flex: 0.5 }}
                           >
                             {
-                              resourceSlotsDetails?.[deviceName]
+                              mergedResourceSlots?.[deviceName]
                                 ?.human_readable_name
                             }
                             {index}

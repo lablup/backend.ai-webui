@@ -65,7 +65,7 @@ const AgentList: React.FC<AgentListProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
-  const [resourceSlotsDetails] = useResourceSlotsDetails();
+  const { mergedResourceSlots } = useResourceSlotsDetails();
   const [currentAgentInfo, setCurrentAgentInfo] =
     useState<AgentDetailModalFragment$key | null>();
   const [currentSettingAgent, setCurrentSettingAgent] =
@@ -303,7 +303,7 @@ const AgentList: React.FC<AgentListProps> = ({
                           type="secondary"
                           style={{ fontSize: token.sizeXS }}
                         >
-                          {resourceSlotsDetails?.cpu?.display_unit}
+                          {mergedResourceSlots?.cpu?.display_unit}
                         </Typography.Text>
                       </Flex>
                       <BAIProgressWithLabel
@@ -392,7 +392,7 @@ const AgentList: React.FC<AgentListProps> = ({
                           type="secondary"
                           style={{ fontSize: token.sizeXS }}
                         >
-                          {resourceSlotsDetails?.[key]?.display_unit}
+                          {mergedResourceSlots?.[key]?.display_unit}
                         </Typography.Text>
                       </Flex>
                       <BAIProgressWithLabel
@@ -475,7 +475,7 @@ const AgentList: React.FC<AgentListProps> = ({
             <Flex direction="column" gap="xxs">
               <Flex justify="between" style={{ minWidth: 200 }}>
                 <Typography.Text>
-                  {resourceSlotsDetails?.cpu?.human_readable_name}
+                  {mergedResourceSlots?.cpu?.human_readable_name}
                 </Typography.Text>
                 <BAIProgressWithLabel
                   percent={liveStat.cpu_util.ratio * 100}
@@ -490,7 +490,7 @@ const AgentList: React.FC<AgentListProps> = ({
               </Flex>
               <Flex justify="between" style={{ minWidth: 200 }}>
                 <Typography.Text>
-                  {resourceSlotsDetails?.mem?.human_readable_name}
+                  {mergedResourceSlots?.mem?.human_readable_name}
                 </Typography.Text>
                 <BAIProgressWithLabel
                   percent={liveStat.mem_util.ratio}
@@ -518,10 +518,7 @@ const AgentList: React.FC<AgentListProps> = ({
                       gap="xxs"
                     >
                       <Typography.Text>
-                        {
-                          resourceSlotsDetails?.[deviceName]
-                            ?.human_readable_name
-                        }
+                        {mergedResourceSlots?.[deviceName]?.human_readable_name}
                         (util)
                       </Typography.Text>
                       <BAIProgressWithLabel
@@ -554,10 +551,7 @@ const AgentList: React.FC<AgentListProps> = ({
                       gap="xxs"
                     >
                       <Typography.Text>
-                        {
-                          resourceSlotsDetails?.[deviceName]
-                            ?.human_readable_name
-                        }
+                        {mergedResourceSlots?.[deviceName]?.human_readable_name}
                         (mem)
                       </Typography.Text>
                       <BAIProgressWithLabel
