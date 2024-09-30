@@ -6,7 +6,7 @@ import {
   useTanQuery,
 } from './reactQueryAlias';
 import _ from 'lodash';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export const baseResourceSlotNames = ['cpu', 'mem'] as const;
 export type BaseResourceSlotName = (typeof baseResourceSlotNames)[number];
