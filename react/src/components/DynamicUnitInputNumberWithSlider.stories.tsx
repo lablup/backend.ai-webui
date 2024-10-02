@@ -71,3 +71,46 @@ export const AllowOlnyGiB: Story = {
     units: ['m', 'g'],
   },
 };
+
+export const GreaterMinThanMax: Story = {
+  name: 'Greater min than max',
+  args: {
+    min: '3g',
+    max: '1g',
+    units: ['m', 'g'],
+  },
+};
+
+export const ExtraMarks: Story = {
+  name: 'Extra marks',
+  args: {
+    min: '0g',
+    max: '1g',
+    units: ['m', 'g'],
+    extraMarks: {
+      0.5: {
+        style: {
+          color: 'red',
+        },
+        label: '0.5g',
+      },
+    },
+  },
+};
+
+export const ExtraMarksWithGreaterMinThanMax: Story = {
+  name: 'Extra marks with greater min than max',
+  args: {
+    min: '3g',
+    max: '1g',
+    units: ['m', 'g'],
+    extraMarks: {
+      0.5: {
+        style: {
+          color: 'red',
+        },
+        label: '0.5g',
+      },
+    },
+  },
+};
