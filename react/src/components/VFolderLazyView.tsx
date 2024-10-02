@@ -6,6 +6,7 @@ import { VFolder } from './VFolderSelect';
 import { FolderOutlined } from '@ant-design/icons';
 import { Typography } from 'antd';
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 
 interface VFolderLazyViewProps {
   uuid: string;
@@ -17,6 +18,7 @@ const VFolderLazyView: React.FC<VFolderLazyViewProps> = ({
 }) => {
   const currentProject = useCurrentProjectValue();
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
+  const location = useLocation();
 
   const webuiNavigate = useWebUINavigate();
   const { data: vFolders } = useSuspenseTanQuery({
@@ -43,7 +45,7 @@ const VFolderLazyView: React.FC<VFolderLazyViewProps> = ({
       <Typography.Link
         onClick={() => {
           webuiNavigate({
-            pathname: '/data',
+            pathname: location.pathname,
             search: `?folder=${vFolder.id}`,
           });
         }}
