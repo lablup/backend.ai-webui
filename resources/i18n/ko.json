@@ -168,7 +168,7 @@
       "TotalAllocation": "총 자원 할당량",
       "SetSessionOwner": "세션 소유자 설정",
       "OwnerAccessKey": "소유자 접근키",
-      "OwnerGroup": "소유자 그룹",
+      "OwnerGroup": "소유자 프로젝트",
       "OwnerResourceGroup": "소유자 자원 그룹",
       "LaunchSessionWithAccessKey": "지정한 키로 세션 시작",
       "OwnerEmail": "사용자 E-Mail",

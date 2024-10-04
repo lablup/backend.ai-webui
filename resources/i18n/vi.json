@@ -152,7 +152,7 @@
       "TotalAllocation": "Tổng phân bổ",
       "SetSessionOwner": "Chủ sở hữu phiên",
       "OwnerAccessKey": "Khóa truy cập của chủ sở hữu",
-      "OwnerGroup": "Nhóm chủ sở hữu",
+      "OwnerGroup": "Dự án chủ sở hữu",
       "OwnerResourceGroup": "Nhóm tài nguyên chủ sở hữu",
       "LaunchSessionWithAccessKey": "Khởi chạy phiên thay mặt cho khóa truy cập",
       "OwnerEmail": "Email của chủ sở hữu",

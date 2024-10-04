@@ -152,7 +152,7 @@
       "TotalAllocation": "Toplam Tahsis",
       "SetSessionOwner": "Oturum sahibi",
       "OwnerAccessKey": "Sahip erişim anahtarı",
-      "OwnerGroup": "Sahip grubu",
+      "OwnerGroup": "Proje sahibi",
       "OwnerResourceGroup": "Sahip kaynak grubu",
       "LaunchSessionWithAccessKey": "Erişim anahtarı adına oturumu başlat",
       "OwnerEmail": "Sahip E-postası",

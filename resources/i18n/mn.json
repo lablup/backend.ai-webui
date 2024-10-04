@@ -152,7 +152,7 @@
       "TotalAllocation": "Нийт хуваарилалт",
       "SetSessionOwner": "Session эзэмшигч",
       "OwnerAccessKey": "Эзэмшигчийн нэвтрэх түлхүүр",
-      "OwnerGroup": "Эзэмшигчийн бүлэг",
+      "OwnerGroup": "Эзэмшигч төсөл",
       "OwnerResourceGroup": "Эзэмшигчийн нөөцийн бүлэг",
       "LaunchSessionWithAccessKey": "Хандалтын (access) түлхүүрээр session эхлүүлэх",
       "OwnerEmail": "Эзэмшигчийн имэйл",

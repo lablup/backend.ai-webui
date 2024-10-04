@@ -1217,7 +1217,7 @@
       "OpenMPOptimization": "Optimización OpenMP/OpenBLAS",
       "OwnerAccessKey": "Clave de acceso del propietario",
       "OwnerEmail": "Correo electrónico del propietario",
-      "OwnerGroup": "Grupo de propietarios",
+      "OwnerGroup": "Proyecto propietario",
       "OwnerResourceGroup": "Grupo de recursos propietario",
       "PleaseWaitInitializing": "Por favor, espere mientras se inicializa...",
       "PortsTitleWithRange": "Valor del puerto (entre 1024 ~ 65535)",

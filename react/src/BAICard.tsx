@@ -3,7 +3,7 @@ import { Button, Card, CardProps, theme } from 'antd';
 import _ from 'lodash';
 import React, { ReactNode } from 'react';
 
-interface BAICardProps extends CardProps {
+export interface BAICardProps extends CardProps {
   status?: 'success' | 'error' | 'warning' | 'default';
   extraButtonTitle?: string | ReactNode;
   onClickExtraButton?: () => void;

@@ -1214,7 +1214,7 @@
       "OpenMPOptimization": "OpenMP/OpenBLAS-optimointi",
       "OwnerAccessKey": "Omistajan käyttöoikeusavain",
       "OwnerEmail": "Omistajan sähköpostiosoite",
-      "OwnerGroup": "Omistajaryhmä",
+      "OwnerGroup": "Omistajan hanke",
       "OwnerResourceGroup": "Omistajan resurssiryhmä",
       "PleaseWaitInitializing": "Odota alustuksen aikana...",
       "PortsTitleWithRange": "Portin arvo (välillä 1024 ~ 65535)",

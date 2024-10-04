@@ -26,6 +26,10 @@ import SessionLauncherValidationTour from '../components/SessionLauncherErrorTou
 import SessionNameFormItem, {
   SessionNameFormItemValue,
 } from '../components/SessionNameFormItem';
+import SessionOwnerSetterCard, {
+  SessionOwnerSetterFormValues,
+} from '../components/SessionOwnerSetterCard';
+import { SessionOwnerSetterPreviewCard } from '../components/SessionOwnerSetterCard';
 import SourceCodeViewer from '../components/SourceCodeViewer';
 import VFolderTableFormItem, {
   VFolderTableFormValues,
@@ -40,6 +44,7 @@ import {
   useUpdatableState,
   useWebUINavigate,
 } from '../hooks';
+import { useCurrentUserRole } from '../hooks/backendai';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useThemeMode } from '../hooks/useThemeMode';
@@ -150,7 +155,8 @@ export type SessionLauncherFormValue = SessionLauncherValue &
   ImageEnvironmentFormInput &
   ResourceAllocationFormValue &
   VFolderTableFormValues &
-  PortSelectFormValues;
+  PortSelectFormValues &
+  SessionOwnerSetterFormValues;
 
 type SessionMode = 'normal' | 'inference' | 'import';
 
@@ -170,6 +176,7 @@ const SessionLauncherPage = () => {
 
   const mainContentDivRef = useAtomValue(mainContentDivRefState);
   const baiClient = useSuspendedBackendaiClient();
+  const currentUserRole = useCurrentUserRole();
 
   const [isStartingSession, setIsStartingSession] = useState(false);
   const INITIAL_FORM_VALUES: SessionLauncherValue = useMemo(
@@ -237,6 +244,7 @@ const SessionLauncherPage = () => {
             ['environments.image'],
             ['environments.customizedTag'],
             ['autoMountedFolderNames'],
+            ['owner'],
           ),
         },
         'replaceIn',
@@ -422,9 +430,18 @@ const SessionLauncherPage = () => {
               : {}),
 
             // TODO: support change owner
-            group_name: currentProject.name,
-            domain: baiClient._config.domainName,
-            scaling_group: values.resourceGroup,
+            ...(values.owner?.enabled
+              ? {
+                  group_name: values.owner.project,
+                  domain: values.owner.domainName,
+                  scaling_group: values.owner.project,
+                  owner_access_key: values.owner.accesskey,
+                }
+              : {
+                  group_name: currentProject.name,
+                  domain: baiClient._config.domainName,
+                  scaling_group: values.resourceGroup,
+                }),
             ///////////////////////////
 
             cluster_mode: values.cluster_mode,
@@ -906,6 +923,16 @@ const SessionLauncherPage = () => {
                   </Card>
                 )}
 
+                {(currentUserRole === 'admin' ||
+                  currentUserRole === 'superadmin') && (
+                  <SessionOwnerSetterCard
+                    style={{
+                      display:
+                        currentStepKey === 'sessionType' ? 'block' : 'none',
+                    }}
+                  />
+                )}
+
                 {sessionType === 'inference' && (
                   <Card title="Inference Mode Configuration">
                     <Form.Item
@@ -1194,6 +1221,14 @@ const SessionLauncherPage = () => {
                         )}
                       </Descriptions>
                     </BAICard>
+                    <SessionOwnerSetterPreviewCard
+                      onClickExtraButton={() => {
+                        setCurrentStep(
+                          // @ts-ignore
+                          steps.findIndex((v) => v.key === 'sessionType'),
+                        );
+                      }}
+                    />
                     <BAICard
                       title={t('session.launcher.Environments')}
                       size="small"
@@ -1734,13 +1769,15 @@ const SessionLauncherPage = () => {
         }}
       /> */}
       {currentStep === steps.length - 1 ? (
-        <SessionLauncherValidationTour
-          open={validationTourOpen}
-          onClose={() => {
-            setValidationTourOpen(false);
-          }}
-          scrollIntoViewOptions
-        />
+        <ErrorBoundary fallback={null}>
+          <SessionLauncherValidationTour
+            open={validationTourOpen}
+            onClose={() => {
+              setValidationTourOpen(false);
+            }}
+            scrollIntoViewOptions
+          />
+        </ErrorBoundary>
       ) : undefined}
     </Flex>
   );

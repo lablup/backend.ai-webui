@@ -152,7 +152,7 @@
       "TotalAllocation": "Συνολική κατανομή",
       "SetSessionOwner": "Κάτοχος συνεδρίας",
       "OwnerAccessKey": "Κλειδί πρόσβασης κατόχου",
-      "OwnerGroup": "Ομάδα ιδιοκτητών",
+      "OwnerGroup": "Έργο ιδιοκτήτη",
       "OwnerResourceGroup": "Ομάδα πόρων κατόχου",
       "LaunchSessionWithAccessKey": "Εκκίνηση περιόδου λειτουργίας εκ μέρους του κλειδιού πρόσβασης",
       "OwnerEmail": "Ηλεκτρονικό ταχυδρομείο κατόχου",

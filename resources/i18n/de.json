@@ -152,7 +152,7 @@
       "TotalAllocation": "Gesamtzuweisung",
       "SetSessionOwner": "Sitzungsinhaber",
       "OwnerAccessKey": "Zugriffsschlüssel für den Besitzer",
-      "OwnerGroup": "Eigentümergruppe",
+      "OwnerGroup": "Projekt des Eigentümers",
       "OwnerResourceGroup": "Eigentümerressourcengruppe Owner",
       "LaunchSessionWithAccessKey": "Sitzung im Namen des Zugriffsschlüssels starten",
       "OwnerEmail": "Eigentümer-E-Mail",

@@ -152,7 +152,7 @@
       "TotalAllocation": "Jumlah Peruntukan",
       "SetSessionOwner": "Pemilik sesi",
       "OwnerAccessKey": "Kunci akses pemilik",
-      "OwnerGroup": "Kumpulan pemilik",
+      "OwnerGroup": "Projek pemilik",
       "OwnerResourceGroup": "Kumpulan sumber pemilik",
       "LaunchSessionWithAccessKey": "Lancarkan sesi atas nama kunci akses",
       "OwnerEmail": "E-mel Pemilik",

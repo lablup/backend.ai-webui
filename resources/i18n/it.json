@@ -152,7 +152,7 @@
       "TotalAllocation": "Allocazione totale",
       "SetSessionOwner": "Titolare della sessione Session",
       "OwnerAccessKey": "Chiave di accesso del proprietario",
-      "OwnerGroup": "Gruppo di proprietari",
+      "OwnerGroup": "Progetto del proprietario",
       "OwnerResourceGroup": "Gruppo di risorse proprietario",
       "LaunchSessionWithAccessKey": "Avvia sessione per conto della chiave di accesso",
       "OwnerEmail": "Email del proprietario",

@@ -177,7 +177,7 @@
       "TotalAllocation": "การจัดสรรทั้งหมด",
       "SetSessionOwner": "เจ้าของเซสชัน",
       "OwnerAccessKey": "คีย์การเข้าถึงของเจ้าของ",
-      "OwnerGroup": "กลุ่มของเจ้าของ",
+      "OwnerGroup": "เจ้าของโครงการ",
       "OwnerResourceGroup": "กลุ่มทรัพยากรของเจ้าของ",
       "LaunchSessionWithAccessKey": "เปิดเซสชันในนามของคีย์การเข้าถึง",
       "OwnerEmail": "อีเมลเจ้าของ",

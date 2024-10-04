@@ -152,7 +152,7 @@
       "TotalAllocation": "总分配",
       "SetSessionOwner": "会话所有者",
       "OwnerAccessKey": "所有者访问密钥",
-      "OwnerGroup": "所有者组",
+      "OwnerGroup": "业主项目",
       "OwnerResourceGroup": "所有者资源组",
       "LaunchSessionWithAccessKey": "代表访问密钥启动会话",
       "OwnerEmail": "所有者电子邮件",

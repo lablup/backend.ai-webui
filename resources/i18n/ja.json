@@ -152,7 +152,7 @@
       "TotalAllocation": "総割り当て",
       "SetSessionOwner": "セッションオーナー",
       "OwnerAccessKey": "所有者アクセスキー",
-      "OwnerGroup": "オーナーグループ",
+      "OwnerGroup": "オーナー・プロジェクト",
       "OwnerResourceGroup": "オーナーリソースグループ",
       "LaunchSessionWithAccessKey": "アクセスキーに代わってセッションを起動します",
       "OwnerEmail": "所有者の電子メール",

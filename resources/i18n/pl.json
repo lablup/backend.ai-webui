@@ -152,7 +152,7 @@
       "TotalAllocation": "Całkowity przydział",
       "SetSessionOwner": "Właściciel sesji",
       "OwnerAccessKey": "Klucz dostępu właściciela",
-      "OwnerGroup": "Grupa właścicieli",
+      "OwnerGroup": "Projekt właściciela",
       "OwnerResourceGroup": "Grupa zasobów właściciela",
       "LaunchSessionWithAccessKey": "Uruchom sesję w imieniu klucza dostępu",
       "OwnerEmail": "E-mail właściciela",

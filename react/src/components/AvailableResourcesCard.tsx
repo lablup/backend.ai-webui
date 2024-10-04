@@ -3,7 +3,7 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import Flex from './Flex';
-import ResourceGroupSelect from './ResourceGroupSelect';
+import ResourceGroupSelectForCurrentProject from './ResourceGroupSelectForCurrentProject';
 import { QuestionCircleOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Button, Card, Tooltip } from 'antd';
 import React, { useDeferredValue, useState } from 'react';
@@ -23,11 +23,9 @@ const AvailableResourcesCard = () => {
     <Card
       title={
         <Flex direction="row" gap={'xs'}>
-          <ResourceGroupSelect
+          <ResourceGroupSelectForCurrentProject
             showSearch
-            autoSelectDefault
             style={{ minWidth: 100 }}
-            value={selectedResourceGroup}
             onChange={(v) => setSelectedResourceGroup(v)}
             loading={selectedResourceGroup !== deferredSelectedResourceGroup}
             popupMatchSelectWidth={false}

@@ -177,7 +177,7 @@
       "TotalAllocation": "Total Allocation",
       "SetSessionOwner": "Session owner",
       "OwnerAccessKey": "Owner access key",
-      "OwnerGroup": "Owner group",
+      "OwnerGroup": "Owner project",
       "OwnerResourceGroup": "Owner resource group",
       "LaunchSessionWithAccessKey": "Launch session on behalf of the access key",
       "OwnerEmail": "Owner Email",
