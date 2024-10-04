@@ -975,7 +975,9 @@
     "DescThemeMode": "Sesuaikan rupa Backend.AI WebUI pada peranti anda.",
     "ThemeMode": "Mod Tema",
     "BootstrapScriptEmpty": "Skripnya kosong. \nSila masukkan skrip.",
-    "BootstrapScriptDeleted": "Skrip Bootstrap dipadamkan"
+    "BootstrapScriptDeleted": "Skrip Bootstrap dipadamkan",
+    "ClassicSessionLauncher": "Pelancar Sesi Classic",
+    "DescClassicSessionLauncher": "Gunakan pelancar sesi Classic dan bukannya pelancar sesi NEO. \nPelancar sesi Classic mungkin tidak mempunyai ciri terkini."
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Penggunaan Terminal Web Lanjutan: Salin kandungan terminal",

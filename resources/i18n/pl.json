@@ -976,7 +976,9 @@
     "DescThemeMode": "Dostosuj wygląd Backend.AI WebUI na swoim urządzeniu.",
     "ThemeMode": "Tryb tematyczny",
     "BootstrapScriptEmpty": "Skrypt jest pusty. \nProszę wprowadzić skrypt.",
-    "BootstrapScriptDeleted": "Usunięto skrypt Bootstrap"
+    "BootstrapScriptDeleted": "Usunięto skrypt Bootstrap",
+    "ClassicSessionLauncher": "Classic program uruchamiający sesję",
+    "DescClassicSessionLauncher": "Użyj Classic programu uruchamiającego sesję zamiast programu uruchamiającego sesję NEO. \nClassic program uruchamiający sesję może nie mieć najnowszych funkcji."
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Zaawansowane korzystanie z terminala internetowego: Skopiuj zawartość terminala",

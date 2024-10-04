@@ -1103,7 +1103,9 @@
     "DarkMode": "Dark Mode",
     "DescThemeMode": "Customize how Backend.AI WebUI looks on your device.",
     "BootstrapScriptEmpty": "The script is empty. \nPlease enter the script.",
-    "BootstrapScriptDeleted": "Bootstrap script deleted"
+    "BootstrapScriptDeleted": "Bootstrap script deleted",
+    "ClassicSessionLauncher": "Classic Session Launcher",
+    "DescClassicSessionLauncher": "Use the Classic session launcher instead of the NEO session launcher. Classic session launcher may not have the latest features."
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Advanced Web Terminal Usage: Copy terminal contents",

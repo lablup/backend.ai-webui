@@ -1568,7 +1568,9 @@
     "DescThemeMode": "Mukauta miltä Backend.AI WebUI näyttää laitteessasi.",
     "ThemeMode": "Teematila",
     "BootstrapScriptEmpty": "Käsikirjoitus on tyhjä. \nAnna käsikirjoitus.",
-    "BootstrapScriptDeleted": "Bootstrap-skripti poistettu"
+    "BootstrapScriptDeleted": "Bootstrap-skripti poistettu",
+    "ClassicSessionLauncher": "Classic istunnon käynnistysohjelma",
+    "DescClassicSessionLauncher": "Käytä Classic-istunnonkäynnistysohjelmaa NEO-istunnonkäynnistimen sijaan. \nClassic istunnonkäynnistysohjelmassa ei välttämättä ole uusimpia ominaisuuksia."
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Edistynyt verkkopäätteen käyttö: Kopioi terminaalin sisältö",

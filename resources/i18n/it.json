@@ -977,7 +977,9 @@
     "DescThemeMode": "Personalizza l'aspetto di Backend.AI WebUI sul tuo dispositivo.",
     "ThemeMode": "Modalità tema",
     "BootstrapScriptEmpty": "La sceneggiatura è vuota. \nInserisci la sceneggiatura.",
-    "BootstrapScriptDeleted": "Script di bootstrap eliminato"
+    "BootstrapScriptDeleted": "Script di bootstrap eliminato",
+    "ClassicSessionLauncher": "Avvio sessioni Classic",
+    "DescClassicSessionLauncher": "Utilizza l'avvio della sessione Classic anziché l'avvio della sessione NEO. \nIl launcher della sessione Classic potrebbe non avere le funzionalità più recenti."
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Utilizzo avanzato del terminale Web: copia il contenuto del terminale",

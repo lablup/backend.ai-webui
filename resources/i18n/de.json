@@ -976,7 +976,9 @@
     "DescThemeMode": "Passen Sie an, wie die Backend.AI-WebUI auf Ihrem Gerät aussieht.",
     "ThemeMode": "Themenmodus",
     "BootstrapScriptEmpty": "Das Skript ist leer. \nBitte geben Sie das Skript ein.",
-    "BootstrapScriptDeleted": "Bootstrap-Skript gelöscht"
+    "BootstrapScriptDeleted": "Bootstrap-Skript gelöscht",
+    "ClassicSessionLauncher": "Classic Sitzungsstarter",
+    "DescClassicSessionLauncher": "Verwenden Sie den Classic-Sitzungsstarter anstelle des NEO-Sitzungsstarters. \nDer Classic Sitzungsstarter verfügt möglicherweise nicht über die neuesten Funktionen."
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Erweiterte Web-Terminal-Nutzung: Terminal-Inhalte kopieren",
