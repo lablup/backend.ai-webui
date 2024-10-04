@@ -5,7 +5,6 @@ import { atomFamily } from 'jotai/utils';
 
 interface UserSettings {
   has_opened_tour_neo_session_validation?: boolean;
-  use_2409_session_launcher?: boolean;
   desktop_notification?: boolean;
   compact_sidebar?: boolean;
   preserve_login?: boolean;
@@ -17,6 +16,7 @@ interface UserSettings {
   auto_logout?: boolean;
   summary_items?: Array<Omit<SummaryItem, 'data'>>;
   selected_language?: string;
+  classic_session_launcher?: boolean;
 }
 
 interface GeneralSettings {

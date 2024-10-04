@@ -152,7 +152,7 @@
       "TotalAllocation": "総割り当て",
       "SetSessionOwner": "セッションオーナー",
       "OwnerAccessKey": "所有者アクセスキー",
-      "OwnerGroup": "オーナーグループ",
+      "OwnerGroup": "オーナー・プロジェクト",
       "OwnerResourceGroup": "オーナーリソースグループ",
       "LaunchSessionWithAccessKey": "アクセスキーに代わってセッションを起動します",
       "OwnerEmail": "所有者の電子メール",
@@ -976,7 +976,9 @@
     "DescThemeMode": "Backend.AI WebUI がデバイス上でどのように見えるかをカスタマイズします。",
     "ThemeMode": "テーマモード",
     "BootstrapScriptEmpty": "スクリプトが空です。\nスクリプトを入力してください。",
-    "BootstrapScriptDeleted": "ブートストラップ スクリプトが削除されました"
+    "BootstrapScriptDeleted": "ブートストラップ スクリプトが削除されました",
+    "ClassicSessionLauncher": "Classic セッションランチャー",
+    "DescClassicSessionLauncher": "NEO セッション ランチャーの代わりに Classic セッション ランチャーを使用します。\nClassic セッション ランチャーには最新の機能が含まれていない可能性があります。"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "高度なWeb端末の使用法：端末の内容をコピーする",

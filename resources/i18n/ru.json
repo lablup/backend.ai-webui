@@ -152,7 +152,7 @@
       "TotalAllocation": "Итого распределено",
       "SetSessionOwner": "Владелец сеанса",
       "OwnerAccessKey": "Ключ доступа владельца",
-      "OwnerGroup": "Группа владельцев",
+      "OwnerGroup": "Проект владельца",
       "OwnerResourceGroup": "Группа ресурсов владельца",
       "LaunchSessionWithAccessKey": "Запускаем сессию от имени ключа доступа",
       "OwnerEmail": "Электронная почта владельца",

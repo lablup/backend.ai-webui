@@ -152,7 +152,7 @@
       "TotalAllocation": "Alocação Total",
       "SetSessionOwner": "Proprietário da sessão",
       "OwnerAccessKey": "Chave de acesso do proprietário",
-      "OwnerGroup": "Grupo proprietário",
+      "OwnerGroup": "Projeto do proprietário",
       "OwnerResourceGroup": "Grupo de recursos do proprietário",
       "LaunchSessionWithAccessKey": "Inicie a sessão em nome da chave de acesso",
       "OwnerEmail": "Email do proprietário",
@@ -976,7 +976,9 @@
     "DescThemeMode": "Personalize a aparência do Backend.AI WebUI em seu dispositivo.",
     "ThemeMode": "Modo Tema",
     "BootstrapScriptEmpty": "O script está vazio. \nPor favor insira o roteiro.",
-    "BootstrapScriptDeleted": "Script de inicialização excluído"
+    "BootstrapScriptDeleted": "Script de inicialização excluído",
+    "ClassicSessionLauncher": "Lançador de sessão Classic",
+    "DescClassicSessionLauncher": "Use o iniciador de sessão Classic em vez do iniciador de sessão NEO. \nO iniciador de sessão Classic pode não ter os recursos mais recentes."
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Uso avançado do terminal da Web: Copiar o conteúdo do terminal",

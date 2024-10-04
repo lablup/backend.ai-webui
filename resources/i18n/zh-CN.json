@@ -152,7 +152,7 @@
       "TotalAllocation": "总分配",
       "SetSessionOwner": "会话所有者",
       "OwnerAccessKey": "所有者访问密钥",
-      "OwnerGroup": "所有者组",
+      "OwnerGroup": "业主项目",
       "OwnerResourceGroup": "所有者资源组",
       "LaunchSessionWithAccessKey": "代表访问密钥启动会话",
       "OwnerEmail": "所有者电子邮件",
@@ -976,7 +976,9 @@
     "DescThemeMode": "自定义 Backend.AI WebUI 在您设备上的外观。",
     "ThemeMode": "主题模式",
     "BootstrapScriptEmpty": "脚本是空的。\n请输入脚本。",
-    "BootstrapScriptDeleted": "引导脚本已删除"
+    "BootstrapScriptDeleted": "引导脚本已删除",
+    "ClassicSessionLauncher": "Classic会话启动器",
+    "DescClassicSessionLauncher": "使用 Classic 会话启动器而不是 NEO 会话启动器。 \nClassic 会话启动器可能不具有最新功能。"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "高级 Web 终端使用：复制终端内容",

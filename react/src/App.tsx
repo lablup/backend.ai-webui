@@ -7,7 +7,7 @@ import {
 import Flex from './components/Flex';
 import LocationStateBreadCrumb from './components/LocationStateBreadCrumb';
 import MainLayout from './components/MainLayout/MainLayout';
-import { useSuspendedBackendaiClient, useWebUINavigate } from './hooks';
+import { useSuspendedBackendaiClient } from './hooks';
 import { useBAISettingUserState } from './hooks/useBAISetting';
 import Page401 from './pages/Page401';
 import Page404 from './pages/Page404';
@@ -38,9 +38,6 @@ const UserSettingsPage = React.lazy(() => import('./pages/UserSettingsPage'));
 const SessionListPage = React.lazy(() => import('./pages/SessionListPage'));
 const SessionLauncherPage = React.lazy(
   () => import('./pages/SessionLauncherPage'),
-);
-const NeoSessionLauncherSwitchAlert = React.lazy(
-  () => import('./components/NeoSessionLauncherSwitchAlert'),
 );
 const ResourcePolicyPage = React.lazy(
   () => import('./pages/ResourcePolicyPage'),
@@ -142,15 +139,6 @@ const router = createBrowserRouter([
       {
         path: '/job',
         handle: { labelKey: 'webui.menu.Sessions' },
-        Component: () => {
-          const { token } = theme.useToken();
-          useSuspendedBackendaiClient(); // make sure the client is ready
-          return (
-            <NeoSessionLauncherSwitchAlert
-              style={{ marginBottom: token.paddingContentVerticalLG }}
-            />
-          );
-        },
       },
       {
         path: '/serving',
@@ -210,22 +198,18 @@ const router = createBrowserRouter([
         path: '/import',
         handle: { labelKey: 'webui.menu.Import&Run' },
         Component: () => {
-          const { token } = theme.useToken();
-          const [is2409Launcher] = useBAISettingUserState(
-            'use_2409_session_launcher',
+          const [classicSessionLauncher] = useBAISettingUserState(
+            'classic_session_launcher',
           );
           return (
             <BAIErrorBoundary>
-              <NeoSessionLauncherSwitchAlert
-                style={{ marginBottom: token.paddingContentVerticalLG }}
-              />
-              {is2409Launcher ? null : <ImportAndRunPage />}
+              {classicSessionLauncher ? null : <ImportAndRunPage />}
               {/* @ts-ignore */}
               <backend-ai-import-view
                 active
                 class="page"
                 name="import"
-                sessionLauncherType={is2409Launcher ? 'classic' : 'neo'}
+                sessionLauncherType={classicSessionLauncher ? 'classic' : 'neo'}
               />
             </BAIErrorBoundary>
           );
@@ -321,7 +305,6 @@ const router = createBrowserRouter([
         path: '/session/start',
         handle: { labelKey: 'session.launcher.StartNewSession' },
         Component: () => {
-          const webuiNavigate = useWebUINavigate();
           const { token } = theme.useToken();
           return (
             <Flex
@@ -330,13 +313,6 @@ const router = createBrowserRouter([
               align="stretch"
               style={{ paddingBottom: token.paddingContentVerticalLG }}
             >
-              <NeoSessionLauncherSwitchAlert
-                onChange={(value) => {
-                  if (value === 'current') {
-                    webuiNavigate('/job');
-                  }
-                }}
-              />
               <LocationStateBreadCrumb />
               <Suspense
                 fallback={

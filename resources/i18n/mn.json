@@ -152,7 +152,7 @@
       "TotalAllocation": "Нийт хуваарилалт",
       "SetSessionOwner": "Session эзэмшигч",
       "OwnerAccessKey": "Эзэмшигчийн нэвтрэх түлхүүр",
-      "OwnerGroup": "Эзэмшигчийн бүлэг",
+      "OwnerGroup": "Эзэмшигч төсөл",
       "OwnerResourceGroup": "Эзэмшигчийн нөөцийн бүлэг",
       "LaunchSessionWithAccessKey": "Хандалтын (access) түлхүүрээр session эхлүүлэх",
       "OwnerEmail": "Эзэмшигчийн имэйл",
@@ -977,7 +977,9 @@
     "DescThemeMode": "Backend.AI WebUI төхөөрөмж дээрээ хэрхэн харагдахыг тохируулна уу.",
     "ThemeMode": "Загварын горим",
     "BootstrapScriptEmpty": "Скрипт хоосон байна. \nСкриптийг оруулна уу.",
-    "BootstrapScriptDeleted": "Bootstrap скриптийг устгасан"
+    "BootstrapScriptDeleted": "Bootstrap скриптийг устгасан",
+    "ClassicSessionLauncher": "Classic сесс эхлүүлэгч",
+    "DescClassicSessionLauncher": "NEO сесс эхлүүлэгчийн оронд Classic сесс эхлүүлэгчийг ашиглана уу. \nClassic сесс эхлүүлэгч нь хамгийн сүүлийн үеийн функцгүй байж магадгүй."
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Дэвшилтэт вэб терминалын хэрэглээ: Терминалын агуулгыг хуулах",

@@ -152,7 +152,7 @@
       "TotalAllocation": "Toplam Tahsis",
       "SetSessionOwner": "Oturum sahibi",
       "OwnerAccessKey": "Sahip erişim anahtarı",
-      "OwnerGroup": "Sahip grubu",
+      "OwnerGroup": "Proje sahibi",
       "OwnerResourceGroup": "Sahip kaynak grubu",
       "LaunchSessionWithAccessKey": "Erişim anahtarı adına oturumu başlat",
       "OwnerEmail": "Sahip E-postası",
@@ -976,7 +976,9 @@
     "DescThemeMode": "Backend.AI WebUI'nin cihazınızda nasıl görüneceğini özelleştirin.",
     "ThemeMode": "Tema Modu",
     "BootstrapScriptEmpty": "Senaryo boş. \nLütfen betiği girin.",
-    "BootstrapScriptDeleted": "Bootstrap komut dosyası silindi"
+    "BootstrapScriptDeleted": "Bootstrap komut dosyası silindi",
+    "ClassicSessionLauncher": "Classic Oturum Başlatıcı",
+    "DescClassicSessionLauncher": "NEO oturum başlatıcısı yerine Classic oturum başlatıcıyı kullanın. \nClassic oturum başlatıcı en son özelliklere sahip olmayabilir."
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Gelişmiş Web Terminali Kullanımı: Terminal içeriğini kopyalayın",

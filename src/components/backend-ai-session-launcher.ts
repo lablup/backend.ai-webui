@@ -1479,7 +1479,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * */
   async _launchSessionDialog() {
     const shouldNeo = !globalThis.backendaioptions.get(
-      'use_2409_session_launcher',
+      'classic_session_launcher',
       false,
     );
 
