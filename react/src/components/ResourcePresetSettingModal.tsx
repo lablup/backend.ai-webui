@@ -301,7 +301,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
                   }),
                 ]}
               >
-                <DynamicUnitInputNumber />
+                <DynamicUnitInputNumber max="7.999p" />
               </Form.Item>
             </Col>
           </Row>
