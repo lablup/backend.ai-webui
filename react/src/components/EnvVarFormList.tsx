@@ -137,4 +137,40 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
   );
 };
 
+const sensitivePatterns = [
+  /AUTH/i,
+  /ACCESS/i,
+  /SECRET/i,
+  /_KEY/i,
+  /PASSWORD/i,
+  /PASSWD/i,
+  /PWD/i,
+  /TOKEN/i,
+  /PRIVATE/i,
+  /CREDENTIAL/i,
+  /JWT/i,
+  /KEYPAIR/i,
+  /CERTIFICATE/i,
+  /SSH/i,
+  /ENCRYPT/i,
+  /SIGNATURE/i,
+  /SALT/i,
+  /PIN/i,
+  /PASSPHRASE/i,
+  /OAUTH/i,
+];
+
+export function isSensitiveEnv(key: string) {
+  return sensitivePatterns.some((pattern) => pattern.test(key));
+}
+
+export function sanitizeSensitiveEnv(envs: EnvVarFormListValue[]) {
+  return envs.map((env) => {
+    if (env && isSensitiveEnv(env.variable)) {
+      return { ...env, value: '' };
+    }
+    return env;
+  });
+}
+
 export default EnvVarFormList;

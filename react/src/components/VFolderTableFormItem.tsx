@@ -19,6 +19,7 @@ interface VFolderTableFormItemProps extends Omit<FormItemProps, 'name'> {
 export interface VFolderTableFormValues {
   mounts: string[];
   vfoldersAliasMap: AliasMap;
+  autoMountedFolderNames?: string[];
 }
 
 const VFolderTableFormItem: React.FC<VFolderTableFormItemProps> = ({
