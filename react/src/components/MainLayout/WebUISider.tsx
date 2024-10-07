@@ -332,6 +332,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           // TODO: After 'SessionListPage' is completed and used as the main page, remove this code
           //       and change 'job' key to 'session'
           location.pathname.split('/')[1] === 'session' ? 'job' : '',
+          location.pathname.split('/')[1] === 'service' ? 'serving' : '',
         ]}
         items={
           // TODO: add plugin menu

@@ -31,6 +31,18 @@ const VFolderTableFormItem: React.FC<VFolderTableFormItemProps> = ({
   const form = Form.useFormInstance();
   const { t } = useTranslation();
   Form.useWatch('vfoldersAliasMap', form);
+
+  // const result = _.reduce(
+  //   form.getFieldValue('vfoldersAliasMap'),
+  //   (acc, v, k) => {
+  //     if (v) { // alias 값이 존재하는 경우에만 처리
+  //       acc.push({ id: null, name: k, alias: v });
+  //     }
+  //     return acc;
+  //   },
+  //   []
+  // );
+
   return (
     <>
       <Form.Item
@@ -39,14 +51,11 @@ const VFolderTableFormItem: React.FC<VFolderTableFormItemProps> = ({
         name="vfoldersAliasMap"
         rules={[
           {
-            validator(rule, map) {
-              const arr = _.chain(form.getFieldValue('mounts'))
-                .reduce((result, name) => {
-                  result[name] = map[name] || '/home/work/' + name;
-                  return result;
-                }, {} as AliasMap)
-                .values()
-                .value();
+            validator(rule, value) {
+              const arr = _.map(value, (v, k) =>
+                v.alias ? v.alias : DEFAULT_ALIAS_BASE_PATH + k,
+              );
+
               if (_.uniq(arr).length !== arr.length) {
                 return Promise.reject(
                   t('session.launcher.FolderAliasOverlapping'),

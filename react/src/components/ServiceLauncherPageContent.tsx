@@ -26,6 +26,7 @@ import ResourceAllocationFormItems, {
 import ResourceNumber from './ResourceNumber';
 import VFolderLazyView from './VFolderLazyView';
 import VFolderSelect from './VFolderSelect';
+import { AliasMap } from './VFolderTable';
 import VFolderTableFormItem from './VFolderTableFormItem';
 import { ServiceLauncherPageContentFragment$key } from './__generated__/ServiceLauncherPageContentFragment.graphql';
 import { ServiceLauncherPageContentModifyMutation } from './__generated__/ServiceLauncherPageContentModifyMutation.graphql';
@@ -109,7 +110,7 @@ interface ServiceLauncherInput extends ImageEnvironmentFormInput {
   openToPublic: boolean;
   modelMountDestination: string;
   modelDefinitionPath: string;
-  vfoldersAliasMap: Record<string, string>;
+  vfoldersAliasMap: AliasMap;
   mounts?: Array<string>;
   envvars: EnvVarFormListValue[];
   runtimeVariant: string;
@@ -309,7 +310,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
               (acc, key: string) => {
                 acc[key] = {
                   ...(values.vfoldersAliasMap[key] && {
-                    mount_destination: values.vfoldersAliasMap[key],
+                    mount_destination: values.vfoldersAliasMap[key]?.alias,
                   }),
                   type: 'bind', // FIXME: hardcoded. change it with option later
                 };
@@ -505,11 +506,13 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                     ),
                     values,
                   ),
+                  //FIXME: alias map 형식으로 변환 해야함.
                   extra_mounts: _.map(values.mounts, (vfolder) => {
                     return {
                       vfolder_id: vfolder,
                       ...(values.vfoldersAliasMap[vfolder] && {
-                        mount_destination: values.vfoldersAliasMap[vfolder],
+                        mount_destination:
+                          values.vfoldersAliasMap[vfolder]?.alias,
                       }),
                     };
                   }),
