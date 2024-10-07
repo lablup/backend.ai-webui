@@ -1047,7 +1047,8 @@
     "NoDataToExport": "Dữ liệu cho bản trích xuất CSV không tồn tại.",
     "ExportCSV": "xuất CSV",
     "Tools": "Công cụ",
-    "MemorySizeExceedsLimit": "Kích thước bộ nhớ phải nhỏ hơn 300 PiB"
+    "MemorySizeExceedsLimit": "Kích thước bộ nhớ phải nhỏ hơn 300 PiB",
+    "AssignUsers": "Chỉ định người dùng"
   },
   "registry": {
     "Hostname": "Tên máy chủ",

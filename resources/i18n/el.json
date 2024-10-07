@@ -1047,7 +1047,8 @@
     "NoDataToExport": "Τα δεδομένα για το απόσπασμα CSV δεν υπάρχουν.",
     "ExportCSV": "εξαγωγή CSV",
     "Tools": "Εργαλεία",
-    "MemorySizeExceedsLimit": "Το μέγεθος της μνήμης πρέπει να είναι μικρότερο από 300 PiB"
+    "MemorySizeExceedsLimit": "Το μέγεθος της μνήμης πρέπει να είναι μικρότερο από 300 PiB",
+    "AssignUsers": "Εκχώρηση χρηστών"
   },
   "registry": {
     "Hostname": "Όνομα κεντρικού υπολογιστή",

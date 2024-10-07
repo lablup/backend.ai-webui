@@ -6,11 +6,16 @@ import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
-interface Props extends SelectProps {
+interface Props extends Omit<SelectProps, 'value'> {
+  value: string | string[];
   onSelectUser: (user: any) => void;
 }
 
-const UserSelector: React.FC<Props> = ({ onSelectUser, ...selectProps }) => {
+const UserSelector: React.FC<Props> = ({
+  value,
+  onSelectUser,
+  ...selectProps
+}) => {
   const { t } = useTranslation();
   const [search, setSearch] = useState<string>('');
   const deferredSearch = useDeferredValue(search);
@@ -46,6 +51,7 @@ const UserSelector: React.FC<Props> = ({ onSelectUser, ...selectProps }) => {
   );
   return (
     <Select
+      mode={_.isArray(value) ? 'multiple' : undefined}
       filterOption={false}
       searchValue={search}
       loading={deferredSearch !== search}
@@ -53,11 +59,19 @@ const UserSelector: React.FC<Props> = ({ onSelectUser, ...selectProps }) => {
         setSearch(value);
       }}
       onChange={(value) => {
-        onSelectUser(
-          _.find(user_list?.items, (user) => {
-            return user?.email === value;
-          }),
-        );
+        _.isArray(value)
+          ? onSelectUser(
+              _.map(value, (user) => {
+                return _.find(user_list?.items, (u) => {
+                  return u?.email === user;
+                });
+              }),
+            )
+          : onSelectUser(
+              _.find(user_list?.items, (user) => {
+                return user?.email === value;
+              }),
+            );
       }}
       showSearch
       placeholder={t('storageHost.quotaSettings.SelectUser')}

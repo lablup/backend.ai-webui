@@ -1047,7 +1047,8 @@
     "NoDataToExport": "CSV抽出用のデータが存在しません。",
     "ExportCSV": "CSVエクスポート",
     "Tools": "ツール",
-    "MemorySizeExceedsLimit": "メモリ サイズは 300 PiB 未満である必要があります"
+    "MemorySizeExceedsLimit": "メモリ サイズは 300 PiB 未満である必要があります",
+    "AssignUsers": "ユーザーの割り当て"
   },
   "registry": {
     "Hostname": "ホスト名",
