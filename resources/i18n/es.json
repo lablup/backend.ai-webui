@@ -143,7 +143,8 @@
     "SaveWithoutClose": "Guardar sin cerrar",
     "Collapse": "Colapsar",
     "Expand": "Expandir",
-    "Clear": "Borrar"
+    "Clear": "Borrar",
+    "Apply": "Solicitar"
   },
   "credential": {
     "AccessKeyOptional": "Clave de acceso (opcional)",
@@ -1271,7 +1272,7 @@
       "EnqueueComputeSessionWarning": "Recursos insuficientes. \nLa sesión puede estar pendiente.",
       "SessionName": "Nombre de la sesión",
       "ResetFormConfirm": "¿Quieres restablecer todas tus entradas?",
-      "TemplateAndHistory": "Plantillas",
+      "TemplateAndHistory": "Plantillas e historia",
       "ScheduleTimeSimple": "Establecer hora de inicio",
       "ResourceAllocationPerContainer": "Asignación de recursos por contenedor",
       "NumberOfContainer": "Número de contenedor",
@@ -1300,7 +1301,8 @@
       "InvalidPortFormat": "El formato del número de puerto es incorrecto.",
       "DuplicatedPort": "Hay puertos duplicados.",
       "FolderAliasOverlappingToAutoMount": "Existe una carpeta de montaje automático con el mismo nombre.",
-      "InsufficientAllocationOfResourcesWarning": "Los recursos asignables están por debajo del recurso mínimo requerido en la imagen seleccionada."
+      "InsufficientAllocationOfResourcesWarning": "Los recursos asignables están por debajo del recurso mínimo requerido en la imagen seleccionada.",
+      "RecentHistory": "Historia reciente"
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",

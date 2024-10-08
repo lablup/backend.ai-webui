@@ -261,7 +261,7 @@
       "PreOpenPortMaxCountLimit": "คุณสามารถตั้งค่าพอร์ตที่เปิดล่วงหน้าได้สูงสุด {{count}} พอร์ต",
       "PreOpenPortMaxCountLimit_plural": "คุณสามารถตั้งค่าพอร์ตที่เปิดล่วงหน้าได้สูงสุด {{count}} พอร์ต",
       "EnqueueComputeSessionWarning": "ทรัพยากรไม่เพียงพอ เซสชันอาจอยู่ในสถานะรอ",
-      "TemplateAndHistory": "เทมเพลตและประวัติ",
+      "TemplateAndHistory": "เทมเพลต",
       "StartTimeMustBeInTheFuture": "เวลาเริ่มต้นต้องเป็นเวลาหลังจากปัจจุบัน",
       "SessionName": "ชื่อเซสชัน",
       "ResetFormConfirm": "คุณต้องการรีเซ็ตรายการที่คุณป้อนทั้งหมดหรือไม่?",
@@ -293,7 +293,8 @@
       "InvalidPortFormat": "รูปแบบหมายเลขพอร์ตไม่ถูกต้อง",
       "DuplicatedPort": "มีพอร์ตที่ซ้ำกัน",
       "FolderAliasOverlappingToAutoMount": "มีโฟลเดอร์ที่เมาท์อัตโนมัติที่มีชื่อเดียวกันอยู่แล้ว",
-      "InsufficientAllocationOfResourcesWarning": "ทรัพยากรที่จัดสรรได้อยู่ต่ำกว่าทรัพยากรขั้นต่ำที่จำเป็นในรูปภาพที่เลือก"
+      "InsufficientAllocationOfResourcesWarning": "ทรัพยากรที่จัดสรรได้อยู่ต่ำกว่าทรัพยากรขั้นต่ำที่จำเป็นในรูปภาพที่เลือก",
+      "RecentHistory": "ประวัติศาสตร์ล่าสุด"
     },
     "Preparing": "กำลังเตรียมการ...",
     "PreparingSession": "กำลังเตรียมเซสชัน...",
@@ -546,7 +547,8 @@
     "SaveWithoutClose": "บันทึกโดยไม่ปิด",
     "Collapse": "ย่อ",
     "Expand": "ขยาย",
-    "Clear": "ล้าง"
+    "Clear": "ล้าง",
+    "Apply": "นำมาใช้"
   },
   "agent": {
     "Endpoint": "จุดสิ้นสุด",

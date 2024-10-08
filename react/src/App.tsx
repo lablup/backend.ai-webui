@@ -303,7 +303,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/session/start',
-        handle: { labelKey: 'session.launcher.StartNewSession' },
+        // handle: { labelKey: 'session.launcher.StartNewSession' },
         Component: () => {
           const { token } = theme.useToken();
           return (

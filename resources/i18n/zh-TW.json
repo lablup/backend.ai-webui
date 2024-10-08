@@ -250,7 +250,7 @@
       "EnqueueComputeSessionWarning": "資源不足。\n會話可能處於待處理狀態。",
       "SessionName": "會話名稱",
       "ResetFormConfirm": "您想重置所有條目嗎？",
-      "TemplateAndHistory": "範本",
+      "TemplateAndHistory": "模板和历史",
       "ScheduleTimeSimple": "設定開始時間",
       "ResourceAllocationPerContainer": "每个集装箱的资源分配",
       "NumberOfContainer": "集装箱数量",
@@ -279,7 +279,8 @@
       "InvalidPortFormat": "端口号格式不正确。",
       "DuplicatedPort": "有重复的端口。",
       "FolderAliasOverlappingToAutoMount": "存在同名的自动挂载文件夹。",
-      "InsufficientAllocationOfResourcesWarning": "可分配資源低於所選映像所需的最低資源。"
+      "InsufficientAllocationOfResourcesWarning": "可分配資源低於所選映像所需的最低資源。",
+      "RecentHistory": "近代历史"
     },
     "Preparing": "正在準備...",
     "PreparingSession": "正在準備會議...",
@@ -457,7 +458,8 @@
     "SaveWithoutClose": "儲存而不關閉",
     "Collapse": "坍塌",
     "Expand": "擴張",
-    "Clear": "刪除"
+    "Clear": "刪除",
+    "Apply": "申请"
   },
   "agent": {
     "Endpoint": "端點",
