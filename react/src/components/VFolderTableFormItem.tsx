@@ -30,7 +30,7 @@ const VFolderTableFormItem: React.FC<VFolderTableFormItemProps> = ({
 }) => {
   const form = Form.useFormInstance();
   const { t } = useTranslation();
-  Form.useWatch('vfoldersAliasMap', form);
+  console.log(Form.useWatch('vfoldersAliasMap', form));
   return (
     <>
       <Form.Item

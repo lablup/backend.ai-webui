@@ -266,7 +266,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   const handleAliasUpdate = useEventNotStable(() => {
     setAliasMap(
       _.mapValues(
-        _.pickBy(internalForm.getFieldsValue(), (v) => !!v), //remove empty
+        _.pickBy(internalForm.getFieldsValue({ strict: false }), (v) => !!v), //remove empty
         (v, k) => inputToAliasPath(k, v), // add alias base path
       ),
     );
@@ -533,7 +533,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
           }}
         />
       </Flex>
-      <Form form={internalForm} component={false}>
+      <Form form={internalForm} component={false} preserve={false}>
         <Table
           // size="small"
           scroll={{ x: 'max-content' }}
@@ -542,6 +542,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
             selectedRowKeys,
             onChange: (selectedRowKeys) => {
               setSelectedRowKeys(selectedRowKeys as VFolderKey[]);
+              handleAliasUpdate();
             },
           }}
           showSorterTooltip={false}
