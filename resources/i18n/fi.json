@@ -1297,7 +1297,8 @@
       "InvalidPortFormat": "Porttinumeron muoto on virheellinen.",
       "DuplicatedPort": "Portteja on päällekkäin.",
       "FolderAliasOverlappingToAutoMount": "Samanniminen automaattinen kiinnityskansio on olemassa.",
-      "InsufficientAllocationOfResourcesWarning": "Allokoitavat resurssit jäävät alle valitussa kuvassa vaaditun vähimmäisresurssin."
+      "InsufficientAllocationOfResourcesWarning": "Allokoitavat resurssit jäävät alle valitussa kuvassa vaaditun vähimmäisresurssin.",
+      "RecentHistory": "Viimeisimmät istunnot"
     },
     "ExpiresAfter": "Jäljellä oleva aika",
     "CPU": "CPU",

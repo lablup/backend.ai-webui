@@ -279,7 +279,8 @@
       "InvalidPortFormat": "O formato do número da porta está incorreto.",
       "DuplicatedPort": "Existem portas duplicadas.",
       "FolderAliasOverlappingToAutoMount": "Existe uma pasta de montagem automática com o mesmo nome.",
-      "InsufficientAllocationOfResourcesWarning": "Os recursos alocáveis ​​ficam abaixo do recurso mínimo exigido na imagem selecionada."
+      "InsufficientAllocationOfResourcesWarning": "Os recursos alocáveis ​​ficam abaixo do recurso mínimo exigido na imagem selecionada.",
+      "RecentHistory": "Sessões recentes"
     },
     "Preparing": "Preparando...",
     "PreparingSession": "Preparando sessão ...",

@@ -1300,7 +1300,8 @@
       "InvalidPortFormat": "El formato del número de puerto es incorrecto.",
       "DuplicatedPort": "Hay puertos duplicados.",
       "FolderAliasOverlappingToAutoMount": "Existe una carpeta de montaje automático con el mismo nombre.",
-      "InsufficientAllocationOfResourcesWarning": "Los recursos asignables están por debajo del recurso mínimo requerido en la imagen seleccionada."
+      "InsufficientAllocationOfResourcesWarning": "Los recursos asignables están por debajo del recurso mínimo requerido en la imagen seleccionada.",
+      "RecentHistory": "Sesiones recientes"
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",

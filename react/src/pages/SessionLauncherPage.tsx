@@ -31,6 +31,7 @@ import SessionOwnerSetterCard, {
   SessionOwnerSetterFormValues,
 } from '../components/SessionOwnerSetterCard';
 import { SessionOwnerSetterPreviewCard } from '../components/SessionOwnerSetterCard';
+import SessionTemplateModal from '../components/SessionTemplateModal';
 import SourceCodeViewer from '../components/SourceCodeViewer';
 import VFolderTableFormItem, {
   VFolderTableFormValues,
@@ -45,7 +46,10 @@ import {
   useUpdatableState,
   useWebUINavigate,
 } from '../hooks';
-import { useCurrentUserRole } from '../hooks/backendai';
+import {
+  useCurrentUserRole,
+  useRecentSessionHistory,
+} from '../hooks/backendai';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useThemeMode } from '../hooks/useThemeMode';
@@ -59,7 +63,7 @@ import {
   QuestionCircleOutlined,
   RightOutlined,
 } from '@ant-design/icons';
-import { useDebounceFn } from 'ahooks';
+import { useDebounceFn, useToggle } from 'ahooks';
 import {
   Alert,
   App,
@@ -230,7 +234,10 @@ const SessionLauncherPage = () => {
   const webuiNavigate = useWebUINavigate();
   const currentProject = useCurrentProjectValue();
 
+  const [isOpenTemplateModal, { toggle: toggleIsOpenTemplateModal }] =
+    useToggle();
   const { upsertNotification } = useSetBAINotification();
+  const [, { push: pushSessionHistory }] = useRecentSessionHistory();
 
   const { run: syncFormToURLWithDebounce } = useDebounceFn(
     () => {
@@ -540,6 +547,7 @@ const SessionLauncherPage = () => {
         });
         await Promise.all(sessionPromises)
           .then(([firstSession]) => {
+            // pushSessionHistory()
             // console.log('##sessionPromises', firstSession);
             if (
               values.num_of_sessions === 1 &&
@@ -649,21 +657,22 @@ const SessionLauncherPage = () => {
           align="stretch"
           style={{ flex: 1, maxWidth: 700 }}
         >
-          {/* <Flex direction="row" justify="between">
-            <Typography.Title level={3} style={{ marginTop: 0 }}>
+          <Flex direction="row" justify="between">
+            <Typography.Title level={4} style={{ marginTop: 0 }}>
               {t('session.launcher.StartNewSession')}
             </Typography.Title>
             <Flex direction="row" gap={'sm'}>
               <Button
                 type="link"
-                icon={<BlockOutlined />}
-                disabled
+                // icon={<BlockOutlined />}
+                // disabled
                 style={{ paddingRight: 0, paddingLeft: 0 }}
+                onClick={() => toggleIsOpenTemplateModal()}
               >
                 {t('session.launcher.TemplateAndHistory')}
               </Button>
             </Flex>
-          </Flex> */}
+          </Flex>
           {/* <Suspense fallback={<FlexActivityIndicator />}> */}
           <Form.Provider
             onFormChange={(name, info) => {
@@ -1769,13 +1778,15 @@ const SessionLauncherPage = () => {
           </Flex>
         )}
       </Flex>
-      {/* <FolderExplorer
-        folderName={selectedFolderName}
-        open={!!selectedFolderName}
-        onRequestClose={() => {
-          setSelectedFolderName(undefined);
+      <SessionTemplateModal
+        open={isOpenTemplateModal}
+        onCancel={() => {
+          toggleIsOpenTemplateModal();
         }}
-      /> */}
+        onOk={() => {
+          toggleIsOpenTemplateModal();
+        }}
+      />
       {currentStep === steps.length - 1 ? (
         <ErrorBoundary fallback={null}>
           <SessionLauncherValidationTour
