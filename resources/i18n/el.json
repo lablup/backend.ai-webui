@@ -1084,7 +1084,11 @@
     "NoRegistryToDisplay": "Δεν εμφανίζονται μητρώα",
     "ModifyRegistry": "Τροποποίηση μητρώου",
     "ConfirmNoUserName": "Ο χρήστης και ο κωδικός πρόσβασης δεν έχουν καθοριστεί, θέλετε να αποθηκεύσετε;",
-    "DescURLFormat": "Μη έγκυρος τύπος URL"
+    "DescURLFormat": "Μη έγκυρος τύπος URL",
+    "RegistryName": "Όνομα Μητρώου",
+    "DescRegistryNameIsEmpty": "Το όνομα μητρώου είναι κενό",
+    "RegistryNameAlreadyExists": "Το όνομα μητρώου υπάρχει ήδη. \nΑλλάξτε το όνομα μητρώου για προσθήκη.",
+    "Project": "Σχέδιο"
   },
   "resourceGroup": {
     "ResourceGroups": "Ομάδες πόρων",

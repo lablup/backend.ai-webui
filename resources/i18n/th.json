@@ -1197,7 +1197,11 @@
     "RegistrySuccessfullyModified": "แก้ไขทะเบียนสำเร็จแล้ว",
     "PleaseSelectOption": "กรุณาเลือกตัวเลือก",
     "ConfirmNoUserName": "ไม่ได้ระบุชื่อผู้ใช้และรหัสผ่าน คุณต้องการบันทึกหรือไม่?",
-    "DescURLFormat": "รูปแบบ URL ไม่ถูกต้อง"
+    "DescURLFormat": "รูปแบบ URL ไม่ถูกต้อง",
+    "RegistryName": "ชื่อรีจิสทรี",
+    "DescRegistryNameIsEmpty": "ชื่อรีจิสทรีว่างเปล่า",
+    "RegistryNameAlreadyExists": "มีชื่อรีจิสทรีอยู่แล้ว \nกรุณาเปลี่ยนชื่อรีจิสทรีที่จะเพิ่ม",
+    "Project": "โครงการ"
   },
   "resourceGroup": {
     "ResourceGroups": "กลุ่มทรัพยากร",

@@ -1082,7 +1082,11 @@
     "ModifyRegistry": "Изменение реестра",
     "NoRegistryToDisplay": "Отсутствие отображаемых реестров",
     "ConfirmNoUserName": "Пользователь и пароль не указаны, хотите сохранить?",
-    "DescURLFormat": "Неверный тип URL"
+    "DescURLFormat": "Неверный тип URL",
+    "RegistryName": "Имя реестра",
+    "DescRegistryNameIsEmpty": "Имя реестра пусто",
+    "RegistryNameAlreadyExists": "Имя реестра уже существует. \nПожалуйста, измените имя реестра для добавления.",
+    "Project": "Проект"
   },
   "resourceGroup": {
     "ResourceGroups": "Группы ресурсов",

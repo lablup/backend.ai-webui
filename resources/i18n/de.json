@@ -1084,7 +1084,11 @@
     "NoRegistryToDisplay": "Keine Registrierungen anzeigen",
     "ModifyRegistry": "Registry ändern",
     "ConfirmNoUserName": "Benutzer und Passwort nicht angegeben, möchten Sie speichern?",
-    "DescURLFormat": "Ungültiger URL-Typ"
+    "DescURLFormat": "Ungültiger URL-Typ",
+    "RegistryName": "Registrierungsname",
+    "DescRegistryNameIsEmpty": "Der Registrierungsname ist leer",
+    "RegistryNameAlreadyExists": "Der Registrierungsname ist bereits vorhanden. \nBitte ändern Sie den hinzuzufügenden Registrierungsnamen.",
+    "Project": "Projekt"
   },
   "resourceGroup": {
     "ResourceGroups": "Ressourcengruppen",

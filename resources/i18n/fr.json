@@ -1084,7 +1084,11 @@
     "ModifyRegistry": "Modifier le registre",
     "NoRegistryToDisplay": "Aucun registre à afficher",
     "ConfirmNoUserName": "L'utilisateur et le mot de passe ne sont pas spécifiés, voulez-vous sauvegarder ?",
-    "DescURLFormat": "Type d'URL invalide"
+    "DescURLFormat": "Type d'URL invalide",
+    "RegistryName": "Nom du registre",
+    "DescRegistryNameIsEmpty": "Le nom du registre est vide",
+    "RegistryNameAlreadyExists": "Le nom du registre existe déjà. \nVeuillez modifier le nom du registre à ajouter.",
+    "Project": "Projet"
   },
   "resourceGroup": {
     "ResourceGroups": "Groupes de ressources",
