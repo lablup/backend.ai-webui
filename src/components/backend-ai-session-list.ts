@@ -4506,13 +4506,6 @@ ${rowData.item[this.sessionNameField]}</pre
                         ></vaadin-grid-column>
                       `
                     : html``}
-                  <lablup-grid-sort-filter-column
-                    width="110px"
-                    path="architecture"
-                    header="${_t('session.Architecture')}"
-                    resizable
-                    .renderer="${this._boundArchitectureRenderer}"
-                  ></lablup-grid-sort-filter-column>
                   ${this._isIntegratedCondition
                     ? html`
                         <lablup-grid-sort-filter-column
@@ -4538,6 +4531,13 @@ ${rowData.item[this.sessionNameField]}</pre
                         ></lablup-grid-sort-filter-column>
                       `
                     : html``}
+                  <lablup-grid-sort-filter-column
+                    width="110px"
+                    path="architecture"
+                    header="${_t('session.Architecture')}"
+                    resizable
+                    .renderer="${this._boundArchitectureRenderer}"
+                  ></lablup-grid-sort-filter-column>
                 </vaadin-grid>
               `
             : html``
