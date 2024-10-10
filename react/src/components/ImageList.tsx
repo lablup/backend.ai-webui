@@ -350,6 +350,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         isCustomized: image?.tag
           ? image.tag.indexOf('customized') !== -1
           : false,
+        fullName: getImageFullName(image) || '',
       };
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -378,13 +379,15 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           : false;
         const langMatch = regExp.test(curFilterValues.lang);
         const namespaceMatch = regExp.test(curFilterValues.namespace);
+        const fullNameMatch = regExp.test(curFilterValues.fullName);
         return (
           baseVersionMatch ||
           baseImagesMatch ||
           constraintsMatch ||
           langMatch ||
           namespaceMatch ||
-          customizedMatch
+          customizedMatch ||
+          fullNameMatch
         );
       });
     });
