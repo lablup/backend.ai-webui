@@ -1729,5 +1729,10 @@
     "SelectEndpoint": "Seleccionar punto final",
     "SyncInput": "Entrada de sincronización",
     "CompareWithOtherModels": "Comparar con otros modelos"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelList": "Lista de modelos"
+    }
   }
 }

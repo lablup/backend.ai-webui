@@ -59,7 +59,7 @@ const ImportAndRunPage = React.lazy(() => import('./pages/ImportAndRunPage'));
 
 const RedirectToSummary = () => {
   useSuspendedBackendaiClient();
-  const pathName = '/summary';
+  const pathName = '/serving';
   document.dispatchEvent(
     new CustomEvent('move-to-from-react', {
       detail: {
@@ -68,7 +68,7 @@ const RedirectToSummary = () => {
       },
     }),
   );
-  return <Navigate to="/summary" replace />;
+  return <Navigate to="/serving" replace />;
 };
 
 const router = createBrowserRouter([
@@ -117,25 +117,25 @@ const router = createBrowserRouter([
         path: '/app/index.html',
         element: <RedirectToSummary />,
       },
-      {
-        path: '/summary',
-        Component: () => {
-          const { token } = theme.useToken();
-          return (
-            <>
-              <AnnouncementAlert
-                showIcon
-                icon={undefined}
-                banner={false}
-                style={{ marginBottom: token.paddingContentVerticalLG }}
-                closable
-              />
-              {/* <SummaryPage /> */}
-            </>
-          );
-        },
-        handle: { labelKey: 'webui.menu.Summary' },
-      },
+      // {
+      //   path: '/data',
+      //   Component: () => {
+      //     const { token } = theme.useToken();
+      //     return (
+      //       <>
+      //         <AnnouncementAlert
+      //           showIcon
+      //           icon={undefined}
+      //           banner={false}
+      //           style={{ marginBottom: token.paddingContentVerticalLG }}
+      //           closable
+      //         />
+      //         {/* <SummaryPage /> */}
+      //       </>
+      //     );
+      //   },
+      //   handle: { labelKey: 'webui.menu.Summary' },
+      // },
       {
         path: '/job',
         handle: { labelKey: 'webui.menu.Sessions' },

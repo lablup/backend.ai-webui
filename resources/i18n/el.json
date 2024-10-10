@@ -1727,5 +1727,10 @@
     "SelectEndpoint": "Επιλέξτε Τελικό σημείο",
     "SyncInput": "Συγχρονισμός εισόδου",
     "CompareWithOtherModels": "Συγκρίνετε με άλλα μοντέλα"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelList": "Λίστα μοντέλων"
+    }
   }
 }

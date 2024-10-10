@@ -1727,5 +1727,10 @@
     "SelectEndpoint": "Wybierz Punkt końcowy",
     "SyncInput": "Synchronizuj wejście",
     "CompareWithOtherModels": "Porównaj z innymi modelami"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelList": "Lista modeli"
+    }
   }
 }

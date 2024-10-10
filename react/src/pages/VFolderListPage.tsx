@@ -35,7 +35,7 @@ type TabKey =
 
 interface VFolderListPageProps {}
 
-const tabParam = withDefault(StringParam, 'general');
+const tabParam = withDefault(StringParam, 'model');
 
 const VFolderListPage: React.FC<VFolderListPageProps> = (props) => {
   const { t } = useTranslation();
@@ -85,18 +85,18 @@ const VFolderListPage: React.FC<VFolderListPageProps> = (props) => {
   }[curTabKey];
 
   const tabList = filterEmptyItem([
-    {
-      key: 'general',
-      tab: t('data.Folders'),
-    },
-    {
-      key: 'data',
-      tab: t('data.Pipeline'),
-    },
-    {
-      key: 'automount',
-      tab: t('data.AutomountFolders'),
-    },
+    // {
+    //   key: 'general',
+    //   tab: t('data.Folders'),
+    // },
+    // {
+    //   key: 'data',
+    //   tab: t('data.Pipeline'),
+    // },
+    // {
+    //   key: 'automount',
+    //   tab: t('data.AutomountFolders'),
+    // },
     {
       key: 'model',
       tab: t('data.Models'),
@@ -157,14 +157,24 @@ const VFolderListPage: React.FC<VFolderListPageProps> = (props) => {
           <Alert icon={<></>} banner type="info" message={tabBannerText} />
         ) : null}
         {curTabKey === 'model-store' ? (
-          <Suspense
-            fallback={<Skeleton active style={{ padding: token.paddingMD }} />}
-          >
-            <ModelStoreListPage />
-          </Suspense>
+          <div style={{ width: '77vw' }}>
+            <Suspense
+              fallback={
+                <Skeleton active style={{ padding: token.paddingMD }} />
+              }
+            >
+              <ModelStoreListPage />
+            </Suspense>
+          </div>
         ) : null}
-        {/* @ts-ignore  */}
-        <backend-ai-data-view ref={dataViewRef} active _activeTab={curTabKey} />
+        <div style={{ width: '77vw' }}>
+          {/* @ts-ignore  */}
+          <backend-ai-data-view
+            ref={dataViewRef}
+            active
+            _activeTab={curTabKey}
+          />
+        </div>
       </Card>
       <InviteFolderPermissionSettingModal
         onRequestClose={() => {
