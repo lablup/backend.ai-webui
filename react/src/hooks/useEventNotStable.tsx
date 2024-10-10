@@ -1,8 +1,10 @@
 import { useCallback, useLayoutEffect, useRef } from 'react';
 
-export function useEventNotStable(handler: (props: any) => void) {
+export function useEventNotStable<Args extends unknown[], Return>(
+  handler: (...args: Args) => Return,
+) {
   // eslint-disable-next-line
-  const handlerRef = useRef<Function | null>(null);
+  const handlerRef = useRef<typeof handler | undefined>(undefined);
 
   // In a real implementation, this would run before layout effects
   useLayoutEffect(() => {
@@ -11,9 +13,9 @@ export function useEventNotStable(handler: (props: any) => void) {
 
   // eslint-disable-next-line
   // @ts-ignore
-  return useCallback((...args) => {
+  return useCallback((...args: Args) => {
     // In a real implementation, this would throw if called during render
     const fn = handlerRef.current;
-    return fn ? fn(...args) : null;
+    return fn ? fn(...args) : undefined;
   }, []);
 }
