@@ -1046,7 +1046,8 @@
     "NoDataToExport": "CSV 擷取的資料不存在。",
     "ExportCSV": "匯出 CSV",
     "Tools": "工具",
-    "MemorySizeExceedsLimit": "記憶體大小應小於 300 PiB"
+    "MemorySizeExceedsLimit": "記憶體大小應小於 300 PiB",
+    "AssignUsers": "分配用戶"
   },
   "registry": {
     "Hostname": "主機名",

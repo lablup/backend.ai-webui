@@ -42,8 +42,8 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
     useState<string>(currentDomain);
   const [selectedProjectId, setSelectedProjectId] = useState<string>();
   useState<string>();
-  const [selectedUserId, setSelectedUserId] = useState<string>();
-  const [selectedUserEmail, setSelectedUserEmail] = useState<string>();
+  const [selectedUserId, setSelectedUserId] = useState<string>('');
+  const [selectedUserEmail, setSelectedUserEmail] = useState<string>('');
   useState<string>();
 
   const quotaScopeId = addQuotaScopeTypePrefix(

@@ -1047,7 +1047,8 @@
     "NoDataToExport": "Os dados para a extração CSV não existem.",
     "ExportCSV": "exportar CSV",
     "Tools": "Ferramentas",
-    "MemorySizeExceedsLimit": "O tamanho da memória deve ser inferior a 300 PiB"
+    "MemorySizeExceedsLimit": "O tamanho da memória deve ser inferior a 300 PiB",
+    "AssignUsers": "Atribuir usuários"
   },
   "registry": {
     "Hostname": "nome de anfitrião",

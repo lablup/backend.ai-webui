@@ -3,6 +3,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
+import UserSelector from './UserSelector';
 import {
   CreateUserResourcePolicyInput,
   UserResourcePolicySettingModalCreateMutation,
@@ -12,6 +13,7 @@ import {
   ModifyUserResourcePolicyInput,
   UserResourcePolicySettingModalModifyMutation,
 } from './__generated__/UserResourcePolicySettingModalModifyMutation.graphql';
+import { UserResourcePolicySettingModalResourcePolicyMutation } from './__generated__/UserResourcePolicySettingModalResourcePolicyMutation.graphql';
 import {
   Form,
   Input,
@@ -23,7 +25,7 @@ import {
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment, useMutation } from 'react-relay';
 
@@ -42,6 +44,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
+  const [selectedUsers, setSelectedUsers] = useState<any[]>([]);
   const formRef = useRef<FormInstance>(null);
 
   const baiClient = useSuspendedBackendaiClient();
@@ -102,6 +105,22 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
       }
     }
   `);
+
+  const [commitModifyUserSetting, isInFlightCommitModifyUserSetting] =
+    useMutation<UserResourcePolicySettingModalResourcePolicyMutation>(graphql`
+      mutation UserResourcePolicySettingModalResourcePolicyMutation(
+        $email: String!
+        $props: ModifyUserInput!
+      ) {
+        modify_user(email: $email, props: $props) {
+          ok
+          msg
+          user {
+            resource_policy
+          }
+        }
+      }
+    `);
 
   const initialValues = useMemo(() => {
     let unlimitedValues = {};
@@ -167,11 +186,6 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
               if (!res?.create_user_resource_policy?.ok || errors) {
                 message.error(res?.create_user_resource_policy?.msg);
                 onRequestClose();
-              } else {
-                message.success(
-                  t('storageHost.ResourcePolicySuccessfullyUpdated'),
-                );
-                onRequestClose(true);
               }
             },
             onError(error) {
@@ -188,11 +202,6 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
               if (!res?.modify_user_resource_policy?.ok || errors) {
                 message.error(res?.modify_user_resource_policy?.msg);
                 onRequestClose();
-              } else {
-                message.success(
-                  t('storageHost.ResourcePolicySuccessfullyUpdated'),
-                );
-                onRequestClose(true);
               }
             },
             onError(error) {
@@ -200,6 +209,30 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
             },
           });
         }
+        // Update user's resource policy
+        _.forEach(selectedUsers, (user) => {
+          commitModifyUserSetting({
+            variables: {
+              email: user?.email,
+              props: {
+                resource_policy: values?.name,
+              },
+            },
+            onCompleted(res, errors) {
+              if (!res?.modify_user?.ok || errors) {
+                message.error(res?.modify_user?.msg);
+                return;
+              }
+            },
+            onError(error) {
+              message.error(error?.message);
+              return;
+            },
+          });
+        });
+        message.success(t('storageHost.ResourcePolicySuccessfullyUpdated'));
+        setSelectedUsers([]);
+        onRequestClose(true);
       })
       .catch(() => {});
   };
@@ -216,7 +249,8 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
       destroyOnClose
       confirmLoading={
         isInFlightCommitCreateUserResourcePolicy ||
-        isInFlightCommitModifyUserResourcePolicy
+        isInFlightCommitModifyUserResourcePolicy ||
+        isInFlightCommitModifyUserSetting
       }
       {...baiModalProps}
     >
@@ -311,6 +345,15 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
             <InputNumber min={0} style={{ width: '100%' }} />
           </Form.Item>
         ) : null}
+        <Form.Item label={t('resourcePolicy.AssignUsers')}>
+          <UserSelector
+            value={selectedUsers}
+            onSelectUser={(users) => {
+              setSelectedUsers(users);
+            }}
+            style={{ width: '100%' }}
+          />
+        </Form.Item>
       </Form>
     </BAIModal>
   );
