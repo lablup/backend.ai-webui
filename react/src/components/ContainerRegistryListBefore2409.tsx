@@ -1,17 +1,16 @@
 import { filterNonNullItems } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
-import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal from './BAIModal';
-import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
+import ContainerRegistryEditorModal from './ContainerRegistryEditorModalBefore2409';
 import Flex from './Flex';
-import { ContainerRegistryListDeleteMutation } from './__generated__/ContainerRegistryListDeleteMutation.graphql';
-import { ContainerRegistryListDomainMutation } from './__generated__/ContainerRegistryListDomainMutation.graphql';
+import { ContainerRegistryListBefore2409DeleteMutation } from './__generated__/ContainerRegistryListBefore2409DeleteMutation.graphql';
+import { ContainerRegistryListBefore2409DomainMutation } from './__generated__/ContainerRegistryListBefore2409DomainMutation.graphql';
 import {
-  ContainerRegistryListQuery,
-  ContainerRegistryListQuery$data,
-} from './__generated__/ContainerRegistryListQuery.graphql';
+  ContainerRegistryListBefore2409Query,
+  ContainerRegistryListBefore2409Query$data,
+} from './__generated__/ContainerRegistryListBefore2409Query.graphql';
 import {
   DeleteOutlined,
   ExclamationCircleOutlined,
@@ -40,11 +39,11 @@ import { useLazyLoadQuery, useMutation } from 'react-relay';
 
 export type ContainerRegistry = NonNullable<
   NonNullable<
-    NonNullable<ContainerRegistryListQuery$data>['container_registry_nodes']
-  >['edges'][number]
->['node'];
+    NonNullable<ContainerRegistryListBefore2409Query$data>['container_registries']
+  >
+>[0];
 
-const ContainerRegistryList: React.FC<{
+const ContainerRegistryListBefore2409: React.FC<{
   style?: React.CSSProperties;
 }> = ({ style }) => {
   const baiClient = useSuspendedBackendaiClient();
@@ -54,25 +53,21 @@ const ContainerRegistryList: React.FC<{
   const { message } = App.useApp();
   const { upsertNotification } = useSetBAINotification();
 
-  const { container_registry_nodes, domain } =
-    useLazyLoadQuery<ContainerRegistryListQuery>(
+  const { container_registries, domain } =
+    useLazyLoadQuery<ContainerRegistryListBefore2409Query>(
       graphql`
-        query ContainerRegistryListQuery($domain: String!) {
-          container_registry_nodes @since(version: "24.09.0") {
-            edges {
-              node {
-                ...ContainerRegistryEditorModalFragment
-                id
-                row_id
-                registry_name
-                name
-                url
-                type
-                project
-                username
-                password
-                ssl_verify
-              }
+        query ContainerRegistryListBefore2409Query($domain: String!) {
+          container_registries {
+            ...ContainerRegistryEditorModalBefore2409Fragment
+            id
+            hostname
+            config {
+              url
+              type
+              project
+              username
+              password
+              ssl_verify
             }
           }
           domain(name: $domain) {
@@ -89,12 +84,13 @@ const ContainerRegistryList: React.FC<{
         fetchKey,
       },
     );
-  const containerRegistries = _.map(container_registry_nodes?.edges, 'node');
 
   const [commitDeleteMutation, isInFlightDeleteMutation] =
-    useMutation<ContainerRegistryListDeleteMutation>(graphql`
-      mutation ContainerRegistryListDeleteMutation($id: String!) {
-        delete_container_registry_node(id: $id) {
+    useMutation<ContainerRegistryListBefore2409DeleteMutation>(graphql`
+      mutation ContainerRegistryListBefore2409DeleteMutation(
+        $hostname: String!
+      ) {
+        delete_container_registry(hostname: $hostname) {
           container_registry {
             id
           }
@@ -103,8 +99,8 @@ const ContainerRegistryList: React.FC<{
     `);
 
   const [commitDomainMutation, isInFlightDomationMutation] =
-    useMutation<ContainerRegistryListDomainMutation>(graphql`
-      mutation ContainerRegistryListDomainMutation(
+    useMutation<ContainerRegistryListBefore2409DomainMutation>(graphql`
+      mutation ContainerRegistryListBefore2409DomainMutation(
         $domain: String!
         $allowed_docker_registries: [String]!
       ) {
@@ -125,8 +121,10 @@ const ContainerRegistryList: React.FC<{
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const [editingRegistry, setEditingRegistry] = useState<ContainerRegistry>();
-  const [deletingRegistry, setDeletingRegistry] = useState<ContainerRegistry>();
+  const [editingRegistry, setEditingRegistry] =
+    useState<ContainerRegistry>(null);
+  const [deletingRegistry, setDeletingRegistry] =
+    useState<ContainerRegistry>(null);
   const [deletingConfirmText, setDeletingConfirmText] = useState('');
   const [isNewModalOpen, setIsNewModalOpen] = useState(false);
 
@@ -134,7 +132,7 @@ const ContainerRegistryList: React.FC<{
 
   // const deferredInFlightDomainName = useDeferredValue(inFlightDomainName);
 
-  const rescanImage = async (registry_name: string) => {
+  const rescanImage = async (hostname: string) => {
     // const indicator: any =
     //   // @ts-ignore
     //   await globalThis.lablupIndicator.start('indeterminate');
@@ -142,7 +140,7 @@ const ContainerRegistryList: React.FC<{
     // indicator.set(10, t('registry.UpdatingRegistryInfo'));
     const notiKey = upsertNotification({
       // key: notiKey,
-      message: `${registry_name} ${t('maintenance.RescanImages')}`,
+      message: `${hostname} ${t('maintenance.RescanImages')}`,
       description: t('registry.UpdatingRegistryInfo'),
       open: true,
       backgroundTask: {
@@ -169,7 +167,7 @@ const ContainerRegistryList: React.FC<{
       }
     };
     baiClient.maintenance
-      .rescan_images(registry_name)
+      .rescan_images(hostname)
       .then(({ rescan_images }: any) => {
         if (rescan_images.ok) {
           upsertNotification({
@@ -279,7 +277,7 @@ const ContainerRegistryList: React.FC<{
         </Button>
       </Flex>
       <Table
-        rowKey={(record) => record.row_id}
+        rowKey={(record) => record.id}
         scroll={{ x: 'max-content' }}
         pagination={false}
         columns={[
@@ -288,67 +286,67 @@ const ContainerRegistryList: React.FC<{
           //   dataIndex: 'id',
           // },
           {
-            title: t('registry.RegistryName'),
-            dataIndex: 'registry_name',
+            title: t('registry.Hostname'),
+            dataIndex: 'hostname',
             // fixed: 'left',
           },
           {
             title: t('registry.RegistryURL'),
-            dataIndex: 'url',
+            dataIndex: ['config', 'url'],
           },
           {
             title: t('registry.Type'),
-            dataIndex: 'type',
+            dataIndex: ['config', 'type'],
           },
           {
             title: t('registry.HarborProject'),
-            dataIndex: 'project',
-            render: (value) => {
+            dataIndex: ['config', 'project'],
+            render: (value, record) => {
               return <Tag key={value || ''}>{value || ''}</Tag>;
             },
           },
           {
             title: t('registry.Username'),
-            dataIndex: 'username',
+            dataIndex: ['config', 'username'],
           },
           {
             title: t('registry.Password'),
-            dataIndex: 'password',
+            dataIndex: ['config', 'password'],
           },
           {
             title: t('general.Enabled'),
             render: (value, record) => {
               const isEnabled = _.includes(
                 domain?.allowed_docker_registries,
-                record.registry_name,
+                record.hostname,
               );
               return (
                 <Switch
                   checked={
-                    inFlightHostName === record.row_id + fetchKey
+                    inFlightHostName === record.hostname + fetchKey
                       ? !isEnabled
                       : isEnabled
                   }
                   disabled={isPendingReload || isInFlightDomationMutation}
                   loading={
                     (isPendingReload || isInFlightDomationMutation) &&
-                    inFlightHostName === record.row_id + fetchKey
+                    inFlightHostName === record.hostname + fetchKey
                   }
                   onChange={(isOn) => {
-                    if (!_.isString(record.registry_name)) return;
+                    if (!_.isString(record.hostname)) return;
                     let newAllowedDockerRegistries = _.clone(
                       domain?.allowed_docker_registries || [],
                     ) as string[];
                     if (isOn) {
-                      newAllowedDockerRegistries.push(record.registry_name);
+                      newAllowedDockerRegistries.push(record.hostname);
                     } else {
                       newAllowedDockerRegistries = _.without(
                         newAllowedDockerRegistries,
-                        record.registry_name,
+                        record.hostname,
                       );
                     }
 
-                    setInFlightHostName(record.row_id + fetchKey);
+                    setInFlightHostName(record.hostname + fetchKey);
                     commitDomainMutation({
                       variables: {
                         domain: baiClient._config.domainName,
@@ -384,7 +382,7 @@ const ContainerRegistryList: React.FC<{
                   }}
                 />
                 // <Button type="primary">
-                //   {record?.ssl_verify ? 'Yes' : 'No'}
+                //   {record?.config?.ssl_verify ? 'Yes' : 'No'}
                 // </Button>
               );
             },
@@ -426,8 +424,7 @@ const ContainerRegistryList: React.FC<{
                       icon={
                         <SyncOutlined
                           onClick={() => {
-                            record.registry_name &&
-                              rescanImage(record.registry_name);
+                            record.hostname && rescanImage(record.hostname);
                           }}
                         />
                       }
@@ -438,11 +435,14 @@ const ContainerRegistryList: React.FC<{
             },
           },
         ]}
-        dataSource={filterNonNullItems(containerRegistries)}
+        dataSource={filterNonNullItems(container_registries)}
       />
       <ContainerRegistryEditorModal
         containerRegistryFrgmt={editingRegistry}
-        existingRegistryNames={_.map(containerRegistries, 'registry_name')}
+        existingHostnames={_.map(
+          container_registries,
+          (r) => r?.hostname || '',
+        )}
         open={!!editingRegistry || isNewModalOpen}
         onOk={(type) => {
           if (type === 'create') {
@@ -474,13 +474,13 @@ const ContainerRegistryList: React.FC<{
         okText={t('button.Delete')}
         okButtonProps={{
           danger: true,
-          disabled: deletingConfirmText !== deletingRegistry?.registry_name,
+          disabled: deletingConfirmText !== deletingRegistry?.hostname,
         }}
         onOk={() => {
           if (deletingRegistry) {
             commitDeleteMutation({
               variables: {
-                id: deletingRegistry.id,
+                hostname: deletingRegistry.hostname || '',
               },
               onCompleted: (res, error) => {
                 if (error) {
@@ -527,9 +527,7 @@ const ContainerRegistryList: React.FC<{
           }}
         >
           <Typography.Text>
-            <Typography.Text code>
-              {deletingRegistry?.registry_name}
-            </Typography.Text>{' '}
+            <Typography.Text code>{deletingRegistry?.hostname}</Typography.Text>{' '}
             {t('registry.TypeRegistryNameToDelete')}
           </Typography.Text>
           <Form>
@@ -538,7 +536,7 @@ const ContainerRegistryList: React.FC<{
               // help="asdf"
               // validateStatus={
               //   deletingConfirmText &&
-              //   deletingConfirmText !== deletingRegistry?.registry_name
+              //   deletingConfirmText !== deletingRegistry?.hostname
               //     ? 'error'
               //     : undefined
               // }
@@ -547,9 +545,7 @@ const ContainerRegistryList: React.FC<{
                   required: true,
                   message: t('registry.HostnameDoesNotMatch'),
                   validator: async () => {
-                    if (
-                      deletingConfirmText === deletingRegistry?.registry_name
-                    ) {
+                    if (deletingConfirmText === deletingRegistry?.hostname) {
                       return Promise.resolve();
                     }
                     return Promise.reject();
@@ -570,4 +566,4 @@ const ContainerRegistryList: React.FC<{
   );
 };
 
-export default ContainerRegistryList;
+export default ContainerRegistryListBefore2409;

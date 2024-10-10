@@ -119,139 +119,166 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         ) : null,
     },
     {
-      title: t('environment.Registry'),
-      dataIndex: 'registry',
-      key: 'registry',
-      sorter: (a, b) =>
-        a?.registry && b?.registry ? a.registry.localeCompare(b.registry) : 0,
+      title: t('environment.FullName'),
+      key: 'fullName',
       render: (text, row) => (
-        <TextHighlighter keyword={imageSearch}>{row.registry}</TextHighlighter>
-      ),
-    },
-    {
-      title: t('environment.Architecture'),
-      dataIndex: 'architecture',
-      key: 'architecture',
-      sorter: (a, b) =>
-        a?.architecture && b?.architecture
-          ? a.architecture.localeCompare(b.architecture)
-          : 0,
-      render: (text, row) => (
-        <TextHighlighter keyword={imageSearch}>
-          {row.architecture}
-        </TextHighlighter>
-      ),
-    },
-    {
-      title: t('environment.Namespace'),
-      key: 'namespace',
-      dataIndex: 'namespace',
-      sorter: (a, b) => {
-        const namespaceA = getNamespace(getImageFullName(a) || '');
-        const namespaceB = getNamespace(getImageFullName(b) || '');
-        return namespaceA && namespaceB
-          ? namespaceA.localeCompare(namespaceB)
-          : 0;
-      },
-      render: (text, row) => (
-        <TextHighlighter keyword={imageSearch}>
-          {getNamespace(getImageFullName(row) || '')}
-        </TextHighlighter>
-      ),
-    },
-    {
-      title: t('environment.Language'),
-      key: 'lang',
-      dataIndex: 'lang',
-      sorter: (a, b) => {
-        const langA = a?.name ? getLang(a?.name) : '';
-        const langB = b?.name ? getLang(b?.name) : '';
-        return langA && langB ? langA.localeCompare(langB) : 0;
-      },
-      render: (text, row) => (
-        <TextHighlighter keyword={imageSearch}>
-          {row.name ? getLang(row.name) : null}
-        </TextHighlighter>
-      ),
-    },
-    {
-      title: t('environment.Version'),
-      key: 'baseversion',
-      dataIndex: 'baseversion',
-      sorter: (a, b) => {
-        const baseversionA = getBaseVersion(getImageFullName(a) || '');
-        const baseversionB = getBaseVersion(getImageFullName(b) || '');
-        return baseversionA && baseversionB
-          ? baseversionA.localeCompare(baseversionB)
-          : 0;
-      },
-      render: (text, row) => (
-        <TextHighlighter keyword={imageSearch}>
-          {getBaseVersion(getImageFullName(row) || '')}
-        </TextHighlighter>
-      ),
-    },
-    {
-      title: t('environment.Base'),
-      key: 'baseimage',
-      dataIndex: 'baseimage',
-      sorter: (a, b) => {
-        const baseimageA =
-          !a?.tag || !a?.name ? '' : getBaseImages(a?.tag, a?.name)[0] || '';
-        const baseimageB =
-          !b?.tag || !b?.name ? '' : getBaseImages(b?.tag, b?.name)[0] || '';
-        if (baseimageA === '' && baseimageB === '') return 0;
-        if (baseimageA === '') return -1;
-        if (baseimageB === '') return 1;
-        return baseimageA.localeCompare(baseimageB);
-      },
-      render: (text, row) => (
-        <Flex direction="row" align="start">
-          {row?.tag && row?.name
-            ? getBaseImages(row.tag, row.name).map((baseImage) => (
-                <Tag color="green">
-                  <TextHighlighter keyword={imageSearch}>
-                    {baseImage}
-                  </TextHighlighter>
-                </Tag>
-              ))
-            : null}
+        <Flex
+          direction="row"
+          align="center"
+          gap="xxs"
+          onClick={(e) => {
+            // To prevent the click event from selecting the row
+            e.stopPropagation();
+          }}
+        >
+          <TextHighlighter keyword={imageSearch}>
+            {getImageFullName(row) || ''}
+          </TextHighlighter>
+          <CopyButton
+            type="text"
+            defaultIcon={<CopyOutlined />}
+            style={{ color: token.colorPrimary }}
+            copyable={{
+              text: getImageFullName(row) || '',
+            }}
+          />
         </Flex>
       ),
     },
-    {
-      title: t('environment.Constraint'),
-      key: 'constraint',
-      dataIndex: 'constraint',
-      sorter: (a, b) => {
-        const requirementA =
-          a?.tag && b?.labels
-            ? getConstraints(
-                a?.tag,
-                a?.labels as { key: string; value: string }[],
-              )[0] || ''
-            : '';
-        const requirementB =
-          b?.tag && b?.labels
-            ? getConstraints(
-                b?.tag,
-                b?.labels as { key: string; value: string }[],
-              )[0] || ''
-            : '';
-        if (requirementA === '' && requirementB === '') return 0;
-        if (requirementA === '') return -1;
-        if (requirementB === '') return 1;
-        return requirementA.localeCompare(requirementB);
-      },
-      render: (text, row) =>
-        row?.tag ? (
-          <ConstraintTags
-            tag={row?.tag}
-            labels={row?.labels as { key: string; value: string }[]}
-            highlightKeyword={imageSearch}
-          />
-        ) : null,
-    },
+    // {
+    //   title: t('environment.Registry'),
+    //   dataIndex: 'registry',
+    //   key: 'registry',
+    //   sorter: (a, b) =>
+    //     a?.registry && b?.registry ? a.registry.localeCompare(b.registry) : 0,
+    //   render: (text, row) => (
+    //     <TextHighlighter keyword={imageSearch}>{row.registry}</TextHighlighter>
+    //   ),
+    // },
+    // {
+    //   title: t('environment.Architecture'),
+    //   dataIndex: 'architecture',
+    //   key: 'architecture',
+    //   sorter: (a, b) =>
+    //     a?.architecture && b?.architecture
+    //       ? a.architecture.localeCompare(b.architecture)
+    //       : 0,
+    //   render: (text, row) => (
+    //     <TextHighlighter keyword={imageSearch}>
+    //       {row.architecture}
+    //     </TextHighlighter>
+    //   ),
+    // },
+    // {
+    //   title: t('environment.Namespace'),
+    //   key: 'namespace',
+    //   dataIndex: 'namespace',
+    //   sorter: (a, b) => {
+    //     const namespaceA = getNamespace(getImageFullName(a) || '');
+    //     const namespaceB = getNamespace(getImageFullName(b) || '');
+    //     return namespaceA && namespaceB
+    //       ? namespaceA.localeCompare(namespaceB)
+    //       : 0;
+    //   },
+    //   render: (text, row) => (
+    //     <TextHighlighter keyword={imageSearch}>
+    //       {getNamespace(getImageFullName(row) || '')}
+    //     </TextHighlighter>
+    //   ),
+    // },
+    // {
+    //   title: t('environment.Language'),
+    //   key: 'lang',
+    //   dataIndex: 'lang',
+    //   sorter: (a, b) => {
+    //     const langA = a?.name ? getLang(a?.name) : '';
+    //     const langB = b?.name ? getLang(b?.name) : '';
+    //     return langA && langB ? langA.localeCompare(langB) : 0;
+    //   },
+    //   render: (text, row) => (
+    //     <TextHighlighter keyword={imageSearch}>
+    //       {row.name ? getLang(row.name) : null}
+    //     </TextHighlighter>
+    //   ),
+    // },
+    // {
+    //   title: t('environment.Version'),
+    //   key: 'baseversion',
+    //   dataIndex: 'baseversion',
+    //   sorter: (a, b) => {
+    //     const baseversionA = getBaseVersion(getImageFullName(a) || '');
+    //     const baseversionB = getBaseVersion(getImageFullName(b) || '');
+    //     return baseversionA && baseversionB
+    //       ? baseversionA.localeCompare(baseversionB)
+    //       : 0;
+    //   },
+    //   render: (text, row) => (
+    //     <TextHighlighter keyword={imageSearch}>
+    //       {getBaseVersion(getImageFullName(row) || '')}
+    //     </TextHighlighter>
+    //   ),
+    // },
+    // {
+    //   title: t('environment.Base'),
+    //   key: 'baseimage',
+    //   dataIndex: 'baseimage',
+    //   sorter: (a, b) => {
+    //     const baseimageA =
+    //       !a?.tag || !a?.name ? '' : getBaseImages(a?.tag, a?.name)[0] || '';
+    //     const baseimageB =
+    //       !b?.tag || !b?.name ? '' : getBaseImages(b?.tag, b?.name)[0] || '';
+    //     if (baseimageA === '' && baseimageB === '') return 0;
+    //     if (baseimageA === '') return -1;
+    //     if (baseimageB === '') return 1;
+    //     return baseimageA.localeCompare(baseimageB);
+    //   },
+    //   render: (text, row) => (
+    //     <Flex direction="row" align="start">
+    //       {row?.tag && row?.name
+    //         ? getBaseImages(row.tag, row.name).map((baseImage) => (
+    //             <Tag color="green">
+    //               <TextHighlighter keyword={imageSearch}>
+    //                 {baseImage}
+    //               </TextHighlighter>
+    //             </Tag>
+    //           ))
+    //         : null}
+    //     </Flex>
+    //   ),
+    // },
+    // {
+    //   title: t('environment.Constraint'),
+    //   key: 'constraint',
+    //   dataIndex: 'constraint',
+    //   sorter: (a, b) => {
+    //     const requirementA =
+    //       a?.tag && b?.labels
+    //         ? getConstraints(
+    //             a?.tag,
+    //             a?.labels as { key: string; value: string }[],
+    //           )[0] || ''
+    //         : '';
+    //     const requirementB =
+    //       b?.tag && b?.labels
+    //         ? getConstraints(
+    //             b?.tag,
+    //             b?.labels as { key: string; value: string }[],
+    //           )[0] || ''
+    //         : '';
+    //     if (requirementA === '' && requirementB === '') return 0;
+    //     if (requirementA === '') return -1;
+    //     if (requirementB === '') return 1;
+    //     return requirementA.localeCompare(requirementB);
+    //   },
+    //   render: (text, row) =>
+    //     row?.tag ? (
+    //       <ConstraintTags
+    //         tag={row?.tag}
+    //         labels={row?.labels as { key: string; value: string }[]}
+    //         highlightKeyword={imageSearch}
+    //       />
+    //     ) : null,
+    // },
     {
       title: t('environment.Digest'),
       dataIndex: 'digest',
@@ -294,14 +321,6 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             e.stopPropagation();
           }}
         >
-          <CopyButton
-            type="text"
-            defaultIcon={<CopyOutlined />}
-            style={{ color: token.colorPrimary }}
-            copyable={{
-              text: getImageFullName(row) || '',
-            }}
-          ></CopyButton>
           <Button
             type="text"
             icon={
