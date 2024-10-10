@@ -29,7 +29,7 @@ const DynamicInputNumber: React.FC<DynamicInputNumberProps> = ({
   const [key, updateKey] = useUpdatableState('first');
   useEffect(() => {
     setTimeout(() => {
-      updateKey(value);
+      updateKey(value.toString());
     }, 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
