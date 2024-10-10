@@ -1607,7 +1607,7 @@ class Client {
         'X-BackendAI-Version': this._config.apiVersion,
         'X-BackendAI-Date': d.toISOString(),
       });
-      if (queryString.startsWith('/server') === true) {
+      if (queryString.startsWith('/server') || queryString.startsWith('/statistics')) {
         // Force request to use Public when session mode is enabled
         uri = this._config.endpoint + queryString;
       } else {

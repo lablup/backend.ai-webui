@@ -1140,7 +1140,7 @@
       "ConnectUrlIsNotValid": "La URL de conexión no es válida."
     },
     "core": "núcleo",
-    "exportCSV": "exportar CSV",
+    "exportCSV": "exportar a CSV",
     "launcher": {
       "AIAccelerator": "Acelerador de IA",
       "Accelerator": "Acelerador",
