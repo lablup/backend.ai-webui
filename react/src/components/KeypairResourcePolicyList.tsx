@@ -111,6 +111,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
       key: 'name',
       fixed: 'left',
       sorter: (a, b) => localeCompare(a?.name, b?.name),
+      // width: 200,
     },
     {
       title: t('resourcePolicy.Resources'),

@@ -125,6 +125,7 @@
     "@types/hammerjs": "^2.0.45",
     "@types/jest": "^29.5.12",
     "@types/node": "^22.4.1",
+    "@types/react-resizable": "^3.0.8",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
     "@web/dev-server": "^0.4.6",
