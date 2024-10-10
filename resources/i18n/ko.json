@@ -75,7 +75,8 @@
     "UNAUTHORIZEDACCESS": "허가되지 않은 접근입니다.",
     "AdminOnlyPage": "접근하려는 페이지는 관리자 권한이 필요합니다.<br /> 아래 버튼을 클릭하면 요약 페이지로 돌아갑니다.",
     "CleanUpLoginSession": "로그인 된 세션을 종료합니다...",
-    "CleanUpNow": "종료합니다..."
+    "CleanUpNow": "종료합니다...",
+    "NetworkSoftTimeout": "서버와의 연결이 원할하지 않습니다."
   },
   "summary": {
     "StartMenu": "시작",
