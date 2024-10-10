@@ -7,6 +7,7 @@ import EnvVarFormList, {
   EnvVarFormListValue,
 } from '../components/EnvVarFormList';
 import Flex from '../components/Flex';
+import { useFolderExplorerOpener } from '../components/FolderExplorerOpener';
 import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from '../components/ImageEnvironmentSelectFormItems';
@@ -172,6 +173,7 @@ export type AppOption = {
   // [key in string]: any;
 };
 const SessionLauncherPage = () => {
+  const { open } = useFolderExplorerOpener();
   const app = App.useApp();
   let sessionMode: SessionMode = 'normal';
 
@@ -469,7 +471,12 @@ const SessionLauncherPage = () => {
                 }
               : undefined),
             mounts: values.mounts,
-            mount_map: values.vfoldersAliasMap,
+            mount_map: _.fromPairs(
+              _.filter(
+                _.map(values.vfoldersAliasMap, (v, k) => [k, v.alias]),
+                ([, alias]) => alias !== null && alias !== undefined,
+              ),
+            ),
 
             env: {
               ..._.fromPairs(values.envvars.map((v) => [v.variable, v.value])),
@@ -520,8 +527,6 @@ const SessionLauncherPage = () => {
               });
           },
         );
-        // console.log('##', values.mounts);
-        // console.log(sessionInfo);
         const backupTo = window.location.pathname + window.location.search;
         webuiNavigate(redirectTo || '/job');
         upsertNotification({
@@ -1542,6 +1547,29 @@ const SessionLauncherPage = () => {
                               {
                                 dataIndex: 'name',
                                 title: t('data.folders.Name'),
+                                render: (value, record) => {
+                                  return (
+                                    <Flex
+                                      onClick={() => {
+                                        record?.id && open(record.id);
+                                      }}
+                                      style={{
+                                        width: 'fit-content',
+                                        cursor: 'pointer',
+                                      }}
+                                    >
+                                      <Typography.Text
+                                        style={{
+                                          whiteSpace: 'pre-line',
+                                          wordBreak: 'break-all',
+                                          textAlign: 'start',
+                                        }}
+                                      >
+                                        {value}
+                                      </Typography.Text>
+                                    </Flex>
+                                  );
+                                },
                               },
                               {
                                 dataIndex: 'alias',
@@ -1566,9 +1594,13 @@ const SessionLauncherPage = () => {
                               form.getFieldValue('mounts'),
                               (v) => {
                                 return {
+                                  id: form.getFieldValue('vfoldersAliasMap')?.[
+                                    v
+                                  ]?.id,
                                   name: v,
                                   alias:
-                                    form.getFieldValue('vfoldersAliasMap')?.[v],
+                                    form.getFieldValue('vfoldersAliasMap')?.[v]
+                                      ?.alias,
                                 };
                               },
                             )}

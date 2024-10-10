@@ -7,6 +7,7 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useEventNotStable } from '../hooks/useEventNotStable';
 import { useShadowRoot } from './DefaultProviders';
 import Flex from './Flex';
+import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import TextHighlighter from './TextHighlighter';
 import VFolderPermissionTag from './VFolderPermissionTag';
 import { VFolder } from './VFolderSelect';
@@ -51,7 +52,11 @@ export interface VFolderSelectValue {
 }
 
 export interface AliasMap {
-  [key: string]: string;
+  [key: string]: {
+    id: string;
+    name: string;
+    alias: string;
+  };
 }
 
 type DataIndex = keyof VFolder;
@@ -117,24 +122,11 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   const [keypair] = useKeyPairLazyLoadQuery(baiClient?._config.accessKey);
 
   const [internalForm] = Form.useForm<AliasMap>();
-  useEffect(() => {
-    // TODO: check setFieldsValue performance
-    if (aliasMap) {
-      internalForm.setFieldsValue(
-        _.mapValues(aliasMap, (v) => {
-          if (v.startsWith(aliasBasePath)) {
-            return v.slice(aliasBasePath.length);
-          }
-          return v;
-        }),
-      );
-      internalForm.validateFields();
-    }
-  }, [aliasMap, internalForm, aliasBasePath]);
 
   const { t } = useTranslation();
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const currentProject = useCurrentProjectValue();
+  const { open } = useFolderExplorerOpener();
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const { data: allFolderList } = useSuspenseTanQuery({
@@ -258,10 +250,16 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
 
   const handleAliasUpdate = useEventNotStable(() => {
     setAliasMap(
-      _.mapValues(
-        _.pickBy(internalForm.getFieldsValue(), (v) => !!v), //remove empty
-        (v, k) => inputToAliasPath(k, v), // add alias base path
-      ),
+      _.mapValues(internalForm.getFieldsValue(), (v, k) => {
+        return {
+          id:
+            _.find(allFolderList, (v) => {
+              return _.isEqual(v.name, k);
+            })?.id ?? '',
+          name: k,
+          alias: v ? inputToAliasPath(k, v) : null,
+        };
+      }),
     );
     internalForm.validateFields().catch(() => {});
   });
@@ -311,15 +309,27 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
             direction="column"
             align="stretch"
             gap={'xxs'}
-            style={
-              showAliasInput && isCurrentRowSelected
-                ? { display: 'inline-flex', height: 70, width: '100%' }
-                : {
-                    maxWidth: 200,
-                  }
-            }
+            style={{
+              ...(showAliasInput && isCurrentRowSelected
+                ? { width: '100%' }
+                : { maxWidth: 200 }),
+            }}
           >
-            <TextHighlighter keyword={searchKey}>{value}</TextHighlighter>
+            <Flex
+              onClick={() => {
+                record.id && open(record.id);
+              }}
+              style={{
+                width: 'fit-content',
+                cursor: 'pointer',
+              }}
+            >
+              <Typography.Text
+                style={{ whiteSpace: 'pre-line', wordBreak: 'break-all' }}
+              >
+                <TextHighlighter keyword={searchKey}>{value}</TextHighlighter>
+              </Typography.Text>
+            </Flex>
             {showAliasInput && isCurrentRowSelected && (
               <Form.Item
                 noStyle
@@ -356,9 +366,9 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                               value &&
                               _.some(
                                 allAliasPathMap,
-                                (path, k) =>
+                                (info, k) =>
                                   k !== getRowKey(record) && // not current row
-                                  path ===
+                                  info.alias ===
                                     inputToAliasPath(getRowKey(record), value),
                               )
                             ) {
@@ -395,10 +405,11 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                         },
                       ]}
                       // dependencies={[getRowKey(record)]}
-                      extra={inputToAliasPath(
-                        record.name,
-                        internalForm.getFieldValue(getRowKey(record)),
-                      )}
+                      // extra={inputToAliasPath(
+                      //   record.name,
+                      //   internalForm.getFieldValue(getRowKey(record)),
+                      // )}
+                      style={{ margin: 0 }}
                     >
                       <Input
                         onClick={(e) => {
