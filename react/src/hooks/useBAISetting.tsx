@@ -17,7 +17,14 @@ interface UserSettings {
   summary_items?: Array<Omit<SummaryItem, 'data'>>;
   selected_language?: string;
   classic_session_launcher?: boolean;
+  recentSessionHistory?: Array<SessionHistory>;
 }
+
+export type SessionHistory = {
+  id: string;
+  params: string;
+  createdAt: string;
+};
 
 interface GeneralSettings {
   last_login?: number;
@@ -28,8 +35,9 @@ interface GeneralSettings {
 export const useBAISettingUserState = <K extends keyof UserSettings>(
   name: K,
 ): [UserSettings[K], (newValue: UserSettings[K]) => void] => {
-  return useAtom(SettingAtomFamily('user.' + name));
+  return useAtom<UserSettings[K]>(SettingAtomFamily('user.' + name));
 };
+
 export const useBAISettingGeneralState = <K extends keyof GeneralSettings>(
   name: K,
 ): [GeneralSettings[K], (newValue: GeneralSettings[K]) => void] => {

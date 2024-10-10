@@ -279,7 +279,8 @@
       "InvalidPortFormat": "端口号格式不正确。",
       "DuplicatedPort": "有重复的端口。",
       "FolderAliasOverlappingToAutoMount": "存在同名的自动挂载文件夹。",
-      "InsufficientAllocationOfResourcesWarning": "可分配資源低於所選映像所需的最低資源。"
+      "InsufficientAllocationOfResourcesWarning": "可分配資源低於所選映像所需的最低資源。",
+      "RecentHistory": "近期会议"
     },
     "Preparing": "正在準備...",
     "PreparingSession": "正在準備會議...",
