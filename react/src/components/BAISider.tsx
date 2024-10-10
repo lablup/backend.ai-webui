@@ -1,4 +1,5 @@
 import Flex from './Flex';
+import { DRAWER_WIDTH } from './WEBUINotificationDrawer';
 import { ConfigProvider, Grid, SiderProps, Typography, theme } from 'antd';
 import Sider from 'antd/es/layout/Sider';
 import _ from 'lodash';
@@ -56,7 +57,7 @@ const BAISider: React.FC<BAISiderProps> = ({
         `}
       </style>
       <Sider
-        width={221}
+        width={DRAWER_WIDTH}
         breakpoint="md"
         style={{
           overflowX: 'hidden',
@@ -65,7 +66,7 @@ const BAISider: React.FC<BAISiderProps> = ({
           position: 'sticky',
           top: 0,
           left: 0,
-          borderRight: '1px solid',
+          background: '#FFF',
           borderColor: token.colorBorder,
           paddingTop: token.paddingContentVerticalSM,
           scrollbarColor: 'auto',
@@ -86,7 +87,7 @@ const BAISider: React.FC<BAISiderProps> = ({
             algorithm: siderTheme === 'dark' ? theme.darkAlgorithm : undefined,
           }}
         >
-          <Flex
+          {/* <Flex
             direction="column"
             justify="start"
             align="start"
@@ -120,7 +121,7 @@ const BAISider: React.FC<BAISiderProps> = ({
                 {otherProps.collapsed ? logoTitleCollapsed : logoTitle}
               </Typography.Text>
             </div>
-          </Flex>
+          </Flex> */}
           {children}
           {bottomText && (
             <>
