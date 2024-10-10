@@ -66,8 +66,7 @@
     "format": "pnpm dlx prettier --check 'src/**/*.{js,jsx,ts,tsx}'",
     "format-fix": "pnpm dlx prettier --write './src/**/*.{js,jsx,ts,tsx}'",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build",
-    "postinstall": "patch-package"
+    "build-storybook": "storybook build"
   },
   "eslintConfig": {
     "extends": [
@@ -131,5 +130,10 @@
     "typescript": "^5.4.5",
     "react-refresh": "0.11.0"
   },
-  "proxy": "http://localhost:3081"
+  "proxy": "http://localhost:3081",
+  "pnpm": {
+    "patchedDependencies": {
+      "@cloudscape-design/board-components@3.0.60": "patches/@cloudscape-design__board-components@3.0.60.patch"
+    }
+  }
 }
