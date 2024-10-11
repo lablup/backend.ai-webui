@@ -250,7 +250,7 @@
       "EnqueueComputeSessionWarning": "Risorse insufficienti. \nLa sessione potrebbe essere in sospeso.",
       "SessionName": "Nome della sessione",
       "ResetFormConfirm": "Vuoi reimpostare tutte le tue voci?",
-      "TemplateAndHistory": "Modelli",
+      "TemplateAndHistory": "Modelli e storia",
       "ScheduleTimeSimple": "Imposta l'ora di inizio",
       "ResourceAllocationPerContainer": "Allocazione delle risorse per contenitore",
       "NumberOfContainer": "Numero di contenitori",
@@ -279,7 +279,8 @@
       "InvalidPortFormat": "Il formato del numero di porta non è corretto.",
       "DuplicatedPort": "Ci sono porte duplicate.",
       "FolderAliasOverlappingToAutoMount": "Esiste una cartella di montaggio automatico con lo stesso nome.",
-      "InsufficientAllocationOfResourcesWarning": "Le risorse assegnabili sono inferiori alla risorsa minima richiesta nell'immagine selezionata."
+      "InsufficientAllocationOfResourcesWarning": "Le risorse assegnabili sono inferiori alla risorsa minima richiesta nell'immagine selezionata.",
+      "RecentHistory": "Storia recente"
     },
     "Preparing": "Preparazione...",
     "PreparingSession": "Preparazione della sessione...",
@@ -458,7 +459,8 @@
     "SaveWithoutClose": "Salva senza chiudere",
     "Collapse": "Crollo",
     "Expand": "Espandere",
-    "Clear": "Eliminare"
+    "Clear": "Eliminare",
+    "Apply": "Applicare"
   },
   "agent": {
     "Endpoint": "Endpoint",

@@ -31,6 +31,7 @@ import SessionOwnerSetterCard, {
   SessionOwnerSetterFormValues,
 } from '../components/SessionOwnerSetterCard';
 import { SessionOwnerSetterPreviewCard } from '../components/SessionOwnerSetterCard';
+import SessionTemplateModal from '../components/SessionTemplateModal';
 import SourceCodeViewer from '../components/SourceCodeViewer';
 import VFolderTableFormItem, {
   VFolderTableFormValues,
@@ -45,7 +46,10 @@ import {
   useUpdatableState,
   useWebUINavigate,
 } from '../hooks';
-import { useCurrentUserRole } from '../hooks/backendai';
+import {
+  useCurrentUserRole,
+  useRecentSessionHistory,
+} from '../hooks/backendai';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useThemeMode } from '../hooks/useThemeMode';
@@ -59,7 +63,7 @@ import {
   QuestionCircleOutlined,
   RightOutlined,
 } from '@ant-design/icons';
-import { useDebounceFn } from 'ahooks';
+import { useDebounceFn, useToggle } from 'ahooks';
 import {
   Alert,
   App,
@@ -69,7 +73,6 @@ import {
   Col,
   Descriptions,
   Form,
-  FormInstance,
   Grid,
   Input,
   InputNumber,
@@ -92,7 +95,7 @@ import _ from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { dark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import {
@@ -223,14 +226,17 @@ const SessionLauncherPage = () => {
     redirectTo: StringParam,
     appOption: AppOptionParam,
   });
+  const { search } = useLocation();
 
   const { isDarkMode } = useThemeMode();
-  const navigate = useNavigate();
   // const { moveTo } = useWebComponentInfo();
   const webuiNavigate = useWebUINavigate();
   const currentProject = useCurrentProjectValue();
 
+  const [isOpenTemplateModal, { toggle: toggleIsOpenTemplateModal }] =
+    useToggle();
   const { upsertNotification } = useSetBAINotification();
+  const [, { push: pushSessionHistory }] = useRecentSessionHistory();
 
   const { run: syncFormToURLWithDebounce } = useDebounceFn(
     () => {
@@ -290,7 +296,13 @@ const SessionLauncherPage = () => {
   }, []);
 
   const mergedInitialValues = useMemo(() => {
-    return _.merge({}, INITIAL_FORM_VALUES, formValuesFromQueryParams);
+    return _.merge(
+      {},
+      // bec
+      // { sessionName: '' } as Partial<SessionLauncherFormValue>,
+      INITIAL_FORM_VALUES,
+      formValuesFromQueryParams,
+    );
   }, [INITIAL_FORM_VALUES, formValuesFromQueryParams]);
 
   // ScrollTo top when step is changed
@@ -375,6 +387,7 @@ const SessionLauncherPage = () => {
   const startSession = () => {
     // TODO: support inference mode, support import mode
     setIsStartingSession(true);
+    const usedSearchParams = search;
     form
       .validateFields()
       .then(async (values) => {
@@ -539,58 +552,72 @@ const SessionLauncherPage = () => {
           open: true,
         });
         await Promise.all(sessionPromises)
-          .then(([firstSession]) => {
-            // console.log('##sessionPromises', firstSession);
-            if (
-              values.num_of_sessions === 1 &&
-              values.sessionType !== 'batch'
-            ) {
-              const res = firstSession;
-              let appOptions: AppOption = _.cloneDeep(appOptionFromQueryParams);
-              if ('kernelId' in res) {
-                // API v4
-                appOptions = _.extend(appOptions, {
-                  'session-name': res.kernelId,
-                  'access-key': '',
-                  mode: sessionMode,
-                  // mode: this.mode,
-                });
-              } else {
-                // API >= v5
-                appOptions = _.extend(appOptions, {
-                  'session-uuid': res.sessionId,
-                  'session-name': res.sessionName,
-                  'access-key': '',
-                  mode: sessionMode,
-                  // mode: this.mode,
-                });
-              }
-              const service_info = res.servicePorts;
-              if (Array.isArray(service_info) === true) {
-                appOptions['app-services'] = service_info.map(
-                  (a: { name: string }) => a.name,
+          .then(
+            ([firstSession]: Array<{
+              kernelId?: string;
+              sessionId: string;
+              sessionName: string;
+              servicePorts: Array<{ name: string }>;
+            }>) => {
+              pushSessionHistory({
+                id: firstSession.sessionId,
+                params: usedSearchParams,
+                name: firstSession.sessionName,
+              });
+              // console.log('##sessionPromises', firstSession);
+              if (
+                values.num_of_sessions === 1 &&
+                values.sessionType !== 'batch'
+              ) {
+                const res = firstSession;
+                let appOptions: AppOption = _.cloneDeep(
+                  appOptionFromQueryParams,
                 );
-              } else {
-                appOptions['app-services'] = [];
-              }
-              // TODO: support import and inference
-              // if (sessionMode === 'import') {
-              //   appOptions['runtime'] = 'jupyter';
-              //   appOptions['filename'] = this.importFilename;
-              // }
-              // if (sessionMode === 'inference') {
-              //   appOptions['runtime'] = appOptions['app-services'].find(
-              //     (element: any) => !['ttyd', 'sshd'].includes(element),
-              //   );
-              // }
+                if ('kernelId' in res) {
+                  // API v4
+                  appOptions = _.extend(appOptions, {
+                    'session-name': res.kernelId,
+                    'access-key': '',
+                    mode: sessionMode,
+                    // mode: this.mode,
+                  });
+                } else {
+                  // API >= v5
+                  appOptions = _.extend(appOptions, {
+                    'session-uuid': res.sessionId,
+                    'session-name': res.sessionName,
+                    'access-key': '',
+                    mode: sessionMode,
+                    // mode: this.mode,
+                  });
+                }
+                const service_info = res.servicePorts;
+                if (Array.isArray(service_info) === true) {
+                  appOptions['app-services'] = service_info.map(
+                    (a: { name: string }) => a.name,
+                  );
+                } else {
+                  appOptions['app-services'] = [];
+                }
+                // TODO: support import and inference
+                // if (sessionMode === 'import') {
+                //   appOptions['runtime'] = 'jupyter';
+                //   appOptions['filename'] = this.importFilename;
+                // }
+                // if (sessionMode === 'inference') {
+                //   appOptions['runtime'] = appOptions['app-services'].find(
+                //     (element: any) => !['ttyd', 'sshd'].includes(element),
+                //   );
+                // }
 
-              // only launch app when it has valid service ports
-              if (service_info.length > 0) {
-                // @ts-ignore
-                globalThis.appLauncher.showLauncher(appOptions);
+                // only launch app when it has valid service ports
+                if (service_info.length > 0) {
+                  // @ts-ignore
+                  globalThis.appLauncher.showLauncher(appOptions);
+                }
               }
-            }
-          })
+            },
+          )
           .catch(() => {
             upsertNotification({
               key: 'session-launcher:' + sessionName,
@@ -649,21 +676,22 @@ const SessionLauncherPage = () => {
           align="stretch"
           style={{ flex: 1, maxWidth: 700 }}
         >
-          {/* <Flex direction="row" justify="between">
-            <Typography.Title level={3} style={{ marginTop: 0 }}>
+          <Flex direction="row" justify="between">
+            <Typography.Title level={4} style={{ marginTop: 0 }}>
               {t('session.launcher.StartNewSession')}
             </Typography.Title>
             <Flex direction="row" gap={'sm'}>
               <Button
                 type="link"
-                icon={<BlockOutlined />}
-                disabled
+                // icon={<BlockOutlined />}
+                // disabled
                 style={{ paddingRight: 0, paddingLeft: 0 }}
+                onClick={() => toggleIsOpenTemplateModal()}
               >
                 {t('session.launcher.TemplateAndHistory')}
               </Button>
             </Flex>
-          </Flex> */}
+          </Flex>
           {/* <Suspense fallback={<FlexActivityIndicator />}> */}
           <Form.Provider
             onFormChange={(name, info) => {
@@ -1447,7 +1475,9 @@ const SessionLauncherPage = () => {
                                 </Tag>
                               )}
 
-                              <FormResourceNumbers form={form} />
+                              <ResourceNumbersOfSession
+                                resource={form.getFieldValue('resource')}
+                              />
                               {/* {_.chain(
                               form.getFieldValue('allocationPreset') ===
                                 'custom'
@@ -1502,8 +1532,8 @@ const SessionLauncherPage = () => {
                           title={t('session.launcher.TotalAllocation')}
                         >
                           <Flex direction="row" gap="xxs">
-                            <FormResourceNumbers
-                              form={form}
+                            <ResourceNumbersOfSession
+                              resource={form.getFieldValue('resource')}
                               containerCount={
                                 form.getFieldValue('cluster_size') === 1
                                   ? form.getFieldValue('num_of_sessions')
@@ -1651,9 +1681,8 @@ const SessionLauncherPage = () => {
                       title={t('button.Reset')}
                       description={t('session.launcher.ResetFormConfirm')}
                       onConfirm={() => {
+                        webuiNavigate('/session/start');
                         form.resetFields();
-
-                        navigate('/session/start');
                       }}
                       icon={
                         <QuestionCircleOutlined
@@ -1769,13 +1798,53 @@ const SessionLauncherPage = () => {
           </Flex>
         )}
       </Flex>
-      {/* <FolderExplorer
-        folderName={selectedFolderName}
-        open={!!selectedFolderName}
-        onRequestClose={() => {
-          setSelectedFolderName(undefined);
+      <SessionTemplateModal
+        onRequestClose={(formValue) => {
+          if (formValue) {
+            const fieldsValue = _.merge(
+              {
+                // reset fields related to optional and nested fields
+                sessionName: '',
+                ports: [],
+                mounts: [],
+                vfoldersAliasMap: {},
+                bootstrap_script: '',
+                num_of_sessions: 1,
+                owner: {
+                  enabled: false,
+                  accesskey: '',
+                  domainName: '',
+                  email: undefined,
+                  project: '',
+                  resourceGroup: '',
+                },
+                environments: {
+                  manual: '',
+                },
+                batch: {
+                  enabled: false,
+                  command: undefined,
+                  scheduleDate: undefined,
+                },
+              } as Omit<
+                Required<OptionalFieldsOnly<SessionLauncherFormValue>>,
+                'autoMountedFolderNames'
+              >,
+              formValue,
+            );
+
+            if (!_.isEmpty(fieldsValue.sessionName)) {
+              fieldsValue.sessionName =
+                fieldsValue.sessionName + '-' + generateRandomString(4);
+            }
+            form.setFieldsValue(fieldsValue);
+            setCurrentStep(steps.length - 1);
+            form.validateFields().catch(() => {});
+          }
+          toggleIsOpenTemplateModal();
         }}
-      /> */}
+        open={isOpenTemplateModal}
+      />
       {currentStep === steps.length - 1 ? (
         <ErrorBoundary fallback={null}>
           <SessionLauncherValidationTour
@@ -1791,19 +1860,19 @@ const SessionLauncherPage = () => {
   );
 };
 
-const FormResourceNumbers: React.FC<{
-  form: FormInstance;
+type FormOrResourceRequired = {
+  resource: ResourceAllocationFormValue['resource'];
   containerCount?: number;
-}> = ({ form, containerCount = 1 }) => {
+};
+
+export const ResourceNumbersOfSession: React.FC<FormOrResourceRequired> = ({
+  resource,
+  containerCount = 1,
+}) => {
   return (
     <>
       {_.map(
-        _.omit(
-          form.getFieldsValue().resource,
-          'shmem',
-          'accelerator',
-          'acceleratorType',
-        ),
+        _.omit(resource, 'shmem', 'accelerator', 'acceleratorType'),
         (value, type) => {
           return (
             <ResourceNumber
@@ -1812,29 +1881,31 @@ const FormResourceNumbers: React.FC<{
               type={type}
               value={
                 type === 'mem'
-                  ? (iSizeToSize(value, 'b')?.number || 0) * containerCount + ''
+                  ? (iSizeToSize(value.toString(), 'b')?.number || 0) *
+                      containerCount +
+                    ''
                   : _.toNumber(value) * containerCount + ''
               }
               opts={{
-                shmem: form.getFieldValue('resource').shmem
-                  ? (iSizeToSize(form.getFieldValue('resource').shmem, 'b')
-                      ?.number || 0) * containerCount
+                shmem: resource.shmem
+                  ? (iSizeToSize(resource.shmem, 'b')?.number || 0) *
+                    containerCount
                   : undefined,
               }}
             />
           );
         },
       )}
-      {_.isNumber(form.getFieldValue(['resource', 'accelerator'])) &&
-        form.getFieldValue(['resource', 'acceleratorType']) && (
-          <ResourceNumber
-            // @ts-ignore
-            type={form.getFieldValue(['resource', 'acceleratorType'])}
-            value={_.toString(
-              form.getFieldValue(['resource', 'accelerator']) * containerCount,
-            )}
-          />
-        )}
+      {resource &&
+      resource.accelerator &&
+      resource.acceleratorType &&
+      _.isNumber(resource.accelerator) ? (
+        <ResourceNumber
+          // @ts-ignore
+          type={resource.acceleratorType}
+          value={_.toString(resource.accelerator * containerCount)}
+        />
+      ) : null}
     </>
   );
 };

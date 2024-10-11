@@ -143,7 +143,8 @@
     "SaveWithoutClose": "Tallenna ilman sulkemista",
     "Collapse": "Romahdus",
     "Expand": "Laajentaa",
-    "Clear": "Poistaa"
+    "Clear": "Poistaa",
+    "Apply": "Hae"
   },
   "credential": {
     "AccessKeyOptional": "Pääsyavain (valinnainen)",
@@ -1268,7 +1269,7 @@
       "EnqueueComputeSessionWarning": "Jos asetat sen suuremmaksi kuin tällä hetkellä käytettävissä olevat resurssit, istunnon luominen viivästyy jonossa, kunnes se tulee saataville.",
       "SessionName": "Istunnon nimi",
       "ResetFormConfirm": "Haluatko nollata kaikki tietosi?",
-      "TemplateAndHistory": "Mallit",
+      "TemplateAndHistory": "Mallit & historia",
       "ScheduleTimeSimple": "Aseta aloitusaika",
       "ResourceAllocationPerContainer": "Resurssien jakaminen konttia kohti",
       "NumberOfContainer": "Säiliön numero",
@@ -1297,7 +1298,8 @@
       "InvalidPortFormat": "Porttinumeron muoto on virheellinen.",
       "DuplicatedPort": "Portteja on päällekkäin.",
       "FolderAliasOverlappingToAutoMount": "Samanniminen automaattinen kiinnityskansio on olemassa.",
-      "InsufficientAllocationOfResourcesWarning": "Allokoitavat resurssit jäävät alle valitussa kuvassa vaaditun vähimmäisresurssin."
+      "InsufficientAllocationOfResourcesWarning": "Allokoitavat resurssit jäävät alle valitussa kuvassa vaaditun vähimmäisresurssin.",
+      "RecentHistory": "Lähihistoria"
     },
     "ExpiresAfter": "Jäljellä oleva aika",
     "CPU": "CPU",

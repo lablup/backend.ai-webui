@@ -250,7 +250,7 @@
       "EnqueueComputeSessionWarning": "Mevcut mevcut kaynaklardan daha büyük bir değere ayarlarsanız, oturumun oluşturulması, kullanılabilir hale gelene kadar kuyrukta ertelenecektir.",
       "SessionName": "Oturum adı",
       "ResetFormConfirm": "Tüm girişlerinizi sıfırlamak istiyor musunuz?",
-      "TemplateAndHistory": "Şablonlar",
+      "TemplateAndHistory": "Şablonlar ve tarihçe",
       "ScheduleTimeSimple": "Başlangıç ​​zamanını ayarla",
       "ResourceAllocationPerContainer": "Konteyner Başına Kaynak Tahsisi",
       "NumberOfContainer": "Konteyner sayısı",
@@ -279,7 +279,8 @@
       "InvalidPortFormat": "Bağlantı noktası numarası biçimi yanlış.",
       "DuplicatedPort": "Çift bağlantı noktaları var.",
       "FolderAliasOverlappingToAutoMount": "Aynı ada sahip bir otomatik montaj klasörü mevcut.",
-      "InsufficientAllocationOfResourcesWarning": "Tahsis edilebilir kaynaklar, seçilen görüntüde gereken minimum kaynağın altına düşüyor."
+      "InsufficientAllocationOfResourcesWarning": "Tahsis edilebilir kaynaklar, seçilen görüntüde gereken minimum kaynağın altına düşüyor.",
+      "RecentHistory": "Yakın Tarih"
     },
     "Preparing": "hazırlanıyor...",
     "PreparingSession": "Oturum hazırlanıyor...",
@@ -457,7 +458,8 @@
     "SaveWithoutClose": "Kapatmadan Kaydet",
     "Collapse": "Yıkılmak",
     "Expand": "Genişletmek",
-    "Clear": "Silmek"
+    "Clear": "Silmek",
+    "Apply": "Başvurmak"
   },
   "agent": {
     "Endpoint": "uç nokta",
