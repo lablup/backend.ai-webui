@@ -547,7 +547,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                       name: updatedEndpoint?.name,
                     }),
                   );
-                  webuiNavigate('/serving');
+                  webuiNavigate(`/serving/${endpoint?.endpoint_id}`);
                 }
               },
               onError: (error) => {
@@ -566,7 +566,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                     name: endpoint.name, // FIXME: temporally get name from endpoint, not input value
                   }),
                 );
-                webuiNavigate('/serving');
+                webuiNavigate(`/serving/${endpoint?.endpoint_id}`);
               },
               onError: (error) => {
                 console.log(error);
