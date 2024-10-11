@@ -93,6 +93,7 @@ const LLMPlaygroundPage: React.FC<LLMPlaygroundPageProps> = ({ ...props }) => {
         </Flex>
         <Flex
           gap={'xs'}
+          direction="row"
           style={{
             margin: token.margin,
             marginTop: 0,
@@ -104,7 +105,14 @@ const LLMPlaygroundPage: React.FC<LLMPlaygroundPageProps> = ({ ...props }) => {
           {_.map(list, (__, index) => (
             <Suspense
               fallback={
-                <Card style={{ flex: 1 }}>
+                <Card
+                  bordered
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                  }}
+                >
                   <Skeleton active />
                 </Card>
               }
