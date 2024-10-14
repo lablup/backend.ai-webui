@@ -25,6 +25,7 @@ describe('DomainSelect', () => {
   test('default render', async () => {
     const environment = createMockEnvironment();
     const { asFragment } = render(
+      // @ts-ignore
       <RelayEnvironmentProvider environment={environment}>
         <Suspense fallback="loading...">
           <DomainSelector
