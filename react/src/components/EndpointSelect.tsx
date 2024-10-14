@@ -28,9 +28,8 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
   ...selectPropsWithoutLoading
 }) => {
   const baiClient = useSuspendedBackendaiClient();
-  const [controllableValue, setControllableValue] = useControllableValue(
-    selectPropsWithoutLoading,
-  );
+  const [controllableValue, setControllableValue] =
+    useControllableValue<string>(selectPropsWithoutLoading);
   const [searchStr, setSearchStr] = useState<string>();
   const [isSearchPending, startSearchTransition] = useTransition();
 
@@ -62,7 +61,7 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
             ...EndpointLLMChatCard_endpoint
           }
         }
-        endpoint(endpoint_id: $endpoint_id) @skip(if: $skipEndpoint) {
+        endpoint(endpoint_id: $endpoint_id) @skipOnClient(if: $skipEndpoint) {
           name
           endpoint_id
           ...EndpointLLMChatCard_endpoint
