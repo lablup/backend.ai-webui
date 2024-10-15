@@ -56,7 +56,7 @@ type ScalingGroup = {
   remaining: ResourceRemaining;
 };
 
-type ResourceSlots = {
+export type ResourceSlots = {
   cpu: string;
   mem: string;
   [key: string]: string;
@@ -77,7 +77,7 @@ export type ResourcePreset = {
   allocatable: boolean;
 };
 
-type ResourceAllocation = {
+export type ResourceAllocation = {
   keypair_limits: ResourceLimits;
   keypair_using: ResourceUsing;
   keypair_remaining: ResourceRemaining;
@@ -356,7 +356,7 @@ export const useResourceLimitAndRemaining = ({
   ] as const;
 };
 
-const limitParser = (limit: string | undefined) => {
+export const limitParser = (limit: string | undefined) => {
   if (limit === undefined) {
     return undefined;
   } else if (limit === 'Infinity') {

@@ -208,25 +208,25 @@ const AdminDashboardPage: React.FC<AdminDashboardPageProps> = (props) => {
     {
       name: 'CPU',
       displayUnit: 'Core',
-      value: 12,
+      value: '12',
       percentage: (4 / 12) * 100,
     },
     {
       name: 'RAM',
       displayUnit: 'GiB',
-      value: 256,
+      value: '256',
       percentage: (8 / 12) * 100,
     },
     {
       name: 'FGPU',
       displayUnit: 'GiB',
-      value: 3.5,
+      value: '3.5',
       percentage: (4 / 12) * 100,
     },
     {
       name: 'ATOM',
       displayUnit: 'Unit',
-      value: 2,
+      value: '2',
       percentage: (2 / 12) * 100,
     },
   ];
