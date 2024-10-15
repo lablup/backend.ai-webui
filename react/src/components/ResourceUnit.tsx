@@ -5,9 +5,10 @@ import React from 'react';
 export interface ResourceUnitProps {
   name: string;
   displayUnit: string;
-  value: number;
+  value: string;
   percentage: number;
   color?: string;
+  style?: React.CSSProperties;
 }
 
 const ResourceUnit: React.FC<ResourceUnitProps> = ({
@@ -16,20 +17,11 @@ const ResourceUnit: React.FC<ResourceUnitProps> = ({
   value,
   percentage,
   color,
+  style,
 }) => {
   const { token } = theme.useToken();
   return (
-    <Flex
-      direction="column"
-      style={
-        {
-          // width: 88,
-          // height: 70,
-        }
-      }
-      align="start"
-      justify="center"
-    >
+    <Flex direction="column" style={style} align="start" justify="center">
       <Typography.Text
         style={{
           // marginBottom: token.margin,
@@ -40,7 +32,7 @@ const ResourceUnit: React.FC<ResourceUnitProps> = ({
         {name}
       </Typography.Text>
       <Flex direction="column" align="start" justify="start">
-        <Flex align="baseline">
+        <Flex align="baseline" gap="xxs">
           <Typography.Text
             style={{
               fontSize: token.sizeXL,

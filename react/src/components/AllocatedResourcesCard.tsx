@@ -1,8 +1,21 @@
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { humanReadableBinarySize, iSizeToSize } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useResourceSlotsDetails } from '../hooks/backendai';
+import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
+import {
+  useCurrentProjectValue,
+  useCurrentResourceGroupValue,
+} from '../hooks/useCurrentProject';
+import {
+  ResourceSlots,
+  ResourceAllocation,
+  limitParser,
+} from '../hooks/useResourceLimitAndRemaining';
+import BAILayoutCard from './BAILayoutCard';
 import Flex from './Flex';
 import ResourceGroupSelect from './ResourceGroupSelect';
+import ResourceGroupSelectForCurrentProject from './ResourceGroupSelectForCurrentProject';
 import ResourceUnit, { ResourceUnitProps } from './ResourceUnit';
-import BAILayoutCard from './BAILayoutCard';
 import { QuestionCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import {
   Button,
@@ -30,33 +43,101 @@ const AllocatedResourcesCard: React.FC<AllocatedResourcesCardProps> = ({
 }) => {
   const { token } = theme.useToken();
   const { t } = useTranslation();
+  const currentResourceGroup = useCurrentResourceGroupValue(); // use global state
   const currentProject = useCurrentProjectValue();
+  const baiClient = useSuspendedBackendaiClient();
+  const { mergedResourceSlots } = useResourceSlotsDetails();
 
-  const resourceUnitMockData: Array<ResourceUnitProps> = [
+  const { data: resourceAllocation, refetch } = useSuspenseTanQuery<
+    ResourceAllocation | undefined
+  >({
+    queryKey: ['check-presets', currentProject.name, currentResourceGroup],
+    queryFn: () => {
+      if (currentResourceGroup) {
+        return baiClient.resourcePreset
+          .check({
+            group: currentProject.name,
+            scaling_group: currentResourceGroup,
+          })
+          .catch(() => {});
+      } else {
+        return;
+      }
+    },
+    // onSuccess: (data) => {
+    //   if (!data) {
+    //     refetch();
+    //   }
+    // },
+    // suspense: !_.isEmpty(currentResourceGroup), //prevent flicking
+  });
+
+  const mergeResources = (remaining: any, using: any) => {
+    let merged: ResourceSlots = {
+      cpu: '',
+      mem: '',
+    };
+
+    [remaining, using].forEach((obj) => {
+      Object.entries(obj).forEach(([key, value]) => {
+        const numValue = parseFloat(value as string) || 0;
+        merged[key] = (parseFloat(merged[key] || '0') + numValue).toString();
+      });
+    });
+
+    return merged;
+  };
+
+  const remaining =
+    resourceAllocation?.scaling_groups[currentResourceGroup as string]
+      ?.remaining || {};
+  const using =
+    resourceAllocation?.scaling_groups[currentResourceGroup as string]?.using ||
+    {};
+  const mergedResources: ResourceSlots = mergeResources(remaining, using);
+
+  const accelerators = _.omit(mergedResources, ['cpu', 'mem']);
+  const usingAccelerators: { [key: string]: string } = _.omit(using, [
+    'cpu',
+    'mem',
+  ]);
+
+  console.log(iSizeToSize(limitParser(using?.mem) + '', 'g', 0));
+
+  const acceleratorData = _.map(accelerators, (value, key) => ({
+    name: mergedResourceSlots[key]?.human_readable_name || key.toUpperCase(),
+    displayUnit: mergedResourceSlots[key]?.display_unit || 'Unit',
+    value: usingAccelerators[key],
+    percentage:
+      (parseInt(usingAccelerators[key]) / parseInt(mergedResources[key])) * 100,
+  }));
+
+  const resourceUnitData: Array<ResourceUnitProps> = [
     {
       name: 'CPU',
       displayUnit: 'Core',
-      value: 12,
-      percentage: (4 / 12) * 100,
+      value: using?.cpu as string,
+      percentage:
+        (parseInt(using?.cpu as string) / parseInt(mergedResources.cpu)) * 100,
     },
     {
       name: 'RAM',
       displayUnit: 'GiB',
-      value: 256,
-      percentage: (8 / 12) * 100,
+      value: iSizeToSize(limitParser(using?.mem) + '', 'g', 0)?.number?.toFixed(
+        1,
+      ) as string,
+      percentage:
+        (parseInt(
+          iSizeToSize(limitParser(using?.mem) + '', 'g', 0)
+            ?.numberFixed as string,
+        ) /
+          parseInt(
+            iSizeToSize(limitParser(mergedResources.mem) + '', 'g', 0)
+              ?.numberFixed as string,
+          )) *
+        100,
     },
-    {
-      name: 'FGPU',
-      displayUnit: 'GiB',
-      value: 3.5,
-      percentage: (4 / 12) * 100,
-    },
-    {
-      name: 'ATOM',
-      displayUnit: 'Unit',
-      value: 2,
-      percentage: (2 / 12) * 100,
-    },
+    ...acceleratorData,
   ];
   return (
     <ConfigProvider
@@ -80,40 +161,44 @@ const AllocatedResourcesCard: React.FC<AllocatedResourcesCardProps> = ({
         }
         extra={
           <>
-            <ResourceGroupSelect
-              placeholder={t('session.ResourceGroup')}
-              variant="borderless"
+            <ResourceGroupSelectForCurrentProject
               style={{ minWidth: 151, fontSize: token.fontSizeLG, padding: 0 }}
-              dropdownStyle={{ color: '#999999' }} 
-              projectName={currentProject.name}/>
+              variant="borderless"
+              showSearch
+            />
             <Button
               type="text"
               icon={<SyncOutlined />}
               style={{ color: 'inherit' }}
+              onClick={() => {
+                refetch();
+              }}
             />
           </>
         }
         style={{ width: width ?? 678, height: 192 }}
       >
-        <Flex justify="between" style={{ maxWidth: 630 }}>
-          {_.map(
-            resourceUnitMockData,
-            (resourceUnit: ResourceUnitProps, index) => (
-              <>
-                <ResourceUnit
-                  key={index}
-                  name={resourceUnit.name}
-                  displayUnit={resourceUnit.displayUnit}
-                  value={resourceUnit.value}
-                  percentage={resourceUnit.percentage}
-                  color={'#00BD9B'}
+        <Flex justify="between" align="stretch" style={{ width: '100%' }}>
+          {_.map(resourceUnitData, (resourceUnit: ResourceUnitProps, index) => (
+            <Flex
+              style={{ width: `${_.round(100 / resourceUnitData.length)}%` }}
+            >
+              <ResourceUnit
+                key={index}
+                name={resourceUnit.name}
+                displayUnit={resourceUnit.displayUnit}
+                value={resourceUnit.value}
+                percentage={resourceUnit.percentage}
+                color={'#00BD9B'}
+              />
+              {index < resourceUnitData.length - 1 && (
+                <Divider
+                  type="vertical"
+                  style={{ height: 70, margin: '0 auto' }}
                 />
-                {index < resourceUnitMockData.length - 1 && (
-                  <Divider type="vertical" style={{ height: 70 }} />
-                )}
-              </>
-            ),
-          )}
+              )}
+            </Flex>
+          ))}
         </Flex>
       </BAILayoutCard>
       {/* <Card

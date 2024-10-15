@@ -79,7 +79,6 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     baiClient?.supports('user-committed-image') ?? false;
 
   const menuInPreparation = [
-    'data',
     'my-environment',
     'examples',
     'serving',
@@ -116,15 +115,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       type: 'group',
       children: [
         {
-          label: (
-            <Tooltip
-              placement="right"
-              title="Work In Progress..."
-              color={'#333333'}
-            >
-              {t('webui.menu.Data&Storage')}
-            </Tooltip>
-          ),
+          label: t('webui.menu.Data&Storage'),
           icon: <CloudUploadOutlined style={{ color: token.colorPrimaryBg }} />,
           key: 'data',
         },
