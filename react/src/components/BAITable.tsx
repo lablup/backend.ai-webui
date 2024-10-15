@@ -1,9 +1,9 @@
-import { Table } from 'antd';
+import { GetProps, Table } from 'antd';
 import { createStyles } from 'antd-style';
 import { ColumnsType } from 'antd/es/table';
 import { TableProps } from 'antd/lib';
 import _ from 'lodash';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Resizable, ResizeCallbackData } from 'react-resizable';
 
 const useStyles = createStyles(({ token, css }) => ({
@@ -28,7 +28,7 @@ const useStyles = createStyles(({ token, css }) => ({
 const ResizableTitle = (
   props: React.HTMLAttributes<any> & {
     onResize: (
-      e: React.SyntheticEvent<Element>,
+      e: React.SyntheticEvent<Element> | undefined,
       data: ResizeCallbackData,
     ) => void;
     width: number;
@@ -36,11 +36,25 @@ const ResizableTitle = (
 ) => {
   const { onResize, width, ...restProps } = props;
 
-  if (!width) {
-    return <th {...restProps} />;
-  }
+  const wrapRef = useRef<HTMLTableCellElement>(null);
 
-  return (
+  // This is a workaround for the initial width of resizable columns if the width is not specified
+  useEffect(() => {
+    if (wrapRef.current && _.isUndefined(width)) {
+      onResize(undefined, {
+        size: {
+          width: wrapRef.current.offsetWidth,
+          height: wrapRef.current.offsetHeight,
+        },
+        node: wrapRef.current,
+        handle: 'e',
+      });
+    }
+  });
+
+  return _.isUndefined(width) ? (
+    <th ref={wrapRef} {...restProps} />
+  ) : (
     <Resizable
       width={width}
       height={0}
@@ -60,74 +74,73 @@ const ResizableTitle = (
   );
 };
 
-interface BAITableProps extends Omit<TableProps, 'columns'> {
+interface BAITableProps extends TableProps {
   resizable?: boolean;
-  columns: ColumnsType<any>;
 }
+
+const columnKeyOrIndexKey = (column: any, index: number) =>
+  column.key || `index_${index}`;
+const generateResizedColumnWidths = (columns?: ColumnsType) => {
+  const widths: Record<string, number> = {};
+  _.each(columns, (column, index) => {
+    widths[columnKeyOrIndexKey(column, index)] = column.width as number;
+  });
+  return widths;
+};
 
 const BAITable: React.FC<BAITableProps> = ({
   resizable = false,
   columns,
+  components,
   ...tableProps
 }) => {
   const { styles } = useStyles();
-  const [tableColumns, setTableColumns] = useState<ColumnsType<any>>(
-    columns || [],
-  );
 
-  useMemo(() => {
-    if (!resizable) {
-      setTableColumns(columns);
-      return;
-    }
+  const [resizedColumnWidths, setResizedColumnWidths] = useState<
+    Record<string, number>
+  >(generateResizedColumnWidths(columns));
 
-    const resizableColumns = _.map(columns, (col, index) => ({
-      ...col,
-      onHeaderCell: (column: ColumnsType[number]) => {
-        return {
-          width: column.width,
-          onResize: handleResize(index) as React.ReactEventHandler<any>,
-        };
-      },
-    }));
-
-    const handleResize =
-      (index: number) =>
-      (_: React.SyntheticEvent<Element>, { size }: ResizeCallbackData) => {
-        const newColumns = [...resizableColumns];
-        newColumns[index] = {
-          ...newColumns[index],
-          width: size.width,
-          onHeaderCell: (column: ColumnsType[number]) => {
-            return {
-              width: column.width,
-              onResize: handleResize(index) as React.ReactEventHandler<any>,
-            };
-          },
-        };
-        setTableColumns(newColumns);
-      };
-
-    setTableColumns(resizableColumns);
-  }, [resizable, columns]);
+  const mergedColumns = useMemo(() => {
+    return !resizable
+      ? columns
+      : _.map(
+          columns,
+          (column, index) =>
+            ({
+              ...column,
+              width:
+                resizedColumnWidths[columnKeyOrIndexKey(column, index)] ||
+                column.width,
+              onHeaderCell: (column: ColumnsType[number]) => {
+                return {
+                  width: column.width,
+                  onResize: (e, { size }) => {
+                    setResizedColumnWidths((prev) => ({
+                      ...prev,
+                      [columnKeyOrIndexKey(column, index)]: size.width,
+                    }));
+                  },
+                } as GetProps<typeof ResizableTitle>;
+              },
+            }) as ColumnsType[number],
+        );
+  }, [resizable, columns, resizedColumnWidths]);
 
   return (
-    <>
-      <Table
-        className={resizable ? styles.resizableTable : ''}
-        components={
-          resizable
-            ? {
-                header: {
-                  cell: ResizableTitle,
-                },
-              }
-            : undefined
-        }
-        columns={tableColumns}
-        {...tableProps}
-      />
-    </>
+    <Table
+      className={resizable ? styles.resizableTable : ''}
+      components={
+        resizable
+          ? _.merge(components || {}, {
+              header: {
+                cell: ResizableTitle,
+              },
+            })
+          : components
+      }
+      columns={mergedColumns}
+      {...tableProps}
+    />
   );
 };
 
