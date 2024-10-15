@@ -345,7 +345,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
               ),
             }}
           >
-            {t('session.launcher.Environments')} /
+            {t('session.launcher.Environments')} /{' '}
             {t('session.launcher.Version')}
           </Typography.Text>
         }
