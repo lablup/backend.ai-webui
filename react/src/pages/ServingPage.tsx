@@ -63,18 +63,26 @@ const ServingPage: React.FC<ServingPageProps> = ({ ...props }) => {
         }}
       >
         {curTabKey === 'services' ? (
-          <Suspense
-            fallback={<Skeleton active style={{ padding: token.paddingMD }} />}
-          >
-            <EndpointListPage />
-          </Suspense>
+          <div style={{ width: '77vw' }}>
+            <Suspense
+              fallback={
+                <Skeleton active style={{ padding: token.paddingMD }} />
+              }
+            >
+              <EndpointListPage />
+            </Suspense>
+          </div>
         ) : null}
         {curTabKey === 'chatting' && baiClient._config.enableLLMPlayground ? (
-          <Suspense
-            fallback={<Skeleton active style={{ padding: token.paddingMD }} />}
-          >
-            <ChattingPage />
-          </Suspense>
+          <div style={{ width: '77vw' }}>
+            <Suspense
+              fallback={
+                <Skeleton active style={{ padding: token.paddingMD }} />
+              }
+            >
+              <ChattingPage />
+            </Suspense>
+          </div>
         ) : null}
       </Card>
     </Flex>

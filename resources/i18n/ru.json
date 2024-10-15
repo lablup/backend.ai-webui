@@ -1725,5 +1725,10 @@
     "SelectEndpoint": "Выберите конечную точку",
     "SyncInput": "Вход синхронизации",
     "CompareWithOtherModels": "Сравнить с другими моделями"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelList": "Список моделей"
+    }
   }
 }
