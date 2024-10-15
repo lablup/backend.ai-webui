@@ -1,4 +1,5 @@
 import Flex from '../components/Flex';
+import FolderCreateModal from '../components/FolderCreateModal';
 import ImportFromHuggingFaceModal from '../components/ImportFromHuggingFaceModal';
 import InviteFolderPermissionSettingModal from '../components/InviteFolderPermissionSettingModal';
 import { filterEmptyItem } from '../helper';
@@ -45,6 +46,7 @@ const VFolderListPage: React.FC<VFolderListPageProps> = (props) => {
   const baiClient = useSuspendedBackendaiClient();
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const dataViewRef = useRef(null);
+  const [isOpenCreateModal, { toggle: openCreateModal }] = useToggle(false);
   const [inviteFolderId, setInviteFolderId] = useState<string | null>(null);
   const [
     isVisibleImportFromHuggingFaceModal,
@@ -144,8 +146,9 @@ const VFolderListPage: React.FC<VFolderListPageProps> = (props) => {
               type="primary"
               icon={<PlusOutlined />}
               onClick={() => {
+                openCreateModal();
                 // @ts-ignore
-                dataViewRef.current?.openAddFolderDialog();
+                // dataViewRef.current?.openAddFolderDialog();
               }}
             >
               {t('data.Add')}
@@ -178,6 +181,10 @@ const VFolderListPage: React.FC<VFolderListPageProps> = (props) => {
         onRequestClose={() => {
           toggleImportFromHuggingFaceModal();
         }}
+      />
+      <FolderCreateModal
+        open={isOpenCreateModal}
+        onRequestClose={() => openCreateModal()}
       />
     </Flex>
   );
