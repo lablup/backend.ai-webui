@@ -4,6 +4,7 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { useWebComponentInfo } from './DefaultProviders';
 import TOTPActivateModal from './TOTPActivateModal';
+import UserResourcePolicySelector from './UserResourcePolicySelector';
 import { UserSettingModalMutation } from './__generated__/UserSettingModalMutation.graphql';
 import {
   UserSettingModalQuery,
@@ -108,6 +109,7 @@ const UserSettingModal: React.FC<Props> = ({
             id
             name
           }
+          resource_policy
           # TODO: reflect https://github.com/lablup/backend.ai-webui/pull/1999
           # support from 23.09.0b1
           # https://github.com/lablup/backend.ai/pull/1530
@@ -158,6 +160,7 @@ const UserSettingModal: React.FC<Props> = ({
               id
               name
             }
+            resource_policy
             # TODO: reflect https://github.com/lablup/backend.ai-webui/pull/1999
             # support from 23.09.0b1
             # https://github.com/lablup/backend.ai/pull/1530
@@ -169,7 +172,6 @@ const UserSettingModal: React.FC<Props> = ({
         }
       }
     `);
-
   const mutationToRemoveTotp = useTanMutation({
     mutationFn: (email: string) => {
       return baiClient.remove_totp(email);
@@ -386,6 +388,12 @@ const UserSettingModal: React.FC<Props> = ({
             />
           </Form.Item>
         )}
+        <Form.Item
+          name="resource_policy"
+          label={t('resourcePolicy.ResourcePolicy')}
+        >
+          <UserResourcePolicySelector />
+        </Form.Item>
       </Form>
       {!!isTOTPSupported && (
         <TOTPActivateModal
