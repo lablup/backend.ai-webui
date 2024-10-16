@@ -531,6 +531,7 @@ export default class BackendAICredentialView extends BackendAIPage {
    * @param {EventTarget} list - List webcomponent
    */
   _showList(list) {
+    console.log('list', list);
     const els = this.shadowRoot?.querySelectorAll<HTMLElement>(
       '.list-content',
     ) as NodeListOf<HTMLElement>;
