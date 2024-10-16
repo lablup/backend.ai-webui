@@ -38,7 +38,7 @@ const Page404 = () => {
           <Button
             size="large"
             type="primary"
-            onClick={() => webuiNavigate('/summary')}
+            onClick={() => webuiNavigate('/start')} // '/summary
           >
             {t('button.GoBackToSummaryPage')}
           </Button>

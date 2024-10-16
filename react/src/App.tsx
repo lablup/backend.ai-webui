@@ -11,7 +11,7 @@ import { useSuspendedBackendaiClient } from './hooks';
 import { useBAISettingUserState } from './hooks/useBAISetting';
 import Page401 from './pages/Page401';
 import Page404 from './pages/Page404';
-import VFolderListPage from './pages/VFolderListPage';
+// import VFolderListPage from './pages/VFolderListPage';
 import { Skeleton, theme } from 'antd';
 import React, { Suspense } from 'react';
 import { FC } from 'react';
@@ -58,6 +58,15 @@ const InteractiveLoginPage = React.lazy(
   () => import('./pages/InteractiveLoginPage'),
 );
 const ImportAndRunPage = React.lazy(() => import('./pages/ImportAndRunPage'));
+
+const AdminDashboardPage = React.lazy(
+  () => import('./pages/AdminDashboardPage'),
+);
+const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
+
+const NeoVFolderListPage = React.lazy(
+  () => import('./pages/NeoVFolderListPage'),
+);
 
 const RedirectToStart = () => {
   useSuspendedBackendaiClient();
@@ -138,6 +147,28 @@ const router = createBrowserRouter([
           );
         },
         handle: { labelKey: 'start' },
+      },
+      {
+        path: '/dashboard',
+        Component: () => {
+          return (
+            <BAIErrorBoundary>
+              <DashboardPage />
+            </BAIErrorBoundary>
+          );
+        },
+      },
+      {
+        path: '/system_overview',
+        Component: () => {
+          const { token } = theme.useToken();
+          useSuspendedBackendaiClient(); // make sure the client is ready
+          return (
+            <BAIErrorBoundary>
+              <AdminDashboardPage />
+            </BAIErrorBoundary>
+          );
+        },
       },
       {
         path: '/job',
@@ -223,7 +254,8 @@ const router = createBrowserRouter([
         handle: { labelKey: 'webui.menu.Data&Storage' },
         element: (
           <BAIErrorBoundary>
-            <VFolderListPage />
+            {/* <VFolderListPage /> */}
+            <NeoVFolderListPage />
           </BAIErrorBoundary>
         ),
       },

@@ -1,5 +1,5 @@
 import Flex from './Flex';
-import { Tag } from 'antd';
+import { Tag, theme } from 'antd';
 import _ from 'lodash';
 import React from 'react';
 
@@ -12,6 +12,8 @@ type ValueType = string | React.ReactNode;
 const DoubleTag: React.FC<{
   values?: ValueType[] | DoubleTagObjectValue[];
 }> = ({ values = [] }) => {
+  const { token } = theme.useToken();
+
   if (values.length === 0) return null;
   let objectValues: DoubleTagObjectValue[];
   if (
@@ -30,19 +32,27 @@ const DoubleTag: React.FC<{
   }
 
   return (
-    <Flex direction="row">
+    <Flex direction="row" gap={token.marginXS}>
       {_.map(objectValues, (objValue, idx) => {
         return (
           <Tag
             key={idx}
-            style={
-              _.last(objectValues) === objValue
+            style={{
+              borderRadius: 6,
+              padding: 0,
+              ...(_.last(objectValues) === objValue
                 ? undefined
-                : { margin: 0, marginRight: -1 }
-            }
+                : { margin: 0, marginRight: -1 }),
+            }}
             color={objValue.color}
           >
-            {objValue.label}
+            <Flex
+              align="center"
+              justify="center"
+              style={{ width: 20, height: 20 }}
+            >
+              {objValue.label}
+            </Flex>
           </Tag>
         );
       })}
