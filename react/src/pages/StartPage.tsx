@@ -39,7 +39,7 @@ const StartPage: React.FC<StartPageProps> = (props) => {
     // indicator.set(10, t('registry.UpdatingRegistryInfo'));
     const notiKey = upsertNotification({
       // key: notiKey,
-      message: `${hostname} ${t('maintenance.RescanImages')}`,
+      message: `${hostname ?? ''} ${t('maintenance.RescanImages')}`,
       description: t('registry.UpdatingRegistryInfo'),
       open: true,
       backgroundTask: {
