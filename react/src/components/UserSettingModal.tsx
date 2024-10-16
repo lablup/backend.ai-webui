@@ -1,15 +1,23 @@
-import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
-import { useTOTPSupported } from '../hooks/backendai';
+import {
+  useCurrentDomainValue,
+  useSuspendedBackendaiClient,
+  useUpdatableState,
+} from '../hooks';
+import { useCurrentUserRole, useTOTPSupported } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { useWebComponentInfo } from './DefaultProviders';
 import TOTPActivateModal from './TOTPActivateModal';
 import UserResourcePolicySelector from './UserResourcePolicySelector';
-import { UserSettingModalMutation } from './__generated__/UserSettingModalMutation.graphql';
 import {
-  UserSettingModalQuery,
-  UserSettingModalQuery$data,
-} from './__generated__/UserSettingModalQuery.graphql';
+  UserInput,
+  UserSettingModalCreateMutation,
+} from './__generated__/UserSettingModalCreateMutation.graphql';
+import {
+  ModifyUserInput,
+  UserSettingModalModifyMutation,
+} from './__generated__/UserSettingModalModifyMutation.graphql';
+import { UserSettingModalQuery } from './__generated__/UserSettingModalQuery.graphql';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
@@ -19,8 +27,9 @@ import {
   Switch,
   message,
   Typography,
-  Modal,
   FormInstance,
+  App,
+  theme,
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
@@ -29,25 +38,32 @@ import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-relay';
 import { useLazyLoadQuery } from 'react-relay';
 
-type User = UserSettingModalQuery$data['user'];
-
 type UserStatus = {
   [key: string]: string;
+};
+const userStatus: UserStatus = {
+  active: 'Active',
+  inactive: 'Inactive',
+  'before-verification': 'Before Verification',
+  deleted: 'Deleted',
 };
 
 type UserRole = {
   [key: string]: string[];
 };
+const permissionRangeOfRoleChanges: UserRole = {
+  superadmin: ['superadmin', 'admin', 'user', 'monitor'],
+  admin: ['admin', 'user', 'monitor'],
+};
 
-interface Props extends BAIModalProps {
+interface UserSettingModalProps extends BAIModalProps {
   extraFetchKey?: string;
 }
 
-const UserSettingModal: React.FC<Props> = ({
+const UserSettingModal: React.FC<UserSettingModalProps> = ({
   extraFetchKey = '',
   ...baiModalProps
 }) => {
-  const { t } = useTranslation();
   const { value, dispatchEvent } = useWebComponentInfo();
   let parsedValue: {
     open: boolean;
@@ -63,38 +79,30 @@ const UserSettingModal: React.FC<Props> = ({
   }
   const { open, userEmail } = parsedValue;
 
-  const [modal, contextHolder] = Modal.useModal();
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
+  const { modal } = App.useApp();
+  const formRef = useRef<FormInstance>(null);
 
-  const formRef = useRef<FormInstance<User>>(null);
-
-  const userStatus: UserStatus = {
-    active: 'Active',
-    inactive: 'Inactive',
-    'before-verification': 'Before Verification',
-    deleted: 'Deleted',
-  };
-
-  const permissionRangeOfRoleChanges: UserRole = {
-    superadmin: ['superadmin', 'admin', 'user', 'monitor'],
-    admin: ['admin', 'user', 'monitor'],
-  };
-
-  const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
-  const deferredMergedFetchKey = useDeferredValue(fetchKey + extraFetchKey);
-
+  const currentUserRole = useCurrentUserRole();
+  const currentDomainName = useCurrentDomainValue();
   const baiClient = useSuspendedBackendaiClient();
   const sudoSessionEnabledSupported = baiClient?.supports(
     'sudo-session-enabled',
   );
   const { isTOTPSupported, isLoading: isLoadingManagerSupportingTOTP } =
     useTOTPSupported();
-  const { user, loggedInUser } = useLazyLoadQuery<UserSettingModalQuery>(
+  const [isOpenTOTPActivateModal, { toggle: toggleTOTPActivateModal }] =
+    useToggle(false);
+  const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
+  const deferredMergedFetchKey = useDeferredValue(fetchKey + extraFetchKey);
+
+  const { user } = useLazyLoadQuery<UserSettingModalQuery>(
     graphql`
       query UserSettingModalQuery(
         $email: String
         $isNotSupportSudoSessionEnabled: Boolean!
         $isNotSupportTotp: Boolean!
-        $loggedInUserEmail: String
       ) {
         user(email: $email) {
           email
@@ -118,16 +126,12 @@ const UserSettingModal: React.FC<Props> = ({
           totp_activated @skipOnClient(if: $isNotSupportTotp)
           ...TOTPActivateModalFragment
         }
-        loggedInUser: user(email: $loggedInUserEmail) {
-          role
-        }
       }
     `,
     {
-      email: userEmail,
+      email: userEmail ?? '',
       isNotSupportSudoSessionEnabled: !sudoSessionEnabledSupported,
       isNotSupportTotp: !isTOTPSupported,
-      loggedInUserEmail: baiClient?.email ?? '',
     },
     {
       fetchKey: deferredMergedFetchKey,
@@ -136,8 +140,8 @@ const UserSettingModal: React.FC<Props> = ({
   );
 
   const [commitModifyUserSetting, isInFlightCommitModifyUserSetting] =
-    useMutation<UserSettingModalMutation>(graphql`
-      mutation UserSettingModalMutation(
+    useMutation<UserSettingModalModifyMutation>(graphql`
+      mutation UserSettingModalModifyMutation(
         $email: String!
         $props: ModifyUserInput!
         $isNotSupportSudoSessionEnabled: Boolean!
@@ -172,49 +176,152 @@ const UserSettingModal: React.FC<Props> = ({
         }
       }
     `);
+
+  const [commitCreateUser, isInFlightCommitCreateUser] =
+    useMutation<UserSettingModalCreateMutation>(graphql`
+      mutation UserSettingModalCreateMutation(
+        $email: String!
+        $props: UserInput!
+        $isNotSupportSudoSessionEnabled: Boolean!
+        $isNotSupportTotp: Boolean!
+      ) {
+        create_user(email: $email, props: $props) {
+          ok
+          msg
+          user {
+            id
+            email
+            username
+            need_password_change
+            full_name
+            description
+            status
+            domain_name
+            role
+            groups {
+              id
+              name
+            }
+            resource_policy
+            sudo_session_enabled
+              @skipOnClient(if: $isNotSupportSudoSessionEnabled)
+            totp_activated @skipOnClient(if: $isNotSupportTotp)
+            ...TOTPActivateModalFragment
+          }
+        }
+      }
+    `);
+
   const mutationToRemoveTotp = useTanMutation({
     mutationFn: (email: string) => {
       return baiClient.remove_totp(email);
     },
   });
 
-  const [isOpenTOTPActivateModal, { toggle: toggleTOTPActivateModal }] =
-    useToggle(false);
+  const INITIAL_VALUES = {
+    email: '',
+    username: '',
+    need_password_change: false,
+    full_name: '',
+    description: '',
+    status: 'active',
+    domain_name: currentDomainName,
+    role: 'user',
+    is_active: true,
+    resource_policy: 'default',
+  };
 
-  const _onOk = () => {
-    formRef.current?.validateFields().then(async (values) => {
-      let input = { ...values };
-      delete input.email;
-      input = _.omit(input, ['password_confirm']);
-      input = _.omitBy(input, (item) => item === undefined || item === '');
-      if (!sudoSessionEnabledSupported) {
-        delete input?.sudo_session_enabled;
-      }
-      // TOTP setting
-      if (!isTOTPSupported) {
-        delete input?.totp_activated;
-      }
-
-      commitModifyUserSetting({
-        variables: {
-          email: values?.email || '',
-          props: input,
-          isNotSupportSudoSessionEnabled: !sudoSessionEnabledSupported,
-          isNotSupportTotp: !isTOTPSupported,
-        },
-        onCompleted(res) {
-          if (res?.modify_user?.ok) {
-            message.success(t('environment.SuccessfullyModified'));
-          } else {
-            message.error(res?.modify_user?.msg);
-          }
-          dispatchEvent('ok', null);
-        },
-        onError(err) {
-          message.error(err?.message);
-        },
-      });
-    });
+  const handleOk = () => {
+    formRef.current
+      ?.validateFields()
+      .then(async (values) => {
+        if (user) {
+          const props: ModifyUserInput = _.omitBy(
+            _.omit(values, ['email', 'password_confirm']),
+            _.isEmpty,
+          );
+          commitModifyUserSetting({
+            variables: {
+              email: values?.email || '',
+              props: props,
+              isNotSupportSudoSessionEnabled: !sudoSessionEnabledSupported,
+              isNotSupportTotp: !isTOTPSupported,
+            },
+            onCompleted: (res, errors) => {
+              if (!res?.modify_user?.ok) {
+                message.error(t('dialog.ErrorOccurred'));
+                console.error(res?.modify_user?.msg);
+                dispatchEvent('cancel', null);
+                return;
+              }
+              if (errors && errors.length > 0) {
+                const errorMsgList = _.map(errors, (error) => error.message);
+                for (const error of errorMsgList) {
+                  message.error(error, 2.5);
+                }
+                dispatchEvent('cancel', null);
+              }
+              message.success(t('environment.SuccessfullyModified'));
+              dispatchEvent('ok', null);
+            },
+            onError: (err) => {
+              message.error(t('dialog.ErrorOccurred'));
+              console.error(err);
+            },
+          });
+        } else {
+          const default_group_id = [
+            await baiClient.group
+              .list()
+              .then((res: any) => _.find(res.groups, { name: 'default' })?.id),
+          ];
+          const props: UserInput = {
+            ..._.omit(values, ['email', 'password_confirm']),
+            password: values.password,
+            need_password_change: values.need_password_change,
+            username: values?.username || _.split(values.email, '@')[0],
+            full_name: values?.full_name || _.split(values.email, '@')[0],
+            description:
+              values?.description ||
+              `${_.split(values.email, '@')[0]}'s Account`,
+            group_ids: default_group_id,
+          };
+          commitCreateUser({
+            variables: {
+              email: values?.email || '',
+              props: props,
+              isNotSupportSudoSessionEnabled: !sudoSessionEnabledSupported,
+              isNotSupportTotp: !isTOTPSupported,
+            },
+            onCompleted: (res, errors) => {
+              if (!res?.create_user?.ok) {
+                message.error(
+                  res.create_user?.msg?.includes('already exists')
+                    ? t('credential.UserAccountCreatedError')
+                    : t('dialog.ErrorOccurred'),
+                );
+                console.error(res?.create_user?.msg);
+                dispatchEvent('cancel', null);
+                return;
+              }
+              if (errors && errors.length > 0) {
+                const errorMsgList = _.map(errors, (error) => error.message);
+                for (const error of errorMsgList) {
+                  message.error(error, 2.5);
+                }
+                dispatchEvent('cancel', null);
+              }
+              message.success(t('environment.SuccessfullyCreated'));
+              dispatchEvent('ok', null);
+            },
+            onError: (err) => {
+              message.error(t('dialog.ErrorOccurred'));
+              console.error(err);
+            },
+          });
+        }
+      })
+      .catch((e) => console.error(e));
   };
 
   return (
@@ -224,10 +331,14 @@ const UserSettingModal: React.FC<Props> = ({
         dispatchEvent('cancel', null);
       }}
       centered
-      title={t('credential.ModifyUserDetail')}
-      destroyOnClose={true}
-      onOk={_onOk}
-      confirmLoading={isInFlightCommitModifyUserSetting}
+      title={
+        user ? t('credential.ModifyUserDetail') : t('credential.CreateUser')
+      }
+      destroyOnClose
+      onOk={handleOk}
+      confirmLoading={
+        isInFlightCommitModifyUserSetting || isInFlightCommitCreateUser
+      }
       {...baiModalProps}
     >
       <Form
@@ -236,22 +347,45 @@ const UserSettingModal: React.FC<Props> = ({
         labelCol={{ span: 10 }}
         wrapperCol={{ span: 20 }}
         validateTrigger={['onChange', 'onBlur']}
-        style={{ marginBottom: 40, marginTop: 20 }}
-        initialValues={{ ...user }}
+        style={{ marginBottom: 40, marginTop: token.marginMD }}
+        initialValues={user ? { ...user } : INITIAL_VALUES}
       >
-        <Form.Item name="email" label={t('credential.UserID')}>
-          <Input disabled />
+        <Form.Item
+          name="email"
+          label={t('credential.UserID')}
+          rules={[{ required: !user }, { type: 'email' }]}
+        >
+          <Input disabled={!!user} />
         </Form.Item>
-        <Form.Item name="username" label={t('credential.UserName')}>
+        <Form.Item
+          name="username"
+          label={t('credential.UserName')}
+          rules={[
+            {
+              max: 64,
+            },
+          ]}
+        >
           <Input placeholder={t('maxLength.64chars')} />
         </Form.Item>
-        <Form.Item name="full_name" label={t('credential.FullName')}>
+        <Form.Item
+          name="full_name"
+          label={t('credential.FullName')}
+          rules={[
+            {
+              max: 64,
+            },
+          ]}
+        >
           <Input placeholder={t('maxLength.64chars')} />
         </Form.Item>
         <Form.Item
           name="password"
-          label={t('general.NewPassword')}
+          label={user ? t('general.NewPassword') : t('general.Password')}
           rules={[
+            {
+              required: !user,
+            },
             {
               pattern: /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[_\W]).{8,}$/,
               message: t('webui.menu.InvalidPasswordMessage'),
@@ -263,8 +397,16 @@ const UserSettingModal: React.FC<Props> = ({
         <Form.Item
           name="password_confirm"
           dependencies={['password']}
-          label={t('webui.menu.NewPasswordAgain')}
+          label={
+            user
+              ? t('webui.menu.NewPasswordAgain')
+              : t('general.ConfirmPassword')
+          }
           rules={[
+            {
+              required: !user,
+              message: '',
+            },
             ({ getFieldValue }) => ({
               validator(_, value) {
                 if (!value && !!getFieldValue('password')) {
@@ -284,7 +426,11 @@ const UserSettingModal: React.FC<Props> = ({
         >
           <Input.Password />
         </Form.Item>
-        <Form.Item name="description" label={t('credential.Description')}>
+        <Form.Item
+          name="description"
+          label={t('credential.Description')}
+          rules={[{ max: 500 }]}
+        >
           <Input.TextArea placeholder={t('maxLength.500chars')} />
         </Form.Item>
         <Form.Item name="status" label={t('credential.UserStatus')}>
@@ -298,12 +444,12 @@ const UserSettingModal: React.FC<Props> = ({
           />
         </Form.Item>
         {!!user?.role &&
-          !!loggedInUser?.role &&
-          loggedInUser.role in permissionRangeOfRoleChanges && (
+          !!currentUserRole &&
+          currentUserRole in permissionRangeOfRoleChanges && (
             <Form.Item name="role" label={t('credential.Role')}>
               <Select
                 options={_.map(
-                  permissionRangeOfRoleChanges[loggedInUser.role],
+                  permissionRangeOfRoleChanges[currentUserRole],
                   (item) => {
                     return {
                       value: item,
@@ -337,7 +483,10 @@ const UserSettingModal: React.FC<Props> = ({
             valuePropName="checked"
             extra={
               user?.email !== baiClient?.email && (
-                <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                <Typography.Text
+                  type="secondary"
+                  style={{ fontSize: token.fontSizeSM }}
+                >
                   {t('credential.AdminCanOnlyRemoveTotp')}
                 </Typography.Text>
               )
@@ -391,6 +540,7 @@ const UserSettingModal: React.FC<Props> = ({
         <Form.Item
           name="resource_policy"
           label={t('resourcePolicy.ResourcePolicy')}
+          rules={[{ required: !user }]}
         >
           <UserResourcePolicySelector />
         </Form.Item>
@@ -409,7 +559,6 @@ const UserSettingModal: React.FC<Props> = ({
           }}
         />
       )}
-      {contextHolder}
     </BAIModal>
   );
 };
