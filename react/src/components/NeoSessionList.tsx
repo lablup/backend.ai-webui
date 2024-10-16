@@ -5,10 +5,13 @@ import {
   localeCompare,
   transformSorterToOrderString,
 } from '../helper';
-import { useUpdatableState } from '../hooks';
+import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import BAIIntervalText from './BAIIntervalText';
+import DoubleTag from './DoubleTag';
 import Flex from './Flex';
+import ResourceNumber from './ResourceNumber';
 import SessionListTemplate from './SessionListTemplate';
 import { NeoSessionListQuery } from './__generated__/NeoSessionListQuery.graphql';
 import { SearchOutlined } from '@ant-design/icons';
@@ -34,6 +37,7 @@ const NeoSessionList: React.FC<NeoSessionListProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { id: projectId } = useCurrentProjectValue();
+  const baiClient = useSuspendedBackendaiClient();
 
   const [
     sessionFetchKey,
@@ -139,6 +143,7 @@ const NeoSessionList: React.FC<NeoSessionListProps> = ({
 
   const columns = filterEmptyItem<ColumnType<any>>([
     {
+      key: 'index',
       title: '#',
       fixed: 'left',
       // @ts-ignore
@@ -151,6 +156,7 @@ const NeoSessionList: React.FC<NeoSessionListProps> = ({
       },
     },
     {
+      key: 'name',
       title: 'Name',
       dataIndex: 'name',
       // @ts-ignore
@@ -163,6 +169,7 @@ const NeoSessionList: React.FC<NeoSessionListProps> = ({
       ),
     },
     {
+      key: 'status',
       title: t('session.Status'),
       dataIndex: 'status',
       // @ts-ignore
@@ -173,6 +180,7 @@ const NeoSessionList: React.FC<NeoSessionListProps> = ({
       ),
     },
     {
+      key: 'utils',
       title: 'Utils.',
       dataIndex: 'containers',
       render: (value) => {
@@ -289,10 +297,36 @@ const NeoSessionList: React.FC<NeoSessionListProps> = ({
       },
     },
     {
+      key: 'accelerator',
       title: t('session.launcher.AIAccelerator'),
-      render: () => 'CUDA FGPU',
+      render: (value, record) => (
+        <Flex gap="xxs">
+          {record.occupied_slots &&
+            _.map(JSON.parse(record.occupied_slots), (value, type) => {
+              if (_.includes(['cpu', 'mem'], type)) {
+                return '-';
+              }
+              return (
+                <ResourceNumber
+                  key={type}
+                  // @ts-ignore
+                  type={type}
+                  value={_.toString(value)}
+                  opts={{
+                    shmem: _.sum(
+                      _.map(JSON.parse(record.resource_opts), (item) => {
+                        return item.shmem;
+                      }),
+                    ),
+                  }}
+                />
+              );
+            })}
+        </Flex>
+      ),
     },
     {
+      key: 'cpu',
       title: t('session.CPU'),
       // FIXME: parse occupied slots initially
       dataIndex: 'occupied_slots',
@@ -308,6 +342,7 @@ const NeoSessionList: React.FC<NeoSessionListProps> = ({
       },
     },
     {
+      key: 'mem',
       title: 'RAM',
       // FIXME: parse occupied slots initially
       dataIndex: 'occupied_slots',
@@ -324,15 +359,21 @@ const NeoSessionList: React.FC<NeoSessionListProps> = ({
       },
     },
     {
+      key: 'elapsed',
       title: 'Elapsed',
+      dataIndex: 'created_at',
       // @ts-ignore
       render: (value, record) => {
-        const createdAt = dayjs(record.created_at);
-        const terminatedAt = dayjs(record.terminated_at);
-        const diff = terminatedAt.diff(createdAt, 'second');
-        const diffDuration = dayjs.duration(diff);
-        const formattedDiff = `${diffDuration.hours().toString().padStart(2, '0')}:${diffDuration.minutes().toString().padStart(2, '0')}:${diffDuration.seconds().toString().padStart(2, '0')}`;
-        return formattedDiff;
+        return (
+          <Flex direction="column" gap="xs">
+            <BAIIntervalText
+              callback={() => {
+                return baiClient.utils.elapsedTime(value, record.terminated_at);
+              }}
+              delay={1000}
+            />
+          </Flex>
+        );
       },
     },
   ]);
