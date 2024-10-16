@@ -5,7 +5,7 @@ import BatchSessionIcon from '../components/icons/BatchSessionIcon';
 import ExampleStartIcon from '../components/icons/ExampleStart';
 import InteractiveSessionIcon from '../components/icons/InteractiveSession';
 import ModelServiceIcon from '../components/icons/ModelServiceIcon';
-// import RecalculateResourcesIcon from '../components/icons/RecalculateResourcesIcon';
+import RecalculateResourcesIcon from '../components/icons/RecalculateResourcesIcon';
 import UpdateEnvironmentImageIcon from '../components/icons/UpdateEnvironmentImageIcon';
 // import URLStartIcon from '../components/icons/URLStartIcon';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
