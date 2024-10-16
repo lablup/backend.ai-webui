@@ -1,4 +1,5 @@
 import {
+  filterEmptyItem,
   filterNonNullItems,
   iSizeToSize,
   localeCompare,
@@ -8,11 +9,12 @@ import { useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import Flex from './Flex';
+import SessionListTemplate from './SessionListTemplate';
 import { NeoSessionListQuery } from './__generated__/NeoSessionListQuery.graphql';
 import { SearchOutlined } from '@ant-design/icons';
 import { Input, Progress, Radio, Table, Tag, theme, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
-import { TableRowSelection } from 'antd/lib/table/interface';
+import { ColumnType, TableRowSelection } from 'antd/lib/table/interface';
 import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -26,7 +28,7 @@ interface NeoSessionListProps {
 }
 
 const NeoSessionList: React.FC<NeoSessionListProps> = ({
-  sessionType: status,
+  sessionType: type,
   ...props
 }) => {
   const { t } = useTranslation();
@@ -60,6 +62,8 @@ const NeoSessionList: React.FC<NeoSessionListProps> = ({
     selectedRowKeys,
     onChange: onSelectChange,
   };
+  const [radioValue, setRadioValue] = useState('running');
+  const [inputValue, setInputValue] = useState('');
 
   const statusTagColor = {
     //prepare
@@ -106,6 +110,10 @@ const NeoSessionList: React.FC<NeoSessionListProps> = ({
             name
             created_at
             terminated_at
+            containers {
+              live_stat
+              last_stat
+            }
             status
             occupied_slots
             resource_opts
@@ -129,6 +137,206 @@ const NeoSessionList: React.FC<NeoSessionListProps> = ({
     },
   );
 
+  const columns = filterEmptyItem<ColumnType<any>>([
+    {
+      title: '#',
+      fixed: 'left',
+      // @ts-ignore
+      render: (id, record, index) => {
+        return (
+          index +
+          1 +
+          (tablePaginationOption.current - 1) * tablePaginationOption.pageSize
+        );
+      },
+    },
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      // @ts-ignore
+      sorter: (a, b) => localeCompare(a.name, b.name),
+      // @ts-ignore
+      render: (value) => (
+        <Typography.Text style={{ maxWidth: 122 }} ellipsis>
+          {value}
+        </Typography.Text>
+      ),
+    },
+    {
+      title: t('session.Status'),
+      dataIndex: 'status',
+      // @ts-ignore
+      sorter: (a, b) => localeCompare(a.status, b.status),
+      // @ts-ignore
+      render: (value) => (
+        <Tag color={_.get(statusTagColor, value)}>{value}</Tag>
+      ),
+    },
+    {
+      title: 'Utils.',
+      dataIndex: 'containers',
+      render: (value) => {
+        const aggregatedLiveStat: {
+          [key: string]: { capacity: number; current: number; ratio: number };
+        } = {
+          cpu_util: { capacity: 0, current: 0, ratio: 0 },
+          mem: { capacity: 0, current: 0, ratio: 0 },
+        };
+
+        value.forEach((container: { live_stat: any }) => {
+          const parsedLiveStat = _.isEmpty(container.live_stat)
+            ? null
+            : JSON.parse(container.live_stat);
+
+          if (parsedLiveStat) {
+            Object.keys(parsedLiveStat).forEach((statKey) => {
+              if (
+                statKey === 'cpu_util' ||
+                statKey === 'cpu_used' ||
+                statKey === 'mem' ||
+                statKey === 'io_read' ||
+                statKey === 'io_write' ||
+                statKey === 'io_scratch_size' ||
+                statKey === 'net_rx' ||
+                statKey === 'net_tx'
+              ) {
+                if (!aggregatedLiveStat[statKey]) {
+                  aggregatedLiveStat[statKey] = {
+                    capacity: 0,
+                    current: 0,
+                    ratio: 0,
+                  };
+                }
+                aggregatedLiveStat[statKey].current += parseFloat(
+                  parsedLiveStat[statKey].current,
+                );
+                aggregatedLiveStat[statKey].capacity += parseFloat(
+                  parsedLiveStat[statKey].capacity,
+                );
+                return;
+              }
+              if (statKey.includes('_util') || statKey.includes('_mem')) {
+                if (!aggregatedLiveStat[statKey]) {
+                  aggregatedLiveStat[statKey] = {
+                    capacity: 0,
+                    current: 0,
+                    ratio: 0,
+                  };
+                }
+                aggregatedLiveStat[statKey].current += parseFloat(
+                  parsedLiveStat[statKey].current,
+                );
+                aggregatedLiveStat[statKey].capacity += parseFloat(
+                  parsedLiveStat[statKey].capacity,
+                );
+              }
+            });
+          }
+        });
+
+        // Calculate utilization ratios
+        if (aggregatedLiveStat.cpu_util) {
+          aggregatedLiveStat.cpu_util.ratio =
+            aggregatedLiveStat.cpu_util.current /
+              aggregatedLiveStat.cpu_util.capacity || 0;
+        }
+        if (aggregatedLiveStat.mem) {
+          aggregatedLiveStat.mem.ratio =
+            aggregatedLiveStat.mem.current / aggregatedLiveStat.mem.capacity ||
+            0;
+        }
+
+        Object.keys(aggregatedLiveStat).forEach((statKey) => {
+          if (statKey === 'cpu_util' || statKey === 'mem') return;
+          if (
+            statKey.indexOf('_util') !== -1 &&
+            aggregatedLiveStat[statKey].capacity > 0
+          ) {
+            aggregatedLiveStat[statKey].ratio =
+              aggregatedLiveStat[statKey].current / 100 || 0;
+          }
+          if (
+            statKey.indexOf('_mem') !== -1 &&
+            aggregatedLiveStat[statKey].capacity > 0
+          ) {
+            aggregatedLiveStat[statKey].ratio =
+              aggregatedLiveStat[statKey].current /
+                aggregatedLiveStat[statKey].capacity || 0;
+          }
+        });
+
+        return (
+          <Flex direction="column" justify="start" gap={4}>
+            {Object.entries(
+              _.pickBy(
+                aggregatedLiveStat,
+                (_value: any, key: string) =>
+                  key === 'cpu_util' || key === 'mem' || key.includes('_util'),
+              ),
+            ).map(([key, value]) => {
+              return (
+                <Progress
+                  key={key}
+                  percent={_.round(aggregatedLiveStat[key]?.ratio, 2) || 0}
+                  strokeLinecap="butt"
+                  size={[107, 11]}
+                  strokeColor="#999"
+                />
+              );
+            })}
+          </Flex>
+        );
+      },
+    },
+    {
+      title: t('session.launcher.AIAccelerator'),
+      render: () => 'CUDA FGPU',
+    },
+    {
+      title: t('session.CPU'),
+      // FIXME: parse occupied slots initially
+      dataIndex: 'occupied_slots',
+      render: (value: string) => {
+        return _.get(JSON.parse(value), 'cpu', '-');
+      },
+      // @ts-ignore
+      sorter: (a, b) => {
+        return (
+          _.get(JSON.parse(a.occupied_slots), 'cpu', 0) -
+          _.get(JSON.parse(b.occupied_slots), 'cpu', 0)
+        );
+      },
+    },
+    {
+      title: 'RAM',
+      // FIXME: parse occupied slots initially
+      dataIndex: 'occupied_slots',
+      render: (value: string) => {
+        const mem = _.get(JSON.parse(value), 'mem', '-');
+        return mem === '-' ? mem : iSizeToSize(mem, 'G')?.numberUnit + 'iB';
+      },
+      // @ts-ignore
+      sorter: (a, b) => {
+        return (
+          _.get(JSON.parse(a.occupied_slots), 'mem', 0) -
+          _.get(JSON.parse(b.occupied_slots), 'mem', 0)
+        );
+      },
+    },
+    {
+      title: 'Elapsed',
+      // @ts-ignore
+      render: (value, record) => {
+        const createdAt = dayjs(record.created_at);
+        const terminatedAt = dayjs(record.terminated_at);
+        const diff = terminatedAt.diff(createdAt, 'second');
+        const diffDuration = dayjs.duration(diff);
+        const formattedDiff = `${diffDuration.hours().toString().padStart(2, '0')}:${diffDuration.minutes().toString().padStart(2, '0')}:${diffDuration.seconds().toString().padStart(2, '0')}`;
+        return formattedDiff;
+      },
+    },
+  ]);
+
   return (
     <Flex direction="column" align="stretch" gap={'lg'}>
       <Flex gap={'lg'} direction="row">
@@ -140,14 +348,56 @@ const NeoSessionList: React.FC<NeoSessionListProps> = ({
           optionType="button"
           buttonStyle="solid"
           defaultValue="running"
+          value={radioValue}
+          onChange={(e) => setRadioValue(e.target.value)}
         />
         <Input
           style={{ width: 222 }}
           placeholder={t('propertyFilter.placeHolder')}
           suffix={<SearchOutlined />}
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
         />
       </Flex>
-      <Table
+      <SessionListTemplate
+        dataSource={filterNonNullItems(
+          _.filter(compute_session_list?.items, (item) => {
+            const runningStatuses = [
+              'RESTARTING',
+              'PREPARING',
+              'PULLING',
+              'RUNNING',
+              'RUNNING_DEGRADED',
+              'PENDING',
+              'SCHEDULED',
+              'TERMINATING',
+            ];
+            const finishedStatuses = ['TERMINATED'];
+
+            const isRunning = radioValue === 'running';
+            const statusMatch = isRunning
+              ? runningStatuses.includes(item?.status as string)
+              : finishedStatuses.includes(item?.status as string);
+
+            switch (type) {
+              case 'all':
+                return statusMatch;
+              case 'interactive':
+              case 'batch':
+              case 'inference':
+              case 'system':
+                return (
+                  statusMatch &&
+                  item?.type?.toUpperCase() === type.toUpperCase()
+                );
+              default:
+                return true;
+            }
+          }),
+        )}
+        columns={columns}
+      ></SessionListTemplate>
+      {/* <Table
         scroll={{ x: 'max-content' }}
         showSorterTooltip={false}
         sortDirections={['descend', 'ascend', 'descend']}
@@ -275,7 +525,7 @@ const NeoSessionList: React.FC<NeoSessionListProps> = ({
             },
           },
         ]}
-      />
+      /> */}
     </Flex>
   );
 };

@@ -3,11 +3,17 @@ import BAIStartSimpleCard from '../components/BAIStartSimpleCard';
 import Flex from '../components/Flex';
 import NeoSessionList from '../components/NeoSessionList';
 import SessionsIcon from '../components/icons/SessionsIcon';
-import { useWebUINavigate } from '../hooks';
+import { useUpdatableState, useWebUINavigate } from '../hooks';
+import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { NeoSessionPage_ServiceListQuery } from './__generated__/NeoSessionPage_ServiceListQuery.graphql';
+import { NeoSessionPage_SessionListQuery } from './__generated__/NeoSessionPage_SessionListQuery.graphql';
 import { Card, Typography, Button, Tabs, Badge, theme } from 'antd';
+import graphql from 'babel-plugin-relay/macro';
 import { t } from 'i18next';
 import _ from 'lodash';
-import React from 'react';
+import React, { useState } from 'react';
+import { useLazyLoadQuery } from 'react-relay';
 
 const TAB_ITEMS_MAP = {
   all: t('general.All'),
@@ -17,19 +23,205 @@ const TAB_ITEMS_MAP = {
   system: 'System',
 };
 
-const MOCK_TOTAL_DATA = {
-  all: '83',
-  interactive: '44/83',
-  batch: '32/83',
-  inference: '6/83',
-  system: '1/83',
-};
-
 interface NeoSessionPageProps {}
 
 const NeoSessionPage: React.FC<NeoSessionPageProps> = (props) => {
   const { token } = theme.useToken();
   const webuiNavigate = useWebUINavigate();
+  const [
+    sessionFetchKey,
+    // setSessionFetchKey
+  ] = useUpdatableState('initial-fetch');
+  const {
+    baiPaginationOption,
+    tablePaginationOption,
+    setTablePaginationOption,
+  } = useBAIPaginationOptionState({
+    current: 1,
+    pageSize: 10,
+  });
+  const { id: projectId } = useCurrentProjectValue();
+  const [order, setOrder] = useState<string>();
+  const [servicesFetchKey, updateServicesFetchKey] =
+    useUpdatableState('initial-fetch');
+
+  const { compute_session_list } =
+    useLazyLoadQuery<NeoSessionPage_SessionListQuery>(
+      graphql`
+        query NeoSessionPage_SessionListQuery(
+          $limit: Int!
+          $offset: Int!
+          $group_id: String
+          $status: String
+          $order: String
+        ) {
+          compute_session_list(
+            limit: $limit
+            offset: $offset
+            group_id: $group_id
+            status: $status
+            order: $order
+          ) {
+            items {
+              id
+              type
+              session_id
+              name
+              created_at
+              terminated_at
+              containers {
+                live_stat
+                last_stat
+              }
+              status
+              occupied_slots
+              resource_opts
+            }
+            total_count
+          }
+        }
+      `,
+      {
+        limit: baiPaginationOption.limit,
+        offset: baiPaginationOption.offset,
+        group_id: projectId,
+        order,
+      },
+      {
+        fetchKey:
+          sessionFetchKey === 'initial-fetch'
+            ? 'store-and-network'
+            : 'network-only',
+        fetchPolicy: 'network-only',
+      },
+    );
+
+  const { endpoint_list: modelServiceList } =
+    useLazyLoadQuery<NeoSessionPage_ServiceListQuery>(
+      graphql`
+        query NeoSessionPage_ServiceListQuery(
+          $offset: Int!
+          $projectID: UUID
+          $limit: Int!
+          $filter: String
+        ) {
+          endpoint_list(
+            offset: $offset
+            limit: $limit
+            project: $projectID
+            filter: $filter
+          ) {
+            total_count
+            items {
+              status
+            }
+          }
+        }
+      `,
+      {
+        offset: baiPaginationOption.offset,
+        limit: 10,
+        projectID: projectId,
+        filter: null,
+      },
+      {
+        fetchPolicy: 'network-only',
+        fetchKey: servicesFetchKey,
+      },
+    );
+
+  const allActiveSessionCount =
+    _.filter(compute_session_list?.items, (item) =>
+      _.includes(
+        [
+          'RESTARTING',
+          'PREPARING',
+          'PULLING',
+          'RUNNING',
+          'RUNNING_DEGRADED',
+          'PENDING',
+          'SCHEDULED',
+        ],
+        item?.status,
+      ),
+    ).length +
+    (_.filter(modelServiceList?.items, (item) => item?.status !== 'TERMINATED')
+      .length ?? 0);
+
+  const interactiveSessionCount = _.filter(
+    compute_session_list?.items,
+    (item) =>
+      _.includes(
+        [
+          'RESTARTING',
+          'PREPARING',
+          'PULLING',
+          'RUNNING',
+          'RUNNING_DEGRADED',
+          'PENDING',
+          'SCHEDULED',
+        ],
+        item?.status,
+      ) && item?.type === 'INTERACTIVE',
+  ).length;
+
+  const batchSessionCount = _.filter(
+    compute_session_list?.items,
+    (item) =>
+      _.includes(
+        [
+          'RESTARTING',
+          'PREPARING',
+          'PULLING',
+          'RUNNING',
+          'RUNNING_DEGRADED',
+          'PENDING',
+          'SCHEDULED',
+        ],
+        item?.status,
+      ) && item?.type === 'BATCH',
+  ).length;
+
+  const inferenceSessionCount = _.filter(
+    compute_session_list?.items,
+    (item) =>
+      _.includes(
+        [
+          'RESTARTING',
+          'PREPARING',
+          'PULLING',
+          'RUNNING',
+          'RUNNING_DEGRADED',
+          'PENDING',
+          'SCHEDULED',
+        ],
+        item?.status,
+      ) && item?.type === 'INFERENCE',
+  ).length;
+  const systemSessionCount = _.filter(
+    compute_session_list?.items,
+    (item) =>
+      _.includes(
+        [
+          'RESTARTING',
+          'PREPARING',
+          'PULLING',
+          'RUNNING',
+          'RUNNING_DEGRADED',
+          'PENDING',
+          'SCHEDULED',
+        ],
+        item?.status,
+      ) && item?.type === 'SYSTEM',
+  ).length;
+
+  const MOCK_TOTAL_DATA = {
+    all: `${allActiveSessionCount}`,
+    interactive: `${interactiveSessionCount} / ${allActiveSessionCount}`,
+    batch: `${batchSessionCount} / ${allActiveSessionCount}`,
+    inference: `${inferenceSessionCount} / ${allActiveSessionCount}`,
+    system: `${systemSessionCount} / ${allActiveSessionCount}`,
+  };
 
   return (
     <Flex direction="column" align="stretch" gap={'lg'}>
