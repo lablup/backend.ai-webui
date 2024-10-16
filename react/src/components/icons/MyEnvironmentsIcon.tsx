@@ -1,14 +1,12 @@
-import { ReactComponent as logo } from './RecalculateResources.svg';
+import { ReactComponent as logo } from './MyEnvironments.svg';
 import Icon from '@ant-design/icons';
 import { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
 
-interface RecalculateResourcesIconProps
+interface MyEnvironmentsIconProps
   extends Omit<CustomIconComponentProps, 'width' | 'height' | 'fill'> {}
 
-const RecalculateResourcesIcon: React.FC<RecalculateResourcesIconProps> = (
-  props,
-) => {
+const MyEnvironmentsIcon: React.FC<MyEnvironmentsIconProps> = (props) => {
   return <Icon component={logo} {...props} />;
 };
 
-export default RecalculateResourcesIcon;
+export default MyEnvironmentsIcon;

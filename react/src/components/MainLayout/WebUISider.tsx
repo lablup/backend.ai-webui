@@ -11,6 +11,9 @@ import SignoutModal from '../SignoutModal';
 import EndpointsIcon from '../icons/EndpointsIcon';
 import ExamplesIcon from '../icons/ExamplesIcon';
 import ModelsIcon from '../icons/ModelsIcon';
+import MyEnvironmentsIcon from '../icons/MyEnvironmentsIcon';
+import PipelinesIcon from '../icons/PipelinesIcon';
+import SessionsIcon from '../icons/SessionsIcon';
 import TrailsIcon from '../icons/TrailsIcon';
 import { PluginPage, WebUIPluginType } from './MainLayout';
 import {
@@ -128,7 +131,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       children: [
         {
           label: t('webui.menu.Sessions'),
-          icon: <BarsOutlined style={{ color: token.colorPrimaryBg }} />,
+          icon: <SessionsIcon style={{ color: token.colorPrimaryBg }} />,
           key: 'session',
         },
         supportUserCommittedImage && {
@@ -141,7 +144,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
               {t('webui.menu.MyEnvironments')}
             </Tooltip>
           ),
-          icon: <FileDoneOutlined style={{ color: token.colorPrimaryBg }} />,
+          icon: <MyEnvironmentsIcon style={{ color: token.colorPrimaryBg }} />,
           key: 'my-environment',
         },
         {
@@ -207,7 +210,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
               {'Pipelines'}
             </Tooltip>
           ),
-          icon: <ExportOutlined style={{ color: token.colorPrimaryBg }} />, // TODO: change to custom Pipelines icon
+          icon: <PipelinesIcon style={{ color: token.colorPrimaryBg }} />, // TODO: change to custom Pipelines icon
           key: 'pipeline',
           onClick: () => {
             window.open(fasttrackEndpoint, '_blank', 'noopener noreferrer');
