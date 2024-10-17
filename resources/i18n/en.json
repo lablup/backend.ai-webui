@@ -1198,7 +1198,6 @@
     "TypeRegistryNameToDelete": "Type registry hostname to delete",
     "RegistryTurnedOn": "Registry enabled",
     "RegistryTurnedOff": "Registry disabled",
-    "RegistryHostnameAlreadyExists": "Hostname Already Exists. Please change the hostname to add",
     "RegistrySuccessfullyAdded": "Registry successfully added.",
     "RegistrySuccessfullyDeleted": "Registry successfully deleted.",
     "HostnameDoesNotMatch": "Hostname does not match!",

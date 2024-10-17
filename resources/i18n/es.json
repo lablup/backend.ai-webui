@@ -899,7 +899,6 @@
     "ProjectNameIsRequired": "El nombre del proyecto es obligatorio",
     "Registries": "Registros",
     "RegistryHostname": "Nombre de host de registro",
-    "RegistryHostnameAlreadyExists": "El nombre de host ya existe. Por favor, cambie el nombre de host para añadir",
     "RegistrySuccessfullyAdded": "Registro añadido correctamente.",
     "RegistrySuccessfullyDeleted": "Registro eliminado correctamente.",
     "RegistrySuccessfullyModified": "Registro modificado con éxito.",

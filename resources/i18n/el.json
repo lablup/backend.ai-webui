@@ -1070,7 +1070,6 @@
     "TypeRegistryNameToDelete": "Πληκτρολογήστε το όνομα κεντρικού υπολογιστή μητρώου για διαγραφή",
     "RegistryTurnedOn": "Το μητρώο ενεργοποιήθηκε",
     "RegistryTurnedOff": "Το μητρώο απενεργοποιήθηκε",
-    "RegistryHostnameAlreadyExists": "Το όνομα κεντρικού υπολογιστή υπάρχει ήδη. Αλλάξτε το όνομα κεντρικού υπολογιστή για προσθήκη",
     "RegistrySuccessfullyAdded": "Το μητρώο προστέθηκε με επιτυχία.",
     "RegistrySuccessfullyDeleted": "Το μητρώο διαγράφηκε με επιτυχία.",
     "HostnameDoesNotMatch": "Το όνομα κεντρικού υπολογιστή δεν ταιριάζει!",

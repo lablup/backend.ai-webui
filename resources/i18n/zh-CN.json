@@ -1070,7 +1070,6 @@
     "TypeRegistryNameToDelete": "键入要删除的注册表主机名",
     "RegistryTurnedOn": "启用注册表",
     "RegistryTurnedOff": "注册表已禁用",
-    "RegistryHostnameAlreadyExists": "主机名已存在。请更改主机名以添加",
     "RegistrySuccessfullyAdded": "注册表添加成功。",
     "RegistrySuccessfullyDeleted": "注册表删除成功。",
     "HostnameDoesNotMatch": "主机名不匹配！",

@@ -1070,7 +1070,6 @@
     "TypeRegistryNameToDelete": "Geben Sie den zu löschenden Registrierungs-Hostnamen ein",
     "RegistryTurnedOn": "Registrierung aktiviert",
     "RegistryTurnedOff": "Registrierung deaktiviert",
-    "RegistryHostnameAlreadyExists": "Hostname ist bereits vorhanden. Bitte ändern Sie den hinzuzufügenden Hostnamen",
     "RegistrySuccessfullyAdded": "Registrierung erfolgreich hinzugefügt.",
     "RegistrySuccessfullyDeleted": "Registrierung erfolgreich gelöscht.",
     "HostnameDoesNotMatch": "Hostname stimmt nicht überein!",

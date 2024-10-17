@@ -266,13 +266,6 @@ class BackendAIRegistryList extends BackendAIPage {
       input['project'] = '';
     }
 
-    // if hostname already exists
-    if (!this._editMode && this._hostnames.includes(hostname)) {
-      this.notification.text = _text('registry.RegistryHostnameAlreadyExists');
-      this.notification.show();
-      return;
-    }
-
     globalThis.backendaiclient.registry
       .set(hostname, input)
       .then(({ result }) => {

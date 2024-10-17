@@ -1070,7 +1070,6 @@
     "TypeRegistryNameToDelete": "削除するレジストリホスト名を入力します",
     "RegistryTurnedOn": "レジストリが有効",
     "RegistryTurnedOff": "レジストリが無効になっています",
-    "RegistryHostnameAlreadyExists": "ホスト名はすでに存在します。追加するホスト名を変更してください",
     "RegistrySuccessfullyAdded": "レジストリが正常に追加されました。",
     "RegistrySuccessfullyDeleted": "レジストリが正常に削除されました。",
     "HostnameDoesNotMatch": "ホスト名が一致しません！",

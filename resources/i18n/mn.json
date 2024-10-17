@@ -1070,7 +1070,6 @@
     "TypeRegistryNameToDelete": "Устгахын тулд бүртгэлийн хостын нэрийг бичнэ үү",
     "RegistryTurnedOn": "Бүртгэлийг идэвхжүүлсэн",
     "RegistryTurnedOff": "Бүртгэлийг идэвхгүйжүүлсэн",
-    "RegistryHostnameAlreadyExists": "Хостын нэр аль хэдийн байна. Нэмэхийн тулд хостын нэрийг солино уу",
     "RegistrySuccessfullyAdded": "Бүртгэл амжилттай нэмэгдэв.",
     "RegistrySuccessfullyDeleted": "Бүртгэлийг амжилттай устгалаа.",
     "HostnameDoesNotMatch": "Хостын нэр таарахгүй байна!",

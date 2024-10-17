@@ -1070,7 +1070,6 @@
     "TypeRegistryNameToDelete": "Tapez le nom d'hôte du registre à supprimer",
     "RegistryTurnedOn": "Registre activé",
     "RegistryTurnedOff": "Registre désactivé",
-    "RegistryHostnameAlreadyExists": "Le nom d'hôte existe déjà. Veuillez changer le nom d'hôte à ajouter",
     "RegistrySuccessfullyAdded": "Registre ajouté avec succès.",
     "RegistrySuccessfullyDeleted": "Registre supprimé avec succès.",
     "HostnameDoesNotMatch": "Le nom d'hôte ne correspond pas !",

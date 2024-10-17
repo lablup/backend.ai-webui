@@ -1070,7 +1070,6 @@
     "TypeRegistryNameToDelete": "Nhập tên máy chủ đăng ký để xóa",
     "RegistryTurnedOn": "Đã bật đăng ký",
     "RegistryTurnedOff": "Đăng ký bị vô hiệu hóa",
-    "RegistryHostnameAlreadyExists": "Tên máy chủ đã tồn tại. Vui lòng thay đổi tên máy chủ để thêm",
     "RegistrySuccessfullyAdded": "Đã thêm đăng ký thành công.",
     "RegistrySuccessfullyDeleted": "Đã xóa sổ đăng ký thành công.",
     "HostnameDoesNotMatch": "Tên máy chủ không khớp!",

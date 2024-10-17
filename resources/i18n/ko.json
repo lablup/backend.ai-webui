@@ -1184,7 +1184,6 @@
     "TypeRegistryNameToDelete": "삭제 확인을 위해 레지스트리 이름을 입력하세요.",
     "RegistryTurnedOn": "레지스트리가 활성화 되었습니다",
     "RegistryTurnedOff": "레지스트리가 비활성화 되었습니다",
-    "RegistryHostnameAlreadyExists": "호스트이름이 이미 존재합니다. 다른 이름으로 변경 후 등록해주세요.",
     "RegistrySuccessfullyAdded": "레지스트리가 성공적으로 등록되었습니다.",
     "RegistrySuccessfullyDeleted": "레지스트리가 성공적으로 삭제되었습니다.",
     "HostnameDoesNotMatch": "호스트명이 일치하지 않습니다.",

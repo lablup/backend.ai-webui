@@ -1184,7 +1184,6 @@
     "TypeRegistryNameToDelete": "พิมพ์ชื่อโฮสต์ทะเบียนเพื่อลบ",
     "RegistryTurnedOn": "เปิดใช้งานทะเบียนแล้ว",
     "RegistryTurnedOff": "ปิดใช้งานทะเบียนแล้ว",
-    "RegistryHostnameAlreadyExists": "มีชื่อโฮสต์นี้อยู่แล้ว กรุณาเปลี่ยนชื่อโฮสต์เพื่อเพิ่ม",
     "RegistrySuccessfullyAdded": "เพิ่มทะเบียนสำเร็จแล้ว",
     "RegistrySuccessfullyDeleted": "ลบทะเบียนสำเร็จแล้ว",
     "HostnameDoesNotMatch": "ชื่อโฮสต์ไม่ตรงกัน!",

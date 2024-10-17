@@ -1069,7 +1069,6 @@
     "TypeRegistryNameToDelete": "鍵入要刪除的註冊表主機名",
     "RegistryTurnedOn": "啟用註冊表",
     "RegistryTurnedOff": "註冊表已禁用",
-    "RegistryHostnameAlreadyExists": "主機名已存在。請更改主機名以添加",
     "RegistrySuccessfullyAdded": "註冊表添加成功。",
     "RegistrySuccessfullyDeleted": "註冊表刪除成功。",
     "HostnameDoesNotMatch": "主機名不匹配！",

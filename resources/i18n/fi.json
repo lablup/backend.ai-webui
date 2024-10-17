@@ -896,7 +896,6 @@
     "ProjectNameIsRequired": "Hankkeen nimi vaaditaan",
     "Registries": "Rekisterit",
     "RegistryHostname": "Rekisterin isäntänimi",
-    "RegistryHostnameAlreadyExists": "Isäntänimi on jo olemassa. Vaihda isäntänimi lisäämällä",
     "RegistrySuccessfullyAdded": "Rekisteri lisätty onnistuneesti.",
     "RegistrySuccessfullyDeleted": "Rekisteri onnistuneesti poistettu.",
     "RegistrySuccessfullyModified": "Rekisteriä muutettu onnistuneesti.",

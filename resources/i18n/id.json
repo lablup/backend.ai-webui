@@ -1071,7 +1071,6 @@
     "TypeRegistryNameToDelete": "Ketik nama host registri untuk dihapus",
     "RegistryTurnedOn": "Registri diaktifkan",
     "RegistryTurnedOff": "Registri dinonaktifkan",
-    "RegistryHostnameAlreadyExists": "Nama Host Sudah Ada. Silakan ubah nama host untuk menambahkan",
     "RegistrySuccessfullyAdded": "Registri berhasil ditambahkan.",
     "RegistrySuccessfullyDeleted": "Registri berhasil dihapus.",
     "HostnameDoesNotMatch": "Nama host tidak cocok!",

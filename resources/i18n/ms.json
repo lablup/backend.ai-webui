@@ -1069,7 +1069,6 @@
     "TypeRegistryNameToDelete": "Taip nama hos pendaftaran untuk dipadamkan",
     "RegistryTurnedOn": "Pendaftaran didayakan",
     "RegistryTurnedOff": "Pendaftaran dilumpuhkan",
-    "RegistryHostnameAlreadyExists": "Nama Hos Sudah Ada. Tukar nama host untuk ditambahkan",
     "RegistrySuccessfullyAdded": "Pendaftaran berjaya ditambahkan.",
     "RegistrySuccessfullyDeleted": "Pendaftaran berjaya dipadamkan.",
     "HostnameDoesNotMatch": "Nama hos tidak sepadan!",

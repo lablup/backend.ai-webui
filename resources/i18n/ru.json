@@ -1068,7 +1068,6 @@
     "TypeRegistryNameToDelete": "Введите имя хоста реестра для удаления",
     "RegistryTurnedOn": "Реестр включен",
     "RegistryTurnedOff": "Реестр отключен",
-    "RegistryHostnameAlreadyExists": "Имя хоста уже существует. Пожалуйста, измените имя хоста, чтобы добавить",
     "RegistrySuccessfullyAdded": "Реестр успешно добавлен.",
     "RegistrySuccessfullyDeleted": "Реестр успешно удален.",
     "HostnameDoesNotMatch": "Имя хоста не совпадает!",

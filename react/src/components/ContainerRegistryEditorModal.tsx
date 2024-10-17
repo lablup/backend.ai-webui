@@ -234,16 +234,6 @@ const ContainerRegistryEditorModal: React.FC<
               message: t('registry.DescHostnameIsEmpty'),
               pattern: new RegExp('^.+$'),
             },
-            {
-              validator: (_, value) => {
-                if (!containerRegistry && existingHostnames?.includes(value)) {
-                  return Promise.reject(
-                    t('registry.RegistryHostnameAlreadyExists'),
-                  );
-                }
-                return Promise.resolve();
-              },
-            },
           ]}
         >
           <Input

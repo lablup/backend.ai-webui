@@ -1070,7 +1070,6 @@
     "TypeRegistryNameToDelete": "Silmek için kayıt defteri ana bilgisayar adını yazın",
     "RegistryTurnedOn": "Kayıt etkinleştirildi",
     "RegistryTurnedOff": "Kayıt devre dışı",
-    "RegistryHostnameAlreadyExists": "Ana Bilgisayar Adı Zaten Var. Lütfen eklemek için ana bilgisayar adını değiştirin",
     "RegistrySuccessfullyAdded": "Kayıt başarıyla eklendi.",
     "RegistrySuccessfullyDeleted": "Kayıt defteri başarıyla silindi.",
     "HostnameDoesNotMatch": "Ana bilgisayar adı eşleşmiyor!",

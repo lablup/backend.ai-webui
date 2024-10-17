@@ -1070,7 +1070,6 @@
     "TypeRegistryNameToDelete": "Wpisz nazwę hosta rejestru do usunięcia",
     "RegistryTurnedOn": "Rejestr włączony",
     "RegistryTurnedOff": "Rejestr wyłączony",
-    "RegistryHostnameAlreadyExists": "Nazwa hosta już istnieje. Zmień nazwę hosta do dodania",
     "RegistrySuccessfullyAdded": "Pomyślnie dodano rejestr.",
     "RegistrySuccessfullyDeleted": "Rejestr został pomyślnie usunięty.",
     "HostnameDoesNotMatch": "Nazwa hosta nie pasuje!",
