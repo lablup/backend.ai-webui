@@ -606,12 +606,13 @@
     "WarningLessRateLimit": "Se il valore di Rate Limit è piccolo, le operazioni API come il login possono essere bloccate.",
     "NoCredentialToDisplay": "Nessuna credenziale da visualizzare",
     "KeypairDetail": "Dettaglio coppia di chiavi",
-    "SignoutSeccessfullyFinished": "Il signout è terminato in modo sicuro",
     "Status": "Stato",
     "NoUserToDisplay": "Nessun utente da visualizzare",
     "EnableSudoSession": "Abilita la sessione sudo",
     "MainAccessKey": "Chiave di accesso principale",
-    "InactivateTheFollowingUsers": "Disattiva i seguenti utenti."
+    "InactivateTheFollowingUsers": "Disattiva i seguenti utenti.",
+    "CreatedAt": "Creato a",
+    "SignoutSuccessfullyFinished": "Il signout è terminato in modo sicuro"
   },
   "data": {
     "Folders": "cartelle",

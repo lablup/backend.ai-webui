@@ -605,12 +605,13 @@
     "WarningLessRateLimit": "Jika nilai Had Kadar adalah kecil, operasi API seperti log masuk mungkin disekat.",
     "NoCredentialToDisplay": "Tiada Bukti Kelayakan untuk dipaparkan",
     "KeypairDetail": "Butiran pasangan kekunci",
-    "SignoutSeccessfullyFinished": "Log keluar telah selesai dengan selamat",
     "Status": "Status",
     "NoUserToDisplay": "Tiada Pengguna untuk dipaparkan",
     "EnableSudoSession": "Dayakan sesi sudo",
     "MainAccessKey": "Kunci Akses Utama",
-    "InactivateTheFollowingUsers": "Nyahaktifkan pengguna berikut."
+    "InactivateTheFollowingUsers": "Nyahaktifkan pengguna berikut.",
+    "CreatedAt": "Dicipta Pada",
+    "SignoutSuccessfullyFinished": "Log keluar telah selesai dengan selamat"
   },
   "data": {
     "Folders": "Folder",
