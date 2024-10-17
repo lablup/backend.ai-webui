@@ -223,7 +223,8 @@
     },
     "EnableSudoSession": "Ota sudo-istunto käyttöön",
     "MainAccessKey": "Pääkäyttöavain",
-    "InactivateTheFollowingUsers": "Poista seuraavat käyttäjät käytöstä."
+    "InactivateTheFollowingUsers": "Poista seuraavat käyttäjät käytöstä.",
+    "CreatedAt": "Luotu klo"
   },
   "data": {
     "Allowslettersnumbersand-_": "Sallii kirjaimet, numerot ja -_",
