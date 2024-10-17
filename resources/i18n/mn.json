@@ -608,11 +608,12 @@
     "KeypairDetail": "Товчлуурын дэлгэрэнгүй",
     "AdminCanOnlyRemoveTotp": "Зөвхөн бусад хэрэглэгчдийн 2FA-г идэвхгүй болгох боломжтой.",
     "KeySeccessfullyDeleted": "KeyPair амжилттай устгагдсан.",
-    "SignoutSeccessfullyFinished": "Гарах ажиллагаа амжилттай дууслаа",
     "ModifyUserDetail": "Хэрэглэгчийн мэдээллийг өөрчлөх",
     "EnableSudoSession": "Sudo сессийг идэвхжүүлэх",
     "MainAccessKey": "Үндсэн хандалтын түлхүүр",
-    "InactivateTheFollowingUsers": "Дараах хэрэглэгчдийг идэвхгүй болго."
+    "InactivateTheFollowingUsers": "Дараах хэрэглэгчдийг идэвхгүй болго.",
+    "CreatedAt": "Үүсгэсэн",
+    "SignoutSuccessfullyFinished": "Гарах ажиллагаа амжилттай дууслаа"
   },
   "data": {
     "Folders": "Фолдерууд",

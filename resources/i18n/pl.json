@@ -605,12 +605,13 @@
     "WarningLessRateLimit": "Jeśli wartość Rate Limit jest niska, operacje API, takie jak logowanie, mogą zostać zablokowane.",
     "NoCredentialToDisplay": "Brak poświadczeń do wyświetlenia",
     "KeypairDetail": "Szczegóły pary kluczy",
-    "SignoutSeccessfullyFinished": "Wylogowanie zostało pomyślnie zakończone",
     "Status": "Status",
     "NoUserToDisplay": "Brak użytkowników do wyświetlenia",
     "EnableSudoSession": "Włącz sesję sudo",
     "MainAccessKey": "Główny klucz dostępu",
-    "InactivateTheFollowingUsers": "Dezaktywuj następujących użytkowników."
+    "InactivateTheFollowingUsers": "Dezaktywuj następujących użytkowników.",
+    "CreatedAt": "Utworzono o godz",
+    "SignoutSuccessfullyFinished": "Wylogowanie zostało pomyślnie zakończone"
   },
   "data": {
     "Folders": "Lornetka składana",

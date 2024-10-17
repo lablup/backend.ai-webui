@@ -28,7 +28,8 @@
     "Warboy",
     "webcomponent",
     "webui",
-    "wsproxy"
+    "wsproxy",
+    "ahooks",
   ],
   "flagWords": [
     "데이터레이크",

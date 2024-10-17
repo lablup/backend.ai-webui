@@ -604,12 +604,13 @@
     "WarningLessRateLimit": "Hız Sınırı değeri küçükse, oturum açma gibi API işlemleri engellenebilir.",
     "NoCredentialToDisplay": "Görüntülenecek Kimlik Bilgisi Yok",
     "KeypairDetail": "Anahtar Çifti Detayı",
-    "SignoutSeccessfullyFinished": "Çıkış işlemi başarıyla tamamlandı",
     "Status": "Durum",
     "NoUserToDisplay": "Görüntülenecek Kullanıcı Yok",
     "EnableSudoSession": "Sudo oturumunu etkinleştir",
     "MainAccessKey": "Ana Erişim Anahtarı",
-    "InactivateTheFollowingUsers": "Aşağıdaki kullanıcıları devre dışı bırakın."
+    "InactivateTheFollowingUsers": "Aşağıdaki kullanıcıları devre dışı bırakın.",
+    "CreatedAt": "Oluşturulma Tarihi",
+    "SignoutSuccessfullyFinished": "Çıkış işlemi başarıyla tamamlandı"
   },
   "data": {
     "Folders": "klasörler",
