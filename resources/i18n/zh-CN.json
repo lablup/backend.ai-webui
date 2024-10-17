@@ -602,7 +602,8 @@
     "NoUserToDisplay": "无用户显示",
     "EnableSudoSession": "启用 sudo 会话",
     "MainAccessKey": "主访问密钥",
-    "InactivateTheFollowingUsers": "停用以下用户。"
+    "InactivateTheFollowingUsers": "停用以下用户。",
+    "CreatedAt": "创建于"
   },
   "data": {
     "Folders": "文件夹",

@@ -604,7 +604,8 @@
     "ModifyUserDetail": "Хэрэглэгчийн мэдээллийг өөрчлөх",
     "EnableSudoSession": "Sudo сессийг идэвхжүүлэх",
     "MainAccessKey": "Үндсэн хандалтын түлхүүр",
-    "InactivateTheFollowingUsers": "Дараах хэрэглэгчдийг идэвхгүй болго."
+    "InactivateTheFollowingUsers": "Дараах хэрэглэгчдийг идэвхгүй болго.",
+    "CreatedAt": "Үүсгэсэн"
   },
   "data": {
     "Folders": "Фолдерууд",
