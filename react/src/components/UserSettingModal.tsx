@@ -6,7 +6,6 @@ import {
 import { useCurrentUserRole, useTOTPSupported } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import { useWebComponentInfo } from './DefaultProviders';
 import TOTPActivateModal from './TOTPActivateModal';
 import UserResourcePolicySelector from './UserResourcePolicySelector';
 import {
@@ -57,28 +56,15 @@ const permissionRangeOfRoleChanges: UserRole = {
 };
 
 interface UserSettingModalProps extends BAIModalProps {
-  extraFetchKey?: string;
+  userEmail?: string | null;
+  onRequestClose: (success: boolean) => void;
 }
 
 const UserSettingModal: React.FC<UserSettingModalProps> = ({
-  extraFetchKey = '',
+  userEmail,
+  onRequestClose,
   ...baiModalProps
 }) => {
-  const { value, dispatchEvent } = useWebComponentInfo();
-  let parsedValue: {
-    open: boolean;
-    userEmail: string;
-  };
-  try {
-    parsedValue = JSON.parse(value || '');
-  } catch (error) {
-    parsedValue = {
-      open: false,
-      userEmail: '',
-    };
-  }
-  const { open, userEmail } = parsedValue;
-
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { modal } = App.useApp();
@@ -95,7 +81,6 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
   const [isOpenTOTPActivateModal, { toggle: toggleTOTPActivateModal }] =
     useToggle(false);
   const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
-  const deferredMergedFetchKey = useDeferredValue(fetchKey + extraFetchKey);
 
   const { user } = useLazyLoadQuery<UserSettingModalQuery>(
     graphql`
@@ -134,8 +119,8 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
       isNotSupportTotp: !isTOTPSupported,
     },
     {
-      fetchKey: deferredMergedFetchKey,
       fetchPolicy: 'network-only',
+      fetchKey: fetchKey,
     },
   );
 
@@ -250,11 +235,11 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             onCompleted: (res) => {
               if (res?.modify_user?.ok) {
                 message.success(t('environment.SuccessfullyModified'));
+                onRequestClose(true);
               } else {
                 message.error(t('dialog.ErrorOccurred'));
                 console.error(res?.modify_user?.msg);
               }
-              dispatchEvent('ok', null);
             },
             onError: (err) => {
               message.error(t('dialog.ErrorOccurred'));
@@ -288,7 +273,6 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             onCompleted: (res) => {
               if (res?.create_user?.ok) {
                 message.success(t('environment.SuccessfullyCreated'));
-                dispatchEvent('ok', null);
               } else {
                 message.error(
                   res.create_user?.msg?.includes('already exists')
@@ -310,10 +294,6 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
 
   return (
     <BAIModal
-      open={open}
-      onCancel={() => {
-        dispatchEvent('cancel', null);
-      }}
       centered
       title={
         user ? t('credential.ModifyUserDetail') : t('credential.CreateUser')
@@ -323,6 +303,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
       confirmLoading={
         isInFlightCommitModifyUserSetting || isInFlightCommitCreateUser
       }
+      onCancel={() => onRequestClose(false)}
       {...baiModalProps}
     >
       <Form
@@ -486,7 +467,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                 if (checked) {
                   toggleTOTPActivateModal();
                 } else {
-                  if (user?.totp_activated) {
+                  if (!user?.totp_activated) {
                     formRef.current?.setFieldValue('totp_activated', true);
                     modal.confirm({
                       title: t('totp.TurnOffTotp'),
