@@ -1085,7 +1085,11 @@
     "ModifyRegistry": "Memodifikasi Registri",
     "NoRegistryToDisplay": "Tidak ada Pendaftaran untuk ditampilkan",
     "ConfirmNoUserName": "Pengguna dan kata sandi tidak ditentukan, apakah Anda ingin menyimpan?",
-    "DescURLFormat": "Jenis URL tidak valid"
+    "DescURLFormat": "Jenis URL tidak valid",
+    "RegistryName": "Nama Registri",
+    "DescRegistryNameIsEmpty": "Nama registri kosong",
+    "RegistryNameAlreadyExists": "Nama registri sudah ada. \nSilakan ubah nama registri untuk ditambahkan.",
+    "Project": "Proyek"
   },
   "resourceGroup": {
     "ResourceGroups": "Grup Sumber Daya",

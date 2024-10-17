@@ -1084,7 +1084,11 @@
     "NoRegistryToDisplay": "Không có đăng ký để hiển thị",
     "ModifyRegistry": "Sửa đổi sổ đăng ký",
     "ConfirmNoUserName": "Người dùng và mật khẩu không được chỉ định, bạn có muốn lưu không?",
-    "DescURLFormat": "Loại URL không hợp lệ"
+    "DescURLFormat": "Loại URL không hợp lệ",
+    "RegistryName": "Tên đăng ký",
+    "DescRegistryNameIsEmpty": "Tên đăng ký trống",
+    "RegistryNameAlreadyExists": "Tên đăng ký đã tồn tại. \nVui lòng thay đổi tên đăng ký để thêm.",
+    "Project": "Dự án"
   },
   "resourceGroup": {
     "ResourceGroups": "Nhóm tài nguyên",

@@ -1084,7 +1084,11 @@
     "NoRegistryToDisplay": "Görüntülenecek Kayıt Yok",
     "ModifyRegistry": "Kayıt Defterini Değiştir",
     "ConfirmNoUserName": "Kullanıcı ve şifre belirtilmemiş, kaydetmek ister misiniz?",
-    "DescURLFormat": "Geçersiz URL Türü"
+    "DescURLFormat": "Geçersiz URL Türü",
+    "RegistryName": "Kayıt Defteri Adı",
+    "DescRegistryNameIsEmpty": "Kayıt defteri adı boş",
+    "RegistryNameAlreadyExists": "Kayıt defteri adı zaten mevcut. \nLütfen eklemek için kayıt defteri adını değiştirin.",
+    "Project": "Proje"
   },
   "resourceGroup": {
     "ResourceGroups": "Kaynak Grupları",

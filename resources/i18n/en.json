@@ -1211,7 +1211,11 @@
     "RegistrySuccessfullyModified": "Registry successfully modified.",
     "PleaseSelectOption": "Please Select Option",
     "ConfirmNoUserName": "User and password not specified, would you like to save?",
-    "DescURLFormat": "Invalid URL Type"
+    "DescURLFormat": "Invalid URL Type",
+    "RegistryName": "Registry Name",
+    "DescRegistryNameIsEmpty": "Registry name is empty",
+    "RegistryNameAlreadyExists": "Registry name already exists. Please change the registry name to add.",
+    "Project": "Project"
   },
   "resourceGroup": {
     "ResourceGroups": "Resource Groups",
