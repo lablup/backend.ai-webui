@@ -283,7 +283,9 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
                   <Button
                     type="text"
                     icon={
-                      <InfoCircleOutlined style={{ color: token.colorSuccess }} />
+                      <InfoCircleOutlined
+                        style={{ color: token.colorSuccess }}
+                      />
                     }
                     onClick={() => {
                       startInfoModalOpenTransition(() => {
@@ -293,7 +295,9 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
                   />
                   <Button
                     type="text"
-                    icon={<SettingOutlined style={{ color: token.colorInfo }} />}
+                    icon={
+                      <SettingOutlined style={{ color: token.colorInfo }} />
+                    }
                     onClick={() => {
                       startSettingModalOpenTransition(() => {
                         setEmailForSettingModal(record?.email || null);
@@ -303,19 +307,23 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
                   <Tooltip
                     title={
                       isActive
-                        ? t('credential.Inactive')
-                        : t('credential.Active')
+                        ? t('credential.Deactivate')
+                        : t('credential.Activate')
                     }
                   >
                     <Popconfirm
                       title={
                         isActive
-                          ? t('credential.ConfirmUpdateStatusToInActive')
-                          : t('credential.ConfirmUpdateStatusToActive')
+                          ? t('credential.DeactivateUser')
+                          : t('credential.ActivateUser')
                       }
                       placement="left"
                       okType={isActive ? 'danger' : 'primary'}
-                      okText={isActive ? t('credential.Inactive') : undefined}
+                      okText={
+                        isActive
+                          ? t('credential.Deactivate')
+                          : t('credential.Activate')
+                      }
                       description={record?.email}
                       onConfirm={() => {
                         setPendingUserId(record?.id || '');
