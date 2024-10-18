@@ -56,6 +56,9 @@ const InteractiveLoginPage = React.lazy(
   () => import('./pages/InteractiveLoginPage'),
 );
 const ImportAndRunPage = React.lazy(() => import('./pages/ImportAndRunPage'));
+const UserCredentialsPage = React.lazy(
+  () => import('./pages/UserCredentialsPage'),
+);
 
 const RedirectToSummary = () => {
   useSuspendedBackendaiClient();
@@ -282,6 +285,7 @@ const router = createBrowserRouter([
       {
         path: '/credential',
         handle: { labelKey: 'webui.menu.UserCredentials&Policies' },
+        Component: UserCredentialsPage,
       },
       {
         path: '/logs',
