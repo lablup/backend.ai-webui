@@ -27,14 +27,23 @@ import { useTranslation } from 'react-i18next';
 import { fetchQuery, useRelayEnvironment } from 'react-relay';
 
 export interface SessionOwnerSetterFormValues {
-  owner?: {
-    email: string;
-    accesskey: string;
-    project: string;
-    resourceGroup: string;
-    enabled: boolean;
-    domainName: string;
-  };
+  owner?:
+    | {
+        email: string;
+        accesskey: string;
+        project: string;
+        resourceGroup: string;
+        enabled: true;
+        domainName: string;
+      }
+    | {
+        email?: string;
+        accesskey?: string;
+        project?: string;
+        resourceGroup?: string;
+        enabled: false;
+        domainName?: string;
+      };
 }
 
 const SessionOwnerSetterCard: React.FC<CardProps> = (props) => {
@@ -74,8 +83,10 @@ const SessionOwnerSetterCard: React.FC<CardProps> = (props) => {
     enabled: !!fetchingEmail,
   });
 
-  const ownerKeypairs = data?.keypairs;
-  const owner = data?.user;
+  const ownerKeypairs = form.getFieldValue(['owner', 'email'])
+    ? data?.keypairs
+    : undefined;
+  const owner = form.getFieldValue(['owner', 'email']) ? data?.user : undefined;
 
   const nonExistentOwner = !isFetching && fetchingEmail && !owner;
   return (
