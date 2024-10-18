@@ -738,7 +738,8 @@
     "MainAccessKey": "Main Access Key",
     "InactivateTheFollowingUsers": "Inactivate the following users.",
     "CreatedAt": "Created At",
-    "SignoutSuccessfullyFinished": "Signout is seccessfully finished"
+    "SignoutSuccessfullyFinished": "Signout is seccessfully finished",
+    "AccessKey": "Access Key"
   },
   "data": {
     "Folders": "Folders",

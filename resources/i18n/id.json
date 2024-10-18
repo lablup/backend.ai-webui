@@ -612,7 +612,8 @@
     "MainAccessKey": "Kunci Akses Utama",
     "InactivateTheFollowingUsers": "Nonaktifkan pengguna berikut.",
     "CreatedAt": "Dibuat Pada",
-    "SignoutSuccessfullyFinished": "Keluar dengan aman selesai"
+    "SignoutSuccessfullyFinished": "Keluar dengan aman selesai",
+    "AccessKey": "Kunci Akses"
   },
   "data": {
     "Folders": "Folder",

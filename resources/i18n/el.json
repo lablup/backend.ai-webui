@@ -611,7 +611,8 @@
     "MainAccessKey": "Κύριο κλειδί πρόσβασης",
     "InactivateTheFollowingUsers": "Απενεργοποιήστε τους παρακάτω χρήστες.",
     "CreatedAt": "Δημιουργήθηκε στο",
-    "SignoutSuccessfullyFinished": "Η αποσύνδεση ολοκληρώθηκε επιτυχώς"
+    "SignoutSuccessfullyFinished": "Η αποσύνδεση ολοκληρώθηκε επιτυχώς",
+    "AccessKey": "Κλειδί πρόσβασης"
   },
   "data": {
     "Folders": "Φάκελοι",

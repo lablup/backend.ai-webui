@@ -611,7 +611,8 @@
     "MainAccessKey": "主访问密钥",
     "InactivateTheFollowingUsers": "停用以下用户。",
     "CreatedAt": "创建于",
-    "SignoutSuccessfullyFinished": "签出已顺利完成"
+    "SignoutSuccessfullyFinished": "签出已顺利完成",
+    "AccessKey": "访问密钥"
   },
   "data": {
     "Folders": "文件夹",

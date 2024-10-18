@@ -611,7 +611,8 @@
     "MainAccessKey": "Clé d'accès principale",
     "InactivateTheFollowingUsers": "Désactivez les utilisateurs suivants.",
     "CreatedAt": "Créé à",
-    "SignoutSuccessfullyFinished": "La signature est terminée en toute sécurité"
+    "SignoutSuccessfullyFinished": "La signature est terminée en toute sécurité",
+    "AccessKey": "Clé d'accès"
   },
   "data": {
     "Folders": "Dossiers",

@@ -611,7 +611,8 @@
     "MainAccessKey": "Główny klucz dostępu",
     "InactivateTheFollowingUsers": "Dezaktywuj następujących użytkowników.",
     "CreatedAt": "Utworzono o godz",
-    "SignoutSuccessfullyFinished": "Wylogowanie zostało pomyślnie zakończone"
+    "SignoutSuccessfullyFinished": "Wylogowanie zostało pomyślnie zakończone",
+    "AccessKey": "Klucz dostępu"
   },
   "data": {
     "Folders": "Lornetka składana",
