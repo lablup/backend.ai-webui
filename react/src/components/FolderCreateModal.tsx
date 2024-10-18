@@ -4,7 +4,7 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
-import ProjectSelector from './ProjectSelect';
+import ProjectSelect from './ProjectSelect';
 import StorageSelect from './StorageSelect';
 import { App, Button, Divider, Form, Input, Radio, Switch, theme } from 'antd';
 import { createStyles } from 'antd-style';
@@ -221,7 +221,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                 getFieldValue('type') === 'project' && (
                   <>
                     <Form.Item label={t('data.Project')} name={'group'}>
-                      <ProjectSelector domain={currentDomain} />
+                      <ProjectSelect domain={currentDomain} />
                     </Form.Item>
                     <Divider />
                   </>

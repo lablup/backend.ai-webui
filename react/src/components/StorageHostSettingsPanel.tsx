@@ -2,7 +2,7 @@ import { QuotaScopeType, addQuotaScopeTypePrefix } from '../helper/index';
 import { useCurrentDomainValue, useUpdatableState } from '../hooks';
 import DomainSelector from './DomainSelector';
 import Flex from './Flex';
-import ProjectSelector from './ProjectSelect';
+import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
 import QuotaScopeCard from './QuotaScopeCard';
 import QuotaSettingModal from './QuotaSettingModal';
 import UserSelector from './UserSelector';
@@ -124,7 +124,7 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
                   />
                 </Form.Item>
                 <Form.Item label={t('webui.menu.Project')}>
-                  <ProjectSelector
+                  <ProjectSelectForAdminPage
                     style={{ width: '20vw' }}
                     value={selectedProjectId}
                     disabled={!selectedDomainName}
