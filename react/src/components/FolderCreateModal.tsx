@@ -189,7 +189,8 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
               formRef.current?.setFieldValue('host', value);
             }}
             showUsageStatus
-            autoSelectType="default"
+            autoSelectType="usage"
+            showSearch
           />
         </Form.Item>
         <Divider />
