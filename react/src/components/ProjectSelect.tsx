@@ -16,16 +16,18 @@ type ProjectInfo = {
   projectResourcePolicy: any; // Replace 'any' with the actual type
   projectName: string;
 };
-interface Props extends SelectProps {
+export interface ProjectSelectProps extends SelectProps {
   onSelectProject?: (projectInfo: ProjectInfo) => void;
   domain: string;
   autoSelectDefault?: boolean;
+  disableDefaultFilter?: boolean;
 }
 
-const ProjectSelector: React.FC<Props> = ({
+const ProjectSelect: React.FC<ProjectSelectProps> = ({
   onSelectProject,
   domain,
   autoClearSearchValue,
+  disableDefaultFilter,
   ...selectProps
 }) => {
   const { t } = useTranslation();
@@ -86,9 +88,11 @@ const ProjectSelector: React.FC<Props> = ({
   const projects = projectsSince2403 || projectsBefore2403;
 
   // temporary filtering groups by accessible groups according to user query
-  const accessibleProjects = projects?.filter((project) =>
-    user?.groups?.map((group) => group?.id).includes(project?.id),
-  );
+  const accessibleProjects = disableDefaultFilter
+    ? projects
+    : projects?.filter((project) =>
+        user?.groups?.map((group) => group?.id).includes(project?.id),
+      );
 
   const getLabel = (key: string) =>
     ({
@@ -135,4 +139,4 @@ const ProjectSelector: React.FC<Props> = ({
   );
 };
 
-export default ProjectSelector;
+export default ProjectSelect;
