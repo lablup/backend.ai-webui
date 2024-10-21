@@ -7,6 +7,7 @@ import BAIModal from './BAIModal';
 import BAIPropertyFilter from './BAIPropertyFilter';
 import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
 import Flex from './Flex';
+import TableColumnsSettingModal from './TableColumnsSettingModal';
 import { ContainerRegistryListDeleteMutation } from './__generated__/ContainerRegistryListDeleteMutation.graphql';
 import { ContainerRegistryListDomainMutation } from './__generated__/ContainerRegistryListDomainMutation.graphql';
 import {
@@ -22,6 +23,7 @@ import {
   SettingOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
+import { useLocalStorageState, useToggle } from 'ahooks';
 import {
   Button,
   Form,
@@ -34,6 +36,8 @@ import {
   theme,
   App,
 } from 'antd';
+import { AnyObject } from 'antd/es/_util/type';
+import { ColumnsType, ColumnType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { useState, useTransition } from 'react';
@@ -42,9 +46,11 @@ import { useLazyLoadQuery, useMutation } from 'react-relay';
 
 export type ContainerRegistry = NonNullable<
   NonNullable<
-    NonNullable<ContainerRegistryListQuery$data>['container_registry_nodes']
-  >['edges'][number]
->['node'];
+    NonNullable<
+      NonNullable<ContainerRegistryListQuery$data>['container_registry_nodes']
+    >['edges'][number]
+  >['node']
+>;
 
 const ContainerRegistryList: React.FC<{
   style?: React.CSSProperties;
@@ -58,6 +64,8 @@ const ContainerRegistryList: React.FC<{
   const [isPendingFilter, startFilterTransition] = useTransition();
   const [isPendingPageChange, startPageChangeTransition] = useTransition();
   const [filterString, setFilterString] = useState<string>();
+  const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
+    useToggle();
 
   const {
     baiPaginationOption,
@@ -156,8 +164,10 @@ const ContainerRegistryList: React.FC<{
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const [editingRegistry, setEditingRegistry] = useState<ContainerRegistry>();
-  const [deletingRegistry, setDeletingRegistry] = useState<ContainerRegistry>();
+  const [editingRegistry, setEditingRegistry] =
+    useState<ContainerRegistry | null>();
+  const [deletingRegistry, setDeletingRegistry] =
+    useState<ContainerRegistry | null>();
   const [deletingConfirmText, setDeletingConfirmText] = useState('');
   const [isNewModalOpen, setIsNewModalOpen] = useState(false);
 
@@ -268,6 +278,175 @@ const ContainerRegistryList: React.FC<{
       .catch(handleReScanError);
   };
 
+  const columns: ColumnsType<ContainerRegistry> = [
+    // {
+    //   title: '#',
+    //   dataIndex: 'id',
+    // },
+    {
+      key: 'registry_name',
+      title: t('registry.RegistryName'),
+      dataIndex: 'registry_name',
+      sorter: true,
+      // fixed: 'left',
+    },
+    {
+      key: 'url',
+      title: t('registry.RegistryURL'),
+      dataIndex: 'url',
+    },
+    {
+      key: 'type',
+      title: t('registry.Type'),
+      dataIndex: 'type',
+    },
+    {
+      key: 'project',
+      title: t('registry.Project'),
+      dataIndex: 'project',
+      render: (value) => {
+        return <Tag key={value || ''}>{value || ''}</Tag>;
+      },
+    },
+    {
+      key: 'username',
+      title: t('registry.Username'),
+      dataIndex: 'username',
+    },
+    {
+      key: 'password',
+      title: t('registry.Password'),
+      dataIndex: 'password',
+    },
+    {
+      key: 'enabled',
+      title: t('general.Enabled'),
+      render: (value, record) => {
+        const isEnabled = _.includes(
+          domain?.allowed_docker_registries,
+          record.registry_name,
+        );
+        return (
+          <Switch
+            checked={
+              inFlightHostName === record.id + fetchKey ? !isEnabled : isEnabled
+            }
+            disabled={isPendingReload || isInFlightDomainMutation}
+            loading={
+              (isPendingReload || isInFlightDomainMutation) &&
+              inFlightHostName === record.id + fetchKey
+            }
+            onChange={(isOn) => {
+              if (!_.isString(record.registry_name)) return;
+              let newAllowedDockerRegistries = _.clone(
+                domain?.allowed_docker_registries || [],
+              ) as string[];
+              if (isOn) {
+                newAllowedDockerRegistries.push(record.registry_name);
+              } else {
+                newAllowedDockerRegistries = _.without(
+                  newAllowedDockerRegistries,
+                  record.registry_name,
+                );
+              }
+
+              setInFlightHostName(record.id + fetchKey);
+              commitDomainMutation({
+                variables: {
+                  domain: baiClient._config.domainName,
+                  allowed_docker_registries: newAllowedDockerRegistries,
+                },
+                onCompleted: (res, errors) => {
+                  if (!res?.modify_domain?.ok) {
+                    message.error(res?.modify_domain?.msg);
+                    return;
+                  }
+                  if (errors && errors?.length > 0) {
+                    const errorMsgList = _.map(
+                      errors,
+                      (error) => error.message,
+                    );
+                    for (const error of errorMsgList) {
+                      message.error(error, 2.5);
+                    }
+                  } else {
+                    startReloadTransition(() => {
+                      updateFetchKey();
+                    });
+                  }
+
+                  message.info({
+                    key: 'registry-enabled',
+                    content: isOn
+                      ? t('registry.RegistryTurnedOn')
+                      : t('registry.RegistryTurnedOff'),
+                  });
+                },
+              });
+            }}
+          />
+          // <Button type="primary">
+          //   {record?.ssl_verify ? 'Yes' : 'No'}
+          // </Button>
+        );
+      },
+    },
+    {
+      title: t('general.Control'),
+      fixed: 'right',
+      render(value, record, index) {
+        return (
+          <Flex>
+            <Tooltip title={t('button.Edit')}>
+              <Button
+                size="large"
+                style={{
+                  color: token.colorInfo,
+                }}
+                type="text"
+                icon={<SettingOutlined />}
+                onClick={() => {
+                  setEditingRegistry(record);
+                }}
+              />
+            </Tooltip>
+            <Tooltip title={t('button.Delete')}>
+              <Button
+                size="large"
+                danger
+                type="text"
+                icon={<DeleteOutlined />}
+                onClick={() => {
+                  setDeletingRegistry(record);
+                }}
+              />
+            </Tooltip>
+            <Tooltip title={t('maintenance.RescanImages')}>
+              <Button
+                size="large"
+                type="text"
+                icon={
+                  <SyncOutlined
+                    onClick={() => {
+                      record.registry_name && rescanImage(record.registry_name);
+                    }}
+                  />
+                }
+              />
+            </Tooltip>
+          </Flex>
+        );
+      },
+    },
+  ];
+
+  const [displayedColumnKeys, setDisplayedColumnKeys] = useLocalStorageState(
+    'backendaiwebui.ContainerRegistryList.displayedColumnKeys',
+    {
+      defaultValue: _.map(columns, (column) => _.toString(column.key)),
+    },
+  );
+
   return (
     <Flex
       direction="column"
@@ -359,164 +538,12 @@ const ContainerRegistryList: React.FC<{
           spinning: isPendingPageChange || isPendingFilter,
           indicator: <LoadingOutlined />,
         }}
-        columns={[
-          // {
-          //   title: '#',
-          //   dataIndex: 'id',
-          // },
-          {
-            title: t('registry.RegistryName'),
-            dataIndex: 'registry_name',
-            sorter: true,
-            // fixed: 'left',
-          },
-          {
-            title: t('registry.RegistryURL'),
-            dataIndex: 'url',
-          },
-          {
-            title: t('registry.Type'),
-            dataIndex: 'type',
-          },
-          {
-            title: t('registry.Project'),
-            dataIndex: 'project',
-            render: (value) => {
-              return <Tag key={value || ''}>{value || ''}</Tag>;
-            },
-          },
-          {
-            title: t('registry.Username'),
-            dataIndex: 'username',
-          },
-          {
-            title: t('registry.Password'),
-            dataIndex: 'password',
-          },
-          {
-            title: t('general.Enabled'),
-            render: (value, record) => {
-              const isEnabled = _.includes(
-                domain?.allowed_docker_registries,
-                record.registry_name,
-              );
-              return (
-                <Switch
-                  checked={
-                    inFlightHostName === record.id + fetchKey
-                      ? !isEnabled
-                      : isEnabled
-                  }
-                  disabled={isPendingReload || isInFlightDomainMutation}
-                  loading={
-                    (isPendingReload || isInFlightDomainMutation) &&
-                    inFlightHostName === record.id + fetchKey
-                  }
-                  onChange={(isOn) => {
-                    if (!_.isString(record.registry_name)) return;
-                    let newAllowedDockerRegistries = _.clone(
-                      domain?.allowed_docker_registries || [],
-                    ) as string[];
-                    if (isOn) {
-                      newAllowedDockerRegistries.push(record.registry_name);
-                    } else {
-                      newAllowedDockerRegistries = _.without(
-                        newAllowedDockerRegistries,
-                        record.registry_name,
-                      );
-                    }
-
-                    setInFlightHostName(record.id + fetchKey);
-                    commitDomainMutation({
-                      variables: {
-                        domain: baiClient._config.domainName,
-                        allowed_docker_registries: newAllowedDockerRegistries,
-                      },
-                      onCompleted: (res, errors) => {
-                        if (!res?.modify_domain?.ok) {
-                          message.error(res?.modify_domain?.msg);
-                          return;
-                        }
-                        if (errors && errors?.length > 0) {
-                          const errorMsgList = _.map(
-                            errors,
-                            (error) => error.message,
-                          );
-                          for (const error of errorMsgList) {
-                            message.error(error, 2.5);
-                          }
-                        } else {
-                          startReloadTransition(() => {
-                            updateFetchKey();
-                          });
-                        }
-
-                        message.info({
-                          key: 'registry-enabled',
-                          content: isOn
-                            ? t('registry.RegistryTurnedOn')
-                            : t('registry.RegistryTurnedOff'),
-                        });
-                      },
-                    });
-                  }}
-                />
-                // <Button type="primary">
-                //   {record?.ssl_verify ? 'Yes' : 'No'}
-                // </Button>
-              );
-            },
-          },
-          {
-            title: t('general.Control'),
-            fixed: 'right',
-            render(value, record, index) {
-              return (
-                <Flex>
-                  <Tooltip title={t('button.Edit')}>
-                    <Button
-                      size="large"
-                      style={{
-                        color: token.colorInfo,
-                      }}
-                      type="text"
-                      icon={<SettingOutlined />}
-                      onClick={() => {
-                        setEditingRegistry(record);
-                      }}
-                    />
-                  </Tooltip>
-                  <Tooltip title={t('button.Delete')}>
-                    <Button
-                      size="large"
-                      danger
-                      type="text"
-                      icon={<DeleteOutlined />}
-                      onClick={() => {
-                        setDeletingRegistry(record);
-                      }}
-                    />
-                  </Tooltip>
-                  <Tooltip title={t('maintenance.RescanImages')}>
-                    <Button
-                      size="large"
-                      type="text"
-                      icon={
-                        <SyncOutlined
-                          onClick={() => {
-                            record.registry_name &&
-                              rescanImage(record.registry_name);
-                          }}
-                        />
-                      }
-                    />
-                  </Tooltip>
-                </Flex>
-              );
-            },
-          },
-        ]}
         dataSource={filterNonNullItems(containerRegistries)}
+        columns={
+          _.filter(columns, (column) =>
+            _.includes(displayedColumnKeys, _.toString(column.key)),
+          ) as ColumnType<AnyObject>[]
+        }
       />
       <ContainerRegistryEditorModal
         containerRegistryFrgmt={editingRegistry}
@@ -642,6 +669,30 @@ const ContainerRegistryList: React.FC<{
           </Form>
         </Flex>
       </BAIModal>
+      <Flex
+        justify="end"
+        style={{
+          padding: token.paddingXXS,
+        }}
+      >
+        <Button
+          type="text"
+          icon={<SettingOutlined />}
+          onClick={() => {
+            toggleColumnSettingModal();
+          }}
+        />
+      </Flex>
+      <TableColumnsSettingModal
+        open={visibleColumnSettingModal}
+        onRequestClose={(values) => {
+          values?.selectedColumnKeys &&
+            setDisplayedColumnKeys(values?.selectedColumnKeys);
+          toggleColumnSettingModal();
+        }}
+        columns={columns}
+        displayedColumnKeys={displayedColumnKeys ? displayedColumnKeys : []}
+      />
     </Flex>
   );
 };
