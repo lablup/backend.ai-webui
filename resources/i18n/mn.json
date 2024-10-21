@@ -1084,7 +1084,11 @@
     "ModifyRegistry": "Бүртгэлийг өөрчлөх",
     "NoRegistryToDisplay": "Харуулах бүртгэл байхгүй",
     "ConfirmNoUserName": "Хэрэглэгч болон нууц үгийг заагаагүй тул хадгалах уу?",
-    "DescURLFormat": "Хүчингүй URL төрөл"
+    "DescURLFormat": "Хүчингүй URL төрөл",
+    "RegistryName": "Бүртгэлийн нэр",
+    "DescRegistryNameIsEmpty": "Бүртгэлийн нэр хоосон байна",
+    "RegistryNameAlreadyExists": "Бүртгэлийн нэр аль хэдийн байна. \nНэмэх бүртгэлийн нэрийг өөрчилнө үү.",
+    "Project": "Төсөл"
   },
   "resourceGroup": {
     "ResourceGroups": "Нөөцийн бүлгүүд",

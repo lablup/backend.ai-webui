@@ -917,7 +917,11 @@
     "Username": "Nombre de usuario",
     "UsernameOptional": "Nombre de usuario (opcional)",
     "ConfirmNoUserName": "Usuario y contraseña no especificados, ¿desea guardar?",
-    "DescURLFormat": "Tipo de URL no válido"
+    "DescURLFormat": "Tipo de URL no válido",
+    "RegistryName": "Nombre de registro",
+    "DescRegistryNameIsEmpty": "El nombre del registro está vacío",
+    "RegistryNameAlreadyExists": "El nombre del registro ya existe. \nCambie el nombre del registro para agregar.",
+    "Project": "Proyecto"
   },
   "resourceGroup": {
     "Active": "Activo",

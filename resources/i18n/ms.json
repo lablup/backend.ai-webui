@@ -1083,7 +1083,11 @@
     "NoRegistryToDisplay": "Tiada Pendaftaran untuk dipaparkan",
     "ModifyRegistry": "Ubah suai Pendaftaran",
     "ConfirmNoUserName": "Pengguna dan kata laluan tidak dinyatakan, adakah anda ingin menyimpan?",
-    "DescURLFormat": "Jenis URL tidak sah"
+    "DescURLFormat": "Jenis URL tidak sah",
+    "RegistryName": "Nama Pendaftaran",
+    "DescRegistryNameIsEmpty": "Nama pendaftaran kosong",
+    "RegistryNameAlreadyExists": "Nama pendaftaran sudah wujud. \nSila tukar nama pendaftaran untuk ditambahkan.",
+    "Project": "Projek"
   },
   "resourceGroup": {
     "ResourceGroups": "Kumpulan Sumber",

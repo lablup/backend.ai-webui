@@ -914,7 +914,11 @@
     "Username": "Käyttäjätunnus",
     "UsernameOptional": "Käyttäjätunnus (valinnainen)",
     "ConfirmNoUserName": "Käyttäjää ja salasanaa ei ole määritetty, haluatko tallentaa?",
-    "DescURLFormat": "Virheellinen URL-tyyppi"
+    "DescURLFormat": "Virheellinen URL-tyyppi",
+    "RegistryName": "Rekisterin nimi",
+    "DescRegistryNameIsEmpty": "Rekisterin nimi on tyhjä",
+    "RegistryNameAlreadyExists": "Rekisterin nimi on jo olemassa. \nMuuta lisättävä rekisterinimi.",
+    "Project": "Projekti"
   },
   "resourceGroup": {
     "Active": "Aktiivinen",

@@ -277,9 +277,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
               setTimeout(() => {
                 setInput('');
               }, 0);
-              if (onSubmitChange) {
-                onSubmitChange();
-              }
+              onSubmitChange?.();
             }
           }}
         />,

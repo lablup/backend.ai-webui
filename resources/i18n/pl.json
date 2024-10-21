@@ -1084,7 +1084,11 @@
     "NoRegistryToDisplay": "Brak rejestrów do wyświetlenia",
     "ModifyRegistry": "Modyfikacja rejestru",
     "ConfirmNoUserName": "Użytkownik i hasło nie zostały określone, czy chcesz zapisać?",
-    "DescURLFormat": "Nieprawidłowy typ adresu URL"
+    "DescURLFormat": "Nieprawidłowy typ adresu URL",
+    "RegistryName": "Nazwa rejestru",
+    "DescRegistryNameIsEmpty": "Nazwa rejestru jest pusta",
+    "RegistryNameAlreadyExists": "Nazwa rejestru już istnieje. \nZmień nazwę rejestru, aby go dodać.",
+    "Project": "Projekt"
   },
   "resourceGroup": {
     "ResourceGroups": "Grupy zasobów",

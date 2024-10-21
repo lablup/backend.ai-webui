@@ -1084,7 +1084,11 @@
     "NoRegistryToDisplay": "Nessun registro da visualizzare",
     "ModifyRegistry": "Modificare il registro",
     "ConfirmNoUserName": "Utente e password non specificati, si desidera salvare?",
-    "DescURLFormat": "Tipo di URL non valido"
+    "DescURLFormat": "Tipo di URL non valido",
+    "RegistryName": "Nome del registro",
+    "DescRegistryNameIsEmpty": "Il nome del registro è vuoto",
+    "RegistryNameAlreadyExists": "Il nome del registro esiste già. \nModificare il nome del registro da aggiungere.",
+    "Project": "Progetto"
   },
   "resourceGroup": {
     "ResourceGroups": "Gruppi di risorse",

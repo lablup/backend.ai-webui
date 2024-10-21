@@ -1,4 +1,5 @@
 import ContainerRegistryList from '../components/ContainerRegistryList';
+import ContainerRegistryListBefore2409 from '../components/ContainerRegistryListBefore2409';
 import FlexActivityIndicator from '../components/FlexActivityIndicator';
 import ImageList from '../components/ImageList';
 import ResourcePresetList from '../components/ResourcePresetList';
@@ -17,6 +18,8 @@ const EnvironmentPage = () => {
   const isSupportContainerRegistryGraphQL = baiClient.supports(
     'container-registry-gql',
   );
+  const isSupportContainerRegistryNodes =
+    baiClient?.isManagerVersionCompatibleWith('24.09.0');
 
   return (
     <Card
@@ -60,8 +63,16 @@ const EnvironmentPage = () => {
         {curTabKey === 'preset' && <ResourcePresetList />}
         {curTabKey === 'registry' ? (
           isSupportContainerRegistryGraphQL ? (
-            <ContainerRegistryList />
+            isSupportContainerRegistryNodes ? (
+              // manager ≤ v24.09.0
+              <ContainerRegistryList />
+            ) : (
+              // v23.09.2 ≤ manager < v24.09.0
+              <ContainerRegistryListBefore2409 />
+            )
           ) : (
+            // TODO: remove this from 24.09.2
+            // v23.09.2 < manager
             // @ts-ignore
             <backend-ai-registry-list active />
           )

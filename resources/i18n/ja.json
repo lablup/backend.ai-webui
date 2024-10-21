@@ -1084,7 +1084,11 @@
     "NoRegistryToDisplay": "レジストリ情報がありません。",
     "ModifyRegistry": "レジストリの修正",
     "ConfirmNoUserName": "ユーザーとパスワードが指定されていません。",
-    "DescURLFormat": "無効な URL タイプ"
+    "DescURLFormat": "無効な URL タイプ",
+    "RegistryName": "レジストリ名",
+    "DescRegistryNameIsEmpty": "レジストリ名が空です",
+    "RegistryNameAlreadyExists": "レジストリ名はすでに存在します。\n追加するレジストリ名を変更してください。",
+    "Project": "プロジェクト"
   },
   "resourceGroup": {
     "ResourceGroups": "リソースグループ",
