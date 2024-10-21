@@ -46,12 +46,10 @@ import {
   useUpdatableState,
   useWebUINavigate,
 } from '../hooks';
-import {
-  useCurrentUserRole,
-  useRecentSessionHistory,
-} from '../hooks/backendai';
+import { useCurrentUserRole } from '../hooks/backendai';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useRecentSessionHistory } from '../hooks/useRecentSessionHistory';
 import { useThemeMode } from '../hooks/useThemeMode';
 // @ts-ignore
 import customCSS from './SessionLauncherPage.css?raw';
@@ -296,11 +294,7 @@ const SessionLauncherPage = () => {
   }, []);
 
   const mergedInitialValues = useMemo(() => {
-    return _.merge(
-      {},
-      INITIAL_FORM_VALUES,
-      formValuesFromQueryParams,
-    );
+    return _.merge({}, INITIAL_FORM_VALUES, formValuesFromQueryParams);
   }, [INITIAL_FORM_VALUES, formValuesFromQueryParams]);
 
   // ScrollTo top when step is changed
@@ -685,7 +679,7 @@ const SessionLauncherPage = () => {
                 style={{ paddingRight: 0, paddingLeft: 0 }}
                 onClick={() => toggleIsOpenTemplateModal()}
               >
-                {t('session.launcher.TemplateAndHistory')}
+                {t('session.launcher.RecentHistory')}
               </Button>
             </Flex>
           </Flex>
