@@ -1,5 +1,6 @@
 'use client';
 
+import { filterEmptyItem } from '../../helper';
 import { useWebUINavigate } from '../../hooks';
 import Flex from '../Flex';
 import ChatInput from './ChatInput';
@@ -56,6 +57,7 @@ export interface LLMChatCardProps extends CardProps {
   onModelChange?: (modelId: string) => void;
   onInputChange?: (input: string) => void;
   onSubmitChange?: () => void;
+  showCompareMenuItem?: boolean;
 }
 
 const LLMChatCard: React.FC<LLMChatCardProps> = ({
@@ -73,6 +75,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
   submitKey,
   onInputChange,
   onSubmitChange,
+  showCompareMenuItem,
   ...cardProps
 }) => {
   const webuiNavigate = useWebUINavigate();
@@ -162,8 +165,8 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitKey]);
 
-  const items: MenuProps['items'] = [
-    {
+  const items: MenuProps['items'] = filterEmptyItem([
+    showCompareMenuItem && {
       key: 'compare',
       label: t('chatui.CompareWithOtherModels'),
       icon: <Scale />,
@@ -185,7 +188,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
         setMessages([]);
       },
     },
-  ];
+  ]);
 
   return (
     <Card
