@@ -250,7 +250,7 @@
       "EnqueueComputeSessionWarning": "リソースが不十分です。\nセッションが保留中の可能性があります。",
       "SessionName": "セッション名",
       "ResetFormConfirm": "入力した内容をすべて初期化しますか？",
-      "TemplateAndHistory": "テンプレート",
+      "TemplateAndHistory": "テンプレートと歴史",
       "ScheduleTimeSimple": "開始時間の設定",
       "ResourceAllocationPerContainer": "コンテナあたりのリソース割り当て",
       "NumberOfContainer": "コンテナ数",
@@ -279,7 +279,8 @@
       "InvalidPortFormat": "ポート番号の形式が正しくない。",
       "DuplicatedPort": "ポートが重複している。",
       "FolderAliasOverlappingToAutoMount": "同名の自動マウントフォルダが存在する。",
-      "InsufficientAllocationOfResourcesWarning": "割り当て可能なリソースが、選択したイメージに必要な最小リソースを下回ります。"
+      "InsufficientAllocationOfResourcesWarning": "割り当て可能なリソースが、選択したイメージに必要な最小リソースを下回ります。",
+      "RecentHistory": "最近の歴史"
     },
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",
@@ -457,7 +458,8 @@
     "SaveWithoutClose": "閉じずに保存",
     "Collapse": "崩壊",
     "Expand": "拡大する",
-    "Clear": "消去"
+    "Clear": "消去",
+    "Apply": "応募する"
   },
   "agent": {
     "Endpoint": "終点",
@@ -1084,7 +1086,11 @@
     "NoRegistryToDisplay": "レジストリ情報がありません。",
     "ModifyRegistry": "レジストリの修正",
     "ConfirmNoUserName": "ユーザーとパスワードが指定されていません。",
-    "DescURLFormat": "無効な URL タイプ"
+    "DescURLFormat": "無効な URL タイプ",
+    "RegistryName": "レジストリ名",
+    "DescRegistryNameIsEmpty": "レジストリ名が空です",
+    "RegistryNameAlreadyExists": "レジストリ名はすでに存在します。\n追加するレジストリ名を変更してください。",
+    "Project": "プロジェクト"
   },
   "resourceGroup": {
     "ResourceGroups": "リソースグループ",

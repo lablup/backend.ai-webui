@@ -309,6 +309,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               onClick={() => {
                 setOpenChatModal(true);
               }}
+              disabled={endpoint?.status !== 'HEALTHY'}
             />
           </Tooltip>
         </>

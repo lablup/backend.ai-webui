@@ -1,5 +1,4 @@
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import {
   EndpointSelectQuery,
   EndpointSelectQuery$data,
@@ -8,33 +7,45 @@ import { useControllableValue } from 'ahooks';
 import { Select, SelectProps } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React from 'react';
+import React, { useState, useTransition } from 'react';
 import { useLazyLoadQuery } from 'react-relay';
 
 interface EndpointSelectProps extends Omit<SelectProps, 'options'> {
   fetchKey?: string;
+  lifecycleStageFilter?: LifecycleStage[];
 }
 
 export type Endpoint = NonNullableItem<
   EndpointSelectQuery$data['endpoint_list']
 >;
 
+type LifecycleStage = 'created' | 'destroying' | 'destroyed';
+
 const EndpointSelect: React.FC<EndpointSelectProps> = ({
   fetchKey,
-  ...selectProps
+  lifecycleStageFilter = ['created'],
+  loading,
+  ...selectPropsWithoutLoading
 }) => {
   const baiClient = useSuspendedBackendaiClient();
-  const { baiPaginationOption } = useBAIPaginationOptionState({
-    current: 1,
-    pageSize: 100,
-  });
-  const { endpoint_list } = useLazyLoadQuery<EndpointSelectQuery>(
+  const [controllableValue, setControllableValue] =
+    useControllableValue<string>(selectPropsWithoutLoading);
+  const [searchStr, setSearchStr] = useState<string>();
+  const [isSearchPending, startSearchTransition] = useTransition();
+
+  const lifecycleStageFilterStr = lifecycleStageFilter
+    .map((v) => `lifecycle_stage == "${v}"`)
+    .join(' | ');
+
+  const { endpoint_list, endpoint } = useLazyLoadQuery<EndpointSelectQuery>(
     graphql`
       query EndpointSelectQuery(
         $offset: Int!
         $limit: Int!
         $projectID: UUID
         $filter: String
+        $endpoint_id: UUID!
+        $skipEndpoint: Boolean!
       ) {
         endpoint_list(
           offset: $offset
@@ -50,21 +61,29 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
             ...EndpointLLMChatCard_endpoint
           }
         }
+        endpoint(endpoint_id: $endpoint_id) @skipOnClient(if: $skipEndpoint) {
+          name
+          endpoint_id
+          ...EndpointLLMChatCard_endpoint
+        }
       }
     `,
     {
-      limit: baiPaginationOption.limit,
-      offset: baiPaginationOption.offset,
+      limit: 10,
+      offset: 0,
       filter: baiClient.supports('endpoint-lifecycle-stage-filter')
-        ? `lifecycle_stage == "created"`
+        ? [lifecycleStageFilterStr, searchStr]
+            .filter(Boolean)
+            .map((v) => `(${v})`)
+            .join(' & ')
         : undefined,
+      endpoint_id: controllableValue,
+      skipEndpoint: !controllableValue,
     },
     {
       fetchKey: fetchKey,
     },
   );
-  const [controllableValue, setControllableValue] =
-    useControllableValue(selectProps);
 
   // useEffect(() => {
   //   if (autoSelectDefault && _.isEmpty(controllableValue)) {
@@ -75,18 +94,38 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
   //   }
   // }, []);
 
-  return (
-    <Select
-      showSearch
-      optionFilterProp="label"
-      {...selectProps}
-      options={_.map(endpoint_list?.items, (item) => {
+  const selectOptions = endpoint
+    ? _.map(
+        _.uniqBy(_.concat(endpoint_list?.items, endpoint), 'endpoint_id'),
+        (item) => {
+          return {
+            label: item?.name,
+            value: item?.endpoint_id,
+            endpoint: item,
+          };
+        },
+      )
+    : _.map(endpoint_list?.items, (item) => {
         return {
           label: item?.name,
           value: item?.endpoint_id,
           endpoint: item,
         };
-      })}
+      });
+
+  return (
+    <Select
+      showSearch
+      onSearch={(v) => {
+        startSearchTransition(() => {
+          setSearchStr(v && `name ilike "%${v}%"`);
+        });
+      }}
+      filterOption={false}
+      loading={isSearchPending || loading}
+      options={selectOptions}
+      {...selectPropsWithoutLoading}
+      // override value and onChange
       value={controllableValue}
       onChange={(v, option) => {
         setControllableValue(v, _.castArray(option)?.[0].endpoint);

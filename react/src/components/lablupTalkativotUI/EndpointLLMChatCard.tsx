@@ -1,9 +1,10 @@
+import { useUpdatableState } from '../../hooks';
 import { useSuspenseTanQuery } from '../../hooks/reactQueryAlias';
 import EndpointSelect from '../EndpointSelect';
 import { Model } from './ChatUIModal';
 import LLMChatCard, { BAIModel } from './LLMChatCard';
 import { EndpointLLMChatCard_endpoint$key } from './__generated__/EndpointLLMChatCard_endpoint.graphql';
-import { CloseOutlined } from '@ant-design/icons';
+import { CloseOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Alert, Button, CardProps, Popconfirm, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import { atom, useAtom } from 'jotai';
@@ -22,7 +23,6 @@ interface EndpointLLMChatCardProps extends CardProps {
   closable?: boolean;
   defaultModelId?: string;
   defaultEndpoint?: EndpointLLMChatCard_endpoint$key;
-  fetchKey?: string;
   isSynchronous?: boolean;
   onRequestClose?: () => void;
   onModelChange?: (modelId: string) => void;
@@ -33,7 +33,6 @@ const EndpointLLMChatCard: React.FC<EndpointLLMChatCardProps> = ({
   closable,
   defaultModelId,
   defaultEndpoint,
-  fetchKey,
   isSynchronous,
   onRequestClose,
   onModelChange,
@@ -42,6 +41,7 @@ const EndpointLLMChatCard: React.FC<EndpointLLMChatCardProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
+  const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [endpointFrgmt, setEndpointFrgmt] =
     useState<EndpointLLMChatCard_endpoint$key | null>(defaultEndpoint || null);
   const endpoint = useFragment(
@@ -152,6 +152,16 @@ const EndpointLLMChatCard: React.FC<EndpointLLMChatCardProps> = ({
             type="warning"
             showIcon
             message={t('chatui.CannotFindModel')}
+            action={
+              <Button
+                icon={<ReloadOutlined />}
+                onClick={() => {
+                  updateFetchKey();
+                }}
+              >
+                {t('button.Refresh')}
+              </Button>
+            }
           />
         )
       }

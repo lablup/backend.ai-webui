@@ -1,14 +1,15 @@
+import BAIPropertyFilter from '../components/BAIPropertyFilter';
 import EndpointOwnerInfo from '../components/EndpointOwnerInfo';
 import EndpointStatusTag from '../components/EndpointStatusTag';
 import Flex from '../components/Flex';
 import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
-import { baiSignedRequestWithPromise } from '../helper';
+import { baiSignedRequestWithPromise, filterEmptyItem } from '../helper';
 import {
   useSuspendedBackendaiClient,
   useUpdatableState,
   useWebUINavigate,
 } from '../hooks';
-import { useCurrentUserInfo } from '../hooks/backendai';
+import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 // import { getSortOrderByName } from '../hooks/reactPaginationQueryOptions';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -41,6 +42,7 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 import { Link } from 'react-router-dom';
+import { StringParam, useQueryParam } from 'use-query-params';
 
 export type Endpoint = NonNullable<
   NonNullable<
@@ -93,13 +95,16 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
       : `lifecycle_stage == "${deferredSelectedLifecycleStage}"`;
 
   const [isRefetchPending, startRefetchTransition] = useTransition();
+  const [isFilterPending, startFilterTransition] = useTransition();
   const [servicesFetchKey, updateServicesFetchKey] =
     useUpdatableState('initial-fetch');
   const [optimisticDeletingId, setOptimisticDeletingId] = useState<
     string | null
   >();
 
+  const [filterStr, setFilterStr] = useQueryParam('filter', StringParam);
   const [currentUser] = useCurrentUserInfo();
+  const currentUserRole = useCurrentUserRole();
 
   // const [selectedGeneration, setSelectedGeneration] = useState<
   //   "current" | "next"
@@ -373,7 +378,10 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
         limit: deferredPaginationState.pageSize,
         projectID: curProject.id,
         filter: baiClient.supports('endpoint-lifecycle-stage-filter')
-          ? lifecycleStageFilter
+          ? [lifecycleStageFilter, filterStr]
+              .filter(Boolean)
+              .map((v) => `(${v})`)
+              .join(' & ')
           : undefined,
       },
       {
@@ -413,6 +421,7 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
       <Flex
         direction="row"
         justify="between"
+        align="start"
         wrap="wrap"
         gap={'xs'}
         style={{
@@ -421,34 +430,86 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
           paddingRight: token.paddingContentHorizontalSM,
         }}
       >
-        <Flex direction="column" align="start">
+        <Flex
+          direction="row"
+          gap={'sm'}
+          align="start"
+          wrap="wrap"
+          style={{ flexShrink: 1 }}
+        >
           {baiClient.supports('endpoint-lifecycle-stage-filter') && (
-            <Radio.Group
-              value={selectedLifecycleStage}
-              onChange={(e) => {
-                setSelectedLifecycleStage(e.target?.value);
-                // reset pagination state when filter changes
-                setPaginationState({
-                  current: 1,
-                  pageSize: paginationState.pageSize,
-                });
-              }}
-              optionType="button"
-              buttonStyle="solid"
-              options={[
-                {
-                  label: 'Active',
-                  value: 'created&destroying',
-                },
-                {
-                  label: 'Destroyed',
-                  value: 'destroyed',
-                },
-              ]}
-            />
+            <>
+              <Radio.Group
+                value={selectedLifecycleStage}
+                onChange={(e) => {
+                  setSelectedLifecycleStage(e.target?.value);
+                  // reset pagination state when filter changes
+                  setPaginationState({
+                    current: 1,
+                    pageSize: paginationState.pageSize,
+                  });
+                }}
+                optionType="button"
+                buttonStyle="solid"
+                options={[
+                  {
+                    label: 'Active',
+                    value: 'created&destroying',
+                  },
+                  {
+                    label: 'Destroyed',
+                    value: 'destroyed',
+                  },
+                ]}
+              />
+              <BAIPropertyFilter
+                value={filterStr || undefined}
+                onChange={(v) => {
+                  startFilterTransition(() => {
+                    setFilterStr(v, 'replaceIn');
+                  });
+                }}
+                loading={isFilterPending}
+                filterProperties={filterEmptyItem([
+                  // https://github.com/lablup/backend.ai/blob/main/src/ai/backend/manager/models/endpoint.py#L766-L773
+                  {
+                    key: 'name',
+                    type: 'string',
+                    propertyLabel: t('modelService.EndpointName'),
+                  },
+                  {
+                    key: 'url',
+                    type: 'string',
+                    propertyLabel: t('modelService.ServiceEndpoint'),
+                  },
+                  currentUserRole === 'admin' ||
+                  currentUserRole === 'superadmin'
+                    ? {
+                        key: 'created_user_email',
+                        type: 'string',
+                        propertyLabel: t('modelService.Owner'),
+                      }
+                    : undefined,
+                  // not supported yet
+                  // {
+                  //   key: 'open_to_public',
+                  //   propertyLabel: t('modelService.Public'),
+                  //   type: 'boolean',
+                  //   options: [
+                  //     {
+                  //       value: 'true',
+                  //     },
+                  //     {
+                  //       value:'false'
+                  //     }
+                  //   ]
+                  // }
+                ])}
+              />
+            </>
           )}
         </Flex>
-        <Flex direction="row" gap={'xs'} wrap="wrap" style={{ flexShrink: 1 }}>
+        <Flex direction="row" gap={'xs'}>
           <Flex gap={'xs'}>
             <Button
               icon={<ReloadOutlined />}
@@ -470,7 +531,7 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
       </Flex>
       <Table
         loading={{
-          spinning: isPendingPaginationAndFilter,
+          spinning: isPendingPaginationAndFilter || isFilterPending,
           indicator: <LoadingOutlined />,
         }}
         scroll={{ x: 'max-content' }}

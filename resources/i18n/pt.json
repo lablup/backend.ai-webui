@@ -250,7 +250,7 @@
       "EnqueueComputeSessionWarning": "Recursos insuficientes. \nA sessão pode estar pendente.",
       "SessionName": "Nome da sessão",
       "ResetFormConfirm": "Deseja redefinir todas as suas entradas?",
-      "TemplateAndHistory": "Modelos",
+      "TemplateAndHistory": "Modelos e história",
       "ScheduleTimeSimple": "Definir horário de início",
       "ResourceAllocationPerContainer": "Atribuição de recursos por contentor",
       "NumberOfContainer": "Número de contentores",
@@ -279,7 +279,8 @@
       "InvalidPortFormat": "O formato do número da porta está incorreto.",
       "DuplicatedPort": "Existem portas duplicadas.",
       "FolderAliasOverlappingToAutoMount": "Existe uma pasta de montagem automática com o mesmo nome.",
-      "InsufficientAllocationOfResourcesWarning": "Os recursos alocáveis ​​ficam abaixo do recurso mínimo exigido na imagem selecionada."
+      "InsufficientAllocationOfResourcesWarning": "Os recursos alocáveis ​​ficam abaixo do recurso mínimo exigido na imagem selecionada.",
+      "RecentHistory": "História recente"
     },
     "Preparing": "Preparando...",
     "PreparingSession": "Preparando sessão ...",
@@ -457,7 +458,8 @@
     "SaveWithoutClose": "Salvar sem fechar",
     "Collapse": "Colapso",
     "Expand": "Expandir",
-    "Clear": "Excluir"
+    "Clear": "Excluir",
+    "Apply": "Aplicar"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -1084,7 +1086,11 @@
     "NoRegistryToDisplay": "Não há registos a apresentar",
     "ModifyRegistry": "Modificar o registo",
     "ConfirmNoUserName": "Utilizador e palavra-passe não especificados, pretende guardar?",
-    "DescURLFormat": "Tipo de URL inválido"
+    "DescURLFormat": "Tipo de URL inválido",
+    "RegistryName": "Nome do Registro",
+    "DescRegistryNameIsEmpty": "O nome do registro está vazio",
+    "RegistryNameAlreadyExists": "O nome do registro já existe. \nAltere o nome do registro para adicionar.",
+    "Project": "Projeto"
   },
   "resourceGroup": {
     "ResourceGroups": "Grupos de Recursos",

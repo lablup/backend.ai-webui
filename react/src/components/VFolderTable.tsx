@@ -31,7 +31,13 @@ import { ColumnsType } from 'antd/lib/table';
 import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import React, { useEffect, useMemo, useState, useTransition } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition,
+} from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
@@ -244,22 +250,23 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
    * @param input - The input path to be converted.
    * @returns The aliased path based on the name and input.
    */
-  const inputToAliasPath = useEventNotStable(
+  const inputToAliasPath = useCallback(
     (name: VFolderKey, input?: string) => {
-      if (_.isEmpty(input)) {
+      if (input === undefined || input === '') {
         return `${aliasBasePath}${name}`;
-      } else if (input?.startsWith('/')) {
+      } else if (input.startsWith('/')) {
         return input;
       } else {
         return `${aliasBasePath}${input}`;
       }
     },
+    [aliasBasePath],
   );
 
   const handleAliasUpdate = useEventNotStable(() => {
     setAliasMap(
       _.mapValues(
-        _.pickBy(internalForm.getFieldsValue(), (v) => !!v), //remove empty
+        _.pickBy(internalForm.getFieldsValue({ strict: false }), (v) => !!v), //remove empty
         (v, k) => inputToAliasPath(k, v), // add alias base path
       ),
     );
@@ -526,7 +533,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
           }}
         />
       </Flex>
-      <Form form={internalForm} component={false}>
+      <Form form={internalForm} component={false} preserve={false}>
         <Table
           // size="small"
           scroll={{ x: 'max-content' }}
@@ -535,6 +542,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
             selectedRowKeys,
             onChange: (selectedRowKeys) => {
               setSelectedRowKeys(selectedRowKeys as VFolderKey[]);
+              handleAliasUpdate();
             },
           }}
           showSorterTooltip={false}

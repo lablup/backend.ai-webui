@@ -106,7 +106,7 @@ const StorageSelect: React.FC<Props> = ({
       }}
       searchValue={controllableSearchValue}
       onSearch={setControllableSearchValue}
-      optionLabelProp="value"
+      optionLabelProp={showUsageStatus ? 'label' : 'value'}
       options={_.map(vhostInfo?.allowed, (host) => ({
         label: showUsageStatus ? (
           <Flex align="center" gap={'xs'}>

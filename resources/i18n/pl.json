@@ -250,7 +250,7 @@
       "EnqueueComputeSessionWarning": "Niewystarczające zasoby. \nSesja może być w toku.",
       "SessionName": "Nazwa sesji",
       "ResetFormConfirm": "Czy chcesz zresetować wszystkie swoje wpisy?",
-      "TemplateAndHistory": "Szablony",
+      "TemplateAndHistory": "Szablony i historia",
       "ScheduleTimeSimple": "Ustaw godzinę rozpoczęcia",
       "ResourceAllocationPerContainer": "Alokacja zasobów na kontener",
       "NumberOfContainer": "Liczba pojemników",
@@ -279,7 +279,8 @@
       "InvalidPortFormat": "Format numeru portu jest nieprawidłowy.",
       "DuplicatedPort": "Istnieją zduplikowane porty.",
       "FolderAliasOverlappingToAutoMount": "Istnieje folder automatycznego montażu o tej samej nazwie.",
-      "InsufficientAllocationOfResourcesWarning": "Zasoby, które można przydzielić, są mniejsze niż minimalne zasoby wymagane w wybranym obrazie."
+      "InsufficientAllocationOfResourcesWarning": "Zasoby, które można przydzielić, są mniejsze niż minimalne zasoby wymagane w wybranym obrazie.",
+      "RecentHistory": "Najnowsza historia"
     },
     "Preparing": "Przygotowuję...",
     "PreparingSession": "Przygotowuję sesję...",
@@ -457,7 +458,8 @@
     "SaveWithoutClose": "Zapisz bez zamykania",
     "Collapse": "Zawalić się",
     "Expand": "Zwiększać",
-    "Clear": "Usuwać"
+    "Clear": "Usuwać",
+    "Apply": "Zastosuj"
   },
   "agent": {
     "Endpoint": "Punkt końcowy",
@@ -1084,7 +1086,11 @@
     "NoRegistryToDisplay": "Brak rejestrów do wyświetlenia",
     "ModifyRegistry": "Modyfikacja rejestru",
     "ConfirmNoUserName": "Użytkownik i hasło nie zostały określone, czy chcesz zapisać?",
-    "DescURLFormat": "Nieprawidłowy typ adresu URL"
+    "DescURLFormat": "Nieprawidłowy typ adresu URL",
+    "RegistryName": "Nazwa rejestru",
+    "DescRegistryNameIsEmpty": "Nazwa rejestru jest pusta",
+    "RegistryNameAlreadyExists": "Nazwa rejestru już istnieje. \nZmień nazwę rejestru, aby go dodać.",
+    "Project": "Projekt"
   },
   "resourceGroup": {
     "ResourceGroups": "Grupy zasobów",

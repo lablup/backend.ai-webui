@@ -89,6 +89,13 @@ export async function loginAsMonitor(page: Page) {
     webServerEndpoint,
   );
 }
+export async function loginAsCreatedAccount(
+  page: Page,
+  email: string,
+  password: string,
+) {
+  await login(page, email, password, webServerEndpoint);
+}
 
 export async function logout(page: Page) {
   await page.getByTestId('user-dropdown-button').click();

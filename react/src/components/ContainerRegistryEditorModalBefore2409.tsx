@@ -1,8 +1,7 @@
 import BAIModal, { BAIModalProps } from './BAIModal';
-import HiddenFormItem from './HiddenFormItem';
-import { ContainerRegistryEditorModalCreateMutation } from './__generated__/ContainerRegistryEditorModalCreateMutation.graphql';
-import { ContainerRegistryEditorModalFragment$key } from './__generated__/ContainerRegistryEditorModalFragment.graphql';
-import { ContainerRegistryEditorModalModifyMutation } from './__generated__/ContainerRegistryEditorModalModifyMutation.graphql';
+import { ContainerRegistryEditorModalBefore2409CreateMutation } from './__generated__/ContainerRegistryEditorModalBefore2409CreateMutation.graphql';
+import { ContainerRegistryEditorModalBefore2409Fragment$key } from './__generated__/ContainerRegistryEditorModalBefore2409Fragment.graphql';
+import { ContainerRegistryEditorModalBefore2409ModifyMutation } from './__generated__/ContainerRegistryEditorModalBefore2409ModifyMutation.graphql';
 import { Form, Input, Select, Checkbox, FormInstance, App } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
@@ -10,14 +9,20 @@ import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment, useMutation } from 'react-relay';
 
-interface ContainerRegistryEditorModalProps
+interface ContainerRegistryEditorModalBefore2409Props
   extends Omit<BAIModalProps, 'onOk'> {
+  existingHostnames?: string[];
   onOk: (type: 'create' | 'modify') => void;
-  containerRegistryFrgmt?: ContainerRegistryEditorModalFragment$key | null;
+  containerRegistryFrgmt?: ContainerRegistryEditorModalBefore2409Fragment$key | null;
 }
 const ContainerRegistryEditorModal: React.FC<
-  ContainerRegistryEditorModalProps
-> = ({ containerRegistryFrgmt = null, onOk, ...modalProps }) => {
+  ContainerRegistryEditorModalBefore2409Props
+> = ({
+  existingHostnames,
+  containerRegistryFrgmt = null,
+  onOk,
+  ...modalProps
+}) => {
   const { t } = useTranslation();
   const formRef = useRef<FormInstance>(null);
 
@@ -25,75 +30,61 @@ const ContainerRegistryEditorModal: React.FC<
 
   const containerRegistry = useFragment(
     graphql`
-      fragment ContainerRegistryEditorModalFragment on ContainerRegistryNode {
+      fragment ContainerRegistryEditorModalBefore2409Fragment on ContainerRegistry {
         id
-        row_id
-        name
-        registry_name
-        url
-        type
-        project
-        username
-        ssl_verify
+        hostname
+        config {
+          url
+          type
+          project
+          username
+          ssl_verify
+        }
       }
     `,
     containerRegistryFrgmt,
   );
   const [commitCreateRegistry, isInflightCreateRegistry] =
-    useMutation<ContainerRegistryEditorModalCreateMutation>(graphql`
-      mutation ContainerRegistryEditorModalCreateMutation(
-        $registry_name: String!
-        $type: ContainerRegistryTypeField!
-        $url: String!
-        $is_global: Boolean
-        $password: String
-        $project: String
-        $ssl_verify: Boolean
-        $username: String
+    useMutation<ContainerRegistryEditorModalBefore2409CreateMutation>(graphql`
+      mutation ContainerRegistryEditorModalBefore2409CreateMutation(
+        $hostname: String!
+        $props: CreateContainerRegistryInput!
       ) {
-        create_container_registry_node(
-          registry_name: $registry_name
-          type: $type
-          url: $url
-          is_global: $is_global
-          password: $password
-          project: $project
-          ssl_verify: $ssl_verify
-          username: $username
-        ) {
+        create_container_registry(hostname: $hostname, props: $props) {
           container_registry {
             id
+            hostname
+            config {
+              url
+              type
+              project
+              username
+              password
+              ssl_verify
+            }
           }
         }
       }
     `);
 
   const [commitModifyRegistry, isInflightModifyRegistry] =
-    useMutation<ContainerRegistryEditorModalModifyMutation>(graphql`
-      mutation ContainerRegistryEditorModalModifyMutation(
-        $id: String!
-        $registry_name: String
-        $type: ContainerRegistryTypeField
-        $url: String
-        $is_global: Boolean
-        $password: String
-        $project: String
-        $ssl_verify: Boolean
-        $username: String
+    useMutation<ContainerRegistryEditorModalBefore2409ModifyMutation>(graphql`
+      mutation ContainerRegistryEditorModalBefore2409ModifyMutation(
+        $hostname: String!
+        $props: ModifyContainerRegistryInput!
       ) {
-        modify_container_registry_node(
-          id: $id
-          registry_name: $registry_name
-          type: $type
-          url: $url
-          is_global: $is_global
-          password: $password
-          project: $project
-          ssl_verify: $ssl_verify
-          username: $username
-        ) {
+        modify_container_registry(hostname: $hostname, props: $props) {
           container_registry {
             id
+            hostname
+            config {
+              url
+              type
+              project
+              username
+              password
+              ssl_verify
+            }
           }
         }
       }
@@ -103,33 +94,34 @@ const ContainerRegistryEditorModal: React.FC<
     return formRef.current
       ?.validateFields()
       .then((values) => {
-        let mutationVariables = {
-          id: _.isEmpty(values.row_id) ? undefined : values.row_id,
-          registry_name: values.registry_name,
-          url: values.url,
-          type: values.type,
-          project: values.type === 'docker' ? 'library' : values.project,
-          username: _.isEmpty(values.username) ? null : values.username,
-          password: values.isChangedPassword
-            ? _.isEmpty(values.password)
-              ? null // unset
-              : values.password
-            : undefined, // no change
+        const mutationVariables = {
+          hostname: values.hostname,
+          props: {
+            url: values.config.url,
+            type: values.config.type,
+            project:
+              values.config.project === 'docker'
+                ? undefined
+                : values.config.project,
+            username: _.isEmpty(values.config.username)
+              ? null
+              : values.config.username,
+            password: values.isChangedPassword
+              ? _.isEmpty(values.config.password)
+                ? null // unset
+                : values.config.password
+              : undefined, // no change
+          },
         };
         if (containerRegistry) {
           if (!values.isChangedPassword) {
-            delete mutationVariables.password;
+            delete mutationVariables.props.password;
           }
-          mutationVariables = _.omitBy(mutationVariables, _.isNil) as Required<
-            typeof mutationVariables
-          >;
           commitModifyRegistry({
             variables: mutationVariables,
             onCompleted: (res, errors) => {
               if (
-                _.isEmpty(
-                  res.modify_container_registry_node?.container_registry,
-                )
+                _.isEmpty(res.modify_container_registry?.container_registry)
               ) {
                 message.error(t('dialog.ErrorOccurred'));
                 return;
@@ -148,16 +140,11 @@ const ContainerRegistryEditorModal: React.FC<
             },
           });
         } else {
-          mutationVariables = _.omitBy(mutationVariables, _.isNil) as Required<
-            typeof mutationVariables
-          >;
           commitCreateRegistry({
             variables: mutationVariables,
             onCompleted: (res, errors) => {
               if (
-                _.isEmpty(
-                  res?.create_container_registry_node?.container_registry,
-                )
+                _.isEmpty(res?.create_container_registry?.container_registry)
               ) {
                 message.error(t('dialog.ErrorOccurred'));
                 return;
@@ -193,11 +180,12 @@ const ContainerRegistryEditorModal: React.FC<
           ?.validateFields()
           .then((values) => {
             if (
-              _.includes(values?.type, 'harbor') &&
-              (_.isEmpty(values.username) ||
+              _.includes(values.config?.type, 'harbor') &&
+              (_.isEmpty(values.config.username) ||
                 (containerRegistry
-                  ? values.isChangedPassword && _.isEmpty(values.password)
-                  : _.isEmpty(values.password)))
+                  ? values.isChangedPassword &&
+                    _.isEmpty(values.config.password)
+                  : _.isEmpty(values.config.password)))
             ) {
               modal.confirm({
                 title: t('button.Confirm'),
@@ -223,42 +211,49 @@ const ContainerRegistryEditorModal: React.FC<
           containerRegistry
             ? {
                 ...containerRegistry,
+                config: {
+                  ...containerRegistry.config,
+                  project: containerRegistry.config?.project || undefined,
+                },
               }
             : {
-                type: 'docker',
-                project: 'library',
+                config: {
+                  type: 'docker',
+                },
               }
         }
         preserve={false}
       >
-        {containerRegistry && (
-          <HiddenFormItem name="row_id" value={containerRegistry.row_id} />
-        )}
         <Form.Item
-          label={t('registry.RegistryName')}
-          name="registry_name"
+          label={t('registry.Hostname')}
+          name="hostname"
           required
           rules={[
             {
               required: true,
-              message: t('registry.DescRegistryNameIsEmpty'),
+              message: t('registry.DescHostnameIsEmpty'),
               pattern: new RegExp('^.+$'),
             },
             {
-              type: 'string',
-              max: 50,
-              message: t('maxLength.50chars'),
+              validator: (_, value) => {
+                if (!containerRegistry && existingHostnames?.includes(value)) {
+                  return Promise.reject(
+                    t('registry.RegistryHostnameAlreadyExists'),
+                  );
+                }
+                return Promise.resolve();
+              },
             },
           ]}
         >
           <Input
             disabled={!!containerRegistry}
-            // placeholder={t('registry.registry_name')}
-            value={containerRegistry?.registry_name || undefined}
+            // placeholder={t('registry.Hostname')}
+            value={containerRegistry?.hostname || undefined}
           />
         </Form.Item>
         <Form.Item
-          name={'url'}
+          name={['config', 'url']}
           label={t('registry.RegistryURL')}
           required
           rules={[
@@ -295,18 +290,19 @@ const ContainerRegistryEditorModal: React.FC<
         <Form.Item
           noStyle
           shouldUpdate={(prev, next) =>
-            _.isEmpty(prev?.password) !== _.isEmpty(next?.password)
+            _.isEmpty(prev.config?.password) !==
+            _.isEmpty(next.config?.password)
           }
         >
           {({ validateFields, getFieldValue }) => {
-            validateFields(['username']);
+            validateFields([['config', 'username']]);
             return (
               <Form.Item
-                name={'username'}
+                name={['config', 'username']}
                 label={t('registry.Username')}
                 rules={[
                   {
-                    required: !_.isEmpty(getFieldValue('password')),
+                    required: !_.isEmpty(getFieldValue(['config', 'password'])),
                   },
                   {
                     type: 'string',
@@ -329,7 +325,7 @@ const ContainerRegistryEditorModal: React.FC<
             }
           >
             {({ getFieldValue }) => (
-              <Form.Item noStyle name={'password'}>
+              <Form.Item noStyle name={['config', 'password']}>
                 <Input.Password
                   disabled={
                     !_.isEmpty(containerRegistry) &&
@@ -344,7 +340,7 @@ const ContainerRegistryEditorModal: React.FC<
               <Checkbox
                 onChange={(e) => {
                   if (!e.target.checked) {
-                    formRef.current?.setFieldValue('password', '');
+                    formRef.current?.setFieldValue(['config', 'password'], '');
                   }
                 }}
               >
@@ -354,7 +350,7 @@ const ContainerRegistryEditorModal: React.FC<
           )}
         </Form.Item>
         <Form.Item
-          name={'type'}
+          name={['config', 'type']}
           label={t('registry.RegistryType')}
           required
           rules={[
@@ -376,41 +372,54 @@ const ContainerRegistryEditorModal: React.FC<
                 value: 'harbor2',
               },
             ]}
-            onChange={(value) => {
-              if (value === 'docker') {
-                formRef.current?.setFieldValue('project', 'library');
-                formRef.current?.validateFields(['project']);
-              }
+            onChange={() => {
+              // form.validateFields();
             }}
           ></Select>
         </Form.Item>
         <Form.Item
-          shouldUpdate={(prev, next) => prev?.type !== next?.type}
+          shouldUpdate={(prev, next) =>
+            prev?.config?.type !== next?.config?.type
+          }
           noStyle
         >
           {({ getFieldValue }) => {
             return (
-              <Form.Item
-                name={'project'}
-                label={t('registry.ProjectName')}
-                required
-                rules={[
-                  {
-                    required: true,
-                    message: t('registry.ProjectNameIsRequired'),
-                  },
-                  {
-                    type: 'string',
-                    max: 255,
-                    message: t('maxLength.255chars'),
-                  },
-                ]}
-              >
-                <Input
-                  disabled={getFieldValue('type') === 'docker'}
-                  allowClear
-                />
-              </Form.Item>
+              getFieldValue(['config', 'type']) !== 'docker' && (
+                <Form.Item
+                  name={['config', 'project']}
+                  label={t('registry.ProjectName')}
+                  required
+                  rules={[
+                    {
+                      required: true,
+                      message: t('registry.ProjectNameIsRequired'),
+                    },
+                    {
+                      validator(rule, value, callback) {
+                        _.map(value, (v) => {
+                          if (v.length > 255) {
+                            return Promise.reject(t('maxLength.255chars'));
+                          }
+                        });
+                        return Promise.resolve();
+                      },
+                    },
+                  ]}
+                >
+                  {/* <Input
+                  // disabled={
+                  //   form.getFieldValue(['config', 'type']) === 'docker'
+                  // }
+                  /> */}
+                  <Select
+                    mode="tags"
+                    open={false}
+                    tokenSeparators={[',', ' ']}
+                    suffixIcon={null}
+                  />
+                </Form.Item>
+              )
             );
           }}
         </Form.Item>

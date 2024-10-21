@@ -2,7 +2,8 @@ import { useTanQuery } from '../../hooks/reactQueryAlias';
 import Flex from '../Flex';
 import LLMChatCard from './LLMChatCard';
 import { ChatUIModalFragment$key } from './__generated__/ChatUIModalFragment.graphql';
-import { Alert, Modal, ModalProps, Skeleton, theme } from 'antd';
+import { ReloadOutlined } from '@ant-design/icons';
+import { Alert, Button, Modal, ModalProps, Skeleton, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React from 'react';
@@ -40,6 +41,7 @@ const ChatUIModal: React.FC<ChatUIModalProps> = ({
       centered
       width={'80%'}
       style={{ maxWidth: token.screenLGMax }}
+      destroyOnClose
     >
       <Flex direction="column" align="stretch" style={{ flex: 1 }}>
         <EndpointChatContent
@@ -61,6 +63,7 @@ const EndpointChatContent: React.FC<ChatUIBasicProps> = ({
       fragment ChatUIModalFragment on Endpoint {
         endpoint_id
         url
+        status
       }
     `,
     endpointFrgmt,
@@ -69,6 +72,7 @@ const EndpointChatContent: React.FC<ChatUIBasicProps> = ({
     data: modelsResult,
     // error,
     isFetching,
+    refetch,
   } = useTanQuery<{
     data: Array<Model>;
   }>({
@@ -99,10 +103,21 @@ const EndpointChatContent: React.FC<ChatUIBasicProps> = ({
             type="warning"
             showIcon
             message={t('chatui.CannotFindModel')}
+            action={
+              <Button
+                icon={<ReloadOutlined />}
+                onClick={() => {
+                  refetch();
+                }}
+              >
+                {t('button.Refresh')}
+              </Button>
+            }
           />
         )
       }
       modelId={modelsResult?.data?.[0].id ?? 'custom'}
+      showCompareMenuItem
     />
   );
 };

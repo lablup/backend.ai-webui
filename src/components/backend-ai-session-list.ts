@@ -3064,7 +3064,8 @@ export default class BackendAISessionList extends BackendAIPage {
                 --general-monospace-font-family
               );
             }
-            #session-rename-icon {
+            #session-rename-icon,
+            #session-name-copy-icon {
               --mdc-icon-size: 20px;
             }
           </style>
@@ -3099,6 +3100,15 @@ ${rowData.item[this.sessionNameField]}</pre
                     ></mwc-icon-button-toggle>
                   `
                 : html``}
+              <mwc-icon-button
+                id="session-name-copy-icon"
+                class="fg controls-running"
+                icon="content_copy"
+                @click="${async () =>
+                  await navigator.clipboard.writeText(
+                    rowData.item[this.sessionNameField],
+                  )}"
+              ></mwc-icon-button>
             </div>
             <div class="horizontal center center-justified layout">
               ${rowData.item.icon
@@ -4506,13 +4516,6 @@ ${rowData.item[this.sessionNameField]}</pre
                         ></vaadin-grid-column>
                       `
                     : html``}
-                  <lablup-grid-sort-filter-column
-                    width="110px"
-                    path="architecture"
-                    header="${_t('session.Architecture')}"
-                    resizable
-                    .renderer="${this._boundArchitectureRenderer}"
-                  ></lablup-grid-sort-filter-column>
                   ${this._isIntegratedCondition
                     ? html`
                         <lablup-grid-sort-filter-column
@@ -4538,6 +4541,13 @@ ${rowData.item[this.sessionNameField]}</pre
                         ></lablup-grid-sort-filter-column>
                       `
                     : html``}
+                  <lablup-grid-sort-filter-column
+                    width="110px"
+                    path="architecture"
+                    header="${_t('session.Architecture')}"
+                    resizable
+                    .renderer="${this._boundArchitectureRenderer}"
+                  ></lablup-grid-sort-filter-column>
                 </vaadin-grid>
               `
             : html``
