@@ -1,5 +1,5 @@
 import { useBackendAIImageMetaData } from '../hooks';
-import { useRecentSessionHistory } from '../hooks/backendai';
+import { useRecentSessionHistory } from '../hooks/useRecentSessionHistory';
 import {
   ResourceNumbersOfSession,
   SessionLauncherFormValue,
