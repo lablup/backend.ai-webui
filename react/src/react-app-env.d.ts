@@ -26,6 +26,12 @@ type DeepPartial<T> = {
         : T[P];
 };
 
+type SelectivePartial<T, K extends keyof T> = Partial<Pick<T, K>> & Omit<T, K>;
+
+type OptionalFieldsOnly<T> = {
+  [K in keyof T as {} extends Pick<T, K> ? K : never]?: T[K];
+};
+
 type NonNullableItem<T> = NonNullable<NonNullable<NonNullable<T>['items']>>[0];
 
 type NonNullableNodeOnEdges<T extends RelayConnection | null> = NonNullable<

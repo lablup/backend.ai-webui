@@ -280,7 +280,8 @@
       "InvalidPortFormat": "Портын дугаарын формат буруу байна.",
       "DuplicatedPort": "Давхардсан портууд байна.",
       "FolderAliasOverlappingToAutoMount": "Ижил нэртэй автоматаар холбох хавтас байна.",
-      "InsufficientAllocationOfResourcesWarning": "Хуваарилах нөөц нь сонгосон зурагт шаардагдах хамгийн бага нөөцөөс доогуур байна."
+      "InsufficientAllocationOfResourcesWarning": "Хуваарилах нөөц нь сонгосон зурагт шаардагдах хамгийн бага нөөцөөс доогуур байна.",
+      "RecentHistory": "Сүүлийн үеийн түүх"
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",
@@ -459,7 +460,8 @@
     "SaveWithoutClose": "Хаахгүйгээр хадгалах",
     "Collapse": "Нурах",
     "Expand": "Өргөтгөх",
-    "Clear": "Устгах"
+    "Clear": "Устгах",
+    "Apply": "Өргөдөл гаргах"
   },
   "agent": {
     "Endpoint": "Төгсгөлийн цэг",
