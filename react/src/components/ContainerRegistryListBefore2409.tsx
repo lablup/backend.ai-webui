@@ -301,8 +301,8 @@ const ContainerRegistryListBefore2409: React.FC<{
           {
             title: t('registry.HarborProject'),
             dataIndex: ['config', 'project'],
-            render: (value, record) => {
-              return <Tag key={value || ''}>{value || ''}</Tag>;
+            render: (value: string[], record) => {
+              return _.map(value, (v) => <Tag key={v || ''}>{v || ''}</Tag>);
             },
           },
           {

@@ -396,9 +396,14 @@ const ContainerRegistryEditorModal: React.FC<
                       message: t('registry.ProjectNameIsRequired'),
                     },
                     {
-                      type: 'string',
-                      max: 255,
-                      message: t('maxLength.255chars'),
+                      validator(rule, value, callback) {
+                        _.map(value, (v) => {
+                          if (v.length > 255) {
+                            return Promise.reject(t('maxLength.255chars'));
+                          }
+                        });
+                        return Promise.resolve();
+                      },
                     },
                   ]}
                 >
