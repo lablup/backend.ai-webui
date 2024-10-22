@@ -48,7 +48,22 @@ interface FolderCreateFormItemsType {
 }
 
 interface FolderCreateModalProps extends BAIModalProps {
-  onRequestClose: () => void;
+  onRequestClose: (response?: FolderCreationResponse) => void;
+}
+export interface FolderCreationResponse {
+  id: string;
+  name: string;
+  quota_scope_id: string;
+  host: string;
+  usage_mode: 'general' | 'model';
+  permission: 'rw' | 'ro' | 'wd';
+  max_size: number;
+  creator: string;
+  ownership_type: 'user' | 'project';
+  user: string;
+  group: string | null;
+  cloneable: boolean;
+  status: string;
 }
 
 const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
@@ -67,7 +82,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
 
   const mutationToCreateFolder = useTanMutation<
-    unknown,
+    FolderCreationResponse,
     { message?: string },
     FolderCreateFormItemsType
   >({
@@ -103,12 +118,12 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
       ?.validateFields()
       .then((values) => {
         mutationToCreateFolder.mutate(values, {
-          onSuccess: () => {
+          onSuccess: (result) => {
             message.success(t('data.folders.FolderCreated'));
             document.dispatchEvent(
               new CustomEvent('backend-ai-folder-list-changed'),
             );
-            onRequestClose();
+            onRequestClose(result);
           },
           onError: (error) => {
             message.error(error.message);

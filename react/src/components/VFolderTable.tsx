@@ -7,6 +7,7 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useEventNotStable } from '../hooks/useEventNotStable';
 import { useShadowRoot } from './DefaultProviders';
 import Flex from './Flex';
+import FolderCreateModal from './FolderCreateModal';
 import TextHighlighter from './TextHighlighter';
 import VFolderPermissionTag from './VFolderPermissionTag';
 import { VFolder } from './VFolderSelect';
@@ -31,6 +32,7 @@ import { ColumnsType } from 'antd/lib/table';
 import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
+import { PlusIcon } from 'lucide-react';
 import React, {
   useCallback,
   useEffect,
@@ -96,6 +98,8 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
       return key as VFolderKey;
     };
   }, [rowKey]);
+
+  const [isOpenCreateModal, setIsOpenCreateModal] = useState(false);
 
   const [selectedRowKeys, setSelectedRowKeys] = useControllableState<
     VFolderKey[]
@@ -493,6 +497,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
       dataIndex: 'created_at',
       sorter: (a, b) => a.created_at.localeCompare(b.created_at),
       render: (value, record) => dayjs(value).format('L'),
+      defaultSortOrder: 'descend',
     },
     // {
     //   title: 'Modified',
@@ -523,15 +528,27 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
           allowClear
           placeholder={t('data.SearchByName')}
         />
-        <Button
-          loading={isPendingRefetch}
-          icon={<ReloadOutlined />}
-          onClick={() => {
-            startRefetchTransition(() => {
-              updateFetchKey();
-            });
-          }}
-        />
+        <Tooltip title={t('button.Refresh')}>
+          <Button
+            loading={isPendingRefetch}
+            icon={<ReloadOutlined />}
+            onClick={() => {
+              startRefetchTransition(() => {
+                updateFetchKey();
+              });
+            }}
+          />
+        </Tooltip>
+        <Tooltip title={t('data.CreateANewStorageFolder')}>
+          <Button
+            icon={<PlusIcon />}
+            type="primary"
+            ghost
+            onClick={() => {
+              setIsOpenCreateModal(true);
+            }}
+          />
+        </Tooltip>
       </Flex>
       <Form form={internalForm} component={false} preserve={false}>
         <Table
@@ -567,6 +584,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
               },
             };
           }}
+          sortDirections={['ascend', 'descend']}
           {...tableProps}
         />
       </Form>
@@ -582,6 +600,22 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
           </Descriptions>
         </>
       ) : null}
+      <FolderCreateModal
+        open={isOpenCreateModal}
+        onRequestClose={(result) => {
+          setIsOpenCreateModal(false);
+          if (result) {
+            startRefetchTransition(() => {
+              updateFetchKey();
+              setSelectedRowKeys((x) => [
+                ...x,
+                // @ts-ignore
+                result[rowKey],
+              ]);
+            });
+          }
+        }}
+      />
     </Flex>
   );
 };
