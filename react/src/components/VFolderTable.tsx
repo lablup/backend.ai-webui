@@ -5,9 +5,11 @@ import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useEventNotStable } from '../hooks/useEventNotStable';
+import BAILink from './BAILink';
 import { useShadowRoot } from './DefaultProviders';
 import Flex from './Flex';
 import FolderCreateModal from './FolderCreateModal';
+import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import TextHighlighter from './TextHighlighter';
 import VFolderPermissionTag from './VFolderPermissionTag';
 import { VFolder } from './VFolderSelect';
@@ -92,6 +94,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   showAutoMountedFoldersSection,
   ...tableProps
 }) => {
+  const { generateFolderPath } = useFolderExplorerOpener();
   const getRowKey = React.useMemo(() => {
     return (record: VFolder) => {
       const key = record && record[rowKey as DataIndex];
@@ -320,7 +323,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
         return (
           <Flex
             direction="column"
-            align="stretch"
+            align="start"
             gap={'xxs'}
             style={
               showAliasInput && isCurrentRowSelected
@@ -330,7 +333,9 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                   }
             }
           >
-            <TextHighlighter keyword={searchKey}>{value}</TextHighlighter>
+            <BAILink type="hover" to={generateFolderPath(record.id)}>
+              <TextHighlighter keyword={searchKey}>{value}</TextHighlighter>
+            </BAILink>
             {showAliasInput && isCurrentRowSelected && (
               <Form.Item
                 noStyle
