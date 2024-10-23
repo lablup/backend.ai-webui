@@ -638,7 +638,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         serviceName: endpoint?.name,
         resourceGroup: endpoint?.resource_group,
         allocationPreset: 'custom',
-        desiredRoutingCount: endpoint?.desired_session_count || 1,
+        desiredRoutingCount: endpoint?.desired_session_count ?? 1,
         // FIXME: memory doesn't applied to resource allocation
         resource: {
           cpu: parseInt(JSON.parse(endpoint?.resource_slots)?.cpu),
