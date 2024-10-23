@@ -792,7 +792,7 @@
     "ServiceEndpoint": "Punto final del servicio",
     "ServiceInfo": "Información de servicio",
     "ServiceName": "Nombre del servicio",
-    "ServiceNameRule": "Sólo se permiten de 4 a 24 caracteres alfanuméricos, guión bajo(_), guión(-) y punto(.) y debe terminar con un carácter alfanumérico.",
+    "ServiceNameRule": "Solo permita de 4 a 24 caracteres alfanuméricos, guión bajo (_) y guión (-) y debe terminar con un carácter alfanumérico.",
     "Services": "Servicios",
     "ServingRouteErrorModalTitle": "Error de ruta de servicio",
     "SessionId": "ID de sesión",
