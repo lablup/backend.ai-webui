@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@cloudscape-design/board-components@3.0.60':
+    hash: fhg3ewlezo3pghekstxbb4qeem
+    path: patches/@cloudscape-design__board-components@3.0.60.patch
+
 importers:
 
   .:
@@ -22,7 +27,7 @@ importers:
         version: 5.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@cloudscape-design/board-components':
         specifier: 3.0.60
-        version: 3.0.60(@cloudscape-design/components@3.0.677(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@cloudscape-design/design-tokens@3.0.40)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 3.0.60(patch_hash=fhg3ewlezo3pghekstxbb4qeem)(@cloudscape-design/components@3.0.677(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@cloudscape-design/design-tokens@3.0.40)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@codemirror/language':
         specifier: ^6.10.2
         version: 6.10.2
@@ -9772,7 +9777,7 @@ snapshots:
 
   '@bcoe/v8-coverage@0.2.3': {}
 
-  '@cloudscape-design/board-components@3.0.60(@cloudscape-design/components@3.0.677(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@cloudscape-design/design-tokens@3.0.40)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@cloudscape-design/board-components@3.0.60(patch_hash=fhg3ewlezo3pghekstxbb4qeem)(@cloudscape-design/components@3.0.677(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@cloudscape-design/design-tokens@3.0.40)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@cloudscape-design/component-toolkit': 1.0.0-beta.64
       '@cloudscape-design/components': 3.0.677(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
