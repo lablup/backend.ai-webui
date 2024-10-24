@@ -70,95 +70,96 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const [isOpenSignoutModal, { toggle: toggleSignoutModal }] = useToggle(false);
 
   const generalMenu = filterEmptyItem<ItemType>([
+    // {
+    //   label: t('webui.menu.Summary'),
+    //   icon: <DashboardOutlined />,
+    //   key: 'summary',
+    // },
+    // {
+    //   label: t('webui.menu.Sessions'),
+    //   icon: <BarsOutlined />,
+    //   key: 'job',
+    // },
     {
-      label: t('webui.menu.Summary'),
-      icon: <DashboardOutlined />,
-      key: 'summary',
-    },
-    {
-      label: t('webui.menu.Sessions'),
-      icon: <BarsOutlined />,
-      key: 'job',
+      label: t('modelserving.menu.ModelList'), //t('webui.menu.Data&Storage'),
+      icon: <BarsOutlined />, // <CloudUploadOutlined />,
+      key: 'data',
     },
     supportServing && {
-      label: t('webui.menu.Serving'),
+      label: t('modelserving.menu.ModelServices'), //t('webui.menu.Serving'),
       icon: <RocketOutlined />,
       key: 'serving',
     },
-    {
-      label: t('webui.menu.Import&Run'),
-      icon: <PlayIcon />,
-      key: 'import',
-    },
-    {
-      label: t('webui.menu.Data&Storage'),
-      icon: <CloudUploadOutlined />,
-      key: 'data',
-    },
-    supportUserCommittedImage && {
-      label: t('webui.menu.MyEnvironments'),
-      icon: <FileDoneOutlined />,
-      key: 'my-environment',
-    },
-    !isHideAgents && {
-      label: t('webui.menu.AgentSummary'),
-      icon: <HddOutlined />,
-      key: 'agent-summary',
-    },
-    {
-      label: t('webui.menu.Statistics'),
-      icon: <BarChartOutlined />,
-      key: 'statistics',
-    },
-    !!fasttrackEndpoint && {
-      label: t('webui.menu.FastTrack'),
-      icon: <ExportOutlined />,
-      key: 'pipeline',
-      onClick: () => {
-        window.open(fasttrackEndpoint, '_blank', 'noopener noreferrer');
-      },
-    },
+    // {
+    //   label: t('webui.menu.Import&Run'),
+    //   icon: <PlayIcon />,
+    //   key: 'import',
+    // },
+
+    // supportUserCommittedImage && {
+    //   label: t('webui.menu.MyEnvironments'),
+    //   icon: <FileDoneOutlined />,
+    //   key: 'my-environment',
+    // },
+    // !isHideAgents && {
+    //   label: t('webui.menu.AgentSummary'),
+    //   icon: <HddOutlined />,
+    //   key: 'agent-summary',
+    // },
+    // {
+    //   label: t('webui.menu.Statistics'),
+    //   icon: <BarChartOutlined />,
+    //   key: 'statistics',
+    // },
+    // !!fasttrackEndpoint && {
+    //   label: t('webui.menu.FastTrack'),
+    //   icon: <ExportOutlined />,
+    //   key: 'pipeline',
+    //   onClick: () => {
+    //     window.open(fasttrackEndpoint, '_blank', 'noopener noreferrer');
+    //   },
+    // },
   ]);
 
   const adminMenu: MenuProps['items'] = [
-    {
-      label: t('webui.menu.Users'),
-      icon: <UserOutlined />,
-      key: 'credential',
-    },
-    {
-      label: t('webui.menu.Environments'),
-      icon: <FileDoneOutlined />,
-      key: 'environment',
-    },
-    {
-      label: t('webui.menu.ResourcePolicy'),
-      icon: <SolutionOutlined />,
-      key: 'resource-policy',
-    },
+    // {
+    //   label: t('webui.menu.Users'),
+    //   icon: <UserOutlined />,
+    //   key: 'credential',
+    // },
+    // {
+    //   label: t('webui.menu.Environments'),
+    //   icon: <FileDoneOutlined />,
+    //   key: 'environment',
+    // },
+    // {
+    //   label: t('webui.menu.ResourcePolicy'),
+    //   icon: <SolutionOutlined />,
+    //   key: 'resource-policy',
+    // },
   ];
 
   const superAdminMenu: MenuProps['items'] = [
-    {
-      label: t('webui.menu.Resources'),
-      icon: <HddOutlined />,
-      key: 'agent',
-    },
-    {
-      label: t('webui.menu.Configurations'),
-      icon: <ControlOutlined />,
-      key: 'settings',
-    },
-    {
-      label: t('webui.menu.Maintenance'),
-      icon: <ToolOutlined />,
-      key: 'maintenance',
-    },
-    {
-      label: t('webui.menu.Information'),
-      icon: <InfoCircleOutlined />,
-      key: 'information',
-    },
+    // {
+    //   label: t('webui.menu.Resources'),
+    //   icon: <HddOutlined />,
+    //   key: 'agent',
+    // },
+    // {
+    //   label: t('webui.menu.Configurations'),
+    //   icon: <ControlOutlined />,
+    //   key: 'settings',
+    // },
+    // {
+    //   label: t('webui.menu.Maintenance'),
+    //   icon: <ToolOutlined />,
+    //   key: 'maintenance',
+    // },
+    // {
+    //   label: t('webui.menu.Information'),
+    //   icon: <InfoCircleOutlined />,
+    //   key: 'information',
+    // },
   ];
 
   const pluginMap: Record<string, MenuProps['items']> = {
@@ -217,7 +218,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             height: themeConfig?.logo?.size?.height || 32,
             cursor: 'pointer',
           }}
-          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
+          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/serving')}
         />
       }
       theme={mergedSiderTheme}
@@ -237,12 +238,16 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             height: themeConfig?.logo?.sizeCollapsed?.height || 32,
             cursor: 'pointer',
           }}
-          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
+          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/data')}
         />
       }
-      logoTitle={themeConfig?.logo?.logoTitle || siteDescription || 'WebUI'}
+      logoTitle={
+        themeConfig?.logo?.logoTitle || siteDescription || 'Model Player'
+      }
       logoTitleCollapsed={
-        themeConfig?.logo?.logoTitleCollapsed || siteDescription || 'WebUI'
+        themeConfig?.logo?.logoTitleCollapsed ||
+        siteDescription ||
+        'Model Player'
       }
       bottomText={
         props.collapsed ? null : (
@@ -326,7 +331,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     >
       <BAIMenu
         selectedKeys={[
-          location.pathname.split('/')[1] || 'summary',
+          location.pathname.split('/')[1] || 'data',
           // TODO: After matching first path of 'storage-settings' and 'agent', remove this code
           location.pathname.split('/')[1] === 'storage-settings' ? 'agent' : '',
           // TODO: After 'SessionListPage' is completed and used as the main page, remove this code
@@ -338,21 +343,21 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           currentUserRole === 'superadmin'
             ? [
                 ...generalMenu,
-                {
-                  type: 'group',
-                  label: (
-                    <Flex
-                      style={{ borderBottom: `1px solid ${token.colorBorder}` }}
-                    >
-                      {!props.collapsed && (
-                        <Typography.Text type="secondary" ellipsis>
-                          {t('webui.menu.Administration')}
-                        </Typography.Text>
-                      )}
-                    </Flex>
-                  ),
-                  children: [...adminMenu, ...superAdminMenu],
-                },
+                // {
+                //   type: 'group',
+                //   label: (
+                //     <Flex
+                //       style={{ borderBottom: `1px solid ${token.colorBorder}` }}
+                //     >
+                //       {!props.collapsed && (
+                //         <Typography.Text type="secondary" ellipsis>
+                //           {t('webui.menu.Administration')}
+                //         </Typography.Text>
+                //       )}
+                //     </Flex>
+                //   ),
+                //   children: [...adminMenu, ...superAdminMenu],
+                // },
               ]
             : currentUserRole === 'admin'
               ? [

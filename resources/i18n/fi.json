@@ -1731,5 +1731,10 @@
     "SelectModel": "Valitse Malli",
     "SyncInput": "Synkronoi sisääntulo",
     "CompareWithOtherModels": "Vertaa muihin malleihin"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelList": "Malliluettelo"
+    }
   }
 }

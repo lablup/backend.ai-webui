@@ -1,11 +1,9 @@
 import { ConfigProvider, Menu, MenuProps, theme } from 'antd';
 import React from 'react';
 
-// interface BAIMenuProps extends MenuProps {
+interface BAIMenuProps extends MenuProps {}
 
-// }
-
-const BAIMenu: React.FC<MenuProps> = ({ ...props }) => {
+const BAIMenu: React.FC<BAIMenuProps> = ({ ...props }) => {
   const { token } = theme.useToken();
   return (
     <>
@@ -33,8 +31,13 @@ const BAIMenu: React.FC<MenuProps> = ({ ...props }) => {
         theme={{
           components: {
             Menu: {
-              itemBorderRadius: 2,
+              itemBorderRadius: 20,
               itemMarginInline: 0,
+              colorPrimaryBorder: token.colorInfoHover,
+              itemHoverBg: token.colorInfoHover,
+              itemHoverColor: token.colorPrimaryBg,
+              itemSelectedBg: token.colorInfoHover,
+              itemSelectedColor: token.colorPrimaryBg,
             },
           },
         }}

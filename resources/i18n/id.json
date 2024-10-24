@@ -1733,5 +1733,10 @@
     "SelectEndpoint": "Pilih Titik Akhir",
     "SyncInput": "Sinkronkan masukan",
     "CompareWithOtherModels": "Bandingkan dengan model lain"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelList": "Daftar Model"
+    }
   }
 }
