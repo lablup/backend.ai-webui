@@ -21,6 +21,7 @@ export interface ProjectSelectProps extends SelectProps {
   domain: string;
   autoSelectDefault?: boolean;
   disableDefaultFilter?: boolean;
+  filter?: string;
 }
 
 const ProjectSelect: React.FC<ProjectSelectProps> = ({
@@ -28,6 +29,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
   domain,
   autoClearSearchValue,
   disableDefaultFilter,
+  filter,
   ...selectProps
 }) => {
   const { t } = useTranslation();
@@ -85,7 +87,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
         fetchPolicy: 'store-and-network',
       },
     );
-  const projects = projectsSince2403 || projectsBefore2403;
+  const projects = _.filter(projectsSince2403 || projectsBefore2403, filter);
 
   // temporary filtering groups by accessible groups according to user query
   const accessibleProjects = disableDefaultFilter
