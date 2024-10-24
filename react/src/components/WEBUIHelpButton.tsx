@@ -4,7 +4,9 @@ import { Button, ButtonProps } from 'antd';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 
-interface WEBUIHelpButtonProps extends ButtonProps {}
+interface WEBUIHelpButtonProps extends ButtonProps {
+  iconColor?: string;
+}
 const WEBUIHelpButton: React.FC<WEBUIHelpButtonProps> = ({ ...props }) => {
   const [lang] = useCurrentLanguage();
   const location = useLocation();
@@ -36,7 +38,11 @@ const WEBUIHelpButton: React.FC<WEBUIHelpButtonProps> = ({ ...props }) => {
   return (
     <Button
       size="large"
-      icon={<QuestionCircleOutlined />}
+      icon={
+        <QuestionCircleOutlined
+          style={{ color: props.iconColor ?? 'inherit' }}
+        />
+      }
       type="text"
       target="_blank"
       href={URL}

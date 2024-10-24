@@ -10,7 +10,9 @@ import { atom, useAtom } from 'jotai';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
 
-interface Props extends ButtonProps {}
+interface Props extends ButtonProps {
+  iconColor?: string;
+}
 export const isOpenDrawerState = atom(false);
 
 const BAINotificationButton: React.FC<Props> = ({ ...props }) => {
@@ -37,7 +39,7 @@ const BAINotificationButton: React.FC<Props> = ({ ...props }) => {
         size="large"
         icon={
           <Badge dot={hasRunningBackgroundTask}>
-            <BellOutlined />
+            <BellOutlined style={{ color: props.iconColor ?? 'inherit' }} />
           </Badge>
         }
         type="text"
