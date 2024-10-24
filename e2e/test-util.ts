@@ -124,16 +124,29 @@ export async function fillOutVaadinGridCellFilter(
   await nameInput.fill(inputValue);
 }
 
-export async function createVFolderAndVerify(page: Page, folderName: string) {
+export async function createVFolderAndVerify(
+  page: Page,
+  folderName: string,
+  usageMode: 'general' | 'model' = 'general',
+  type: 'user' | 'project' = 'user',
+  permission: 'rw' | 'ro' | 'wd' = 'rw',
+) {
+  const permissionMap = {
+    rw: 'Read & Write',
+    ro: 'Read only',
+    wd: 'Delete',
+  };
   await navigateTo(page, 'data');
 
   await page.getByRole('button', { name: 'plus Add' }).click();
-  // TODO: wait for initial rendering without timeout
-  await page.waitForTimeout(1000);
-  await page.getByRole('textbox', { name: 'Folder name*' }).click();
-  await page.getByRole('textbox', { name: 'Folder name*' }).fill(folderName);
-  await page.getByRole('button', { name: 'Create', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Folder name' }).fill(folderName);
+  // select parsed parameters in create modal form
+  await page.getByRole('radio', { name: usageMode }).click();
+  await page.getByRole('radio', { name: type }).click();
+  await page.getByRole('radio', { name: permissionMap[permission] }).click();
 
+  await page.getByRole('button', { name: 'Create', exact: true }).click();
+  await page.reload();
   const nameInput = page
     .locator('#general-folder-storage vaadin-grid-cell-content')
     .filter({ hasText: 'Name' })
@@ -142,7 +155,9 @@ export async function createVFolderAndVerify(page: Page, folderName: string) {
     .locator('input');
   await nameInput.click();
   await nameInput.fill(folderName);
-  await page.waitForSelector(`text=folder_open ${folderName}`);
+  await expect(
+    page.locator('vaadin-grid-cell-content').filter({ hasText: folderName }),
+  ).toBeVisible();
   await nameInput.fill('');
 }
 

@@ -5,6 +5,7 @@ import {
   loginAsUser,
   loginAsUser2,
   logout,
+  navigateTo,
   userInfo,
 } from './test-util';
 import { test, expect } from '@playwright/test';
@@ -19,7 +20,7 @@ test.describe('VFolder ', () => {
 });
 
 test.describe('VFolder sharing', () => {
-  const sharingFolderName = 'e2e-test-folder-sharing';
+  const sharingFolderName = 'e2e-test-folder-sharing' + new Date().getTime();
   test.beforeEach(async ({ page }) => {
     await loginAsUser(page);
     await createVFolderAndVerify(page, sharingFolderName);
@@ -27,76 +28,20 @@ test.describe('VFolder sharing', () => {
 
   test('User can share vFolder to User2. User2 can accept invitation', async ({
     page,
+    browser,
   }) => {
-    await page
-      .locator('#general-folder-storage vaadin-grid-cell-content')
-      .filter({ hasText: sharingFolderName })
-      .locator('//following-sibling::*[7]')
-      .getByRole('button', { name: 'share' })
-      .click();
-    await page.getByRole('textbox', { name: 'Enter E-Mail address' }).click();
-    await page
-      .getByRole('textbox', { name: 'Enter E-Mail address' })
-      .fill('user2@lablup.com');
-    await page
-      .locator('#share-folder-dialog')
-      .locator('#share-button')
-      .getByLabel('share')
-      .click();
-
-    await logout(page);
-    await loginAsUser2(page);
-
-    // click accept button in the invitation
-    await page
-      .getByText(`From ${userInfo.user.email}`)
-      .locator('..')
-      .filter({ hasText: sharingFolderName })
-      .getByRole('button', { name: 'accept' })
-      .first()
-      .click();
-    await page.getByRole('menuitem', { name: 'Data & Storage' }).click();
-    await page.waitForTimeout(1000);
-
     await fillOutVaadinGridCellFilter(
       page.locator('#general-folder-storage'),
       'Name',
       sharingFolderName,
     );
-
-    await page
-      .locator('#general-folder-storage vaadin-grid-cell-content')
-      .filter({ hasText: sharingFolderName })
-      .locator('//following-sibling::*[7]')
-      .getByLabel('remove_circle')
-      .click();
-    await page.getByLabel('Type folder name to leave').click();
-    await page.getByLabel('Type folder name to leave').fill(sharingFolderName);
-    await page.getByRole('button', { name: 'Leave' }).click();
-
-    await page.waitForTimeout(1000);
-    // check disappeared
     await expect(
       page
-        .locator('#general-folder-storage vaadin-grid-cell-content')
-        .filter({ hasText: sharingFolderName })
-        .first(),
-    ).toBeHidden();
-
-    await logout(page);
-    await loginAsUser(page);
-    await deleteVFolderAndVerify(page, sharingFolderName);
-  });
-
-  test('User2 can not see the invitation if User deleted the folder you shared.', async ({
-    page,
-  }) => {
-    await page
-      .locator('#general-folder-storage vaadin-grid-cell-content')
-      .filter({ hasText: sharingFolderName })
-      .locator('//following-sibling::*[7]')
-      .getByRole('button', { name: 'share' })
-      .click();
+        .locator('vaadin-grid-cell-content')
+        .filter({ hasText: sharingFolderName }),
+    ).toBeVisible();
+    await expect(page.getByRole('button', { name: 'share' })).toHaveCount(1);
+    await page.getByRole('button', { name: 'share' }).click();
     await page.getByRole('textbox', { name: 'Enter E-Mail address' }).click();
     await page
       .getByRole('textbox', { name: 'Enter E-Mail address' })
@@ -106,43 +51,65 @@ test.describe('VFolder sharing', () => {
       .locator('#share-button')
       .getByLabel('share')
       .click();
-
-    await logout(page);
-    await loginAsUser2(page);
-
-    // check the invitation is sent to User2
+    // check the invitation and accept as User2
+    const page2 = await browser.newPage();
+    await loginAsUser2(page2);
     await expect(
-      page
+      page2
         .getByText(`From ${userInfo.user.email}`)
         .locator('..')
         .filter({ hasText: sharingFolderName }),
     ).toBeVisible();
-
-    await logout(page);
-    await loginAsUser(page);
-    await deleteVFolderAndVerify(page, sharingFolderName);
-
-    // check the invitation is disappeared
-    await logout(page);
-    await loginAsUser2(page);
+    await page2
+      .getByText(`From ${userInfo.user.email}`)
+      .locator('..')
+      .filter({ hasText: sharingFolderName })
+      .getByRole('button', { name: 'accept' })
+      .click();
+    // check the shared folder is visible
+    await navigateTo(page2, 'data');
+    await fillOutVaadinGridCellFilter(
+      page2.locator('#general-folder-storage'),
+      'Name',
+      sharingFolderName,
+    );
     await expect(
-      page
-        .getByText(`From ${userInfo.user.email}`)
-        .locator('..')
+      page2
+        .locator('vaadin-grid-cell-content')
         .filter({ hasText: sharingFolderName }),
-    ).toBeHidden();
+    ).toBeVisible();
+    // leave the shared folder
+    await expect(
+      page2.getByRole('button', { name: 'remove_circle' }),
+    ).toHaveCount(1);
+    await page2.getByRole('button', { name: 'remove_circle' }).click();
+    await page2
+      .getByRole('textbox', { name: 'Type folder name to leave' })
+      .click();
+    await page2.getByLabel('Type folder name to leave').fill(sharingFolderName);
+    await page2.getByRole('button', { name: 'Leave' }).click();
+    // delete folder
+    await deleteVFolderAndVerify(page, sharingFolderName);
+    await page.close();
+    await page2.close();
   });
 
-  test('User2 can see the invitation but can not accept if User deleted the folder when User2 is trying to accept.', async ({
+  test('User2 can not see the invitation if User deleted the folder you shared.', async ({
     page,
     browser,
   }) => {
-    await page
-      .locator('#general-folder-storage vaadin-grid-cell-content')
-      .filter({ hasText: sharingFolderName })
-      .locator('//following-sibling::*[7]')
-      .getByRole('button', { name: 'share' })
-      .click();
+    await fillOutVaadinGridCellFilter(
+      page.locator('#general-folder-storage'),
+      'Name',
+      sharingFolderName,
+    );
+    await expect(
+      page
+        .locator('vaadin-grid-cell-content')
+        .filter({ hasText: sharingFolderName }),
+    ).toBeVisible();
+    await expect(page.getByRole('button', { name: 'share' })).toHaveCount(1);
+    await page.getByRole('button', { name: 'share' }).click();
     await page.getByRole('textbox', { name: 'Enter E-Mail address' }).click();
     await page
       .getByRole('textbox', { name: 'Enter E-Mail address' })
@@ -152,7 +119,6 @@ test.describe('VFolder sharing', () => {
       .locator('#share-button')
       .getByLabel('share')
       .click();
-
     // check the invitation is sent to User2
     const page2 = await browser.newPage();
     await loginAsUser2(page2);
@@ -162,10 +128,60 @@ test.describe('VFolder sharing', () => {
         .locator('..')
         .filter({ hasText: sharingFolderName }),
     ).toBeVisible();
+    // Delete folder as User before User2 accept the invitation
+    await deleteVFolderAndVerify(page, sharingFolderName);
+    // check the invitation is disappeared
+    await page2.reload();
+    await expect(
+      // make sure summary page is rendered
+      page2.getByTitle('Invitation'),
+    ).toBeVisible();
+    await expect(
+      page2
+        .getByText(`From ${userInfo.user.email}`)
+        .locator('..')
+        .filter({ hasText: sharingFolderName }),
+    ).toHaveCount(0);
+    await page.close();
+    await page2.close();
+  });
 
+  test('User2 can see the invitation but can not accept if User deleted the folder when User2 is trying to accept.', async ({
+    page,
+    browser,
+  }) => {
+    await fillOutVaadinGridCellFilter(
+      page.locator('#general-folder-storage'),
+      'Name',
+      sharingFolderName,
+    );
+    await expect(
+      page
+        .locator('vaadin-grid-cell-content')
+        .filter({ hasText: sharingFolderName }),
+    ).toBeVisible();
+    await expect(page.getByRole('button', { name: 'share' })).toHaveCount(1);
+    await page.getByRole('button', { name: 'share' }).click();
+    await page.getByRole('textbox', { name: 'Enter E-Mail address' }).click();
+    await page
+      .getByRole('textbox', { name: 'Enter E-Mail address' })
+      .fill('user2@lablup.com');
+    await page
+      .locator('#share-folder-dialog')
+      .locator('#share-button')
+      .getByLabel('share')
+      .click();
+    // check the invitation is sent to User2
+    const page2 = await browser.newPage();
+    await loginAsUser2(page2);
+    await expect(
+      page2
+        .getByText(`From ${userInfo.user.email}`)
+        .locator('..')
+        .filter({ hasText: sharingFolderName }),
+    ).toBeVisible();
     // User delete the folder when User2 is trying to accept
     await deleteVFolderAndVerify(page, sharingFolderName);
-
     // User2 accept the invitation
     await page2
       .getByText(`From ${userInfo.user.email}`)
@@ -179,5 +195,7 @@ test.describe('VFolder sharing', () => {
         .locator('.ant-notification-notice')
         .filter({ hasText: 'No such vfolder invitation' }),
     ).toBeVisible();
+    await page.close();
+    await page2.close();
   });
 });
