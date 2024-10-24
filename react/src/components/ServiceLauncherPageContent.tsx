@@ -732,7 +732,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         name="serviceName"
                         rules={[
                           {
-                            pattern: /^(?=.{4,24}$)\w[\w.-]*\w$/,
+                            pattern: /^(?=.{4,24}$)\w[\w-]*\w$/,
                             message: t('modelService.ServiceNameRule'),
                           },
                           {

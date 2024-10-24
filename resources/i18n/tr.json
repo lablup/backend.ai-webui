@@ -1547,7 +1547,7 @@
     "FormValidationFailed": "Form doğrulama başarısız oldu",
     "StartNewServing": "Yeni servis başlatın",
     "ServiceName": "Hizmet Adı",
-    "ServiceNameRule": "Yalnızca alfanümerik, alt çizgi (_), kısa çizgi (-) ve nokta (.) karakterlerinden oluşan 4 ila 24 karaktere izin verin ve alfanümerik bir karakterle bitmelidir.",
+    "ServiceNameRule": "Yalnızca 4 - 24 arası alfasayısal karakter, alt çizgi(_) ve kısa çizgi(-) karakterlerine izin verilir ve bu karakterler alfasayısal bir karakterle bitmelidir.",
     "OpenToPublic": "Halka Açık",
     "DesiredRoutingCount": "İstenen Yönlendirme Sayısı",
     "ServingRouteErrorModalTitle": "Hizmet Veren Rota Hatası",
