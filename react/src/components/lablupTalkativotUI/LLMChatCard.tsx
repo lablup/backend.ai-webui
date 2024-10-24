@@ -166,19 +166,21 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
   }, [submitKey]);
 
   const items: MenuProps['items'] = filterEmptyItem([
-    showCompareMenuItem && {
-      key: 'compare',
-      label: t('chatui.CompareWithOtherModels'),
-      icon: <Scale />,
-      onClick: () => {
-        webuiNavigate(
-          `/serving?tab=chatting&endpointId=${endpointId}&modelId=${modelId}`,
-        );
+    showCompareMenuItem && [
+      {
+        key: 'compare',
+        label: t('chatui.CompareWithOtherModels'),
+        icon: <Scale />,
+        onClick: () => {
+          webuiNavigate(
+            `/serving?tab=chatting&endpointId=${endpointId}&modelId=${modelId}`,
+          );
+        },
       },
-    },
-    {
-      type: 'divider',
-    },
+      {
+        type: 'divider',
+      },
+    ],
     {
       key: 'clear',
       danger: true,
