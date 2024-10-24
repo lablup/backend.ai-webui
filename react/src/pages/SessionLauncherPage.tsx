@@ -48,7 +48,10 @@ import {
 } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import {
+  useCurrentProjectValue,
+  useCurrentResourceGroupState,
+} from '../hooks/useCurrentProject';
 import { useRecentSessionHistory } from '../hooks/useRecentSessionHistory';
 import { useThemeMode } from '../hooks/useThemeMode';
 // @ts-ignore
@@ -179,9 +182,11 @@ const SessionLauncherPage = () => {
   const mainContentDivRef = useAtomValue(mainContentDivRefState);
   const baiClient = useSuspendedBackendaiClient();
   const currentUserRole = useCurrentUserRole();
+  const [currentGlobalResourceGroup, setCurrentGlobalResourceGroup] =
+    useCurrentResourceGroupState();
 
   const [isStartingSession, setIsStartingSession] = useState(false);
-  const INITIAL_FORM_VALUES: SessionLauncherValue = useMemo(
+  const INITIAL_FORM_VALUES: DeepPartial<SessionLauncherFormValue> = useMemo(
     () => ({
       sessionType: 'interactive',
       // If you set `allocationPreset` to 'custom', `allocationPreset` is not changed automatically any more.
@@ -204,8 +209,12 @@ const SessionLauncherPage = () => {
         },
       }),
       ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+      resourceGroup: currentGlobalResourceGroup || undefined,
     }),
-    [baiClient._config?.default_session_environment],
+    [
+      baiClient._config?.default_session_environment,
+      currentGlobalResourceGroup,
+    ],
   );
   const StepParam = withDefault(NumberParam, 0);
   const FormValuesParam = withDefault(JsonParam, INITIAL_FORM_VALUES);
@@ -525,8 +534,8 @@ const SessionLauncherPage = () => {
               });
           },
         );
-        // console.log('##', values.mounts);
-        // console.log(sessionInfo);
+        // After sending a create request, navigate to job page and set current resource group
+        setCurrentGlobalResourceGroup(values.resourceGroup);
         const backupTo = window.location.pathname + window.location.search;
         webuiNavigate(redirectTo || '/job');
         upsertNotification({

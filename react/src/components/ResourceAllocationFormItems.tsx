@@ -23,7 +23,7 @@ import {
   ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
 import InputNumberWithSlider from './InputNumberWithSlider';
-import ResourceGroupSelectForCurrentProject from './ResourceGroupSelectForCurrentProject';
+import ResourceGroupSelect from './ResourceGroupSelect';
 import ResourcePresetSelect from './ResourcePresetSelect';
 import { CaretDownOutlined } from '@ant-design/icons';
 import {
@@ -42,18 +42,19 @@ import React, { useEffect, useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 export const AUTOMATIC_DEFAULT_SHMEM = '64m';
-export const RESOURCE_ALLOCATION_INITIAL_FORM_VALUES = {
-  resource: {
-    cpu: 0,
-    mem: '0g',
-    shmem: '0g',
-    accelerator: 0,
-  },
-  num_of_sessions: 1,
-  cluster_mode: 'single-node',
-  cluster_size: 1,
-  enabledAutomaticShmem: true,
-};
+export const RESOURCE_ALLOCATION_INITIAL_FORM_VALUES: DeepPartial<ResourceAllocationFormValue> =
+  {
+    resource: {
+      cpu: 0,
+      mem: '0g',
+      shmem: '0g',
+      accelerator: 0,
+    },
+    num_of_sessions: 1,
+    cluster_mode: 'single-node',
+    cluster_size: 1,
+    enabledAutomaticShmem: true,
+  };
 
 export const isMinOversMaxValue = (min: number, max: number) => {
   return min >= max;
@@ -408,8 +409,8 @@ const ResourceAllocationFormItems: React.FC<
           },
         ]}
       >
-        {/* WARN: ResourceGroupSelectForCurrentProject component can not be controlled (no `value` props).  It uses global state */}
-        <ResourceGroupSelectForCurrentProject showSearch />
+        <ResourceGroupSelect projectName={currentProject.name} showSearch />
+        {/* <ResourceGroupSelectForCurrentProject showSearch /> */}
       </Form.Item>
 
       {enableResourcePresets ? (

@@ -11,6 +11,7 @@ import {
 } from '../hooks';
 import { KnownAcceleratorResourceSlotName } from '../hooks/backendai';
 import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
+import { useCurrentResourceGroupState } from '../hooks/useCurrentProject';
 import BAIModal, { DEFAULT_BAI_MODAL_Z_INDEX } from './BAIModal';
 import EnvVarFormList, { EnvVarFormListValue } from './EnvVarFormList';
 import Flex from './Flex';
@@ -145,6 +146,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
 
   const [form] = Form.useForm<ServiceLauncherFormValue>();
   const [wantToChangeResource, setWantToChangeResource] = useState(false);
+  const [currentGlobalResourceGroup, setCurrentGlobalResourceGroup] =
+    useCurrentResourceGroupState();
 
   const endpoint = useFragment(
     graphql`
@@ -578,6 +581,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           // create service
           mutationToCreateService.mutate(values, {
             onSuccess: () => {
+              // After creating service, navigate to serving page and set current resource group
+              setCurrentGlobalResourceGroup(values.resourceGroup);
               // FIXME: temporally refer to mutate input to message
               message.success(
                 t('modelService.ServiceCreated', { name: values.serviceName }),
@@ -693,6 +698,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           },
         }),
         vFolderID: model ? model : undefined,
+        resourceGroup: currentGlobalResourceGroup,
       };
 
   return (
