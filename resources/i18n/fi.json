@@ -790,7 +790,7 @@
     "ServiceEndpoint": "Palvelun päätepiste",
     "ServiceInfo": "Palvelun tiedot",
     "ServiceName": "Palvelun nimi",
-    "ServiceNameRule": "Ainoastaan aakkosnumeerisia merkkejä, alaviivoja(_), väliviivoja(-) ja pisteitä(.) saa olla 4-24 merkkiä, ja sen on päätyttävä aakkosnumeeriseen merkkiin.",
+    "ServiceNameRule": "Salli vain aakkosnumeeriset, alaviivat (_) ja yhdysviivat (-), ja sen tulee päättyä aakkosnumeeriseen merkkiin.",
     "Services": "Palvelut",
     "ServingRouteErrorModalTitle": "Palvelevan reitin virhe",
     "SessionId": "Istunnon ID",
@@ -832,7 +832,10 @@
     "SyncRoutesRequested": "Reitin synkronointia on pyydetty.",
     "UpdateService": "Päivityspalvelu",
     "StartNewService": "Aloita uusi palvelu",
-    "RuntimeVariant": "Päättelyn suoritusaikamuunnos"
+    "RuntimeVariant": "Päättelyn suoritusaikamuunnos",
+    "ServiceNameMinLength": "Kirjoita vähintään 4 merkkiä.",
+    "ServiceNameMaxLength": "Anna enintään 24 merkkiä.",
+    "ServiceNameCannotStartWithHyphen": "Tavuviivoja (-) ei voi käyttää kummassakaan päässä."
   },
   "notification": {
     "Initializing": "Aloitetaan...",

@@ -1547,7 +1547,7 @@
     "FormValidationFailed": "Convalida del modulo non riuscita",
     "StartNewServing": "Iniziare un nuovo servizio",
     "ServiceName": "Nome del servizio",
-    "ServiceNameRule": "Sono consentiti solo da 4 a 24 caratteri alfanumerici, underscore(_), trattino(-) e punto(.) e devono terminare con un carattere alfanumerico.",
+    "ServiceNameRule": "Consenti solo caratteri alfanumerici, trattino basso (_) e trattino (-) e deve terminare con un carattere alfanumerico.",
     "OpenToPublic": "Aperto al pubblico",
     "DesiredRoutingCount": "Conteggio dell'instradamento desiderato",
     "ServingRouteErrorModalTitle": "Errore del percorso di servizio",
@@ -1604,7 +1604,10 @@
     "UpdateService": "Servizio di aggiornamento",
     "StartNewService": "Avvia nuovo servizio",
     "RuntimeVariant": "Variante di runtime dell'inferenza",
-    "Chatting": "Chiacchierando"
+    "Chatting": "Chiacchierando",
+    "ServiceNameMinLength": "Inserisci almeno 4 caratteri.",
+    "ServiceNameMaxLength": "Inserisci 24 caratteri o meno.",
+    "ServiceNameCannotStartWithHyphen": "I trattini (-) non possono essere utilizzati alle due estremità."
   },
   "ErrorBoundary": {
     "title": "Si è verificato un errore.",

@@ -1625,7 +1625,7 @@
     "TokenExpiredDateHelp": "Le délai d'expiration par défaut du jeton est de 24 heures.",
     "TokenExpiredDateError": "L'heure d'expiration du jeton doit être postérieure à l'heure actuelle.",
     "FormValidationFailed": "La validation du formulaire a échoué",
-    "ServiceNameRule": "Seuls 4 à 24 caractères alphanumériques, le trait de soulignement (_), le trait d'union (-) et le point (.) sont autorisés et le texte doit se terminer par un caractère alphanumérique.",
+    "ServiceNameRule": "Autorisez uniquement les caractères alphanumériques, les traits de soulignement (_) et les traits d'union (-) et ils doivent se terminer par un caractère alphanumérique.",
     "resources": "Ressources",
     "Image": "Image",
     "Owner": "Propriétaire",
@@ -1657,7 +1657,10 @@
     "UpdateService": "Service de mise à jour",
     "StartNewService": "Démarrer un nouveau service",
     "RuntimeVariant": "Variante d'exécution de l'inférence",
-    "Chatting": "Bavardage"
+    "Chatting": "Bavardage",
+    "ServiceNameMinLength": "Veuillez saisir au moins 4 caractères.",
+    "ServiceNameMaxLength": "Veuillez saisir 24 caractères ou moins.",
+    "ServiceNameCannotStartWithHyphen": "Les tirets (-) ne peuvent pas être utilisés à chaque extrémité."
   },
   "ErrorBoundary": {
     "title": "Une erreur s'est produite.",

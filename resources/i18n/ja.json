@@ -1546,7 +1546,7 @@
     "FormValidationFailed": "フォーム検証の失敗",
     "StartNewServing": "新サービス開始",
     "ServiceName": "サービス名",
-    "ServiceNameRule": "4～24文字の英字、数字、アンダーライン(_)、ハイフン(-)、ピリオド(.)のみを許可し、英文で英字または数字で終わる必要があります。",
+    "ServiceNameRule": "英数字、アンダースコア (_)、およびハイフン (-) のみを使用でき、英数字で終わる必要があります。",
     "OpenToPublic": "アプリを外部に公開",
     "DesiredRoutingCount": "希望のルーティング数",
     "ServingRouteErrorModalTitle": "サービングルートエラー",
@@ -1603,7 +1603,10 @@
     "UpdateService": "アップデートサービス",
     "StartNewService": "新しいサービスを開始する",
     "RuntimeVariant": "推論ランタイム・バリアント",
-    "Chatting": "おしゃべり"
+    "Chatting": "おしゃべり",
+    "ServiceNameMinLength": "少なくとも 4 文字を入力してください。",
+    "ServiceNameMaxLength": "24文字以内で入力してください。",
+    "ServiceNameCannotStartWithHyphen": "両端にハイフン（-）を使用することはできません。"
   },
   "ErrorBoundary": {
     "title": "エラーが発生しました。",

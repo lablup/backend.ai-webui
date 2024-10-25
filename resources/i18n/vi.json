@@ -1588,7 +1588,7 @@
     "FormValidationFailed": "Xác thực biểu mẫu không thành công",
     "StartNewServing": "Bắt đầu phân phát mới",
     "ServiceName": "Tên dịch vụ",
-    "ServiceNameRule": "Chỉ cho phép 4 đến 24 ký tự chữ và số, dấu gạch dưới (_), dấu gạch nối (-) và dấu chấm (.) và phải kết thúc bằng ký tự chữ và số.",
+    "ServiceNameRule": "Chỉ cho phép chữ và số, dấu gạch dưới (_), dấu gạch nối (-) và phải kết thúc bằng ký tự chữ và số.",
     "OpenToPublic": "Mở cửa cho công chúng",
     "DesiredRoutingCount": "Số lượng định tuyến mong muốn",
     "ServingRouteErrorModalTitle": "Lỗi tuyến đường phục vụ",
@@ -1645,7 +1645,10 @@
     "UpdateService": "Dịch vụ cập nhật",
     "StartNewService": "Bắt đầu dịch vụ mới",
     "RuntimeVariant": "Biến thể thời gian chạy suy luận",
-    "Chatting": "Trò chuyện"
+    "Chatting": "Trò chuyện",
+    "ServiceNameMinLength": "Vui lòng nhập ít nhất 4 ký tự.",
+    "ServiceNameMaxLength": "Vui lòng nhập 24 ký tự trở xuống.",
+    "ServiceNameCannotStartWithHyphen": "Dấu gạch nối (-) không thể được sử dụng ở cả hai đầu."
   },
   "totp": {
     "TotpSetupCompleted": "Đã bật 2FA",
