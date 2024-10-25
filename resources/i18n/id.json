@@ -1626,7 +1626,7 @@
     "TokenExpiredDateHelp": "Waktu kedaluwarsa token default adalah 24 jam kemudian.",
     "TokenExpiredDateError": "Waktu kedaluwarsa token harus setelah waktu saat ini",
     "FormValidationFailed": "Validasi formulir gagal",
-    "ServiceNameRule": "Hanya mengizinkan 4 hingga 24 karakter alfanumerik, garis bawah (_), tanda hubung (-), dan titik (.) dan harus diakhiri dengan karakter alfanumerik.",
+    "ServiceNameRule": "Hanya diperbolehkan alfanumerik, garis bawah(_), dan tanda hubung(-) dan harus diakhiri dengan karakter alfanumerik.",
     "resources": "Sumber daya",
     "Image": "Gambar",
     "Owner": "Pemilik",
@@ -1657,7 +1657,10 @@
     "UpdateService": "Layanan Pembaruan",
     "StartNewService": "Mulai Layanan Baru",
     "RuntimeVariant": "Varian Runtime Inferensi",
-    "Chatting": "Mengobrol"
+    "Chatting": "Mengobrol",
+    "ServiceNameMinLength": "Silakan masukkan setidaknya 4 karakter.",
+    "ServiceNameMaxLength": "Silakan masukkan 24 karakter atau kurang.",
+    "ServiceNameCannotStartWithHyphen": "Tanda hubung (-) tidak dapat digunakan pada kedua ujungnya."
   },
   "ErrorBoundary": {
     "title": "Telah terjadi kesalahan.",

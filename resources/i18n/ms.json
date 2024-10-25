@@ -1587,7 +1587,7 @@
     "FormValidationFailed": "Pengesahan borang gagal",
     "StartNewServing": "Mulakan hidangan baharu",
     "ServiceName": "Nama Perkhidmatan",
-    "ServiceNameRule": "Hanya benarkan 4 hingga 24 aksara abjad angka, garis bawah(_), sempang(-), dan noktah(.) dan ia mesti berakhir dengan aksara abjad angka.",
+    "ServiceNameRule": "Hanya benarkan abjad angka, garis bawah(_), dan sempang(-) dan ia mesti berakhir dengan aksara abjad angka.",
     "OpenToPublic": "Terbuka Kepada Umum",
     "DesiredRoutingCount": "Kiraan Laluan yang Diingini",
     "ServingRouteErrorModalTitle": "Ralat Laluan Pelayanan",
@@ -1644,7 +1644,10 @@
     "UpdateService": "Perkhidmatan Kemas Kini",
     "StartNewService": "Mulakan Perkhidmatan Baharu",
     "RuntimeVariant": "Varian Masa Jalan Inferens",
-    "Chatting": "Berbual"
+    "Chatting": "Berbual",
+    "ServiceNameMinLength": "Sila masukkan sekurang-kurangnya 4 aksara.",
+    "ServiceNameMaxLength": "Sila masukkan 24 aksara atau kurang.",
+    "ServiceNameCannotStartWithHyphen": "Tanda sempang (-) tidak boleh digunakan pada kedua-dua hujung."
   },
   "totp": {
     "TotpSetupCompleted": "Didayakan 2FA",

@@ -1588,7 +1588,7 @@
     "FormValidationFailed": "表单验证失败",
     "StartNewServing": "开始新服务",
     "ServiceName": "服务名称",
-    "ServiceNameRule": "只允许 4 至 24 个字符的字母数字、下划线（_）、连字符（-）和句号（.），且必须以字母数字字符结尾。",
+    "ServiceNameRule": "仅允许使用字母数字、下划线 (_) 和连字符 (-)，并且必须以字母数字字符结尾。",
     "OpenToPublic": "向公众开放",
     "DesiredRoutingCount": "所需的路由计数",
     "ServingRouteErrorModalTitle": "服务路由错误",
@@ -1646,7 +1646,10 @@
     "UpdateService": "更新服务",
     "StartNewService": "开始新服务",
     "RuntimeVariant": "推理运行时变量",
-    "Chatting": "聊天"
+    "Chatting": "聊天",
+    "ServiceNameMinLength": "请输入至少 4 个字符。",
+    "ServiceNameMaxLength": "请输入 24 个或更少的字符。",
+    "ServiceNameCannotStartWithHyphen": "两端不能使用连字符 (-)。"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",

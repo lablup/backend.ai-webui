@@ -1547,7 +1547,7 @@
     "FormValidationFailed": "Form doğrulama başarısız oldu",
     "StartNewServing": "Yeni servis başlatın",
     "ServiceName": "Hizmet Adı",
-    "ServiceNameRule": "Yalnızca alfanümerik, alt çizgi (_), kısa çizgi (-) ve nokta (.) karakterlerinden oluşan 4 ila 24 karaktere izin verin ve alfanümerik bir karakterle bitmelidir.",
+    "ServiceNameRule": "Yalnızca alfasayısal, alt çizgi(_) ve kısa çizgiye(-) izin verilir ve alfasayısal bir karakterle bitmelidir.",
     "OpenToPublic": "Halka Açık",
     "DesiredRoutingCount": "İstenen Yönlendirme Sayısı",
     "ServingRouteErrorModalTitle": "Hizmet Veren Rota Hatası",
@@ -1604,7 +1604,10 @@
     "UpdateService": "Güncelleme Hizmeti",
     "StartNewService": "Yeni Hizmeti Başlat",
     "RuntimeVariant": "Çıkarım Çalışma Zamanı Varyantı",
-    "Chatting": "Sohbet"
+    "Chatting": "Sohbet",
+    "ServiceNameMinLength": "Lütfen en az 4 karakter giriniz.",
+    "ServiceNameMaxLength": "Lütfen 24 veya daha az karakter girin.",
+    "ServiceNameCannotStartWithHyphen": "Kısa çizgi (-) her iki uçta da kullanılamaz."
   },
   "ErrorBoundary": {
     "title": "Bir hata oluştu.",

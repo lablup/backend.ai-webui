@@ -732,7 +732,23 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         name="serviceName"
                         rules={[
                           {
-                            pattern: /^(?=.{4,24}$)\w[\w.-]*\w$/,
+                            min: 4,
+                            message: t('modelService.ServiceNameMinLength'),
+                            type: 'string',
+                          },
+                          {
+                            max: 24,
+                            message: t('modelService.ServiceNameMaxLength'),
+                            type: 'string',
+                          },
+                          {
+                            pattern: /^(?:[^-]|[^-].*[^-])$/,
+                            message: t(
+                              'modelService.ServiceNameCannotStartWithHyphen',
+                            ),
+                          },
+                          {
+                            pattern: /^[\w-]+$/,
                             message: t('modelService.ServiceNameRule'),
                           },
                           {

@@ -481,7 +481,7 @@
     "ExpiredDate": "Expired Date",
     "TokenExpiredDateHelp": "The default token expiration time is 24 hours later.",
     "TokenExpiredDateError": "The token expiration time must be after the current time",
-    "ServiceNameRule": "Only allow 4 to 24 characters of alphanumeric, underscore(_), hyphen(-), and period(.) and it must end with an alphanumeric character.",
+    "ServiceNameRule": "Only allow alphanumeric, underscore(_), and hyphen(-) and it must end with an alphanumeric character.",
     "FormValidationFailed": "Form validation failed",
     "CannotValidateNow": "Cannot validate service now. Please check resource allocation or other configurations.",
     "resources": "Resources",
@@ -507,7 +507,10 @@
     "StartNewService": "Start New Service",
     "UpdateService": "Update Service",
     "RuntimeVariant": "Inference Runtime Variant",
-    "Chatting": "Chatting"
+    "Chatting": "Chatting",
+    "ServiceNameMinLength": "Please enter at least 4 characters.",
+    "ServiceNameMaxLength": "Please enter 24 characters or less.",
+    "ServiceNameCannotStartWithHyphen": "Hyphens (-) cannot be used at either end."
   },
   "button": {
     "Cancel": "Cancel",

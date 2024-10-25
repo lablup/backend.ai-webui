@@ -462,7 +462,7 @@
     "ExpiredDate": "토큰 만료 시각",
     "TokenExpiredDateHelp": "토큰 만료 시각 기본 값은 24시간 뒤입니다.",
     "TokenExpiredDateError": "토큰 만료 시간은 현재 시간 이후여야 합니다.",
-    "ServiceNameRule": "4~24자의 영문, 숫자, 밑줄(_), 하이픈(-), 마침표(.)만 허용하며, 영문으로 영문이나 숫자로 끝나야합니다.",
+    "ServiceNameRule": "영숫자, 밑줄(_), 하이픈(-)만 허용하며 영숫자로 끝나야 합니다.",
     "FormValidationFailed": "양식 유효성 검사 실패",
     "resources": "자원",
     "Image": "이미지",
@@ -495,7 +495,10 @@
     "UpdateService": "서비스 업데이트",
     "StartNewService": "새로운 서비스 시작",
     "RuntimeVariant": "인퍼런스 런타임 종류",
-    "Chatting": "채팅"
+    "Chatting": "채팅",
+    "ServiceNameMinLength": "4자 이상 입력해주세요.",
+    "ServiceNameMaxLength": "24자 이하로 입력해주세요.",
+    "ServiceNameCannotStartWithHyphen": "하이픈(-)은 양쪽 끝에 사용할 수 없습니다."
   },
   "button": {
     "Cancel": "취소",
