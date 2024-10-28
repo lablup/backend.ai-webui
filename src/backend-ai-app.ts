@@ -12,6 +12,7 @@ export const navigate =
     // Extract the page name from path.
     if (
       [
+        '/start',
         '/summary',
         '/job',
         '/session',

@@ -1653,7 +1653,8 @@
       "InvalidBlankEmail": "Syötä sähköpostiosoitteesi",
       "DisMatchUserEmail": "Käyttäjän sähköpostiosoite ei täsmää",
       "MyEnvironments": "Omat ympäristöt",
-      "ResourcePolicy": "Resurssipolitiikka"
+      "ResourcePolicy": "Resurssipolitiikka",
+      "Start": "Aloita"
     },
     "NetworkSoftTimeout": "Palvelimen vastaus kestää kauemmin. Odota hetki"
   },
@@ -1732,5 +1733,26 @@
     "hour": "tunnin",
     "day": "day",
     "week": "viikko"
+  },
+  "start": {
+    "CreateFolder": "Luo uusi tallennuskansio",
+    "button": {
+      "CreateFolder": "Luo kansio",
+      "StartSession": "Aloita istunto",
+      "ModelService": "Aloita palvelu",
+      "StartNow": "Aloita nyt",
+      "StartBatchSession": "Aloita URL-osoitteesta"
+    },
+    "CreateFolderDesc": "Kansion luominen ja tiedostojen lataaminen ovat tärkeitä koulutusmallien tai palvelujen tarjoamisen kannalta. \nAloita lataamalla tiedostot.",
+    "StartSession": "Aloita interaktiivinen istunto",
+    "StartSessionDesc": "Haluatko kouluttaa mallia? \nNapsauta painiketta luodaksesi istunnon välittömästi. \nValitse haluamasi ympäristö ja resurssit koodin ja muiden tehtävien suorittamista varten.",
+    "StartBatchSession": "Aloita eräistunto",
+    "StartBatchSessionDesc": "Jos haluat käyttää ennalta määritettyjä tiedostoja tai ajoitettuja tehtäviä, kokeile eräistuntoja. \nAnna komento, aseta päivämäärä ja aika ja suorita tarvittaessa.",
+    "ModelService": "Käynnistä mallipalvelu",
+    "ModelServiceDesc": "Oletko valmis jakamaan koulutetun mallisi muiden kanssa? \nNapsauta painiketta luodaksesi palvelun.",
+    "StartFromExample": "Aloita esimerkistä",
+    "StartFromExampleDesc": "Tutustu erilaisiin esimerkkikoodeihin ja aloita.",
+    "StartFromURL": "Aloita URL-osoitteesta",
+    "StartFromURLDesc": "Tuo projektisi ja koodisi eri ympäristöistä, kuten GitHubista, GitLabista, Notebookista jne."
   }
 }
