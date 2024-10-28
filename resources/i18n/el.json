@@ -515,7 +515,8 @@
     "Extend": "Επεκτείνω",
     "RemainingLoginSessionTime": "Χρόνος μέχρι την αυτόματη αποσύνδεση",
     "Change": "Αλλαγή",
-    "MaxValueNotification": "{{name}} πρέπει να είναι το μέγιστο {{max}}"
+    "MaxValueNotification": "{{name}} πρέπει να είναι το μέγιστο {{max}}",
+    "TotalItems": "Σύνολο {{total}} στοιχείων"
   },
   "credential": {
     "Permission": "Αδεια",

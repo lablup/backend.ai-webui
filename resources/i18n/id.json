@@ -516,7 +516,8 @@
     "Extend": "Memperpanjang",
     "RemainingLoginSessionTime": "Waktu Hingga Keluar Otomatis",
     "Change": "Perubahan",
-    "MaxValueNotification": "{{nama}} harus maksimal {{max}}"
+    "MaxValueNotification": "{{nama}} harus maksimal {{max}}",
+    "TotalItems": "Total item {{total}}"
   },
   "credential": {
     "Permission": "Izin",

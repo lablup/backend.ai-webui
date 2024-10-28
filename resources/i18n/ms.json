@@ -514,7 +514,8 @@
     "NSelected": "{{count}} item yang dipilih",
     "Extend": "Panjangkan",
     "Change": "Berubah",
-    "MaxValueNotification": "{{nama}} mestilah maksimum {{maks}}"
+    "MaxValueNotification": "{{nama}} mestilah maksimum {{maks}}",
+    "TotalItems": "Jumlah {{total}} item"
   },
   "credential": {
     "Permission": "Kebenaran",

@@ -515,7 +515,8 @@
     "Extend": "Uzatmak",
     "RemainingLoginSessionTime": "Otomatik Çıkışa Kadar Geçen Süre",
     "Change": "Değişim",
-    "MaxValueNotification": "{{name}} maksimum {{max}} olmalıdır"
+    "MaxValueNotification": "{{name}} maksimum {{max}} olmalıdır",
+    "TotalItems": "Toplam {{toplam}} öğe"
   },
   "credential": {
     "Permission": "izin",

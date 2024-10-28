@@ -515,7 +515,8 @@
     "Extend": "Продлевать",
     "RemainingLoginSessionTime": "Время до автоматического выхода из системы",
     "Change": "Изменить",
-    "MaxValueNotification": "{{name}} должен быть максимальным {{max}}"
+    "MaxValueNotification": "{{name}} должен быть максимальным {{max}}",
+    "TotalItems": "Всего {{total}} предметов"
   },
   "credential": {
     "Permission": "Разрешение",

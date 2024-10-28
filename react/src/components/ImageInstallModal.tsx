@@ -4,7 +4,7 @@ import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import { EnvironmentImage } from './ImageList';
-import { List } from 'antd';
+import { List, Typography } from 'antd';
 import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -153,18 +153,36 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
     >
       <Flex direction="column" gap="md" align="start">
         {hasInstalledImage ? t('environment.InstalledImagesAreExcluded') : null}
-        <Flex direction="column" align="start">
+        <Flex
+          direction="column"
+          align="start"
+          style={{
+            width: '100%',
+          }}
+        >
           <List
             size="small"
-            bordered
             dataSource={imagesToInstall.map(
               (image) => `${image?.registry}/${image?.name}/${image?.tag}`,
             )}
-            renderItem={(item) => <List.Item>{item}</List.Item>}
+            style={{
+              width: '100%',
+            }}
+            renderItem={(item) => (
+              <List.Item>
+                <Typography.Text strong>{item}</Typography.Text>
+              </List.Item>
+            )}
+            pagination={{
+              pageSize: 5,
+              showTotal: (total) => t('general.TotalItems', { total }),
+            }}
           />
         </Flex>
-        {t('environment.DescSignificantInstallTime')}
-        {t('dialog.ask.DoYouWantToProceed')}
+        <Typography.Text>
+          {t('environment.DescSignificantInstallTime')}&nbsp;
+          {t('dialog.ask.DoYouWantToProceed')}
+        </Typography.Text>
       </Flex>
     </BAIModal>
   );

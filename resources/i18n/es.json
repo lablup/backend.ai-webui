@@ -566,7 +566,8 @@
     "Extend": "Extender",
     "RemainingLoginSessionTime": "Tiempo hasta el cierre de sesión automático",
     "Change": "Cambia",
-    "MaxValueNotification": "{{name}} debe ser máximo {{max}}"
+    "MaxValueNotification": "{{name}} debe ser máximo {{max}}",
+    "TotalItems": "Total {{total}} artículos"
   },
   "import": {
     "CleanUpImportTask": "Tarea de importación de limpieza...",

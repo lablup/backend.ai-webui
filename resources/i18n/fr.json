@@ -515,7 +515,8 @@
     "Extend": "Étendre",
     "RemainingLoginSessionTime": "Délai avant déconnexion automatique",
     "Change": "Changer",
-    "MaxValueNotification": "{{nom}} doit être maximum {{max}}"
+    "MaxValueNotification": "{{nom}} doit être maximum {{max}}",
+    "TotalItems": "Total des éléments {{total}}"
   },
   "credential": {
     "Permission": "Autorisation",

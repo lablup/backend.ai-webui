@@ -641,7 +641,8 @@
     "Extend": "ขยาย",
     "RemainingLoginSessionTime": "เวลาจนกระทั่งออกจากระบบอัตโนมัติ",
     "Change": "เปลี่ยน",
-    "MaxValueNotification": "{{name}} ต้องมีค่าสูงสุด {{max}}"
+    "MaxValueNotification": "{{name}} ต้องมีค่าสูงสุด {{max}}",
+    "TotalItems": "รวม {{total}} รายการ"
   },
   "credential": {
     "Permission": "สิทธิ์",

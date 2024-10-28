@@ -515,7 +515,8 @@
     "Extend": "Rozszerzyć",
     "RemainingLoginSessionTime": "Czas do automatycznego wylogowania",
     "Change": "Zmiana",
-    "MaxValueNotification": "{{name}} musi być maksymalna {{max}}."
+    "MaxValueNotification": "{{name}} musi być maksymalna {{max}}.",
+    "TotalItems": "Łącznie {{total}} pozycji"
   },
   "credential": {
     "Permission": "Pozwolenie",

@@ -643,7 +643,8 @@
     "Extend": "Extend",
     "RemainingLoginSessionTime": "Time until auto logout",
     "Change": "Change",
-    "MaxValueNotification": "{{name}} must be maximum {{max}}"
+    "MaxValueNotification": "{{name}} must be maximum {{max}}",
+    "TotalItems": "Total {{total}} items"
   },
   "credential": {
     "Permission": "Permission",

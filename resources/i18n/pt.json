@@ -515,7 +515,8 @@
     "Extend": "Ampliar",
     "RemainingLoginSessionTime": "Tempo até ao encerramento automático da sessão",
     "Change": "Alterar",
-    "MaxValueNotification": "{{nome}} deve ser o máximo {{max}}"
+    "MaxValueNotification": "{{nome}} deve ser o máximo {{max}}",
+    "TotalItems": "Total de itens {{total}}"
   },
   "credential": {
     "Permission": "Permissão",

@@ -515,7 +515,8 @@
     "Extend": "Mở rộng",
     "RemainingLoginSessionTime": "Thời gian cho đến khi tự động đăng xuất",
     "Change": "Thay đổi",
-    "MaxValueNotification": "{{name}} phải tối đa {{max}}"
+    "MaxValueNotification": "{{name}} phải tối đa {{max}}",
+    "TotalItems": "Tổng số {{total}} mặt hàng"
   },
   "credential": {
     "Permission": "Sự cho phép",
