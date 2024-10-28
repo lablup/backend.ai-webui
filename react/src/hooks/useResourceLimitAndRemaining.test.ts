@@ -1,5 +1,4 @@
 import { isMatchingMaxPerContainer } from './useResourceLimitAndRemaining';
-import exp from 'constants';
 
 describe('getConfigName', () => {
   test('should match unknown devices', () => {
@@ -38,6 +37,9 @@ describe('getConfigName', () => {
         'maxWarboyDevicesPerContainer',
         'warboy.device',
       ),
+    ).toBe(true);
+    expect(
+      isMatchingMaxPerContainer('maxRNGDDevicesPerContainer', 'rngd.device'),
     ).toBe(true);
     expect(
       isMatchingMaxPerContainer(

@@ -84,6 +84,8 @@ export default class BackendAIResourcePanel extends BackendAIPage {
   @property({ type: Number }) gaudi2_used = 0;
   @property({ type: Number }) warboy_total = 0;
   @property({ type: Number }) warboy_used = 0;
+  @property({ type: Number }) rngd_total = 0;
+  @property({ type: Number }) rngd_used = 0;
   @property({ type: Number }) hyperaccel_lpu_total = 0;
   @property({ type: Number }) hyperaccel_lpu_used = 0;
   @property({ type: Object }) notification = Object();
@@ -352,6 +354,9 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     this.resources.warboy = {};
     this.resources.warboy.total = 0;
     this.resources.warboy.used = 0;
+    this.resources.rngd = {};
+    this.resources.rngd.total = 0;
+    this.resources.rngd.used = 0;
     this.resources.hyperaccel_lpu = {};
     this.resources.hyperaccel_lpu.total = 0;
     this.resources.hyperaccel_lpu.used = 0;
@@ -422,6 +427,11 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     } else {
       this.warboy_total = this.resources['warboy.device'].total;
     }
+    if (isNaN(this.resources['rngd.device'].total)) {
+      this.rngd_total = 0;
+    } else {
+      this.rngd_total = this.resources['rngd.device'].total;
+    }
     if (isNaN(this.resources['hyperaccel-lpu.device'].total)) {
       this.hyperaccel_lpu_total = 0;
     } else {
@@ -435,6 +445,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     this.ipu_used = this.resources['ipu.device'].used;
     this.atom_used = this.resources['atom.device'].used;
     this.warboy_used = this.resources['warboy.device'].used;
+    this.rngd_used = this.resources['rngd.device'].used;
     this.hyperaccel_lpu_used = this.resources['hyperaccel-lpu.device'].used;
 
     this.cpu_percent = parseFloat(this.resources.cpu.percent).toFixed(2);
@@ -699,6 +710,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                   this.atom_plus_total ||
                   this.gaudi2_total ||
                   this.warboy_total ||
+                  this.rngd_total ||
                   this.hyperaccel_lpu_total
                     ? html`
                         <div class="resource-line"></div>
@@ -1089,6 +1101,47 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                       <span class="percentage start-bar">
                                         ${this._prefixFormatWithoutTrailingZeros(
                                           this.warboy_used,
+                                          1,
+                                        ) + '%'}
+                                      </span>
+                                      <span class="percentage end-bar"></span>
+                                    </div>
+                                  </div>
+                                `
+                              : html``}
+                            ${this.rngd_total
+                              ? html`
+                                  <div class="layout horizontal">
+                                    <div
+                                      class="layout vertical start-justified wrap"
+                                    >
+                                      <lablup-progress-bar
+                                        id="rngd-usage-bar"
+                                        class="start"
+                                        progress="${this.rngd_used / 100.0}"
+                                        description="${this._prefixFormatWithoutTrailingZeros(
+                                          this.rngd_used,
+                                          2,
+                                        )} / ${this._prefixFormatWithoutTrailingZeros(
+                                          this.rngd_total,
+                                          2,
+                                        )} RNGDs ${_t('summary.reserved')}."
+                                      ></lablup-progress-bar>
+                                      <lablup-progress-bar
+                                        id="rngd-usage-bar-2"
+                                        class="end"
+                                        progress="0"
+                                        description="${_t(
+                                          'summary.RNGDEnabled',
+                                        )}."
+                                      ></lablup-progress-bar>
+                                    </div>
+                                    <div
+                                      class="layout vertical center center-justified"
+                                    >
+                                      <span class="percentage start-bar">
+                                        ${this._prefixFormatWithoutTrailingZeros(
+                                          this.rngd_used,
                                           1,
                                         ) + '%'}
                                       </span>

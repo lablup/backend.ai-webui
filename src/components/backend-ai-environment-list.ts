@@ -88,6 +88,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @query('#modify-image-atom-plus') modifyImageAtomPlus!: Button;
   @query('#modify-image-gaudi-2') modifyImageGaudi2!: Button;
   @query('#modify-image-warboy') modifyImageWarboy!: Button;
+  @query('#modify-image-rngd') modifyImageRNGD!: Button;
   @query('#modify-image-hyperaccel-lpu') modifyImageHyperaccelLPU!: Button;
   @query('#delete-app-info-dialog') deleteAppInfoDialog!: BackendAIDialog;
   @query('#delete-image-dialog') deleteImageDialog!: BackendAIDialog;
@@ -431,6 +432,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               }
               if (resource.key == 'warboy.device') {
                 resource.key = 'warboy_device';
+              }
+              if (resource.key == 'rngd.device') {
+                resource.key = 'rngd_device';
               }
               if (resource.key == 'hyperaccel-lpu.device') {
                 resource.key = 'hyperaccel_lpu_device';
@@ -968,6 +972,24 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                     )}
                   </span>
                   <span class="indicator">Warboy</span>
+                </div>
+              </div>
+            `
+          : html``}
+        ${rowData.item.rngd_device_limit_min
+          ? html`
+              <div class="layout horizontal center flex">
+                <div class="layout horizontal configuration">
+                  <img
+                    class="indicator-icon fg green"
+                    src="/resources/icons/furiosa.svg"
+                  />
+                  <span>${rowData.item.rngd_device_limit_min}</span>
+                  ~
+                  <span>
+                    ${this._markIfUnlimited(rowData.item.rngd_device_limit_max)}
+                  </span>
+                  <span class="indicator">RNGD</span>
                 </div>
               </div>
             `

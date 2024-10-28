@@ -407,6 +407,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'atom-plus.device': 'atom_plus_device',
         'gaudi2.device': 'gaudi2_device',
         'warboy.device': 'warboy_device',
+        'rngd.device': 'rngd_device',
         'hyperaccel-lpu.device': 'hyperaccel_lpu_device',
       };
       for (const [k, v] of Object.entries(deviceList)) {
@@ -564,6 +565,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'atom-plus.device': 'atom_plus_device',
         'gaudi2.device': 'gaudi2_device',
         'warboy.device': 'warboy_device',
+        'rngd.device': 'rngd_device',
         'hyperaccel-lpu.device': 'hyperaccel_lpu_device',
       };
       const slotList = {
@@ -578,6 +580,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'atom-plus.device': 'atom_plus_device',
         'gaudi2.device': 'gaudi2_device',
         'warboy.device': 'warboy_device',
+        'rngd.device': 'rngd_device',
         'hyperaccel-lpu.device': 'hyperaccel_lpu_device',
       };
       if (this.scaling_group === '' && this.scaling_groups.length > 0) {

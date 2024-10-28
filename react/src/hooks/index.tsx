@@ -360,6 +360,7 @@ type BackendAIConfig = {
   maxATOMPlusDevicesPerContainer: number;
   maxGaudi2DevicesPerContainer: number;
   maxWarboyDevicesPerContainer: number;
+  maxRNGDDevicesPerContainer: number;
   maxShmPerContainer: number;
   maxFileUploadSize: number;
   allow_image_list: string[];

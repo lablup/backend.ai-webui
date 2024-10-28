@@ -20,6 +20,7 @@ export const knownAcceleratorResourceSlotNames = [
   'atom-plus.device',
   'gaudi2.device',
   'warboy.device',
+  'rngd.device',
   'hyperaccel-lpu.device',
 ] as const;
 export type KnownAcceleratorResourceSlotName =

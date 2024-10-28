@@ -47,6 +47,7 @@ interface Options {
   atom_plus: boolean;
   gaudi2: boolean;
   warboy: boolean;
+  rngd: boolean;
   hyperaccel_lpu: boolean;
   schedulerType: string;
   scheduler: {
@@ -108,6 +109,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
       atom_plus: false,
       gaudi2: false,
       warboy: false,
+      rngd: false,
       hyperaccel_lpu: false,
       schedulerType: 'fifo',
       scheduler: {
@@ -641,6 +643,27 @@ export default class BackendAiSettingsView extends BackendAIPage {
                     <div
                       class="vertical center-justified layout setting-desc-shrink"
                     >
+                      <div class="title">${_t('settings.RNGDsupport')}</div>
+                      <div class="description-shrink">
+                        ${_tr('settings.DescRNGDsupport')}
+                        <br />
+                        ${_t('settings.RequireRNGDPlugin')}
+                      </div>
+                    </div>
+                    <div
+                      class="vertical center-justified layout setting-button"
+                    >
+                      <mwc-switch
+                        id="rngd-support-switch"
+                        ?selected="${this.options['rngd']}"
+                        disabled
+                      ></mwc-switch>
+                    </div>
+                  </div>
+                  <div class="horizontal layout setting-item">
+                    <div
+                      class="vertical center-justified layout setting-desc-shrink"
+                    >
                       <div class="title">
                         ${_t('settings.HyperaccelLPUsupport')}
                       </div>
@@ -982,6 +1005,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
       }
       if ('warboy.device' in response) {
         this.options['warboy'] = true;
+      }
+      if ('rngd.device' in response) {
+        this.options['rngd'] = true;
       }
       if ('hyperaccel-lpu.device' in response) {
         this.options['hyperaccel-lpu'] = true;

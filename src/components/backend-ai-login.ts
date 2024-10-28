@@ -116,6 +116,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Number }) maxIPUDevicesPerContainer = 8;
   @property({ type: Number }) maxATOMDevicesPerContainer = 8;
   @property({ type: Number }) maxWarboyDevicesPerContainer = 8;
+  @property({ type: Number }) maxRNGDDevicesPerContainer = 8;
   @property({ type: Number }) maxGaudi2DevicesPerContainer = 8;
   @property({ type: Number }) maxShmPerContainer = 2;
   @property({ type: Number }) maxFileUploadSize = -1;
@@ -1019,6 +1020,16 @@ export default class BackendAILogin extends BackendAIPage {
       } as ConfigValueObject,
     ) as number;
 
+    // Max RNGD devices per container number
+    this.maxRNGDDevicesPerContainer = this._getConfigValueByExists(
+      resourcesConfig,
+      {
+        valueType: 'number',
+        defaultValue: 8,
+        value: parseInt(resourcesConfig?.maxRNGDDevicesPerContainer),
+      } as ConfigValueObject,
+    ) as number;
+
     // Max shared memory per container number
     this.maxShmPerContainer = this._getConfigValueByExists(resourcesConfig, {
       valueType: 'number',
@@ -1862,6 +1873,8 @@ export default class BackendAILogin extends BackendAIPage {
           this.maxGaudi2DevicesPerContainer;
         globalThis.backendaiclient._config.maxWarboyDevicesPerContainer =
           this.maxWarboyDevicesPerContainer;
+        globalThis.backendaiclient._config.maxRNGDDevicesPerContainer =
+          this.maxRNGDDevicesPerContainer;
         globalThis.backendaiclient._config.maxShmPerContainer =
           this.maxShmPerContainer;
         globalThis.backendaiclient._config.maxFileUploadSize =
