@@ -1080,7 +1080,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {string} url - page to redirect from the current page.
    */
   _moveTo(url = '') {
-    const page = url !== '' ? url : 'summary';
+    const page = url !== '' ? url : 'start';
     // globalThis.history.pushState({}, '', page);
     store.dispatch(navigate(decodeURIComponent(page), {}));
 
