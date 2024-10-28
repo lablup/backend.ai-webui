@@ -99,54 +99,143 @@ index 9ce96efb6b78053be6c29b4ab98115e465c02372..cd0a89e0e5f5b092ba03ff191c720d29
  //# sourceMappingURL=internal.js.map
 \ No newline at end of file
 diff --git a/board-item/styles.css.js b/board-item/styles.css.js
-index 1dcaf7ccab588a3e3a1a9bfdab40d1b3e7d4a69f..f1d982c4f3451cb351c817e4e62b8bc3028caeea 100644
+index 1dcaf7ccab588a3e3a1a9bfdab40d1b3e7d4a69f..39416d9d804f3addcea8a70836da994802028526 100644
 --- a/board-item/styles.css.js
 +++ b/board-item/styles.css.js
-@@ -2,15 +2,15 @@
-     import './styles.scoped.css';
-     export default {
-   "root": "awsui_root_9ckv7_1974t_1",
+@@ -1,16 +1,17 @@
++import './styles.scoped.css';
+ 
+-    import './styles.scoped.css';
+-    export default {
+-  "root": "awsui_root_9ckv7_1974t_1",
 -  "container-override": "awsui_container-override_9ckv7_1974t_6",
-+  "container-override": "awsui_container-override_9ckv7_1974t_6 bai_board_container-override",
-   "active": "awsui_active_9ckv7_1974t_6",
+-  "active": "awsui_active_9ckv7_1974t_6",
 -  "header": "awsui_header_9ckv7_1974t_28",
-+  "header": "awsui_header_9ckv7_1974t_28 bai_board_header",
-   "flexible": "awsui_flexible_9ckv7_1974t_34",
+-  "flexible": "awsui_flexible_9ckv7_1974t_34",
 -  "handle": "awsui_handle_9ckv7_1974t_38",
-+  "handle": "awsui_handle_9ckv7_1974t_38 bai_board_handle",
-   "refresh": "awsui_refresh_9ckv7_1974t_41",
-   "header-content": "awsui_header-content_9ckv7_1974t_45",
-   "settings": "awsui_settings_9ckv7_1974t_49",
-   "fixed": "awsui_fixed_9ckv7_1974t_57",
+-  "refresh": "awsui_refresh_9ckv7_1974t_41",
+-  "header-content": "awsui_header-content_9ckv7_1974t_45",
+-  "settings": "awsui_settings_9ckv7_1974t_49",
+-  "fixed": "awsui_fixed_9ckv7_1974t_57",
 -  "resizer": "awsui_resizer_9ckv7_1974t_61"
-+  "resizer": "awsui_resizer_9ckv7_1974t_61 bai_board_resizer",
++export default {
++  root: 'awsui_root_9ckv7_1974t_1',
++  'container-override':
++    'awsui_container-override_9ckv7_1974t_6 bai_board_container-override',
++  active: 'awsui_active_9ckv7_1974t_6',
++  header: 'awsui_header_9ckv7_1974t_28 bai_board_header',
++  flexible: 'awsui_flexible_9ckv7_1974t_34',
++  handle: 'awsui_handle_9ckv7_1974t_38 bai_board_handle',
++  refresh: 'awsui_refresh_9ckv7_1974t_41',
++  'header-content': 'awsui_header-content_9ckv7_1974t_45',
++  settings: 'awsui_settings_9ckv7_1974t_49',
++  fixed: 'awsui_fixed_9ckv7_1974t_57',
++  resizer: 'awsui_resizer_9ckv7_1974t_61 bai_board_resizer',
++  content: 'awsui_content_14iqq_1ml84_220 bai_board_content',
  };
-   
+-  
 \ No newline at end of file
+diff --git a/board-item/styles.scoped.css b/board-item/styles.scoped.css
+index 4ec7adae84985a34199e770b659fc9b8f121c4d4..8ecc2cc3e53e9024e9213bf1e827748f59c443f1 100644
+--- a/board-item/styles.scoped.css
++++ b/board-item/styles.scoped.css
+@@ -4,16 +4,24 @@
+ 
+ /* TODO: use container API instead of styles override */
+ .awsui_container-override_9ckv7_1974t_6.awsui_active_9ckv7_1974t_6:not(#\9) {
+-  box-shadow: var(--shadow-container-active-kl29x9, 0px 1px 1px 1px #e9ebed, 0px 6px 36px rgba(0, 7, 22, 0.1019607843));
++  box-shadow: var(
++    --shadow-container-active-kl29x9,
++    0px 1px 1px 1px #e9ebed,
++    0px 6px 36px rgba(0, 7, 22, 0.1019607843)
++  );
+ }
+-[data-awsui-focus-visible] .awsui_container-override_9ckv7_1974t_6.awsui_active_9ckv7_1974t_6:not(#\9) {
++[data-awsui-focus-visible]
++  .awsui_container-override_9ckv7_1974t_6.awsui_active_9ckv7_1974t_6:not(#\9) {
+   position: relative;
+   box-sizing: border-box;
+   outline: 2px dotted transparent;
+   outline-offset: -1px;
+ }
+-[data-awsui-focus-visible] .awsui_container-override_9ckv7_1974t_6.awsui_active_9ckv7_1974t_6:not(#\9)::before {
+-  content: " ";
++[data-awsui-focus-visible]
++  .awsui_container-override_9ckv7_1974t_6.awsui_active_9ckv7_1974t_6:not(
++    #\9
++  )::before {
++  content: ' ';
+   display: block;
+   position: absolute;
+   box-sizing: border-box;
+@@ -28,7 +36,11 @@
+ .awsui_header_9ckv7_1974t_28:not(#\9) {
+   display: flex;
+   justify-items: center;
+-  padding: var(--space-scaled-s-aqzyko, 12px) calc(var(--space-container-horizontal-wfukh3, 20px) - var(--space-scaled-xs-26e2du, 8px));
++  padding: var(--space-scaled-s-aqzyko, 12px)
++    calc(
++      var(--space-container-horizontal-wfukh3, 20px) -
++        var(--space-scaled-xs-26e2du, 8px)
++    );
+ }
+ 
+ .awsui_flexible_9ckv7_1974t_34:not(#\9) {
+@@ -60,6 +72,14 @@
+ 
+ .awsui_resizer_9ckv7_1974t_61:not(#\9) {
+   position: absolute;
+-  bottom: calc(var(--space-static-xs-7sfb63, 8px) - var(--space-static-xxxs-3gu9os, 2px));
+-  right: calc(var(--space-static-xs-7sfb63, 8px) - var(--space-static-xxxs-3gu9os, 2px));
++  bottom: calc(
++    var(--space-static-xs-7sfb63, 8px) - var(--space-static-xxxs-3gu9os, 2px)
++  );
++  right: calc(
++    var(--space-static-xs-7sfb63, 8px) - var(--space-static-xxxs-3gu9os, 2px)
++  );
++}
++
++.awsui_content_14iqq_1ml84_220 {
++  padding: 0 !important;
+ }
 diff --git a/board-item/styles.selectors.js b/board-item/styles.selectors.js
-index 2acfd3b34f880ec39462ec5d44f7f780e041fbec..beebd8d83a48e0326fb8d68e67e2549f1ffcd2b3 100644
+index 2acfd3b34f880ec39462ec5d44f7f780e041fbec..e73f107b533a3e0a68d231ede87e2d59d448fe9d 100644
 --- a/board-item/styles.selectors.js
 +++ b/board-item/styles.selectors.js
-@@ -3,15 +3,15 @@
-     Object.defineProperty(exports, "__esModule", { value: true });
-     module.exports.default = {
-   "root": "awsui_root_9ckv7_1974t_1",
+@@ -1,17 +1,17 @@
+-
+-    // es-module interop with Babel and Typescript
+-    Object.defineProperty(exports, "__esModule", { value: true });
+-    module.exports.default = {
+-  "root": "awsui_root_9ckv7_1974t_1",
 -  "container-override": "awsui_container-override_9ckv7_1974t_6",
-+  "container-override": "awsui_container-override_9ckv7_1974t_6 bai_board_container-override",
-   "active": "awsui_active_9ckv7_1974t_6",
+-  "active": "awsui_active_9ckv7_1974t_6",
 -  "header": "awsui_header_9ckv7_1974t_28",
-+  "header": "awsui_header_9ckv7_1974t_28 bai_board_header",
-   "flexible": "awsui_flexible_9ckv7_1974t_34",
+-  "flexible": "awsui_flexible_9ckv7_1974t_34",
 -  "handle": "awsui_handle_9ckv7_1974t_38",
-+  "handle": "awsui_handle_9ckv7_1974t_38 bai_board_handle",
-   "refresh": "awsui_refresh_9ckv7_1974t_41",
-   "header-content": "awsui_header-content_9ckv7_1974t_45",
-   "settings": "awsui_settings_9ckv7_1974t_49",
-   "fixed": "awsui_fixed_9ckv7_1974t_57",
+-  "refresh": "awsui_refresh_9ckv7_1974t_41",
+-  "header-content": "awsui_header-content_9ckv7_1974t_45",
+-  "settings": "awsui_settings_9ckv7_1974t_49",
+-  "fixed": "awsui_fixed_9ckv7_1974t_57",
 -  "resizer": "awsui_resizer_9ckv7_1974t_61"
-+  "resizer": "awsui_resizer_9ckv7_1974t_61 bai_board_resizer"
++// es-module interop with Babel and Typescript
++Object.defineProperty(exports, '__esModule', { value: true });
++module.exports.default = {
++  root: 'awsui_root_9ckv7_1974t_1',
++  'container-override':
++    'awsui_container-override_9ckv7_1974t_6 bai_board_container-override',
++  active: 'awsui_active_9ckv7_1974t_6',
++  header: 'awsui_header_9ckv7_1974t_28 bai_board_header',
++  flexible: 'awsui_flexible_9ckv7_1974t_34',
++  handle: 'awsui_handle_9ckv7_1974t_38 bai_board_handle',
++  refresh: 'awsui_refresh_9ckv7_1974t_41',
++  'header-content': 'awsui_header-content_9ckv7_1974t_45',
++  settings: 'awsui_settings_9ckv7_1974t_49',
++  fixed: 'awsui_fixed_9ckv7_1974t_57',
++  resizer: 'awsui_resizer_9ckv7_1974t_61 bai_board_resizer',
++  content: 'awsui_content_14iqq_1ml84_220 bai_board_content',
  };
-   
+-  
 \ No newline at end of file
 diff --git a/internal/grid/styles.css.js b/internal/grid/styles.css.js
 index ec202e1a6c757f5513ffa0a2566a1691b8ed18df..0c0ed570ea9c72e7e484c0371825c9710896085c 100644
