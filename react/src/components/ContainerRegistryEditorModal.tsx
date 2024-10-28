@@ -110,11 +110,12 @@ const ContainerRegistryEditorModal: React.FC<
           type: values.type,
           project: values.type === 'docker' ? 'library' : values.project,
           username: _.isEmpty(values.username) ? null : values.username,
-          password: values.isChangedPassword
-            ? _.isEmpty(values.password)
-              ? null // unset
-              : values.password
-            : undefined, // no change
+          password:
+            values.isChangedPassword || !containerRegistry
+              ? _.isEmpty(values.password)
+                ? null // unset
+                : values.password
+              : undefined, // no change
         };
         if (containerRegistry) {
           if (!values.isChangedPassword) {
