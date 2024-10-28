@@ -176,7 +176,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
         );
       },
     },
-    {
+    showCompareMenuItem && {
       type: 'divider',
     },
     {
