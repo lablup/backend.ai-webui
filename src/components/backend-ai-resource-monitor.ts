@@ -1292,6 +1292,65 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                   </div>
                 `
               : html``}
+            ${this.total_slot.rngd_device
+              ? html`
+                  <div class="layout horizontal center-justified monitor">
+                    <div
+                      class="layout vertical center center-justified resource-name"
+                    >
+                      <span class="gauge-name">RNGD</span>
+                    </div>
+                    <div class="layout vertical center-justified wrap">
+                      <lablup-progress-bar
+                        id="rngd-usage-bar"
+                        class="start"
+                        progress="${this.used_resource_group_slot_percent
+                          .rngd_device / 100.0}"
+                        description="${this._prefixFormatWithoutTrailingZeros(
+                          this.used_resource_group_slot.rngd_device,
+                          2,
+                        )} / ${this._prefixFormatWithoutTrailingZeros(
+                          this.total_resource_group_slot.rngd_device,
+                          2,
+                        )} RNGDs"
+                      ></lablup-progress-bar>
+                      <lablup-progress-bar
+                        id="rngd-usage-bar-2"
+                        class="end"
+                        progress="${this.used_slot_percent.rngd_device / 100.0}"
+                        buffer="${this.used_slot_percent.rngd_device / 100.0}"
+                        description="${this._prefixFormatWithoutTrailingZeros(
+                          this.used_slot.rngd_device,
+                          2,
+                        )} / ${this._prefixFormatWithoutTrailingZeros(
+                          this.total_slot.rngd_device,
+                          2,
+                        )} RNGDs"
+                      ></lablup-progress-bar>
+                    </div>
+                    <div class="layout vertical center center-justified">
+                      <span class="percentage start-bar">
+                        ${this._numberWithPostfix(
+                          this._prefixFormatWithoutTrailingZeros(
+                            this.used_resource_group_slot_percent.rngd_device,
+                            1,
+                          ),
+                          '%',
+                        )}
+                      </span>
+                      <span class="percentage end-bar">
+                        ${this._numberWithPostfix(
+                          this._prefixFormatWithoutTrailingZeros(
+                            this.used_slot_percent.rngd_device,
+                            1,
+                          ),
+                          '%',
+                        )}
+                      </span>
+                    </div>
+                  </div>
+                `
+              : html``}
             ${this.total_slot.hyperaccel_lpu_device
               ? html`
                   <div class="layout horizontal center-justified monitor">
@@ -1844,6 +1903,51 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                               ${this._numberWithPostfix(
                                 this._prefixFormatWithoutTrailingZeros(
                                   this.total_project_slot.warboy_device,
+                                  1,
+                                ),
+                                '%',
+                              )}
+                            </span>
+                          </div>
+                        </div>
+                      `
+                    : html``}
+                  ${this.total_project_slot.rngd_device
+                    ? html`
+                        <div class="layout horizontal">
+                          <span
+                            style="width:35px;margin-left:5px; margin-right:5px;"
+                          >
+                            RNGD
+                          </span>
+                          <lablup-progress-bar
+                            id="tpu-project-usage-bar"
+                            class="end"
+                            progress="${this.used_project_slot_percent
+                              .rngd_device / 100.0}"
+                            description="${this.used_project_slot
+                              .rngd_device}/${this.total_project_slot
+                              .rngd_device === 'Infinity'
+                              ? '∞'
+                              : this._prefixFormatWithoutTrailingZeros(
+                                  this.total_project_slot.rngd_device,
+                                  2,
+                                )} RNGDs"
+                          ></lablup-progress-bar>
+                          <div class="layout vertical center center-justified">
+                            <span class="percentage start-bar">
+                              ${this._numberWithPostfix(
+                                this._prefixFormatWithoutTrailingZeros(
+                                  this.used_project_slot_percent.rngd_device,
+                                  1,
+                                ),
+                                '%',
+                              )}
+                            </span>
+                            <span class="percentage end-bar">
+                              ${this._numberWithPostfix(
+                                this._prefixFormatWithoutTrailingZeros(
+                                  this.total_project_slot.rngd_device,
                                   1,
                                 ),
                                 '%',

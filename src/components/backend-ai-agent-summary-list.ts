@@ -452,6 +452,24 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
                   agents[objectKey].used_warboy_slots_ratio * 100
                 )?.toFixed(1);
               }
+              if ('rngd.device' in available_slots) {
+                agents[objectKey].rngd_slots = parseInt(
+                  available_slots['rngd.device'],
+                );
+                if ('rngd.device' in occupied_slots) {
+                  agents[objectKey].used_rngd_slots = parseInt(
+                    occupied_slots['rngd.device'],
+                  );
+                } else {
+                  agents[objectKey].used_rngd_slots = 0;
+                }
+                agents[objectKey].used_rngd_slots_ratio =
+                  agents[objectKey].used_rngd_slots /
+                  agents[objectKey].rngd_slots;
+                agents[objectKey].total_rngd_percent = (
+                  agents[objectKey].used_rngd_slots_ratio * 100
+                )?.toFixed(1);
+              }
               if ('hyperaccel-lpu.device' in available_slots) {
                 agents[objectKey].hyperaccel_lpu_slots = parseInt(
                   available_slots['hyperaccel-lpu.device'],
@@ -734,7 +752,7 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
                   <div class="layout horizontal start resource-indicator">
                     <img
                       class="indicator-icon fg green"
-                      src="/resources/icons/tpu.svg"
+                      src="/resources/icons/furiosa.svg"
                     />
                     <span class="monospace" style="padding-left:5px;">
                       ${rowData.item.used_atom_slots}/${rowData.item.atom_slots}
@@ -783,7 +801,7 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
                   <div class="layout horizontal start resource-indicator">
                     <img
                       class="indicator-icon fg green"
-                      src="/resources/icons/tpu.svg"
+                      src="/resources/icons/furiosa.svg"
                     />
                     <span class="monospace" style="padding-left:5px;">
                       ${rowData.item.used_atom_plus_slots}/${rowData.item
@@ -808,7 +826,7 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
                   <div class="layout horizontal start resource-indicator">
                     <img
                       class="indicator-icon fg green"
-                      src="/resources/icons/tpu.svg"
+                      src="/resources/icons/furiosa.svg"
                     />
                     <span class="monospace" style="padding-left:5px;">
                       ${rowData.item.used_warboy_slots}/${rowData.item
@@ -821,6 +839,30 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
                     id="warboy-bar"
                     progress="${rowData.item.used_warboy_slots_ratio}"
                     description="${rowData.item.total_warboy_percent}%"
+                  ></lablup-progress-bar>
+                </div>
+              `
+            : html``}
+          ${rowData.item.rngd_slots
+            ? html`
+                <div
+                  class="layout horizontal center-justified flex progress-bar-section"
+                >
+                  <div class="layout horizontal start resource-indicator">
+                    <img
+                      class="indicator-icon fg green"
+                      src="/resources/icons/furiosa.svg"
+                    />
+                    <span class="monospace" style="padding-left:5px;">
+                      ${rowData.item.used_rngd_slots}/${rowData.item.rngd_slots}
+                    </span>
+                    <span class="indicator">RNGD</span>
+                  </div>
+                  <span class="flex"></span>
+                  <lablup-progress-bar
+                    id="rngd-bar"
+                    progress="${rowData.item.used_rngd_slots_ratio}"
+                    description="${rowData.item.total_rngd_percent}%"
                   ></lablup-progress-bar>
                 </div>
               `

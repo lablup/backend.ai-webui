@@ -75,7 +75,8 @@
     "UNAUTHORIZEDACCESS": "허가되지 않은 접근입니다.",
     "AdminOnlyPage": "접근하려는 페이지는 관리자 권한이 필요합니다.<br /> 아래 버튼을 클릭하면 요약 페이지로 돌아갑니다.",
     "CleanUpLoginSession": "로그인 된 세션을 종료합니다...",
-    "CleanUpNow": "종료합니다..."
+    "CleanUpNow": "종료합니다...",
+    "NetworkSoftTimeout": "서버 응답이 지연되고 있습니다. 잠시만 기다려 주세요."
   },
   "summary": {
     "StartMenu": "시작",
@@ -115,6 +116,7 @@
     "IPUEnabled": "IPU NPU 사용중",
     "ATOMEnabled": "ATOM NPU 사용중",
     "WarboyEnabled": "Warboy NPU 사용중",
+    "RNGDEnabled": "RNGD NPU 사용 중",
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "Hyperaccel LPU 사용중",
     "ATOMPlusEnabled": "ATOM+ NPU 사용중"
@@ -1009,7 +1011,9 @@
     "AlreadyInstalledImage": "이미 설치된 이미지입니다.",
     "InstalledImagesAreExcluded": "설치된 이미지는 제외되었습니다.",
     "CheckImageInstallation": "다음 이미지를 설치하시겠습니까?",
-    "SearchImages": "이미지 검색"
+    "SearchImages": "이미지 검색",
+    "DescDownloadImage": "__NOT_TRANSLATED__",
+    "DescSignificantDownloadTime": "__NOT_TRANSLATED__"
   },
   "resourcePreset": {
     "ResourcePresets": "자원 프리셋",
@@ -1400,6 +1404,9 @@
     "Warboysupport": "Warboy 지원",
     "DescWarboysupport": "Furiosa Warboy 가속기를 사용합니다.",
     "RequireWarboyPlugin": "Backend.AI Warboy 플러그인이 필요합니다.",
+    "RNGDsupport": "RNGD",
+    "DescRNGDsupport": "Furiosa RNGD 가속기를 사용합니다.",
+    "RequireRNGDPlugin": "Backend.AI RNGD 플러그인이 필요합니다.",
     "OpenSourceCUDAGPUsupport": "오픈소스 CUDA GPU 지원",
     "ShowOnlyChanged": "수정 사항만 표시",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
@@ -1642,7 +1649,8 @@
     "255chars": "(최대 길이 255자)",
     "500chars": "(최대 길이 500자)",
     "512chars": "(최대 길이 512자)",
-    "2048chars": "(최대 길이 2048자)"
+    "2048chars": "(최대 길이 2048자)",
+    "50chars": "(최대 50자)"
   },
   "inputLimit": {
     "4to64chars": "(4~64자)",

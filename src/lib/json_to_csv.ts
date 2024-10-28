@@ -45,7 +45,8 @@ export default class JsonToCsv {
                   'tpu_device',
                   'ipu_device',
                   'atom_device',
-                  'warboy_device',].includes(key) &&
+                  'warboy_device',
+                  'rngd.device',].includes(key) &&
                 typeof subJson[key] === 'string'
                   ? ''
                   : subJson[key];

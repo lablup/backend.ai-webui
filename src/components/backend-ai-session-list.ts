@@ -1207,6 +1207,11 @@ export default class BackendAISessionList extends BackendAIPage {
                 resourceSlots['warboy.device'],
               );
             }
+            if ('rngd.device' in resourceSlots) {
+              sessions[objectKey].rngd_slot = parseInt(
+                resourceSlots['rngd.device'],
+              );
+            }
             if ('hyperaccel-lpu.device' in resourceSlots) {
               sessions[objectKey].hyperaccel_lpu_slot = parseInt(
                 resourceSlots['hyperaccel-lpu.device'],
@@ -3574,6 +3579,16 @@ ${rowData.item[this.sessionNameField]}</pre
                     <span class="indicator">Warboy</span>
                   `
                 : html``}
+              ${rowData.item.rngd_slot
+                ? html`
+                    <img
+                      class="indicator-icon fg green"
+                      src="/resources/icons/furiosa.svg"
+                    />
+                    <span>${rowData.item.rngd_slot}</span>
+                    <span class="indicator">RNGD</span>
+                  `
+                : html``}
               ${rowData.item.hyeraccel_lpu_slot
                 ? html`
                     <img
@@ -3593,6 +3608,7 @@ ${rowData.item[this.sessionNameField]}</pre
               !rowData.item.atom_plus_slot &&
               !rowData.item.gaudi2_slot &&
               !rowData.item.warboy_slot &&
+              !rowData.item.rngd_slot &&
               !rowData.item.hyperaccel_lpu_slot
                 ? html`
                     <mwc-icon class="fg green indicator">view_module</mwc-icon>

@@ -1073,6 +1073,9 @@ class Client {
       if (resources['warboy.device']) {
         config['warboy.device'] = parseInt(resources['warboy.device']);
       }
+      if (resources['rngd.device']) {
+        config['rngd.device'] = parseInt(resources['rngd.device']);
+      }
       if (resources['hyperaccel-lpu.device']) {
         config['hyperaccel-lpu.device'] = parseInt(resources['hyperaccel-lpu.device']);
       }
@@ -3977,6 +3980,9 @@ class Resources {
     this.resources['warboy.device'] = {};
     this.resources['warboy.device'].total = 0;
     this.resources['warboy.device'].used = 0;
+    this.resources['rngd.device'] = {};
+    this.resources['rngd.device'].total = 0;
+    this.resources['rngd.device'].used = 0;
     this.resources['hyperaccel-lpu.device'] = {};
     this.resources['hyperaccel-lpu.device'].total = 0;
     this.resources['hyperaccel-lpu.device'].used = 0;
@@ -4134,6 +4140,16 @@ class Resources {
               this.resources['warboy.device'].used =
                 parseInt(this.resources['warboy.device'].used) +
                 Math.floor(Number(occupied_slots['warboy.device']));
+            }
+            if ('rngd.device' in available_slots) {
+              this.resources['rngd.device'].total =
+                parseInt(this.resources['rngd.device'].total) +
+                Math.floor(Number(available_slots['rngd.device']));
+            }
+            if ('rngd.device' in occupied_slots) {
+              this.resources['rngd.device'].used =
+                parseInt(this.resources['rngd.device'].used) +
+                Math.floor(Number(occupied_slots['rngd.device']));
             }
             if ('hyperaccel-lpu.device' in available_slots) {
               this.resources['hyperaccel-lpu.device'].total =

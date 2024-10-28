@@ -254,7 +254,6 @@ const ContainerRegistryEditorModal: React.FC<
         >
           <Input
             disabled={!!containerRegistry}
-            // placeholder={t('registry.registry_name')}
             value={containerRegistry?.registry_name || undefined}
           />
         </Form.Item>

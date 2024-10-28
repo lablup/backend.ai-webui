@@ -130,6 +130,7 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
     'atom-plus.device': '/resources/icons/rebel.svg',
     'gaudi2.device': '/resources/icons/gaudi.svg',
     'warboy.device': '/resources/icons/furiosa.svg',
+    'rngd.device': '/resources/icons/furiosa.svg',
     'hyperaccel-lpu.device': '/resources/icons/npu_generic.svg',
   };
 
