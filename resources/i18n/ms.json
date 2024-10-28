@@ -67,7 +67,8 @@
       "MyEnvironments": "Persekitaran Saya",
       "ResourcePolicy": "Dasar Sumber",
       "FullNameUpdated": "Nama penuh berjaya dikemas kini.",
-      "Chat": "Berbual"
+      "Chat": "Berbual",
+      "Start": "Mulakan"
     },
     "YouAreOffline": "Luar talian: Tidak disambungkan ke mana-mana rangkaian.",
     "YouAreOnline": "Anda kini dalam talian",
@@ -1800,5 +1801,26 @@
     "AgentId": "Id ejen",
     "ContainerId": "ID kontena",
     "Kernels": "Biji"
+  },
+  "start": {
+    "CreateFolder": "Buat Folder Storan Baharu",
+    "button": {
+      "CreateFolder": "Buat Folder",
+      "StartSession": "Mulakan Sesi",
+      "ModelService": "Mulakan Perkhidmatan",
+      "StartNow": "Mulakan Sekarang",
+      "StartBatchSession": "Mulakan daripada URL"
+    },
+    "CreateFolderDesc": "Mencipta folder dan memuat naik fail adalah penting untuk model latihan atau menyediakan perkhidmatan secara luaran. \nSila mulakan dengan memuat naik fail.",
+    "StartSession": "Mulakan Sesi Interaktif",
+    "StartSessionDesc": "Ingin melatih model? \nKlik butang untuk membuat sesi serta-merta. \nPilih persekitaran dan sumber pilihan anda untuk menjalankan kod dan tugasan lain.",
+    "StartBatchSession": "Mulakan Sesi Kelompok",
+    "StartBatchSessionDesc": "Untuk fail yang dipratentukan atau tugasan yang dijadualkan, cuba sesi Kelompok. \nMasukkan arahan, tetapkan tarikh dan masa, dan jalankan seperti yang diperlukan.",
+    "ModelService": "Mulakan Perkhidmatan Model",
+    "ModelServiceDesc": "Bersedia untuk berkongsi model terlatih anda dengan orang lain? \nKlik butang untuk membuat perkhidmatan.",
+    "StartFromExample": "Mulakan daripada Contoh",
+    "StartFromExampleDesc": "Terokai pelbagai contoh kod dan mulakan.",
+    "StartFromURL": "Mulakan Dari URL",
+    "StartFromURLDesc": "Import projek dan kod anda daripada pelbagai persekitaran seperti GitHub, GitLab, Notebook, dsb."
   }
 }

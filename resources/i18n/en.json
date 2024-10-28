@@ -66,7 +66,8 @@
       "MyEnvironments": "My Environments",
       "ResourcePolicy": "Resource Policy",
       "FullNameUpdated": "Full name is successfully updated.",
-      "Chat": "Chat"
+      "Chat": "Chat",
+      "Start": "Start"
     },
     "YouAreOffline": "Offline: Not connected to any networks.",
     "YouAreOnline": "You are now online",
@@ -1806,5 +1807,26 @@
     "AgentId": "Agent ID",
     "ContainerId": "Container ID",
     "Kernels": "Kernels"
+  },
+  "start": {
+    "CreateFolder": "Create New Storage Folder",
+    "button": {
+      "CreateFolder": "Create Folder",
+      "StartSession": "Start Session",
+      "ModelService": "Start Service",
+      "StartNow": "Start Now",
+      "StartBatchSession": "Start from a URL"
+    },
+    "CreateFolderDesc": "Create folders and upload files. To train models or provide external services, it is essential to create folders and upload files.",
+    "StartSession": "Start Interactive Session",
+    "StartSessionDesc": "Create a session to train a model. Choose your preferred environment and resources to run a code.",
+    "StartBatchSession": "Start Batch Session",
+    "StartBatchSessionDesc": "Create a batch session for predefined files or scheduled tasks. Enter the command, set the date and time, and run the session on demand.",
+    "ModelService": "Start Model Service",
+    "ModelServiceDesc": "Select to share your trained model with others. This action will create a model service.",
+    "StartFromExample": "Start from the Example",
+    "StartFromExampleDesc": "Explore various example codes and get started.",
+    "StartFromURLDesc": "Import your project and code from various environments such as GitHub, GitLab, Notebook, etc.",
+    "StartFromURL": "Start From URL"
   }
 }

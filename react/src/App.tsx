@@ -29,7 +29,7 @@ const ServingPage = React.lazy(() => import('./pages/ServingPage'));
 const EndpointDetailPage = React.lazy(
   () => import('./pages/EndpointDetailPage'),
 );
-// const SummaryPage = React.lazy(() => import('./pages/SummaryPage'));
+const StartPage = React.lazy(() => import('./pages/StartPage'));
 const EnvironmentPage = React.lazy(() => import('./pages/EnvironmentPage'));
 const MyEnvironmentPage = React.lazy(() => import('./pages/MyEnvironmentPage'));
 const StorageHostSettingPage = React.lazy(
@@ -111,18 +111,23 @@ const router = createBrowserRouter([
     ),
     children: [
       {
-        path: '/',
-        element: <WebUINavigate to="/summary" replace />,
+        path: '/start',
+        element: (
+          <BAIErrorBoundary>
+            <StartPage />
+          </BAIErrorBoundary>
+        ),
+        handle: { labelKey: 'webui.menu.Start' },
       },
       {
         //for electron dev mode
         path: '/build/electron-app/app/index.html',
-        element: <WebUINavigate to="/summary" replace />,
+        element: <WebUINavigate to="/start" replace />,
       },
       {
         //for electron prod mode
         path: '/app/index.html',
-        element: <WebUINavigate to="/summary" replace />,
+        element: <WebUINavigate to="/start" replace />,
       },
       {
         path: '/chat',
@@ -142,7 +147,6 @@ const router = createBrowserRouter([
                 style={{ marginBottom: token.paddingContentVerticalLG }}
                 closable
               />
-              {/* <SummaryPage /> */}
             </>
           );
         },

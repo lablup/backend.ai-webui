@@ -67,7 +67,8 @@
       "MyEnvironments": "Mes environnements",
       "ResourcePolicy": "Politique des ressources",
       "FullNameUpdated": "Le nom complet a été mis à jour avec succès.",
-      "Chat": "Chat"
+      "Chat": "Chat",
+      "Start": "Commencer"
     },
     "YouAreOffline": "Hors ligne : N'est connecté à aucun réseau.",
     "YouAreOnline": "Vous êtes maintenant en ligne",
@@ -1800,5 +1801,26 @@
     "AgentId": "ID d'agent",
     "ContainerId": "ID de conteneur",
     "Kernels": "Graines"
+  },
+  "start": {
+    "CreateFolder": "Créer un nouveau dossier de stockage",
+    "button": {
+      "CreateFolder": "Créer un dossier",
+      "StartSession": "Démarrer la session",
+      "ModelService": "Démarrer le service",
+      "StartNow": "Commencez maintenant",
+      "StartBatchSession": "Commencer à partir d'une URL"
+    },
+    "CreateFolderDesc": "La création d'un dossier et le téléchargement de fichiers sont cruciaux pour former des modèles ou fournir des services en externe. \nVeuillez commencer par télécharger les fichiers.",
+    "StartSession": "Démarrer une session interactive",
+    "StartSessionDesc": "Vous souhaitez former un modèle ? \nCliquez sur le bouton pour créer une session instantanément. \nChoisissez votre environnement et vos ressources préférés pour exécuter du code et d'autres tâches.",
+    "StartBatchSession": "Démarrer une session par lots",
+    "StartBatchSessionDesc": "Pour les fichiers prédéfinis ou les tâches planifiées, essayez les sessions par lots. \nEntrez la commande, définissez la date et l'heure et exécutez-la selon vos besoins.",
+    "ModelService": "Démarrer le service de modèle",
+    "ModelServiceDesc": "Prêt à partager votre modèle formé avec d'autres ? \nCliquez sur le bouton pour créer un service.",
+    "StartFromExample": "Partir de l'exemple",
+    "StartFromExampleDesc": "Explorez divers exemples de codes et commencez.",
+    "StartFromURL": "Commencer à partir de l'URL",
+    "StartFromURLDesc": "Importez votre projet et votre code depuis divers environnements tels que GitHub, GitLab, Notebook, etc."
   }
 }

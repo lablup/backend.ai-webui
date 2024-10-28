@@ -67,7 +67,8 @@
       "MyEnvironments": "Moje Środowiska",
       "ResourcePolicy": "Polityka zasobów",
       "FullNameUpdated": "Pełna nazwa została pomyślnie zaktualizowana.",
-      "Chat": "Czat"
+      "Chat": "Czat",
+      "Start": "Start"
     },
     "YouAreOffline": "Offline: Brak połączenia z siecią.",
     "YouAreOnline": "Jesteś teraz online",
@@ -1800,5 +1801,26 @@
     "AgentId": "Identyfikator agenta",
     "ContainerId": "Identyfikator kontenera",
     "Kernels": "Jądra"
+  },
+  "start": {
+    "CreateFolder": "Utwórz nowy folder przechowywania",
+    "button": {
+      "CreateFolder": "Utwórz folder",
+      "StartSession": "Rozpocznij sesję",
+      "ModelService": "Uruchom usługę",
+      "StartNow": "Zacznij teraz",
+      "StartBatchSession": "Zacznij od adresu URL"
+    },
+    "CreateFolderDesc": "Utworzenie folderu i przesłanie plików jest kluczowe w przypadku uczenia modeli lub świadczenia usług na zewnątrz. \nRozpocznij od przesłania plików.",
+    "StartSession": "Rozpocznij sesję interaktywną",
+    "StartSessionDesc": "Chcesz wyszkolić modelkę? \nKliknij przycisk, aby natychmiast utworzyć sesję. \nWybierz preferowane środowisko i zasoby do uruchamiania kodu i innych zadań.",
+    "StartBatchSession": "Rozpocznij sesję wsadową",
+    "StartBatchSessionDesc": "W przypadku wstępnie zdefiniowanych plików lub zaplanowanych zadań wypróbuj sesje wsadowe. \nWprowadź polecenie, ustaw datę i godzinę i uruchom w razie potrzeby.",
+    "ModelService": "Uruchom usługę modelową",
+    "ModelServiceDesc": "Chcesz udostępnić wytrenowany model innym? \nKliknij przycisk, aby utworzyć usługę.",
+    "StartFromExample": "Zacznij od przykładu",
+    "StartFromExampleDesc": "Zapoznaj się z różnymi przykładowymi kodami i rozpocznij pracę.",
+    "StartFromURL": "Zacznij od adresu URL",
+    "StartFromURLDesc": "Zaimportuj swój projekt i kod z różnych środowisk, takich jak GitHub, GitLab, Notatnik itp."
   }
 }

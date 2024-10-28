@@ -26,6 +26,7 @@ import {
   HddOutlined,
   InfoCircleOutlined,
   MessageOutlined,
+  PlayCircleOutlined,
   SolutionOutlined,
   ToolOutlined,
   UserOutlined,
@@ -90,6 +91,11 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     'experimental_neo_session_list',
   );
   const generalMenu = filterEmptyItem<ItemType>([
+    {
+      label: <WebUILink to="/start">{t('webui.menu.Start')}</WebUILink>,
+      icon: <PlayCircleOutlined style={{ color: token.colorPrimary }} />,
+      key: 'start',
+    },
     {
       label: <WebUILink to="/summary">{t('webui.menu.Summary')}</WebUILink>,
       icon: <DashboardOutlined style={{ color: token.colorPrimary }} />,
@@ -269,7 +275,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             height: themeConfig?.logo?.size?.height || 24,
             cursor: 'pointer',
           }}
-          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
+          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/start')}
         />
       }
       theme={currentSiderTheme}
@@ -289,7 +295,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             height: themeConfig?.logo.sizeCollapsed?.height ?? 24,
             cursor: 'pointer',
           }}
-          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
+          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/start')}
         />
       }
       logoTitle={themeConfig?.logo?.logoTitle || siteDescription || 'WebUI'}

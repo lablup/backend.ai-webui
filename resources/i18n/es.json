@@ -1658,7 +1658,8 @@
       "MyEnvironments": "Mis ambientes",
       "ResourcePolicy": "Política de recursos",
       "FullNameUpdated": "El nombre completo se ha actualizado correctamente.",
-      "Chat": "Chat"
+      "Chat": "Chat",
+      "Start": "Comenzar"
     },
     "NetworkSoftTimeout": "El servidor está tardando más en responder. Por favor, espere un momento",
     "NotFound": "<p>¡Oops!<br/>Página no encontrada...</p>",
@@ -1800,5 +1801,26 @@
     "AgentId": "ID de agente",
     "ContainerId": "ID de contenedor",
     "Kernels": "Núcleo"
+  },
+  "start": {
+    "CreateFolder": "Crear una nueva carpeta de almacenamiento",
+    "button": {
+      "CreateFolder": "Crear carpeta",
+      "StartSession": "Iniciar sesión",
+      "ModelService": "Iniciar servicio",
+      "StartNow": "Empezar ahora",
+      "StartBatchSession": "Comenzar desde una URL"
+    },
+    "CreateFolderDesc": "Crear una carpeta y cargar archivos es crucial para entrenar modelos o brindar servicios externamente. \nComience subiendo los archivos.",
+    "StartSession": "Iniciar una sesión interactiva",
+    "StartSessionDesc": "¿Quieres entrenar un modelo? \nHaga clic en el botón para crear una sesión al instante. \nElija su entorno y recursos preferidos para ejecutar código y otras tareas.",
+    "StartBatchSession": "Iniciar sesión por lotes",
+    "StartBatchSessionDesc": "Para archivos predefinidos o tareas programadas, pruebe las sesiones por lotes. \nIngrese el comando, establezca la fecha y la hora y ejecútelo según sea necesario.",
+    "ModelService": "Iniciar servicio de modelo",
+    "ModelServiceDesc": "¿Listo para compartir su modelo entrenado con otros? \nHaga clic en el botón para crear un servicio.",
+    "StartFromExample": "Empezar desde el ejemplo",
+    "StartFromExampleDesc": "Explore varios códigos de ejemplo y comience.",
+    "StartFromURL": "Empezar desde URL",
+    "StartFromURLDesc": "Importe su proyecto y código desde varios entornos como GitHub, GitLab, Notebook, etc."
   }
 }
