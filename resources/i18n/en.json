@@ -989,7 +989,7 @@
     "Action": "Action",
     "Base": "Base",
     "Constraint": "Constraint",
-    "ResourceLimit": "Resource Limit",
+    "ResourceLimit": "Resource limit",
     "DescDeleteAppInfo": "You are about to delete the app info: ",
     "DescDeleteImage": "You are about to delete the image(s): ",
     "DescSignificantInstallTime": "This process requires significant install time.",
@@ -1027,7 +1027,10 @@
     "CheckImageInstallation": "Installing an image?",
     "SearchImages": "Search images",
     "DescDownloadImage": "DescDownloadImage",
-    "DescSignificantDownloadTime": "DescSignificantDownloadTime"
+    "DescSignificantDownloadTime": "DescSignificantDownloadTime",
+    "BaseImageName": "Base image name",
+    "Tags": "Tags",
+    "FullImagePath": "Full image path"
   },
   "resourcePreset": {
     "ResourcePresets": "Resource Presets",

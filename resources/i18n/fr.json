@@ -897,7 +897,10 @@
     "CheckImageInstallation": "Installation d'une image ?",
     "InstalledImagesAreExcluded": "Les images installées sont exclues.",
     "DescDownloadImage": "__NOT_TRANSLATED__",
-    "DescSignificantDownloadTime": "__NOT_TRANSLATED__"
+    "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
+    "BaseImageName": "Nom de l'image de base",
+    "Tags": "Balises",
+    "FullImagePath": "Chemin d'accès complet à l'image"
   },
   "resourcePreset": {
     "ResourcePresets": "Préréglages de ressources",

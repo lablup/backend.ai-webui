@@ -5,6 +5,7 @@
     "Backendai",
     "backendaiclient",
     "backendaioptions",
+    "baseversion",
     "cssinjs",
     "cuda",
     "FGPU",
@@ -19,17 +20,14 @@
     "RNGD",
     "shmem",
     "superadmin",
+    "textbox",
+    "vaadin",
     "vfolder",
     "vfolders",
     "Warboy",
     "webcomponent",
     "webui",
-    "wsproxy",
-    "vfolders",
-    "vfolder",
-    "filebrowser",
-    "vaadin",
-    "textbox"
+    "wsproxy"
   ],
   "flagWords": [
     "데이터레이크",

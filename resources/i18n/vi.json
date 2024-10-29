@@ -897,7 +897,10 @@
     "CheckImageInstallation": "Cài đặt một hình ảnh?",
     "InstalledImagesAreExcluded": "Hình ảnh được cài đặt được loại trừ.",
     "DescDownloadImage": "__NOT_TRANSLATED__",
-    "DescSignificantDownloadTime": "__NOT_TRANSLATED__"
+    "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
+    "BaseImageName": "Tên hình ảnh cơ sở",
+    "Tags": "Thẻ",
+    "FullImagePath": "Đường dẫn hình ảnh đầy đủ"
   },
   "resourcePreset": {
     "ResourcePresets": "Cài đặt trước tài nguyên",

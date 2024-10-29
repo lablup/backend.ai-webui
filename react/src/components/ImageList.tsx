@@ -1,8 +1,13 @@
 import Flex from '../components/Flex';
-import { filterNonNullItems, getImageFullName } from '../helper';
-import { useBackendAIImageMetaData, useUpdatableState } from '../hooks';
+import { filterNonNullItems, getImageFullName, localeCompare } from '../helper';
+import {
+  useBackendAIImageMetaData,
+  useSuspendedBackendaiClient,
+  useUpdatableState,
+} from '../hooks';
+import DoubleTag from './DoubleTag';
 import ImageInstallModal from './ImageInstallModal';
-import { ConstraintTags } from './ImageTags';
+import { BaseImageTags, ConstraintTags, LangTags } from './ImageTags';
 import ManageAppsModal from './ManageAppsModal';
 import ManageImageResourceLimitModal from './ManageImageResourceLimitModal';
 import ResourceNumber from './ResourceNumber';
@@ -14,7 +19,6 @@ import {
 import CopyButton from './lablupTalkativotUI/CopyButton';
 import {
   AppstoreOutlined,
-  CopyOutlined,
   ReloadOutlined,
   SearchOutlined,
   SettingOutlined,
@@ -37,7 +41,14 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   const [selectedRows, setSelectedRows] = useState<EnvironmentImage[]>([]);
   const [
     ,
-    { getNamespace, getBaseVersion, getLang, getBaseImages, getConstraints },
+    {
+      getNamespace,
+      getBaseVersion,
+      getLang,
+      getBaseImages,
+      getConstraints,
+      getBaseImage,
+    },
   ] = useBackendAIImageMetaData();
   const { token } = theme.useToken();
   const [managingApp, setManagingApp] = useState<EnvironmentImage | null>(null);
@@ -52,13 +63,16 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   const [imageSearch, setImageSearch] = useState('');
   const [isPendingRefreshTransition, startRefreshTransition] = useTransition();
   const [isPendingSearchTransition, startSearchTransition] = useTransition();
+  const baiClient = useSuspendedBackendaiClient();
+  const supportExtendedImageInfo =
+    baiClient?.supports('extended-image-info') ?? false;
 
   const { images } = useLazyLoadQuery<ImageListQuery>(
     graphql`
       query ImageListQuery {
         images {
           id
-          name
+          name @deprecatedSince(version: "24.09.1.")
           tag
           registry
           architecture
@@ -74,6 +88,13 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             min
             max
           }
+          namespace @since(version: "24.09.1.")
+          base_image_name @since(version: "24.09.1.")
+          tags @since(version: "24.09.1.") {
+            key
+            value
+          }
+          version @since(version: "24.09.1.")
         }
       }
     `,
@@ -119,139 +140,170 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         ) : null,
     },
     {
+      title: t('environment.FullImagePath'),
+      key: 'fullImagePath',
+      render: (row) => (
+        <Flex gap={'xxs'}>
+          <TextHighlighter keyword={imageSearch}>
+            {getImageFullName(row) || ''}
+          </TextHighlighter>
+          <CopyButton
+            type="text"
+            style={{ color: token.colorPrimary }}
+            copyable={{
+              text: getImageFullName(row) || '',
+            }}
+          />
+        </Flex>
+      ),
+      sorter: (a, b) => localeCompare(getImageFullName(a), getImageFullName(b)),
+    },
+    {
       title: t('environment.Registry'),
       dataIndex: 'registry',
       key: 'registry',
-      sorter: (a, b) =>
-        a?.registry && b?.registry ? a.registry.localeCompare(b.registry) : 0,
-      render: (text, row) => (
-        <TextHighlighter keyword={imageSearch}>{row.registry}</TextHighlighter>
+      sorter: (a, b) => localeCompare(a?.registry, b?.registry),
+      render: (text) => (
+        <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
       ),
     },
     {
       title: t('environment.Architecture'),
       dataIndex: 'architecture',
       key: 'architecture',
-      sorter: (a, b) =>
-        a?.architecture && b?.architecture
-          ? a.architecture.localeCompare(b.architecture)
-          : 0,
-      render: (text, row) => (
-        <TextHighlighter keyword={imageSearch}>
-          {row.architecture}
-        </TextHighlighter>
+      sorter: (a, b) => localeCompare(a?.architecture, b?.architecture),
+      render: (text) => (
+        <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
       ),
     },
-    {
-      title: t('environment.Namespace'),
-      key: 'namespace',
-      dataIndex: 'namespace',
-      sorter: (a, b) => {
-        const namespaceA = getNamespace(getImageFullName(a) || '');
-        const namespaceB = getNamespace(getImageFullName(b) || '');
-        return namespaceA && namespaceB
-          ? namespaceA.localeCompare(namespaceB)
-          : 0;
-      },
-      render: (text, row) => (
-        <TextHighlighter keyword={imageSearch}>
-          {getNamespace(getImageFullName(row) || '')}
-        </TextHighlighter>
-      ),
-    },
-    {
-      title: t('environment.Language'),
-      key: 'lang',
-      dataIndex: 'lang',
-      sorter: (a, b) => {
-        const langA = a?.name ? getLang(a?.name) : '';
-        const langB = b?.name ? getLang(b?.name) : '';
-        return langA && langB ? langA.localeCompare(langB) : 0;
-      },
-      render: (text, row) => (
-        <TextHighlighter keyword={imageSearch}>
-          {row.name ? getLang(row.name) : null}
-        </TextHighlighter>
-      ),
-    },
-    {
-      title: t('environment.Version'),
-      key: 'baseversion',
-      dataIndex: 'baseversion',
-      sorter: (a, b) => {
-        const baseversionA = getBaseVersion(getImageFullName(a) || '');
-        const baseversionB = getBaseVersion(getImageFullName(b) || '');
-        return baseversionA && baseversionB
-          ? baseversionA.localeCompare(baseversionB)
-          : 0;
-      },
-      render: (text, row) => (
-        <TextHighlighter keyword={imageSearch}>
-          {getBaseVersion(getImageFullName(row) || '')}
-        </TextHighlighter>
-      ),
-    },
-    {
-      title: t('environment.Base'),
-      key: 'baseimage',
-      dataIndex: 'baseimage',
-      sorter: (a, b) => {
-        const baseimageA =
-          !a?.tag || !a?.name ? '' : getBaseImages(a?.tag, a?.name)[0] || '';
-        const baseimageB =
-          !b?.tag || !b?.name ? '' : getBaseImages(b?.tag, b?.name)[0] || '';
-        if (baseimageA === '' && baseimageB === '') return 0;
-        if (baseimageA === '') return -1;
-        if (baseimageB === '') return 1;
-        return baseimageA.localeCompare(baseimageB);
-      },
-      render: (text, row) => (
-        <Flex direction="row" align="start">
-          {row?.tag && row?.name
-            ? getBaseImages(row.tag, row.name).map((baseImage) => (
-                <Tag color="green">
-                  <TextHighlighter keyword={imageSearch}>
-                    {baseImage}
-                  </TextHighlighter>
-                </Tag>
-              ))
-            : null}
-        </Flex>
-      ),
-    },
-    {
-      title: t('environment.Constraint'),
-      key: 'constraint',
-      dataIndex: 'constraint',
-      sorter: (a, b) => {
-        const requirementA =
-          a?.tag && b?.labels
-            ? getConstraints(
-                a?.tag,
-                a?.labels as { key: string; value: string }[],
-              )[0] || ''
-            : '';
-        const requirementB =
-          b?.tag && b?.labels
-            ? getConstraints(
-                b?.tag,
-                b?.labels as { key: string; value: string }[],
-              )[0] || ''
-            : '';
-        if (requirementA === '' && requirementB === '') return 0;
-        if (requirementA === '') return -1;
-        if (requirementB === '') return 1;
-        return requirementA.localeCompare(requirementB);
-      },
-      render: (text, row) =>
-        row?.tag ? (
-          <ConstraintTags
-            tag={row?.tag}
-            labels={row?.labels as { key: string; value: string }[]}
-            highlightKeyword={imageSearch}
-          />
-        ) : null,
-    },
+    ...(supportExtendedImageInfo
+      ? [
+          {
+            title: t('environment.Namespace'),
+            key: 'namespace',
+            dataIndex: 'namespace',
+            sorter: (a: EnvironmentImage, b: EnvironmentImage) =>
+              localeCompare(a?.namespace, b?.namespace),
+            render: (text: string) => (
+              <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
+            ),
+          },
+          {
+            title: t('environment.BaseImageName'),
+            key: 'base_image_name',
+            dataIndex: 'base_image_name',
+            sorter: (a: EnvironmentImage, b: EnvironmentImage) =>
+              localeCompare(a?.base_image_name, b?.base_image_name),
+            render: (text: string, row: EnvironmentImage) => (
+              <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
+            ),
+          },
+          {
+            title: t('environment.Version'),
+            key: 'version',
+            dataIndex: 'version',
+            sorter: (a: EnvironmentImage, b: EnvironmentImage) =>
+              localeCompare(a?.version, b?.version),
+            render: (text: string) => (
+              <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
+            ),
+          },
+          {
+            title: t('environment.Tags'),
+            key: 'tags',
+            dataIndex: 'tags',
+            render: (text: Array<{ key: string; value: string }>) => {
+              return (
+                <Flex direction="row" align="start">
+                  {_.map(text, (tag) => (
+                    <DoubleTag values={[tag.key, tag.value]} />
+                  ))}
+                </Flex>
+              );
+            },
+          },
+        ]
+      : [
+          {
+            title: t('environment.Namespace'),
+            key: 'name',
+            dataIndex: 'name',
+            sorter: (a: EnvironmentImage, b: EnvironmentImage) =>
+              localeCompare(getImageFullName(a), getImageFullName(b)),
+            render: (text: string, row: EnvironmentImage) => (
+              <TextHighlighter keyword={imageSearch}>
+                {getNamespace(getImageFullName(row) || '')}
+              </TextHighlighter>
+            ),
+          },
+          {
+            title: t('environment.Language'),
+            key: 'lang',
+            dataIndex: 'lang',
+            sorter: (a: EnvironmentImage, b: EnvironmentImage) =>
+              localeCompare(getLang(a.name ?? ''), getLang(b.name ?? '')),
+            render: (text: string, row: EnvironmentImage) => (
+              <LangTags image={getImageFullName(row) || ''} color="green" />
+            ),
+          },
+          {
+            title: t('environment.Version'),
+            key: 'baseversion',
+            dataIndex: 'baseversion',
+            sorter: (a: EnvironmentImage, b: EnvironmentImage) =>
+              localeCompare(
+                getBaseVersion(getImageFullName(a) || ''),
+                getBaseVersion(getImageFullName(b) || ''),
+              ),
+            render: (text: string, row: EnvironmentImage) => (
+              <TextHighlighter keyword={imageSearch}>
+                {getBaseVersion(getImageFullName(row) || '')}
+              </TextHighlighter>
+            ),
+          },
+          {
+            title: t('environment.Base'),
+            key: 'baseimage',
+            dataIndex: 'baseimage',
+            sorter: (a: EnvironmentImage, b: EnvironmentImage) =>
+              localeCompare(
+                getBaseImage(getBaseImage(getImageFullName(a) || '')),
+                getBaseImage(getBaseImage(getImageFullName(b) || '')),
+              ),
+            render: (text: string, row: EnvironmentImage) => (
+              <BaseImageTags image={getImageFullName(row) || ''} />
+            ),
+          },
+          {
+            title: t('environment.Constraint'),
+            key: 'constraint',
+            dataIndex: 'constraint',
+            sorter: (a: EnvironmentImage, b: EnvironmentImage) => {
+              const requirementA =
+                a?.tag && b?.labels
+                  ? getConstraints(
+                      a?.tag,
+                      a?.labels as { key: string; value: string }[],
+                    )[0] || ''
+                  : '';
+              const requirementB =
+                b?.tag && b?.labels
+                  ? getConstraints(
+                      b?.tag,
+                      b?.labels as { key: string; value: string }[],
+                    )[0] || ''
+                  : '';
+              return localeCompare(requirementA, requirementB);
+            },
+            render: (text: string, row: EnvironmentImage) =>
+              row?.tag ? (
+                <ConstraintTags
+                  tag={row.tag}
+                  labels={row?.labels as { key: string; value: string }[]}
+                />
+              ) : null,
+          },
+        ]),
     {
       title: t('environment.Digest'),
       dataIndex: 'digest',
@@ -294,14 +346,6 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             e.stopPropagation();
           }}
         >
-          <CopyButton
-            type="text"
-            defaultIcon={<CopyOutlined />}
-            style={{ color: token.colorPrimary }}
-            copyable={{
-              text: getImageFullName(row) || '',
-            }}
-          ></CopyButton>
           <Button
             type="text"
             icon={

@@ -858,7 +858,7 @@
     "Action": "Tindakan",
     "Base": "Pangkalan",
     "Constraint": "Kekangan",
-    "ResourceLimit": "Had Sumber",
+    "ResourceLimit": "Had sumber",
     "DescDeleteAppInfo": "Anda akan memadamkan maklumat aplikasi:",
     "DescDeleteImage": "Anda akan memadamkan gambar:",
     "DescSignificantInstallTime": "Proses ini memerlukan masa muat turun yang ketara.",
@@ -897,7 +897,10 @@
     "CheckImageInstallation": "Memasang imej?",
     "InstalledImagesAreExcluded": "Imej yang dipasang dikecualikan.",
     "DescDownloadImage": "__NOT_TRANSLATED__",
-    "DescSignificantDownloadTime": "__NOT_TRANSLATED__"
+    "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
+    "BaseImageName": "Nama imej asas",
+    "Tags": "Tag",
+    "FullImagePath": "Laluan imej penuh"
   },
   "resourcePreset": {
     "ResourcePresets": "Pratetap Sumber",

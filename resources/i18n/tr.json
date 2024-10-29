@@ -858,7 +858,7 @@
     "Action": "Aksiyon",
     "Base": "baz",
     "Constraint": "Kısıtlama",
-    "ResourceLimit": "Kaynak Sınırı",
+    "ResourceLimit": "Kaynak sınırı",
     "DescDeleteAppInfo": "Uygulama bilgilerini silmek üzeresiniz:",
     "DescDeleteImage": "Resim(ler)i silmek üzeresiniz:",
     "DescSignificantInstallTime": "Bu işlem önemli indirme süresi gerektirir.",
@@ -897,7 +897,10 @@
     "CheckImageInstallation": "Bir görüntü mü yüklüyorsunuz?",
     "InstalledImagesAreExcluded": "Yüklü görüntüler hariçtir.",
     "DescDownloadImage": "__NOT_TRANSLATED__",
-    "DescSignificantDownloadTime": "__NOT_TRANSLATED__"
+    "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
+    "BaseImageName": "Temel resim adı",
+    "Tags": "Etiketler",
+    "FullImagePath": "Tam görüntü yolu"
   },
   "resourcePreset": {
     "ResourcePresets": "Kaynak Ön Ayarları",

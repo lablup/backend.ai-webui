@@ -310,18 +310,17 @@ export const useBackendAIImageMetaData = () => {
       },
       tagAlias: (tag: string) => {
         let metadataTagAlias = metadata?.tagAlias[tag];
-        if (!metadataTagAlias && metadata?.tagReplace) {
-          for (const [key, replaceString] of Object.entries(
-            metadata.tagReplace,
-          )) {
+        metadataTagAlias = _.reduce(
+          _.entries(metadata.tagReplace),
+          (acc, [key, replaceString]) => {
             const pattern = new RegExp(key);
-            if (pattern.test(tag)) {
-              metadataTagAlias = tag.replace(pattern, replaceString);
-              break;
-            }
-          }
-        }
-        return metadataTagAlias || tag;
+            return pattern.test(tag)
+              ? _.startCase(_.replace(tag, pattern, replaceString))
+              : acc;
+          },
+          _.startCase(tag),
+        );
+        return metadataTagAlias;
       },
     },
   ] as const;
