@@ -32,7 +32,7 @@ const DoubleTag: React.FC<{
   return (
     <Flex direction="row">
       {_.map(objectValues, (objValue, idx) => {
-        return (
+        return !_.isEmpty(objValue.label) ? (
           <Tag
             key={idx}
             style={
@@ -44,7 +44,7 @@ const DoubleTag: React.FC<{
           >
             {objValue.label}
           </Tag>
-        );
+        ) : null;
       })}
     </Flex>
   );

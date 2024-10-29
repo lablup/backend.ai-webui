@@ -1011,7 +1011,10 @@
     "CustomizedImageSuccessfullyDeleted": "ลบอิมเมจที่กำหนดเองสำเร็จแล้ว",
     "DescImageResourceModified": "แก้ไขขีดจำกัดทรัพยากรสำเร็จแล้ว",
     "DescImagePortsModified": "แก้ไขพอร์ตอิมเมจสำเร็จแล้ว",
-    "ModifyImageResourceLimitReinstallRequired": "<p>หากคุณแก้ไขอิมเมจที่ได้รับการติดตั้งแล้ว คุณจะต้องติดตั้งอิมเมจใหม่</p><p>การแก้ไขจะไม่มีผลจนกว่าจะมีการติดตั้งอิมเมจใหม่\n</p>"
+    "ModifyImageResourceLimitReinstallRequired": "<p>หากคุณแก้ไขอิมเมจที่ได้รับการติดตั้งแล้ว คุณจะต้องติดตั้งอิมเมจใหม่</p><p>การแก้ไขจะไม่มีผลจนกว่าจะมีการติดตั้งอิมเมจใหม่\n</p>",
+    "BaseImageName": "ชื่อภาพฐาน",
+    "Tags": "แท็ก",
+    "FullImagePath": "เส้นทางภาพเต็ม"
   },
   "resourcePreset": {
     "ResourcePresets": "ค่าที่กำหนดไว้ล่วงหน้าของทรัพยากร",

@@ -1013,7 +1013,10 @@
     "CheckImageInstallation": "다음 이미지를 설치하시겠습니까?",
     "SearchImages": "이미지 검색",
     "DescDownloadImage": "__NOT_TRANSLATED__",
-    "DescSignificantDownloadTime": "__NOT_TRANSLATED__"
+    "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
+    "BaseImageName": "기본 이미지 이름",
+    "Tags": "태그",
+    "FullImagePath": "전체 이미지 경로"
   },
   "resourcePreset": {
     "ResourcePresets": "자원 프리셋",

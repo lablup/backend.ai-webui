@@ -518,7 +518,7 @@
     "ProtocolMustBeOneOfSupported": "Protokollan on oltava jokin seuraavista: 'http', 'tcp', 'preopen' ja 'pty'.",
     "Registries": "Rekisterit",
     "Registry": "Rekisteri",
-    "ResourceLimit": "Resurssiraja",
+    "ResourceLimit": "Resurssirajoitus",
     "ResourcePresets": "Resurssien esiasetukset",
     "SelectedImagesAlreadyInstalled": "Valittu kuva (valitut kuvat) on jo asennettu tai Ei mitään. Tarkista uudelleen.",
     "SelectedImagesNotInstalled": "Valittuja kuvia ei ole asennettu. Tarkista uudelleen.",
@@ -536,7 +536,10 @@
     "CheckImageInstallation": "Kuvan asentaminen?",
     "InstalledImagesAreExcluded": "Asennettuja kuvia ei oteta huomioon.",
     "DescDownloadImage": "__NOT_TRANSLATED__",
-    "DescSignificantDownloadTime": "__NOT_TRANSLATED__"
+    "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
+    "BaseImageName": "Peruskuvan nimi",
+    "Tags": "Tunnisteet",
+    "FullImagePath": "Koko kuvan polku"
   },
   "explorer": {
     "InputTooShort": "InputTooShort",

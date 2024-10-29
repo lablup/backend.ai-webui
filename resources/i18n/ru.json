@@ -897,7 +897,10 @@
     "CheckImageInstallation": "Установка образа?",
     "InstalledImagesAreExcluded": "Установленные образы исключены.",
     "DescDownloadImage": "__NOT_TRANSLATED__",
-    "DescSignificantDownloadTime": "__NOT_TRANSLATED__"
+    "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
+    "BaseImageName": "Имя базового изображения",
+    "Tags": "Теги",
+    "FullImagePath": "Полный путь к изображению"
   },
   "resourcePreset": {
     "ResourcePresets": "Предустановки ресурсов",
