@@ -345,8 +345,9 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             render: (text: string, row: EnvironmentImage) =>
               row?.tag ? (
                 <ConstraintTags
-                  tag={row.tag}
-                  labels={row?.labels as { key: string; value: string }[]}
+                  tag={row?.tag}
+                  labels={row?.labels as Array<{ key: string; value: string }>}
+                  highlightKeyword={imageSearch}
                 />
               ) : null,
           },
