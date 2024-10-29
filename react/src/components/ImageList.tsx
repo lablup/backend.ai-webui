@@ -66,6 +66,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
   const [isPendingRefreshTransition, startRefreshTransition] = useTransition();
   const [isPendingSearchTransition, startSearchTransition] = useTransition();
+  const [, { tagAlias }] = useBackendAIImageMetaData();
   const baiClient = useSuspendedBackendaiClient();
   const supportExtendedImageInfo = baiClient?.supports('extended-image-info');
 
@@ -197,7 +198,14 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             sorter: (a: EnvironmentImage, b: EnvironmentImage) =>
               localeCompare(a?.base_image_name, b?.base_image_name),
             render: (text: string, row: EnvironmentImage) => (
-              <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
+              // Replace with this code after using ImageNode instead of Image
+              // <AliasedBaseImageName
+              //   imageFrgmt={row}
+              //   highlightKeyword={imageSearch}
+              // />
+              <TextHighlighter keyword={imageSearch}>
+                {tagAlias(text)}
+              </TextHighlighter>
             ),
           },
           {
@@ -310,11 +318,10 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
       title: t('environment.Digest'),
       dataIndex: 'digest',
       key: 'digest',
-      sorter: (a, b) =>
-        a?.digest && b?.digest ? a.digest.localeCompare(b.digest) : 0,
-      render: (text, row) => (
+      sorter: (a, b) => localeCompare(a?.digest, b?.digest),
+      render: (text) => (
         <Typography.Text ellipsis={{ tooltip: true }} style={{ maxWidth: 200 }}>
-          <TextHighlighter keyword={imageSearch}>{row.digest}</TextHighlighter>
+          <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
         </Typography.Text>
       ),
     },
