@@ -108,7 +108,8 @@ describe('useBackendAIImageMetaData', () => {
 
     const { key, tags } = getImageMeta(
       getImageFullName({
-        name: 'abc/def/training',
+        namespace: 'abc/def/training',
+        name: undefined,
         humanized_name: 'abc/def/training',
         tag: '01-py3-abc-v1',
         registry: '192.168.0.1:7080',

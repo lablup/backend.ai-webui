@@ -64,8 +64,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   const [isPendingRefreshTransition, startRefreshTransition] = useTransition();
   const [isPendingSearchTransition, startSearchTransition] = useTransition();
   const baiClient = useSuspendedBackendaiClient();
-  const supportExtendedImageInfo =
-    baiClient?.supports('extended-image-info') ?? false;
+  const supportExtendedImageInfo = baiClient?.supports('extended-image-info');
 
   const { images } = useLazyLoadQuery<ImageListQuery>(
     graphql`
