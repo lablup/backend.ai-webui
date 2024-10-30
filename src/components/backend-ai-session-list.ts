@@ -3893,6 +3893,31 @@ ${rowData.item[this.sessionNameField]}</pre
                   </div>
                 `
               : html``}
+            ${rowData.item.gaudi2_slot &&
+            parseFloat(rowData.item.gaudi2_slot) > 0
+              ? html`
+                  <div class="vertical start-justified layout">
+                    <div class="usage-items">
+                      Gaudi 2(util)
+                      ${rowData.item.live_stat?.gaudi2_util
+                        ? (
+                            rowData.item.live_stat?.gaudi2_util?.ratio * 100
+                          ).toFixed(1)
+                        : `-`}
+                      %
+                    </div>
+                    <div class="horizontal start-justified center layout">
+                      <lablup-progress-bar
+                        class="usage"
+                        progress="${rowData.item?.live_stat?.gaudi2_util
+                          ?.current /
+                          rowData.item?.live_stat?.gaudi2_util?.capacity || 0}"
+                        description=""
+                      ></lablup-progress-bar>
+                    </div>
+                  </div>
+                `
+              : html``}
             <div class="horizontal start-justified center layout">
               <div class="usage-items">I/O</div>
               <div
