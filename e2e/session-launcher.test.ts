@@ -8,7 +8,9 @@ import {
 import { test, expect } from '@playwright/test';
 
 test.describe('NEO Sessions Launcher', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page }, testInfo) => {
+    // session test code needs more time to run
+    testInfo.setTimeout(60_000);
     await loginAsUser(page);
   });
 

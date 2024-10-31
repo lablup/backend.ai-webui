@@ -134,12 +134,6 @@ test.describe.parallel('config.toml', () => {
       await page
         .getByRole('button', { name: '2 Environments & Resource' })
         .click();
-      await page
-        .locator(
-          '.ant-form-item-control-input-content > .ant-select > .ant-select-selector',
-        )
-        .first()
-        .click();
       await page.getByLabel('Environments / Version').fill('AF');
       await page
         .locator('.rc-virtual-list-holder-inner > div:nth-child(2)')
