@@ -198,7 +198,9 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             sorter: (a: EnvironmentImage, b: EnvironmentImage) =>
               localeCompare(a?.base_image_name, b?.base_image_name),
             render: (text: string, row: EnvironmentImage) => (
-              <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
+              <TextHighlighter keyword={imageSearch}>
+                {tagAlias(text)}
+              </TextHighlighter>
             ),
           },
           {
