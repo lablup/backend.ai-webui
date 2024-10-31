@@ -50,6 +50,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
       getBaseImages,
       getConstraints,
       getBaseImage,
+      tagAlias,
     },
   ] = useBackendAIImageMetaData();
   const { token } = theme.useToken();
