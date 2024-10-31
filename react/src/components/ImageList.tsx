@@ -214,12 +214,54 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             title: t('environment.Tags'),
             key: 'tags',
             dataIndex: 'tags',
-            render: (text: Array<{ key: string; value: string }>) => {
+            render: (
+              text: Array<{ key: string; value: string }>,
+              row: EnvironmentImage,
+            ) => {
               return (
+                // <AliasedImageDoubleTags
+                //   imageFrgmt={row}
+                //   label={undefined}
+                //   highlightKeyword={imageSearch}
+                // />
                 <Flex direction="row" align="start">
-                  {_.map(text, (tag) => (
-                    <DoubleTag values={[tag.key, tag.value]} />
-                  ))}
+                  {_.map(text, (tag: { key: string; value: string }) => {
+                    const isCustomized = _.includes(tag.key, 'customized_');
+                    const tagValue = isCustomized
+                      ? _.find(row?.labels, {
+                          key: 'ai.backend.customized-image.name',
+                        })?.value
+                      : tag.value;
+                    return (
+                      <DoubleTag
+                        key={tag.key}
+                        values={[
+                          {
+                            label: (
+                              <TextHighlighter
+                                keyword={imageSearch}
+                                key={tag.key}
+                              >
+                                {tagAlias(tag.key)}
+                              </TextHighlighter>
+                            ),
+                            color: isCustomized ? 'cyan' : 'blue',
+                          },
+                          {
+                            label: (
+                              <TextHighlighter
+                                keyword={imageSearch}
+                                key={tagValue}
+                              >
+                                {tagValue}
+                              </TextHighlighter>
+                            ),
+                            color: isCustomized ? 'cyan' : 'blue',
+                          },
+                        ]}
+                      />
+                    );
+                  })}
                 </Flex>
               );
             },
