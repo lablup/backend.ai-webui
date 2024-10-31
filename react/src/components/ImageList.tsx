@@ -228,6 +228,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
                 //   highlightKeyword={imageSearch}
                 // />
                 <Flex direction="row" align="start">
+                  {/* TODO: replace this with AliasedImageDoubleTags after image list query with ImageNode is implemented. */}
                   {_.map(text, (tag: { key: string; value: string }) => {
                     const isCustomized = _.includes(tag.key, 'customized_');
                     const tagValue = isCustomized

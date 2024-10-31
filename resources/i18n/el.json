@@ -283,7 +283,8 @@
       "FolderAliasOverlappingToAutoMount": "Υπάρχει ένας φάκελος αυτόματης προσάρτησης με το ίδιο όνομα.",
       "InsufficientAllocationOfResourcesWarning": "Οι κατανεμητέοι πόροι πέφτουν κάτω από τον ελάχιστο απαιτούμενο πόρο στην επιλεγμένη εικόνα.",
       "RecentHistory": "Πρόσφατη ιστορία",
-      "CreatedAt": "Δημιουργήθηκε στο"
+      "CreatedAt": "Δημιουργήθηκε στο",
+      "Tags": "Ετικέτες"
     },
     "Preparing": "Προετοιμασία ...",
     "PreparingSession": "Προετοιμασία συνεδρίας ...",

@@ -283,7 +283,8 @@
       "FolderAliasOverlappingToAutoMount": "同名の自動マウントフォルダが存在する。",
       "InsufficientAllocationOfResourcesWarning": "割り当て可能なリソースが、選択したイメージに必要な最小リソースを下回ります。",
       "RecentHistory": "最近の歴史",
-      "CreatedAt": "作成日"
+      "CreatedAt": "作成日",
+      "Tags": "タグ"
     },
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",

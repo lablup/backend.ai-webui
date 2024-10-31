@@ -283,7 +283,8 @@
       "FolderAliasOverlappingToAutoMount": "Folder auto-lekap dengan nama yang sama wujud.",
       "InsufficientAllocationOfResourcesWarning": "Sumber yang boleh diperuntukkan berada di bawah sumber minimum yang diperlukan dalam imej yang dipilih.",
       "RecentHistory": "Sejarah Terkini",
-      "CreatedAt": "Dicipta Pada"
+      "CreatedAt": "Dicipta Pada",
+      "Tags": "Tag"
     },
     "Preparing": "Menyiapkan ...",
     "PreparingSession": "Menyiapkan sesi ...",

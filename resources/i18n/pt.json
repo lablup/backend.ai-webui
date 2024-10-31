@@ -283,7 +283,8 @@
       "FolderAliasOverlappingToAutoMount": "Existe uma pasta de montagem automática com o mesmo nome.",
       "InsufficientAllocationOfResourcesWarning": "Os recursos alocáveis ​​ficam abaixo do recurso mínimo exigido na imagem selecionada.",
       "RecentHistory": "História recente",
-      "CreatedAt": "Criado em"
+      "CreatedAt": "Criado em",
+      "Tags": "Etiquetas"
     },
     "Preparing": "Preparando...",
     "PreparingSession": "Preparando sessão ...",

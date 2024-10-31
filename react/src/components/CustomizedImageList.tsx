@@ -26,7 +26,7 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { useLocalStorageState } from 'ahooks';
-import { App, Button, Popconfirm, Table, theme, Typography } from 'antd';
+import { App, Button, Input, Popconfirm, Table, theme, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';

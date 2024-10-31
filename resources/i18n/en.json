@@ -297,7 +297,8 @@
       "FolderAliasOverlappingToAutoMount": "An auto-mount folder with the same name exists.",
       "InsufficientAllocationOfResourcesWarning": "Allocatable resources falls below the minimum resource required in the selected image.",
       "RecentHistory": "Recent History",
-      "CreatedAt": "CreatedAt"
+      "CreatedAt": "CreatedAt",
+      "Tags": "Tags"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",

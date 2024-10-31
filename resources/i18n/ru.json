@@ -283,7 +283,8 @@
       "FolderAliasOverlappingToAutoMount": "Существует папка автомонтирования с таким же именем.",
       "InsufficientAllocationOfResourcesWarning": "Выделяемые ресурсы ниже минимального ресурса, необходимого для выбранного изображения.",
       "RecentHistory": "Новейшая история",
-      "CreatedAt": "Создано в"
+      "CreatedAt": "Создано в",
+      "Tags": "Теги"
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",

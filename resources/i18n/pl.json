@@ -283,7 +283,8 @@
       "FolderAliasOverlappingToAutoMount": "Istnieje folder automatycznego montażu o tej samej nazwie.",
       "InsufficientAllocationOfResourcesWarning": "Zasoby, które można przydzielić, są mniejsze niż minimalne zasoby wymagane w wybranym obrazie.",
       "RecentHistory": "Najnowsza historia",
-      "CreatedAt": "Utworzono o godz"
+      "CreatedAt": "Utworzono o godz",
+      "Tags": "Tagi"
     },
     "Preparing": "Przygotowuję...",
     "PreparingSession": "Przygotowuję sesję...",

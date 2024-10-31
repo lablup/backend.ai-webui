@@ -283,7 +283,8 @@
       "FolderAliasOverlappingToAutoMount": "Es existiert ein Auto-Mount-Ordner mit demselben Namen.",
       "InsufficientAllocationOfResourcesWarning": "Die zuweisbaren Ressourcen liegen unter der im ausgewählten Bild erforderlichen Mindestressource.",
       "RecentHistory": "Jüngere Geschichte",
-      "CreatedAt": "Erstellt am"
+      "CreatedAt": "Erstellt am",
+      "Tags": "Schlagworte"
     },
     "Preparing": "Vorbereitung...",
     "PreparingSession": "Sitzung vorbereiten...",

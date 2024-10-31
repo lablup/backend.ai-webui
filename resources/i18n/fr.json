@@ -283,7 +283,8 @@
       "FolderAliasOverlappingToAutoMount": "Il existe un dossier de montage automatique portant le même nom.",
       "InsufficientAllocationOfResourcesWarning": "Les ressources allouables sont inférieures à la ressource minimale requise dans l'image sélectionnée.",
       "RecentHistory": "Histoire récente",
-      "CreatedAt": "Créé à"
+      "CreatedAt": "Créé à",
+      "Tags": "Balises"
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",

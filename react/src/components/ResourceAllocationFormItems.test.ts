@@ -46,6 +46,9 @@ describe('getAllocatablePresetNames', () => {
     registry: 'registry1',
     tag: 'tag1',
     resource_limits: [{ key: 'cuda.shares', min: '1', max: '1' }],
+    base_image_name: undefined,
+    tags: undefined,
+    version: undefined,
   };
 
   it('should return presets when currentImage has accelerator limits', () => {
