@@ -75,7 +75,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
       query ImageListQuery {
         images {
           id
-          name @deprecatedSince(version: "24.09.1.")
+          name @deprecatedSince(version: "24.09.1")
           tag
           registry
           architecture
@@ -91,13 +91,13 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             min
             max
           }
-          namespace @since(version: "24.09.1.")
-          base_image_name @since(version: "24.09.1.")
-          tags @since(version: "24.09.1.") {
+          namespace @since(version: "24.09.1")
+          base_image_name @since(version: "24.09.1")
+          tags @since(version: "24.09.1") {
             key
             value
           }
-          version @since(version: "24.09.1.")
+          version @since(version: "24.09.1")
         }
       }
     `,

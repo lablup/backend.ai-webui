@@ -25,7 +25,7 @@ const AliasedImageDoubleTags: React.FC<AliasedImageDoubleTagsProps> = ({
           key
           value
         }
-        tags @since(version: "24.09.1.") {
+        tags @since(version: "24.09.1") {
           key
           value
         }

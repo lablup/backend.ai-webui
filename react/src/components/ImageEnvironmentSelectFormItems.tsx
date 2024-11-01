@@ -112,7 +112,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
       query ImageEnvironmentSelectFormItemsQuery($installed: Boolean) {
         images(is_installed: $installed) {
           id
-          name @deprecatedSince(version: "24.09.1.")
+          name @deprecatedSince(version: "24.09.1")
           humanized_name
           tag
           registry
@@ -128,13 +128,13 @@ const ImageEnvironmentSelectFormItems: React.FC<
             key
             value
           }
-          namespace @since(version: "24.09.1.")
-          base_image_name @since(version: "24.09.1.")
-          tags @since(version: "24.09.1.") {
+          namespace @since(version: "24.09.1")
+          base_image_name @since(version: "24.09.1")
+          tags @since(version: "24.09.1") {
             key
             value
           }
-          version @since(version: "24.09.1.")
+          version @since(version: "24.09.1")
         }
       }
     `,

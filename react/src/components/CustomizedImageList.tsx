@@ -78,7 +78,7 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
       query CustomizedImageListQuery {
         customized_images {
           id
-          name @deprecatedSince(version: "24.09.1.")
+          name @deprecatedSince(version: "24.09.1")
           humanized_name
           tag
           registry
@@ -89,13 +89,13 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
             value
           }
           supported_accelerators
-          namespace @since(version: "24.09.1.")
-          base_image_name @since(version: "24.09.1.")
-          tags @since(version: "24.09.1.") {
+          namespace @since(version: "24.09.1")
+          base_image_name @since(version: "24.09.1")
+          tags @since(version: "24.09.1") {
             key
             value
           }
-          version @since(version: "24.09.1.")
+          version @since(version: "24.09.1")
           ...AliasedImageDoubleTagsFragment
         }
       }
