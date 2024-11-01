@@ -434,8 +434,10 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   const imageFilterValues = useMemo(() => {
     return defaultSortedImages?.map((image) => {
       return {
-        installed: image?.installed ? t('environment.Installed') : '',
-        namespace: getNamespace(getImageFullName(image) || ''),
+        namespace: supportExtendedImageInfo ? image?.namespace : image?.name,
+        fullName: getImageFullName(image) || '',
+        digest: image?.digest || '',
+        // ------------ need only before 24.09.1 ------------
         lang: image?.name ? getLang(image.name) : '',
         baseversion: getBaseVersion(getImageFullName(image) || ''),
         baseimage:
@@ -450,7 +452,12 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         isCustomized: image?.tag
           ? image.tag.indexOf('customized') !== -1
           : false,
-        fullName: getImageFullName(image) || '',
+        // -------------------------------------------------
+        // ------------ need only after 24.09.1 ------------
+        baseImageName: supportExtendedImageInfo ? image?.base_image_name : '',
+        tags: supportExtendedImageInfo ? image?.tags : [],
+        version: supportExtendedImageInfo ? image?.version : '',
+        // -------------------------------------------------
       };
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -465,7 +472,6 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         if (['digest', 'architecture', 'registry'].includes(key))
           return regExp.test(_.toString(value));
         const curFilterValues = imageFilterValues[idx] || {};
-        if (key === 'installed') return regExp.test(curFilterValues.installed);
         const baseVersionMatch = regExp.test(curFilterValues.baseversion);
         const baseImagesMatch = _.some(curFilterValues.baseimage, (value) =>
           regExp.test(value),
@@ -478,8 +484,15 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           ? regExp.test('customized')
           : false;
         const langMatch = regExp.test(curFilterValues.lang);
-        const namespaceMatch = regExp.test(curFilterValues.namespace);
+        const namespaceMatch = regExp.test(curFilterValues.namespace || '');
         const fullNameMatch = regExp.test(curFilterValues.fullName);
+        const tagsMatch = _.some(
+          curFilterValues.tags,
+          (tag: { key: string; value: string }) =>
+            regExp.test(tag.key) || regExp.test(tag.value),
+        );
+        const versionMatch = regExp.test(curFilterValues.version || '');
+        const digestMatch = regExp.test(curFilterValues.digest);
         return (
           baseVersionMatch ||
           baseImagesMatch ||
@@ -487,7 +500,10 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           langMatch ||
           namespaceMatch ||
           customizedMatch ||
-          fullNameMatch
+          fullNameMatch ||
+          tagsMatch ||
+          versionMatch ||
+          digestMatch
         );
       });
     });
