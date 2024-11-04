@@ -41,7 +41,7 @@ const ResizableTitle = (
   // This is a workaround for the initial width of resizable columns if the width is not specified
   useEffect(() => {
     if (wrapRef.current && _.isUndefined(width)) {
-      onResize(undefined, {
+      onResize?.(undefined, {
         size: {
           width: wrapRef.current.offsetWidth,
           height: wrapRef.current.offsetHeight,
