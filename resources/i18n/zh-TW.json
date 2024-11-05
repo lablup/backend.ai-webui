@@ -292,7 +292,7 @@
     "Others": "其他",
     "exportCSV": "導出 CSV",
     "Terminate": "終止",
-    "SessionInfo": "會話信息",
+    "SessionInfo": "会议信息",
     "Status": "地位",
     "Configuration": "配置",
     "core": "核",
@@ -420,7 +420,8 @@
     "WarningForceTerminateSessions": "警告：強制終止會話",
     "ForceTerminateWarningMsg2": "僅當狀態在不合理的長時間內沒有發生變化時才執行。",
     "ForceTerminateWarningMsg3": "此操作不會刪除代理程式上的實際容器。\n可能需要手動清潔。",
-    "ContainerToCleanUp": "需要清理的容器"
+    "ContainerToCleanUp": "需要清理的容器",
+    "SessionNotFound": "您没有访问该会话的权限或该会话不存在。"
   },
   "button": {
     "Cancel": "取消",

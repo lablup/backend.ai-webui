@@ -420,7 +420,8 @@
     "WarningForceTerminateSessions": "Amaran: Tamatkan Sesi Paksa",
     "ForceTerminateWarningMsg2": "Laksanakan hanya apabila keadaan tidak berubah untuk tempoh masa yang tidak munasabah.",
     "ForceTerminateWarningMsg3": "Tindakan ini tidak memadamkan bekas sebenar pada ejen. \nPembersihan manual mungkin diperlukan.",
-    "ContainerToCleanUp": "Bekas untuk dibersihkan"
+    "ContainerToCleanUp": "Bekas untuk dibersihkan",
+    "SessionNotFound": "Anda tidak mempunyai kebenaran untuk mengakses sesi ini atau sesi tidak wujud."
   },
   "button": {
     "Cancel": "Batal",

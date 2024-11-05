@@ -31,5 +31,6 @@ module.exports = {
     // https://www.typescriptlang.org/docs/handbook/declaration-files/do-s-and-don-ts.html#number-string-boolean-symbol-and-object
     DateTime: 'string',
     UUID: 'string',
+    JSONString: 'string',
   },
 };

@@ -292,7 +292,7 @@
     "Others": "Andere",
     "exportCSV": "CSV-Datei exportieren",
     "Terminate": "Beenden",
-    "SessionInfo": "Sitzungsinfo",
+    "SessionInfo": "Infos zur Sitzung",
     "Status": "Status",
     "Configuration": "Aufbau",
     "core": "Ader",
@@ -420,7 +420,8 @@
     "WarningForceTerminateSessions": "Warnung: Beendigung der Sitzung(en) erzwingen",
     "ForceTerminateWarningMsg2": "Nur ausführen, wenn sich der Zustand über einen unangemessen langen Zeitraum nicht ändert.",
     "ForceTerminateWarningMsg3": "Durch diese Aktion werden die tatsächlichen Container auf dem/den Agent(en) nicht gelöscht. \nMöglicherweise ist eine manuelle Bereinigung erforderlich.",
-    "ContainerToCleanUp": "Behälter zum Aufräumen"
+    "ContainerToCleanUp": "Behälter zum Aufräumen",
+    "SessionNotFound": "Sie haben keine Zugriffsberechtigung für diese Sitzung oder die Sitzung existiert nicht."
   },
   "button": {
     "Cancel": "Stornieren",

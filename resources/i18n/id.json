@@ -421,7 +421,8 @@
     "WarningForceTerminateSessions": "Peringatan: Paksa Mengakhiri Sesi",
     "ForceTerminateWarningMsg2": "Jalankan hanya ketika keadaan tidak berubah dalam jangka waktu yang terlalu lama.",
     "ForceTerminateWarningMsg3": "Tindakan ini tidak menghapus penampung sebenarnya pada agen. \nPembersihan manual mungkin diperlukan.",
-    "ContainerToCleanUp": "Wadah yang harus dibersihkan"
+    "ContainerToCleanUp": "Wadah yang harus dibersihkan",
+    "SessionNotFound": "Anda tidak memiliki izin untuk mengakses sesi ini atau sesi tersebut tidak ada."
   },
   "button": {
     "Cancel": "Batalkan",

@@ -84,6 +84,26 @@ export const useAnonymousBackendaiClient = ({
   return client;
 };
 
+export type BackendAIClient = {
+  vfolder: {
+    list: (path: string) => Promise<any>;
+    list_hosts: () => Promise<any>;
+    list_all_hosts: () => Promise<any>;
+    list_files: (path: string, id: string) => Promise<any>;
+    list_allowed_types: () => Promise<string[]>;
+    clone: (input: any, name: string) => Promise<any>;
+  };
+  supports: (feature: string) => boolean;
+  [key: string]: any;
+  _config: BackendAIConfig;
+  isManagerVersionCompatibleWith: (version: string) => boolean;
+  utils: {
+    elapsedTime: (
+      start: string | Date | number,
+      end?: string | Date | number | null,
+    ) => string;
+  };
+};
 export const useSuspendedBackendaiClient = () => {
   const { data: client } = useSuspenseTanQuery<any>({
     queryKey: ['backendai-client-for-suspense'],
@@ -112,20 +132,7 @@ export const useSuspendedBackendaiClient = () => {
     // enabled: false,
   });
 
-  return client as {
-    vfolder: {
-      list: (path: string) => Promise<any>;
-      list_hosts: () => Promise<any>;
-      list_all_hosts: () => Promise<any>;
-      list_files: (path: string, id: string) => Promise<any>;
-      list_allowed_types: () => Promise<string[]>;
-      clone: (input: any, name: string) => Promise<any>;
-    };
-    supports: (feature: string) => boolean;
-    [key: string]: any;
-    _config: BackendAIConfig;
-    isManagerVersionCompatibleWith: (version: string) => boolean;
-  };
+  return client as BackendAIClient;
 };
 
 interface ImageMetadata {

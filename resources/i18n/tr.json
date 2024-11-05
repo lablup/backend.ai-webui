@@ -292,7 +292,7 @@
     "Others": "Diğerleri",
     "exportCSV": "CSV'yi dışa aktar",
     "Terminate": "sonlandırmak",
-    "SessionInfo": "OturumBilgisi",
+    "SessionInfo": "Oturum Bilgileri",
     "Status": "Durum",
     "Configuration": "Yapılandırma",
     "core": "çekirdek",
@@ -420,7 +420,8 @@
     "WarningForceTerminateSessions": "Uyarı: Oturumları Sonlandırmaya Zorla",
     "ForceTerminateWarningMsg2": "Yalnızca durum makul olmayan uzun bir süre boyunca değişmediğinde yürütün.",
     "ForceTerminateWarningMsg3": "Bu eylem, aracı(lar)daki gerçek kapsayıcıları silmez. \nManuel temizleme gerekebilir.",
-    "ContainerToCleanUp": "Temizlenecek konteyner(ler)"
+    "ContainerToCleanUp": "Temizlenecek konteyner(ler)",
+    "SessionNotFound": "Bu oturuma erişim izniniz yok veya oturum mevcut değil."
   },
   "button": {
     "Cancel": "İptal etmek",

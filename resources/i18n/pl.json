@@ -420,7 +420,8 @@
     "WarningForceTerminateSessions": "Ostrzeżenie: wymuś zakończenie sesji",
     "ForceTerminateWarningMsg2": "Wykonaj tylko wtedy, gdy stan nie zmienia się przez nieracjonalnie długi okres czasu.",
     "ForceTerminateWarningMsg3": "Ta akcja nie usuwa rzeczywistych kontenerów agentów. \nMoże być konieczne ręczne czyszczenie.",
-    "ContainerToCleanUp": "Pojemnik(i) do oczyszczenia"
+    "ContainerToCleanUp": "Pojemnik(i) do oczyszczenia",
+    "SessionNotFound": "Nie masz uprawnień dostępu do tej sesji lub sesja nie istnieje."
   },
   "button": {
     "Cancel": "Anuluj",

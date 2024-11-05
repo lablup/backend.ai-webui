@@ -1874,7 +1874,7 @@ export const ResourceNumbersOfSession: React.FC<FormOrResourceRequired> = ({
       {_.map(
         _.omit(resource, 'shmem', 'accelerator', 'acceleratorType'),
         (value, type) => {
-          return (
+          return value === '0' ? null : (
             <ResourceNumber
               key={type}
               // @ts-ignore

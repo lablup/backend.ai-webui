@@ -138,6 +138,8 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
     type as KnownAcceleratorResourceSlotName
   ] ?? <MicrochipIcon />;
 
+  const { mergedResourceSlots } = useResourceSlotsDetails();
+
   const content =
     typeof targetIcon === 'string' ? (
       <img
@@ -156,7 +158,9 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
     );
 
   return showTooltip ? (
-    <Tooltip title={type}>{content}</Tooltip>
+    <Tooltip title={mergedResourceSlots[type]?.description || type}>
+      {content}
+    </Tooltip>
   ) : (
     <Flex style={{ pointerEvents: 'none' }}>{content}</Flex>
   );

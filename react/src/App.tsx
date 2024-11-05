@@ -57,6 +57,10 @@ const InteractiveLoginPage = React.lazy(
 );
 const ImportAndRunPage = React.lazy(() => import('./pages/ImportAndRunPage'));
 
+const ComputeSessionList = React.lazy(
+  () => import('./components/ComputeSessionList'),
+);
+
 const RedirectToSummary = () => {
   useSuspendedBackendaiClient();
   const pathName = '/summary';
@@ -139,6 +143,11 @@ const router = createBrowserRouter([
       {
         path: '/job',
         handle: { labelKey: 'webui.menu.Sessions' },
+        element: (
+          <BAIErrorBoundary>
+            <ComputeSessionList />
+          </BAIErrorBoundary>
+        ),
       },
       {
         path: '/serving',

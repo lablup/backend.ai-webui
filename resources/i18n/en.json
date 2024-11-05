@@ -308,7 +308,7 @@
     "Others": "Others",
     "exportCSV": "export CSV",
     "Terminate": "Terminate",
-    "SessionInfo": "SessionInfo",
+    "SessionInfo": "Session Info",
     "Status": "Status",
     "StatusInfo": "Status Info",
     "StatusDetail": "Detail",
@@ -434,7 +434,8 @@
     "WarningForceTerminateSessions": "Warning: Force Terminate Session(s)",
     "ForceTerminateWarningMsg2": "Execute only when the state does not change for an unreasonably long period of time.",
     "ForceTerminateWarningMsg3": "This action does not delete the actual containers on the agent(s). Manual cleanup may be required.",
-    "ContainerToCleanUp": "Container(s) to clean up"
+    "ContainerToCleanUp": "Container(s) to clean up",
+    "SessionNotFound": "You do not have permission to access this session or the session does not exist."
   },
   "modelService": {
     "Services": "Services",

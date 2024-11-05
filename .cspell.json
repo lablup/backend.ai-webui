@@ -10,6 +10,7 @@
     "FGPU",
     "filebrowser",
     "Frgmt",
+    "Frgmts",
     "Gaudi",
     "keypair",
     "Lablup",
@@ -19,17 +20,14 @@
     "RNGD",
     "shmem",
     "superadmin",
+    "textbox",
+    "vaadin",
     "vfolder",
     "vfolders",
     "Warboy",
     "webcomponent",
     "webui",
-    "wsproxy",
-    "vfolders",
-    "vfolder",
-    "filebrowser",
-    "vaadin",
-    "textbox"
+    "wsproxy"
   ],
   "flagWords": [
     "데이터레이크",

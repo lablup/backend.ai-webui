@@ -646,22 +646,25 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         desiredRoutingCount: endpoint?.desired_session_count ?? 1,
         // FIXME: memory doesn't applied to resource allocation
         resource: {
-          cpu: parseInt(JSON.parse(endpoint?.resource_slots)?.cpu),
+          cpu: parseInt(JSON.parse(endpoint?.resource_slots || '{}')?.cpu),
           mem: iSizeToSize(
-            JSON.parse(endpoint?.resource_slots)?.mem + 'b',
+            JSON.parse(endpoint?.resource_slots || '{}')?.mem + 'b',
             'g',
             3,
             true,
           )?.numberUnit,
           shmem: iSizeToSize(
-            JSON.parse(endpoint?.resource_opts)?.shmem ||
+            JSON.parse(endpoint?.resource_opts || '{}')?.shmem ||
               AUTOMATIC_DEFAULT_SHMEM,
             'g',
             3,
             true,
           )?.numberUnit,
           ...getAIAcceleratorWithStringifiedKey(
-            _.omit(JSON.parse(endpoint?.resource_slots), ['cpu', 'mem']),
+            _.omit(JSON.parse(endpoint?.resource_slots || '{}'), [
+              'cpu',
+              'mem',
+            ]),
           ),
         },
         cluster_mode:
@@ -974,7 +977,9 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                       key={type}
                                       type={type}
                                       value={value}
-                                      opts={endpoint?.resource_opts}
+                                      opts={JSON.parse(
+                                        endpoint?.resource_opts || '{}',
+                                      )}
                                     />
                                   );
                                 },

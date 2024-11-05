@@ -292,7 +292,7 @@
     "Others": "Altri",
     "exportCSV": "esporta CSV",
     "Terminate": "Terminare",
-    "SessionInfo": "Informazioni sulla sessione",
+    "SessionInfo": "Info sulla sessione",
     "Status": "Stato",
     "Configuration": "Configurazione",
     "core": "nucleo",
@@ -421,7 +421,8 @@
     "WarningForceTerminateSessions": "Avviso: forza la chiusura delle sessioni",
     "ForceTerminateWarningMsg2": "Eseguire solo quando lo stato non cambia per un periodo di tempo irragionevolmente lungo.",
     "ForceTerminateWarningMsg3": "Questa azione non elimina i contenitori effettivi sugli agenti. \nPotrebbe essere necessaria la pulizia manuale.",
-    "ContainerToCleanUp": "Contenitori da pulire"
+    "ContainerToCleanUp": "Contenitori da pulire",
+    "SessionNotFound": "Non si ha il permesso di accedere a questa sessione o la sessione non esiste."
   },
   "button": {
     "Cancel": "Annulla",

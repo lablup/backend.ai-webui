@@ -292,7 +292,7 @@
     "Others": "Khác",
     "exportCSV": "xuất CSV",
     "Terminate": "Chấm dứt",
-    "SessionInfo": "SessionInfo",
+    "SessionInfo": "Thông tin phiên",
     "Status": "Trạng thái",
     "Configuration": "Cấu hình",
     "core": "cốt lõi",
@@ -420,7 +420,8 @@
     "WarningForceTerminateSessions": "Cảnh báo: Buộc chấm dứt (các) phiên",
     "ForceTerminateWarningMsg2": "Chỉ thực hiện khi trạng thái không thay đổi trong một khoảng thời gian dài không hợp lý.",
     "ForceTerminateWarningMsg3": "Hành động này không xóa các vùng chứa thực tế trên (các) tác nhân. \nCó thể cần phải dọn dẹp thủ công.",
-    "ContainerToCleanUp": "(Các) thùng chứa để dọn dẹp"
+    "ContainerToCleanUp": "(Các) thùng chứa để dọn dẹp",
+    "SessionNotFound": "Bạn không có quyền truy cập phiên này hoặc phiên không tồn tại."
   },
   "button": {
     "Cancel": "Huỷ bỏ",

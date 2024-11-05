@@ -392,3 +392,7 @@ export function formatToUUID(str: string) {
 
   return `${str.slice(0, 8)}-${str.slice(8, 12)}-${str.slice(12, 16)}-${str.slice(16, 20)}-${str.slice(20)}`;
 }
+
+export const toGlobalId = (type: string, id: string): string => {
+  return btoa(`${type}:${id}`);
+};

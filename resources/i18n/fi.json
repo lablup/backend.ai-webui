@@ -1094,7 +1094,7 @@
     "SFTPExtraNotification": "On suositeltavaa poistaa istunnot sen jälkeen, kun ne on käytetty, sillä istuntojen määrä on rajoitettu. Istunnot, joita ei käytetä tiedostojen lataamiseen tietyn ajan kuluessa, voidaan poistaa automaattisesti.",
     "SeeAppDialog": "Katso sovellusdialogi",
     "SeeContainerLogs": "Katso konttien lokit",
-    "SessionInfo": "SessionInfo",
+    "SessionInfo": "Istunnon tiedot",
     "SessionRenamed": "Istunto nimetty uudelleen",
     "SessionTerminated": "Istunto päättyi.",
     "SessionType": "SessionType",
@@ -1332,7 +1332,8 @@
     "WarningForceTerminateSessions": "Varoitus: pakota lopettamaan istunnot",
     "ForceTerminateWarningMsg2": "Suorita vain, kun tila ei muutu kohtuuttoman pitkään.",
     "ForceTerminateWarningMsg3": "Tämä toiminto ei poista agenttien varsinaisia ​​säilöjä. \nManuaalinen puhdistus saattaa olla tarpeen.",
-    "ContainerToCleanUp": "Säiliö(t) puhdistettava(t)."
+    "ContainerToCleanUp": "Säiliö(t) puhdistettava(t).",
+    "SessionNotFound": "Sinulla ei ole oikeuksia käyttää tätä istuntoa tai istuntoa ei ole olemassa."
   },
   "settings": {
     "ATOMsupport": "ATOM",

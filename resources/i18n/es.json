@@ -1097,7 +1097,7 @@
     "SFTPExtraNotification": "Se recomienda eliminar las sesiones una vez utilizadas, ya que existe un límite en el número de sesiones. Las sesiones que no se utilicen para subir archivos en un determinado periodo de tiempo pueden eliminarse automáticamente.",
     "SeeAppDialog": "Ver App Dialog",
     "SeeContainerLogs": "Ver registros de contenedores",
-    "SessionInfo": "SessionInfo",
+    "SessionInfo": "Información de la sesión",
     "SessionRenamed": "Sesión renombrada",
     "SessionTerminated": "Sesión terminada.",
     "SessionType": "Tipo de sesión",
@@ -1335,7 +1335,8 @@
     "WarningForceTerminateSessions": "Advertencia: Forzar la finalización de sesiones",
     "ForceTerminateWarningMsg2": "Ejecutar solo cuando el estado no cambie durante un período de tiempo excesivamente largo.",
     "ForceTerminateWarningMsg3": "Esta acción no elimina los contenedores reales de los agentes. \nEs posible que se requiera una limpieza manual.",
-    "ContainerToCleanUp": "Contenedor(es) para limpiar"
+    "ContainerToCleanUp": "Contenedor(es) para limpiar",
+    "SessionNotFound": "No tiene permiso para acceder a esta sesión o la sesión no existe."
   },
   "settings": {
     "ATOMsupport": "ATOM",

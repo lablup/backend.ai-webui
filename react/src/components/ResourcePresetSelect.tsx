@@ -124,7 +124,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
           options: _.map(resource_presets, (preset, index) => {
             const slotsInfo: {
               [key in ResourceSlotName]: string;
-            } = JSON.parse(preset?.resource_slots);
+            } = JSON.parse(preset?.resource_slots || '{}');
             const disabled = allocatablePresetNames
               ? !allocatablePresetNames.includes(preset?.name || '')
               : undefined;

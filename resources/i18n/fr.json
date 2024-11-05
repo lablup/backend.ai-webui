@@ -420,7 +420,8 @@
     "WarningForceTerminateSessions": "Avertissement : Forcer la fin des sessions",
     "ForceTerminateWarningMsg2": "Exécuter uniquement lorsque l’état ne change pas pendant une période de temps déraisonnablement longue.",
     "ForceTerminateWarningMsg3": "Cette action ne supprime pas les conteneurs réels sur le ou les agents. \nUn nettoyage manuel peut être nécessaire.",
-    "ContainerToCleanUp": "Conteneur(s) à nettoyer"
+    "ContainerToCleanUp": "Conteneur(s) à nettoyer",
+    "SessionNotFound": "Vous n'avez pas la permission d'accéder à cette session ou la session n'existe pas."
   },
   "button": {
     "Cancel": "Annuler",
