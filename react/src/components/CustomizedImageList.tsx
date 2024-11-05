@@ -1,30 +1,41 @@
 import Flex from '../components/Flex';
 import {
   BaseImageTags,
-  BaseVersionTags,
   ConstraintTags,
   LangTags,
 } from '../components/ImageTags';
 import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
-import { getImageFullName, localeCompare } from '../helper';
+import { filterNonNullItems, getImageFullName, localeCompare } from '../helper';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
   useUpdatableState,
 } from '../hooks';
+import AliasedImageDoubleTags from './AliasedImageDoubleTags';
+import TextHighlighter from './TextHighlighter';
 import { CustomizedImageListForgetAndUntagMutation } from './__generated__/CustomizedImageListForgetAndUntagMutation.graphql';
 import {
   CustomizedImageListQuery,
   CustomizedImageListQuery$data,
 } from './__generated__/CustomizedImageListQuery.graphql';
-import { DeleteOutlined, SettingOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  ReloadOutlined,
+  SearchOutlined,
+  SettingOutlined,
+} from '@ant-design/icons';
 import { useLocalStorageState } from 'ahooks';
-import { App, Button, Popconfirm, Table, theme, Typography } from 'antd';
+import { App, Button, Input, Popconfirm, Table, theme, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React, { PropsWithChildren, useState, useTransition } from 'react';
+import React, {
+  PropsWithChildren,
+  useMemo,
+  useState,
+  useTransition,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery, useMutation } from 'react-relay';
 
@@ -45,6 +56,8 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
   const [customizedImageListFetchKey, updateCustomizedImageListFetchKey] =
     useUpdatableState('initial-fetch');
   const [inFlightImageId, setInFlightImageId] = useState<string>();
+  const [imageSearch, setImageSearch] = useState('');
+  const [isPendingSearchTransition, startSearchTransition] = useTransition();
   const [
     ,
     {
@@ -53,6 +66,9 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
       getBaseVersion,
       getBaseImage,
       getConstraints,
+      tagAlias,
+      getLang,
+      getBaseImages,
     },
   ] = useBackendAIImageMetaData();
 
@@ -72,7 +88,14 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
             value
           }
           supported_accelerators
-          namespace @since(version: "24.09.1.")
+          namespace @since(version: "24.09.1")
+          base_image_name @since(version: "24.09.1")
+          tags @since(version: "24.09.1") {
+            key
+            value
+          }
+          version @since(version: "24.09.1")
+          ...AliasedImageDoubleTagsFragment
         }
       }
     `,
@@ -100,18 +123,125 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
       }
     `);
 
+  // Sort images by humanized_name to prevent the image list from jumping around when the images are updated
+  // TODO: after `images` query  supports sort order, we should remove this line
+  const defaultSortedImages = useMemo(
+    () => _.sortBy(customized_images, (image) => image?.humanized_name),
+    [customized_images],
+  );
+
+  const imageFilterValues = useMemo(() => {
+    return defaultSortedImages?.map((image) => {
+      return {
+        namespace: supportExtendedImageInfo ? image?.namespace : image?.name,
+        fullName: getImageFullName(image) || '',
+        digest: image?.digest || '',
+        // ------------ need only before 24.09.1 ------------
+        lang: image?.name ? getLang(image.name) : '',
+        baseversion: getBaseVersion(getImageFullName(image) || ''),
+        baseimage:
+          image?.tag && image?.name ? getBaseImages(image.tag, image.name) : [],
+        constraints:
+          image?.tag && image?.labels
+            ? getConstraints(
+                image.tag,
+                image.labels as { key: string; value: string }[],
+              )
+            : [],
+        isCustomized: image?.tag
+          ? image.tag.indexOf('customized') !== -1
+          : false,
+        // -------------------------------------------------
+        // ------------ need only after 24.09.1 ------------
+        baseImageName: supportExtendedImageInfo ? image?.base_image_name : '',
+        tags: supportExtendedImageInfo ? image?.tags : [],
+        version: supportExtendedImageInfo ? image?.version : '',
+        // -------------------------------------------------
+      };
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultSortedImages]);
+
+  const filteredImageData = useMemo(() => {
+    if (_.isEmpty(imageSearch)) return defaultSortedImages;
+    const regExp = new RegExp(`${_.escapeRegExp(imageSearch)}`, 'i');
+    return _.filter(defaultSortedImages, (image, idx) => {
+      return _.some(image, (value, key) => {
+        if (key === 'id') return false;
+        if (['digest', 'architecture', 'registry'].includes(key))
+          return regExp.test(_.toString(value));
+        const curFilterValues = imageFilterValues[idx] || {};
+        const baseVersionMatch = regExp.test(curFilterValues.baseversion);
+        const baseImagesMatch = _.some(curFilterValues.baseimage, (value) =>
+          regExp.test(value),
+        );
+        const constraintsMatch = _.some(
+          curFilterValues.constraints,
+          (constraint) => regExp.test(constraint),
+        );
+        const customizedMatch = curFilterValues.isCustomized
+          ? regExp.test('customized')
+          : false;
+        const langMatch = regExp.test(curFilterValues.lang);
+        const namespaceMatch = regExp.test(curFilterValues.namespace || '');
+        const fullNameMatch = regExp.test(curFilterValues.fullName);
+        const tagsMatch = _.some(
+          curFilterValues.tags,
+          (tag: { key: string; value: string }) =>
+            regExp.test(tag.key) || regExp.test(tag.value),
+        );
+        const versionMatch = regExp.test(curFilterValues.version || '');
+        const digestMatch = regExp.test(curFilterValues.digest);
+        return (
+          baseVersionMatch ||
+          baseImagesMatch ||
+          constraintsMatch ||
+          langMatch ||
+          namespaceMatch ||
+          customizedMatch ||
+          fullNameMatch ||
+          tagsMatch ||
+          versionMatch ||
+          digestMatch
+        );
+      });
+    });
+  }, [imageSearch, imageFilterValues, defaultSortedImages]);
+
   const columns: ColumnsType<CommittedImage> = [
+    {
+      title: t('environment.FullImagePath'),
+      key: 'fullImagePath',
+      render: (row) => (
+        <Typography.Text
+          copyable={{
+            text: getImageFullName(row) || '',
+          }}
+        >
+          <TextHighlighter keyword={imageSearch}>
+            {getImageFullName(row) || ''}
+          </TextHighlighter>
+        </Typography.Text>
+      ),
+      sorter: (a, b) => localeCompare(getImageFullName(a), getImageFullName(b)),
+    },
     {
       title: t('environment.Registry'),
       dataIndex: 'registry',
       key: 'registry',
       sorter: (a, b) => localeCompare(a?.registry, b?.registry),
+      render: (text) => (
+        <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
+      ),
     },
     {
       title: t('environment.Architecture'),
       dataIndex: 'architecture',
       key: 'architecture',
       sorter: (a, b) => localeCompare(a?.architecture, b?.architecture),
+      render: (text) => (
+        <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
+      ),
     },
     ...(supportExtendedImageInfo
       ? [
@@ -121,6 +251,46 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
             dataIndex: 'namespace',
             sorter: (a: CommittedImage, b: CommittedImage) =>
               localeCompare(a?.namespace, b?.namespace),
+            render: (text: string) => (
+              <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
+            ),
+          },
+          {
+            title: t('environment.BaseImageName'),
+            key: 'base_image_name',
+            dataIndex: 'base_image_name',
+            sorter: (a: CommittedImage, b: CommittedImage) =>
+              localeCompare(a?.base_image_name, b?.base_image_name),
+            render: (text: string) => (
+              <TextHighlighter keyword={imageSearch}>
+                {tagAlias(text)}
+              </TextHighlighter>
+            ),
+          },
+          {
+            title: t('environment.Version'),
+            key: 'version',
+            dataIndex: 'version',
+            sorter: (a: CommittedImage, b: CommittedImage) =>
+              localeCompare(a?.version, b?.version),
+            render: (text: string) => (
+              <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
+            ),
+          },
+          {
+            title: t('environment.Tags'),
+            key: 'tags',
+            dataIndex: 'tags',
+            render: (
+              text: Array<{ key: string; value: string }>,
+              row: CommittedImage,
+            ) => (
+              <AliasedImageDoubleTags
+                imageFrgmt={row}
+                label={undefined}
+                highlightKeyword={imageSearch}
+              />
+            ),
           },
         ]
       : [
@@ -139,84 +309,87 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
               <span>{getNamespace(getImageFullName(row) || '')}</span>
             ),
           },
+          {
+            title: t('environment.Language'),
+            key: 'lang',
+            sorter: (a: CommittedImage, b: CommittedImage) =>
+              localeCompare(
+                getImageLang(getImageFullName(a) || ''),
+                getImageLang(getImageFullName(b) || ''),
+              ),
+            render: (text: string, row: CommittedImage) => (
+              <LangTags image={getImageFullName(row) || ''} color="green" />
+            ),
+          },
+          {
+            title: t('environment.Version'),
+            key: 'baseversion',
+            dataIndex: 'baseversion',
+            sorter: (a: CommittedImage, b: CommittedImage) =>
+              localeCompare(
+                getBaseVersion(getImageFullName(a) || ''),
+                getBaseVersion(getImageFullName(b) || ''),
+              ),
+            render: (text: string, row: CommittedImage) => (
+              <TextHighlighter keyword={imageSearch}>
+                {getBaseVersion(getImageFullName(row) || '')}
+              </TextHighlighter>
+            ),
+          },
+          {
+            title: t('environment.Base'),
+            key: 'baseimage',
+            dataIndex: 'baseimage',
+            sorter: (a: CommittedImage, b: CommittedImage) =>
+              localeCompare(
+                getBaseImage(getImageFullName(a) || ''),
+                getBaseImage(getImageFullName(b) || ''),
+              ),
+            render: (text: string, row: CommittedImage) => (
+              <BaseImageTags image={getImageFullName(row) || ''} />
+            ),
+          },
+          {
+            title: t('environment.Constraint'),
+            key: 'constraint',
+            dataIndex: 'constraint',
+            sorter: (a: CommittedImage, b: CommittedImage) => {
+              const requirementA =
+                a?.tag && b?.labels
+                  ? getConstraints(
+                      a?.tag,
+                      a?.labels as { key: string; value: string }[],
+                    )[0] || ''
+                  : '';
+              const requirementB =
+                b?.tag && b?.labels
+                  ? getConstraints(
+                      b?.tag,
+                      b?.labels as { key: string; value: string }[],
+                    )[0] || ''
+                  : '';
+              return localeCompare(requirementA, requirementB);
+            },
+            render: (text: string, row: CommittedImage) =>
+              row?.tag ? (
+                <ConstraintTags
+                  tag={row?.tag}
+                  labels={row?.labels as Array<{ key: string; value: string }>}
+                  highlightKeyword={imageSearch}
+                />
+              ) : null,
+          },
         ]),
-    {
-      title: t('environment.Language'),
-      key: 'lang',
-      sorter: (a, b) => {
-        const langA = getImageLang(getImageFullName(a) || '');
-        const langB = getImageLang(getImageFullName(b) || '');
-        return langA && langB ? langA.localeCompare(langB) : 0;
-      },
-      render: (text, row) => (
-        <LangTags image={getImageFullName(row) || ''} color="green" />
-      ),
-    },
-    {
-      title: t('environment.Version'),
-      key: 'baseversion',
-      sorter: (a, b) => {
-        const baseversionA = getBaseVersion(getImageFullName(a) || '');
-        const baseversionB = getBaseVersion(getImageFullName(b) || '');
-        return baseversionA && baseversionB
-          ? baseversionA.localeCompare(baseversionB)
-          : 0;
-      },
-      render: (text, row) => (
-        <BaseVersionTags image={getImageFullName(row) || ''} color="green" />
-      ),
-    },
-    {
-      title: t('environment.Base'),
-      key: 'baseimage',
-      sorter: (a, b) => {
-        const baseimageA = getBaseImage(getImageFullName(a) || '');
-        const baseimageB = getBaseImage(getImageFullName(b) || '');
-        return baseimageA && baseimageB
-          ? baseimageA.localeCompare(baseimageB)
-          : 0;
-      },
-      render: (text, row) => (
-        <BaseImageTags image={getImageFullName(row) || ''} />
-      ),
-    },
-    {
-      title: t('environment.Constraint'),
-      key: 'constraint',
-      sorter: (a, b) => {
-        const requirementA =
-          a?.tag && b?.labels
-            ? getConstraints(
-                a?.tag,
-                a?.labels as { key: string; value: string }[],
-              )[0] || ''
-            : '';
-        const requirementB =
-          b?.tag && b?.labels
-            ? getConstraints(
-                b?.tag,
-                b?.labels as { key: string; value: string }[],
-              )[0] || ''
-            : '';
-        if (requirementA === '' && requirementB === '') return 0;
-        if (requirementA === '') return -1;
-        if (requirementB === '') return 1;
-        return requirementA.localeCompare(requirementB);
-      },
-      render: (text, row) =>
-        row?.tag ? (
-          <ConstraintTags
-            tag={row.tag}
-            labels={row?.labels as { key: string; value: string }[]}
-          />
-        ) : null,
-    },
     {
       title: t('environment.Digest'),
       dataIndex: 'digest',
       key: 'digest',
-      sorter: (a, b) =>
-        a?.digest && b?.digest ? a.digest.localeCompare(b.digest) : 0,
+      sorter: (a, b) => localeCompare(a?.digest, b?.digest),
+      render: (text) => (
+        <Typography.Text ellipsis={{ tooltip: true }} style={{ maxWidth: 200 }}>
+          <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
+        </Typography.Text>
+      ),
     },
     {
       title: t('general.Control'),
@@ -224,15 +397,6 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
       fixed: 'right',
       render: (text, row) => (
         <Flex direction="row" align="stretch" justify="center" gap="xxs">
-          <Typography.Text
-            copyable={{
-              text: getImageFullName(row) || '',
-            }}
-            style={{
-              paddingTop: token.paddingXXS,
-              paddingBottom: token.paddingXXS,
-            }}
-          />
           <Popconfirm
             title={t('dialog.ask.DoYouWantToProceed')}
             description={t('dialog.warning.CannotBeUndone')}
@@ -293,14 +457,36 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
   return (
     <Flex direction="column" align="stretch" gap={'xs'}>
       <Flex direction="column" align="stretch">
+        <Flex justify="end" style={{ padding: token.paddingSM }} gap="xs">
+          <Input
+            allowClear
+            prefix={<SearchOutlined />}
+            placeholder={t('environment.SearchImages')}
+            onChange={(e) => {
+              startSearchTransition(() => setImageSearch(e.target.value));
+            }}
+            style={{
+              width: 200,
+            }}
+          />
+          <Button
+            icon={<ReloadOutlined />}
+            loading={isRefetchPending}
+            onClick={() => {
+              startRefetchTransition(() => updateCustomizedImageListFetchKey());
+            }}
+          >
+            {t('button.Refresh')}
+          </Button>
+        </Flex>
         <Table
-          loading={isRefetchPending}
+          loading={isPendingSearchTransition}
           columns={
             columns.filter((column) =>
               displayedColumnKeys?.includes(_.toString(column.key)),
             ) as ColumnType<AnyObject>[]
           }
-          dataSource={customized_images as readonly AnyObject[] | undefined}
+          dataSource={filterNonNullItems(filteredImageData)}
           rowKey="id"
           scroll={{ x: 'max-content' }}
           pagination={false}
