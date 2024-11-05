@@ -31,7 +31,7 @@ const BAIMenu: React.FC<BAIMenuProps> = ({ ...props }) => {
           components: {
             Menu: {
               itemBorderRadius: 20,
-              itemMarginInline: 0,
+              itemMarginInline: 14,
               colorPrimaryBorder: props.isAdminMenu
                 ? token.colorSuccess
                 : token.colorInfoHover,

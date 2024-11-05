@@ -5,8 +5,10 @@ import React from 'react';
 export interface ResourceUnitProps {
   name: string;
   displayUnit: string;
-  value: number;
+  value: string;
   percentage: number;
+  color?: string;
+  style?: React.CSSProperties;
 }
 
 const ResourceUnit: React.FC<ResourceUnitProps> = ({
@@ -14,35 +16,28 @@ const ResourceUnit: React.FC<ResourceUnitProps> = ({
   displayUnit,
   value,
   percentage,
+  color,
+  style,
 }) => {
   const { token } = theme.useToken();
   return (
-    <Flex
-      direction="column"
-      style={{
-        // width: 88,
-        // height: 70,
-        marginTop: 14,
-      }}
-      align="start"
-      justify="center"
-    >
+    <Flex direction="column" style={style} align="start" justify="center">
       <Typography.Text
         style={{
-          marginBottom: token.margin,
+          // marginBottom: token.margin,
           fontSize: token.fontSizeLG,
           fontWeight: token.fontWeightStrong,
         }}
       >
         {name}
       </Typography.Text>
-      <Flex direction="column" align="start" justify="start" gap={8}>
-        <Flex align="baseline">
+      <Flex direction="column" align="start" justify="start">
+        <Flex align="baseline" gap="xxs">
           <Typography.Text
             style={{
               fontSize: token.sizeXL,
               fontWeight: token.fontWeightStrong,
-              color: '#00BD9B',
+              color: color,
             }}
           >
             {value}
@@ -50,6 +45,7 @@ const ResourceUnit: React.FC<ResourceUnitProps> = ({
           <Typography.Text
             style={{
               fontSize: token.fontSize,
+              color: color,
             }}
           >
             {displayUnit}
@@ -60,7 +56,7 @@ const ResourceUnit: React.FC<ResourceUnitProps> = ({
           steps={12}
           showInfo={false}
           size={[5, 12]}
-          strokeColor="#00BD9B"
+          strokeColor={color}
         />
       </Flex>
     </Flex>

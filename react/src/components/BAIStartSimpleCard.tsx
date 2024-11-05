@@ -79,6 +79,7 @@ const BAIStartSimpleCard: React.FC<BAIStartSimpleCardProps> = ({
                 fontSize: token.fontSizeSM,
                 color: '#333333',
                 textAlign: 'center',
+                whiteSpace: 'pre-line',
               }}
             >
               {title}

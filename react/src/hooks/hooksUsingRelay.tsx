@@ -60,6 +60,7 @@ export const useCurrentKeyPairResourcePolicyLazyLoadQuery = (
           keypair_resource_policy(name: $name) {
             max_containers_per_session
             max_concurrent_sessions
+            max_concurrent_sftp_sessions
           }
         }
       `,
