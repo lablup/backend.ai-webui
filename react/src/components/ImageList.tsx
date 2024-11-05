@@ -11,6 +11,7 @@ import { BaseImageTags, ConstraintTags, LangTags } from './ImageTags';
 import ManageAppsModal from './ManageAppsModal';
 import ManageImageResourceLimitModal from './ManageImageResourceLimitModal';
 import ResourceNumber from './ResourceNumber';
+import TableColumnsSettingModal from './TableColumnsSettingModal';
 import TextHighlighter from './TextHighlighter';
 import {
   ImageListQuery,
@@ -23,8 +24,9 @@ import {
   SettingOutlined,
   VerticalAlignBottomOutlined,
 } from '@ant-design/icons';
+import { useLocalStorageState } from 'ahooks';
 import { App, Button, Input, Table, Tag, theme, Typography } from 'antd';
-import { ColumnsType } from 'antd/es/table';
+import { ColumnsType, ColumnType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { Key, useMemo, useState, useTransition } from 'react';
@@ -61,6 +63,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   const [installingImages, setInstallingImages] = useState<string[]>([]);
   const { message } = App.useApp();
   const [imageSearch, setImageSearch] = useState('');
+  const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
   const [isPendingRefreshTransition, startRefreshTransition] = useTransition();
   const [isPendingSearchTransition, startSearchTransition] = useTransition();
   const baiClient = useSuspendedBackendaiClient();
@@ -346,7 +349,9 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
       key: 'digest',
       sorter: (a, b) => localeCompare(a?.digest || '', b?.digest || ''),
       render: (text, row) => (
-        <TextHighlighter keyword={imageSearch}>{row.digest}</TextHighlighter>
+        <Typography.Text ellipsis={{ tooltip: true }} style={{ maxWidth: 200 }}>
+          <TextHighlighter keyword={imageSearch}>{row.digest}</TextHighlighter>
+        </Typography.Text>
       ),
     },
     {
@@ -409,6 +414,13 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
       ),
     },
   ];
+
+  const [displayedColumnKeys, setDisplayedColumnKeys] = useLocalStorageState(
+    'backendaiwebui.EnvironmentPage.displayedColumnKeys',
+    {
+      defaultValue: columns.map((column) => _.toString(column.key)),
+    },
+  );
 
   const imageFilterValues = useMemo(() => {
     return defaultSortedImages?.map((image) => {
@@ -541,7 +553,11 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             style: { marginRight: token.marginXS },
           }}
           dataSource={filterNonNullItems(filteredImageData)}
-          columns={columns}
+          columns={
+            columns.filter((column) =>
+              displayedColumnKeys?.includes(_.toString(column.key)),
+            ) as ColumnType<EnvironmentImage>[]
+          }
           loading={isPendingSearchTransition}
           rowSelection={{
             type: 'checkbox',
@@ -567,6 +583,20 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           showSorterTooltip={false}
           sortDirections={['descend', 'ascend', 'descend']}
         />
+        <Flex
+          justify="end"
+          style={{
+            padding: token.paddingXXS,
+          }}
+        >
+          <Button
+            type="text"
+            icon={<SettingOutlined />}
+            onClick={() => {
+              setIsOpenColumnsSetting(true);
+            }}
+          />
+        </Flex>
       </Flex>
       <ManageImageResourceLimitModal
         open={!!managingResourceLimit}
@@ -597,6 +627,16 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         }}
         setInstallingImages={setInstallingImages}
         selectedRows={selectedRows}
+      />
+      <TableColumnsSettingModal
+        open={isOpenColumnsSetting}
+        onRequestClose={(values) => {
+          values?.selectedColumnKeys &&
+            setDisplayedColumnKeys(values?.selectedColumnKeys);
+          setIsOpenColumnsSetting(!isOpenColumnsSetting);
+        }}
+        columns={columns}
+        displayedColumnKeys={displayedColumnKeys ? displayedColumnKeys : []}
       />
     </>
   );

@@ -721,9 +721,6 @@ class Client {
     if (this.isManagerVersionCompatibleWith('24.09.1')) {
       this._features['extended-image-info'] = true;
     }
-    if (this.isManagerVersionCompatibleWith('24.09.1')) {
-      this._features['extended-image-info'] = true;
-    }
   }
 
   /**
