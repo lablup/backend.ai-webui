@@ -1,7 +1,7 @@
+import { CommittedImage } from '../components/CustomizedImageList';
 import { Image } from '../components/ImageEnvironmentSelectFormItems';
 import { EnvironmentImage } from '../components/ImageList';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { CommittedImage } from '../pages/MyEnvironmentPage';
 import { SorterResult } from 'antd/es/table/interface';
 import _ from 'lodash';
 
