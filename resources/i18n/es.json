@@ -145,7 +145,8 @@
     "Collapse": "Colapsar",
     "Expand": "Expandir",
     "Clear": "Borrar",
-    "Apply": "Solicitar"
+    "Apply": "Solicitar",
+    "CopySomething": "Copiar {{name}}"
   },
   "credential": {
     "AccessKeyOptional": "Clave de acceso (opcional)",

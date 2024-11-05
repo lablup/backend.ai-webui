@@ -145,7 +145,8 @@
     "Collapse": "Romahdus",
     "Expand": "Laajentaa",
     "Clear": "Poistaa",
-    "Apply": "Hae"
+    "Apply": "Hae",
+    "CopySomething": "Kopioi {{name}}"
   },
   "credential": {
     "AccessKeyOptional": "Pääsyavain (valinnainen)",

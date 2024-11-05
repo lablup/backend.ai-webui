@@ -1,4 +1,5 @@
 import { useBackendAIAppLauncher } from '../../hooks/useBackendAIAppLauncher';
+import ContainerLogModal from './ContainerLogModal';
 import TerminateSessionModal from './TerminateSessionModal';
 import {
   SessionActionButtonsFragment$data,
@@ -6,7 +7,7 @@ import {
 } from './__generated__/SessionActionButtonsFragment.graphql';
 import { Tooltip, Button, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
-import { TerminalIcon, PowerOffIcon } from 'lucide-react';
+import { TerminalIcon, PowerOffIcon, ScrollTextIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
@@ -38,9 +39,7 @@ const isActive = (session: SessionActionButtonsFragment$data) => {
 //   ].includes(session?.status || '');
 // };
 
-const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
-  sessionFrgmt,
-}) => {
+const SessionActionButtons: React.FC<SessionActionButtonsProps> = (props) => {
   const { token } = theme.useToken();
   const appLauncher = useBackendAIAppLauncher();
 
@@ -55,13 +54,14 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
         access_key
         service_ports
         commit_status
-
         ...TerminateSessionModalFragment
+        ...ContainerLogModalFragment
       }
     `,
-    sessionFrgmt,
+    props.sessionFrgmt,
   );
   const [openTerminateModal, setOpenTerminateModal] = useState(false);
+  const [openLogModal, setOpenLogModal] = useState(false);
 
   // const isDisabledTermination = !['PENDING'].includes(session?.status || '') && session?.commit_status === 'ongoing'
   // ${(this._isRunning && !this._isPreparing(rowData.item.status)) ||
@@ -94,10 +94,23 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
             setOpenTerminateModal(false);
           }}
         />
-        {/*
+
         <Tooltip title={t('session.SeeContainerLogs')}>
-          <Button icon={<ScrollTextIcon />} />
+          <Button
+            icon={<ScrollTextIcon />}
+            onClick={() => {
+              setOpenLogModal(true);
+            }}
+          />
         </Tooltip>
+        <ContainerLogModal
+          sessionFrgmt={session}
+          open={openLogModal}
+          onCancel={() => {
+            setOpenLogModal(false);
+          }}
+        />
+        {/*
         <Tooltip title={t('session.RequestContainerCommit')}>
         <Button icon={<ContainerIcon />} />
       </Tooltip> */}

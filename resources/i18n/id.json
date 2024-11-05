@@ -464,7 +464,8 @@
     "Collapse": "Runtuh",
     "Expand": "Memperluas",
     "Clear": "Menghapus",
-    "Apply": "Menerapkan"
+    "Apply": "Menerapkan",
+    "CopySomething": "Salin {{name}}"
   },
   "agent": {
     "Endpoint": "Titik akhir",

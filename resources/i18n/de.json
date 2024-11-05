@@ -463,7 +463,8 @@
     "Collapse": "Zusammenbruch",
     "Expand": "Expandieren",
     "Clear": "Löschen",
-    "Apply": "Bewerbung"
+    "Apply": "Bewerbung",
+    "CopySomething": "Kopieren Sie {{name}}"
   },
   "agent": {
     "Endpoint": "Endpunkt",

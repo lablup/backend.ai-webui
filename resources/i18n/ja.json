@@ -463,7 +463,8 @@
     "Collapse": "崩壊",
     "Expand": "拡大する",
     "Clear": "消去",
-    "Apply": "応募する"
+    "Apply": "応募する",
+    "CopySomething": "{{name}} をコピー"
   },
   "agent": {
     "Endpoint": "終点",

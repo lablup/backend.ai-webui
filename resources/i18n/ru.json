@@ -463,7 +463,8 @@
     "Collapse": "Крах",
     "Expand": "Расширять",
     "Clear": "Удалить",
-    "Apply": "Применить"
+    "Apply": "Применить",
+    "CopySomething": "Копировать {{name}}"
   },
   "agent": {
     "Endpoint": "Конечная точка",

@@ -463,7 +463,8 @@
     "Collapse": "Κατάρρευση",
     "Expand": "Επεκτείνουν",
     "Clear": "Διαγράφω",
-    "Apply": "Εφαρμογή"
+    "Apply": "Εφαρμογή",
+    "CopySomething": "Αντιγραφή {{name}}"
   },
   "agent": {
     "Endpoint": "Τελικό σημείο",

@@ -465,7 +465,8 @@
     "Collapse": "Нурах",
     "Expand": "Өргөтгөх",
     "Clear": "Устгах",
-    "Apply": "Өргөдөл гаргах"
+    "Apply": "Өргөдөл гаргах",
+    "CopySomething": "{{name}}-г хуулах"
   },
   "agent": {
     "Endpoint": "Төгсгөлийн цэг",

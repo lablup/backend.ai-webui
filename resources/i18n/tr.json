@@ -463,7 +463,8 @@
     "Collapse": "Yıkılmak",
     "Expand": "Genişletmek",
     "Clear": "Silmek",
-    "Apply": "Başvurmak"
+    "Apply": "Başvurmak",
+    "CopySomething": "Kopyala {{name}}"
   },
   "agent": {
     "Endpoint": "uç nokta",

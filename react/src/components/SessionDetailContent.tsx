@@ -77,6 +77,9 @@ const SessionDetailContent: React.FC<{
             ...SessionTypeTagFragment
             ...EditableSessionNameFragment
             ...SessionReservationFragment
+            # fix: This fragment is not used in this component, but it is required by the SessionActionButtonsFragment.
+            # It might be a bug in relay
+            ...ContainerLogModalFragment
           }
           legacy_session: compute_session(id: $uuid) {
             image
@@ -103,7 +106,6 @@ const SessionDetailContent: React.FC<{
     legacy_session.image + '@' + legacy_session.architecture;
   return session ? (
     <Flex direction="column" gap={'sm'} align="stretch">
-      {/* {JSON.stringify(compute_session_node.requested_slots, null, 2)} */}
       <Flex
         direction="row"
         justify="between"

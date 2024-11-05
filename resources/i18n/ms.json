@@ -463,7 +463,8 @@
     "Collapse": "Runtuh",
     "Expand": "Kembangkan",
     "Clear": "Padam",
-    "Apply": "Mohon"
+    "Apply": "Mohon",
+    "CopySomething": "Salin {{name}}"
   },
   "agent": {
     "Endpoint": "Titik Akhir",

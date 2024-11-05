@@ -543,7 +543,8 @@
     "Collapse": "접기",
     "Expand": "펼치기",
     "Clear": "삭제",
-    "Apply": "적용"
+    "Apply": "적용",
+    "CopySomething": "{{name}} 복사하기"
   },
   "agent": {
     "Endpoint": "엔드포인트",

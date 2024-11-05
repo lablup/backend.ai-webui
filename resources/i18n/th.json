@@ -555,7 +555,8 @@
     "Collapse": "ย่อ",
     "Expand": "ขยาย",
     "Clear": "ล้าง",
-    "Apply": "นำมาใช้"
+    "Apply": "นำมาใช้",
+    "CopySomething": "คัดลอก {{name}}"
   },
   "agent": {
     "Endpoint": "จุดสิ้นสุด",

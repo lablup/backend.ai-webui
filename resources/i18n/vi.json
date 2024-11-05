@@ -463,7 +463,8 @@
     "Collapse": "Sụp đổ",
     "Expand": "Mở rộng",
     "Clear": "Xóa bỏ",
-    "Apply": "Áp dụng"
+    "Apply": "Áp dụng",
+    "CopySomething": "Sao chép {{name}}"
   },
   "agent": {
     "Endpoint": "Điểm cuối",

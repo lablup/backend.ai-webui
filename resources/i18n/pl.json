@@ -463,7 +463,8 @@
     "Collapse": "Zawalić się",
     "Expand": "Zwiększać",
     "Clear": "Usuwać",
-    "Apply": "Zastosuj"
+    "Apply": "Zastosuj",
+    "CopySomething": "Kopiuj {{name}}"
   },
   "agent": {
     "Endpoint": "Punkt końcowy",

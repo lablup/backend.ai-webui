@@ -556,7 +556,8 @@
     "Collapse": "Collapse",
     "Expand": "Expand",
     "Clear": "Clear",
-    "Apply": "Apply"
+    "Apply": "Apply",
+    "CopySomething": "Copy {{name}}"
   },
   "agent": {
     "Endpoint": "Endpoint",

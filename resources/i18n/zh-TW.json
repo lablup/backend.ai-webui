@@ -463,7 +463,8 @@
     "Collapse": "坍塌",
     "Expand": "擴張",
     "Clear": "刪除",
-    "Apply": "申请"
+    "Apply": "申请",
+    "CopySomething": "复制 {{name}}"
   },
   "agent": {
     "Endpoint": "端點",

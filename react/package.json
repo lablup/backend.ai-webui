@@ -9,6 +9,7 @@
     "@ant-design/icons": "^5.4.0",
     "@cloudscape-design/board-components": "3.0.60",
     "@codemirror/language": "^6.10.2",
+    "@melloware/react-logviewer": "^5.2.4",
     "@storybook/test": "^8.2.8",
     "@tanstack/react-query": "^5.51.15",
     "@testing-library/jest-dom": "^6.4.8",

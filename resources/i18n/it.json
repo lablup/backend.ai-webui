@@ -464,7 +464,8 @@
     "Collapse": "Crollo",
     "Expand": "Espandere",
     "Clear": "Eliminare",
-    "Apply": "Applicare"
+    "Apply": "Applicare",
+    "CopySomething": "Copia {{name}}"
   },
   "agent": {
     "Endpoint": "Endpoint",
