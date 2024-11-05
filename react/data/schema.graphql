@@ -320,12 +320,12 @@ type ImageNode implements Node {
 
   """Added in 24.03.4. The undecoded id value stored in DB."""
   row_id: UUID
-  name: String @deprecated(reason: "Deprecated since 24.09.1. use `namespace` instead")
+  name: String @deprecated(reason: "Deprecated since 24.12.0. use `namespace` instead")
 
-  """Added in 24.09.1."""
+  """Added in 24.12.0."""
   namespace: String
 
-  """Added in 24.09.1."""
+  """Added in 24.12.0."""
   base_image_name: String
 
   """Added in 24.03.10."""
@@ -333,10 +333,10 @@ type ImageNode implements Node {
   humanized_name: String
   tag: String
 
-  """Added in 24.09.1."""
+  """Added in 24.12.0."""
   tags: [KVPair]
 
-  """Added in 24.09.1."""
+  """Added in 24.12.0."""
   version: String
   registry: String
   architecture: String
@@ -411,7 +411,7 @@ type DomainNode implements Node {
   scaling_groups(filter: String, order: String, offset: Int, before: String, after: String, first: Int, last: Int): ScalinGroupConnection
 }
 
-"""Added in 24.09.1."""
+"""Added in 24.12.0."""
 scalar Bytes
 
 """Added in 24.12.0."""
@@ -757,12 +757,12 @@ type Group {
 
 type Image {
   id: UUID
-  name: String @deprecated(reason: "Deprecated since 24.09.1. use `namespace` instead")
+  name: String @deprecated(reason: "Deprecated since 24.12.0. use `namespace` instead")
 
-  """Added in 24.09.1."""
+  """Added in 24.12.0."""
   namespace: String
 
-  """Added in 24.09.1."""
+  """Added in 24.12.0."""
   base_image_name: String
 
   """Added in 24.03.10."""
@@ -770,10 +770,10 @@ type Image {
   humanized_name: String
   tag: String
 
-  """Added in 24.09.1."""
+  """Added in 24.12.0."""
   tags: [KVPair]
 
-  """Added in 24.09.1."""
+  """Added in 24.12.0."""
   version: String
   registry: String
   architecture: String

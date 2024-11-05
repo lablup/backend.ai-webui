@@ -77,7 +77,7 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
       query CustomizedImageListQuery {
         customized_images {
           id
-          name @deprecatedSince(version: "24.09.1")
+          name @deprecatedSince(version: "24.12.0")
           humanized_name
           tag
           registry
@@ -88,13 +88,13 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
             value
           }
           supported_accelerators
-          namespace @since(version: "24.09.1")
-          base_image_name @since(version: "24.09.1")
-          tags @since(version: "24.09.1") {
+          namespace @since(version: "24.12.0")
+          base_image_name @since(version: "24.12.0")
+          tags @since(version: "24.12.0") {
             key
             value
           }
-          version @since(version: "24.09.1")
+          version @since(version: "24.12.0")
           ...AliasedImageDoubleTagsFragment
         }
       }
@@ -136,7 +136,7 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
         namespace: supportExtendedImageInfo ? image?.namespace : image?.name,
         fullName: getImageFullName(image) || '',
         digest: image?.digest || '',
-        // ------------ need only before 24.09.1 ------------
+        // ------------ need only before 24.12.0 ------------
         lang: image?.name ? getLang(image.name) : '',
         baseversion: getBaseVersion(getImageFullName(image) || ''),
         baseimage:
@@ -152,7 +152,7 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
           ? image.tag.indexOf('customized') !== -1
           : false,
         // -------------------------------------------------
-        // ------------ need only after 24.09.1 ------------
+        // ------------ need only after 24.12.0 ------------
         baseImageName: supportExtendedImageInfo ? image?.base_image_name : '',
         tags: supportExtendedImageInfo ? image?.tags : [],
         version: supportExtendedImageInfo ? image?.version : '',

@@ -74,7 +74,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
       query ImageListQuery {
         images {
           id
-          name @deprecatedSince(version: "24.09.1")
+          name @deprecatedSince(version: "24.12.0")
           tag
           registry
           architecture
@@ -90,13 +90,13 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             min
             max
           }
-          namespace @since(version: "24.09.1")
-          base_image_name @since(version: "24.09.1")
-          tags @since(version: "24.09.1") {
+          namespace @since(version: "24.12.0")
+          base_image_name @since(version: "24.12.0")
+          tags @since(version: "24.12.0") {
             key
             value
           }
-          version @since(version: "24.09.1")
+          version @since(version: "24.12.0")
         }
       }
     `,
@@ -429,7 +429,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         namespace: supportExtendedImageInfo ? image?.namespace : image?.name,
         fullName: getImageFullName(image) || '',
         digest: image?.digest || '',
-        // ------------ need only before 24.09.1 ------------
+        // ------------ need only before 24.12.0 ------------
         lang: image?.name ? getLang(image.name) : '',
         baseversion: getBaseVersion(getImageFullName(image) || ''),
         baseimage:
@@ -445,7 +445,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           ? image.tag.indexOf('customized') !== -1
           : false,
         // -------------------------------------------------
-        // ------------ need only after 24.09.1 ------------
+        // ------------ need only after 24.12.0 ------------
         baseImageName: supportExtendedImageInfo ? image?.base_image_name : '',
         tags: supportExtendedImageInfo ? image?.tags : [],
         version: supportExtendedImageInfo ? image?.version : '',
