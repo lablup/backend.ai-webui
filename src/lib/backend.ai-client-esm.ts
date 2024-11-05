@@ -716,6 +716,7 @@ class Client {
     }
     if (this.isManagerVersionCompatibleWith('24.09')) {
       this._features['extend-login-session'] = true;
+      this._features['session-node'] = true;
     }
   }
 

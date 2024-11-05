@@ -1647,37 +1647,45 @@ export default class BackendAISessionList extends BackendAIPage {
    * Show logs - work title, session logs, session name, and access key.
    */
   _showLogs() {
-    globalThis.backendaiclient
-      .get_logs(
-        this.workDialog.sessionUuid,
-        this.workDialog.accessKey,
-        this.selectedKernelId !== '' ? this.selectedKernelId : null,
-        15000,
-      )
-      .then((req) => {
-        const ansi_up = new AnsiUp();
-        const logs = ansi_up.ansi_to_html(req.result.logs);
-        (
-          this.shadowRoot?.querySelector('#work-title') as HTMLSpanElement
-        ).innerHTML =
-          `${this.workDialog.sessionName} (${this.workDialog.sessionUuid})`;
-        (
-          this.shadowRoot?.querySelector('#work-area') as HTMLDivElement
-        ).innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
-        // TODO define extended type for custom properties
-        this.workDialog.show();
-      })
-      .catch((err) => {
-        if (err && err.message) {
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.detail = err.message;
-          this.notification.show(true, err);
-        } else if (err && err.title) {
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.detail = '';
-          this.notification.show(true, err);
-        }
-      });
+    if (globalThis.backendaiclient.supports('session-node')) {
+      document.dispatchEvent(
+        new CustomEvent('bai-open-session-log', {
+          detail: this.workDialog.sessionUuid,
+        }),
+      );
+    } else {
+      globalThis.backendaiclient
+        .get_logs(
+          this.workDialog.sessionUuid,
+          this.workDialog.accessKey,
+          this.selectedKernelId !== '' ? this.selectedKernelId : null,
+          15000,
+        )
+        .then((req) => {
+          const ansi_up = new AnsiUp();
+          const logs = ansi_up.ansi_to_html(req.result.logs);
+          (
+            this.shadowRoot?.querySelector('#work-title') as HTMLSpanElement
+          ).innerHTML =
+            `${this.workDialog.sessionName} (${this.workDialog.sessionUuid})`;
+          (
+            this.shadowRoot?.querySelector('#work-area') as HTMLDivElement
+          ).innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
+          // TODO define extended type for custom properties
+          this.workDialog.show();
+        })
+        .catch((err) => {
+          if (err && err.message) {
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.detail = err.message;
+            this.notification.show(true, err);
+          } else if (err && err.title) {
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.detail = '';
+            this.notification.show(true, err);
+          }
+        });
+    }
   }
 
   _downloadLogs() {
