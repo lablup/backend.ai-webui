@@ -7,8 +7,12 @@ import {
   LangTags,
 } from '../components/ImageTags';
 import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
-import { getImageFullName } from '../helper';
-import { useBackendAIImageMetaData, useUpdatableState } from '../hooks';
+import { getImageFullName, localeCompare } from '../helper';
+import {
+  useBackendAIImageMetaData,
+  useSuspendedBackendaiClient,
+  useUpdatableState,
+} from '../hooks';
 import { MyEnvironmentPageForgetAndUntagMutation } from './__generated__/MyEnvironmentPageForgetAndUntagMutation.graphql';
 import {
   MyEnvironmentPageQuery,
@@ -40,6 +44,8 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
+  const baiClient = useSuspendedBackendaiClient();
+  const supportExtendedImageInfo = baiClient?.supports('extended-image-info');
 
   const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
   const [selectedTab] = useState<TabKey>('images');
@@ -63,7 +69,7 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
       query MyEnvironmentPageQuery {
         customized_images {
           id
-          name
+          name @deprecatedSince(version: "24.09.1")
           humanized_name
           tag
           registry
@@ -74,6 +80,7 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
             value
           }
           supported_accelerators
+          namespace @since(version: "24.09.1")
         }
       }
     `,
@@ -106,40 +113,48 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
       title: t('environment.Registry'),
       dataIndex: 'registry',
       key: 'registry',
-      sorter: (a, b) =>
-        a?.registry && b?.registry ? a.registry.localeCompare(b.registry) : 0,
+      sorter: (a, b) => localeCompare(a?.registry, b?.registry),
     },
     {
       title: t('environment.Architecture'),
       dataIndex: 'architecture',
       key: 'architecture',
-      sorter: (a, b) =>
-        a?.architecture && b?.architecture
-          ? a.architecture.localeCompare(b.architecture)
-          : 0,
+      sorter: (a, b) => localeCompare(a?.architecture, b?.architecture),
     },
-    {
-      title: t('environment.Namespace'),
-      key: 'namespace',
-      sorter: (a, b) => {
-        const namespaceA = getNamespace(getImageFullName(a) || '');
-        const namespaceB = getNamespace(getImageFullName(b) || '');
-        return namespaceA && namespaceB
-          ? namespaceA.localeCompare(namespaceB)
-          : 0;
-      },
-      render: (text, row) => (
-        <span>{getNamespace(getImageFullName(row) || '')}</span>
-      ),
-    },
+    ...(supportExtendedImageInfo
+      ? [
+          {
+            title: t('environment.Namespace'),
+            key: 'namespace',
+            dataIndex: 'namespace',
+            sorter: (a: CommittedImage, b: CommittedImage) =>
+              localeCompare(a?.namespace, b?.namespace),
+          },
+        ]
+      : [
+          {
+            title: t('environment.Namespace'),
+            key: 'name',
+            dataIndex: 'name',
+            sorter: (a: CommittedImage, b: CommittedImage) =>
+              localeCompare(
+                getNamespace(getImageFullName(a) || ''),
+                getNamespace(getImageFullName(b) || ''),
+              ),
+            render: (text: string, row: CommittedImage) => (
+              <span>{getNamespace(getImageFullName(row) || '')}</span>
+            ),
+          },
+        ]),
     {
       title: t('environment.Language'),
       key: 'lang',
-      sorter: (a, b) => {
-        const langA = getImageLang(getImageFullName(a) || '');
-        const langB = getImageLang(getImageFullName(b) || '');
-        return langA && langB ? langA.localeCompare(langB) : 0;
-      },
+      sorter: (a, b) =>
+        localeCompare(
+          getImageLang(getImageFullName(a) || ''),
+          getImageLang(getImageFullName(b) || ''),
+        ),
+
       render: (text, row) => (
         <LangTags image={getImageFullName(row) || ''} color="green" />
       ),
@@ -147,13 +162,11 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
     {
       title: t('environment.Version'),
       key: 'baseversion',
-      sorter: (a, b) => {
-        const baseversionA = getBaseVersion(getImageFullName(a) || '');
-        const baseversionB = getBaseVersion(getImageFullName(b) || '');
-        return baseversionA && baseversionB
-          ? baseversionA.localeCompare(baseversionB)
-          : 0;
-      },
+      sorter: (a, b) =>
+        localeCompare(
+          getBaseVersion(getImageFullName(a) || ''),
+          getBaseVersion(getImageFullName(b) || ''),
+        ),
       render: (text, row) => (
         <BaseVersionTags image={getImageFullName(row) || ''} color="green" />
       ),
@@ -161,13 +174,11 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
     {
       title: t('environment.Base'),
       key: 'baseimage',
-      sorter: (a, b) => {
-        const baseimageA = getBaseImage(getImageFullName(a) || '');
-        const baseimageB = getBaseImage(getImageFullName(b) || '');
-        return baseimageA && baseimageB
-          ? baseimageA.localeCompare(baseimageB)
-          : 0;
-      },
+      sorter: (a, b) =>
+        localeCompare(
+          getBaseImage(getImageFullName(a) || ''),
+          getBaseImage(getImageFullName(b) || ''),
+        ),
       render: (text, row) => (
         <BaseImageTags image={getImageFullName(row) || ''} />
       ),
@@ -190,10 +201,7 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
                 b?.labels as { key: string; value: string }[],
               )[0] || ''
             : '';
-        if (requirementA === '' && requirementB === '') return 0;
-        if (requirementA === '') return -1;
-        if (requirementB === '') return 1;
-        return requirementA.localeCompare(requirementB);
+        return localeCompare(requirementA, requirementB);
       },
       render: (text, row) =>
         row?.tag ? (
@@ -207,8 +215,7 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
       title: t('environment.Digest'),
       dataIndex: 'digest',
       key: 'digest',
-      sorter: (a, b) =>
-        a?.digest && b?.digest ? a.digest.localeCompare(b.digest) : 0,
+      sorter: (a, b) => localeCompare(a?.digest || '', b?.digest || ''),
     },
     {
       title: t('general.Control'),

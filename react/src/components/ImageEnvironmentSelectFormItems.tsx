@@ -92,6 +92,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
   const form = Form.useFormInstance<ImageEnvironmentFormInput>();
   const environments = Form.useWatch('environments', { form, preserve: true });
   const baiClient = useSuspendedBackendaiClient();
+  const supportExtendedImageInfo = baiClient?.supports('extended-image-info');
 
   const [environmentSearch, setEnvironmentSearch] = useState('');
   const [versionSearch, setVersionSearch] = useState('');
@@ -111,7 +112,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
       query ImageEnvironmentSelectFormItemsQuery($installed: Boolean) {
         images(is_installed: $installed) {
           id
-          name
+          name @deprecatedSince(version: "24.09.1")
           humanized_name
           tag
           registry
@@ -127,6 +128,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
             key
             value
           }
+          namespace @since(version: "24.09.1")
         }
       }
     `,
@@ -266,7 +268,9 @@ const ImageEnvironmentSelectFormItems: React.FC<
                   // metadata?.imageInfo[
                   //   getImageMeta(getImageFullName(image) || "").key
                   // ]?.name || image?.name
-                  image?.registry + '/' + image?.name
+                  `${image?.registry}/${
+                    supportExtendedImageInfo ? image?.namespace : image?.name
+                  }`
                 );
               })
               .map((images, environmentName) => {
@@ -365,7 +369,10 @@ const ImageEnvironmentSelectFormItems: React.FC<
             if (fullNameMatchedImage) {
               form.setFieldsValue({
                 environments: {
-                  environment: fullNameMatchedImage?.name || '',
+                  environment:
+                    (supportExtendedImageInfo
+                      ? fullNameMatchedImage?.namespace
+                      : fullNameMatchedImage?.name) || '',
                   version: getImageFullName(fullNameMatchedImage),
                   image: fullNameMatchedImage,
                 },
@@ -379,7 +386,10 @@ const ImageEnvironmentSelectFormItems: React.FC<
                 .images[0];
               form.setFieldsValue({
                 environments: {
-                  environment: firstInListImage?.name || '',
+                  environment:
+                    (supportExtendedImageInfo
+                      ? firstInListImage?.namespace
+                      : firstInListImage?.name) || '',
                   version: getImageFullName(firstInListImage),
                   image: firstInListImage,
                 },
@@ -393,7 +403,11 @@ const ImageEnvironmentSelectFormItems: React.FC<
         >
           {fullNameMatchedImage ? (
             <Select.Option
-              value={fullNameMatchedImage?.name}
+              value={
+                supportExtendedImageInfo
+                  ? fullNameMatchedImage?.namespace
+                  : fullNameMatchedImage?.name
+              }
               filterValue={getImageFullName(fullNameMatchedImage)}
             >
               <Flex

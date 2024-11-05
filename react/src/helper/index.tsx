@@ -314,7 +314,7 @@ export const getImageFullName = (
   image: Image | CommittedImage | EnvironmentImage,
 ) => {
   return image
-    ? `${image.registry}/${image.name}:${image.tag}@${image.architecture}`
+    ? `${image.registry}/${image.namespace ?? image.name}:${image.tag}@${image.architecture}`
     : undefined;
 };
 
