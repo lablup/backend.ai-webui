@@ -1316,7 +1316,8 @@
       "FolderAliasOverlappingToAutoMount": "Samanniminen automaattinen kiinnityskansio on olemassa.",
       "InsufficientAllocationOfResourcesWarning": "Allokoitavat resurssit jäävät alle valitussa kuvassa vaaditun vähimmäisresurssin.",
       "RecentHistory": "Lähihistoria",
-      "CreatedAt": "LuotuAt"
+      "CreatedAt": "LuotuAt",
+      "Tags": "Tunnisteet"
     },
     "ExpiresAfter": "Jäljellä oleva aika",
     "CPU": "CPU",

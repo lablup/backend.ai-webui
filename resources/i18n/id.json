@@ -284,7 +284,8 @@
       "FolderAliasOverlappingToAutoMount": "Folder pemasangan otomatis dengan nama yang sama tersedia.",
       "InsufficientAllocationOfResourcesWarning": "Sumber daya yang dapat dialokasikan berada di bawah sumber daya minimum yang diperlukan pada gambar yang dipilih.",
       "RecentHistory": "Riwayat Terbaru",
-      "CreatedAt": "DibuatPada"
+      "CreatedAt": "DibuatPada",
+      "Tags": "Tag"
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",

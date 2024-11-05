@@ -283,7 +283,8 @@
       "FolderAliasOverlappingToAutoMount": "Aynı ada sahip bir otomatik montaj klasörü mevcut.",
       "InsufficientAllocationOfResourcesWarning": "Tahsis edilebilir kaynaklar, seçilen görüntüde gereken minimum kaynağın altına düşüyor.",
       "RecentHistory": "Yakın Tarih",
-      "CreatedAt": "Oluşturulma Tarihi"
+      "CreatedAt": "Oluşturulma Tarihi",
+      "Tags": "Etiketler"
     },
     "Preparing": "hazırlanıyor...",
     "PreparingSession": "Oturum hazırlanıyor...",

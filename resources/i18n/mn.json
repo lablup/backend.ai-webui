@@ -284,7 +284,8 @@
       "FolderAliasOverlappingToAutoMount": "Ижил нэртэй автоматаар холбох хавтас байна.",
       "InsufficientAllocationOfResourcesWarning": "Хуваарилах нөөц нь сонгосон зурагт шаардагдах хамгийн бага нөөцөөс доогуур байна.",
       "RecentHistory": "Сүүлийн үеийн түүх",
-      "CreatedAt": "Үүсгэсэн"
+      "CreatedAt": "Үүсгэсэн",
+      "Tags": "Шошго"
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",

@@ -145,6 +145,9 @@ describe('useBackendAIImageMetaData', () => {
             value: 'NVIDIA CORPORATION <cudatools@nvidia.com>',
           },
         ],
+        base_image_name: undefined,
+        tags: undefined,
+        version: undefined,
       }) || '',
     );
     expect(key).toBe('training');

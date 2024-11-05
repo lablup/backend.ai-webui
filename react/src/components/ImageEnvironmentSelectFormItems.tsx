@@ -97,7 +97,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
   const [environmentSearch, setEnvironmentSearch] = useState('');
   const [versionSearch, setVersionSearch] = useState('');
   const { t } = useTranslation();
-  const [metadata, { getImageMeta }] = useBackendAIImageMetaData();
+  const [metadata, { getImageMeta, tagAlias }] = useBackendAIImageMetaData();
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
 
@@ -129,6 +129,12 @@ const ImageEnvironmentSelectFormItems: React.FC<
             value
           }
           namespace @since(version: "24.09.1")
+          base_image_name @since(version: "24.09.1")
+          tags @since(version: "24.09.1") {
+            key
+            value
+          }
+          version @since(version: "24.09.1")
         }
       }
     `,
@@ -498,7 +504,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                               }}
                             />
                             <TextHighlighter keyword={environmentSearch}>
-                              {environmentGroup.displayName}
+                              {tagAlias(environmentGroup.displayName)}
                             </TextHighlighter>
                           </Flex>
                           <Flex
@@ -577,13 +583,25 @@ const ImageEnvironmentSelectFormItems: React.FC<
                         paddingLeft: token.paddingSM,
                       }}
                     >
-                      {t('session.launcher.Version')}
-                      <Divider type="vertical" />
-                      {t('session.launcher.Base')}
-                      <Divider type="vertical" />
-                      {t('session.launcher.Architecture')}
-                      <Divider type="vertical" />
-                      {t('session.launcher.Requirements')}
+                      {supportExtendedImageInfo ? (
+                        <>
+                          {t('session.launcher.Version')}
+                          <Divider type="vertical" />
+                          {t('session.launcher.Architecture')}
+                          <Divider type="vertical" />
+                          {t('session.launcher.Tags')}
+                        </>
+                      ) : (
+                        <>
+                          {t('session.launcher.Version')}
+                          <Divider type="vertical" />
+                          {t('session.launcher.Base')}
+                          <Divider type="vertical" />
+                          {t('session.launcher.Architecture')}
+                          <Divider type="vertical" />
+                          {t('session.launcher.Requirements')}
+                        </>
+                      )}
                     </Flex>
                     <Divider style={{ margin: '8px 0' }} />
                     {menu}
@@ -602,18 +620,21 @@ const ImageEnvironmentSelectFormItems: React.FC<
                       '-',
                     ) || ['', '', ''];
 
-                    let tagAlias = metadata?.tagAlias[tag];
-                    if (!tagAlias) {
+                    let metadataTagAlias = metadata?.tagAlias[tag];
+                    if (!metadataTagAlias) {
                       for (const [key, replaceString] of Object.entries(
                         metadata?.tagReplace || {},
                       )) {
                         const pattern = new RegExp(key);
                         if (pattern.test(tag)) {
-                          tagAlias = tag?.replace(pattern, replaceString);
+                          metadataTagAlias = tag?.replace(
+                            pattern,
+                            replaceString,
+                          );
                         }
                       }
-                      if (!tagAlias) {
-                        tagAlias = tag;
+                      if (!metadataTagAlias) {
+                        metadataTagAlias = tag;
                       }
                     }
 
@@ -695,39 +716,98 @@ const ImageEnvironmentSelectFormItems: React.FC<
                         value={getImageFullName(image)}
                         filterValue={[
                           version,
-                          tagAlias,
+                          metadataTagAlias,
                           image?.architecture,
                           ...extraFilterValues,
                         ].join('\t')}
                       >
-                        <Flex direction="row" justify="between">
+                        {supportExtendedImageInfo ? (
                           <Flex direction="row">
                             <TextHighlighter keyword={versionSearch}>
-                              {version}
-                            </TextHighlighter>
-                            <Divider type="vertical" />
-                            <TextHighlighter keyword={versionSearch}>
-                              {tagAlias}
+                              {image?.version}
                             </TextHighlighter>
                             <Divider type="vertical" />
                             <TextHighlighter keyword={versionSearch}>
                               {image?.architecture}
                             </TextHighlighter>
+                            <Divider type="vertical" />
+                            <Flex direction="row" align="start">
+                              {/* TODO: replace this with AliasedImageDoubleTags after image list query with ImageNode is implemented. */}
+                              {_.map(
+                                image?.tags,
+                                (tag: { key: string; value: string }) => {
+                                  const isCustomized = _.includes(
+                                    tag.key,
+                                    'customized_',
+                                  );
+                                  const tagValue = isCustomized
+                                    ? _.find(image?.labels, {
+                                        key: 'ai.backend.customized-image.name',
+                                      })?.value
+                                    : tag.value;
+                                  return (
+                                    <DoubleTag
+                                      key={tag.key}
+                                      values={[
+                                        {
+                                          label: (
+                                            <TextHighlighter
+                                              keyword={versionSearch}
+                                              key={tag.key}
+                                            >
+                                              {tagAlias(tag.key)}
+                                            </TextHighlighter>
+                                          ),
+                                          color: isCustomized ? 'cyan' : 'blue',
+                                        },
+                                        {
+                                          label: (
+                                            <TextHighlighter
+                                              keyword={versionSearch}
+                                              key={tagValue}
+                                            >
+                                              {tagValue}
+                                            </TextHighlighter>
+                                          ),
+                                          color: isCustomized ? 'cyan' : 'blue',
+                                        },
+                                      ]}
+                                    />
+                                  );
+                                },
+                              )}
+                            </Flex>
                           </Flex>
-                          <Flex
-                            direction="row"
-                            // set specific class name to handle flex wrap using css
-                            className={
-                              isDarkMode ? 'tag-wrap-dark' : 'tag-wrap-light'
-                            }
-                            style={{
-                              marginLeft: token.marginXS,
-                              flexShrink: 1,
-                            }}
-                          >
-                            {requirementTags || '-'}
+                        ) : (
+                          <Flex direction="row" justify="between">
+                            <Flex direction="row">
+                              <TextHighlighter keyword={versionSearch}>
+                                {version}
+                              </TextHighlighter>
+                              <Divider type="vertical" />
+                              <TextHighlighter keyword={versionSearch}>
+                                {metadataTagAlias}
+                              </TextHighlighter>
+                              <Divider type="vertical" />
+                              <TextHighlighter keyword={versionSearch}>
+                                {image?.architecture}
+                              </TextHighlighter>
+                            </Flex>
+                            <Flex
+                              direction="row"
+                              // set specific class name to handle flex wrap using css
+                              className={
+                                isDarkMode ? 'tag-wrap-dark' : 'tag-wrap-light'
+                              }
+                              style={{
+                                marginLeft: token.marginXS,
+                                flexShrink: 1,
+                              }}
+                            >
+                              {requirementTags || '-'}
+                            </Flex>
                           </Flex>
-                        </Flex>
+                        )}
                       </Select.Option>
                     );
                   },

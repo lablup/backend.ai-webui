@@ -165,7 +165,7 @@ export function isSensitiveEnv(key: string) {
 }
 
 export function sanitizeSensitiveEnv(envs: EnvVarFormListValue[]) {
-  return envs.map((env) => {
+  return _.map(envs, (env) => {
     if (env && isSensitiveEnv(env.variable)) {
       return { ...env, value: '' };
     }

@@ -1319,7 +1319,8 @@
       "FolderAliasOverlappingToAutoMount": "Existe una carpeta de montaje automático con el mismo nombre.",
       "InsufficientAllocationOfResourcesWarning": "Los recursos asignables están por debajo del recurso mínimo requerido en la imagen seleccionada.",
       "RecentHistory": "Historia reciente",
-      "CreatedAt": "Creado en"
+      "CreatedAt": "Creado en",
+      "Tags": "Etiquetas"
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",

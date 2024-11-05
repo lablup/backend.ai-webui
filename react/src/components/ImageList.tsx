@@ -339,6 +339,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
                 <ConstraintTags
                   tag={row?.tag}
                   labels={row?.labels as Array<{ key: string; value: string }>}
+                  highlightKeyword={imageSearch}
                 />
               ) : null,
           },

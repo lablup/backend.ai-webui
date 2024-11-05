@@ -283,7 +283,8 @@
       "FolderAliasOverlappingToAutoMount": "存在同名的自动挂载文件夹。",
       "InsufficientAllocationOfResourcesWarning": "可分配資源低於所選映像所需的最低資源。",
       "RecentHistory": "近代历史",
-      "CreatedAt": "創建時間"
+      "CreatedAt": "創建時間",
+      "Tags": "標籤"
     },
     "Preparing": "正在準備...",
     "PreparingSession": "正在準備會議...",

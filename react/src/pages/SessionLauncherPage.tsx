@@ -39,9 +39,11 @@ import VFolderTableFormItem, {
 import {
   compareNumberWithUnits,
   generateRandomString,
+  getImageFullName,
   iSizeToSize,
 } from '../helper';
 import {
+  useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
   useUpdatableState,
   useWebUINavigate,
@@ -73,6 +75,7 @@ import {
   Checkbox,
   Col,
   Descriptions,
+  Divider,
   Form,
   Grid,
   Input,
@@ -184,6 +187,10 @@ const SessionLauncherPage = () => {
   const currentUserRole = useCurrentUserRole();
   const [currentGlobalResourceGroup, setCurrentGlobalResourceGroup] =
     useCurrentResourceGroupState();
+  const [, { tagAlias }] = useBackendAIImageMetaData();
+
+  const supportExtendedImageInfo =
+    baiClient?.supports('extended-image-info') ?? false;
 
   const [isStartingSession, setIsStartingSession] = useState(false);
   const INITIAL_FORM_VALUES: DeepPartial<SessionLauncherFormValue> = useMemo(
@@ -1295,67 +1302,188 @@ const SessionLauncherPage = () => {
                           {currentProject.name}
                         </Descriptions.Item>
                         <Descriptions.Item label={t('general.Image')}>
-                          <Row
-                            style={{ flexFlow: 'nowrap', gap: token.sizeXS }}
-                          >
-                            <Col>
-                              <ImageMetaIcon
-                                image={
-                                  form.getFieldValue('environments')?.version ||
-                                  form.getFieldValue('environments')?.manual
-                                }
-                              />
-                            </Col>
-                            <Col>
-                              {/* {form.getFieldValue('environments').image} */}
-                              <Flex direction="row">
-                                {form.getFieldValue('environments')?.manual ? (
-                                  <Typography.Text
-                                    code
-                                    style={{ wordBreak: 'break-all' }}
-                                    copyable={{
-                                      text: form.getFieldValue('environments')
-                                        ?.manual,
-                                    }}
-                                  >
-                                    {form.getFieldValue('environments')?.manual}
-                                  </Typography.Text>
-                                ) : (
-                                  <>
-                                    <SessionKernelTags
-                                      image={
-                                        form.getFieldValue('environments')
-                                          ?.version
-                                      }
-                                    />
-                                    {form.getFieldValue('environments')
-                                      ?.customizedTag ? (
-                                      <DoubleTag
-                                        values={[
-                                          {
-                                            label: 'Customized',
-                                            color: 'cyan',
-                                          },
-                                          {
-                                            label:
-                                              form.getFieldValue('environments')
-                                                ?.customizedTag,
-                                            color: 'cyan',
-                                          },
-                                        ]}
-                                      />
-                                    ) : null}
+                          {supportExtendedImageInfo ? (
+                            <Row style={{ flexFlow: 'nowrap' }}>
+                              <Col>
+                                <ImageMetaIcon
+                                  image={
+                                    form.getFieldValue('environments')
+                                      ?.version ||
+                                    form.getFieldValue('environments')?.manual
+                                  }
+                                  style={{ marginRight: token.marginXS }}
+                                />
+                              </Col>
+                              <Col>
+                                <Flex direction="row" wrap="wrap">
+                                  {form.getFieldValue('environments')
+                                    ?.manual ? (
                                     <Typography.Text
+                                      code
+                                      style={{ wordBreak: 'break-all' }}
                                       copyable={{
                                         text: form.getFieldValue('environments')
-                                          ?.version,
+                                          ?.manual,
                                       }}
-                                    />
-                                  </>
-                                )}
-                              </Flex>
-                            </Col>
-                          </Row>
+                                    >
+                                      {
+                                        form.getFieldValue('environments')
+                                          ?.manual
+                                      }
+                                    </Typography.Text>
+                                  ) : (
+                                    <>
+                                      <Typography.Text>
+                                        {tagAlias(
+                                          form.getFieldValue('environments')
+                                            ?.image?.base_image_name,
+                                        )}
+                                      </Typography.Text>
+                                      <Divider type="vertical" />
+                                      <Typography.Text>
+                                        {
+                                          form.getFieldValue('environments')
+                                            ?.image?.version
+                                        }
+                                      </Typography.Text>
+                                      <Divider type="vertical" />
+                                      <Typography.Text>
+                                        {
+                                          form.getFieldValue('environments')
+                                            ?.image?.architecture
+                                        }
+                                      </Typography.Text>
+                                      <Divider type="vertical" />
+                                      {/* TODO: replace this with AliasedImageDoubleTags after image list query with ImageNode is implemented. */}
+                                      {_.map(
+                                        form.getFieldValue('environments')
+                                          ?.image?.tags,
+                                        (tag: {
+                                          key: string;
+                                          value: string;
+                                        }) => {
+                                          const isCustomized = _.includes(
+                                            tag.key,
+                                            'customized_',
+                                          );
+                                          const tagValue = isCustomized
+                                            ? _.find(
+                                                form.getFieldValue(
+                                                  'environments',
+                                                )?.image?.labels,
+                                                {
+                                                  key: 'ai.backend.customized-image.name',
+                                                },
+                                              )?.value
+                                            : tag.value;
+                                          return (
+                                            <DoubleTag
+                                              key={tag.key}
+                                              values={[
+                                                {
+                                                  label: tagAlias(tag.key),
+                                                  color: isCustomized
+                                                    ? 'cyan'
+                                                    : 'blue',
+                                                },
+                                                {
+                                                  label: tagValue,
+                                                  color: isCustomized
+                                                    ? 'cyan'
+                                                    : 'blue',
+                                                },
+                                              ]}
+                                            />
+                                          );
+                                        },
+                                      )}
+                                      <Typography.Text
+                                        style={{ color: token.colorPrimary }}
+                                        copyable={{
+                                          text:
+                                            getImageFullName(
+                                              form.getFieldValue('environments')
+                                                ?.image,
+                                            ) ||
+                                            form.getFieldValue('environments')
+                                              ?.version,
+                                        }}
+                                      />
+                                    </>
+                                  )}
+                                </Flex>
+                              </Col>
+                            </Row>
+                          ) : (
+                            <Row
+                              style={{ flexFlow: 'nowrap', gap: token.sizeXS }}
+                            >
+                              <Col>
+                                <ImageMetaIcon
+                                  image={
+                                    form.getFieldValue('environments')
+                                      ?.version ||
+                                    form.getFieldValue('environments')?.manual
+                                  }
+                                />
+                              </Col>
+                              <Col>
+                                {/* {form.getFieldValue('environments').image} */}
+                                <Flex direction="row" wrap="wrap">
+                                  {form.getFieldValue('environments')
+                                    ?.manual ? (
+                                    <Typography.Text
+                                      code
+                                      style={{ wordBreak: 'break-all' }}
+                                      copyable={{
+                                        text: form.getFieldValue('environments')
+                                          ?.manual,
+                                      }}
+                                    >
+                                      {
+                                        form.getFieldValue('environments')
+                                          ?.manual
+                                      }
+                                    </Typography.Text>
+                                  ) : (
+                                    <>
+                                      <SessionKernelTags
+                                        image={
+                                          form.getFieldValue('environments')
+                                            ?.version
+                                        }
+                                      />
+                                      {form.getFieldValue('environments')
+                                        ?.customizedTag ? (
+                                        <DoubleTag
+                                          values={[
+                                            {
+                                              label: 'Customized',
+                                              color: 'cyan',
+                                            },
+                                            {
+                                              label:
+                                                form.getFieldValue(
+                                                  'environments',
+                                                )?.customizedTag,
+                                              color: 'cyan',
+                                            },
+                                          ]}
+                                        />
+                                      ) : null}
+                                      <Typography.Text
+                                        copyable={{
+                                          text: form.getFieldValue(
+                                            'environments',
+                                          )?.version,
+                                        }}
+                                      />
+                                    </>
+                                  )}
+                                </Flex>
+                              </Col>
+                            </Row>
+                          )}
                         </Descriptions.Item>
                         {form.getFieldValue('envvars')?.length > 0 && (
                           <Descriptions.Item
