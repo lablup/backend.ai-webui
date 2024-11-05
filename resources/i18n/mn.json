@@ -861,7 +861,7 @@
     "Action": "Үйлдэл",
     "Base": "Суурь",
     "Constraint": "Хязгаарлалт",
-    "ResourceLimit": "Нөөцийн хязгаарлалт",
+    "ResourceLimit": "Нөөцийн хязгаар",
     "DescDeleteAppInfo": "Та аппын мэдээллийг устгах гэж байна:",
     "DescDeleteImage": "Та зураг (ууд) ыг устгах гэж байна:",
     "DescSignificantInstallTime": "Энэ процесс нь татаж авахад ихээхэн хугацаа шаарддаг.",
@@ -900,7 +900,10 @@
     "CheckImageInstallation": "Зураг суулгаж байна уу?",
     "InstalledImagesAreExcluded": "Суулгасан зургуудыг оруулаагүй болно.",
     "DescDownloadImage": "__NOT_TRANSLATED__",
-    "DescSignificantDownloadTime": "__NOT_TRANSLATED__"
+    "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
+    "BaseImageName": "Зургийн үндсэн нэр",
+    "Tags": "Шошго",
+    "FullImagePath": "Зургийн бүрэн зам"
   },
   "resourcePreset": {
     "ResourcePresets": "Нөөцийн урьдчилсан тохируулга",

@@ -899,7 +899,10 @@
     "CheckImageInstallation": "Instalowanie obrazu?",
     "InstalledImagesAreExcluded": "Zainstalowane obrazy są wykluczone.",
     "DescDownloadImage": "__NOT_TRANSLATED__",
-    "DescSignificantDownloadTime": "__NOT_TRANSLATED__"
+    "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
+    "BaseImageName": "Podstawowa nazwa obrazu",
+    "Tags": "Tagi",
+    "FullImagePath": "Pełna ścieżka obrazu"
   },
   "resourcePreset": {
     "ResourcePresets": "Predefiniowane ustawienia zasobów",

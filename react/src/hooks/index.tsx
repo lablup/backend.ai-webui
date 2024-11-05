@@ -316,19 +316,20 @@ export const useBackendAIImageMetaData = () => {
         return architecture;
       },
       tagAlias: (tag: string) => {
-        let metadataTagAlias = metadata?.tagAlias[tag];
-        if (!metadataTagAlias && metadata?.tagReplace) {
-          for (const [key, replaceString] of Object.entries(
-            metadata.tagReplace,
-          )) {
-            const pattern = new RegExp(key);
-            if (pattern.test(tag)) {
-              metadataTagAlias = tag.replace(pattern, replaceString);
-              break;
-            }
-          }
-        }
-        return metadataTagAlias || tag;
+        return (
+          metadata?.tagAlias[tag] ??
+          _.chain(metadata.tagReplace)
+            .toPairs()
+            .find(([regExpStr]) => new RegExp(regExpStr).test(tag))
+            .thru((pair) => {
+              if (pair) {
+                const [regExpStr, replaceStr] = pair;
+                return _.replace(tag, new RegExp(regExpStr), replaceStr);
+              }
+            })
+            .value() ??
+          _.startCase(tag)
+        );
       },
     },
   ] as const;

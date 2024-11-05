@@ -861,7 +861,7 @@
     "Action": "Azione",
     "Base": "Base",
     "Constraint": "vincolo",
-    "ResourceLimit": "Limite di risorse",
+    "ResourceLimit": "Limite delle risorse",
     "DescDeleteAppInfo": "Stai per eliminare le informazioni sull'app:",
     "DescDeleteImage": "Stai per eliminare le immagini:",
     "DescSignificantInstallTime": "Questo processo richiede un tempo di download significativo.",
@@ -900,7 +900,10 @@
     "CheckImageInstallation": "Installare un'immagine?",
     "InstalledImagesAreExcluded": "Le immagini installate sono escluse.",
     "DescDownloadImage": "__NOT_TRANSLATED__",
-    "DescSignificantDownloadTime": "__NOT_TRANSLATED__"
+    "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
+    "BaseImageName": "Nome dell'immagine di base",
+    "Tags": "Tag",
+    "FullImagePath": "Percorso completo dell'immagine"
   },
   "resourcePreset": {
     "ResourcePresets": "Preimpostazioni delle risorse",

@@ -537,7 +537,10 @@
     "CheckImageInstallation": "¿Instalar una imagen?",
     "InstalledImagesAreExcluded": "Se excluyen las imágenes instaladas.",
     "DescDownloadImage": "__NOT_TRANSLATED__",
-    "DescSignificantDownloadTime": "__NOT_TRANSLATED__"
+    "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
+    "BaseImageName": "Nombre de la imagen base",
+    "Tags": "Etiquetas",
+    "FullImagePath": "Ruta de imagen completa"
   },
   "explorer": {
     "InputTooShort": "InputTooShort",

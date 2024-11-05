@@ -899,7 +899,10 @@
     "CheckImageInstallation": "安装图像？",
     "InstalledImagesAreExcluded": "不包括已安装的图像。",
     "DescDownloadImage": "__NOT_TRANSLATED__",
-    "DescSignificantDownloadTime": "__NOT_TRANSLATED__"
+    "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
+    "BaseImageName": "基础镜像名称",
+    "Tags": "标签",
+    "FullImagePath": "完整图像路径"
   },
   "resourcePreset": {
     "ResourcePresets": "资源预设",

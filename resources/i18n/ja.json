@@ -899,7 +899,10 @@
     "CheckImageInstallation": "イメージのインストール？",
     "InstalledImagesAreExcluded": "インストールされたイメージは除く。",
     "DescDownloadImage": "__NOT_TRANSLATED__",
-    "DescSignificantDownloadTime": "__NOT_TRANSLATED__"
+    "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
+    "BaseImageName": "ベースイメージ名",
+    "Tags": "タグ",
+    "FullImagePath": "完全な画像パス"
   },
   "resourcePreset": {
     "ResourcePresets": "リソースプリセット",

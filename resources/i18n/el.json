@@ -899,7 +899,10 @@
     "CheckImageInstallation": "Εγκαθιστώντας μια εικόνα;",
     "InstalledImagesAreExcluded": "Οι εγκατεστημένες εικόνες εξαιρούνται.",
     "DescDownloadImage": "__NOT_TRANSLATED__",
-    "DescSignificantDownloadTime": "__NOT_TRANSLATED__"
+    "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
+    "BaseImageName": "Όνομα εικόνας βάσης",
+    "Tags": "Ετικέτες",
+    "FullImagePath": "Πλήρης διαδρομή εικόνας"
   },
   "resourcePreset": {
     "ResourcePresets": "Προεπιλογές πόρων",

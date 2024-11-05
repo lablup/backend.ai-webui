@@ -5,6 +5,7 @@
     "Backendai",
     "backendaiclient",
     "backendaioptions",
+    "baseversion",
     "cssinjs",
     "cuda",
     "FGPU",

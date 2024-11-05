@@ -861,7 +861,7 @@
     "Action": "Tindakan",
     "Base": "Basis",
     "Constraint": "Batasan",
-    "ResourceLimit": "Batas Sumber Daya",
+    "ResourceLimit": "Batasan sumber daya",
     "DescDeleteAppInfo": "Anda akan menghapus info aplikasi: ",
     "DescDeleteImage": "Anda akan menghapus image: ",
     "DescSignificantInstallTime": "Proses ini membutuhkan waktu pengunduhan yang signifikan.",
@@ -900,7 +900,10 @@
     "CheckImageInstallation": "Memasang gambar?",
     "InstalledImagesAreExcluded": "Gambar yang diinstal tidak termasuk.",
     "DescDownloadImage": "__NOT_TRANSLATED__",
-    "DescSignificantDownloadTime": "__NOT_TRANSLATED__"
+    "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
+    "BaseImageName": "Nama gambar dasar",
+    "Tags": "Tag",
+    "FullImagePath": "Jalur gambar penuh"
   },
   "resourcePreset": {
     "ResourcePresets": "Preset Sumber Daya",
