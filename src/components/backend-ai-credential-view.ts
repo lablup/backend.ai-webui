@@ -84,7 +84,6 @@ export default class BackendAICredentialView extends BackendAIPage {
   @query('#id_user_name') userNameInput!: TextField;
   @query('#id_user_password') userPasswordInput!: TextField;
   @query('#new-keypair-dialog') newKeypairDialog!: BackendAIDialog;
-  @query('#new-user-dialog') newUserDialog!: BackendAIDialog;
   @query('#export-to-csv') exportToCsvDialog!: BackendAIDialog;
   @query('#export-file-name') exportFileNameInput!: TextField;
 
@@ -303,13 +302,6 @@ export default class BackendAICredentialView extends BackendAIPage {
   }
 
   /**
-   * Launch an user add dialog.
-   */
-  _launchUserAddDialog() {
-    this.newUserDialog.show();
-  }
-
-  /**
    * Open react user create modal.
    * UserSettingModal.tsx
    */
@@ -406,69 +398,6 @@ export default class BackendAICredentialView extends BackendAIPage {
           this.notification.detail = err.message;
           this.notification.show(true, err);
         }
-      });
-  }
-
-  /**
-   * Add an user with user information.
-   */
-  _addUser() {
-    const email = this.userEmailInput.value;
-    // if name value is empty, it will be covered by the username of email address.
-    const name =
-      this.userNameInput.value !== ''
-        ? this.userNameInput.value
-        : email.split('@')[0];
-    const password = this.userPasswordInput.value;
-
-    // if any input value is invalid, it returns.
-    if (
-      !this.userEmailInput.checkValidity() ||
-      !this.userPasswordInput.checkValidity() ||
-      !this.userPasswordConfirmInput.checkValidity()
-    ) {
-      return;
-    }
-
-    // all values except 'username', and 'password' are arbitrarily designated default values
-    const input = {
-      username: name,
-      password: password,
-      need_password_change: false,
-      full_name: name,
-      description: `${name}'s Account`,
-      is_active: true,
-      domain_name: 'default',
-      role: 'user',
-    };
-
-    globalThis.backendaiclient.group
-      .list()
-      .then((res) => {
-        const default_id = res.groups.find((x) => x.name === 'default').id;
-        return Promise.resolve(
-          globalThis.backendaiclient.user.create(email, {
-            ...input,
-            group_ids: [default_id],
-          }),
-        );
-      })
-      .then((res) => {
-        this.newUserDialog.hide();
-        if (res['create_user'].ok) {
-          this.notification.text = _text('credential.UserAccountCreated');
-
-          this.activeUserList.refresh();
-        } else {
-          // console.error(res['create_user'].msg);
-          this.notification.text = _text('credential.UserAccountCreatedError');
-        }
-        this.notification.show();
-
-        this.userEmailInput.value = '';
-        this.userNameInput.value = '';
-        this.userPasswordInput.value = '';
-        this.userPasswordConfirmInput.value = '';
       });
   }
 
@@ -620,89 +549,6 @@ export default class BackendAICredentialView extends BackendAIPage {
     if (!menu.open) {
       menu.show();
     }
-  }
-
-  _validatePassword1() {
-    this.userPasswordConfirmInput.reportValidity();
-    this.userPasswordInput.validityTransform = (newValue, nativeValidity) => {
-      if (!nativeValidity.valid) {
-        if (nativeValidity.valueMissing) {
-          this.userPasswordInput.validationMessage = _text(
-            'signup.PasswordInputRequired',
-          );
-          return {
-            valid: nativeValidity.valid,
-            customError: !nativeValidity.valid,
-          };
-        } else {
-          this.userPasswordInput.validationMessage = _text(
-            'signup.PasswordInvalid',
-          );
-          return {
-            valid: nativeValidity.valid,
-            customError: !nativeValidity.valid,
-          };
-        }
-      } else {
-        return {
-          valid: nativeValidity.valid,
-          customError: !nativeValidity.valid,
-        };
-      }
-    };
-  }
-
-  _validatePassword2() {
-    this.userPasswordConfirmInput.validityTransform = (
-      newValue,
-      nativeValidity,
-    ) => {
-      if (!nativeValidity.valid) {
-        if (nativeValidity.valueMissing) {
-          this.userPasswordConfirmInput.validationMessage = _text(
-            'signup.PasswordInputRequired',
-          );
-          return {
-            valid: nativeValidity.valid,
-            customError: !nativeValidity.valid,
-          };
-        } else {
-          this.userPasswordConfirmInput.validationMessage = _text(
-            'signup.PasswordInvalid',
-          );
-          return {
-            valid: nativeValidity.valid,
-            customError: !nativeValidity.valid,
-          };
-        }
-      } else {
-        // custom validation for password input match
-        const isMatched =
-          this.userPasswordInput.value === this.userPasswordConfirmInput.value;
-        if (!isMatched) {
-          this.userPasswordConfirmInput.validationMessage = _text(
-            'signup.PasswordNotMatched',
-          );
-        }
-        return {
-          valid: isMatched,
-          customError: !isMatched,
-        };
-      }
-    };
-  }
-
-  _validatePassword() {
-    this._validatePassword1();
-    this._validatePassword2();
-  }
-
-  _togglePasswordVisibility(element) {
-    const isVisible = element.__on;
-    const password = element.closest('div').querySelector('mwc-textfield');
-    isVisible
-      ? password.setAttribute('type', 'text')
-      : password.setAttribute('type', 'password');
   }
 
   static gBToBytes(value = 0) {
@@ -920,82 +766,6 @@ export default class BackendAICredentialView extends BackendAIPage {
             label="${_t('general.Add')}"
             fullwidth
             @click="${this._addKeyPair}"
-          ></mwc-button>
-        </div>
-      </backend-ai-dialog>
-      <backend-ai-dialog id="new-user-dialog" fixed backdrop blockscrolling>
-        <span slot="title">${_t('credential.CreateUser')}</span>
-        <div slot="content">
-          <mwc-textfield
-            type="email"
-            name="user_email"
-            id="id_user_email"
-            label="${_t('general.E-Mail')}"
-            autoValidate
-            required
-            placeholder="${_text('maxLength.64chars')}"
-            maxLength="64"
-            validationMessage="${_text(
-              'credential.validation.InvalidEmailAddress',
-            )}"
-          ></mwc-textfield>
-          <mwc-textfield
-            type="text"
-            name="user_name"
-            id="id_user_name"
-            label="${_t('general.Username')}"
-            placeholder="${_text('maxLength.64chars')}"
-            maxLength="64"
-          ></mwc-textfield>
-          <div class="horizontal flex layout">
-            <mwc-textfield
-              type="password"
-              name="user_password"
-              id="id_user_password"
-              label="${_t('general.Password')}"
-              autoValidate
-              required
-              pattern=${BackendAiCommonUtils.passwordRegex}
-              validationMessage="${_text('signup.PasswordInvalid')}"
-              @change="${() => this._validatePassword()}"
-              maxLength="64"
-            ></mwc-textfield>
-            <mwc-icon-button-toggle
-              off
-              onIcon="visibility"
-              offIcon="visibility_off"
-              @click="${(e) => this._togglePasswordVisibility(e.target)}"
-            ></mwc-icon-button-toggle>
-          </div>
-          <div class="horizontal flex layout">
-            <mwc-textfield
-              type="password"
-              name="user_confirm"
-              id="id_user_confirm"
-              label="${_t('general.ConfirmPassword')}"
-              autoValidate
-              required
-              pattern=${BackendAiCommonUtils.passwordRegex}
-              validationMessage="${_text('signup.PasswordNotMatched')}"
-              @change="${() => this._validatePassword()}"
-              maxLength="64"
-            ></mwc-textfield>
-            <mwc-icon-button-toggle
-              off
-              onIcon="visibility"
-              offIcon="visibility_off"
-              @click="${(e) => this._togglePasswordVisibility(e.target)}"
-            ></mwc-icon-button-toggle>
-          </div>
-        </div>
-        <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button
-            raised
-            id="create-user-button"
-            icon="add"
-            label="${_t('credential.CreateUser')}"
-            fullwidth
-            @click="${this._addUser}"
           ></mwc-button>
         </div>
       </backend-ai-dialog>
