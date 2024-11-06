@@ -58,6 +58,7 @@ const UserInfoModal: React.FC<Props> = ({ ...baiModalProps }) => {
             id
             name
           }
+          resource_policy
           # TODO: reflect https://github.com/lablup/backend.ai-webui/pull/1999
           # support from 23.09.0b1
           # https://github.com/lablup/backend.ai/pull/1530
@@ -115,6 +116,9 @@ const UserInfoModal: React.FC<Props> = ({ ...baiModalProps }) => {
         <Descriptions.Item label={t('credential.UserID')}>
           {user?.email}
         </Descriptions.Item>
+        <Descriptions.Item label={t('credential.Description')}>
+          {user?.description}
+        </Descriptions.Item>
         <Descriptions.Item label={t('credential.UserName')}>
           {user?.username}
         </Descriptions.Item>
@@ -150,11 +154,14 @@ const UserInfoModal: React.FC<Props> = ({ ...baiModalProps }) => {
         title={t('credential.Association')}
         labelStyle={{ width: '50%' }}
       >
+        <Descriptions.Item label={t('credential.Role')}>
+          {user?.role}
+        </Descriptions.Item>
         <Descriptions.Item label={t('credential.Domain')}>
           {user?.domain_name}
         </Descriptions.Item>
-        <Descriptions.Item label={t('credential.Role')}>
-          {user?.role}
+        <Descriptions.Item label={t('credential.ResourcePolicy')}>
+          {user?.resource_policy}
         </Descriptions.Item>
       </Descriptions>
       <br />
