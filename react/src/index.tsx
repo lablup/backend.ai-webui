@@ -1,11 +1,20 @@
 import App from './App';
+import BAIIntervalText from './components/BAIIntervalText';
+import { jotaiStore, useWebComponentInfo } from './components/DefaultProviders';
 import Flex from './components/Flex';
 import FlexActivityIndicator from './components/FlexActivityIndicator';
-import ResourceGroupSelect from './components/ResourceGroupSelect';
+import ResourceGroupSelectForCurrentProject from './components/ResourceGroupSelectForCurrentProject';
+import SourceCodeViewer from './components/SourceCodeViewer';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
-import reactToWebComponent from './helper/react-to-webcomponent';
+import reactToWebComponent, {
+  ReactWebComponentProps,
+} from './helper/react-to-webcomponent';
+import { useSuspendedBackendaiClient } from './hooks';
+import { useCurrentResourceGroupValue } from './hooks/useCurrentProject';
 import { ThemeModeProvider } from './hooks/useThemeMode';
-import ModelStoreListPage from './pages/ModelStoreListPage';
+import { Tag, theme } from 'antd';
+import dayjs from 'dayjs';
+import { Provider as JotaiProvider } from 'jotai';
 import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import { useTranslation } from 'react-i18next';
@@ -21,23 +30,12 @@ const SessionList = React.lazy(() => import('./pages/SessionListPage'));
 const ResetPasswordRequired = React.lazy(
   () => import('./components/ResetPasswordRequired'),
 );
-const StorageStatusPanel = React.lazy(
-  () => import('./components/StorageStatusPanel'),
-);
-const StorageStatusPanelFallback = React.lazy(() =>
-  import('./components/StorageStatusPanel').then((m) => ({
-    default: m.StorageStatusPanelFallback,
-  })),
-);
 const CopyableCodeText = React.lazy(
   () => import('./components/CopyableCodeText'),
 );
 const UserInfoModal = React.lazy(() => import('./components/UserInfoModal'));
 const UserSettingsModal = React.lazy(
   () => import('./components/UserSettingModal'),
-);
-const ManageAppsModal = React.lazy(
-  () => import('./components/ManageAppsModal'),
 );
 const UserDropdownMenu = React.lazy(
   () => import('./components/UserDropdownMenu'),
@@ -83,19 +81,6 @@ customElements.define(
 );
 
 customElements.define(
-  'backend-ai-react-storage-status-panel',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <Suspense fallback={<StorageStatusPanelFallback />}>
-          <StorageStatusPanel fetchKey={props.value || ''} />
-        </Suspense>
-      </DefaultProviders>
-    );
-  }),
-);
-
-customElements.define(
   'backend-ai-react-copyable-code-text',
   reactToWebComponent((props) => {
     return (
@@ -129,17 +114,6 @@ customElements.define(
 );
 
 customElements.define(
-  'backend-ai-react-manage-app-dialog',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <ManageAppsModal />
-      </DefaultProviders>
-    );
-  }),
-);
-
-customElements.define(
   'backend-ai-react-user-dropdown-menu',
   reactToWebComponent((props) => {
     return (
@@ -149,43 +123,89 @@ customElements.define(
     );
   }),
 );
-customElements.define(
-  'backend-ai-react-resource-group-select',
-  reactToWebComponent((props) => {
-    const [value, setValue] = React.useState(props.value || '');
-    const { t } = useTranslation();
-    React.useEffect(() => {
-      if (props.value !== value) {
-        setValue(props.value || '');
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props.value]);
 
+customElements.define(
+  'backend-ai-react-source-code-viewer',
+  reactToWebComponent((props) => {
     return (
       <DefaultProviders {...props}>
-        <Flex
-          direction="column"
-          gap="sm"
-          align="stretch"
-          style={{ minWidth: 200, maxWidth: 310 }}
-        >
-          {t('session.launcher.ResourceGroup')}
-          <ResourceGroupSelect
-            size="large"
-            showSearch
-            value={value}
-            loading={value !== props.value || value === ''}
-            onChange={(value) => {
-              setValue(value);
-              props.dispatchEvent('change', value);
-            }}
-            popupMatchSelectWidth={false}
-          />
-        </Flex>
+        <SourceCodeViewerInWebComponent {...props} />
       </DefaultProviders>
     );
   }),
 );
+
+const SourceCodeViewerInWebComponent = (props: ReactWebComponentProps) => {
+  const {
+    parsedValue: { children, language, wordWrap } = {
+      children: '',
+      language: '',
+    },
+  } = useWebComponentInfo<{
+    children: string;
+    language: string;
+    wordWrap?: boolean;
+  }>();
+  return (
+    <SourceCodeViewer language={language} wordWrap={wordWrap ? true : false}>
+      {children}
+    </SourceCodeViewer>
+  );
+};
+
+customElements.define(
+  'backend-ai-react-resource-group-select',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <ResourceGroupSelectInWebComponent {...props} />
+      </DefaultProviders>
+    );
+  }),
+);
+
+const ResourceGroupSelectInWebComponent = (props: ReactWebComponentProps) => {
+  const { t } = useTranslation();
+
+  useSuspendedBackendaiClient();
+
+  const currentResourceGroupByProject = useCurrentResourceGroupValue();
+
+  React.useEffect(() => {
+    if (
+      // @ts-ignore
+      currentResourceGroupByProject !== globalThis.resourceBroker.scaling_group
+    ) {
+      props.dispatchEvent('change', currentResourceGroupByProject);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    currentResourceGroupByProject,
+    // @ts-ignore
+    globalThis.resourceBroker.scaling_group,
+  ]);
+  return (
+    <Flex
+      direction="column"
+      gap="sm"
+      align="stretch"
+      style={{ minWidth: 200, maxWidth: 310 }}
+    >
+      {t('session.launcher.ResourceGroup')}
+      <ResourceGroupSelectForCurrentProject
+        size="large"
+        showSearch
+        disabled={currentResourceGroupByProject !== props.value}
+        loading={currentResourceGroupByProject !== props.value}
+        onChange={(value) => {
+          // setValue(value);
+          props.dispatchEvent('change', value);
+        }}
+        popupMatchSelectWidth={false}
+      />
+    </Flex>
+  );
+};
 
 customElements.define(
   'backend-ai-react-container-registry-list',
@@ -194,19 +214,6 @@ customElements.define(
       <DefaultProviders {...props}>
         <Suspense fallback={<FlexActivityIndicator />}>
           <ContainerRegistryList />
-        </Suspense>
-      </DefaultProviders>
-    );
-  }),
-);
-
-customElements.define(
-  'backend-ai-react-model-store-list',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <Suspense fallback={<FlexActivityIndicator />}>
-          <ModelStoreListPage />
         </Suspense>
       </DefaultProviders>
     );
@@ -250,9 +257,11 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <ThemeModeProvider>
-      <App />
-    </ThemeModeProvider>
+    <JotaiProvider store={jotaiStore}>
+      <ThemeModeProvider>
+        <App />
+      </ThemeModeProvider>
+    </JotaiProvider>
   </React.StrictMode>,
 );
 
@@ -281,3 +290,60 @@ customElements.define(
     );
   }),
 );
+
+customElements.define(
+  'backend-ai-session-reservation-timer',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <ReservationTimeCounter {...props} />
+      </DefaultProviders>
+    );
+  }),
+);
+
+const ReservationTimeCounter = (props: ReactWebComponentProps) => {
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
+
+  const { parsedValue } = useWebComponentInfo<{
+    starts_at: string;
+    terminated_at: string;
+  }>();
+
+  const baiClient = useSuspendedBackendaiClient();
+
+  if (dayjs(parsedValue.starts_at).isAfter(dayjs())) return null;
+
+  return (
+    <Flex>
+      <Tag
+        color={token.colorTextDisabled}
+        style={{
+          margin: 0,
+          borderTopLeftRadius: token.borderRadiusSM,
+          borderBottomLeftRadius: token.borderRadiusSM,
+        }}
+      >
+        {t('session.ElapsedTime')}
+      </Tag>
+      <Tag
+        color={token['green-7']}
+        style={{
+          borderTopRightRadius: token.borderRadiusSM,
+          borderBottomRightRadius: token.borderRadiusSM,
+        }}
+      >
+        <BAIIntervalText
+          callback={() => {
+            return baiClient.utils.elapsedTime(
+              parsedValue.starts_at,
+              parsedValue.terminated_at || null,
+            );
+          }}
+          delay={1000}
+        />
+      </Tag>
+    </Flex>
+  );
+};

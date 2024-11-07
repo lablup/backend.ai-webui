@@ -8,6 +8,7 @@ import { SessionInfoCellFragment$key } from './__generated__/SessionInfoCellFrag
 import { EditOutlined } from '@ant-design/icons';
 import { Button, Form, FormInstance, Input, Typography, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
+import _ from 'lodash';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
@@ -74,6 +75,7 @@ const SessionInfoCell: React.FC<{
       ?.validateFields()
       .then(({ name }) => {
         setEditing(false);
+        if (session.name === name) return;
         setOptimisticName(name);
         mutation.mutate(name, {
           onSuccess: (result) => {
@@ -87,7 +89,7 @@ const SessionInfoCell: React.FC<{
       .catch(() => {});
   };
 
-  const isPendingRename = mutation.isLoading || optimisticName !== session.name;
+  const isPendingRename = mutation.isPending || optimisticName !== session.name;
 
   // sessions[objectKey].icon = this._getKernelIcon(session.image);
   //         sessions[objectKey].sessionTags = this._getKernelInfo(session.image);
@@ -109,8 +111,12 @@ const SessionInfoCell: React.FC<{
               message: t('session.Validation.EnterValidSessionName'),
             },
             () => ({
-              validator(_, value) {
-                if (sessionNameList.includes(String(value))) {
+              validator(form, value) {
+                if (
+                  _.without(sessionNameList, session.name).includes(
+                    String(value),
+                  )
+                ) {
                   return Promise.reject(
                     new Error(t('session.Validation.SessionNameAlreadyExist')),
                   );

@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import {
   IronFlex,
@@ -44,7 +44,11 @@ interface Options {
   tpu: boolean;
   ipu: boolean;
   atom: boolean;
+  atom_plus: boolean;
+  gaudi2: boolean;
   warboy: boolean;
+  rngd: boolean;
+  hyperaccel_lpu: boolean;
   schedulerType: string;
   scheduler: {
     num_retries_to_skip: string;
@@ -102,7 +106,11 @@ export default class BackendAiSettingsView extends BackendAIPage {
       tpu: false,
       ipu: false,
       atom: false,
+      atom_plus: false,
+      gaudi2: false,
       warboy: false,
+      rngd: false,
+      hyperaccel_lpu: false,
       schedulerType: 'fifo',
       scheduler: {
         num_retries_to_skip: '0',
@@ -572,6 +580,48 @@ export default class BackendAiSettingsView extends BackendAIPage {
                     <div
                       class="vertical center-justified layout setting-desc-shrink"
                     >
+                      <div class="title">${_t('settings.ATOMPlusSupport')}</div>
+                      <div class="description-shrink">
+                        ${_tr('settings.DescATOMPlusSupport')}
+                        <br />
+                        ${_t('settings.RequireATOMPlusPlugin')}
+                      </div>
+                    </div>
+                    <div
+                      class="vertical center-justified layout setting-button"
+                    >
+                      <mwc-switch
+                        id="atom-plus-support-switch"
+                        ?selected="${this.options['atom_plus']}"
+                        disabled
+                      ></mwc-switch>
+                    </div>
+                  </div>
+                  <div class="horizontal layout setting-item">
+                    <div
+                      class="vertical center-justified layout setting-desc-shrink"
+                    >
+                      <div class="title">${_t('settings.Gaudi2Support')}</div>
+                      <div class="description-shrink">
+                        ${_tr('settings.DescGaudi2Support')}
+                        <br />
+                        ${_t('settings.RequireGaudi2Plugin')}
+                      </div>
+                    </div>
+                    <div
+                      class="vertical center-justified layout setting-button"
+                    >
+                      <mwc-switch
+                        id="gaudi-2-support-switch"
+                        ?selected="${this.options['gaudi2']}"
+                        disabled
+                      ></mwc-switch>
+                    </div>
+                  </div>
+                  <div class="horizontal layout setting-item">
+                    <div
+                      class="vertical center-justified layout setting-desc-shrink"
+                    >
                       <div class="title">${_t('settings.Warboysupport')}</div>
                       <div class="description-shrink">
                         ${_tr('settings.DescWarboysupport')}
@@ -585,6 +635,50 @@ export default class BackendAiSettingsView extends BackendAIPage {
                       <mwc-switch
                         id="warboy-support-switch"
                         ?selected="${this.options['warboy']}"
+                        disabled
+                      ></mwc-switch>
+                    </div>
+                  </div>
+                  <div class="horizontal layout setting-item">
+                    <div
+                      class="vertical center-justified layout setting-desc-shrink"
+                    >
+                      <div class="title">${_t('settings.RNGDsupport')}</div>
+                      <div class="description-shrink">
+                        ${_tr('settings.DescRNGDsupport')}
+                        <br />
+                        ${_t('settings.RequireRNGDPlugin')}
+                      </div>
+                    </div>
+                    <div
+                      class="vertical center-justified layout setting-button"
+                    >
+                      <mwc-switch
+                        id="rngd-support-switch"
+                        ?selected="${this.options['rngd']}"
+                        disabled
+                      ></mwc-switch>
+                    </div>
+                  </div>
+                  <div class="horizontal layout setting-item">
+                    <div
+                      class="vertical center-justified layout setting-desc-shrink"
+                    >
+                      <div class="title">
+                        ${_t('settings.HyperaccelLPUsupport')}
+                      </div>
+                      <div class="description-shrink">
+                        ${_tr('settings.DescHyperaccelLPUsupport')}
+                        <br />
+                        ${_t('settings.RequireHyperaccelLPUPlugin')}
+                      </div>
+                    </div>
+                    <div
+                      class="vertical center-justified layout setting-button"
+                    >
+                      <mwc-switch
+                        id="hyperaccel-lpu-support-switch"
+                        ?selected="${this.options['hyperaccel_lpu']}"
                         disabled
                       ></mwc-switch>
                     </div>
@@ -903,8 +997,20 @@ export default class BackendAiSettingsView extends BackendAIPage {
       if ('ipu.device' in response) {
         this.options['ipu'] = true;
       }
+      if ('atom.device' in response) {
+        this.options['atom'] = true;
+      }
+      if ('atom-plus.device' in response) {
+        this.options['atom_plus'] = true;
+      }
       if ('warboy.device' in response) {
         this.options['warboy'] = true;
+      }
+      if ('rngd.device' in response) {
+        this.options['rngd'] = true;
+      }
+      if ('hyperaccel-lpu.device' in response) {
+        this.options['hyperaccel-lpu'] = true;
       }
       // this.update(this.options);
       this.requestUpdate();

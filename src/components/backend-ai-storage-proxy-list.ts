@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import { navigate } from '../backend-ai-app';
 import '../plastics/lablup-shields/lablup-shields';
@@ -83,7 +83,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 182px);
+          height: var(--list-height, calc(100vh - 182px));
         }
 
         mwc-icon {

@@ -1,61 +1,89 @@
 import { GBToBytes, bytesToGB } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
+import Flex from './Flex';
+import FormItemWithUnlimited from './FormItemWithUnlimited';
+import {
+  CreateProjectResourcePolicyInput,
+  ProjectResourcePolicySettingModalCreateMutation,
+} from './__generated__/ProjectResourcePolicySettingModalCreateMutation.graphql';
 import { ProjectResourcePolicySettingModalFragment$key } from './__generated__/ProjectResourcePolicySettingModalFragment.graphql';
-// import { ProjectResourcePolicySettingModalCreateMutation } from "./__generated__/ProjectResourcePolicySettingModalCreateMutation.graphql";
-import { ProjectResourcePolicySettingModalModifyMutation } from './__generated__/ProjectResourcePolicySettingModalModifyMutation.graphql';
-import { Form, Input, message, Alert, FormInstance } from 'antd';
+import {
+  ModifyProjectResourcePolicyInput,
+  ProjectResourcePolicySettingModalModifyMutation,
+} from './__generated__/ProjectResourcePolicySettingModalModifyMutation.graphql';
+import {
+  Form,
+  Input,
+  Alert,
+  App,
+  theme,
+  InputNumber,
+  FormInstance,
+} from 'antd';
 import graphql from 'babel-plugin-relay/macro';
-import React, { useRef } from 'react';
+import _ from 'lodash';
+import React, { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment, useMutation } from 'react-relay';
 
 interface Props extends BAIModalProps {
+  existingPolicyNames?: string[];
   projectResourcePolicyFrgmt: ProjectResourcePolicySettingModalFragment$key | null;
-  onRequestClose: () => void;
+  onRequestClose: (success?: boolean) => void;
 }
 
 const ProjectResourcePolicySettingModal: React.FC<Props> = ({
-  projectResourcePolicyFrgmt: resourcePolicyFrgmt,
+  existingPolicyNames,
+  projectResourcePolicyFrgmt = null,
   onRequestClose,
   ...baiModalProps
 }) => {
   const { t } = useTranslation();
-
+  const { token } = theme.useToken();
+  const { message } = App.useApp();
   const formRef = useRef<FormInstance>(null);
 
-  const projectResourcePolicyInfo = useFragment(
+  const baiClient = useSuspendedBackendaiClient();
+  const supportMaxVfolderCount = baiClient?.supports(
+    'max-vfolder-count-in-user-and-project-resource-policy',
+  );
+  const supportMaxQuotaScopeSize = baiClient?.supports('max-quota-scope-size');
+
+  const projectResourcePolicy = useFragment(
     graphql`
       fragment ProjectResourcePolicySettingModalFragment on ProjectResourcePolicy {
         id
         name
         created_at
-        max_quota_scope_size
+        # follows version of https://github.com/lablup/backend.ai/pull/1993
+        # --------------- START --------------------
+        max_vfolder_count @since(version: "23.09.6")
+        max_quota_scope_size @since(version: "23.09.2")
+        # ---------------- END ---------------------
       }
     `,
-    resourcePolicyFrgmt,
+    projectResourcePolicyFrgmt,
   );
 
-  // const [
-  //   commitCreateProjectResourcePolicy,
-  //   isInFlightCommitCreateProjectResourcePolicy,
-  // ] = useMutation<ProjectResourcePolicySettingModalCreateMutation>(graphql`
-  //   mutation ProjectResourcePolicySettingModalCreateMutation(
-  //     $name: String!
-  //     $props: CreateProjectResourcePolicyInput!
-  //   ) {
-  //     create_project_resource_policy(name: $name, props: $props) {
-  //       ok
-  //       msg
-  //       resource_policy {
-  //         max_quota_scope_size
-  //       }
-  //     }
-  //   }
-  // `);
+  const [
+    commitCreateProjectResourcePolicy,
+    isInFlightCommitCreateProjectResourcePolicy,
+  ] = useMutation<ProjectResourcePolicySettingModalCreateMutation>(graphql`
+    mutation ProjectResourcePolicySettingModalCreateMutation(
+      $name: String!
+      $props: CreateProjectResourcePolicyInput!
+    ) {
+      create_project_resource_policy(name: $name, props: $props) {
+        ok
+        msg
+      }
+    }
+  `);
 
   const [
     commitModifyProjectResourcePolicy,
-    // isInFlightCommitModifyProjectResourcePolicy,
+    isInFlightCommitModifyProjectResourcePolicy,
   ] = useMutation<ProjectResourcePolicySettingModalModifyMutation>(graphql`
     mutation ProjectResourcePolicySettingModalModifyMutation(
       $name: String!
@@ -68,107 +96,183 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
     }
   `);
 
-  const _onOk = (e: React.MouseEvent<HTMLElement>) => {
-    formRef.current?.validateFields().then((values) => {
-      if (
-        projectResourcePolicyInfo?.name &&
-        projectResourcePolicyInfo?.max_quota_scope_size
-      ) {
-        commitModifyProjectResourcePolicy({
-          variables: {
-            name: projectResourcePolicyInfo?.name,
-            props: {
-              // max_vfolder_count: values?.max_vfolder_count,
-              max_quota_scope_size: GBToBytes(values?.max_quota_scope_size),
+  const initialValues = useMemo(() => {
+    let unlimitedValues = {};
+    if (projectResourcePolicy === null) {
+      unlimitedValues = {
+        // Initialize unlimited values as a default when creating a new policy.\
+        max_vfolder_count: 0,
+        max_quota_scope_size: -1,
+      };
+    }
+    let maxQuotaScopeSize = projectResourcePolicy?.max_quota_scope_size;
+    maxQuotaScopeSize =
+      _.isUndefined(maxQuotaScopeSize) || maxQuotaScopeSize === -1
+        ? -1
+        : bytesToGB(maxQuotaScopeSize);
+    return {
+      ...unlimitedValues,
+      ...projectResourcePolicy,
+      max_quota_scope_size: maxQuotaScopeSize,
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    projectResourcePolicy,
+    projectResourcePolicy?.max_vfolder_count,
+    projectResourcePolicy?.max_quota_scope_size,
+  ]);
+
+  const handleOk = (e: React.MouseEvent<HTMLElement>) => {
+    return formRef?.current
+      ?.validateFields()
+      .then((values) => {
+        const props:
+          | CreateProjectResourcePolicyInput
+          | ModifyProjectResourcePolicyInput = {
+          max_vfolder_count: values?.max_vfolder_count || 0,
+          max_quota_scope_size:
+            values?.max_quota_scope_size === -1
+              ? -1
+              : GBToBytes(values?.max_quota_scope_size),
+        };
+        if (!supportMaxVfolderCount) {
+          delete props.max_vfolder_count;
+        }
+        if (!supportMaxQuotaScopeSize) {
+          delete props.max_quota_scope_size;
+        }
+        if (projectResourcePolicy === null) {
+          commitCreateProjectResourcePolicy({
+            variables: {
+              name: values?.name,
+              props: props as CreateProjectResourcePolicyInput,
             },
-          },
-          onCompleted(response) {
-            if (response?.modify_project_resource_policy?.ok) {
-              message.success(
-                t('storageHost.ResourcePolicySuccessfullyUpdated'),
-              );
-            } else {
-              message.error(response?.modify_project_resource_policy?.msg);
-            }
-            onRequestClose();
-          },
-          onError(error) {
-            console.log(error);
-            message.error(error.message);
-          },
-        });
-      } else {
-        //   commitCreateProjectResourcePolicy({
-        //     variables: {
-        //       // TODO: Apply multiple resource policy
-        //       // Create a project resource policy with the same name as the project name
-        //       name: projectResourcePolicy || "",
-        //       props: {
-        //         max_quota_scope_size: GBToBytes(values?.max_quota_scope_size),
-        //       },
-        //     },
-        //     onCompleted(response) {
-        //       if (response?.create_project_resource_policy?.ok) {
-        //         message.success(
-        //           t("storageHost.ResourcePolicySuccessfullyCreated")
-        //         );
-        //       } else {
-        //         message.error(response?.create_project_resource_policy?.msg);
-        //       }
-        //       onRequestClose();
-        //     },
-        //     onError(error) {
-        //       console.log(error);
-        //       message.error(error.message);
-        //     },
-        //   });
-      }
-    });
+            onCompleted(res, errors) {
+              if (!res?.create_project_resource_policy?.ok || errors) {
+                message.error(res?.create_project_resource_policy?.msg);
+                onRequestClose();
+              } else {
+                message.success(
+                  t('storageHost.ResourcePolicySuccessfullyUpdated'),
+                );
+                onRequestClose(true);
+              }
+            },
+            onError(error) {
+              message.error(error?.message);
+            },
+          });
+        } else {
+          commitModifyProjectResourcePolicy({
+            variables: {
+              name: values?.name,
+              props: props as ModifyProjectResourcePolicyInput,
+            },
+            onCompleted(res, errors) {
+              if (!res?.modify_project_resource_policy?.ok || errors) {
+                message.error(res?.modify_project_resource_policy?.msg);
+                onRequestClose();
+              } else {
+                message.success(
+                  t('storageHost.ResourcePolicySuccessfullyUpdated'),
+                );
+                onRequestClose(true);
+              }
+            },
+            onError(error) {
+              message.error(error?.message);
+            },
+          });
+        }
+      })
+      .catch(() => {});
   };
 
   return (
     <BAIModal
-      {...baiModalProps}
+      title={
+        projectResourcePolicy === null
+          ? t('resourcePolicy.CreateResourcePolicy')
+          : t('resourcePolicy.UpdateResourcePolicy')
+      }
+      onOk={handleOk}
+      onCancel={() => onRequestClose()}
       destroyOnClose
-      title={t('storageHost.ResourcePolicySettings')}
-      onOk={_onOk}
+      confirmLoading={
+        isInFlightCommitCreateProjectResourcePolicy ||
+        isInFlightCommitModifyProjectResourcePolicy
+      }
+      {...baiModalProps}
     >
       <Alert
         message={t('storageHost.BeCarefulToSetProjectResourcePolicy')}
         type="warning"
         showIcon
-        style={{ marginTop: 20, marginBottom: 25 }}
+        style={{ marginBottom: token.marginMD }}
       />
       <Form
         ref={formRef}
+        layout="vertical"
+        requiredMark="optional"
+        initialValues={initialValues}
         preserve={false}
-        labelCol={{ span: 6 }}
-        wrapperCol={{ span: 20 }}
-        validateTrigger={['onChange', 'onBlur']}
-        initialValues={{
-          id: projectResourcePolicyInfo?.id,
-          name: projectResourcePolicyInfo?.name,
-          created_at: projectResourcePolicyInfo?.created_at,
-          max_quota_scope_size:
-            projectResourcePolicyInfo?.max_quota_scope_size === -1
-              ? null
-              : bytesToGB(projectResourcePolicyInfo?.max_quota_scope_size),
-        }}
       >
         <Form.Item
-          name="max_quota_scope_size"
-          label={t('storageHost.MaxFolderSize')}
+          label={t('resourcePolicy.Name')}
+          name="name"
+          required
           rules={[
             {
-              pattern: /^\d+(\.\d+)?$/,
-              message:
-                t('storageHost.quotaSettings.AllowNumberAndDot') ||
-                'Allows numbers and .(dot) only',
+              required: true,
+              message: t('data.explorer.ValueRequired'),
+            },
+            {
+              max: 255,
+            },
+            {
+              validator: (_, value) => {
+                if (
+                  !projectResourcePolicy &&
+                  existingPolicyNames?.includes(value)
+                ) {
+                  return Promise.reject(
+                    t('resourcePolicy.ResourcePolicyNameAlreadyExists'),
+                  );
+                }
+                return Promise.resolve();
+              },
             },
           ]}
         >
-          <Input addonAfter="GB" type="number" step={0.25} />
+          <Input disabled={!!projectResourcePolicy} />
         </Form.Item>
+        <Flex
+          direction="column"
+          align="stretch"
+          gap={'md'}
+          style={{ marginBottom: token.marginMD }}
+        >
+          {supportMaxVfolderCount ? (
+            <FormItemWithUnlimited
+              name={'max_vfolder_count'}
+              unlimitedValue={0}
+              label={t('resourcePolicy.MaxFolderCount')}
+              style={{ width: '100%', margin: 0 }}
+            >
+              <InputNumber min={0} style={{ width: '100%' }} />
+            </FormItemWithUnlimited>
+          ) : null}
+          {supportMaxQuotaScopeSize ? (
+            <FormItemWithUnlimited
+              name={'max_quota_scope_size'}
+              unlimitedValue={-1}
+              label={t('storageHost.MaxFolderSize')}
+              style={{ width: '100%', margin: 0 }}
+            >
+              <InputNumber min={0} addonAfter="GB" style={{ width: '100%' }} />
+            </FormItemWithUnlimited>
+          ) : null}
+        </Flex>
       </Form>
     </BAIModal>
   );

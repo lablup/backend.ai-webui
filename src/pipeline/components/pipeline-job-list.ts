@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import '../../components/backend-ai-dialog';
 import { BackendAiStyles } from '../../components/backend-ai-general-styles';
@@ -145,7 +145,7 @@ export default class PipelineJobList extends BackendAIPage {
         }
 
         mwc-list.left-border mwc-list-item {
-          border-left: 1px solid #ccc;
+          border-left: 1px solid var(--token-colorBorder, #ccc);
         }
 
         /* Set width according to screen width (on mobile, tablet, and desktop) */

@@ -1866,8 +1866,8 @@ class VFolder {
       recursive: recursive,
     };
     let rqst = this.client.newSignedRequest(
-      'DELETE',
-      `${this.urlPrefix}/${name}/delete_files`,
+      'POST',
+      `${this.urlPrefix}/${name}/delete-files`,
       body,
     );
     return this.client._wrapWithPromise(rqst);

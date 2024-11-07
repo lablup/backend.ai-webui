@@ -1,5 +1,6 @@
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useBackendAIImageMetaData } from '../hooks';
+import BAIIntervalText from './BAIIntervalText';
 import DoubleTag from './DoubleTag';
 import Flex from './Flex';
 import ImageMetaIcon from './ImageMetaIcon';
@@ -263,14 +264,24 @@ const SessionList: React.FC<SessionListProps> = ({
             dataIndex: 'created_at',
             render(value, record) {
               const localeStringDate = new Date(value).toLocaleString();
-              const elapsedTime = baiClient.utils.elapsedTime(
-                value,
-                record.terminated_at,
-              );
+
               return (
                 <Flex direction="column" gap="xs">
                   {localeStringDate}
-                  <DoubleTag values={[t('session.ElapsedTime'), elapsedTime]} />
+                  <DoubleTag
+                    values={[
+                      t('session.ElapsedTime'),
+                      <BAIIntervalText
+                        callback={() => {
+                          return baiClient.utils.elapsedTime(
+                            value,
+                            record.terminated_at,
+                          );
+                        }}
+                        delay={1000}
+                      />,
+                    ]}
+                  />
                 </Flex>
               );
             },
@@ -307,7 +318,7 @@ const SessionList: React.FC<SessionListProps> = ({
           ...(baiClient.is_admin || !!baiClient._config.hideAgents
             ? [
                 {
-                  title: t('session.Agent'),
+                  title: t('session.Agents'),
                   dataIndex: 'agents',
                   render(value: string[]) {
                     return _.map(value, (agent) => {

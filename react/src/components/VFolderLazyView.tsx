@@ -1,10 +1,12 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
-import { useCurrentProjectValue, useWebUINavigate } from '../hooks';
-import { useTanQuery } from '../hooks/reactQueryAlias';
+import { useWebUINavigate } from '../hooks';
+import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { VFolder } from './VFolderSelect';
 import { FolderOutlined } from '@ant-design/icons';
 import { Typography } from 'antd';
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 
 interface VFolderLazyViewProps {
   uuid: string;
@@ -16,31 +18,35 @@ const VFolderLazyView: React.FC<VFolderLazyViewProps> = ({
 }) => {
   const currentProject = useCurrentProjectValue();
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
+  const location = useLocation();
 
   const webuiNavigate = useWebUINavigate();
-  const { data: vFolders } = useTanQuery({
+  const { data: vFolders } = useSuspenseTanQuery({
     queryKey: ['VFolderSelectQuery'],
     queryFn: () => {
+      const search = new URLSearchParams();
+      search.set('group_id', currentProject.id);
       return baiRequestWithPromise({
         method: 'GET',
-        url: `/folders?group_id=${currentProject.id}`,
+        url: `/folders?${search.toString()}`,
       }) as Promise<VFolder[]>;
     },
     staleTime: 1000,
-    suspense: true,
   });
+
   const vFolder = vFolders?.find(
     // `id` of `/folders` API is not UUID, but UUID without `-`
     (vFolder) => vFolder.id === uuid.replaceAll('-', ''),
   );
+
   return (
     vFolder &&
     (clickable ? (
       <Typography.Link
         onClick={() => {
           webuiNavigate({
-            pathname: '/data',
-            search: `?folder=${vFolder.name}`,
+            pathname: location.pathname,
+            search: `?folder=${vFolder.id}`,
           });
         }}
       >

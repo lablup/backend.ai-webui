@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import { navigate } from '../backend-ai-app';
 import '../plastics/lablup-piechart/lablup-piechart';
@@ -32,6 +32,9 @@ import { customElement, property, query } from 'lit/decorators.js';
  */
 type BackendAIResourceMonitor =
   HTMLElementTagNameMap['backend-ai-resource-monitor'];
+
+type BackendAIResourcePanel =
+  HTMLElementTagNameMap['backend-ai-resource-panel'];
 
 /**
  `<backend-ai-summary-view>` is a Summary panel of backend.ai web UI.
@@ -88,6 +91,7 @@ export default class BackendAISummary extends BackendAIPage {
   @property({ type: Boolean }) allowAppDownloadPanel = true;
   @property({ type: String }) downloadAppOS = '';
   @query('#resource-monitor') resourceMonitor!: BackendAIResourceMonitor;
+  @query('#resource-panel') resourcePanel!: BackendAIResourcePanel;
 
   constructor() {
     super();
@@ -104,7 +108,7 @@ export default class BackendAISummary extends BackendAIPage {
         extension: 'dmg',
       },
       Windows: {
-        os: 'win',
+        os: 'win32',
         architecture: ['arm64', 'x64'],
         extension: 'zip',
       },
@@ -226,7 +230,7 @@ export default class BackendAISummary extends BackendAIPage {
         }
 
         #download-app-os-select-box mwc-select {
-          width: 305px;
+          width: 100%;
           height: 58px;
         }
 
@@ -295,9 +299,11 @@ export default class BackendAISummary extends BackendAIPage {
     await this.updateComplete;
     if (active === false) {
       this.resourceMonitor.removeAttribute('active');
+      this.resourcePanel.removeAttribute('active');
       return;
     }
     this.resourceMonitor.setAttribute('active', 'true');
+    this.resourcePanel.setAttribute('active', '');
     if (
       typeof globalThis.backendaiclient === 'undefined' ||
       globalThis.backendaiclient === null ||
@@ -315,6 +321,9 @@ export default class BackendAISummary extends BackendAIPage {
             globalThis.backendaiclient._config.appDownloadUrl;
           this.allowAppDownloadPanel =
             globalThis.backendaiclient._config.allowAppDownloadPanel;
+          if (globalThis.backendaiclient.supports('use-win-instead-of-win32')) {
+            this.appDownloadMap['Windows']['os'] = 'win';
+          }
 
           if (this.activeConnected) {
             this._refreshConsoleUpdateInformation();
@@ -332,6 +341,9 @@ export default class BackendAISummary extends BackendAIPage {
       this.appDownloadUrl = globalThis.backendaiclient._config.appDownloadUrl;
       this.allowAppDownloadPanel =
         globalThis.backendaiclient._config.allowAppDownloadPanel;
+      if (globalThis.backendaiclient.supports('use-win-instead-of-win32')) {
+        this.appDownloadMap['Windows']['os'] = 'win';
+      }
       this._refreshConsoleUpdateInformation();
       this._refreshInvitations();
       // let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
@@ -396,16 +408,12 @@ export default class BackendAISummary extends BackendAIPage {
       this.notification.text =
         _text('summary.AcceptSharedVFolder') + `${invitation.vfolder_name}`;
       this.notification.show();
-      this._refreshInvitations();
     } catch (err) {
-      panel.setAttribute('disabled', 'false');
-      panel.querySelectorAll('mwc-button').forEach((btn) => {
-        btn.setAttribute('disabled', 'false');
-      });
       this.notification.text = PainKiller.relieve(err.title);
       this.notification.detail = err.message;
       this.notification.show(true, err);
     }
+    this._refreshInvitations();
   }
 
   /**
@@ -429,16 +437,12 @@ export default class BackendAISummary extends BackendAIPage {
       this.notification.text =
         _text('summary.DeclineSharedVFolder') + `${invitation.vfolder_name}`;
       this.notification.show();
-      this._refreshInvitations();
     } catch (err) {
-      panel.setAttribute('disabled', 'false');
-      panel.querySelectorAll('mwc-button').forEach((btn) => {
-        btn.setAttribute('disabled', 'false');
-      });
       this.notification.text = PainKiller.relieve(err.title);
       this.notification.detail = err.message;
       this.notification.show(true, err);
     }
+    this._refreshInvitations();
   }
 
   _stripHTMLTags(str) {
@@ -501,6 +505,7 @@ export default class BackendAISummary extends BackendAIPage {
                   location="summary"
                   id="session-launcher"
                   ?active="${this.active === true}"
+                  ?allowNEOSessionLauncher="${true}"
                 ></backend-ai-session-launcher>
               </div>
               <div class="horizontal center-justified layout wrap">
@@ -520,7 +525,7 @@ export default class BackendAISummary extends BackendAIPage {
                           this._moveTo('/credential', '?action=add');
                         }}"
                         class="vertical center center-justified layout start-menu-items link-button"
-                        style="border-left:1px solid #ccc;"
+                        style="border-left:1px solid var(--token-colorBorder, #ccc);"
                       >
                         <i class="fas fa-key fa-2x"></i>
                         <span>${_t('summary.CreateANewKeypair')}</span>
@@ -530,7 +535,7 @@ export default class BackendAISummary extends BackendAIPage {
                           this._moveTo('/credential', '?action=manage');
                         }}"
                         class="vertical center center-justified layout start-menu-items link-button"
-                        style="border-left:1px solid #ccc;"
+                        style="border-left:1px solid var(--token-colorBorder, #ccc);"
                       >
                         <i class="fas fa-cogs fa-2x"></i>
                         <span>${_t('summary.MaintainKeypairs')}</span>
@@ -545,6 +550,7 @@ export default class BackendAISummary extends BackendAIPage {
             elevation="1"
             narrow
             height="500"
+            scrollableY="true"
           >
             <div slot="message">
               <backend-ai-resource-monitor
@@ -556,6 +562,7 @@ export default class BackendAISummary extends BackendAIPage {
             </div>
           </lablup-activity-panel>
           <backend-ai-resource-panel
+            id="resource-panel"
             ?active="${this.active === true}"
             height="500"
           ></backend-ai-resource-panel>
@@ -582,19 +589,22 @@ export default class BackendAISummary extends BackendAIPage {
                               <h3 style="padding-top:10px;">
                                 From ${invitation.inviter}
                               </h3>
-                              <span class="invitation_folder_name">
+                              <div class="invitation_folder_name">
                                 ${_t('summary.FolderName')}:
                                 ${invitation.vfolder_name}
-                              </span>
+                              </div>
                               <div class="horizontal center layout">
                                 ${_t('summary.Permission')}:
                                 ${[...invitation.perm].map(
                                   (c) => html`
                                     <lablup-shields
                                       app=""
-                                      color="${['green', 'blue', 'red'][
-                                        ['r', 'w', 'd'].indexOf(c)
-                                      ]}"
+                                      color="${[
+                                        'green',
+                                        'blue',
+                                        'red',
+                                        'yellow',
+                                      ][['r', 'w', 'd', 'o'].indexOf(c)]}"
                                       description="${c.toUpperCase()}"
                                       ui="flat"
                                     ></lablup-shields>
@@ -635,7 +645,6 @@ export default class BackendAISummary extends BackendAIPage {
                 <lablup-activity-panel
                   title="${_t('summary.DownloadWebUIApp')}"
                   elevation="1"
-                  narrow
                   height="245"
                 >
                   <div slot="message">
@@ -660,15 +669,19 @@ export default class BackendAISummary extends BackendAIPage {
                         )}
                       </mwc-select>
                     </div>
-                    <div class="horizontal layout center center-justified">
+                    <div
+                      class="horizontal layout center-justified"
+                      style="gap:20px"
+                    >
                       ${this.downloadAppOS &&
                       this.appDownloadMap[this.downloadAppOS][
                         'architecture'
                       ].map(
                         (arch) => html`
                           <mwc-button
-                            raised
-                            style="margin:10px;flex-basis:50%;"
+                            icon="cloud_download"
+                            outlined
+                            style="margin:10px 0 10px 0;flex-basis:50%;"
                             @click="${(e) => this._downloadApplication(e)}"
                           >
                             ${arch}

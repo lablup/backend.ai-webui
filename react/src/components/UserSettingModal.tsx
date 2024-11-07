@@ -1,43 +1,69 @@
-import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import {
+  useCurrentDomainValue,
+  useSuspendedBackendaiClient,
+  useUpdatableState,
+} from '../hooks';
+import { useCurrentUserRole, useTOTPSupported } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { useWebComponentInfo } from './DefaultProviders';
 import TOTPActivateModal from './TOTPActivateModal';
-import { UserSettingModalMutation } from './__generated__/UserSettingModalMutation.graphql';
+import UserResourcePolicySelector from './UserResourcePolicySelector';
 import {
-  UserSettingModalQuery,
-  UserSettingModalQuery$data,
-} from './__generated__/UserSettingModalQuery.graphql';
+  UserInput,
+  UserSettingModalCreateMutation,
+} from './__generated__/UserSettingModalCreateMutation.graphql';
+import {
+  ModifyUserInput,
+  UserSettingModalModifyMutation,
+} from './__generated__/UserSettingModalModifyMutation.graphql';
+import { UserSettingModalQuery } from './__generated__/UserSettingModalQuery.graphql';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Form, Input, Select, Switch, message, Typography, Modal } from 'antd';
+import {
+  Form,
+  Input,
+  Select,
+  Switch,
+  message,
+  Typography,
+  FormInstance,
+  App,
+  theme,
+} from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React, { useDeferredValue } from 'react';
+import React, { useDeferredValue, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQuery } from 'react-query';
 import { useMutation } from 'react-relay';
 import { useLazyLoadQuery } from 'react-relay';
 
-type User = UserSettingModalQuery$data['user'];
-
 type UserStatus = {
   [key: string]: string;
+};
+const userStatus: UserStatus = {
+  active: 'Active',
+  inactive: 'Inactive',
+  'before-verification': 'Before Verification',
+  deleted: 'Deleted',
 };
 
 type UserRole = {
   [key: string]: string[];
 };
+const permissionRangeOfRoleChanges: UserRole = {
+  superadmin: ['superadmin', 'admin', 'user', 'monitor'],
+  admin: ['admin', 'user', 'monitor'],
+};
 
-interface Props extends BAIModalProps {
+interface UserSettingModalProps extends BAIModalProps {
   extraFetchKey?: string;
 }
 
-const UserSettingModal: React.FC<Props> = ({
+const UserSettingModal: React.FC<UserSettingModalProps> = ({
   extraFetchKey = '',
   ...baiModalProps
 }) => {
-  const { t } = useTranslation();
   const { value, dispatchEvent } = useWebComponentInfo();
   let parsedValue: {
     open: boolean;
@@ -53,52 +79,30 @@ const UserSettingModal: React.FC<Props> = ({
   }
   const { open, userEmail } = parsedValue;
 
-  const [modal, contextHolder] = Modal.useModal();
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
+  const { modal } = App.useApp();
+  const formRef = useRef<FormInstance>(null);
 
-  const [form] = Form.useForm<User>();
-
-  const userStatus: UserStatus = {
-    active: 'Active',
-    inactive: 'Inactive',
-    'before-verification': 'Before Verification',
-    deleted: 'Deleted',
-  };
-
-  const permissionRangeOfRoleChanges: UserRole = {
-    superadmin: ['superadmin', 'admin', 'user', 'monitor'],
-    admin: ['admin', 'user', 'monitor'],
-  };
-
-  const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
-  const deferredMergedFetchKey = useDeferredValue(fetchKey + extraFetchKey);
-
+  const currentUserRole = useCurrentUserRole();
+  const currentDomainName = useCurrentDomainValue();
   const baiClient = useSuspendedBackendaiClient();
   const sudoSessionEnabledSupported = baiClient?.supports(
     'sudo-session-enabled',
   );
-  let totpSupported = false;
-  let {
-    data: isManagerSupportingTOTP,
-    isLoading: isLoadingManagerSupportingTOTP,
-  } = useQuery(
-    'isManagerSupportingTOTP',
-    () => {
-      return baiClient.isManagerSupportingTOTP();
-    },
-    {
-      // for to render even this fail query failed
-      suspense: false,
-    },
-  );
-  totpSupported = baiClient?.supports('2FA') && isManagerSupportingTOTP;
+  const { isTOTPSupported, isLoading: isLoadingManagerSupportingTOTP } =
+    useTOTPSupported();
+  const [isOpenTOTPActivateModal, { toggle: toggleTOTPActivateModal }] =
+    useToggle(false);
+  const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
+  const deferredMergedFetchKey = useDeferredValue(fetchKey + extraFetchKey);
 
-  const { user, loggedInUser } = useLazyLoadQuery<UserSettingModalQuery>(
+  const { user } = useLazyLoadQuery<UserSettingModalQuery>(
     graphql`
       query UserSettingModalQuery(
         $email: String
         $isNotSupportSudoSessionEnabled: Boolean!
         $isNotSupportTotp: Boolean!
-        $loggedInUserEmail: String
       ) {
         user(email: $email) {
           email
@@ -113,6 +117,7 @@ const UserSettingModal: React.FC<Props> = ({
             id
             name
           }
+          resource_policy
           # TODO: reflect https://github.com/lablup/backend.ai-webui/pull/1999
           # support from 23.09.0b1
           # https://github.com/lablup/backend.ai/pull/1530
@@ -121,16 +126,12 @@ const UserSettingModal: React.FC<Props> = ({
           totp_activated @skipOnClient(if: $isNotSupportTotp)
           ...TOTPActivateModalFragment
         }
-        loggedInUser: user(email: $loggedInUserEmail) {
-          role
-        }
       }
     `,
     {
-      email: userEmail,
+      email: userEmail ?? '',
       isNotSupportSudoSessionEnabled: !sudoSessionEnabledSupported,
-      isNotSupportTotp: !totpSupported,
-      loggedInUserEmail: baiClient?.email ?? '',
+      isNotSupportTotp: !isTOTPSupported,
     },
     {
       fetchKey: deferredMergedFetchKey,
@@ -139,8 +140,8 @@ const UserSettingModal: React.FC<Props> = ({
   );
 
   const [commitModifyUserSetting, isInFlightCommitModifyUserSetting] =
-    useMutation<UserSettingModalMutation>(graphql`
-      mutation UserSettingModalMutation(
+    useMutation<UserSettingModalModifyMutation>(graphql`
+      mutation UserSettingModalModifyMutation(
         $email: String!
         $props: ModifyUserInput!
         $isNotSupportSudoSessionEnabled: Boolean!
@@ -163,9 +164,45 @@ const UserSettingModal: React.FC<Props> = ({
               id
               name
             }
+            resource_policy
             # TODO: reflect https://github.com/lablup/backend.ai-webui/pull/1999
             # support from 23.09.0b1
             # https://github.com/lablup/backend.ai/pull/1530
+            sudo_session_enabled
+              @skipOnClient(if: $isNotSupportSudoSessionEnabled)
+            totp_activated @skipOnClient(if: $isNotSupportTotp)
+            ...TOTPActivateModalFragment
+          }
+        }
+      }
+    `);
+
+  const [commitCreateUser, isInFlightCommitCreateUser] =
+    useMutation<UserSettingModalCreateMutation>(graphql`
+      mutation UserSettingModalCreateMutation(
+        $email: String!
+        $props: UserInput!
+        $isNotSupportSudoSessionEnabled: Boolean!
+        $isNotSupportTotp: Boolean!
+      ) {
+        create_user(email: $email, props: $props) {
+          ok
+          msg
+          user {
+            id
+            email
+            username
+            need_password_change
+            full_name
+            description
+            status
+            domain_name
+            role
+            groups {
+              id
+              name
+            }
+            resource_policy
             sudo_session_enabled
               @skipOnClient(if: $isNotSupportSudoSessionEnabled)
             totp_activated @skipOnClient(if: $isNotSupportTotp)
@@ -181,43 +218,110 @@ const UserSettingModal: React.FC<Props> = ({
     },
   });
 
-  const [isOpenTOTPActivateModal, { toggle: toggleTOTPActivateModal }] =
-    useToggle(false);
+  const INITIAL_VALUES = {
+    email: '',
+    username: '',
+    need_password_change: false,
+    full_name: '',
+    description: '',
+    status: 'active',
+    domain_name: currentDomainName,
+    role: 'user',
+    is_active: true,
+    resource_policy: 'default',
+  };
 
-  const _onOk = () => {
-    form.validateFields().then(async (values) => {
-      let input = { ...values };
-      delete input.email;
-      input = _.omit(input, ['password_confirm']);
-      input = _.omitBy(input, (item) => item === undefined || item === '');
-      if (!sudoSessionEnabledSupported) {
-        delete input?.sudo_session_enabled;
-      }
-      // TOTP setting
-      if (!totpSupported) {
-        delete input?.totp_activated;
-      }
-
-      commitModifyUserSetting({
-        variables: {
-          email: values?.email || '',
-          props: input,
-          isNotSupportSudoSessionEnabled: !sudoSessionEnabledSupported,
-          isNotSupportTotp: !totpSupported,
-        },
-        onCompleted(res) {
-          if (res?.modify_user?.ok) {
-            message.success(t('environment.SuccessfullyModified'));
-          } else {
-            message.error(res?.modify_user?.msg);
-          }
-          dispatchEvent('ok', null);
-        },
-        onError(err) {
-          message.error(err?.message);
-        },
-      });
-    });
+  const handleOk = () => {
+    formRef.current
+      ?.validateFields()
+      .then(async (values) => {
+        if (user) {
+          const props: ModifyUserInput = _.omitBy(
+            _.omit(values, ['email', 'password_confirm']),
+            _.isEmpty,
+          );
+          commitModifyUserSetting({
+            variables: {
+              email: values?.email || '',
+              props: props,
+              isNotSupportSudoSessionEnabled: !sudoSessionEnabledSupported,
+              isNotSupportTotp: !isTOTPSupported,
+            },
+            onCompleted: (res, errors) => {
+              if (!res?.modify_user?.ok) {
+                message.error(t('dialog.ErrorOccurred'));
+                console.error(res?.modify_user?.msg);
+                dispatchEvent('cancel', null);
+                return;
+              }
+              if (errors && errors.length > 0) {
+                const errorMsgList = _.map(errors, (error) => error.message);
+                for (const error of errorMsgList) {
+                  message.error(error, 2.5);
+                }
+                dispatchEvent('cancel', null);
+              }
+              message.success(t('environment.SuccessfullyModified'));
+              dispatchEvent('ok', null);
+            },
+            onError: (err) => {
+              message.error(t('dialog.ErrorOccurred'));
+              console.error(err);
+            },
+          });
+        } else {
+          const default_group_id = [
+            await baiClient.group
+              .list()
+              .then((res: any) => _.find(res.groups, { name: 'default' })?.id),
+          ];
+          const props: UserInput = {
+            ..._.omit(values, ['email', 'password_confirm']),
+            password: values.password,
+            need_password_change: values.need_password_change,
+            username: values?.username || _.split(values.email, '@')[0],
+            full_name: values?.full_name || _.split(values.email, '@')[0],
+            description:
+              values?.description ||
+              `${_.split(values.email, '@')[0]}'s Account`,
+            group_ids: default_group_id,
+          };
+          commitCreateUser({
+            variables: {
+              email: values?.email || '',
+              props: props,
+              isNotSupportSudoSessionEnabled: !sudoSessionEnabledSupported,
+              isNotSupportTotp: !isTOTPSupported,
+            },
+            onCompleted: (res, errors) => {
+              if (!res?.create_user?.ok) {
+                message.error(
+                  res.create_user?.msg?.includes('already exists')
+                    ? t('credential.UserAccountCreatedError')
+                    : t('dialog.ErrorOccurred'),
+                );
+                console.error(res?.create_user?.msg);
+                dispatchEvent('cancel', null);
+                return;
+              }
+              if (errors && errors.length > 0) {
+                const errorMsgList = _.map(errors, (error) => error.message);
+                for (const error of errorMsgList) {
+                  message.error(error, 2.5);
+                }
+                dispatchEvent('cancel', null);
+              }
+              message.success(t('environment.SuccessfullyCreated'));
+              dispatchEvent('ok', null);
+            },
+            onError: (err) => {
+              message.error(t('dialog.ErrorOccurred'));
+              console.error(err);
+            },
+          });
+        }
+      })
+      .catch((e) => console.error(e));
   };
 
   return (
@@ -227,34 +331,61 @@ const UserSettingModal: React.FC<Props> = ({
         dispatchEvent('cancel', null);
       }}
       centered
-      title={t('credential.ModifyUserDetail')}
-      destroyOnClose={true}
-      onOk={_onOk}
-      confirmLoading={isInFlightCommitModifyUserSetting}
+      title={
+        user ? t('credential.ModifyUserDetail') : t('credential.CreateUser')
+      }
+      destroyOnClose
+      onOk={handleOk}
+      confirmLoading={
+        isInFlightCommitModifyUserSetting || isInFlightCommitCreateUser
+      }
       {...baiModalProps}
     >
       <Form
+        ref={formRef}
         preserve={false}
-        form={form}
         labelCol={{ span: 10 }}
         wrapperCol={{ span: 20 }}
         validateTrigger={['onChange', 'onBlur']}
-        style={{ marginBottom: 40, marginTop: 20 }}
-        initialValues={{ ...user }}
+        style={{ marginBottom: 40, marginTop: token.marginMD }}
+        initialValues={user ? { ...user } : INITIAL_VALUES}
       >
-        <Form.Item name="email" label={t('credential.UserID')}>
-          <Input disabled />
+        <Form.Item
+          name="email"
+          label={t('credential.UserID')}
+          rules={[{ required: !user }, { type: 'email' }]}
+        >
+          <Input disabled={!!user} />
         </Form.Item>
-        <Form.Item name="username" label={t('credential.UserName')}>
+        <Form.Item
+          name="username"
+          label={t('credential.UserName')}
+          rules={[
+            {
+              max: 64,
+            },
+          ]}
+        >
           <Input placeholder={t('maxLength.64chars')} />
         </Form.Item>
-        <Form.Item name="full_name" label={t('credential.FullName')}>
+        <Form.Item
+          name="full_name"
+          label={t('credential.FullName')}
+          rules={[
+            {
+              max: 64,
+            },
+          ]}
+        >
           <Input placeholder={t('maxLength.64chars')} />
         </Form.Item>
         <Form.Item
           name="password"
-          label={t('general.NewPassword')}
+          label={user ? t('general.NewPassword') : t('general.Password')}
           rules={[
+            {
+              required: !user,
+            },
             {
               pattern: /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[_\W]).{8,}$/,
               message: t('webui.menu.InvalidPasswordMessage'),
@@ -266,8 +397,16 @@ const UserSettingModal: React.FC<Props> = ({
         <Form.Item
           name="password_confirm"
           dependencies={['password']}
-          label={t('webui.menu.NewPasswordAgain')}
+          label={
+            user
+              ? t('webui.menu.NewPasswordAgain')
+              : t('general.ConfirmPassword')
+          }
           rules={[
+            {
+              required: !user,
+              message: '',
+            },
             ({ getFieldValue }) => ({
               validator(_, value) {
                 if (!value && !!getFieldValue('password')) {
@@ -287,7 +426,11 @@ const UserSettingModal: React.FC<Props> = ({
         >
           <Input.Password />
         </Form.Item>
-        <Form.Item name="description" label={t('credential.Description')}>
+        <Form.Item
+          name="description"
+          label={t('credential.Description')}
+          rules={[{ max: 500 }]}
+        >
           <Input.TextArea placeholder={t('maxLength.500chars')} />
         </Form.Item>
         <Form.Item name="status" label={t('credential.UserStatus')}>
@@ -301,12 +444,12 @@ const UserSettingModal: React.FC<Props> = ({
           />
         </Form.Item>
         {!!user?.role &&
-          !!loggedInUser?.role &&
-          loggedInUser.role in permissionRangeOfRoleChanges && (
+          !!currentUserRole &&
+          currentUserRole in permissionRangeOfRoleChanges && (
             <Form.Item name="role" label={t('credential.Role')}>
               <Select
                 options={_.map(
-                  permissionRangeOfRoleChanges[loggedInUser.role],
+                  permissionRangeOfRoleChanges[currentUserRole],
                   (item) => {
                     return {
                       value: item,
@@ -333,14 +476,17 @@ const UserSettingModal: React.FC<Props> = ({
             <Switch />
           </Form.Item>
         )}
-        {!!totpSupported && (
+        {!!isTOTPSupported && (
           <Form.Item
             name="totp_activated"
             label={t('webui.menu.TotpActivated')}
             valuePropName="checked"
             extra={
               user?.email !== baiClient?.email && (
-                <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                <Typography.Text
+                  type="secondary"
+                  style={{ fontSize: token.fontSizeSM }}
+                >
                   {t('credential.AdminCanOnlyRemoveTotp')}
                 </Typography.Text>
               )
@@ -348,7 +494,7 @@ const UserSettingModal: React.FC<Props> = ({
           >
             <Switch
               loading={
-                isLoadingManagerSupportingTOTP || mutationToRemoveTotp.isLoading
+                isLoadingManagerSupportingTOTP || mutationToRemoveTotp.isPending
               }
               disabled={
                 user?.email !== baiClient?.email && !user?.totp_activated
@@ -358,7 +504,7 @@ const UserSettingModal: React.FC<Props> = ({
                   toggleTOTPActivateModal();
                 } else {
                   if (user?.totp_activated) {
-                    form.setFieldValue('totp_activated', true);
+                    formRef.current?.setFieldValue('totp_activated', true);
                     modal.confirm({
                       title: t('totp.TurnOffTotp'),
                       icon: <ExclamationCircleFilled />,
@@ -371,7 +517,10 @@ const UserSettingModal: React.FC<Props> = ({
                           onSuccess: () => {
                             message.success(t('totp.RemoveTotpSetupCompleted'));
                             updateFetchKey();
-                            form.setFieldValue('totp_activated', false);
+                            formRef.current?.setFieldValue(
+                              'totp_activated',
+                              false,
+                            );
                           },
                           onError: (err) => {
                             console.log(err);
@@ -379,7 +528,7 @@ const UserSettingModal: React.FC<Props> = ({
                         });
                       },
                       onCancel() {
-                        form.setFieldValue('totp_activated', true);
+                        formRef.current?.setFieldValue('totp_activated', true);
                       },
                     });
                   }
@@ -388,8 +537,15 @@ const UserSettingModal: React.FC<Props> = ({
             />
           </Form.Item>
         )}
+        <Form.Item
+          name="resource_policy"
+          label={t('resourcePolicy.ResourcePolicy')}
+          rules={[{ required: !user }]}
+        >
+          <UserResourcePolicySelector />
+        </Form.Item>
       </Form>
-      {!!totpSupported && (
+      {!!isTOTPSupported && (
         <TOTPActivateModal
           userFrgmt={user}
           open={isOpenTOTPActivateModal}
@@ -397,13 +553,12 @@ const UserSettingModal: React.FC<Props> = ({
             if (success) {
               updateFetchKey();
             } else {
-              form.setFieldValue('totp_activated', false);
+              formRef.current?.setFieldValue('totp_activated', false);
             }
             toggleTOTPActivateModal();
           }}
         />
       )}
-      {contextHolder}
     </BAIModal>
   );
 };

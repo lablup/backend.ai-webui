@@ -1,6 +1,7 @@
+import { useSuspenseTanQuery } from './reactQueryAlias';
+import { useEventNotStable } from './useEventNotStable';
 import _ from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
-import { useQuery } from 'react-query';
 import { NavigateOptions, To, useNavigate } from 'react-router-dom';
 
 interface WebUINavigateOptions extends NavigateOptions {
@@ -48,9 +49,9 @@ export const useBackendAIConnectedState = () => {
 export const useDateISOState = (initialValue?: string) => {
   const [value, setValue] = useState(initialValue || new Date().toISOString());
 
-  const update = (newValue?: string) => {
+  const update = useEventNotStable((newValue?: string) => {
     setValue(newValue || new Date().toISOString());
-  };
+  });
   return [value, update] as const;
 };
 
@@ -61,46 +62,6 @@ export const useUpdatableState = (initialValue: string) => {
 export const useCurrentDomainValue = () => {
   const baiClient = useSuspendedBackendaiClient();
   return baiClient._config.domainName;
-};
-
-export const useCurrentProjectValue = () => {
-  const baiClient = useSuspendedBackendaiClient();
-  const [project, _setProject] = useState<{
-    name: string;
-    id: string;
-  }>({
-    name: baiClient.current_group,
-    id: baiClient.groupIds[baiClient.current_group],
-  });
-
-  useEffect(() => {
-    const listener = (e: any) => {
-      const newProjectName = e.detail;
-      _setProject({
-        name: newProjectName,
-        id: baiClient.groupIds[newProjectName],
-      });
-    };
-    document.addEventListener('backend-ai-group-changed', listener);
-    return () => {
-      document.removeEventListener('backend-ai-group-changed', listener);
-    };
-  }, [baiClient.groupIds]);
-
-  return project;
-};
-
-export const useSetCurrentProject = () => {
-  const baiClient = useSuspendedBackendaiClient();
-  return (projectInfo: { projectName: string; projectId: string }) => {
-    baiClient.current_group = projectInfo.projectName;
-    // @ts-ignore
-    globalThis.backendaiutils._writeRecentProjectGroup(baiClient.current_group);
-    const event: CustomEvent = new CustomEvent('backend-ai-group-changed', {
-      detail: projectInfo.projectName,
-    });
-    document.dispatchEvent(event);
-  };
 };
 
 export const useAnonymousBackendaiClient = ({
@@ -123,9 +84,29 @@ export const useAnonymousBackendaiClient = ({
   return client;
 };
 
+export type BackendAIClient = {
+  vfolder: {
+    list: (path: string) => Promise<any>;
+    list_hosts: () => Promise<any>;
+    list_all_hosts: () => Promise<any>;
+    list_files: (path: string, id: string) => Promise<any>;
+    list_allowed_types: () => Promise<string[]>;
+    clone: (input: any, name: string) => Promise<any>;
+  };
+  supports: (feature: string) => boolean;
+  [key: string]: any;
+  _config: BackendAIConfig;
+  isManagerVersionCompatibleWith: (version: string) => boolean;
+  utils: {
+    elapsedTime: (
+      start: string | Date | number,
+      end?: string | Date | number | null,
+    ) => string;
+  };
+};
 export const useSuspendedBackendaiClient = () => {
-  const { data: client } = useQuery<any>({
-    queryKey: 'backendai-client-for-suspense',
+  const { data: client } = useSuspenseTanQuery<any>({
+    queryKey: ['backendai-client-for-suspense'],
     queryFn: () =>
       new Promise((resolve) => {
         if (
@@ -149,20 +130,9 @@ export const useSuspendedBackendaiClient = () => {
       }),
     retry: false,
     // enabled: false,
-    suspense: true,
   });
 
-  return client as {
-    vfolder: {
-      list: (path: string) => Promise<any>;
-      list_hosts: () => Promise<any>;
-      list_files: (path: string, id: string) => Promise<any>;
-      list_allowed_types: () => Promise<string[]>;
-      clone: (input: any, name: string) => Promise<any>;
-    };
-    [key: string]: any;
-    _config: BackendAIConfig;
-  };
+  return client as BackendAIClient;
 };
 
 interface ImageMetadata {
@@ -179,32 +149,28 @@ interface ImageMetadata {
 }
 
 export const useBackendAIImageMetaData = () => {
-  const { data: metadata } = useQuery({
-    queryKey: 'backendai-metadata-for-suspense',
+  const { data: metadata } = useSuspenseTanQuery<{
+    imageInfo: {
+      [key: string]: ImageMetadata | undefined;
+    };
+    tagAlias: {
+      [key: string]: string;
+    };
+    tagReplace: {
+      [key: string]: string;
+    };
+  }>({
+    queryKey: ['backendai-metadata-for-suspense'],
     queryFn: () => {
-      return fetch('resources/image_metadata.json')
-        .then((response) => response.json())
-        .then(
-          (json: {
-            imageInfo: {
-              [key: string]: ImageMetadata | undefined;
-            };
-            tagAlias: {
-              [key: string]: string;
-            };
-            tagReplace: {
-              [key: string]: string;
-            };
-          }) => {
-            return json;
-          },
-        );
+      return fetch('resources/image_metadata.json').then((response) =>
+        response.json(),
+      );
     },
-    suspense: true,
     retry: false,
   });
 
   const getImageMeta = (imageName: string) => {
+    // registry/name:tag@architecture
     // cr.backend.ai/multiarch/python:3.9-ubuntu20.04
     // key = python, tags = [3.9, ubuntu20.04]
     if (_.isEmpty(imageName)) {
@@ -250,8 +216,49 @@ export const useBackendAIImageMetaData = () => {
             : 'default.png')
         );
       },
+      getNamespace: (imageName: string) => {
+        const names = imageName.split('/');
+        return names.length < 2 ? names[0] : names[1] || '';
+      },
+      getImageLang: (imageName: string) => {
+        const names = imageName.split('/');
+        const langs =
+          names.length < 3 ? '' : (names[2].split(':')[0]?.split('-') ?? '');
+        return langs[langs.length - 1];
+      },
+      getLang: (shortImageName: string) => {
+        // console.log(imageName);
+        const names = shortImageName.split('/');
+        let lang = '';
+        if (!_.isUndefined(names[1])) {
+          lang = names.slice(1).join('');
+        } else {
+          lang = names[0];
+        }
+        const langs = lang.split('-');
+        if (!_.isUndefined(langs[1])) {
+          if (langs[0] === 'r') lang = langs[0];
+          else lang = langs[1];
+        }
+        return metadata?.tagAlias[lang] || lang;
+      },
       getImageTags: (imageName: string) => {
         // const { key, tags } = getImageMeta(imageName);
+      },
+      getFilteredRequirementsTags: (imageName: string) => {
+        const { tags } = getImageMeta(imageName);
+        const [, , ...requirements] = tags || ['', '', ''];
+        const filteredRequirements = _.filter(
+          requirements,
+          (req) => !_.includes(req, 'customized_'),
+        );
+        return filteredRequirements;
+      },
+      getCustomTag: (imageLabels: { key: string; value: string }[]) => {
+        const customizedNameLabel = _.find(imageLabels, {
+          key: 'ai.backend.customized-image.name',
+        })?.value;
+        return customizedNameLabel;
       },
       getBaseVersion: (imageName: string) => {
         const { tags } = getImageMeta(imageName);
@@ -261,7 +268,69 @@ export const useBackendAIImageMetaData = () => {
         const { tags } = getImageMeta(imageName);
         return tags[1];
       },
+      getBaseImages: (tag: string, name: string) => {
+        const tags = tag.split('-');
+        let baseImage;
+        let lang = '';
+        if (!_.isUndefined(tags[1])) {
+          baseImage = tags[1];
+        }
+        let baseImageArr = [];
+        if (!_.isUndefined(baseImage)) {
+          baseImageArr.push(metadata?.tagAlias[baseImage] || baseImage);
+        }
+        const names = name.split('/');
+        if (names[1] !== undefined) {
+          lang = names.slice(1).join('');
+        } else {
+          lang = names[0];
+        }
+        const langs = lang.split('-');
+        if (!_.isUndefined(langs[1])) {
+          baseImageArr.push(metadata?.tagAlias[langs[0]] || langs[0]);
+        }
+        return baseImageArr;
+      },
       getImageMeta,
+      getConstraints: (
+        tag: string,
+        labels: { key: string; value: string }[],
+      ) => {
+        const tags = tag.split('-');
+        if (!_.isUndefined(tags[1]) && !_.isUndefined(tag[2])) {
+          const additionalReq =
+            metadata?.tagAlias[
+              tags.slice(2, tags.indexOf('customized_')).join('-')
+            ] || tags.slice(2, tags.indexOf('customized_')).join('-');
+          const result = [additionalReq];
+          const customizedNameLabel = labels?.find(
+            (label) => label.key === 'ai.backend.customized-image.name',
+          )?.value;
+          if (customizedNameLabel) result.push(customizedNameLabel);
+          return result;
+        }
+        return [];
+      },
+      getArchitecture: (imageName: string) => {
+        let [, architecture] = imageName ? imageName.split('@') : ['', ''];
+        return architecture;
+      },
+      tagAlias: (tag: string) => {
+        return (
+          metadata?.tagAlias[tag] ??
+          _.chain(metadata.tagReplace)
+            .toPairs()
+            .find(([regExpStr]) => new RegExp(regExpStr).test(tag))
+            .thru((pair) => {
+              if (pair) {
+                const [regExpStr, replaceStr] = pair;
+                return _.replace(tag, new RegExp(regExpStr), replaceStr);
+              }
+            })
+            .value() ??
+          _.startCase(tag)
+        );
+      },
     },
   ] as const;
 };
@@ -286,7 +355,6 @@ type BackendAIConfig = {
   default_import_environment: string;
   allow_project_resource_monitor: boolean;
   allow_manual_image_name_for_session: boolean;
-  always_enqueue_compute_session: boolean;
   openPortToPublic: boolean;
   allowPreferredPort: boolean;
   maxCPUCoresPerContainer: number;
@@ -297,13 +365,19 @@ type BackendAIConfig = {
   maxTPUDevicesPerContainer: number;
   maxIPUDevicesPerContainer: number;
   maxATOMDevicesPerContainer: number;
+  maxATOMPlusDevicesPerContainer: number;
+  maxGaudi2DevicesPerContainer: number;
   maxWarboyDevicesPerContainer: number;
+  maxRNGDDevicesPerContainer: number;
   maxShmPerContainer: number;
   maxFileUploadSize: number;
   allow_image_list: string[];
   maskUserInfo: boolean;
   singleSignOnVendors: string[];
   ssoRealmName: string;
+  enableModelStore: boolean;
+  enableLLMPlayground: boolean;
+  enableImportFromHuggingFace: boolean;
   enableContainerCommit: boolean;
   appDownloadUrl: string;
   systemSSHImage: string;
@@ -317,5 +391,8 @@ type BackendAIConfig = {
   blockList: string[];
   inactiveList: string[];
   allowSignout: boolean;
+  allowNonAuthTCP: boolean;
+  enableExtendLoginSession: boolean;
+  showNonInstalledImages: boolean;
   [key: string]: any;
 };

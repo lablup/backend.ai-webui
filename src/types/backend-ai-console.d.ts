@@ -1,13 +1,9 @@
 import '../lib/backend.ai-client-es6';
-import '../plastics/mwc/mwc-drawer';
-import '../plastics/mwc/mwc-multi-select';
-import '../plastics/mwc/mwc-top-app-bar-fixed';
 import './backend-ai-app-launcher';
 import './backend-ai-dialog';
-import './backend-ai-help-button';
+import './backend-ai-folder-explorer';
 import './backend-ai-indicator-pool';
 import './backend-ai-login';
-import './backend-ai-offline-indicator';
 import './backend-ai-resource-broker';
 import './backend-ai-settings-store';
 import './backend-ai-sidepanel-notification';
@@ -75,7 +71,6 @@ export default class BackendAIWebUI extends BackendAIWebUI_base {
   _offlineIndicatorOpened: boolean;
   _offline: boolean;
   config: any;
-  appBody: any;
   appPage: any;
   contentBody: any;
   mainToolbar: any;

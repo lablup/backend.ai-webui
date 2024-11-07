@@ -1,80 +1,75 @@
 import { iSizeToSize } from '../helper';
+import {
+  BaseResourceSlotName,
+  KnownAcceleratorResourceSlotName,
+  ResourceSlotName,
+  useResourceSlotsDetails,
+} from '../hooks/backendai';
+import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
 import Flex from './Flex';
 import { Tooltip, Typography, theme } from 'antd';
+import _ from 'lodash';
+import { MicrochipIcon } from 'lucide-react';
 import React, { ReactElement } from 'react';
-import { useTranslation } from 'react-i18next';
-
-const resourceTypes = [
-  'cpu',
-  'mem',
-  'cuda.device',
-  'cuda.shares',
-  'rocm.device',
-  'tpu.device',
-  'ipu.device',
-  'atom.device',
-  'warboy.device',
-] as const;
-
-export type ResourceTypeKey = (typeof resourceTypes)[number];
-
-export const ACCELERATOR_UNIT_MAP: {
-  [key: string]: string;
-} = {
-  'cuda.device': 'GPU',
-  'cuda.shares': 'FGPU',
-  'rocm.device': 'GPU',
-  'tpu.device': 'TPU',
-  'ipu.device': 'IPU',
-  'atom.device': 'ATOM',
-  'warboy.device': 'Warboy',
-};
 
 export type ResourceOpts = {
   shmem?: number;
 };
-interface Props {
-  type: ResourceTypeKey;
+interface ResourceNumberProps {
+  type: ResourceSlotName | string;
   extra?: ReactElement;
   opts?: ResourceOpts;
   value: string;
   hideTooltip?: boolean;
+  max?: string;
 }
 
 type ResourceTypeInfo<V> = {
-  [key in string]: V;
+  [key in KnownAcceleratorResourceSlotName]: V;
+} & {
+  [key in BaseResourceSlotName]: V;
 };
-const ResourceNumber: React.FC<Props> = ({
+const ResourceNumber: React.FC<ResourceNumberProps> = ({
   type,
   value: amount,
   extra,
   opts,
   hideTooltip = false,
+  max,
 }) => {
-  const { t } = useTranslation();
   const { token } = theme.useToken();
-  const units: ResourceTypeInfo<string> = {
-    cpu: t('session.core'),
-    mem: 'GiB',
-    ...ACCELERATOR_UNIT_MAP,
+  const currentGroup = useCurrentResourceGroupValue();
+  const { mergedResourceSlots } = useResourceSlotsDetails(
+    currentGroup || undefined,
+  );
+
+  const formatAmount = (amount: string) => {
+    return mergedResourceSlots?.[type]?.number_format.binary
+      ? Number(iSizeToSize(amount, 'g', 3, true)?.numberFixed).toString()
+      : (mergedResourceSlots?.[type]?.number_format.round_length || 0) > 0
+        ? parseFloat(amount).toFixed(2)
+        : amount;
   };
 
   return (
     <Flex direction="row" gap="xxs">
-      {resourceTypes.includes(type) ? (
+      {mergedResourceSlots?.[type] ? (
         <ResourceTypeIcon type={type} showTooltip={!hideTooltip} />
       ) : (
         type
       )}
 
       <Typography.Text>
-        {units[type] === 'GiB'
-          ? Number(iSizeToSize(amount, 'g', 3, true)?.numberFixed).toString()
-          : units[type] === 'FGPU'
-            ? parseFloat(amount).toFixed(2)
-            : amount}
+        {formatAmount(amount)}
+        {_.isUndefined(max)
+          ? null
+          : max === 'Infinity'
+            ? '~∞'
+            : `~${formatAmount(max)}`}
       </Typography.Text>
-      <Typography.Text type="secondary">{units[type]}</Typography.Text>
+      <Typography.Text type="secondary">
+        {mergedResourceSlots?.[type]?.display_unit || ''}
+      </Typography.Text>
       {type === 'mem' && opts?.shmem && opts?.shmem > 0 ? (
         <Typography.Text
           type="secondary"
@@ -109,7 +104,7 @@ const MWCIconWrap: React.FC<{ size?: number; children: string }> = ({
 };
 interface AccTypeIconProps
   extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'src'> {
-  type: ResourceTypeKey;
+  type: ResourceSlotName | string;
   showIcon?: boolean;
   showUnit?: boolean;
   showTooltip?: boolean;
@@ -123,27 +118,30 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
   showTooltip = true,
   ...props
 }) => {
-  const { t } = useTranslation();
-
-  const resourceTypeIconSrcMap: ResourceTypeInfo<
-    [ReactElement | string, string]
-  > = {
-    cpu: [
-      <MWCIconWrap size={size}>developer_board</MWCIconWrap>,
-      t('session.core'),
-    ],
-    mem: [<MWCIconWrap size={size}>memory</MWCIconWrap>, 'GiB'],
-    'cuda.device': ['/resources/icons/file_type_cuda.svg', 'GPU'],
-    'cuda.shares': ['/resources/icons/file_type_cuda.svg', 'FGPU'],
-    'rocm.device': ['/resources/icons/rocm.svg', 'GPU'],
-    'tpu.device': [<MWCIconWrap size={size}>view_module</MWCIconWrap>, 'TPU'],
-    'ipu.device': [<MWCIconWrap size={size}>view_module</MWCIconWrap>, 'IPU'],
-    'atom.device': ['/resources/icons/rebel.svg', 'ATOM'],
-    'warboy.device': ['/resources/icons/furiosa.svg', 'Warboy'],
+  const resourceTypeIconSrcMap: ResourceTypeInfo<ReactElement | string> = {
+    cpu: <MWCIconWrap size={size}>developer_board</MWCIconWrap>,
+    mem: <MWCIconWrap size={size}>memory</MWCIconWrap>,
+    'cuda.device': '/resources/icons/file_type_cuda.svg',
+    'cuda.shares': '/resources/icons/file_type_cuda.svg',
+    'rocm.device': '/resources/icons/rocm.svg',
+    'tpu.device': <MWCIconWrap size={size}>view_module</MWCIconWrap>,
+    'ipu.device': <MWCIconWrap size={size}>view_module</MWCIconWrap>,
+    'atom.device': '/resources/icons/rebel.svg',
+    'atom-plus.device': '/resources/icons/rebel.svg',
+    'gaudi2.device': '/resources/icons/gaudi.svg',
+    'warboy.device': '/resources/icons/furiosa.svg',
+    'rngd.device': '/resources/icons/furiosa.svg',
+    'hyperaccel-lpu.device': '/resources/icons/npu_generic.svg',
   };
 
+  const targetIcon = resourceTypeIconSrcMap[
+    type as KnownAcceleratorResourceSlotName
+  ] ?? <MicrochipIcon />;
+
+  const { mergedResourceSlots } = useResourceSlotsDetails();
+
   const content =
-    typeof resourceTypeIconSrcMap[type]?.[0] === 'string' ? (
+    typeof targetIcon === 'string' ? (
       <img
         {...props}
         style={{
@@ -152,21 +150,20 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
           ...(props.style || {}),
         }}
         // @ts-ignore
-        src={resourceTypeIconSrcMap[type]?.[0] || ''}
+        src={resourceTypeIconSrcMap[type] || ''}
         alt={type}
       />
     ) : (
-      <Flex style={{ width: 16, height: 16 }}>
-        {resourceTypeIconSrcMap[type]?.[0] || type}
-      </Flex>
+      <Flex style={{ width: 16, height: 16 }}>{targetIcon || type}</Flex>
     );
 
   return showTooltip ? (
-    // <Tooltip title={showTooltip ? `${type} (${resourceTypeIconSrcMap[type][1]})` : undefined}>
-    <Tooltip title={type}>{content}</Tooltip>
+    <Tooltip title={mergedResourceSlots[type]?.description || type}>
+      {content}
+    </Tooltip>
   ) : (
     <Flex style={{ pointerEvents: 'none' }}>{content}</Flex>
   );
 };
 
-export default ResourceNumber;
+export default React.memo(ResourceNumber);

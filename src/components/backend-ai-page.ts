@@ -29,6 +29,7 @@ registerTranslateConfig({
 export class BackendAIPage extends LitElement {
   public notification: any; // Global notification
   public tasker: any; // Global Background tasker
+  private requiresUpdateWhenInactive: boolean = false;
   @property({ type: Boolean, reflect: true }) active = false;
   @property({ type: Boolean }) hasLoadedStrings = false;
   @property({ type: String }) permission; // Reserved for plugin pages
@@ -83,7 +84,12 @@ export class BackendAIPage extends LitElement {
   }
 
   shouldUpdate(): boolean {
-    return this.active;
+    if (!this.active && this.requiresUpdateWhenInactive) {
+      this.requiresUpdateWhenInactive = false; // Only need to update once
+      return true;
+    } else {
+      return this.active;
+    }
   }
 
   attributeChangedCallback(
@@ -91,12 +97,17 @@ export class BackendAIPage extends LitElement {
     oldval: string | null,
     newval: string | null,
   ): void {
-    if (name == 'active' && newval !== null) {
-      this.active = true;
-      this._viewStateChanged(true);
-    } else if (name === 'active') {
-      this.active = false;
-      this._viewStateChanged(false);
+    if (name === 'active') {
+      if (oldval === newval) {
+        return;
+      } else if (newval !== null) {
+        this.active = true;
+        this._viewStateChanged(true);
+      } else {
+        this.requiresUpdateWhenInactive = true;
+        this.active = false;
+        this._viewStateChanged(false);
+      }
     }
     super.attributeChangedCallback(name, oldval, newval);
   }

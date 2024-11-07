@@ -1,5 +1,6 @@
 import { newLineToBrElement } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useTanQuery } from '../hooks/reactQueryAlias';
 import DescriptionLabel from './DescriptionLabel';
 import DoubleTag from './DoubleTag';
 import Flex from './Flex';
@@ -15,7 +16,6 @@ import {
   Col,
 } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { useQuery } from 'react-query';
 
 interface InformationProps {}
 const Information: React.FC<InformationProps> = () => {
@@ -24,22 +24,19 @@ const Information: React.FC<InformationProps> = () => {
 
   const baiClient = useSuspendedBackendaiClient();
 
-  let { data: licenseInfo, isLoading: isLoadingLicenseInfo } = useQuery<{
+  let { data: licenseInfo, isLoading: isLoadingLicenseInfo } = useTanQuery<{
     valid: boolean;
     type: string;
     licensee: string;
     key: string;
     expiration: string;
-  }>(
-    'licenseInfo',
-    () => {
+  }>({
+    queryKey: ['licenseInfo'],
+    queryFn: () => {
       return baiClient.enterprise.getLicense();
     },
-    {
-      // for to render even this fail query failed
-      suspense: false,
-    },
-  );
+    // for to render even this fail query failed
+  });
 
   if (!licenseInfo) {
     licenseInfo = {
@@ -127,7 +124,10 @@ const Information: React.FC<InformationProps> = () => {
                 {true ? (
                   <CheckOutlined title="Yes" />
                 ) : (
-                  <WarningOutlined style={{ color: 'red' }} title="No" />
+                  <WarningOutlined
+                    style={{ color: token.colorWarning }}
+                    title="No"
+                  />
                 )}
               </Descriptions.Item>
               <Descriptions.Item
@@ -141,7 +141,10 @@ const Information: React.FC<InformationProps> = () => {
                 {baiClient?._config.endpoint.startsWith('https:') ? (
                   <CheckOutlined title="Yes" />
                 ) : (
-                  <WarningOutlined style={{ color: 'red' }} title="No" />
+                  <WarningOutlined
+                    style={{ color: token.colorWarning }}
+                    title="No"
+                  />
                 )}
               </Descriptions.Item>
             </Descriptions>
@@ -222,7 +225,7 @@ const Information: React.FC<InformationProps> = () => {
               {licenseInfo.valid ? (
                 <CheckOutlined />
               ) : (
-                <WarningOutlined style={{ color: 'red' }} />
+                <WarningOutlined style={{ color: token.colorWarning }} />
               )}
             </Descriptions.Item>
             <Descriptions.Item

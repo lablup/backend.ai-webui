@@ -1,3 +1,4 @@
+import { filterEmptyItem } from '../../helper';
 import { useCustomThemeConfig } from '../../helper/customThemeConfig';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
@@ -8,28 +9,35 @@ import Flex from '../Flex';
 import SignoutModal from '../SignoutModal';
 import { PluginPage, WebUIPluginType } from './MainLayout';
 import {
+  ApiOutlined,
   BarChartOutlined,
   BarsOutlined,
-  CaretRightOutlined,
   CloudUploadOutlined,
   ControlOutlined,
   DashboardOutlined,
-  ExperimentOutlined,
   ExportOutlined,
   FileDoneOutlined,
   HddOutlined,
   InfoCircleOutlined,
   RocketOutlined,
+  SolutionOutlined,
   ToolOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { theme, MenuProps, Typography } from 'antd';
+import { ItemType } from 'antd/lib/menu/interface';
 import _ from 'lodash';
+import { PlayIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
+type MenuItem = {
+  label: string;
+  icon: React.ReactNode;
+  key: string;
+};
 interface WebUISiderProps
   extends Pick<BAISiderProps, 'collapsed' | 'collapsedWidth' | 'onBreakpoint'> {
   webuiplugins?: WebUIPluginType;
@@ -56,10 +64,12 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const inactiveList = baiClient?._config?.inactiveList ?? null;
   const siteDescription = baiClient?._config?.siteDescription ?? null;
   const supportServing = baiClient?.supports('model-serving') ?? false;
+  const supportUserCommittedImage =
+    baiClient?.supports('user-committed-image') ?? false;
 
   const [isOpenSignoutModal, { toggle: toggleSignoutModal }] = useToggle(false);
 
-  const generalMenu: MenuProps['items'] = [
+  const generalMenu = filterEmptyItem<ItemType>([
     {
       label: t('webui.menu.Summary'),
       icon: <DashboardOutlined />,
@@ -77,13 +87,18 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     },
     {
       label: t('webui.menu.Import&Run'),
-      icon: <CaretRightOutlined />,
+      icon: <PlayIcon />,
       key: 'import',
     },
     {
       label: t('webui.menu.Data&Storage'),
       icon: <CloudUploadOutlined />,
       key: 'data',
+    },
+    supportUserCommittedImage && {
+      label: t('webui.menu.MyEnvironments'),
+      icon: <FileDoneOutlined />,
+      key: 'my-environment',
     },
     !isHideAgents && {
       label: t('webui.menu.AgentSummary'),
@@ -98,12 +113,12 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     !!fasttrackEndpoint && {
       label: t('webui.menu.FastTrack'),
       icon: <ExportOutlined />,
-      key: 'fasttrack',
+      key: 'pipeline',
       onClick: () => {
         window.open(fasttrackEndpoint, '_blank', 'noopener noreferrer');
       },
     },
-  ];
+  ]);
 
   const adminMenu: MenuProps['items'] = [
     {
@@ -115,6 +130,11 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       label: t('webui.menu.Environments'),
       icon: <FileDoneOutlined />,
       key: 'environment',
+    },
+    {
+      label: t('webui.menu.ResourcePolicy'),
+      icon: <SolutionOutlined />,
+      key: 'resource-policy',
     },
   ];
 
@@ -141,7 +161,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     },
   ];
 
-  const pluginMap = {
+  const pluginMap: Record<string, MenuProps['items']> = {
     'menuitem-user': generalMenu,
     'menuitem-admin': adminMenu,
     'menuitem-superadmin': superAdminMenu,
@@ -152,18 +172,18 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   _.forOwn(props.webuiplugins, (value, key) => {
     // Check if the `pluginMap` object has the current key using the `_.has` function.
     if (_.has(pluginMap, key)) {
-      const menu = pluginMap[key as keyof typeof pluginMap];
+      const menu = pluginMap[key as keyof typeof pluginMap] as MenuItem[];
       const pluginPages = props?.webuiplugins?.page;
       _.map(value, (name) => {
         // Find page item belonging to each of menuitem-user, menuitem-admin, menuitem-superadmin in webuiplugins.page
         const page = _.find(pluginPages, { name: name }) as PluginPage;
         if (page) {
-          const menuItem = {
+          const menuItem: MenuItem = {
             label: page?.menuitem,
-            icon: <ExperimentOutlined />,
+            icon: <ApiOutlined />,
             key: page?.url,
           };
-          menu.push(menuItem);
+          menu?.push(menuItem);
         }
       });
     }
@@ -192,7 +212,11 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                 '/manifest/backend.ai-text-bgdark.svg'
               : themeConfig?.logo?.src || '/manifest/backend.ai-text.svg'
           }
-          style={{ width: 191, height: 32, cursor: 'pointer' }}
+          style={{
+            width: themeConfig?.logo?.size?.width || 191,
+            height: themeConfig?.logo?.size?.height || 32,
+            cursor: 'pointer',
+          }}
           onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
         />
       }
@@ -208,7 +232,11 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
               : themeConfig?.logo?.srcCollapsed ||
                 '/manifest/backend.ai-brand-simple.svg'
           }
-          style={{ width: 48, height: 32, cursor: 'pointer' }}
+          style={{
+            width: themeConfig?.logo?.sizeCollapsed?.width || 48,
+            height: themeConfig?.logo?.sizeCollapsed?.height || 32,
+            cursor: 'pointer',
+          }}
           onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
         />
       }
@@ -279,7 +307,9 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
               </Flex>
             </div>
             <address>
-              <small className="sidebar-footer">Lablup Inc.</small>
+              <small className="sidebar-footer">
+                {themeConfig?.branding?.companyName || 'Lablup Inc.'}
+              </small>
               &nbsp;
               <small
                 className="sidebar-footer"
@@ -299,6 +329,9 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           location.pathname.split('/')[1] || 'summary',
           // TODO: After matching first path of 'storage-settings' and 'agent', remove this code
           location.pathname.split('/')[1] === 'storage-settings' ? 'agent' : '',
+          // TODO: After 'SessionListPage' is completed and used as the main page, remove this code
+          //       and change 'job' key to 'session'
+          location.pathname.split('/')[1] === 'session' ? 'job' : '',
         ]}
         items={
           // TODO: add plugin menu

@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 const {app, Menu, shell, BrowserWindow, protocol, session, clipboard, dialog, ipcMain} = require('electron');
 process.env.electronPath = app.getAppPath();
@@ -250,7 +250,7 @@ app.once('ready', function() {
                 protocol: 'file',
                 slashes: true
               }));
-              mainContent.executeJavaScript(`window.__local_proxy = '${proxyUrl}'`);
+              mainContent.executeJavaScript(`window.__local_proxy = {}; window.__local_proxy.url = '${proxyUrl}';`);
               console.log('Re-connected to proxy: ' + proxyUrl);
             }
           },

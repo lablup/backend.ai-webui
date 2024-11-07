@@ -1,35 +1,93 @@
 import AnnouncementAlert from './components/AnnouncementAlert';
-import BAIErrorBoundary from './components/BAIErrorBoundary';
+import BAIErrorBoundary, { ErrorView } from './components/BAIErrorBoundary';
 import {
   DefaultProvidersForReactRoot,
   RoutingEventHandler,
 } from './components/DefaultProviders';
+import Flex from './components/Flex';
+import LocationStateBreadCrumb from './components/LocationStateBreadCrumb';
 import MainLayout from './components/MainLayout/MainLayout';
+import { useSuspendedBackendaiClient } from './hooks';
+import { useBAISettingUserState } from './hooks/useBAISetting';
 import Page401 from './pages/Page401';
 import Page404 from './pages/Page404';
-import React from 'react';
+import VFolderListPage from './pages/VFolderListPage';
+import { Skeleton, theme } from 'antd';
+import React, { Suspense } from 'react';
 import { FC } from 'react';
 import {
   Navigate,
   RouterProvider,
   createBrowserRouter,
 } from 'react-router-dom';
-import { RecoilRoot } from 'recoil';
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 
 const Information = React.lazy(() => import('./components/Information'));
-const ServingListPage = React.lazy(() => import('./pages/ServingListPage'));
+const ServingPage = React.lazy(() => import('./pages/ServingPage'));
+const EndpointDetailPage = React.lazy(
+  () => import('./pages/EndpointDetailPage'),
+);
+// const SummaryPage = React.lazy(() => import('./pages/SummaryPage'));
 const EnvironmentPage = React.lazy(() => import('./pages/EnvironmentPage'));
+const MyEnvironmentPage = React.lazy(() => import('./pages/MyEnvironmentPage'));
 const StorageHostSettingPage = React.lazy(
   () => import('./pages/StorageHostSettingPage'),
 );
-const RoutingListPage = React.lazy(() => import('./pages/RoutingListPage'));
 const UserSettingsPage = React.lazy(() => import('./pages/UserSettingsPage'));
+const SessionListPage = React.lazy(() => import('./pages/SessionListPage'));
+const SessionLauncherPage = React.lazy(
+  () => import('./pages/SessionLauncherPage'),
+);
+const ResourcePolicyPage = React.lazy(
+  () => import('./pages/ResourcePolicyPage'),
+);
+const ResourcesPage = React.lazy(() => import('./pages/ResourcesPage'));
+const FolderExplorerOpener = React.lazy(
+  () => import('./components/FolderExplorerOpener'),
+);
+const ServiceLauncherCreatePage = React.lazy(
+  () => import('./components/ServiceLauncherPageContent'),
+);
+const ServiceLauncherUpdatePage = React.lazy(
+  () => import('./pages/ServiceLauncherPage'),
+);
+const InteractiveLoginPage = React.lazy(
+  () => import('./pages/InteractiveLoginPage'),
+);
+const ImportAndRunPage = React.lazy(() => import('./pages/ImportAndRunPage'));
+
+const ComputeSessionList = React.lazy(
+  () => import('./components/ComputeSessionList'),
+);
+
+const RedirectToSummary = () => {
+  useSuspendedBackendaiClient();
+  const pathName = '/summary';
+  document.dispatchEvent(
+    new CustomEvent('move-to-from-react', {
+      detail: {
+        path: pathName,
+        // params: options?.params,
+      },
+    }),
+  );
+  return <Navigate to="/summary" replace />;
+};
 
 const router = createBrowserRouter([
   {
+    path: '/interactive-login',
+    errorElement: <ErrorView />,
+    element: (
+      <QueryParamProvider adapter={ReactRouter6Adapter}>
+        <InteractiveLoginPage />
+      </QueryParamProvider>
+    ),
+  },
+  {
     path: '/',
+    errorElement: <ErrorView />,
     element: (
       <QueryParamProvider
         adapter={ReactRouter6Adapter}
@@ -42,46 +100,60 @@ const router = createBrowserRouter([
       >
         <MainLayout />
         <RoutingEventHandler />
+        <Suspense fallback={null}>
+          <FolderExplorerOpener />
+        </Suspense>
       </QueryParamProvider>
     ),
     handle: { labelKey: 'webui.menu.Summary' },
     children: [
       {
         path: '/',
-        element: <Navigate to="/summary" replace />,
+        element: <RedirectToSummary />,
       },
       {
         //for electron dev mode
         path: '/build/electron-app/app/index.html',
-        element: <Navigate to="/summary" replace />,
+        element: <RedirectToSummary />,
       },
       {
         //for electron prod mode
         path: '/app/index.html',
-        element: <Navigate to="/summary" replace />,
+        element: <RedirectToSummary />,
       },
       {
         path: '/summary',
-        Component: () => (
-          <AnnouncementAlert
-            showIcon
-            icon={undefined}
-            banner={false}
-            style={{ marginBottom: 16 }}
-            closable
-          />
-        ),
+        Component: () => {
+          const { token } = theme.useToken();
+          return (
+            <>
+              <AnnouncementAlert
+                showIcon
+                icon={undefined}
+                banner={false}
+                style={{ marginBottom: token.paddingContentVerticalLG }}
+                closable
+              />
+              {/* <SummaryPage /> */}
+            </>
+          );
+        },
         handle: { labelKey: 'webui.menu.Summary' },
       },
       {
         path: '/job',
         handle: { labelKey: 'webui.menu.Sessions' },
+        element: (
+          <BAIErrorBoundary>
+            <ComputeSessionList />
+          </BAIErrorBoundary>
+        ),
       },
       {
         path: '/serving',
         element: (
           <BAIErrorBoundary>
-            <ServingListPage />
+            <ServingPage />
           </BAIErrorBoundary>
         ),
         handle: { labelKey: 'webui.menu.Serving' },
@@ -90,18 +162,85 @@ const router = createBrowserRouter([
         path: '/serving/:serviceId',
         element: (
           <BAIErrorBoundary>
-            <RoutingListPage />
+            <EndpointDetailPage />
           </BAIErrorBoundary>
         ),
         handle: { labelKey: 'modelService.RoutingInfo' },
       },
       {
+        path: '/service',
+        handle: { labelKey: 'webui.menu.Serving' },
+        children: [
+          {
+            path: '',
+            element: <Navigate to="/serving" replace />,
+          },
+          {
+            path: 'start',
+            handle: { labelKey: 'modelService.StartNewService' },
+            element: (
+              <BAIErrorBoundary>
+                <Suspense
+                  fallback={
+                    <Flex direction="column" style={{ maxWidth: 700 }}>
+                      <Skeleton active />
+                    </Flex>
+                  }
+                >
+                  <ServiceLauncherCreatePage />
+                </Suspense>
+              </BAIErrorBoundary>
+            ),
+          },
+          {
+            path: 'update/:endpointId',
+            handle: { labelKey: 'modelService.UpdateService' },
+            element: (
+              <BAIErrorBoundary>
+                <ServiceLauncherUpdatePage />
+              </BAIErrorBoundary>
+            ),
+          },
+        ],
+      },
+      {
         path: '/import',
         handle: { labelKey: 'webui.menu.Import&Run' },
+        Component: () => {
+          const [classicSessionLauncher] = useBAISettingUserState(
+            'classic_session_launcher',
+          );
+          return (
+            <BAIErrorBoundary>
+              {classicSessionLauncher ? null : <ImportAndRunPage />}
+              {/* @ts-ignore */}
+              <backend-ai-import-view
+                active
+                class="page"
+                name="import"
+                sessionLauncherType={classicSessionLauncher ? 'classic' : 'neo'}
+              />
+            </BAIErrorBoundary>
+          );
+        },
       },
       {
         path: '/data',
         handle: { labelKey: 'webui.menu.Data&Storage' },
+        element: (
+          <BAIErrorBoundary>
+            <VFolderListPage />
+          </BAIErrorBoundary>
+        ),
+      },
+      {
+        path: '/my-environment',
+        element: (
+          <BAIErrorBoundary>
+            <MyEnvironmentPage />
+          </BAIErrorBoundary>
+        ),
+        handle: { labelKey: 'webui.menu.MyEnvironments' },
       },
       {
         path: '/agent-summary',
@@ -119,6 +258,12 @@ const router = createBrowserRouter([
       {
         path: '/agent',
         handle: { labelKey: 'webui.menu.ComputationResources' },
+        Component: ResourcesPage,
+      },
+      {
+        path: '/resource-policy',
+        handle: { labelKey: 'webui.menu.ResourcePolicy' },
+        Component: ResourcePolicyPage,
       },
       {
         path: '/settings',
@@ -163,10 +308,33 @@ const router = createBrowserRouter([
       {
         path: '/session',
         handle: { labelKey: 'webui.menu.Sessions' },
+        Component: SessionListPage,
       },
       {
         path: '/session/start',
-        handle: { labelKey: 'session.launcher.StartNewSession' },
+        // handle: { labelKey: 'session.launcher.StartNewSession' },
+        Component: () => {
+          const { token } = theme.useToken();
+          return (
+            <Flex
+              direction="column"
+              gap={token.paddingContentVerticalLG}
+              align="stretch"
+              style={{ paddingBottom: token.paddingContentVerticalLG }}
+            >
+              <LocationStateBreadCrumb />
+              <Suspense
+                fallback={
+                  <Flex direction="column" style={{ maxWidth: 700 }}>
+                    <Skeleton active />
+                  </Flex>
+                }
+              >
+                <SessionLauncherPage />
+              </Suspense>
+            </Flex>
+          );
+        },
       },
       // Leave empty tag for plugin pages.
       {
@@ -179,11 +347,9 @@ const router = createBrowserRouter([
 
 const App: FC = () => {
   return (
-    <RecoilRoot>
-      <DefaultProvidersForReactRoot>
-        <RouterProvider router={router} />
-      </DefaultProvidersForReactRoot>
-    </RecoilRoot>
+    <DefaultProvidersForReactRoot>
+      <RouterProvider router={router} />
+    </DefaultProvidersForReactRoot>
   );
 };
 

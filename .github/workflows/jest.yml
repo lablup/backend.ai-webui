@@ -10,28 +10,49 @@ on:
 defaults:
   run:
     working-directory: ./react
-
 jobs:
   coverage:
+    permissions: 
+      checks: write
+      pull-requests: write
+      contents: write
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
     - uses: jwalton/gh-find-current-pr@v1
       id: findPr
+    - uses: pnpm/action-setup@v4
+      name: Install pnpm
+      with:
+        version: 9
+        run_install: false
     - uses: actions/setup-node@v4
       with:
         node-version-file: '.nvmrc'
+        cache: 'pnpm'
+    - name: Get pnpm store directory
+      shell: bash
+      run: |
+        echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+    - uses: actions/cache@v4
+      name: Setup pnpm cache
+      with:
+        path: ${{ env.STORE_PATH }}
+        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-store-
     - name: Install dependencies
-      run: npm install
+      run: pnpm install
     - name: Run ESLint on React
-      run: npx eslint ./src --ignore-pattern '*.test.*' --max-warnings=0
+      run: pnpm  eslint ./src --ignore-pattern '*.test.*' --max-warnings=0
     - name: run relay-compiler
-      run: npm run relay
+      run: pnpm run relay
     - name: Jest report
       uses: ArtiomTr/jest-coverage-report-action@v2
       with:
         skip-step: install
         working-directory: ./react
-        package-manager: npm
-        test-script: npm run test
+        package-manager: pnpm
+        test-script: pnpm run test
         prnumber: ${{ steps.findPr.outputs.number }}
+        annotations: failed-tests

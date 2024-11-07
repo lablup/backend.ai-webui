@@ -2,11 +2,28 @@ import { useSuspendedBackendaiClient } from '.';
 import { Image } from '../components/ImageEnvironmentSelectFormItems';
 import { AUTOMATIC_DEFAULT_SHMEM } from '../components/ResourceAllocationFormItems';
 import { addNumberWithUnits, iSizeToSize } from '../helper';
-import { useResourceSlots } from '../hooks/backendai';
-import { useTanQuery } from './reactQueryAlias';
+import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
+import { useSuspenseTanQuery } from './reactQueryAlias';
 import _ from 'lodash';
+import { useMemo } from 'react';
 
-interface MergedResourceLimits {
+const maxPerContainerRegex = /^max([A-Za-z0-9]+)PerContainer$/;
+
+export const isMatchingMaxPerContainer = (configName: string, key: string) => {
+  const match = configName.match(maxPerContainerRegex);
+  if (match) {
+    const configLowerCase = match[1].toLowerCase();
+    const keyLowerCase = key.replaceAll(/[.-]/g, '').toLowerCase();
+    // Because some accelerator names are not the same as the config name, we need to check if the config name is a substring of the accelerator name
+    // cuda.shares => maxCUDASharesPerContainer
+    // cuda.device => maxCUDADevicesPerContainer (Not maxCUDADevicePerContainer)
+    return (
+      configLowerCase === keyLowerCase || configLowerCase === keyLowerCase + 's'
+    );
+  }
+  return false;
+};
+export interface MergedResourceLimits {
   accelerators: {
     [key: string]:
       | {
@@ -30,9 +47,7 @@ interface MergedResourceLimits {
 }
 
 type ResourceLimits = {
-  cpu: string | 'Infinity' | 'NaN';
-  mem: string | 'Infinity' | 'NaN';
-  'cuda.device': string | 'Infinity' | 'NaN';
+  [key in ResourceSlotName]?: string | 'Infinity' | 'NaN';
 };
 type ResourceUsing = ResourceLimits;
 type ResourceRemaining = ResourceLimits;
@@ -44,7 +59,6 @@ type ScalingGroup = {
 type ResourceSlots = {
   cpu: string;
   mem: string;
-  'cuda.device': string;
   [key: string]: string;
 };
 
@@ -56,7 +70,7 @@ type RemainingSlots = {
   };
 };
 
-type Preset = {
+export type ResourcePreset = {
   name: string;
   resource_slots: ResourceSlots;
   shared_memory: string | null;
@@ -71,7 +85,7 @@ type ResourceAllocation = {
   scaling_groups: {
     [key: string]: ScalingGroup;
   };
-  presets: Preset[];
+  presets: ResourcePreset[];
   group_limits: ResourceLimits;
   group_using: ResourceUsing;
   group_remaining: ResourceRemaining;
@@ -80,14 +94,16 @@ type ResourceAllocation = {
 interface Props {
   currentProjectName: string;
   currentImage?: Image;
-  currentResourceGroup: string;
+  currentResourceGroup?: string;
+  ignorePerContainerConfig?: boolean;
 }
 
 // determine resource limits and remaining for current resource group and current image in current project
 export const useResourceLimitAndRemaining = ({
   currentImage,
-  currentResourceGroup,
+  currentResourceGroup = '',
   currentProjectName,
+  ignorePerContainerConfig = false,
 }: Props) => {
   const baiClient = useSuspendedBackendaiClient();
   const [resourceSlots] = useResourceSlots();
@@ -97,20 +113,22 @@ export const useResourceLimitAndRemaining = ({
     data: checkPresetInfo,
     refetch,
     isRefetching,
-  } = useTanQuery<ResourceAllocation>({
-    queryKey: ['check-resets', currentProjectName, currentResourceGroup],
+  } = useSuspenseTanQuery<ResourceAllocation | undefined>({
+    queryKey: ['check-presets', currentProjectName, currentResourceGroup],
     queryFn: () => {
       if (currentResourceGroup) {
-        return baiClient.resourcePreset.check({
-          group: currentProjectName,
-          scaling_group: currentResourceGroup,
-        });
+        return baiClient.resourcePreset
+          .check({
+            group: currentProjectName,
+            scaling_group: currentResourceGroup,
+          })
+          .catch(() => {});
       } else {
         return;
       }
     },
-    staleTime: 0,
-    suspense: !_.isEmpty(currentResourceGroup), //prevent flicking
+    staleTime: 1000,
+    // suspense: !_.isEmpty(currentResourceGroup), //prevent flicking
   });
 
   const currentImageMinM =
@@ -192,6 +210,14 @@ export const useResourceLimitAndRemaining = ({
       },
     ),
   };
+  const perContainerConfigs = useMemo(
+    () =>
+      _.omitBy(baiClient._config, (value, key) => {
+        return !maxPerContainerRegex.test(key);
+      }),
+    [baiClient._config],
+  );
+
   const resourceLimits: MergedResourceLimits = {
     cpu:
       resourceSlots?.cpu === undefined
@@ -204,10 +230,12 @@ export const useResourceLimitAndRemaining = ({
               ),
             ]),
             max: _.min([
-              baiClient._config.maxCPUCoresPerContainer,
+              ignorePerContainerConfig
+                ? undefined
+                : baiClient._config.maxCPUCoresPerContainer,
               limitParser(checkPresetInfo?.keypair_limits.cpu),
               limitParser(checkPresetInfo?.group_limits.cpu),
-              resourceGroupResourceSize?.cpu,
+              // resourceGroupResourceSize?.cpu,
             ]),
           },
     mem:
@@ -229,7 +257,9 @@ export const useResourceLimitAndRemaining = ({
             max:
               //handled by 'g(GiB)' unit
               _.min([
-                baiClient._config.maxMemoryPerContainer,
+                ignorePerContainerConfig
+                  ? undefined
+                  : baiClient._config.maxMemoryPerContainer,
                 limitParser(checkPresetInfo?.keypair_limits.mem) &&
                   iSizeToSize(
                     limitParser(checkPresetInfo?.keypair_limits.mem) + '',
@@ -241,33 +271,18 @@ export const useResourceLimitAndRemaining = ({
                     'g',
                   )?.number,
                 // scaling group all mem (using + remaining), string type
-                resourceGroupResourceSize?.mem &&
-                  iSizeToSize(resourceGroupResourceSize?.mem + '', 'g')?.number,
+                // resourceGroupResourceSize?.mem &&
+                //   iSizeToSize(resourceGroupResourceSize?.mem + '', 'g')?.number,
               ]) + 'g',
           },
-    // shmem:
-    //   resourceSlots?.mem === undefined
-    //     ? undefined
-    //     : {
-    //         min: _.max([
-    //           _.find(currentImage?.resource_limits, (i) => i?.key === 'shmem')
-    //             ?.min,
-    //           '64m',
-    //         ]),
-    //       },
     accelerators: _.reduce(
       acceleratorSlots,
       (result, value, key) => {
-        const configName =
-          {
-            'cuda.device': 'maxCUDADevicesPerContainer',
-            'cuda.shares': 'maxCUDASharesPerContainer',
-            'rocm.device': 'maxROCMDevicesPerContainer',
-            'tpu.device': 'maxTPUDevicesPerContainer',
-            'ipu.device': 'maxIPUDevicesPerContainer',
-            'atom.device': 'maxATOMDevicesPerContainer',
-            'warboy.device': 'maxWarboyDevicesPerContainer',
-          }[key] || 'cuda.device'; // FIXME: temporally `cuda.device` config, when undefined
+        const perContainerLimit =
+          _.find(perContainerConfigs, (configValue, configName) => {
+            return isMatchingMaxPerContainer(configName, key);
+          }) ?? baiClient._config['cuda.device']; // FIXME: temporally `cuda.device` config, when undefined
+
         result[key] = {
           min: parseInt(
             _.filter(
@@ -278,9 +293,13 @@ export const useResourceLimitAndRemaining = ({
             )?.[0]?.min || '0',
           ),
           max: _.min([
-            baiClient._config[configName] || 8,
+            perContainerLimit || 8,
+            limitParser(
+              checkPresetInfo?.keypair_limits[key as ResourceSlotName],
+            ),
+            limitParser(checkPresetInfo?.group_limits[key as ResourceSlotName]),
             // scaling group all cpu (using + remaining), string type
-            resourceGroupResourceSize.accelerators[key],
+            // resourceGroupResourceSize.accelerators[key],
           ]),
         };
         return result;
@@ -294,12 +313,15 @@ export const useResourceLimitAndRemaining = ({
       (result, value, key) => {
         result[key] =
           _.min([
-            // @ts-ignore
-            _.toNumber(checkPresetInfo?.keypair_remaining[key]),
-            // @ts-ignore
-            _.toNumber(checkPresetInfo?.group_remaining[key]),
-            // @ts-ignore
-            _.toNumber(checkPresetInfo?.scaling_group_remaining[key]),
+            _.toNumber(
+              checkPresetInfo?.keypair_remaining[key as ResourceSlotName],
+            ),
+            _.toNumber(
+              checkPresetInfo?.group_remaining[key as ResourceSlotName],
+            ),
+            _.toNumber(
+              checkPresetInfo?.scaling_group_remaining[key as ResourceSlotName],
+            ),
           ]) ?? Number.MAX_SAFE_INTEGER;
         return result;
       },
@@ -326,6 +348,7 @@ export const useResourceLimitAndRemaining = ({
       remaining,
       currentImageMinM,
       isRefetching,
+      checkPresetInfo,
     },
     {
       refetch,

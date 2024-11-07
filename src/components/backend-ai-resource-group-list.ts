@@ -78,11 +78,15 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
   @query('#resource-group-active') resourceGroupActiveSwitch!: Switch;
   @query('#resource-group-public') resourceGroupPublicSwitch!: Switch;
   @query('#resource-group-wsproxy-address')
-  resourceGroupWSProxyaddressInput!: TextField;
+  resourceGroupWSProxyAddressInput!: TextField;
   @query('#allowed-session-types') private allowedSessionTypesSelect;
   @query('#num-retries-to-skip') numberOfRetriesToSkip!: TextField;
   @query('#pending-timeout') timeoutInput!: TextField;
   @query('#delete-resource-group') deleteResourceGroupInput!: TextField;
+  @query('#modify-resource-group')
+  modifyResourceGroupButton!: HTMLButtonElement;
+  @query('#create-resource-group')
+  createResourceGroupButton!: HTMLButtonElement;
 
   constructor() {
     super();
@@ -119,7 +123,12 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           --mdc-theme-primary: var(--general-textfield-selected-color);
         }
 
-        mwc-button[outlined] {
+        mwc-button[raised] {
+          margin-left: var(--token-marginXXS);
+        }
+
+        mwc-button.full-size,
+        mwc-button.full {
           width: 100%;
           margin: 10px auto;
           background-image: none;
@@ -406,7 +415,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
         input['scheduler_opts'] = JSON.stringify(this.schedulerOpts);
       }
       if (this.enableWSProxyAddr) {
-        const wsproxyAddress = this.resourceGroupWSProxyaddressInput.value;
+        const wsproxyAddress = this.resourceGroupWSProxyAddressInput.value;
         input['wsproxy_addr'] = wsproxyAddress;
       }
       if (this.enableIsPublic) {
@@ -470,19 +479,23 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
     const name = this.resourceGroupInfo.name;
 
     const input = {};
-    if (description !== this.resourceGroupInfo.description)
+    if (description !== this.resourceGroupInfo.description) {
       input['description'] = description;
-    if (scheduler !== this.resourceGroupInfo.scheduler)
+    }
+    if (scheduler !== this.resourceGroupInfo.scheduler) {
       input['scheduler'] = scheduler;
-    if (isActive !== this.resourceGroupInfo.is_active)
+    }
+    if (isActive !== this.resourceGroupInfo.is_active) {
       input['is_active'] = isActive;
+    }
     if (this.enableWSProxyAddr) {
-      let wsproxy_addr: string = this.resourceGroupWSProxyaddressInput.value;
+      let wsproxy_addr: string = this.resourceGroupWSProxyAddressInput.value;
       if (wsproxy_addr.endsWith('/')) {
         wsproxy_addr = wsproxy_addr.slice(0, wsproxy_addr.length - 1);
       }
-      if (wsproxy_addr !== this.resourceGroupInfo.wsproxy_addr)
+      if (wsproxy_addr !== this.resourceGroupInfo.wsproxy_addr) {
         input['wsproxy_addr'] = wsproxy_addr;
+      }
     }
 
     if (this.enableSchedulerOpts) {
@@ -493,8 +506,9 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
 
     if (this.enableIsPublic) {
       const isPublic = this.resourceGroupPublicSwitch?.selected;
-      if (isPublic !== this.resourceGroupInfo.is_public)
+      if (isPublic !== this.resourceGroupInfo.is_public) {
         input['is_public'] = isPublic;
+      }
     }
 
     if (Object.keys(input).length === 0) {
@@ -522,7 +536,6 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
     const name = this.resourceGroupInfo.name;
     if (this.deleteResourceGroupInput.value !== name) {
       this.notification.text = _text('resourceGroup.ResourceGroupNameNotMatch');
-      this._hideDialogById('#delete-resource-group-dialog');
       this.notification.show();
       return;
     }
@@ -677,6 +690,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
    */
   _launchDeleteDialog(resourceGroup: object) {
     this.resourceGroupInfo = resourceGroup;
+    this.deleteResourceGroupInput.value = '';
     this._launchDialogById('#delete-resource-group-dialog');
   }
 
@@ -704,6 +718,13 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
       });
     }
     this._launchDialogById('#resource-group-dialog');
+  }
+
+  _validateWsproxyAddress(obj: any) {
+    const submitButton =
+      this.modifyResourceGroupButton || this.createResourceGroupButton;
+
+    submitButton.disabled = !obj.checkValidity();
   }
 
   render() {
@@ -878,6 +899,12 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                   label="${_t('resourceGroup.WsproxyAddress')}"
                   placeholder="http://localhost:10200"
                   value="${this.resourceGroupInfo?.wsproxy_addr ?? ''}"
+                  autoValidate
+                  validationMessage="${_t('registry.DescURLFormat')}"
+                  @input="${(e) => {
+                    this._addInputValidator(e.target);
+                    this._validateWsproxyAddress(e.target);
+                  }}"
                 ></mwc-textfield>
               `
             : html``}
@@ -948,6 +975,8 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           ${Object.keys(this.resourceGroupInfo).length > 0
             ? html`
                 <mwc-button
+                  id="modify-resource-group"
+                  class="full"
                   unelevated
                   icon="save"
                   label="${_t('button.Save')}"
@@ -956,6 +985,8 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
               `
             : html`
                 <mwc-button
+                  id="create-resource-group"
+                  class="full"
                   unelevated
                   icon="add"
                   label="${_t('button.Create')}"
@@ -983,9 +1014,13 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
             outlined
-            icon="delete"
+            label="${_t('button.Cancel')}"
+            @click="${(e) => this._hideDialog(e)}"
+          ></mwc-button>
+          <mwc-button
+            raised
+            class="warning fg red"
             label="${_t('button.Delete')}"
-            style="box-sizing: border-box;"
             @click="${this._deleteResourceGroup}"
           ></mwc-button>
         </div>

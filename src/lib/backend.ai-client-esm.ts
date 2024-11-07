@@ -8,7 +8,7 @@ Licensed under MIT
 /*jshint esnext: true */
 import CryptoES from 'crypto-es';
 //var CryptoES = require("crypto-js"); /* Exclude for ES6 */
-import { comparePEP440Versions } from './pep440';
+import { comparePEP440Versions, isCompatibleMultipleConditions} from './pep440';
 type requestInfo = {
   method: string;
   headers: Headers;
@@ -266,7 +266,7 @@ class Client {
     this._features = {}; // feature support list
     this.abortController = new AbortController();
     this.abortSignal = this.abortController.signal;
-    this.requestTimeout = 5000;
+    this.requestTimeout = 15000;
     if (localStorage.getItem('backendaiwebui.sessionid')) {
       this._loginSessionId = localStorage.getItem('backendaiwebui.sessionid');
     } else {
@@ -347,7 +347,7 @@ class Client {
       }
       errorType = Client.ERR_RESPONSE;
       let contentType = resp.headers.get('Content-Type');
-      if (!rawFile && contentType === null) {
+      if (!rawFile && (contentType === null || resp.status === 204 )) {
         body = await resp.blob();
       } else if (
         !rawFile &&
@@ -665,6 +665,18 @@ class Client {
     }
     if (this.isManagerVersionCompatibleWith('23.09.2')) {
       this._features['container-registry-gql'] = true;
+      this._features['max-quota-scope-size-in-user-and-project-resource-policy'] = true;
+      this._features['deprecated-max-vfolder-size-in-user-and-project-resource-policy'] = true;
+      this._features['max-quota-scope-size'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('23.09.4')) {
+      this._features['deprecated-max-vfolder-count-in-keypair-resource-policy'] = true;
+      this._features['deprecated-max-vfolder-size-in-keypair-resource-policy'] = true;
+      this._features['use-win-instead-of-win32'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('23.09.6')) {
+      this._features['max-vfolder-count-in-user-and-project-resource-policy'] = true;
+      this._features['deprecated-max-quota-scope-in-keypair-resource-policy'] = true;
     }
     if (this.isManagerVersionCompatibleWith('23.09.7')) {
       this._features['main-access-key'] = true;
@@ -675,18 +687,52 @@ class Client {
     if (this.isManagerVersionCompatibleWith('23.09.9')) {
       this._features['modify-endpoint'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('23.09.10')) {
+      this._features['max-session-count-per-model-session'] = true;
+      // In versions 23.09.10 and earlier, it is not suitable to create and modify user resource policies.
+      this._features['configure-user-resource-policy'] = true;
+    }
     if (this.isManagerVersionCompatibleWith('24.03.0')) {
-      this._features['max-vfolder-count-in-user-resource-policy'] = true;
+      this._features['vfolder-trash-bin'] = true;
       this._features['model-store'] = true;
+      this._features['per-user-image'] = true;
+      this._features['user-committed-image'] = true;
+      this._features['model-service-validation'] = true;
+      this._features['max-customized-image-count'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('24.03.4')) {
+      this._features['endpoint-extra-mounts'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('24.03.5')) {
+      this._features['modify-endpoint-environ'] = true;
+      this._features['endpoint-runtime-variant'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('24.03.7')) {
+      this._features['per-kernel-logs'] = true;
+    }
+    // ignore next alpha version
+    if(this.isManagerVersionCompatibleWith(['24.03.10'])) {
+      this._features['endpoint-lifecycle-stage-filter'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('24.09')) {
+      this._features['extend-login-session'] = true;
+      this._features['session-node'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('24.12.0')) {
+      this._features['extended-image-info'] = true;
     }
   }
 
   /**
    * Return if manager is compatible with given version.
    */
-  isManagerVersionCompatibleWith(version) {
+  isManagerVersionCompatibleWith(version: string | Array<string>) {
     let managerVersion = this._managerVersion;
-    return comparePEP440Versions(managerVersion, version) >= 0;
+    if(Array.isArray(version)){
+      return isCompatibleMultipleConditions(managerVersion, version);
+    } else {
+      return comparePEP440Versions(managerVersion, version) >= 0;
+    }
   }
 
   /**
@@ -1022,8 +1068,20 @@ class Client {
       if (resources['atom.device']) {
         config['atom.device'] = parseInt(resources['atom.device']);
       }
+      if (resources['atom-plus.device']) {
+        config['atom-plus.device'] = parseInt(resources['atom-plus.device']);
+      }
+      if (resources['gaudi2.device']) {
+        config['gaudi2.device'] = parseInt(resources['gaudi2.device']);
+      }
       if (resources['warboy.device']) {
         config['warboy.device'] = parseInt(resources['warboy.device']);
+      }
+      if (resources['rngd.device']) {
+        config['rngd.device'] = parseInt(resources['rngd.device']);
+      }
+      if (resources['hyperaccel-lpu.device']) {
+        config['hyperaccel-lpu.device'] = parseInt(resources['hyperaccel-lpu.device']);
       }
       if (resources['cluster_size']) {
         params['cluster_size'] = resources['cluster_size'];
@@ -1249,10 +1307,17 @@ class Client {
    * @param {string | null} ownerKey - owner key to access
    * @param {number} timeout - timeout to wait log query. Set to 0 to use default value.
    */
-  async get_logs(sessionId, ownerKey = null, timeout = 0): Promise<any> {
-    let queryString = `${this.kernelPrefix}/${sessionId}/logs`;
+  async get_logs(sessionId, ownerKey = null, kernelId = null, timeout = 0): Promise<any> {
+    let queryParams: Array<string> = [];
     if (ownerKey != null) {
-      queryString = `${queryString}?owner_access_key=${ownerKey}`;
+      queryParams.push(`owner_access_key=${ownerKey}`);
+    }
+    if (this.supports('per-kernel-logs') && kernelId !== null) {
+      queryParams.push(`kernel_id=${kernelId}`);
+    }
+    let queryString = `${this.kernelPrefix}/${sessionId}/logs`;
+    if (queryParams.length > 0) {
+      queryString += `?${queryParams.join('&')}`;
     }
     let rqst = this.newSignedRequest('GET', queryString, null, null);
     return this._wrapWithPromise(rqst, false, null, timeout);
@@ -1437,7 +1502,7 @@ class Client {
     };
     const q = new URLSearchParams(params).toString();
     let rqst = this.newSignedRequest(
-      'GET',
+      this.isManagerVersionCompatibleWith('23.09') ? 'POST' : 'GET',
       `${this.kernelPrefix}/${sessionId}/download?${q}`,
       null,
       null,
@@ -1451,7 +1516,7 @@ class Client {
     };
     const q = new URLSearchParams(params).toString();
     let rqst = this.newSignedRequest(
-      'GET',
+      this.isManagerVersionCompatibleWith('23.09') ? 'POST' : 'GET',
       `${this.kernelPrefix}/${sessionId}/download_single?${q}`,
       null,
       null,
@@ -2197,6 +2262,23 @@ class VFolder {
   }
 
   /**
+   * Delete a Virtual folder by id.
+   *
+   * @param {string} id - Virtual folder id.
+   */
+  async delete_by_id(id): Promise<any> {
+    let body = {
+      vfolder_id: id,
+    };
+    let rqst = this.client.newSignedRequest(
+      'DELETE',
+      `${this.urlPrefix}`,
+      body,
+    );
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
    * Leave an invited Virtual folder.
    *
    * @param {string} name - Virtual folder name. If no name is given, use name on this VFolder object.
@@ -2370,8 +2452,8 @@ class VFolder {
       recursive: recursive,
     };
     let rqst = this.client.newSignedRequest(
-      'DELETE',
-      `${this.urlPrefix}/${name}/delete_files`,
+      this.client._managerVersion >= '24.03.7' ? 'POST' : 'DELETE',
+      `${this.urlPrefix}/${name}/delete-files`,
       body,
     );
     return this.client._wrapWithPromise(rqst);
@@ -2659,6 +2741,37 @@ class VFolder {
     const rqst = this.client.newSignedRequest(
       'POST',
       `${this.urlPrefix}/_/quota`,
+      body,
+    );
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Restore vfolder from trash bin, by changing status.
+   * 
+   * @param {string} vfolder_id - id of the vfolder.
+   */
+  async restore_from_trash_bin(vfolder_id): Promise<any> {
+    const body = {vfolder_id};
+    let rqst = this.client.newSignedRequest(
+      'POST',
+      `${this.urlPrefix}/restore-from-trash-bin`,
+      body,
+    );
+    return this.client._wrapWithPromise(rqst);
+  }
+
+
+  /**
+   * Delete `delete-pending` vfolders in storage proxy
+   *
+   * @param {string} vfolder_id - id of the vfolder.
+   */
+  async delete_from_trash_bin(vfolder_id): Promise<any> {
+    const body = {vfolder_id};
+    let rqst = this.client.newSignedRequest(
+      'POST',
+      `${this.urlPrefix}/delete-from-trash-bin`,
       body,
     );
     return this.client._wrapWithPromise(rqst);
@@ -3705,6 +3818,20 @@ class ComputeSession {
   }
 
   /**
+   * Request container commit for corresponding session in agent node
+   *
+   * @param sessionName - name of the session
+   */
+  async convertSessionToImage(sessionName: string, newImageName: string): Promise<any> {
+    const rqst = this.client.newSignedRequest(
+      'POST',
+      `/session/${sessionName}/imagify`,
+      { image_name: newImageName },
+    );
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
    * Get status of requested container commit on agent node (ongoing / finished / failed)
    *
    * @param sessionName - name of the session
@@ -3848,9 +3975,21 @@ class Resources {
     this.resources['atom.device'] = {};
     this.resources['atom.device'].total = 0;
     this.resources['atom.device'].used = 0;
+    this.resources['atom-plus.device'] = {};
+    this.resources['atom-plus.device'].total = 0;
+    this.resources['atom-plus.device'].used = 0;
+    this.resources['gaudi2.device'] = {};
+    this.resources['gaudi2.device'].total = 0;
+    this.resources['gaudi2.device'].used = 0;
     this.resources['warboy.device'] = {};
     this.resources['warboy.device'].total = 0;
     this.resources['warboy.device'].used = 0;
+    this.resources['rngd.device'] = {};
+    this.resources['rngd.device'].total = 0;
+    this.resources['rngd.device'].used = 0;
+    this.resources['hyperaccel-lpu.device'] = {};
+    this.resources['hyperaccel-lpu.device'].total = 0;
+    this.resources['hyperaccel-lpu.device'].used = 0;
 
     this.resources.agents = {};
     this.resources.agents.total = 0;
@@ -3976,6 +4115,26 @@ class Resources {
                 parseInt(this.resources['atom.device'].used) +
                 Math.floor(Number(occupied_slots['atom.device']));
             }
+            if ('atom-plus.device' in available_slots) {
+              this.resources['atom-plus.device'].total =
+                parseInt(this.resources['atom-plus.device'].total) +
+                Math.floor(Number(available_slots['atom-plus.device']));
+            }
+            if ('atom-plus.device' in occupied_slots) {
+              this.resources['atom-plus.device'].used =
+                parseInt(this.resources['atom-plus.device'].used) +
+                Math.floor(Number(occupied_slots['atom-plus.device']));
+            }
+            if ('gaudi2.device' in available_slots) {
+              this.resources['gaudi2.device'].total =
+                parseInt(this.resources['gaudi2.device'].total) +
+                Math.floor(Number(available_slots['gaudi2.device']));
+            }
+            if ('gaudi2.device' in occupied_slots) {
+              this.resources['gaudi2.device'].used =
+                parseInt(this.resources['gaudi2.device'].used) +
+                Math.floor(Number(occupied_slots['gaudi2.device']));
+            }
             if ('warboy.device' in available_slots) {
               this.resources['warboy.device'].total =
                 parseInt(this.resources['warboy.device'].total) +
@@ -3985,6 +4144,26 @@ class Resources {
               this.resources['warboy.device'].used =
                 parseInt(this.resources['warboy.device'].used) +
                 Math.floor(Number(occupied_slots['warboy.device']));
+            }
+            if ('rngd.device' in available_slots) {
+              this.resources['rngd.device'].total =
+                parseInt(this.resources['rngd.device'].total) +
+                Math.floor(Number(available_slots['rngd.device']));
+            }
+            if ('rngd.device' in occupied_slots) {
+              this.resources['rngd.device'].used =
+                parseInt(this.resources['rngd.device'].used) +
+                Math.floor(Number(occupied_slots['rngd.device']));
+            }
+            if ('hyperaccel-lpu.device' in available_slots) {
+              this.resources['hyperaccel-lpu.device'].total =
+                parseInt(this.resources['hyperaccel-lpu.device'].total) +
+                Math.floor(Number(available_slots['hyperaccel-lpu.device']));
+            }
+            if ('hyperaccel-lpu.device' in occupied_slots) {
+              this.resources['hyperaccel-lpu.device'].used =
+                parseInt(this.resources['hyperaccel-lpu.device'].used) +
+                Math.floor(Number(occupied_slots['hyperaccel-lpu.device']));
             }
 
             if (isNaN(this.resources.cpu.used)) {

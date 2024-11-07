@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import {
   IronFlex,
@@ -52,7 +52,7 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
           font-weight: 100;
           font-size: 16px;
           padding-left: 20px;
-          border-bottom: 1px solid #ccc;
+          border-bottom: 1px solid var(--token-colorBorder, #ccc);
           width: 100%;
         }
 

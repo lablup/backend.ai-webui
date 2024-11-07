@@ -27,8 +27,13 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({ ...props }) => {
                   type="primary"
                   key="console"
                   onClick={() => {
-                    // resetErrorBoundary();
-                    window.location.reload();
+                    // @ts-ignore
+                    if (globalThis.isElectron) {
+                      // @ts-ignore
+                      globalThis.location.href = globalThis.electronInitialHref;
+                    } else {
+                      globalThis.location.reload();
+                    }
                   }}
                   icon={<ReloadOutlined />}
                 >
@@ -72,3 +77,32 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({ ...props }) => {
 };
 
 export default BAIErrorBoundary;
+export const ErrorView = () => {
+  const { t } = useTranslation();
+  return (
+    <Result
+      status="warning"
+      title={t('ErrorBoundary.title')}
+      extra={
+        <Flex direction="column" gap="md">
+          <Button
+            type="primary"
+            key="console"
+            onClick={() => {
+              // @ts-ignore
+              if (globalThis.isElectron) {
+                // @ts-ignore
+                globalThis.location.href = globalThis.electronInitialHref;
+              } else {
+                globalThis.location.reload();
+              }
+            }}
+            icon={<ReloadOutlined />}
+          >
+            {t('ErrorBoundary.reloadPage')}
+          </Button>
+        </Flex>
+      }
+    ></Result>
+  );
+};

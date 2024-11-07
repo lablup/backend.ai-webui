@@ -1,24 +1,3 @@
-.ant-modal.bai-modal .ant-modal-content {
-  padding: var(--general-modal-content-padding, 0);
-}
-.ant-modal.bai-modal .ant-modal-body {
-  padding: var(--general-modal-body-padding, 0 24px);
-}
-
-.ant-modal.bai-modal .ant-modal-footer {
-  padding: var(--general-modal-footer-padding, 0 20px 24px 20px);
-}
-
-.ant-modal.bai-modal .ant-modal-header {
-  border-bottom: 1px solid rgb(221, 221, 221);
-  border-width: 100%;
-  justify-content: space-between;
-  display: flex;
-  align-items: center;
-  height: var(--general-modal-header-height, 69px);
-  padding: var(--general-modal-header-padding, 10px 20px);
-}
-
 div > div.ant-modal-wrap.draggable.ant-modal-centered {
   overflow: hidden;
 }
@@ -27,4 +6,5 @@ div > div.ant-modal-wrap.draggable.ant-modal-centered {
   width: var(--general-modal-header-width, 26px);
   height: var(--general-modal-header-height, 26px);
   top: 22px;
+  -webkit-app-region: no-drag;
 }

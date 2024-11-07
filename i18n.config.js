@@ -38,7 +38,8 @@ module.exports = {
     interpolation: {
       prefix: '{{',
       suffix: '}}'
-    }
+    },
+    plural: false
   },
   transform: function customTransform(file, enc, done) {
     'use strict';
@@ -46,7 +47,7 @@ module.exports = {
     const content = fs.readFileSync(file.path, enc);
     let count = 0;
 
-    parser.parseFuncFromString(content, {list: ['_t', 't']}, (key, options) => {
+    parser.parseFuncFromString(content, {list: ['_t', '_tr', '_text', 't']}, (key, options) => {
       parser.set(key, Object.assign({}, options, {
         nsSeparator: false,
         keySeparator: '.'

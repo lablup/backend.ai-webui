@@ -1,13 +1,14 @@
 import { compareNumberWithUnits, iSizeToSize } from '../helper';
+import { useUpdatableState } from '../hooks';
+import useControllableState from '../hooks/useControllableState';
 import DynamicUnitInputNumber, {
   DynamicUnitInputNumberProps,
 } from './DynamicUnitInputNumber';
 import Flex from './Flex';
-import { useControllableValue } from 'ahooks';
 import { Slider, theme } from 'antd';
 import { SliderMarks } from 'antd/es/slider';
 import _ from 'lodash';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 export interface DynamicUnitInputNumberWithSliderProps
   extends DynamicUnitInputNumberProps {
@@ -28,7 +29,7 @@ const DynamicUnitInputNumberWithSlider: React.FC<
   step = 0.05,
   ...otherProps
 }) => {
-  const [value, setValue] = useControllableValue<string | undefined | null>(
+  const [value, setValue] = useControllableState<string | undefined | null>(
     otherProps,
     {
       defaultValue: '0g',
@@ -45,6 +46,32 @@ const DynamicUnitInputNumberWithSlider: React.FC<
   //     : undefined;
   // }, [warn, maxGiB?.number]);
   // console.log('##marks', marks);
+
+  // FIXME: this is a workaround to fix the issue that the value is not updated when the value is controlled
+  const [key, updateKey] = useUpdatableState('first');
+  useEffect(() => {
+    setTimeout(() => {
+      updateKey(value?.toString());
+    }, 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const isMinOversMaxValue =
+    _.isNumber(minGiB?.number) &&
+    _.isNumber(maxGiB?.number) &&
+    minGiB?.number > maxGiB?.number;
+
+  const filterOutInvalidMarks = (marks: SliderMarks) => {
+    return _.omitBy({ ...marks }, (option, key) => {
+      const markNumber = parseFloat(key);
+      return (
+        minGiB &&
+        maxGiB &&
+        (minGiB?.number > markNumber || maxGiB?.number < markNumber)
+      );
+    });
+  };
+
   return (
     <Flex direction="row" gap={'md'}>
       <Flex
@@ -54,9 +81,11 @@ const DynamicUnitInputNumberWithSlider: React.FC<
       >
         <DynamicUnitInputNumber
           {...otherProps}
+          key={key}
           min={min}
           max={max}
           units={units}
+          // set value to 0mib when min value overs max value
           value={value}
           onChange={(nextValue) => {
             setValue(nextValue);
@@ -65,6 +94,7 @@ const DynamicUnitInputNumberWithSlider: React.FC<
             minWidth: 130,
           }}
           roundStep={step}
+          changeOnBlur={!isMinOversMaxValue}
         />
       </Flex>
       <Flex
@@ -131,13 +161,21 @@ const DynamicUnitInputNumberWithSlider: React.FC<
             }}
             step={step}
             // min={minGiB.number}  // DO NOT use min, because slider left should be 0
-            value={valueGiB?.number}
+
+            // For the slider, when min value overs max value, it will not work.
+            // In this case, hide all information and disabled the slider.
+            // Most of case, it's not a good idea to set the different value to the control value,
+            // but in this case, it's okay to hide all information and disabled the slider.
+            value={isMinOversMaxValue ? 0 : valueGiB?.number}
+            disabled={isMinOversMaxValue}
             tooltip={{
-              formatter: (value = 0) => {
-                return value < 1
-                  ? `${(value * 1024).toFixed(2)} MiB`
-                  : `${value.toFixed(2)} GiB`;
-              },
+              formatter: isMinOversMaxValue
+                ? null
+                : (value = 0) => {
+                    return value < 1
+                      ? `${(value * 1024).toFixed(2)} MiB`
+                      : `${value.toFixed(2)} GiB`;
+                  },
             }}
             onChange={(newNumValue) => {
               if (minGiB?.number && minGiB.number > newNumValue) {
@@ -150,13 +188,7 @@ const DynamicUnitInputNumberWithSlider: React.FC<
                 );
               }
             }}
-            marks={{
-              // 0: {
-              //   style: {
-              //     color: token.colorTextSecondary,
-              //   },
-              //   label: 0,
-              // },
+            marks={filterOutInvalidMarks({
               ...(minGiB &&
                 _.isNumber(minGiB?.number) && {
                   [minGiB.number]: {
@@ -191,7 +223,7 @@ const DynamicUnitInputNumberWithSlider: React.FC<
                         : maxGiB.number * 1024 + 'm',
                 },
               }),
-            }}
+            })}
           />
         </Flex>
       </Flex>

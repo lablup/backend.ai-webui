@@ -7,11 +7,15 @@ import React, { useState, useRef } from 'react';
 import type { DraggableData, DraggableEvent } from 'react-draggable';
 import Draggable from 'react-draggable';
 
+export const DEFAULT_BAI_MODAL_Z_INDEX = 1001;
 export interface BAIModalProps extends ModalProps {
-  okText?: string; // customize text of ok button with adequate content
   draggable?: boolean; // modal can be draggle
 }
-const BAIModal: React.FC<BAIModalProps> = ({ styles, ...modalProps }) => {
+const BAIModal: React.FC<BAIModalProps> = ({
+  className,
+  styles,
+  ...modalProps
+}) => {
   const { token } = theme.useToken();
   const [disabled, setDisabled] = useState(true);
   const [bounds, setBounds] = useState({
@@ -42,15 +46,44 @@ const BAIModal: React.FC<BAIModalProps> = ({ styles, ...modalProps }) => {
     <>
       <style>{rawBAIModalCss}</style>
       <Modal
+        keyboard={false}
         {...modalProps}
         centered={modalProps.centered ?? true}
-        className="bai-modal"
+        className={`bai-modal ${className ?? ''}`}
         wrapClassName={modalProps.draggable ? 'draggable' : ''}
         styles={{
           ...styles,
           header: {
-            marginBottom: token.marginSM,
+            marginBottom: 0,
+            borderBottom: `1px solid var(--token-colorBorder, ${token.colorBorder})`,
+            borderWidth: '100%',
+            justifyContent: 'space-between',
+            display: 'flex',
+            alignItems: 'center',
+            height: 'var(--general-modal-header-height, 69px)',
+            padding: 'var(--general-modal-header-padding, 10px 20px)',
             ...styles?.header,
+          },
+          body: {
+            padding: `var(--general-modal-body-padding, 0 24px)`,
+            maxHeight: 'calc(100vh - 69px - 57px - 48px)',
+            overflow: 'auto',
+            paddingTop: token.paddingMD,
+            paddingBottom: token.paddingMD,
+            ...styles?.body,
+          },
+          content: {
+            padding: `var(--general-modal-content-padding, 0)`,
+            ...styles?.content,
+          },
+          footer: {
+            borderTop: '1px solid',
+            borderColor: token.colorBorder,
+            padding: token.paddingSM,
+            paddingLeft: token.paddingMD,
+            paddingRight: token.paddingMD,
+            marginTop: 0,
+            ...styles?.footer,
           },
         }}
         title={
@@ -59,6 +92,8 @@ const BAIModal: React.FC<BAIModalProps> = ({ styles, ...modalProps }) => {
               style={{
                 cursor: modalProps.draggable ? 'move' : '',
                 display: !modalProps.draggable ? 'none' : '',
+                // @ts-ignore
+                '-webkit-app-region': 'no-drag',
               }}
               onMouseOver={() => {
                 if (disabled) {
@@ -86,7 +121,7 @@ const BAIModal: React.FC<BAIModalProps> = ({ styles, ...modalProps }) => {
             modal
           )
         }
-        zIndex={1001}
+        zIndex={DEFAULT_BAI_MODAL_Z_INDEX}
       />
     </>
   );

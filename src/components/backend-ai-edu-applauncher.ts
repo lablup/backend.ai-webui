@@ -1,6 +1,6 @@
 /**
 @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import { Client, ClientConfig } from '../lib/backend.ai-client-esm';
 import {
@@ -157,7 +157,6 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
   async _initClient(apiEndpoint: string) {
     this.notification = globalThis.lablupNotification;
     const webUIShell: any = document.querySelector('#webui-shell');
-    // webUIShell.appBody.style.visibility = 'visible';
     if (apiEndpoint === '') {
       const api_endpoint: any = localStorage.getItem(
         'backendaiwebui.api_endpoint',
@@ -519,16 +518,25 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
       ._open_wsproxy(sessionId, requestedApp, null, null)
       .then(async (resp) => {
         if (resp.url) {
-          const appConnectUrl = await this.appLauncher._connectToProxyWorker(
+          const appRespUrl = await this.appLauncher._connectToProxyWorker(
             resp.url,
             '',
           );
+          const appConnectUrl = String(appRespUrl?.appConnectUrl) || resp.url;
+          if (!appConnectUrl) {
+            this.appLauncher.indicator.end();
+            this.notification.text = _text(
+              'session.applauncher.ConnectUrlIsNotValid',
+            );
+            this.notification.show(true);
+            return;
+          }
           this.appLauncher.indicator.set(
             100,
             _text('session.applauncher.Prepared'),
           );
           setTimeout(() => {
-            globalThis.open(appConnectUrl || resp.url, '_self');
+            globalThis.open(appConnectUrl, '_self');
             // globalThis.open(resp.url);
           });
         } else {

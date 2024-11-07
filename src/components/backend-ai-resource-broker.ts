@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import { BackendAIPage } from './backend-ai-page';
 import { CSSResultGroup, html } from 'lit';
@@ -153,6 +153,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     this.icons = globalThis.backendaimetadata.icons;
     this.imageTagAlias = globalThis.backendaimetadata.imageTagAlias;
     this.imageTagReplace = globalThis.backendaimetadata.imageTagReplace;
+    this.imageInfo = globalThis.backendaimetadata.imageInfo;
     document.addEventListener(
       'backend-ai-metadata-image-loaded',
       () => {
@@ -160,6 +161,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         this.icons = globalThis.backendaimetadata.icons;
         this.imageTagAlias = globalThis.backendaimetadata.imageTagAlias;
         this.imageTagReplace = globalThis.backendaimetadata.imageTagReplace;
+        this.imageInfo = globalThis.backendaimetadata.imageInfo;
       },
       { once: true },
     );
@@ -261,8 +263,8 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     const hosts = await globalThis.backendaiclient?.vfolder?.list_hosts(
       globalThis.backendaiclient?.current_group_id(),
     );
-    return Object.values(hosts.volume_info).map(
-      (item: any) => item?.sftp_scaling_groups.join(', '),
+    return Object.values(hosts.volume_info).map((item: any) =>
+      item?.sftp_scaling_groups.join(', '),
     );
   }
 
@@ -308,7 +310,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       // Reload number of sessions
       const fields = ['name'];
       await globalThis.backendaiclient?.computeSession
-        ?.list(fields, 'RUNNING', null, 1000)
+        ?.list(fields, 'RUNNING', null, 1)
         .then((res) => {
           if (!res.compute_session_list && res.legacy_compute_session_list) {
             res.compute_session_list = res.legacy_compute_session_list;
@@ -402,7 +404,11 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'tpu.device': 'tpu_device',
         'ipu.device': 'ipu_device',
         'atom.device': 'atom_device',
+        'atom-plus.device': 'atom_plus_device',
+        'gaudi2.device': 'gaudi2_device',
         'warboy.device': 'warboy_device',
+        'rngd.device': 'rngd_device',
+        'hyperaccel-lpu.device': 'hyperaccel_lpu_device',
       };
       for (const [k, v] of Object.entries(deviceList)) {
         // Set gpu_modes
@@ -489,7 +495,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     if (!globalThis.backendaiclient || this.aggregate_updating) {
       return Promise.resolve(false);
     }
-    if (Date.now() - this.lastQueryTime < 1000) {
+    if (Date.now() - this.lastQueryTime < 2000) {
       return Promise.resolve(false);
     }
     // console.log('aggregate from:', from);
@@ -556,7 +562,11 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'tpu.device': 'tpu_device',
         'ipu.device': 'ipu_device',
         'atom.device': 'atom_device',
+        'atom-plus.device': 'atom_plus_device',
+        'gaudi2.device': 'gaudi2_device',
         'warboy.device': 'warboy_device',
+        'rngd.device': 'rngd_device',
+        'hyperaccel-lpu.device': 'hyperaccel_lpu_device',
       };
       const slotList = {
         cpu: 'cpu',
@@ -567,7 +577,11 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'tpu.device': 'tpu_device',
         'ipu.device': 'ipu_device',
         'atom.device': 'atom_device',
+        'atom-plus.device': 'atom_plus_device',
+        'gaudi2.device': 'gaudi2_device',
         'warboy.device': 'warboy_device',
+        'rngd.device': 'rngd_device',
+        'hyperaccel-lpu.device': 'hyperaccel_lpu_device',
       };
       if (this.scaling_group === '' && this.scaling_groups.length > 0) {
         // no scaling group in the current project
@@ -834,22 +848,23 @@ export default class BackendAiResourceBroker extends BackendAIPage {
               occupied: { cpu: 0, mem: 0, cuda_device: 0, cuda_shares: 0 },
             },
           );
-        resourceGroupSlots.remaining = {};
-        Object.keys(resourceGroupSlots.available).forEach((key) => {
-          resourceGroupSlots.remaining[key] =
-            resourceGroupSlots.available[key] -
-            resourceGroupSlots.occupied[key];
-        });
-
-        this.total_resource_group_slot = this._roundResourceDecimalPlaces(
-          resourceGroupSlots.available,
-        );
-        // This value is purposely set to the remaining resource group slots
-        // when `hideAgents` is `true`.  There are some cases it is more useful
-        // to display the remaining slots.
-        this.used_resource_group_slot = this._roundResourceDecimalPlaces(
-          resourceGroupSlots.remaining,
-        );
+        if (resourceGroupSlots !== undefined) {
+          resourceGroupSlots.remaining = {};
+          Object.keys(resourceGroupSlots.available).forEach((key) => {
+            resourceGroupSlots.remaining[key] =
+              resourceGroupSlots.available[key] -
+              resourceGroupSlots.occupied[key];
+          });
+          this.total_resource_group_slot = this._roundResourceDecimalPlaces(
+            resourceGroupSlots.available,
+          );
+          // This value is purposely set to the remaining resource group slots
+          // when `hideAgents` is `true`.  There are some cases it is more useful
+          // to display the remaining slots.
+          this.used_resource_group_slot = this._roundResourceDecimalPlaces(
+            resourceGroupSlots.occupied,
+          );
+        }
       } else {
         this.total_resource_group_slot = this._roundResourceDecimalPlaces(
           total_resource_group_slot,
@@ -930,9 +945,6 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         used_resource_group_slot_percent,
       );
 
-      const enqueueSession =
-        globalThis.backendaiclient._config.always_enqueue_compute_session ===
-        true;
       const availablePresets = resourcePresetInfo.presets
         .map((item) => {
           if (item.allocatable === true) {
@@ -941,8 +953,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
                 item[slotName] = item.resource_slots[slotKey];
               }
             }
-          } else if (enqueueSession) {
-            // Even if allocatable is false, if enqueueSession is true,
+          } else {
             // allocatable is determined based on when no resources are allocated.
             item.allocatable = true;
             for (const [slotKey, slotName] of Object.entries(slotList)) {

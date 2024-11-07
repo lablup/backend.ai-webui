@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import {
   IronFlex,
@@ -35,6 +35,8 @@ import 'macro-carousel';
  @element backend-ai-app-launcher
  */
 
+const TCP_APPS = ['sshd', 'vscode-desktop', 'xrdp', 'vnc'];
+
 @customElement('backend-ai-app-launcher')
 export default class BackendAiAppLauncher extends BackendAIPage {
   @property({ type: Boolean, reflect: true }) active = true;
@@ -52,12 +54,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({ type: Object }) refreshTimer = Object();
   @property({ type: Object }) kernel_labels = Object();
   @property({ type: Object }) indicator = Object();
-  @property({ type: String }) sshHost = '127.0.0.1';
-  @property({ type: String }) sshPort = '';
-  @property({ type: Number }) vncPort = 0;
-  @property({ type: Number }) xrdpPort = 0;
+  @property({ type: String }) tcpHost = '127.0.0.1';
+  @property({ type: String }) tcpPort = '';
   @property({ type: String }) mountedVfolderName = '';
-  @property({ type: Number }) vscodeDesktopPort = 0;
   @property({ type: String }) tensorboardPath = '';
   @property({ type: String }) endpointURL = '';
   @property({ type: Boolean }) isPathConfigured = false;
@@ -66,6 +65,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     'mlflow-ui',
   ];
   @property({ type: Object }) appController = Object();
+  @property({ type: Boolean }) allowTCPApps = false;
   @property({ type: Boolean }) openPortToPublic = false;
   @property({ type: Boolean }) allowPreferredPort = false;
   @property({ type: Array }) appOrder;
@@ -127,6 +127,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
         mwc-icon-button.sftp-session-connection-copy {
           --mdc-icon-size: 20px;
+          background-color: transparent;
         }
 
         #ssh-dialog {
@@ -195,7 +196,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           cursor: pointer;
           font-size: 0.9rem;
           font-family: Ubuntu;
-          color: #0000ee;
+          color: var(--token-colorLink, #0000ee);
           font-weight: 500;
         }
 
@@ -272,9 +273,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           margin-right: 10px;
         }
 
-        .ssh-connection-example {
+        .ssh-connection-example,
+        .vscode-connection-example {
           display: flex;
-          background-color: rgba(230, 230, 230, 1);
+          background-color: var(--token-colorBorder, rgba(230, 230, 230, 1));
           padding: 10px;
           border-radius: 5px;
           margin-bottom: 5px;
@@ -324,8 +326,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       (e: any) => {
         if (e.detail) {
           this._readSSHKey(e.detail.sessionUuid);
-          this.sshPort = e.detail.port;
-          this.sshHost = e.detail.host;
+          this.tcpPort = e.detail.port;
+          this.tcpHost = e.detail.host;
           this.mountedVfolderName = e.detail.mounted;
           this._openSSHDialog();
         }
@@ -430,8 +432,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    */
   async _getWSProxyVersion(sessionUuid) {
     if (globalThis.backendaiwebui.debug === true) {
-      if (this.forceUseV1Proxy.checked) return 'v1';
-      else if (this.forceUseV2Proxy.checked) return 'v2';
+      if (this.forceUseV1Proxy?.checked) return 'v1';
+      else if (this.forceUseV2Proxy?.checked) return 'v2';
     }
 
     const kInfo = await globalThis.backendaiclient.computeSession.get(
@@ -558,9 +560,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (Object.keys(appServicesOption).length > 0) {
       this.appSupportOption = appServicesOption;
     }
+    this.allowTCPApps =
+      globalThis.isElectron ||
+      globalThis.backendaiclient._config.allowNonAuthTCP;
+
     filteredAppServices.forEach((elm) => {
       if (elm in this.appTemplate) {
-        if (elm !== 'sshd' || (elm === 'sshd' && globalThis.isElectron)) {
+        if (elm !== 'sshd' || (elm === 'sshd' && this.allowTCPApps)) {
           if (interText !== this.appTemplate[elm][0].category) {
             this.appSupportList.push({
               name: this.appTemplate[elm][0].category.substring(2),
@@ -591,7 +597,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
     if (
       globalThis.backendaiclient.supports('local-vscode-remote-connection') &&
-      globalThis.isElectron &&
+      this.allowTCPApps &&
       !filteredAppServices.includes('vscode-desktop')
     ) {
       const insertAfterIndex = this.appSupportList.findIndex(
@@ -644,7 +650,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       param['secret_key'] = globalThis.backendaiclient._config.secretKey;
     }
     param['api_version'] = globalThis.backendaiclient.APIMajorVersion;
-    if (globalThis.isElectron && globalThis.__local_proxy.url === undefined) {
+    if (globalThis.isElectron && window.__local_proxy?.url === undefined) {
       this.indicator.end();
       this.notification.text = _text('session.launcher.ProxyNotReady');
       this.notification.show();
@@ -909,14 +915,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this._hideAppLauncher();
       this.indicator = await globalThis.lablupIndicator.start();
       let port = null;
-      if (globalThis.isElectron && appName === 'sshd') {
+      if (this.allowTCPApps && appName === 'sshd') {
         port = globalThis.backendaioptions.get('custom_ssh_port', 0);
         if (port === '0' || port === 0) {
           // setting store does not accept null.
           port = null;
         }
       }
-      if (globalThis.isElectron && appName === 'vscode-desktop') {
+      if (this.allowTCPApps && appName === 'vscode-desktop') {
         port = globalThis.backendaioptions.get('custom_ssh_port', 0);
         if (port === '0' || port === 0) {
           // setting store does not accept null.
@@ -933,14 +939,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               delete this.controls.runtime; // Remove runtime option to prevent dangling loop.
               this._showAppLauncher(this.controls);
             } else {
-              const appConnectUrl = await this._connectToProxyWorker(
+              const { appConnectUrl } = await this._connectToProxyWorker(
                 response.url,
                 urlPostfix,
               );
               this.indicator.set(100, _text('session.applauncher.Prepared'));
               setTimeout(() => {
                 globalThis.open(
-                  appConnectUrl || response.url + urlPostfix,
+                  appConnectUrl?.href || response.url + urlPostfix,
                   '_blank',
                 );
                 // console.log(appName + " proxy loaded: ");
@@ -953,9 +959,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
   }
 
-  async _connectToProxyWorker(url, urlPostfix) {
+  async _connectToProxyWorker(
+    url,
+    urlPostfix,
+    followRedirect = true, // should be set to true unless user requests non-auth TCP app from browser
+  ) {
     // Try to get permit key since it is not possible to get it with the
     // redirect request. This is required to reuse the existing port.
+    let reused = false;
     let rqstUrl = new URL(url + urlPostfix);
     if (localStorage.getItem('backendaiwebui.appproxy-permit-key')) {
       rqstUrl.searchParams.set(
@@ -978,31 +989,37 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         localStorage.setItem('backendaiwebui.appproxy-permit-key', permitKey);
       }
 
-      if (!resp.reuse) {
-        // For the new permit, we need to follow the redirect to open the
-        // corresponding port.
-        const redirectRqst = {
-          method: 'GET',
-          uri: redirectUrl.href,
-          mode: 'no-cors',
-          redirect: 'follow',
-          credentials: 'include',
-        };
-        let count = 0;
-        while (count < 5) {
-          const result = await this.sendRequest(redirectRqst);
-          if (
-            typeof result === 'object' &&
-            'status' in result &&
-            [500, 501, 502].includes(result.status)
-          ) {
-            await this._sleep(1000);
-            count = count + 1;
-            console.warn(`Retry connect to proxy worker (${count})...`);
-          } else {
-            count = 6;
+      reused = resp.reuse;
+
+      if (followRedirect) {
+        if (!resp.reuse) {
+          // For the new permit, we need to follow the redirect to open the
+          // corresponding port.
+          const redirectRqst = {
+            method: 'GET',
+            uri: redirectUrl.href,
+            mode: 'no-cors',
+            redirect: 'follow',
+            credentials: 'include',
+          };
+          let count = 0;
+          while (count < 5) {
+            const result = await this.sendRequest(redirectRqst);
+            if (
+              typeof result === 'object' &&
+              'status' in result &&
+              [500, 501, 502].includes(result.status)
+            ) {
+              await this._sleep(1000);
+              count = count + 1;
+              console.warn(`Retry connect to proxy worker (${count})...`);
+            } else {
+              count = 6;
+            }
           }
         }
+      } else {
+        rqstUrl = new URL(resp.redirect_url);
       }
     } else {
       // When there is no redirect_url or encountered an error in fetching the
@@ -1046,7 +1063,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       );
       rqstUrl = new URL(rqstUrl.href);
     }
-    return rqstUrl.href;
+    return { appConnectUrl: rqstUrl, reused };
   }
 
   async _sleep(ms) {
@@ -1122,14 +1139,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this._hideAppLauncher();
       this.indicator = await globalThis.lablupIndicator.start();
       let port;
-      if (globalThis.isElectron && appName === 'sshd') {
+      if (this.allowTCPApps && appName === 'sshd') {
         port = globalThis.backendaioptions.get('custom_ssh_port', 0);
         if (port === '0' || port === 0) {
           // setting store does not accept null.
           port = null;
         }
       }
-      if (globalThis.isElectron && appName === 'vscode-desktop') {
+      if (this.allowTCPApps && appName === 'vscode-desktop') {
         port = globalThis.backendaioptions.get('custom_ssh_port', 0);
         if (port === '0' || port === 0) {
           // setting store does not accept null.
@@ -1150,14 +1167,65 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       }
       this._open_wsproxy(sessionUuid, sendAppName, port, envs, args).then(
         async (response) => {
-          const appConnectUrl = await this._connectToProxyWorker(
+          const { appConnectUrl, reused } = await this._connectToProxyWorker(
             response.url,
             urlPostfix,
+            TCP_APPS.indexOf(appName) === -1 || globalThis.isElectron,
           );
+
+          // eligiblity for spawning TCP-based apps are already verified when first loading the app launcher icons, so here we assume that either non-auth TCP mode is enabled on system or user is using electron app
+          if (TCP_APPS.indexOf(appName) !== -1 && this.allowTCPApps) {
+            if (globalThis.isElectron) {
+              this.tcpHost = '127.0.0.1';
+              this.tcpPort = response.port.toString();
+            } else {
+              let gatewayURL: URL;
+              if (!reused) {
+                appConnectUrl.searchParams.set('do-not-redirect', 'true');
+                const result = await fetch(appConnectUrl.href);
+                const body = await result.json();
+                const { redirectURI } = body;
+                if (redirectURI === null) {
+                  this.indicator.end();
+                  this.notification.text = _text(
+                    'session.launcher.ProxyNotReady',
+                  );
+                  this.notification.show();
+                  return;
+                }
+                const redirectURL = new URL(redirectURI);
+                const directTCPsupported =
+                  redirectURL.searchParams.get('directTCP');
+                const gatewayURI = redirectURL.searchParams.get('gateway');
+                if (directTCPsupported !== 'true') {
+                  this.indicator.end();
+                  this.notification.text = _text(
+                    'session.launcher.ProxyDirectTCPNotSupported',
+                  );
+                  this.notification.show();
+                  return;
+                } else if (gatewayURI === null) {
+                  this.indicator.end();
+                  this.notification.text = _text(
+                    'session.launcher.ProxyNotReady',
+                  );
+                  this.notification.show();
+                  return;
+                } else {
+                  gatewayURL = new URL(gatewayURI.replace('tcp', 'http'));
+                }
+              } else {
+                // when port is used appproxy endpoint will just return url to proxy port directly
+                gatewayURL = new URL(appConnectUrl.href);
+              }
+
+              // javascript URL does not allow any other protocols than http or https
+              this.tcpHost = gatewayURL.hostname;
+              this.tcpPort = gatewayURL.port;
+            }
+          }
           if (appName === 'sshd') {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
-            this.sshHost = '127.0.0.1';
-            this.sshPort = response.port;
             this._readSSHKey(sessionUuid);
             this._openSSHDialog();
             setTimeout(() => {
@@ -1165,15 +1233,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             }, 1000);
           } else if (appName === 'vnc') {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
-            this.vncPort = response.port;
             this._openVNCDialog();
           } else if (appName === 'xrdp') {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
-            this.xrdpPort = response.port;
             this._openXRDPDialog();
           } else if (appName === 'vscode-desktop') {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
-            this.vscodeDesktopPort = response.port;
             this._readTempPasswd(sessionUuid);
             this._openVSCodeDesktopDialog();
             setTimeout(() => {
@@ -1183,7 +1248,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
               globalThis.open(
-                appConnectUrl || response.url + urlPostfix,
+                appConnectUrl?.href || response.url + urlPostfix,
                 '_blank',
               );
               // console.log(appName + " proxy loaded: ");
@@ -1249,14 +1314,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     ) {
       this.indicator = await globalThis.lablupIndicator.start();
       this._open_wsproxy(sessionUuid, 'ttyd').then(async (response) => {
-        const appConnectUrl = await this._connectToProxyWorker(
+        const { appConnectUrl } = await this._connectToProxyWorker(
           response.url,
           '',
         );
         if (response.url) {
           this.indicator.set(100, _text('session.applauncher.Prepared'));
           setTimeout(() => {
-            globalThis.open(appConnectUrl || response.url, '_blank');
+            globalThis.open(appConnectUrl?.href || response.url, '_blank');
             this.indicator.end();
             // console.log("Terminal proxy loaded: ");
             // console.log(sessionUuid);
@@ -1343,7 +1408,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       };
       this._open_wsproxy(sessionUuid, appName, port, null, path).then(
         async (response) => {
-          const appConnectUrl = await this._connectToProxyWorker(
+          const { appConnectUrl } = await this._connectToProxyWorker(
             response.url,
             urlPostfix,
           );
@@ -1352,7 +1417,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           button.removeAttribute('disabled');
           setTimeout(() => {
             globalThis.open(
-              appConnectUrl || response.url + urlPostfix,
+              appConnectUrl?.href || response.url + urlPostfix,
               '_blank',
             );
             // console.log(appName + ' proxy loaded: ');
@@ -1434,8 +1499,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const content = this.terminalGuideDialog.children[1];
     const div: HTMLElement = document.createElement('div');
     div.setAttribute('class', 'vertical layout flex');
-    let lang = globalThis.backendaioptions.get('current_language');
-    // if current_language is OS default, then link to English docs
+    let lang = globalThis.backendaioptions.get(
+      'language',
+      'default',
+      'general',
+    );
+    // if language is OS default, then link to English docs
     if (!['en', 'ko', 'ru', 'fr', 'mn', 'id'].includes(lang)) {
       lang = 'en';
     }
@@ -1508,7 +1577,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   _copySSHConnectionExample(divSelector) {
     const divElement = this.shadowRoot?.querySelector(divSelector);
     if (divElement) {
-      const textToCopy = divElement.textContent.trim();
+      const textToCopy = divElement.textContent
+        .replace(/[\r\n\t]+/g, ' ')
+        .replace(/\s\s+/g, ' ')
+        .trim();
 
       if (textToCopy.length === 0) {
         this.notification.text = _text(
@@ -1547,7 +1619,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <link rel="stylesheet" href="resources/custom.css">
+      <link rel="stylesheet" href="resources/custom.css" />
       <backend-ai-dialog id="app-dialog" fixed backdrop narrowLayout>
         <div slot="title" class="horizontal layout center">
           <span>${_t('session.applauncher.App')}</span>
@@ -1572,13 +1644,16 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                 `
               : html``
           }
-          <div style="padding:15px 0;" class="horizontal layout wrap center start-justified">
+          <div
+            style="padding:15px 0;"
+            class="horizontal layout wrap center start-justified"
+          >
             ${this.appSupportList.map(
               (item) => html`
                 ${item.category === 'divider'
                   ? html`
                       <h3
-                        style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;"
+                        style="width:100%;padding-left:15px;border-bottom:1px solid var(--token-colorBorder, #ccc);"
                       >
                         ${item.title}
                       </h3>
@@ -1692,22 +1767,22 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                 : html``
             }
             <div class="horizontal layout center">
-            ${
-              globalThis.backendaiwebui.debug === true
-                ? html`
-                    <mwc-checkbox
-                      id="force-use-v1-proxy"
-                      style="margin-right:0.5em;"
-                    ></mwc-checkbox>
-                    Force use of V1
-                    <mwc-checkbox
-                      id="force-use-v2-proxy"
-                      style="margin-right:0.5em;"
-                    ></mwc-checkbox>
-                    Force use of V2
-                  `
-                : ``
-            }
+              ${
+                globalThis.backendaiwebui.debug === true
+                  ? html`
+                      <mwc-checkbox
+                        id="force-use-v1-proxy"
+                        style="margin-right:0.5em;"
+                      ></mwc-checkbox>
+                      Force use of V1
+                      <mwc-checkbox
+                        id="force-use-v2-proxy"
+                        style="margin-right:0.5em;"
+                      ></mwc-checkbox>
+                      Force use of V2
+                    `
+                  : ``
+              }
             </div>
           </div>
           <div style="padding:10px 20px 15px 20px">
@@ -1722,7 +1797,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                       ${_t('session.UseSubdomain')}
                       <mwc-textfield
                         id="custom-subdomain"
-                        type="string"
                         style="margin-left:1em;width:90px;"
                         @change="${(e) => this._adjustCustomSubdomain(e)}"
                       ></mwc-textfield>
@@ -1733,105 +1807,112 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </div>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="ssh-dialog" fixed backdrop>
+      <backend-ai-dialog id="ssh-dialog" fixed backdrop style="z-index: 1002; position: fixed;">
         <span slot="title">SSH / SFTP connection</span>
         <div slot="content">
           <section class="vertical layout wrap start start-justified">
             <div id="expandable-desc">
-              <div style="padding:15px 0;">${_t(
-                'session.SFTPDescription',
-              )}</div>
+              <div style="padding:15px 0;">
+                ${_t('session.SFTPDescription')}
+              </div>
               <div style="background-color:var(--paper-blue-200);">
-                <div style="background-color:var(--paper-blue-400);padding:5px 15px">
-                  <span style="font-weight:700;">${_t(
-                    'session.ConnectionNotice',
-                  )}</span>
+                <div
+                  style="background-color:var(--paper-blue-400);padding:5px 15px"
+                >
+                  <span style="font-weight:700;">
+                    ${_t('session.ConnectionNotice')}
+                  </span>
                 </div>
-              <div style="padding:15px;">${_tr(
-                'session.SFTPExtraNotification',
-              )}</div>
+                <div style="padding:15px;">
+                  ${_tr('session.SFTPExtraNotification')}
+                </div>
               </div>
             </div>
-            <button id="collapsible-btn" @click="${(e) =>
-              this._toggleCollapsibleArea(e)}">
+            <button
+              id="collapsible-btn"
+              @click="${(e) => this._toggleCollapsibleArea(e)}"
+            >
               ${_t('session.Readmore')}
             </button>
             <h4>${_t('session.ConnectionInformation')}</h4>
-            <div><span>User:</span> work</div>
-            <div><span>SSH URL:</span> <a href="ssh://${this.sshHost}:${
-              this.sshPort
-            }">ssh://${this.sshHost}</a>
+            <div>
+              <span>User:</span>
+              work
             </div>
-            <div><span>SFTP URL:</span> <a href="sftp://${this.sshHost}:${
-              this.sshPort
-            }">sftp://${this.sshHost}</a>
+            <div>
+              <span>SSH URL:</span>
+              <a href="ssh://${this.tcpHost}:${this.tcpPort}">
+                ssh://${this.tcpHost}
+              </a>
             </div>
-            <div><span>Port:</span> ${this.sshPort}</div>
+            <div>
+              <span>SFTP URL:</span>
+              <a href="sftp://${this.tcpHost}:${this.tcpPort}">
+                sftp://${this.tcpHost}
+              </a>
+            </div>
+            <div>
+              <span>Port:</span>
+              ${this.tcpPort}
+            </div>
             <h4>${_t('session.ConnectionExample')}</h4>
-                <div class="horizontal layout flex monospace ssh-connection-example">
-                <span id="sftp-string">
-                  sftp -i ./id_container -P ${
-                    this.sshPort
-                  } -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null work@${
-                    this.sshHost
-                  }
-                </span>
-                <mwc-icon-button
-                class="sftp-session-connection-copy"
-                icon="content_copy" @click="${() =>
-                  this._copySSHConnectionExample('#sftp-string')}">
-                </mwc-icon-button>
-                </div>
-                <div class="horizontal layout flex monospace ssh-connection-example">
-                <span id="scp-string">
-                  scp -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -P ${
-                    this.sshPort
-                  } -rp /path/to/source work@${this.sshHost}:~/${
-                    this.mountedVfolderName
-                  }
-                </span>
-                <mwc-icon-button
-                class="sftp-session-connection-copy"
-                icon="content_copy" @click="${() =>
-                  this._copySSHConnectionExample('#scp-string')}">
-                </mwc-icon-button>
-                </div>
-                <div class="horizontal layout flex monospace ssh-connection-example">
-                <span id="rsync-string">
-                  rsync -av -e "ssh -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p ${
-                    this.sshPort
-                  }" /path/to/source/ work@${this.sshHost}:~/${
-                    this.mountedVfolderName
-                  }/
-                </span>
-                <mwc-icon-button
-                class="sftp-session-connection-copy"
-                icon="content_copy" @click="${() =>
-                  this._copySSHConnectionExample('#rsync-string')}">
-                </mwc-icon-button>
-                </div>
+            <div class="vertical layout flex" style="gap: var(--token-sizeXS); width: 100%;">
+              <backend-ai-react-source-code-viewer
+                key="ssh-connection-example"
+                value="${JSON.stringify({
+                  children: `sftp -i ./id_container -P ${this.tcpPort} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null work@${this.tcpHost}`,
+                  language: 'shell',
+                  wordWrap: true,
+                })}"
+              ></backend-ai-react-source-code-viewer>
+              <backend-ai-react-source-code-viewer
+                key="ssh-connection-example2"
+                value="${JSON.stringify({
+                  children: `scp -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -P ${this.tcpPort} -rp /path/to/source work@${this.tcpHost}:~/${this.mountedVfolderName}`,
+                  language: 'shell',
+                  wordWrap: true,
+                })}"
+              /></backend-ai-react-source-code-viewer>
+              <backend-ai-react-source-code-viewer
+                key="ssh-connection-example3"
+                value="${JSON.stringify({
+                  children: `rsync -av -e "ssh -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p ${this.tcpPort}" /path/to/source/ work@${this.tcpHost}:~/${this.mountedVfolderName}/`,
+                  language: 'shell',
+                  wordWrap: true,
+                })}"
+              /></backend-ai-react-source-code-viewer>
+            </div>
           </section>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
-          <a id="sshkey-download-link" style="margin-top:15px;width:100%;" href="">
-            <mwc-button unelevated fullwidth>${_t(
-              'DownloadSSHKey',
-            )}</mwc-button>
+          <a
+            id="sshkey-download-link"
+            style="margin-top:15px;width:100%;"
+            href=""
+          >
+            <mwc-button unelevated fullwidth>
+              ${_t('DownloadSSHKey')}
+            </mwc-button>
           </a>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="tensorboard-dialog" fixed>
         <span slot="title">${_t('session.TensorboardPath')}</span>
         <div slot="content" class="vertical layout">
-        <div>${_t('session.InputTensorboardPath')}</div>
-          <mwc-textfield id="tensorboard-path" value="${_t(
-            'session.DefaultTensorboardPath',
-          )}"></mwc-textfield>
+          <div>${_t('session.InputTensorboardPath')}</div>
+          <mwc-textfield
+            id="tensorboard-path"
+            value="${_t('session.DefaultTensorboardPath')}"
+          ></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal end-justified center flex layout">
-          <mwc-button unelevated fullwidth
-              icon="rowing" class="bg green" @click="${(e) =>
-                this._addTensorboardPath(e)}">
+          <mwc-button
+            unelevated
+            fullwidth
+            icon="rowing"
+            class="bg green"
+            @click="${(e) => this._addTensorboardPath(e)}"
+          >
             ${_t('session.UseThisPath')}
           </mwc-button>
         </div>
@@ -1843,9 +1924,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <mwc-textfield value=""></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button unelevated fullwidth class="fg apps green" @click="${(
-            e,
-          ) => this._addTensorboardPath(e)}">
+          <mwc-button
+            unelevated
+            fullwidth
+            class="fg apps green"
+            @click="${(e) => this._addTensorboardPath(e)}"
+          >
             ${_t('session.UseThisArguments')}
           </mwc-button>
         </div>
@@ -1853,14 +1937,16 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       <backend-ai-dialog id="vnc-dialog" fixed backdrop>
         <span slot="title">${_t('session.VNCconnection')}</span>
         <div slot="content" style="padding:15px;">
-          <div style="padding:15px 0;">${_t(
-            'session.UseYourFavoriteVNCApp',
-          )}</div>
+          <div style="padding:15px 0;">
+            ${_t('session.UseYourFavoriteVNCApp')}
+          </div>
           <section class="vertical layout wrap start start-justified">
             <h4>${_t('session.ConnectionInformation')}</h4>
-            <div><span>VNC URL:</span> <a href="ssh://127.0.0.1:${
-              this.vncPort
-            }">vnc://127.0.0.1:${this.vncPort}</a>
+            <div>
+              <span>VNC URL:</span>
+              <a href="ssh://127.0.0.1:${this.tcpPort}">
+                vnc://127.0.0.1:${this.tcpPort}
+              </a>
             </div>
           </section>
         </div>
@@ -1868,19 +1954,26 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       <backend-ai-dialog id="xrdp-dialog" fixed backdrop>
         <span slot="title">${_t('session.XRDPconnection')}</span>
         <div slot="content" style="padding:15px;">
-          <div style="padding:15px 0;">${_t(
-            'session.UseYourFavoriteMSTSCApp',
-          )}</div>
+          <div style="padding:15px 0;">
+            ${_t('session.UseYourFavoriteMSTSCApp')}
+          </div>
           <section class="vertical layout wrap start start-justified">
             <h4>${_t('session.ConnectionInformation')}</h4>
-            <div><span>RDP URL:</span> <a href="rdp://127.0.0.1:${
-              this.xrdpPort
-            }">rdp://127.0.0.1:${this.xrdpPort}</a>
+            <div>
+              <span>RDP URL:</span>
+              <a href="rdp://127.0.0.1:${this.tcpPort}">
+                rdp://127.0.0.1:${this.tcpPort}
+              </a>
             </div>
           </section>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="app-launch-confirmation-dialog" warning fixed backdrop>
+      <backend-ai-dialog
+        id="app-launch-confirmation-dialog"
+        warning
+        fixed
+        backdrop
+      >
         <span slot="title">${_t('session.applauncher.AppMustBeRun')}</span>
         <div slot="content" class="vertical layout">
           <p>${_t('session.applauncher.AppMustBeRunDialog')}</p>
@@ -1893,8 +1986,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             icon="rowing"
             label="${_t('session.applauncher.ConfirmAndRun')}"
             fullwidth
-            @click="${() => this._runApp(this.appController)}">
-          </mwc-button>
+            @click="${() => this._runApp(this.appController)}"
+          ></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="terminal-guide" fixed backdrop>
@@ -1907,32 +2000,37 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         <div slot="content">
           <div>${_t('session.VSCodeRemoteDescription')}</div>
           <section class="vertical layout wrap start start-justified">
-            <h3>${_t('session.ConnectionInformation')}</h4>
+            <h4>${_t('session.ConnectionInformation')}</h4>
             <span>${_t('session.VSCodeRemotePasswordTitle')}:</span>
-            <backend-ai-react-copyable-code-text value="${
-              this.vscodeDesktopPassword
-            }" style="width:max-content;margin-bottom:10px;"></backend-ai-react-copyable-code-text>
-            <div class="horizontal wrap layout note" style="background-color:#FFFBE7;width:100%;padding:10px 0px;">
-              <p style="margin:auto 10px;">${_t(
-                'session.VSCodeRemoteNoticeSSHConfig',
-              )}</p>
-              <p style="margin:auto 10px;">
-                <pre style="white-space:pre-line; margin:10px 10px 0 10px">
-                  Host 127.0.0.1
-                  &nbsp;&nbsp;StrictHostKeyChecking no
-                  &nbsp;&nbsp;UserKnownHostsFile /dev/null
-                </pre>
-              </p>
+            <backend-ai-react-copyable-code-text
+              value="${this.vscodeDesktopPassword}"
+              style="max-width:420px;margin-bottom:10px;"
+            ></backend-ai-react-copyable-code-text>
+            <div class="horizontal wrap layout vscode-connection-example">
+              <span>${_t('session.VSCodeRemoteNoticeSSHConfig')}</span>
+              <pre style="white-space:pre-line;">
+                Host bai-vscode
+                &nbsp;User work
+                &nbsp;Hostname ${this.tcpHost}
+                &nbsp;Port ${this.tcpPort}
+                &nbsp;StrictHostKeyChecking no
+                &nbsp;UserKnownHostsFile /dev/null
+              </pre
+              >
             </div>
           </section>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
-          <a id="vscode-link" style="margin-top:15px;width:100%;" href="vscode://vscode-remote/ssh-remote+work@127.0.0.1%3A${
-            this.vscodeDesktopPort
-          }/home/work">
-            <mwc-button unelevated fullwidth>${_t(
-              'OpenVSCodeRemote',
-            )}</mwc-button>
+          <a
+            id="vscode-link"
+            style="margin-top:15px;width:100%;"
+            href="vscode://vscode-remote/ssh-remote+work@${
+              this.tcpHost
+            }%3A${this.tcpPort}/home/work"
+          >
+            <mwc-button unelevated fullwidth>
+              ${_t('OpenVSCodeRemote')}
+            </mwc-button>
           </a>
         </div>
       </backend-ai-dialog>

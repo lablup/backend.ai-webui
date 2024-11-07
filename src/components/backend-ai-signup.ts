@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import { Client, ClientConfig } from '../lib/backend.ai-client-esm';
 import {
@@ -81,7 +81,7 @@ export default class BackendAiSignup extends BackendAIPage {
         fieldset input {
           width: 100%;
           border: 0;
-          border-bottom: 1px solid #aaa;
+          border-bottom: 1px solid var(--token-colorBorder, #ccc);
           margin: 15px 0;
           font: inherit;
           font-size: 16px;
@@ -89,7 +89,7 @@ export default class BackendAiSignup extends BackendAIPage {
         }
 
         fieldset input:focus {
-          border-bottom: 1.5px solid #0d47a1;
+          border-bottom: 1.5px solid var(--token-colorLink, #0d47a1);
         }
 
         #signup-panel {
@@ -186,7 +186,11 @@ export default class BackendAiSignup extends BackendAIPage {
   receiveTOSAgreement() {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = '';
-      this.TOSdialog.tosLanguage = globalThis.backendaioptions.get('language');
+      this.TOSdialog.tosLanguage = globalThis.backendaioptions.get(
+        'language',
+        'default',
+        'general',
+      );
       this.TOSdialog.title = _t('webui.menu.TermsOfService') as string;
       this.TOSdialog.tosEntry = 'terms-of-service';
       this.TOSdialog.open();
@@ -196,7 +200,11 @@ export default class BackendAiSignup extends BackendAIPage {
   receivePPAgreement() {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = '';
-      this.TOSdialog.tosLanguage = globalThis.backendaioptions.get('language');
+      this.TOSdialog.tosLanguage = globalThis.backendaioptions.get(
+        'language',
+        'default',
+        'general',
+      );
       this.TOSdialog.title = _t('webui.menu.PrivacyPolicy') as string;
       this.TOSdialog.tosEntry = 'privacy-policy';
       this.TOSdialog.open();

@@ -1,138 +1,152 @@
+import BAIModal from './BAIModal';
 import Flex from './Flex';
 import SettingItem from './SettingItem';
 import { SettingItemProps } from './SettingItem';
-import { SearchOutlined } from '@ant-design/icons';
-import { Checkbox, Input, Tabs, theme } from 'antd';
-import { useResponsive } from 'antd-style';
+import { RedoOutlined, SearchOutlined } from '@ant-design/icons';
+import { useToggle } from 'ahooks';
+import { Alert, Button, Checkbox, Input, Tabs, Typography, theme } from 'antd';
+import { createStyles } from 'antd-style';
 import _ from 'lodash';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+const useStyles = createStyles(({ css }) => ({
+  TabStyles: css`
+    .ant-tabs-tab-active {
+      font-weight: var(--token-fontWeightSuperStrong, 700);
+    }
+    .ant-typography-secondary {
+      font-weight: normal !important;
+    }
+  `,
+}));
 
 interface SettingPageProps {
   settingGroup: { title: string; settingItems: SettingItemProps[] }[];
-  placeholder?: string;
+  tabDirection?: 'top' | 'left';
 }
 
 const SettingList: React.FC<SettingPageProps> = ({
   settingGroup,
-  placeholder,
-}: SettingPageProps) => {
+  tabDirection = 'left',
+}) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const { styles } = useStyles();
   const [searchValue, setSearchValue] = useState('');
   const [changedOptionFilter, setChangedOptionFilter] = useState(false);
+  const [isOpenResetChangesModal, { toggle: setIsOpenResetChangesModal }] =
+    useToggle(false);
 
-  const { mobile } = useResponsive();
+  const appendedAllSettingGroup = useMemo(() => {
+    return [
+      {
+        title: t('general.All'),
+        settingItems: _.flatMap(settingGroup, (item) => item.settingItems),
+      },
+      ...settingGroup,
+    ];
+    // eslint-disable-next-line
+  }, [settingGroup]);
 
-  const appendedSettingGroup = [
-    {
-      title: t('general.All'),
-      settingItems: _.flatMap(settingGroup, (item) => item.settingItems),
-    },
-    ...settingGroup,
-  ];
-  const matchedItemValidator = (item: SettingItemProps) => {
+  const searchedItemFilter = (item: SettingItemProps) => {
     return (
       item.title.toLowerCase().includes(searchValue.toLowerCase()) ||
       (typeof item.description === 'string' &&
         item.description.toLowerCase().includes(searchValue.toLowerCase()))
     );
   };
+
   const changedItemValidator = (item: SettingItemProps) => {
+    if (item.value === null || item.value === undefined) {
+      return false;
+    }
     return item.value !== item.defaultValue;
   };
-
-  const itemMaxWidth = 600;
-  const isLeftTab = !mobile;
-  const leftTabWidth = 200;
-
   return (
-    <Flex
-      direction="column"
-      gap={'md'}
-      align="stretch"
-      style={{
-        flex: 1,
-        padding: token.paddingContentHorizontal,
-        paddingLeft: isLeftTab ? 0 : token.paddingContentHorizontal,
-        paddingRight: token.paddingContentHorizontal,
-        maxWidth: itemMaxWidth + leftTabWidth + token.marginLG,
-      }}
-    >
+    <>
       <Flex
-        direction="row"
-        justify="start"
-        wrap="wrap"
-        gap={'xs'}
+        direction="column"
+        gap={'md'}
+        align="stretch"
         style={{
-          paddingLeft: isLeftTab ? token.paddingContentHorizontal : 0,
+          padding: token.paddingContentHorizontal,
+          maxWidth: token.screenLG,
         }}
       >
-        {/* <Typography.Title
-          level={4}
-          style={{
-            margin: 0,
-            marginLeft: isLeftTab ? token.marginMD : 0,
-            padding: 0,
-            width: isLeftTab ? leftTabWidth - token.marginXS : undefined,
-          }}
-        >
-          {t('settings.Config')}
-        </Typography.Title> */}
-        <Input
-          prefix={<SearchOutlined />}
-          placeholder={placeholder || t('setting.SearchPlaceholder')}
-          onChange={(e) => setSearchValue(e.target.value)}
-          value={searchValue}
-          style={{ flex: 1, minWidth: 50 }}
-        />
-        <Checkbox onChange={(e) => setChangedOptionFilter(e.target.checked)}>
-          {t('settings.ShowOnlyChanged')}
-        </Checkbox>
-
-        {/* <Button
+        <Flex justify="start" gap={'xs'}>
+          <Input
+            prefix={<SearchOutlined />}
+            placeholder={t('settings.SearchPlaceholder')}
+            onChange={(e) => setSearchValue(e.target.value)}
+            value={searchValue}
+          />
+          <Checkbox
+            onChange={(e) => setChangedOptionFilter(e.target.checked)}
+            style={{ whiteSpace: 'nowrap' }}
+          >
+            {t('settings.ShowOnlyChanged')}
+          </Checkbox>
+          <Button
             icon={<RedoOutlined />}
-            onClick={() => {
-              _.flatMap(settingGroup, (item) => item.settingItems).forEach(
-                (option) => {
-                  option?.setValue && option.setValue(option.defaultValue);
-                },
-              );
-            }}
+            onClick={() => setIsOpenResetChangesModal()}
           >
             {t('button.Reset')}
-          </Button> */}
+          </Button>
+        </Flex>
+        <Tabs
+          className={styles.TabStyles}
+          tabPosition={tabDirection ? 'left' : 'top'}
+          tabBarStyle={{ minWidth: 200 }}
+          items={_.map(appendedAllSettingGroup, (settingGroup) => {
+            const filteredItems = settingGroup.settingItems.filter((item) => {
+              return (
+                (!changedOptionFilter || changedItemValidator(item)) &&
+                searchedItemFilter(item)
+              );
+            });
+            return {
+              key: settingGroup.title,
+              label: (
+                <>
+                  <Typography.Text>{settingGroup.title}</Typography.Text>
+                  <Typography.Text type="secondary">{` (${filteredItems.length})`}</Typography.Text>
+                </>
+              ),
+              children: (
+                <Flex direction="column" gap={'lg'} align="start">
+                  {filteredItems.map((item) => (
+                    <SettingItem {...item} />
+                  ))}
+                </Flex>
+              ),
+            };
+          })}
+        />
       </Flex>
-      <Tabs
-        tabPosition={isLeftTab ? 'left' : 'top'}
-        tabBarStyle={{
-          width: isLeftTab ? leftTabWidth : undefined,
+      <BAIModal
+        open={isOpenResetChangesModal}
+        title={t('dialog.ask.DoYouWantToResetChanges')}
+        okText={t('button.Reset')}
+        okButtonProps={{ danger: true }}
+        onOk={() => {
+          _.flatMap(settingGroup, (item) => item.settingItems).forEach(
+            (option) => {
+              option?.setValue && option.setValue(option.defaultValue);
+            },
+          );
+          setIsOpenResetChangesModal();
         }}
-        items={appendedSettingGroup.map((settingGroup) => {
-          const filteredItems = settingGroup.settingItems.filter((item) => {
-            return (
-              (!changedOptionFilter || changedItemValidator(item)) &&
-              matchedItemValidator(item)
-            );
-          });
-          return {
-            key: settingGroup.title,
-            label:
-              settingGroup.title +
-              (searchValue || changedOptionFilter
-                ? ` (${filteredItems.length})`
-                : ''),
-            children: (
-              <Flex direction="column" gap={'lg'} align="start">
-                {filteredItems.map((item) => (
-                  <SettingItem {...item} />
-                ))}
-              </Flex>
-            ),
-          };
-        })}
-      />
-    </Flex>
+        cancelText={t('button.Cancel')}
+        onCancel={() => setIsOpenResetChangesModal()}
+      >
+        <Alert
+          showIcon
+          message={t('dialog.warning.CannotBeUndone')}
+          type="warning"
+        />
+      </BAIModal>
+    </>
   );
 };
 

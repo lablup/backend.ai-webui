@@ -1,10 +1,8 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import {
-  CLOSE_SNACKBAR,
-  OPEN_SNACKBAR,
   UPDATE_DRAWER_STATE,
   UPDATE_OFFLINE,
   UPDATE_PAGE,
@@ -35,16 +33,6 @@ const app = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         drawerOpened: action.opened,
-      };
-    case OPEN_SNACKBAR:
-      return {
-        ...state,
-        offlineIndicatorOpened: true,
-      };
-    case CLOSE_SNACKBAR:
-      return {
-        ...state,
-        offlineIndicatorOpened: false,
       };
     default:
       return state;

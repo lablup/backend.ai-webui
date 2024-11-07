@@ -1,9 +1,11 @@
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
+import useControllableState from '../hooks/useControllableState';
 import { ProjectSelectorQuery } from './__generated__/ProjectSelectorQuery.graphql';
-import { useControllableValue } from 'ahooks';
 import { Select, SelectProps } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
@@ -14,51 +16,112 @@ type ProjectInfo = {
   projectResourcePolicy: any; // Replace 'any' with the actual type
   projectName: string;
 };
-interface Props extends SelectProps {
+export interface ProjectSelectProps extends SelectProps {
   onSelectProject?: (projectInfo: ProjectInfo) => void;
   domain: string;
   autoSelectDefault?: boolean;
+  disableDefaultFilter?: boolean;
 }
 
-const ProjectSelector: React.FC<Props> = ({
+const ProjectSelect: React.FC<ProjectSelectProps> = ({
   onSelectProject,
   domain,
   autoClearSearchValue,
+  disableDefaultFilter,
   ...selectProps
 }) => {
   const { t } = useTranslation();
+  const [currentUser] = useCurrentUserInfo();
+  const baiClient = useSuspendedBackendaiClient();
 
-  const [value, setValue] = useControllableValue(selectProps);
-  const { projects } = useLazyLoadQuery<ProjectSelectorQuery>(
-    graphql`
-      query ProjectSelectorQuery($domain_name: String) {
-        projects: groups(domain_name: $domain_name, is_active: true) {
-          id
-          is_active
-          name
-          resource_policy
+  const [value, setValue] = useControllableState(selectProps);
+  const userRole = useCurrentUserRole();
+  const { projectsSince2403, projectsBefore2403, user } =
+    useLazyLoadQuery<ProjectSelectorQuery>(
+      graphql`
+        query ProjectSelectorQuery(
+          $domain_name: String
+          $email: String
+          $type: [String]
+        ) {
+          projectsSince2403: groups(
+            domain_name: $domain_name
+            is_active: true
+            type: $type
+          ) @since(version: "24.03.0") {
+            id
+            is_active
+            name
+            resource_policy
+            type
+          }
+          projectsBefore2403: groups(
+            domain_name: $domain_name
+            is_active: true
+          ) @deprecatedSince(version: "24.03.0") {
+            id
+            is_active
+            name
+            resource_policy
+          }
+          user(email: $email) {
+            groups {
+              id
+              name
+            }
+          }
         }
-      }
-    `,
-    {
-      domain_name: domain,
-    },
-    {
-      fetchPolicy: 'store-and-network',
-    },
-  );
+      `,
+      {
+        domain_name: domain,
+        email: currentUser.email,
+        type:
+          (userRole === 'admin' || userRole === 'superadmin') &&
+          baiClient._config.enableModelStore
+            ? ['GENERAL', 'MODEL_STORE']
+            : ['GENERAL'],
+      },
+      {
+        fetchPolicy: 'store-and-network',
+      },
+    );
+  const projects = projectsSince2403 || projectsBefore2403;
 
-  useEffect(() => {
-    if (
-      autoClearSearchValue &&
-      !value &&
-      projects?.length &&
-      projects?.length > 0
-    ) {
-      alert(projects[0]?.id);
-      setValue(projects[0]?.id);
-    }
-  });
+  // temporary filtering groups by accessible groups according to user query
+  const accessibleProjects = disableDefaultFilter
+    ? projects
+    : projects?.filter((project) =>
+        user?.groups?.map((group) => group?.id).includes(project?.id),
+      );
+
+  const getLabel = (key: string) =>
+    ({
+      GENERAL: t('general.General'),
+      MODEL_STORE: t('data.ModelStore'),
+    })[key] || key;
+
+  const groupOptions = _.chain(accessibleProjects)
+    .groupBy('type')
+    .map((value, key) => {
+      return {
+        label: getLabel(key),
+        title: key,
+        options: _.chain(value)
+          .sortBy('name')
+          .map((project) => {
+            return {
+              label: project?.name,
+              value: project?.id,
+              projectId: project?.id,
+              projectResourcePolicy: project?.resource_policy,
+              projectName: project?.name,
+            };
+          })
+          .value(),
+      };
+    })
+    .value();
+
   return (
     <Select
       onChange={(value, option) => {
@@ -69,17 +132,11 @@ const ProjectSelector: React.FC<Props> = ({
       {...selectProps}
       value={value}
       optionFilterProp="projectName"
-      options={_.map(_.sortBy(projects, 'name'), (project) => {
-        return {
-          label: project?.name,
-          value: project?.id,
-          projectId: project?.id,
-          projectResourcePolicy: project?.resource_policy,
-          projectName: project?.name,
-        };
-      })}
+      options={
+        _.size(groupOptions) > 1 ? groupOptions : groupOptions[0]?.options
+      }
     />
   );
 };
 
-export default ProjectSelector;
+export default ProjectSelect;

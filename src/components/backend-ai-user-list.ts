@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import '../plastics/lablup-shields/lablup-shields';
 import {
@@ -127,7 +127,7 @@ export default class BackendAIUserList extends BackendAIPage {
           margin: 0 0 10px 0;
           display: block;
           height: 20px;
-          border-bottom: 1px solid #ddd;
+          border-bottom: 1px solid var(--token-colorBorder, #ccc);
         }
 
         vaadin-item {
@@ -696,8 +696,10 @@ export default class BackendAIUserList extends BackendAIPage {
         <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
         <div slot="content">
           <p>
-            You are inactivating the user
-            <span style="color:red">${this.signoutUserName}</span>
+            ${_t('credential.InactivateTheFollowingUsers')}
+            <span style="color:var(--token-red, red)">
+              ${this.signoutUserName}
+            </span>
             .
           </p>
           <p>${_t('dialog.ask.DoYouWantToProceed')}</p>

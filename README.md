@@ -135,7 +135,7 @@ You can debug the app.
 Backend.AI Web UI is built with
  * `lit-element` as webcomponent framework
  * `react` as library for web UI
- * `npm` as package manager
+ * `pnpm` as package manager
  * `rollup` as bundler
  * `electron` as app shell
  * `watchman` as file change watcher for development
@@ -147,7 +147,7 @@ View [Code of conduct](https://github.com/lablup/backend.ai-webui/blob/main/CODE
 ### Initializing
 
 ```console
-$ npm i
+$ pnpm i
 ```
 
 If this is not your first-time compilation, please clean the temporary directories with this command:
@@ -162,21 +162,21 @@ You must perform first-time compilation for testing. Some additional mandatory p
 $ make compile_wsproxy
 ```
 
-To run `relay-compiler` with the watch option(`npm run relay -- --watch`) on a React project, you need to install `watchman`. If you use Homebrew on Linux, it's a great way to get a recent Watchman build. Please refer to [the official installation guide](https://facebook.github.io/watchman/docs/install).
+To run `relay-compiler` with the watch option(`pnpm run relay -- --watch`) on a React project, you need to install `watchman`. If you use Homebrew on Linux, it's a great way to get a recent Watchman build. Please refer to [the official installation guide](https://facebook.github.io/watchman/docs/install).
 
 ### Developing / testing without bundling
 
 On a terminal:
 ```console
-$ npm run build:d   # To watch source changes
+$ pnpm run build:d   # To watch source changes
 ```
 On another terminal:
 ```console
-$ npm run server:d  # To run dev. web server
+$ pnpm run server:d  # To run dev. web server
 ```
 On yet another terminal:
 ```console
-$ npm run wsproxy  # To run websocket proxy
+$ pnpm run wsproxy  # To run websocket proxy
 ```
 
 If you want to change port for your development environment, Add your configuration to `/react/.env.development` file in the project:
@@ -188,21 +188,31 @@ Defaultly, `PORT` is `9081`
 
 ### Lint Checking
 ```console
-$ npm run lint  # To check lints
+$ pnpm run lint  # To check lints
 ```
 
 ### Unit Testing
 
-The project uses `testcafe` as testing framework.
-To perform functional tests, you must run complete Backend.AI cluster before starting test.
+The project uses `Playwright` as E2E testing framework and `Jest` as JavaScript testing framework.
 
+
+#### Playwright test
+To perform E2E tests, you must run complete Backend.AI cluster before starting test.
 On a terminal:
 ```console
-$ npm run server:d  # To run dev. web server
+$ pnpm run server:d  # To run dev. web server
 ```
 On another terminal:
 ```console
-$ npm run test      # Run tests (tests are located in `tests` directory)
+$ pnpm run test      # Run tests (tests are located in `tests` directory)
+```
+
+#### Jest test
+To perform JavaScript test,
+On a terminal;
+```console
+$ pnpm run test  # For ./src
+$ cd ./react && pnpm run test  # For ./react
 ```
 
 ### Electron (app mode) development / testing
@@ -211,16 +221,36 @@ $ npm run test      # Run tests (tests are located in `tests` directory)
 
 On a terminal:
 ```console
-$ npm run server:d    # To run test server
+$ pnpm run server:d    # To run test server
 ```
 OR
 ```console
-$ npm run server:p    # To run compiled source
+$ pnpm run server:p    # To run compiled source
 ```
 
 On another terminal:
 ```console
-$ npm run electron:d  # Run Electron as dev mode.
+$ pnpm run electron:d  # Run Electron as dev mode.
+```
+
+### Development tools
+
+#### Recommended: VSCode Relay GraphQL Extension
+
+For developing with Relay in your React application, it is highly recommended to install the [VSCode Relay GraphQL extension](https://marketplace.visualstudio.com/items?itemName=meta.relay). This extension provides various features to enhance your development experience with Relay.
+
+**Installation Steps:**
+1. Open VSCode and navigate to the Extensions view.
+2. Search for `Relay` and find the `Relay - GraphQL` extension by Meta.
+3. Click the `Install` button to add the extension to your VSCode.
+
+**Configuration:**
+After installing the extension, add the following configuration to your `./vscode/settings.json` file:
+
+```json
+{
+  "relay.rootDirectory": "react"
+}
 ```
 
 ## Serving Guide
@@ -345,7 +375,7 @@ $ git submodule update --init --checkout --recursive
 This is only needed with pure ES6 dev. environment / browser. Websocket proxy is embedded in Electron and automatically starts.
 
 ```console
-$ npm run wsproxy
+$ pnpm run wsproxy
 ```
 
 If webui app is behind an external http proxy, and you have to pass through
@@ -391,8 +421,8 @@ Electron building is automated using `Makefile`.
 ```console
 $ make clean      # clean prebuilt codes
 $ make mac        # build macOS app (both Intel/Apple)
-$ make mac_intel  # build macOS app (Intel x64)
-$ make mac_apple  # build macOS app (Apple Silicon)
+$ make mac_x64    # build macOS app (Intel x64)
+$ make mac_arm64  # build macOS app (Apple Silicon)
 $ make win        # build win64 app
 $ make linux      # build linux app
 $ make all        # build win64/macos/linux app
@@ -416,12 +446,12 @@ NOTE: Sometimes Apple silicon version compiled on Intel machine does not work.
 
 ##### Intel x64
 ```console
-$ make mac_intel
+$ make mac_x64
 ```
 
 ##### Apple Silicon (Apple M1 and above)
 ```console
-$ make mac_apple
+$ make mac_arm64
 ```
 
 ##### Building app with Code Signing (all platforms)
@@ -457,13 +487,13 @@ Note: There are two Electron configuration files, `main.js` and `main.electron-p
 
 ```console
 $ make dep            # Compile with app dependencies
-$ npm run electron:d  # OR, ./node_modules/electron/cli.js .
+$ pnpm run electron:d  # OR, ./node_modules/electron/cli.js .
 ```
 
 The electron app reads the configuration from `./build/electron-app/app/config.toml`, which is copied from the root `config.toml` file during `make clean && make dep`.
 
 If you configure `[server].webServerURL`, the electron app will load the web contents (including `config.toml`) from the designated server.
-The server may be either a `npm run server:d` instance or a `./py -m ai.backend.web.server` daemon from the mono-repo.
+The server may be either a `pnpm run server:d` instance or a `./py -m ai.backend.web.server` daemon from the mono-repo.
 This is known as the "web shell" mode and allows live edits of the web UI while running it inside the electron app.
 
 ### Localization

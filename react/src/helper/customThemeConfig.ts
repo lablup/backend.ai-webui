@@ -11,15 +11,28 @@ type LogoConfig = {
   logoTitleCollapsed?: string;
   alt?: string;
   href?: string;
+  size?: {
+    width?: number;
+    height?: number;
+  };
+  sizeCollapsed?: {
+    width?: number;
+    height?: number;
+  };
 };
 type SiderConfig = {
   theme?: 'light' | 'dark';
+};
+type BrandingConfig = {
+  companyName?: string;
+  brandName?: string;
 };
 let _customTheme: {
   light: ThemeConfig;
   dark: ThemeConfig;
   logo: LogoConfig;
   sider?: SiderConfig;
+  branding?: BrandingConfig;
 };
 
 export const loadCustomThemeConfig = () => {

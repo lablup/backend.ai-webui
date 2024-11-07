@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import { Client, ClientConfig } from '../lib/backend.ai-client-esm';
 import {
@@ -66,7 +66,6 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
    */
   _initClient(apiEndpoint: string) {
     this.webUIShell = document.querySelector('#webui-shell');
-    this.webUIShell.appBody.style.visibility = 'visible';
     this.notification = globalThis.lablupNotification;
     this.successDialog = this.shadowRoot?.querySelector(
       '#verification-success-dialog',

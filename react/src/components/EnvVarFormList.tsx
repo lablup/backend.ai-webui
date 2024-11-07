@@ -88,9 +88,27 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
                   {...restField}
                   name={[name, 'value']}
                   style={{ marginBottom: 0, flex: 1 }}
-                  rules={[{ required: true, message: 'Enter value' }]}
+                  rules={[
+                    {
+                      required: true,
+                      message: t(
+                        'session.launcher.EnvironmentVariableValueRequired',
+                      ),
+                    },
+                  ]}
+                  validateTrigger={['onChange', 'onBlur']}
                 >
-                  <Input placeholder="Value" />
+                  <Input
+                    placeholder="Value"
+                    // onChange={() => {
+                    //   const valueFields = fields.map((field, index) => [
+                    //     props.name,
+                    //     index,
+                    //     'value',
+                    //   ]);
+                    //   form.validateFields(valueFields);
+                    // }}
+                  />
                 </Form.Item>
                 <MinusCircleOutlined onClick={() => remove(name)} />
               </Flex>
@@ -109,7 +127,7 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
                 icon={<PlusOutlined />}
                 block
               >
-                Add variable
+                {t('session.launcher.AddEnvironmentVariable')}
               </Button>
             </Form.Item>
           </Flex>
@@ -118,5 +136,41 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
     </Form.List>
   );
 };
+
+const sensitivePatterns = [
+  /AUTH/i,
+  /ACCESS/i,
+  /SECRET/i,
+  /_KEY/i,
+  /PASSWORD/i,
+  /PASSWD/i,
+  /PWD/i,
+  /TOKEN/i,
+  /PRIVATE/i,
+  /CREDENTIAL/i,
+  /JWT/i,
+  /KEYPAIR/i,
+  /CERTIFICATE/i,
+  /SSH/i,
+  /ENCRYPT/i,
+  /SIGNATURE/i,
+  /SALT/i,
+  /PIN/i,
+  /PASSPHRASE/i,
+  /OAUTH/i,
+];
+
+export function isSensitiveEnv(key: string) {
+  return sensitivePatterns.some((pattern) => pattern.test(key));
+}
+
+export function sanitizeSensitiveEnv(envs: EnvVarFormListValue[]) {
+  return _.map(envs, (env) => {
+    if (env && isSensitiveEnv(env.variable)) {
+      return { ...env, value: '' };
+    }
+    return env;
+  });
+}
 
 export default EnvVarFormList;

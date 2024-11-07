@@ -1,4 +1,9 @@
+import { CommittedImage } from '../components/CustomizedImageList';
+import { Image } from '../components/ImageEnvironmentSelectFormItems';
+import { EnvironmentImage } from '../components/ImageList';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { SorterResult } from 'antd/es/table/interface';
+import _ from 'lodash';
 
 export const newLineToBrElement = (
   text: string,
@@ -186,10 +191,18 @@ export function iSizeToSize(
   };
 }
 
-//
-function toFixedFloorWithoutTrailingZeros(num: number, fixed: number) {
-  var re = new RegExp('^-?\\d+(?:.\\d{0,' + (fixed || -1) + '})?');
-  return num.toString().match(re)?.[0] || '0';
+export function toFixedFloorWithoutTrailingZeros(
+  num: number | string,
+  fixed: number,
+) {
+  const number = typeof num === 'string' ? parseFloat(num) : num;
+  return parseFloat(number.toFixed(fixed)).toString();
+}
+
+export function toFixedWithTypeValidation(num: number | string, fixed: number) {
+  return typeof num === 'number'
+    ? num.toFixed(fixed)
+    : parseFloat(num).toFixed(fixed);
 }
 
 export function compareNumberWithUnits(size1: string, size2: string) {
@@ -256,7 +269,7 @@ export const offset_to_cursor = (offset: number): string => {
 };
 
 export function filterNonNullItems<T extends { [key: string]: any }>(
-  arr: ReadonlyArray<T | null> | null | undefined,
+  arr: ReadonlyArray<T | null | undefined> | null | undefined,
 ): T[] {
   if (arr === null || arr === undefined) {
     return [];
@@ -265,7 +278,7 @@ export function filterNonNullItems<T extends { [key: string]: any }>(
 }
 
 export function parseUnit(str: string): [number, string] {
-  const match = str?.match(/^(\d+(?:\.\d+)?)([a-zA-Z]*)$/);
+  const match = str?.match(/^(\d*\.?\d+)([a-zA-Z%]*)$/);
   if (!match) {
     // If the input doesn't match the pattern, assume it's in bytes
     return [parseFloat(str), 'b'];
@@ -274,3 +287,112 @@ export function parseUnit(str: string): [number, string] {
   const unit = match[2];
   return [num, unit.toLowerCase() || 'b'];
 }
+
+export const isOutsideRange = (
+  value?: number | string,
+  min?: number | string,
+  max?: number | string,
+) => {
+  if (value === undefined) return false;
+  value = _.toNumber(value);
+  if (min !== undefined && value < _.toNumber(min)) return true;
+  if (max !== undefined && value > _.toNumber(max)) return true;
+  return false;
+};
+export const isOutsideRangeWithUnits = (
+  value: string,
+  min?: string,
+  max?: string,
+) => {
+  if (value === undefined) return false;
+  if (min !== undefined && compareNumberWithUnits(value, min) < 0) return true;
+  if (max !== undefined && compareNumberWithUnits(value, max) > 0) return true;
+  return false;
+};
+
+export const getImageFullName = (
+  image: Image | CommittedImage | EnvironmentImage,
+) => {
+  return image
+    ? `${image.registry}/${image.namespace ?? image.name}:${image.tag}@${image.architecture}`
+    : undefined;
+};
+
+export const localeCompare = (a?: string | null, b?: string | null) => {
+  if (a === null || a === undefined) return -1;
+  if (b === null || b === undefined) return 1;
+  return a.localeCompare(b);
+};
+
+export function transformSorterToOrderString<T = any>(
+  sorter: SorterResult<T> | Array<SorterResult<T>>,
+) {
+  if (Array.isArray(sorter)) {
+    return _.chain(sorter)
+      .map((s) =>
+        s.order ? `${s.order === 'descend' ? '-' : ''}${s.field}` : undefined,
+      )
+      .compact()
+      .join(',')
+      .value();
+  } else {
+    return sorter.order
+      ? `${sorter.order === 'descend' ? '-' : ''}${sorter.field}`
+      : undefined;
+  }
+}
+
+export const numberSorterWithInfinityValue = (
+  a?: number | null,
+  b?: number | null,
+  infiniteValue?: number | null,
+  nullishFallbackValue: number = 0,
+) => {
+  const transform = (value?: number | null) => {
+    if (value === infiniteValue) return Number.POSITIVE_INFINITY;
+    if (value === null || value === undefined) return nullishFallbackValue;
+    return value;
+  };
+  return transform(a) - transform(b);
+};
+
+/**
+ * Filters out empty items from an array.
+ *
+ * @template T - The type of items in the array.
+ * @param arr - The array to filter.
+ * @returns An array containing only non-empty items.
+ */
+export const filterEmptyItem = <T,>(
+  arr: Array<T | undefined | null | '' | false | any[] | object>,
+): Array<T> => _.filter(arr, (item) => !_.isEmpty(item)) as Array<T>;
+
+export const generateRandomString = (n = 3) => {
+  let randNum = Math.floor(Math.random() * 52 * 52 * 52);
+
+  const parseNum = (num: number) => {
+    if (num < 26) return String.fromCharCode(65 + num);
+    else return String.fromCharCode(97 + num - 26);
+  };
+
+  let randStr = '';
+
+  for (let i = 0; i < n; i++) {
+    randStr += parseNum(randNum % 52);
+    randNum = Math.floor(randNum / 52);
+  }
+
+  return randStr;
+};
+
+export function formatToUUID(str: string) {
+  if (str.length !== 32) {
+    throw new Error('Input string must be 32 characters long');
+  }
+
+  return `${str.slice(0, 8)}-${str.slice(8, 12)}-${str.slice(12, 16)}-${str.slice(16, 20)}-${str.slice(20)}`;
+}
+
+export const toGlobalId = (type: string, id: string): string => {
+  return btoa(`${type}:${id}`);
+};

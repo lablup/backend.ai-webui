@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import '../plastics/lablup-shields/lablup-shields';
 import {
@@ -147,14 +147,8 @@ export default class BackendAICredentialList extends BackendAIPage {
           padding-right: 5px;
         }
 
-        #keypair-modify-save {
-          --button-bg: var(--paper-light-green-50);
-          --button-bg-hover: var(--paper-green-100);
-          --button-bg-active: var(--paper-green-600);
-        }
-
-        #policy-list {
-          width: 100%;
+        mwc-list-item {
+          width: var(--token-mwc-select-item-width, 340px);
         }
 
         backend-ai-dialog {
@@ -167,7 +161,7 @@ export default class BackendAICredentialList extends BackendAIPage {
           margin: 0 0 10px 0;
           display: block;
           height: 20px;
-          border-bottom: 1px solid #ddd;
+          border-bottom: 1px solid var(--token-colorBorder, #ccc);
         }
 
         mwc-button,
@@ -381,7 +375,7 @@ export default class BackendAICredentialList extends BackendAIPage {
               keypair['total_resource_slots'].ipu_device = '-';
             }
             if ('atom.device' in keypair['total_resource_slots']) {
-              keypair['total_resource_slots'].tpu_device =
+              keypair['total_resource_slots'].atom_device =
                 keypair['total_resource_slots']['atom.device'];
             }
             if (
@@ -390,8 +384,28 @@ export default class BackendAICredentialList extends BackendAIPage {
             ) {
               keypair['total_resource_slots'].atom_device = '-';
             }
+            if ('atom-plus.device' in keypair['total_resource_slots']) {
+              keypair['total_resource_slots'].atom_plus_device =
+                keypair['total_resource_slots']['atom-plus.device'];
+            }
+            if (
+              'atom-plus.device' in keypair['total_resource_slots'] === false &&
+              keypair['default_for_unspecified'] === 'UNLIMITED'
+            ) {
+              keypair['total_resource_slots'].atom_plus_device = '-';
+            }
+            if ('gaudi2.device' in keypair['total_resource_slots']) {
+              keypair['total_resource_slots'].gaudi2_device =
+                keypair['total_resource_slots']['gaudi2.device'];
+            }
+            if (
+              'gaudi2.device' in keypair['total_resource_slots'] === false &&
+              keypair['default_for_unspecified'] === 'UNLIMITED'
+            ) {
+              keypair['total_resource_slots'].gaudi2_device = '-';
+            }
             if ('warboy.device' in keypair['total_resource_slots']) {
-              keypair['total_resource_slots'].tpu_device =
+              keypair['total_resource_slots'].warboy_device =
                 keypair['total_resource_slots']['warboy.device'];
             }
             if (
@@ -399,6 +413,27 @@ export default class BackendAICredentialList extends BackendAIPage {
               keypair['default_for_unspecified'] === 'UNLIMITED'
             ) {
               keypair['total_resource_slots'].warboy_device = '-';
+            }
+            if ('rngd.device' in keypair['total_resource_slots']) {
+              keypair['total_resource_slots'].rngd_device =
+                keypair['total_resource_slots']['rngd.device'];
+            }
+            if (
+              'rngd.device' in keypair['total_resource_slots'] === false &&
+              keypair['default_for_unspecified'] === 'UNLIMITED'
+            ) {
+              keypair['total_resource_slots'].rngd_device = '-';
+            }
+            if ('hyperaccel-lpu.device' in keypair['total_resource_slots']) {
+              keypair['total_resource_slots'].hyperaccel_lpu_device =
+                keypair['total_resource_slots']['hyperaccel-lpu.device'];
+            }
+            if (
+              'hyperaccel_lpu_device' in keypair['total_resource_slots'] ===
+                false &&
+              keypair['default_for_unspecified'] === 'UNLIMITED'
+            ) {
+              keypair['total_resource_slots'].hyperaccel_lpu_device = '-';
             }
 
             [
@@ -410,7 +445,11 @@ export default class BackendAICredentialList extends BackendAIPage {
               'tpu_device',
               'ipu_device',
               'atom_device',
+              'atom_plus_device',
+              'gaudi2_device',
               'warboy_device',
+              'rngd_device',
+              'hyperaccel_lpu_device',
             ].forEach((slot) => {
               keypair['total_resource_slots'][slot] = this._markIfUnlimited(
                 keypair['total_resource_slots'][slot],
@@ -748,17 +787,6 @@ export default class BackendAICredentialList extends BackendAIPage {
                   inverted
                   @click="${(e) => this._revokeKey(e)}"
                 ></mwc-icon-button>
-                <mwc-icon-button
-                  class="fg red"
-                  icon="delete_forever"
-                  fab
-                  ?disabled=${this._mainAccessKeyList.includes(
-                    rowData.item?.access_key,
-                  )}
-                  flat
-                  inverted
-                  @click="${(e) => this._deleteKeyPairDialog(e)}"
-                ></mwc-icon-button>
               `
             : html``}
           ${this._isActive() === false
@@ -770,6 +798,21 @@ export default class BackendAICredentialList extends BackendAIPage {
                   flat
                   inverted
                   @click="${(e) => this._reuseKey(e)}"
+                ></mwc-icon-button>
+              `
+            : html``}
+          ${this.isAdmin && !this._isActive()
+            ? html`
+                <mwc-icon-button
+                  class="fg red"
+                  icon="delete_forever"
+                  fab
+                  ?disabled=${this._mainAccessKeyList.includes(
+                    rowData.item?.access_key,
+                  )}
+                  flat
+                  inverted
+                  @click="${(e) => this._deleteKeyPairDialog(e)}"
                 ></mwc-icon-button>
               `
             : html``}
@@ -796,7 +839,7 @@ export default class BackendAICredentialList extends BackendAIPage {
             ? html`
                 <lablup-shields
                   app=""
-                  color="red"
+                  color="darkgreen"
                   description="${_t('credential.MainAccessKey')}"
                   ui="flat"
                 ></lablup-shields>
@@ -883,18 +926,25 @@ export default class BackendAICredentialList extends BackendAIPage {
               `
             : html``}
         </div>
-        <div class="layout horizontal wrap center">
-          <div class="layout horizontal configuration">
-            <mwc-icon class="fg green">cloud_queue</mwc-icon>
-            <span>${rowData.item.max_vfolder_size}</span>
-            <span class="indicator">GB</span>
-          </div>
-        </div>
-        <div class="layout horizontal configuration">
-          <mwc-icon class="fg green">folder</mwc-icon>
-          <span>${rowData.item.max_vfolder_count}</span>
-          <span class="indicator">${_t('general.Folders')}</span>
-        </div>
+        ${!globalThis.backendaiclient.supports(
+          'deprecated-max-vfolder-count-in-keypair-resource-policy',
+        )
+          ? html`
+              <div class="layout horizontal wrap center">
+                <div class="layout horizontal configuration">
+                  <mwc-icon class="fg green">cloud_queue</mwc-icon>
+                  <span>${rowData.item.max_vfolder_size}</span>
+                  <span class="indicator">GB</span>
+                </div>
+              </div>
+              <div class="layout horizontal configuration">
+                <mwc-icon class="fg green">folder</mwc-icon>
+                <span>${rowData.item.max_vfolder_count}</span>
+                <span class="indicator">${_t('general.Folders')}</span>
+              </div>
+            `
+          : html``}
+        <!-- TODO: Display max_vfolder_count in user resource policy -->
       `,
       root,
     );
@@ -1349,6 +1399,7 @@ export default class BackendAICredentialList extends BackendAIPage {
             <mwc-select
               id="policy-list"
               label="${_t('credential.SelectPolicy')}"
+              fixedMenuPosition
             >
               ${Object.keys(this.resourcePolicy).map(
                 (rp) => html`

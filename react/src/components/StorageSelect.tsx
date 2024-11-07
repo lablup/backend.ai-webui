@@ -1,14 +1,14 @@
 import { usageIndicatorColor } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
+import useControllableState from '../hooks/useControllableState';
 import { useShadowRoot } from './DefaultProviders';
 import Flex from './Flex';
 import TextHighlighter from './TextHighlighter';
-import { useControllableValue } from 'ahooks';
 import { Select, SelectProps, Badge, Tooltip } from 'antd';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQuery } from 'react-query';
 
 export type VolumeInfo = {
   id: string;
@@ -23,7 +23,7 @@ interface Props extends Omit<SelectProps, 'value' | 'onChange'> {
   autoSelectType?: 'usage' | 'default';
   showUsageStatus?: boolean;
   value?: string;
-  onChange?: React.Dispatch<React.SetStateAction<VolumeInfo | undefined>>;
+  onChange?: (v?: string, vInfo?: VolumeInfo) => void;
 }
 // TODO: use React.forwardRef
 const StorageSelect: React.FC<Props> = ({
@@ -41,30 +41,34 @@ const StorageSelect: React.FC<Props> = ({
   const shadowRoot = useShadowRoot();
   const baiClient = useSuspendedBackendaiClient();
 
-  const { data: vhostInfo, isLoading: isLoadingVhostInfo } = useQuery<{
-    default: string;
-    allowed: Array<string>;
-    volume_info?: {
-      [key: string]: {
-        backend: string;
-        capabilities: string[];
-        usage: {
-          percentage: number;
+  const { data: vhostInfo, isLoading: isLoadingVhostInfo } =
+    useSuspenseTanQuery<{
+      default: string;
+      allowed: Array<string>;
+      volume_info?: {
+        [key: string]: {
+          backend: string;
+          capabilities: string[];
+          usage: {
+            percentage: number;
+          };
+          sftp_scaling_groups: any[];
         };
-        sftp_scaling_groups: any[];
       };
-    };
-  }>('vhostInfo', () => {
-    return baiClient.vfolder.list_hosts();
-  });
+    }>({
+      queryKey: ['vhostInfo'],
+      queryFn: () => {
+        return baiClient.vfolder.list_hosts();
+      },
+    });
 
-  const [controllableState, setControllableState] = useControllableValue(
-    _.omitBy({ value, onChange, defaultValue }, _.isUndefined),
-  );
+  const [controllableState, setControllableState] = useControllableState({
+    value,
+    onChange,
+    defaultValue,
+  });
   const [controllableSearchValue, setControllableSearchValue] =
-    useControllableValue(
-      _.omitBy({ value: searchValue, onChange: onSearch }, _.isUndefined),
-    );
+    useControllableState({ value: searchValue, onChange: onSearch });
   useEffect(() => {
     if (!autoSelectType) return;
     let nextHost = vhostInfo?.default ?? vhostInfo?.allowed[0] ?? '';
@@ -102,7 +106,7 @@ const StorageSelect: React.FC<Props> = ({
       }}
       searchValue={controllableSearchValue}
       onSearch={setControllableSearchValue}
-      optionLabelProp="value"
+      optionLabelProp={showUsageStatus ? 'label' : 'value'}
       options={_.map(vhostInfo?.allowed, (host) => ({
         label: showUsageStatus ? (
           <Flex align="center" gap={'xs'}>

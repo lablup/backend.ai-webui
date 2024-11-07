@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import {
   IronFlex,
@@ -126,7 +126,7 @@ export default class LablupExpansion extends LitElement {
           margin: 0 0 10px 0;
           display: block;
           height: 20px;
-          border-bottom: 1px solid #ddd !important;
+          border-bottom: 1px solid var(--token-colorBorder, #ccc) !important;
         }
       `,
     ];

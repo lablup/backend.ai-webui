@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import { Client, ClientConfig } from '../lib/backend.ai-client-esm';
 import {
@@ -73,7 +73,6 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
    */
   _initClient(apiEndpoint: string) {
     this.webUIShell = document.querySelector('#webui-shell');
-    this.webUIShell.appBody.style.visibility = 'visible';
     this.notification = globalThis.lablupNotification;
     this.passwordChangeDialog = this.shadowRoot?.querySelector(
       '#update-password-dialog',

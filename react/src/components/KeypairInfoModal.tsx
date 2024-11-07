@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
@@ -38,9 +38,7 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
             .then((res: any) => res.keypairs)
         : null;
     },
-    suspense: false,
     staleTime: 0,
-    cacheTime: 0,
   });
 
   const supportMainAccessKey = baiClient?.supports('main-access-key');
@@ -104,7 +102,7 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
                   {value}
                 </Typography.Text>
                 {supportMainAccessKey && value === user?.main_access_key && (
-                  <Tag color="red">{t('credential.MainAccessKey')}</Tag>
+                  <Tag color="#457b3b">{t('credential.MainAccessKey')}</Tag>
                 )}
               </Flex>
             ),

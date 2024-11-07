@@ -3,10 +3,11 @@ import { Button, Card, CardProps, theme } from 'antd';
 import _ from 'lodash';
 import React, { ReactNode } from 'react';
 
-interface BAICardProps extends CardProps {
+export interface BAICardProps extends CardProps {
   status?: 'success' | 'error' | 'warning' | 'default';
   extraButtonTitle?: string | ReactNode;
   onClickExtraButton?: () => void;
+  ref?: React.LegacyRef<HTMLDivElement> | undefined;
 }
 
 const BAICard: React.FC<BAICardProps> = ({
@@ -38,15 +39,16 @@ const BAICard: React.FC<BAICardProps> = ({
     undefined;
   return (
     <Card
+      className={status === 'error' ? 'bai-card-error' : ''}
       style={_.extend(style, {
         borderColor:
           status === 'error'
             ? token.colorError
             : status === 'warning'
-            ? token.colorWarning
-            : status === 'success'
-            ? token.colorSuccess
-            : style?.borderColor, // default
+              ? token.colorWarning
+              : status === 'success'
+                ? token.colorSuccess
+                : style?.borderColor, // default
       })}
       extra={_extra}
       {...cardProps}

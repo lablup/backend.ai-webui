@@ -17,7 +17,7 @@ printf "\n${LWHITE}Validating Javascript:${NC}\n"
 
 # Check for eslint
 if [[ ! -x "$ESLINT" ]]; then
-  printf "\t\033[41mPlease install ESlint\033[0m (npm i --save-dev eslint)"
+  printf "\t\033[41mPlease install ESlint\033[0m (pnpm i --save-dev eslint)"
   exit 1
 fi
 

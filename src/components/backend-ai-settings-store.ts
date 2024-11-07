@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import { BackendAIPage } from './backend-ai-page';
 import { html } from 'lit';
@@ -27,10 +27,10 @@ export default class BackendAiSettingsStore extends BackendAIPage {
       'user.desktop_notification': true,
       'user.compact_sidebar': false,
       'user.preserve_login': false,
-      'user.language': 'default',
       'user.automatic_update_check': true,
       'user.custom_ssh_port': '',
       'user.beta_feature': false,
+      'general.language': 'en',
     };
     this.readSettings();
   }
@@ -63,12 +63,31 @@ export default class BackendAiSettingsStore extends BackendAIPage {
     }
   }
 
-  set(name, value, namespace = 'user') {
-    return this._writeUserSetting(name, value, namespace);
+  set(name, value, namespace = 'user', skipDispatch = false) {
+    if (!skipDispatch) {
+      const event = new CustomEvent('backendaiwebui.settings:set', {
+        detail: {
+          name: name,
+          value: value,
+          namespace: namespace,
+        },
+      });
+      document.dispatchEvent(event);
+    }
+    this.options[namespace + '.' + name] = value;
   }
 
-  delete(name, namespace = 'user') {
-    return this._deleteUserSetting(name, namespace);
+  delete(name, namespace = 'user', skipDispatch = false) {
+    if (!skipDispatch) {
+      const event = new CustomEvent('backendaiwebui.settings:delete', {
+        detail: {
+          name: name,
+          namespace: namespace,
+        },
+      });
+      document.dispatchEvent(event);
+    }
+    delete this.options[namespace + '.' + name];
   }
 
   _readSetting(name, default_value = true, namespace = 'user') {
@@ -88,39 +107,6 @@ export default class BackendAiSettingsStore extends BackendAIPage {
     } else {
       this.options[name] = default_value;
     }
-  }
-
-  _writeUserSetting(name, value, namespace) {
-    if (value === false) {
-      localStorage.setItem(
-        'backendaiwebui.settings.' + namespace + '.' + name,
-        'false',
-      );
-    } else if (value === true) {
-      localStorage.setItem(
-        'backendaiwebui.settings.' + namespace + '.' + name,
-        'true',
-      );
-    } else if (typeof value === 'object') {
-      localStorage.setItem(
-        'backendaiwebui.settings.' + namespace + '.' + name,
-        JSON.stringify(value),
-      );
-    } else {
-      localStorage.setItem(
-        'backendaiwebui.settings.' + namespace + '.' + name,
-        value,
-      );
-    }
-    this.options[namespace + '.' + name] = value;
-  }
-
-  _deleteUserSetting(name, namespace) {
-    localStorage.removeItem(
-      'backendaiwebui.settings.' + namespace + '.' + name,
-    );
-    delete this.options[namespace + '.' + name];
-    return true;
   }
 
   isJson(str) {

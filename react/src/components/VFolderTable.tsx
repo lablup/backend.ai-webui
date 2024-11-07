@@ -1,31 +1,49 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
-import { useCurrentProjectValue, useUpdatableState } from '../hooks';
-import { useTanQuery } from '../hooks/reactQueryAlias';
+import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useKeyPairLazyLoadQuery } from '../hooks/hooksUsingRelay';
+import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
+import useControllableState from '../hooks/useControllableState';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useEventNotStable } from '../hooks/useEventNotStable';
+import BAILink from './BAILink';
 import { useShadowRoot } from './DefaultProviders';
 import Flex from './Flex';
+import FolderCreateModal from './FolderCreateModal';
+import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import TextHighlighter from './TextHighlighter';
 import VFolderPermissionTag from './VFolderPermissionTag';
 import { VFolder } from './VFolderSelect';
+import { VFolderTableProjectQuery } from './__generated__/VFolderTableProjectQuery.graphql';
 import {
   QuestionCircleOutlined,
   ReloadOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { useControllableValue } from 'ahooks';
 import {
   Button,
+  Descriptions,
   Form,
   Input,
   Table,
   TableProps,
+  Tag,
   Tooltip,
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import React, { useEffect, useState, useTransition } from 'react';
+import { PlusIcon } from 'lucide-react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition,
+} from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import { useLazyLoadQuery } from 'react-relay';
 
 export interface VFolderFile {
   name: string;
@@ -57,19 +75,26 @@ export interface VFolderTableProps extends Omit<TableProps<VFolder>, 'rowKey'> {
   onChangeAliasMap?: (aliasMap: AliasMap) => void;
   filter?: (vFolder: VFolder) => boolean;
   rowKey: string | number;
+  onChangeAutoMountedFolders?: (names: Array<string>) => void;
+  showAutoMountedFoldersSection?: boolean;
 }
 
+export const vFolderAliasNameRegExp = /^[a-zA-Z0-9_/.-]*$/;
+export const DEFAULT_ALIAS_BASE_PATH = '/home/work/';
 const VFolderTable: React.FC<VFolderTableProps> = ({
   filter,
   showAliasInput = false,
   selectedRowKeys: controlledSelectedRowKeys = [],
   onChangeSelectedRowKeys,
-  aliasBasePath = '/home/work/',
+  aliasBasePath = DEFAULT_ALIAS_BASE_PATH,
   aliasMap: controlledAliasMap,
   onChangeAliasMap,
   rowKey = 'name',
+  onChangeAutoMountedFolders,
+  showAutoMountedFoldersSection,
   ...tableProps
 }) => {
+  const { generateFolderPath } = useFolderExplorerOpener();
   const getRowKey = React.useMemo(() => {
     return (record: VFolder) => {
       const key = record && record[rowKey as DataIndex];
@@ -77,7 +102,9 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     };
   }, [rowKey]);
 
-  const [selectedRowKeys, setSelectedRowKeys] = useControllableValue<
+  const [isOpenCreateModal, setIsOpenCreateModal] = useState(false);
+
+  const [selectedRowKeys, setSelectedRowKeys] = useControllableState<
     VFolderKey[]
   >(
     {
@@ -89,7 +116,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     },
   );
 
-  const [aliasMap, setAliasMap] = useControllableValue<AliasMap>(
+  const [aliasMap, setAliasMap] = useControllableState<AliasMap>(
     {
       value: controlledAliasMap,
       onChange: onChangeAliasMap,
@@ -98,6 +125,9 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
       defaultValue: {},
     },
   );
+
+  const baiClient = useSuspendedBackendaiClient();
+  const [keypair] = useKeyPairLazyLoadQuery(baiClient?._config.accessKey);
 
   const [internalForm] = Form.useForm<AliasMap>();
   useEffect(() => {
@@ -120,60 +150,141 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   const currentProject = useCurrentProjectValue();
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [isPendingRefetch, startRefetchTransition] = useTransition();
-  const { data: allFolderList } = useTanQuery({
+  const { data: allFolderList } = useSuspenseTanQuery({
     queryKey: ['VFolderSelectQuery', fetchKey, currentProject.id],
     queryFn: () => {
+      const search = new URLSearchParams();
+      search.set('group_id', currentProject.id);
       return baiRequestWithPromise({
         method: 'GET',
-        url: `/folders?group_id=${currentProject.id}`,
+        url: `/folders?${search.toString()}`,
       }) as Promise<VFolder[]>;
     },
-    staleTime: 0,
+    staleTime: 1000,
   });
-  const [searchKey, setSearchKey] = useState('');
-  const displayingFolders = _.filter(allFolderList, (vf) => {
-    // keep selected folders
-    if (selectedRowKeys.includes(getRowKey(vf))) {
-      return true;
-    }
-    // filter by search key
-    return (
-      (!filter || filter(vf)) && (!searchKey || vf.name.includes(searchKey))
+
+  const { domain, group, keypair_resource_policy } =
+    useLazyLoadQuery<VFolderTableProjectQuery>(
+      graphql`
+        query VFolderTableProjectQuery(
+          $domain_name: String!
+          $group_id: UUID!
+          $keypair_resource_policy_name: String!
+        ) {
+          domain(name: $domain_name) {
+            allowed_vfolder_hosts
+          }
+          group(id: $group_id, domain_name: $domain_name) {
+            allowed_vfolder_hosts
+          }
+          keypair_resource_policy(name: $keypair_resource_policy_name) {
+            allowed_vfolder_hosts
+          }
+        }
+      `,
+      {
+        domain_name: baiClient._config.domainName,
+        group_id: currentProject.id,
+        keypair_resource_policy_name: keypair?.resource_policy || '',
+      },
+      {
+        fetchPolicy: 'store-and-network',
+        fetchKey: fetchKey,
+      },
     );
+
+  const filteredFolderListByPermission = useMemo(() => {
+    const allowedVFolderHostsByDomain = JSON.parse(
+      domain?.allowed_vfolder_hosts || '{}',
+    );
+    const allowedVFolderHostsByGroup = JSON.parse(
+      group?.allowed_vfolder_hosts || '{}',
+    );
+    const allowedVFolderHostsByKeypairResourcePolicy = JSON.parse(
+      keypair_resource_policy?.allowed_vfolder_hosts || '{}',
+    );
+
+    const mergedVFolderPermissions = _.merge(
+      {}, // start with empty object
+      allowedVFolderHostsByDomain,
+      allowedVFolderHostsByGroup,
+      allowedVFolderHostsByKeypairResourcePolicy,
+    );
+    // only allow mount if volume permission has 'mount-in-session'
+    const mountAllowedVolumes = Object.keys(mergedVFolderPermissions).filter(
+      (volume) => mergedVFolderPermissions[volume].includes('mount-in-session'),
+    );
+    // Need to filter allFolderList from allowed vfolder
+    return allFolderList?.filter((folder) =>
+      mountAllowedVolumes.includes(folder.host),
+    );
+  }, [domain, group, keypair_resource_policy, allFolderList]);
+
+  const autoMountedFolderNamesByPermission = useMemo(
+    () =>
+      _.chain(filteredFolderListByPermission)
+        .filter((vf) => vf.status === 'ready' && vf.name?.startsWith('.'))
+        .map((vf) => vf.name)
+        .value(),
+    [filteredFolderListByPermission],
+  );
+
+  useEffect(() => {
+    _.isFunction(onChangeAutoMountedFolders) &&
+      onChangeAutoMountedFolders(autoMountedFolderNamesByPermission);
+    // Do not need to run when `autoMountedFolderNames` changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoMountedFolderNamesByPermission]);
+
+  const [searchKey, setSearchKey] = useState('');
+  const displayingFolders = _.chain(filteredFolderListByPermission)
+    .filter((vf) => (filter ? filter(vf) : true))
+    .filter((vf) => {
+      if (selectedRowKeys.includes(getRowKey(vf))) {
+        return true;
+      }
+      return !searchKey || vf.name.includes(searchKey);
+    })
+    .value();
+
+  /**
+   * Converts the input path to an aliased path based on the provided name and input.
+   * If the input is empty, it appends the name to the alias base path.
+   * If the input starts with '/', it returns the input as is.
+   * Otherwise, it appends the input to the alias base path.
+   *
+   * @param name - The name of the VFolderKey.
+   * @param input - The input path to be converted.
+   * @returns The aliased path based on the name and input.
+   */
+  const inputToAliasPath = useCallback(
+    (name: VFolderKey, input?: string) => {
+      if (input === undefined || input === '') {
+        return `${aliasBasePath}${name}`;
+      } else if (input.startsWith('/')) {
+        return input;
+      } else {
+        return `${aliasBasePath}${input}`;
+      }
+    },
+    [aliasBasePath],
+  );
+
+  const handleAliasUpdate = useEventNotStable(() => {
+    setAliasMap(
+      _.mapValues(
+        _.pickBy(internalForm.getFieldsValue({ strict: false }), (v) => !!v), //remove empty
+        (v, k) => inputToAliasPath(k, v), // add alias base path
+      ),
+    );
+    internalForm.validateFields().catch(() => {});
   });
-  // const { token } = theme.useToken();
-  // const searchInput = useRef<InputRef>(null);
 
-  // TODO: set defaults
-  // useUpdateEffect(() => {
-  //   setSelectedRowKeys(defaultSelectedKeys || []);
-  // }, [defaultSelectedKeys]);
-
-  const handleAliasUpdate = (e?: any) => {
-    e?.preventDefault();
-    internalForm
-      .validateFields()
-      .then((values) => {})
-      .catch(() => {})
-      .finally(() => {
-        setAliasMap(
-          _.mapValues(
-            _.pickBy(internalForm.getFieldsValue(), (v) => !!v), //remove empty
-            (v, k) => mapAliasToPath(k, v), // add alias base path
-          ),
-        );
-      });
-  };
-
-  const mapAliasToPath = (name: VFolderKey, input?: string) => {
-    if (_.isEmpty(input)) {
-      return `${aliasBasePath}${name}`;
-    } else if (input?.startsWith('/')) {
-      return input;
-    } else {
-      return `${aliasBasePath}${input}`;
-    }
-  };
+  useEffect(() => {
+    handleAliasUpdate();
+    // `selectedRowKeys` can be changed by parents at any time, so we need to check whether `selectedRowKeys` has changed using JSON.stringify
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(selectedRowKeys), handleAliasUpdate]);
 
   const shadowRoot = useShadowRoot();
 
@@ -212,15 +323,19 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
         return (
           <Flex
             direction="column"
-            align="stretch"
+            align="start"
             gap={'xxs'}
             style={
               showAliasInput && isCurrentRowSelected
                 ? { display: 'inline-flex', height: 70, width: '100%' }
-                : undefined
+                : {
+                    maxWidth: 200,
+                  }
             }
           >
-            <TextHighlighter keyword={searchKey}>{value}</TextHighlighter>
+            <BAILink type="hover" to={generateFolderPath(record.id)}>
+              <TextHighlighter keyword={searchKey}>{value}</TextHighlighter>
+            </BAILink>
             {showAliasInput && isCurrentRowSelected && (
               <Form.Item
                 noStyle
@@ -233,7 +348,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                   const allAliasPathMap = _(selectedRowKeys).reduce(
                     (result, name) => {
                       result[name] =
-                        aliasMap?.[name] || mapAliasToPath(name, undefined);
+                        aliasMap?.[name] || inputToAliasPath(name, undefined);
 
                       return result;
                     },
@@ -247,7 +362,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                         {
                           // required: true,
                           type: 'string',
-                          pattern: /^[a-zA-Z0-9_/-]*$/,
+                          pattern: vFolderAliasNameRegExp,
                           message: t('session.launcher.FolderAliasInvalid'),
                         },
                         {
@@ -260,7 +375,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                                 (path, k) =>
                                   k !== getRowKey(record) && // not current row
                                   path ===
-                                    mapAliasToPath(getRowKey(record), value),
+                                    inputToAliasPath(getRowKey(record), value),
                               )
                             ) {
                               return Promise.reject(
@@ -270,9 +385,33 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                             return Promise.resolve();
                           },
                         },
+                        {
+                          type: 'string',
+                          validator: async (rule, value) => {
+                            const aliasPath = inputToAliasPath(
+                              getRowKey(record),
+                              value,
+                            );
+                            if (
+                              value &&
+                              _.map(
+                                autoMountedFolderNamesByPermission,
+                                // `n` is the name of the auto mounted folder. It cannot be empty.
+                                (n) => inputToAliasPath('', n),
+                              ).includes(aliasPath)
+                            ) {
+                              return Promise.reject(
+                                t(
+                                  'session.launcher.FolderAliasOverlappingToAutoMount',
+                                ),
+                              );
+                            }
+                            return Promise.resolve();
+                          },
+                        },
                       ]}
                       // dependencies={[getRowKey(record)]}
-                      extra={mapAliasToPath(
+                      extra={inputToAliasPath(
                         record.name,
                         internalForm.getFieldValue(getRowKey(record)),
                       )}
@@ -282,10 +421,10 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                           e.stopPropagation();
                         }}
                         placeholder={t('session.launcher.FolderAlias')}
-                        // onPressEnter={handleAliasUpdate}
-                        // onBlur={handleAliasUpdate}
-                        onChange={handleAliasUpdate}
                         allowClear
+                        onChange={() => {
+                          handleAliasUpdate();
+                        }}
                       ></Input>
                     </Form.Item>
                   );
@@ -363,6 +502,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
       dataIndex: 'created_at',
       sorter: (a, b) => a.created_at.localeCompare(b.created_at),
       render: (value, record) => dayjs(value).format('L'),
+      defaultSortOrder: 'descend',
     },
     // {
     //   title: 'Modified',
@@ -393,17 +533,29 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
           allowClear
           placeholder={t('data.SearchByName')}
         />
-        <Button
-          loading={isPendingRefetch}
-          icon={<ReloadOutlined />}
-          onClick={() => {
-            startRefetchTransition(() => {
-              updateFetchKey();
-            });
-          }}
-        />
+        <Tooltip title={t('button.Refresh')}>
+          <Button
+            loading={isPendingRefetch}
+            icon={<ReloadOutlined />}
+            onClick={() => {
+              startRefetchTransition(() => {
+                updateFetchKey();
+              });
+            }}
+          />
+        </Tooltip>
+        <Tooltip title={t('data.CreateANewStorageFolder')}>
+          <Button
+            icon={<PlusIcon />}
+            type="primary"
+            ghost
+            onClick={() => {
+              setIsOpenCreateModal(true);
+            }}
+          />
+        </Tooltip>
       </Flex>
-      <Form form={internalForm}>
+      <Form form={internalForm} component={false} preserve={false}>
         <Table
           // size="small"
           scroll={{ x: 'max-content' }}
@@ -437,9 +589,38 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
               },
             };
           }}
+          sortDirections={['ascend', 'descend']}
           {...tableProps}
         />
       </Form>
+      {showAutoMountedFoldersSection &&
+      autoMountedFolderNamesByPermission.length > 0 ? (
+        <>
+          <Descriptions size="small">
+            <Descriptions.Item label={t('data.AutomountFolders')}>
+              {_.map(autoMountedFolderNamesByPermission, (name) => {
+                return <Tag key={name}>{name}</Tag>;
+              })}
+            </Descriptions.Item>
+          </Descriptions>
+        </>
+      ) : null}
+      <FolderCreateModal
+        open={isOpenCreateModal}
+        onRequestClose={(result) => {
+          setIsOpenCreateModal(false);
+          if (result) {
+            startRefetchTransition(() => {
+              updateFetchKey();
+              setSelectedRowKeys((x) => [
+                ...x,
+                // @ts-ignore
+                result[rowKey],
+              ]);
+            });
+          }
+        }}
+      />
     </Flex>
   );
 };

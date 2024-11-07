@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import '../plastics/lablup-piechart/lablup-piechart';
 import '../plastics/lablup-shields/lablup-shields';
@@ -78,8 +78,16 @@ export default class BackendAIResourcePanel extends BackendAIPage {
   @property({ type: Number }) ipu_used = 0;
   @property({ type: Number }) atom_total = 0;
   @property({ type: Number }) atom_used = 0;
+  @property({ type: Number }) atom_plus_total = 0;
+  @property({ type: Number }) atom_plus_used = 0;
+  @property({ type: Number }) gaudi2_total = 0;
+  @property({ type: Number }) gaudi2_used = 0;
   @property({ type: Number }) warboy_total = 0;
   @property({ type: Number }) warboy_used = 0;
+  @property({ type: Number }) rngd_total = 0;
+  @property({ type: Number }) rngd_used = 0;
+  @property({ type: Number }) hyperaccel_lpu_total = 0;
+  @property({ type: Number }) hyperaccel_lpu_used = 0;
   @property({ type: Object }) notification = Object();
   @property({ type: Object }) resourcePolicy;
   @property({ type: String }) announcement = '';
@@ -297,7 +305,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
         if (this.active == true) {
           setTimeout(() => {
             this._refreshAgentInformation(status);
-          }, 15000);
+          }, 30000);
         }
       })
       .catch((err) => {
@@ -337,9 +345,21 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     this.resources.atom = {};
     this.resources.atom.total = 0;
     this.resources.atom.used = 0;
+    this.resources.atom_plus = {};
+    this.resources.atom_plus.total = 0;
+    this.resources.atom_plus.used = 0;
+    this.resources.gaudi2 = {};
+    this.resources.gaudi2.total = 0;
+    this.resources.gaudi2.used = 0;
     this.resources.warboy = {};
     this.resources.warboy.total = 0;
     this.resources.warboy.used = 0;
+    this.resources.rngd = {};
+    this.resources.rngd.total = 0;
+    this.resources.rngd.used = 0;
+    this.resources.hyperaccel_lpu = {};
+    this.resources.hyperaccel_lpu.total = 0;
+    this.resources.hyperaccel_lpu.used = 0;
     this.resources.agents = {};
     this.resources.agents.total = 0;
     this.resources.agents.using = 0;
@@ -392,10 +412,30 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     } else {
       this.atom_total = this.resources['atom.device'].total;
     }
+    if (isNaN(this.resources['atom-plus.device'].total)) {
+      this.atom_plus_total = 0;
+    } else {
+      this.atom_plus_total = this.resources['atom-plus.device'].total;
+    }
+    if (isNaN(this.resources['gaudi2.device'].total)) {
+      this.gaudi2_total = 0;
+    } else {
+      this.gaudi2_total = this.resources['gaudi2.device'].total;
+    }
     if (isNaN(this.resources['warboy.device'].total)) {
       this.warboy_total = 0;
     } else {
       this.warboy_total = this.resources['warboy.device'].total;
+    }
+    if (isNaN(this.resources['rngd.device'].total)) {
+      this.rngd_total = 0;
+    } else {
+      this.rngd_total = this.resources['rngd.device'].total;
+    }
+    if (isNaN(this.resources['hyperaccel-lpu.device'].total)) {
+      this.hyperaccel_lpu_total = 0;
+    } else {
+      this.hyperaccel_lpu_total = this.resources['hyperaccel-lpu.device'].total;
     }
     this.cpu_used = this.resources.cpu.used;
     this.cuda_gpu_used = this.resources['cuda.device'].used;
@@ -405,6 +445,8 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     this.ipu_used = this.resources['ipu.device'].used;
     this.atom_used = this.resources['atom.device'].used;
     this.warboy_used = this.resources['warboy.device'].used;
+    this.rngd_used = this.resources['rngd.device'].used;
+    this.hyperaccel_lpu_used = this.resources['hyperaccel-lpu.device'].used;
 
     this.cpu_percent = parseFloat(this.resources.cpu.percent).toFixed(2);
     this.cpu_total_percent =
@@ -503,6 +545,16 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     return num.toString().replace(regexp, ',');
   }
 
+  _prefixFormatWithoutTrailingZeros(num: string | number = '0', fixed: number) {
+    const number = typeof num === 'string' ? parseFloat(num) : num;
+    return parseFloat(number.toFixed(fixed)).toString();
+  }
+  _prefixFormat(num: string | number = '0;', fixed: number) {
+    return typeof num === 'string'
+      ? parseFloat(num)?.toFixed(fixed)
+      : num?.toFixed(fixed);
+  }
+
   render() {
     // language=HTML
     return html`
@@ -513,6 +565,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
         elevation="1"
         narrow
         height="${this.height}"
+        scrollableY="true"
       >
         <div slot="message">
           <div class="horizontal justified layout wrap indicators">
@@ -544,25 +597,44 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                         class="start"
                         progress="${this.cpu_total_usage_ratio / 100.0}"
                         description="${this._addComma(
-                          this.cpu_used,
-                        )}/${this._addComma(this.cpu_total)} ${_t(
-                          'summary.CoresReserved',
-                        )}."
+                          this._prefixFormatWithoutTrailingZeros(
+                            this.cpu_used,
+                            0,
+                          ),
+                        )}/${this._addComma(
+                          this._prefixFormatWithoutTrailingZeros(
+                            this.cpu_total,
+                            0,
+                          ),
+                        )} ${_t('summary.CoresReserved')}."
                       ></lablup-progress-bar>
                       <lablup-progress-bar
                         id="cpu-usage-bar-2"
                         class="end"
                         progress="${this.cpu_current_usage_ratio / 100.0}"
-                        description="${_t('summary.Using')} ${this
-                          .cpu_total_percent} % (util. ${this.cpu_percent} %)"
+                        description="${_t(
+                          'summary.Using',
+                        )} ${this._prefixFormatWithoutTrailingZeros(
+                          this.cpu_total_percent,
+                          1,
+                        )} % (util. ${this._prefixFormatWithoutTrailingZeros(
+                          this.cpu_percent,
+                          1,
+                        )} %)"
                       ></lablup-progress-bar>
                     </div>
                     <div class="layout vertical center center-justified">
                       <span class="percentage start-bar">
-                        ${parseInt(this.cpu_total_percent) + '%'}
+                        ${this._prefixFormatWithoutTrailingZeros(
+                          this.cpu_total_percent,
+                          1,
+                        ) + '%'}
                       </span>
                       <span class="percentage end-bar">
-                        ${parseInt(this.cpu_percent) + '%'}
+                        ${this._prefixFormatWithoutTrailingZeros(
+                          this.cpu_percent,
+                          1,
+                        ) + '%'}
                       </span>
                     </div>
                   </div>
@@ -579,38 +651,52 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                         class="start"
                         progress="${this.mem_total_usage_ratio / 100.0}"
                         description="${this._addComma(
-                          this.mem_allocated,
-                        )} / ${this._addComma(this.mem_total)} GiB ${_t(
-                          'summary.reserved',
-                        )}."
+                          this._prefixFormatWithoutTrailingZeros(
+                            this.mem_allocated,
+                            2,
+                          ),
+                        )} / ${this._addComma(
+                          this._prefixFormatWithoutTrailingZeros(
+                            this.mem_total,
+                            2,
+                          ),
+                        )} GiB ${_t('summary.reserved')}."
                       ></lablup-progress-bar>
                       <lablup-progress-bar
                         id="mem-usage-bar-2"
                         class="end"
                         progress="${this.mem_current_usage_ratio / 100.0}"
                         description="${_t('summary.Using')} ${this._addComma(
-                          this.mem_used,
+                          this._prefixFormatWithoutTrailingZeros(
+                            this.mem_used,
+                            2,
+                          ),
                         )} GiB
                     (${parseInt(this.mem_used) !== 0
-                          ? (
+                          ? this._prefixFormatWithoutTrailingZeros(
                               (parseInt(this.mem_used) /
                                 parseInt(this.mem_total)) *
-                              100
-                            ).toFixed(0)
+                                100,
+                              1,
+                            )
                           : '0'} %)"
                       ></lablup-progress-bar>
                     </div>
                     <div class="layout vertical center center-justified">
                       <span class="percentage start-bar">
-                        ${this.mem_total_usage_ratio.toFixed(1) + '%'}
+                        ${this._prefixFormatWithoutTrailingZeros(
+                          this.mem_total_usage_ratio,
+                          1,
+                        ) + '%'}
                       </span>
                       <span class="percentage end-bar">
                         ${(parseInt(this.mem_used) !== 0
-                          ? (
+                          ? this._prefixFormatWithoutTrailingZeros(
                               (parseInt(this.mem_used) /
                                 parseInt(this.mem_total)) *
-                              100
-                            ).toFixed(0)
+                                100,
+                              1,
+                            )
                           : '0') + '%'}
                       </span>
                     </div>
@@ -621,14 +707,18 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                   this.tpu_total ||
                   this.ipu_total ||
                   this.atom_total ||
-                  this.warboy_total
+                  this.atom_plus_total ||
+                  this.gaudi2_total ||
+                  this.warboy_total ||
+                  this.rngd_total ||
+                  this.hyperaccel_lpu_total
                     ? html`
                         <div class="resource-line"></div>
                         <div class="layout horizontal center flex resource">
                           <div
                             class="layout vertical center center-justified resource-name"
                           >
-                            <div class="gauge-name">GPU/NPU</div>
+                            <div class="gauge-name">GPU / NPU</div>
                           </div>
                           <div class="layout vertical">
                             ${this.cuda_gpu_total
@@ -642,11 +732,13 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                         class="start"
                                         progress="${this.cuda_gpu_used /
                                         this.cuda_gpu_total}"
-                                        description="${this
-                                          .cuda_gpu_used} / ${this
-                                          .cuda_gpu_total} CUDA GPUs ${_t(
-                                          'summary.reserved',
-                                        )}."
+                                        description="${this._prefixFormat(
+                                          this.cuda_gpu_used,
+                                          2,
+                                        )} / ${this._prefixFormat(
+                                          this.cuda_gpu_total,
+                                          2,
+                                        )} CUDA GPUs ${_t('summary.reserved')}."
                                       ></lablup-progress-bar>
                                       <lablup-progress-bar
                                         id="gpu-usage-bar-2"
@@ -662,11 +754,12 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                     >
                                       <span class="percentage start-bar">
                                         ${this.cuda_gpu_used !== 0
-                                          ? (
+                                          ? this._prefixFormatWithoutTrailingZeros(
                                               (this.cuda_gpu_used /
                                                 this.cuda_gpu_total) *
-                                              100
-                                            ).toFixed(1)
+                                                100,
+                                              1,
+                                            )
                                           : 0}%
                                       </span>
                                       <span class="percentage end-bar">
@@ -687,9 +780,13 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                         class="start"
                                         progress="${this.cuda_fgpu_used /
                                         this.cuda_fgpu_total}"
-                                        description="${this
-                                          .cuda_fgpu_used} / ${this
-                                          .cuda_fgpu_total} CUDA FGPUs ${_t(
+                                        description="${this._prefixFormat(
+                                          this.cuda_fgpu_used,
+                                          2,
+                                        )} / ${this._prefixFormat(
+                                          this.cuda_fgpu_total,
+                                          2,
+                                        )} CUDA FGPUs ${_t(
                                           'summary.reserved',
                                         )}."
                                       ></lablup-progress-bar>
@@ -707,11 +804,12 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                     >
                                       <span class="percentage start-bar">
                                         ${this.cuda_fgpu_used !== 0
-                                          ? (
+                                          ? this._prefixFormatWithoutTrailingZeros(
                                               (this.cuda_fgpu_used /
                                                 this.cuda_fgpu_total) *
-                                              100
-                                            ).toFixed(1)
+                                                100,
+                                              1,
+                                            )
                                           : 0}%
                                       </span>
                                       <span class="percentage end-bar">
@@ -731,11 +829,13 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                         id="rocm-gpu-usage-bar"
                                         class="start"
                                         progress="${this.rocm_gpu_used / 100.0}"
-                                        description="${this
-                                          .rocm_gpu_used} / ${this
-                                          .rocm_gpu_total} ROCm GPUs ${_t(
-                                          'summary.reserved',
-                                        )}."
+                                        description="${this._prefixFormat(
+                                          this.rocm_gpu_used,
+                                          2,
+                                        )} / ${this._prefixFormat(
+                                          this.rocm_gpu_total,
+                                          2,
+                                        )} ROCm GPUs ${_t('summary.reserved')}."
                                       ></lablup-progress-bar>
                                       <lablup-progress-bar
                                         id="rocm-gpu-usage-bar-2"
@@ -750,7 +850,10 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                       class="layout vertical center center-justified"
                                     >
                                       <span class="percentage start-bar">
-                                        ${this.rocm_gpu_used.toFixed(1) + '%'}
+                                        ${this._prefixFormatWithoutTrailingZeros(
+                                          this.rocm_gpu_used,
+                                          1,
+                                        ) + '%'}
                                       </span>
                                       <span class="percentage end-bar">
                                         &nbsp;
@@ -769,10 +872,13 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                         id="tpu-usage-bar"
                                         class="start"
                                         progress="${this.tpu_used / 100.0}"
-                                        description="${this.tpu_used} / ${this
-                                          .tpu_total} TPUs ${_t(
-                                          'summary.reserved',
-                                        )}."
+                                        description="${this._prefixFormatWithoutTrailingZeros(
+                                          this.tpu_used,
+                                          2,
+                                        )} / ${this._prefixFormatWithoutTrailingZeros(
+                                          this.tpu_total,
+                                          2,
+                                        )} TPUs ${_t('summary.reserved')}."
                                       ></lablup-progress-bar>
                                       <lablup-progress-bar
                                         id="tpu-usage-bar-2"
@@ -787,7 +893,10 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                       class="layout vertical center center-justified"
                                     >
                                       <span class="percentage start-bar">
-                                        ${this.tpu_used.toFixed(1) + '%'}
+                                        ${this._prefixFormatWithoutTrailingZeros(
+                                          this.tpu_used,
+                                          1,
+                                        ) + '%'}
                                       </span>
                                       <span class="percentage end-bar"></span>
                                     </div>
@@ -804,10 +913,13 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                         id="ipu-usage-bar"
                                         class="start"
                                         progress="${this.ipu_used / 100.0}"
-                                        description="${this.ipu_used} / ${this
-                                          .ipu_total} IPUs ${_t(
-                                          'summary.reserved',
-                                        )}."
+                                        description="${this._prefixFormatWithoutTrailingZeros(
+                                          this.ipu_used,
+                                          2,
+                                        )} / ${this._prefixFormatWithoutTrailingZeros(
+                                          this.ipu_total,
+                                          2,
+                                        )} IPUs ${_t('summary.reserved')}."
                                       ></lablup-progress-bar>
                                       <lablup-progress-bar
                                         id="ipu-usage-bar-2"
@@ -822,7 +934,10 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                       class="layout vertical center center-justified"
                                     >
                                       <span class="percentage start-bar">
-                                        ${this.ipu_used.toFixed(1) + '%'}
+                                        ${this._prefixFormatWithoutTrailingZeros(
+                                          this.ipu_used,
+                                          1,
+                                        ) + '%'}
                                       </span>
                                       <span class="percentage end-bar"></span>
                                     </div>
@@ -839,10 +954,13 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                         id="atom-usage-bar"
                                         class="start"
                                         progress="${this.atom_used / 100.0}"
-                                        description="${this.atom_used} / ${this
-                                          .atom_total} ATOMs ${_t(
-                                          'summary.reserved',
-                                        )}."
+                                        description="${this._prefixFormatWithoutTrailingZeros(
+                                          this.atom_used,
+                                          2,
+                                        )} / ${this._prefixFormatWithoutTrailingZeros(
+                                          this.atom_total,
+                                          2,
+                                        )} ATOMs ${_t('summary.reserved')}."
                                       ></lablup-progress-bar>
                                       <lablup-progress-bar
                                         id="atom-usage-bar-2"
@@ -857,7 +975,93 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                       class="layout vertical center center-justified"
                                     >
                                       <span class="percentage start-bar">
-                                        ${this.atom_used.toFixed(1) + '%'}
+                                        ${this._prefixFormatWithoutTrailingZeros(
+                                          this.atom_used,
+                                          1,
+                                        ) + '%'}
+                                      </span>
+                                      <span class="percentage end-bar"></span>
+                                    </div>
+                                  </div>
+                                `
+                              : html``}
+                            ${this.atom_plus_total
+                              ? html`
+                                  <div class="layout horizontal">
+                                    <div
+                                      class="layout vertical start-justified wrap"
+                                    >
+                                      <lablup-progress-bar
+                                        id="atom-plus-usage-bar"
+                                        class="start"
+                                        progress="${this.atom_plus_used /
+                                        100.0}"
+                                        description="${this._prefixFormatWithoutTrailingZeros(
+                                          this.atom_plus_used,
+                                          2,
+                                        )} / ${this._prefixFormatWithoutTrailingZeros(
+                                          this.atom_plus_total,
+                                          2,
+                                        )} ATOM+ ${_t('summary.reserved')}."
+                                      ></lablup-progress-bar>
+                                      <lablup-progress-bar
+                                        id="atom-plus-usage-bar-2"
+                                        class="end"
+                                        progress="0"
+                                        description="${_t(
+                                          'summary.ATOMPlusEnabled',
+                                        )}."
+                                      ></lablup-progress-bar>
+                                    </div>
+                                    <div
+                                      class="layout vertical center center-justified"
+                                    >
+                                      <span class="percentage start-bar">
+                                        ${this._prefixFormatWithoutTrailingZeros(
+                                          this.atom_plus_used,
+                                          1,
+                                        ) + '%'}
+                                      </span>
+                                      <span class="percentage end-bar"></span>
+                                    </div>
+                                  </div>
+                                `
+                              : html``}
+                            ${this.gaudi2_total
+                              ? html`
+                                  <div class="layout horizontal">
+                                    <div
+                                      class="layout vertical start-justified wrap"
+                                    >
+                                      <lablup-progress-bar
+                                        id="gaudi-2-usage-bar"
+                                        class="start"
+                                        progress="${this.gaudi2_used / 100.0}"
+                                        description="${this._prefixFormatWithoutTrailingZeros(
+                                          this.gaudi2_used,
+                                          2,
+                                        )} / ${this._prefixFormatWithoutTrailingZeros(
+                                          this.gaudi2_total,
+                                          2,
+                                        )} Gaudi 2 ${_t('summary.reserved')}."
+                                      ></lablup-progress-bar>
+                                      <lablup-progress-bar
+                                        id="gaudi-2-usage-bar-2"
+                                        class="end"
+                                        progress="0"
+                                        description="${_t(
+                                          'session.Gaudi2Enabled',
+                                        )}."
+                                      ></lablup-progress-bar>
+                                    </div>
+                                    <div
+                                      class="layout vertical center center-justified"
+                                    >
+                                      <span class="percentage start-bar">
+                                        ${this._prefixFormatWithoutTrailingZeros(
+                                          this.gaudi2_used,
+                                          1,
+                                        ) + '%'}
                                       </span>
                                       <span class="percentage end-bar"></span>
                                     </div>
@@ -874,11 +1078,13 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                         id="warboy-usage-bar"
                                         class="start"
                                         progress="${this.warboy_used / 100.0}"
-                                        description="${this
-                                          .warboy_used} / ${this
-                                          .warboy_total} Warboys ${_t(
-                                          'summary.reserved',
-                                        )}."
+                                        description="${this._prefixFormatWithoutTrailingZeros(
+                                          this.warboy_used,
+                                          2,
+                                        )} / ${this._prefixFormatWithoutTrailingZeros(
+                                          this.warboy_total,
+                                          2,
+                                        )} Warboys ${_t('summary.reserved')}."
                                       ></lablup-progress-bar>
                                       <lablup-progress-bar
                                         id="warboy-usage-bar-2"
@@ -893,7 +1099,95 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                       class="layout vertical center center-justified"
                                     >
                                       <span class="percentage start-bar">
-                                        ${this.warboy_used.toFixed(1) + '%'}
+                                        ${this._prefixFormatWithoutTrailingZeros(
+                                          this.warboy_used,
+                                          1,
+                                        ) + '%'}
+                                      </span>
+                                      <span class="percentage end-bar"></span>
+                                    </div>
+                                  </div>
+                                `
+                              : html``}
+                            ${this.rngd_total
+                              ? html`
+                                  <div class="layout horizontal">
+                                    <div
+                                      class="layout vertical start-justified wrap"
+                                    >
+                                      <lablup-progress-bar
+                                        id="rngd-usage-bar"
+                                        class="start"
+                                        progress="${this.rngd_used / 100.0}"
+                                        description="${this._prefixFormatWithoutTrailingZeros(
+                                          this.rngd_used,
+                                          2,
+                                        )} / ${this._prefixFormatWithoutTrailingZeros(
+                                          this.rngd_total,
+                                          2,
+                                        )} RNGDs ${_t('summary.reserved')}."
+                                      ></lablup-progress-bar>
+                                      <lablup-progress-bar
+                                        id="rngd-usage-bar-2"
+                                        class="end"
+                                        progress="0"
+                                        description="${_t(
+                                          'summary.RNGDEnabled',
+                                        )}."
+                                      ></lablup-progress-bar>
+                                    </div>
+                                    <div
+                                      class="layout vertical center center-justified"
+                                    >
+                                      <span class="percentage start-bar">
+                                        ${this._prefixFormatWithoutTrailingZeros(
+                                          this.rngd_used,
+                                          1,
+                                        ) + '%'}
+                                      </span>
+                                      <span class="percentage end-bar"></span>
+                                    </div>
+                                  </div>
+                                `
+                              : html``}
+                            ${this.hyperaccel_lpu_total
+                              ? html`
+                                  <div class="layout horizontal">
+                                    <div
+                                      class="layout vertical start-justified wrap"
+                                    >
+                                      <lablup-progress-bar
+                                        id="hyperaccel-lpu-usage-bar"
+                                        class="start"
+                                        progress="${this.hyperaccel_lpu_used /
+                                        100.0}"
+                                        description="${this._prefixFormatWithoutTrailingZeros(
+                                          this.hyperaccel_lpu_used,
+                                          2,
+                                        )} / ${this._prefixFormatWithoutTrailingZeros(
+                                          this.hyperaccel_lpu_total,
+                                          2,
+                                        )} Hyperaccel LPUs ${_t(
+                                          'summary.reserved',
+                                        )}."
+                                      ></lablup-progress-bar>
+                                      <lablup-progress-bar
+                                        id="hyperaccel-lpu-usage-bar-2"
+                                        class="end"
+                                        progress="0"
+                                        description="${_t(
+                                          'summary.HyperaccelLPUEnabled',
+                                        )}."
+                                      ></lablup-progress-bar>
+                                    </div>
+                                    <div
+                                      class="layout vertical center center-justified"
+                                    >
+                                      <span class="percentage start-bar">
+                                        ${this._prefixFormatWithoutTrailingZeros(
+                                          this.hyperaccel_lpu_used,
+                                          1,
+                                        ) + '%'}
                                       </span>
                                       <span class="percentage end-bar"></span>
                                     </div>

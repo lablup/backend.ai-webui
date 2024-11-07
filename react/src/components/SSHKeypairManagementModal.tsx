@@ -9,9 +9,12 @@ import { Button, Typography, theme } from 'antd';
 import React, { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface SSHKeypairManagementModalProps extends BAIModalProps {}
+interface SSHKeypairManagementModalProps extends BAIModalProps {
+  onRequestClose: (success?: boolean) => void;
+}
 
 const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
+  onRequestClose,
   ...modalProps
 }) => {
   const { t } = useTranslation();
@@ -41,8 +44,9 @@ const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
     <>
       <BAIModal
         title={t('usersettings.SSHKeypairGeneration')}
+        onCancel={() => onRequestClose()}
         footer={[
-          <Button key="back" onClick={modalProps.onCancel}>
+          <Button key="back" onClick={() => onRequestClose()}>
             {t('button.Close')}
           </Button>,
           <Button
@@ -90,8 +94,6 @@ const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
         isRefreshModalPending={isPendingRefreshModal}
         onRequestClose={() => {
           toggleSSHKeypairGenerationModal();
-        }}
-        onRequestRefresh={() => {
           startRefreshModalTransition(() => {
             updateFetchKey();
           });

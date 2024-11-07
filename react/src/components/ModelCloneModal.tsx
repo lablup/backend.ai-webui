@@ -1,43 +1,83 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
+import { useSetBAINotification } from '../hooks/useBAINotification';
 import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import StorageSelect from './StorageSelect';
+import { ModelCloneModalVFolderFragment$key } from './__generated__/ModelCloneModalVFolderFragment.graphql';
 import {
   Alert,
   Form,
   FormInstance,
+  FormItemProps,
   Input,
   Select,
   Switch,
   message,
 } from 'antd';
-import { useRef } from 'react';
+import graphql from 'babel-plugin-relay/macro';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useFragment } from 'react-relay';
 
 interface ModelCloneModalProps extends BAIModalProps {
-  sourceFolderName: string;
-  sourceFolderHost: string;
+  vfolderNode: ModelCloneModalVFolderFragment$key | null;
+  deprecatedVFolderInfo?: {
+    id: string;
+    name: string;
+    host: string;
+  };
 }
 const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
-  sourceFolderName,
-  sourceFolderHost,
+  // sourceFolderName,
+  // sourceFolderHost,
+  vfolderNode,
+  deprecatedVFolderInfo,
   ...props
 }) => {
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  const formRef = useRef<FormInstance>(null);
+  const vfolder =
+    useFragment(
+      graphql`
+        fragment ModelCloneModalVFolderFragment on VirtualFolderNode {
+          id
+          name
+          host
+        }
+      `,
+      vfolderNode,
+    ) || deprecatedVFolderInfo;
+
+  const formRef = useRef<
+    FormInstance<{
+      target_name: string;
+      target_host: string;
+      permission: string;
+      // type: string;
+      // project: string;
+      usage_mode: string;
+    }>
+  >(null);
   const painKiller = usePainKiller();
+  const { upsertNotification } = useSetBAINotification();
 
-  // const { data: allowed_vfolder_types } = useTanQuery({
-  //   queryKey: ['modelCloneModal', 'vfolder_allowed_types'],
-  //   queryFn: () => {
-  //     return baiClient.vfolder.list_allowed_types();
-  //   },
-  // });
+  const [extraNameError, setExtraNameError] = useState<
+    Pick<FormItemProps, 'validateStatus' | 'help'>
+  >({});
 
-  const mutationToClone = useTanMutation({
+  const mutationToClone = useTanMutation<
+    {
+      bgtask_id: string;
+      id: string;
+    },
+    { type?: string; title?: string; message?: string },
+    {
+      input: any;
+      name: string;
+    }
+  >({
     // @ts-ignore
     mutationFn: ({ input, name }: { input: any; name: string }) => {
       return baiClient.vfolder.clone(input, name);
@@ -49,32 +89,61 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
       destroyOnClose
       {...props}
       okText={t('button.Clone')}
-      confirmLoading={mutationToClone.isLoading}
-      onOk={() => {
+      confirmLoading={mutationToClone.isPending}
+      onOk={(e) => {
         formRef.current
           ?.validateFields()
           .then((values) => {
-            mutationToClone.mutate(
-              {
-                input: values,
-                name: sourceFolderName,
-              },
-              {
-                onSuccess(data) {
-                  message.info({
-                    content: t('modelStore.CloneSuccess'),
-                  });
-                  props.onOk?.(data);
+            if (vfolder?.name && vfolder.host) {
+              mutationToClone.mutate(
+                {
+                  input: values,
+                  name: vfolder.name,
                 },
-                onError(error: any) {
-                  // const title = painKiller.relieve(error?.title);
-                  const messageStr = painKiller.relieve(error?.message);
-                  message.error({
-                    content: messageStr,
-                  });
+                {
+                  onSuccess(data) {
+                    upsertNotification({
+                      key: 'modelStore.clone.' + vfolder.id,
+                      open: true,
+                      backgroundTask: {
+                        status: 'pending',
+                        percent: 0,
+                        taskId: data.bgtask_id,
+                        statusDescriptions: {
+                          pending: t('data.folders.FolderClonePending'),
+                          resolved: t('data.folders.FolderCloned'),
+                          rejected: t('data.folders.FolderCloneFailed'),
+                        },
+                      },
+                      message: values.target_name,
+                      toText: t('data.folders.OpenAFolder'),
+                      to: `/data?tab=model&folder=${data.id}`,
+                    });
+                    props.onOk?.(e);
+                  },
+                  onError(error) {
+                    if (
+                      error.message?.includes(
+                        'The virtual folder already exists with the same name',
+                      )
+                    ) {
+                      setExtraNameError({
+                        validateStatus: 'error',
+                        help: t('modelStore.FolderAlreadyExists'),
+                      });
+                    } else {
+                      const messageStr = painKiller.relieve(
+                        error?.message || '',
+                      );
+                      message.error({
+                        content: messageStr,
+                      });
+                    }
+                  },
                 },
-              },
-            );
+              );
+            } else {
+            }
           })
           .catch(() => {});
       }}
@@ -90,16 +159,18 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
             // project: currentProject.id,
             // type: 'user',
             usage_mode: 'model',
-            target_name: sourceFolderName + '_1',
-            target_host: sourceFolderHost,
+            target_name: vfolder?.name + '_1',
+            target_host: vfolder?.host,
           }}
+          scrollToFirstError
         >
+          {/*  */}
           <Form.Item label={t('data.ExistingFolderName')} required>
-            <Input value={sourceFolderName} disabled />
+            <Input value={vfolder?.name || ''} disabled />
           </Form.Item>
           <Form.Item
             name="target_name"
-            label={t('data.Foldername')}
+            label={t('data.NewFolderName')}
             rules={[
               {
                 required: true,
@@ -109,8 +180,14 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
                 message: t('data.Allowslettersnumbersand-_dot'),
               },
             ]}
+            {...extraNameError}
           >
-            <Input autoComplete="off" />
+            <Input
+              autoComplete="off"
+              onChange={() => {
+                setExtraNameError({});
+              }}
+            />
           </Form.Item>
           <Form.Item
             name="target_host"

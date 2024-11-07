@@ -1,0 +1,176 @@
+diff --git a/node_modules/@cloudscape-design/board-components/board-item/interfaces.d.ts b/node_modules/@cloudscape-design/board-components/board-item/interfaces.d.ts
+index 7451c23..2f0221c 100644
+--- a/node_modules/@cloudscape-design/board-components/board-item/interfaces.d.ts
++++ b/node_modules/@cloudscape-design/board-components/board-item/interfaces.d.ts
+@@ -31,6 +31,7 @@ export interface BoardItemProps {
+      * * `resizeHandleAriaDescription` (string, optional) - the ARIA description for the resize handle.
+      */
+     i18nStrings: BoardItemProps.I18nStrings;
++    className?: string;
+ }
+ export declare namespace BoardItemProps {
+     interface I18nStrings {
+diff --git a/node_modules/@cloudscape-design/board-components/board-item/internal.js b/node_modules/@cloudscape-design/board-components/board-item/internal.js
+index 9ce96ef..cd0a89e 100644
+--- a/node_modules/@cloudscape-design/board-components/board-item/internal.js
++++ b/node_modules/@cloudscape-design/board-components/board-item/internal.js
+@@ -11,12 +11,12 @@ import ResizeHandle from "../internal/resize-handle";
+ import ScreenreaderOnly from "../internal/screenreader-only";
+ import WidgetContainerHeader from "./header";
+ import styles from "./styles.css.js";
+-export function InternalBoardItem({ children, header, settings, disableContentPaddings, footer, i18nStrings, __internalRootRef, ...rest }) {
++export function InternalBoardItem({ className, children, header, settings, disableContentPaddings, footer, i18nStrings, __internalRootRef, ...rest }) {
+     const { dragHandle, resizeHandle, isActive } = useItemContext();
+     const dragHandleAriaLabelledBy = useId();
+     const dragHandleAriaDescribedBy = useId();
+     const resizeHandleAriaLabelledBy = useId();
+     const resizeHandleAriaDescribedBy = useId();
+-    return (_jsxs("div", { ref: __internalRootRef, className: styles.root, ...getDataAttributes(rest), children: [_jsx(Container, { fitHeight: true, disableHeaderPaddings: true, header: _jsx(WidgetContainerHeader, { handle: _jsx(DragHandle, { ref: dragHandle.ref, ariaLabelledBy: dragHandleAriaLabelledBy, ariaDescribedBy: dragHandleAriaDescribedBy, onPointerDown: dragHandle.onPointerDown, onKeyDown: dragHandle.onKeyDown, isActive: dragHandle.isActive }), settings: settings, children: header }), footer: footer, disableContentPaddings: disableContentPaddings, className: clsx(styles["container-override"], isActive && styles.active), children: children }), resizeHandle && (_jsx("div", { className: styles.resizer, children: _jsx(ResizeHandle, { ariaLabelledBy: resizeHandleAriaLabelledBy, ariaDescribedBy: resizeHandleAriaDescribedBy, onPointerDown: resizeHandle.onPointerDown, onKeyDown: resizeHandle.onKeyDown, isActive: resizeHandle.isActive }) })), _jsx(ScreenreaderOnly, { id: dragHandleAriaLabelledBy, children: i18nStrings.dragHandleAriaLabel }), _jsx(ScreenreaderOnly, { id: dragHandleAriaDescribedBy, children: i18nStrings.dragHandleAriaDescription }), _jsx(ScreenreaderOnly, { id: resizeHandleAriaLabelledBy, children: i18nStrings.resizeHandleAriaLabel }), _jsx(ScreenreaderOnly, { id: resizeHandleAriaDescribedBy, children: i18nStrings.resizeHandleAriaDescription })] }));
++    return (_jsxs("div", { ref: __internalRootRef, className: styles.root + (className?` ${className}`:''), ...getDataAttributes(rest), children: [_jsx(Container, { fitHeight: true, disableHeaderPaddings: true, header: _jsx(WidgetContainerHeader, { handle: _jsx(DragHandle, { ref: dragHandle.ref, ariaLabelledBy: dragHandleAriaLabelledBy, ariaDescribedBy: dragHandleAriaDescribedBy, onPointerDown: dragHandle.onPointerDown, onKeyDown: dragHandle.onKeyDown, isActive: dragHandle.isActive }), settings: settings, children: header }), footer: footer, disableContentPaddings: disableContentPaddings, className: clsx(styles["container-override"], isActive && styles.active), children: children }), resizeHandle && (_jsx("div", { className: styles.resizer, children: _jsx(ResizeHandle, { ariaLabelledBy: resizeHandleAriaLabelledBy, ariaDescribedBy: resizeHandleAriaDescribedBy, onPointerDown: resizeHandle.onPointerDown, onKeyDown: resizeHandle.onKeyDown, isActive: resizeHandle.isActive }) })), _jsx(ScreenreaderOnly, { id: dragHandleAriaLabelledBy, children: i18nStrings.dragHandleAriaLabel }), _jsx(ScreenreaderOnly, { id: dragHandleAriaDescribedBy, children: i18nStrings.dragHandleAriaDescription }), _jsx(ScreenreaderOnly, { id: resizeHandleAriaLabelledBy, children: i18nStrings.resizeHandleAriaLabel }), _jsx(ScreenreaderOnly, { id: resizeHandleAriaDescribedBy, children: i18nStrings.resizeHandleAriaDescription })] }));
+ }
+ //# sourceMappingURL=internal.js.map
+\ No newline at end of file
+diff --git a/node_modules/@cloudscape-design/board-components/board-item/styles.css.js b/node_modules/@cloudscape-design/board-components/board-item/styles.css.js
+index 1dcaf7c..f1d982c 100644
+--- a/node_modules/@cloudscape-design/board-components/board-item/styles.css.js
++++ b/node_modules/@cloudscape-design/board-components/board-item/styles.css.js
+@@ -2,15 +2,15 @@
+     import './styles.scoped.css';
+     export default {
+   "root": "awsui_root_9ckv7_1974t_1",
+-  "container-override": "awsui_container-override_9ckv7_1974t_6",
++  "container-override": "awsui_container-override_9ckv7_1974t_6 bai_board_container-override",
+   "active": "awsui_active_9ckv7_1974t_6",
+-  "header": "awsui_header_9ckv7_1974t_28",
++  "header": "awsui_header_9ckv7_1974t_28 bai_board_header",
+   "flexible": "awsui_flexible_9ckv7_1974t_34",
+-  "handle": "awsui_handle_9ckv7_1974t_38",
++  "handle": "awsui_handle_9ckv7_1974t_38 bai_board_handle",
+   "refresh": "awsui_refresh_9ckv7_1974t_41",
+   "header-content": "awsui_header-content_9ckv7_1974t_45",
+   "settings": "awsui_settings_9ckv7_1974t_49",
+   "fixed": "awsui_fixed_9ckv7_1974t_57",
+-  "resizer": "awsui_resizer_9ckv7_1974t_61"
++  "resizer": "awsui_resizer_9ckv7_1974t_61 bai_board_resizer",
+ };
+   
+\ No newline at end of file
+diff --git a/node_modules/@cloudscape-design/board-components/board-item/styles.selectors.js b/node_modules/@cloudscape-design/board-components/board-item/styles.selectors.js
+index 2acfd3b..beebd8d 100644
+--- a/node_modules/@cloudscape-design/board-components/board-item/styles.selectors.js
++++ b/node_modules/@cloudscape-design/board-components/board-item/styles.selectors.js
+@@ -3,15 +3,15 @@
+     Object.defineProperty(exports, "__esModule", { value: true });
+     module.exports.default = {
+   "root": "awsui_root_9ckv7_1974t_1",
+-  "container-override": "awsui_container-override_9ckv7_1974t_6",
++  "container-override": "awsui_container-override_9ckv7_1974t_6 bai_board_container-override",
+   "active": "awsui_active_9ckv7_1974t_6",
+-  "header": "awsui_header_9ckv7_1974t_28",
++  "header": "awsui_header_9ckv7_1974t_28 bai_board_header",
+   "flexible": "awsui_flexible_9ckv7_1974t_34",
+-  "handle": "awsui_handle_9ckv7_1974t_38",
++  "handle": "awsui_handle_9ckv7_1974t_38 bai_board_handle",
+   "refresh": "awsui_refresh_9ckv7_1974t_41",
+   "header-content": "awsui_header-content_9ckv7_1974t_45",
+   "settings": "awsui_settings_9ckv7_1974t_49",
+   "fixed": "awsui_fixed_9ckv7_1974t_57",
+-  "resizer": "awsui_resizer_9ckv7_1974t_61"
++  "resizer": "awsui_resizer_9ckv7_1974t_61 bai_board_resizer"
+ };
+   
+\ No newline at end of file
+diff --git a/node_modules/@cloudscape-design/board-components/board/interfaces.d.ts b/node_modules/@cloudscape-design/board-components/board/interfaces.d.ts
+index 8833051..4c47c4d 100644
+--- a/node_modules/@cloudscape-design/board-components/board/interfaces.d.ts
++++ b/node_modules/@cloudscape-design/board-components/board/interfaces.d.ts
+@@ -65,6 +65,7 @@ export interface BoardProps<D = DataFallbackType> {
+      * When items are loading the slot can be used to render the loading indicator.
+      */
+     empty: ReactNode;
++    className?: String;
+ }
+ export declare namespace BoardProps {
+     type Item<D = DataFallbackType> = BoardItemDefinition<D>;
+diff --git a/node_modules/@cloudscape-design/board-components/board/internal.js b/node_modules/@cloudscape-design/board-components/board/internal.js
+index 39c479f..6e4e4a9 100644
+--- a/node_modules/@cloudscape-design/board-components/board/internal.js
++++ b/node_modules/@cloudscape-design/board-components/board/internal.js
+@@ -22,7 +22,7 @@ import { selectTransitionRows, useTransition } from "./transition";
+ import { announcementToString } from "./utils/announcements";
+ import { createTransforms } from "./utils/create-transforms";
+ import { createItemsChangeEvent } from "./utils/events";
+-export function InternalBoard({ items, renderItem, onItemsChange, empty, i18nStrings, __internalRootRef, ...rest }) {
++export function InternalBoard({ className, items, renderItem, onItemsChange, empty, i18nStrings, __internalRootRef, ...rest }) {
+     var _a, _b;
+     const containerAccessRef = useRef(null);
+     const [currentColumns, containerQueryRef] = useContainerColumns();
+@@ -161,7 +161,7 @@ export function InternalBoard({ items, renderItem, onItemsChange, empty, i18nStr
+     const announcement = transitionAnnouncement
+         ? announcementToString(transitionAnnouncement, items, i18nStrings, itemsLayout.columns)
+         : "";
+-    return (_jsxs("div", { ref: __internalRootRef, ...getDataAttributes(rest), children: [_jsx(ScreenReaderGridNavigation, { items: items, itemsLayout: itemsLayout, ariaLabel: i18nStrings.navigationAriaLabel, ariaDescription: i18nStrings.navigationAriaDescription, itemAriaLabel: i18nStrings.navigationItemAriaLabel, onActivateItem: focusItem }), _jsx("div", { ref: containerRef, className: clsx(styles.root, { [styles.empty]: rows === 0 }), children: rows > 0 ? (_jsx(Grid, { columns: itemsLayout.columns, layout: [...placeholdersLayout.items, ...itemsLayout.items], children: (gridContext) => {
++    return (_jsxs("div", { ref: __internalRootRef, ...getDataAttributes(rest), children: [_jsx(ScreenReaderGridNavigation, { items: items, itemsLayout: itemsLayout, ariaLabel: i18nStrings.navigationAriaLabel, ariaDescription: i18nStrings.navigationAriaDescription, itemAriaLabel: i18nStrings.navigationItemAriaLabel, onActivateItem: focusItem }), _jsx("div", { ref: containerRef, className: clsx(styles.root + (className?` ${className}`:'') , { [styles.empty]: rows === 0 }), children: rows > 0 ? (_jsx(Grid, { columns: itemsLayout.columns, layout: [...placeholdersLayout.items, ...itemsLayout.items], children: (gridContext) => {
+                         var _a;
+                         const layoutShift = (_a = transition === null || transition === void 0 ? void 0 : transition.layoutShift) !== null && _a !== void 0 ? _a : removeTransition === null || removeTransition === void 0 ? void 0 : removeTransition.layoutShift;
+                         const transforms = layoutShift ? createTransforms(itemsLayout, layoutShift.moves, gridContext) : {};
+diff --git a/node_modules/@cloudscape-design/board-components/board/styles.css.js b/node_modules/@cloudscape-design/board-components/board/styles.css.js
+index 0cad188..6acfdb2 100644
+--- a/node_modules/@cloudscape-design/board-components/board/styles.css.js
++++ b/node_modules/@cloudscape-design/board-components/board/styles.css.js
+@@ -1,9 +1,9 @@
+ 
+     import './styles.scoped.css';
+     export default {
+-  "placeholder": "awsui_placeholder_1h7dk_inx8o_1",
+-  "placeholder--active": "awsui_placeholder--active_1h7dk_inx8o_5",
+-  "placeholder--hover": "awsui_placeholder--hover_1h7dk_inx8o_8",
++  "placeholder": "awsui_placeholder_1h7dk_inx8o_1 bai_board_placeholder",
++  "placeholder--active": "awsui_placeholder--active_1h7dk_inx8o_5 bai_board_placeholder--active",
++  "placeholder--hover": "awsui_placeholder--hover_1h7dk_inx8o_8 bai_board_placeholder--hover",
+   "root": "awsui_root_1h7dk_inx8o_12",
+   "empty": "awsui_empty_1h7dk_inx8o_16"
+ };
+diff --git a/node_modules/@cloudscape-design/board-components/board/styles.selectors.js b/node_modules/@cloudscape-design/board-components/board/styles.selectors.js
+index be32160..eea1a96 100644
+--- a/node_modules/@cloudscape-design/board-components/board/styles.selectors.js
++++ b/node_modules/@cloudscape-design/board-components/board/styles.selectors.js
+@@ -2,9 +2,9 @@
+     // es-module interop with Babel and Typescript
+     Object.defineProperty(exports, "__esModule", { value: true });
+     module.exports.default = {
+-  "placeholder": "awsui_placeholder_1h7dk_inx8o_1",
+-  "placeholder--active": "awsui_placeholder--active_1h7dk_inx8o_5",
+-  "placeholder--hover": "awsui_placeholder--hover_1h7dk_inx8o_8",
++  "placeholder": "awsui_placeholder_1h7dk_inx8o_1 bai_board_placeholder",
++  "placeholder--active": "awsui_placeholder--active_1h7dk_inx8o_5 bai_board_placeholder--active",
++  "placeholder--hover": "awsui_placeholder--hover_1h7dk_inx8o_8 bai_board_placeholder--hover",
+   "root": "awsui_root_1h7dk_inx8o_12",
+   "empty": "awsui_empty_1h7dk_inx8o_16"
+ };
+diff --git a/node_modules/@cloudscape-design/board-components/internal/grid/styles.css.js b/node_modules/@cloudscape-design/board-components/internal/grid/styles.css.js
+index ec202e1..0c0ed57 100644
+--- a/node_modules/@cloudscape-design/board-components/internal/grid/styles.css.js
++++ b/node_modules/@cloudscape-design/board-components/internal/grid/styles.css.js
+@@ -7,6 +7,5 @@
+   "columns-2": "awsui_columns-2_1hw7z_1ywbc_17",
+   "columns-4": "awsui_columns-4_1hw7z_1ywbc_21",
+   "columns-6": "awsui_columns-6_1hw7z_1ywbc_25",
+-  "grid__item": "awsui_grid__item_1hw7z_1ywbc_29"
++  "grid__item": "awsui_grid__item_1hw7z_1ywbc_29 bai_grid_item"
+ };
+-  
+\ No newline at end of file
+diff --git a/node_modules/@cloudscape-design/board-components/internal/grid/styles.selectors.js b/node_modules/@cloudscape-design/board-components/internal/grid/styles.selectors.js
+index e9bd94a..cf7bcb1 100644
+--- a/node_modules/@cloudscape-design/board-components/internal/grid/styles.selectors.js
++++ b/node_modules/@cloudscape-design/board-components/internal/grid/styles.selectors.js
+@@ -8,6 +8,6 @@
+   "columns-2": "awsui_columns-2_1hw7z_1ywbc_17",
+   "columns-4": "awsui_columns-4_1hw7z_1ywbc_21",
+   "columns-6": "awsui_columns-6_1hw7z_1ywbc_25",
+-  "grid__item": "awsui_grid__item_1hw7z_1ywbc_29"
++  "grid__item": "awsui_grid__item_1hw7z_1ywbc_29 bai_grid_item"
+ };
+   
+\ No newline at end of file

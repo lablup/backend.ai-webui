@@ -1,7 +1,8 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
+import { navigate } from '../backend-ai-app';
 import '../plastics/lablup-shields/lablup-shields';
 import {
   IronFlex,
@@ -9,6 +10,7 @@ import {
   IronFlexFactors,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
+import { store } from '../store';
 import './backend-ai-dialog';
 import { BackendAiStyles } from './backend-ai-general-styles';
 import { BackendAIPage } from './backend-ai-page';
@@ -119,7 +121,23 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     min: '0',
     max: '0',
   };
+  @property({ type: Object }) atom_plus_device_metric = {
+    min: '0',
+    max: '0',
+  };
+  @property({ type: Object }) gaudi2_device_metric = {
+    min: '0',
+    max: '0',
+  };
   @property({ type: Object }) warboy_device_metric = {
+    min: '0',
+    max: '0',
+  };
+  @property({ type: Object }) rngd_device_metric = {
+    min: '0',
+    max: '0',
+  };
+  @property({ type: Object }) hyperaccel_lpu_device_metric = {
     min: '0',
     max: '0',
   };
@@ -193,7 +211,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({ type: Number }) max_tpu_device_per_container = 8;
   @property({ type: Number }) max_ipu_device_per_container = 8;
   @property({ type: Number }) max_atom_device_per_container = 4;
+  @property({ type: Number }) max_atom_plus_device_per_container = 4;
+  @property({ type: Number }) max_gaudi2_device_per_container = 4;
   @property({ type: Number }) max_warboy_device_per_container = 4;
+  @property({ type: Number }) max_rngd_device_per_container = 4;
+  @property({ type: Number }) max_hyperaccel_lpu_device_per_container = 4;
   @property({ type: Number }) max_shm_per_container = 8;
   @property({ type: Boolean }) allow_manual_image_name_for_session = false;
   @property({ type: Object }) resourceBroker;
@@ -228,7 +250,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({ type: Boolean }) isExceedMaxCountForPreopenPorts = false;
   @property({ type: Number }) maxCountForPreopenPorts = 10;
   @property({ type: Boolean }) allowCustomResourceAllocation = true;
-
+  @property({ type: Boolean }) allowNEOSessionLauncher = false;
   @query('#image-name') manualImageName;
   @query('#version') version_selector!: Select;
   @query('#environment') environment!: Select;
@@ -243,11 +265,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @query('#prev-button') prevButton!: IconButton;
   @query('#next-button') nextButton!: IconButton;
   @query('#OpenMPswitch') openMPSwitch!: Switch;
-  @query('#cpu-resource') cpuResouceSlider!: LablupSlider;
-  @query('#gpu-resource') npuResouceSlider!: LablupSlider;
-  @query('#mem-resource') memoryResouceSlider!: LablupSlider;
-  @query('#shmem-resource') sharedMemoryResouceSlider!: LablupSlider;
-  @query('#session-resource') sessionResouceSlider!: LablupSlider;
+  @query('#cpu-resource') cpuResourceSlider!: LablupSlider;
+  @query('#gpu-resource') npuResourceSlider!: LablupSlider;
+  @query('#mem-resource') memoryResourceSlider!: LablupSlider;
+  @query('#shmem-resource') sharedMemoryResourceSlider!: LablupSlider;
+  @query('#session-resource') sessionResourceSlider!: LablupSlider;
   @query('#cluster-size') clusterSizeSlider!: LablupSlider;
   @query('#launch-button-msg') launchButtonMessage!: HTMLSpanElement;
   @query('#new-session-dialog') newSessionDialog!: BackendAIDialog;
@@ -522,7 +544,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         .resource-allocated-box {
-          background-color: var(--token-colorBgElevated, --paper-grey-300);
           border-radius: 5px;
           margin: 5px;
           z-index: 10;
@@ -868,6 +889,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             opacity: 1;
           }
         }
+        #launch-button {
+          font-size: 14px;
+        }
       `,
     ];
   }
@@ -976,9 +1000,20 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             globalThis.backendaiclient._config.maxIPUDevicesPerContainer || 8;
           this.max_atom_device_per_container =
             globalThis.backendaiclient._config.maxATOMDevicesPerContainer || 8;
+          this.max_atom_plus_device_per_container =
+            globalThis.backendaiclient._config.maxATOMPlUSDevicesPerContainer ||
+            8;
+          this.max_gaudi2_device_per_container =
+            globalThis.backendaiclient._config.maxGaudi2DevicesPerContainer ||
+            8;
           this.max_warboy_device_per_container =
             globalThis.backendaiclient._config.maxWarboyDevicesPerContainer ||
             8;
+          this.max_rngd_device_per_container =
+            globalThis.backendaiclient._config.maxRNGDDevicesPerContainer || 8;
+          this.max_hyperaccel_lpu_device_per_container =
+            globalThis.backendaiclient._config
+              .maxHyperaccelLPUDevicesPerContainer || 8;
           this.max_shm_per_container =
             globalThis.backendaiclient._config.maxShmPerContainer || 8;
           if (
@@ -1024,8 +1059,17 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         globalThis.backendaiclient._config.maxIPUDevicesPerContainer || 8;
       this.max_atom_device_per_container =
         globalThis.backendaiclient._config.maxATOMDevicesPerContainer || 8;
+      this.max_atom_plus_device_per_container =
+        globalThis.backendaiclient._config.maxATOMPlUSDevicesPerContainer || 8;
+      this.max_gaudi2_device_per_container =
+        globalThis.backendaiclient._config.maxGaudi2DevicesPerContainer || 8;
       this.max_warboy_device_per_container =
         globalThis.backendaiclient._config.maxWarboyDevicesPerContainer || 8;
+      this.max_rngd_device_per_container =
+        globalThis.backendaiclient._config.maxRNGDDevicesPerContainer || 8;
+      this.max_hyperaccel_lpu_device_per_container =
+        globalThis.backendaiclient._config
+          .maxHyperaccelLPUDevicesPerContainer || 8;
       this.max_shm_per_container =
         globalThis.backendaiclient._config.maxShmPerContainer || 8;
       if (
@@ -1443,6 +1487,29 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * Else, launch session dialog.
    * */
   async _launchSessionDialog() {
+    const shouldNeo = !globalThis.backendaioptions.get(
+      'classic_session_launcher',
+      false,
+    );
+
+    if (this.allowNEOSessionLauncher === true && shouldNeo) {
+      const url =
+        '/session/start?formValues=' +
+        encodeURIComponent(
+          JSON.stringify({
+            resourceGroup: this.resourceBroker.scaling_group,
+          }),
+        );
+      store.dispatch(navigate(decodeURIComponent(url), {}));
+
+      document.dispatchEvent(
+        new CustomEvent('react-navigate', {
+          detail: url,
+        }),
+      );
+      return;
+    }
+
     if (
       typeof globalThis.backendaiclient === 'undefined' ||
       globalThis.backendaiclient === null ||
@@ -1528,6 +1595,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       const nameFragments = this.manualImageName.value.split(':');
       version = nameFragments.splice(-1, 1)[0];
       kernel = nameFragments.join(':');
+      // extract architecture if exists
+      architecture = ['x86_64', 'aarch64'].includes(
+        this.manualImageName.value.split('@').pop(),
+      )
+        ? this.manualImageName.value.split('@').pop()
+        : undefined;
+      if (architecture) {
+        kernel = this.manualImageName.value.split('@')[0];
+      }
       // TODO: Add support for selecting image architecture when starting kernel with manual image name
     } else {
       // When the "Environment" dropdown is disabled after typing the image name manually,
@@ -1550,11 +1626,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.shadowRoot?.querySelector('#session-name') as TextField
     ).checkValidity();
     let vfolder = this.selectedVfolders; // Will be overwritten if customFolderMapping is given on inference mode.
-    this.cpu_request = parseInt(this.cpuResouceSlider.value);
-    this.mem_request = parseFloat(this.memoryResouceSlider.value);
-    this.shmem_request = parseFloat(this.sharedMemoryResouceSlider.value);
-    this.gpu_request = parseFloat(this.npuResouceSlider.value);
-    this.session_request = parseInt(this.sessionResouceSlider.value);
+    this.cpu_request = parseInt(this.cpuResourceSlider.value);
+    this.mem_request = parseFloat(this.memoryResourceSlider.value);
+    this.shmem_request = parseFloat(this.sharedMemoryResourceSlider.value);
+    this.gpu_request = parseFloat(this.npuResourceSlider.value);
+    this.session_request = parseInt(this.sessionResourceSlider.value);
     this.num_sessions = this.session_request;
     if (this.sessions_list.includes(sessionName)) {
       this.notification.text = _text('session.launcher.DuplicatedSessionName');
@@ -1626,8 +1702,20 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       case 'atom.device':
         config['atom.device'] = this.gpu_request;
         break;
+      case 'atom-plus.device':
+        config['atom-plus.device'] = this.gpu_request;
+        break;
+      case 'gaudi2.device':
+        config['gaudi2.device'] = this.gpu_request;
+        break;
       case 'warboy.device':
         config['warboy.device'] = this.gpu_request;
+        break;
+      case 'rngd.device':
+        config['rngd.device'] = this.gpu_request;
+        break;
+      case 'hyperaccel-lpu.device':
+        config['hyperaccel-lpu.device'] = this.gpu_request;
         break;
       default:
         // Fallback to current gpu mode if there is a gpu request, but without gpu type.
@@ -1635,8 +1723,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           config[this.gpu_mode] = this.gpu_request;
         }
     }
-    if (String(this.memoryResouceSlider.value) === 'Infinity') {
-      config['mem'] = String(this.memoryResouceSlider.value);
+    if (String(this.memoryResourceSlider.value) === 'Infinity') {
+      config['mem'] = String(this.memoryResourceSlider.value);
     } else {
       config['mem'] = String(this.mem_request) + 'g';
     }
@@ -1664,7 +1752,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       (this._debug && this.manualImageName.value !== '') ||
       (this.manualImageName && this.manualImageName.value !== '')
     ) {
-      kernelName = this.manualImageName.value;
+      kernelName = architecture ? kernel : this.manualImageName.value;
     } else {
       kernelName = this._generateKernelIndex(kernel, version);
     }
@@ -2181,13 +2269,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       );
     } else {
       this.metric_updating = true;
-      let enqueue_session = false;
-      if (
-        globalThis.backendaiclient._config.always_enqueue_compute_session ===
-        true
-      ) {
-        enqueue_session = true;
-      }
       await this._aggregateResourceUse('update-metric');
       await this._updateVirtualFolderList();
       this.autoMountedVfolders = this.vfolders.filter((item) =>
@@ -2236,15 +2317,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       const available_slot = this.resourceBroker.available_slot;
 
       // Post-UI markup to disable unchangeable values
-      this.cpuResouceSlider.disabled = false;
-      this.memoryResouceSlider.disabled = false;
-      this.npuResouceSlider.disabled = false;
+      this.cpuResourceSlider.disabled = false;
+      this.memoryResourceSlider.disabled = false;
+      this.npuResourceSlider.disabled = false;
       if (globalThis.backendaiclient.supports('multi-container')) {
         // initialize cluster_size
         this.cluster_size = 1;
         this.clusterSizeSlider.value = this.cluster_size;
       }
-      this.sessionResouceSlider.disabled = false;
+      this.sessionResourceSlider.disabled = false;
       this.launchButton.disabled = false;
       this.launchButtonMessageTextContent = _text(
         'session.launcher.ConfirmAndLaunch',
@@ -2263,23 +2344,26 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         if (item.key === 'cpu') {
           const cpu_metric = { ...item };
           cpu_metric.min = parseInt(cpu_metric.min);
-          if (enqueue_session) {
-            [
-              'cpu',
-              'mem',
-              'cuda_device',
-              'cuda_shares',
-              'rocm_device',
-              'tpu_device',
-              'ipu_device',
-              'atom_device',
-              'warboy_device',
-            ].forEach((slot) => {
-              if (slot in this.total_resource_group_slot) {
-                available_slot[slot] = this.total_resource_group_slot[slot];
-              }
-            });
-          }
+
+          [
+            'cpu',
+            'mem',
+            'cuda_device',
+            'cuda_shares',
+            'rocm_device',
+            'tpu_device',
+            'ipu_device',
+            'atom_device',
+            'atom_plus_device',
+            'gaudi2_device',
+            'warboy_device',
+            'rngd.device',
+            'hyperaccel_lpu_device',
+          ].forEach((slot) => {
+            if (slot in this.total_resource_group_slot) {
+              available_slot[slot] = this.total_resource_group_slot[slot];
+            }
+          });
 
           if ('cpu' in this.userResourceLimit) {
             if (
@@ -2325,7 +2409,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               cpu_metric.min = cpu_metric.max;
               disableLaunch = true;
             }
-            this.cpuResouceSlider.disabled = true;
+            this.cpuResourceSlider.disabled = true;
           }
           this.cpu_metric = cpu_metric;
           // monkeypatch for cluster_metric max size
@@ -2388,7 +2472,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               cuda_device_metric.min = cuda_device_metric.max;
               disableLaunch = true;
             }
-            this.npuResouceSlider.disabled = true;
+            this.npuResourceSlider.disabled = true;
           }
           this.npu_device_metric = cuda_device_metric;
           this._NPUDeviceNameOnSlider = 'GPU';
@@ -2440,7 +2524,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               cuda_shares_metric.min = cuda_shares_metric.max;
               disableLaunch = true;
             }
-            this.npuResouceSlider.disabled = true;
+            this.npuResourceSlider.disabled = true;
           }
 
           this.cuda_shares_metric = cuda_shares_metric;
@@ -2458,7 +2542,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               rocm_device_metric.min = rocm_device_metric.max;
               disableLaunch = true;
             }
-            this.npuResouceSlider.disabled = true;
+            this.npuResourceSlider.disabled = true;
           }
           this.npu_device_metric = rocm_device_metric;
           this._NPUDeviceNameOnSlider = 'GPU';
@@ -2510,7 +2594,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               tpu_device_metric.min = tpu_device_metric.max;
               disableLaunch = true;
             }
-            this.npuResouceSlider.disabled = true;
+            this.npuResourceSlider.disabled = true;
           }
           this.npu_device_metric = tpu_device_metric;
           this._NPUDeviceNameOnSlider = 'TPU';
@@ -2562,7 +2646,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               ipu_device_metric.min = ipu_device_metric.max;
               disableLaunch = true;
             }
-            this.npuResouceSlider.disabled = true;
+            this.npuResourceSlider.disabled = true;
           }
           this.npu_device_metric = ipu_device_metric;
           this._NPUDeviceNameOnSlider = 'IPU';
@@ -2614,10 +2698,114 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               atom_device_metric.min = atom_device_metric.max;
               disableLaunch = true;
             }
-            this.npuResouceSlider.disabled = true;
+            this.npuResourceSlider.disabled = true;
           }
           this._NPUDeviceNameOnSlider = 'ATOM';
           this.npu_device_metric = atom_device_metric;
+        }
+        if (item.key === 'atom-plus.device') {
+          const atom_plus_device_metric = { ...item };
+          atom_plus_device_metric.min = parseInt(atom_plus_device_metric.min);
+          if ('atom-plus.device' in this.userResourceLimit) {
+            if (
+              parseInt(atom_plus_device_metric.max) !== 0 &&
+              atom_plus_device_metric.max !== 'Infinity' &&
+              !isNaN(atom_plus_device_metric.max) &&
+              atom_plus_device_metric.max != null
+            ) {
+              atom_plus_device_metric.max = Math.min(
+                parseInt(atom_plus_device_metric.max),
+                parseInt(this.userResourceLimit['atom-plus.device']),
+                available_slot['atom_plus_device'],
+                this.max_atom_plus_device_per_container,
+              );
+            } else {
+              atom_plus_device_metric.max = Math.min(
+                parseInt(this.userResourceLimit['atom-plus.device']),
+                parseInt(available_slot['atom_plus_device']),
+                this.max_atom_plus_device_per_container,
+              );
+            }
+          } else {
+            if (
+              parseInt(atom_plus_device_metric.max) !== 0 &&
+              atom_plus_device_metric.max !== 'Infinity' &&
+              !isNaN(atom_plus_device_metric.max) &&
+              atom_plus_device_metric.max != null
+            ) {
+              atom_plus_device_metric.max = Math.min(
+                parseInt(atom_plus_device_metric.max),
+                parseInt(available_slot['atom_plus_device']),
+                this.max_atom_plus_device_per_container,
+              );
+            } else {
+              atom_plus_device_metric.max = Math.min(
+                parseInt(this.available_slot['atom_plus_device']),
+                this.max_atom_plus_device_per_container,
+              );
+            }
+          }
+          if (atom_plus_device_metric.min >= atom_plus_device_metric.max) {
+            if (atom_plus_device_metric.min > atom_plus_device_metric.max) {
+              atom_plus_device_metric.min = atom_plus_device_metric.max;
+              disableLaunch = true;
+            }
+            this.npuResourceSlider.disabled = true;
+          }
+          this._NPUDeviceNameOnSlider = 'ATOM+';
+          this.npu_device_metric = atom_plus_device_metric;
+        }
+        if (item.key === 'gaudi2.device') {
+          const gaudi2_device_metric = { ...item };
+          gaudi2_device_metric.min = parseInt(gaudi2_device_metric.min);
+          if ('gaudi2.device' in this.userResourceLimit) {
+            if (
+              parseInt(gaudi2_device_metric.max) !== 0 &&
+              gaudi2_device_metric.max !== 'Infinity' &&
+              !isNaN(gaudi2_device_metric.max) &&
+              gaudi2_device_metric.max != null
+            ) {
+              gaudi2_device_metric.max = Math.min(
+                parseInt(gaudi2_device_metric.max),
+                parseInt(this.userResourceLimit['gaudi2.device']),
+                available_slot['gaudi2_device'],
+                this.max_gaudi2_device_per_container,
+              );
+            } else {
+              gaudi2_device_metric.max = Math.min(
+                parseInt(this.userResourceLimit['gaudi2.device']),
+                parseInt(available_slot['gaudi2_device']),
+                this.max_gaudi2_device_per_container,
+              );
+            }
+          } else {
+            if (
+              parseInt(gaudi2_device_metric.max) !== 0 &&
+              gaudi2_device_metric.max !== 'Infinity' &&
+              !isNaN(gaudi2_device_metric.max) &&
+              gaudi2_device_metric.max != null
+            ) {
+              gaudi2_device_metric.max = Math.min(
+                parseInt(gaudi2_device_metric.max),
+                parseInt(available_slot['gaudi2_device']),
+                this.max_gaudi2_device_per_container,
+              );
+            } else {
+              gaudi2_device_metric.max = Math.min(
+                parseInt(this.available_slot['gaudi2_device']),
+                this.max_gaudi2_device_per_container,
+              );
+            }
+          }
+          if (gaudi2_device_metric.min >= gaudi2_device_metric.max) {
+            if (gaudi2_device_metric.min > gaudi2_device_metric.max) {
+              gaudi2_device_metric.min = gaudi2_device_metric.max;
+              disableLaunch = true;
+            }
+            this.npuResourceSlider.disabled = true;
+          }
+          this._NPUDeviceNameOnSlider = 'Gaudi 2';
+          this.npu_device_metric = gaudi2_device_metric;
         }
         if (item.key === 'warboy.device') {
           const warboy_device_metric = { ...item };
@@ -2666,11 +2854,122 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               warboy_device_metric.min = warboy_device_metric.max;
               disableLaunch = true;
             }
-            this.npuResouceSlider.disabled = true;
+            this.npuResourceSlider.disabled = true;
           }
-          console.log(warboy_device_metric);
           this._NPUDeviceNameOnSlider = 'Warboy';
           this.npu_device_metric = warboy_device_metric;
+        }
+        if (item.key === 'rngd.device') {
+          const rngd_device_metric = { ...item };
+          rngd_device_metric.min = parseInt(rngd_device_metric.min);
+          if ('rngd.device' in this.userResourceLimit) {
+            if (
+              parseInt(rngd_device_metric.max) !== 0 &&
+              rngd_device_metric.max !== 'Infinity' &&
+              !isNaN(rngd_device_metric.max) &&
+              rngd_device_metric.max != null
+            ) {
+              rngd_device_metric.max = Math.min(
+                parseInt(rngd_device_metric.max),
+                parseInt(this.userResourceLimit['rngd.device']),
+                available_slot['cuda_device'],
+                this.max_cuda_device_per_container,
+              );
+            } else {
+              rngd_device_metric.max = Math.min(
+                parseInt(this.userResourceLimit['rngd.device']),
+                parseInt(available_slot['cuda_device']),
+                this.max_cuda_device_per_container,
+              );
+            }
+          } else {
+            if (
+              parseInt(rngd_device_metric.max) !== 0 &&
+              rngd_device_metric.max !== 'Infinity' &&
+              !isNaN(rngd_device_metric.max) &&
+              rngd_device_metric.max != null
+            ) {
+              rngd_device_metric.max = Math.min(
+                parseInt(rngd_device_metric.max),
+                parseInt(available_slot['rngd_device']),
+                this.max_rngd_device_per_container,
+              );
+            } else {
+              rngd_device_metric.max = Math.min(
+                parseInt(this.available_slot['rngd_device']),
+                this.max_rngd_device_per_container,
+              );
+            }
+          }
+          if (rngd_device_metric.min >= rngd_device_metric.max) {
+            if (rngd_device_metric.min > rngd_device_metric.max) {
+              rngd_device_metric.min = rngd_device_metric.max;
+              disableLaunch = true;
+            }
+            this.npuResourceSlider.disabled = true;
+          }
+          this._NPUDeviceNameOnSlider = 'RNGD';
+          this.npu_device_metric = rngd_device_metric;
+        }
+        if (item.key === 'hyperaccel-lpu.device') {
+          const hyperaccel_lpu_device_metric = { ...item };
+          hyperaccel_lpu_device_metric.min = parseInt(
+            hyperaccel_lpu_device_metric.min,
+          );
+          if ('hyperaccel-lpu.device' in this.userResourceLimit) {
+            if (
+              parseInt(hyperaccel_lpu_device_metric.max) !== 0 &&
+              hyperaccel_lpu_device_metric.max !== 'Infinity' &&
+              !isNaN(hyperaccel_lpu_device_metric.max) &&
+              hyperaccel_lpu_device_metric.max != null
+            ) {
+              hyperaccel_lpu_device_metric.max = Math.min(
+                parseInt(hyperaccel_lpu_device_metric.max),
+                parseInt(this.userResourceLimit['hyperaccel-lpu.device']),
+                available_slot['hyperaccel_lpu_device'],
+                this.max_hyperaccel_lpu_device_per_container,
+              );
+            } else {
+              hyperaccel_lpu_device_metric.max = Math.min(
+                parseInt(this.userResourceLimit['hyperaccel-lpu.device']),
+                parseInt(available_slot['hyperaccel_lpu_device']),
+                this.max_hyperaccel_lpu_device_per_container,
+              );
+            }
+          } else {
+            if (
+              parseInt(hyperaccel_lpu_device_metric.max) !== 0 &&
+              hyperaccel_lpu_device_metric.max !== 'Infinity' &&
+              !isNaN(hyperaccel_lpu_device_metric.max) &&
+              hyperaccel_lpu_device_metric.max != null
+            ) {
+              hyperaccel_lpu_device_metric.max = Math.min(
+                parseInt(hyperaccel_lpu_device_metric.max),
+                parseInt(available_slot['hyperaccel_lpu_device']),
+                this.max_hyperaccel_lpu_device_per_container,
+              );
+            } else {
+              hyperaccel_lpu_device_metric.max = Math.min(
+                parseInt(this.available_slot['hyperaccel_lpu_device']),
+                this.max_hyperaccel_lpu_device_per_container,
+              );
+            }
+          }
+          if (
+            hyperaccel_lpu_device_metric.min >= hyperaccel_lpu_device_metric.max
+          ) {
+            if (
+              hyperaccel_lpu_device_metric.min >
+              hyperaccel_lpu_device_metric.max
+            ) {
+              hyperaccel_lpu_device_metric.min =
+                hyperaccel_lpu_device_metric.max;
+              disableLaunch = true;
+            }
+            this.npuResourceSlider.disabled = true;
+          }
+          this._NPUDeviceNameOnSlider = 'Hyperaccel LPU';
+          this.npu_device_metric = hyperaccel_lpu_device_metric;
         }
 
         if (item.key === 'mem') {
@@ -2743,7 +3042,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               mem_metric.min = mem_metric.max;
               disableLaunch = true;
             }
-            this.memoryResouceSlider.disabled = true;
+            this.memoryResourceSlider.disabled = true;
           }
           mem_metric.min = Number(mem_metric.min.toFixed(2));
           mem_metric.max = Number(mem_metric.max.toFixed(2));
@@ -2772,7 +3071,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           shmem_metric.min = shmem_metric.max;
           disableLaunch = true;
         }
-        this.sharedMemoryResouceSlider.disabled = true;
+        this.sharedMemoryResourceSlider.disabled = true;
       }
       shmem_metric.min = Number(shmem_metric.min.toFixed(2));
       shmem_metric.max = Number(shmem_metric.max.toFixed(2));
@@ -2781,8 +3080,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       // GPU metric
       if (this.npu_device_metric.min == 0 && this.npu_device_metric.max == 0) {
         // GPU is disabled (by image,too).
-        this.npuResouceSlider.disabled = true;
-        this.npuResouceSlider.value = 0;
+        this.npuResourceSlider.disabled = true;
+        this.npuResourceSlider.value = 0;
         if (this.resource_templates.length > 0) {
           // Remove mismatching templates
           const new_resource_templates: any = [];
@@ -2811,8 +3110,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           this.resource_templates_filtered = this.resource_templates;
         }
       } else {
-        this.npuResouceSlider.disabled = false;
-        this.npuResouceSlider.value = this.npu_device_metric.max;
+        this.npuResourceSlider.disabled = false;
+        this.npuResourceSlider.value = this.npu_device_metric.max;
         this.resource_templates_filtered = this.resource_templates;
       }
       // Refresh with resource template
@@ -2836,11 +3135,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         );
       }
       if (disableLaunch) {
-        this.cpuResouceSlider.disabled = true; // Not enough CPU. so no session.
-        this.memoryResouceSlider.disabled = true;
-        this.npuResouceSlider.disabled = true;
-        this.sessionResouceSlider.disabled = true;
-        this.sharedMemoryResouceSlider.disabled = true;
+        this.cpuResourceSlider.disabled = true; // Not enough CPU. so no session.
+        this.memoryResourceSlider.disabled = true;
+        this.npuResourceSlider.disabled = true;
+        this.sessionResourceSlider.disabled = true;
+        this.sharedMemoryResourceSlider.disabled = true;
         this.launchButton.disabled = true;
         (
           this.shadowRoot?.querySelector('.allocation-check') as HTMLDivElement
@@ -2852,11 +3151,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           'session.launcher.NotEnoughResource',
         );
       } else {
-        this.cpuResouceSlider.disabled = false;
-        this.memoryResouceSlider.disabled = false;
-        this.npuResouceSlider.disabled = false;
-        this.sessionResouceSlider.disabled = false;
-        this.sharedMemoryResouceSlider.disabled = false;
+        this.cpuResourceSlider.disabled = false;
+        this.memoryResourceSlider.disabled = false;
+        this.npuResourceSlider.disabled = false;
+        this.sessionResourceSlider.disabled = false;
+        this.sharedMemoryResourceSlider.disabled = false;
         this.launchButton.disabled = false;
         (
           this.shadowRoot?.querySelector('.allocation-check') as HTMLDivElement
@@ -2869,14 +3168,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this.npu_device_metric.min == this.npu_device_metric.max &&
         this.npu_device_metric.max < 1
       ) {
-        this.npuResouceSlider.disabled = true;
+        this.npuResourceSlider.disabled = true;
       }
       if (this.concurrency_limit <= 1) {
         // this.shadowRoot.querySelector('#cluster-size').disabled = true;
-        this.sessionResouceSlider.min = 1;
-        this.sessionResouceSlider.max = 2;
-        this.sessionResouceSlider.value = 1;
-        this.sessionResouceSlider.disabled = true;
+        this.sessionResourceSlider.min = 1;
+        this.sessionResourceSlider.max = 2;
+        this.sessionResourceSlider.value = 1;
+        this.sessionResourceSlider.disabled = true;
       }
       if (
         this.max_containers_per_session <= 1 &&
@@ -3126,12 +3425,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    */
   _setSessionLimit(maxValue = 1) {
     if (maxValue > 0) {
-      this.sessionResouceSlider.value = maxValue;
+      this.sessionResourceSlider.value = maxValue;
       this.session_request = maxValue;
-      this.sessionResouceSlider.disabled = true;
+      this.sessionResourceSlider.disabled = true;
     } else {
-      this.sessionResouceSlider.max = this.concurrency_limit;
-      this.sessionResouceSlider.disabled = false;
+      this.sessionResourceSlider.max = this.concurrency_limit;
+      this.sessionResourceSlider.disabled = false;
     }
   }
 
@@ -3156,20 +3455,25 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const tpu_device = button.tpu_device;
     const ipu_device = button.ipu_device;
     const atom_device = button.atom_device;
+    const atom_plus_device = button.atom_plus_device;
+    const gaudi2_device = button.gaudi2_device;
     const warboy_device = button.warboy_device;
+    const rngd_device = button.rngd_device;
+    const hyperaccel_lpu_device = button.hyperaccel_lpu_device;
+
     let gpu_type;
     let gpu_value;
     if (
       (typeof cuda_device !== 'undefined' && Number(cuda_device) > 0) ||
       (typeof cuda_shares !== 'undefined' && Number(cuda_shares) > 0)
     ) {
-      if (typeof cuda_device === 'undefined') {
+      if (typeof cuda_shares === 'undefined') {
+        gpu_type = 'cuda.device';
+        gpu_value = cuda_device;
+      } else {
         // FGPU
         gpu_type = 'cuda.shares';
         gpu_value = cuda_shares;
-      } else {
-        gpu_type = 'cuda.device';
-        gpu_value = cuda_device;
       }
     } else if (typeof rocm_device !== 'undefined' && Number(rocm_device) > 0) {
       gpu_type = 'rocm.device';
@@ -3184,11 +3488,32 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       gpu_type = 'atom.device';
       gpu_value = atom_device;
     } else if (
+      typeof atom_plus_device !== 'undefined' &&
+      Number(atom_plus_device) > 0
+    ) {
+      gpu_type = 'atom-plus.device';
+      gpu_value = atom_plus_device;
+    } else if (
+      typeof gaudi2_device !== 'undefined' &&
+      Number(gaudi2_device) > 0
+    ) {
+      gpu_type = 'gaudi2.device';
+      gpu_value = gaudi2_device;
+    } else if (
       typeof warboy_device !== 'undefined' &&
       Number(warboy_device) > 0
     ) {
       gpu_type = 'warboy.device';
       gpu_value = warboy_device;
+    } else if (typeof rngd_device !== 'undefined' && Number(rngd_device) > 0) {
+      gpu_type = 'rngd.device';
+      gpu_value = rngd_device;
+    } else if (
+      typeof hyperaccel_lpu_device !== 'undefined' &&
+      Number(hyperaccel_lpu_device) > 0
+    ) {
+      gpu_type = 'hyperaccel-lpu.device';
+      gpu_value = hyperaccel_lpu_device;
     } else {
       gpu_type = 'none';
       gpu_value = 0;
@@ -3206,10 +3531,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _updateResourceIndicator(cpu, mem, gpu_type, gpu_value) {
-    this.cpuResouceSlider.value = cpu;
-    this.memoryResouceSlider.value = mem;
-    this.npuResouceSlider.value = gpu_value;
-    this.sharedMemoryResouceSlider.value = this.shmem_request;
+    this.cpuResourceSlider.value = cpu;
+    this.memoryResourceSlider.value = mem;
+    this.npuResourceSlider.value = gpu_value;
+    this.sharedMemoryResourceSlider.value = this.shmem_request;
     this.cpu_request = cpu;
     this.mem_request = mem;
     this.gpu_request = gpu_value;
@@ -3296,7 +3621,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.ownerFeatureInitialized = true;
     }
     const email = this.ownerEmailInput.value;
-    if (!this.ownerEmailInput.checkValidity()) {
+    if (
+      !this.ownerEmailInput.checkValidity() ||
+      email === '' ||
+      email === undefined
+    ) {
       this.notification.text = _text(
         'credential.validation.InvalidEmailAddress',
       );
@@ -3331,13 +3660,20 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     });
 
     /* Fetch domain / group information */
-    const userInfo = await globalThis.backendaiclient.user.get(email, [
-      'domain_name',
-      'groups {id name}',
-    ]);
-    this.ownerDomain = userInfo.user.domain_name;
-    this.ownerGroups = userInfo.user.groups;
-    if (this.ownerGroups) {
+    try {
+      const userInfo = await globalThis.backendaiclient.user.get(email, [
+        'domain_name',
+        'groups {id name}',
+      ]);
+      this.ownerDomain = userInfo.user.domain_name;
+      this.ownerGroups = userInfo.user.groups;
+    } catch (e) {
+      this.notification.text = _text('session.launcher.NotEnoughOwnershipInfo');
+      this.notification.show();
+      return;
+    }
+
+    if (this.ownerGroups.length) {
       this.ownerGroupSelect.layout(true).then(() => {
         this.ownerGroupSelect.select(0);
         // remove protected property usage
@@ -3562,7 +3898,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       const container = this.shadowRoot?.querySelector(
         '#resource-allocated-box-shadow',
       ) as HTMLDivElement;
-      for (let i = 0; i < Math.min(6, cluster_size - 1); i = i + 1) {
+      for (let i = 0; i <= Math.min(5, cluster_size - 1); i = i + 1) {
         const item = document.createElement('div');
         item.classList.add(
           'horizontal',
@@ -3575,17 +3911,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         item.style.position = 'absolute';
         item.style.top = '-' + (5 + 5 * i) + 'px';
         item.style.left = 5 + 5 * i + 'px';
-        const intensity = 245 + i * 2;
+        const intensity = this.isDarkMode ? 88 - i * 2 : 245 + i * 2;
         item.style.backgroundColor =
           'rgb(' + intensity + ',' + intensity + ',' + intensity + ')';
-        item.style.borderColor =
-          'rgb(' +
-          (intensity - 10) +
-          ',' +
-          (intensity - 10) +
-          ',' +
-          (intensity - 10) +
-          ')';
+        item.style.borderColor = this.isDarkMode
+          ? 'none'
+          : 'rgb(' +
+            (intensity - 10) +
+            ',' +
+            (intensity - 10) +
+            ',' +
+            (intensity - 10) +
+            ')';
         item.style.zIndex = (6 - i).toString();
         container.appendChild(item);
       }
@@ -3605,22 +3942,22 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _updateShmemLimit() {
-    const currentMemLimit = parseFloat(this.memoryResouceSlider.value);
-    let shmemValue = this.sharedMemoryResouceSlider.value;
+    const currentMemLimit = parseFloat(this.memoryResourceSlider.value);
+    let shmemValue = this.sharedMemoryResourceSlider.value;
     // this.shmem_metric.max = Math.min(this.max_shm_per_container, currentMemLimit);
     // clamp the max value to the smaller of the current memory value or the configuration file value.
     // shmemEl.max = this.shmem_metric.max;
     if (parseFloat(shmemValue) > currentMemLimit) {
       shmemValue = currentMemLimit;
       this.shmem_request = shmemValue;
-      this.sharedMemoryResouceSlider.value = shmemValue;
-      this.sharedMemoryResouceSlider.max = shmemValue;
+      this.sharedMemoryResourceSlider.value = shmemValue;
+      this.sharedMemoryResourceSlider.max = shmemValue;
       this.notification.text = _text(
         'session.launcher.SharedMemorySettingIsReduced',
       );
       this.notification.show();
     } else if (this.max_shm_per_container > shmemValue) {
-      this.sharedMemoryResouceSlider.max =
+      this.sharedMemoryResourceSlider.max =
         currentMemLimit > this.max_shm_per_container
           ? this.max_shm_per_container
           : currentMemLimit;
@@ -4281,6 +4618,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this._resetEnvironmentVariables();
     this._resetPreOpenPorts();
     this._unselectAllSelectedFolder();
+    this._deleteAllocationPaneShadow();
   }
 
   /**
@@ -4306,7 +4644,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       'tpu.device': 'TPU',
       'ipu.device': 'IPU',
       'atom.device': 'ATOM',
+      'atom-plus.device': 'ATOM+',
+      'gaudi2.device': 'Gaudi 2',
       'warboy.device': 'Warboy',
+      'rngd.device': 'RNGD',
+      'hyperaccel-lpu.device': 'Hyperaccel LPU',
     };
     if (gpu_type in accelerator_names) {
       return accelerator_names[gpu_type];
@@ -4597,7 +4939,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               id="batch-mode-config-section"
               style="display:none;gap:3px;"
             >
-              <span class="launcher-item-title" style="width:386px;">
+              <span
+                class="launcher-item-title"
+                style="width:386px;padding-left:16px;"
+              >
                 ${_t('session.launcher.BatchModeConfig')}
               </span>
               <div class="horizontal layout start-justified">
@@ -5007,7 +5352,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                       .tpu_device="${item.tpu_device}"
                       .ipu_device="${item.ipu_device}"
                       .atom_device="${item.atom_device}"
+                      .atom_plus_device="${item.atom_plus_device}"
+                      .gaudi2_device="${item.gaudi2_device}"
                       .warboy_device="${item.warboy_device}"
+                      .rngd_device="${item.rngd_device}"
+                      .hyperaccel_lpu_device="${item.hyperaccel_lpu_device}"
                       .shmem="${item.shmem}"
                     >
                       <div class="horizontal layout end-justified">
@@ -5066,9 +5415,30 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                 ${item.atom_device} ATOM
                               `
                             : html``}
+                          ${item.atom_plus_device && item.atom_plus_device > 0
+                            ? html`
+                                ${item.atom_plus_device} ATOM+
+                              `
+                            : html``}
+                          ${item.gaudi2_device && item.gaudi2_device > 0
+                            ? html`
+                                ${item.gaudi2_device} Gaudi 2
+                              `
+                            : html``}
                           ${item.warboy_device && item.warboy_device > 0
                             ? html`
                                 ${item.warboy_device} Warboy
+                              `
+                            : html``}
+                          ${item.rngd_device && item.rngd_device > 0
+                            ? html`
+                                ${item.rngd_device} RNGD
+                              `
+                            : html``}
+                          ${item.hyperaccel_lpu_device &&
+                          item.hyperaccel_lpu_device > 0
+                            ? html`
+                                ${item.hyperaccel_lpu_device} Hyperaccel LPU
                               `
                             : html``}
                         </div>
@@ -5496,7 +5866,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   ? 'display:none;'
                   : ''}"
               >
-                <div class="horizontal layout">
+                <div class="horizontal layout resource-allocated-box">
                   <div
                     class="vertical layout center center-justified resource-allocated"
                   >
@@ -5563,7 +5933,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 class="horizontal layout center center-justified allocation-check"
               >
                 <div id="total-allocation-pane" style="position:relative;">
-                  <div class="horizontal layout resource-allocated-box">
+                  <div class="horizontal layout">
                     <div
                       class="vertical layout center center-justified resource-allocated"
                     >
@@ -5992,7 +6362,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             icon="rowing"
             @click="${() => this._newSession()}"
           >
-            <span>${_t('session.launcher.Launch')}</span>
+            ${_t('session.launcher.Launch')}
           </mwc-button>
         </div>
       </backend-ai-dialog>

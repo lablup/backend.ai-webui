@@ -1,12 +1,18 @@
+import { useCustomThemeConfig } from '../../helper/customThemeConfig';
+import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
+import BAIErrorBoundary from '../BAIErrorBoundary';
 import BAISider from '../BAISider';
 import Flex from '../Flex';
+import ForceTOTPChecker from '../ForceTOTPChecker';
+import NetworkStatusBanner from '../NetworkStatusBanner';
+import PasswordChangeRequestAlert from '../PasswordChangeRequestAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
-import { useLocalStorageState } from 'ahooks';
 import { App, Layout, theme } from 'antd';
+import { atom, useSetAtom } from 'jotai';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
 
@@ -25,19 +31,34 @@ export type WebUIPluginType = {
   'menuitem-superadmin': string[];
 };
 
+export const mainContentDivRefState = atom<React.RefObject<HTMLElement | null>>(
+  {
+    current: null,
+  },
+);
+
 function MainLayout() {
   const navigate = useNavigate();
-
-  const [compactSidebarActive] = useLocalStorageState<boolean | undefined>(
-    'backendaiwebui.settings.user.compact_sidebar',
-  );
+  const [compactSidebarActive] = useBAISettingUserState('compact_sidebar');
   const [sideCollapsed, setSideCollapsed] =
     useState<boolean>(!!compactSidebarActive);
+
+  useEffect(() => {
+    if (sideCollapsed !== compactSidebarActive) {
+      setSideCollapsed(!!compactSidebarActive);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [compactSidebarActive]);
 
   // const currentDomainName = useCurrentDomainValue();
   const { token } = theme.useToken();
   const webUIRef = useRef<HTMLElement>(null);
   const contentScrollFlexRef = useRef<HTMLDivElement>(null);
+  const setMainContentDivRefState = useSetAtom(mainContentDivRefState);
+  useEffect(() => {
+    setMainContentDivRefState(contentScrollFlexRef);
+  }, [contentScrollFlexRef, setMainContentDivRefState]);
+
   const [webUIPlugins, setWebUIPlugins] = useState<
     WebUIPluginType | undefined
   >();
@@ -128,35 +149,38 @@ function MainLayout() {
               paddingRight: token.paddingContentHorizontalLG,
               paddingBottom: token.paddingContentVertical,
               height: '100vh',
-              // height: `calc(100vh - ${HEADER_HEIGHT}px)`,
               overflow: 'auto',
             }}
           >
-            <Suspense
-              fallback={
-                <div>
-                  <Layout.Header style={{ visibility: 'hidden', height: 62 }} />
-                </div>
-              }
-            >
-              <div
-                style={{
-                  margin: `0 -${token.paddingContentHorizontalLG}px 0 -${token.paddingContentHorizontalLG}px`,
-                  position: 'sticky',
-                  top: 0,
-                  zIndex: HEADER_Z_INDEX_IN_MAIN_LAYOUT,
-                }}
+            <BAIErrorBoundary>
+              <Suspense
+                fallback={
+                  <div>
+                    <Layout.Header
+                      style={{ visibility: 'hidden', height: 62 }}
+                    />
+                  </div>
+                }
               >
-                <WebUIHeader
-                  onClickMenuIcon={() => setSideCollapsed((v) => !v)}
-                  containerElement={contentScrollFlexRef.current}
-                />
-              </div>
-            </Suspense>
-            {/* <Flex direction="column"> */}
+                <div
+                  style={{
+                    margin: `0 -${token.paddingContentHorizontalLG}px 0 -${token.paddingContentHorizontalLG}px`,
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: HEADER_Z_INDEX_IN_MAIN_LAYOUT,
+                  }}
+                >
+                  <NetworkStatusBanner />
+                  <WebUIHeader
+                    onClickMenuIcon={() => setSideCollapsed((v) => !v)}
+                    containerElement={contentScrollFlexRef.current}
+                  />
+                </div>
+              </Suspense>
+              {/* <Flex direction="column"> */}
 
-            {/* TODO: Breadcrumb */}
-            {/* {location.pathname.split("/").length > 3 && (
+              {/* TODO: Breadcrumb */}
+              {/* {location.pathname.split("/").length > 3 && (
             <Breadcrumb
               items={matches.map((match, index) => {
                 return {
@@ -180,13 +204,26 @@ function MainLayout() {
               })}
             />
           )} */}
-            <Suspense>
-              <Outlet />
-            </Suspense>
-            {/* To match paddig to 16 (2+14) */}
-            {/* </Flex> */}
-            {/* @ts-ignore */}
-            <backend-ai-webui id="webui-shell" ref={webUIRef} />
+              <Suspense>
+                <PasswordChangeRequestAlert
+                  showIcon
+                  icon={undefined}
+                  banner={false}
+                  style={{ marginBottom: token.paddingContentVerticalLG }}
+                  closable
+                />
+              </Suspense>
+              <Suspense>
+                <ForceTOTPChecker />
+              </Suspense>
+              <Suspense>
+                <Outlet />
+              </Suspense>
+              {/* To match paddig to 16 (2+14) */}
+              {/* </Flex> */}
+              {/* @ts-ignore */}
+              <backend-ai-webui id="webui-shell" ref={webUIRef} />
+            </BAIErrorBoundary>
           </Flex>
         </BAIContentWithDrawerArea>
       </Layout>
@@ -214,16 +251,29 @@ const NotificationForAnonymous = () => {
 
 export const CSSTokenVariables = () => {
   const { token } = theme.useToken();
-  useThemeMode(); // This is to make sure the theme mode is updated
+  const { isDarkMode } = useThemeMode(); // This is to make sure the theme mode is updated
 
+  const themeConfig = useCustomThemeConfig();
   return (
     <style>
       {`
 :root {
 ${Object.entries(token)
-  .map(([key, value]) => `--token-${key}: ${value?.toString() ?? ''};`)
+  .map(([key, value]) => {
+    // Skip Component specific tokens
+    if (key.charAt(0) === key.charAt(0).toUpperCase()) {
+      return '';
+    } else {
+      return typeof value === 'number'
+        ? `--token-${key}: ${value}px;`
+        : `--token-${key}: ${value?.toString() ?? ''};`;
+    }
+  })
   .join('\n')}
-}
+
+  --theme-logo-url: url("${
+    isDarkMode ? themeConfig?.logo.srcDark : themeConfig?.logo.src
+  }");
       `}
     </style>
   );

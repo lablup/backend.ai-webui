@@ -1,13 +1,21 @@
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useTanMutation } from '../hooks/reactQueryAlias';
+import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import { TOTPActivateModalFragment$key } from './__generated__/TOTPActivateModalFragment.graphql';
-import { QRCode, Typography, Input, theme, Form, message, Spin } from 'antd';
+import {
+  QRCode,
+  Typography,
+  Input,
+  theme,
+  Form,
+  message,
+  Spin,
+  FormInstance,
+} from 'antd';
 import graphql from 'babel-plugin-relay/macro';
-import React from 'react';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQuery } from 'react-query';
 import { useFragment } from 'react-relay';
 
 type TOTPActivateFormInput = {
@@ -26,7 +34,7 @@ const TOTPActivateModal: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const [form] = Form.useForm<TOTPActivateFormInput>();
+  const formRef = useRef<FormInstance<TOTPActivateFormInput>>(null);
 
   const user = useFragment(
     graphql`
@@ -39,7 +47,8 @@ const TOTPActivateModal: React.FC<Props> = ({
   );
 
   const baiClient = useSuspendedBackendaiClient();
-  let initializedTotp = useQuery<{
+
+  const initializedTotp = useTanQuery<{
     totp_key: string;
     totp_uri: string;
   }>({
@@ -51,9 +60,7 @@ const TOTPActivateModal: React.FC<Props> = ({
         ? baiClient.initialize_totp()
         : null;
     },
-    suspense: false,
-    staleTime: 0,
-    cacheTime: 0,
+    staleTime: 1000,
   });
 
   const mutationToActivateTotp = useTanMutation({
@@ -63,8 +70,8 @@ const TOTPActivateModal: React.FC<Props> = ({
   });
 
   const _onOk = () => {
-    form
-      .validateFields()
+    formRef.current
+      ?.validateFields()
       .then((values) => {
         mutationToActivateTotp.mutate(values, {
           onSuccess: () => {
@@ -86,7 +93,7 @@ const TOTPActivateModal: React.FC<Props> = ({
     <BAIModal
       title={t('webui.menu.SetupTotp')}
       maskClosable={false}
-      confirmLoading={mutationToActivateTotp.isLoading}
+      confirmLoading={mutationToActivateTotp.isPending}
       onOk={_onOk}
       onCancel={() => {
         onRequestClose();
@@ -121,8 +128,8 @@ const TOTPActivateModal: React.FC<Props> = ({
           </Flex>
           {t('totp.EnterConfirmationCode')}
           <Form
+            ref={formRef}
             preserve={false}
-            form={form}
             validateTrigger={['onChange', 'onBlur']}
           >
             <Flex

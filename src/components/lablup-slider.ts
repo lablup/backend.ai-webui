@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import {
   IronFlex,
@@ -66,7 +66,6 @@ export default class LablupSlider extends LitElement {
             --slider-color,
             '#018786'
           );
-          --mdc-theme-on-surface: var(--paper-grey-100);
           color: var(--token-colorTextSecondary, --paper-grey-700);
         }
       `,

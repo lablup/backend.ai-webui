@@ -1,4 +1,4 @@
-import { comparePEP440Versions, normalizePEP440Version } from './pep440';
+import { comparePEP440Versions, isCompatibleMultipleConditions, normalizePEP440Version } from './pep440';
 
 describe('normalizePEP440Version', () => {
   test('should normalize versions correctly', () => {
@@ -33,6 +33,15 @@ describe('comparePEP440Versions', () => {
     expect(comparePEP440Versions('24.03.0dev3', '24.03.0dev5')).toBe(-1);
     expect(comparePEP440Versions('24.03.0dev3', '24.03.0dev3')).toBe(0);
     expect(comparePEP440Versions('24.03.0a1', '24.03.0b1')).toBe(-1);
+    expect(comparePEP440Versions('24.03.4', '24.03.4-post.1')).toBe(-1);
+    expect(comparePEP440Versions('24.03.4-post.2', '24.03.4-post.1')).toBe(1);
+    expect(comparePEP440Versions('24.03.4-post.2', '24.03.4.post2')).toBe(0);
+    expect(comparePEP440Versions('24.03.4-post.2', '24.03.4-post.2')).toBe(0);
+    expect(comparePEP440Versions('24.03.4-beta.2', '24.03.4-post.2')).toBe(-1);
+    expect(comparePEP440Versions('24.03.4-b.2', '24.03.4-beta.2')).toBe(0);
+    expect(comparePEP440Versions('24.03.4-alpha.2', '24.03.4-a.2')).toBe(0);
+    expect(comparePEP440Versions('24.03.4-b.2', '24.03.4-alpha.2')).toBe(1);
+
   });
 
   test('comparePEP440Versions', () => {
@@ -64,3 +73,12 @@ describe('comparePEP440Versions', () => {
     }
   });
 });
+
+describe('isCompatibleMultipleConditions', ()=>{
+  it('should compare versions correctly', ()=>{
+    expect(isCompatibleMultipleConditions('23.03.3', ['24.3.1', '23.03.2'])).toBe(true)
+    expect(isCompatibleMultipleConditions('23.03.3', ['24.3.1', '23.03.4'])).toBe(false)
+    expect(isCompatibleMultipleConditions('25.03.3', ['24.3.1', '23.03.4'])).toBe(true)
+    expect(isCompatibleMultipleConditions('22.03.3', ['24.3.1', '23.03.4'])).toBe(false)
+  });
+})

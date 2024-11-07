@@ -1,9 +1,34 @@
 import { useSuspendedBackendaiClient, useUpdatableState } from '.';
 import { maskString, useBaiSignedRequestWithPromise } from '../helper';
-import { useTanMutation, useTanQuery } from './reactQueryAlias';
+import {
+  useSuspenseTanQuery,
+  useTanMutation,
+  useTanQuery,
+} from './reactQueryAlias';
 import _ from 'lodash';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
+export const baseResourceSlotNames = ['cpu', 'mem'] as const;
+export type BaseResourceSlotName = (typeof baseResourceSlotNames)[number];
+export const knownAcceleratorResourceSlotNames = [
+  'cuda.device',
+  'cuda.shares',
+  'rocm.device',
+  'tpu.device',
+  'ipu.device',
+  'atom.device',
+  'atom-plus.device',
+  'gaudi2.device',
+  'warboy.device',
+  'rngd.device',
+  'hyperaccel-lpu.device',
+] as const;
+export type KnownAcceleratorResourceSlotName =
+  (typeof knownAcceleratorResourceSlotNames)[number];
+
+export type ResourceSlotName =
+  | BaseResourceSlotName
+  | KnownAcceleratorResourceSlotName;
 export interface QuotaScope {
   id: string;
   quota_scope_id: string;
@@ -18,16 +43,8 @@ export interface QuotaScope {
 export const useResourceSlots = () => {
   const [key, checkUpdate] = useUpdatableState('first');
   const baiClient = useSuspendedBackendaiClient();
-  const { data: resourceSlots } = useTanQuery<{
-    cpu?: string;
-    mem?: string;
-    'cuda.shares'?: string;
-    'cuda.device'?: string;
-    'rocm.device'?: string;
-    'tpu.device'?: string;
-    'ipu.device'?: string;
-    'atom.device'?: string;
-    'warboy.device'?: string;
+  const { data: resourceSlots } = useSuspenseTanQuery<{
+    [key in ResourceSlotName]?: string;
   }>({
     queryKey: ['useResourceSlots', key],
     queryFn: () => {
@@ -43,40 +60,74 @@ export const useResourceSlots = () => {
   ] as const;
 };
 
-export const useResourceSlotsByResourceGroup = (name?: string) => {
+type ResourceSlotDetail = {
+  slot_name: string;
+  description: string;
+  human_readable_name: string;
+  display_unit: string;
+  number_format: {
+    binary: boolean;
+    round_length: number;
+  };
+  display_icon: string;
+};
+
+/**
+ * Custom hook to fetch resource slot details by resource group name.
+ * @param resourceGroupName - The name of the resource group. if not provided, it will use resource/device_metadata.json
+ * @returns An array containing the resource slots and a refresh function.
+ */
+export const useResourceSlotsDetails = (resourceGroupName?: string) => {
   const [key, checkUpdate] = useUpdatableState('first');
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
-  const { data: resourceSlots } = useTanQuery<{
-    cpu: string;
-    mem: string;
-    'cuda.shares': string;
-    'cuda.device': string;
-    'rocm.device': string;
-    'ipu.device': string;
-    'atom.device': string;
-    'warboy.device': string;
-    [key: string]: string;
+  const baiClient = useSuspendedBackendaiClient();
+  const { data: resourceSlotsInRG } = useTanQuery<{
+    [key: string]: ResourceSlotDetail | undefined;
   }>({
-    queryKey: ['useResourceSlots', name, key],
+    queryKey: ['useResourceSlots', resourceGroupName, key],
     queryFn: () => {
       // return baiClient.get_resource_slots();
-      if (_.isEmpty(name)) {
-        return;
+      if (
+        !resourceGroupName ||
+        !baiClient.isManagerVersionCompatibleWith('23.09.0')
+      ) {
+        return undefined;
       } else {
+        // `/resource-slots/details` is available since 23.09
+        // https://github.com/lablup/backend.ai/issues/1589
+        const search = new URLSearchParams();
+        search.set('sgroup', resourceGroupName);
         return baiRequestWithPromise({
           method: 'GET',
-          url: `/config/resource-slots/details?sgroup=${name}`,
+          url: `/config/resource-slots/details?${search.toString()}`,
         });
       }
     },
-    staleTime: 0,
+    staleTime: 3000,
   });
-  return [
-    resourceSlots,
-    {
-      refresh: () => checkUpdate(),
+
+  // TODO: improve waterfall loading
+  const { data: deviceMetadata } = useTanQuery<{
+    [key: string]: ResourceSlotDetail | undefined;
+  }>({
+    queryKey: ['backendai-metadata-device', key],
+    queryFn: () => {
+      return fetch('resources/device_metadata.json')
+        .then((response) => response.json())
+        .then((result) => result?.deviceInfo);
     },
-  ] as const;
+    staleTime: 1000 * 60 * 60 * 24,
+  });
+
+  return {
+    resourceSlotsInRG,
+    deviceMetadata,
+    mergedResourceSlots: useMemo(
+      () => _.merge({}, deviceMetadata, resourceSlotsInRG),
+      [deviceMetadata, resourceSlotsInRG],
+    ),
+    refresh: useCallback(() => checkUpdate(), [checkUpdate]),
+  };
 };
 
 interface UserInfo {
@@ -156,8 +207,8 @@ export const useCurrentUserInfo = () => {
       ...userInfo,
       username: getUsername(),
       isPendingMutation:
-        mutationToUpdateUserFullName.isLoading ||
-        mutationToUpdateUserPassword.isLoading,
+        mutationToUpdateUserFullName.isPending ||
+        mutationToUpdateUserPassword.isPending,
     },
     {
       updateFullName: (
@@ -216,15 +267,13 @@ export const useCurrentUserRole = () => {
     user: {
       role: 'superadmin' | 'admin' | 'user' | 'monitor';
     };
-  }>(
-    ['getUserRole', userInfo.email],
-    () => {
+  }>({
+    queryKey: ['getUserRole', userInfo.email],
+    queryFn: () => {
       return baiClient.user.get(userInfo.email, ['role']);
     },
-    {
-      suspense: false,
-    },
-  );
+    staleTime: Infinity,
+  });
   const userRole = roleData?.user.role;
 
   return userRole;
@@ -232,16 +281,27 @@ export const useCurrentUserRole = () => {
 
 export const useTOTPSupported = () => {
   const baiClient = useSuspendedBackendaiClient();
-  const { data: isManagerSupportingTOTP } = useTanQuery<boolean>(
-    'isManagerSupportingTOTP',
-    () => {
+  const { data: isManagerSupportingTOTP, isLoading } = useTanQuery<boolean>({
+    queryKey: ['isManagerSupportingTOTP'],
+    queryFn: () => {
       return baiClient.isManagerSupportingTOTP();
     },
-    {
-      suspense: false,
-    },
-  );
-  const isSupported = baiClient.supports('2FA') && isManagerSupportingTOTP;
+    staleTime: 1000,
+  });
+  const isTOTPSupported = baiClient.supports('2FA') && isManagerSupportingTOTP;
 
-  return isSupported;
+  return { isTOTPSupported, isLoading };
+};
+
+export const useAllowedHostNames = () => {
+  const baiClient = useSuspendedBackendaiClient();
+  const { data: allowedHosts } = useSuspenseTanQuery<{
+    allowed: Array<string>;
+  }>({
+    queryKey: ['useAllowedHostNames'],
+    queryFn: () => {
+      return baiClient.vfolder.list_all_hosts();
+    },
+  });
+  return allowedHosts?.allowed;
 };

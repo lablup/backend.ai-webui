@@ -1,14 +1,14 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 // import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
 import {
   IronFlex,
   IronFlexAlignment,
 } from '../plastics/layout/iron-flex-layout-classes';
-import '../plastics/mwc/mwc-dialog';
 import { BackendAiStyles } from './backend-ai-general-styles';
+import '@material/mwc-dialog';
 import '@material/mwc-icon-button';
 import { css, CSSResultGroup, html, LitElement } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
@@ -144,7 +144,7 @@ export default class BackendAIDialog extends LitElement {
           margin: 0 0 10px 0;
           display: block;
           height: 20px;
-          border-bottom: 1px solid #ddd !important;
+          border-bottom: 1px solid var(--token-colorBorder, #ccc) !important;
         }
 
         mwc-icon-button {
@@ -205,6 +205,12 @@ export default class BackendAIDialog extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
+    document.addEventListener('locationPath:changed', this.hide);
+  }
+
+  disconnectedCallback(): void {
+    super.disconnectedCallback();
+    document.removeEventListener('locationPath:changed', this.hide);
   }
 
   /**
@@ -224,7 +230,7 @@ export default class BackendAIDialog extends LitElement {
   /**
    * Hide a dialog.
    */
-  hide() {
+  hide = () => {
     if (this.closeWithConfirmation) {
       const closeEvent = new CustomEvent('dialog-closing-confirm', {
         detail: '',
@@ -234,7 +240,7 @@ export default class BackendAIDialog extends LitElement {
       this.dialog.close();
       this._resetScroll();
     }
-  }
+  };
 
   /**
    * Move to top of the dialog.

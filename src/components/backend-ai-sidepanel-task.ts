@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import {
   IronFlex,
@@ -8,9 +8,9 @@ import {
   IronFlexFactors,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
-import '../plastics/mwc/mwc-drawer';
 import { BackendAIPage } from './backend-ai-page';
 import { BackendAIWebUIStyles } from './backend-ai-webui-styles';
+import '@material/mwc-drawer';
 import '@material/mwc-icon';
 import '@material/mwc-list';
 import '@material/mwc-list/mwc-list-item';
@@ -56,7 +56,7 @@ export default class BackendAiSidepanelTask extends BackendAIPage {
           width: 100%;
           height: 25px;
           padding: 5px 15px;
-          border-bottom: 1px solid #cccccc;
+          border-bottom: 1px solid var(--token-colorBorder, #ccc);
         }
 
         mwc-list {

@@ -1,20 +1,20 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
-import { useCurrentProjectValue, useUpdatableState } from '../hooks';
-import { useTanQuery } from '../hooks/reactQueryAlias';
+import { useUpdatableState } from '../hooks';
+import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
+import useControllableState from '../hooks/useControllableState';
 import TextHighlighter from './TextHighlighter';
-import { useControllableValue } from 'ahooks';
 import { Select, SelectProps } from 'antd';
 import _ from 'lodash';
-import React, { useEffect, useTransition } from 'react';
+import React, { useEffect } from 'react';
 
 interface ResourceGroupSelectProps extends SelectProps {
-  projectId?: string;
+  projectName: string;
   autoSelectDefault?: boolean;
   filter?: (projectName: string) => boolean;
 }
 
 const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
-  projectId,
+  projectName,
   autoSelectDefault,
   filter,
   searchValue,
@@ -23,21 +23,17 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
   ...selectProps
 }) => {
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
-  const currentProject = useCurrentProjectValue();
-  const [key, checkUpdate] = useUpdatableState('first');
+  const [fetchKey] = useUpdatableState('first');
   const [controllableSearchValue, setControllableSearchValue] =
-    useControllableValue<string>(
-      _.omitBy(
-        {
-          value: searchValue,
-          onChange: onSearch,
-        },
-        _.isUndefined,
-      ),
-    );
+    useControllableState<string>({
+      value: searchValue,
+      onChange: onSearch,
+    });
 
-  const [isPendingLoading, startLoadingTransition] = useTransition();
-  const { data: resourceGroupSelectQueryResult } = useTanQuery<
+  const [controllableValue, setControllableValue] =
+    useControllableState(selectProps);
+
+  const { data: resourceGroupSelectQueryResult } = useSuspenseTanQuery<
     [
       {
         scaling_groups: {
@@ -60,12 +56,14 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
       },
     ]
   >({
-    queryKey: ['ResourceGroupSelectQuery', key, currentProject.name],
+    queryKey: ['ResourceGroupSelectQuery', projectName],
     queryFn: () => {
+      const search = new URLSearchParams();
+      search.set('group', projectName);
       return Promise.all([
         baiRequestWithPromise({
           method: 'GET',
-          url: `/scaling-groups?group=${currentProject.name}`,
+          url: `/scaling-groups?${search.toString()}`,
         }),
         baiRequestWithPromise({
           method: 'GET',
@@ -74,6 +72,7 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
       ]);
     },
     staleTime: 0,
+    fetchKey: fetchKey,
   });
 
   const sftpResourceGroups = _.flatMap(
@@ -94,6 +93,14 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
     },
   );
 
+  useEffect(() => {
+    if (
+      controllableValue &&
+      !_.some(resourceGroups, (item) => item.name === controllableValue)
+    ) {
+      setControllableValue(undefined);
+    }
+  }, [resourceGroups, controllableValue, setControllableValue]);
   const autoSelectedResourceGroup =
     _.find(resourceGroups, (item) => item.name === 'default') ||
     resourceGroups[0];
@@ -110,36 +117,48 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
       autoSelectedOption &&
       autoSelectedOption.value !== selectProps.value
     ) {
-      selectProps.onChange?.(autoSelectedOption.value, autoSelectedOption);
+      setControllableValue(autoSelectedOption.value, autoSelectedOption);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoSelectDefault]);
 
+  const searchProps: Pick<
+    SelectProps,
+    'onSearch' | 'searchValue' | 'showSearch'
+  > = selectProps.showSearch
+    ? {
+        onSearch: setControllableSearchValue,
+        searchValue: controllableSearchValue,
+        showSearch: true,
+      }
+    : {};
+
   return (
     <Select
       defaultActiveFirstOption
-      onSearch={setControllableSearchValue}
-      searchValue={controllableSearchValue}
+      {...searchProps}
       defaultValue={autoSelectDefault ? autoSelectedOption : undefined}
       onDropdownVisibleChange={(open) => {
-        if (open) {
-          startLoadingTransition(() => {
-            checkUpdate();
-          });
-        }
+        // if (open) {
+        //   startLoadingTransition(() => {
+        //     updateFetchKey();
+        //   });
+        // }
       }}
-      loading={isPendingLoading || loading}
+      loading={loading}
       options={_.map(resourceGroups, (resourceGroup) => {
         return { value: resourceGroup.name, label: resourceGroup.name };
       })}
       optionRender={(option) => {
         return (
           <TextHighlighter keyword={controllableSearchValue}>
-            {option.data.value}
+            {option.data.value?.toString()}
           </TextHighlighter>
         );
       }}
       {...selectProps}
+      value={controllableValue}
+      onChange={setControllableValue}
     />
   );
 };

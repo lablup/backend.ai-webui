@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 // import * as aiSDK from '../lib/backend.ai-client-es6';
 import * as ai from '../lib/backend.ai-client-esm';
@@ -104,7 +104,6 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Boolean }) allow_signout = false;
   @property({ type: Boolean }) allow_project_resource_monitor = false;
   @property({ type: Boolean }) allow_manual_image_name_for_session = false;
-  @property({ type: Boolean }) always_enqueue_compute_session = false;
   @property({ type: Boolean }) allowSignupWithoutConfirmation = false;
   @property({ type: Boolean }) openPortToPublic = false;
   @property({ type: Boolean }) allowPreferredPort = false;
@@ -117,12 +116,15 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Number }) maxIPUDevicesPerContainer = 8;
   @property({ type: Number }) maxATOMDevicesPerContainer = 8;
   @property({ type: Number }) maxWarboyDevicesPerContainer = 8;
+  @property({ type: Number }) maxRNGDDevicesPerContainer = 8;
+  @property({ type: Number }) maxGaudi2DevicesPerContainer = 8;
   @property({ type: Number }) maxShmPerContainer = 2;
   @property({ type: Number }) maxFileUploadSize = -1;
   @property({ type: Boolean }) maskUserInfo = false;
   @property({ type: Boolean }) hideAgents = true;
   @property({ type: Boolean }) enable2FA = false;
   @property({ type: Boolean }) force2FA = false;
+  @property({ type: Boolean }) allowNonAuthTCP = false;
   @property({ type: Array }) singleSignOnVendors: string[] = [];
   @property({ type: String }) ssoRealmName = '';
   @property({ type: Array }) allow_image_list;
@@ -138,7 +140,11 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Number }) maxCountForPreopenPorts = 10;
   @property({ type: Boolean }) allowCustomResourceAllocation = true;
   @property({ type: Boolean }) isDirectorySizeVisible = true;
-  @property({ type: Boolean }) supportModelStore = false;
+  @property({ type: Boolean }) enableModelStore = false;
+  @property({ type: Boolean }) enableLLMPlayground = false;
+  @property({ type: Boolean }) enableImportFromHuggingFace = false;
+  @property({ type: Boolean }) enableExtendLoginSession = false;
+  @property({ type: Boolean }) showNonInstalledImages = false;
   @property({ type: String }) eduAppNamePrefix;
   @property({ type: String }) pluginPages;
   @property({ type: Array }) blockList = [] as string[];
@@ -232,6 +238,7 @@ export default class BackendAILogin extends BackendAIPage {
 
         mwc-button {
           background-image: none;
+          --mdc-typography-button-font-size: var(--token-fontSizeSM, 12px);
         }
 
         mwc-button[unelevated] {
@@ -243,10 +250,6 @@ export default class BackendAILogin extends BackendAIPage {
           --mdc-button-outline-width: 2px;
         }
 
-        h3 small {
-          --button-font-size: 12px;
-        }
-
         .title-img {
           height: 35px;
           padding: 15px 0 15px 5px;
@@ -254,7 +257,7 @@ export default class BackendAILogin extends BackendAIPage {
 
         #change-signin-area > #change-signin-message {
           font-size: 12px;
-          margin: 5px 10px;
+          margin: 5px 0px;
           text-align: center;
           font-weight: 400;
         }
@@ -625,16 +628,6 @@ export default class BackendAILogin extends BackendAIPage {
       } as ConfigValueObject,
     ) as boolean;
 
-    // Always enqueue compute session flag
-    this.always_enqueue_compute_session = this._getConfigValueByExists(
-      generalConfig,
-      {
-        valueType: 'boolean',
-        defaultValue: false,
-        value: generalConfig?.alwaysEnqueueComputeSession,
-      } as ConfigValueObject,
-    ) as boolean;
-
     // Allow Sign out flag
     this.allow_signout = this._getConfigValueByExists(generalConfig, {
       valueType: 'boolean',
@@ -855,11 +848,38 @@ export default class BackendAILogin extends BackendAIPage {
     } as ConfigValueObject) as string;
 
     // Enable model store support
-    this.supportModelStore = this._getConfigValueByExists(generalConfig, {
+    this.enableModelStore = this._getConfigValueByExists(generalConfig, {
       valueType: 'boolean',
       defaultValue: false,
-      value: generalConfig?.supportModelStore,
+      value: generalConfig?.enableModelStore,
     } as ConfigValueObject) as boolean;
+
+    // Enable LLM Playground support
+    this.enableLLMPlayground = this._getConfigValueByExists(generalConfig, {
+      valueType: 'boolean',
+      defaultValue: false,
+      value: generalConfig?.enableLLMPlayground,
+    } as ConfigValueObject) as boolean;
+
+    // Enable importing from Hugging Face support
+    this.enableImportFromHuggingFace = this._getConfigValueByExists(
+      generalConfig,
+      {
+        valueType: 'boolean',
+        defaultValue: false,
+        value: generalConfig?.enableImportFromHuggingFace,
+      } as ConfigValueObject,
+    ) as boolean;
+
+    // Enable extend login session
+    this.enableExtendLoginSession = this._getConfigValueByExists(
+      generalConfig,
+      {
+        valueType: 'boolean',
+        defaultValue: false,
+        value: generalConfig?.enableExtendLoginSession,
+      } as ConfigValueObject,
+    ) as boolean;
   }
 
   /**
@@ -894,6 +914,13 @@ export default class BackendAILogin extends BackendAIPage {
       valueType: 'boolean',
       defaultValue: false,
       value: resourcesConfig?.allowPreferredPort,
+    } as ConfigValueObject) as boolean;
+
+    // Preferred port flag
+    this.allowNonAuthTCP = this._getConfigValueByExists(resourcesConfig, {
+      valueType: 'boolean',
+      defaultValue: false,
+      value: resourcesConfig?.allowNonAuthTCP,
     } as ConfigValueObject) as boolean;
 
     // Max CPU cores per container number
@@ -973,6 +1000,16 @@ export default class BackendAILogin extends BackendAIPage {
       } as ConfigValueObject,
     ) as number;
 
+    // Max Gaudi 2 devices per container number
+    this.maxGaudi2DevicesPerContainer = this._getConfigValueByExists(
+      resourcesConfig,
+      {
+        valueType: 'number',
+        defaultValue: 8,
+        value: parseInt(resourcesConfig?.maxGaudi2DevicesPerContainer),
+      } as ConfigValueObject,
+    ) as number;
+
     // Max Warboy devices per container number
     this.maxWarboyDevicesPerContainer = this._getConfigValueByExists(
       resourcesConfig,
@@ -980,6 +1017,16 @@ export default class BackendAILogin extends BackendAIPage {
         valueType: 'number',
         defaultValue: 8,
         value: parseInt(resourcesConfig?.maxWarboyDevicesPerContainer),
+      } as ConfigValueObject,
+    ) as number;
+
+    // Max RNGD devices per container number
+    this.maxRNGDDevicesPerContainer = this._getConfigValueByExists(
+      resourcesConfig,
+      {
+        valueType: 'number',
+        defaultValue: 8,
+        value: parseInt(resourcesConfig?.maxRNGDDevicesPerContainer),
       } as ConfigValueObject,
     ) as number;
 
@@ -1014,6 +1061,16 @@ export default class BackendAILogin extends BackendAIPage {
         ? environmentsConfig?.allowlist.split(',').map((el) => el.trim())
         : [],
     } as ConfigValueObject) as string[];
+
+    // Enable show all images when creating session/service
+    this.showNonInstalledImages = this._getConfigValueByExists(
+      environmentsConfig,
+      {
+        valueType: 'boolean',
+        defaultValue: false,
+        value: environmentsConfig?.showNonInstalledImages,
+      } as ConfigValueObject,
+    ) as boolean;
   }
 
   /**
@@ -1132,7 +1189,7 @@ export default class BackendAILogin extends BackendAIPage {
 
   /**
    * Load configuration file from the WebServer when using Session mode.
-   *
+   * @return {Promise<any> | void}
    * */
   private _loadConfigFromWebServer() {
     if (!window.location.href.startsWith(this.api_endpoint)) {
@@ -1147,7 +1204,7 @@ export default class BackendAILogin extends BackendAIPage {
         ];
         const webserverConfigURL = new URL('./config.toml', this.api_endpoint)
           .href;
-        webuiEl._parseConfig(webserverConfigURL, true).then((config) => {
+        return webuiEl._parseConfig(webserverConfigURL, true).then((config) => {
           // Monkey patch for backwards compatibility.
           // From 24.04, we use `logoTitle` and `logoTitleCollapsed` of /resources/theme.json instead of `general.siteDescription`.
           this.siteDescription =
@@ -1164,6 +1221,7 @@ export default class BackendAILogin extends BackendAIPage {
         });
       }
     }
+    return Promise.resolve(undefined);
   }
 
   /**
@@ -1204,7 +1262,10 @@ export default class BackendAILogin extends BackendAIPage {
     this.api_endpoint = this.api_endpoint.trim();
     if (this.connection_mode === ('SESSION' as ConnectionMode)) {
       if (globalThis.isElectron) {
-        this._loadConfigFromWebServer();
+        this._loadConfigFromWebServer()?.then(() => {
+          const webuiEl = document.querySelector('backend-ai-webui');
+          webuiEl && webuiEl.loadConfig(webuiEl.config);
+        });
       }
       return this._checkLoginUsingSession();
     } else if (this.connection_mode === ('API' as ConnectionMode)) {
@@ -1786,12 +1847,12 @@ export default class BackendAILogin extends BackendAIPage {
           this.allow_project_resource_monitor;
         globalThis.backendaiclient._config.allow_manual_image_name_for_session =
           this.allow_manual_image_name_for_session;
-        globalThis.backendaiclient._config.always_enqueue_compute_session =
-          this.always_enqueue_compute_session;
         globalThis.backendaiclient._config.openPortToPublic =
           this.openPortToPublic;
         globalThis.backendaiclient._config.allowPreferredPort =
           this.allowPreferredPort;
+        globalThis.backendaiclient._config.allowNonAuthTCP =
+          this.allowNonAuthTCP;
         globalThis.backendaiclient._config.maxCPUCoresPerContainer =
           this.maxCPUCoresPerContainer;
         globalThis.backendaiclient._config.maxMemoryPerContainer =
@@ -1808,14 +1869,20 @@ export default class BackendAILogin extends BackendAIPage {
           this.maxIPUDevicesPerContainer;
         globalThis.backendaiclient._config.maxATOMDevicesPerContainer =
           this.maxATOMDevicesPerContainer;
+        globalThis.backendaiclient._config.maxGaudi2DevicesPerContainer =
+          this.maxGaudi2DevicesPerContainer;
         globalThis.backendaiclient._config.maxWarboyDevicesPerContainer =
           this.maxWarboyDevicesPerContainer;
+        globalThis.backendaiclient._config.maxRNGDDevicesPerContainer =
+          this.maxRNGDDevicesPerContainer;
         globalThis.backendaiclient._config.maxShmPerContainer =
           this.maxShmPerContainer;
         globalThis.backendaiclient._config.maxFileUploadSize =
           this.maxFileUploadSize;
         globalThis.backendaiclient._config.allow_image_list =
           this.allow_image_list;
+        globalThis.backendaiclient._config.showNonInstalledImages =
+          this.showNonInstalledImages;
         globalThis.backendaiclient._config.maskUserInfo = this.maskUserInfo;
         globalThis.backendaiclient._config.singleSignOnVendors =
           this.singleSignOnVendors;
@@ -1839,8 +1906,14 @@ export default class BackendAILogin extends BackendAIPage {
           this.allowCustomResourceAllocation;
         globalThis.backendaiclient._config.isDirectorySizeVisible =
           this.isDirectorySizeVisible;
-        globalThis.backendaiclient._config.supportModelStore =
-          this.supportModelStore;
+        globalThis.backendaiclient._config.enableModelStore =
+          this.enableModelStore;
+        globalThis.backendaiclient._config.enableLLMPlayground =
+          this.enableLLMPlayground;
+        globalThis.backendaiclient._config.enableImportFromHuggingFace =
+          this.enableImportFromHuggingFace;
+        globalThis.backendaiclient._config.enableExtendLoginSession =
+          this.enableExtendLoginSession;
         globalThis.backendaiclient._config.pluginPages = this.pluginPages;
         globalThis.backendaiclient._config.blockList = this.blockList;
         globalThis.backendaiclient._config.inactiveList = this.inactiveList;
@@ -2015,21 +2088,23 @@ export default class BackendAILogin extends BackendAIPage {
           </div>
         </div>
         <div slot="content" class="login-panel intro centered">
-          <h3
+          <div
             class="horizontal center layout"
-            style="margin: 0 25px;font-weight:700;min-height:40px; padding-bottom:10px;"
+            style="margin: 0 25px;font-weight:700;min-height:40px; padding-bottom:10px; justify-content: space-between;"
           >
-            <div>
+            <h3
+              style="flex: 1; white-space: normal; overflow-wrap: break-word; word-break: break-word; margin-right: 10px;"
+            >
               ${this.connection_mode === 'SESSION'
-                ? _t('login.LoginWithE-mail')
+                ? _t('login.LoginWithE-mailorUsername')
                 : _t('login.LoginWithIAM')}
-            </div>
-            <div class="flex"></div>
+            </h3>
             ${this.change_signin_support
               ? html`
                   <div
                     id="change-signin-area"
                     class="vertical center-justified layout"
+                    style="flex: 1; text-align: right;"
                   >
                     <div id="change-signin-message">
                       ${_t('login.LoginAnotherway')}
@@ -2045,7 +2120,7 @@ export default class BackendAILogin extends BackendAIPage {
                   </div>
                 `
               : html``}
-          </h3>
+          </div>
           <div class="login-form">
             <div id="waiting-animation" class="horizontal layout wrap">
               <div class="sk-folding-cube">
@@ -2070,11 +2145,11 @@ export default class BackendAILogin extends BackendAIPage {
                     disabled
                   ></mwc-icon-button>
                   <mwc-textfield
-                    type="email"
+                    required
                     id="id_user_id"
                     maxlength="64"
                     autocomplete="username"
-                    label="${_t('login.E-mail')}"
+                    label="${_t('login.E-mailorUsername')}"
                     value="${this.user_id}"
                     @keyup="${this._submitIfEnter}"
                   ></mwc-textfield>
@@ -2266,7 +2341,11 @@ export default class BackendAILogin extends BackendAIPage {
                       ></mwc-button>
                     `
                   : html``}
-                <div id="additional-action-area" class="layout horizontal">
+                <div
+                  id="additional-action-area"
+                  class="layout horizontal"
+                  style="align-items: flex-end;"
+                >
                   ${this.signup_support
                     ? html`
                         <div

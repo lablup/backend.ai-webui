@@ -3,7 +3,7 @@
 Backend.AI API : JSON to CSV Converter
 ======================================
 
-(C) Copyright 2016-2020 Lablup Inc.
+(C) Copyright 2016-2024 Lablup Inc.
 Licensed under MIT
 */
 
@@ -37,7 +37,16 @@ export default class JsonToCsv {
             let subJson = JSON.parse(cell);
             Object.keys(subJson).map((key) => {
               subJson[key] =
-                ['cpu', 'mem', 'cuda_shares', 'cuda_device'].includes(key) &&
+                ['cpu',
+                  'mem',
+                  'cuda_shares',
+                  'cuda_device',
+                  'rocm_device',
+                  'tpu_device',
+                  'ipu_device',
+                  'atom_device',
+                  'warboy_device',
+                  'rngd.device',].includes(key) &&
                 typeof subJson[key] === 'string'
                   ? ''
                   : subJson[key];

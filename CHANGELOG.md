@@ -1,4 +1,191 @@
 # Changelog
+## v24.03.0 (06/04/2024)
+## What's Changed
+* fix: @typescript-eslint/typescript-estree dependency warning by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2225
+* feat: support dark theme by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2193
+* feat: add JSON schema files for theme.json by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2232
+* fix: Electron live debug mode using `LIVE_DEBUG` and `LIVE_DEBUG_ENDPOINT` by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2233
+* feat: Introduce `SettingList` component for setting page UI by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2212
+* fix: missing commit of UserSettingsPage to rollback by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2234
+* feat: add password change request alert to summary page by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2238
+* feat: build plugin pages and update electron ver. by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2226
+* docs: Update outdated Makefile command for building macOS apps by @rapsealk in https://github.com/lablup/backend.ai-webui/pull/2237
+* feat: display announcement alert to every page. by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2239
+* fix: unintended console log and import `glob` by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2241
+* fix: optional chaining and  handle `_requestDestroySession` by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2242
+* fix: owner info error handling in session launcher by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2243
+* fix:  FastTrack menu key to `pipeline` by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2245
+* hotfix: regression of image info display in serving page by @lizable in https://github.com/lablup/backend.ai-webui/pull/2244
+* build(deps): bump es5-ext from 0.10.62 to 0.10.64 by @dependabot in https://github.com/lablup/backend.ai-webui/pull/2231
+* build(deps-dev): bump ip from 1.1.8 to 1.1.9 by @dependabot in https://github.com/lablup/backend.ai-webui/pull/2223
+* fix: change to select colors via token by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2247
+* feat: `theme-logo-url` css variable by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2248
+* fix: change disabled slider color and total allocation conditional rendering by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2250
+* feat: fixed to be able to dynamically change colors. by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2254
+* fix: font-size of the session launcher button by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2258
+* style: modify background color more naturally by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2257
+* fix: regression of built-in app in session execution when app itself is refreshed in Windows Desktop app by @lizable in https://github.com/lablup/backend.ai-webui/pull/2256
+* fix: modify husky config to format both lit and react components by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2262
+* revert: lint-staged setting of #2262 by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2264
+* fix: regression of imageInfo initialization for categorizing environments by label in metadata by @lizable in https://github.com/lablup/backend.ai-webui/pull/2267
+* feat: 'make clean' removes build files in the react folder by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2272
+* feat: Quota Scope ID in data page's storage status panel by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2259
+* update: node.js packages by @inureyes in https://github.com/lablup/backend.ai-webui/pull/2268
+* fix: use `ref` of the `Form` instead of the `useForm` function in the Modal by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2270
+* feat: Neo session launcher as a default by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2220
+* feat: update year of copyright by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2276
+* style: fix the broken select UI of the new storage folder dialog by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2280
+* style: update hard coded colors and missed translations by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2277
+* feat: support vfolder trash bin by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2204
+* fix: regression of listing connected agent with null-check on live_stat from response by @lizable in https://github.com/lablup/backend.ai-webui/pull/2286
+* feat: display `Quota per storage volume` info if quota is available by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2285
+* fix: If the language setting is not 'en' or 'kr', change the language value to 'en'. by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2291
+* fix: update exporting session list by @lizable in https://github.com/lablup/backend.ai-webui/pull/2279
+* fix: disable download button when download perm is not allowed by @lizable in https://github.com/lablup/backend.ai-webui/pull/2295
+* feat: expose TCP apps from browser-based WebUI by @kyujin-cho in https://github.com/lablup/backend.ai-webui/pull/2188
+* Fix: TOTP activation modal not opening for non-TOTP users with `forceTotp` by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2299
+* feat: support per user image push by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2300
+* feat: destroy-all function in stacked notification by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2289
+* misc: update description of type of login account in login panel by @lizable in https://github.com/lablup/backend.ai-webui/pull/2301
+* feat: add support for Hyperaccel LPU devices by @kyujin-cho in https://github.com/lablup/backend.ai-webui/pull/2134
+* fix: created count in `StorageStatusPanel` by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2302
+* fix: modify compatible manager version of trash bin by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2303
+* feat: match field version compatibility for vfolder v3 by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2292
+* feat: display accelerator key instead of empty string by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2294
+* fix: `vfolder-trash-bin` is duplicated by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2305
+* fix: vFolder field has incorrect value in editing by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2306
+* fix: session list fetch error by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2307
+* fix: apply AI accelerator allocation when selecting resource preset in neo session launcher by @lizable in https://github.com/lablup/backend.ai-webui/pull/2308
+* hotfix: neo session launcher on cloud by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2310
+* feat: add tooltip for submit button by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2311
+* remove remaining session limit validation error by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2312
+* fix: use `max_resoure_policy` of `user_resource_policy` since 23.09.6 by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2313
+* hotfix: touchup container commit feature by @lizable in https://github.com/lablup/backend.ai-webui/pull/2314
+* fix: update imageify availability status on `input` event by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2315
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v23.09.9...v24.03.0
+
+
+## v23.09.10-rc.1 (06/03/2024)
+## What's Changed
+* fix: @typescript-eslint/typescript-estree dependency warning by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2225
+* feat: support dark theme by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2193
+* feat: add JSON schema files for theme.json by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2232
+* fix: Electron live debug mode using `LIVE_DEBUG` and `LIVE_DEBUG_ENDPOINT` by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2233
+* feat: Introduce `SettingList` component for setting page UI by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2212
+* fix: missing commit of UserSettingsPage to rollback by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2234
+* feat: add password change request alert to summary page by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2238
+* feat: build plugin pages and update electron ver. by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2226
+* docs: Update outdated Makefile command for building macOS apps by @rapsealk in https://github.com/lablup/backend.ai-webui/pull/2237
+* feat: display announcement alert to every page. by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2239
+* fix: unintended console log and import `glob` by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2241
+* fix: optional chaining and  handle `_requestDestroySession` by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2242
+* fix: owner info error handling in session launcher by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2243
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v23.09.9...v23.09.10-rc.1
+
+
+## v23.09.9 (22/02/2024)
+## What's Changed
+* fix: version comparison function based on  PEP440 by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2139
+* fix: mapping `servicePorts` instead string array when get services. by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2177
+* feat: filter props of VFolderTableFormItem by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2173
+* fix: `initialValues` props of `<Form/>` under Modal doesn't work in Electron by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2178
+* feat: React root including MainLayout, useBAINotification by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2121
+* Fix/draggable header for electron by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2184
+* fix: remove ROCm icon from resource monitor by @rapsealk in https://github.com/lablup/backend.ai-webui/pull/2185
+* feat: separate the formatting and linting configuration by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2162
+* feat: add draggable prop of BAIModal to drag modal by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2179
+* fix: image info(metadata) can be `undefined` by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2197
+* fix:  regular expression for validating registry URL by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2192
+* fix:modify guide description of TOTPActivateModal by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2174
+* fix: modify zIndex of BAIModal to prevent manipulation of the notification drawer by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2186
+* fix: update logo image for AMD ROCm by @rapsealk in https://github.com/lablup/backend.ai-webui/pull/2182
+* feat: update VFolder operation statuses by @rapsealk in https://github.com/lablup/backend.ai-webui/pull/2031
+* feat: prevent modifying DESTROYING status services by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2200
+* fix: ResourceGroupSelect is layout and support search highlight by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2166
+* feat: apply ellipsis into notification by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2199
+* fix: display credential-list when `keypair`button in `summary` page is clicked by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2194
+* feat: autoSelectDefault and showUsageStatus props of StorageSelector by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2180
+* fix: general setting page is empty after navigation from log tab by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2211
+* fix: when user menu is clicked, credential tab is shown instead of user. by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2208
+* feature: provide UI for updating resource allocation in model service by @lizable in https://github.com/lablup/backend.ai-webui/pull/2168
+* fix: current project doesn't apply to vfolder list and session list by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2218
+* fix: resource-monitor is shown at out of layout by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2207
+* feat: refactor batch session date picker component with react component by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2215
+* fix:  main layout header appears behind fixed column table by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2206
+* add: type for date by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2224
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v23.09.8...v23.09.9
+
+
+## v23.09.8 (20/01/2024)
+## What's Changed
+* fix: Correct hyphen usage in input validator regex by @adrysn in https://github.com/lablup/backend.ai-webui/pull/2052
+* fix: add omitted html tag in folder explorer by @lizable in https://github.com/lablup/backend.ai-webui/pull/2057
+* feat: set `singleAttributePerLine` prettier option to `false` (default:false) by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2053
+* fix: remove `unhandled promise rejection` in UserProfileSettingModal  by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2048
+* fix: typo error by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2060
+* fix: remove comment applied in controls column in vfolder list by @lizable in https://github.com/lablup/backend.ai-webui/pull/2063
+* fix: reflect changed desktop app download link by architecture by @inureyes in https://github.com/lablup/backend.ai-webui/pull/2065
+* add: BUILD_NUMBER as a number of commits on build target branch by @inureyes in https://github.com/lablup/backend.ai-webui/pull/2072
+* feat: add model store tab to storage page by @inureyes in https://github.com/lablup/backend.ai-webui/pull/2064
+* feat: recover folder cloneable option in folder create/setting modal. by @lizable in https://github.com/lablup/backend.ai-webui/pull/2069
+* fix: modify small tag to follow main branch by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2074
+* fix: rename to mode_card by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2076
+* fix: Sharing vfolder dialog is not closed when user click outside of dialog by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2078
+* build(deps-dev): bump browserify-sign from 4.2.1 to 4.2.2 by @dependabot in https://github.com/lablup/backend.ai-webui/pull/2000
+* build(deps-dev): bump @adobe/css-tools from 4.3.1 to 4.3.2 by @dependabot in https://github.com/lablup/backend.ai-webui/pull/2068
+* build(deps): bump @babel/traverse from 7.22.15 to 7.23.2 in /react by @dependabot in https://github.com/lablup/backend.ai-webui/pull/1977
+* build(deps): bump @adobe/css-tools from 4.3.1 to 4.3.2 in /react by @dependabot in https://github.com/lablup/backend.ai-webui/pull/2070
+* feat: Disable primary keypair deletion by @lizable in https://github.com/lablup/backend.ai-webui/pull/2083
+* feat: re-arrange my account dialog by @lizable in https://github.com/lablup/backend.ai-webui/pull/2087
+* fix: Change to setting.Pulgins to setting.OpensourcePlugins by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2080
+* fix: adjust support version check for main access key by @lizable in https://github.com/lablup/backend.ai-webui/pull/2088
+* feat: remaining marks in environment allocation slider by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2030
+* fix:activated and disabled mwc-switch's color is shown shadow color by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2092
+* refactor: rewrite protocol interceptor / buffer handler to new format introduced from Electron 25 by @inureyes in https://github.com/lablup/backend.ai-webui/pull/2067
+* fix: user signup without confirmation by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2046
+* feat: Expose endpoint and created user in model serving list by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2047
+* fix:The Credential View displays a list that does not match the sub-tab by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2055
+* feat: Add table columns setting component by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2071
+* fix: calculate liveStat by considering all containers by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2086
+* fix: Remove unnecessary spaces in sFTP upload session commands by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2107
+* feat: run `relay:watch` with nodemon by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2097
+* fix: Image name exceptions of `ImageEnvironmentSelectFormItem` by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2109
+* docs: fix GitHub branding by @Yaminyam in https://github.com/lablup/backend.ai-webui/pull/2111
+* feat: Set resource limitation in service launcher by @lizable in https://github.com/lablup/backend.ai-webui/pull/2112
+* fix:modiy condition of registry user config validation by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2099
+* feat: `useResourceLimitAndRemaining` hook by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2108
+* fix:Add white-space style by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2095
+* fix:UserDropdownMenu userName's item overflow issue by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2116
+* feat:Implement notice alert and delete notice-ticker and announcement panel. by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2098
+* refactor: Signout modal by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2093
+* docs: fix GitLab branding by @Yaminyam in https://github.com/lablup/backend.ai-webui/pull/2122
+* fix: env variable validation rule in neo session lanuncher  by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2110
+* style: remove `whiteSpace` to fix the broken UI of the announcement. by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2126
+* fix: implement Neo Session column's content by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2130
+* Revert "fix: implement Neo Session column's content" by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2132
+* feat: implement custom hooks to use React dark mode by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2120
+* feat: `allow_manual_image_name_for_session` option in ServiceLauncher by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2136
+* fix: model service owner always represented as logged in user by @kyujin-cho in https://github.com/lablup/backend.ai-webui/pull/2138
+* feat: add session name validator to the session launcher by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2123
+* fix: default select value is appeared correctly in add-folder-dialog by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2144
+* fix: apply overflow style and modify option to mwc-list-item in modify-permission-dialog by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2143
+* feat: add session info to the neo session list by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2133
+* feat: refactoring ErrorLogList to react by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2131
+* feat: improve log search performance and UX by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2146
+* fix: omit the mark if it is greater than the max by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2152
+* fix: improve session status info by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2150
+* feat: Improve edu-applauncher scalability for adding session templates by @fregataa in https://github.com/lablup/backend.ai-webui/pull/2147
+* fix: show antd error message when failed to terminate in-service model by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2157
+* fix: UserInfoModal is displayed previous data by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2153
+
+## New Contributors
+* @ironAiken2 made their first contribution in https://github.com/lablup/backend.ai-webui/pull/2157
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v23.09.7...v23.09.8
+
 
 ## v23.09.7 (25/11/2023)
 ## What's Changed

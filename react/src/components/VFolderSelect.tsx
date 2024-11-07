@@ -1,6 +1,8 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
-import { useCurrentProjectValue, useUpdatableState } from '../hooks';
-import { useTanQuery } from '../hooks/reactQueryAlias';
+import { useUpdatableState } from '../hooks';
+import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
+import useControllableState from '../hooks/useControllableState';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { Select, SelectProps } from 'antd';
 import _ from 'lodash';
 import React, { startTransition, useEffect } from 'react';
@@ -30,16 +32,19 @@ export type VFolder = {
 
 interface VFolderSelectProps extends SelectProps {
   autoSelectDefault?: boolean;
+  valuePropName?: 'id' | 'name';
   filter?: (vFolder: VFolder) => boolean;
 }
 
 const VFolderSelect: React.FC<VFolderSelectProps> = ({
   filter,
   autoSelectDefault,
+  valuePropName = 'name',
   ...selectProps
 }) => {
   const currentProject = useCurrentProjectValue();
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
+  const [value, setValue] = useControllableState(selectProps);
   // const { vfolder_list } = useLazyLoadQuery<VFolderSelectQuery>(
   //   graphql`
   //     # query VFolderSelectQuery($group_id: UUID) {
@@ -67,15 +72,16 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
   //     fetchPolicy: "store-and-network",
   //   }
   // );
-  // console.log("vfolder_list", vfolder_list);
   const [key, checkUpdate] = useUpdatableState('first');
 
-  const { data } = useTanQuery({
+  const { data } = useSuspenseTanQuery({
     queryKey: ['VFolderSelectQuery', key],
     queryFn: () => {
+      const search = new URLSearchParams();
+      search.set('group_id', currentProject.id);
       return baiRequestWithPromise({
         method: 'GET',
-        url: `/folders?group_id=${currentProject.id}`,
+        url: `/folders?${search.toString()}`,
       }) as Promise<VFolder[]>;
     },
     staleTime: 0,
@@ -86,19 +92,23 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
   const autoSelectedOption = _.first(filteredVFolders)
     ? {
         label: _.first(filteredVFolders)?.name,
-        value: _.first(filteredVFolders)?.name,
+        value: _.first(filteredVFolders)?.[valuePropName],
       }
     : undefined;
+  // TODO: use controllable value
   useEffect(() => {
     if (autoSelectDefault && autoSelectedOption) {
-      selectProps.onChange?.(autoSelectedOption.value, autoSelectedOption);
+      setValue(autoSelectedOption.value, autoSelectedOption);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoSelectDefault]);
   return (
     <Select
       showSearch
+      optionFilterProp={'label'}
       {...selectProps}
+      value={value}
+      onChange={setValue}
       onDropdownVisibleChange={(open) => {
         if (open) {
           startTransition(() => {
@@ -106,15 +116,13 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
           });
         }
       }}
-    >
-      {_.map(filteredVFolders, (vfolder) => {
-        return (
-          <Select.Option key={vfolder?.id} value={vfolder?.name}>
-            {vfolder?.name}
-          </Select.Option>
-        );
+      options={_.map(filteredVFolders, (vfolder) => {
+        return {
+          label: vfolder?.name,
+          value: vfolder?.[valuePropName],
+        };
       })}
-    </Select>
+    />
   );
 };
 

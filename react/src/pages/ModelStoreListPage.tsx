@@ -4,13 +4,35 @@ import TextHighlighter from '../components/TextHighlighter';
 import { ModelCardModalFragment$key } from '../components/__generated__/ModelCardModalFragment.graphql';
 import { useUpdatableState } from '../hooks';
 import { ModelStoreListPageQuery } from './__generated__/ModelStoreListPageQuery.graphql';
-import { ReloadOutlined } from '@ant-design/icons';
-import { Button, Card, Input, List, Select, Tag, theme } from 'antd';
+import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
+import {
+  Alert,
+  Button,
+  Card,
+  Input,
+  List,
+  Select,
+  Tag,
+  theme,
+  Typography,
+} from 'antd';
+import { createStyles } from 'antd-style';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
+import { FolderX } from 'lucide-react';
 import React, { useMemo, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
+
+const useStyles = createStyles(({ css, token }) => {
+  return {
+    cardList: css`
+      .ant-col {
+        height: calc(100% - ${token.marginMD}px);
+      }
+    `,
+  };
+});
 
 const ModelStoreListPage: React.FC = () => {
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
@@ -22,6 +44,8 @@ const ModelStoreListPage: React.FC = () => {
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
   const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
 
+  const { styles } = useStyles();
+
   const [currentModelInfo, setCurrentModelInfo] =
     useState<ModelCardModalFragment$key | null>();
 
@@ -30,11 +54,13 @@ const ModelStoreListPage: React.FC = () => {
   const { model_cards } = useLazyLoadQuery<ModelStoreListPageQuery>(
     graphql`
       query ModelStoreListPageQuery($filter: String) {
-        model_cards(filter: $filter) {
+        # TODO: Implement pagination for model_cards
+        model_cards(filter: $filter, first: 200) {
           edges {
             cursor
             node {
               id
+              row_id @since(version: "24.03.7")
               name
               author
               title
@@ -44,6 +70,7 @@ const ModelStoreListPage: React.FC = () => {
               label
               license
               min_resource
+              error_msg @since(version: "24.03.7")
               ...ModelCardModalFragment
             }
           }
@@ -106,7 +133,8 @@ const ModelStoreListPage: React.FC = () => {
         gap={'xs'}
       >
         <Flex direction="row" gap={'md'}>
-          <Input.Search
+          <Input
+            prefix={<SearchOutlined />}
             placeholder={t('modelStore.SearchModels')}
             allowClear
             onChange={(e) => {
@@ -151,7 +179,6 @@ const ModelStoreListPage: React.FC = () => {
             popupMatchSelectWidth={false}
             value={selectedTasks}
             onChange={(value) => {
-              console.log(value);
               setSelectedTasks(value as string[]);
             }}
             allowClear
@@ -174,6 +201,7 @@ const ModelStoreListPage: React.FC = () => {
         </Flex>
       </Flex>
       <List
+        className={styles.cardList}
         grid={{ gutter: 16, xs: 1, sm: 2, md: 2, lg: 3, xl: 4, xxl: 5 }}
         dataSource={model_cards?.edges
           ?.map((edge) => edge?.node)
@@ -182,11 +210,12 @@ const ModelStoreListPage: React.FC = () => {
             if (search) {
               const searchLower = search.toLowerCase();
               passSearchFilter =
+                info?.description?.toLowerCase().includes(searchLower) ||
                 info?.title?.toLowerCase().includes(searchLower) ||
                 info?.task?.toLowerCase().includes(searchLower) ||
                 info?.category?.toLowerCase().includes(searchLower) ||
-                info?.label?.some(
-                  (label) => label?.toLowerCase().includes(searchLower),
+                info?.label?.some((label) =>
+                  label?.toLowerCase().includes(searchLower),
                 ) ||
                 false;
             }
@@ -206,17 +235,45 @@ const ModelStoreListPage: React.FC = () => {
             onClick={() => {
               setCurrentModelInfo(item);
             }}
+            style={{
+              height: '100%',
+            }}
           >
             <Card
               hoverable
               title={
-                <TextHighlighter keyword={search}>
-                  {item?.title}
-                </TextHighlighter>
+                item?.title ? (
+                  <TextHighlighter keyword={search}>
+                    {item?.title}
+                  </TextHighlighter>
+                ) : (
+                  <Typography.Text type="secondary">
+                    <FolderX
+                      style={{
+                        marginLeft: token.marginXXS,
+                        marginRight: token.marginXXS,
+                        fontSize: token.fontSize,
+                      }}
+                    />
+                    {item?.name}
+                  </Typography.Text>
+                )
               }
+              style={{
+                height: '100%',
+              }}
               size="small"
             >
               <Flex direction="row" wrap="wrap" gap={'xs'}>
+                {item?.description && (
+                  <Typography.Paragraph
+                    ellipsis={{ rows: 3, expandable: false }}
+                  >
+                    <TextHighlighter keyword={search}>
+                      {item?.description}
+                    </TextHighlighter>
+                  </Typography.Paragraph>
+                )}
                 {item?.category && (
                   <Tag bordered={false}>
                     <TextHighlighter keyword={search}>
@@ -239,6 +296,21 @@ const ModelStoreListPage: React.FC = () => {
                       </TextHighlighter>
                     </Tag>
                   ))}
+                {item?.error_msg && (
+                  <Alert
+                    style={{ width: '100%' }}
+                    message={
+                      <Typography.Paragraph
+                        ellipsis={{ rows: 6 }}
+                        style={{ marginBottom: 0 }}
+                      >
+                        {item.error_msg}
+                      </Typography.Paragraph>
+                    }
+                    type="error"
+                    showIcon
+                  />
+                )}
               </Flex>
             </Card>
           </List.Item>

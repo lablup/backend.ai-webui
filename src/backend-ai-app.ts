@@ -1,12 +1,10 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 export const UPDATE_PAGE = 'UPDATE_PAGE';
 export const UPDATE_OFFLINE = 'UPDATE_OFFLINE';
 export const UPDATE_DRAWER_STATE = 'UPDATE_DRAWER_STATE';
-export const OPEN_SNACKBAR = 'OPEN_SNACKBAR';
-export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';
 
 export const navigate =
   (path: any, params: Record<string, unknown> = {}) =>
@@ -21,6 +19,7 @@ export const navigate =
         '/agent-summary',
         '/experiment',
         '/data',
+        '/my-environment',
         '/pipeline',
         '/pipeline-job',
         '/statistics',
@@ -116,12 +115,10 @@ const loadPage =
       case 'data':
         import('./components/backend-ai-data-view.js');
         break;
-      case 'usersettings':
-        import('./components/backend-ai-usersettings-general-list');
-        break;
       case 'agent':
       case 'resource':
-        import('./components/backend-ai-agent-view.js');
+        import('./components/backend-ai-resource-group-list.js');
+        import('./components/backend-ai-storage-proxy-list.js');
         break;
       case 'storage-settings':
         import('./components/backend-ai-storage-host-settings-view.js');
@@ -188,30 +185,6 @@ const updatePage = (page, params) => {
     page,
     params,
   };
-};
-
-let offlineTimer;
-
-export const showOffline = () => (dispatch) => {
-  dispatch({
-    type: OPEN_SNACKBAR,
-  });
-  window.clearTimeout(offlineTimer);
-  offlineTimer = window.setTimeout(
-    () => dispatch({ type: CLOSE_SNACKBAR }),
-    3000,
-  );
-};
-
-export const updateOffline = (offline) => (dispatch, getState) => {
-  // Show the snackbar only if offline status changes.
-  if (offline !== getState().app.offline) {
-    dispatch(showOffline());
-  }
-  dispatch({
-    type: UPDATE_OFFLINE,
-    offline,
-  });
 };
 
 export const updateDrawerState = (opened) => {

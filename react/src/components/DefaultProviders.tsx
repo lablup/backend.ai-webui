@@ -4,12 +4,17 @@ import rawFixAntCss from '../fix_antd.css?raw';
 import { useCustomThemeConfig } from '../helper/customThemeConfig';
 import { ReactWebComponentProps } from '../helper/react-to-webcomponent';
 import { ThemeModeProvider, useThemeMode } from '../hooks/useThemeMode';
+// @ts-ignore
+import indexCss from '../index.css?raw';
 import { StyleProvider, createCache } from '@ant-design/cssinjs';
-import { App, ConfigProvider, theme } from 'antd';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useUpdateEffect } from 'ahooks';
+import { App, AppProps, ConfigProvider, theme, Typography } from 'antd';
 import en_US from 'antd/locale/en_US';
 import ko_KR from 'antd/locale/ko_KR';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
+import duration from 'dayjs/plugin/duration';
 import localeData from 'dayjs/plugin/localeData';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -18,6 +23,8 @@ import utc from 'dayjs/plugin/utc';
 import weekday from 'dayjs/plugin/weekday';
 import i18n from 'i18next';
 import Backend from 'i18next-http-backend';
+import { createStore, Provider as JotaiProvider } from 'jotai';
+import { GlobeIcon } from 'lucide-react';
 import React, {
   Suspense,
   useEffect,
@@ -26,21 +33,23 @@ import React, {
   useState,
 } from 'react';
 import { useTranslation, initReactI18next } from 'react-i18next';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { RelayEnvironmentProvider } from 'react-relay';
-import { BrowserRouter, useNavigate } from 'react-router-dom';
+import { BrowserRouter, useLocation, useNavigate } from 'react-router-dom';
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 
+export const jotaiStore = createStore();
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 dayjs.extend(localizedFormat);
 dayjs.extend(relativeTime);
 dayjs.extend(utc);
 dayjs.extend(timezone);
+dayjs.extend(duration);
 
 interface WebComponentContextType {
   value?: ReactWebComponentProps['value'];
+  parsedValue?: any;
   dispatchEvent: ReactWebComponentProps['dispatchEvent'];
   moveTo: (
     path: string,
@@ -53,13 +62,18 @@ interface WebComponentContextType {
 const WebComponentContext = React.createContext<WebComponentContextType>(null!);
 const ShadowRootContext = React.createContext<ShadowRoot>(null!);
 export const useShadowRoot = () => React.useContext(ShadowRootContext);
-export const useWebComponentInfo = () => React.useContext(WebComponentContext);
+export const useWebComponentInfo = <ParsedType extends any>() => {
+  const context = React.useContext(WebComponentContext);
+  return {
+    ...context,
+    parsedValue: context.parsedValue as ParsedType,
+  };
+};
 
 // Create a client
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      suspense: true,
       refetchOnWindowFocus: false,
       retry: false,
     },
@@ -70,15 +84,47 @@ export interface DefaultProvidersProps extends ReactWebComponentProps {
   children?: React.ReactNode;
 }
 
+let isDebugModeByParam = false;
+if (process.env.NODE_ENV === 'development') {
+  const urlParams = new URLSearchParams(window.location.search);
+  isDebugModeByParam = urlParams.get('debug') === 'true';
+}
+
 i18n
   .use(initReactI18next) // passes i18n down to react-i18next
   .use(Backend)
+  .use({
+    type: 'postProcessor',
+    name: 'copyableI18nKey',
+    process: function (value: any, key: any, options: any, translator: any) {
+      // @ts-ignore
+      if (globalThis?.backendaiwebui?.debug || isDebugModeByParam) {
+        return (
+          <Typography.Text
+            copyable={{
+              text: key,
+              tooltips: key,
+              icon: <GlobeIcon />,
+            }}
+          >
+            {value}
+          </Typography.Text>
+        );
+      } else {
+        return value;
+      }
+    },
+  })
   .init({
     backend: {
       loadPath: '/resources/i18n/{{lng}}.json',
     },
-    //@ts-ignore
-    lng: globalThis?.backendaioptions?.get('current_language') || 'en',
+    postProcess:
+      process.env.NODE_ENV === 'development' ? ['copyableI18nKey'] : [],
+    lng:
+      //@ts-ignore
+      globalThis?.backendaioptions?.get('language', 'default', 'general') ||
+      'en',
     fallbackLng: 'en',
     interpolation: {
       escapeValue: false, // react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape
@@ -92,7 +138,7 @@ i18n
 export const useCurrentLanguage = () => {
   const [lang, _setLang] = useState(
     //@ts-ignore
-    globalThis?.backendaioptions?.get('current_language'),
+    globalThis?.backendaioptions?.get('language', 'default', 'general') || 'en',
   );
   const { i18n } = useTranslation();
 
@@ -121,6 +167,12 @@ export const useCurrentLanguage = () => {
   return [lang] as const;
 };
 
+const commonAppProps: AppProps = {
+  message: {
+    duration: 4,
+  },
+};
+
 const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
   children,
   value,
@@ -134,8 +186,15 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
   const { isDarkMode } = useThemeMode();
 
   const componentValues = useMemo(() => {
+    let parsedValue: any;
+    try {
+      parsedValue = JSON.parse(value || '');
+    } catch (error) {
+      parsedValue = {};
+    }
     return {
       value,
+      parsedValue,
       dispatchEvent,
       moveTo: (path, params) => {
         dispatchEvent('moveTo', { path, params: params });
@@ -143,13 +202,14 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
     } as WebComponentContextType;
   }, [value, dispatchEvent]);
   return (
-    <>
+    <JotaiProvider store={jotaiStore}>
       {RelayEnvironment && (
         <RelayEnvironmentProvider environment={RelayEnvironment}>
           <React.StrictMode>
             <style>
               {styles}
               {rawFixAntCss}
+              {indexCss}
             </style>
             <QueryClientProvider client={queryClient}>
               <ShadowRootContext.Provider value={shadowRoot}>
@@ -171,7 +231,7 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
                           : theme.defaultAlgorithm,
                       }}
                     >
-                      <App>
+                      <App {...commonAppProps}>
                         <StyleProvider container={shadowRoot} cache={cache}>
                           <Suspense fallback="">
                             <BrowserRouter>
@@ -199,12 +259,13 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
           </React.StrictMode>
         </RelayEnvironmentProvider>
       )}
-    </>
+    </JotaiProvider>
   );
 };
 
 export const RoutingEventHandler = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   useLayoutEffect(() => {
     const handleNavigate = (e: any) => {
       const { detail } = e;
@@ -220,6 +281,10 @@ export const RoutingEventHandler = () => {
       document.removeEventListener('react-navigate', handleNavigate);
     };
   }, [navigate]);
+
+  useUpdateEffect(() => {
+    document.dispatchEvent(new CustomEvent('locationPath:changed'));
+  }, [location.pathname]);
 
   return null;
 };
@@ -243,6 +308,7 @@ export const DefaultProvidersForReactRoot: React.FC<
 
   return (
     <>
+      <style>{indexCss}</style>
       {RelayEnvironment && (
         <RelayEnvironmentProvider environment={RelayEnvironment}>
           <QueryClientProvider client={queryClient}>
@@ -262,7 +328,7 @@ export const DefaultProvidersForReactRoot: React.FC<
                   : theme.defaultAlgorithm,
               }}
             >
-              <App>
+              <App {...commonAppProps}>
                 {/* <StyleProvider container={shadowRoot} cache={cache}> */}
                 <Suspense>
                   {/* <BrowserRouter> */}

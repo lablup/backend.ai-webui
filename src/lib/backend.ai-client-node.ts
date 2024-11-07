@@ -258,7 +258,7 @@ class Client {
     this._features = {}; // feature support list
     this.abortController = new AbortController();
     this.abortSignal = this.abortController.signal;
-    this.requestTimeout = 5000;
+    this.requestTimeout = 15000;
     //if (this._config.connectionMode === 'API') {
     //this.getManagerVersion();
     //}
@@ -2062,8 +2062,8 @@ class VFolder {
       recursive: recursive,
     };
     let rqst = this.client.newSignedRequest(
-      'DELETE',
-      `${this.urlPrefix}/${name}/delete_files`,
+      'POST',
+      `${this.urlPrefix}/${name}/delete-files`,
       body,
     );
     return this.client._wrapWithPromise(rqst);
@@ -3715,8 +3715,8 @@ class Maintenance {
    * @param {string} task_id - background task id.
    */
   attach_background_task(task_id: string) {
-    var urlStr = '/events/background-task?task_id=' + task_id;
-    let req = this.client.newSignedRequest('GET', urlStr, null);
+    const urlStr = '/events/background-task?task_id=' + task_id;
+    const req = this.client.newSignedRequest('GET', urlStr, null);
     return new EventSource(req.uri, { withCredentials: true });
   }
 
