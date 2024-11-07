@@ -632,6 +632,24 @@
         }
       ]
     },
+    "python-conda": {
+      "name": "Python (Anaconda)",
+      "description": "Anaconda is a popular distribution platform that simplifies Python package management and deployment by providing a comprehensive collection of data science packages and development tools.",
+      "group": "Scientific Environment",
+      "tags": [],
+      "icon": "anaconda.svg",
+      "label": [
+        {
+          "category": "Env",
+          "tag": "Python",
+          "color": "blue"
+        },
+        {
+          "tag": "Conda",
+          "color": "blue"
+        }
+      ]
+    },
     "neurodebian": {
       "name": "NeuroDebian",
       "description": "NeuroDebian provides a large collection of popular neuroscience research software for the Debian operating system as well as Ubuntu and other derivatives.",
