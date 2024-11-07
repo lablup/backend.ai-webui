@@ -629,7 +629,7 @@ const SessionLauncherPage = () => {
             upsertNotification({
               key: 'session-launcher:' + sessionName,
               to: backupTo,
-              toText: '수정',
+              toText: t('button.Edit'),
             });
             // this.metadata_updating = false;
             // console.log(err);
