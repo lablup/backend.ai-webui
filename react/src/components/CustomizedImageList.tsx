@@ -402,17 +402,29 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
                   variables: {
                     id: row.id,
                   },
-                  onCompleted(data, errors) {
-                    if (errors) {
-                      message.error(errors[0]?.message);
+                  onCompleted(res, errors) {
+                    if (!res?.forget_image_by_id?.ok) {
+                      message.error(res?.forget_image_by_id?.msg);
                       return;
+                    } else if (!res?.untag_image_from_registry?.ok) {
+                      message.error(res?.untag_image_from_registry?.msg);
+                      return;
+                    } else if (errors && errors?.length > 0) {
+                      const errorMsgList = _.map(
+                        errors,
+                        (error) => error.message,
+                      );
+                      for (const error of errorMsgList) {
+                        message.error(error, 2.5);
+                      }
+                    } else {
+                      startRefetchTransition(() => {
+                        updateCustomizedImageListFetchKey();
+                      });
+                      message.success(
+                        t('environment.CustomizedImageSuccessfullyDeleted'),
+                      );
                     }
-                    startRefetchTransition(() => {
-                      updateCustomizedImageListFetchKey();
-                    });
-                    message.success(
-                      t('environment.CustomizedImageSuccessfullyDeleted'),
-                    );
                   },
                   onError(err) {
                     message.error(err?.message);
