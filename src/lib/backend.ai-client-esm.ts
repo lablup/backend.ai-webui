@@ -266,7 +266,7 @@ class Client {
     this._features = {}; // feature support list
     this.abortController = new AbortController();
     this.abortSignal = this.abortController.signal;
-    this.requestTimeout = 15000;
+    this.requestTimeout = 30000;
     if (localStorage.getItem('backendaiwebui.sessionid')) {
       this._loginSessionId = localStorage.getItem('backendaiwebui.sessionid');
     } else {
@@ -1015,7 +1015,7 @@ class Client {
     kernelType: string,
     sessionId: string,
     resources = {},
-    timeout: number = 0,
+    timeout: number = 30000,
     architecture: string = 'x86_64',
   ) {
     if (

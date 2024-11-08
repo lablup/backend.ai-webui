@@ -513,7 +513,7 @@ const SessionLauncherPage = () => {
                 sessionInfo.kernelName,
                 formattedSessionName,
                 sessionInfo.config,
-                20000,
+                30000,
                 sessionInfo.architecture,
               )
               .then((res: { created: boolean; status: string }) => {

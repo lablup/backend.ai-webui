@@ -1522,7 +1522,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
           environment,
           null,
           imageResource,
-          10000,
+          30000,
           undefined,
         );
       })
@@ -1613,7 +1613,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
             environment,
             `sftp-${this.vfolderID}`,
             imageResource,
-            15000,
+            30000,
             undefined,
           );
         if (sessionResponse.status === 'CANCELLED') {

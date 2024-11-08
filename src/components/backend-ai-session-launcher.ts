@@ -1989,7 +1989,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       kernelName,
       sessionName,
       config,
-      20000,
+      30000,
       architecture,
     );
     task
