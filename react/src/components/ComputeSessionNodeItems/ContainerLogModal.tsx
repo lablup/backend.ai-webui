@@ -1,6 +1,7 @@
 import { downloadBlob } from '../../helper/csv-util';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useTanQuery } from '../../hooks/reactQueryAlias';
+import { useMemoWithPrevious } from '../../hooks/useMemoWithPrevious';
 import BAIModal, { BAIModalProps } from '../BAIModal';
 import Flex from '../Flex';
 import { ContainerLogModalFragment$key } from './__generated__/ContainerLogModalFragment.graphql';
@@ -18,7 +19,7 @@ import {
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { DownloadIcon } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
 
@@ -112,15 +113,11 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
   // console.log(signed)
   // console.log(signed.uri);
 
-  const previousLastLineNumber = useRef(0);
-
-  useEffect(() => {
-    previousLastLineNumber.current = logs?.split('\n').length || 0;
-  }, [logs]);
+  const [lastLineNumbers, { resetPrevious: resetPreviousLineNumber }] =
+    useMemoWithPrevious(() => logs?.split('\n').length || 0, [logs]);
 
   const { md } = Grid.useBreakpoint();
   const { t } = useTranslation();
-  const fixedPreviousLastLineNumber = previousLastLineNumber.current;
 
   return (
     <BAIModal
@@ -170,7 +167,7 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
             value={selectedKernelId}
             onChange={(value) => {
               setSelectedKernelId(value);
-              previousLastLineNumber.current = 0; // reset previous last line number
+              resetPreviousLineNumber();
             }}
             options={_.chain(session?.kernel_nodes?.edges)
               .map((e) => {
@@ -199,7 +196,7 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
             onChange={(value) => { 
               setLogSize(value);
               if(value!=='full'){
-                previousLastLineNumber.current = 0; // reset previous last line number
+                resetPreviousLineNumber();
               }
               refetch();
             }}
@@ -248,7 +245,7 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
                 enableSearchNavigation
                 selectableLines
                 text={logs || ''}
-                highlight={fixedPreviousLastLineNumber}
+                highlight={lastLineNumbers.previous}
                 extraLines={1}
                 // url={signed.uri}
                 // fetchOptions={
