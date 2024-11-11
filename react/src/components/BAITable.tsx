@@ -1,3 +1,4 @@
+import { useDebounce } from 'ahooks';
 import { GetProps, Table } from 'antd';
 import { createStyles } from 'antd-style';
 import { ColumnsType } from 'antd/es/table';
@@ -34,9 +35,10 @@ const ResizableTitle = (
     width: number;
   },
 ) => {
-  const { onResize, width, ...restProps } = props;
-
+  const { onResize, width, onClick, ...restProps } = props;
   const wrapRef = useRef<HTMLTableCellElement>(null);
+  const [isResizing, setIsResizing] = useState(false);
+  const debouncedIsResizing = useDebounce(isResizing, { wait: 100 });
 
   // This is a workaround for the initial width of resizable columns if the width is not specified
   useEffect(() => {
@@ -67,9 +69,24 @@ const ResizableTitle = (
         />
       }
       onResize={onResize}
+      onResizeStart={() => {
+        setIsResizing(true);
+      }}
+      onResizeStop={() => {
+        setIsResizing(false);
+      }}
       draggableOpts={{ enableUserSelectHack: false }}
     >
-      <th {...restProps} />
+      <th
+        onClick={(e) => {
+          if (debouncedIsResizing) {
+            e.preventDefault();
+          } else {
+            onClick?.(e);
+          }
+        }}
+        {...restProps}
+      />
     </Resizable>
   );
 };
