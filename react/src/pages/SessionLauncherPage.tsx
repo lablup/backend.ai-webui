@@ -132,6 +132,7 @@ interface SessionConfig {
   startsAt?: string;
   startupCommand?: string;
   bootstrap_script?: string;
+  agent_list?: string[];
 }
 
 interface CreateSessionInfo {
@@ -443,6 +444,15 @@ const SessionLauncherPage = () => {
           architecture,
           sessionName: sessionName,
           config: {
+            ...(baiClient.supports('agent-select') &&
+            !baiClient?._config?.hideAgents &&
+            values.agent !== 'auto'
+              ? {
+                  agent_list: [values.agent].filter(
+                    (agent): agent is string => !!agent,
+                  ),
+                } // Filter out undefined values
+              : undefined),
             type: values.sessionType,
             ...(_.isEmpty(values.bootstrap_script)
               ? {}
@@ -471,8 +481,6 @@ const SessionLauncherPage = () => {
                   domain: baiClient._config.domainName,
                   scaling_group: values.resourceGroup,
                 }),
-            ///////////////////////////
-
             cluster_mode: values.cluster_mode,
             cluster_size: values.cluster_size,
             maxWaitSeconds: 15,
@@ -498,9 +506,17 @@ const SessionLauncherPage = () => {
               ..._.omit(values.hpcOptimization, 'autoEnabled'),
             },
             preopen_ports: transformPortValuesToNumbers(values.ports),
+            ...(baiClient.supports('agent-select') &&
+            !baiClient?._config?.hideAgents &&
+            values.agent !== 'auto'
+              ? {
+                  agent_list: [values.agent].filter(
+                    (agent): agent is string => !!agent,
+                  ),
+                } // Filter out undefined values
+              : undefined),
           },
         };
-
         const sessionPromises = _.map(
           _.range(values.num_of_sessions || 1),
           (i) => {
@@ -1638,6 +1654,15 @@ const SessionLauncherPage = () => {
                               .value()} */}
                             </Flex>
                           </Descriptions.Item>
+                          {baiClient.supports('agent-select') &&
+                            !baiClient?._config?.hideAgents && (
+                              <Descriptions.Item
+                                label={t('session.launcher.AgentNode')}
+                              >
+                                {form.getFieldValue('agent') ||
+                                  t('session.launcher.AutoSelect')}
+                              </Descriptions.Item>
+                            )}
                           <Descriptions.Item
                             label={t('session.launcher.NumberOfContainer')}
                           >
@@ -1954,6 +1979,7 @@ const SessionLauncherPage = () => {
                   command: undefined,
                   scheduleDate: undefined,
                 },
+                agent: 'auto', // Add the missing 'agent' property
               } as Omit<
                 Required<OptionalFieldsOnly<SessionLauncherFormValue>>,
                 'autoMountedFolderNames'

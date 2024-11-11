@@ -1320,7 +1320,12 @@
       "InsufficientAllocationOfResourcesWarning": "Los recursos asignables están por debajo del recurso mínimo requerido en la imagen seleccionada.",
       "RecentHistory": "Historia reciente",
       "CreatedAt": "Creado en",
-      "Tags": "Etiquetas"
+      "Tags": "Etiquetas",
+      "SelectAgent": "Seleccionar Agente",
+      "autoSelect": "Selección automática",
+      "DescSelectAgent": "Los recursos que se muestran en el lado derecho del agente representan la cantidad real de recursos disponibles. \nActualmente, la selección de agentes solo está disponible en un entorno de un solo nodo y un solo contenedor. \nLa configuración predeterminada es la asignación de agentes por parte del programador.",
+      "AgentNode": "Agente",
+      "AutoSelect": "selección automática"
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",

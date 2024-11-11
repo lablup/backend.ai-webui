@@ -1109,13 +1109,16 @@ export default class BackendAISessionList extends BackendAIPage {
                 sessions[objectKey].cpu_used_time =
                   this._automaticScaledTime(0);
               }
-              if (this.is_superadmin) {
+              if (
+                this.is_superadmin ||
+                !globalThis.backendaiclient._config.hideAgents
+              ) {
                 sessions[objectKey].agents_ids_with_container_ids = sessions[
                   objectKey
                 ].containers
                   ?.map((c) => {
-                    const agentID = c.agent;
-                    const containerID = c.container_id?.slice(0, 4);
+                    const agentID = c.agent ?? '-';
+                    const containerID = c.container_id?.slice(0, 4) ?? '-';
                     return `${agentID}(${containerID})`;
                   })
                   ?.join('\n');
@@ -4556,7 +4559,7 @@ ${rowData.item[this.sessionNameField]}</pre
     render(
       // language=HTML
       html`
-        <pre>${rowData.item.agents_ids_with_container_ids}</pre>
+        <pre>${rowData?.item?.agents_ids_with_container_ids ?? ''}</pre>
       `,
       root,
     );

@@ -284,7 +284,12 @@
       "InsufficientAllocationOfResourcesWarning": "Zasoby, które można przydzielić, są mniejsze niż minimalne zasoby wymagane w wybranym obrazie.",
       "RecentHistory": "Najnowsza historia",
       "CreatedAt": "Utworzono o godz",
-      "Tags": "Tagi"
+      "Tags": "Tagi",
+      "SelectAgent": "Wybierz Agenta",
+      "autoSelect": "Automatyczny wybór",
+      "DescSelectAgent": "Zasoby wyświetlane po prawej stronie agenta reprezentują rzeczywistą ilość dostępnych zasobów. \nObecnie wybór agenta jest dostępny tylko w środowisku z jednym węzłem i jednym kontenerem. \nUstawieniem domyślnym jest przydzielanie agentów przez program planujący.",
+      "AgentNode": "Agent",
+      "AutoSelect": "automatyczny wybór"
     },
     "Preparing": "Przygotowuję...",
     "PreparingSession": "Przygotowuję sesję...",

@@ -298,7 +298,9 @@
       "InsufficientAllocationOfResourcesWarning": "ทรัพยากรที่จัดสรรได้อยู่ต่ำกว่าทรัพยากรขั้นต่ำที่จำเป็นในรูปภาพที่เลือก",
       "RecentHistory": "ประวัติศาสตร์ล่าสุด",
       "CreatedAt": "สร้างเมื่อ",
-      "Tags": "แท็ก"
+      "Tags": "แท็ก",
+      "AgentNode": "ตัวแทน",
+      "AutoSelect": "เลือกอัตโนมัติ"
     },
     "Preparing": "กำลังเตรียมการ...",
     "PreparingSession": "กำลังเตรียมเซสชัน...",

@@ -284,7 +284,12 @@
       "InsufficientAllocationOfResourcesWarning": "Die zuweisbaren Ressourcen liegen unter der im ausgewählten Bild erforderlichen Mindestressource.",
       "RecentHistory": "Jüngere Geschichte",
       "CreatedAt": "Erstellt am",
-      "Tags": "Schlagworte"
+      "Tags": "Schlagworte",
+      "SelectAgent": "Wählen Sie Agent aus",
+      "autoSelect": "Automatische Auswahl",
+      "DescSelectAgent": "Die auf der rechten Seite des Agenten angezeigten Ressourcen stellen die tatsächliche Menge der verfügbaren Ressourcen dar. \nDerzeit ist die Agentenauswahl nur in einer Single-Node-Single-Container-Umgebung verfügbar. \nDie Standardeinstellung ist die Agentenzuteilung durch den Scheduler.",
+      "AgentNode": "Agent",
+      "AutoSelect": "automatisch auswählen"
     },
     "Preparing": "Vorbereitung...",
     "PreparingSession": "Sitzung vorbereiten...",

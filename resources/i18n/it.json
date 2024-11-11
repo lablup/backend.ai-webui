@@ -284,7 +284,12 @@
       "InsufficientAllocationOfResourcesWarning": "Le risorse assegnabili sono inferiori alla risorsa minima richiesta nell'immagine selezionata.",
       "RecentHistory": "Storia recente",
       "CreatedAt": "CreatoAt",
-      "Tags": "Tag"
+      "Tags": "Tag",
+      "SelectAgent": "Seleziona Agente",
+      "autoSelect": "Auto selezione",
+      "DescSelectAgent": "Le risorse visualizzate sul lato destro dell'agente rappresentano la quantità effettiva di risorse disponibili. \nAttualmente, la selezione dell'agente è disponibile solo in un ambiente con contenitore singolo a nodo singolo. \nL'impostazione predefinita è l'allocazione dell'agente da parte dello scheduler.",
+      "AgentNode": "Agente",
+      "AutoSelect": "selezione automatica"
     },
     "Preparing": "Preparazione...",
     "PreparingSession": "Preparazione della sessione...",

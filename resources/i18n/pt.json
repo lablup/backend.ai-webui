@@ -284,7 +284,12 @@
       "InsufficientAllocationOfResourcesWarning": "Os recursos alocáveis ​​ficam abaixo do recurso mínimo exigido na imagem selecionada.",
       "RecentHistory": "História recente",
       "CreatedAt": "Criado em",
-      "Tags": "Etiquetas"
+      "Tags": "Etiquetas",
+      "SelectAgent": "Selecione Agente",
+      "autoSelect": "Auto seleção",
+      "DescSelectAgent": "Os recursos exibidos no lado direito do agente representam a quantidade real de recursos disponíveis. \nAtualmente, a seleção de agentes está disponível apenas em um ambiente de nó único e contêiner único. \nA configuração padrão é a alocação de agentes pelo agendador.",
+      "AgentNode": "Agente",
+      "AutoSelect": "seleção automática"
     },
     "Preparing": "Preparando...",
     "PreparingSession": "Preparando sessão ...",

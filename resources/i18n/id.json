@@ -285,7 +285,12 @@
       "InsufficientAllocationOfResourcesWarning": "Sumber daya yang dapat dialokasikan berada di bawah sumber daya minimum yang diperlukan pada gambar yang dipilih.",
       "RecentHistory": "Riwayat Terbaru",
       "CreatedAt": "DibuatPada",
-      "Tags": "Tag"
+      "Tags": "Tag",
+      "SelectAgent": "Pilih Agen",
+      "autoSelect": "Pilih Otomatis",
+      "DescSelectAgent": "Sumber daya yang ditampilkan di sisi kanan agen mewakili jumlah sebenarnya sumber daya yang tersedia. \nSaat ini, pemilihan agen hanya tersedia di lingkungan kontainer tunggal node tunggal. \nPengaturan defaultnya adalah alokasi agen oleh penjadwal.",
+      "AgentNode": "Agen",
+      "AutoSelect": "pilih otomatis"
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",

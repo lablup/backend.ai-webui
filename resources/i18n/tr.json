@@ -284,7 +284,12 @@
       "InsufficientAllocationOfResourcesWarning": "Tahsis edilebilir kaynaklar, seçilen görüntüde gereken minimum kaynağın altına düşüyor.",
       "RecentHistory": "Yakın Tarih",
       "CreatedAt": "Oluşturulma Tarihi",
-      "Tags": "Etiketler"
+      "Tags": "Etiketler",
+      "SelectAgent": "Temsilci Seçin",
+      "autoSelect": "Otomatik seçim",
+      "DescSelectAgent": "Aracının sağ tarafında görüntülenen kaynaklar, mevcut kaynakların gerçek miktarını temsil eder. \nŞu anda aracı seçimi yalnızca tek düğümlü, tek kapsayıcılı bir ortamda mümkündür. \nVarsayılan ayar, ajanın zamanlayıcı tarafından tahsis edilmesidir.",
+      "AgentNode": "Ajan",
+      "AutoSelect": "otomatik seç"
     },
     "Preparing": "hazırlanıyor...",
     "PreparingSession": "Oturum hazırlanıyor...",

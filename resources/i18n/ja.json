@@ -284,7 +284,12 @@
       "InsufficientAllocationOfResourcesWarning": "割り当て可能なリソースが、選択したイメージに必要な最小リソースを下回ります。",
       "RecentHistory": "最近の歴史",
       "CreatedAt": "作成日",
-      "Tags": "タグ"
+      "Tags": "タグ",
+      "SelectAgent": "エージェントの選択",
+      "autoSelect": "自動選択",
+      "DescSelectAgent": "エージェントの右側に表示されるリソースは、使用可能なリソースの実際の量を表します。\n現在、エージェントの選択は、単一ノード、単一コンテナー環境でのみ使用できます。\nデフォルト設定は、スケジューラによるエージェント割り当てです。",
+      "AgentNode": "エージェント",
+      "AutoSelect": "自動選択"
     },
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",

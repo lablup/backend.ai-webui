@@ -284,7 +284,12 @@
       "InsufficientAllocationOfResourcesWarning": "Les ressources allouables sont inférieures à la ressource minimale requise dans l'image sélectionnée.",
       "RecentHistory": "Histoire récente",
       "CreatedAt": "Créé à",
-      "Tags": "Balises"
+      "Tags": "Balises",
+      "SelectAgent": "Sélectionnez un agent",
+      "autoSelect": "Sélection automatique",
+      "DescSelectAgent": "Les ressources affichées sur le côté droit de l'agent représentent la quantité réelle de ressources disponibles. \nActuellement, la sélection d'agents n'est disponible que dans un environnement à nœud unique et à conteneur unique. \nLe paramètre par défaut est l'allocation des agents par le planificateur.",
+      "AgentNode": "Agent",
+      "AutoSelect": "sélection automatique"
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",

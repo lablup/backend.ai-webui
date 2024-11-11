@@ -1317,7 +1317,12 @@
       "InsufficientAllocationOfResourcesWarning": "Allokoitavat resurssit jäävät alle valitussa kuvassa vaaditun vähimmäisresurssin.",
       "RecentHistory": "Lähihistoria",
       "CreatedAt": "LuotuAt",
-      "Tags": "Tunnisteet"
+      "Tags": "Tunnisteet",
+      "SelectAgent": "Valitse Agentti",
+      "autoSelect": "Automaattinen valinta",
+      "DescSelectAgent": "Agentin oikealla puolella näkyvät resurssit edustavat käytettävissä olevien resurssien todellista määrää. \nTällä hetkellä agentin valinta on käytettävissä vain yhden solmun yhden säilön ympäristössä. \nOletusasetus on ajastimen suorittama agentin allokointi.",
+      "AgentNode": "Agentti",
+      "AutoSelect": "automaattinen valinta"
     },
     "ExpiresAfter": "Jäljellä oleva aika",
     "CPU": "CPU",

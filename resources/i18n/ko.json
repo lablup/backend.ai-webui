@@ -285,7 +285,12 @@
       "InsufficientAllocationOfResourcesWarning": "할당 가능한 자원이 선택된 이미지에서 요구되는 최소 자원보다 부족합니다.",
       "RecentHistory": "최근 기록",
       "CreatedAt": "생성 시간",
-      "Tags": "태그"
+      "Tags": "태그",
+      "SelectAgent": "에이전트 선택",
+      "autoSelect": "자동 선택",
+      "DescSelectAgent": "에이전트 오른쪽에 표시되는 자원은 실제 사용 가능한 자원의 양을 나타냅니다. \n현재 에이전트 선택은 단일 노드 단일 컨테이너 환경에서만 사용할 수 있습니다. \n기본 설정은 스케줄러에 의한 에이전트 할당입니다.",
+      "AgentNode": "에이전트",
+      "AutoSelect": "자동 선택"
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",

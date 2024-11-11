@@ -718,6 +718,9 @@ class Client {
       this._features['extend-login-session'] = true;
       this._features['session-node'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('24.09.1')) {
+      this._features['agent-select'] = true;
+    }
     if (this.isManagerVersionCompatibleWith('24.12.0')) {
       this._features['extended-image-info'] = true;
     }
@@ -1141,6 +1144,9 @@ class Client {
       }
       if (resources['preopen_ports']) {
         params['config'].preopen_ports = resources['preopen_ports'];
+      }
+      if (resources['agent_list']) {
+        params['config'].agent_list = resources['agent_list'];
       }
     }
     let rqst;

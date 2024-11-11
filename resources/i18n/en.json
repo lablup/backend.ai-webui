@@ -298,7 +298,12 @@
       "InsufficientAllocationOfResourcesWarning": "Allocatable resources falls below the minimum resource required in the selected image.",
       "RecentHistory": "Recent History",
       "CreatedAt": "CreatedAt",
-      "Tags": "Tags"
+      "Tags": "Tags",
+      "SelectAgent": "Select Agent",
+      "autoSelect": "Auto Select",
+      "DescSelectAgent": "The resources displayed on the right side of the agent represent the actual amount of available resources. Currently, agent selection is only available in a single-node single-container environment. The default setting is agent allocation by the scheduler.",
+      "AgentNode": "Agent ",
+      "AutoSelect": "auto-select"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
