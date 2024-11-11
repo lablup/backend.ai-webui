@@ -1,5 +1,6 @@
 import { downloadBlob } from '../../helper/csv-util';
 import { useSuspendedBackendaiClient } from '../../hooks';
+import { useCurrentUserRole } from '../../hooks/backendai';
 import { useTanQuery } from '../../hooks/reactQueryAlias';
 import { useMemoWithPrevious } from '../../hooks/useMemoWithPrevious';
 import BAIModal, { BAIModalProps } from '../BAIModal';
@@ -33,6 +34,7 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
 }) => {
   const baiClient = useSuspendedBackendaiClient();
   const { token } = theme.useToken();
+  const userRole = useCurrentUserRole();
 
   const session = useFragment(
     graphql`
@@ -48,6 +50,7 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
               id
               row_id
               container_id
+              cluster_idx
               cluster_role
             }
           }
@@ -170,13 +173,31 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
               resetPreviousLineNumber();
             }}
             options={_.chain(session?.kernel_nodes?.edges)
+              .sortBy((e) => `${e?.node?.cluster_role} ${e?.node?.cluster_idx}`)
               .map((e) => {
                 return {
-                  label: e?.node?.cluster_role,
+                  label: (
+                    <>
+                      {e?.node?.cluster_role}
+                      {e?.node?.cluster_role !== 'main'
+                        ? e?.node?.cluster_idx
+                        : ''}
+                      {userRole === 'admin' || userRole === 'superadmin' ? (
+                        <Typography.Text
+                          style={{
+                            fontFamily: 'monospace',
+                            fontSize: token.fontSizeSM,
+                          }}
+                          type="secondary"
+                        >
+                          ({(e?.node?.row_id || '').substring(0, 5)})
+                        </Typography.Text>
+                      ) : null}
+                    </>
+                  ),
                   value: e?.node?.row_id,
                 };
               })
-              .sortBy('label')
               .value()}
           />
           <Divider type="vertical" />
