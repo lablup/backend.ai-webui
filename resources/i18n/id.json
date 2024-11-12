@@ -524,11 +524,11 @@
     "General": "Umum",
     "Disabled": "Dinonaktifkan",
     "NSelected": "Item {{hitung}} yang dipilih",
-    "Extend": "Memperpanjang",
     "RemainingLoginSessionTime": "Waktu Hingga Keluar Otomatis",
     "Change": "Perubahan",
     "MaxValueNotification": "{{nama}} harus maksimal {{max}}",
-    "TotalItems": "Total item {{total}}"
+    "TotalItems": "Total item {{total}}",
+    "ExtendLoginSession": "Memperpanjang sesi masuk"
   },
   "credential": {
     "Permission": "Izin",

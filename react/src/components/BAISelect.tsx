@@ -1,8 +1,45 @@
 import { Select, SelectProps } from 'antd';
+import { createStyles } from 'antd-style';
+import classNames from 'classnames';
 import _ from 'lodash';
 import React, { useLayoutEffect } from 'react';
 
+const useStyles = createStyles(({ css, token }) => ({
+  ghostSelect: css`
+    &.ant-select {
+      .ant-select-selector {
+        background-color: transparent;
+        border-color: ${token.colorBgBase} !important;
+        /* box-shadow: none; */
+        color: ${token.colorBgBase};
+        /* transition: color 0.3s, border-color 0.3s; */
+      }
+
+      &:hover .ant-select-selector {
+        background-color: rgb(255 255 255 / 10%);
+      }
+
+      &:active .ant-select-selector {
+        background-color: rgb(255 255 255 / 10%);
+      }
+
+      .ant-select-arrow {
+        color: ${token.colorBgBase};
+      }
+
+      &:hover .ant-select-arrow {
+        color: ${token.colorBgBase};
+      }
+
+      &:active .ant-select-arrow {
+        color: ${token.colorBgBase};
+      }
+    }
+  `,
+}));
+
 interface BAISelectProps extends SelectProps {
+  ghost?: boolean;
   autoSelectOption?: boolean | ((options: SelectProps['options']) => any);
 }
 /**
@@ -18,9 +55,12 @@ interface BAISelectProps extends SelectProps {
  */
 const BAISelect: React.FC<BAISelectProps> = ({
   autoSelectOption,
+  ghost,
   ...selectProps
 }) => {
   const { value, options, onChange } = selectProps;
+  const { styles } = useStyles();
+
   useLayoutEffect(() => {
     if (autoSelectOption && _.isEmpty(value) && options?.[0]) {
       if (_.isBoolean(autoSelectOption)) {
@@ -30,7 +70,17 @@ const BAISelect: React.FC<BAISelectProps> = ({
       }
     }
   }, [value, options, onChange, autoSelectOption]);
-  return <Select {...selectProps} />;
+
+  return (
+    <Select
+      {...selectProps}
+      className={
+        ghost
+          ? classNames(styles.ghostSelect, selectProps.className)
+          : selectProps.className
+      }
+    />
+  );
 };
 
 export default BAISelect;

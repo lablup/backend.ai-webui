@@ -49,7 +49,7 @@
       "Environments&Presets": "실행환경 및 프리셋",
       "ComputationResources": "연산 자원",
       "Logs": "로그",
-      "Project": "현재 프로젝트",
+      "Project": "프로젝트",
       "Experiments": "실험",
       "PleaseChangeYourPassword": "비밀번호를 변경해주세요.",
       "PasswordChangePlace": "상단바의 사람 아이콘을 클릭하고 \"사용자 정보 변경\" 메뉴로 이동하세요.",
@@ -638,11 +638,11 @@
     "General": "일반",
     "Disabled": "비활성화",
     "NSelected": "{{count}}개 선택됨",
-    "Extend": "연장",
     "RemainingLoginSessionTime": "자동 로그아웃까지 남은 시간",
     "Change": "변경",
     "MaxValueNotification": "{{ name }} 최대 값은 {{ max }}입니다",
-    "TotalItems": "총 {{ total }}개"
+    "TotalItems": "총 {{ total }}개",
+    "ExtendLoginSession": "로그인 세션 연장"
   },
   "credential": {
     "Permission": "권한",

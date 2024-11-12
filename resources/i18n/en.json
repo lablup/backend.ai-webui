@@ -651,11 +651,11 @@
     "General": "General",
     "Disabled": "Disabled",
     "NSelected": "Selected {{count}} item(s)",
-    "Extend": "Extend",
     "RemainingLoginSessionTime": "Time until auto logout",
     "Change": "Change",
     "MaxValueNotification": "{{name}} must be maximum {{max}}",
-    "TotalItems": "Total {{total}} items"
+    "TotalItems": "Total {{total}} items",
+    "ExtendLoginSession": "Extend a login session"
   },
   "credential": {
     "Permission": "Permission",

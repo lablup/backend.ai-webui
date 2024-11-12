@@ -646,11 +646,11 @@
     "Session": "เซสชัน",
     "General": "ทั่วไป",
     "Disabled": "ปิดใช้งาน",
-    "Extend": "ขยาย",
     "RemainingLoginSessionTime": "เวลาจนกระทั่งออกจากระบบอัตโนมัติ",
     "Change": "เปลี่ยน",
     "MaxValueNotification": "{{name}} ต้องมีค่าสูงสุด {{max}}",
-    "TotalItems": "รวม {{total}} รายการ"
+    "TotalItems": "รวม {{total}} รายการ",
+    "ExtendLoginSession": "ขยายเซสชันการเข้าสู่ระบบ"
   },
   "credential": {
     "Permission": "สิทธิ์",

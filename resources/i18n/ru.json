@@ -523,11 +523,11 @@
     "General": "Общие сведения",
     "Disabled": "Инвалид",
     "NSelected": "Выбранный {{count}} элемент(ы)",
-    "Extend": "Продлевать",
     "RemainingLoginSessionTime": "Время до автоматического выхода из системы",
     "Change": "Изменить",
     "MaxValueNotification": "{{name}} должен быть максимальным {{max}}",
-    "TotalItems": "Всего {{total}} предметов"
+    "TotalItems": "Всего {{total}} предметов",
+    "ExtendLoginSession": "Продление сеанса входа в систему"
   },
   "credential": {
     "Permission": "Разрешение",

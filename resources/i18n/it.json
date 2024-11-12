@@ -524,11 +524,11 @@
     "General": "Generale",
     "Disabled": "Disabili",
     "NSelected": "Articolo/i selezionato/i {{count}}",
-    "Extend": "Estendere",
     "RemainingLoginSessionTime": "Tempo fino alla disconnessione automatica",
     "Change": "Cambiamento",
     "MaxValueNotification": "{{nome}} deve essere massimo {{max}}",
-    "TotalItems": "Totale articoli {{totale}}"
+    "TotalItems": "Totale articoli {{totale}}",
+    "ExtendLoginSession": "Estendere una sessione di login"
   },
   "credential": {
     "Permission": "Autorizzazione",

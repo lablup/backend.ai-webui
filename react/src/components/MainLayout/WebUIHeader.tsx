@@ -4,29 +4,37 @@ import {
   useCurrentProjectValue,
   useSetCurrentProject,
 } from '../../hooks/useCurrentProject';
-import { useScrollBreakPoint } from '../../hooks/useScrollBreackPoint';
 import BAINotificationButton from '../BAINotificationButton';
 import Flex, { FlexProps } from '../Flex';
 import LoginSessionExtendButton from '../LoginSessionExtendButton';
 import ProjectSelect from '../ProjectSelect';
+import ReverseThemeProvider from '../ReverseThemeProvider';
 import UserDropdownMenu from '../UserDropdownMenu';
 import WEBUIHelpButton from '../WEBUIHelpButton';
 import WebUIThemeToggleButton from '../WebUIThemeToggleButton';
-// @ts-ignore
-import rawCss from './WebUIHeader.css?raw';
-import { MenuOutlined } from '@ant-design/icons';
 import { theme, Button, Typography, Grid, Divider } from 'antd';
-import _ from 'lodash';
+import { createStyles } from 'antd-style';
+import { MenuIcon } from 'lucide-react';
 import { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMatches } from 'react-router-dom';
+
+const useStyles = createStyles(({ css, token }) => ({
+  webuiHeader: css`
+    &,
+    & .draggable {
+      -webkit-app-region: drag;
+    }
+    & .non-draggable {
+      -webkit-app-region: no-drag;
+    }
+  `,
+}));
 
 export interface WebUIHeaderProps extends FlexProps {
   onClickMenuIcon?: () => void;
   containerElement?: HTMLDivElement | null;
 }
 
-export const HEADER_HEIGHT = 62;
 const WebUIHeader: React.FC<WebUIHeaderProps> = ({
   onClickMenuIcon,
   containerElement,
@@ -37,69 +45,68 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
   const currentProject = useCurrentProjectValue();
   const setCurrentProject = useSetCurrentProject();
   const baiClient = useSuspendedBackendaiClient();
-  const matches = useMatches();
-  const { y: scrolled } = useScrollBreakPoint(
-    {
-      y: 1,
-    },
-    containerElement,
-  );
   const gridBreakpoint = Grid.useBreakpoint();
-
-  const { md } = Grid.useBreakpoint();
 
   const [isPendingProjectChanged, startProjectChangedTransition] =
     useTransition();
   const [optimisticProjectId, setOptimisticProjectId] = useState(
     currentProject.id,
   );
+
+  const { styles } = useStyles();
+
   return (
     <Flex
       align="center"
       justify="between"
       direction="row"
       style={{
-        height: HEADER_HEIGHT,
+        height: token.Layout?.headerHeight || 60,
+        backgroundColor: token.Layout?.headerBg,
         paddingRight: token.marginMD,
         paddingLeft: token.marginMD,
-        backgroundColor: scrolled ? token.colorBgElevated : 'transparent',
-        boxShadow: scrolled ? `0 5px 6px -6px ${token.colorBorder}` : 'none',
-        transition: 'background-color 0.2s ease-in-out',
+        color: token.colorBgBase,
       }}
-      className={'webui-header-container'}
+      className={styles.webuiHeader}
     >
-      <style>{rawCss}</style>
       <Flex direction="row" gap={'sm'}>
-        <Button
-          icon={<MenuOutlined />}
-          type="text"
-          onClick={() => {
-            onClickMenuIcon?.();
-          }}
-          className="non-draggable"
-        />
-        <Typography.Title level={5} style={{ margin: 0 }}>
-          {/* @ts-ignore */}
-          {t(_.last(matches)?.handle?.labelKey) || ''}
-        </Typography.Title>
-      </Flex>
-      <Flex gap={md ? 'sm' : 'xs'}>
-        <Typography.Text type="secondary">
-          {t('webui.menu.Project')}
-        </Typography.Text>
+        <ReverseThemeProvider>
+          {!gridBreakpoint.sm && (
+            <Button
+              icon={<MenuIcon />}
+              type="text"
+              onClick={() => {
+                onClickMenuIcon?.();
+              }}
+              className="non-draggable"
+              style={{
+                marginLeft: token.marginSM * -1,
+              }}
+            />
+          )}
+          {gridBreakpoint.sm && (
+            <Typography.Text
+              style={{
+                fontWeight: 600, // semi-bold
+                fontSize: token.fontSizeLG,
+              }}
+            >
+              {t('webui.menu.Project')}
+            </Typography.Text>
+          )}
+        </ReverseThemeProvider>
         <Suspense>
           <ProjectSelect
             popupMatchSelectWidth={false}
             style={{
               minWidth: 100,
-              maxWidth: gridBreakpoint.lg ? undefined : 100,
+              maxWidth: gridBreakpoint.lg ? undefined : 150,
             }}
             loading={isPendingProjectChanged}
             disabled={isPendingProjectChanged}
             className="non-draggable"
             showSearch
             domain={currentDomainName}
-            size={gridBreakpoint.lg ? 'large' : 'middle'}
             value={
               isPendingProjectChanged ? optimisticProjectId : currentProject?.id
             }
@@ -111,20 +118,35 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
             }}
           />
         </Suspense>
-        <Flex direction="row" className="non-draggable">
-          <BAINotificationButton />
+      </Flex>
+      <Flex direction="row" className="non-draggable" gap="xxs" align="center">
+        {baiClient.supports('extend-login-session') &&
+          baiClient._config.enableExtendLoginSession && (
+            <Suspense>
+              <LoginSessionExtendButton />
+              {gridBreakpoint.md && (
+                <Divider
+                  type="vertical"
+                  style={{ borderColor: 'transparent' }}
+                />
+              )}
+            </Suspense>
+          )}
+        <BAINotificationButton
+          buttonRender={(btn) => (
+            <ReverseThemeProvider>{btn}</ReverseThemeProvider>
+          )}
+        />
+
+        <ReverseThemeProvider>
           <WebUIThemeToggleButton />
           <WEBUIHelpButton />
-          {baiClient.supports('extend-login-session') &&
-            baiClient._config.enableExtendLoginSession && (
-              <Suspense>
-                <Divider type="vertical" />
-                <LoginSessionExtendButton />
-                <Divider type="vertical" />
-              </Suspense>
-            )}
-          <UserDropdownMenu />
-        </Flex>
+        </ReverseThemeProvider>
+        <UserDropdownMenu
+          buttonRender={(btn) => (
+            <ReverseThemeProvider>{btn}</ReverseThemeProvider>
+          )}
+        />
       </Flex>
     </Flex>
   );

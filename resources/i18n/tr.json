@@ -523,11 +523,11 @@
     "General": "Genel",
     "Disabled": "Engelli",
     "NSelected": "Seçilen {{count}} öğe(ler)",
-    "Extend": "Uzatmak",
     "RemainingLoginSessionTime": "Otomatik Çıkışa Kadar Geçen Süre",
     "Change": "Değişim",
     "MaxValueNotification": "{{name}} maksimum {{max}} olmalıdır",
-    "TotalItems": "Toplam {{toplam}} öğe"
+    "TotalItems": "Toplam {{toplam}} öğe",
+    "ExtendLoginSession": "Oturum açma oturumunu uzatma"
   },
   "credential": {
     "Permission": "izin",

@@ -12,7 +12,6 @@ const WebUIThemeToggleButton: React.FC<WebUIThemeToggleButtonProps> = ({
 
   return (
     <Button
-      size="large"
       type="text"
       icon={isDarkMode ? <SunOutlined /> : <MoonOutlined />}
       onClick={() => {
