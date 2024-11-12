@@ -149,6 +149,54 @@ interface ImageMetadata {
   }[];
 }
 
+export const imageParser = {
+  getBaseVersion: (imageName: string) => {
+    return (
+      _.first(_.split(_.last(_.split(imageName, ':')), /[^a-zA-Z\d.]+/)) || ''
+    );
+  },
+  getBaseImage: (imageName: string) => {
+    const splitByColon = _.split(imageName, ':');
+    const beforeLastColon = _.join(_.initial(splitByColon), ':');
+    const lastItemAfterSplitBySlash = _.last(_.split(beforeLastColon, '/'));
+    return lastItemAfterSplitBySlash || '';
+  },
+  getTags: (tag: string, labels: Array<{ key: string; value: string }>) => {
+    // Remove the 'customized_' prefix and its following string from the tag
+    const cleanedTag = _.replace(tag, /customized_[a-zA-Z\d.]+/, '');
+    // Split the remaining tag into segments based on alphanumeric and '.' characters, ignoring the first segment
+    const tags = _.tail(_.split(cleanedTag, /[^a-zA-Z\d.]+/));
+    const result: Array<{ key: string; value: string }> = [];
+
+    // Process not 'customized_' tags
+    _.forEach(tags, (currentTag) => {
+      // Separate the alphabetic prefix from the numeric and '.' suffix for each tag
+      const match = /^([a-zA-Z]+)(.*)$/.exec(currentTag);
+      if (match) {
+        const [, key, value] = match;
+        // Ensure the value is an empty string if it's undefined
+        result.push({ key, value: value || '' });
+      }
+    });
+
+    // Handle the 'customized_' tag separately by finding the custom image name in labels
+    const customizedNameLabel = _.get(
+      _.find(labels, { key: 'ai.backend.customized-image.name' }),
+      'value',
+      '',
+    );
+    // If a custom image name exists, add it to the result with the key 'Customized'
+    if (customizedNameLabel) {
+      result.push({ key: 'Customized', value: customizedNameLabel });
+    }
+
+    // Remove duplicates and entries with an empty 'key'
+    return _.uniqWith(
+      _.filter(result, ({ key }) => !_.isEmpty(key)),
+      _.isEqual,
+    );
+  },
+};
 export const useBackendAIImageMetaData = () => {
   const { data: metadata } = useSuspenseTanQuery<{
     imageInfo: {
@@ -261,18 +309,6 @@ export const useBackendAIImageMetaData = () => {
         })?.value;
         return customizedNameLabel;
       },
-      getBaseVersion: (imageName: string) => {
-        return (
-          _.first(_.split(_.last(_.split(imageName, ':')), /[^a-zA-Z\d.]+/)) ||
-          ''
-        );
-      },
-      getBaseImage: (imageName: string) => {
-        const splitByColon = _.split(imageName, ':');
-        const beforeLastColon = _.join(_.initial(splitByColon), ':');
-        const lastItemAfterSplitBySlash = _.last(_.split(beforeLastColon, '/'));
-        return lastItemAfterSplitBySlash || '';
-      },
       getBaseImages: (tag: string, name: string) => {
         const tags = tag.split('-');
         let baseImage;
@@ -297,41 +333,6 @@ export const useBackendAIImageMetaData = () => {
         return baseImageArr;
       },
       getImageMeta,
-      getTags: (tag: string, labels: Array<{ key: string; value: string }>) => {
-        // Remove the 'customized_' prefix and its following string from the tag
-        const cleanedTag = _.replace(tag, /customized_[a-zA-Z\d.]+/, '');
-        // Split the remaining tag into segments based on alphanumeric and '.' characters, ignoring the first segment
-        const tags = _.tail(_.split(cleanedTag, /[^a-zA-Z\d.]+/));
-        const result: Array<{ key: string; value: string }> = [];
-
-        // Process not 'customized_' tags
-        _.forEach(tags, (currentTag) => {
-          // Separate the alphabetic prefix from the numeric and '.' suffix for each tag
-          const match = /^([a-zA-Z]+)(.*)$/.exec(currentTag);
-          if (match) {
-            const [, key, value] = match;
-            // Ensure the value is an empty string if it's undefined
-            result.push({ key, value: value || '' });
-          }
-        });
-
-        // Handle the 'customized_' tag separately by finding the custom image name in labels
-        const customizedNameLabel = _.get(
-          _.find(labels, { key: 'ai.backend.customized-image.name' }),
-          'value',
-          '',
-        );
-        // If a custom image name exists, add it to the result with the key 'Customized'
-        if (customizedNameLabel) {
-          result.push({ key: 'Customized', value: customizedNameLabel });
-        }
-
-        // Remove duplicates and entries with an empty 'key'
-        return _.uniqWith(
-          _.filter(result, ({ key }) => !_.isEmpty(key)),
-          _.isEqual,
-        );
-      },
       getConstraints: (
         tag: string,
         labels: { key: string; value: string }[],
@@ -371,6 +372,7 @@ export const useBackendAIImageMetaData = () => {
           preserveDotStartCase(tag)
         );
       },
+      ...imageParser,
     },
   ] as const;
 };
