@@ -10,6 +10,7 @@ import Flex from './Flex';
 // @ts-ignore
 import cssRaw from './ImageEnvironmentSelectFormItems.css?raw';
 import ImageMetaIcon from './ImageMetaIcon';
+import { ImageTags } from './ImageTags';
 import TextHighlighter from './TextHighlighter';
 import {
   ImageEnvironmentSelectFormItemsQuery,
@@ -98,7 +99,8 @@ const ImageEnvironmentSelectFormItems: React.FC<
   const [environmentSearch, setEnvironmentSearch] = useState('');
   const [versionSearch, setVersionSearch] = useState('');
   const { t } = useTranslation();
-  const [metadata, { getImageMeta, tagAlias }] = useBackendAIImageMetaData();
+  const [metadata, { getBaseVersion, getImageMeta, tagAlias }] =
+    useBackendAIImageMetaData();
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
 
@@ -584,25 +586,11 @@ const ImageEnvironmentSelectFormItems: React.FC<
                         paddingLeft: token.paddingSM,
                       }}
                     >
-                      {supportExtendedImageInfo ? (
-                        <>
-                          {t('session.launcher.Version')}
-                          <Divider type="vertical" />
-                          {t('session.launcher.Architecture')}
-                          <Divider type="vertical" />
-                          {t('session.launcher.Tags')}
-                        </>
-                      ) : (
-                        <>
-                          {t('session.launcher.Version')}
-                          <Divider type="vertical" />
-                          {t('session.launcher.Base')}
-                          <Divider type="vertical" />
-                          {t('session.launcher.Architecture')}
-                          <Divider type="vertical" />
-                          {t('session.launcher.Requirements')}
-                        </>
-                      )}
+                      {t('session.launcher.Version')}
+                      <Divider type="vertical" />
+                      {t('session.launcher.Architecture')}
+                      <Divider type="vertical" />
+                      {t('session.launcher.Tags')}
                     </Flex>
                     <Divider style={{ margin: '8px 0' }} />
                     {menu}
@@ -798,29 +786,23 @@ const ImageEnvironmentSelectFormItems: React.FC<
                           <Flex direction="row" justify="between">
                             <Flex direction="row">
                               <TextHighlighter keyword={versionSearch}>
-                                {version}
-                              </TextHighlighter>
-                              <Divider type="vertical" />
-                              <TextHighlighter keyword={versionSearch}>
-                                {metadataTagAlias}
+                                {getBaseVersion(getImageFullName(image) || '')}
                               </TextHighlighter>
                               <Divider type="vertical" />
                               <TextHighlighter keyword={versionSearch}>
                                 {image?.architecture}
                               </TextHighlighter>
-                            </Flex>
-                            <Flex
-                              direction="row"
-                              // set specific class name to handle flex wrap using css
-                              className={
-                                isDarkMode ? 'tag-wrap-dark' : 'tag-wrap-light'
-                              }
-                              style={{
-                                marginLeft: token.marginXS,
-                                flexShrink: 1,
-                              }}
-                            >
-                              {requirementTags || '-'}
+                              <Divider type="vertical" />
+                              <ImageTags
+                                tag={image?.tag || ''}
+                                highlightKeyword={versionSearch}
+                                labels={
+                                  image?.labels as Array<{
+                                    key: string;
+                                    value: string;
+                                  }>
+                                }
+                              />
                             </Flex>
                           </Flex>
                         )}

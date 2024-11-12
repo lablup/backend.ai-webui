@@ -11,7 +11,7 @@ import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from '../components/ImageEnvironmentSelectFormItems';
 import ImageMetaIcon from '../components/ImageMetaIcon';
-import SessionKernelTags from '../components/ImageTags';
+import { ImageTags } from '../components/ImageTags';
 import { mainContentDivRefState } from '../components/MainLayout/MainLayout';
 import PortSelectFormItem, {
   PortSelectFormValues,
@@ -41,6 +41,7 @@ import {
   generateRandomString,
   getImageFullName,
   iSizeToSize,
+  preserveDotStartCase,
 } from '../helper';
 import {
   useBackendAIImageMetaData,
@@ -188,7 +189,8 @@ const SessionLauncherPage = () => {
   const currentUserRole = useCurrentUserRole();
   const [currentGlobalResourceGroup, setCurrentGlobalResourceGroup] =
     useCurrentResourceGroupState();
-  const [, { tagAlias }] = useBackendAIImageMetaData();
+  const [, { getBaseVersion, getBaseImage, tagAlias }] =
+    useBackendAIImageMetaData();
 
   const supportExtendedImageInfo =
     baiClient?.supports('extended-image-info') ?? false;
@@ -1392,7 +1394,15 @@ const SessionLauncherPage = () => {
                                                 },
                                               )?.value
                                             : tag.value;
-                                          return (
+                                          const aliasedTag = tagAlias(
+                                            tag.key + tagValue,
+                                          );
+                                          return _.isEqual(
+                                            aliasedTag,
+                                            preserveDotStartCase(
+                                              tag.key + tagValue,
+                                            ),
+                                          ) ? (
                                             <DoubleTag
                                               key={tag.key}
                                               values={[
@@ -1410,6 +1420,15 @@ const SessionLauncherPage = () => {
                                                 },
                                               ]}
                                             />
+                                          ) : (
+                                            <Tag
+                                              key={tag.key}
+                                              color={
+                                                isCustomized ? 'cyan' : 'blue'
+                                              }
+                                            >
+                                              {aliasedTag}
+                                            </Tag>
                                           );
                                         },
                                       )}
@@ -1463,36 +1482,41 @@ const SessionLauncherPage = () => {
                                     </Typography.Text>
                                   ) : (
                                     <>
-                                      <SessionKernelTags
-                                        image={
+                                      <Typography.Text>
+                                        {tagAlias(
+                                          getBaseImage(
+                                            form.getFieldValue('environments')
+                                              ?.version,
+                                          ),
+                                        )}
+                                      </Typography.Text>
+                                      <Divider type="vertical" />
+                                      <Typography.Text>
+                                        {getBaseVersion(
                                           form.getFieldValue('environments')
-                                            ?.version
+                                            ?.version,
+                                        )}
+                                      </Typography.Text>
+                                      <Divider type="vertical" />
+                                      <Typography.Text>
+                                        {
+                                          form.getFieldValue('environments')
+                                            ?.image?.architecture
                                         }
-                                      />
-                                      {form.getFieldValue('environments')
-                                        ?.customizedTag ? (
-                                        <DoubleTag
-                                          values={[
-                                            {
-                                              label: 'Customized',
-                                              color: 'cyan',
-                                            },
-                                            {
-                                              label:
-                                                form.getFieldValue(
-                                                  'environments',
-                                                )?.customizedTag,
-                                              color: 'cyan',
-                                            },
-                                          ]}
-                                        />
-                                      ) : null}
-                                      <Typography.Text
-                                        copyable={{
-                                          text: form.getFieldValue(
-                                            'environments',
-                                          )?.version,
-                                        }}
+                                      </Typography.Text>
+                                      <Divider type="vertical" />
+                                      <ImageTags
+                                        tag={
+                                          form.getFieldValue('environments')
+                                            ?.image?.tag
+                                        }
+                                        labels={
+                                          form.getFieldValue('environments')
+                                            ?.image?.labels as Array<{
+                                            key: string;
+                                            value: string;
+                                          }>
+                                        }
                                       />
                                     </>
                                   )}
