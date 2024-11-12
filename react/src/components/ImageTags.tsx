@@ -1,3 +1,4 @@
+import { preserveDotStartCase } from '../helper';
 import { useBackendAIImageMetaData } from '../hooks';
 import DoubleTag, { DoubleTagObjectValue } from './DoubleTag';
 import Flex from './Flex';
@@ -76,7 +77,7 @@ export const ArchitectureTags: React.FC<ArchitectureTagsProps> = ({
   const [, { getArchitecture, tagAlias }] = useBackendAIImageMetaData();
   return _.isEmpty(tagAlias(getArchitecture(image))) ? null : (
     <Tag color="green" {...props}>
-      {tagAlias(getArchitecture(image))}
+      {getArchitecture(image)}
     </Tag>
   );
 };
@@ -161,3 +162,59 @@ const SessionKernelTags: React.FC<{
 };
 
 export default React.memo(SessionKernelTags);
+
+interface ImageTagsProps extends TagProps {
+  tag: string;
+  labels: Array<{ key: string; value: string }>;
+  highlightKeyword?: string;
+}
+export const ImageTags: React.FC<ImageTagsProps> = ({
+  tag,
+  labels,
+  highlightKeyword,
+  ...props
+}) => {
+  labels = labels || [];
+  const [, { getTags, tagAlias }] = useBackendAIImageMetaData();
+  const tags = getTags(tag, labels);
+  return (
+    <Flex direction="row" align="start">
+      {_.map(tags, (tag: { key: string; value: string }, index) => {
+        const isCustomized = tag.key === 'Customized';
+        const aliasedTag = tagAlias(tag.key + tag.value);
+        return _.isEqual(
+          aliasedTag,
+          preserveDotStartCase(tag.key + tag.value),
+        ) ? (
+          <DoubleTag
+            key={tag.key}
+            values={[
+              {
+                label: (
+                  <TextHighlighter keyword={highlightKeyword}>
+                    {tagAlias(tag.key)}
+                  </TextHighlighter>
+                ),
+                color: isCustomized ? 'cyan' : 'blue',
+              },
+              {
+                label: (
+                  <TextHighlighter keyword={highlightKeyword} key={index}>
+                    {tag.value}
+                  </TextHighlighter>
+                ),
+                color: isCustomized ? 'cyan' : 'blue',
+              },
+            ]}
+          />
+        ) : (
+          <Tag key={tag.key} color={isCustomized ? 'cyan' : 'blue'}>
+            <TextHighlighter keyword={highlightKeyword} key={index}>
+              {aliasedTag}
+            </TextHighlighter>
+          </Tag>
+        );
+      })}
+    </Flex>
+  );
+};

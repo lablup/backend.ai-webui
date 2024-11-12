@@ -396,3 +396,14 @@ export function formatToUUID(str: string) {
 export const toGlobalId = (type: string, id: string): string => {
   return btoa(`${type}:${id}`);
 };
+
+export function preserveDotStartCase(str: string) {
+  // Temporarily replace periods with a unique placeholder
+  const placeholder = '<<<DOT>>>';
+  const tempStr = str.replace(/\./g, placeholder);
+
+  const startCased = _.startCase(tempStr);
+
+  // Replace the placeholder back with periods
+  return startCased.replace(new RegExp(placeholder, 'g'), '.');
+}

@@ -4,6 +4,7 @@ import {
   filterNonNullItems,
   getImageFullName,
   localeCompare,
+  preserveDotStartCase,
 } from '../helper';
 import {
   useBackendAIImageMetaData,
@@ -12,7 +13,7 @@ import {
 } from '../hooks';
 import DoubleTag from './DoubleTag';
 import ImageInstallModal from './ImageInstallModal';
-import { BaseImageTags, ConstraintTags, LangTags } from './ImageTags';
+import { ImageTags } from './ImageTags';
 import ManageAppsModal from './ManageAppsModal';
 import ManageImageResourceLimitModal from './ManageImageResourceLimitModal';
 import ResourceNumber from './ResourceNumber';
@@ -45,18 +46,8 @@ export type EnvironmentImage = NonNullable<
 const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   const { t } = useTranslation();
   const [selectedRows, setSelectedRows] = useState<EnvironmentImage[]>([]);
-  const [
-    ,
-    {
-      getNamespace,
-      getBaseVersion,
-      getLang,
-      getBaseImages,
-      getConstraints,
-      getBaseImage,
-      tagAlias,
-    },
-  ] = useBackendAIImageMetaData();
+  const [, { getBaseVersion, getBaseImages, getBaseImage, tagAlias, getTags }] =
+    useBackendAIImageMetaData();
   const { token } = theme.useToken();
   const [managingApp, setManagingApp] = useState<EnvironmentImage | null>(null);
   const [managingResourceLimit, setManagingResourceLimit] =
@@ -194,7 +185,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
       key: 'base_image_name',
       dataIndex: 'base_image_name',
       sorter: (a, b) => localeCompare(a?.base_image_name, b?.base_image_name),
-      render: (text, row) => (
+      render: (text) => (
         <TextHighlighter keyword={imageSearch}>
           {tagAlias(text)}
         </TextHighlighter>
@@ -213,7 +204,10 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
       title: t('environment.Tags'),
       key: 'tags',
       dataIndex: 'tags',
-      render: (text: Array<{ key: string; value: string }>, row) => {
+      render: (
+        text: Array<{ key: string; value: string }>,
+        row: EnvironmentImage,
+      ) => {
         return (
           <Flex direction="row" align="start">
             {/* TODO: replace this with AliasedImageDoubleTags after image list query with ImageNode is implemented. */}
@@ -224,7 +218,11 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
                     key: 'ai.backend.customized-image.name',
                   })?.value
                 : tag.value;
-              return (
+              const aliasedTag = tagAlias(tag.key + tagValue);
+              return _.isEqual(
+                aliasedTag,
+                preserveDotStartCase(tag.key + tagValue),
+              ) ? (
                 <DoubleTag
                   key={tag.key}
                   values={[
@@ -246,6 +244,12 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
                     },
                   ]}
                 />
+              ) : (
+                <Tag key={tag.key} color={isCustomized ? 'cyan' : 'blue'}>
+                  <TextHighlighter keyword={imageSearch}>
+                    {aliasedTag}
+                  </TextHighlighter>
+                </Tag>
               );
             })}
           </Flex>
@@ -257,20 +261,23 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
       key: 'name',
       dataIndex: 'name',
       sorter: (a, b) => localeCompare(getImageFullName(a), getImageFullName(b)),
-      render: (text, row) => (
-        <TextHighlighter keyword={imageSearch}>
-          {getNamespace(getImageFullName(row) || '')}
-        </TextHighlighter>
+      render: (text) => (
+        <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
       ),
     },
     !supportExtendedImageInfo && {
-      title: t('environment.Language'),
-      key: 'lang',
-      dataIndex: 'lang',
+      title: t('environment.Base'),
+      key: 'baseimage',
+      dataIndex: 'baseimage',
       sorter: (a, b) =>
-        localeCompare(getLang(a.name ?? ''), getLang(b.name ?? '')),
+        localeCompare(
+          getBaseImage(getImageFullName(a) || ''),
+          getBaseImage(getImageFullName(b) || ''),
+        ),
       render: (text, row) => (
-        <LangTags image={getImageFullName(row) || ''} color="green" />
+        <TextHighlighter keyword={imageSearch}>
+          {tagAlias(getBaseImage(getImageFullName(row) || ''))}
+        </TextHighlighter>
       ),
     },
     !supportExtendedImageInfo && {
@@ -289,47 +296,17 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
       ),
     },
     !supportExtendedImageInfo && {
-      title: t('environment.Base'),
-      key: 'baseimage',
-      dataIndex: 'baseimage',
-      sorter: (a, b) =>
-        localeCompare(
-          getBaseImage(getImageFullName(a) || ''),
-          getBaseImage(getImageFullName(b) || ''),
-        ),
+      title: t('environment.Tags'),
+      key: 'tag',
+      dataIndex: 'tag',
+      sorter: (a, b) => localeCompare(a?.tag, b?.tag),
       render: (text, row) => (
-        <BaseImageTags image={getImageFullName(row) || ''} />
+        <ImageTags
+          tag={text}
+          labels={row.labels as Array<{ key: string; value: string }>}
+          highlightKeyword={imageSearch}
+        />
       ),
-    },
-    !supportExtendedImageInfo && {
-      title: t('environment.Constraint'),
-      key: 'constraint',
-      dataIndex: 'constraint',
-      sorter: (a, b) => {
-        const requirementA =
-          a?.tag && b?.labels
-            ? getConstraints(
-                a?.tag,
-                a?.labels as { key: string; value: string }[],
-              )[0] || ''
-            : '';
-        const requirementB =
-          b?.tag && b?.labels
-            ? getConstraints(
-                b?.tag,
-                b?.labels as { key: string; value: string }[],
-              )[0] || ''
-            : '';
-        return localeCompare(requirementA, requirementB);
-      },
-      render: (text, row) =>
-        row?.tag ? (
-          <ConstraintTags
-            tag={row?.tag}
-            labels={row?.labels as Array<{ key: string; value: string }>}
-            highlightKeyword={imageSearch}
-          />
-        ) : null,
     },
     {
       title: t('environment.Digest'),
@@ -417,17 +394,14 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         fullName: getImageFullName(image) || '',
         digest: image?.digest || '',
         // ------------ need only before 24.12.0 ------------
-        lang: image?.name ? getLang(image.name) : '',
         baseversion: getBaseVersion(getImageFullName(image) || ''),
         baseimage:
           image?.tag && image?.name ? getBaseImages(image.tag, image.name) : [],
-        constraints:
-          image?.tag && image?.labels
-            ? getConstraints(
-                image.tag,
-                image.labels as { key: string; value: string }[],
-              )
-            : [],
+        tag:
+          getTags(
+            image?.tag || '',
+            image?.labels as Array<{ key: string; value: string }>,
+          ) || [],
         isCustomized: image?.tag
           ? image.tag.indexOf('customized') !== -1
           : false,
@@ -455,14 +429,13 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         const baseImagesMatch = _.some(curFilterValues.baseimage, (value) =>
           regExp.test(value),
         );
-        const constraintsMatch = _.some(
-          curFilterValues.constraints,
-          (constraint) => regExp.test(constraint),
+        const tagMatch = _.some(
+          curFilterValues.tag,
+          (tag) => regExp.test(tag.key) || regExp.test(tag.value),
         );
         const customizedMatch = curFilterValues.isCustomized
           ? regExp.test('customized')
           : false;
-        const langMatch = regExp.test(curFilterValues.lang);
         const namespaceMatch = regExp.test(curFilterValues.namespace || '');
         const fullNameMatch = regExp.test(curFilterValues.fullName);
         const tagsMatch = _.some(
@@ -475,8 +448,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         return (
           baseVersionMatch ||
           baseImagesMatch ||
-          constraintsMatch ||
-          langMatch ||
+          tagMatch ||
           namespaceMatch ||
           customizedMatch ||
           fullNameMatch ||

@@ -1,4 +1,5 @@
 import { getImageFullName, localeCompare } from '../helper';
+import { preserveDotStartCase } from '../helper';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
@@ -745,7 +746,13 @@ const ImageEnvironmentSelectFormItems: React.FC<
                                         key: 'ai.backend.customized-image.name',
                                       })?.value
                                     : tag.value;
-                                  return (
+                                  const aliasedTag = tagAlias(
+                                    tag.key + tagValue,
+                                  );
+                                  return _.isEqual(
+                                    aliasedTag,
+                                    preserveDotStartCase(tag.key + tagValue),
+                                  ) ? (
                                     <DoubleTag
                                       key={tag.key}
                                       values={[
@@ -773,6 +780,15 @@ const ImageEnvironmentSelectFormItems: React.FC<
                                         },
                                       ]}
                                     />
+                                  ) : (
+                                    <Tag
+                                      key={tag.key}
+                                      color={isCustomized ? 'cyan' : 'blue'}
+                                    >
+                                      <TextHighlighter keyword={versionSearch}>
+                                        {aliasedTag}
+                                      </TextHighlighter>
+                                    </Tag>
                                   );
                                 },
                               )}

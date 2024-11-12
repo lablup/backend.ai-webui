@@ -1,8 +1,10 @@
+import { preserveDotStartCase } from '../helper';
 import { useBackendAIImageMetaData } from '../hooks';
 import DoubleTag, { DoubleTagObjectValue } from './DoubleTag';
 import Flex from './Flex';
 import TextHighlighter from './TextHighlighter';
 import { AliasedImageDoubleTagsFragment$key } from './__generated__/AliasedImageDoubleTagsFragment.graphql';
+import { Tag } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React from 'react';
@@ -45,7 +47,11 @@ const AliasedImageDoubleTags: React.FC<AliasedImageDoubleTagsProps> = ({
               key: 'ai.backend.customized-image.name',
             })?.value
           : tag.value;
-        return (
+        const aliasedTag = tagAlias(tag.key + tagValue);
+        return _.isEqual(
+          aliasedTag,
+          preserveDotStartCase(tag.key + tagValue),
+        ) ? (
           <DoubleTag
             key={tag.key}
             values={[
@@ -68,6 +74,13 @@ const AliasedImageDoubleTags: React.FC<AliasedImageDoubleTagsProps> = ({
             ]}
             {...doubleTagProps}
           />
+        ) : (
+          <Tag
+            key={tag.key}
+            color={isCustomized ? 'cyan' : doubleTagProps.color}
+          >
+            {aliasedTag}
+          </Tag>
         );
       })}
     </Flex>
