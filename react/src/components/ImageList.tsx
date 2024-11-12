@@ -11,6 +11,7 @@ import {
   useSuspendedBackendaiClient,
   useUpdatableState,
 } from '../hooks';
+import BAITable from './BAITable';
 import DoubleTag from './DoubleTag';
 import ImageInstallModal from './ImageInstallModal';
 import { ImageTags } from './ImageTags';
@@ -31,7 +32,7 @@ import {
   VerticalAlignBottomOutlined,
 } from '@ant-design/icons';
 import { useLocalStorageState } from 'ahooks';
-import { App, Button, Input, Table, Tag, theme, Typography } from 'antd';
+import { App, Button, Input, Tag, theme, Typography } from 'antd';
 import { ColumnsType, ColumnType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
@@ -152,6 +153,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         </Typography.Text>
       ),
       sorter: (a, b) => localeCompare(getImageFullName(a), getImageFullName(b)),
+      width: token.screenXS,
     },
     {
       title: t('environment.Registry'),
@@ -518,7 +520,8 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             {t('environment.Install')}
           </Button>
         </Flex>
-        <Table<EnvironmentImage>
+        <BAITable
+          resizable
           rowKey="id"
           scroll={{ x: 'max-content' }}
           pagination={{

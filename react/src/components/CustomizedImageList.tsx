@@ -12,6 +12,7 @@ import {
   useUpdatableState,
 } from '../hooks';
 import AliasedImageDoubleTags from './AliasedImageDoubleTags';
+import BAITable from './BAITable';
 import { ImageTags } from './ImageTags';
 import TextHighlighter from './TextHighlighter';
 import { CustomizedImageListForgetAndUntagMutation } from './__generated__/CustomizedImageListForgetAndUntagMutation.graphql';
@@ -26,7 +27,7 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { useLocalStorageState } from 'ahooks';
-import { App, Button, Input, Popconfirm, Table, theme, Typography } from 'antd';
+import { App, Button, Input, Popconfirm, theme, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
@@ -209,6 +210,7 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
         </Typography.Text>
       ),
       sorter: (a, b) => localeCompare(getImageFullName(a), getImageFullName(b)),
+      width: token.screenXS,
     },
     {
       title: t('environment.Registry'),
@@ -433,7 +435,8 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
             {t('button.Refresh')}
           </Button>
         </Flex>
-        <Table
+        <BAITable
+          resizable
           loading={isPendingSearchTransition}
           columns={
             columns.filter((column) =>

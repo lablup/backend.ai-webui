@@ -145,6 +145,8 @@ const BAITable: React.FC<BAITableProps> = ({
 
   return (
     <Table
+      sortDirections={['descend', 'ascend', 'descend']}
+      showSorterTooltip={false}
       className={resizable ? styles.resizableTable : ''}
       components={
         resizable
