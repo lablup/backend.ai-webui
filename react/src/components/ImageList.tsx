@@ -227,21 +227,14 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
               ) ? (
                 <DoubleTag
                   key={tag.key}
+                  highlightKeyword={imageSearch}
                   values={[
                     {
-                      label: (
-                        <TextHighlighter keyword={imageSearch} key={tag.key}>
-                          {tagAlias(tag.key)}
-                        </TextHighlighter>
-                      ),
+                      label: tagAlias(tag.key),
                       color: isCustomized ? 'cyan' : 'blue',
                     },
                     {
-                      label: (
-                        <TextHighlighter keyword={imageSearch} key={tagValue}>
-                          {tagValue}
-                        </TextHighlighter>
-                      ),
+                      label: tagValue ?? '',
                       color: isCustomized ? 'cyan' : 'blue',
                     },
                   ]}

@@ -1,7 +1,7 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
-import BAIIntervalText from './BAIIntervalText';
+import BAIIntervalView from './BAIIntervalView';
 import Flex from './Flex';
 import { ClockCircleOutlined } from '@ant-design/icons';
 import { Button, Tooltip } from 'antd';
@@ -37,7 +37,7 @@ const LoginSessionExtendButton: React.FC<
       <Tooltip title={t('general.RemainingLoginSessionTime')}>
         <Flex gap={'xxs'}>
           <ClockCircleOutlined />
-          <BAIIntervalText
+          <BAIIntervalView
             callback={() => {
               const diff = dayjs(data?.expires).diff(dayjs(), 'seconds');
               const duration = dayjs.duration(Math.max(0, diff), 'seconds');
@@ -54,7 +54,7 @@ const LoginSessionExtendButton: React.FC<
               return `${days ? days + 'd ' : ''}${duration.format('HH:mm:ss')}`;
             }}
             delay={100}
-          ></BAIIntervalText>
+          ></BAIIntervalView>
         </Flex>
       </Tooltip>
       <Button

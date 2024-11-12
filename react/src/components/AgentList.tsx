@@ -10,7 +10,7 @@ import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOption
 import { useThemeMode } from '../hooks/useThemeMode';
 import AgentDetailModal from './AgentDetailModal';
 import AgentSettingModal from './AgentSettingModal';
-import BAIIntervalText from './BAIIntervalText';
+import BAIIntervalView from './BAIIntervalView';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import BAIPropertyFilter from './BAIPropertyFilter';
 import DoubleTag from './DoubleTag';
@@ -247,16 +247,21 @@ const AgentList: React.FC<AgentListProps> = ({
         return (
           <Flex direction="column">
             <Typography.Text>{dayjs(value).format('ll LTS')}</Typography.Text>
-            <DoubleTag
-              values={[
-                t('agent.Running'),
-                <BAIIntervalText
-                  callback={() => {
-                    return baiClient.utils.elapsedTime(value, Date.now());
-                  }}
-                  delay={1000}
-                />,
-              ]}
+            <BAIIntervalView
+              callback={() => {
+                return baiClient.utils.elapsedTime(value, Date.now());
+              }}
+              delay={1000}
+              render={(intervalValue) => (
+                <DoubleTag
+                  values={[
+                    { label: t('agent.Running') },
+                    {
+                      label: intervalValue,
+                    },
+                  ]}
+                />
+              )}
             />
           </Flex>
         );
@@ -640,7 +645,7 @@ const AgentList: React.FC<AgentListProps> = ({
               values={[
                 { label: 'Agent' },
                 {
-                  label: record?.version,
+                  label: record?.version || '',
                   color:
                     value === 'ALIVE'
                       ? 'green'

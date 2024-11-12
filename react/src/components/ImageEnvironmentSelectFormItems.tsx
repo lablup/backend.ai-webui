@@ -640,14 +640,10 @@ const ImageEnvironmentSelectFormItems: React.FC<
                             ':',
                           ).map((str) => {
                             extraFilterValues.push(str);
-                            return (
-                              <TextHighlighter
-                                keyword={versionSearch}
-                                key={str}
-                              >
-                                {str}
-                              </TextHighlighter>
-                            );
+                            return {
+                              label: str,
+                              highlightKeyword: versionSearch,
+                            };
                           })}
                         />
                       ))
@@ -671,27 +667,14 @@ const ImageEnvironmentSelectFormItems: React.FC<
                         requirementTags.push(
                           <DoubleTag
                             key={requirementTags.length + 1}
+                            highlightKeyword={versionSearch}
                             values={[
                               {
-                                label: (
-                                  <TextHighlighter
-                                    keyword={versionSearch}
-                                    key="Customized"
-                                  >
-                                    Customized
-                                  </TextHighlighter>
-                                ),
+                                label: 'Customized',
                                 color: 'cyan',
                               },
                               {
-                                label: (
-                                  <TextHighlighter
-                                    keyword={versionSearch}
-                                    key={tag}
-                                  >
-                                    {tag}
-                                  </TextHighlighter>
-                                ),
+                                label: tag ?? '',
                                 color: 'cyan',
                               },
                             ]}
@@ -743,27 +726,14 @@ const ImageEnvironmentSelectFormItems: React.FC<
                                   ) ? (
                                     <DoubleTag
                                       key={tag.key}
+                                      highlightKeyword={versionSearch}
                                       values={[
                                         {
-                                          label: (
-                                            <TextHighlighter
-                                              keyword={versionSearch}
-                                              key={tag.key}
-                                            >
-                                              {tagAlias(tag.key)}
-                                            </TextHighlighter>
-                                          ),
+                                          label: tagAlias(tag.key),
                                           color: isCustomized ? 'cyan' : 'blue',
                                         },
                                         {
-                                          label: (
-                                            <TextHighlighter
-                                              keyword={versionSearch}
-                                              key={tagValue}
-                                            >
-                                              {tagValue}
-                                            </TextHighlighter>
-                                          ),
+                                          label: tagValue ?? '',
                                           color: isCustomized ? 'cyan' : 'blue',
                                         },
                                       ]}

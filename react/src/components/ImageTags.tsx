@@ -121,21 +121,14 @@ export const ConstraintTags: React.FC<ConstraintTagsProps> = ({
       {!_.isEmpty(constraints?.[1]) ? (
         <DoubleTag
           color="cyan"
+          highlightKeyword={highlightKeyword}
           values={[
             {
-              label: (
-                <TextHighlighter keyword={highlightKeyword}>
-                  Customized
-                </TextHighlighter>
-              ),
+              label: 'Customized',
               color: 'cyan',
             },
             {
-              label: (
-                <TextHighlighter keyword={highlightKeyword}>
-                  {constraints[1]}
-                </TextHighlighter>
-              ),
+              label: constraints[1],
               color: 'cyan',
             },
           ]}
@@ -188,21 +181,14 @@ export const ImageTags: React.FC<ImageTagsProps> = ({
         ) ? (
           <DoubleTag
             key={tag.key}
+            highlightKeyword={highlightKeyword}
             values={[
               {
-                label: (
-                  <TextHighlighter keyword={highlightKeyword}>
-                    {tagAlias(tag.key)}
-                  </TextHighlighter>
-                ),
+                label: tagAlias(tag.key),
                 color: isCustomized ? 'cyan' : 'blue',
               },
               {
-                label: (
-                  <TextHighlighter keyword={highlightKeyword} key={index}>
-                    {tag.value}
-                  </TextHighlighter>
-                ),
+                label: tag.value,
                 color: isCustomized ? 'cyan' : 'blue',
               },
             ]}

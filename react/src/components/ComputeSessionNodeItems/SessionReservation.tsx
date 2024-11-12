@@ -1,5 +1,5 @@
 import { useSuspendedBackendaiClient } from '../../hooks';
-import BAIIntervalText from '../BAIIntervalText';
+import BAIIntervalView from '../BAIIntervalView';
 import DoubleTag from '../DoubleTag';
 import { SessionReservationFragment$key } from './__generated__/SessionReservationFragment.graphql';
 import graphql from 'babel-plugin-relay/macro';
@@ -26,21 +26,24 @@ const SessionReservation: React.FC<{
   return (
     <>
       {dayjs(session.created_at).format('lll')}
-      <DoubleTag
-        values={[
-          t('session.ElapsedTime'),
-          <BAIIntervalText
-            callback={() => {
-              return session?.created_at
-                ? baiClient.utils.elapsedTime(
-                    session.created_at,
-                    session?.terminated_at,
-                  )
-                : '-';
-            }}
-            delay={1000}
-          />,
-        ]}
+      <BAIIntervalView
+        callback={() => {
+          return session?.created_at
+            ? baiClient.utils.elapsedTime(
+                session.created_at,
+                session?.terminated_at,
+              )
+            : '-';
+        }}
+        delay={1000}
+        render={(intervalValue) => (
+          <DoubleTag
+            values={[
+              { label: t('session.ElapsedTime') },
+              { label: intervalValue },
+            ]}
+          />
+        )}
       />
     </>
   );

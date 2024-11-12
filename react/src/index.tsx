@@ -1,5 +1,5 @@
 import App from './App';
-import BAIIntervalText from './components/BAIIntervalText';
+import BAIIntervalView from './components/BAIIntervalView';
 import { jotaiStore, useWebComponentInfo } from './components/DefaultProviders';
 import Flex from './components/Flex';
 import FlexActivityIndicator from './components/FlexActivityIndicator';
@@ -334,7 +334,7 @@ const ReservationTimeCounter = (props: ReactWebComponentProps) => {
           borderBottomRightRadius: token.borderRadiusSM,
         }}
       >
-        <BAIIntervalText
+        <BAIIntervalView
           callback={() => {
             return baiClient.utils.elapsedTime(
               parsedValue.starts_at,

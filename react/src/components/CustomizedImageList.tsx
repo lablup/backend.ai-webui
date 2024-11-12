@@ -266,8 +266,8 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
       render: (text: Array<{ key: string; value: string }>, row) => (
         <AliasedImageDoubleTags
           imageFrgmt={row}
-          label={undefined}
           highlightKeyword={imageSearch}
+          label={''}
         />
       ),
     },

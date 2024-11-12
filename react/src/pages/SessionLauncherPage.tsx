@@ -1,5 +1,5 @@
 import BAICard from '../BAICard';
-import BAIIntervalText from '../components/BAIIntervalText';
+import BAIIntervalView from '../components/BAIIntervalView';
 import DatePickerISO from '../components/DatePickerISO';
 import DoubleTag from '../components/DoubleTag';
 import EnvVarFormList, {
@@ -855,7 +855,7 @@ const SessionLauncherPage = () => {
                               'scheduleDate',
                             ]);
                             return (
-                              <BAIIntervalText
+                              <BAIIntervalView
                                 delay={1000}
                                 callback={() => {
                                   const scheduleDate = form.getFieldValue([

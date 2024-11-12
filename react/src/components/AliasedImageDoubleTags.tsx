@@ -2,7 +2,6 @@ import { preserveDotStartCase } from '../helper';
 import { useBackendAIImageMetaData } from '../hooks';
 import DoubleTag, { DoubleTagObjectValue } from './DoubleTag';
 import Flex from './Flex';
-import TextHighlighter from './TextHighlighter';
 import { AliasedImageDoubleTagsFragment$key } from './__generated__/AliasedImageDoubleTagsFragment.graphql';
 import { Tag } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
@@ -54,21 +53,14 @@ const AliasedImageDoubleTags: React.FC<AliasedImageDoubleTagsProps> = ({
         ) ? (
           <DoubleTag
             key={tag.key}
+            highlightKeyword={highlightKeyword}
             values={[
               {
-                label: (
-                  <TextHighlighter keyword={highlightKeyword} key={tag.key}>
-                    {tagAlias(tag.key)}
-                  </TextHighlighter>
-                ),
+                label: tagAlias(tag.key),
                 color: isCustomized ? 'cyan' : doubleTagProps.color,
               },
               {
-                label: (
-                  <TextHighlighter keyword={highlightKeyword} key={tagValue}>
-                    {tagValue}
-                  </TextHighlighter>
-                ),
+                label: tagValue ?? '',
                 color: isCustomized ? 'cyan' : doubleTagProps.color,
               },
             ]}

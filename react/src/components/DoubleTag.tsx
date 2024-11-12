@@ -1,19 +1,20 @@
 import Flex from './Flex';
+import TextHighlighter from './TextHighlighter';
 import { Tag } from 'antd';
 import _ from 'lodash';
 import React from 'react';
 
 export type DoubleTagObjectValue = {
-  label: ValueType;
+  label: string;
   color?: string;
 };
 
-type ValueType = string | React.ReactNode;
 const DoubleTag: React.FC<{
-  values?: ValueType[] | DoubleTagObjectValue[];
-}> = ({ values = [] }) => {
+  values?: Array<string> | Array<DoubleTagObjectValue>;
+  highlightKeyword?: string;
+}> = ({ values = [], highlightKeyword }) => {
   if (values.length === 0) return null;
-  let objectValues: DoubleTagObjectValue[];
+  let objectValues: Array<DoubleTagObjectValue>;
   if (
     values[0] &&
     (typeof values[0] === 'string' || React.isValidElement(values[0]))
@@ -31,8 +32,8 @@ const DoubleTag: React.FC<{
 
   return (
     <Flex direction="row">
-      {_.map(objectValues, (objValue, idx) => {
-        return !_.isEmpty(objValue.label) ? (
+      {_.map(objectValues, (objValue, idx) =>
+        !_.isEmpty(objValue.label) ? (
           <Tag
             key={idx}
             style={
@@ -42,10 +43,16 @@ const DoubleTag: React.FC<{
             }
             color={objValue.color}
           >
-            {objValue.label}
+            {!_.isUndefined(highlightKeyword) ? (
+              <TextHighlighter keyword={highlightKeyword}>
+                {objValue.label}
+              </TextHighlighter>
+            ) : (
+              objValue.label
+            )}
           </Tag>
-        ) : null;
-      })}
+        ) : null,
+      )}
     </Flex>
   );
 };
