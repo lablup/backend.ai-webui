@@ -526,11 +526,11 @@
     "General": "Tổng quan",
     "Disabled": "Tàn tật",
     "NSelected": "Đã chọn {{count}} mục",
-    "Extend": "Mở rộng",
     "RemainingLoginSessionTime": "Thời gian cho đến khi tự động đăng xuất",
     "Change": "Thay đổi",
     "MaxValueNotification": "{{name}} phải tối đa {{max}}",
-    "TotalItems": "Tổng số {{total}} mặt hàng"
+    "TotalItems": "Tổng số {{total}} mặt hàng",
+    "ExtendLoginSession": "Gia hạn phiên đăng nhập"
   },
   "credential": {
     "Permission": "Sự cho phép",

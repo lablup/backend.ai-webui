@@ -571,11 +571,11 @@
     "General": "Yleistä",
     "Disabled": "Vammaiset",
     "NSelected": "Valittu {{count}} kohde(t)",
-    "Extend": "Laajenna",
     "RemainingLoginSessionTime": "Aika automaattiseen uloskirjautumiseen asti",
     "Change": "Muuta",
     "MaxValueNotification": "{{name}} on oltava maksimi {{max}}",
-    "TotalItems": "Yhteensä {{total}} kohteita"
+    "TotalItems": "Yhteensä {{total}} kohteita",
+    "ExtendLoginSession": "Sisäänkirjautumisistunnon laajentaminen"
   },
   "import": {
     "CleanUpImportTask": "Tuontitehtävän siivous...",

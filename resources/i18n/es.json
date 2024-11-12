@@ -571,11 +571,11 @@
     "General": "General",
     "Disabled": "Discapacitados",
     "NSelected": "Elemento(s) {{cuenta}} seleccionado(s)",
-    "Extend": "Extender",
     "RemainingLoginSessionTime": "Tiempo hasta el cierre de sesión automático",
     "Change": "Cambia",
     "MaxValueNotification": "{{name}} debe ser máximo {{max}}",
-    "TotalItems": "Total {{total}} artículos"
+    "TotalItems": "Total {{total}} artículos",
+    "ExtendLoginSession": "Prolongar una sesión de inicio de sesión"
   },
   "import": {
     "CleanUpImportTask": "Tarea de importación de limpieza...",

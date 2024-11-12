@@ -328,7 +328,7 @@ function createWindow() {
     height: windowHeight,
     title: 'Backend.AI',
     frame: true,
-    titleBarStyle: 'hiddenInset',
+    titleBarStyle: 'customButtonsOnHover',
     webPreferences: {
       nativeWindowOpen: true,
       nodeIntegration: false,

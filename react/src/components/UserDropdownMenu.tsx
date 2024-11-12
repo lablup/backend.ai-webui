@@ -28,7 +28,7 @@ import {
   theme,
 } from 'antd';
 import _ from 'lodash';
-import React, { Suspense, useTransition } from 'react';
+import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryLoader } from 'react-relay';
 
@@ -36,7 +36,9 @@ const UserProfileSettingModal = React.lazy(
   () => import('./UserProfileSettingModal'),
 );
 
-const UserDropdownMenu: React.FC = () => {
+const UserDropdownMenu: React.FC<{
+  buttonRender?: (defaultButton: React.ReactNode) => React.ReactNode;
+}> = ({ buttonRender = (btn) => btn }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [userInfo] = useCurrentUserInfo();
@@ -169,47 +171,55 @@ const UserDropdownMenu: React.FC = () => {
   const [userProfileSettingQueryRef, loadUserProfileSettingQuery] =
     useQueryLoader<UserProfileSettingModalQuery>(UserProfileQuery);
 
+  const [open, setOpen] = useState(false);
   return (
     <>
       <Dropdown
         menu={{ items }}
         trigger={['click']}
-        // open={debouncedOpenToFixDropdownMenu}
         overlayStyle={{
           maxWidth: 300,
         }}
         placement="bottomRight"
+        open={open}
+        onOpenChange={(open) => {
+          setOpen(open);
+        }}
       >
-        <Button
-          type="text"
-          size="large"
-          data-testid="user-dropdown-button"
-          // loading={isPendingInitializeSettingModal}
-          onClick={(e) => e.preventDefault()}
-          style={{
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginTop: -2,
-            fontSize: token.fontSize,
-          }}
-          // icon={<UserOutlined />}
-          icon={
-            <Avatar
-              size={20}
-              icon={<UserOutlined style={{ fontSize: 13 }} />}
-              style={
-                {
-                  // border: 1,
+        {buttonRender(
+          <Button
+            type="text"
+            data-testid="user-dropdown-button"
+            // loading={isPendingInitializeSettingModal}
+            onClick={(e) => setOpen(!open)}
+            style={{
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginTop: -2,
+              fontSize: token.fontSizeLG,
+            }}
+            // icon={<UserOutlined />}
+            icon={
+              <Avatar
+                size={17}
+                icon={
+                  <UserOutlined
+                    style={{ fontSize: 10, color: token.colorPrimary }}
+                  />
                 }
-              }
-            ></Avatar>
-          }
-        >
-          {screens.lg && _.truncate(userInfo.username, { length: 30 })}
-        </Button>
+                style={{
+                  // border: 1,
+                  backgroundColor: token.colorBgBase,
+                }}
+              ></Avatar>
+            }
+          >
+            {screens.lg && _.truncate(userInfo.username, { length: 30 })}
+          </Button>,
+        )}
       </Dropdown>
       <Suspense>
         {userProfileSettingQueryRef && (

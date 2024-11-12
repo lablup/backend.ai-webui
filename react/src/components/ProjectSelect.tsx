@@ -1,8 +1,9 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import useControllableState from '../hooks/useControllableState';
+import BAISelect from './BAISelect';
 import { ProjectSelectorQuery } from './__generated__/ProjectSelectorQuery.graphql';
-import { Select, SelectProps } from 'antd';
+import { SelectProps } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React from 'react';
@@ -123,7 +124,8 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
     .value();
 
   return (
-    <Select
+    <BAISelect
+      ghost
       onChange={(value, option) => {
         setValue(value);
         onSelectProject?.(option as ProjectInfo);
@@ -135,6 +137,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
       options={
         _.size(groupOptions) > 1 ? groupOptions : groupOptions[0]?.options
       }
+      style={{}}
     />
   );
 };
