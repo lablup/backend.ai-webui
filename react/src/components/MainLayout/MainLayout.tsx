@@ -9,6 +9,7 @@ import ForceTOTPChecker from '../ForceTOTPChecker';
 import NetworkStatusBanner from '../NetworkStatusBanner';
 import PasswordChangeRequestAlert from '../PasswordChangeRequestAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
+import WebUIBreadcrumb from '../WebUIBreadcrumb';
 import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
 import { App, Layout, theme } from 'antd';
@@ -217,6 +218,13 @@ function MainLayout() {
                 <ForceTOTPChecker />
               </Suspense>
               <Suspense>
+                <WebUIBreadcrumb
+                  style={{
+                    marginBottom: token.marginMD,
+                    marginLeft: token.paddingContentHorizontalLG * -1,
+                    marginRight: token.paddingContentHorizontalLG * -1,
+                  }}
+                />
                 <Outlet />
               </Suspense>
               {/* To match paddig to 16 (2+14) */}
