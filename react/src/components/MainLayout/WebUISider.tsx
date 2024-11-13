@@ -7,6 +7,7 @@ import BAIMenu from '../BAIMenu';
 import BAISider, { BAISiderProps } from '../BAISider';
 import Flex from '../Flex';
 import SignoutModal from '../SignoutModal';
+import WebUILink from '../WebUILink';
 import { PluginPage, WebUIPluginType } from './MainLayout';
 import {
   ApiOutlined,
@@ -71,42 +72,52 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
 
   const generalMenu = filterEmptyItem<ItemType>([
     {
-      label: t('webui.menu.Summary'),
+      label: <WebUILink to="/summary">{t('webui.menu.Summary')}</WebUILink>,
       icon: <DashboardOutlined />,
       key: 'summary',
     },
     {
-      label: t('webui.menu.Sessions'),
+      label: <WebUILink to="/job">{t('webui.menu.Sessions')}</WebUILink>,
       icon: <BarsOutlined />,
       key: 'job',
     },
     supportServing && {
-      label: t('webui.menu.Serving'),
+      label: <WebUILink to="/serving">{t('webui.menu.Serving')}</WebUILink>,
       icon: <RocketOutlined />,
       key: 'serving',
     },
     {
-      label: t('webui.menu.Import&Run'),
+      label: <WebUILink to="/import">{t('webui.menu.Import&Run')}</WebUILink>,
       icon: <PlayIcon />,
       key: 'import',
     },
     {
-      label: t('webui.menu.Data&Storage'),
+      label: <WebUILink to="/data">{t('webui.menu.Data&Storage')}</WebUILink>,
       icon: <CloudUploadOutlined />,
       key: 'data',
     },
     supportUserCommittedImage && {
-      label: t('webui.menu.MyEnvironments'),
+      label: (
+        <WebUILink to="/my-environment">
+          {t('webui.menu.MyEnvironments')}
+        </WebUILink>
+      ),
       icon: <FileDoneOutlined />,
       key: 'my-environment',
     },
     !isHideAgents && {
-      label: t('webui.menu.AgentSummary'),
+      label: (
+        <WebUILink to="/agent-summary">
+          {t('webui.menu.AgentSummary')}
+        </WebUILink>
+      ),
       icon: <HddOutlined />,
       key: 'agent-summary',
     },
     {
-      label: t('webui.menu.Statistics'),
+      label: (
+        <WebUILink to="/statistics">{t('webui.menu.Statistics')}</WebUILink>
+      ),
       icon: <BarChartOutlined />,
       key: 'statistics',
     },
@@ -122,17 +133,23 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
 
   const adminMenu: MenuProps['items'] = [
     {
-      label: t('webui.menu.Users'),
+      label: <WebUILink to="/credential">{t('webui.menu.Users')}</WebUILink>,
       icon: <UserOutlined />,
       key: 'credential',
     },
     {
-      label: t('webui.menu.Environments'),
+      label: (
+        <WebUILink to="/environment">{t('webui.menu.Environments')}</WebUILink>
+      ),
       icon: <FileDoneOutlined />,
       key: 'environment',
     },
     {
-      label: t('webui.menu.ResourcePolicy'),
+      label: (
+        <WebUILink to="/resource-policy">
+          {t('webui.menu.ResourcePolicy')}
+        </WebUILink>
+      ),
       icon: <SolutionOutlined />,
       key: 'resource-policy',
     },
@@ -140,22 +157,28 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
 
   const superAdminMenu: MenuProps['items'] = [
     {
-      label: t('webui.menu.Resources'),
+      label: <WebUILink to="/agent">{t('webui.menu.Resources')}</WebUILink>,
       icon: <HddOutlined />,
       key: 'agent',
     },
     {
-      label: t('webui.menu.Configurations'),
+      label: (
+        <WebUILink to="/settings">{t('webui.menu.Configurations')}</WebUILink>
+      ),
       icon: <ControlOutlined />,
       key: 'settings',
     },
     {
-      label: t('webui.menu.Maintenance'),
+      label: (
+        <WebUILink to="/maintenance">{t('webui.menu.Maintenance')}</WebUILink>
+      ),
       icon: <ToolOutlined />,
       key: 'maintenance',
     },
     {
-      label: t('webui.menu.Information'),
+      label: (
+        <WebUILink to="/information">{t('webui.menu.Information')}</WebUILink>
+      ),
       icon: <InfoCircleOutlined />,
       key: 'information',
     },
