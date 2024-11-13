@@ -3,6 +3,9 @@ import { useCustomThemeConfig } from '../../helper/customThemeConfig';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { useThemeMode } from '../../hooks/useThemeMode';
+import EndpointsIcon from '../BAIIcons/EndpointsIcon';
+import MyEnvironmentsIcon from '../BAIIcons/MyEnvironmentsIcon';
+import SessionsIcon from '../BAIIcons/SessionsIcon';
 import BAIMenu from '../BAIMenu';
 import BAISider, { BAISiderProps } from '../BAISider';
 import Flex from '../Flex';
@@ -26,7 +29,7 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { theme, MenuProps, Typography } from 'antd';
+import { theme, MenuProps, Typography, ConfigProvider } from 'antd';
 import { ItemType } from 'antd/lib/menu/interface';
 import _ from 'lodash';
 import { PlayIcon } from 'lucide-react';
@@ -73,27 +76,27 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const generalMenu = filterEmptyItem<ItemType>([
     {
       label: <WebUILink to="/summary">{t('webui.menu.Summary')}</WebUILink>,
-      icon: <DashboardOutlined />,
+      icon: <DashboardOutlined style={{ color: token.colorPrimary }} />,
       key: 'summary',
     },
     {
       label: <WebUILink to="/job">{t('webui.menu.Sessions')}</WebUILink>,
-      icon: <BarsOutlined />,
+      icon: <SessionsIcon style={{ color: token.colorPrimary }} />,
       key: 'job',
     },
     supportServing && {
       label: <WebUILink to="/serving">{t('webui.menu.Serving')}</WebUILink>,
-      icon: <RocketOutlined />,
+      icon: <EndpointsIcon style={{ color: token.colorPrimary }} />,
       key: 'serving',
     },
     {
       label: <WebUILink to="/import">{t('webui.menu.Import&Run')}</WebUILink>,
-      icon: <PlayIcon />,
+      icon: <PlayIcon style={{ color: token.colorPrimary }} />,
       key: 'import',
     },
     {
       label: <WebUILink to="/data">{t('webui.menu.Data&Storage')}</WebUILink>,
-      icon: <CloudUploadOutlined />,
+      icon: <CloudUploadOutlined style={{ color: token.colorPrimary }} />,
       key: 'data',
     },
     supportUserCommittedImage && {
@@ -102,7 +105,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           {t('webui.menu.MyEnvironments')}
         </WebUILink>
       ),
-      icon: <FileDoneOutlined />,
+      icon: <MyEnvironmentsIcon style={{ color: token.colorPrimary }} />,
       key: 'my-environment',
     },
     !isHideAgents && {
@@ -111,19 +114,19 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           {t('webui.menu.AgentSummary')}
         </WebUILink>
       ),
-      icon: <HddOutlined />,
+      icon: <HddOutlined style={{ color: token.colorPrimary }} />,
       key: 'agent-summary',
     },
     {
       label: (
         <WebUILink to="/statistics">{t('webui.menu.Statistics')}</WebUILink>
       ),
-      icon: <BarChartOutlined />,
+      icon: <BarChartOutlined style={{ color: token.colorPrimary }} />,
       key: 'statistics',
     },
     !!fasttrackEndpoint && {
       label: t('webui.menu.FastTrack'),
-      icon: <ExportOutlined />,
+      icon: <ExportOutlined style={{ color: token.colorPrimary }} />,
       key: 'pipeline',
       onClick: () => {
         window.open(fasttrackEndpoint, '_blank', 'noopener noreferrer');
@@ -134,14 +137,14 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const adminMenu: MenuProps['items'] = [
     {
       label: <WebUILink to="/credential">{t('webui.menu.Users')}</WebUILink>,
-      icon: <UserOutlined />,
+      icon: <UserOutlined style={{ color: token.colorInfo }} />,
       key: 'credential',
     },
     {
       label: (
         <WebUILink to="/environment">{t('webui.menu.Environments')}</WebUILink>
       ),
-      icon: <FileDoneOutlined />,
+      icon: <FileDoneOutlined style={{ color: token.colorInfo }} />,
       key: 'environment',
     },
     {
@@ -150,7 +153,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           {t('webui.menu.ResourcePolicy')}
         </WebUILink>
       ),
-      icon: <SolutionOutlined />,
+      icon: <SolutionOutlined style={{ color: token.colorInfo }} />,
       key: 'resource-policy',
     },
   ];
@@ -158,28 +161,28 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const superAdminMenu: MenuProps['items'] = [
     {
       label: <WebUILink to="/agent">{t('webui.menu.Resources')}</WebUILink>,
-      icon: <HddOutlined />,
+      icon: <HddOutlined style={{ color: token.colorInfo }} />,
       key: 'agent',
     },
     {
       label: (
         <WebUILink to="/settings">{t('webui.menu.Configurations')}</WebUILink>
       ),
-      icon: <ControlOutlined />,
+      icon: <ControlOutlined style={{ color: token.colorInfo }} />,
       key: 'settings',
     },
     {
       label: (
         <WebUILink to="/maintenance">{t('webui.menu.Maintenance')}</WebUILink>
       ),
-      icon: <ToolOutlined />,
+      icon: <ToolOutlined style={{ color: token.colorInfo }} />,
       key: 'maintenance',
     },
     {
       label: (
         <WebUILink to="/information">{t('webui.menu.Information')}</WebUILink>
       ),
-      icon: <InfoCircleOutlined />,
+      icon: <InfoCircleOutlined style={{ color: token.colorInfo }} />,
       key: 'information',
     },
   ];
@@ -232,12 +235,12 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           src={
             mergedSiderTheme === 'dark' && themeConfig?.logo?.srcDark
               ? themeConfig?.logo?.srcDark ||
-                '/manifest/backend.ai-text-bgdark.svg'
-              : themeConfig?.logo?.src || '/manifest/backend.ai-text.svg'
+                '/manifest/backend.ai-white-text.svg'
+              : themeConfig?.logo?.src || '/manifest/backend.ai-white-text.svg'
           }
           style={{
-            width: themeConfig?.logo?.size?.width || 191,
-            height: themeConfig?.logo?.size?.height || 32,
+            width: themeConfig?.logo?.size?.width || 159,
+            height: themeConfig?.logo?.size?.height || 24,
             cursor: 'pointer',
           }}
           onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
@@ -256,8 +259,8 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                 '/manifest/backend.ai-brand-simple.svg'
           }
           style={{
-            width: themeConfig?.logo?.sizeCollapsed?.width || 48,
-            height: themeConfig?.logo?.sizeCollapsed?.height || 32,
+            width: themeConfig?.logo.sizeCollapsed?.width ?? 24,
+            height: themeConfig?.logo.sizeCollapsed?.height ?? 24,
             cursor: 'pointer',
           }}
           onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
@@ -348,6 +351,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       {...props}
     >
       <BAIMenu
+        collapsed={props.collapsed}
         selectedKeys={[
           location.pathname.split('/')[1] || 'summary',
           // TODO: After matching first path of 'storage-settings' and 'agent', remove this code
@@ -356,63 +360,75 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           //       and change 'job' key to 'session'
           location.pathname.split('/')[1] === 'session' ? 'job' : '',
         ]}
-        items={
-          // TODO: add plugin menu
-          currentUserRole === 'superadmin'
-            ? [
-                ...generalMenu,
-                {
-                  type: 'group',
-                  label: (
-                    <Flex
-                      style={{ borderBottom: `1px solid ${token.colorBorder}` }}
-                    >
-                      {!props.collapsed && (
-                        <Typography.Text type="secondary" ellipsis>
-                          {t('webui.menu.Administration')}
-                        </Typography.Text>
-                      )}
-                    </Flex>
-                  ),
-                  children: [...adminMenu, ...superAdminMenu],
-                },
-              ]
-            : currentUserRole === 'admin'
-              ? [
-                  ...generalMenu,
-                  {
-                    type: 'group',
-                    label: (
-                      <Flex
-                        style={{
-                          borderBottom: `1px solid ${token.colorBorder}`,
-                        }}
-                      >
-                        {!props.collapsed && (
-                          <Typography.Text type="secondary" ellipsis>
-                            {t('webui.menu.Administration')}
-                          </Typography.Text>
-                        )}
-                      </Flex>
-                    ),
-                    children: [...adminMenu],
-                  },
-                ]
-              : [...generalMenu]
-        }
-        /**
-         * Etc menu
-         */
-        // {
-        //   label: '404',
-        //   icon: <QuestionOutlined />,
-        //   key: '404',
-        // },
-        // ]}
-        onClick={({ key, keyPath }) => {
-          webuiNavigate('/' + keyPath.join('/'));
-        }}
+        items={generalMenu}
       />
+      {(currentUserRole === 'superadmin' || currentUserRole === 'admin') && (
+        <ConfigProvider
+          theme={{
+            token: {
+              colorPrimary: token.colorInfo,
+            },
+          }}
+        >
+          <BAIMenu
+            collapsed={props.collapsed}
+            selectedKeys={[
+              location.pathname.split('/')[1] || 'summary',
+              // TODO: After matching first path of 'storage-settings' and 'agent', remove this code
+              location.pathname.split('/')[1] === 'storage-settings'
+                ? 'agent'
+                : '',
+              // TODO: After 'SessionListPage' is completed and used as the main page, remove this code
+              //       and change 'job' key to 'session'
+              location.pathname.split('/')[1] === 'session' ? 'job' : '',
+            ]}
+            items={
+              // TODO: add plugin menu
+              currentUserRole === 'superadmin'
+                ? [
+                    {
+                      type: 'group',
+                      label: (
+                        <Flex
+                          style={{
+                            borderBottom: `1px solid ${token.colorBorder}`,
+                          }}
+                        >
+                          {!props.collapsed && (
+                            <Typography.Text type="secondary" ellipsis>
+                              {t('webui.menu.Administration')}
+                            </Typography.Text>
+                          )}
+                        </Flex>
+                      ),
+                      children: [...adminMenu, ...superAdminMenu],
+                    },
+                  ]
+                : currentUserRole === 'admin'
+                  ? [
+                      {
+                        type: 'group',
+                        label: (
+                          <Flex
+                            style={{
+                              borderBottom: `1px solid ${token.colorBorder}`,
+                            }}
+                          >
+                            {!props.collapsed && (
+                              <Typography.Text type="secondary" ellipsis>
+                                {t('webui.menu.Administration')}
+                              </Typography.Text>
+                            )}
+                          </Flex>
+                        ),
+                        children: [...adminMenu],
+                      },
+                    ]
+                  : []
+            }
+          />
+        </ConfigProvider>
+      )}
     </BAISider>
   );
 };
