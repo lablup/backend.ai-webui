@@ -9,6 +9,7 @@ import ForceTOTPChecker from '../ForceTOTPChecker';
 import NetworkStatusBanner from '../NetworkStatusBanner';
 import PasswordChangeRequestAlert from '../PasswordChangeRequestAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
+import WebUIBreadcrumb from '../WebUIBreadcrumb';
 import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
 import { App, Layout, theme } from 'antd';
@@ -177,33 +178,6 @@ function MainLayout() {
                   />
                 </div>
               </Suspense>
-              {/* <Flex direction="column"> */}
-
-              {/* TODO: Breadcrumb */}
-              {/* {location.pathname.split("/").length > 3 && (
-            <Breadcrumb
-              items={matches.map((match, index) => {
-                return {
-                  key: match.id,
-                  href:
-                    _.last(matches) === match
-                      ? undefined
-                      : // @ts-ignore
-                        match?.handle?.altPath || match.pathname,
-                  //@ts-ignore
-                  title: match?.handle?.title,
-                  onClick:
-                    _.last(matches) === match
-                      ? undefined
-                      : (e) => {
-                          e.preventDefault();
-                          // @ts-ignore
-                          navigate(match?.handle?.altPath || match.pathname);
-                        },
-                };
-              })}
-            />
-          )} */}
               <Suspense>
                 <PasswordChangeRequestAlert
                   showIcon
@@ -217,6 +191,13 @@ function MainLayout() {
                 <ForceTOTPChecker />
               </Suspense>
               <Suspense>
+                <WebUIBreadcrumb
+                  style={{
+                    marginBottom: token.marginMD,
+                    marginLeft: token.paddingContentHorizontalLG * -1,
+                    marginRight: token.paddingContentHorizontalLG * -1,
+                  }}
+                />
                 <Outlet />
               </Suspense>
               {/* To match paddig to 16 (2+14) */}
