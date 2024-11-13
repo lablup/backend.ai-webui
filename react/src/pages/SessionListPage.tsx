@@ -16,7 +16,7 @@ const RUNNINGS = [
   'PENDING',
   'SCHEDULED',
   'PREPARED',
-  'PREPARING',
+  'CREATING',
   'PULLING',
 ];
 const TAB_STATUS_MAP = {

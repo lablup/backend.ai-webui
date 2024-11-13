@@ -261,7 +261,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         globalThis.backendaiclient.supports('prepared-session-status')
           ? 'PREPARED'
           : undefined,
-        'PREPARING',
+        'CREATING',
         'PULLING',
       ]
         .filter((v) => !!v)
@@ -275,7 +275,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         globalThis.backendaiclient.supports('prepared-session-status')
           ? 'PREPARED'
           : undefined,
-        'PREPARING',
+        'CREATING',
         'PULLING',
       ]
         .filter((v) => !!v)

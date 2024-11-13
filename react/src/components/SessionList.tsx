@@ -116,7 +116,7 @@ const SessionList: React.FC<SessionListProps> = ({
     //prepare
     RESTARTING: 'blue',
     PREPARED: 'blue',
-    PREPARING: 'blue',
+    CREATING: 'blue',
     PULLING: 'blue',
     //running
     RUNNING: 'green',

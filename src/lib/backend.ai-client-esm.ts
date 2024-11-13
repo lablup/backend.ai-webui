@@ -2808,7 +2808,7 @@ class Agent {
   /**
    * List computation agents.
    *
-   * @param {string} status - Status to query. Should be one of 'ALIVE', 'PREPARING', 'TERMINATING' and 'TERMINATED'.
+   * @param {string} status - Status to query. Should be one of 'ALIVE', 'CREATING', 'TERMINATING' and 'TERMINATED'.
    * @param {array} fields - Fields to query. Queryable fields are:  'id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots'.
    * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
    */
@@ -2882,7 +2882,7 @@ class AgentSummary {
   /**
    * List of agent summary.
    *
-   * @param {string} status - Status to query. Should be one of 'ALIVE', 'PREPARING', 'TERMINATING' and 'TERMINATED'.
+   * @param {string} status - Status to query. Should be one of 'ALIVE', 'CREATING', 'TERMINATING' and 'TERMINATED'.
    * @param {array} fields - Fields to query. Queryable fields are:  id, status, scaling_group, schedulable, schedulable, available_slots, occupied_slots.
    * @param {number} limit - limit number of query items.
    * @param {number} offset - offset for item query. Useful for pagination.
@@ -3612,7 +3612,7 @@ class ComputeSession {
    * Get the number of compute sessions with specific conditions.
    *
    * @param {string or array} status - status to query. Default is 'RUNNING'.
-   *        Available statuses are: `PREPARING`, `BUILDING`, `PENDING`, `SCHEDULED`, `RUNNING`, `RESTARTING`, `RESIZING`, `SUSPENDED`, `TERMINATING`, `TERMINATED`, `ERROR`.
+   *        Available statuses are: `CREATING`, `BUILDING`, `PENDING`, `SCHEDULED`, `RUNNING`, `RESTARTING`, `RESIZING`, `SUSPENDED`, `TERMINATING`, `TERMINATED`, `ERROR`.
    * @param {string} accessKey - access key that is used to start compute sessions.
    * @param {number} limit - limit number of query items.
    * @param {number} offset - offset for item query. Useful for pagination.
@@ -3650,7 +3650,7 @@ class ComputeSession {
    *
    * @param {array} fields - fields to query. Default fields are: ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
    * @param {string or array} status - status to query. Default is 'RUNNING'.
-   *        Available statuses are: `PREPARING`, `BUILDING`, `PENDING`, `SCHEDULED`, `RUNNING`, `RESTARTING`, `RESIZING`, `SUSPENDED`, `TERMINATING`, `TERMINATED`, `ERROR`.
+   *        Available statuses are: `CREATING`, `BUILDING`, `PENDING`, `SCHEDULED`, `RUNNING`, `RESTARTING`, `RESIZING`, `SUSPENDED`, `TERMINATING`, `TERMINATED`, `ERROR`.
    * @param {string} accessKey - access key that is used to start compute sessions.
    * @param {number} limit - limit number of query items.
    * @param {number} offset - offset for item query. Useful for pagination.
@@ -3722,7 +3722,7 @@ class ComputeSession {
       'occupied_slots',
       'containers {live_stat last_stat}',
     ],
-    status = 'RUNNING,RESTARTING,TERMINATING,PENDING,SCHEDULED,PREPARING,PULLING,TERMINATED,CANCELLED,ERROR',
+    status = 'RUNNING,RESTARTING,TERMINATING,PENDING,SCHEDULED,CREATING,PULLING,TERMINATED,CANCELLED,ERROR',
     accessKey = '',
     limit = 100,
     offset = 0,

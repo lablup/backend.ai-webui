@@ -17,7 +17,7 @@ const statusTagColor = {
   //prepare
   RESTARTING: 'blue',
   PREPARED: 'blue',
-  PREPARING: 'blue',
+  CREATING: 'blue',
   PULLING: 'blue',
   //running
   RUNNING: 'green',
@@ -33,7 +33,7 @@ const isTransitional = (session: SessionStatusTagFragment$data) => {
     'RESTARTING',
     'TERMINATING',
     'PENDING',
-    'PREPARING',
+    'CREATING',
     'PULLING',
   ].includes(session?.status || '');
 };

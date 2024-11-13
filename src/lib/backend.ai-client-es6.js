@@ -32471,7 +32471,7 @@
               'occupied_slots',
               'containers {live_stat last_stat}',
             ],
-            e = 'RUNNING,RESTARTING,TERMINATING,PENDING,SCHEDULED,PREPARING,PULLING,TERMINATED,CANCELLED,ERROR',
+            e = 'RUNNING,RESTARTING,TERMINATING,PENDING,SCHEDULED,CREATING,PULLING,TERMINATED,CANCELLED,ERROR',
             i = '',
             r = 100,
             n = 0,

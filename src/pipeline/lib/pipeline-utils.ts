@@ -107,7 +107,7 @@ export default class PipelineUtils extends LitElement {
       case 'PULLING':
       case 'SCHEDULED':
       case 'PREPARED':
-      case 'PREPARING':
+      case 'CREATING':
       case 'PENDING':
         color = 'yellow';
         break;

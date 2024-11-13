@@ -578,12 +578,7 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   _isPreparing(status) {
-    const preparingStatuses = [
-      'RESTARTING',
-      'PREPARED',
-      'PREPARING',
-      'PULLING',
-    ];
+    const preparingStatuses = ['RESTARTING', 'PREPARED', 'CREATING', 'PULLING'];
     if (preparingStatuses.indexOf(status) === -1) {
       return false;
     }
@@ -765,7 +760,8 @@ export default class BackendAISessionList extends BackendAIPage {
           'TERMINATING',
           'PENDING',
           'SCHEDULED',
-          'PREPARING',
+          'PREPARED',
+          'CREATING',
           'PULLING',
           'ERROR',
         ];
@@ -783,7 +779,12 @@ export default class BackendAISessionList extends BackendAIPage {
           'TERMINATING',
           'PENDING',
           'SCHEDULED',
+<<<<<<< HEAD
           'PREPARING',
+=======
+          'PREPARED',
+          'CREATING',
+>>>>>>> 035be307 (feat: Replace PREPARING status to CREATING)
           'PULLING',
         ];
         if (globalThis.backendaiclient.supports('prepared-session-status')) {

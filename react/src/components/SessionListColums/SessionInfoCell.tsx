@@ -21,13 +21,13 @@ const isRunningStatus = (status: string = '') => {
     'PENDING',
     'SCHEDULED',
     'PREPARED',
-    'PREPARING',
+    'CREATING',
     'PULLING',
   ].includes(status);
 };
 
 const isPreparing = (status: string = '') => {
-  return ['RESTARTING', 'PREPARED', 'PREPARING', 'PULLING'].includes(status);
+  return ['RESTARTING', 'PREPARED', 'CREATING', 'PULLING'].includes(status);
 };
 
 const SessionInfoCell: React.FC<{
