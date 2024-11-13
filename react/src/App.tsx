@@ -292,7 +292,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/agent',
-        handle: { labelKey: 'webui.menu.ComputationResources' },
+        handle: { labelKey: 'webui.menu.Resources' },
         Component: ResourcesPage,
       },
       {
@@ -306,7 +306,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/maintenance',
-        handle: { labelKey: 'webui.menu.Environments&Presets' },
+        handle: { labelKey: 'webui.menu.Maintenance' },
       },
       {
         path: '/storage-settings/:hostname',
