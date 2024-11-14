@@ -20,6 +20,8 @@ test.describe('Login using the admin account', () => {
 
   test('should redirect to the Summary', async ({ page }) => {
     await expect(page).toHaveURL(/\/summary/);
-    await expect(page.getByRole('heading', { name: 'Summary' })).toBeVisible();
+    await expect(
+      page.getByTestId('webui-breadcrumb').getByText('Summary'),
+    ).toBeVisible();
   });
 });

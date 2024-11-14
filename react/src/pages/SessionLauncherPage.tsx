@@ -1720,6 +1720,18 @@ const SessionLauncherPage = () => {
                                           }>
                                         }
                                       />
+                                      <Typography.Text
+                                        style={{ color: token.colorPrimary }}
+                                        copyable={{
+                                          text:
+                                            getImageFullName(
+                                              form.getFieldValue('environments')
+                                                ?.image,
+                                            ) ||
+                                            form.getFieldValue('environments')
+                                              ?.version,
+                                        }}
+                                      />
                                     </>
                                   )}
                                 </Flex>

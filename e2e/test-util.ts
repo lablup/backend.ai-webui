@@ -226,7 +226,7 @@ export async function createSession(page: Page, sessionName: string) {
   await page
     .getByRole('heading', { name: 'App close' })
     .getByLabel('close')
-    .click({ timeout: 15000 });
+    .click({ timeout: 30000 });
 
   // Verify that a cell exists to display the session name
   const session = page

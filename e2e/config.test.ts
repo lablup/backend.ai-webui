@@ -44,7 +44,7 @@ test.describe.parallel('config.toml', () => {
 
       // check if the menu items are hidden
       await expect(
-        page.getByRole('menuitem', { name: 'Summary' }),
+        page.getByTestId('webui-breadcrumb').getByText('Summary'),
       ).toBeHidden();
       await expect(
         page.getByRole('menuitem', { name: 'Sessions' }),
@@ -67,7 +67,7 @@ test.describe.parallel('config.toml', () => {
 
       // check if the menu items are visible
       await expect(
-        page.getByRole('menuitem', { name: 'Summary' }),
+        page.getByRole('link', { name: 'Summary', exact: true }),
       ).toBeVisible();
       await expect(
         page.getByRole('menuitem', { name: 'Sessions' }),
@@ -97,37 +97,14 @@ test.describe.parallel('config.toml', () => {
         .getByRole('columnheader', { name: 'Status' })
         .locator('div')
         .click();
-      await page
-        .getByRole('columnheader', { name: 'Status' })
-        .locator('div')
-        .click();
 
-      const registryCell = await page
-        .locator('.ant-table-row > td:nth-child(3)')
-        .first();
-      const registry = await registryCell.textContent();
+      await page.getByRole('button', { name: 'Copy' }).first().click();
 
-      const architectureCell = await page
-        .locator('.ant-table-row > td:nth-child(4)')
-        .first();
-      const architecture = await architectureCell.textContent();
+      await context.grantPermissions(['clipboard-read', 'clipboard-write']);
 
-      const namespaceCell = await page
-        .getByRole('cell', { name: 'community' })
-        .first();
-      const namespace = await namespaceCell.textContent();
-
-      const languageCell = await page
-        .getByRole('cell', { name: 'afni' })
-        .first();
-      const language = await languageCell.textContent();
-
-      const versionCell = await page
-        .getByRole('cell', { name: 'ubuntu18.04' })
-        .first();
-      const version = await versionCell.textContent();
-
-      const uninstalledImageString = `${registry}/${namespace}/${language}:${version}@${architecture}`;
+      const uninstalledImageString = await (
+        await page.evaluateHandle(() => navigator.clipboard.readText())
+      ).jsonValue();
 
       await page.goto(webuiEndpoint);
       await page.getByLabel('power_settings_new').click();

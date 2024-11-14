@@ -40,7 +40,7 @@ import {
   theme,
 } from 'antd';
 import _ from 'lodash';
-import React, { useEffect, useMemo, useTransition } from 'react';
+import React, { Suspense, useEffect, useMemo, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 export const AUTOMATIC_DEFAULT_SHMEM = '64m';
@@ -1206,23 +1206,25 @@ const ResourceAllocationFormItems: React.FC<
           tooltip={<Trans i18nKey={'session.launcher.DescSelectAgent'} />}
         >
           <Flex gap={'xs'}>
-            <Form.Item required noStyle style={{ flex: 1 }} name="agent">
-              {baiClient.supports('agent-select') && (
-                <AgentSelect
-                  resourceGroup={currentResourceGroup}
-                  fetchKey={agentFetchKey}
-                  onChange={(value, option) => {
-                    if (value !== 'auto') {
-                      form.setFieldsValue({
-                        cluster_mode: 'single-node',
-                        cluster_size: 1,
-                      });
-                    }
-                    // TODO: set cluster mode to single node and cluster size to 1 when agent value is not "auto"
-                  }}
-                ></AgentSelect>
-              )}
-            </Form.Item>
+            <Suspense>
+              <Form.Item required noStyle style={{ flex: 1 }} name="agent">
+                {baiClient.supports('agent-select') && (
+                  <AgentSelect
+                    resourceGroup={currentResourceGroup}
+                    fetchKey={agentFetchKey}
+                    onChange={(value, option) => {
+                      if (value !== 'auto') {
+                        form.setFieldsValue({
+                          cluster_mode: 'single-node',
+                          cluster_size: 1,
+                        });
+                      }
+                      // TODO: set cluster mode to single node and cluster size to 1 when agent value is not "auto"
+                    }}
+                  ></AgentSelect>
+                )}
+              </Form.Item>
+            </Suspense>
             <Form.Item noStyle>
               <Button
                 loading={isPendingAgentList}
