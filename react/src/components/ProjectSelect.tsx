@@ -3,7 +3,6 @@ import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import useControllableState from '../hooks/useControllableState';
 import BAISelect, { BAISelectProps } from './BAISelect';
 import { ProjectSelectorQuery } from './__generated__/ProjectSelectorQuery.graphql';
-import { SelectProps } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React from 'react';

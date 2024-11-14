@@ -6,7 +6,7 @@ test.beforeEach(async ({ page }) => {
   await loginAsAdmin(page);
   await page.getByRole('menuitem', { name: 'hdd Resources' }).click();
   await expect(
-    page.getByRole('heading', { name: 'Computation Resources' }),
+    page.getByTestId('webui-breadcrumb').getByText('Resources'),
   ).toBeVisible();
 });
 

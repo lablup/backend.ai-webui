@@ -14,7 +14,7 @@ test.describe('NEO Sessions Launcher', () => {
     await loginAsUser(page);
   });
 
-  const sessionName = 'e2e-test-session';
+  const sessionName = 'e2e-test-session' + new Date().getTime();
   test('User can create session in NEO', async ({ page }) => {
     await createSession(page, sessionName);
     await deleteSession(page, sessionName);

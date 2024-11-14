@@ -100,7 +100,7 @@ test.describe('environment ', () => {
     // Verify image is modified
     const resourceLimitControlIndex = await findColumnIndex(
       imageListTable,
-      'Resource Limit',
+      'Resource limit',
     );
     const resource = await firstRow
       .locator('.ant-table-cell')
