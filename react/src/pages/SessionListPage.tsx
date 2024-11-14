@@ -15,6 +15,7 @@ const RUNNINGS = [
   'TERMINATING',
   'PENDING',
   'SCHEDULED',
+  'PREPARED',
   'PREPARING',
   'PULLING',
 ];

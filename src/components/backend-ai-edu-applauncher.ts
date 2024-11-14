@@ -258,6 +258,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         'TERMINATING',
         'PENDING',
         'SCHEDULED',
+        'PREPARED',
         'PREPARING',
         'PULLING',
       ].join(',');
@@ -267,6 +268,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         'RESTARTING',
         'TERMINATING',
         'PENDING',
+        'PREPARED',
         'PREPARING',
         'PULLING',
       ].join(',');

@@ -16,6 +16,7 @@ interface SessionStatusTagProps {
 const statusTagColor = {
   //prepare
   RESTARTING: 'blue',
+  PREPARED: 'blue',
   PREPARING: 'blue',
   PULLING: 'blue',
   //running

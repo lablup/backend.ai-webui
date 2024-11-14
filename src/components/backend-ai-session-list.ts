@@ -578,7 +578,12 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   _isPreparing(status) {
-    const preparingStatuses = ['RESTARTING', 'PREPARING', 'PULLING'];
+    const preparingStatuses = [
+      'RESTARTING',
+      'PREPARED',
+      'PREPARING',
+      'PULLING',
+    ];
     if (preparingStatuses.indexOf(status) === -1) {
       return false;
     }
@@ -760,6 +765,7 @@ export default class BackendAISessionList extends BackendAIPage {
           'TERMINATING',
           'PENDING',
           'SCHEDULED',
+          'PREPARED',
           'PREPARING',
           'PULLING',
           'ERROR',
@@ -775,6 +781,7 @@ export default class BackendAISessionList extends BackendAIPage {
           'TERMINATING',
           'PENDING',
           'SCHEDULED',
+          'PREPARED',
           'PREPARING',
           'PULLING',
         ];
