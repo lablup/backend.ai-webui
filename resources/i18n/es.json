@@ -68,7 +68,8 @@
     "UserNameAlreadyExist": "El nombre de usuario ya existe. No se puede duplicar.",
     "VirtualFolderAlreadyExist": "Ya existe una carpeta virtual con el mismo nombre. Elimine su propia carpeta o rechace la invitación.",
     "ReachedResourceLimitPleaseContact": "Alcanzó su límite de recursos. \nPor favor contacte al administrador.",
-    "InvalidUrl": "No es una URL válida"
+    "InvalidUrl": "No es una URL válida",
+    "AllowsPositiveNumberOnly": "Permitir solo números positivos."
   },
   "DownloadSSHKey": "Descargar clave SSH",
   "ErrorBoundary": {
@@ -1256,7 +1257,7 @@
       "SessionAlreadyExists": "El nombre de la sesión ya existe",
       "SessionNameAllowCondition": "El nombre de la sesión debe tener de 4 a 64 letras/números sin espacios en blanco.",
       "SessionNameOptional": "Nombre de la sesión (opcional)",
-      "SessionStartTime": "Comienza la sesión:",
+      "SessionStartTime": "Comienza la sesión",
       "SessionType": "Tipo de sesión",
       "Sessions": "Sesiones",
       "SetEnvironmentVariable": "Variable de entorno (opcional)",
@@ -1325,7 +1326,10 @@
       "autoSelect": "Selección automática",
       "DescSelectAgent": "Los recursos que se muestran en el lado derecho del agente representan la cantidad real de recursos disponibles. \nActualmente, la selección de agentes solo está disponible en un entorno de un solo nodo y un solo contenedor. \nLa configuración predeterminada es la asignación de agentes por parte del programador.",
       "AgentNode": "Agente",
-      "AutoSelect": "selección automática"
+      "AutoSelect": "selección automática",
+      "BatchJobTimeoutDuration": "Duración del tiempo de espera del trabajo por lotes",
+      "BatchJobTimeoutDurationDesc": "Establezca el tiempo máximo de ejecución para trabajos por lotes. \nLa sesión finalizará automáticamente si se excede el tiempo especificado.",
+      "SetBatchJobTimeoutDuration": "Establecer la duración del tiempo de espera del trabajo por lotes"
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",
@@ -1759,5 +1763,13 @@
     "SelectEndpoint": "Seleccionar punto final",
     "SyncInput": "Entrada de sincronización",
     "CompareWithOtherModels": "Comparar con otros modelos"
+  },
+  "time": {
+    "ms": "ms",
+    "sec": "segundo",
+    "min": "min",
+    "hour": "hora",
+    "day": "day",
+    "week": "semana"
   }
 }

@@ -219,7 +219,7 @@
       "PreOpenPortConfigurationDone": "预开放端口配置成功。",
       "InfiniteTime": "无限",
       "ResetStartTime": "请重新设置开始时间。",
-      "SessionStartTime": "会议开始：",
+      "SessionStartTime": "会议开始",
       "SessionType": "会议类型",
       "InferenceMode": "推论",
       "BatchMode": "批次",
@@ -289,7 +289,10 @@
       "autoSelect": "自动选择",
       "DescSelectAgent": "代理右侧显示的资源代表实际可用资源量。\n目前，代理选择仅适用于单节点单容器环境。\n默认设置是由调度程序分配代理。",
       "AgentNode": "代理人",
-      "AutoSelect": "自动选择"
+      "AutoSelect": "自动选择",
+      "BatchJobTimeoutDuration": "批处理作业超时时间",
+      "BatchJobTimeoutDurationDesc": "设置批处理作业的最长执行时间。\n如果超过指定时间，会话将自动终止。",
+      "SetBatchJobTimeoutDuration": "设置批处理作业超时时间"
     },
     "Preparing": "正在准备...",
     "PreparingSession": "正在准备会议...",
@@ -1536,7 +1539,8 @@
     "APINotSupported": "不支持 API。需要最新版本的 Backend.AI 管理器。",
     "WrongAPIServerAddress": "错误的 API 服务器地址。",
     "ReachedResourceLimitPleaseContact": "已达到您的资源限制。\n请联系管理员。",
-    "InvalidUrl": "这不是一个有效的 URL"
+    "InvalidUrl": "这不是一个有效的 URL",
+    "AllowsPositiveNumberOnly": "仅允许正数。"
   },
   "maxLength": {
     "64chars": "（最多 64 个字符）",
@@ -1758,5 +1762,13 @@
     "SelectEndpoint": "选择端点",
     "SyncInput": "同步输入",
     "CompareWithOtherModels": "与其他型号比较"
+  },
+  "time": {
+    "ms": "ms",
+    "sec": "秒",
+    "min": "分钟",
+    "hour": "小时",
+    "day": "day",
+    "week": "星期"
   }
 }

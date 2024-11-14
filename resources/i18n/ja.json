@@ -219,7 +219,7 @@
       "PreOpenPortConfigurationDone": "事前開放ポート値が設定されました。",
       "InfiniteTime": "未定",
       "ResetStartTime": "セッション開始時間を再設定してください。",
-      "SessionStartTime": "セッション開始時間：",
+      "SessionStartTime": "セッション開始時間",
       "SessionType": "セッションタイプ",
       "InferenceMode": "推論",
       "BatchMode": "バッチ",
@@ -289,7 +289,10 @@
       "autoSelect": "自動選択",
       "DescSelectAgent": "エージェントの右側に表示されるリソースは、使用可能なリソースの実際の量を表します。\n現在、エージェントの選択は、単一ノード、単一コンテナー環境でのみ使用できます。\nデフォルト設定は、スケジューラによるエージェント割り当てです。",
       "AgentNode": "エージェント",
-      "AutoSelect": "自動選択"
+      "AutoSelect": "自動選択",
+      "BatchJobTimeoutDuration": "バッチジョブのタイムアウト時間",
+      "BatchJobTimeoutDurationDesc": "バッチジョブの最大実行時間を設定します。\n指定された時間を超えると、セッションは自動的に終了します。",
+      "SetBatchJobTimeoutDuration": "バッチジョブのタイムアウト時間を設定する"
     },
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",
@@ -1536,7 +1539,8 @@
     "APINotSupported": "APIはサポートされていません。最新バージョンのBackend.AIマネージャが必要です。",
     "WrongAPIServerAddress": "APIサーバーのアドレスが間違っています。",
     "ReachedResourceLimitPleaseContact": "リソース制限に達しました。\n管理者にお問い合わせください。",
-    "InvalidUrl": "有効な URL ではありません"
+    "InvalidUrl": "有効な URL ではありません",
+    "AllowsPositiveNumberOnly": "正の数のみを許可します。"
   },
   "maxLength": {
     "64chars": "（最大64文字）",
@@ -1757,5 +1761,13 @@
     "SelectEndpoint": "エンドポイントの選択",
     "SyncInput": "同期入力",
     "CompareWithOtherModels": "他モデルとの比較"
+  },
+  "time": {
+    "ms": "ms",
+    "sec": "秒",
+    "min": "分",
+    "hour": "時間",
+    "day": "日",
+    "week": "週"
   }
 }

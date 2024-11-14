@@ -149,7 +149,7 @@
       "BatchModeConfig": "Batch mode Configuration",
       "ScheduleTime": "Schedule time (optional)",
       "StartUpCommand": "Startup Command",
-      "SessionStartTime": "Session Starts: ",
+      "SessionStartTime": "Session Starts",
       "ResetStartTime": "Please reset the start time.",
       "InfiniteTime": "Infinite",
       "SetEnvironmentVariable": "Environment Variable (optional)",
@@ -303,7 +303,10 @@
       "autoSelect": "Auto Select",
       "DescSelectAgent": "The resources displayed on the right side of the agent represent the actual amount of available resources. Currently, agent selection is only available in a single-node single-container environment. The default setting is agent allocation by the scheduler.",
       "AgentNode": "Agent ",
-      "AutoSelect": "auto-select"
+      "AutoSelect": "auto-select",
+      "BatchJobTimeoutDuration": "Batch Job Timeout Duration",
+      "BatchJobTimeoutDurationDesc": "Set the maximum execution time for batch jobs. The session will automatically terminate if the specified time is exceeded.",
+      "SetBatchJobTimeoutDuration": "Set batch job timeout duration"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
@@ -1668,7 +1671,8 @@
     "APINotSupported": "API not supported. Requires latest version of Backend.AI manager.",
     "ErrorFetchingExternalContent": "Error fetching external content:",
     "ReachedResourceLimitPleaseContact": "Reached your resource limit. Please contact the administrator.",
-    "InvalidUrl": "It is not a valid URL"
+    "InvalidUrl": "It is not a valid URL",
+    "AllowsPositiveNumberOnly": "Allow positive number only."
   },
   "maxLength": {
     "64chars": "(maximum 64 chars)",
@@ -1762,5 +1766,13 @@
     "DeleteChattingSessionDescription": "You are about to delete this topic. Once deleted, it cannot be recovered. Please proceed with caution.",
     "SyncInput": "Sync input",
     "CompareWithOtherModels": "Compare with other models"
+  },
+  "time": {
+    "ms": "ms",
+    "sec": "sec",
+    "min": "min",
+    "hour": "hour",
+    "day": "day",
+    "week": "week"
   }
 }

@@ -68,7 +68,8 @@
     "UserNameAlreadyExist": "Käyttäjätunnus on jo olemassa. Sitä ei voi kopioida.",
     "VirtualFolderAlreadyExist": "Samanniminen virtuaalikansio on jo olemassa. Poista oma kansiosi tai hylkää kutsu.",
     "ReachedResourceLimitPleaseContact": "Resurssiraja saavutettu. \nOta yhteyttä ylläpitäjään.",
-    "InvalidUrl": "Se ei ole kelvollinen URL-osoite"
+    "InvalidUrl": "Se ei ole kelvollinen URL-osoite",
+    "AllowsPositiveNumberOnly": "Salli vain positiivinen luku."
   },
   "DownloadSSHKey": "Lataa SSH-avain",
   "ErrorBoundary": {
@@ -1253,7 +1254,7 @@
       "SessionAlreadyExists": "Istunnon nimi on jo olemassa",
       "SessionNameAllowCondition": "Istunnon nimessä tulisi olla 4-64 aakkosta/numeroa ilman välilyöntejä.",
       "SessionNameOptional": "Istunnon nimi (valinnainen)",
-      "SessionStartTime": "Istunto alkaa:",
+      "SessionStartTime": "Istunto alkaa",
       "SessionType": "Istunnon tyyppi",
       "Sessions": "Istunnot",
       "SetEnvironmentVariable": "Ympäristömuuttuja (valinnainen)",
@@ -1322,7 +1323,10 @@
       "autoSelect": "Automaattinen valinta",
       "DescSelectAgent": "Agentin oikealla puolella näkyvät resurssit edustavat käytettävissä olevien resurssien todellista määrää. \nTällä hetkellä agentin valinta on käytettävissä vain yhden solmun yhden säilön ympäristössä. \nOletusasetus on ajastimen suorittama agentin allokointi.",
       "AgentNode": "Agentti",
-      "AutoSelect": "automaattinen valinta"
+      "AutoSelect": "automaattinen valinta",
+      "BatchJobTimeoutDuration": "Erätyön aikakatkaisun kesto",
+      "BatchJobTimeoutDurationDesc": "Aseta erätöiden enimmäissuoritusaika. \nIstunto päättyy automaattisesti, jos määritetty aika ylittyy.",
+      "SetBatchJobTimeoutDuration": "Aseta erätyön aikakatkaisun kesto"
     },
     "ExpiresAfter": "Jäljellä oleva aika",
     "CPU": "CPU",
@@ -1755,5 +1759,13 @@
     "SelectModel": "Valitse Malli",
     "SyncInput": "Synkronoi sisääntulo",
     "CompareWithOtherModels": "Vertaa muihin malleihin"
+  },
+  "time": {
+    "ms": "ms",
+    "sec": "sek",
+    "min": "min",
+    "hour": "tunnin",
+    "day": "day",
+    "week": "viikko"
   }
 }

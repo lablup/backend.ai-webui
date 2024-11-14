@@ -216,7 +216,7 @@
       "DescFolderAlias": "</p><p>Si vous remplissez ce champ, le nom du dossier sera remplacé par un alias lors du montage.</p><p>Les chemins absolus seront montés dans '/', les autres sont des sous-chemins de /home/work</p><p>N'utilisez pas d'alias comme pour les dossiers système.</p><p>Vérifiez le chemin final qui est imprimé dans 'Dossiers montés' ci-dessous.</p><p>Si vous voulez voir cette fenêtre à nouveau, cliquez sur l'icône à côté de 'Chemin & Alias'</p>",
       "InfiniteTime": "Infini",
       "ResetStartTime": "Veuillez réinitialiser l'heure de début.",
-      "SessionStartTime": "Début de la session :",
+      "SessionStartTime": "Début de la session",
       "SessionType": "Type de session",
       "BatchMode": "Lot",
       "InteractiveMode": "Interactif",
@@ -289,7 +289,10 @@
       "autoSelect": "Sélection automatique",
       "DescSelectAgent": "Les ressources affichées sur le côté droit de l'agent représentent la quantité réelle de ressources disponibles. \nActuellement, la sélection d'agents n'est disponible que dans un environnement à nœud unique et à conteneur unique. \nLe paramètre par défaut est l'allocation des agents par le planificateur.",
       "AgentNode": "Agent",
-      "AutoSelect": "sélection automatique"
+      "AutoSelect": "sélection automatique",
+      "BatchJobTimeoutDuration": "Durée d'expiration du travail par lots",
+      "BatchJobTimeoutDurationDesc": "Définissez la durée d'exécution maximale des tâches par lots. \nLa session se terminera automatiquement si la durée spécifiée est dépassée.",
+      "SetBatchJobTimeoutDuration": "Définir la durée d'expiration du travail par lots"
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",
@@ -1536,7 +1539,8 @@
     "APINotSupported": "L'API n'est pas prise en charge. Nécessite la dernière version du gestionnaire Backend.AI.",
     "WrongAPIServerAddress": "Mauvaise adresse du serveur API.",
     "ReachedResourceLimitPleaseContact": "Vous avez atteint votre limite de ressources. \nVeuillez contacter l'administrateur.",
-    "InvalidUrl": "Ce n'est pas une URL valide"
+    "InvalidUrl": "Ce n'est pas une URL valide",
+    "AllowsPositiveNumberOnly": "Autoriser uniquement les nombres positifs."
   },
   "maxLength": {
     "64chars": "(maximum 64 caractères)",
@@ -1757,5 +1761,13 @@
     "SelectEndpoint": "Sélectionnez le point de terminaison",
     "SyncInput": "Entrée de synchronisation",
     "CompareWithOtherModels": "Comparez avec d'autres modèles"
+  },
+  "time": {
+    "ms": "ms",
+    "sec": "seconde",
+    "min": "min",
+    "hour": "heure",
+    "day": "day",
+    "week": "semaine"
   }
 }

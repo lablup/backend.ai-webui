@@ -220,7 +220,7 @@
       "PreOpenPortConfigurationDone": "Pomyślnie skonfigurowano wstępnie otwarte porty.",
       "InfiniteTime": "Nieskończony",
       "ResetStartTime": "Zresetuj czas rozpoczęcia.",
-      "SessionStartTime": "Początek sesji:",
+      "SessionStartTime": "Początek sesji",
       "SessionType": "Typ sesji",
       "InferenceMode": "Wnioskowanie",
       "BatchMode": "Partia",
@@ -289,7 +289,10 @@
       "autoSelect": "Automatyczny wybór",
       "DescSelectAgent": "Zasoby wyświetlane po prawej stronie agenta reprezentują rzeczywistą ilość dostępnych zasobów. \nObecnie wybór agenta jest dostępny tylko w środowisku z jednym węzłem i jednym kontenerem. \nUstawieniem domyślnym jest przydzielanie agentów przez program planujący.",
       "AgentNode": "Agent",
-      "AutoSelect": "automatyczny wybór"
+      "AutoSelect": "automatyczny wybór",
+      "BatchJobTimeoutDuration": "Czas oczekiwania na zadanie wsadowe",
+      "BatchJobTimeoutDurationDesc": "Ustaw maksymalny czas wykonywania zadań wsadowych. \nSesja zakończy się automatycznie po przekroczeniu określonego czasu.",
+      "SetBatchJobTimeoutDuration": "Ustaw limit czasu zadania wsadowego"
     },
     "Preparing": "Przygotowuję...",
     "PreparingSession": "Przygotowuję sesję...",
@@ -1536,7 +1539,8 @@
     "APINotSupported": "Interfejs API nie jest obsługiwany. Wymaga najnowszej wersji menedżera Backend.AI.",
     "WrongAPIServerAddress": "Nieprawidłowy adres serwera API.",
     "ReachedResourceLimitPleaseContact": "Osiągnięto limit zasobów. \nSkontaktuj się z administratorem.",
-    "InvalidUrl": "To nie jest prawidłowy adres URL"
+    "InvalidUrl": "To nie jest prawidłowy adres URL",
+    "AllowsPositiveNumberOnly": "Zezwalaj tylko na liczby dodatnie."
   },
   "maxLength": {
     "64chars": "(maksymalnie 64 znaki)",
@@ -1757,5 +1761,13 @@
     "SelectEndpoint": "Wybierz Punkt końcowy",
     "SyncInput": "Synchronizuj wejście",
     "CompareWithOtherModels": "Porównaj z innymi modelami"
+  },
+  "time": {
+    "ms": "ms",
+    "sec": "sek",
+    "min": "min",
+    "hour": "godzina",
+    "day": "day",
+    "week": "tydzień"
   }
 }

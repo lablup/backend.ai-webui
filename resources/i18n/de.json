@@ -220,7 +220,7 @@
       "PreOpenPortConfigurationDone": "Vorgeöffnete Ports erfolgreich konfiguriert.",
       "InfiniteTime": "Unendlich",
       "ResetStartTime": "Bitte stellen Sie die Startzeit neu ein.",
-      "SessionStartTime": "Die Sitzung beginnt:",
+      "SessionStartTime": "Die Sitzung beginnt",
       "SessionType": "Sitzungstyp",
       "InferenceMode": "Inferenz",
       "BatchMode": "Stapel",
@@ -289,7 +289,10 @@
       "autoSelect": "Automatische Auswahl",
       "DescSelectAgent": "Die auf der rechten Seite des Agenten angezeigten Ressourcen stellen die tatsächliche Menge der verfügbaren Ressourcen dar. \nDerzeit ist die Agentenauswahl nur in einer Single-Node-Single-Container-Umgebung verfügbar. \nDie Standardeinstellung ist die Agentenzuteilung durch den Scheduler.",
       "AgentNode": "Agent",
-      "AutoSelect": "automatisch auswählen"
+      "AutoSelect": "automatisch auswählen",
+      "BatchJobTimeoutDuration": "Dauer des Batch-Job-Timeouts",
+      "BatchJobTimeoutDurationDesc": "Legen Sie die maximale Ausführungszeit für Batch-Jobs fest. \nDie Sitzung wird automatisch beendet, wenn die angegebene Zeit überschritten wird.",
+      "SetBatchJobTimeoutDuration": "Legen Sie die Zeitüberschreitungsdauer für Batch-Jobs fest"
     },
     "Preparing": "Vorbereitung...",
     "PreparingSession": "Sitzung vorbereiten...",
@@ -1536,7 +1539,8 @@
     "APINotSupported": "API wird nicht unterstützt. Erfordert die neueste Version des Backend.AI-Managers.",
     "WrongAPIServerAddress": "Falsche API-Serveradresse.",
     "ReachedResourceLimitPleaseContact": "Ihr Ressourcenlimit wurde erreicht. \nBitte wenden Sie sich an den Administrator.",
-    "InvalidUrl": "Es handelt sich nicht um eine gültige URL"
+    "InvalidUrl": "Es handelt sich nicht um eine gültige URL",
+    "AllowsPositiveNumberOnly": "Nur positive Zahlen zulassen."
   },
   "maxLength": {
     "64chars": "(maximal 64 Zeichen)",
@@ -1757,5 +1761,13 @@
     "SelectEndpoint": "Wählen Sie Endpunkt aus",
     "SyncInput": "Eingang synchronisieren",
     "CompareWithOtherModels": "Vergleichen Sie mit anderen Modellen"
+  },
+  "time": {
+    "ms": "ms",
+    "sec": "Sek",
+    "min": "min",
+    "hour": "Stunde",
+    "day": "day",
+    "week": "Woche"
   }
 }

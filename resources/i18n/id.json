@@ -222,7 +222,7 @@
       "DescFolderAlias": "<p>Jika Anda mengisi input ini, nama folder akan berubah menjadi alias saat dipasang.</p> <p>Path absolut akan dipasang di '/', yang lainnya adalah sub path dari /home/work</p> <p>Jangan gunakan alias yang sama dengan folder sistem.</p> <p>Silakan periksa path akhir yang dicetak di 'Mounted folder' di bawah ini.</p> <p>Jika Anda ingin melihat jendela ini lagi, klik ikon di sebelah 'Path & Alias'.",
       "InfiniteTime": "Tak terbatas",
       "ResetStartTime": "Atur ulang waktu mulai.",
-      "SessionStartTime": "Sesi dimulai:",
+      "SessionStartTime": "Sesi dimulai",
       "SessionType": "Jenis Sesi",
       "BatchMode": "Batch",
       "InteractiveMode": "Interaktif",
@@ -290,7 +290,10 @@
       "autoSelect": "Pilih Otomatis",
       "DescSelectAgent": "Sumber daya yang ditampilkan di sisi kanan agen mewakili jumlah sebenarnya sumber daya yang tersedia. \nSaat ini, pemilihan agen hanya tersedia di lingkungan kontainer tunggal node tunggal. \nPengaturan defaultnya adalah alokasi agen oleh penjadwal.",
       "AgentNode": "Agen",
-      "AutoSelect": "pilih otomatis"
+      "AutoSelect": "pilih otomatis",
+      "BatchJobTimeoutDuration": "Durasi Batas Waktu Tugas Batch",
+      "BatchJobTimeoutDurationDesc": "Tetapkan waktu eksekusi maksimum untuk pekerjaan batch. \nSesi akan otomatis berakhir jika waktu yang ditentukan terlampaui.",
+      "SetBatchJobTimeoutDuration": "Tetapkan durasi batas waktu tugas batch"
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",
@@ -1537,7 +1540,8 @@
     "APINotSupported": "API tidak didukung. Memerlukan versi terbaru dari manajer Backend.AI.",
     "WrongAPIServerAddress": "Alamat server API salah.",
     "ReachedResourceLimitPleaseContact": "Mencapai batas sumber daya Anda. \nSilakan hubungi administrator.",
-    "InvalidUrl": "Ini bukan URL yang valid"
+    "InvalidUrl": "Ini bukan URL yang valid",
+    "AllowsPositiveNumberOnly": "Izinkan angka positif saja."
   },
   "maxLength": {
     "64chars": "(maksimum 64 karakter)",
@@ -1757,5 +1761,13 @@
     "SelectEndpoint": "Pilih Titik Akhir",
     "SyncInput": "Sinkronkan masukan",
     "CompareWithOtherModels": "Bandingkan dengan model lain"
+  },
+  "time": {
+    "ms": "ms",
+    "sec": "detik",
+    "min": "min",
+    "hour": "jam",
+    "day": "day",
+    "week": "pekan"
   }
 }

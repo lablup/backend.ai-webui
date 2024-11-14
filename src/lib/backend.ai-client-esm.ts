@@ -723,6 +723,7 @@ class Client {
     }
     if (this.isManagerVersionCompatibleWith('24.12.0')) {
       this._features['extended-image-info'] = true;
+      this._features['batch-timeout'] = true;
     }
   }
 
@@ -1020,6 +1021,7 @@ class Client {
     resources = {},
     timeout: number = 30000,
     architecture: string = 'x86_64',
+    batchTimeout?: string,
   ) {
     if (
       typeof sessionId === 'undefined' ||
@@ -1033,6 +1035,9 @@ class Client {
       clientSessionToken: sessionId,
       architecture: architecture,
     };
+    if (batchTimeout) {
+      params['batch_timeout'] = batchTimeout;
+    }
     if (resources && Object.keys(resources).length !== 0) {
       let config = {};
       if (resources['cpu']) {
@@ -1124,6 +1129,9 @@ class Client {
       }
       if (resources['owner_access_key']) {
         params['owner_access_key'] = resources['owner_access_key'];
+      }
+      if (resources['batch_timeout']) {
+        params['batch_timeout'] = resources['batch_timeout'];
       }
       params['config'] = { resources: config };
       if (resources['mounts']) {

@@ -220,7 +220,7 @@
       "PreOpenPortConfigurationDone": "Porte preaperture configurate con successo.",
       "InfiniteTime": "Infinito",
       "ResetStartTime": "Si prega di reimpostare l'orario di inizio.",
-      "SessionStartTime": "Inizio sessione:",
+      "SessionStartTime": "Inizio sessione",
       "SessionType": "Tipo di sessione",
       "InferenceMode": "Inferenza",
       "BatchMode": "Lotto",
@@ -289,7 +289,10 @@
       "autoSelect": "Auto selezione",
       "DescSelectAgent": "Le risorse visualizzate sul lato destro dell'agente rappresentano la quantità effettiva di risorse disponibili. \nAttualmente, la selezione dell'agente è disponibile solo in un ambiente con contenitore singolo a nodo singolo. \nL'impostazione predefinita è l'allocazione dell'agente da parte dello scheduler.",
       "AgentNode": "Agente",
-      "AutoSelect": "selezione automatica"
+      "AutoSelect": "selezione automatica",
+      "BatchJobTimeoutDuration": "Durata del timeout del lavoro batch",
+      "BatchJobTimeoutDurationDesc": "Imposta il tempo di esecuzione massimo per i lavori batch. \nLa sessione terminerà automaticamente se viene superato il tempo specificato.",
+      "SetBatchJobTimeoutDuration": "Imposta la durata del timeout del lavoro batch"
     },
     "Preparing": "Preparazione...",
     "PreparingSession": "Preparazione della sessione...",
@@ -1536,7 +1539,8 @@
     "APINotSupported": "API non supportata. Richiede l'ultima versione del gestore Backend.AI.",
     "WrongAPIServerAddress": "Indirizzo del server API errato.",
     "ReachedResourceLimitPleaseContact": "Raggiunto il limite delle risorse. \nSi prega di contattare l'amministratore.",
-    "InvalidUrl": "Non è un URL valido"
+    "InvalidUrl": "Non è un URL valido",
+    "AllowsPositiveNumberOnly": "Consenti solo numeri positivi."
   },
   "maxLength": {
     "64chars": "(massimo 64 caratteri)",
@@ -1757,5 +1761,13 @@
     "SelectEndpoint": "Seleziona punto finale",
     "SyncInput": "Ingresso sincronizzato",
     "CompareWithOtherModels": "Confronta con altri modelli"
+  },
+  "time": {
+    "ms": "ms",
+    "sec": "sez",
+    "min": "min",
+    "hour": "ora",
+    "day": "day",
+    "week": "settimana"
   }
 }

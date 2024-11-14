@@ -38,6 +38,7 @@ import VFolderTableFormItem, {
 } from '../components/VFolderTableFormItem';
 import {
   compareNumberWithUnits,
+  formatDuration,
   generateRandomString,
   getImageFullName,
   iSizeToSize,
@@ -140,6 +141,7 @@ interface CreateSessionInfo {
   kernelName: string;
   sessionName: string;
   architecture: string;
+  batchTimeout?: string;
   config: SessionConfig;
 }
 
@@ -149,6 +151,9 @@ interface SessionLauncherValue {
     enabled: boolean;
     scheduleDate?: string;
     command?: string;
+    timeoutEnabled?: boolean;
+    timeout?: string;
+    timeoutUnit?: string;
   };
   allocationPreset: string;
   envvars: EnvVarFormListValue[];
@@ -194,6 +199,7 @@ const SessionLauncherPage = () => {
 
   const supportExtendedImageInfo =
     baiClient?.supports('extended-image-info') ?? false;
+  const supportBatchTimeout = baiClient?.supports('batch-timeout') ?? false;
 
   const [isStartingSession, setIsStartingSession] = useState(false);
   const INITIAL_FORM_VALUES: DeepPartial<SessionLauncherFormValue> = useMemo(
@@ -210,6 +216,11 @@ const SessionLauncherPage = () => {
         enabled: false,
         command: undefined,
         scheduleDate: undefined,
+        ...(supportBatchTimeout && {
+          timeoutEnabled: false,
+          timeout: undefined,
+          timeoutUnit: 's',
+        }),
       },
       envvars: [],
       // set default_session_environment only if set
@@ -224,6 +235,7 @@ const SessionLauncherPage = () => {
     [
       baiClient._config?.default_session_environment,
       currentGlobalResourceGroup,
+      supportBatchTimeout,
     ],
   );
   const StepParam = withDefault(NumberParam, 0);
@@ -445,6 +457,14 @@ const SessionLauncherPage = () => {
           kernelName,
           architecture,
           sessionName: sessionName,
+          ...(supportBatchTimeout &&
+          values?.batch?.timeoutEnabled &&
+          !_.isUndefined(values?.batch?.timeout)
+            ? {
+                batchTimeout:
+                  _.toString(values.batch.timeout) + values?.batch?.timeoutUnit,
+              }
+            : undefined),
           config: {
             ...(baiClient.supports('agent-select') &&
             !baiClient?._config?.hideAgents &&
@@ -533,6 +553,7 @@ const SessionLauncherPage = () => {
                 sessionInfo.config,
                 30000,
                 sessionInfo.architecture,
+                sessionInfo.batchTimeout,
               )
               .then((res: { created: boolean; status: string }) => {
                 // // When session is already created with the same name, the status code
@@ -841,146 +862,306 @@ const SessionLauncherPage = () => {
                       <Input.TextArea autoSize />
                     </Form.Item>
                     <Form.Item
-                      label={t('session.launcher.SessionStartTime')}
-                      extra={
-                        <Form.Item
-                          noStyle
-                          shouldUpdate={(prev, next) =>
-                            prev.batch.scheduleDate !== next.batch.scheduleDate
-                          }
-                        >
-                          {() => {
-                            const scheduleDate = form.getFieldValue([
-                              'batch',
-                              'scheduleDate',
-                            ]);
-                            return (
-                              <BAIIntervalView
-                                delay={1000}
-                                callback={() => {
-                                  const scheduleDate = form.getFieldValue([
-                                    'batch',
-                                    'scheduleDate',
-                                  ]);
-                                  if (scheduleDate) {
-                                    if (dayjs(scheduleDate).isBefore(dayjs())) {
-                                      if (
-                                        form.getFieldError([
-                                          'batch',
-                                          'scheduleDate',
-                                        ]).length === 0
-                                      ) {
-                                        form.validateFields([
-                                          ['batch', 'scheduleDate'],
-                                        ]);
-                                      }
-                                      return undefined;
-                                    } else {
-                                      return dayjs(scheduleDate).fromNow();
-                                    }
-                                  } else {
-                                    return undefined;
-                                  }
-                                }}
-                                triggerKey={
-                                  scheduleDate ? scheduleDate : 'none'
-                                }
-                              />
-                            );
-                          }}
-                        </Form.Item>
-                      }
+                      noStyle
+                      dependencies={[['batch', 'scheduleDate']]}
                     >
-                      <Flex direction="row" gap={'xs'}>
-                        <Form.Item
-                          noStyle
-                          name={['batch', 'enabled']}
-                          valuePropName="checked"
-                        >
-                          <Checkbox
-                            onChange={(e) => {
-                              if (
-                                e.target.checked &&
-                                _.isEmpty(
-                                  form.getFieldValue(['batch', 'scheduleDate']),
-                                )
-                              ) {
-                                form.setFieldValue(
-                                  ['batch', 'scheduleDate'],
-                                  dayjs().add(2, 'minutes').toISOString(),
-                                );
-                              } else if (e.target.checked === false) {
-                                form.setFieldValue(
-                                  ['batch', 'scheduleDate'],
-                                  undefined,
-                                );
+                      {() => {
+                        const scheduleDate = form.getFieldValue([
+                          'batch',
+                          'scheduleDate',
+                        ]);
+                        return (
+                          <BAIIntervalView
+                            delay={1000}
+                            callback={() => {
+                              const scheduleDate = form.getFieldValue([
+                                'batch',
+                                'scheduleDate',
+                              ]);
+                              if (scheduleDate) {
+                                if (dayjs(scheduleDate).isBefore(dayjs())) {
+                                  if (
+                                    form.getFieldError([
+                                      'batch',
+                                      'scheduleDate',
+                                    ]).length === 0
+                                  ) {
+                                    form.validateFields([
+                                      ['batch', 'scheduleDate'],
+                                    ]);
+                                  }
+                                  return undefined;
+                                } else {
+                                  return dayjs(scheduleDate).fromNow();
+                                }
+                              } else {
+                                return undefined;
                               }
-                              form.validateFields([['batch', 'scheduleDate']]);
                             }}
-                          >
-                            {t('session.launcher.Enable')}
-                          </Checkbox>
-                        </Form.Item>
-                        <Form.Item
-                          noStyle
-                          // dependencies={[['batch', 'enabled']]}
-                          shouldUpdate={(prev, next) => {
-                            return (
-                              // @ts-ignore
-                              prev.batch?.enabled !== next.batch?.enabled
-                            );
-                          }}
-                        >
-                          {() => {
-                            const disabled =
-                              form.getFieldValue('batch')?.enabled !== true;
-                            return (
-                              <>
+                            triggerKey={scheduleDate ? scheduleDate : 'none'}
+                            render={(time) => {
+                              return (
                                 <Form.Item
-                                  name={['batch', 'scheduleDate']}
-                                  noStyle
-                                  rules={[
-                                    {
-                                      // required: true,
-                                      validator: async (rule, value) => {
-                                        if (
-                                          value &&
-                                          dayjs(value).isBefore(dayjs())
-                                        ) {
-                                          return Promise.reject(
-                                            t(
-                                              'session.launcher.StartTimeMustBeInTheFuture',
-                                            ),
-                                          );
-                                        }
-                                        return Promise.resolve();
-                                      },
-                                    },
-                                  ]}
+                                  label={t('session.launcher.SessionStartTime')}
+                                  extra={time}
                                 >
-                                  <DatePickerISO
-                                    disabled={disabled}
-                                    showTime
-                                    localFormat
-                                    disabledDate={(value) => {
-                                      return value.isBefore(
-                                        dayjs().startOf('day'),
-                                      );
-                                    }}
-                                  />
-                                </Form.Item>
-                                {/* <Form.Item
+                                  <Flex direction="row" gap={'xs'}>
+                                    <Form.Item
                                       noStyle
-                                      name={['batch', 'scheduleTime']}
+                                      name={['batch', 'enabled']}
+                                      valuePropName="checked"
                                     >
-                                      <TimePicker disabled={disabled} />
-                                    </Form.Item> */}
-                              </>
-                            );
-                          }}
-                        </Form.Item>
-                      </Flex>
+                                      <Checkbox
+                                        onChange={(e) => {
+                                          if (
+                                            e.target.checked &&
+                                            _.isEmpty(
+                                              form.getFieldValue([
+                                                'batch',
+                                                'scheduleDate',
+                                              ]),
+                                            )
+                                          ) {
+                                            form.setFieldValue(
+                                              ['batch', 'scheduleDate'],
+                                              dayjs()
+                                                .add(2, 'minutes')
+                                                .toISOString(),
+                                            );
+                                          } else if (
+                                            e.target.checked === false
+                                          ) {
+                                            form.setFieldValue(
+                                              ['batch', 'scheduleDate'],
+                                              undefined,
+                                            );
+                                          }
+                                          form.validateFields([
+                                            ['batch', 'scheduleDate'],
+                                          ]);
+                                        }}
+                                      >
+                                        {t('session.launcher.Enable')}
+                                      </Checkbox>
+                                    </Form.Item>
+                                    <Form.Item
+                                      noStyle
+                                      // dependencies={[['batch', 'enabled']]}
+                                      shouldUpdate={(prev, next) => {
+                                        return (
+                                          // @ts-ignore
+                                          prev.batch?.enabled !==
+                                          next.batch?.enabled
+                                        );
+                                      }}
+                                    >
+                                      {() => {
+                                        const disabled =
+                                          form.getFieldValue('batch')
+                                            ?.enabled !== true;
+                                        return (
+                                          <>
+                                            <Form.Item
+                                              name={['batch', 'scheduleDate']}
+                                              noStyle
+                                              rules={[
+                                                {
+                                                  // required: true,
+                                                  validator: async (
+                                                    rule,
+                                                    value,
+                                                  ) => {
+                                                    if (
+                                                      value &&
+                                                      dayjs(value).isBefore(
+                                                        dayjs(),
+                                                      )
+                                                    ) {
+                                                      return Promise.reject(
+                                                        t(
+                                                          'session.launcher.StartTimeMustBeInTheFuture',
+                                                        ),
+                                                      );
+                                                    }
+                                                    return Promise.resolve();
+                                                  },
+                                                },
+                                              ]}
+                                            >
+                                              <DatePickerISO
+                                                disabled={disabled}
+                                                showTime
+                                                localFormat
+                                                disabledDate={(value) => {
+                                                  return value.isBefore(
+                                                    dayjs().startOf('day'),
+                                                  );
+                                                }}
+                                              />
+                                            </Form.Item>
+                                            {/* <Form.Item
+                                              noStyle
+                                              name={['batch', 'scheduleTime']}
+                                            >
+                                              <TimePicker disabled={disabled} />
+                                            </Form.Item> */}
+                                          </>
+                                        );
+                                      }}
+                                    </Form.Item>
+                                  </Flex>
+                                </Form.Item>
+                              );
+                            }}
+                          />
+                        );
+                      }}
                     </Form.Item>
+
+                    {supportBatchTimeout ? (
+                      <Form.Item
+                        noStyle
+                        dependencies={[
+                          ['batch', 'timeoutEnabled'],
+                          ['batch', 'timeoutUnit'],
+                        ]}
+                      >
+                        {() => {
+                          const timeout = form.getFieldValue([
+                            'batch',
+                            'timeout',
+                          ]);
+                          const unit = form.getFieldValue([
+                            'batch',
+                            'timeoutUnit',
+                          ]);
+
+                          const timeDuration = dayjs.duration(
+                            timeout,
+                            unit ?? 's',
+                          );
+
+                          const formattedDuration = formatDuration(
+                            timeDuration,
+                            t,
+                          );
+
+                          const durationText =
+                            !_.isNull(timeout) && _.toFinite(timeout) > 0
+                              ? formattedDuration
+                              : null;
+                          return (
+                            <Form.Item
+                              label={t(
+                                'session.launcher.BatchJobTimeoutDuration',
+                              )}
+                              tooltip={t(
+                                'session.launcher.BatchJobTimeoutDurationDesc',
+                              )}
+                              // extra={durationText}
+                              help={durationText}
+                            >
+                              <Flex direction="row" gap={'xs'}>
+                                <Form.Item
+                                  noStyle
+                                  name={['batch', 'timeoutEnabled']}
+                                  valuePropName="checked"
+                                >
+                                  <Checkbox
+                                    onChange={(e) => {
+                                      if (e.target.checked === false) {
+                                        form.setFieldValue(
+                                          ['batch', 'timeout'],
+                                          undefined,
+                                        );
+                                      }
+                                      form.validateFields([
+                                        ['batch', 'timeout'],
+                                      ]);
+                                    }}
+                                  >
+                                    {t('session.launcher.Enable')}
+                                  </Checkbox>
+                                </Form.Item>
+                                <Form.Item
+                                  noStyle
+                                  dependencies={[['batch', 'timeoutEnabled']]}
+                                >
+                                  {() => {
+                                    const disabled =
+                                      form.getFieldValue([
+                                        'batch',
+                                        'timeoutEnabled',
+                                      ]) !== true;
+                                    return (
+                                      <>
+                                        <Form.Item
+                                          name={['batch', 'timeout']}
+                                          label={t(
+                                            'session.launcher.BatchJobTimeoutDuration',
+                                          )}
+                                          noStyle
+                                          rules={[
+                                            {
+                                              min: 0,
+                                              type: 'number',
+                                              message: t(
+                                                'error.AllowsPositiveNumberOnly',
+                                              ),
+                                            },
+                                            {
+                                              required: !disabled,
+                                            },
+                                          ]}
+                                        >
+                                          <InputNumber
+                                            disabled={disabled}
+                                            min={1}
+                                            addonAfter={
+                                              <Form.Item
+                                                noStyle
+                                                name={['batch', 'timeoutUnit']}
+                                              >
+                                                <Select
+                                                  tabIndex={-1}
+                                                  style={{ minWidth: 75 }}
+                                                  options={[
+                                                    {
+                                                      label: t('time.sec'),
+                                                      value: 's',
+                                                    },
+                                                    {
+                                                      label: t('time.min'),
+                                                      value: 'm',
+                                                    },
+                                                    {
+                                                      label: t('time.hour'),
+                                                      value: 'h',
+                                                    },
+                                                    {
+                                                      label: t('time.day'),
+                                                      value: 'd',
+                                                    },
+                                                    {
+                                                      label: t('time.week'),
+                                                      value: 'w',
+                                                    },
+                                                  ]}
+                                                />
+                                              </Form.Item>
+                                            }
+                                          />
+                                        </Form.Item>
+                                      </>
+                                    );
+                                  }}
+                                </Form.Item>
+                              </Flex>
+                            </Form.Item>
+                          );
+                        }}
+                      </Form.Item>
+                    ) : null}
                   </Card>
                 )}
 
@@ -1266,7 +1447,7 @@ const SessionLauncherPage = () => {
                               )}
                             </Descriptions.Item>
                             <Descriptions.Item
-                              label={t('session.launcher.ScheduleTimeSimple')}
+                              label={t('session.launcher.SessionStartTime')}
                             >
                               {form.getFieldValue(['batch', 'scheduleDate']) ? (
                                 dayjs(
@@ -1278,6 +1459,27 @@ const SessionLauncherPage = () => {
                                 </Typography.Text>
                               )}
                             </Descriptions.Item>
+                            {supportBatchTimeout ? (
+                              <Descriptions.Item
+                                label={t(
+                                  'session.launcher.BatchJobTimeoutDuration',
+                                )}
+                              >
+                                {form.getFieldValue(['batch', 'timeout']) ? (
+                                  <Typography.Text>
+                                    {form.getFieldValue(['batch', 'timeout'])}
+                                    {form.getFieldValue([
+                                      'batch',
+                                      'timeoutUnit',
+                                    ]) || 's'}
+                                  </Typography.Text>
+                                ) : (
+                                  <Typography.Text type="secondary">
+                                    {t('general.None')}
+                                  </Typography.Text>
+                                )}
+                              </Descriptions.Item>
+                            ) : null}
                           </>
                         )}
                       </Descriptions>

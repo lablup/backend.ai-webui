@@ -3,6 +3,8 @@ import { Image } from '../components/ImageEnvironmentSelectFormItems';
 import { EnvironmentImage } from '../components/ImageList';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { SorterResult } from 'antd/es/table/interface';
+import { Duration } from 'dayjs/plugin/duration';
+import { TFunction } from 'i18next';
 import _ from 'lodash';
 
 export const newLineToBrElement = (
@@ -406,4 +408,17 @@ export function preserveDotStartCase(str: string) {
 
   // Replace the placeholder back with periods
   return startCased.replace(new RegExp(placeholder, 'g'), '.');
+}
+
+export function formatDuration(duration: Duration, t: TFunction) {
+  // We need to `t` function to translate the time unit in React render phase
+  return [
+    duration.weeks() ? `${duration.weeks()} ${t('time.week')}` : '',
+    duration.days() ? `${duration.days()} ${t('time.day')}` : '',
+    duration.hours() ? `${duration.hours()} ${t('time.hour')}` : '',
+    duration.minutes() ? `${duration.minutes()} ${t('time.min')}` : '',
+    duration.seconds() ? `${duration.seconds()} ${t('time.sec')}` : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
 }

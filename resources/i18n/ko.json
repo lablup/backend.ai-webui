@@ -139,7 +139,7 @@
       "ScheduleTime": "시작 시간 설정 (옵션)",
       "ScheduleTimeSimple": "시작 시간 설정",
       "StartUpCommand": "세션 시작시 실행할 명령",
-      "SessionStartTime": "세션 시작 시간: ",
+      "SessionStartTime": "세션 시작 시간",
       "SetEnvironmentVariable": "환경 변수 설정 (옵션)",
       "SetPreopenPorts": "사전 개방 포트 설정 (옵션)",
       "ResetStartTime": "세션 시작 시간을 다시 설정해주세요.",
@@ -290,7 +290,10 @@
       "autoSelect": "자동 선택",
       "DescSelectAgent": "에이전트 오른쪽에 표시되는 자원은 실제 사용 가능한 자원의 양을 나타냅니다. \n현재 에이전트 선택은 단일 노드 단일 컨테이너 환경에서만 사용할 수 있습니다. \n기본 설정은 스케줄러에 의한 에이전트 할당입니다.",
       "AgentNode": "에이전트",
-      "AutoSelect": "자동 선택"
+      "AutoSelect": "자동 선택",
+      "BatchJobTimeoutDuration": "배치 작업 최대 실행 시간",
+      "BatchJobTimeoutDurationDesc": "배치 작업의 최대 실행 시간을 설정합니다. 지정된 시간이 초과되면 세션이 자동으로 종료됩니다.",
+      "SetBatchJobTimeoutDuration": "배치 작업 최대 실행 시간 설정"
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",
@@ -1652,7 +1655,8 @@
     "FolderSharingNotAvailableToUser": "요청한 사용자는 폴더 공유가 불가능한 상태입니다.",
     "APINotSupported": "지원하지 않는 API입니다. 최신 버전의 Backend.AI 매니저가 필요합니다.",
     "ReachedResourceLimitPleaseContact": "자원 제한에 도달했습니다. 관리자에게 문의하세요.",
-    "InvalidUrl": "유효한 URL이 아닙니다."
+    "InvalidUrl": "유효한 URL이 아닙니다.",
+    "AllowsPositiveNumberOnly": "양수만 허용합니다."
   },
   "maxLength": {
     "64chars": "(최대 길이 64자)",
@@ -1759,5 +1763,13 @@
     "SelectEndpoint": "엔드포인트 선택",
     "SyncInput": "입력 연동",
     "CompareWithOtherModels": "다른 모델과 비교하기"
+  },
+  "time": {
+    "ms": "밀리초",
+    "sec": "초",
+    "min": "분",
+    "hour": "시간",
+    "day": "일",
+    "week": "주"
   }
 }

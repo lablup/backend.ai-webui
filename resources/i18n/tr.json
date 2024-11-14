@@ -220,7 +220,7 @@
       "PreOpenPortConfigurationDone": "Ön açık bağlantı noktaları başarıyla yapılandırıldı.",
       "InfiniteTime": "Sonsuz",
       "ResetStartTime": "Lütfen başlangıç saatini sıfırlayın.",
-      "SessionStartTime": "Oturum Başlıyor:",
+      "SessionStartTime": "Oturum Başlıyor",
       "SessionType": "Oturum Türü",
       "InferenceMode": "Çıkarım",
       "BatchMode": "Toplu İş",
@@ -285,11 +285,17 @@
       "RecentHistory": "Yakın Tarih",
       "CreatedAt": "Oluşturulma Tarihi",
       "Tags": "Etiketler",
+<<<<<<< HEAD
       "SelectAgent": "Temsilci Seçin",
       "autoSelect": "Otomatik seçim",
       "DescSelectAgent": "Aracının sağ tarafında görüntülenen kaynaklar, mevcut kaynakların gerçek miktarını temsil eder. \nŞu anda aracı seçimi yalnızca tek düğümlü, tek kapsayıcılı bir ortamda mümkündür. \nVarsayılan ayar, ajanın zamanlayıcı tarafından tahsis edilmesidir.",
       "AgentNode": "Ajan",
       "AutoSelect": "otomatik seç"
+=======
+      "BatchJobTimeoutDuration": "Toplu İş Zaman Aşımı Süresi",
+      "BatchJobTimeoutDurationDesc": "Toplu işler için maksimum yürütme süresini ayarlayın. \nBelirtilen sürenin aşılması durumunda oturum otomatik olarak sonlandırılacaktır.",
+      "SetBatchJobTimeoutDuration": "Toplu iş zaman aşımı süresini ayarlama"
+>>>>>>> 8c3cb7de3 (feat: batch session timeout)
     },
     "Preparing": "hazırlanıyor...",
     "PreparingSession": "Oturum hazırlanıyor...",
@@ -1536,7 +1542,8 @@
     "APINotSupported": "API desteklenmiyor. Backend.AI yöneticisinin en son sürümünü gerektirir.",
     "WrongAPIServerAddress": "Yanlış API sunucu adresi.",
     "ReachedResourceLimitPleaseContact": "Kaynak sınırınıza ulaştınız. \nLütfen yöneticiyle iletişime geçin.",
-    "InvalidUrl": "Geçerli bir URL değil"
+    "InvalidUrl": "Geçerli bir URL değil",
+    "AllowsPositiveNumberOnly": "Yalnızca pozitif sayıya izin ver."
   },
   "maxLength": {
     "64chars": "(maksimum 64 karakter)",
@@ -1757,5 +1764,13 @@
     "SelectEndpoint": "Uç Noktayı Seçin",
     "SyncInput": "Senkronizasyon girişi",
     "CompareWithOtherModels": "Diğer modellerle karşılaştırın"
+  },
+  "time": {
+    "ms": "ms",
+    "sec": "sn",
+    "min": "min",
+    "hour": "saat",
+    "day": "day",
+    "week": "hafta"
   }
 }
