@@ -479,10 +479,6 @@ export const BackendAIWebUIStyles = [
       height: 0;
     }
 
-    .terms-of-use {
-      margin-bottom: 10px;
-    }
-
     footer#short-height {
       display: none;
     }

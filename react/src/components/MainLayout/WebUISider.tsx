@@ -2,7 +2,7 @@ import { filterEmptyItem } from '../../helper';
 import { useCustomThemeConfig } from '../../helper/customThemeConfig';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
-import { useThemeMode } from '../../hooks/useThemeMode';
+import usePrimaryColors from '../../hooks/usePrimaryColors';
 import EndpointsIcon from '../BAIIcons/EndpointsIcon';
 import MyEnvironmentsIcon from '../BAIIcons/MyEnvironmentsIcon';
 import SessionsIcon from '../BAIIcons/SessionsIcon';
@@ -10,6 +10,7 @@ import BAIMenu from '../BAIMenu';
 import BAISider, { BAISiderProps } from '../BAISider';
 import Flex from '../Flex';
 import ReverseThemeProvider from '../ReverseThemeProvider';
+import SiderToggleButton from '../SiderToggleButton';
 import SignoutModal from '../SignoutModal';
 import WebUILink from '../WebUILink';
 import { PluginPage, WebUIPluginType } from './MainLayout';
@@ -27,18 +28,19 @@ import {
   ToolOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { useToggle } from 'ahooks';
+import { useHover, useToggle } from 'ahooks';
 import {
   theme,
   MenuProps,
   Typography,
   ConfigProvider,
   Divider,
+  Grid,
 } from 'antd';
 import { ItemType } from 'antd/lib/menu/interface';
 import _ from 'lodash';
 import { PlayIcon } from 'lucide-react';
-import React, { useContext } from 'react';
+import React, { useContext, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
@@ -50,6 +52,7 @@ type MenuItem = {
 interface WebUISiderProps
   extends Pick<BAISiderProps, 'collapsed' | 'collapsedWidth' | 'onBreakpoint'> {
   webuiplugins?: WebUIPluginType;
+  onCollapse?: (collapsed: boolean) => void;
 }
 const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const { t } = useTranslation();
@@ -75,6 +78,11 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     baiClient?.supports('user-committed-image') ?? false;
 
   const [isOpenSignoutModal, { toggle: toggleSignoutModal }] = useToggle(false);
+
+  const siderRef = useRef<HTMLDivElement>(null);
+  const isSiderHover = useHover(siderRef);
+  const gridBreakpoint = Grid.useBreakpoint();
+  const primaryColors = usePrimaryColors();
 
   const generalMenu = filterEmptyItem<ItemType>([
     {
@@ -231,6 +239,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
 
   return (
     <BAISider
+      ref={siderRef}
       logo={
         <img
           className="logo-wide"
@@ -273,11 +282,130 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       logoTitleCollapsed={
         themeConfig?.logo?.logoTitleCollapsed || siteDescription || 'WebUI'
       }
-      bottomText={
-        props.collapsed ? null : (
-          <>
+      {...props}
+    >
+      <SiderToggleButton
+        collapsed={props.collapsed}
+        buttonTop={68}
+        // buttonTop={18}
+        onClick={(collapsed) => {
+          props.onCollapse?.(collapsed);
+        }}
+        hidden={!gridBreakpoint.sm || !isSiderHover}
+      />
+      <Flex
+        direction="column"
+        align="stretch"
+        justify="start"
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+          paddingTop: token.paddingLG,
+          paddingBottom: token.paddingSM,
+        }}
+      >
+        <BAIMenu
+          collapsed={props.collapsed}
+          selectedKeys={[
+            location.pathname.split('/')[1] || 'summary',
+            // TODO: After matching first path of 'storage-settings' and 'agent', remove this code
+            location.pathname.split('/')[1] === 'storage-settings'
+              ? 'agent'
+              : '',
+            // TODO: After 'SessionListPage' is completed and used as the main page, remove this code
+            //       and change 'job' key to 'session'
+            location.pathname.split('/')[1] === 'session' ? 'job' : '',
+          ]}
+          items={generalMenu}
+        />
+        {(currentUserRole === 'superadmin' || currentUserRole === 'admin') && (
+          <ConfigProvider
+            theme={{
+              token: {
+                colorPrimary: primaryColors.admin,
+              },
+            }}
+          >
+            <BAIMenu
+              collapsed={props.collapsed}
+              selectedKeys={[
+                location.pathname.split('/')[1] || 'summary',
+                // TODO: After matching first path of 'storage-settings' and 'agent', remove this code
+                location.pathname.split('/')[1] === 'storage-settings'
+                  ? 'agent'
+                  : '',
+                // TODO: After 'SessionListPage' is completed and used as the main page, remove this code
+                //       and change 'job' key to 'session'
+                location.pathname.split('/')[1] === 'session' ? 'job' : '',
+              ]}
+              items={
+                // TODO: add plugin menu
+                currentUserRole === 'superadmin'
+                  ? [
+                      {
+                        type: 'group',
+                        label: (
+                          <Flex
+                            style={{
+                              borderBottom: `1px solid ${token.colorBorder}`,
+                            }}
+                          >
+                            {!props.collapsed && (
+                              <Typography.Text type="secondary" ellipsis>
+                                {t('webui.menu.Administration')}
+                              </Typography.Text>
+                            )}
+                          </Flex>
+                        ),
+                        children: [...adminMenu, ...superAdminMenu],
+                      },
+                    ]
+                  : currentUserRole === 'admin'
+                    ? [
+                        {
+                          type: 'group',
+                          label: (
+                            <Flex
+                              style={{
+                                borderBottom: `1px solid ${token.colorBorder}`,
+                              }}
+                            >
+                              {!props.collapsed && (
+                                <Typography.Text type="secondary" ellipsis>
+                                  {t('webui.menu.Administration')}
+                                </Typography.Text>
+                              )}
+                            </Flex>
+                          ),
+                          children: [...adminMenu],
+                        },
+                      ]
+                    : []
+              }
+            />
+          </ConfigProvider>
+        )}
+      </Flex>
+      {props.collapsed ? null : (
+        <Flex
+          justify="center"
+          direction="column"
+          style={{
+            width: '100%',
+            padding: 30,
+            paddingTop: 0,
+            textAlign: 'center',
+          }}
+        >
+          <Typography.Text
+            type="secondary"
+            style={{
+              fontSize: '12px',
+              wordBreak: 'normal',
+            }}
+          >
             <div className="terms-of-use">
-              <Divider style={{ marginBottom: token.margin }} />
+              <Divider style={{ marginTop: 0, marginBottom: token.margin }} />
               <Flex
                 wrap="wrap"
                 style={{ fontSize: token.sizeXS }}
@@ -349,89 +477,8 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                 {`${global.packageVersion}.${globalThis.buildNumber}`}
               </small>
             </address>
-          </>
-        )
-      }
-      {...props}
-    >
-      <BAIMenu
-        collapsed={props.collapsed}
-        selectedKeys={[
-          location.pathname.split('/')[1] || 'summary',
-          // TODO: After matching first path of 'storage-settings' and 'agent', remove this code
-          location.pathname.split('/')[1] === 'storage-settings' ? 'agent' : '',
-          // TODO: After 'SessionListPage' is completed and used as the main page, remove this code
-          //       and change 'job' key to 'session'
-          location.pathname.split('/')[1] === 'session' ? 'job' : '',
-        ]}
-        items={generalMenu}
-      />
-      {(currentUserRole === 'superadmin' || currentUserRole === 'admin') && (
-        <ConfigProvider
-          theme={{
-            token: {
-              colorPrimary: token.colorInfo,
-            },
-          }}
-        >
-          <BAIMenu
-            collapsed={props.collapsed}
-            selectedKeys={[
-              location.pathname.split('/')[1] || 'summary',
-              // TODO: After matching first path of 'storage-settings' and 'agent', remove this code
-              location.pathname.split('/')[1] === 'storage-settings'
-                ? 'agent'
-                : '',
-              // TODO: After 'SessionListPage' is completed and used as the main page, remove this code
-              //       and change 'job' key to 'session'
-              location.pathname.split('/')[1] === 'session' ? 'job' : '',
-            ]}
-            items={
-              // TODO: add plugin menu
-              currentUserRole === 'superadmin'
-                ? [
-                    {
-                      type: 'group',
-                      label: (
-                        <Flex
-                          style={{
-                            borderBottom: `1px solid ${token.colorBorder}`,
-                          }}
-                        >
-                          {!props.collapsed && (
-                            <Typography.Text type="secondary" ellipsis>
-                              {t('webui.menu.Administration')}
-                            </Typography.Text>
-                          )}
-                        </Flex>
-                      ),
-                      children: [...adminMenu, ...superAdminMenu],
-                    },
-                  ]
-                : currentUserRole === 'admin'
-                  ? [
-                      {
-                        type: 'group',
-                        label: (
-                          <Flex
-                            style={{
-                              borderBottom: `1px solid ${token.colorBorder}`,
-                            }}
-                          >
-                            {!props.collapsed && (
-                              <Typography.Text type="secondary" ellipsis>
-                                {t('webui.menu.Administration')}
-                              </Typography.Text>
-                            )}
-                          </Flex>
-                        ),
-                        children: [...adminMenu],
-                      },
-                    ]
-                  : []
-            }
-          />
-        </ConfigProvider>
+          </Typography.Text>
+        </Flex>
       )}
     </BAISider>
   );
