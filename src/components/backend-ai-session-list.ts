@@ -765,11 +765,13 @@ export default class BackendAISessionList extends BackendAIPage {
           'TERMINATING',
           'PENDING',
           'SCHEDULED',
-          'PREPARED',
           'PREPARING',
           'PULLING',
           'ERROR',
         ];
+        if (globalThis.backendaiclient.supports('prepared-session-status')) {
+          status.push('PREPARED');
+        }
         break;
       case 'finished':
         status = ['TERMINATED', 'CANCELLED']; // TERMINATED, CANCELLED
@@ -781,10 +783,12 @@ export default class BackendAISessionList extends BackendAIPage {
           'TERMINATING',
           'PENDING',
           'SCHEDULED',
-          'PREPARED',
           'PREPARING',
           'PULLING',
         ];
+        if (globalThis.backendaiclient.supports('prepared-session-status')) {
+          status.push('PREPARED');
+        }
     }
     if (
       !globalThis.backendaiclient.supports('avoid-hol-blocking') &&
