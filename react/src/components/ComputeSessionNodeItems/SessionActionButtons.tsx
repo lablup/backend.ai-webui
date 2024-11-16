@@ -34,6 +34,7 @@ const isActive = (session: SessionActionButtonsFragment$data) => {
 //     'RESTARTING',
 //     'TERMINATING',
 //     'PENDING',
+//     'PREPARING',
 //     'CREATING',
 //     'PULLING',
 //   ].includes(session?.status || '');

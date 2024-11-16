@@ -578,7 +578,13 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   _isPreparing(status) {
-    const preparingStatuses = ['RESTARTING', 'PREPARED', 'CREATING', 'PULLING'];
+    const preparingStatuses = [
+      'RESTARTING',
+      'PREPARING',
+      'PREPARED',
+      'CREATING',
+      'PULLING',
+    ];
     if (preparingStatuses.indexOf(status) === -1) {
       return false;
     }
@@ -760,13 +766,15 @@ export default class BackendAISessionList extends BackendAIPage {
           'TERMINATING',
           'PENDING',
           'SCHEDULED',
-          'PREPARED',
-          'CREATING',
+          'PREPARING',
           'PULLING',
           'ERROR',
         ];
         if (globalThis.backendaiclient.supports('prepared-session-status')) {
           status.push('PREPARED');
+        }
+        if (globalThis.backendaiclient.supports('creating-session-status')) {
+          status.push('CREATING');
         }
         break;
       case 'finished':
@@ -779,16 +787,14 @@ export default class BackendAISessionList extends BackendAIPage {
           'TERMINATING',
           'PENDING',
           'SCHEDULED',
-<<<<<<< HEAD
           'PREPARING',
-=======
-          'PREPARED',
-          'CREATING',
->>>>>>> 035be307 (feat: Replace PREPARING status to CREATING)
           'PULLING',
         ];
         if (globalThis.backendaiclient.supports('prepared-session-status')) {
           status.push('PREPARED');
+        }
+        if (globalThis.backendaiclient.supports('creating-session-status')) {
+          status.push('CREATING');
         }
     }
     if (

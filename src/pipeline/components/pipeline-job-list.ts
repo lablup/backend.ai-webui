@@ -298,6 +298,7 @@ export default class PipelineJobList extends BackendAIPage {
             [
               'PENDING',
               'SCHEDULED',
+              'PREPARING',
               'PREPARED',
               'CREATING',
               'BUILDING',

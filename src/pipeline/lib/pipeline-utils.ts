@@ -106,6 +106,7 @@ export default class PipelineUtils extends LitElement {
       case 'BUILDING':
       case 'PULLING':
       case 'SCHEDULED':
+      case 'PREPARING':
       case 'PREPARED':
       case 'CREATING':
       case 'PENDING':

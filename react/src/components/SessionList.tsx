@@ -115,6 +115,7 @@ const SessionList: React.FC<SessionListProps> = ({
   const statusTagColor = {
     //prepare
     RESTARTING: 'blue',
+    PREPARING: 'blue',
     PREPARED: 'blue',
     CREATING: 'blue',
     PULLING: 'blue',

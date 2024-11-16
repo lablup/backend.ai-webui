@@ -20,6 +20,7 @@ const isRunningStatus = (status: string = '') => {
     'TERMINATING',
     'PENDING',
     'SCHEDULED',
+    'PREPARING',
     'PREPARED',
     'CREATING',
     'PULLING',
@@ -27,7 +28,13 @@ const isRunningStatus = (status: string = '') => {
 };
 
 const isPreparing = (status: string = '') => {
-  return ['RESTARTING', 'PREPARED', 'CREATING', 'PULLING'].includes(status);
+  return [
+    'RESTARTING',
+    'PREPARING',
+    'PREPARED',
+    'CREATING',
+    'PULLING',
+  ].includes(status);
 };
 
 const SessionInfoCell: React.FC<{
