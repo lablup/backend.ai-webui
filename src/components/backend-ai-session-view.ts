@@ -334,7 +334,6 @@ export default class BackendAISessionView extends BackendAIPage {
         'TERMINATING',
         'PENDING',
         'SCHEDULED',
-        'PREPARED',
         'PREPARING',
         'PULLING',
         'TERMINATED',
@@ -347,13 +346,15 @@ export default class BackendAISessionView extends BackendAIPage {
         'RESTARTING',
         'TERMINATING',
         'PENDING',
-        'PREPARED',
         'PREPARING',
         'PULLING',
         'TERMINATED',
         'CANCELLED',
         'ERROR',
       ];
+    }
+    if (globalThis.backendaiclient.supports('prepared-session-status')) {
+      status.push('PREPARED');
     }
     if (globalThis.backendaiclient.supports('detailed-session-states')) {
       status = status.join(',');

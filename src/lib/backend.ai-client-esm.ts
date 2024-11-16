@@ -724,6 +724,7 @@ class Client {
     if (this.isManagerVersionCompatibleWith('24.12.0')) {
       this._features['extended-image-info'] = true;
       this._features['batch-timeout'] = true;
+      this._features['prepared-session-status'] = true;
     }
   }
 
