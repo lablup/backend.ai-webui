@@ -606,6 +606,11 @@ const SessionLauncherPage = () => {
               sessionName: string;
               servicePorts: Array<{ name: string }>;
             }>) => {
+              // After the session is created, add a "See Details" button to navigate to the session page.
+              upsertNotification({
+                key: 'session-launcher:' + sessionName,
+                to: `/session?sessionDetail=${firstSession.sessionId}`,
+              });
               pushSessionHistory({
                 id: firstSession.sessionId,
                 params: usedSearchParams,
