@@ -630,9 +630,9 @@ export default class BackendAIImport extends BackendAIPage {
         this.notification.text = _text('import.NoNotebookCode');
         this.notification.show();
       } else {
-        if (navigator.clipboard !== undefined) {
+        if (navigator?.clipboard !== undefined) {
           // for Chrome, Safari
-          navigator.clipboard.writeText(copyText).then(
+          navigator.clipboard.writeText?.(copyText).then(
             () => {
               this.notification.text = _text('import.NotebookBadgeCodeCopied');
               this.notification.show();

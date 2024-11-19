@@ -3035,6 +3035,25 @@ export default class BackendAISessionList extends BackendAIPage {
     );
   }
 
+  copyText(text: string) {
+    if (navigator.clipboard !== undefined) {
+      // for Chrome, Safari
+      navigator?.clipboard?.writeText(text)?.then((err) => {
+        console.error('Could not copy text: ', err);
+      });
+    } else {
+      // other browsers
+      const tmpInputElement = document.createElement('input');
+      tmpInputElement.type = 'text';
+      tmpInputElement.value = text;
+
+      document.body.appendChild(tmpInputElement);
+      tmpInputElement.select();
+      document.execCommand('copy');
+      document.body.removeChild(tmpInputElement);
+    }
+  }
+
   /**
    * Render session information - category, color, description, etc.
    *
@@ -3131,10 +3150,8 @@ ${rowData.item[this.sessionNameField]}</pre
                 id="session-name-copy-icon"
                 class="fg controls-running"
                 icon="content_copy"
-                @click="${async () =>
-                  await navigator.clipboard.writeText(
-                    rowData.item[this.sessionNameField],
-                  )}"
+                @click="${() =>
+                  this.copyText(rowData.item[this.sessionNameField])}"
               ></mwc-icon-button>
             </div>
             <div class="horizontal center center-justified layout">
