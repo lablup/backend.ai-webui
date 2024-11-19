@@ -1,4 +1,4 @@
-import { iSizeToSize } from '../helper';
+import { convertBinarySizeUnit } from '../helper';
 import {
   UNLIMITED_MAX_CONCURRENT_SESSIONS,
   UNLIMITED_MAX_CONTAINERS_PER_SESSIONS,
@@ -125,7 +125,7 @@ const KeypairResourcePolicySettingModal: React.FC<
     );
 
     if (parsedTotalResourceSlots?.mem) {
-      parsedTotalResourceSlots.mem = iSizeToSize(
+      parsedTotalResourceSlots.mem = convertBinarySizeUnit(
         parsedTotalResourceSlots?.mem + 'b',
         'g',
         2,
@@ -167,7 +167,7 @@ const KeypairResourcePolicySettingModal: React.FC<
           values?.parsedTotalResourceSlots,
           (value, key) => {
             if (_.includes(key, 'mem')) {
-              return iSizeToSize(value, 'b', 0)?.numberFixed;
+              return convertBinarySizeUnit(value, 'b', 0)?.numberFixed;
             }
             return value;
           },
@@ -353,9 +353,9 @@ const KeypairResourcePolicySettingModal: React.FC<
                                 _.includes(resourceSlotKey, 'mem') &&
                                 value &&
                                 // @ts-ignore
-                                iSizeToSize(value, 'p').number >
+                                convertBinarySizeUnit(value, 'p').number >
                                   // @ts-ignore
-                                  iSizeToSize('300p', 'p').number
+                                  convertBinarySizeUnit('300p', 'p').number
                               ) {
                                 return Promise.reject(
                                   new Error(

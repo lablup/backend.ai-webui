@@ -1,4 +1,8 @@
-import { filterNonNullItems, iSizeToSize, localeCompare } from '../helper';
+import {
+  filterNonNullItems,
+  convertBinarySizeUnit,
+  localeCompare,
+} from '../helper';
 import { useUpdatableState } from '../hooks';
 import Flex from './Flex';
 import ResourceNumber from './ResourceNumber';
@@ -131,7 +135,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
             title: t('resourcePreset.SharedMemory'),
             dataIndex: 'shared_memory',
             render: (text) =>
-              text ? iSizeToSize(text + '', 'g')?.number : '-',
+              text ? convertBinarySizeUnit(text + '', 'g')?.number : '-',
             sorter: (a, b) => a.shared_memory - b.shared_memory,
           },
           {

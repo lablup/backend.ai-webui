@@ -1,4 +1,4 @@
-import { compareNumberWithUnits, iSizeToSize } from '../helper';
+import { compareNumberWithUnits, convertBinarySizeUnit } from '../helper';
 import { useUpdatableState } from '../hooks';
 import useControllableState from '../hooks/useControllableState';
 import DynamicUnitInputNumber, {
@@ -36,9 +36,12 @@ const DynamicUnitInputNumberWithSlider: React.FC<
     },
   );
   const { token } = theme.useToken();
-  const minGiB = useMemo(() => iSizeToSize(min, 'g', 2), [min]);
-  const maxGiB = useMemo(() => iSizeToSize(max, 'g', 2), [max]);
-  const valueGiB = useMemo(() => iSizeToSize(value || '0g', 'g', 2), [value]);
+  const minGiB = useMemo(() => convertBinarySizeUnit(min, 'g', 2), [min]);
+  const maxGiB = useMemo(() => convertBinarySizeUnit(max, 'g', 2), [max]);
+  const valueGiB = useMemo(
+    () => convertBinarySizeUnit(value || '0g', 'g', 2),
+    [value],
+  );
 
   // const warnPercent = useMemo(() => {
   //   return warn

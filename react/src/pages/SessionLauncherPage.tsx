@@ -41,7 +41,7 @@ import {
   formatDuration,
   generateRandomString,
   getImageFullName,
-  iSizeToSize,
+  convertBinarySizeUnit,
   preserveDotStartCase,
 } from '../helper';
 import {
@@ -2261,14 +2261,15 @@ export const ResourceNumbersOfSession: React.FC<FormOrResourceRequired> = ({
               type={type}
               value={
                 type === 'mem'
-                  ? (iSizeToSize(value.toString(), 'b')?.number || 0) *
+                  ? (convertBinarySizeUnit(value.toString(), 'b')?.number ||
+                      0) *
                       containerCount +
                     ''
                   : _.toNumber(value) * containerCount + ''
               }
               opts={{
                 shmem: resource.shmem
-                  ? (iSizeToSize(resource.shmem, 'b')?.number || 0) *
+                  ? (convertBinarySizeUnit(resource.shmem, 'b')?.number || 0) *
                     containerCount
                   : undefined,
               }}

@@ -1,4 +1,4 @@
-import { iSizeToSize } from '../helper';
+import { convertBinarySizeUnit } from '../helper';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import DynamicUnitInputNumber from './DynamicUnitInputNumber';
@@ -82,7 +82,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
           values?.resource_slots,
           (value, key) => {
             if (_.includes(key, 'mem')) {
-              return iSizeToSize(value, 'b', 0)?.numberFixed;
+              return convertBinarySizeUnit(value, 'b', 0)?.numberFixed;
             }
             return value;
           },
@@ -92,7 +92,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
         const props: CreateResourcePresetInput | ModifyResourcePresetInput = {
           resource_slots: JSON.stringify(resourceSlots || {}),
           shared_memory: values?.shared_memory
-            ? iSizeToSize(values?.shared_memory, 'b', 0)?.numberFixed
+            ? convertBinarySizeUnit(values?.shared_memory, 'b', 0)?.numberFixed
             : null,
         };
         if (_.isEmpty(resourcePreset)) {
@@ -180,12 +180,14 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
                     JSON.parse(resourcePreset?.resource_slots || '{}'),
                     (value, key) =>
                       _.includes(key, 'mem')
-                        ? iSizeToSize(value + 'b', 'g')?.numberUnit
+                        ? convertBinarySizeUnit(value + 'b', 'g')?.numberUnit
                         : value,
                   ) || {},
                 shared_memory: resourcePreset?.shared_memory
-                  ? iSizeToSize(resourcePreset?.shared_memory + 'b', 'g')
-                      ?.numberUnit
+                  ? convertBinarySizeUnit(
+                      resourcePreset?.shared_memory + 'b',
+                      'g',
+                    )?.numberUnit
                   : null,
               }
             : {}
@@ -242,9 +244,9 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
                                 value &&
                                 _.includes(resourceSlotKey, 'mem') &&
                                 // @ts-ignore
-                                iSizeToSize(value, 'p').number >
+                                convertBinarySizeUnit(value, 'p').number >
                                   // @ts-ignore
-                                  iSizeToSize('300p', 'p').number
+                                  convertBinarySizeUnit('300p', 'p').number
                               ) {
                                 return Promise.reject(
                                   new Error(
@@ -288,9 +290,11 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
                       if (
                         value &&
                         getFieldValue('resource_slots')?.mem &&
-                        (iSizeToSize(getFieldValue('resource_slots')?.mem, 'b')
-                          ?.number ?? 0) <
-                          (iSizeToSize(value, 'b')?.number ?? 0)
+                        (convertBinarySizeUnit(
+                          getFieldValue('resource_slots')?.mem,
+                          'b',
+                        )?.number ?? 0) <
+                          (convertBinarySizeUnit(value, 'b')?.number ?? 0)
                       ) {
                         return Promise.reject(
                           t('resourcePreset.MemoryShouldBeLargerThanSHMEM'),

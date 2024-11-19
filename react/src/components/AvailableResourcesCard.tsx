@@ -1,4 +1,4 @@
-import { iSizeToSize } from '../helper';
+import { convertBinarySizeUnit } from '../helper';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
@@ -58,12 +58,14 @@ const AvailableResourcesCard = () => {
         <BAIProgressWithLabel
           title="MEM"
           percent={
-            ((iSizeToSize(remaining.mem + '', 'm')?.number || 0) /
-              (iSizeToSize(resourceLimits.mem?.max + '', 'm')?.number || 1)) *
+            ((convertBinarySizeUnit(remaining.mem + '', 'm')?.number || 0) /
+              (convertBinarySizeUnit(resourceLimits.mem?.max + '', 'm')
+                ?.number || 1)) *
             100
           }
           valueLabel={
-            iSizeToSize(remaining.mem + '', 'g', 2)?.numberFixed + ' GiB'
+            convertBinarySizeUnit(remaining.mem + '', 'g', 2)?.numberFixed +
+            ' GiB'
           }
         />
       </Flex>

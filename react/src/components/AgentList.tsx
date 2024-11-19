@@ -1,6 +1,6 @@
 import {
   bytesToGB,
-  iSizeToSize,
+  convertBinarySizeUnit,
   toFixedFloorWithoutTrailingZeros,
   transformSorterToOrderString,
 } from '../helper';
@@ -340,11 +340,17 @@ const AgentList: React.FC<AgentListProps> = ({
                       <Flex gap="xxs">
                         <ResourceTypeIcon type={'mem'} />
                         <Typography.Text>
-                          {iSizeToSize(parsedOccupiedSlots.mem, 'g', 0)
-                            ?.numberFixed ?? 0}
+                          {convertBinarySizeUnit(
+                            parsedOccupiedSlots.mem,
+                            'g',
+                            0,
+                          )?.numberFixed ?? 0}
                           /
-                          {iSizeToSize(parsedAvailableSlots.mem, 'g', 0)
-                            ?.numberFixed ?? 0}
+                          {convertBinarySizeUnit(
+                            parsedAvailableSlots.mem,
+                            'g',
+                            0,
+                          )?.numberFixed ?? 0}
                         </Typography.Text>
                         <Typography.Text
                           type="secondary"
@@ -501,11 +507,15 @@ const AgentList: React.FC<AgentListProps> = ({
                   percent={liveStat.mem_util.ratio}
                   width={120}
                   valueLabel={
-                    iSizeToSize(_.toString(liveStat.mem_util.current), 'g')
-                      ?.numberFixed +
+                    convertBinarySizeUnit(
+                      _.toString(liveStat.mem_util.current),
+                      'g',
+                    )?.numberFixed +
                     '/' +
-                    iSizeToSize(_.toString(liveStat.mem_util.capacity), 'g')
-                      ?.numberFixed +
+                    convertBinarySizeUnit(
+                      _.toString(liveStat.mem_util.capacity),
+                      'g',
+                    )?.numberFixed +
                     ' GiB'
                   }
                 />
@@ -568,7 +578,7 @@ const AgentList: React.FC<AgentListProps> = ({
                             100 || 0
                         }
                         valueLabel={
-                          iSizeToSize(
+                          convertBinarySizeUnit(
                             _.toString(
                               liveStat[statKey as keyof typeof liveStat]
                                 .current,
@@ -576,7 +586,7 @@ const AgentList: React.FC<AgentListProps> = ({
                             'g',
                           )?.numberFixed +
                           '/' +
-                          iSizeToSize(
+                          convertBinarySizeUnit(
                             _.toString(
                               liveStat[statKey as keyof typeof liveStat]
                                 .capacity,

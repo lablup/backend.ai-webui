@@ -1,7 +1,7 @@
 import { useSuspendedBackendaiClient } from '.';
 import { Image } from '../components/ImageEnvironmentSelectFormItems';
 import { AUTOMATIC_DEFAULT_SHMEM } from '../components/ResourceAllocationFormItems';
-import { addNumberWithUnits, iSizeToSize } from '../helper';
+import { addNumberWithUnits, convertBinarySizeUnit } from '../helper';
 import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
 import { useSuspenseTanQuery } from './reactQueryAlias';
 import _ from 'lodash';
@@ -164,7 +164,7 @@ export const useResourceLimitAndRemaining = ({
       !_.isEmpty(
         checkPresetInfo?.scaling_groups[currentResourceGroup]?.remaining?.mem,
       )
-        ? iSizeToSize(
+        ? convertBinarySizeUnit(
             _.toNumber(
               checkPresetInfo?.scaling_groups[currentResourceGroup]?.using.mem,
             ) +
@@ -248,8 +248,8 @@ export const useResourceLimitAndRemaining = ({
               //handled by 'b' unit
               addNumberWithUnits(
                 _.max([
-                  iSizeToSize(currentImageMinM, 'b')?.number,
-                  iSizeToSize(AUTOMATIC_DEFAULT_SHMEM, 'b')?.number,
+                  convertBinarySizeUnit(currentImageMinM, 'b')?.number,
+                  convertBinarySizeUnit(AUTOMATIC_DEFAULT_SHMEM, 'b')?.number,
                   0,
                 ]) + 'b',
                 AUTOMATIC_DEFAULT_SHMEM,
@@ -261,12 +261,12 @@ export const useResourceLimitAndRemaining = ({
                   ? undefined
                   : baiClient._config.maxMemoryPerContainer,
                 limitParser(checkPresetInfo?.keypair_limits.mem) &&
-                  iSizeToSize(
+                  convertBinarySizeUnit(
                     limitParser(checkPresetInfo?.keypair_limits.mem) + '',
                     'g',
                   )?.number,
                 limitParser(checkPresetInfo?.group_limits.mem) &&
-                  iSizeToSize(
+                  convertBinarySizeUnit(
                     limitParser(checkPresetInfo?.group_limits.mem) + '',
                     'g',
                   )?.number,

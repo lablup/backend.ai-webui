@@ -1,7 +1,7 @@
 import {
   addNumberWithUnits,
   compareNumberWithUnits,
-  iSizeToSize,
+  convertBinarySizeUnit,
 } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useResourceSlotsDetails } from '../hooks/backendai';
@@ -239,9 +239,9 @@ const ResourceAllocationFormItems: React.FC<
     const minimumResources: Partial<ResourceAllocationFormValue['resource']> = {
       cpu: resourceLimits.cpu?.min,
       mem:
-        iSizeToSize(
-          (iSizeToSize(resourceLimits.shmem?.min, 'm')?.number || 0) +
-            (iSizeToSize(resourceLimits.mem?.min, 'm')?.number || 0) +
+        convertBinarySizeUnit(
+          (convertBinarySizeUnit(resourceLimits.shmem?.min, 'm')?.number || 0) +
+            (convertBinarySizeUnit(resourceLimits.mem?.min, 'm')?.number || 0) +
             'm',
           'g',
         )?.number + 'g', //to prevent loosing precision
@@ -345,7 +345,11 @@ const ResourceAllocationFormItems: React.FC<
       (preset) => preset.name === name,
     );
     const slots = _.pick(preset?.resource_slots, _.keys(resourceSlots));
-    const mem = iSizeToSize((slots?.mem || 0) + 'b', 'g', 2)?.numberUnit;
+    const mem = convertBinarySizeUnit(
+      (slots?.mem || 0) + 'b',
+      'g',
+      2,
+    )?.numberUnit;
     const acceleratorObj = _.omit(slots, ['cpu', 'mem', 'shmem']);
 
     // Select the first matched AI accelerator type and value
@@ -372,7 +376,7 @@ const ResourceAllocationFormItems: React.FC<
         ...acceleratorSetting,
         // transform to GB based on preset values
         mem,
-        shmem: iSizeToSize((preset?.shared_memory || 0) + 'b', 'g', 2)
+        shmem: convertBinarySizeUnit((preset?.shared_memory || 0) + 'b', 'g', 2)
           ?.numberUnit,
         cpu: parseInt(slots?.cpu || '0') || 0,
       },
@@ -766,8 +770,11 @@ const ResourceAllocationFormItems: React.FC<
                                 ...(remaining.mem
                                   ? {
                                       //@ts-ignore
-                                      [iSizeToSize(remaining.mem + 'b', 'g', 3)
-                                        ?.numberFixed]: {
+                                      [convertBinarySizeUnit(
+                                        remaining.mem + 'b',
+                                        'g',
+                                        3,
+                                      )?.numberFixed]: {
                                         label: <RemainingMark />,
                                       },
                                     }

@@ -1,7 +1,7 @@
 import {
   baiSignedRequestWithPromise,
   compareNumberWithUnits,
-  iSizeToSize,
+  convertBinarySizeUnit,
   useBaiSignedRequestWithPromise,
 } from '../helper';
 import {
@@ -647,13 +647,13 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         // FIXME: memory doesn't applied to resource allocation
         resource: {
           cpu: parseInt(JSON.parse(endpoint?.resource_slots || '{}')?.cpu),
-          mem: iSizeToSize(
+          mem: convertBinarySizeUnit(
             JSON.parse(endpoint?.resource_slots || '{}')?.mem + 'b',
             'g',
             3,
             true,
           )?.numberUnit,
-          shmem: iSizeToSize(
+          shmem: convertBinarySizeUnit(
             JSON.parse(endpoint?.resource_opts || '{}')?.shmem ||
               AUTOMATIC_DEFAULT_SHMEM,
             'g',
