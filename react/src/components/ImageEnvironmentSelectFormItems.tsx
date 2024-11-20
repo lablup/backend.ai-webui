@@ -507,7 +507,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                               }}
                             />
                             <TextHighlighter keyword={environmentSearch}>
-                              {tagAlias(environmentGroup.displayName)}
+                              {environmentGroup.displayName}
                             </TextHighlighter>
                           </Flex>
                           <Flex
