@@ -1,8 +1,0 @@
-.webui-header-container,
-.webui-header-container .draggable {
-  -webkit-app-region: drag;
-}
-
-.webui-header-container .non-draggable {
-  -webkit-app-region: no-drag;
-}

@@ -526,11 +526,11 @@
     "General": "Ogólne",
     "Disabled": "Wyłączony",
     "NSelected": "Wybrane elementy {{count}}",
-    "Extend": "Rozszerzyć",
     "RemainingLoginSessionTime": "Czas do automatycznego wylogowania",
     "Change": "Zmiana",
     "MaxValueNotification": "{{name}} musi być maksymalna {{max}}.",
-    "TotalItems": "Łącznie {{total}} pozycji"
+    "TotalItems": "Łącznie {{total}} pozycji",
+    "ExtendLoginSession": "Przedłużanie sesji logowania"
   },
   "credential": {
     "Permission": "Pozwolenie",

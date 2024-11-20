@@ -526,11 +526,11 @@
     "General": "Umum",
     "Disabled": "Dilumpuhkan",
     "NSelected": "{{count}} item yang dipilih",
-    "Extend": "Panjangkan",
     "RemainingLoginSessionTime": "__NOT_TRANSLATED__",
     "Change": "Berubah",
     "MaxValueNotification": "{{nama}} mestilah maksimum {{maks}}",
-    "TotalItems": "Jumlah {{total}} item"
+    "TotalItems": "Jumlah {{total}} item",
+    "ExtendLoginSession": "Lanjutkan sesi log masuk"
   },
   "credential": {
     "Permission": "Kebenaran",

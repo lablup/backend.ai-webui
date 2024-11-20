@@ -526,11 +526,11 @@
     "General": "一般情况",
     "Disabled": "残疾",
     "NSelected": "已选择的 {{count}} 项目",
-    "Extend": "延長",
     "RemainingLoginSessionTime": "自动注销前的时间",
     "Change": "改变",
     "MaxValueNotification": "{{name}} 必须是最大值 {{max}}",
-    "TotalItems": "{{总计}}项目总数"
+    "TotalItems": "{{总计}}项目总数",
+    "ExtendLoginSession": "延长登录会话"
   },
   "credential": {
     "Permission": "允許",

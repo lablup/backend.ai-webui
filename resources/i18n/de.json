@@ -526,11 +526,11 @@
     "General": "Allgemein",
     "Disabled": "Behinderte",
     "NSelected": "Ausgewählte(r) {{count}} Artikel",
-    "Extend": "Verlängern",
     "RemainingLoginSessionTime": "Zeit bis zur automatischen Abmeldung",
     "Change": "Ändern Sie",
     "MaxValueNotification": "{{name}} muss maximal {{max}} sein",
-    "TotalItems": "Insgesamt {{Gesamt}} Artikel"
+    "TotalItems": "Insgesamt {{Gesamt}} Artikel",
+    "ExtendLoginSession": "Eine Anmeldesitzung verlängern"
   },
   "credential": {
     "Permission": "Genehmigung",

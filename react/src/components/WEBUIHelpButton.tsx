@@ -35,7 +35,6 @@ const WEBUIHelpButton: React.FC<WEBUIHelpButtonProps> = ({ ...props }) => {
 
   return (
     <Button
-      size="large"
       icon={<QuestionCircleOutlined />}
       type="text"
       target="_blank"

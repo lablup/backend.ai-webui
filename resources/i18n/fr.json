@@ -526,11 +526,11 @@
     "General": "Général",
     "Disabled": "Handicapés",
     "NSelected": "Élément(s) sélectionné(s) {{count}}",
-    "Extend": "Étendre",
     "RemainingLoginSessionTime": "Délai avant déconnexion automatique",
     "Change": "Changer",
     "MaxValueNotification": "{{nom}} doit être maximum {{max}}",
-    "TotalItems": "Total des éléments {{total}}"
+    "TotalItems": "Total des éléments {{total}}",
+    "ExtendLoginSession": "Prolonger une session de connexion"
   },
   "credential": {
     "Permission": "Autorisation",

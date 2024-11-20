@@ -526,11 +526,11 @@
     "General": "Geral",
     "Disabled": "Desativado",
     "NSelected": "Item(ns) {{contagem}} selecionado(s)",
-    "Extend": "Ampliar",
     "RemainingLoginSessionTime": "Tempo até ao encerramento automático da sessão",
     "Change": "Alterar",
     "MaxValueNotification": "{{nome}} deve ser o máximo {{max}}",
-    "TotalItems": "Total de itens {{total}}"
+    "TotalItems": "Total de itens {{total}}",
+    "ExtendLoginSession": "Prolongar uma sessão de início de sessão"
   },
   "credential": {
     "Permission": "Permissão",
