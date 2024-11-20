@@ -337,7 +337,7 @@
       "description": "NVIDIA Triton Inference Server is an open-source, high-performance server that simplifies the deployment of AI models for inference in production environments..This environment is integrated with Nvidia GPU Cloud.",
       "group": "Machine Learning / Deep Learning",
       "tags": [],
-      "icon": "nvidia.png",
+      "icon": "nvidia.svg",
       "label": [
         {
           "category": "Env",
