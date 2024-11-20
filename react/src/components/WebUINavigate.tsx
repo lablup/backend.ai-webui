@@ -3,20 +3,20 @@ import _ from 'lodash';
 import React, { useEffect } from 'react';
 import { Navigate, NavigateProps } from 'react-router-dom';
 
-interface WebUINavigateProps extends NavigateProps {
-  options?: {
-    params?: any;
-  };
-}
-const WebUINavigate: React.FC<WebUINavigateProps> = ({ options, ...props }) => {
+interface WebUINavigateProps extends NavigateProps {}
+const WebUINavigate: React.FC<WebUINavigateProps> = ({ ...props }) => {
   useSuspendedBackendaiClient();
   const pathName = _.isString(props.to) ? props.to : props.to.pathname || '';
+  const [path, query] = pathName.split('?');
+  const params = {
+    params: Object.fromEntries(new URLSearchParams(query)),
+  };
   useEffect(() => {
     document.dispatchEvent(
       new CustomEvent('move-to-from-react', {
         detail: {
-          path: pathName,
-          params: options?.params,
+          path: path,
+          params,
         },
       }),
     );

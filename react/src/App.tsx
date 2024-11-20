@@ -19,6 +19,7 @@ import {
   IndexRouteObject,
   RouterProvider,
   createBrowserRouter,
+  useLocation,
 } from 'react-router-dom';
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
@@ -147,7 +148,10 @@ const router = createBrowserRouter([
         children: [
           {
             path: '',
-            element: <WebUINavigate to="/job" replace />,
+            Component: () => {
+              const location = useLocation();
+              return <WebUINavigate to={'/job' + location.search} replace />;
+            },
           },
           {
             path: '/session/start',
