@@ -29,6 +29,7 @@ const WebUIBreadcrumb: React.FC<WebUIBreadcrumbProps> = (props) => {
         } as React.CSSProperties,
         props.style,
       )}
+      data-testid="webui-breadcrumb"
     >
       <Breadcrumb
         style={{
