@@ -56,7 +56,7 @@ const BAISider: React.FC<BAISiderProps> = ({
         `}
       </style>
       <Sider
-        width={221}
+        width={240}
         breakpoint="md"
         style={{
           overflowX: 'hidden',
@@ -65,9 +65,6 @@ const BAISider: React.FC<BAISiderProps> = ({
           position: 'sticky',
           top: 0,
           left: 0,
-          borderRight: '1px solid',
-          borderColor: token.colorBorder,
-          paddingTop: token.paddingContentVerticalSM,
           scrollbarColor: 'auto',
         }}
         {...otherProps}
@@ -88,15 +85,16 @@ const BAISider: React.FC<BAISiderProps> = ({
         >
           <Flex
             direction="column"
-            justify="start"
-            align="start"
+            justify="center"
+            align={otherProps.collapsed ? 'center' : 'start'}
             style={{
-              padding: otherProps.collapsed
-                ? `${12 + token.marginSM}px 12px 12px 12px`
-                : `${12 + token.marginSM}px 16px 12px 16px`,
-              overflow: 'visible',
               transition: 'all 0.2s ease-in-out',
-              marginBottom: token.marginSM,
+              backgroundColor: token.colorPrimary,
+              padding: otherProps.collapsed ? undefined : '0 30px',
+              height: token.Layout?.headerHeight || 60,
+              marginBottom: token.marginXL,
+              position: 'sticky',
+              top: 0,
             }}
             className={'logo-and-text-container draggable'}
           >
@@ -108,7 +106,7 @@ const BAISider: React.FC<BAISiderProps> = ({
                 {logoCollapsed}
               </div>
             </div>
-            <div className="logo-title-wrap non-draggable">
+            {/* <div className="logo-title-wrap non-draggable">
               <Typography.Text
                 style={{
                   fontSize: 16,
@@ -119,7 +117,7 @@ const BAISider: React.FC<BAISiderProps> = ({
               >
                 {otherProps.collapsed ? logoTitleCollapsed : logoTitle}
               </Typography.Text>
-            </div>
+            </div> */}
           </Flex>
           {children}
           {bottomText && (
@@ -130,7 +128,7 @@ const BAISider: React.FC<BAISiderProps> = ({
                 direction="column"
                 style={{
                   width: '100%',
-                  padding: 20,
+                  padding: 30,
                   textAlign: 'center',
                 }}
               >
