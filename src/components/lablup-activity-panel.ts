@@ -63,11 +63,11 @@ export default class LablupActivityPanel extends LitElement {
           box-sizing: border-box;
           margin: 0 !important;
           padding: 0;
-          border-radius: 5px;
+          border-radius: var(--token-borderRadiusLG);
           width: 280px;
           line-height: 1.1;
           color: var(--token-colorText);
-          border: 1px solid var(--token-colorBorder, #424242);
+          border: 1px solid var(--token-colorBorderSecondary, #424242);
         }
 
         div.card > h4 {
@@ -79,7 +79,7 @@ export default class LablupActivityPanel extends LitElement {
           padding: 5px 15px 5px 20px;
           margin: 0 0 10px 0;
           border-radius: 5px 5px 0 0;
-          border-bottom: 1px solid var(--token-colorBorder, #ddd);
+          border-bottom: 1px solid var(--token-colorBorderSecondary, #ddd);
           display: flex;
           white-space: nowrap;
           text-overflow: ellipsis;

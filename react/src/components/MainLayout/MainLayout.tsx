@@ -1,5 +1,6 @@
 import { useCustomThemeConfig } from '../../helper/customThemeConfig';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
+import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import BAIErrorBoundary from '../BAIErrorBoundary';
@@ -50,6 +51,18 @@ function MainLayout() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [compactSidebarActive]);
+
+  useKeyboardShortcut(
+    (event) => {
+      if (event.key === '[') {
+        event.preventDefault();
+        setSideCollapsed((v) => !v);
+      }
+    },
+    {
+      skipShortcutOnMetaKey: true,
+    },
+  );
 
   // const currentDomainName = useCurrentDomainValue();
   const { token } = theme.useToken();
@@ -131,6 +144,9 @@ function MainLayout() {
             } else {
               !compactSidebarActive && setSideCollapsed(false);
             }
+          }}
+          onCollapse={(collapsed) => {
+            setSideCollapsed(collapsed);
           }}
           webuiplugins={webUIPlugins}
         />
