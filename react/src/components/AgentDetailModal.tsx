@@ -93,13 +93,14 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                 </Typography.Title>
                 <BAIProgressWithLabel
                   percent={
-                    ((convertBinarySizeUnit(
-                      _.toString(agent?.mem_cur_bytes),
-                      'g',
-                    )?.number ?? 0) /
-                      (convertBinarySizeUnit(parsedAvailableSlots?.mem, 'g')
-                        ?.number ?? 0)) *
-                      100 ?? 0
+                    (_.toNumber(
+                      convertBinarySizeUnit(_.toString(agent?.mem_cur_bytes), 'g')
+                        ?.number,
+                    ) /
+                      _.toNumber(
+                        convertBinarySizeUnit(parsedAvailableSlots?.mem, 'g')?.number,
+                      )) *
+                      100 || 0
                   }
                   valueLabel={`${
                     convertBinarySizeUnit(_.toString(agent?.mem_cur_bytes), 'g')

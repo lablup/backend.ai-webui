@@ -15,7 +15,7 @@ export interface BAIProgressWithLabelProps {
 const BAIProgressWithLabel: React.FC<BAIProgressWithLabelProps> = ({
   title,
   valueLabel,
-  percent = 0,
+  percent,
   width,
   strokeColor,
   labelStyle,
@@ -46,7 +46,7 @@ const BAIProgressWithLabel: React.FC<BAIProgressWithLabelProps> = ({
       <Flex
         style={{
           height: '100%',
-          width: `${percent > 100 ? 100 : percent}%`,
+          width: `${!percent || _.isNaN(percent) ? 0 : _.min([percent, 100])}%`,
           position: 'absolute',
           left: 0,
           top: 0,
@@ -60,7 +60,16 @@ const BAIProgressWithLabel: React.FC<BAIProgressWithLabelProps> = ({
         <Typography.Text style={{ fontSize, ...labelStyle }}>
           {title}
         </Typography.Text>
-        <Typography.Text style={{ fontSize, ...labelStyle }}>
+        <Typography.Text
+          style={{
+            fontSize,
+            color:
+              _.isNaN(percent) || _.isUndefined(percent)
+                ? token.colorTextDisabled
+                : undefined,
+            ...labelStyle,
+          }}
+        >
           {valueLabel}
         </Typography.Text>
       </Flex>
