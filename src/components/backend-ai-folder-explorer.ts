@@ -1599,6 +1599,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
     imageResource['mounts'] = [this.vfolderName];
     imageResource['cpu'] = 1;
     imageResource['mem'] = '256m';
+    imageResource['type'] = 'system';
     imageResource['domain'] = globalThis.backendaiclient._config.domainName;
     imageResource['scaling_group'] =
       this.volumeInfo[this.vhost]?.sftp_scaling_groups[0];
