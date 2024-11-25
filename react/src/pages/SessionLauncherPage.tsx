@@ -1233,6 +1233,10 @@ const SessionLauncherPage = () => {
                   }}
                 >
                   <ResourceAllocationFormItems
+                    enableAgentSelect={
+                      !baiClient._config.hideAgents &&
+                      baiClient.supports('agent-select')
+                    }
                     enableNumOfSessions
                     enableResourcePresets
                     showRemainingWarning

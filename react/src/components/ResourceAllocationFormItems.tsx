@@ -84,6 +84,7 @@ type MergedResourceAllocationFormValue = ResourceAllocationFormValue &
   ImageEnvironmentFormInput;
 
 interface ResourceAllocationFormItemsProps {
+  enableAgentSelect?: boolean;
   enableNumOfSessions?: boolean;
   enableResourcePresets?: boolean;
   showRemainingWarning?: boolean;
@@ -93,6 +94,7 @@ interface ResourceAllocationFormItemsProps {
 const ResourceAllocationFormItems: React.FC<
   ResourceAllocationFormItemsProps
 > = ({
+  enableAgentSelect = false,
   enableNumOfSessions,
   enableResourcePresets,
   forceImageMinValues = false,
@@ -1206,7 +1208,7 @@ const ResourceAllocationFormItems: React.FC<
         </Card>
       ) : null}
       {/* TODO: Support cluster mode */}
-      {!baiClient._config.hideAgents && (
+      {enableAgentSelect && (
         <Form.Item
           label={t('session.launcher.SelectAgent')}
           required
@@ -1215,21 +1217,19 @@ const ResourceAllocationFormItems: React.FC<
           <Flex gap={'xs'}>
             <Suspense>
               <Form.Item required noStyle style={{ flex: 1 }} name="agent">
-                {baiClient.supports('agent-select') && (
-                  <AgentSelect
-                    resourceGroup={currentResourceGroup}
-                    fetchKey={agentFetchKey}
-                    onChange={(value, option) => {
-                      if (value !== 'auto') {
-                        form.setFieldsValue({
-                          cluster_mode: 'single-node',
-                          cluster_size: 1,
-                        });
-                      }
-                      // TODO: set cluster mode to single node and cluster size to 1 when agent value is not "auto"
-                    }}
-                  ></AgentSelect>
-                )}
+                <AgentSelect
+                  resourceGroup={currentResourceGroup}
+                  fetchKey={agentFetchKey}
+                  onChange={(value, option) => {
+                    if (value !== 'auto') {
+                      form.setFieldsValue({
+                        cluster_mode: 'single-node',
+                        cluster_size: 1,
+                      });
+                    }
+                    // TODO: set cluster mode to single node and cluster size to 1 when agent value is not "auto"
+                  }}
+                ></AgentSelect>
               </Form.Item>
             </Suspense>
             <Form.Item noStyle>
