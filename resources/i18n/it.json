@@ -66,7 +66,9 @@
       "DisMatchUserEmail": "L'e-mail dell'utente non corrisponde",
       "MyEnvironments": "I miei ambienti",
       "ResourcePolicy": "Politica delle risorse",
-      "FullNameUpdated": "Il nome completo è stato aggiornato con successo."
+      "FullNameUpdated": "Il nome completo è stato aggiornato con successo.",
+      "Playground": "Parco giochi",
+      "ModelStore": "Negozio di modelli"
     },
     "YouAreOffline": "Non in linea: Non è collegato ad alcuna rete.",
     "YouAreOnline": "Ora sei online",
@@ -1686,7 +1688,10 @@
     "CloneInfo": "Verrà clonata come cartella del tipo di utente.",
     "CloneToFolder": "Clonare in una cartella",
     "FolderAlreadyExists": "Una cartella con questo nome esiste già.",
-    "FinetuneModel": "Modello di messa a punto"
+    "FinetuneModel": "Modello di messa a punto",
+    "Experience": "Esperienza",
+    "ModelCard": "Scheda modello",
+    "ImportFromHuggingFace": "Importa da viso abbracciato"
   },
   "table": {
     "SettingTable": "Impostazione della tabella",
@@ -1786,5 +1791,12 @@
     "AgentId": "ID agente",
     "ContainerId": "ID contenitore",
     "Kernels": "Kernels"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelServices": "Servizi modello",
+      "ModelList": "Elenco dei modelli",
+      "MyServices": "I miei servizi"
+    }
   }
 }

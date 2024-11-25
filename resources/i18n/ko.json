@@ -66,7 +66,9 @@
       "DisMatchUserEmail": "사용자 이메일이 일치하지 않습니다.",
       "MyEnvironments": "나의 실행 환경",
       "ResourcePolicy": "자원 정책",
-      "FullNameUpdated": "사용자 이름이 갱신되었습니다."
+      "FullNameUpdated": "사용자 이름이 성공적으로 갱신되었습니다.",
+      "Playground": "플레이그라운드",
+      "ModelStore": "모델 스토어"
     },
     "YouAreOffline": "오프라인: 네트워크에 연결되어 있지 않습니다.",
     "YouAreOnline": "온라인 상태가 되었습니다",
@@ -1690,7 +1692,10 @@
     "CloneInfo": "새로운 사용자 폴더로 복제됩니다.",
     "CloneToFolder": "폴더로 복제",
     "FolderAlreadyExists": "같은 이름의 폴더가 존재합니다.",
-    "FinetuneModel": "모델 파인튜닝"
+    "FinetuneModel": "모델 파인튜닝",
+    "Experience": "사용해보기",
+    "ModelCard": "모델 카드",
+    "ImportFromHuggingFace": "Hugging Face 에서 가져오기"
   },
   "table": {
     "SettingTable": "테이블 설정",
@@ -1792,5 +1797,12 @@
     "AgentId": "에이전트 ID",
     "ContainerId": "컨테이너 ID",
     "Kernels": "커널"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelServices": "모델 서비스",
+      "ModelList": "모델 리스트",
+      "MyServices": "실행중인 서비스"
+    }
   }
 }
