@@ -85,64 +85,70 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const primaryColors = usePrimaryColors();
 
   const generalMenu = filterEmptyItem<ItemType>([
-    {
-      label: <WebUILink to="/summary">{t('webui.menu.Summary')}</WebUILink>,
-      icon: <DashboardOutlined style={{ color: token.colorPrimary }} />,
-      key: 'summary',
-    },
-    {
-      label: <WebUILink to="/job">{t('webui.menu.Sessions')}</WebUILink>,
-      icon: <SessionsIcon style={{ color: token.colorPrimary }} />,
-      key: 'job',
-    },
+    // {
+    //   label: <WebUILink to="/summary">{t('webui.menu.Summary')}</WebUILink>,
+    //   icon: <DashboardOutlined style={{ color: token.colorPrimary }} />,
+    //   key: 'summary',
+    // },
+    // {
+    //   label: <WebUILink to="/job">{t('webui.menu.Sessions')}</WebUILink>,
+    //   icon: <SessionsIcon style={{ color: token.colorPrimary }} />,
+    //   key: 'job',
+    // },
     supportServing && {
-      label: <WebUILink to="/serving">{t('webui.menu.Serving')}</WebUILink>,
+      label: (
+        <WebUILink to="/serving">
+          {t('modelserving.menu.ModelServices')}
+        </WebUILink>
+      ),
       icon: <EndpointsIcon style={{ color: token.colorPrimary }} />,
       key: 'serving',
     },
+    // {
+    //   label: <WebUILink to="/import">{t('webui.menu.Import&Run')}</WebUILink>,
+    //   icon: <PlayIcon style={{ color: token.colorPrimary }} />,
+    //   key: 'import',
+    // },
     {
-      label: <WebUILink to="/import">{t('webui.menu.Import&Run')}</WebUILink>,
-      icon: <PlayIcon style={{ color: token.colorPrimary }} />,
-      key: 'import',
-    },
-    {
-      label: <WebUILink to="/data">{t('webui.menu.Data&Storage')}</WebUILink>,
+      label: (
+        <WebUILink to="/data">{t('modelserving.menu.ModelList')}</WebUILink>
+      ),
       icon: <CloudUploadOutlined style={{ color: token.colorPrimary }} />,
       key: 'data',
     },
-    supportUserCommittedImage && {
-      label: (
-        <WebUILink to="/my-environment">
-          {t('webui.menu.MyEnvironments')}
-        </WebUILink>
-      ),
-      icon: <MyEnvironmentsIcon style={{ color: token.colorPrimary }} />,
-      key: 'my-environment',
-    },
-    !isHideAgents && {
-      label: (
-        <WebUILink to="/agent-summary">
-          {t('webui.menu.AgentSummary')}
-        </WebUILink>
-      ),
-      icon: <HddOutlined style={{ color: token.colorPrimary }} />,
-      key: 'agent-summary',
-    },
-    {
-      label: (
-        <WebUILink to="/statistics">{t('webui.menu.Statistics')}</WebUILink>
-      ),
-      icon: <BarChartOutlined style={{ color: token.colorPrimary }} />,
-      key: 'statistics',
-    },
-    !!fasttrackEndpoint && {
-      label: t('webui.menu.FastTrack'),
-      icon: <ExportOutlined style={{ color: token.colorPrimary }} />,
-      key: 'pipeline',
-      onClick: () => {
-        window.open(fasttrackEndpoint, '_blank', 'noopener noreferrer');
-      },
-    },
+    // supportUserCommittedImage && {
+    //   label: (
+    //     <WebUILink to="/my-environment">
+    //       {t('webui.menu.MyEnvironments')}
+    //     </WebUILink>
+    //   ),
+    //   icon: <MyEnvironmentsIcon style={{ color: token.colorPrimary }} />,
+    //   key: 'my-environment',
+    // },
+    // !isHideAgents && {
+    //   label: (
+    //     <WebUILink to="/agent-summary">
+    //       {t('webui.menu.AgentSummary')}
+    //     </WebUILink>
+    //   ),
+    //   icon: <HddOutlined style={{ color: token.colorPrimary }} />,
+    //   key: 'agent-summary',
+    // },
+    // {
+    //   label: (
+    //     <WebUILink to="/statistics">{t('webui.menu.Statistics')}</WebUILink>
+    //   ),
+    //   icon: <BarChartOutlined style={{ color: token.colorPrimary }} />,
+    //   key: 'statistics',
+    // },
+    // !!fasttrackEndpoint && {
+    //   label: t('webui.menu.FastTrack'),
+    //   icon: <ExportOutlined style={{ color: token.colorPrimary }} />,
+    //   key: 'pipeline',
+    //   onClick: () => {
+    //     window.open(fasttrackEndpoint, '_blank', 'noopener noreferrer');
+    //   },
+    // },
   ]);
 
   const adminMenu: MenuProps['items'] = [
@@ -255,7 +261,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             height: themeConfig?.logo?.size?.height || 24,
             cursor: 'pointer',
           }}
-          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
+          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/serving')}
         />
       }
       theme={currentSiderTheme}
@@ -275,7 +281,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             height: themeConfig?.logo.sizeCollapsed?.height ?? 24,
             cursor: 'pointer',
           }}
-          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
+          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/serving')}
         />
       }
       logoTitle={themeConfig?.logo?.logoTitle || siteDescription || 'WebUI'}

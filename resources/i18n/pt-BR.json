@@ -1733,5 +1733,11 @@
     "hour": "hora",
     "day": "day",
     "week": "semana"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelServices": "Serviços de modelo",
+      "ModelList": "Lista de modelos"
+    }
   }
 }
