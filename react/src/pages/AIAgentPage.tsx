@@ -34,6 +34,19 @@ const { Meta } = Card;
 const AIAgentCard = ({ agent }: { agent: AIAgent }) => {
   const tags = agent.meta.tags || [];
   const { styles } = useStyles();
+  const avatar =
+    agent.type === 'external' ? (
+      <img
+        src={agent.meta.avatar}
+        alt={agent.meta.title}
+        height={150}
+        width={150}
+        style={{ borderRadius: '50%' }}
+      />
+    ) : (
+      <FluentEmojiIcon name={agent.meta.avatar} height={150} width={150} />
+    );
+
   return (
     <Card hoverable>
       <Flex
@@ -45,13 +58,7 @@ const AIAgentCard = ({ agent }: { agent: AIAgent }) => {
       >
         <Meta
           title={agent.meta.title}
-          avatar={
-            <FluentEmojiIcon
-              name={agent.meta.avatar}
-              height={150}
-              width={150}
-            />
-          }
+          avatar={avatar}
           description={agent.meta.descriptions}
           className={styles.meta}
         />
