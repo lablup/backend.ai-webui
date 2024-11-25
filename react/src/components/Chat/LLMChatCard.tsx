@@ -304,6 +304,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
+        minHeight: '50vh',
       }}
       styles={{
         body: {
@@ -328,7 +329,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
         <ChatSender
           autoFocus
           value={input}
-          placeholder="Say something..."
+          placeholder="Ask me anything..."
           header={
             <Sender.Header
               closable={false}

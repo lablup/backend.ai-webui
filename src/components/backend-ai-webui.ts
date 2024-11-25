@@ -163,6 +163,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     'settings',
     'maintenance',
     'serving',
+    'playground',
+    'model-store',
     'service',
     'service/start',
     'service/update',

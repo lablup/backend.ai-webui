@@ -73,6 +73,10 @@ const SessionDetailAndContainerLogOpenerLegacy = React.lazy(
 
 const ChatPage = React.lazy(() => import('./pages/ChatPage'));
 
+/**
+ * Pages for Model Player
+ */
+const ModelStorePage = React.lazy(() => import('./pages/ModelStorePage'));
 interface CustomHandle {
   title?: string;
   labelKey?: string;
@@ -113,23 +117,23 @@ const router = createBrowserRouter([
     ),
     children: [
       {
-        path: '/start',
+        path: '/chat',
         element: (
           <BAIErrorBoundary>
             <StartPage />
           </BAIErrorBoundary>
         ),
-        handle: { labelKey: 'webui.menu.Start' },
+        handle: { labelKey: 'webui.menu.Chat' },
       },
       {
         //for electron dev mode
         path: '/build/electron-app/app/index.html',
-        element: <WebUINavigate to="/start" replace />,
+        element: <WebUINavigate to="/chat" replace />,
       },
       {
         //for electron prod mode
         path: '/app/index.html',
-        element: <WebUINavigate to="/start" replace />,
+        element: <WebUINavigate to="/chat" replace />,
       },
       {
         path: '/chat',
@@ -423,6 +427,19 @@ const router = createBrowserRouter([
       {
         path: '*',
         element: <></>,
+      },
+      /**
+       * Pages for Model Player
+       */
+      {
+        path: '/chat',
+        handle: { labelKey: 'webui.menu.Playground' },
+        Component: ChatPage,
+      },
+      {
+        path: '/model-store',
+        handle: { labelKey: 'webui.menu.ModelStore' },
+        Component: ModelStorePage,
       },
     ],
   },

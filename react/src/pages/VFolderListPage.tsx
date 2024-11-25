@@ -27,16 +27,14 @@ const StorageStatusPanelFallback = React.lazy(() =>
 );
 
 type TabKey =
-  | 'general'
-  | 'data'
-  | 'automount'
-  | 'model'
-  | 'model-store'
-  | 'trash-bin';
+  // | 'general'
+  // | 'data'
+  // | 'automount'
+  'model' | 'model-store' | 'trash-bin';
 
 interface VFolderListPageProps {}
 
-const tabParam = withDefault(StringParam, 'general');
+const tabParam = withDefault(StringParam, 'model-store');
 
 const VFolderListPage: React.FC<VFolderListPageProps> = (props) => {
   const { t } = useTranslation();
@@ -87,6 +85,7 @@ const VFolderListPage: React.FC<VFolderListPageProps> = (props) => {
   }[curTabKey];
 
   const tabList = filterEmptyItem([
+    /*
     {
       key: 'general',
       tab: t('data.Folders'),
@@ -99,6 +98,7 @@ const VFolderListPage: React.FC<VFolderListPageProps> = (props) => {
       key: 'automount',
       tab: t('data.AutomountFolders'),
     },
+    */
     {
       key: 'model',
       tab: t('data.Models'),
