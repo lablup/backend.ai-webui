@@ -566,7 +566,8 @@
     "Expand": "Expand",
     "Clear": "Clear",
     "Apply": "Apply",
-    "CopySomething": "Copy {{name}}"
+    "CopySomething": "Copy {{name}}",
+    "GoBackToModelServicesPage": "Go back to model services page"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -1774,5 +1775,11 @@
     "hour": "hour",
     "day": "day",
     "week": "week"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelServices": "Model Services",
+      "ModelList": "Model List"
+    }
   }
 }

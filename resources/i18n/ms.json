@@ -1769,5 +1769,11 @@
     "hour": "jam",
     "day": "day",
     "week": "minggu"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelServices": "Perkhidmatan Model",
+      "ModelList": "Senarai Model"
+    }
   }
 }

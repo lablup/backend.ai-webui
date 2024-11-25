@@ -1749,5 +1749,11 @@
     "hour": "ชั่วโมง",
     "day": "day",
     "week": "สัปดาห์"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelServices": "บริการโมเดล",
+      "ModelList": "รายการรุ่น"
+    }
   }
 }

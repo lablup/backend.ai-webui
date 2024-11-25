@@ -1769,5 +1769,11 @@
     "hour": "цаг",
     "day": "day",
     "week": "долоо хоног"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelServices": "Загвар үйлчилгээ",
+      "ModelList": "Загварын жагсаалт"
+    }
   }
 }

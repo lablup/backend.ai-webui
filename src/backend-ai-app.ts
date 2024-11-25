@@ -50,7 +50,7 @@ export const navigate =
     }
     let page;
     if (['/', 'build', '/build', 'app', '/app'].includes(path)) {
-      page = 'summary';
+      page = 'serving';
     } else if (path[0] === '/') {
       page = path.slice(1);
     } else {

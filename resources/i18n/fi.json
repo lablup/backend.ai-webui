@@ -1767,5 +1767,11 @@
     "hour": "tunnin",
     "day": "day",
     "week": "viikko"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelServices": "Mallipalvelut",
+      "ModelList": "Malliluettelo"
+    }
   }
 }
