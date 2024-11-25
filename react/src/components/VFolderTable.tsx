@@ -53,7 +53,7 @@ export interface VFolderFile {
   created: string;
   modified: string;
 }
-type VFolderKey = string | number;
+type VFolderKey = string;
 
 export interface VFolderSelectValue {
   alias?: string;

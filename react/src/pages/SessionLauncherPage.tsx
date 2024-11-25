@@ -1501,14 +1501,19 @@ const SessionLauncherPage = () => {
                       title={t('session.launcher.Environments')}
                       size="small"
                       status={
-                        _.some(form.getFieldValue('envvars'), (v, idx) => {
-                          return (
-                            form.getFieldError(['envvars', idx, 'variable'])
-                              .length > 0 ||
-                            form.getFieldError(['envvars', idx, 'value'])
-                              .length > 0
-                          );
-                        })
+                        _.some(
+                          form.getFieldValue(
+                            'envvars',
+                          ) as SessionLauncherFormValue['envvars'],
+                          (v, idx) => {
+                            return (
+                              form.getFieldError(['envvars', idx, 'variable'])
+                                .length > 0 ||
+                              form.getFieldError(['envvars', idx, 'value'])
+                                .length > 0
+                            );
+                          },
+                        )
                           ? 'error'
                           : undefined
                       }
@@ -1781,9 +1786,8 @@ const SessionLauncherPage = () => {
                       title={t('session.launcher.ResourceAllocation')}
                       status={
                         _.some(form.getFieldValue('resource'), (v, key) => {
-                          //                         console.log(form.getFieldError(['resource', 'shmem']));
-                          // console.log(form.getFieldValue(['resource']));
                           return (
+                            // @ts-ignore
                             form.getFieldError(['resource', key]).length > 0
                           );
                         }) ||
@@ -1812,9 +1816,13 @@ const SessionLauncherPage = () => {
                     >
                       <Flex direction="column" align="stretch">
                         {_.some(
-                          form.getFieldValue('resource')?.resource,
-                          (v, key) => {
+                          form.getFieldValue('resource'),
+                          (
+                            v,
+                            key: keyof SessionLauncherFormValue['resource'],
+                          ) => {
                             return (
+                              // @ts-ignore
                               form.getFieldWarning(['resource', key]).length > 0
                             );
                           },

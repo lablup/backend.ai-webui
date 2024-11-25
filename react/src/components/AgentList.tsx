@@ -1,6 +1,7 @@
 import {
   bytesToGB,
   convertBinarySizeUnit,
+  filterNonNullItems,
   toFixedFloorWithoutTrailingZeros,
   transformSorterToOrderString,
 } from '../helper';
@@ -851,7 +852,7 @@ const AgentList: React.FC<AgentListProps> = ({
         bordered
         scroll={{ x: 'max-content' }}
         rowKey={'id'}
-        dataSource={agent_list?.items}
+        dataSource={filterNonNullItems(agent_list?.items)}
         showSorterTooltip={false}
         columns={
           _.filter(columns, (column) =>

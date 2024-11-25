@@ -1,7 +1,7 @@
 import { useDebounce } from 'ahooks';
 import { GetProps, Table } from 'antd';
 import { createStyles } from 'antd-style';
-import { ColumnsType } from 'antd/es/table';
+import { ColumnsType, ColumnType } from 'antd/es/table';
 import { TableProps } from 'antd/lib';
 import _ from 'lodash';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -91,13 +91,14 @@ const ResizableTitle = (
   );
 };
 
-interface BAITableProps extends TableProps {
+interface BAITableProps<RecordType extends object = any>
+  extends TableProps<RecordType> {
   resizable?: boolean;
 }
 
 const columnKeyOrIndexKey = (column: any, index: number) =>
   column.key || `index_${index}`;
-const generateResizedColumnWidths = (columns?: ColumnsType) => {
+const generateResizedColumnWidths = (columns?: ColumnsType<any>) => {
   const widths: Record<string, number> = {};
   _.each(columns, (column, index) => {
     widths[columnKeyOrIndexKey(column, index)] = column.width as number;
@@ -105,12 +106,12 @@ const generateResizedColumnWidths = (columns?: ColumnsType) => {
   return widths;
 };
 
-const BAITable: React.FC<BAITableProps> = ({
+const BAITable = <RecordType extends object = any>({
   resizable = false,
   columns,
   components,
   ...tableProps
-}) => {
+}: BAITableProps<RecordType>) => {
   const { styles } = useStyles();
 
   const [resizedColumnWidths, setResizedColumnWidths] = useState<
@@ -128,7 +129,7 @@ const BAITable: React.FC<BAITableProps> = ({
               width:
                 resizedColumnWidths[columnKeyOrIndexKey(column, index)] ||
                 column.width,
-              onHeaderCell: (column: ColumnsType[number]) => {
+              onHeaderCell: (column: ColumnType<RecordType>) => {
                 return {
                   width: column.width,
                   onResize: (e, { size }) => {
@@ -139,7 +140,7 @@ const BAITable: React.FC<BAITableProps> = ({
                   },
                 } as GetProps<typeof ResizableTitle>;
               },
-            }) as ColumnsType[number],
+            }) as ColumnType<RecordType>,
         );
   }, [resizable, columns, resizedColumnWidths]);
 
