@@ -20,6 +20,7 @@ import WebUILink from '../WebUILink';
 import { PluginPage, WebUIPluginType } from './MainLayout';
 import {
   ApiOutlined,
+  AppstoreOutlined,
   BarChartOutlined,
   CloudUploadOutlined,
   ControlOutlined,
@@ -142,6 +143,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     'experimental_dashboard',
   );
   const generalMenu = filterEmptyItem<WebUIGeneralMenuItemType>([
+    /*
     {
       label: <WebUILink to="/start">{t('webui.menu.Start')}</WebUILink>,
       icon: <PlayCircleOutlined style={{ color: token.colorPrimary }} />,
@@ -159,19 +161,29 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       icon: <DashboardOutlined style={{ color: token.colorPrimary }} />,
       key: 'summary',
       group: 'none',
+      label: (
+        <WebUILink to="/playground">{t('webui.menu.Playground')}</WebUILink>
+      ),
+      icon: <MessageOutlined style={{ color: token.colorPrimary }} />,
+      key: 'playground',
+    },
+    */
+    {
+      label: <WebUILink to="/chat">{t('webui.menu.Chat')}</WebUILink>,
+      icon: <MessageOutlined style={{ color: token.colorPrimary }} />,
+      key: 'chat',
     },
     {
       label: (
-        <WebUILink to={experimentalNeoSessionList ? '/session' : '/job'}>
-          {t('webui.menu.Sessions')}
-        </WebUILink>
+        <WebUILink to="/model-store">{t('webui.menu.ModelStore')}</WebUILink>
       ),
-      icon: <SessionsIcon style={{ color: token.colorPrimary }} />,
-      key: 'job',
-      group: 'workload',
+      icon: <AppstoreOutlined style={{ color: token.colorPrimary }} />,
+      key: 'model-store',
     },
     supportServing && {
-      label: <WebUILink to="/serving">{t('webui.menu.Serving')}</WebUILink>,
+      label: (
+        <WebUILink to="/serving">{t('modelserving.menu.MyServices')}</WebUILink>
+      ),
       icon: <EndpointsIcon style={{ color: token.colorPrimary }} />,
       key: 'serving',
       group: 'service',
@@ -188,6 +200,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       key: 'ai-agent',
       group: 'playground',
     },
+    /*
     {
       label: <WebUILink to="/chat">{t('webui.menu.Chat')}</WebUILink>,
       icon: <MessageOutlined style={{ color: token.colorPrimary }} />,
@@ -243,9 +256,11 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       },
       group: 'mlops',
     },
+    */
   ]);
 
-  const adminMenu: MenuProps['items'] = [
+  const adminMenu: MenuProps['items'] = [];
+  /*[
     {
       label: <WebUILink to="/credential">{t('webui.menu.Users')}</WebUILink>,
       icon: <UserOutlined style={{ color: token.colorInfo }} />,
@@ -268,8 +283,10 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       key: 'resource-policy',
     },
   ];
+  */
 
-  const superAdminMenu: MenuProps['items'] = [
+  const superAdminMenu: MenuProps['items'] = [];
+  /*[
     {
       label: <WebUILink to="/agent">{t('webui.menu.Resources')}</WebUILink>,
       icon: <HddOutlined style={{ color: token.colorInfo }} />,
@@ -296,9 +313,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       icon: <InfoCircleOutlined style={{ color: token.colorInfo }} />,
       key: 'information',
     },
-  ];
-
-  const pluginMap: Record<string, MenuProps['items']> = {
+  ]*/ const pluginMap: Record<string, MenuProps['items']> = {
     'menuitem-user': generalMenu,
     'menuitem-admin': adminMenu,
     'menuitem-superadmin': superAdminMenu,
@@ -415,7 +430,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             height: themeConfig?.logo?.size?.height || 24,
             cursor: 'pointer',
           }}
-          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/start')}
+          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/chat')}
         />
       }
       theme={currentSiderTheme}
@@ -435,7 +450,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             height: themeConfig?.logo.sizeCollapsed?.height ?? 24,
             cursor: 'pointer',
           }}
-          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/start')}
+          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/chat')}
         />
       }
       {...props}
@@ -497,6 +512,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
               ]}
               items={
                 // TODO: add plugin menu
+                /*
                 currentUserRole === 'superadmin'
                   ? [
                       {
@@ -538,6 +554,8 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                         },
                       ]
                     : []
+                    */
+                []
               }
             />
           </ConfigProvider>

@@ -113,8 +113,8 @@ export default class BackendAIPermissionDeniedView extends BackendAIPage {
    * @param {string} url - page to redirect from the current page.
    */
   _moveTo(url = '') {
-    const page = url !== '' ? url : 'start';
-    globalThis.history.pushState({}, '', '/start');
+    const page = url !== '' ? url : 'chat';
+    globalThis.history.pushState({}, '', '/chat');
     store.dispatch(navigate(decodeURIComponent('/' + page), {}));
   }
 

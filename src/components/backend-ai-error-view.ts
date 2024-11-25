@@ -70,8 +70,8 @@ export default class BackendAIErrorView extends BackendAIPage {
    * @param {string} url - page to redirect from the current page.
    */
   _moveTo(url = '') {
-    const page = url !== '' ? url : 'start';
-    globalThis.history.pushState({}, '', '/start');
+    const page = url !== '' ? url : 'chat';
+    globalThis.history.pushState({}, '', '/chat');
     store.dispatch(navigate(decodeURIComponent('/' + page), {}));
     document.dispatchEvent(
       new CustomEvent('react-navigate', {
@@ -97,8 +97,8 @@ export default class BackendAIErrorView extends BackendAIPage {
               unelevated
               fullwidth
               id="go-to-summary"
-              label="${_t('button.GoBackToSummaryPage')}"
-              @click="${() => this._moveTo('start')}"
+              label="${_t('button.GoBackToModelServicesPage')}"
+              @click="${() => this._moveTo('chat')}"
             ></mwc-button>
           </div>
         </div>
