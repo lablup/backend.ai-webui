@@ -967,6 +967,7 @@
     "TokenGenerated": "Token generado",
     "TokenGenerationFailed": "Generación de token fallida. Por favor, inténtelo de nuevo.",
     "TrafficRatio": "Ratio de tráfico",
+    "TryModelOnYourOwn": "Pruebe el servicio de modelos por su cuenta",
     "UpdateService": "Servicio de actualización",
     "Validate": "Validar",
     "ValidationInfo": "Información de validación"
@@ -1000,6 +1001,11 @@
     "StartCommand": "Comando de inicio",
     "Task": "Tarea",
     "Version": "Versión"
+  },
+  "modelserving": {
+    "menu": {
+      "MyServices": "Mis servicios"
+    }
   },
   "notification": {
     "AreYouSureToClearAllNotifications": "¿Estás seguro de borrar todas las notificaciones?",
@@ -1837,6 +1843,7 @@
     "DescClassicSessionLauncher": "Utilice el iniciador de sesiones Classic en lugar del iniciador de sesiones NEO. \nEs posible que el iniciador de sesiones Classic no tenga las funciones más recientes.",
     "DescDesktopNotification": "Habilita la notificación de escritorio. \n<br /> Si está activado, Backend.Ai usa el sistema de notificación integrado del sistema operativo también. \nDesactivar esta opción no afecta las notificaciones dentro de la interfaz de usuario web. \nDependiendo del sistema operativo, las notificaciones de escritorio pueden requerir habilitar los permisos de notificación en la configuración del sistema.",
     "DescExperimentalDashboard": "Use la página del tablero en lugar de la página de resumen.",
+    "DescExperimentalPALI": "Use PALI en lugar de WebUI.",
     "DescKeepLoginSessionInformation": "Permite que la aplicación webui conserve la información de la sesión de inicio de sesión actual la próxima vez.<br />Si la opción está desactivada, la información de inicio de sesión se borrará cada vez que se cierre la sesión.",
     "DescLanguage": "Establecer el lenguaje de la interfaz. Los idiomas que no sean inglés y coreano se proporcionarán a través de la traducción automática.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "Por favor, actualice el script con un valor no vacío.",
@@ -1953,6 +1960,7 @@
       "NewPasswordMismatch": "Dos nuevas contraseñas no coinciden.",
       "Notifications": "Notificaciones",
       "OriginalPassword": "Contraseña original",
+      "PALI": "PALI",
       "PasswordChangePlace": "Haga clic en el icono de persona de la barra superior y vaya al menú \"Mi cuenta\".",
       "PasswordMismatch": "Contraseña incorrecta",
       "PasswordUpdated": "La contraseña se ha actualizado correctamente.",

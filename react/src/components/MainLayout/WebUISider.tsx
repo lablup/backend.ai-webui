@@ -149,7 +149,37 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const [experimentalDashboard] = useBAISettingUserState(
     'experimental_dashboard',
   );
+  const [experimentalPALI] = useBAISettingUserState('experimental_PALI');
+  const paliMenu = filterEmptyItem<WebUIGeneralMenuItemType>([
+    {
+      label: <WebUILink to="/chat">{t('webui.menu.Chat')}</WebUILink>,
+      icon: <MessageOutlined style={{ color: token.colorPrimary }} />,
+      key: 'chat',
+      group: 'playground',
+    },
+    experimentalAIAgents && {
+      label: <WebUILink to="/ai-agent">{t('webui.menu.AIAgents')}</WebUILink>,
+      icon: <BotMessageSquare style={{ color: token.colorPrimary }} />,
+      key: 'ai-agent',
+      group: 'playground',
+    },
+    {
+      label: <WebUILink to="/model-store">{t('data.ModelStore')}</WebUILink>,
+      icon: <ModelStoreIcon style={{ color: token.colorPrimary }} />,
+      key: 'model-store',
+      group: 'service',
+    },
+    supportServing && {
+      label: (
+        <WebUILink to="/serving">{t('modelserving.menu.MyServices')}</WebUILink>
+      ),
+      icon: <EndpointsIcon style={{ color: token.colorPrimary }} />,
+      key: 'serving',
+      group: 'service',
+    },
+  ]);
   const generalMenu = filterEmptyItem<WebUIGeneralMenuItemType>([
+    ...paliMenu,
     {
       label: <WebUILink to="/start">{t('webui.menu.Start')}</WebUILink>,
       icon: <PlayCircleOutlined style={{ color: token.colorPrimary }} />,
@@ -177,30 +207,6 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       icon: <SessionsIcon style={{ color: token.colorPrimary }} />,
       key: 'job',
       group: 'workload',
-    },
-    supportServing && {
-      label: <WebUILink to="/serving">{t('webui.menu.Serving')}</WebUILink>,
-      icon: <EndpointsIcon style={{ color: token.colorPrimary }} />,
-      key: 'serving',
-      group: 'service',
-    },
-    {
-      label: <WebUILink to="/model-store">{t('data.ModelStore')}</WebUILink>,
-      icon: <ModelStoreIcon style={{ color: token.colorPrimary }} />,
-      key: 'model-store',
-      group: 'service',
-    },
-    experimentalAIAgents && {
-      label: <WebUILink to="/ai-agent">{t('webui.menu.AIAgents')}</WebUILink>,
-      icon: <BotMessageSquare style={{ color: token.colorPrimary }} />,
-      key: 'ai-agent',
-      group: 'playground',
-    },
-    {
-      label: <WebUILink to="/chat">{t('webui.menu.Chat')}</WebUILink>,
-      icon: <MessageOutlined style={{ color: token.colorPrimary }} />,
-      key: 'chat',
-      group: 'playground',
     },
     {
       label: <WebUILink to="/import">{t('webui.menu.Import&Run')}</WebUILink>,
@@ -305,7 +311,6 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       key: 'information',
     },
   ];
-
   const pluginMap: Record<string, MenuProps['items']> = {
     'menuitem-user': generalMenu,
     'menuitem-admin': adminMenu,
@@ -341,7 +346,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     }
   });
 
-  _.forEach([generalMenu, adminMenu, superAdminMenu], (menu) => {
+  _.forEach([generalMenu, adminMenu, superAdminMenu, paliMenu], (menu) => {
     // Remove menu items that are in blockList
     _.remove(menu, (item) => _.includes(blockList, item?.key));
     // Disable menu items that are in inactiveList
@@ -404,6 +409,47 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     .flatten()
     .value();
 
+  const groupedPaliMenu = _.chain(paliMenu)
+    .groupBy('group')
+    .map((items, group) => {
+      if (group === 'none') {
+        return items;
+      }
+      return {
+        type: 'group',
+        name: group,
+        label: (
+          <Flex
+            style={{
+              borderBottom: `1px solid ${token.colorBorder}`,
+            }}
+          >
+            {!props.collapsed && (
+              <Typography.Text type="secondary" ellipsis>
+                {aliasGroupNameMap[group as GroupName]}
+              </Typography.Text>
+            )}
+          </Flex>
+        ),
+        children: items,
+      };
+    })
+    .sort((a, b) => {
+      const order: Array<GroupName> = [
+        'none',
+        'storage',
+        'workload',
+        'playground',
+        'service',
+        'mlops',
+        'metrics',
+      ];
+      // @ts-ignore
+      return order.indexOf(a.name) - order.indexOf(b.name);
+    })
+    .flatten()
+    .value();
+
   return (
     <BAISider
       className="webui-sider"
@@ -423,7 +469,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             height: themeConfig?.logo?.size?.height || 24,
             cursor: 'pointer',
           }}
-          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/start')}
+          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/chat')}
         />
       }
       theme={currentSiderTheme}
@@ -443,7 +489,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             height: themeConfig?.logo.sizeCollapsed?.height ?? 24,
             cursor: 'pointer',
           }}
-          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/start')}
+          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/chat')}
         />
       }
       {...props}
@@ -481,7 +527,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             location.pathname.split('/')[1] === 'session' ? 'job' : '',
           ]}
           // @ts-ignore
-          items={groupedGeneralMenu}
+          items={experimentalPALI ? groupedPaliMenu : groupedGeneralMenu}
         />
         {(currentUserRole === 'superadmin' || currentUserRole === 'admin') && (
           <ConfigProvider

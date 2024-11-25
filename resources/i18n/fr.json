@@ -967,6 +967,7 @@
     "TokenGenerated": "Jeton généré",
     "TokenGenerationFailed": "La génération de jetons a échoué. Veuillez réessayer.",
     "TrafficRatio": "Ratio de trafic",
+    "TryModelOnYourOwn": "Essayez le service modèle par vous-même",
     "UpdateService": "Service de mise à jour",
     "Validate": "Valider",
     "ValidationInfo": "Informations de validation"
@@ -1000,6 +1001,11 @@
     "StartCommand": "Démarrer la commande",
     "Task": "Tâche",
     "Version": "Version"
+  },
+  "modelserving": {
+    "menu": {
+      "MyServices": "Mes services"
+    }
   },
   "notification": {
     "AreYouSureToClearAllNotifications": "Êtes-vous sûr d'avoir effacé toutes les notifications ?",
@@ -1837,6 +1843,7 @@
     "DescClassicSessionLauncher": "Utilisez le lanceur de session Classic au lieu du lanceur de session NEO. \nLe lanceur de session Classic peut ne pas disposer des dernières fonctionnalités.",
     "DescDesktopNotification": "Active la notification de bureau. \n<br /> Si vous allume, backend.ai utilise également le système de notification intégré du système d'exploitation. \nLa désactivation de cette option n'affecte pas les notifications dans l'interface utilisateur Web. \nSelon le système d'exploitation, les notifications de bureau peuvent nécessiter l'activation des autorisations de notification dans les paramètres du système.",
     "DescExperimentalDashboard": "Utilisez la page de tableau de bord au lieu de la page Résumé.",
+    "DescExperimentalPALI": "Utilisez du PALI au lieu de WebUI.",
     "DescKeepLoginSessionInformation": "Laissez l'application webui conserver les informations de session de connexion actuelles la prochaine fois. <br /> Si l'option est désactivée, les informations de connexion seront effacées à chaque déconnexion.",
     "DescLanguage": "Définir la langue d'interface. Des langues autres que l'anglais et le coréen seront fournies par traduction automatique.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "Veuillez mettre à jour le script avec une valeur non vide.",
@@ -1953,6 +1960,7 @@
       "NewPasswordMismatch": "Les deux nouveaux mots de passe ne correspondent pas.",
       "Notifications": "Notifications",
       "OriginalPassword": "Mot de passe d'origine",
+      "PALI": "PALI",
       "PasswordChangePlace": "Cliquez sur l'icône de la personne dans la barre supérieure et accédez au menu \"Mon compte\".",
       "PasswordMismatch": "Non concordance des mots de passe",
       "PasswordUpdated": "Le mot de passe a été mis à jour avec succès.",

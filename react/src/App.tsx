@@ -82,7 +82,12 @@ const SessionDetailAndContainerLogOpenerLegacy = React.lazy(
 const ChatPage = React.lazy(() => import('./pages/ChatPage'));
 
 const AIAgentPage = React.lazy(() => import('./pages/AIAgentPage'));
+const AIAgentIFramePage = React.lazy(() => import('./pages/AIAgentIFramePage'));
 
+/**
+ * Pages for Model Player
+ */
+const ModelStorePage = React.lazy(() => import('./pages/ModelStorePage'));
 interface CustomHandle {
   title?: string;
   labelKey?: string;
@@ -90,6 +95,235 @@ interface CustomHandle {
 export interface WebUIRouteObject extends IndexRouteObject {
   handle: CustomHandle;
 }
+
+const routerPALI = createBrowserRouter([
+  {
+    path: '/interactive-login',
+    errorElement: <ErrorView />,
+    element: (
+      <QueryParamProvider adapter={ReactRouter6Adapter}>
+        <InteractiveLoginPage />
+      </QueryParamProvider>
+    ),
+  },
+  {
+    path: '/',
+    errorElement: <ErrorView />,
+    element: (
+      <QueryParamProvider
+        adapter={ReactRouter6Adapter}
+        options={
+          {
+            // searchStringToObject: queryString.parse,
+            // objectToSearchString: queryString.stringify,
+          }
+        }
+      >
+        <MainLayout />
+        <RoutingEventHandler />
+        <Suspense fallback={null}>
+          <FolderExplorerOpener />
+        </Suspense>
+      </QueryParamProvider>
+    ),
+    children: [
+      {
+        //for electron dev mode
+        path: '/build/electron-app/app/index.html',
+        element: <WebUINavigate to="/chat" replace />,
+      },
+      {
+        //for electron prod mode
+        path: '/app/index.html',
+        element: <WebUINavigate to="/chat" replace />,
+      },
+      {
+        path: '/chat',
+        handle: { labelKey: 'webui.menu.Chat' },
+        Component: () => {
+          const { t } = useTranslation();
+          useSuspendedBackendaiClient();
+          return (
+            <Suspense
+              fallback={<BAICard title={t('webui.menu.Chat')} loading />}
+            >
+              <ChatPage />
+            </Suspense>
+          );
+        },
+      },
+      {
+        path: '/serving',
+
+        handle: { labelKey: 'webui.menu.Serving' },
+        children: [
+          {
+            path: '',
+            Component: () => {
+              const { t } = useTranslation();
+              useSuspendedBackendaiClient();
+              return (
+                <BAIErrorBoundary>
+                  <Suspense
+                    fallback={
+                      <BAICard title={t('webui.menu.Serving')} loading />
+                    }
+                  >
+                    <ServingPage />
+                  </Suspense>
+                </BAIErrorBoundary>
+              );
+            },
+          },
+          {
+            path: '/serving/:serviceId',
+            element: (
+              <BAIErrorBoundary>
+                <Suspense fallback={<Skeleton active />}>
+                  <EndpointDetailPage />
+                </Suspense>
+              </BAIErrorBoundary>
+            ),
+            handle: { labelKey: 'modelService.RoutingInfo' },
+          },
+        ],
+      },
+      {
+        path: '/service',
+        handle: { labelKey: 'webui.menu.Serving' },
+        children: [
+          {
+            path: '',
+            element: <WebUINavigate to="/serving" replace />,
+          },
+          {
+            path: 'start',
+            handle: { labelKey: 'modelService.StartNewService' },
+            element: (
+              <BAIErrorBoundary>
+                <Suspense
+                  fallback={
+                    <Flex direction="column" style={{ maxWidth: 700 }}>
+                      <Skeleton active />
+                    </Flex>
+                  }
+                >
+                  <ServiceLauncherCreatePage />
+                </Suspense>
+              </BAIErrorBoundary>
+            ),
+          },
+          {
+            path: 'update/:endpointId',
+            handle: { labelKey: 'modelService.UpdateService' },
+            element: (
+              <BAIErrorBoundary>
+                <Suspense
+                  fallback={
+                    <Flex direction="column" style={{ maxWidth: 700 }}>
+                      <Skeleton active />
+                    </Flex>
+                  }
+                >
+                  <ServiceLauncherUpdatePage />
+                </Suspense>
+              </BAIErrorBoundary>
+            ),
+          },
+        ],
+      },
+      {
+        path: '/model-store',
+        handle: { labelKey: 'data.ModelStore' },
+        element: (
+          <BAIErrorBoundary>
+            <Suspense
+              fallback={
+                <Flex direction="column" style={{ maxWidth: 700 }}>
+                  <Skeleton active />
+                </Flex>
+              }
+            >
+              <ModelStoreListPage />
+            </Suspense>
+          </BAIErrorBoundary>
+        ),
+      },
+      {
+        path: '/usersettings',
+        handle: { labelKey: 'webui.menu.Settings&Logs' },
+        Component: UserSettingsPage,
+      },
+      {
+        path: '/credential',
+        handle: { labelKey: 'webui.menu.UserCredentials&Policies' },
+        Component: UserCredentialsPage,
+      },
+      {
+        path: '/logs',
+        handle: { labelKey: 'webui.menu.Logs' },
+      },
+      {
+        path: '/error',
+        Component: Page404,
+      },
+      {
+        path: '/unauthorized',
+        handle: { labelKey: 'webui.UnauthorizedAccess' },
+        Component: Page401,
+      },
+      // Leave empty tag for plugin pages.
+      {
+        path: '*',
+        element: <></>,
+      },
+      {
+        path: '/ai-agent',
+        handle: { labelKey: 'webui.menu.AIAgents' },
+        Component: () => {
+          const [experimentalAIAgents] = useBAISettingUserState(
+            'experimental_ai_agents',
+          );
+          return experimentalAIAgents ? (
+            <Suspense fallback={<Skeleton active />}>
+              <AIAgentPage />
+            </Suspense>
+          ) : (
+            <WebUINavigate to={'/start'} replace />
+          );
+        },
+      },
+      /**
+       * Pages for Model Player
+       */
+      {
+        path: '/chat',
+        handle: { labelKey: 'webui.menu.Playground' },
+        Component: ChatPage,
+      },
+      {
+        path: '/model-store',
+        handle: { labelKey: 'webui.menu.ModelStore' },
+        Component: ModelStorePage,
+      },
+      // default page: modelstore
+      {
+        path: '',
+        handle: { labelKey: 'webui.menu.ModelStore' },
+        Component: ModelStorePage,
+      },
+      {
+        path: '/ai-agent/external',
+        handle: { labelKey: 'webui.menu.AIAgents' },
+        Component: () => (
+          <Suspense fallback={<Skeleton active />}>
+            <AIAgentIFramePage />
+          </Suspense>
+        ),
+      },
+    ],
+  },
+]);
 
 const router = createBrowserRouter([
   {
@@ -513,9 +747,11 @@ const router = createBrowserRouter([
 ]);
 
 const App: FC = () => {
+  const [experimentalPALI] =
+    useBAISettingUserState('experimental_PALI') ?? false;
   return (
     <DefaultProvidersForReactRoot>
-      <RouterProvider router={router} />
+      <RouterProvider router={experimentalPALI ? routerPALI : router} />
     </DefaultProvidersForReactRoot>
   );
 };

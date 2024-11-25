@@ -967,6 +967,7 @@
     "TokenGenerated": "Wygenerowany token",
     "TokenGenerationFailed": "Generowanie tokena nie powiodło się. Spróbuj ponownie.",
     "TrafficRatio": "Współczynnik ruchu",
+    "TryModelOnYourOwn": "Wypróbuj modelową usługę samodzielnie",
     "UpdateService": "Aktualizuj usługę",
     "Validate": "Uprawomocnić",
     "ValidationInfo": "Informacje o weryfikacji"
@@ -1000,6 +1001,11 @@
     "StartCommand": "Uruchom polecenie",
     "Task": "Zadanie",
     "Version": "Wersja"
+  },
+  "modelserving": {
+    "menu": {
+      "MyServices": "Moje usługi"
+    }
   },
   "notification": {
     "AreYouSureToClearAllNotifications": "Czy na pewno wyczyścić wszystkie powiadomienia?",
@@ -1837,6 +1843,7 @@
     "DescClassicSessionLauncher": "Użyj Classic programu uruchamiającego sesję zamiast programu uruchamiającego sesję NEO. \nClassic program uruchamiający sesję może nie mieć najnowszych funkcji.",
     "DescDesktopNotification": "Włącza powiadomienie komputerowe. \n<br /> Jeśli włączony, Backend.ai używa również wbudowanego systemu powiadomień. \nWyłączenie tej opcji nie wpływa na powiadomienia w interfejsie internetowym. \nW zależności od systemu operacyjnego powiadomienia komputerowe mogą wymagać umożliwienia uprawnień powiadomień w ustawieniach systemu.",
     "DescExperimentalDashboard": "Użyj strony Dashboard zamiast strony podsumowującej.",
+    "DescExperimentalPALI": "Użyj PALI zamiast WebUI.",
     "DescKeepLoginSessionInformation": "Pozwól aplikacji webui zachować bieżące informacje o sesji logowania następnym razem. <br /> Jeśli opcja jest wyłączona, dane logowania będą usuwane przy każdym wylogowaniu.",
     "DescLanguage": "Ustaw język interfejsu. Języki inne niż angielski i koreański będą dostarczane przez tłumaczenie maszynowe.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "Proszę zaktualizować skrypt o niepustą wartość.",
@@ -1953,6 +1960,7 @@
       "NewPasswordMismatch": "Dwa nowe hasła nie pasują.",
       "Notifications": "Powiadomienia",
       "OriginalPassword": "Oryginalne hasło",
+      "PALI": "PALI",
       "PasswordChangePlace": "Kliknij ikonę osoby na górnym pasku i przejdź do menu \"Moje konto\".",
       "PasswordMismatch": "Hasło różni się",
       "PasswordUpdated": "Hasło zostało pomyślnie zaktualizowane.",

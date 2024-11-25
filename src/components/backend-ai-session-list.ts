@@ -2047,7 +2047,7 @@ export default class BackendAISessionList extends BackendAIPage {
    * Returns agent-oriented array from session list by traversing
    *
    * @param sessionList
-   * @returns [{agent: '...', containers: ['...', '...']}]
+   * @return [{agent: '...', containers: ['...', '...']}]
    */
   static _parseAgentBasedContainers(sessionList) {
     return Object.values(

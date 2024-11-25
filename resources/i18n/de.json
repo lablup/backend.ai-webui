@@ -967,6 +967,7 @@
     "TokenGenerated": "Token erzeugt",
     "TokenGenerationFailed": "Token-Generierung fehlgeschlagen. Bitte versuchen Sie es erneut.",
     "TrafficRatio": "Verkehrsdichte",
+    "TryModelOnYourOwn": "Probieren Sie den Modelldienst alleine aus",
     "UpdateService": "Update-Service",
     "Validate": "Bestätigen",
     "ValidationInfo": "Validierungsinformationen"
@@ -1000,6 +1001,11 @@
     "StartCommand": "Befehl starten",
     "Task": "Aufgabe",
     "Version": "Ausführung"
+  },
+  "modelserving": {
+    "menu": {
+      "MyServices": "Meine Dienste"
+    }
   },
   "notification": {
     "AreYouSureToClearAllNotifications": "Sind Sie sicher, dass Sie alle Benachrichtigungen gelöscht haben?",
@@ -1835,6 +1841,7 @@
     "DescClassicSessionLauncher": "Verwenden Sie den Classic-Sitzungsstarter anstelle des NEO-Sitzungsstarters. \nDer Classic Sitzungsstarter verfügt möglicherweise nicht über die neuesten Funktionen.",
     "DescDesktopNotification": "Aktiviert die Desktop -Benachrichtigung. \n<br /> Wenn er eingeschaltet ist, verwendet Backend.ai auch das integrierte Benachrichtigungssystem des Betriebssystems. \nDas Ausschalten dieser Option wirkt sich nicht auf Benachrichtigungen innerhalb der Web -Benutzeroberfläche aus. \nAbhängig vom Betriebssystem müssen Desktop -Benachrichtigungen möglicherweise Benachrichtigungsberechtigungen in den Systemeinstellungen ermöglichen.",
     "DescExperimentalDashboard": "Verwenden Sie die Dashboard -Seite anstelle einer zusammenfassenden Seite.",
+    "DescExperimentalPALI": "Verwenden Sie PALI anstelle von WebUI.",
     "DescKeepLoginSessionInformation": "Lassen Sie die Webui-App beim nächsten Mal die aktuellen Anmeldesitzungsinformationen beibehalten. <br /> Wenn die Option deaktiviert ist, werden die Anmeldeinformationen bei jeder Abmeldung gelöscht.",
     "DescLanguage": "Setzen Sie die Schnittstelle. Andere Sprachen als Englisch und Koreanisch werden per maschineller Übersetzung bereitgestellt.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "Bitte aktualisieren Sie das Skript mit einem nicht leeren Wert.",
@@ -1951,6 +1958,7 @@
       "NewPasswordMismatch": "Zwei neue Passwörter stimmen nicht überein.",
       "Notifications": "Benachrichtigungen",
       "OriginalPassword": "Original-Passwort",
+      "PALI": "PALI",
       "PasswordChangePlace": "Klicken Sie auf das Personensymbol in der oberen Leiste und rufen Sie das Menü \"Mein Konto\" auf.",
       "PasswordMismatch": "Die Passwörter stimmen nicht überein",
       "PasswordUpdated": "Das Passwort wurde erfolgreich aktualisiert.",

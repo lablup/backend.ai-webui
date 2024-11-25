@@ -965,6 +965,7 @@
     "TokenGenerated": "Token yang dihasilkan",
     "TokenGenerationFailed": "Pembuatan token gagal. silakan coba lagi.",
     "TrafficRatio": "Rasio Lalu Lintas",
+    "TryModelOnYourOwn": "Coba Layanan Model sendiri",
     "UpdateService": "Layanan Pembaruan",
     "Validate": "Mengesahkan",
     "ValidationInfo": "Info Validasi"
@@ -998,6 +999,11 @@
     "StartCommand": "Mulai Perintah",
     "Task": "Tugas",
     "Version": "Versi: kapan"
+  },
+  "modelserving": {
+    "menu": {
+      "MyServices": "Layanan saya"
+    }
   },
   "notification": {
     "AreYouSureToClearAllNotifications": "Apakah Anda yakin untuk menghapus semua notifikasi?",
@@ -1836,6 +1842,7 @@
     "DescClassicSessionLauncher": "Gunakan peluncur sesi Classic alih-alih peluncur sesi NEO. \nPeluncur sesi Classic mungkin tidak memiliki fitur terbaru.",
     "DescDesktopNotification": "Memungkinkan pemberitahuan desktop. \n<br /> Jika dihidupkan, backend.ai menggunakan sistem pemberitahuan bawaan OS juga. \nMematikan opsi ini tidak memengaruhi pemberitahuan dalam Web UI. \nBergantung pada sistem operasi, pemberitahuan desktop mungkin memerlukan izin pemberitahuan yang memungkinkan dalam pengaturan sistem.",
     "DescExperimentalDashboard": "Gunakan halaman dasbor alih -alih halaman ringkasan.",
+    "DescExperimentalPALI": "Gunakan PALI bukan WebUI.",
     "DescKeepLoginSessionInformation": "Biarkan aplikasi UI web menyimpan informasi sesi login saat ini di lain waktu. <br />Jika opsi dimatikan, informasi login akan dihapus setiap keluar.",
     "DescLanguage": "Atur bahasa antarmuka. Bahasa selain bahasa Inggris dan Korea akan disediakan melalui terjemahan mesin.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "Harap perbarui skrip dengan nilai yang tidak kosong.",
@@ -1952,6 +1959,7 @@
       "NewPasswordMismatch": "Dua kata sandi baru tidak cocok.",
       "Notifications": "Pemberitahuan",
       "OriginalPassword": "Kata sandi asli",
+      "PALI": "PALI",
       "PasswordChangePlace": "Klik ikon orang di bilah atas dan buka menu \"Akun Saya\".",
       "PasswordMismatch": "Kata sandi tidak cocok",
       "PasswordUpdated": "Kata sandi berhasil diperbarui.",

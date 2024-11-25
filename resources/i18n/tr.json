@@ -967,6 +967,7 @@
     "TokenGenerated": "Token oluşturuldu",
     "TokenGenerationFailed": "Jeton üretimi başarısız oldu. lütfen tekrar deneyin.",
     "TrafficRatio": "Trafik Oranı",
+    "TryModelOnYourOwn": "Model hizmetini kendi başınıza deneyin",
     "UpdateService": "Güncelleme Hizmeti",
     "Validate": "Doğrula",
     "ValidationInfo": "Doğrulama Bilgisi"
@@ -1000,6 +1001,11 @@
     "StartCommand": "Komutu Başlat",
     "Task": "Görev",
     "Version": "Sürüm"
+  },
+  "modelserving": {
+    "menu": {
+      "MyServices": "Hizmetlerim"
+    }
   },
   "notification": {
     "AreYouSureToClearAllNotifications": "Tüm bildirimleri temizlediğinizden emin misiniz?",
@@ -1837,6 +1843,7 @@
     "DescClassicSessionLauncher": "NEO oturum başlatıcısı yerine Classic oturum başlatıcıyı kullanın. \nClassic oturum başlatıcı en son özelliklere sahip olmayabilir.",
     "DescDesktopNotification": "Masaüstü bildirimini etkinleştirir. \n<br /> Açılırsa, backend.ai OS yerleşik bildirim sistemi de kullanır. \nBu seçeneği kapatmak Web kullanıcı arayüzündeki bildirimleri etkilemez. \nİşletim sistemine bağlı olarak, masaüstü bildirimleri sistem ayarlarında bildirim izinlerinin etkinleştirilmesini gerektirebilir.",
     "DescExperimentalDashboard": "Özet sayfası yerine gösterge paneli sayfasını kullanın.",
+    "DescExperimentalPALI": "WebUI yerine PALI kullanın.",
     "DescKeepLoginSessionInformation": "Webui uygulamasının bir dahaki sefere mevcut oturum açma bilgilerini tutmasına izin verin. <br /> Seçenek kapatılırsa, oturum açma bilgileri her oturum kapatıldığında temizlenir.",
     "DescLanguage": "Arayüz dilini ayarlayın. İngilizce ve Korece dışındaki diller makine çevirisi ile sağlanacaktır.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "Lütfen komut dosyasını boş olmayan bir değerle güncelleyin.",
@@ -1953,6 +1960,7 @@
       "NewPasswordMismatch": "İki yeni şifre eşleşmiyor.",
       "Notifications": "Bildirimler",
       "OriginalPassword": "Orijinal şifre",
+      "PALI": "PALI",
       "PasswordChangePlace": "Üst çubuktaki kişi simgesine tıklayın ve \"Hesabım\" menüsüne gidin.",
       "PasswordMismatch": "Şifre eşleşmiyor",
       "PasswordUpdated": "Şifre başarıyla güncellendi.",

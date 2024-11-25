@@ -967,6 +967,7 @@
     "TokenGenerated": "Mã thông báo được tạo",
     "TokenGenerationFailed": "Tạo mã thông báo không thành công. \nvui lòng thử lại.",
     "TrafficRatio": "Tỷ lệ lưu lượng truy cập",
+    "TryModelOnYourOwn": "Hãy tự mình thử dịch vụ mô hình",
     "UpdateService": "Dịch vụ cập nhật",
     "Validate": "Xác thực",
     "ValidationInfo": "Thông tin xác thực"
@@ -1000,6 +1001,11 @@
     "StartCommand": "Bắt đầu lệnh",
     "Task": "Nhiệm vụ",
     "Version": "Phiên bản"
+  },
+  "modelserving": {
+    "menu": {
+      "MyServices": "Dịch vụ của tôi"
+    }
   },
   "notification": {
     "AreYouSureToClearAllNotifications": "Bạn có chắc chắn xóa tất cả thông báo không?",
@@ -1837,6 +1843,7 @@
     "DescClassicSessionLauncher": "Sử dụng trình khởi chạy phiên Classic thay vì trình khởi chạy phiên NEO. \nTrình khởi chạy phiên Classic có thể không có các tính năng mới nhất.",
     "DescDesktopNotification": "Cho phép thông báo máy tính để bàn. \n<br /> Nếu được bật, Backend.ai cũng sử dụng hệ thống thông báo tích hợp OS. \nTắt tùy chọn này không ảnh hưởng đến thông báo trong UI web. \nTùy thuộc vào hệ điều hành, thông báo máy tính để bàn có thể yêu cầu cho phép các quyền thông báo trong cài đặt hệ thống.",
     "DescExperimentalDashboard": "Sử dụng trang bảng điều khiển thay vì trang tóm tắt.",
+    "DescExperimentalPALI": "Sử dụng PALI thay vì WebUI.",
     "DescKeepLoginSessionInformation": "Hãy để ứng dụng webui giữ thông tin phiên đăng nhập hiện tại vào lần sau. <br /> Nếu tùy chọn bị tắt, thông tin đăng nhập sẽ bị xóa mỗi lần đăng xuất.",
     "DescLanguage": "Đặt ngôn ngữ giao diện. Các ngôn ngữ khác ngoài tiếng Anh và tiếng Hàn sẽ được cung cấp thông qua dịch máy.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "Vui lòng cập nhật tập lệnh với giá trị không trống.",
@@ -1953,6 +1960,7 @@
       "NewPasswordMismatch": "Hai mật khẩu mới không khớp.",
       "Notifications": "Thông báo",
       "OriginalPassword": "Mật khẩu ban đầu",
+      "PALI": "PALI",
       "PasswordChangePlace": "Nhấp vào biểu tượng hình người ở thanh trên cùng và chuyển đến menu \"Tài khoản của tôi\".",
       "PasswordMismatch": "Mật khẩu không khớp",
       "PasswordUpdated": "Mật khẩu được cập nhật thành công.",

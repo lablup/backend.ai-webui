@@ -21,6 +21,8 @@ export interface NotificationState
   open?: boolean;
   icon?: 'folder';
   backgroundTask?: {
+    onResolve?: (notification: NotificationState) => void;
+    onFailed?: (notification: NotificationState) => void;
     taskId?: string;
     percent?: number;
     status: 'pending' | 'rejected' | 'resolved';
@@ -104,7 +106,7 @@ export const useBAINotificationEffect = () => {
               backgroundTask: {
                 status: 'resolved',
               },
-              duration: CLOSING_DURATION,
+              duration: 0, // CLOSING_DURATION,
             });
             const overrideData = generateOverrideByStatus(
               updatedNotification,
@@ -182,6 +184,8 @@ export const useBAINotificationEffect = () => {
             listeningTaskIdsRef.current,
             notification.backgroundTask?.taskId,
           );
+          notification?.backgroundTask?.onResolve?.(notification);
+          notification?.backgroundTask?.onFailed?.(notification);
           sse.close();
           if (_.startsWith(_.toString(notification.key), 'image-rescan:')) {
             const event = new CustomEvent('image-rescanned');
@@ -198,6 +202,8 @@ export const useBAINotificationEffect = () => {
           });
         });
         const failHandler = (e: any) => {
+          notification?.backgroundTask?.onResolve?.(notification);
+          notification?.backgroundTask?.onFailed?.(notification);
           listeningTaskIdsRef.current = _.without(
             listeningTaskIdsRef.current,
             notification.backgroundTask?.taskId,
@@ -222,6 +228,8 @@ export const useBAINotificationEffect = () => {
         sse.addEventListener('bgtask_failed', failHandler);
         sse.addEventListener('task_failed', (e) => {
           const data = JSON.parse(e['data']);
+          notification?.backgroundTask?.onResolve?.(notification);
+          notification?.backgroundTask?.onFailed?.(notification);
           upsertNotification({
             key: notification.key,
             message: notification.message,
@@ -238,6 +246,8 @@ export const useBAINotificationEffect = () => {
         });
 
         sse.addEventListener('bgtask_cancelled', (e) => {
+          notification?.backgroundTask?.onResolve?.(notification);
+          notification?.backgroundTask?.onFailed?.(notification);
           listeningTaskIdsRef.current = _.without(
             listeningTaskIdsRef.current,
             notification.backgroundTask?.taskId,

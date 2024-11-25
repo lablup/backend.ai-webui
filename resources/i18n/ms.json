@@ -966,6 +966,7 @@
     "TokenGenerated": "Token dijana",
     "TokenGenerationFailed": "Penjanaan token gagal. \nsila cuba lagi.",
     "TrafficRatio": "Nisbah Trafik",
+    "TryModelOnYourOwn": "Cuba perkhidmatan model sendiri",
     "UpdateService": "Perkhidmatan Kemas Kini",
     "Validate": "Sahkan",
     "ValidationInfo": "Maklumat Pengesahan"
@@ -999,6 +1000,11 @@
     "StartCommand": "Mulakan Perintah",
     "Task": "Tugasan",
     "Version": "Versi"
+  },
+  "modelserving": {
+    "menu": {
+      "MyServices": "Perkhidmatan saya"
+    }
   },
   "notification": {
     "AreYouSureToClearAllNotifications": "Adakah anda pasti mengosongkan semua pemberitahuan?",
@@ -1835,6 +1841,7 @@
     "DescClassicSessionLauncher": "Gunakan pelancar sesi Classic dan bukannya pelancar sesi NEO. \nPelancar sesi Classic mungkin tidak mempunyai ciri terkini.",
     "DescDesktopNotification": "Membolehkan pemberitahuan desktop. \n<br /> Jika dihidupkan, backend.ai menggunakan sistem pemberitahuan terbina dalam OS juga. \nMematikan pilihan ini tidak menjejaskan pemberitahuan dalam UI Web. \nBergantung pada sistem operasi, pemberitahuan desktop mungkin memerlukan keizinan pemberitahuan dalam tetapan sistem.",
     "DescExperimentalDashboard": "Gunakan halaman papan pemuka dan bukannya halaman ringkasan.",
+    "DescExperimentalPALI": "Gunakan PALI dan bukannya WebUI.",
     "DescKeepLoginSessionInformation": "Biarkan aplikasi webui menyimpan maklumat sesi log masuk semasa lain kali. <br /> Sekiranya pilihan dimatikan, maklumat log masuk akan dihapus setiap log keluar.",
     "DescLanguage": "Tetapkan bahasa antara muka. Bahasa selain bahasa Inggeris dan Korea akan disediakan melalui terjemahan mesin.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "Sila kemas kini skrip dengan nilai yang tidak kosong.",
@@ -1950,6 +1957,7 @@
       "NewPasswordMismatch": "Dua kata laluan baru tidak sepadan.",
       "Notifications": "Pemberitahuan",
       "OriginalPassword": "Kata laluan asal",
+      "PALI": "PALI",
       "PasswordChangePlace": "Klik ikon orang pada bar atas dan pergi ke menu \"Akaun Saya\".",
       "PasswordMismatch": "Ketidakcocokan kata laluan",
       "PasswordUpdated": "Kata laluan berjaya dikemas kini.",

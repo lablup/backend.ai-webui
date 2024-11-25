@@ -971,6 +971,7 @@
     "TokenGenerated": "Token generated",
     "TokenGenerationFailed": "Token generation failed. please try again.",
     "TrafficRatio": "Traffic Ratio",
+    "TryModelOnYourOwn": "Try model service on your own",
     "UpdateService": "Update Service",
     "Validate": "Validate",
     "ValidationInfo": "Validation Info"
@@ -1004,6 +1005,11 @@
     "StartCommand": "Start Command",
     "Task": "Task",
     "Version": "Version"
+  },
+  "modelserving": {
+    "menu": {
+      "MyServices": "My Services"
+    }
   },
   "notification": {
     "AreYouSureToClearAllNotifications": "Are you sure to clear all notifications?",
@@ -1843,6 +1849,7 @@
     "DescClassicSessionLauncher": "Use the Classic session launcher instead of the NEO session launcher. Classic session launcher may not have the latest features.",
     "DescDesktopNotification": "Enables desktop notification. <br />If turned on, Backend.AI uses OS built-in notification system too. Turning off this option does not affect notifications within web UI. Depending on the operating system, desktop notifications may require enabling notification permissions in system settings.",
     "DescExperimentalDashboard": "Use Dashboard page instead of Summary page.",
+    "DescExperimentalPALI": "Use PALI instead of WebUI.",
     "DescKeepLoginSessionInformation": "Let webui app keep current login session information next time.<br />If the option is turned off, login information will be cleared each logout.",
     "DescLanguage": "Set interface language. Languages other than English and Korean will be provided via machine translation.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "Please update script with non empty value.",
@@ -1960,6 +1967,7 @@
       "NewPasswordMismatch": "Two new passwords do not match.",
       "Notifications": "Notifications",
       "OriginalPassword": "Original password",
+      "PALI": "PALI",
       "PasswordChangePlace": "Click the person icon on the top bar and go to the \"My Account\" menu.",
       "PasswordMismatch": "Password mismatch",
       "PasswordUpdated": "Password is successfully updated.",

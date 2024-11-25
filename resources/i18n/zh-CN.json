@@ -967,6 +967,7 @@
     "TokenGenerated": "生成的令牌",
     "TokenGenerationFailed": "令牌生成失败，请重试。",
     "TrafficRatio": "交通比率",
+    "TryModelOnYourOwn": "自己尝试模型服务",
     "UpdateService": "更新服务",
     "Validate": "证实",
     "ValidationInfo": "验证信息"
@@ -1000,6 +1001,11 @@
     "StartCommand": "启动命令",
     "Task": "任务",
     "Version": "版本"
+  },
+  "modelserving": {
+    "menu": {
+      "MyServices": "我的服务"
+    }
   },
   "notification": {
     "AreYouSureToClearAllNotifications": "您确定清除所有通知吗？",
@@ -1837,6 +1843,7 @@
     "DescClassicSessionLauncher": "使用 Classic 会话启动器而不是 NEO 会话启动器。 \nClassic 会话启动器可能不具有最新功能。",
     "DescDesktopNotification": "启用桌面通知。 \n<br />如果打开，Backend.ai也使用OS内置通知系统。\n关闭此选项不会影响Web UI中的通知。\n根据操作系统，桌面通知可能需要在系统设置中启用通知权限。",
     "DescExperimentalDashboard": "使用仪表板页面而不是摘要页面。",
+    "DescExperimentalPALI": "使用PALI代替WebUI.",
     "DescKeepLoginSessionInformation": "下次让 webui 应用程序保留当前登录会话信息。 <br /> 如果关闭该选项，则每次注销时都会清除登录信息。",
     "DescLanguage": "设置接口语言。英语和韩文以外的语言将通过机器翻译提供。",
     "DescLetUserUpdateScriptWithNonEmptyValue": "请使用非空值更新脚本。",
@@ -1953,6 +1960,7 @@
       "NewPasswordMismatch": "两个新密码不匹配。",
       "Notifications": "通知",
       "OriginalPassword": "原始密码",
+      "PALI": "PALI",
       "PasswordChangePlace": "点击顶部栏上的个人图标，进入 \"我的账户 \"菜单。",
       "PasswordMismatch": "密码不匹配",
       "PasswordUpdated": "密码更新成功。",

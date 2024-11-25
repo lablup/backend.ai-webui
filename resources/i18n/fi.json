@@ -966,6 +966,7 @@
     "TokenGenerated": "Tuotettu merkki",
     "TokenGenerationFailed": "Tokenin luominen epäonnistui. yritä uudelleen.",
     "TrafficRatio": "Liikennesuhde",
+    "TryModelOnYourOwn": "Kokeile mallipalvelua yksin",
     "UpdateService": "Päivityspalvelu",
     "Validate": "Vahvista",
     "ValidationInfo": "Vahvistustiedot"
@@ -999,6 +1000,11 @@
     "StartCommand": "Käynnistä komento",
     "Task": "Tehtävä",
     "Version": "Versio"
+  },
+  "modelserving": {
+    "menu": {
+      "MyServices": "Minun palveluni"
+    }
   },
   "notification": {
     "AreYouSureToClearAllNotifications": "Oletko varma, että tyhjennät kaikki ilmoitukset?",
@@ -1836,6 +1842,7 @@
     "DescClassicSessionLauncher": "Käytä Classic-istunnonkäynnistysohjelmaa NEO-istunnonkäynnistimen sijaan. \nClassic istunnonkäynnistysohjelmassa ei välttämättä ole uusimpia ominaisuuksia.",
     "DescDesktopNotification": "Mahdollistaa työpöytäilmoituksen. \n<br /> Jos kytketään päälle, backend.ai käyttää myös sisäänrakennettua ilmoitusjärjestelmää. \nTämän vaihtoehdon sammuttaminen ei vaikuta ilmoituksiin Web -käyttöliittymässä. \nKäyttöjärjestelmästä riippuen työpöytäilmoitukset voivat edellyttää ilmoitusoikeuksien mahdollistamista järjestelmä -asetuksissa.",
     "DescExperimentalDashboard": "Käytä kojelaudan sivua yhteenvetosivun sijasta.",
+    "DescExperimentalPALI": "Käytä PALI WebUI sijasta.",
     "DescKeepLoginSessionInformation": "Anna webui-sovelluksen säilyttää nykyisen kirjautumisistunnon tiedot seuraavalla kerralla.<br />Jos vaihtoehto on pois päältä, kirjautumistiedot tyhjennetään jokaisen uloskirjautumisen yhteydessä.",
     "DescLanguage": "Aseta käyttöliittymäkieli. Muut kielet kuin englanti ja korea tarjotaan koneen käännöksen kautta.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "Päivitä skripti ei-tyhjällä arvolla.",
@@ -1952,6 +1959,7 @@
       "NewPasswordMismatch": "Kaksi uutta salasanaa ei täsmää.",
       "Notifications": "Ilmoitukset",
       "OriginalPassword": "Alkuperäinen salasana",
+      "PALI": "PALI",
       "PasswordChangePlace": "Napsauta yläpalkin henkilö-kuvaketta ja siirry \"Oma tili\" -valikkoon.",
       "PasswordMismatch": "Salasana ei täsmää",
       "PasswordUpdated": "Salasana on päivitetty onnistuneesti.",

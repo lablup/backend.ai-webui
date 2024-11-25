@@ -391,7 +391,7 @@ export default class BackendAISummary extends BackendAIPage {
    * Returns tab according to vfolder information
    *
    * @param vfolderInfo
-   * @returns {string} - tab name of vfolder (model, general, data, automount)
+   * @return {string} - tab name of vfolder (model, general, data, automount)
    */
   static getVFolderTabByVFolderInfo(vfolderInfo) {
     if (

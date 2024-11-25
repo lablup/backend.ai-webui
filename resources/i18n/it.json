@@ -965,6 +965,7 @@
     "TokenGenerated": "Gettone generato",
     "TokenGenerationFailed": "La generazione del token non è riuscita. Riprovare.",
     "TrafficRatio": "Rapporto di traffico",
+    "TryModelOnYourOwn": "Prova il servizio modello da solo",
     "UpdateService": "Servizio di aggiornamento",
     "Validate": "Convalidare",
     "ValidationInfo": "Informazioni sulla convalida"
@@ -998,6 +999,11 @@
     "StartCommand": "Avvia comando",
     "Task": "Compito",
     "Version": "Versione"
+  },
+  "modelserving": {
+    "menu": {
+      "MyServices": "I miei servizi"
+    }
   },
   "notification": {
     "AreYouSureToClearAllNotifications": "Sei sicuro di cancellare tutte le notifiche?",
@@ -1834,6 +1840,7 @@
     "DescClassicSessionLauncher": "Utilizza l'avvio della sessione Classic anziché l'avvio della sessione NEO. \nIl launcher della sessione Classic potrebbe non avere le funzionalità più recenti.",
     "DescDesktopNotification": "Abilita la notifica desktop. \n<br /> Se acceso, Backend.ai utilizza anche il sistema di notifica integrato del sistema operativo. \nDisattiva questa opzione non influisce sulle notifiche all'interno dell'interfaccia utente Web. \nA seconda del sistema operativo, le notifiche desktop possono richiedere l'abilitazione delle autorizzazioni di notifica nelle impostazioni del sistema.",
     "DescExperimentalDashboard": "Usa la pagina Dashboard anziché la pagina di riepilogo.",
+    "DescExperimentalPALI": "Usa PALI invece di WebUI.",
     "DescKeepLoginSessionInformation": "Consenti all'app webui di conservare le informazioni sulla sessione di accesso corrente la prossima volta. <br /> Se l'opzione è disattivata, le informazioni di accesso verranno cancellate ad ogni logout.",
     "DescLanguage": "Imposta il linguaggio dell'interfaccia. Le lingue diverse dall'inglese e dal coreano saranno fornite tramite traduzione di macchine.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "Aggiorna lo script con un valore non vuoto.",
@@ -1950,6 +1957,7 @@
       "NewPasswordMismatch": "Due nuove password non corrispondono.",
       "Notifications": "Notifiche",
       "OriginalPassword": "Password originale",
+      "PALI": "PALI",
       "PasswordChangePlace": "Fare clic sull'icona della persona nella barra superiore e accedere al menu \"Il mio account\".",
       "PasswordMismatch": "Mancata corrispondenza della password",
       "PasswordUpdated": "La password è stata aggiornata con successo.",
