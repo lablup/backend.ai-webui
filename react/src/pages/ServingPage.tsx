@@ -49,11 +49,6 @@ const ServingPage: React.FC<ServingPageProps> = ({ ...props }) => {
   return (
     <Flex direction="column" align="stretch" gap={'md'}>
       <Card
-        activeTabKey={curTabKey}
-        onTabChange={(key) => {
-          setCurTabKey(key as TabKey);
-        }}
-        tabList={tabList}
         styles={{
           body: {
             padding: 0,
@@ -62,12 +57,13 @@ const ServingPage: React.FC<ServingPageProps> = ({ ...props }) => {
           },
         }}
       >
-        {curTabKey === 'services' ? (
-          <Suspense
-            fallback={<Skeleton active style={{ padding: token.paddingMD }} />}
-          >
-            <EndpointListPage />
-          </Suspense>
+        <Suspense
+          fallback={<Skeleton active style={{ padding: token.paddingMD }} />}
+        >
+          <EndpointListPage />
+        </Suspense>
+        {/* {curTabKey === 'services' ? (
+ 
         ) : null}
         {curTabKey === 'chatting' && baiClient._config.enableLLMPlayground ? (
           <Suspense
@@ -75,7 +71,7 @@ const ServingPage: React.FC<ServingPageProps> = ({ ...props }) => {
           >
             <ChattingPage />
           </Suspense>
-        ) : null}
+        ) : null} */}
       </Card>
     </Flex>
   );

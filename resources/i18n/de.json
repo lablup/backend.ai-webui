@@ -66,7 +66,9 @@
       "DisMatchUserEmail": "Die E-Mail-Adresse des Benutzers stimmt nicht überein",
       "MyEnvironments": "Meine Umgebungen",
       "ResourcePolicy": "Ressourcenpolitik",
-      "FullNameUpdated": "Der vollständige Name wurde erfolgreich aktualisiert."
+      "FullNameUpdated": "Der vollständige Name wurde erfolgreich aktualisiert.",
+      "Playground": "Spielplatz",
+      "ModelStore": "Modellladen"
     },
     "YouAreOffline": "Offline: Keine Verbindung zu einem Netzwerk.",
     "YouAreOnline": "Sie sind jetzt online",
@@ -1680,7 +1682,10 @@
     "CloneInfo": "Er wird als Ihr Benutzertyp-Ordner geklont.",
     "CloneToFolder": "In einen Ordner klonen",
     "FolderAlreadyExists": "Ein Ordner mit diesem Namen existiert bereits.",
-    "FinetuneModel": "Feinabstimmung des Modells"
+    "FinetuneModel": "Feinabstimmung des Modells",
+    "Experience": "Erfahrung",
+    "ModelCard": "Modellkarte",
+    "ImportFromHuggingFace": "Import aus Hugging Face"
   },
   "table": {
     "SettingTable": "Sitzordnung bei Tisch",
@@ -1755,5 +1760,12 @@
     "ReloadPage": "Laden Sie die Seite neu",
     "ResetErrorBoundary": "ErrorBoundary zurücksetzen",
     "Title": "Es ist ein Fehler aufgetreten."
+  },
+  "modelserving": {
+    "menu": {
+      "ModelServices": "Modelldienstleistungen",
+      "ModelList": "Modellliste",
+      "MyServices": "Meine Dienste"
+    }
   }
 }
