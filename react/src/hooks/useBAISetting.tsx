@@ -1,5 +1,5 @@
+import { BAIBoardItem } from '../components/BAIBoard';
 import { jotaiStore } from '../components/DefaultProviders';
-import { StartItem } from '../pages/StartPage';
 import { atom, useAtom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 
@@ -14,10 +14,10 @@ interface UserSettings {
   last_window_close_time?: number;
   endpoints?: string[];
   auto_logout?: boolean;
-  summary_items?: Array<Omit<StartItem, 'data'>>;
   selected_language?: string;
   classic_session_launcher?: boolean;
   recentSessionHistory?: Array<SessionHistory>;
+  start_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
 }
 
 export type SessionHistory = {

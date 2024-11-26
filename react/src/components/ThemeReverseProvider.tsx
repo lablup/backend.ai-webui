@@ -6,7 +6,7 @@ import React, { useContext } from 'react';
 interface ReverseThemeProviderProps extends ConfigProviderProps {
   className?: string;
 }
-const ReverseThemeProvider: React.FC<ReverseThemeProviderProps> = ({
+const ThemeReverseProvider: React.FC<ReverseThemeProviderProps> = ({
   ...props
 }) => {
   const themeConfig = useCustomThemeConfig();
@@ -26,4 +26,4 @@ const ReverseThemeProvider: React.FC<ReverseThemeProviderProps> = ({
   );
 };
 
-export default ReverseThemeProvider;
+export default ThemeReverseProvider;

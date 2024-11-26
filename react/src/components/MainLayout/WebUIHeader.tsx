@@ -8,7 +8,7 @@ import BAINotificationButton from '../BAINotificationButton';
 import Flex, { FlexProps } from '../Flex';
 import LoginSessionExtendButton from '../LoginSessionExtendButton';
 import ProjectSelect from '../ProjectSelect';
-import ReverseThemeProvider from '../ReverseThemeProvider';
+import ThemeReverseProvider from '../ThemeReverseProvider';
 import UserDropdownMenu from '../UserDropdownMenu';
 import WEBUIHelpButton from '../WEBUIHelpButton';
 import WebUIThemeToggleButton from '../WebUIThemeToggleButton';
@@ -70,7 +70,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
       className={styles.webuiHeader}
     >
       <Flex direction="row" gap={'sm'}>
-        <ReverseThemeProvider>
+        <ThemeReverseProvider>
           {!gridBreakpoint.sm && (
             <Button
               icon={<MenuIcon />}
@@ -94,7 +94,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
               {t('webui.menu.Project')}
             </Typography.Text>
           )}
-        </ReverseThemeProvider>
+        </ThemeReverseProvider>
         <Suspense>
           <ProjectSelect
             ghost
@@ -135,17 +135,17 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
           )}
         <BAINotificationButton
           buttonRender={(btn) => (
-            <ReverseThemeProvider>{btn}</ReverseThemeProvider>
+            <ThemeReverseProvider>{btn}</ThemeReverseProvider>
           )}
         />
 
-        <ReverseThemeProvider>
+        <ThemeReverseProvider>
           <WebUIThemeToggleButton />
           <WEBUIHelpButton />
-        </ReverseThemeProvider>
+        </ThemeReverseProvider>
         <UserDropdownMenu
           buttonRender={(btn) => (
-            <ReverseThemeProvider>{btn}</ReverseThemeProvider>
+            <ThemeReverseProvider>{btn}</ThemeReverseProvider>
           )}
         />
       </Flex>

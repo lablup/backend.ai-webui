@@ -1,7 +1,7 @@
 import Flex from './Flex';
-import useResizeObserver from '@react-hook/resize-observer';
+// import useResizeObserver from '@react-hook/resize-observer';
 import { Button, Divider, Typography, theme } from 'antd';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 
 interface StartItemContentProps {
   title: string;
@@ -10,7 +10,6 @@ interface StartItemContentProps {
   buttonText: string;
   onClick?: () => void;
   themeColor?: string;
-  iconBgColor?: string;
   itemRole?: 'user' | 'admin';
 }
 
@@ -21,18 +20,11 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
   buttonText,
   onClick,
   themeColor,
-  iconBgColor,
   itemRole = 'user',
 }) => {
   const { token } = theme.useToken();
-  const [needScroll, setNeedScroll] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const colorPrimaryWithAlpha = `rgba(${parseInt(token.colorPrimary.slice(1, 3), 16)}, ${parseInt(token.colorPrimary.slice(3, 5), 16)}, ${parseInt(token.colorPrimary.slice(5, 7), 16)}, 0.15)`;
-  const colorInfoWithAlpha = `rgba(${parseInt(token.colorInfo.slice(1, 3), 16)}, ${parseInt(token.colorInfo.slice(3, 5), 16)}, ${parseInt(token.colorInfo.slice(5, 7), 16)}, 0.15)`;
-
-  useResizeObserver(containerRef, (entry) => {
-    entry.contentRect.width <= 220 ? setNeedScroll(true) : setNeedScroll(false);
-  });
 
   return (
     <Flex
@@ -55,11 +47,9 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
             borderRadius: 25,
             width: 50,
             height: 50,
-            backgroundColor: iconBgColor
-              ? iconBgColor
-              : itemRole === 'user'
-                ? colorPrimaryWithAlpha
-                : colorInfoWithAlpha,
+            fontSize: token.fontSizeHeading3,
+            color: token.colorPrimary,
+            backgroundColor: colorPrimaryWithAlpha,
           }}
         >
           {icon}
@@ -83,10 +73,13 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
           type="secondary"
           style={{ fontSize: token.fontSizeSM }}
         >
-          {!needScroll && description}
+          {description}
         </Typography.Text>
       </Flex>
-      <Flex direction="column" style={{ width: '100%' }}>
+      <Flex
+        direction="column"
+        style={{ width: '100%', position: 'sticky', bottom: 0 }}
+      >
         {description && (
           <Divider style={{ margin: token.marginSM, borderWidth: 2 }} />
         )}
