@@ -430,7 +430,8 @@
     "ForceTerminateWarningMsg2": "僅當狀態在不合理的長時間內沒有發生變化時才執行。",
     "ForceTerminateWarningMsg3": "此操作不會刪除代理程式上的實際容器。\n可能需要手動清潔。",
     "ContainerToCleanUp": "需要清理的容器",
-    "SessionNotFound": "您没有访问该会话的权限或该会话不存在。"
+    "SessionNotFound": "您没有访问该会话的权限或该会话不存在。",
+    "NotInProject": "本次会议属于另一个项目。"
   },
   "button": {
     "Cancel": "取消",

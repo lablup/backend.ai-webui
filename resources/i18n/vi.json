@@ -430,7 +430,8 @@
     "ForceTerminateWarningMsg2": "Chỉ thực hiện khi trạng thái không thay đổi trong một khoảng thời gian dài không hợp lý.",
     "ForceTerminateWarningMsg3": "Hành động này không xóa các vùng chứa thực tế trên (các) tác nhân. \nCó thể cần phải dọn dẹp thủ công.",
     "ContainerToCleanUp": "(Các) thùng chứa để dọn dẹp",
-    "SessionNotFound": "Bạn không có quyền truy cập phiên này hoặc phiên không tồn tại."
+    "SessionNotFound": "Bạn không có quyền truy cập phiên này hoặc phiên không tồn tại.",
+    "NotInProject": "Phiên này thuộc về một dự án khác."
   },
   "button": {
     "Cancel": "Huỷ bỏ",

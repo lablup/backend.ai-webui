@@ -444,7 +444,8 @@
     "ForceTerminateWarningMsg2": "Execute only when the state does not change for an unreasonably long period of time.",
     "ForceTerminateWarningMsg3": "This action does not delete the actual containers on the agent(s). Manual cleanup may be required.",
     "ContainerToCleanUp": "Container(s) to clean up",
-    "SessionNotFound": "You do not have permission to access this session or the session does not exist."
+    "SessionNotFound": "You do not have permission to access this session or the session does not exist.",
+    "NotInProject": "This session belongs to a different project"
   },
   "modelService": {
     "Services": "Services",

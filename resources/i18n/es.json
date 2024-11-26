@@ -1350,7 +1350,8 @@
     "ForceTerminateWarningMsg2": "Ejecutar solo cuando el estado no cambie durante un período de tiempo excesivamente largo.",
     "ForceTerminateWarningMsg3": "Esta acción no elimina los contenedores reales de los agentes. \nEs posible que se requiera una limpieza manual.",
     "ContainerToCleanUp": "Contenedor(es) para limpiar",
-    "SessionNotFound": "No tiene permiso para acceder a esta sesión o la sesión no existe."
+    "SessionNotFound": "No tiene permiso para acceder a esta sesión o la sesión no existe.",
+    "NotInProject": "Esta sesión pertenece a un proyecto diferente."
   },
   "settings": {
     "ATOMsupport": "ATOM",

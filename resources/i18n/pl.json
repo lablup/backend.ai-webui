@@ -430,7 +430,8 @@
     "ForceTerminateWarningMsg2": "Wykonaj tylko wtedy, gdy stan nie zmienia się przez nieracjonalnie długi okres czasu.",
     "ForceTerminateWarningMsg3": "Ta akcja nie usuwa rzeczywistych kontenerów agentów. \nMoże być konieczne ręczne czyszczenie.",
     "ContainerToCleanUp": "Pojemnik(i) do oczyszczenia",
-    "SessionNotFound": "Nie masz uprawnień dostępu do tej sesji lub sesja nie istnieje."
+    "SessionNotFound": "Nie masz uprawnień dostępu do tej sesji lub sesja nie istnieje.",
+    "NotInProject": "Ta sesja należy do innego projektu."
   },
   "button": {
     "Cancel": "Anuluj",

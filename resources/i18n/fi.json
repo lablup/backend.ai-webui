@@ -1347,7 +1347,8 @@
     "ForceTerminateWarningMsg2": "Suorita vain, kun tila ei muutu kohtuuttoman pitkään.",
     "ForceTerminateWarningMsg3": "Tämä toiminto ei poista agenttien varsinaisia ​​säilöjä. \nManuaalinen puhdistus saattaa olla tarpeen.",
     "ContainerToCleanUp": "Säiliö(t) puhdistettava(t).",
-    "SessionNotFound": "Sinulla ei ole oikeuksia käyttää tätä istuntoa tai istuntoa ei ole olemassa."
+    "SessionNotFound": "Sinulla ei ole oikeuksia käyttää tätä istuntoa tai istuntoa ei ole olemassa.",
+    "NotInProject": "Tämä istunto kuuluu eri hankkeeseen."
   },
   "settings": {
     "ATOMsupport": "ATOM",

@@ -430,7 +430,8 @@
     "ForceTerminateWarningMsg2": "Nur ausführen, wenn sich der Zustand über einen unangemessen langen Zeitraum nicht ändert.",
     "ForceTerminateWarningMsg3": "Durch diese Aktion werden die tatsächlichen Container auf dem/den Agent(en) nicht gelöscht. \nMöglicherweise ist eine manuelle Bereinigung erforderlich.",
     "ContainerToCleanUp": "Behälter zum Aufräumen",
-    "SessionNotFound": "Sie haben keine Zugriffsberechtigung für diese Sitzung oder die Sitzung existiert nicht."
+    "SessionNotFound": "Sie haben keine Zugriffsberechtigung für diese Sitzung oder die Sitzung existiert nicht.",
+    "NotInProject": "Diese Sitzung gehört zu einem anderen Projekt."
   },
   "button": {
     "Cancel": "Stornieren",

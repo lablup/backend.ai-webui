@@ -430,7 +430,8 @@
     "ForceTerminateWarningMsg2": "Execute somente quando o estado não mudar por um período de tempo excessivamente longo.",
     "ForceTerminateWarningMsg3": "Esta ação não exclui os contêineres reais do(s) agente(s). \nA limpeza manual pode ser necessária.",
     "ContainerToCleanUp": "Recipiente(s) para limpar",
-    "SessionNotFound": "Não tem permissão para aceder a esta sessão ou a sessão não existe."
+    "SessionNotFound": "Não tem permissão para aceder a esta sessão ou a sessão não existe.",
+    "NotInProject": "Esta sessão pertence a um projeto diferente."
   },
   "button": {
     "Cancel": "Cancelar",
