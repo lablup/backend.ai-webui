@@ -3,6 +3,7 @@ import HiddenFormItem from './HiddenFormItem';
 import { ContainerRegistryEditorModalCreateMutation } from './__generated__/ContainerRegistryEditorModalCreateMutation.graphql';
 import { ContainerRegistryEditorModalFragment$key } from './__generated__/ContainerRegistryEditorModalFragment.graphql';
 import { ContainerRegistryEditorModalModifyMutation } from './__generated__/ContainerRegistryEditorModalModifyMutation.graphql';
+import { ContainerRegistryEditorModalModifyWithoutPasswordMutation } from './__generated__/ContainerRegistryEditorModalModifyWithoutPasswordMutation.graphql';
 import { Form, Input, Select, Checkbox, FormInstance, App } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
@@ -99,6 +100,39 @@ const ContainerRegistryEditorModal: React.FC<
       }
     `);
 
+  const [
+    commitModifyRegistryWithoutPassword,
+    isInflightModifyRegistryWithoutPassword,
+  ] = useMutation<ContainerRegistryEditorModalModifyWithoutPasswordMutation>(
+    graphql`
+      mutation ContainerRegistryEditorModalModifyWithoutPasswordMutation(
+        $id: String!
+        $registry_name: String
+        $type: ContainerRegistryTypeField
+        $url: String
+        $is_global: Boolean
+        $project: String
+        $ssl_verify: Boolean
+        $username: String
+      ) {
+        modify_container_registry_node(
+          id: $id
+          registry_name: $registry_name
+          type: $type
+          url: $url
+          is_global: $is_global
+          project: $project
+          ssl_verify: $ssl_verify
+          username: $username
+        ) {
+          container_registry {
+            id
+          }
+        }
+      }
+    `,
+  );
+
   const handleSave = async () => {
     return formRef.current
       ?.validateFields()
@@ -120,34 +154,56 @@ const ContainerRegistryEditorModal: React.FC<
         if (containerRegistry) {
           if (!values.isChangedPassword) {
             delete mutationVariables.password;
-          }
-          mutationVariables = _.omitBy(mutationVariables, _.isNil) as Required<
-            typeof mutationVariables
-          >;
-          commitModifyRegistry({
-            variables: mutationVariables,
-            onCompleted: (res, errors) => {
-              if (
-                _.isEmpty(
-                  res.modify_container_registry_node?.container_registry,
-                )
-              ) {
-                message.error(t('dialog.ErrorOccurred'));
-                return;
-              }
-              if (errors && errors.length > 0) {
-                const errorMsgList = _.map(errors, (error) => error.message);
-                for (const error of errorMsgList) {
-                  message.error(error, 2.5);
+            commitModifyRegistryWithoutPassword({
+              variables: mutationVariables,
+              onCompleted: (res, errors) => {
+                if (
+                  _.isEmpty(
+                    res.modify_container_registry_node?.container_registry,
+                  )
+                ) {
+                  message.error(t('dialog.ErrorOccurred'));
+                  return;
                 }
-              } else {
-                onOk && onOk('modify');
-              }
-            },
-            onError: (error) => {
-              message.error(t('dialog.ErrorOccurred'));
-            },
-          });
+                if (errors && errors.length > 0) {
+                  const errorMsgList = _.map(errors, (error) => error.message);
+                  for (const error of errorMsgList) {
+                    message.error(error, 2.5);
+                  }
+                } else {
+                  onOk && onOk('modify');
+                }
+              },
+              onError: (error) => {
+                message.error(t('dialog.ErrorOccurred'));
+              },
+            });
+          } else {
+            commitModifyRegistry({
+              variables: mutationVariables,
+              onCompleted: (res, errors) => {
+                if (
+                  _.isEmpty(
+                    res.modify_container_registry_node?.container_registry,
+                  )
+                ) {
+                  message.error(t('dialog.ErrorOccurred'));
+                  return;
+                }
+                if (errors && errors.length > 0) {
+                  const errorMsgList = _.map(errors, (error) => error.message);
+                  for (const error of errorMsgList) {
+                    message.error(error, 2.5);
+                  }
+                } else {
+                  onOk && onOk('modify');
+                }
+              },
+              onError: (error) => {
+                message.error(t('dialog.ErrorOccurred'));
+              },
+            });
+          }
         } else {
           mutationVariables = _.omitBy(mutationVariables, _.isNil) as Required<
             typeof mutationVariables
@@ -188,7 +244,11 @@ const ContainerRegistryEditorModal: React.FC<
           : t('registry.AddRegistry')
       }
       okText={containerRegistry ? t('button.Save') : t('button.Add')}
-      confirmLoading={isInflightCreateRegistry || isInflightModifyRegistry}
+      confirmLoading={
+        isInflightCreateRegistry ||
+        isInflightModifyRegistry ||
+        isInflightModifyRegistryWithoutPassword
+      }
       onOk={() => {
         formRef.current
           ?.validateFields()
