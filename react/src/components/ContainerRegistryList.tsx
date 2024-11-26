@@ -56,7 +56,7 @@ const ContainerRegistryList: React.FC<{
   style?: React.CSSProperties;
 }> = ({ style }) => {
   const baiClient = useSuspendedBackendaiClient();
-  const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
+  const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [isPendingReload, startReloadTransition] = useTransition();
   const painKiller = usePainKiller();
   const { message } = App.useApp();
@@ -124,7 +124,8 @@ const ContainerRegistryList: React.FC<{
         offset: baiPaginationOption.offset,
       },
       {
-        fetchPolicy: 'store-and-network',
+        fetchPolicy:
+          fetchKey === 'first' ? 'store-and-network' : 'network-only',
         fetchKey,
       },
     );
