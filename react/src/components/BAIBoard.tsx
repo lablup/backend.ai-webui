@@ -2,25 +2,27 @@ import Board, { BoardProps } from '@cloudscape-design/board-components/board';
 import BoardItem from '@cloudscape-design/board-components/board-item';
 import { Skeleton } from 'antd';
 import { createStyles } from 'antd-style';
+import classNames from 'classnames';
 import { Suspense } from 'react';
 
-const useStyles = createStyles(({ css }) => {
-  const defaultBoard = css`
-    .bai_board_placeholder {
-      border-radius: var(--token-borderRadius) !important;
-    }
-    .bai_board_placeholder--active {
-      background-color: var(--token-colorSplit) !important ;
-    }
-    .bai_board_placeholder--hover {
-      background-color: var(--token-colorPrimaryHover) !important ;
-      // FIXME: global token doesn't exist, so opacity fits color
-      opacity: 0.3;
-    }
-  `;
+const useStyles = createStyles(({ css, token }) => {
   return {
     board: css`
-      ${defaultBoard}
+      .bai_board_placeholder {
+        border-radius: var(--token-borderRadius) !important;
+      }
+      .bai_board_placeholder--active {
+        background-color: var(--token-colorSplit) !important ;
+      }
+      .bai_board_placeholder--hover {
+        background-color: var(--token-colorPrimaryHover) !important ;
+        // FIXME: global token doesn't exist, so opacity fits color
+        opacity: 0.3;
+      }
+
+      .bai_board_handle button span {
+        color: ${token.colorTextTertiary} !important;
+      }
     `,
     disableResize: css`
       .bai_board_resizer {
@@ -52,37 +54,36 @@ const useStyles = createStyles(({ css }) => {
   };
 });
 
-interface BAICustomizableGridProps {
-  items: Array<BoardProps.Item>;
-  onItemsChange: (
-    event: CustomEvent<BoardProps.ItemsChangeDetail<unknown>>,
-  ) => void;
+export interface BAIBoardDataType {
+  content?: React.ReactNode;
+}
+
+export type BAIBoardItem = BoardProps.Item<BAIBoardDataType>;
+export interface BAIBoardProps<T extends BAIBoardDataType = BAIBoardDataType> {
+  items: Array<BoardProps.Item<T>>;
+  onItemsChange: (event: CustomEvent<BoardProps.ItemsChangeDetail<T>>) => void;
   resizable?: boolean;
   movable?: boolean;
 }
 
-const BAIBoard: React.FC<BAICustomizableGridProps> = ({
-  items: parsedItems,
+const BAIBoard = <T extends BAIBoardDataType>({
+  items,
   resizable = false,
   movable = false,
   ...BoardProps
-}) => {
+}: BAIBoardProps<T>) => {
   const { styles } = useStyles();
-
-  const boardStyles = [
-    styles.board,
-    !movable && styles.disableMove,
-    !resizable && styles.disableResize,
-  ].join(' ');
-
   return (
-    <Board
-      className={boardStyles}
+    <Board<T>
+      className={classNames(
+        styles.board,
+        !movable && styles.disableMove,
+        !resizable && styles.disableResize,
+      )}
       empty
-      renderItem={(item: any) => {
+      renderItem={(item: BoardProps.Item<T>) => {
         return (
           <BoardItem
-            //@ts-ignore
             className={styles.boardItems}
             key={item.id}
             i18nStrings={{
@@ -98,7 +99,7 @@ const BAIBoard: React.FC<BAICustomizableGridProps> = ({
           </BoardItem>
         );
       }}
-      items={parsedItems}
+      items={items}
       i18nStrings={(() => {
         const createAnnouncement = (
           operationAnnouncement: any,

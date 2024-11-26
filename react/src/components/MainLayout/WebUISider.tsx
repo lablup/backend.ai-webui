@@ -10,7 +10,7 @@ import SessionsIcon from '../BAIIcons/SessionsIcon';
 import BAIMenu from '../BAIMenu';
 import BAISider, { BAISiderProps } from '../BAISider';
 import Flex from '../Flex';
-import ReverseThemeProvider from '../ReverseThemeProvider';
+import ThemeReverseProvider from '../ReverseThemeProvider';
 import SiderToggleButton from '../SiderToggleButton';
 import SignoutModal from '../SignoutModal';
 import WebUILink from '../WebUILink';
@@ -514,9 +514,9 @@ const WebUISiderWithCustomTheme: React.FC<WebUISiderProps> = (props) => {
     (!isParentDark && themeConfig?.sider?.theme === 'dark');
 
   return shouldReverse ? (
-    <ReverseThemeProvider>
+    <ThemeReverseProvider>
       <WebUISider {...props} />
-    </ReverseThemeProvider>
+    </ThemeReverseProvider>
   ) : (
     <WebUISider {...props} />
   );
