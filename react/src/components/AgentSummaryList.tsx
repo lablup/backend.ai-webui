@@ -1,12 +1,14 @@
 import {
+  baiSignedRequestWithPromise,
   convertBinarySizeUnit,
   filterNonNullItems,
   toFixedFloorWithoutTrailingZeros,
   transformSorterToOrderString,
 } from '../helper';
-import { useUpdatableState } from '../hooks';
+import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
+import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import BAIPropertyFilter from './BAIPropertyFilter';
 import Flex from './Flex';
@@ -84,6 +86,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
     startRefreshTransition(() => {
       updateFetchKey();
     });
+  const baiClient = useSuspendedBackendaiClient();
 
   const { agent_summary_list } = useLazyLoadQuery<AgentSummaryListQuery>(
     graphql`
@@ -125,6 +128,30 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
       fetchKey,
       fetchPolicy,
     },
+  );
+
+  const { data } = useSuspenseTanQuery({
+    queryKey: ['baiClient.setting.list'],
+    queryFn: () =>
+      baiSignedRequestWithPromise({
+        method: 'POST',
+        url: '/config/get',
+        body: {
+          key: `volumes/proxies`,
+          prefix: true,
+        },
+        client: baiClient,
+      }),
+  });
+
+  const sftpScalingGroups = _.flatMap(data?.result, (value) =>
+    _.get(value, 'sftp_scaling_groups', null),
+  ).filter(Boolean);
+
+  // Hide sFTP upload agents
+  const filteredAgentSummaryList = _.filter(
+    agent_summary_list?.items,
+    (item) => !_.includes(sftpScalingGroups, item?.scaling_group),
   );
 
   const columns: ColumnsType<AgentSummary> = [
@@ -436,7 +463,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
         bordered
         scroll={{ x: 'max-content' }}
         rowKey={'id'}
-        dataSource={filterNonNullItems(agent_summary_list?.items)}
+        dataSource={filterNonNullItems(filteredAgentSummaryList)}
         showSorterTooltip={false}
         columns={
           _.filter(columns, (column) =>
