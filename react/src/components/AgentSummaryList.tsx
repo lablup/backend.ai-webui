@@ -9,6 +9,7 @@ import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
+import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import BAIPropertyFilter from './BAIPropertyFilter';
 import Flex from './Flex';
@@ -25,7 +26,7 @@ import {
   ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import { useLocalStorageState } from 'ahooks';
+import { useToggle } from 'ahooks';
 import {
   Button,
   Segmented,
@@ -59,7 +60,8 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { mergedResourceSlots } = useResourceSlotsDetails();
-  const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
+  const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
+    useToggle();
   const [isPendingStatusFetch, startStatusFetchTransition] = useTransition();
   const [isPendingRefresh, startRefreshTransition] = useTransition();
   const [isPendingPageChange, startPageChangeTransition] = useTransition();
@@ -372,12 +374,8 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
       sorter: true,
     },
   ];
-  const [displayedColumnKeys, setDisplayedColumnKeys] = useLocalStorageState(
-    'backendaiwebui.AgentSummaryList.displayedColumnKeys',
-    {
-      defaultValue: columns.map((column) => _.toString(column.key)),
-    },
-  );
+  const [hiddenColumnKeys, setHiddenColumnKeys] =
+    useHiddenColumnKeysSetting('AgentSummaryList');
 
   return (
     <Flex direction="column" align="stretch" style={containerStyle}>
@@ -466,8 +464,9 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
         dataSource={filterNonNullItems(filteredAgentSummaryList)}
         showSorterTooltip={false}
         columns={
-          _.filter(columns, (column) =>
-            displayedColumnKeys?.includes(_.toString(column.key)),
+          _.filter(
+            columns,
+            (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),
           ) as ColumnType<AnyObject>[]
         }
         pagination={{
@@ -509,19 +508,24 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
           type="text"
           icon={<SettingOutlined />}
           onClick={() => {
-            setIsOpenColumnsSetting(true);
+            toggleColumnSettingModal();
           }}
         />
       </Flex>
       <TableColumnsSettingModal
-        open={isOpenColumnsSetting}
+        open={visibleColumnSettingModal}
         onRequestClose={(values) => {
           values?.selectedColumnKeys &&
-            setDisplayedColumnKeys(values?.selectedColumnKeys);
-          setIsOpenColumnsSetting(false);
+            setHiddenColumnKeys(
+              _.difference(
+                columns.map((column) => _.toString(column.key)),
+                values?.selectedColumnKeys,
+              ),
+            );
+          toggleColumnSettingModal();
         }}
         columns={columns}
-        displayedColumnKeys={displayedColumnKeys ? displayedColumnKeys : []}
+        hiddenColumnKeys={hiddenColumnKeys}
       />
     </Flex>
   );

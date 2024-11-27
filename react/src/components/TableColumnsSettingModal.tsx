@@ -9,21 +9,21 @@ import { useTranslation } from 'react-i18next';
 
 interface FormValues {
   searchInput?: string;
-  selectedColumnKeys?: string[];
+  selectedColumnKeys?: Array<string>;
 }
 
 interface TableColumnsSettingProps extends BAIModalProps {
   open: boolean;
   onRequestClose: (formValues?: FormValues) => void;
   columns: ColumnsType<any>;
-  displayedColumnKeys?: string[];
+  hiddenColumnKeys?: Array<string>;
 }
 
 const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
   open,
   onRequestClose,
   columns,
-  displayedColumnKeys,
+  hiddenColumnKeys,
   ...modalProps
 }) => {
   const formRef = useRef<FormInstance>(null);
@@ -39,7 +39,7 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
     return text;
   };
 
-  const columnOptions = columns.map((column) => {
+  const columnOptions = _.map(columns, (column) => {
     if (typeof column.title === 'string') {
       return {
         label: column.title,
@@ -81,9 +81,9 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
         ref={formRef}
         preserve={false}
         initialValues={{
-          selectedColumnKeys:
-            displayedColumnKeys ||
-            columnOptions.map((columnOption) => columnOption.value),
+          selectedColumnKeys: _.map(columnOptions, 'value')?.filter(
+            (columnKey) => !_.includes(hiddenColumnKeys, columnKey),
+          ),
         }}
         layout="vertical"
       >
@@ -107,7 +107,7 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
               ? _.toLower(getFieldValue('searchInput'))
               : undefined;
 
-            const filteredColumns = columnOptions.map((columnOption) =>
+            const filteredColumns = _.map(columnOptions, (columnOption) =>
               _.toLower(_.toString(columnOption.label)).includes(
                 searchKeyword || '',
               )
