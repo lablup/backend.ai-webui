@@ -151,7 +151,8 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     // },
   ]);
 
-  const adminMenu: MenuProps['items'] = [
+  const adminMenu: MenuProps['items'] = [];
+  /*[
     {
       label: <WebUILink to="/credential">{t('webui.menu.Users')}</WebUILink>,
       icon: <UserOutlined style={{ color: token.colorInfo }} />,
@@ -174,8 +175,10 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       key: 'resource-policy',
     },
   ];
+  */
 
-  const superAdminMenu: MenuProps['items'] = [
+  const superAdminMenu: MenuProps['items'] = [];
+  /*[
     {
       label: <WebUILink to="/agent">{t('webui.menu.Resources')}</WebUILink>,
       icon: <HddOutlined style={{ color: token.colorInfo }} />,
@@ -202,9 +205,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       icon: <InfoCircleOutlined style={{ color: token.colorInfo }} />,
       key: 'information',
     },
-  ];
-
-  const pluginMap: Record<string, MenuProps['items']> = {
+  ]*/ const pluginMap: Record<string, MenuProps['items']> = {
     'menuitem-user': generalMenu,
     'menuitem-admin': adminMenu,
     'menuitem-superadmin': superAdminMenu,
@@ -346,6 +347,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
               ]}
               items={
                 // TODO: add plugin menu
+                /*
                 currentUserRole === 'superadmin'
                   ? [
                       {
@@ -387,6 +389,8 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                         },
                       ]
                     : []
+                    */
+                []
               }
             />
           </ConfigProvider>
