@@ -567,7 +567,8 @@
     "Expand": "Expand",
     "Clear": "Clear",
     "Apply": "Apply",
-    "CopySomething": "Copy {{name}}"
+    "CopySomething": "Copy {{name}}",
+    "ViewMetrics": "View Metrics"
   },
   "agent": {
     "Endpoint": "Endpoint",

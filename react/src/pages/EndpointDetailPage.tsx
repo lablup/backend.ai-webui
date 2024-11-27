@@ -1,4 +1,5 @@
 import CopyableCodeText from '../components/CopyableCodeText';
+import EndpointMetricsModal from '../components/EndpointMetricsModal';
 import EndpointOwnerInfo from '../components/EndpointOwnerInfo';
 import EndpointStatusTag from '../components/EndpointStatusTag';
 import EndpointTokenGenerationModal from '../components/EndpointTokenGenerationModal';
@@ -29,6 +30,7 @@ import {
   CheckOutlined,
   CloseOutlined,
   FolderOutlined,
+  LineChartOutlined,
   LoadingOutlined,
   PlusOutlined,
   QuestionCircleOutlined,
@@ -102,6 +104,8 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   const [isPendingClearError, startClearErrorTransition] = useTransition();
   const [selectedSessionErrorForModal, setSelectedSessionErrorForModal] =
     useState<InferenceSessionErrorModalFragment$key | null>(null);
+  const [openEndpointMetricsModal, setOpenEndpointMetricsModal] =
+    useState(false);
   const [isOpenTokenGenerationModal, setIsOpenTokenGenerationModal] =
     useState(false);
   const [openChatModal, setOpenChatModal] = useState(false);
@@ -182,6 +186,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               status
             }
             created_user_email @since(version: "23.09.8")
+            live_stat @since(version: "23.09.11")
             ...EndpointOwnerInfoFragment
             ...EndpointStatusTagFragment
             ...ChatUIModalFragment
@@ -478,6 +483,16 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           )}
           <Button
             loading={isPendingRefetch}
+            disabled={!endpoint?.live_stat}
+            icon={<LineChartOutlined />}
+            onClick={() => {
+              setOpenEndpointMetricsModal(true);
+            }}
+          >
+            {t('button.ViewMetrics')}
+          </Button>
+          <Button
+            loading={isPendingRefetch}
             icon={<ReloadOutlined />}
             disabled={isDestroyingStatus(
               endpoint?.desired_session_count,
@@ -726,6 +741,13 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         open={openChatModal}
         onCancel={() => {
           setOpenChatModal(false);
+        }}
+      />
+      <EndpointMetricsModal
+        endpoint_id={endpoint?.endpoint_id || ''}
+        open={openEndpointMetricsModal}
+        onCancel={() => {
+          setOpenEndpointMetricsModal(false);
         }}
       />
       <SessionDetailDrawer
