@@ -110,28 +110,6 @@ customElements.define(
 );
 
 customElements.define(
-  'backend-ai-react-user-info-dialog',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <UserInfoModal draggable />
-      </DefaultProviders>
-    );
-  }),
-);
-
-customElements.define(
-  'backend-ai-react-user-setting-dialog',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <UserSettingsModal draggable />
-      </DefaultProviders>
-    );
-  }),
-);
-
-customElements.define(
   'backend-ai-react-user-dropdown-menu',
   reactToWebComponent((props) => {
     return (
