@@ -10,10 +10,15 @@ import { atom, useAtom } from 'jotai';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
 
-interface Props extends ButtonProps {}
+interface Props extends ButtonProps {
+  buttonRender?: (defaultButton: React.ReactNode) => React.ReactNode;
+}
 export const isOpenDrawerState = atom(false);
 
-const BAINotificationButton: React.FC<Props> = ({ ...props }) => {
+const BAINotificationButton: React.FC<Props> = ({
+  buttonRender = (btn) => btn,
+  ...props
+}) => {
   const [notifications, { upsertNotification }] = useBAINotificationState();
   useBAINotificationEffect();
 
@@ -33,17 +38,18 @@ const BAINotificationButton: React.FC<Props> = ({ ...props }) => {
   });
   return (
     <>
-      <Button
-        size="large"
-        icon={
-          <Badge dot={hasRunningBackgroundTask}>
-            <BellOutlined />
-          </Badge>
-        }
-        type="text"
-        onClick={() => setIsOpenDrawer((v) => !v)}
-        {...props}
-      />
+      {buttonRender(
+        <Button
+          icon={
+            <Badge dot={hasRunningBackgroundTask}>
+              <BellOutlined />
+            </Badge>
+          }
+          type="text"
+          onClick={() => setIsOpenDrawer((v) => !v)}
+          {...props}
+        />,
+      )}
       <WEBUINotificationDrawer
         open={isOpenDrawer}
         onClose={() => setIsOpenDrawer((v) => !v)}

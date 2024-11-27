@@ -1,27 +1,39 @@
 import Flex from '../components/Flex';
-import { filterNonNullItems, getImageFullName } from '../helper';
-import { useBackendAIImageMetaData, useUpdatableState } from '../hooks';
+import {
+  filterEmptyItem,
+  filterNonNullItems,
+  getImageFullName,
+  localeCompare,
+  preserveDotStartCase,
+} from '../helper';
+import {
+  useBackendAIImageMetaData,
+  useSuspendedBackendaiClient,
+  useUpdatableState,
+} from '../hooks';
+import BAITable from './BAITable';
+import DoubleTag from './DoubleTag';
 import ImageInstallModal from './ImageInstallModal';
-import { ConstraintTags } from './ImageTags';
+import { ImageTags } from './ImageTags';
 import ManageAppsModal from './ManageAppsModal';
 import ManageImageResourceLimitModal from './ManageImageResourceLimitModal';
 import ResourceNumber from './ResourceNumber';
+import TableColumnsSettingModal from './TableColumnsSettingModal';
 import TextHighlighter from './TextHighlighter';
 import {
   ImageListQuery,
   ImageListQuery$data,
 } from './__generated__/ImageListQuery.graphql';
-import CopyButton from './lablupTalkativotUI/CopyButton';
 import {
   AppstoreOutlined,
-  CopyOutlined,
   ReloadOutlined,
   SearchOutlined,
   SettingOutlined,
   VerticalAlignBottomOutlined,
 } from '@ant-design/icons';
-import { App, Button, Input, Table, Tag, theme, Typography } from 'antd';
-import { ColumnsType } from 'antd/es/table';
+import { useLocalStorageState } from 'ahooks';
+import { App, Button, Input, Tag, theme, Typography } from 'antd';
+import { ColumnType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { Key, useMemo, useState, useTransition } from 'react';
@@ -35,10 +47,8 @@ export type EnvironmentImage = NonNullable<
 const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   const { t } = useTranslation();
   const [selectedRows, setSelectedRows] = useState<EnvironmentImage[]>([]);
-  const [
-    ,
-    { getNamespace, getBaseVersion, getLang, getBaseImages, getConstraints },
-  ] = useBackendAIImageMetaData();
+  const [, { getBaseVersion, getBaseImages, getBaseImage, tagAlias, getTags }] =
+    useBackendAIImageMetaData();
   const { token } = theme.useToken();
   const [managingApp, setManagingApp] = useState<EnvironmentImage | null>(null);
   const [managingResourceLimit, setManagingResourceLimit] =
@@ -50,15 +60,18 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   const [installingImages, setInstallingImages] = useState<string[]>([]);
   const { message } = App.useApp();
   const [imageSearch, setImageSearch] = useState('');
+  const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
   const [isPendingRefreshTransition, startRefreshTransition] = useTransition();
   const [isPendingSearchTransition, startSearchTransition] = useTransition();
+  const baiClient = useSuspendedBackendaiClient();
+  const supportExtendedImageInfo = baiClient?.supports('extended-image-info');
 
   const { images } = useLazyLoadQuery<ImageListQuery>(
     graphql`
       query ImageListQuery {
         images {
           id
-          name
+          name @deprecatedSince(version: "24.12.0")
           tag
           registry
           architecture
@@ -74,6 +87,13 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             min
             max
           }
+          namespace @since(version: "24.12.0")
+          base_image_name @since(version: "24.12.0")
+          tags @since(version: "24.12.0") {
+            key
+            value
+          }
+          version @since(version: "24.12.0")
         }
       }
     `,
@@ -94,13 +114,13 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
     [images],
   );
 
-  const columns: ColumnsType<EnvironmentImage> = [
+  const columns: Array<ColumnType<EnvironmentImage>> = filterEmptyItem([
     {
       title: t('environment.Status'),
       dataIndex: 'installed',
       key: 'installed',
       defaultSortOrder: 'descend',
-      sorter: (a: EnvironmentImage, b: EnvironmentImage) => {
+      sorter: (a, b) => {
         return _.toNumber(a?.installed || 0) - _.toNumber(b?.installed || 0);
       },
       render: (text, row) =>
@@ -119,147 +139,176 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         ) : null,
     },
     {
+      title: t('environment.FullImagePath'),
+      key: 'fullImagePath',
+      render: (row) => (
+        <Typography.Text
+          copyable={{
+            text: getImageFullName(row) || '',
+          }}
+        >
+          <TextHighlighter keyword={imageSearch}>
+            {getImageFullName(row) || ''}
+          </TextHighlighter>
+        </Typography.Text>
+      ),
+      sorter: (a, b) => localeCompare(getImageFullName(a), getImageFullName(b)),
+      width: token.screenXS,
+    },
+    {
       title: t('environment.Registry'),
       dataIndex: 'registry',
       key: 'registry',
-      sorter: (a, b) =>
-        a?.registry && b?.registry ? a.registry.localeCompare(b.registry) : 0,
-      render: (text, row) => (
-        <TextHighlighter keyword={imageSearch}>{row.registry}</TextHighlighter>
+      sorter: (a, b) => localeCompare(a?.registry, b?.registry),
+      render: (text) => (
+        <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
       ),
     },
     {
       title: t('environment.Architecture'),
       dataIndex: 'architecture',
       key: 'architecture',
-      sorter: (a, b) =>
-        a?.architecture && b?.architecture
-          ? a.architecture.localeCompare(b.architecture)
-          : 0,
-      render: (text, row) => (
-        <TextHighlighter keyword={imageSearch}>
-          {row.architecture}
-        </TextHighlighter>
+      sorter: (a, b) => localeCompare(a?.architecture, b?.architecture),
+      render: (text) => (
+        <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
       ),
     },
-    {
+    supportExtendedImageInfo && {
       title: t('environment.Namespace'),
       key: 'namespace',
       dataIndex: 'namespace',
-      sorter: (a, b) => {
-        const namespaceA = getNamespace(getImageFullName(a) || '');
-        const namespaceB = getNamespace(getImageFullName(b) || '');
-        return namespaceA && namespaceB
-          ? namespaceA.localeCompare(namespaceB)
-          : 0;
-      },
-      render: (text, row) => (
+      sorter: (a, b) => localeCompare(a?.namespace, b?.namespace),
+      render: (text) => (
+        <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
+      ),
+    },
+    supportExtendedImageInfo && {
+      title: t('environment.BaseImageName'),
+      key: 'base_image_name',
+      dataIndex: 'base_image_name',
+      sorter: (a, b) => localeCompare(a?.base_image_name, b?.base_image_name),
+      render: (text) => (
         <TextHighlighter keyword={imageSearch}>
-          {getNamespace(getImageFullName(row) || '')}
+          {tagAlias(text)}
         </TextHighlighter>
       ),
     },
-    {
-      title: t('environment.Language'),
-      key: 'lang',
-      dataIndex: 'lang',
-      sorter: (a, b) => {
-        const langA = a?.name ? getLang(a?.name) : '';
-        const langB = b?.name ? getLang(b?.name) : '';
-        return langA && langB ? langA.localeCompare(langB) : 0;
+    supportExtendedImageInfo && {
+      title: t('environment.Version'),
+      key: 'version',
+      dataIndex: 'version',
+      sorter: (a, b) => localeCompare(a?.version, b?.version),
+      render: (text) => (
+        <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
+      ),
+    },
+    supportExtendedImageInfo && {
+      title: t('environment.Tags'),
+      key: 'tags',
+      dataIndex: 'tags',
+      render: (text, row) => {
+        return (
+          <Flex direction="row" align="start">
+            {/* TODO: replace this with AliasedImageDoubleTags after image list query with ImageNode is implemented. */}
+            {_.map(text, (tag: { key: string; value: string }) => {
+              const isCustomized = _.includes(tag.key, 'customized_');
+              const tagValue = isCustomized
+                ? _.find(row?.labels, {
+                    key: 'ai.backend.customized-image.name',
+                  })?.value
+                : tag.value;
+              const aliasedTag = tagAlias(tag.key + tagValue);
+              return _.isEqual(
+                aliasedTag,
+                preserveDotStartCase(tag.key + tagValue),
+              ) ? (
+                <DoubleTag
+                  key={tag.key}
+                  highlightKeyword={imageSearch}
+                  values={[
+                    {
+                      label: tagAlias(tag.key),
+                      color: isCustomized ? 'cyan' : 'blue',
+                    },
+                    {
+                      label: tagValue ?? '',
+                      color: isCustomized ? 'cyan' : 'blue',
+                    },
+                  ]}
+                />
+              ) : (
+                <Tag key={tag.key} color={isCustomized ? 'cyan' : 'blue'}>
+                  <TextHighlighter keyword={imageSearch}>
+                    {aliasedTag}
+                  </TextHighlighter>
+                </Tag>
+              );
+            })}
+          </Flex>
+        );
       },
+    },
+    !supportExtendedImageInfo && {
+      title: t('environment.Namespace'),
+      key: 'name',
+      dataIndex: 'name',
+      sorter: (a, b) => localeCompare(getImageFullName(a), getImageFullName(b)),
+      render: (text) => (
+        <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
+      ),
+    },
+    !supportExtendedImageInfo && {
+      title: t('environment.Base'),
+      key: 'baseimage',
+      dataIndex: 'baseimage',
+      sorter: (a, b) =>
+        localeCompare(
+          getBaseImage(getImageFullName(a) || ''),
+          getBaseImage(getImageFullName(b) || ''),
+        ),
       render: (text, row) => (
         <TextHighlighter keyword={imageSearch}>
-          {row.name ? getLang(row.name) : null}
+          {tagAlias(getBaseImage(getImageFullName(row) || ''))}
         </TextHighlighter>
       ),
     },
-    {
+    !supportExtendedImageInfo && {
       title: t('environment.Version'),
       key: 'baseversion',
       dataIndex: 'baseversion',
-      sorter: (a, b) => {
-        const baseversionA = getBaseVersion(getImageFullName(a) || '');
-        const baseversionB = getBaseVersion(getImageFullName(b) || '');
-        return baseversionA && baseversionB
-          ? baseversionA.localeCompare(baseversionB)
-          : 0;
-      },
+      sorter: (a, b) =>
+        localeCompare(
+          getBaseVersion(getImageFullName(a) || ''),
+          getBaseVersion(getImageFullName(b) || ''),
+        ),
       render: (text, row) => (
         <TextHighlighter keyword={imageSearch}>
           {getBaseVersion(getImageFullName(row) || '')}
         </TextHighlighter>
       ),
     },
-    {
-      title: t('environment.Base'),
-      key: 'baseimage',
-      dataIndex: 'baseimage',
-      sorter: (a, b) => {
-        const baseimageA =
-          !a?.tag || !a?.name ? '' : getBaseImages(a?.tag, a?.name)[0] || '';
-        const baseimageB =
-          !b?.tag || !b?.name ? '' : getBaseImages(b?.tag, b?.name)[0] || '';
-        if (baseimageA === '' && baseimageB === '') return 0;
-        if (baseimageA === '') return -1;
-        if (baseimageB === '') return 1;
-        return baseimageA.localeCompare(baseimageB);
-      },
+    !supportExtendedImageInfo && {
+      title: t('environment.Tags'),
+      key: 'tag',
+      dataIndex: 'tag',
+      sorter: (a, b) => localeCompare(a?.tag, b?.tag),
       render: (text, row) => (
-        <Flex direction="row" align="start">
-          {row?.tag && row?.name
-            ? getBaseImages(row.tag, row.name).map((baseImage) => (
-                <Tag color="green">
-                  <TextHighlighter keyword={imageSearch}>
-                    {baseImage}
-                  </TextHighlighter>
-                </Tag>
-              ))
-            : null}
-        </Flex>
+        <ImageTags
+          tag={text}
+          labels={row.labels as Array<{ key: string; value: string }>}
+          highlightKeyword={imageSearch}
+        />
       ),
-    },
-    {
-      title: t('environment.Constraint'),
-      key: 'constraint',
-      dataIndex: 'constraint',
-      sorter: (a, b) => {
-        const requirementA =
-          a?.tag && b?.labels
-            ? getConstraints(
-                a?.tag,
-                a?.labels as { key: string; value: string }[],
-              )[0] || ''
-            : '';
-        const requirementB =
-          b?.tag && b?.labels
-            ? getConstraints(
-                b?.tag,
-                b?.labels as { key: string; value: string }[],
-              )[0] || ''
-            : '';
-        if (requirementA === '' && requirementB === '') return 0;
-        if (requirementA === '') return -1;
-        if (requirementB === '') return 1;
-        return requirementA.localeCompare(requirementB);
-      },
-      render: (text, row) =>
-        row?.tag ? (
-          <ConstraintTags
-            tag={row?.tag}
-            labels={row?.labels as { key: string; value: string }[]}
-            highlightKeyword={imageSearch}
-          />
-        ) : null,
     },
     {
       title: t('environment.Digest'),
       dataIndex: 'digest',
       key: 'digest',
-      sorter: (a, b) =>
-        a?.digest && b?.digest ? a.digest.localeCompare(b.digest) : 0,
+      sorter: (a, b) => localeCompare(a?.digest || '', b?.digest || ''),
       render: (text, row) => (
-        <TextHighlighter keyword={imageSearch}>{row.digest}</TextHighlighter>
+        <Typography.Text ellipsis={{ tooltip: true }} style={{ maxWidth: 200 }}>
+          <TextHighlighter keyword={imageSearch}>{row.digest}</TextHighlighter>
+        </Typography.Text>
       ),
     },
     {
@@ -294,14 +343,6 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             e.stopPropagation();
           }}
         >
-          <CopyButton
-            type="text"
-            defaultIcon={<CopyOutlined />}
-            style={{ color: token.colorPrimary }}
-            copyable={{
-              text: getImageFullName(row) || '',
-            }}
-          ></CopyButton>
           <Button
             type="text"
             icon={
@@ -329,28 +370,39 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         </Flex>
       ),
     },
-  ];
+  ]);
+
+  const [displayedColumnKeys, setDisplayedColumnKeys] = useLocalStorageState(
+    'backendaiwebui.EnvironmentPage.displayedColumnKeys',
+    {
+      defaultValue: columns.map((column) => _.toString(column.key)),
+    },
+  );
 
   const imageFilterValues = useMemo(() => {
     return defaultSortedImages?.map((image) => {
       return {
-        installed: image?.installed ? t('environment.Installed') : '',
-        namespace: getNamespace(getImageFullName(image) || ''),
-        lang: image?.name ? getLang(image.name) : '',
+        namespace: supportExtendedImageInfo ? image?.namespace : image?.name,
+        fullName: getImageFullName(image) || '',
+        digest: image?.digest || '',
+        // ------------ need only before 24.12.0 ------------
         baseversion: getBaseVersion(getImageFullName(image) || ''),
         baseimage:
           image?.tag && image?.name ? getBaseImages(image.tag, image.name) : [],
-        constraints:
-          image?.tag && image?.labels
-            ? getConstraints(
-                image.tag,
-                image.labels as { key: string; value: string }[],
-              )
-            : [],
+        tag:
+          getTags(
+            image?.tag || '',
+            image?.labels as Array<{ key: string; value: string }>,
+          ) || [],
         isCustomized: image?.tag
           ? image.tag.indexOf('customized') !== -1
           : false,
-        fullName: getImageFullName(image) || '',
+        // -------------------------------------------------
+        // ------------ need only after 24.12.0 ------------
+        baseImageName: supportExtendedImageInfo ? image?.base_image_name : '',
+        tags: supportExtendedImageInfo ? image?.tags : [],
+        version: supportExtendedImageInfo ? image?.version : '',
+        // -------------------------------------------------
       };
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -365,29 +417,36 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         if (['digest', 'architecture', 'registry'].includes(key))
           return regExp.test(_.toString(value));
         const curFilterValues = imageFilterValues[idx] || {};
-        if (key === 'installed') return regExp.test(curFilterValues.installed);
         const baseVersionMatch = regExp.test(curFilterValues.baseversion);
         const baseImagesMatch = _.some(curFilterValues.baseimage, (value) =>
           regExp.test(value),
         );
-        const constraintsMatch = _.some(
-          curFilterValues.constraints,
-          (constraint) => regExp.test(constraint),
+        const tagMatch = _.some(
+          curFilterValues.tag,
+          (tag) => regExp.test(tag.key) || regExp.test(tag.value),
         );
         const customizedMatch = curFilterValues.isCustomized
           ? regExp.test('customized')
           : false;
-        const langMatch = regExp.test(curFilterValues.lang);
-        const namespaceMatch = regExp.test(curFilterValues.namespace);
+        const namespaceMatch = regExp.test(curFilterValues.namespace || '');
         const fullNameMatch = regExp.test(curFilterValues.fullName);
+        const tagsMatch = _.some(
+          curFilterValues.tags,
+          (tag: { key: string; value: string }) =>
+            regExp.test(tag.key) || regExp.test(tag.value),
+        );
+        const versionMatch = regExp.test(curFilterValues.version || '');
+        const digestMatch = regExp.test(curFilterValues.digest);
         return (
           baseVersionMatch ||
           baseImagesMatch ||
-          constraintsMatch ||
-          langMatch ||
+          tagMatch ||
           namespaceMatch ||
           customizedMatch ||
-          fullNameMatch
+          fullNameMatch ||
+          tagsMatch ||
+          versionMatch ||
+          digestMatch
         );
       });
     });
@@ -451,7 +510,8 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             {t('environment.Install')}
           </Button>
         </Flex>
-        <Table<EnvironmentImage>
+        <BAITable
+          resizable
           rowKey="id"
           scroll={{ x: 'max-content' }}
           pagination={{
@@ -462,13 +522,15 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             style: { marginRight: token.marginXS },
           }}
           dataSource={filterNonNullItems(filteredImageData)}
-          columns={columns}
+          columns={columns.filter((column) =>
+            displayedColumnKeys?.includes(_.toString(column.key)),
+          )}
           loading={isPendingSearchTransition}
           rowSelection={{
             type: 'checkbox',
             // hideSelectAll: true,
             // columnWidth: 48,
-            onChange: (_, selectedRows: EnvironmentImage[]) => {
+            onChange: (_, selectedRows) => {
               setSelectedRows(selectedRows);
             },
             selectedRowKeys: selectedRows.map((row) => row.id) as Key[],
@@ -488,6 +550,20 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           showSorterTooltip={false}
           sortDirections={['descend', 'ascend', 'descend']}
         />
+        <Flex
+          justify="end"
+          style={{
+            padding: token.paddingXXS,
+          }}
+        >
+          <Button
+            type="text"
+            icon={<SettingOutlined />}
+            onClick={() => {
+              setIsOpenColumnsSetting(true);
+            }}
+          />
+        </Flex>
       </Flex>
       <ManageImageResourceLimitModal
         open={!!managingResourceLimit}
@@ -518,6 +594,16 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         }}
         setInstallingImages={setInstallingImages}
         selectedRows={selectedRows}
+      />
+      <TableColumnsSettingModal
+        open={isOpenColumnsSetting}
+        onRequestClose={(values) => {
+          values?.selectedColumnKeys &&
+            setDisplayedColumnKeys(values?.selectedColumnKeys);
+          setIsOpenColumnsSetting(!isOpenColumnsSetting);
+        }}
+        columns={columns}
+        displayedColumnKeys={displayedColumnKeys ? displayedColumnKeys : []}
       />
     </>
   );

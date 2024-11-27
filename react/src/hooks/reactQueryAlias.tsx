@@ -2,10 +2,10 @@ import {
   type QueryKey,
   useQuery,
   useMutation,
-  UseQueryOptions,
   useQueryClient,
   QueryObserver,
   useSuspenseQuery,
+  UseSuspenseQueryOptions,
 } from '@tanstack/react-query';
 import { useRef } from 'react';
 
@@ -32,12 +32,9 @@ export const useSuspenseTanQuery = <
 >({
   fetchKey,
   ...options
-}: Omit<
-  UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
-    fetchKey?: string;
-  },
-  'suspense'
->) => {
+}: UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  fetchKey?: string;
+}) => {
   const queryClient = useQueryClient();
 
   const queryResult = useSuspenseQuery<TQueryFnData, TError, TData, TQueryKey>({

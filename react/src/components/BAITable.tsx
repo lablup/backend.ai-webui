@@ -1,6 +1,7 @@
+import { useDebounce } from 'ahooks';
 import { GetProps, Table } from 'antd';
 import { createStyles } from 'antd-style';
-import { ColumnsType } from 'antd/es/table';
+import { ColumnsType, ColumnType } from 'antd/es/table';
 import { TableProps } from 'antd/lib';
 import _ from 'lodash';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -34,14 +35,15 @@ const ResizableTitle = (
     width: number;
   },
 ) => {
-  const { onResize, width, ...restProps } = props;
-
+  const { onResize, width, onClick, ...restProps } = props;
   const wrapRef = useRef<HTMLTableCellElement>(null);
+  const [isResizing, setIsResizing] = useState(false);
+  const debouncedIsResizing = useDebounce(isResizing, { wait: 100 });
 
   // This is a workaround for the initial width of resizable columns if the width is not specified
   useEffect(() => {
     if (wrapRef.current && _.isUndefined(width)) {
-      onResize(undefined, {
+      onResize?.(undefined, {
         size: {
           width: wrapRef.current.offsetWidth,
           height: wrapRef.current.offsetHeight,
@@ -67,20 +69,36 @@ const ResizableTitle = (
         />
       }
       onResize={onResize}
+      onResizeStart={() => {
+        setIsResizing(true);
+      }}
+      onResizeStop={() => {
+        setIsResizing(false);
+      }}
       draggableOpts={{ enableUserSelectHack: false }}
     >
-      <th {...restProps} />
+      <th
+        onClick={(e) => {
+          if (debouncedIsResizing) {
+            e.preventDefault();
+          } else {
+            onClick?.(e);
+          }
+        }}
+        {...restProps}
+      />
     </Resizable>
   );
 };
 
-interface BAITableProps extends TableProps {
+interface BAITableProps<RecordType extends object = any>
+  extends TableProps<RecordType> {
   resizable?: boolean;
 }
 
 const columnKeyOrIndexKey = (column: any, index: number) =>
   column.key || `index_${index}`;
-const generateResizedColumnWidths = (columns?: ColumnsType) => {
+const generateResizedColumnWidths = (columns?: ColumnsType<any>) => {
   const widths: Record<string, number> = {};
   _.each(columns, (column, index) => {
     widths[columnKeyOrIndexKey(column, index)] = column.width as number;
@@ -88,12 +106,12 @@ const generateResizedColumnWidths = (columns?: ColumnsType) => {
   return widths;
 };
 
-const BAITable: React.FC<BAITableProps> = ({
+const BAITable = <RecordType extends object = any>({
   resizable = false,
   columns,
   components,
   ...tableProps
-}) => {
+}: BAITableProps<RecordType>) => {
   const { styles } = useStyles();
 
   const [resizedColumnWidths, setResizedColumnWidths] = useState<
@@ -111,7 +129,7 @@ const BAITable: React.FC<BAITableProps> = ({
               width:
                 resizedColumnWidths[columnKeyOrIndexKey(column, index)] ||
                 column.width,
-              onHeaderCell: (column: ColumnsType[number]) => {
+              onHeaderCell: (column: ColumnType<RecordType>) => {
                 return {
                   width: column.width,
                   onResize: (e, { size }) => {
@@ -122,12 +140,14 @@ const BAITable: React.FC<BAITableProps> = ({
                   },
                 } as GetProps<typeof ResizableTitle>;
               },
-            }) as ColumnsType[number],
+            }) as ColumnType<RecordType>,
         );
   }, [resizable, columns, resizedColumnWidths]);
 
   return (
     <Table
+      sortDirections={['descend', 'ascend', 'descend']}
+      showSorterTooltip={false}
       className={resizable ? styles.resizableTable : ''}
       components={
         resizable

@@ -1,11 +1,12 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
-import BAIIntervalText from './BAIIntervalText';
+import BAIIntervalView from './BAIIntervalView';
 import Flex from './Flex';
 import { ClockCircleOutlined } from '@ant-design/icons';
-import { Button, Tooltip } from 'antd';
+import { Button, ConfigProvider, Grid, Tooltip } from 'antd';
 import { default as dayjs } from 'dayjs';
+import { Repeat2Icon } from 'lucide-react';
 import React, { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -18,6 +19,8 @@ const LoginSessionExtendButton: React.FC<
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const [isPending, startTransition] = useTransition();
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
+
+  const gridBreakpoint = Grid.useBreakpoint();
 
   const { data } = useSuspenseTanQuery<{
     expires: string;
@@ -33,37 +36,56 @@ const LoginSessionExtendButton: React.FC<
   });
 
   return (
-    <Flex direction="row" gap="xxs">
-      <Tooltip title={t('general.RemainingLoginSessionTime')}>
-        <Flex gap={'xxs'}>
-          <ClockCircleOutlined />
-          <BAIIntervalText
-            callback={() => {
-              const diff = dayjs(data?.expires).diff(dayjs(), 'seconds');
-              const duration = dayjs.duration(Math.max(0, diff), 'seconds');
-              const days = duration.days();
-              if (duration.seconds() === 0) {
-                // @ts-ignore
-                if (globalThis.isElectron) {
-                  // @ts-ignore
-                  globalThis.location.href = globalThis.electronInitialHref;
-                } else {
-                  globalThis.location.reload();
-                }
-              }
-              return `${days ? days + 'd ' : ''}${duration.format('HH:mm:ss')}`;
-            }}
-            delay={100}
-          ></BAIIntervalText>
-        </Flex>
-      </Tooltip>
-      <Button
-        loading={isPending}
-        onClick={() => startTransition(() => updateFetchKey())}
-        size="small"
+    <Flex direction="row" gap="xs">
+      <BAIIntervalView
+        callback={() => {
+          const diff = dayjs(data?.expires).diff(dayjs(), 'seconds');
+          const duration = dayjs.duration(Math.max(0, diff), 'seconds');
+          const days = duration.days();
+          if (duration.seconds() === 0) {
+            // @ts-ignore
+            if (globalThis.isElectron) {
+              // @ts-ignore
+              globalThis.location.href = globalThis.electronInitialHref;
+            } else {
+              globalThis.location.reload();
+            }
+          }
+          return gridBreakpoint.lg
+            ? `${days ? days + 'd ' : ''}${duration.format('HH:mm:ss')}`
+            : days
+              ? days + 'd'
+              : duration.format('HH:mm:ss');
+        }}
+        delay={100}
+        render={(text) => {
+          return (
+            <Tooltip title={t('general.RemainingLoginSessionTime')}>
+              <Flex gap={'xxs'}>
+                <ClockCircleOutlined />
+                {text}
+              </Flex>
+            </Tooltip>
+          );
+        }}
+      />
+      <ConfigProvider
+        theme={{
+          token: {
+            // hack to change the primary hover color for header
+            colorPrimaryHover: 'rgb(255,255,255,0.15)',
+          },
+        }}
       >
-        {t('general.Extend')}
-      </Button>
+        <Tooltip title={t('general.ExtendLoginSession')}>
+          <Button
+            type="primary"
+            loading={isPending}
+            onClick={() => startTransition(() => updateFetchKey())}
+            icon={<Repeat2Icon />}
+          />
+        </Tooltip>
+      </ConfigProvider>
     </Flex>
   );
 };

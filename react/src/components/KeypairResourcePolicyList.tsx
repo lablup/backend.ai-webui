@@ -119,16 +119,19 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
       render: (text, row) => (
         <Flex gap={'xxs'}>
           {!_.isEmpty(JSON.parse(row?.total_resource_slots || '{}'))
-            ? _.map(JSON.parse(row?.total_resource_slots), (value, type) => {
-                return (
-                  <ResourceNumber
-                    key={type}
-                    // @ts-ignore
-                    type={type}
-                    value={_.toString(value)}
-                  />
-                );
-              })
+            ? _.map(
+                JSON.parse(row?.total_resource_slots || '{}'),
+                (value, type) => {
+                  return (
+                    <ResourceNumber
+                      key={type}
+                      // @ts-ignore
+                      type={type}
+                      value={_.toString(value)}
+                    />
+                  );
+                },
+              )
             : '-'}
         </Flex>
       ),

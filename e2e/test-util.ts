@@ -226,7 +226,7 @@ export async function createSession(page: Page, sessionName: string) {
   await page
     .getByRole('heading', { name: 'App close' })
     .getByLabel('close')
-    .click();
+    .click({ timeout: 30000 });
 
   // Verify that a cell exists to display the session name
   const session = page
@@ -256,7 +256,9 @@ export async function deleteSession(page: Page, sessionName: string) {
 
   // Verify session is cleared
   await searchSessionInfo.fill('');
-  await expect(page.getByText(sessionName)).toBeHidden();
+  await expect(
+    page.locator('vaadin-grid-cell-content').filter({ hasText: sessionName }),
+  ).toBeHidden({ timeout: 30_000 });
 }
 
 /**

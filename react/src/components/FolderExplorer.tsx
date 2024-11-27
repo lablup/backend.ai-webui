@@ -12,7 +12,14 @@ import dayjs from 'dayjs';
 import _ from 'lodash';
 import React, { useState, useTransition } from 'react';
 
-// import { useRecoilValue } from "recoil";
+interface FileItem {
+  name: string;
+  type: string;
+  size: number;
+  mode: string;
+  created: string;
+  modified: string;
+}
 
 interface Props extends ModalProps {
   defaultSelectedKeys?: React.Key[];
@@ -65,16 +72,15 @@ const FolderExplorer: React.FC<Props> = ({
 
   const baiClient = useSuspendedBackendaiClient();
 
-  const { data: fileList } = useSuspenseTanQuery({
+  const { data: fileList } = useSuspenseTanQuery<Array<FileItem>>({
     queryKey: ['FolderExplorer', folderName, path.join('/')],
     queryFn: () => {
       if (!props.open || !folderName) {
-        return null;
+        return [];
       }
       return baiClient.vfolder
         .list_files(path.join('/'), folderName)
         .then((res: any) => {
-          console.log('###', res.items);
           // if (res.status === 404) {
           //   return null;
           // }

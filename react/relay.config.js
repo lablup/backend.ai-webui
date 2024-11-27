@@ -24,12 +24,13 @@ module.exports = {
   exclude: ['**/node_modules/**', '**/__mocks__/**', '**/__generated__/**'],
   // noFutureProofEnums: true,
   featureFlags: {
-    enable_relay_resolver_transform: true,
+    // enable_relay_resolver_transform: true,
   },
   customScalarTypes: {
     // Be careful, the value of this setting is a typescript type. It is not a `String`.
     // https://www.typescriptlang.org/docs/handbook/declaration-files/do-s-and-don-ts.html#number-string-boolean-symbol-and-object
     DateTime: 'string',
     UUID: 'string',
+    JSONString: 'string',
   },
 };

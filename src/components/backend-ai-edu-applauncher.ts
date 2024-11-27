@@ -258,18 +258,28 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         'TERMINATING',
         'PENDING',
         'SCHEDULED',
+        globalThis.backendaiclient.supports('prepared-session-status')
+          ? 'PREPARED'
+          : undefined,
         'PREPARING',
         'PULLING',
-      ].join(',');
+      ]
+        .filter((v) => !!v)
+        .join(',');
     } else {
       statuses = [
         'RUNNING',
         'RESTARTING',
         'TERMINATING',
         'PENDING',
+        globalThis.backendaiclient.supports('prepared-session-status')
+          ? 'PREPARED'
+          : undefined,
         'PREPARING',
         'PULLING',
-      ].join(',');
+      ]
+        .filter((v) => !!v)
+        .join(',');
     }
 
     const accessKey = globalThis.backendaiclient._config.accessKey;

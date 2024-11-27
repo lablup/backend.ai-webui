@@ -90,6 +90,12 @@ module.exports = {
             stream: require.resolve('stream-browserify'),
           },
         },
+        ignoreWarnings: [
+          {
+            module: /@melloware\/react-logviewer/,
+            message: /Failed to parse source map/,
+          }
+        ],
       };
     },
   },

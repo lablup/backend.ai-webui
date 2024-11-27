@@ -578,7 +578,12 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   _isPreparing(status) {
-    const preparingStatuses = ['RESTARTING', 'PREPARING', 'PULLING'];
+    const preparingStatuses = [
+      'RESTARTING',
+      'PREPARED',
+      'PREPARING',
+      'PULLING',
+    ];
     if (preparingStatuses.indexOf(status) === -1) {
       return false;
     }
@@ -764,6 +769,9 @@ export default class BackendAISessionList extends BackendAIPage {
           'PULLING',
           'ERROR',
         ];
+        if (globalThis.backendaiclient.supports('prepared-session-status')) {
+          status.push('PREPARED');
+        }
         break;
       case 'finished':
         status = ['TERMINATED', 'CANCELLED']; // TERMINATED, CANCELLED
@@ -778,6 +786,9 @@ export default class BackendAISessionList extends BackendAIPage {
           'PREPARING',
           'PULLING',
         ];
+        if (globalThis.backendaiclient.supports('prepared-session-status')) {
+          status.push('PREPARED');
+        }
     }
     if (
       !globalThis.backendaiclient.supports('avoid-hol-blocking') &&
@@ -1109,13 +1120,16 @@ export default class BackendAISessionList extends BackendAIPage {
                 sessions[objectKey].cpu_used_time =
                   this._automaticScaledTime(0);
               }
-              if (this.is_superadmin) {
+              if (
+                this.is_superadmin ||
+                !globalThis.backendaiclient._config.hideAgents
+              ) {
                 sessions[objectKey].agents_ids_with_container_ids = sessions[
                   objectKey
                 ].containers
                   ?.map((c) => {
-                    const agentID = c.agent;
-                    const containerID = c.container_id?.slice(0, 4);
+                    const agentID = c.agent ?? '-';
+                    const containerID = c.container_id?.slice(0, 4) ?? '-';
                     return `${agentID}(${containerID})`;
                   })
                   ?.join('\n');
@@ -1647,37 +1661,45 @@ export default class BackendAISessionList extends BackendAIPage {
    * Show logs - work title, session logs, session name, and access key.
    */
   _showLogs() {
-    globalThis.backendaiclient
-      .get_logs(
-        this.workDialog.sessionUuid,
-        this.workDialog.accessKey,
-        this.selectedKernelId !== '' ? this.selectedKernelId : null,
-        15000,
-      )
-      .then((req) => {
-        const ansi_up = new AnsiUp();
-        const logs = ansi_up.ansi_to_html(req.result.logs);
-        (
-          this.shadowRoot?.querySelector('#work-title') as HTMLSpanElement
-        ).innerHTML =
-          `${this.workDialog.sessionName} (${this.workDialog.sessionUuid})`;
-        (
-          this.shadowRoot?.querySelector('#work-area') as HTMLDivElement
-        ).innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
-        // TODO define extended type for custom properties
-        this.workDialog.show();
-      })
-      .catch((err) => {
-        if (err && err.message) {
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.detail = err.message;
-          this.notification.show(true, err);
-        } else if (err && err.title) {
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.detail = '';
-          this.notification.show(true, err);
-        }
-      });
+    if (globalThis.backendaiclient.supports('session-node')) {
+      document.dispatchEvent(
+        new CustomEvent('bai-open-session-log', {
+          detail: this.workDialog.sessionUuid,
+        }),
+      );
+    } else {
+      globalThis.backendaiclient
+        .get_logs(
+          this.workDialog.sessionUuid,
+          this.workDialog.accessKey,
+          this.selectedKernelId !== '' ? this.selectedKernelId : null,
+          15000,
+        )
+        .then((req) => {
+          const ansi_up = new AnsiUp();
+          const logs = ansi_up.ansi_to_html(req.result.logs);
+          (
+            this.shadowRoot?.querySelector('#work-title') as HTMLSpanElement
+          ).innerHTML =
+            `${this.workDialog.sessionName} (${this.workDialog.sessionUuid})`;
+          (
+            this.shadowRoot?.querySelector('#work-area') as HTMLDivElement
+          ).innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
+          // TODO define extended type for custom properties
+          this.workDialog.show();
+        })
+        .catch((err) => {
+          if (err && err.message) {
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.detail = err.message;
+            this.notification.show(true, err);
+          } else if (err && err.title) {
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.detail = '';
+            this.notification.show(true, err);
+          }
+        });
+    }
   }
 
   _downloadLogs() {
@@ -3013,6 +3035,25 @@ export default class BackendAISessionList extends BackendAIPage {
     );
   }
 
+  copyText(text: string) {
+    if (navigator.clipboard !== undefined) {
+      // for Chrome, Safari
+      navigator?.clipboard?.writeText(text)?.then((err) => {
+        console.error('Could not copy text: ', err);
+      });
+    } else {
+      // other browsers
+      const tmpInputElement = document.createElement('input');
+      tmpInputElement.type = 'text';
+      tmpInputElement.value = text;
+
+      document.body.appendChild(tmpInputElement);
+      tmpInputElement.select();
+      document.execCommand('copy');
+      document.body.removeChild(tmpInputElement);
+    }
+  }
+
   /**
    * Render session information - category, color, description, etc.
    *
@@ -3109,10 +3150,8 @@ ${rowData.item[this.sessionNameField]}</pre
                 id="session-name-copy-icon"
                 class="fg controls-running"
                 icon="content_copy"
-                @click="${async () =>
-                  await navigator.clipboard.writeText(
-                    rowData.item[this.sessionNameField],
-                  )}"
+                @click="${() =>
+                  this.copyText(rowData.item[this.sessionNameField])}"
               ></mwc-icon-button>
             </div>
             <div class="horizontal center center-justified layout">
@@ -3846,6 +3885,39 @@ ${rowData.item[this.sessionNameField]}</pre
                   </div>
                 `
               : html``}
+            ${rowData.item.tpu_slot
+              ? html`
+                  <div class="vertical start-justified layout">
+                    <div class="usage-items">
+                      TPU(mem)
+                      ${rowData.item.live_stat
+                        ? `${BackendAISessionList._prefixFormatWithoutTrailingZeros(
+                            BackendAISessionList.bytesToGiB(
+                              rowData.item.live_stat?.tpu_mem?.current,
+                              2,
+                            ),
+                            2,
+                          )} /
+                    ${BackendAISessionList._prefixFormatWithoutTrailingZeros(
+                      BackendAISessionList.bytesToGiB(
+                        rowData.item.live_stat?.tpu_mem?.capacity,
+                        2,
+                      ),
+                      2,
+                    )}`
+                        : `-`}
+                      GiB
+                    </div>
+                    <div class="horizontal start-justified center layout">
+                      <lablup-progress-bar
+                        class="usage"
+                        progress="${rowData.item.live_stat?.tpu_mem?.ratio}"
+                        description=""
+                      ></lablup-progress-bar>
+                    </div>
+                  </div>
+                `
+              : html``}
             ${rowData.item.ipu_slot && parseFloat(rowData.item.ipu_slot) > 0
               ? html`
                   <div class="vertical start-justified layout">
@@ -3863,6 +3935,39 @@ ${rowData.item[this.sessionNameField]}</pre
                         class="usage"
                         progress="${rowData.item?.live_stat?.ipu_util?.current /
                           rowData.item?.live_stat?.ipu_util?.capacity || 0}"
+                        description=""
+                      ></lablup-progress-bar>
+                    </div>
+                  </div>
+                `
+              : html``}
+            ${rowData.item.ipu_slot
+              ? html`
+                  <div class="vertical start-justified layout">
+                    <div class="usage-items">
+                      IPU(mem)
+                      ${rowData.item.live_stat
+                        ? `${BackendAISessionList._prefixFormatWithoutTrailingZeros(
+                            BackendAISessionList.bytesToGiB(
+                              rowData.item.live_stat?.ipu_mem?.current,
+                              2,
+                            ),
+                            2,
+                          )} /
+                      ${BackendAISessionList._prefixFormatWithoutTrailingZeros(
+                        BackendAISessionList.bytesToGiB(
+                          rowData.item.live_stat?.ipu_mem?.capacity,
+                          2,
+                        ),
+                        2,
+                      )}`
+                        : `-`}
+                      GiB
+                    </div>
+                    <div class="horizontal start-justified center layout">
+                      <lablup-progress-bar
+                        class="usage"
+                        progress="${rowData.item.live_stat?.ipu_mem?.ratio}"
                         description=""
                       ></lablup-progress-bar>
                     </div>
@@ -3887,6 +3992,334 @@ ${rowData.item[this.sessionNameField]}</pre
                         progress="${rowData.item?.live_stat?.atom_util
                           ?.current /
                           rowData.item?.live_stat?.atom_util?.capacity || 0}"
+                        description=""
+                      ></lablup-progress-bar>
+                    </div>
+                  </div>
+                `
+              : html``}
+            ${rowData.item.atom_slot
+              ? html`
+                  <div class="vertical start-justified layout">
+                    <div class="usage-items">
+                      ATOM(mem)
+                      ${rowData.item.live_stat
+                        ? `${BackendAISessionList._prefixFormatWithoutTrailingZeros(
+                            BackendAISessionList.bytesToGiB(
+                              rowData.item.live_stat?.atom_mem?.current,
+                              2,
+                            ),
+                            2,
+                          )} /
+                      ${BackendAISessionList._prefixFormatWithoutTrailingZeros(
+                        BackendAISessionList.bytesToGiB(
+                          rowData.item.live_stat?.atom_mem?.capacity,
+                          2,
+                        ),
+                        2,
+                      )}`
+                        : `-`}
+                      GiB
+                    </div>
+                    <div class="horizontal start-justified center layout">
+                      <lablup-progress-bar
+                        class="usage"
+                        progress="${rowData.item.live_stat?.atom_mem?.ratio}"
+                        description=""
+                      ></lablup-progress-bar>
+                    </div>
+                  </div>
+                `
+              : html``}
+            ${rowData.item.atom_plus_slot &&
+            parseFloat(rowData.item.atom_plus_slot) > 0
+              ? html`
+                  <div class="vertical start-justified layout">
+                    <div class="usage-items">
+                      ATOM+(util)
+                      ${rowData.item.live_stat?.atom_plus_util
+                        ? (
+                            rowData.item.live_stat?.atom_plus_util?.ratio * 100
+                          ).toFixed(1)
+                        : `-`}
+                      %
+                    </div>
+                    <div class="horizontal start-justified center layout">
+                      <lablup-progress-bar
+                        class="usage"
+                        progress="${rowData.item?.live_stat?.atom_plus_util
+                          ?.current /
+                          rowData.item?.live_stat?.atom_plus_util?.capacity ||
+                        0}"
+                        description=""
+                      ></lablup-progress-bar>
+                    </div>
+                  </div>
+                `
+              : html``}
+            ${rowData.item.atom_plus_slot
+              ? html`
+                  <div class="vertical start-justified layout">
+                    <div class="usage-items">
+                      ATOM+(mem)
+                      ${rowData.item.live_stat
+                        ? `${BackendAISessionList._prefixFormatWithoutTrailingZeros(
+                            BackendAISessionList.bytesToGiB(
+                              rowData.item.live_stat?.atom_plus_mem?.current,
+                              2,
+                            ),
+                            2,
+                          )} /
+                      ${BackendAISessionList._prefixFormatWithoutTrailingZeros(
+                        BackendAISessionList.bytesToGiB(
+                          rowData.item.live_stat?.atom_plus_mem?.capacity,
+                          2,
+                        ),
+                        2,
+                      )}`
+                        : `-`}
+                      GiB
+                    </div>
+                    <div class="horizontal start-justified center layout">
+                      <lablup-progress-bar
+                        class="usage"
+                        progress="${rowData.item.live_stat?.atom_plus_mem
+                          ?.ratio}"
+                        description=""
+                      ></lablup-progress-bar>
+                    </div>
+                  </div>
+                `
+              : html``}
+            ${rowData.item.gaudi2_slot &&
+            parseFloat(rowData.item.gaudi2_slot) > 0
+              ? html`
+                  <div class="vertical start-justified layout">
+                    <div class="usage-items">
+                      Gaudi 2(util)
+                      ${rowData.item.live_stat?.gaudi2_util
+                        ? (
+                            rowData.item.live_stat?.gaudi2_util?.ratio * 100
+                          ).toFixed(1)
+                        : `-`}
+                      %
+                    </div>
+                    <div class="horizontal start-justified center layout">
+                      <lablup-progress-bar
+                        class="usage"
+                        progress="${rowData.item?.live_stat?.gaudi2_util
+                          ?.current /
+                          rowData.item?.live_stat?.gaudi2_util?.capacity || 0}"
+                        description=""
+                      ></lablup-progress-bar>
+                    </div>
+                  </div>
+                `
+              : html``}
+            ${rowData.item.gaudi2_slot
+              ? html`
+                  <div class="vertical start-justified layout">
+                    <div class="usage-items">
+                      Gaudi 2(mem)
+                      ${rowData.item.live_stat
+                        ? `${BackendAISessionList._prefixFormatWithoutTrailingZeros(
+                            BackendAISessionList.bytesToGiB(
+                              rowData.item.live_stat?.gaudi2_mem?.current,
+                              2,
+                            ),
+                            2,
+                          )} /
+                      ${BackendAISessionList._prefixFormatWithoutTrailingZeros(
+                        BackendAISessionList.bytesToGiB(
+                          rowData.item.live_stat?.gaudi2_mem?.capacity,
+                          2,
+                        ),
+                        2,
+                      )}`
+                        : `-`}
+                      GiB
+                    </div>
+                    <div class="horizontal start-justified center layout">
+                      <lablup-progress-bar
+                        class="usage"
+                        progress="${rowData.item.live_stat?.gaudi2_mem?.ratio}"
+                        description=""
+                      ></lablup-progress-bar>
+                    </div>
+                  </div>
+                `
+              : html``}
+            ${rowData.item.warboy_slot &&
+            parseFloat(rowData.item.warboy_slot) > 0
+              ? html`
+                  <div class="vertical start-justified layout">
+                    <div class="usage-items">
+                      Warboy(util)
+                      ${rowData.item.live_stat?.warboy_util
+                        ? (
+                            rowData.item.live_stat?.warboy_util?.ratio * 100
+                          ).toFixed(1)
+                        : `-`}
+                      %
+                    </div>
+                    <div class="horizontal start-justified center layout">
+                      <lablup-progress-bar
+                        class="usage"
+                        progress="${rowData.item?.live_stat?.warboy_util
+                          ?.current /
+                          rowData.item?.live_stat?.warboy_util?.capacity || 0}"
+                        description=""
+                      ></lablup-progress-bar>
+                    </div>
+                  </div>
+                `
+              : html``}
+            ${rowData.item.warboy_slot
+              ? html`
+                  <div class="vertical start-justified layout">
+                    <div class="usage-items">
+                      Warboy(mem)
+                      ${rowData.item.live_stat
+                        ? `${BackendAISessionList._prefixFormatWithoutTrailingZeros(
+                            BackendAISessionList.bytesToGiB(
+                              rowData.item.live_stat?.warboy_mem?.current,
+                              2,
+                            ),
+                            2,
+                          )} /
+                        ${BackendAISessionList._prefixFormatWithoutTrailingZeros(
+                          BackendAISessionList.bytesToGiB(
+                            rowData.item.live_stat?.warboy_mem?.capacity,
+                            2,
+                          ),
+                          2,
+                        )}`
+                        : `-`}
+                      GiB
+                    </div>
+                    <div class="horizontal start-justified center layout">
+                      <lablup-progress-bar
+                        class="usage"
+                        progress="${rowData.item.live_stat?.warboy_mem?.ratio}"
+                        description=""
+                      ></lablup-progress-bar>
+                    </div>
+                  </div>
+                `
+              : html``}
+            ${rowData.item.rngd_slot && parseFloat(rowData.item.rngd_slot) > 0
+              ? html`
+                  <div class="vertical start-justified layout">
+                    <div class="usage-items">
+                      RNGD(util)
+                      ${rowData.item.live_stat?.rngd_util
+                        ? (
+                            rowData.item.live_stat?.rngd_util?.ratio * 100
+                          ).toFixed(1)
+                        : `-`}
+                      %
+                    </div>
+                    <div class="horizontal start-justified center layout">
+                      <lablup-progress-bar
+                        class="usage"
+                        progress="${rowData.item?.live_stat?.rngd_util
+                          ?.current /
+                          rowData.item?.live_stat?.rngd_util?.capacity || 0}"
+                        description=""
+                      ></lablup-progress-bar>
+                    </div>
+                  </div>
+                `
+              : html``}
+            ${rowData.item.rngd_slot
+              ? html`
+                  <div class="vertical start-justified layout">
+                    <div class="usage-items">
+                      RNGD(mem)
+                      ${rowData.item.live_stat
+                        ? `${BackendAISessionList._prefixFormatWithoutTrailingZeros(
+                            BackendAISessionList.bytesToGiB(
+                              rowData.item.live_stat?.rngd_mem?.current,
+                              2,
+                            ),
+                            2,
+                          )} /
+                      ${BackendAISessionList._prefixFormatWithoutTrailingZeros(
+                        BackendAISessionList.bytesToGiB(
+                          rowData.item.live_stat?.rngd_mem?.capacity,
+                          2,
+                        ),
+                        2,
+                      )}`
+                        : `-`}
+                      GiB
+                    </div>
+                    <div class="horizontal start-justified center layout">
+                      <lablup-progress-bar
+                        class="usage"
+                        progress="${rowData.item.live_stat?.rngd_mem?.ratio}"
+                        description=""
+                      ></lablup-progress-bar>
+                    </div>
+                  </div>
+                `
+              : html``}
+            ${rowData.item.hyeraccel_lpu_slot &&
+            parseFloat(rowData.item.hyeraccel_lpu_slot) > 0
+              ? html`
+                  <div class="vertical start-justified layout">
+                    <div class="usage-items">
+                      Hyperaccel LPU(util)
+                      ${rowData.item.live_stat?.hyeraccel_lpu_util
+                        ? (
+                            rowData.item.live_stat?.hyeraccel_lpu_util?.ratio *
+                            100
+                          ).toFixed(1)
+                        : `-`}
+                      %
+                    </div>
+                    <div class="horizontal start-justified center layout">
+                      <lablup-progress-bar
+                        class="usage"
+                        progress="${rowData.item?.live_stat?.hyeraccel_lpu_util
+                          ?.current /
+                          rowData.item?.live_stat?.hyeraccel_lpu_util
+                            ?.capacity || 0}"
+                        description=""
+                      ></lablup-progress-bar>
+                    </div>
+                  </div>
+                `
+              : html``}
+            ${rowData.item.hyeraccel_lpu_slot
+              ? html`
+                  <div class="vertical start-justified layout">
+                    <div class="usage-items">
+                      Hyperaccel LPU(mem)
+                      ${rowData.item.live_stat
+                        ? `${BackendAISessionList._prefixFormatWithoutTrailingZeros(
+                            BackendAISessionList.bytesToGiB(
+                              rowData.item.live_stat?.hyeraccel_lpu_mem
+                                ?.current,
+                              2,
+                            ),
+                            2,
+                          )} /
+                      ${BackendAISessionList._prefixFormatWithoutTrailingZeros(
+                        BackendAISessionList.bytesToGiB(
+                          rowData.item.live_stat?.hyeraccel_lpu_mem?.capacity,
+                          2,
+                        ),
+                        2,
+                      )}`
+                        : `-`}
+                      GiB
+                    </div>
+                    <div class="horizontal start-justified center layout">
+                      <lablup-progress-bar
+                        class="usage"
+                        progress="${rowData.item.live_stat?.hyeraccel_lpu_mem
+                          ?.ratio}"
                         description=""
                       ></lablup-progress-bar>
                     </div>
@@ -4154,7 +4587,7 @@ ${rowData.item[this.sessionNameField]}</pre
     render(
       // language=HTML
       html`
-        <pre>${rowData.item.agents_ids_with_container_ids}</pre>
+        <pre>${rowData?.item?.agents_ids_with_container_ids ?? ''}</pre>
       `,
       root,
     );

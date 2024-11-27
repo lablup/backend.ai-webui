@@ -1,5 +1,5 @@
 import App from './App';
-import BAIIntervalText from './components/BAIIntervalText';
+import BAIIntervalView from './components/BAIIntervalView';
 import { jotaiStore, useWebComponentInfo } from './components/DefaultProviders';
 import Flex from './components/Flex';
 import FlexActivityIndicator from './components/FlexActivityIndicator';
@@ -19,6 +19,24 @@ import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import { useTranslation } from 'react-i18next';
 import { Route, Routes } from 'react-router-dom';
+
+// To maintain compatibility with various manager versions, the WebUI client uses directives to manipulate GraphQL queries.
+// This can cause Relay to show "Warning: RelayResponseNormalizer: Payload did not contain a value for field" in the browser console during development.
+// It's advisable to ignore these frequent logs in development mode.
+if (process.env.NODE_ENV === 'development') {
+  const originalConsoleError = console.error;
+  console.error = function (message, ...args) {
+    if (
+      typeof message === 'string' &&
+      message.includes(
+        'Warning: RelayResponseNormalizer: Payload did not contain a value for field',
+      )
+    ) {
+      return;
+    }
+    originalConsoleError.apply(console, [message, ...args]);
+  };
+}
 
 // Load custom theme config once in react/index.tsx
 loadCustomThemeConfig();
@@ -334,7 +352,7 @@ const ReservationTimeCounter = (props: ReactWebComponentProps) => {
           borderBottomRightRadius: token.borderRadiusSM,
         }}
       >
-        <BAIIntervalText
+        <BAIIntervalView
           callback={() => {
             return baiClient.utils.elapsedTime(
               parsedValue.starts_at,

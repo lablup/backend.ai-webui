@@ -266,7 +266,7 @@ class Client {
     this._features = {}; // feature support list
     this.abortController = new AbortController();
     this.abortSignal = this.abortController.signal;
-    this.requestTimeout = 15000;
+    this.requestTimeout = 30000;
     if (localStorage.getItem('backendaiwebui.sessionid')) {
       this._loginSessionId = localStorage.getItem('backendaiwebui.sessionid');
     } else {
@@ -716,6 +716,15 @@ class Client {
     }
     if (this.isManagerVersionCompatibleWith('24.09')) {
       this._features['extend-login-session'] = true;
+      this._features['session-node'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('24.09.1')) {
+      this._features['agent-select'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('24.12.0')) {
+      this._features['extended-image-info'] = true;
+      this._features['batch-timeout'] = true;
+      this._features['prepared-session-status'] = true;
     }
   }
 
@@ -1011,8 +1020,9 @@ class Client {
     kernelType: string,
     sessionId: string,
     resources = {},
-    timeout: number = 0,
+    timeout: number = 30000,
     architecture: string = 'x86_64',
+    batchTimeout?: string,
   ) {
     if (
       typeof sessionId === 'undefined' ||
@@ -1026,6 +1036,9 @@ class Client {
       clientSessionToken: sessionId,
       architecture: architecture,
     };
+    if (batchTimeout) {
+      params['batch_timeout'] = batchTimeout;
+    }
     if (resources && Object.keys(resources).length !== 0) {
       let config = {};
       if (resources['cpu']) {
@@ -1118,6 +1131,9 @@ class Client {
       if (resources['owner_access_key']) {
         params['owner_access_key'] = resources['owner_access_key'];
       }
+      if (resources['batch_timeout']) {
+        params['batch_timeout'] = resources['batch_timeout'];
+      }
       params['config'] = { resources: config };
       if (resources['mounts']) {
         params['config'].mounts = resources['mounts'];
@@ -1137,6 +1153,9 @@ class Client {
       }
       if (resources['preopen_ports']) {
         params['config'].preopen_ports = resources['preopen_ports'];
+      }
+      if (resources['agent_list']) {
+        params['config'].agent_list = resources['agent_list'];
       }
     }
     let rqst;

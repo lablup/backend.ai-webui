@@ -1,4 +1,4 @@
-import { iSizeToSize } from '../helper';
+import { convertBinarySizeUnit } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
@@ -93,16 +93,19 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                 </Typography.Title>
                 <BAIProgressWithLabel
                   percent={
-                    ((iSizeToSize(_.toString(agent?.mem_cur_bytes), 'g')
-                      ?.number ?? 0) /
-                      (iSizeToSize(parsedAvailableSlots?.mem, 'g')?.number ??
-                        0)) *
-                      100 ?? 0
+                    (_.toNumber(
+                      convertBinarySizeUnit(_.toString(agent?.mem_cur_bytes), 'g')
+                        ?.number,
+                    ) /
+                      _.toNumber(
+                        convertBinarySizeUnit(parsedAvailableSlots?.mem, 'g')?.number,
+                      )) *
+                      100 || 0
                   }
                   valueLabel={`${
-                    iSizeToSize(_.toString(agent?.mem_cur_bytes), 'g')
+                    convertBinarySizeUnit(_.toString(agent?.mem_cur_bytes), 'g')
                       ?.numberUnit
-                  }iB / ${iSizeToSize(parsedAvailableSlots?.mem, 'g')?.numberUnit}iB`}
+                  }iB / ${convertBinarySizeUnit(parsedAvailableSlots?.mem, 'g')?.numberUnit}iB`}
                 />
               </Flex>
             ) : null}
@@ -115,8 +118,11 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                   <Typography.Text>TX:</Typography.Text>
                   <Typography.Text>
                     {
-                      iSizeToSize(parsedLiveStat?.node?.net_tx?.current, 'm', 1)
-                        ?.numberUnit
+                      convertBinarySizeUnit(
+                        parsedLiveStat?.node?.net_tx?.current,
+                        'm',
+                        1,
+                      )?.numberUnit
                     }
                     iB
                   </Typography.Text>
@@ -125,8 +131,11 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                   <Typography.Text>RX:</Typography.Text>
                   <Typography.Text>
                     {
-                      iSizeToSize(parsedLiveStat?.node?.net_rx?.current, 'm', 1)
-                        ?.numberUnit
+                      convertBinarySizeUnit(
+                        parsedLiveStat?.node?.net_rx?.current,
+                        'm',
+                        1,
+                      )?.numberUnit
                     }
                     iB
                   </Typography.Text>

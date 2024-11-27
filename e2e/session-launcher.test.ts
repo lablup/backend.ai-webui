@@ -8,11 +8,13 @@ import {
 import { test, expect } from '@playwright/test';
 
 test.describe('NEO Sessions Launcher', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page }, testInfo) => {
+    // session test code needs more time to run
+    testInfo.setTimeout(60_000);
     await loginAsUser(page);
   });
 
-  const sessionName = 'e2e-test-session';
+  const sessionName = 'e2e-test-session' + new Date().getTime();
   test('User can create session in NEO', async ({ page }) => {
     await createSession(page, sessionName);
     await deleteSession(page, sessionName);

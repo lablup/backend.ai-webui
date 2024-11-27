@@ -1,6 +1,6 @@
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useBackendAIImageMetaData } from '../hooks';
-import BAIIntervalText from './BAIIntervalText';
+import BAIIntervalView from './BAIIntervalView';
 import DoubleTag from './DoubleTag';
 import Flex from './Flex';
 import ImageMetaIcon from './ImageMetaIcon';
@@ -115,6 +115,7 @@ const SessionList: React.FC<SessionListProps> = ({
   const statusTagColor = {
     //prepare
     RESTARTING: 'blue',
+    PREPARED: 'blue',
     PREPARING: 'blue',
     PULLING: 'blue',
     //running
@@ -268,19 +269,24 @@ const SessionList: React.FC<SessionListProps> = ({
               return (
                 <Flex direction="column" gap="xs">
                   {localeStringDate}
-                  <DoubleTag
-                    values={[
-                      t('session.ElapsedTime'),
-                      <BAIIntervalText
-                        callback={() => {
-                          return baiClient.utils.elapsedTime(
-                            value,
-                            record.terminated_at,
-                          );
-                        }}
-                        delay={1000}
-                      />,
-                    ]}
+                  <BAIIntervalView
+                    callback={() => {
+                      return baiClient.utils.elapsedTime(
+                        value,
+                        record.terminated_at,
+                      );
+                    }}
+                    delay={1000}
+                    render={(intervalValue) => (
+                      <DoubleTag
+                        values={[
+                          { label: t('session.ElapsedTime') },
+                          {
+                            label: intervalValue,
+                          },
+                        ]}
+                      />
+                    )}
                   />
                 </Flex>
               );

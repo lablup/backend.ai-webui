@@ -1,3 +1,4 @@
+import { preserveDotStartCase } from '../helper';
 import { useSuspenseTanQuery } from './reactQueryAlias';
 import { useEventNotStable } from './useEventNotStable';
 import _ from 'lodash';
@@ -84,6 +85,26 @@ export const useAnonymousBackendaiClient = ({
   return client;
 };
 
+export type BackendAIClient = {
+  vfolder: {
+    list: (path: string) => Promise<any>;
+    list_hosts: () => Promise<any>;
+    list_all_hosts: () => Promise<any>;
+    list_files: (path: string, id: string) => Promise<any>;
+    list_allowed_types: () => Promise<string[]>;
+    clone: (input: any, name: string) => Promise<any>;
+  };
+  supports: (feature: string) => boolean;
+  [key: string]: any;
+  _config: BackendAIConfig;
+  isManagerVersionCompatibleWith: (version: string) => boolean;
+  utils: {
+    elapsedTime: (
+      start: string | Date | number,
+      end?: string | Date | number | null,
+    ) => string;
+  };
+};
 export const useSuspendedBackendaiClient = () => {
   const { data: client } = useSuspenseTanQuery<any>({
     queryKey: ['backendai-client-for-suspense'],
@@ -112,20 +133,7 @@ export const useSuspendedBackendaiClient = () => {
     // enabled: false,
   });
 
-  return client as {
-    vfolder: {
-      list: (path: string) => Promise<any>;
-      list_hosts: () => Promise<any>;
-      list_all_hosts: () => Promise<any>;
-      list_files: (path: string, id: string) => Promise<any>;
-      list_allowed_types: () => Promise<string[]>;
-      clone: (input: any, name: string) => Promise<any>;
-    };
-    supports: (feature: string) => boolean;
-    [key: string]: any;
-    _config: BackendAIConfig;
-    isManagerVersionCompatibleWith: (version: string) => boolean;
-  };
+  return client as BackendAIClient;
 };
 
 interface ImageMetadata {
@@ -141,6 +149,54 @@ interface ImageMetadata {
   }[];
 }
 
+export const imageParser = {
+  getBaseVersion: (imageName: string) => {
+    return (
+      _.first(_.split(_.last(_.split(imageName, ':')), /[^a-zA-Z\d.]+/)) || ''
+    );
+  },
+  getBaseImage: (imageName: string) => {
+    const splitByColon = _.split(imageName, ':');
+    const beforeLastColon = _.join(_.initial(splitByColon), ':');
+    const lastItemAfterSplitBySlash = _.last(_.split(beforeLastColon, '/'));
+    return lastItemAfterSplitBySlash || '';
+  },
+  getTags: (tag: string, labels: Array<{ key: string; value: string }>) => {
+    // Remove the 'customized_' prefix and its following string from the tag
+    const cleanedTag = _.replace(tag, /customized_[a-zA-Z\d.]+/, '');
+    // Split the remaining tag into segments based on alphanumeric and '.' characters, ignoring the first segment
+    const tags = _.tail(_.split(cleanedTag, /[^a-zA-Z\d.]+/));
+    const result: Array<{ key: string; value: string }> = [];
+
+    // Process not 'customized_' tags
+    _.forEach(tags, (currentTag) => {
+      // Separate the alphabetic prefix from the numeric and '.' suffix for each tag
+      const match = /^([a-zA-Z]+)(.*)$/.exec(currentTag);
+      if (match) {
+        const [, key, value] = match;
+        // Ensure the value is an empty string if it's undefined
+        result.push({ key, value: value || '' });
+      }
+    });
+
+    // Handle the 'customized_' tag separately by finding the custom image name in labels
+    const customizedNameLabel = _.get(
+      _.find(labels, { key: 'ai.backend.customized-image.name' }),
+      'value',
+      '',
+    );
+    // If a custom image name exists, add it to the result with the key 'Customized'
+    if (customizedNameLabel) {
+      result.push({ key: 'Customized', value: customizedNameLabel });
+    }
+
+    // Remove duplicates and entries with an empty 'key'
+    return _.uniqWith(
+      _.filter(result, ({ key }) => !_.isEmpty(key)),
+      _.isEqual,
+    );
+  },
+};
 export const useBackendAIImageMetaData = () => {
   const { data: metadata } = useSuspenseTanQuery<{
     imageInfo: {
@@ -182,7 +238,7 @@ export const useBackendAIImageMetaData = () => {
       ).split(':');
 
       // remove architecture string and split by '-'
-      const tags = tag.split('@')[0].split('-');
+      const tags = _.split(_.first(_.split(tag, '@')), '-');
       return { key, tags };
     } catch (error) {
       return {
@@ -235,8 +291,8 @@ export const useBackendAIImageMetaData = () => {
         }
         return metadata?.tagAlias[lang] || lang;
       },
-      getImageTags: (imageName: string) => {
-        // const { key, tags } = getImageMeta(imageName);
+      getImageTagStr: (imageName: string) => {
+        return _.last(_.split(_.first(_.split(imageName, '@')), ':'));
       },
       getFilteredRequirementsTags: (imageName: string) => {
         const { tags } = getImageMeta(imageName);
@@ -252,14 +308,6 @@ export const useBackendAIImageMetaData = () => {
           key: 'ai.backend.customized-image.name',
         })?.value;
         return customizedNameLabel;
-      },
-      getBaseVersion: (imageName: string) => {
-        const { tags } = getImageMeta(imageName);
-        return tags[0];
-      },
-      getBaseImage: (imageName: string) => {
-        const { tags } = getImageMeta(imageName);
-        return tags[1];
       },
       getBaseImages: (tag: string, name: string) => {
         const tags = tag.split('-');
@@ -309,20 +357,22 @@ export const useBackendAIImageMetaData = () => {
         return architecture;
       },
       tagAlias: (tag: string) => {
-        let metadataTagAlias = metadata?.tagAlias[tag];
-        if (!metadataTagAlias && metadata?.tagReplace) {
-          for (const [key, replaceString] of Object.entries(
-            metadata.tagReplace,
-          )) {
-            const pattern = new RegExp(key);
-            if (pattern.test(tag)) {
-              metadataTagAlias = tag.replace(pattern, replaceString);
-              break;
-            }
-          }
-        }
-        return metadataTagAlias || tag;
+        return (
+          metadata?.tagAlias[tag] ??
+          _.chain(metadata.tagReplace)
+            .toPairs()
+            .find(([regExpStr]) => new RegExp(regExpStr).test(tag))
+            .thru((pair) => {
+              if (pair) {
+                const [regExpStr, replaceStr] = pair;
+                return _.replace(tag, new RegExp(regExpStr), replaceStr);
+              }
+            })
+            .value() ??
+          preserveDotStartCase(tag)
+        );
       },
+      ...imageParser,
     },
   ] as const;
 };

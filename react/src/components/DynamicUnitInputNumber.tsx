@@ -1,4 +1,4 @@
-import { iSizeToSize, parseUnit } from '../helper';
+import { convertBinarySizeUnit, parseUnit, SizeUnit } from '../helper';
 import useControllableState from '../hooks/useControllableState';
 import { usePrevious } from 'ahooks';
 import { InputNumber, InputNumberProps, Select, Typography } from 'antd';
@@ -99,13 +99,16 @@ const DynamicUnitInputNumber: React.FC<DynamicUnitInputNumberProps> = ({
       }}
       //TODO: When min and max have different units, they should be calculated and put in.
       // 입력의 초소단위 확인 0.4g 가 되는지 확인
-      // @ts-ignore
-      max={maxUnit === unit ? maxNumValue : iSizeToSize(max, unit).number}
+      max={
+        maxUnit === unit
+          ? maxNumValue
+          : convertBinarySizeUnit(max, unit as SizeUnit)?.number
+      }
       min={
         minUnit === unit
           ? minNumValue
           : // @ts-ignore
-            iSizeToSize(min, unit).number
+            convertBinarySizeUnit(min, unit).number
       }
       addonAfter={
         <Select

@@ -1,4 +1,4 @@
-import BAIIntervalText from './BAIIntervalText';
+import BAIIntervalView from './BAIIntervalView';
 import DatePickerISO, { DatePickerISOProps } from './DatePickerISO';
 import { useWebComponentInfo } from './DefaultProviders';
 import Flex from './Flex';
@@ -86,7 +86,7 @@ const BatchSessionScheduledTimeSetting: React.FC<Props> = ({
                 style={{ fontSize: token.fontSizeSM - 2 }}
               >
                 ({t('session.launcher.StartAfter')}
-                <BAIIntervalText
+                <BAIIntervalView
                   callback={() => {
                     return dayjs(scheduleTime).fromNow();
                   }}

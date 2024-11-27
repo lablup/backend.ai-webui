@@ -1,8 +1,10 @@
+import { preserveDotStartCase } from '../helper';
 import { useBackendAIImageMetaData } from '../hooks';
 import DoubleTag, { DoubleTagObjectValue } from './DoubleTag';
 import Flex from './Flex';
 import TextHighlighter from './TextHighlighter';
 import { Tag, TagProps } from 'antd';
+import _ from 'lodash';
 import React from 'react';
 
 interface ImageAliasNameAndBaseVersionTagsProps
@@ -41,7 +43,7 @@ export const BaseVersionTags: React.FC<BaseVersionTagsProps> = ({
 }) => {
   image = image || '';
   const [, { getBaseVersion, tagAlias }] = useBackendAIImageMetaData();
-  return (
+  return _.isEmpty(tagAlias(getBaseVersion(image))) ? null : (
     <Tag color="green" {...props}>
       {tagAlias(getBaseVersion(image))}
     </Tag>
@@ -57,7 +59,7 @@ export const BaseImageTags: React.FC<BaseImageTagsProps> = ({
 }) => {
   image = image || '';
   const [, { getBaseImage, tagAlias }] = useBackendAIImageMetaData();
-  return (
+  return _.isEmpty(tagAlias(getBaseImage(image))) ? null : (
     <Tag color="green" {...props}>
       {tagAlias(getBaseImage(image))}
     </Tag>
@@ -73,9 +75,9 @@ export const ArchitectureTags: React.FC<ArchitectureTagsProps> = ({
 }) => {
   image = image || '';
   const [, { getArchitecture, tagAlias }] = useBackendAIImageMetaData();
-  return (
+  return _.isEmpty(tagAlias(getArchitecture(image))) ? null : (
     <Tag color="green" {...props}>
-      {tagAlias(getArchitecture(image))}
+      {getArchitecture(image)}
     </Tag>
   );
 };
@@ -86,7 +88,7 @@ interface LangTagsProps extends TagProps {
 export const LangTags: React.FC<LangTagsProps> = ({ image, ...props }) => {
   image = image || '';
   const [, { getImageLang, tagAlias }] = useBackendAIImageMetaData();
-  return (
+  return _.isEmpty(tagAlias(getImageLang(image))) ? null : (
     <Tag color="green" {...props}>
       {tagAlias(getImageLang(image))}
     </Tag>
@@ -109,31 +111,24 @@ export const ConstraintTags: React.FC<ConstraintTagsProps> = ({
   const constraints = getConstraints(tag, labels);
   return (
     <Flex direction="row" align="start">
-      {constraints[0] ? (
+      {!_.isEmpty(constraints?.[0]) ? (
         <Tag color="blue" {...props}>
           <TextHighlighter keyword={highlightKeyword}>
             {constraints[0]}
           </TextHighlighter>
         </Tag>
       ) : null}
-      {constraints[1] ? (
+      {!_.isEmpty(constraints?.[1]) ? (
         <DoubleTag
           color="cyan"
+          highlightKeyword={highlightKeyword}
           values={[
             {
-              label: (
-                <TextHighlighter keyword={highlightKeyword}>
-                  Customized
-                </TextHighlighter>
-              ),
+              label: 'Customized',
               color: 'cyan',
             },
             {
-              label: (
-                <TextHighlighter keyword={highlightKeyword}>
-                  {constraints[1]}
-                </TextHighlighter>
-              ),
+              label: constraints[1],
               color: 'cyan',
             },
           ]}
@@ -160,3 +155,52 @@ const SessionKernelTags: React.FC<{
 };
 
 export default React.memo(SessionKernelTags);
+
+interface ImageTagsProps extends TagProps {
+  tag: string;
+  labels: Array<{ key: string; value: string }>;
+  highlightKeyword?: string;
+}
+export const ImageTags: React.FC<ImageTagsProps> = ({
+  tag,
+  labels,
+  highlightKeyword,
+  ...props
+}) => {
+  labels = labels || [];
+  const [, { getTags, tagAlias }] = useBackendAIImageMetaData();
+  const tags = getTags(tag, labels);
+  return (
+    <Flex direction="row" align="start">
+      {_.map(tags, (tag: { key: string; value: string }, index) => {
+        const isCustomized = tag.key === 'Customized';
+        const aliasedTag = tagAlias(tag.key + tag.value);
+        return _.isEqual(
+          aliasedTag,
+          preserveDotStartCase(tag.key + tag.value),
+        ) ? (
+          <DoubleTag
+            key={tag.key}
+            highlightKeyword={highlightKeyword}
+            values={[
+              {
+                label: tagAlias(tag.key),
+                color: isCustomized ? 'cyan' : 'blue',
+              },
+              {
+                label: tag.value,
+                color: isCustomized ? 'cyan' : 'blue',
+              },
+            ]}
+          />
+        ) : (
+          <Tag key={tag.key} color={isCustomized ? 'cyan' : 'blue'}>
+            <TextHighlighter keyword={highlightKeyword} key={index}>
+              {aliasedTag}
+            </TextHighlighter>
+          </Tag>
+        );
+      })}
+    </Flex>
+  );
+};

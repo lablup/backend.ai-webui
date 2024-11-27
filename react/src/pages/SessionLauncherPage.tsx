@@ -1,5 +1,5 @@
 import BAICard from '../BAICard';
-import BAIIntervalText from '../components/BAIIntervalText';
+import BAIIntervalView from '../components/BAIIntervalView';
 import DatePickerISO from '../components/DatePickerISO';
 import DoubleTag from '../components/DoubleTag';
 import EnvVarFormList, {
@@ -11,7 +11,7 @@ import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from '../components/ImageEnvironmentSelectFormItems';
 import ImageMetaIcon from '../components/ImageMetaIcon';
-import SessionKernelTags from '../components/ImageTags';
+import { ImageTags } from '../components/ImageTags';
 import { mainContentDivRefState } from '../components/MainLayout/MainLayout';
 import PortSelectFormItem, {
   PortSelectFormValues,
@@ -38,10 +38,14 @@ import VFolderTableFormItem, {
 } from '../components/VFolderTableFormItem';
 import {
   compareNumberWithUnits,
+  formatDuration,
   generateRandomString,
-  iSizeToSize,
+  getImageFullName,
+  convertBinarySizeUnit,
+  preserveDotStartCase,
 } from '../helper';
 import {
+  useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
   useUpdatableState,
   useWebUINavigate,
@@ -73,6 +77,7 @@ import {
   Checkbox,
   Col,
   Descriptions,
+  Divider,
   Form,
   Grid,
   Input,
@@ -129,12 +134,14 @@ interface SessionConfig {
   startsAt?: string;
   startupCommand?: string;
   bootstrap_script?: string;
+  agent_list?: string[];
 }
 
 interface CreateSessionInfo {
   kernelName: string;
   sessionName: string;
   architecture: string;
+  batchTimeout?: string;
   config: SessionConfig;
 }
 
@@ -144,6 +151,9 @@ interface SessionLauncherValue {
     enabled: boolean;
     scheduleDate?: string;
     command?: string;
+    timeoutEnabled?: boolean;
+    timeout?: string;
+    timeoutUnit?: string;
   };
   allocationPreset: string;
   envvars: EnvVarFormListValue[];
@@ -184,6 +194,12 @@ const SessionLauncherPage = () => {
   const currentUserRole = useCurrentUserRole();
   const [currentGlobalResourceGroup, setCurrentGlobalResourceGroup] =
     useCurrentResourceGroupState();
+  const [, { getBaseVersion, getBaseImage, tagAlias }] =
+    useBackendAIImageMetaData();
+
+  const supportExtendedImageInfo =
+    baiClient?.supports('extended-image-info') ?? false;
+  const supportBatchTimeout = baiClient?.supports('batch-timeout') ?? false;
 
   const [isStartingSession, setIsStartingSession] = useState(false);
   const INITIAL_FORM_VALUES: DeepPartial<SessionLauncherFormValue> = useMemo(
@@ -200,6 +216,11 @@ const SessionLauncherPage = () => {
         enabled: false,
         command: undefined,
         scheduleDate: undefined,
+        ...(supportBatchTimeout && {
+          timeoutEnabled: false,
+          timeout: undefined,
+          timeoutUnit: 's',
+        }),
       },
       envvars: [],
       // set default_session_environment only if set
@@ -214,6 +235,7 @@ const SessionLauncherPage = () => {
     [
       baiClient._config?.default_session_environment,
       currentGlobalResourceGroup,
+      supportBatchTimeout,
     ],
   );
   const StepParam = withDefault(NumberParam, 0);
@@ -435,7 +457,24 @@ const SessionLauncherPage = () => {
           kernelName,
           architecture,
           sessionName: sessionName,
+          ...(supportBatchTimeout &&
+          values?.batch?.timeoutEnabled &&
+          !_.isUndefined(values?.batch?.timeout)
+            ? {
+                batchTimeout:
+                  _.toString(values.batch.timeout) + values?.batch?.timeoutUnit,
+              }
+            : undefined),
           config: {
+            ...(baiClient.supports('agent-select') &&
+            !baiClient?._config?.hideAgents &&
+            values.agent !== 'auto'
+              ? {
+                  agent_list: [values.agent].filter(
+                    (agent): agent is string => !!agent,
+                  ),
+                } // Filter out undefined values
+              : undefined),
             type: values.sessionType,
             ...(_.isEmpty(values.bootstrap_script)
               ? {}
@@ -464,8 +503,6 @@ const SessionLauncherPage = () => {
                   domain: baiClient._config.domainName,
                   scaling_group: values.resourceGroup,
                 }),
-            ///////////////////////////
-
             cluster_mode: values.cluster_mode,
             cluster_size: values.cluster_size,
             maxWaitSeconds: 15,
@@ -491,9 +528,17 @@ const SessionLauncherPage = () => {
               ..._.omit(values.hpcOptimization, 'autoEnabled'),
             },
             preopen_ports: transformPortValuesToNumbers(values.ports),
+            ...(baiClient.supports('agent-select') &&
+            !baiClient?._config?.hideAgents &&
+            values.agent !== 'auto'
+              ? {
+                  agent_list: [values.agent].filter(
+                    (agent): agent is string => !!agent,
+                  ),
+                } // Filter out undefined values
+              : undefined),
           },
         };
-
         const sessionPromises = _.map(
           _.range(values.num_of_sessions || 1),
           (i) => {
@@ -506,8 +551,9 @@ const SessionLauncherPage = () => {
                 sessionInfo.kernelName,
                 formattedSessionName,
                 sessionInfo.config,
-                20000,
+                30000,
                 sessionInfo.architecture,
+                sessionInfo.batchTimeout,
               )
               .then((res: { created: boolean; status: string }) => {
                 // // When session is already created with the same name, the status code
@@ -560,6 +606,11 @@ const SessionLauncherPage = () => {
               sessionName: string;
               servicePorts: Array<{ name: string }>;
             }>) => {
+              // After the session is created, add a "See Details" button to navigate to the session page.
+              upsertNotification({
+                key: 'session-launcher:' + sessionName,
+                to: `/session?sessionDetail=${firstSession.sessionId}`,
+              });
               pushSessionHistory({
                 id: firstSession.sessionId,
                 params: usedSearchParams,
@@ -622,7 +673,7 @@ const SessionLauncherPage = () => {
             upsertNotification({
               key: 'session-launcher:' + sessionName,
               to: backupTo,
-              toText: '수정',
+              toText: t('button.Edit'),
             });
             // this.metadata_updating = false;
             // console.log(err);
@@ -816,146 +867,306 @@ const SessionLauncherPage = () => {
                       <Input.TextArea autoSize />
                     </Form.Item>
                     <Form.Item
-                      label={t('session.launcher.SessionStartTime')}
-                      extra={
-                        <Form.Item
-                          noStyle
-                          shouldUpdate={(prev, next) =>
-                            prev.batch.scheduleDate !== next.batch.scheduleDate
-                          }
-                        >
-                          {() => {
-                            const scheduleDate = form.getFieldValue([
-                              'batch',
-                              'scheduleDate',
-                            ]);
-                            return (
-                              <BAIIntervalText
-                                delay={1000}
-                                callback={() => {
-                                  const scheduleDate = form.getFieldValue([
-                                    'batch',
-                                    'scheduleDate',
-                                  ]);
-                                  if (scheduleDate) {
-                                    if (dayjs(scheduleDate).isBefore(dayjs())) {
-                                      if (
-                                        form.getFieldError([
-                                          'batch',
-                                          'scheduleDate',
-                                        ]).length === 0
-                                      ) {
-                                        form.validateFields([
-                                          ['batch', 'scheduleDate'],
-                                        ]);
-                                      }
-                                      return undefined;
-                                    } else {
-                                      return dayjs(scheduleDate).fromNow();
-                                    }
-                                  } else {
-                                    return undefined;
-                                  }
-                                }}
-                                triggerKey={
-                                  scheduleDate ? scheduleDate : 'none'
-                                }
-                              />
-                            );
-                          }}
-                        </Form.Item>
-                      }
+                      noStyle
+                      dependencies={[['batch', 'scheduleDate']]}
                     >
-                      <Flex direction="row" gap={'xs'}>
-                        <Form.Item
-                          noStyle
-                          name={['batch', 'enabled']}
-                          valuePropName="checked"
-                        >
-                          <Checkbox
-                            onChange={(e) => {
-                              if (
-                                e.target.checked &&
-                                _.isEmpty(
-                                  form.getFieldValue(['batch', 'scheduleDate']),
-                                )
-                              ) {
-                                form.setFieldValue(
-                                  ['batch', 'scheduleDate'],
-                                  dayjs().add(2, 'minutes').toISOString(),
-                                );
-                              } else if (e.target.checked === false) {
-                                form.setFieldValue(
-                                  ['batch', 'scheduleDate'],
-                                  undefined,
-                                );
+                      {() => {
+                        const scheduleDate = form.getFieldValue([
+                          'batch',
+                          'scheduleDate',
+                        ]);
+                        return (
+                          <BAIIntervalView
+                            delay={1000}
+                            callback={() => {
+                              const scheduleDate = form.getFieldValue([
+                                'batch',
+                                'scheduleDate',
+                              ]);
+                              if (scheduleDate) {
+                                if (dayjs(scheduleDate).isBefore(dayjs())) {
+                                  if (
+                                    form.getFieldError([
+                                      'batch',
+                                      'scheduleDate',
+                                    ]).length === 0
+                                  ) {
+                                    form.validateFields([
+                                      ['batch', 'scheduleDate'],
+                                    ]);
+                                  }
+                                  return undefined;
+                                } else {
+                                  return dayjs(scheduleDate).fromNow();
+                                }
+                              } else {
+                                return undefined;
                               }
-                              form.validateFields([['batch', 'scheduleDate']]);
                             }}
-                          >
-                            {t('session.launcher.Enable')}
-                          </Checkbox>
-                        </Form.Item>
-                        <Form.Item
-                          noStyle
-                          // dependencies={[['batch', 'enabled']]}
-                          shouldUpdate={(prev, next) => {
-                            return (
-                              // @ts-ignore
-                              prev.batch?.enabled !== next.batch?.enabled
-                            );
-                          }}
-                        >
-                          {() => {
-                            const disabled =
-                              form.getFieldValue('batch')?.enabled !== true;
-                            return (
-                              <>
+                            triggerKey={scheduleDate ? scheduleDate : 'none'}
+                            render={(time) => {
+                              return (
                                 <Form.Item
-                                  name={['batch', 'scheduleDate']}
-                                  noStyle
-                                  rules={[
-                                    {
-                                      // required: true,
-                                      validator: async (rule, value) => {
-                                        if (
-                                          value &&
-                                          dayjs(value).isBefore(dayjs())
-                                        ) {
-                                          return Promise.reject(
-                                            t(
-                                              'session.launcher.StartTimeMustBeInTheFuture',
-                                            ),
-                                          );
-                                        }
-                                        return Promise.resolve();
-                                      },
-                                    },
-                                  ]}
+                                  label={t('session.launcher.SessionStartTime')}
+                                  extra={time}
                                 >
-                                  <DatePickerISO
-                                    disabled={disabled}
-                                    showTime
-                                    localFormat
-                                    disabledDate={(value) => {
-                                      return value.isBefore(
-                                        dayjs().startOf('day'),
-                                      );
-                                    }}
-                                  />
-                                </Form.Item>
-                                {/* <Form.Item
+                                  <Flex direction="row" gap={'xs'}>
+                                    <Form.Item
                                       noStyle
-                                      name={['batch', 'scheduleTime']}
+                                      name={['batch', 'enabled']}
+                                      valuePropName="checked"
                                     >
-                                      <TimePicker disabled={disabled} />
-                                    </Form.Item> */}
-                              </>
-                            );
-                          }}
-                        </Form.Item>
-                      </Flex>
+                                      <Checkbox
+                                        onChange={(e) => {
+                                          if (
+                                            e.target.checked &&
+                                            _.isEmpty(
+                                              form.getFieldValue([
+                                                'batch',
+                                                'scheduleDate',
+                                              ]),
+                                            )
+                                          ) {
+                                            form.setFieldValue(
+                                              ['batch', 'scheduleDate'],
+                                              dayjs()
+                                                .add(2, 'minutes')
+                                                .toISOString(),
+                                            );
+                                          } else if (
+                                            e.target.checked === false
+                                          ) {
+                                            form.setFieldValue(
+                                              ['batch', 'scheduleDate'],
+                                              undefined,
+                                            );
+                                          }
+                                          form.validateFields([
+                                            ['batch', 'scheduleDate'],
+                                          ]);
+                                        }}
+                                      >
+                                        {t('session.launcher.Enable')}
+                                      </Checkbox>
+                                    </Form.Item>
+                                    <Form.Item
+                                      noStyle
+                                      // dependencies={[['batch', 'enabled']]}
+                                      shouldUpdate={(prev, next) => {
+                                        return (
+                                          // @ts-ignore
+                                          prev.batch?.enabled !==
+                                          next.batch?.enabled
+                                        );
+                                      }}
+                                    >
+                                      {() => {
+                                        const disabled =
+                                          form.getFieldValue('batch')
+                                            ?.enabled !== true;
+                                        return (
+                                          <>
+                                            <Form.Item
+                                              name={['batch', 'scheduleDate']}
+                                              noStyle
+                                              rules={[
+                                                {
+                                                  // required: true,
+                                                  validator: async (
+                                                    rule,
+                                                    value,
+                                                  ) => {
+                                                    if (
+                                                      value &&
+                                                      dayjs(value).isBefore(
+                                                        dayjs(),
+                                                      )
+                                                    ) {
+                                                      return Promise.reject(
+                                                        t(
+                                                          'session.launcher.StartTimeMustBeInTheFuture',
+                                                        ),
+                                                      );
+                                                    }
+                                                    return Promise.resolve();
+                                                  },
+                                                },
+                                              ]}
+                                            >
+                                              <DatePickerISO
+                                                disabled={disabled}
+                                                showTime
+                                                localFormat
+                                                disabledDate={(value) => {
+                                                  return value.isBefore(
+                                                    dayjs().startOf('day'),
+                                                  );
+                                                }}
+                                              />
+                                            </Form.Item>
+                                            {/* <Form.Item
+                                              noStyle
+                                              name={['batch', 'scheduleTime']}
+                                            >
+                                              <TimePicker disabled={disabled} />
+                                            </Form.Item> */}
+                                          </>
+                                        );
+                                      }}
+                                    </Form.Item>
+                                  </Flex>
+                                </Form.Item>
+                              );
+                            }}
+                          />
+                        );
+                      }}
                     </Form.Item>
+
+                    {supportBatchTimeout ? (
+                      <Form.Item
+                        noStyle
+                        dependencies={[
+                          ['batch', 'timeoutEnabled'],
+                          ['batch', 'timeoutUnit'],
+                        ]}
+                      >
+                        {() => {
+                          const timeout = form.getFieldValue([
+                            'batch',
+                            'timeout',
+                          ]);
+                          const unit = form.getFieldValue([
+                            'batch',
+                            'timeoutUnit',
+                          ]);
+
+                          const timeDuration = dayjs.duration(
+                            timeout,
+                            unit ?? 's',
+                          );
+
+                          const formattedDuration = formatDuration(
+                            timeDuration,
+                            t,
+                          );
+
+                          const durationText =
+                            !_.isNull(timeout) && _.toFinite(timeout) > 0
+                              ? formattedDuration
+                              : null;
+                          return (
+                            <Form.Item
+                              label={t(
+                                'session.launcher.BatchJobTimeoutDuration',
+                              )}
+                              tooltip={t(
+                                'session.launcher.BatchJobTimeoutDurationDesc',
+                              )}
+                              // extra={durationText}
+                              help={durationText}
+                            >
+                              <Flex direction="row" gap={'xs'}>
+                                <Form.Item
+                                  noStyle
+                                  name={['batch', 'timeoutEnabled']}
+                                  valuePropName="checked"
+                                >
+                                  <Checkbox
+                                    onChange={(e) => {
+                                      if (e.target.checked === false) {
+                                        form.setFieldValue(
+                                          ['batch', 'timeout'],
+                                          undefined,
+                                        );
+                                      }
+                                      form.validateFields([
+                                        ['batch', 'timeout'],
+                                      ]);
+                                    }}
+                                  >
+                                    {t('session.launcher.Enable')}
+                                  </Checkbox>
+                                </Form.Item>
+                                <Form.Item
+                                  noStyle
+                                  dependencies={[['batch', 'timeoutEnabled']]}
+                                >
+                                  {() => {
+                                    const disabled =
+                                      form.getFieldValue([
+                                        'batch',
+                                        'timeoutEnabled',
+                                      ]) !== true;
+                                    return (
+                                      <>
+                                        <Form.Item
+                                          name={['batch', 'timeout']}
+                                          label={t(
+                                            'session.launcher.BatchJobTimeoutDuration',
+                                          )}
+                                          noStyle
+                                          rules={[
+                                            {
+                                              min: 0,
+                                              type: 'number',
+                                              message: t(
+                                                'error.AllowsPositiveNumberOnly',
+                                              ),
+                                            },
+                                            {
+                                              required: !disabled,
+                                            },
+                                          ]}
+                                        >
+                                          <InputNumber
+                                            disabled={disabled}
+                                            min={1}
+                                            addonAfter={
+                                              <Form.Item
+                                                noStyle
+                                                name={['batch', 'timeoutUnit']}
+                                              >
+                                                <Select
+                                                  tabIndex={-1}
+                                                  style={{ minWidth: 75 }}
+                                                  options={[
+                                                    {
+                                                      label: t('time.sec'),
+                                                      value: 's',
+                                                    },
+                                                    {
+                                                      label: t('time.min'),
+                                                      value: 'm',
+                                                    },
+                                                    {
+                                                      label: t('time.hour'),
+                                                      value: 'h',
+                                                    },
+                                                    {
+                                                      label: t('time.day'),
+                                                      value: 'd',
+                                                    },
+                                                    {
+                                                      label: t('time.week'),
+                                                      value: 'w',
+                                                    },
+                                                  ]}
+                                                />
+                                              </Form.Item>
+                                            }
+                                          />
+                                        </Form.Item>
+                                      </>
+                                    );
+                                  }}
+                                </Form.Item>
+                              </Flex>
+                            </Form.Item>
+                          );
+                        }}
+                      </Form.Item>
+                    ) : null}
                   </Card>
                 )}
 
@@ -1022,6 +1233,10 @@ const SessionLauncherPage = () => {
                   }}
                 >
                   <ResourceAllocationFormItems
+                    enableAgentSelect={
+                      !baiClient._config.hideAgents &&
+                      baiClient.supports('agent-select')
+                    }
                     enableNumOfSessions
                     enableResourcePresets
                     showRemainingWarning
@@ -1241,7 +1456,7 @@ const SessionLauncherPage = () => {
                               )}
                             </Descriptions.Item>
                             <Descriptions.Item
-                              label={t('session.launcher.ScheduleTimeSimple')}
+                              label={t('session.launcher.SessionStartTime')}
                             >
                               {form.getFieldValue(['batch', 'scheduleDate']) ? (
                                 dayjs(
@@ -1253,6 +1468,27 @@ const SessionLauncherPage = () => {
                                 </Typography.Text>
                               )}
                             </Descriptions.Item>
+                            {supportBatchTimeout ? (
+                              <Descriptions.Item
+                                label={t(
+                                  'session.launcher.BatchJobTimeoutDuration',
+                                )}
+                              >
+                                {form.getFieldValue(['batch', 'timeout']) ? (
+                                  <Typography.Text>
+                                    {form.getFieldValue(['batch', 'timeout'])}
+                                    {form.getFieldValue([
+                                      'batch',
+                                      'timeoutUnit',
+                                    ]) || 's'}
+                                  </Typography.Text>
+                                ) : (
+                                  <Typography.Text type="secondary">
+                                    {t('general.None')}
+                                  </Typography.Text>
+                                )}
+                              </Descriptions.Item>
+                            ) : null}
                           </>
                         )}
                       </Descriptions>
@@ -1269,14 +1505,19 @@ const SessionLauncherPage = () => {
                       title={t('session.launcher.Environments')}
                       size="small"
                       status={
-                        _.some(form.getFieldValue('envvars'), (v, idx) => {
-                          return (
-                            form.getFieldError(['envvars', idx, 'variable'])
-                              .length > 0 ||
-                            form.getFieldError(['envvars', idx, 'value'])
-                              .length > 0
-                          );
-                        })
+                        _.some(
+                          form.getFieldValue(
+                            'envvars',
+                          ) as SessionLauncherFormValue['envvars'],
+                          (v, idx) => {
+                            return (
+                              form.getFieldError(['envvars', idx, 'variable'])
+                                .length > 0 ||
+                              form.getFieldError(['envvars', idx, 'value'])
+                                .length > 0
+                            );
+                          },
+                        )
                           ? 'error'
                           : undefined
                       }
@@ -1295,67 +1536,222 @@ const SessionLauncherPage = () => {
                           {currentProject.name}
                         </Descriptions.Item>
                         <Descriptions.Item label={t('general.Image')}>
-                          <Row
-                            style={{ flexFlow: 'nowrap', gap: token.sizeXS }}
-                          >
-                            <Col>
-                              <ImageMetaIcon
-                                image={
-                                  form.getFieldValue('environments')?.version ||
-                                  form.getFieldValue('environments')?.manual
-                                }
-                              />
-                            </Col>
-                            <Col>
-                              {/* {form.getFieldValue('environments').image} */}
-                              <Flex direction="row">
-                                {form.getFieldValue('environments')?.manual ? (
-                                  <Typography.Text
-                                    code
-                                    style={{ wordBreak: 'break-all' }}
-                                    copyable={{
-                                      text: form.getFieldValue('environments')
-                                        ?.manual,
-                                    }}
-                                  >
-                                    {form.getFieldValue('environments')?.manual}
-                                  </Typography.Text>
-                                ) : (
-                                  <>
-                                    <SessionKernelTags
-                                      image={
-                                        form.getFieldValue('environments')
-                                          ?.version
-                                      }
-                                    />
-                                    {form.getFieldValue('environments')
-                                      ?.customizedTag ? (
-                                      <DoubleTag
-                                        values={[
-                                          {
-                                            label: 'Customized',
-                                            color: 'cyan',
-                                          },
-                                          {
-                                            label:
-                                              form.getFieldValue('environments')
-                                                ?.customizedTag,
-                                            color: 'cyan',
-                                          },
-                                        ]}
-                                      />
-                                    ) : null}
+                          {supportExtendedImageInfo ? (
+                            <Row style={{ flexFlow: 'nowrap' }}>
+                              <Col>
+                                <ImageMetaIcon
+                                  image={
+                                    form.getFieldValue('environments')
+                                      ?.version ||
+                                    form.getFieldValue('environments')?.manual
+                                  }
+                                  style={{ marginRight: token.marginXS }}
+                                />
+                              </Col>
+                              <Col>
+                                <Flex direction="row" wrap="wrap">
+                                  {form.getFieldValue('environments')
+                                    ?.manual ? (
                                     <Typography.Text
+                                      code
+                                      style={{ wordBreak: 'break-all' }}
                                       copyable={{
                                         text: form.getFieldValue('environments')
-                                          ?.version,
+                                          ?.manual,
                                       }}
-                                    />
-                                  </>
-                                )}
-                              </Flex>
-                            </Col>
-                          </Row>
+                                    >
+                                      {
+                                        form.getFieldValue('environments')
+                                          ?.manual
+                                      }
+                                    </Typography.Text>
+                                  ) : (
+                                    <>
+                                      <Typography.Text>
+                                        {tagAlias(
+                                          form.getFieldValue('environments')
+                                            ?.image?.base_image_name,
+                                        )}
+                                      </Typography.Text>
+                                      <Divider type="vertical" />
+                                      <Typography.Text>
+                                        {
+                                          form.getFieldValue('environments')
+                                            ?.image?.version
+                                        }
+                                      </Typography.Text>
+                                      <Divider type="vertical" />
+                                      <Typography.Text>
+                                        {
+                                          form.getFieldValue('environments')
+                                            ?.image?.architecture
+                                        }
+                                      </Typography.Text>
+                                      <Divider type="vertical" />
+                                      {/* TODO: replace this with AliasedImageDoubleTags after image list query with ImageNode is implemented. */}
+                                      {_.map(
+                                        form.getFieldValue('environments')
+                                          ?.image?.tags,
+                                        (tag: {
+                                          key: string;
+                                          value: string;
+                                        }) => {
+                                          const isCustomized = _.includes(
+                                            tag.key,
+                                            'customized_',
+                                          );
+                                          const tagValue = isCustomized
+                                            ? _.find(
+                                                form.getFieldValue(
+                                                  'environments',
+                                                )?.image?.labels,
+                                                {
+                                                  key: 'ai.backend.customized-image.name',
+                                                },
+                                              )?.value
+                                            : tag.value;
+                                          const aliasedTag = tagAlias(
+                                            tag.key + tagValue,
+                                          );
+                                          return _.isEqual(
+                                            aliasedTag,
+                                            preserveDotStartCase(
+                                              tag.key + tagValue,
+                                            ),
+                                          ) ? (
+                                            <DoubleTag
+                                              key={tag.key}
+                                              values={[
+                                                {
+                                                  label: tagAlias(tag.key),
+                                                  color: isCustomized
+                                                    ? 'cyan'
+                                                    : 'blue',
+                                                },
+                                                {
+                                                  label: tagValue,
+                                                  color: isCustomized
+                                                    ? 'cyan'
+                                                    : 'blue',
+                                                },
+                                              ]}
+                                            />
+                                          ) : (
+                                            <Tag
+                                              key={tag.key}
+                                              color={
+                                                isCustomized ? 'cyan' : 'blue'
+                                              }
+                                            >
+                                              {aliasedTag}
+                                            </Tag>
+                                          );
+                                        },
+                                      )}
+                                      <Typography.Text
+                                        style={{ color: token.colorPrimary }}
+                                        copyable={{
+                                          text:
+                                            getImageFullName(
+                                              form.getFieldValue('environments')
+                                                ?.image,
+                                            ) ||
+                                            form.getFieldValue('environments')
+                                              ?.version,
+                                        }}
+                                      />
+                                    </>
+                                  )}
+                                </Flex>
+                              </Col>
+                            </Row>
+                          ) : (
+                            <Row
+                              style={{ flexFlow: 'nowrap', gap: token.sizeXS }}
+                            >
+                              <Col>
+                                <ImageMetaIcon
+                                  image={
+                                    form.getFieldValue('environments')
+                                      ?.version ||
+                                    form.getFieldValue('environments')?.manual
+                                  }
+                                />
+                              </Col>
+                              <Col>
+                                {/* {form.getFieldValue('environments').image} */}
+                                <Flex direction="row" wrap="wrap">
+                                  {form.getFieldValue('environments')
+                                    ?.manual ? (
+                                    <Typography.Text
+                                      code
+                                      style={{ wordBreak: 'break-all' }}
+                                      copyable={{
+                                        text: form.getFieldValue('environments')
+                                          ?.manual,
+                                      }}
+                                    >
+                                      {
+                                        form.getFieldValue('environments')
+                                          ?.manual
+                                      }
+                                    </Typography.Text>
+                                  ) : (
+                                    <>
+                                      <Typography.Text>
+                                        {tagAlias(
+                                          getBaseImage(
+                                            form.getFieldValue('environments')
+                                              ?.version,
+                                          ),
+                                        )}
+                                      </Typography.Text>
+                                      <Divider type="vertical" />
+                                      <Typography.Text>
+                                        {getBaseVersion(
+                                          form.getFieldValue('environments')
+                                            ?.version,
+                                        )}
+                                      </Typography.Text>
+                                      <Divider type="vertical" />
+                                      <Typography.Text>
+                                        {
+                                          form.getFieldValue('environments')
+                                            ?.image?.architecture
+                                        }
+                                      </Typography.Text>
+                                      <Divider type="vertical" />
+                                      <ImageTags
+                                        tag={
+                                          form.getFieldValue('environments')
+                                            ?.image?.tag
+                                        }
+                                        labels={
+                                          form.getFieldValue('environments')
+                                            ?.image?.labels as Array<{
+                                            key: string;
+                                            value: string;
+                                          }>
+                                        }
+                                      />
+                                      <Typography.Text
+                                        style={{ color: token.colorPrimary }}
+                                        copyable={{
+                                          text:
+                                            getImageFullName(
+                                              form.getFieldValue('environments')
+                                                ?.image,
+                                            ) ||
+                                            form.getFieldValue('environments')
+                                              ?.version,
+                                        }}
+                                      />
+                                    </>
+                                  )}
+                                </Flex>
+                              </Col>
+                            </Row>
+                          )}
                         </Descriptions.Item>
                         {form.getFieldValue('envvars')?.length > 0 && (
                           <Descriptions.Item
@@ -1394,9 +1790,8 @@ const SessionLauncherPage = () => {
                       title={t('session.launcher.ResourceAllocation')}
                       status={
                         _.some(form.getFieldValue('resource'), (v, key) => {
-                          //                         console.log(form.getFieldError(['resource', 'shmem']));
-                          // console.log(form.getFieldValue(['resource']));
                           return (
+                            // @ts-ignore
                             form.getFieldError(['resource', key]).length > 0
                           );
                         }) ||
@@ -1425,9 +1820,13 @@ const SessionLauncherPage = () => {
                     >
                       <Flex direction="column" align="stretch">
                         {_.some(
-                          form.getFieldValue('resource')?.resource,
-                          (v, key) => {
+                          form.getFieldValue('resource'),
+                          (
+                            v,
+                            key: keyof SessionLauncherFormValue['resource'],
+                          ) => {
                             return (
+                              // @ts-ignore
                               form.getFieldWarning(['resource', key]).length > 0
                             );
                           },
@@ -1510,6 +1909,15 @@ const SessionLauncherPage = () => {
                               .value()} */}
                             </Flex>
                           </Descriptions.Item>
+                          {baiClient.supports('agent-select') &&
+                            !baiClient?._config?.hideAgents && (
+                              <Descriptions.Item
+                                label={t('session.launcher.AgentNode')}
+                              >
+                                {form.getFieldValue('agent') ||
+                                  t('session.launcher.AutoSelect')}
+                              </Descriptions.Item>
+                            )}
                           <Descriptions.Item
                             label={t('session.launcher.NumberOfContainer')}
                           >
@@ -1826,6 +2234,7 @@ const SessionLauncherPage = () => {
                   command: undefined,
                   scheduleDate: undefined,
                 },
+                agent: 'auto', // Add the missing 'agent' property
               } as Omit<
                 Required<OptionalFieldsOnly<SessionLauncherFormValue>>,
                 'autoMountedFolderNames'
@@ -1874,21 +2283,22 @@ export const ResourceNumbersOfSession: React.FC<FormOrResourceRequired> = ({
       {_.map(
         _.omit(resource, 'shmem', 'accelerator', 'acceleratorType'),
         (value, type) => {
-          return (
+          return value === '0' ? null : (
             <ResourceNumber
               key={type}
               // @ts-ignore
               type={type}
               value={
                 type === 'mem'
-                  ? (iSizeToSize(value.toString(), 'b')?.number || 0) *
+                  ? (convertBinarySizeUnit(value.toString(), 'b')?.number ||
+                      0) *
                       containerCount +
                     ''
                   : _.toNumber(value) * containerCount + ''
               }
               opts={{
                 shmem: resource.shmem
-                  ? (iSizeToSize(resource.shmem, 'b')?.number || 0) *
+                  ? (convertBinarySizeUnit(resource.shmem, 'b')?.number || 0) *
                     containerCount
                   : undefined,
               }}

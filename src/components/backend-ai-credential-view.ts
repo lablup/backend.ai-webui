@@ -70,6 +70,7 @@ export default class BackendAICredentialView extends BackendAIPage {
   @property({ type: Boolean }) enableSessionLifetime = false;
   @property({ type: String }) activeUserInnerTab = 'active';
   @property({ type: String }) activeCredentialInnerTab = 'active';
+  @property({ type: Boolean }) openUserSettingModal = false;
   @query('#active-credential-list')
   activeCredentialList!: BackendAICredentialList;
   @query('#inactive-credential-list')
@@ -306,6 +307,14 @@ export default class BackendAICredentialView extends BackendAIPage {
    */
   _launchUserAddDialog() {
     this.newUserDialog.show();
+  }
+
+  /**
+   * Open react user create modal.
+   * UserSettingModal.tsx
+   */
+  _openUserCreateModal() {
+    this.openUserSettingModal = true;
   }
 
   /**
@@ -782,7 +791,7 @@ export default class BackendAICredentialView extends BackendAIPage {
                 id="add-user"
                 icon="add"
                 label="${_t('credential.CreateUser')}"
-                @click="${this._launchUserAddDialog}"
+                @click="${() => this._openUserCreateModal()}"
               ></mwc-button>
             </h4>
             <div>
@@ -1018,6 +1027,20 @@ export default class BackendAICredentialView extends BackendAIPage {
           ></mwc-button>
         </div>
       </backend-ai-dialog>
+      ${this.openUserSettingModal
+        ? html`
+            <backend-ai-react-user-setting-dialog
+              value="${JSON.stringify({
+                open: this.openUserSettingModal,
+              })}"
+              @ok="${() => {
+                this.openUserSettingModal = false;
+                this.activeUserList.refresh();
+              }}"
+              @cancel="${() => (this.openUserSettingModal = false)}"
+            ></backend-ai-react-user-setting-dialog>
+          `
+        : html``}
     `;
   }
 }

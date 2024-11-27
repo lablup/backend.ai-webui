@@ -353,6 +353,9 @@ export default class BackendAISessionView extends BackendAIPage {
         'ERROR',
       ];
     }
+    if (globalThis.backendaiclient.supports('prepared-session-status')) {
+      status.push('PREPARED');
+    }
     if (globalThis.backendaiclient.supports('detailed-session-states')) {
       status = status.join(',');
     }

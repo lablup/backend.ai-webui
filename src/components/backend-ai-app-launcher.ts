@@ -1588,9 +1588,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         );
         this.notification.show();
       } else {
-        if (navigator.clipboard !== undefined) {
+        if (navigator?.clipboard !== undefined) {
           // for Chrome, Safari
-          navigator.clipboard.writeText(textToCopy).then(
+          navigator.clipboard.writeText?.(textToCopy).then(
             () => {
               this.notification.text = _text(
                 'session.applauncher.SSHConnectionExampleClipboardCopy',

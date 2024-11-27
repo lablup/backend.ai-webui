@@ -7,6 +7,7 @@ import { useFolderExplorerOpener } from '../components/FolderExplorerOpener';
 import ImageMetaIcon from '../components/ImageMetaIcon';
 import InferenceSessionErrorModal from '../components/InferenceSessionErrorModal';
 import ResourceNumber from '../components/ResourceNumber';
+import SessionDetailDrawer from '../components/SessionDetailDrawer';
 import VFolderLazyView from '../components/VFolderLazyView';
 import { InferenceSessionErrorModalFragment$key } from '../components/__generated__/InferenceSessionErrorModalFragment.graphql';
 import ChatUIModal from '../components/lablupTalkativotUI/ChatUIModal';
@@ -116,6 +117,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   const { message } = App.useApp();
   const webuiNavigate = useWebUINavigate();
   const { open } = useFolderExplorerOpener();
+  const [selectedSessionId, setSelectedSessionId] = useState<string>();
   const { endpoint, endpoint_token_list } =
     useLazyLoadQuery<EndpointDetailPageQuery>(
       graphql`
@@ -404,7 +406,9 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     label: t('session.launcher.EnvironmentVariable'),
     children: (
       <Typography.Text style={{ fontFamily: 'monospace' }}>
-        {_.isEmpty(JSON.parse(endpoint?.environ)) ? '-' : endpoint?.environ}
+        {_.isEmpty(JSON.parse(endpoint?.environ || '{}'))
+          ? '-'
+          : endpoint?.environ}
       </Typography.Text>
     ),
     span: {
@@ -651,6 +655,17 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             {
               title: t('modelService.SessionId'),
               dataIndex: 'session',
+              render: (sessionId) => {
+                return (
+                  <Typography.Link
+                    onClick={() => {
+                      setSelectedSessionId(sessionId);
+                    }}
+                  >
+                    {sessionId}
+                  </Typography.Link>
+                );
+              },
             },
             {
               title: t('modelService.Status'),
@@ -711,6 +726,13 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         open={openChatModal}
         onCancel={() => {
           setOpenChatModal(false);
+        }}
+      />
+      <SessionDetailDrawer
+        open={!selectedSessionId}
+        sessionId={selectedSessionId}
+        onClose={() => {
+          setSelectedSessionId(undefined);
         }}
       />
     </Flex>

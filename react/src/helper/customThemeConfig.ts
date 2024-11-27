@@ -27,13 +27,15 @@ type BrandingConfig = {
   companyName?: string;
   brandName?: string;
 };
-let _customTheme: {
-  light: ThemeConfig;
-  dark: ThemeConfig;
-  logo: LogoConfig;
-  sider?: SiderConfig;
-  branding?: BrandingConfig;
-};
+let _customTheme:
+  | {
+      light: ThemeConfig;
+      dark: ThemeConfig;
+      logo: LogoConfig;
+      sider?: SiderConfig;
+      branding?: BrandingConfig;
+    }
+  | undefined;
 
 export const loadCustomThemeConfig = () => {
   fetch('resources/theme.json')

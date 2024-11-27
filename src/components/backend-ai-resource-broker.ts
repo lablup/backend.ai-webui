@@ -862,7 +862,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
           // when `hideAgents` is `true`.  There are some cases it is more useful
           // to display the remaining slots.
           this.used_resource_group_slot = this._roundResourceDecimalPlaces(
-            resourceGroupSlots.remaining,
+            resourceGroupSlots.occupied,
           );
         }
       } else {

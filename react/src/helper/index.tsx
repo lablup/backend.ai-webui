@@ -1,8 +1,10 @@
+import { CommittedImage } from '../components/CustomizedImageList';
 import { Image } from '../components/ImageEnvironmentSelectFormItems';
 import { EnvironmentImage } from '../components/ImageList';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { CommittedImage } from '../pages/MyEnvironmentPage';
 import { SorterResult } from 'antd/es/table/interface';
+import { Duration } from 'dayjs/plugin/duration';
+import { TFunction } from 'i18next';
 import _ from 'lodash';
 
 export const newLineToBrElement = (
@@ -137,7 +139,7 @@ export const bytesToGB = (
   return (bytes / 10 ** 9).toFixed(decimalPoint);
 };
 
-type SizeUnit =
+export type SizeUnit =
   | 'B'
   | 'K'
   | 'M'
@@ -152,19 +154,14 @@ type SizeUnit =
   | 't'
   | 'p'
   | 'e';
-export function iSizeToSize(
+
+function convertSizeUnit(
   sizeWithUnit: string | undefined,
-  targetSizeUnit?: SizeUnit,
+  targetSizeUnit?: SizeUnit | 'auto',
   fixed: number = 2,
   round: boolean = false,
-):
-  | {
-      number: number;
-      numberFixed: string;
-      unit: string;
-      numberUnit: string;
-    }
-  | undefined {
+  base: 1024 | 1000 = 1024,
+) {
   if (sizeWithUnit === undefined) {
     return undefined;
   }
@@ -174,21 +171,55 @@ export function iSizeToSize(
   if (sizeIndex === -1 || isNaN(sizeValue)) {
     throw new Error('Invalid size format,' + sizeWithUnit);
   }
-  const bytes = sizeValue * Math.pow(1024, sizeIndex);
-  const targetIndex = targetSizeUnit
-    ? sizes.indexOf(targetSizeUnit.toUpperCase())
-    : sizeIndex;
-  const targetBytes = bytes / Math.pow(1024, targetIndex);
-  // const numberFixed = targetBytes.toFixed(fixed);
+
+  const bytes = sizeValue * Math.pow(base, sizeIndex);
+  let targetIndex: number;
+
+  if (targetSizeUnit === 'auto') {
+    // Auto unit selection logic
+    targetIndex = Math.floor(Math.log(bytes) / Math.log(base));
+    targetIndex = Math.min(Math.max(targetIndex, 0), sizes.length - 1);
+
+    const tempBytes = bytes / Math.pow(base, targetIndex);
+    if (tempBytes < 1 && targetIndex > 0) {
+      targetIndex--;
+    }
+  } else {
+    // Existing logic: explicit unit usage
+    targetIndex = targetSizeUnit
+      ? sizes.indexOf(targetSizeUnit.toUpperCase())
+      : sizeIndex;
+  }
+
+  const finalBytes = bytes / Math.pow(base, targetIndex);
   const numberFixed = round
-    ? targetBytes.toFixed(fixed)
-    : toFixedFloorWithoutTrailingZeros(targetBytes, fixed);
+    ? finalBytes.toFixed(fixed)
+    : toFixedFloorWithoutTrailingZeros(finalBytes, fixed);
+
   return {
-    number: targetBytes,
+    number: finalBytes,
     numberFixed,
     unit: sizes[targetIndex],
     numberUnit: `${numberFixed}${sizes[targetIndex]}`,
   };
+}
+
+export function convertBinarySizeUnit(
+  sizeWithUnit: string | undefined,
+  targetSizeUnit?: SizeUnit | 'auto',
+  fixed: number = 2,
+  round: boolean = false,
+) {
+  return convertSizeUnit(sizeWithUnit, targetSizeUnit, fixed, round, 1024);
+}
+
+export function convertDecimalSizeUnit(
+  sizeWithUnit: string | undefined,
+  targetSizeUnit?: SizeUnit | 'auto',
+  fixed: number = 2,
+  round: boolean = false,
+) {
+  return convertSizeUnit(sizeWithUnit, targetSizeUnit, fixed, round, 1000);
 }
 
 export function toFixedFloorWithoutTrailingZeros(
@@ -208,16 +239,17 @@ export function toFixedWithTypeValidation(num: number | string, fixed: number) {
 export function compareNumberWithUnits(size1: string, size2: string) {
   const [number1, unit1] = parseUnit(size1);
   const [number2, unit2] = parseUnit(size2);
-  // console.log(size1, size2);
-  // console.log(number1, unit1, number2, unit2);
+
   if (unit1 === unit2) {
     return number1 - number2;
   }
   if (number1 === 0 && number2 === 0) {
     return 0;
   }
-  // @ts-ignore
-  return iSizeToSize(size1, 'g')?.number - iSizeToSize(size2, 'g')?.number;
+
+  const value1 = convertBinarySizeUnit(size1, 'g')?.number ?? 0;
+  const value2 = convertBinarySizeUnit(size2, 'g')?.number ?? 0;
+  return value1 - value2;
 }
 
 export function addNumberWithUnits(
@@ -225,9 +257,9 @@ export function addNumberWithUnits(
   size2: string,
   targetUnit: SizeUnit = 'm',
 ) {
-  return iSizeToSize(
-    (iSizeToSize(size1, 'b')?.number || 0) +
-      (iSizeToSize(size2, 'b')?.number || 0) +
+  return convertBinarySizeUnit(
+    (convertBinarySizeUnit(size1, 'b')?.number || 0) +
+      (convertBinarySizeUnit(size2, 'b')?.number || 0) +
       'b',
     targetUnit,
   )?.numberUnit;
@@ -314,7 +346,7 @@ export const getImageFullName = (
   image: Image | CommittedImage | EnvironmentImage,
 ) => {
   return image
-    ? `${image.registry}/${image.name}:${image.tag}@${image.architecture}`
+    ? `${image.registry}/${image.namespace ?? image.name}:${image.tag}@${image.architecture}`
     : undefined;
 };
 
@@ -391,4 +423,32 @@ export function formatToUUID(str: string) {
   }
 
   return `${str.slice(0, 8)}-${str.slice(8, 12)}-${str.slice(12, 16)}-${str.slice(16, 20)}-${str.slice(20)}`;
+}
+
+export const toGlobalId = (type: string, id: string): string => {
+  return btoa(`${type}:${id}`);
+};
+
+export function preserveDotStartCase(str: string) {
+  // Temporarily replace periods with a unique placeholder
+  const placeholder = '<<<DOT>>>';
+  const tempStr = str.replace(/\./g, placeholder);
+
+  const startCased = _.startCase(tempStr);
+
+  // Replace the placeholder back with periods
+  return startCased.replace(new RegExp(placeholder, 'g'), '.');
+}
+
+export function formatDuration(duration: Duration, t: TFunction) {
+  // We need to `t` function to translate the time unit in React render phase
+  return [
+    duration.weeks() ? `${duration.weeks()} ${t('time.week')}` : '',
+    duration.days() ? `${duration.days()} ${t('time.day')}` : '',
+    duration.hours() ? `${duration.hours()} ${t('time.hour')}` : '',
+    duration.minutes() ? `${duration.minutes()} ${t('time.min')}` : '',
+    duration.seconds() ? `${duration.seconds()} ${t('time.sec')}` : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
 }

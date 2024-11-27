@@ -1,36 +1,39 @@
 import Flex from './Flex';
-import { ConfigProvider, Grid, SiderProps, Typography, theme } from 'antd';
+import { ConfigProvider, Grid, SiderProps, theme } from 'antd';
 import Sider from 'antd/es/layout/Sider';
+import classNames from 'classnames';
 import _ from 'lodash';
-import React from 'react';
+import React, { forwardRef } from 'react';
 
 export interface BAISiderProps extends SiderProps {
   logoCollapsed?: React.ReactNode;
   logo?: React.ReactNode;
   logoTitleCollapsed?: React.ReactNode;
   logoTitle?: React.ReactNode;
-  bottomText?: React.ReactNode;
 }
 
-export const DEFAULT_COLLAPSED_WIDTH = 74;
-const BAISider: React.FC<BAISiderProps> = ({
-  children,
-  logo,
-  logoCollapsed,
-  logoTitle,
-  logoTitleCollapsed,
-  bottomText,
-  theme: siderTheme,
-  ...otherProps
-}) => {
-  const { token } = theme.useToken();
-  const { Text } = Typography;
-  const { xs } = Grid.useBreakpoint();
+export const COLLAPSED_SIDER_WIDTH = 74;
+export const SIDER_WIDTH = 240;
+const BAISider = forwardRef<HTMLDivElement, BAISiderProps>(
+  (
+    {
+      children,
+      logo,
+      logoCollapsed,
+      logoTitle,
+      logoTitleCollapsed,
+      theme: siderTheme,
+      ...otherProps
+    },
+    ref,
+  ) => {
+    const { token } = theme.useToken();
+    const { xs } = Grid.useBreakpoint();
 
-  return (
-    <>
-      <style>
-        {`
+    return (
+      <>
+        <style>
+          {`
           .bai-sider .ant-layout-sider-children {
             display: flex;
             flex-direction: column;
@@ -54,102 +57,70 @@ const BAISider: React.FC<BAISiderProps> = ({
             -webkit-app-region: no-drag;
           }
         `}
-      </style>
-      <Sider
-        width={221}
-        breakpoint="md"
-        style={{
-          overflowX: 'hidden',
-          overflowY: 'auto',
-          height: '100vh',
-          position: 'sticky',
-          top: 0,
-          left: 0,
-          borderRight: '1px solid',
-          borderColor: token.colorBorder,
-          paddingTop: token.paddingContentVerticalSM,
-          scrollbarColor: 'auto',
-        }}
-        {...otherProps}
-        collapsedWidth={
-          xs
-            ? 0
-            : _.isNumber(otherProps.collapsedWidth)
-              ? otherProps.collapsedWidth
-              : DEFAULT_COLLAPSED_WIDTH
-        }
-        theme={siderTheme}
-        className="bai-sider"
-      >
-        <ConfigProvider
-          theme={{
-            algorithm: siderTheme === 'dark' ? theme.darkAlgorithm : undefined,
+        </style>
+        <Sider
+          ref={ref}
+          width={SIDER_WIDTH}
+          breakpoint="md"
+          style={{
+            boxShadow: '0px 0px 10px 0px rgba(0, 0, 0, 0.10)',
+            height: '100vh',
+            scrollbarColor: 'auto',
           }}
+          {...otherProps}
+          collapsedWidth={
+            xs
+              ? 0
+              : _.isNumber(otherProps.collapsedWidth)
+                ? otherProps.collapsedWidth
+                : COLLAPSED_SIDER_WIDTH
+          }
+          theme={siderTheme}
+          className={classNames('bai-sider', otherProps.className)}
+          trigger={null}
         >
-          <Flex
-            direction="column"
-            justify="start"
-            align="start"
-            style={{
-              padding: otherProps.collapsed
-                ? `${12 + token.marginSM}px 12px 12px 12px`
-                : `${12 + token.marginSM}px 16px 12px 16px`,
-              overflow: 'visible',
-              transition: 'all 0.2s ease-in-out',
-              marginBottom: token.marginSM,
+          <ConfigProvider
+            theme={{
+              algorithm:
+                siderTheme === 'dark' ? theme.darkAlgorithm : undefined,
             }}
-            className={'logo-and-text-container draggable'}
           >
-            <div className="logo-img-wrap non-draggable">
-              <div style={{ display: otherProps.collapsed ? 'none' : 'block' }}>
-                {logo}
-              </div>
-              <div style={{ display: otherProps.collapsed ? 'block' : 'none' }}>
-                {logoCollapsed}
-              </div>
-            </div>
-            <div className="logo-title-wrap non-draggable">
-              <Typography.Text
-                style={{
-                  fontSize: 16,
-                  lineHeight: '16px',
-                  fontWeight: 200,
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {otherProps.collapsed ? logoTitleCollapsed : logoTitle}
-              </Typography.Text>
-            </div>
-          </Flex>
-          {children}
-          {bottomText && (
-            <>
-              <Flex style={{ flex: 1 }} />
+            <Flex direction="column" align="stretch" style={{ height: '100%' }}>
               <Flex
-                justify="center"
                 direction="column"
+                justify="center"
+                align={otherProps.collapsed ? 'center' : 'start'}
                 style={{
-                  width: '100%',
-                  padding: 20,
-                  textAlign: 'center',
+                  transition: 'all 0.2s ease-in-out',
+                  backgroundColor: token.colorPrimary,
+                  padding: otherProps.collapsed ? undefined : '0 30px',
+                  height: token.Layout?.headerHeight || 60,
+                  position: 'sticky',
+                  top: 0,
+                  zIndex: 1,
                 }}
+                className={'logo-and-text-container draggable'}
               >
-                <Text
-                  type="secondary"
-                  style={{
-                    fontSize: '12px',
-                    wordBreak: 'normal',
-                  }}
-                >
-                  {bottomText}
-                </Text>
+                <div className="logo-img-wrap non-draggable">
+                  <div
+                    style={{ display: otherProps.collapsed ? 'none' : 'block' }}
+                  >
+                    {logo}
+                  </div>
+                  <div
+                    style={{ display: otherProps.collapsed ? 'block' : 'none' }}
+                  >
+                    {logoCollapsed}
+                  </div>
+                </div>
               </Flex>
-            </>
-          )}
-        </ConfigProvider>
-      </Sider>
-    </>
-  );
-};
+              {children}
+            </Flex>
+          </ConfigProvider>
+        </Sider>
+      </>
+    );
+  },
+);
 
 export default BAISider;

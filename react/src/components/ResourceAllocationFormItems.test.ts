@@ -36,7 +36,8 @@ describe('getAllocatablePresetNames', () => {
 
   const image_has_cuda_shares_min1_max1: Image = {
     id: 'id1',
-    name: 'image1',
+    namespace: 'image1',
+    name: undefined,
     digest: 'digest1',
     architecture: 'arm64',
     humanized_name: 'Image 1',
@@ -45,6 +46,9 @@ describe('getAllocatablePresetNames', () => {
     registry: 'registry1',
     tag: 'tag1',
     resource_limits: [{ key: 'cuda.shares', min: '1', max: '1' }],
+    base_image_name: undefined,
+    tags: undefined,
+    version: undefined,
   };
 
   it('should return presets when currentImage has accelerator limits', () => {

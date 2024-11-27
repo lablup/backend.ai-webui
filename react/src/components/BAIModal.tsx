@@ -9,9 +9,7 @@ import Draggable from 'react-draggable';
 
 export const DEFAULT_BAI_MODAL_Z_INDEX = 1001;
 export interface BAIModalProps extends ModalProps {
-  okText?: string; // customize text of ok button with adequate content
   draggable?: boolean; // modal can be draggle
-  className?: string;
 }
 const BAIModal: React.FC<BAIModalProps> = ({
   className,
