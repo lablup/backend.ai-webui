@@ -109,9 +109,6 @@ const loadPage =
       case 'serving':
         import('./components/backend-ai-serving-view.js');
         break;
-      case 'agent-summary':
-        import('./components/backend-ai-agent-summary-view.js');
-        break;
       case 'data':
         import('./components/backend-ai-data-view.js');
         break;

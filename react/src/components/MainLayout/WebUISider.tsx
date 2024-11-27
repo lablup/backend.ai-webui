@@ -490,8 +490,8 @@ const WebUISiderWithCustomTheme: React.FC<WebUISiderProps> = (props) => {
   const isParentDark = config.theme?.algorithm === theme.darkAlgorithm;
 
   const shouldReverse =
-    (isParentDark && themeConfig.sider?.theme === 'light') ||
-    (!isParentDark && themeConfig.sider?.theme === 'dark');
+    (isParentDark && themeConfig?.sider?.theme === 'light') ||
+    (!isParentDark && themeConfig?.sider?.theme === 'dark');
 
   return shouldReverse ? (
     <ReverseThemeProvider>
