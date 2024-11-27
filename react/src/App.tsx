@@ -60,6 +60,7 @@ const ImportAndRunPage = React.lazy(() => import('./pages/ImportAndRunPage'));
 const ComputeSessionList = React.lazy(
   () => import('./components/ComputeSessionList'),
 );
+const AgentSummaryPage = React.lazy(() => import('./pages/AgentSummaryPage'));
 
 interface CustomHandle {
   title?: string;
@@ -283,6 +284,11 @@ const router = createBrowserRouter([
       },
       {
         path: '/agent-summary',
+        element: (
+          <BAIErrorBoundary>
+            <AgentSummaryPage />
+          </BAIErrorBoundary>
+        ),
         handle: { labelKey: 'webui.menu.AgentSummary' },
       },
       {

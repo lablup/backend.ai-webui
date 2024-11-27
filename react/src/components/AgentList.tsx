@@ -709,14 +709,14 @@ const AgentList: React.FC<AgentListProps> = ({
             {value === true ? (
               <CheckCircleOutlined
                 style={{
-                  color: token.colorPrimary,
+                  color: token.colorSuccess,
                   fontSize: token.fontSizeXL,
                 }}
               />
             ) : (
               <MinusCircleOutlined
                 style={{
-                  color: token.colorError,
+                  color: token.colorTextDisabled,
                   fontSize: token.fontSizeXL,
                 }}
               />
