@@ -356,6 +356,9 @@ export default class BackendAISessionView extends BackendAIPage {
     if (globalThis.backendaiclient.supports('prepared-session-status')) {
       status.push('PREPARED');
     }
+    if (globalThis.backendaiclient.supports('creating-session-status')) {
+      status.push('CREATING');
+    }
     if (globalThis.backendaiclient.supports('detailed-session-states')) {
       status = status.join(',');
     }

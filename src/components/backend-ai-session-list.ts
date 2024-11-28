@@ -580,8 +580,9 @@ export default class BackendAISessionList extends BackendAIPage {
   _isPreparing(status) {
     const preparingStatuses = [
       'RESTARTING',
-      'PREPARED',
       'PREPARING',
+      'PREPARED',
+      'CREATING',
       'PULLING',
     ];
     if (preparingStatuses.indexOf(status) === -1) {
@@ -772,6 +773,9 @@ export default class BackendAISessionList extends BackendAIPage {
         if (globalThis.backendaiclient.supports('prepared-session-status')) {
           status.push('PREPARED');
         }
+        if (globalThis.backendaiclient.supports('creating-session-status')) {
+          status.push('CREATING');
+        }
         break;
       case 'finished':
         status = ['TERMINATED', 'CANCELLED']; // TERMINATED, CANCELLED
@@ -788,6 +792,9 @@ export default class BackendAISessionList extends BackendAIPage {
         ];
         if (globalThis.backendaiclient.supports('prepared-session-status')) {
           status.push('PREPARED');
+        }
+        if (globalThis.backendaiclient.supports('creating-session-status')) {
+          status.push('CREATING');
         }
     }
     if (
