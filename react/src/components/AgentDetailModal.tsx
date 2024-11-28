@@ -1,4 +1,4 @@
-import { convertBinarySizeUnit } from '../helper';
+import { convertBinarySizeUnit, convertDecimalSizeUnit } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
@@ -94,11 +94,14 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                 <BAIProgressWithLabel
                   percent={
                     (_.toNumber(
-                      convertBinarySizeUnit(_.toString(agent?.mem_cur_bytes), 'g')
-                        ?.number,
+                      convertBinarySizeUnit(
+                        _.toString(agent?.mem_cur_bytes),
+                        'g',
+                      )?.number,
                     ) /
                       _.toNumber(
-                        convertBinarySizeUnit(parsedAvailableSlots?.mem, 'g')?.number,
+                        convertBinarySizeUnit(parsedAvailableSlots?.mem, 'g')
+                          ?.number,
                       )) *
                       100 || 0
                   }
@@ -118,26 +121,26 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                   <Typography.Text>TX:</Typography.Text>
                   <Typography.Text>
                     {
-                      convertBinarySizeUnit(
+                      convertDecimalSizeUnit(
                         parsedLiveStat?.node?.net_tx?.current,
                         'm',
                         1,
                       )?.numberUnit
                     }
-                    iB
+                    B
                   </Typography.Text>
                 </Flex>
                 <Flex gap="xl">
                   <Typography.Text>RX:</Typography.Text>
                   <Typography.Text>
                     {
-                      convertBinarySizeUnit(
+                      convertDecimalSizeUnit(
                         parsedLiveStat?.node?.net_rx?.current,
                         'm',
                         1,
                       )?.numberUnit
                     }
-                    iB
+                    B
                   </Typography.Text>
                 </Flex>
               </Flex>
