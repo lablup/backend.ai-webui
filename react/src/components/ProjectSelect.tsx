@@ -129,6 +129,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
         onSelectProject?.(option as ProjectInfo);
       }}
       placeholder={t('storageHost.quotaSettings.SelectProject')}
+      popupMatchSelectWidth={false}
       {...selectProps}
       value={value}
       optionFilterProp="projectName"
