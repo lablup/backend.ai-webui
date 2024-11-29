@@ -41,8 +41,8 @@ const LoginSessionExtendButton: React.FC<
         callback={() => {
           const diff = dayjs(data?.expires).diff(dayjs(), 'seconds');
           const duration = dayjs.duration(Math.max(0, diff), 'seconds');
-          const days = duration.days();
-          if (duration.seconds() === 0) {
+          const days = Math.floor(duration.asDays());
+          if (duration.asSeconds() <= 0) {
             // @ts-ignore
             if (globalThis.isElectron) {
               // @ts-ignore
