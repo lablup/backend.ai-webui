@@ -686,8 +686,7 @@ const SessionLauncherPage = () => {
 
                 // only launch app when it has valid service ports
                 if (service_info.length > 0) {
-                  // @ts-ignore
-                  globalThis.appLauncher.showLauncher(appOptions);
+                  globalThis.appLauncher.showLauncher?.(appOptions);
                 }
               }
             },
