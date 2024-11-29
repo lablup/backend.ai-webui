@@ -20,8 +20,6 @@ export const navigate =
         '/experiment',
         '/data',
         '/my-environment',
-        '/pipeline',
-        '/pipeline-job',
         '/statistics',
         '/usersettings',
         '/agent',
@@ -96,16 +94,11 @@ const loadPage =
       case 'session':
         import('./components/backend-ai-session-view-next.js');
         break;
-      // temporally block pipeline
-      /* case 'pipeline':
-    import('./pipeline/components/pipeline-view.js');
-    break;
-  case 'pipeline-job':
-    import('./pipeline/components/pipeline-job-view.js');
-    break;
-  case 'experiment':
-    import('./components/backend-ai-experiment-view.js');
-    break; */
+      // temporally block experiment
+      /*
+      case 'experiment':
+        import('./components/backend-ai-experiment-view.js');
+        break; */
       case 'serving':
         import('./components/backend-ai-serving-view.js');
         break;
