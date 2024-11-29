@@ -27,9 +27,7 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({ ...props }) => {
                   type="primary"
                   key="console"
                   onClick={() => {
-                    // @ts-ignore
                     if (globalThis.isElectron) {
-                      // @ts-ignore
                       globalThis.location.href = globalThis.electronInitialHref;
                     } else {
                       globalThis.location.reload();
@@ -89,9 +87,7 @@ export const ErrorView = () => {
             type="primary"
             key="console"
             onClick={() => {
-              // @ts-ignore
               if (globalThis.isElectron) {
-                // @ts-ignore
                 globalThis.location.href = globalThis.electronInitialHref;
               } else {
                 globalThis.location.reload();
