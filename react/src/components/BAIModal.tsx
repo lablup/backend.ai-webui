@@ -1,9 +1,10 @@
+import useControllableState from '../hooks/useControllableState';
 // @ts-ignore
 import rawBAIModalCss from './BAIModal.css?raw';
 import { HolderOutlined } from '@ant-design/icons';
 import { Modal, ModalProps, theme } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import type { DraggableData, DraggableEvent } from 'react-draggable';
 import Draggable from 'react-draggable';
 
@@ -14,6 +15,7 @@ export interface BAIModalProps extends ModalProps {
 const BAIModal: React.FC<BAIModalProps> = ({
   className,
   styles,
+  keyboard,
   ...modalProps
 }) => {
   const { token } = theme.useToken();
@@ -42,12 +44,45 @@ const BAIModal: React.FC<BAIModalProps> = ({
         (targetRect.height - 69), // 69 is height of modal header
     });
   };
+
+  const [open, setOpen] = useControllableState(modalProps, {
+    valuePropName: 'open',
+    trigger: 'onCancel',
+  });
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        const activeElement = document.activeElement;
+        if (
+          activeElement &&
+          (activeElement.tagName === 'INPUT' ||
+            activeElement.tagName === 'TEXTAREA' ||
+            activeElement.getAttribute('role') === 'combobox')
+        ) {
+          (activeElement as HTMLElement)?.blur?.();
+        } else {
+          setOpen(false);
+        }
+      }
+    };
+
+    if (open && keyboard) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [open, setOpen, keyboard]);
+
   return (
     <>
       <style>{rawBAIModalCss}</style>
       <Modal
         keyboard={false}
         {...modalProps}
+        //override open with controlled open
+        open={open}
         centered={modalProps.centered ?? true}
         className={`bai-modal ${className ?? ''}`}
         wrapClassName={modalProps.draggable ? 'draggable' : ''}
