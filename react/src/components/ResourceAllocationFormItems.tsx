@@ -1053,10 +1053,11 @@ const ResourceAllocationFormItems: React.FC<
                             },
                           }}
                           disabled={
-                            currentImageAcceleratorLimits.length === 0 &&
-                            _.isEmpty(
-                              form.getFieldValue(['environments', 'manual']),
-                            )
+                            _.isEmpty(acceleratorSlots) ||
+                            (currentImageAcceleratorLimits.length === 0 &&
+                              _.isEmpty(
+                                form.getFieldValue(['environments', 'manual']),
+                              ))
                           }
                           min={0}
                           max={
@@ -1081,26 +1082,11 @@ const ResourceAllocationFormItems: React.FC<
                               >
                                 <Select
                                   tabIndex={-1}
-                                  disabled={
-                                    currentImageAcceleratorLimits.length ===
-                                      0 &&
-                                    _.isEmpty(
-                                      form.getFieldValue([
-                                        'environments',
-                                        'manual',
-                                      ]),
-                                    )
-                                  }
                                   suffixIcon={
                                     _.size(acceleratorSlots) > 1
                                       ? undefined
                                       : null
                                   }
-                                  // open={
-                                  //   _.size(acceleratorSlots) > 1
-                                  //     ? undefined
-                                  //     : false
-                                  // }
                                   popupMatchSelectWidth={false}
                                   options={_.map(
                                     acceleratorSlots,
