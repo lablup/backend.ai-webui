@@ -435,6 +435,18 @@ const ContainerRegistryEditorModal: React.FC<
               {
                 value: 'harbor2',
               },
+              {
+                value: 'github',
+              },
+              {
+                value: 'gitlab',
+              },
+              {
+                value: 'ecr',
+              },
+              {
+                value: 'ecr-public',
+              },
             ]}
             onChange={(value) => {
               if (value === 'docker') {
