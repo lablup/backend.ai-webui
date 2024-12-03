@@ -43,9 +43,7 @@ const LoginSessionExtendButton: React.FC<
           const duration = dayjs.duration(Math.max(0, diff), 'seconds');
           const days = Math.floor(duration.asDays());
           if (duration.asSeconds() <= 0) {
-            // @ts-ignore
             if (globalThis.isElectron) {
-              // @ts-ignore
               globalThis.location.href = globalThis.electronInitialHref;
             } else {
               globalThis.location.reload();

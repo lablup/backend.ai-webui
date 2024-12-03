@@ -4,6 +4,7 @@ import SSHKeypairManagementModal from '../components/SSHKeypairManagementModal';
 import { SettingItemProps } from '../components/SettingItem';
 import SettingList from '../components/SettingList';
 import ShellScriptEditModal from '../components/ShellScriptEditModal';
+import { filterEmptyItem } from '../helper';
 import {
   useBAISettingGeneralState,
   useBAISettingUserState,
@@ -53,7 +54,7 @@ const UserPreferencesPage = () => {
   const settingGroup: { title: string; settingItems: SettingItemProps[] }[] = [
     {
       title: t('usersettings.Preferences'),
-      settingItems: [
+      settingItems: filterEmptyItem([
         {
           type: 'checkbox',
           title: t('usersettings.DesktopNotification'),
@@ -126,22 +127,19 @@ const UserPreferencesPage = () => {
             console.log(globalThis.backendaioptions.get('selected_language'));
           },
         },
-        ...[
+        globalThis.isElectron && {
+          type: 'checkbox',
+          title: t('usersettings.KeepLoginSessionInformation'),
+          description: (
+            <Trans i18nKey="usersettings.DescKeepLoginSessionInformation" />
+          ),
+          defaultValue: false,
           //@ts-ignore
-          globalThis.isElectron && {
-            type: 'checkbox',
-            title: t('usersettings.KeepLoginSessionInformation'),
-            description: (
-              <Trans i18nKey="usersettings.DescKeepLoginSessionInformation" />
-            ),
-            defaultValue: false,
-            //@ts-ignore
-            value: preserveLogin,
-            onChange: (e: any) => {
-              setPreserveLogin(e.target.checked);
-            },
+          value: preserveLogin,
+          onChange: (e: any) => {
+            setPreserveLogin(e.target.checked);
           },
-        ].filter(Boolean),
+        },
         {
           type: 'checkbox',
           title: t('usersettings.AutomaticUpdateCheck'),
@@ -202,7 +200,7 @@ const UserPreferencesPage = () => {
             setIsClassicSessionLauncher(e.target.checked);
           },
         },
-      ],
+      ]),
     },
     {
       title: t('usersettings.ShellEnvironments'),

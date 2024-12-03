@@ -52,7 +52,6 @@ export const ThemeModeProvider: React.FC<PropsWithChildren> = ({
       } else {
         document.body.classList.remove('dark-theme');
       }
-      // @ts-ignore
       globalThis.isDarkMode = value;
 
       document.dispatchEvent(
