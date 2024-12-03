@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react';
  * @param callback The function to be executed at the specified interval.
  * @param delay The delay (in milliseconds) between each execution of the callback function. If `null`, the interval is cleared(pause).
  */
-export function useInterval(callback: () => void, delay: number) {
+export function useInterval(callback: () => void, delay: number | null) {
   const savedCallback = useRef<() => any>();
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export function useInterval(callback: () => void, delay: number) {
  */
 export const useIntervalValue = (
   calculator: () => any,
-  delay: number,
+  delay: number | null,
   triggerKey?: string,
 ) => {
   const [result, setResult] = useState(calculator());

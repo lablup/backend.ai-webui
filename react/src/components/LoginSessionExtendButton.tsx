@@ -7,7 +7,7 @@ import { ClockCircleOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Grid, Tooltip } from 'antd';
 import { default as dayjs } from 'dayjs';
 import { Repeat2Icon } from 'lucide-react';
-import React, { useTransition } from 'react';
+import React, { useTransition, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface LoginSessionExtendButtonProps {}
@@ -19,6 +19,7 @@ const LoginSessionExtendButton: React.FC<
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const [isPending, startTransition] = useTransition();
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
+  const [isDisabled, setIsDisabled] = useState(false);
 
   const gridBreakpoint = Grid.useBreakpoint();
 
@@ -42,14 +43,19 @@ const LoginSessionExtendButton: React.FC<
           const diff = dayjs(data?.expires).diff(dayjs(), 'seconds');
           const duration = dayjs.duration(Math.max(0, diff), 'seconds');
           const days = Math.floor(duration.asDays());
-          if (duration.asSeconds() <= 0) {
-            // @ts-ignore
-            if (globalThis.isElectron) {
+          const isExpired = duration.asMilliseconds() <= 0;
+          setIsDisabled(isExpired);
+          if (isExpired) {
+            // FIXME: temporally add timeout (5s) for page reload to be applied
+            setTimeout(() => {
               // @ts-ignore
-              globalThis.location.href = globalThis.electronInitialHref;
-            } else {
-              globalThis.location.reload();
-            }
+              if (globalThis.isElectron) {
+                // @ts-ignore
+                globalThis.location.href = globalThis.electronInitialHref;
+              } else {
+                globalThis.location.reload();
+              }
+            }, 5000);
           }
           return gridBreakpoint.lg
             ? `${days ? days + 'd ' : ''}${duration.format('HH:mm:ss')}`
@@ -57,7 +63,7 @@ const LoginSessionExtendButton: React.FC<
               ? days + 'd'
               : duration.format('HH:mm:ss');
         }}
-        delay={100}
+        delay={isDisabled ? null : 100}
         render={(text) => {
           return (
             <Tooltip title={t('general.RemainingLoginSessionTime')}>
@@ -83,6 +89,7 @@ const LoginSessionExtendButton: React.FC<
             loading={isPending}
             onClick={() => startTransition(() => updateFetchKey())}
             icon={<Repeat2Icon />}
+            disabled={isDisabled}
           />
         </Tooltip>
       </ConfigProvider>
