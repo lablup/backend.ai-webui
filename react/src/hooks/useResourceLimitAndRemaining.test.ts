@@ -1,3 +1,4 @@
+import '../../__test__/matchMedia.mock.js';
 import { isMatchingMaxPerContainer } from './useResourceLimitAndRemaining';
 
 describe('getConfigName', () => {
