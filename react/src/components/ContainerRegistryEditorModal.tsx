@@ -142,7 +142,7 @@ const ContainerRegistryEditorModal: React.FC<
           registry_name: values.registry_name,
           url: values.url,
           type: values.type,
-          project: values.type === 'docker' ? 'library' : values.project,
+          project: values.project,
           username: _.isEmpty(values.username) ? null : values.username,
           password:
             values.isChangedPassword || !containerRegistry
@@ -285,10 +285,7 @@ const ContainerRegistryEditorModal: React.FC<
             ? {
                 ...containerRegistry,
               }
-            : {
-                type: 'docker',
-                project: 'library',
-              }
+            : {}
         }
         preserve={false}
       >
@@ -448,12 +445,6 @@ const ContainerRegistryEditorModal: React.FC<
                 value: 'ecr-public',
               },
             ]}
-            onChange={(value) => {
-              if (value === 'docker') {
-                formRef.current?.setFieldValue('project', 'library');
-                formRef.current?.validateFields(['project']);
-              }
-            }}
           ></Select>
         </Form.Item>
         <Form.Item
@@ -478,10 +469,7 @@ const ContainerRegistryEditorModal: React.FC<
                   },
                 ]}
               >
-                <Input
-                  disabled={getFieldValue('type') === 'docker'}
-                  allowClear
-                />
+                <Input allowClear />
               </Form.Item>
             );
           }}
