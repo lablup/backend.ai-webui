@@ -6,10 +6,7 @@ import {
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../hooks/hooksUsingRelay';
-import {
-  useCurrentProjectValue,
-  useCurrentResourceGroupValue,
-} from '../hooks/useCurrentProject';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useEventNotStable } from '../hooks/useEventNotStable';
 import {
   MergedResourceLimits,
@@ -17,6 +14,7 @@ import {
   useResourceLimitAndRemaining,
 } from '../hooks/useResourceLimitAndRemaining';
 import AgentSelect from './AgentSelect';
+import BAISelect from './BAISelect';
 import DynamicUnitInputNumberWithSlider from './DynamicUnitInputNumberWithSlider';
 import Flex from './Flex';
 import {
@@ -35,7 +33,6 @@ import {
   Form,
   Radio,
   Row,
-  Select,
   Switch,
   theme,
 } from 'antd';
@@ -113,7 +110,11 @@ const ResourceAllocationFormItems: React.FC<
   const [isPendingAgentList, startAgentListTransition] = useTransition();
 
   const currentProject = useCurrentProjectValue();
-  const currentResourceGroup = useCurrentResourceGroupValue(); // use global state
+  const currentResourceGroupInForm =
+    Form.useWatch(['resourceGroup'], {
+      form,
+      preserve: true,
+    }) || form.getFieldValue('resourceGroup');
 
   const currentImage = Form.useWatch(['environments', 'image'], {
     form,
@@ -126,12 +127,12 @@ const ResourceAllocationFormItems: React.FC<
   const [{ currentImageMinM, remaining, resourceLimits, checkPresetInfo }] =
     useResourceLimitAndRemaining({
       currentProjectName: currentProject.name,
-      currentResourceGroup: currentResourceGroup || undefined, // global currentResourceGroup can be null
+      currentResourceGroup: currentResourceGroupInForm || undefined, // global currentResourceGroup can be null
       currentImage: currentImage,
     });
 
   const { mergedResourceSlots, resourceSlotsInRG: resourceSlots } =
-    useResourceSlotsDetails(currentResourceGroup || undefined);
+    useResourceSlotsDetails(currentResourceGroupInForm || undefined);
 
   const acceleratorSlots = _.omitBy(resourceSlots, (value, key) => {
     if (['cpu', 'mem', 'shmem'].includes(key)) return true;
@@ -220,18 +221,19 @@ const ResourceAllocationFormItems: React.FC<
 
   useEffect(() => {
     if (currentAllocationPreset === 'auto-select') {
-      currentResourceGroup && updateAllocationPresetBasedOnResourceGroup();
+      currentResourceGroupInForm &&
+        updateAllocationPresetBasedOnResourceGroup();
     }
   }, [
-    currentResourceGroup,
+    currentResourceGroupInForm,
     updateAllocationPresetBasedOnResourceGroup,
     currentAllocationPreset,
   ]);
   // update allocation preset based on resource group and current image
   useEffect(() => {
-    currentResourceGroup && updateAllocationPresetBasedOnResourceGroup();
+    currentResourceGroupInForm && updateAllocationPresetBasedOnResourceGroup();
   }, [
-    currentResourceGroup,
+    currentResourceGroupInForm,
     updateAllocationPresetBasedOnResourceGroup,
     currentImage,
   ]);
@@ -423,7 +425,6 @@ const ResourceAllocationFormItems: React.FC<
         ]}
       >
         <ResourceGroupSelect projectName={currentProject.name} showSearch />
-        {/* <ResourceGroupSelectForCurrentProject showSearch /> */}
       </Form.Item>
 
       {enableResourcePresets ? (
@@ -916,6 +917,12 @@ const ResourceAllocationFormItems: React.FC<
                       'resource',
                       'acceleratorType',
                     ]);
+                    const isAcceleratorInputDisabled =
+                      _.isEmpty(acceleratorSlots) ||
+                      (currentImageAcceleratorLimits.length === 0 &&
+                        _.isEmpty(
+                          form.getFieldValue(['environments', 'manual']),
+                        ));
                     return (
                       <Form.Item
                         name={['resource', 'accelerator']}
@@ -1052,13 +1059,7 @@ const ResourceAllocationFormItems: React.FC<
                                   : undefined,
                             },
                           }}
-                          disabled={
-                            _.isEmpty(acceleratorSlots) ||
-                            (currentImageAcceleratorLimits.length === 0 &&
-                              _.isEmpty(
-                                form.getFieldValue(['environments', 'manual']),
-                              ))
-                          }
+                          disabled={isAcceleratorInputDisabled}
                           min={0}
                           max={
                             resourceLimits.accelerators[currentAcceleratorType]
@@ -1079,9 +1080,12 @@ const ResourceAllocationFormItems: React.FC<
                                 noStyle
                                 name={['resource', 'acceleratorType']}
                                 initialValue={_.keys(acceleratorSlots)[0]}
+                                hidden={isAcceleratorInputDisabled}
                               >
-                                <Select
+                                <BAISelect
+                                  autoSelectOption
                                   tabIndex={-1}
+                                  // Do not delete disabled prop. It is necessary to prevent the user from changing the value.
                                   suffixIcon={
                                     _.size(acceleratorSlots) > 1
                                       ? undefined
@@ -1204,7 +1208,7 @@ const ResourceAllocationFormItems: React.FC<
             <Suspense>
               <Form.Item required noStyle style={{ flex: 1 }} name="agent">
                 <AgentSelect
-                  resourceGroup={currentResourceGroup}
+                  resourceGroup={currentResourceGroupInForm}
                   fetchKey={agentFetchKey}
                   onChange={(value, option) => {
                     if (value !== 'auto') {

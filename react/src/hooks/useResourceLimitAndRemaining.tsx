@@ -4,6 +4,7 @@ import { AUTOMATIC_DEFAULT_SHMEM } from '../components/ResourceAllocationFormIte
 import { addNumberWithUnits, convertBinarySizeUnit } from '../helper';
 import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
 import { useSuspenseTanQuery } from './reactQueryAlias';
+import { useResourceGroupsForCurrentProject } from './useCurrentProject';
 import _ from 'lodash';
 import { useMemo } from 'react';
 
@@ -108,15 +109,19 @@ export const useResourceLimitAndRemaining = ({
   const baiClient = useSuspendedBackendaiClient();
   const [resourceSlots] = useResourceSlots();
   const acceleratorSlots = _.omit(resourceSlots, ['cpu', 'mem', 'shmem']);
+  const { resourceGroups } = useResourceGroupsForCurrentProject();
 
   const {
     data: checkPresetInfo,
     refetch,
     isRefetching,
-  } = useSuspenseTanQuery<ResourceAllocation | undefined>({
+  } = useSuspenseTanQuery<ResourceAllocation | null>({
     queryKey: ['check-presets', currentProjectName, currentResourceGroup],
     queryFn: () => {
-      if (currentResourceGroup) {
+      if (
+        currentResourceGroup &&
+        _.some(resourceGroups, (rg) => rg.name === currentResourceGroup)
+      ) {
         return baiClient.resourcePreset
           .check({
             group: currentProjectName,
@@ -124,7 +129,7 @@ export const useResourceLimitAndRemaining = ({
           })
           .catch(() => {});
       } else {
-        return;
+        return null;
       }
     },
     staleTime: 1000,
