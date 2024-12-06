@@ -2,7 +2,6 @@ import App from './App';
 import BAIIntervalView from './components/BAIIntervalView';
 import { jotaiStore, useWebComponentInfo } from './components/DefaultProviders';
 import Flex from './components/Flex';
-import FlexActivityIndicator from './components/FlexActivityIndicator';
 import ResourceGroupSelectForCurrentProject from './components/ResourceGroupSelectForCurrentProject';
 import SourceCodeViewer from './components/SourceCodeViewer';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
@@ -15,10 +14,9 @@ import { ThemeModeProvider } from './hooks/useThemeMode';
 import { Tag, theme } from 'antd';
 import dayjs from 'dayjs';
 import { Provider as JotaiProvider } from 'jotai';
-import React, { Suspense } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { useTranslation } from 'react-i18next';
-import { Route, Routes } from 'react-router-dom';
 
 // To maintain compatibility with various manager versions, the WebUI client uses directives to manipulate GraphQL queries.
 // This can cause Relay to show "Warning: RelayResponseNormalizer: Payload did not contain a value for field" in the browser console during development.
@@ -44,7 +42,6 @@ loadCustomThemeConfig();
 const DefaultProviders = React.lazy(
   () => import('./components/DefaultProviders'),
 );
-const SessionList = React.lazy(() => import('./pages/SessionListPage'));
 const ResetPasswordRequired = React.lazy(
   () => import('./components/ResetPasswordRequired'),
 );
@@ -55,38 +52,10 @@ const UserInfoModal = React.lazy(() => import('./components/UserInfoModal'));
 const UserSettingsModal = React.lazy(
   () => import('./components/UserSettingModal'),
 );
-const UserDropdownMenu = React.lazy(
-  () => import('./components/UserDropdownMenu'),
-);
-const SessionLauncherPage = React.lazy(
-  () => import('./pages/SessionLauncherPage'),
-);
-const ContainerRegistryList = React.lazy(
-  () => import('./components/ContainerRegistryList'),
-);
-const KeypairInfoModal = React.lazy(
-  () => import('./components/KeypairInfoModal'),
-);
 const SignoutModal = React.lazy(() => import('./components/SignoutModal'));
-
-const ErrorLogList = React.lazy(() => import('./components/ErrorLogList'));
 
 const BatchSessionScheduledTimeSetting = React.lazy(
   () => import('./components/BatchSessionScheduledTimeSetting'),
-);
-
-customElements.define(
-  'backend-ai-react-session-list',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <Routes>
-          <Route path="/session" element={<SessionList />} />
-          <Route path="/session/start" element={<SessionLauncherPage />} />
-        </Routes>
-      </DefaultProviders>
-    );
-  }),
 );
 
 customElements.define(
@@ -126,17 +95,6 @@ customElements.define(
     return (
       <DefaultProviders {...props}>
         <UserSettingsModal draggable />
-      </DefaultProviders>
-    );
-  }),
-);
-
-customElements.define(
-  'backend-ai-react-user-dropdown-menu',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <UserDropdownMenu />
       </DefaultProviders>
     );
   }),
@@ -226,35 +184,6 @@ const ResourceGroupSelectInWebComponent = (props: ReactWebComponentProps) => {
 };
 
 customElements.define(
-  'backend-ai-react-container-registry-list',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <Suspense fallback={<FlexActivityIndicator />}>
-          <ContainerRegistryList />
-        </Suspense>
-      </DefaultProviders>
-    );
-  }),
-);
-
-customElements.define(
-  'backend-ai-react-keypair-info-modal',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <KeypairInfoModal
-          open={props.value === 'true'}
-          onRequestClose={() => {
-            props.dispatchEvent('close', null);
-          }}
-        />
-      </DefaultProviders>
-    );
-  }),
-);
-
-customElements.define(
   'backend-ai-react-signout-modal',
   reactToWebComponent((props) => {
     return (
@@ -281,17 +210,6 @@ root.render(
       </ThemeModeProvider>
     </JotaiProvider>
   </React.StrictMode>,
-);
-
-customElements.define(
-  'backend-ai-react-error-log-list',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <ErrorLogList />
-      </DefaultProviders>
-    );
-  }),
 );
 
 customElements.define(
