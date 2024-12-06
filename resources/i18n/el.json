@@ -114,7 +114,7 @@
     "IPUEnabled": "IPU NPU Ενεργοποιημένη",
     "ATOMEnabled": "ATOM NPU Ενεργοποιημένη",
     "WarboyEnabled": "Ενεργοποιημένη NPU Warboy",
-    "DownloadWebUIApp": "Κατεβάστε την εφαρμογή Backend.AI Web UI App",
+    "DownloadWebUIApp": "Κατεβάστε την εφαρμογή Desktop",
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "Hyperaccel LPU Enabled",
     "ATOMPlusEnabled": "Ενεργοποιημένο ATOM+ NPU",

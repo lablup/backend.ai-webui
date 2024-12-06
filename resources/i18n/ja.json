@@ -114,7 +114,7 @@
     "IPUEnabled": "IPU NPU使用中",
     "ATOMEnabled": "ATOM NPU使用中",
     "WarboyEnabled": "Warboy NPU使用中",
-    "DownloadWebUIApp": "Backend.AI Web UIアプリのダウンロード",
+    "DownloadWebUIApp": "デスクトップアプリをダウンロード",
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "ハイパーアクセル LPU が有効になりました",
     "ATOMPlusEnabled": "ATOM+ NPU 有効",

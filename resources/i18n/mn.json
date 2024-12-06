@@ -111,7 +111,7 @@
     "AcceptSharedVFolder": "Та энэ фолдер рүү нэвтрэх боломжтой боллоо:",
     "DeclineSharedVFolder": "Энэхүү фолдерын уралгыг устгалаа:",
     "connectingToCluster": "Backend.AI кластерт холбогдож байна ...",
-    "DownloadWebUIApp": "Backend.AI Web UI програмыг татаж аваарай",
+    "DownloadWebUIApp": "Ширээний програмыг татаж авах",
     "IPUEnabled": "IPU NPU идэвхжүүлсэн",
     "ATOMEnabled": "ATOM NPU-г идэвхжүүлсэн",
     "WarboyEnabled": "Warboy NPU идэвхжүүлсэн",

@@ -114,7 +114,7 @@
     "IPUEnabled": "Đã bật NPU IPU",
     "ATOMEnabled": "Đã bật NPU ATOM",
     "WarboyEnabled": "NPU Warboy đã được kích hoạt",
-    "DownloadWebUIApp": "Tải xuống ứng dụng giao diện người dùng web Backend.AI",
+    "DownloadWebUIApp": "Tải xuống ứng dụng dành cho máy tính để bàn",
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "Đã bật LPU Hyperaccel",
     "ATOMPlusEnabled": "Đã bật NPU ATOM+",

@@ -124,7 +124,7 @@
     "AcceptSharedVFolder": "ตอนนี้คุณสามารถเข้าถึงโฟลเดอร์ได้แล้ว: ",
     "DeclineSharedVFolder": "ลบคำเชิญโฟลเดอร์แล้ว: ",
     "connectingToCluster": "กำลังเชื่อมต่อกับคลัสเตอร์ Backend.AI...",
-    "DownloadWebUIApp": "ดาวน์โหลดแอป Backend.AI Web UI",
+    "DownloadWebUIApp": "ดาวน์โหลดแอพเดสก์ท็อป",
     "IPUEnabled": "เปิดใช้งาน IPU NPU",
     "ATOMEnabled": "เปิดใช้งาน ATOM NPU",
     "WarboyEnabled": "เปิดใช้งาน Warboy NPU",

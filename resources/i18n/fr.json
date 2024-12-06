@@ -111,7 +111,7 @@
     "AcceptSharedVFolder": "Vous pouvez maintenant accéder au dossier :",
     "DeclineSharedVFolder": "L'invitation au dossier est supprimée :",
     "connectingToCluster": "Connexion au cluster Backend.AI...",
-    "DownloadWebUIApp": "Télécharger l'application Backend.AI Web UI",
+    "DownloadWebUIApp": "Télécharger l'application de bureau",
     "IPUEnabled": "IPU NPU Activé",
     "ATOMEnabled": "ATOM NPU Activé",
     "WarboyEnabled": "Warboy NPU activé",

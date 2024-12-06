@@ -111,7 +111,7 @@
     "AcceptSharedVFolder": "Anda sekarang dapat mengakses folder: ",
     "DeclineSharedVFolder": "Undangan folder dihapus: ",
     "connectingToCluster": "Menghubungkan ke Cluster Backend.AI...",
-    "DownloadWebUIApp": "Unduh Aplikasi UI Web Backend.AI",
+    "DownloadWebUIApp": "Unduh Aplikasi Desktop",
     "IPUEnabled": "IPU NPU Diaktifkan",
     "ATOMEnabled": "ATOM NPU Diaktifkan",
     "WarboyEnabled": "Warboy NPU Diaktifkan",
