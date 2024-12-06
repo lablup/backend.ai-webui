@@ -365,6 +365,14 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
             valid: nativeValidity.valid,
             valueMissing: !nativeValidity.valid,
           };
+        } else if (nativeValidity.patternMismatch) {
+          this.resourceGroupNameInput.validationMessage = _text(
+            'resourceGroup.EnterValidResourceGroupName',
+          );
+          return {
+            valid: nativeValidity.valid,
+            patternMismatch: !nativeValidity.valid,
+          };
         } else {
           this.resourceGroupNameInput.validationMessage = _text(
             'resourceGroup.EnterValidResourceGroupName',
@@ -848,6 +856,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                   validationMessage="${_t('data.explorer.ValueRequired')}"
                   required
                   autoValidate
+                  pattern="^[\\p{L}\\p{N}]+(\\s[\\p{L}\\p{N}]+)*$"
                   @change="${() => this._validateResourceGroupName()}"
                 ></mwc-textfield>
               `
