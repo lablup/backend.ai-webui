@@ -103,17 +103,17 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <WebUINavigate to="/summary" replace />,
+        element: <WebUINavigate to="/serving" replace />,
       },
       {
         //for electron dev mode
         path: '/build/electron-app/app/index.html',
-        element: <WebUINavigate to="/summary" replace />,
+        element: <WebUINavigate to="/serving" replace />,
       },
       {
         //for electron prod mode
         path: '/app/index.html',
-        element: <WebUINavigate to="/summary" replace />,
+        element: <WebUINavigate to="/serving" replace />,
       },
       {
         path: '/summary',
