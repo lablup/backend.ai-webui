@@ -91,9 +91,6 @@ const loadPage =
       case 'job':
         import('./components/backend-ai-session-view.js');
         break;
-      case 'session':
-        import('./components/backend-ai-session-view-next.js');
-        break;
       // temporally block experiment
       /*
       case 'experiment':
@@ -116,9 +113,6 @@ const loadPage =
       case 'credential':
       case 'user':
         import('./components/backend-ai-credential-view.js');
-        break;
-      case 'environment':
-        import('./components/backend-ai-environment-view.js');
         break;
       case 'settings':
         import('./components/backend-ai-settings-view.js');
