@@ -1230,7 +1230,9 @@
     "RegistryName": "레지스트리 이름",
     "DescRegistryNameIsEmpty": "레지스트리 이름이 비어 있습니다.",
     "RegistryNameAlreadyExists": "레지스트리 이름이 이미 존재합니다. \n레지스트리 이름을 변경해주세요.",
-    "Project": "프로젝트"
+    "Project": "프로젝트",
+    "DescExtraJsonFormat": "유효한 형식의 JSON을 입력해 주세요",
+    "ExtraInformation": "추가 정보"
   },
   "resourceGroup": {
     "ResourceGroups": "자원 그룹",

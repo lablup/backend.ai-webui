@@ -1115,7 +1115,9 @@
     "RegistryName": "註冊表名稱",
     "DescRegistryNameIsEmpty": "註冊表名稱為空",
     "RegistryNameAlreadyExists": "註冊表名稱已存在。\n請更改註冊表名稱來新增。",
-    "Project": "專案"
+    "Project": "專案",
+    "DescExtraJsonFormat": "請輸入格式有效的 JSON",
+    "ExtraInformation": "額外資訊"
   },
   "resourceGroup": {
     "ResourceGroups": "資源組",

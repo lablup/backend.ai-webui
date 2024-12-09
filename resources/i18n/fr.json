@@ -1114,7 +1114,9 @@
     "RegistryName": "Nom du registre",
     "DescRegistryNameIsEmpty": "Le nom du registre est vide",
     "RegistryNameAlreadyExists": "Le nom du registre existe déjà. \nVeuillez modifier le nom du registre à ajouter.",
-    "Project": "Projet"
+    "Project": "Projet",
+    "DescExtraJsonFormat": "Veuillez saisir un JSON au format valide",
+    "ExtraInformation": "Informations supplémentaires"
   },
   "resourceGroup": {
     "ResourceGroups": "Groupes de ressources",

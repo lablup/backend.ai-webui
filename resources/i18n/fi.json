@@ -902,7 +902,9 @@
     "RegistryName": "Rekisterin nimi",
     "DescRegistryNameIsEmpty": "Rekisterin nimi on tyhjä",
     "RegistryNameAlreadyExists": "Rekisterin nimi on jo olemassa. \nMuuta lisättävä rekisterinimi.",
-    "Project": "Projekti"
+    "Project": "Projekti",
+    "DescExtraJsonFormat": "Anna kelvollisesti muotoiltu JSON",
+    "ExtraInformation": "Lisätiedot"
   },
   "resourceGroup": {
     "Active": "Aktiivinen",
