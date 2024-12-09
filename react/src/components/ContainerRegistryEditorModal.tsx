@@ -1,10 +1,17 @@
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useThemeMode } from '../hooks/useThemeMode';
+import BAICodeEditor from './BAICodeEditor';
 import BAIModal, { BAIModalProps } from './BAIModal';
+import Flex from './Flex';
 import HiddenFormItem from './HiddenFormItem';
 import { ContainerRegistryEditorModalCreateMutation } from './__generated__/ContainerRegistryEditorModalCreateMutation.graphql';
+import { ContainerRegistryEditorModalCreateWithoutExtraMutation } from './__generated__/ContainerRegistryEditorModalCreateWithoutExtraMutation.graphql';
 import { ContainerRegistryEditorModalFragment$key } from './__generated__/ContainerRegistryEditorModalFragment.graphql';
 import { ContainerRegistryEditorModalModifyMutation } from './__generated__/ContainerRegistryEditorModalModifyMutation.graphql';
+import { ContainerRegistryEditorModalModifyWithoutExtraMutation } from './__generated__/ContainerRegistryEditorModalModifyWithoutExtraMutation.graphql';
+import { ContainerRegistryEditorModalModifyWithoutPasswordAndExtraMutation } from './__generated__/ContainerRegistryEditorModalModifyWithoutPasswordAndExtraMutation.graphql';
 import { ContainerRegistryEditorModalModifyWithoutPasswordMutation } from './__generated__/ContainerRegistryEditorModalModifyWithoutPasswordMutation.graphql';
-import { Form, Input, Select, Checkbox, FormInstance, App } from 'antd';
+import { Form, Input, Select, Checkbox, FormInstance, App, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useRef } from 'react';
@@ -20,9 +27,15 @@ const ContainerRegistryEditorModal: React.FC<
   ContainerRegistryEditorModalProps
 > = ({ containerRegistryFrgmt = null, onOk, ...modalProps }) => {
   const { t } = useTranslation();
-  const formRef = useRef<FormInstance>(null);
-
+  const { token } = theme.useToken();
+  const { isDarkMode } = useThemeMode();
   const { message, modal } = App.useApp();
+
+  const baiClient = useSuspendedBackendaiClient();
+  const isSupportExtraField =
+    baiClient.isManagerVersionCompatibleWith('24.09.3');
+
+  const formRef = useRef<FormInstance>(null);
 
   const containerRegistry = useFragment(
     graphql`
@@ -36,13 +49,51 @@ const ContainerRegistryEditorModal: React.FC<
         project
         username
         ssl_verify
+        extra @since(version: "24.09.3")
       }
     `,
     containerRegistryFrgmt,
   );
+
   const [commitCreateRegistry, isInflightCreateRegistry] =
     useMutation<ContainerRegistryEditorModalCreateMutation>(graphql`
       mutation ContainerRegistryEditorModalCreateMutation(
+        $registry_name: String!
+        $type: ContainerRegistryTypeField!
+        $url: String!
+        $is_global: Boolean
+        $password: String
+        $project: String
+        $ssl_verify: Boolean
+        $username: String
+        $extra: JSONString
+      ) {
+        create_container_registry_node(
+          registry_name: $registry_name
+          type: $type
+          url: $url
+          is_global: $is_global
+          password: $password
+          project: $project
+          ssl_verify: $ssl_verify
+          username: $username
+          extra: $extra
+        ) {
+          container_registry {
+            id
+          }
+        }
+      }
+    `);
+
+  // Because the input of mutation is provided as some argument, not the input type,
+  // versions of the mutation that do not include a particular argument are provided with 'Without'.
+  const [
+    commitCreateRegistryWithoutExtra,
+    isInflightCreateRegistryWithoutExtra,
+  ] = useMutation<ContainerRegistryEditorModalCreateWithoutExtraMutation>(
+    graphql`
+      mutation ContainerRegistryEditorModalCreateWithoutExtraMutation(
         $registry_name: String!
         $type: ContainerRegistryTypeField!
         $url: String!
@@ -67,11 +118,48 @@ const ContainerRegistryEditorModal: React.FC<
           }
         }
       }
-    `);
+    `,
+  );
 
   const [commitModifyRegistry, isInflightModifyRegistry] =
     useMutation<ContainerRegistryEditorModalModifyMutation>(graphql`
       mutation ContainerRegistryEditorModalModifyMutation(
+        $id: String!
+        $registry_name: String
+        $type: ContainerRegistryTypeField
+        $url: String
+        $is_global: Boolean
+        $password: String
+        $project: String
+        $ssl_verify: Boolean
+        $username: String
+        $extra: JSONString
+      ) {
+        modify_container_registry_node(
+          id: $id
+          registry_name: $registry_name
+          type: $type
+          url: $url
+          is_global: $is_global
+          password: $password
+          project: $project
+          ssl_verify: $ssl_verify
+          username: $username
+          extra: $extra
+        ) {
+          container_registry {
+            id
+          }
+        }
+      }
+    `);
+
+  const [
+    commitModifyRegistryWithoutExtra,
+    isInflightModifyRegistryWithoutExtra,
+  ] = useMutation<ContainerRegistryEditorModalModifyWithoutExtraMutation>(
+    graphql`
+      mutation ContainerRegistryEditorModalModifyWithoutExtraMutation(
         $id: String!
         $registry_name: String
         $type: ContainerRegistryTypeField
@@ -98,7 +186,8 @@ const ContainerRegistryEditorModal: React.FC<
           }
         }
       }
-    `);
+    `,
+  );
 
   const [
     commitModifyRegistryWithoutPassword,
@@ -114,6 +203,7 @@ const ContainerRegistryEditorModal: React.FC<
         $project: String
         $ssl_verify: Boolean
         $username: String
+        $extra: JSONString
       ) {
         modify_container_registry_node(
           id: $id
@@ -124,6 +214,7 @@ const ContainerRegistryEditorModal: React.FC<
           project: $project
           ssl_verify: $ssl_verify
           username: $username
+          extra: $extra
         ) {
           container_registry {
             id
@@ -132,6 +223,40 @@ const ContainerRegistryEditorModal: React.FC<
       }
     `,
   );
+
+  const [
+    commitModifyRegistryWithoutPasswordAndExtra,
+    isInflightModifyRegistryWithoutPasswordAndExtra,
+  ] =
+    useMutation<ContainerRegistryEditorModalModifyWithoutPasswordAndExtraMutation>(
+      graphql`
+        mutation ContainerRegistryEditorModalModifyWithoutPasswordAndExtraMutation(
+          $id: String!
+          $registry_name: String
+          $type: ContainerRegistryTypeField
+          $url: String
+          $is_global: Boolean
+          $project: String
+          $ssl_verify: Boolean
+          $username: String
+        ) {
+          modify_container_registry_node(
+            id: $id
+            registry_name: $registry_name
+            type: $type
+            url: $url
+            is_global: $is_global
+            project: $project
+            ssl_verify: $ssl_verify
+            username: $username
+          ) {
+            container_registry {
+              id
+            }
+          }
+        }
+      `,
+    );
 
   const handleSave = async () => {
     return formRef.current
@@ -150,88 +275,185 @@ const ContainerRegistryEditorModal: React.FC<
                 ? null // unset
                 : values.password
               : undefined, // no change
+          extra: _.isEmpty(values.extra)
+            ? null
+            : JSON.stringify(JSON.parse(values.extra)),
         };
+
         if (containerRegistry) {
           if (!values.isChangedPassword) {
             delete mutationVariables.password;
-            commitModifyRegistryWithoutPassword({
-              variables: mutationVariables,
-              onCompleted: (res, errors) => {
-                if (
-                  _.isEmpty(
-                    res.modify_container_registry_node?.container_registry,
-                  )
-                ) {
-                  message.error(t('dialog.ErrorOccurred'));
-                  return;
-                }
-                if (errors && errors.length > 0) {
-                  const errorMsgList = _.map(errors, (error) => error.message);
-                  for (const error of errorMsgList) {
-                    message.error(error, 2.5);
-                  }
-                } else {
-                  onOk && onOk('modify');
-                }
-              },
-              onError: (error) => {
-                message.error(t('dialog.ErrorOccurred'));
-              },
-            });
+            isSupportExtraField
+              ? commitModifyRegistryWithoutPassword({
+                  variables: mutationVariables,
+                  onCompleted: (res, errors) => {
+                    if (
+                      _.isEmpty(
+                        res.modify_container_registry_node?.container_registry,
+                      )
+                    ) {
+                      message.error(t('dialog.ErrorOccurred'));
+                      return;
+                    }
+                    if (errors && errors.length > 0) {
+                      const errorMsgList = _.map(
+                        errors,
+                        (error) => error.message,
+                      );
+                      for (const error of errorMsgList) {
+                        message.error(error, 2.5);
+                      }
+                    } else {
+                      onOk && onOk('modify');
+                    }
+                  },
+                  onError: (error) => {
+                    message.error(t('dialog.ErrorOccurred'));
+                  },
+                })
+              : commitModifyRegistryWithoutPasswordAndExtra({
+                  variables: _.omit(mutationVariables, ['extra']),
+                  onCompleted: (res, errors) => {
+                    if (
+                      _.isEmpty(
+                        res.modify_container_registry_node?.container_registry,
+                      )
+                    ) {
+                      message.error(t('dialog.ErrorOccurred'));
+                      return;
+                    }
+                    if (errors && errors.length > 0) {
+                      const errorMsgList = _.map(
+                        errors,
+                        (error) => error.message,
+                      );
+                      for (const error of errorMsgList) {
+                        message.error(error, 2.5);
+                      }
+                    } else {
+                      onOk && onOk('modify');
+                    }
+                  },
+                  onError: (error) => {
+                    message.error(t('dialog.ErrorOccurred'));
+                  },
+                });
           } else {
-            commitModifyRegistry({
-              variables: mutationVariables,
-              onCompleted: (res, errors) => {
-                if (
-                  _.isEmpty(
-                    res.modify_container_registry_node?.container_registry,
-                  )
-                ) {
-                  message.error(t('dialog.ErrorOccurred'));
-                  return;
-                }
-                if (errors && errors.length > 0) {
-                  const errorMsgList = _.map(errors, (error) => error.message);
-                  for (const error of errorMsgList) {
-                    message.error(error, 2.5);
-                  }
-                } else {
-                  onOk && onOk('modify');
-                }
-              },
-              onError: (error) => {
-                message.error(t('dialog.ErrorOccurred'));
-              },
-            });
+            isSupportExtraField
+              ? commitModifyRegistry({
+                  variables: mutationVariables,
+                  onCompleted: (res, errors) => {
+                    if (
+                      _.isEmpty(
+                        res.modify_container_registry_node?.container_registry,
+                      )
+                    ) {
+                      message.error(t('dialog.ErrorOccurred'));
+                      return;
+                    }
+                    if (errors && errors.length > 0) {
+                      const errorMsgList = _.map(
+                        errors,
+                        (error) => error.message,
+                      );
+                      for (const error of errorMsgList) {
+                        message.error(error, 2.5);
+                      }
+                    } else {
+                      onOk && onOk('modify');
+                    }
+                  },
+                  onError: (error) => {
+                    message.error(t('dialog.ErrorOccurred'));
+                  },
+                })
+              : commitModifyRegistryWithoutExtra({
+                  variables: _.omit(mutationVariables, ['extra']),
+                  onCompleted: (res, errors) => {
+                    if (
+                      _.isEmpty(
+                        res.modify_container_registry_node?.container_registry,
+                      )
+                    ) {
+                      message.error(t('dialog.ErrorOccurred'));
+                      return;
+                    }
+                    if (errors && errors.length > 0) {
+                      const errorMsgList = _.map(
+                        errors,
+                        (error) => error.message,
+                      );
+                      for (const error of errorMsgList) {
+                        message.error(error, 2.5);
+                      }
+                    } else {
+                      onOk && onOk('modify');
+                    }
+                  },
+                  onError: (error) => {
+                    message.error(t('dialog.ErrorOccurred'));
+                  },
+                });
           }
         } else {
           mutationVariables = _.omitBy(mutationVariables, _.isNil) as Required<
             typeof mutationVariables
           >;
-          commitCreateRegistry({
-            variables: mutationVariables,
-            onCompleted: (res, errors) => {
-              if (
-                _.isEmpty(
-                  res?.create_container_registry_node?.container_registry,
-                )
-              ) {
-                message.error(t('dialog.ErrorOccurred'));
-                return;
-              }
-              if (errors && errors?.length > 0) {
-                const errorMsgList = _.map(errors, (error) => error.message);
-                for (const error of errorMsgList) {
-                  message.error(error, 2.5);
-                }
-              } else {
-                onOk && onOk('create');
-              }
-            },
-            onError(error) {
-              message.error(t('dialog.ErrorOccurred'));
-            },
-          });
+          isSupportExtraField
+            ? commitCreateRegistry({
+                variables: mutationVariables,
+                onCompleted: (res, errors) => {
+                  if (
+                    _.isEmpty(
+                      res?.create_container_registry_node?.container_registry,
+                    )
+                  ) {
+                    message.error(t('dialog.ErrorOccurred'));
+                    return;
+                  }
+                  if (errors && errors?.length > 0) {
+                    const errorMsgList = _.map(
+                      errors,
+                      (error) => error.message,
+                    );
+                    for (const error of errorMsgList) {
+                      message.error(error, 2.5);
+                    }
+                  } else {
+                    onOk && onOk('create');
+                  }
+                },
+                onError(error) {
+                  message.error(t('dialog.ErrorOccurred'));
+                },
+              })
+            : commitCreateRegistryWithoutExtra({
+                variables: mutationVariables,
+                onCompleted: (res, errors) => {
+                  if (
+                    _.isEmpty(
+                      res?.create_container_registry_node?.container_registry,
+                    )
+                  ) {
+                    message.error(t('dialog.ErrorOccurred'));
+                    return;
+                  }
+                  if (errors && errors?.length > 0) {
+                    const errorMsgList = _.map(
+                      errors,
+                      (error) => error.message,
+                    );
+                    for (const error of errorMsgList) {
+                      message.error(error, 2.5);
+                    }
+                  } else {
+                    onOk && onOk('create');
+                  }
+                },
+                onError(error) {
+                  message.error(t('dialog.ErrorOccurred'));
+                },
+              });
         }
       })
       .catch((error) => {});
@@ -246,8 +468,11 @@ const ContainerRegistryEditorModal: React.FC<
       okText={containerRegistry ? t('button.Save') : t('button.Add')}
       confirmLoading={
         isInflightCreateRegistry ||
+        isInflightCreateRegistryWithoutExtra ||
         isInflightModifyRegistry ||
-        isInflightModifyRegistryWithoutPassword
+        isInflightModifyRegistryWithoutExtra ||
+        isInflightModifyRegistryWithoutPassword ||
+        isInflightModifyRegistryWithoutPasswordAndExtra
       }
       onOk={() => {
         formRef.current
@@ -284,6 +509,13 @@ const ContainerRegistryEditorModal: React.FC<
           containerRegistry
             ? {
                 ...containerRegistry,
+                extra: containerRegistry?.extra
+                  ? JSON.stringify(
+                      JSON.parse(containerRegistry?.extra),
+                      null,
+                      2,
+                    )
+                  : '',
               }
             : {}
         }
@@ -474,6 +706,45 @@ const ContainerRegistryEditorModal: React.FC<
             );
           }}
         </Form.Item>
+        {isSupportExtraField && (
+          <Form.Item label={t('registry.ExtraInformation')}>
+            <Flex
+              style={{
+                border: `1px solid ${token.colorBorder}`,
+                borderRadius: token.borderRadius,
+                overflow: 'hidden',
+              }}
+            >
+              <Form.Item
+                name="extra"
+                noStyle
+                rules={[
+                  {
+                    validator: (_, value) => {
+                      if (value) {
+                        try {
+                          JSON.parse(value);
+                        } catch (e) {
+                          return Promise.reject(
+                            t('registry.DescExtraJsonFormat'),
+                          );
+                        }
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+              >
+                <BAICodeEditor
+                  editable
+                  language="json"
+                  theme={isDarkMode ? 'dark' : 'light'}
+                  style={{ width: '100%' }}
+                />
+              </Form.Item>
+            </Flex>
+          </Form.Item>
+        )}
       </Form>
     </BAIModal>
   );
