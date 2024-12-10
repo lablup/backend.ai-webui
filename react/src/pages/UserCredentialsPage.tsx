@@ -1,5 +1,6 @@
 import BAICard from '../BAICard';
 import FlexActivityIndicator from '../components/FlexActivityIndicator';
+import UserCredentialList from '../components/UserCredentialList';
 import UserList from '../components/UserList';
 import { createStyles } from 'antd-style';
 import { CardTabListType } from 'antd/es/card';
@@ -48,9 +49,7 @@ const UserCredentialsPage: React.FC = () => {
         }
       >
         {curTabKey === 'users' && <UserList />}
-        {curTabKey === 'credentials' && (
-          <div>{t('credential.Credentials')}</div>
-        )}
+        {curTabKey === 'credentials' && <UserCredentialList />}
       </Suspense>
     </BAICard>
   );
