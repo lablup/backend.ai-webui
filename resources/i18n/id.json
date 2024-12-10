@@ -607,11 +607,12 @@
     "KeypairDetail": "Detail Pasangan Kunci",
     "AdminCanOnlyRemoveTotp": "Hanya menonaktifkan 2FA pengguna lain yang dapat dilakukan.",
     "KeySeccessfullyDeleted": "KeyPair dihapus dengan aman.",
-    "SignoutSeccessfullyFinished": "Keluar dengan aman selesai",
     "ModifyUserDetail": "Ubah Detail Pengguna",
     "EnableSudoSession": "Aktifkan sesi sudo",
     "MainAccessKey": "Kunci Akses Utama",
-    "InactivateTheFollowingUsers": "Nonaktifkan pengguna berikut."
+    "InactivateTheFollowingUsers": "Nonaktifkan pengguna berikut.",
+    "CreatedAt": "Dibuat Pada",
+    "SignoutSuccessfullyFinished": "Keluar dengan aman selesai"
   },
   "data": {
     "Folders": "Folder",

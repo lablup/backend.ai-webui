@@ -730,10 +730,11 @@
     "KeypairDetail": "รายละเอียดคู่คีย์",
     "AdminCanOnlyRemoveTotp": "สามารถปิดการใช้งาน 2FA ของผู้ใช้อื่นได้เท่านั้น",
     "KeySeccessfullyDeleted": "ลบคู่คีย์สำเร็จแล้ว",
-    "SignoutSeccessfullyFinished": "ออกจากระบบสำเร็จแล้ว",
     "EnableSudoSession": "เปิดใช้งานเซสชัน sudo",
     "MainAccessKey": "คีย์การเข้าถึงหลัก",
-    "InactivateTheFollowingUsers": "ปิดการใช้งานผู้ใช้ต่อไปนี้"
+    "InactivateTheFollowingUsers": "ปิดการใช้งานผู้ใช้ต่อไปนี้",
+    "CreatedAt": "สร้างเมื่อ",
+    "SignoutSuccessfullyFinished": "ออกจากระบบสำเร็จแล้ว"
   },
   "data": {
     "Folders": "โฟลเดอร์",

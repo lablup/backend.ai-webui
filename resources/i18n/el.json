@@ -605,12 +605,13 @@
     "WarningLessRateLimit": "Εάν η τιμή Όριο ρυθμού είναι μικρή, ενδέχεται να μπλοκαριστούν λειτουργίες API, όπως η σύνδεση.",
     "NoCredentialToDisplay": "Δεν εμφανίζονται διαπιστευτήρια",
     "KeypairDetail": "Λεπτομέρεια ζεύγους κλειδιών",
-    "SignoutSeccessfullyFinished": "Η αποσύνδεση ολοκληρώθηκε επιτυχώς",
     "Status": "Κατάσταση",
     "NoUserToDisplay": "Δεν υπάρχουν χρήστες για εμφάνιση",
     "EnableSudoSession": "Ενεργοποίηση συνεδρίας sudo",
     "MainAccessKey": "Κύριο κλειδί πρόσβασης",
-    "InactivateTheFollowingUsers": "Απενεργοποιήστε τους παρακάτω χρήστες."
+    "InactivateTheFollowingUsers": "Απενεργοποιήστε τους παρακάτω χρήστες.",
+    "CreatedAt": "Δημιουργήθηκε στο",
+    "SignoutSuccessfullyFinished": "Η αποσύνδεση ολοκληρώθηκε επιτυχώς"
   },
   "data": {
     "Folders": "Φάκελοι",

@@ -606,11 +606,12 @@
     "KeypairDetail": "Détail de la paire de clés",
     "AdminCanOnlyRemoveTotp": "Seule la désactivation du 2FA des autres utilisateurs est possible.",
     "KeySeccessfullyDeleted": "La paire de clés est supprimée successivement.",
-    "SignoutSeccessfullyFinished": "La signature est terminée en toute sécurité",
     "ModifyUserDetail": "Modifier les détails de l'utilisateur",
     "EnableSudoSession": "Activer la session sudo",
     "MainAccessKey": "Clé d'accès principale",
-    "InactivateTheFollowingUsers": "Désactivez les utilisateurs suivants."
+    "InactivateTheFollowingUsers": "Désactivez les utilisateurs suivants.",
+    "CreatedAt": "Créé à",
+    "SignoutSuccessfullyFinished": "La signature est terminée en toute sécurité"
   },
   "data": {
     "Folders": "Dossiers",
