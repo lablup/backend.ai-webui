@@ -1,10 +1,12 @@
 import { useTanQuery } from '../../hooks/reactQueryAlias';
 import Flex from '../Flex';
 import LLMChatCard from './LLMChatCard';
+import { ChatUIModalEndpointTokenListFragment$key } from './__generated__/ChatUIModalEndpointTokenListFragment.graphql';
 import { ChatUIModalFragment$key } from './__generated__/ChatUIModalFragment.graphql';
 import { ReloadOutlined } from '@ant-design/icons';
 import { Alert, Button, Modal, ModalProps, Skeleton, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
+import dayjs from 'dayjs';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +14,10 @@ import { useFragment } from 'react-relay';
 
 interface ChatUIBasicProps {
   endpointFrgmt: ChatUIModalFragment$key | null | undefined;
+  endpointTokenFrgmt:
+    | ChatUIModalEndpointTokenListFragment$key
+    | null
+    | undefined;
   basePath?: string;
   // models?: GetProp<typeof LLMChatCard, 'models'>;
 }
@@ -19,6 +25,7 @@ interface ChatUIModalProps extends ModalProps, ChatUIBasicProps {}
 
 const ChatUIModal: React.FC<ChatUIModalProps> = ({
   endpointFrgmt = null,
+  endpointTokenFrgmt = null,
   basePath,
   // models,
   ...props
@@ -47,6 +54,7 @@ const ChatUIModal: React.FC<ChatUIModalProps> = ({
         <EndpointChatContent
           basePath={basePath}
           endpointFrgmt={endpointFrgmt}
+          endpointTokenFrgmt={endpointTokenFrgmt}
         />
       </Flex>
     </Modal>
@@ -55,6 +63,7 @@ const ChatUIModal: React.FC<ChatUIModalProps> = ({
 
 const EndpointChatContent: React.FC<ChatUIBasicProps> = ({
   endpointFrgmt,
+  endpointTokenFrgmt,
   basePath = 'v1',
 }) => {
   const { t } = useTranslation();
@@ -68,6 +77,32 @@ const EndpointChatContent: React.FC<ChatUIBasicProps> = ({
     `,
     endpointFrgmt,
   );
+  const endpointTokenList = useFragment(
+    graphql`
+      fragment ChatUIModalEndpointTokenListFragment on EndpointTokenList {
+        items {
+          id
+          token
+          created_at
+          valid_until
+        }
+      }
+    `,
+    endpointTokenFrgmt,
+  );
+
+  const newestToken = _.maxBy(
+    endpointTokenList?.items,
+    (item) => item?.created_at,
+  );
+  // FIXME: temporally parse UTC and change to timezone (timezone need to be added in server side)
+  const newestValidToken = dayjs
+    .utc(newestToken?.valid_until)
+    .tz()
+    .isAfter(dayjs())
+    ? newestToken?.token
+    : undefined;
+
   const {
     data: modelsResult,
     // error,
@@ -117,6 +152,7 @@ const EndpointChatContent: React.FC<ChatUIBasicProps> = ({
         )
       }
       modelId={modelsResult?.data?.[0].id ?? 'custom'}
+      modelToken={newestValidToken}
       showCompareMenuItem
     />
   );
