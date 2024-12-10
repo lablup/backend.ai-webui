@@ -91,7 +91,7 @@ function trimFilterValue(filterValue: string): string {
 }
 
 export function mergeFilterValues(
-  filterStrings: Array<string | undefined>,
+  filterStrings: Array<string | undefined | null>,
   operator: string = '&',
 ) {
   const mergedFilter = _.join(
