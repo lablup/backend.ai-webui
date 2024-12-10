@@ -19,7 +19,7 @@
     "ahooks": "^3.8.1",
     "ai": "^3.4.33",
     "ansi_up": "^6.0.2",
-    "antd": "^5.22.2",
+    "antd": "^5.22.4",
     "antd-style": "^3.7.1",
     "classnames": "^2.5.1",
     "dayjs": "^1.11.13",
@@ -132,7 +132,7 @@
   "pnpm": {
     "patchedDependencies": {
       "@cloudscape-design/board-components@3.0.60": "patches/@cloudscape-design__board-components@3.0.60.patch",
-      "rc-field-form@2.5.1": "patches/rc-field-form@2.5.1.patch"
+      "rc-field-form": "patches/rc-field-form.patch"
     }
   }
 }
