@@ -281,6 +281,7 @@ export const useBAIPaginationQueryOptions = ({
 interface BAIPaginationOption {
   limit: number;
   offset: number;
+  first?: number;
   // filter?: string;
   // order?: string;
 }
@@ -304,6 +305,7 @@ export const useBAIPaginationOptionState = (
   return {
     baiPaginationOption: {
       limit: options.pageSize,
+      first: options.pageSize,
       offset:
         options.current > 1 ? (options.current - 1) * options.pageSize : 0,
     },
