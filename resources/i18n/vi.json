@@ -1735,5 +1735,10 @@
     "hour": "giờ",
     "day": "day",
     "week": "tuần"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelList": "Danh sách mẫu"
+    }
   }
 }
