@@ -12,12 +12,13 @@ interface UserSettings {
   custom_ssh_port?: string;
   beta_feature?: boolean;
   last_window_close_time?: number;
-  endpoints?: string[];
+  endpoints?: Array<string>;
   auto_logout?: boolean;
   summary_items?: Array<Omit<SummaryItem, 'data'>>;
   selected_language?: string;
   classic_session_launcher?: boolean;
   recentSessionHistory?: Array<SessionHistory>;
+  [key: `hiddenColumnKeys.${string}`]: Array<string>;
 }
 
 export type SessionHistory = {

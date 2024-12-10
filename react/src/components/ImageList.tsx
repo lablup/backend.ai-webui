@@ -11,6 +11,7 @@ import {
   useSuspendedBackendaiClient,
   useUpdatableState,
 } from '../hooks';
+import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import BAITable from './BAITable';
 import DoubleTag from './DoubleTag';
 import ImageInstallModal from './ImageInstallModal';
@@ -31,7 +32,7 @@ import {
   SettingOutlined,
   VerticalAlignBottomOutlined,
 } from '@ant-design/icons';
-import { useLocalStorageState } from 'ahooks';
+import { useToggle } from 'ahooks';
 import { App, Button, Input, Tag, theme, Typography } from 'antd';
 import { ColumnType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
@@ -60,7 +61,8 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   const [installingImages, setInstallingImages] = useState<string[]>([]);
   const { message } = App.useApp();
   const [imageSearch, setImageSearch] = useState('');
-  const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
+  const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
+    useToggle();
   const [isPendingRefreshTransition, startRefreshTransition] = useTransition();
   const [isPendingSearchTransition, startSearchTransition] = useTransition();
   const baiClient = useSuspendedBackendaiClient();
@@ -372,12 +374,8 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
     },
   ]);
 
-  const [displayedColumnKeys, setDisplayedColumnKeys] = useLocalStorageState(
-    'backendaiwebui.EnvironmentPage.displayedColumnKeys',
-    {
-      defaultValue: columns.map((column) => _.toString(column.key)),
-    },
-  );
+  const [hiddenColumnKeys, setHiddenColumnKeys] =
+    useHiddenColumnKeysSetting('ImageList');
 
   const imageFilterValues = useMemo(() => {
     return defaultSortedImages?.map((image) => {
@@ -522,8 +520,9 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             style: { marginRight: token.marginXS },
           }}
           dataSource={filterNonNullItems(filteredImageData)}
-          columns={columns.filter((column) =>
-            displayedColumnKeys?.includes(_.toString(column.key)),
+          columns={_.filter(
+            columns,
+            (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),
           )}
           loading={isPendingSearchTransition}
           rowSelection={{
@@ -560,7 +559,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             type="text"
             icon={<SettingOutlined />}
             onClick={() => {
-              setIsOpenColumnsSetting(true);
+              toggleColumnSettingModal();
             }}
           />
         </Flex>
@@ -596,14 +595,19 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         selectedRows={selectedRows}
       />
       <TableColumnsSettingModal
-        open={isOpenColumnsSetting}
+        open={visibleColumnSettingModal}
         onRequestClose={(values) => {
           values?.selectedColumnKeys &&
-            setDisplayedColumnKeys(values?.selectedColumnKeys);
-          setIsOpenColumnsSetting(!isOpenColumnsSetting);
+            setHiddenColumnKeys(
+              _.difference(
+                columns.map((column) => _.toString(column.key)),
+                values?.selectedColumnKeys,
+              ),
+            );
+          toggleColumnSettingModal();
         }}
         columns={columns}
-        displayedColumnKeys={displayedColumnKeys ? displayedColumnKeys : []}
+        hiddenColumnKeys={hiddenColumnKeys}
       />
     </>
   );

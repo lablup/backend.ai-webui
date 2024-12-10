@@ -1,11 +1,13 @@
 import {
   bytesToGB,
   filterEmptyItem,
+  filterNonNullItems,
   localeCompare,
   numberSorterWithInfinityValue,
 } from '../helper';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import Flex from './Flex';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import UserResourcePolicySettingModal from './UserResourcePolicySettingModal';
@@ -22,9 +24,8 @@ import {
   ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import { useLocalStorageState } from 'ahooks';
+import { useToggle } from 'ahooks';
 import { App, Button, Dropdown, Popconfirm, Space, Table, theme } from 'antd';
-import { AnyObject } from 'antd/es/_util/type';
 import { ColumnType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
@@ -48,7 +49,8 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
   const [userResourcePolicyFetchKey, updateUserResourcePolicyFetchKey] =
     useUpdatableState('initial-fetch');
   const [isCreatingPolicySetting, setIsCreatingPolicySetting] = useState(false);
-  const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
+  const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
+    useToggle();
   const [inFlightResourcePolicyName, setInFlightResourcePolicyName] =
     useState<string>();
   const [editingUserResourcePolicy, setEditingUserResourcePolicy] =
@@ -245,20 +247,23 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
     },
   ]);
 
-  const [displayedColumnKeys, setDisplayedColumnKeys] = useLocalStorageState(
-    'backendaiwebui.UserResourcePolicyList.displayedColumnKeys',
-    {
-      defaultValue: columns.map((column) => _.toString(column.key)),
-    },
+  const [hiddenColumnKeys, setHiddenColumnKeys] = useHiddenColumnKeysSetting(
+    'UserResourcePolicyList',
   );
 
   const handleExportCSV = () => {
-    if (!user_resource_policies || !displayedColumnKeys) {
+    if (
+      !user_resource_policies ||
+      user_resource_policies.length === hiddenColumnKeys?.length
+    ) {
       message.error(t('resourcePolicy.NoDataToExport'));
       return;
     }
 
-    const columnKeys = _.without(displayedColumnKeys, 'control');
+    const columnKeys = _.without(
+      _.map(columns, (column) => _.toString(column.key)),
+      'control',
+    );
     const responseData = _.map(user_resource_policies, (policy) => {
       return _.pick(
         policy,
@@ -341,12 +346,11 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
       <Table
         rowKey="id"
         showSorterTooltip={false}
-        columns={
-          _.filter(columns, (column) =>
-            displayedColumnKeys?.includes(_.toString(column.key)),
-          ) as ColumnType<AnyObject>[]
-        }
-        dataSource={user_resource_policies as readonly AnyObject[] | undefined}
+        columns={_.filter(
+          columns,
+          (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),
+        )}
+        dataSource={filterNonNullItems(user_resource_policies)}
         scroll={{ x: 'max-content' }}
         pagination={false}
       />
@@ -360,19 +364,24 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
           type="text"
           icon={<SettingOutlined />}
           onClick={() => {
-            setIsOpenColumnsSetting(true);
+            toggleColumnSettingModal();
           }}
         />
       </Flex>
       <TableColumnsSettingModal
-        open={isOpenColumnsSetting}
+        open={visibleColumnSettingModal}
         onRequestClose={(values) => {
           values?.selectedColumnKeys &&
-            setDisplayedColumnKeys(values?.selectedColumnKeys);
-          setIsOpenColumnsSetting(false);
+            setHiddenColumnKeys(
+              _.difference(
+                columns.map((column) => _.toString(column.key)),
+                values?.selectedColumnKeys,
+              ),
+            );
+          toggleColumnSettingModal();
         }}
         columns={columns}
-        displayedColumnKeys={displayedColumnKeys ? displayedColumnKeys : []}
+        hiddenColumnKeys={hiddenColumnKeys}
       />
       <UserResourcePolicySettingModal
         existingPolicyNames={_.map(user_resource_policies, 'name')}
