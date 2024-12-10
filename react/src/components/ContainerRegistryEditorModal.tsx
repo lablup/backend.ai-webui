@@ -16,7 +16,19 @@ import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment, useMutation } from 'react-relay';
+import { useFragment, useMutation, UseMutationConfig } from 'react-relay';
+
+type RegistryFormInput = {
+  row_id?: string;
+  registry_name: string;
+  url: string;
+  type: string;
+  project: string;
+  username?: string;
+  password?: string;
+  isChangedPassword?: boolean;
+  extra?: string;
+};
 
 interface ContainerRegistryEditorModalProps
   extends Omit<BAIModalProps, 'onOk'> {
@@ -35,7 +47,7 @@ const ContainerRegistryEditorModal: React.FC<
   const isSupportExtraField =
     baiClient.isManagerVersionCompatibleWith('24.09.3');
 
-  const formRef = useRef<FormInstance>(null);
+  const formRef = useRef<FormInstance<RegistryFormInput>>(null);
 
   const containerRegistry = useFragment(
     graphql`
@@ -56,214 +68,17 @@ const ContainerRegistryEditorModal: React.FC<
   );
 
   const [commitCreateRegistry, isInflightCreateRegistry] =
-    useMutation<ContainerRegistryEditorModalCreateMutation>(graphql`
-      mutation ContainerRegistryEditorModalCreateMutation(
-        $registry_name: String!
-        $type: ContainerRegistryTypeField!
-        $url: String!
-        $is_global: Boolean
-        $password: String
-        $project: String
-        $ssl_verify: Boolean
-        $username: String
-        $extra: JSONString
-      ) {
-        create_container_registry_node(
-          registry_name: $registry_name
-          type: $type
-          url: $url
-          is_global: $is_global
-          password: $password
-          project: $project
-          ssl_verify: $ssl_verify
-          username: $username
-          extra: $extra
-        ) {
-          container_registry {
-            id
-          }
-        }
-      }
-    `);
-
-  // Because the input of mutation is provided as some argument, not the input type,
-  // versions of the mutation that do not include a particular argument are provided with 'Without'.
-  const [
-    commitCreateRegistryWithoutExtra,
-    isInflightCreateRegistryWithoutExtra,
-  ] = useMutation<ContainerRegistryEditorModalCreateWithoutExtraMutation>(
-    graphql`
-      mutation ContainerRegistryEditorModalCreateWithoutExtraMutation(
-        $registry_name: String!
-        $type: ContainerRegistryTypeField!
-        $url: String!
-        $is_global: Boolean
-        $password: String
-        $project: String
-        $ssl_verify: Boolean
-        $username: String
-      ) {
-        create_container_registry_node(
-          registry_name: $registry_name
-          type: $type
-          url: $url
-          is_global: $is_global
-          password: $password
-          project: $project
-          ssl_verify: $ssl_verify
-          username: $username
-        ) {
-          container_registry {
-            id
-          }
-        }
-      }
-    `,
-  );
+    useCreateContainerMutation();
 
   const [commitModifyRegistry, isInflightModifyRegistry] =
-    useMutation<ContainerRegistryEditorModalModifyMutation>(graphql`
-      mutation ContainerRegistryEditorModalModifyMutation(
-        $id: String!
-        $registry_name: String
-        $type: ContainerRegistryTypeField
-        $url: String
-        $is_global: Boolean
-        $password: String
-        $project: String
-        $ssl_verify: Boolean
-        $username: String
-        $extra: JSONString
-      ) {
-        modify_container_registry_node(
-          id: $id
-          registry_name: $registry_name
-          type: $type
-          url: $url
-          is_global: $is_global
-          password: $password
-          project: $project
-          ssl_verify: $ssl_verify
-          username: $username
-          extra: $extra
-        ) {
-          container_registry {
-            id
-          }
-        }
-      }
-    `);
-
-  const [
-    commitModifyRegistryWithoutExtra,
-    isInflightModifyRegistryWithoutExtra,
-  ] = useMutation<ContainerRegistryEditorModalModifyWithoutExtraMutation>(
-    graphql`
-      mutation ContainerRegistryEditorModalModifyWithoutExtraMutation(
-        $id: String!
-        $registry_name: String
-        $type: ContainerRegistryTypeField
-        $url: String
-        $is_global: Boolean
-        $password: String
-        $project: String
-        $ssl_verify: Boolean
-        $username: String
-      ) {
-        modify_container_registry_node(
-          id: $id
-          registry_name: $registry_name
-          type: $type
-          url: $url
-          is_global: $is_global
-          password: $password
-          project: $project
-          ssl_verify: $ssl_verify
-          username: $username
-        ) {
-          container_registry {
-            id
-          }
-        }
-      }
-    `,
-  );
-
-  const [
-    commitModifyRegistryWithoutPassword,
-    isInflightModifyRegistryWithoutPassword,
-  ] = useMutation<ContainerRegistryEditorModalModifyWithoutPasswordMutation>(
-    graphql`
-      mutation ContainerRegistryEditorModalModifyWithoutPasswordMutation(
-        $id: String!
-        $registry_name: String
-        $type: ContainerRegistryTypeField
-        $url: String
-        $is_global: Boolean
-        $project: String
-        $ssl_verify: Boolean
-        $username: String
-        $extra: JSONString
-      ) {
-        modify_container_registry_node(
-          id: $id
-          registry_name: $registry_name
-          type: $type
-          url: $url
-          is_global: $is_global
-          project: $project
-          ssl_verify: $ssl_verify
-          username: $username
-          extra: $extra
-        ) {
-          container_registry {
-            id
-          }
-        }
-      }
-    `,
-  );
-
-  const [
-    commitModifyRegistryWithoutPasswordAndExtra,
-    isInflightModifyRegistryWithoutPasswordAndExtra,
-  ] =
-    useMutation<ContainerRegistryEditorModalModifyWithoutPasswordAndExtraMutation>(
-      graphql`
-        mutation ContainerRegistryEditorModalModifyWithoutPasswordAndExtraMutation(
-          $id: String!
-          $registry_name: String
-          $type: ContainerRegistryTypeField
-          $url: String
-          $is_global: Boolean
-          $project: String
-          $ssl_verify: Boolean
-          $username: String
-        ) {
-          modify_container_registry_node(
-            id: $id
-            registry_name: $registry_name
-            type: $type
-            url: $url
-            is_global: $is_global
-            project: $project
-            ssl_verify: $ssl_verify
-            username: $username
-          ) {
-            container_registry {
-              id
-            }
-          }
-        }
-      `,
-    );
+    useModifyContainerMutation();
 
   const handleSave = async () => {
     return formRef.current
       ?.validateFields()
       .then((values) => {
         let mutationVariables = {
-          id: _.isEmpty(values.row_id) ? undefined : values.row_id,
+          id: values.row_id,
           registry_name: values.registry_name,
           url: values.url,
           type: values.type,
@@ -277,183 +92,70 @@ const ContainerRegistryEditorModal: React.FC<
               : undefined, // no change
           extra: _.isEmpty(values.extra)
             ? null
-            : JSON.stringify(JSON.parse(values.extra)),
+            : JSON.stringify(JSON.parse(values.extra ?? '{}')),
         };
 
         if (containerRegistry) {
-          if (!values.isChangedPassword) {
-            delete mutationVariables.password;
-            isSupportExtraField
-              ? commitModifyRegistryWithoutPassword({
-                  variables: mutationVariables,
-                  onCompleted: (res, errors) => {
-                    if (
-                      _.isEmpty(
-                        res.modify_container_registry_node?.container_registry,
-                      )
-                    ) {
-                      message.error(t('dialog.ErrorOccurred'));
-                      return;
-                    }
-                    if (errors && errors.length > 0) {
-                      const errorMsgList = _.map(
-                        errors,
-                        (error) => error.message,
-                      );
-                      for (const error of errorMsgList) {
-                        message.error(error, 2.5);
-                      }
-                    } else {
-                      onOk && onOk('modify');
-                    }
-                  },
-                  onError: (error) => {
-                    message.error(t('dialog.ErrorOccurred'));
-                  },
-                })
-              : commitModifyRegistryWithoutPasswordAndExtra({
-                  variables: _.omit(mutationVariables, ['extra']),
-                  onCompleted: (res, errors) => {
-                    if (
-                      _.isEmpty(
-                        res.modify_container_registry_node?.container_registry,
-                      )
-                    ) {
-                      message.error(t('dialog.ErrorOccurred'));
-                      return;
-                    }
-                    if (errors && errors.length > 0) {
-                      const errorMsgList = _.map(
-                        errors,
-                        (error) => error.message,
-                      );
-                      for (const error of errorMsgList) {
-                        message.error(error, 2.5);
-                      }
-                    } else {
-                      onOk && onOk('modify');
-                    }
-                  },
-                  onError: (error) => {
-                    message.error(t('dialog.ErrorOccurred'));
-                  },
-                });
-          } else {
-            isSupportExtraField
-              ? commitModifyRegistry({
-                  variables: mutationVariables,
-                  onCompleted: (res, errors) => {
-                    if (
-                      _.isEmpty(
-                        res.modify_container_registry_node?.container_registry,
-                      )
-                    ) {
-                      message.error(t('dialog.ErrorOccurred'));
-                      return;
-                    }
-                    if (errors && errors.length > 0) {
-                      const errorMsgList = _.map(
-                        errors,
-                        (error) => error.message,
-                      );
-                      for (const error of errorMsgList) {
-                        message.error(error, 2.5);
-                      }
-                    } else {
-                      onOk && onOk('modify');
-                    }
-                  },
-                  onError: (error) => {
-                    message.error(t('dialog.ErrorOccurred'));
-                  },
-                })
-              : commitModifyRegistryWithoutExtra({
-                  variables: _.omit(mutationVariables, ['extra']),
-                  onCompleted: (res, errors) => {
-                    if (
-                      _.isEmpty(
-                        res.modify_container_registry_node?.container_registry,
-                      )
-                    ) {
-                      message.error(t('dialog.ErrorOccurred'));
-                      return;
-                    }
-                    if (errors && errors.length > 0) {
-                      const errorMsgList = _.map(
-                        errors,
-                        (error) => error.message,
-                      );
-                      for (const error of errorMsgList) {
-                        message.error(error, 2.5);
-                      }
-                    } else {
-                      onOk && onOk('modify');
-                    }
-                  },
-                  onError: (error) => {
-                    message.error(t('dialog.ErrorOccurred'));
-                  },
-                });
-          }
+          commitModifyRegistry(
+            {
+              variables: {
+                ...mutationVariables,
+                ...(mutationVariables.id
+                  ? { id: mutationVariables.id }
+                  : { id: '' }),
+              },
+              onCompleted: (res, errors) => {
+                if (
+                  _.isEmpty(
+                    res.modify_container_registry_node?.container_registry,
+                  )
+                ) {
+                  message.error(t('dialog.ErrorOccurred'));
+                  return;
+                }
+                if (errors && errors.length > 0) {
+                  const errorMsgList = _.map(errors, (error) => error.message);
+                  for (const error of errorMsgList) {
+                    message.error(error, 2.5);
+                  }
+                } else {
+                  onOk && onOk('modify');
+                }
+              },
+              onError: (error) => {
+                message.error(t('dialog.ErrorOccurred'));
+              },
+            },
+            values.isChangedPassword ?? false,
+          );
         } else {
           mutationVariables = _.omitBy(mutationVariables, _.isNil) as Required<
             typeof mutationVariables
           >;
-          isSupportExtraField
-            ? commitCreateRegistry({
-                variables: mutationVariables,
-                onCompleted: (res, errors) => {
-                  if (
-                    _.isEmpty(
-                      res?.create_container_registry_node?.container_registry,
-                    )
-                  ) {
-                    message.error(t('dialog.ErrorOccurred'));
-                    return;
-                  }
-                  if (errors && errors?.length > 0) {
-                    const errorMsgList = _.map(
-                      errors,
-                      (error) => error.message,
-                    );
-                    for (const error of errorMsgList) {
-                      message.error(error, 2.5);
-                    }
-                  } else {
-                    onOk && onOk('create');
-                  }
-                },
-                onError(error) {
-                  message.error(t('dialog.ErrorOccurred'));
-                },
-              })
-            : commitCreateRegistryWithoutExtra({
-                variables: mutationVariables,
-                onCompleted: (res, errors) => {
-                  if (
-                    _.isEmpty(
-                      res?.create_container_registry_node?.container_registry,
-                    )
-                  ) {
-                    message.error(t('dialog.ErrorOccurred'));
-                    return;
-                  }
-                  if (errors && errors?.length > 0) {
-                    const errorMsgList = _.map(
-                      errors,
-                      (error) => error.message,
-                    );
-                    for (const error of errorMsgList) {
-                      message.error(error, 2.5);
-                    }
-                  } else {
-                    onOk && onOk('create');
-                  }
-                },
-                onError(error) {
-                  message.error(t('dialog.ErrorOccurred'));
-                },
-              });
+          commitCreateRegistry({
+            variables: mutationVariables,
+            onCompleted: (res, errors) => {
+              if (
+                _.isEmpty(
+                  res?.create_container_registry_node?.container_registry,
+                )
+              ) {
+                message.error(t('dialog.ErrorOccurred'));
+                return;
+              }
+              if (errors && errors?.length > 0) {
+                const errorMsgList = _.map(errors, (error) => error.message);
+                for (const error of errorMsgList) {
+                  message.error(error, 2.5);
+                }
+              } else {
+                onOk && onOk('create');
+              }
+            },
+            onError(error) {
+              message.error(t('dialog.ErrorOccurred'));
+            },
+          });
         }
       })
       .catch((error) => {});
@@ -466,14 +168,7 @@ const ContainerRegistryEditorModal: React.FC<
           : t('registry.AddRegistry')
       }
       okText={containerRegistry ? t('button.Save') : t('button.Add')}
-      confirmLoading={
-        isInflightCreateRegistry ||
-        isInflightCreateRegistryWithoutExtra ||
-        isInflightModifyRegistry ||
-        isInflightModifyRegistryWithoutExtra ||
-        isInflightModifyRegistryWithoutPassword ||
-        isInflightModifyRegistryWithoutPasswordAndExtra
-      }
+      confirmLoading={isInflightCreateRegistry || isInflightModifyRegistry}
       onOk={() => {
         formRef.current
           ?.validateFields()
@@ -749,5 +444,254 @@ const ContainerRegistryEditorModal: React.FC<
     </BAIModal>
   );
 };
+
+function useCreateContainerMutation() {
+  const baiClient = useSuspendedBackendaiClient();
+  const isSupportExtraField =
+    baiClient.isManagerVersionCompatibleWith('24.09.3');
+  const [commitCreateRegistry, isInflightCreateRegistry] =
+    useMutation<ContainerRegistryEditorModalCreateMutation>(graphql`
+      mutation ContainerRegistryEditorModalCreateMutation(
+        $registry_name: String!
+        $type: ContainerRegistryTypeField!
+        $url: String!
+        $is_global: Boolean
+        $password: String
+        $project: String
+        $ssl_verify: Boolean
+        $username: String
+        $extra: JSONString
+      ) {
+        create_container_registry_node(
+          registry_name: $registry_name
+          type: $type
+          url: $url
+          is_global: $is_global
+          password: $password
+          project: $project
+          ssl_verify: $ssl_verify
+          username: $username
+          extra: $extra
+        ) {
+          container_registry {
+            id
+          }
+        }
+      }
+    `);
+
+  // Because the input of mutation is provided as some argument, not the input type,
+  // versions of the mutation that do not include a particular argument are provided with 'Without'.
+  const [
+    commitCreateRegistryWithoutExtra,
+    isInflightCreateRegistryWithoutExtra,
+  ] = useMutation<ContainerRegistryEditorModalCreateWithoutExtraMutation>(
+    graphql`
+      mutation ContainerRegistryEditorModalCreateWithoutExtraMutation(
+        $registry_name: String!
+        $type: ContainerRegistryTypeField!
+        $url: String!
+        $is_global: Boolean
+        $password: String
+        $project: String
+        $ssl_verify: Boolean
+        $username: String
+      ) {
+        create_container_registry_node(
+          registry_name: $registry_name
+          type: $type
+          url: $url
+          is_global: $is_global
+          password: $password
+          project: $project
+          ssl_verify: $ssl_verify
+          username: $username
+        ) {
+          container_registry {
+            id
+          }
+        }
+      }
+    `,
+  );
+
+  return isSupportExtraField
+    ? ([commitCreateRegistry, isInflightCreateRegistry] as const)
+    : ([
+        commitCreateRegistryWithoutExtra,
+        isInflightCreateRegistryWithoutExtra,
+      ] as const);
+}
+
+function useModifyContainerMutation() {
+  const baiClient = useSuspendedBackendaiClient();
+  const isSupportExtraField =
+    baiClient.isManagerVersionCompatibleWith('24.09.3');
+
+  const [commitModifyRegistry, isInflightModifyRegistry] =
+    useMutation<ContainerRegistryEditorModalModifyMutation>(graphql`
+      mutation ContainerRegistryEditorModalModifyMutation(
+        $id: String!
+        $registry_name: String
+        $type: ContainerRegistryTypeField
+        $url: String
+        $is_global: Boolean
+        $password: String
+        $project: String
+        $ssl_verify: Boolean
+        $username: String
+        $extra: JSONString
+      ) {
+        modify_container_registry_node(
+          id: $id
+          registry_name: $registry_name
+          type: $type
+          url: $url
+          is_global: $is_global
+          password: $password
+          project: $project
+          ssl_verify: $ssl_verify
+          username: $username
+          extra: $extra
+        ) {
+          container_registry {
+            id
+          }
+        }
+      }
+    `);
+
+  const [
+    commitModifyRegistryWithoutExtra,
+    isInflightModifyRegistryWithoutExtra,
+  ] = useMutation<ContainerRegistryEditorModalModifyWithoutExtraMutation>(
+    graphql`
+      mutation ContainerRegistryEditorModalModifyWithoutExtraMutation(
+        $id: String!
+        $registry_name: String
+        $type: ContainerRegistryTypeField
+        $url: String
+        $is_global: Boolean
+        $password: String
+        $project: String
+        $ssl_verify: Boolean
+        $username: String
+      ) {
+        modify_container_registry_node(
+          id: $id
+          registry_name: $registry_name
+          type: $type
+          url: $url
+          is_global: $is_global
+          password: $password
+          project: $project
+          ssl_verify: $ssl_verify
+          username: $username
+        ) {
+          container_registry {
+            id
+          }
+        }
+      }
+    `,
+  );
+
+  const [
+    commitModifyRegistryWithoutPassword,
+    isInflightModifyRegistryWithoutPassword,
+  ] = useMutation<ContainerRegistryEditorModalModifyWithoutPasswordMutation>(
+    graphql`
+      mutation ContainerRegistryEditorModalModifyWithoutPasswordMutation(
+        $id: String!
+        $registry_name: String
+        $type: ContainerRegistryTypeField
+        $url: String
+        $is_global: Boolean
+        $project: String
+        $ssl_verify: Boolean
+        $username: String
+        $extra: JSONString
+      ) {
+        modify_container_registry_node(
+          id: $id
+          registry_name: $registry_name
+          type: $type
+          url: $url
+          is_global: $is_global
+          project: $project
+          ssl_verify: $ssl_verify
+          username: $username
+          extra: $extra
+        ) {
+          container_registry {
+            id
+          }
+        }
+      }
+    `,
+  );
+
+  const [
+    commitModifyRegistryWithoutPasswordAndExtra,
+    isInflightModifyRegistryWithoutPasswordAndExtra,
+  ] =
+    useMutation<ContainerRegistryEditorModalModifyWithoutPasswordAndExtraMutation>(
+      graphql`
+        mutation ContainerRegistryEditorModalModifyWithoutPasswordAndExtraMutation(
+          $id: String!
+          $registry_name: String
+          $type: ContainerRegistryTypeField
+          $url: String
+          $is_global: Boolean
+          $project: String
+          $ssl_verify: Boolean
+          $username: String
+        ) {
+          modify_container_registry_node(
+            id: $id
+            registry_name: $registry_name
+            type: $type
+            url: $url
+            is_global: $is_global
+            project: $project
+            ssl_verify: $ssl_verify
+            username: $username
+          ) {
+            container_registry {
+              id
+            }
+          }
+        }
+      `,
+    );
+
+  return [
+    (
+      config:
+        | UseMutationConfig<ContainerRegistryEditorModalModifyMutation>
+        | UseMutationConfig<ContainerRegistryEditorModalModifyWithoutExtraMutation>
+        | UseMutationConfig<ContainerRegistryEditorModalModifyWithoutPasswordMutation>
+        | UseMutationConfig<ContainerRegistryEditorModalModifyWithoutPasswordAndExtraMutation>,
+      isChangedPassword: boolean,
+    ) => {
+      if (!isChangedPassword && 'password' in config.variables) {
+        delete config.variables.password;
+      }
+      if (isSupportExtraField) {
+        return isChangedPassword
+          ? commitModifyRegistry(config)
+          : commitModifyRegistryWithoutPassword(config);
+      } else {
+        return isChangedPassword
+          ? commitModifyRegistryWithoutExtra(config)
+          : commitModifyRegistryWithoutPasswordAndExtra(config);
+      }
+    },
+    isInflightModifyRegistry ||
+      isInflightModifyRegistryWithoutExtra ||
+      isInflightModifyRegistryWithoutPassword ||
+      isInflightModifyRegistryWithoutPasswordAndExtra,
+  ] as const;
+}
 
 export default ContainerRegistryEditorModal;
