@@ -10,7 +10,8 @@ import { useFragment } from 'react-relay';
 
 const SessionReservation: React.FC<{
   sessionFrgmt: SessionReservationFragment$key;
-}> = ({ sessionFrgmt }) => {
+  mode?: 'simple-elapsed' | 'detail';
+}> = ({ sessionFrgmt, mode = 'detail' }) => {
   const baiClient = useSuspendedBackendaiClient();
   const { t } = useTranslation();
   const session = useFragment(
@@ -25,8 +26,9 @@ const SessionReservation: React.FC<{
   );
   return (
     <>
-      {dayjs(session.created_at).format('lll')}
+      {mode !== 'simple-elapsed' && dayjs(session.created_at).format('lll')}
       <BAIIntervalView
+        key={session.id}
         callback={() => {
           return session?.created_at
             ? baiClient.utils.elapsedTime(
@@ -36,14 +38,18 @@ const SessionReservation: React.FC<{
             : '-';
         }}
         delay={1000}
-        render={(intervalValue) => (
-          <DoubleTag
-            values={[
-              { label: t('session.ElapsedTime') },
-              { label: intervalValue },
-            ]}
-          />
-        )}
+        render={(intervalValue) =>
+          mode === 'simple-elapsed' ? (
+            intervalValue
+          ) : (
+            <DoubleTag
+              values={[
+                { label: t('session.ElapsedTime') },
+                { label: intervalValue },
+              ]}
+            />
+          )
+        }
       />
     </>
   );

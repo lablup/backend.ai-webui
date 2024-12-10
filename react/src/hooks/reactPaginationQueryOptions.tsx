@@ -281,6 +281,7 @@ export const useBAIPaginationQueryOptions = ({
 interface BAIPaginationOption {
   limit: number;
   offset: number;
+  first?: number;
   // filter?: string;
   // order?: string;
 }
@@ -297,13 +298,16 @@ export const useBAIPaginationOptionState = (
 ): {
   baiPaginationOption: BAIPaginationOption;
   tablePaginationOption: AntdBasicPaginationOption;
-  setTablePaginationOption: (pagination: AntdBasicPaginationOption) => void;
+  setTablePaginationOption: (
+    pagination: Partial<AntdBasicPaginationOption>,
+  ) => void;
 } => {
   const [options, setOptions] =
     useState<AntdBasicPaginationOption>(initialOptions);
   return {
     baiPaginationOption: {
       limit: options.pageSize,
+      first: options.pageSize,
       offset:
         options.current > 1 ? (options.current - 1) * options.pageSize : 0,
     },

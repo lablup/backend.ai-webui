@@ -166,7 +166,7 @@ const SessionDetailContent: React.FC<{
           label={t('session.Status')}
           contentStyle={{ display: 'flex', gap: token.marginSM }}
         >
-          <SessionStatusTag sessionFrgmt={session} />
+          <SessionStatusTag sessionFrgmt={session} showInfo />
           {/* <Button type="text" icon={<TriangleAlertIcon />} /> */}
         </Descriptions.Item>
         <Descriptions.Item label={t('session.SessionType')}>
