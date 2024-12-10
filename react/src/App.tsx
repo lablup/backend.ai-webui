@@ -57,8 +57,8 @@ const InteractiveLoginPage = React.lazy(
 );
 const ImportAndRunPage = React.lazy(() => import('./pages/ImportAndRunPage'));
 
-const ComputeSessionList = React.lazy(
-  () => import('./components/ComputeSessionList'),
+const ComputeSessionListPage = React.lazy(
+  () => import('./pages/ComputeSessionListPage'),
 );
 const AgentSummaryPage = React.lazy(() => import('./pages/AgentSummaryPage'));
 
@@ -139,7 +139,7 @@ const router = createBrowserRouter([
         handle: { labelKey: 'webui.menu.Sessions' },
         element: (
           <BAIErrorBoundary>
-            <ComputeSessionList />
+            <ComputeSessionListPage />
           </BAIErrorBoundary>
         ),
       },

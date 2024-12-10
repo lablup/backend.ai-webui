@@ -1,6 +1,7 @@
-import BAIModal from './BAIModal';
-import ContainerLogModalWithLazyQueryLoader from './ComputeSessionNodeItems/ContainerLogModalWithLazyQueryLoader';
-import SessionDetailDrawer from './SessionDetailDrawer';
+import BAIModal from '../components/BAIModal';
+import ContainerLogModalWithLazyQueryLoader from '../components/ComputeSessionNodeItems/ContainerLogModalWithLazyQueryLoader';
+import SessionDetailDrawer from '../components/SessionDetailDrawer';
+import SessionNodes from '../components/SessionNodes';
 import { Skeleton } from 'antd';
 import { Suspense, useEffect, useState } from 'react';
 import { StringParam, useQueryParam } from 'use-query-params';
@@ -21,6 +22,7 @@ const ComputeSessionList = () => {
   }, []);
   return (
     <>
+      <SessionNodes />
       <SessionDetailDrawer
         open={!sessionId}
         sessionId={sessionId || undefined}
