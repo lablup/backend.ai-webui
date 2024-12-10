@@ -6,9 +6,21 @@ import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import ProjectSelect from './ProjectSelect';
 import StorageSelect from './StorageSelect';
-import { App, Button, Divider, Form, Input, Radio, Switch, theme } from 'antd';
+import {
+  App,
+  Button,
+  Divider,
+  Form,
+  GetRef,
+  Input,
+  InputRef,
+  Radio,
+  Switch,
+  theme,
+} from 'antd';
 import { createStyles } from 'antd-style';
 import { FormInstance } from 'antd/lib';
+import _ from 'lodash';
 import { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -68,6 +80,7 @@ export interface FolderCreationResponse {
 
 const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
   onRequestClose,
+  afterOpenChange,
   ...modalProps
 }) => {
   const { t } = useTranslation();
@@ -78,6 +91,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
   const formRef = useRef<FormInstance>(null);
   const currentDomain = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
+  const firstInputRef = useRef<InputRef>(null);
 
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
 
@@ -135,6 +149,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
 
   return (
     <BAIModal
+      keyboard
       className={styles.modal}
       title={t('data.CreateANewStorageFolder')}
       footer={
@@ -171,6 +186,12 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         onRequestClose();
       }}
       destroyOnClose
+      afterOpenChange={(open) => {
+        if (open) {
+          firstInputRef.current?.focus();
+        }
+        afterOpenChange?.(open);
+      }}
       {...modalProps}
     >
       <Form
@@ -194,7 +215,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
             },
           ]}
         >
-          <Input placeholder={t('maxLength.64chars')} />
+          <Input ref={firstInputRef} placeholder={t('maxLength.64chars')} />
         </Form.Item>
         <Divider />
 
@@ -218,11 +239,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         </Form.Item>
         <Divider />
 
-        <Form.Item
-          label={t('data.Type')}
-          name={'type'}
-          style={{ flex: 1, marginBottom: 0 }}
-        >
+        <Form.Item label={t('data.Type')} name={'type'} style={{ flex: 1 }}>
           <Radio.Group>
             <Radio value={'user'}>User</Radio>
             <Radio value={'project'}>Project</Radio>
