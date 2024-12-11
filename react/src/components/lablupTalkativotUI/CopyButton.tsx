@@ -1,6 +1,6 @@
-import { Button, ButtonProps, Tooltip } from 'antd';
+import { CheckOutlined, CopyOutlined } from '@ant-design/icons';
+import { Button, ButtonProps, theme, Tooltip } from 'antd';
 import { CopyConfig } from 'antd/es/typography/Base';
-import { CheckIcon, CopyIcon } from 'lucide-react';
 import React from 'react';
 import { useEffect } from 'react';
 import { useState } from 'react';
@@ -13,8 +13,9 @@ interface CopyButtonProps extends ButtonProps {
 const CopyButton: React.FC<CopyButtonProps> = ({
   copyable,
   defaultIcon,
-  ...props
+  ...buttonProps
 }) => {
+  const { token } = theme.useToken();
   const [isCopied, setIsCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -38,9 +39,17 @@ const CopyButton: React.FC<CopyButtonProps> = ({
       <CopyToClipboard text={copyable?.text || ''} onCopy={handleCopy}>
         <Button
           icon={
-            isCopied ? <CheckIcon /> : defaultIcon ? defaultIcon : <CopyIcon />
+            isCopied ? (
+              <CheckOutlined />
+            ) : defaultIcon ? (
+              defaultIcon
+            ) : (
+              <CopyOutlined />
+            )
           }
-          {...props}
+          type="text"
+          style={{ color: token.colorPrimary }}
+          {...buttonProps}
         />
       </CopyToClipboard>
     </Tooltip>
