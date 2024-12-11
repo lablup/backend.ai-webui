@@ -605,12 +605,13 @@
     "WarningLessRateLimit": "Nếu giá trị Giới hạn tốc độ nhỏ, các hoạt động API như đăng nhập có thể bị chặn.",
     "NoCredentialToDisplay": "Không có thông tin xác thực nào để hiển thị",
     "KeypairDetail": "Chi tiết bàn phím",
-    "SignoutSeccessfullyFinished": "Đăng xuất đã hoàn tất thành công",
     "Status": "Trạng thái",
     "NoUserToDisplay": "Không có người dùng để hiển thị",
     "EnableSudoSession": "Kích hoạt phiên sudo",
     "MainAccessKey": "Khóa truy cập chính",
-    "InactivateTheFollowingUsers": "Vô hiệu hóa những người dùng sau."
+    "InactivateTheFollowingUsers": "Vô hiệu hóa những người dùng sau.",
+    "CreatedAt": "Được tạo tại",
+    "SignoutSuccessfullyFinished": "Đăng xuất đã hoàn tất thành công"
   },
   "data": {
     "Folders": "Thư mục",

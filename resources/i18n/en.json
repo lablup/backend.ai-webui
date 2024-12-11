@@ -734,10 +734,11 @@
     "KeypairDetail": "Keypair Detail",
     "AdminCanOnlyRemoveTotp": "Only disabling 2FA of other users is possible.",
     "KeySeccessfullyDeleted": "KeyPair is seccessfully deleted.",
-    "SignoutSeccessfullyFinished": "Signout is seccessfully finished",
     "EnableSudoSession": "Enable sudo session",
     "MainAccessKey": "Main Access Key",
-    "InactivateTheFollowingUsers": "Inactivate the following users."
+    "InactivateTheFollowingUsers": "Inactivate the following users.",
+    "CreatedAt": "Created At",
+    "SignoutSuccessfullyFinished": "Signout is seccessfully finished"
   },
   "data": {
     "Folders": "Folders",
