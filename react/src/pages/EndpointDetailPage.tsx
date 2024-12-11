@@ -202,6 +202,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               created_at
               valid_until
             }
+            ...ChatUIModalEndpointTokenListFragment
           }
         }
       `,
@@ -723,6 +724,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       ></EndpointTokenGenerationModal>
       <ChatUIModal
         endpointFrgmt={endpoint}
+        endpointTokenFrgmt={endpoint_token_list}
         open={openChatModal}
         onCancel={() => {
           setOpenChatModal(false);

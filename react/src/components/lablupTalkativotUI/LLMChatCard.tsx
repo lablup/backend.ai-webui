@@ -58,6 +58,7 @@ export interface LLMChatCardProps extends CardProps {
   onInputChange?: (input: string) => void;
   onSubmitChange?: () => void;
   showCompareMenuItem?: boolean;
+  modelToken?: string;
 }
 
 const LLMChatCard: React.FC<LLMChatCardProps> = ({
@@ -76,6 +77,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
   onInputChange,
   onSubmitChange,
   showCompareMenuItem,
+  modelToken,
   ...cardProps
 }) => {
   const webuiNavigate = useWebUINavigate();
@@ -306,6 +308,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
           key={baseURL}
           initialValues={{
             baseURL: baseURL,
+            token: modelToken,
           }}
         >
           {alert ? (
