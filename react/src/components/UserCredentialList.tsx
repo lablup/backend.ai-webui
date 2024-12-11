@@ -5,12 +5,18 @@ import {
 } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
+import KeypairSettingModal from '../pages/KeypairSettingModal';
+import { KeypairSettingModalFragment$key } from '../pages/__generated__/KeypairSettingModalFragment.graphql';
 import BAIPropertyFilter from './BAIPropertyFilter';
 import BAITable from './BAITable';
 import Flex from './Flex';
+import KeypairInfoModal from './KeypairInfoModal';
 import { UserCredentialListDeleteMutation } from './__generated__/UserCredentialListDeleteMutation.graphql';
 import { UserCredentialListModifyMutation } from './__generated__/UserCredentialListModifyMutation.graphql';
-import { UserCredentialListQuery } from './__generated__/UserCredentialListQuery.graphql';
+import {
+  UserCredentialListQuery,
+  UserCredentialListQuery$data,
+} from './__generated__/UserCredentialListQuery.graphql';
 import {
   DeleteOutlined,
   InfoCircleOutlined,
@@ -36,6 +42,10 @@ import { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery, useMutation } from 'react-relay';
 
+type Keypair = NonNullable<
+  NonNullable<UserCredentialListQuery$data['keypair_list']>['items'][number]
+>;
+
 const UserCredentialList: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -45,6 +55,12 @@ const UserCredentialList: React.FC = () => {
   const [activeType, setActiveType] = useState<'active' | 'inactive'>('active');
   const [order, setOrder] = useState<string>();
   const [filterString, setFilterString] = useState<string>();
+  const [keypairSettingModalFrgmt, setKeypairSettingModalFrgmt] =
+    useState<KeypairSettingModalFragment$key | null>(null);
+  const [openUserKeypairSettingModal, setOpenUserKeypairSettingModal] =
+    useState(false);
+  const [keypairInfoModalFrgmt, setKeypairInfoModalFrgmt] = useState<any>(null);
+
   const [isPendingRefresh, startRefreshTransition] = useTransition();
   const [isActiveTypePending, startActiveTypeTransition] = useTransition();
   const [isPendingPageChange, startPageChangeTransition] = useTransition();
@@ -90,6 +106,9 @@ const UserCredentialList: React.FC = () => {
             num_queries
             concurrency_used @since(version: "24.09.0")
             concurrency_limit @since(version: "24.09.0")
+
+            ...KeypairSettingModalFragment
+            ...KeypairInfoModalFragment
           }
           total_count
         }
@@ -217,10 +236,17 @@ const UserCredentialList: React.FC = () => {
               icon={<ReloadOutlined />}
             />
           </Tooltip>
-          <Button type="primary">{t('credential.AddCredential')}</Button>
+          <Button
+            type="primary"
+            onClick={() => {
+              setOpenUserKeypairSettingModal(true);
+            }}
+          >
+            {t('credential.AddCredential')}
+          </Button>
         </Flex>
       </Flex>
-      <BAITable
+      <BAITable<Keypair>
         // resizable
         rowKey={'id'}
         scroll={{ x: 'max-content' }}
@@ -343,20 +369,24 @@ const UserCredentialList: React.FC = () => {
             key: 'control',
             title: t('general.Control'),
             fixed: 'right',
-            render: (record) => {
+            render: (value, record) => {
               return (
                 <Flex gap={token.marginXS}>
                   <Button
                     type="link"
                     icon={<InfoCircleOutlined />}
-                    onClick={() => {}}
+                    onClick={() => {
+                      setKeypairInfoModalFrgmt(record);
+                    }}
                   />
                   <Button
                     type="link"
                     icon={
                       <SettingOutlined style={{ color: token.colorInfo }} />
                     }
-                    onClick={() => {}}
+                    onClick={() => {
+                      setKeypairSettingModalFrgmt(record);
+                    }}
                   />
                   {activeType === 'inactive' && (
                     <Button
@@ -365,7 +395,7 @@ const UserCredentialList: React.FC = () => {
                       onClick={() => {
                         commitModifyKeypair({
                           variables: {
-                            access_key: record.access_key,
+                            access_key: record.access_key ?? '',
                             props: {
                               is_active: true,
                             },
@@ -405,7 +435,7 @@ const UserCredentialList: React.FC = () => {
                       activeType === 'active'
                         ? commitModifyKeypair({
                             variables: {
-                              access_key: record.access_key,
+                              access_key: record.access_key ?? '',
                               props: {
                                 is_active: false,
                               },
@@ -429,7 +459,7 @@ const UserCredentialList: React.FC = () => {
                           })
                         : commitDeleteKeypair({
                             variables: {
-                              access_key: record.access_key,
+                              access_key: record.access_key ?? '',
                             },
                             onCompleted: (res, errors) => {
                               if (!res?.delete_keypair?.ok || errors) {
@@ -480,6 +510,26 @@ const UserCredentialList: React.FC = () => {
             }
             setOrder(transformSorterToOrderString(sorter));
           });
+        }}
+      />
+      <KeypairSettingModal
+        keypairSettingModalFrgmt={keypairSettingModalFrgmt}
+        open={!!keypairSettingModalFrgmt || openUserKeypairSettingModal}
+        onRequestClose={(success) => {
+          setKeypairSettingModalFrgmt(null);
+          setOpenUserKeypairSettingModal(false);
+          if (success) {
+            startRefreshTransition(() => {
+              updateFetchKey();
+            });
+          }
+        }}
+      />
+      <KeypairInfoModal
+        keypairInfoModalFrgmt={keypairInfoModalFrgmt}
+        open={!!keypairInfoModalFrgmt}
+        onRequestClose={() => {
+          setKeypairInfoModalFrgmt(null);
         }}
       />
     </Flex>

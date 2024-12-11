@@ -612,7 +612,8 @@
     "InactivateTheFollowingUsers": "停用以下用户。",
     "CreatedAt": "創建於",
     "SignoutSuccessfullyFinished": "签出已顺利完成",
-    "AccessKey": "存取密鑰"
+    "AccessKey": "存取密鑰",
+    "SecretKey": "秘密鑰匙"
   },
   "data": {
     "Folders": "文件夾",

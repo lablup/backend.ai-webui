@@ -739,7 +739,8 @@
     "InactivateTheFollowingUsers": "Inactivate the following users.",
     "CreatedAt": "Created At",
     "SignoutSuccessfullyFinished": "Signout is seccessfully finished",
-    "AccessKey": "Access Key"
+    "AccessKey": "Access Key",
+    "SecretKey": "Secret Key"
   },
   "data": {
     "Folders": "Folders",

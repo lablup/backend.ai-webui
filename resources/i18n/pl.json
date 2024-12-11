@@ -612,7 +612,8 @@
     "InactivateTheFollowingUsers": "Dezaktywuj następujących użytkowników.",
     "CreatedAt": "Utworzono o godz",
     "SignoutSuccessfullyFinished": "Wylogowanie zostało pomyślnie zakończone",
-    "AccessKey": "Klucz dostępu"
+    "AccessKey": "Klucz dostępu",
+    "SecretKey": "Tajny klucz"
   },
   "data": {
     "Folders": "Lornetka składana",

@@ -727,7 +727,8 @@
     "InactivateTheFollowingUsers": "다음 사용자를 비활성화합니다.",
     "CreatedAt": "생성 날짜",
     "SignoutSuccessfullyFinished": "사용자 계정이 성공적으로 삭제되었습니다.",
-    "AccessKey": "접근키"
+    "AccessKey": "접근키",
+    "SecretKey": "비밀 키"
   },
   "data": {
     "Folders": "폴더",

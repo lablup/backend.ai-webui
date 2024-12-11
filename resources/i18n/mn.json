@@ -614,7 +614,8 @@
     "InactivateTheFollowingUsers": "Дараах хэрэглэгчдийг идэвхгүй болго.",
     "CreatedAt": "Үүсгэсэн",
     "SignoutSuccessfullyFinished": "Гарах ажиллагаа амжилттай дууслаа",
-    "AccessKey": "Хандалтын түлхүүр"
+    "AccessKey": "Хандалтын түлхүүр",
+    "SecretKey": "Нууц түлхүүр"
   },
   "data": {
     "Folders": "Фолдерууд",

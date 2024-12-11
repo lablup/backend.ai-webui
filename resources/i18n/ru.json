@@ -612,7 +612,8 @@
     "InactivateTheFollowingUsers": "Деактивируйте следующих пользователей.",
     "CreatedAt": "Создано в",
     "SignoutSuccessfullyFinished": "Выход из системы завершен",
-    "AccessKey": "Ключ доступа"
+    "AccessKey": "Ключ доступа",
+    "SecretKey": "Секретный ключ"
   },
   "data": {
     "Folders": "Папки",

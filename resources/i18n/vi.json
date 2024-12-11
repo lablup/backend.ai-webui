@@ -612,7 +612,8 @@
     "InactivateTheFollowingUsers": "Vô hiệu hóa những người dùng sau.",
     "CreatedAt": "Được tạo tại",
     "SignoutSuccessfullyFinished": "Đăng xuất đã hoàn tất thành công",
-    "AccessKey": "Khóa truy cập"
+    "AccessKey": "Khóa truy cập",
+    "SecretKey": "Khóa bí mật"
   },
   "data": {
     "Folders": "Thư mục",

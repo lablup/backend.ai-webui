@@ -612,7 +612,8 @@
     "InactivateTheFollowingUsers": "Απενεργοποιήστε τους παρακάτω χρήστες.",
     "CreatedAt": "Δημιουργήθηκε στο",
     "SignoutSuccessfullyFinished": "Η αποσύνδεση ολοκληρώθηκε επιτυχώς",
-    "AccessKey": "Κλειδί πρόσβασης"
+    "AccessKey": "Κλειδί πρόσβασης",
+    "SecretKey": "Μυστικό κλειδί"
   },
   "data": {
     "Folders": "Φάκελοι",
