@@ -94,10 +94,11 @@ export function mergeFilterValues(
   filterStrings: Array<string | undefined>,
   operator: string = '&',
 ) {
-  return _.join(
+  const mergedFilter = _.join(
     _.map(filterEmptyItem(filterStrings), (str) => `(${str})`),
     operator,
   );
+  return !!mergedFilter ? mergedFilter : undefined;
 }
 
 /**
@@ -129,7 +130,7 @@ export function parseFilterValue(filter: string) {
  * @param operator - The logical operator to use ('and' or 'or').
  * @returns The combined filter string.
  */
-function combineFilters(filters: string[], operator: 'and' | 'or'): string {
+function combineFilters(filters: string[], operator: '&' | '|'): string {
   return filters.join(` ${operator} `);
 }
 
@@ -194,7 +195,7 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
           item.type === 'string' ? `"${item.value}"` : item.value;
         return `${item.property} ${item.operator} ${valueStringInResult}`;
       });
-      setValue(combineFilters(filterStrings, 'and')); // Change 'and' to 'or' if needed
+      setValue(combineFilters(filterStrings, '&'));
     }
   }, [list, setValue]);
 
