@@ -176,6 +176,9 @@
     "workbox-sw": "^7.1.0",
     "ws": "^8.18.0"
   },
+  "optionalDependencies": {
+    "macos-alias": "^0.2.11"
+  },
   "overrides": {
     "eslint": "^8.57.0"
   },
