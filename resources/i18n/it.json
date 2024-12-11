@@ -612,7 +612,8 @@
     "MainAccessKey": "Chiave di accesso principale",
     "InactivateTheFollowingUsers": "Disattiva i seguenti utenti.",
     "CreatedAt": "Creato a",
-    "SignoutSuccessfullyFinished": "Il signout è terminato in modo sicuro"
+    "SignoutSuccessfullyFinished": "Il signout è terminato in modo sicuro",
+    "AccessKey": "Chiave di accesso"
   },
   "data": {
     "Folders": "cartelle",

@@ -613,7 +613,8 @@
     "MainAccessKey": "Үндсэн хандалтын түлхүүр",
     "InactivateTheFollowingUsers": "Дараах хэрэглэгчдийг идэвхгүй болго.",
     "CreatedAt": "Үүсгэсэн",
-    "SignoutSuccessfullyFinished": "Гарах ажиллагаа амжилттай дууслаа"
+    "SignoutSuccessfullyFinished": "Гарах ажиллагаа амжилттай дууслаа",
+    "AccessKey": "Хандалтын түлхүүр"
   },
   "data": {
     "Folders": "Фолдерууд",

@@ -230,7 +230,8 @@
     "MainAccessKey": "Clave de acceso principal",
     "InactivateTheFollowingUsers": "Desactivar los siguientes usuarios.",
     "CreatedAt": "Creado en",
-    "SignoutSuccessfullyFinished": "El proceso de registro ha finalizado"
+    "SignoutSuccessfullyFinished": "El proceso de registro ha finalizado",
+    "AccessKey": "Clave de acceso"
   },
   "data": {
     "Allowslettersnumbersand-_": "Permite letras, números y -_",

@@ -611,7 +611,8 @@
     "MainAccessKey": "Khóa truy cập chính",
     "InactivateTheFollowingUsers": "Vô hiệu hóa những người dùng sau.",
     "CreatedAt": "Được tạo tại",
-    "SignoutSuccessfullyFinished": "Đăng xuất đã hoàn tất thành công"
+    "SignoutSuccessfullyFinished": "Đăng xuất đã hoàn tất thành công",
+    "AccessKey": "Khóa truy cập"
   },
   "data": {
     "Folders": "Thư mục",
