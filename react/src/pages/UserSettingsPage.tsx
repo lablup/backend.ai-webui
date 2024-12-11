@@ -1,5 +1,5 @@
 import ErrorLogList from '../components/ErrorLogList';
-import KeypairInfoModal from '../components/KeypairInfoModal';
+import MyKeypairInfoModal from '../components/MyKeypairInfoModal';
 import SSHKeypairManagementModal from '../components/SSHKeypairManagementModal';
 import { SettingItemProps } from '../components/SettingItem';
 import SettingList from '../components/SettingList';
@@ -263,7 +263,7 @@ const UserPreferencesPage = () => {
         {curTabKey === 'general' && <SettingList settingGroup={settingGroup} />}
         {curTabKey === 'logs' && <ErrorLogList />}
       </Card>
-      <KeypairInfoModal
+      <MyKeypairInfoModal
         open={isOpenSSHKeypairInfoModal}
         onRequestClose={toggleSSHKeypairInfoModal}
       />
