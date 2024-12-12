@@ -4,28 +4,21 @@ import { useCurrentUserRole } from '../../hooks/backendai';
 import { useTanQuery } from '../../hooks/reactQueryAlias';
 import { useMemoWithPrevious } from '../../hooks/useMemoWithPrevious';
 import BAIModal, { BAIModalProps } from '../BAIModal';
+import BAISelect from '../BAISelect';
 import Flex from '../Flex';
 import { ContainerLogModalFragment$key } from './__generated__/ContainerLogModalFragment.graphql';
 import { ReloadOutlined } from '@ant-design/icons';
 import { LazyLog, ScrollFollow } from '@melloware/react-logviewer';
-import {
-  Button,
-  Divider,
-  Grid,
-  Select,
-  theme,
-  Tooltip,
-  Typography,
-} from 'antd';
+import { Button, Divider, Grid, theme, Tooltip, Typography } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { DownloadIcon } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
 
 interface ContainerLogModalProps extends BAIModalProps {
-  sessionFrgmt: ContainerLogModalFragment$key;
+  sessionFrgmt: ContainerLogModalFragment$key | null;
 }
 
 const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
@@ -66,9 +59,14 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
       kernelNodes[0]?.row_id,
   );
 
+  useEffect(() => {
+    if (modalProps.open === false) {
+      setSelectedKernelId(undefined);
+    }
+  }, [modalProps.open]);
+
   // Currently we can only fetch full logs
   // const [logSize, setLogSize] = useState<100|'full'>('full');
-
   const {
     data: logs,
     refetch,
@@ -129,20 +127,24 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
           <Typography.Title level={4} style={{ margin: 0, flexShrink: 0 }}>
             Logs
           </Typography.Title>
-          <Typography.Text style={{ fontWeight: 'normal' }} ellipsis>
-            {session?.name}
-          </Typography.Text>
-          <Typography.Text
-            style={{ fontWeight: 'normal', fontFamily: 'monospace' }}
-            copyable={{
-              text: session?.row_id,
-              tooltips: t('button.CopySomething', {
-                name: t('session.SessionId'),
-              }),
-            }}
-          >
-            ({md ? session?.row_id : session?.row_id.split('-')?.[0]})
-          </Typography.Text>
+          {session ? (
+            <>
+              <Typography.Text style={{ fontWeight: 'normal' }} ellipsis>
+                {session?.name}
+              </Typography.Text>
+              <Typography.Text
+                style={{ fontWeight: 'normal', fontFamily: 'monospace' }}
+                copyable={{
+                  text: session?.row_id,
+                  tooltips: t('button.CopySomething', {
+                    name: t('session.SessionId'),
+                  }),
+                }}
+              >
+                ({md ? session?.row_id : session?.row_id.split('-')?.[0]})
+              </Typography.Text>
+            </>
+          ) : null}
         </Flex>
       }
       width={'100%'}
@@ -157,6 +159,7 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
       }}
       {...modalProps}
       footer={null}
+      destroyOnClose
     >
       <Flex
         direction="column"
@@ -166,12 +169,13 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
       >
         <Flex gap="sm" wrap="wrap">
           Kernel Role
-          <Select
+          <BAISelect
             value={selectedKernelId}
             onChange={(value) => {
               setSelectedKernelId(value);
               resetPreviousLineNumber();
             }}
+            autoSelectOption
             options={_.chain(session?.kernel_nodes?.edges)
               .sortBy((e) => `${e?.node?.cluster_role} ${e?.node?.cluster_idx}`)
               .map((e) => {
