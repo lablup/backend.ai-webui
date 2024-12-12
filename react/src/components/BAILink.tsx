@@ -15,7 +15,7 @@ const useStyles = createStyles(({ css, token }) => ({
 }));
 
 interface BAILinkProps extends LinkProps {
-  type: 'hover';
+  type?: 'hover';
 }
 const BAILink: React.FC<BAILinkProps> = ({ type, ...linkProps }) => {
   const { styles } = useStyles();
