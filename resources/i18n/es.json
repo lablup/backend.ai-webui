@@ -231,7 +231,8 @@
     "InactivateTheFollowingUsers": "Desactivar los siguientes usuarios.",
     "CreatedAt": "Creado en",
     "SignoutSuccessfullyFinished": "El proceso de registro ha finalizado",
-    "AccessKey": "Clave de acceso"
+    "AccessKey": "Clave de acceso",
+    "SecretKey": "clave secreta"
   },
   "data": {
     "Allowslettersnumbersand-_": "Permite letras, números y -_",

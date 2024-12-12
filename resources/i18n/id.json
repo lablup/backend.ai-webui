@@ -613,7 +613,8 @@
     "InactivateTheFollowingUsers": "Nonaktifkan pengguna berikut.",
     "CreatedAt": "Dibuat Pada",
     "SignoutSuccessfullyFinished": "Keluar dengan aman selesai",
-    "AccessKey": "Kunci Akses"
+    "AccessKey": "Kunci Akses",
+    "SecretKey": "Kunci Rahasia"
   },
   "data": {
     "Folders": "Folder",

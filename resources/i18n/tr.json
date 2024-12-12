@@ -611,7 +611,8 @@
     "InactivateTheFollowingUsers": "Aşağıdaki kullanıcıları devre dışı bırakın.",
     "CreatedAt": "Oluşturulma Tarihi",
     "SignoutSuccessfullyFinished": "Çıkış işlemi başarıyla tamamlandı",
-    "AccessKey": "Erişim Anahtarı"
+    "AccessKey": "Erişim Anahtarı",
+    "SecretKey": "Gizli Anahtar"
   },
   "data": {
     "Folders": "klasörler",

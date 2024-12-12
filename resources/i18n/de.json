@@ -612,7 +612,8 @@
     "InactivateTheFollowingUsers": "Deaktivieren Sie die folgenden Benutzer.",
     "CreatedAt": "Erstellt am",
     "SignoutSuccessfullyFinished": "Die Abmeldung ist erfolgreich abgeschlossen",
-    "AccessKey": "Zugriffsschlüssel"
+    "AccessKey": "Zugriffsschlüssel",
+    "SecretKey": "Geheimer Schlüssel"
   },
   "data": {
     "Folders": "Ordner",

@@ -612,7 +612,8 @@
     "InactivateTheFollowingUsers": "Inative os seguintes usuários.",
     "CreatedAt": "Criado em",
     "SignoutSuccessfullyFinished": "O registo foi concluído com êxito",
-    "AccessKey": "Chave de acesso"
+    "AccessKey": "Chave de acesso",
+    "SecretKey": "Chave secreta"
   },
   "data": {
     "Folders": "Pastas",

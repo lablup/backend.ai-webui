@@ -1,125 +1,89 @@
-/**
- @license
- Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
- */
-import { useSuspendedBackendaiClient } from '../hooks';
-import { useCurrentUserInfo } from '../hooks/backendai';
-import { useTanQuery } from '../hooks/reactQueryAlias';
-import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
-import { KeypairInfoModalQuery } from './__generated__/KeypairInfoModalQuery.graphql';
-import { Button, Table, Typography, Tag } from 'antd';
+import BAIModal from './BAIModal';
+import { KeypairInfoModalFragment$key } from './__generated__/KeypairInfoModalFragment.graphql';
+import { Descriptions, ModalProps } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import dayjs from 'dayjs';
+import { t } from 'i18next';
+import { useFragment } from 'react-relay';
 
-interface KeypairInfoModalProps extends BAIModalProps {
+interface KeypairInfoModalProps extends ModalProps {
+  keypairInfoModalFrgmt: KeypairInfoModalFragment$key | null;
   onRequestClose: () => void;
 }
 
 const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
+  keypairInfoModalFrgmt = null,
   onRequestClose,
-  ...baiModalProps
+  ...modalProps
 }) => {
-  const { t } = useTranslation();
-  const [userInfo] = useCurrentUserInfo();
-  const baiClient = useSuspendedBackendaiClient();
-  const { data: keypairs } = useTanQuery({
-    queryKey: ['baiClient.keypair.list', baiModalProps.open], // refetch on open state
-    queryFn: () => {
-      return baiModalProps.open
-        ? baiClient.keypair
-            .list(
-              userInfo.email,
-              ['access_key', 'secret_key', 'is_active'],
-              true,
-            )
-            .then((res: any) => res.keypairs)
-        : null;
-    },
-    staleTime: 0,
-  });
-
-  const supportMainAccessKey = baiClient?.supports('main-access-key');
-
-  const { user } = useLazyLoadQuery<KeypairInfoModalQuery>(
+  const keypair = useFragment(
     graphql`
-      query KeypairInfoModalQuery($email: String) {
-        user(email: $email) {
-          email
-          main_access_key @since(version: "23.09.7")
-        }
+      fragment KeypairInfoModalFragment on KeyPair {
+        user_id
+        access_key
+        secret_key
+        created_at
+        last_used
+        resource_policy
+        num_queries
+        rate_limit
+        concurrency_used @since(version: "24.09.0")
+        concurrency_limit @since(version: "24.09.0")
       }
     `,
-    {
-      email: userInfo.email,
-    },
+    keypairInfoModalFrgmt,
   );
 
   return (
     <BAIModal
-      {...baiModalProps}
-      title={t('usersettings.MyKeypairInfo')}
-      centered
-      onCancel={onRequestClose}
-      destroyOnClose
-      width={'auto'}
-      footer={[
-        <Button
-          key="keypairInfoClose"
-          onClick={() => {
-            onRequestClose();
-          }}
-        >
-          {t('button.Close')}
-        </Button>,
-      ]}
+      title={t('credential.KeypairDetail')}
+      onCancel={() => onRequestClose()}
+      {...modalProps}
     >
-      <Table
-        scroll={{ x: 'max-content' }}
-        rowKey={'access_key'}
-        dataSource={keypairs}
-        columns={[
-          {
-            title: '#',
-            fixed: 'left',
-            render: (id, record, index) => {
-              ++index;
-              return index;
-            },
-            showSorterTooltip: false,
-            rowScope: 'row',
-          },
-          {
-            title: t('general.AccessKey'),
-            key: 'accessKey',
-            dataIndex: 'access_key',
-            fixed: 'left',
-            render: (value) => (
-              <Flex direction="column" align="start">
-                <Typography.Text ellipsis copyable>
-                  {value}
-                </Typography.Text>
-                {supportMainAccessKey && value === user?.main_access_key && (
-                  <Tag color="#457b3b">{t('credential.MainAccessKey')}</Tag>
-                )}
-              </Flex>
-            ),
-          },
-          {
-            title: t('general.SecretKey'),
-            key: 'secretKey',
-            dataIndex: 'secret_key',
-            fixed: 'left',
-            render: (value) => (
-              <Typography.Text ellipsis copyable>
-                {value}
-              </Typography.Text>
-            ),
-          },
-        ]}
-      />
+      <Descriptions
+        title={t('credential.Information')}
+        size="small"
+        column={1}
+        labelStyle={{ width: '40%' }}
+      >
+        <Descriptions.Item label={t('credential.UserID')}>
+          {keypair?.user_id}
+        </Descriptions.Item>
+        <Descriptions.Item label={t('credential.AccessKey')}>
+          {keypair?.access_key}
+        </Descriptions.Item>
+        <Descriptions.Item label={t('credential.SecretKey')}>
+          {keypair?.secret_key}
+        </Descriptions.Item>
+        <Descriptions.Item label={t('credential.CreatedAt')}>
+          {dayjs(keypair?.created_at).format('lll')}
+        </Descriptions.Item>
+        <Descriptions.Item label={t('credential.Lastused')}>
+          {keypair?.last_used ? dayjs(keypair?.last_used).format('lll') : '-'}
+        </Descriptions.Item>
+      </Descriptions>
+      <br />
+      <Descriptions
+        title={t('credential.Allocation')}
+        size="small"
+        column={1}
+        labelStyle={{ width: '40%' }}
+      >
+        <Descriptions.Item label={t('credential.ResourcePolicy')}>
+          {keypair?.resource_policy}
+        </Descriptions.Item>
+        <Descriptions.Item label={t('credential.NumberOfQueries')}>
+          {keypair?.num_queries}
+        </Descriptions.Item>
+        <Descriptions.Item label={t('credential.ConcurrentSessions')}>
+          {keypair?.concurrency_used}
+        </Descriptions.Item>
+        <Descriptions.Item
+          label={`${t('credential.RateLimit')} ${t('credential.for900seconds')}`}
+        >
+          {keypair?.rate_limit}
+        </Descriptions.Item>
+      </Descriptions>
     </BAIModal>
   );
 };

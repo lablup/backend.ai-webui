@@ -612,7 +612,8 @@
     "InactivateTheFollowingUsers": "以下のユーザーを無効化します。",
     "CreatedAt": "作成日",
     "SignoutSuccessfullyFinished": "ユーザーアカウントが正常に削除されました。",
-    "AccessKey": "アクセスキー"
+    "AccessKey": "アクセスキー",
+    "SecretKey": "秘密鍵"
   },
   "data": {
     "Folders": "フォルダー",

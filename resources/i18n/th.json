@@ -735,7 +735,8 @@
     "InactivateTheFollowingUsers": "ปิดการใช้งานผู้ใช้ต่อไปนี้",
     "CreatedAt": "สร้างเมื่อ",
     "SignoutSuccessfullyFinished": "ออกจากระบบสำเร็จแล้ว",
-    "AccessKey": "คีย์การเข้าถึง"
+    "AccessKey": "คีย์การเข้าถึง",
+    "SecretKey": "รหัสลับ"
   },
   "data": {
     "Folders": "โฟลเดอร์",

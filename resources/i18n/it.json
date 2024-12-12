@@ -613,7 +613,8 @@
     "InactivateTheFollowingUsers": "Disattiva i seguenti utenti.",
     "CreatedAt": "Creato a",
     "SignoutSuccessfullyFinished": "Il signout è terminato in modo sicuro",
-    "AccessKey": "Chiave di accesso"
+    "AccessKey": "Chiave di accesso",
+    "SecretKey": "Chiave segreta"
   },
   "data": {
     "Folders": "cartelle",
