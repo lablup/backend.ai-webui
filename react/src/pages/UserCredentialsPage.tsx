@@ -1,6 +1,7 @@
 import BAICard from '../BAICard';
+import Flex from '../components/Flex';
 import FlexActivityIndicator from '../components/FlexActivityIndicator';
-import UserList from '../components/UserList';
+import UserNodeList from '../components/UserNodeList';
 import { createStyles } from 'antd-style';
 import { CardTabListType } from 'antd/es/card';
 import { Suspense } from 'react';
@@ -47,9 +48,14 @@ const UserCredentialsPage: React.FC = () => {
           />
         }
       >
-        {curTabKey === 'users' && <UserList />}
+        {curTabKey === 'users' && (
+          <Flex direction="column" align="stretch">
+            <UserNodeList />
+          </Flex>
+        )}
         {curTabKey === 'credentials' && (
-          <div>{t('credential.Credentials')}</div>
+          // @ts-expect-error
+          <backend-ai-credential-view active />
         )}
       </Suspense>
     </BAICard>

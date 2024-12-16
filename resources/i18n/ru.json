@@ -611,7 +611,10 @@
     "MainAccessKey": "Главный ключ доступа",
     "InactivateTheFollowingUsers": "Деактивируйте следующих пользователей.",
     "CreatedAt": "Создано в",
-    "SignoutSuccessfullyFinished": "Выход из системы завершен"
+    "SignoutSuccessfullyFinished": "Выход из системы завершен",
+    "StatusUpdatedSuccessfully": "Статус пользователя изменился.",
+    "ConfirmUpdateStatusToInActive": "Вы уверены, что хотите бездействовать?",
+    "ConfirmUpdateStatusToActive": "Вы уверены, что хотите активировать его?"
   },
   "data": {
     "Folders": "Папки",

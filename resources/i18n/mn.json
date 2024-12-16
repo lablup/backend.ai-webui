@@ -613,7 +613,10 @@
     "MainAccessKey": "Үндсэн хандалтын түлхүүр",
     "InactivateTheFollowingUsers": "Дараах хэрэглэгчдийг идэвхгүй болго.",
     "CreatedAt": "Үүсгэсэн",
-    "SignoutSuccessfullyFinished": "Гарах ажиллагаа амжилттай дууслаа"
+    "SignoutSuccessfullyFinished": "Гарах ажиллагаа амжилттай дууслаа",
+    "StatusUpdatedSuccessfully": "Хэрэглэгчийн статус өөрчлөгдсөн.",
+    "ConfirmUpdateStatusToInActive": "Та үүнийг идэвхгүй болгохдоо итгэлтэй байна уу?",
+    "ConfirmUpdateStatusToActive": "Та үүнийг идэвхжүүлэхдээ итгэлтэй байна уу?"
   },
   "data": {
     "Folders": "Фолдерууд",

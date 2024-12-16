@@ -612,7 +612,10 @@
     "MainAccessKey": "Kunci Akses Utama",
     "InactivateTheFollowingUsers": "Nonaktifkan pengguna berikut.",
     "CreatedAt": "Dibuat Pada",
-    "SignoutSuccessfullyFinished": "Keluar dengan aman selesai"
+    "SignoutSuccessfullyFinished": "Keluar dengan aman selesai",
+    "StatusUpdatedSuccessfully": "Status pengguna telah berubah.",
+    "ConfirmUpdateStatusToInActive": "Apakah Anda yakin ingin menonaktifkannya?",
+    "ConfirmUpdateStatusToActive": "Apakah Anda yakin ingin mengaktifkannya?"
   },
   "data": {
     "Folders": "Folder",

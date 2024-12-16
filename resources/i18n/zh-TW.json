@@ -611,7 +611,10 @@
     "MainAccessKey": "主存取密鑰",
     "InactivateTheFollowingUsers": "停用以下用户。",
     "CreatedAt": "創建於",
-    "SignoutSuccessfullyFinished": "签出已顺利完成"
+    "SignoutSuccessfullyFinished": "签出已顺利完成",
+    "StatusUpdatedSuccessfully": "用户状态已更改。",
+    "ConfirmUpdateStatusToInActive": "你确定要不活动吗？",
+    "ConfirmUpdateStatusToActive": "你确定要激活它吗？"
   },
   "data": {
     "Folders": "文件夾",

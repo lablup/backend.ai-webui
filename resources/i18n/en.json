@@ -738,7 +738,10 @@
     "MainAccessKey": "Main Access Key",
     "InactivateTheFollowingUsers": "Inactivate the following users.",
     "CreatedAt": "Created At",
-    "SignoutSuccessfullyFinished": "Signout is seccessfully finished"
+    "SignoutSuccessfullyFinished": "Signout is seccessfully finished",
+    "StatusUpdatedSuccessfully": "The user status has changed.",
+    "ConfirmUpdateStatusToInActive": "Are you sure you want to inactive it?",
+    "ConfirmUpdateStatusToActive": "Are you sure you want to active it?"
   },
   "data": {
     "Folders": "Folders",

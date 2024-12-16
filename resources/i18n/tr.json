@@ -610,7 +610,10 @@
     "MainAccessKey": "Ana Erişim Anahtarı",
     "InactivateTheFollowingUsers": "Aşağıdaki kullanıcıları devre dışı bırakın.",
     "CreatedAt": "Oluşturulma Tarihi",
-    "SignoutSuccessfullyFinished": "Çıkış işlemi başarıyla tamamlandı"
+    "SignoutSuccessfullyFinished": "Çıkış işlemi başarıyla tamamlandı",
+    "StatusUpdatedSuccessfully": "Kullanıcı durumu değişti.",
+    "ConfirmUpdateStatusToInActive": "Aktif hale getirmek istediğine emin misin?",
+    "ConfirmUpdateStatusToActive": "Aktif etmek istediğine emin misin?"
   },
   "data": {
     "Folders": "klasörler",

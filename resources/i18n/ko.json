@@ -726,7 +726,10 @@
     "MainAccessKey": "기본 액세스 키",
     "InactivateTheFollowingUsers": "다음 사용자를 비활성화합니다.",
     "CreatedAt": "생성 날짜",
-    "SignoutSuccessfullyFinished": "사용자 계정이 성공적으로 삭제되었습니다."
+    "SignoutSuccessfullyFinished": "사용자 계정이 성공적으로 삭제되었습니다.",
+    "StatusUpdatedSuccessfully": "사용자 상태가 변경되었습니다.",
+    "ConfirmUpdateStatusToInActive": "정말로 비활성화 하시겠습니까?",
+    "ConfirmUpdateStatusToActive": "정말로 활성화 하시겠습니까?"
   },
   "data": {
     "Folders": "폴더",

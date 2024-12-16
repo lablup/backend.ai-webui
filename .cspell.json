@@ -30,6 +30,8 @@
     "webui",
     "wsproxy",
     "ahooks",
+    "lucide",
+    "Signout"
   ],
   "flagWords": [
     "데이터레이크",

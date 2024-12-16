@@ -611,7 +611,10 @@
     "MainAccessKey": "Główny klucz dostępu",
     "InactivateTheFollowingUsers": "Dezaktywuj następujących użytkowników.",
     "CreatedAt": "Utworzono o godz",
-    "SignoutSuccessfullyFinished": "Wylogowanie zostało pomyślnie zakończone"
+    "SignoutSuccessfullyFinished": "Wylogowanie zostało pomyślnie zakończone",
+    "StatusUpdatedSuccessfully": "Status użytkownika uległ zmianie.",
+    "ConfirmUpdateStatusToInActive": "Czy na pewno chcesz go nieaktywować?",
+    "ConfirmUpdateStatusToActive": "Czy na pewno chcesz go aktywować?"
   },
   "data": {
     "Folders": "Lornetka składana",

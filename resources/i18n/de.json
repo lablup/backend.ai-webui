@@ -611,7 +611,10 @@
     "MainAccessKey": "Hauptzugangsschlüssel",
     "InactivateTheFollowingUsers": "Deaktivieren Sie die folgenden Benutzer.",
     "CreatedAt": "Erstellt am",
-    "SignoutSuccessfullyFinished": "Die Abmeldung ist erfolgreich abgeschlossen"
+    "SignoutSuccessfullyFinished": "Die Abmeldung ist erfolgreich abgeschlossen",
+    "StatusUpdatedSuccessfully": "Der Benutzerstatus hat sich geändert.",
+    "ConfirmUpdateStatusToInActive": "Sind Sie sicher, dass Sie es deaktivieren wollen?",
+    "ConfirmUpdateStatusToActive": "Sind Sie sich sicher, dass Sie sie aktivieren wollen?"
   },
   "data": {
     "Folders": "Ordner",

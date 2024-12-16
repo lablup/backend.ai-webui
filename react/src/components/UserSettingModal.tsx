@@ -56,12 +56,12 @@ const permissionRangeOfRoleChanges: UserRole = {
 };
 
 interface UserSettingModalProps extends BAIModalProps {
-  userEmail: string | null;
+  userEmail?: string | null;
   onRequestClose: (success: boolean) => void;
 }
 
 const UserSettingModal: React.FC<UserSettingModalProps> = ({
-  userEmail,
+  userEmail = null,
   onRequestClose,
   ...baiModalProps
 }) => {
@@ -119,7 +119,9 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
       isNotSupportTotp: !isTOTPSupported,
     },
     {
-      fetchPolicy: 'network-only',
+      // Do not fetch user data if the modal is closed or the user email is not provided
+      fetchPolicy:
+        baiModalProps.open && userEmail ? 'network-only' : 'store-only',
       fetchKey: fetchKey,
     },
   );

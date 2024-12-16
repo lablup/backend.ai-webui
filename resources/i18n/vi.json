@@ -611,7 +611,10 @@
     "MainAccessKey": "Khóa truy cập chính",
     "InactivateTheFollowingUsers": "Vô hiệu hóa những người dùng sau.",
     "CreatedAt": "Được tạo tại",
-    "SignoutSuccessfullyFinished": "Đăng xuất đã hoàn tất thành công"
+    "SignoutSuccessfullyFinished": "Đăng xuất đã hoàn tất thành công",
+    "StatusUpdatedSuccessfully": "Trạng thái người dùng đã thay đổi.",
+    "ConfirmUpdateStatusToInActive": "Bạn có chắc chắn muốn vô hiệu hóa nó không?",
+    "ConfirmUpdateStatusToActive": "Bạn có chắc chắn muốn kích hoạt nó không?"
   },
   "data": {
     "Folders": "Thư mục",

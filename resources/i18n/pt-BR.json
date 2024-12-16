@@ -611,7 +611,10 @@
     "MainAccessKey": "Chave de acesso principal",
     "InactivateTheFollowingUsers": "Inative os seguintes usuários.",
     "CreatedAt": "Criado em",
-    "SignoutSuccessfullyFinished": "O registo foi concluído com êxito"
+    "SignoutSuccessfullyFinished": "O registo foi concluído com êxito",
+    "StatusUpdatedSuccessfully": "O estado do utilizador foi alterado.",
+    "ConfirmUpdateStatusToInActive": "Tem a certeza de que quer inactivá-lo?",
+    "ConfirmUpdateStatusToActive": "Tem a certeza de que quer activá-lo?"
   },
   "data": {
     "Folders": "Pastas",

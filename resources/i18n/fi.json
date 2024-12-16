@@ -230,7 +230,10 @@
     "MainAccessKey": "Pääkäyttöavain",
     "InactivateTheFollowingUsers": "Poista seuraavat käyttäjät käytöstä.",
     "CreatedAt": "Luotu klo",
-    "SignoutSuccessfullyFinished": "Uloskirjautuminen on päättynyt hetkessä"
+    "SignoutSuccessfullyFinished": "Uloskirjautuminen on päättynyt hetkessä",
+    "StatusUpdatedSuccessfully": "Käyttäjän tila on muuttunut.",
+    "ConfirmUpdateStatusToInActive": "Oletko varma, että haluat jättää sen käyttämättä?",
+    "ConfirmUpdateStatusToActive": "Oletko varma, että haluat aktivoida sen?"
   },
   "data": {
     "Allowslettersnumbersand-_": "Sallii kirjaimet, numerot ja -_",

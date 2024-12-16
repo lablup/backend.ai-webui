@@ -37,7 +37,6 @@ import { customElement, property, query } from 'lit/decorators.js';
  */
 type BackendAICredentialList =
   HTMLElementTagNameMap['backend-ai-credential-list'];
-type BackendAIUserList = HTMLElementTagNameMap['backend-ai-user-list'];
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 
 /**
@@ -75,7 +74,6 @@ export default class BackendAICredentialView extends BackendAIPage {
   activeCredentialList!: BackendAICredentialList;
   @query('#inactive-credential-list')
   inactiveCredentialList!: BackendAICredentialList;
-  @query('#active-user-list') activeUserList!: BackendAIUserList;
   @query('#rate-limit') rateLimit!: Select;
   @query('#resource-policy') resourcePolicy!: Select;
   @query('#id_user_email') userEmailInput!: TextField;
@@ -253,7 +251,7 @@ export default class BackendAICredentialView extends BackendAIPage {
         this.isSuperAdmin = true;
       }
     }
-    this._activeTab = 'user-lists';
+    this._activeTab = 'credential-lists';
     this.vfolder_max_limit['value'] = 10;
     this._defaultFileName = this._getDefaultCSVFileName();
     await this._runAction();
@@ -267,11 +265,9 @@ export default class BackendAICredentialView extends BackendAIPage {
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
-      this.activeUserList.active = false;
       this._status = 'inactive';
       return;
     }
-    this.activeUserList.active = true;
     this._status = 'active';
     if (
       typeof globalThis.backendaiclient === 'undefined' ||
@@ -410,69 +406,6 @@ export default class BackendAICredentialView extends BackendAIPage {
   }
 
   /**
-   * Add an user with user information.
-   */
-  _addUser() {
-    const email = this.userEmailInput.value;
-    // if name value is empty, it will be covered by the username of email address.
-    const name =
-      this.userNameInput.value !== ''
-        ? this.userNameInput.value
-        : email.split('@')[0];
-    const password = this.userPasswordInput.value;
-
-    // if any input value is invalid, it returns.
-    if (
-      !this.userEmailInput.checkValidity() ||
-      !this.userPasswordInput.checkValidity() ||
-      !this.userPasswordConfirmInput.checkValidity()
-    ) {
-      return;
-    }
-
-    // all values except 'username', and 'password' are arbitrarily designated default values
-    const input = {
-      username: name,
-      password: password,
-      need_password_change: false,
-      full_name: name,
-      description: `${name}'s Account`,
-      is_active: true,
-      domain_name: 'default',
-      role: 'user',
-    };
-
-    globalThis.backendaiclient.group
-      .list()
-      .then((res) => {
-        const default_id = res.groups.find((x) => x.name === 'default').id;
-        return Promise.resolve(
-          globalThis.backendaiclient.user.create(email, {
-            ...input,
-            group_ids: [default_id],
-          }),
-        );
-      })
-      .then((res) => {
-        this.newUserDialog.hide();
-        if (res['create_user'].ok) {
-          this.notification.text = _text('credential.UserAccountCreated');
-
-          this.activeUserList.refresh();
-        } else {
-          // console.error(res['create_user'].msg);
-          this.notification.text = _text('credential.UserAccountCreatedError');
-        }
-        this.notification.show();
-
-        this.userEmailInput.value = '';
-        this.userNameInput.value = '';
-        this.userPasswordInput.value = '';
-        this.userPasswordConfirmInput.value = '';
-      });
-  }
-
-  /**
    * Disable the page.
    */
   disablePage() {
@@ -504,12 +437,6 @@ export default class BackendAICredentialView extends BackendAIPage {
     let innerTab;
     // show inner tab(active) after selecting outer tab
     switch (this._activeTab) {
-      case 'user-lists':
-        innerTab = this.shadowRoot?.querySelector(
-          'mwc-tab[title=' + this.activeUserInnerTab + '-' + tabKeyword + ']',
-        );
-        this._showList(innerTab);
-        break;
       case 'credential-lists':
         innerTab = this.shadowRoot?.querySelector(
           'mwc-tab[title=' +
@@ -531,7 +458,6 @@ export default class BackendAICredentialView extends BackendAIPage {
    * @param {EventTarget} list - List webcomponent
    */
   _showList(list) {
-    console.log('list', list);
     const els = this.shadowRoot?.querySelectorAll<HTMLElement>(
       '.list-content',
     ) as NodeListOf<HTMLElement>;
@@ -566,21 +492,10 @@ export default class BackendAICredentialView extends BackendAIPage {
     if (!this.exportFileNameInput.validity.valid) {
       return;
     }
-    let users;
     let credential_active;
     let credential_inactive;
     let credential;
     switch (this._activeTab) {
-      case 'user-lists':
-        users = this.activeUserList.users;
-        users.map((obj) => {
-          // filtering unnecessary key
-          ['password', 'need_password_change'].forEach(
-            (key) => delete obj[key],
-          );
-        });
-        JsonToCsv.exportToCsv(this.exportFileNameInput.value, users);
-        break;
       case 'credential-lists':
         credential_active = this.activeCredentialList.keypairs;
         credential_inactive = this.inactiveCredentialList.keypairs;
@@ -731,7 +646,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       <lablup-activity-panel noheader narrow autowidth>
         <div slot="message">
           <h3 class="tab horizontal wrap layout">
-            <mwc-tab-bar class="main-bar">
+            <mwc-tab-bar class="main-bar" style="display: none;">
               <mwc-tab
                 title="user-lists"
                 label="${_t('credential.Users')}"
@@ -743,78 +658,9 @@ export default class BackendAICredentialView extends BackendAIPage {
                 @click="${(e) => this._showTab(e.target)}"
               ></mwc-tab>
             </mwc-tab-bar>
-            ${this.isAdmin
-              ? html`
-                  <span class="flex"></span>
-                  <div style="position: relative;">
-                    <mwc-icon-button
-                      id="dropdown-menu-button"
-                      icon="more_horiz"
-                      raised
-                      @click="${(e) => this._toggleDropdown(e)}"
-                    ></mwc-icon-button>
-                    <mwc-menu id="dropdown-menu">
-                      <mwc-list-item>
-                        <a
-                          class="horizontal layout start center export-csv"
-                          @click="${this._openExportToCsvDialog}"
-                        >
-                          <mwc-icon
-                            style="color:var(--token-colorTextSecondary);padding-right:10px;"
-                          >
-                            get_app
-                          </mwc-icon>
-                          ${_t('credential.exportCSV')}
-                        </a>
-                      </mwc-list-item>
-                    </mwc-menu>
-                  </div>
-                `
-              : html``}
           </h3>
-          <div id="user-lists" class="admin item tab-content card">
-            <h4 class="horizontal flex center center-justified layout">
-              <mwc-tab-bar class="sub-bar">
-                <mwc-tab
-                  title="active-user-list"
-                  label="${_t('credential.Active')}"
-                  @click="${(e) => this._showList(e.target)}"
-                ></mwc-tab>
-                <mwc-tab
-                  title="inactive-user-list"
-                  label="${_t('credential.Inactive')}"
-                  @click="${(e) => this._showList(e.target)}"
-                ></mwc-tab>
-              </mwc-tab-bar>
-              <span class="flex"></span>
-              <mwc-button
-                raised
-                id="add-user"
-                icon="add"
-                label="${_t('credential.CreateUser')}"
-                @click="${() => this._openUserCreateModal()}"
-              ></mwc-button>
-            </h4>
-            <div>
-              <backend-ai-user-list
-                class="list-content"
-                id="active-user-list"
-                condition="active"
-                ?active="${this._activeTab === 'user-lists'}"
-              ></backend-ai-user-list>
-              <backend-ai-user-list
-                class="list-content"
-                id="inactive-user-list"
-                style="display:none;"
-                ?active="${this._activeTab === 'user-lists'}"
-              ></backend-ai-user-list>
-            </div>
-          </div>
-          <div
-            id="credential-lists"
-            class="item tab-content card"
-            style="display:none;"
-          >
+
+          <div id="credential-lists" class="item tab-content card">
             <h4 class="horizontal flex center center-justified layout">
               <mwc-tab-bar class="sub-bar">
                 <mwc-tab
@@ -829,6 +675,34 @@ export default class BackendAICredentialView extends BackendAIPage {
                 ></mwc-tab>
               </mwc-tab-bar>
               <div class="flex"></div>
+              ${this.isAdmin
+                ? html`
+                    <span class="flex"></span>
+                    <div style="position: relative;">
+                      <mwc-icon-button
+                        id="dropdown-menu-button"
+                        icon="more_horiz"
+                        raised
+                        @click="${(e) => this._toggleDropdown(e)}"
+                      ></mwc-icon-button>
+                      <mwc-menu id="dropdown-menu">
+                        <mwc-list-item>
+                          <a
+                            class="horizontal layout start center export-csv"
+                            @click="${this._openExportToCsvDialog}"
+                          >
+                            <mwc-icon
+                              style="color:var(--token-colorTextSecondary);padding-right:10px;"
+                            >
+                              get_app
+                            </mwc-icon>
+                            ${_t('credential.exportCSV')}
+                          </a>
+                        </mwc-list-item>
+                      </mwc-menu>
+                    </div>
+                  `
+                : html``}
               <mwc-button
                 raised
                 id="add-keypair"
@@ -988,16 +862,6 @@ export default class BackendAICredentialView extends BackendAIPage {
             ></mwc-icon-button-toggle>
           </div>
         </div>
-        <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button
-            raised
-            id="create-user-button"
-            icon="add"
-            label="${_t('credential.CreateUser')}"
-            fullwidth
-            @click="${this._addUser}"
-          ></mwc-button>
-        </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="export-to-csv" fixed backdrop blockscrolling>
         <span slot="title">
@@ -1028,20 +892,6 @@ export default class BackendAICredentialView extends BackendAIPage {
           ></mwc-button>
         </div>
       </backend-ai-dialog>
-      ${this.openUserSettingModal
-        ? html`
-            <backend-ai-react-user-setting-dialog
-              value="${JSON.stringify({
-                open: this.openUserSettingModal,
-              })}"
-              @ok="${() => {
-                this.openUserSettingModal = false;
-                this.activeUserList.refresh();
-              }}"
-              @cancel="${() => (this.openUserSettingModal = false)}"
-            ></backend-ai-react-user-setting-dialog>
-          `
-        : html``}
     `;
   }
 }

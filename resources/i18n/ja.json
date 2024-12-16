@@ -611,7 +611,10 @@
     "MainAccessKey": "メインアクセスキー",
     "InactivateTheFollowingUsers": "以下のユーザーを無効化します。",
     "CreatedAt": "作成日",
-    "SignoutSuccessfullyFinished": "ユーザーアカウントが正常に削除されました。"
+    "SignoutSuccessfullyFinished": "ユーザーアカウントが正常に削除されました。",
+    "StatusUpdatedSuccessfully": "ユーザーステータスが変更されました。",
+    "ConfirmUpdateStatusToInActive": "本当に活動休止したいのか？",
+    "ConfirmUpdateStatusToActive": "本当にアクティブにしたいのか？"
   },
   "data": {
     "Folders": "フォルダー",

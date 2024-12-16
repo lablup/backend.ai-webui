@@ -734,7 +734,10 @@
     "MainAccessKey": "คีย์การเข้าถึงหลัก",
     "InactivateTheFollowingUsers": "ปิดการใช้งานผู้ใช้ต่อไปนี้",
     "CreatedAt": "สร้างเมื่อ",
-    "SignoutSuccessfullyFinished": "ออกจากระบบสำเร็จแล้ว"
+    "SignoutSuccessfullyFinished": "ออกจากระบบสำเร็จแล้ว",
+    "StatusUpdatedSuccessfully": "สถานะผู้ใช้มีการเปลี่ยนแปลง",
+    "ConfirmUpdateStatusToInActive": "คุณแน่ใจหรือไม่ว่าต้องการปิดใช้งาน",
+    "ConfirmUpdateStatusToActive": "คุณแน่ใจหรือไม่ว่าต้องการใช้งานมัน?"
   },
   "data": {
     "Folders": "โฟลเดอร์",
