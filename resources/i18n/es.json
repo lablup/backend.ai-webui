@@ -200,7 +200,6 @@
     "ResourcePolicy": "Política de recursos",
     "Role": "Papel",
     "SelectPolicy": "Seleccionar política",
-    "SignoutSeccessfullyFinished": "El proceso de registro ha finalizado",
     "Status": "Estado",
     "UserAccountCreated": "La cuenta de usuario se ha creado correctamente",
     "UserAccountCreatedError": "Esta cuenta ya ha sido registrada.",
@@ -229,7 +228,9 @@
     },
     "EnableSudoSession": "Habilitar sesión sudo",
     "MainAccessKey": "Clave de acceso principal",
-    "InactivateTheFollowingUsers": "Desactivar los siguientes usuarios."
+    "InactivateTheFollowingUsers": "Desactivar los siguientes usuarios.",
+    "CreatedAt": "Creado en",
+    "SignoutSuccessfullyFinished": "El proceso de registro ha finalizado"
   },
   "data": {
     "Allowslettersnumbersand-_": "Permite letras, números y -_",

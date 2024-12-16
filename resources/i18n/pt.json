@@ -605,12 +605,13 @@
     "WarningLessRateLimit": "Se o valor do Limite de taxa for pequeno, as operações da API, como o início de sessão, podem ser bloqueadas.",
     "NoCredentialToDisplay": "Não há credenciais a apresentar",
     "KeypairDetail": "Detalhe do par de chaves",
-    "SignoutSeccessfullyFinished": "O registo foi concluído com êxito",
     "Status": "Estado",
     "NoUserToDisplay": "Nenhum utilizador a apresentar",
     "EnableSudoSession": "Habilitar sessão sudo",
     "MainAccessKey": "Chave de acesso principal",
-    "InactivateTheFollowingUsers": "Inative os seguintes usuários."
+    "InactivateTheFollowingUsers": "Inative os seguintes usuários.",
+    "CreatedAt": "Criado em",
+    "SignoutSuccessfullyFinished": "O registo foi concluído com êxito"
   },
   "data": {
     "Folders": "Pastas",

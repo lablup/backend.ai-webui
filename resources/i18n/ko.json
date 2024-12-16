@@ -721,11 +721,12 @@
     "KeypairDetail": "키페어 정보",
     "AdminCanOnlyRemoveTotp": "다른 사용자의 이중 인증은 해제만 가능합니다.",
     "KeySeccessfullyDeleted": "키페어가 정상적으로 삭제되었습니다.",
-    "SignoutSeccessfullyFinished": "사용자 계정이 성공적으로 삭제되었습니다.",
     "ModifyUserDetail": "사용자 상세 정보 수정",
     "EnableSudoSession": "sudo 세션 허용",
     "MainAccessKey": "기본 액세스 키",
-    "InactivateTheFollowingUsers": "다음 사용자를 비활성화합니다."
+    "InactivateTheFollowingUsers": "다음 사용자를 비활성화합니다.",
+    "CreatedAt": "생성 날짜",
+    "SignoutSuccessfullyFinished": "사용자 계정이 성공적으로 삭제되었습니다."
   },
   "data": {
     "Folders": "폴더",

@@ -605,12 +605,13 @@
     "WarningLessRateLimit": "Wenn der Wert für das Ratenlimit klein ist, können API-Vorgänge wie die Anmeldung blockiert werden.",
     "NoCredentialToDisplay": "Keine Berechtigungsnachweise zum Anzeigen",
     "KeypairDetail": "Schlüsselpaar Detail",
-    "SignoutSeccessfullyFinished": "Die Abmeldung ist erfolgreich abgeschlossen",
     "Status": "Status",
     "NoUserToDisplay": "Keine Benutzer zum Anzeigen",
     "EnableSudoSession": "Sudo-Sitzung aktivieren",
     "MainAccessKey": "Hauptzugangsschlüssel",
-    "InactivateTheFollowingUsers": "Deaktivieren Sie die folgenden Benutzer."
+    "InactivateTheFollowingUsers": "Deaktivieren Sie die folgenden Benutzer.",
+    "CreatedAt": "Erstellt am",
+    "SignoutSuccessfullyFinished": "Die Abmeldung ist erfolgreich abgeschlossen"
   },
   "data": {
     "Folders": "Ordner",

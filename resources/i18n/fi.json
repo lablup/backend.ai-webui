@@ -200,7 +200,6 @@
     "ResourcePolicy": "Resurssipolitiikka",
     "Role": "Rooli",
     "SelectPolicy": "Valitse politiikka",
-    "SignoutSeccessfullyFinished": "Uloskirjautuminen on päättynyt hetkessä",
     "Status": "Tila",
     "UserAccountCreated": "Käyttäjätili on luotu onnistuneesti",
     "UserAccountCreatedError": "Tämä tili on jo rekisteröity.",
@@ -229,7 +228,9 @@
     },
     "EnableSudoSession": "Ota sudo-istunto käyttöön",
     "MainAccessKey": "Pääkäyttöavain",
-    "InactivateTheFollowingUsers": "Poista seuraavat käyttäjät käytöstä."
+    "InactivateTheFollowingUsers": "Poista seuraavat käyttäjät käytöstä.",
+    "CreatedAt": "Luotu klo",
+    "SignoutSuccessfullyFinished": "Uloskirjautuminen on päättynyt hetkessä"
   },
   "data": {
     "Allowslettersnumbersand-_": "Sallii kirjaimet, numerot ja -_",

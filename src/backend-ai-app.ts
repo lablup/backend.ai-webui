@@ -110,10 +110,6 @@ const loadPage =
       case 'storage-settings':
         import('./components/backend-ai-storage-host-settings-view.js');
         break;
-      case 'credential':
-      case 'user':
-        import('./components/backend-ai-credential-view.js');
-        break;
       case 'settings':
         import('./components/backend-ai-settings-view.js');
         break;

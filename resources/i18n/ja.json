@@ -605,12 +605,13 @@
     "WarningLessRateLimit": "Rate Limit値が小さいと、ログインなどのAPI操作がブロックされることがあります。",
     "NoCredentialToDisplay": "資格情報がありません。",
     "KeypairDetail": "キーフェア情報",
-    "SignoutSeccessfullyFinished": "ユーザーアカウントが正常に削除されました。",
     "Status": "状態",
     "NoUserToDisplay": "ユーザー情報がありません。",
     "EnableSudoSession": "sudoセッションを有効にする",
     "MainAccessKey": "メインアクセスキー",
-    "InactivateTheFollowingUsers": "以下のユーザーを無効化します。"
+    "InactivateTheFollowingUsers": "以下のユーザーを無効化します。",
+    "CreatedAt": "作成日",
+    "SignoutSuccessfullyFinished": "ユーザーアカウントが正常に削除されました。"
   },
   "data": {
     "Folders": "フォルダー",

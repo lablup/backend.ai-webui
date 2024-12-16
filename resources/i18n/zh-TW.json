@@ -605,12 +605,13 @@
     "WarningLessRateLimit": "如果速率限制值较小，可能会阻止登录等 API 操作。",
     "NoCredentialToDisplay": "无证书显示",
     "KeypairDetail": "配对密钥详情",
-    "SignoutSeccessfullyFinished": "签出已顺利完成",
     "Status": "现状",
     "NoUserToDisplay": "无用户显示",
     "EnableSudoSession": "啟用 sudo 會話",
     "MainAccessKey": "主存取密鑰",
-    "InactivateTheFollowingUsers": "停用以下用户。"
+    "InactivateTheFollowingUsers": "停用以下用户。",
+    "CreatedAt": "創建於",
+    "SignoutSuccessfullyFinished": "签出已顺利完成"
   },
   "data": {
     "Folders": "文件夾",

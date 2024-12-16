@@ -48,10 +48,6 @@ const ResetPasswordRequired = React.lazy(
 const CopyableCodeText = React.lazy(
   () => import('./components/CopyableCodeText'),
 );
-const UserInfoModal = React.lazy(() => import('./components/UserInfoModal'));
-const UserSettingsModal = React.lazy(
-  () => import('./components/UserSettingModal'),
-);
 const SignoutModal = React.lazy(() => import('./components/SignoutModal'));
 
 const BatchSessionScheduledTimeSetting = React.lazy(
@@ -73,28 +69,6 @@ customElements.define(
     return (
       <DefaultProviders {...props}>
         <CopyableCodeText text={props.value || ''} />
-      </DefaultProviders>
-    );
-  }),
-);
-
-customElements.define(
-  'backend-ai-react-user-info-dialog',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <UserInfoModal draggable />
-      </DefaultProviders>
-    );
-  }),
-);
-
-customElements.define(
-  'backend-ai-react-user-setting-dialog',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <UserSettingsModal draggable />
       </DefaultProviders>
     );
   }),

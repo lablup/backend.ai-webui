@@ -606,11 +606,12 @@
     "KeypairDetail": "Детализация пары ключей",
     "AdminCanOnlyRemoveTotp": "Возможно только отключение 2FA для других пользователей.",
     "KeySeccessfullyDeleted": "Пара ключей удалена без последствий.",
-    "SignoutSeccessfullyFinished": "Выход из системы завершен",
     "ModifyUserDetail": "Изменение сведений о пользователе",
     "EnableSudoSession": "Включить сеанс sudo",
     "MainAccessKey": "Главный ключ доступа",
-    "InactivateTheFollowingUsers": "Деактивируйте следующих пользователей."
+    "InactivateTheFollowingUsers": "Деактивируйте следующих пользователей.",
+    "CreatedAt": "Создано в",
+    "SignoutSuccessfullyFinished": "Выход из системы завершен"
   },
   "data": {
     "Folders": "Папки",

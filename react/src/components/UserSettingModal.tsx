@@ -6,7 +6,6 @@ import {
 import { useCurrentUserRole, useTOTPSupported } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import { useWebComponentInfo } from './DefaultProviders';
 import TOTPActivateModal from './TOTPActivateModal';
 import UserResourcePolicySelector from './UserResourcePolicySelector';
 import {
@@ -33,7 +32,7 @@ import {
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React, { useDeferredValue, useRef } from 'react';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-relay';
 import { useLazyLoadQuery } from 'react-relay';
@@ -57,28 +56,15 @@ const permissionRangeOfRoleChanges: UserRole = {
 };
 
 interface UserSettingModalProps extends BAIModalProps {
-  extraFetchKey?: string;
+  userEmail: string | null;
+  onRequestClose: (success: boolean) => void;
 }
 
 const UserSettingModal: React.FC<UserSettingModalProps> = ({
-  extraFetchKey = '',
+  userEmail,
+  onRequestClose,
   ...baiModalProps
 }) => {
-  const { value, dispatchEvent } = useWebComponentInfo();
-  let parsedValue: {
-    open: boolean;
-    userEmail: string;
-  };
-  try {
-    parsedValue = JSON.parse(value || '');
-  } catch (error) {
-    parsedValue = {
-      open: false,
-      userEmail: '',
-    };
-  }
-  const { open, userEmail } = parsedValue;
-
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { modal } = App.useApp();
@@ -95,7 +81,6 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
   const [isOpenTOTPActivateModal, { toggle: toggleTOTPActivateModal }] =
     useToggle(false);
   const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
-  const deferredMergedFetchKey = useDeferredValue(fetchKey + extraFetchKey);
 
   const { user } = useLazyLoadQuery<UserSettingModalQuery>(
     graphql`
@@ -134,8 +119,8 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
       isNotSupportTotp: !isTOTPSupported,
     },
     {
-      fetchKey: deferredMergedFetchKey,
       fetchPolicy: 'network-only',
+      fetchKey: fetchKey,
     },
   );
 
@@ -251,7 +236,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               if (!res?.modify_user?.ok) {
                 message.error(t('dialog.ErrorOccurred'));
                 console.error(res?.modify_user?.msg);
-                dispatchEvent('cancel', null);
+                onRequestClose(false);
                 return;
               }
               if (errors && errors.length > 0) {
@@ -259,10 +244,10 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                 for (const error of errorMsgList) {
                   message.error(error, 2.5);
                 }
-                dispatchEvent('cancel', null);
+                onRequestClose(false);
               }
               message.success(t('environment.SuccessfullyModified'));
-              dispatchEvent('ok', null);
+              onRequestClose(true);
             },
             onError: (err) => {
               message.error(t('dialog.ErrorOccurred'));
@@ -301,7 +286,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                     : t('dialog.ErrorOccurred'),
                 );
                 console.error(res?.create_user?.msg);
-                dispatchEvent('cancel', null);
+                onRequestClose(false);
                 return;
               }
               if (errors && errors.length > 0) {
@@ -309,10 +294,10 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                 for (const error of errorMsgList) {
                   message.error(error, 2.5);
                 }
-                dispatchEvent('cancel', null);
+                onRequestClose(false);
               }
               message.success(t('environment.SuccessfullyCreated'));
-              dispatchEvent('ok', null);
+              onRequestClose(true);
             },
             onError: (err) => {
               message.error(t('dialog.ErrorOccurred'));
@@ -326,10 +311,6 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
 
   return (
     <BAIModal
-      open={open}
-      onCancel={() => {
-        dispatchEvent('cancel', null);
-      }}
       centered
       title={
         user ? t('credential.ModifyUserDetail') : t('credential.CreateUser')
@@ -339,6 +320,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
       confirmLoading={
         isInFlightCommitModifyUserSetting || isInFlightCommitCreateUser
       }
+      onCancel={() => onRequestClose(false)}
       {...baiModalProps}
     >
       <Form

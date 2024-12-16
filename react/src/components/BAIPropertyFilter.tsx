@@ -27,7 +27,7 @@ import React, {
 import { useTranslation } from 'react-i18next';
 
 //github.com/lablup/backend.ai/blob/main/src/ai/backend/manager/models/minilang/queryfilter.py
-type FilterProperty = {
+export type FilterProperty = {
   key: string;
   // operators: Array<string>;
   defaultOperator?: string;
