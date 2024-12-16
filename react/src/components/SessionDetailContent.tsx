@@ -17,6 +17,7 @@ import {
   Button,
   Descriptions,
   Grid,
+  Tag,
   theme,
   Tooltip,
   Typography,
@@ -188,9 +189,9 @@ const SessionDetailContent: React.FC<{
           {legacy_session?.mounts?.join(', ')}
         </Descriptions.Item>
         <Descriptions.Item label={t('session.launcher.ResourceAllocation')}>
-          <Flex gap={'sm'}>
+          <Flex gap={'sm'} wrap="wrap">
             <Tooltip title={t('session.ResourceGroup')}>
-              {session.scaling_group}
+              <Tag>{session.scaling_group}</Tag>
             </Tooltip>
             <ResourceNumbersOfSession
               resource={JSON.parse(session.requested_slots || '{}')}
