@@ -447,7 +447,6 @@
     "StartNewServing": "เริ่มการให้บริการใหม่",
     "ServiceName": "ชื่อบริการ",
     "OpenToPublic": "เปิดให้สาธารณะ",
-    "DesiredRoutingCount": "จำนวนการกำหนดเส้นทางที่ต้องการ",
     "DesiredSessionCount": "จำนวนเซสชันที่ต้องการ",
     "EndpointName": "ชื่อจุดสิ้นสุด",
     "EndpointId": "รหัสจุดสิ้นสุด",
@@ -519,7 +518,8 @@
     "Chatting": "การแชท",
     "ServiceNameMinLength": "กรุณากรอกอย่างน้อย 4 ตัวอักษร",
     "ServiceNameMaxLength": "โปรดป้อนอักขระ 24 ตัวหรือน้อยกว่า",
-    "ServiceNameCannotStartWithHyphen": "เครื่องหมายยัติภังค์ (-) ไม่สามารถใช้ที่ปลายทั้งสองข้างได้"
+    "ServiceNameCannotStartWithHyphen": "เครื่องหมายยัติภังค์ (-) ไม่สามารถใช้ที่ปลายทั้งสองข้างได้",
+    "NumberOfReplicas": "จำนวนแบบจำลอง"
   },
   "button": {
     "Cancel": "ยกเลิก",

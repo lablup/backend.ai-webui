@@ -31,7 +31,8 @@
     "wsproxy",
     "ahooks",
     "lucide",
-    "Signout"
+    "Signout",
+    "Talkativot"
   ],
   "flagWords": [
     "데이터레이크",

@@ -793,7 +793,6 @@
     "Controls": "Controla",
     "CreatedAt": "Creado en",
     "CurrentTime": "Hora actual",
-    "DesiredRoutingCount": "Recuento de rutas deseado",
     "DesiredSessionCount": "Recuento de sesiones deseado",
     "EditModelService": "Editar modelo de servicio",
     "EndpointId": "ID de punto final",
@@ -864,7 +863,8 @@
     "Chatting": "Charlando",
     "ServiceNameMinLength": "Por favor ingrese al menos 4 caracteres.",
     "ServiceNameMaxLength": "Por favor ingrese 24 caracteres o menos.",
-    "ServiceNameCannotStartWithHyphen": "No se pueden utilizar guiones (-) en ninguno de los extremos."
+    "ServiceNameCannotStartWithHyphen": "No se pueden utilizar guiones (-) en ninguno de los extremos.",
+    "NumberOfReplicas": "Número de réplicas"
   },
   "notification": {
     "Initializing": "Inicializando...",
