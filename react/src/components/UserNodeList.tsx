@@ -5,19 +5,34 @@ import {
   filterNonNullItems,
   transformSorterToOrderString,
 } from '../helper';
+import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import UserInfoModal from './UserInfoModal';
 import UserSettingModal from './UserSettingModal';
 import { UserNodeListModifyMutation } from './__generated__/UserNodeListModifyMutation.graphql';
-import { UserNodeListQuery } from './__generated__/UserNodeListQuery.graphql';
+import {
+  UserNodeListQuery,
+  UserNodeListQuery$data,
+} from './__generated__/UserNodeListQuery.graphql';
 import {
   ReloadOutlined,
   LoadingOutlined,
   InfoCircleOutlined,
   SettingOutlined,
+  MoreOutlined,
 } from '@ant-design/icons';
-import { Tooltip, Button, Table, theme, Radio, Popconfirm, App } from 'antd';
+import {
+  Tooltip,
+  Button,
+  Table,
+  theme,
+  Radio,
+  Popconfirm,
+  App,
+  TableColumnsType,
+  Dropdown,
+} from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -25,6 +40,12 @@ import { BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery, useMutation } from 'react-relay';
+
+type UserNode = NonNullable<
+  NonNullable<
+    NonNullable<UserNodeListQuery$data['user_nodes']>
+  >['edges'][number]
+>['node'];
 
 interface UserNodeListProps {}
 
@@ -124,6 +145,154 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
       }
     `);
 
+  const columns: TableColumnsType<UserNode> = filterEmptyItem([
+    {
+      key: 'email',
+      title: t('credential.UserID'),
+      dataIndex: 'email',
+      sorter: true,
+    },
+    {
+      key: 'username',
+      title: t('credential.Name'),
+      dataIndex: 'username',
+      sorter: true,
+    },
+    {
+      key: 'role',
+      title: t('credential.Role'),
+      dataIndex: 'role',
+      sorter: true,
+    },
+    {
+      key: 'description',
+      title: t('credential.Description'),
+      dataIndex: 'description',
+    },
+    {
+      title: t('credential.CreatedAt'),
+      dataIndex: 'created_at',
+      render: (text) => dayjs(text).format('lll'),
+      sorter: true,
+      defaultSortOrder: 'descend',
+    },
+    activeFilter === 'status != "active"' && {
+      key: 'status',
+      title: t('credential.Status'),
+      dataIndex: 'status',
+      sorter: true,
+    },
+    {
+      title: t('general.Control'),
+      render: (record) => {
+        const isActive = record?.status === 'active';
+        return (
+          <Flex gap={token.marginXS}>
+            <Button
+              type="text"
+              icon={
+                <InfoCircleOutlined style={{ color: token.colorSuccess }} />
+              }
+              onClick={() => {
+                startInfoModalOpenTransition(() => {
+                  setEmailForInfoModal(record?.email || null);
+                });
+              }}
+            />
+            <Button
+              type="text"
+              icon={<SettingOutlined style={{ color: token.colorInfo }} />}
+              onClick={() => {
+                startSettingModalOpenTransition(() => {
+                  setEmailForSettingModal(record?.email || null);
+                });
+              }}
+            />
+            <Tooltip
+              title={
+                isActive ? t('credential.Deactivate') : t('credential.Activate')
+              }
+            >
+              <Popconfirm
+                title={
+                  isActive
+                    ? t('credential.DeactivateUser')
+                    : t('credential.ActivateUser')
+                }
+                placement="left"
+                okType={isActive ? 'danger' : 'primary'}
+                okText={
+                  isActive
+                    ? t('credential.Deactivate')
+                    : t('credential.Activate')
+                }
+                description={record?.email}
+                onConfirm={() => {
+                  setPendingUserId(record?.id || '');
+                  commitModifyUser({
+                    variables: {
+                      email: record?.email || '',
+                      props: {
+                        status: isActive ? 'inactive' : 'active',
+                      },
+                    },
+                    onCompleted: () => {
+                      message.success(
+                        t('credential.StatusUpdatedSuccessfully'),
+                      );
+                      startRefreshTransition(() => {
+                        updateFetchKey();
+                      });
+                    },
+                    onError: (error) => {
+                      message.error(error?.message);
+                      console.error(error);
+                    },
+                  });
+                }}
+              >
+                <Button
+                  type="text"
+                  danger={isActive}
+                  icon={isActive ? <BanIcon /> : <UndoIcon />}
+                  disabled={
+                    isInFlightCommitModifyUser && pendingUserId !== record?.id
+                  }
+                  loading={
+                    isInFlightCommitModifyUser && pendingUserId === record?.id
+                  }
+                />
+              </Popconfirm>
+            </Tooltip>
+          </Flex>
+        );
+      },
+    },
+  ]);
+
+  const handleExportCSV = () => {
+    if (!user_nodes?.edges || _.isEmpty(user_nodes?.edges)) {
+      message.error(t('credential.NoDataToExport'));
+      return;
+    }
+
+    const columnKeys = _.without(
+      _.map(columns, (column) => _.toString(column?.key)),
+      'control',
+    );
+    const responseData: Partial<UserNode>[] = _.map(user_nodes?.edges, (e) => {
+      return _.pick(e?.node, columnKeys);
+    });
+
+    exportCSVWithFormattingRules(
+      responseData,
+      `${activeFilter === 'status == "active"' ? 'active' : 'inactive'}_users_list`,
+      {
+        created_at: (value) => dayjs(value).format('lll'),
+      },
+    );
+  };
+
   return (
     <Flex direction="column" align="stretch">
       <Flex
@@ -211,6 +380,22 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
           />
         </Flex>
         <Flex gap="xs">
+          <Dropdown
+            menu={{
+              items: [
+                {
+                  key: 'export-csv',
+                  label: t('credential.ExportCSV'),
+                  onClick: () => {
+                    handleExportCSV();
+                  },
+                },
+              ],
+            }}
+            placement="bottomRight"
+          >
+            <Button icon={<MoreOutlined />} />
+          </Dropdown>
           <Tooltip title={t('button.Refresh')}>
             <Button
               loading={isPendingRefresh}
@@ -237,138 +422,7 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
         scroll={{ x: 'max-content' }}
         rowKey={'id'}
         dataSource={_.map(filterNonNullItems(user_nodes?.edges), (e) => e.node)}
-        columns={filterEmptyItem([
-          {
-            key: 'email',
-            title: t('credential.UserID'),
-            dataIndex: 'email',
-            sorter: true,
-          },
-          {
-            key: 'username',
-            title: t('credential.Name'),
-            dataIndex: 'username',
-            sorter: true,
-          },
-          {
-            key: 'role',
-            title: t('credential.Role'),
-            dataIndex: 'role',
-            sorter: true,
-          },
-          {
-            key: 'description',
-            title: t('credential.Description'),
-            dataIndex: 'description',
-          },
-          {
-            title: t('credential.CreatedAt'),
-            dataIndex: 'created_at',
-            render: (text) => dayjs(text).format('lll'),
-            sorter: true,
-            defaultSortOrder: 'descend',
-          },
-          activeFilter === 'status != "active"' && {
-            key: 'status',
-            title: t('credential.Status'),
-            dataIndex: 'status',
-            sorter: true,
-          },
-          {
-            title: t('general.Control'),
-            render: (record) => {
-              const isActive = record?.status === 'active';
-              return (
-                <Flex gap={token.marginXS}>
-                  <Button
-                    type="text"
-                    icon={
-                      <InfoCircleOutlined
-                        style={{ color: token.colorSuccess }}
-                      />
-                    }
-                    onClick={() => {
-                      startInfoModalOpenTransition(() => {
-                        setEmailForInfoModal(record?.email || null);
-                      });
-                    }}
-                  />
-                  <Button
-                    type="text"
-                    icon={
-                      <SettingOutlined style={{ color: token.colorInfo }} />
-                    }
-                    onClick={() => {
-                      startSettingModalOpenTransition(() => {
-                        setEmailForSettingModal(record?.email || null);
-                      });
-                    }}
-                  />
-                  <Tooltip
-                    title={
-                      isActive
-                        ? t('credential.Deactivate')
-                        : t('credential.Activate')
-                    }
-                  >
-                    <Popconfirm
-                      title={
-                        isActive
-                          ? t('credential.DeactivateUser')
-                          : t('credential.ActivateUser')
-                      }
-                      placement="left"
-                      okType={isActive ? 'danger' : 'primary'}
-                      okText={
-                        isActive
-                          ? t('credential.Deactivate')
-                          : t('credential.Activate')
-                      }
-                      description={record?.email}
-                      onConfirm={() => {
-                        setPendingUserId(record?.id || '');
-                        commitModifyUser({
-                          variables: {
-                            email: record?.email || '',
-                            props: {
-                              status: isActive ? 'inactive' : 'active',
-                            },
-                          },
-                          onCompleted: () => {
-                            message.success(
-                              t('credential.StatusUpdatedSuccessfully'),
-                            );
-                            startRefreshTransition(() => {
-                              updateFetchKey();
-                            });
-                          },
-                          onError: (error) => {
-                            message.error(error?.message);
-                            console.error(error);
-                          },
-                        });
-                      }}
-                    >
-                      <Button
-                        type="text"
-                        danger={isActive}
-                        icon={isActive ? <BanIcon /> : <UndoIcon />}
-                        disabled={
-                          isInFlightCommitModifyUser &&
-                          pendingUserId !== record?.id
-                        }
-                        loading={
-                          isInFlightCommitModifyUser &&
-                          pendingUserId === record?.id
-                        }
-                      />
-                    </Popconfirm>
-                  </Tooltip>
-                </Flex>
-              );
-            },
-          },
-        ])}
+        columns={columns}
         showSorterTooltip={false}
         sortDirections={['descend', 'ascend', 'descend']}
         pagination={{
@@ -379,7 +433,7 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
           showTotal(total, range) {
             return `${range[0]}-${range[1]} of ${total} users`;
           },
-          pageSizeOptions: ['10', '20', '50'],
+          pageSizeOptions: ['10', '20', '50', '100', '500', '1000'],
           style: { marginRight: token.marginXS },
         }}
         onChange={({ pageSize, current }, filters, sorter) => {

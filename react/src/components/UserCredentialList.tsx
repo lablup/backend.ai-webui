@@ -3,6 +3,7 @@ import {
   filterNonNullItems,
   transformSorterToOrderString,
 } from '../helper';
+import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import BAIPropertyFilter from './BAIPropertyFilter';
@@ -21,14 +22,17 @@ import {
   DeleteOutlined,
   InfoCircleOutlined,
   LoadingOutlined,
+  MoreOutlined,
   ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 import {
   App,
   Button,
+  Dropdown,
   Popconfirm,
   Radio,
+  TableColumnsType,
   Tag,
   Tooltip,
   Typography,
@@ -150,6 +154,308 @@ const UserCredentialList: React.FC = () => {
       }
     `);
 
+  const columns: TableColumnsType<Keypair> = filterEmptyItem([
+    {
+      key: 'userID',
+      title: t('credential.UserID'),
+      dataIndex: 'email',
+      fixed: 'left',
+      sorter: true,
+      // TODO: user_id field in keypair_list is used as user's email, but sorting is done by email field
+      render: (value, record) => {
+        return record.user_id;
+      },
+    },
+    {
+      key: 'accessKey',
+      title: t('credential.AccessKey'),
+      dataIndex: 'access_key',
+      sorter: true,
+    },
+    {
+      key: 'permission',
+      title: t('credential.Permission'),
+      dataIndex: 'is_admin',
+      render: (isAdmin) =>
+        isAdmin ? (
+          <>
+            <Tag color="red">admin</Tag>
+            <Tag color="green">user</Tag>
+          </>
+        ) : (
+          <Tag color="green">user</Tag>
+        ),
+      sorter: true,
+    },
+    {
+      key: 'keyAge',
+      title: t('credential.KeyAge'),
+      dataIndex: 'created_at',
+      render: (createdAt) => {
+        return `${dayjs().diff(createdAt, 'day')}${t('credential.Days')}`;
+      },
+      sorter: true,
+    },
+    {
+      key: 'createdAt',
+      title: t('credential.CreatedAt'),
+      dataIndex: 'created_at',
+      render: (createdAt) => dayjs(createdAt).format('lll'),
+      sorter: true,
+    },
+    {
+      key: 'resourcePolicy',
+      title: t('credential.ResourcePolicy'),
+      dataIndex: 'resource_policy',
+      sorter: true,
+    },
+    {
+      key: 'allocation',
+      title: t('credential.Allocation'),
+      render: (record) => {
+        return (
+          <Flex direction="column" align="start">
+            <Typography.Text>
+              {record.concurrency_used}
+              <Typography.Text
+                type="secondary"
+                style={{
+                  marginLeft: token.marginXXS,
+                  fontSize: token.fontSizeSM,
+                }}
+              >
+                {t('credential.Sessions')}
+              </Typography.Text>
+            </Typography.Text>
+            <Typography.Text
+              style={{
+                fontSize: token.fontSizeSM,
+              }}
+            >
+              {record.rate_limit}
+              <Typography.Text
+                type="secondary"
+                style={{
+                  marginLeft: token.marginXXS,
+                  fontSize: token.fontSizeSM,
+                }}
+              >
+                {t('credential.ReqPer15Min')}
+              </Typography.Text>
+            </Typography.Text>
+            <Typography.Text
+              style={{
+                fontSize: token.fontSizeSM,
+              }}
+            >
+              {record.num_queries}
+              <Typography.Text
+                type="secondary"
+                style={{
+                  marginLeft: token.marginXXS,
+                  fontSize: token.fontSizeSM,
+                }}
+              >
+                {t('credential.Queries')}
+              </Typography.Text>
+            </Typography.Text>
+          </Flex>
+        );
+      },
+    },
+    {
+      key: 'control',
+      title: t('general.Control'),
+      fixed: 'right',
+      render: (value, record) => {
+        return (
+          <Flex gap={token.marginXS}>
+            <Button
+              type="text"
+              icon={
+                <InfoCircleOutlined style={{ color: token.colorSuccess }} />
+              }
+              onClick={() => {
+                startInfoModalOpenTransition(() => {
+                  setKeypairInfoModalFrgmt(record);
+                });
+              }}
+            />
+            <Button
+              type="text"
+              icon={<SettingOutlined style={{ color: token.colorInfo }} />}
+              onClick={() => {
+                startSettingModalOpenTransition(() => {
+                  setKeypairSettingModalFrgmt(record);
+                });
+              }}
+            />
+            {activeType === 'inactive' && (
+              <Tooltip title={t('credential.Activate')}>
+                <Popconfirm
+                  title={t('credential.ActivateCredential')}
+                  description={record.user_id}
+                  okText={t('credential.Activate')}
+                  placement="left"
+                  onConfirm={() => {
+                    commitModifyKeypair({
+                      variables: {
+                        access_key: record.access_key ?? '',
+                        props: {
+                          is_active: true,
+                        },
+                      },
+                      onCompleted: (res, errors) => {
+                        if (!res?.modify_keypair?.ok || errors) {
+                          message.error(res?.modify_keypair?.msg);
+                          return;
+                        }
+                        message.success(
+                          t('credential.KeypairStatusUpdatedSuccessfully'),
+                        );
+                        startRefreshTransition(() => {
+                          updateFetchKey();
+                        });
+                      },
+                      onError: (error) => {
+                        message.error(error?.message);
+                        console.error(error);
+                      },
+                    });
+                  }}
+                >
+                  <Button type="text" icon={<UndoIcon />} />
+                </Popconfirm>
+              </Tooltip>
+            )}
+            {activeType === 'active' ? (
+              <Tooltip title={t('credential.Deactivate')}>
+                <Popconfirm
+                  title={t('credential.DeactivateCredential')}
+                  description={record.user_id}
+                  okButtonProps={{
+                    loading: isInFlightCommitModifyKeypair,
+                  }}
+                  okType="danger"
+                  okText={t('credential.Deactivate')}
+                  placement="left"
+                  onConfirm={() => {
+                    commitModifyKeypair({
+                      variables: {
+                        access_key: record.access_key ?? '',
+                        props: {
+                          is_active: false,
+                        },
+                      },
+                      onCompleted: (res, errors) => {
+                        if (!res?.modify_keypair?.ok || errors) {
+                          message.error(res?.modify_keypair?.msg);
+                          return;
+                        }
+                        message.success(
+                          t('credential.KeypairStatusUpdatedSuccessfully'),
+                        );
+                        startRefreshTransition(() => {
+                          updateFetchKey();
+                        });
+                      },
+                      onError: (error) => {
+                        message.error(error?.message);
+                        console.error(error);
+                      },
+                    });
+                  }}
+                >
+                  <Button type="text" danger icon={<BanIcon />} />
+                </Popconfirm>
+              </Tooltip>
+            ) : (
+              <Button
+                type="text"
+                danger
+                icon={<DeleteOutlined />}
+                loading={isInFlightCommitDeleteKeypair}
+                onClick={() => {
+                  modal.confirm({
+                    title: t('credential.DeleteCredential'),
+                    content: (
+                      <Flex direction="column" align="stretch">
+                        <Typography.Text>
+                          {t('credential.YouAreAboutToDeleteCredential')}
+                        </Typography.Text>
+                        <Typography.Text strong>
+                          {record.user_id}
+                        </Typography.Text>
+                        <br />
+                        <Typography.Text type="danger">
+                          {t('dialog.warning.CannotBeUndone')}
+                        </Typography.Text>
+                      </Flex>
+                    ),
+                    onOk: () => {
+                      commitDeleteKeypair({
+                        variables: {
+                          access_key: record.access_key ?? '',
+                        },
+                        onCompleted: (res, errors) => {
+                          if (!res?.delete_keypair?.ok || errors) {
+                            message.error(res?.delete_keypair?.msg);
+                            return;
+                          }
+                          message.success(
+                            t('credential.KeypairSuccessfullyDeleted'),
+                          );
+                          startRefreshTransition(() => {
+                            updateFetchKey();
+                          });
+                        },
+                        onError: (error) => {
+                          message.error(error?.message);
+                          console.error(error);
+                        },
+                      });
+                    },
+                    okButtonProps: {
+                      danger: true,
+                    },
+                    okText: t('button.Delete'),
+                  });
+                }}
+              />
+            )}
+          </Flex>
+        );
+      },
+    },
+  ]);
+
+  const handleExportCSV = () => {
+    if (!keypair_list?.items || _.isEmpty(keypair_list?.items)) {
+      message.error(t('credential.NoDataToExport'));
+      return;
+    }
+
+    const columnKeys = _.without(
+      _.map(columns, (column) => _.toString(column.key)),
+      'control',
+    );
+    const responseData: Partial<Keypair>[] = _.map(
+      keypair_list?.items,
+      (item) => {
+        return _.pick(item, columnKeys);
+      },
+    );
+
+    exportCSVWithFormattingRules(
+      responseData,
+      `${activeType === 'active' ? 'active' : 'inactive'}_credentials_list`,
+      {
+        is_admin: (value) => (value ? 'admin' : 'user'),
+        created_at: (value) => dayjs(value).format('lll'),
+      },
+    );
+  };
+
   return (
     <Flex direction="column" align="stretch">
       <Flex
@@ -228,6 +534,22 @@ const UserCredentialList: React.FC = () => {
           />
         </Flex>
         <Flex gap={'xs'}>
+          <Dropdown
+            menu={{
+              items: [
+                {
+                  key: 'export-csv',
+                  label: t('credential.ExportCSV'),
+                  onClick: () => {
+                    handleExportCSV();
+                  },
+                },
+              ],
+            }}
+            placement="bottomRight"
+          >
+            <Button icon={<MoreOutlined />} />
+          </Dropdown>
           <Tooltip title={t('button.Refresh')}>
             <Button
               loading={isPendingRefresh}
@@ -263,288 +585,7 @@ const UserCredentialList: React.FC = () => {
           indicator: <LoadingOutlined />,
         }}
         dataSource={filterNonNullItems(keypair_list?.items)}
-        columns={filterEmptyItem([
-          {
-            key: 'userID',
-            title: t('credential.UserID'),
-            dataIndex: 'email',
-            fixed: 'left',
-            sorter: true,
-            // TODO: user_id field in keypair_list is used as user's email, but sorting is done by email field
-            render: (value, record) => {
-              return record.user_id;
-            },
-          },
-          {
-            key: 'accessKey',
-            title: t('credential.AccessKey'),
-            dataIndex: 'access_key',
-            sorter: true,
-          },
-          {
-            key: 'permission',
-            title: t('credential.Permission'),
-            dataIndex: 'is_admin',
-            render: (isAdmin) =>
-              isAdmin ? (
-                <>
-                  <Tag color="red">admin</Tag>
-                  <Tag color="green">user</Tag>
-                </>
-              ) : (
-                <Tag color="green">user</Tag>
-              ),
-            sorter: true,
-          },
-          {
-            key: 'keyAge',
-            title: t('credential.KeyAge'),
-            dataIndex: 'created_at',
-            render: (createdAt) => {
-              return `${dayjs().diff(createdAt, 'day')}${t('credential.Days')}`;
-            },
-            sorter: true,
-          },
-          {
-            key: 'createdAt',
-            title: t('credential.CreatedAt'),
-            dataIndex: 'created_at',
-            render: (createdAt) => dayjs(createdAt).format('lll'),
-            sorter: true,
-          },
-          {
-            key: 'resourcePolicy',
-            title: t('credential.ResourcePolicy'),
-            dataIndex: 'resource_policy',
-            sorter: true,
-          },
-          {
-            key: 'allocation',
-            title: t('credential.Allocation'),
-            render: (record) => {
-              return (
-                <Flex direction="column" align="start">
-                  <Typography.Text>
-                    {record.concurrency_used}
-                    <Typography.Text
-                      type="secondary"
-                      style={{
-                        marginLeft: token.marginXXS,
-                        fontSize: token.fontSizeSM,
-                      }}
-                    >
-                      {t('credential.Sessions')}
-                    </Typography.Text>
-                  </Typography.Text>
-                  <Typography.Text
-                    style={{
-                      fontSize: token.fontSizeSM,
-                    }}
-                  >
-                    {record.rate_limit}
-                    <Typography.Text
-                      type="secondary"
-                      style={{
-                        marginLeft: token.marginXXS,
-                        fontSize: token.fontSizeSM,
-                      }}
-                    >
-                      {t('credential.ReqPer15Min')}
-                    </Typography.Text>
-                  </Typography.Text>
-                  <Typography.Text
-                    style={{
-                      fontSize: token.fontSizeSM,
-                    }}
-                  >
-                    {record.num_queries}
-                    <Typography.Text
-                      type="secondary"
-                      style={{
-                        marginLeft: token.marginXXS,
-                        fontSize: token.fontSizeSM,
-                      }}
-                    >
-                      {t('credential.Queries')}
-                    </Typography.Text>
-                  </Typography.Text>
-                </Flex>
-              );
-            },
-          },
-          {
-            key: 'control',
-            title: t('general.Control'),
-            fixed: 'right',
-            render: (value, record) => {
-              return (
-                <Flex gap={token.marginXS}>
-                  <Button
-                    type="text"
-                    icon={
-                      <InfoCircleOutlined
-                        style={{ color: token.colorSuccess }}
-                      />
-                    }
-                    onClick={() => {
-                      startInfoModalOpenTransition(() => {
-                        setKeypairInfoModalFrgmt(record);
-                      });
-                    }}
-                  />
-                  <Button
-                    type="text"
-                    icon={
-                      <SettingOutlined style={{ color: token.colorInfo }} />
-                    }
-                    onClick={() => {
-                      startSettingModalOpenTransition(() => {
-                        setKeypairSettingModalFrgmt(record);
-                      });
-                    }}
-                  />
-                  {activeType === 'inactive' && (
-                    <Tooltip title={t('credential.Activate')}>
-                      <Popconfirm
-                        title={t('credential.ActivateCredential')}
-                        description={record.user_id}
-                        okText={t('credential.Activate')}
-                        placement="left"
-                        onConfirm={() => {
-                          commitModifyKeypair({
-                            variables: {
-                              access_key: record.access_key ?? '',
-                              props: {
-                                is_active: true,
-                              },
-                            },
-                            onCompleted: (res, errors) => {
-                              if (!res?.modify_keypair?.ok || errors) {
-                                message.error(res?.modify_keypair?.msg);
-                                return;
-                              }
-                              message.success(
-                                t(
-                                  'credential.KeypairStatusUpdatedSuccessfully',
-                                ),
-                              );
-                              startRefreshTransition(() => {
-                                updateFetchKey();
-                              });
-                            },
-                            onError: (error) => {
-                              message.error(error?.message);
-                              console.error(error);
-                            },
-                          });
-                        }}
-                      >
-                        <Button type="text" icon={<UndoIcon />} />
-                      </Popconfirm>
-                    </Tooltip>
-                  )}
-                  {activeType === 'active' ? (
-                    <Tooltip title={t('credential.Deactivate')}>
-                      <Popconfirm
-                        title={t('credential.DeactivateCredential')}
-                        description={record.user_id}
-                        okButtonProps={{
-                          loading: isInFlightCommitModifyKeypair,
-                        }}
-                        okType="danger"
-                        okText={t('credential.Deactivate')}
-                        placement="left"
-                        onConfirm={() => {
-                          commitModifyKeypair({
-                            variables: {
-                              access_key: record.access_key ?? '',
-                              props: {
-                                is_active: false,
-                              },
-                            },
-                            onCompleted: (res, errors) => {
-                              if (!res?.modify_keypair?.ok || errors) {
-                                message.error(res?.modify_keypair?.msg);
-                                return;
-                              }
-                              message.success(
-                                t(
-                                  'credential.KeypairStatusUpdatedSuccessfully',
-                                ),
-                              );
-                              startRefreshTransition(() => {
-                                updateFetchKey();
-                              });
-                            },
-                            onError: (error) => {
-                              message.error(error?.message);
-                              console.error(error);
-                            },
-                          });
-                        }}
-                      >
-                        <Button type="text" danger icon={<BanIcon />} />
-                      </Popconfirm>
-                    </Tooltip>
-                  ) : (
-                    <Button
-                      type="text"
-                      danger
-                      icon={<DeleteOutlined />}
-                      loading={isInFlightCommitDeleteKeypair}
-                      onClick={() => {
-                        modal.confirm({
-                          title: t('credential.DeleteCredential'),
-                          content: (
-                            <Flex direction="column" align="stretch">
-                              <Typography.Text>
-                                {t('credential.YouAreAboutToDeleteCredential')}
-                              </Typography.Text>
-                              <Typography.Text strong>
-                                {record.user_id}
-                              </Typography.Text>
-                              <br />
-                              <Typography.Text type="danger">
-                                {t('dialog.warning.CannotBeUndone')}
-                              </Typography.Text>
-                            </Flex>
-                          ),
-                          onOk: () => {
-                            commitDeleteKeypair({
-                              variables: {
-                                access_key: record.access_key ?? '',
-                              },
-                              onCompleted: (res, errors) => {
-                                if (!res?.delete_keypair?.ok || errors) {
-                                  message.error(res?.delete_keypair?.msg);
-                                  return;
-                                }
-                                message.success(
-                                  t('credential.KeypairSuccessfullyDeleted'),
-                                );
-                                startRefreshTransition(() => {
-                                  updateFetchKey();
-                                });
-                              },
-                              onError: (error) => {
-                                message.error(error?.message);
-                                console.error(error);
-                              },
-                            });
-                          },
-                          okButtonProps: {
-                            danger: true,
-                          },
-                          okText: t('button.Delete'),
-                        });
-                      }}
-                    />
-                  )}
-                </Flex>
-              );
-            },
-          },
-        ])}
+        columns={columns}
         showSorterTooltip={false}
         pagination={{
           pageSize: tablePaginationOption.pageSize,
@@ -554,8 +595,7 @@ const UserCredentialList: React.FC = () => {
           showTotal: (total, range) => {
             return `${range[0]}-${range[1]} of ${total} items`;
           },
-          // TODO: need to set more options to export CSV in current page's data
-          pageSizeOptions: ['10', '20', '50'],
+          pageSizeOptions: ['10', '20', '50', '100', '500', '1000'],
           style: { marginRight: token.marginXS },
         }}
         onChange={({ pageSize, current }, filters, sorter) => {

@@ -615,6 +615,8 @@
     "ReqPer15Min": "Yêu cầu mỗi 15 phút",
     "Sessions": "Phiên",
     "LastUsed": "Lần sử dụng cuối cùng",
+    "NoDataToExport": "Dữ liệu cho bản trích xuất CSV không tồn tại.",
+    "ExportCSV": "xuất CSV",
     "KeypairStatusUpdatedSuccessfully": "Trạng thái cặp khóa đã thay đổi.",
     "KeypairSuccessfullyDeleted": "KeyPair đã được xóa thành công.",
     "ActivateUser": "Kích hoạt người dùng",

@@ -624,7 +624,9 @@
     "DeactivateCredential": "Деактивировать учетные данные",
     "YouAreAboutToDeleteCredential": "Вы собираетесь удалить учетные данные этого пользователя:",
     "DeleteCredential": "Удалить учетные данные",
-    "ActivateCredential": "Активировать учетные данные"
+    "ActivateCredential": "Активировать учетные данные",
+    "NoDataToExport": "Данные для извлечения CSV не существуют.",
+    "ExportCSV": "экспортировать CSV"
   },
   "data": {
     "Folders": "Папки",

@@ -615,6 +615,8 @@
     "Queries": "Zapytania",
     "ReqPer15Min": "Zapotrzebowanie na 15 min",
     "Sessions": "Sesje",
+    "NoDataToExport": "Dane do ekstraktu CSV nie istnieją.",
+    "ExportCSV": "eksportuj plik CSV",
     "KeypairStatusUpdatedSuccessfully": "Stan pary kluczy uległ zmianie.",
     "KeypairSuccessfullyDeleted": "KeyPair został pomyślnie usunięty.",
     "ActivateUser": "Aktywuj użytkownika",

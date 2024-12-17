@@ -617,6 +617,8 @@
     "KeypairStatusUpdatedSuccessfully": "密钥对状态已更改。",
     "KeypairSuccessfullyDeleted": "密钥对已成功删除。",
     "LastUsed": "最后使用",
+    "NoDataToExport": "CSV 提取的数据不存在。",
+    "ExportCSV": "导出 CSV",
     "ActivateUser": "激活用户",
     "DeactivateUser": "停用用户",
     "Deactivate": "停用",

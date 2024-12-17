@@ -617,6 +617,8 @@
     "KeypairStatusUpdatedSuccessfully": "密鑰對狀態已變更。",
     "KeypairSuccessfullyDeleted": "密鑰對已成功刪除。",
     "LastUsed": "最後使用",
+    "NoDataToExport": "CSV 擷取的資料不存在。",
+    "ExportCSV": "匯出 CSV",
     "ActivateUser": "啟用用戶",
     "DeactivateUser": "停用用戶",
     "Deactivate": "停用",
