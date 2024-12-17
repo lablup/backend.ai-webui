@@ -68,7 +68,8 @@ interface RoutingInfo {
 export interface ModelServiceInfo {
   endpoint_id: string;
   name: string;
-  desired_session_count: number;
+  desired_session_count?: number;
+  replicas?: number;
   active_routes: RoutingInfo[];
   service_endpoint: string;
   is_public: boolean;
@@ -151,7 +152,8 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               size_bytes
               supported_accelerators
             }
-            desired_session_count
+            desired_session_count @deprecatedSince(version: "24.12.0")
+            replicas @since(version: "24.12.0")
             url
             open_to_public
             errors {
@@ -297,7 +299,9 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     },
     {
       label: t('modelService.DesiredSessionCount'),
-      children: endpoint?.desired_session_count,
+      children: baiClient.isManagerVersionCompatibleWith('24.12.0')
+        ? endpoint?.replicas
+        : endpoint?.desired_session_count,
     },
     {
       label: t('modelService.ServiceEndpoint'),
@@ -480,7 +484,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             loading={isPendingRefetch}
             icon={<ReloadOutlined />}
             disabled={isDestroyingStatus(
-              endpoint?.desired_session_count,
+              endpoint?.desired_session_count ?? endpoint?.replicas,
               endpoint?.status,
             )}
             onClick={() => {
@@ -501,7 +505,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             icon={<SettingOutlined />}
             disabled={
               isDestroyingStatus(
-                endpoint?.desired_session_count,
+                endpoint?.desired_session_count ?? endpoint?.replicas,
                 endpoint?.status,
               ) ||
               (!!endpoint?.created_user_email &&
@@ -531,7 +535,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             type="primary"
             icon={<PlusOutlined />}
             disabled={isDestroyingStatus(
-              endpoint?.desired_session_count,
+              endpoint?.desired_session_count ?? endpoint?.replicas,
               endpoint?.status,
             )}
             onClick={() => {
@@ -617,7 +621,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               icon={<SyncOutlined />}
               loading={mutationToSyncRoutes.isPending}
               disabled={isDestroyingStatus(
-                endpoint?.desired_session_count,
+                endpoint?.desired_session_count ?? endpoint?.replicas,
                 endpoint?.status,
               )}
               onClick={() => {
