@@ -624,7 +624,9 @@
     "DeactivateCredential": "Anmeldeinformationen deaktivieren",
     "YouAreAboutToDeleteCredential": "Sie sind dabei, die Anmeldeinformationen dieses Benutzers zu löschen:",
     "DeleteCredential": "Anmeldedaten löschen",
-    "ActivateCredential": "Anmeldeinformationen aktivieren"
+    "ActivateCredential": "Anmeldeinformationen aktivieren",
+    "NoDataToExport": "Die Daten für den CSV-Extrakt sind nicht vorhanden.",
+    "ExportCSV": "CSV exportieren"
   },
   "data": {
     "Folders": "Ordner",

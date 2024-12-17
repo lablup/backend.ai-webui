@@ -624,7 +624,9 @@
     "DeactivateCredential": "Désactiver l'identifiant",
     "YouAreAboutToDeleteCredential": "Vous êtes sur le point de supprimer les identifiants de cet utilisateur :",
     "DeleteCredential": "Supprimer l'identifiant",
-    "ActivateCredential": "Activer l'identifiant"
+    "ActivateCredential": "Activer l'identifiant",
+    "NoDataToExport": "Les données pour l'extrait CSV n'existent pas.",
+    "ExportCSV": "exporter au format CSV"
   },
   "data": {
     "Folders": "Dossiers",

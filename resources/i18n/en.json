@@ -751,7 +751,9 @@
     "DeactivateCredential": "Deactivate credential",
     "YouAreAboutToDeleteCredential": "You are about to delete this user's credential:",
     "DeleteCredential": "Delete credential",
-    "ActivateCredential": "Activate credential"
+    "ActivateCredential": "Activate credential",
+    "NoDataToExport": "The data for the CSV extract does not exist.",
+    "ExportCSV": "export CSV"
   },
   "data": {
     "Folders": "Folders",

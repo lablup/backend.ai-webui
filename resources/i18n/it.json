@@ -625,7 +625,9 @@
     "DeactivateCredential": "Disattiva credenziale",
     "YouAreAboutToDeleteCredential": "Stai per eliminare le credenziali di questo utente:",
     "DeleteCredential": "Elimina credenziale",
-    "ActivateCredential": "Attiva credenziale"
+    "ActivateCredential": "Attiva credenziale",
+    "NoDataToExport": "I dati per l'estrazione CSV non esistono.",
+    "ExportCSV": "esportare CSV"
   },
   "data": {
     "Folders": "cartelle",

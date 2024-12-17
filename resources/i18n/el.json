@@ -624,7 +624,9 @@
     "DeactivateCredential": "Απενεργοποίηση διαπιστευτηρίων",
     "YouAreAboutToDeleteCredential": "Πρόκειται να διαγράψετε τα διαπιστευτήρια αυτού του χρήστη:",
     "DeleteCredential": "Διαγραφή διαπιστευτηρίων",
-    "ActivateCredential": "Ενεργοποίηση διαπιστευτηρίων"
+    "ActivateCredential": "Ενεργοποίηση διαπιστευτηρίων",
+    "NoDataToExport": "Τα δεδομένα για το απόσπασμα CSV δεν υπάρχουν.",
+    "ExportCSV": "εξαγωγή CSV"
   },
   "data": {
     "Folders": "Φάκελοι",

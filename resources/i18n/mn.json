@@ -617,6 +617,8 @@
     "ReqPer15Min": "15 минут тутамд хэрэгцээ",
     "Sessions": "Хурал",
     "LastUsed": "Сүүлд ашигласан",
+    "NoDataToExport": "CSV хандалтын өгөгдөл байхгүй байна.",
+    "ExportCSV": "CSV экспортлох",
     "KeypairStatusUpdatedSuccessfully": "Товчлуурын хослол өөрчлөгдсөн.",
     "KeypairSuccessfullyDeleted": "KeyPair амжилттай устгагдлаа.",
     "ActivateUser": "Хэрэглэгчийг идэвхжүүлэх",

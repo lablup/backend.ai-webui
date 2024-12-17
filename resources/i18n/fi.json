@@ -234,6 +234,8 @@
     "ReqPer15Min": "Req per 15 min",
     "Sessions": "Istunnot",
     "LastUsed": "Viimeksi käytetty",
+    "NoDataToExport": "CSV-otteen tietoja ei ole olemassa.",
+    "ExportCSV": "vie CSV",
     "KeypairStatusUpdatedSuccessfully": "Näppäinparin tila on muuttunut.",
     "KeypairSuccessfullyDeleted": "Avainparin poistaminen onnistui.",
     "ActivateUser": "Aktivoi käyttäjä",

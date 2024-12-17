@@ -738,6 +738,8 @@
     "ReqPer15Min": "ต้องการต่อ 15 นาที",
     "Sessions": "เซสชัน",
     "LastUsed": "ใช้ครั้งล่าสุด",
+    "NoDataToExport": "ไม่มีข้อมูลสำหรับการแยก CSV",
+    "ExportCSV": "ส่งออก CSV",
     "KeypairStatusUpdatedSuccessfully": "สถานะคู่กุญแจเปลี่ยนไป",
     "KeypairSuccessfullyDeleted": "ลบ KeyPair สำเร็จแล้ว",
     "ActivateUser": "เปิดใช้งานผู้ใช้",

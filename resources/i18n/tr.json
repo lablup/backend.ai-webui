@@ -623,7 +623,9 @@
     "DeactivateCredential": "Kimlik bilgilerini devre dışı bırak",
     "YouAreAboutToDeleteCredential": "Bu kullanıcının kimlik bilgilerini silmek üzeresiniz:",
     "DeleteCredential": "Kimlik bilgisini sil",
-    "ActivateCredential": "Kimlik bilgisini etkinleştir"
+    "ActivateCredential": "Kimlik bilgisini etkinleştir",
+    "NoDataToExport": "CSV ekstresine ilişkin veriler mevcut değil.",
+    "ExportCSV": "CSV'yi dışa aktar"
   },
   "data": {
     "Folders": "klasörler",
