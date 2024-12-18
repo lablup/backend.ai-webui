@@ -58,6 +58,7 @@ const ChatMessageContent: React.FC<{
             </Card>
           ) : (
             <code {...rest} className={className}>
+              {/* @ts-expect-error */}
               {children}
             </code>
           );
@@ -70,6 +71,7 @@ const ChatMessageContent: React.FC<{
 };
 
 const X: React.FC<SyntaxHighlighterProps> = ({ children, ...props }) => {
+  // @ts-expect-error
   return <SyntaxHighlighter {...props}>{children}</SyntaxHighlighter>;
 };
 const CodeBlock = React.memo(X);
