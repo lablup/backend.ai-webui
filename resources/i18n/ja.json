@@ -1114,7 +1114,9 @@
     "RegistryName": "レジストリ名",
     "DescRegistryNameIsEmpty": "レジストリ名が空です",
     "RegistryNameAlreadyExists": "レジストリ名はすでに存在します。\n追加するレジストリ名を変更してください。",
-    "Project": "プロジェクト"
+    "Project": "プロジェクト",
+    "DescExtraJsonFormat": "有効な形式の JSON を入力してください",
+    "ExtraInformation": "追加情報"
   },
   "resourceGroup": {
     "ResourceGroups": "リソースグループ",

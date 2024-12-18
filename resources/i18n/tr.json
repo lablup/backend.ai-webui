@@ -1113,7 +1113,9 @@
     "RegistryName": "Kayıt Defteri Adı",
     "DescRegistryNameIsEmpty": "Kayıt defteri adı boş",
     "RegistryNameAlreadyExists": "Kayıt defteri adı zaten mevcut. \nLütfen eklemek için kayıt defteri adını değiştirin.",
-    "Project": "Proje"
+    "Project": "Proje",
+    "DescExtraJsonFormat": "Lütfen geçerli olarak biçimlendirilmiş JSON girin",
+    "ExtraInformation": "Ekstra Bilgi"
   },
   "resourceGroup": {
     "ResourceGroups": "Kaynak Grupları",

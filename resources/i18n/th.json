@@ -1225,7 +1225,9 @@
     "RegistryName": "ชื่อรีจิสทรี",
     "DescRegistryNameIsEmpty": "ชื่อรีจิสทรีว่างเปล่า",
     "RegistryNameAlreadyExists": "มีชื่อรีจิสทรีอยู่แล้ว \nกรุณาเปลี่ยนชื่อรีจิสทรีที่จะเพิ่ม",
-    "Project": "โครงการ"
+    "Project": "โครงการ",
+    "DescExtraJsonFormat": "โปรดป้อน JSON ที่มีรูปแบบถูกต้อง",
+    "ExtraInformation": "ข้อมูลเพิ่มเติม"
   },
   "resourceGroup": {
     "ResourceGroups": "กลุ่มทรัพยากร",
