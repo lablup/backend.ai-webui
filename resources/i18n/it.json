@@ -65,7 +65,8 @@
       "InvalidBlankEmail": "Inserisci il tuo indirizzo email",
       "DisMatchUserEmail": "L'e-mail dell'utente non corrisponde",
       "MyEnvironments": "I miei ambienti",
-      "ResourcePolicy": "Politica delle risorse"
+      "ResourcePolicy": "Politica delle risorse",
+      "Start": "Inizio"
     },
     "YouAreOffline": "Non in linea: Non è collegato ad alcuna rete.",
     "YouAreOnline": "Ora sei online",
@@ -1739,5 +1740,26 @@
     "hour": "ora",
     "day": "day",
     "week": "settimana"
+  },
+  "start": {
+    "CreateFolder": "Crea una nuova cartella di archiviazione",
+    "button": {
+      "CreateFolder": "Crea cartella",
+      "StartSession": "Avvia sessione",
+      "ModelService": "Avvia servizio",
+      "StartNow": "Inizia ora",
+      "StartBatchSession": "Inizia da un URL"
+    },
+    "CreateFolderDesc": "La creazione di una cartella e il caricamento di file sono fondamentali per la formazione di modelli o la fornitura di servizi esternamente. \nInizia caricando i file.",
+    "StartSession": "Avvia una sessione interattiva",
+    "StartSessionDesc": "Vuoi addestrare un modello? \nFare clic sul pulsante per creare immediatamente una sessione. \nScegli l'ambiente e le risorse preferiti per l'esecuzione del codice e altre attività.",
+    "StartBatchSession": "Avvia sessione batch",
+    "StartBatchSessionDesc": "Per file predefiniti o attività pianificate, prova le sessioni batch. \nImmettere il comando, impostare la data e l'ora ed eseguirlo secondo necessità.",
+    "ModelService": "Avvia il servizio modello",
+    "ModelServiceDesc": "Pronto a condividere il tuo modello addestrato con altri? \nFare clic sul pulsante per creare un servizio.",
+    "StartFromExample": "Partire dall'Esempio",
+    "StartFromExampleDesc": "Esplora vari codici di esempio e inizia.",
+    "StartFromURL": "Inizia dall'URL",
+    "StartFromURLDesc": "Importa il tuo progetto e codice da vari ambienti come GitHub, GitLab, Notebook, ecc."
   }
 }
