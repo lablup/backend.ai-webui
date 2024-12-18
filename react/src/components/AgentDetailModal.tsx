@@ -1,4 +1,8 @@
-import { convertBinarySizeUnit, convertDecimalSizeUnit } from '../helper';
+import {
+  convertBinarySizeUnit,
+  convertDecimalSizeUnit,
+  toFixedFloorWithoutTrailingZeros,
+} from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
@@ -78,7 +82,9 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                     </Typography.Text>
                     <BAIProgressWithLabel
                       percent={value?.pct}
-                      valueLabel={value?.pct + '%'}
+                      valueLabel={
+                        toFixedFloorWithoutTrailingZeros(value?.pct, 1) + '%'
+                      }
                     />
                   </Flex>
                 ))}
@@ -124,7 +130,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                       convertDecimalSizeUnit(
                         parsedLiveStat?.node?.net_tx?.current,
                         'm',
-                        1,
+                        2,
                       )?.numberUnit
                     }
                     B
@@ -137,7 +143,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                       convertDecimalSizeUnit(
                         parsedLiveStat?.node?.net_rx?.current,
                         'm',
-                        1,
+                        2,
                       )?.numberUnit
                     }
                     B
@@ -177,7 +183,12 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                           </Typography.Text>
                           <BAIProgressWithLabel
                             percent={_.toFinite((value?.[1] as LiveStat)?.pct)}
-                            valueLabel={(value?.[1] as LiveStat)?.pct + '%'}
+                            valueLabel={
+                              toFixedFloorWithoutTrailingZeros(
+                                (value?.[1] as LiveStat)?.pct,
+                                1,
+                              ) + '%'
+                            }
                           />
                         </Flex>
                       ),
@@ -211,7 +222,12 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                           </Typography.Text>
                           <BAIProgressWithLabel
                             percent={_.toFinite((value?.[1] as LiveStat)?.pct)}
-                            valueLabel={(value?.[1] as LiveStat)?.pct + '%'}
+                            valueLabel={
+                              toFixedFloorWithoutTrailingZeros(
+                                (value?.[1] as LiveStat)?.pct,
+                                1,
+                              ) + '%'
+                            }
                           />
                         </Flex>
                       ),
