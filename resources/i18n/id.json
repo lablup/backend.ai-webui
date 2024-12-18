@@ -616,6 +616,8 @@
     "ReqPer15Min": "Persyaratan per 15 menit",
     "Sessions": "Sesi",
     "LastUsed": "Terakhir digunakan",
+    "NoDataToExport": "Data untuk ekstrak CSV tidak ada.",
+    "ExportCSV": "ekspor CSV",
     "KeypairStatusUpdatedSuccessfully": "Status pasangan kunci telah berubah.",
     "KeypairSuccessfullyDeleted": "KeyPair berhasil dihapus.",
     "ActivateUser": "Aktifkan pengguna",

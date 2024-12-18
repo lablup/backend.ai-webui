@@ -615,6 +615,8 @@
     "ReqPer15Min": "15分あたりの要求",
     "Sessions": "セッション",
     "LastUsed": "最後に使用した",
+    "NoDataToExport": "CSV抽出用のデータが存在しません。",
+    "ExportCSV": "CSVエクスポート",
     "KeypairStatusUpdatedSuccessfully": "キーペアのステータスが変更されました。",
     "KeypairSuccessfullyDeleted": "キーペアは正常に削除されました。",
     "ActivateUser": "ユーザーをアクティブ化する",

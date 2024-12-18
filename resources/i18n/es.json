@@ -243,7 +243,9 @@
     "DeactivateCredential": "Desactivar credencial",
     "YouAreAboutToDeleteCredential": "Estás a punto de eliminar la credencial de este usuario:",
     "DeleteCredential": "Eliminar credencial",
-    "ActivateCredential": "Activar credencial"
+    "ActivateCredential": "Activar credencial",
+    "NoDataToExport": "Los datos para el extracto CSV no existen.",
+    "ExportCSV": "exportar CSV"
   },
   "data": {
     "Allowslettersnumbersand-_": "Permite letras, números y -_",
