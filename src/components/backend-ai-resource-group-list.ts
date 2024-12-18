@@ -365,6 +365,14 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
             valid: nativeValidity.valid,
             valueMissing: !nativeValidity.valid,
           };
+        } else if (nativeValidity.patternMismatch) {
+          this.resourceGroupNameInput.validationMessage = _text(
+            'resourceGroup.EnterValidResourceGroupName',
+          );
+          return {
+            valid: nativeValidity.valid,
+            patternMismatch: !nativeValidity.valid,
+          };
         } else {
           this.resourceGroupNameInput.validationMessage = _text(
             'resourceGroup.EnterValidResourceGroupName',
@@ -459,7 +467,8 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           this.notification.show(true, err);
         });
     } else {
-      // ResourceGroupNameEl.reportValidity();
+      this._validateResourceGroupName();
+      this.resourceGroupNameInput.reportValidity();
       return;
     }
   }
@@ -845,10 +854,10 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                   label="${_t('resourceGroup.ResourceGroupName')}"
                   maxLength="64"
                   placeholder="${_t('maxLength.64chars')}"
-                  validationMessage="${_t('data.explorer.ValueRequired')}"
                   required
                   autoValidate
-                  @change="${() => this._validateResourceGroupName()}"
+                  pattern="^[\\p{L}\\p{N}]+(?:[\\-_.][\\p{L}\\p{N}]+)*$"
+                  @input="${() => this._validateResourceGroupName()}"
                 ></mwc-textfield>
               `
             : html`
