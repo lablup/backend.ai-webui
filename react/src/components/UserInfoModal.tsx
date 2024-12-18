@@ -79,15 +79,10 @@ const UserInfoModal: React.FC<Props> = ({
     <BAIModal
       centered
       title={t('credential.UserDetail')}
-      footer={[
-        <Button key="ok" type="primary" onClick={onRequestClose}>
-          {t('button.OK')}
-        </Button>,
-      ]}
+      footer={null}
       onCancel={onRequestClose}
       {...baiModalProps}
     >
-      <br />
       <Descriptions
         size="small"
         column={columnSetting}
