@@ -1485,7 +1485,8 @@
       "SelectUser": "Etsi ja valitse Käyttäjä",
       "UnsetCustomSettings": "Mukautettujen asetusten poistaminen"
     },
-    "StorageSetting": "Tallennusasetus"
+    "StorageSetting": "Tallennusasetus",
+    "HardLimitInodes": "Hard Limit Inodes"
   },
   "totp": {
     "ConfirmTotpRemovalBody": "Oletko varma, ettet halua käyttää kaksitekijätodennusta?",
