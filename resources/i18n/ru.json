@@ -1739,5 +1739,11 @@
     "hour": "час",
     "day": "day",
     "week": "неделя"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelServices": "Модельные услуги",
+      "ModelList": "Список моделей"
+    }
   }
 }

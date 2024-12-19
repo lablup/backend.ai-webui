@@ -1739,5 +1739,11 @@
     "hour": "jam",
     "day": "day",
     "week": "pekan"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelServices": "Layanan Model",
+      "ModelList": "Daftar Model"
+    }
   }
 }
