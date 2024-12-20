@@ -1758,6 +1758,7 @@ const SessionLauncherPage = () => {
                             label={t('session.launcher.EnvironmentVariable')}
                           >
                             {form.getFieldValue('envvars')?.length ? (
+                              // @ts-expect-error
                               <SyntaxHighlighter
                                 style={isDarkMode ? dark : undefined}
                                 codeTagProps={{
