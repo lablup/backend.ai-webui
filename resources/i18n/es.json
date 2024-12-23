@@ -169,7 +169,6 @@
     "DescRequirePasswordChange": "¿Requerir cambio de contraseña?",
     "Description": "Descripción",
     "Domain": "Dominio",
-    "ExportCSVFile": "Exportar archivo CSV",
     "FileName": "Nombre del fichero",
     "FullName": "Nombre y apellidos",
     "Information": "Información",
@@ -210,7 +209,6 @@
     "WarningLessRateLimit": "Si el valor de Rate Limit es pequeño, es posible que se bloqueen operaciones de la API como el inicio de sesión.",
     "active": "activo",
     "concurrentsessions": "Sesiones simultáneas",
-    "exportCSV": "exportar CSV",
     "for900seconds": "durante 900 segundos",
     "validation": {
       "InvalidEmailAddress": "Dirección de correo electrónico no válida.",
@@ -993,8 +991,6 @@
     "CreatedAt": "Creado en",
     "MaxFolderCount": "Número máximo de carpetas",
     "ProjectResourcePolicy": "Política de recursos del proyecto",
-    "NoDataToExport": "Los datos para el extracto CSV no existen.",
-    "ExportCSV": "exportar CSV",
     "Tools": "Herramientas",
     "MemorySizeExceedsLimit": "El tamaño de la memoria debe ser inferior a 300 PiB"
   },
@@ -1043,13 +1039,10 @@
     "CreationFailed": "No se ha podido crear la sesión. Por favor, inténtelo de nuevo en unos minutos.",
     "DefaultTensorboardPath": "/home/trabajo/registros",
     "DescCommitSession": "Está a punto de comprometer el contenedor correspondiente a la sesión siguiente:",
-    "DownloadingCSVFile": "Descargando archivo CSV...",
     "DownloadingSessionLogs": "Descarga de registros de sesión.",
     "ElapsedTime": "Tiempo transcurrido",
     "EnvironmentInfo": "Información medioambiental",
     "ExecuteTerminalApp": "Ejecutar Terminal App",
-    "ExportCSVFile": "Exportar archivo CSV",
-    "ExportSessionListToCSVFile": "Exportar la lista de sesiones a un archivo CSV",
     "Finished": "Terminado",
     "GracePeriod": "Período de gracia",
     "GracePeriodDesc": "El comprobador de inactividad por utilización se activará después de este tiempo de gracia inicial. Durante este tiempo, las sesiones no se terminan aunque la utilización sea baja.",
@@ -1140,7 +1133,6 @@
       "ConnectUrlIsNotValid": "La URL de conexión no es válida."
     },
     "core": "núcleo",
-    "exportCSV": "exportar CSV",
     "launcher": {
       "AIAccelerator": "Acelerador de IA",
       "Accelerator": "Acelerador",

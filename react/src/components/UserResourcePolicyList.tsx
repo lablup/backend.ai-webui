@@ -5,7 +5,6 @@ import {
   localeCompare,
   numberSorterWithInfinityValue,
 } from '../helper';
-import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import Flex from './Flex';
@@ -19,13 +18,12 @@ import {
 import { UserResourcePolicySettingModalFragment$key } from './__generated__/UserResourcePolicySettingModalFragment.graphql';
 import {
   DeleteOutlined,
-  DownOutlined,
   PlusOutlined,
   ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App, Button, Dropdown, Popconfirm, Space, Table, theme } from 'antd';
+import { App, Button, Popconfirm, Table, theme } from 'antd';
 import { ColumnType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
@@ -251,41 +249,11 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
     'UserResourcePolicyList',
   );
 
-  const handleExportCSV = () => {
-    if (
-      !user_resource_policies ||
-      user_resource_policies.length === hiddenColumnKeys?.length
-    ) {
-      message.error(t('resourcePolicy.NoDataToExport'));
-      return;
-    }
-
-    const columnKeys = _.without(
-      _.map(columns, (column) => _.toString(column.key)),
-      'control',
-    );
-    const responseData = _.map(user_resource_policies, (policy) => {
-      return _.pick(
-        policy,
-        columnKeys.map((key) => key as keyof UserResourcePolicies),
-      );
-    });
-
-    exportCSVWithFormattingRules(
-      responseData as UserResourcePolicies[],
-      'user-resource-policies',
-      {
-        max_vfolder_count: (text) => (_.toNumber(text) === 0 ? '-' : text),
-        max_quota_scope_size: (text) => (text === -1 ? '-' : bytesToGB(text)),
-      },
-    );
-  };
-
   return (
     <Flex direction="column" align="stretch">
       <Flex
         direction="row"
-        justify="between"
+        justify="end"
         wrap="wrap"
         gap={'xs'}
         style={{
@@ -294,54 +262,22 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
           paddingRight: token.paddingContentHorizontalSM,
         }}
       >
-        <Flex direction="column" align="start">
-          <Dropdown
-            menu={{
-              items: [
-                {
-                  key: 'exportCSV',
-                  label: t('resourcePolicy.ExportCSV'),
-                  onClick: () => {
-                    handleExportCSV();
-                  },
-                },
-              ],
-            }}
-          >
-            <Button
-              type="link"
-              style={{ padding: 0 }}
-              onClick={(e) => e.preventDefault()}
-            >
-              <Space style={{ color: token.colorLinkHover }}>
-                {t('resourcePolicy.Tools')}
-                <DownOutlined />
-              </Space>
-            </Button>
-          </Dropdown>
-        </Flex>
-        <Flex direction="row" gap={'xs'} wrap="wrap" style={{ flexShrink: 1 }}>
-          <Flex gap={'xs'}>
-            <Button
-              icon={<ReloadOutlined />}
-              loading={isRefetchPending}
-              onClick={() => {
-                startRefetchTransition(() =>
-                  updateUserResourcePolicyFetchKey(),
-                );
-              }}
-            />
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() => {
-                setIsCreatingPolicySetting(true);
-              }}
-            >
-              {t('button.Create')}
-            </Button>
-          </Flex>
-        </Flex>
+        <Button
+          icon={<ReloadOutlined />}
+          loading={isRefetchPending}
+          onClick={() => {
+            startRefetchTransition(() => updateUserResourcePolicyFetchKey());
+          }}
+        />
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={() => {
+            setIsCreatingPolicySetting(true);
+          }}
+        >
+          {t('button.Create')}
+        </Button>
       </Flex>
       <Table
         rowKey="id"

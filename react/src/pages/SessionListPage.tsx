@@ -152,10 +152,6 @@ const SessionListPage: React.FC<PropsWithChildren> = ({ children }) => {
           onTabChange={(key) => setSelectedTab(key as TabKey)}
           tabBarExtraContent={
             <Flex direction="row" gap={'sm'}>
-              {/* <Tooltip title={t("session.exportCSV")}>
-                    <Button icon={<DownloadOutlined />} type="text" />
-                  </Tooltip> */}
-              {/* @ts-ignore */}
               <Button
                 type="primary"
                 icon={<PoweroffOutlined />}

@@ -232,10 +232,6 @@ export const BackendAiStyles = [
       color: var(--token-colorLinkHover, #3e872d);
     }
 
-    a.export-csv {
-      color: var(--token-colorText);
-    }
-
     fieldset {
       padding: 0;
       border: 0;

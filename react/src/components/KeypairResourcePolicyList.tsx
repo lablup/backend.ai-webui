@@ -3,7 +3,6 @@ import {
   UNLIMITED_MAX_CONCURRENT_SESSIONS,
   UNLIMITED_MAX_CONTAINERS_PER_SESSIONS,
 } from '../helper/const-vars';
-import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import Flex from './Flex';
@@ -18,22 +17,12 @@ import {
 import { KeypairResourcePolicySettingModalFragment$key } from './__generated__/KeypairResourcePolicySettingModalFragment.graphql';
 import {
   DeleteOutlined,
-  DownOutlined,
   PlusOutlined,
   ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import {
-  App,
-  Button,
-  Dropdown,
-  Popconfirm,
-  Space,
-  Table,
-  Tag,
-  theme,
-} from 'antd';
+import { App, Button, Popconfirm, Table, Tag, theme } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
@@ -288,46 +277,11 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
     'KeypairResourcePolicyList',
   );
 
-  const handleExportCSV = () => {
-    if (!keypair_resource_policies) {
-      message.error(t('resourcePolicy.NoDataToExport'));
-      return;
-    }
-
-    const columnKeys = _.without(
-      _.map(columns, (column) => _.toString(column.key)),
-      'control',
-    );
-    const responseData = _.map(keypair_resource_policies, (policy) => {
-      return _.pick(
-        policy,
-        columnKeys.map((key) => key as keyof KeypairResourcePolicies),
-      );
-    });
-
-    exportCSVWithFormattingRules(
-      responseData as KeypairResourcePolicies[],
-      'keypair_resource_policies',
-      {
-        total_resource_slots: (text) =>
-          _.isEmpty(text) ? '-' : JSON.stringify(text),
-        max_concurrent_sessions: (text) =>
-          text === UNLIMITED_MAX_CONCURRENT_SESSIONS ? '-' : text,
-        max_containers_per_session: (text) =>
-          text === UNLIMITED_MAX_CONTAINERS_PER_SESSIONS ? '-' : text,
-        idle_timeout: (text) => (text ? text : '-'),
-        max_session_lifetime: (text) => (text ? text : '-'),
-        allowed_vfolder_hosts: (text) =>
-          _.isEmpty(text) ? '-' : _.keys(JSON.parse(text)).join(', '),
-      },
-    );
-  };
-
   return (
     <Flex direction="column" align="stretch">
       <Flex
         direction="row"
-        justify="between"
+        justify="end"
         wrap="wrap"
         gap={'xs'}
         style={{
@@ -336,54 +290,22 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
           paddingRight: token.paddingContentHorizontalSM,
         }}
       >
-        <Flex direction="column" align="start">
-          <Dropdown
-            menu={{
-              items: [
-                {
-                  key: 'exportCSV',
-                  label: t('resourcePolicy.ExportCSV'),
-                  onClick: () => {
-                    handleExportCSV();
-                  },
-                },
-              ],
-            }}
-          >
-            <Button
-              type="link"
-              style={{ padding: 0 }}
-              onClick={(e) => e.preventDefault()}
-            >
-              <Space style={{ color: token.colorLinkHover }}>
-                {t('resourcePolicy.Tools')}
-                <DownOutlined />
-              </Space>
-            </Button>
-          </Dropdown>
-        </Flex>
-        <Flex direction="row" gap={'xs'} wrap="wrap" style={{ flexShrink: 1 }}>
-          <Flex gap={'xs'}>
-            <Button
-              icon={<ReloadOutlined />}
-              loading={isRefetchPending}
-              onClick={() => {
-                startRefetchTransition(() =>
-                  updateKeypairResourcePolicyFetchKey(),
-                );
-              }}
-            />
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() => {
-                setIsCreatingPolicySetting(true);
-              }}
-            >
-              {t('button.Create')}
-            </Button>
-          </Flex>
-        </Flex>
+        <Button
+          icon={<ReloadOutlined />}
+          loading={isRefetchPending}
+          onClick={() => {
+            startRefetchTransition(() => updateKeypairResourcePolicyFetchKey());
+          }}
+        />
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={() => {
+            setIsCreatingPolicySetting(true);
+          }}
+        >
+          {t('button.Create')}
+        </Button>
       </Flex>
       <Table
         columns={

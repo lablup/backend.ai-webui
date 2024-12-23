@@ -554,7 +554,6 @@ const UserCredentialList: React.FC = () => {
           showTotal: (total, range) => {
             return `${range[0]}-${range[1]} of ${total} items`;
           },
-          // TODO: need to set more options to export CSV in current page's data
           pageSizeOptions: ['10', '20', '50'],
           style: { marginRight: token.marginXS },
         }}

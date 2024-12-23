@@ -169,7 +169,6 @@
     "DescRequirePasswordChange": "Vaadi salasanan vaihtamista?",
     "Description": "Kuvaus",
     "Domain": "Verkkotunnus",
-    "ExportCSVFile": "Vie CSV-tiedosto",
     "FileName": "Tiedoston nimi",
     "FullName": "Koko nimi",
     "Information": "Tiedot",
@@ -210,7 +209,6 @@
     "WarningLessRateLimit": "Jos Rate Limit -arvo on pieni, API-toiminnot, kuten kirjautuminen, voivat estyä.",
     "active": "aktiivinen",
     "concurrentsessions": "Samanaikaiset istunnot",
-    "exportCSV": "viedä CSV",
     "for900seconds": "900 sekuntia",
     "validation": {
       "InvalidEmailAddress": "Virheellinen sähköpostiosoite.",
@@ -990,8 +988,6 @@
     "CreatedAt": "Luotu klo",
     "MaxFolderCount": "Kansioiden enimmäismäärä",
     "ProjectResourcePolicy": "Projektin resurssipolitiikka",
-    "NoDataToExport": "CSV-otteen tietoja ei ole olemassa.",
-    "ExportCSV": "vie CSV",
     "Tools": "Työkalut",
     "MemorySizeExceedsLimit": "Muistin koon tulee olla alle 300 PiB"
   },
@@ -1040,13 +1036,10 @@
     "CreationFailed": "Istunnon luominen epäonnistui. Yritä uudelleen muutaman minuutin kuluttua.",
     "DefaultTensorboardPath": "/home/work/logs",
     "DescCommitSession": "Olet aikeissa sitouttaa alla olevaa istuntoa vastaavan kontin:",
-    "DownloadingCSVFile": "CSV-tiedoston lataaminen...",
     "DownloadingSessionLogs": "Istuntolokien lataaminen.",
     "ElapsedTime": "Kulunut aika",
     "EnvironmentInfo": "Ympäristötiedot",
     "ExecuteTerminalApp": "Suorita päätelaitesovellus",
-    "ExportCSVFile": "Vie CSV-tiedosto",
-    "ExportSessionListToCSVFile": "Vie istuntoluettelo CSV-tiedostoon",
     "Finished": "Valmis",
     "GracePeriod": "Karenssiaika",
     "GracePeriodDesc": "Käyttötarkkailu aktivoituu tämän alkuvapauden jälkeen. Tänä aikana istuntoja ei lopeteta, vaikka käyttöaste olisi alhainen.",
@@ -1137,7 +1130,6 @@
       "ConnectUrlIsNotValid": "Yhteyden URL-osoite ei kelpaa."
     },
     "core": "ydin",
-    "exportCSV": "viedä CSV",
     "launcher": {
       "AIAccelerator": "AI-kiihdyttämö",
       "Accelerator": "Kiihdytin",
