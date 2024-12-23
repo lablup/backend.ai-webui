@@ -1243,7 +1243,9 @@
     "RegistryName": "Registry Name",
     "DescRegistryNameIsEmpty": "Registry name is empty",
     "RegistryNameAlreadyExists": "Registry name already exists. Please change the registry name to add.",
-    "Project": "Project"
+    "Project": "Project",
+    "DescExtraJsonFormat": "Please enter validly formatted JSON",
+    "ExtraInformation": "Extra Information"
   },
   "resourceGroup": {
     "ResourceGroups": "Resource Groups",

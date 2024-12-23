@@ -1114,7 +1114,9 @@
     "RegistryName": "Бүртгэлийн нэр",
     "DescRegistryNameIsEmpty": "Бүртгэлийн нэр хоосон байна",
     "RegistryNameAlreadyExists": "Бүртгэлийн нэр аль хэдийн байна. \nНэмэх бүртгэлийн нэрийг өөрчилнө үү.",
-    "Project": "Төсөл"
+    "Project": "Төсөл",
+    "DescExtraJsonFormat": "Зөв форматтай JSON оруулна уу",
+    "ExtraInformation": "Нэмэлт мэдээлэл"
   },
   "resourceGroup": {
     "ResourceGroups": "Нөөцийн бүлгүүд",

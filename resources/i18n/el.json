@@ -1114,7 +1114,9 @@
     "RegistryName": "Όνομα Μητρώου",
     "DescRegistryNameIsEmpty": "Το όνομα μητρώου είναι κενό",
     "RegistryNameAlreadyExists": "Το όνομα μητρώου υπάρχει ήδη. \nΑλλάξτε το όνομα μητρώου για προσθήκη.",
-    "Project": "Σχέδιο"
+    "Project": "Σχέδιο",
+    "DescExtraJsonFormat": "Εισαγάγετε JSON με έγκυρη μορφή",
+    "ExtraInformation": "Επιπλέον Πληροφορίες"
   },
   "resourceGroup": {
     "ResourceGroups": "Ομάδες πόρων",

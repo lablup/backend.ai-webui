@@ -1115,7 +1115,9 @@
     "RegistryName": "Nama Registri",
     "DescRegistryNameIsEmpty": "Nama registri kosong",
     "RegistryNameAlreadyExists": "Nama registri sudah ada. \nSilakan ubah nama registri untuk ditambahkan.",
-    "Project": "Proyek"
+    "Project": "Proyek",
+    "DescExtraJsonFormat": "Silakan masukkan JSON yang diformat secara valid",
+    "ExtraInformation": "Informasi Tambahan"
   },
   "resourceGroup": {
     "ResourceGroups": "Grup Sumber Daya",

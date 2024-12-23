@@ -1114,7 +1114,9 @@
     "RegistryName": "Имя реестра",
     "DescRegistryNameIsEmpty": "Имя реестра пусто",
     "RegistryNameAlreadyExists": "Имя реестра уже существует. \nПожалуйста, измените имя реестра для добавления.",
-    "Project": "Проект"
+    "Project": "Проект",
+    "DescExtraJsonFormat": "Пожалуйста, введите JSON в правильном формате.",
+    "ExtraInformation": "Дополнительная информация"
   },
   "resourceGroup": {
     "ResourceGroups": "Группы ресурсов",

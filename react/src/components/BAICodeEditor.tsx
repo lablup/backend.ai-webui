@@ -4,8 +4,8 @@ import CodeMirror, { ReactCodeMirrorProps } from '@uiw/react-codemirror';
 import { EditorView } from '@uiw/react-codemirror';
 
 interface BAICodeEditorProps extends Omit<ReactCodeMirrorProps, 'language'> {
-  value: string;
-  onChange: (value: string) => void;
+  value?: string;
+  onChange?: (value: string) => void;
   language: LanguageName;
   editable?: boolean;
   showLineNumbers?: boolean;
@@ -39,9 +39,9 @@ const BAICodeEditor: React.FC<BAICodeEditorProps> = ({
       basicSetup={{
         lineNumbers: showLineNumbers,
       }}
-      {...CodeMirrorProps}
       value={script}
       onChange={(value, viewUpdate) => setScript(value)}
+      {...CodeMirrorProps}
     />
   );
 };

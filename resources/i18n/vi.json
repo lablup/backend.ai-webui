@@ -1114,7 +1114,9 @@
     "RegistryName": "Tên đăng ký",
     "DescRegistryNameIsEmpty": "Tên đăng ký trống",
     "RegistryNameAlreadyExists": "Tên đăng ký đã tồn tại. \nVui lòng thay đổi tên đăng ký để thêm.",
-    "Project": "Dự án"
+    "Project": "Dự án",
+    "DescExtraJsonFormat": "Vui lòng nhập JSON được định dạng hợp lệ",
+    "ExtraInformation": "Thông tin bổ sung"
   },
   "resourceGroup": {
     "ResourceGroups": "Nhóm tài nguyên",

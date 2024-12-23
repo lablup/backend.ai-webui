@@ -1114,7 +1114,9 @@
     "RegistryName": "Registrierungsname",
     "DescRegistryNameIsEmpty": "Der Registrierungsname ist leer",
     "RegistryNameAlreadyExists": "Der Registrierungsname ist bereits vorhanden. \nBitte ändern Sie den hinzuzufügenden Registrierungsnamen.",
-    "Project": "Projekt"
+    "Project": "Projekt",
+    "DescExtraJsonFormat": "Bitte geben Sie gültig formatiertes JSON ein",
+    "ExtraInformation": "Zusätzliche Informationen"
   },
   "resourceGroup": {
     "ResourceGroups": "Ressourcengruppen",

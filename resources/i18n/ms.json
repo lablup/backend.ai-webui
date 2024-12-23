@@ -1114,7 +1114,9 @@
     "RegistryName": "Nama Pendaftaran",
     "DescRegistryNameIsEmpty": "Nama pendaftaran kosong",
     "RegistryNameAlreadyExists": "Nama pendaftaran sudah wujud. \nSila tukar nama pendaftaran untuk ditambahkan.",
-    "Project": "Projek"
+    "Project": "Projek",
+    "DescExtraJsonFormat": "Sila masukkan JSON yang diformatkan dengan sah",
+    "ExtraInformation": "Maklumat Tambahan"
   },
   "resourceGroup": {
     "ResourceGroups": "Kumpulan Sumber",

@@ -905,7 +905,9 @@
     "RegistryName": "Nombre de registro",
     "DescRegistryNameIsEmpty": "El nombre del registro está vacío",
     "RegistryNameAlreadyExists": "El nombre del registro ya existe. \nCambie el nombre del registro para agregar.",
-    "Project": "Proyecto"
+    "Project": "Proyecto",
+    "DescExtraJsonFormat": "Por favor ingrese JSON con formato válido",
+    "ExtraInformation": "Información adicional"
   },
   "resourceGroup": {
     "Active": "Activo",
