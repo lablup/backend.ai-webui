@@ -185,214 +185,165 @@ const ResourceAllocationFormItems: React.FC<
     });
   });
 
-  const updateAllocationPresetBasedOnResourceGroup = useEventNotStable(() => {
-    if (
-      _.includes(
-        ['custom', 'minimum-required'],
-        form.getFieldValue('allocationPreset'),
-      )
-    ) {
-      // if the current preset is custom or minimum-required, do nothing.
-    } else {
-      if (
-        allocatablePresetNames.includes(form.getFieldValue('allocationPreset'))
-      ) {
-        // if the current preset is available in the current resource group, do nothing.
-      } else if (enableResourcePresets && allocatablePresetNames[0]) {
-        const autoSelectedPreset = _.sortBy(allocatablePresetNames)[0];
-        form.setFieldsValue({
-          allocationPreset: autoSelectedPreset,
-        });
-        updateResourceFieldsBasedOnPreset(autoSelectedPreset);
-      } else {
-        // if the current preset is not available in the current resource group, set to custom
-        form.setFieldsValue({
-          allocationPreset: 'custom',
-        });
-      }
-    }
-    ensureValidAcceleratorType();
-    form
-      .validateFields(['resource'], {
-        recursive: true,
-      })
-      .catch(() => {});
-  });
+  const updateResourceFieldsBasedOnImage = useEventNotStable(
+    (force?: boolean) => {
+      // when image changed, set value of resources to min value only if it's larger than current value
+      const minimumResources: Partial<ResourceAllocationFormValue['resource']> =
+        {
+          cpu: resourceLimits.cpu?.min,
+          mem:
+            convertBinarySizeUnit(
+              (convertBinarySizeUnit(resourceLimits.shmem?.min, 'm')?.number ||
+                0) +
+                (convertBinarySizeUnit(resourceLimits.mem?.min, 'm')?.number ||
+                  0) +
+                'm',
+              'g',
+            )?.number + 'g', //to prevent loosing precision
+        };
 
-  useEffect(() => {
-    if (currentAllocationPreset === 'auto-select') {
-      currentResourceGroupInForm &&
-        updateAllocationPresetBasedOnResourceGroup();
-    }
-  }, [
-    currentResourceGroupInForm,
-    updateAllocationPresetBasedOnResourceGroup,
-    currentAllocationPreset,
-  ]);
-  // update allocation preset based on resource group and current image
-  useEffect(() => {
-    currentResourceGroupInForm && updateAllocationPresetBasedOnResourceGroup();
-  }, [
-    currentResourceGroupInForm,
-    updateAllocationPresetBasedOnResourceGroup,
-    currentImage,
-  ]);
-
-  const updateResourceFieldsBasedOnImage = (force?: boolean) => {
-    // when image changed, set value of resources to min value only if it's larger than current value
-    const minimumResources: Partial<ResourceAllocationFormValue['resource']> = {
-      cpu: resourceLimits.cpu?.min,
-      mem:
-        convertBinarySizeUnit(
-          (convertBinarySizeUnit(resourceLimits.shmem?.min, 'm')?.number || 0) +
-            (convertBinarySizeUnit(resourceLimits.mem?.min, 'm')?.number || 0) +
-            'm',
-          'g',
-        )?.number + 'g', //to prevent loosing precision
-    };
-
-    // NOTE: accelerator value setting is done inside the conditional statement
-    if (currentImageAcceleratorLimits.length > 0) {
-      if (
-        _.find(
-          currentImageAcceleratorLimits,
-          (limit) =>
-            limit?.key === form.getFieldValue(['resource', 'acceleratorType']),
-        )
-      ) {
-        // if current selected accelerator type is supported in the selected image,
-        minimumResources.acceleratorType = form.getFieldValue([
-          'resource',
-          'acceleratorType',
-        ]);
-        minimumResources.accelerator =
-          resourceLimits.accelerators[
-            form.getFieldValue(['resource', 'acceleratorType'])
-          ]?.min;
-      } else {
-        // if current selected accelerator type is not supported in the selected image,
-        // change accelerator type to the first supported accelerator type.
-        const nextImageSelectorType: string | undefined | null = // NOTE:
-          // filter from resourceSlots since resourceSlots and supported image could be non-identical.
-          // resourceSlots returns "all resources enable to allocate(including AI accelerator)"
-          // imageAcceleratorLimit returns "all resources that is supported in the selected image"
-          _.filter(currentImageAcceleratorLimits, (acceleratorInfo: any) =>
-            _.keys(resourceSlots).includes(acceleratorInfo?.key),
-          )[0]?.key;
-
-        if (nextImageSelectorType) {
+      // NOTE: accelerator value setting is done inside the conditional statement
+      if (currentImageAcceleratorLimits.length > 0) {
+        if (
+          _.find(
+            currentImageAcceleratorLimits,
+            (limit) =>
+              limit?.key ===
+              form.getFieldValue(['resource', 'acceleratorType']),
+          )
+        ) {
+          // if current selected accelerator type is supported in the selected image,
+          minimumResources.acceleratorType = form.getFieldValue([
+            'resource',
+            'acceleratorType',
+          ]);
           minimumResources.accelerator =
-            resourceLimits.accelerators[nextImageSelectorType]?.min;
-          minimumResources.acceleratorType = nextImageSelectorType;
+            resourceLimits.accelerators[
+              form.getFieldValue(['resource', 'acceleratorType'])
+            ]?.min;
+        } else {
+          // if current selected accelerator type is not supported in the selected image,
+          // change accelerator type to the first supported accelerator type.
+          const nextImageSelectorType: string | undefined | null = // NOTE:
+            // filter from resourceSlots since resourceSlots and supported image could be non-identical.
+            // resourceSlots returns "all resources enable to allocate(including AI accelerator)"
+            // imageAcceleratorLimit returns "all resources that is supported in the selected image"
+            _.filter(currentImageAcceleratorLimits, (acceleratorInfo: any) =>
+              _.keys(resourceSlots).includes(acceleratorInfo?.key),
+            )[0]?.key;
+
+          if (nextImageSelectorType) {
+            minimumResources.accelerator =
+              resourceLimits.accelerators[nextImageSelectorType]?.min;
+            minimumResources.acceleratorType = nextImageSelectorType;
+          }
         }
+      } else {
+        minimumResources.accelerator = 0;
       }
-    } else {
-      minimumResources.accelerator = 0;
-    }
 
-    if (!forceImageMinValues && !force) {
-      // delete keys that is not less than current value
-      (['cpu', 'accelerator'] as const).forEach((key) => {
-        const minNum = minimumResources[key];
-        if (
-          _.isNumber(minNum) &&
-          minNum < form.getFieldValue(['resource', key])
-        ) {
-          delete minimumResources[key];
-        }
+      if (!forceImageMinValues && !force) {
+        // delete keys that is not less than current value
+        (['cpu', 'accelerator'] as const).forEach((key) => {
+          const minNum = minimumResources[key];
+          if (
+            _.isNumber(minNum) &&
+            minNum < form.getFieldValue(['resource', key])
+          ) {
+            delete minimumResources[key];
+          }
+        });
+        (['mem', 'shmem'] as const).forEach((key) => {
+          const minNumStr = minimumResources[key];
+          if (
+            _.isString(minNumStr) &&
+            compareNumberWithUnits(
+              minNumStr,
+              form.getFieldValue(['resource', key]),
+            ) < 0
+          ) {
+            delete minimumResources[key];
+          }
+        });
+      }
+
+      form.setFieldsValue({
+        resource: {
+          ...minimumResources,
+        },
       });
-      (['mem', 'shmem'] as const).forEach((key) => {
-        const minNumStr = minimumResources[key];
-        if (
-          _.isString(minNumStr) &&
-          compareNumberWithUnits(
-            minNumStr,
-            form.getFieldValue(['resource', key]),
-          ) < 0
-        ) {
-          delete minimumResources[key];
-        }
-      });
-    }
 
-    form.setFieldsValue({
-      resource: {
-        ...minimumResources,
-      },
-    });
+      // set to 0 when currentImage doesn't support any AI accelerator
+      if (currentImage && currentImageAcceleratorLimits.length === 0) {
+        form.setFieldValue(['resource', 'accelerator'], 0);
+      }
 
-    // set to 0 when currentImage doesn't support any AI accelerator
-    if (currentImage && currentImageAcceleratorLimits.length === 0) {
-      form.setFieldValue(['resource', 'accelerator'], 0);
-    }
+      if (form.getFieldValue('enabledAutomaticShmem')) {
+        runShmemAutomationRule(form.getFieldValue(['resource', 'mem']) || '0g');
+      }
+      form
+        .validateFields(['resource'], {
+          recursive: true,
+        })
+        .catch(() => {});
+    },
+  );
 
-    if (form.getFieldValue('enabledAutomaticShmem')) {
-      runShmemAutomationRule(form.getFieldValue(['resource', 'mem']) || '0g');
-    }
-    form
-      .validateFields(['resource'], {
-        recursive: true,
-      })
-      .catch(() => {});
-  };
+  const updateResourceFieldsBasedOnPreset = useEventNotStable(
+    (name: string) => {
+      const preset = _.find(
+        checkPresetInfo?.presets,
+        (preset) => preset.name === name,
+      );
+      const slots = _.pick(preset?.resource_slots, _.keys(resourceSlots));
+      const mem = convertBinarySizeUnit(
+        (slots?.mem || 0) + 'b',
+        'g',
+        2,
+      )?.numberUnit;
+      const acceleratorObj = _.omit(slots, ['cpu', 'mem', 'shmem']);
 
-  useEffect(() => {
-    updateResourceFieldsBasedOnImage();
-    // When the currentImage is changed, execute the latest updateResourceFieldsBasedOnImage function.
-    // So we don't need to add `updateResourceFieldsBasedOnImage` to the dependencies.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentImage]);
+      // Select the first matched AI accelerator type and value
+      const firstMatchedAcceleratorType = _.find(
+        _.keys(acceleratorSlots),
+        (value) => acceleratorObj[value] !== undefined,
+      );
 
-  const updateResourceFieldsBasedOnPreset = (name: string) => {
-    const preset = _.find(
-      checkPresetInfo?.presets,
-      (preset) => preset.name === name,
-    );
-    const slots = _.pick(preset?.resource_slots, _.keys(resourceSlots));
-    const mem = convertBinarySizeUnit(
-      (slots?.mem || 0) + 'b',
-      'g',
-      2,
-    )?.numberUnit;
-    const acceleratorObj = _.omit(slots, ['cpu', 'mem', 'shmem']);
-
-    // Select the first matched AI accelerator type and value
-    const firstMatchedAcceleratorType = _.find(
-      _.keys(acceleratorSlots),
-      (value) => acceleratorObj[value] !== undefined,
-    );
-
-    let acceleratorSetting: {
-      acceleratorType?: string;
-      accelerator: number;
-    } = {
-      accelerator: 0,
-    };
-    if (firstMatchedAcceleratorType) {
-      acceleratorSetting = {
-        acceleratorType: firstMatchedAcceleratorType,
-        accelerator: Number(acceleratorObj[firstMatchedAcceleratorType] || 0),
+      let acceleratorSetting: {
+        acceleratorType?: string;
+        accelerator: number;
+      } = {
+        accelerator: 0,
       };
-    }
-    form.setFieldsValue({
-      resource: {
-        // ...slots,
-        ...acceleratorSetting,
-        // transform to GB based on preset values
-        mem,
-        shmem: convertBinarySizeUnit((preset?.shared_memory || 0) + 'b', 'g', 2)
-          ?.numberUnit,
-        cpu: parseInt(slots?.cpu || '0') || 0,
-      },
-    });
-    runShmemAutomationRule(mem || '0g');
+      if (firstMatchedAcceleratorType) {
+        acceleratorSetting = {
+          acceleratorType: firstMatchedAcceleratorType,
+          accelerator: Number(acceleratorObj[firstMatchedAcceleratorType] || 0),
+        };
+      }
+      form.setFieldsValue({
+        resource: {
+          // ...slots,
+          ...acceleratorSetting,
+          // transform to GB based on preset values
+          mem,
+          shmem: convertBinarySizeUnit(
+            (preset?.shared_memory || 0) + 'b',
+            'g',
+            2,
+          )?.numberUnit,
+          cpu: parseInt(slots?.cpu || '0') || 0,
+        },
+      });
+      runShmemAutomationRule(mem || '0g');
 
-    form
-      .validateFields(['resource'], {
-        recursive: true,
-      })
-      .catch(() => {});
-  };
+      form
+        .validateFields(['resource'], {
+          recursive: true,
+        })
+        .catch(() => {});
+    },
+  );
 
   const runShmemAutomationRule = (M_plus_S: string) => {
     // if M+S > 4G, S can be 1G regard to current image's minimum mem(M)
@@ -412,6 +363,70 @@ const ResourceAllocationFormItems: React.FC<
       form.setFieldValue(['resource', 'shmem'], AUTOMATIC_DEFAULT_SHMEM);
     }
   };
+
+  // This effect is
+  // - for auto selecting the preset right after initialling the form and resourceSlots are loaded
+  // - ensuring accelerator type is valid when related data is changed
+  useEffect(() => {
+    // `auto-select` is the initial value of the form
+    // if resourceSlots is loaded, update the form based on the resourceSlots
+    if (
+      currentAllocationPreset === 'auto-select' &&
+      !_.isUndefined(resourceSlots)
+    ) {
+      if (
+        _.includes(
+          ['custom', 'minimum-required'],
+          form.getFieldValue('allocationPreset'),
+        )
+      ) {
+        // if the current preset is custom or minimum-required, do nothing.
+      } else {
+        if (
+          allocatablePresetNames.includes(
+            form.getFieldValue('allocationPreset'),
+          )
+        ) {
+          // if the current preset is available in the current resource group, do nothing.
+        } else if (enableResourcePresets && allocatablePresetNames[0]) {
+          const autoSelectedPreset = _.sortBy(allocatablePresetNames)[0];
+          form.setFieldsValue({
+            allocationPreset: autoSelectedPreset,
+          });
+          updateResourceFieldsBasedOnPreset(autoSelectedPreset);
+        } else {
+          // if the current preset is not available in the current resource group, set to custom
+          form.setFieldsValue({
+            allocationPreset: 'custom',
+          });
+        }
+      }
+      ensureValidAcceleratorType();
+      form
+        .validateFields(['resource'], {
+          recursive: true,
+        })
+        .catch(() => {});
+    } else {
+      ensureValidAcceleratorType();
+    }
+  }, [
+    currentAllocationPreset,
+    allocatablePresetNames,
+    resourceSlots,
+    form,
+    enableResourcePresets,
+    // below are functions wrapped by useEventNotStable
+    ensureValidAcceleratorType,
+    updateResourceFieldsBasedOnPreset,
+  ]);
+
+  // This effect is for auto updating the resource fields when minimum-required preset is selected
+  useEffect(() => {
+    if (currentAllocationPreset === 'minimum-required') {
+      updateResourceFieldsBasedOnImage(true);
+    }
+  }, [currentImage, currentAllocationPreset, updateResourceFieldsBasedOnImage]);
 
   return (
     <>
@@ -445,7 +460,7 @@ const ResourceAllocationFormItems: React.FC<
                   break;
                 case 'minimum-required':
                   form.setFieldValue('enabledAutomaticShmem', true);
-                  updateResourceFieldsBasedOnImage(true);
+                  // updating resource fields based on preset is handled in useEffect because it has another dependency(image).
                   break;
                 default:
                   form.setFieldValue('enabledAutomaticShmem', true);

@@ -206,7 +206,7 @@ const SessionLauncherPage = () => {
     () => ({
       sessionType: 'interactive',
       // If you set `allocationPreset` to 'custom', `allocationPreset` is not changed automatically any more.
-      allocationPreset: 'auto-preset',
+      allocationPreset: 'auto-select',
       hpcOptimization: {
         autoEnabled: true,
         OMP_NUM_THREADS: '1',
