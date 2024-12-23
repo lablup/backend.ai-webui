@@ -1752,5 +1752,10 @@
     "hour": "小时",
     "day": "day",
     "week": "星期"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelList": "型号列表"
+    }
   }
 }
