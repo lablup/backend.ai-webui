@@ -13,6 +13,7 @@ import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 // import { getSortOrderByName } from '../hooks/reactPaginationQueryOptions';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import {
   EndpointListPageQuery,
   EndpointListPageQuery$data,
@@ -25,8 +26,7 @@ import {
   ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import { useRafInterval } from 'ahooks';
-import { useLocalStorageState } from 'ahooks';
+import { useRafInterval, useToggle } from 'ahooks';
 import { Button, Table, Typography, theme, Radio, App } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
@@ -71,7 +71,8 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const webuiNavigate = useWebUINavigate();
   const { token } = theme.useToken();
   const curProject = useCurrentProjectValue();
-  const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
+  const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
+    useToggle();
   const [selectedLifecycleStage, setSelectedLifecycleStage] =
     useState<LifecycleStage>('created&destroying');
   const deferredSelectedLifecycleStage = useDeferredValue(
@@ -311,12 +312,8 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
         ),
     },
   ];
-  const [displayedColumnKeys, setDisplayedColumnKeys] = useLocalStorageState(
-    'backendaiwebui.EndpointListPage.displayedColumnKeys',
-    {
-      defaultValue: columns.map((column) => _.toString(column.key)),
-    },
-  );
+  const [hiddenColumnKeys, setHiddenColumnKeys] =
+    useHiddenColumnKeysSetting('EndpointListPage');
 
   useRafInterval(() => {
     startTransitionWithoutPendingState(() => {
@@ -537,8 +534,9 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
         scroll={{ x: 'max-content' }}
         rowKey={'endpoint_id'}
         dataSource={(sortedEndpointList || []) as Endpoint[]}
-        columns={columns.filter((column) =>
-          displayedColumnKeys?.includes(_.toString(column.key)),
+        columns={_.filter(
+          columns,
+          (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),
         )}
         pagination={{
           pageSize: paginationState.pageSize,
@@ -565,19 +563,24 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
           type="text"
           icon={<SettingOutlined />}
           onClick={() => {
-            setIsOpenColumnsSetting(true);
+            toggleColumnSettingModal();
           }}
         />
       </Flex>
       <TableColumnsSettingModal
-        open={isOpenColumnsSetting}
+        open={visibleColumnSettingModal}
         onRequestClose={(values) => {
           values?.selectedColumnKeys &&
-            setDisplayedColumnKeys(values?.selectedColumnKeys);
-          setIsOpenColumnsSetting(!isOpenColumnsSetting);
+            setHiddenColumnKeys(
+              _.difference(
+                columns.map((column) => _.toString(column.key)),
+                values?.selectedColumnKeys,
+              ),
+            );
+          toggleColumnSettingModal();
         }}
         columns={columns}
-        displayedColumnKeys={displayedColumnKeys ? displayedColumnKeys : []}
+        hiddenColumnKeys={hiddenColumnKeys}
       />
     </Flex>
   );

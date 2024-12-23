@@ -5,6 +5,7 @@ import {
 } from '../helper/const-vars';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import Flex from './Flex';
 import KeypairResourcePolicySettingModal from './KeypairResourcePolicySettingModal';
 import ResourceNumber from './ResourceNumber';
@@ -22,7 +23,7 @@ import {
   ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import { useLocalStorageState } from 'ahooks';
+import { useToggle } from 'ahooks';
 import {
   App,
   Button,
@@ -57,7 +58,8 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
   const [keypairResourcePolicyFetchKey, updateKeypairResourcePolicyFetchKey] =
     useUpdatableState('initial-fetch');
   const [isRefetchPending, startRefetchTransition] = useTransition();
-  const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
+  const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
+    useToggle();
   const [isCreatingPolicySetting, setIsCreatingPolicySetting] = useState(false);
   const [inFlightResourcePolicyName, setInFlightResourcePolicyName] =
     useState<string>();
@@ -282,11 +284,8 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
     },
   ];
 
-  const [displayedColumnKeys, setDisplayedColumnKeys] = useLocalStorageState(
-    'backendaiwebui.KeypairResourcePolicyList.displayedColumnKeys',
-    {
-      defaultValue: columns.map((column) => _.toString(column.key)),
-    },
+  const [hiddenColumnKeys, setHiddenColumnKeys] = useHiddenColumnKeysSetting(
+    'KeypairResourcePolicyList',
   );
 
   const handleExportCSV = () => {
@@ -295,11 +294,14 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
       return;
     }
 
-    const columnkeys = _.without(displayedColumnKeys, 'control');
+    const columnKeys = _.without(
+      _.map(columns, (column) => _.toString(column.key)),
+      'control',
+    );
     const responseData = _.map(keypair_resource_policies, (policy) => {
       return _.pick(
         policy,
-        columnkeys.map((key) => key as keyof KeypairResourcePolicies),
+        columnKeys.map((key) => key as keyof KeypairResourcePolicies),
       );
     });
 
@@ -385,8 +387,9 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
       </Flex>
       <Table
         columns={
-          columns.filter((column) =>
-            displayedColumnKeys?.includes(_.toString(column.key)),
+          _.filter(
+            columns,
+            (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),
           ) as ColumnType<AnyObject>[]
         }
         dataSource={
@@ -407,19 +410,24 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
           type="text"
           icon={<SettingOutlined />}
           onClick={() => {
-            setIsOpenColumnsSetting(true);
+            toggleColumnSettingModal();
           }}
         />
       </Flex>
       <TableColumnsSettingModal
-        open={isOpenColumnsSetting}
+        open={visibleColumnSettingModal}
         onRequestClose={(values) => {
           values?.selectedColumnKeys &&
-            setDisplayedColumnKeys(values?.selectedColumnKeys);
-          setIsOpenColumnsSetting(false);
+            setHiddenColumnKeys(
+              _.difference(
+                columns.map((column) => _.toString(column.key)),
+                values?.selectedColumnKeys,
+              ),
+            );
+          toggleColumnSettingModal();
         }}
         columns={columns}
-        displayedColumnKeys={displayedColumnKeys ? displayedColumnKeys : []}
+        hiddenColumnKeys={hiddenColumnKeys}
       />
       <Suspense>
         <KeypairResourcePolicySettingModal

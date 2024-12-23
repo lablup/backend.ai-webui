@@ -2,6 +2,7 @@ import { filterNonNullItems, transformSorterToOrderString } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
+import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal from './BAIModal';
 import BAIPropertyFilter from './BAIPropertyFilter';
@@ -23,7 +24,7 @@ import {
   SettingOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
-import { useLocalStorageState, useToggle } from 'ahooks';
+import { useToggle } from 'ahooks';
 import {
   Button,
   Form,
@@ -441,11 +442,8 @@ const ContainerRegistryList: React.FC<{
     },
   ];
 
-  const [displayedColumnKeys, setDisplayedColumnKeys] = useLocalStorageState(
-    'backendaiwebui.ContainerRegistryList.displayedColumnKeys',
-    {
-      defaultValue: _.map(columns, (column) => _.toString(column.key)),
-    },
+  const [hiddenColumnKeys, setHiddenColumnKeys] = useHiddenColumnKeysSetting(
+    'ContainerRegistryList',
   );
 
   return (
@@ -541,8 +539,9 @@ const ContainerRegistryList: React.FC<{
         }}
         dataSource={filterNonNullItems(containerRegistries)}
         columns={
-          _.filter(columns, (column) =>
-            _.includes(displayedColumnKeys, _.toString(column.key)),
+          _.filter(
+            columns,
+            (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),
           ) as ColumnType<AnyObject>[]
         }
       />
@@ -688,11 +687,16 @@ const ContainerRegistryList: React.FC<{
         open={visibleColumnSettingModal}
         onRequestClose={(values) => {
           values?.selectedColumnKeys &&
-            setDisplayedColumnKeys(values?.selectedColumnKeys);
+            setHiddenColumnKeys(
+              _.difference(
+                columns.map((column) => _.toString(column.key)),
+                values?.selectedColumnKeys,
+              ),
+            );
           toggleColumnSettingModal();
         }}
         columns={columns}
-        displayedColumnKeys={displayedColumnKeys ? displayedColumnKeys : []}
+        hiddenColumnKeys={hiddenColumnKeys}
       />
     </Flex>
   );

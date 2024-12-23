@@ -1,4 +1,5 @@
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import BAIModal from './BAIModal';
 import Flex from './Flex';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
@@ -10,7 +11,7 @@ import {
   LoadingOutlined,
   ReloadOutlined,
 } from '@ant-design/icons';
-import { useLocalStorageState } from 'ahooks';
+import { useToggle } from 'ahooks';
 import { Button, Typography, Table, Alert, Checkbox, Input, theme } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
@@ -37,7 +38,8 @@ const ErrorLogList: React.FC<{
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [isOpenClearLogsModal, setIsOpenClearLogsModal] = useState(false);
-  const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
+  const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
+    useToggle();
   const [checkedShowOnlyError, setCheckedShowOnlyError] = useState(false);
   const [logSearch, setLogSearch] = useState('');
   const [updateKey, checkUpdateKey] = useUpdatableState('first');
@@ -167,12 +169,8 @@ const ErrorLogList: React.FC<{
     },
   ];
 
-  const [displayedColumnKeys, setDisplayedColumnKeys] = useLocalStorageState(
-    'backendaiwebui.ErrorLogList.displayedColumnKeys',
-    {
-      defaultValue: columns.map((column) => _.toString(column.key)),
-    },
-  );
+  const [hiddenColumnKeys, setHiddenColumnKeys] =
+    useHiddenColumnKeysSetting('ErrorLogList');
 
   const storageLogData = useMemo(() => {
     const raw: LogType[] = JSON.parse(
@@ -286,8 +284,9 @@ const ErrorLogList: React.FC<{
               })
             : (filteredLogData as LogType[])
         }
-        columns={columns.filter((column) =>
-          displayedColumnKeys?.includes(_.toString(column.key)),
+        columns={_.filter(
+          columns,
+          (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),
         )}
         onRow={(record) => {
           return {
@@ -299,13 +298,14 @@ const ErrorLogList: React.FC<{
         justify="end"
         style={{
           paddingRight: token.paddingXS,
+          paddingBottom: token.paddingXS,
         }}
       >
         <Button
           type="text"
           icon={<SettingOutlined />}
           onClick={() => {
-            setIsOpenColumnsSetting(true);
+            toggleColumnSettingModal();
           }}
         />
       </Flex>
@@ -328,14 +328,19 @@ const ErrorLogList: React.FC<{
         <Alert message={t('dialog.warning.CannotBeUndone')} type="warning" />
       </BAIModal>
       <TableColumnsSettingModal
-        open={isOpenColumnsSetting}
+        open={visibleColumnSettingModal}
         onRequestClose={(values) => {
           values?.selectedColumnKeys &&
-            setDisplayedColumnKeys(values?.selectedColumnKeys);
-          setIsOpenColumnsSetting(false);
+            setHiddenColumnKeys(
+              _.difference(
+                columns.map((column) => _.toString(column.key)),
+                values?.selectedColumnKeys,
+              ),
+            );
+          toggleColumnSettingModal();
         }}
         columns={columns}
-        displayedColumnKeys={displayedColumnKeys ? displayedColumnKeys : []}
+        hiddenColumnKeys={hiddenColumnKeys}
       />
     </Flex>
   );

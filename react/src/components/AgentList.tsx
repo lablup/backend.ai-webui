@@ -8,6 +8,7 @@ import {
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
+import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import { useThemeMode } from '../hooks/useThemeMode';
 import AgentDetailModal from './AgentDetailModal';
 import AgentSettingModal from './AgentSettingModal';
@@ -32,7 +33,7 @@ import {
   ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import { useLocalStorageState } from 'ahooks';
+import { useToggle } from 'ahooks';
 import {
   Button,
   Segmented,
@@ -71,7 +72,8 @@ const AgentList: React.FC<AgentListProps> = ({
     useState<AgentDetailModalFragment$key | null>();
   const [currentSettingAgent, setCurrentSettingAgent] =
     useState<AgentSettingModalFragment$key | null>();
-  const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
+  const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
+    useToggle();
   const baiClient = useSuspendedBackendaiClient();
   const [isPendingStatusFetch, startStatusFetchTransition] = useTransition();
   const [isPendingRefresh, startRefreshTransition] = useTransition();
@@ -756,12 +758,9 @@ const AgentList: React.FC<AgentListProps> = ({
       },
     },
   ];
-  const [displayedColumnKeys, setDisplayedColumnKeys] = useLocalStorageState(
-    'backendaiwebui.AgentList.displayedColumnKeys',
-    {
-      defaultValue: columns.map((column) => _.toString(column.key)),
-    },
-  );
+
+  const [hiddenColumnKeys, setHiddenColumnKeys] =
+    useHiddenColumnKeysSetting('AgentList');
 
   return (
     <Flex direction="column" align="stretch" style={containerStyle}>
@@ -855,8 +854,9 @@ const AgentList: React.FC<AgentListProps> = ({
         dataSource={filterNonNullItems(agent_list?.items)}
         showSorterTooltip={false}
         columns={
-          _.filter(columns, (column) =>
-            displayedColumnKeys?.includes(_.toString(column.key)),
+          _.filter(
+            columns,
+            (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),
           ) as ColumnType<AnyObject>[]
         }
         pagination={{
@@ -898,7 +898,7 @@ const AgentList: React.FC<AgentListProps> = ({
           type="text"
           icon={<SettingOutlined />}
           onClick={() => {
-            setIsOpenColumnsSetting(true);
+            toggleColumnSettingModal();
           }}
         />
       </Flex>
@@ -918,14 +918,19 @@ const AgentList: React.FC<AgentListProps> = ({
         }}
       />
       <TableColumnsSettingModal
-        open={isOpenColumnsSetting}
+        open={visibleColumnSettingModal}
         onRequestClose={(values) => {
           values?.selectedColumnKeys &&
-            setDisplayedColumnKeys(values?.selectedColumnKeys);
-          setIsOpenColumnsSetting(false);
+            setHiddenColumnKeys(
+              _.difference(
+                columns.map((column) => _.toString(column.key)),
+                values?.selectedColumnKeys,
+              ),
+            );
+          toggleColumnSettingModal();
         }}
         columns={columns}
-        displayedColumnKeys={displayedColumnKeys ? displayedColumnKeys : []}
+        hiddenColumnKeys={hiddenColumnKeys}
       />
     </Flex>
   );
