@@ -225,7 +225,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
         if (user) {
           const props: ModifyUserInput = _.omitBy(
             _.omit(values, ['email', 'password_confirm']),
-            _.isEmpty,
+            _.isNil,
           );
           commitModifyUserSetting({
             variables: {
