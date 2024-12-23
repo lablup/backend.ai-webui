@@ -261,6 +261,9 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         globalThis.backendaiclient.supports('prepared-session-status')
           ? 'PREPARED'
           : undefined,
+        globalThis.backendaiclient.supports('creating-session-status')
+          ? 'CREATING'
+          : undefined,
         'PREPARING',
         'PULLING',
       ]
@@ -274,6 +277,9 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         'PENDING',
         globalThis.backendaiclient.supports('prepared-session-status')
           ? 'PREPARED'
+          : undefined,
+        globalThis.backendaiclient.supports('creating-session-status')
+          ? 'CREATING'
           : undefined,
         'PREPARING',
         'PULLING',
