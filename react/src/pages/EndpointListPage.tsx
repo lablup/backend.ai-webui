@@ -153,7 +153,10 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
             type="text"
             icon={<SettingOutlined />}
             style={
-              isDestroyingStatus(row?.desired_session_count, row?.status) ||
+              isDestroyingStatus(
+                row?.desired_session_count ?? row?.replicas,
+                row?.status,
+              ) ||
               (!!row.created_user_email &&
                 row.created_user_email !== currentUser.email)
                 ? {
@@ -164,7 +167,10 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   }
             }
             disabled={
-              isDestroyingStatus(row?.desired_session_count, row?.status) ||
+              isDestroyingStatus(
+                row?.desired_session_count ?? row?.replicas,
+                row?.status,
+              ) ||
               (!!row.created_user_email &&
                 row.created_user_email !== currentUser.email)
             }
@@ -177,7 +183,10 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
             icon={
               <DeleteOutlined
                 style={
-                  isDestroyingStatus(row?.desired_session_count, row?.status)
+                  isDestroyingStatus(
+                    row?.desired_session_count ?? row?.replicas,
+                    row?.status,
+                  )
                     ? undefined
                     : {
                         color: token.colorError,
@@ -190,7 +199,7 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
               optimisticDeletingId === row.endpoint_id
             }
             disabled={isDestroyingStatus(
-              row?.desired_session_count,
+              row?.desired_session_count ?? row?.replicas,
               row?.status,
             )}
             onClick={() => {
@@ -274,7 +283,9 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
     },
     {
       title: t('modelService.DesiredSessionCount'),
-      dataIndex: 'desired_session_count',
+      dataIndex: baiClient.isManagerVersionCompatibleWith('24.12.0')
+        ? 'replicas'
+        : 'desired_session_count',
       key: 'desiredSessionCount',
       render: (desired_session_count) => {
         return desired_session_count < 0 ? '-' : desired_session_count;
@@ -349,7 +360,10 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
               url
               open_to_public
               created_at @since(version: "23.09.0")
-              desired_session_count @required(action: NONE)
+              desired_session_count
+                @required(action: NONE)
+                @deprecatedSince(version: "24.12.0")
+              replicas @required(action: NONE) @since(version: "24.12.0")
               routings {
                 routing_id
                 endpoint

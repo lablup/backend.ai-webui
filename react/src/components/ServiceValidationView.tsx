@@ -53,7 +53,11 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
       const image: string = `${values.environments.image?.registry}/${values.environments.image?.name}:${values.environments.image?.tag}`;
       const body: ServiceCreateType = {
         name: values.serviceName,
-        desired_session_count: values.desiredRoutingCount,
+        ...(baiClient.isManagerVersionCompatibleWith('24.12.0')
+          ? { replicas: values.replicas }
+          : {
+              desired_session_count: values.desiredRoutingCount,
+            }),
         image: image,
         runtime_variant: values.runtimeVariant,
         architecture: values.environments.image?.architecture as string,
