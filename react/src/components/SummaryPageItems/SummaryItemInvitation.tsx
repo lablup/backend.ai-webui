@@ -1,4 +1,3 @@
-import BAICard from '../../BAICard';
 import {
   baiSignedRequestWithPromise,
   useBaiSignedRequestWithPromise,
@@ -8,6 +7,7 @@ import {
   useSuspenseTanQuery,
   useTanMutation,
 } from '../../hooks/reactQueryAlias';
+import BAICard from '../BAICard';
 import Flex from '../Flex';
 import { App, Button, Descriptions, Empty, Tag, Typography, theme } from 'antd';
 import { useTranslation } from 'react-i18next';

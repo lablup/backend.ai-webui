@@ -1,4 +1,4 @@
-import BAICard from '../BAICard';
+import BAICard from '../components/BAICard';
 import Flex from '../components/Flex';
 import FlexActivityIndicator from '../components/FlexActivityIndicator';
 import UserCredentialList from '../components/UserCredentialList';
