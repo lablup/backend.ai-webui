@@ -1199,7 +1199,8 @@
     "NoDataToExport": "CSV 추출을 위한 데이터가 존재하지 않습니다. ",
     "ExportCSV": "CSV로 내보내기",
     "Tools": "도구",
-    "MemorySizeExceedsLimit": "메모리 크기는 300PiB 미만이어야 합니다."
+    "MemorySizeExceedsLimit": "메모리 크기는 300PiB 미만이어야 합니다.",
+    "MaxNetworkCount": "최대 네트워크 수"
   },
   "registry": {
     "Hostname": "호스트명",

@@ -993,7 +993,8 @@
     "NoDataToExport": "CSV-otteen tietoja ei ole olemassa.",
     "ExportCSV": "vie CSV",
     "Tools": "Työkalut",
-    "MemorySizeExceedsLimit": "Muistin koon tulee olla alle 300 PiB"
+    "MemorySizeExceedsLimit": "Muistin koon tulee olla alle 300 PiB",
+    "MaxNetworkCount": "Verkkojen enimmäismäärä"
   },
   "resourcePreset": {
     "AboutToDeletePreset": "Olet poistamassa tätä esiasetusta:",

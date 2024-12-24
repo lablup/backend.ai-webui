@@ -1083,7 +1083,8 @@
     "NoDataToExport": "Данные для извлечения CSV не существуют.",
     "ExportCSV": "экспортировать CSV",
     "Tools": "Инструменты",
-    "MemorySizeExceedsLimit": "Размер памяти должен быть менее 300 ПиБ."
+    "MemorySizeExceedsLimit": "Размер памяти должен быть менее 300 ПиБ.",
+    "MaxNetworkCount": "Максимальное количество сетей"
   },
   "registry": {
     "Hostname": "Имя хоста",
