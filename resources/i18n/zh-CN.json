@@ -1083,7 +1083,8 @@
     "NoDataToExport": "CSV 提取的数据不存在。",
     "ExportCSV": "导出 CSV",
     "Tools": "工具",
-    "MemorySizeExceedsLimit": "内存大小应小于 300 PiB"
+    "MemorySizeExceedsLimit": "内存大小应小于 300 PiB",
+    "MaxNetworkCount": "最大网络数"
   },
   "registry": {
     "Hostname": "主机名",
