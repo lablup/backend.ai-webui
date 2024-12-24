@@ -1,3 +1,4 @@
+import { filterEmptyItem } from '../helper';
 import useControllableState from '../hooks/useControllableState';
 import Flex from './Flex';
 import { CloseCircleOutlined } from '@ant-design/icons';
@@ -26,7 +27,7 @@ import React, {
 import { useTranslation } from 'react-i18next';
 
 //github.com/lablup/backend.ai/blob/main/src/ai/backend/manager/models/minilang/queryfilter.py
-type FilterProperty = {
+export type FilterProperty = {
   key: string;
   // operators: Array<string>;
   defaultOperator?: string;
@@ -34,6 +35,11 @@ type FilterProperty = {
   // TODO: support array, number
   type: 'string' | 'boolean';
   options?: AutoCompleteProps['options'];
+  strictSelection?: boolean;
+  rule?: {
+    message: string;
+    validate: (value: string) => boolean;
+  };
 };
 export interface BAIPropertyFilterProps
   extends Omit<ComponentProps<typeof Flex>, 'value' | 'onChange'> {
@@ -74,8 +80,25 @@ const DEFAULT_OPTIONS_OF_TYPES: {
   string: undefined,
 };
 
+const DEFAULT_STRICT_SELECTION_OF_TYPES: {
+  [key: string]: boolean | undefined;
+} = {
+  boolean: true,
+};
+
 function trimFilterValue(filterValue: string): string {
   return filterValue.replace(/^%|%$/g, '');
+}
+
+export function mergeFilterValues(
+  filterStrings: Array<string | undefined>,
+  operator: string = '&',
+) {
+  const mergedFilter = _.join(
+    _.map(filterEmptyItem(filterStrings), (str) => `(${str})`),
+    operator,
+  );
+  return !!mergedFilter ? mergedFilter : undefined;
 }
 
 /**
@@ -99,6 +122,16 @@ export function parseFilterValue(filter: string) {
 
   // Return an object containing the parsed property, operator, and value.
   return { property, operator, value };
+}
+
+/**
+ * Combines filter strings with the specified logical operator.
+ * @param filters - The array of filter strings to combine.
+ * @param operator - The logical operator to use ('and' or 'or').
+ * @returns The combined filter string.
+ */
+function combineFilters(filters: string[], operator: '&' | '|'): string {
+  return filters.join(` ${operator} `);
 }
 
 const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
@@ -150,22 +183,40 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
 
   const { token } = theme.useToken();
 
+  const [isValid, setIsValid] = useState(true);
+  const [isFocused, setIsFocused] = useState(false);
+
   useEffect(() => {
     if (list.length === 0) {
       setValue(undefined);
     } else {
-      setValue(
-        _.map(list, (item) => {
-          const valueStringInResult =
-            item.type === 'string' ? `"${item.value}"` : item.value;
-          return `${item.property} ${item.operator} ${valueStringInResult}`;
-        }).join(' & '),
-      );
+      const filterStrings = _.map(list, (item) => {
+        const valueStringInResult =
+          item.type === 'string' ? `"${item.value}"` : item.value;
+        return `${item.property} ${item.operator} ${valueStringInResult}`;
+      });
+      setValue(combineFilters(filterStrings, '&'));
     }
   }, [list, setValue]);
 
   const onSearch = (value: string) => {
     if (_.isEmpty(value)) return;
+    if (
+      selectedProperty.strictSelection ||
+      DEFAULT_STRICT_SELECTION_OF_TYPES[selectedProperty.type]
+    ) {
+      const option = _.find(
+        selectedProperty.options ||
+          DEFAULT_OPTIONS_OF_TYPES[selectedProperty.type],
+        (o) => o.value === value,
+      );
+      if (!option) return;
+    }
+    const isValid =
+      !selectedProperty.rule?.validate || selectedProperty.rule.validate(value);
+    setIsValid(isValid);
+    if (!isValid) return;
+
     setSearch('');
     const operator =
       selectedProperty.defaultOperator ||
@@ -194,38 +245,56 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
           onSelect={() => {
             autoCompleteRef.current?.focus();
             setIsOpenAutoComplete(true);
+            setIsValid(true);
           }}
           showSearch
           optionFilterProp="label"
         />
-        <AutoComplete
-          ref={autoCompleteRef}
-          value={search}
-          open={isOpenAutoComplete}
-          onDropdownVisibleChange={setIsOpenAutoComplete}
-          // https://ant.design/components/auto-complete#why-doesnt-the-text-composition-system-work-well-with-onsearch-in-controlled-mode
-          // onSearch={(value) => {}}
-          onSelect={onSearch}
-          onChange={(value) => {
-            setSearch(value);
-          }}
-          style={{
-            minWidth: 200,
-          }}
-          // @ts-ignore
-          options={_.filter(
-            selectedProperty.options ||
-              DEFAULT_OPTIONS_OF_TYPES[selectedProperty.type],
-            (option) => {
-              return _.isEmpty(search)
-                ? true
-                : option.label?.toString().includes(search);
-            },
-          )}
-          placeholder={t('propertyFilter.placeHolder')}
+        <Tooltip
+          title={isValid || !isFocused ? '' : selectedProperty.rule?.message}
+          open={!isValid && isFocused}
+          color={token.colorError}
         >
-          <Input.Search onSearch={onSearch} allowClear />
-        </AutoComplete>
+          <AutoComplete
+            ref={autoCompleteRef}
+            value={search}
+            open={isOpenAutoComplete}
+            onDropdownVisibleChange={setIsOpenAutoComplete}
+            // https://ant.design/components/auto-complete#why-doesnt-the-text-composition-system-work-well-with-onsearch-in-controlled-mode
+            // onSearch={(value) => {}}
+            onSelect={onSearch}
+            onChange={(value) => {
+              setIsValid(true);
+              setSearch(value);
+            }}
+            style={{
+              minWidth: 200,
+            }}
+            // @ts-ignore
+            options={_.filter(
+              selectedProperty.options ||
+                DEFAULT_OPTIONS_OF_TYPES[selectedProperty.type],
+              (option) => {
+                return _.isEmpty(search)
+                  ? true
+                  : option.label?.toString().includes(search);
+              },
+            )}
+            placeholder={t('propertyFilter.placeHolder')}
+            onBlur={() => {
+              setIsFocused(false);
+            }}
+            onFocus={() => {
+              setIsFocused(true);
+            }}
+          >
+            <Input.Search
+              onSearch={onSearch}
+              allowClear
+              status={!isValid && isFocused ? 'error' : undefined}
+            />
+          </AutoComplete>
+        </Tooltip>
       </Space.Compact>
       {list.length > 0 && (
         <Flex

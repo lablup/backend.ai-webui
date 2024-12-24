@@ -62,13 +62,17 @@ const fetchFn: FetchFunction = async (
     (await globalThis.backendaiclient
       ?._wrapWithPromise(reqInfo, false, null, 10000, 0)
       .catch((err: any) => {
-        // console.log(err);
+        if (err.isError && err.statusCode === 401) {
+          const error = new Error('GraphQL Authorization Error');
+          error.name = 'AuthorizationError';
+          throw error;
+        }
       })) || {};
 
   return result;
 };
 
-let subscribeFn: SubscribeFunction;
+let subscribeFn: SubscribeFunction | undefined = undefined;
 
 // if (typeof window !== "undefined") {
 //   // We only want to setup subscriptions if we are on the client.

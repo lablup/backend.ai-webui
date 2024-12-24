@@ -2,23 +2,18 @@ import {
   useBAINotificationEffect,
   useBAINotificationState,
 } from '../hooks/useBAINotification';
+import ReverseThemeProvider from './ReverseThemeProvider';
 import WEBUINotificationDrawer from './WEBUINotificationDrawer';
 import { BellOutlined } from '@ant-design/icons';
-import { Badge, Button } from 'antd';
+import { Badge, Button, Typography } from 'antd';
 import type { ButtonProps } from 'antd';
 import { atom, useAtom } from 'jotai';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
 
-interface Props extends ButtonProps {
-  buttonRender?: (defaultButton: React.ReactNode) => React.ReactNode;
-}
 export const isOpenDrawerState = atom(false);
 
-const BAINotificationButton: React.FC<Props> = ({
-  buttonRender = (btn) => btn,
-  ...props
-}) => {
+const BAINotificationButton: React.FC<ButtonProps> = ({ ...props }) => {
   const [notifications, { upsertNotification }] = useBAINotificationState();
   useBAINotificationEffect();
 
@@ -36,20 +31,28 @@ const BAINotificationButton: React.FC<Props> = ({
   const hasRunningBackgroundTask = _.some(notifications, (n) => {
     return n.backgroundTask?.status === 'pending';
   });
+
+  // To match complicated theme in WebUIHeader, we need to wrap the icon with nested `ReverseThemeProvider`.
   return (
     <>
-      {buttonRender(
+      <ReverseThemeProvider>
         <Button
           icon={
-            <Badge dot={hasRunningBackgroundTask}>
-              <BellOutlined />
-            </Badge>
+            <ReverseThemeProvider>
+              <Badge color="red" dot={hasRunningBackgroundTask}>
+                <ReverseThemeProvider>
+                  <Typography.Text>
+                    <BellOutlined />
+                  </Typography.Text>
+                </ReverseThemeProvider>
+              </Badge>
+            </ReverseThemeProvider>
           }
           type="text"
           onClick={() => setIsOpenDrawer((v) => !v)}
           {...props}
-        />,
-      )}
+        />
+      </ReverseThemeProvider>
       <WEBUINotificationDrawer
         open={isOpenDrawer}
         onClose={() => setIsOpenDrawer((v) => !v)}

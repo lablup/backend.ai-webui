@@ -1,35 +1,25 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTOTPSupported } from '../hooks/backendai';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import { useWebComponentInfo } from './DefaultProviders';
 import { UserInfoModalQuery } from './__generated__/UserInfoModalQuery.graphql';
-import { Descriptions, DescriptionsProps, Button, Tag, Spin } from 'antd';
+import { Descriptions, DescriptionsProps, Tag, Spin } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
-interface Props extends BAIModalProps {}
+interface Props extends BAIModalProps {
+  userEmail: string;
+  onRequestClose: () => void;
+}
 
-const UserInfoModal: React.FC<Props> = ({ ...baiModalProps }) => {
+const UserInfoModal: React.FC<Props> = ({
+  userEmail,
+  onRequestClose,
+  ...baiModalProps
+}) => {
   const { t } = useTranslation();
-
-  const { value, dispatchEvent } = useWebComponentInfo();
-  let parsedValue: {
-    open: boolean;
-    userEmail: string;
-  };
-  try {
-    parsedValue = JSON.parse(value || '');
-  } catch (error) {
-    parsedValue = {
-      open: false,
-      userEmail: '',
-    };
-  }
-  const { open, userEmail } = parsedValue;
-
   const baiClient = useSuspendedBackendaiClient();
   const sudoSessionEnabledSupported = baiClient?.supports(
     'sudo-session-enabled',
@@ -87,26 +77,12 @@ const UserInfoModal: React.FC<Props> = ({ ...baiModalProps }) => {
 
   return (
     <BAIModal
-      open={open}
-      onCancel={() => {
-        dispatchEvent('cancel', null);
-      }}
       centered
       title={t('credential.UserDetail')}
-      footer={[
-        <Button
-          key="ok"
-          type="primary"
-          onClick={() => {
-            dispatchEvent('cancel', null);
-          }}
-        >
-          {t('button.OK')}
-        </Button>,
-      ]}
+      footer={null}
+      onCancel={onRequestClose}
       {...baiModalProps}
     >
-      <br />
       <Descriptions
         size="small"
         column={columnSetting}

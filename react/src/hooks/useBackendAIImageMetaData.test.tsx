@@ -32,7 +32,7 @@ describe('useBackendAIImageMetaData', () => {
               r: 'R',
               'r-base': 'R',
               py3: 'Python3',
-              ngc: 'Nvidia GPU Cloud',
+              ngc: 'NVIDIA GPU Cloud',
               py310: 'Python3',
             },
             tagReplace: {},
@@ -71,7 +71,7 @@ describe('useBackendAIImageMetaData', () => {
     const [, { getBaseImages }] = result.current;
     const baseImages = getBaseImages('21.11-py3', 'testing/ngc-pytorc');
     expect(baseImages[0]).toBe('Python3');
-    expect(baseImages[1]).toBe('Nvidia GPU Cloud');
+    expect(baseImages[1]).toBe('NVIDIA GPU Cloud');
   });
   it('get constraint data', async () => {
     const { result } = renderHook(() => useBackendAIImageMetaData(), {

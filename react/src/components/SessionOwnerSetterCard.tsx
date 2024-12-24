@@ -1,6 +1,6 @@
-import BAICard, { BAICardProps } from '../BAICard';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useTanQuery } from '../hooks/reactQueryAlias';
+import BAICard, { BAICardProps } from './BAICard';
 import BAISelect from './BAISelect';
 import Flex from './Flex';
 import HiddenFormItem from './HiddenFormItem';

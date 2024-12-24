@@ -1,7 +1,5 @@
-import BAICard from '../BAICard';
 import BAIIntervalView from '../components/BAIIntervalView';
 import DatePickerISO from '../components/DatePickerISO';
-import DoubleTag from '../components/DoubleTag';
 import EnvVarFormList, {
   sanitizeSensitiveEnv,
   EnvVarFormListValue,
@@ -10,12 +8,9 @@ import Flex from '../components/Flex';
 import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from '../components/ImageEnvironmentSelectFormItems';
-import ImageMetaIcon from '../components/ImageMetaIcon';
-import { ImageTags } from '../components/ImageTags';
 import { mainContentDivRefState } from '../components/MainLayout/MainLayout';
 import PortSelectFormItem, {
   PortSelectFormValues,
-  PortTag,
   transformPortValuesToNumbers,
 } from '../components/PortSelectFormItem';
 import ResourceAllocationFormItems, {
@@ -24,15 +19,14 @@ import ResourceAllocationFormItems, {
 } from '../components/ResourceAllocationFormItems';
 import ResourceNumber from '../components/ResourceNumber';
 import SessionLauncherValidationTour from '../components/SessionLauncherErrorTourProps';
+import SessionLauncherPreview from '../components/SessionLauncherPreview';
 import SessionNameFormItem, {
   SessionNameFormItemValue,
 } from '../components/SessionNameFormItem';
 import SessionOwnerSetterCard, {
   SessionOwnerSetterFormValues,
 } from '../components/SessionOwnerSetterCard';
-import { SessionOwnerSetterPreviewCard } from '../components/SessionOwnerSetterCard';
 import SessionTemplateModal from '../components/SessionTemplateModal';
-import SourceCodeViewer from '../components/SourceCodeViewer';
 import VFolderTableFormItem, {
   VFolderTableFormValues,
 } from '../components/VFolderTableFormItem';
@@ -40,12 +34,10 @@ import {
   compareNumberWithUnits,
   formatDuration,
   generateRandomString,
-  getImageFullName,
   convertBinarySizeUnit,
-  preserveDotStartCase,
+  filterEmptyItem,
 } from '../helper';
 import {
-  useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
   useUpdatableState,
   useWebUINavigate,
@@ -57,7 +49,6 @@ import {
   useCurrentResourceGroupState,
 } from '../hooks/useCurrentProject';
 import { useRecentSessionHistory } from '../hooks/useRecentSessionHistory';
-import { useThemeMode } from '../hooks/useThemeMode';
 // @ts-ignore
 import customCSS from './SessionLauncherPage.css?raw';
 import {
@@ -70,14 +61,11 @@ import {
 } from '@ant-design/icons';
 import { useDebounceFn, useToggle } from 'ahooks';
 import {
-  Alert,
   App,
   Button,
   Card,
   Checkbox,
   Col,
-  Descriptions,
-  Divider,
   Form,
   Grid,
   Input,
@@ -89,8 +77,6 @@ import {
   StepProps,
   Steps,
   Switch,
-  Table,
-  Tag,
   Tooltip,
   Typography,
   theme,
@@ -102,8 +88,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import { dark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import {
   JsonParam,
   NumberParam,
@@ -185,6 +169,17 @@ export type AppOption = {
   filename?: string;
   // [key in string]: any;
 };
+
+export type SessionLauncherStepKey =
+  | 'sessionType'
+  | 'environment'
+  | 'storage'
+  | 'network'
+  | 'review';
+interface StepPropsWithKey extends StepProps {
+  key: SessionLauncherStepKey;
+}
+
 const SessionLauncherPage = () => {
   const app = App.useApp();
   let sessionMode: SessionMode = 'normal';
@@ -194,11 +189,7 @@ const SessionLauncherPage = () => {
   const currentUserRole = useCurrentUserRole();
   const [currentGlobalResourceGroup, setCurrentGlobalResourceGroup] =
     useCurrentResourceGroupState();
-  const [, { getBaseVersion, getBaseImage, tagAlias }] =
-    useBackendAIImageMetaData();
 
-  const supportExtendedImageInfo =
-    baiClient?.supports('extended-image-info') ?? false;
   const supportBatchTimeout = baiClient?.supports('batch-timeout') ?? false;
 
   const [isStartingSession, setIsStartingSession] = useState(false);
@@ -206,7 +197,7 @@ const SessionLauncherPage = () => {
     () => ({
       sessionType: 'interactive',
       // If you set `allocationPreset` to 'custom', `allocationPreset` is not changed automatically any more.
-      allocationPreset: 'auto-preset',
+      allocationPreset: 'auto-select',
       hpcOptimization: {
         autoEnabled: true,
         OMP_NUM_THREADS: '1',
@@ -257,7 +248,6 @@ const SessionLauncherPage = () => {
   });
   const { search } = useLocation();
 
-  const { isDarkMode } = useThemeMode();
   // const { moveTo } = useWebComponentInfo();
   const webuiNavigate = useWebUINavigate();
   const currentProject = useCurrentProjectValue();
@@ -340,44 +330,35 @@ const SessionLauncherPage = () => {
     form.getFieldValue('sessionType') ||
     formValuesFromQueryParams.sessionType;
 
-  const steps = _.filter(
-    [
-      {
-        title: t('session.launcher.SessionType'),
-        key: 'sessionType',
-        // status: form.getFieldError('name').length > 0 ? 'error' : undefined,
-      },
-      {
-        title: `${t('session.launcher.Environments')} & ${t(
-          'session.launcher.ResourceAllocation',
-        )} `,
-        key: 'environment',
-      },
-      sessionType !== 'inference' && {
-        title: t('webui.menu.Data&Storage'),
-        key: 'storage',
-      },
-      {
-        title: t('session.launcher.Network'),
-        key: 'network',
-      },
-      {
-        title: t('session.launcher.ConfirmAndLaunch'),
-        icon: <PlayCircleFilled />,
-        // @ts-ignore
-        key: 'review',
-      },
-    ] as StepProps[],
-    (v) => !!v,
-  );
+  const steps: Array<StepPropsWithKey> = filterEmptyItem([
+    {
+      title: t('session.launcher.SessionType'),
+      key: 'sessionType',
+      // status: form.getFieldError('name').length > 0 ? 'error' : undefined,
+    },
+    {
+      title: `${t('session.launcher.Environments')} & ${t(
+        'session.launcher.ResourceAllocation',
+      )} `,
+      key: 'environment',
+    },
+    sessionType !== 'inference' && {
+      title: t('webui.menu.Data&Storage'),
+      key: 'storage',
+    },
+    {
+      title: t('session.launcher.Network'),
+      key: 'network',
+    },
+    {
+      title: t('session.launcher.ConfirmAndLaunch'),
+      icon: <PlayCircleFilled />,
+      // @ts-ignore
+      key: 'review',
+    },
+  ]);
 
-  const currentStepKey:
-    | 'sessionType'
-    | 'environment'
-    | 'storage'
-    | 'network'
-    // @ts-ignore
-    | 'review' = steps[currentStep]?.key;
+  const currentStepKey = steps[currentStep]?.key;
 
   const hasError = _.some(
     form.getFieldsError(),
@@ -1233,6 +1214,10 @@ const SessionLauncherPage = () => {
                   }}
                 >
                   <ResourceAllocationFormItems
+                    enableAgentSelect={
+                      !baiClient._config.hideAgents &&
+                      baiClient.supports('agent-select')
+                    }
                     enableNumOfSessions
                     enableResourcePresets
                     showRemainingWarning
@@ -1382,693 +1367,12 @@ const SessionLauncherPage = () => {
 
                 {/* Step Start*/}
                 {currentStepKey === 'review' && (
-                  <>
-                    <BAICard
-                      title={t('session.launcher.SessionType')}
-                      size="small"
-                      status={
-                        form.getFieldError('sessionName').length > 0 ||
-                        form.getFieldError(['batch', 'command']).length > 0 ||
-                        form.getFieldError(['batch', 'scheduleDate']).length > 0
-                          ? 'error'
-                          : undefined
-                      }
-                      extraButtonTitle={t('button.Edit')}
-                      onClickExtraButton={() => {
-                        setCurrentStep(
-                          // @ts-ignore
-                          steps.findIndex((v) => v.key === 'sessionType'),
-                        );
-                      }}
-                      // extra={
-                      //   <Button
-                      //     type="link"
-                      //     onClick={() => {
-                      //       setCurrentStep(
-                      //         // @ts-ignore
-                      //         steps.findIndex((v) => v.key === 'sessionType'),
-                      //       );
-                      //     }}
-                      //     icon={
-                      //       form.getFieldError('name').length > 0 && (
-                      //         <ExclamationCircleTwoTone
-                      //           twoToneColor={token.colorError}
-                      //         />
-                      //       )
-                      //     }
-                      //   >
-                      //     {t('button.Edit')}
-                      //   </Button>
-                      // }
-                    >
-                      <Descriptions size="small" column={1}>
-                        <Descriptions.Item label={t('session.SessionType')}>
-                          {form.getFieldValue('sessionType')}
-                        </Descriptions.Item>
-                        {!_.isEmpty(form.getFieldValue('sessionName')) && (
-                          <Descriptions.Item
-                            label={t('session.launcher.SessionName')}
-                          >
-                            {form.getFieldValue('sessionName')}
-                          </Descriptions.Item>
-                        )}
-                        {sessionType === 'batch' && (
-                          <>
-                            <Descriptions.Item
-                              label={t('session.launcher.StartUpCommand')}
-                              labelStyle={{ whiteSpace: 'nowrap' }}
-                              contentStyle={{
-                                overflow: 'auto',
-                              }}
-                            >
-                              {form.getFieldValue(['batch', 'command']) ? (
-                                <SourceCodeViewer language="shell">
-                                  {form.getFieldValue(['batch', 'command'])}
-                                </SourceCodeViewer>
-                              ) : (
-                                <Typography.Text type="secondary">
-                                  {t('general.None')}
-                                </Typography.Text>
-                              )}
-                            </Descriptions.Item>
-                            <Descriptions.Item
-                              label={t('session.launcher.SessionStartTime')}
-                            >
-                              {form.getFieldValue(['batch', 'scheduleDate']) ? (
-                                dayjs(
-                                  form.getFieldValue(['batch', 'scheduleDate']),
-                                ).format('LLL (Z)')
-                              ) : (
-                                <Typography.Text type="secondary">
-                                  {t('general.None')}
-                                </Typography.Text>
-                              )}
-                            </Descriptions.Item>
-                            {supportBatchTimeout ? (
-                              <Descriptions.Item
-                                label={t(
-                                  'session.launcher.BatchJobTimeoutDuration',
-                                )}
-                              >
-                                {form.getFieldValue(['batch', 'timeout']) ? (
-                                  <Typography.Text>
-                                    {form.getFieldValue(['batch', 'timeout'])}
-                                    {form.getFieldValue([
-                                      'batch',
-                                      'timeoutUnit',
-                                    ]) || 's'}
-                                  </Typography.Text>
-                                ) : (
-                                  <Typography.Text type="secondary">
-                                    {t('general.None')}
-                                  </Typography.Text>
-                                )}
-                              </Descriptions.Item>
-                            ) : null}
-                          </>
-                        )}
-                      </Descriptions>
-                    </BAICard>
-                    <SessionOwnerSetterPreviewCard
-                      onClickExtraButton={() => {
-                        setCurrentStep(
-                          // @ts-ignore
-                          steps.findIndex((v) => v.key === 'sessionType'),
-                        );
-                      }}
-                    />
-                    <BAICard
-                      title={t('session.launcher.Environments')}
-                      size="small"
-                      status={
-                        _.some(form.getFieldValue('envvars'), (v, idx) => {
-                          return (
-                            form.getFieldError(['envvars', idx, 'variable'])
-                              .length > 0 ||
-                            form.getFieldError(['envvars', idx, 'value'])
-                              .length > 0
-                          );
-                        })
-                          ? 'error'
-                          : undefined
-                      }
-                      extraButtonTitle={t('button.Edit')}
-                      onClickExtraButton={() => {
-                        setCurrentStep(
-                          // @ts-ignore
-                          steps.findIndex((v) => v.key === 'environment'),
-                        );
-                      }}
-                    >
-                      <Descriptions size="small" column={1}>
-                        <Descriptions.Item
-                          label={t('session.launcher.Project')}
-                        >
-                          {currentProject.name}
-                        </Descriptions.Item>
-                        <Descriptions.Item label={t('general.Image')}>
-                          {supportExtendedImageInfo ? (
-                            <Row style={{ flexFlow: 'nowrap' }}>
-                              <Col>
-                                <ImageMetaIcon
-                                  image={
-                                    form.getFieldValue('environments')
-                                      ?.version ||
-                                    form.getFieldValue('environments')?.manual
-                                  }
-                                  style={{ marginRight: token.marginXS }}
-                                />
-                              </Col>
-                              <Col>
-                                <Flex direction="row" wrap="wrap">
-                                  {form.getFieldValue('environments')
-                                    ?.manual ? (
-                                    <Typography.Text
-                                      code
-                                      style={{ wordBreak: 'break-all' }}
-                                      copyable={{
-                                        text: form.getFieldValue('environments')
-                                          ?.manual,
-                                      }}
-                                    >
-                                      {
-                                        form.getFieldValue('environments')
-                                          ?.manual
-                                      }
-                                    </Typography.Text>
-                                  ) : (
-                                    <>
-                                      <Typography.Text>
-                                        {tagAlias(
-                                          form.getFieldValue('environments')
-                                            ?.image?.base_image_name,
-                                        )}
-                                      </Typography.Text>
-                                      <Divider type="vertical" />
-                                      <Typography.Text>
-                                        {
-                                          form.getFieldValue('environments')
-                                            ?.image?.version
-                                        }
-                                      </Typography.Text>
-                                      <Divider type="vertical" />
-                                      <Typography.Text>
-                                        {
-                                          form.getFieldValue('environments')
-                                            ?.image?.architecture
-                                        }
-                                      </Typography.Text>
-                                      <Divider type="vertical" />
-                                      {/* TODO: replace this with AliasedImageDoubleTags after image list query with ImageNode is implemented. */}
-                                      {_.map(
-                                        form.getFieldValue('environments')
-                                          ?.image?.tags,
-                                        (tag: {
-                                          key: string;
-                                          value: string;
-                                        }) => {
-                                          const isCustomized = _.includes(
-                                            tag.key,
-                                            'customized_',
-                                          );
-                                          const tagValue = isCustomized
-                                            ? _.find(
-                                                form.getFieldValue(
-                                                  'environments',
-                                                )?.image?.labels,
-                                                {
-                                                  key: 'ai.backend.customized-image.name',
-                                                },
-                                              )?.value
-                                            : tag.value;
-                                          const aliasedTag = tagAlias(
-                                            tag.key + tagValue,
-                                          );
-                                          return _.isEqual(
-                                            aliasedTag,
-                                            preserveDotStartCase(
-                                              tag.key + tagValue,
-                                            ),
-                                          ) ? (
-                                            <DoubleTag
-                                              key={tag.key}
-                                              values={[
-                                                {
-                                                  label: tagAlias(tag.key),
-                                                  color: isCustomized
-                                                    ? 'cyan'
-                                                    : 'blue',
-                                                },
-                                                {
-                                                  label: tagValue,
-                                                  color: isCustomized
-                                                    ? 'cyan'
-                                                    : 'blue',
-                                                },
-                                              ]}
-                                            />
-                                          ) : (
-                                            <Tag
-                                              key={tag.key}
-                                              color={
-                                                isCustomized ? 'cyan' : 'blue'
-                                              }
-                                            >
-                                              {aliasedTag}
-                                            </Tag>
-                                          );
-                                        },
-                                      )}
-                                      <Typography.Text
-                                        style={{ color: token.colorPrimary }}
-                                        copyable={{
-                                          text:
-                                            getImageFullName(
-                                              form.getFieldValue('environments')
-                                                ?.image,
-                                            ) ||
-                                            form.getFieldValue('environments')
-                                              ?.version,
-                                        }}
-                                      />
-                                    </>
-                                  )}
-                                </Flex>
-                              </Col>
-                            </Row>
-                          ) : (
-                            <Row
-                              style={{ flexFlow: 'nowrap', gap: token.sizeXS }}
-                            >
-                              <Col>
-                                <ImageMetaIcon
-                                  image={
-                                    form.getFieldValue('environments')
-                                      ?.version ||
-                                    form.getFieldValue('environments')?.manual
-                                  }
-                                />
-                              </Col>
-                              <Col>
-                                {/* {form.getFieldValue('environments').image} */}
-                                <Flex direction="row" wrap="wrap">
-                                  {form.getFieldValue('environments')
-                                    ?.manual ? (
-                                    <Typography.Text
-                                      code
-                                      style={{ wordBreak: 'break-all' }}
-                                      copyable={{
-                                        text: form.getFieldValue('environments')
-                                          ?.manual,
-                                      }}
-                                    >
-                                      {
-                                        form.getFieldValue('environments')
-                                          ?.manual
-                                      }
-                                    </Typography.Text>
-                                  ) : (
-                                    <>
-                                      <Typography.Text>
-                                        {tagAlias(
-                                          getBaseImage(
-                                            form.getFieldValue('environments')
-                                              ?.version,
-                                          ),
-                                        )}
-                                      </Typography.Text>
-                                      <Divider type="vertical" />
-                                      <Typography.Text>
-                                        {getBaseVersion(
-                                          form.getFieldValue('environments')
-                                            ?.version,
-                                        )}
-                                      </Typography.Text>
-                                      <Divider type="vertical" />
-                                      <Typography.Text>
-                                        {
-                                          form.getFieldValue('environments')
-                                            ?.image?.architecture
-                                        }
-                                      </Typography.Text>
-                                      <Divider type="vertical" />
-                                      <ImageTags
-                                        tag={
-                                          form.getFieldValue('environments')
-                                            ?.image?.tag
-                                        }
-                                        labels={
-                                          form.getFieldValue('environments')
-                                            ?.image?.labels as Array<{
-                                            key: string;
-                                            value: string;
-                                          }>
-                                        }
-                                      />
-                                      <Typography.Text
-                                        style={{ color: token.colorPrimary }}
-                                        copyable={{
-                                          text:
-                                            getImageFullName(
-                                              form.getFieldValue('environments')
-                                                ?.image,
-                                            ) ||
-                                            form.getFieldValue('environments')
-                                              ?.version,
-                                        }}
-                                      />
-                                    </>
-                                  )}
-                                </Flex>
-                              </Col>
-                            </Row>
-                          )}
-                        </Descriptions.Item>
-                        {form.getFieldValue('envvars')?.length > 0 && (
-                          <Descriptions.Item
-                            label={t('session.launcher.EnvironmentVariable')}
-                          >
-                            {form.getFieldValue('envvars')?.length ? (
-                              <SyntaxHighlighter
-                                style={isDarkMode ? dark : undefined}
-                                codeTagProps={{
-                                  style: {
-                                    // fontFamily: 'monospace',
-                                  },
-                                }}
-                                // showLineNumbers
-                                customStyle={{
-                                  margin: 0,
-                                  width: '100%',
-                                }}
-                              >
-                                {_.map(
-                                  form.getFieldValue('envvars'),
-                                  (v: { variable: string; value: string }) =>
-                                    `${v?.variable || ''}="${v?.value || ''}"`,
-                                ).join('\n')}
-                              </SyntaxHighlighter>
-                            ) : (
-                              <Typography.Text type="secondary">
-                                -
-                              </Typography.Text>
-                            )}
-                          </Descriptions.Item>
-                        )}
-                      </Descriptions>
-                    </BAICard>
-                    <BAICard
-                      title={t('session.launcher.ResourceAllocation')}
-                      status={
-                        _.some(form.getFieldValue('resource'), (v, key) => {
-                          //                         console.log(form.getFieldError(['resource', 'shmem']));
-                          // console.log(form.getFieldValue(['resource']));
-                          return (
-                            form.getFieldError(['resource', key]).length > 0
-                          );
-                        }) ||
-                        form.getFieldError(['num_of_sessions']).length > 0 ||
-                        form.getFieldError('resourceGroup').length > 0
-                          ? 'error'
-                          : // : _.some(form.getFieldValue('resource'), (v, key) => {
-                            //     //                         console.log(form.getFieldError(['resource', 'shmem']));
-                            //     // console.log(form.getFieldValue(['resource']));
-                            //     return (
-                            //       form.getFieldWarning(['resource', key]).length >
-                            //       0
-                            //     );
-                            //   })
-                            // ? 'warning'
-                            undefined
-                      }
-                      size="small"
-                      extraButtonTitle={t('button.Edit')}
-                      onClickExtraButton={() => {
-                        setCurrentStep(
-                          // @ts-ignore
-                          steps.findIndex((v) => v.key === 'environment'),
-                        );
-                      }}
-                    >
-                      <Flex direction="column" align="stretch">
-                        {_.some(
-                          form.getFieldValue('resource')?.resource,
-                          (v, key) => {
-                            return (
-                              form.getFieldWarning(['resource', key]).length > 0
-                            );
-                          },
-                        ) && (
-                          <Alert
-                            type="warning"
-                            showIcon
-                            message={t(
-                              'session.launcher.EnqueueComputeSessionWarning',
-                            )}
-                          />
-                        )}
-
-                        <Descriptions column={2}>
-                          <Descriptions.Item
-                            label={t('general.ResourceGroup')}
-                            span={2}
-                          >
-                            {form.getFieldValue('resourceGroup') || (
-                              <Typography.Text type="secondary">
-                                {t('general.None')}
-                              </Typography.Text>
-                            )}
-                          </Descriptions.Item>
-                          <Descriptions.Item
-                            label={t(
-                              'session.launcher.ResourceAllocationPerContainer',
-                            )}
-                            span={2}
-                          >
-                            <Flex
-                              direction="row"
-                              align="start"
-                              gap={'sm'}
-                              wrap="wrap"
-                              style={{ flex: 1 }}
-                            >
-                              {form.getFieldValue('allocationPreset') ===
-                              'custom' ? (
-                                // t('session.launcher.CustomAllocation')
-                                ''
-                              ) : (
-                                <Tag>
-                                  {form.getFieldValue('allocationPreset')}
-                                </Tag>
-                              )}
-
-                              <ResourceNumbersOfSession
-                                resource={form.getFieldValue('resource')}
-                              />
-                              {/* {_.chain(
-                              form.getFieldValue('allocationPreset') ===
-                                'custom'
-                                ? form.getFieldValue('resource')
-                                : JSON.parse(
-                                    form.getFieldValue('selectedPreset')
-                                      ?.resource_slots || '{}',
-                                  ),
-                            )
-                              .map((value, type) => {
-                                // @ts-ignore
-                                if (resourceSlots[type] === undefined)
-                                  return undefined;
-                                const resource_opts = {
-                                  shmem:
-                                    form.getFieldValue('selectedPreset')
-                                      .shared_memory,
-                                };
-                                return (
-                                  <ResourceNumber
-                                    key={type}
-                                    // @ts-ignore
-                                    type={type}
-                                    value={value}
-                                    opts={resource_opts}
-                                  />
-                                );
-                              })
-                              .compact()
-                              .value()} */}
-                            </Flex>
-                          </Descriptions.Item>
-                          {baiClient.supports('agent-select') &&
-                            !baiClient?._config?.hideAgents && (
-                              <Descriptions.Item
-                                label={t('session.launcher.AgentNode')}
-                              >
-                                {form.getFieldValue('agent') ||
-                                  t('session.launcher.AutoSelect')}
-                              </Descriptions.Item>
-                            )}
-                          <Descriptions.Item
-                            label={t('session.launcher.NumberOfContainer')}
-                          >
-                            {form.getFieldValue('cluster_size') === 1
-                              ? form.getFieldValue('num_of_sessions')
-                              : form.getFieldValue('cluster_size')}
-                          </Descriptions.Item>
-                          <Descriptions.Item
-                            label={t('session.launcher.ClusterMode')}
-                          >
-                            {form.getFieldValue('cluster_mode') ===
-                            'single-node'
-                              ? t('session.launcher.SingleNode')
-                              : t('session.launcher.MultiNode')}
-                          </Descriptions.Item>
-                        </Descriptions>
-                        <Card
-                          size="small"
-                          type="inner"
-                          title={t('session.launcher.TotalAllocation')}
-                        >
-                          <Flex direction="row" gap="xxs">
-                            <ResourceNumbersOfSession
-                              resource={form.getFieldValue('resource')}
-                              containerCount={
-                                form.getFieldValue('cluster_size') === 1
-                                  ? form.getFieldValue('num_of_sessions')
-                                  : form.getFieldValue('cluster_size')
-                              }
-                            />
-                          </Flex>
-                        </Card>
-                      </Flex>
-                    </BAICard>
-                    <BAICard
-                      title={t('webui.menu.Data&Storage')}
-                      size="small"
-                      status={
-                        form.getFieldError('vfoldersAliasMap').length > 0
-                          ? 'error'
-                          : undefined
-                      }
-                      extraButtonTitle={t('button.Edit')}
-                      onClickExtraButton={() => {
-                        setCurrentStep(
-                          // @ts-ignore
-                          steps.findIndex((v) => v.key === 'storage'),
-                        );
-                      }}
-                    >
-                      {/* {console.log(_.sum([form.getFieldValue('mounts')?.length, form.getFieldValue('autoMountedFolderNames')]))} */}
-                      {/* {_.sum([form.getFieldValue('mounts')?.length, form.getFieldValue('autoMountedFolderNames').length]) > 0 ? ( */}
-                      <Flex direction="column" align="stretch" gap={'xs'}>
-                        {form.getFieldValue('mounts')?.length > 0 ? (
-                          <Table
-                            rowKey="name"
-                            size="small"
-                            pagination={false}
-                            columns={[
-                              {
-                                dataIndex: 'name',
-                                title: t('data.folders.Name'),
-                              },
-                              {
-                                dataIndex: 'alias',
-                                title: t('session.launcher.FolderAlias'),
-                                render: (value, record) => {
-                                  return _.isEmpty(value) ? (
-                                    <Typography.Text
-                                      type="secondary"
-                                      style={{
-                                        opacity: 0.7,
-                                      }}
-                                    >
-                                      {`/home/work/${record.name}`}
-                                    </Typography.Text>
-                                  ) : (
-                                    value
-                                  );
-                                },
-                              },
-                            ]}
-                            dataSource={_.map(
-                              form.getFieldValue('mounts'),
-                              (v) => {
-                                return {
-                                  name: v,
-                                  alias:
-                                    form.getFieldValue('vfoldersAliasMap')?.[v],
-                                };
-                              },
-                            )}
-                          ></Table>
-                        ) : (
-                          <Alert
-                            type="warning"
-                            showIcon
-                            message={t('session.launcher.NoFolderMounted')}
-                          />
-                        )}
-                        {form.getFieldValue('autoMountedFolderNames')?.length >
-                        0 ? (
-                          <Descriptions size="small">
-                            <Descriptions.Item
-                              label={t('data.AutomountFolders')}
-                            >
-                              {_.map(
-                                form.getFieldValue('autoMountedFolderNames'),
-                                (name) => {
-                                  return <Tag>{name}</Tag>;
-                                },
-                              )}
-                            </Descriptions.Item>
-                          </Descriptions>
-                        ) : null}
-                      </Flex>
-                    </BAICard>
-                    <BAICard
-                      title="Network"
-                      size="small"
-                      status={
-                        form.getFieldError('ports').length > 0
-                          ? 'error'
-                          : undefined
-                      }
-                      extraButtonTitle={t('button.Edit')}
-                      onClickExtraButton={() => {
-                        setCurrentStep(
-                          // @ts-ignore
-                          steps.findIndex((v) => v.key === 'network'),
-                        );
-                      }}
-                    >
-                      <Descriptions size="small">
-                        <Descriptions.Item
-                          label={t('session.launcher.PreOpenPortTitle')}
-                        >
-                          <Flex
-                            direction="row"
-                            gap="xs"
-                            style={{ flex: 1 }}
-                            wrap="wrap"
-                          >
-                            {/* {form.getFieldValue('environments').image} */}
-                            {_.sortBy(form.getFieldValue('ports'), (v) =>
-                              parseInt(v),
-                            ).map((v) => (
-                              <PortTag value={v} style={{ margin: 0 }}>
-                                {v}
-                              </PortTag>
-                            ))}
-
-                            {!_.isArray(form.getFieldValue('ports')) ||
-                            form.getFieldValue('ports')?.length === 0 ? (
-                              <Typography.Text type="secondary">
-                                {t('general.None')}
-                              </Typography.Text>
-                            ) : null}
-                          </Flex>
-                        </Descriptions.Item>
-                      </Descriptions>
-                    </BAICard>
-                  </>
+                  <SessionLauncherPreview
+                    onClickEditStep={(stepKey) => {
+                      const nextStep = _.findIndex(steps, { key: stepKey });
+                      setCurrentStep(nextStep);
+                    }}
+                  />
                 )}
 
                 <Flex direction="row" justify="between">

@@ -10,12 +10,14 @@ import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
 import SessionTypeTag from './ComputeSessionNodeItems/SessionTypeTag';
 import Flex from './Flex';
 import ImageMetaIcon from './ImageMetaIcon';
+import { SessionDetailContentLegacyQuery } from './__generated__/SessionDetailContentLegacyQuery.graphql';
 import { SessionDetailContentQuery } from './__generated__/SessionDetailContentQuery.graphql';
 import {
   Alert,
   Button,
   Descriptions,
   Grid,
+  Tag,
   theme,
   Tooltip,
   Typography,
@@ -35,6 +37,24 @@ const SessionDetailContent: React.FC<{
   const userRole = useCurrentUserRole();
 
   const { md } = Grid.useBreakpoint();
+  // TODO: remove and refactor this waterfall request after v24.12.0
+  // get the project id of the session for <= v24.12.0.
+  const { session_for_project_id } =
+    useLazyLoadQuery<SessionDetailContentLegacyQuery>(
+      graphql`
+        query SessionDetailContentLegacyQuery($uuid: UUID!) {
+          session_for_project_id: compute_session(id: $uuid) {
+            group_id
+          }
+        }
+      `,
+      {
+        uuid: id,
+      },
+      {
+        fetchPolicy: 'network-only',
+      },
+    );
   const { session, legacy_session } =
     useLazyLoadQuery<SessionDetailContentQuery>(
       //  In compute_session_node, there are missing fields. We need to use `compute_session` to get the missing fields.
@@ -92,7 +112,7 @@ const SessionDetailContent: React.FC<{
       {
         id: toGlobalId('ComputeSessionNode', id),
         uuid: id,
-        project_id: currentProject.id,
+        project_id: session_for_project_id?.group_id || currentProject.id,
       },
       {
         fetchPolicy: 'network-only',
@@ -106,6 +126,9 @@ const SessionDetailContent: React.FC<{
     legacy_session.image + '@' + legacy_session.architecture;
   return session ? (
     <Flex direction="column" gap={'sm'} align="stretch">
+      {session_for_project_id?.group_id !== currentProject.id && (
+        <Alert message={t('session.NotInProject')} type="warning" showIcon />
+      )}
       <Flex
         direction="row"
         justify="between"
@@ -166,9 +189,9 @@ const SessionDetailContent: React.FC<{
           {legacy_session?.mounts?.join(', ')}
         </Descriptions.Item>
         <Descriptions.Item label={t('session.launcher.ResourceAllocation')}>
-          <Flex gap={'sm'}>
+          <Flex gap={'sm'} wrap="wrap">
             <Tooltip title={t('session.ResourceGroup')}>
-              {session.scaling_group}
+              <Tag>{session.scaling_group}</Tag>
             </Tooltip>
             <ResourceNumbersOfSession
               resource={JSON.parse(session.requested_slots || '{}')}

@@ -133,12 +133,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
               )}
             </Suspense>
           )}
-        <BAINotificationButton
-          buttonRender={(btn) => (
-            <ReverseThemeProvider>{btn}</ReverseThemeProvider>
-          )}
-        />
-
+        <BAINotificationButton />
         <ReverseThemeProvider>
           <WebUIThemeToggleButton />
           <WEBUIHelpButton />

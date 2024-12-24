@@ -11,6 +11,7 @@ import {
   useSuspendedBackendaiClient,
   useUpdatableState,
 } from '../hooks';
+import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import AliasedImageDoubleTags from './AliasedImageDoubleTags';
 import BAITable from './BAITable';
 import { ImageTags } from './ImageTags';
@@ -26,7 +27,7 @@ import {
   SearchOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import { useLocalStorageState } from 'ahooks';
+import { useToggle } from 'ahooks';
 import { App, Button, Input, Popconfirm, theme, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
@@ -53,7 +54,8 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
   const supportExtendedImageInfo =
     baiClient?.supports('extended-image-info') ?? false;
 
-  const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
+  const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
+    useToggle();
   const [isRefetchPending, startRefetchTransition] = useTransition();
   const [customizedImageListFetchKey, updateCustomizedImageListFetchKey] =
     useUpdatableState('initial-fetch');
@@ -403,11 +405,8 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
     },
   ]);
 
-  const [displayedColumnKeys, setDisplayedColumnKeys] = useLocalStorageState(
-    'backendaiwebui.CustomizedImageList.displayedColumnKeys',
-    {
-      defaultValue: columns.map((column) => _.toString(column.key)),
-    },
+  const [hiddenColumnKeys, setHiddenColumnKeys] = useHiddenColumnKeysSetting(
+    'CustomizedImageList',
   );
 
   return (
@@ -439,8 +438,10 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
           resizable
           loading={isPendingSearchTransition}
           columns={
-            columns.filter((column) =>
-              displayedColumnKeys?.includes(_.toString(column.key)),
+            _.filter(
+              columns,
+              (column) =>
+                !_.includes(hiddenColumnKeys, _.toString(column?.key)),
             ) as ColumnType<AnyObject>[]
           }
           dataSource={filterNonNullItems(filteredImageData)}
@@ -458,20 +459,25 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
             type="text"
             icon={<SettingOutlined />}
             onClick={() => {
-              setIsOpenColumnsSetting(true);
+              toggleColumnSettingModal();
             }}
           />
         </Flex>
       </Flex>
       <TableColumnsSettingModal
-        open={isOpenColumnsSetting}
+        open={visibleColumnSettingModal}
         onRequestClose={(values) => {
           values?.selectedColumnKeys &&
-            setDisplayedColumnKeys(values?.selectedColumnKeys);
-          setIsOpenColumnsSetting(!isOpenColumnsSetting);
+            setHiddenColumnKeys(
+              _.difference(
+                columns.map((column) => _.toString(column.key)),
+                values?.selectedColumnKeys,
+              ),
+            );
+          toggleColumnSettingModal();
         }}
         columns={columns}
-        displayedColumnKeys={displayedColumnKeys ? displayedColumnKeys : []}
+        hiddenColumnKeys={hiddenColumnKeys}
       />
     </Flex>
   );

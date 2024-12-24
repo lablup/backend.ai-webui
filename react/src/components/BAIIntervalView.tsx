@@ -11,7 +11,7 @@ const BAIIntervalView = <T,>({
 }: {
   callback: () => T;
   render?: RenderProp<T>;
-  delay: number;
+  delay: number | null;
   triggerKey?: string;
 }) => {
   const value = useIntervalValue(callback, delay, triggerKey);

@@ -11,6 +11,7 @@ import {
   useSuspendedBackendaiClient,
   useUpdatableState,
 } from '../hooks';
+import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import BAITable from './BAITable';
 import DoubleTag from './DoubleTag';
 import ImageInstallModal from './ImageInstallModal';
@@ -31,9 +32,9 @@ import {
   SettingOutlined,
   VerticalAlignBottomOutlined,
 } from '@ant-design/icons';
-import { useLocalStorageState } from 'ahooks';
+import { useToggle } from 'ahooks';
 import { App, Button, Input, Tag, theme, Typography } from 'antd';
-import { ColumnsType, ColumnType } from 'antd/es/table';
+import { ColumnType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { Key, useMemo, useState, useTransition } from 'react';
@@ -60,7 +61,8 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   const [installingImages, setInstallingImages] = useState<string[]>([]);
   const { message } = App.useApp();
   const [imageSearch, setImageSearch] = useState('');
-  const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
+  const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
+    useToggle();
   const [isPendingRefreshTransition, startRefreshTransition] = useTransition();
   const [isPendingSearchTransition, startSearchTransition] = useTransition();
   const baiClient = useSuspendedBackendaiClient();
@@ -114,7 +116,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
     [images],
   );
 
-  const columns: ColumnsType<EnvironmentImage> = filterEmptyItem([
+  const columns: Array<ColumnType<EnvironmentImage>> = filterEmptyItem([
     {
       title: t('environment.Status'),
       dataIndex: 'installed',
@@ -206,10 +208,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
       title: t('environment.Tags'),
       key: 'tags',
       dataIndex: 'tags',
-      render: (
-        text: Array<{ key: string; value: string }>,
-        row: EnvironmentImage,
-      ) => {
+      render: (text, row) => {
         return (
           <Flex direction="row" align="start">
             {/* TODO: replace this with AliasedImageDoubleTags after image list query with ImageNode is implemented. */}
@@ -375,12 +374,8 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
     },
   ]);
 
-  const [displayedColumnKeys, setDisplayedColumnKeys] = useLocalStorageState(
-    'backendaiwebui.EnvironmentPage.displayedColumnKeys',
-    {
-      defaultValue: columns.map((column) => _.toString(column.key)),
-    },
-  );
+  const [hiddenColumnKeys, setHiddenColumnKeys] =
+    useHiddenColumnKeysSetting('ImageList');
 
   const imageFilterValues = useMemo(() => {
     return defaultSortedImages?.map((image) => {
@@ -525,17 +520,16 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             style: { marginRight: token.marginXS },
           }}
           dataSource={filterNonNullItems(filteredImageData)}
-          columns={
-            columns.filter((column) =>
-              displayedColumnKeys?.includes(_.toString(column.key)),
-            ) as ColumnType<EnvironmentImage>[]
-          }
+          columns={_.filter(
+            columns,
+            (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),
+          )}
           loading={isPendingSearchTransition}
           rowSelection={{
             type: 'checkbox',
             // hideSelectAll: true,
             // columnWidth: 48,
-            onChange: (_, selectedRows: EnvironmentImage[]) => {
+            onChange: (_, selectedRows) => {
               setSelectedRows(selectedRows);
             },
             selectedRowKeys: selectedRows.map((row) => row.id) as Key[],
@@ -565,7 +559,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             type="text"
             icon={<SettingOutlined />}
             onClick={() => {
-              setIsOpenColumnsSetting(true);
+              toggleColumnSettingModal();
             }}
           />
         </Flex>
@@ -601,14 +595,19 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         selectedRows={selectedRows}
       />
       <TableColumnsSettingModal
-        open={isOpenColumnsSetting}
+        open={visibleColumnSettingModal}
         onRequestClose={(values) => {
           values?.selectedColumnKeys &&
-            setDisplayedColumnKeys(values?.selectedColumnKeys);
-          setIsOpenColumnsSetting(!isOpenColumnsSetting);
+            setHiddenColumnKeys(
+              _.difference(
+                columns.map((column) => _.toString(column.key)),
+                values?.selectedColumnKeys,
+              ),
+            );
+          toggleColumnSettingModal();
         }}
         columns={columns}
-        displayedColumnKeys={displayedColumnKeys ? displayedColumnKeys : []}
+        hiddenColumnKeys={hiddenColumnKeys}
       />
     </>
   );

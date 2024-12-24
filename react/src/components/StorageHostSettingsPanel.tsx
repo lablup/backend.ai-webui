@@ -125,7 +125,6 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
                 </Form.Item>
                 <Form.Item label={t('webui.menu.Project')}>
                   <ProjectSelectForAdminPage
-                    style={{ width: '20vw' }}
                     value={selectedProjectId}
                     disabled={!selectedDomainName}
                     domain={selectedDomainName || ''}

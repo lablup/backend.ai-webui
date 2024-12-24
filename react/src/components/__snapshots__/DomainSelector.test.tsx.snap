@@ -3,37 +3,41 @@
 exports[`DomainSelect default render 1`] = `
 <DocumentFragment>
   <div
-    class="ant-select ant-select-outlined css-dev-only-do-not-override-d2lrxs ant-select-focused ant-select-single ant-select-show-arrow ant-select-open"
+    class="ant-select ant-select-outlined css-dev-only-do-not-override-1x0dypw ant-select-focused ant-select-single ant-select-show-arrow ant-select-open"
     title="hello"
   >
     <div
       class="ant-select-selector"
     >
       <span
-        class="ant-select-selection-search"
+        class="ant-select-selection-wrap"
       >
-        <input
-          aria-activedescendant="rc_select_TEST_OR_SSR_list_0"
-          aria-autocomplete="list"
-          aria-controls="rc_select_TEST_OR_SSR_list"
-          aria-expanded="true"
-          aria-haspopup="listbox"
-          aria-owns="rc_select_TEST_OR_SSR_list"
-          autocomplete="off"
-          class="ant-select-selection-search-input"
-          id="rc_select_TEST_OR_SSR"
-          readonly=""
-          role="combobox"
-          style="opacity: 0;"
-          type="search"
-          unselectable="on"
-          value=""
-        />
-      </span>
-      <span
-        class="ant-select-selection-placeholder"
-      >
-        Please select domain
+        <span
+          class="ant-select-selection-search"
+        >
+          <input
+            aria-activedescendant="rc_select_TEST_OR_SSR_list_0"
+            aria-autocomplete="list"
+            aria-controls="rc_select_TEST_OR_SSR_list"
+            aria-expanded="true"
+            aria-haspopup="listbox"
+            aria-owns="rc_select_TEST_OR_SSR_list"
+            autocomplete="off"
+            class="ant-select-selection-search-input"
+            id="rc_select_TEST_OR_SSR"
+            readonly=""
+            role="combobox"
+            style="opacity: 0;"
+            type="search"
+            unselectable="on"
+            value=""
+          />
+        </span>
+        <span
+          class="ant-select-selection-placeholder"
+        >
+          Please select domain
+        </span>
       </span>
     </div>
     <span

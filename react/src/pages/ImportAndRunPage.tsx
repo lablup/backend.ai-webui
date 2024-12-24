@@ -1,4 +1,4 @@
-import BAICard from '../BAICard';
+import BAICard from '../components/BAICard';
 import ImportNotebook from '../components/ImportNotebook';
 import { theme } from 'antd';
 import React from 'react';

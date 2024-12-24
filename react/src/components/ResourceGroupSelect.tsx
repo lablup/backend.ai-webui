@@ -5,7 +5,7 @@ import useControllableState from '../hooks/useControllableState';
 import TextHighlighter from './TextHighlighter';
 import { Select, SelectProps } from 'antd';
 import _ from 'lodash';
-import React, { useEffect } from 'react';
+import React, { useEffect, useTransition } from 'react';
 
 interface ResourceGroupSelectProps extends SelectProps {
   projectName: string;
@@ -30,8 +30,17 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
       onChange: onSearch,
     });
 
-  const [controllableValue, setControllableValue] =
+  const [controllableValue, setControllableValueDoNotUseWithoutTransition] =
     useControllableState(selectProps);
+  const [isPendingChangeTransition, startChangeTransition] = useTransition();
+  const setControllableValueWithTransition = React.useCallback(
+    (v: typeof controllableValue, ...args: any[]) => {
+      startChangeTransition(() => {
+        setControllableValueDoNotUseWithoutTransition(v, ...args);
+      });
+    },
+    [startChangeTransition, setControllableValueDoNotUseWithoutTransition],
+  );
 
   const { data: resourceGroupSelectQueryResult } = useSuspenseTanQuery<
     [
@@ -93,14 +102,17 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
     },
   );
 
+  // If the current selected value is not in the resourceGroups, reset the value to undefined
   useEffect(() => {
     if (
       controllableValue &&
       !_.some(resourceGroups, (item) => item.name === controllableValue)
     ) {
-      setControllableValue(undefined);
+      setControllableValueWithTransition(undefined);
     }
-  }, [resourceGroups, controllableValue, setControllableValue]);
+  }, [resourceGroups, controllableValue, setControllableValueWithTransition]);
+
+  // Auto select is only executed once
   const autoSelectedResourceGroup =
     _.find(resourceGroups, (item) => item.name === 'default') ||
     resourceGroups[0];
@@ -117,7 +129,10 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
       autoSelectedOption &&
       autoSelectedOption.value !== selectProps.value
     ) {
-      setControllableValue(autoSelectedOption.value, autoSelectedOption);
+      setControllableValueWithTransition(
+        autoSelectedOption.value,
+        autoSelectedOption,
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoSelectDefault]);
@@ -138,14 +153,8 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
       defaultActiveFirstOption
       {...searchProps}
       defaultValue={autoSelectDefault ? autoSelectedOption : undefined}
-      onDropdownVisibleChange={(open) => {
-        // if (open) {
-        //   startLoadingTransition(() => {
-        //     updateFetchKey();
-        //   });
-        // }
-      }}
-      loading={loading}
+      loading={loading || isPendingChangeTransition}
+      disabled={isPendingChangeTransition}
       options={_.map(resourceGroups, (resourceGroup) => {
         return { value: resourceGroup.name, label: resourceGroup.name };
       })}
@@ -158,7 +167,7 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
       }}
       {...selectProps}
       value={controllableValue}
-      onChange={setControllableValue}
+      onChange={setControllableValueWithTransition}
     />
   );
 };

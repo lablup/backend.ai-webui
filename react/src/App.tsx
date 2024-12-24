@@ -56,10 +56,14 @@ const InteractiveLoginPage = React.lazy(
   () => import('./pages/InteractiveLoginPage'),
 );
 const ImportAndRunPage = React.lazy(() => import('./pages/ImportAndRunPage'));
+const UserCredentialsPage = React.lazy(
+  () => import('./pages/UserCredentialsPage'),
+);
 
 const ComputeSessionList = React.lazy(
   () => import('./components/ComputeSessionList'),
 );
+const AgentSummaryPage = React.lazy(() => import('./pages/AgentSummaryPage'));
 
 interface CustomHandle {
   title?: string;
@@ -283,6 +287,11 @@ const router = createBrowserRouter([
       },
       {
         path: '/agent-summary',
+        element: (
+          <BAIErrorBoundary>
+            <AgentSummaryPage />
+          </BAIErrorBoundary>
+        ),
         handle: { labelKey: 'webui.menu.AgentSummary' },
       },
       {
@@ -330,6 +339,7 @@ const router = createBrowserRouter([
       {
         path: '/credential',
         handle: { labelKey: 'webui.menu.UserCredentials&Policies' },
+        Component: UserCredentialsPage,
       },
       {
         path: '/logs',

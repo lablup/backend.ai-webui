@@ -17,14 +17,16 @@ const WebUILink: React.FC<WebUILinkProps> = ({ options, ...props }) => {
         const pathName = _.isString(props.to)
           ? props.to
           : props.to.pathname || '';
-        document.dispatchEvent(
-          new CustomEvent('move-to-from-react', {
-            detail: {
-              path: pathName,
-              params: options?.params,
-            },
-          }),
-        );
+        if (!e.metaKey && !e.ctrlKey) {
+          document.dispatchEvent(
+            new CustomEvent('move-to-from-react', {
+              detail: {
+                path: pathName,
+                params: options?.params,
+              },
+            }),
+          );
+        }
       }}
     />
   );

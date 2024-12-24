@@ -2824,7 +2824,7 @@ class ComputeSession {
    * Get the number of compute sessions with specific conditions.
    *
    * @param {string or array} status - status to query. Default is 'RUNNING'.
-   *        Available statuses are: `PREPARING`, `BUILDING`, `PENDING`, `SCHEDULED`, `RUNNING`, `RESTARTING`, `RESIZING`, `SUSPENDED`, `TERMINATING`, `TERMINATED`, `ERROR`.
+   *        Available statuses are: `PREPARING`, `PREPARED`, `CREATING`, `BUILDING`, `PENDING`, `SCHEDULED`, `RUNNING`, `RESTARTING`, `RESIZING`, `SUSPENDED`, `TERMINATING`, `TERMINATED`, `ERROR`.
    * @param {string} accessKey - access key that is used to start compute sessions.
    * @param {number} limit - limit number of query items.
    * @param {number} offset - offset for item query. Useful for pagination.
@@ -2861,7 +2861,7 @@ class ComputeSession {
    *
    * @param {array} fields - fields to query. Default fields are: ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
    * @param {string or array} status - status to query. Default is 'RUNNING'.
-   *        Available statuses are: `PREPARING`, `BUILDING`, `PENDING`, `SCHEDULED`, `RUNNING`, `RESTARTING`, `RESIZING`, `SUSPENDED`, `TERMINATING`, `TERMINATED`, `ERROR`.
+   *        Available statuses are: `PREPARING`, `PREPARED`, `CREATING`, `BUILDING`, `PENDING`, `SCHEDULED`, `RUNNING`, `RESTARTING`, `RESIZING`, `SUSPENDED`, `TERMINATING`, `TERMINATED`, `ERROR`.
    * @param {string} accessKey - access key that is used to start compute sessions.
    * @param {number} limit - limit number of query items.
    * @param {number} offset - offset for item query. Useful for pagination.
@@ -2932,7 +2932,7 @@ class ComputeSession {
       'occupied_slots',
       'containers {live_stat last_stat}',
     ],
-    status = 'RUNNING,RESTARTING,TERMINATING,PENDING,SCHEDULED,PREPARING,PULLING,TERMINATED,CANCELLED,ERROR',
+    status = 'RUNNING,RESTARTING,TERMINATING,PENDING,SCHEDULED,PREPARING,PREPARED,CREATING,PULLING,TERMINATED,CANCELLED,ERROR',
     accessKey = '',
     limit = 100,
     offset = 0,

@@ -6,11 +6,14 @@ import Flex from './Flex';
 import { ClockCircleOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Grid, Tooltip } from 'antd';
 import { default as dayjs } from 'dayjs';
+import { atom, useAtom } from 'jotai';
 import { Repeat2Icon } from 'lucide-react';
 import React, { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface LoginSessionExtendButtonProps {}
+
+export const isLoginSessionExpiredState = atom(false);
 
 const LoginSessionExtendButton: React.FC<
   LoginSessionExtendButtonProps
@@ -21,6 +24,10 @@ const LoginSessionExtendButton: React.FC<
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
 
   const gridBreakpoint = Grid.useBreakpoint();
+
+  const [isLoginSessionExpired, setIsLoginSessionExpired] = useAtom(
+    isLoginSessionExpiredState,
+  );
 
   const { data } = useSuspenseTanQuery<{
     expires: string;
@@ -35,29 +42,28 @@ const LoginSessionExtendButton: React.FC<
     staleTime: 1000,
   });
 
+  if (isLoginSessionExpired) {
+    const error = new Error('Login session expired');
+    error.name = 'AuthorizationError';
+    throw error;
+  }
+
   return (
     <Flex direction="row" gap="xs">
       <BAIIntervalView
         callback={() => {
           const diff = dayjs(data?.expires).diff(dayjs(), 'seconds');
           const duration = dayjs.duration(Math.max(0, diff), 'seconds');
-          const days = duration.days();
-          if (duration.seconds() === 0) {
-            // @ts-ignore
-            if (globalThis.isElectron) {
-              // @ts-ignore
-              globalThis.location.href = globalThis.electronInitialHref;
-            } else {
-              globalThis.location.reload();
-            }
-          }
+          const days = Math.floor(duration.asDays());
+          const isExpired = duration.asMilliseconds() <= 0;
+          setIsLoginSessionExpired(isExpired);
           return gridBreakpoint.lg
             ? `${days ? days + 'd ' : ''}${duration.format('HH:mm:ss')}`
             : days
               ? days + 'd'
               : duration.format('HH:mm:ss');
         }}
-        delay={100}
+        delay={isLoginSessionExpired ? null : 100}
         render={(text) => {
           return (
             <Tooltip title={t('general.RemainingLoginSessionTime')}>
@@ -83,6 +89,7 @@ const LoginSessionExtendButton: React.FC<
             loading={isPending}
             onClick={() => startTransition(() => updateFetchKey())}
             icon={<Repeat2Icon />}
+            disabled={isLoginSessionExpired}
           />
         </Tooltip>
       </ConfigProvider>

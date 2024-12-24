@@ -84,7 +84,6 @@
     "drawflow": "^0.0.59",
     "glob": "^10.4.5",
     "https-proxy-agent": "^7.0.5",
-    "js-yaml": "^4.1.0",
     "lit": "^3.2.0",
     "lit-translate": "^2.0.1",
     "log": "^6.3.1",
@@ -176,6 +175,9 @@
     "workbox-strategies": "^7.1.0",
     "workbox-sw": "^7.1.0",
     "ws": "^8.18.0"
+  },
+  "optionalDependencies": {
+    "macos-alias": "^0.2.11"
   },
   "overrides": {
     "eslint": "^8.57.0"

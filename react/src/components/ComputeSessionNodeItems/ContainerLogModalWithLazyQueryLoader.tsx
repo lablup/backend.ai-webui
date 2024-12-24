@@ -2,15 +2,15 @@ import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import ContainerLogModal from './ContainerLogModal';
 import { ContainerLogModalWithLazyQueryLoaderQuery } from './__generated__/ContainerLogModalWithLazyQueryLoaderQuery.graphql';
 import graphql from 'babel-plugin-relay/macro';
-import { useState } from 'react';
 import { useLazyLoadQuery } from 'react-relay';
 
 const ContainerLogModalWithLazyQueryLoader: React.FC<{
-  sessionId: string;
-  afterClose?: () => void;
-}> = ({ sessionId, afterClose }) => {
+  sessionId?: string;
+  open: boolean;
+  loading: boolean;
+  onRequestClose?: () => void;
+}> = ({ sessionId, open, loading, onRequestClose }) => {
   const currentProject = useCurrentProjectValue();
-  const [open, setOpen] = useState(true);
   const { compute_session_node } =
     useLazyLoadQuery<ContainerLogModalWithLazyQueryLoaderQuery>(
       graphql`
@@ -27,23 +27,20 @@ const ContainerLogModalWithLazyQueryLoader: React.FC<{
         sessionId,
         project_id: currentProject.id,
       },
+      {
+        fetchPolicy: sessionId ? 'network-only' : 'store-only',
+      },
     );
 
   return (
-    compute_session_node && (
-      <ContainerLogModal
-        maskTransitionName={open ? '' : undefined}
-        transitionName={open ? '' : undefined}
-        sessionFrgmt={compute_session_node}
-        open={open}
-        onCancel={() => {
-          setOpen(false);
-        }}
-        afterClose={() => {
-          afterClose?.();
-        }}
-      />
-    )
+    <ContainerLogModal
+      sessionFrgmt={compute_session_node || null}
+      open={open}
+      loading={loading}
+      onCancel={() => {
+        onRequestClose && onRequestClose();
+      }}
+    />
   );
 };
 

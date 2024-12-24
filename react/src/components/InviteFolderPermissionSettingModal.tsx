@@ -38,7 +38,7 @@ const InviteFolderPermissionSettingModal: React.FC<
     data: shared,
     isFetching,
     refetch,
-  } = useTanQuery({
+  } = useTanQuery<Array<Invitee>>({
     queryKey: [
       'baiClient.vfolder.list_invitees',
       baiModalProps.open,
@@ -49,10 +49,10 @@ const InviteFolderPermissionSettingModal: React.FC<
         ? baiRequestWithPromise({
             method: 'GET',
             url: `/folders/_/shared${vfolderId ? `?vfolder_id=${vfolderId}` : ''}`,
-          }).then((res: { shared: Invitee }) =>
+          }).then((res: { shared: Array<Invitee> }) =>
             _.sortBy(res.shared, 'shared_to.email'),
           )
-        : null,
+        : undefined,
     staleTime: 0,
   });
 
