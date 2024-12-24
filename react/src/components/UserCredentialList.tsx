@@ -38,9 +38,10 @@ import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
-import { useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery, useMutation } from 'react-relay';
+import { StringParam, useQueryParam } from 'use-query-params';
 
 type Keypair = NonNullable<
   NonNullable<UserCredentialListQuery$data['keypair_list']>['items'][number]
@@ -50,6 +51,14 @@ const UserCredentialList: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message, modal } = App.useApp();
+
+  const [action, setAction] = useQueryParam('action', StringParam);
+  useEffect(() => {
+    if (action === 'add') {
+      setOpenUserKeypairSettingModal(true);
+      setAction(undefined);
+    }
+  }, [action, setAction]);
 
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [activeType, setActiveType] = useState<'active' | 'inactive'>('active');
