@@ -522,7 +522,10 @@ export default class BackendAISummary extends BackendAIPage {
                   ? html`
                       <button
                         @click="${() => {
-                          this._moveTo('/credential', '?action=add');
+                          this._moveTo(
+                            '/credential',
+                            '?tab=credentials&action=add',
+                          );
                         }}"
                         class="vertical center center-justified layout start-menu-items link-button"
                         style="border-left:1px solid var(--token-colorBorder, #ccc);"
@@ -532,7 +535,7 @@ export default class BackendAISummary extends BackendAIPage {
                       </button>
                       <button
                         @click="${() => {
-                          this._moveTo('/credential', '?action=manage');
+                          this._moveTo('/credential', '?tab=credentials');
                         }}"
                         class="vertical center center-justified layout start-menu-items link-button"
                         style="border-left:1px solid var(--token-colorBorder, #ccc);"
@@ -566,80 +569,80 @@ export default class BackendAISummary extends BackendAIPage {
             ?active="${this.active === true}"
             height="500"
           ></backend-ai-resource-panel>
-          <div class="horizontal wrap layout">
-            <lablup-activity-panel
-              title="${_t('summary.Invitation')}"
-              elevation="1"
-              height="245"
-              scrollableY
+          <lablup-activity-panel
+            title="${_t('summary.Invitation')}"
+            elevation="1"
+            narrow
+            height="245"
+            scrollableY="true"
+          >
+            <div
+              class="layout vertical"
+              slot="message"
+              style="padding: 10px; gap: 10px;"
             >
-              <div slot="message">
-                ${this.invitations.length > 0
-                  ? this.invitations.map(
-                      (invitation, index) => html`
-                        <lablup-activity-panel
-                          class="inner-panel"
-                          noheader
-                          autowidth
-                          elevation="0"
-                          height="130"
-                        >
-                          <div slot="message">
-                            <div class="wrap layout">
-                              <h3 style="padding-top:10px;">
-                                From ${invitation.inviter}
-                              </h3>
-                              <div class="invitation_folder_name">
-                                ${_t('summary.FolderName')}:
-                                ${invitation.vfolder_name}
-                              </div>
-                              <div class="horizontal center layout">
-                                ${_t('summary.Permission')}:
-                                ${[...invitation.perm].map(
-                                  (c) => html`
-                                    <lablup-shields
-                                      app=""
-                                      color="${[
-                                        'green',
-                                        'blue',
-                                        'red',
-                                        'yellow',
-                                      ][['r', 'w', 'd', 'o'].indexOf(c)]}"
-                                      description="${c.toUpperCase()}"
-                                      ui="flat"
-                                    ></lablup-shields>
-                                  `,
-                                )}
-                              </div>
-                              <div
-                                style="margin:15px auto;"
-                                class="horizontal layout end-justified"
-                              >
-                                <mwc-button
-                                  outlined
-                                  label="${_t('summary.Decline')}"
-                                  @click="${(e) =>
-                                    this._deleteInvitation(e, invitation)}"
-                                ></mwc-button>
-                                <mwc-button
-                                  unelevated
-                                  label="${_t('summary.Accept')}"
-                                  @click="${(e) =>
-                                    this._acceptInvitation(e, invitation)}"
-                                ></mwc-button>
-                                <span class="flex"></span>
-                              </div>
+              ${this.invitations.length > 0
+                ? this.invitations.map(
+                    (invitation, index) => html`
+                      <lablup-activity-panel
+                        class="inner-panel"
+                        noheader
+                        autowidth
+                        elevation="0"
+                        height="130"
+                      >
+                        <div slot="message">
+                          <div class="wrap layout">
+                            <h3 style="padding-top:10px;">
+                              From ${invitation.inviter}
+                            </h3>
+                            <div class="invitation_folder_name">
+                              ${_t('summary.FolderName')}:
+                              ${invitation.vfolder_name}
+                            </div>
+                            <div class="horizontal center layout">
+                              ${_t('summary.Permission')}:
+                              ${[...invitation.perm].map(
+                                (c) => html`
+                                  <lablup-shields
+                                    app=""
+                                    color="${['green', 'blue', 'red', 'yellow'][
+                                      ['r', 'w', 'd', 'o'].indexOf(c)
+                                    ]}"
+                                    description="${c.toUpperCase()}"
+                                    ui="flat"
+                                  ></lablup-shields>
+                                `,
+                              )}
+                            </div>
+                            <div
+                              style="margin:15px auto; gap: 8px;"
+                              class="horizontal layout end-justified"
+                            >
+                              <mwc-button
+                                outlined
+                                label="${_t('summary.Decline')}"
+                                @click="${(e) =>
+                                  this._deleteInvitation(e, invitation)}"
+                              ></mwc-button>
+                              <mwc-button
+                                unelevated
+                                label="${_t('summary.Accept')}"
+                                @click="${(e) =>
+                                  this._acceptInvitation(e, invitation)}"
+                              ></mwc-button>
+                              <span class="flex"></span>
                             </div>
                           </div>
-                        </lablup-activity-panel>
-                      `,
-                    )
-                  : html`
-                      <p>${_text('summary.NoInvitations')}</p>
-                    `}
-              </div>
-            </lablup-activity-panel>
-          </div>
+                        </div>
+                      </lablup-activity-panel>
+                    `,
+                  )
+                : html`
+                    <p>${_text('summary.NoInvitations')}</p>
+                  `}
+            </div>
+          </lablup-activity-panel>
           ${!globalThis.isElectron && this.allowAppDownloadPanel
             ? html`
                 <lablup-activity-panel
