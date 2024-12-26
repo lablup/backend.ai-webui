@@ -996,7 +996,8 @@
     "NoDataToExport": "Los datos para el extracto CSV no existen.",
     "ExportCSV": "exportar CSV",
     "Tools": "Herramientas",
-    "MemorySizeExceedsLimit": "El tamaño de la memoria debe ser inferior a 300 PiB"
+    "MemorySizeExceedsLimit": "El tamaño de la memoria debe ser inferior a 300 PiB",
+    "MaxNetworkCount": "Recuento máximo de red"
   },
   "resourcePreset": {
     "AboutToDeletePreset": "Está a punto de borrar este preajuste:",

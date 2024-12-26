@@ -1083,7 +1083,8 @@
     "NoDataToExport": "Data untuk ekstrak CSV tidak wujud.",
     "ExportCSV": "eksport CSV",
     "Tools": "Alatan",
-    "MemorySizeExceedsLimit": "Saiz memori hendaklah kurang daripada 300 PiB"
+    "MemorySizeExceedsLimit": "Saiz memori hendaklah kurang daripada 300 PiB",
+    "MaxNetworkCount": "Kiraan Rangkaian Maks"
   },
   "registry": {
     "Hostname": "Nama Hos",

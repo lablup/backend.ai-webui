@@ -1083,7 +1083,8 @@
     "NoDataToExport": "CSV хандалтын өгөгдөл байхгүй байна.",
     "ExportCSV": "CSV экспортлох",
     "Tools": "Багаж хэрэгсэл",
-    "MemorySizeExceedsLimit": "Санах ойн хэмжээ 300 PiB-ээс бага байх ёстой"
+    "MemorySizeExceedsLimit": "Санах ойн хэмжээ 300 PiB-ээс бага байх ёстой",
+    "MaxNetworkCount": "Хамгийн их сүлжээний тоо"
   },
   "registry": {
     "Hostname": "Хостын нэр",

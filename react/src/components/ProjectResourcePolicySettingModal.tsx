@@ -49,6 +49,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
     'max-vfolder-count-in-user-and-project-resource-policy',
   );
   const supportMaxQuotaScopeSize = baiClient?.supports('max-quota-scope-size');
+  const supportMaxNetworkCount = baiClient?.supports('max_network_count');
 
   const projectResourcePolicy = useFragment(
     graphql`
@@ -61,6 +62,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
         max_vfolder_count @since(version: "23.09.6")
         max_quota_scope_size @since(version: "23.09.2")
         # ---------------- END ---------------------
+        max_network_count @since(version: "24.12.0")
       }
     `,
     projectResourcePolicyFrgmt,
@@ -103,6 +105,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
         // Initialize unlimited values as a default when creating a new policy.\
         max_vfolder_count: 0,
         max_quota_scope_size: -1,
+        max_network_count: -1,
       };
     }
     let maxQuotaScopeSize = projectResourcePolicy?.max_quota_scope_size;
@@ -134,12 +137,16 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
             values?.max_quota_scope_size === -1
               ? -1
               : GBToBytes(values?.max_quota_scope_size),
+          max_network_count: values?.max_network_count || -1,
         };
         if (!supportMaxVfolderCount) {
           delete props.max_vfolder_count;
         }
         if (!supportMaxQuotaScopeSize) {
           delete props.max_quota_scope_size;
+        }
+        if (!supportMaxNetworkCount) {
+          delete props.max_network_count;
         }
         if (projectResourcePolicy === null) {
           commitCreateProjectResourcePolicy({
@@ -270,6 +277,16 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
               style={{ width: '100%', margin: 0 }}
             >
               <InputNumber min={0} addonAfter="GB" style={{ width: '100%' }} />
+            </FormItemWithUnlimited>
+          ) : null}
+          {supportMaxNetworkCount ? (
+            <FormItemWithUnlimited
+              name={'max_network_count'}
+              unlimitedValue={-1}
+              label={t('resourcePolicy.MaxNetworkCount')}
+              style={{ width: '100%', margin: 0 }}
+            >
+              <InputNumber min={0} style={{ width: '100%' }} />
             </FormItemWithUnlimited>
           ) : null}
         </Flex>
