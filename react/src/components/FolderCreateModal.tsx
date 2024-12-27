@@ -1,6 +1,7 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
-import { useCurrentDomainValue } from '../hooks';
-import { useTanMutation } from '../hooks/reactQueryAlias';
+import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentUserRole } from '../hooks/backendai';
+import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
@@ -9,6 +10,7 @@ import StorageSelect from './StorageSelect';
 import { App, Button, Divider, Form, Input, Radio, Switch, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import { FormInstance } from 'antd/lib';
+import _ from 'lodash';
 import { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -76,10 +78,20 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
   const { message } = App.useApp();
 
   const formRef = useRef<FormInstance>(null);
+  const baiClient = useSuspendedBackendaiClient();
+  const userRole = useCurrentUserRole();
   const currentDomain = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
 
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
+
+  const { data: allowedTypes, isFetching: isFetchingAllowedTypes } =
+    useTanQuery({
+      queryKey: ['allowedTypes', modalProps.open],
+      enabled: modalProps.open,
+      queryFn: () =>
+        modalProps.open ? baiClient.vfolder.list_allowed_types() : undefined,
+    });
 
   const mutationToCreateFolder = useTanMutation<
     FolderCreationResponse,
@@ -135,6 +147,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
 
   return (
     <BAIModal
+      loading={isFetchingAllowedTypes}
       className={styles.modal}
       title={t('data.CreateANewStorageFolder')}
       footer={
@@ -167,6 +180,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         </Flex>
       }
       width={650}
+      okButtonProps={{ loading: mutationToCreateFolder.isPending }}
       onCancel={() => {
         onRequestClose();
       }}
@@ -224,8 +238,17 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
           style={{ flex: 1, marginBottom: 0 }}
         >
           <Radio.Group>
-            <Radio value={'user'}>User</Radio>
-            <Radio value={'project'}>Project</Radio>
+            {/* Both role and allowedTypes checks are required:
+             * - role: admin/superadmin can create project folders
+             * - allowedTypes: Ensure that user/group types are registered and available
+             */}
+            {_.includes(allowedTypes, 'user') ? (
+              <Radio value={'user'}>User</Radio>
+            ) : null}
+            {(userRole === 'admin' || userRole === 'superadmin') &&
+            _.includes(allowedTypes, 'group') ? (
+              <Radio value={'project'}>Project</Radio>
+            ) : null}
           </Radio.Group>
         </Form.Item>
         <Divider />
