@@ -65,7 +65,9 @@
       "InvalidBlankEmail": "Masukkan email Anda",
       "DisMatchUserEmail": "Email Pengguna tidak cocok",
       "MyEnvironments": "Lingkungan Saya",
-      "ResourcePolicy": "Kebijakan Sumber Daya"
+      "ResourcePolicy": "Kebijakan Sumber Daya",
+      "Playground": "Tempat bermain",
+      "ModelStore": "Toko Model"
     },
     "YouAreOffline": "Offline: Tidak terhubung ke jaringan apa pun.",
     "YouAreOnline": "Anda sekarang online",
@@ -1705,7 +1707,9 @@
     "category": "Kategori",
     "CloneToFolder": "Mengkloning ke folder",
     "FolderAlreadyExists": "Folder dengan nama ini sudah ada.",
-    "FinetuneModel": "Penyempurnaan Model"
+    "FinetuneModel": "Penyempurnaan Model",
+    "Experience": "Pengalaman",
+    "ModelCard": "Kartu Model"
   },
   "table": {
     "SettingTable": "Penataan meja",
@@ -1756,7 +1760,8 @@
   "modelserving": {
     "menu": {
       "ModelServices": "Layanan Model",
-      "ModelList": "Daftar Model"
+      "ModelList": "Daftar Model",
+      "MyServices": "Layanan Saya"
     }
   }
 }

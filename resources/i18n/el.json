@@ -65,7 +65,9 @@
       "InvalidBlankEmail": "Συμπληρώστε το email σας",
       "DisMatchUserEmail": "Το email χρήστη δεν ταιριάζει",
       "MyEnvironments": "Τα περιβάλλοντα μου",
-      "ResourcePolicy": "Πολιτική Πόρων"
+      "ResourcePolicy": "Πολιτική Πόρων",
+      "Playground": "Παιδική χαρά",
+      "ModelStore": "Κατάστημα μοντέλων"
     },
     "YouAreOffline": "Offline: Δεν είναι συνδεδεμένος σε κανένα δίκτυο.",
     "YouAreOnline": "Είστε πλέον συνδεδεμένοι",
@@ -1705,7 +1707,9 @@
     "category": "Κατηγορία",
     "CloneToFolder": "Κλωνοποίηση σε φάκελο",
     "FolderAlreadyExists": "Ένας φάκελος με αυτό το όνομα υπάρχει ήδη.",
-    "FinetuneModel": "Μοντέλο Finetune"
+    "FinetuneModel": "Μοντέλο Finetune",
+    "Experience": "Εμπειρία",
+    "ModelCard": "Κάρτα μοντέλου"
   },
   "table": {
     "SettingTable": "Ρύθμιση πίνακα",
@@ -1756,7 +1760,8 @@
   "modelserving": {
     "menu": {
       "ModelServices": "Υπηρεσίες μοντέλου",
-      "ModelList": "Λίστα μοντέλων"
+      "ModelList": "Λίστα μοντέλων",
+      "MyServices": "Οι υπηρεσίες μου"
     }
   }
 }

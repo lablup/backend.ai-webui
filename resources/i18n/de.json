@@ -65,7 +65,9 @@
       "InvalidBlankEmail": "Geben sie ihre E-Mail Adresse ein",
       "DisMatchUserEmail": "Die E-Mail-Adresse des Benutzers stimmt nicht überein",
       "MyEnvironments": "Meine Umgebungen",
-      "ResourcePolicy": "Ressourcenpolitik"
+      "ResourcePolicy": "Ressourcenpolitik",
+      "Playground": "Spielplatz",
+      "ModelStore": "Modellladen"
     },
     "YouAreOffline": "Offline: Keine Verbindung zu einem Netzwerk.",
     "YouAreOnline": "Sie sind jetzt online",
@@ -1705,7 +1707,9 @@
     "category": "Kategorie",
     "CloneToFolder": "In einen Ordner klonen",
     "FolderAlreadyExists": "Ein Ordner mit diesem Namen existiert bereits.",
-    "FinetuneModel": "Feinabstimmung des Modells"
+    "FinetuneModel": "Feinabstimmung des Modells",
+    "Experience": "Erfahrung",
+    "ModelCard": "Modellkarte"
   },
   "table": {
     "SettingTable": "Sitzordnung bei Tisch",
@@ -1756,7 +1760,8 @@
   "modelserving": {
     "menu": {
       "ModelServices": "Modelldienstleistungen",
-      "ModelList": "Modellliste"
+      "ModelList": "Modellliste",
+      "MyServices": "Meine Dienste"
     }
   }
 }

@@ -65,7 +65,9 @@
       "InvalidBlankEmail": "Nhập email của bạn",
       "DisMatchUserEmail": "E-mail của người dùng không khớp",
       "MyEnvironments": "Môi trường của tôi",
-      "ResourcePolicy": "Chính sách tài nguyên"
+      "ResourcePolicy": "Chính sách tài nguyên",
+      "Playground": "Sân chơi",
+      "ModelStore": "Cửa hàng mô hình"
     },
     "YouAreOffline": "Ngoại tuyến: Không kết nối với bất kỳ mạng nào.",
     "YouAreOnline": "Bạn hiện đang trực tuyến",
@@ -1705,7 +1707,9 @@
     "category": "Loại",
     "CloneToFolder": "Sao chép vào một thư mục",
     "FolderAlreadyExists": "Một thư mục có tên này đã tồn tại.",
-    "FinetuneModel": "Mô hình Finetune"
+    "FinetuneModel": "Mô hình Finetune",
+    "Experience": "Kinh nghiệm",
+    "ModelCard": "Thẻ mẫu"
   },
   "table": {
     "SettingTable": "Cài đặt bảng",
@@ -1755,7 +1759,8 @@
   },
   "modelserving": {
     "menu": {
-      "ModelList": "Danh sách mẫu"
+      "ModelList": "Danh sách mẫu",
+      "MyServices": "Dịch vụ của tôi"
     }
   }
 }

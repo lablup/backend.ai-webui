@@ -65,7 +65,9 @@
       "InvalidBlankEmail": "ใส่อีเมลของคุณ",
       "DisMatchUserEmail": "อีเมลผู้ใช้ไม่ตรงกัน",
       "MyEnvironments": "สภาพแวดล้อมของฉัน",
-      "ResourcePolicy": "นโยบายทรัพยากร"
+      "ResourcePolicy": "นโยบายทรัพยากร",
+      "Playground": "สนามเด็กเล่น",
+      "ModelStore": "ร้านโมเดล"
     },
     "YouAreOffline": "ออฟไลน์: ไม่ได้เชื่อมต่อกับเครือข่ายใดๆ",
     "YouAreOnline": "คุณออนไลน์แล้ว",
@@ -1689,7 +1691,9 @@
     "category": "หมวดหมู่",
     "CloneToFolder": "โคลนไปยังโฟลเดอร์",
     "FolderAlreadyExists": "มีโฟลเดอร์ชื่อนี้อยู่แล้ว",
-    "FinetuneModel": "ปรับแต่งโมเดล"
+    "FinetuneModel": "ปรับแต่งโมเดล",
+    "Experience": "ประสบการณ์",
+    "ModelCard": "การ์ดโมเดล"
   },
   "tourguide": {
     "NeoSessionLauncher": {
@@ -1736,7 +1740,8 @@
   "modelserving": {
     "menu": {
       "ModelServices": "บริการโมเดล",
-      "ModelList": "รายการรุ่น"
+      "ModelList": "รายการรุ่น",
+      "MyServices": "บริการของฉัน"
     }
   }
 }

@@ -65,7 +65,9 @@
       "InvalidBlankEmail": "Wprowadź swój email",
       "DisMatchUserEmail": "Adres e-mail użytkownika nie jest zgodny",
       "MyEnvironments": "Moje Środowiska",
-      "ResourcePolicy": "Polityka zasobów"
+      "ResourcePolicy": "Polityka zasobów",
+      "Playground": "Plac gier i zabaw",
+      "ModelStore": "Sklep modelarski"
     },
     "YouAreOffline": "Offline: Brak połączenia z siecią.",
     "YouAreOnline": "Jesteś teraz online",
@@ -1705,7 +1707,9 @@
     "category": "Kategoria",
     "CloneToFolder": "Klonowanie do folderu",
     "FolderAlreadyExists": "Folder o tej nazwie już istnieje.",
-    "FinetuneModel": "Dostosuj model"
+    "FinetuneModel": "Dostosuj model",
+    "Experience": "Doświadczenie",
+    "ModelCard": "Karta Modelowa"
   },
   "table": {
     "SettingTable": "Nakrycie stołu",
@@ -1756,7 +1760,8 @@
   "modelserving": {
     "menu": {
       "ModelServices": "Usługi modelarskie",
-      "ModelList": "Lista modeli"
+      "ModelList": "Lista modeli",
+      "MyServices": "Moje usługi"
     }
   }
 }

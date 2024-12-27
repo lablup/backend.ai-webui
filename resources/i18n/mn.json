@@ -65,7 +65,9 @@
       "InvalidBlankEmail": "Имэйлээ оруулна уу",
       "DisMatchUserEmail": "Хэрэглэгчийн имэйл таарахгүй байна",
       "MyEnvironments": "Миний орчин",
-      "ResourcePolicy": "Нөөцийн бодлого"
+      "ResourcePolicy": "Нөөцийн бодлого",
+      "Playground": "Тоглоомын талбай",
+      "ModelStore": "Загварын дэлгүүр"
     },
     "YouAreOffline": "Офлайн: Ямар ч сүлжээнд холбогдоогүй.",
     "YouAreOnline": "Та одоо онлайн байна",
@@ -1705,7 +1707,9 @@
     "category": "Ангилал",
     "CloneToFolder": "Хавтас руу клон хийх",
     "FolderAlreadyExists": "Ийм нэртэй хавтас аль хэдийн байна.",
-    "FinetuneModel": "Finetune загвар"
+    "FinetuneModel": "Finetune загвар",
+    "Experience": "Туршлага",
+    "ModelCard": "Загварын карт"
   },
   "table": {
     "SettingTable": "Хүснэгтийн тохиргоо",
@@ -1756,7 +1760,8 @@
   "modelserving": {
     "menu": {
       "ModelServices": "Загвар үйлчилгээ",
-      "ModelList": "Загварын жагсаалт"
+      "ModelList": "Загварын жагсаалт",
+      "MyServices": "Миний үйлчилгээ"
     }
   }
 }

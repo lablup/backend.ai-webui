@@ -16,6 +16,7 @@ import WebUILink from '../WebUILink';
 import { PluginPage, WebUIPluginType } from './MainLayout';
 import {
   ApiOutlined,
+  AppstoreOutlined,
   BarChartOutlined,
   CloudUploadOutlined,
   ControlOutlined,
@@ -24,6 +25,7 @@ import {
   FileDoneOutlined,
   HddOutlined,
   InfoCircleOutlined,
+  MessageOutlined,
   SolutionOutlined,
   ToolOutlined,
   UserOutlined,
@@ -95,11 +97,23 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     //   icon: <SessionsIcon style={{ color: token.colorPrimary }} />,
     //   key: 'job',
     // },
+    {
+      label: (
+        <WebUILink to="/playground">{t('webui.menu.Playground')}</WebUILink>
+      ),
+      icon: <MessageOutlined style={{ color: token.colorPrimary }} />,
+      key: 'playground',
+    },
+    {
+      label: (
+        <WebUILink to="/model-store">{t('webui.menu.ModelStore')}</WebUILink>
+      ),
+      icon: <AppstoreOutlined style={{ color: token.colorPrimary }} />,
+      key: 'model-store',
+    },
     supportServing && {
       label: (
-        <WebUILink to="/serving">
-          {t('modelserving.menu.ModelServices')}
-        </WebUILink>
+        <WebUILink to="/serving">{t('modelserving.menu.MyServices')}</WebUILink>
       ),
       icon: <EndpointsIcon style={{ color: token.colorPrimary }} />,
       key: 'serving',
@@ -109,13 +123,13 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     //   icon: <PlayIcon style={{ color: token.colorPrimary }} />,
     //   key: 'import',
     // },
-    {
-      label: (
-        <WebUILink to="/data">{t('modelserving.menu.ModelList')}</WebUILink>
-      ),
-      icon: <CloudUploadOutlined style={{ color: token.colorPrimary }} />,
-      key: 'data',
-    },
+    // {
+    //   label: (
+    //     <WebUILink to="/data">{t('modelserving.menu.ModelList')}</WebUILink>
+    //   ),
+    //   icon: <CloudUploadOutlined style={{ color: token.colorPrimary }} />,
+    //   key: 'data',
+    // },
     // supportUserCommittedImage && {
     //   label: (
     //     <WebUILink to="/my-environment">

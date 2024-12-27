@@ -64,7 +64,9 @@
       "InvalidBlankEmail": "Enter your e-mail",
       "DisMatchUserEmail": "User E-mail does not match",
       "MyEnvironments": "My Environments",
-      "ResourcePolicy": "Resource Policy"
+      "ResourcePolicy": "Resource Policy",
+      "Playground": "Playground",
+      "ModelStore": "Model Store"
     },
     "YouAreOffline": "Offline: Not connected to any networks.",
     "YouAreOnline": "You are now online",
@@ -1714,7 +1716,9 @@
     "category": "Category",
     "CloneToFolder": "Clone to a folder",
     "FolderAlreadyExists": "A folder with this name already exists.",
-    "FinetuneModel": "Finetune Model"
+    "FinetuneModel": "Finetune Model",
+    "Experience": "Experience",
+    "ModelCard": "Model Card"
   },
   "tourguide": {
     "NeoSessionLauncher": {
@@ -1761,7 +1765,8 @@
   "modelserving": {
     "menu": {
       "ModelServices": "Model Services",
-      "ModelList": "Model List"
+      "ModelList": "Model List",
+      "MyServices": "My Services"
     }
   }
 }

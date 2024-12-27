@@ -65,7 +65,9 @@
       "InvalidBlankEmail": "E-postanızı giriniz",
       "DisMatchUserEmail": "Kullanıcı E-postası eşleşmiyor",
       "MyEnvironments": "Ortamlarım",
-      "ResourcePolicy": "Kaynak Politikası"
+      "ResourcePolicy": "Kaynak Politikası",
+      "Playground": "Bahçesi",
+      "ModelStore": "Model Mağazası"
     },
     "YouAreOffline": "Çevrimdışı: Herhangi bir ağa bağlı değil.",
     "YouAreOnline": "artık çevrimiçisin",
@@ -1704,7 +1706,9 @@
     "category": "Kategori",
     "CloneToFolder": "Bir klasöre klonlama",
     "FolderAlreadyExists": "Bu isimde bir klasör zaten mevcut.",
-    "FinetuneModel": "İnce Ayar Modeli"
+    "FinetuneModel": "İnce Ayar Modeli",
+    "Experience": "Deneyim",
+    "ModelCard": "Model Kartı"
   },
   "table": {
     "SettingTable": "Tablo Ayarı",
@@ -1751,5 +1755,10 @@
     "hour": "saat",
     "day": "day",
     "week": "hafta"
+  },
+  "modelserving": {
+    "menu": {
+      "MyServices": "Hizmetlerim"
+    }
   }
 }

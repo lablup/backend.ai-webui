@@ -65,7 +65,9 @@
       "InvalidBlankEmail": "メールアドレスを入力",
       "DisMatchUserEmail": "ユーザーの電子メールが一致しません",
       "MyEnvironments": "私の環境",
-      "ResourcePolicy": "リソースポリシー"
+      "ResourcePolicy": "リソースポリシー",
+      "Playground": "遊び場",
+      "ModelStore": "模型店"
     },
     "YouAreOffline": "オフライン：どのネットワークにも接続されていない。",
     "YouAreOnline": "あなたは今オンラインです",
@@ -1705,7 +1707,9 @@
     "category": "カテゴリー",
     "CloneToFolder": "フォルダへのクローン",
     "FolderAlreadyExists": "この名前のフォルダはすでに存在する。",
-    "FinetuneModel": "ファインチューンモデル"
+    "FinetuneModel": "ファインチューンモデル",
+    "Experience": "経験",
+    "ModelCard": "モデルカード"
   },
   "table": {
     "SettingTable": "テーブルセッティング",
@@ -1756,7 +1760,8 @@
   "modelserving": {
     "menu": {
       "ModelServices": "モデルサービス",
-      "ModelList": "機種一覧"
+      "ModelList": "機種一覧",
+      "MyServices": "私のサービス"
     }
   }
 }

@@ -65,7 +65,9 @@
       "InvalidBlankEmail": "輸入你的電子郵件信箱",
       "DisMatchUserEmail": "使用者電子郵件不符",
       "MyEnvironments": "我的環境",
-      "ResourcePolicy": "資源政策"
+      "ResourcePolicy": "資源政策",
+      "Playground": "操場",
+      "ModelStore": "模型店"
     },
     "YouAreOffline": "脱机：未连接任何网络。",
     "YouAreOnline": "您現在在線",
@@ -1706,7 +1708,9 @@
     "category": "類別",
     "CloneToFolder": "克隆到文件夹",
     "FolderAlreadyExists": "该名称的文件夹已经存在。",
-    "FinetuneModel": "微調模型"
+    "FinetuneModel": "微調模型",
+    "Experience": "經驗",
+    "ModelCard": "型號卡"
   },
   "table": {
     "SettingTable": "桌面設定",
@@ -1756,7 +1760,8 @@
   },
   "modelserving": {
     "menu": {
-      "ModelList": "型號列表"
+      "ModelList": "型號列表",
+      "MyServices": "我的服務"
     }
   }
 }

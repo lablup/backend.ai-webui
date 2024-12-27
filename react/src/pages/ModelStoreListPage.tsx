@@ -3,6 +3,7 @@ import ModelCardModal from '../components/ModelCardModal';
 import TextHighlighter from '../components/TextHighlighter';
 import { ModelCardModalFragment$key } from '../components/__generated__/ModelCardModalFragment.graphql';
 import { useUpdatableState } from '../hooks';
+import { ModelStoreListPageEndpointQuery } from './__generated__/ModelStoreListPageEndpointQuery.graphql';
 import { ModelStoreListPageQuery } from './__generated__/ModelStoreListPageQuery.graphql';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import {
@@ -15,6 +16,7 @@ import {
   Tag,
   theme,
   Typography,
+  Image,
 } from 'antd';
 import { createStyles } from 'antd-style';
 import graphql from 'babel-plugin-relay/macro';
@@ -43,7 +45,13 @@ const ModelStoreListPage: React.FC = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
   const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
-
+  const [paginationState] = useState<{
+    current: number;
+    pageSize: number;
+  }>({
+    current: 1,
+    pageSize: 100,
+  });
   const { styles } = useStyles();
 
   const [currentModelInfo, setCurrentModelInfo] =
@@ -90,8 +98,6 @@ const ModelStoreListPage: React.FC = () => {
       fetchKey,
     },
   );
-
-  // const filterInfo = _.map
 
   const fieldsValues = useMemo(() => {
     const result: {
@@ -265,14 +271,11 @@ const ModelStoreListPage: React.FC = () => {
               children={
                 <Flex direction="column" align="stretch" gap="xs">
                   <Flex direction="row" align="start" gap="xs">
-                    <img
-                      alt="example"
+                    <Image
+                      width={150}
                       src={`/resources/images/model-player/${_.replace(item?.name as string, ' ', '-')}.jpeg`}
-                      style={{
-                        marginRight: token.marginXS,
-                        width: 200,
-                        height: 200,
-                      }}
+                      fallback="/resources/images/model-player/default.jpeg"
+                      loading={'lazy'}
                     />
                     <Typography.Paragraph
                       ellipsis={{ rows: 3, expandable: false }}
