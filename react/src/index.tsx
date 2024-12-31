@@ -11,6 +11,7 @@ import reactToWebComponent, {
 import { useSuspendedBackendaiClient } from './hooks';
 import { useCurrentResourceGroupValue } from './hooks/useCurrentProject';
 import { ThemeModeProvider } from './hooks/useThemeMode';
+import '@ant-design/v5-patch-for-react-19';
 import { Tag, theme } from 'antd';
 import dayjs from 'dayjs';
 import { Provider as JotaiProvider } from 'jotai';
