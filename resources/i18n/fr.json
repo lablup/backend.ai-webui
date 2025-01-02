@@ -1596,7 +1596,6 @@
     "StartNewServing": "Commencer une nouvelle distribution",
     "ServiceName": "Nom du service",
     "OpenToPublic": "Ouvert au public",
-    "DesiredRoutingCount": "Nombre d'acheminements souhaités",
     "Services": "Services",
     "RoutingInfo": "Informations sur le routage",
     "ServiceInfo": "Informations sur le service",
@@ -1666,7 +1665,8 @@
     "Chatting": "Bavardage",
     "ServiceNameMinLength": "Veuillez saisir au moins 4 caractères.",
     "ServiceNameMaxLength": "Veuillez saisir 24 caractères ou moins.",
-    "ServiceNameCannotStartWithHyphen": "Les tirets (-) ne peuvent pas être utilisés à chaque extrémité."
+    "ServiceNameCannotStartWithHyphen": "Les tirets (-) ne peuvent pas être utilisés à chaque extrémité.",
+    "NumberOfReplicas": "Nombre de répliques"
   },
   "ErrorBoundary": {
     "title": "Une erreur s'est produite.",

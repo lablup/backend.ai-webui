@@ -1555,7 +1555,6 @@
     "ServiceName": "サービス名",
     "ServiceNameRule": "英数字、アンダースコア (_)、およびハイフン (-) のみを使用でき、英数字で終わる必要があります。",
     "OpenToPublic": "アプリを外部に公開",
-    "DesiredRoutingCount": "希望のルーティング数",
     "ServingRouteErrorModalTitle": "サービングルートエラー",
     "SessionId": "セッションID",
     "Services": "モデルサービス",
@@ -1613,7 +1612,8 @@
     "Chatting": "おしゃべり",
     "ServiceNameMinLength": "少なくとも 4 文字を入力してください。",
     "ServiceNameMaxLength": "24文字以内で入力してください。",
-    "ServiceNameCannotStartWithHyphen": "両端にハイフン（-）を使用することはできません。"
+    "ServiceNameCannotStartWithHyphen": "両端にハイフン（-）を使用することはできません。",
+    "NumberOfReplicas": "レプリカの数"
   },
   "ErrorBoundary": {
     "title": "エラーが発生しました。",

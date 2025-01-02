@@ -88,7 +88,8 @@ interface ServiceCreateConfigType {
 }
 export interface ServiceCreateType {
   name: string;
-  desired_session_count: number;
+  desired_session_count?: number;
+  replicas?: number;
   image: string;
   runtime_variant: string;
   architecture: string;
@@ -106,7 +107,7 @@ export interface ServiceCreateType {
 interface ServiceLauncherInput extends ImageEnvironmentFormInput {
   serviceName: string;
   vFolderID: string;
-  desiredRoutingCount: number;
+  replicas: number;
   openToPublic: boolean;
   modelMountDestination: string;
   modelDefinitionPath: string;
@@ -153,7 +154,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     graphql`
       fragment ServiceLauncherPageContentFragment on Endpoint {
         endpoint_id
-        desired_session_count
+        desired_session_count @deprecatedSince(version: "24.12.0")
+        replicas @since(version: "24.12.0")
         resource_group
         resource_slots
         resource_opts
@@ -264,7 +266,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   const legacyMutationToUpdateService = useTanMutation({
     mutationFn: (values: ServiceLauncherFormValue) => {
       const body = {
-        to: values.desiredRoutingCount,
+        to: values.replicas,
       };
       return baiSignedRequestWithPromise({
         method: 'POST',
@@ -289,7 +291,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
       }
       const body: ServiceCreateType = {
         name: values.serviceName,
-        desired_session_count: values.desiredRoutingCount,
+        // REST API does not support `replicas` field. To use `replicas` field, we need `create_endpoint` mutation.
+        desired_session_count: values.replicas,
         ...getImageInfoFromInputInCreating(
           checkManualImageAllowed(
             baiClient._config.allow_manual_image_name_for_session,
@@ -407,7 +410,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         msg
         endpoint {
           endpoint_id
-          desired_session_count
+          desired_session_count @deprecatedSince(version: "24.12.0")
+          replicas @since(version: "24.12.0")
           resource_group
           resource_slots
           resource_opts
@@ -500,7 +504,11 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                       ? 'SINGLE_NODE'
                       : 'MULTI_NODE',
                   cluster_size: values.cluster_size,
-                  desired_session_count: values.desiredRoutingCount,
+                  ...(baiClient.supports('replicas')
+                    ? { replicas: values.replicas }
+                    : {
+                        desired_session_count: values.replicas,
+                      }),
                   ...getImageInfoFromInputInEditing(
                     checkManualImageAllowed(
                       baiClient._config.allow_manual_image_name_for_session,
@@ -643,7 +651,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         serviceName: endpoint?.name,
         resourceGroup: endpoint?.resource_group,
         allocationPreset: 'custom',
-        desiredRoutingCount: endpoint?.desired_session_count ?? 1,
+        replicas: endpoint?.replicas ?? endpoint?.desired_session_count ?? 1,
         // FIXME: memory doesn't applied to resource allocation
         resource: {
           cpu: parseInt(JSON.parse(endpoint?.resource_slots || '{}')?.cpu),
@@ -692,7 +700,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         // TODO: set mounts alias map according to extra_mounts if possible
       }
     : {
-        desiredRoutingCount: 1,
+        replicas: 1,
         runtimeVariant: 'custom',
         ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
         ...(baiClient._config?.default_session_environment && {
@@ -899,8 +907,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                     </>
                   )}
                   <Form.Item
-                    label={t('modelService.DesiredRoutingCount')}
-                    name="desiredRoutingCount"
+                    label={t('modelService.NumberOfReplicas')}
+                    name={'replicas'}
                     rules={[
                       {
                         required: true,

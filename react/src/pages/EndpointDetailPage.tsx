@@ -18,6 +18,7 @@ import {
   useWebUINavigate,
 } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
+import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { isDestroyingStatus } from './EndpointListPage';
 import {
@@ -68,7 +69,8 @@ interface RoutingInfo {
 export interface ModelServiceInfo {
   endpoint_id: string;
   name: string;
-  desired_session_count: number;
+  desired_session_count?: number;
+  replicas?: number;
   active_routes: RoutingInfo[];
   service_endpoint: string;
   is_public: boolean;
@@ -91,12 +93,14 @@ const dayDiff = (a: any, b: any) => {
 const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const baiClient = useSuspendedBackendaiClient();
-  const navigate = useNavigate();
+  const { message } = App.useApp();
+  const { baiPaginationOption } = useBAIPaginationOptionState({
+    current: 1,
+    pageSize: 100,
+  });
   const { serviceId } = useParams<{
     serviceId: string;
   }>();
-
   const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [isPendingClearError, startClearErrorTransition] = useTransition();
@@ -107,14 +111,8 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   const [openChatModal, setOpenChatModal] = useState(false);
   const [currentUser] = useCurrentUserInfo();
   // const curProject = useCurrentProjectValue();
-  const [paginationState] = useState<{
-    current: number;
-    pageSize: number;
-  }>({
-    current: 1,
-    pageSize: 100,
-  });
-  const { message } = App.useApp();
+  const baiClient = useSuspendedBackendaiClient();
+  const navigate = useNavigate();
   const webuiNavigate = useWebUINavigate();
   const { open } = useFolderExplorerOpener();
   const [selectedSessionId, setSelectedSessionId] = useState<string>();
@@ -151,7 +149,8 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               size_bytes
               supported_accelerators
             }
-            desired_session_count
+            desired_session_count @deprecatedSince(version: "24.12.0")
+            replicas @since(version: "24.12.0")
             url
             open_to_public
             errors {
@@ -207,9 +206,8 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         }
       `,
       {
-        tokenListOffset:
-          (paginationState.current - 1) * paginationState.pageSize,
-        tokenListLimit: paginationState.pageSize,
+        tokenListOffset: baiPaginationOption.offset,
+        tokenListLimit: baiPaginationOption.limit,
         endpointId: serviceId || '',
       },
       {
@@ -298,7 +296,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     },
     {
       label: t('modelService.DesiredSessionCount'),
-      children: endpoint?.desired_session_count,
+      children: endpoint?.desired_session_count ?? endpoint?.replicas,
     },
     {
       label: t('modelService.ServiceEndpoint'),
@@ -481,7 +479,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             loading={isPendingRefetch}
             icon={<ReloadOutlined />}
             disabled={isDestroyingStatus(
-              endpoint?.desired_session_count,
+              endpoint?.desired_session_count ?? endpoint?.replicas,
               endpoint?.status,
             )}
             onClick={() => {
@@ -502,7 +500,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             icon={<SettingOutlined />}
             disabled={
               isDestroyingStatus(
-                endpoint?.desired_session_count,
+                endpoint?.desired_session_count ?? endpoint?.replicas,
                 endpoint?.status,
               ) ||
               (!!endpoint?.created_user_email &&
@@ -532,7 +530,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             type="primary"
             icon={<PlusOutlined />}
             disabled={isDestroyingStatus(
-              endpoint?.desired_session_count,
+              endpoint?.desired_session_count ?? endpoint?.replicas,
               endpoint?.status,
             )}
             onClick={() => {
@@ -562,14 +560,14 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               fixed: 'left',
               render: (text, row) => (
                 <Typography.Text ellipsis copyable style={{ width: 150 }}>
-                  {row.token}
+                  {row?.token}
                 </Typography.Text>
               ),
             },
             {
               title: 'Status',
               render: (text, row) => {
-                const isExpired = dayjs.utc(row.valid_until).isBefore();
+                const isExpired = dayjs.utc(row?.valid_until).isBefore();
                 return (
                   <Tag color={isExpired ? 'red' : 'green'}>
                     {isExpired ? 'Expired' : 'Valid'}
@@ -585,7 +583,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                   {
                     // FIXME: temporally parse UTC and change to timezone (timezone need to be added in server side)
                     row.valid_until
-                      ? dayjs.utc(row.valid_until).tz().format('ll LTS')
+                      ? dayjs.utc(row?.valid_until).tz().format('ll LTS')
                       : '-'
                   }
                 </span>
@@ -598,7 +596,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               title: 'Created at',
               dataIndex: 'created_at',
               render: (text, row) => (
-                <span>{dayjs(row.created_at).format('ll LT')}</span>
+                <span>{dayjs(row?.created_at).format('ll LT')}</span>
               ),
               defaultSortOrder: 'descend',
               sortDirections: ['descend', 'ascend', 'descend'],
@@ -618,7 +616,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               icon={<SyncOutlined />}
               loading={mutationToSyncRoutes.isPending}
               disabled={isDestroyingStatus(
-                endpoint?.desired_session_count,
+                endpoint?.desired_session_count ?? endpoint?.replicas,
                 endpoint?.status,
               )}
               onClick={() => {
@@ -674,20 +672,20 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                 row.status && (
                   <>
                     <Tag
-                      color={applyStatusColor(row.status)}
-                      key={row.status}
+                      color={applyStatusColor(row?.status)}
+                      key={row?.status}
                       style={{ marginRight: 0 }}
                     >
-                      {row.status.toUpperCase()}
+                      {row?.status.toUpperCase()}
                     </Tag>
-                    {row.status === 'FAILED_TO_START' && row.session && (
+                    {row?.status === 'FAILED_TO_START' && row?.session && (
                       <Button
                         size="small"
                         type="text"
                         icon={<QuestionCircleOutlined />}
                         style={{ color: token.colorTextSecondary }}
                         onClick={() => {
-                          row.session && openSessionErrorModal(row.session);
+                          row?.session && openSessionErrorModal(row?.session);
                         }}
                       />
                     )}

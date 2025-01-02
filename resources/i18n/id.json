@@ -1597,7 +1597,6 @@
     "StartNewServing": "Memulai sajian baru",
     "ServiceName": "Nama Layanan",
     "OpenToPublic": "Terbuka Untuk Umum",
-    "DesiredRoutingCount": "Jumlah Perutean yang Diinginkan",
     "Services": "Layanan",
     "RoutingInfo": "Info Perutean",
     "ServiceInfo": "Info Layanan",
@@ -1666,7 +1665,8 @@
     "Chatting": "Mengobrol",
     "ServiceNameMinLength": "Silakan masukkan setidaknya 4 karakter.",
     "ServiceNameMaxLength": "Silakan masukkan 24 karakter atau kurang.",
-    "ServiceNameCannotStartWithHyphen": "Tanda hubung (-) tidak dapat digunakan pada kedua ujungnya."
+    "ServiceNameCannotStartWithHyphen": "Tanda hubung (-) tidak dapat digunakan pada kedua ujungnya.",
+    "NumberOfReplicas": "Jumlah replika"
   },
   "ErrorBoundary": {
     "title": "Telah terjadi kesalahan.",

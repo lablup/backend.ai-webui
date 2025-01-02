@@ -791,7 +791,6 @@
     "Controls": "Ohjaimet",
     "CreatedAt": "Created at",
     "CurrentTime": "Nykyinen aika",
-    "DesiredRoutingCount": "Haluttu reititysmäärä",
     "DesiredSessionCount": "Haluttu istunnon määrä",
     "EditModelService": "Muokkaa mallipalvelua",
     "EndpointId": "Päätepisteen tunnus",
@@ -861,7 +860,8 @@
     "RuntimeVariant": "Päättelyn suoritusaikamuunnos",
     "ServiceNameMinLength": "Kirjoita vähintään 4 merkkiä.",
     "ServiceNameMaxLength": "Anna enintään 24 merkkiä.",
-    "ServiceNameCannotStartWithHyphen": "Tavuviivoja (-) ei voi käyttää kummassakaan päässä."
+    "ServiceNameCannotStartWithHyphen": "Tavuviivoja (-) ei voi käyttää kummassakaan päässä.",
+    "NumberOfReplicas": "Kopioiden määrä"
   },
   "notification": {
     "Initializing": "Aloitetaan...",

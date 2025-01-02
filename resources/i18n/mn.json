@@ -1596,7 +1596,6 @@
     "StartNewServing": "Шинээр үйлчилж эхлэх",
     "ServiceName": "Үйлчилгээний нэр",
     "OpenToPublic": "Олон нийтэд нээлттэй",
-    "DesiredRoutingCount": "Хүссэн чиглүүлэлтийн тоо",
     "Services": "Үйлчилгээ",
     "RoutingInfo": "Чиглүүлэлтийн мэдээлэл",
     "ServiceInfo": "Үйлчилгээний мэдээлэл",
@@ -1666,7 +1665,8 @@
     "Chatting": "Чатлаж байна",
     "ServiceNameMinLength": "Дор хаяж 4 тэмдэгт оруулна уу.",
     "ServiceNameMaxLength": "24 ба түүнээс бага тэмдэгт оруулна уу.",
-    "ServiceNameCannotStartWithHyphen": "Хоёр төгсгөлд зураас (-) ашиглах боломжгүй."
+    "ServiceNameCannotStartWithHyphen": "Хоёр төгсгөлд зураас (-) ашиглах боломжгүй.",
+    "NumberOfReplicas": "Хуулбаруудын тоо"
   },
   "ErrorBoundary": {
     "title": "Алдаа гарсан байна.",
