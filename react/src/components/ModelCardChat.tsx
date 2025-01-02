@@ -139,8 +139,6 @@ const ModelCardChat: React.FC<ModelCardChatProps> = ({
     },
   });
 
-  console.log(newestValidToken);
-
   return (
     <LLMChatCard
       endpointId={endpoint_list?.items[0]?.endpoint_id || ''}
@@ -149,9 +147,7 @@ const ModelCardChat: React.FC<ModelCardChatProps> = ({
         id: m.id,
         name: m.id,
       }))}
-      headers={{
-        Authorization: `BackendAI ${newestValidToken}`,
-      }}
+      apiKey={newestValidToken}
       fetchOnClient
       style={{ flex: 1 }}
       allowCustomModel={false}
