@@ -1709,7 +1709,8 @@
     "FolderAlreadyExists": "Tämän niminen kansio on jo olemassa.",
     "FinetuneModel": "Finetune malli",
     "Experience": "Kokea",
-    "ModelCard": "Mallikortti"
+    "ModelCard": "Mallikortti",
+    "ImportFromHuggingFace": "Tuo halaavista kasvoista"
   },
   "table": {
     "SettingTable": "Kattaus",

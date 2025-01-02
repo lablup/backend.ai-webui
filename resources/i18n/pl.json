@@ -1709,7 +1709,8 @@
     "FolderAlreadyExists": "Folder o tej nazwie już istnieje.",
     "FinetuneModel": "Dostosuj model",
     "Experience": "Doświadczenie",
-    "ModelCard": "Karta Modelowa"
+    "ModelCard": "Karta Modelowa",
+    "ImportFromHuggingFace": "Importuj z przytulającej twarzy"
   },
   "table": {
     "SettingTable": "Nakrycie stołu",

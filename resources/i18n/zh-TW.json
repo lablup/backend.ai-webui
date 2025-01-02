@@ -1710,7 +1710,8 @@
     "FolderAlreadyExists": "该名称的文件夹已经存在。",
     "FinetuneModel": "微調模型",
     "Experience": "經驗",
-    "ModelCard": "型號卡"
+    "ModelCard": "型號卡",
+    "ImportFromHuggingFace": "從擁抱臉導入"
   },
   "table": {
     "SettingTable": "桌面設定",

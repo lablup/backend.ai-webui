@@ -1709,7 +1709,8 @@
     "FolderAlreadyExists": "Ein Ordner mit diesem Namen existiert bereits.",
     "FinetuneModel": "Feinabstimmung des Modells",
     "Experience": "Erfahrung",
-    "ModelCard": "Modellkarte"
+    "ModelCard": "Modellkarte",
+    "ImportFromHuggingFace": "Import aus Hugging Face"
   },
   "table": {
     "SettingTable": "Sitzordnung bei Tisch",

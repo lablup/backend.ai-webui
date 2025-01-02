@@ -1711,7 +1711,8 @@
     "FolderAlreadyExists": "Ya existe una carpeta con este nombre.",
     "FinetuneModel": "Modelo de ajuste fino",
     "Experience": "Experiencia",
-    "ModelCard": "Tarjeta modelo"
+    "ModelCard": "Tarjeta modelo",
+    "ImportFromHuggingFace": "Importar desde la cara abrazada"
   },
   "table": {
     "SettingTable": "Ajuste de la tabla",

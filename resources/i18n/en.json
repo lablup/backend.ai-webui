@@ -1718,7 +1718,8 @@
     "FolderAlreadyExists": "A folder with this name already exists.",
     "FinetuneModel": "Finetune Model",
     "Experience": "Experience",
-    "ModelCard": "Model Card"
+    "ModelCard": "Model Card",
+    "ImportFromHuggingFace": "Import From Hugging Face"
   },
   "tourguide": {
     "NeoSessionLauncher": {

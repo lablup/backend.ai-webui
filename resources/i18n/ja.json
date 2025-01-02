@@ -1709,7 +1709,8 @@
     "FolderAlreadyExists": "この名前のフォルダはすでに存在する。",
     "FinetuneModel": "ファインチューンモデル",
     "Experience": "経験",
-    "ModelCard": "モデルカード"
+    "ModelCard": "モデルカード",
+    "ImportFromHuggingFace": "ハグフェイスからインポート"
   },
   "table": {
     "SettingTable": "テーブルセッティング",

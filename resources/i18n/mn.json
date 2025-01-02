@@ -1709,7 +1709,8 @@
     "FolderAlreadyExists": "Ийм нэртэй хавтас аль хэдийн байна.",
     "FinetuneModel": "Finetune загвар",
     "Experience": "Туршлага",
-    "ModelCard": "Загварын карт"
+    "ModelCard": "Загварын карт",
+    "ImportFromHuggingFace": "Тэврэх нүүрээс импортлох"
   },
   "table": {
     "SettingTable": "Хүснэгтийн тохиргоо",

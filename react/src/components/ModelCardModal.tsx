@@ -1,21 +1,12 @@
 import { useBackendAIImageMetaData } from '../hooks';
 import { useUpdatableState } from '../hooks';
-import { useTanQuery } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
+import ModelCardChat from './ModelCardChat';
 import ModelCloneModal from './ModelCloneModal';
 import ResourceNumber from './ResourceNumber';
-import { ModelCardModalEndpointDetailQuery } from './__generated__/ModelCardModalEndpointDetailQuery.graphql';
 import { ModelCardModalFragment$key } from './__generated__/ModelCardModalFragment.graphql';
-import { Model } from './lablupTalkativotUI/ChatUIModal';
-import LLMChatCard from './lablupTalkativotUI/LLMChatCard';
-import {
-  BankOutlined,
-  CopyOutlined,
-  FileOutlined,
-  ReloadOutlined,
-} from '@ant-design/icons';
-import { stringLiteral } from '@babel/types';
+import { BankOutlined, FileOutlined } from '@ant-design/icons';
 import {
   Alert,
   Button,
@@ -29,25 +20,24 @@ import {
   Typography,
   Tabs,
   theme,
+  Skeleton,
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _, { head } from 'lodash';
-import { Cog, FolderX } from 'lucide-react';
+import { FolderX } from 'lucide-react';
 import Markdown from 'markdown-to-jsx';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
-import { useLazyLoadQuery } from 'react-relay';
 
 interface ModelCardModalProps extends BAIModalProps {
   modelCardModalFrgmt?: ModelCardModalFragment$key | null;
-  basePath?: string;
+  // basePath?: string;
   onRequestClose: () => void;
 }
 const ModelCardModal: React.FC<ModelCardModalProps> = ({
   modelCardModalFrgmt = null,
-  basePath = 'v1',
   onRequestClose,
   ...props
 }) => {
@@ -97,138 +87,6 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
     `,
     modelCardModalFrgmt,
   );
-
-  const [paginationState] = useState<{
-    current: number;
-    pageSize: number;
-  }>({
-    current: 1,
-    pageSize: 100,
-  });
-
-  const { endpoint, endpoint_token_list } =
-    useLazyLoadQuery<ModelCardModalEndpointDetailQuery>(
-      graphql`
-        query ModelCardModalEndpointDetailQuery(
-          $endpointId: UUID!
-          $tokenListOffset: Int!
-          $tokenListLimit: Int!
-        ) {
-          endpoint(endpoint_id: $endpointId) {
-            name
-            status
-            endpoint_id
-            image @deprecatedSince(version: "23.09.9")
-            image_object @since(version: "23.09.9") {
-              name
-              humanized_name
-              tag
-              registry
-              architecture
-              is_local
-              digest
-              resource_limits {
-                key
-                min
-                max
-              }
-              labels {
-                key
-                value
-              }
-              size_bytes
-              supported_accelerators
-            }
-            desired_session_count
-            url
-            open_to_public
-            retries
-            runtime_variant @since(version: "24.03.5") {
-              human_readable_name
-            }
-            model
-            model_mount_destiation @deprecatedSince(version: "24.03.4")
-            model_mount_destination @since(version: "24.03.4")
-            model_definition_path @since(version: "24.03.4")
-            extra_mounts @since(version: "24.03.4") {
-              row_id
-              name
-            }
-            environ
-            resource_group
-            resource_slots
-            resource_opts
-            routings {
-              routing_id
-              session
-              traffic_ratio
-              endpoint
-              status
-            }
-            created_user_email @since(version: "23.09.8")
-            ...EndpointOwnerInfoFragment
-            ...EndpointStatusTagFragment
-          }
-          endpoint_token_list(
-            offset: $tokenListOffset
-            limit: $tokenListLimit
-            endpoint_id: $endpointId
-          ) {
-            total_count
-            items {
-              id
-              token
-              endpoint_id
-              domain
-              project
-              session_owner
-              created_at
-              valid_until
-            }
-          }
-        }
-      `,
-      {
-        tokenListOffset:
-          (paginationState.current - 1) * paginationState.pageSize,
-        tokenListLimit: paginationState.pageSize,
-        // TODO: set endpointId
-        endpointId: 'cdc6ffa1-5b35-4111-9f2a-d99875fdf6ff',
-      },
-      {
-        fetchPolicy:
-          fetchKey === 'initial-fetch' ? 'store-and-network' : 'network-only',
-        fetchKey,
-      },
-    );
-
-  const {
-    data: modelsResult,
-    // error,
-    isFetching,
-    refetch,
-  } = useTanQuery<{
-    data: Array<Model>;
-  }>({
-    queryKey: ['models', endpoint?.url],
-    queryFn: () => {
-      return fetch(
-        new URL(basePath + '/models', endpoint?.url || '').toString(),
-      ).then((res) => res.json());
-    },
-  });
-
-  const newestToken = _.maxBy(
-    endpoint_token_list?.items,
-    (item) => item?.created_at,
-  );
-  // FIXME: temporally parse UTC and change to timezone (timezone need to be added in server side)
-  const newestValidToken = dayjs
-    .utc(newestToken?.valid_until)
-    .tz()
-    .isAfter(dayjs())
-    ? newestToken?.token
-    : undefined;
 
   const colSize = {
     xs: { span: 24 },
@@ -286,40 +144,14 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
             key: 'experience',
             label: t('modelStore.Experience'),
             children: (
-              <Flex direction="row" wrap="wrap" align="center" gap={'sm'}>
-                <LLMChatCard
-                  endpointId={endpoint?.endpoint_id || ''}
-                  baseURL={new URL(basePath, endpoint?.url || '').toString()}
-                  models={_.map(modelsResult?.data, (m) => ({
-                    id: m.id,
-                    name: m.id,
-                  }))}
-                  fetchOnClient
-                  style={{ flex: 1 }}
-                  allowCustomModel={_.isEmpty(modelsResult?.data)}
-                  alert={
-                    _.isEmpty(modelsResult?.data) && (
-                      <Alert
-                        type="warning"
-                        showIcon
-                        message={t('chatui.CannotFindModel')}
-                        action={
-                          <Button
-                            icon={<ReloadOutlined />}
-                            onClick={() => {
-                              refetch();
-                            }}
-                          >
-                            {t('button.Refresh')}
-                          </Button>
-                        }
-                      />
-                    )
-                  }
-                  modelId={modelsResult?.data?.[0].id ?? 'custom'}
-                  modelToken={newestValidToken}
-                />
-              </Flex>
+              <Suspense fallback={<Skeleton active />}>
+                <Flex direction="row" wrap="wrap" align="center" gap={'sm'}>
+                  <ModelCardChat
+                    basePath="v1"
+                    modelName={model_card?.name || ''}
+                  />
+                </Flex>
+              </Suspense>
             ),
           },
           {

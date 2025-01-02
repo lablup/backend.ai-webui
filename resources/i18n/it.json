@@ -1709,7 +1709,8 @@
     "FolderAlreadyExists": "Una cartella con questo nome esiste già.",
     "FinetuneModel": "Modello di messa a punto",
     "Experience": "Esperienza",
-    "ModelCard": "Scheda modello"
+    "ModelCard": "Scheda modello",
+    "ImportFromHuggingFace": "Importa da viso abbracciato"
   },
   "table": {
     "SettingTable": "Impostazione della tabella",

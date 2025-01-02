@@ -1709,7 +1709,8 @@
     "FolderAlreadyExists": "Ένας φάκελος με αυτό το όνομα υπάρχει ήδη.",
     "FinetuneModel": "Μοντέλο Finetune",
     "Experience": "Εμπειρία",
-    "ModelCard": "Κάρτα μοντέλου"
+    "ModelCard": "Κάρτα μοντέλου",
+    "ImportFromHuggingFace": "Εισαγωγή από το πρόσωπο που αγκαλιάζει"
   },
   "table": {
     "SettingTable": "Ρύθμιση πίνακα",

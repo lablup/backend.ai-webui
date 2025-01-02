@@ -1,9 +1,9 @@
 import Flex from '../components/Flex';
+import ImportFromHuggingFacePanel from '../components/ImportFromHuggingFacePanel';
 import ModelCardModal from '../components/ModelCardModal';
 import TextHighlighter from '../components/TextHighlighter';
 import { ModelCardModalFragment$key } from '../components/__generated__/ModelCardModalFragment.graphql';
 import { useUpdatableState } from '../hooks';
-import { ModelStoreListPageEndpointQuery } from './__generated__/ModelStoreListPageEndpointQuery.graphql';
 import { ModelStoreListPageQuery } from './__generated__/ModelStoreListPageQuery.graphql';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import {
@@ -79,6 +79,10 @@ const ModelStoreListPage: React.FC = () => {
               license
               min_resource
               error_msg @since(version: "24.03.7")
+              vfolder {
+                id
+                name
+              }
               ...ModelCardModalFragment
             }
           }
@@ -132,6 +136,7 @@ const ModelStoreListPage: React.FC = () => {
       gap="lg"
       style={{ padding: token.paddingLG }}
     >
+      <ImportFromHuggingFacePanel />
       <Flex
         direction="column"
         align="stretch"
@@ -273,6 +278,7 @@ const ModelStoreListPage: React.FC = () => {
                   <Flex direction="row" align="start" gap="xs">
                     <Image
                       width={150}
+                      preview={false}
                       src={`/resources/images/model-player/${_.replace(item?.name as string, ' ', '-')}.jpeg`}
                       fallback="/resources/images/model-player/default.jpeg"
                       loading={'lazy'}

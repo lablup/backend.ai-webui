@@ -1693,7 +1693,8 @@
     "FolderAlreadyExists": "มีโฟลเดอร์ชื่อนี้อยู่แล้ว",
     "FinetuneModel": "ปรับแต่งโมเดล",
     "Experience": "ประสบการณ์",
-    "ModelCard": "การ์ดโมเดล"
+    "ModelCard": "การ์ดโมเดล",
+    "ImportFromHuggingFace": "นำเข้าจากกอดใบหน้า"
   },
   "tourguide": {
     "NeoSessionLauncher": {

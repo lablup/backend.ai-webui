@@ -1709,7 +1709,8 @@
     "FolderAlreadyExists": "Folder dengan nama ini sudah wujud.",
     "FinetuneModel": "Model Finetune",
     "Experience": "Pengalaman",
-    "ModelCard": "Kad Model"
+    "ModelCard": "Kad Model",
+    "ImportFromHuggingFace": "Import Dari Muka Berpeluk"
   },
   "table": {
     "SelectColumnToDisplay": "Pilih untuk lajur untuk dipaparkan",

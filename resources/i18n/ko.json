@@ -1711,7 +1711,8 @@
     "FolderAlreadyExists": "같은 이름의 폴더가 존재합니다.",
     "FinetuneModel": "모델 파인튜닝",
     "Experience": "사용해보기",
-    "ModelCard": "모델 카드"
+    "ModelCard": "모델 카드",
+    "ImportFromHuggingFace": "Hugging Face 에서 가져오기"
   },
   "table": {
     "SettingTable": "테이블 설정",

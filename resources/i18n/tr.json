@@ -1708,7 +1708,8 @@
     "FolderAlreadyExists": "Bu isimde bir klasör zaten mevcut.",
     "FinetuneModel": "İnce Ayar Modeli",
     "Experience": "Deneyim",
-    "ModelCard": "Model Kartı"
+    "ModelCard": "Model Kartı",
+    "ImportFromHuggingFace": "Sarılma Yüzünden İçe Aktar"
   },
   "table": {
     "SettingTable": "Tablo Ayarı",

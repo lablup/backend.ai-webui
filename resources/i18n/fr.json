@@ -1709,7 +1709,8 @@
     "FolderAlreadyExists": "Un dossier portant ce nom existe déjà.",
     "FinetuneModel": "Modèle de réglage fin",
     "Experience": "Expérience",
-    "ModelCard": "Carte modèle"
+    "ModelCard": "Carte modèle",
+    "ImportFromHuggingFace": "Importer depuis un visage câlin"
   },
   "table": {
     "SettingTable": "Paramètre de table",

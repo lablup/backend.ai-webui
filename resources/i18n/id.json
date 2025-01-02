@@ -1709,7 +1709,8 @@
     "FolderAlreadyExists": "Folder dengan nama ini sudah ada.",
     "FinetuneModel": "Penyempurnaan Model",
     "Experience": "Pengalaman",
-    "ModelCard": "Kartu Model"
+    "ModelCard": "Kartu Model",
+    "ImportFromHuggingFace": "Impor Dari Memeluk Wajah"
   },
   "table": {
     "SettingTable": "Penataan meja",

@@ -1709,7 +1709,8 @@
     "FolderAlreadyExists": "Папка с таким именем уже существует.",
     "FinetuneModel": "Точная настройка модели",
     "Experience": "Опыт",
-    "ModelCard": "Модель карты"
+    "ModelCard": "Модель карты",
+    "ImportFromHuggingFace": "Импорт из обнимающего лица"
   },
   "table": {
     "SettingTable": "Сервировка стола",

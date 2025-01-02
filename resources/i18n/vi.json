@@ -1709,7 +1709,8 @@
     "FolderAlreadyExists": "Một thư mục có tên này đã tồn tại.",
     "FinetuneModel": "Mô hình Finetune",
     "Experience": "Kinh nghiệm",
-    "ModelCard": "Thẻ mẫu"
+    "ModelCard": "Thẻ mẫu",
+    "ImportFromHuggingFace": "Nhập Từ Ôm Mặt"
   },
   "table": {
     "SettingTable": "Cài đặt bảng",

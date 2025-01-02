@@ -1709,7 +1709,8 @@
     "FolderAlreadyExists": "Já existe uma pasta com este nome.",
     "FinetuneModel": "Modelo de ajuste fino",
     "Experience": "Experiência",
-    "ModelCard": "Cartão Modelo"
+    "ModelCard": "Cartão Modelo",
+    "ImportFromHuggingFace": "Importar do rosto abraçado"
   },
   "table": {
     "SettingTable": "Configuração de mesa",
