@@ -1891,7 +1891,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             href=""
           >
             <mwc-button unelevated fullwidth>
-              ${_t('DownloadSSHKey')}
+              ${_t('session.applauncher.DownloadSSHKey')}
             </mwc-button>
           </a>
         </div>
@@ -2029,7 +2029,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             }%3A${this.tcpPort}/home/work"
           >
             <mwc-button unelevated fullwidth>
-              ${_t('OpenVSCodeRemote')}
+        applauncher.OpenVSCodeRemoteVSCodeRemote')}
             </mwc-button>
           </a>
         </div>

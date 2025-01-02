@@ -303,7 +303,6 @@
     "SessionInfo": "Informations sur la session",
     "Status": "Statut",
     "Configuration": "Configuration",
-    "core": "cœur",
     "Reservation": "Réservation",
     "Agent": "Agent",
     "Usage": "Usage",
@@ -326,7 +325,9 @@
       "App": "Application",
       "NoExistingConnectionExample": "Aucun exemple de connexion à copier.",
       "SSHConnectionExampleClipboardCopy": "L'exemple de connexion SSH a été copié dans le presse-papiers.",
-      "ConnectUrlIsNotValid": "L'URL de connexion n'est pas valide."
+      "ConnectUrlIsNotValid": "L'URL de connexion n'est pas valide.",
+      "DownloadSSHKey": "Télécharger la clé SSH",
+      "OpenVSCodeRemote": "Ouvrir le code local de Visual Studio"
     },
     "TensorboardPath": "Répertoire des journaux pour TensorBoard",
     "InputTensorboardPath": "Veuillez saisir le répertoire de journal auquel TensorBoard fera référence. Notez que le répertoire des journaux ne sera pas automatiquement créé.",
@@ -430,7 +431,8 @@
     "ForceTerminateWarningMsg3": "Cette action ne supprime pas les conteneurs réels sur le ou les agents. \nUn nettoyage manuel peut être nécessaire.",
     "ContainerToCleanUp": "Conteneur(s) à nettoyer",
     "SessionNotFound": "Vous n'avez pas la permission d'accéder à cette session ou la session n'existe pas.",
-    "NotInProject": "Cette session fait partie d'un autre projet."
+    "NotInProject": "Cette session fait partie d'un autre projet.",
+    "Core": "cœur"
   },
   "button": {
     "Cancel": "Annuler",
@@ -503,7 +505,6 @@
     "Agent": "Agent"
   },
   "general": {
-    "cores": "cœurs",
     "ResourceGroup": "Groupe de ressources",
     "AccessKey": "Clef d'accès",
     "Folders": "Dossiers",
@@ -530,7 +531,8 @@
     "Change": "Changer",
     "MaxValueNotification": "{{nom}} doit être maximum {{max}}",
     "TotalItems": "Total des éléments {{total}}",
-    "ExtendLoginSession": "Prolonger une session de connexion"
+    "ExtendLoginSession": "Prolonger une session de connexion",
+    "Cores": "cœurs"
   },
   "credential": {
     "Permission": "Autorisation",
@@ -541,12 +543,9 @@
     "ResourcePolicy": "Politique de ressources",
     "NumberOfQueries": "Nombre de requêtes",
     "ConcurrentSessions": "Sessions simultanées",
-    "active": "actif",
-    "concurrentsessions": "Sessions simultanées",
     "RateLimit": "Limite de débit",
     "RateLimitValidation": "La limite de débit doit être supérieure à zéro et inférieure à 50 000.",
     "RateLimitFor15min": "Limite de débit (pendant 15 min.)",
-    "for900seconds": "pendant 900 secondes",
     "Users": "Utilisateurs",
     "exportCSV": "exporter CSV",
     "CreateUser": "Créer un utilisateur",
@@ -624,7 +623,8 @@
     "DeactivateCredential": "Désactiver l'identifiant",
     "YouAreAboutToDeleteCredential": "Vous êtes sur le point de supprimer les identifiants de cet utilisateur :",
     "DeleteCredential": "Supprimer l'identifiant",
-    "ActivateCredential": "Activer l'identifiant"
+    "ActivateCredential": "Activer l'identifiant",
+    "For900Seconds": "pendant 900 secondes"
   },
   "data": {
     "Folders": "Dossiers",
@@ -792,7 +792,7 @@
       "Insufficient": "Insuffisant",
       "StatusOfSelectedHost": "Statut de l'hôte sélectionné",
       "Status": "Statut",
-      "used": "utilisé"
+      "Used": "utilisé"
     },
     "SelectStorageHost": "Sélectionner l'hôte de stockage",
     "NumberOfFolders": "Nombre de dossiers",
@@ -808,7 +808,6 @@
     "New": "Nouveau",
     "Add": "Ajouter",
     "CloningIsOnlyPossibleSameHost": "Actuellement, le clonage n'est possible que sur le même hôte.",
-    "userQuotaScopeId": "Quota Scope ID",
     "NewFolderName": "Nouveau nom de dossier",
     "modelStore": {
       "ImportFromHuggingFace": "Importer depuis Hugging Face",
@@ -839,7 +838,8 @@
       "ImportAndStartServiceSuccessDesc": "Le nouveau dossier modèle et le nouveau service sont prêts. \nCliquez sur le bouton « Afficher les informations de service » pour vérifier les détails du modèle et démarrer l'opération souhaitée.",
       "AddedItems": "Éléments ajoutés",
       "ModelFolderName": "Nom du dossier modèle"
-    }
+    },
+    "UserQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {
@@ -925,7 +925,8 @@
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
     "BaseImageName": "Nom de l'image de base",
     "Tags": "Balises",
-    "FullImagePath": "Chemin d'accès complet à l'image"
+    "FullImagePath": "Chemin d'accès complet à l'image",
+    "SuccessfullyCreated": "Création réussie"
   },
   "resourcePreset": {
     "ResourcePresets": "Préréglages de ressources",
@@ -1263,9 +1264,9 @@
     "DescImagePullBehavior": "Détermine les conditions de téléchargement automatique de nouvelles images lorsqu'une nouvelle version est enregistrée dans le registre. Pour aucun, les nouvelles images ne seront pas automatiquement téléchargées.",
     "GUI": "IHM graphique",
     "image": {
-      "digest": "Digérer",
-      "tag": "Étiqueter",
-      "none": "Rien"
+      "Digest": "Digérer",
+      "None": "Rien",
+      "Tag": "Étiqueter"
     },
     "OverlayNetwork": "Réseau de recouvrement",
     "OverlayNetworkConfiguration": "Configuration à utiliser lors de la création de réseaux superposés.",
@@ -1423,13 +1424,6 @@
   "update": {
     "NewWebUIVersionAvailable": "Une nouvelle version est disponible :"
   },
-  "sidepanel": {
-    "BackgroundTasks": "Tâches en cours d'exécution",
-    "NoBackgroundTask": "Ne pas demander.",
-    "Running": "En cours...",
-    "Notification": "Notification",
-    "NoNotification": "Aucune notification."
-  },
   "import": {
     "NoSuitableResourceFoundOnGivenURL": "Aucune ressource appropriée trouvée sur l'URL donnée.",
     "ReadyToImport": "Prêt à importer",
@@ -1466,16 +1460,6 @@
     "GitlabDefaultBranch": "Nom de la branche GitLab",
     "InvalidNotebookURL": "L'URL de Notbook n'est pas valide."
   },
-  "usagepanel": {
-    "StatisticsForThisMonth": "Statistiques pour ce mois",
-    "NumSessions": "Nombre de séances",
-    "UsedTime": "Temps utilisé",
-    "CpuUsedTime": "Temps d'utilisation du processeur",
-    "GpuUsedTime": "Temps d'utilisation du GPU",
-    "DiskUsed": "Utilisation du disque",
-    "TrafficUsed": "Utilisation du trafic"
-  },
-  "DownloadSSHKey": "Télécharger la clé SSH",
   "license": {
     "Perpetual": "Perpétuel",
     "Subscription": "Abonnement",
@@ -1536,7 +1520,6 @@
     "ValueRequired": "ValeurRequis",
     "InputTooShort": "Entrée Trop Courte"
   },
-  "OpenVSCodeRemote": "Ouvrir le code local de Visual Studio",
   "totp": {
     "OTP": "Mot de passe unique",
     "TotpSetupCompleted": "Activé 2FA",
@@ -1668,14 +1651,6 @@
     "ServiceNameMaxLength": "Veuillez saisir 24 caractères ou moins.",
     "ServiceNameCannotStartWithHyphen": "Les tirets (-) ne peuvent pas être utilisés à chaque extrémité."
   },
-  "ErrorBoundary": {
-    "title": "Une erreur s'est produite.",
-    "reloadPage": "Recharger la page",
-    "resetErrorBoundary": "Réinitialisation de la limite d'erreur",
-    "displayOnlyDevEnv": "Ce bloc d'erreur n'est affiché que dans l'environnement de développement WebUI.",
-    "expiredLoginSessionTitle": "Votre session de connexion a expiré.",
-    "expiredLoginSessionReLogin": "Connexion"
-  },
   "modelStore": {
     "Description": "Description",
     "Model": "Modèle",
@@ -1712,14 +1687,6 @@
     "SelectColumnToDisplay": "Sélectionnez les colonnes à afficher",
     "SearchTableColumn": "Rechercher des colonnes dans un tableau"
   },
-  "tourguide": {
-    "NeoSessionLauncher": {
-      "ValidationErrorTitle": "Erreurs de validation du champ de saisie",
-      "ValidationErrorText": "Si vous ne saisissez pas de valeur dans un champ obligatoire ou si vous saisissez une valeur non valide, un message d'erreur s'affiche dans ce champ.",
-      "FixErrorAndTryAgainText": "S'il y a un champ d'erreur, le bouton Lancer la session est désactivé. \nVeuillez corriger l'erreur et réessayer.",
-      "FixErrorFieldbyModifyButton": "Pour ce champ d'erreur, vous pouvez accéder directement au bouton Modifier dans le coin supérieur droit pour le modifier."
-    }
-  },
   "sourceCodeViewer": {
     "Copy": "Copie",
     "Copied": "Copié"
@@ -1750,11 +1717,43 @@
     "UploadFilesDescription": "Cliquez ou faites glisser les fichiers vers cette zone pour les télécharger"
   },
   "time": {
-    "ms": "ms",
-    "sec": "seconde",
-    "min": "min",
-    "hour": "heure",
-    "day": "day",
-    "week": "semaine"
+    "Day": "day",
+    "Hour": "heure",
+    "Min": "min",
+    "Ms": "ms",
+    "Sec": "seconde",
+    "Week": "semaine"
+  },
+  "usagePanel": {
+    "CpuUsedTime": "Temps d'utilisation du processeur",
+    "DiskUsed": "Utilisation du disque",
+    "GpuUsedTime": "Temps d'utilisation du GPU",
+    "NumSessions": "Nombre de séances",
+    "StatisticsForThisMonth": "Statistiques pour ce mois",
+    "TrafficUsed": "Utilisation du trafic",
+    "UsedTime": "Temps utilisé"
+  },
+  "sidePanel": {
+    "BackgroundTasks": "Tâches en cours d'exécution",
+    "NoBackgroundTask": "Ne pas demander.",
+    "NoNotification": "Aucune notification.",
+    "Notification": "Notification",
+    "Running": "En cours..."
+  },
+  "tourGuide": {
+    "NeoSessionLauncher": {
+      "FixErrorAndTryAgainText": "S'il y a un champ d'erreur, le bouton Lancer la session est désactivé. \nVeuillez corriger l'erreur et réessayer.",
+      "FixErrorFieldbyModifyButton": "Pour ce champ d'erreur, vous pouvez accéder directement au bouton Modifier dans le coin supérieur droit pour le modifier.",
+      "ValidationErrorText": "Si vous ne saisissez pas de valeur dans un champ obligatoire ou si vous saisissez une valeur non valide, un message d'erreur s'affiche dans ce champ.",
+      "ValidationErrorTitle": "Erreurs de validation du champ de saisie"
+    }
+  },
+  "errorBoundary": {
+    "DisplayOnlyDevEnv": "Ce bloc d'erreur n'est affiché que dans l'environnement de développement WebUI.",
+    "ExpiredLoginSessionReLogin": "Connexion",
+    "ExpiredLoginSessionTitle": "Votre session de connexion a expiré.",
+    "ReloadPage": "Recharger la page",
+    "ResetErrorBoundary": "Réinitialisation de la limite d'erreur",
+    "Title": "Une erreur s'est produite."
   }
 }

@@ -303,7 +303,6 @@
     "SessionInfo": "会议信息",
     "Status": "地位",
     "Configuration": "配置",
-    "core": "核",
     "Reservation": "预订",
     "Agent": "代理人",
     "Usage": "用法",
@@ -326,7 +325,9 @@
       "NoExistingConnectionExample": "无连接示例可复制。",
       "SSHConnectionExampleClipboardCopy": "SSH 连接示例已复制到剪贴板。",
       "App": "应用程序",
-      "ConnectUrlIsNotValid": "连接 URL 无效。"
+      "ConnectUrlIsNotValid": "连接 URL 无效。",
+      "DownloadSSHKey": "下载 SSH 密钥",
+      "OpenVSCodeRemote": "打开本地 Visual Studio 代码"
     },
     "TensorboardPath": "TensorBoard 的日志目录",
     "InputTensorboardPath": "请输入 TensorBoard 将引用的日志目录。请注意，日志目录不会自动创建..",
@@ -430,7 +431,8 @@
     "ForceTerminateWarningMsg3": "此操作不会删除代理上的实际容器。\n可能需要手动清理。",
     "ContainerToCleanUp": "需要清理的容器",
     "SessionNotFound": "您没有访问该会话的权限或该会话不存在。",
-    "NotInProject": "本次会议属于另一个项目。"
+    "NotInProject": "本次会议属于另一个项目。",
+    "Core": "核"
   },
   "button": {
     "Cancel": "取消",
@@ -503,7 +505,6 @@
     "Agent": "代理"
   },
   "general": {
-    "cores": "核心",
     "ResourceGroup": "资源组",
     "AccessKey": "访问密钥",
     "Folders": "文件夹",
@@ -530,7 +531,8 @@
     "Change": "改变",
     "MaxValueNotification": "{{name}} 必须是最大值 {{max}}",
     "TotalItems": "{{总计}}项目总数",
-    "ExtendLoginSession": "延长登录会话"
+    "ExtendLoginSession": "延长登录会话",
+    "Cores": "核心"
   },
   "credential": {
     "Permission": "允许",
@@ -541,12 +543,9 @@
     "ResourcePolicy": "资源政策",
     "NumberOfQueries": "查询数",
     "ConcurrentSessions": "并发会话",
-    "active": "积极的",
-    "concurrentsessions": "同期会议",
     "RateLimit": "速率限制",
     "RateLimitValidation": "速率限制应大于零且小于 50000。",
     "RateLimitFor15min": "速率限制（15 分钟）",
-    "for900seconds": "900 秒",
     "Users": "用户",
     "exportCSV": "导出 CSV",
     "CreateUser": "创建用户",
@@ -624,7 +623,8 @@
     "DeactivateCredential": "停用凭证",
     "YouAreAboutToDeleteCredential": "您将要删除该用户的凭据：",
     "DeleteCredential": "删除凭证",
-    "ActivateCredential": "激活凭证"
+    "ActivateCredential": "激活凭证",
+    "For900Seconds": "900 秒"
   },
   "data": {
     "Folders": "文件夹",
@@ -798,7 +798,7 @@
       "Insufficient": "不足",
       "StatusOfSelectedHost": "选定主机的状态",
       "Status": "现状",
-      "used": "中古"
+      "Used": "中古"
     },
     "Pipeline": "管道文件夹",
     "DialogDataFolder": "在 FastTrack 中创建管道时自动创建的管道专用文件夹。",
@@ -808,7 +808,6 @@
     "New": "新的",
     "Add": "添加",
     "CloningIsOnlyPossibleSameHost": "目前，克隆只能在同一主机上进行。",
-    "userQuotaScopeId": "Quota Scope ID",
     "NewFolderName": "新文件夹名称",
     "modelStore": {
       "ImportFromHuggingFace": "从 Hugging Face 导入",
@@ -839,7 +838,8 @@
       "ImportAndStartServiceSuccessDesc": "新的模型文件夹和服务已准备就绪。\n单击“查看服务信息”按钮以检查型号详细信息并开始所需的操作。",
       "AddedItems": "添加的项目",
       "ModelFolderName": "模型文件夹名称"
-    }
+    },
+    "UserQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {
@@ -925,7 +925,8 @@
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
     "BaseImageName": "基础镜像名称",
     "Tags": "标签",
-    "FullImagePath": "完整图像路径"
+    "FullImagePath": "完整图像路径",
+    "SuccessfullyCreated": "创建成功"
   },
   "resourcePreset": {
     "ResourcePresets": "资源预设",
@@ -1263,9 +1264,9 @@
     "DescImagePullBehavior": "确定在注册表中注册新版本时自动下载新图像的条件。对于 none，不会自动下载新图像。",
     "GUI": "图形用户界面",
     "image": {
-      "digest": "消化",
-      "tag": "标签",
-      "none": "没有任何"
+      "Digest": "消化",
+      "None": "没有任何",
+      "Tag": "标签"
     },
     "OverlayNetwork": "叠加网络",
     "OverlayNetworkConfiguration": "创建叠加网络时使用的配置。",
@@ -1423,13 +1424,6 @@
   "update": {
     "NewWebUIVersionAvailable": "新版本可用："
   },
-  "sidepanel": {
-    "BackgroundTasks": "运行任务",
-    "NoBackgroundTask": "没有任务。",
-    "Running": "跑步...",
-    "Notification": "通知",
-    "NoNotification": "没有通知。"
-  },
   "import": {
     "NoSuitableResourceFoundOnGivenURL": "在给定的 URL 上找不到合适的资源。",
     "ReadyToImport": "准备进口",
@@ -1466,16 +1460,6 @@
     "GitlabDefaultBranch": "GitLab 分支名称",
     "InvalidNotebookURL": "Notbook URL 无效。"
   },
-  "usagepanel": {
-    "StatisticsForThisMonth": "本月统计",
-    "NumSessions": "会话数",
-    "UsedTime": "使用时间",
-    "CpuUsedTime": "CPU使用时间",
-    "GpuUsedTime": "GPU 使用时间",
-    "DiskUsed": "磁盘使用情况",
-    "TrafficUsed": "流量使用"
-  },
-  "DownloadSSHKey": "下载 SSH 密钥",
   "license": {
     "Perpetual": "永动的",
     "Subscription": "订阅",
@@ -1535,14 +1519,6 @@
   "explorer": {
     "ValueRequired": "需要值",
     "InputTooShort": "输入太短"
-  },
-  "ErrorBoundary": {
-    "title": "发生错误。",
-    "reloadPage": "重新载入页面",
-    "resetErrorBoundary": "重置错误边界",
-    "displayOnlyDevEnv": "此错误块仅在 WebUI 开发环境中显示。",
-    "expiredLoginSessionTitle": "您的登录会话已过期。",
-    "expiredLoginSessionReLogin": "登录"
   },
   "storageHost": {
     "quotaSettings": {
@@ -1672,7 +1648,6 @@
     "EnterConfirmationCode": "现在输入验证器生成的 OTP 进行验证。",
     "RequireOTP": "写入一次性密码。"
   },
-  "OpenVSCodeRemote": "打开本地 Visual Studio 代码",
   "inputLimit": {
     "4to64chars": "（4 至 64 个字符）",
     "4to32chars": "(4~32个字符)"
@@ -1713,14 +1688,6 @@
     "SelectColumnToDisplay": "选择要显示的列",
     "SearchTableColumn": "搜索表格列"
   },
-  "tourguide": {
-    "NeoSessionLauncher": {
-      "ValidationErrorTitle": "输入字段验证错误",
-      "ValidationErrorText": "如果您未在必填字段中输入值或输入无效值，则该字段中会显示一条错误消息。",
-      "FixErrorAndTryAgainText": "如果存在错误字段，则“启动会话”按钮将被禁用。\n请更正错误并重试。",
-      "FixErrorFieldbyModifyButton": "对于该错误字段，您可以直接进入右上角的编辑按钮进行编辑。"
-    }
-  },
   "sourceCodeViewer": {
     "Copy": "复制",
     "Copied": "已复制"
@@ -1751,11 +1718,43 @@
     "UploadFilesDescription": "点击或拖拽文件到该区域即可上传"
   },
   "time": {
-    "ms": "ms",
-    "sec": "秒",
-    "min": "分钟",
-    "hour": "小时",
-    "day": "day",
-    "week": "星期"
+    "Day": "day",
+    "Hour": "小时",
+    "Min": "分钟",
+    "Ms": "ms",
+    "Sec": "秒",
+    "Week": "星期"
+  },
+  "usagePanel": {
+    "CpuUsedTime": "CPU使用时间",
+    "DiskUsed": "磁盘使用情况",
+    "GpuUsedTime": "GPU 使用时间",
+    "NumSessions": "会话数",
+    "StatisticsForThisMonth": "本月统计",
+    "TrafficUsed": "流量使用",
+    "UsedTime": "使用时间"
+  },
+  "sidePanel": {
+    "BackgroundTasks": "运行任务",
+    "NoBackgroundTask": "没有任务。",
+    "NoNotification": "没有通知。",
+    "Notification": "通知",
+    "Running": "跑步..."
+  },
+  "tourGuide": {
+    "NeoSessionLauncher": {
+      "FixErrorAndTryAgainText": "如果存在错误字段，则“启动会话”按钮将被禁用。\n请更正错误并重试。",
+      "FixErrorFieldbyModifyButton": "对于该错误字段，您可以直接进入右上角的编辑按钮进行编辑。",
+      "ValidationErrorText": "如果您未在必填字段中输入值或输入无效值，则该字段中会显示一条错误消息。",
+      "ValidationErrorTitle": "输入字段验证错误"
+    }
+  },
+  "errorBoundary": {
+    "DisplayOnlyDevEnv": "此错误块仅在 WebUI 开发环境中显示。",
+    "ExpiredLoginSessionReLogin": "登录",
+    "ExpiredLoginSessionTitle": "您的登录会话已过期。",
+    "ReloadPage": "重新载入页面",
+    "ResetErrorBoundary": "重置错误边界",
+    "Title": "发生错误。"
   }
 }

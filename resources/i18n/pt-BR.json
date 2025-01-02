@@ -303,7 +303,6 @@
     "SessionInfo": "Informações sobre a sessão",
     "Status": "Status",
     "Configuration": "Configuração",
-    "core": "testemunho",
     "Reservation": "Reserva",
     "Agent": "Agente",
     "Usage": "Uso",
@@ -326,7 +325,9 @@
       "NoExistingConnectionExample": "Não há exemplo de ligação a copiar.",
       "SSHConnectionExampleClipboardCopy": "O exemplo de ligação SSH foi copiado para a área de transferência.",
       "App": "Aplicação",
-      "ConnectUrlIsNotValid": "O URL de conexão não é válido."
+      "ConnectUrlIsNotValid": "O URL de conexão não é válido.",
+      "DownloadSSHKey": "Baixar chave SSH",
+      "OpenVSCodeRemote": "Abrir o código local do Visual Studio"
     },
     "TensorboardPath": "Diretório de registro para TensorBoard",
     "InputTensorboardPath": "Insira o diretório de registro ao qual o TensorBoard se referirá. Observe que o diretório de log não será criado automaticamente.",
@@ -430,7 +431,8 @@
     "ForceTerminateWarningMsg3": "Esta ação não exclui os contêineres reais do(s) agente(s). \nA limpeza manual pode ser necessária.",
     "ContainerToCleanUp": "Recipiente(s) para limpar",
     "SessionNotFound": "Não tem permissão para aceder a esta sessão ou a sessão não existe.",
-    "NotInProject": "Esta sessão pertence a um projeto diferente."
+    "NotInProject": "Esta sessão pertence a um projeto diferente.",
+    "Core": "testemunho"
   },
   "button": {
     "Cancel": "Cancelar",
@@ -503,7 +505,6 @@
     "Agent": "Agente"
   },
   "general": {
-    "cores": "núcleos",
     "ResourceGroup": "Grupo de Recursos",
     "AccessKey": "Chave de acesso",
     "Folders": "Pastas",
@@ -530,7 +531,8 @@
     "Change": "Alterar",
     "MaxValueNotification": "{{nome}} deve ser o máximo {{max}}",
     "TotalItems": "Total de itens {{total}}",
-    "ExtendLoginSession": "Prolongar uma sessão de início de sessão"
+    "ExtendLoginSession": "Prolongar uma sessão de início de sessão",
+    "Cores": "núcleos"
   },
   "credential": {
     "Permission": "Permissão",
@@ -541,12 +543,9 @@
     "ResourcePolicy": "Política de Recursos",
     "NumberOfQueries": "Número de consultas",
     "ConcurrentSessions": "Sessões Simultâneas",
-    "active": "ativo",
-    "concurrentsessions": "Sessões simultâneas",
     "RateLimit": "Taxa limite",
     "RateLimitValidation": "O limite de taxa deve ser maior que zero e abaixo de 50000.",
     "RateLimitFor15min": "Limite de taxa (por 15 min.)",
-    "for900seconds": "por 900 segundos",
     "Users": "Comercial",
     "exportCSV": "exportar CSV",
     "CreateUser": "Criar usuário",
@@ -624,7 +623,8 @@
     "DeactivateCredential": "Desativar credencial",
     "YouAreAboutToDeleteCredential": "Você está prestes a excluir a credencial deste usuário:",
     "DeleteCredential": "Excluir credencial",
-    "ActivateCredential": "Ativar credencial"
+    "ActivateCredential": "Ativar credencial",
+    "For900Seconds": "por 900 segundos"
   },
   "data": {
     "Folders": "Pastas",
@@ -798,7 +798,7 @@
       "Insufficient": "Insuficiente",
       "StatusOfSelectedHost": "Estado do anfitrião selecionado",
       "Status": "Estado",
-      "used": "utilizado"
+      "Used": "utilizado"
     },
     "Pipeline": "Pastas de pipelines",
     "DialogDataFolder": "Pastas dedicadas ao pipeline que são criadas automaticamente ao criar pipelines no FastTrack.",
@@ -808,7 +808,6 @@
     "New": "Novo",
     "Add": "Adicionar",
     "CloningIsOnlyPossibleSameHost": "Atualmente, a clonagem só é possível no mesmo host.",
-    "userQuotaScopeId": "Quota Scope ID",
     "NewFolderName": "Novo nome da pasta",
     "modelStore": {
       "ImportFromHuggingFace": "Importar do Hugging Face",
@@ -839,7 +838,8 @@
       "ImportAndStartServiceSuccessDesc": "A pasta e o serviço do novo modelo estão prontos. \nClique no botão 'Ver informações de serviço' para verificar os detalhes do modelo e iniciar a operação desejada.",
       "AddedItems": "Itens adicionados",
       "ModelFolderName": "Nome da pasta do modelo"
-    }
+    },
+    "UserQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {
@@ -925,7 +925,8 @@
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
     "BaseImageName": "Nome da imagem base",
     "Tags": "Etiquetas",
-    "FullImagePath": "Caminho completo da imagem"
+    "FullImagePath": "Caminho completo da imagem",
+    "SuccessfullyCreated": "Criado com sucesso"
   },
   "resourcePreset": {
     "ResourcePresets": "Predefinições de recursos",
@@ -1263,9 +1264,9 @@
     "DescImagePullBehavior": "Determina as condições para o download automático de novas imagens quando uma nova versão é registrada no registro. Para nenhum, as novas imagens não serão baixadas automaticamente.",
     "GUI": "GUI",
     "image": {
-      "digest": "Digerir",
-      "tag": "Marcação",
-      "none": "Nenhum"
+      "Digest": "Digerir",
+      "None": "Nenhum",
+      "Tag": "Marcação"
     },
     "OverlayNetwork": "Rede de sobreposição",
     "OverlayNetworkConfiguration": "Configuração a utilizar na criação de redes sobrepostas.",
@@ -1423,13 +1424,6 @@
   "update": {
     "NewWebUIVersionAvailable": "Nova versão disponível:"
   },
-  "sidepanel": {
-    "BackgroundTasks": "Tarefas em execução",
-    "NoBackgroundTask": "Não pergunte.",
-    "Running": "Corrida...",
-    "Notification": "Notificação",
-    "NoNotification": "Sem notificação."
-  },
   "import": {
     "NoSuitableResourceFoundOnGivenURL": "Nenhum recurso adequado encontrado no URL fornecido.",
     "ReadyToImport": "Pronto para importar",
@@ -1466,16 +1460,6 @@
     "GitlabDefaultBranch": "Nome do ramo do GitLab",
     "InvalidNotebookURL": "URL inválido do Notbook."
   },
-  "usagepanel": {
-    "StatisticsForThisMonth": "Estatísticas para este mês",
-    "NumSessions": "Número de Sessões",
-    "UsedTime": "Tempo usado",
-    "CpuUsedTime": "Tempo de uso da CPU",
-    "GpuUsedTime": "Tempo de uso da GPU",
-    "DiskUsed": "Uso de disco",
-    "TrafficUsed": "Uso de tráfego"
-  },
-  "DownloadSSHKey": "Baixar chave SSH",
   "license": {
     "Perpetual": "Perpétuo",
     "Subscription": "Inscrição",
@@ -1535,14 +1519,6 @@
   "explorer": {
     "ValueRequired": "ValueRequired",
     "InputTooShort": "InputTooShort"
-  },
-  "ErrorBoundary": {
-    "title": "Ocorreu um erro.",
-    "reloadPage": "Recarregar a página",
-    "resetErrorBoundary": "Repor ErrorBoundary",
-    "displayOnlyDevEnv": "Este bloco de erro é apresentado apenas no ambiente de desenvolvimento da WebUI.",
-    "expiredLoginSessionTitle": "A sua sessão de início de sessão expirou.",
-    "expiredLoginSessionReLogin": "Iniciar sessão"
   },
   "storageHost": {
     "quotaSettings": {
@@ -1671,7 +1647,6 @@
     "EnterConfirmationCode": "Agora insira o OTP gerado pelo autenticador para verificar.",
     "RequireOTP": "Escreva OTP."
   },
-  "OpenVSCodeRemote": "Abrir o código local do Visual Studio",
   "inputLimit": {
     "4to64chars": "(4~64 caracteres)",
     "4to32chars": "(4~32 caracteres)"
@@ -1712,14 +1687,6 @@
     "SelectColumnToDisplay": "Selecione as colunas a serem exibidas",
     "SearchTableColumn": "Pesquisar colunas da tabela"
   },
-  "tourguide": {
-    "NeoSessionLauncher": {
-      "ValidationErrorTitle": "Erros de validação de campo de entrada",
-      "ValidationErrorText": "Se você não inserir um valor em um campo obrigatório ou inserir um valor inválido, uma mensagem de erro será exibida nesse campo.",
-      "FixErrorAndTryAgainText": "Se houver um campo de erro, o botão Iniciar sessão estará desabilitado. \nCorrija o erro e tente novamente.",
-      "FixErrorFieldbyModifyButton": "Para esse campo de erro, você pode ir diretamente ao botão Editar no canto superior direito para editá-lo."
-    }
-  },
   "sourceCodeViewer": {
     "Copy": "cópia de",
     "Copied": "Copiado"
@@ -1750,11 +1717,43 @@
     "UploadFilesDescription": "Clique ou arraste os arquivos para esta área para fazer upload"
   },
   "time": {
-    "ms": "ms",
-    "sec": "seg",
-    "min": "min",
-    "hour": "hora",
-    "day": "day",
-    "week": "semana"
+    "Day": "day",
+    "Hour": "hora",
+    "Min": "min",
+    "Ms": "ms",
+    "Sec": "seg",
+    "Week": "semana"
+  },
+  "usagePanel": {
+    "CpuUsedTime": "Tempo de uso da CPU",
+    "DiskUsed": "Uso de disco",
+    "GpuUsedTime": "Tempo de uso da GPU",
+    "NumSessions": "Número de Sessões",
+    "StatisticsForThisMonth": "Estatísticas para este mês",
+    "TrafficUsed": "Uso de tráfego",
+    "UsedTime": "Tempo usado"
+  },
+  "sidePanel": {
+    "BackgroundTasks": "Tarefas em execução",
+    "NoBackgroundTask": "Não pergunte.",
+    "NoNotification": "Sem notificação.",
+    "Notification": "Notificação",
+    "Running": "Corrida..."
+  },
+  "tourGuide": {
+    "NeoSessionLauncher": {
+      "FixErrorAndTryAgainText": "Se houver um campo de erro, o botão Iniciar sessão estará desabilitado. \nCorrija o erro e tente novamente.",
+      "FixErrorFieldbyModifyButton": "Para esse campo de erro, você pode ir diretamente ao botão Editar no canto superior direito para editá-lo.",
+      "ValidationErrorText": "Se você não inserir um valor em um campo obrigatório ou inserir um valor inválido, uma mensagem de erro será exibida nesse campo.",
+      "ValidationErrorTitle": "Erros de validação de campo de entrada"
+    }
+  },
+  "errorBoundary": {
+    "DisplayOnlyDevEnv": "Este bloco de erro é apresentado apenas no ambiente de desenvolvimento da WebUI.",
+    "ExpiredLoginSessionReLogin": "Iniciar sessão",
+    "ExpiredLoginSessionTitle": "A sua sessão de início de sessão expirou.",
+    "ReloadPage": "Recarregar a página",
+    "ResetErrorBoundary": "Repor ErrorBoundary",
+    "Title": "Ocorreu um erro."
   }
 }

@@ -318,7 +318,7 @@ const StorageStatusPanel: React.FC<{
     },
     {
       key: 'userQuotaScopeId',
-      label: t('data.userQuotaScopeId'),
+      label: t('data.UserQuotaScopeId'),
       children: (
         <Typography.Text copyable>
           {addQuotaScopeTypePrefix('user', user?.id || '')}

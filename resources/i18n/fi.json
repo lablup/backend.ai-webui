@@ -71,16 +71,6 @@
     "InvalidUrl": "Se ei ole kelvollinen URL-osoite",
     "AllowsPositiveNumberOnly": "Salli vain positiivinen luku."
   },
-  "DownloadSSHKey": "Lataa SSH-avain",
-  "ErrorBoundary": {
-    "displayOnlyDevEnv": "Tämä virhelohko näytetään vain WebUI-kehitysympäristössä.",
-    "reloadPage": "Lataa sivu uudelleen",
-    "resetErrorBoundary": "Nollaa ErrorBoundary",
-    "title": "On tapahtunut virhe.",
-    "expiredLoginSessionTitle": "Kirjautumisistuntosi on päättynyt.",
-    "expiredLoginSessionReLogin": "Kirjaudu sisään"
-  },
-  "OpenVSCodeRemote": "Avaa paikallinen Visual Studio Code",
   "agent": {
     "AgentSetting": "Agentin asetukset",
     "AgentSettingUpdated": "Agentin asetus päivitetty.",
@@ -208,10 +198,7 @@
     "UserStatus": "Käyttäjän tila",
     "Users": "Käyttäjät",
     "WarningLessRateLimit": "Jos Rate Limit -arvo on pieni, API-toiminnot, kuten kirjautuminen, voivat estyä.",
-    "active": "aktiivinen",
-    "concurrentsessions": "Samanaikaiset istunnot",
     "exportCSV": "viedä CSV",
-    "for900seconds": "900 sekuntia",
     "validation": {
       "InvalidEmailAddress": "Virheellinen sähköpostiosoite.",
       "LetterNumber-_dot": "Sallii kirjaimet, numerot ja -_.",
@@ -243,7 +230,8 @@
     "DeactivateCredential": "Poista kirjautumistiedot käytöstä",
     "YouAreAboutToDeleteCredential": "Olet poistamassa tämän käyttäjän kirjautumistiedot:",
     "DeleteCredential": "Poista kirjautumistiedot",
-    "ActivateCredential": "Aktivoi tunnistetiedot"
+    "ActivateCredential": "Aktivoi tunnistetiedot",
+    "For900Seconds": "900 sekuntia"
   },
   "data": {
     "Allowslettersnumbersand-_": "Sallii kirjaimet, numerot ja -_",
@@ -420,14 +408,13 @@
       "Insufficient": "Riittämätön",
       "Status": "Tila",
       "StatusOfSelectedHost": "Valitun isännän tila",
-      "used": "käytetty"
+      "Used": "käytetty"
     },
     "SearchByName": "Hae nimellä",
     "ModelStore": "Mallikauppa",
     "Add": "Lisätä",
     "CloningIsOnlyPossibleSameHost": "Tällä hetkellä kloonaus on mahdollista vain samassa isännässä.",
     "New": "Uusi",
-    "userQuotaScopeId": "Quota Scope ID",
     "NewFolderName": "Uusi kansion nimi",
     "modelStore": {
       "ImportFromHuggingFace": "Tuo Hugging Facesta",
@@ -458,7 +445,8 @@
       "ImportAndStartServiceSuccessDesc": "Uusi mallikansio ja palvelu ovat valmiina. \nNapsauta \"Näytä palvelutiedot\" -painiketta tarkistaaksesi mallin tiedot ja aloittaaksesi haluamasi toiminnon.",
       "AddedItems": "Lisätyt kohteet",
       "ModelFolderName": "Mallin kansion nimi"
-    }
+    },
+    "UserQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {
@@ -557,7 +545,8 @@
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
     "BaseImageName": "Peruskuvan nimi",
     "Tags": "Tunnisteet",
-    "FullImagePath": "Koko kuvan polku"
+    "FullImagePath": "Koko kuvan polku",
+    "SuccessfullyCreated": "Luotu onnistuneesti"
   },
   "explorer": {
     "InputTooShort": "InputTooShort",
@@ -578,7 +567,6 @@
     "SecretKey": "Salainen avain",
     "StorageProxies": "Varastot",
     "Username": "Käyttäjätunnus",
-    "cores": "ytimet",
     "None": "Ei ole",
     "Image": "Kuva",
     "All": "Kaikki",
@@ -591,7 +579,8 @@
     "Change": "Muuta",
     "MaxValueNotification": "{{name}} on oltava maksimi {{max}}",
     "TotalItems": "Yhteensä {{total}} kohteita",
-    "ExtendLoginSession": "Sisäänkirjautumisistunnon laajentaminen"
+    "ExtendLoginSession": "Sisäänkirjautumisistunnon laajentaminen",
+    "Cores": "ytimet"
   },
   "import": {
     "CleanUpImportTask": "Tuontitehtävän siivous...",
@@ -1135,9 +1124,10 @@
       "NoExistingConnectionExample": "Ei yhteyttä Kopioitava esimerkki.",
       "Prepared": "Valmisteltu",
       "SSHConnectionExampleClipboardCopy": "SSH-yhteys Esimerkki on kopioitu leikepöydälle.",
-      "ConnectUrlIsNotValid": "Yhteyden URL-osoite ei kelpaa."
+      "ConnectUrlIsNotValid": "Yhteyden URL-osoite ei kelpaa.",
+      "DownloadSSHKey": "Lataa SSH-avain",
+      "OpenVSCodeRemote": "Avaa paikallinen Visual Studio Code"
     },
-    "core": "ydin",
     "exportCSV": "viedä CSV",
     "launcher": {
       "AIAccelerator": "AI-kiihdyttämö",
@@ -1331,7 +1321,8 @@
     "ForceTerminateWarningMsg3": "Tämä toiminto ei poista agenttien varsinaisia ​​säilöjä. \nManuaalinen puhdistus saattaa olla tarpeen.",
     "ContainerToCleanUp": "Säiliö(t) puhdistettava(t).",
     "SessionNotFound": "Sinulla ei ole oikeuksia käyttää tätä istuntoa tai istuntoa ei ole olemassa.",
-    "NotInProject": "Tämä istunto kuuluu eri hankkeeseen."
+    "NotInProject": "Tämä istunto kuuluu eri hankkeeseen.",
+    "Core": "ydin"
   },
   "settings": {
     "ATOMsupport": "ATOM",
@@ -1391,9 +1382,9 @@
     "UseGUIonWeb": "Backend.AI GUI:n käyttö Webissä",
     "Warboysupport": "Warboy",
     "image": {
-      "digest": "Digest",
-      "none": "Ei ole",
-      "tag": "Tag"
+      "Digest": "Digest",
+      "None": "Ei ole",
+      "Tag": "Tag"
     },
     "OpenSourceCUDAGPUsupport": "Avoimen lähdekoodin CUDA GPU-tuki",
     "ShowOnlyChanged": "Vain näyttö muuttuu",
@@ -1410,13 +1401,6 @@
     "RNGDsupport": "RNGD",
     "DescRNGDsupport": "Käytä Furiosa RNGD -tukea",
     "RequireRNGDPlugin": "Vaatii Backend.AI RNGD -laajennuksen."
-  },
-  "sidepanel": {
-    "BackgroundTasks": "Tehtävien suorittaminen",
-    "NoBackgroundTask": "Ei tehtävää.",
-    "NoNotification": "Ei ilmoitusta.",
-    "Notification": "Ilmoitus",
-    "Running": "Juoksu..."
   },
   "signup": {
     "E-mail": "Sähköposti",
@@ -1515,15 +1499,6 @@
   },
   "update": {
     "NewWebUIVersionAvailable": "Uusi versio on saatavilla:"
-  },
-  "usagepanel": {
-    "CpuUsedTime": "CPU:n käytetty aika",
-    "DiskUsed": "Levyn käyttö",
-    "GpuUsedTime": "GPU:n käyttöaika",
-    "NumSessions": "Istuntojen määrä",
-    "StatisticsForThisMonth": "Tämän kuukauden tilastot",
-    "TrafficUsed": "Liikenteen käyttö",
-    "UsedTime": "Käytetty aika"
   },
   "usersettings": {
     "AutoLogout": "Automaattinen uloskirjautuminen",
@@ -1712,14 +1687,6 @@
     "SelectColumnToDisplay": "Valitse näytettävät sarakkeet",
     "SearchTableColumn": "Hae taulukon sarakkeita"
   },
-  "tourguide": {
-    "NeoSessionLauncher": {
-      "ValidationErrorTitle": "Syöttökentän vahvistusvirheet",
-      "ValidationErrorText": "Jos et syötä arvoa pakolliseen kenttään tai kirjoitat virheellisen arvon, kenttään tulee virheilmoitus.",
-      "FixErrorAndTryAgainText": "Jos virhekenttä on, Launch session -painike ei ole käytössä. \nKorjaa virhe ja yritä uudelleen.",
-      "FixErrorFieldbyModifyButton": "Voit muokata virhekenttää suoraan oikeassa yläkulmassa olevasta Muokkaa-painikkeesta."
-    }
-  },
   "sourceCodeViewer": {
     "Copy": "Kopio",
     "Copied": "Kopioitu"
@@ -1749,11 +1716,43 @@
     "UploadFilesDescription": "Napsauta tai vedä tiedostoja tälle alueelle ladataksesi"
   },
   "time": {
-    "ms": "ms",
-    "sec": "sek",
-    "min": "min",
-    "hour": "tunnin",
-    "day": "day",
-    "week": "viikko"
+    "Day": "day",
+    "Hour": "tunnin",
+    "Min": "min",
+    "Ms": "ms",
+    "Sec": "sek",
+    "Week": "viikko"
+  },
+  "usagePanel": {
+    "CpuUsedTime": "CPU:n käytetty aika",
+    "DiskUsed": "Levyn käyttö",
+    "GpuUsedTime": "GPU:n käyttöaika",
+    "NumSessions": "Istuntojen määrä",
+    "StatisticsForThisMonth": "Tämän kuukauden tilastot",
+    "TrafficUsed": "Liikenteen käyttö",
+    "UsedTime": "Käytetty aika"
+  },
+  "sidePanel": {
+    "BackgroundTasks": "Tehtävien suorittaminen",
+    "NoBackgroundTask": "Ei tehtävää.",
+    "NoNotification": "Ei ilmoitusta.",
+    "Notification": "Ilmoitus",
+    "Running": "Juoksu..."
+  },
+  "tourGuide": {
+    "NeoSessionLauncher": {
+      "FixErrorAndTryAgainText": "Jos virhekenttä on, Launch session -painike ei ole käytössä. \nKorjaa virhe ja yritä uudelleen.",
+      "FixErrorFieldbyModifyButton": "Voit muokata virhekenttää suoraan oikeassa yläkulmassa olevasta Muokkaa-painikkeesta.",
+      "ValidationErrorText": "Jos et syötä arvoa pakolliseen kenttään tai kirjoitat virheellisen arvon, kenttään tulee virheilmoitus.",
+      "ValidationErrorTitle": "Syöttökentän vahvistusvirheet"
+    }
+  },
+  "errorBoundary": {
+    "DisplayOnlyDevEnv": "Tämä virhelohko näytetään vain WebUI-kehitysympäristössä.",
+    "ExpiredLoginSessionReLogin": "Kirjaudu sisään",
+    "ExpiredLoginSessionTitle": "Kirjautumisistuntosi on päättynyt.",
+    "ReloadPage": "Lataa sivu uudelleen",
+    "ResetErrorBoundary": "Nollaa ErrorBoundary",
+    "Title": "On tapahtunut virhe."
   }
 }

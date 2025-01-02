@@ -78,7 +78,7 @@ export default class BackendAiSidepanelNotification extends BackendAIPage {
     // language=HTML
     return html`
       <div id="container">
-        <h3>${_t('sidepanel.Notification')}</h3>
+        <h3>${_t('sidePanel.Notification')}</h3>
         <mwc-list>
           ${this.notifications.map(
             (item: any) => html`
@@ -92,7 +92,7 @@ export default class BackendAiSidepanelNotification extends BackendAIPage {
           ${this.notifications.length === 0
             ? html`
                 <div style="padding:15px 0;width:100%;text-align:center;">
-                  ${_t('sidepanel.NoNotification')}
+                  ${_t('sidePanel.NoNotification')}
                 </div>
               `
             : html``}

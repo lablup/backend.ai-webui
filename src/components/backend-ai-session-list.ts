@@ -3522,7 +3522,7 @@ ${rowData.item[this.sessionNameField]}</pre
             <div class="layout horizontal center configuration">
               <mwc-icon class="fg green indicator">developer_board</mwc-icon>
               <span>${rowData.item.cpu_slot}</span>
-              <span class="indicator">${_t('session.core')}</span>
+              <span class="indicator">${_t('session.Core')}</span>
             </div>
             <div class="layout horizontal center configuration">
               <mwc-icon class="fg green indicator">memory</mwc-icon>

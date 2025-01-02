@@ -303,7 +303,6 @@
     "SessionInfo": "Πληροφορίες συνεδρίας",
     "Status": "Κατάσταση",
     "Configuration": "Διαμόρφωση",
-    "core": "πυρήνας",
     "Reservation": "Κράτηση",
     "Agent": "Μέσο",
     "Usage": "Χρήση",
@@ -326,7 +325,9 @@
       "NoExistingConnectionExample": "Δεν υπάρχει σύνδεση Παράδειγμα προς αντιγραφή.",
       "SSHConnectionExampleClipboardCopy": "Το παράδειγμα σύνδεσης SSH έχει αντιγραφεί στο πρόχειρο.",
       "App": "Εφαρμογή",
-      "ConnectUrlIsNotValid": "Η διεύθυνση URL σύνδεσης δεν είναι έγκυρη."
+      "ConnectUrlIsNotValid": "Η διεύθυνση URL σύνδεσης δεν είναι έγκυρη.",
+      "DownloadSSHKey": "Λήψη κλειδιού SSH",
+      "OpenVSCodeRemote": "Ανοίξτε τον τοπικό κώδικα του Visual Studio"
     },
     "TensorboardPath": "Κατάλογος καταγραφής για TensorBoard",
     "InputTensorboardPath": "Εισαγάγετε τον κατάλογο καταγραφής στον οποίο αναφέρεται το TensorBoard. Σημειώστε ότι ο κατάλογος καταγραφής δεν θα δημιουργηθεί αυτόματα ..",
@@ -430,7 +431,8 @@
     "ForceTerminateWarningMsg3": "Αυτή η ενέργεια δεν διαγράφει τα πραγματικά κοντέινερ στους πράκτορες. \nΕνδέχεται να απαιτείται χειροκίνητος καθαρισμός.",
     "ContainerToCleanUp": "Δοχείο(α) για καθαρισμό",
     "SessionNotFound": "Δεν έχετε δικαίωμα πρόσβασης σε αυτή τη συνεδρία ή η συνεδρία δεν υπάρχει.",
-    "NotInProject": "Αυτή η συνεδρία ανήκει σε διαφορετικό έργο."
+    "NotInProject": "Αυτή η συνεδρία ανήκει σε διαφορετικό έργο.",
+    "Core": "πυρήνας"
   },
   "button": {
     "Cancel": "Ματαίωση",
@@ -503,7 +505,6 @@
     "Agent": "Πράκτορας"
   },
   "general": {
-    "cores": "πυρήνες",
     "ResourceGroup": "Ομάδα πόρων",
     "AccessKey": "Κλειδί πρόσβασης",
     "Folders": "Φάκελοι",
@@ -530,7 +531,8 @@
     "Change": "Αλλαγή",
     "MaxValueNotification": "{{name}} πρέπει να είναι το μέγιστο {{max}}",
     "TotalItems": "Σύνολο {{total}} στοιχείων",
-    "ExtendLoginSession": "Επέκταση μιας περιόδου σύνδεσης"
+    "ExtendLoginSession": "Επέκταση μιας περιόδου σύνδεσης",
+    "Cores": "πυρήνες"
   },
   "credential": {
     "Permission": "Αδεια",
@@ -541,12 +543,9 @@
     "ResourcePolicy": "Πολιτική πόρων",
     "NumberOfQueries": "Αριθμός ερωτημάτων",
     "ConcurrentSessions": "Ταυτόχρονες συνεδρίες",
-    "active": "ενεργός",
-    "concurrentsessions": "Ταυτόχρονες συνεδρίες",
     "RateLimit": "Όριο τιμής",
     "RateLimitValidation": "Το όριο τιμής πρέπει να είναι μεγαλύτερο από το μηδέν και κάτω από 50000.",
     "RateLimitFor15min": "Όριο τιμής (για 15 λεπτά)",
-    "for900seconds": "για 900 δευτερόλεπτα",
     "Users": "Χρήστες",
     "exportCSV": "εξαγωγή CSV",
     "CreateUser": "Δημιουργία χρήστη",
@@ -624,7 +623,8 @@
     "DeactivateCredential": "Απενεργοποίηση διαπιστευτηρίων",
     "YouAreAboutToDeleteCredential": "Πρόκειται να διαγράψετε τα διαπιστευτήρια αυτού του χρήστη:",
     "DeleteCredential": "Διαγραφή διαπιστευτηρίων",
-    "ActivateCredential": "Ενεργοποίηση διαπιστευτηρίων"
+    "ActivateCredential": "Ενεργοποίηση διαπιστευτηρίων",
+    "For900Seconds": "για 900 δευτερόλεπτα"
   },
   "data": {
     "Folders": "Φάκελοι",
@@ -791,7 +791,7 @@
       "Insufficient": "Ανεπαρκές",
       "StatusOfSelectedHost": "Κατάσταση του επιλεγμένου κεντρικού υπολογιστή",
       "Status": "Κατάσταση",
-      "used": "χρησιμοποιημένο"
+      "Used": "χρησιμοποιημένο"
     },
     "SelectStorageHost": "Επιλογή κεντρικού υπολογιστή αποθήκευσης",
     "NumberOfFolders": "Αριθμός φακέλων",
@@ -808,7 +808,6 @@
     "New": "Νέος",
     "Add": "Προσθέστε",
     "CloningIsOnlyPossibleSameHost": "Προς το παρόν, η κλωνοποίηση είναι δυνατή μόνο στον ίδιο κεντρικό υπολογιστή.",
-    "userQuotaScopeId": "Quota Scope ID",
     "NewFolderName": "Νέο όνομα φακέλου",
     "modelStore": {
       "ImportFromHuggingFace": "Εισαγωγή από το Hugging Face",
@@ -839,7 +838,8 @@
       "ImportAndStartServiceSuccessDesc": "Ο νέος φάκελος μοντέλου και η υπηρεσία είναι έτοιμα. \nΚάντε κλικ στο κουμπί «Προβολή πληροφοριών υπηρεσίας» για να ελέγξετε τις λεπτομέρειες του μοντέλου και να ξεκινήσετε την επιθυμητή λειτουργία.",
       "AddedItems": "Προστέθηκαν στοιχεία",
       "ModelFolderName": "Όνομα φακέλου μοντέλου"
-    }
+    },
+    "UserQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {
@@ -925,7 +925,8 @@
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
     "BaseImageName": "Όνομα εικόνας βάσης",
     "Tags": "Ετικέτες",
-    "FullImagePath": "Πλήρης διαδρομή εικόνας"
+    "FullImagePath": "Πλήρης διαδρομή εικόνας",
+    "SuccessfullyCreated": "Δημιουργήθηκε με επιτυχία"
   },
   "resourcePreset": {
     "ResourcePresets": "Προεπιλογές πόρων",
@@ -1263,9 +1264,9 @@
     "DescImagePullBehavior": "Καθορίζει τις προϋποθέσεις για αυτόματη λήψη νέων εικόνων όταν καταχωρείται μια νέα έκδοση στο μητρώο. Χωρίς καμία, οι νέες εικόνες δεν θα ληφθούν αυτόματα.",
     "GUI": "GUI",
     "image": {
-      "digest": "Σύνοψη",
-      "tag": "Ετικέτα",
-      "none": "Κανένας"
+      "Digest": "Σύνοψη",
+      "None": "Κανένας",
+      "Tag": "Ετικέτα"
     },
     "OverlayNetwork": "Δίκτυο επικάλυψης",
     "OverlayNetworkConfiguration": "Ρύθμιση παραμέτρων για χρήση κατά τη δημιουργία δικτύων επικάλυψης.",
@@ -1423,13 +1424,6 @@
   "update": {
     "NewWebUIVersionAvailable": "Η νέα έκδοση είναι διαθέσιμη:"
   },
-  "sidepanel": {
-    "BackgroundTasks": "Εκτέλεση εργασιών",
-    "NoBackgroundTask": "Χωρίς εργασία.",
-    "Running": "Τρέξιμο...",
-    "Notification": "Γνωστοποίηση",
-    "NoNotification": "Χωρίς ειδοποίηση."
-  },
   "import": {
     "NoSuitableResourceFoundOnGivenURL": "Δεν βρέθηκε κατάλληλος πόρος σε δεδομένη διεύθυνση URL.",
     "ReadyToImport": "Έτοιμο για εισαγωγή",
@@ -1466,16 +1460,6 @@
     "GitlabDefaultBranch": "Όνομα υποκαταστήματος GitLab",
     "InvalidNotebookURL": "Μη έγκυρη διεύθυνση URL του Notbook."
   },
-  "usagepanel": {
-    "StatisticsForThisMonth": "Στατιστικά για αυτόν τον μήνα",
-    "NumSessions": "Αριθμός συνεδριών",
-    "UsedTime": "Χρησιμοποιημένος χρόνος",
-    "CpuUsedTime": "Χρησιμοποιημένος χρόνος CPU",
-    "GpuUsedTime": "Χρησιμοποιημένος χρόνος GPU",
-    "DiskUsed": "Χρήση δίσκου",
-    "TrafficUsed": "Χρήση κυκλοφορίας"
-  },
-  "DownloadSSHKey": "Λήψη κλειδιού SSH",
   "license": {
     "Perpetual": "Διαρκής",
     "Subscription": "Συνδρομή",
@@ -1615,14 +1599,6 @@
     "ServiceNameMaxLength": "Εισαγάγετε 24 χαρακτήρες ή λιγότερους.",
     "ServiceNameCannotStartWithHyphen": "Οι παύλες (-) δεν μπορούν να χρησιμοποιηθούν σε κανένα άκρο."
   },
-  "ErrorBoundary": {
-    "title": "Εμφανίστηκε σφάλμα.",
-    "reloadPage": "Επαναφόρτωση της σελίδας",
-    "resetErrorBoundary": "Επαναφορά ErrorBoundary",
-    "displayOnlyDevEnv": "Αυτό το μπλοκ σφάλματος εμφανίζεται μόνο στο περιβάλλον ανάπτυξης WebUI.",
-    "expiredLoginSessionTitle": "Η περίοδος σύνδεσής σας έχει λήξει.",
-    "expiredLoginSessionReLogin": "Σύνδεση"
-  },
   "storageHost": {
     "quotaSettings": {
       "SelectDomain": "Επιλέξτε τομέα",
@@ -1671,7 +1647,6 @@
     "EnterConfirmationCode": "Τώρα εισαγάγετε το OTP που δημιουργήθηκε από τον έλεγχο ταυτότητας για επαλήθευση.",
     "RequireOTP": "Γράψτε OTP."
   },
-  "OpenVSCodeRemote": "Ανοίξτε τον τοπικό κώδικα του Visual Studio",
   "inputLimit": {
     "4to64chars": "(4~64 χαρακτήρες)",
     "4to32chars": "(4~32 χαρακτήρες)"
@@ -1712,14 +1687,6 @@
     "SelectColumnToDisplay": "Επιλέξτε για εμφάνιση στηλών",
     "SearchTableColumn": "Αναζήτηση στηλών πίνακα"
   },
-  "tourguide": {
-    "NeoSessionLauncher": {
-      "ValidationErrorTitle": "Σφάλματα επικύρωσης πεδίου εισαγωγής",
-      "ValidationErrorText": "Εάν δεν εισαγάγετε μια τιμή σε ένα απαιτούμενο πεδίο ή εισαγάγετε μια μη έγκυρη τιμή, εμφανίζεται ένα μήνυμα σφάλματος σε αυτό το πεδίο.",
-      "FixErrorAndTryAgainText": "Εάν υπάρχει πεδίο σφάλματος, το κουμπί Εκκίνηση συνεδρίας είναι απενεργοποιημένο. \nΔιορθώστε το σφάλμα και δοκιμάστε ξανά.",
-      "FixErrorFieldbyModifyButton": "Για αυτό το πεδίο σφάλματος, μπορείτε να μεταβείτε απευθείας στο κουμπί Επεξεργασία στην επάνω δεξιά γωνία για να το επεξεργαστείτε."
-    }
-  },
   "sourceCodeViewer": {
     "Copy": "αντίγραφο",
     "Copied": "Αντιγράφηκε"
@@ -1750,11 +1717,43 @@
     "UploadFilesDescription": "Κάντε κλικ ή σύρετε αρχεία σε αυτήν την περιοχή για μεταφόρτωση"
   },
   "time": {
-    "ms": "ms",
-    "sec": "δευτ",
-    "min": "min",
-    "hour": "ώρα",
-    "day": "day",
-    "week": "εβδομάδα"
+    "Day": "day",
+    "Hour": "ώρα",
+    "Min": "min",
+    "Ms": "ms",
+    "Sec": "δευτ",
+    "Week": "εβδομάδα"
+  },
+  "usagePanel": {
+    "CpuUsedTime": "Χρησιμοποιημένος χρόνος CPU",
+    "DiskUsed": "Χρήση δίσκου",
+    "GpuUsedTime": "Χρησιμοποιημένος χρόνος GPU",
+    "NumSessions": "Αριθμός συνεδριών",
+    "StatisticsForThisMonth": "Στατιστικά για αυτόν τον μήνα",
+    "TrafficUsed": "Χρήση κυκλοφορίας",
+    "UsedTime": "Χρησιμοποιημένος χρόνος"
+  },
+  "sidePanel": {
+    "BackgroundTasks": "Εκτέλεση εργασιών",
+    "NoBackgroundTask": "Χωρίς εργασία.",
+    "NoNotification": "Χωρίς ειδοποίηση.",
+    "Notification": "Γνωστοποίηση",
+    "Running": "Τρέξιμο..."
+  },
+  "tourGuide": {
+    "NeoSessionLauncher": {
+      "FixErrorAndTryAgainText": "Εάν υπάρχει πεδίο σφάλματος, το κουμπί Εκκίνηση συνεδρίας είναι απενεργοποιημένο. \nΔιορθώστε το σφάλμα και δοκιμάστε ξανά.",
+      "FixErrorFieldbyModifyButton": "Για αυτό το πεδίο σφάλματος, μπορείτε να μεταβείτε απευθείας στο κουμπί Επεξεργασία στην επάνω δεξιά γωνία για να το επεξεργαστείτε.",
+      "ValidationErrorText": "Εάν δεν εισαγάγετε μια τιμή σε ένα απαιτούμενο πεδίο ή εισαγάγετε μια μη έγκυρη τιμή, εμφανίζεται ένα μήνυμα σφάλματος σε αυτό το πεδίο.",
+      "ValidationErrorTitle": "Σφάλματα επικύρωσης πεδίου εισαγωγής"
+    }
+  },
+  "errorBoundary": {
+    "DisplayOnlyDevEnv": "Αυτό το μπλοκ σφάλματος εμφανίζεται μόνο στο περιβάλλον ανάπτυξης WebUI.",
+    "ExpiredLoginSessionReLogin": "Σύνδεση",
+    "ExpiredLoginSessionTitle": "Η περίοδος σύνδεσής σας έχει λήξει.",
+    "ReloadPage": "Επαναφόρτωση της σελίδας",
+    "ResetErrorBoundary": "Επαναφορά ErrorBoundary",
+    "Title": "Εμφανίστηκε σφάλμα."
   }
 }

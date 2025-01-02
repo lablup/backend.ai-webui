@@ -71,16 +71,6 @@
     "InvalidUrl": "No es una URL válida",
     "AllowsPositiveNumberOnly": "Permitir solo números positivos."
   },
-  "DownloadSSHKey": "Descargar clave SSH",
-  "ErrorBoundary": {
-    "displayOnlyDevEnv": "Este bloque de error sólo se muestra en el entorno de desarrollo WebUI.",
-    "reloadPage": "Recargar la página",
-    "resetErrorBoundary": "Restablecer ErrorBoundary",
-    "title": "Se ha producido un error.",
-    "expiredLoginSessionTitle": "Su sesión ha expirado.",
-    "expiredLoginSessionReLogin": "Inicio de sesión"
-  },
-  "OpenVSCodeRemote": "Abrir código local de Visual Studio",
   "agent": {
     "AgentSetting": "Configuración del agente",
     "AgentSettingUpdated": "Configuración de agente actualizada.",
@@ -208,10 +198,7 @@
     "UserStatus": "Estado del usuario",
     "Users": "Usuarios",
     "WarningLessRateLimit": "Si el valor de Rate Limit es pequeño, es posible que se bloqueen operaciones de la API como el inicio de sesión.",
-    "active": "activo",
-    "concurrentsessions": "Sesiones simultáneas",
     "exportCSV": "exportar CSV",
-    "for900seconds": "durante 900 segundos",
     "validation": {
       "InvalidEmailAddress": "Dirección de correo electrónico no válida.",
       "LetterNumber-_dot": "Permite letras, números y -_.",
@@ -243,7 +230,8 @@
     "DeactivateCredential": "Desactivar credencial",
     "YouAreAboutToDeleteCredential": "Estás a punto de eliminar la credencial de este usuario:",
     "DeleteCredential": "Eliminar credencial",
-    "ActivateCredential": "Activar credencial"
+    "ActivateCredential": "Activar credencial",
+    "For900Seconds": "durante 900 segundos"
   },
   "data": {
     "Allowslettersnumbersand-_": "Permite letras, números y -_",
@@ -420,14 +408,13 @@
       "Insufficient": "Insuficiente",
       "Status": "Estado",
       "StatusOfSelectedHost": "Estado del host seleccionado",
-      "used": "usado"
+      "Used": "usado"
     },
     "SearchByName": "Buscar por nombre",
     "ModelStore": "Tienda de modelos",
     "New": "Nuevo",
     "Add": "Añadir",
     "CloningIsOnlyPossibleSameHost": "Actualmente, la clonación sólo es posible en el mismo host.",
-    "userQuotaScopeId": "Quota Scope ID",
     "NewFolderName": "Nuevo nombre de carpeta",
     "modelStore": {
       "ImportFromHuggingFace": "Importar desde Hugging Face",
@@ -458,7 +445,8 @@
       "ImportAndStartServiceSuccessDesc": "La carpeta del nuevo modelo y el servicio están listos. \nHaga clic en el botón 'Ver información de servicio' para verificar los detalles del modelo e iniciar la operación deseada.",
       "AddedItems": "Artículos agregados",
       "ModelFolderName": "Nombre de la carpeta del modelo"
-    }
+    },
+    "UserQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {
@@ -557,7 +545,8 @@
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
     "BaseImageName": "Nombre de la imagen base",
     "Tags": "Etiquetas",
-    "FullImagePath": "Ruta de imagen completa"
+    "FullImagePath": "Ruta de imagen completa",
+    "SuccessfullyCreated": "Creado con éxito"
   },
   "explorer": {
     "InputTooShort": "InputTooShort",
@@ -578,7 +567,6 @@
     "SecretKey": "Clave secreta",
     "StorageProxies": "Almacenes",
     "Username": "Nombre de usuario",
-    "cores": "núcleos",
     "None": "Ninguno",
     "Image": "Imagen",
     "All": "Todos",
@@ -591,7 +579,8 @@
     "Change": "Cambia",
     "MaxValueNotification": "{{name}} debe ser máximo {{max}}",
     "TotalItems": "Total {{total}} artículos",
-    "ExtendLoginSession": "Prolongar una sesión de inicio de sesión"
+    "ExtendLoginSession": "Prolongar una sesión de inicio de sesión",
+    "Cores": "núcleos"
   },
   "import": {
     "CleanUpImportTask": "Tarea de importación de limpieza...",
@@ -709,7 +698,6 @@
     "DescChangePasswordEmail": "Para enviar un correo electrónico para cambiar su contraseña, escriba su E-mail y pulse el botón ENVIAR.",
     "DescConfirmLeave": "Para confirmar, escriba de nuevo su e-mail y contraseña.",
     "DescEndpoint": "<p>En API ENDPOINT, se debe ingresar la URL del Servidor Web Backend.AI, que retransmite la solicitud al Administrador.</p><p>e.g., http://127.0.0.1:8090/</p>",
-    "E-mail": "Correo electrónico",
     "EmailSendButton": "Enviar",
     "Endpoint": "Punto final",
     "EndpointHistory": "Historial de puntos finales",
@@ -721,7 +709,6 @@
     "LeaveService": "Dejar el servicio",
     "Login": "Inicio de sesión",
     "LoginAnotherway": "¿Quieres iniciar sesión de otra forma?",
-    "LoginWithE-mail": "Iniciar sesión con correo electrónico",
     "LoginWithIAM": "Iniciar sesión con IAM",
     "NoEndpointSaved": "No se ha guardado ningún punto final.",
     "NotAUser": "¿No es usuario?",
@@ -1138,9 +1125,10 @@
       "NoExistingConnectionExample": "No hay conexión Ejemplo a copiar.",
       "Prepared": "Preparado",
       "SSHConnectionExampleClipboardCopy": "El ejemplo de conexión SSH se ha copiado en el portapapeles.",
-      "ConnectUrlIsNotValid": "La URL de conexión no es válida."
+      "ConnectUrlIsNotValid": "La URL de conexión no es válida.",
+      "DownloadSSHKey": "Descargar clave SSH",
+      "OpenVSCodeRemote": "Abrir código local de Visual Studio"
     },
-    "core": "núcleo",
     "exportCSV": "exportar CSV",
     "launcher": {
       "AIAccelerator": "Acelerador de IA",
@@ -1334,7 +1322,8 @@
     "ForceTerminateWarningMsg3": "Esta acción no elimina los contenedores reales de los agentes. \nEs posible que se requiera una limpieza manual.",
     "ContainerToCleanUp": "Contenedor(es) para limpiar",
     "SessionNotFound": "No tiene permiso para acceder a esta sesión o la sesión no existe.",
-    "NotInProject": "Esta sesión pertenece a un proyecto diferente."
+    "NotInProject": "Esta sesión pertenece a un proyecto diferente.",
+    "Core": "núcleo"
   },
   "settings": {
     "ATOMsupport": "ATOM",
@@ -1393,9 +1382,9 @@
     "UseGUIonWeb": "Utilizar la GUI Backend.AI en la Web",
     "Warboysupport": "Warboy",
     "image": {
-      "digest": "Digerir",
-      "none": "Ninguno",
-      "tag": "Etiqueta"
+      "Digest": "Digerir",
+      "None": "Ninguno",
+      "Tag": "Etiqueta"
     },
     "Plugins": "Complementos",
     "OpenSourceCUDAGPUsupport": "Compatibilidad con GPU CUDA de código abierto",
@@ -1413,13 +1402,6 @@
     "RNGDsupport": "RNGD",
     "DescRNGDsupport": "Utilice el soporte Furiosa RNGD",
     "RequireRNGDPlugin": "Requiere el complemento Backend.AI RNGD."
-  },
-  "sidepanel": {
-    "BackgroundTasks": "Tareas en curso",
-    "NoBackgroundTask": "Ninguna tarea.",
-    "NoNotification": "No hay notificación.",
-    "Notification": "Notificación",
-    "Running": "Corriendo..."
   },
   "signup": {
     "E-mail": "Correo electrónico",
@@ -1518,15 +1500,6 @@
   },
   "update": {
     "NewWebUIVersionAvailable": "Nueva versión disponible:"
-  },
-  "usagepanel": {
-    "CpuUsedTime": "Tiempo de uso de la CPU",
-    "DiskUsed": "Uso del disco",
-    "GpuUsedTime": "Tiempo de uso de la GPU",
-    "NumSessions": "Número de sesiones",
-    "StatisticsForThisMonth": "Estadísticas de este mes",
-    "TrafficUsed": "Uso del tráfico",
-    "UsedTime": "Tiempo de uso"
   },
   "usersettings": {
     "AutoLogout": "Cierre automático de sesión",
@@ -1714,14 +1687,6 @@
     "SelectColumnToDisplay": "Seleccionar columnas para mostrar",
     "SearchTableColumn": "Buscar columnas de la tabla"
   },
-  "tourguide": {
-    "NeoSessionLauncher": {
-      "ValidationErrorTitle": "Errores de validación del campo de entrada",
-      "ValidationErrorText": "Si no ingresa un valor en un campo obligatorio o ingresa un valor no válido, aparece un mensaje de error en ese campo.",
-      "FixErrorAndTryAgainText": "Si hay un campo de error, el botón Iniciar sesión está deshabilitado. \nCorrija el error y vuelva a intentarlo.",
-      "FixErrorFieldbyModifyButton": "Para ese campo de error, puede ir directamente al botón Editar en la esquina superior derecha para editarlo."
-    }
-  },
   "sourceCodeViewer": {
     "Copy": "Copiar",
     "Copied": "Copiado"
@@ -1752,11 +1717,43 @@
     "UploadFilesDescription": "Haga clic o arrastre archivos a esta área para cargarlos"
   },
   "time": {
-    "ms": "ms",
-    "sec": "segundo",
-    "min": "min",
-    "hour": "hora",
-    "day": "day",
-    "week": "semana"
+    "Day": "day",
+    "Hour": "hora",
+    "Min": "min",
+    "Ms": "ms",
+    "Sec": "segundo",
+    "Week": "semana"
+  },
+  "usagePanel": {
+    "CpuUsedTime": "Tiempo de uso de la CPU",
+    "DiskUsed": "Uso del disco",
+    "GpuUsedTime": "Tiempo de uso de la GPU",
+    "NumSessions": "Número de sesiones",
+    "StatisticsForThisMonth": "Estadísticas de este mes",
+    "TrafficUsed": "Uso del tráfico",
+    "UsedTime": "Tiempo de uso"
+  },
+  "sidePanel": {
+    "BackgroundTasks": "Tareas en curso",
+    "NoBackgroundTask": "Ninguna tarea.",
+    "NoNotification": "No hay notificación.",
+    "Notification": "Notificación",
+    "Running": "Corriendo..."
+  },
+  "tourGuide": {
+    "NeoSessionLauncher": {
+      "FixErrorAndTryAgainText": "Si hay un campo de error, el botón Iniciar sesión está deshabilitado. \nCorrija el error y vuelva a intentarlo.",
+      "FixErrorFieldbyModifyButton": "Para ese campo de error, puede ir directamente al botón Editar en la esquina superior derecha para editarlo.",
+      "ValidationErrorText": "Si no ingresa un valor en un campo obligatorio o ingresa un valor no válido, aparece un mensaje de error en ese campo.",
+      "ValidationErrorTitle": "Errores de validación del campo de entrada"
+    }
+  },
+  "errorBoundary": {
+    "DisplayOnlyDevEnv": "Este bloque de error sólo se muestra en el entorno de desarrollo WebUI.",
+    "ExpiredLoginSessionReLogin": "Inicio de sesión",
+    "ExpiredLoginSessionTitle": "Su sesión ha expirado.",
+    "ReloadPage": "Recargar la página",
+    "ResetErrorBoundary": "Restablecer ErrorBoundary",
+    "Title": "Se ha producido un error."
   }
 }
