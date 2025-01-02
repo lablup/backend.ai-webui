@@ -1742,7 +1742,11 @@
     "DeleteChattingSessionDescription": "Bu konuyu silmek üzeresiniz. \nBir kere silindikten sonra geri getirilemez. \nLütfen dikkatli bir şekilde ilerleyin.",
     "SelectEndpoint": "Uç Noktayı Seçin",
     "SyncInput": "Senkronizasyon girişi",
-    "CompareWithOtherModels": "Diğer modellerle karşılaştırın"
+    "CompareWithOtherModels": "Diğer modellerle karşılaştırın",
+    "Attachments": "Ekler",
+    "DropFileHere": "Dosyayı buraya bırakın",
+    "UploadFiles": "Dosyaları yükle",
+    "UploadFilesDescription": "Yüklemek için dosyaları bu alana tıklayın veya sürükleyin"
   },
   "time": {
     "ms": "ms",

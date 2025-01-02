@@ -1743,7 +1743,11 @@
     "DeleteChattingSessionDescription": "Anda akan memadamkan topik ini. \nSetelah dipadam, ia tidak boleh dipulihkan. \nSila teruskan dengan berhati-hati.",
     "SelectEndpoint": "Pilih Titik Akhir",
     "SyncInput": "Input penyegerakan",
-    "CompareWithOtherModels": "Bandingkan dengan model lain"
+    "CompareWithOtherModels": "Bandingkan dengan model lain",
+    "Attachments": "Lampiran",
+    "DropFileHere": "Lepaskan fail di sini",
+    "UploadFiles": "Muat naik fail",
+    "UploadFilesDescription": "Klik atau seret fail ke kawasan ini untuk memuat naik"
   },
   "time": {
     "ms": "ms",

@@ -1743,7 +1743,11 @@
     "DeleteChattingSessionDescription": "Вы собираетесь удалить эту тему. \nПосле удаления его невозможно восстановить. \nПожалуйста, действуйте осторожно.",
     "SelectEndpoint": "Выберите конечную точку",
     "SyncInput": "Вход синхронизации",
-    "CompareWithOtherModels": "Сравнить с другими моделями"
+    "CompareWithOtherModels": "Сравнить с другими моделями",
+    "Attachments": "Вложения",
+    "DropFileHere": "Перетащите файл сюда",
+    "UploadFiles": "Загрузить файлы",
+    "UploadFilesDescription": "Нажмите или перетащите файлы в эту область, чтобы загрузить"
   },
   "time": {
     "ms": "ms",

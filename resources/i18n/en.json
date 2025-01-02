@@ -1747,7 +1747,11 @@
     "DeleteChattingSession": "Delete chatting session",
     "DeleteChattingSessionDescription": "You are about to delete this topic. Once deleted, it cannot be recovered. Please proceed with caution.",
     "SyncInput": "Sync input",
-    "CompareWithOtherModels": "Compare with other models"
+    "CompareWithOtherModels": "Compare with other models",
+    "Attachments": "Attachments",
+    "DropFileHere": "Drop file here",
+    "UploadFiles": "Upload files",
+    "UploadFilesDescription": "Click or drag files to this area to upload"
   },
   "time": {
     "ms": "ms",

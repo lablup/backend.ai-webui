@@ -5,6 +5,7 @@ import ScrollBottomHandlerButton from './ScrollBottomHandlerButton';
 import { Message } from '@ai-sdk/react';
 import { theme } from 'antd';
 import Compact from 'antd/es/space/Compact';
+import _ from 'lodash';
 import React, { useRef, useState } from 'react';
 import { Virtuoso, VirtuosoHandle } from 'react-virtuoso';
 
@@ -115,7 +116,7 @@ const VirtualChatMessageList: React.FC<VirtualizedListProps> = ({
               }
             }
           }}
-          lastMessageContent={messages[messages.length - 1]?.content}
+          lastMessageContent={_.get(_.last(messages), 'content')}
         />
       </div>
     </Flex>

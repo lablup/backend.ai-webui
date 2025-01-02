@@ -1743,7 +1743,11 @@
     "DeleteChattingSessionDescription": "Zamierzasz usunąć ten temat. \nRaz usuniętego nie można odzyskać. \nProszę postępować ostrożnie.",
     "SelectEndpoint": "Wybierz Punkt końcowy",
     "SyncInput": "Synchronizuj wejście",
-    "CompareWithOtherModels": "Porównaj z innymi modelami"
+    "CompareWithOtherModels": "Porównaj z innymi modelami",
+    "Attachments": "Załączniki",
+    "DropFileHere": "Upuść plik tutaj",
+    "UploadFiles": "Prześlij pliki",
+    "UploadFilesDescription": "Kliknij lub przeciągnij pliki do tego obszaru, aby je przesłać"
   },
   "time": {
     "ms": "ms",

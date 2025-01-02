@@ -1743,7 +1743,11 @@
     "DeleteChattingSessionDescription": "Stai per eliminare questo argomento. \nUna volta eliminato, non può essere recuperato. \nSi prega di procedere con cautela.",
     "SelectEndpoint": "Seleziona punto finale",
     "SyncInput": "Ingresso sincronizzato",
-    "CompareWithOtherModels": "Confronta con altri modelli"
+    "CompareWithOtherModels": "Confronta con altri modelli",
+    "Attachments": "Allegati",
+    "DropFileHere": "Rilascia il file qui",
+    "UploadFiles": "Carica file",
+    "UploadFilesDescription": "Fare clic o trascinare i file in quest'area per caricarli"
   },
   "time": {
     "ms": "ms",

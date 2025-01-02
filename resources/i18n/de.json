@@ -1743,7 +1743,11 @@
     "DeleteChattingSessionDescription": "Sie sind dabei, dieses Thema zu löschen. \nEinmal gelöscht, kann es nicht wiederhergestellt werden. \nBitte gehen Sie vorsichtig vor.",
     "SelectEndpoint": "Wählen Sie Endpunkt aus",
     "SyncInput": "Eingang synchronisieren",
-    "CompareWithOtherModels": "Vergleichen Sie mit anderen Modellen"
+    "CompareWithOtherModels": "Vergleichen Sie mit anderen Modellen",
+    "Attachments": "Anhänge",
+    "DropFileHere": "Datei hier ablegen",
+    "UploadFiles": "Dateien hochladen",
+    "UploadFilesDescription": "Klicken oder ziehen Sie Dateien zum Hochladen in diesen Bereich"
   },
   "time": {
     "ms": "ms",

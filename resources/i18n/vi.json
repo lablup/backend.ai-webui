@@ -1743,7 +1743,11 @@
     "DeleteChattingSessionDescription": "Bạn sắp xóa chủ đề này. \nMột khi đã xóa, nó không thể được phục hồi. \nHãy tiến hành thận trọng.",
     "SelectEndpoint": "Chọn điểm cuối",
     "SyncInput": "Đồng bộ hóa đầu vào",
-    "CompareWithOtherModels": "So sánh với các mô hình khác"
+    "CompareWithOtherModels": "So sánh với các mô hình khác",
+    "Attachments": "Tệp đính kèm",
+    "DropFileHere": "Thả tập tin ở đây",
+    "UploadFiles": "Tải tập tin lên",
+    "UploadFilesDescription": "Nhấp hoặc kéo tệp vào khu vực này để tải lên"
   },
   "time": {
     "ms": "ms",

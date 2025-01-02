@@ -1744,7 +1744,11 @@
     "DeleteChattingSessionDescription": "您即將刪除該主題。\n一旦刪除，就無法恢復。\n請謹慎行事。",
     "SelectEndpoint": "選擇端點",
     "SyncInput": "同步輸入",
-    "CompareWithOtherModels": "與其他型號比較"
+    "CompareWithOtherModels": "與其他型號比較",
+    "Attachments": "附件",
+    "DropFileHere": "將文件拖放到此處",
+    "UploadFiles": "上傳文件",
+    "UploadFilesDescription": "點選或拖曳文件到該區域即可上傳"
   },
   "time": {
     "ms": "ms",

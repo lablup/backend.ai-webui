@@ -1743,7 +1743,11 @@
     "DeleteChattingSessionDescription": "Та энэ сэдвийг устгах гэж байна. \nУстгасны дараа сэргээх боломжгүй. \nБолгоомжтой үргэлжлүүлнэ үү.",
     "SelectEndpoint": "Төгсгөлийн цэгийг сонгоно уу",
     "SyncInput": "Синкийн оролт",
-    "CompareWithOtherModels": "Бусад загваруудтай харьцуул"
+    "CompareWithOtherModels": "Бусад загваруудтай харьцуул",
+    "Attachments": "Хавсралтууд",
+    "DropFileHere": "Файлыг энд буулгана уу",
+    "UploadFiles": "Файлуудыг байршуулах",
+    "UploadFilesDescription": "Байршуулахын тулд файлуудыг энэ хэсэгт товшиж эсвэл чирнэ үү"
   },
   "time": {
     "ms": "ms",

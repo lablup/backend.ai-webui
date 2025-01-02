@@ -8,11 +8,18 @@ import ModelSelect from './ModelSelect';
 import VirtualChatMessageList from './VirtualChatMessageList';
 import { createOpenAI } from '@ai-sdk/openai';
 import { useChat } from '@ai-sdk/react';
-import { DeleteOutlined, MoreOutlined } from '@ant-design/icons';
+import {
+  CloudUploadOutlined,
+  DeleteOutlined,
+  LinkOutlined,
+  MoreOutlined,
+} from '@ant-design/icons';
+import { Attachments, AttachmentsProps, Sender } from '@ant-design/x';
 import { useControllableValue } from 'ahooks';
 import { streamText } from 'ai';
 import {
   Alert,
+  Badge,
   Button,
   Card,
   CardProps,
@@ -25,7 +32,7 @@ import {
 } from 'antd';
 import _ from 'lodash';
 import { Scale } from 'lucide-react';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export type BAIModel = {
@@ -81,6 +88,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
   ...cardProps
 }) => {
   const webuiNavigate = useWebUINavigate();
+  const [isOpenAttachments, setIsOpenAttachments] = useState(false);
 
   const [modelId, setModelId] = useControllableValue(cardProps, {
     valuePropName: 'modelId',
@@ -89,16 +97,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
   });
 
   const customModelFormRef = useRef<FormInstance>(null);
-
-  // const [userInput, setUserInput] = useControllableValue(cardProps,{
-  //   valuePropName: "userInput",
-  //   trigger: "onChangeUserInput",
-  // });
-
-  // useControllableValue(cardProps, {
-  //   valuePropName: "agentId",
-  //   trigger: "onAgentChange",
-  // });
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const {
     messages,
@@ -109,7 +108,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
     isLoading,
     append,
     setMessages,
-    // ...chatHelpers
+    // ...chatHelpers,
   } = useChat({
     api: baseURL,
     headers,
@@ -164,6 +163,8 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitKey]);
 
+  const [files, setFiles] = useState<AttachmentsProps['items']>([]);
+
   const items: MenuProps['items'] = filterEmptyItem([
     showCompareMenuItem && {
       key: 'compare',
@@ -191,6 +192,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
 
   return (
     <Card
+      ref={cardRef}
       bordered
       extra={
         [
@@ -260,6 +262,65 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
           autoFocus
           value={input}
           placeholder="Say something..."
+          header={
+            <Sender.Header
+              closable={false}
+              title={t('chatui.Attachments')}
+              open={!!isOpenAttachments && !_.isEmpty(files)}
+              onOpenChange={setIsOpenAttachments}
+              styles={{
+                content: {
+                  padding: 0,
+                },
+              }}
+            >
+              <Attachments
+                beforeUpload={() => false}
+                getDropContainer={() => cardRef.current}
+                accept="image/*,text/*"
+                items={files}
+                onChange={({ fileList }) => setFiles(fileList)}
+                placeholder={(type) =>
+                  type === 'drop'
+                    ? {
+                        title: t('chatui.DropFileHere'),
+                      }
+                    : {
+                        icon: <CloudUploadOutlined />,
+                        title: t('chatui.UploadFiles'),
+                        description: t('chatui.UploadFilesDescription'),
+                      }
+                }
+              />
+            </Sender.Header>
+          }
+          prefix={
+            <Attachments
+              beforeUpload={() => false}
+              getDropContainer={() => cardRef.current}
+              accept="image/*,text/*"
+              items={files}
+              onChange={({ fileList }) => {
+                setFiles(fileList);
+                setIsOpenAttachments(true);
+              }}
+              placeholder={(type) =>
+                type === 'drop'
+                  ? {
+                      title: t('chatui.DropFileHere'),
+                    }
+                  : {
+                      icon: <CloudUploadOutlined />,
+                      title: t('chatui.UploadFiles'),
+                      description: t('chatui.UploadFilesDescription'),
+                    }
+              }
+            >
+              <Badge dot={!_.isEmpty(files) && !isOpenAttachments}>
+                <Button type="text" icon={<LinkOutlined />} />
+              </Badge>
+            </Attachments>
+          }
           onChange={(v: string) => {
             setInput(v);
             if (onInputChange) {
@@ -271,17 +332,35 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
             stop();
           }}
           onSend={() => {
-            if (input) {
-              append({
-                role: 'user',
-                content: input,
-              });
+            if (input || !_.isEmpty(files)) {
+              const fileList = _.map(
+                files,
+                (item) => item.originFileObj as File,
+              );
+              // Filter after converting to `File`
+              const fileListArray = _.filter(fileList, Boolean);
+              const dataTransfer = new DataTransfer();
+              _.forEach(fileListArray, (file) => dataTransfer.items.add(file));
+
+              append(
+                {
+                  role: 'user',
+                  content: input,
+                },
+                {
+                  experimental_attachments: dataTransfer.files,
+                },
+              );
+
               setTimeout(() => {
                 setInput('');
+                setFiles([]);
+                setIsOpenAttachments(false);
               }, 0);
               onSubmitChange?.();
             }
           }}
+          style={{ flex: 1 }}
         />,
       ]}
     >
@@ -342,9 +421,9 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
         </Form>
       </Flex>
       {/* <ChatMessageList messages={messages}  /> */}
-      {!_.isEmpty((error as any)?.responseBody) ? (
+      {!_.isEmpty(error?.message) ? (
         <Alert
-          message={(error as any)?.responseBody}
+          message={error?.message}
           type="error"
           showIcon
           style={{

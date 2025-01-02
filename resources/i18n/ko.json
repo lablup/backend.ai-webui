@@ -1745,7 +1745,11 @@
     "DeleteChattingSessionDescription": "이 주제를 삭제하려고 합니다. \n삭제한 후에는 복구할 수 없습니다. \n주의해서 진행하시기 바랍니다.",
     "SelectEndpoint": "엔드포인트 선택",
     "SyncInput": "입력 연동",
-    "CompareWithOtherModels": "다른 모델과 비교하기"
+    "CompareWithOtherModels": "다른 모델과 비교하기",
+    "Attachments": "첨부파일",
+    "DropFileHere": "파일을 여기에 놓아주세요.",
+    "UploadFiles": "파일 업로드",
+    "UploadFilesDescription": "파일을 여기 끌어다 놓거나 이 영역을 클릭하세요"
   },
   "time": {
     "ms": "밀리초",

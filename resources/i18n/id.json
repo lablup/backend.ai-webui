@@ -1743,7 +1743,11 @@
     "DeleteChattingSessionDescription": "Anda akan menghapus topik ini. \nSetelah dihapus, itu tidak dapat dipulihkan. \nSilakan lanjutkan dengan hati-hati.",
     "SelectEndpoint": "Pilih Titik Akhir",
     "SyncInput": "Sinkronkan masukan",
-    "CompareWithOtherModels": "Bandingkan dengan model lain"
+    "CompareWithOtherModels": "Bandingkan dengan model lain",
+    "Attachments": "Lampiran",
+    "DropFileHere": "Letakkan file di sini",
+    "UploadFiles": "Unggah file",
+    "UploadFilesDescription": "Klik atau seret file ke area ini untuk diunggah"
   },
   "time": {
     "ms": "ms",

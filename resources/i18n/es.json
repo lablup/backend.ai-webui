@@ -1745,7 +1745,11 @@
     "DeleteChattingSessionDescription": "Estás a punto de eliminar este tema. \nUna vez eliminado, no se puede recuperar. \nProceda con precaución.",
     "SelectEndpoint": "Seleccionar punto final",
     "SyncInput": "Entrada de sincronización",
-    "CompareWithOtherModels": "Comparar con otros modelos"
+    "CompareWithOtherModels": "Comparar con otros modelos",
+    "Attachments": "Adjuntos",
+    "DropFileHere": "Suelta el archivo aquí",
+    "UploadFiles": "Subir archivos",
+    "UploadFilesDescription": "Haga clic o arrastre archivos a esta área para cargarlos"
   },
   "time": {
     "ms": "ms",

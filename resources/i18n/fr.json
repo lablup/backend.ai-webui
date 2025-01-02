@@ -1743,7 +1743,11 @@
     "DeleteChattingSessionDescription": "Vous êtes sur le point de supprimer ce sujet. \nUne fois supprimé, il ne peut pas être récupéré. \nVeuillez procéder avec prudence.",
     "SelectEndpoint": "Sélectionnez le point de terminaison",
     "SyncInput": "Entrée de synchronisation",
-    "CompareWithOtherModels": "Comparez avec d'autres modèles"
+    "CompareWithOtherModels": "Comparez avec d'autres modèles",
+    "Attachments": "Pièces jointes",
+    "DropFileHere": "Déposez le fichier ici",
+    "UploadFiles": "Télécharger des fichiers",
+    "UploadFilesDescription": "Cliquez ou faites glisser les fichiers vers cette zone pour les télécharger"
   },
   "time": {
     "ms": "ms",

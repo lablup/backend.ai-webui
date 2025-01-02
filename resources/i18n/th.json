@@ -1723,7 +1723,11 @@
     "DeleteChattingSession": "ลบเซสชันการแชท",
     "DeleteChattingSessionDescription": "คุณกำลังจะลบหัวข้อนี้ เมื่อลบแล้วจะไม่สามารถกู้คืนได้ กรุณาดำเนินการด้วยความระมัดระวัง",
     "SyncInput": "ซิงค์อินพุต",
-    "CompareWithOtherModels": "เปรียบเทียบกับรุ่นอื่นๆ"
+    "CompareWithOtherModels": "เปรียบเทียบกับรุ่นอื่นๆ",
+    "Attachments": "ไฟล์แนบ",
+    "DropFileHere": "วางไฟล์ที่นี่",
+    "UploadFiles": "อัพโหลดไฟล์",
+    "UploadFilesDescription": "คลิกหรือลากไฟล์ไปยังบริเวณนี้เพื่ออัปโหลด"
   },
   "time": {
     "ms": "ms",

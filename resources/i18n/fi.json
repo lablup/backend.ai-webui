@@ -1742,7 +1742,11 @@
     "DeleteChatHistory": "Poista keskusteluhistoria",
     "SelectModel": "Valitse Malli",
     "SyncInput": "Synkronoi sisääntulo",
-    "CompareWithOtherModels": "Vertaa muihin malleihin"
+    "CompareWithOtherModels": "Vertaa muihin malleihin",
+    "Attachments": "Liitteet",
+    "DropFileHere": "Pudota tiedosto tähän",
+    "UploadFiles": "Lataa tiedostoja",
+    "UploadFilesDescription": "Napsauta tai vedä tiedostoja tälle alueelle ladataksesi"
   },
   "time": {
     "ms": "ms",

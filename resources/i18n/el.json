@@ -1743,7 +1743,11 @@
     "DeleteChattingSessionDescription": "Πρόκειται να διαγράψετε αυτό το θέμα. \nΑφού διαγραφεί, δεν μπορεί να ανακτηθεί. \nΠαρακαλούμε προχωρήστε με προσοχή.",
     "SelectEndpoint": "Επιλέξτε Τελικό σημείο",
     "SyncInput": "Συγχρονισμός εισόδου",
-    "CompareWithOtherModels": "Συγκρίνετε με άλλα μοντέλα"
+    "CompareWithOtherModels": "Συγκρίνετε με άλλα μοντέλα",
+    "Attachments": "Συνημμένα",
+    "DropFileHere": "Αποθέστε το αρχείο εδώ",
+    "UploadFiles": "Μεταφόρτωση αρχείων",
+    "UploadFilesDescription": "Κάντε κλικ ή σύρετε αρχεία σε αυτήν την περιοχή για μεταφόρτωση"
   },
   "time": {
     "ms": "ms",
