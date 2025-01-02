@@ -1672,7 +1672,9 @@
       "InvalidBlankEmail": "Syötä sähköpostiosoitteesi",
       "DisMatchUserEmail": "Käyttäjän sähköpostiosoite ei täsmää",
       "MyEnvironments": "Omat ympäristöt",
-      "ResourcePolicy": "Resurssipolitiikka"
+      "ResourcePolicy": "Resurssipolitiikka",
+      "Playground": "Leikkikenttä",
+      "ModelStore": "Mallikauppa"
     },
     "NetworkSoftTimeout": "Palvelimen vastaus kestää kauemmin. Odota hetki"
   },
@@ -1705,7 +1707,10 @@
     "Version": "Versio",
     "CloneToFolder": "Kloonaa kansioon",
     "FolderAlreadyExists": "Tämän niminen kansio on jo olemassa.",
-    "FinetuneModel": "Finetune malli"
+    "FinetuneModel": "Finetune malli",
+    "Experience": "Kokea",
+    "ModelCard": "Mallikortti",
+    "ImportFromHuggingFace": "Tuo halaavista kasvoista"
   },
   "table": {
     "SettingTable": "Kattaus",
@@ -1755,5 +1760,12 @@
     "hour": "tunnin",
     "day": "day",
     "week": "viikko"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelServices": "Mallipalvelut",
+      "ModelList": "Malliluettelo",
+      "MyServices": "Omat palvelut"
+    }
   }
 }

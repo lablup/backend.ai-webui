@@ -65,7 +65,9 @@
       "InvalidBlankEmail": "Masukkan emel anda",
       "DisMatchUserEmail": "E-mel Pengguna tidak sepadan",
       "MyEnvironments": "Persekitaran Saya",
-      "ResourcePolicy": "Dasar Sumber"
+      "ResourcePolicy": "Dasar Sumber",
+      "Playground": "Taman permainan",
+      "ModelStore": "Kedai Model"
     },
     "YouAreOffline": "Luar talian: Tidak disambungkan ke mana-mana rangkaian.",
     "YouAreOnline": "Anda kini dalam talian",
@@ -1705,7 +1707,10 @@
     "category": "kategori",
     "CloneToFolder": "Klon ke folder",
     "FolderAlreadyExists": "Folder dengan nama ini sudah wujud.",
-    "FinetuneModel": "Model Finetune"
+    "FinetuneModel": "Model Finetune",
+    "Experience": "Pengalaman",
+    "ModelCard": "Kad Model",
+    "ImportFromHuggingFace": "Import Dari Muka Berpeluk"
   },
   "table": {
     "SelectColumnToDisplay": "Pilih untuk lajur untuk dipaparkan",
@@ -1756,5 +1761,12 @@
     "hour": "jam",
     "day": "day",
     "week": "minggu"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelServices": "Perkhidmatan Model",
+      "ModelList": "Senarai Model",
+      "MyServices": "Perkhidmatan Saya"
+    }
   }
 }

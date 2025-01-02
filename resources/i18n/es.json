@@ -1674,7 +1674,9 @@
       "InvalidBlankEmail": "Introduce tu correo electrónico",
       "DisMatchUserEmail": "El correo electrónico del usuario no coincide",
       "MyEnvironments": "Mis ambientes",
-      "ResourcePolicy": "Política de recursos"
+      "ResourcePolicy": "Política de recursos",
+      "Playground": "Patio de juegos",
+      "ModelStore": "Tienda de modelos"
     },
     "NetworkSoftTimeout": "El servidor está tardando más en responder. Por favor, espere un momento"
   },
@@ -1707,7 +1709,10 @@
     "category": "Categoría",
     "CloneToFolder": "Clonar en una carpeta",
     "FolderAlreadyExists": "Ya existe una carpeta con este nombre.",
-    "FinetuneModel": "Modelo de ajuste fino"
+    "FinetuneModel": "Modelo de ajuste fino",
+    "Experience": "Experiencia",
+    "ModelCard": "Tarjeta modelo",
+    "ImportFromHuggingFace": "Importar desde la cara abrazada"
   },
   "table": {
     "SettingTable": "Ajuste de la tabla",
@@ -1758,5 +1763,12 @@
     "hour": "hora",
     "day": "day",
     "week": "semana"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelServices": "Servicios modelo",
+      "ModelList": "Lista de modelos",
+      "MyServices": "Mis servicios"
+    }
   }
 }

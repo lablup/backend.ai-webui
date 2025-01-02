@@ -65,7 +65,9 @@
       "InvalidBlankEmail": "Inserisci il tuo indirizzo email",
       "DisMatchUserEmail": "L'e-mail dell'utente non corrisponde",
       "MyEnvironments": "I miei ambienti",
-      "ResourcePolicy": "Politica delle risorse"
+      "ResourcePolicy": "Politica delle risorse",
+      "Playground": "Parco giochi",
+      "ModelStore": "Negozio di modelli"
     },
     "YouAreOffline": "Non in linea: Non è collegato ad alcuna rete.",
     "YouAreOnline": "Ora sei online",
@@ -1705,7 +1707,10 @@
     "category": "Categoria",
     "CloneToFolder": "Clonare in una cartella",
     "FolderAlreadyExists": "Una cartella con questo nome esiste già.",
-    "FinetuneModel": "Modello di messa a punto"
+    "FinetuneModel": "Modello di messa a punto",
+    "Experience": "Esperienza",
+    "ModelCard": "Scheda modello",
+    "ImportFromHuggingFace": "Importa da viso abbracciato"
   },
   "table": {
     "SettingTable": "Impostazione della tabella",
@@ -1756,5 +1761,12 @@
     "hour": "ora",
     "day": "day",
     "week": "settimana"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelServices": "Servizi modello",
+      "ModelList": "Elenco dei modelli",
+      "MyServices": "I miei servizi"
+    }
   }
 }

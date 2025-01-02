@@ -64,7 +64,9 @@
       "InvalidBlankEmail": "Enter your e-mail",
       "DisMatchUserEmail": "User E-mail does not match",
       "MyEnvironments": "My Environments",
-      "ResourcePolicy": "Resource Policy"
+      "ResourcePolicy": "Resource Policy",
+      "Playground": "Playground",
+      "ModelStore": "Model Store"
     },
     "YouAreOffline": "Offline: Not connected to any networks.",
     "YouAreOnline": "You are now online",
@@ -565,7 +567,8 @@
     "Expand": "Expand",
     "Clear": "Clear",
     "Apply": "Apply",
-    "CopySomething": "Copy {{name}}"
+    "CopySomething": "Copy {{name}}",
+    "GoBackToModelServicesPage": "Go back to model services page"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -1713,7 +1716,10 @@
     "category": "Category",
     "CloneToFolder": "Clone to a folder",
     "FolderAlreadyExists": "A folder with this name already exists.",
-    "FinetuneModel": "Finetune Model"
+    "FinetuneModel": "Finetune Model",
+    "Experience": "Experience",
+    "ModelCard": "Model Card",
+    "ImportFromHuggingFace": "Import From Hugging Face"
   },
   "tourguide": {
     "NeoSessionLauncher": {
@@ -1760,5 +1766,12 @@
     "hour": "hour",
     "day": "day",
     "week": "week"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelServices": "Model Services",
+      "ModelList": "Model List",
+      "MyServices": "My Services"
+    }
   }
 }
