@@ -13,6 +13,7 @@ import {
   DeleteOutlined,
   LinkOutlined,
   MoreOutlined,
+  RocketOutlined,
 } from '@ant-design/icons';
 import { Attachments, AttachmentsProps, Sender } from '@ant-design/x';
 import { useControllableValue } from 'ahooks';
@@ -28,7 +29,9 @@ import {
   FormInstance,
   Input,
   MenuProps,
+  Tag,
   theme,
+  Typography,
 } from 'antd';
 import _ from 'lodash';
 import { Scale } from 'lucide-react';
@@ -137,6 +140,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
           ),
           messages: body?.messages,
         });
+        setStartTime(Date.now());
         return result.toDataStreamResponse();
       } else {
         return fetch(input, init);
@@ -145,6 +149,10 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
   });
   const { token } = theme.useToken();
   const { t } = useTranslation();
+
+  const [totalTokens, setTotalTokens] = useState(0);
+  const [tokenPerSecond, setTokenPerSecond] = useState(0);
+  const [startTime, setStartTime] = useState<number | null>(null);
 
   // If the `inputMessage` prop exists, the `input` state has to follow it.
   useEffect(() => {
@@ -162,6 +170,23 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitKey]);
+
+  useEffect(() => {
+    setTotalTokens(
+      _.sumBy(messages, (message) => message?.content.length) + input.length,
+    );
+  }, [messages, input]);
+
+  useEffect(() => {
+    if (!_.isEmpty(messages)) {
+      const lastMessage = _.last(messages);
+      if (lastMessage?.role === 'assistant' && startTime) {
+        const lastToken = lastMessage.content?.length || 0;
+        const elapsedTime = (Date.now() - startTime) / 1000;
+        setTokenPerSecond(lastToken / elapsedTime);
+      }
+    }
+  }, [messages, startTime]);
 
   const [files, setFiles] = useState<AttachmentsProps['items']>([]);
 
@@ -337,10 +362,11 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
                 files,
                 (item) => item.originFileObj as File,
               );
-              // Filter after converting to `File`
               const fileListArray = _.filter(fileList, Boolean);
               const dataTransfer = new DataTransfer();
-              _.forEach(fileListArray, (file) => dataTransfer.items.add(file));
+              _.forEach(fileListArray, (file) => {
+                dataTransfer.items.add(file);
+              });
 
               append(
                 {
@@ -433,6 +459,21 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
         />
       ) : null}
       <VirtualChatMessageList messages={messages} isStreaming={isLoading} />
+      <Flex justify="end" align="end" style={{ margin: token.marginSM }}>
+        <Tag>
+          <Flex gap={'xs'}>
+            <RocketOutlined />
+            <Flex gap={'xxs'}>
+              <Typography.Text>{tokenPerSecond.toFixed(2)}</Typography.Text>
+              <Typography.Text type="secondary">tok/s</Typography.Text>
+            </Flex>
+            <Flex gap={'xxs'}>
+              <Typography.Text>{totalTokens}</Typography.Text>
+              <Typography.Text type="secondary">total tokens</Typography.Text>
+            </Flex>
+          </Flex>
+        </Tag>
+      </Flex>
     </Card>
   );
 };
