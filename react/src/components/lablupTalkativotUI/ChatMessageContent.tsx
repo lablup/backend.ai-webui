@@ -16,6 +16,9 @@ const ChatMessageContent: React.FC<{
   return (
     <Markdown
       components={{
+        p({ node, ...props }) {
+          return <p {...props} style={{ whiteSpace: 'pre-wrap' }} />;
+        },
         code(props) {
           const { children, className, node, ref, ...rest } = props;
           const match = /language-(\w+)/.exec(className || '');

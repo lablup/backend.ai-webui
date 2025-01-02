@@ -3,7 +3,7 @@
 import { filterEmptyItem } from '../../helper';
 import { useWebUINavigate } from '../../hooks';
 import Flex from '../Flex';
-import ChatInput from './ChatInput';
+import ChatSender from './ChatSender';
 import ModelSelect from './ModelSelect';
 import VirtualChatMessageList from './VirtualChatMessageList';
 import { createOpenAI } from '@ai-sdk/openai';
@@ -105,7 +105,6 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
     error,
     input,
     setInput,
-    handleInputChange,
     stop,
     isLoading,
     append,
@@ -118,8 +117,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
     body: {
       modelId: modelId,
     },
-    streamMode: 'stream-data',
-    fetch: (input, init) => {
+    fetch: async (input, init) => {
       if (fetchOnClient || modelId === 'custom') {
         const body = JSON.parse(init?.body as string);
         const provider = createOpenAI({
@@ -131,7 +129,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
               ? customModelFormRef.current?.getFieldValue('token')
               : apiKey) || 'dummy',
         });
-        return streamText({
+        const result = await streamText({
           abortSignal: init?.signal || undefined,
           model: provider(
             allowCustomModel
@@ -139,9 +137,8 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
               : modelId,
           ),
           messages: body?.messages,
-        }).then((result) => {
-          return result.toAIStreamResponse();
         });
+        return result.toDataStreamResponse();
       } else {
         return fetch(input, init);
       }
@@ -259,14 +256,14 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
         },
       }}
       actions={[
-        <ChatInput
+        <ChatSender
           autoFocus
           value={input}
           placeholder="Say something..."
-          onChange={(v) => {
-            handleInputChange(v);
+          onChange={(v: string) => {
+            setInput(v);
             if (onInputChange) {
-              onInputChange(v.target.value);
+              onInputChange(v);
             }
           }}
           loading={isLoading}
