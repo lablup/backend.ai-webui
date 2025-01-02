@@ -1,15 +1,17 @@
 import Flex from './Flex';
-import { Typography, theme } from 'antd';
+import { ProgressProps, Typography, theme } from 'antd';
 import _ from 'lodash';
 import React from 'react';
 
-export interface BAIProgressWithLabelProps {
+export interface BAIProgressWithLabelProps
+  extends Omit<ProgressProps, 'width' | 'size'> {
   title?: React.ReactNode;
   valueLabel?: React.ReactNode;
   percent?: number;
   width?: React.CSSProperties['width'];
   strokeColor?: string;
   labelStyle?: React.CSSProperties;
+  progressStyle?: React.CSSProperties;
   size?: 'small' | 'middle' | 'large';
 }
 const BAIProgressWithLabel: React.FC<BAIProgressWithLabelProps> = ({
@@ -19,6 +21,7 @@ const BAIProgressWithLabel: React.FC<BAIProgressWithLabelProps> = ({
   width,
   strokeColor,
   labelStyle,
+  progressStyle,
   size = 'small',
 }) => {
   const { token } = theme.useToken();
@@ -39,6 +42,7 @@ const BAIProgressWithLabel: React.FC<BAIProgressWithLabelProps> = ({
         ...(_.isNumber(width) || _.isString(width)
           ? { width: width }
           : { flex: 1 }),
+        ...progressStyle,
       }}
       direction="column"
       align="stretch"

@@ -10,6 +10,7 @@ import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
 import SessionTypeTag from './ComputeSessionNodeItems/SessionTypeTag';
 import Flex from './Flex';
 import ImageMetaIcon from './ImageMetaIcon';
+import SessionUsageMonitor from './SessionUsageMonitor';
 import { SessionDetailContentLegacyQuery } from './__generated__/SessionDetailContentLegacyQuery.graphql';
 import { SessionDetailContentQuery } from './__generated__/SessionDetailContentQuery.graphql';
 import {
@@ -100,6 +101,7 @@ const SessionDetailContent: React.FC<{
             # fix: This fragment is not used in this component, but it is required by the SessionActionButtonsFragment.
             # It might be a bug in relay
             ...ContainerLogModalFragment
+            ...SessionUsageMonitorFragment
           }
           legacy_session: compute_session(id: $uuid) {
             image
@@ -201,10 +203,13 @@ const SessionDetailContent: React.FC<{
         <Descriptions.Item label={t('session.Agent')}>
           {session.agent_ids || '-'}
         </Descriptions.Item>
-        <Descriptions.Item label={t('session.Reservation')}>
+        <Descriptions.Item label={t('session.Reservation')} span={md ? 2 : 1}>
           <Flex gap={'xs'} wrap={'wrap'}>
             <SessionReservation sessionFrgmt={session} />
           </Flex>
+        </Descriptions.Item>
+        <Descriptions.Item label={'Resource Usage'} span={md ? 2 : 1}>
+          <SessionUsageMonitor sessionFrgmt={session} />
         </Descriptions.Item>
       </Descriptions>
     </Flex>
