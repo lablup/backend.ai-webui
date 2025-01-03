@@ -806,7 +806,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             <span>${rowData.item.cpu_limit_min}</span>
             ~
             <span>${this._markIfUnlimited(rowData.item.cpu_limit_max)}</span>
-            <span class="indicator">${_t('general.cores')}</span>
+            <span class="indicator">${_t('general.Cores')}</span>
           </div>
         </div>
         <div class="layout horizontal center flex">

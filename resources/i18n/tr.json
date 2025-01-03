@@ -303,7 +303,6 @@
     "SessionInfo": "Oturum Bilgileri",
     "Status": "Durum",
     "Configuration": "Yapılandırma",
-    "core": "çekirdek",
     "Reservation": "Rezervasyon",
     "Agent": "Temsilci",
     "Usage": "kullanım",
@@ -326,7 +325,9 @@
       "NoExistingConnectionExample": "Kopyalanacak Bağlantı Örneği Yok.",
       "SSHConnectionExampleClipboardCopy": "SSH Bağlantı Örneği panoya kopyalandı.",
       "App": "Uygulama",
-      "ConnectUrlIsNotValid": "Bağlantı URL'si geçerli değil."
+      "ConnectUrlIsNotValid": "Bağlantı URL'si geçerli değil.",
+      "DownloadSSHKey": "SSH Anahtarını İndirin",
+      "OpenVSCodeRemote": "Yerel Visual Studio Kodunu açın"
     },
     "TensorboardPath": "TensorBoard için günlük dizini",
     "InputTensorboardPath": "Lütfen TensorBoard'un başvuracağı günlük dizinini girin. Günlük dizininin otomatik olarak oluşturulmayacağını unutmayın..",
@@ -429,7 +430,8 @@
     "ForceTerminateWarningMsg2": "Yalnızca durum makul olmayan uzun bir süre boyunca değişmediğinde yürütün.",
     "ForceTerminateWarningMsg3": "Bu eylem, aracı(lar)daki gerçek kapsayıcıları silmez. \nManuel temizleme gerekebilir.",
     "ContainerToCleanUp": "Temizlenecek konteyner(ler)",
-    "SessionNotFound": "Bu oturuma erişim izniniz yok veya oturum mevcut değil."
+    "SessionNotFound": "Bu oturuma erişim izniniz yok veya oturum mevcut değil.",
+    "Core": "çekirdek"
   },
   "button": {
     "Cancel": "İptal etmek",
@@ -502,7 +504,6 @@
     "Agent": "Ajan"
   },
   "general": {
-    "cores": "çekirdek",
     "ResourceGroup": "Kaynak Grubu",
     "AccessKey": "Erişim anahtarı",
     "Folders": "klasörler",
@@ -529,7 +530,8 @@
     "Change": "Değişim",
     "MaxValueNotification": "{{name}} maksimum {{max}} olmalıdır",
     "TotalItems": "Toplam {{toplam}} öğe",
-    "ExtendLoginSession": "Oturum açma oturumunu uzatma"
+    "ExtendLoginSession": "Oturum açma oturumunu uzatma",
+    "Cores": "çekirdek"
   },
   "credential": {
     "Permission": "izin",
@@ -540,12 +542,9 @@
     "ResourcePolicy": "Kaynak Politikası",
     "NumberOfQueries": "Sorgu Sayısı",
     "ConcurrentSessions": "Birleşen oturumlar",
-    "active": "aktif",
-    "concurrentsessions": "Birleşen oturumlar",
     "RateLimit": "Oran Sınırı",
     "RateLimitValidation": "Hız Limiti sıfırdan büyük ve 50000'in altında olmalıdır.",
     "RateLimitFor15min": "Hız Limiti (15 dk. için)",
-    "for900seconds": "900 saniye",
     "Users": "Kullanıcılar",
     "exportCSV": "CSV'yi dışa aktar",
     "CreateUser": "Kullanıcı oluştur",
@@ -623,7 +622,8 @@
     "DeactivateCredential": "Kimlik bilgilerini devre dışı bırak",
     "YouAreAboutToDeleteCredential": "Bu kullanıcının kimlik bilgilerini silmek üzeresiniz:",
     "DeleteCredential": "Kimlik bilgisini sil",
-    "ActivateCredential": "Kimlik bilgisini etkinleştir"
+    "ActivateCredential": "Kimlik bilgisini etkinleştir",
+    "For900Seconds": "900 saniye"
   },
   "data": {
     "Folders": "klasörler",
@@ -790,7 +790,7 @@
       "Insufficient": "Yetersiz",
       "StatusOfSelectedHost": "Seçilen Ana Bilgisayarın Durumu",
       "Status": "Durum",
-      "used": "kullanılmış"
+      "Used": "kullanılmış"
     },
     "SelectStorageHost": "Depolama ana bilgisayarını seçin",
     "NumberOfFolders": "Klasör sayısı",
@@ -807,7 +807,6 @@
     "New": "Yeni",
     "Add": "Ekle",
     "CloningIsOnlyPossibleSameHost": "Şu anda klonlama yalnızca aynı ana bilgisayarda mümkündür.",
-    "userQuotaScopeId": "Quota Scope ID",
     "NewFolderName": "Yeni klasör adı",
     "modelStore": {
       "ImportFromHuggingFace": "Hugging Face'ten içe aktar",
@@ -838,7 +837,8 @@
       "ImportAndStartServiceSuccessDesc": "Yeni model klasörü ve servisi hazır. \nModel ayrıntılarını kontrol etmek ve istediğiniz işlemi başlatmak için 'Servis bilgilerini görüntüle' düğmesine tıklayın.",
       "AddedItems": "Eklenen öğeler",
       "ModelFolderName": "Model klasörü adı"
-    }
+    },
+    "UserQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {
@@ -924,7 +924,8 @@
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
     "BaseImageName": "Temel resim adı",
     "Tags": "Etiketler",
-    "FullImagePath": "Tam görüntü yolu"
+    "FullImagePath": "Tam görüntü yolu",
+    "SuccessfullyCreated": "Başarıyla oluşturuldu"
   },
   "resourcePreset": {
     "ResourcePresets": "Kaynak Ön Ayarları",
@@ -1262,9 +1263,9 @@
     "DescImagePullBehavior": "Kayıt defterine yeni bir sürüm kaydedildiğinde yeni görüntülerin otomatik olarak indirilmesi için koşulları belirler. Hiçbiri için, yeni resimler otomatik olarak indirilmeyecektir.",
     "GUI": "GUI",
     "image": {
-      "digest": "sindirmek",
-      "tag": "Etiket",
-      "none": "Yok"
+      "Digest": "sindirmek",
+      "None": "Yok",
+      "Tag": "Etiket"
     },
     "OverlayNetwork": "Yerleşim Ağı",
     "OverlayNetworkConfiguration": "Yer paylaşımlı ağlar oluştururken kullanılacak yapılandırma.",
@@ -1422,13 +1423,6 @@
   "update": {
     "NewWebUIVersionAvailable": "Yeni sürüm mevcut:"
   },
-  "sidepanel": {
-    "BackgroundTasks": "Çalışan Görevler",
-    "NoBackgroundTask": "Sorma.",
-    "Running": "Koşu...",
-    "Notification": "Bildirim",
-    "NoNotification": "Bildirim yok."
-  },
   "import": {
     "NoSuitableResourceFoundOnGivenURL": "Verilen URL'de uygun kaynak bulunamadı.",
     "ReadyToImport": "İçe Aktarmaya Hazır",
@@ -1465,16 +1459,6 @@
     "GitlabDefaultBranch": "Gitlab Şube Adı",
     "InvalidNotebookURL": "Geçersiz Not Defteri URL'si."
   },
-  "usagepanel": {
-    "StatisticsForThisMonth": "Bu Ay İçin İstatistikler",
-    "NumSessions": "Seans Sayısı",
-    "UsedTime": "Kullanılan zaman",
-    "CpuUsedTime": "CPU Kullanım Süresi",
-    "GpuUsedTime": "GPU Kullanım Süresi",
-    "DiskUsed": "Disk kullanımı",
-    "TrafficUsed": "Trafik Kullanımı"
-  },
-  "DownloadSSHKey": "SSH Anahtarını İndirin",
   "license": {
     "Perpetual": "sürekli",
     "Subscription": "abonelik",
@@ -1614,14 +1598,6 @@
     "ServiceNameMaxLength": "Lütfen 24 veya daha az karakter girin.",
     "ServiceNameCannotStartWithHyphen": "Kısa çizgi (-) her iki uçta da kullanılamaz."
   },
-  "ErrorBoundary": {
-    "title": "Bir hata oluştu.",
-    "reloadPage": "Sayfayı yeniden yükle",
-    "resetErrorBoundary": "ErrorBoundary'yi Sıfırla",
-    "displayOnlyDevEnv": "Bu hata bloğu yalnızca WebUI geliştirme ortamında görüntülenir.",
-    "expiredLoginSessionTitle": "Giriş oturumunuzun süresi doldu.",
-    "expiredLoginSessionReLogin": "Giriş"
-  },
   "storageHost": {
     "quotaSettings": {
       "SelectDomain": "Etki Alanı Seçin",
@@ -1670,7 +1646,6 @@
     "EnterConfirmationCode": "Şimdi doğrulamak için kimlik doğrulayıcı tarafından oluşturulan OTP'yi girin.",
     "RequireOTP": "OTP'yi yazın."
   },
-  "OpenVSCodeRemote": "Yerel Visual Studio Kodunu açın",
   "inputLimit": {
     "4to64chars": "(4~64 karakter)",
     "4to32chars": "(4~32 karakter)"
@@ -1711,14 +1686,6 @@
     "SelectColumnToDisplay": "Görüntülenecek sütunları seçin",
     "SearchTableColumn": "Tablo sütunlarında arama yapın"
   },
-  "tourguide": {
-    "NeoSessionLauncher": {
-      "ValidationErrorTitle": "Giriş alanı doğrulama hataları",
-      "ValidationErrorText": "Zorunlu bir alana değer girmezseniz veya geçersiz bir değer girerseniz o alanda bir hata mesajı görüntülenir.",
-      "FixErrorAndTryAgainText": "Bir hata alanı varsa Oturumu başlat düğmesi devre dışı bırakılır. \nLütfen hatayı düzeltip tekrar deneyin.",
-      "FixErrorFieldbyModifyButton": "Bu hata alanını düzenlemek için doğrudan sağ üst köşedeki Düzenle düğmesine gidebilirsiniz."
-    }
-  },
   "sourceCodeViewer": {
     "Copy": "Kopyala",
     "Copied": "Kopyalandı"
@@ -1749,11 +1716,43 @@
     "UploadFilesDescription": "Yüklemek için dosyaları bu alana tıklayın veya sürükleyin"
   },
   "time": {
-    "ms": "ms",
-    "sec": "sn",
-    "min": "min",
-    "hour": "saat",
-    "day": "day",
-    "week": "hafta"
+    "Day": "day",
+    "Hour": "saat",
+    "Min": "min",
+    "Ms": "ms",
+    "Sec": "sn",
+    "Week": "hafta"
+  },
+  "usagePanel": {
+    "CpuUsedTime": "CPU Kullanım Süresi",
+    "DiskUsed": "Disk kullanımı",
+    "GpuUsedTime": "GPU Kullanım Süresi",
+    "NumSessions": "Seans Sayısı",
+    "StatisticsForThisMonth": "Bu Ay İçin İstatistikler",
+    "TrafficUsed": "Trafik Kullanımı",
+    "UsedTime": "Kullanılan zaman"
+  },
+  "sidePanel": {
+    "BackgroundTasks": "Çalışan Görevler",
+    "NoBackgroundTask": "Sorma.",
+    "NoNotification": "Bildirim yok.",
+    "Notification": "Bildirim",
+    "Running": "Koşu..."
+  },
+  "tourGuide": {
+    "NeoSessionLauncher": {
+      "FixErrorAndTryAgainText": "Bir hata alanı varsa Oturumu başlat düğmesi devre dışı bırakılır. \nLütfen hatayı düzeltip tekrar deneyin.",
+      "FixErrorFieldbyModifyButton": "Bu hata alanını düzenlemek için doğrudan sağ üst köşedeki Düzenle düğmesine gidebilirsiniz.",
+      "ValidationErrorText": "Zorunlu bir alana değer girmezseniz veya geçersiz bir değer girerseniz o alanda bir hata mesajı görüntülenir.",
+      "ValidationErrorTitle": "Giriş alanı doğrulama hataları"
+    }
+  },
+  "errorBoundary": {
+    "DisplayOnlyDevEnv": "Bu hata bloğu yalnızca WebUI geliştirme ortamında görüntülenir.",
+    "ExpiredLoginSessionReLogin": "Giriş",
+    "ExpiredLoginSessionTitle": "Giriş oturumunuzun süresi doldu.",
+    "ReloadPage": "Sayfayı yeniden yükle",
+    "ResetErrorBoundary": "ErrorBoundary'yi Sıfırla",
+    "Title": "Bir hata oluştu."
   }
 }

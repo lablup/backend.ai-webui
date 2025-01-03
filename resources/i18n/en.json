@@ -328,7 +328,6 @@
     "TotalRetries": "Total Retries",
     "LastTry": "Last Try",
     "Configuration": "Configuration",
-    "core": "core",
     "Reservation": "Reservation",
     "Agent": "Agent",
     "Agents": "Agents",
@@ -359,7 +358,9 @@
       "App": "App",
       "NoExistingConnectionExample": "No Connection Example to be copied.",
       "SSHConnectionExampleClipboardCopy": "SSH Connection Example has been copied to the clipboard.",
-      "ConnectUrlIsNotValid": "Connect URL is not valid."
+      "ConnectUrlIsNotValid": "Connect URL is not valid.",
+      "DownloadSSHKey": "Download SSH Key",
+      "OpenVSCodeRemote": "Open local Visual Studio Code"
     },
     "TensorboardPath": "Log directory for TensorBoard",
     "InputTensorboardPath": "Please input log directory that TensorBoard will refer to. Note that the log directory will not be automatically created..",
@@ -443,7 +444,8 @@
     "ForceTerminateWarningMsg3": "This action does not delete the actual containers on the agent(s). Manual cleanup may be required.",
     "ContainerToCleanUp": "Container(s) to clean up",
     "SessionNotFound": "You do not have permission to access this session or the session does not exist.",
-    "NotInProject": "This session belongs to a different project"
+    "NotInProject": "This session belongs to a different project",
+    "Core": "core"
   },
   "modelService": {
     "Services": "Services",
@@ -630,7 +632,6 @@
     "StorageSetting": "Storage Setting"
   },
   "general": {
-    "cores": "cores",
     "ResourceGroup": "Resource Group",
     "AccessKey": "Access Key",
     "Folders": "Folders",
@@ -657,7 +658,8 @@
     "Change": "Change",
     "MaxValueNotification": "{{name}} must be maximum {{max}}",
     "TotalItems": "Total {{total}} items",
-    "ExtendLoginSession": "Extend a login session"
+    "ExtendLoginSession": "Extend a login session",
+    "Cores": "cores"
   },
   "credential": {
     "Permission": "Permission",
@@ -668,12 +670,9 @@
     "ResourcePolicy": "Resource Policy",
     "NumberOfQueries": "Number Of Queries",
     "ConcurrentSessions": "Concurrent Sessions",
-    "active": "active",
-    "concurrentsessions": "Concurrent sessions",
     "RateLimit": "Rate Limit",
     "RateLimitValidation": "Rate Limit should be greater than zero and below 50000.",
     "RateLimitFor15min": "Rate Limit (for 15 min.)",
-    "for900seconds": "for 900 seconds",
     "RateLimitInputRequired": "Input required.",
     "InvalidRateLimitValue": "Input a valid Rate Limit value.",
     "WarningLessRateLimit": "If the Rate Limit value is small, API operations such as login may be blocked.",
@@ -751,7 +750,8 @@
     "DeactivateCredential": "Deactivate credential",
     "YouAreAboutToDeleteCredential": "You are about to delete this user's credential:",
     "DeleteCredential": "Delete credential",
-    "ActivateCredential": "Activate credential"
+    "ActivateCredential": "Activate credential",
+    "For900Seconds": "for 900 seconds"
   },
   "data": {
     "Folders": "Folders",
@@ -777,7 +777,7 @@
       "Insufficient": "Insufficient",
       "StatusOfSelectedHost": "Status Of Selected Host",
       "Status": "Status",
-      "used": "used"
+      "Used": "used"
     },
     "Foldername": "Folder name",
     "FolderToCopy": "Folder to copy",
@@ -935,7 +935,6 @@
     "New": "New",
     "Add": "Add",
     "CloningIsOnlyPossibleSameHost": "Currently, cloning is only possible on the same host.",
-    "userQuotaScopeId": "Quota Scope ID",
     "NewFolderName": "New folder name",
     "modelStore": {
       "ImportFromHuggingFace": "Import from Hugging Face",
@@ -968,7 +967,8 @@
       "ImportAndStartServiceSuccessDesc": "The new model folder and service are ready. Click the 'View service info' button to check the model details and start the desired operation.",
       "AddedItems": "Added items",
       "ModelFolderName": "Model folder name"
-    }
+    },
+    "UserQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {
@@ -1054,7 +1054,8 @@
     "DescSignificantDownloadTime": "DescSignificantDownloadTime",
     "BaseImageName": "Base image name",
     "Tags": "Tags",
-    "FullImagePath": "Full image path"
+    "FullImagePath": "Full image path",
+    "SuccessfullyCreated": "Successfully created"
   },
   "resourcePreset": {
     "ResourcePresets": "Resource Presets",
@@ -1393,9 +1394,9 @@
     "DescImagePullBehavior": "Determines the conditions for automatically downloading new images when a new version is registered in the registry. For none, new images will not be automatically downloaded.",
     "GUI": "GUI",
     "image": {
-      "digest": "Digest",
-      "tag": "Tag",
-      "none": "None"
+      "Digest": "Digest",
+      "None": "None",
+      "Tag": "Tag"
     },
     "OverlayNetwork": "Overlay Network",
     "OverlayNetworkConfiguration": "Configuration to use when creating overlay networks.",
@@ -1552,13 +1553,6 @@
   "update": {
     "NewWebUIVersionAvailable": "New version is available:"
   },
-  "sidepanel": {
-    "BackgroundTasks": "Running Tasks",
-    "NoBackgroundTask": "No Task.",
-    "Running": "Running...",
-    "Notification": "Notification",
-    "NoNotification": "No Notification."
-  },
   "import": {
     "NoSuitableResourceFoundOnGivenURL": "No suitable resource found on given URL.",
     "ReadyToImport": "Ready To Import",
@@ -1595,17 +1589,6 @@
     "GitlabDefaultBranch": "GitLab Branch Name",
     "InvalidNotebookURL": "Invalid Notbook URL."
   },
-  "usagepanel": {
-    "StatisticsForThisMonth": "Statistics for This Month",
-    "NumSessions": "Number of Sessions",
-    "UsedTime": "Used Time",
-    "CpuUsedTime": "CPU Used Time",
-    "GpuUsedTime": "GPU Used Time",
-    "DiskUsed": "Disk Usage",
-    "TrafficUsed": "Traffic Usage"
-  },
-  "DownloadSSHKey": "Download SSH Key",
-  "OpenVSCodeRemote": "Open local Visual Studio Code",
   "license": {
     "Perpetual": "Perpetual",
     "Subscription": "Subscription",
@@ -1676,14 +1659,6 @@
     "SelectColumnToDisplay": "Select for columns to display",
     "SearchTableColumn": "Search table columns"
   },
-  "ErrorBoundary": {
-    "title": "An error has occurred.",
-    "reloadPage": "Reload the page",
-    "resetErrorBoundary": "Reset ErrorBoundary",
-    "displayOnlyDevEnv": "This error block is displayed only in WebUI development environment.",
-    "expiredLoginSessionTitle": "Your login session has expired.",
-    "expiredLoginSessionReLogin": "Login"
-  },
   "modelStore": {
     "FilterByName": "Filter By Name",
     "Model": "Model",
@@ -1714,14 +1689,6 @@
     "CloneToFolder": "Clone to a folder",
     "FolderAlreadyExists": "A folder with this name already exists.",
     "FinetuneModel": "Finetune Model"
-  },
-  "tourguide": {
-    "NeoSessionLauncher": {
-      "ValidationErrorTitle": "Input field validation errors",
-      "ValidationErrorText": "If you don't enter a value in a required field or enter an invalid value, an error message displays in that field.",
-      "FixErrorAndTryAgainText": "If there is an error field, the Launch session button is disabled. Please correct the error and try again.",
-      "FixErrorFieldbyModifyButton": "For that error field, you can go directly to the Edit button in the top right corner to edit it."
-    }
   },
   "sourceCodeViewer": {
     "Copy": "Copy",
@@ -1754,11 +1721,43 @@
     "UploadFilesDescription": "Click or drag files to this area to upload"
   },
   "time": {
-    "ms": "ms",
-    "sec": "sec",
-    "min": "min",
-    "hour": "hour",
-    "day": "day",
-    "week": "week"
+    "Day": "day",
+    "Hour": "hour",
+    "Min": "min",
+    "Ms": "ms",
+    "Sec": "sec",
+    "Week": "week"
+  },
+  "usagePanel": {
+    "CpuUsedTime": "CPU Used Time",
+    "DiskUsed": "Disk Usage",
+    "GpuUsedTime": "GPU Used Time",
+    "NumSessions": "Number of Sessions",
+    "StatisticsForThisMonth": "Statistics for This Month",
+    "TrafficUsed": "Traffic Usage",
+    "UsedTime": "Used Time"
+  },
+  "sidePanel": {
+    "BackgroundTasks": "Running Tasks",
+    "NoBackgroundTask": "No Task.",
+    "NoNotification": "No Notification.",
+    "Notification": "Notification",
+    "Running": "Running..."
+  },
+  "tourGuide": {
+    "NeoSessionLauncher": {
+      "FixErrorAndTryAgainText": "If there is an error field, the Launch session button is disabled. Please correct the error and try again.",
+      "FixErrorFieldbyModifyButton": "For that error field, you can go directly to the Edit button in the top right corner to edit it.",
+      "ValidationErrorText": "If you don't enter a value in a required field or enter an invalid value, an error message displays in that field.",
+      "ValidationErrorTitle": "Input field validation errors"
+    }
+  },
+  "errorBoundary": {
+    "DisplayOnlyDevEnv": "This error block is displayed only in WebUI development environment.",
+    "ExpiredLoginSessionReLogin": "Login",
+    "ExpiredLoginSessionTitle": "Your login session has expired.",
+    "ReloadPage": "Reload the page",
+    "ResetErrorBoundary": "Reset ErrorBoundary",
+    "Title": "An error has occurred."
   }
 }

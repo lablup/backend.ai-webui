@@ -303,7 +303,6 @@
     "SessionInfo": "会议信息",
     "Status": "地位",
     "Configuration": "配置",
-    "core": "核",
     "Reservation": "預訂",
     "Agent": "代理人",
     "Usage": "用法",
@@ -326,7 +325,9 @@
       "NoExistingConnectionExample": "无连接示例可复制。",
       "SSHConnectionExampleClipboardCopy": "SSH 连接示例已复制到剪贴板。",
       "App": "应用程序",
-      "ConnectUrlIsNotValid": "連線 URL 無效。"
+      "ConnectUrlIsNotValid": "連線 URL 無效。",
+      "DownloadSSHKey": "下載 SSH 密鑰",
+      "OpenVSCodeRemote": "打开本地 Visual Studio 代码"
     },
     "TensorboardPath": "TensorBoard 的日誌目錄",
     "InputTensorboardPath": "請輸入 TensorBoard 將引用的日誌目錄。請注意，日誌目錄不會自動創建..",
@@ -1424,13 +1425,6 @@
   "update": {
     "NewWebUIVersionAvailable": "新版本可用："
   },
-  "sidepanel": {
-    "BackgroundTasks": "運行任務",
-    "NoBackgroundTask": "沒有任務。",
-    "Running": "跑步...",
-    "Notification": "通知",
-    "NoNotification": "沒有通知。"
-  },
   "import": {
     "NoSuitableResourceFoundOnGivenURL": "在給定的 URL 上找不到合適的資源。",
     "ReadyToImport": "準備進口",
@@ -1467,16 +1461,6 @@
     "GitlabDefaultBranch": "GitLab 分支名称",
     "InvalidNotebookURL": "Notbook URL 无效。"
   },
-  "usagepanel": {
-    "StatisticsForThisMonth": "本月統計",
-    "NumSessions": "會話數",
-    "UsedTime": "使用時間",
-    "CpuUsedTime": "CPU使用時間",
-    "GpuUsedTime": "GPU 使用時間",
-    "DiskUsed": "磁盤使用情況",
-    "TrafficUsed": "流量使用"
-  },
-  "DownloadSSHKey": "下載 SSH 密鑰",
   "license": {
     "Perpetual": "永動的",
     "Subscription": "訂閱",
@@ -1536,14 +1520,6 @@
   "explorer": {
     "ValueRequired": "需要值",
     "InputTooShort": "輸入太短"
-  },
-  "ErrorBoundary": {
-    "title": "发生错误。",
-    "reloadPage": "重新载入页面",
-    "resetErrorBoundary": "重置错误边界",
-    "displayOnlyDevEnv": "此错误块仅在 WebUI 开发环境中显示。",
-    "expiredLoginSessionTitle": "您的登录会话已过期。",
-    "expiredLoginSessionReLogin": "登录"
   },
   "storageHost": {
     "quotaSettings": {
@@ -1672,7 +1648,6 @@
     "EnterConfirmationCode": "現在輸入驗證器產生的 OTP 進行驗證。",
     "RequireOTP": "寫入一次性密碼。"
   },
-  "OpenVSCodeRemote": "打开本地 Visual Studio 代码",
   "inputLimit": {
     "4to64chars": "（4 至 64 个字符）",
     "4to32chars": "(4~32個字元)"
@@ -1713,14 +1688,6 @@
     "SelectColumnToDisplay": "選擇要顯示的列",
     "SearchTableColumn": "搜尋表格列"
   },
-  "tourguide": {
-    "NeoSessionLauncher": {
-      "ValidationErrorTitle": "輸入欄位驗證錯誤",
-      "ValidationErrorText": "如果您未在必填欄位中輸入值或輸入無效值，則該欄位中會顯示錯誤訊息。",
-      "FixErrorAndTryAgainText": "如果存在錯誤字段，則「啟動會話」按鈕將被停用。\n請更正錯誤並重試。",
-      "FixErrorFieldbyModifyButton": "對於該錯誤字段，您可以直接進入右上角的編輯按鈕進行編輯。"
-    }
-  },
   "sourceCodeViewer": {
     "Copy": "複製",
     "Copied": "已複製"
@@ -1751,11 +1718,43 @@
     "UploadFilesDescription": "點選或拖曳文件到該區域即可上傳"
   },
   "time": {
-    "ms": "ms",
-    "sec": "秒",
-    "min": "分钟",
-    "hour": "小時",
-    "day": "day",
-    "week": "星期"
+    "Ms": "ms",
+    "Sec": "秒",
+    "Min": "分钟",
+    "Hour": "小時",
+    "Day": "day",
+    "Week": "星期"
+  },
+  "usagePanel": {
+    "CpuUsedTime": "CPU使用時間",
+    "DiskUsed": "磁盤使用情況",
+    "GpuUsedTime": "GPU 使用時間",
+    "NumSessions": "會話數",
+    "StatisticsForThisMonth": "本月統計",
+    "TrafficUsed": "流量使用",
+    "UsedTime": "使用時間"
+  },
+  "sidePanel": {
+    "BackgroundTasks": "運行任務",
+    "NoBackgroundTask": "沒有任務。",
+    "NoNotification": "沒有通知。",
+    "Notification": "通知",
+    "Running": "跑步..."
+  },
+  "tourGuide": {
+    "NeoSessionLauncher": {
+      "FixErrorAndTryAgainText": "如果存在錯誤字段，則「啟動會話」按鈕將被停用。\n請更正錯誤並重試。",
+      "FixErrorFieldbyModifyButton": "對於該錯誤字段，您可以直接進入右上角的編輯按鈕進行編輯。",
+      "ValidationErrorText": "如果您未在必填欄位中輸入值或輸入無效值，則該欄位中會顯示錯誤訊息。",
+      "ValidationErrorTitle": "輸入欄位驗證錯誤"
+    }
+  },
+  "errorBoundary": {
+    "DisplayOnlyDevEnv": "此错误块仅在 WebUI 开发环境中显示。",
+    "ExpiredLoginSessionReLogin": "登录",
+    "ExpiredLoginSessionTitle": "您的登录会话已过期。",
+    "ReloadPage": "重新载入页面",
+    "ResetErrorBoundary": "重置错误边界",
+    "Title": "发生错误。"
   }
 }

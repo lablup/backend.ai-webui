@@ -303,7 +303,6 @@
     "SessionInfo": "セッション情報",
     "Status": "状態",
     "Configuration": "構成",
-    "core": "芯",
     "Reservation": "予約",
     "Agent": "エージェント",
     "Usage": "使用法",
@@ -326,7 +325,9 @@
       "NoExistingConnectionExample": "コピーする接続例がありません。",
       "SSHConnectionExampleClipboardCopy": "SSH接続例がクリップボードにコピーされました。",
       "App": "アプリ",
-      "ConnectUrlIsNotValid": "接続 URL が無効です。"
+      "ConnectUrlIsNotValid": "接続 URL が無効です。",
+      "DownloadSSHKey": "SSHキーをダウンロード",
+      "OpenVSCodeRemote": "ローカルVisual Studio Codeを開く"
     },
     "TensorboardPath": "TensorBoardのログディレクトリ",
     "InputTensorboardPath": "TensorBoardが参照するログディレクトリを入力してください。ログディレクトリは自動的に作成されないことに注意してください。",
@@ -430,7 +431,8 @@
     "ForceTerminateWarningMsg3": "このアクションでは、エージェント上の実際のコンテナは削除されません。\n手動によるクリーンアップが必要な場合があります。",
     "ContainerToCleanUp": "クリーンアップするコンテナ",
     "SessionNotFound": "このセッションにアクセスする権限がないか、セッションが存在しません。",
-    "NotInProject": "このセッションは別のプロジェクトに属しています。"
+    "NotInProject": "このセッションは別のプロジェクトに属しています。",
+    "Core": "芯"
   },
   "button": {
     "Cancel": "キャンセル",
@@ -503,7 +505,6 @@
     "Agent": "代理店"
   },
   "general": {
-    "cores": "コア",
     "ResourceGroup": "リソースグループ",
     "AccessKey": "アクセスキー",
     "Folders": "フォルダー",
@@ -530,7 +531,8 @@
     "Change": "変更",
     "MaxValueNotification": "{{ name }}最大値は{{ max }}です",
     "TotalItems": "合計{{total}}項目",
-    "ExtendLoginSession": "ログインセッションの延長"
+    "ExtendLoginSession": "ログインセッションの延長",
+    "Cores": "コア"
   },
   "credential": {
     "Permission": "許可",
@@ -541,12 +543,9 @@
     "ResourcePolicy": "リソースポリシー",
     "NumberOfQueries": "クエリの数",
     "ConcurrentSessions": "同時セッション",
-    "active": "アクティブ",
-    "concurrentsessions": "同時セッション",
     "RateLimit": "レート制限",
     "RateLimitValidation": "レート制限はゼロより大きく、50000未満である必要があります。",
     "RateLimitFor15min": "レート制限（15分間）",
-    "for900seconds": "900秒間",
     "Users": "ユーザー",
     "exportCSV": "CSVをエクスポート",
     "CreateUser": "ユーザーを作成",
@@ -624,7 +623,8 @@
     "DeactivateCredential": "資格情報を非アクティブ化する",
     "YouAreAboutToDeleteCredential": "このユーザーの資格情報を削除しようとしています:",
     "DeleteCredential": "資格情報の削除",
-    "ActivateCredential": "資格情報のアクティブ化"
+    "ActivateCredential": "資格情報のアクティブ化",
+    "For900Seconds": "900秒間"
   },
   "data": {
     "Folders": "フォルダー",
@@ -791,7 +791,7 @@
       "Insufficient": "不足",
       "StatusOfSelectedHost": "選択したホストの状態",
       "Status": "状態",
-      "used": "使用中"
+      "Used": "使用中"
     },
     "SelectStorageHost": "ホストを選択してください",
     "NumberOfFolders": "フォルダ数",
@@ -808,7 +808,6 @@
     "New": "新しい",
     "Add": "追加",
     "CloningIsOnlyPossibleSameHost": "現在、クローン作成は同じホスト上でのみ可能です。",
-    "userQuotaScopeId": "Quota Scope ID",
     "NewFolderName": "新しいフォルダ名",
     "modelStore": {
       "ImportFromHuggingFace": "Hugging Face からインポート",
@@ -839,7 +838,8 @@
       "ImportAndStartServiceSuccessDesc": "新しいモデルのフォルダーとサービスが準備できました。 \n「サービス情報を見る」ボタンをクリックすると機種の詳細を確認し、必要な操作を開始します。",
       "AddedItems": "追加された項目",
       "ModelFolderName": "モデルフォルダ名"
-    }
+    },
+    "UserQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {
@@ -925,7 +925,8 @@
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
     "BaseImageName": "ベースイメージ名",
     "Tags": "タグ",
-    "FullImagePath": "完全な画像パス"
+    "FullImagePath": "完全な画像パス",
+    "SuccessfullyCreated": "正常に作成されました"
   },
   "resourcePreset": {
     "ResourcePresets": "リソースプリセット",
@@ -1263,9 +1264,9 @@
     "DescImagePullBehavior": "レジストリに新しいバージョンが登録されたときに、新しいイメージを自動的にダウンロードするための条件を決定します。なしの場合、新しいイメージは自動的にダウンロードされません。",
     "GUI": "GUI",
     "image": {
-      "digest": "ダイジェスト",
-      "tag": "鬼ごっこ",
-      "none": "無し"
+      "Digest": "ダイジェスト",
+      "None": "無し",
+      "Tag": "鬼ごっこ"
     },
     "OverlayNetwork": "オーバーレイネットワーク",
     "OverlayNetworkConfiguration": "オーバーレイネットワークの設定を変更します。",
@@ -1423,13 +1424,6 @@
   "update": {
     "NewWebUIVersionAvailable": "新しいバージョンが利用可能です："
   },
-  "sidepanel": {
-    "BackgroundTasks": "実行中のタスク",
-    "NoBackgroundTask": "聞かない。",
-    "Running": "ランニング...",
-    "Notification": "お知らせ",
-    "NoNotification": "通知なし。"
-  },
   "import": {
     "NoSuitableResourceFoundOnGivenURL": "指定されたURLに適切なリソースが見つかりません。",
     "ReadyToImport": "インポートする準備ができました",
@@ -1466,16 +1460,6 @@
     "GitlabDefaultBranch": "GitLab ブランチ名",
     "InvalidNotebookURL": "無効なNotbook URLです。"
   },
-  "usagepanel": {
-    "StatisticsForThisMonth": "今月の統計",
-    "NumSessions": "セッション数",
-    "UsedTime": "使用時間",
-    "CpuUsedTime": "CPU使用時間",
-    "GpuUsedTime": "GPU使用時間",
-    "DiskUsed": "ディスクの使用状況",
-    "TrafficUsed": "トラフィックの使用"
-  },
-  "DownloadSSHKey": "SSHキーをダウンロード",
   "license": {
     "Perpetual": "パーペチュアル",
     "Subscription": "サブスクリプション",
@@ -1615,14 +1599,6 @@
     "ServiceNameMaxLength": "24文字以内で入力してください。",
     "ServiceNameCannotStartWithHyphen": "両端にハイフン（-）を使用することはできません。"
   },
-  "ErrorBoundary": {
-    "title": "エラーが発生しました。",
-    "reloadPage": "ページの更新",
-    "resetErrorBoundary": "ErrorBoundaryの初期化",
-    "displayOnlyDevEnv": "このエラーブロックはWebUI開発環境でのみ表示されます。",
-    "expiredLoginSessionTitle": "ログインセッションの有効期限が切れました。",
-    "expiredLoginSessionReLogin": "ログイン"
-  },
   "storageHost": {
     "quotaSettings": {
       "SelectDomain": "ドメインの選択",
@@ -1671,7 +1647,6 @@
     "EnterConfirmationCode": "次に、認証システムによって生成された OTP を入力して確認します。",
     "RequireOTP": "OTPを書き込みます。"
   },
-  "OpenVSCodeRemote": "ローカルVisual Studio Codeを開く",
   "inputLimit": {
     "4to64chars": "(4～64文字)",
     "4to32chars": "(4~32文字)"
@@ -1712,14 +1687,6 @@
     "SelectColumnToDisplay": "表示する列を選択します",
     "SearchTableColumn": "テーブルの列を検索する"
   },
-  "tourguide": {
-    "NeoSessionLauncher": {
-      "ValidationErrorTitle": "入力フィールド検証エラー",
-      "ValidationErrorText": "必須フィールドに値を入力しなかったり、無効な値を入力したりすると、そのフィールドにエラー メッセージが表示されます。",
-      "FixErrorAndTryAgainText": "エラーフィールドがある場合、「セッションの起動」ボタンは無効になります。\nエラーを修正して再試行してください。",
-      "FixErrorFieldbyModifyButton": "そのエラー フィールドについては、右上隅にある [編集] ボタンに直接移動して編集できます。"
-    }
-  },
   "sourceCodeViewer": {
     "Copy": "コピー",
     "Copied": "コピーされました"
@@ -1750,11 +1717,43 @@
     "UploadFilesDescription": "ファイルをクリックまたはこの領域にドラッグしてアップロードします"
   },
   "time": {
-    "ms": "ms",
-    "sec": "秒",
-    "min": "分",
-    "hour": "時間",
-    "day": "日",
-    "week": "週"
+    "Day": "日",
+    "Hour": "時間",
+    "Min": "分",
+    "Ms": "ms",
+    "Sec": "秒",
+    "Week": "週"
+  },
+  "usagePanel": {
+    "CpuUsedTime": "CPU使用時間",
+    "DiskUsed": "ディスクの使用状況",
+    "GpuUsedTime": "GPU使用時間",
+    "NumSessions": "セッション数",
+    "StatisticsForThisMonth": "今月の統計",
+    "TrafficUsed": "トラフィックの使用",
+    "UsedTime": "使用時間"
+  },
+  "sidePanel": {
+    "BackgroundTasks": "実行中のタスク",
+    "NoBackgroundTask": "聞かない。",
+    "NoNotification": "通知なし。",
+    "Notification": "お知らせ",
+    "Running": "ランニング..."
+  },
+  "tourGuide": {
+    "NeoSessionLauncher": {
+      "FixErrorAndTryAgainText": "エラーフィールドがある場合、「セッションの起動」ボタンは無効になります。\nエラーを修正して再試行してください。",
+      "FixErrorFieldbyModifyButton": "そのエラー フィールドについては、右上隅にある [編集] ボタンに直接移動して編集できます。",
+      "ValidationErrorText": "必須フィールドに値を入力しなかったり、無効な値を入力したりすると、そのフィールドにエラー メッセージが表示されます。",
+      "ValidationErrorTitle": "入力フィールド検証エラー"
+    }
+  },
+  "errorBoundary": {
+    "DisplayOnlyDevEnv": "このエラーブロックはWebUI開発環境でのみ表示されます。",
+    "ExpiredLoginSessionReLogin": "ログイン",
+    "ExpiredLoginSessionTitle": "ログインセッションの有効期限が切れました。",
+    "ReloadPage": "ページの更新",
+    "ResetErrorBoundary": "ErrorBoundaryの初期化",
+    "Title": "エラーが発生しました。"
   }
 }

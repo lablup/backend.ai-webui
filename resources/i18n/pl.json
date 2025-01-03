@@ -303,7 +303,6 @@
     "SessionInfo": "Informacje o sesji",
     "Status": "Status",
     "Configuration": "Konfiguracja",
-    "core": "rdzeń",
     "Reservation": "Rezerwacja",
     "Agent": "Agent",
     "Usage": "Stosowanie",
@@ -326,7 +325,9 @@
       "NoExistingConnectionExample": "Brak przykładu połączenia do skopiowania.",
       "SSHConnectionExampleClipboardCopy": "Przykład połączenia SSH został skopiowany do schowka.",
       "App": "Aplikacja",
-      "ConnectUrlIsNotValid": "Adres URL połączenia jest nieprawidłowy."
+      "ConnectUrlIsNotValid": "Adres URL połączenia jest nieprawidłowy.",
+      "DownloadSSHKey": "Pobierz klucz SSH",
+      "OpenVSCodeRemote": "Otwórz lokalny kod Visual Studio"
     },
     "TensorboardPath": "Katalog dziennika dla TensorBoard",
     "InputTensorboardPath": "Wprowadź katalog dziennika, do którego będzie się odwoływać TensorBoard. Pamiętaj, że katalog dziennika nie zostanie utworzony automatycznie.",
@@ -430,7 +431,8 @@
     "ForceTerminateWarningMsg3": "Ta akcja nie usuwa rzeczywistych kontenerów agentów. \nMoże być konieczne ręczne czyszczenie.",
     "ContainerToCleanUp": "Pojemnik(i) do oczyszczenia",
     "SessionNotFound": "Nie masz uprawnień dostępu do tej sesji lub sesja nie istnieje.",
-    "NotInProject": "Ta sesja należy do innego projektu."
+    "NotInProject": "Ta sesja należy do innego projektu.",
+    "Core": "rdzeń"
   },
   "button": {
     "Cancel": "Anuluj",
@@ -503,7 +505,6 @@
     "Agent": "Agent"
   },
   "general": {
-    "cores": "rdzenie",
     "ResourceGroup": "Grupa zasobów",
     "AccessKey": "Klucz dostępu",
     "Folders": "Lornetka składana",
@@ -530,7 +531,8 @@
     "Change": "Zmiana",
     "MaxValueNotification": "{{name}} musi być maksymalna {{max}}.",
     "TotalItems": "Łącznie {{total}} pozycji",
-    "ExtendLoginSession": "Przedłużanie sesji logowania"
+    "ExtendLoginSession": "Przedłużanie sesji logowania",
+    "Cores": "rdzenie"
   },
   "credential": {
     "Permission": "Pozwolenie",
@@ -541,12 +543,9 @@
     "ResourcePolicy": "Polityka zasobów",
     "NumberOfQueries": "Liczba zapytań",
     "ConcurrentSessions": "Sesje równoległe",
-    "active": "aktywny",
-    "concurrentsessions": "Sesje równoległe",
     "RateLimit": "Ograniczenie szybkości",
     "RateLimitValidation": "Limit szybkości powinien być większy od zera i mniejszy niż 50000.",
     "RateLimitFor15min": "Limit szybkości (przez 15 min.)",
-    "for900seconds": "przez 900 sekund",
     "Users": "Użytkownicy",
     "exportCSV": "eksportuj CSV",
     "CreateUser": "Stwórz użytkownika",
@@ -624,7 +623,8 @@
     "DeactivateCredential": "Dezaktywuj dane uwierzytelniające",
     "YouAreAboutToDeleteCredential": "Zamierzasz usunąć dane uwierzytelniające tego użytkownika:",
     "DeleteCredential": "Usuń dane uwierzytelniające",
-    "ActivateCredential": "Aktywuj dane uwierzytelniające"
+    "ActivateCredential": "Aktywuj dane uwierzytelniające",
+    "For900Seconds": "przez 900 sekund"
   },
   "data": {
     "Folders": "Lornetka składana",
@@ -791,7 +791,7 @@
       "Insufficient": "Niewystarczające",
       "StatusOfSelectedHost": "Status wybranego hosta",
       "Status": "Status",
-      "used": "używany"
+      "Used": "używany"
     },
     "SelectStorageHost": "Wybór hosta pamięci masowej",
     "NumberOfFolders": "Liczba folderów",
@@ -808,7 +808,6 @@
     "New": "Nowy",
     "Add": "Dodaj",
     "CloningIsOnlyPossibleSameHost": "Obecnie klonowanie jest możliwe tylko na tym samym hoście.",
-    "userQuotaScopeId": "Quota Scope ID",
     "NewFolderName": "Nowa nazwa folderu",
     "modelStore": {
       "ImportFromHuggingFace": "Importuj z Hugging Face",
@@ -839,7 +838,8 @@
       "ImportAndStartServiceSuccessDesc": "Nowy folder modelu i usługa są gotowe. \nKliknij przycisk „Wyświetl informacje serwisowe”, aby sprawdzić szczegóły modelu i rozpocząć żądaną operację.",
       "AddedItems": "Dodane elementy",
       "ModelFolderName": "Nazwa folderu modelu"
-    }
+    },
+    "UserQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {
@@ -925,7 +925,8 @@
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
     "BaseImageName": "Podstawowa nazwa obrazu",
     "Tags": "Tagi",
-    "FullImagePath": "Pełna ścieżka obrazu"
+    "FullImagePath": "Pełna ścieżka obrazu",
+    "SuccessfullyCreated": "Pomyślnie utworzono"
   },
   "resourcePreset": {
     "ResourcePresets": "Predefiniowane ustawienia zasobów",
@@ -1263,9 +1264,9 @@
     "DescImagePullBehavior": "Określa warunki automatycznego pobierania nowych obrazów po zarejestrowaniu nowej wersji w rejestrze. W przypadku braku nowe obrazy nie będą automatycznie pobierane.",
     "GUI": "GUI",
     "image": {
-      "digest": "strawić",
-      "tag": "Etykietka",
-      "none": "Żaden"
+      "Digest": "strawić",
+      "None": "Żaden",
+      "Tag": "Etykietka"
     },
     "OverlayNetwork": "Sieć nakładkowa",
     "OverlayNetworkConfiguration": "Konfiguracja używana podczas tworzenia sieci nakładkowych.",
@@ -1423,13 +1424,6 @@
   "update": {
     "NewWebUIVersionAvailable": "Dostępna jest nowa wersja:"
   },
-  "sidepanel": {
-    "BackgroundTasks": "Uruchomione zadania",
-    "NoBackgroundTask": "Nie pytaj.",
-    "Running": "Bieganie...",
-    "Notification": "Powiadomienie",
-    "NoNotification": "Brak powiadomienia."
-  },
   "import": {
     "NoSuitableResourceFoundOnGivenURL": "Nie znaleziono odpowiedniego zasobu pod podanym adresem URL.",
     "ReadyToImport": "Gotowy do importu",
@@ -1466,16 +1460,6 @@
     "GitlabDefaultBranch": "Nazwa oddziału GitLab",
     "InvalidNotebookURL": "Nieprawidłowy adres URL Notbook."
   },
-  "usagepanel": {
-    "StatisticsForThisMonth": "Statystyki za ten miesiąc",
-    "NumSessions": "Liczba sesji",
-    "UsedTime": "Zużyty czas",
-    "CpuUsedTime": "Czas użycia procesora",
-    "GpuUsedTime": "Czas użycia GPU",
-    "DiskUsed": "Użycie dysku",
-    "TrafficUsed": "Wykorzystanie ruchu"
-  },
-  "DownloadSSHKey": "Pobierz klucz SSH",
   "license": {
     "Perpetual": "Wieczny",
     "Subscription": "Subskrypcja",
@@ -1615,14 +1599,6 @@
     "ServiceNameMaxLength": "Wprowadź maksymalnie 24 znaki.",
     "ServiceNameCannotStartWithHyphen": "Łączników (-) nie można używać na żadnym końcu."
   },
-  "ErrorBoundary": {
-    "title": "Wystąpił błąd.",
-    "reloadPage": "Przeładuj stronę",
-    "resetErrorBoundary": "Reset ErrorBoundary",
-    "displayOnlyDevEnv": "Ten blok błędu jest wyświetlany tylko w środowisku programistycznym WebUI.",
-    "expiredLoginSessionTitle": "Sesja logowania wygasła.",
-    "expiredLoginSessionReLogin": "Logowanie"
-  },
   "storageHost": {
     "quotaSettings": {
       "SelectDomain": "Wybierz domenę",
@@ -1671,7 +1647,6 @@
     "EnterConfirmationCode": "Teraz wprowadź hasło jednorazowe wygenerowane przez moduł uwierzytelniający w celu weryfikacji.",
     "RequireOTP": "Napisz OTP."
   },
-  "OpenVSCodeRemote": "Otwórz lokalny kod Visual Studio",
   "inputLimit": {
     "4to64chars": "(4~64 znaki)",
     "4to32chars": "(4~32 znaki)"
@@ -1712,14 +1687,6 @@
     "SelectColumnToDisplay": "Wybierz, które kolumny mają być wyświetlane",
     "SearchTableColumn": "Przeszukaj kolumny tabeli"
   },
-  "tourguide": {
-    "NeoSessionLauncher": {
-      "ValidationErrorTitle": "Błędy sprawdzania poprawności pola wejściowego",
-      "ValidationErrorText": "Jeśli nie wprowadzisz wartości w wymaganym polu lub wprowadzisz nieprawidłową wartość, w tym polu wyświetli się komunikat o błędzie.",
-      "FixErrorAndTryAgainText": "Jeśli występuje pole błędu, przycisk Uruchom sesję jest wyłączony. \nPopraw błąd i spróbuj ponownie.",
-      "FixErrorFieldbyModifyButton": "W przypadku tego pola błędu możesz przejść bezpośrednio do przycisku Edytuj w prawym górnym rogu, aby go edytować."
-    }
-  },
   "sourceCodeViewer": {
     "Copy": "Kopiuj",
     "Copied": "Skopiowano"
@@ -1750,11 +1717,43 @@
     "UploadFilesDescription": "Kliknij lub przeciągnij pliki do tego obszaru, aby je przesłać"
   },
   "time": {
-    "ms": "ms",
-    "sec": "sek",
-    "min": "min",
-    "hour": "godzina",
-    "day": "day",
-    "week": "tydzień"
+    "Day": "day",
+    "Hour": "godzina",
+    "Min": "min",
+    "Ms": "ms",
+    "Sec": "sek",
+    "Week": "tydzień"
+  },
+  "usagePanel": {
+    "CpuUsedTime": "Czas użycia procesora",
+    "DiskUsed": "Użycie dysku",
+    "GpuUsedTime": "Czas użycia GPU",
+    "NumSessions": "Liczba sesji",
+    "StatisticsForThisMonth": "Statystyki za ten miesiąc",
+    "TrafficUsed": "Wykorzystanie ruchu",
+    "UsedTime": "Zużyty czas"
+  },
+  "sidePanel": {
+    "BackgroundTasks": "Uruchomione zadania",
+    "NoBackgroundTask": "Nie pytaj.",
+    "NoNotification": "Brak powiadomienia.",
+    "Notification": "Powiadomienie",
+    "Running": "Bieganie..."
+  },
+  "tourGuide": {
+    "NeoSessionLauncher": {
+      "FixErrorAndTryAgainText": "Jeśli występuje pole błędu, przycisk Uruchom sesję jest wyłączony. \nPopraw błąd i spróbuj ponownie.",
+      "FixErrorFieldbyModifyButton": "W przypadku tego pola błędu możesz przejść bezpośrednio do przycisku Edytuj w prawym górnym rogu, aby go edytować.",
+      "ValidationErrorText": "Jeśli nie wprowadzisz wartości w wymaganym polu lub wprowadzisz nieprawidłową wartość, w tym polu wyświetli się komunikat o błędzie.",
+      "ValidationErrorTitle": "Błędy sprawdzania poprawności pola wejściowego"
+    }
+  },
+  "errorBoundary": {
+    "DisplayOnlyDevEnv": "Ten blok błędu jest wyświetlany tylko w środowisku programistycznym WebUI.",
+    "ExpiredLoginSessionReLogin": "Logowanie",
+    "ExpiredLoginSessionTitle": "Sesja logowania wygasła.",
+    "ReloadPage": "Przeładuj stronę",
+    "ResetErrorBoundary": "Reset ErrorBoundary",
+    "Title": "Wystąpił błąd."
   }
 }
