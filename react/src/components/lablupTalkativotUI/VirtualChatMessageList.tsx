@@ -22,6 +22,7 @@ const VirtualChatMessageList: React.FC<VirtualizedListProps> = ({
 }) => {
   const virtuosoRef = useRef<VirtuosoHandle>(null);
   const [atBottom, setAtBottom] = useState(true);
+  const [userScrolled, setUserScrolled] = useState(false);
   const { token } = theme.useToken();
   // overscan should be 1.5 times the height of the window
   const overscan = typeof window !== 'undefined' ? window.innerHeight * 1.5 : 0;
@@ -33,7 +34,12 @@ const VirtualChatMessageList: React.FC<VirtualizedListProps> = ({
       style={{ height: '100%', flex: 1 }}
     >
       <Virtuoso
-        atBottomStateChange={setAtBottom}
+        atBottomStateChange={(isAtBottom) => {
+          setAtBottom(isAtBottom);
+          if (isAtBottom) {
+            setUserScrolled(false);
+          }
+        }}
         atBottomThreshold={60}
         computeItemKey={(_, item) => item.id}
         data={messages}
@@ -80,45 +86,58 @@ const VirtualChatMessageList: React.FC<VirtualizedListProps> = ({
         }}
         overscan={overscan}
         ref={virtuosoRef}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          right: '50%',
-          transform: 'translateX(+50%)',
-          bottom: token.marginSM,
-          opacity: atBottom ? 0 : 1,
-          transition: 'opacity 0.2s',
-          transitionDelay: atBottom ? '0s' : '0.2s',
+        onScroll={() => {
+          if (!atBottom) {
+            setUserScrolled(true);
+          }
         }}
-      >
-        <ScrollBottomHandlerButton
-          atBottom={atBottom}
-          autoScroll={isStreaming}
-          onScrollToBottom={(type) => {
-            const virtuoso = virtuosoRef.current;
-            switch (type) {
-              case 'auto': {
-                virtuoso?.scrollToIndex({
-                  align: 'end',
-                  behavior: 'auto',
-                  index: 'LAST',
-                });
-                break;
-              }
-              case 'click': {
-                virtuoso?.scrollToIndex({
-                  align: 'end',
-                  behavior: 'smooth',
-                  index: 'LAST',
-                });
-                break;
-              }
-            }
+        onWheel={() => {
+          if (!atBottom) {
+            setUserScrolled(true);
+          }
+        }}
+      />
+      {!_.isEmpty(messages) && (
+        <div
+          style={{
+            position: 'absolute',
+            right: '50%',
+            transform: 'translateX(+50%)',
+            bottom: token.marginSM,
+            opacity: atBottom ? 0 : 1,
+            transition: 'opacity 0.2s',
+            transitionDelay: atBottom ? '0s' : '0.2s',
           }}
-          lastMessageContent={_.get(_.last(messages), 'content')}
-        />
-      </div>
+        >
+          <ScrollBottomHandlerButton
+            atBottom={atBottom}
+            autoScroll={isStreaming && !userScrolled}
+            onScrollToBottom={(type) => {
+              const virtuoso = virtuosoRef.current;
+              switch (type) {
+                case 'auto': {
+                  virtuoso?.scrollToIndex({
+                    align: 'end',
+                    behavior: 'auto',
+                    index: 'LAST',
+                  });
+                  break;
+                }
+                case 'click': {
+                  virtuoso?.scrollToIndex({
+                    align: 'end',
+                    behavior: 'smooth',
+                    index: 'LAST',
+                  });
+                  setUserScrolled(false);
+                  break;
+                }
+              }
+            }}
+            lastMessageContent={_.get(_.last(messages), 'content')}
+          />
+        </div>
+      )}
     </Flex>
   );
 };
