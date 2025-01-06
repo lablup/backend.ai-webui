@@ -1747,7 +1747,8 @@
     "Attachments": "Lampiran",
     "DropFileHere": "Lepaskan fail di sini",
     "UploadFiles": "Muat naik fail",
-    "UploadFilesDescription": "Klik atau seret fail ke kawasan ini untuk memuat naik"
+    "UploadFilesDescription": "Klik atau seret fail ke kawasan ini untuk memuat naik",
+    "Picture": "Gambar"
   },
   "time": {
     "ms": "ms",

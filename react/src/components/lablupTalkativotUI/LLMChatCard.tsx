@@ -14,6 +14,7 @@ import {
   DeleteOutlined,
   LinkOutlined,
   MoreOutlined,
+  PictureOutlined,
   RocketOutlined,
 } from '@ant-design/icons';
 import { Attachments, AttachmentsProps, Sender } from '@ant-design/x';
@@ -32,6 +33,7 @@ import {
   MenuProps,
   Tag,
   theme,
+  Tooltip,
   Typography,
 } from 'antd';
 import _ from 'lodash';
@@ -93,6 +95,8 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
 }) => {
   const webuiNavigate = useWebUINavigate();
   const [isOpenAttachments, setIsOpenAttachments] = useState(false);
+  const [isImageGeneration, setIsImageGeneration] = useState(false);
+  const [loadingImageGeneration, setLoadingImageGeneration] = useState(false);
 
   const [modelId, setModelId] = useControllableValue(cardProps, {
     valuePropName: 'modelId',
@@ -221,6 +225,34 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
     },
   ]);
 
+  const generateImage = async (prompt: string, accessKey: string) => {
+    setLoadingImageGeneration(true);
+    try {
+      const response = await fetch(
+        'https://flux-inference.asia03.app.backend.ai/generate-flux-image',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            prompt: prompt,
+            access_key: accessKey,
+          }),
+        },
+      );
+
+      if (response.ok) {
+        const responseData = await response.json();
+        return responseData.image_base64;
+      } else {
+        throw new Error('Error generating image');
+      }
+    } finally {
+      setLoadingImageGeneration(false);
+    }
+  };
+
   return (
     <Card
       ref={cardRef}
@@ -251,6 +283,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
               value={modelId}
               onChange={setModelId}
               allowCustomModel={allowCustomModel}
+              disabled={isImageGeneration}
             />
             <Dropdown menu={{ items }} trigger={['click']}>
               <Button
@@ -325,32 +358,59 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
               />
             </Sender.Header>
           }
+          styles={{
+            prefix: {
+              alignSelf: 'center',
+            },
+          }}
           prefix={
-            <Attachments
-              beforeUpload={() => false}
-              getDropContainer={() => cardRef.current}
-              accept="image/*,text/*"
-              items={files}
-              onChange={({ fileList }) => {
-                setFiles(fileList);
-                setIsOpenAttachments(true);
-              }}
-              placeholder={(type) =>
-                type === 'drop'
-                  ? {
-                      title: t('chatui.DropFileHere'),
-                    }
-                  : {
-                      icon: <CloudUploadOutlined />,
-                      title: t('chatui.UploadFiles'),
-                      description: t('chatui.UploadFilesDescription'),
-                    }
-              }
-            >
-              <Badge dot={!_.isEmpty(files) && !isOpenAttachments}>
-                <Button type="text" icon={<LinkOutlined />} />
-              </Badge>
-            </Attachments>
+            isImageGeneration ? (
+              <Tag
+                title={t('chatui.Picture')}
+                closable
+                onClose={() => setIsImageGeneration(false)}
+                color="blue"
+              >
+                {t('chatui.Picture')}
+              </Tag>
+            ) : (
+              <>
+                <Attachments
+                  beforeUpload={() => false}
+                  getDropContainer={() => cardRef.current}
+                  accept="image/*,text/*"
+                  items={files}
+                  onChange={({ fileList }) => {
+                    setFiles(fileList);
+                    setIsOpenAttachments(true);
+                  }}
+                  placeholder={(type) =>
+                    type === 'drop'
+                      ? {
+                          title: t('chatui.DropFileHere'),
+                        }
+                      : {
+                          icon: <CloudUploadOutlined />,
+                          title: t('chatui.UploadFiles'),
+                          description: t('chatui.UploadFilesDescription'),
+                        }
+                  }
+                >
+                  <Badge dot={!_.isEmpty(files) && !isOpenAttachments}>
+                    <Button type="text" icon={<LinkOutlined />} />
+                  </Badge>
+                </Attachments>
+                <Tooltip title={t('chatui.Picture')}>
+                  <Button
+                    type="text"
+                    icon={<PictureOutlined />}
+                    onClick={() => {
+                      setIsImageGeneration(true);
+                    }}
+                  />
+                </Tooltip>
+              </>
+            )
           }
           onChange={(v: string) => {
             setInput(v);
@@ -358,37 +418,64 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
               onInputChange(v);
             }
           }}
-          loading={isLoading}
+          loading={isLoading || loadingImageGeneration}
           onStop={() => {
             stop();
           }}
-          onSend={() => {
+          onSend={async () => {
             if (input || !_.isEmpty(files)) {
               const fileList = _.map(
                 files,
                 (item) => item.originFileObj as File,
               );
-              // Filter after converting to `File`
               const fileListArray = _.filter(fileList, Boolean);
               const dataTransfer = new DataTransfer();
               _.forEach(fileListArray, (file) => {
                 dataTransfer.items.add(file);
               });
 
-              append(
-                {
-                  role: 'user',
-                  content: input,
-                },
-                {
-                  experimental_attachments: dataTransfer.files,
-                },
-              );
+              if (isImageGeneration) {
+                try {
+                  const imageBase64 = await generateImage(input, 'accessKey');
+                  setMessages((prevMessages) => [
+                    ...prevMessages,
+                    {
+                      id: _.uniqueId(),
+                      role: 'user',
+                      content: input,
+                    },
+                    {
+                      id: _.uniqueId(),
+                      role: 'assistant',
+                      content: '',
+                      experimental_attachments: [
+                        {
+                          contentType: 'image/png',
+                          url: imageBase64,
+                        },
+                      ],
+                    },
+                  ]);
+                } catch (error) {
+                  console.error(error);
+                }
+              } else {
+                append(
+                  {
+                    role: 'user',
+                    content: input,
+                  },
+                  {
+                    experimental_attachments: dataTransfer.files,
+                  },
+                );
+              }
 
               setTimeout(() => {
                 setInput('');
                 setFiles([]);
                 setIsOpenAttachments(false);
+                setIsImageGeneration(false);
               }, 0);
               onSubmitChange?.();
             }

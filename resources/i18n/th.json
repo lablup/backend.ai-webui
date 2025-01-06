@@ -1727,7 +1727,8 @@
     "Attachments": "ไฟล์แนบ",
     "DropFileHere": "วางไฟล์ที่นี่",
     "UploadFiles": "อัพโหลดไฟล์",
-    "UploadFilesDescription": "คลิกหรือลากไฟล์ไปยังบริเวณนี้เพื่ออัปโหลด"
+    "UploadFilesDescription": "คลิกหรือลากไฟล์ไปยังบริเวณนี้เพื่ออัปโหลด",
+    "Picture": "รูปภาพ"
   },
   "time": {
     "ms": "ms",

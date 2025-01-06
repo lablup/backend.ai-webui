@@ -1747,7 +1747,8 @@
     "Attachments": "Anexos",
     "DropFileHere": "Solte o arquivo aqui",
     "UploadFiles": "Carregar arquivos",
-    "UploadFilesDescription": "Clique ou arraste os arquivos para esta área para fazer upload"
+    "UploadFilesDescription": "Clique ou arraste os arquivos para esta área para fazer upload",
+    "Picture": "Foto"
   },
   "time": {
     "ms": "ms",
