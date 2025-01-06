@@ -84,8 +84,8 @@ const ChatMessage: React.FC<{
                 src={attachment?.url}
                 alt={attachment?.name}
                 style={{
-                  maxWidth: '50vw',
-                  maxHeight: '12vh',
+                  maxWidth: placement === 'left' ? 200 : 300,
+                  maxHeight: placement === 'left' ? 200 : 300,
                   borderRadius: token.borderRadius,
                 }}
               />

@@ -151,7 +151,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                   wrap="wrap"
                   align="stretch"
                   gap={'sm'}
-                  style={{ width: '100%' }}
+                  style={{ width: '100%', minHeight: '50vh' }}
                 >
                   <Flex
                     direction="row"
