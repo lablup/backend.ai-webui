@@ -271,7 +271,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
     setLoadingImageGeneration(true);
     try {
       const response = await fetch(
-        'https://stable-diffusion-3m.asia03.app.backend.ai/generate-image',
+        customModelFormRef.current?.getFieldValue('baseURL'),
         {
           method: 'POST',
           headers: {
@@ -285,7 +285,9 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
       );
       if (response.ok) {
         const responseData = await response.json();
-        return 'data:image/png;base64,' + responseData.image_base64;
+        return _.startsWith(responseData.image_base64, 'data:image/png;base64,')
+          ? responseData.image_base64
+          : 'data:image/png;base64,' + responseData.image_base64;
       } else {
         throw new Error('Error generating image');
       }
@@ -473,8 +475,8 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
               });
 
               if (isImageGeneration) {
+                const generationId = _.uniqueId();
                 try {
-                  const imageBase64 = await generateImage(input, 'accessKey');
                   setMessages((prevMessages) => [
                     ...prevMessages,
                     {
@@ -483,7 +485,20 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
                       content: input,
                     },
                     {
-                      id: _.uniqueId(),
+                      id: generationId,
+                      role: 'assistant',
+                      content: 'Processing...',
+                    },
+                  ]);
+                  setInput('');
+                  const imageBase64 = await generateImage(input, 'accessKey');
+                  setMessages((prevMessages) => [
+                    ..._.filter(
+                      prevMessages,
+                      (message) => message.id !== generationId,
+                    ),
+                    {
+                      id: generationId,
                       role: 'assistant',
                       content: '',
                       experimental_attachments: [
@@ -569,6 +584,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
                 required: true,
               },
             ]}
+            hidden={isImageGeneration}
           >
             <Input placeholder="llm-model" />
           </Form.Item>

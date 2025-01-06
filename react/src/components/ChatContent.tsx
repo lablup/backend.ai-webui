@@ -13,12 +13,14 @@ import { useLazyLoadQuery } from 'react-relay/hooks';
 interface ChatContentProps {
   endpointId: string;
   endpointUrl: string;
+  endpointName: string;
   basePath: string;
 }
 
 const ChatContent: React.FC<ChatContentProps> = ({
   endpointId,
   endpointUrl,
+  endpointName,
   basePath,
 }) => {
   const { t } = useTranslation();
@@ -56,6 +58,7 @@ const ChatContent: React.FC<ChatContentProps> = ({
         fetchPolicy: 'network-only',
       },
     );
+  const isTextToImageModel = _.includes(endpointName, 'stable-diffusion');
 
   const newestValidToken =
     _.orderBy(endpoint_token_list?.items, ['valid_until'], ['desc'])[0]
@@ -85,7 +88,14 @@ const ChatContent: React.FC<ChatContentProps> = ({
   return (
     <LLMChatCard
       endpointId={endpointId || ''}
-      baseURL={new URL(basePath, endpointUrl).toString()}
+      baseURL={
+        endpointUrl
+          ? isTextToImageModel
+            ? new URL('/generate-image', endpointUrl || '').toString()
+            : new URL(basePath, endpointUrl || '').toString()
+          : ''
+      }
+      isImageGeneration={isTextToImageModel}
       models={_.map(modelsResult?.data, (m) => ({
         id: m.id,
         name: m.id,
