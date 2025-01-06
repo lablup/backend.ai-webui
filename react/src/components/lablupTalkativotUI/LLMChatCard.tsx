@@ -2,6 +2,7 @@
 
 import { filterEmptyItem } from '../../helper';
 import { useWebUINavigate } from '../../hooks';
+import { useTokenCount } from '../../hooks/useTokenizer';
 import Flex from '../Flex';
 import ChatSender from './ChatSender';
 import ModelSelect from './ModelSelect';
@@ -169,23 +170,29 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitKey]);
 
-  const totalTokens = useMemo(() => {
-    return (
-      _.sumBy(messages, (message) => message?.content.length) + input.length
-    );
-  }, [messages, input]);
+  const inputTokenCount = useTokenCount(input);
 
-  const tokenPerSecond = useMemo(() => {
-    if (!_.isEmpty(messages) && startTime) {
-      const lastMessage = _.last(messages);
-      if (lastMessage?.role === 'assistant') {
-        const lastToken = lastMessage.content?.length || 0;
-        const elapsedTime = (Date.now() - startTime) / 1000;
-        return lastToken / elapsedTime;
-      }
+  const allChatMessageString = useMemo(() => {
+    return _.map(messages, (message) => message?.content).join('');
+  }, [messages]);
+  const chatsTokenCount = useTokenCount(allChatMessageString);
+  const totalTokenCount = inputTokenCount + chatsTokenCount;
+
+  const lastAssistantMessageString = useMemo(() => {
+    const lastAssistantMessage = _.last(messages);
+    if (lastAssistantMessage?.role === 'assistant') {
+      return lastAssistantMessage?.content;
+    } else {
+      return '';
     }
-    return 0;
-  }, [messages, startTime]);
+  }, [messages]);
+
+  const lastAssistantTokenCount = useTokenCount(lastAssistantMessageString);
+  const tokenPerSecond = useMemo(() => {
+    return lastAssistantTokenCount > 0 && startTime
+      ? lastAssistantTokenCount / ((Date.now() - startTime) / 1000)
+      : 0;
+  }, [lastAssistantTokenCount, startTime]);
 
   const [files, setFiles] = useState<AttachmentsProps['items']>([]);
 
@@ -468,7 +475,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
               <Typography.Text type="secondary">tok/s</Typography.Text>
             </Flex>
             <Flex gap={'xxs'}>
-              <Typography.Text>{totalTokens}</Typography.Text>
+              <Typography.Text>{totalTokenCount}</Typography.Text>
               <Typography.Text type="secondary">total tokens</Typography.Text>
             </Flex>
           </Flex>

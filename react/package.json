@@ -29,6 +29,7 @@
     "antd-style": "^3.7.1",
     "classnames": "^2.5.1",
     "dayjs": "^1.11.13",
+    "gpt-tokenizer": "^2.8.1",
     "graphql": "^16.9.0",
     "i18next": "^23.16.8",
     "i18next-http-backend": "^2.7.0",
