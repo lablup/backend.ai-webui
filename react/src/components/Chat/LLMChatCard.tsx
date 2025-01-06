@@ -14,6 +14,7 @@ import {
   DeleteOutlined,
   LinkOutlined,
   MoreOutlined,
+  PictureOutlined,
   RocketOutlined,
 } from '@ant-design/icons';
 import { Attachments, AttachmentsProps, Sender } from '@ant-design/x';
@@ -37,6 +38,7 @@ import {
   MenuProps,
   Tag,
   theme,
+  Tooltip,
   Typography,
 } from 'antd';
 import _ from 'lodash';
@@ -77,6 +79,7 @@ export interface LLMChatCardProps extends CardProps {
   onSubmitChange?: () => void;
   showCompareMenuItem?: boolean;
   modelToken?: string;
+  isImageGeneration?: boolean;
 }
 
 const LLMChatCard: React.FC<LLMChatCardProps> = ({
@@ -98,11 +101,13 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
   onSubmitChange,
   showCompareMenuItem,
   modelToken,
+  isImageGeneration,
   ...cardProps
 }) => {
   const webuiNavigate = useWebUINavigate();
   const [isOpenAttachments, setIsOpenAttachments] = useState(false);
   const [files, setFiles] = useState<AttachmentsProps['items']>([]);
+  const [loadingImageGeneration, setLoadingImageGeneration] = useState(false);
 
   const [modelId, setModelId] = useControllableValue(cardProps, {
     valuePropName: 'modelId',
@@ -257,6 +262,33 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
     },
   ]);
 
+  const generateImage = async (prompt: string, accessKey: string) => {
+    setLoadingImageGeneration(true);
+    try {
+      const response = await fetch(
+        'https://stable-diffusion-3m.asia03.app.backend.ai/generate-image',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            prompt: prompt,
+            access_key: accessKey,
+          }),
+        },
+      );
+      if (response.ok) {
+        const responseData = await response.json();
+        return 'data:image/png;base64,' + responseData.image_base64;
+      } else {
+        throw new Error('Error generating image');
+      }
+    } finally {
+      setLoadingImageGeneration(false);
+    }
+  };
+
   return (
     <Card
       ref={cardRef}
@@ -328,7 +360,8 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
       actions={[
         <ChatSender
           autoFocus
-          value={input}
+          //@ts-ignore
+          input={input as string}
           placeholder="Ask me anything..."
           header={
             <Sender.Header
@@ -347,11 +380,11 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
                 getDropContainer={() => cardRef.current}
                 accept="image/*,text/*"
                 items={files}
-                onChange={({ fileList }) => {
+                onChange={({ fileList }: { fileList: AttachmentsProps['items'] }) => {
                   setFiles(fileList);
                   onAttachmentChange?.(fileList);
                 }}
-                placeholder={(type) =>
+                placeholder={(type: string) =>
                   type === 'drop'
                     ? {
                         title: t('chatui.DropFileHere'),
@@ -365,18 +398,23 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
               />
             </Sender.Header>
           }
+          styles={{
+            prefix: {
+              alignSelf: 'center',
+            },
+          }}
           prefix={
             <Attachments
               beforeUpload={() => false}
               getDropContainer={() => cardRef.current}
               accept="image/*,text/*"
               items={files}
-              onChange={({ fileList }) => {
+              onChange={({ fileList }: { fileList: AttachmentsProps['items'] }) => {
                 setFiles(fileList);
                 onAttachmentChange?.(fileList);
                 setIsOpenAttachments(true);
               }}
-              placeholder={(type) =>
+              placeholder={(type: string) =>
                 type === 'drop'
                   ? {
                       title: t('chatui.DropFileHere'),
@@ -399,11 +437,11 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
               onInputChange(v);
             }
           }}
-          loading={isLoading}
+          loading={isLoading || loadingImageGeneration}
           onStop={() => {
             stop();
           }}
-          onSend={() => {
+          onSend={async () => {
             if (input || !_.isEmpty(files)) {
               const chatRequestOptions: ChatRequestOptions = {};
               if (!_.isEmpty(files)) {
@@ -417,6 +455,53 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
                 },
                 chatRequestOptions,
               );
+              const fileList = _.map(
+                files,
+                (item) => item.originFileObj as File,
+              );
+              // Filter after converting to `File`
+              const fileListArray = _.filter(fileList, Boolean);
+              const dataTransfer = new DataTransfer();
+              _.forEach(fileListArray, (file) => {
+                dataTransfer.items.add(file);
+              });
+
+              if (isImageGeneration) {
+                try {
+                  const imageBase64 = await generateImage(input, 'accessKey');
+                  setMessages((prevMessages) => [
+                    ...prevMessages,
+                    {
+                      id: _.uniqueId(),
+                      role: 'user',
+                      content: input,
+                    },
+                    {
+                      id: _.uniqueId(),
+                      role: 'assistant',
+                      content: '',
+                      experimental_attachments: [
+                        {
+                          contentType: 'image/png',
+                          url: imageBase64,
+                        },
+                      ],
+                    },
+                  ]);
+                } catch (error) {
+                  console.error(error);
+                }
+              } else {
+                append(
+                  {
+                    role: 'user',
+                    content: input,
+                  },
+                  {
+                    experimental_attachments: dataTransfer.files,
+                  },
+                );
+              }
 
               setTimeout(() => {
                 setInput('');
