@@ -49,6 +49,7 @@ const EndpointLLMChatCard: React.FC<EndpointLLMChatCardProps> = ({
       fragment EndpointLLMChatCard_endpoint on Endpoint {
         endpoint_id
         url
+        name
       }
     `,
     endpointFrgmt,
@@ -62,6 +63,8 @@ const EndpointLLMChatCard: React.FC<EndpointLLMChatCardProps> = ({
   const [chatSubmitKeyInfo, setChatSubmitKeyInfo] = useAtom(
     chatSubmitKeyInfoState,
   );
+
+  const isTextToImageModel = _.includes(endpoint?.name, 'stable-diffusion');
 
   const { data: modelsResult } = useSuspenseTanQuery<{
     data: Array<Model>;
@@ -93,9 +96,12 @@ const EndpointLLMChatCard: React.FC<EndpointLLMChatCardProps> = ({
       {...cardProps}
       baseURL={
         endpoint?.url
-          ? new URL(basePath, endpoint?.url ?? undefined).toString()
-          : undefined
+          ? isTextToImageModel
+            ? new URL('/generate-image', endpoint?.url).toString()
+            : new URL(basePath, endpoint?.url).toString()
+          : ''
       }
+      isImageGeneration={isTextToImageModel}
       models={models}
       fetchOnClient
       leftExtra={
@@ -147,7 +153,8 @@ const EndpointLLMChatCard: React.FC<EndpointLLMChatCardProps> = ({
       }
       allowCustomModel={_.isEmpty(models)}
       alert={
-        _.isEmpty(models) && (
+        !isTextToImageModel &&
+        _.isEmpty(modelsResult?.data) && (
           <Alert
             type="warning"
             showIcon
