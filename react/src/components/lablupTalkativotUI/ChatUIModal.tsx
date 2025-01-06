@@ -71,6 +71,7 @@ const EndpointChatContent: React.FC<ChatUIBasicProps> = ({
     graphql`
       fragment ChatUIModalFragment on Endpoint {
         endpoint_id
+        name
         url
         status
       }
@@ -90,6 +91,7 @@ const EndpointChatContent: React.FC<ChatUIBasicProps> = ({
     `,
     endpointTokenFrgmt,
   );
+  const isTextToImageModel = _.includes(endpoint?.name, 'stable-diffusion');
 
   const newestToken = _.maxBy(
     endpointTokenList?.items,
@@ -124,7 +126,14 @@ const EndpointChatContent: React.FC<ChatUIBasicProps> = ({
   ) : (
     <LLMChatCard
       endpointId={endpoint?.endpoint_id || ''}
-      baseURL={new URL(basePath, endpoint?.url || '').toString()}
+      baseURL={
+        endpoint?.url
+          ? isTextToImageModel
+            ? new URL('/generate-image', endpoint?.url || '').toString()
+            : new URL(basePath, endpoint?.url || '').toString()
+          : ''
+      }
+      isImageGeneration={isTextToImageModel}
       models={_.map(modelsResult?.data, (m) => ({
         id: m.id,
         name: m.id,
@@ -133,6 +142,7 @@ const EndpointChatContent: React.FC<ChatUIBasicProps> = ({
       style={{ flex: 1 }}
       allowCustomModel={_.isEmpty(modelsResult?.data)}
       alert={
+        !isTextToImageModel &&
         _.isEmpty(modelsResult?.data) && (
           <Alert
             type="warning"
