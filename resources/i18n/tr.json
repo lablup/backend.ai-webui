@@ -1746,7 +1746,8 @@
     "Attachments": "Ekler",
     "DropFileHere": "Dosyayı buraya bırakın",
     "UploadFiles": "Dosyaları yükle",
-    "UploadFilesDescription": "Yüklemek için dosyaları bu alana tıklayın veya sürükleyin"
+    "UploadFilesDescription": "Yüklemek için dosyaları bu alana tıklayın veya sürükleyin",
+    "Picture": "Resim"
   },
   "time": {
     "ms": "ms",

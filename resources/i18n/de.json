@@ -1747,7 +1747,8 @@
     "Attachments": "Anhänge",
     "DropFileHere": "Datei hier ablegen",
     "UploadFiles": "Dateien hochladen",
-    "UploadFilesDescription": "Klicken oder ziehen Sie Dateien zum Hochladen in diesen Bereich"
+    "UploadFilesDescription": "Klicken oder ziehen Sie Dateien zum Hochladen in diesen Bereich",
+    "Picture": "Bild"
   },
   "time": {
     "ms": "ms",

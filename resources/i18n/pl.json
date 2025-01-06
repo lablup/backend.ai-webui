@@ -1747,7 +1747,8 @@
     "Attachments": "Załączniki",
     "DropFileHere": "Upuść plik tutaj",
     "UploadFiles": "Prześlij pliki",
-    "UploadFilesDescription": "Kliknij lub przeciągnij pliki do tego obszaru, aby je przesłać"
+    "UploadFilesDescription": "Kliknij lub przeciągnij pliki do tego obszaru, aby je przesłać",
+    "Picture": "Zdjęcie"
   },
   "time": {
     "ms": "ms",

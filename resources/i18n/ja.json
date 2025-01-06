@@ -1747,7 +1747,8 @@
     "Attachments": "添付ファイル",
     "DropFileHere": "ここにファイルをドロップします",
     "UploadFiles": "ファイルをアップロードする",
-    "UploadFilesDescription": "ファイルをクリックまたはこの領域にドラッグしてアップロードします"
+    "UploadFilesDescription": "ファイルをクリックまたはこの領域にドラッグしてアップロードします",
+    "Picture": "写真"
   },
   "time": {
     "ms": "ms",

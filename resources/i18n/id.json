@@ -1747,7 +1747,8 @@
     "Attachments": "Lampiran",
     "DropFileHere": "Letakkan file di sini",
     "UploadFiles": "Unggah file",
-    "UploadFilesDescription": "Klik atau seret file ke area ini untuk diunggah"
+    "UploadFilesDescription": "Klik atau seret file ke area ini untuk diunggah",
+    "Picture": "Gambar"
   },
   "time": {
     "ms": "ms",

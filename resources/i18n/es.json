@@ -1749,7 +1749,8 @@
     "Attachments": "Adjuntos",
     "DropFileHere": "Suelta el archivo aquí",
     "UploadFiles": "Subir archivos",
-    "UploadFilesDescription": "Haga clic o arrastre archivos a esta área para cargarlos"
+    "UploadFilesDescription": "Haga clic o arrastre archivos a esta área para cargarlos",
+    "Picture": "Imagen"
   },
   "time": {
     "ms": "ms",

@@ -1747,7 +1747,8 @@
     "Attachments": "Tệp đính kèm",
     "DropFileHere": "Thả tập tin ở đây",
     "UploadFiles": "Tải tập tin lên",
-    "UploadFilesDescription": "Nhấp hoặc kéo tệp vào khu vực này để tải lên"
+    "UploadFilesDescription": "Nhấp hoặc kéo tệp vào khu vực này để tải lên",
+    "Picture": "Hình ảnh"
   },
   "time": {
     "ms": "ms",

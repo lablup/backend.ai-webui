@@ -1747,7 +1747,8 @@
     "Attachments": "Pièces jointes",
     "DropFileHere": "Déposez le fichier ici",
     "UploadFiles": "Télécharger des fichiers",
-    "UploadFilesDescription": "Cliquez ou faites glisser les fichiers vers cette zone pour les télécharger"
+    "UploadFilesDescription": "Cliquez ou faites glisser les fichiers vers cette zone pour les télécharger",
+    "Picture": "Image"
   },
   "time": {
     "ms": "ms",
