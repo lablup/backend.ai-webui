@@ -12,6 +12,7 @@ import { useFragment } from 'react-relay';
 
 interface SessionStatusTagProps {
   sessionFrgmt?: SessionStatusTagFragment$key | null;
+  showInfo?: boolean;
 }
 const statusTagColor = {
   //prepare
@@ -51,6 +52,7 @@ const statusInfoTagColor = {
 };
 const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
   sessionFrgmt,
+  showInfo,
 }) => {
   const session = useFragment(
     graphql`
@@ -66,7 +68,7 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
   const { token } = theme.useToken();
 
   return session ? (
-    _.isEmpty(session.status_info) ? (
+    _.isEmpty(session.status_info) || !showInfo ? (
       <Tag
         color={
           session.status ? _.get(statusTagColor, session.status) : undefined

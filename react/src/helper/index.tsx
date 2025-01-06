@@ -3,6 +3,7 @@ import { Image } from '../components/ImageEnvironmentSelectFormItems';
 import { EnvironmentImage } from '../components/ImageList';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { SorterResult } from 'antd/es/table/interface';
+import dayjs from 'dayjs';
 import { Duration } from 'dayjs/plugin/duration';
 import { TFunction } from 'i18next';
 import _ from 'lodash';
@@ -451,4 +452,22 @@ export function formatDuration(duration: Duration, t: TFunction) {
   ]
     .filter(Boolean)
     .join(' ');
+}
+
+export function formatDurationAsDays(
+  start: string,
+  end?: string | null,
+  dayLabel: string = 'd ',
+): string {
+  const startTime = dayjs(start);
+  const endTime = end ? dayjs(end) : dayjs();
+
+  const diff = dayjs.duration(endTime.diff(startTime));
+
+  const asDays = Math.floor(diff.asDays());
+  const hours = diff.hours().toString().padStart(2, '0');
+  const minutes = diff.minutes().toString().padStart(2, '0');
+  const seconds = diff.seconds().toString().padStart(2, '0');
+
+  return `${asDays ? `${asDays}${dayLabel}` : ''}${hours}:${minutes}:${seconds}`;
 }
