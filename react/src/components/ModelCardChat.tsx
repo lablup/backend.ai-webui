@@ -67,6 +67,7 @@ const ModelCardChat: React.FC<ModelCardChatProps> = ({
     <ChatContent
       endpointId={healthyEndpoint[0]?.endpoint_id as string}
       endpointUrl={healthyEndpoint[0]?.url as string}
+      endpointName={healthyEndpoint[0]?.name as string}
       basePath={basePath}
     />
   ) : (
