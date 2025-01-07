@@ -1691,7 +1691,8 @@
     "FolderAlreadyExists": "A folder with this name already exists.",
     "FinetuneModel": "Finetune Model",
     "Experience": "Experience",
-    "ModelCard": "Model Card"
+    "ModelCard": "Model Card",
+    "ImportFromHuggingFace": "Import From Hugging Face"
   },
   "tourguide": {
     "NeoSessionLauncher": {
@@ -1753,14 +1754,6 @@
     "NoNotification": "No Notification.",
     "Notification": "Notification",
     "Running": "Running..."
-  },
-  "tourGuide": {
-    "neoSessionLauncher": {
-      "FixErrorAndTryAgainText": "If there is an error field, the Launch session button is disabled. Please correct the error and try again.",
-      "FixErrorFieldByModifyButton": "For that error field, you can go directly to the Edit button in the top right corner to edit it.",
-      "ValidationErrorText": "If you don't enter a value in a required field or enter an invalid value, an error message displays in that field.",
-      "ValidationErrorTitle": "Input field validation errors"
-    }
   },
   "errorBoundary": {
     "DisplayOnlyDevEnv": "This error block is displayed only in WebUI development environment.",

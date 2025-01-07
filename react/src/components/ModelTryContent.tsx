@@ -257,7 +257,10 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
           tags: undefined,
           version: undefined,
         },
-        environment: '',
+        // FIXME: temporarily hard-coded environment variable
+        environment: modelName?.includes('Talkativot UI')
+          ? '[{"tokenLimit":1024,"vision":false,"apiEndpoint":"https://llama_kor_bllossom.asia03.app.backend.ai","id":"Llama-3.2-Korean-Bllossom-3B","name":"Llama-3.2-Korean-Bllossom-3B"},{"tokenLimit":2048,"vision":false,"apiEndpoint":"https://gemma2_9b.asia03.app.backend.ai/","id":"gemma-2-9b-it","name":"gemma-2-9b-it"},{"tokenLimit":4096,"vision":true,"apiEndpoint":"https://llama-vision.asia03.app.backend.ai/","id":"Llama-3.2-11B-Vision-Instruct","name":"Llama-3.2-11B-Vision-Instruct"}]'
+          : '',
         version: '',
       },
       // FIXME: temporally hard-coded runtime variant
