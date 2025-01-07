@@ -246,6 +246,7 @@ const ModelStoreListPage: React.FC = () => {
           .sort((a, b) => {
             const specialNames = [
               'gemma-2-27b-it',
+              'Llama-3.2-11B-Vision-Instruct',
               'stable-diffusion-3-medium',
             ];
             const aIndex = specialNames.indexOf(a?.name || '');
