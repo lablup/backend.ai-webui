@@ -89,7 +89,9 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
   );
 
   const filteredModelStoreList = myModelStoreList.filter((vFolder) =>
-    vFolder.name.includes(modelName || ''),
+    vFolder.name.includes(
+      modelName === 'Talkativot UI' ? 'talkativot-standalone' : modelName || '',
+    ),
   );
 
   const mutationToClone = useTanMutation<
@@ -207,7 +209,9 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
       ? 'stable-diffusion-3m'
       : modelName?.includes('Llama-3.2-11B-Vision-Instruct')
         ? 'llama-vision-11b'
-        : modelName;
+        : modelName?.includes('Talkativot UI')
+          ? 'talkativot'
+          : modelName;
     return {
       serviceName: `${model}-${generateRandomString(4)}`,
       replicas: 1,
@@ -267,7 +271,9 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
       resource: {
         cpu: 4,
         mem: '32g',
-        accelerator: minAIAcclResource,
+        accelerator: modelName?.includes('Talkativot UI')
+          ? 0
+          : minAIAcclResource,
         acceleratorType: 'cuda.shares',
         shmem: '1g',
       },
@@ -299,10 +305,10 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
             cloneable: true,
             permission: 'wd', // write-delete permission
             target_host: modelStorageHost, // lowestUsageHost, // clone to accessible and lowest usage storage host
-            target_name: `${modelName}-1`,
+            target_name: `${modelName === 'Talkativot UI' ? 'talkativot-standalone-1' : modelName}`,
             usage_mode: 'model',
           },
-          name: `${modelName}`,
+          name: `${modelName === 'Talkativot UI' ? 'talkativot-standalone' : modelName}`,
         },
         {
           onSuccess: (data) => {
@@ -525,7 +531,10 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
       )}
       <Button
         type="primary"
-        disabled={modelName?.includes('stable-diffusion')}
+        disabled={
+          modelName?.includes('stable-diffusion') ||
+          modelName?.includes('Talkativot UI')
+        }
         onClick={() => {
           cloneOrCreateModelService('vllm');
         }}
@@ -540,7 +549,8 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
         disabled={
           modelName?.includes('stable-diffusion') ||
           modelName?.includes('gemma-2-27b-it') ||
-          modelName?.includes('Llama-3.2-11B-Vision-Instruct')
+          modelName?.includes('Llama-3.2-11B-Vision-Instruct') ||
+          modelName?.includes('Talkativot UI')
         }
         type="primary"
         onClick={() => {
