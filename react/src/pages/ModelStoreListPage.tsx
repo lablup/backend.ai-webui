@@ -248,6 +248,7 @@ const ModelStoreListPage: React.FC = () => {
               'gemma-2-27b-it',
               'Llama-3.2-11B-Vision-Instruct',
               'stable-diffusion-3-medium',
+              'Talkativot UI',
             ];
             const aIndex = specialNames.indexOf(a?.name || '');
             const bIndex = specialNames.indexOf(b?.name || '');
