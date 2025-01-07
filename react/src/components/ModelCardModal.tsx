@@ -167,9 +167,11 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                           : 'v1'
                       }
                       modelName={
-                        model_card?.name?.includes('stable-diffusion-3-medium')
+                        model_card?.name === 'stable-diffusion-3-medium'
                           ? 'stable-diffusion-3m'
-                          : model_card?.name || ''
+                          : model_card?.name === 'Llama-3.2-11B-Vision-Instruct'
+                            ? 'llama-vision-11b'
+                            : model_card?.name || ''
                       }
                     />
                   </Flex>

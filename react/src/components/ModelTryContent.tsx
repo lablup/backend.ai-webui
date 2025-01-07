@@ -205,7 +205,9 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
   ): ServiceLauncherFormValue => {
     const model = modelName?.includes('stable-diffusion-3-medium')
       ? 'stable-diffusion-3m'
-      : modelName;
+      : modelName?.includes('Llama-3.2-11B-Vision-Instruct')
+        ? 'llama-vision-11b'
+        : modelName;
     return {
       serviceName: `${model}-${generateRandomString(4)}`,
       replicas: 1,
@@ -537,7 +539,8 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
       <Button
         disabled={
           modelName?.includes('stable-diffusion') ||
-          modelName?.includes('gemma-2-27b-it')
+          modelName?.includes('gemma-2-27b-it') ||
+          modelName?.includes('Llama-3.2-11B-Vision-Instruct')
         }
         type="primary"
         onClick={() => {
