@@ -160,20 +160,36 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                     gap={'sm'}
                     style={{ flex: 1 }}
                   >
-                    <ModelCardChat
-                      basePath={
-                        model_card?.name?.includes('stable-diffusion-3-medium')
-                          ? 'generate-image'
-                          : 'v1'
-                      }
-                      modelName={
-                        model_card?.name === 'stable-diffusion-3-medium'
-                          ? 'stable-diffusion-3m'
-                          : model_card?.name === 'Llama-3.2-11B-Vision-Instruct'
-                            ? 'llama-vision-11b'
-                            : model_card?.name || ''
-                      }
-                    />
+                    {model_card?.name === 'Talkativot UI' ? (
+                      // FIXME: temporally add iframe for Talkativot UI
+                      <iframe
+                        src="https://talkativot-aiot-demo.asia03.app.backend.ai/chat"
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          border: 'none',
+                        }}
+                        title="Talkativot AIOT Demo"
+                      />
+                    ) : (
+                      <ModelCardChat
+                        basePath={
+                          model_card?.name?.includes(
+                            'stable-diffusion-3-medium',
+                          )
+                            ? 'generate-image'
+                            : 'v1'
+                        }
+                        modelName={
+                          model_card?.name === 'stable-diffusion-3-medium'
+                            ? 'stable-diffusion-3m'
+                            : model_card?.name ===
+                                'Llama-3.2-11B-Vision-Instruct'
+                              ? 'llama-vision-11b'
+                              : model_card?.name || ''
+                        }
+                      />
+                    )}
                   </Flex>
                   <Divider type="vertical" style={{ height: '100%' }} />
                   <Flex
