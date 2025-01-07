@@ -183,9 +183,15 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                     <ModelTryContent
                       modelStorageHost={model_card?.vfolder?.host as string}
                       modelName={model_card?.name as string}
-                      minAIAcclResource={_.toNumber(
-                        model_card?.min_resource ?? '10',
-                      )}
+                      minAIAcclResource={(() => {
+                        const minResource = _.toNumber(
+                          model_card?.min_resource,
+                        );
+                        if (_.isNaN(minResource) || minResource === 0) {
+                          return 10;
+                        }
+                        return minResource;
+                      })()}
                       title={'PALI run on my cloud: '}
                     />
                   </Flex>
