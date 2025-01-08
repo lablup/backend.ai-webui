@@ -100,6 +100,7 @@ const resourceGroupsForCurrentProjectAtom = atom(async (get) => {
       (rg) => !allSftpScalingGroups.includes(rg.name),
     ),
     vhostInfo,
+    allSftpScalingGroups,
   };
 });
 
