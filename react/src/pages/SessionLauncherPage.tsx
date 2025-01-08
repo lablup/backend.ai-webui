@@ -84,7 +84,7 @@ import {
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
 import _ from 'lodash';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -689,6 +689,14 @@ const SessionLauncherPage = () => {
   };
 
   const [validationTourOpen, setValidationTourOpen] = useState(false);
+
+  const [isQueryReset, setIsQueryReset] = useState(false);
+  useLayoutEffect(() => {
+    if (isQueryReset) {
+      form.resetFields();
+      setIsQueryReset(false);
+    }
+  }, [isQueryReset, form]);
 
   return (
     <Flex
@@ -1381,8 +1389,8 @@ const SessionLauncherPage = () => {
                       title={t('button.Reset')}
                       description={t('session.launcher.ResetFormConfirm')}
                       onConfirm={() => {
-                        webuiNavigate('/session/start');
-                        form.resetFields();
+                        setQuery({}, 'replace');
+                        setIsQueryReset(true);
                       }}
                       icon={
                         <QuestionCircleOutlined
