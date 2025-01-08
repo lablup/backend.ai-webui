@@ -537,6 +537,92 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
         }
       });
   }
+  /**
+   * Downloads multiple selected files.
+   * If one of the downloads fails, it is skipped, and the remaining files are downloaded.
+   *
+   * @return {Promise<void>}
+   */
+  async _downloadMultipleFiles() {
+    if (!this._isDownloadable(this.vhost)) {
+      this.notification.text = _text('data.explorer.DownloadNotAllowed');
+      this.notification.show();
+      return;
+    }
+
+    const files: Array<{
+      name: string;
+      type: 'FILE' | 'DIRECTORY';
+    }> = this.fileListGrid.selectedItems.map((file) => ({
+      name: file.name,
+      type: file.type,
+    }));
+    const results = await Promise.all(
+      files.map(async (file) => {
+        try {
+          return await globalThis.backendaiclient.vfolder.request_download_token(
+            this.breadcrumb.concat(file.name).join('/'),
+            this.vfolderName,
+            file.type === 'DIRECTORY', // archive
+          );
+        } catch (err) {
+          if (err && err.message) {
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.detail = err.message;
+            this.notification.show(true, err);
+          }
+          // return null to skip the download
+          return null;
+        }
+      }),
+    );
+
+    const download = (idx: number) => {
+      // if the index is out of range, return
+      if (idx >= results.length) {
+        return;
+      }
+      // if the result is null, skip the download
+      if (!results[idx]) {
+        download(idx + 1);
+        return;
+      }
+
+      const res = results[idx];
+      const token = res.token;
+      let url;
+      if (this._APIMajorVersion < 6) {
+        url =
+          globalThis.backendaiclient.vfolder.get_download_url_with_token(token);
+      } else {
+        url = `${res.url}?token=${res.token}&archive=${files[idx].type === 'DIRECTORY'}`;
+      }
+      if (globalThis.iOSSafari) {
+        this.downloadURL = url;
+        URL.revokeObjectURL(url);
+      } else {
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.addEventListener('click', function (e) {
+          e.stopPropagation();
+        });
+        a.href = url;
+        a.download = files[idx].name;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        /**
+         * Delay the download of the next file by 500ms to prevent the browser from blocking the download.
+         * If you think 500ms is too much, you can reduce it.
+         */
+        setTimeout(() => {
+          download(idx + 1);
+        }, 500);
+      }
+    };
+    download(0);
+  }
 
   /* File upload and download */
   /**
