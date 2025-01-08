@@ -242,7 +242,6 @@
       "PrePortConfigWillDisappear": "Kaydedilmemiş tüm önceden açık portlar kaybolacaktır.",
       "StartModelServing": "Model Servisini Başlat",
       "PreOpenPortRangeGuide": "Virgülle (,) veya boşlukla ayırarak birden fazla değer girin.",
-      "preopen": "önceden açılmak",
       "Network": "Ağ",
       "Enable": "Olanak vermek",
       "FolderAliasInvalid": "Yalnızca alfasayısal karakterlere, alt çizgi (_), eğik çizgi (/), nokta (.) ve tire (-) karakterlerine izin verilir.",
@@ -285,25 +284,23 @@
       "CreatedAt": "Oluşturulma Tarihi",
       "Tags": "Etiketler",
       "SelectAgent": "Temsilci Seçin",
-      "autoSelect": "Otomatik seçim",
       "DescSelectAgent": "Aracının sağ tarafında görüntülenen kaynaklar, mevcut kaynakların gerçek miktarını temsil eder. \nŞu anda aracı seçimi yalnızca tek düğümlü, tek kapsayıcılı bir ortamda mümkündür. \nVarsayılan ayar, ajanın zamanlayıcı tarafından tahsis edilmesidir.",
       "AgentNode": "Ajan",
-      "AutoSelect": "otomatik seç",
+      "AutoSelect": "Otomatik seçim",
       "BatchJobTimeoutDuration": "Toplu İş Zaman Aşımı Süresi",
       "BatchJobTimeoutDurationDesc": "Toplu işler için maksimum yürütme süresini ayarlayın. \nBelirtilen sürenin aşılması durumunda oturum otomatik olarak sonlandırılacaktır.",
-      "SetBatchJobTimeoutDuration": "Toplu iş zaman aşımı süresini ayarlama"
+      "SetBatchJobTimeoutDuration": "Toplu iş zaman aşımı süresini ayarlama",
+      "PreOpen": "önceden açılmak"
     },
     "Preparing": "hazırlanıyor...",
     "PreparingSession": "Oturum hazırlanıyor...",
     "Running": "Koşu",
     "Finished": "bitmiş",
     "Others": "Diğerleri",
-    "exportCSV": "CSV'yi dışa aktar",
     "Terminate": "sonlandırmak",
     "SessionInfo": "Oturum Bilgileri",
     "Status": "Durum",
     "Configuration": "Yapılandırma",
-    "core": "çekirdek",
     "Reservation": "Rezervasyon",
     "Agent": "Temsilci",
     "Usage": "kullanım",
@@ -318,16 +315,6 @@
     "ResourceGroup": "Kaynak Grubu",
     "NoLogs": "Günlük yok.",
     "CreationFailed": "Oturum oluşturulamadı. Lütfen birkaç dakika sonra tekrar deneyin.",
-    "applauncher": {
-      "AppMustBeRun": "Yalnızca uygulama zaten çalışıyorken başlayın",
-      "AppMustBeRunDialog": "Bu uygulamaya yalnızca, zaten terminal üzerinden çalışıyorsa erişilebilir ve kullanılabilir. Değilse, uygulama çalışmadığında oluşan bir hata sayfasına yönlendirileceksiniz.",
-      "ConfirmAndRun": "kontrol ettim başlıyorum",
-      "Prepared": "Hazırlanmış",
-      "NoExistingConnectionExample": "Kopyalanacak Bağlantı Örneği Yok.",
-      "SSHConnectionExampleClipboardCopy": "SSH Bağlantı Örneği panoya kopyalandı.",
-      "App": "Uygulama",
-      "ConnectUrlIsNotValid": "Bağlantı URL'si geçerli değil."
-    },
     "TensorboardPath": "TensorBoard için günlük dizini",
     "InputTensorboardPath": "Lütfen TensorBoard'un başvuracağı günlük dizinini girin. Günlük dizininin otomatik olarak oluşturulmayacağını unutmayın..",
     "DefaultTensorboardPath": "/ev/iş/günlükler",
@@ -422,14 +409,28 @@
     "SessionId": "Oturum kimliği",
     "EnvironmentAndVersion": "Ortam ve Sürüm",
     "Tags": "Etiketler",
-    "fGPU": "fGPU",
     "Gaudi2Enabled": "Gaudi 2 NPU Etkinleştirilmiş",
     "ForceTerminateWarningMsg": "Bu eylem, mevcut durumuna bakılmaksızın oturumu sonlandıracak veya iptal edecektir. \nEmin misin?",
     "WarningForceTerminateSessions": "Uyarı: Oturumları Sonlandırmaya Zorla",
     "ForceTerminateWarningMsg2": "Yalnızca durum makul olmayan uzun bir süre boyunca değişmediğinde yürütün.",
     "ForceTerminateWarningMsg3": "Bu eylem, aracı(lar)daki gerçek kapsayıcıları silmez. \nManuel temizleme gerekebilir.",
     "ContainerToCleanUp": "Temizlenecek konteyner(ler)",
-    "SessionNotFound": "Bu oturuma erişim izniniz yok veya oturum mevcut değil."
+    "SessionNotFound": "Bu oturuma erişim izniniz yok veya oturum mevcut değil.",
+    "Core": "çekirdek",
+    "appLauncher": {
+      "App": "Uygulama",
+      "AppMustBeRun": "Yalnızca uygulama zaten çalışıyorken başlayın",
+      "AppMustBeRunDialog": "Bu uygulamaya yalnızca, zaten terminal üzerinden çalışıyorsa erişilebilir ve kullanılabilir. Değilse, uygulama çalışmadığında oluşan bir hata sayfasına yönlendirileceksiniz.",
+      "ConfirmAndRun": "kontrol ettim başlıyorum",
+      "ConnectUrlIsNotValid": "Bağlantı URL'si geçerli değil.",
+      "DownloadSSHKey": "SSH Anahtarını İndirin",
+      "NoExistingConnectionExample": "Kopyalanacak Bağlantı Örneği Yok.",
+      "OpenVSCodeRemote": "Yerel Visual Studio Kodunu açın",
+      "Prepared": "Hazırlanmış",
+      "SSHConnectionExampleClipboardCopy": "SSH Bağlantı Örneği panoya kopyalandı."
+    },
+    "ExportCSV": "CSV'yi dışa aktar",
+    "FGPU": "fGPU"
   },
   "button": {
     "Cancel": "İptal etmek",
@@ -502,7 +503,6 @@
     "Agent": "Ajan"
   },
   "general": {
-    "cores": "çekirdek",
     "ResourceGroup": "Kaynak Grubu",
     "AccessKey": "Erişim anahtarı",
     "Folders": "klasörler",
@@ -529,7 +529,8 @@
     "Change": "Değişim",
     "MaxValueNotification": "{{name}} maksimum {{max}} olmalıdır",
     "TotalItems": "Toplam {{toplam}} öğe",
-    "ExtendLoginSession": "Oturum açma oturumunu uzatma"
+    "ExtendLoginSession": "Oturum açma oturumunu uzatma",
+    "Cores": "çekirdek"
   },
   "credential": {
     "Permission": "izin",
@@ -540,14 +541,10 @@
     "ResourcePolicy": "Kaynak Politikası",
     "NumberOfQueries": "Sorgu Sayısı",
     "ConcurrentSessions": "Birleşen oturumlar",
-    "active": "aktif",
-    "concurrentsessions": "Birleşen oturumlar",
     "RateLimit": "Oran Sınırı",
     "RateLimitValidation": "Hız Limiti sıfırdan büyük ve 50000'in altında olmalıdır.",
     "RateLimitFor15min": "Hız Limiti (15 dk. için)",
-    "for900seconds": "900 saniye",
     "Users": "Kullanıcılar",
-    "exportCSV": "CSV'yi dışa aktar",
     "CreateUser": "Kullanıcı oluştur",
     "AddCredential": "Kimlik Bilgisi Ekle",
     "PolicyGroup": "İlke Grubu",
@@ -623,7 +620,9 @@
     "DeactivateCredential": "Kimlik bilgilerini devre dışı bırak",
     "YouAreAboutToDeleteCredential": "Bu kullanıcının kimlik bilgilerini silmek üzeresiniz:",
     "DeleteCredential": "Kimlik bilgisini sil",
-    "ActivateCredential": "Kimlik bilgisini etkinleştir"
+    "ActivateCredential": "Kimlik bilgisini etkinleştir",
+    "For900Seconds": "900 saniye",
+    "ExportCSV": "CSV'yi dışa aktar"
   },
   "data": {
     "Folders": "klasörler",
@@ -790,7 +789,7 @@
       "Insufficient": "Yetersiz",
       "StatusOfSelectedHost": "Seçilen Ana Bilgisayarın Durumu",
       "Status": "Durum",
-      "used": "kullanılmış"
+      "Used": "kullanılmış"
     },
     "SelectStorageHost": "Depolama ana bilgisayarını seçin",
     "NumberOfFolders": "Klasör sayısı",
@@ -807,7 +806,6 @@
     "New": "Yeni",
     "Add": "Ekle",
     "CloningIsOnlyPossibleSameHost": "Şu anda klonlama yalnızca aynı ana bilgisayarda mümkündür.",
-    "userQuotaScopeId": "Quota Scope ID",
     "NewFolderName": "Yeni klasör adı",
     "modelStore": {
       "ImportFromHuggingFace": "Hugging Face'ten içe aktar",
@@ -838,7 +836,8 @@
       "ImportAndStartServiceSuccessDesc": "Yeni model klasörü ve servisi hazır. \nModel ayrıntılarını kontrol etmek ve istediğiniz işlemi başlatmak için 'Servis bilgilerini görüntüle' düğmesine tıklayın.",
       "AddedItems": "Eklenen öğeler",
       "ModelFolderName": "Model klasörü adı"
-    }
+    },
+    "UserQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {
@@ -863,7 +862,7 @@
       "Error": "Hata"
     },
     "hide": {
-      "DonotShowThisAgain": "Bunu bir daha gösterme."
+      "DoNotShowThisAgain": "Bunu bir daha gösterme."
     }
   },
   "environment": {
@@ -924,7 +923,8 @@
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
     "BaseImageName": "Temel resim adı",
     "Tags": "Etiketler",
-    "FullImagePath": "Tam görüntü yolu"
+    "FullImagePath": "Tam görüntü yolu",
+    "SuccessfullyCreated": "Başarıyla oluşturuldu"
   },
   "resourcePreset": {
     "ResourcePresets": "Kaynak Ön Ayarları",
@@ -951,7 +951,7 @@
     "DeleteResourcePreset": "Kaynak ön ayarını sil",
     "PresetNameAlreadyExists": "Aynı ada sahip bir kaynak ön ayarı zaten mevcut."
   },
-  "usersettings": {
+  "userSettings": {
     "General": "Genel",
     "Logs": "Kütükler",
     "Preferences": "Tercihler",
@@ -1144,7 +1144,6 @@
     "ResourceGroupName": "KaynakGrubuAdı",
     "Active": "Aktif",
     "SelectScheduler": "Zamanlayıcı Seç",
-    "NochangesMade": "Değişiklik yapılmadı",
     "ResourceGroupNameNotMatch": "Kaynak grubu adı eşleşmiyor!",
     "ResourceGroupCreated": "Kaynak grubu başarıyla oluşturuldu",
     "ResourceGroupModified": "Kaynak grubu başarıyla değiştirildi",
@@ -1160,7 +1159,8 @@
     "AllowedSessionTypes": "İzin verilen oturum türleri",
     "Public": "Kamu",
     "RetriesToSkip": "Times",
-    "NoGroupToDisplay": "NoGroupToDisplay"
+    "NoGroupToDisplay": "NoGroupToDisplay",
+    "NoChangesMade": "Değişiklik yapılmadı"
   },
   "maintenance": {
     "Fix": "Düzelt",
@@ -1262,9 +1262,9 @@
     "DescImagePullBehavior": "Kayıt defterine yeni bir sürüm kaydedildiğinde yeni görüntülerin otomatik olarak indirilmesi için koşulları belirler. Hiçbiri için, yeni resimler otomatik olarak indirilmeyecektir.",
     "GUI": "GUI",
     "image": {
-      "digest": "sindirmek",
-      "tag": "Etiket",
-      "none": "Yok"
+      "Digest": "sindirmek",
+      "None": "Yok",
+      "Tag": "Etiket"
     },
     "OverlayNetwork": "Yerleşim Ağı",
     "OverlayNetworkConfiguration": "Yer paylaşımlı ağlar oluştururken kullanılacak yapılandırma.",
@@ -1353,7 +1353,6 @@
     "SecretKey": "Gizli anahtar",
     "Endpoint": "uç nokta",
     "NotAUser": "Kullanıcı değil misiniz?",
-    "LoginAnotherway": "Başka bir şekilde giriş yapmak ister misiniz?",
     "SignUp": "kaydol",
     "LoginWithIAM": "IAM ile Giriş Yap",
     "ClickToUseIAM": "IAM'yi Kullanmak İçin Tıklayın",
@@ -1383,11 +1382,11 @@
       "LoginWithSAML": "SAML ile Oturum Açma",
       "LoginWithRealm": "{{realmName }} ile giriş yapın"
     },
-    "LoginWithE-mailorUsername": "E-posta veya Kullanıcı Adıyla Giriş Yapın",
-    "E-mailorUsername": "E-posta ya da kullanıcı adı"
+    "LoginAnotherWay": "Başka bir şekilde giriş yapmak ister misiniz?",
+    "LoginWithE-mailOrUsername": "E-posta veya Kullanıcı Adıyla Giriş Yapın",
+    "E-mailOrUsername": "E-posta ya da kullanıcı adı"
   },
-  "signup": {
-    "SignupBETA": "Kaydolma (yalnızca Beta davetiyesi)",
+  "signUp": {
     "E-mail": "e-posta",
     "UserName": "Kullanıcı adı",
     "Password": "Parola",
@@ -1395,8 +1394,6 @@
     "PasswordInputRequired": "Şifre gereklidir.",
     "PasswordInvalid": "Harf, sayı ve simge karışımıyla 8 veya daha fazla karakter kullanın.",
     "PasswordNotMatched": "Bu şifreler eşleşmedi. Tekrar dene.",
-    "Signup": "Kaydol",
-    "SignupSucceeded": "Başarıyla kaydoldu.",
     "Processing": "İşleme...",
     "InvitationToken": "Davet Simgesi",
     "TokenInputRequired": "Jeton gereklidir.",
@@ -1417,17 +1414,13 @@
     "SendEmail": "doğrulama e-postası gönder",
     "SendError": "E-posta gönderilirken hata oluştu",
     "EmailSent": "E-posta gönderildi",
-    "VerificationError": "Doğrulama hatası oluştu"
+    "VerificationError": "Doğrulama hatası oluştu",
+    "SignUpBETA": "Kaydolma (yalnızca Beta davetiyesi)",
+    "SignUp": "Kaydol",
+    "SignUpSucceeded": "Başarıyla kaydoldu."
   },
   "update": {
     "NewWebUIVersionAvailable": "Yeni sürüm mevcut:"
-  },
-  "sidepanel": {
-    "BackgroundTasks": "Çalışan Görevler",
-    "NoBackgroundTask": "Sorma.",
-    "Running": "Koşu...",
-    "Notification": "Bildirim",
-    "NoNotification": "Bildirim yok."
   },
   "import": {
     "NoSuitableResourceFoundOnGivenURL": "Verilen URL'de uygun kaynak bulunamadı.",
@@ -1465,16 +1458,6 @@
     "GitlabDefaultBranch": "Gitlab Şube Adı",
     "InvalidNotebookURL": "Geçersiz Not Defteri URL'si."
   },
-  "usagepanel": {
-    "StatisticsForThisMonth": "Bu Ay İçin İstatistikler",
-    "NumSessions": "Seans Sayısı",
-    "UsedTime": "Kullanılan zaman",
-    "CpuUsedTime": "CPU Kullanım Süresi",
-    "GpuUsedTime": "GPU Kullanım Süresi",
-    "DiskUsed": "Disk kullanımı",
-    "TrafficUsed": "Trafik Kullanımı"
-  },
-  "DownloadSSHKey": "SSH Anahtarını İndirin",
   "license": {
     "Perpetual": "sürekli",
     "Subscription": "abonelik",
@@ -1482,7 +1465,6 @@
   },
   "eduapi": {
     "CannotAuthorizeSessionByToken": "Oturumunuz yetkilendirilemiyor. Önce portala giriş yapın.",
-    "QueryingExisitingComputeSession": "Mevcut bilgi işlem oturumu sorgulanıyor...",
     "PleaseReload": "Lütfen bir süre sonra yeniden yükleyin.",
     "FoundExistingComputeSession": "Mevcut bilgi işlem oturumu bulundu",
     "FindingSessionTemplate": "Oturum şablonu bulundu...",
@@ -1490,8 +1472,9 @@
     "CreatingComputeSession": "Hesaplama oturumu oluşturuluyor...",
     "SessionStillPreparing": "Oturum hala hazırlanıyor. Bir süre sonra yeniden yükle",
     "ComputeSessionPrepared": "Hesaplama oturumu hazırlandı",
-    "sessionStatusIs": "Oturum durumu (şimdiki değeri)",
-    "EmptyProject": "BoşProje"
+    "EmptyProject": "BoşProje",
+    "QueryingExistingComputeSession": "Mevcut bilgi işlem oturumu sorgulanıyor...",
+    "SessionStatusIs": "Oturum durumu (şimdiki değeri)"
   },
   "error": {
     "UpdateError": "Güncelleme hatası",
@@ -1614,14 +1597,6 @@
     "ServiceNameMaxLength": "Lütfen 24 veya daha az karakter girin.",
     "ServiceNameCannotStartWithHyphen": "Kısa çizgi (-) her iki uçta da kullanılamaz."
   },
-  "ErrorBoundary": {
-    "title": "Bir hata oluştu.",
-    "reloadPage": "Sayfayı yeniden yükle",
-    "resetErrorBoundary": "ErrorBoundary'yi Sıfırla",
-    "displayOnlyDevEnv": "Bu hata bloğu yalnızca WebUI geliştirme ortamında görüntülenir.",
-    "expiredLoginSessionTitle": "Giriş oturumunuzun süresi doldu.",
-    "expiredLoginSessionReLogin": "Giriş"
-  },
   "storageHost": {
     "quotaSettings": {
       "SelectDomain": "Etki Alanı Seçin",
@@ -1670,7 +1645,6 @@
     "EnterConfirmationCode": "Şimdi doğrulamak için kimlik doğrulayıcı tarafından oluşturulan OTP'yi girin.",
     "RequireOTP": "OTP'yi yazın."
   },
-  "OpenVSCodeRemote": "Yerel Visual Studio Kodunu açın",
   "inputLimit": {
     "4to64chars": "(4~64 karakter)",
     "4to32chars": "(4~32 karakter)"
@@ -1711,27 +1685,19 @@
     "SelectColumnToDisplay": "Görüntülenecek sütunları seçin",
     "SearchTableColumn": "Tablo sütunlarında arama yapın"
   },
-  "tourguide": {
-    "NeoSessionLauncher": {
-      "ValidationErrorTitle": "Giriş alanı doğrulama hataları",
-      "ValidationErrorText": "Zorunlu bir alana değer girmezseniz veya geçersiz bir değer girerseniz o alanda bir hata mesajı görüntülenir.",
-      "FixErrorAndTryAgainText": "Bir hata alanı varsa Oturumu başlat düğmesi devre dışı bırakılır. \nLütfen hatayı düzeltip tekrar deneyin.",
-      "FixErrorFieldbyModifyButton": "Bu hata alanını düzenlemek için doğrudan sağ üst köşedeki Düzenle düğmesine gidebilirsiniz."
-    }
-  },
   "sourceCodeViewer": {
     "Copy": "Kopyala",
     "Copied": "Kopyalandı"
   },
   "propertyFilter": {
-    "placeHolder": "Arama",
-    "ResetFilter": "Filtreleri sıfırla"
+    "ResetFilter": "Filtreleri sıfırla",
+    "PlaceHolder": "Arama"
   },
   "interactiveLogin": {
     "InteractiveLoginWithBackendAI": "Backend.AI hesabınızla giriş yapın",
-    "confirmLoginMessage": "{{kullanıcı adı}} ile giriş yapmak ister misiniz? ({{email}}) hesabınız var mı?",
     "ServiceName": "Hizmet adı",
-    "useAnotherAccount": "Farklı bir hesapla oturum açın"
+    "UseAnotherAccount": "Farklı bir hesapla oturum açın",
+    "ConfirmLoginMessage": "{{kullanıcı adı}} ile giriş yapmak ister misiniz? ({{email}}) hesabınız var mı?"
   },
   "chatui": {
     "CannotFindModel": "LLM modelleri bulunamıyor. \nLütfen modeli özelleştirin.",
@@ -1749,11 +1715,43 @@
     "UploadFilesDescription": "Yüklemek için dosyaları bu alana tıklayın veya sürükleyin"
   },
   "time": {
-    "ms": "ms",
-    "sec": "sn",
-    "min": "min",
-    "hour": "saat",
-    "day": "day",
-    "week": "hafta"
+    "Day": "day",
+    "Hour": "saat",
+    "Min": "min",
+    "Ms": "ms",
+    "Sec": "sn",
+    "Week": "hafta"
+  },
+  "usagePanel": {
+    "CpuUsedTime": "CPU Kullanım Süresi",
+    "DiskUsed": "Disk kullanımı",
+    "GpuUsedTime": "GPU Kullanım Süresi",
+    "NumSessions": "Seans Sayısı",
+    "StatisticsForThisMonth": "Bu Ay İçin İstatistikler",
+    "TrafficUsed": "Trafik Kullanımı",
+    "UsedTime": "Kullanılan zaman"
+  },
+  "sidePanel": {
+    "BackgroundTasks": "Çalışan Görevler",
+    "NoBackgroundTask": "Sorma.",
+    "NoNotification": "Bildirim yok.",
+    "Notification": "Bildirim",
+    "Running": "Koşu..."
+  },
+  "tourGuide": {
+    "neoSessionLauncher": {
+      "FixErrorAndTryAgainText": "Bir hata alanı varsa Oturumu başlat düğmesi devre dışı bırakılır. \nLütfen hatayı düzeltip tekrar deneyin.",
+      "FixErrorFieldByModifyButton": "Bu hata alanını düzenlemek için doğrudan sağ üst köşedeki Düzenle düğmesine gidebilirsiniz.",
+      "ValidationErrorText": "Zorunlu bir alana değer girmezseniz veya geçersiz bir değer girerseniz o alanda bir hata mesajı görüntülenir.",
+      "ValidationErrorTitle": "Giriş alanı doğrulama hataları"
+    }
+  },
+  "errorBoundary": {
+    "DisplayOnlyDevEnv": "Bu hata bloğu yalnızca WebUI geliştirme ortamında görüntülenir.",
+    "ExpiredLoginSessionReLogin": "Giriş",
+    "ExpiredLoginSessionTitle": "Giriş oturumunuzun süresi doldu.",
+    "ReloadPage": "Sayfayı yeniden yükle",
+    "ResetErrorBoundary": "ErrorBoundary'yi Sıfırla",
+    "Title": "Bir hata oluştu."
   }
 }

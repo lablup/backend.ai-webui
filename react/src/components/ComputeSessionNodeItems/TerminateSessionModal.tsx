@@ -316,7 +316,7 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
         gap={'xs'}
       >
         <Typography.Text>
-          {t('usersettings.SessionTerminationDialog')}
+          {t('userSettings.SessionTerminationDialog')}
         </Typography.Text>
         <Typography.Text mark>
           {sessions.length === 1

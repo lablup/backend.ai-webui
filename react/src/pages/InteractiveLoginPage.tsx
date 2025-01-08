@@ -38,7 +38,7 @@ const Children = () => {
     >
       <Card title={t('interactiveLogin.InteractiveLoginWithBackendAI')}>
         <Flex direction="column" gap={'sm'} align="stretch">
-          {t('interactiveLogin.confirmLoginMessage', {
+          {t('interactiveLogin.ConfirmLoginMessage', {
             username: userInfo.username,
             email: userInfo.email,
           })}
@@ -84,7 +84,7 @@ const Children = () => {
                 document.dispatchEvent(event);
               }}
             >
-              {t('interactiveLogin.useAnotherAccount')}
+              {t('interactiveLogin.UseAnotherAccount')}
             </Button>
             <Button
               size="large"

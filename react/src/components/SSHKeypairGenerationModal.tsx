@@ -33,13 +33,13 @@ const SSHKeypairGenerationModal: React.FC<SSHKeypairGenerationModalProps> = ({
 
   return (
     <BAIModal
-      title={t('usersettings.SSHKeypairGeneration')}
+      title={t('userSettings.SSHKeypairGeneration')}
       closeIcon={false}
       footer={[
         <Popconfirm
           key="close"
           title={t('button.Confirm')}
-          description={t('usersettings.ClearSSHKeypairInput')}
+          description={t('userSettings.ClearSSHKeypairInput')}
           onConfirm={onRequestClose}
         >
           <Button>{t('button.Close')}</Button>
@@ -48,7 +48,7 @@ const SSHKeypairGenerationModal: React.FC<SSHKeypairGenerationModalProps> = ({
       {...baiModalProps}
     >
       <Spin spinning={isRefreshModalPending} indicator={<LoadingOutlined />}>
-        <Typography.Text strong>{t('usersettings.PublicKey')}</Typography.Text>
+        <Typography.Text strong>{t('userSettings.PublicKey')}</Typography.Text>
         <Flex direction="row" align="start" justify="between">
           <Typography.Paragraph>
             <pre
@@ -67,7 +67,7 @@ const SSHKeypairGenerationModal: React.FC<SSHKeypairGenerationModalProps> = ({
             style={{ marginTop: token.margin }}
           />
         </Flex>
-        <Typography.Text strong>{t('usersettings.PrivateKey')}</Typography.Text>
+        <Typography.Text strong>{t('userSettings.PrivateKey')}</Typography.Text>
         <Flex direction="row" align="start" justify="between">
           <Typography.Paragraph>
             <pre
@@ -81,7 +81,7 @@ const SSHKeypairGenerationModal: React.FC<SSHKeypairGenerationModalProps> = ({
               {data?.ssh_private_key}
             </pre>
             <Typography.Text type="danger">
-              {t('usersettings.SSHKeypairGenerationWarning')}
+              {t('userSettings.SSHKeypairGenerationWarning')}
             </Typography.Text>
           </Typography.Paragraph>
           <Typography.Text

@@ -141,7 +141,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
             <span>
               ${this._markIfUnlimited(rowData.item.resource_slots.cpu)}
             </span>
-            <span class="indicator">${_t('general.cores')}</span>
+            <span class="indicator">${_t('general.Cores')}</span>
           </div>
           <div class="layout horizontal configuration">
             <mwc-icon class="fg green">memory</mwc-icon>

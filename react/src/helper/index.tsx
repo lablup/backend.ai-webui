@@ -443,11 +443,11 @@ export function preserveDotStartCase(str: string = '') {
 export function formatDuration(duration: Duration, t: TFunction) {
   // We need to `t` function to translate the time unit in React render phase
   return [
-    duration.weeks() ? `${duration.weeks()} ${t('time.week')}` : '',
-    duration.days() ? `${duration.days()} ${t('time.day')}` : '',
-    duration.hours() ? `${duration.hours()} ${t('time.hour')}` : '',
-    duration.minutes() ? `${duration.minutes()} ${t('time.min')}` : '',
-    duration.seconds() ? `${duration.seconds()} ${t('time.sec')}` : '',
+    duration.weeks() ? `${duration.weeks()} ${t('time.Week')}` : '',
+    duration.days() ? `${duration.days()} ${t('time.Day')}` : '',
+    duration.hours() ? `${duration.hours()} ${t('time.Hour')}` : '',
+    duration.minutes() ? `${duration.minutes()} ${t('time.Min')}` : '',
+    duration.seconds() ? `${duration.seconds()} ${t('time.Sec')}` : '',
   ]
     .filter(Boolean)
     .join(' ');

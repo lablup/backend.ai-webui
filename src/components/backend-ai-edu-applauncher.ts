@@ -295,7 +295,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     try {
       this.appLauncher.indicator.set(
         20,
-        _text('eduapi.QueryingExisitingComputeSession'),
+        _text('eduapi.QueryingExistingComputeSession'),
       );
       sessions = await globalThis.backendaiclient.computeSession.list(
         fields,
@@ -398,7 +398,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         if (sessionStatus !== 'RUNNING') {
           this.appLauncher.indicator.end();
           this.notification.text =
-            _text('eduapi.sessionStatusIs') +
+            _text('eduapi.SessionStatusIs') +
             ` ${sessionStatus}. ` +
             _text('eduapi.PleaseReload');
           this.notification.show(true);
@@ -542,14 +542,14 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
           if (!appConnectUrl) {
             this.appLauncher.indicator.end();
             this.notification.text = _text(
-              'session.applauncher.ConnectUrlIsNotValid',
+              'session.appLauncher.ConnectUrlIsNotValid',
             );
             this.notification.show(true);
             return;
           }
           this.appLauncher.indicator.set(
             100,
-            _text('session.applauncher.Prepared'),
+            _text('session.appLauncher.Prepared'),
           );
           setTimeout(() => {
             globalThis.open(appConnectUrl, '_self');

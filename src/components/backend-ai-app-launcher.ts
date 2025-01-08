@@ -934,7 +934,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         async (response) => {
           if (response.url) {
             if (mode === 'inference') {
-              this.indicator.set(100, _text('session.applauncher.Prepared'));
+              this.indicator.set(100, _text('session.appLauncher.Prepared'));
               this.endpointURL = response.proxy;
               delete this.controls.runtime; // Remove runtime option to prevent dangling loop.
               this._showAppLauncher(this.controls);
@@ -943,7 +943,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                 response.url,
                 urlPostfix,
               );
-              this.indicator.set(100, _text('session.applauncher.Prepared'));
+              this.indicator.set(100, _text('session.appLauncher.Prepared'));
               setTimeout(() => {
                 globalThis.open(
                   appConnectUrl?.href || response.url + urlPostfix,
@@ -1225,27 +1225,27 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             }
           }
           if (appName === 'sshd') {
-            this.indicator.set(100, _text('session.applauncher.Prepared'));
+            this.indicator.set(100, _text('session.appLauncher.Prepared'));
             this._readSSHKey(sessionUuid);
             this._openSSHDialog();
             setTimeout(() => {
               this.indicator.end();
             }, 1000);
           } else if (appName === 'vnc') {
-            this.indicator.set(100, _text('session.applauncher.Prepared'));
+            this.indicator.set(100, _text('session.appLauncher.Prepared'));
             this._openVNCDialog();
           } else if (appName === 'xrdp') {
-            this.indicator.set(100, _text('session.applauncher.Prepared'));
+            this.indicator.set(100, _text('session.appLauncher.Prepared'));
             this._openXRDPDialog();
           } else if (appName === 'vscode-desktop') {
-            this.indicator.set(100, _text('session.applauncher.Prepared'));
+            this.indicator.set(100, _text('session.appLauncher.Prepared'));
             this._readTempPasswd(sessionUuid);
             this._openVSCodeDesktopDialog();
             setTimeout(() => {
               this.indicator.end();
             }, 1000);
           } else if (response.url) {
-            this.indicator.set(100, _text('session.applauncher.Prepared'));
+            this.indicator.set(100, _text('session.appLauncher.Prepared'));
             setTimeout(() => {
               globalThis.open(
                 appConnectUrl?.href || response.url + urlPostfix,
@@ -1319,7 +1319,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           '',
         );
         if (response.url) {
-          this.indicator.set(100, _text('session.applauncher.Prepared'));
+          this.indicator.set(100, _text('session.appLauncher.Prepared'));
           setTimeout(() => {
             globalThis.open(appConnectUrl?.href || response.url, '_blank');
             this.indicator.end();
@@ -1458,7 +1458,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const checkbox = document.createElement('mwc-checkbox');
     checkbox.setAttribute('id', 'hide-guide');
     const checkboxMsg = document.createElement('span');
-    checkboxMsg.innerHTML = `${_text('dialog.hide.DonotShowThisAgain')}`;
+    checkboxMsg.innerHTML = `${_text('dialog.hide.DoNotShowThisAgain')}`;
 
     div.appendChild(checkbox);
     div.appendChild(checkboxMsg);
@@ -1584,7 +1584,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
       if (textToCopy.length === 0) {
         this.notification.text = _text(
-          'session.applauncher.NoExistingConnectionExample',
+          'session.appLauncher.NoExistingConnectionExample',
         );
         this.notification.show();
       } else {
@@ -1593,7 +1593,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           navigator.clipboard.writeText?.(textToCopy).then(
             () => {
               this.notification.text = _text(
-                'session.applauncher.SSHConnectionExampleClipboardCopy',
+                'session.appLauncher.SSHConnectionExampleClipboardCopy',
               );
               this.notification.show();
             },
@@ -1622,7 +1622,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       <link rel="stylesheet" href="resources/custom.css" />
       <backend-ai-dialog id="app-dialog" fixed backdrop narrowLayout>
         <div slot="title" class="horizontal layout center">
-          <span>${_t('session.applauncher.App')}</span>
+          <span>${_t('session.appLauncher.App')}</span>
         </div>
         <div slot="content">
           ${
@@ -1891,7 +1891,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             href=""
           >
             <mwc-button unelevated fullwidth>
-              ${_t('DownloadSSHKey')}
+              ${_t('session.appLauncher.DownloadSSHKey')}
             </mwc-button>
           </a>
         </div>
@@ -1974,9 +1974,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         fixed
         backdrop
       >
-        <span slot="title">${_t('session.applauncher.AppMustBeRun')}</span>
+        <span slot="title">${_t('session.appLauncher.AppMustBeRun')}</span>
         <div slot="content" class="vertical layout">
-          <p>${_t('session.applauncher.AppMustBeRunDialog')}</p>
+          <p>${_t('session.appLauncher.AppMustBeRunDialog')}</p>
           <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
@@ -1984,7 +1984,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             raised
             id="app-launch-confirmation-button"
             icon="rowing"
-            label="${_t('session.applauncher.ConfirmAndRun')}"
+            label="${_t('session.appLauncher.ConfirmAndRun')}"
             fullwidth
             @click="${() => this._runApp(this.appController)}"
           ></mwc-button>
@@ -2029,7 +2029,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             }%3A${this.tcpPort}/home/work"
           >
             <mwc-button unelevated fullwidth>
-              ${_t('OpenVSCodeRemote')}
+        applauncher.OpenVSCodeRemoteVSCodeRemote')}
             </mwc-button>
           </a>
         </div>

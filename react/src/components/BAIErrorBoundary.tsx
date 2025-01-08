@@ -39,8 +39,8 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
               status="warning"
               title={
                 isLoginSessionExpiredError
-                  ? t('ErrorBoundary.expiredLoginSessionTitle')
-                  : t('ErrorBoundary.title')
+                  ? t('errorBoundary.ExpiredLoginSessionTitle')
+                  : t('errorBoundary.Title')
               }
               extra={
                 <Flex direction="column" gap="md">
@@ -60,8 +60,8 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
                     icon={<ReloadOutlined />}
                   >
                     {isLoginSessionExpiredError
-                      ? t('ErrorBoundary.expiredLoginSessionReLogin')
-                      : t('ErrorBoundary.reloadPage')}
+                      ? t('errorBoundary.ExpiredLoginSessionReLogin')
+                      : t('errorBoundary.ReloadPage')}
                   </Button>
                   {process.env.NODE_ENV === 'development' && (
                     <Flex
@@ -82,12 +82,12 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
                                 resetErrorBoundary();
                               }}
                             >
-                              {t('ErrorBoundary.resetErrorBoundary')}
+                              {t('errorBoundary.ResetErrorBoundary')}
                             </Button>
                             <Typography.Text>{error.message}</Typography.Text>
                           </Flex>
                         }
-                        message={t('ErrorBoundary.displayOnlyDevEnv')}
+                        message={t('errorBoundary.DisplayOnlyDevEnv')}
                       />
                     </Flex>
                   )}
@@ -107,7 +107,7 @@ export const ErrorView = () => {
   return (
     <Result
       status="warning"
-      title={t('ErrorBoundary.title')}
+      title={t('errorBoundary.Title')}
       extra={
         <Flex direction="column" gap="md">
           <Button
@@ -124,7 +124,7 @@ export const ErrorView = () => {
             }}
             icon={<ReloadOutlined />}
           >
-            {t('ErrorBoundary.reloadPage')}
+            {t('errorBoundary.ReloadPage')}
           </Button>
         </Flex>
       }

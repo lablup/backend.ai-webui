@@ -1121,23 +1121,23 @@ const SessionLauncherPage = () => {
                                                   style={{ minWidth: 75 }}
                                                   options={[
                                                     {
-                                                      label: t('time.sec'),
+                                                      label: t('time.Sec'),
                                                       value: 's',
                                                     },
                                                     {
-                                                      label: t('time.min'),
+                                                      label: t('time.Min'),
                                                       value: 'm',
                                                     },
                                                     {
-                                                      label: t('time.hour'),
+                                                      label: t('time.Hour'),
                                                       value: 'h',
                                                     },
                                                     {
-                                                      label: t('time.day'),
+                                                      label: t('time.Day'),
                                                       value: 'd',
                                                     },
                                                     {
-                                                      label: t('time.week'),
+                                                      label: t('time.Week'),
                                                       value: 'w',
                                                     },
                                                   ]}

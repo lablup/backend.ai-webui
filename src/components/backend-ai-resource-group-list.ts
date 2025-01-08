@@ -521,7 +521,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
     }
 
     if (Object.keys(input).length === 0) {
-      this.notification.text = _text('resourceGroup.NochangesMade');
+      this.notification.text = _text('resourceGroup.NoChangesMade');
       this.notification.show();
       return;
     }

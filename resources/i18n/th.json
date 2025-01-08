@@ -257,7 +257,6 @@
       "Enable": "เปิดใช้งาน",
       "Network": "เครือข่าย",
       "PreOpenPortRangeGuide": "ใส่หลายค่าโดยคั่นด้วยเครื่องหมายจุลภาค (,) หรือช่องว่าง",
-      "preopen": "เปิดล่วงหน้า",
       "FolderAliasInvalid": "อนุญาตเฉพาะตัวอักษร ตัวเลข ขีดล่าง (_) เครื่องหมายทับ (/) จุด (.) และขีดกลาง (-)",
       "PreOpenPortMaxCountLimit": "คุณสามารถตั้งค่าพอร์ตที่เปิดล่วงหน้าได้สูงสุด {{count}} พอร์ต",
       "PreOpenPortMaxCountLimit_plural": "คุณสามารถตั้งค่าพอร์ตที่เปิดล่วงหน้าได้สูงสุด {{count}} พอร์ต",
@@ -302,7 +301,8 @@
       "AutoSelect": "เลือกอัตโนมัติ",
       "BatchJobTimeoutDuration": "ระยะเวลาหมดเวลางานแบทช์",
       "BatchJobTimeoutDurationDesc": "ตั้งเวลาดำเนินการสูงสุดสำหรับงานแบทช์ \nเซสชันจะสิ้นสุดลงโดยอัตโนมัติหากเกินเวลาที่กำหนด",
-      "SetBatchJobTimeoutDuration": "กำหนดระยะเวลาหมดเวลางานแบทช์"
+      "SetBatchJobTimeoutDuration": "กำหนดระยะเวลาหมดเวลางานแบทช์",
+      "PreOpen": "เปิดล่วงหน้า"
     },
     "Preparing": "กำลังเตรียมการ...",
     "PreparingSession": "กำลังเตรียมเซสชัน...",
@@ -311,7 +311,6 @@
     "Batch": "แบบแบตช์",
     "Finished": "เสร็จสิ้น",
     "Others": "อื่นๆ",
-    "exportCSV": "ส่งออก CSV",
     "Terminate": "ยุติ",
     "SessionInfo": "ข้อมูลเซสชัน",
     "Status": "สถานะ",
@@ -326,7 +325,6 @@
     "TotalRetries": "จำนวนครั้งที่ลองใหม่ทั้งหมด",
     "LastTry": "ความพยายามครั้งสุดท้าย",
     "Configuration": "การกำหนดค่า",
-    "core": "คอร์",
     "Reservation": "การจอง",
     "Agent": "ตัวแทน",
     "Agents": "ตัวแทน",
@@ -349,16 +347,6 @@
     "NoLogs": "ไม่มีบันทึก",
     "NoSessionToDisplay": "ไม่มีเซสชันที่จะแสดง",
     "CreationFailed": "การสร้างเซสชันล้มเหลว กรุณาลองอีกครั้งในอีกสักครู่",
-    "applauncher": {
-      "AppMustBeRun": "เริ่มเฉพาะเมื่อแอปกำลังทำงานอยู่แล้วเท่านั้น",
-      "AppMustBeRunDialog": "แอปนี้สามารถเข้าถึงและใช้งานได้เฉพาะเมื่อมันกำลังทำงานผ่านเทอร์มินัลแล้วเท่านั้น หากไม่เป็นเช่นนั้น คุณจะถูกนำไปยังหน้าข้อผิดพลาดที่เกิดขึ้นเมื่อแอปไม่ได้ทำงาน",
-      "ConfirmAndRun": "ฉันได้ตรวจสอบแล้วและจะเริ่มต้น",
-      "Prepared": "เตรียมพร้อมแล้ว",
-      "App": "แอป",
-      "NoExistingConnectionExample": "ไม่มีตัวอย่างการเชื่อมต่อที่จะคัดลอก",
-      "SSHConnectionExampleClipboardCopy": "คัดลอกตัวอย่างการเชื่อมต่อ SSH ไปยังคลิปบอร์ดแล้ว",
-      "ConnectUrlIsNotValid": "URL การเชื่อมต่อไม่ถูกต้อง"
-    },
     "TensorboardPath": "ไดเรกทอรีบันทึกสำหรับ TensorBoard",
     "InputTensorboardPath": "กรุณาใส่ไดเรกทอรีบันทึกที่ TensorBoard จะอ้างอิง โปรดทราบว่าไดเรกทอรีบันทึกจะไม่ถูกสร้างโดยอัตโนมัติ",
     "DefaultTensorboardPath": "/home/work/logs",
@@ -433,14 +421,28 @@
     "SessionId": "รหัสเซสชัน",
     "EnvironmentAndVersion": "สภาพแวดล้อมและเวอร์ชัน",
     "Tags": "แท็ก",
-    "fGPU": "fGPU",
     "ForceTerminateWarningMsg": "การกระทำนี้จะยุติหรือยกเลิกเซสชันโดยไม่คำนึงถึงสถานะปัจจุบัน คุณแน่ใจหรือไม่?",
     "WarningForceTerminateSessions": "คำเตือน: บังคับยุติเซสชัน",
     "ForceTerminateWarningMsg2": "ดำเนินการเฉพาะเมื่อสถานะไม่เปลี่ยนแปลงเป็นระยะเวลานานเกินไปเท่านั้น",
     "ForceTerminateWarningMsg3": "การกระทำนี้ไม่ได้ลบคอนเทนเนอร์จริงบนตัวแทน อาจต้องทำความสะอาดด้วยตนเอง",
     "ContainerToCleanUp": "คอนเทนเนอร์ที่ต้องทำความสะอาด",
     "SessionNotFound": "คุณไม่ได้รับอนุญาตให้เข้าถึงเซสชันนี้หรือไม่มีเซสชันนี้",
-    "NotInProject": "เซสชันนี้เป็นของโปรเจ็กต์อื่น"
+    "NotInProject": "เซสชันนี้เป็นของโปรเจ็กต์อื่น",
+    "Core": "คอร์",
+    "appLauncher": {
+      "App": "แอป",
+      "AppMustBeRun": "เริ่มเฉพาะเมื่อแอปกำลังทำงานอยู่แล้วเท่านั้น",
+      "AppMustBeRunDialog": "แอปนี้สามารถเข้าถึงและใช้งานได้เฉพาะเมื่อมันกำลังทำงานผ่านเทอร์มินัลแล้วเท่านั้น หากไม่เป็นเช่นนั้น คุณจะถูกนำไปยังหน้าข้อผิดพลาดที่เกิดขึ้นเมื่อแอปไม่ได้ทำงาน",
+      "ConfirmAndRun": "ฉันได้ตรวจสอบแล้วและจะเริ่มต้น",
+      "ConnectUrlIsNotValid": "URL การเชื่อมต่อไม่ถูกต้อง",
+      "DownloadSSHKey": "ดาวน์โหลดคีย์ SSH",
+      "NoExistingConnectionExample": "ไม่มีตัวอย่างการเชื่อมต่อที่จะคัดลอก",
+      "OpenVSCodeRemote": "เปิด Visual Studio Code ในเครื่อง",
+      "Prepared": "เตรียมพร้อมแล้ว",
+      "SSHConnectionExampleClipboardCopy": "คัดลอกตัวอย่างการเชื่อมต่อ SSH ไปยังคลิปบอร์ดแล้ว"
+    },
+    "ExportCSV": "ส่งออก CSV",
+    "FGPU": "fGPU"
   },
   "modelService": {
     "Services": "บริการ",
@@ -627,7 +629,6 @@
     "StorageSetting": "การตั้งค่าการจัดเก็บ"
   },
   "general": {
-    "cores": "คอร์",
     "ResourceGroup": "กลุ่มทรัพยากร",
     "AccessKey": "คีย์การเข้าถึง",
     "Folders": "โฟลเดอร์",
@@ -653,7 +654,8 @@
     "Change": "เปลี่ยน",
     "MaxValueNotification": "{{name}} ต้องมีค่าสูงสุด {{max}}",
     "TotalItems": "รวม {{total}} รายการ",
-    "ExtendLoginSession": "ขยายเซสชันการเข้าสู่ระบบ"
+    "ExtendLoginSession": "ขยายเซสชันการเข้าสู่ระบบ",
+    "Cores": "คอร์"
   },
   "credential": {
     "Permission": "สิทธิ์",
@@ -664,17 +666,13 @@
     "ResourcePolicy": "นโยบายทรัพยากร",
     "NumberOfQueries": "จำนวนคำขอ",
     "ConcurrentSessions": "เซสชันพร้อมกัน",
-    "active": "ใช้งาน",
-    "concurrentsessions": "เซสชันพร้อมกัน",
     "RateLimit": "ขีดจำกัดอัตรา",
     "RateLimitValidation": "ขีดจำกัดอัตราควรมากกว่าศูนย์และต่ำกว่า 50000",
     "RateLimitFor15min": "ขีดจำกัดอัตรา (สำหรับ 15 นาที)",
-    "for900seconds": "สำหรับ 900 วินาที",
     "RateLimitInputRequired": "ต้องป้อนข้อมูล",
     "InvalidRateLimitValue": "ป้อนค่าขีดจำกัดอัตราที่ถูกต้อง",
     "WarningLessRateLimit": "หากค่าขีดจำกัดอัตราน้อยเกินไป การดำเนินการ API เช่น การเข้าสู่ระบบอาจถูกบล็อก",
     "Users": "ผู้ใช้",
-    "exportCSV": "ส่งออก CSV",
     "CreateUser": "สร้างผู้ใช้",
     "AddCredential": "เพิ่มข้อมูลประจำตัว",
     "PolicyGroup": "กลุ่มนโยบาย",
@@ -747,7 +745,9 @@
     "DeactivateCredential": "ปิดใช้งานข้อมูลรับรอง",
     "YouAreAboutToDeleteCredential": "คุณกำลังจะลบข้อมูลรับรองของผู้ใช้รายนี้:",
     "DeleteCredential": "ลบข้อมูลรับรอง",
-    "ActivateCredential": "เปิดใช้งานข้อมูลรับรอง"
+    "ActivateCredential": "เปิดใช้งานข้อมูลรับรอง",
+    "For900Seconds": "สำหรับ 900 วินาที",
+    "ExportCSV": "ส่งออก CSV"
   },
   "data": {
     "Folders": "โฟลเดอร์",
@@ -773,7 +773,7 @@
       "Insufficient": "ไม่เพียงพอ",
       "StatusOfSelectedHost": "สถานะของโฮสต์ที่เลือก",
       "Status": "สถานะ",
-      "used": "ใช้แล้ว"
+      "Used": "ใช้แล้ว"
     },
     "Foldername": "ชื่อโฟลเดอร์",
     "FolderToCopy": "โฟลเดอร์ที่จะคัดลอก",
@@ -931,7 +931,6 @@
     "New": "ใหม่",
     "Add": "เพิ่ม",
     "CloningIsOnlyPossibleSameHost": "ปัจจุบันการโคลนสามารถทำได้เฉพาะบนโฮสต์เดียวกัน",
-    "userQuotaScopeId": "รหัสขอบเขตโควตาผู้ใช้",
     "NewFolderName": "ชื่อโฟลเดอร์ใหม่",
     "modelStore": {
       "ImportFromHuggingFace": "นำเข้าจาก Hugging Face",
@@ -956,7 +955,8 @@
       "ImportAndStartServiceSuccessDesc": "โฟลเดอร์และบริการรุ่นใหม่พร้อมแล้ว \nคลิกปุ่ม 'ดูข้อมูลบริการ' เพื่อตรวจสอบรายละเอียดรุ่นและเริ่มการดำเนินการที่ต้องการ",
       "AddedItems": "เพิ่มรายการแล้ว",
       "ModelFolderName": "ชื่อโฟลเดอร์โมเดล"
-    }
+    },
+    "UserQuotaScopeId": "รหัสขอบเขตโควตาผู้ใช้"
   },
   "dialog": {
     "warning": {
@@ -981,7 +981,7 @@
       "Error": "ข้อผิดพลาด"
     },
     "hide": {
-      "DonotShowThisAgain": "ไม่ต้องแสดงข้อความนี้อีก"
+      "DoNotShowThisAgain": "ไม่ต้องแสดงข้อความนี้อีก"
     }
   },
   "environment": {
@@ -1036,7 +1036,8 @@
     "ModifyImageResourceLimitReinstallRequired": "<p>หากคุณแก้ไขอิมเมจที่ได้รับการติดตั้งแล้ว คุณจะต้องติดตั้งอิมเมจใหม่</p><p>การแก้ไขจะไม่มีผลจนกว่าจะมีการติดตั้งอิมเมจใหม่\n</p>",
     "BaseImageName": "ชื่อภาพฐาน",
     "Tags": "แท็ก",
-    "FullImagePath": "เส้นทางภาพเต็ม"
+    "FullImagePath": "เส้นทางภาพเต็ม",
+    "SuccessfullyCreated": "สร้างสำเร็จแล้ว"
   },
   "resourcePreset": {
     "ResourcePresets": "ค่าที่กำหนดไว้ล่วงหน้าของทรัพยากร",
@@ -1063,7 +1064,7 @@
     "DeleteResourcePreset": "ลบการตั้งค่าทรัพยากรล่วงหน้า",
     "PresetNameAlreadyExists": "มีทรัพยากรที่ตั้งไว้ล่วงหน้าซึ่งมีชื่อเดียวกันอยู่แล้ว"
   },
-  "usersettings": {
+  "userSettings": {
     "General": "ทั่วไป",
     "Logs": "บันทึก",
     "Preferences": "การตั้งค่า",
@@ -1256,7 +1257,6 @@
     "ResourceGroupName": "ชื่อกลุ่มทรัพยากร",
     "Active": "ใช้งาน",
     "SelectScheduler": "เลือกตัวจัดกำหนดการ",
-    "NochangesMade": "ไม่มีการเปลี่ยนแปลง",
     "ResourceGroupNameNotMatch": "ชื่อกลุ่มทรัพยากรไม่ตรงกัน!",
     "ResourceGroupCreated": "สร้างกลุ่มทรัพยากรสำเร็จแล้ว",
     "ResourceGroupModified": "แก้ไขกลุ่มทรัพยากรสำเร็จแล้ว",
@@ -1272,7 +1272,8 @@
     "AllowedSessionTypes": "ประเภทเซสชันที่อนุญาต",
     "Domain": "โดเมน",
     "Public": "สาธารณะ",
-    "PublicStatus": "สถานะสาธารณะ"
+    "PublicStatus": "สถานะสาธารณะ",
+    "NoChangesMade": "ไม่มีการเปลี่ยนแปลง"
   },
   "maintenance": {
     "Fix": "แก้ไข",
@@ -1375,9 +1376,9 @@
     "DescImagePullBehavior": "กำหนดเงื่อนไขสำหรับการดาวน์โหลดอิมเมจใหม่โดยอัตโนมัติเมื่อมีการลงทะเบียนเวอร์ชันใหม่ในทะเบียน สำหรับ 'none' จะไม่มีการดาวน์โหลดอิมเมจใหม่โดยอัตโนมัติ",
     "GUI": "GUI",
     "image": {
-      "digest": "ไดเจสต์",
-      "tag": "แท็ก",
-      "none": "ไม่มี"
+      "Digest": "ไดเจสต์",
+      "None": "ไม่มี",
+      "Tag": "แท็ก"
     },
     "OverlayNetwork": "เครือข่ายโอเวอร์เลย์",
     "OverlayNetworkConfiguration": "การกำหนดค่าที่ใช้เมื่อสร้างเครือข่ายโอเวอร์เลย์",
@@ -1459,7 +1460,6 @@
     "SecretKey": "คีย์ลับ",
     "Endpoint": "จุดสิ้นสุด",
     "NotAUser": "ยังไม่ได้เป็นผู้ใช้?",
-    "LoginAnotherway": "ต้องการเข้าสู่ระบบด้วยวิธีอื่นหรือไม่?",
     "SignUp": "ลงทะเบียน",
     "LoginWithIAM": "เข้าสู่ระบบด้วย IAM",
     "ClickToUseIAM": "คลิกเพื่อใช้ IAM",
@@ -1489,11 +1489,11 @@
       "LoginWithRealm": "เข้าสู่ระบบด้วย {{ realmName }}"
     },
     "EndpointStartWith": "จุดสิ้นสุดต้องขึ้นต้นด้วย http:// หรือ https://",
-    "LoginWithE-mailorUsername": "เข้าสู่ระบบด้วยอีเมลหรือชื่อผู้ใช้",
-    "E-mailorUsername": "อีเมลหรือชื่อผู้ใช้"
+    "LoginAnotherWay": "ต้องการเข้าสู่ระบบด้วยวิธีอื่นหรือไม่?",
+    "LoginWithE-mailOrUsername": "เข้าสู่ระบบด้วยอีเมลหรือชื่อผู้ใช้",
+    "E-mailOrUsername": "อีเมลหรือชื่อผู้ใช้"
   },
-  "signup": {
-    "SignupBETA": "ลงทะเบียน (เฉพาะผู้ได้รับเชิญเบต้า)",
+  "signUp": {
     "E-mail": "อีเมล",
     "UserName": "ชื่อผู้ใช้",
     "Password": "รหัสผ่าน",
@@ -1501,8 +1501,6 @@
     "PasswordInputRequired": "ต้องระบุรหัสผ่าน",
     "PasswordInvalid": "ใช้ 8 ตัวอักษรขึ้นไปโดยผสมตัวอักษร ตัวเลข และสัญลักษณ์",
     "PasswordNotMatched": "รหัสผ่านไม่ตรงกัน ลองอีกครั้ง",
-    "Signup": "ลงทะเบียน",
-    "SignupSucceeded": "ลงทะเบียนสำเร็จ",
     "Processing": "กำลังดำเนินการ...",
     "InvitationToken": "โทเคนคำเชิญ",
     "TokenInputRequired": "ต้องระบุโทเคน",
@@ -1523,17 +1521,13 @@
     "SendEmail": "ส่งอีเมลยืนยัน",
     "SendError": "เกิดข้อผิดพลาดระหว่างการส่งอีเมล",
     "EmailSent": "ส่งอีเมลแล้ว",
-    "VerificationError": "เกิดข้อผิดพลาดในการยืนยัน"
+    "VerificationError": "เกิดข้อผิดพลาดในการยืนยัน",
+    "SignUpBETA": "ลงทะเบียน (เฉพาะผู้ได้รับเชิญเบต้า)",
+    "SignUp": "ลงทะเบียน",
+    "SignUpSucceeded": "ลงทะเบียนสำเร็จ"
   },
   "update": {
     "NewWebUIVersionAvailable": "มีเวอร์ชันใหม่พร้อมใช้งาน:"
-  },
-  "sidepanel": {
-    "BackgroundTasks": "งานที่กำลังทำงาน",
-    "NoBackgroundTask": "ไม่มีงาน",
-    "Running": "กำลังทำงาน...",
-    "Notification": "การแจ้งเตือน",
-    "NoNotification": "ไม่มีการแจ้งเตือน"
   },
   "import": {
     "NoSuitableResourceFoundOnGivenURL": "ไม่พบทรัพยากรที่เหมาะสมบน URL ที่ให้มา",
@@ -1571,17 +1565,6 @@
     "GitlabDefaultBranch": "ชื่อ Branch GitLab",
     "InvalidNotebookURL": "URL โน้ตบุ๊กไม่ถูกต้อง"
   },
-  "usagepanel": {
-    "StatisticsForThisMonth": "สถิติสำหรับเดือนนี้",
-    "NumSessions": "จำนวนเซสชัน",
-    "UsedTime": "เวลาที่ใช้",
-    "CpuUsedTime": "เวลาที่ใช้ CPU",
-    "GpuUsedTime": "เวลาที่ใช้ GPU",
-    "DiskUsed": "การใช้ดิสก์",
-    "TrafficUsed": "การใช้งานเครือข่าย"
-  },
-  "DownloadSSHKey": "ดาวน์โหลดคีย์ SSH",
-  "OpenVSCodeRemote": "เปิด Visual Studio Code ในเครื่อง",
   "license": {
     "Perpetual": "ถาวร",
     "Subscription": "การสมัครสมาชิก",
@@ -1589,7 +1572,6 @@
   },
   "eduapi": {
     "CannotAuthorizeSessionByToken": "ไม่สามารถอนุญาตเซสชันของคุณได้ กรุณาเข้าสู่ระบบที่พอร์ทัลก่อน",
-    "QueryingExisitingComputeSession": "กำลังสอบถามเซสชันการคำนวณที่มีอยู่ ...",
     "PleaseReload": "กรุณาโหลดใหม่หลังจากผ่านไปสักครู่",
     "FoundExistingComputeSession": "พบเซสชันการคำนวณที่มีอยู่",
     "FindingSessionTemplate": "กำลังค้นหาเทมเพลตเซสชัน ...",
@@ -1597,8 +1579,9 @@
     "CreatingComputeSession": "กำลังสร้างเซสชันการคำนวณ ...",
     "SessionStillPreparing": "เซสชันยังอยู่ในขั้นตอนการเตรียมการ โหลดใหม่หลังจากผ่านไปสักครู่",
     "ComputeSessionPrepared": "เตรียมเซสชันการคำนวณแล้ว",
-    "sessionStatusIs": "สถานะเซสชันคือ",
-    "EmptyProject": "โครงการว่างเปล่า"
+    "EmptyProject": "โครงการว่างเปล่า",
+    "QueryingExistingComputeSession": "กำลังสอบถามเซสชันการคำนวณที่มีอยู่ ...",
+    "SessionStatusIs": "สถานะเซสชันคือ"
   },
   "error": {
     "UpdateError": "ข้อผิดพลาดในการอัปเดต",
@@ -1652,14 +1635,6 @@
     "SelectColumnToDisplay": "เลือกคอลัมน์ที่ต้องการแสดง",
     "SearchTableColumn": "ค้นหาคอลัมน์ตาราง"
   },
-  "ErrorBoundary": {
-    "title": "เกิดข้อผิดพลาด",
-    "reloadPage": "โหลดหน้าใหม่",
-    "resetErrorBoundary": "รีเซ็ต ErrorBoundary",
-    "displayOnlyDevEnv": "บล็อกข้อผิดพลาดนี้จะแสดงเฉพาะในสภาพแวดล้อมการพัฒนา WebUI เท่านั้น",
-    "expiredLoginSessionTitle": "เซสชั่นการเข้าสู่ระบบของคุณหมดอายุแล้ว",
-    "expiredLoginSessionReLogin": "เข้าสู่ระบบ"
-  },
   "modelStore": {
     "FilterByName": "กรองตามชื่อ",
     "Model": "โมเดล",
@@ -1691,27 +1666,19 @@
     "FolderAlreadyExists": "มีโฟลเดอร์ชื่อนี้อยู่แล้ว",
     "FinetuneModel": "ปรับแต่งโมเดล"
   },
-  "tourguide": {
-    "NeoSessionLauncher": {
-      "ValidationErrorTitle": "ข้อผิดพลาดในการตรวจสอบช่องข้อมูล",
-      "ValidationErrorText": "หากคุณไม่ป้อนค่าในช่องที่จำเป็นหรือป้อนค่าที่ไม่ถูกต้อง จะแสดงข้อความแจ้งข้อผิดพลาดในช่องนั้น",
-      "FixErrorAndTryAgainText": "หากมีช่องที่ผิดพลาด ปุ่มเริ่มเซสชันจะถูกปิดใช้งาน กรุณาแก้ไขข้อผิดพลาดและลองอีกครั้ง",
-      "FixErrorFieldbyModifyButton": "สำหรับช่องที่มีข้อผิดพลาดนั้น คุณสามารถไปที่ปุ่มแก้ไขที่มุมขวาบนโดยตรงเพื่อแก้ไขได้"
-    }
-  },
   "sourceCodeViewer": {
     "Copy": "คัดลอก",
     "Copied": "คัดลอกแล้ว"
   },
   "propertyFilter": {
-    "placeHolder": "ค้นหา",
-    "ResetFilter": "รีเซ็ตตัวกรอง"
+    "ResetFilter": "รีเซ็ตตัวกรอง",
+    "PlaceHolder": "ค้นหา"
   },
   "interactiveLogin": {
     "InteractiveLoginWithBackendAI": "เข้าสู่ระบบด้วยบัญชี Backend.AI ของคุณ",
-    "confirmLoginMessage": "คุณต้องการเข้าสู่ระบบด้วยบัญชี {{username}} ({{email}}) หรือไม่?",
     "ServiceName": "ชื่อบริการ",
-    "useAnotherAccount": "เข้าสู่ระบบด้วยบัญชีอื่น"
+    "UseAnotherAccount": "เข้าสู่ระบบด้วยบัญชีอื่น",
+    "ConfirmLoginMessage": "คุณต้องการเข้าสู่ระบบด้วยบัญชี {{username}} ({{email}}) หรือไม่?"
   },
   "chatui": {
     "CannotFindModel": "ไม่พบโมเดล LLM กรุณาปรับแต่งโมเดล",
@@ -1719,7 +1686,6 @@
     "DeleteChatHistory": "ลบประวัติการแชท",
     "SelectModel": "เลือกโมเดล",
     "SelectEndpoint": "เลือกจุดสิ้นสุด",
-    "DeleteChatSession": "ลบเซสชันการแชท",
     "DeleteChattingSession": "ลบเซสชันการแชท",
     "DeleteChattingSessionDescription": "คุณกำลังจะลบหัวข้อนี้ เมื่อลบแล้วจะไม่สามารถกู้คืนได้ กรุณาดำเนินการด้วยความระมัดระวัง",
     "SyncInput": "ซิงค์อินพุต",
@@ -1730,11 +1696,43 @@
     "UploadFilesDescription": "คลิกหรือลากไฟล์ไปยังบริเวณนี้เพื่ออัปโหลด"
   },
   "time": {
-    "ms": "ms",
-    "sec": "วินาท",
-    "min": "min",
-    "hour": "ชั่วโมง",
-    "day": "day",
-    "week": "สัปดาห์"
+    "Day": "day",
+    "Hour": "ชั่วโมง",
+    "Min": "min",
+    "Ms": "ms",
+    "Sec": "วินาท",
+    "Week": "สัปดาห์"
+  },
+  "usagePanel": {
+    "CpuUsedTime": "เวลาที่ใช้ CPU",
+    "DiskUsed": "การใช้ดิสก์",
+    "GpuUsedTime": "เวลาที่ใช้ GPU",
+    "NumSessions": "จำนวนเซสชัน",
+    "StatisticsForThisMonth": "สถิติสำหรับเดือนนี้",
+    "TrafficUsed": "การใช้งานเครือข่าย",
+    "UsedTime": "เวลาที่ใช้"
+  },
+  "sidePanel": {
+    "BackgroundTasks": "งานที่กำลังทำงาน",
+    "NoBackgroundTask": "ไม่มีงาน",
+    "NoNotification": "ไม่มีการแจ้งเตือน",
+    "Notification": "การแจ้งเตือน",
+    "Running": "กำลังทำงาน..."
+  },
+  "tourGuide": {
+    "neoSessionLauncher": {
+      "FixErrorAndTryAgainText": "หากมีช่องที่ผิดพลาด ปุ่มเริ่มเซสชันจะถูกปิดใช้งาน กรุณาแก้ไขข้อผิดพลาดและลองอีกครั้ง",
+      "FixErrorFieldByModifyButton": "สำหรับช่องที่มีข้อผิดพลาดนั้น คุณสามารถไปที่ปุ่มแก้ไขที่มุมขวาบนโดยตรงเพื่อแก้ไขได้",
+      "ValidationErrorText": "หากคุณไม่ป้อนค่าในช่องที่จำเป็นหรือป้อนค่าที่ไม่ถูกต้อง จะแสดงข้อความแจ้งข้อผิดพลาดในช่องนั้น",
+      "ValidationErrorTitle": "ข้อผิดพลาดในการตรวจสอบช่องข้อมูล"
+    }
+  },
+  "errorBoundary": {
+    "DisplayOnlyDevEnv": "บล็อกข้อผิดพลาดนี้จะแสดงเฉพาะในสภาพแวดล้อมการพัฒนา WebUI เท่านั้น",
+    "ExpiredLoginSessionReLogin": "เข้าสู่ระบบ",
+    "ExpiredLoginSessionTitle": "เซสชั่นการเข้าสู่ระบบของคุณหมดอายุแล้ว",
+    "ReloadPage": "โหลดหน้าใหม่",
+    "ResetErrorBoundary": "รีเซ็ต ErrorBoundary",
+    "Title": "เกิดข้อผิดพลาด"
   }
 }

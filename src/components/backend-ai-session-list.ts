@@ -3522,7 +3522,7 @@ ${rowData.item[this.sessionNameField]}</pre
             <div class="layout horizontal center configuration">
               <mwc-icon class="fg green indicator">developer_board</mwc-icon>
               <span>${rowData.item.cpu_slot}</span>
-              <span class="indicator">${_t('session.core')}</span>
+              <span class="indicator">${_t('session.Core')}</span>
             </div>
             <div class="layout horizontal center configuration">
               <mwc-icon class="fg green indicator">memory</mwc-icon>
@@ -5075,7 +5075,7 @@ ${rowData.item[this.sessionNameField]}</pre
       <backend-ai-dialog id="terminate-session-dialog" fixed backdrop>
         <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
         <div slot="content">
-          <p>${_t('usersettings.SessionTerminationDialog')}</p>
+          <p>${_t('userSettings.SessionTerminationDialog')}</p>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button class="warning fg red" @click="${() => {
@@ -5097,7 +5097,7 @@ ${rowData.item[this.sessionNameField]}</pre
       <backend-ai-dialog id="terminate-selected-sessions-dialog" fixed backdrop>
         <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
         <div slot="content">
-          <p>${_t('usersettings.SessionTerminationDialog')}</p>
+          <p>${_t('userSettings.SessionTerminationDialog')}</p>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
