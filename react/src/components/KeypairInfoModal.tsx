@@ -123,7 +123,7 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
           {keypair?.concurrency_used}
         </Descriptions.Item>
         <Descriptions.Item
-          label={`${t('credential.RateLimit')} ${t('credential.for900seconds')}`}
+          label={`${t('credential.RateLimit')} ${t('credential.For900Seconds')}`}
         >
           {keypair?.rate_limit}
         </Descriptions.Item>

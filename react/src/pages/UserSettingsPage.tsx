@@ -52,12 +52,12 @@ const UserPreferencesPage = () => {
 
   const settingGroup: { title: string; settingItems: SettingItemProps[] }[] = [
     {
-      title: t('usersettings.Preferences'),
+      title: t('userSettings.Preferences'),
       settingItems: [
         {
           type: 'checkbox',
-          title: t('usersettings.DesktopNotification'),
-          description: <Trans i18nKey="usersettings.DescDesktopNotification" />,
+          title: t('userSettings.DesktopNotification'),
+          description: <Trans i18nKey="userSettings.DescDesktopNotification" />,
           defaultValue: false,
           value: desktopNotification,
           setValue: setDesktopNotification,
@@ -67,8 +67,8 @@ const UserPreferencesPage = () => {
         },
         {
           type: 'checkbox',
-          title: t('usersettings.UseCompactSidebar'),
-          description: <Trans i18nKey="usersettings.DescUseCompactSidebar" />,
+          title: t('userSettings.UseCompactSidebar'),
+          description: <Trans i18nKey="userSettings.DescUseCompactSidebar" />,
           defaultValue: false,
           value: compactSidebar,
           setValue: setCompactSidebar,
@@ -78,8 +78,8 @@ const UserPreferencesPage = () => {
         },
         {
           type: 'select',
-          title: t('usersettings.Language'),
-          description: t('usersettings.DescLanguage'),
+          title: t('userSettings.Language'),
+          description: t('userSettings.DescLanguage'),
           selectProps: {
             options: [
               { label: t('language.OSDefault'), value: 'default' },
@@ -130,9 +130,9 @@ const UserPreferencesPage = () => {
           //@ts-ignore
           globalThis.isElectron && {
             type: 'checkbox',
-            title: t('usersettings.KeepLoginSessionInformation'),
+            title: t('userSettings.KeepLoginSessionInformation'),
             description: (
-              <Trans i18nKey="usersettings.DescKeepLoginSessionInformation" />
+              <Trans i18nKey="userSettings.DescKeepLoginSessionInformation" />
             ),
             defaultValue: false,
             //@ts-ignore
@@ -144,9 +144,9 @@ const UserPreferencesPage = () => {
         ].filter(Boolean),
         {
           type: 'checkbox',
-          title: t('usersettings.AutomaticUpdateCheck'),
+          title: t('userSettings.AutomaticUpdateCheck'),
           description: (
-            <Trans i18nKey="usersettings.DescAutomaticUpdateCheck" />
+            <Trans i18nKey="userSettings.DescAutomaticUpdateCheck" />
           ),
           defaultValue: false,
           value: autoAutomaticUpdateCheck,
@@ -157,8 +157,8 @@ const UserPreferencesPage = () => {
         },
         {
           type: 'checkbox',
-          title: t('usersettings.AutoLogout'),
-          description: t('usersettings.DescAutoLogout'),
+          title: t('userSettings.AutoLogout'),
+          description: t('userSettings.DescAutoLogout'),
           defaultValue: false,
           value: autoLogout,
           setValue: setAutoLogout,
@@ -168,8 +168,8 @@ const UserPreferencesPage = () => {
         },
         {
           type: 'custom',
-          title: t('usersettings.MyKeypairInfo'),
-          description: t('usersettings.DescMyKeypairInfo'),
+          title: t('userSettings.MyKeypairInfo'),
+          description: t('userSettings.DescMyKeypairInfo'),
           children: (
             <Button
               icon={<SettingOutlined />}
@@ -181,8 +181,8 @@ const UserPreferencesPage = () => {
         },
         {
           type: 'custom',
-          title: t('usersettings.SSHKeypairManagement'),
-          description: t('usersettings.DescSSHKeypairManagement'),
+          title: t('userSettings.SSHKeypairManagement'),
+          description: t('userSettings.DescSSHKeypairManagement'),
           children: (
             <Button
               icon={<SettingOutlined />}
@@ -194,8 +194,8 @@ const UserPreferencesPage = () => {
         },
         {
           type: 'checkbox',
-          title: t('usersettings.ClassicSessionLauncher'),
-          description: t('usersettings.DescClassicSessionLauncher'),
+          title: t('userSettings.ClassicSessionLauncher'),
+          description: t('userSettings.DescClassicSessionLauncher'),
           defaultValue: false,
           value: isClassicSessionLauncher,
           onChange: (e) => {
@@ -205,11 +205,11 @@ const UserPreferencesPage = () => {
       ],
     },
     {
-      title: t('usersettings.ShellEnvironments'),
+      title: t('userSettings.ShellEnvironments'),
       settingItems: [
         {
           type: 'custom',
-          title: t('usersettings.EditBootstrapScript'),
+          title: t('userSettings.EditBootstrapScript'),
           children: (
             <Button
               icon={<SettingOutlined />}
@@ -224,7 +224,7 @@ const UserPreferencesPage = () => {
         },
         {
           type: 'custom',
-          title: t('usersettings.EditUserConfigScript'),
+          title: t('userSettings.EditUserConfigScript'),
           children: (
             <Button
               icon={<SettingOutlined />}
@@ -249,11 +249,11 @@ const UserPreferencesPage = () => {
         tabList={[
           {
             key: 'general',
-            label: t('usersettings.General'),
+            label: t('userSettings.General'),
           },
           {
             key: 'logs',
-            label: t('usersettings.Logs'),
+            label: t('userSettings.Logs'),
           },
         ]}
         bodyStyle={{

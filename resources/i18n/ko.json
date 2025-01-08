@@ -253,7 +253,6 @@
       "MinMemory": "현재 선택한 실행환경의 최소 메모리 용량은 {{size}}iB입니다.",
       "Enable": "활성화",
       "Network": "네트워크",
-      "preopen": "사전 개방 포트",
       "EnqueueComputeSessionWarning": "자원이 부족하여 세션이 즉시 실행되지 않을 수 있습니다.",
       "ErrorCanNotExceedRemaining": "남아있는 자원({{amount}})보다 크게 설정할 수 없습니다.",
       "Template": "세션 템플릿",
@@ -286,13 +285,13 @@
       "CreatedAt": "생성 시간",
       "Tags": "태그",
       "SelectAgent": "에이전트 선택",
-      "autoSelect": "자동 선택",
       "DescSelectAgent": "에이전트 오른쪽에 표시되는 자원은 실제 사용 가능한 자원의 양을 나타냅니다. \n현재 에이전트 선택은 단일 노드 단일 컨테이너 환경에서만 사용할 수 있습니다. \n기본 설정은 스케줄러에 의한 에이전트 할당입니다.",
       "AgentNode": "에이전트",
       "AutoSelect": "자동 선택",
       "BatchJobTimeoutDuration": "배치 작업 최대 실행 시간",
       "BatchJobTimeoutDurationDesc": "배치 작업의 최대 실행 시간을 설정합니다. 지정된 시간이 초과되면 세션이 자동으로 종료됩니다.",
-      "SetBatchJobTimeoutDuration": "배치 작업 최대 실행 시간 설정"
+      "SetBatchJobTimeoutDuration": "배치 작업 최대 실행 시간 설정",
+      "PreOpen": "사전 개방 포트"
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",
@@ -301,7 +300,6 @@
     "Batch": "Batch",
     "Finished": "종료",
     "Others": "기타",
-    "exportCSV": "CSV로 내보내기",
     "Terminate": "종료",
     "SessionInfo": "세션 정보",
     "Status": "상태",
@@ -311,7 +309,6 @@
     "TotalRetries": "생성 시도 횟수",
     "LastTry": "최근 시도한 시간",
     "Configuration": "구성",
-    "core": "코어",
     "Reservation": "예약시간",
     "Agent": "실행노드",
     "Usage": "사용량",
@@ -329,16 +326,6 @@
     "NoLogs": "로그가 없습니다.",
     "NoSessionToDisplay": "세션 정보가 없습니다.",
     "CreationFailed": "세션 생성에 실패하였습니다. 잠시 후 다시 시도해주세요.",
-    "applauncher": {
-      "AppMustBeRun": "이미 앱이 실행중일 때만 시작하세요",
-      "AppMustBeRunDialog": "이 앱은 터미널을 통해 미리 실행되고 있는 경우에만 접근 및 사용할 수 있습니다. 그렇지 않은 경우, 앱이 실행중이 아닐때 발생하는 오류 페이지에 접속될 것입니다.",
-      "ConfirmAndRun": "확인하였으며 시작하겠습니다",
-      "Prepared": "준비되었습니다",
-      "App": "앱",
-      "NoExistingConnectionExample": "복사할 접속 예제가 없습니다.",
-      "SSHConnectionExampleClipboardCopy": "SSH 접속 예제가 클립보드에 복사되었습니다.",
-      "ConnectUrlIsNotValid": "연결 URL이 유효하지 않습니다."
-    },
     "TensorboardPath": "TensorBoard가 참조할 로그 디렉토리 경로",
     "InputTensorboardPath": "TensorBoard가 참조할 로그 디렉토리 경로를 입력하세요. 로그 디렉토리는 자동으로 생성되지 않는다는 점에 주의하십시오.",
     "DefaultTensorboardPath": "/home/work/logs",
@@ -423,7 +410,6 @@
     "SessionId": "세션 ID",
     "EnvironmentAndVersion": "환경 및 버전",
     "Tags": "태그",
-    "fGPU": "fGPU",
     "Gaudi2Enabled": "Gaudi 2 NPU 사용중",
     "ForceTerminateWarningMsg": "실제 컨테이너 상태와 상관 없이 세션을 종료 또는 취소 처리합니다. 계속하시겠습니까?",
     "WarningForceTerminateSessions": "경고: 세션 강제 종료",
@@ -431,7 +417,22 @@
     "ForceTerminateWarningMsg3": "연산노드에 컨테이너가 남아있는 경우 수동으로 컨테이너 삭제가 필요할 수 있습니다.",
     "ContainerToCleanUp": "확인할 컨테이너 목록",
     "SessionNotFound": "해당 세션에 접근할 권한이 없거나 세션이 존재하지 않습니다.",
-    "NotInProject": "이 세션은 다른 프로젝트에 속해 있습니다."
+    "NotInProject": "이 세션은 다른 프로젝트에 속해 있습니다.",
+    "Core": "코어",
+    "appLauncher": {
+      "App": "앱",
+      "AppMustBeRun": "이미 앱이 실행중일 때만 시작하세요",
+      "AppMustBeRunDialog": "이 앱은 터미널을 통해 미리 실행되고 있는 경우에만 접근 및 사용할 수 있습니다. 그렇지 않은 경우, 앱이 실행중이 아닐때 발생하는 오류 페이지에 접속될 것입니다.",
+      "ConfirmAndRun": "확인하였으며 시작하겠습니다",
+      "ConnectUrlIsNotValid": "연결 URL이 유효하지 않습니다.",
+      "DownloadSSHKey": "SSH 키 다운로드",
+      "NoExistingConnectionExample": "복사할 접속 예제가 없습니다.",
+      "OpenVSCodeRemote": "로컬 Visual Studio Code 열기",
+      "Prepared": "준비되었습니다",
+      "SSHConnectionExampleClipboardCopy": "SSH 접속 예제가 클립보드에 복사되었습니다."
+    },
+    "ExportCSV": "CSV로 내보내기",
+    "FGPU": "fGPU"
   },
   "modelService": {
     "Services": "모델 서비스",
@@ -618,7 +619,6 @@
     }
   },
   "general": {
-    "cores": "코어",
     "ResourceGroup": "자원 그룹",
     "AccessKey": "접근키",
     "Folders": "폴더",
@@ -645,7 +645,8 @@
     "Change": "변경",
     "MaxValueNotification": "{{ name }} 최대 값은 {{ max }}입니다",
     "TotalItems": "총 {{ total }}개",
-    "ExtendLoginSession": "로그인 세션 연장"
+    "ExtendLoginSession": "로그인 세션 연장",
+    "Cores": "코어"
   },
   "credential": {
     "Permission": "권한",
@@ -656,17 +657,13 @@
     "ResourcePolicy": "자원 정책",
     "NumberOfQueries": "쿼리 수",
     "ConcurrentSessions": "동시 세션수",
-    "active": "활성",
-    "concurrentsessions": "동시 세션수",
     "RateLimit": "최대 요청수",
     "RateLimitValidation": "최대 요청수 값은 0보다 크고 50000 이하 여야 합니다.",
     "RateLimitFor15min": "15분 동안의 최대 요청수",
-    "for900seconds": "(900초당)",
     "RateLimitInputRequired": "Rate Limit 값을 입력해주세요.",
     "InvalidRateLimitValue": "올바른 Rate Limit 값을 입력해주세요.",
     "WarningLessRateLimit": "Rate Limit 값이 작으면 로그인 등 API 작업이 차단될 수 있습니다.",
     "Users": "사용자",
-    "exportCSV": "CSV로 내보내기",
     "CreateUser": "사용자 추가",
     "AddCredential": "자격증명 추가",
     "PolicyGroup": "정책 그룹",
@@ -739,7 +736,9 @@
     "DeactivateCredential": "자격증명 비활성화",
     "YouAreAboutToDeleteCredential": "다음 사용자의 자격증명을 삭제하려고 합니다:",
     "DeleteCredential": "자격증명 삭제",
-    "ActivateCredential": "자격증명 활성화"
+    "ActivateCredential": "자격증명 활성화",
+    "For900Seconds": "(900초당)",
+    "ExportCSV": "CSV로 내보내기"
   },
   "data": {
     "Folders": "폴더",
@@ -762,10 +761,10 @@
     "usage": {
       "Status": "상태",
       "StatusOfSelectedHost": "선택한 호스트 상태",
-      "used": "사용중",
       "Adequate": "여유",
       "Caution": "주의",
-      "Insufficient": "부족"
+      "Insufficient": "부족",
+      "Used": "사용중"
     },
     "Foldername": "폴더 이름",
     "FolderToCopy": "복사할 폴더 이름",
@@ -923,7 +922,6 @@
     "New": "새로운",
     "Add": "추가",
     "CloningIsOnlyPossibleSameHost": "현재 폴더 복사는 동일한 호스트간에만 가능합니다.",
-    "userQuotaScopeId": "Quota Scope ID",
     "NewFolderName": "새 폴더 이름",
     "modelStore": {
       "ImportFromHuggingFace": "Hugging Face에서 가져오기",
@@ -955,7 +953,8 @@
       "ImportAndStartServiceSuccessDesc": "새로운 모델 폴더와 서비스가 준비되었습니다. \n'서비스 정보 보기' 버튼을 클릭하시면 모델 상세 정보를 확인하고 원하는 작업을 시작하실 수 있습니다.",
       "AddedItems": "추가된 항목",
       "ModelFolderName": "모델 폴더 이름"
-    }
+    },
+    "UserQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {
@@ -980,7 +979,7 @@
       "Error": "오류"
     },
     "hide": {
-      "DonotShowThisAgain": "다시 보지 않기"
+      "DoNotShowThisAgain": "다시 보지 않기"
     }
   },
   "environment": {
@@ -1041,7 +1040,8 @@
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
     "BaseImageName": "기본 이미지 이름",
     "Tags": "태그",
-    "FullImagePath": "전체 이미지 경로"
+    "FullImagePath": "전체 이미지 경로",
+    "SuccessfullyCreated": "성공적으로 생성되었습니다"
   },
   "resourcePreset": {
     "ResourcePresets": "자원 프리셋",
@@ -1068,7 +1068,7 @@
     "DeleteResourcePreset": "자원 프리셋 삭제",
     "PresetNameAlreadyExists": "동일한 이름의 자원 프리셋이 이미 존재합니다."
   },
-  "usersettings": {
+  "userSettings": {
     "General": "일반",
     "Logs": "로그",
     "Preferences": "설정",
@@ -1261,7 +1261,6 @@
     "ResourceGroupName": "자원 그룹 이름",
     "Active": "활성",
     "SelectScheduler": "스케줄러 선택",
-    "NochangesMade": "변경사항이 없습니다",
     "ResourceGroupNameNotMatch": "자원 그룹명이 일치하지 않습니다.",
     "ResourceGroupCreated": "자원 그룹이 성공적으로 수정되었습니다.",
     "ResourceGroupModified": "자원 그룹이 성공적으로 수정되었습니다.",
@@ -1277,7 +1276,8 @@
     "AllowedSessionTypes": "허용된 세션 타입",
     "Domain": "도메인",
     "Public": "공개",
-    "PublicStatus": "공개 상태"
+    "PublicStatus": "공개 상태",
+    "NoChangesMade": "변경사항이 없습니다"
   },
   "maintenance": {
     "Fix": "수정",
@@ -1381,9 +1381,9 @@
     "DescImagePullBehavior": "현재 사용중인 이미지의 새 버전이 레지스트리에 등록되었을 때 새로운 이미지를 자동으로 다운로드하는 비교 기준을 결정합니다. 현재 계산환경 이미지를 업데이트 없이 유지하려면 이 옵션을 사용 안함으로 지정하시기 바랍니다.",
     "GUI": "그래픽 사용자 환경",
     "image": {
-      "digest": "해시값",
-      "tag": "태그",
-      "none": "사용안함"
+      "Digest": "해시값",
+      "None": "사용안함",
+      "Tag": "태그"
     },
     "OverlayNetwork": "오버레이 네트워크",
     "OverlayNetworkConfiguration": "오버레이 네트워크 설정을 변경합니다.",
@@ -1470,7 +1470,6 @@
     "SecretKey": "비밀키",
     "Endpoint": "엔드포인트",
     "NotAUser": "아직 가입 전이면",
-    "LoginAnotherway": "다른 방식으로 로그인하기",
     "SignUp": "가입하기",
     "LoginWithIAM": "IAM으로 로그인",
     "ClickToUseIAM": "IAM 사용",
@@ -1500,11 +1499,11 @@
       "LoginWithRealm": "{{ realmName }} 로그인"
     },
     "EndpointStartWith": "http:// 혹은 https:// 로 시작해야 합니다.",
-    "LoginWithE-mailorUsername": "이메일 또는 사용자 이름으로 로그인",
-    "E-mailorUsername": "이메일 또는 사용자 이름"
+    "LoginAnotherWay": "다른 방식으로 로그인하기",
+    "LoginWithE-mailOrUsername": "이메일 또는 사용자 이름으로 로그인",
+    "E-mailOrUsername": "이메일 또는 사용자 이름"
   },
-  "signup": {
-    "SignupBETA": "가입 (베타 초대 대상)",
+  "signUp": {
     "E-mail": "E-mail",
     "UserName": "사용자명",
     "Password": " 비밀번호",
@@ -1512,8 +1511,6 @@
     "PasswordInputRequired": "비밀번호는 필수 입력입니다.",
     "PasswordInvalid": "비밀번호는 최소 8자 이상, 영문 및 숫자와 특수문자를 최소 1자 이상 포함해야 합니다.",
     "PasswordNotMatched": "비밀번호가 불일치합니다. 다시 입력해주세요.",
-    "Signup": "가입",
-    "SignupSucceeded": "가입 완료",
     "Processing": "진행 중",
     "InvitationToken": "초대 토큰",
     "TokenInputRequired": "토큰은 필수 입력입니다.",
@@ -1534,17 +1531,13 @@
     "SendEmail": "인증 메일 전송",
     "SendError": "메일 전송 과정에서 에러가 발생하였습니다.",
     "EmailSent": "이메일을 보냈습니다",
-    "VerificationError": "인증 에러가 발생하였습니다."
+    "VerificationError": "인증 에러가 발생하였습니다.",
+    "SignUpBETA": "가입 (베타 초대 대상)",
+    "SignUp": "가입",
+    "SignUpSucceeded": "가입 완료"
   },
   "update": {
     "NewWebUIVersionAvailable": "새 버전이 출시되었습니다:"
-  },
-  "sidepanel": {
-    "BackgroundTasks": "작업",
-    "NoBackgroundTask": "실행중인 작업이 없습니다.",
-    "Running": "실행중...",
-    "Notification": "알림",
-    "NoNotification": "알림이 없습니다."
   },
   "import": {
     "NoSuitableResourceFoundOnGivenURL": "URL에서 가져올 수 있는 항목이 없습니다.",
@@ -1582,16 +1575,6 @@
     "GitlabDefaultBranch": "GitLab 브랜치 이름",
     "InvalidNotebookURL": "유효하지 않은 노트북 URL입니다."
   },
-  "usagepanel": {
-    "StatisticsForThisMonth": "이번달 통계",
-    "NumSessions": "실행 세션 수",
-    "UsedTime": "사용 시간",
-    "CpuUsedTime": "CPU 사용량",
-    "GpuUsedTime": "GPU 사용량",
-    "DiskUsed": "디스크 사용량",
-    "TrafficUsed": "트래픽 사용"
-  },
-  "DownloadSSHKey": "SSH 키 다운로드",
   "license": {
     "Perpetual": "영구 라이선스",
     "Subscription": "구독 라이선스",
@@ -1599,7 +1582,6 @@
   },
   "eduapi": {
     "CannotAuthorizeSessionByToken": "인증 실패. 포털에 로그인 되어 있는지 확인하십시오.",
-    "QueryingExisitingComputeSession": "기존 연산 세션 조회중 ...",
     "PleaseReload": "잠시 후에 다시 시도해 보십시오.",
     "FoundExistingComputeSession": "실행 중인 계산 세션이 발견되었습니다.",
     "FindingSessionTemplate": "세션 템플릿 탐색 중 ...",
@@ -1607,8 +1589,9 @@
     "CreatingComputeSession": "연산 세션 생성 중 ...",
     "SessionStillPreparing": "연산 세션이 계속 준비중입니다. 잠시 후 리로드 하십시오.",
     "ComputeSessionPrepared": "연산 세션이 준비되었습니다",
-    "sessionStatusIs": "세션 상태는 ",
-    "EmptyProject": "사용자가 소속된 프로젝트가 없습니다."
+    "EmptyProject": "사용자가 소속된 프로젝트가 없습니다.",
+    "QueryingExistingComputeSession": "기존 연산 세션 조회중 ...",
+    "SessionStatusIs": "세션 상태는 "
   },
   "error": {
     "UpdateError": "업데이트 에러",
@@ -1656,7 +1639,6 @@
     "ValueRequired": "값이 필요합니다.",
     "InputTooShort": "입력값이 너무 짧습니다."
   },
-  "OpenVSCodeRemote": "로컬 Visual Studio Code 열기",
   "totp": {
     "OTP": "이중 인증",
     "TotpSetupCompleted": "이중 인증이 활성화 되었습니다.",
@@ -1669,14 +1651,6 @@
     "TurnOffTotp": "이중 인증 비활성화",
     "EnterConfirmationCode": "이제 확인을 위해 인증기에서 생성된 OTP를 입력하세요.",
     "RequireOTP": "OTP값을 입력하세요."
-  },
-  "ErrorBoundary": {
-    "title": "에러가 발생했습니다.",
-    "reloadPage": "페이지 새로고침",
-    "resetErrorBoundary": "ErrorBoundary 초기화",
-    "displayOnlyDevEnv": "이 에러 블록은 WebUI 개발 환경에서만 표시됩니다.",
-    "expiredLoginSessionTitle": "로그인 세션이 만료되었습니다.",
-    "expiredLoginSessionReLogin": "로그인"
   },
   "modelStore": {
     "Description": "설명",
@@ -1714,27 +1688,19 @@
     "SearchTableColumn": "테이블 열 검색",
     "SelectColumnToDisplay": "표시할 열 선택"
   },
-  "tourguide": {
-    "NeoSessionLauncher": {
-      "ValidationErrorTitle": "입력 필드 검증 오류",
-      "ValidationErrorText": "필수 입력 필드에 값을 입력하지 않거나 잘못된 값을 입력한 경우, 해당 필드에 오류 메시지가 표시됩니다.",
-      "FixErrorAndTryAgainText": "오류 필드가 있는 경우, 세션 실행 버튼이 비활성화 됩니다. 오류 수정 후 다시 시도해 주세요.",
-      "FixErrorFieldbyModifyButton": "해당 오류 필드에 대해, 우측 상단의 수정 버튼으로 바로 이동하여 수정할 수 있습니다."
-    }
-  },
   "sourceCodeViewer": {
     "Copy": "복사",
     "Copied": "복사됨"
   },
   "propertyFilter": {
     "ResetFilter": "필터 초기화",
-    "placeHolder": "검색"
+    "PlaceHolder": "검색"
   },
   "interactiveLogin": {
     "InteractiveLoginWithBackendAI": "Backend.AI 계정을 이용한 로그인",
-    "confirmLoginMessage": "{{username}} ({{email}}) 계정으로 로그인하시겠습니까?",
     "ServiceName": "서비스 이름",
-    "useAnotherAccount": "다른 계정으로 로그인"
+    "UseAnotherAccount": "다른 계정으로 로그인",
+    "ConfirmLoginMessage": "{{username}} ({{email}}) 계정으로 로그인하시겠습니까?"
   },
   "chatui": {
     "CannotFindModel": "LLM 모델을 찾을 수 없습니다. 사용자 정의 모델을 설정해주세요.",
@@ -1752,11 +1718,43 @@
     "UploadFilesDescription": "파일을 여기 끌어다 놓거나 이 영역을 클릭하세요"
   },
   "time": {
-    "ms": "밀리초",
-    "sec": "초",
-    "min": "분",
-    "hour": "시간",
-    "day": "일",
-    "week": "주"
+    "Day": "일",
+    "Hour": "시간",
+    "Min": "분",
+    "Ms": "밀리초",
+    "Sec": "초",
+    "Week": "주"
+  },
+  "usagePanel": {
+    "CpuUsedTime": "CPU 사용량",
+    "DiskUsed": "디스크 사용량",
+    "GpuUsedTime": "GPU 사용량",
+    "NumSessions": "실행 세션 수",
+    "StatisticsForThisMonth": "이번달 통계",
+    "TrafficUsed": "트래픽 사용",
+    "UsedTime": "사용 시간"
+  },
+  "sidePanel": {
+    "BackgroundTasks": "작업",
+    "NoBackgroundTask": "실행중인 작업이 없습니다.",
+    "NoNotification": "알림이 없습니다.",
+    "Notification": "알림",
+    "Running": "실행중..."
+  },
+  "tourGuide": {
+    "neoSessionLauncher": {
+      "FixErrorAndTryAgainText": "오류 필드가 있는 경우, 세션 실행 버튼이 비활성화 됩니다. 오류 수정 후 다시 시도해 주세요.",
+      "FixErrorFieldByModifyButton": "해당 오류 필드에 대해, 우측 상단의 수정 버튼으로 바로 이동하여 수정할 수 있습니다.",
+      "ValidationErrorText": "필수 입력 필드에 값을 입력하지 않거나 잘못된 값을 입력한 경우, 해당 필드에 오류 메시지가 표시됩니다.",
+      "ValidationErrorTitle": "입력 필드 검증 오류"
+    }
+  },
+  "errorBoundary": {
+    "DisplayOnlyDevEnv": "이 에러 블록은 WebUI 개발 환경에서만 표시됩니다.",
+    "ExpiredLoginSessionReLogin": "로그인",
+    "ExpiredLoginSessionTitle": "로그인 세션이 만료되었습니다.",
+    "ReloadPage": "페이지 새로고침",
+    "ResetErrorBoundary": "ErrorBoundary 초기화",
+    "Title": "에러가 발생했습니다."
   }
 }

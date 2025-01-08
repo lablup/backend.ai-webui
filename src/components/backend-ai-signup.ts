@@ -56,7 +56,7 @@ export default class BackendAiSignup extends BackendAIPage {
   @property({ type: String }) preloadedToken;
   @property({ type: Boolean }) allowSignupWithoutConfirmation;
   @property({ type: HTMLSpanElement }) signupButtonMessage = html`
-    <span id="signup-button-message">${_text('signup.Signup')}</span>
+    <span id="signup-button-message">${_text('signUp.SignUp')}</span>
   `;
   @query('#signup-button') signupButton!: Button;
   @query('#id_user_email') userEmailInput!: TextField;
@@ -270,7 +270,7 @@ export default class BackendAiSignup extends BackendAIPage {
       this.tokenInput.value = this.preloadedToken;
     }
     this.signupButtonMessage = html`
-      <span id="signup-button-message">${_text('signup.Signup')}</span>
+      <span id="signup-button-message">${_text('signUp.SignUp')}</span>
     `;
   }
 
@@ -316,7 +316,7 @@ export default class BackendAiSignup extends BackendAIPage {
       ) as HTMLInputElement
     ).checked;
     if (approved === false) {
-      this.notification.text = _text('signup.RequestAgreementTermsOfService');
+      this.notification.text = _text('signUp.RequestAgreementTermsOfService');
       this.notification.show();
       return;
     }
@@ -328,7 +328,7 @@ export default class BackendAiSignup extends BackendAIPage {
     const user_email = this.userEmailInput.value;
     const user_name = this.userNameInput.value;
     const password = this.passwordInput.value;
-    this.notification.text = _text('signup.Processing');
+    this.notification.text = _text('signUp.Processing');
     this.notification.show();
     const body = {
       email: user_email,
@@ -346,10 +346,10 @@ export default class BackendAiSignup extends BackendAIPage {
         this._toggleInputField(false);
         this.signupButtonMessage = html`
           <span id="signup-button-message">
-            ${_text('signup.SignupSucceeded')}
+            ${_text('signUp.SignUpSucceeded')}
           </span>
         `;
-        this.notification.text = _text('signup.SignupSucceeded');
+        this.notification.text = _text('signUp.SignUpSucceeded');
         this.notification.show();
         setTimeout(() => {
           this.signupPanel.hide();
@@ -395,14 +395,14 @@ export default class BackendAiSignup extends BackendAIPage {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
           this.userEmailInput.validationMessage = _text(
-            'signup.EmailInputRequired',
+            'signUp.EmailInputRequired',
           );
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid,
           };
         } else {
-          this.userEmailInput.validationMessage = _text('signup.InvalidEmail');
+          this.userEmailInput.validationMessage = _text('signUp.InvalidEmail');
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid,
@@ -414,7 +414,7 @@ export default class BackendAiSignup extends BackendAIPage {
           /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         const isValid = regex.exec(this.userEmailInput.value);
         if (!isValid) {
-          this.userEmailInput.validationMessage = _text('signup.InvalidEmail');
+          this.userEmailInput.validationMessage = _text('signUp.InvalidEmail');
         }
         return {
           // TODO clear return required
@@ -431,7 +431,7 @@ export default class BackendAiSignup extends BackendAIPage {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
           this.passwordInput.validationMessage = _text(
-            'signup.PasswordInputRequired',
+            'signUp.PasswordInputRequired',
           );
           return {
             valid: nativeValidity.valid,
@@ -439,7 +439,7 @@ export default class BackendAiSignup extends BackendAIPage {
           };
         } else {
           this.passwordInput.validationMessage = _text(
-            'signup.PasswordInvalid',
+            'signUp.PasswordInvalid',
           );
           return {
             valid: nativeValidity.valid,
@@ -463,7 +463,7 @@ export default class BackendAiSignup extends BackendAIPage {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
           this.passwordConfirmInput.validationMessage = _text(
-            'signup.PasswordInputRequired',
+            'signUp.PasswordInputRequired',
           );
           return {
             valid: nativeValidity.valid,
@@ -471,7 +471,7 @@ export default class BackendAiSignup extends BackendAIPage {
           };
         } else {
           this.passwordConfirmInput.validationMessage = _text(
-            'signup.PasswordInvalid',
+            'signUp.PasswordInvalid',
           );
           return {
             valid: nativeValidity.valid,
@@ -484,7 +484,7 @@ export default class BackendAiSignup extends BackendAIPage {
           this.passwordInput.value === this.passwordConfirmInput.value;
         if (!isMatched) {
           this.passwordConfirmInput.validationMessage = _text(
-            'signup.PasswordNotMatched',
+            'signUp.PasswordNotMatched',
           );
         }
         return {
@@ -513,10 +513,10 @@ export default class BackendAiSignup extends BackendAIPage {
         <span slot="title">
           ${this.allowSignupWithoutConfirmation
             ? html`
-                ${_t('signup.Signup')}
+                ${_t('signUp.SignUp')}
               `
             : html`
-                ${_t('signup.SignupBETA')}
+                ${_t('signUp.SignUpBETA')}
               `}
         </span>
         <div slot="content" class="vertical flex layout">
@@ -527,10 +527,10 @@ export default class BackendAiSignup extends BackendAIPage {
             autofocus
             maxlength="64"
             placeholder="${_text('maxLength.64chars')}"
-            label="${_t('signup.E-mail')}"
+            label="${_t('signUp.E-mail')}"
             validateOnInitialRender
             @change="${this._validateEmail}"
-            validationMessage="${_t('signup.EmailInputRequired')}"
+            validationMessage="${_t('signUp.EmailInputRequired')}"
             value="${this.user_email}"
             required
           ></mwc-textfield>
@@ -540,7 +540,7 @@ export default class BackendAiSignup extends BackendAIPage {
             id="id_user_name"
             maxlength="64"
             placeholder="${_text('maxLength.64chars')}"
-            label="${_t('signup.UserName')}"
+            label="${_t('signUp.UserName')}"
             value="${this.user_name}"
           ></mwc-textfield>
           ${this.allowSignupWithoutConfirmation
@@ -551,8 +551,8 @@ export default class BackendAiSignup extends BackendAIPage {
                   name="token"
                   id="id_token"
                   maxlength="50"
-                  label="${_t('signup.InvitationToken')}"
-                  validationMessage="${_t('signup.TokenInputRequired')}"
+                  label="${_t('signUp.InvitationToken')}"
+                  validationMessage="${_t('signUp.TokenInputRequired')}"
                   required
                 ></mwc-textfield>
               `}
@@ -561,10 +561,10 @@ export default class BackendAiSignup extends BackendAIPage {
               type="password"
               name="password1"
               id="id_password1"
-              label="${_t('signup.Password')}"
+              label="${_t('signUp.Password')}"
               maxLength="64"
               pattern=${BackendAiCommonUtils.passwordRegex}
-              validationMessage="${_t('signup.PasswordInputRequired')}"
+              validationMessage="${_t('signUp.PasswordInputRequired')}"
               @change="${this._validatePassword}"
               value=""
               required
@@ -581,10 +581,10 @@ export default class BackendAiSignup extends BackendAIPage {
               type="password"
               name="password2"
               id="id_password2"
-              label="${_t('signup.PasswordAgain')}"
+              label="${_t('signUp.PasswordAgain')}"
               maxLength="64"
               pattern=${BackendAiCommonUtils.passwordRegex}
-              validationMessage="${_t('signup.PasswordInputRequired')}"
+              validationMessage="${_t('signUp.PasswordInputRequired')}"
               @change="${this._validatePassword}"
               value=""
               required
@@ -602,21 +602,21 @@ export default class BackendAiSignup extends BackendAIPage {
           >
             <mwc-checkbox id="approve-terms-of-service"></mwc-checkbox>
             <p style="font-size:12px;">
-              ${_text('signup.PolicyAgreement_1')}
+              ${_text('signUp.PolicyAgreement_1')}
               <a
                 style="color:var(--token-colorPrimary);"
                 @click="${() => this.receiveTOSAgreement()}"
               >
-                ${_t('signup.TermsOfService')}
+                ${_t('signUp.TermsOfService')}
               </a>
-              ${_text('signup.PolicyAgreement_2')}
+              ${_text('signUp.PolicyAgreement_2')}
               <a
                 style="color:var(--token-colorPrimary);"
                 @click="${() => this.receivePPAgreement()}"
               >
-                ${_t('signup.PrivacyPolicy')}
+                ${_t('signUp.PrivacyPolicy')}
               </a>
-              ${_text('signup.PolicyAgreement_3')}
+              ${_text('signUp.PolicyAgreement_3')}
             </p>
           </div>
         </div>
@@ -651,9 +651,9 @@ export default class BackendAiSignup extends BackendAIPage {
         blockscrolling
         persistent
       >
-        <span slot="title">${_t('signup.ThankYou')}</span>
+        <span slot="title">${_t('signUp.ThankYou')}</span>
         <div slot="content">
-          <p style="max-width:350px">${_t('signup.VerificationMessage')}</p>
+          <p style="max-width:350px">${_t('signUp.VerificationMessage')}</p>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button

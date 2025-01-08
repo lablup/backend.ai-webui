@@ -60,7 +60,7 @@ const MyKeypairInfoModal: React.FC<MyKeypairInfoModalProps> = ({
   return (
     <BAIModal
       {...baiModalProps}
-      title={t('usersettings.MyKeypairInfo')}
+      title={t('userSettings.MyKeypairInfo')}
       centered
       onCancel={onRequestClose}
       destroyOnClose

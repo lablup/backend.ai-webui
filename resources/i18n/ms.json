@@ -242,7 +242,6 @@
       "PrePortConfigWillDisappear": "Mana-mana port prabuka yang belum disimpan akan hilang.",
       "StartModelServing": "Mulakan Penyajian Model",
       "PreOpenPortRangeGuide": "Masukkan berbilang nilai yang dipisahkan dengan sama ada koma (,) atau ruang.",
-      "preopen": "prabuka",
       "Network": "Rangkaian",
       "Enable": "Dayakan",
       "FolderAliasInvalid": "Hanya aksara abjad angka, garis bawah (_), garis miring (/), titik (.), dan sempang (-) dibenarkan.",
@@ -285,25 +284,23 @@
       "CreatedAt": "Dicipta Pada",
       "Tags": "Tag",
       "SelectAgent": "Pilih Ejen",
-      "autoSelect": "Pilih Auto",
       "DescSelectAgent": "Sumber yang dipaparkan di sebelah kanan ejen mewakili jumlah sebenar sumber yang tersedia. \nPada masa ini, pemilihan ejen hanya tersedia dalam persekitaran bekas tunggal nod tunggal. \nTetapan lalai ialah peruntukan ejen oleh penjadual.",
       "AgentNode": "ejen",
-      "AutoSelect": "auto-pilih",
+      "AutoSelect": "Pilih Auto",
       "BatchJobTimeoutDuration": "Tempoh Tamat Kerja Berkelompok",
       "BatchJobTimeoutDurationDesc": "Tetapkan masa pelaksanaan maksimum untuk kerja kelompok. \nSesi akan ditamatkan secara automatik jika melebihi masa yang ditetapkan.",
-      "SetBatchJobTimeoutDuration": "Tetapkan tempoh tamat masa kerja kelompok"
+      "SetBatchJobTimeoutDuration": "Tetapkan tempoh tamat masa kerja kelompok",
+      "PreOpen": "prabuka"
     },
     "Preparing": "Menyiapkan ...",
     "PreparingSession": "Menyiapkan sesi ...",
     "Running": "Berlari",
     "Finished": "Selesai",
     "Others": "Yang lain",
-    "exportCSV": "eksport CSV",
     "Terminate": "Tamatkan",
     "SessionInfo": "Maklumat Sesi",
     "Status": "Status",
     "Configuration": "Konfigurasi",
-    "core": "teras",
     "Reservation": "Tempahan",
     "Agent": "Ejen",
     "Usage": "Penggunaan",
@@ -318,16 +315,6 @@
     "ResourceGroup": "Kumpulan Sumber",
     "NoLogs": "Tiada balak.",
     "CreationFailed": "Pembuatan sesi gagal. Sila cuba lagi dalam beberapa minit.",
-    "applauncher": {
-      "AppMustBeRun": "Mulakan hanya apabila aplikasi sudah berjalan",
-      "AppMustBeRunDialog": "Aplikasi ini hanya dapat diakses dan digunakan jika sudah berjalan melalui terminal. Sekiranya tidak, anda akan diarahkan ke halaman ralat yang berlaku semasa aplikasi tidak berjalan.",
-      "ConfirmAndRun": "Saya periksa dan saya akan mulakan",
-      "Prepared": "Bersedia",
-      "NoExistingConnectionExample": "Tiada Contoh Sambungan untuk disalin.",
-      "SSHConnectionExampleClipboardCopy": "Contoh Sambungan SSH telah disalin ke papan keratan.",
-      "App": "Aplikasi",
-      "ConnectUrlIsNotValid": "URL Sambung tidak sah."
-    },
     "TensorboardPath": "Direktori log untuk TensorBoard",
     "InputTensorboardPath": "Sila masukkan direktori log yang akan dirujuk oleh TensorBoard. Perhatikan bahawa direktori log tidak akan dibuat secara automatik ..",
     "DefaultTensorboardPath": "/ rumah / kerja / balak",
@@ -422,7 +409,6 @@
     "SessionId": "Id Sesi",
     "EnvironmentAndVersion": "Persekitaran dan Versi",
     "Tags": "Tag",
-    "fGPU": "fGPU",
     "Gaudi2Enabled": "Gaudi 2 NPU Didayakan",
     "ForceTerminateWarningMsg": "Tindakan ini akan menamatkan atau membatalkan sesi tanpa mengira status semasanya. \nAdakah anda pasti?",
     "WarningForceTerminateSessions": "Amaran: Tamatkan Sesi Paksa",
@@ -430,7 +416,22 @@
     "ForceTerminateWarningMsg3": "Tindakan ini tidak memadamkan bekas sebenar pada ejen. \nPembersihan manual mungkin diperlukan.",
     "ContainerToCleanUp": "Bekas untuk dibersihkan",
     "SessionNotFound": "Anda tidak mempunyai kebenaran untuk mengakses sesi ini atau sesi tidak wujud.",
-    "NotInProject": "Sesi ini tergolong dalam projek yang berbeza"
+    "NotInProject": "Sesi ini tergolong dalam projek yang berbeza",
+    "Core": "teras",
+    "appLauncher": {
+      "App": "Aplikasi",
+      "AppMustBeRun": "Mulakan hanya apabila aplikasi sudah berjalan",
+      "AppMustBeRunDialog": "Aplikasi ini hanya dapat diakses dan digunakan jika sudah berjalan melalui terminal. Sekiranya tidak, anda akan diarahkan ke halaman ralat yang berlaku semasa aplikasi tidak berjalan.",
+      "ConfirmAndRun": "Saya periksa dan saya akan mulakan",
+      "ConnectUrlIsNotValid": "URL Sambung tidak sah.",
+      "DownloadSSHKey": "Muat turun Kunci SSH",
+      "NoExistingConnectionExample": "Tiada Contoh Sambungan untuk disalin.",
+      "OpenVSCodeRemote": "Buka Kod Visual Studio tempatan",
+      "Prepared": "Bersedia",
+      "SSHConnectionExampleClipboardCopy": "Contoh Sambungan SSH telah disalin ke papan keratan."
+    },
+    "ExportCSV": "eksport CSV",
+    "FGPU": "fGPU"
   },
   "button": {
     "Cancel": "Batal",
@@ -503,7 +504,6 @@
     "Agent": "Ejen"
   },
   "general": {
-    "cores": "teras",
     "ResourceGroup": "Kumpulan Sumber",
     "AccessKey": "Kunci akses",
     "Folders": "Folder",
@@ -530,7 +530,8 @@
     "Change": "Berubah",
     "MaxValueNotification": "{{nama}} mestilah maksimum {{maks}}",
     "TotalItems": "Jumlah {{total}} item",
-    "ExtendLoginSession": "Lanjutkan sesi log masuk"
+    "ExtendLoginSession": "Lanjutkan sesi log masuk",
+    "Cores": "teras"
   },
   "credential": {
     "Permission": "Kebenaran",
@@ -541,14 +542,10 @@
     "ResourcePolicy": "Dasar Sumber",
     "NumberOfQueries": "Bilangan Pertanyaan",
     "ConcurrentSessions": "Sesi Serentak",
-    "active": "aktif",
-    "concurrentsessions": "Sesi serentak",
     "RateLimit": "Had Kadar",
     "RateLimitValidation": "Had Kadar hendaklah lebih besar daripada sifar dan di bawah 50000",
     "RateLimitFor15min": "Had Kadar (selama 15 min.)",
-    "for900seconds": "selama 900 saat",
     "Users": "Pengguna",
-    "exportCSV": "eksport CSV",
     "CreateUser": "Buat Pengguna",
     "AddCredential": "Tambah kelayakan",
     "PolicyGroup": "Kumpulan Dasar",
@@ -624,7 +621,9 @@
     "DeactivateCredential": "Nyahaktifkan kelayakan",
     "YouAreAboutToDeleteCredential": "Anda akan memadamkan kelayakan pengguna ini:",
     "DeleteCredential": "Padamkan kelayakan",
-    "ActivateCredential": "Aktifkan kelayakan"
+    "ActivateCredential": "Aktifkan kelayakan",
+    "For900Seconds": "selama 900 saat",
+    "ExportCSV": "eksport CSV"
   },
   "data": {
     "Folders": "Folder",
@@ -798,7 +797,7 @@
       "Insufficient": "Tidak mencukupi",
       "StatusOfSelectedHost": "Status Hos Terpilih",
       "Status": "Status",
-      "used": "digunakan"
+      "Used": "digunakan"
     },
     "Pipeline": "Folder Saluran Paip",
     "DialogDataFolder": "Folder khusus saluran paip yang dibuat secara automatik apabila membuat saluran paip dalam FastTrack.",
@@ -808,7 +807,6 @@
     "New": "Baru",
     "Add": "Tambah",
     "CloningIsOnlyPossibleSameHost": "Pada masa ini, pengklonan hanya boleh dilakukan pada hos yang sama.",
-    "userQuotaScopeId": "Quota Scope ID",
     "NewFolderName": "Nama folder baharu",
     "modelStore": {
       "ImportFromHuggingFace": "Import daripada Hugging Face",
@@ -839,7 +837,8 @@
       "ImportAndStartServiceSuccessDesc": "Folder dan perkhidmatan model baharu sudah sedia. \nKlik butang 'Lihat maklumat perkhidmatan' untuk menyemak butiran model dan memulakan operasi yang diingini.",
       "AddedItems": "Item ditambah",
       "ModelFolderName": "Nama folder model"
-    }
+    },
+    "UserQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {
@@ -864,7 +863,7 @@
       "DeleteForever": "Padam Selamanya?"
     },
     "hide": {
-      "DonotShowThisAgain": "Jangan tunjukkan ini lagi."
+      "DoNotShowThisAgain": "Jangan tunjukkan ini lagi."
     }
   },
   "environment": {
@@ -925,7 +924,8 @@
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
     "BaseImageName": "Nama imej asas",
     "Tags": "Tag",
-    "FullImagePath": "Laluan imej penuh"
+    "FullImagePath": "Laluan imej penuh",
+    "SuccessfullyCreated": "Berjaya dibuat"
   },
   "resourcePreset": {
     "ResourcePresets": "Pratetap Sumber",
@@ -952,7 +952,7 @@
     "DeleteResourcePreset": "Padamkan pratetap sumber",
     "PresetNameAlreadyExists": "Pratetap sumber dengan nama yang sama sudah wujud."
   },
-  "usersettings": {
+  "userSettings": {
     "General": "Am",
     "Logs": "Log",
     "Preferences": "Keutamaan",
@@ -1145,7 +1145,6 @@
     "ResourceGroupName": "ResourceGroupName",
     "Active": "Aktif",
     "SelectScheduler": "Pilih Penjadual",
-    "NochangesMade": "Tidak ada perubahan yang dibuat",
     "ResourceGroupNameNotMatch": "Nama kumpulan sumber tidak sepadan!",
     "ResourceGroupCreated": "Kumpulan sumber berjaya dibuat",
     "ResourceGroupModified": "Kumpulan sumber berjaya diubah suai",
@@ -1161,7 +1160,8 @@
     "AllowedSessionTypes": "Jenis sesi yang dibenarkan",
     "Public": "Awam",
     "RetriesToSkip": "Masa",
-    "NoGroupToDisplay": "NoGroupToDisplay"
+    "NoGroupToDisplay": "NoGroupToDisplay",
+    "NoChangesMade": "Tidak ada perubahan yang dibuat"
   },
   "maintenance": {
     "Fix": "Menetapkan",
@@ -1263,9 +1263,9 @@
     "DescImagePullBehavior": "Menentukan syarat untuk memuat turun gambar baru secara automatik apabila versi baru didaftarkan dalam pendaftaran. Tidak ada, gambar baru tidak akan dimuat turun secara automatik.",
     "GUI": "GUI",
     "image": {
-      "digest": "Pencernaan",
-      "tag": "Tag",
-      "none": "Tiada"
+      "Digest": "Pencernaan",
+      "None": "Tiada",
+      "Tag": "Tag"
     },
     "OverlayNetwork": "Rangkaian Tindanan",
     "OverlayNetworkConfiguration": "Konfigurasi untuk digunakan semasa membuat rangkaian tindanan.",
@@ -1354,7 +1354,6 @@
     "SecretKey": "Kunci Rahsia",
     "Endpoint": "Titik Akhir",
     "NotAUser": "Bukan pengguna?",
-    "LoginAnotherway": "Mahu log masuk dengan cara lain?",
     "SignUp": "Mendaftar",
     "LoginWithIAM": "Log Masuk Dengan IAM",
     "ClickToUseIAM": "Klik Untuk Menggunakan IAM",
@@ -1384,11 +1383,11 @@
       "LoginWithSAML": "Log masuk dengan SAML",
       "LoginWithRealm": "Log masuk dengan {{ realmName }}"
     },
-    "LoginWithE-mailorUsername": "Log masuk Dengan E-mel atau Nama Pengguna",
-    "E-mailorUsername": "E-mel atau Nama pengguna"
+    "LoginAnotherWay": "Mahu log masuk dengan cara lain?",
+    "LoginWithE-mailOrUsername": "Log masuk Dengan E-mel atau Nama Pengguna",
+    "E-mailOrUsername": "E-mel atau Nama pengguna"
   },
-  "signup": {
-    "SignupBETA": "Pendaftaran (Jemputan beta sahaja)",
+  "signUp": {
     "E-mail": "E-mel",
     "UserName": "Nama Pengguna",
     "Password": "Kata Laluan",
@@ -1396,8 +1395,6 @@
     "PasswordInputRequired": "Kata laluan diperlukan.",
     "PasswordInvalid": "Gunakan 8 atau lebih aksara dengan gabungan huruf, nombor & simbol.",
     "PasswordNotMatched": "Kata laluan tersebut tidak sepadan. Cuba lagi.",
-    "Signup": "Mendaftar",
-    "SignupSucceeded": "Berjaya mendaftar.",
     "Processing": "Memproses ...",
     "InvitationToken": "Token Jemputan",
     "TokenInputRequired": "Token diperlukan.",
@@ -1418,17 +1415,13 @@
     "SendEmail": "Hantar e-mel pengesahan",
     "SendError": "Ralat berlaku semasa penghantaran e-mel",
     "EmailSent": "Emel dihantar",
-    "VerificationError": "Ralat pengesahan berlaku"
+    "VerificationError": "Ralat pengesahan berlaku",
+    "SignUpBETA": "Pendaftaran (Jemputan beta sahaja)",
+    "SignUp": "Mendaftar",
+    "SignUpSucceeded": "Berjaya mendaftar."
   },
   "update": {
     "NewWebUIVersionAvailable": "Versi baru tersedia:"
-  },
-  "sidepanel": {
-    "BackgroundTasks": "Menjalankan Tugas",
-    "NoBackgroundTask": "Tiada Tugas.",
-    "Running": "Berlari ...",
-    "Notification": "Pemberitahuan",
-    "NoNotification": "Tiada Pemberitahuan."
   },
   "import": {
     "NoSuitableResourceFoundOnGivenURL": "Tiada sumber yang sesuai dijumpai pada URL yang diberikan.",
@@ -1466,16 +1459,6 @@
     "GitlabDefaultBranch": "Nama Cawangan GitLab",
     "InvalidNotebookURL": "URL Notbook tidak sah."
   },
-  "usagepanel": {
-    "StatisticsForThisMonth": "Statistik untuk Bulan Ini",
-    "NumSessions": "Bilangan Sesi",
-    "UsedTime": "Masa Terpakai",
-    "CpuUsedTime": "Masa Terpakai CPU",
-    "GpuUsedTime": "Masa Digunakan GPU",
-    "DiskUsed": "Penggunaan cakera",
-    "TrafficUsed": "Penggunaan Lalu Lintas"
-  },
-  "DownloadSSHKey": "Muat turun Kunci SSH",
   "license": {
     "Perpetual": "Kekal",
     "Subscription": "Langganan",
@@ -1483,7 +1466,6 @@
   },
   "eduapi": {
     "CannotAuthorizeSessionByToken": "Tidak dapat mengesahkan sesi anda. Masuk ke portal terlebih dahulu.",
-    "QueryingExisitingComputeSession": "Pertanyaan sesi pengkomputeran yang ada ...",
     "PleaseReload": "Muat semula selepas beberapa waktu.",
     "FoundExistingComputeSession": "Menjumpai sesi pengiraan yang ada",
     "FindingSessionTemplate": "Mencari templat sesi ...",
@@ -1491,8 +1473,9 @@
     "CreatingComputeSession": "Membuat sesi mengira ...",
     "SessionStillPreparing": "Sesi masih dalam persiapan. Muat semula selepas beberapa ketika",
     "ComputeSessionPrepared": "Sesi perkiraan disediakan",
-    "sessionStatusIs": "Status sesi adalah",
-    "EmptyProject": "EmptyProject"
+    "EmptyProject": "EmptyProject",
+    "QueryingExistingComputeSession": "Pertanyaan sesi pengkomputeran yang ada ...",
+    "SessionStatusIs": "Status sesi adalah"
   },
   "error": {
     "UpdateError": "Ralat kemas kini",
@@ -1535,14 +1518,6 @@
   "explorer": {
     "ValueRequired": "Nilai Diperlukan",
     "InputTooShort": "InputTooShort"
-  },
-  "ErrorBoundary": {
-    "title": "Ralat telah berlaku.",
-    "reloadPage": "Muat semula halaman",
-    "resetErrorBoundary": "Tetapkan Semula ErrorBoundary",
-    "displayOnlyDevEnv": "Blok ralat ini hanya dipaparkan dalam persekitaran pembangunan WebUI.",
-    "expiredLoginSessionTitle": "Sesi log masuk anda telah tamat tempoh.",
-    "expiredLoginSessionReLogin": "Log masuk"
   },
   "storageHost": {
     "quotaSettings": {
@@ -1671,7 +1646,6 @@
     "EnterConfirmationCode": "Sekarang masukkan OTP yang dijana oleh pengesah untuk mengesahkan.",
     "RequireOTP": "Tulis OTP."
   },
-  "OpenVSCodeRemote": "Buka Kod Visual Studio tempatan",
   "inputLimit": {
     "4to64chars": "(4~64 aksara)",
     "4to32chars": "(4~32 aksara)"
@@ -1712,27 +1686,19 @@
     "SettingTable": "Tetapan Meja",
     "SearchTableColumn": "Cari lajur jadual"
   },
-  "tourguide": {
-    "NeoSessionLauncher": {
-      "ValidationErrorTitle": "Ralat pengesahan medan input",
-      "ValidationErrorText": "Jika anda tidak memasukkan nilai dalam medan yang diperlukan atau memasukkan nilai yang tidak sah, mesej ralat dipaparkan dalam medan tersebut.",
-      "FixErrorAndTryAgainText": "Jika terdapat medan ralat, butang Sesi Pelancaran dinyahdayakan. \nSila betulkan ralat dan cuba lagi.",
-      "FixErrorFieldbyModifyButton": "Untuk medan ralat itu, anda boleh pergi terus ke butang Edit di penjuru kanan sebelah atas untuk mengeditnya."
-    }
-  },
   "sourceCodeViewer": {
     "Copy": "Salinan",
     "Copied": "disalin"
   },
   "propertyFilter": {
-    "placeHolder": "Cari",
-    "ResetFilter": "Tetapkan semula penapis"
+    "ResetFilter": "Tetapkan semula penapis",
+    "PlaceHolder": "Cari"
   },
   "interactiveLogin": {
     "InteractiveLoginWithBackendAI": "Log masuk dengan akaun Backend.AI anda",
-    "confirmLoginMessage": "Adakah anda ingin melog masuk dengan akaun {{username}} ({{email}})?",
     "ServiceName": "Nama perkhidmatan",
-    "useAnotherAccount": "Log masuk dengan akaun lain"
+    "UseAnotherAccount": "Log masuk dengan akaun lain",
+    "ConfirmLoginMessage": "Adakah anda ingin melog masuk dengan akaun {{username}} ({{email}})?"
   },
   "chatui": {
     "CannotFindModel": "Model LLM tidak ditemui. \nSila sesuaikan model.",
@@ -1750,11 +1716,43 @@
     "UploadFilesDescription": "Klik atau seret fail ke kawasan ini untuk memuat naik"
   },
   "time": {
-    "ms": "ms",
-    "sec": "sec",
-    "min": "min",
-    "hour": "jam",
-    "day": "day",
-    "week": "minggu"
+    "Day": "day",
+    "Hour": "jam",
+    "Min": "min",
+    "Ms": "ms",
+    "Sec": "sec",
+    "Week": "minggu"
+  },
+  "usagePanel": {
+    "CpuUsedTime": "Masa Terpakai CPU",
+    "DiskUsed": "Penggunaan cakera",
+    "GpuUsedTime": "Masa Digunakan GPU",
+    "NumSessions": "Bilangan Sesi",
+    "StatisticsForThisMonth": "Statistik untuk Bulan Ini",
+    "TrafficUsed": "Penggunaan Lalu Lintas",
+    "UsedTime": "Masa Terpakai"
+  },
+  "sidePanel": {
+    "BackgroundTasks": "Menjalankan Tugas",
+    "NoBackgroundTask": "Tiada Tugas.",
+    "NoNotification": "Tiada Pemberitahuan.",
+    "Notification": "Pemberitahuan",
+    "Running": "Berlari ..."
+  },
+  "tourGuide": {
+    "neoSessionLauncher": {
+      "FixErrorAndTryAgainText": "Jika terdapat medan ralat, butang Sesi Pelancaran dinyahdayakan. \nSila betulkan ralat dan cuba lagi.",
+      "FixErrorFieldByModifyButton": "Untuk medan ralat itu, anda boleh pergi terus ke butang Edit di penjuru kanan sebelah atas untuk mengeditnya.",
+      "ValidationErrorText": "Jika anda tidak memasukkan nilai dalam medan yang diperlukan atau memasukkan nilai yang tidak sah, mesej ralat dipaparkan dalam medan tersebut.",
+      "ValidationErrorTitle": "Ralat pengesahan medan input"
+    }
+  },
+  "errorBoundary": {
+    "DisplayOnlyDevEnv": "Blok ralat ini hanya dipaparkan dalam persekitaran pembangunan WebUI.",
+    "ExpiredLoginSessionReLogin": "Log masuk",
+    "ExpiredLoginSessionTitle": "Sesi log masuk anda telah tamat tempoh.",
+    "ReloadPage": "Muat semula halaman",
+    "ResetErrorBoundary": "Tetapkan Semula ErrorBoundary",
+    "Title": "Ralat telah berlaku."
   }
 }

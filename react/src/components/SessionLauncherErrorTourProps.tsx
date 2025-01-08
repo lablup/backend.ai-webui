@@ -13,15 +13,15 @@ const SessionLauncherValidationTour: React.FC<
 
   const steps = [
     {
-      title: t('tourguide.NeoSessionLauncher.ValidationErrorTitle'),
-      description: t('tourguide.NeoSessionLauncher.ValidationErrorText'),
+      title: t('tourGuide.neoSessionLauncher.ValidationErrorTitle'),
+      description: t('tourGuide.neoSessionLauncher.ValidationErrorText'),
       target: () =>
         document.getElementsByClassName('bai-card-error')?.[0] as HTMLElement,
     },
     {
-      title: t('tourguide.NeoSessionLauncher.ValidationErrorTitle'),
+      title: t('tourGuide.neoSessionLauncher.ValidationErrorTitle'),
       description: t(
-        'tourguide.NeoSessionLauncher.FixErrorFieldbyModifyButton',
+        'tourGuide.neoSessionLauncher.FixErrorFieldByModifyButton',
       ),
       target: () =>
         (
@@ -29,8 +29,8 @@ const SessionLauncherValidationTour: React.FC<
         )?.querySelector('.ant-card-extra') as HTMLElement,
     },
     {
-      title: t('tourguide.NeoSessionLauncher.ValidationErrorTitle'),
-      description: t('tourguide.NeoSessionLauncher.FixErrorAndTryAgainText'),
+      title: t('tourGuide.neoSessionLauncher.ValidationErrorTitle'),
+      description: t('tourGuide.neoSessionLauncher.FixErrorAndTryAgainText'),
       target: () =>
         document.querySelector(
           '[data-test-id="neo-session-launcher-tour-step-navigation"]',

@@ -1387,11 +1387,11 @@ export default class BackendAILogin extends BackendAIPage {
           '#change-password-confirm-dialog',
         ) as BackendAIDialog
       ).hide();
-      this.notification.text = _text('signup.EmailSent');
+      this.notification.text = _text('signUp.EmailSent');
       this.notification.show();
     } catch (e) {
       console.error(e);
-      this.notification.text = e.message || _text('signup.SendError');
+      this.notification.text = e.message || _text('signUp.SendError');
       this.notification.show();
     }
   }
@@ -2096,7 +2096,7 @@ export default class BackendAILogin extends BackendAIPage {
               style="flex: 1; white-space: normal; overflow-wrap: break-word; word-break: break-word; margin-right: 10px;"
             >
               ${this.connection_mode === 'SESSION'
-                ? _t('login.LoginWithE-mailorUsername')
+                ? _t('login.LoginWithE-mailOrUsername')
                 : _t('login.LoginWithIAM')}
             </h3>
             ${this.change_signin_support
@@ -2107,7 +2107,7 @@ export default class BackendAILogin extends BackendAIPage {
                     style="flex: 1; text-align: right;"
                   >
                     <div id="change-signin-message">
-                      ${_t('login.LoginAnotherway')}
+                      ${_t('login.LoginAnotherWay')}
                     </div>
                     <mwc-button
                       outlined
@@ -2149,7 +2149,7 @@ export default class BackendAILogin extends BackendAIPage {
                     id="id_user_id"
                     maxlength="64"
                     autocomplete="username"
-                    label="${_t('login.E-mailorUsername')}"
+                    label="${_t('login.E-mailOrUsername')}"
                     value="${this.user_id}"
                     @keyup="${this._submitIfEnter}"
                   ></mwc-textfield>
@@ -2429,7 +2429,7 @@ export default class BackendAILogin extends BackendAIPage {
             value=""
             autofocus
             auto-validate
-            validationMessage="${_t('signup.InvalidEmail')}"
+            validationMessage="${_t('signUp.InvalidEmail')}"
             pattern="^[A-Z0-9a-z#-_]+@.+\\..+$"
           ></mwc-textfield>
         </div>

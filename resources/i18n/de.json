@@ -242,7 +242,6 @@
       "PrePortConfigWillDisappear": "Alle nicht gespeicherten, bereits geöffneten Ports werden gelöscht.",
       "StartModelServing": "Start Model Serving",
       "PreOpenPortRangeGuide": "Geben Sie mehrere Werte ein, getrennt durch ein Komma (,) oder ein Leerzeichen.",
-      "preopen": "Voreröffnet",
       "Network": "Netzwerk",
       "Enable": "Aktivieren",
       "FolderAliasInvalid": "Es sind nur alphanumerische Zeichen, Unterstrich (_), Schrägstrich (/), Punkt (.) und Bindestrich (-) zulässig.",
@@ -285,25 +284,23 @@
       "CreatedAt": "Erstellt am",
       "Tags": "Schlagworte",
       "SelectAgent": "Wählen Sie Agent aus",
-      "autoSelect": "Automatische Auswahl",
       "DescSelectAgent": "Die auf der rechten Seite des Agenten angezeigten Ressourcen stellen die tatsächliche Menge der verfügbaren Ressourcen dar. \nDerzeit ist die Agentenauswahl nur in einer Single-Node-Single-Container-Umgebung verfügbar. \nDie Standardeinstellung ist die Agentenzuteilung durch den Scheduler.",
       "AgentNode": "Agent",
-      "AutoSelect": "automatisch auswählen",
+      "AutoSelect": "Automatische Auswahl",
       "BatchJobTimeoutDuration": "Dauer des Batch-Job-Timeouts",
       "BatchJobTimeoutDurationDesc": "Legen Sie die maximale Ausführungszeit für Batch-Jobs fest. \nDie Sitzung wird automatisch beendet, wenn die angegebene Zeit überschritten wird.",
-      "SetBatchJobTimeoutDuration": "Legen Sie die Zeitüberschreitungsdauer für Batch-Jobs fest"
+      "SetBatchJobTimeoutDuration": "Legen Sie die Zeitüberschreitungsdauer für Batch-Jobs fest",
+      "PreOpen": "Voreröffnet"
     },
     "Preparing": "Vorbereitung...",
     "PreparingSession": "Sitzung vorbereiten...",
     "Running": "Laufen",
     "Finished": "Fertig",
     "Others": "Andere",
-    "exportCSV": "CSV-Datei exportieren",
     "Terminate": "Beenden",
     "SessionInfo": "Infos zur Sitzung",
     "Status": "Status",
     "Configuration": "Aufbau",
-    "core": "Ader",
     "Reservation": "Reservierung",
     "Agent": "Agent",
     "Usage": "Verwendung",
@@ -318,16 +315,6 @@
     "ResourceGroup": "Ressourcengruppe",
     "NoLogs": "Keine Protokolle.",
     "CreationFailed": "Sitzungserstellung fehlgeschlagen. Bitte versuchen Sie es in einigen Minuten erneut.",
-    "applauncher": {
-      "AppMustBeRun": "Nur starten, wenn die App bereits läuft",
-      "AppMustBeRunDialog": "Diese App kann nur aufgerufen und verwendet werden, wenn sie bereits über das Terminal läuft. Wenn nicht, werden Sie zu einer Fehlerseite geleitet, die auftritt, wenn die App nicht ausgeführt wird.",
-      "ConfirmAndRun": "Ich habe nachgesehen und ich fange an",
-      "Prepared": "Bereit",
-      "NoExistingConnectionExample": "Keine Verbindung Zu kopierendes Beispiel.",
-      "SSHConnectionExampleClipboardCopy": "SSH Connection Example wurde in die Zwischenablage kopiert.",
-      "App": "App",
-      "ConnectUrlIsNotValid": "Die Verbindungs-URL ist ungültig."
-    },
     "TensorboardPath": "Protokollverzeichnis für TensorBoard",
     "InputTensorboardPath": "Bitte geben Sie das Protokollverzeichnis ein, auf das sich TensorBoard bezieht. Beachten Sie, dass das Protokollverzeichnis nicht automatisch erstellt wird.",
     "DefaultTensorboardPath": "/home/work/logs",
@@ -422,7 +409,6 @@
     "SessionId": "Session-ID",
     "EnvironmentAndVersion": "Umgebung und Version",
     "Tags": "Stichworte",
-    "fGPU": "fGPU",
     "Gaudi2Enabled": "Gaudi 2 NPU Ermöglicht",
     "ForceTerminateWarningMsg": "Diese Aktion beendet oder bricht die Sitzung ab, unabhängig von ihrem aktuellen Status. \nBist du sicher?",
     "WarningForceTerminateSessions": "Warnung: Beendigung der Sitzung(en) erzwingen",
@@ -430,7 +416,22 @@
     "ForceTerminateWarningMsg3": "Durch diese Aktion werden die tatsächlichen Container auf dem/den Agent(en) nicht gelöscht. \nMöglicherweise ist eine manuelle Bereinigung erforderlich.",
     "ContainerToCleanUp": "Behälter zum Aufräumen",
     "SessionNotFound": "Sie haben keine Zugriffsberechtigung für diese Sitzung oder die Sitzung existiert nicht.",
-    "NotInProject": "Diese Sitzung gehört zu einem anderen Projekt."
+    "NotInProject": "Diese Sitzung gehört zu einem anderen Projekt.",
+    "Core": "Ader",
+    "appLauncher": {
+      "App": "App",
+      "AppMustBeRun": "Nur starten, wenn die App bereits läuft",
+      "AppMustBeRunDialog": "Diese App kann nur aufgerufen und verwendet werden, wenn sie bereits über das Terminal läuft. Wenn nicht, werden Sie zu einer Fehlerseite geleitet, die auftritt, wenn die App nicht ausgeführt wird.",
+      "ConfirmAndRun": "Ich habe nachgesehen und ich fange an",
+      "ConnectUrlIsNotValid": "Die Verbindungs-URL ist ungültig.",
+      "DownloadSSHKey": "SSH-Schlüssel herunterladen",
+      "NoExistingConnectionExample": "Keine Verbindung Zu kopierendes Beispiel.",
+      "OpenVSCodeRemote": "Lokalen Visual Studio Code öffnen",
+      "Prepared": "Bereit",
+      "SSHConnectionExampleClipboardCopy": "SSH Connection Example wurde in die Zwischenablage kopiert."
+    },
+    "ExportCSV": "CSV-Datei exportieren",
+    "FGPU": "fGPU"
   },
   "button": {
     "Cancel": "Stornieren",
@@ -503,7 +504,6 @@
     "Agent": "Agent"
   },
   "general": {
-    "cores": "Kerne",
     "ResourceGroup": "Ressourcengruppe",
     "AccessKey": "Zugangsschlüssel",
     "Folders": "Ordner",
@@ -530,7 +530,8 @@
     "Change": "Ändern Sie",
     "MaxValueNotification": "{{name}} muss maximal {{max}} sein",
     "TotalItems": "Insgesamt {{Gesamt}} Artikel",
-    "ExtendLoginSession": "Eine Anmeldesitzung verlängern"
+    "ExtendLoginSession": "Eine Anmeldesitzung verlängern",
+    "Cores": "Kerne"
   },
   "credential": {
     "Permission": "Genehmigung",
@@ -541,14 +542,10 @@
     "ResourcePolicy": "Ressourcenrichtlinie",
     "NumberOfQueries": "Anzahl der Abfragen",
     "ConcurrentSessions": "Gleichzeitige Sitzungen",
-    "active": "aktiv",
-    "concurrentsessions": "Gleichzeitige Sitzungen",
     "RateLimit": "Bewertungslimit",
     "RateLimitValidation": "Die Ratengrenze sollte größer als null und unter 50000 sein.",
     "RateLimitFor15min": "Ratenbegrenzung (für 15 Min.)",
-    "for900seconds": "für 900 Sekunden",
     "Users": "Benutzer",
-    "exportCSV": "CSV-Datei exportieren",
     "CreateUser": "Benutzer erstellen",
     "AddCredential": "Anmeldedaten hinzufügen",
     "PolicyGroup": "Richtliniengruppe",
@@ -624,7 +621,9 @@
     "DeactivateCredential": "Anmeldeinformationen deaktivieren",
     "YouAreAboutToDeleteCredential": "Sie sind dabei, die Anmeldeinformationen dieses Benutzers zu löschen:",
     "DeleteCredential": "Anmeldedaten löschen",
-    "ActivateCredential": "Anmeldeinformationen aktivieren"
+    "ActivateCredential": "Anmeldeinformationen aktivieren",
+    "For900Seconds": "für 900 Sekunden",
+    "ExportCSV": "CSV-Datei exportieren"
   },
   "data": {
     "Folders": "Ordner",
@@ -791,7 +790,7 @@
       "Insufficient": "Unzureichend",
       "StatusOfSelectedHost": "Status des ausgewählten Hosts",
       "Status": "Status",
-      "used": "gebraucht"
+      "Used": "gebraucht"
     },
     "SelectStorageHost": "Speicherhost auswählen",
     "NumberOfFolders": "Anzahl von Ordnern",
@@ -808,7 +807,6 @@
     "New": "Neu",
     "Add": "hinzufügen",
     "CloningIsOnlyPossibleSameHost": "Derzeit ist das Klonen nur auf demselben Host möglich.",
-    "userQuotaScopeId": "Quota Scope ID",
     "NewFolderName": "Neuer Ordnername",
     "modelStore": {
       "ImportFromHuggingFace": "Import aus Hugging Face",
@@ -839,7 +837,8 @@
       "ImportAndStartServiceSuccessDesc": "Die neue Modellmappe und der Service sind fertig. \nKlicken Sie auf die Schaltfläche „Serviceinformationen anzeigen“, um die Modelldetails zu überprüfen und den gewünschten Vorgang zu starten.",
       "AddedItems": "Artikel hinzugefügt",
       "ModelFolderName": "Name des Modellordners"
-    }
+    },
+    "UserQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {
@@ -864,7 +863,7 @@
       "Error": "Error"
     },
     "hide": {
-      "DonotShowThisAgain": "Zeigen Sie dies nicht noch einmal."
+      "DoNotShowThisAgain": "Zeigen Sie dies nicht noch einmal."
     }
   },
   "environment": {
@@ -925,7 +924,8 @@
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
     "BaseImageName": "Basisbildname",
     "Tags": "Schlagworte",
-    "FullImagePath": "Vollständiger Bildpfad"
+    "FullImagePath": "Vollständiger Bildpfad",
+    "SuccessfullyCreated": "Erfolgreich erstellt"
   },
   "resourcePreset": {
     "ResourcePresets": "Ressourcenvoreinstellungen",
@@ -952,7 +952,7 @@
     "DeleteResourcePreset": "Ressourcenvoreinstellung löschen",
     "PresetNameAlreadyExists": "Eine Ressourcenvoreinstellung mit demselben Namen ist bereits vorhanden."
   },
-  "usersettings": {
+  "userSettings": {
     "General": "Allgemeines",
     "Logs": "Protokolle",
     "Preferences": "Einstellungen",
@@ -1145,7 +1145,6 @@
     "ResourceGroupName": "Ressourcengruppenname",
     "Active": "Aktiv",
     "SelectScheduler": "Wählen Sie Planer",
-    "NochangesMade": "Keine Änderungen vorgenommen",
     "ResourceGroupNameNotMatch": "Name der Ressourcengruppe stimmt nicht überein!",
     "ResourceGroupCreated": "Ressourcengruppe erfolgreich erstellt",
     "ResourceGroupModified": "Ressourcengruppe erfolgreich geändert",
@@ -1161,7 +1160,8 @@
     "AllowedSessionTypes": "Erlaubte Sitzungstypen",
     "Public": "Öffentlich",
     "RetriesToSkip": "Zeiten",
-    "NoGroupToDisplay": "NoGroupToDisplay"
+    "NoGroupToDisplay": "NoGroupToDisplay",
+    "NoChangesMade": "Keine Änderungen vorgenommen"
   },
   "maintenance": {
     "Fix": "Fix",
@@ -1263,9 +1263,9 @@
     "DescImagePullBehavior": "Legt die Bedingungen für das automatische Herunterladen neuer Images fest, wenn eine neue Version in der Registrierung registriert wird. Für keine werden neue Bilder nicht automatisch heruntergeladen.",
     "GUI": "GUI",
     "image": {
-      "digest": "Verdauen",
-      "tag": "Etikett",
-      "none": "Keiner"
+      "Digest": "Verdauen",
+      "None": "Keiner",
+      "Tag": "Etikett"
     },
     "OverlayNetwork": "Overlay-Netzwerk",
     "OverlayNetworkConfiguration": "Konfiguration, die bei der Erstellung von Overlay-Netzen zu verwenden ist.",
@@ -1354,7 +1354,6 @@
     "SecretKey": "Geheimer Schlüssel",
     "Endpoint": "Endpunkt",
     "NotAUser": "Kein Benutzer?",
-    "LoginAnotherway": "Möchten Sie sich auf andere Weise anmelden?",
     "SignUp": "Anmelden",
     "LoginWithIAM": "Mit IAM anmelden",
     "ClickToUseIAM": "Klicken Sie hier, um IAM zu verwenden",
@@ -1384,11 +1383,11 @@
       "LoginWithSAML": "Anmeldung mit SAML",
       "LoginWithRealm": "Anmeldung mit {{ realmName }}"
     },
-    "LoginWithE-mailorUsername": "Melden Sie sich mit E-Mail oder Benutzernamen an",
-    "E-mailorUsername": "E-Mail Adresse oder Benutzername"
+    "LoginAnotherWay": "Möchten Sie sich auf andere Weise anmelden?",
+    "LoginWithE-mailOrUsername": "Melden Sie sich mit E-Mail oder Benutzernamen an",
+    "E-mailOrUsername": "E-Mail Adresse oder Benutzername"
   },
-  "signup": {
-    "SignupBETA": "Anmeldung (nur Beta-Einladung)",
+  "signUp": {
     "E-mail": "Email",
     "UserName": "Nutzername",
     "Password": "Passwort",
@@ -1396,8 +1395,6 @@
     "PasswordInputRequired": "Passwort wird benötigt.",
     "PasswordInvalid": "Verwenden Sie 8 oder mehr Zeichen mit einer Mischung aus Buchstaben, Zahlen und Symbolen.",
     "PasswordNotMatched": "Diese Passwörter stimmten nicht überein. Versuchen Sie es erneut.",
-    "Signup": "Anmelden",
-    "SignupSucceeded": "Erfolgreich angemeldet.",
     "Processing": "Wird bearbeitet...",
     "InvitationToken": "Einladungsmarke",
     "TokenInputRequired": "Token ist erforderlich.",
@@ -1418,17 +1415,13 @@
     "SendEmail": "Senden Sie E-Mail-Verifizierung",
     "SendError": "Beim Versenden der E-Mail ist ein Fehler aufgetreten",
     "EmailSent": "E-Mail gesendet",
-    "VerificationError": "Verifizierungsfehler aufgetreten"
+    "VerificationError": "Verifizierungsfehler aufgetreten",
+    "SignUpBETA": "Anmeldung (nur Beta-Einladung)",
+    "SignUp": "Anmelden",
+    "SignUpSucceeded": "Erfolgreich angemeldet."
   },
   "update": {
     "NewWebUIVersionAvailable": "Neue Version ist verfügbar:"
-  },
-  "sidepanel": {
-    "BackgroundTasks": "Ausführen von Aufgaben",
-    "NoBackgroundTask": "Nicht fragen.",
-    "Running": "Laufen...",
-    "Notification": "Benachrichtigung",
-    "NoNotification": "Keine Benachrichtigung."
   },
   "import": {
     "NoSuitableResourceFoundOnGivenURL": "Unter der angegebenen URL wurde keine geeignete Ressource gefunden.",
@@ -1466,16 +1459,6 @@
     "GitlabDefaultBranch": "GitLab-Zweigname",
     "InvalidNotebookURL": "Ungültige Notbook-URL."
   },
-  "usagepanel": {
-    "StatisticsForThisMonth": "Statistik für diesen Monat",
-    "NumSessions": "Anzahl der Sitzungen",
-    "UsedTime": "Genutzte Zeit",
-    "CpuUsedTime": "CPU-Nutzungszeit",
-    "GpuUsedTime": "GPU-Nutzungszeit",
-    "DiskUsed": "Festplattennutzung",
-    "TrafficUsed": "Traffic-Nutzung"
-  },
-  "DownloadSSHKey": "SSH-Schlüssel herunterladen",
   "license": {
     "Perpetual": "Unbefristet",
     "Subscription": "Abonnement",
@@ -1483,7 +1466,6 @@
   },
   "eduapi": {
     "CannotAuthorizeSessionByToken": "Ihre Sitzung kann nicht autorisiert werden. Melden Sie sich zuerst im Portal an.",
-    "QueryingExisitingComputeSession": "Vorhandene Compute-Sitzung wird abgefragt...",
     "PleaseReload": "Bitte nach einiger Zeit neu laden.",
     "FoundExistingComputeSession": "Vorhandene Compute-Sitzung gefunden",
     "FindingSessionTemplate": "Sitzungsvorlage wird gefunden ...",
@@ -1491,8 +1473,9 @@
     "CreatingComputeSession": "Compute-Sitzung erstellen ...",
     "SessionStillPreparing": "Sitzung ist noch in Vorbereitung. Nach einiger Zeit neu laden",
     "ComputeSessionPrepared": "Computersitzung vorbereitet",
-    "sessionStatusIs": "Sitzungsstatus ist",
-    "EmptyProject": "EmptyProject"
+    "EmptyProject": "EmptyProject",
+    "QueryingExistingComputeSession": "Vorhandene Compute-Sitzung wird abgefragt...",
+    "SessionStatusIs": "Sitzungsstatus ist"
   },
   "error": {
     "UpdateError": "Aktualisierungsfehler",
@@ -1615,14 +1598,6 @@
     "ServiceNameMaxLength": "Bitte geben Sie maximal 24 Zeichen ein.",
     "ServiceNameCannotStartWithHyphen": "Bindestriche (-) dürfen an beiden Enden nicht verwendet werden."
   },
-  "ErrorBoundary": {
-    "title": "Es ist ein Fehler aufgetreten.",
-    "reloadPage": "Laden Sie die Seite neu",
-    "resetErrorBoundary": "ErrorBoundary zurücksetzen",
-    "displayOnlyDevEnv": "Dieser Fehlerblock wird nur in der WebUI-Entwicklungsumgebung angezeigt.",
-    "expiredLoginSessionTitle": "Ihre Anmeldesitzung ist abgelaufen.",
-    "expiredLoginSessionReLogin": "Anmeldung"
-  },
   "storageHost": {
     "quotaSettings": {
       "SelectDomain": "Bereich auswählen",
@@ -1671,7 +1646,6 @@
     "EnterConfirmationCode": "Geben Sie nun zur Überprüfung das vom Authentifikator generierte OTP ein.",
     "RequireOTP": "Schreiben Sie OTP."
   },
-  "OpenVSCodeRemote": "Lokalen Visual Studio Code öffnen",
   "inputLimit": {
     "4to64chars": "(4~64 Zeichen)",
     "4to32chars": "(4~32 Zeichen)"
@@ -1712,27 +1686,19 @@
     "SelectColumnToDisplay": "Wählen Sie die anzuzeigenden Spalten aus",
     "SearchTableColumn": "Tabellenspalten durchsuchen"
   },
-  "tourguide": {
-    "NeoSessionLauncher": {
-      "ValidationErrorTitle": "Fehler bei der Validierung des Eingabefelds",
-      "ValidationErrorText": "Wenn Sie in einem Pflichtfeld keinen Wert eingeben oder einen ungültigen Wert eingeben, wird in diesem Feld eine Fehlermeldung angezeigt.",
-      "FixErrorAndTryAgainText": "Wenn ein Fehlerfeld vorhanden ist, ist die Schaltfläche „Sitzung starten“ deaktiviert. \nBitte beheben Sie den Fehler und versuchen Sie es erneut.",
-      "FixErrorFieldbyModifyButton": "Für dieses Fehlerfeld können Sie direkt auf die Schaltfläche „Bearbeiten“ in der oberen rechten Ecke gehen, um es zu bearbeiten."
-    }
-  },
   "sourceCodeViewer": {
     "Copy": "Kopieren",
     "Copied": "Kopiert"
   },
   "propertyFilter": {
-    "placeHolder": "Suche",
-    "ResetFilter": "Filter zurücksetzen"
+    "ResetFilter": "Filter zurücksetzen",
+    "PlaceHolder": "Suche"
   },
   "interactiveLogin": {
     "InteractiveLoginWithBackendAI": "Melden Sie sich mit Ihrem Backend.AI-Konto an",
-    "confirmLoginMessage": "Möchten Sie sich mit {{Benutzername}} anmelden ({{E-Mail}}) Konto anmelden?",
     "ServiceName": "Name des Dienstes",
-    "useAnotherAccount": "Mit einem anderen Konto anmelden"
+    "UseAnotherAccount": "Mit einem anderen Konto anmelden",
+    "ConfirmLoginMessage": "Möchten Sie sich mit {{Benutzername}} anmelden ({{E-Mail}}) Konto anmelden?"
   },
   "chatui": {
     "CannotFindModel": "LLM-Modelle können nicht gefunden werden. \nBitte passen Sie das Modell an.",
@@ -1750,11 +1716,43 @@
     "UploadFilesDescription": "Klicken oder ziehen Sie Dateien zum Hochladen in diesen Bereich"
   },
   "time": {
-    "ms": "ms",
-    "sec": "Sek",
-    "min": "min",
-    "hour": "Stunde",
-    "day": "day",
-    "week": "Woche"
+    "Day": "day",
+    "Hour": "Stunde",
+    "Min": "min",
+    "Ms": "ms",
+    "Sec": "Sek",
+    "Week": "Woche"
+  },
+  "usagePanel": {
+    "CpuUsedTime": "CPU-Nutzungszeit",
+    "DiskUsed": "Festplattennutzung",
+    "GpuUsedTime": "GPU-Nutzungszeit",
+    "NumSessions": "Anzahl der Sitzungen",
+    "StatisticsForThisMonth": "Statistik für diesen Monat",
+    "TrafficUsed": "Traffic-Nutzung",
+    "UsedTime": "Genutzte Zeit"
+  },
+  "sidePanel": {
+    "BackgroundTasks": "Ausführen von Aufgaben",
+    "NoBackgroundTask": "Nicht fragen.",
+    "NoNotification": "Keine Benachrichtigung.",
+    "Notification": "Benachrichtigung",
+    "Running": "Laufen..."
+  },
+  "tourGuide": {
+    "neoSessionLauncher": {
+      "FixErrorAndTryAgainText": "Wenn ein Fehlerfeld vorhanden ist, ist die Schaltfläche „Sitzung starten“ deaktiviert. \nBitte beheben Sie den Fehler und versuchen Sie es erneut.",
+      "FixErrorFieldByModifyButton": "Für dieses Fehlerfeld können Sie direkt auf die Schaltfläche „Bearbeiten“ in der oberen rechten Ecke gehen, um es zu bearbeiten.",
+      "ValidationErrorText": "Wenn Sie in einem Pflichtfeld keinen Wert eingeben oder einen ungültigen Wert eingeben, wird in diesem Feld eine Fehlermeldung angezeigt.",
+      "ValidationErrorTitle": "Fehler bei der Validierung des Eingabefelds"
+    }
+  },
+  "errorBoundary": {
+    "DisplayOnlyDevEnv": "Dieser Fehlerblock wird nur in der WebUI-Entwicklungsumgebung angezeigt.",
+    "ExpiredLoginSessionReLogin": "Anmeldung",
+    "ExpiredLoginSessionTitle": "Ihre Anmeldesitzung ist abgelaufen.",
+    "ReloadPage": "Laden Sie die Seite neu",
+    "ResetErrorBoundary": "ErrorBoundary zurücksetzen",
+    "Title": "Es ist ein Fehler aufgetreten."
   }
 }

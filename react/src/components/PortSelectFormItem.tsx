@@ -115,7 +115,7 @@ const PortSelectFormItem: React.FC<Props> = ({
           );
         }}
         style={{ width: '100%' }}
-        // placeholder={t('session.launcher.preopen')}
+        // placeholder={t('session.launcher.PreOpen')}
         // options={_.map(portGuides, (v, k) => ({
         //   value: parseInt(k),
         //   // label: `${k} - ${v}`,

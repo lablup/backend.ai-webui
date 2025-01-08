@@ -3287,7 +3287,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       pathCheckbox.setAttribute('id', 'hide-guide');
       const checkboxMsg = document.createElement('span');
       checkboxMsg.append(
-        document.createTextNode(`${_text('dialog.hide.DonotShowThisAgain')}`),
+        document.createTextNode(`${_text('dialog.hide.DoNotShowThisAgain')}`),
       );
       div.appendChild(pathCheckbox);
       div.appendChild(checkboxMsg);

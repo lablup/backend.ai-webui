@@ -108,7 +108,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
         this.successDialog.show();
       } catch (e) {
         console.error(e);
-        this.notification.text = _text('signup.VerificationError');
+        this.notification.text = _text('signUp.VerificationError');
         this.notification.show();
         window.setTimeout(() => this.failDialog.show(), 100);
       }
@@ -125,11 +125,11 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
     if (!emailEl.value || !emailEl.validity.valid) return;
     try {
       await this.client.cloud.send_verification_email(emailEl.value);
-      this.notification.text = _text('signup.EmailSent');
+      this.notification.text = _text('signUp.EmailSent');
       this.notification.show();
     } catch (e) {
       console.error(e);
-      this.notification.text = e.message || _text('signup.SendError');
+      this.notification.text = e.message || _text('signUp.SendError');
       this.notification.show();
     }
   }
@@ -146,11 +146,11 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
         persistent
         style="padding:0;"
       >
-        <span slot="title">${_t('signup.EmailVerified')}</span>
+        <span slot="title">${_t('signUp.EmailVerified')}</span>
 
         <div slot="content">
           <div class="horizontal layout center">
-            <p style="width:256px;">${_t('signup.EmailVerifiedMessage')}</p>
+            <p style="width:256px;">${_t('signUp.EmailVerifiedMessage')}</p>
           </div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
@@ -171,12 +171,12 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
         persistent
         style="padding:0;"
       >
-        <span slot="title">${_t('signup.EmailVerificationFailed')}</span>
+        <span slot="title">${_t('signUp.EmailVerificationFailed')}</span>
 
         <div slot="content">
           <div class="horizontal layout center">
             <p style="width:256px;">
-              ${_t('signup.EmailVerificationFailedMessage')}
+              ${_t('signUp.EmailVerificationFailedMessage')}
             </p>
           </div>
           <div style="margin:20px;">
@@ -185,7 +185,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
               label="${_t('data.explorer.EnterEmailAddress')}"
               autofocus
               auto-validate
-              validationMessage="${_t('signup.InvalidEmail')}"
+              validationMessage="${_t('signUp.InvalidEmail')}"
               pattern="^[A-Z0-9a-z#-_]+@.+\\..+$"
               maxLength="64"
               placeholder="${_t('maxLength.64chars')}"
@@ -197,7 +197,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
           <mwc-button
             unelevated
             fullwidth
-            label="${_t('signup.SendEmail')}"
+            label="${_t('signUp.SendEmail')}"
             @click="${() => this.sendVerificationCode()}"
           ></mwc-button>
         </div>

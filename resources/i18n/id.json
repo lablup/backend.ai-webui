@@ -248,7 +248,6 @@
       "MinMemory": "Kapasitas memori minimum untuk lingkungan runtime yang saat ini dipilih adalah {{size}}iB.",
       "ModelStorage": "Penyimpanan Model",
       "PreOpenPortRangeGuide": "Masukkan beberapa nilai yang dipisahkan dengan koma (,) atau spasi.",
-      "preopen": "pra-buka",
       "Network": "Jaringan",
       "Enable": "Memungkinkan",
       "FolderAliasInvalid": "Hanya karakter alfanumerik, garis bawah (_), garis miring (/), titik (.), dan tanda hubung (-) yang diperbolehkan.",
@@ -286,25 +285,23 @@
       "CreatedAt": "DibuatPada",
       "Tags": "Tag",
       "SelectAgent": "Pilih Agen",
-      "autoSelect": "Pilih Otomatis",
       "DescSelectAgent": "Sumber daya yang ditampilkan di sisi kanan agen mewakili jumlah sebenarnya sumber daya yang tersedia. \nSaat ini, pemilihan agen hanya tersedia di lingkungan kontainer tunggal node tunggal. \nPengaturan defaultnya adalah alokasi agen oleh penjadwal.",
       "AgentNode": "Agen",
-      "AutoSelect": "pilih otomatis",
+      "AutoSelect": "Pilih Otomatis",
       "BatchJobTimeoutDuration": "Durasi Batas Waktu Tugas Batch",
       "BatchJobTimeoutDurationDesc": "Tetapkan waktu eksekusi maksimum untuk pekerjaan batch. \nSesi akan otomatis berakhir jika waktu yang ditentukan terlampaui.",
-      "SetBatchJobTimeoutDuration": "Tetapkan durasi batas waktu tugas batch"
+      "SetBatchJobTimeoutDuration": "Tetapkan durasi batas waktu tugas batch",
+      "PreOpen": "pra-buka"
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",
     "Running": "Jalankan",
     "Finished": "Selesai",
     "Others": "Lainnya",
-    "exportCSV": "ekspor CSV",
     "Terminate": "Akhiri",
     "SessionInfo": "Info Sesi",
     "Status": "Status",
     "Configuration": "Konfigurasi",
-    "core": "core",
     "Reservation": "Reservasi",
     "Agent": "Agen",
     "Usage": "Pemakaian",
@@ -319,16 +316,6 @@
     "ResourceGroup": "Grup Sumber Daya",
     "NoLogs": "Tidak ada log.",
     "CreationFailed": "Pembuatan sesi gagal. Silakan coba lagi dalam beberapa menit.",
-    "applauncher": {
-      "AppMustBeRun": "Mulai hanya saat aplikasi sudah berjalan",
-      "AppMustBeRunDialog": "Aplikasi ini hanya dapat diakses dan digunakan jika sudah berjalan melalui terminal. Jika tidak, Anda akan diarahkan ke halaman galat yang terjadi saat aplikasi tidak berjalan.",
-      "ConfirmAndRun": "Saya sudah memeriksa dan saya akan mulai",
-      "Prepared": "Siap",
-      "App": "Aplikasi",
-      "NoExistingConnectionExample": "Tidak Ada Koneksi Contoh untuk disalin.",
-      "SSHConnectionExampleClipboardCopy": "Contoh Koneksi SSH telah disalin ke clipboard.",
-      "ConnectUrlIsNotValid": "URL koneksi tidak valid."
-    },
     "TensorboardPath": "Direktori log untuk TensorBoard",
     "InputTensorboardPath": "Harap masukkan direktori log yang akan dirujuk oleh TensorBoard. Perhatikan bahwa direktori log tidak akan dibuat secara otomatis..",
     "DefaultTensorboardPath": "/home/work/log",
@@ -423,7 +410,6 @@
     "EnvironmentAndVersion": "Lingkungan dan Versi",
     "Tags": "Tag",
     "Agents": "Agen",
-    "fGPU": "fGPU",
     "Gaudi2Enabled": "Gaudi 2 NPU Diaktifkan",
     "ForceTerminateWarningMsg": "Tindakan ini akan mengakhiri atau membatalkan sesi terlepas dari statusnya saat ini. \nApa kamu yakin?",
     "WarningForceTerminateSessions": "Peringatan: Paksa Mengakhiri Sesi",
@@ -431,7 +417,22 @@
     "ForceTerminateWarningMsg3": "Tindakan ini tidak menghapus penampung sebenarnya pada agen. \nPembersihan manual mungkin diperlukan.",
     "ContainerToCleanUp": "Wadah yang harus dibersihkan",
     "SessionNotFound": "Anda tidak memiliki izin untuk mengakses sesi ini atau sesi tersebut tidak ada.",
-    "NotInProject": "Sesi ini merupakan bagian dari proyek yang berbeda."
+    "NotInProject": "Sesi ini merupakan bagian dari proyek yang berbeda.",
+    "Core": "core",
+    "appLauncher": {
+      "App": "Aplikasi",
+      "AppMustBeRun": "Mulai hanya saat aplikasi sudah berjalan",
+      "AppMustBeRunDialog": "Aplikasi ini hanya dapat diakses dan digunakan jika sudah berjalan melalui terminal. Jika tidak, Anda akan diarahkan ke halaman galat yang terjadi saat aplikasi tidak berjalan.",
+      "ConfirmAndRun": "Saya sudah memeriksa dan saya akan mulai",
+      "ConnectUrlIsNotValid": "URL koneksi tidak valid.",
+      "DownloadSSHKey": "Unduh Kunci SSH",
+      "NoExistingConnectionExample": "Tidak Ada Koneksi Contoh untuk disalin.",
+      "OpenVSCodeRemote": "Buka kode Visual Studio lokal",
+      "Prepared": "Siap",
+      "SSHConnectionExampleClipboardCopy": "Contoh Koneksi SSH telah disalin ke clipboard."
+    },
+    "ExportCSV": "ekspor CSV",
+    "FGPU": "fGPU"
   },
   "button": {
     "Cancel": "Batalkan",
@@ -504,7 +505,6 @@
     "Agent": "Agen"
   },
   "general": {
-    "cores": "core",
     "ResourceGroup": "Grup Sumber Daya",
     "AccessKey": "Kunci Akses",
     "Folders": "Folder",
@@ -531,7 +531,8 @@
     "Change": "Perubahan",
     "MaxValueNotification": "{{nama}} harus maksimal {{max}}",
     "TotalItems": "Total item {{total}}",
-    "ExtendLoginSession": "Memperpanjang sesi masuk"
+    "ExtendLoginSession": "Memperpanjang sesi masuk",
+    "Cores": "core"
   },
   "credential": {
     "Permission": "Izin",
@@ -542,14 +543,10 @@
     "ResourcePolicy": "Kebijakan Sumber Daya",
     "NumberOfQueries": "Jumlah Kueri",
     "ConcurrentSessions": "Sesi Serentak",
-    "active": "aktif",
-    "concurrentsessions": "Sesi serentak",
     "RateLimit": "Batas Tarif",
     "RateLimitValidation": "Batas Tarif harus lebih besar dari nol dan di bawah 50000.",
     "RateLimitFor15min": "Batas Tarif (selama 15 menit)",
-    "for900seconds": "selama 900 detik",
     "Users": "Pengguna",
-    "exportCSV": "ekspor CSV",
     "CreateUser": "Buat pengguna",
     "AddCredential": "Tambahkan Kredensial",
     "PolicyGroup": "Grup Kebijakan",
@@ -625,7 +622,9 @@
     "DeactivateCredential": "Nonaktifkan kredensial",
     "YouAreAboutToDeleteCredential": "Anda akan menghapus kredensial pengguna ini:",
     "DeleteCredential": "Hapus kredensial",
-    "ActivateCredential": "Aktifkan kredensial"
+    "ActivateCredential": "Aktifkan kredensial",
+    "For900Seconds": "selama 900 detik",
+    "ExportCSV": "ekspor CSV"
   },
   "data": {
     "Folders": "Folder",
@@ -793,7 +792,7 @@
       "Insufficient": "Tidak mencukupi",
       "StatusOfSelectedHost": "Status Tuan Rumah Terpilih",
       "Status": "Status",
-      "used": "digunakan"
+      "Used": "digunakan"
     },
     "SelectStorageHost": "Memilih host penyimpanan",
     "NumberOfFolders": "Jumlah folder",
@@ -809,7 +808,6 @@
     "New": "Baru",
     "Add": "Menambahkan",
     "CloningIsOnlyPossibleSameHost": "Saat ini, kloning hanya dapat dilakukan pada host yang sama.",
-    "userQuotaScopeId": "Quota Scope ID",
     "NewFolderName": "Nama folder baru",
     "modelStore": {
       "ImportFromHuggingFace": "Impor dari Hugging Face",
@@ -840,7 +838,8 @@
       "ImportAndStartServiceSuccessDesc": "Folder model baru dan layanan sudah siap. \nKlik tombol 'Lihat info layanan' untuk memeriksa detail model dan memulai pengoperasian yang diinginkan.",
       "AddedItems": "Item yang ditambahkan",
       "ModelFolderName": "Nama folder model"
-    }
+    },
+    "UserQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {
@@ -865,7 +864,7 @@
       "Error": "Galat"
     },
     "hide": {
-      "DonotShowThisAgain": "Jangan tampilkan ini lagi."
+      "DoNotShowThisAgain": "Jangan tampilkan ini lagi."
     }
   },
   "environment": {
@@ -926,7 +925,8 @@
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
     "BaseImageName": "Nama gambar dasar",
     "Tags": "Tag",
-    "FullImagePath": "Jalur gambar penuh"
+    "FullImagePath": "Jalur gambar penuh",
+    "SuccessfullyCreated": "Berhasil dibuat"
   },
   "resourcePreset": {
     "ResourcePresets": "Preset Sumber Daya",
@@ -953,7 +953,7 @@
     "DeleteResourcePreset": "Hapus preset sumber daya",
     "PresetNameAlreadyExists": "Prasetel sumber daya dengan nama yang sama sudah ada."
   },
-  "usersettings": {
+  "userSettings": {
     "General": "Umum",
     "Logs": "Log",
     "Preferences": "Preferensi",
@@ -1146,7 +1146,6 @@
     "ResourceGroupName": "Nama Grup Sumber Daya",
     "Active": "Aktif",
     "SelectScheduler": "Pilih Penjadwal",
-    "NochangesMade": "Tidak ada perubahan yang dilakukan",
     "ResourceGroupNameNotMatch": "Nama grup sumber daya tidak cocok!",
     "ResourceGroupCreated": "Grup sumber daya berhasil dibuat",
     "ResourceGroupModified": "Grup sumber daya berhasil diubah",
@@ -1162,7 +1161,8 @@
     "AllowedSessionTypes": "Jenis sesi yang diizinkan",
     "Domain": "Domain",
     "Public": "Publik",
-    "PublicStatus": "Status Publik"
+    "PublicStatus": "Status Publik",
+    "NoChangesMade": "Tidak ada perubahan yang dilakukan"
   },
   "maintenance": {
     "Fix": "Perbaiki",
@@ -1264,9 +1264,9 @@
     "DescImagePullBehavior": "Menentukan kondisi untuk mengunduh image baru secara otomatis saat versi baru terdaftar di registri. Jika tidak ada, image baru tidak akan diunduh secara otomatis.",
     "GUI": "GUI",
     "image": {
-      "digest": "Intisari",
-      "tag": "Tag",
-      "none": "Tidak ada"
+      "Digest": "Intisari",
+      "None": "Tidak ada",
+      "Tag": "Tag"
     },
     "OverlayNetwork": "Jaringan Overlay",
     "OverlayNetworkConfiguration": "Konfigurasi yang digunakan saat membuat jaringan overlay.",
@@ -1355,7 +1355,6 @@
     "SecretKey": "Kunci rahasia",
     "Endpoint": "Titik akhir",
     "NotAUser": "Bukan pengguna?",
-    "LoginAnotherway": "Ingin login dengan cara lain?",
     "SignUp": "Daftar",
     "LoginWithIAM": "Masuk dengan IAM",
     "ClickToUseIAM": "Klik untuk Menggunakan IAM",
@@ -1385,11 +1384,11 @@
     "EndpointInfo": "Tentang Endpoint",
     "DescEndpoint": "<p>Dalam API ENDPOINT, URL server Web Backend.AI, yang meneruskan permintaan ke Manajer, harus dimasukkan.</p> <p>misalnya, http://127.0.0.1:8090/</p> <p>",
     "EndpointStartWith": "Titik akhir harus dimulai dengan http:// atau https://.",
-    "LoginWithE-mailorUsername": "Masuk Dengan Email atau Nama Pengguna",
-    "E-mailorUsername": "Email atau nama pengguna"
+    "LoginAnotherWay": "Ingin login dengan cara lain?",
+    "LoginWithE-mailOrUsername": "Masuk Dengan Email atau Nama Pengguna",
+    "E-mailOrUsername": "Email atau nama pengguna"
   },
-  "signup": {
-    "SignupBETA": "Pendaftaran (khusus undangan Beta)",
+  "signUp": {
     "E-mail": "E-mail",
     "UserName": "Nama pengguna",
     "Password": "Kata sandi",
@@ -1397,8 +1396,6 @@
     "PasswordInputRequired": "Kata sandi dibutuhkan.",
     "PasswordInvalid": "Gunakan 8 karakter atau lebih dengan campuran huruf, angka & simbol.",
     "PasswordNotMatched": "Kata sandi tersebut tidak cocok. Mohon coba lagi.",
-    "Signup": "Daftar",
-    "SignupSucceeded": "Berhasil mendaftar.",
     "Processing": "Memproses...",
     "InvitationToken": "Token Undangan",
     "TokenInputRequired": "Token diperlukan.",
@@ -1419,17 +1416,13 @@
     "SendEmail": "Kirim email verifikasi",
     "SendError": "Terjadi kesalahan saat mengirim email",
     "EmailSent": "Email terkirim",
-    "VerificationError": "Terjadi kesalahan verifikasi"
+    "VerificationError": "Terjadi kesalahan verifikasi",
+    "SignUpBETA": "Pendaftaran (khusus undangan Beta)",
+    "SignUp": "Daftar",
+    "SignUpSucceeded": "Berhasil mendaftar."
   },
   "update": {
     "NewWebUIVersionAvailable": "Versi baru tersedia:"
-  },
-  "sidepanel": {
-    "BackgroundTasks": "Tugas yang Dijalankan",
-    "NoBackgroundTask": "Tidak Ada Tugas.",
-    "Running": "Menjalankan...",
-    "Notification": "Notifikasi",
-    "NoNotification": "Tidak ada Notifikasi."
   },
   "import": {
     "NoSuitableResourceFoundOnGivenURL": "Tidak ada sumber daya yang sesuai ditemukan pada URL yang diberikan.",
@@ -1467,16 +1460,6 @@
     "GitlabDefaultBranch": "Nama Cabang GitLab",
     "InvalidNotebookURL": "URL Notbook tidak valid."
   },
-  "usagepanel": {
-    "StatisticsForThisMonth": "Statistik Bulan Ini",
-    "NumSessions": "Jumlah Sesi",
-    "UsedTime": "Waktu Pemakaian",
-    "CpuUsedTime": "Waktu Pemakaian CPU",
-    "GpuUsedTime": "Waktu Pemakaian GPU",
-    "DiskUsed": "Pemakaian Disk",
-    "TrafficUsed": "Pemakaian Lalu Lintas"
-  },
-  "DownloadSSHKey": "Unduh Kunci SSH",
   "license": {
     "Perpetual": "Selamanya",
     "Subscription": "Langganan",
@@ -1484,7 +1467,6 @@
   },
   "eduapi": {
     "CannotAuthorizeSessionByToken": "Tidak dapat mengotorisasi sesi Anda. Login ke portal terlebih dahulu.",
-    "QueryingExisitingComputeSession": "Mengkueri sesi komputasi yang ada ...",
     "PleaseReload": "Harap muat ulang setelah beberapa saat.",
     "FoundExistingComputeSession": "Menemukan sesi komputasi yang ada",
     "FindingSessionTemplate": "Menemukan template sesi...",
@@ -1492,8 +1474,9 @@
     "CreatingComputeSession": "Membuat sesi komputasi...",
     "SessionStillPreparing": "Sesi masih dalam persiapan. Harap muat ulang setelah beberapa saat",
     "ComputeSessionPrepared": "Sesi komputasi tersiapkan",
-    "sessionStatusIs": "Status sesi adalah",
-    "EmptyProject": "Proyek Kosong"
+    "EmptyProject": "Proyek Kosong",
+    "QueryingExistingComputeSession": "Mengkueri sesi komputasi yang ada ...",
+    "SessionStatusIs": "Status sesi adalah"
   },
   "error": {
     "UpdateError": "Galat pembaruan",
@@ -1537,7 +1520,6 @@
     "ValueRequired": "NilaiDiperlukan",
     "InputTooShort": "MasukanTerlaluPendek"
   },
-  "OpenVSCodeRemote": "Buka kode Visual Studio lokal",
   "totp": {
     "OTP": "Kata sandi satu kali",
     "TotpSetupCompleted": "Mengaktifkan 2FA",
@@ -1668,14 +1650,6 @@
     "ServiceNameMaxLength": "Silakan masukkan 24 karakter atau kurang.",
     "ServiceNameCannotStartWithHyphen": "Tanda hubung (-) tidak dapat digunakan pada kedua ujungnya."
   },
-  "ErrorBoundary": {
-    "title": "Telah terjadi kesalahan.",
-    "reloadPage": "Muat ulang halaman",
-    "resetErrorBoundary": "Setel Ulang Batas Kesalahan",
-    "displayOnlyDevEnv": "Blok kesalahan ini hanya ditampilkan di lingkungan pengembangan WebUI.",
-    "expiredLoginSessionTitle": "Sesi login Anda telah kedaluwarsa.",
-    "expiredLoginSessionReLogin": "Masuk"
-  },
   "modelStore": {
     "Description": "Keterangan",
     "Model": "Model",
@@ -1712,27 +1686,19 @@
     "SelectColumnToDisplay": "Pilih kolom yang akan ditampilkan",
     "SearchTableColumn": "Cari kolom tabel"
   },
-  "tourguide": {
-    "NeoSessionLauncher": {
-      "ValidationErrorTitle": "Kesalahan validasi kolom masukan",
-      "ValidationErrorText": "Jika Anda tidak memasukkan nilai di bidang yang wajib diisi atau memasukkan nilai yang tidak valid, pesan kesalahan akan ditampilkan di bidang tersebut.",
-      "FixErrorAndTryAgainText": "Jika ada bidang kesalahan, tombol Sesi peluncuran dinonaktifkan. \nHarap perbaiki kesalahannya dan coba lagi.",
-      "FixErrorFieldbyModifyButton": "Untuk kolom error tersebut, Anda bisa langsung menuju tombol Edit di pojok kanan atas untuk mengeditnya."
-    }
-  },
   "sourceCodeViewer": {
     "Copy": "Menyalin",
     "Copied": "Disalin"
   },
   "propertyFilter": {
-    "placeHolder": "Pencarian",
-    "ResetFilter": "Setel ulang filter"
+    "ResetFilter": "Setel ulang filter",
+    "PlaceHolder": "Pencarian"
   },
   "interactiveLogin": {
     "InteractiveLoginWithBackendAI": "Login dengan akun Backend.AI Anda",
-    "confirmLoginMessage": "Apakah Anda ingin masuk dengan akun {{nama pengguna}} ({{email}})?",
     "ServiceName": "Nama layanan",
-    "useAnotherAccount": "Masuk dengan akun yang berbeda"
+    "UseAnotherAccount": "Masuk dengan akun yang berbeda",
+    "ConfirmLoginMessage": "Apakah Anda ingin masuk dengan akun {{nama pengguna}} ({{email}})?"
   },
   "chatui": {
     "CannotFindModel": "Model LLM tidak dapat ditemukan. \nSilakan sesuaikan modelnya.",
@@ -1750,11 +1716,43 @@
     "UploadFilesDescription": "Klik atau seret file ke area ini untuk diunggah"
   },
   "time": {
-    "ms": "ms",
-    "sec": "detik",
-    "min": "min",
-    "hour": "jam",
-    "day": "day",
-    "week": "pekan"
+    "Day": "day",
+    "Hour": "jam",
+    "Min": "min",
+    "Ms": "ms",
+    "Sec": "detik",
+    "Week": "pekan"
+  },
+  "usagePanel": {
+    "CpuUsedTime": "Waktu Pemakaian CPU",
+    "DiskUsed": "Pemakaian Disk",
+    "GpuUsedTime": "Waktu Pemakaian GPU",
+    "NumSessions": "Jumlah Sesi",
+    "StatisticsForThisMonth": "Statistik Bulan Ini",
+    "TrafficUsed": "Pemakaian Lalu Lintas",
+    "UsedTime": "Waktu Pemakaian"
+  },
+  "sidePanel": {
+    "BackgroundTasks": "Tugas yang Dijalankan",
+    "NoBackgroundTask": "Tidak Ada Tugas.",
+    "NoNotification": "Tidak ada Notifikasi.",
+    "Notification": "Notifikasi",
+    "Running": "Menjalankan..."
+  },
+  "tourGuide": {
+    "neoSessionLauncher": {
+      "FixErrorAndTryAgainText": "Jika ada bidang kesalahan, tombol Sesi peluncuran dinonaktifkan. \nHarap perbaiki kesalahannya dan coba lagi.",
+      "FixErrorFieldByModifyButton": "Untuk kolom error tersebut, Anda bisa langsung menuju tombol Edit di pojok kanan atas untuk mengeditnya.",
+      "ValidationErrorText": "Jika Anda tidak memasukkan nilai di bidang yang wajib diisi atau memasukkan nilai yang tidak valid, pesan kesalahan akan ditampilkan di bidang tersebut.",
+      "ValidationErrorTitle": "Kesalahan validasi kolom masukan"
+    }
+  },
+  "errorBoundary": {
+    "DisplayOnlyDevEnv": "Blok kesalahan ini hanya ditampilkan di lingkungan pengembangan WebUI.",
+    "ExpiredLoginSessionReLogin": "Masuk",
+    "ExpiredLoginSessionTitle": "Sesi login Anda telah kedaluwarsa.",
+    "ReloadPage": "Muat ulang halaman",
+    "ResetErrorBoundary": "Setel Ulang Batas Kesalahan",
+    "Title": "Telah terjadi kesalahan."
   }
 }

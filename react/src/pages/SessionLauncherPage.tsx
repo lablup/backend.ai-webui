@@ -84,7 +84,7 @@ import {
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
 import _ from 'lodash';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -690,6 +690,14 @@ const SessionLauncherPage = () => {
 
   const [validationTourOpen, setValidationTourOpen] = useState(false);
 
+  const [isQueryReset, setIsQueryReset] = useState(false);
+  useLayoutEffect(() => {
+    if (isQueryReset) {
+      form.resetFields();
+      setIsQueryReset(false);
+    }
+  }, [isQueryReset, form]);
+
   return (
     <Flex
       direction="column"
@@ -1113,23 +1121,23 @@ const SessionLauncherPage = () => {
                                                   style={{ minWidth: 75 }}
                                                   options={[
                                                     {
-                                                      label: t('time.sec'),
+                                                      label: t('time.Sec'),
                                                       value: 's',
                                                     },
                                                     {
-                                                      label: t('time.min'),
+                                                      label: t('time.Min'),
                                                       value: 'm',
                                                     },
                                                     {
-                                                      label: t('time.hour'),
+                                                      label: t('time.Hour'),
                                                       value: 'h',
                                                     },
                                                     {
-                                                      label: t('time.day'),
+                                                      label: t('time.Day'),
                                                       value: 'd',
                                                     },
                                                     {
-                                                      label: t('time.week'),
+                                                      label: t('time.Week'),
                                                       value: 'w',
                                                     },
                                                   ]}
@@ -1381,8 +1389,8 @@ const SessionLauncherPage = () => {
                       title={t('button.Reset')}
                       description={t('session.launcher.ResetFormConfirm')}
                       onConfirm={() => {
-                        webuiNavigate('/session/start');
-                        form.resetFields();
+                        setQuery({}, 'replace');
+                        setIsQueryReset(true);
                       }}
                       icon={
                         <QuestionCircleOutlined

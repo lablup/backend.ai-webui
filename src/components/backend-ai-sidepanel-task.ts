@@ -108,7 +108,7 @@ export default class BackendAiSidepanelTask extends BackendAIPage {
     // language=HTML
     return html`
       <div id="container">
-        <h3>${_t('sidepanel.BackgroundTasks')}</h3>
+        <h3>${_t('sidePanel.BackgroundTasks')}</h3>
         <mwc-list>
           ${this.tasks.map(
             (item: any) => html`
@@ -122,7 +122,7 @@ export default class BackendAiSidepanelTask extends BackendAIPage {
                   ${this._taskIcon(item.tasktype)}
                 </mwc-icon>
                 <span class="title">${item.tasktitle}</span>
-                <span slot="secondary">${_t('sidepanel.Running')}</span>
+                <span slot="secondary">${_t('sidePanel.Running')}</span>
               </mwc-list-item>
               <li divider role="separator"></li>
             `,
@@ -130,7 +130,7 @@ export default class BackendAiSidepanelTask extends BackendAIPage {
           ${this.tasks.length === 0
             ? html`
                 <div style="padding:15px 0;width:100%;text-align:center;">
-                  ${_t('sidepanel.NoBackgroundTask')}
+                  ${_t('sidePanel.NoBackgroundTask')}
                 </div>
               `
             : html``}

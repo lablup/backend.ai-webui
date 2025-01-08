@@ -114,12 +114,12 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
   const saveScript = ({ closeAfter = true } = {}) => {
     if (shellInfo === 'bootstrap') {
       if (!script) {
-        app.message.error(t('usersettings.BootstrapScriptEmpty'));
+        app.message.error(t('userSettings.BootstrapScriptEmpty'));
         return;
       }
       updateBootStrapScriptMutation.mutate(script, {
         onSuccess: (result) => {
-          app.message.success(t('usersettings.BootstrapScriptUpdated'));
+          app.message.success(t('userSettings.BootstrapScriptUpdated'));
           closeAfter && onRequestClose();
         },
         onError: (error: any) => {
@@ -134,7 +134,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
       if (existValidator) {
         updateUserConfigScriptMutation.mutate(script, {
           onSuccess: (result) => {
-            app.message.success(t('usersettings.DescScriptUpdated'));
+            app.message.success(t('userSettings.DescScriptUpdated'));
             if (closeAfter) {
               onRequestClose();
             } else {
@@ -142,14 +142,14 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
             }
           },
           onError: (error: any) => {
-            app.message.error(t('usersettings.DescNewUserConfigFileCreated'));
+            app.message.error(t('userSettings.DescNewUserConfigFileCreated'));
             console.error(error);
           },
         });
       } else {
         createUserConfigScriptMutation.mutate(script, {
           onSuccess: (result) => {
-            app.message.success(t('usersettings.DescScriptCreated'));
+            app.message.success(t('userSettings.DescScriptCreated'));
             if (closeAfter) {
               onRequestClose();
             } else {
@@ -157,7 +157,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
             }
           },
           onError: (error: any) => {
-            app.message.error(t('usersettings.DescNewUserConfigFileCreated'));
+            app.message.error(t('userSettings.DescNewUserConfigFileCreated'));
             console.error(error);
           },
         });
@@ -169,7 +169,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
     if (shellInfo === 'bootstrap') {
       updateBootStrapScriptMutation.mutate('', {
         onSuccess: (result) => {
-          app.message.success(t('usersettings.BootstrapScriptDeleted'));
+          app.message.success(t('userSettings.BootstrapScriptDeleted'));
           onRequestClose();
         },
         onError: (error: any) => {
@@ -182,7 +182,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
       deleteUserConfigScriptMutation.mutate(undefined, {
         onSuccess: (result) => {
           app.message.success(
-            `${t('usersettings.DescScriptDeleted')}${rcfileNames}`,
+            `${t('userSettings.DescScriptDeleted')}${rcfileNames}`,
           );
           onRequestClose();
         },
@@ -199,8 +199,8 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
       width={800}
       title={
         shellInfo === 'bootstrap'
-          ? t('usersettings.EditBootstrapScript')
-          : t('usersettings.EditUserConfigScript')
+          ? t('userSettings.EditBootstrapScript')
+          : t('userSettings.EditUserConfigScript')
       }
       onCancel={() => onRequestClose()}
       okText={t('button.Save')}
@@ -285,7 +285,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
     >
       <Flex direction="column" align="stretch" gap={'sm'}>
         <Typography.Text>
-          {t('usersettings.BootstrapScriptDescription')}
+          {t('userSettings.BootstrapScriptDescription')}
         </Typography.Text>
         {shellInfo === 'userconfig' && (
           <Select

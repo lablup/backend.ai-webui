@@ -280,7 +280,7 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
                   : option.label?.toString().includes(search);
               },
             )}
-            placeholder={t('propertyFilter.placeHolder')}
+            placeholder={t('propertyFilter.PlaceHolder')}
             onBlur={() => {
               setIsFocused(false);
             }}

@@ -119,7 +119,7 @@ const AgentSelect: React.FC<Props> = ({
       {...selectProps}
       value={value}
       options={[
-        { label: t('session.launcher.autoSelect'), value: 'auto' },
+        { label: t('session.launcher.AutoSelect'), value: 'auto' },
         ...agentOptions,
       ]}
     />

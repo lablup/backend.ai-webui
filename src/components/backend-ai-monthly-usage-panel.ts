@@ -89,31 +89,31 @@ export default class BackendAIMonthlyUsagePanel extends LitElement {
     // language=HTML
     return html`
       <div class="card">
-        <h3>${_t('usagepanel.StatisticsForThisMonth')}</h3>
+        <h3>${_t('usagePanel.StatisticsForThisMonth')}</h3>
         <div class="horizontal layout">
           <div class="vertical center layout">
             <span class="value">${this.num_sessions}</span>
-            <span class="desc">${_t('usagepanel.NumSessions')}</span>
+            <span class="desc">${_t('usagePanel.NumSessions')}</span>
           </div>
           <div class="vertical center layout">
             <span class="value">${this.used_time}</span>
-            <span class="desc">${_t('usagepanel.UsedTime')}</span>
+            <span class="desc">${_t('usagePanel.UsedTime')}</span>
           </div>
           <div class="vertical center layout">
             <span class="value">${this.cpu_used_time}</span>
-            <span class="desc">${_t('usagepanel.CpuUsedTime')}</span>
+            <span class="desc">${_t('usagePanel.CpuUsedTime')}</span>
           </div>
           <div class="vertical center layout">
             <span class="value">${this.gpu_used_time}</span>
-            <span class="desc">${_t('usagepanel.GpuUsedTime')}</span>
+            <span class="desc">${_t('usagePanel.GpuUsedTime')}</span>
           </div>
           <div class="vertical center layout">
             <span class="value">${this.disk_used}GB</span>
-            <span class="desc">${_t('usagepanel.DiskUsed')}</span>
+            <span class="desc">${_t('usagePanel.DiskUsed')}</span>
           </div>
           <div class="vertical center layout">
             <span class="value">${this.traffic_used}MiB</span>
-            <span class="desc">${_t('usagepanel.TrafficUsed')}</span>
+            <span class="desc">${_t('usagePanel.TrafficUsed')}</span>
           </div>
         </div>
       </div>

@@ -43,7 +43,7 @@ const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
   return (
     <>
       <BAIModal
-        title={t('usersettings.SSHKeypairGeneration')}
+        title={t('userSettings.SSHKeypairGeneration')}
         onCancel={() => onRequestClose()}
         footer={[
           <Button key="back" onClick={() => onRequestClose()}>
@@ -67,7 +67,7 @@ const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
         {...modalProps}
       >
         <Typography.Text strong>
-          {t('usersettings.CurrentSSHPublicKey')}
+          {t('userSettings.CurrentSSHPublicKey')}
         </Typography.Text>
         {data?.ssh_public_key ? (
           <Flex direction="row" align="start" justify="between">
@@ -84,7 +84,7 @@ const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
         ) : (
           <Typography.Paragraph>
             <pre style={{ height: 270 }}>
-              {t('usersettings.NoExistingSSHKeypair')}
+              {t('userSettings.NoExistingSSHKeypair')}
             </pre>
           </Typography.Paragraph>
         )}

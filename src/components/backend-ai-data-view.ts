@@ -725,7 +725,7 @@ export default class BackendAIData extends BackendAIPage {
                   (${Math.floor(
                     this._helpDescriptionStorageProxyInfo?.usage?.percentage,
                   )}%
-                  ${_t('data.usage.used')}
+                  ${_t('data.usage.Used')}
                   ${this._helpDescriptionStorageProxyInfo?.usage?.total &&
                   this._helpDescriptionStorageProxyInfo?.usage?.used
                     ? html`

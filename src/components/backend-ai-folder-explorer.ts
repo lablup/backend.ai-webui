@@ -2080,7 +2080,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
               @change="${(e) => this._toggleShowFilebrowserNotification(e)}"
             ></mwc-checkbox>
             <span style="font-size:0.8rem;">
-              ${_text('dialog.hide.DonotShowThisAgain')}
+              ${_text('dialog.hide.DoNotShowThisAgain')}
             </span>
           </div>
           <mwc-button unelevated @click="${(e) => this._hideDialog(e)}">

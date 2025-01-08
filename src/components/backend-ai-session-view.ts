@@ -624,7 +624,7 @@ export default class BackendAISessionView extends BackendAIPage {
                               >
                                 get_app
                               </mwc-icon>
-                              ${_t('session.exportCSV')}
+                              ${_t('session.ExportCSV')}
                             </a>
                           </mwc-list-item>
                         </mwc-menu>

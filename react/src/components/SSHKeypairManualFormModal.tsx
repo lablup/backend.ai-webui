@@ -27,7 +27,7 @@ const SSHKeypairManualFormModal: React.FC<SSHKeypairManualFormModalProps> = ({
 
   return (
     <BAIModal
-      title={t('usersettings.SSHKeypairEnterManually')}
+      title={t('userSettings.SSHKeypairEnterManually')}
       okText={t('button.Save')}
       onOk={() => {
         formRef.current
@@ -55,7 +55,7 @@ const SSHKeypairManualFormModal: React.FC<SSHKeypairManualFormModalProps> = ({
           name="pubkey"
           label={
             <Typography.Text strong>
-              {t('usersettings.PublicKey')}
+              {t('userSettings.PublicKey')}
             </Typography.Text>
           }
           rules={[{ required: true, message: t('settings.InputRequired') }]}
@@ -70,7 +70,7 @@ const SSHKeypairManualFormModal: React.FC<SSHKeypairManualFormModalProps> = ({
           name="privkey"
           label={
             <Typography.Text strong>
-              {t('usersettings.PrivateKey')}
+              {t('userSettings.PrivateKey')}
             </Typography.Text>
           }
           rules={[{ required: true, message: t('settings.InputRequired') }]}

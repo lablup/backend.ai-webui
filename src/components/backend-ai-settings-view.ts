@@ -80,9 +80,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
   @property({ type: Object }) optionsAndId: SettingOption[];
   @property({ type: Object }) notification = Object();
   @property({ type: Array }) imagePullingBehavior = [
-    { name: _text('settings.image.digest'), behavior: 'digest' },
-    { name: _text('settings.image.tag'), behavior: 'tag' },
-    { name: _text('settings.image.none'), behavior: 'none' },
+    { name: _text('settings.image.Digest'), behavior: 'digest' },
+    { name: _text('settings.image.Tag'), behavior: 'tag' },
+    { name: _text('settings.image.None'), behavior: 'none' },
   ];
   @property({ type: Array }) jobschedulerType = ['fifo', 'lifo', 'drf'];
   @property({ type: String }) selectedSchedulerType = '';

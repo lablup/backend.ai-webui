@@ -180,7 +180,7 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
               label="${_t('data.explorer.EnterEmailAddress')}"
               autofocus
               auto-validate
-              validationMessage="${_t('signup.InvalidEmail')}"
+              validationMessage="${_t('signUp.InvalidEmail')}"
               pattern="^[A-Z0-9a-z#-_]+@.+\\..+$"
               maxLength="64"
               placeholder="${_t('maxLength.64chars')}"
