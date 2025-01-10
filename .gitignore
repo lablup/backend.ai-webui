@@ -1,4 +1,3 @@
-
 # Logs
 logs
 *.log
@@ -62,6 +61,10 @@ typings/
 
 # dotenv environment variables file
 .env
+
+# dotenv environment variables file for playwright test
+/e2e/envs/*
+!/e2e/envs/.env.playwright.sample
 
 # next.js build output
 .next
@@ -139,3 +142,5 @@ yarn.lock
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+/e2e/screenshots/*

@@ -112,7 +112,7 @@
     "@babel/preset-typescript": "^7.24.7",
     "@babel/types": "^7.25.2",
     "@electron/packager": "^18.3.3",
-    "@playwright/test": "^1.46.1",
+    "@playwright/test": "^1.49.1",
     "@rollup/plugin-commonjs": "^25.0.8",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-replace": "^5.0.7",
