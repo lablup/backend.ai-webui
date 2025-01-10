@@ -28,6 +28,7 @@ import { useTranslation } from 'react-i18next';
 
 interface ModelTryContentProps {
   modelStorageHost?: string;
+  modelStoreName?: string;
   modelName?: string;
   minAIAcclResource: number;
   title?: string;
@@ -36,6 +37,7 @@ interface ModelTryContentProps {
 const ModelTryContent: React.FC<ModelTryContentProps> = ({
   modelName,
   modelStorageHost,
+  modelStoreName,
   minAIAcclResource,
   title,
   ...props
@@ -310,10 +312,10 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
             cloneable: true,
             permission: 'wd', // write-delete permission
             target_host: modelStorageHost, // lowestUsageHost, // clone to accessible and lowest usage storage host
-            target_name: `${modelName === 'Talkativot UI' ? 'talkativot-standalone-1' : modelName}`,
+            target_name: `${modelName === 'Talkativot UI' ? 'talkativot-standalone-1' : modelName + '-1'}`,
             usage_mode: 'model',
           },
-          name: `${modelName === 'Talkativot UI' ? 'talkativot-standalone' : modelName}`,
+          name: `${modelName === 'Talkativot UI' ? 'talkativot-standalone' : modelStoreName}`,
         },
         {
           onSuccess: (data) => {
