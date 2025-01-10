@@ -200,6 +200,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                   >
                     <ModelTryContent
                       modelStorageHost={model_card?.vfolder?.host as string}
+                      modelStoreName={model_card?.vfolder?.name as string}
                       modelName={model_card?.name as string}
                       minAIAcclResource={(() => {
                         const minResource = _.toNumber(
