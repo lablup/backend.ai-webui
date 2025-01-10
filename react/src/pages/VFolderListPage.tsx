@@ -40,12 +40,11 @@ const tabParam = withDefault(StringParam, 'general');
 
 const VFolderListPage: React.FC<VFolderListPageProps> = (props) => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam, {
     updateType: 'replace',
   });
-  const baiClient = useSuspendedBackendaiClient();
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
-  const dataViewRef = useRef(null);
   const [isOpenCreateModal, { toggle: openCreateModal }] = useToggle(false);
   const [inviteFolderId, setInviteFolderId] = useState<string | null>(null);
   const [
@@ -53,7 +52,8 @@ const VFolderListPage: React.FC<VFolderListPageProps> = (props) => {
     { toggle: toggleImportFromHuggingFaceModal },
   ] = useToggle(false);
 
-  const { token } = theme.useToken();
+  const dataViewRef = useRef(null);
+  const baiClient = useSuspendedBackendaiClient();
   const enableImportFromHuggingFace =
     baiClient._config.enableImportFromHuggingFace;
 
