@@ -495,7 +495,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
     const fn = e.target.getAttribute('filename');
     const path = this.breadcrumb.concat(fn).join('/');
     const job = globalThis.backendaiclient.vfolder.request_download_token(
-      path,
+      [path],
       this.vfolderName,
       archive,
     );
@@ -554,74 +554,53 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
       name: string;
       type: 'FILE' | 'DIRECTORY';
     }> = this.fileListGrid.selectedItems.map((file) => ({
-      name: file.name,
+      name: this.breadcrumb.concat(file.name).join('/'),
       type: file.type,
     }));
-    const results = await Promise.all(
-      files.map(async (file) => {
-        try {
-          return await globalThis.backendaiclient.vfolder.request_download_token(
-            this.breadcrumb.concat(file.name).join('/'),
-            this.vfolderName,
-            file.type === 'DIRECTORY', // archive
-          );
-        } catch (err) {
-          if (err && err.message) {
-            this.notification.text = PainKiller.relieve(err.title);
-            this.notification.detail = err.message;
-            this.notification.show(true, err);
-          }
-          // return null to skip the download
-          return null;
-        }
-      }),
-    );
-
-    const download = (idx: number) => {
-      // if the index is out of range, return
-      if (idx >= results.length) {
-        return;
-      }
-      // if the result is null, skip the download
-      if (!results[idx]) {
-        download(idx + 1);
-        return;
-      }
-
-      const res = results[idx];
-      const token = res.token;
-      let url;
+    try {
+      const isArchive =
+        files.length === 1 ? files[0].type === 'DIRECTORY' : true;
+      const { token, url } =
+        await globalThis.backendaiclient.vfolder.request_download_token(
+          files.map((file) => file.name),
+          this.vfolderName,
+          isArchive,
+        );
+      let downloadURL;
       if (this._APIMajorVersion < 6) {
-        url =
+        downloadURL =
           globalThis.backendaiclient.vfolder.get_download_url_with_token(token);
       } else {
-        url = `${res.url}?token=${res.token}&archive=${files[idx].type === 'DIRECTORY'}`;
+        downloadURL = `${url}?token=${token}&archive=${isArchive}`;
       }
       if (globalThis.iOSSafari) {
-        this.downloadURL = url;
-        URL.revokeObjectURL(url);
+        this.downloadURL = downloadURL;
+        // this.downloadFileDialog.show();
+        URL.revokeObjectURL(downloadURL);
       } else {
         const a = document.createElement('a');
         a.style.display = 'none';
         a.addEventListener('click', function (e) {
           e.stopPropagation();
         });
-        a.href = url;
-        a.download = files[idx].name;
+        a.href = downloadURL;
+
+        a.download =
+          files.length === 1
+            ? (files[0].name.split('/').pop() as string)
+            : this.vfolderName;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        /**
-         * Delay the download of the next file by 500ms to prevent the browser from blocking the download.
-         * If you think 500ms is too much, you can reduce it.
-         */
-        setTimeout(() => {
-          download(idx + 1);
-        }, 500);
+        URL.revokeObjectURL(downloadURL);
       }
-    };
-    download(0);
+    } catch (err) {
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+    }
   }
 
   /* File upload and download */

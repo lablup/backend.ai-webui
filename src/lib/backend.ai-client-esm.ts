@@ -2509,17 +2509,17 @@ class VFolder {
   /**
    * Request a download and get the token for direct download.
    *
-   * @param {string} file - File to download. Should contain full path.
+   * @param {Array<string>} files - Files to download. Should contain full path.
    * @param {string} name - Virtual folder name that files are in.
    * @param {boolean} archive - Download target directory as an archive.
    */
   async request_download_token(
-    file,
+    files,
     name = false,
     archive = false,
   ): Promise<any> {
     let body = {
-      file,
+      files,
       archive,
     };
     let rqstUrl;
