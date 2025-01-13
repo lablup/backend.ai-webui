@@ -351,7 +351,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/unauthorized',
-        handle: { labelKey: 'webui.UNAUTHORIZEDACCESS' },
+        handle: { labelKey: 'webui.UnauthorizedAccess' },
         Component: Page401,
       },
       // Leave empty tag for plugin pages.

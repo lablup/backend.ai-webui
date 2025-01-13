@@ -90,8 +90,8 @@ export default class BackendAIErrorView extends BackendAIPage {
           style="width:500px;margin:20px;"
         />
         <div class="vertical layout" style="width:100%;">
-          <div class="title">${_tr('webui.NOTFOUND')}</div>
-          <p class="description">${_t('webui.DescNOTFOUND')}</p>
+          <div class="title">${_tr('webui.NotFound')}</div>
+          <p class="description">${_t('webui.DescNotFound')}</p>
           <div>
             <mwc-button
               unelevated

@@ -2009,7 +2009,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         if (err && err.message) {
           if ('statusCode' in err && err.statusCode === 408) {
             this.notification.text = _text(
-              'session.launcher.sessionStillPreparing',
+              'session.launcher.SessionStillPreparing',
             );
           } else {
             if (err.description) {
@@ -4113,7 +4113,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           };
         } else {
           this.sessionName.validationMessage = _text(
-            'session.Validation.EnterValidSessionName',
+            'session.validation.EnterValidSessionName',
           );
           return {
             valid: nativeValidity.valid,

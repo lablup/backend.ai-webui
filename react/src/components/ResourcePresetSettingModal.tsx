@@ -200,7 +200,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
             { required: true, message: t('resourcePreset.NoPresetName') },
             {
               pattern: /^[a-zA-Z0-9._-]*$/,
-              message: t('data.Allowslettersnumbersand-_dot'),
+              message: t('data.AllowsLettersNumbersAnd-_Dot'),
             },
             {
               validator(_, value) {

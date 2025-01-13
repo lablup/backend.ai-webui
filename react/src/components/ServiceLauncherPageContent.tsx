@@ -949,7 +949,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                           <Form.Item
                             label={
                               <>
-                                {t('modelService.resources')}
+                                {t('modelService.Resources')}
                                 <Button
                                   type="link"
                                   onClick={() => {

@@ -1,4 +1,5 @@
 {
+  "$schema": "../i18n.schema.json",
   "webui": {
     "menu": {
       "WelcomeMessage": "Chào mừng, {{ userName }}.",
@@ -35,7 +36,6 @@
       "NewPasswordMismatch": "Hai mật khẩu mới không khớp.",
       "PasswordMismatch": "Mật khẩu không khớp",
       "PasswordUpdated": "Mật khẩu được cập nhật thành công.",
-      "FullnameUpdated": "Tên đầy đủ được cập nhật thành công.",
       "TermsOfService": "Điều khoản dịch vụ",
       "PrivacyPolicy": "Chính sách bảo mật",
       "LeaveService": "Rời khỏi dịch vụ",
@@ -65,17 +65,18 @@
       "InvalidBlankEmail": "Nhập email của bạn",
       "DisMatchUserEmail": "E-mail của người dùng không khớp",
       "MyEnvironments": "Môi trường của tôi",
-      "ResourcePolicy": "Chính sách tài nguyên"
+      "ResourcePolicy": "Chính sách tài nguyên",
+      "FullNameUpdated": "Tên đầy đủ được cập nhật thành công."
     },
     "YouAreOffline": "Ngoại tuyến: Không kết nối với bất kỳ mạng nào.",
     "YouAreOnline": "Bạn hiện đang trực tuyến",
-    "NOTFOUND": " <p> Rất tiếc! <br/> Không tìm thấy trang ... </p>",
-    "DescNOTFOUND": "Xin lỗi, không thể tìm thấy trang bạn đang tìm.",
-    "UNAUTHORIZEDACCESS": "Truy cập trái phép",
     "AdminOnlyPage": "Bạn không có quyền truy cập trang này. <br /> Nhấp vào nút bên dưới để chuyển hướng đến trang tóm tắt.",
     "CleanUpLoginSession": "Dọn dẹp phiên đăng nhập ...",
     "CleanUpNow": "Dọn dẹp ngay bây giờ ...",
-    "NetworkSoftTimeout": "Máy chủ mất nhiều thời gian hơn để phản hồi. \nVui lòng đợi một lát"
+    "NetworkSoftTimeout": "Máy chủ mất nhiều thời gian hơn để phản hồi. \nVui lòng đợi một lát",
+    "NotFound": " <p> Rất tiếc! <br/> Không tìm thấy trang ... </p>",
+    "DescNotFound": "Xin lỗi, không thể tìm thấy trang bạn đang tìm.",
+    "UnauthorizedAccess": "Truy cập trái phép"
   },
   "summary": {
     "StartMenu": "Menu Bắt đầu",
@@ -83,7 +84,6 @@
     "ActiveSessions": "Phiên hoạt động",
     "ResourceStatistics": "Thống kê tài nguyên",
     "CoresReserved": "Lõi dự trữ",
-    "reserved": "kín đáo",
     "FractionalGPUScalingEnabled": "Đã bật chia tỷ lệ GPU phân đoạn",
     "ROCMGPUEnabled": "GPU ROCm được kích hoạt",
     "TPUEnabled": "TPU đã bật",
@@ -110,7 +110,6 @@
     "NoInvitations": "Không có lời mời nào để hiển thị.",
     "AcceptSharedVFolder": "Bây giờ bạn có thể truy cập thư mục:",
     "DeclineSharedVFolder": "Thư mời thư mục đã bị xóa:",
-    "connectingToCluster": "Đang kết nối với Backend.AI Cluster ...",
     "IPUEnabled": "Đã bật NPU IPU",
     "ATOMEnabled": "Đã bật NPU ATOM",
     "WarboyEnabled": "NPU Warboy đã được kích hoạt",
@@ -118,7 +117,9 @@
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "Đã bật LPU Hyperaccel",
     "ATOMPlusEnabled": "Đã bật NPU ATOM+",
-    "RNGDEnabled": "Đã bật RNGD"
+    "RNGDEnabled": "Đã bật RNGD",
+    "ReservedShort": "kín đáo",
+    "ConnectingToCluster": "Đang kết nối với Backend.AI Cluster ..."
   },
   "session": {
     "launcher": {
@@ -179,7 +180,6 @@
       "StartImportedNotebook": "Bắt đầu Sổ tay đã Nhập",
       "DuplicatedSessionName": "Tên phiên trùng lặp không được phép",
       "SessionNameAllowCondition": "Tên phiên phải có 4-64 bảng chữ cái / số mà không có bất kỳ khoảng trắng nào.",
-      "sessionStillPreparing": "Phiên họp vẫn đang trong quá trình chuẩn bị. Sau khi phiên bắt đầu, hãy nhấn vào biểu tượng ứng dụng để khởi động ứng dụng.",
       "ResourceMonitorToggle": "Xem giám sát tài nguyên",
       "SharedMemorySettingIsReduced": "Cài đặt bộ nhớ dùng chung được giảm xuống dưới bộ nhớ được cấp phát.",
       "NoActiveKeypair": "Không có cặp khóa hoạt động",
@@ -290,7 +290,8 @@
       "BatchJobTimeoutDuration": "Thời gian chờ của công việc hàng loạt",
       "BatchJobTimeoutDurationDesc": "Đặt thời gian thực hiện tối đa cho các công việc hàng loạt. \nPhiên sẽ tự động kết thúc nếu vượt quá thời gian quy định.",
       "SetBatchJobTimeoutDuration": "Đặt thời gian chờ cho công việc hàng loạt",
-      "PreOpen": "mở trước"
+      "PreOpen": "mở trước",
+      "SessionStillPreparing": "Phiên họp vẫn đang trong quá trình chuẩn bị. Sau khi phiên bắt đầu, hãy nhấn vào biểu tượng ứng dụng để khởi động ứng dụng."
     },
     "Preparing": "Đang chuẩn bị ...",
     "PreparingSession": "Đang chuẩn bị phiên ...",
@@ -331,7 +332,7 @@
     "UseYourFavoriteMSTSCApp": "Sử dụng ứng dụng MS Remote Desktop yêu thích của bạn",
     "Architecture": "Ngành kiến ​​​​trúc",
     "SessionType": "Loại phiên",
-    "Validation": {
+    "validation": {
       "EnterValidSessionName": "Vui lòng nhập kết hợp ít nhất 4 chữ cái trong bảng chữ cái, hoặc số, hoặc dấu gạch ngang hoặc dấu gạch dưới.",
       "SessionNameRequired": "Tên phiên là bắt buộc",
       "SluggedStrings": "Chuỗi bị trượt (>3 ký tự)",
@@ -346,8 +347,6 @@
     "Interactive": "Tương tác",
     "Batch": "Lô hàng",
     "Inference": "Sự suy luận",
-    "Readmore": "Đọc thêm...",
-    "Readless": "Đọc ít hơn",
     "AllowedClientIps": "IP khách hàng được phép",
     "CommaSeparated": "được phân tách bằng dấu phẩy",
     "UseSubdomain": "Sử dụng tên miền phụ",
@@ -431,7 +430,9 @@
       "SSHConnectionExampleClipboardCopy": "Ví dụ về kết nối SSH đã được sao chép vào bảng nhớ tạm."
     },
     "ExportCSV": "xuất CSV",
-    "FGPU": "fGPU"
+    "FGPU": "fGPU",
+    "ReadLess": "Đọc ít hơn",
+    "ReadMore": "Đọc thêm..."
   },
   "button": {
     "Cancel": "Huỷ bỏ",
@@ -637,9 +638,6 @@
     "Create": "Tạo nên",
     "Update": "Cập nhật",
     "FolderNameRequired": "Tên thư mục là bắt buộc",
-    "FileandFoldernameRequired": "Tên tệp / thư mục là bắt buộc",
-    "Allowslettersnumbersand-_dot": "Cho phép các chữ cái, số và -_.",
-    "Allowslettersnumbersand-_": "Cho phép các chữ cái, số và -_",
     "FolderNameTooLong": "Nhập tên thư mục ít hơn 64 ký tự",
     "EnterDifferentValue": "Vui lòng nhập một giá trị khác với tên tệp hoặc thư mục hiện có. Vui lòng kiểm tra xem có ký tự khoảng trắng trong trường nhập hay không.",
     "Host": "Tổ chức",
@@ -815,7 +813,6 @@
       "InferenceEngineVersion": "Phiên bản công cụ suy luận",
       "ReplicaNumber": "Số bản sao",
       "ImportAndStartService": "Dịch vụ nhập và bắt đầu",
-      "huggingFaceUrlPlaceholder": "Nhập URL Hugging Face",
       "ImportOnly": "Chỉ nhập khẩu",
       "StartWithHuggingFaceUrl": "Nó sẽ bắt đầu bằng https://huggingface.co",
       "CheckHuggingFaceUrl": "Kiểm tra",
@@ -836,9 +833,13 @@
       "ImportOnlySuccessDesc": "Thư mục mô hình mới đã sẵn sàng. \nHãy bắt đầu dịch vụ ngay bây giờ và thử thao tác bạn muốn.",
       "ImportAndStartServiceSuccessDesc": "Thư mục mô hình và dịch vụ mới đã sẵn sàng. \nNhấp vào nút 'Xem thông tin dịch vụ' để kiểm tra chi tiết mẫu máy và bắt đầu thao tác mong muốn.",
       "AddedItems": "Các mục đã thêm",
-      "ModelFolderName": "Tên thư mục mẫu"
+      "ModelFolderName": "Tên thư mục mẫu",
+      "HuggingFaceUrlPlaceholder": "Nhập URL Hugging Face"
     },
-    "UserQuotaScopeId": "Quota Scope ID"
+    "UserQuotaScopeId": "Quota Scope ID",
+    "FileAndFolderNameRequired": "Tên tệp / thư mục là bắt buộc",
+    "AllowsLettersNumbersAnd-_": "Cho phép các chữ cái, số và -_",
+    "AllowsLettersNumbersAnd-_Dot": "Cho phép các chữ cái, số và -_."
   },
   "dialog": {
     "warning": {
@@ -1232,10 +1233,7 @@
     "Scaling": "Mở rộng quy mô",
     "AllowAgentSideRegistration": "Cho phép đăng ký phía đại lý",
     "DescAllowAgentSideRegistration": "Cho phép đại lý tự đăng ký với người quản lý. <br/> Chỉ sử dụng nếu cụm Backend.AI được quản lý trên vị trí an toàn.",
-    "DescCUDAGPUsupport": "Hỗ trợ GPU NVIDIA CUDA. <br/> Yêu cầu Plugin Backend.AI CUDA.",
     "CUDAGPUdisabledByFGPUsupport": "Bị vô hiệu hóa do hệ thống sử dụng plugin GPU Fractional",
-    "ROCMGPUsupport": "Hỗ trợ GPU ROCm",
-    "DescROCMGPUsupport": "Hỗ trợ GPU AMD ROCm. <br/> Yêu cầu Plugin Backend.AI ROCm.",
     "Scheduler": "Người lập kế hoạch",
     "SchedulerConfiguration": "Cấu hình cho mỗi bộ lập lịch công việc.",
     "Require2003orAbove": "Yêu cầu Backend.AI 20.03 trở lên.",
@@ -1269,24 +1267,15 @@
     },
     "OverlayNetwork": "Mạng che phủ",
     "OverlayNetworkConfiguration": "Cấu hình để sử dụng khi tạo mạng lớp phủ.",
-    "IPUsupport": "I PU",
-    "DescIPUsupport": "Sử dụng trình tăng tốc GraphCore IPU",
     "RequireIPUPlugin": "Yêu cầu Plugin IPU Backend.AI.",
-    "ATOMsupport": "nguyên tử",
-    "DescATOMsupport": "Sử dụng máy gia tốc ATOM của Rebellions",
     "RequireATOMPlugin": "Yêu cầu Plugin Backend.AI ATOM.",
-    "Warboysupport": "chiến binh",
-    "DescWarboysupport": "Sử dụng hỗ trợ Furiosa Warboy",
     "RequireWarboyPlugin": "Yêu cầu Plugin Backend.AI Warboy.",
     "OverlayNetworkSettings": "Cài đặt mạng lớp phủ",
     "OverlayNetworkSettingsDescription": "Mạng lớp phủ là mạng máy tính được xếp chồng lên trên một mạng khác. \nMạng lớp phủ tạo ra một mạng phân tán giữa nhiều máy chủ daemon Docker của trình quản lý Backend.AI.",
     "MTUDescription": "Đơn vị truyền tối đa, kích thước của gói lớn nhất mà giao thức mạng có thể truyền.",
     "OutOfRange": "Ngoài phạm vi.",
     "Plugins": "bổ sung",
-    "OpenSourceCUDAGPUsupport": "Hỗ trợ GPU CUDA mã nguồn mở",
     "ShowOnlyChanged": "Chỉ hiển thị các thay đổi",
-    "HyperaccelLPUsupport": "Hyperaccel LPU",
-    "DescHyperaccelLPUsupport": "Sử dụng bộ tăng tốc LPU Hyperaccel.",
     "RequireHyperaccelLPUPlugin": "Yêu cầu Plugin LPU Backend.AI Hyperaccel.",
     "SearchPlaceholder": "Tìm kiếm",
     "Gaudi2Support": "Hỗ trợ Gaudi 2",
@@ -1295,9 +1284,21 @@
     "ATOMPlusSupport": "Hỗ trợ ATOM+",
     "RequireATOMPlusPlugin": "Yêu cầu Plugin Backend.AI ATOM+.",
     "DescATOMPlusSupport": "Sử dụng máy gia tốc ATOM+ của Rebellions.",
-    "RNGDsupport": "RNGD",
-    "DescRNGDsupport": "Sử dụng hỗ trợ Furiosa RNGD",
-    "RequireRNGDPlugin": "Yêu cầu Plugin Backend.AI RNGD."
+    "RequireRNGDPlugin": "Yêu cầu Plugin Backend.AI RNGD.",
+    "IPUSupport": "I PU",
+    "DescWarboySupport": "Sử dụng hỗ trợ Furiosa Warboy",
+    "DescIPUSupport": "Sử dụng trình tăng tốc GraphCore IPU",
+    "DescATOMSupport": "Sử dụng máy gia tốc ATOM của Rebellions",
+    "DescCudaGPUSupport": "Hỗ trợ GPU NVIDIA CUDA. <br/> Yêu cầu Plugin Backend.AI CUDA.",
+    "DescHyperaccelLPUSupport": "Sử dụng bộ tăng tốc LPU Hyperaccel.",
+    "DescRNGDSupport": "Sử dụng hỗ trợ Furiosa RNGD",
+    "DescRocmGPUSupport": "Hỗ trợ GPU AMD ROCm. <br/> Yêu cầu Plugin Backend.AI ROCm.",
+    "HyperaccelLPUSupport": "Hyperaccel LPU",
+    "OpenSourceCudaGPUSupport": "Hỗ trợ GPU CUDA mã nguồn mở",
+    "WarboySupport": "chiến binh",
+    "ATOMSupport": "nguyên tử",
+    "RNGDSupport": "RNGD",
+    "ROCMGPUSupport": "Hỗ trợ GPU ROCm"
   },
   "notification": {
     "SuccessfullyUpdated": "Cập nhật thành công",
@@ -1379,7 +1380,7 @@
     "EndpointInfo": "Giới thiệu về điểm cuối",
     "DescEndpoint": "<p>Trong API ENDPOINT, phải nhập URL của Máy chủ web Backend.AI chuyển tiếp yêu cầu đến Người quản lý.</p><p>ví dụ: http://127.0.0.1:8090/</p>",
     "EndpointStartWith": "Điểm cuối phải bắt đầu bằng http:// hoặc https://.",
-    "SingleSignOn": {
+    "singleSignOn": {
       "LoginWithSAML": "Đăng nhập bằng SAML",
       "LoginWithRealm": "Đăng nhập bằng {{realmName }}"
     },
@@ -1586,7 +1587,6 @@
     "SessionOwner": "Chủ sở hữu phiên",
     "ServiceEndpoint": "Điểm cuối dịch vụ",
     "NoServiceEndpoint": "Không có điểm cuối dịch vụ",
-    "resources": "Tài nguyên",
     "Image": "Hình ảnh",
     "GeneratedTokens": "Mã thông báo được tạo",
     "GenerateToken": "Tạo mã thông báo",
@@ -1631,7 +1631,8 @@
     "Chatting": "Trò chuyện",
     "ServiceNameMinLength": "Vui lòng nhập ít nhất 4 ký tự.",
     "ServiceNameMaxLength": "Vui lòng nhập 24 ký tự trở xuống.",
-    "ServiceNameCannotStartWithHyphen": "Dấu gạch nối (-) không thể được sử dụng ở cả hai đầu."
+    "ServiceNameCannotStartWithHyphen": "Dấu gạch nối (-) không thể được sử dụng ở cả hai đầu.",
+    "Resources": "Tài nguyên"
   },
   "totp": {
     "TotpSetupCompleted": "Đã bật 2FA",
@@ -1676,7 +1677,6 @@
     "CloneAsFolder": "Sao chép dưới dạng Thư mục",
     "CloneSuccess": "Yêu cầu nhân bản đã được gửi thành công.",
     "CloneInfo": "Nó sẽ được sao chép thành thư mục loại người dùng của bạn.",
-    "category": "Loại",
     "CloneToFolder": "Sao chép vào một thư mục",
     "FolderAlreadyExists": "Một thư mục có tên này đã tồn tại.",
     "FinetuneModel": "Mô hình Finetune"

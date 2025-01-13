@@ -31,7 +31,12 @@
     "wsproxy",
     "ahooks",
     "lucide",
-    "Signout"
+    "Signout",
+    "Totp",
+    "Keypairs",
+    "Hyperaccel",
+    "Tensorboard",
+    "Automount"
   ],
   "flagWords": [
     "데이터레이크",

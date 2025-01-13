@@ -1,4 +1,5 @@
 {
+  "$schema": "../i18n.schema.json",
   "summary": {
     "FastTrack": "FastTrack",
     "ATOMEnabled": "ATOM NPU käytössä",
@@ -36,11 +37,11 @@
     "Used": "Käytetty",
     "Using": "Käyttämällä",
     "WarboyEnabled": "Warboy NPU käytössä",
-    "connectingToCluster": "Yhteyden muodostaminen Backend.AI-klusteriin...",
-    "reserved": "varattu",
     "HyperaccelLPUEnabled": "Hyperaccel LPU käytössä",
     "ATOMPlusEnabled": "ATOM+ NPU käytössä",
-    "RNGDEnabled": "RNGD käytössä"
+    "RNGDEnabled": "RNGD käytössä",
+    "ReservedShort": "varattu",
+    "ConnectingToCluster": "Yhteyden muodostaminen Backend.AI-klusteriin..."
   },
   "error": {
     "WrongAPIServerAddress": "Väärä API-palvelimen osoite.",
@@ -234,8 +235,6 @@
     "ExportCSV": "viedä CSV"
   },
   "data": {
-    "Allowslettersnumbersand-_": "Sallii kirjaimet, numerot ja -_",
-    "Allowslettersnumbersand-_dot": "Sallii kirjaimet, numerot ja -_.",
     "AutomountFolders": "Automount-kansiot",
     "Create": "Luo",
     "CreateANewStorageFolder": "Luo uusi tallennuskansio",
@@ -245,7 +244,6 @@
     "DialogModelFolder": "Voit palvella ja hallita malleja.",
     "EnterDifferentValue": "Anna jokin muu arvo kuin olemassa olevan tiedoston tai kansion nimi. Tarkista, onko syöttökentässä välilyönti vai ei.",
     "ExistingFolderName": "Olemassa olevan kansion nimi",
-    "FileandFoldernameRequired": "Tiedoston/kansioiden nimi vaaditaan",
     "FolderNameRequired": "Kansion nimi vaaditaan",
     "FolderNameTooLong": "Kirjoita kansion nimi alle 64 merkkiä",
     "FolderToCopy": "Kopioitava kansio",
@@ -423,7 +421,6 @@
       "InferenceEngineVersion": "Päättele moottorin versio",
       "ReplicaNumber": "Replikan numero",
       "ImportAndStartService": "Tuo ja käynnistä palvelu",
-      "huggingFaceUrlPlaceholder": "Syötä Hugging Face-URL-osoite",
       "ImportOnly": "Vain tuonti",
       "StartWithHuggingFaceUrl": "Sen pitäisi alkaa https://huggingface.co",
       "CheckHuggingFaceUrl": "Tarkista",
@@ -444,9 +441,13 @@
       "ImportOnlySuccessDesc": "Uusi mallikansio on valmis. \nKäynnistä palvelu nyt ja kokeile haluamaasi toimintoa.",
       "ImportAndStartServiceSuccessDesc": "Uusi mallikansio ja palvelu ovat valmiina. \nNapsauta \"Näytä palvelutiedot\" -painiketta tarkistaaksesi mallin tiedot ja aloittaaksesi haluamasi toiminnon.",
       "AddedItems": "Lisätyt kohteet",
-      "ModelFolderName": "Mallin kansion nimi"
+      "ModelFolderName": "Mallin kansion nimi",
+      "HuggingFaceUrlPlaceholder": "Syötä Hugging Face-URL-osoite"
     },
-    "UserQuotaScopeId": "Quota Scope ID"
+    "UserQuotaScopeId": "Quota Scope ID",
+    "FileAndFolderNameRequired": "Tiedoston/kansioiden nimi vaaditaan",
+    "AllowsLettersNumbersAnd-_": "Sallii kirjaimet, numerot ja -_",
+    "AllowsLettersNumbersAnd-_Dot": "Sallii kirjaimet, numerot ja -_."
   },
   "dialog": {
     "warning": {
@@ -616,7 +617,7 @@
     "RepoWillBeFolder": "Tuodut GitHub-arkistot muunnetaan kansioiksi ja ne voidaan asentaa istunnon alkaessa.",
     "WrongURLType": "Väärä URL-tyyppi",
     "YouCanCreateNotebookCode": "Kirjoita muistikirjan URL-osoite luodaksesi alla olevan kaltaisen merkkikoodin, jonka voit suorittaa suoraan Backend.AI:ssa.",
-    "InvalidNotebookURL": "Virheellinen Notbookin URL-osoite."
+    "InvalidNotebookURL": "Virheellinen muistikirjan URL-osoite."
   },
   "information": {
     "APIVersion": "API-versio",
@@ -719,7 +720,7 @@
     "SendChangePasswordEmail": "Lähetä sähköpostiviesti salasanan vaihtamisesta",
     "SignUp": "Rekisteröidy",
     "SignoutFinished": "Kirjautuminen päättyi.",
-    "SingleSignOn": {
+    "singleSignOn": {
       "LoginWithRealm": "Kirjaudu sisään {{ realmName }}",
       "LoginWithSAML": "Kirjautuminen SAML:llä"
     },
@@ -818,7 +819,6 @@
     "TokenGenerated": "Tuotettu merkki",
     "TokenGenerationFailed": "Tokenin luominen epäonnistui. yritä uudelleen.",
     "TrafficRatio": "Liikennesuhde",
-    "resources": "Resurssit",
     "Owner": "Omistaja",
     "Validate": "Vahvista",
     "Cancel": "Peruuttaa",
@@ -850,7 +850,8 @@
     "RuntimeVariant": "Päättelyn suoritusaikamuunnos",
     "ServiceNameMinLength": "Kirjoita vähintään 4 merkkiä.",
     "ServiceNameMaxLength": "Anna enintään 24 merkkiä.",
-    "ServiceNameCannotStartWithHyphen": "Tavuviivoja (-) ei voi käyttää kummassakaan päässä."
+    "ServiceNameCannotStartWithHyphen": "Tavuviivoja (-) ei voi käyttää kummassakaan päässä.",
+    "Resources": "Resurssit"
   },
   "notification": {
     "Initializing": "Aloitetaan...",
@@ -1061,8 +1062,6 @@
     "Others": "Muut",
     "Preparing": "Valmistautuminen...",
     "PreparingSession": "Istunnon valmistelu...",
-    "Readless": "Lue vähemmän",
-    "Readmore": "Lue lisää...",
     "RequestContainerCommit": "Pyyntö Container Commit",
     "Reservation": "Varaukset",
     "ResourceGroup": "Resurssiryhmä",
@@ -1103,7 +1102,7 @@
     "VSCodeRemoteDescription": "Voit käynnistää paikallisen Visual Studio Code -sovelluksen ja muodostaa yhteyden etälaskentaistuntoon (SSH:n kautta) käyttämällä alla olevaa salasanaa. Kopioi salasana ennen painikkeen napsauttamista. (HUOMAUTUS: Sinun on asennettava Visual Studio Code paikalliselle koneellesi).",
     "VSCodeRemoteNoticeSSHConfig": "Jos haluat luoda saumattoman yhteyden Visual Studio Code -ohjelmistolle etälaskentaistuntoon, luo tai muokkaa $HOME/.ssh/config-tiedostoa ja lisää seuraava lohko.",
     "VSCodeRemotePasswordTitle": "Visual Studio Code SSH-etäsalasana",
-    "Validation": {
+    "validation": {
       "EnterValidSessionName": "Anna vähintään neljän aakkosten kirjaimen tai numeron tai yhdysviivan tai alaviivan yhdistelmä.",
       "SessionNameAlreadyExist": "Istunnon nimi on jo olemassa",
       "SessionNameRequired": "Istunnon nimi vaaditaan",
@@ -1235,7 +1234,6 @@
       "TotalAllocation": "Kokonaismääräraha",
       "UserResourceLimit": "Käyttäjän resurssirajoitus",
       "Version": "Versio",
-      "sessionStillPreparing": "Istuntoa valmistellaan edelleen. Kun istunto on alkanut, käynnistä sovellus napauttamalla sovelluskuvaketta.",
       "PreOpenPortMaxCountLimit": "Voit määrittää enintään {{count}} ennalta avattuja portteja.",
       "PreOpenPortRangeGuide": "Syötä useita arvoja joko pilkulla (,) tai välilyönnillä erotettuina.",
       "FolderAliasInvalid": "Vain aakkosnumeeriset merkit, alaviiva (_), kauttaviiva (/), piste (.) ja viiva (-) ovat sallittuja.",
@@ -1285,7 +1283,8 @@
       "BatchJobTimeoutDuration": "Erätyön aikakatkaisun kesto",
       "BatchJobTimeoutDurationDesc": "Aseta erätöiden enimmäissuoritusaika. \nIstunto päättyy automaattisesti, jos määritetty aika ylittyy.",
       "SetBatchJobTimeoutDuration": "Aseta erätyön aikakatkaisun kesto",
-      "PreOpen": "avataan etukäteen"
+      "PreOpen": "avataan etukäteen",
+      "SessionStillPreparing": "Istuntoa valmistellaan edelleen. Kun istunto on alkanut, käynnistä sovellus napauttamalla sovelluskuvaketta."
     },
     "ExpiresAfter": "Jäljellä oleva aika",
     "CPU": "CPU",
@@ -1321,33 +1320,28 @@
       "SSHConnectionExampleClipboardCopy": "SSH-yhteys Esimerkki on kopioitu leikepöydälle."
     },
     "ExportCSV": "viedä CSV",
-    "FGPU": "fGPU"
+    "FGPU": "fGPU",
+    "ReadLess": "Lue vähemmän",
+    "ReadMore": "Lue lisää..."
   },
   "settings": {
-    "ATOMsupport": "ATOM",
     "AllowAgentSideRegistration": "Salli agenttipuolen rekisteröinti",
     "CUDAGPUdisabledByFGPUsupport": "Ei käytössä, koska järjestelmä käyttää Fractional GPU -lisäosaa.",
     "Config": "Config",
     "ConfigPerJobSchduler": "Ajastimen asetukset",
     "ConfigPerJobSchdulerDescription": "Aikatauluttaja-asetuksen arvot ovat oletusarvoja, joita käytetään, kun kussakin resurssiryhmässä ei ole aikatauluttaja-asetusta. Jos resurssiryhmäkohtainen asetus on olemassa, tätä arvoa ei oteta huomioon.",
-    "DescATOMsupport": "Käytä Rebellions ATOM-kiihdytintä",
     "DescAllowAgentSideRegistration": "Salli agentin rekisteröityä managerille.<br/>Käytä vain, jos Backend.AI-klusteria hallinnoidaan suojatussa paikassa.",
-    "DescCUDAGPUsupport": "NVIDIA CUDA GPU -tuki. <br/> Vaatii Backend.AI CUDA Pluginin.",
     "DescFractionalGPU": "Käytä Fractional GPU -ominaisuutta GPU-virtualisoinnin kanssa.",
-    "DescIPUsupport": "Käytä GraphCore IPU -kiihdytintä",
     "DescImagePullBehavior": "Määrittää ehdot uusien kuvien automaattiselle lataamiselle, kun uusi versio on rekisteröity rekisteriin. Jos asetusta ei ole, uusia kuvia ei ladata automaattisesti.",
-    "DescROCMGPUsupport": "AMD ROCm GPU -tuki. <br/> Vaatii Backend.AI ROCm Pluginin.",
     "DescRegisterNewImagesFromRepo": "Rekisteröi uudet ympäristöt arkistosta.",
     "DescTPU": "Käytä TPU-kiihdytintä.",
     "DescUseCLIonGUI": "Backend.AI CLI:n tarjoaminen GUI-sovelluksessa/webissä. Edellyttää Backend.AI CLI -kuvaa.",
     "DescUseGUIonWeb": "Backend.AI GUI:n tarjoaminen verkkopalveluna. Edellyttää Backend.AI Web UI -kuvaa.",
-    "DescWarboysupport": "Käytä Furiosa Warboy -tukea",
     "EnterpriseFeatures": "Yrityksen ominaisuudet",
     "EnvConfigWillDisappear": "Kaikki tallentamattomat ympäristömuuttujat ja -arvot häviävät.",
     "FifoOnly": "Tällä hetkellä muutokset ovat mahdollisia vain silloin, kun aikatauluttaja on FIFO.",
     "FractionalGPU": "Murto-osa GPU",
     "GUI": "GUI",
-    "IPUsupport": "IPU",
     "Image": "Kuva",
     "ImagePullBehavior": "Kuvan automaattinen asennus / päivityssääntö",
     "InputRequired": "Tämä kenttä on pakollinen.",
@@ -1360,7 +1354,6 @@
     "OverlayNetworkSettings": "Päällekkäisverkon asetukset",
     "OverlayNetworkSettingsDescription": "Päällekkäisverkko on tietokoneverkko, joka on kerrostettu toisen verkon päälle. Päällekkäisverkko luo hajautetun verkon useiden Backend.AI-managerin Docker-daemon-isäntien välille.",
     "Plugins": "Liitännäiset",
-    "ROCMGPUsupport": "ROCm GPU-tuki",
     "RegisterNewImagesFromRepo": "Rekisteröi uudet kuvat arkistosta",
     "Require2003orAbove": "Vaatii Backend.AI 20.03 tai uudemman version.",
     "Require2009orAbove": "Vaatii Backend.AI 20.09 tai uudemman version.",
@@ -1379,16 +1372,12 @@
     "TPU": "TPU",
     "UseCLIonGUI": "Backend.AI CLI:n käyttö GUI:ssa",
     "UseGUIonWeb": "Backend.AI GUI:n käyttö Webissä",
-    "Warboysupport": "Warboy",
     "image": {
       "Digest": "Digest",
       "None": "Ei ole",
       "Tag": "Tag"
     },
-    "OpenSourceCUDAGPUsupport": "Avoimen lähdekoodin CUDA GPU-tuki",
     "ShowOnlyChanged": "Vain näyttö muuttuu",
-    "HyperaccelLPUsupport": "Hyperaccel LPU",
-    "DescHyperaccelLPUsupport": "Käytä Hyperaccel LPU -kiihdytintä.",
     "RequireHyperaccelLPUPlugin": "Vaatii Backend.AI Hyperaccel LPU -laajennuksen.",
     "SearchPlaceholder": "Etsi",
     "Gaudi2Support": "Gaudi 2 -tuki",
@@ -1397,9 +1386,21 @@
     "ATOMPlusSupport": "ATOM+-tuki",
     "RequireATOMPlusPlugin": "Vaatii Backend.AI ATOM+ laajennuksen.",
     "DescATOMPlusSupport": "Käytä Rebellions ATOM+ -kiihdytintä.",
-    "RNGDsupport": "RNGD",
-    "DescRNGDsupport": "Käytä Furiosa RNGD -tukea",
-    "RequireRNGDPlugin": "Vaatii Backend.AI RNGD -laajennuksen."
+    "RequireRNGDPlugin": "Vaatii Backend.AI RNGD -laajennuksen.",
+    "IPUSupport": "IPU",
+    "DescWarboySupport": "Käytä Furiosa Warboy -tukea",
+    "DescIPUSupport": "Käytä GraphCore IPU -kiihdytintä",
+    "DescATOMSupport": "Käytä Rebellions ATOM-kiihdytintä",
+    "DescCudaGPUSupport": "NVIDIA CUDA GPU -tuki. <br/> Vaatii Backend.AI CUDA Pluginin.",
+    "DescHyperaccelLPUSupport": "Käytä Hyperaccel LPU -kiihdytintä.",
+    "DescRNGDSupport": "Käytä Furiosa RNGD -tukea",
+    "DescRocmGPUSupport": "AMD ROCm GPU -tuki. <br/> Vaatii Backend.AI ROCm Pluginin.",
+    "HyperaccelLPUSupport": "Hyperaccel LPU",
+    "OpenSourceCudaGPUSupport": "Avoimen lähdekoodin CUDA GPU-tuki",
+    "WarboySupport": "Warboy",
+    "ATOMSupport": "ATOM",
+    "RNGDSupport": "RNGD",
+    "ROCMGPUSupport": "ROCm GPU-tuki"
   },
   "signUp": {
     "E-mail": "Sähköposti",
@@ -1575,9 +1576,6 @@
     "AdminOnlyPage": "Sinulla ei ole lupaa käyttää tätä sivua.<br />Klikkaa alla olevaa painiketta ohjataksesi yhteenvetosivulle.",
     "CleanUpLoginSession": "Siivoa kirjautumisistunto...",
     "CleanUpNow": "Siivoa nyt...",
-    "DescNOTFOUND": "Valitettavasti etsimääsi sivua ei löytynyt.",
-    "NOTFOUND": "<p>Oops!<br/>Sivua ei löydy...</p>",
-    "UNAUTHORIZEDACCESS": "Luvaton pääsy",
     "YouAreOffline": "Offline: Ei yhteyttä mihinkään verkkoon.",
     "YouAreOnline": "Olet nyt verkossa",
     "menu": {
@@ -1596,7 +1594,6 @@
       "FastTrack": "FastTrack",
       "FullName": "Koko nimi",
       "FullNameInvalid": "Koko nimi saa olla enintään 64 merkkiä",
-      "FullnameUpdated": "Koko nimi on päivitetty onnistuneesti.",
       "Help": "Apua",
       "Import&Run": "Tuo ja suorita",
       "Information": "Tiedot",
@@ -1646,12 +1643,15 @@
       "InvalidBlankEmail": "Syötä sähköpostiosoitteesi",
       "DisMatchUserEmail": "Käyttäjän sähköpostiosoite ei täsmää",
       "MyEnvironments": "Omat ympäristöt",
-      "ResourcePolicy": "Resurssipolitiikka"
+      "ResourcePolicy": "Resurssipolitiikka",
+      "FullNameUpdated": "Koko nimi on päivitetty onnistuneesti."
     },
-    "NetworkSoftTimeout": "Palvelimen vastaus kestää kauemmin. Odota hetki"
+    "NetworkSoftTimeout": "Palvelimen vastaus kestää kauemmin. Odota hetki",
+    "NotFound": "<p>Oops!<br/>Sivua ei löydy...</p>",
+    "DescNotFound": "Valitettavasti etsimääsi sivua ei löytynyt.",
+    "UnauthorizedAccess": "Luvaton pääsy"
   },
   "modelStore": {
-    "category": "Kategoria",
     "Author": "Tekijä",
     "Category": "Kategoria",
     "CloneAsFolder": "Kloonaa kansioksi",

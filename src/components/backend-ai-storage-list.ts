@@ -671,7 +671,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             label="${_t('data.folders.TypeNewFolderName')}"
             pattern="^[a-zA-Z0-9._-]*$"
             autoValidate
-            validationMessage="${_t('data.Allowslettersnumbersand-_dot')}"
+            validationMessage="${_t('data.AllowsLettersNumbersAnd-_Dot')}"
             maxLength="64"
             placeholder="${_text('maxLength.64chars')}"
             @change="${() => this._validateFolderName(true)}"
@@ -2338,7 +2338,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           };
         } else {
           folderName.validationMessage = _text(
-            'data.Allowslettersnumbersand-_dot',
+            'data.AllowsLettersNumbersAnd-_Dot',
           );
           return {
             valid: nativeValidity.valid,
@@ -2365,7 +2365,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         isValid = !regex.test(folderName.value);
         if (!isValid) {
           folderName.validationMessage = _text(
-            'data.Allowslettersnumbersand-_dot',
+            'data.AllowsLettersNumbersAnd-_Dot',
           );
         }
         return {

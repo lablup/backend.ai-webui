@@ -331,7 +331,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       ),
     },
     {
-      label: t('modelService.resources'),
+      label: t('modelService.Resources'),
       children: (
         <Flex direction="row" wrap="wrap" gap={'md'}>
           <Tooltip title={t('session.ResourceGroup')}>

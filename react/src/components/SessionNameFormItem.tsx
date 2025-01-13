@@ -22,11 +22,11 @@ const SessionNameFormItem: React.FC<SessionNameFormItemProps> = ({
       rules={[
         {
           min: 4,
-          message: t('session.Validation.SessionNameTooShort'),
+          message: t('session.validation.SessionNameTooShort'),
         },
         {
           max: 64,
-          message: t('session.Validation.SessionNameTooLong64'),
+          message: t('session.validation.SessionNameTooLong64'),
         },
         {
           validator(f, value) {
@@ -35,19 +35,19 @@ const SessionNameFormItem: React.FC<SessionNameFormItemProps> = ({
             }
             if (!/^\w/.test(value)) {
               return Promise.reject(
-                t('session.Validation.SessionNameShouldStartWith'),
+                t('session.validation.SessionNameShouldStartWith'),
               );
             }
 
             if (!/^[\w.-]*$/.test(value)) {
               return Promise.reject(
-                t('session.Validation.SessionNameInvalidCharacter'),
+                t('session.validation.SessionNameInvalidCharacter'),
               );
             }
 
             if (!/\w$/.test(value) && value.length >= 4) {
               return Promise.reject(
-                t('session.Validation.SessionNameShouldEndWith'),
+                t('session.validation.SessionNameShouldEndWith'),
               );
             }
             return Promise.resolve();

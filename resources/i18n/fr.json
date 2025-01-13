@@ -1,4 +1,5 @@
 {
+  "$schema": "../i18n.schema.json",
   "webui": {
     "menu": {
       "WelcomeMessage": "Bienvenue, {{ userName }}.",
@@ -35,7 +36,6 @@
       "NewPasswordMismatch": "Les deux nouveaux mots de passe ne correspondent pas.",
       "PasswordMismatch": "Non concordance des mots de passe",
       "PasswordUpdated": "Le mot de passe a été mis à jour avec succès.",
-      "FullnameUpdated": "Le nom complet a été mis à jour avec succès.",
       "TermsOfService": "Conditions d'utilisation",
       "PrivacyPolicy": "Politique de confidentialité",
       "LeaveService": "Quitter le service",
@@ -65,17 +65,18 @@
       "InvalidBlankEmail": "Entrer votre Email",
       "DisMatchUserEmail": "L'e-mail de l'utilisateur ne correspond pas",
       "MyEnvironments": "Mes environnements",
-      "ResourcePolicy": "Politique des ressources"
+      "ResourcePolicy": "Politique des ressources",
+      "FullNameUpdated": "Le nom complet a été mis à jour avec succès."
     },
     "YouAreOffline": "Hors ligne : N'est connecté à aucun réseau.",
     "YouAreOnline": "Vous êtes maintenant en ligne",
-    "NOTFOUND": " <p> Oups ! <br/> Page non trouvée... </p>",
-    "DescNOTFOUND": "Désolé, la page que vous recherchez est introuvable.",
-    "UNAUTHORIZEDACCESS": "L'accès est non autorisé",
     "AdminOnlyPage": "Vous n'êtes pas autorisé à accéder à cette page. <br /> Cliquez sur le bouton ci-dessous pour rediriger vers la page de résumé.",
     "CleanUpLoginSession": "Rafraîchi la session de connexion...",
     "CleanUpNow": "En cours de rafraîchissement...",
-    "NetworkSoftTimeout": "Le serveur prend plus de temps pour répondre. Veuillez patienter un moment"
+    "NetworkSoftTimeout": "Le serveur prend plus de temps pour répondre. Veuillez patienter un moment",
+    "NotFound": " <p> Oups ! <br/> Page non trouvée... </p>",
+    "DescNotFound": "Désolé, la page que vous recherchez est introuvable.",
+    "UnauthorizedAccess": "L'accès est non autorisé"
   },
   "summary": {
     "StartMenu": "Le menu Démarrer",
@@ -83,7 +84,6 @@
     "ActiveSessions": "sessions actives",
     "ResourceStatistics": "Statistiques des ressources",
     "CoresReserved": "Cœur réservés",
-    "reserved": "réservé",
     "FractionalGPUScalingEnabled": "Mise à l'échelle fractionnée du GPU activée",
     "ROCMGPUEnabled": "GPU ROCm activé",
     "TPUEnabled": "TPU activé",
@@ -110,7 +110,6 @@
     "NoInvitations": "Il n'y a pas d'invitations à afficher.",
     "AcceptSharedVFolder": "Vous pouvez maintenant accéder au dossier :",
     "DeclineSharedVFolder": "L'invitation au dossier est supprimée :",
-    "connectingToCluster": "Connexion au cluster Backend.AI...",
     "DownloadWebUIApp": "Télécharger l'application de bureau",
     "IPUEnabled": "IPU NPU Activé",
     "ATOMEnabled": "ATOM NPU Activé",
@@ -118,7 +117,9 @@
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "Hyperaccel LPU activé",
     "ATOMPlusEnabled": "ATOM+ NPU activé",
-    "RNGDEnabled": "RNGD activé"
+    "RNGDEnabled": "RNGD activé",
+    "ReservedShort": "réservé",
+    "ConnectingToCluster": "Connexion au cluster Backend.AI..."
   },
   "session": {
     "launcher": {
@@ -179,7 +180,6 @@
       "StartImportedNotebook": "Démarrer le bloc-notes importé",
       "DuplicatedSessionName": "Nom de session dupliqué non autorisé",
       "SessionNameAllowCondition": "Le nom de la session doit comporter de 4 à 64 alphabets/chiffres sans aucun espace.",
-      "sessionStillPreparing": "La séance est encore en préparation. Une fois la session démarrée, appuyez sur l'icône de l'application pour démarrer l'application.",
       "ResourceMonitorToggle": "Voir le moniteur de ressources",
       "SharedMemorySettingIsReduced": "Le paramètre de mémoire partagée est réduit en dessous de la mémoire allouée.",
       "NoActiveKeypair": "Aucune paire de clés active",
@@ -290,7 +290,8 @@
       "BatchJobTimeoutDuration": "Durée d'expiration du travail par lots",
       "BatchJobTimeoutDurationDesc": "Définissez la durée d'exécution maximale des tâches par lots. \nLa session se terminera automatiquement si la durée spécifiée est dépassée.",
       "SetBatchJobTimeoutDuration": "Définir la durée d'expiration du travail par lots",
-      "PreOpen": "préouverture"
+      "PreOpen": "préouverture",
+      "SessionStillPreparing": "La séance est encore en préparation. Une fois la session démarrée, appuyez sur l'icône de l'application pour démarrer l'application."
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",
@@ -341,7 +342,7 @@
     "Interactive": "Interactif",
     "Batch": "Lot",
     "Architecture": "Architecture",
-    "Validation": {
+    "validation": {
       "SessionNameRequired": "Le nom de la session est obligatoire",
       "EnterValidSessionName": "Veuillez saisir une combinaison d'au moins 4 lettres de l'alphabet, ou chiffres, ou trait d'union, ou trait de soulignement.",
       "SessionNameAlreadyExist": "Le nom de la session existe déjà",
@@ -394,8 +395,6 @@
     "System": "Télécharger les sessions",
     "SFTPExtraNotification": "Il est recommandé de supprimer les sessions après leur utilisation, car leur nombre est limité. Les sessions qui ne sont pas utilisées pour télécharger des fichiers pendant une certaine période peuvent être automatiquement supprimées.",
     "ConnectionNotice": "Avis",
-    "Readless": "Lire moins",
-    "Readmore": "Lire la suite...",
     "SessionType": "Type de session",
     "ExpiresAfter": "Temps restant",
     "CPU": "UNITÉ CENTRALE",
@@ -431,7 +430,9 @@
       "SSHConnectionExampleClipboardCopy": "L'exemple de connexion SSH a été copié dans le presse-papiers."
     },
     "ExportCSV": "exporter CSV",
-    "FGPU": "fGPU"
+    "FGPU": "fGPU",
+    "ReadLess": "Lire moins",
+    "ReadMore": "Lire la suite..."
   },
   "button": {
     "Cancel": "Annuler",
@@ -637,9 +638,6 @@
     "Create": "Créer",
     "Update": "Mettre à jour",
     "FolderNameRequired": "Le nom du dossier est requis",
-    "FileandFoldernameRequired": "Le nom du fichier/dossier est requis",
-    "Allowslettersnumbersand-_dot": "Autorise les lettres, les chiffres et -_.",
-    "Allowslettersnumbersand-_": "Autorise les lettres, les chiffres et -_",
     "FolderNameTooLong": "Saisissez un nom de dossier inférieur à 64 caractères",
     "EnterDifferentValue": "Veuillez saisir une valeur différente du nom de fichier ou de dossier existant. Veuillez vérifier s'il y a un espace dans le champ de saisie ou non.",
     "Host": "Hôte",
@@ -815,7 +813,6 @@
       "InferenceEngineVersion": "Version du moteur d'inférence",
       "ReplicaNumber": "Numéro de réplique",
       "ImportAndStartService": "Service d'importation et de démarrage",
-      "huggingFaceUrlPlaceholder": "Saisissez l'URL Hugging Face",
       "ImportOnly": "Importer uniquement",
       "StartWithHuggingFaceUrl": "Cela devrait commencer par https://huggingface.co",
       "CheckHuggingFaceUrl": "Vérifier",
@@ -836,9 +833,13 @@
       "ImportOnlySuccessDesc": "Le nouveau dossier modèle est prêt. \nDémarrez le service maintenant et essayez l'opération souhaitée.",
       "ImportAndStartServiceSuccessDesc": "Le nouveau dossier modèle et le nouveau service sont prêts. \nCliquez sur le bouton « Afficher les informations de service » pour vérifier les détails du modèle et démarrer l'opération souhaitée.",
       "AddedItems": "Éléments ajoutés",
-      "ModelFolderName": "Nom du dossier modèle"
+      "ModelFolderName": "Nom du dossier modèle",
+      "HuggingFaceUrlPlaceholder": "Saisissez l'URL Hugging Face"
     },
-    "UserQuotaScopeId": "Quota Scope ID"
+    "UserQuotaScopeId": "Quota Scope ID",
+    "FileAndFolderNameRequired": "Le nom du fichier/dossier est requis",
+    "AllowsLettersNumbersAnd-_": "Autorise les lettres, les chiffres et -_",
+    "AllowsLettersNumbersAnd-_Dot": "Autorise les lettres, les chiffres et -_."
   },
   "dialog": {
     "warning": {
@@ -1232,10 +1233,7 @@
     "Scaling": "Mise à l'échelle",
     "AllowAgentSideRegistration": "Autoriser l'enregistrement côté agent",
     "DescAllowAgentSideRegistration": "Autoriser l'agent à s'inscrire auprès du gestionnaire. <br/> À utiliser uniquement si le cluster Backend.AI est géré sur un emplacement sécurisé.",
-    "DescCUDAGPUsupport": "Prise en charge du GPU NVIDIA CUDA. <br/> Nécessite le plugin Backend.AI CUDA.",
     "CUDAGPUdisabledByFGPUsupport": "Désactivé car le système utilise le plug-in Fractional GPU",
-    "ROCMGPUsupport": "Prise en charge du GPU ROCm",
-    "DescROCMGPUsupport": "Prise en charge du GPU AMD ROCm. <br/> Nécessite le plugin Backend.AI ROCm.",
     "Scheduler": "Planificateur",
     "SchedulerConfiguration": "Configuration par planificateur de tâches.",
     "Require2003orAbove": "Nécessite Backend.AI 20.03 ou supérieur.",
@@ -1273,20 +1271,11 @@
     "OverlayNetworkSettingsDescription": "Un réseau superposé est un réseau informatique qui est superposé à un autre réseau. Le réseau superposé crée un réseau distribué entre plusieurs démons Docker du gestionnaire Backend.AI.",
     "MTUDescription": "Unité de transmission maximale, la taille du plus grand paquet qu'un protocole de réseau peut transmettre.",
     "OutOfRange": "Hors de portée.",
-    "IPUsupport": "UIP",
-    "DescIPUsupport": "Utiliser l'accélérateur GraphCore IPU",
-    "ATOMsupport": "ATOM",
-    "DescATOMsupport": "Utiliser l'accélérateur ATOM de Rebellions",
     "RequireIPUPlugin": "Nécessite le plugin Backend.AI IPU.",
     "RequireATOMPlugin": "Nécessite le plugin ATOM Backend.AI.",
-    "Warboysupport": "Warboy",
-    "DescWarboysupport": "Utiliser le support Furiosa Warboy",
     "RequireWarboyPlugin": "Requiert le plugin Backend.AI Warboy.",
     "Plugins": "Plugins",
-    "OpenSourceCUDAGPUsupport": "Prise en charge des GPU CUDA Open Source",
     "ShowOnlyChanged": "Afficher uniquement les modifications",
-    "HyperaccelLPUsupport": "Hyperaccel LPU",
-    "DescHyperaccelLPUsupport": "Utilisez l'accélérateur Hyperaccel LPU.",
     "RequireHyperaccelLPUPlugin": "Nécessite le plugin LPU Backend.AI Hyperaccel.",
     "SearchPlaceholder": "Recherche",
     "Gaudi2Support": "Assistance Gaudi 2",
@@ -1295,9 +1284,21 @@
     "ATOMPlusSupport": "Prise en charge ATOM+",
     "RequireATOMPlusPlugin": "Nécessite le plugin Backend.AI ATOM+.",
     "DescATOMPlusSupport": "Utilisez l’accélérateur Rebellions ATOM+.",
-    "RNGDsupport": "RNGD",
-    "DescRNGDsupport": "Utiliser le support Furiosa RNGD",
-    "RequireRNGDPlugin": "Nécessite le plugin Backend.AI RNGD."
+    "RequireRNGDPlugin": "Nécessite le plugin Backend.AI RNGD.",
+    "IPUSupport": "UIP",
+    "DescWarboySupport": "Utiliser le support Furiosa Warboy",
+    "DescIPUSupport": "Utiliser l'accélérateur GraphCore IPU",
+    "DescATOMSupport": "Utiliser l'accélérateur ATOM de Rebellions",
+    "DescCudaGPUSupport": "Prise en charge du GPU NVIDIA CUDA. <br/> Nécessite le plugin Backend.AI CUDA.",
+    "DescHyperaccelLPUSupport": "Utilisez l'accélérateur Hyperaccel LPU.",
+    "DescRNGDSupport": "Utiliser le support Furiosa RNGD",
+    "DescRocmGPUSupport": "Prise en charge du GPU AMD ROCm. <br/> Nécessite le plugin Backend.AI ROCm.",
+    "HyperaccelLPUSupport": "Hyperaccel LPU",
+    "OpenSourceCudaGPUSupport": "Prise en charge des GPU CUDA Open Source",
+    "WarboySupport": "Warboy",
+    "ATOMSupport": "ATOM",
+    "RNGDSupport": "RNGD",
+    "ROCMGPUSupport": "Prise en charge du GPU ROCm"
   },
   "notification": {
     "SuccessfullyUpdated": "Mise à jour réussie",
@@ -1376,7 +1377,7 @@
     "InvalidChangePasswordTokenMessage": "Le jeton émis pour changer le mot de passe a une erreur. Veuillez envoyer un autre e-mail pour changer le mot de passe et réessayer.",
     "PleaseInputLoginInfo": "Veuillez saisir l'identifiant et le mot de passe pour vous connecter.",
     "TooManyAttempt": "Il y a eu trop de tentatives de connexion. Les tentatives de connexion sont bloquées depuis un certain temps.",
-    "SingleSignOn": {
+    "singleSignOn": {
       "LoginWithRealm": "Se connecter avec {{ realmName }}",
       "LoginWithSAML": "Se connecter avec SAML"
     },
@@ -1457,7 +1458,7 @@
     "GitlabRepoWillBeFolder": "Les dépôts GitLab importés sont convertis en dossiers et peuvent être montés au démarrage de la session.",
     "GitlabURL": "URL GitLab",
     "GitlabDefaultBranch": "Nom de la branche GitLab",
-    "InvalidNotebookURL": "L'URL de Notbook n'est pas valide."
+    "InvalidNotebookURL": "URL du bloc-notes non valide."
   },
   "license": {
     "Perpetual": "Perpétuel",
@@ -1614,7 +1615,6 @@
     "TokenExpiredDateError": "L'heure d'expiration du jeton doit être postérieure à l'heure actuelle.",
     "FormValidationFailed": "La validation du formulaire a échoué",
     "ServiceNameRule": "Autorisez uniquement les caractères alphanumériques, les traits de soulignement (_) et les traits d'union (-) et ils doivent se terminer par un caractère alphanumérique.",
-    "resources": "Ressources",
     "Image": "Image",
     "Owner": "Propriétaire",
     "Validate": "Valider",
@@ -1648,7 +1648,8 @@
     "Chatting": "Bavardage",
     "ServiceNameMinLength": "Veuillez saisir au moins 4 caractères.",
     "ServiceNameMaxLength": "Veuillez saisir 24 caractères ou moins.",
-    "ServiceNameCannotStartWithHyphen": "Les tirets (-) ne peuvent pas être utilisés à chaque extrémité."
+    "ServiceNameCannotStartWithHyphen": "Les tirets (-) ne peuvent pas être utilisés à chaque extrémité.",
+    "Resources": "Ressources"
   },
   "modelStore": {
     "Description": "Description",
@@ -1676,7 +1677,6 @@
     "CloneAsFolder": "Cloner en tant que dossier",
     "CloneSuccess": "La demande de clone a été envoyée avec succès.",
     "CloneInfo": "Il sera cloné en tant que dossier de votre type d'utilisateur.",
-    "category": "Catégorie",
     "CloneToFolder": "Cloner dans un dossier",
     "FolderAlreadyExists": "Un dossier portant ce nom existe déjà.",
     "FinetuneModel": "Modèle de réglage fin"

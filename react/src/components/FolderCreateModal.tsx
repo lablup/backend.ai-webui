@@ -200,7 +200,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
             { required: true },
             {
               pattern: /^[a-zA-Z0-9-_.]+$/,
-              message: t('data.Allowslettersnumbersand-_dot'),
+              message: t('data.AllowsLettersNumbersAnd-_Dot'),
             },
             {
               max: 64,

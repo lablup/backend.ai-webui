@@ -1,4 +1,5 @@
 {
+  "$schema": "../i18n.schema.json",
   "webui": {
     "menu": {
       "WelcomeMessage": "ยินดีต้อนรับ, {{ userName }}",
@@ -39,7 +40,6 @@
       "PasswordMismatch": "รหัสผ่านไม่ตรงกัน",
       "PleaseConfirmYourPassword": "กรุณายืนยันรหัสผ่านของคุณ",
       "PasswordUpdated": "อัปเดตรหัสผ่านเรียบร้อยแล้ว",
-      "FullnameUpdated": "อัปเดตชื่อเต็มเรียบร้อยแล้ว",
       "TermsOfService": "ข้อตกลงการใช้บริการ",
       "PrivacyPolicy": "นโยบายความเป็นส่วนตัว",
       "LeaveService": "ยกเลิกการใช้บริการ",
@@ -65,17 +65,18 @@
       "InvalidBlankEmail": "ใส่อีเมลของคุณ",
       "DisMatchUserEmail": "อีเมลผู้ใช้ไม่ตรงกัน",
       "MyEnvironments": "สภาพแวดล้อมของฉัน",
-      "ResourcePolicy": "นโยบายทรัพยากร"
+      "ResourcePolicy": "นโยบายทรัพยากร",
+      "FullNameUpdated": "อัปเดตชื่อเต็มเรียบร้อยแล้ว"
     },
     "YouAreOffline": "ออฟไลน์: ไม่ได้เชื่อมต่อกับเครือข่ายใดๆ",
     "YouAreOnline": "คุณออนไลน์แล้ว",
-    "NOTFOUND": "<p>โอ๊ะ!<br/>ไม่พบหน้าที่คุณต้องการ...</p>",
-    "DescNOTFOUND": "ขออภัย ไม่พบหน้าที่คุณกำลังมองหา",
-    "UNAUTHORIZEDACCESS": "การเข้าถึงที่ไม่ได้รับอนุญาต",
     "AdminOnlyPage": "คุณไม่มีสิทธิ์เข้าถึงหน้านี้<br />คลิกปุ่มด้านล่างเพื่อกลับไปยังหน้าสรุป",
     "CleanUpLoginSession": "กำลังล้างเซสชันการเข้าสู่ระบบ...",
     "CleanUpNow": "ล้างตอนนี้...",
-    "NetworkSoftTimeout": "เซิร์ฟเวอร์ใช้เวลาตอบสนองนานขึ้น \nกรุณารอสักครู่"
+    "NetworkSoftTimeout": "เซิร์ฟเวอร์ใช้เวลาตอบสนองนานขึ้น \nกรุณารอสักครู่",
+    "NotFound": "<p>โอ๊ะ!<br/>ไม่พบหน้าที่คุณต้องการ...</p>",
+    "DescNotFound": "ขออภัย ไม่พบหน้าที่คุณกำลังมองหา",
+    "UnauthorizedAccess": "การเข้าถึงที่ไม่ได้รับอนุญาต"
   },
   "totp": {
     "ScanQRToEnable": "สแกนรหัส QR ด้วยแอปพลิเคชันยืนยันตัวตนของคุณเพื่อเริ่มตั้งค่าการยืนยันตัวตนสองขั้นตอน",
@@ -96,7 +97,6 @@
     "ActiveSessions": "เซสชันที่ใช้งานอยู่",
     "ResourceStatistics": "สถิติทรัพยากร",
     "CoresReserved": "คอร์ที่จองไว้",
-    "reserved": "จองแล้ว",
     "FractionalGPUScalingEnabled": "เปิดใช้งานการปรับขนาด GPU แบบเศษส่วน",
     "ROCMGPUEnabled": "เปิดใช้งาน ROCm GPU",
     "TPUEnabled": "เปิดใช้งาน TPU",
@@ -123,7 +123,6 @@
     "NoInvitations": "ไม่มีคำเชิญที่จะแสดง",
     "AcceptSharedVFolder": "ตอนนี้คุณสามารถเข้าถึงโฟลเดอร์ได้แล้ว: ",
     "DeclineSharedVFolder": "ลบคำเชิญโฟลเดอร์แล้ว: ",
-    "connectingToCluster": "กำลังเชื่อมต่อกับคลัสเตอร์ Backend.AI...",
     "DownloadWebUIApp": "ดาวน์โหลดแอพเดสก์ท็อป",
     "IPUEnabled": "เปิดใช้งาน IPU NPU",
     "ATOMEnabled": "เปิดใช้งาน ATOM NPU",
@@ -131,7 +130,9 @@
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "เปิดใช้งาน Hyperaccel LPU",
     "ATOMPlusEnabled": "เปิดใช้งาน ATOM+ NPU",
-    "RNGDEnabled": "เปิดใช้งาน RNGD แล้ว"
+    "RNGDEnabled": "เปิดใช้งาน RNGD แล้ว",
+    "ReservedShort": "จองแล้ว",
+    "ConnectingToCluster": "กำลังเชื่อมต่อกับคลัสเตอร์ Backend.AI..."
   },
   "session": {
     "launcher": {
@@ -209,7 +210,6 @@
       "DuplicatedSessionName": "ไม่อนุญาตให้ใช้ชื่อเซสชันซ้ำ",
       "SessionNameAllowCondition": "ชื่อเซสชันควรมีตัวอักษร/ตัวเลข 4-64 ตัวโดยไม่มีช่องว่าง",
       "SessionAlreadyExists": "มีชื่อเซสชันนี้อยู่แล้ว",
-      "sessionStillPreparing": "เซสชันยังอยู่ในขั้นตอนการเตรียมการ หลังจากเซสชันเริ่มต้น ให้แตะไอคอนแอปเพื่อเริ่มแอป",
       "ResourceMonitorToggle": "ดูการติดตามทรัพยากร",
       "SharedMemorySettingIsReduced": "การตั้งค่าหน่วยความจำร่วมถูกลดลงให้ต่ำกว่าหน่วยความจำที่จัดสรร",
       "NoActiveKeypair": "ไม่มีคู่กุญแจที่ใช้งานอยู่",
@@ -302,7 +302,8 @@
       "BatchJobTimeoutDuration": "ระยะเวลาหมดเวลางานแบทช์",
       "BatchJobTimeoutDurationDesc": "ตั้งเวลาดำเนินการสูงสุดสำหรับงานแบทช์ \nเซสชันจะสิ้นสุดลงโดยอัตโนมัติหากเกินเวลาที่กำหนด",
       "SetBatchJobTimeoutDuration": "กำหนดระยะเวลาหมดเวลางานแบทช์",
-      "PreOpen": "เปิดล่วงหน้า"
+      "PreOpen": "เปิดล่วงหน้า",
+      "SessionStillPreparing": "เซสชันยังอยู่ในขั้นตอนการเตรียมการ หลังจากเซสชันเริ่มต้น ให้แตะไอคอนแอปเพื่อเริ่มแอป"
     },
     "Preparing": "กำลังเตรียมการ...",
     "PreparingSession": "กำลังเตรียมเซสชัน...",
@@ -336,8 +337,6 @@
     "TryPreferredPort": "ลองใช้พอร์ตที่ต้องการ",
     "SFTPDescription": "คุณสามารถอัปโหลดไฟล์ได้อย่างรวดเร็วและปลอดภัยผ่านไคลเอนต์ SSH/SFTP หากคุณยังไม่ได้อัปโหลดคู่คีย์ SSH ของคุณล่วงหน้า กรุณาคลิกปุ่ม \"ดาวน์โหลดคีย์ SSH\" เพื่อบันทึกคีย์ SSH ของคุณก่อน จากนั้นคุณสามารถใช้คีย์นั้นเพื่อดำเนินการคำสั่งต่างๆ เช่น SFTP, SCP และ Rsync ในหน้า \"เซสชัน - อัปโหลดเซสชัน\" คุณสามารถจัดการรายการเซสชันสำหรับการอัปโหลดไฟล์ได้",
     "SFTPExtraNotification": "แนะนำให้ลบเซสชันหลังจากใช้งานแล้ว เนื่องจากมีข้อจำกัดในจำนวนเซสชัน เซสชันที่ไม่ได้ใช้สำหรับอัปโหลดไฟล์ภายในระยะเวลาหนึ่งอาจถูกลบโดยอัตโนมัติ",
-    "Readmore": "อ่านเพิ่มเติม...",
-    "Readless": "อ่านน้อยลง",
     "ConnectionInformation": "ข้อมูลการเชื่อมต่อ",
     "VNCconnection": "การเชื่อมต่อ VNC",
     "CheckAgainDialog": "การกระทำนี้ไม่สามารถย้อนกลับได้ คุณต้องการดำเนินการต่อหรือไม่?",
@@ -365,7 +364,7 @@
     "OnlyOneFolderAttached": "มีเพียงหนึ่งโฟลเดอร์ที่แนบมา",
     "NoLogMsgAvailable": "ไม่มีข้อความบันทึกที่พร้อมใช้งานในสถานะปัจจุบัน",
     "SessionRenamed": "เปลี่ยนชื่อเซสชันแล้ว",
-    "Validation": {
+    "validation": {
       "SessionNameRequired": "ต้องระบุชื่อเซสชัน",
       "SluggedStrings": "สตริงที่ทำให้เป็น slug (>3 ตัวอักษร)",
       "EnterValidSessionName": "กรุณาป้อนชื่อที่ประกอบด้วยตัวอักษรอย่างน้อย 4 ตัว หรือตัวเลข หรือเครื่องหมายขีด หรือขีดล่าง",
@@ -442,7 +441,9 @@
       "SSHConnectionExampleClipboardCopy": "คัดลอกตัวอย่างการเชื่อมต่อ SSH ไปยังคลิปบอร์ดแล้ว"
     },
     "ExportCSV": "ส่งออก CSV",
-    "FGPU": "fGPU"
+    "FGPU": "fGPU",
+    "ReadLess": "อ่านน้อยลง",
+    "ReadMore": "อ่านเพิ่มเติม..."
   },
   "modelService": {
     "Services": "บริการ",
@@ -495,7 +496,6 @@
     "ServiceNameRule": "อนุญาตเฉพาะตัวอักษรและตัวเลข ขีดล่าง (_) และขีดกลาง (-) และต้องลงท้ายด้วยอักขระตัวอักษรและตัวเลข",
     "FormValidationFailed": "การตรวจสอบแบบฟอร์มล้มเหลว",
     "CannotValidateNow": "ไม่สามารถตรวจสอบบริการได้ในขณะนี้ กรุณาตรวจสอบการจัดสรรทรัพยากรหรือการกำหนดค่าอื่น ๆ",
-    "resources": "ทรัพยากร",
     "Image": "อิมเมจ",
     "Owner": "เจ้าของ",
     "Processing": "กำลังประมวลผล...",
@@ -521,7 +521,8 @@
     "Chatting": "การแชท",
     "ServiceNameMinLength": "กรุณากรอกอย่างน้อย 4 ตัวอักษร",
     "ServiceNameMaxLength": "โปรดป้อนอักขระ 24 ตัวหรือน้อยกว่า",
-    "ServiceNameCannotStartWithHyphen": "เครื่องหมายยัติภังค์ (-) ไม่สามารถใช้ที่ปลายทั้งสองข้างได้"
+    "ServiceNameCannotStartWithHyphen": "เครื่องหมายยัติภังค์ (-) ไม่สามารถใช้ที่ปลายทั้งสองข้างได้",
+    "Resources": "ทรัพยากร"
   },
   "button": {
     "Cancel": "ยกเลิก",
@@ -761,9 +762,6 @@
     "Create": "สร้าง",
     "Update": "อัปเดต",
     "FolderNameRequired": "ต้องระบุชื่อโฟลเดอร์",
-    "FileandFoldernameRequired": "ต้องระบุชื่อไฟล์/โฟลเดอร์",
-    "Allowslettersnumbersand-_dot": "อนุญาตตัวอักษร ตัวเลข และ -_.",
-    "Allowslettersnumbersand-_": "อนุญาตตัวอักษร ตัวเลข และ -_",
     "FolderNameTooLong": "ป้อนชื่อโฟลเดอร์ไม่เกิน 64 ตัวอักษร",
     "EnterDifferentValue": "กรุณาป้อนค่าที่แตกต่างจากชื่อไฟล์หรือโฟลเดอร์ที่มีอยู่ กรุณาตรวจสอบว่ามีช่องว่างในช่องป้อนข้อมูลหรือไม่",
     "Host": "โฮสต์",
@@ -956,7 +954,10 @@
       "AddedItems": "เพิ่มรายการแล้ว",
       "ModelFolderName": "ชื่อโฟลเดอร์โมเดล"
     },
-    "UserQuotaScopeId": "รหัสขอบเขตโควตาผู้ใช้"
+    "UserQuotaScopeId": "รหัสขอบเขตโควตาผู้ใช้",
+    "FileAndFolderNameRequired": "ต้องระบุชื่อไฟล์/โฟลเดอร์",
+    "AllowsLettersNumbersAnd-_": "อนุญาตตัวอักษร ตัวเลข และ -_",
+    "AllowsLettersNumbersAnd-_Dot": "อนุญาตตัวอักษร ตัวเลข และ -_."
   },
   "dialog": {
     "warning": {
@@ -1344,10 +1345,7 @@
     "Scaling": "การปรับขนาด",
     "AllowAgentSideRegistration": "อนุญาตการลงทะเบียนฝั่งตัวแทน",
     "DescAllowAgentSideRegistration": "อนุญาตให้ตัวแทนลงทะเบียนตัวเองกับผู้จัดการ<br/>ใช้เฉพาะเมื่อคลัสเตอร์ Backend.AI ถูกจัดการในสถานที่ที่ปลอดภัย",
-    "DescCUDAGPUsupport": "การสนับสนุน GPU NVIDIA CUDA <br/>ต้องใช้ปลั๊กอิน Backend.AI CUDA",
     "CUDAGPUdisabledByFGPUsupport": "ปิดใช้งานเนื่องจากระบบใช้ปลั๊กอิน Fractional GPU",
-    "ROCMGPUsupport": "การสนับสนุน GPU ROCm",
-    "DescROCMGPUsupport": "การสนับสนุน GPU AMD ROCm <br/>ต้องใช้ปลั๊กอิน Backend.AI ROCm",
     "Scheduler": "ตัวจัดกำหนดการ",
     "SchedulerConfiguration": "การกำหนดค่าต่อตัวจัดกำหนดการงาน",
     "Require2003orAbove": "ต้องใช้ Backend.AI 20.03 หรือสูงกว่า",
@@ -1385,25 +1383,28 @@
     "OverlayNetworkSettings": "การตั้งค่าเครือข่ายโอเวอร์เลย์",
     "OverlayNetworkSettingsDescription": "เครือข่ายโอเวอร์เลย์คือเครือข่ายคอมพิวเตอร์ที่ซ้อนทับบนเครือข่ายอื่น เครือข่ายโอเวอร์เลย์สร้างเครือข่ายแบบกระจายระหว่างโฮสต์ Docker daemon หลายตัวของผู้จัดการ Backend.AI",
     "MTUDescription": "หน่วยการส่งสูงสุด คือขนาดของแพ็คเก็ตที่ใหญ่ที่สุดที่โปรโตคอลเครือข่ายสามารถส่งได้",
-    "IPUsupport": "IPU",
-    "DescIPUsupport": "ใช้ตัวเร่งความเร็ว GraphCore IPU",
-    "ATOMsupport": "ATOM",
-    "DescATOMsupport": "ใช้ตัวเร่งความเร็ว Rebellions ATOM",
     "RequireIPUPlugin": "ต้องใช้ปลั๊กอิน Backend.AI IPU",
     "RequireATOMPlugin": "ต้องใช้ปลั๊กอิน Backend.AI ATOM",
-    "Warboysupport": "Warboy",
-    "DescWarboysupport": "ใช้การสนับสนุน Furiosa Warboy",
     "RequireWarboyPlugin": "ต้องใช้ปลั๊กอิน Backend.AI Warboy",
     "Plugins": "ปลั๊กอิน",
-    "OpenSourceCUDAGPUsupport": "การสนับสนุน GPU CUDA แบบโอเพนซอร์ส",
     "ShowOnlyChanged": "แสดงเฉพาะรายการที่เปลี่ยนแปลง",
-    "HyperaccelLPUsupport": "Hyperaccel LPU",
-    "DescHyperaccelLPUsupport": "ใช้ตัวเร่งความเร็ว Hyperaccel LPU",
     "RequireHyperaccelLPUPlugin": "ต้องใช้ปลั๊กอิน Backend.AI Hyperaccel LPU",
     "SearchPlaceholder": "ค้นหา",
-    "DescRNGDsupport": "ใช้การสนับสนุน Furiosa RNGD",
     "RequireRNGDPlugin": "ต้องใช้ปลั๊กอิน Backend.AI RNGD",
-    "RNGDsupport": "RNGD"
+    "IPUSupport": "IPU",
+    "DescWarboySupport": "ใช้การสนับสนุน Furiosa Warboy",
+    "DescIPUSupport": "ใช้ตัวเร่งความเร็ว GraphCore IPU",
+    "DescATOMSupport": "ใช้ตัวเร่งความเร็ว Rebellions ATOM",
+    "DescCudaGPUSupport": "การสนับสนุน GPU NVIDIA CUDA <br/>ต้องใช้ปลั๊กอิน Backend.AI CUDA",
+    "DescHyperaccelLPUSupport": "ใช้ตัวเร่งความเร็ว Hyperaccel LPU",
+    "DescRNGDSupport": "ใช้การสนับสนุน Furiosa RNGD",
+    "DescRocmGPUSupport": "การสนับสนุน GPU AMD ROCm <br/>ต้องใช้ปลั๊กอิน Backend.AI ROCm",
+    "HyperaccelLPUSupport": "Hyperaccel LPU",
+    "OpenSourceCudaGPUSupport": "การสนับสนุน GPU CUDA แบบโอเพนซอร์ส",
+    "WarboySupport": "Warboy",
+    "ATOMSupport": "ATOM",
+    "RNGDSupport": "RNGD",
+    "ROCMGPUSupport": "การสนับสนุน GPU ROCm"
   },
   "notification": {
     "SuccessfullyUpdated": "อัปเดตสำเร็จแล้ว",
@@ -1484,7 +1485,7 @@
     "InvalidChangePasswordTokenMessage": "โทเคนที่ออกเพื่อเปลี่ยนรหัสผ่านมีข้อผิดพลาด กรุณาส่งอีเมลเพื่อเปลี่ยนรหัสผ่านอีกครั้งและลองใหม่",
     "PleaseInputLoginInfo": "กรุณาป้อนรหัสประจำตัวและรหัสผ่านเพื่อเข้าสู่ระบบ",
     "TooManyAttempt": "มีความพยายามเข้าสู่ระบบมากเกินไป การพยายามเข้าสู่ระบบถูกบล็อกชั่วคราว",
-    "SingleSignOn": {
+    "singleSignOn": {
       "LoginWithSAML": "เข้าสู่ระบบด้วย SAML",
       "LoginWithRealm": "เข้าสู่ระบบด้วย {{ realmName }}"
     },
@@ -1563,7 +1564,7 @@
     "GitlabRepoWillBeFolder": "พื้นที่เก็บข้อมูล GitLab ที่นำเข้าจะถูกแปลงเป็นโฟลเดอร์และสามารถเมาท์ได้เมื่อเริ่มเซสชัน",
     "GitlabURL": "URL GitLab",
     "GitlabDefaultBranch": "ชื่อ Branch GitLab",
-    "InvalidNotebookURL": "URL โน้ตบุ๊กไม่ถูกต้อง"
+    "InvalidNotebookURL": "URL สมุดบันทึกไม่ถูกต้อง"
   },
   "license": {
     "Perpetual": "ถาวร",
@@ -1661,7 +1662,6 @@
     "CloneAsFolder": "โคลนเป็นโฟลเดอร์",
     "CloneSuccess": "ส่งคำขอโคลนสำเร็จแล้ว",
     "CloneInfo": "จะถูกโคลนเป็นโฟลเดอร์ประเภทผู้ใช้ของคุณ",
-    "category": "หมวดหมู่",
     "CloneToFolder": "โคลนไปยังโฟลเดอร์",
     "FolderAlreadyExists": "มีโฟลเดอร์ชื่อนี้อยู่แล้ว",
     "FinetuneModel": "ปรับแต่งโมเดล"

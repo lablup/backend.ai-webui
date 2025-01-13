@@ -28,8 +28,8 @@ const Page401 = () => {
         />
         <Flex direction="column" align="start" gap={'lg'}>
           <Typography.Title level={2} style={{ margin: 0 }}>
-            {/* t('webui.UNAUTHORIZEDACCESS') */}
-            <Trans i18nKey={'webui.UNAUTHORIZEDACCESS'} />
+            {/* t('webui.UnauthorizedAccess') */}
+            <Trans i18nKey={'webui.UnauthorizedAccess'} />
           </Typography.Title>
           <Typography.Text type="secondary" style={{ margin: 0 }}>
             {/* t('webui.AdminOnlyPage') */}

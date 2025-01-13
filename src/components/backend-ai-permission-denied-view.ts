@@ -127,7 +127,7 @@ export default class BackendAIPermissionDeniedView extends BackendAIPage {
           src="/resources/images/401_unauthorized_access.svg"
         />
         <div class="vertical layout desc">
-          <div class="title">${_tr('webui.UNAUTHORIZEDACCESS')}</div>
+          <div class="title">${_tr('webui.UnauthorizedAccess')}</div>
           <p class="description">${_tr('webui.AdminOnlyPage')}</p>
           <div>
             <mwc-button

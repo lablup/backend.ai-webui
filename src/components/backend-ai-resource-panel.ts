@@ -253,7 +253,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
       .catch((err) => {
         this.spinner.hide();
         this.sessions = 0;
-        this.notification.text = _text('summary.connectingToCluster');
+        this.notification.text = _text('summary.ConnectingToCluster');
         this.notification.detail = err;
         this.notification.show(false, err);
         if (this.active) {
@@ -660,7 +660,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                             this.mem_total,
                             2,
                           ),
-                        )} GiB ${_t('summary.reserved')}."
+                        )} GiB ${_t('summary.ReservedShort')}."
                       ></lablup-progress-bar>
                       <lablup-progress-bar
                         id="mem-usage-bar-2"
@@ -738,7 +738,9 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                         )} / ${this._prefixFormat(
                                           this.cuda_gpu_total,
                                           2,
-                                        )} CUDA GPUs ${_t('summary.reserved')}."
+                                        )} CUDA GPUs ${_t(
+                                          'summary.ReservedShort',
+                                        )}."
                                       ></lablup-progress-bar>
                                       <lablup-progress-bar
                                         id="gpu-usage-bar-2"
@@ -835,7 +837,9 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                         )} / ${this._prefixFormat(
                                           this.rocm_gpu_total,
                                           2,
-                                        )} ROCm GPUs ${_t('summary.reserved')}."
+                                        )} ROCm GPUs ${_t(
+                                          'summary.ReservedShort',
+                                        )}."
                                       ></lablup-progress-bar>
                                       <lablup-progress-bar
                                         id="rocm-gpu-usage-bar-2"
@@ -878,7 +882,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                         )} / ${this._prefixFormatWithoutTrailingZeros(
                                           this.tpu_total,
                                           2,
-                                        )} TPUs ${_t('summary.reserved')}."
+                                        )} TPUs ${_t('summary.ReservedShort')}."
                                       ></lablup-progress-bar>
                                       <lablup-progress-bar
                                         id="tpu-usage-bar-2"
@@ -919,7 +923,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                         )} / ${this._prefixFormatWithoutTrailingZeros(
                                           this.ipu_total,
                                           2,
-                                        )} IPUs ${_t('summary.reserved')}."
+                                        )} IPUs ${_t('summary.ReservedShort')}."
                                       ></lablup-progress-bar>
                                       <lablup-progress-bar
                                         id="ipu-usage-bar-2"
@@ -960,7 +964,9 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                         )} / ${this._prefixFormatWithoutTrailingZeros(
                                           this.atom_total,
                                           2,
-                                        )} ATOMs ${_t('summary.reserved')}."
+                                        )} ATOMs ${_t(
+                                          'summary.ReservedShort',
+                                        )}."
                                       ></lablup-progress-bar>
                                       <lablup-progress-bar
                                         id="atom-usage-bar-2"
@@ -1002,7 +1008,9 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                         )} / ${this._prefixFormatWithoutTrailingZeros(
                                           this.atom_plus_total,
                                           2,
-                                        )} ATOM+ ${_t('summary.reserved')}."
+                                        )} ATOM+ ${_t(
+                                          'summary.ReservedShort',
+                                        )}."
                                       ></lablup-progress-bar>
                                       <lablup-progress-bar
                                         id="atom-plus-usage-bar-2"
@@ -1043,7 +1051,9 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                         )} / ${this._prefixFormatWithoutTrailingZeros(
                                           this.gaudi2_total,
                                           2,
-                                        )} Gaudi 2 ${_t('summary.reserved')}."
+                                        )} Gaudi 2 ${_t(
+                                          'summary.ReservedShort',
+                                        )}."
                                       ></lablup-progress-bar>
                                       <lablup-progress-bar
                                         id="gaudi-2-usage-bar-2"
@@ -1084,7 +1094,9 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                         )} / ${this._prefixFormatWithoutTrailingZeros(
                                           this.warboy_total,
                                           2,
-                                        )} Warboys ${_t('summary.reserved')}."
+                                        )} Warboys ${_t(
+                                          'summary.ReservedShort',
+                                        )}."
                                       ></lablup-progress-bar>
                                       <lablup-progress-bar
                                         id="warboy-usage-bar-2"
@@ -1125,7 +1137,9 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                         )} / ${this._prefixFormatWithoutTrailingZeros(
                                           this.rngd_total,
                                           2,
-                                        )} RNGDs ${_t('summary.reserved')}."
+                                        )} RNGDs ${_t(
+                                          'summary.ReservedShort',
+                                        )}."
                                       ></lablup-progress-bar>
                                       <lablup-progress-bar
                                         id="rngd-usage-bar-2"
@@ -1168,7 +1182,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                           this.hyperaccel_lpu_total,
                                           2,
                                         )} Hyperaccel LPUs ${_t(
-                                          'summary.reserved',
+                                          'summary.reservedShort',
                                         )}."
                                       ></lablup-progress-bar>
                                       <lablup-progress-bar

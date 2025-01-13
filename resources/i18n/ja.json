@@ -1,4 +1,5 @@
 {
+  "$schema": "../i18n.schema.json",
   "webui": {
     "menu": {
       "WelcomeMessage": "ようこそ、{{ userName }}.",
@@ -35,7 +36,6 @@
       "NewPasswordMismatch": "2つの新しいパスワードが一致しません。",
       "PasswordMismatch": "パスワード",
       "PasswordUpdated": "パスワードが正常に更新されました。",
-      "FullnameUpdated": "フルネームが正常に更新されました。",
       "TermsOfService": "利用規約",
       "PrivacyPolicy": "個人情報保護方針",
       "LeaveService": "サービスを終了する",
@@ -65,17 +65,18 @@
       "InvalidBlankEmail": "メールアドレスを入力",
       "DisMatchUserEmail": "ユーザーの電子メールが一致しません",
       "MyEnvironments": "私の環境",
-      "ResourcePolicy": "リソースポリシー"
+      "ResourcePolicy": "リソースポリシー",
+      "FullNameUpdated": "フルネームが正常に更新されました。"
     },
     "YouAreOffline": "オフライン：どのネットワークにも接続されていない。",
     "YouAreOnline": "あなたは今オンラインです",
-    "NOTFOUND": " <p>おっと！ <br/>ページが見つかりません... </p>",
-    "DescNOTFOUND": "申し訳ありませんが、お探しのページが見つかりませんでした。",
-    "UNAUTHORIZEDACCESS": "不正アクセス",
     "AdminOnlyPage": "このページにアクセスする権限がありません。 <br />下のボタンをクリックして、概要ページにリダイレクトします。",
     "CleanUpLoginSession": "ログインセッションをクリーンアップします...",
     "CleanUpNow": "今すぐクリーンアップ...",
-    "NetworkSoftTimeout": "サーバーの応答に時間がかかっています。しばらくお待ちください。"
+    "NetworkSoftTimeout": "サーバーの応答に時間がかかっています。しばらくお待ちください。",
+    "NotFound": " <p>おっと！ <br/>ページが見つかりません... </p>",
+    "DescNotFound": "申し訳ありませんが、お探しのページが見つかりませんでした。",
+    "UnauthorizedAccess": "不正アクセス"
   },
   "summary": {
     "StartMenu": "スタートメニュー",
@@ -83,7 +84,6 @@
     "ActiveSessions": "アクティブセッション",
     "ResourceStatistics": "リソース統計",
     "CoresReserved": "予約済みのコア",
-    "reserved": "予約済み",
     "FractionalGPUScalingEnabled": "フラクショナルGPUスケーリングが有効",
     "ROCMGPUEnabled": "ROCmGPUが有効",
     "TPUEnabled": "TPUが有効",
@@ -110,7 +110,6 @@
     "NoInvitations": "表示する招待状はありません。",
     "AcceptSharedVFolder": "これで、フォルダにアクセスできます。",
     "DeclineSharedVFolder": "フォルダの招待状が削除されます：",
-    "connectingToCluster": "Backend.AIクラスターに接続しています...",
     "IPUEnabled": "IPU NPU使用中",
     "ATOMEnabled": "ATOM NPU使用中",
     "WarboyEnabled": "Warboy NPU使用中",
@@ -118,7 +117,9 @@
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "ハイパーアクセル LPU が有効になりました",
     "ATOMPlusEnabled": "ATOM+ NPU 有効",
-    "RNGDEnabled": "RNGD 有効"
+    "RNGDEnabled": "RNGD 有効",
+    "ReservedShort": "予約済み",
+    "ConnectingToCluster": "Backend.AIクラスターに接続しています..."
   },
   "session": {
     "launcher": {
@@ -179,7 +180,6 @@
       "StartImportedNotebook": "インポートされたノートブックを開始する",
       "DuplicatedSessionName": "重複したセッション名は許可されていません",
       "SessionNameAllowCondition": "セッション名には、空白を含まない4〜64個のアルファベット/数字を含める必要があります。",
-      "sessionStillPreparing": "セッションはまだ準備中です。セッションが開始したら、アプリアイコンをタップしてアプリを起動します。",
       "ResourceMonitorToggle": "リソースモニターを参照してください",
       "SharedMemorySettingIsReduced": "共有メモリの設定は、割り当てられたメモリより少なくなります。",
       "NoActiveKeypair": "アクティブなキーペアがありません",
@@ -290,7 +290,8 @@
       "BatchJobTimeoutDuration": "バッチジョブのタイムアウト時間",
       "BatchJobTimeoutDurationDesc": "バッチジョブの最大実行時間を設定します。\n指定された時間を超えると、セッションは自動的に終了します。",
       "SetBatchJobTimeoutDuration": "バッチジョブのタイムアウト時間を設定する",
-      "PreOpen": "事前開放ポート"
+      "PreOpen": "事前開放ポート",
+      "SessionStillPreparing": "セッションはまだ準備中です。セッションが開始したら、アプリアイコンをタップしてアプリを起動します。"
     },
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",
@@ -331,7 +332,7 @@
     "UseYourFavoriteMSTSCApp": "お気に入りのMSリモートデスクトップアプリを使用する",
     "Architecture": "アーキテクチャ",
     "SessionType": "セッションタイプ",
-    "Validation": {
+    "validation": {
       "EnterValidSessionName": "アルファベット、数字、ハイフン、アンダースコアを 4 文字以上組み合わせて入力してください。",
       "SessionNameRequired": "セッション名を入力してください",
       "SluggedStrings": "最低4文字以上の固有の文字列で入力してください。",
@@ -346,8 +347,6 @@
     "Interactive": "インタラクティブ",
     "Batch": "バッチ",
     "Inference": "INFERENCE",
-    "Readmore": "もっと詳しく...",
-    "Readless": "内容折りたたみ",
     "AllowedClientIps": "許可されたクライアントIP",
     "CommaSeparated": "カンマで区切る",
     "UseSubdomain": "サブドメインのアドレス入力",
@@ -431,7 +430,9 @@
       "SSHConnectionExampleClipboardCopy": "SSH接続例がクリップボードにコピーされました。"
     },
     "ExportCSV": "CSVをエクスポート",
-    "FGPU": "fGPU"
+    "FGPU": "fGPU",
+    "ReadLess": "内容折りたたみ",
+    "ReadMore": "もっと詳しく..."
   },
   "button": {
     "Cancel": "キャンセル",
@@ -637,9 +638,6 @@
     "Create": "作成する",
     "Update": "更新",
     "FolderNameRequired": "フォルダ名が必要です",
-    "FileandFoldernameRequired": "ファイル/フォルダ名が必要です",
-    "Allowslettersnumbersand-_dot": "文字、数字、および-_を許可します。",
-    "Allowslettersnumbersand-_": "文字、数字、および-_を許可します",
     "FolderNameTooLong": "64文字未満のフォルダ名を入力してください",
     "EnterDifferentValue": "既存のファイル名またはフォルダ名とは異なる値を入力してください。入力フィールドにスペース文字があるかどうかを確認してください。",
     "Host": "ホスト",
@@ -815,7 +813,6 @@
       "InferenceEngineVersion": "推論エンジンのバージョン",
       "ReplicaNumber": "レプリカ番号",
       "ImportAndStartService": "サービスのインポートと開始",
-      "huggingFaceUrlPlaceholder": "Hugging Faceの URL を入力してください",
       "ImportOnly": "輸入のみ",
       "StartWithHuggingFaceUrl": "https://huggingface.co で始まる必要があります",
       "CheckHuggingFaceUrl": "チェック",
@@ -836,9 +833,13 @@
       "ImportOnlySuccessDesc": "新しいモデルフォルダーの準備ができました。\n今すぐサービスを開始し、必要な操作を試してください。",
       "ImportAndStartServiceSuccessDesc": "新しいモデルのフォルダーとサービスが準備できました。 \n「サービス情報を見る」ボタンをクリックすると機種の詳細を確認し、必要な操作を開始します。",
       "AddedItems": "追加された項目",
-      "ModelFolderName": "モデルフォルダ名"
+      "ModelFolderName": "モデルフォルダ名",
+      "HuggingFaceUrlPlaceholder": "Hugging Faceの URL を入力してください"
     },
-    "UserQuotaScopeId": "Quota Scope ID"
+    "UserQuotaScopeId": "Quota Scope ID",
+    "FileAndFolderNameRequired": "ファイル/フォルダ名が必要です",
+    "AllowsLettersNumbersAnd-_": "文字、数字、および-_を許可します",
+    "AllowsLettersNumbersAnd-_Dot": "文字、数字、および-_を許可します。"
   },
   "dialog": {
     "warning": {
@@ -1232,10 +1233,7 @@
     "Scaling": "スケーリング",
     "AllowAgentSideRegistration": "エージェント側の登録を許可する",
     "DescAllowAgentSideRegistration": "エージェントが自分自身をマネージャーに登録できるようにします。 <br/>Backend.AIクラスターが安全な場所で管理されている場合にのみ使用します。",
-    "DescCUDAGPUsupport": "NVIDIA CUDAGPUのサポート。 <br/> Backend.AICUDAプラグインが必要です。",
     "CUDAGPUdisabledByFGPUsupport": "システムがフラクショナルGPUプラグインを使用しているため無効になっています",
-    "ROCMGPUsupport": "ROCmGPUサポート",
-    "DescROCMGPUsupport": "AMD ROCmGPUのサポート。 <br/> Backend.AIROCmプラグインが必要です。",
     "Scheduler": "スケジューラー",
     "SchedulerConfiguration": "ジョブスケジューラごとの構成。",
     "Require2003orAbove": "Backend.AI20.03以降が必要です。",
@@ -1269,24 +1267,15 @@
     },
     "OverlayNetwork": "オーバーレイネットワーク",
     "OverlayNetworkConfiguration": "オーバーレイネットワークの設定を変更します。",
-    "IPUsupport": "IPUサポート",
-    "DescIPUsupport": "GraphCore IPUアクセラレータを使用します。",
     "RequireIPUPlugin": "Backend.AI IPUプラグインが必要です。",
-    "ATOMsupport": "ATOM対応",
-    "DescATOMsupport": "Rebellions ATOMアクセラレータを使用します。",
     "RequireATOMPlugin": "Backend.AI ATOMプラグインが必要です。",
-    "Warboysupport": "Warboyサポート",
-    "DescWarboysupport": "Backend.AI Warboyプラグインが必要です。",
     "RequireWarboyPlugin": "Backend.AI Warboyプラグインが必要です。",
     "OverlayNetworkSettings": "オーバーレイネットワーク設定",
     "OverlayNetworkSettingsDescription": "オーバーレイネットワークは、物理ネットワークの上に構築される仮想的なコンピュータネットワークです。オーバーレイネットワークは、Backend.AIマネージャーの複数のDockerデーモンホスト間で分散ネットワークを作成します。",
     "MTUDescription": "最大送信単位 - 当該レイヤーが送信できる最大プロトコルデータ単位のサイズです。",
     "OutOfRange": "入力範囲外です。",
     "Plugins": "プラグイン",
-    "OpenSourceCUDAGPUsupport": "オープンソースのCUDA GPUのサポート",
     "ShowOnlyChanged": "表示のみの変更",
-    "HyperaccelLPUsupport": "Hyperaccel LPU",
-    "DescHyperaccelLPUsupport": "Hyperaccel LPU アクセラレータを使用します。",
     "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU プラグインが必要です。",
     "SearchPlaceholder": "検索",
     "Gaudi2Support": "Gaudi 2 のサポート",
@@ -1295,9 +1284,21 @@
     "ATOMPlusSupport": "アトムのサポート",
     "RequireATOMPlusPlugin": "Backend.AI ATOM+プラグインが必要です。",
     "DescATOMPlusSupport": "Rebellions ATOM+ アクセラレータを使用します。",
-    "RNGDsupport": "RNGD",
-    "DescRNGDsupport": "Furiosa RNGD サポートを使用する",
-    "RequireRNGDPlugin": "Backend.AI RNGD プラグインが必要です。"
+    "RequireRNGDPlugin": "Backend.AI RNGD プラグインが必要です。",
+    "IPUSupport": "IPUサポート",
+    "DescWarboySupport": "Backend.AI Warboyプラグインが必要です。",
+    "DescIPUSupport": "GraphCore IPUアクセラレータを使用します。",
+    "DescATOMSupport": "Rebellions ATOMアクセラレータを使用します。",
+    "DescCudaGPUSupport": "NVIDIA CUDAGPUのサポート。 <br/> Backend.AICUDAプラグインが必要です。",
+    "DescHyperaccelLPUSupport": "Hyperaccel LPU アクセラレータを使用します。",
+    "DescRNGDSupport": "Furiosa RNGD サポートを使用する",
+    "DescRocmGPUSupport": "AMD ROCmGPUのサポート。 <br/> Backend.AIROCmプラグインが必要です。",
+    "HyperaccelLPUSupport": "Hyperaccel LPU",
+    "OpenSourceCudaGPUSupport": "オープンソースのCUDA GPUのサポート",
+    "WarboySupport": "Warboyサポート",
+    "ATOMSupport": "ATOM対応",
+    "RNGDSupport": "RNGD",
+    "ROCMGPUSupport": "ROCmGPUサポート"
   },
   "notification": {
     "SuccessfullyUpdated": "正常に更新されました",
@@ -1379,7 +1380,7 @@
     "EndpointInfo": "エンドポイントのご案内",
     "DescEndpoint": "<p>エンドポイントには、Managerへの接続を中継するBackend.AI Webserverが動作しているURLを記述してください</p><p><p>e.g., http://127.0.0.1:8090/</p></p>",
     "EndpointStartWith": "http:// または https:// で開始する必要があります。",
-    "SingleSignOn": {
+    "singleSignOn": {
       "LoginWithSAML": "SAMLログイン",
       "LoginWithRealm": "{{ realmName }}ログイン"
     },
@@ -1457,7 +1458,7 @@
     "GitlabRepoWillBeFolder": "インポートしたGitLabリポジトリはフォルダに変換され、セッション開始時にマウントすることができます。",
     "GitlabURL": "GitLabアドレス",
     "GitlabDefaultBranch": "GitLab ブランチ名",
-    "InvalidNotebookURL": "無効なNotbook URLです。"
+    "InvalidNotebookURL": "ノートブックの URL が無効です。"
   },
   "license": {
     "Perpetual": "パーペチュアル",
@@ -1551,7 +1552,6 @@
     "SessionOwner": "セッション所有者",
     "ServiceEndpoint": "サービスエンドポイント",
     "NoServiceEndpoint": "サービスエンドポイントがありません。",
-    "resources": "リソース",
     "GeneratedTokens": "生成されたトークン一覧",
     "GenerateToken": "トークン生成",
     "RoutesInfo": "ルート情報",
@@ -1596,7 +1596,8 @@
     "Chatting": "おしゃべり",
     "ServiceNameMinLength": "少なくとも 4 文字を入力してください。",
     "ServiceNameMaxLength": "24文字以内で入力してください。",
-    "ServiceNameCannotStartWithHyphen": "両端にハイフン（-）を使用することはできません。"
+    "ServiceNameCannotStartWithHyphen": "両端にハイフン（-）を使用することはできません。",
+    "Resources": "リソース"
   },
   "storageHost": {
     "quotaSettings": {
@@ -1676,7 +1677,6 @@
     "CloneAsFolder": "フォルダとしてクローン",
     "CloneSuccess": "クローン要求は正常に送信された。",
     "CloneInfo": "ユーザータイプのフォルダとしてクローンされます。",
-    "category": "カテゴリー",
     "CloneToFolder": "フォルダへのクローン",
     "FolderAlreadyExists": "この名前のフォルダはすでに存在する。",
     "FinetuneModel": "ファインチューンモデル"

@@ -303,7 +303,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
                 auto-validate
                 required
                 disabled
-                error-message="${_t('data.Allowslettersnumbersand-_dot')}"
+                error-message="${_t('data.AllowsLettersNumbersAnd-_Dot')}"
               ></mwc-textfield>
               <h4>${_t('resourcePreset.ResourcePreset')}</h4>
               <div class="horizontal center layout">
@@ -391,7 +391,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
             required
             maxLength="255"
             placeholder="${_t('maxLength.255chars')}"
-            error-message="${_t('data.Allowslettersnumbersand-_')}"
+            error-message="${_t('data.AllowsLettersNumbersAnd-_')}"
           ></mwc-textfield>
           <h4>${_t('resourcePreset.ResourcePreset')}</h4>
           <div class="horizontal center layout">

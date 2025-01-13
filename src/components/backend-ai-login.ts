@@ -2323,7 +2323,7 @@ export default class BackendAILogin extends BackendAIPage {
                   ? html`
                       <mwc-button
                         id="sso-login-saml-button"
-                        label="${_t('login.SingleSignOn.LoginWithSAML')}"
+                        label="${_t('login.singleSignOn.LoginWithSAML')}"
                         fullwidth
                         @click="${() => this.loginWithSAML()}"
                       ></mwc-button>
@@ -2333,7 +2333,7 @@ export default class BackendAILogin extends BackendAIPage {
                   ? html`
                       <mwc-button
                         id="sso-login-openid-button"
-                        label="${_t('login.SingleSignOn.LoginWithRealm', {
+                        label="${_t('login.singleSignOn.LoginWithRealm', {
                           realmName: this.ssoRealmName || 'OpenID',
                         })}"
                         fullwidth

@@ -850,7 +850,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
           this.newNameInput.validationMessage = _text(
-            'data.FileandFoldernameRequired',
+            'data.FileAndFolderNameRequired',
           );
         }
         return {
@@ -878,7 +878,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
         isValid = !regex.test(this.newNameInput.value);
         if (!isValid) {
           this.newNameInput.validationMessage = _text(
-            'data.Allowslettersnumbersand-_dot',
+            'data.AllowsLettersNumbersAnd-_Dot',
           );
         }
         return {

@@ -79,7 +79,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
             if (newFullName !== userInfo.full_name) {
               messageApi.open({
                 type: 'success',
-                content: t('webui.menu.FullnameUpdated'),
+                content: t('webui.menu.FullNameUpdated'),
               });
             }
 

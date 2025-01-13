@@ -177,7 +177,7 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
               },
               {
                 pattern: /^[a-zA-Z0-9._-]*$/,
-                message: t('data.Allowslettersnumbersand-_dot'),
+                message: t('data.AllowsLettersNumbersAnd-_Dot'),
               },
             ]}
             {...extraNameError}

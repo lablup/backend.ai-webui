@@ -363,7 +363,7 @@ export default class BackendAIData extends BackendAIPage {
             @change="${() => this._validateFolderName()}"
             pattern="^[a-zA-Z0-9._-]*$"
             required
-            validationMessage="${_t('data.Allowslettersnumbersand-_dot')}"
+            validationMessage="${_t('data.AllowsLettersNumbersAnd-_Dot')}"
             maxLength="64"
             placeholder="${_t('maxLength.64chars')}"
           ></mwc-textfield>
@@ -559,7 +559,7 @@ export default class BackendAIData extends BackendAIPage {
             @change="${() => this._validateFolderName()}"
             pattern="^[a-zA-Z0-9._-]*$"
             required
-            validationMessage="${_t('data.Allowslettersnumbersand-_dot')}"
+            validationMessage="${_t('data.AllowsLettersNumbersAnd-_Dot')}"
             maxLength="64"
             placeholder="${_t('maxLength.64chars')}"
           ></mwc-textfield>
@@ -1304,7 +1304,7 @@ export default class BackendAIData extends BackendAIPage {
           };
         } else {
           this.addFolderNameInput.validationMessage = _text(
-            'data.Allowslettersnumbersand-_dot',
+            'data.AllowsLettersNumbersAnd-_Dot',
           );
           return {
             valid: nativeValidity.valid,
@@ -1317,7 +1317,7 @@ export default class BackendAIData extends BackendAIPage {
         let isValid = !regex.test(this.addFolderNameInput.value);
         if (!isValid) {
           this.addFolderNameInput.validationMessage = _text(
-            'data.Allowslettersnumbersand-_dot',
+            'data.AllowsLettersNumbersAnd-_Dot',
           );
         }
         if (this.addFolderNameInput.value.length > 64) {
