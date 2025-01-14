@@ -14,6 +14,7 @@ interface InputNumberWithSliderProps {
   step?: number | null;
   disabled?: boolean;
   value?: number;
+  allowNegative?: boolean;
   onChange?: (value: number) => void;
   inputNumberProps?: OmitControlledProps<InputNumberProps>;
   sliderProps?:
