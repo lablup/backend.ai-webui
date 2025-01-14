@@ -766,7 +766,8 @@
       "RenameAFolder": "Хавтасны нэрийг өөрчлөх",
       "Filename": "Файлын нэр",
       "RemoveFileExtension": "Устгах ",
-      "NoSharedFolders": "Хуваалцсан фолдер байхгүй"
+      "NoSharedFolders": "Хуваалцсан фолдер байхгүй",
+      "Allowed": "Зөвшөөрөгдсөн"
     },
     "invitation": {
       "NoValidEmails": "Хүчинтэй имэйл оруулаагүй болно",
@@ -1087,7 +1088,9 @@
     "MemorySizeExceedsLimit": "Санах ойн хэмжээ 300 PiB-ээс бага байх ёстой",
     "MaxNetworkCount": "Хамгийн их сүлжээний тоо",
     "MaxPendingSessionCount": "Хамгийн их хүлээгдэж буй сессийн тоо",
-    "MaxConcurrentSFTPSessions": "Хамгийн их зэрэгцсэн SFTP сессүүд"
+    "MaxConcurrentSFTPSessions": "Хамгийн их зэрэгцсэн SFTP сессүүд",
+    "DefaultForUnspecified": "Тодорхойгүй өгөгдмөл",
+    "MaxPendingSessionResourceSlots": "Хүлээгдэж буй сессийн хамгийн их нөөц"
   },
   "registry": {
     "Hostname": "Хостын нэр",

@@ -765,7 +765,8 @@
       "RenameAFolder": "Μετονομασία φακέλου",
       "Filename": "Ονομα αρχείου",
       "RemoveFileExtension": "Αφαιρώ ",
-      "NoSharedFolders": "Δεν υπάρχουν κοινόχρηστοι φάκελοι"
+      "NoSharedFolders": "Δεν υπάρχουν κοινόχρηστοι φάκελοι",
+      "Allowed": "Επιτρέπεται"
     },
     "invitation": {
       "NoValidEmails": "Δεν καταχωρήθηκαν έγκυρα μηνύματα ηλεκτρονικού ταχυδρομείου",
@@ -1088,7 +1089,9 @@
     "MemorySizeExceedsLimit": "Το μέγεθος της μνήμης πρέπει να είναι μικρότερο από 300 PiB",
     "MaxNetworkCount": "Μέγιστος αριθμός δικτύου",
     "MaxPendingSessionCount": "Μέγιστος αριθμός συνεδριών σε εκκρεμότητα",
-    "MaxConcurrentSFTPSessions": "Μέγιστες ταυτόχρονες συνεδρίες SFTP"
+    "MaxConcurrentSFTPSessions": "Μέγιστες ταυτόχρονες συνεδρίες SFTP",
+    "DefaultForUnspecified": "Προεπιλογή για απροσδιόριστο",
+    "MaxPendingSessionResourceSlots": "Μέγιστος πόρος περιόδου λειτουργίας σε εκκρεμότητα"
   },
   "registry": {
     "Hostname": "Όνομα κεντρικού υπολογιστή",

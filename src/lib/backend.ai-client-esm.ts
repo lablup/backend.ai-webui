@@ -704,6 +704,7 @@ class Client {
       this._features['endpoint-extra-mounts'] = true;
       this._features['max-pending-session-count'] = true;
       this._features['max-concurrent-sftp-sessions'] = true;
+      this._features['max-pending-session-resource-slots'] = true;
     }
     if (this.isManagerVersionCompatibleWith('24.03.5')) {
       this._features['modify-endpoint-environ'] = true;

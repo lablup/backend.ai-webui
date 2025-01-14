@@ -889,7 +889,8 @@
       "RenameAFolder": "폴더 이름 변경",
       "Filename": "파일 이름",
       "RemoveFileExtension": " 제거",
-      "NoSharedFolders": "공유 폴더가 없습니다."
+      "NoSharedFolders": "공유 폴더가 없습니다.",
+      "Allowed": "허용"
     },
     "invitation": {
       "NoValidEmails": "정상적인 이메일을 입력해주세요",
@@ -1203,7 +1204,9 @@
     "MemorySizeExceedsLimit": "메모리 크기는 300PiB 미만이어야 합니다.",
     "MaxNetworkCount": "최대 네트워크 수",
     "MaxPendingSessionCount": "최대 대기 세션 수",
-    "MaxConcurrentSFTPSessions": "최대 동시 SFTP 세션"
+    "MaxConcurrentSFTPSessions": "최대 동시 SFTP 세션",
+    "DefaultForUnspecified": "지정되지 않은 경우 기본값",
+    "MaxPendingSessionResourceSlots": "최대 대기 세션 자원"
   },
   "registry": {
     "Hostname": "호스트명",

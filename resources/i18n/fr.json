@@ -765,7 +765,8 @@
       "RenameAFolder": "Renommer le dossier",
       "Filename": "Nom de fichier",
       "RemoveFileExtension": "Retirer ",
-      "NoSharedFolders": "Aucun dossier partagé"
+      "NoSharedFolders": "Aucun dossier partagé",
+      "Allowed": "Autorisé"
     },
     "invitation": {
       "NoValidEmails": "Aucun e-mail valide n'a été saisi",
@@ -1088,7 +1089,9 @@
     "MemorySizeExceedsLimit": "La taille de la mémoire doit être inférieure à 300 PiB",
     "MaxNetworkCount": "Nombre maximum de réseaux",
     "MaxPendingSessionCount": "Nombre maximum de sessions en attente",
-    "MaxConcurrentSFTPSessions": "Nombre maximal de sessions SFTP simultanées"
+    "MaxConcurrentSFTPSessions": "Nombre maximal de sessions SFTP simultanées",
+    "DefaultForUnspecified": "Par défaut pour non spécifié",
+    "MaxPendingSessionResourceSlots": "Ressources maximales de session en attente"
   },
   "registry": {
     "Hostname": "Nom d'hôte",
