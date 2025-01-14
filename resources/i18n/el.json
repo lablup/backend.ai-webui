@@ -261,6 +261,7 @@
     "UserQuotaScopeId": "Quota Scope ID",
     "explorer": {
       "Actions": "Ενέργειες",
+      "Allowed": "Επιτρεπόμενος",
       "ClickFilebrowserButton": "Για να ανεβάσετε τους φακέλους, κάντε κλικ στο κουμπί Εκτέλεση του προγράμματος περιήγησης αρχείων.",
       "CreateANewFolder": "Δημιουργήστε έναν νέο φάκελο",
       "Created": "Δημιουργήθηκε",
@@ -1038,6 +1039,7 @@
     "ContainerPerSession": "Κοντέινερ ανά περίοδο σύνδεσης",
     "CreateResourcePolicy": "Δημιουργία Πολιτικής Πόρων",
     "CreatedAt": "Δημιουργήθηκε στο",
+    "DefaultForUnspecified": "Προεπιλογή για απροσδιόριστο",
     "DeletePolicy": "Διαγραφή πολιτικής",
     "DeletePolicyDescription": "Πρόκειται να διαγράψετε αυτήν την πολιτική:",
     "ExportCSV": "εξαγωγή CSV",
@@ -1051,6 +1053,7 @@
     "MaxFolderCount": "Μέγιστος αριθμός φακέλων",
     "MaxNetworkCount": "Μέγιστος αριθμός δικτύου",
     "MaxPendingSessionCount": "Μέγιστο μέτρο εκκρεμούσης",
+    "MaxPendingSessionResourceSlots": "Max εκκρεμείς υποδοχές πόρων συνεδρίας",
     "MaxQuotaScopeSize": "Μέγιστο μέγεθος εύρους ορίου (GB)",
     "MaxSessionCountPerModelSession": "Μέγιστος αριθμός περιόδων σύνδεσης ανά περίοδο λειτουργίας μοντέλου",
     "MaxSessionLifetime": "Διάρκεια ζωής συνόδου (sec.)",
