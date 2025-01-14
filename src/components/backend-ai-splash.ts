@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2025 Lablup Inc. All rights reserved.
  */
 import './backend-ai-dialog';
 import BackendAIDialog from './backend-ai-dialog';
@@ -178,7 +178,7 @@ export default class BackendAISplash extends LitElement {
           </ul>
           <ul>
             <li>Powered by <a target="_blank" href="https://github.com/lablup/backend.ai/blob/main/LICENSE">open-source software</a></li>
-            <li class="copyright">Copyright &copy; 2015-2024 Lablup Inc.</li>
+            <li class="copyright">Copyright &copy; 2015-2025 Lablup Inc.</li>
             <li class="release-note">
               <a target="_blank" href="https://github.com/lablup/backend.ai-webui/releases/tag/v${
                 this.version

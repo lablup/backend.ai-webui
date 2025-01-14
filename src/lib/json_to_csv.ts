@@ -3,7 +3,7 @@
 Backend.AI API : JSON to CSV Converter
 ======================================
 
-(C) Copyright 2016-2024 Lablup Inc.
+(C) Copyright 2016-2025 Lablup Inc.
 Licensed under MIT
 */
 
