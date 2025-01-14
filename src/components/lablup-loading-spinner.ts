@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2025 Lablup Inc. All rights reserved.
  */
 import '@material/mwc-circular-progress';
 import { css, CSSResultGroup, html, LitElement } from 'lit';
