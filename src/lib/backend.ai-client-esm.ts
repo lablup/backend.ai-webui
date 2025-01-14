@@ -725,6 +725,12 @@ class Client {
     }
     if (this.isManagerVersionCompatibleWith('24.03.4')) {
       this._features['endpoint-extra-mounts'] = true;
+      // Incorrect version annotation in the schema.
+      // ref: https://github.com/lablup/backend.ai/issues/3413
+      // ---------------------- START ----------------------
+      this._features['max-pending-session-count'] = true;
+      this._features['max-concurrent-sftp-sessions'] = true;
+      // ---------------------- END ------------------------
     }
     if (this.isManagerVersionCompatibleWith('24.03.5')) {
       this._features['modify-endpoint-environ'] = true;
