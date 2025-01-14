@@ -22,6 +22,8 @@ import BackendAiSessionLauncher from './backend-ai-session-launcher';
 import './lablup-grid-sort-filter-column';
 import './lablup-loading-spinner';
 import LablupLoadingSpinner from './lablup-loading-spinner';
+import { shapes } from '@dicebear/collection';
+import { createAvatar } from '@dicebear/core';
 import '@material/mwc-formfield';
 import '@material/mwc-icon-button';
 import '@material/mwc-list';
@@ -1146,7 +1148,6 @@ export default class BackendAiStorageList extends BackendAIPage {
             ? html`
                 <mwc-icon-button
                   class="fg blue controls-running"
-                  icon="folder_open"
                   title=${_t('data.folders.OpenAFolder')}
                   @click="${() => {
                     this.triggerOpenFilebrowserToReact(rowData);
@@ -1155,7 +1156,15 @@ export default class BackendAiStorageList extends BackendAIPage {
                     rowData.item.status,
                   )}"
                   .folder-id="${rowData.item.name}"
-                ></mwc-icon-button>
+                >
+                  <img
+                    style="width: 24px; height: 24px;"
+                    src="${createAvatar(shapes, {
+                      seed: rowData.item.id + rowData.item.name,
+                      shape3: [],
+                    }).toDataUri()}"
+                  />
+                </mwc-icon-button>
               `
             : html``}
           <div
