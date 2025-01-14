@@ -8,9 +8,11 @@ import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import Flex from './Flex';
+import KeypairResourcePolicyInfoModal from './KeypairResourcePolicyInfoModal';
 import KeypairResourcePolicySettingModal from './KeypairResourcePolicySettingModal';
 import ResourceNumber from './ResourceNumber';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
+import { KeypairResourcePolicyInfoModalFragment$key } from './__generated__/KeypairResourcePolicyInfoModalFragment.graphql';
 import { KeypairResourcePolicyListMutation } from './__generated__/KeypairResourcePolicyListMutation.graphql';
 import {
   KeypairResourcePolicyListQuery,
@@ -20,6 +22,7 @@ import { KeypairResourcePolicySettingModalFragment$key } from './__generated__/K
 import {
   DeleteOutlined,
   DownOutlined,
+  InfoCircleOutlined,
   PlusOutlined,
   ReloadOutlined,
   SettingOutlined,
@@ -66,6 +69,10 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
     useState<string>();
   const [editingKeypairResourcePolicy, setEditingKeypairResourcePolicy] =
     useState<KeypairResourcePolicySettingModalFragment$key | null>();
+  const [currentResourcePolicy, setCurrentResourcePolicy] =
+    useState<KeypairResourcePolicyInfoModalFragment$key | null>(null);
+  const [isPendingInfoModalOpen, startInfoModalOpenTransition] =
+    useTransition();
 
   const baiClient = useSuspendedBackendaiClient();
 
@@ -84,6 +91,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
             max_pending_session_count @since(version: "24.03.4")
             max_concurrent_sftp_sessions @since(version: "24.03.4")
             ...KeypairResourcePolicySettingModalFragment
+            ...KeypairResourcePolicyInfoModalFragment
           }
         }
       `,
@@ -230,6 +238,16 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
       fixed: 'right',
       render: (text, row) => (
         <Flex direction="row" align="stretch">
+          <Button
+            type="text"
+            size="large"
+            icon={<InfoCircleOutlined style={{ color: token.colorSuccess }} />}
+            onClick={() => {
+              startInfoModalOpenTransition(() => {
+                setCurrentResourcePolicy(row || null);
+              });
+            }}
+          />
           <Button
             type="text"
             size="large"
@@ -490,6 +508,16 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
               });
             }
           }}
+        />
+      </Suspense>
+      <Suspense>
+        <KeypairResourcePolicyInfoModal
+          open={!!currentResourcePolicy || isPendingInfoModalOpen}
+          onRequestClose={() => {
+            setCurrentResourcePolicy(null);
+          }}
+          loading={isPendingInfoModalOpen}
+          resourcePolicyFrgmt={currentResourcePolicy || null}
         />
       </Suspense>
     </Flex>

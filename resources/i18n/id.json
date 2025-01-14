@@ -262,6 +262,7 @@
     "UserQuotaScopeId": "Quota Scope ID",
     "explorer": {
       "Actions": "Tindakan",
+      "Allowed": "Diizinkan",
       "ClickFilebrowserButton": "Untuk mengunggah Folder, Silakan klik tombol Jalankan file browser.",
       "CreateANewFolder": "Buat folder baru",
       "Created": "Dibuat",
@@ -1040,6 +1041,7 @@
     "ContainerPerSession": "Kontainer Per Sesi",
     "CreateResourcePolicy": "Buat Kebijakan Sumber Daya",
     "CreatedAt": "Dibuat di",
+    "DefaultForUnspecified": "Default untuk tidak ditentukan",
     "DeletePolicy": "Hapus Kebijakan",
     "DeletePolicyDescription": "Anda akan menghapus kebijakan ini:",
     "ExportCSV": "ekspor CSV",
@@ -1053,6 +1055,7 @@
     "MaxFolderCount": "Jumlah Folder Maks",
     "MaxNetworkCount": "Jumlah Jaringan Maks",
     "MaxPendingSessionCount": "Hitungan sesi Max Tertunda",
+    "MaxPendingSessionResourceSlots": "Slot sumber daya sesi maks yang tertunda",
     "MaxQuotaScopeSize": "Ukuran Cakupan Kuota Maks (GB)",
     "MaxSessionCountPerModelSession": "Jumlah Sesi Maks Per Sesi Model",
     "MaxSessionLifetime": "Sesi Seumur Hidup (detik)",
