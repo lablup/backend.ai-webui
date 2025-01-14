@@ -1,21 +1,18 @@
 import Flex from './Flex';
 import { Form, Checkbox, FormItemProps } from 'antd';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
-import React, {
-  cloneElement,
-  isValidElement,
-  useEffect,
-  useState,
-} from 'react';
+import React, { cloneElement, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface FormItemWithUnlimitedProps extends FormItemProps {
-  unlimitedValue?: number | string;
+  unlimitedValue?: number | string | null;
+  disableUnlimited?: boolean;
 }
 
 const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
   name,
   unlimitedValue,
+  disableUnlimited,
   children,
   ...formItemPropsWithoutNameAndChildren
 }) => {
@@ -30,19 +27,19 @@ const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
   }, [form, name, unlimitedValue]);
 
   // Disable children when isUnlimited is true.
-  const childrenWithProps = isValidElement(children)
+  const childrenWithProps = React.isValidElement(children)
     ? cloneElement(children, {
         disabled: isUnlimited,
       } as React.Attributes & { disabled?: boolean })
     : children;
 
-  const childrenWithNullValue =
-    isUnlimited && isValidElement(children)
+  const childrenWithUndefinedValue =
+    isUnlimited && React.isValidElement(children)
       ? cloneElement(children, {
-          value: null,
+          value: undefined,
           disabled: isUnlimited,
         } as React.Attributes & { value?: any })
-      : null;
+      : undefined;
 
   return (
     <Flex direction="column" align="start">
@@ -59,11 +56,12 @@ const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
           style={{ margin: 0 }}
           {...formItemPropsWithoutNameAndChildren}
         >
-          {childrenWithNullValue}
+          {childrenWithUndefinedValue}
         </Form.Item>
       ) : null}
       <Checkbox
         checked={isUnlimited}
+        disabled={disableUnlimited}
         onChange={(e: CheckboxChangeEvent) => {
           const checked = e.target.checked;
           setIsUnlimited(checked);
