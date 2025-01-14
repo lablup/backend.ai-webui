@@ -766,7 +766,8 @@
       "RenameAFolder": "Dosyayı yeniden adlandır",
       "Filename": "Dosya adı",
       "RemoveFileExtension": "Kaldırmak ",
-      "NoSharedFolders": "Paylaşılan klasör yok"
+      "NoSharedFolders": "Paylaşılan klasör yok",
+      "Allowed": "İzin verilmiş"
     },
     "invitation": {
       "NoValidEmails": "Geçerli e-posta girilmedi",
@@ -1091,7 +1092,9 @@
     "MemorySizeExceedsLimit": "Bellek boyutu 300 PiB'den az olmalıdır",
     "MaxNetworkCount": "Maksimum Ağ Sayısı",
     "MaxPendingSessionCount": "Maksimum Bekleyen Oturum Sayısı",
-    "MaxConcurrentSFTPSessions": "Maksimum Eşzamanlı SFTP Oturumu Sayısı"
+    "MaxConcurrentSFTPSessions": "Maksimum Eşzamanlı SFTP Oturumu Sayısı",
+    "DefaultForUnspecified": "Belirtilmeyen İçin Varsayılan",
+    "MaxPendingSessionResourceSlots": "Maksimum Bekleyen Oturum Kaynağı"
   },
   "registry": {
     "Hostname": "ana bilgisayar adı",

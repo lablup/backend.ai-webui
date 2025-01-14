@@ -767,7 +767,8 @@
       "RenameAFolder": "Namakan semula Folder",
       "Filename": "Nama fail",
       "RemoveFileExtension": "Alih keluar ",
-      "NoSharedFolders": "Tiada folder kongsi"
+      "NoSharedFolders": "Tiada folder kongsi",
+      "Allowed": "dibenarkan"
     },
     "invitation": {
       "NoValidEmails": "Tidak ada e-mel yang sah dimasukkan",
@@ -1092,7 +1093,9 @@
     "MemorySizeExceedsLimit": "Saiz memori hendaklah kurang daripada 300 PiB",
     "MaxNetworkCount": "Kiraan Rangkaian Maks",
     "MaxPendingSessionCount": "Kiraan Sesi Menunggu Maks",
-    "MaxConcurrentSFTPSessions": "Sesi SFTP Serentak Maks"
+    "MaxConcurrentSFTPSessions": "Sesi SFTP Serentak Maks",
+    "DefaultForUnspecified": "Lalai Untuk Tidak Ditentukan",
+    "MaxPendingSessionResourceSlots": "Sumber Sesi Menunggu Maks"
   },
   "registry": {
     "Hostname": "Nama Hos",

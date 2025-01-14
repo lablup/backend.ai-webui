@@ -767,7 +767,8 @@
       "RenameAFolder": "Переименовать папку",
       "Filename": "Имя файла",
       "RemoveFileExtension": "Удалять ",
-      "NoSharedFolders": "Нет общих папок"
+      "NoSharedFolders": "Нет общих папок",
+      "Allowed": "Допустимый"
     },
     "invitation": {
       "NoValidEmails": "Не введены действительные адреса электронной почты",
@@ -1092,7 +1093,9 @@
     "MemorySizeExceedsLimit": "Размер памяти должен быть менее 300 ПиБ.",
     "MaxNetworkCount": "Максимальное количество сетей",
     "MaxPendingSessionCount": "Максимальное количество ожидающих сеансов",
-    "MaxConcurrentSFTPSessions": "Максимальное количество одновременных SFTP-сессий"
+    "MaxConcurrentSFTPSessions": "Максимальное количество одновременных SFTP-сессий",
+    "DefaultForUnspecified": "По умолчанию для неопределенного",
+    "MaxPendingSessionResourceSlots": "Максимальное количество ресурсов ожидающих сеансов"
   },
   "registry": {
     "Hostname": "Имя хоста",

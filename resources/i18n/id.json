@@ -768,7 +768,8 @@
       "RenameAFolder": "Mengganti nama folder",
       "Filename": "Nama file",
       "RemoveFileExtension": "Menghapus ",
-      "NoSharedFolders": "Tidak ada folder bersama"
+      "NoSharedFolders": "Tidak ada folder bersama",
+      "Allowed": "Diizinkan"
     },
     "invitation": {
       "NoValidEmails": "Tidak ada email valid yang dimasukkan",
@@ -1093,7 +1094,9 @@
     "MemorySizeExceedsLimit": "Ukuran memori harus kurang dari 300 PiB",
     "MaxNetworkCount": "Jumlah Jaringan Maks",
     "MaxPendingSessionCount": "Jumlah Sesi Tertunda Maks",
-    "MaxConcurrentSFTPSessions": "Sesi SFTP Serentak Maks"
+    "MaxConcurrentSFTPSessions": "Sesi SFTP Serentak Maks",
+    "DefaultForUnspecified": "Default Untuk Tidak Ditentukan",
+    "MaxPendingSessionResourceSlots": "Sumber Daya Sesi Maks yang Tertunda"
   },
   "registry": {
     "Hostname": "Nama host",
