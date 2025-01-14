@@ -453,7 +453,6 @@
     "StartNewServing": "Start new serving",
     "ServiceName": "Service Name",
     "OpenToPublic": "Open To Public",
-    "DesiredRoutingCount": "Desired Routing Count",
     "DesiredSessionCount": "Desired Session Count",
     "EndpointName": "Endpoint Name",
     "EndpointId": "Endpoint ID",
@@ -525,7 +524,8 @@
     "ServiceNameMinLength": "Please enter at least 4 characters.",
     "ServiceNameMaxLength": "Please enter 24 characters or less.",
     "ServiceNameCannotStartWithHyphen": "Hyphens (-) cannot be used at either end.",
-    "Resources": "Resources"
+    "Resources": "Resources",
+    "NumberOfReplicas": "Number of replicas"
   },
   "button": {
     "Cancel": "Cancel",

@@ -1540,7 +1540,6 @@
     "ServiceName": "Όνομα υπηρεσίας",
     "ServiceNameRule": "Επιτρέπονται μόνο αλφαριθμητικά, κάτω παύλα(_) και παύλα(-) και πρέπει να τελειώνει με αλφαριθμητικό χαρακτήρα.",
     "OpenToPublic": "Ανοιχτό για το κοινό",
-    "DesiredRoutingCount": "Επιθυμητός αριθμός δρομολόγησης",
     "ServingRouteErrorModalTitle": "Σφάλμα διαδρομής εξυπηρέτησης",
     "SessionId": "Αναγνωριστικό συνεδρίας",
     "Services": "Υπηρεσίες",
@@ -1598,7 +1597,8 @@
     "ServiceNameMinLength": "Εισαγάγετε τουλάχιστον 4 χαρακτήρες.",
     "ServiceNameMaxLength": "Εισαγάγετε 24 χαρακτήρες ή λιγότερους.",
     "ServiceNameCannotStartWithHyphen": "Οι παύλες (-) δεν μπορούν να χρησιμοποιηθούν σε κανένα άκρο.",
-    "Resources": "Πόροι"
+    "Resources": "Πόροι",
+    "NumberOfReplicas": "Αριθμός αντιγράφων"
   },
   "storageHost": {
     "quotaSettings": {

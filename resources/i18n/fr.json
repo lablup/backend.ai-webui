@@ -1580,7 +1580,6 @@
     "StartNewServing": "Commencer une nouvelle distribution",
     "ServiceName": "Nom du service",
     "OpenToPublic": "Ouvert au public",
-    "DesiredRoutingCount": "Nombre d'acheminements souhaités",
     "Services": "Services",
     "RoutingInfo": "Informations sur le routage",
     "ServiceInfo": "Informations sur le service",
@@ -1650,7 +1649,8 @@
     "ServiceNameMinLength": "Veuillez saisir au moins 4 caractères.",
     "ServiceNameMaxLength": "Veuillez saisir 24 caractères ou moins.",
     "ServiceNameCannotStartWithHyphen": "Les tirets (-) ne peuvent pas être utilisés à chaque extrémité.",
-    "Resources": "Ressources"
+    "Resources": "Ressources",
+    "NumberOfReplicas": "Nombre de répliques"
   },
   "modelStore": {
     "Description": "Description",

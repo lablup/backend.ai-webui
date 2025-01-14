@@ -1540,7 +1540,6 @@
     "ServiceName": "Nazwa usługi",
     "ServiceNameRule": "Zezwalaj tylko na znaki alfanumeryczne, podkreślenie (_) i łącznik (-) i muszą one kończyć się znakiem alfanumerycznym.",
     "OpenToPublic": "Otwarte dla publiczności",
-    "DesiredRoutingCount": "Pożądana liczba tras",
     "ServingRouteErrorModalTitle": "Błąd trasy serwowania",
     "SessionId": "Identyfikator sesji",
     "Services": "Usługi",
@@ -1598,7 +1597,8 @@
     "ServiceNameMinLength": "Proszę wpisać co najmniej 4 znaki.",
     "ServiceNameMaxLength": "Wprowadź maksymalnie 24 znaki.",
     "ServiceNameCannotStartWithHyphen": "Łączników (-) nie można używać na żadnym końcu.",
-    "Resources": "Zasoby"
+    "Resources": "Zasoby",
+    "NumberOfReplicas": "Liczba replik"
   },
   "storageHost": {
     "quotaSettings": {

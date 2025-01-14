@@ -1539,7 +1539,6 @@
     "ServiceName": "Hizmet Adı",
     "ServiceNameRule": "Yalnızca alfasayısal, alt çizgi(_) ve kısa çizgiye(-) izin verilir ve alfasayısal bir karakterle bitmelidir.",
     "OpenToPublic": "Halka Açık",
-    "DesiredRoutingCount": "İstenen Yönlendirme Sayısı",
     "ServingRouteErrorModalTitle": "Hizmet Veren Rota Hatası",
     "SessionId": "Oturum Kimliği",
     "Services": "Hizmetler",
@@ -1597,7 +1596,8 @@
     "ServiceNameMinLength": "Lütfen en az 4 karakter giriniz.",
     "ServiceNameMaxLength": "Lütfen 24 veya daha az karakter girin.",
     "ServiceNameCannotStartWithHyphen": "Kısa çizgi (-) her iki uçta da kullanılamaz.",
-    "Resources": "Kaynaklar"
+    "Resources": "Kaynaklar",
+    "NumberOfReplicas": "Kopya sayısı"
   },
   "storageHost": {
     "quotaSettings": {

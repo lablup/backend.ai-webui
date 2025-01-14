@@ -727,6 +727,7 @@ class Client {
       this._features['prepared-session-status'] = true;
       this._features['creating-session-status'] = true;
       this._features['max_network_count'] = true;
+      this._features['replicas'] = true;
     }
   }
 

@@ -1580,7 +1580,6 @@
     "StartNewServing": "Запуск новой порции",
     "ServiceName": "Название услуги",
     "OpenToPublic": "Открыт для посещения",
-    "DesiredRoutingCount": "Желаемое количество маршрутов",
     "Services": "Услуги",
     "RoutingInfo": "Маршрутная информация",
     "ServiceInfo": "Служебная информация",
@@ -1650,7 +1649,8 @@
     "ServiceNameMinLength": "Пожалуйста, введите не менее 4 символов.",
     "ServiceNameMaxLength": "Введите не более 24 символов.",
     "ServiceNameCannotStartWithHyphen": "Дефисы (-) нельзя использовать ни на одном конце.",
-    "Resources": "Ресурсы"
+    "Resources": "Ресурсы",
+    "NumberOfReplicas": "Количество реплик"
   },
   "modelStore": {
     "Description": "Описание",

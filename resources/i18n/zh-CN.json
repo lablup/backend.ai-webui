@@ -1575,7 +1575,6 @@
     "ServiceName": "服务名称",
     "ServiceNameRule": "仅允许使用字母数字、下划线 (_) 和连字符 (-)，并且必须以字母数字字符结尾。",
     "OpenToPublic": "向公众开放",
-    "DesiredRoutingCount": "所需的路由计数",
     "ServingRouteErrorModalTitle": "服务路由错误",
     "SessionId": "会话 ID",
     "Services": "服务",
@@ -1633,7 +1632,8 @@
     "ServiceNameMinLength": "请输入至少 4 个字符。",
     "ServiceNameMaxLength": "请输入 24 个或更少的字符。",
     "ServiceNameCannotStartWithHyphen": "两端不能使用连字符 (-)。",
-    "Resources": "资源"
+    "Resources": "资源",
+    "NumberOfReplicas": "副本数量"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",

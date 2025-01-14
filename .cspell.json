@@ -36,7 +36,8 @@
     "Keypairs",
     "Hyperaccel",
     "Tensorboard",
-    "Automount"
+    "Automount",
+    "Talkativot"
   ],
   "flagWords": [
     "데이터레이크",

@@ -1539,7 +1539,6 @@
     "ServiceName": "Nome del servizio",
     "ServiceNameRule": "Consenti solo caratteri alfanumerici, trattino basso (_) e trattino (-) e deve terminare con un carattere alfanumerico.",
     "OpenToPublic": "Aperto al pubblico",
-    "DesiredRoutingCount": "Conteggio dell'instradamento desiderato",
     "ServingRouteErrorModalTitle": "Errore del percorso di servizio",
     "SessionId": "ID sessione",
     "Services": "Servizi",
@@ -1596,7 +1595,8 @@
     "ServiceNameMinLength": "Inserisci almeno 4 caratteri.",
     "ServiceNameMaxLength": "Inserisci 24 caratteri o meno.",
     "ServiceNameCannotStartWithHyphen": "I trattini (-) non possono essere utilizzati alle due estremità.",
-    "Resources": "Risorse"
+    "Resources": "Risorse",
+    "NumberOfReplicas": "Numero di repliche"
   },
   "storageHost": {
     "quotaSettings": {

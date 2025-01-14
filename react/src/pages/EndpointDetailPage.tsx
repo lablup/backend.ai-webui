@@ -18,6 +18,7 @@ import {
   useWebUINavigate,
 } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
+import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { isDestroyingStatus } from './EndpointListPage';
 import {
@@ -58,7 +59,7 @@ import { BotMessageSquareIcon } from 'lucide-react';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 interface RoutingInfo {
   route_id: string;
@@ -68,7 +69,8 @@ interface RoutingInfo {
 export interface ModelServiceInfo {
   endpoint_id: string;
   name: string;
-  desired_session_count: number;
+  desired_session_count?: number;
+  replicas?: number;
   active_routes: RoutingInfo[];
   service_endpoint: string;
   is_public: boolean;
@@ -91,12 +93,14 @@ const dayDiff = (a: any, b: any) => {
 const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const baiClient = useSuspendedBackendaiClient();
-  const navigate = useNavigate();
+  const { message } = App.useApp();
+  const { baiPaginationOption } = useBAIPaginationOptionState({
+    current: 1,
+    pageSize: 100,
+  });
   const { serviceId } = useParams<{
     serviceId: string;
   }>();
-
   const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [isPendingClearError, startClearErrorTransition] = useTransition();
@@ -107,14 +111,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   const [openChatModal, setOpenChatModal] = useState(false);
   const [currentUser] = useCurrentUserInfo();
   // const curProject = useCurrentProjectValue();
-  const [paginationState] = useState<{
-    current: number;
-    pageSize: number;
-  }>({
-    current: 1,
-    pageSize: 100,
-  });
-  const { message } = App.useApp();
+  const baiClient = useSuspendedBackendaiClient();
   const webuiNavigate = useWebUINavigate();
   const { open } = useFolderExplorerOpener();
   const [selectedSessionId, setSelectedSessionId] = useState<string>();
@@ -151,7 +148,8 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               size_bytes
               supported_accelerators
             }
-            desired_session_count
+            desired_session_count @deprecatedSince(version: "24.12.0")
+            replicas @since(version: "24.12.0")
             url
             open_to_public
             errors {
@@ -207,9 +205,8 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         }
       `,
       {
-        tokenListOffset:
-          (paginationState.current - 1) * paginationState.pageSize,
-        tokenListLimit: paginationState.pageSize,
+        tokenListOffset: baiPaginationOption.offset,
+        tokenListLimit: baiPaginationOption.limit,
         endpointId: serviceId || '',
       },
       {
@@ -297,8 +294,8 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       children: <EndpointOwnerInfo endpointFrgmt={endpoint} />,
     },
     {
-      label: t('modelService.DesiredSessionCount'),
-      children: endpoint?.desired_session_count,
+      label: t('modelService.NumberOfReplicas'),
+      children: endpoint?.replicas ?? endpoint?.desired_session_count,
     },
     {
       label: t('modelService.ServiceEndpoint'),
@@ -443,7 +440,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             title: t('modelService.Services'),
             onClick: (e) => {
               e.preventDefault();
-              navigate('/serving');
+              webuiNavigate('/serving');
             },
             href: '/serving',
           },
@@ -481,7 +478,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             loading={isPendingRefetch}
             icon={<ReloadOutlined />}
             disabled={isDestroyingStatus(
-              endpoint?.desired_session_count,
+              endpoint?.replicas ?? endpoint?.desired_session_count,
               endpoint?.status,
             )}
             onClick={() => {
@@ -502,7 +499,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             icon={<SettingOutlined />}
             disabled={
               isDestroyingStatus(
-                endpoint?.desired_session_count,
+                endpoint?.replicas ?? endpoint?.desired_session_count,
                 endpoint?.status,
               ) ||
               (!!endpoint?.created_user_email &&
@@ -532,7 +529,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             type="primary"
             icon={<PlusOutlined />}
             disabled={isDestroyingStatus(
-              endpoint?.desired_session_count,
+              endpoint?.replicas ?? endpoint?.desired_session_count,
               endpoint?.status,
             )}
             onClick={() => {
@@ -618,7 +615,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               icon={<SyncOutlined />}
               loading={mutationToSyncRoutes.isPending}
               disabled={isDestroyingStatus(
-                endpoint?.desired_session_count,
+                endpoint?.replicas ?? endpoint?.desired_session_count,
                 endpoint?.status,
               )}
               onClick={() => {
@@ -674,8 +671,8 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                 row.status && (
                   <>
                     <Tag
-                      color={applyStatusColor(row.status)}
-                      key={row.status}
+                      color={applyStatusColor(row?.status)}
+                      key={row?.status}
                       style={{ marginRight: 0 }}
                     >
                       {row.status.toUpperCase()}

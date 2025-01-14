@@ -3,13 +3,19 @@ import EndpointOwnerInfo from '../components/EndpointOwnerInfo';
 import EndpointStatusTag from '../components/EndpointStatusTag';
 import Flex from '../components/Flex';
 import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
-import { baiSignedRequestWithPromise, filterEmptyItem } from '../helper';
+import {
+  baiSignedRequestWithPromise,
+  filterEmptyItem,
+  filterNonNullItems,
+  transformSorterToOrderString,
+} from '../helper';
 import {
   useSuspendedBackendaiClient,
   useUpdatableState,
   useWebUINavigate,
 } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
+import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 // import { getSortOrderByName } from '../hooks/reactPaginationQueryOptions';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -28,7 +34,7 @@ import {
 } from '@ant-design/icons';
 import { useRafInterval, useToggle } from 'ahooks';
 import { Button, Table, Typography, theme, Radio, App } from 'antd';
-import { ColumnsType } from 'antd/es/table';
+import { ColumnType } from 'antd/lib/table';
 import graphql from 'babel-plugin-relay/macro';
 import { default as dayjs } from 'dayjs';
 import _ from 'lodash';
@@ -37,7 +43,6 @@ import React, {
   useState,
   useTransition,
   startTransition as startTransitionWithoutPendingState,
-  useDeferredValue,
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
@@ -51,7 +56,6 @@ export type Endpoint = NonNullable<
     >['items']
   >[0]
 >;
-
 export const isDestroyingStatus = (
   desiredSessionCount: number | null | undefined,
   status: string | null | undefined,
@@ -66,37 +70,29 @@ type LifecycleStage = 'created&destroying' | 'destroyed';
 
 const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation();
-  const { message, modal } = App.useApp();
-  const baiClient = useSuspendedBackendaiClient();
-  const webuiNavigate = useWebUINavigate();
   const { token } = theme.useToken();
-  const curProject = useCurrentProjectValue();
+  const { message, modal } = App.useApp();
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
     useToggle();
   const [selectedLifecycleStage, setSelectedLifecycleStage] =
     useState<LifecycleStage>('created&destroying');
-  const deferredSelectedLifecycleStage = useDeferredValue(
-    selectedLifecycleStage,
-  );
-  const [paginationState, setPaginationState] = useState<{
-    current: number;
-    pageSize: number;
-  }>({
+
+  const {
+    baiPaginationOption,
+    tablePaginationOption,
+    setTablePaginationOption,
+  } = useBAIPaginationOptionState({
     current: 1,
     pageSize: 10,
   });
-
-  const deferredPaginationState = useDeferredValue(paginationState);
-  const isPendingPaginationAndFilter =
-    selectedLifecycleStage !== deferredSelectedLifecycleStage ||
-    paginationState !== deferredPaginationState;
   const lifecycleStageFilter =
-    deferredSelectedLifecycleStage === 'created&destroying'
+    selectedLifecycleStage === 'created&destroying'
       ? `lifecycle_stage == "created" | lifecycle_stage == "destroying"`
-      : `lifecycle_stage == "${deferredSelectedLifecycleStage}"`;
+      : `lifecycle_stage == "${selectedLifecycleStage}"`;
 
   const [isRefetchPending, startRefetchTransition] = useTransition();
   const [isFilterPending, startFilterTransition] = useTransition();
+  const [isPendingPageChange, startPageChangeTransition] = useTransition();
   const [servicesFetchKey, updateServicesFetchKey] =
     useUpdatableState('initial-fetch');
   const [optimisticDeletingId, setOptimisticDeletingId] = useState<
@@ -104,22 +100,23 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
   >();
 
   const [filterStr, setFilterStr] = useQueryParam('filter', StringParam);
+  const [order, setOrder] = useState<string>();
   const [currentUser] = useCurrentUserInfo();
   const currentUserRole = useCurrentUserRole();
+  const curProject = useCurrentProjectValue();
+  const baiClient = useSuspendedBackendaiClient();
+  const webuiNavigate = useWebUINavigate();
 
-  // const [selectedGeneration, setSelectedGeneration] = useState<
-  //   "current" | "next"
-  // >("next");
-
-  const columns: ColumnsType<Endpoint> = [
+  const columns = filterEmptyItem<ColumnType<Endpoint>>([
     {
       title: t('modelService.EndpointName'),
-      dataIndex: 'endpoint_id',
       key: 'endpointName',
+      dataIndex: 'name',
       fixed: 'left',
-      render: (endpoint_id, row) => (
-        <Link to={'/serving/' + endpoint_id}>{row.name}</Link>
+      render: (name, row) => (
+        <Link to={'/serving/' + row.endpoint_id}>{name}</Link>
       ),
+      sorter: true,
     },
     {
       title: t('modelService.EndpointId'),
@@ -132,12 +129,12 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
     },
     {
       title: t('modelService.ServiceEndpoint'),
-      dataIndex: 'endpoint_id',
+      dataIndex: 'url',
       key: 'url',
-      render: (endpoint_id, row) =>
-        row.url ? (
-          <Typography.Link copyable href={row.url} target="_blank">
-            {row.url}
+      render: (url) =>
+        url ? (
+          <Typography.Link copyable href={url} target="_blank">
+            {url}
           </Typography.Link>
         ) : (
           '-'
@@ -153,7 +150,10 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
             type="text"
             icon={<SettingOutlined />}
             style={
-              isDestroyingStatus(row?.desired_session_count, row?.status) ||
+              isDestroyingStatus(
+                row.replicas ?? row.desired_session_count,
+                row.status,
+              ) ||
               (!!row.created_user_email &&
                 row.created_user_email !== currentUser.email)
                 ? {
@@ -164,7 +164,10 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   }
             }
             disabled={
-              isDestroyingStatus(row?.desired_session_count, row?.status) ||
+              isDestroyingStatus(
+                row.replicas ?? row.desired_session_count,
+                row.status,
+              ) ||
               (!!row.created_user_email &&
                 row.created_user_email !== currentUser.email)
             }
@@ -177,7 +180,10 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
             icon={
               <DeleteOutlined
                 style={
-                  isDestroyingStatus(row?.desired_session_count, row?.status)
+                  isDestroyingStatus(
+                    row.replicas ?? row.desired_session_count,
+                    row.status,
+                  )
                     ? undefined
                     : {
                         color: token.colorError,
@@ -190,8 +196,8 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
               optimisticDeletingId === row.endpoint_id
             }
             disabled={isDestroyingStatus(
-              row?.desired_session_count,
-              row?.status,
+              row.replicas ?? row.desired_session_count,
+              row.status,
             )}
             onClick={() => {
               modal.confirm({
@@ -205,10 +211,10 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   type: 'primary',
                 },
                 onOk: () => {
-                  setOptimisticDeletingId(row.endpoint_id);
+                  setOptimisticDeletingId(row?.endpoint_id);
                   // FIXME: any better idea for handling result?
                   row.endpoint_id &&
-                    terminateModelServiceMutation.mutate(row.endpoint_id, {
+                    terminateModelServiceMutation.mutate(row?.endpoint_id, {
                       onSuccess: (res) => {
                         startRefetchTransition(() => {
                           updateServicesFetchKey();
@@ -244,19 +250,15 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
       key: 'status',
       render: (text, row) => <EndpointStatusTag endpointFrgmt={row} />,
     },
-    ...(baiClient.is_admin
-      ? [
-          {
-            title: t('modelService.Owner'),
-            // created_user_email is referred by EndpointOwnerInfoFragment
-            dataIndex: 'created_user_email',
-            key: 'session_owner',
-            render: (_: string, endpoint_info: Endpoint) => (
-              <EndpointOwnerInfo endpointFrgmt={endpoint_info} />
-            ),
-          },
-        ]
-      : []),
+    baiClient.is_admin && {
+      title: t('modelService.Owner'),
+      // created_user_email is referred by EndpointOwnerInfoFragment
+      dataIndex: 'created_user_email',
+      key: 'session_owner',
+      render: (_: string, endpoint_info: Endpoint) => (
+        <EndpointOwnerInfo endpointFrgmt={endpoint_info} />
+      ),
+    },
     {
       title: t('modelService.CreatedAt'),
       dataIndex: 'created_at',
@@ -273,10 +275,12 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
       },
     },
     {
-      title: t('modelService.DesiredSessionCount'),
-      dataIndex: 'desired_session_count',
+      title: t('modelService.NumberOfReplicas'),
+      dataIndex: baiClient.supports('replicas')
+        ? 'replicas'
+        : 'desired_session_count',
       key: 'desiredSessionCount',
-      render: (desired_session_count) => {
+      render: (desired_session_count: number) => {
         return desired_session_count < 0 ? '-' : desired_session_count;
       },
     },
@@ -311,7 +315,7 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
           <CloseOutlined style={{ color: token.colorTextSecondary }} />
         ),
     },
-  ];
+  ]);
   const [hiddenColumnKeys, setHiddenColumnKeys] =
     useHiddenColumnKeysSetting('EndpointListPage');
 
@@ -329,12 +333,14 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
           $limit: Int!
           $projectID: UUID
           $filter: String
+          $order: String
         ) {
           endpoint_list(
             offset: $offset
             limit: $limit
             project: $projectID
             filter: $filter
+            order: $order
           ) {
             total_count
             items {
@@ -349,7 +355,8 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
               url
               open_to_public
               created_at @since(version: "23.09.0")
-              desired_session_count @required(action: NONE)
+              desired_session_count @deprecatedSince(version: "24.12.0")
+              replicas @since(version: "24.12.0")
               routings {
                 routing_id
                 endpoint
@@ -369,10 +376,8 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
         }
       `,
       {
-        offset:
-          (deferredPaginationState.current - 1) *
-          deferredPaginationState.pageSize,
-        limit: deferredPaginationState.pageSize,
+        offset: baiPaginationOption.offset,
+        limit: baiPaginationOption.limit,
         projectID: curProject.id,
         filter: baiClient.supports('endpoint-lifecycle-stage-filter')
           ? [lifecycleStageFilter, filterStr]
@@ -380,13 +385,13 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
               .map((v) => `(${v})`)
               .join(' & ')
           : undefined,
+        order,
       },
       {
         fetchPolicy: 'network-only',
         fetchKey: servicesFetchKey,
       },
     );
-  const sortedEndpointList = _.sortBy(modelServiceList?.items, 'name');
 
   // FIXME: struggling with sending data when active tab changes!
   // const runningModelServiceList = modelServiceList?.filter(
@@ -439,11 +444,12 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
               <Radio.Group
                 value={selectedLifecycleStage}
                 onChange={(e) => {
-                  setSelectedLifecycleStage(e.target?.value);
-                  // reset pagination state when filter changes
-                  setPaginationState({
-                    current: 1,
-                    pageSize: paginationState.pageSize,
+                  startPageChangeTransition(() => {
+                    setSelectedLifecycleStage(e.target?.value);
+                    setTablePaginationOption({
+                      current: 1,
+                      pageSize: 10,
+                    });
                   });
                 }}
                 optionType="button"
@@ -528,29 +534,35 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
       </Flex>
       <Table
         loading={{
-          spinning: isPendingPaginationAndFilter || isFilterPending,
+          spinning: isFilterPending || isPendingPageChange,
           indicator: <LoadingOutlined />,
         }}
         scroll={{ x: 'max-content' }}
         rowKey={'endpoint_id'}
-        dataSource={(sortedEndpointList || []) as Endpoint[]}
+        dataSource={filterNonNullItems(modelServiceList?.items)}
         columns={_.filter(
           columns,
           (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),
         )}
+        sortDirections={['descend', 'ascend', 'descend']}
         pagination={{
-          pageSize: paginationState.pageSize,
-          current: paginationState.current,
+          pageSize: tablePaginationOption.pageSize,
+          current: tablePaginationOption.current,
           pageSizeOptions: ['10', '20', '50'],
           total: modelServiceList?.total_count || 0,
           showSizeChanger: true,
-          onChange(page, pageSize) {
-            setPaginationState({
-              current: page,
-              pageSize: pageSize,
-            });
-          },
           style: { marginRight: token.marginXS },
+        }}
+        onChange={({ pageSize, current }, filter, sorter) => {
+          startPageChangeTransition(() => {
+            if (_.isNumber(current) && _.isNumber(pageSize)) {
+              setTablePaginationOption({
+                current,
+                pageSize,
+              });
+            }
+            setOrder(transformSorterToOrderString(sorter));
+          });
         }}
       />
       <Flex

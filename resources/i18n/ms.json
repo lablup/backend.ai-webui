@@ -1575,7 +1575,6 @@
     "ServiceName": "Nama Perkhidmatan",
     "ServiceNameRule": "Hanya benarkan abjad angka, garis bawah(_), dan sempang(-) dan ia mesti berakhir dengan aksara abjad angka.",
     "OpenToPublic": "Terbuka Kepada Umum",
-    "DesiredRoutingCount": "Kiraan Laluan yang Diingini",
     "ServingRouteErrorModalTitle": "Ralat Laluan Pelayanan",
     "SessionId": "ID Sesi",
     "Services": "Perkhidmatan",
@@ -1633,7 +1632,8 @@
     "ServiceNameMinLength": "Sila masukkan sekurang-kurangnya 4 aksara.",
     "ServiceNameMaxLength": "Sila masukkan 24 aksara atau kurang.",
     "ServiceNameCannotStartWithHyphen": "Tanda sempang (-) tidak boleh digunakan pada kedua-dua hujung.",
-    "Resources": "Sumber"
+    "Resources": "Sumber",
+    "NumberOfReplicas": "Bilangan replika"
   },
   "totp": {
     "TotpSetupCompleted": "Didayakan 2FA",

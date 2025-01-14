@@ -441,7 +441,6 @@
     "StartNewServing": "새 서비스 시작",
     "ServiceName": "서비스 이름",
     "OpenToPublic": "앱을 외부에 공개",
-    "DesiredRoutingCount": "원하는 라우팅 수",
     "DesiredSessionCount": "원하는 세션 수",
     "EndpointName": "엔드포인트 이름",
     "EndpointId": "엔드포인트 ID",
@@ -513,7 +512,8 @@
     "ServiceNameMinLength": "4자 이상 입력해주세요.",
     "ServiceNameMaxLength": "24자 이하로 입력해주세요.",
     "ServiceNameCannotStartWithHyphen": "하이픈(-)은 양쪽 끝에 사용할 수 없습니다.",
-    "Resources": "자원"
+    "Resources": "자원",
+    "NumberOfReplicas": "복제본 수"
   },
   "button": {
     "Cancel": "취소",

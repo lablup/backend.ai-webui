@@ -1581,7 +1581,6 @@
     "StartNewServing": "Memulai sajian baru",
     "ServiceName": "Nama Layanan",
     "OpenToPublic": "Terbuka Untuk Umum",
-    "DesiredRoutingCount": "Jumlah Perutean yang Diinginkan",
     "Services": "Layanan",
     "RoutingInfo": "Info Perutean",
     "ServiceInfo": "Info Layanan",
@@ -1650,7 +1649,8 @@
     "ServiceNameMinLength": "Silakan masukkan setidaknya 4 karakter.",
     "ServiceNameMaxLength": "Silakan masukkan 24 karakter atau kurang.",
     "ServiceNameCannotStartWithHyphen": "Tanda hubung (-) tidak dapat digunakan pada kedua ujungnya.",
-    "Resources": "Sumber daya"
+    "Resources": "Sumber daya",
+    "NumberOfReplicas": "Jumlah replika"
   },
   "modelStore": {
     "Description": "Keterangan",
