@@ -322,7 +322,8 @@
       "RenameAFolder": "Renombrar carpeta",
       "Filename": "Nombre del archivo",
       "RemoveFileExtension": "Eliminar ",
-      "NoSharedFolders": "Sin carpetas compartidas"
+      "NoSharedFolders": "Sin carpetas compartidas",
+      "Allowed": "Permitido"
     },
     "folders": {
       "CannotDeleteFolder": "No se puede eliminar la carpeta montada en una o más sesiones. Por favor, termine la sesión primero.",
@@ -987,7 +988,9 @@
     "MemorySizeExceedsLimit": "El tamaño de la memoria debe ser inferior a 300 PiB",
     "MaxNetworkCount": "Recuento máximo de red",
     "MaxPendingSessionCount": "Recuento máximo de sesiones pendientes",
-    "MaxConcurrentSFTPSessions": "Sesiones SFTP simultáneas máximas"
+    "MaxConcurrentSFTPSessions": "Sesiones SFTP simultáneas máximas",
+    "DefaultForUnspecified": "Predeterminado para no especificado",
+    "MaxPendingSessionResourceSlots": "Recursos máximos de sesión pendiente"
   },
   "resourcePreset": {
     "AboutToDeletePreset": "Está a punto de borrar este preajuste:",

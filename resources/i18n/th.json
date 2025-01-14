@@ -897,7 +897,8 @@
       "RenameAFolder": "เปลี่ยนชื่อโฟลเดอร์",
       "Filename": "ชื่อไฟล์",
       "RemoveFileExtension": "ลบ ",
-      "NoSharedFolders": "ไม่มีโฟลเดอร์ที่ใช้ร่วมกัน"
+      "NoSharedFolders": "ไม่มีโฟลเดอร์ที่ใช้ร่วมกัน",
+      "Allowed": "อนุญาต"
     },
     "invitation": {
       "NoValidEmails": "ไม่มีอีเมลที่ถูกต้องถูกป้อน",
@@ -1200,7 +1201,9 @@
     "MemorySizeExceedsLimit": "ขนาดหน่วยความจำควรน้อยกว่า 300 PiB",
     "MaxNetworkCount": "จำนวนเครือข่ายสูงสุด",
     "MaxPendingSessionCount": "จำนวนเซสชันที่รอดำเนินการสูงสุด",
-    "MaxConcurrentSFTPSessions": "เซสชัน SFTP พร้อมกันสูงสุด"
+    "MaxConcurrentSFTPSessions": "เซสชัน SFTP พร้อมกันสูงสุด",
+    "DefaultForUnspecified": "ค่าเริ่มต้นสำหรับไม่ระบุ",
+    "MaxPendingSessionResourceSlots": "ทรัพยากรเซสชันที่รอดำเนินการสูงสุด"
   },
   "registry": {
     "Hostname": "ชื่อโฮสต์",

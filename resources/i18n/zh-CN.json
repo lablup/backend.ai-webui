@@ -765,7 +765,8 @@
       "RenameAFolder": "重命名文件夹",
       "Filename": "文件名",
       "RemoveFileExtension": "消除 ",
-      "NoSharedFolders": "没有共享文件夹"
+      "NoSharedFolders": "没有共享文件夹",
+      "Allowed": "允许"
     },
     "invitation": {
       "NoValidEmails": "没有输入有效的电子邮件",
@@ -1088,7 +1089,9 @@
     "MemorySizeExceedsLimit": "内存大小应小于 300 PiB",
     "MaxNetworkCount": "最大网络数",
     "MaxPendingSessionCount": "最大待处理会话数",
-    "MaxConcurrentSFTPSessions": "最大并发 SFTP 会话数"
+    "MaxConcurrentSFTPSessions": "最大并发 SFTP 会话数",
+    "DefaultForUnspecified": "未指定的默认值",
+    "MaxPendingSessionResourceSlots": "最大待处理会话资源"
   },
   "registry": {
     "Hostname": "主机名",
