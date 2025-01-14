@@ -443,7 +443,8 @@
     "ExportCSV": "ส่งออก CSV",
     "FGPU": "fGPU",
     "ReadLess": "อ่านน้อยลง",
-    "ReadMore": "อ่านเพิ่มเติม..."
+    "ReadMore": "อ่านเพิ่มเติม...",
+    "CommitImageName": "ชื่อภาพที่มุ่งมั่น"
   },
   "modelService": {
     "Services": "บริการ",

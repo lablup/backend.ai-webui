@@ -1322,7 +1322,8 @@
     "ExportCSV": "viedä CSV",
     "FGPU": "fGPU",
     "ReadLess": "Lue vähemmän",
-    "ReadMore": "Lue lisää..."
+    "ReadMore": "Lue lisää...",
+    "CommitImageName": "Sitoutunut kuvan nimi"
   },
   "settings": {
     "AllowAgentSideRegistration": "Salli agenttipuolen rekisteröinti",

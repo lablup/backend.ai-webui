@@ -433,7 +433,8 @@
     "ExportCSV": "CSV로 내보내기",
     "FGPU": "fGPU",
     "ReadLess": "내용 접기",
-    "ReadMore": "더 알아보기..."
+    "ReadMore": "더 알아보기...",
+    "CommitImageName": "커밋 이미지 이름"
   },
   "modelService": {
     "Services": "모델 서비스",

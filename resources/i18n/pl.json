@@ -432,7 +432,8 @@
     "ExportCSV": "eksportuj CSV",
     "FGPU": "fGPU",
     "ReadLess": "Czytaj mniej",
-    "ReadMore": "Czytaj więcej..."
+    "ReadMore": "Czytaj więcej...",
+    "CommitImageName": "Zatwierdzona nazwa obrazu"
   },
   "button": {
     "Cancel": "Anuluj",

@@ -445,7 +445,8 @@
     "ExportCSV": "export CSV",
     "FGPU": "fGPU",
     "ReadLess": "Read less",
-    "ReadMore": "Read More..."
+    "ReadMore": "Read More...",
+    "CommitImageName": "Committed image name"
   },
   "modelService": {
     "Services": "Services",

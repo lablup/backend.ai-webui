@@ -432,7 +432,8 @@
     "ExportCSV": "eksport CSV",
     "FGPU": "fGPU",
     "ReadLess": "Kurangkan membaca",
-    "ReadMore": "Baca Lagi..."
+    "ReadMore": "Baca Lagi...",
+    "CommitImageName": "Nama imej komited"
   },
   "button": {
     "Cancel": "Batal",

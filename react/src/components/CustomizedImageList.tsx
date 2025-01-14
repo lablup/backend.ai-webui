@@ -356,13 +356,23 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
                     id: row.id,
                   },
                   onCompleted(res, errors) {
-                    if (!res?.forget_image_by_id?.ok) {
+                    if (
+                      !_.isNil(res?.forget_image_by_id) &&
+                      !res?.forget_image_by_id?.ok
+                    ) {
                       message.error(res?.forget_image_by_id?.msg);
                       return;
-                    } else if (!res?.untag_image_from_registry?.ok) {
+                    }
+
+                    if (
+                      !_.isNil(res?.untag_image_from_registry) &&
+                      !res?.untag_image_from_registry?.ok
+                    ) {
                       message.error(res?.untag_image_from_registry?.msg);
                       return;
-                    } else if (errors && errors?.length > 0) {
+                    }
+
+                    if (errors && errors?.length > 0) {
                       const errorMsgList = _.map(
                         errors,
                         (error) => error.message,
@@ -370,14 +380,15 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
                       for (const error of errorMsgList) {
                         message.error(error, 2.5);
                       }
-                    } else {
-                      startRefetchTransition(() => {
-                        updateCustomizedImageListFetchKey();
-                      });
-                      message.success(
-                        t('environment.CustomizedImageSuccessfullyDeleted'),
-                      );
+                      return;
                     }
+
+                    startRefetchTransition(() => {
+                      updateCustomizedImageListFetchKey();
+                    });
+                    message.success(
+                      t('environment.CustomizedImageSuccessfullyDeleted'),
+                    );
                   },
                   onError(err) {
                     message.error(err?.message);

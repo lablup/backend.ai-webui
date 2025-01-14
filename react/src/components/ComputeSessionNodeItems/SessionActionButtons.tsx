@@ -1,10 +1,13 @@
+import { useSuspendedBackendaiClient } from '../../hooks';
 import { useBackendAIAppLauncher } from '../../hooks/useBackendAIAppLauncher';
+import ContainerCommitModal from './ContainerCommitModal';
 import ContainerLogModal from './ContainerLogModal';
 import TerminateSessionModal from './TerminateSessionModal';
 import {
   SessionActionButtonsFragment$data,
   SessionActionButtonsFragment$key,
 } from './__generated__/SessionActionButtonsFragment.graphql';
+import { DeliveredProcedureOutlined } from '@ant-design/icons';
 import { Tooltip, Button, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import { TerminalIcon, PowerOffIcon, ScrollTextIcon } from 'lucide-react';
@@ -41,28 +44,32 @@ const isActive = (session: SessionActionButtonsFragment$data) => {
 // };
 
 const SessionActionButtons: React.FC<SessionActionButtonsProps> = (props) => {
+  const { t } = useTranslation();
   const { token } = theme.useToken();
   const appLauncher = useBackendAIAppLauncher();
-
-  const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
 
   const session = useFragment(
     graphql`
       fragment SessionActionButtonsFragment on ComputeSessionNode {
         id
         row_id @required(action: NONE)
+        type
         status
         access_key
         service_ports
         commit_status
         ...TerminateSessionModalFragment
         ...ContainerLogModalFragment
+        ...ContainerCommitModalFragment
       }
     `,
     props.sessionFrgmt,
   );
   const [openTerminateModal, setOpenTerminateModal] = useState(false);
   const [openLogModal, setOpenLogModal] = useState(false);
+  const [openContainerCommitModal, setOpenContainerCommitModal] =
+    useState(false);
 
   // const isDisabledTermination = !['PENDING'].includes(session?.status || '') && session?.commit_status === 'ongoing'
   // ${(this._isRunning && !this._isPreparing(rowData.item.status)) ||
@@ -111,10 +118,24 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = (props) => {
             setOpenLogModal(false);
           }}
         />
-        {/*
         <Tooltip title={t('session.RequestContainerCommit')}>
-        <Button icon={<ContainerIcon />} />
-      </Tooltip> */}
+          <Button
+            disabled={
+              (!baiClient.supports('image-commit') ||
+                !baiClient._config.enableContainerCommit) &&
+              session.type !== 'system'
+            }
+            icon={<DeliveredProcedureOutlined style={{ fontSize: 14 }} />}
+            onClick={() => {
+              setOpenContainerCommitModal(true);
+            }}
+          />
+        </Tooltip>
+        <ContainerCommitModal
+          sessionFrgmt={session}
+          open={openContainerCommitModal}
+          onRequestClose={() => setOpenContainerCommitModal(false)}
+        />
         <Tooltip title={t('session.TerminateSession')}>
           <Button
             disabled={!isActive(session)}

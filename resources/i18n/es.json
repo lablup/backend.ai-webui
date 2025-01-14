@@ -1323,7 +1323,8 @@
     "ExportCSV": "exportar CSV",
     "FGPU": "fGPU",
     "ReadLess": "Leer menos",
-    "ReadMore": "Leer más..."
+    "ReadMore": "Leer más...",
+    "CommitImageName": "Nombre de la imagen confirmada"
   },
   "settings": {
     "AllowAgentSideRegistration": "Permitir el registro del agente",

@@ -432,7 +432,8 @@
     "ExportCSV": "экспорт CSV",
     "FGPU": "фГПУ",
     "ReadLess": "Читать далее",
-    "ReadMore": "Читать далее..."
+    "ReadMore": "Читать далее...",
+    "CommitImageName": "Имя зафиксированного изображения"
   },
   "button": {
     "Cancel": "Отмена",

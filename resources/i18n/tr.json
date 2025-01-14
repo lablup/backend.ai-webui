@@ -431,7 +431,8 @@
     "ExportCSV": "CSV'yi dışa aktar",
     "FGPU": "fGPU",
     "ReadLess": "Daha az oku",
-    "ReadMore": "Daha Fazlasını Oku..."
+    "ReadMore": "Daha Fazlasını Oku...",
+    "CommitImageName": "Taahhüt edilen resim adı"
   },
   "button": {
     "Cancel": "İptal etmek",

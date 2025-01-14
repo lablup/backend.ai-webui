@@ -432,7 +432,8 @@
     "ExportCSV": "CSVをエクスポート",
     "FGPU": "fGPU",
     "ReadLess": "内容折りたたみ",
-    "ReadMore": "もっと詳しく..."
+    "ReadMore": "もっと詳しく...",
+    "CommitImageName": "コミットされたイメージ名"
   },
   "button": {
     "Cancel": "キャンセル",

@@ -102,6 +102,7 @@ const SessionDetailContent: React.FC<{
             # It might be a bug in relay
             ...ContainerLogModalFragment
             ...SessionUsageMonitorFragment
+            ...ContainerCommitModalFragment
           }
           legacy_session: compute_session(id: $uuid) {
             image

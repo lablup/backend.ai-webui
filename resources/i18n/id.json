@@ -433,7 +433,8 @@
     "ExportCSV": "ekspor CSV",
     "FGPU": "fGPU",
     "ReadLess": "Baca lebih sedikit",
-    "ReadMore": "Baca Selengkapnya..."
+    "ReadMore": "Baca Selengkapnya...",
+    "CommitImageName": "Nama gambar yang berkomitmen"
   },
   "button": {
     "Cancel": "Batalkan",

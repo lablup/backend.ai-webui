@@ -432,7 +432,8 @@
     "ExportCSV": "导出 CSV",
     "FGPU": "GPU",
     "ReadLess": "更多信息",
-    "ReadMore": "阅读全文..."
+    "ReadMore": "阅读全文...",
+    "CommitImageName": "提交的图片名称"
   },
   "button": {
     "Cancel": "取消",

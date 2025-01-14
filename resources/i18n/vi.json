@@ -432,7 +432,8 @@
     "ExportCSV": "xuất CSV",
     "FGPU": "fGPU",
     "ReadLess": "Đọc ít hơn",
-    "ReadMore": "Đọc thêm..."
+    "ReadMore": "Đọc thêm...",
+    "CommitImageName": "Tên hình ảnh đã cam kết"
   },
   "button": {
     "Cancel": "Huỷ bỏ",

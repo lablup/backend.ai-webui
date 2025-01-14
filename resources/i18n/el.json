@@ -432,7 +432,8 @@
     "ExportCSV": "εξαγωγή CSV",
     "FGPU": "fGPU",
     "ReadLess": "Διαβάστε λιγότερα",
-    "ReadMore": "Διαβάστε Περισσότερα..."
+    "ReadMore": "Διαβάστε Περισσότερα...",
+    "CommitImageName": "Όνομα δεσμευμένης εικόνας"
   },
   "button": {
     "Cancel": "Ματαίωση",

@@ -433,7 +433,8 @@
     "ExportCSV": "CSV экспортлох",
     "FGPU": "fGPU",
     "ReadLess": "Бага унш",
-    "ReadMore": "Цааш унших..."
+    "ReadMore": "Цааш унших...",
+    "CommitImageName": "Оруулсан зургийн нэр"
   },
   "button": {
     "Cancel": "Цуцлах",
