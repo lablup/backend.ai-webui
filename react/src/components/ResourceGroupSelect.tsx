@@ -5,7 +5,7 @@ import useControllableState from '../hooks/useControllableState';
 import TextHighlighter from './TextHighlighter';
 import { Select, SelectProps } from 'antd';
 import _ from 'lodash';
-import React, { useEffect, useTransition } from 'react';
+import React, { useEffect, useState, useTransition } from 'react';
 
 interface ResourceGroupSelectProps extends SelectProps {
   projectName: string;
@@ -33,8 +33,11 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
   const [controllableValue, setControllableValueDoNotUseWithoutTransition] =
     useControllableState(selectProps);
   const [isPendingChangeTransition, startChangeTransition] = useTransition();
+
+  const [optimisticValue, setOptimisticValue] = useState();
   const setControllableValueWithTransition = React.useCallback(
     (v: typeof controllableValue, ...args: any[]) => {
+      setOptimisticValue(v);
       startChangeTransition(() => {
         setControllableValueDoNotUseWithoutTransition(v, ...args);
       });
@@ -166,7 +169,7 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
         );
       }}
       {...selectProps}
-      value={controllableValue}
+      value={isPendingChangeTransition ? optimisticValue : controllableValue}
       onChange={setControllableValueWithTransition}
     />
   );
