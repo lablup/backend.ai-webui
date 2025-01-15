@@ -1744,6 +1744,7 @@ export default class BackendAILogin extends BackendAIPage {
           'domain_name',
           'groups {name, id}',
           'need_password_change',
+          'uuid',
         ];
         const q = `query { user{ ${fields.join(' ')} } }`;
         const v = { uuid: this.user };
@@ -1783,6 +1784,7 @@ export default class BackendAILogin extends BackendAIPage {
         const role = response['user'].role;
         this.domain_name = response['user'].domain_name;
         globalThis.backendaiclient.email = this.email;
+        globalThis.backendaiclient.user_uuid = response['user'].uuid;
         globalThis.backendaiclient.full_name = response['user'].full_name;
         globalThis.backendaiclient.is_admin = false;
         globalThis.backendaiclient.is_superadmin = false;

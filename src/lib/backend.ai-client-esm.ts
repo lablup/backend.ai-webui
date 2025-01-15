@@ -211,6 +211,11 @@ class Client {
   static ERR_SERVER: any;
   static ERR_UNKNOWN: any;
 
+  // Additional info related to current login user
+  public email: string;
+  public full_name: string;
+  public user_uuid: string;
+
   /**
    * The client API wrapper.
    *

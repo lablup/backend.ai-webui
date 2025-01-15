@@ -26,6 +26,7 @@ const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
     <Drawer
       title={t('session.SessionInfo')}
       width={800}
+      keyboard={false}
       {...drawerProps}
       open={!!sessionId}
       onClose={(e) => {

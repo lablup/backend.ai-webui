@@ -139,6 +139,7 @@ const SessionDetailContent: React.FC<{
         style={{
           alignSelf: 'stretch',
         }}
+        gap={'sm'}
       >
         <EditableSessionName
           sessionFrgmt={session}
@@ -146,9 +147,8 @@ const SessionDetailContent: React.FC<{
           level={3}
           style={{
             margin: 0,
-            flex: 1,
           }}
-          editable={false}
+          editable
         />
         <Button.Group size="large">
           <SessionActionButtons sessionFrgmt={session} />
