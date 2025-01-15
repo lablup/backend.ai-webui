@@ -1168,7 +1168,7 @@
   "maintenance": {
     "Fix": "使固定",
     "MatchDatabase": "将使用情况数据库与当前状态匹配",
-    "DescMatchDatabase": "使用当前状态重新计算使用情况数据库。 <br/> 如果 docker 意外失败或某些会话已被强制终止，则很有用。",
+    "DescMatchDatabase": "使用当前状态重新计算使用情况数据库。 如果 docker 意外失败或某些会话已被强制终止，则很有用。",
     "RecalculateUsage": "重新计算用量",
     "ImagesEnvironment": "图像/环境",
     "RescanImages": "重新扫描图像",
@@ -1176,7 +1176,7 @@
     "DescCleanupOldImages": "清理 docker 镜像列表中的旧镜像。",
     "CleanupImages": "清理图像",
     "RescanImageList": "从存储库重新扫描图像列表",
-    "DescRescanImageList": "从注册的存储库重新扫描图像列表。 <br /> 可能需要很长时间，执行后请稍等。",
+    "DescRescanImageList": "从注册的存储库重新扫描图像列表。 可能需要很长时间，执行后请稍等。",
     "Recalculating": "正在重新计算...",
     "RecalculationFinished": "重新计算完成",
     "RecalculationFailed": "重新计算失败",

@@ -1167,7 +1167,7 @@
   "maintenance": {
     "Fix": "Düzelt",
     "MatchDatabase": "Kullanım veritabanını mevcut durumla eşleştirin",
-    "DescMatchDatabase": "Mevcut durumla kullanım veritabanını yeniden hesaplayın. <br/> Docker kazayla başarısız olursa veya bazı oturumlar zorla sonlandırılırsa kullanışlıdır.",
+    "DescMatchDatabase": "Mevcut durumla kullanım veritabanını yeniden hesaplayın. Docker kazayla başarısız olursa veya bazı oturumlar zorla sonlandırılırsa kullanışlıdır.",
     "RecalculateUsage": "Kullanımı Yeniden Hesapla",
     "ImagesEnvironment": "Görüntüler / Çevre",
     "RescanImages": "Resimleri Yeniden Tara",
@@ -1175,7 +1175,7 @@
     "DescCleanupOldImages": "Docker görüntü listesinden eski görüntüleri temizleyin.",
     "CleanupImages": "Temizleme Görüntüleri",
     "RescanImageList": "Depodan görüntü listesini yeniden tara",
-    "DescRescanImageList": "Kayıtlı depolardan görüntü listesini yeniden tarayın. <br /> Uzun zaman alabilir, bu yüzden lütfen uygulamadan sonra bekleyin.",
+    "DescRescanImageList": "Kayıtlı depolardan görüntü listesini yeniden tarayın. Uzun zaman alabilir, bu yüzden lütfen uygulamadan sonra bekleyin.",
     "Recalculating": "Yeniden hesaplanıyor...",
     "RecalculationFinished": "Yeniden hesaplama tamamlandı",
     "RecalculationFailed": "Yeniden hesaplama başarısız oldu",

@@ -1168,7 +1168,7 @@
   "maintenance": {
     "Fix": "Fix",
     "MatchDatabase": "Nutzungsdatenbank mit aktuellem Status abgleichen",
-    "DescMatchDatabase": "Berechnen Sie die Nutzungsdatenbank mit dem aktuellen Status neu. <br/> Nützlich, wenn Docker versehentlich fehlschlägt oder einige Sitzungen zwangsweise beendet wurden.",
+    "DescMatchDatabase": "Berechnen Sie die Nutzungsdatenbank mit dem aktuellen Status neu. Nützlich, wenn Docker versehentlich fehlschlägt oder einige Sitzungen zwangsweise beendet wurden.",
     "RecalculateUsage": "Nutzung neu berechnen",
     "ImagesEnvironment": "Bilder / Umgebung",
     "RescanImages": "Bilder erneut scannen",
@@ -1176,7 +1176,7 @@
     "DescCleanupOldImages": "Bereinigen Sie alte Images aus der Docker-Image-Liste.",
     "CleanupImages": "Bilder bereinigen",
     "RescanImageList": "Bilderliste aus Repository erneut scannen",
-    "DescRescanImageList": "Bildliste aus registrierten Repositorys erneut scannen. <br /> Es kann lange dauern, also warten Sie bitte nach der Ausführung.",
+    "DescRescanImageList": "Bildliste aus registrierten Repositorys erneut scannen. Es kann lange dauern, also warten Sie bitte nach der Ausführung.",
     "Recalculating": "Neuberechnung...",
     "RecalculationFinished": "Neuberechnung abgeschlossen",
     "RecalculationFailed": "Neuberechnung fehlgeschlagen",

@@ -260,7 +260,14 @@ const UserPreferencesPage = () => {
           padding: 0,
         }}
       >
-        {curTabKey === 'general' && <SettingList settingGroup={settingGroup} />}
+        {curTabKey === 'general' && (
+          <SettingList
+            settingGroup={settingGroup}
+            showChangedOptionFilter
+            showResetButton
+            showSearchBar
+          />
+        )}
         {curTabKey === 'logs' && <ErrorLogList />}
       </Card>
       <MyKeypairInfoModal

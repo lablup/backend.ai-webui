@@ -1168,7 +1168,7 @@
   "maintenance": {
     "Fix": "Fixar",
     "MatchDatabase": "Combine o banco de dados de uso com o estado atual",
-    "DescMatchDatabase": "Recalcule o banco de dados de uso com o estado atual. <br/> Útil se o docker falhar por acidente ou se algumas sessões forem encerradas à força.",
+    "DescMatchDatabase": "Recalcule o banco de dados de uso com o estado atual. Útil se o docker falhar por acidente ou se algumas sessões forem encerradas à força.",
     "RecalculateUsage": "Recalcular uso",
     "ImagesEnvironment": "Imagens / Ambiente",
     "RescanImages": "Reexaminar imagens",
@@ -1176,7 +1176,7 @@
     "DescCleanupOldImages": "Limpe as imagens antigas da lista de imagens do docker.",
     "CleanupImages": "Limpar imagens",
     "RescanImageList": "Verificar novamente a lista de imagens do repositório",
-    "DescRescanImageList": "Verifique novamente a lista de imagens dos repositórios registrados. <br /> Pode demorar muito, então aguarde a execução.",
+    "DescRescanImageList": "Verifique novamente a lista de imagens dos repositórios registrados. Pode demorar muito, então aguarde a execução.",
     "Recalculating": "Recalculando ...",
     "RecalculationFinished": "Recálculo concluído",
     "RecalculationFailed": "O recálculo falhou",

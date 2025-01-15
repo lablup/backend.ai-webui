@@ -1168,7 +1168,7 @@
   "maintenance": {
     "Fix": "Naprawić",
     "MatchDatabase": "Dopasuj bazę danych użytkowania do aktualnego stanu",
-    "DescMatchDatabase": "Przelicz bazę danych użytkowania z aktualnym stanem. <br/> Przydatne, jeśli docker ulegnie awarii przez przypadek lub niektóre sesje zostały przerwane na siłę.",
+    "DescMatchDatabase": "Przelicz bazę danych użytkowania z aktualnym stanem. Przydatne, jeśli docker ulegnie awarii przez przypadek lub niektóre sesje zostały przerwane na siłę.",
     "RecalculateUsage": "Przelicz użycie",
     "ImagesEnvironment": "Obrazy/środowisko",
     "RescanImages": "Ponownie zeskanuj obrazy",
@@ -1176,7 +1176,7 @@
     "DescCleanupOldImages": "Usuń stare obrazy z listy obrazów w oknie dokowanym.",
     "CleanupImages": "Czyszczenie obrazów",
     "RescanImageList": "Ponownie przeskanuj listę obrazów z repozytorium",
-    "DescRescanImageList": "Ponownie przeskanuj listę obrazów z zarejestrowanych repozytoriów. <br /> Może to zająć dużo czasu, więc poczekaj po wykonaniu.",
+    "DescRescanImageList": "Ponownie przeskanuj listę obrazów z zarejestrowanych repozytoriów. Może to zająć dużo czasu, więc poczekaj po wykonaniu.",
     "Recalculating": "Ponowne obliczanie...",
     "RecalculationFinished": "Ponowne obliczanie zakończone",
     "RecalculationFailed": "Ponowne obliczenie nie powiodło się",

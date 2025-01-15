@@ -1167,7 +1167,7 @@
   "maintenance": {
     "Fix": "Correzione",
     "MatchDatabase": "Abbina il database di utilizzo allo stato attuale",
-    "DescMatchDatabase": "Ricalcola il database di utilizzo con lo stato corrente. <br/> Utile se la finestra mobile si guasta per errore o alcune sessioni sono state terminate forzatamente.",
+    "DescMatchDatabase": "Ricalcola il database di utilizzo con lo stato corrente. Utile se la finestra mobile si guasta per errore o alcune sessioni sono state terminate forzatamente.",
     "RecalculateUsage": "Ricalcola utilizzo",
     "ImagesEnvironment": "Immagini / Ambiente",
     "RescanImages": "Nuova scansione delle immagini",
@@ -1175,7 +1175,7 @@
     "DescCleanupOldImages": "Pulisci le vecchie immagini dall'elenco delle immagini della finestra mobile.",
     "CleanupImages": "Immagini di pulizia",
     "RescanImageList": "Riscansiona l'elenco delle immagini dal repository",
-    "DescRescanImageList": "Riscansiona l'elenco delle immagini dai repository registrati. <br /> Potrebbe volerci molto tempo, quindi attendere dopo l'esecuzione.",
+    "DescRescanImageList": "Riscansiona l'elenco delle immagini dai repository registrati. Potrebbe volerci molto tempo, quindi attendere dopo l'esecuzione.",
     "Recalculating": "Ricalcolo in corso...",
     "RecalculationFinished": "Ricalcolo terminato",
     "RecalculationFailed": "Ricalcolo non riuscito",

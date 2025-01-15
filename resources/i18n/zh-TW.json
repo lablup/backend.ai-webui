@@ -1167,7 +1167,7 @@
   "maintenance": {
     "Fix": "使固定",
     "MatchDatabase": "將使用情況數據庫與當前狀態匹配",
-    "DescMatchDatabase": "使用當前狀態重新計算使用情況數據庫。 <br/> 如果 docker 意外失敗或某些會話已被強制終止，則很有用。",
+    "DescMatchDatabase": "使用當前狀態重新計算使用情況數據庫。 如果 docker 意外失敗或某些會話已被強制終止，則很有用。",
     "RecalculateUsage": "重新計算用量",
     "ImagesEnvironment": "圖像/環境",
     "RescanImages": "重新掃描圖像",

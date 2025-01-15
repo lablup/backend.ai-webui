@@ -1168,7 +1168,7 @@
   "maintenance": {
     "Fix": "修正",
     "MatchDatabase": "使用状況データベースを現在の状態と照合する",
-    "DescMatchDatabase": "現在の状態で使用状況データベースを再計算します。 <br/> dockerが誤って失敗した場合、または一部のセッションが強制的に終了した場合に役立ちます。",
+    "DescMatchDatabase": "現在の状態で使用状況データベースを再計算します。 dockerが誤って失敗した場合、または一部のセッションが強制的に終了した場合に役立ちます。",
     "RecalculateUsage": "使用量を再計算する",
     "ImagesEnvironment": "画像/環境",
     "RescanImages": "画像を再スキャンする",
@@ -1176,7 +1176,7 @@
     "DescCleanupOldImages": "Dockerイメージリストから古いイメージをクリーンアップします。",
     "CleanupImages": "クリーンアップ画像",
     "RescanImageList": "リポジトリから画像リストを再スキャンします",
-    "DescRescanImageList": "登録されたリポジトリから画像リストを再スキャンします。 <br />時間がかかる場合がありますので、実行後しばらくお待ちください。",
+    "DescRescanImageList": "登録されたリポジトリから画像リストを再スキャンします。 時間がかかる場合がありますので、実行後しばらくお待ちください。",
     "Recalculating": "再計算中...",
     "RecalculationFinished": "再計算が終了しました",
     "RecalculationFailed": "再計算に失敗しました",

@@ -924,13 +924,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         >
           <mwc-circular-progress indeterminate></mwc-circular-progress>
         </backend-ai-settings-view>
-        <backend-ai-maintenance-view
-          class="page"
-          name="maintenance"
-          ?active="${this._page === 'maintenance'}"
-        >
-          <mwc-circular-progress indeterminate></mwc-circular-progress>
-        </backend-ai-maintenance-view>
         <backend-ai-statistics-view
           class="page"
           name="statistics"

@@ -1168,7 +1168,7 @@
   "maintenance": {
     "Fix": "Menetapkan",
     "MatchDatabase": "Padankan pangkalan data penggunaan dengan keadaan semasa",
-    "DescMatchDatabase": "Hitung semula pangkalan data penggunaan dengan keadaan semasa. <br/> Berguna sekiranya kapal pesiar gagal secara tidak sengaja, atau beberapa sesi telah ditamatkan secara paksa.",
+    "DescMatchDatabase": "Hitung semula pangkalan data penggunaan dengan keadaan semasa. Berguna sekiranya kapal pesiar gagal secara tidak sengaja, atau beberapa sesi telah ditamatkan secara paksa.",
     "RecalculateUsage": "Hitung semula Penggunaan",
     "ImagesEnvironment": "Imej / Alam Sekitar",
     "RescanImages": "Imbas semula Imej",
@@ -1176,7 +1176,7 @@
     "DescCleanupOldImages": "Bersihkan gambar lama dari senarai gambar pelabuhan.",
     "CleanupImages": "Imej Pembersihan",
     "RescanImageList": "Imbas semula senarai gambar dari repositori",
-    "DescRescanImageList": "Imbas semula senarai gambar dari repositori berdaftar. <br /> Mungkin memerlukan masa yang lama, jadi sila tunggu selepas pelaksanaan.",
+    "DescRescanImageList": "Imbas semula senarai gambar dari repositori berdaftar. Mungkin memerlukan masa yang lama, jadi sila tunggu selepas pelaksanaan.",
     "Recalculating": "Mengira semula ...",
     "RecalculationFinished": "Pengiraan semula selesai",
     "RecalculationFailed": "Pengiraan semula gagal",

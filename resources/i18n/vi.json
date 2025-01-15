@@ -1168,7 +1168,7 @@
   "maintenance": {
     "Fix": "Sửa chữa",
     "MatchDatabase": "Khớp cơ sở dữ liệu sử dụng với trạng thái hiện tại",
-    "DescMatchDatabase": "Tính toán lại cơ sở dữ liệu sử dụng với trạng thái hiện tại. <br/> Hữu ích nếu docker bị lỗi do vô tình hoặc một số phiên đã bị buộc phải chấm dứt.",
+    "DescMatchDatabase": "Tính toán lại cơ sở dữ liệu sử dụng với trạng thái hiện tại. Hữu ích nếu docker bị lỗi do vô tình hoặc một số phiên đã bị buộc phải chấm dứt.",
     "RecalculateUsage": "Tính toán lại mức sử dụng",
     "ImagesEnvironment": "Hình ảnh / Môi trường",
     "RescanImages": "Quét lại hình ảnh",
@@ -1176,7 +1176,7 @@
     "DescCleanupOldImages": "Dọn dẹp hình ảnh cũ khỏi danh sách hình ảnh docker.",
     "CleanupImages": "Dọn dẹp hình ảnh",
     "RescanImageList": "Quét lại danh sách hình ảnh từ kho lưu trữ",
-    "DescRescanImageList": "Quét lại danh sách hình ảnh từ các kho đã đăng ký. <br /> Có thể mất nhiều thời gian, vì vậy vui lòng đợi sau khi thực hiện.",
+    "DescRescanImageList": "Quét lại danh sách hình ảnh từ các kho đã đăng ký. Có thể mất nhiều thời gian, vì vậy vui lòng đợi sau khi thực hiện.",
     "Recalculating": "Đang tính toán lại ...",
     "RecalculationFinished": "Tính toán lại đã hoàn thành",
     "RecalculationFailed": "Tính toán lại không thành công",

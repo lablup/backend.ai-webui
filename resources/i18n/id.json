@@ -1169,7 +1169,7 @@
   "maintenance": {
     "Fix": "Perbaiki",
     "MatchDatabase": "Cocokkan database penggunaan dengan status saat ini",
-    "DescMatchDatabase": "Hitung ulang database penggunaan dengan kondisi saat ini. <br/> Berguna jika docker gagal secara tidak sengaja, atau jika beberapa sesi telah dihentikan secara paksa.",
+    "DescMatchDatabase": "Hitung ulang database penggunaan dengan kondisi saat ini. Berguna jika docker gagal secara tidak sengaja, atau jika beberapa sesi telah dihentikan secara paksa.",
     "RecalculateUsage": "Hitung Ulang Penggunaan",
     "ImagesEnvironment": "Image / Lingkungan",
     "RescanImages": "Pindai Ulang Image",
@@ -1177,7 +1177,7 @@
     "DescCleanupOldImages": "Pemberesan image lama dari daftar image docker.",
     "CleanupImages": "Bereskan Image",
     "RescanImageList": "Pindai ulang daftar image dari repositori",
-    "DescRescanImageList": "Pindai ulang daftar image dari repositori terdaftar. <br /> Mungkin butuh waktu lama, jadi harap tunggu setelah eksekusi.",
+    "DescRescanImageList": "Pindai ulang daftar image dari repositori terdaftar. Mungkin butuh waktu lama, jadi harap tunggu setelah eksekusi.",
     "Recalculating": "Menghitung ulang...",
     "RecalculationFinished": "Perhitungan ulang selesai",
     "RecalculationFailed": "Perhitungan ulang gagal",
