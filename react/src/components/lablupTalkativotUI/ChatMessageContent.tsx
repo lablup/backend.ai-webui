@@ -17,6 +17,7 @@ const ChatMessageContent: React.FC<{
     <Markdown
       components={{
         p({ node, ...props }) {
+          // @ts-expect-error
           return <p {...props} style={{ whiteSpace: 'pre-wrap' }} />;
         },
         code(props) {
