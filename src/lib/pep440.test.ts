@@ -80,5 +80,10 @@ describe('isCompatibleMultipleConditions', ()=>{
     expect(isCompatibleMultipleConditions('23.03.3', ['24.3.1', '23.03.4'])).toBe(false)
     expect(isCompatibleMultipleConditions('25.03.3', ['24.3.1', '23.03.4'])).toBe(true)
     expect(isCompatibleMultipleConditions('22.03.3', ['24.3.1', '23.03.4'])).toBe(false)
+    expect(isCompatibleMultipleConditions('24.12.1', ['25.1.0', '24.09.6', '24.03.12'])).toBe(false)
+    expect(isCompatibleMultipleConditions('25.1.1', ['25.1.0', '24.09.6', '24.03.12'])).toBe(true)
+    expect(isCompatibleMultipleConditions('25.0.0', ['25.1.0', '24.09.6', '24.03.12'])).toBe(false)
+    expect(isCompatibleMultipleConditions('24.09.5', ['25.1.0', '24.09.6', '24.03.12'])).toBe(false)
+    expect(isCompatibleMultipleConditions('24.09.7', ['25.1.0', '24.09.6', '24.03.12'])).toBe(true)
   });
 })

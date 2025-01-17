@@ -130,6 +130,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             image @deprecatedSince(version: "23.09.9")
             image_object @since(version: "23.09.9") {
               name
+              namespace @since(version: "24.12.0")
               humanized_name
               tag
               registry
@@ -268,11 +269,10 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     return color;
   };
 
-  const fullImageString: string = (
-    baiClient.supports('modify-endpoint')
-      ? `${endpoint?.image_object?.registry}/${endpoint?.image_object?.name}:${endpoint?.image_object?.tag}@${endpoint?.image_object?.architecture}`
-      : endpoint?.image
-  ) as string;
+  const fullImageString =
+    baiClient.supports('modify-endpoint') && endpoint?.image_object
+      ? `${endpoint.image_object.registry}/${endpoint.image_object.namespace ?? endpoint.image_object.name}:${endpoint.image_object.tag}@${endpoint.image_object.architecture}`
+      : endpoint?.image;
 
   const resource_opts = JSON.parse(endpoint?.resource_opts || '{}');
 
@@ -420,7 +420,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       ? endpoint?.image_object
       : endpoint?.image) && (
       <Flex direction="row" gap={'xs'}>
-        <ImageMetaIcon image={fullImageString} />
+        <ImageMetaIcon image={fullImageString || null} />
         <CopyableCodeText>{fullImageString}</CopyableCodeText>
         {endpoint?.runtime_variant?.human_readable_name ? (
           <Tag>{endpoint?.runtime_variant?.human_readable_name}</Tag>

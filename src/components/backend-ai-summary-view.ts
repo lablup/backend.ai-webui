@@ -429,9 +429,10 @@ export default class BackendAISummary extends BackendAIPage {
     }
     try {
       await globalThis.backendaiclient.vfolder.accept_invitation(invitation.id);
-      const vfolderInfo = await globalThis.backendaiclient.vfolder.info(
-        invitation.vfolder_name,
-      );
+      const folder = globalThis.backendaiclient.supports('vfolder-id-based')
+        ? invitation.vfolder_id
+        : invitation.vfolder_name;
+      const vfolderInfo = await globalThis.backendaiclient.vfolder.info(folder);
       const tabName = BackendAISummary.getVFolderTabByVFolderInfo(vfolderInfo);
       this.notification.url = `/data?tab=${tabName}&folder=${invitation.vfolder_id.replace('-', '')}`;
       this.notification.text =

@@ -94,11 +94,11 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
         formRef.current
           ?.validateFields()
           .then((values) => {
-            if (vfolder?.name && vfolder.host) {
+            if (vfolder?.id && vfolder.host) {
               mutationToClone.mutate(
                 {
                   input: values,
-                  name: vfolder.name,
+                  name: vfolder.id,
                 },
                 {
                   onSuccess(data) {
