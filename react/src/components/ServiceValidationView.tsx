@@ -50,7 +50,7 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
     ServiceLauncherFormValue
   >({
     mutationFn: (values) => {
-      const image: string = `${values.environments.image?.registry}/${values.environments.image?.name}:${values.environments.image?.tag}`;
+      const image: string = `${values.environments.image?.registry}/${values.environments.image?.namespace ?? values.environments.image?.name}:${values.environments.image?.tag}`;
       const body: ServiceCreateType = {
         name: values.serviceName,
         ...(baiClient.supports('replicas')

@@ -174,7 +174,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           row_id
         }
         image_object @since(version: "23.09.9") {
-          name
+          name @deprecatedSince(version: "24.12.0")
+          namespace @since(version: "24.12.0")
           humanized_name
           tag
           registry
@@ -256,7 +257,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     return {
       image: (isManualImageEnabled
         ? formInput.environments.manual?.split('@')[0]
-        : `${formInput.environments.image?.registry}/${formInput.environments.image?.name}:${formInput.environments.image?.tag}`) as string,
+        : formInput.environments.version?.split('@')[0]) as string,
       architecture: (isManualImageEnabled
         ? formInput.environments.manual?.split('@')[1]
         : formInput.environments.image?.architecture) as string,
@@ -420,7 +421,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           open_to_public
           model
           image_object @since(version: "23.09.9") {
-            name
+            name @deprecatedSince(version: "24.12.0")
+            namespace @since(version: "24.12.0")
             humanized_name
             tag
             registry
@@ -682,8 +684,9 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         cluster_size: endpoint?.cluster_size,
         openToPublic: endpoint?.open_to_public,
         environments: {
-          environment: endpoint?.image_object?.name,
-          version: `${endpoint?.image_object?.registry}/${endpoint?.image_object?.name}:${endpoint?.image_object?.tag}@${endpoint?.image_object?.architecture}`,
+          environment:
+            endpoint?.image_object?.namespace ?? endpoint?.image_object?.name,
+          version: `${endpoint?.image_object?.registry}/${endpoint?.image_object?.namespace ?? endpoint?.image_object?.name}:${endpoint?.image_object?.tag}@${endpoint?.image_object?.architecture}`,
           image: endpoint?.image_object,
         },
         vFolderID: endpoint?.model,
