@@ -53,6 +53,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
   // [target vfolder information]
   @property({ type: String }) vfolderID = '';
   @property({ type: String }) vfolderName = '';
+  @property({ type: String }) vfolder = '';
   @property({ type: Array }) vfolderFiles = [];
   @property({ type: String }) vhost = '';
   @property({ type: Boolean }) isWritable = false;
@@ -496,7 +497,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
     const path = this.breadcrumb.concat(fn).join('/');
     const job = globalThis.backendaiclient.vfolder.request_download_token(
       path,
-      this.vfolderName,
+      this.vfolder,
       archive,
     );
     job
@@ -777,6 +778,9 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
       return vfolder.id === this.vfolderID;
     });
     this.vfolderName = vfolder.name;
+    this.vfolder = globalThis.backendaiclient.supports('vfolder-id-based')
+      ? vfolder.id
+      : vfolder.name;
     this.vhost = vfolder.host;
     this.isWritable = vfolder.permission.includes('w');
 
@@ -791,7 +795,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
     this.fileListGrid.selectedItems = [];
     const filesInfo = await globalThis.backendaiclient.vfolder.list_files(
       this.breadcrumb.join('/'),
-      this.vfolderName,
+      this.vfolder,
     );
 
     const details = filesInfo.items;
@@ -968,7 +972,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
       const job = globalThis.backendaiclient.vfolder.rename_file(
         path,
         newName,
-        this.vfolderName,
+        this.vfolder,
         this.is_dir,
       );
       job
@@ -1034,7 +1038,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
       const job = globalThis.backendaiclient.vfolder.delete_files(
         filenames,
         true,
-        this.vfolderName,
+        this.vfolder,
       );
       job.then((res) => {
         this.notification.text =
@@ -1054,7 +1058,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
         const job = globalThis.backendaiclient.vfolder.delete_files(
           [path],
           true,
-          this.vfolderName,
+          this.vfolder,
         );
         job
           .then((res) => {
@@ -1121,7 +1125,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
     this.mkdirNameInput.reportValidity();
     if (this.mkdirNameInput.checkValidity()) {
       const job = globalThis.backendaiclient.vfolder
-        .mkdir([...this.breadcrumb, newfolder].join('/'), this.vfolderName)
+        .mkdir([...this.breadcrumb, newfolder].join('/'), this.vfolder)
         .catch((err) => {
           if (err & err.message) {
             this.notification.text = PainKiller.relieve(err.title);
@@ -1290,7 +1294,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
     const job = globalThis.backendaiclient.vfolder.create_upload_session(
       path,
       fileObj,
-      this.vfolderName,
+      this.vfolder,
     );
     job.then((url) => {
       const start_date = new Date().getTime();

@@ -734,6 +734,9 @@ class Client {
       this._features['max_network_count'] = true;
       this._features['replicas'] = true;
     }
+    if (this.isManagerVersionCompatibleWith(['25.1.0', '24.09.6', '24.03.12'])) {
+      this._features['vfolder-id-based'] = true;
+    }
   }
 
   /**
@@ -2079,6 +2082,7 @@ class ResourcePreset {
 class VFolder {
   public client: any;
   public name: any;
+  public id: any;
   public urlPrefix: any;
 
   /**
@@ -2087,9 +2091,10 @@ class VFolder {
    * @param {Client} client - the Client API wrapper object to bind
    * @param {string} name - Virtual folder name.
    */
-  constructor(client, name = null) {
+  constructor(client, name = null, id = null) {
     this.client = client;
     this.name = name;
+    this.id = id;
     this.urlPrefix = '/folders';
   }
 
@@ -2259,9 +2264,10 @@ class VFolder {
    */
   async rename(new_name = null): Promise<any> {
     const body = { new_name };
+    const vfolder = this.client.supports('vfolder-id-based') ? this.id : this.name;
     let rqst = this.client.newSignedRequest(
       'POST',
-      `${this.urlPrefix}/${this.name}/rename`,
+      `${this.urlPrefix}/${vfolder}/rename`,
       body,
     );
     return this.client._wrapWithPromise(rqst);

@@ -215,14 +215,6 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                 size="small"
                 disabled={!model_card?.vfolder?.cloneable}
                 onClick={() => {
-                  // const event = new CustomEvent('backend-ai-vfolder-cloning', {
-                  //   detail: {
-                  //     // TODO: change this to vfolder name
-                  //     name: mode_card?.name,
-                  //   },
-                  // });
-                  // onRequestClose();
-                  // document.dispatchEvent(event);
                   setVisibleCloneModal(true);
                 }}
               >
