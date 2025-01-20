@@ -737,6 +737,9 @@ class Client {
     if (this.isManagerVersionCompatibleWith(['25.1.0', '24.09.6', '24.03.12'])) {
       this._features['vfolder-id-based'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('25.2.0')) {
+      this._features['vfolder-node'] = true;
+    }
   }
 
   /**
