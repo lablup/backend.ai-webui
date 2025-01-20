@@ -1,4 +1,5 @@
 import { GBToBytes, bytesToGB } from '../helper';
+import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useSuspendedBackendaiClient } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
@@ -275,7 +276,11 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
               label={t('resourcePolicy.MaxFolderCount')}
               style={{ width: '100%', margin: 0 }}
             >
-              <InputNumber min={0} style={{ width: '100%' }} />
+              <InputNumber
+                min={0}
+                max={SIGNED_32BIT_MAX_INT}
+                style={{ width: '100%' }}
+              />
             </FormItemWithUnlimited>
           ) : null}
           {supportMaxQuotaScopeSize ? (
@@ -285,7 +290,12 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
               label={t('storageHost.MaxFolderSize')}
               style={{ width: '100%', margin: 0 }}
             >
-              <InputNumber min={0} addonAfter="GB" style={{ width: '100%' }} />
+              <InputNumber
+                min={0}
+                max={Number.MAX_SAFE_INTEGER}
+                addonAfter="GB"
+                style={{ width: '100%' }}
+              />
             </FormItemWithUnlimited>
           ) : null}
         </Flex>
@@ -297,7 +307,11 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
               { required: true, message: t('data.explorer.ValueRequired') },
             ]}
           >
-            <InputNumber min={0} style={{ width: '100%' }} />
+            <InputNumber
+              min={0}
+              max={SIGNED_32BIT_MAX_INT}
+              style={{ width: '100%' }}
+            />
           </Form.Item>
         ) : null}
         {supportMaxCustomizedImageCount ? (
@@ -308,7 +322,11 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
               { required: true, message: t('data.explorer.ValueRequired') },
             ]}
           >
-            <InputNumber min={0} style={{ width: '100%' }} />
+            <InputNumber
+              min={0}
+              max={SIGNED_32BIT_MAX_INT}
+              style={{ width: '100%' }}
+            />
           </Form.Item>
         ) : null}
       </Form>

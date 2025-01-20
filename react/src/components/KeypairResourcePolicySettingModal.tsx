@@ -329,65 +329,74 @@ const KeypairResourcePolicySettingModal: React.FC<
               },
             }}
           >
-            {_.map(
-              _.chunk(_.keys(resourceSlots), 2),
-              (resourceSlotKeys, index) => (
+            {_.chain(resourceSlots)
+              .keys()
+              .chunk(2)
+              .map((resourceSlotKeys, index) => (
                 <Row gutter={[16, 16]} key={index}>
-                  {_.map(resourceSlotKeys, (resourceSlotKey) => (
-                    <Col
-                      span={12}
-                      key={resourceSlotKey}
-                      style={{ alignSelf: 'end', marginBottom: token.marginLG }}
-                    >
-                      <FormItemWithUnlimited
-                        unlimitedValue={undefined}
-                        label={
-                          _.get(mergedResourceSlots, resourceSlotKey)
-                            ?.description || resourceSlotKey
-                        }
-                        name={['parsedTotalResourceSlots', resourceSlotKey]}
-                        rules={[
-                          {
-                            validator(__, value) {
-                              if (
-                                _.includes(resourceSlotKey, 'mem') &&
-                                value &&
-                                // @ts-ignore
-                                convertBinarySizeUnit(value, 'p').number >
-                                  // @ts-ignore
-                                  convertBinarySizeUnit('300p', 'p').number
-                              ) {
-                                return Promise.reject(
-                                  new Error(
-                                    t('resourcePolicy.MemorySizeExceedsLimit'),
-                                  ),
-                                );
-                              }
-                              return Promise.resolve();
-                            },
-                          },
-                        ]}
+                  {_.chain(resourceSlotKeys)
+                    .map((resourceSlotKey) => (
+                      <Col
+                        span={12}
+                        key={resourceSlotKey}
+                        style={{
+                          alignSelf: 'end',
+                          marginBottom: token.marginLG,
+                        }}
                       >
-                        {_.includes(resourceSlotKey, 'mem') ? (
-                          <DynamicUnitInputNumber />
-                        ) : (
-                          <InputNumber
-                            min={0}
-                            step={
-                              _.includes(resourceSlotKey, '.shares') ? 0.1 : 1
-                            }
-                            addonAfter={
-                              _.get(mergedResourceSlots, resourceSlotKey)
-                                ?.display_unit
-                            }
-                          />
-                        )}
-                      </FormItemWithUnlimited>
-                    </Col>
-                  ))}
+                        <FormItemWithUnlimited
+                          unlimitedValue={undefined}
+                          label={
+                            _.get(mergedResourceSlots, resourceSlotKey)
+                              ?.description || resourceSlotKey
+                          }
+                          name={['parsedTotalResourceSlots', resourceSlotKey]}
+                          rules={[
+                            {
+                              validator(__, value) {
+                                console.log(resourceSlotKey);
+                                if (
+                                  _.includes(resourceSlotKey, 'mem') &&
+                                  value &&
+                                  // @ts-ignore
+                                  convertBinarySizeUnit(value, 'p').number >
+                                    // @ts-ignore
+                                    convertBinarySizeUnit('300p', 'p').number
+                                ) {
+                                  return Promise.reject(
+                                    new Error(
+                                      t(
+                                        'resourcePolicy.MemorySizeExceedsLimit',
+                                      ),
+                                    ),
+                                  );
+                                }
+                                return Promise.resolve();
+                              },
+                            },
+                          ]}
+                        >
+                          {_.includes(resourceSlotKey, 'mem') ? (
+                            <DynamicUnitInputNumber />
+                          ) : (
+                            <InputNumber
+                              min={0}
+                              step={
+                                _.includes(resourceSlotKey, '.shares') ? 0.1 : 1
+                              }
+                              addonAfter={
+                                _.get(mergedResourceSlots, resourceSlotKey)
+                                  ?.display_unit
+                              }
+                            />
+                          )}
+                        </FormItemWithUnlimited>
+                      </Col>
+                    ))
+                    .value()}
                 </Row>
-              ),
-            )}
+              ))
+              .value()}
           </Card>
         </Form.Item>
         <Form.Item label={t('resourcePolicy.Sessions')} required>

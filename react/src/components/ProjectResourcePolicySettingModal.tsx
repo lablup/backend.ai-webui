@@ -1,4 +1,5 @@
 import { GBToBytes, bytesToGB } from '../helper';
+import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useSuspendedBackendaiClient } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
@@ -266,7 +267,11 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
               label={t('resourcePolicy.MaxFolderCount')}
               style={{ width: '100%', margin: 0 }}
             >
-              <InputNumber min={0} style={{ width: '100%' }} />
+              <InputNumber
+                min={0}
+                max={SIGNED_32BIT_MAX_INT}
+                style={{ width: '100%' }}
+              />
             </FormItemWithUnlimited>
           ) : null}
           {supportMaxQuotaScopeSize ? (
@@ -276,7 +281,12 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
               label={t('storageHost.MaxFolderSize')}
               style={{ width: '100%', margin: 0 }}
             >
-              <InputNumber min={0} addonAfter="GB" style={{ width: '100%' }} />
+              <InputNumber
+                min={0}
+                max={Number.MAX_SAFE_INTEGER}
+                addonAfter="GB"
+                style={{ width: '100%' }}
+              />
             </FormItemWithUnlimited>
           ) : null}
           {supportMaxNetworkCount ? (
@@ -286,7 +296,11 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
               label={t('resourcePolicy.MaxNetworkCount')}
               style={{ width: '100%', margin: 0 }}
             >
-              <InputNumber min={0} style={{ width: '100%' }} />
+              <InputNumber
+                min={0}
+                max={SIGNED_32BIT_MAX_INT}
+                style={{ width: '100%' }}
+              />
             </FormItemWithUnlimited>
           ) : null}
         </Flex>
