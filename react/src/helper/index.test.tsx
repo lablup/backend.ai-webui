@@ -177,6 +177,7 @@ describe('getImageFullName', () => {
           },
         ],
         version: '01',
+        supported_accelerators: [],
       }) || '';
     expect(result).toBe(
       '192.168.0.1:7080/abc/def/training:01-py3-abc-v1-def@x86_64',
@@ -234,6 +235,7 @@ describe('getImageFullName', () => {
           },
         ],
         version: '01',
+        supported_accelerators: [],
       }) || '';
     expect(result).toBe(
       '192.168.0.1:7080/abc/def/training:01-py3-abc-v1-def@x86_64',
@@ -292,6 +294,7 @@ describe('getImageFullName', () => {
           },
         ],
         version: '01',
+        supported_accelerators: [],
       }) || '';
     expect(result).toBe(
       '192.168.0.1:7080/abc/def/training:01-py3-abc-v1-def@x86_64',

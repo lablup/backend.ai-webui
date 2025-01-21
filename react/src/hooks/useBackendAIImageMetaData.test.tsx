@@ -148,6 +148,7 @@ describe('useBackendAIImageMetaData', () => {
         base_image_name: undefined,
         tags: undefined,
         version: undefined,
+        supported_accelerators: [],
       }) || '',
     );
     expect(key).toBe('training');

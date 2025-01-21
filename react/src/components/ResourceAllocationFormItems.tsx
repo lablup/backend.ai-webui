@@ -1740,6 +1740,7 @@ export const getAllocatablePresetNames = (
         if (['mem', 'cpu', 'shmem'].includes(key)) return true;
       },
     );
+
     if (currentImageAcceleratorLimits.length === 0) {
       // When current image doesn't require any accelerator,
       // It's available if the preset doesn't have any accelerator
@@ -1764,7 +1765,32 @@ export const getAllocatablePresetNames = (
       );
     }
   }).map((preset) => preset.name);
+
+  const byImageSupportedAccelerator = _.filter(presets, (preset) => {
+    const acceleratorResourceOfPreset = _.omitBy(
+      preset.resource_slots,
+      (value, key) => {
+        if (['mem', 'cpu', 'shmem'].includes(key)) return true;
+      },
+    );
+
+    if (currentImage?.supported_accelerators?.[0] === '*') {
+      return true;
+    } else {
+      return _.some(acceleratorResourceOfPreset, (value, key) => {
+        return (
+          !!currentImage?.supported_accelerators?.includes(key.split('.')[0]) ||
+          value === '0'
+        );
+      });
+    }
+  }).map((preset) => preset.name);
+
   return currentImageAcceleratorLimits.length === 0
-    ? bySliderLimit
-    : _.intersection(bySliderLimit, byImageAcceleratorLimits);
+    ? _.intersection(bySliderLimit, byImageSupportedAccelerator)
+    : _.intersection(
+        bySliderLimit,
+        byImageAcceleratorLimits,
+        byImageSupportedAccelerator,
+      );
 };
