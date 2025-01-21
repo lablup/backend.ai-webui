@@ -3062,6 +3062,22 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   /**
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   */
+  triggerOpenSessionDetailDrawer(rowData) {
+    const queryParams = new URLSearchParams(window.location.search);
+    queryParams.set('sessionDetail', rowData.item.id);
+    document.dispatchEvent(
+      new CustomEvent('react-navigate', {
+        detail: {
+          pathname: '/job',
+          search: queryParams.toString(),
+        },
+      }),
+    );
+  }
+
+  /**
    * Render session information - category, color, description, etc.
    *
    * @param {Element} root - the row details content DOM element
@@ -3101,6 +3117,7 @@ export default class BackendAISessionList extends BackendAIPage {
               white-space: pre-wrap;
               white-space-collapse: collapse;
               word-break: break-all;
+              cursor: pointer;
             }
             #session-rename-field {
               display: none;
@@ -3124,8 +3141,13 @@ export default class BackendAISessionList extends BackendAIPage {
           </style>
           <div class="layout vertical start">
             <div class="horizontal center center-justified layout">
-              <pre id="session-name-field">
-${rowData.item[this.sessionNameField]}</pre
+              <pre
+                id="session-name-field"
+                @click="${() => this.triggerOpenSessionDetailDrawer(rowData)}"
+                @keyup="${() => {}}"
+              >
+                ${rowData.item[this.sessionNameField]}
+              </pre
               >
               ${this._isRunning &&
               !this._isPreparing(rowData.item.status) &&

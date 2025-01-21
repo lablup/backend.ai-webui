@@ -1,3 +1,4 @@
+import { IdleCheckItem } from '../components/ComputeSessionNodeItems/SessionIdleChecks';
 import { CommittedImage } from '../components/CustomizedImageList';
 import { Image } from '../components/ImageEnvironmentSelectFormItems';
 import { EnvironmentImage } from '../components/ImageList';
@@ -451,4 +452,82 @@ export function formatDuration(duration: Duration, t: TFunction) {
   ]
     .filter(Boolean)
     .join(' ');
+}
+
+export function getUtilizationCheckerColor(
+  resources: Record<string, [number, number]> | number[],
+  thresholds_check_operator: 'and' | 'or' | null = null,
+) {
+  // Determine color based on single device utilization.
+  // resources: [number, number]
+  if (!thresholds_check_operator) {
+    const [utilization, threshold] = resources as number[];
+    if (utilization < threshold * 2) {
+      return 'red';
+    } else if (utilization < threshold * 10) {
+      return 'orange';
+    } else {
+      return 'green';
+    }
+  }
+  // Determine color based on multiple device utilization.
+  // resources: Record<string, [number, number]>
+  let color: string | undefined = undefined;
+  if (thresholds_check_operator === 'and') {
+    _.every(resources, ([utilization, threshold]: number[]) => {
+      if (utilization < Math.min(threshold * 2, threshold + 5)) {
+        color = 'red';
+        return true;
+      } else if (utilization < Math.min(threshold * 10, threshold + 10)) {
+        color = 'orange';
+        return true;
+      } else {
+        color = 'green';
+        return true;
+      }
+    });
+  }
+
+  if (thresholds_check_operator === 'or') {
+    _.some(resources, ([utilization, threshold]: number[]) => {
+      if (utilization < Math.min(threshold * 2, threshold + 5)) {
+        color = 'red';
+        return true;
+      } else if (utilization < Math.min(threshold * 10, threshold + 10)) {
+        color = 'orange';
+        return true;
+      } else {
+        color = 'green';
+        return true;
+      }
+    });
+  }
+
+  return color;
+}
+
+export function getIdleChecksTagColor(
+  result: IdleCheckItem,
+  criteria: 'remaining' | 'utilization',
+) {
+  // Determine color based on remaining time.
+  if (criteria === 'remaining') {
+    if (!result.remaining || result.remaining < 3600) {
+      return 'red';
+    } else if (result.remaining < 3600 * 4) {
+      return 'orange';
+    } else {
+      return 'green';
+    }
+  }
+
+  // Determine color based on utilization.
+  if (result.extra && (!result.remaining || result.remaining < 3600 * 4)) {
+    return getUtilizationCheckerColor(
+      result.extra.resources,
+      result.extra.thresholds_check_operator,
+    );
+  }
+
+  return undefined;
 }

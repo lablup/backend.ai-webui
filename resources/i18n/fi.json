@@ -1323,7 +1323,8 @@
     "FGPU": "fGPU",
     "ReadLess": "Lue vähemmän",
     "ReadMore": "Lue lisää...",
-    "CommitImageName": "Sitoutunut kuvan nimi"
+    "CommitImageName": "Sitoutunut kuvan nimi",
+    "IdleCheckExpirationWarning": "Istunnot voidaan lopettaa joutokäyntitarkastusten tulosten perusteella."
   },
   "settings": {
     "AllowAgentSideRegistration": "Salli agenttipuolen rekisteröinti",
