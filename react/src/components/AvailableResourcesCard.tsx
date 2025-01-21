@@ -12,7 +12,7 @@ const AvailableResourcesCard = () => {
   const currentProject = useCurrentProjectValue();
   const [selectedResourceGroup, setSelectedResourceGroup] = useState();
   const deferredSelectedResourceGroup = useDeferredValue(selectedResourceGroup);
-  const [{ remaining, resourceLimits, resourceGroupResourceSize }] =
+  const [{ remaining, mergedResourceLimit, resourceGroupResourceSize }] =
     useResourceLimitAndRemaining({
       currentProjectName: currentProject.name,
       currentResourceGroup: deferredSelectedResourceGroup || 'default',
@@ -48,8 +48,8 @@ const AvailableResourcesCard = () => {
           percent={
             (remaining.cpu /
               // @ts-ignore
-              (resourceLimits.cpu
-                ? resourceLimits.cpu.max
+              (mergedResourceLimit.cpu
+                ? mergedResourceLimit.cpu.max
                 : resourceGroupResourceSize.cpu)) *
             100
           }
@@ -59,7 +59,7 @@ const AvailableResourcesCard = () => {
           title="MEM"
           percent={
             ((convertBinarySizeUnit(remaining.mem + '', 'm')?.number || 0) /
-              (convertBinarySizeUnit(resourceLimits.mem?.max + '', 'm')
+              (convertBinarySizeUnit(mergedResourceLimit.mem?.max + '', 'm')
                 ?.number || 1)) *
             100
           }
