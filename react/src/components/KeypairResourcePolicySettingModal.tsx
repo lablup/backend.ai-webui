@@ -1,10 +1,12 @@
 import { convertBinarySizeUnit } from '../helper';
 import {
+  MAX_CPU_QUOTA,
   UNLIMITED_MAX_CONCURRENT_SESSIONS,
   UNLIMITED_MAX_CONTAINERS_PER_SESSIONS,
 } from '../helper/const-vars';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
+import { usePainKiller } from '../hooks/usePainKiller';
 import AllowedHostNamesSelect from './AllowedHostNamesSelect';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import DynamicUnitInputNumber from './DynamicUnitInputNumber';
@@ -56,6 +58,7 @@ const KeypairResourcePolicySettingModal: React.FC<
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
+  const painKiller = usePainKiller();
   const formRef = useRef<FormInstance>(null);
   const [resourceSlots] = useResourceSlots();
   const { mergedResourceSlots } = useResourceSlotsDetails();
@@ -218,17 +221,18 @@ const KeypairResourcePolicySettingModal: React.FC<
               props: props as CreateKeyPairResourcePolicyInput,
             },
             onCompleted: (res, errors) => {
-              if (!res?.create_keypair_resource_policy?.ok) {
-                message.error(res?.create_keypair_resource_policy?.msg);
-                onRequestClose();
-                return;
-              }
-              if (errors && errors?.length > 0) {
-                const errorMsgList = _.map(errors, (error) => error.message);
-                for (const error of errorMsgList) {
-                  message.error(error, 2.5);
+              if (!res?.create_keypair_resource_policy?.ok || errors) {
+                if (res.create_keypair_resource_policy?.msg) {
+                  message.error(
+                    painKiller.relieve(res.create_keypair_resource_policy.msg),
+                  );
+                } else if (errors && errors.length > 0) {
+                  // if res.create_keypair_resource_policy is null
+                  errors.forEach((error) =>
+                    message.error(painKiller.relieve(error.message), 2.5),
+                  );
                 }
-                onRequestClose();
+                onRequestClose(false);
               } else {
                 message.success(t('resourcePolicy.SuccessfullyCreated'));
                 onRequestClose(true);
@@ -245,19 +249,20 @@ const KeypairResourcePolicySettingModal: React.FC<
               props: props as ModifyKeyPairResourcePolicyInput,
             },
             onCompleted: (res, errors) => {
-              if (!res?.modify_keypair_resource_policy?.ok) {
-                message.error(res?.modify_keypair_resource_policy?.msg);
-                onRequestClose();
-                return;
-              }
-              if (errors && errors?.length > 0) {
-                const errorMsgList = _.map(errors, (error) => error.message);
-                for (const error of errorMsgList) {
-                  message.error(error, 2.5);
+              if (!res?.modify_keypair_resource_policy?.ok || errors) {
+                if (res.modify_keypair_resource_policy?.msg) {
+                  message.error(
+                    painKiller.relieve(res.modify_keypair_resource_policy.msg),
+                  );
+                } else if (errors && errors.length > 0) {
+                  // if res.create_keypair_resource_policy is null
+                  errors.forEach((error) =>
+                    message.error(painKiller.relieve(error.message), 2.5),
+                  );
                 }
-                onRequestClose();
+                onRequestClose(false);
               } else {
-                message.success(t('resourcePolicy.SuccessfullyUpdated'));
+                message.success(t('resourcePolicy.SuccessfullyCreated'));
                 onRequestClose(true);
               }
             },
@@ -354,7 +359,6 @@ const KeypairResourcePolicySettingModal: React.FC<
                           rules={[
                             {
                               validator(__, value) {
-                                console.log(resourceSlotKey);
                                 if (
                                   _.includes(resourceSlotKey, 'mem') &&
                                   value &&
@@ -381,6 +385,7 @@ const KeypairResourcePolicySettingModal: React.FC<
                           ) : (
                             <InputNumber
                               min={0}
+                              max={MAX_CPU_QUOTA}
                               step={
                                 _.includes(resourceSlotKey, '.shares') ? 0.1 : 1
                               }
