@@ -109,7 +109,7 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
                         status: 'pending',
                         percent: 0,
                         taskId: data.bgtask_id,
-                        statusDescriptions: {
+                        onChange: {
                           pending: t('data.folders.FolderClonePending'),
                           resolved: t('data.folders.FolderCloned'),
                           rejected: t('data.folders.FolderCloneFailed'),

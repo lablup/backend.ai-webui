@@ -22,16 +22,38 @@ export interface NotificationState
     taskId?: string;
     percent?: number;
     status: 'pending' | 'rejected' | 'resolved';
-    statusDescriptions?: {
-      pending?: string;
-      resolved?: string;
-      rejected?: string;
+    onChange?: {
+      pending?:
+        | string
+        | Partial<NotificationState>
+        | ((
+            data: unknown,
+            notification: NotificationStateForOnChange,
+          ) => string | Partial<NotificationState>);
+      resolved?:
+        | string
+        | Partial<NotificationState>
+        | ((
+            data: unknown,
+            notification: NotificationStateForOnChange,
+          ) => string | Partial<NotificationState>);
+      rejected?:
+        | string
+        | Partial<NotificationState>
+        | ((
+            data: unknown,
+            notification: NotificationStateForOnChange,
+          ) => string | Partial<NotificationState>);
     };
     renderDataMessage?: (message?: string) => React.ReactNode;
-    promise?: Promise<any>;
+    promise?: Promise<unknown> | null;
   };
   extraDescription?: string;
 }
+
+export type NotificationStateForOnChange = Partial<
+  Omit<NotificationState, 'key' | 'created'>
+>;
 
 export const notificationListState = atom<NotificationState[]>([]);
 
@@ -70,30 +92,37 @@ export const useBAINotificationEffect = () => {
       ) {
         listeningPromiseKeysRef.current.push(notification.key);
         notification.backgroundTask?.promise
-          .then(() => {
-            upsertNotification({
-              key: notification.key,
-              // message: notification.message,
-              description:
-                notification.backgroundTask?.statusDescriptions?.resolved,
+          .then((data) => {
+            const updatedNotification = _.merge({}, notification, {
               backgroundTask: {
                 status: 'resolved',
               },
               duration: CLOSING_DURATION,
             });
+            const overrideData = generateOverrideByStatus(
+              updatedNotification,
+              data,
+            );
+            upsertNotification(
+              _.merge({}, updatedNotification, overrideData),
+              true,
+            );
           })
           .catch((e) => {
-            upsertNotification({
-              key: notification.key,
-              description:
-                e?.message ||
-                notification.backgroundTask?.statusDescriptions?.rejected,
+            const updatedNotification = _.merge({}, notification, {
               backgroundTask: {
                 status: 'rejected',
               },
-              // extraDescription: e?.message,
               duration: CLOSING_DURATION,
             });
+            const overrideData = generateOverrideByStatus(
+              updatedNotification,
+              e,
+            );
+            upsertNotification(
+              _.merge({}, updatedNotification, overrideData),
+              true,
+            );
           })
           .finally(() => {
             listeningPromiseKeysRef.current = _.without(
@@ -259,22 +288,33 @@ export const useSetBAINotification = () => {
   );
 
   const upsertNotification = useCallback(
-    (params: Partial<Omit<NotificationState, 'created'>>) => {
+    (
+      params: Partial<Omit<NotificationState, 'created'>>,
+      skipOverrideByStatus?: boolean,
+    ) => {
       let currentKey: React.Key | undefined;
       setNotifications((prevNotifications: NotificationState[]) => {
         let nextNotifications: NotificationState[];
         const existingIndex = params.key
           ? _.findIndex(prevNotifications, { key: params.key })
           : -1;
-        const newNotification: NotificationState = _.merge(
+        const existingNotification =
+          existingIndex > -1 ? prevNotifications[existingIndex] : undefined;
+        let newNotification: NotificationState = _.merge(
           {}, // start with empty object
-          prevNotifications[existingIndex],
+          existingNotification,
           params,
           {
             key: params.key || uuidv4(),
-            created: new Date().toISOString(),
+            created: existingNotification?.created ?? new Date().toISOString(),
           },
         );
+
+        if (!skipOverrideByStatus) {
+          const overrideData = generateOverrideByStatus(newNotification);
+          newNotification = _.merge({}, newNotification, overrideData);
+        }
+
         // This is to check if the notification should be updated using ant.d notification
         const shouldUpdateUsingAPI =
           (_.isEmpty(params.key) && params.open) ||
@@ -285,12 +325,6 @@ export const useSetBAINotification = () => {
           (newNotification.key &&
             !_activeNotificationKeys.includes(newNotification.key) &&
             params.open);
-
-        // override description according to background task status
-        newNotification.description =
-          newNotification.backgroundTask?.statusDescriptions?.[
-            newNotification.backgroundTask?.status
-          ] || newNotification.description;
 
         if (existingIndex >= 0) {
           nextNotifications = [
@@ -371,3 +405,38 @@ export const useSetBAINotification = () => {
     destroyAllNotifications,
   };
 };
+
+function generateOverrideByStatus(
+  notification?: NotificationState,
+  dataOrError?: any,
+) {
+  const currentHandler =
+    notification?.backgroundTask?.onChange?.[
+      notification.backgroundTask?.status
+    ];
+
+  if (currentHandler) {
+    const overrideData = _.isFunction(currentHandler)
+      ? currentHandler(dataOrError, notification)
+      : currentHandler;
+    if (typeof overrideData === 'string') {
+      return {
+        description: overrideData,
+      };
+    } else {
+      return overrideData;
+    }
+  } else {
+    // If there is no handler for rejected case, set description using error message
+    if (
+      notification?.backgroundTask?.status === 'rejected' &&
+      dataOrError?.message
+    ) {
+      return {
+        // TODO: need to sanitize the error message using Painkiller
+        description: dataOrError.message,
+      };
+    }
+  }
+  return {};
+}

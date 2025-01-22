@@ -58,7 +58,7 @@ const ContainerCommitModal: React.FC<ContainerCommitModalProps> = ({
               backgroundTask: {
                 taskId: res.task_id,
                 status: 'pending',
-                statusDescriptions: {
+                onChange: {
                   pending: t('session.CommitOnGoing'),
                   resolved: t('session.CommitFinished'),
                   rejected: t('session.CommitFailed'),
