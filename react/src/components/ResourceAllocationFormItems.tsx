@@ -17,7 +17,6 @@ import AgentSelect from './AgentSelect';
 import BAISelect from './BAISelect';
 import DynamicUnitInputNumberWithSlider from './DynamicUnitInputNumberWithSlider';
 import Flex from './Flex';
-// import FormItemControl from './FormItemControl';
 import {
   Image,
   ImageEnvironmentFormInput,
@@ -146,12 +145,6 @@ const ResourceAllocationFormItems: React.FC<
   const acceleratorSlotsInRG = resourceSlotsInRG
     ? _.omitBy(resourceSlotsInRG, (value, key) => {
         if (['cpu', 'mem', 'shmem'].includes(key)) return true;
-
-        if (
-          !resourceLimits.accelerators[key]?.max ||
-          resourceLimits.accelerators[key]?.max === 0
-        )
-          return true;
         return false;
       })
     : undefined;
@@ -167,23 +160,34 @@ const ResourceAllocationFormItems: React.FC<
     [currentImage],
   );
 
-  // Disable accelerator input when there is no accelerator slot or no accelerator required in the selected image
-  // TODO: use `supported_accelerators` information from the image instead of `currentImageAcceleratorLimits` (FR-55)
-  const isAcceleratorInputDisabled =
-    (!_.isUndefined(acceleratorSlotsInRG) && _.isEmpty(acceleratorSlotsInRG)) ||
-    (currentImageAcceleratorLimits &&
-      currentImageAcceleratorLimits.length === 0 &&
-      _.isEmpty(currentEnvironmentManual));
+  const enabledAcceleratorKeysInRGForImage = useMemo(() => {
+    if (!currentImage || !acceleratorSlotsInRG) return undefined;
+    return _.chain(acceleratorSlotsInRG)
+      .pickBy((value, key) => {
+        if (
+          currentImage?.supported_accelerators?.[0] === '*' ||
+          !_.isElement(currentEnvironmentManual)
+        )
+          return true;
+        return _.find(
+          currentImage?.supported_accelerators,
+          (supportedAccelerator) => supportedAccelerator === key.split('.')[0],
+        );
+      })
+      .keys()
+      .value();
+  }, [currentImage, acceleratorSlotsInRG, currentEnvironmentManual]);
 
   useEffect(() => {
-    if (isAcceleratorInputDisabled) {
+    // if the current image or resource group doesn't support any AI accelerator, set the value to 0
+    if (enabledAcceleratorKeysInRGForImage?.length === 0) {
       form.setFieldsValue({
         resource: {
           accelerator: 0,
         },
       });
     }
-  }, [isAcceleratorInputDisabled, form]);
+  }, [enabledAcceleratorKeysInRGForImage, form]);
 
   const sessionSliderLimitAndRemaining = {
     min: 1,
@@ -987,8 +991,7 @@ const ResourceAllocationFormItems: React.FC<
                         rules={[
                           {
                             required:
-                              currentImageAcceleratorLimits &&
-                              currentImageAcceleratorLimits.length > 0,
+                              enabledAcceleratorKeysInRGForImage?.length !== 0,
                           },
                           {
                             type: 'number',
@@ -1104,12 +1107,15 @@ const ResourceAllocationFormItems: React.FC<
                               formatter: (value = 0) => {
                                 return `${value} ${mergedResourceSlots?.[currentAcceleratorType]?.display_unit || ''}`;
                               },
-                              open: isAcceleratorInputDisabled
-                                ? false
-                                : undefined,
+                              open:
+                                enabledAcceleratorKeysInRGForImage?.length === 0
+                                  ? false
+                                  : undefined,
                             },
                           }}
-                          disabled={isAcceleratorInputDisabled}
+                          disabled={
+                            enabledAcceleratorKeysInRGForImage?.length === 0
+                          }
                           min={0}
                           max={
                             mergedResourceLimit.accelerators[
@@ -1130,8 +1136,14 @@ const ResourceAllocationFormItems: React.FC<
                               <Form.Item
                                 noStyle
                                 name={['resource', 'acceleratorType']}
-                                initialValue={_.keys(acceleratorSlotsInRG)[0]}
-                                hidden={isAcceleratorInputDisabled}
+                                initialValue={
+                                  enabledAcceleratorKeysInRGForImage?.[0]
+                                }
+                                hidden={
+                                  !enabledAcceleratorKeysInRGForImage ||
+                                  enabledAcceleratorKeysInRGForImage?.length ===
+                                    0
+                                }
                               >
                                 <BAISelect
                                   autoSelectOption
@@ -1152,13 +1164,10 @@ const ResourceAllocationFormItems: React.FC<
                                           mergedResourceSlots?.[name]
                                             ?.display_unit || 'UNIT',
                                         disabled:
-                                          currentImageAcceleratorLimits &&
-                                          currentImageAcceleratorLimits.length >
-                                            0 &&
-                                          !_.find(
-                                            currentImageAcceleratorLimits,
-                                            (limit) => limit?.key === name,
-                                          ),
+                                          // When enabledAcceleratorKeysInRGForImage is undefined, it means that enabledAcceleratorKeysInRGForImage is not determined yet.
+                                          enabledAcceleratorKeysInRGForImage?.includes(
+                                            name,
+                                          ) === false,
                                       };
                                     },
                                   )}
