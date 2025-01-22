@@ -166,7 +166,7 @@ const ResourceAllocationFormItems: React.FC<
       .pickBy((value, key) => {
         if (
           currentImage?.supported_accelerators?.[0] === '*' ||
-          !_.isElement(currentEnvironmentManual)
+          !_.isEmpty(currentEnvironmentManual)
         )
           return true;
         return _.find(
