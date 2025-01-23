@@ -1,26 +1,26 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import { EnvironmentImage } from './ImageList';
 import ImageResourceFormItem from './ImageResourceFormItem';
 import {
   ManageImageResourceLimitModalMutation,
   ResourceLimitInput,
 } from './__generated__/ManageImageResourceLimitModalMutation.graphql';
+import { ManageImageResourceLimitModal_image$key } from './__generated__/ManageImageResourceLimitModal_image.graphql';
 import { App, Form, FormInstance, message } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useRef } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useMutation } from 'react-relay';
+import { useFragment, useMutation } from 'react-relay';
 
 interface ManageImageResourceLimitModalProps extends BAIModalProps {
-  image: EnvironmentImage | null;
+  imageFrgmt: ManageImageResourceLimitModal_image$key | null;
   open: boolean;
   onRequestClose: (success: boolean) => void;
 }
 const ManageImageResourceLimitModal: React.FC<
   ManageImageResourceLimitModalProps
-> = ({ image, open, onRequestClose, ...BAIModalProps }) => {
+> = ({ imageFrgmt, open, onRequestClose, ...BAIModalProps }) => {
   const baiClient = useSuspendedBackendaiClient();
   // Differentiate default max value based on manager version.
   // The difference between validating a variable type as undefined or none for an unsupplied field value.
@@ -29,6 +29,25 @@ const ManageImageResourceLimitModal: React.FC<
   const { t } = useTranslation();
   const formRef = useRef<FormInstance>(null);
   const app = App.useApp();
+
+  const image = useFragment(
+    graphql`
+      fragment ManageImageResourceLimitModal_image on Image {
+        resource_limits {
+          key
+          min
+          max
+        }
+        registry
+        name @deprecatedSince(version: "24.12.0")
+        namespace @since(version: "24.12.0")
+        architecture
+        installed
+        tag
+      }
+    `,
+    imageFrgmt,
+  );
 
   const [commitModifyImageInput, isInFlightModifyImageInput] =
     useMutation<ManageImageResourceLimitModalMutation>(graphql`
@@ -65,7 +84,7 @@ const ManageImageResourceLimitModal: React.FC<
     const commitRequest = () =>
       commitModifyImageInput({
         variables: {
-          target: `${image?.registry}/${image?.name}:${image?.tag}`,
+          target: `${image?.registry}/${image?.name ?? image?.namespace}:${image?.tag}`,
           architecture: image?.architecture,
           props: {
             resource_limits,
