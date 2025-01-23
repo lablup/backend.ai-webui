@@ -345,7 +345,6 @@ const SessionLauncherPreview: React.FC<{
               label={t('session.launcher.EnvironmentVariable')}
             >
               {form.getFieldValue('envvars')?.length ? (
-                // @ts-expect-error In React 19, "'SyntaxHighlighter' cannot be used as a JSX component." error occurs.
                 <SyntaxHighlighter
                   style={isDarkMode ? dark : undefined}
                   codeTagProps={{
