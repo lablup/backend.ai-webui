@@ -221,25 +221,25 @@ const KeypairResourcePolicySettingModal: React.FC<
               props: props as CreateKeyPairResourcePolicyInput,
             },
             onCompleted: (res, errors) => {
-              if (!res?.create_keypair_resource_policy?.ok || errors) {
-                if (res.create_keypair_resource_policy?.msg) {
-                  message.error(
-                    painKiller.relieve(res.create_keypair_resource_policy.msg),
-                  );
-                } else if (errors && errors.length > 0) {
-                  // if res.create_keypair_resource_policy is null
-                  errors.forEach((error) =>
-                    message.error(painKiller.relieve(error.message), 2.5),
-                  );
-                }
+              if (
+                !res?.create_keypair_resource_policy?.ok &&
+                res.create_keypair_resource_policy?.msg
+              ) {
+                message.error(res.create_keypair_resource_policy.msg);
                 onRequestClose(false);
-              } else {
-                message.success(t('resourcePolicy.SuccessfullyCreated'));
-                onRequestClose(true);
+                return;
               }
+              if (errors && errors.length > 0) {
+                errors.forEach((error) => message.error(error.message, 2.5));
+                onRequestClose(false);
+                return;
+              }
+
+              message.success(t('resourcePolicy.SuccessfullyCreated'));
+              onRequestClose(true);
             },
             onError(err) {
-              message.error(err.message);
+              message.error(painKiller.relieve(err?.message));
             },
           });
         } else {
@@ -249,25 +249,25 @@ const KeypairResourcePolicySettingModal: React.FC<
               props: props as ModifyKeyPairResourcePolicyInput,
             },
             onCompleted: (res, errors) => {
-              if (!res?.modify_keypair_resource_policy?.ok || errors) {
-                if (res.modify_keypair_resource_policy?.msg) {
-                  message.error(
-                    painKiller.relieve(res.modify_keypair_resource_policy.msg),
-                  );
-                } else if (errors && errors.length > 0) {
-                  // if res.create_keypair_resource_policy is null
-                  errors.forEach((error) =>
-                    message.error(painKiller.relieve(error.message), 2.5),
-                  );
-                }
+              if (
+                !res?.modify_keypair_resource_policy?.ok &&
+                res.modify_keypair_resource_policy?.msg
+              ) {
+                message.error(res.modify_keypair_resource_policy.msg);
                 onRequestClose(false);
-              } else {
-                message.success(t('resourcePolicy.SuccessfullyCreated'));
-                onRequestClose(true);
+                return;
               }
+              if (errors && errors.length > 0) {
+                errors.forEach((error) => message.error(error.message, 2.5));
+                onRequestClose(false);
+                return;
+              }
+
+              message.success(t('resourcePolicy.SuccessfullyUpdated'));
+              onRequestClose(true);
             },
             onError(err) {
-              message.error(err.message);
+              message.error(painKiller.relieve(err?.message));
             },
           });
         }
