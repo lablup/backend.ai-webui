@@ -1,6 +1,7 @@
 import { GBToBytes, bytesToGB } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
@@ -43,6 +44,8 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
+  const painKiller = usePainKiller();
+
   const formRef = useRef<FormInstance>(null);
 
   const baiClient = useSuspendedBackendaiClient();
@@ -166,7 +169,11 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
             },
             onCompleted(res, errors) {
               if (!res?.create_user_resource_policy?.ok || errors) {
-                message.error(res?.create_user_resource_policy?.msg);
+                message.error(
+                  painKiller.relieve(
+                    res?.create_user_resource_policy?.msg as string,
+                  ),
+                );
                 onRequestClose();
               } else {
                 message.success(
@@ -176,7 +183,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
               }
             },
             onError(error) {
-              message.error(error?.message);
+              message.error(painKiller.relieve(error?.message));
             },
           });
         } else {
@@ -187,7 +194,11 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
             },
             onCompleted(res, errors) {
               if (!res?.modify_user_resource_policy?.ok || errors) {
-                message.error(res?.modify_user_resource_policy?.msg);
+                message.error(
+                  painKiller.relieve(
+                    res?.modify_user_resource_policy?.msg as string,
+                  ),
+                );
                 onRequestClose();
               } else {
                 message.success(
@@ -197,7 +208,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
               }
             },
             onError(error) {
-              message.error(error?.message);
+              message.error(painKiller.relieve(error?.message));
             },
           });
         }
