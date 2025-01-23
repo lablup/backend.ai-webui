@@ -22,7 +22,7 @@ import { CardProps } from 'antd/lib';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { CheckIcon } from 'lucide-react';
-import React, { Suspense, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { fetchQuery, useRelayEnvironment } from 'react-relay';
 
@@ -44,6 +44,7 @@ export interface SessionOwnerSetterFormValues {
         enabled: false;
         domainName?: string;
       };
+  // When owner is changes, mounts and vfolderAliasMap should be reset
 }
 
 const SessionOwnerSetterCard: React.FC<CardProps> = (props) => {
@@ -83,12 +84,22 @@ const SessionOwnerSetterCard: React.FC<CardProps> = (props) => {
     enabled: !!fetchingEmail,
   });
 
+  useEffect(() => {
+    data?.user &&
+      form.setFieldsValue({
+        // @ts-ignore
+        mounts: undefined,
+        vfolderAliasMap: {},
+      });
+  }, [data, form]);
+
   const ownerKeypairs = form.getFieldValue(['owner', 'email'])
     ? data?.keypairs
     : undefined;
   const owner = form.getFieldValue(['owner', 'email']) ? data?.user : undefined;
 
   const nonExistentOwner = !isFetching && fetchingEmail && !owner;
+
   return (
     <Card
       title={t('session.launcher.SetSessionOwner')}
@@ -143,7 +154,6 @@ const SessionOwnerSetterCard: React.FC<CardProps> = (props) => {
                   <Input.Search
                     onSearch={(v) => {
                       // startTransition(()=>{
-
                       form
                         .validateFields([['owner', 'email']])
                         .then(() => {
