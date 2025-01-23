@@ -195,7 +195,6 @@ const router = createBrowserRouter([
               const [experimentalNeoSessionList] = useBAISettingUserState(
                 'experimental_neo_session_list',
               );
-              const { t } = useTranslation();
 
               useSuspendedBackendaiClient();
 
