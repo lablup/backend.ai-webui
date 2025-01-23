@@ -39,7 +39,12 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
   const handleClick = () => {
     onRequestClose();
     const installPromises = imagesToInstall.map(async (image) => {
-      const imageName = image?.registry + '/' + image?.name + ':' + image?.tag;
+      const imageName =
+        image?.registry +
+        '/' +
+        (image?.namespace ?? image?.name) +
+        ':' +
+        image?.tag;
       let isGPURequired = false;
       const imageResource = {} as { [key: string]: any };
       image?.resource_limits?.forEach((resourceLimit) => {
@@ -163,7 +168,8 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
           <List
             size="small"
             dataSource={imagesToInstall.map(
-              (image) => `${image?.registry}/${image?.name}/${image?.tag}`,
+              (image) =>
+                `${image?.registry}/${image?.namespace ?? image?.name}/${image?.tag}`,
             )}
             style={{
               width: '100%',

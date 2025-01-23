@@ -94,11 +94,11 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
         formRef.current
           ?.validateFields()
           .then((values) => {
-            if (vfolder?.name && vfolder.host) {
+            if (vfolder?.id && vfolder.host) {
               mutationToClone.mutate(
                 {
                   input: values,
-                  name: vfolder.name,
+                  name: vfolder.id,
                 },
                 {
                   onSuccess(data) {
@@ -109,7 +109,7 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
                         status: 'pending',
                         percent: 0,
                         taskId: data.bgtask_id,
-                        statusDescriptions: {
+                        onChange: {
                           pending: t('data.folders.FolderClonePending'),
                           resolved: t('data.folders.FolderCloned'),
                           rejected: t('data.folders.FolderCloneFailed'),

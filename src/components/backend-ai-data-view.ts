@@ -93,6 +93,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({ type: Object }) options;
   @property({ type: Number }) capacity;
   @property({ type: String }) cloneFolderName = '';
+  @property({ type: String }) cloneFolder = '';
   @property({ type: Object }) storageProxyInfo = Object();
   @property({ type: String }) folderType = 'user';
   @property({ type: Number }) currentGroupIdx = 0;
@@ -820,6 +821,11 @@ export default class BackendAIData extends BackendAIPage {
       if (e.detail) {
         const selectedItems = e.detail;
         this.cloneFolderName = selectedItems.name;
+        this.cloneFolder = globalThis.backendaiclient.supports(
+          'vfolder-id-based',
+        )
+          ? selectedItems.id
+          : selectedItems.name;
         this._cloneFolderDialog();
       }
     });
@@ -1257,7 +1263,7 @@ export default class BackendAIData extends BackendAIPage {
     }
     cloneable = cloneableEl ? cloneableEl.selected : false;
     this.cloneFolderNameInput.reportValidity();
-    if (this.cloneFolderNameInput.checkValidity()) {
+    if (this.cloneFolderNameInput.checkValidity() && this.cloneFolder) {
       const input = {
         cloneable: cloneable,
         permission: permission,
@@ -1267,7 +1273,7 @@ export default class BackendAIData extends BackendAIPage {
       };
       const job = globalThis.backendaiclient.vfolder.clone(
         input,
-        this.cloneFolderName,
+        this.cloneFolder,
       );
       job
         .then(() => {

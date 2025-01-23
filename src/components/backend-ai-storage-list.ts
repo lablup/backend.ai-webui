@@ -105,6 +105,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({ type: Boolean }) enableVfolderTrashBin = false;
   @property({ type: Boolean }) authenticated = false;
   @property({ type: String }) renameFolderName = '';
+  @property({ type: String }) renameFolderID = '';
   @property({ type: String }) deleteFolderName = '';
   @property({ type: String }) deleteFolderID = '';
   @property({ type: String }) leaveFolderName = '';
@@ -1932,8 +1933,10 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {Event} e - click the info icon button
    * */
   _infoFolder(e) {
-    const folderName = this._getControlName(e);
-    const job = globalThis.backendaiclient.vfolder.info(folderName);
+    const folder = globalThis.backendaiclient.supports('vfolder-id-based')
+      ? this._getControlID(e)
+      : this._getControlName(e);
+    const job = globalThis.backendaiclient.vfolder.info(folder);
     job
       .then((value) => {
         this.folderInfo = value;
@@ -1955,7 +1958,10 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {Event} e - click the settings icon button
    * */
   _modifyFolderOptionDialog(e) {
-    globalThis.backendaiclient.vfolder.name = this._getControlName(e);
+    globalThis.backendaiclient.vfolder.name =
+      globalThis.backendaiclient.supports('vfolder-id-based')
+        ? this._getControlID(e)
+        : this._getControlName(e);
     const job = globalThis.backendaiclient.vfolder.info(
       globalThis.backendaiclient.vfolder.name,
     );
@@ -2075,6 +2081,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    */
   async _updateFolderName() {
     globalThis.backendaiclient.vfolder.name = this.renameFolderName;
+    globalThis.backendaiclient.vfolder.id = this.renameFolderID;
     const newName = this.newFolderNameInput.value;
     this.newFolderNameInput.reportValidity();
     if (newName) {
@@ -2101,6 +2108,11 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {Event} e - click the
    */
   _renameFolderDialog(e) {
+    this.renameFolderID = globalThis.backendaiclient.supports(
+      'vfolder-id-based',
+    )
+      ? this._getControlID(e)
+      : this._getControlName(e);
     this.renameFolderName = this._getControlName(e);
     this.newFolderNameInput.value = '';
     this.openDialog('modify-folder-name-dialog');
@@ -2427,7 +2439,11 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {Event} e - click the share button
    * */
   _shareFolderDialog(e) {
-    this.selectedFolder = this._getControlName(e);
+    this.selectedFolder = globalThis.backendaiclient.supports(
+      'vfolder-id-based',
+    )
+      ? this._getControlID(e)
+      : this._getControlName(e);
     this.selectedFolderType = this._getControlType(e);
     this._initializeSharingFolderDialogLayout();
     this.openDialog('share-folder-dialog');

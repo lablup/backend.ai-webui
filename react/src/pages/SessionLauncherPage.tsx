@@ -570,7 +570,7 @@ const SessionLauncherPage = () => {
           backgroundTask: {
             promise: Promise.all(sessionPromises),
             status: 'pending',
-            statusDescriptions: {
+            onChange: {
               pending: t('session.PreparingSession'),
               resolved: t('eduapi.ComputeSessionPrepared'),
             },
