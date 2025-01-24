@@ -97,7 +97,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
   @property({ type: Object }) _boundCreatedTimeRenderer = Object();
   @property({ type: Object }) _boundSizeRenderer = Object();
   @property({ type: Object }) _boundControlFileListRenderer = Object();
-  @state() private _unionedAllowedPermissionByVolume = Object();
+  @state() _unionedAllowedPermissionByVolume = Object();
 
   @query('#rename-file-dialog') renameDialog!: BackendAIDialog;
   @query('#new-file-name') newNameInput!: TextField;
@@ -760,6 +760,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
         };
       }),
     );
+    this.fileListGrid.clearCache();
   }
 
   private async _getCurrentKeypairResourcePolicy() {
