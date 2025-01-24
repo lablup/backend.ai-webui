@@ -432,6 +432,19 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     },
   });
 
+  items.push({
+    label: 'Autoscaling Rule',
+    children: (
+      <>
+        <Tag>vllm_avg_prompt_throughput_toks_per_s</Tag>
+        <Tag>LESS_THAN</Tag>
+        <Tag>Cool down sec: 300</Tag>
+        <Tag>Min Replica #: 1</Tag>
+        <Tag>Max Replica #: 3</Tag>
+      </>
+    ),
+  });
+
   return (
     <Flex direction="column" align="stretch" gap="sm">
       <Breadcrumb

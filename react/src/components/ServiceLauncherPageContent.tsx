@@ -45,6 +45,7 @@ import {
   theme,
   Tooltip,
   Tag,
+  InputNumber,
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
@@ -909,6 +910,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                       ) : null}
                     </>
                   )}
+                </Card>
+                <Card>
                   <Form.Item
                     label={t('modelService.NumberOfReplicas')}
                     name={'replicas'}
@@ -941,6 +944,89 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                       step={1}
                     />
                   </Form.Item>
+                  <Form.Item
+                    label={'Metric Source'}
+                    name={'metricSource'}
+                    rules={[]}
+                  >
+                    <Select>
+                      <Select.Option value={'inference_framework'}>
+                        Inference Framework
+                      </Select.Option>
+                      <Select.Option value={'kernel'}>Kernel</Select.Option>
+                    </Select>
+                  </Form.Item>
+                  <Form.Item
+                    label={'Metric Name'}
+                    name={'metricName'}
+                    rules={[{ required: true }]}
+                  >
+                    <Input />
+                  </Form.Item>
+                  <Form.Item
+                    label={'Comparator'}
+                    name={'comparator'}
+                    rules={[{ required: true }]}
+                  >
+                    <Select>
+                      <Select.Option value={'LESS_THAN'}>
+                        Less than
+                      </Select.Option>
+                      <Select.Option value={'LESS_THAN_OR_EQUAL'}>
+                        Less than or equal
+                      </Select.Option>
+                      <Select.Option value={'GREATER_THAN'}>
+                        Greater than
+                      </Select.Option>
+                      <Select.Option value={'GREATER_THAN_OR_EQUAL'}>
+                        Greater than or equal
+                      </Select.Option>
+                    </Select>
+                  </Form.Item>
+                  <Form.Item
+                    label={'Step size'}
+                    name={'stepSize'}
+                    rules={[{ required: true }]}
+                  >
+                    <InputNumberWithSlider
+                      // TODO: hardcoded for now
+                      min={-3}
+                      max={3}
+                      inputNumberProps={{}}
+                      step={1}
+                      allowNegative
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label={'Cooldown Seconds'}
+                    name={'cooldownSeconds'}
+                    rules={[]}
+                  >
+                    <InputNumber defaultValue={300}></InputNumber>
+                  </Form.Item>
+                  <Flex
+                    direction="row"
+                    justify="around"
+                    align="stretch"
+                    style={{ width: '100%' }}
+                  >
+                    <Form.Item
+                      label={'Minimum Replicas'}
+                      name={'minReplicas'}
+                      style={{ width: '100%' }}
+                    >
+                      <InputNumber min={0} max={50} style={{ width: 300 }} />
+                    </Form.Item>
+                    <Form.Item
+                      label={'Maximum Replicas'}
+                      name={'maxReplicas'}
+                      style={{ width: '100%' }}
+                    >
+                      <InputNumber min={0} max={50} style={{ width: 300 }} />
+                    </Form.Item>
+                  </Flex>
+                </Card>
+                <Card>
                   {(baiClient.supports('modify-endpoint') || !endpoint) && (
                     <>
                       <ImageEnvironmentSelectFormItems
