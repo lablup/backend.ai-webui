@@ -434,7 +434,8 @@
     "FGPU": "fGPU",
     "ReadLess": "Бага унш",
     "ReadMore": "Цааш унших...",
-    "CommitImageName": "Оруулсан зургийн нэр"
+    "CommitImageName": "Оруулсан зургийн нэр",
+    "IdleCheckExpirationWarning": "Сул зогсолтын шалгалтын үр дүнд үндэслэн хуралдааныг зогсоож болно."
   },
   "button": {
     "Cancel": "Цуцлах",

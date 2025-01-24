@@ -722,6 +722,7 @@ class Client {
     if (this.isManagerVersionCompatibleWith('24.09')) {
       this._features['extend-login-session'] = true;
       this._features['session-node'] = true;
+      this._features['idle-checks-gql'] = true;
     }
     if (this.isManagerVersionCompatibleWith('24.09.1')) {
       this._features['agent-select'] = true;

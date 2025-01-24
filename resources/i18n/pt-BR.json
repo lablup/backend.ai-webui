@@ -433,7 +433,8 @@
     "FGPU": "fGPU",
     "ReadLess": "Ler menos",
     "ReadMore": "Ler mais...",
-    "CommitImageName": "Nome da imagem confirmada"
+    "CommitImageName": "Nome da imagem confirmada",
+    "IdleCheckExpirationWarning": "As sessões podem ser encerradas com base nos resultados das verificações de inatividade."
   },
   "button": {
     "Cancel": "Cancelar",

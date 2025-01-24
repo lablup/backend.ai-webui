@@ -23,6 +23,7 @@ const SessionReservation: React.FC<{
     `,
     sessionFrgmt,
   );
+
   return (
     <>
       {dayjs(session.created_at).format('lll')}

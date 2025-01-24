@@ -432,7 +432,8 @@
     "FGPU": "fGPU",
     "ReadLess": "Daha az oku",
     "ReadMore": "Daha Fazlasını Oku...",
-    "CommitImageName": "Taahhüt edilen resim adı"
+    "CommitImageName": "Taahhüt edilen resim adı",
+    "IdleCheckExpirationWarning": "Idleness Check sonuçlarına göre oturumlar sonlandırılabilir."
   },
   "button": {
     "Cancel": "İptal etmek",

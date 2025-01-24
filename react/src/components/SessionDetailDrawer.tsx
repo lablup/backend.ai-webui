@@ -22,6 +22,7 @@ const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
   const [isPendingReload, startReloadTransition] = useTransition();
 
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
+
   return (
     <Drawer
       title={t('session.SessionInfo')}
@@ -49,7 +50,15 @@ const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
     >
       <Suspense fallback={<Skeleton />}>
         {sessionId && (
-          <SessionDetailContent id={sessionId} fetchKey={fetchKey} />
+          <SessionDetailContent
+            id={sessionId}
+            value={fetchKey}
+            onChange={() => {
+              startReloadTransition(() => {
+                updateFetchKey();
+              });
+            }}
+          />
         )}
       </Suspense>
     </Drawer>

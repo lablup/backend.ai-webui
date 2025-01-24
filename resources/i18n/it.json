@@ -433,7 +433,8 @@
     "FGPU": "fGPU",
     "ReadLess": "Leggi di più",
     "ReadMore": "Per saperne di più...",
-    "CommitImageName": "Nome dell'immagine confermata"
+    "CommitImageName": "Nome dell'immagine confermata",
+    "IdleCheckExpirationWarning": "Le sessioni possono essere interrotte in base ai risultati dei controlli di inattività."
   },
   "button": {
     "Cancel": "Annulla",
