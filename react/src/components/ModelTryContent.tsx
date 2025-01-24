@@ -240,7 +240,7 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
               case 'vllm':
               case 'custom':
               default:
-                return '0.6.6-cuda12.4-ubuntu22.04';// '0.6.2-cuda12.1-ubuntu22.04';
+                return '0.6.6-cuda12.4-ubuntu22.04'; // '0.6.2-cuda12.1-ubuntu22.04';
               case 'nim':
                 return 'ngc-nim:1.0.0-llama3.8b-h100x1-fp16';
             }
@@ -335,7 +335,7 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
                 status: 'pending',
                 percent: 50,
                 taskId: data.bgtask_id,
-                statusDescriptions: {
+                onChange: {
                   pending: 'Downloading model is in progress...', // t('data.folders.FolderClonePending'),
                   resolved: 'Successfully downloaded model.', // t('data.folders.FolderCloned'),
                   rejected:
@@ -384,12 +384,6 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
                                 }
                               }, 5000);
                             }),
-                            statusDescriptions: {
-                              pending: 'Model service is starting...',
-                              resolved: 'Model service is now ready!',
-                              rejected:
-                                'Model service failed to start. Please check the service status.',
-                            },
                             status: 'pending',
                             percent: 0,
                             onResolve: () => {
@@ -480,7 +474,7 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
                     }
                   }, 5000);
                 }),
-                statusDescriptions: {
+                onChange: {
                   pending: 'Model service is starting...',
                   resolved: 'Model service is now ready!',
                   rejected:
