@@ -7,6 +7,8 @@ import {
   SyntaxHighlighterProps,
 } from 'react-syntax-highlighter';
 import { oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import rehypeKatex from 'rehype-katex';
+import remarkMath from 'remark-math';
 
 const { Text } = Typography;
 
@@ -15,6 +17,8 @@ const ChatMessageContent: React.FC<{
 }> = ({ children }) => {
   return (
     <Markdown
+      remarkPlugins={[remarkMath]}
+      rehypePlugins={[rehypeKatex]}
       components={{
         p({ node, ...props }) {
           return <p {...props} style={{ whiteSpace: 'pre-wrap' }} />;
