@@ -66,7 +66,9 @@
       "DisMatchUserEmail": "Kullanıcı E-postası eşleşmiyor",
       "MyEnvironments": "Ortamlarım",
       "ResourcePolicy": "Kaynak Politikası",
-      "FullNameUpdated": "Tam ad başarıyla güncellendi."
+      "FullNameUpdated": "Tam ad başarıyla güncellendi.",
+      "Playground": "Bahçesi",
+      "ModelStore": "Model Mağazası"
     },
     "YouAreOffline": "Çevrimdışı: Herhangi bir ağa bağlı değil.",
     "YouAreOnline": "artık çevrimiçisin",
@@ -1679,7 +1681,10 @@
     "CloneInfo": "Kullanıcı tipi klasörünüz olarak klonlanacaktır.",
     "CloneToFolder": "Bir klasöre klonlama",
     "FolderAlreadyExists": "Bu isimde bir klasör zaten mevcut.",
-    "FinetuneModel": "İnce Ayar Modeli"
+    "FinetuneModel": "İnce Ayar Modeli",
+    "Experience": "Deneyim",
+    "ModelCard": "Model Kartı",
+    "ImportFromHuggingFace": "Sarılma Yüzünden İçe Aktar"
   },
   "table": {
     "SettingTable": "Tablo Ayarı",
@@ -1754,5 +1759,10 @@
     "ReloadPage": "Sayfayı yeniden yükle",
     "ResetErrorBoundary": "ErrorBoundary'yi Sıfırla",
     "Title": "Bir hata oluştu."
+  },
+  "modelserving": {
+    "menu": {
+      "MyServices": "Hizmetlerim"
+    }
   }
 }

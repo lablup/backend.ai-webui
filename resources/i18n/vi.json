@@ -66,7 +66,9 @@
       "DisMatchUserEmail": "E-mail của người dùng không khớp",
       "MyEnvironments": "Môi trường của tôi",
       "ResourcePolicy": "Chính sách tài nguyên",
-      "FullNameUpdated": "Tên đầy đủ được cập nhật thành công."
+      "FullNameUpdated": "Tên đầy đủ được cập nhật thành công.",
+      "Playground": "Sân chơi",
+      "ModelStore": "Cửa hàng mô hình"
     },
     "YouAreOffline": "Ngoại tuyến: Không kết nối với bất kỳ mạng nào.",
     "YouAreOnline": "Bạn hiện đang trực tuyến",
@@ -1680,7 +1682,10 @@
     "CloneInfo": "Nó sẽ được sao chép thành thư mục loại người dùng của bạn.",
     "CloneToFolder": "Sao chép vào một thư mục",
     "FolderAlreadyExists": "Một thư mục có tên này đã tồn tại.",
-    "FinetuneModel": "Mô hình Finetune"
+    "FinetuneModel": "Mô hình Finetune",
+    "Experience": "Kinh nghiệm",
+    "ModelCard": "Thẻ mẫu",
+    "ImportFromHuggingFace": "Nhập Từ Ôm Mặt"
   },
   "table": {
     "SettingTable": "Cài đặt bảng",
@@ -1755,5 +1760,11 @@
     "ReloadPage": "Tải lại trang",
     "ResetErrorBoundary": "Đặt lại ranh giới lỗi",
     "Title": "Một lỗi đã xảy ra."
+  },
+  "modelserving": {
+    "menu": {
+      "ModelList": "Danh sách mẫu",
+      "MyServices": "Dịch vụ của tôi"
+    }
   }
 }

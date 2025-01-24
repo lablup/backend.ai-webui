@@ -1645,7 +1645,9 @@
       "DisMatchUserEmail": "El correo electrónico del usuario no coincide",
       "MyEnvironments": "Mis ambientes",
       "ResourcePolicy": "Política de recursos",
-      "FullNameUpdated": "El nombre completo se ha actualizado correctamente."
+      "FullNameUpdated": "El nombre completo se ha actualizado correctamente.",
+      "Playground": "Patio de juegos",
+      "ModelStore": "Tienda de modelos"
     },
     "NetworkSoftTimeout": "El servidor está tardando más en responder. Por favor, espere un momento",
     "NotFound": "<p>¡Oops!<br/>Página no encontrada...</p>",
@@ -1680,7 +1682,10 @@
     "CloneInfo": "Se clonará como su carpeta de tipo de usuario.",
     "CloneToFolder": "Clonar en una carpeta",
     "FolderAlreadyExists": "Ya existe una carpeta con este nombre.",
-    "FinetuneModel": "Modelo de ajuste fino"
+    "FinetuneModel": "Modelo de ajuste fino",
+    "Experience": "Experiencia",
+    "ModelCard": "Tarjeta modelo",
+    "ImportFromHuggingFace": "Importar desde la cara abrazada"
   },
   "table": {
     "SettingTable": "Ajuste de la tabla",
@@ -1755,5 +1760,12 @@
     "ReloadPage": "Recargar la página",
     "ResetErrorBoundary": "Restablecer ErrorBoundary",
     "Title": "Se ha producido un error."
+  },
+  "modelserving": {
+    "menu": {
+      "ModelServices": "Servicios modelo",
+      "ModelList": "Lista de modelos",
+      "MyServices": "Mis servicios"
+    }
   }
 }

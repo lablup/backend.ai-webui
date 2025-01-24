@@ -1645,7 +1645,9 @@
       "DisMatchUserEmail": "Käyttäjän sähköpostiosoite ei täsmää",
       "MyEnvironments": "Omat ympäristöt",
       "ResourcePolicy": "Resurssipolitiikka",
-      "FullNameUpdated": "Koko nimi on päivitetty onnistuneesti."
+      "FullNameUpdated": "Koko nimi on päivitetty onnistuneesti.",
+      "Playground": "Leikkikenttä",
+      "ModelStore": "Mallikauppa"
     },
     "NetworkSoftTimeout": "Palvelimen vastaus kestää kauemmin. Odota hetki",
     "NotFound": "<p>Oops!<br/>Sivua ei löydy...</p>",
@@ -1680,7 +1682,10 @@
     "Version": "Versio",
     "CloneToFolder": "Kloonaa kansioon",
     "FolderAlreadyExists": "Tämän niminen kansio on jo olemassa.",
-    "FinetuneModel": "Finetune malli"
+    "FinetuneModel": "Finetune malli",
+    "Experience": "Kokea",
+    "ModelCard": "Mallikortti",
+    "ImportFromHuggingFace": "Tuo halaavista kasvoista"
   },
   "table": {
     "SettingTable": "Kattaus",
@@ -1754,5 +1759,12 @@
     "ReloadPage": "Lataa sivu uudelleen",
     "ResetErrorBoundary": "Nollaa ErrorBoundary",
     "Title": "On tapahtunut virhe."
+  },
+  "modelserving": {
+    "menu": {
+      "ModelServices": "Mallipalvelut",
+      "ModelList": "Malliluettelo",
+      "MyServices": "Omat palvelut"
+    }
   }
 }

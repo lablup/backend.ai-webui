@@ -66,7 +66,9 @@
       "DisMatchUserEmail": "Электронная почта пользователя не совпадает",
       "MyEnvironments": "Моя среда",
       "ResourcePolicy": "Ресурсная политика",
-      "FullNameUpdated": "Полное имя успешно обновлено."
+      "FullNameUpdated": "Полное имя успешно обновлено.",
+      "Playground": "Детская площадка",
+      "ModelStore": "Модельный магазин"
     },
     "YouAreOffline": "Не в сети: Не подключен ни к одной сети.",
     "YouAreOnline": "Вы сейчас в сети",
@@ -1680,7 +1682,10 @@
     "CloneInfo": "Она будет клонирована как папка вашего типа пользователя.",
     "CloneToFolder": "Клонирование в папку",
     "FolderAlreadyExists": "Папка с таким именем уже существует.",
-    "FinetuneModel": "Точная настройка модели"
+    "FinetuneModel": "Точная настройка модели",
+    "Experience": "Опыт",
+    "ModelCard": "Модель карты",
+    "ImportFromHuggingFace": "Импорт из обнимающего лица"
   },
   "table": {
     "SettingTable": "Сервировка стола",
@@ -1755,5 +1760,12 @@
     "ReloadPage": "Перезагрузить страницу",
     "ResetErrorBoundary": "Сброс границы ошибки",
     "Title": "Произошла ошибка."
+  },
+  "modelserving": {
+    "menu": {
+      "ModelServices": "Модельные услуги",
+      "ModelList": "Список моделей",
+      "MyServices": "Мои услуги"
+    }
   }
 }
