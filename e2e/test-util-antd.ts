@@ -1,4 +1,4 @@
-import { Locator, expect } from '@playwright/test';
+import { Locator, Page, expect } from '@playwright/test';
 
 export async function checkActiveTab(
   tabsLocator: Locator,
@@ -9,7 +9,7 @@ export async function checkActiveTab(
 }
 
 export async function getTableHeaders(locator: Locator) {
-  return await locator.locator(".ant-table-thead th");
+  return await locator.locator('.ant-table-thead th');
 }
 
 export async function findColumnIndex(
@@ -22,4 +22,16 @@ export async function findColumnIndex(
   }, columnTitle);
 
   return columnIndex;
+}
+
+export function getNotificationTextContainer(page: Page) {
+  return page.locator('.ant-notification-notice-description');
+}
+
+export function getNotificationMessageBox(page: Page) {
+  return getNotificationTextContainer(page).locator('li > div > div >> nth=0');
+}
+
+export function getNotificationDescriptionBox(page: Page) {
+  return getNotificationTextContainer(page).locator('li > div > div >> nth=1');
 }
