@@ -1,5 +1,6 @@
 import SessionKernelTags from '../components/ImageTags';
 import { toGlobalId } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
@@ -40,6 +41,7 @@ const SessionDetailContent: React.FC<{
   const { open } = useFolderExplorerOpener();
   const currentProject = useCurrentProjectValue();
   const userRole = useCurrentUserRole();
+  const baiClient = useSuspendedBackendaiClient();
 
   const { md } = Grid.useBreakpoint();
   // TODO: remove and refactor this waterfall request after v24.12.0
@@ -91,6 +93,16 @@ const SessionDetailContent: React.FC<{
               }
             }
             vfolder_mounts
+            vfolder_nodes @since(version: "25.2.0") {
+              edges {
+                node {
+                  id
+                  row_id
+                  name
+                }
+              }
+              count
+            }
             created_at @required(action: NONE)
             terminated_at
             scaling_group
@@ -131,6 +143,7 @@ const SessionDetailContent: React.FC<{
     legacy_session?.image &&
     legacy_session?.architecture &&
     legacy_session.image + '@' + legacy_session.architecture;
+
   return session ? (
     <Flex direction="column" gap={'sm'} align="stretch">
       {session_for_project_id?.group_id !== currentProject.id && (
@@ -193,25 +206,44 @@ const SessionDetailContent: React.FC<{
           )}
         </Descriptions.Item>
         <Descriptions.Item label={t('session.launcher.MountedFolders')}>
-          {_.map(
-            _.zip(legacy_session?.mounts, session?.vfolder_mounts),
-            (mountInfo) => {
-              const [name, id] = mountInfo;
-              return (
-                <Button
-                  key={id}
-                  type="link"
-                  size="small"
-                  icon={<FolderOutlined />}
-                  onClick={() => {
-                    open(id ?? '');
-                  }}
-                >
-                  {name}
-                </Button>
-              );
-            },
-          )}
+          {baiClient.supports('vfolder-nodes')
+            ? _.map(session?.vfolder_nodes?.edges, (vfolder) => {
+                return (
+                  <Button
+                    key={vfolder?.node?.id}
+                    type="link"
+                    size="small"
+                    icon={<FolderOutlined />}
+                    onClick={() => {
+                      open(vfolder?.node?.row_id ?? '');
+                    }}
+                  >
+                    {vfolder?.node?.name}
+                  </Button>
+                );
+              })
+            : _.map(
+                // compute_session_node query's vfolder_mounts is not include name.
+                // To provide vfolder name in compute_session_node, schema must be changed.
+                // legacy_session.mounts (name) and session.vfolder_mounts (id) give vfolder information in same order.
+                _.zip(legacy_session?.mounts, session?.vfolder_mounts),
+                (mountInfo) => {
+                  const [name, id] = mountInfo;
+                  return (
+                    <Button
+                      key={id}
+                      type="link"
+                      size="small"
+                      icon={<FolderOutlined />}
+                      onClick={() => {
+                        open(id ?? '');
+                      }}
+                    >
+                      {name}
+                    </Button>
+                  );
+                },
+              )}
         </Descriptions.Item>
         <Descriptions.Item label={t('session.launcher.ResourceAllocation')}>
           <Flex gap={'sm'} wrap="wrap">
