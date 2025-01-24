@@ -17,6 +17,7 @@ const ChatMessageContent: React.FC<{
     <Markdown
       components={{
         p({ node, ...props }) {
+          // @ts-ignore
           return <p {...props} style={{ whiteSpace: 'pre-wrap' }} />;
         },
         code(props) {
@@ -61,6 +62,7 @@ const ChatMessageContent: React.FC<{
             </Card>
           ) : (
             <code {...rest} className={className}>
+              {/* @ts-ignore */}
               {children}
             </code>
           );
