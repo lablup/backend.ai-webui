@@ -145,16 +145,34 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     }
   }, [aliasMap, internalForm, aliasBasePath]);
 
+  const formInstance = Form.useFormInstance();
+  const ownerInfo = formInstance.getFieldValue(['owner']);
+  // valid when owner is enabled and all fields are not undefined
+  const isValidOwner =
+    ownerInfo?.enabled &&
+    (!_.isEmpty(ownerInfo)
+      ? _.every(_.omit(ownerInfo, 'enabled'), (key, value) => {
+          return key !== undefined;
+        })
+      : false);
+  const ownerEmail = isValidOwner ? ownerInfo.email : undefined;
+
+  useEffect(() => {
+    formInstance.setFieldsValue({ mounts: undefined, vfolderAliasMap: {} });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isValidOwner]);
+
   const { t } = useTranslation();
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const currentProject = useCurrentProjectValue();
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const { data: allFolderList } = useSuspenseTanQuery({
-    queryKey: ['VFolderSelectQuery', fetchKey, currentProject.id],
+    queryKey: ['VFolderSelectQuery', fetchKey, currentProject.id, ownerEmail],
     queryFn: () => {
       const search = new URLSearchParams();
       search.set('group_id', currentProject.id);
+      ownerEmail && search.set('owner_user_email', ownerEmail);
       return baiRequestWithPromise({
         method: 'GET',
         url: `/folders?${search.toString()}`,
