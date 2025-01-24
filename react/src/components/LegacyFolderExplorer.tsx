@@ -8,6 +8,7 @@ import {
   FileAddOutlined,
   FolderAddOutlined,
   UploadOutlined,
+  CloudDownloadOutlined,
 } from '@ant-design/icons';
 import {
   Button,
@@ -103,6 +104,16 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
               }}
             >
               {lg && t('button.Delete')}
+            </Button>
+            <Button
+              disabled={!isSelected || !isWritable}
+              icon={<CloudDownloadOutlined />}
+              onClick={() => {
+                // @ts-ignore
+                folderExplorerRef.current?._downloadMultipleFiles();
+              }}
+            >
+              {lg && t('button.Download')}
             </Button>
             <Button
               disabled={!isWritable}
