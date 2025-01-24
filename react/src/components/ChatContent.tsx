@@ -1,7 +1,7 @@
 import { useTanQuery } from '../hooks/reactQueryAlias';
+import { Model } from './Chat/ChatUIModal';
+import LLMChatCard from './Chat/LLMChatCard';
 import { ChatContentEndpointDetailQuery } from './__generated__/ChatContentEndpointDetailQuery.graphql';
-import { Model } from './lablupTalkativotUI/ChatUIModal';
-import LLMChatCard from './lablupTalkativotUI/LLMChatCard';
 import { ReloadOutlined } from '@ant-design/icons';
 import { Alert, Button } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
