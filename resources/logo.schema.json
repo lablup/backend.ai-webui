@@ -34,6 +34,6 @@
       }
     }
   },
-  "required": ["src", "srcDark", "title", "alt", "href"],
+  "required": ["src"],
   "additionalProperties": false
 }
