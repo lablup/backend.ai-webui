@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 type LogoConfig = {
   src: string;
   srcDark?: string;
-  logoTitle?: string;
+  title?: string;
   alt?: string;
   href?: string;
   size?: {
