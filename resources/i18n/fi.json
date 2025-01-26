@@ -1451,7 +1451,7 @@
     "DescUseGUIonWeb": "Backend.AI GUI:n tarjoaminen verkkopalveluna. Edellyttää Backend.AI Web UI -kuvaa.",
     "DescWarboySupport": "Käytä Furiosa Warboy -tukea",
     "EnterpriseFeatures": "Yrityksen ominaisuudet",
-    "EnvConfigWillDisappear": "Kaikki tallentamattomat ympäristömuuttujat ja -arvot häviävät.",
+    "EnvConfigWillDisappear": "Kaikki pelastamaton ympäristömuuttuja ja arvo katoaa.",
     "FifoOnly": "Tällä hetkellä muutokset ovat mahdollisia vain silloin, kun aikatauluttaja on FIFO.",
     "FractionalGPU": "Murto-osa GPU",
     "GUI": "GUI",

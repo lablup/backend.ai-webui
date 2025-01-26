@@ -68,6 +68,7 @@ const UserCredentialsPage = React.lazy(
 const AgentSummaryPage = React.lazy(() => import('./pages/AgentSummaryPage'));
 const MaintenancePage = React.lazy(() => import('./pages/MaintenancePage'));
 const StatisticsPage = React.lazy(() => import('./pages/StatisticsPage'));
+const ConfigurationsPage = React.lazy(() => import('./pages/ConfigurationsPage'));
 const SessionDetailAndContainerLogOpenerLegacy = React.lazy(
   () => import('./components/SessionDetailAndContainerLogOpenerLegacy'),
 );
@@ -414,6 +415,11 @@ const router = createBrowserRouter([
       },
       {
         path: '/settings',
+        element: (
+          <BAIErrorBoundary>
+            <ConfigurationsPage />
+          </BAIErrorBoundary>
+        ),
         handle: { labelKey: 'webui.menu.Configurations' },
       },
       {

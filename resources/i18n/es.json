@@ -1453,7 +1453,7 @@
     "DescUseGUIonWeb": "Proporcionar Backend.AI GUI como un servicio web. Requiere la imagen Backend.AI Web UI.",
     "DescWarboySupport": "Usa el apoyo de Furiosa Warboy",
     "EnterpriseFeatures": "Características de la empresa",
-    "EnvConfigWillDisappear": "Cualquier variable de entorno y valor no guardados desaparecerán.",
+    "EnvConfigWillDisappear": "Cualquier variable y valor de entorno no salvado desaparecerá.",
     "FifoOnly": "Actualmente, los cambios sólo son posibles cuando el planificador es FIFO.",
     "FractionalGPU": "GPU fraccionaria",
     "GUI": "GUI",
