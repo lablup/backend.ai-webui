@@ -51,14 +51,18 @@
   },
   "logo": {
     "src": "/manifest/backend.ai-webui-white.svg",
-    "srcCollapsed": "/manifest/backend.ai-brand-simple-white.svg",
     "srcDark": "/manifest/backend.ai-webui-black.svg",
-    "srcCollapsedDark": "/manifest/backend.ai-brand-simple-black.svg",
-    "logoTitle": "WebUI",
-    "logoTitleCollapsed": "WebUI",
+    "title": "WebUI",
+    "alt": "Backend.AI Logo",
+    "href": "/summary"
+  },
+  "logoCollapsed": {
+    "src": "/manifest/backend.ai-brand-simple-white.svg",
+    "srcDark": "/manifest/backend.ai-brand-simple-black.svg",
+    "title": "WebUI",
     "alt": "Backend.AI Logo",
     "href": "/summary",
-    "sizeCollapsed": {
+    "size": {
       "width": 34,
       "height": 34
     }
