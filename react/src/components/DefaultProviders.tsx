@@ -33,7 +33,7 @@ import React, {
   useState,
 } from 'react';
 import { useTranslation, initReactI18next } from 'react-i18next';
-import { RelayEnvironmentProvider } from 'react-relay';
+import { RelayEnvironmentProvider } from 'react-relay/hooks';
 import { BrowserRouter, useLocation, useNavigate } from 'react-router-dom';
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';

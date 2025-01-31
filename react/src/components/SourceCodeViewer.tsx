@@ -19,7 +19,7 @@ const SourceCodeViewer: React.FC<SourceCodeViewerProps> = ({
   language,
   wordWrap,
 }) => {
-  const timerRef = useRef<number>();
+  const timerRef = useRef<number>(null);
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
@@ -78,7 +78,7 @@ const SourceCodeViewer: React.FC<SourceCodeViewerProps> = ({
         text={children}
         onCopy={() => {
           setIsCopied(true);
-          clearTimeout(timerRef.current);
+          timerRef.current && clearTimeout(timerRef.current);
           timerRef.current = window.setTimeout(() => {
             setIsCopied(false);
           }, 2000);
