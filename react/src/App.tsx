@@ -65,6 +65,9 @@ const ComputeSessionList = React.lazy(
 );
 const AgentSummaryPage = React.lazy(() => import('./pages/AgentSummaryPage'));
 const MaintenancePage = React.lazy(() => import('./pages/MaintenancePage'));
+const ConfigurationsPage = React.lazy(
+  () => import('./pages/ConfigurationsPage'),
+);
 
 interface CustomHandle {
   title?: string;
@@ -322,7 +325,7 @@ const router = createBrowserRouter([
         path: '/maintenance',
         element: (
           <BAIErrorBoundary>
-            <MaintenancePage />
+            <ConfigurationsPage />
           </BAIErrorBoundary>
         ),
         handle: { labelKey: 'webui.menu.Maintenance' },
