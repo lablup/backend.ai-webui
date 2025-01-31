@@ -1,4 +1,6 @@
+import BAIModal from '../components/BAIModal';
 import SettingList, { SettingGroup } from '../components/SettingList';
+import useBAIConfigurationsSetting from '../hooks/useBAIConfigurationsSetting';
 import { SettingOutlined } from '@ant-design/icons';
 import { Button, Card } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -8,8 +10,13 @@ type TabKey = 'maintenance';
 
 const tabParam = withDefault(StringParam, 'configurations');
 
+const OverlayNetworkSettingsModal = () => {
+  const { t } = useTranslation();
+};
+
 const ConfigurationsSettingList = () => {
   const { t } = useTranslation();
+  const { options } = useBAIConfigurationsSetting();
 
   const settingGroupList: SettingGroup = [
     {
@@ -21,6 +28,7 @@ const ConfigurationsSettingList = () => {
           description: t('settings.DescRegisterNewImagesFromRepo'),
           value: false,
           defaultValue: false,
+          disabled: true,
         },
         {
           type: 'select',
@@ -39,8 +47,8 @@ const ConfigurationsSettingList = () => {
               { label: t('settings.image.None'), value: 'none' },
             ],
           },
-          defaultValue: 'digest',
-          value: 'digest',
+          defaultValue: options.image_pulling_behavior,
+          value: options.image_pulling_behavior,
         },
       ],
     },
@@ -53,6 +61,7 @@ const ConfigurationsSettingList = () => {
           description: t('settings.DescUseCLIonGUI'),
           value: false,
           defaultValue: false,
+          disabled: true,
         },
         {
           type: 'checkbox',
@@ -60,6 +69,7 @@ const ConfigurationsSettingList = () => {
           description: t('settings.DescUseGUIonWeb'),
           value: false,
           defaultValue: false,
+          disabled: true,
         },
       ],
     },
@@ -72,6 +82,7 @@ const ConfigurationsSettingList = () => {
           description: t('settings.DescAllowAgentSideRegistration'),
           value: true,
           defaultValue: true,
+          disabled: true,
         },
         {
           type: 'custom',
@@ -89,16 +100,28 @@ const ConfigurationsSettingList = () => {
         {
           type: 'checkbox',
           title: t('settings.OpenSourceCudaGPUSupport'),
-          description: <>{t('settings.DescCudaGPUSupport')}</>,
-          value: false,
-          defaultValue: false,
+          description: (
+            <>
+              {t('settings.DescCudaGPUSupport')}{' '}
+              {options.cuda_fgpu && (
+                <>
+                  <br />
+                  {t('settings.CUDAGPUdisabledByFGPUsupport')}
+                </>
+              )}
+            </>
+          ),
+          value: options.cuda_gpu,
+          defaultValue: options.cuda_gpu,
+          disabled: true,
         },
         {
           type: 'checkbox',
           title: t('settings.ROCMGPUSupport'),
-          description: t('DescRocmGPUSupport.DescCudaGPUSupport'),
-          value: false,
-          defaultValue: false,
+          description: t('settings.DescRocmGPUSupport'),
+          value: options.rocm_gpu,
+          defaultValue: options.rocm_gpu,
+          disabled: true,
         },
         {
           type: 'custom',
@@ -129,8 +152,9 @@ const ConfigurationsSettingList = () => {
               {t('settings.RequireFGPUPlugin')}
             </>
           ),
-          value: false,
-          defaultValue: false,
+          value: options.cuda_fgpu,
+          defaultValue: options.cuda_fgpu,
+          disabled: true,
         },
         {
           type: 'checkbox',
@@ -142,8 +166,9 @@ const ConfigurationsSettingList = () => {
               {t('settings.RequireTPUPlugin')}
             </>
           ),
-          value: false,
-          defaultValue: false,
+          value: options.tpu,
+          defaultValue: options.tpu,
+          disabled: true,
         },
         {
           type: 'checkbox',
@@ -155,8 +180,9 @@ const ConfigurationsSettingList = () => {
               {t('settings.RequireTPUPlugin')}
             </>
           ),
-          value: false,
-          defaultValue: false,
+          value: options.ipu,
+          defaultValue: options.ipu,
+          disabled: true,
         },
         {
           type: 'checkbox',
@@ -168,8 +194,9 @@ const ConfigurationsSettingList = () => {
               {t('settings.RequireATOMPlugin')}
             </>
           ),
-          value: false,
-          defaultValue: false,
+          value: options.atom,
+          defaultValue: options.atom,
+          disabled: true,
         },
         {
           type: 'checkbox',
@@ -181,8 +208,9 @@ const ConfigurationsSettingList = () => {
               {t('settings.RequireATOMPlusPlugin')}
             </>
           ),
-          value: false,
-          defaultValue: false,
+          value: options.atom_plus,
+          defaultValue: options.atom_plus,
+          disabled: true,
         },
         {
           type: 'checkbox',
@@ -194,8 +222,9 @@ const ConfigurationsSettingList = () => {
               {t('settings.RequireGaudi2Plugin')}
             </>
           ),
-          value: false,
-          defaultValue: false,
+          value: options.gaudi2,
+          defaultValue: options.gaudi2,
+          disabled: true,
         },
         {
           type: 'checkbox',
@@ -207,8 +236,9 @@ const ConfigurationsSettingList = () => {
               {t('settings.RequireWarboyPlugin')}
             </>
           ),
-          value: false,
-          defaultValue: false,
+          value: options.warboy,
+          defaultValue: options.warboy,
+          disabled: true,
         },
         {
           type: 'checkbox',
@@ -220,8 +250,9 @@ const ConfigurationsSettingList = () => {
               {t('settings.RequireRNGDPlugin')}
             </>
           ),
-          value: false,
-          defaultValue: false,
+          value: options.rngd,
+          defaultValue: options.rngd,
+          disabled: true,
         },
         {
           type: 'checkbox',
@@ -233,8 +264,9 @@ const ConfigurationsSettingList = () => {
               {t('settings.RequireHyperaccelLPUPlugin')}
             </>
           ),
-          value: false,
-          defaultValue: false,
+          value: options.hyperaccel_lpu,
+          defaultValue: options.hyperaccel_lpu,
+          disabled: true,
         },
       ],
     },

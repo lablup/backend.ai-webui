@@ -13,6 +13,7 @@ export interface SettingItemProps {
   setValue?: (value: any) => void;
   selectProps?: Omit<SelectProps, 'value' | 'onChange' | 'defaultValue'>;
   onChange?: (value: any) => void;
+  disabled?: boolean;
 }
 
 const useStyles = createStyles(({ css }) => ({
@@ -33,6 +34,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
   value,
   selectProps,
   onChange,
+  disabled,
 }) => {
   const { token } = theme.useToken();
   const { styles } = useStyles();
@@ -62,6 +64,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
         <Checkbox
           checked={value}
           onChange={onChange}
+          disabled={disabled}
           className={styles.baiSettingItemCheckbox}
         >
           {description}
@@ -74,6 +77,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
             value={value}
             popupMatchSelectWidth={false}
             onChange={onChange}
+            disabled={disabled}
             {...selectProps}
           ></Select>
         </>
