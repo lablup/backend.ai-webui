@@ -1,11 +1,13 @@
 import useBAIConfigurationsSetting, {
   optionRange,
+  SchedulerType,
 } from '../hooks/useBAIConfigurationsSetting';
 import BAIModal, { BAIModalProps } from './BAIModal';
+import Flex from './Flex';
 import SettingList, { SettingGroup } from './SettingList';
 import { SettingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Button, Form, InputNumber, Select } from 'antd';
+import { Button, Form, InputNumber, Select, Typography } from 'antd';
 import { FormInstance } from 'antd/lib';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -68,8 +70,9 @@ const OverlayNetworkSettingModal = ({
 
 interface SchedulerSettingModalProps extends BAIModalProps {
   onRequestClose: () => void;
-  schedulerType: 'fifo' | 'lifo' | 'drf';
+  schedulerType: SchedulerType;
   num_retries_to_skip: number;
+  onSave: (key: SchedulerType, value: { num_retries_to_skip: number }) => void;
 }
 
 const SchedulerSettingModal = ({
@@ -77,6 +80,7 @@ const SchedulerSettingModal = ({
   open,
   schedulerType,
   num_retries_to_skip,
+  onSave,
 }: SchedulerSettingModalProps) => {
   const { t } = useTranslation();
 
@@ -93,11 +97,66 @@ const SchedulerSettingModal = ({
       destroyOnClose
       width={'auto'}
       onCancel={onRequestClose}
+      footer={[
+        <Button key="overlayNetworkClose" onClick={onRequestClose}>
+          {t('button.Close')}
+        </Button>,
+        <Button
+          key="overlayNetworkSave"
+          type="primary"
+          onClick={() =>
+            formRef.current?.validateFields().then((values) => {
+              onSave(values.schedulerType, {
+                num_retries_to_skip: values.num_retries_to_skip,
+              });
+            })
+          }
+        >
+          {t('button.Save')}
+        </Button>,
+      ]}
     >
       <Form initialValues={initialValues} ref={formRef}>
-        <Form.Item label={t('settings.Scheduler')} name="schedulerType">
-          <Select></Select>
+        <Form.Item
+          label={t('settings.Scheduler')}
+          name="schedulerType"
+          required
+        >
+          <Select
+            popupMatchSelectWidth={false}
+            value={schedulerType}
+            options={[
+              {
+                label: 'FIFO',
+                value: 'fifo',
+              },
+              {
+                label: 'LIFO',
+                value: 'lifo',
+              },
+              {
+                label: 'DRF',
+                value: 'drf',
+              },
+            ]}
+          />
         </Form.Item>
+        <Flex direction="column" align="start" style={{ width: '100%' }}>
+          <Typography.Text strong>
+            {t('settings.SchedulerOptions')}
+          </Typography.Text>
+          <Form.Item
+            label={t('settings.SessionCreationRetries')}
+            name="num_retries_to_skip"
+            required
+          >
+            <InputNumber
+              min={optionRange.numRetries.min}
+              max={optionRange.numRetries.max}
+              style={{ width: '100%' }}
+            />
+          </Form.Item>
+        </Flex>
       </Form>
     </BAIModal>
   );
@@ -105,7 +164,8 @@ const SchedulerSettingModal = ({
 
 const ConfigurationsSettingList = () => {
   const { t } = useTranslation();
-  const { options, setNetwork } = useBAIConfigurationsSetting();
+  const { options, setNetwork, setSchedulerType } =
+    useBAIConfigurationsSetting();
   const [isOpenOverlayNetworkModal, { toggle: toggleOverlayNetworkModal }] =
     useToggle(false);
   const [isOpenSchedulerModal, { toggle: toggleSchedulerModal }] =
@@ -390,6 +450,15 @@ const ConfigurationsSettingList = () => {
         open={isOpenSchedulerModal}
         schedulerType={options.schedulerType}
         num_retries_to_skip={Number(options.scheduler.num_retries_to_skip)}
+        onSave={async (key, value) => {
+          if (
+            await setSchedulerType(key, {
+              num_retries_to_skip: value.num_retries_to_skip.toString(),
+            })
+          ) {
+            toggleSchedulerModal();
+          }
+        }}
       />
     </>
   );

@@ -3,8 +3,11 @@ import { useSetBAINotification } from './useBAINotification';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+export type SchedulerType = 'fifo' | 'lifo' | 'drf';
+export type ImagePullingBehavior = 'digest' | 'tag' | 'none';
+
 interface BAIConfigurationsSetting {
-  image_pulling_behavior: 'digest' | 'tag' | 'none';
+  image_pulling_behavior: ImagePullingBehavior;
   cuda_gpu: boolean;
   cuda_fgpu: boolean;
   rocm_gpu: boolean;
@@ -16,7 +19,7 @@ interface BAIConfigurationsSetting {
   warboy: boolean;
   rngd: boolean;
   hyperaccel_lpu: boolean;
-  schedulerType: 'fifo' | 'lifo' | 'drf';
+  schedulerType: SchedulerType;
   scheduler: {
     num_retries_to_skip: '0';
   };
@@ -146,6 +149,30 @@ const useBAIConfigurationsSetting = () => {
     });
   };
 
+  const setSchedulerType = async (
+    key: SchedulerType,
+    value: { num_retries_to_skip: string },
+  ): Promise<boolean> => {
+    try {
+      const { result } = await baiClient.setting.set(
+        `plugins/scheduler/${key}`,
+        value,
+      );
+      if (result !== 'ok') {
+        throw new Error('Failed to set scheduler settings');
+      }
+      updateScheduler();
+      upsertNotification({
+        description: t('notification.SuccessfullyUpdated'),
+        open: true,
+      });
+      return true;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  };
+
   const updateResourceSlots = async () => {
     try {
       const response = await baiClient.get_resource_slots();
@@ -182,6 +209,7 @@ const useBAIConfigurationsSetting = () => {
     updateResourceSlots,
     updatePulling,
     setNetwork,
+    setSchedulerType,
   };
 };
 
