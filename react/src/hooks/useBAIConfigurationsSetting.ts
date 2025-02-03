@@ -1,5 +1,7 @@
 import { useSuspendedBackendaiClient } from '.';
+import { useSetBAINotification } from './useBAINotification';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface BAIConfigurationsSetting {
   image_pulling_behavior: 'digest' | 'tag' | 'none';
@@ -72,7 +74,10 @@ const useBAIConfigurationsSetting = () => {
       mtu: '',
     },
   });
+  console.log(options);
   const baiClient = useSuspendedBackendaiClient();
+  const { upsertNotification } = useSetBAINotification();
+  const { t } = useTranslation();
 
   const updatePulling = async () => {
     try {
@@ -91,21 +96,35 @@ const useBAIConfigurationsSetting = () => {
 
   const updateNetwork = async () => {
     Object.keys(options.network).forEach(async (key) => {
-      try {
-        const { result } = await baiClient.setting.get(
-          `network/overlay/${key}`,
-        );
-        setOptions((prev) => ({
-          ...prev,
-          network: {
-            ...prev.network,
-            [key]: result || '',
-          },
-        }));
-      } catch (e) {
-        console.error(e);
-      }
+      const { result } = await baiClient.setting.get(`network/overlay/${key}`);
+      setOptions((prev) => ({
+        ...prev,
+        network: {
+          ...prev.network,
+          [key]: result || '',
+        },
+      }));
     });
+  };
+
+  const setNetwork = async (value: {
+    [key: string]: string;
+  }): Promise<boolean> => {
+    try {
+      const { result } = await baiClient.setting.set('network/overlay', value);
+      if (result !== 'ok') {
+        throw new Error('Failed to set network overlay settings');
+      }
+      updateNetwork();
+      upsertNotification({
+        description: t('notification.SuccessfullyUpdated'),
+        open: true,
+      });
+      return true;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
   };
 
   const updateScheduler = async () => {
@@ -162,6 +181,7 @@ const useBAIConfigurationsSetting = () => {
     updateScheduler,
     updateResourceSlots,
     updatePulling,
+    setNetwork,
   };
 };
 
