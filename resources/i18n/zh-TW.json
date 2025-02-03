@@ -1085,7 +1085,8 @@
     "ExportCSV": "匯出 CSV",
     "Tools": "工具",
     "MemorySizeExceedsLimit": "記憶體大小應小於 300 PiB",
-    "MaxNetworkCount": "最大網路數"
+    "MaxNetworkCount": "最大網路數",
+    "CannotUpdateResourcePolicy": "無法更新資源策略。\n請檢查輸入值。"
   },
   "registry": {
     "Hostname": "主機名",

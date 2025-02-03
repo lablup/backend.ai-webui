@@ -1086,7 +1086,8 @@
     "ExportCSV": "exportar CSV",
     "Tools": "Ferramentas",
     "MemorySizeExceedsLimit": "O tamanho da memória deve ser inferior a 300 PiB",
-    "MaxNetworkCount": "Contagem máxima de rede"
+    "MaxNetworkCount": "Contagem máxima de rede",
+    "CannotUpdateResourcePolicy": "Não é possível atualizar a política de recursos. \nPor favor, verifique os valores de entrada."
   },
   "registry": {
     "Hostname": "nome de anfitrião",

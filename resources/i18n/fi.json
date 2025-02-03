@@ -984,7 +984,8 @@
     "ExportCSV": "vie CSV",
     "Tools": "Työkalut",
     "MemorySizeExceedsLimit": "Muistin koon tulee olla alle 300 PiB",
-    "MaxNetworkCount": "Verkkojen enimmäismäärä"
+    "MaxNetworkCount": "Verkkojen enimmäismäärä",
+    "CannotUpdateResourcePolicy": "Resurssien käytäntö ei voi päivittää. \nTarkista syöttöarvot."
   },
   "resourcePreset": {
     "AboutToDeletePreset": "Olet poistamassa tätä esiasetusta:",

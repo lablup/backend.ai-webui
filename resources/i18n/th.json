@@ -1198,7 +1198,8 @@
     "ExportCSV": "ส่งออก CSV",
     "Tools": "เครื่องมือ",
     "MemorySizeExceedsLimit": "ขนาดหน่วยความจำควรน้อยกว่า 300 PiB",
-    "MaxNetworkCount": "จำนวนเครือข่ายสูงสุด"
+    "MaxNetworkCount": "จำนวนเครือข่ายสูงสุด",
+    "CannotUpdateResourcePolicy": "ไม่สามารถอัปเดตนโยบายทรัพยากร \nโปรดตรวจสอบค่าอินพุต"
   },
   "registry": {
     "Hostname": "ชื่อโฮสต์",
