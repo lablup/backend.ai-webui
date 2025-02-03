@@ -96,6 +96,8 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             value
           }
           version @since(version: "24.12.0")
+          ...ManageImageResourceLimitModal_image
+          ...ManageAppsModal_image
         }
       }
     `,
@@ -573,7 +575,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
               updateEnvironmentFetchKey();
             });
         }}
-        image={managingResourceLimit}
+        imageFrgmt={managingResourceLimit}
       />
       <ManageAppsModal
         open={!!managingApp}
@@ -584,7 +586,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
               updateEnvironmentFetchKey();
             });
         }}
-        image={managingApp}
+        imageFrgmt={managingApp}
       />
       <ImageInstallModal
         open={isOpenInstallModal}

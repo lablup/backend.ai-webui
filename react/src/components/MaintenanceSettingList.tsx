@@ -1,8 +1,5 @@
 import { useSuspendedBackendaiClient } from '../hooks';
-import {
-  CLOSING_DURATION,
-  useSetBAINotification,
-} from '../hooks/useBAINotification';
+import { useSetBAINotification } from '../hooks/useBAINotification';
 import SettingList, { SettingGroup } from './SettingList';
 import { RedoOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
@@ -29,7 +26,7 @@ const MaintenanceSettingList = () => {
         promise: baiClient.maintenance
           .recalculate_usage()
           .finally(() => setIsRecalculating(false)),
-        statusDescriptions: {
+        onChange: {
           pending: t('maintenance.Recalculating'),
           resolved: t('maintenance.RecalculationFinished'),
           rejected: t('maintenance.RecalculationFailed'),
@@ -40,54 +37,45 @@ const MaintenanceSettingList = () => {
 
   const rescanImages = () => {
     setIsRescanning(true);
-    const notiKey = upsertNotification({
+    upsertNotification({
       message: t('maintenance.RescanImages'),
-      description: t('maintenance.RescanImageScanning'),
       open: true,
       backgroundTask: {
         status: 'pending',
+        promise: baiClient.maintenance.rescan_images(),
+        onChange: {
+          pending: t('maintenance.RescanImageScanning'),
+          resolved: (data) => {
+            const result = data as Awaited<
+              ReturnType<typeof baiClient.maintenance.rescan_images>
+            >;
+            if (result.rescan_images.ok) {
+              return {
+                backgroundTask: {
+                  status: 'pending',
+                  taskId: result.rescan_images.task_id,
+                  promise: null,
+                  percent: 0,
+                  onChange: {
+                    resolved: (_data, _notification) => {
+                      setIsRescanning(false);
+                      return t('maintenance.RescanImageFinished');
+                    },
+                  },
+                },
+              };
+            } else {
+              throw new Error(t('maintenance.RescanFailed'));
+            }
+          },
+          rejected: (data, _) => {
+            const error = data as Error | undefined;
+            setIsRescanning(false);
+            return error?.message || t('maintenance.RescanFailed');
+          },
+        },
       },
     });
-    // If values can be passed through resolve, please refactor the following function using promises
-    baiClient.maintenance
-      .rescan_images()
-      .then(({ rescan_images }) => {
-        if (rescan_images.ok) {
-          upsertNotification({
-            key: notiKey,
-            backgroundTask: {
-              status: 'pending',
-              percent: 0,
-              taskId: rescan_images.task_id,
-              statusDescriptions: {
-                pending: t('maintenance.RescanImageScanning'),
-                resolved: t('maintenance.RescanImageFinished'),
-                rejected: t('maintenance.RescanFailed'),
-              },
-            },
-            duration: 0,
-          });
-        } else {
-          throw new Error(t('maintenance.RescanFailed'));
-        }
-      })
-      .catch((err: any) => {
-        upsertNotification({
-          key: notiKey,
-          // description: painKiller.relieve(err?.title),
-          backgroundTask: {
-            status: 'rejected',
-            statusDescriptions: {
-              rejected: err?.message || t('maintenance.RescanFailed'),
-            },
-          },
-          open: true,
-          duration: CLOSING_DURATION,
-        });
-      })
-      .finally(() => {
-        setIsRescanning(false);
-      });
   };
 
   const settingGroupList: SettingGroup = [

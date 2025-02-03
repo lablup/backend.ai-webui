@@ -141,9 +141,8 @@ export const ConstraintTags: React.FC<ConstraintTagsProps> = ({
 
 const SessionKernelTags: React.FC<{
   image: string | null;
-  style?: React.CSSProperties;
   border?: boolean;
-}> = ({ image, style = {} }, bordered) => {
+}> = ({ image }) => {
   image = image || '';
   return (
     <>

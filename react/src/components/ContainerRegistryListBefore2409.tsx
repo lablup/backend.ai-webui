@@ -176,7 +176,7 @@ const ContainerRegistryListBefore2409: React.FC<{
               status: 'pending',
               percent: 0,
               taskId: rescan_images.task_id,
-              statusDescriptions: {
+              onChange: {
                 pending: t('registry.RescanImages'),
                 resolved: t('registry.RegistryUpdateFinished'),
                 rejected: t('registry.RegistryUpdateFailed'),
