@@ -1,7 +1,6 @@
 import { GBToBytes, bytesToGB } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
@@ -44,7 +43,6 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
-  const painKiller = usePainKiller();
   const formRef = useRef<FormInstance>(null);
 
   const baiClient = useSuspendedBackendaiClient();
@@ -160,9 +158,8 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
             onCompleted(res, errors) {
               if (!res?.create_project_resource_policy?.ok || errors) {
                 message.error(
-                  painKiller.relieve(
-                    res?.create_project_resource_policy?.msg as string,
-                  ),
+                  res?.create_project_resource_policy?.msg ||
+                    t('resourcePolicy.CannotCreateResourcePolicy'),
                 );
                 onRequestClose();
               } else {
@@ -173,7 +170,10 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
               }
             },
             onError(error) {
-              message.error(painKiller.relieve(error?.message));
+              message.error(
+                error?.message ||
+                  t('resourcePolicy.CannotCreateResourcePolicy'),
+              );
             },
           });
         } else {
@@ -185,9 +185,8 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
             onCompleted(res, errors) {
               if (!res?.modify_project_resource_policy?.ok || errors) {
                 message.error(
-                  painKiller.relieve(
-                    res?.modify_project_resource_policy?.msg as string,
-                  ),
+                  res?.modify_project_resource_policy?.msg ||
+                    t('resourcePolicy.CannotUpdateResourcePolicy'),
                 );
                 onRequestClose();
               } else {
@@ -198,7 +197,10 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
               }
             },
             onError(error) {
-              message.error(painKiller.relieve(error?.message));
+              message.error(
+                error?.message ||
+                  t('resourcePolicy.CannotUpdateResourcePolicy'),
+              );
             },
           });
         }
