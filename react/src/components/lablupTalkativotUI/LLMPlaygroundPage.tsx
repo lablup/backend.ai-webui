@@ -17,7 +17,7 @@ const LLMPlaygroundPage: React.FC<LLMPlaygroundPageProps> = ({ ...props }) => {
   const { token } = theme.useToken();
   const { t } = useTranslation();
   // Set the initial list to have two items
-  const { list, remove, getKey, push } = useDynamicList(['0', '1']);
+  const { list, remove, getKey, push } = useDynamicList(['0']);
 
   const [isSynchronous, setSynchronous] = useState(false);
 

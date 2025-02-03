@@ -66,7 +66,9 @@
       "DisMatchUserEmail": "Хэрэглэгчийн имэйл таарахгүй байна",
       "MyEnvironments": "Миний орчин",
       "ResourcePolicy": "Нөөцийн бодлого",
-      "FullNameUpdated": "Бүтэн нэр амжилттай шинэчлэгдлээ."
+      "FullNameUpdated": "Бүтэн нэр амжилттай шинэчлэгдлээ.",
+      "Playground": "Тоглоомын талбай",
+      "ModelStore": "Загварын дэлгүүр"
     },
     "YouAreOffline": "Офлайн: Ямар ч сүлжээнд холбогдоогүй.",
     "YouAreOnline": "Та одоо онлайн байна",
@@ -1679,7 +1681,10 @@
     "CloneInfo": "Үүнийг таны хэрэглэгчийн төрлийн хавтас болгон хувилах болно.",
     "CloneToFolder": "Хавтас руу клон хийх",
     "FolderAlreadyExists": "Ийм нэртэй хавтас аль хэдийн байна.",
-    "FinetuneModel": "Finetune загвар"
+    "FinetuneModel": "Finetune загвар",
+    "Experience": "Туршлага",
+    "ModelCard": "Загварын карт",
+    "ImportFromHuggingFace": "Тэврэх нүүрээс импортлох"
   },
   "table": {
     "SettingTable": "Хүснэгтийн тохиргоо",
@@ -1754,5 +1759,12 @@
     "ReloadPage": "Хуудсыг дахин ачаална уу",
     "ResetErrorBoundary": "Алдааны хил хязгаарыг дахин тохируулах",
     "Title": "Алдаа гарсан байна."
+  },
+  "modelserving": {
+    "menu": {
+      "ModelServices": "Загвар үйлчилгээ",
+      "ModelList": "Загварын жагсаалт",
+      "MyServices": "Миний үйлчилгээ"
+    }
   }
 }
