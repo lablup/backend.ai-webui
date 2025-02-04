@@ -5,6 +5,36 @@ import { useTranslation } from 'react-i18next';
 
 export type SchedulerType = 'fifo' | 'lifo' | 'drf';
 export type ImagePullingBehavior = 'digest' | 'tag' | 'none';
+export type SchedulerOptions = {
+  num_retries_to_skip: string;
+  [key: string]: string;
+};
+export type NetworkOptions = {
+  mtu: string;
+  [key: string]: string;
+};
+
+export const defaultConfigurationsSettings: BAIConfigurationsSetting = {
+  image_pulling_behavior: 'digest',
+  cuda_gpu: false,
+  cuda_fgpu: false,
+  rocm_gpu: false,
+  tpu: false,
+  ipu: false,
+  atom: false,
+  atom_plus: false,
+  gaudi2: false,
+  warboy: false,
+  rngd: false,
+  hyperaccel_lpu: false,
+  schedulerType: 'fifo',
+  scheduler: {
+    num_retries_to_skip: '0',
+  },
+  network: {
+    mtu: '',
+  },
+};
 
 interface BAIConfigurationsSetting {
   image_pulling_behavior: ImagePullingBehavior;
@@ -19,18 +49,23 @@ interface BAIConfigurationsSetting {
   warboy: boolean;
   rngd: boolean;
   hyperaccel_lpu: boolean;
-  schedulerType: SchedulerType;
-  scheduler: {
-    num_retries_to_skip: '0';
-  };
-  network: {
-    mtu: string;
-  };
+  network: NetworkOptions;
   [key: string]: any;
 }
 
-export const optionRange = {
-  numRetries: {
+export const optionRange: {
+  [
+    key:
+      | keyof SchedulerOptions
+      | keyof NetworkOptions
+      | keyof BAIConfigurationsSetting
+      | string
+  ]: {
+    min: number;
+    max: number;
+  };
+} = {
+  num_retries_to_skip: {
     min: 0,
     max: 1000,
   },
@@ -57,43 +92,36 @@ const resourcesSlots: {
 
 const useBAIConfigurationsSetting = () => {
   const [options, setOptions] = useState<BAIConfigurationsSetting>({
-    image_pulling_behavior: 'digest',
-    cuda_gpu: false,
-    cuda_fgpu: false,
-    rocm_gpu: false,
-    tpu: false,
-    ipu: false,
-    atom: false,
-    atom_plus: false,
-    gaudi2: false,
-    warboy: false,
-    rngd: false,
-    hyperaccel_lpu: false,
-    schedulerType: 'fifo',
-    scheduler: {
-      num_retries_to_skip: '0',
-    },
-    network: {
-      mtu: '',
-    },
+    ...defaultConfigurationsSettings,
   });
-  console.log(options);
   const baiClient = useSuspendedBackendaiClient();
   const { upsertNotification } = useSetBAINotification();
   const { t } = useTranslation();
 
   const updatePulling = async () => {
-    try {
-      const { result } = await baiClient.setting.get('docker/image/auto_pull');
-      if (result === null || result === 'digest') {
-        setOptions((prev) => ({ ...prev, image_pulling_behavior: 'digest' }));
-      } else if (result === 'tag') {
-        setOptions((prev) => ({ ...prev, image_pulling_behavior: 'tag' }));
-      } else {
-        setOptions((prev) => ({ ...prev, image_pulling_behavior: 'none' }));
+    const { result } = await baiClient.setting.get('docker/image/auto_pull');
+    if (result === null || result === 'digest') {
+      setOptions((prev) => ({ ...prev, image_pulling_behavior: 'digest' }));
+    } else if (result === 'tag') {
+      setOptions((prev) => ({ ...prev, image_pulling_behavior: 'tag' }));
+    } else {
+      setOptions((prev) => ({ ...prev, image_pulling_behavior: 'none' }));
+    }
+  };
+
+  const setImagePullingBehavior = async (value: ImagePullingBehavior) => {
+    if (value !== options.image_pulling_behavior) {
+      const { result } = await baiClient.setting.set(
+        'docker/image/auto_pull',
+        value,
+      );
+      if (result === 'ok') {
+        updatePulling();
+        upsertNotification({
+          description: t('notification.SuccessfullyUpdated'),
+          open: true,
+        });
       }
-    } catch (e) {
-      console.error(e);
     }
   };
 
@@ -110,90 +138,75 @@ const useBAIConfigurationsSetting = () => {
     });
   };
 
-  const setNetwork = async (value: {
-    [key: string]: string;
-  }): Promise<boolean> => {
-    try {
-      const { result } = await baiClient.setting.set('network/overlay', value);
-      if (result !== 'ok') {
-        throw new Error('Failed to set network overlay settings');
-      }
+  const setNetwork = async (value: { [key: string]: string }) => {
+    const { result } = await baiClient.setting.set('network/overlay', value);
+    if (result === 'ok') {
       updateNetwork();
       upsertNotification({
         description: t('notification.SuccessfullyUpdated'),
         open: true,
       });
-      return true;
-    } catch (e) {
-      console.error(e);
-      return false;
     }
   };
 
-  const updateScheduler = async () => {
-    Object.keys(options.scheduler).forEach(async (key) => {
-      try {
-        const { result } = await baiClient.setting.get(
-          `plugins/scheduler/${options.schedulerType}/${key}`,
-        );
-        setOptions((prev) => ({
-          ...prev,
-          scheduler: {
-            ...prev.scheduler,
-            [key]: result || '0',
-          },
-        }));
-      } catch (e) {
-        console.error(e);
-      }
-    });
+  const updateSelectedScheduler = async (
+    schedulerType: SchedulerType,
+  ): Promise<SchedulerOptions> => {
+    let newOptions: SchedulerOptions = { ...options.scheduler };
+
+    for (const [key] of Object.entries(newOptions)) {
+      const { result } = await baiClient.setting.get(
+        `plugins/scheduler/${schedulerType}/${key}`,
+      );
+      newOptions[key] = result || '0';
+    }
+    return newOptions;
   };
 
-  const setSchedulerType = async (
+  const setScheduler = async (
     key: SchedulerType,
     value: { num_retries_to_skip: string },
-  ): Promise<boolean> => {
-    try {
-      const { result } = await baiClient.setting.set(
-        `plugins/scheduler/${key}`,
-        value,
-      );
-      if (result !== 'ok') {
-        throw new Error('Failed to set scheduler settings');
-      }
-      updateScheduler();
+  ) => {
+    if (key !== 'fifo' && value.num_retries_to_skip !== '0') {
+      upsertNotification({ description: t('settings.FifoOnly'), open: true });
+      return;
+    }
+
+    const { result } = await baiClient.setting.set(
+      `plugins/scheduler/${key}`,
+      value,
+    );
+    if (result === 'ok') {
       upsertNotification({
         description: t('notification.SuccessfullyUpdated'),
         open: true,
       });
-      return true;
-    } catch (e) {
-      console.error(e);
-      return false;
     }
   };
 
-  const updateResourceSlots = async () => {
-    try {
-      const response = await baiClient.get_resource_slots();
+  const updateResourceSlots = () =>
+    baiClient.get_resource_slots().then((response) => {
       const newOptions: BAIConfigurationsSetting = { ...options };
       Object.keys(resourcesSlots).forEach((key) => {
         if (key in response) {
           newOptions[resourcesSlots[key]] = true;
         }
       });
-    } catch (e) {
-      console.error(e);
-    }
-  };
+    });
 
   const updateSettings = async () => {
     await Promise.all([
       updatePulling(),
-      updateScheduler(),
       updateResourceSlots(),
       updateNetwork(),
     ]);
+  };
+
+  const deleteSetting = async (key: string, prefix: boolean = false) => {
+    const { result } = await baiClient.setting.delete(key, prefix);
+    if (result === 'ok') {
+      await updateSettings();
+    }
   };
 
   useEffect(() => {
@@ -205,11 +218,13 @@ const useBAIConfigurationsSetting = () => {
     setOptions,
     updateSettings,
     updateNetwork,
-    updateScheduler,
+    updateSelectedScheduler,
     updateResourceSlots,
     updatePulling,
     setNetwork,
-    setSchedulerType,
+    setScheduler,
+    setImagePullingBehavior,
+    deleteSetting,
   };
 };
 

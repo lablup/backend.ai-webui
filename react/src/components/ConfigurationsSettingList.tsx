@@ -1,171 +1,26 @@
 import useBAIConfigurationsSetting, {
-  optionRange,
+  defaultConfigurationsSettings,
+  NetworkOptions,
   SchedulerType,
 } from '../hooks/useBAIConfigurationsSetting';
-import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
+import OverlayNetworkSettingModal from './OverlayNetworkSettingModal';
+import SchedulerSettingModal from './SchedulerSettingModal';
 import SettingList, { SettingGroup } from './SettingList';
 import { SettingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Button, Form, InputNumber, Select, Typography } from 'antd';
-import { FormInstance } from 'antd/lib';
-import { useRef } from 'react';
+import { Button } from 'antd';
 import { useTranslation } from 'react-i18next';
-
-interface OverlayNetworkSettingsModalProps extends BAIModalProps {
-  onRequestClose: () => void;
-  value: number;
-  onSave: (value: number) => void;
-}
-
-const OverlayNetworkSettingModal = ({
-  onRequestClose,
-  open,
-  value,
-  onSave,
-}: OverlayNetworkSettingsModalProps) => {
-  const { t } = useTranslation();
-
-  const formRef = useRef<FormInstance>(null);
-
-  return (
-    <BAIModal
-      open={open}
-      title={t('settings.OverlayNetworkSettings')}
-      onCancel={onRequestClose}
-      centered
-      destroyOnClose
-      width={'auto'}
-      footer={[
-        <Button key="overlayNetworkClose" onClick={onRequestClose}>
-          {t('button.Close')}
-        </Button>,
-        <Button
-          key="overlayNetworkSave"
-          type="primary"
-          onClick={() =>
-            formRef.current?.validateFields().then((values) => {
-              onSave(values.mtu);
-            })
-          }
-        >
-          {t('button.Save')}
-        </Button>,
-      ]}
-    >
-      <Form ref={formRef} initialValues={{ mtu: value }}>
-        <Form.Item label="MTU" required name="mtu">
-          <InputNumber
-            min={optionRange.mtu.min}
-            max={optionRange.mtu.max}
-            style={{
-              width: '100%',
-            }}
-          />
-        </Form.Item>
-      </Form>
-    </BAIModal>
-  );
-};
-
-interface SchedulerSettingModalProps extends BAIModalProps {
-  onRequestClose: () => void;
-  schedulerType: SchedulerType;
-  num_retries_to_skip: number;
-  onSave: (key: SchedulerType, value: { num_retries_to_skip: number }) => void;
-}
-
-const SchedulerSettingModal = ({
-  onRequestClose,
-  open,
-  schedulerType,
-  num_retries_to_skip,
-  onSave,
-}: SchedulerSettingModalProps) => {
-  const { t } = useTranslation();
-
-  const formRef = useRef<FormInstance>(null);
-  const initialValues = {
-    schedulerType,
-    num_retries_to_skip,
-  };
-  return (
-    <BAIModal
-      title={t('settings.ConfigPerJobSchduler')}
-      open={open}
-      centered
-      destroyOnClose
-      width={'auto'}
-      onCancel={onRequestClose}
-      footer={[
-        <Button key="overlayNetworkClose" onClick={onRequestClose}>
-          {t('button.Close')}
-        </Button>,
-        <Button
-          key="overlayNetworkSave"
-          type="primary"
-          onClick={() =>
-            formRef.current?.validateFields().then((values) => {
-              onSave(values.schedulerType, {
-                num_retries_to_skip: values.num_retries_to_skip,
-              });
-            })
-          }
-        >
-          {t('button.Save')}
-        </Button>,
-      ]}
-    >
-      <Form initialValues={initialValues} ref={formRef}>
-        <Form.Item
-          label={t('settings.Scheduler')}
-          name="schedulerType"
-          required
-        >
-          <Select
-            popupMatchSelectWidth={false}
-            value={schedulerType}
-            options={[
-              {
-                label: 'FIFO',
-                value: 'fifo',
-              },
-              {
-                label: 'LIFO',
-                value: 'lifo',
-              },
-              {
-                label: 'DRF',
-                value: 'drf',
-              },
-            ]}
-          />
-        </Form.Item>
-        <Flex direction="column" align="start" style={{ width: '100%' }}>
-          <Typography.Text strong>
-            {t('settings.SchedulerOptions')}
-          </Typography.Text>
-          <Form.Item
-            label={t('settings.SessionCreationRetries')}
-            name="num_retries_to_skip"
-            required
-          >
-            <InputNumber
-              min={optionRange.numRetries.min}
-              max={optionRange.numRetries.max}
-              style={{ width: '100%' }}
-            />
-          </Form.Item>
-        </Flex>
-      </Form>
-    </BAIModal>
-  );
-};
 
 const ConfigurationsSettingList = () => {
   const { t } = useTranslation();
-  const { options, setNetwork, setSchedulerType } =
-    useBAIConfigurationsSetting();
+  const {
+    options,
+    setNetwork,
+    setScheduler,
+    updateSelectedScheduler,
+    deleteSetting,
+    setImagePullingBehavior,
+  } = useBAIConfigurationsSetting();
   const [isOpenOverlayNetworkModal, { toggle: toggleOverlayNetworkModal }] =
     useToggle(false);
   const [isOpenSchedulerModal, { toggle: toggleSchedulerModal }] =
@@ -200,8 +55,10 @@ const ConfigurationsSettingList = () => {
               { label: t('settings.image.None'), value: 'none' },
             ],
           },
-          defaultValue: options.image_pulling_behavior,
+          setValue: (value) => setImagePullingBehavior(value),
+          defaultValue: defaultConfigurationsSettings.image_pulling_behavior,
           value: options.image_pulling_behavior,
+          onChange: (value) => setImagePullingBehavior(value),
         },
       ],
     },
@@ -270,7 +127,7 @@ const ConfigurationsSettingList = () => {
             </>
           ),
           value: options.cuda_gpu,
-          defaultValue: options.cuda_gpu,
+          defaultValue: defaultConfigurationsSettings.cuda_gpu,
           disabled: true,
         },
         {
@@ -313,7 +170,7 @@ const ConfigurationsSettingList = () => {
             </>
           ),
           value: options.cuda_fgpu,
-          defaultValue: options.cuda_fgpu,
+          defaultValue: defaultConfigurationsSettings.cuda_fgpu,
           disabled: true,
         },
         {
@@ -327,7 +184,7 @@ const ConfigurationsSettingList = () => {
             </>
           ),
           value: options.tpu,
-          defaultValue: options.tpu,
+          defaultValue: defaultConfigurationsSettings.tpu,
           disabled: true,
         },
         {
@@ -341,7 +198,7 @@ const ConfigurationsSettingList = () => {
             </>
           ),
           value: options.ipu,
-          defaultValue: options.ipu,
+          defaultValue: defaultConfigurationsSettings.ipu,
           disabled: true,
         },
         {
@@ -355,7 +212,7 @@ const ConfigurationsSettingList = () => {
             </>
           ),
           value: options.atom,
-          defaultValue: options.atom,
+          defaultValue: defaultConfigurationsSettings.atom,
           disabled: true,
         },
         {
@@ -369,7 +226,7 @@ const ConfigurationsSettingList = () => {
             </>
           ),
           value: options.atom_plus,
-          defaultValue: options.atom_plus,
+          defaultValue: defaultConfigurationsSettings.atom_plus,
           disabled: true,
         },
         {
@@ -383,7 +240,7 @@ const ConfigurationsSettingList = () => {
             </>
           ),
           value: options.gaudi2,
-          defaultValue: options.gaudi2,
+          defaultValue: defaultConfigurationsSettings.gaudi2,
           disabled: true,
         },
         {
@@ -397,7 +254,7 @@ const ConfigurationsSettingList = () => {
             </>
           ),
           value: options.warboy,
-          defaultValue: options.warboy,
+          defaultValue: defaultConfigurationsSettings.warboy,
           disabled: true,
         },
         {
@@ -411,7 +268,7 @@ const ConfigurationsSettingList = () => {
             </>
           ),
           value: options.rngd,
-          defaultValue: options.rngd,
+          defaultValue: defaultConfigurationsSettings.rngd,
           disabled: true,
         },
         {
@@ -425,7 +282,7 @@ const ConfigurationsSettingList = () => {
             </>
           ),
           value: options.hyperaccel_lpu,
-          defaultValue: options.hyperaccel_lpu,
+          defaultValue: defaultConfigurationsSettings.hyperaccel_lpu,
           disabled: true,
         },
       ],
@@ -434,31 +291,35 @@ const ConfigurationsSettingList = () => {
 
   return (
     <>
-      <SettingList settingGroup={settingGroupList} showSearchBar />
+      <SettingList
+        settingGroup={settingGroupList}
+        showSearchBar
+        showChangedOptionFilter
+        showResetButton
+      />
       <OverlayNetworkSettingModal
         onRequestClose={toggleOverlayNetworkModal}
         open={isOpenOverlayNetworkModal}
-        value={Number(options.network.mtu)}
-        onSave={async (value: number | null) => {
-          if (await setNetwork({ mtu: value?.toString() || '' })) {
-            toggleOverlayNetworkModal();
-          }
+        networkOptions={options.network}
+        onSave={async (value: { [key: keyof NetworkOptions]: string }) => {
+          await setNetwork(value);
         }}
+        onDelete={async () => await deleteSetting('network/overlay', true)}
       />
       <SchedulerSettingModal
         onRequestClose={toggleSchedulerModal}
         open={isOpenSchedulerModal}
-        schedulerType={options.schedulerType}
-        num_retries_to_skip={Number(options.scheduler.num_retries_to_skip)}
         onSave={async (key, value) => {
-          if (
-            await setSchedulerType(key, {
-              num_retries_to_skip: value.num_retries_to_skip.toString(),
-            })
-          ) {
-            toggleSchedulerModal();
-          }
+          await setScheduler(key, {
+            num_retries_to_skip: value.num_retries_to_skip.toString(),
+          });
         }}
+        onSchedulerTypeChange={async (schedulerType) =>
+          await updateSelectedScheduler(schedulerType)
+        }
+        onDelete={async (key: SchedulerType) =>
+          await deleteSetting(`scheduler/${key}`, true)
+        }
       />
     </>
   );

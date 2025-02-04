@@ -118,6 +118,7 @@ export type BackendAIClient = {
   setting: {
     get: (key: string) => Promise<any>;
     set: (key: string, value: any) => Promise<any>;
+    delete: (key: string, prefix: boolean) => Promise<any>;
   };
   get_resource_slots: () => Promise<any>;
 };
