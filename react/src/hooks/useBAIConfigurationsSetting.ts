@@ -211,6 +211,7 @@ const useBAIConfigurationsSetting = () => {
 
   useEffect(() => {
     updateSettings();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {
