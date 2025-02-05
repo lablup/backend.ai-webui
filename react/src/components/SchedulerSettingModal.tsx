@@ -5,7 +5,8 @@ import {
 } from '../hooks/useBAIConfigurationsSetting';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
-import { Button, Form, InputNumber, Select, Typography } from 'antd';
+import { InfoCircleOutlined } from '@ant-design/icons';
+import { Button, Form, InputNumber, Select, Tooltip, Typography } from 'antd';
 import { FormInstance } from 'antd/lib';
 import _ from 'lodash';
 import { useRef } from 'react';
@@ -38,11 +39,21 @@ const SchedulerSettingModal = ({
   } = {
     num_retries_to_skip: t('settings.SessionCreationRetries'),
   };
+  const tooltipText: { [key: keyof SchedulerOptions]: string } = {
+    num_retries_to_skip: t('settings.ConfigPerJobSchdulerDescription'),
+  };
   const scheduleOptions: (keyof SchedulerOptions)[] = ['num_retries_to_skip'];
 
   return (
     <BAIModal
-      title={t('settings.ConfigPerJobSchduler')}
+      title={
+        <Flex align="center">
+          {t('settings.ConfigPerJobSchduler')}
+          <Tooltip title={t('settingConfigPerJobSchdulerDescriptions.')}>
+            <Button type="link" size="large" icon={<InfoCircleOutlined />} />
+          </Tooltip>
+        </Flex>
+      }
       open={open}
       centered
       width={'auto'}
@@ -106,7 +117,19 @@ const SchedulerSettingModal = ({
             {t('settings.SchedulerOptions')}
           </Typography.Text>
           {scheduleOptions.map((key) => (
-            <Form.Item label={labels[key]} name={key} required key={key}>
+            <Form.Item
+              label={
+                <Flex align="center">
+                  {labels[key]}
+                  <Tooltip title={tooltipText[key]}>
+                    <Button type="link" icon={<InfoCircleOutlined />} />
+                  </Tooltip>
+                </Flex>
+              }
+              name={key}
+              required
+              key={key}
+            >
               <InputNumber
                 min={optionRange[key].min}
                 max={optionRange[key].max}

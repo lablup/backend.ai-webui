@@ -3,7 +3,9 @@ import {
   optionRange,
 } from '../hooks/useBAIConfigurationsSetting';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import { Button, Form, InputNumber } from 'antd';
+import Flex from './Flex';
+import { InfoCircleOutlined } from '@ant-design/icons';
+import { Button, Form, InputNumber, Tooltip } from 'antd';
 import { FormInstance } from 'antd/lib';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -28,11 +30,21 @@ const OverlayNetworkSettingModal = ({
   const labels: { [key: keyof NetworkOptions]: string } = {
     mtu: 'MTU',
   };
+  const tooltipText: { [key: keyof NetworkOptions]: string } = {
+    mtu: t('settings.MTUDescription'),
+  };
 
   return (
     <BAIModal
       open={open}
-      title={t('settings.OverlayNetworkSettings')}
+      title={
+        <Flex align="center">
+          {t('settings.OverlayNetworkSettings')}
+          <Tooltip title={t('settings.OverlayNetworkSettingsDescription')}>
+            <Button type="link" size="large" icon={<InfoCircleOutlined />} />
+          </Tooltip>
+        </Flex>
+      }
       onCancel={onRequestClose}
       centered
       width={'auto'}
@@ -61,7 +73,19 @@ const OverlayNetworkSettingModal = ({
     >
       <Form ref={formRef} initialValues={networkOptions}>
         {Object.keys(networkOptions).map((key) => (
-          <Form.Item label={labels[key]} required name={key} key={key}>
+          <Form.Item
+            label={
+              <Flex>
+                {labels[key]}
+                <Tooltip title={tooltipText[key]}>
+                  <Button type="link" icon={<InfoCircleOutlined />} />
+                </Tooltip>
+              </Flex>
+            }
+            required
+            name={key}
+            key={key}
+          >
             <InputNumber
               min={optionRange[key].min}
               max={optionRange[key].max}
