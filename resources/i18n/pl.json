@@ -1016,7 +1016,9 @@
     "BootstrapScriptEmpty": "Skrypt jest pusty. \nProszę wprowadzić skrypt.",
     "BootstrapScriptDeleted": "Usunięto skrypt Bootstrap",
     "ClassicSessionLauncher": "Classic program uruchamiający sesję",
-    "DescClassicSessionLauncher": "Użyj Classic programu uruchamiającego sesję zamiast programu uruchamiającego sesję NEO. \nClassic program uruchamiający sesję może nie mieć najnowszych funkcji."
+    "DescClassicSessionLauncher": "Użyj Classic programu uruchamiającego sesję zamiast programu uruchamiającego sesję NEO. \nClassic program uruchamiający sesję może nie mieć najnowszych funkcji.",
+    "NEOSessionList": "Lista sesji NEO",
+    "ExperimentalFeatures": "Cechy eksperymentalne"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Zaawansowane korzystanie z terminala internetowego: Skopiuj zawartość terminala",

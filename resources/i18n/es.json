@@ -1564,7 +1564,9 @@
     "BootstrapScriptEmpty": "El guión está vacío. \nPor favor ingrese el guión.",
     "BootstrapScriptDeleted": "Se eliminó el script de arranque",
     "ClassicSessionLauncher": "Lanzador de sesiones Classic",
-    "DescClassicSessionLauncher": "Utilice el iniciador de sesiones Classic en lugar del iniciador de sesiones NEO. \nEs posible que el iniciador de sesiones Classic no tenga las funciones más recientes."
+    "DescClassicSessionLauncher": "Utilice el iniciador de sesiones Classic en lugar del iniciador de sesiones NEO. \nEs posible que el iniciador de sesiones Classic no tenga las funciones más recientes.",
+    "NEOSessionList": "Lista de sesiones NEO",
+    "ExperimentalFeatures": "Características experimentales"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Uso avanzado del terminal web: Copiar el contenido del terminal",

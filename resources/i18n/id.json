@@ -1017,7 +1017,9 @@
     "BootstrapScriptEmpty": "Skripnya kosong. \nSilakan masukkan skripnya.",
     "BootstrapScriptDeleted": "Skrip bootstrap dihapus",
     "ClassicSessionLauncher": "Peluncur Sesi Classic",
-    "DescClassicSessionLauncher": "Gunakan peluncur sesi Classic alih-alih peluncur sesi NEO. \nPeluncur sesi Classic mungkin tidak memiliki fitur terbaru."
+    "DescClassicSessionLauncher": "Gunakan peluncur sesi Classic alih-alih peluncur sesi NEO. \nPeluncur sesi Classic mungkin tidak memiliki fitur terbaru.",
+    "NEOSessionList": "Daftar Sesi NEO",
+    "ExperimentalFeatures": "Fitur eksperimental"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Penggunaan Terminal Web Tingkat Lanjut: Salin konten terminal",

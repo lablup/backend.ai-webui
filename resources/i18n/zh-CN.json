@@ -1016,7 +1016,9 @@
     "BootstrapScriptEmpty": "脚本是空的。\n请输入脚本。",
     "BootstrapScriptDeleted": "引导脚本已删除",
     "ClassicSessionLauncher": "Classic会话启动器",
-    "DescClassicSessionLauncher": "使用 Classic 会话启动器而不是 NEO 会话启动器。 \nClassic 会话启动器可能不具有最新功能。"
+    "DescClassicSessionLauncher": "使用 Classic 会话启动器而不是 NEO 会话启动器。 \nClassic 会话启动器可能不具有最新功能。",
+    "NEOSessionList": "近地天体会议列表",
+    "ExperimentalFeatures": "实验特点"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "高级 Web 终端使用：复制终端内容",

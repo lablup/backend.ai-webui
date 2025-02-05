@@ -1016,7 +1016,9 @@
     "BootstrapScriptEmpty": "Скрипт пуст. \nПожалуйста, введите сценарий.",
     "BootstrapScriptDeleted": "Скрипт начальной загрузки удален.",
     "ClassicSessionLauncher": "__NOT_TRANSLATED__",
-    "DescClassicSessionLauncher": "__NOT_TRANSLATED__"
+    "DescClassicSessionLauncher": "__NOT_TRANSLATED__",
+    "NEOSessionList": "Список сессий NEO",
+    "ExperimentalFeatures": "Экспериментальные особенности"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Расширенное использование веб-терминала: копирование содержимого терминала",

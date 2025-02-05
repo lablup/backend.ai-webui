@@ -1016,7 +1016,9 @@
     "BootstrapScriptEmpty": "Скрипт хоосон байна. \nСкриптийг оруулна уу.",
     "BootstrapScriptDeleted": "Bootstrap скриптийг устгасан",
     "ClassicSessionLauncher": "Classic сесс эхлүүлэгч",
-    "DescClassicSessionLauncher": "NEO сесс эхлүүлэгчийн оронд Classic сесс эхлүүлэгчийг ашиглана уу. \nClassic сесс эхлүүлэгч нь хамгийн сүүлийн үеийн функцгүй байж магадгүй."
+    "DescClassicSessionLauncher": "NEO сесс эхлүүлэгчийн оронд Classic сесс эхлүүлэгчийг ашиглана уу. \nClassic сесс эхлүүлэгч нь хамгийн сүүлийн үеийн функцгүй байж магадгүй.",
+    "NEOSessionList": "Neo-ийн хуралдааны жагсаалт",
+    "ExperimentalFeatures": "Туршилтын шинж чанарууд"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Дэвшилтэт вэб терминалын хэрэглээ: Терминалын агуулгыг хуулах",

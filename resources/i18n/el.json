@@ -1016,7 +1016,9 @@
     "BootstrapScriptEmpty": "Το σενάριο είναι κενό. \nΕισαγάγετε το σενάριο.",
     "BootstrapScriptDeleted": "Το σενάριο Bootstrap διαγράφηκε",
     "ClassicSessionLauncher": "Classic Session Launcher",
-    "DescClassicSessionLauncher": "Χρησιμοποιήστε το πρόγραμμα εκκίνησης συνεδρίας Classic αντί για το πρόγραμμα εκκίνησης συνεδρίας NEO. \nΤο πρόγραμμα εκκίνησης περιόδου λειτουργίας Classic ενδέχεται να μην έχει τις πιο πρόσφατες δυνατότητες."
+    "DescClassicSessionLauncher": "Χρησιμοποιήστε το πρόγραμμα εκκίνησης συνεδρίας Classic αντί για το πρόγραμμα εκκίνησης συνεδρίας NEO. \nΤο πρόγραμμα εκκίνησης περιόδου λειτουργίας Classic ενδέχεται να μην έχει τις πιο πρόσφατες δυνατότητες.",
+    "NEOSessionList": "NEO Κατάλογος συνόδων",
+    "ExperimentalFeatures": "Πειραματικά χαρακτηριστικά"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Σύνθετη χρήση τερματικού Web: Αντιγραφή περιεχομένου τερματικού",

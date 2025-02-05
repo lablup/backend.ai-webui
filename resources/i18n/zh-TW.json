@@ -1015,7 +1015,9 @@
     "BootstrapScriptEmpty": "腳本是空的。\n請輸入腳本。",
     "BootstrapScriptDeleted": "引導腳本已刪除",
     "ClassicSessionLauncher": "Classic會話啟動器",
-    "DescClassicSessionLauncher": "使用 Classic 會話啟動器而不是 NEO 會話啟動器。 \nClassic 會話啟動器可能不具有最新功能。"
+    "DescClassicSessionLauncher": "使用 Classic 會話啟動器而不是 NEO 會話啟動器。 \nClassic 會話啟動器可能不具有最新功能。",
+    "NEOSessionList": "近地天体会议列表",
+    "ExperimentalFeatures": "实验特点"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "高級 Web 終端使用：複製終端內容",

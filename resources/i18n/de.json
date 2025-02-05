@@ -1016,7 +1016,9 @@
     "BootstrapScriptEmpty": "Das Skript ist leer. \nBitte geben Sie das Skript ein.",
     "BootstrapScriptDeleted": "Bootstrap-Skript gelöscht",
     "ClassicSessionLauncher": "Classic Sitzungsstarter",
-    "DescClassicSessionLauncher": "Verwenden Sie den Classic-Sitzungsstarter anstelle des NEO-Sitzungsstarters. \nDer Classic Sitzungsstarter verfügt möglicherweise nicht über die neuesten Funktionen."
+    "DescClassicSessionLauncher": "Verwenden Sie den Classic-Sitzungsstarter anstelle des NEO-Sitzungsstarters. \nDer Classic Sitzungsstarter verfügt möglicherweise nicht über die neuesten Funktionen.",
+    "NEOSessionList": "NEO Sitzungsliste",
+    "ExperimentalFeatures": "Experimentelle Merkmale"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Erweiterte Web-Terminal-Nutzung: Terminal-Inhalte kopieren",

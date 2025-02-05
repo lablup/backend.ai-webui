@@ -1016,7 +1016,9 @@
     "BootstrapScriptEmpty": "Le script est vide. \nVeuillez entrer le script.",
     "BootstrapScriptDeleted": "Script d'amorçage supprimé",
     "ClassicSessionLauncher": "Lanceur de session Classic",
-    "DescClassicSessionLauncher": "Utilisez le lanceur de session Classic au lieu du lanceur de session NEO. \nLe lanceur de session Classic peut ne pas disposer des dernières fonctionnalités."
+    "DescClassicSessionLauncher": "Utilisez le lanceur de session Classic au lieu du lanceur de session NEO. \nLe lanceur de session Classic peut ne pas disposer des dernières fonctionnalités.",
+    "NEOSessionList": "Liste des sessions NEO",
+    "ExperimentalFeatures": "Caractéristiques expérimentales"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Utilisation avancée du terminal Web : copier le contenu du terminal",

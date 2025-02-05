@@ -144,12 +144,19 @@ const router = createBrowserRouter([
       {
         path: '/job',
         handle: { labelKey: 'webui.menu.Sessions' },
-        element: (
-          <BAIErrorBoundary>
-            <SessionDetailAndContainerLogOpenerLegacy />
-            <ComputeSessionListPage />
-          </BAIErrorBoundary>
-        ),
+        Component: () => {
+          const location = useLocation();
+          const [experimentalNeoSessionList] = useBAISettingUserState(
+            'experimental_neo_session_list',
+          );
+          return experimentalNeoSessionList ? (
+            <WebUINavigate to={'/session' + location.search} replace />
+          ) : (
+            <BAIErrorBoundary>
+              <SessionDetailAndContainerLogOpenerLegacy />
+            </BAIErrorBoundary>
+          );
+        },
       },
       {
         path: '/session',
@@ -159,7 +166,25 @@ const router = createBrowserRouter([
             path: '',
             Component: () => {
               const location = useLocation();
-              return <WebUINavigate to={'/job' + location.search} replace />;
+              const [experimentalNeoSessionList] = useBAISettingUserState(
+                'experimental_neo_session_list',
+              );
+
+              return experimentalNeoSessionList ? (
+                <BAIErrorBoundary>
+                  <Suspense
+                    fallback={
+                      <Flex direction="column" style={{ maxWidth: 700 }}>
+                        <Skeleton active />
+                      </Flex>
+                    }
+                  >
+                    <ComputeSessionListPage />
+                  </Suspense>
+                </BAIErrorBoundary>
+              ) : (
+                <WebUINavigate to={'/job' + location.search} replace />
+              );
             },
           },
           {

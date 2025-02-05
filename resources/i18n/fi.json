@@ -1563,7 +1563,9 @@
     "BootstrapScriptEmpty": "Käsikirjoitus on tyhjä. \nAnna käsikirjoitus.",
     "BootstrapScriptDeleted": "Bootstrap-skripti poistettu",
     "ClassicSessionLauncher": "Classic istunnon käynnistysohjelma",
-    "DescClassicSessionLauncher": "Käytä Classic-istunnonkäynnistysohjelmaa NEO-istunnonkäynnistimen sijaan. \nClassic istunnonkäynnistysohjelmassa ei välttämättä ole uusimpia ominaisuuksia."
+    "DescClassicSessionLauncher": "Käytä Classic-istunnonkäynnistysohjelmaa NEO-istunnonkäynnistimen sijaan. \nClassic istunnonkäynnistysohjelmassa ei välttämättä ole uusimpia ominaisuuksia.",
+    "NEOSessionList": "NEO-istuntoluettelo",
+    "ExperimentalFeatures": "Kokeelliset ominaisuudet"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Edistynyt verkkopäätteen käyttö: Kopioi terminaalin sisältö",

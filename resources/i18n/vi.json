@@ -1016,7 +1016,9 @@
     "BootstrapScriptEmpty": "Kịch bản trống rỗng. \nVui lòng nhập kịch bản.",
     "BootstrapScriptDeleted": "Tập lệnh Bootstrap đã bị xóa",
     "ClassicSessionLauncher": "Trình khởi chạy phiên Classic",
-    "DescClassicSessionLauncher": "Sử dụng trình khởi chạy phiên Classic thay vì trình khởi chạy phiên NEO. \nTrình khởi chạy phiên Classic có thể không có các tính năng mới nhất."
+    "DescClassicSessionLauncher": "Sử dụng trình khởi chạy phiên Classic thay vì trình khởi chạy phiên NEO. \nTrình khởi chạy phiên Classic có thể không có các tính năng mới nhất.",
+    "NEOSessionList": "Danh sách phiên Neo",
+    "ExperimentalFeatures": "Các tính năng thử nghiệm"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Sử dụng đầu cuối web nâng cao: Sao chép nội dung đầu cuối",

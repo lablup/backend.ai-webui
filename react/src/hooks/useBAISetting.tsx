@@ -18,6 +18,7 @@ interface UserSettings {
   selected_language?: string;
   classic_session_launcher?: boolean;
   recentSessionHistory?: Array<SessionHistory>;
+  experimental_neo_session_list?: boolean;
   [key: `hiddenColumnKeys.${string}`]: Array<string>;
 }
 
