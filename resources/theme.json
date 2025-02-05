@@ -14,7 +14,7 @@
         "borderRadiusSM": 1
       },
       "Table": {
-        "headerBorderRadius": 0
+        "headerBg": "#E3E3E3"
       },
       "Layout": {
         "lightSiderBg": "#FFF",
@@ -40,7 +40,6 @@
         "borderRadiusSM": 1
       },
       "Table": {
-        "headerBorderRadius": 0
       },
       "Layout": {
         "lightSiderBg": "#FFF",

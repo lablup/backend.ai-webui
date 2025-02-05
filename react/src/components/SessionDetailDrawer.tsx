@@ -1,4 +1,5 @@
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useInterval } from '../hooks/useIntervalValue';
 import SessionDetailContent from './SessionDetailContent';
 import { ReloadOutlined } from '@ant-design/icons';
 import { Button, Drawer, Skeleton, Tooltip } from 'antd';
@@ -22,6 +23,12 @@ const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
   const [isPendingReload, startReloadTransition] = useTransition();
 
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
+
+  useInterval(() => {
+    startReloadTransition(() => {
+      updateFetchKey();
+    });
+  }, 7_000);
   return (
     <Drawer
       title={t('session.SessionInfo')}

@@ -1,8 +1,9 @@
 import { useDebounce } from 'ahooks';
-import { GetProps, Table } from 'antd';
+import { ConfigProvider, GetProps, Table } from 'antd';
 import { createStyles } from 'antd-style';
 import { ColumnsType, ColumnType } from 'antd/es/table';
 import { TableProps } from 'antd/lib';
+import { ComponentToken } from 'antd/lib/table/style';
 import _ from 'lodash';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Resizable, ResizeCallbackData } from 'react-resizable';
@@ -22,6 +23,11 @@ const useStyles = createStyles(({ token, css }) => ({
       overflow: hidden;
       whitespace: 'pre';
       wordwrap: 'break-word';
+    }
+
+    thead.ant-table-thead > tr > th.ant-table-cell {
+      font-weight: 500;
+      color: ${token.colorTextTertiary};
     }
   `,
 }));
@@ -94,6 +100,7 @@ const ResizableTitle = (
 interface BAITableProps<RecordType extends object = any>
   extends TableProps<RecordType> {
   resizable?: boolean;
+  tableComponentToken?: ComponentToken;
 }
 
 const columnKeyOrIndexKey = (column: any, index: number) =>
@@ -110,6 +117,7 @@ const BAITable = <RecordType extends object = any>({
   resizable = false,
   columns,
   components,
+  tableComponentToken,
   ...tableProps
 }: BAITableProps<RecordType>) => {
   const { styles } = useStyles();
@@ -145,22 +153,35 @@ const BAITable = <RecordType extends object = any>({
   }, [resizable, columns, resizedColumnWidths]);
 
   return (
-    <Table
-      sortDirections={['descend', 'ascend', 'descend']}
-      showSorterTooltip={false}
-      className={resizable ? styles.resizableTable : ''}
-      components={
-        resizable
-          ? _.merge(components || {}, {
-              header: {
-                cell: ResizableTitle,
+    <ConfigProvider
+      theme={
+        tableComponentToken
+          ? {
+              components: {
+                Table: tableComponentToken,
               },
-            })
-          : components
+            }
+          : undefined
       }
-      columns={mergedColumns}
-      {...tableProps}
-    />
+    >
+      <Table
+        size="small"
+        sortDirections={['descend', 'ascend', 'descend']}
+        showSorterTooltip={false}
+        className={resizable ? styles.resizableTable : ''}
+        components={
+          resizable
+            ? _.merge(components || {}, {
+                header: {
+                  cell: ResizableTitle,
+                },
+              })
+            : components
+        }
+        columns={mergedColumns}
+        {...tableProps}
+      />
+    </ConfigProvider>
   );
 };
 

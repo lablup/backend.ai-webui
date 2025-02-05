@@ -60,11 +60,14 @@ const UserCredentialsPage = React.lazy(
   () => import('./pages/UserCredentialsPage'),
 );
 
-const ComputeSessionList = React.lazy(
-  () => import('./components/ComputeSessionList'),
+const ComputeSessionListPage = React.lazy(
+  () => import('./pages/ComputeSessionListPage'),
 );
 const AgentSummaryPage = React.lazy(() => import('./pages/AgentSummaryPage'));
 const MaintenancePage = React.lazy(() => import('./pages/MaintenancePage'));
+const SessionDetailAndContainerLogOpenerLegacy = React.lazy(
+  () => import('./components/SessionDetailAndContainerLogOpenerLegacy'),
+);
 
 interface CustomHandle {
   title?: string;
@@ -143,7 +146,8 @@ const router = createBrowserRouter([
         handle: { labelKey: 'webui.menu.Sessions' },
         element: (
           <BAIErrorBoundary>
-            <ComputeSessionList />
+            <SessionDetailAndContainerLogOpenerLegacy />
+            <ComputeSessionListPage />
           </BAIErrorBoundary>
         ),
       },

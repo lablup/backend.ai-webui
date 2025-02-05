@@ -1,5 +1,4 @@
 import { filterEmptyItem } from '../helper';
-import useControllableState from '../hooks/useControllableState';
 import Flex from './Flex';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
@@ -91,7 +90,7 @@ function trimFilterValue(filterValue: string): string {
 }
 
 export function mergeFilterValues(
-  filterStrings: Array<string | undefined>,
+  filterStrings: Array<string | undefined | null>,
   operator: string = '&',
 ) {
   const mergedFilter = _.join(
@@ -142,7 +141,7 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
   loading,
   ...containerProps
 }) => {
-  const [search, setSearch] = useControllableState({});
+  const [search, setSearch] = useState<string>();
   const autoCompleteRef = useRef<GetRef<typeof AutoComplete>>(null);
   const [isOpenAutoComplete, setIsOpenAutoComplete] = useState(false);
 
@@ -285,7 +284,7 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
               selectedProperty.options ||
                 DEFAULT_OPTIONS_OF_TYPES[selectedProperty.type],
               (option) => {
-                return _.isEmpty(search)
+                return !search
                   ? true
                   : option.label?.toString().includes(search);
               },
@@ -306,7 +305,6 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
           </AutoComplete>
         </Tooltip>
       </Space.Compact>
-      {filtersFromValue.length}
       {filtersFromValue.length > 0 && (
         <Flex
           direction="row"
