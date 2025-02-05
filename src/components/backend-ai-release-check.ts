@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2025 Lablup Inc. All rights reserved.
  */
 import { CSSResultGroup, html, LitElement } from 'lit';
 import { get as _text } from 'lit-translate';

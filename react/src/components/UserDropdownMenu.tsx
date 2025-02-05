@@ -28,7 +28,7 @@ import {
   theme,
 } from 'antd';
 import _ from 'lodash';
-import React, { Suspense, useState, useTransition } from 'react';
+import React, { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryLoader } from 'react-relay';
 
@@ -171,7 +171,6 @@ const UserDropdownMenu: React.FC<{
   const [userProfileSettingQueryRef, loadUserProfileSettingQuery] =
     useQueryLoader<UserProfileSettingModalQuery>(UserProfileQuery);
 
-  const [open, setOpen] = useState(false);
   return (
     <>
       <Dropdown
@@ -181,17 +180,11 @@ const UserDropdownMenu: React.FC<{
           maxWidth: 300,
         }}
         placement="bottomRight"
-        open={open}
-        onOpenChange={(open) => {
-          setOpen(open);
-        }}
       >
         {buttonRender(
           <Button
             type="text"
             data-testid="user-dropdown-button"
-            // loading={isPendingInitializeSettingModal}
-            onClick={(e) => setOpen(!open)}
             style={{
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',

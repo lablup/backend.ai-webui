@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2025 Lablup Inc. All rights reserved.
  */
 import tus from '../lib/tus';
 import {
@@ -53,6 +53,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
   // [target vfolder information]
   @property({ type: String }) vfolderID = '';
   @property({ type: String }) vfolderName = '';
+  @property({ type: String }) vfolder = '';
   @property({ type: Array }) vfolderFiles = [];
   @property({ type: String }) vhost = '';
   @property({ type: Boolean }) isWritable = false;
@@ -96,7 +97,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
   @property({ type: Object }) _boundCreatedTimeRenderer = Object();
   @property({ type: Object }) _boundSizeRenderer = Object();
   @property({ type: Object }) _boundControlFileListRenderer = Object();
-  @state() private _unionedAllowedPermissionByVolume = Object();
+  @state() _unionedAllowedPermissionByVolume = Object();
 
   @query('#rename-file-dialog') renameDialog!: BackendAIDialog;
   @query('#new-file-name') newNameInput!: TextField;
@@ -824,6 +825,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
         };
       }),
     );
+    this.fileListGrid.clearCache();
   }
 
   private async _getCurrentKeypairResourcePolicy() {
@@ -842,6 +844,9 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
       return vfolder.id === this.vfolderID;
     });
     this.vfolderName = vfolder.name;
+    this.vfolder = globalThis.backendaiclient.supports('vfolder-id-based')
+      ? vfolder.id
+      : vfolder.name;
     this.vhost = vfolder.host;
     this.isWritable = vfolder.permission.includes('w');
 
@@ -856,7 +861,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
     this.fileListGrid.selectedItems = [];
     const filesInfo = await globalThis.backendaiclient.vfolder.list_files(
       this.breadcrumb.join('/'),
-      this.vfolderName,
+      this.vfolder,
     );
 
     const details = filesInfo.items;
@@ -915,7 +920,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
           this.newNameInput.validationMessage = _text(
-            'data.FileandFoldernameRequired',
+            'data.FileAndFolderNameRequired',
           );
         }
         return {
@@ -943,7 +948,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
         isValid = !regex.test(this.newNameInput.value);
         if (!isValid) {
           this.newNameInput.validationMessage = _text(
-            'data.Allowslettersnumbersand-_dot',
+            'data.AllowsLettersNumbersAnd-_Dot',
           );
         }
         return {
@@ -1033,7 +1038,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
       const job = globalThis.backendaiclient.vfolder.rename_file(
         path,
         newName,
-        this.vfolderName,
+        this.vfolder,
         this.is_dir,
       );
       job
@@ -1099,7 +1104,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
       const job = globalThis.backendaiclient.vfolder.delete_files(
         filenames,
         true,
-        this.vfolderName,
+        this.vfolder,
       );
       job.then((res) => {
         this.notification.text =
@@ -1119,7 +1124,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
         const job = globalThis.backendaiclient.vfolder.delete_files(
           [path],
           true,
-          this.vfolderName,
+          this.vfolder,
         );
         job
           .then((res) => {
@@ -1186,7 +1191,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
     this.mkdirNameInput.reportValidity();
     if (this.mkdirNameInput.checkValidity()) {
       const job = globalThis.backendaiclient.vfolder
-        .mkdir([...this.breadcrumb, newfolder].join('/'), this.vfolderName)
+        .mkdir([...this.breadcrumb, newfolder].join('/'), this.vfolder)
         .catch((err) => {
           if (err & err.message) {
             this.notification.text = PainKiller.relieve(err.title);
@@ -1355,7 +1360,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
     const job = globalThis.backendaiclient.vfolder.create_upload_session(
       path,
       fileObj,
-      this.vfolderName,
+      this.vfolder,
     );
     job.then((url) => {
       const start_date = new Date().getTime();

@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2025 Lablup Inc. All rights reserved.
  */
 import {
   IronFlex,
@@ -420,10 +420,10 @@ export default class BackendAiSettingsView extends BackendAIPage {
                       class="vertical center-justified layout setting-desc-shrink"
                     >
                       <div class="title">
-                        ${_t('settings.OpenSourceCUDAGPUsupport')}
+                        ${_t('settings.OpenSourceCudaGPUSupport')}
                       </div>
                       <div class="description-shrink">
-                        ${_tr('settings.DescCUDAGPUsupport')}
+                        ${_tr('settings.DescCudaGPUSupport')}
                         ${this.options['cuda_fgpu']
                           ? html`
                               <br />
@@ -446,9 +446,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
                     <div
                       class="vertical center-justified layout setting-desc-shrink"
                     >
-                      <div class="title">${_t('settings.ROCMGPUsupport')}</div>
+                      <div class="title">${_t('settings.ROCMGPUSupport')}</div>
                       <div class="description-shrink">
-                        ${_tr('settings.DescROCMGPUsupport')}
+                        ${_tr('settings.DescRocmGPUSupport')}
                       </div>
                     </div>
                     <div
@@ -538,9 +538,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
                     <div
                       class="vertical center-justified layout setting-desc-shrink"
                     >
-                      <div class="title">${_t('settings.IPUsupport')}</div>
+                      <div class="title">${_t('settings.IPUSupport')}</div>
                       <div class="description-shrink">
-                        ${_tr('settings.DescIPUsupport')}
+                        ${_tr('settings.DescIPUSupport')}
                         <br />
                         ${_t('settings.RequireIPUPlugin')}
                       </div>
@@ -559,9 +559,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
                     <div
                       class="vertical center-justified layout setting-desc-shrink"
                     >
-                      <div class="title">${_t('settings.ATOMsupport')}</div>
+                      <div class="title">${_t('settings.ATOMSupport')}</div>
                       <div class="description-shrink">
-                        ${_tr('settings.DescATOMsupport')}
+                        ${_tr('settings.DescATOMSupport')}
                         <br />
                         ${_t('settings.RequireATOMPlugin')}
                       </div>
@@ -622,9 +622,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
                     <div
                       class="vertical center-justified layout setting-desc-shrink"
                     >
-                      <div class="title">${_t('settings.Warboysupport')}</div>
+                      <div class="title">${_t('settings.WarboySupport')}</div>
                       <div class="description-shrink">
-                        ${_tr('settings.DescWarboysupport')}
+                        ${_tr('settings.DescWarboySupport')}
                         <br />
                         ${_t('settings.RequireWarboyPlugin')}
                       </div>
@@ -643,9 +643,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
                     <div
                       class="vertical center-justified layout setting-desc-shrink"
                     >
-                      <div class="title">${_t('settings.RNGDsupport')}</div>
+                      <div class="title">${_t('settings.RNGDSupport')}</div>
                       <div class="description-shrink">
-                        ${_tr('settings.DescRNGDsupport')}
+                        ${_tr('settings.DescRNGDSupport')}
                         <br />
                         ${_t('settings.RequireRNGDPlugin')}
                       </div>
@@ -665,10 +665,10 @@ export default class BackendAiSettingsView extends BackendAIPage {
                       class="vertical center-justified layout setting-desc-shrink"
                     >
                       <div class="title">
-                        ${_t('settings.HyperaccelLPUsupport')}
+                        ${_t('settings.HyperaccelLPUSupport')}
                       </div>
                       <div class="description-shrink">
-                        ${_tr('settings.DescHyperaccelLPUsupport')}
+                        ${_tr('settings.DescHyperaccelLPUSupport')}
                         <br />
                         ${_t('settings.RequireHyperaccelLPUPlugin')}
                       </div>

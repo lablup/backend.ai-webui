@@ -17,6 +17,7 @@ import AgentSelect from './AgentSelect';
 import BAISelect from './BAISelect';
 import DynamicUnitInputNumberWithSlider from './DynamicUnitInputNumberWithSlider';
 import Flex from './Flex';
+// import FormItemControl from './FormItemControl';
 import {
   Image,
   ImageEnvironmentFormInput,
@@ -124,6 +125,11 @@ const ResourceAllocationFormItems: React.FC<
     form,
     preserve: true,
   });
+  const currentEnvironmentManual = Form.useWatch(['environments', 'manual'], {
+    form,
+    preserve: true,
+  });
+
   const [{ currentImageMinM, remaining, resourceLimits, checkPresetInfo }] =
     useResourceLimitAndRemaining({
       currentProjectName: currentProject.name,
@@ -131,27 +137,52 @@ const ResourceAllocationFormItems: React.FC<
       currentImage: currentImage,
     });
 
-  const { mergedResourceSlots, resourceSlotsInRG: resourceSlots } =
-    useResourceSlotsDetails(currentResourceGroupInForm || undefined);
+  const { mergedResourceSlots, resourceSlotsInRG } = useResourceSlotsDetails(
+    currentResourceGroupInForm || undefined,
+  );
 
-  const acceleratorSlots = _.omitBy(resourceSlots, (value, key) => {
-    if (['cpu', 'mem', 'shmem'].includes(key)) return true;
+  // When undefined, it means that the resourceSlots are not loaded yet.
+  const acceleratorSlots = resourceSlotsInRG
+    ? _.omitBy(resourceSlotsInRG, (value, key) => {
+        if (['cpu', 'mem', 'shmem'].includes(key)) return true;
 
-    if (
-      !resourceLimits.accelerators[key]?.max ||
-      resourceLimits.accelerators[key]?.max === 0
-    )
-      return true;
-    return false;
-  });
+        if (
+          !resourceLimits.accelerators[key]?.max ||
+          resourceLimits.accelerators[key]?.max === 0
+        )
+          return true;
+        return false;
+      })
+    : undefined;
 
+  // When undefined, it means that the image is not determined yet.
   const currentImageAcceleratorLimits = useMemo(
     () =>
-      _.filter(currentImage?.resource_limits, (limit) =>
-        limit ? !_.includes(['cpu', 'mem', 'shmem'], limit.key) : false,
-      ),
-    [currentImage?.resource_limits],
+      currentImage
+        ? _.filter(currentImage?.resource_limits, (limit) =>
+            limit ? !_.includes(['cpu', 'mem', 'shmem'], limit.key) : false,
+          )
+        : undefined,
+    [currentImage],
   );
+
+  // Disable accelerator input when there is no accelerator slot or no accelerator required in the selected image
+  // TODO: use `supported_accelerators` information from the image instead of `currentImageAcceleratorLimits` (FR-55)
+  const isAcceleratorInputDisabled =
+    (!_.isUndefined(acceleratorSlots) && _.isEmpty(acceleratorSlots)) ||
+    (currentImageAcceleratorLimits &&
+      currentImageAcceleratorLimits.length === 0 &&
+      _.isEmpty(currentEnvironmentManual));
+
+  useEffect(() => {
+    if (isAcceleratorInputDisabled) {
+      form.setFieldsValue({
+        resource: {
+          accelerator: 0,
+        },
+      });
+    }
+  }, [isAcceleratorInputDisabled, form]);
 
   const sessionSliderLimitAndRemaining = {
     min: 1,
@@ -174,7 +205,7 @@ const ResourceAllocationFormItems: React.FC<
     ]);
     // If the current accelerator type is not available,
     // change accelerator type to the first supported accelerator
-    const nextAcceleratorType: string = acceleratorSlots[currentAcceleratorType]
+    const nextAcceleratorType = acceleratorSlots?.[currentAcceleratorType]
       ? currentAcceleratorType
       : _.keys(acceleratorSlots)[0];
 
@@ -203,7 +234,10 @@ const ResourceAllocationFormItems: React.FC<
         };
 
       // NOTE: accelerator value setting is done inside the conditional statement
-      if (currentImageAcceleratorLimits.length > 0) {
+      if (
+        currentImageAcceleratorLimits &&
+        currentImageAcceleratorLimits.length > 0
+      ) {
         if (
           _.find(
             currentImageAcceleratorLimits,
@@ -229,7 +263,7 @@ const ResourceAllocationFormItems: React.FC<
             // resourceSlots returns "all resources enable to allocate(including AI accelerator)"
             // imageAcceleratorLimit returns "all resources that is supported in the selected image"
             _.filter(currentImageAcceleratorLimits, (acceleratorInfo: any) =>
-              _.keys(resourceSlots).includes(acceleratorInfo?.key),
+              _.keys(resourceSlotsInRG).includes(acceleratorInfo?.key),
             )[0]?.key;
 
           if (nextImageSelectorType) {
@@ -274,7 +308,11 @@ const ResourceAllocationFormItems: React.FC<
       });
 
       // set to 0 when currentImage doesn't support any AI accelerator
-      if (currentImage && currentImageAcceleratorLimits.length === 0) {
+      if (
+        currentImage &&
+        currentImageAcceleratorLimits &&
+        currentImageAcceleratorLimits.length === 0
+      ) {
         form.setFieldValue(['resource', 'accelerator'], 0);
       }
 
@@ -295,7 +333,7 @@ const ResourceAllocationFormItems: React.FC<
         checkPresetInfo?.presets,
         (preset) => preset.name === name,
       );
-      const slots = _.pick(preset?.resource_slots, _.keys(resourceSlots));
+      const slots = _.pick(preset?.resource_slots, _.keys(resourceSlotsInRG));
       const mem = convertBinarySizeUnit(
         (slots?.mem || 0) + 'b',
         'g',
@@ -372,7 +410,7 @@ const ResourceAllocationFormItems: React.FC<
     // if resourceSlots is loaded, update the form based on the resourceSlots
     if (
       currentAllocationPreset === 'auto-select' &&
-      !_.isUndefined(resourceSlots)
+      !_.isUndefined(resourceSlotsInRG)
     ) {
       if (
         _.includes(
@@ -413,7 +451,7 @@ const ResourceAllocationFormItems: React.FC<
   }, [
     currentAllocationPreset,
     allocatablePresetNames,
-    resourceSlots,
+    resourceSlotsInRG,
     form,
     enableResourcePresets,
     // below are functions wrapped by useEventNotStable
@@ -490,7 +528,7 @@ const ResourceAllocationFormItems: React.FC<
             return (
               // getFieldValue('allocationPreset') === 'custom' && (
               <>
-                {resourceSlots?.cpu && (
+                {resourceSlotsInRG?.cpu && (
                   <Form.Item
                     name={['resource', 'cpu']}
                     // initialValue={0}
@@ -592,7 +630,7 @@ const ResourceAllocationFormItems: React.FC<
                     />
                   </Form.Item>
                 )}
-                {resourceSlots?.mem && (
+                {resourceSlotsInRG?.mem && (
                   <Form.Item
                     label={t('session.launcher.Memory')}
                     tooltip={{
@@ -932,12 +970,6 @@ const ResourceAllocationFormItems: React.FC<
                       'resource',
                       'acceleratorType',
                     ]);
-                    const isAcceleratorInputDisabled =
-                      _.isEmpty(acceleratorSlots) ||
-                      (currentImageAcceleratorLimits.length === 0 &&
-                        _.isEmpty(
-                          form.getFieldValue(['environments', 'manual']),
-                        ));
                     return (
                       <Form.Item
                         name={['resource', 'accelerator']}
@@ -952,7 +984,9 @@ const ResourceAllocationFormItems: React.FC<
                         }}
                         rules={[
                           {
-                            required: currentImageAcceleratorLimits.length > 0,
+                            required:
+                              currentImageAcceleratorLimits &&
+                              currentImageAcceleratorLimits.length > 0,
                           },
                           {
                             type: 'number',
@@ -1068,10 +1102,9 @@ const ResourceAllocationFormItems: React.FC<
                               formatter: (value = 0) => {
                                 return `${value} ${mergedResourceSlots?.[currentAcceleratorType]?.display_unit || ''}`;
                               },
-                              open:
-                                currentImageAcceleratorLimits.length <= 0
-                                  ? false
-                                  : undefined,
+                              open: isAcceleratorInputDisabled
+                                ? false
+                                : undefined,
                             },
                           }}
                           disabled={isAcceleratorInputDisabled}
@@ -1116,6 +1149,7 @@ const ResourceAllocationFormItems: React.FC<
                                           mergedResourceSlots?.[name]
                                             ?.display_unit || 'UNIT',
                                         disabled:
+                                          currentImageAcceleratorLimits &&
                                           currentImageAcceleratorLimits.length >
                                             0 &&
                                           !_.find(
@@ -1490,14 +1524,17 @@ export const getAllocatablePresetNames = (
     } else {
       // When current image requires some accelerator,
       // It's available if the preset has a required accelerator value that is larger than the current image's minimum value
-      return _.some(currentImageAcceleratorLimits, (limit) => {
-        return (
-          limit?.key &&
-          acceleratorResourceOfPreset[limit?.key] &&
-          _.toNumber(acceleratorResourceOfPreset[limit?.key]) >=
-            _.toNumber(limit?.min)
-        );
-      });
+      return (
+        currentImageAcceleratorLimits &&
+        _.some(currentImageAcceleratorLimits, (limit) => {
+          return (
+            limit?.key &&
+            acceleratorResourceOfPreset[limit?.key] &&
+            _.toNumber(acceleratorResourceOfPreset[limit?.key]) >=
+              _.toNumber(limit?.min)
+          );
+        })
+      );
     }
   }).map((preset) => preset.name);
   return currentImageAcceleratorLimits.length === 0

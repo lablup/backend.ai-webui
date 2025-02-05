@@ -236,8 +236,8 @@ importers:
         specifier: ^18.3.3
         version: 18.3.3
       '@playwright/test':
-        specifier: ^1.46.1
-        version: 1.46.1
+        specifier: ^1.49.1
+        version: 1.49.1
       '@rollup/plugin-commonjs':
         specifier: ^25.0.8
         version: 25.0.8(rollup@4.20.0)
@@ -325,6 +325,9 @@ importers:
       eslint-config-prettier:
         specifier: ^9.1.0
         version: 9.1.0(eslint@8.57.0)
+      eslint-plugin-json-schema-validator:
+        specifier: ^5.3.1
+        version: 5.3.1(eslint@8.57.0)
       eslint-plugin-lit-a11y:
         specifier: ^4.1.4
         version: 4.1.4(eslint@8.57.0)
@@ -352,6 +355,9 @@ importers:
       jsdoc:
         specifier: ^4.0.3
         version: 4.0.3
+      jsonc-eslint-parser:
+        specifier: ^2.4.0
+        version: 2.4.0
       lint-staged:
         specifier: ^15.2.8
         version: 15.2.8
@@ -3285,6 +3291,11 @@ packages:
 
   '@playwright/test@1.46.1':
     resolution: {integrity: sha512-Fq6SwLujA/DOIvNC2EL/SojJnkKf/rAwJ//APpJJHRyMi1PdKrY3Az+4XNQ51N4RTbItbIByQ0jgd1tayq1aeA==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+  '@playwright/test@1.49.1':
+    resolution: {integrity: sha512-Ky+BVzPz8pL6PQxHqNRW1k3mIyv933LML7HktS8uik0bUXNCdPhoS/kLihiO1tMf/egaJb4IutXd7UywvXEW+g==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -6764,6 +6775,12 @@ packages:
     resolution: {integrity: sha512-75IUQsusDdalQEW/G/2esa87J7raqdJF+Ca0/Xm5C3Q58Nr4yVYjZGp/P1+2xiEVgXRrA39dpRb8LcshajbqDQ==}
     engines: {node: '>=0.4.0'}
 
+  eslint-compat-utils@0.6.4:
+    resolution: {integrity: sha512-/u+GQt8NMfXO8w17QendT4gvO5acfxQsAKirAt0LVxDnr2N8YLCVbregaNc/Yhp7NM128DwCaRvr8PLDfeNkQw==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      eslint: '>=6.0.0'
+
   eslint-config-google@0.14.0:
     resolution: {integrity: sha512-WsbX4WbjuMvTdeVL6+J3rK1RGhCTqjsFjX7UMSMgZiyxxaNLkoJENbrGExzERFeoTpGw3F3FypTiWAP9ZXzkEw==}
     engines: {node: '>=0.10.0'}
@@ -6788,6 +6805,17 @@ packages:
 
   eslint-import-resolver-node@0.3.9:
     resolution: {integrity: sha512-WFj2isz22JahUv+B788TlO3N6zL3nNJGU8CcZbPZvVEkBPaJdCV4vy5wyghty5ROFbCRnm132v8BScu5/1BQ8g==}
+
+  eslint-json-compat-utils@0.2.1:
+    resolution: {integrity: sha512-YzEodbDyW8DX8bImKhAcCeu/L31Dd/70Bidx2Qex9OFUtgzXLqtfWL4Hr5fM/aCCB8QUZLuJur0S9k6UfgFkfg==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      '@eslint/json': '*'
+      eslint: '*'
+      jsonc-eslint-parser: ^2.4.0
+    peerDependenciesMeta:
+      '@eslint/json':
+        optional: true
 
   eslint-module-utils@2.12.0:
     resolution: {integrity: sha512-wALZ0HFoytlyh/1+4wuZ9FJCD/leWHQzzrxJ8+rebyReSLk7LApMyd3WJaLVoN+D5+WIdJyDK1c6JnE65V4Zyg==}
@@ -6840,6 +6868,12 @@ packages:
         optional: true
       jest:
         optional: true
+
+  eslint-plugin-json-schema-validator@5.3.1:
+    resolution: {integrity: sha512-S5HpOPrpAMXd81TYJbm5iOgy3YirQ+NtHVaii6rmw/iiv5xSu5kPhxiuovoYpL9HSJsyKXJRK597yCy3BLKN8g==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    peerDependencies:
+      eslint: '>=6.0.0'
 
   eslint-plugin-jsx-a11y@6.10.2:
     resolution: {integrity: sha512-scB3nz4WmG75pV8+3eRUQOHZlNSUhFNq37xnpgRkCCELU3XMvXAxLk1eqWWyE22Ki4Q01Fnsw9BA3cJHDPgn2Q==}
@@ -8590,6 +8624,9 @@ packages:
   json-parse-even-better-errors@2.3.1:
     resolution: {integrity: sha512-xyFwyhro/JEof6Ghe2iz2NcXoj2sloNsWr/XsERDK/oiPCfaNhl5ONfp+jQdAZRQQ0IJWNzH9zIZF7li91kh2w==}
 
+  json-schema-migrate@2.0.0:
+    resolution: {integrity: sha512-r38SVTtojDRp4eD6WsCqiE0eNDt4v1WalBXb9cyZYw9ai5cGtBwzRNWjHzJl38w6TxFkXAIA7h+fyX3tnrAFhQ==}
+
   json-schema-traverse@0.4.1:
     resolution: {integrity: sha512-xbbCH5dCYU5T8LcEhhuh7HJ88HXuW3qsI3Y0zOZFKfZEHcpWiHU/Jxzk629Brsab/mMiHQti9wMP+845RPe3Vg==}
 
@@ -8620,6 +8657,10 @@ packages:
     resolution: {integrity: sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==}
     engines: {node: '>=6'}
     hasBin: true
+
+  jsonc-eslint-parser@2.4.0:
+    resolution: {integrity: sha512-WYDyuc/uFcGp6YtM2H0uKmUwieOuzeE/5YocFJLnLfclZ4inf3mRn8ZVy1s7Hxji7Jxm6Ss8gqpexD/GlKoGgg==}
+    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
   jsondiffpatch@0.6.0:
     resolution: {integrity: sha512-3QItJOXp2AP1uv7waBkao5nCvhEv+QmJAd38Ybq7wNI74Q+BBmnLn4EDKz6yI9xGAIQoUF87qHt+kc1IVxB4zQ==}
@@ -9261,6 +9302,10 @@ packages:
     resolution: {integrity: sha512-lKwV/1brpG6mBUFHtb7NUmtABCb2WZZmm2wNiOA5hAb8VdCS4B3dtMWyvcoViccwAW/COERjXLt0zP1zXUN26g==}
     engines: {node: '>=10'}
 
+  minimatch@8.0.4:
+    resolution: {integrity: sha512-W0Wvr9HyFXZRGIDgCicunpQ299OKXs9RgZfaukz4qAW/pJhcpUfupc9c+OObPOFueNy8VSrZgEmDtk6Kh4WzDA==}
+    engines: {node: '>=16 || 14 >=14.17'}
+
   minimatch@9.0.5:
     resolution: {integrity: sha512-G6T0ZX48xgozx7587koeX9Ys2NYy6Gmv//P89sEte9V9whIapMNF4idKxnW2QtCcLiTWlb/wfCabAtAFWhhBow==}
     engines: {node: '>=16 || 14 >=14.17'}
@@ -9820,8 +9865,18 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
+  playwright-core@1.49.1:
+    resolution: {integrity: sha512-BzmpVcs4kE2CH15rWfzpjzVGhWERJfmnXmniSyKeRZUs9Ws65m+RGIi7mjJK/euCegfn3i7jvqWeWyHe9y3Vgg==}
+    engines: {node: '>=18'}
+    hasBin: true
+
   playwright@1.46.1:
     resolution: {integrity: sha512-oPcr1yqoXLCkgKtD5eNUPLiN40rYEM39odNpIb6VE6S7/15gJmA1NzVv6zJYusV0e7tzvkU/utBFNa/Kpxmwng==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+  playwright@1.49.1:
+    resolution: {integrity: sha512-VYL8zLoNTBxVOrJBbDuRgDWa3i+mfQgDTrL8Ah9QXZ7ax4Dsj0MSq5bYgytRnDVVe+njoKnfsYkH3HzqVj5UZA==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -12028,6 +12083,10 @@ packages:
   token-stream@0.0.1:
     resolution: {integrity: sha512-nfjOAu/zAWmX9tgwi5NRp7O7zTDUD1miHiB40klUnAh9qnL1iXdgzcz/i5dMaL5jahcBAaSfmNOBBJBLJW8TEg==}
 
+  toml-eslint-parser@0.10.0:
+    resolution: {integrity: sha512-khrZo4buq4qVmsGzS5yQjKe/WsFvV8fGfOjDQN0q4iy9FjRfPWRgTFrU8u1R2iu/SfWLhY9WnCi4Jhdrcbtg+g==}
+    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+
   touch@3.1.1:
     resolution: {integrity: sha512-r0eojU4bI8MnHr8c5bNo7lJDdI2qXlWWJk6a9EAFG7vbhTjElYhBVS3/miuE0uOuoLdb8Mc/rVfsmm6eo5o9GA==}
     hasBin: true
@@ -12977,6 +13036,10 @@ packages:
 
   yallist@3.1.1:
     resolution: {integrity: sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g==}
+
+  yaml-eslint-parser@1.2.3:
+    resolution: {integrity: sha512-4wZWvE398hCP7O8n3nXKu/vdq1HcH01ixYlCREaJL5NUMwQ0g3MaGFUBNSlmBtKmhbtVG/Cm6lyYmSVTEVil8A==}
+    engines: {node: ^14.17.0 || >=16.0.0}
 
   yaml@1.10.2:
     resolution: {integrity: sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg==}
@@ -16444,6 +16507,10 @@ snapshots:
     dependencies:
       playwright: 1.46.1
 
+  '@playwright/test@1.49.1':
+    dependencies:
+      playwright: 1.49.1
+
   '@pmmmwh/react-refresh-webpack-plugin@0.5.15(react-refresh@0.11.0)(type-fest@2.19.0)(webpack-dev-server@4.15.2(bufferutil@4.0.8)(utf-8-validate@6.0.4)(webpack-cli@5.1.4(webpack@5.93.0))(webpack@5.97.1(esbuild@0.19.12)(webpack-cli@5.1.4(webpack@5.93.0))))(webpack-hot-middleware@2.26.1)(webpack@5.97.1(esbuild@0.19.12)(webpack-cli@5.1.4(webpack@5.93.0)))':
     dependencies:
       ansi-html: 0.0.9
@@ -18554,17 +18621,17 @@ snapshots:
 
   '@webcomponents/webcomponentsjs@2.8.0': {}
 
-  '@webpack-cli/configtest@2.1.1(webpack-cli@5.1.4(webpack@5.93.0))(webpack@5.93.0(webpack-cli@5.1.4))':
+  '@webpack-cli/configtest@2.1.1(webpack-cli@5.1.4)(webpack@5.93.0)':
     dependencies:
       webpack: 5.93.0(webpack-cli@5.1.4)
       webpack-cli: 5.1.4(webpack@5.93.0)
 
-  '@webpack-cli/info@2.0.2(webpack-cli@5.1.4(webpack@5.93.0))(webpack@5.93.0(webpack-cli@5.1.4))':
+  '@webpack-cli/info@2.0.2(webpack-cli@5.1.4)(webpack@5.93.0)':
     dependencies:
       webpack: 5.93.0(webpack-cli@5.1.4)
       webpack-cli: 5.1.4(webpack@5.93.0)
 
-  '@webpack-cli/serve@2.0.5(webpack-cli@5.1.4(webpack@5.93.0))(webpack@5.93.0(webpack-cli@5.1.4))':
+  '@webpack-cli/serve@2.0.5(webpack-cli@5.1.4)(webpack@5.93.0)':
     dependencies:
       webpack: 5.93.0(webpack-cli@5.1.4)
       webpack-cli: 5.1.4(webpack@5.93.0)
@@ -18615,6 +18682,10 @@ snapshots:
     dependencies:
       acorn: 8.12.1
 
+  acorn-jsx@5.3.2(acorn@8.14.0):
+    dependencies:
+      acorn: 8.14.0
+
   acorn-node@1.8.2:
     dependencies:
       acorn: 7.4.1
@@ -18656,7 +18727,7 @@ snapshots:
 
   acorn-walk@8.3.3:
     dependencies:
-      acorn: 8.12.1
+      acorn: 8.14.0
 
   acorn@3.3.0: {}
 
@@ -21066,6 +21137,11 @@ snapshots:
       esrecurse: 4.3.0
       estraverse: 4.3.0
 
+  eslint-compat-utils@0.6.4(eslint@8.57.0):
+    dependencies:
+      eslint: 8.57.0
+      semver: 7.6.3
+
   eslint-config-google@0.14.0(eslint@8.57.0):
     dependencies:
       eslint: 8.57.0
@@ -21108,6 +21184,12 @@ snapshots:
       resolve: 1.22.8
     transitivePeerDependencies:
       - supports-color
+
+  eslint-json-compat-utils@0.2.1(eslint@8.57.0)(jsonc-eslint-parser@2.4.0):
+    dependencies:
+      eslint: 8.57.0
+      esquery: 1.6.0
+      jsonc-eslint-parser: 2.4.0
 
   eslint-module-utils@2.12.0(@typescript-eslint/parser@5.62.0(eslint@8.57.1)(typescript@5.7.2))(eslint-import-resolver-node@0.3.9)(eslint@8.57.1):
     dependencies:
@@ -21166,6 +21248,25 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
       - typescript
+
+  eslint-plugin-json-schema-validator@5.3.1(eslint@8.57.0):
+    dependencies:
+      '@eslint-community/eslint-utils': 4.4.0(eslint@8.57.0)
+      ajv: 8.17.1
+      debug: 4.3.6
+      eslint: 8.57.0
+      eslint-compat-utils: 0.6.4(eslint@8.57.0)
+      eslint-json-compat-utils: 0.2.1(eslint@8.57.0)(jsonc-eslint-parser@2.4.0)
+      json-schema-migrate: 2.0.0
+      jsonc-eslint-parser: 2.4.0
+      minimatch: 8.0.4
+      synckit: 0.9.1
+      toml-eslint-parser: 0.10.0
+      tunnel-agent: 0.6.0
+      yaml-eslint-parser: 1.2.3
+    transitivePeerDependencies:
+      - '@eslint/json'
+      - supports-color
 
   eslint-plugin-jsx-a11y@6.10.2(eslint@8.57.1):
     dependencies:
@@ -21399,8 +21500,8 @@ snapshots:
 
   espree@9.6.1:
     dependencies:
-      acorn: 8.12.1
-      acorn-jsx: 5.3.2(acorn@8.12.1)
+      acorn: 8.14.0
+      acorn-jsx: 5.3.2(acorn@8.14.0)
       eslint-visitor-keys: 3.4.3
 
   esprima-next@5.8.4: {}
@@ -23636,6 +23737,10 @@ snapshots:
 
   json-parse-even-better-errors@2.3.1: {}
 
+  json-schema-migrate@2.0.0:
+    dependencies:
+      ajv: 8.17.1
+
   json-schema-traverse@0.4.1: {}
 
   json-schema-traverse@1.0.0: {}
@@ -23663,6 +23768,13 @@ snapshots:
       minimist: 1.2.8
 
   json5@2.2.3: {}
+
+  jsonc-eslint-parser@2.4.0:
+    dependencies:
+      acorn: 8.14.0
+      eslint-visitor-keys: 3.4.3
+      espree: 9.6.1
+      semver: 7.6.3
 
   jsondiffpatch@0.6.0:
     dependencies:
@@ -24494,6 +24606,10 @@ snapshots:
     dependencies:
       brace-expansion: 2.0.1
 
+  minimatch@8.0.4:
+    dependencies:
+      brace-expansion: 2.0.1
+
   minimatch@9.0.5:
     dependencies:
       brace-expansion: 2.0.1
@@ -25096,9 +25212,17 @@ snapshots:
 
   playwright-core@1.46.1: {}
 
+  playwright-core@1.49.1: {}
+
   playwright@1.46.1:
     dependencies:
       playwright-core: 1.46.1
+    optionalDependencies:
+      fsevents: 2.3.2
+
+  playwright@1.49.1:
+    dependencies:
+      playwright-core: 1.49.1
     optionalDependencies:
       fsevents: 2.3.2
 
@@ -27641,7 +27765,7 @@ snapshots:
     optionalDependencies:
       esbuild: 0.19.12
 
-  terser-webpack-plugin@5.3.10(webpack@5.93.0(webpack-cli@5.1.4)):
+  terser-webpack-plugin@5.3.10(webpack@5.93.0):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
@@ -27652,7 +27776,7 @@ snapshots:
 
   terser@3.16.1:
     dependencies:
-      acorn: 8.12.1
+      acorn: 8.14.0
       commander: 2.17.1
       source-map: 0.6.1
       source-map-support: 0.5.21
@@ -27786,6 +27910,10 @@ snapshots:
   toidentifier@1.0.1: {}
 
   token-stream@0.0.1: {}
+
+  toml-eslint-parser@0.10.0:
+    dependencies:
+      eslint-visitor-keys: 3.4.3
 
   touch@3.1.1: {}
 
@@ -28050,7 +28178,7 @@ snapshots:
 
   unassertify@3.0.1:
     dependencies:
-      acorn: 8.12.1
+      acorn: 8.14.0
       convert-source-map: 1.9.0
       escodegen: 2.1.0
       multi-stage-sourcemap: 0.3.1
@@ -28412,9 +28540,9 @@ snapshots:
   webpack-cli@5.1.4(webpack@5.93.0):
     dependencies:
       '@discoveryjs/json-ext': 0.5.7
-      '@webpack-cli/configtest': 2.1.1(webpack-cli@5.1.4(webpack@5.93.0))(webpack@5.93.0(webpack-cli@5.1.4))
-      '@webpack-cli/info': 2.0.2(webpack-cli@5.1.4(webpack@5.93.0))(webpack@5.93.0(webpack-cli@5.1.4))
-      '@webpack-cli/serve': 2.0.5(webpack-cli@5.1.4(webpack@5.93.0))(webpack@5.93.0(webpack-cli@5.1.4))
+      '@webpack-cli/configtest': 2.1.1(webpack-cli@5.1.4)(webpack@5.93.0)
+      '@webpack-cli/info': 2.0.2(webpack-cli@5.1.4)(webpack@5.93.0)
+      '@webpack-cli/serve': 2.0.5(webpack-cli@5.1.4)(webpack@5.93.0)
       colorette: 2.0.20
       commander: 10.0.1
       cross-spawn: 7.0.3
@@ -28541,7 +28669,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.10(webpack@5.93.0(webpack-cli@5.1.4))
+      terser-webpack-plugin: 5.3.10(webpack@5.93.0)
       watchpack: 2.4.1
       webpack-sources: 3.2.3
     optionalDependencies:
@@ -29007,6 +29135,12 @@ snapshots:
   yallist@2.1.2: {}
 
   yallist@3.1.1: {}
+
+  yaml-eslint-parser@1.2.3:
+    dependencies:
+      eslint-visitor-keys: 3.4.3
+      lodash: 4.17.21
+      yaml: 2.5.0
 
   yaml@1.10.2: {}
 

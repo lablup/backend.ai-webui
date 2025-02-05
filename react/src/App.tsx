@@ -64,6 +64,7 @@ const ComputeSessionList = React.lazy(
   () => import('./components/ComputeSessionList'),
 );
 const AgentSummaryPage = React.lazy(() => import('./pages/AgentSummaryPage'));
+const MaintenancePage = React.lazy(() => import('./pages/MaintenancePage'));
 
 interface CustomHandle {
   title?: string;
@@ -319,6 +320,11 @@ const router = createBrowserRouter([
       },
       {
         path: '/maintenance',
+        element: (
+          <BAIErrorBoundary>
+            <MaintenancePage />
+          </BAIErrorBoundary>
+        ),
         handle: { labelKey: 'webui.menu.Maintenance' },
       },
       {
@@ -351,7 +357,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/unauthorized',
-        handle: { labelKey: 'webui.UNAUTHORIZEDACCESS' },
+        handle: { labelKey: 'webui.UnauthorizedAccess' },
         Component: Page401,
       },
       // Leave empty tag for plugin pages.

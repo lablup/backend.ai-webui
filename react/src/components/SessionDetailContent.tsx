@@ -9,10 +9,12 @@ import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
 import SessionTypeTag from './ComputeSessionNodeItems/SessionTypeTag';
 import Flex from './Flex';
+import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ImageMetaIcon from './ImageMetaIcon';
 import SessionUsageMonitor from './SessionUsageMonitor';
 import { SessionDetailContentLegacyQuery } from './__generated__/SessionDetailContentLegacyQuery.graphql';
 import { SessionDetailContentQuery } from './__generated__/SessionDetailContentQuery.graphql';
+import { FolderOutlined } from '@ant-design/icons';
 import {
   Alert,
   Button,
@@ -25,6 +27,7 @@ import {
 } from 'antd';
 import Title from 'antd/es/typography/Title';
 import graphql from 'babel-plugin-relay/macro';
+import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
@@ -34,6 +37,7 @@ const SessionDetailContent: React.FC<{
 }> = ({ id, fetchKey = 'initial' }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const { open } = useFolderExplorerOpener();
   const currentProject = useCurrentProjectValue();
   const userRole = useCurrentUserRole();
 
@@ -102,6 +106,7 @@ const SessionDetailContent: React.FC<{
             # It might be a bug in relay
             ...ContainerLogModalFragment
             ...SessionUsageMonitorFragment
+            ...ContainerCommitModalFragment
           }
           legacy_session: compute_session(id: $uuid) {
             image
@@ -138,6 +143,7 @@ const SessionDetailContent: React.FC<{
         style={{
           alignSelf: 'stretch',
         }}
+        gap={'sm'}
       >
         <EditableSessionName
           sessionFrgmt={session}
@@ -145,9 +151,8 @@ const SessionDetailContent: React.FC<{
           level={3}
           style={{
             margin: 0,
-            flex: 1,
           }}
-          editable={false}
+          editable
         />
         <Button.Group size="large">
           <SessionActionButtons sessionFrgmt={session} />
@@ -188,7 +193,25 @@ const SessionDetailContent: React.FC<{
           )}
         </Descriptions.Item>
         <Descriptions.Item label={t('session.launcher.MountedFolders')}>
-          {legacy_session?.mounts?.join(', ')}
+          {_.map(
+            _.zip(legacy_session?.mounts, session?.vfolder_mounts),
+            (mountInfo) => {
+              const [name, id] = mountInfo;
+              return (
+                <Button
+                  key={id}
+                  type="link"
+                  size="small"
+                  icon={<FolderOutlined />}
+                  onClick={() => {
+                    open(id ?? '');
+                  }}
+                >
+                  {name}
+                </Button>
+              );
+            },
+          )}
         </Descriptions.Item>
         <Descriptions.Item label={t('session.launcher.ResourceAllocation')}>
           <Flex gap={'sm'} wrap="wrap">

@@ -116,7 +116,7 @@ const SessionInfoCell: React.FC<{
             },
             {
               pattern: /^(?:[a-zA-Z0-9][-a-zA-Z0-9._]{2,}[a-zA-Z0-9])?$/,
-              message: t('session.Validation.EnterValidSessionName'),
+              message: t('session.validation.EnterValidSessionName'),
             },
             () => ({
               validator(form, value) {
@@ -126,7 +126,7 @@ const SessionInfoCell: React.FC<{
                   )
                 ) {
                   return Promise.reject(
-                    new Error(t('session.Validation.SessionNameAlreadyExist')),
+                    new Error(t('session.validation.SessionNameAlreadyExist')),
                   );
                 }
                 return Promise.resolve();

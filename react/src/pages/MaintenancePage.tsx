@@ -1,89 +1,30 @@
-import { useWebComponentInfo } from '../components/DefaultProviders';
-import Flex from '../components/Flex';
-import { RedoOutlined } from '@ant-design/icons';
-import { Button, Card, Row, Col, Typography, theme } from 'antd';
-import React from 'react';
-import { useTranslation, Trans } from 'react-i18next';
+import MaintenanceSettingList from '../components/MaintenanceSettingList';
+import { Card } from 'antd';
+import { useTranslation } from 'react-i18next';
+import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
-const MaintenancePage: React.FC = () => {
+type TabKey = 'maintenance';
+
+const tabParam = withDefault(StringParam, 'maintenance');
+
+const MaintenancePage = () => {
   const { t } = useTranslation();
-
-  const { value, dispatchEvent } = useWebComponentInfo();
-  let parsedValue: {
-    recalculating: boolean;
-    scanning: boolean;
-  };
-  try {
-    parsedValue = JSON.parse(value || '');
-  } catch (error) {
-    parsedValue = {
-      recalculating: false,
-      scanning: false,
-    };
-  }
-  const { recalculating, scanning } = parsedValue;
-
-  const { token } = theme.useToken();
+  const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
 
   return (
-    <Flex
-      direction="row"
-      align="stretch"
-      style={{ margin: token.marginSM, gap: token.margin }}
+    <Card
+      activeTabKey="maintenance"
+      onTabChange={(key) => setCurTabKey(key as TabKey)}
+      tabList={[
+        {
+          key: 'maintenance',
+          tab: t('webui.menu.Maintenance'),
+        },
+      ]}
+      styles={{ body: { padding: 0 } }}
     >
-      <Row gutter={[14, token.margin]}>
-        <Col>
-          <Card title={t('maintenance.Fix')}>
-            <Typography.Title
-              level={5}
-              style={{
-                margin: 0,
-                paddingBottom: '12px',
-              }}
-            >
-              {t('maintenance.MatchDatabase')}
-            </Typography.Title>
-            <Trans>{t('maintenance.DescMatchDatabase')}</Trans>
-            <Button
-              block
-              disabled={recalculating}
-              icon={<RedoOutlined />}
-              onClick={() => dispatchEvent('recalculate', null)}
-              style={{ marginTop: '12px' }}
-            >
-              {recalculating
-                ? t('maintenance.Recalculating')
-                : t('maintenance.RecalculateUsage')}
-            </Button>
-          </Card>
-        </Col>
-        <Col>
-          <Card title={t('maintenance.ImagesEnvironment')}>
-            <Typography.Title
-              level={5}
-              style={{
-                margin: 0,
-                paddingBottom: '12px',
-              }}
-            >
-              {t('maintenance.RescanImageList')}
-            </Typography.Title>
-            <Trans>{t('maintenance.DescRescanImageList')}</Trans>
-            <Button
-              block
-              disabled={scanning}
-              icon={<RedoOutlined />}
-              onClick={() => dispatchEvent('rescan', null)}
-              style={{ marginTop: '12px' }}
-            >
-              {scanning
-                ? t('maintenance.RescanImageScanning')
-                : t('maintenance.RescanImages')}
-            </Button>
-          </Card>
-        </Col>
-      </Row>
-    </Flex>
+      {curTabKey === 'maintenance' && <MaintenanceSettingList />}
+    </Card>
   );
 };
 

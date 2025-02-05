@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2025 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
@@ -79,7 +79,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
             if (newFullName !== userInfo.full_name) {
               messageApi.open({
                 type: 'success',
-                content: t('webui.menu.FullnameUpdated'),
+                content: t('webui.menu.FullNameUpdated'),
               });
             }
 

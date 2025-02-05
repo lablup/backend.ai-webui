@@ -1,4 +1,5 @@
 {
+  "$schema": "../i18n.schema.json",
   "webui": {
     "menu": {
       "WelcomeMessage": "Καλώς ορίσατε, {{ username }}.",
@@ -35,7 +36,6 @@
       "NewPasswordMismatch": "Δύο νέοι κωδικοί πρόσβασης δεν ταιριάζουν.",
       "PasswordMismatch": "Αναντιστοιχία κωδικού πρόσβασης",
       "PasswordUpdated": "Ο κωδικός πρόσβασης ενημερώθηκε με επιτυχία.",
-      "FullnameUpdated": "Το πλήρες όνομα ενημερώθηκε με επιτυχία.",
       "TermsOfService": "Όροι χρήσης",
       "PrivacyPolicy": "Πολιτική απορρήτου",
       "LeaveService": "Αφήστε την υπηρεσία",
@@ -65,17 +65,18 @@
       "InvalidBlankEmail": "Συμπληρώστε το email σας",
       "DisMatchUserEmail": "Το email χρήστη δεν ταιριάζει",
       "MyEnvironments": "Τα περιβάλλοντα μου",
-      "ResourcePolicy": "Πολιτική Πόρων"
+      "ResourcePolicy": "Πολιτική Πόρων",
+      "FullNameUpdated": "Το πλήρες όνομα ενημερώθηκε με επιτυχία."
     },
     "YouAreOffline": "Offline: Δεν είναι συνδεδεμένος σε κανένα δίκτυο.",
     "YouAreOnline": "Είστε πλέον συνδεδεμένοι",
-    "NOTFOUND": " α0d4554eb75c21z0 Ωχ! <br/> Η σελίδα δεν βρέθηκε ... </p>",
-    "DescNOTFOUND": "Δυστυχώς, δεν ήταν δυνατή η εύρεση της σελίδας που αναζητάτε.",
-    "UNAUTHORIZEDACCESS": "Μη εξουσιοδοτημένη πρόσβαση",
     "AdminOnlyPage": "Δεν έχετε άδεια πρόσβασης σε αυτήν τη σελίδα. <br /> Κάντε κλικ στο κουμπί παρακάτω για ανακατεύθυνση στη σελίδα περίληψης.",
     "CleanUpLoginSession": "Εκκαθάριση περιόδου σύνδεσης ...",
     "CleanUpNow": "Καθαρίστε τώρα ...",
-    "NetworkSoftTimeout": "Ο διακομιστής χρειάζεται περισσότερο χρόνο για να ανταποκριθεί. Παρακαλώ περιμένετε λίγο"
+    "NetworkSoftTimeout": "Ο διακομιστής χρειάζεται περισσότερο χρόνο για να ανταποκριθεί. Παρακαλώ περιμένετε λίγο",
+    "NotFound": " α0d4554eb75c21z0 Ωχ! <br/> Η σελίδα δεν βρέθηκε ... </p>",
+    "DescNotFound": "Δυστυχώς, δεν ήταν δυνατή η εύρεση της σελίδας που αναζητάτε.",
+    "UnauthorizedAccess": "Μη εξουσιοδοτημένη πρόσβαση"
   },
   "summary": {
     "StartMenu": "Αρχικο ΜΕΝΟΥ",
@@ -83,7 +84,6 @@
     "ActiveSessions": "Ενεργές Συνεδρίες",
     "ResourceStatistics": "Στατιστικές πόρων",
     "CoresReserved": "Οι πυρήνες διατηρούνται",
-    "reserved": "κατοχυρωμένα",
     "FractionalGPUScalingEnabled": "Η κλασματική GPU κλιμάκωση ενεργοποιήθηκε",
     "ROCMGPUEnabled": "Το ROCm GPU ενεργοποιήθηκε",
     "TPUEnabled": "Το TPU ενεργοποιήθηκε",
@@ -110,7 +110,6 @@
     "NoInvitations": "Δεν υπάρχουν προσκλήσεις για προβολή.",
     "AcceptSharedVFolder": "Τώρα μπορείτε να αποκτήσετε πρόσβαση σε φάκελο:",
     "DeclineSharedVFolder": "Η πρόσκληση φακέλου διαγράφεται:",
-    "connectingToCluster": "Σύνδεση στο σύμπλεγμα Backend.AI ...",
     "IPUEnabled": "IPU NPU Ενεργοποιημένη",
     "ATOMEnabled": "ATOM NPU Ενεργοποιημένη",
     "WarboyEnabled": "Ενεργοποιημένη NPU Warboy",
@@ -118,7 +117,9 @@
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "Hyperaccel LPU Enabled",
     "ATOMPlusEnabled": "Ενεργοποιημένο ATOM+ NPU",
-    "RNGDEnabled": "Ενεργοποιημένο RNGD"
+    "RNGDEnabled": "Ενεργοποιημένο RNGD",
+    "ReservedShort": "κατοχυρωμένα",
+    "ConnectingToCluster": "Σύνδεση στο σύμπλεγμα Backend.AI ..."
   },
   "session": {
     "launcher": {
@@ -179,7 +180,6 @@
       "StartImportedNotebook": "Ξεκινήστε την εισαγωγή Notebook",
       "DuplicatedSessionName": "Δεν επιτρέπεται διπλότυπο όνομα περιόδου σύνδεσης",
       "SessionNameAllowCondition": "Το όνομα της περιόδου σύνδεσης πρέπει να έχει 4-64 αλφάβητα / αριθμούς χωρίς κενά.",
-      "sessionStillPreparing": "Η συνεδρία είναι ακόμη σε προετοιμασία. Μετά την έναρξη της συνεδρίας, πατήστε το εικονίδιο της εφαρμογής για να ξεκινήσετε την εφαρμογή.",
       "ResourceMonitorToggle": "Δείτε την παρακολούθηση πόρων",
       "SharedMemorySettingIsReduced": "Η ρύθμιση της κοινής μνήμης μειώνεται κάτω από την εκχωρημένη μνήμη.",
       "NoActiveKeypair": "Χωρίς ενεργό πληκτρολόγιο",
@@ -290,7 +290,8 @@
       "BatchJobTimeoutDuration": "Διάρκεια χρονικού ορίου λήξης παρτίδας εργασίας",
       "BatchJobTimeoutDurationDesc": "Ορίστε τον μέγιστο χρόνο εκτέλεσης για εργασίες παρτίδας. \nΗ συνεδρία θα τερματιστεί αυτόματα εάν ξεπεραστεί ο καθορισμένος χρόνος.",
       "SetBatchJobTimeoutDuration": "Ορίστε τη διάρκεια του χρονικού ορίου λήξης της παρτίδας εργασίας",
-      "PreOpen": "προανοίγει"
+      "PreOpen": "προανοίγει",
+      "SessionStillPreparing": "Η συνεδρία είναι ακόμη σε προετοιμασία. Μετά την έναρξη της συνεδρίας, πατήστε το εικονίδιο της εφαρμογής για να ξεκινήσετε την εφαρμογή."
     },
     "Preparing": "Προετοιμασία ...",
     "PreparingSession": "Προετοιμασία συνεδρίας ...",
@@ -331,7 +332,7 @@
     "UseYourFavoriteMSTSCApp": "Χρησιμοποιήστε την αγαπημένη σας εφαρμογή απομακρυσμένης επιφάνειας εργασίας MS",
     "Architecture": "Αρχιτεκτονική",
     "SessionType": "SessionType",
-    "Validation": {
+    "validation": {
       "EnterValidSessionName": "Εισαγάγετε έναν συνδυασμό τουλάχιστον 4 γραμμάτων αλφαβήτου ή αριθμών ή παύλας ή υπογράμμισης.",
       "SessionNameRequired": "Το όνομα συνεδρίας είναι υποχρεωτικό",
       "SluggedStrings": "Στιγμιότυπα αλφαριθμητικά (>3 χαρακτήρες)",
@@ -346,8 +347,6 @@
     "Interactive": "Διαδραστικό",
     "Batch": "Παρτίδα",
     "Inference": "Συμπεράσματα",
-    "Readmore": "Διαβάστε Περισσότερα...",
-    "Readless": "Διαβάστε λιγότερα",
     "AllowedClientIps": "Επιτρεπόμενες IPs πελατών",
     "CommaSeparated": "διαχωρισμένα με κόμμα",
     "UseSubdomain": "UseSubdomain",
@@ -431,7 +430,10 @@
       "SSHConnectionExampleClipboardCopy": "Το παράδειγμα σύνδεσης SSH έχει αντιγραφεί στο πρόχειρο."
     },
     "ExportCSV": "εξαγωγή CSV",
-    "FGPU": "fGPU"
+    "FGPU": "fGPU",
+    "ReadLess": "Διαβάστε λιγότερα",
+    "ReadMore": "Διαβάστε Περισσότερα...",
+    "CommitImageName": "Όνομα δεσμευμένης εικόνας"
   },
   "button": {
     "Cancel": "Ματαίωση",
@@ -637,9 +639,6 @@
     "Create": "Δημιουργώ",
     "Update": "Εκσυγχρονίζω",
     "FolderNameRequired": "Απαιτείται όνομα φακέλου",
-    "FileandFoldernameRequired": "Απαιτείται όνομα αρχείου / φακέλου",
-    "Allowslettersnumbersand-_dot": "Επιτρέπει γράμματα, αριθμούς και -_.",
-    "Allowslettersnumbersand-_": "Επιτρέπει γράμματα, αριθμούς και -_",
     "FolderNameTooLong": "Εισαγάγετε όνομα φακέλου με λιγότερους από 64 χαρακτήρες",
     "EnterDifferentValue": "Εισαγάγετε μια τιμή διαφορετική από το υπάρχον όνομα αρχείου ή φακέλου. Ελέγξτε αν ο χαρακτήρας διαστήματος στο πεδίο εισαγωγής ή όχι.",
     "Host": "Πλήθος",
@@ -815,7 +814,6 @@
       "InferenceEngineVersion": "Έκδοση Inference Engine",
       "ReplicaNumber": "Αριθμός αντιγράφου",
       "ImportAndStartService": "Εισαγωγή και έναρξη υπηρεσίας",
-      "huggingFaceUrlPlaceholder": "Εισαγάγετε τη διεύθυνση URL Hugging Face.",
       "ImportOnly": "Μόνο εισαγωγή",
       "StartWithHuggingFaceUrl": "Θα πρέπει να ξεκινά με https://huggingface.co",
       "CheckHuggingFaceUrl": "Ελέγξτε το",
@@ -836,9 +834,13 @@
       "ImportOnlySuccessDesc": "Ο νέος φάκελος μοντέλου είναι έτοιμος. \nΞεκινήστε την υπηρεσία τώρα και δοκιμάστε τη λειτουργία που θέλετε.",
       "ImportAndStartServiceSuccessDesc": "Ο νέος φάκελος μοντέλου και η υπηρεσία είναι έτοιμα. \nΚάντε κλικ στο κουμπί «Προβολή πληροφοριών υπηρεσίας» για να ελέγξετε τις λεπτομέρειες του μοντέλου και να ξεκινήσετε την επιθυμητή λειτουργία.",
       "AddedItems": "Προστέθηκαν στοιχεία",
-      "ModelFolderName": "Όνομα φακέλου μοντέλου"
+      "ModelFolderName": "Όνομα φακέλου μοντέλου",
+      "HuggingFaceUrlPlaceholder": "Εισαγάγετε τη διεύθυνση URL Hugging Face."
     },
-    "UserQuotaScopeId": "Quota Scope ID"
+    "UserQuotaScopeId": "Quota Scope ID",
+    "FileAndFolderNameRequired": "Απαιτείται όνομα αρχείου / φακέλου",
+    "AllowsLettersNumbersAnd-_": "Επιτρέπει γράμματα, αριθμούς και -_",
+    "AllowsLettersNumbersAnd-_Dot": "Επιτρέπει γράμματα, αριθμούς και -_."
   },
   "dialog": {
     "warning": {
@@ -1166,7 +1168,7 @@
   "maintenance": {
     "Fix": "Διορθώσετε",
     "MatchDatabase": "Ταιριάξτε τη βάση δεδομένων χρήσης με την τρέχουσα κατάσταση",
-    "DescMatchDatabase": "Επαναλάβετε τον υπολογισμό της βάσης δεδομένων χρήσης με την τρέχουσα κατάσταση. <br/> Χρήσιμο σε περίπτωση αποτυχίας του λιμενεργάτη, ή ορισμένων συνεδριών τερματίστηκαν βίαια.",
+    "DescMatchDatabase": "Επαναλάβετε τον υπολογισμό της βάσης δεδομένων χρήσης με την τρέχουσα κατάσταση. Χρήσιμο σε περίπτωση αποτυχίας του λιμενεργάτη, ή ορισμένων συνεδριών τερματίστηκαν βίαια.",
     "RecalculateUsage": "Επαναλάβετε τον υπολογισμό της χρήσης",
     "ImagesEnvironment": "Εικόνες / Περιβάλλον",
     "RescanImages": "Σάρωση εικόνων",
@@ -1174,7 +1176,7 @@
     "DescCleanupOldImages": "Καθαρίστε παλιές εικόνες από τη λίστα εικόνων του docker.",
     "CleanupImages": "Εικόνες καθαρισμού",
     "RescanImageList": "Επαναλάβετε τη σάρωση της λίστας εικόνων από το αποθετήριο",
-    "DescRescanImageList": "Σάρωση λίστας εικόνων από καταχωρημένα αποθετήρια. <br /> Μπορεί να χρειαστεί πολύς χρόνος, οπότε περιμένετε μετά την εκτέλεση.",
+    "DescRescanImageList": "Σάρωση λίστας εικόνων από καταχωρημένα αποθετήρια. Μπορεί να χρειαστεί πολύς χρόνος, οπότε περιμένετε μετά την εκτέλεση.",
     "Recalculating": "Επανυπολογισμός ...",
     "RecalculationFinished": "Ο υπολογισμός ολοκληρώθηκε",
     "RecalculationFailed": "Ο υπολογισμός απέτυχε",
@@ -1232,10 +1234,7 @@
     "Scaling": "Απολέπιση",
     "AllowAgentSideRegistration": "Να επιτρέπεται η εγγραφή από τον αντιπρόσωπο",
     "DescAllowAgentSideRegistration": "Επιτρέψτε στον πράκτορα να εγγραφεί στον διαχειριστή. <br/> Χρησιμοποιήστε μόνο εάν το σύμπλεγμα Backend.AI διαχειρίζεται σε ασφαλή τοποθεσία.",
-    "DescCUDAGPUsupport": "Υποστήριξη NVIDIA CUDA GPU. <br/> Απαιτείται πρόσθετο Backend.AI CUDA.",
     "CUDAGPUdisabledByFGPUsupport": "Απενεργοποιήθηκε επειδή το σύστημα χρησιμοποιεί Fractional GPU plugin",
-    "ROCMGPUsupport": "Υποστήριξη ROCm GPU",
-    "DescROCMGPUsupport": "Υποστήριξη AMD ROCm GPU. <br/> Απαιτείται πρόσθετο Backend.AI ROCm.",
     "Scheduler": "Χρονοδιάγραμμα",
     "SchedulerConfiguration": "Διαμόρφωση ανά προγραμματιστή εργασίας.",
     "Require2003orAbove": "Απαιτείται Backend.AI 20.03 ή παραπάνω.",
@@ -1269,24 +1268,15 @@
     },
     "OverlayNetwork": "Δίκτυο επικάλυψης",
     "OverlayNetworkConfiguration": "Ρύθμιση παραμέτρων για χρήση κατά τη δημιουργία δικτύων επικάλυψης.",
-    "IPUsupport": "IPU",
-    "DescIPUsupport": "Χρήση επιταχυντή GraphCore IPU",
     "RequireIPUPlugin": "Απαιτεί Backend.AI IPU Plugin.",
-    "ATOMsupport": "ATOM",
-    "DescATOMsupport": "Χρησιμοποιήστε τον επιταχυντή Rebellions ATOM",
     "RequireATOMPlugin": "Απαιτεί Backend.AI ATOM Plugin.",
-    "Warboysupport": "Warboy",
-    "DescWarboysupport": "Χρησιμοποιήστε την υποστήριξη Furiosa Warboy",
     "RequireWarboyPlugin": "Απαιτεί το Backend.AI Warboy Plugin.",
     "OverlayNetworkSettings": "Ρυθμίσεις δικτύου επικάλυψης",
     "OverlayNetworkSettingsDescription": "Ένα δίκτυο επικάλυψης είναι ένα δίκτυο υπολογιστών που τοποθετείται πάνω σε ένα άλλο δίκτυο. Το δίκτυο επικάλυψης δημιουργεί ένα κατανεμημένο δίκτυο μεταξύ πολλαπλών υποδοχέων Docker daemon του διαχειριστή Backend.AI.",
     "MTUDescription": "Μέγιστη μονάδα μετάδοσης, το μέγεθος του μεγαλύτερου πακέτου που μπορεί να μεταδώσει ένα πρωτόκολλο δικτύου.",
     "OutOfRange": "Εκτός εμβέλειας.",
     "Plugins": "Πρόσθετα",
-    "OpenSourceCUDAGPUsupport": "Υποστήριξη ανοιχτού κώδικα CUDA GPU",
     "ShowOnlyChanged": "Εμφάνιση μόνο αλλαγών",
-    "HyperaccelLPUsupport": "Hyperaccel LPU",
-    "DescHyperaccelLPUsupport": "Χρησιμοποιήστε τον επιταχυντή Hyperaccel LPU.",
     "RequireHyperaccelLPUPlugin": "Απαιτεί το πρόσθετο Backend.AI Hyperaccel LPU.",
     "SearchPlaceholder": "Αναζήτηση",
     "Gaudi2Support": "Υποστήριξη Gaudi 2",
@@ -1295,9 +1285,21 @@
     "ATOMPlusSupport": "Υποστήριξη ATOM+",
     "RequireATOMPlusPlugin": "Απαιτεί πρόσθετο Backend.AI ATOM+.",
     "DescATOMPlusSupport": "Χρησιμοποιήστε τον επιταχυντή Rebellions ATOM+.",
-    "RNGDsupport": "RNGD",
-    "DescRNGDsupport": "Χρησιμοποιήστε την υποστήριξη Furiosa RNGD",
-    "RequireRNGDPlugin": "Απαιτεί το πρόσθετο Backend.AI RNGD."
+    "RequireRNGDPlugin": "Απαιτεί το πρόσθετο Backend.AI RNGD.",
+    "IPUSupport": "IPU",
+    "DescWarboySupport": "Χρησιμοποιήστε την υποστήριξη Furiosa Warboy",
+    "DescIPUSupport": "Χρήση επιταχυντή GraphCore IPU",
+    "DescATOMSupport": "Χρησιμοποιήστε τον επιταχυντή Rebellions ATOM",
+    "DescCudaGPUSupport": "Υποστήριξη NVIDIA CUDA GPU. <br/> Απαιτείται πρόσθετο Backend.AI CUDA.",
+    "DescHyperaccelLPUSupport": "Χρησιμοποιήστε τον επιταχυντή Hyperaccel LPU.",
+    "DescRNGDSupport": "Χρησιμοποιήστε την υποστήριξη Furiosa RNGD",
+    "DescRocmGPUSupport": "Υποστήριξη AMD ROCm GPU. <br/> Απαιτείται πρόσθετο Backend.AI ROCm.",
+    "HyperaccelLPUSupport": "Hyperaccel LPU",
+    "OpenSourceCudaGPUSupport": "Υποστήριξη ανοιχτού κώδικα CUDA GPU",
+    "WarboySupport": "Warboy",
+    "ATOMSupport": "ATOM",
+    "RNGDSupport": "RNGD",
+    "ROCMGPUSupport": "Υποστήριξη ROCm GPU"
   },
   "notification": {
     "SuccessfullyUpdated": "Ενημερώθηκε με επιτυχία",
@@ -1379,7 +1381,7 @@
     "EndpointInfo": "Σχετικά με το Endpoint",
     "DescEndpoint": "<p>Στο API ENDPOINT, θα πρέπει να εισαχθεί η διεύθυνση URL του διακομιστή Web Backend.AI, ο οποίος μεταβιβάζει το αίτημα στον Διαχειριστή.</p><p>π.χ. http://127.0.0.1:8090/</p>",
     "EndpointStartWith": "Το τελικό σημείο πρέπει να αρχίζει με http:// ή https://.",
-    "SingleSignOn": {
+    "singleSignOn": {
       "LoginWithSAML": "Σύνδεση με SAML",
       "LoginWithRealm": "Σύνδεση με {{ realmName }}"
     },
@@ -1457,7 +1459,7 @@
     "GitlabRepoWillBeFolder": "Τα εισαγόμενα αποθετήρια GitLab μετατρέπονται σε φακέλους και μπορούν να προσαρτηθούν κατά την έναρξη της συνεδρίας.",
     "GitlabURL": "URL του GitLab",
     "GitlabDefaultBranch": "Όνομα υποκαταστήματος GitLab",
-    "InvalidNotebookURL": "Μη έγκυρη διεύθυνση URL του Notbook."
+    "InvalidNotebookURL": "Μη έγκυρη διεύθυνση URL σημειωματάριου."
   },
   "license": {
     "Perpetual": "Διαρκής",
@@ -1538,7 +1540,6 @@
     "ServiceName": "Όνομα υπηρεσίας",
     "ServiceNameRule": "Επιτρέπονται μόνο αλφαριθμητικά, κάτω παύλα(_) και παύλα(-) και πρέπει να τελειώνει με αλφαριθμητικό χαρακτήρα.",
     "OpenToPublic": "Ανοιχτό για το κοινό",
-    "DesiredRoutingCount": "Επιθυμητός αριθμός δρομολόγησης",
     "ServingRouteErrorModalTitle": "Σφάλμα διαδρομής εξυπηρέτησης",
     "SessionId": "Αναγνωριστικό συνεδρίας",
     "Services": "Υπηρεσίες",
@@ -1551,7 +1552,6 @@
     "SessionOwner": "Ιδιοκτήτης συνεδρίας",
     "ServiceEndpoint": "Τελικό σημείο υπηρεσίας",
     "NoServiceEndpoint": "Δεν υπάρχει τελικό σημείο υπηρεσίας",
-    "resources": "Πόροι",
     "Image": "Εικόνα",
     "GeneratedTokens": "Παραγόμενα Tokens",
     "GenerateToken": "Δημιουργία Token",
@@ -1596,7 +1596,9 @@
     "Chatting": "Συζήτηση",
     "ServiceNameMinLength": "Εισαγάγετε τουλάχιστον 4 χαρακτήρες.",
     "ServiceNameMaxLength": "Εισαγάγετε 24 χαρακτήρες ή λιγότερους.",
-    "ServiceNameCannotStartWithHyphen": "Οι παύλες (-) δεν μπορούν να χρησιμοποιηθούν σε κανένα άκρο."
+    "ServiceNameCannotStartWithHyphen": "Οι παύλες (-) δεν μπορούν να χρησιμοποιηθούν σε κανένα άκρο.",
+    "Resources": "Πόροι",
+    "NumberOfReplicas": "Αριθμός αντιγράφων"
   },
   "storageHost": {
     "quotaSettings": {
@@ -1676,7 +1678,6 @@
     "CloneAsFolder": "Clone as Folder",
     "CloneSuccess": "Η αίτηση κλωνοποίησης έχει σταλεί με επιτυχία.",
     "CloneInfo": "Θα κλωνοποιηθεί ως φάκελος τύπου χρήστη.",
-    "category": "Κατηγορία",
     "CloneToFolder": "Κλωνοποίηση σε φάκελο",
     "FolderAlreadyExists": "Ένας φάκελος με αυτό το όνομα υπάρχει ήδη.",
     "FinetuneModel": "Μοντέλο Finetune"

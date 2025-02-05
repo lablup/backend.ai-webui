@@ -1,4 +1,5 @@
 {
+  "$schema": "../i18n.schema.json",
   "webui": {
     "menu": {
       "WelcomeMessage": "Selamat datang, {{ userName }}.",
@@ -35,7 +36,6 @@
       "NewPasswordMismatch": "Dua kata laluan baru tidak sepadan.",
       "PasswordMismatch": "Ketidakcocokan kata laluan",
       "PasswordUpdated": "Kata laluan berjaya dikemas kini.",
-      "FullnameUpdated": "Nama penuh berjaya dikemas kini.",
       "TermsOfService": "Syarat Perkhidmatan",
       "PrivacyPolicy": "Dasar Privasi",
       "LeaveService": "Tinggalkan perkhidmatan",
@@ -65,17 +65,18 @@
       "InvalidBlankEmail": "Masukkan emel anda",
       "DisMatchUserEmail": "E-mel Pengguna tidak sepadan",
       "MyEnvironments": "Persekitaran Saya",
-      "ResourcePolicy": "Dasar Sumber"
+      "ResourcePolicy": "Dasar Sumber",
+      "FullNameUpdated": "Nama penuh berjaya dikemas kini."
     },
     "YouAreOffline": "Luar talian: Tidak disambungkan ke mana-mana rangkaian.",
     "YouAreOnline": "Anda kini dalam talian",
-    "NOTFOUND": " <p> Alamak! <br/> Halaman tidak dijumpai ... </p>",
-    "DescNOTFOUND": "Maaf, halaman yang anda cari tidak dapat dijumpai.",
-    "UNAUTHORIZEDACCESS": "Akses tidak dibenarkan",
     "AdminOnlyPage": "Anda tidak mempunyai kebenaran untuk mengakses halaman ini. <br /> Klik butang di bawah untuk mengalihkan ke halaman ringkasan.",
     "CleanUpLoginSession": "Bersihkan sesi log masuk ...",
     "CleanUpNow": "Bersihkan sekarang ...",
-    "NetworkSoftTimeout": "Pelayan mengambil masa yang lebih lama untuk bertindak balas. \nSila tunggu sebentar"
+    "NetworkSoftTimeout": "Pelayan mengambil masa yang lebih lama untuk bertindak balas. \nSila tunggu sebentar",
+    "NotFound": " <p> Alamak! <br/> Halaman tidak dijumpai ... </p>",
+    "DescNotFound": "Maaf, halaman yang anda cari tidak dapat dijumpai.",
+    "UnauthorizedAccess": "Akses tidak dibenarkan"
   },
   "summary": {
     "StartMenu": "Menu Mula",
@@ -83,7 +84,6 @@
     "ActiveSessions": "Sesi Aktif",
     "ResourceStatistics": "Statistik Sumber",
     "CoresReserved": "Inti terpelihara",
-    "reserved": "terpelihara",
     "FractionalGPUScalingEnabled": "Penskalaan GPU pecahan diaktifkan",
     "ROCMGPUEnabled": "ROCm GPU didayakan",
     "TPUEnabled": "TPU Diaktifkan",
@@ -110,7 +110,6 @@
     "NoInvitations": "Tidak ada jemputan untuk dipaparkan.",
     "AcceptSharedVFolder": "Anda kini boleh mengakses folder:",
     "DeclineSharedVFolder": "Jemputan folder dipadamkan:",
-    "connectingToCluster": "Menyambung ke Kluster Backend.AI ...",
     "IPUEnabled": "IPU NPU Didayakan",
     "ATOMEnabled": "ATOM NPU Didayakan",
     "WarboyEnabled": "Warboy NPU Didayakan",
@@ -118,7 +117,9 @@
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "LPU Hyperaccel Didayakan",
     "ATOMPlusEnabled": "ATOM+ NPU Didayakan",
-    "RNGDEnabled": "RNGD Didayakan"
+    "RNGDEnabled": "RNGD Didayakan",
+    "ReservedShort": "terpelihara",
+    "ConnectingToCluster": "Menyambung ke Kluster Backend.AI ..."
   },
   "session": {
     "launcher": {
@@ -179,7 +180,6 @@
       "StartImportedNotebook": "Mulakan Notebook yang Diimport",
       "DuplicatedSessionName": "Nama sesi pendua tidak dibenarkan",
       "SessionNameAllowCondition": "Nama sesi harus mempunyai 4-64 abjad / nombor tanpa ruang kosong.",
-      "sessionStillPreparing": "Sesi masih dalam persiapan. Setelah sesi dimulakan, ketuk ikon aplikasi untuk memulakan aplikasi.",
       "ResourceMonitorToggle": "Lihat monitor sumber",
       "SharedMemorySettingIsReduced": "Tetapan memori bersama dikurangkan menjadi di bawah memori yang diperuntukkan.",
       "NoActiveKeypair": "Tiada Pad Kekunci Aktif",
@@ -290,7 +290,8 @@
       "BatchJobTimeoutDuration": "Tempoh Tamat Kerja Berkelompok",
       "BatchJobTimeoutDurationDesc": "Tetapkan masa pelaksanaan maksimum untuk kerja kelompok. \nSesi akan ditamatkan secara automatik jika melebihi masa yang ditetapkan.",
       "SetBatchJobTimeoutDuration": "Tetapkan tempoh tamat masa kerja kelompok",
-      "PreOpen": "prabuka"
+      "PreOpen": "prabuka",
+      "SessionStillPreparing": "Sesi masih dalam persiapan. Setelah sesi dimulakan, ketuk ikon aplikasi untuk memulakan aplikasi."
     },
     "Preparing": "Menyiapkan ...",
     "PreparingSession": "Menyiapkan sesi ...",
@@ -331,7 +332,7 @@
     "UseYourFavoriteMSTSCApp": "Gunakan aplikasi MS Remote Desktop kegemaran anda",
     "Architecture": "Seni bina",
     "SessionType": "Jenis Sesi",
-    "Validation": {
+    "validation": {
       "EnterValidSessionName": "Sila masukkan gabungan sekurang-kurangnya 4 huruf abjad, atau nombor, atau sempang, atau garis bawah.",
       "SessionNameRequired": "Nama sesi diperlukan",
       "SluggedStrings": "Rentetan slugged (>3 aksara)",
@@ -346,8 +347,6 @@
     "Interactive": "Interaktif",
     "Batch": "Kumpulan",
     "Inference": "Inferens",
-    "Readmore": "Baca Lagi...",
-    "Readless": "Kurangkan membaca",
     "AllowedClientIps": "IP pelanggan yang dibenarkan",
     "CommaSeparated": "dipisahkan koma",
     "UseSubdomain": "GunakanSubdomain",
@@ -431,7 +430,10 @@
       "SSHConnectionExampleClipboardCopy": "Contoh Sambungan SSH telah disalin ke papan keratan."
     },
     "ExportCSV": "eksport CSV",
-    "FGPU": "fGPU"
+    "FGPU": "fGPU",
+    "ReadLess": "Kurangkan membaca",
+    "ReadMore": "Baca Lagi...",
+    "CommitImageName": "Nama imej komited"
   },
   "button": {
     "Cancel": "Batal",
@@ -637,9 +639,6 @@
     "Create": "Buat",
     "Update": "Kemas kini",
     "FolderNameRequired": "Nama folder diperlukan",
-    "FileandFoldernameRequired": "Nama fail / Folder diperlukan",
-    "Allowslettersnumbersand-_dot": "Membolehkan huruf, nombor dan -_.",
-    "Allowslettersnumbersand-_": "Membolehkan huruf, nombor dan -_",
     "FolderNameTooLong": "Masukkan nama folder kurang daripada 64 aksara",
     "EnterDifferentValue": "Masukkan nilai yang berbeza dengan nama fail atau folder yang ada. Sila Periksa sama ada watak ruang di ruang input atau tidak.",
     "Host": "Tuan rumah",
@@ -815,7 +814,6 @@
       "InferenceEngineVersion": "Versi Enjin Inferens",
       "ReplicaNumber": "Nombor Replika",
       "ImportAndStartService": "Import dan Mulakan Perkhidmatan",
-      "huggingFaceUrlPlaceholder": "Masukkan URL Hugging Face",
       "ImportOnly": "Import sahaja",
       "StartWithHuggingFaceUrl": "Ia harus bermula dengan https://huggingface.co",
       "CheckHuggingFaceUrl": "Semak",
@@ -836,9 +834,13 @@
       "ImportOnlySuccessDesc": "Folder model baharu sudah sedia. \nMulakan perkhidmatan sekarang dan cuba operasi yang anda mahu.",
       "ImportAndStartServiceSuccessDesc": "Folder dan perkhidmatan model baharu sudah sedia. \nKlik butang 'Lihat maklumat perkhidmatan' untuk menyemak butiran model dan memulakan operasi yang diingini.",
       "AddedItems": "Item ditambah",
-      "ModelFolderName": "Nama folder model"
+      "ModelFolderName": "Nama folder model",
+      "HuggingFaceUrlPlaceholder": "Masukkan URL Hugging Face"
     },
-    "UserQuotaScopeId": "Quota Scope ID"
+    "UserQuotaScopeId": "Quota Scope ID",
+    "FileAndFolderNameRequired": "Nama fail / Folder diperlukan",
+    "AllowsLettersNumbersAnd-_": "Membolehkan huruf, nombor dan -_",
+    "AllowsLettersNumbersAnd-_Dot": "Membolehkan huruf, nombor dan -_."
   },
   "dialog": {
     "warning": {
@@ -1166,7 +1168,7 @@
   "maintenance": {
     "Fix": "Menetapkan",
     "MatchDatabase": "Padankan pangkalan data penggunaan dengan keadaan semasa",
-    "DescMatchDatabase": "Hitung semula pangkalan data penggunaan dengan keadaan semasa. <br/> Berguna sekiranya kapal pesiar gagal secara tidak sengaja, atau beberapa sesi telah ditamatkan secara paksa.",
+    "DescMatchDatabase": "Hitung semula pangkalan data penggunaan dengan keadaan semasa. Berguna sekiranya kapal pesiar gagal secara tidak sengaja, atau beberapa sesi telah ditamatkan secara paksa.",
     "RecalculateUsage": "Hitung semula Penggunaan",
     "ImagesEnvironment": "Imej / Alam Sekitar",
     "RescanImages": "Imbas semula Imej",
@@ -1174,7 +1176,7 @@
     "DescCleanupOldImages": "Bersihkan gambar lama dari senarai gambar pelabuhan.",
     "CleanupImages": "Imej Pembersihan",
     "RescanImageList": "Imbas semula senarai gambar dari repositori",
-    "DescRescanImageList": "Imbas semula senarai gambar dari repositori berdaftar. <br /> Mungkin memerlukan masa yang lama, jadi sila tunggu selepas pelaksanaan.",
+    "DescRescanImageList": "Imbas semula senarai gambar dari repositori berdaftar. Mungkin memerlukan masa yang lama, jadi sila tunggu selepas pelaksanaan.",
     "Recalculating": "Mengira semula ...",
     "RecalculationFinished": "Pengiraan semula selesai",
     "RecalculationFailed": "Pengiraan semula gagal",
@@ -1232,10 +1234,7 @@
     "Scaling": "Penskalaan",
     "AllowAgentSideRegistration": "Benarkan pendaftaran pihak ejen",
     "DescAllowAgentSideRegistration": "Benarkan ejen mendaftarkan dirinya kepada pengurus. <br/> Gunakan hanya jika kluster Backend.AI diuruskan di lokasi yang selamat.",
-    "DescCUDAGPUsupport": "Sokongan GPU NVIDIA CUDA. <br/> Memerlukan Backend.AI CUDA Plugin.",
     "CUDAGPUdisabledByFGPUsupport": "Dinyahdayakan kerana sistem menggunakan pemalam GPU pecahan",
-    "ROCMGPUsupport": "Sokongan GPU ROCm",
-    "DescROCMGPUsupport": "Sokongan GPU AMD ROCm. <br/> Memerlukan Backend.AI ROCm Plugin.",
     "Scheduler": "Penjadual",
     "SchedulerConfiguration": "Konfigurasi setiap penjadual kerja.",
     "Require2003orAbove": "Memerlukan Backend.AI 20.03 atau lebih tinggi.",
@@ -1269,24 +1268,15 @@
     },
     "OverlayNetwork": "Rangkaian Tindanan",
     "OverlayNetworkConfiguration": "Konfigurasi untuk digunakan semasa membuat rangkaian tindanan.",
-    "IPUsupport": "IPU",
-    "DescIPUsupport": "Gunakan pemecut IPU GraphCore",
     "RequireIPUPlugin": "Memerlukan Pemalam IPU Backend.AI.",
-    "ATOMsupport": "ATOM",
-    "DescATOMsupport": "Gunakan pemecut ATOM Rebellions",
     "RequireATOMPlugin": "Memerlukan Pemalam ATOM Backend.AI.",
-    "Warboysupport": "Warboy",
-    "DescWarboysupport": "Gunakan sokongan Furiosa Warboy",
     "RequireWarboyPlugin": "Memerlukan Backend.AI Warboy Plugin.",
     "OverlayNetworkSettings": "Tetapan Rangkaian Tindanan",
     "OverlayNetworkSettingsDescription": "Rangkaian tindanan ialah rangkaian komputer yang berlapis di atas rangkaian lain. \nRangkaian tindanan mencipta rangkaian teragih di kalangan berbilang hos daemon Docker pengurus Backend.AI.",
     "MTUDescription": "Unit penghantaran maksimum, saiz paket terbesar yang boleh dihantar oleh protokol rangkaian.",
     "OutOfRange": "Luar kawasan.",
     "Plugins": "Pemalam",
-    "OpenSourceCUDAGPUsupport": "Sokongan GPU CUDA Sumber Terbuka",
     "ShowOnlyChanged": "Paparkan Perubahan Sahaja",
-    "HyperaccelLPUsupport": "Hyperaccel LPU",
-    "DescHyperaccelLPUsupport": "Gunakan pemecut LPU Hyperaccel.",
     "RequireHyperaccelLPUPlugin": "Memerlukan Backend.AI Hyperaccel LPU Plugin.",
     "SearchPlaceholder": "Cari",
     "Gaudi2Support": "Sokongan Gaudi 2",
@@ -1295,9 +1285,21 @@
     "ATOMPlusSupport": "Sokongan ATOM+",
     "RequireATOMPlusPlugin": "Memerlukan Plugin Backend.AI ATOM+.",
     "DescATOMPlusSupport": "Gunakan pemecut ATOM+ Rebellions.",
-    "RNGDsupport": "RNGD",
-    "DescRNGDsupport": "Gunakan sokongan Furiosa RNGD",
-    "RequireRNGDPlugin": "Memerlukan Pemalam Backend.AI RNGD."
+    "RequireRNGDPlugin": "Memerlukan Pemalam Backend.AI RNGD.",
+    "IPUSupport": "IPU",
+    "DescWarboySupport": "Gunakan sokongan Furiosa Warboy",
+    "DescIPUSupport": "Gunakan pemecut IPU GraphCore",
+    "DescATOMSupport": "Gunakan pemecut ATOM Rebellions",
+    "DescCudaGPUSupport": "Sokongan GPU NVIDIA CUDA. <br/> Memerlukan Backend.AI CUDA Plugin.",
+    "DescHyperaccelLPUSupport": "Gunakan pemecut LPU Hyperaccel.",
+    "DescRNGDSupport": "Gunakan sokongan Furiosa RNGD",
+    "DescRocmGPUSupport": "Sokongan GPU AMD ROCm. <br/> Memerlukan Backend.AI ROCm Plugin.",
+    "HyperaccelLPUSupport": "Hyperaccel LPU",
+    "OpenSourceCudaGPUSupport": "Sokongan GPU CUDA Sumber Terbuka",
+    "WarboySupport": "Warboy",
+    "ATOMSupport": "ATOM",
+    "RNGDSupport": "RNGD",
+    "ROCMGPUSupport": "Sokongan GPU ROCm"
   },
   "notification": {
     "SuccessfullyUpdated": "Berjaya Dikemas kini",
@@ -1379,7 +1381,7 @@
     "EndpointInfo": "Mengenai Endpoint",
     "DescEndpoint": "<p>Dalam API ENDPOINT, URL Backend.AI Webserver, yang menyampaikan permintaan kepada Pengurus, harus dimasukkan.</p><p>cth., http://127.0.0.1:8090/</p>",
     "EndpointStartWith": "Titik akhir mesti bermula dengan http:// atau https://.",
-    "SingleSignOn": {
+    "singleSignOn": {
       "LoginWithSAML": "Log masuk dengan SAML",
       "LoginWithRealm": "Log masuk dengan {{ realmName }}"
     },
@@ -1457,7 +1459,7 @@
     "GitlabRepoWillBeFolder": "Repositori GitLab yang diimport ditukar kepada folder dan boleh dipasang apabila sesi bermula.",
     "GitlabURL": "URL GitLab",
     "GitlabDefaultBranch": "Nama Cawangan GitLab",
-    "InvalidNotebookURL": "URL Notbook tidak sah."
+    "InvalidNotebookURL": "URL Notebook tidak sah."
   },
   "license": {
     "Perpetual": "Kekal",
@@ -1573,7 +1575,6 @@
     "ServiceName": "Nama Perkhidmatan",
     "ServiceNameRule": "Hanya benarkan abjad angka, garis bawah(_), dan sempang(-) dan ia mesti berakhir dengan aksara abjad angka.",
     "OpenToPublic": "Terbuka Kepada Umum",
-    "DesiredRoutingCount": "Kiraan Laluan yang Diingini",
     "ServingRouteErrorModalTitle": "Ralat Laluan Pelayanan",
     "SessionId": "ID Sesi",
     "Services": "Perkhidmatan",
@@ -1586,7 +1587,6 @@
     "SessionOwner": "Pemilik Sesi",
     "ServiceEndpoint": "Titik Akhir Perkhidmatan",
     "NoServiceEndpoint": "Tiada Titik Akhir Perkhidmatan",
-    "resources": "Sumber",
     "Image": "Gambar",
     "GeneratedTokens": "Token Dijana",
     "GenerateToken": "Hasilkan Token",
@@ -1631,7 +1631,9 @@
     "Chatting": "Berbual",
     "ServiceNameMinLength": "Sila masukkan sekurang-kurangnya 4 aksara.",
     "ServiceNameMaxLength": "Sila masukkan 24 aksara atau kurang.",
-    "ServiceNameCannotStartWithHyphen": "Tanda sempang (-) tidak boleh digunakan pada kedua-dua hujung."
+    "ServiceNameCannotStartWithHyphen": "Tanda sempang (-) tidak boleh digunakan pada kedua-dua hujung.",
+    "Resources": "Sumber",
+    "NumberOfReplicas": "Bilangan replika"
   },
   "totp": {
     "TotpSetupCompleted": "Didayakan 2FA",
@@ -1676,7 +1678,6 @@
     "CloneAsFolder": "Klon sebagai Folder",
     "CloneSuccess": "Permintaan klon telah berjaya dihantar.",
     "CloneInfo": "Ia akan diklonkan sebagai folder jenis pengguna anda.",
-    "category": "kategori",
     "CloneToFolder": "Klon ke folder",
     "FolderAlreadyExists": "Folder dengan nama ini sudah wujud.",
     "FinetuneModel": "Model Finetune"

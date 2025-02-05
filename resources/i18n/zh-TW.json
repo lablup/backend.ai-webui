@@ -1,4 +1,5 @@
 {
+  "$schema": "../i18n.schema.json",
   "webui": {
     "menu": {
       "WelcomeMessage": "歡迎，{{ userName }}",
@@ -35,7 +36,6 @@
       "NewPasswordMismatch": "兩個新密碼不匹配。",
       "PasswordMismatch": "密碼不匹配",
       "PasswordUpdated": "密碼更新成功。",
-      "FullnameUpdated": "全名更新成功。",
       "TermsOfService": "服務條款",
       "PrivacyPolicy": "隱私政策",
       "LeaveService": "離開服務",
@@ -65,17 +65,18 @@
       "InvalidBlankEmail": "輸入你的電子郵件信箱",
       "DisMatchUserEmail": "使用者電子郵件不符",
       "MyEnvironments": "我的環境",
-      "ResourcePolicy": "資源政策"
+      "ResourcePolicy": "資源政策",
+      "FullNameUpdated": "全名更新成功。"
     },
     "YouAreOffline": "脱机：未连接任何网络。",
     "YouAreOnline": "您現在在線",
-    "NOTFOUND": " <p> 糟糕！ <br/> 頁面未找到... </p>",
-    "DescNOTFOUND": "抱歉，找不到您要找的頁面。",
-    "UNAUTHORIZEDACCESS": "越權存取",
     "AdminOnlyPage": "您無權訪問此頁面。 <br /> 單擊下面的按鈕重定向到摘要頁面。",
     "CleanUpLoginSession": "清理登錄會話...",
     "CleanUpNow": "現在清理...",
-    "NetworkSoftTimeout": "服务器响应时间较长。请稍候"
+    "NetworkSoftTimeout": "服务器响应时间较长。请稍候",
+    "NotFound": " <p> 糟糕！ <br/> 頁面未找到... </p>",
+    "DescNotFound": "抱歉，找不到您要找的頁面。",
+    "UnauthorizedAccess": "越權存取"
   },
   "summary": {
     "StartMenu": "開始菜單",
@@ -83,7 +84,6 @@
     "ActiveSessions": "活躍期",
     "ResourceStatistics": "資源統計",
     "CoresReserved": "保留核心",
-    "reserved": "預訂的",
     "FractionalGPUScalingEnabled": "啟用部分 GPU 縮放",
     "ROCMGPUEnabled": "啟用 ROCm GPU",
     "TPUEnabled": "啟用 TPU",
@@ -110,7 +110,6 @@
     "NoInvitations": "沒有邀請顯示。",
     "AcceptSharedVFolder": "您現在可以訪問文件夾：",
     "DeclineSharedVFolder": "文件夾邀請被刪除：",
-    "connectingToCluster": "連接到後端.AI 集群...",
     "IPUEnabled": "启用 IPU NPU",
     "ATOMEnabled": "已启用 ATOM NPU",
     "WarboyEnabled": "启用 Warboy NPU",
@@ -118,7 +117,9 @@
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "Hyperaccel LPU 已啟用。",
     "ATOMPlusEnabled": "ATOM+ NPU 啟用",
-    "RNGDEnabled": "啟用 RNGD"
+    "RNGDEnabled": "啟用 RNGD",
+    "ReservedShort": "預訂的",
+    "ConnectingToCluster": "連接到後端.AI 集群..."
   },
   "session": {
     "launcher": {
@@ -179,7 +180,6 @@
       "StartImportedNotebook": "啟動導入筆記本",
       "DuplicatedSessionName": "不允許重複的會話名稱",
       "SessionNameAllowCondition": "會話名稱應該有 4-64 個字母/數字，沒有任何空格。",
-      "sessionStillPreparing": "會議仍在籌備中。會話開始後，點擊應用程序圖標以啟動應用程序。",
       "ResourceMonitorToggle": "查看資源監視器",
       "SharedMemorySettingIsReduced": "共享內存設置減少到低於分配的內存。",
       "NoActiveKeypair": "無活動密鑰對",
@@ -290,7 +290,8 @@
       "BatchJobTimeoutDuration": "批次作業逾時時間",
       "BatchJobTimeoutDurationDesc": "設定批次作業的最長執行時間。\n如果超過指定時間，會話將自動終止。",
       "SetBatchJobTimeoutDuration": "設定批次作業逾時時間",
-      "PreOpen": "預開放埠"
+      "PreOpen": "預開放埠",
+      "SessionStillPreparing": "會議仍在籌備中。會話開始後，點擊應用程序圖標以啟動應用程序。"
     },
     "Preparing": "正在準備...",
     "PreparingSession": "正在準備會議...",
@@ -331,7 +332,7 @@
     "UseYourFavoriteMSTSCApp": "使用您最喜歡的 MS 遠程桌面應用程序",
     "Architecture": "建筑学",
     "SessionType": "会话类型",
-    "Validation": {
+    "validation": {
       "EnterValidSessionName": "請輸入至少 4 個字母、數字、連字號或底線的組合。",
       "SessionNameRequired": "会话名称为必填项",
       "SluggedStrings": "多字符串（>3 字符）",
@@ -346,8 +347,6 @@
     "Interactive": "交互式",
     "Batch": "批次",
     "Inference": "推论",
-    "Readmore": "阅读全文...",
-    "Readless": "更多信息",
     "AllowedClientIps": "允许的客户端 IP",
     "CommaSeparated": "逗号分隔",
     "UseSubdomain": "使用子域",
@@ -430,7 +429,10 @@
       "SSHConnectionExampleClipboardCopy": "SSH 连接示例已复制到剪贴板。"
     },
     "ExportCSV": "導出 CSV",
-    "FGPU": "GPU"
+    "FGPU": "GPU",
+    "ReadLess": "更多信息",
+    "ReadMore": "阅读全文...",
+    "CommitImageName": "提交的圖片名稱"
   },
   "button": {
     "Cancel": "取消",
@@ -503,7 +505,6 @@
     "Agent": "代理"
   },
   "general": {
-    "cores": "核心",
     "ResourceGroup": "資源組",
     "AccessKey": "訪問密鑰",
     "Folders": "文件夾",
@@ -530,7 +531,8 @@
     "Change": "改变",
     "MaxValueNotification": "{{name}} 必须是最大值 {{max}}",
     "TotalItems": "{{总计}}项目总数",
-    "ExtendLoginSession": "延长登录会话"
+    "ExtendLoginSession": "延长登录会话",
+    "Cores": "核心"
   },
   "credential": {
     "Permission": "允許",
@@ -636,9 +638,6 @@
     "Create": "創造",
     "Update": "更新",
     "FolderNameRequired": "文件夾名稱為必填項",
-    "FileandFoldernameRequired": "需要文件/文件夾名稱",
-    "Allowslettersnumbersand-_dot": "允許字母、數字和 -_。",
-    "Allowslettersnumbersand-_": "允許字母、數字和 -_",
     "FolderNameTooLong": "輸入少於 64 個字符的文件夾名稱",
     "EnterDifferentValue": "請輸入與現有文件或文件夾名稱不同的值。請檢查輸入字段中是否有空格字符。",
     "Host": "主持人",
@@ -797,7 +796,7 @@
       "Insufficient": "不足",
       "StatusOfSelectedHost": "选定主机的状态",
       "Status": "现状",
-      "used": "中古"
+      "Used": "用過的"
     },
     "Pipeline": "管道文件夹",
     "DialogDataFolder": "在 FastTrack 中创建管道时自动创建的管道专用文件夹。",
@@ -807,7 +806,6 @@
     "New": "新的",
     "Add": "添加",
     "CloningIsOnlyPossibleSameHost": "目前，克隆只能在同一主機上進行。",
-    "userQuotaScopeId": "Quota Scope ID",
     "NewFolderName": "新文件夹名称",
     "modelStore": {
       "ImportFromHuggingFace": "從 Hugging Face 匯入",
@@ -816,7 +814,6 @@
       "InferenceEngineVersion": "推理引擎版本",
       "ReplicaNumber": "副本號",
       "ImportAndStartService": "導入並啟動服務",
-      "huggingFaceUrlPlaceholder": "輸入Hugging Face網址",
       "ImportOnly": "僅導入",
       "StartWithHuggingFaceUrl": "它應該以 https://huggingface.co 開頭",
       "CheckHuggingFaceUrl": "检查",
@@ -837,8 +834,13 @@
       "ImportOnlySuccessDesc": "新的模型資料夾已準備就緒。\n現在啟動服務並嘗試您想要的操作。",
       "ImportAndStartServiceSuccessDesc": "新的模型資料夾和服務已準備就緒。\n點擊“查看服務資訊”按鈕以檢查型號詳細資訊並開始所需的操作。",
       "AddedItems": "新增的項目",
-      "ModelFolderName": "模型資料夾名稱"
-    }
+      "ModelFolderName": "模型資料夾名稱",
+      "HuggingFaceUrlPlaceholder": "輸入Hugging Face網址"
+    },
+    "UserQuotaScopeId": "Quota Scope ID",
+    "FileAndFolderNameRequired": "需要文件/文件夾名稱",
+    "AllowsLettersNumbersAnd-_": "允許字母、數字和 -_",
+    "AllowsLettersNumbersAnd-_Dot": "允許字母、數字和 -_。"
   },
   "dialog": {
     "warning": {
@@ -1165,7 +1167,7 @@
   "maintenance": {
     "Fix": "使固定",
     "MatchDatabase": "將使用情況數據庫與當前狀態匹配",
-    "DescMatchDatabase": "使用當前狀態重新計算使用情況數據庫。 <br/> 如果 docker 意外失敗或某些會話已被強制終止，則很有用。",
+    "DescMatchDatabase": "使用當前狀態重新計算使用情況數據庫。 如果 docker 意外失敗或某些會話已被強制終止，則很有用。",
     "RecalculateUsage": "重新計算用量",
     "ImagesEnvironment": "圖像/環境",
     "RescanImages": "重新掃描圖像",
@@ -1231,10 +1233,7 @@
     "Scaling": "縮放",
     "AllowAgentSideRegistration": "允許代理端註冊",
     "DescAllowAgentSideRegistration": "允許代理將自己註冊到經理。 <br/> 僅當 Backend.AI 集群在安全位置管理時使用。",
-    "DescCUDAGPUsupport": "NVIDIA CUDA GPU 支持。 <br/> 需要 Backend.AI CUDA 插件。",
     "CUDAGPUdisabledByFGPUsupport": "已禁用，因為系統使用分數 GPU 插件",
-    "ROCMGPUsupport": "ROCm GPU 支持",
-    "DescROCMGPUsupport": "AMD ROCm GPU 支持。 <br/> 需要 Backend.AI ROCm 插件。",
     "Scheduler": "調度器",
     "SchedulerConfiguration": "每個作業調度程序的配置。",
     "Require2003orAbove": "需要 Backend.AI 20.03 或更高版本。",
@@ -1262,30 +1261,21 @@
     "DescImagePullBehavior": "確定在註冊表中註冊新版本時自動下載新圖像的條件。對於 none，不會自動下載新圖像。",
     "GUI": "圖形用戶界面",
     "image": {
-      "digest": "消化",
-      "tag": "標籤",
-      "none": "沒有任何"
+      "Digest": "消化",
+      "None": "沒有任何",
+      "Tag": "標籤"
     },
     "OverlayNetwork": "叠加网络",
     "OverlayNetworkConfiguration": "创建叠加网络时使用的配置。",
-    "IPUsupport": "议会联盟",
-    "DescIPUsupport": "使用 GraphCore IPU 加速器",
     "RequireIPUPlugin": "需要 Backend.AI IPU 插件。",
-    "ATOMsupport": "ATOM",
-    "DescATOMsupport": "使用 Rebellions ATOM 加速器",
     "RequireATOMPlugin": "需要 Backend.AI ATOM 插件。",
-    "Warboysupport": "战郎",
-    "DescWarboysupport": "使用 Furiosa Warboy 支持",
     "RequireWarboyPlugin": "需要 Backend.AI Warboy 插件。",
     "OverlayNetworkSettings": "覆盖网络设置",
     "OverlayNetworkSettingsDescription": "覆盖网络是在另一个网络之上分层的计算机网络。覆盖网络在 Backend.AI 管理器的多个 Docker 守护进程主机之间创建了一个分布式网络。",
     "MTUDescription": "最大传输单位，网络协议可传输的最大数据包的大小。",
     "OutOfRange": "超出范围。",
     "Plugins": "外掛",
-    "OpenSourceCUDAGPUsupport": "開源 CUDA GPU 支援",
     "ShowOnlyChanged": "僅顯示更改",
-    "HyperaccelLPUsupport": "Hyperaccel LPU",
-    "DescHyperaccelLPUsupport": "使用Hyperaccel LPU加速器。",
     "RequireHyperaccelLPUPlugin": "需要 Backend.AI Hyperaccel LPU 插件。",
     "SearchPlaceholder": "搜索",
     "Gaudi2Support": "高第 2 支持",
@@ -1294,9 +1284,21 @@
     "ATOMPlusSupport": "ATOM+支持",
     "RequireATOMPlusPlugin": "需要 Backend.AI ATOM+ 插件。",
     "DescATOMPlusSupport": "Use Rebellions ATOM+ accelerator",
-    "RNGDsupport": "RNGD",
-    "DescRNGDsupport": "使用 Furiosa RNGD 支持",
-    "RequireRNGDPlugin": "需要 Backend.AI RNGD 插件。"
+    "RequireRNGDPlugin": "需要 Backend.AI RNGD 插件。",
+    "IPUSupport": "议会联盟",
+    "DescWarboySupport": "使用 Furiosa Warboy 支持",
+    "DescIPUSupport": "使用 GraphCore IPU 加速器",
+    "DescATOMSupport": "使用 Rebellions ATOM 加速器",
+    "DescCudaGPUSupport": "NVIDIA CUDA GPU 支持。 <br/> 需要 Backend.AI CUDA 插件。",
+    "DescHyperaccelLPUSupport": "使用Hyperaccel LPU加速器。",
+    "DescRNGDSupport": "使用 Furiosa RNGD 支持",
+    "DescRocmGPUSupport": "AMD ROCm GPU 支持。 <br/> 需要 Backend.AI ROCm 插件。",
+    "HyperaccelLPUSupport": "Hyperaccel LPU",
+    "OpenSourceCudaGPUSupport": "開源 CUDA GPU 支援",
+    "WarboySupport": "战郎",
+    "ATOMSupport": "ATOM",
+    "RNGDSupport": "RNGD",
+    "ROCMGPUSupport": "ROCm GPU 支持"
   },
   "notification": {
     "SuccessfullyUpdated": "成功更新",
@@ -1378,7 +1380,7 @@
     "EndpointInfo": "关于端点",
     "DescEndpoint": "<p>在 API ENDPOINT 中，应输入将请求转发给管理器的 Backend.AI Web 服务器的 URL。</p><p>例如，http://127.0.0.1:8090/</p>。",
     "EndpointStartWith": "端点必须以 http:// 或 https:// 开头。",
-    "SingleSignOn": {
+    "singleSignOn": {
       "LoginWithSAML": "使用 SAML 登录",
       "LoginWithRealm": "使用 {{ realmName }} 登录"
     },
@@ -1456,7 +1458,7 @@
     "GitlabRepoWillBeFolder": "导入的 GitLab 资源库会转换为文件夹，并可在会话启动时挂载。",
     "GitlabURL": "GitLab URL",
     "GitlabDefaultBranch": "GitLab 分支名称",
-    "InvalidNotebookURL": "Notbook URL 无效。"
+    "InvalidNotebookURL": "筆記本 URL 無效。"
   },
   "license": {
     "Perpetual": "永動的",
@@ -1585,7 +1587,6 @@
     "SessionOwner": "会议负责人",
     "ServiceEndpoint": "服务端点",
     "NoServiceEndpoint": "无服务端点",
-    "resources": "资源",
     "GeneratedTokens": "生成令牌",
     "GenerateToken": "生成令牌",
     "RoutesInfo": "路线信息",
@@ -1630,7 +1631,8 @@
     "Chatting": "聊天",
     "ServiceNameMinLength": "請輸入至少 4 個字元。",
     "ServiceNameMaxLength": "請輸入 24 個或更少的字元。",
-    "ServiceNameCannotStartWithHyphen": "兩端不能使用連字符 (-)。"
+    "ServiceNameCannotStartWithHyphen": "兩端不能使用連字符 (-)。",
+    "Resources": "资源"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",
@@ -1675,7 +1677,6 @@
     "CloneAsFolder": "克隆为文件夹",
     "CloneSuccess": "克隆请求已成功发送。",
     "CloneInfo": "它将被克隆为用户类型文件夹。",
-    "category": "類別",
     "CloneToFolder": "克隆到文件夹",
     "FolderAlreadyExists": "该名称的文件夹已经存在。",
     "FinetuneModel": "微調模型"

@@ -140,7 +140,10 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
         </ReverseThemeProvider>
         <UserDropdownMenu
           buttonRender={(btn) => (
-            <ReverseThemeProvider>{btn}</ReverseThemeProvider>
+            //  Add a `div` to resolve the Dropdown bug when the child is a `ConfigProvider`(ReverseThemeProvider).
+            <div>
+              <ReverseThemeProvider>{btn}</ReverseThemeProvider>
+            </div>
           )}
         />
       </Flex>

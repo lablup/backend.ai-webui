@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2025 Lablup Inc. All rights reserved.
  */
 import { navigate } from '../backend-ai-app';
 import '../plastics/lablup-piechart/lablup-piechart';
@@ -389,7 +389,36 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   /**
-   * Accept invitation and make you can access vfloder.
+   * Returns tab according to vfolder information
+   *
+   * @param vfolderInfo
+   * @returns {string} - tab name of vfolder (model, general, data, automount)
+   */
+  static getVFolderTabByVFolderInfo(vfolderInfo) {
+    if (
+      !vfolderInfo.name.startsWith('.') &&
+      vfolderInfo.usage_mode == 'model'
+    ) {
+      return 'model';
+    } else if (
+      !vfolderInfo.name.startsWith('.') &&
+      vfolderInfo.usage_mode == 'general'
+    ) {
+      return 'general';
+    } else if (
+      !vfolderInfo.name.startsWith('.') &&
+      vfolderInfo.usage_mode == 'data'
+    ) {
+      return 'data';
+    } else if (vfolderInfo.name.startsWith('.')) {
+      return 'automount';
+    } else {
+      return 'general';
+    }
+  }
+
+  /**
+   * Accept invitation and make you can access vfolder.
    *
    * @param {Event} e - Click the accept button
    * @param {any} invitation
@@ -398,16 +427,17 @@ export default class BackendAISummary extends BackendAIPage {
     if (!this.activeConnected) {
       return;
     }
-    const panel = e.target.closest('lablup-activity-panel');
     try {
-      panel.setAttribute('disabled', 'true');
-      panel.querySelectorAll('mwc-button').forEach((btn) => {
-        btn.setAttribute('disabled', 'true');
-      });
       await globalThis.backendaiclient.vfolder.accept_invitation(invitation.id);
+      const folder = globalThis.backendaiclient.supports('vfolder-id-based')
+        ? invitation.vfolder_id
+        : invitation.vfolder_name;
+      const vfolderInfo = await globalThis.backendaiclient.vfolder.info(folder);
+      const tabName = BackendAISummary.getVFolderTabByVFolderInfo(vfolderInfo);
+      this.notification.url = `/data?tab=${tabName}&folder=${invitation.vfolder_id.replace('-', '')}`;
       this.notification.text =
         _text('summary.AcceptSharedVFolder') + `${invitation.vfolder_name}`;
-      this.notification.show();
+      this.notification.show(true);
     } catch (err) {
       this.notification.text = PainKiller.relieve(err.title);
       this.notification.detail = err.message;
@@ -426,13 +456,8 @@ export default class BackendAISummary extends BackendAIPage {
     if (!this.activeConnected) {
       return;
     }
-    const panel = e.target.closest('lablup-activity-panel');
 
     try {
-      panel.setAttribute('disabled', 'true');
-      panel.querySelectorAll('mwc-button').forEach((btn) => {
-        btn.setAttribute('disabled', 'true');
-      });
       await globalThis.backendaiclient.vfolder.delete_invitation(invitation.id);
       this.notification.text =
         _text('summary.DeclineSharedVFolder') + `${invitation.vfolder_name}`;

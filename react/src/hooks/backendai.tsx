@@ -133,6 +133,7 @@ export const useResourceSlotsDetails = (resourceGroupName?: string) => {
 interface UserInfo {
   full_name: string;
   email: string;
+  uuid: string;
 }
 
 type mutationOptions<T> = {
@@ -146,6 +147,7 @@ export const useCurrentUserInfo = () => {
   const [userInfo, _setUserInfo] = useState<UserInfo>({
     full_name: baiClient.full_name,
     email: baiClient.email,
+    uuid: baiClient.user_uuid,
   });
 
   const getUsername = () => {

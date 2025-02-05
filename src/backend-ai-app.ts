@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2025 Lablup Inc. All rights reserved.
  */
 export const UPDATE_PAGE = 'UPDATE_PAGE';
 export const UPDATE_OFFLINE = 'UPDATE_OFFLINE';
@@ -112,9 +112,6 @@ const loadPage =
         break;
       case 'settings':
         import('./components/backend-ai-settings-view.js');
-        break;
-      case 'maintenance':
-        import('./components/backend-ai-maintenance-view.js');
         break;
       case 'statistics':
         import('./components/backend-ai-statistics-view.js');

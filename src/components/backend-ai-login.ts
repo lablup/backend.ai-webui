@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2025 Lablup Inc. All rights reserved.
  */
 // import * as aiSDK from '../lib/backend.ai-client-es6';
 import * as ai from '../lib/backend.ai-client-esm';
@@ -1744,6 +1744,7 @@ export default class BackendAILogin extends BackendAIPage {
           'domain_name',
           'groups {name, id}',
           'need_password_change',
+          'uuid',
         ];
         const q = `query { user{ ${fields.join(' ')} } }`;
         const v = { uuid: this.user };
@@ -1783,6 +1784,7 @@ export default class BackendAILogin extends BackendAIPage {
         const role = response['user'].role;
         this.domain_name = response['user'].domain_name;
         globalThis.backendaiclient.email = this.email;
+        globalThis.backendaiclient.user_uuid = response['user'].uuid;
         globalThis.backendaiclient.full_name = response['user'].full_name;
         globalThis.backendaiclient.is_admin = false;
         globalThis.backendaiclient.is_superadmin = false;
@@ -2323,7 +2325,7 @@ export default class BackendAILogin extends BackendAIPage {
                   ? html`
                       <mwc-button
                         id="sso-login-saml-button"
-                        label="${_t('login.SingleSignOn.LoginWithSAML')}"
+                        label="${_t('login.singleSignOn.LoginWithSAML')}"
                         fullwidth
                         @click="${() => this.loginWithSAML()}"
                       ></mwc-button>
@@ -2333,7 +2335,7 @@ export default class BackendAILogin extends BackendAIPage {
                   ? html`
                       <mwc-button
                         id="sso-login-openid-button"
-                        label="${_t('login.SingleSignOn.LoginWithRealm', {
+                        label="${_t('login.singleSignOn.LoginWithRealm', {
                           realmName: this.ssoRealmName || 'OpenID',
                         })}"
                         fullwidth

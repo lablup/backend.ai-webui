@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2025 Lablup Inc. All rights reserved.
  */
 import {
   IronFlex,
@@ -1560,15 +1560,15 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const btn = e.target;
     const isFolded =
       btn.textContent.replace(/\s/g, '') ==
-      _text('session.Readmore').replace(/\s/g, '');
+      _text('session.ReadMore').replace(/\s/g, '');
     const collapsibleArea = this.shadowRoot?.querySelector(
       '#expandable-desc',
     ) as HTMLElement;
     // FIXME: temporally set maxHeight with hardcoded value
     collapsibleArea.style.maxHeight = isFolded ? '100%' : '83px';
     btn.textContent = isFolded
-      ? _text('session.Readless')
-      : _text('session.Readmore');
+      ? _text('session.ReadLess')
+      : _text('session.ReadMore');
   }
   /**
    * Copy SSH Connection Example to Clipboard
@@ -1832,7 +1832,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               id="collapsible-btn"
               @click="${(e) => this._toggleCollapsibleArea(e)}"
             >
-              ${_t('session.Readmore')}
+              ${_t('session.ReadMore')}
             </button>
             <h4>${_t('session.ConnectionInformation')}</h4>
             <div>

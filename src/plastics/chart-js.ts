@@ -1,6 +1,6 @@
 /*
  @license
- Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2025 Lablup Inc. All rights reserved.
  */
 //import Chart from '../lib/Chart.min';
 import Chart from 'chart.js/auto';

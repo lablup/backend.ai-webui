@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2025 Lablup Inc. All rights reserved.
  */
 import '../plastics/lablup-shields/lablup-shields';
 import {
@@ -93,6 +93,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({ type: Object }) options;
   @property({ type: Number }) capacity;
   @property({ type: String }) cloneFolderName = '';
+  @property({ type: String }) cloneFolder = '';
   @property({ type: Object }) storageProxyInfo = Object();
   @property({ type: String }) folderType = 'user';
   @property({ type: Number }) currentGroupIdx = 0;
@@ -363,7 +364,7 @@ export default class BackendAIData extends BackendAIPage {
             @change="${() => this._validateFolderName()}"
             pattern="^[a-zA-Z0-9._-]*$"
             required
-            validationMessage="${_t('data.Allowslettersnumbersand-_dot')}"
+            validationMessage="${_t('data.AllowsLettersNumbersAnd-_Dot')}"
             maxLength="64"
             placeholder="${_t('maxLength.64chars')}"
           ></mwc-textfield>
@@ -559,7 +560,7 @@ export default class BackendAIData extends BackendAIPage {
             @change="${() => this._validateFolderName()}"
             pattern="^[a-zA-Z0-9._-]*$"
             required
-            validationMessage="${_t('data.Allowslettersnumbersand-_dot')}"
+            validationMessage="${_t('data.AllowsLettersNumbersAnd-_Dot')}"
             maxLength="64"
             placeholder="${_t('maxLength.64chars')}"
           ></mwc-textfield>
@@ -820,6 +821,11 @@ export default class BackendAIData extends BackendAIPage {
       if (e.detail) {
         const selectedItems = e.detail;
         this.cloneFolderName = selectedItems.name;
+        this.cloneFolder = globalThis.backendaiclient.supports(
+          'vfolder-id-based',
+        )
+          ? selectedItems.id
+          : selectedItems.name;
         this._cloneFolderDialog();
       }
     });
@@ -1257,7 +1263,7 @@ export default class BackendAIData extends BackendAIPage {
     }
     cloneable = cloneableEl ? cloneableEl.selected : false;
     this.cloneFolderNameInput.reportValidity();
-    if (this.cloneFolderNameInput.checkValidity()) {
+    if (this.cloneFolderNameInput.checkValidity() && this.cloneFolder) {
       const input = {
         cloneable: cloneable,
         permission: permission,
@@ -1267,7 +1273,7 @@ export default class BackendAIData extends BackendAIPage {
       };
       const job = globalThis.backendaiclient.vfolder.clone(
         input,
-        this.cloneFolderName,
+        this.cloneFolder,
       );
       job
         .then(() => {
@@ -1304,7 +1310,7 @@ export default class BackendAIData extends BackendAIPage {
           };
         } else {
           this.addFolderNameInput.validationMessage = _text(
-            'data.Allowslettersnumbersand-_dot',
+            'data.AllowsLettersNumbersAnd-_Dot',
           );
           return {
             valid: nativeValidity.valid,
@@ -1317,7 +1323,7 @@ export default class BackendAIData extends BackendAIPage {
         let isValid = !regex.test(this.addFolderNameInput.value);
         if (!isValid) {
           this.addFolderNameInput.validationMessage = _text(
-            'data.Allowslettersnumbersand-_dot',
+            'data.AllowsLettersNumbersAnd-_Dot',
           );
         }
         if (this.addFolderNameInput.value.length > 64) {

@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2025 Lablup Inc. All rights reserved.
  */
 import { default as AnsiUp } from '../lib/ansiup';
 import '../plastics/lablup-shields/lablup-shields';
@@ -2654,7 +2654,7 @@ export default class BackendAISessionList extends BackendAIPage {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
           renameField.validationMessage = _text(
-            'session.Validation.SessionNameRequired',
+            'session.validation.SessionNameRequired',
           );
           return {
             valid: nativeValidity.valid,
@@ -2662,7 +2662,7 @@ export default class BackendAISessionList extends BackendAIPage {
           };
         } else if (nativeValidity.patternMismatch) {
           renameField.validationMessage = _text(
-            'session.Validation.SluggedStrings',
+            'session.validation.SluggedStrings',
           );
           return {
             valid: nativeValidity.valid,
@@ -2670,7 +2670,7 @@ export default class BackendAISessionList extends BackendAIPage {
           };
         } else {
           renameField.validationMessage = _text(
-            'session.Validation.EnterValidSessionName',
+            'session.validation.EnterValidSessionName',
           );
           return {
             valid: nativeValidity.valid,
@@ -2681,7 +2681,7 @@ export default class BackendAISessionList extends BackendAIPage {
         const isValid = !sessionNames.includes(value) || value === currentName;
         if (!isValid) {
           renameField.validationMessage = _text(
-            'session.Validation.SessionNameAlreadyExist',
+            'session.validation.SessionNameAlreadyExist',
           );
         }
         return {
@@ -3139,7 +3139,7 @@ ${rowData.item[this.sessionNameField]}</pre
                       minLength="4"
                       maxLength="64"
                       validationMessage="${_text(
-                        'session.Validation.EnterValidSessionName',
+                        'session.validation.EnterValidSessionName',
                       )}"
                       value="${rowData.item[this.sessionNameField]}"
                       @input="${(e) => this._validateSessionName(e)}"
@@ -4804,7 +4804,7 @@ ${rowData.item[this.sessionNameField]}</pre
                 maxLength="32"
                 placeholder="${_t('inputLimit.4to32chars')}"
                 validationMessage="${_text(
-                  'session.Validation.EnterValidSessionName',
+                  'session.validation.EnterValidSessionName',
                 )}"
                 style="margin-top:8px;width:100%;"
                 autoValidate
@@ -5230,7 +5230,7 @@ ${rowData.item[this.sessionNameField]}</pre
         this.canStartImagifying = false;
         if (nativeValidity.patternMismatch) {
           this.newImageNameInput.validationMessage = _text(
-            'session.Validation.EnterValidSessionName',
+            'session.validation.EnterValidSessionName',
           );
           return {
             valid: nativeValidity.valid,
@@ -5238,7 +5238,7 @@ ${rowData.item[this.sessionNameField]}</pre
           };
         } else {
           this.newImageNameInput.validationMessage = _text(
-            'session.Validation.EnterValidSessionName',
+            'session.validation.EnterValidSessionName',
           );
           return {
             valid: nativeValidity.valid,

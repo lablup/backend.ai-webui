@@ -1,4 +1,5 @@
 {
+  "$schema": "../i18n.schema.json",
   "webui": {
     "menu": {
       "WelcomeMessage": "Hoş geldiniz, {{ userName }}.",
@@ -35,7 +36,6 @@
       "NewPasswordMismatch": "İki yeni şifre eşleşmiyor.",
       "PasswordMismatch": "Şifre eşleşmiyor",
       "PasswordUpdated": "Şifre başarıyla güncellendi.",
-      "FullnameUpdated": "Tam ad başarıyla güncellendi.",
       "TermsOfService": "Kullanım Şartları",
       "PrivacyPolicy": "Gizlilik Politikası",
       "LeaveService": "hizmetten ayrıl",
@@ -65,17 +65,18 @@
       "InvalidBlankEmail": "E-postanızı giriniz",
       "DisMatchUserEmail": "Kullanıcı E-postası eşleşmiyor",
       "MyEnvironments": "Ortamlarım",
-      "ResourcePolicy": "Kaynak Politikası"
+      "ResourcePolicy": "Kaynak Politikası",
+      "FullNameUpdated": "Tam ad başarıyla güncellendi."
     },
     "YouAreOffline": "Çevrimdışı: Herhangi bir ağa bağlı değil.",
     "YouAreOnline": "artık çevrimiçisin",
-    "NOTFOUND": " <p> Hata! <br/> Sayfa Bulunamadı... </p>",
-    "DescNOTFOUND": "Üzgünüz, aradığınız sayfa bulunamadı.",
-    "UNAUTHORIZEDACCESS": "Yetkisiz Erişim",
     "AdminOnlyPage": "Bu sayfaya erişim izniniz yok. <br /> Özet sayfasına yönlendirmek için aşağıdaki butona tıklayın.",
     "CleanUpLoginSession": "Oturum açma oturumunu temizle...",
     "CleanUpNow": "Şimdi temizle...",
-    "NetworkSoftTimeout": "Sunucunun yanıt vermesi uzun sürüyor. Lütfen biraz bekleyin"
+    "NetworkSoftTimeout": "Sunucunun yanıt vermesi uzun sürüyor. Lütfen biraz bekleyin",
+    "NotFound": " <p> Hata! <br/> Sayfa Bulunamadı... </p>",
+    "DescNotFound": "Üzgünüz, aradığınız sayfa bulunamadı.",
+    "UnauthorizedAccess": "Yetkisiz Erişim"
   },
   "summary": {
     "StartMenu": "Başlangıç menüsü",
@@ -83,7 +84,6 @@
     "ActiveSessions": "Aktif Oturumlar",
     "ResourceStatistics": "Kaynak İstatistikleri",
     "CoresReserved": "Çekirdekler ayrılmış",
-    "reserved": "ayrılmış",
     "FractionalGPUScalingEnabled": "Kesirli GPU ölçeklendirme etkinleştirildi",
     "ROCMGPUEnabled": "ROCm GPU etkin",
     "TPUEnabled": "TPU Etkin",
@@ -110,7 +110,6 @@
     "NoInvitations": "Görüntülenecek davetiye yok.",
     "AcceptSharedVFolder": "Artık klasöre erişebilirsiniz:",
     "DeclineSharedVFolder": "Klasör daveti silindi:",
-    "connectingToCluster": "Backend.AI Cluster'a bağlanılıyor...",
     "IPUEnabled": "IPU NPU Etkin",
     "ATOMEnabled": "ATOM NPU Etkin",
     "WarboyEnabled": "Warboy NPU Etkinleştirildi",
@@ -118,7 +117,9 @@
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "Hyperaccel LPU Etkin",
     "ATOMPlusEnabled": "ATOM+ NPU Etkin",
-    "RNGDEnabled": "RNGD Etkin"
+    "RNGDEnabled": "RNGD Etkin",
+    "ReservedShort": "ayrılmış",
+    "ConnectingToCluster": "Backend.AI Cluster'a bağlanılıyor..."
   },
   "session": {
     "launcher": {
@@ -179,7 +180,6 @@
       "StartImportedNotebook": "İçe Aktarılan Not Defterini Başlat",
       "DuplicatedSessionName": "Yinelenen oturum adına izin verilmiyor",
       "SessionNameAllowCondition": "Oturum adı, boşluk olmadan 4-64 harf/rakam içermelidir.",
-      "sessionStillPreparing": "Seansın hazırlıkları devam ediyor. Oturum başladıktan sonra uygulamayı başlatmak için uygulama simgesine dokunun.",
       "ResourceMonitorToggle": "Kaynak izleyicisine bakın",
       "SharedMemorySettingIsReduced": "Paylaşılan bellek ayarı, ayrılan belleğin altına düşürülür.",
       "NoActiveKeypair": "Etkin Anahtar Çifti Yok",
@@ -290,7 +290,8 @@
       "BatchJobTimeoutDuration": "Toplu İş Zaman Aşımı Süresi",
       "BatchJobTimeoutDurationDesc": "Toplu işler için maksimum yürütme süresini ayarlayın. \nBelirtilen sürenin aşılması durumunda oturum otomatik olarak sonlandırılacaktır.",
       "SetBatchJobTimeoutDuration": "Toplu iş zaman aşımı süresini ayarlama",
-      "PreOpen": "önceden açılmak"
+      "PreOpen": "önceden açılmak",
+      "SessionStillPreparing": "Seansın hazırlıkları devam ediyor. Oturum başladıktan sonra uygulamayı başlatmak için uygulama simgesine dokunun."
     },
     "Preparing": "hazırlanıyor...",
     "PreparingSession": "Oturum hazırlanıyor...",
@@ -331,7 +332,7 @@
     "UseYourFavoriteMSTSCApp": "En sevdiğiniz MS Remote Desktop uygulamasını kullanın",
     "Architecture": "Mimarlık",
     "SessionType": "OturumTürü",
-    "Validation": {
+    "validation": {
       "EnterValidSessionName": "Lütfen en az 4 alfabe harfi veya rakamı, kısa çizgi veya alt çizgiden oluşan bir kombinasyon girin.",
       "SessionNameRequired": "Oturum adı gereklidir",
       "SluggedStrings": "Kesikli dizeler (>3 karakter)",
@@ -346,8 +347,6 @@
     "Interactive": "İnteraktif",
     "Batch": "Toplu İş",
     "Inference": "Çıkarım",
-    "Readmore": "Daha Fazlasını Oku...",
-    "Readless": "Daha az oku",
     "AllowedClientIps": "İzin verilen istemci IP'leri",
     "CommaSeparated": "virgülle ayrılmış",
     "UseSubdomain": "UseSubdomain",
@@ -430,7 +429,10 @@
       "SSHConnectionExampleClipboardCopy": "SSH Bağlantı Örneği panoya kopyalandı."
     },
     "ExportCSV": "CSV'yi dışa aktar",
-    "FGPU": "fGPU"
+    "FGPU": "fGPU",
+    "ReadLess": "Daha az oku",
+    "ReadMore": "Daha Fazlasını Oku...",
+    "CommitImageName": "Taahhüt edilen resim adı"
   },
   "button": {
     "Cancel": "İptal etmek",
@@ -636,9 +638,6 @@
     "Create": "Oluşturmak",
     "Update": "Güncelleme",
     "FolderNameRequired": "Klasör adı gerekli",
-    "FileandFoldernameRequired": "Dosya/Klasör adı gerekli",
-    "Allowslettersnumbersand-_dot": "Harflere, sayılara ve -_'ye izin verir.",
-    "Allowslettersnumbersand-_": "Harflere, sayılara ve -_'ye izin verir",
     "FolderNameTooLong": "64 karakterden az klasör adı girin",
     "EnterDifferentValue": "Lütfen mevcut dosya veya klasör adından farklı bir değer girin. Lütfen giriş alanında boşluk karakteri olup olmadığını kontrol edin.",
     "Host": "ev sahibi",
@@ -814,7 +813,6 @@
       "InferenceEngineVersion": "Çıkarım Motoru Sürümü",
       "ReplicaNumber": "Çoğaltma Numarası",
       "ImportAndStartService": "Hizmeti İçe Aktarma ve Başlatma",
-      "huggingFaceUrlPlaceholder": "Hugging Face URL'sini girin",
       "ImportOnly": "Yalnızca içe aktar",
       "StartWithHuggingFaceUrl": "https://huggingface.co ile başlamalıdır.",
       "CheckHuggingFaceUrl": "Kontrol et",
@@ -835,9 +833,13 @@
       "ImportOnlySuccessDesc": "Yeni model klasörü hazır. \nŞimdi hizmeti başlatın ve istediğiniz işlemi deneyin.",
       "ImportAndStartServiceSuccessDesc": "Yeni model klasörü ve servisi hazır. \nModel ayrıntılarını kontrol etmek ve istediğiniz işlemi başlatmak için 'Servis bilgilerini görüntüle' düğmesine tıklayın.",
       "AddedItems": "Eklenen öğeler",
-      "ModelFolderName": "Model klasörü adı"
+      "ModelFolderName": "Model klasörü adı",
+      "HuggingFaceUrlPlaceholder": "Hugging Face URL'sini girin"
     },
-    "UserQuotaScopeId": "Quota Scope ID"
+    "UserQuotaScopeId": "Quota Scope ID",
+    "FileAndFolderNameRequired": "Dosya/Klasör adı gerekli",
+    "AllowsLettersNumbersAnd-_": "Harflere, sayılara ve -_'ye izin verir",
+    "AllowsLettersNumbersAnd-_Dot": "Harflere, sayılara ve -_'ye izin verir."
   },
   "dialog": {
     "warning": {
@@ -1165,7 +1167,7 @@
   "maintenance": {
     "Fix": "Düzelt",
     "MatchDatabase": "Kullanım veritabanını mevcut durumla eşleştirin",
-    "DescMatchDatabase": "Mevcut durumla kullanım veritabanını yeniden hesaplayın. <br/> Docker kazayla başarısız olursa veya bazı oturumlar zorla sonlandırılırsa kullanışlıdır.",
+    "DescMatchDatabase": "Mevcut durumla kullanım veritabanını yeniden hesaplayın. Docker kazayla başarısız olursa veya bazı oturumlar zorla sonlandırılırsa kullanışlıdır.",
     "RecalculateUsage": "Kullanımı Yeniden Hesapla",
     "ImagesEnvironment": "Görüntüler / Çevre",
     "RescanImages": "Resimleri Yeniden Tara",
@@ -1173,7 +1175,7 @@
     "DescCleanupOldImages": "Docker görüntü listesinden eski görüntüleri temizleyin.",
     "CleanupImages": "Temizleme Görüntüleri",
     "RescanImageList": "Depodan görüntü listesini yeniden tara",
-    "DescRescanImageList": "Kayıtlı depolardan görüntü listesini yeniden tarayın. <br /> Uzun zaman alabilir, bu yüzden lütfen uygulamadan sonra bekleyin.",
+    "DescRescanImageList": "Kayıtlı depolardan görüntü listesini yeniden tarayın. Uzun zaman alabilir, bu yüzden lütfen uygulamadan sonra bekleyin.",
     "Recalculating": "Yeniden hesaplanıyor...",
     "RecalculationFinished": "Yeniden hesaplama tamamlandı",
     "RecalculationFailed": "Yeniden hesaplama başarısız oldu",
@@ -1231,10 +1233,7 @@
     "Scaling": "ölçekleme",
     "AllowAgentSideRegistration": "Aracı tarafı kaydına izin ver",
     "DescAllowAgentSideRegistration": "Aracının kendisini yöneticiye kaydetmesine izin verin. <br/> Yalnızca Backend.AI kümesi güvenli konumda yönetiliyorsa kullanın.",
-    "DescCUDAGPUsupport": "NVIDIA CUDA GPU desteği. <br/> Backend.AI CUDA Eklentisi gerektirir.",
     "CUDAGPUdisabledByFGPUsupport": "Sistem Kesirli GPU eklentisi kullandığı için devre dışı bırakıldı",
-    "ROCMGPUsupport": "ROCm GPU desteği",
-    "DescROCMGPUsupport": "AMD ROCm GPU desteği. <br/> Backend.AI ROCm Eklentisi gerektirir.",
     "Scheduler": "zamanlayıcı",
     "SchedulerConfiguration": "İş zamanlayıcı başına yapılandırma.",
     "Require2003orAbove": "Backend.AI 20.03 veya üstünü gerektirir.",
@@ -1268,24 +1267,15 @@
     },
     "OverlayNetwork": "Yerleşim Ağı",
     "OverlayNetworkConfiguration": "Yer paylaşımlı ağlar oluştururken kullanılacak yapılandırma.",
-    "IPUsupport": "IPU",
-    "DescIPUsupport": "GraphCore IPU hızlandırıcısını kullanma",
     "RequireIPUPlugin": "Backend.AI IPU Eklentisi gerektirir.",
-    "ATOMsupport": "ATOM",
-    "DescATOMsupport": "Rebellions ATOM hızlandırıcısını kullanın",
     "RequireATOMPlugin": "Backend.AI ATOM Eklentisi gerektirir.",
-    "Warboysupport": "Savaş Çocuğu",
-    "DescWarboysupport": "Furiosa Warboy desteğini kullanın",
     "RequireWarboyPlugin": "Backend.AI Warboy Eklentisi gerektirir.",
     "OverlayNetworkSettings": "Yer Paylaşımlı Ağ ayarları",
     "OverlayNetworkSettingsDescription": "Kaplama ağı, başka bir ağın üzerine katmanlanmış bir bilgisayar ağıdır. Kaplama ağı, Backend.AI yöneticisinin birden fazla Docker daemon ana bilgisayarı arasında dağıtılmış bir ağ oluşturur.",
     "MTUDescription": "Maksimum iletim birimi, bir ağ protokolünün iletebileceği en büyük paketin boyutu.",
     "OutOfRange": "Menzil dışında.",
     "Plugins": "Eklentiler",
-    "OpenSourceCUDAGPUsupport": "Açık Kaynak CUDA GPU desteği",
     "ShowOnlyChanged": "Yalnızca Değişiklikleri Görüntüle",
-    "HyperaccelLPUsupport": "Hyperaccel LPU",
-    "DescHyperaccelLPUsupport": "Hyperaccel LPU hızlandırıcısını kullanın.",
     "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU Eklentisi gerektirir.",
     "SearchPlaceholder": "Arama",
     "Gaudi2Support": "Gaudi 2 Desteği",
@@ -1294,9 +1284,21 @@
     "ATOMPlusSupport": "ATOM+ Desteği",
     "RequireATOMPlusPlugin": "Backend.AI ATOM+ Eklentisi gerektirir.",
     "DescATOMPlusSupport": "Rebellions ATOM+ hızlandırıcısını kullanın.",
-    "RNGDsupport": "RNGD",
-    "DescRNGDsupport": "Furiosa RNGD desteğini kullanın",
-    "RequireRNGDPlugin": "Backend.AI RNGD Eklentisi gerektirir."
+    "RequireRNGDPlugin": "Backend.AI RNGD Eklentisi gerektirir.",
+    "IPUSupport": "IPU",
+    "DescWarboySupport": "Furiosa Warboy desteğini kullanın",
+    "DescIPUSupport": "GraphCore IPU hızlandırıcısını kullanma",
+    "DescATOMSupport": "Rebellions ATOM hızlandırıcısını kullanın",
+    "DescCudaGPUSupport": "NVIDIA CUDA GPU desteği. <br/> Backend.AI CUDA Eklentisi gerektirir.",
+    "DescHyperaccelLPUSupport": "Hyperaccel LPU hızlandırıcısını kullanın.",
+    "DescRNGDSupport": "Furiosa RNGD desteğini kullanın",
+    "DescRocmGPUSupport": "AMD ROCm GPU desteği. <br/> Backend.AI ROCm Eklentisi gerektirir.",
+    "HyperaccelLPUSupport": "Hyperaccel LPU",
+    "OpenSourceCudaGPUSupport": "Açık Kaynak CUDA GPU desteği",
+    "WarboySupport": "Savaş Çocuğu",
+    "ATOMSupport": "ATOM",
+    "RNGDSupport": "RNGD",
+    "ROCMGPUSupport": "ROCm GPU desteği"
   },
   "notification": {
     "SuccessfullyUpdated": "Başarıyla güncellendi",
@@ -1378,7 +1380,7 @@
     "EndpointInfo": "Endpoint Hakkında",
     "DescEndpoint": "<p>API ENDPOINT kısmına, isteği Yöneticiye ileten Backend.AI Web sunucusunun URL'si girilmelidir.</p><p>örneğin, http://127.0.0.1:8090/</p>",
     "EndpointStartWith": "Bitiş noktası http:// veya https:// ile başlamalıdır.",
-    "SingleSignOn": {
+    "singleSignOn": {
       "LoginWithSAML": "SAML ile Oturum Açma",
       "LoginWithRealm": "{{realmName }} ile giriş yapın"
     },
@@ -1537,7 +1539,6 @@
     "ServiceName": "Hizmet Adı",
     "ServiceNameRule": "Yalnızca alfasayısal, alt çizgi(_) ve kısa çizgiye(-) izin verilir ve alfasayısal bir karakterle bitmelidir.",
     "OpenToPublic": "Halka Açık",
-    "DesiredRoutingCount": "İstenen Yönlendirme Sayısı",
     "ServingRouteErrorModalTitle": "Hizmet Veren Rota Hatası",
     "SessionId": "Oturum Kimliği",
     "Services": "Hizmetler",
@@ -1550,7 +1551,6 @@
     "SessionOwner": "Oturum Sahibi",
     "ServiceEndpoint": "Hizmet Uç Noktası",
     "NoServiceEndpoint": "Hizmet Uç Noktası Yok",
-    "resources": "Kaynaklar",
     "Image": "Resim",
     "GeneratedTokens": "Oluşturulan Jetonlar",
     "GenerateToken": "Belirteç Oluştur",
@@ -1595,7 +1595,9 @@
     "Chatting": "Sohbet",
     "ServiceNameMinLength": "Lütfen en az 4 karakter giriniz.",
     "ServiceNameMaxLength": "Lütfen 24 veya daha az karakter girin.",
-    "ServiceNameCannotStartWithHyphen": "Kısa çizgi (-) her iki uçta da kullanılamaz."
+    "ServiceNameCannotStartWithHyphen": "Kısa çizgi (-) her iki uçta da kullanılamaz.",
+    "Resources": "Kaynaklar",
+    "NumberOfReplicas": "Kopya sayısı"
   },
   "storageHost": {
     "quotaSettings": {
@@ -1675,7 +1677,6 @@
     "CloneAsFolder": "Klasör olarak klonla",
     "CloneSuccess": "Klonlama isteği başarıyla gönderildi.",
     "CloneInfo": "Kullanıcı tipi klasörünüz olarak klonlanacaktır.",
-    "category": "Kategori",
     "CloneToFolder": "Bir klasöre klonlama",
     "FolderAlreadyExists": "Bu isimde bir klasör zaten mevcut.",
     "FinetuneModel": "İnce Ayar Modeli"

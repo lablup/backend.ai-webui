@@ -1,3 +1,6 @@
+resolves #NNN (FR-MMM)
+<!-- replace NNN, MMM with the GitHub issue number and the corresponding Jira issue number. -->
+
 <!--
 Please precisely, concisely, and concretely describe what this PR changes, the rationale behind codes,
 and how it affects the users and other developers.
@@ -5,7 +8,6 @@ and how it affects the users and other developers.
 
 **Checklist:** (if applicable)
 
-- [ ] Mention to the original issue
 - [ ] Documentation
 - [ ] Minium required manager version
 - [ ] Specific setting for review (eg., KB link, endpoint or how to setup)

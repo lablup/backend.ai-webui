@@ -21,14 +21,25 @@ const useStyles = createStyles(({ css }) => ({
   `,
 }));
 
+export type SettingGroup = Array<{
+  title: string;
+  settingItems: SettingItemProps[];
+}>;
+
 interface SettingPageProps {
-  settingGroup: { title: string; settingItems: SettingItemProps[] }[];
+  settingGroup: SettingGroup;
   tabDirection?: 'top' | 'left';
+  showChangedOptionFilter?: boolean;
+  showResetButton?: boolean;
+  showSearchBar?: boolean;
 }
 
 const SettingList: React.FC<SettingPageProps> = ({
   settingGroup,
   tabDirection = 'left',
+  showChangedOptionFilter,
+  showResetButton,
+  showSearchBar,
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -75,24 +86,30 @@ const SettingList: React.FC<SettingPageProps> = ({
         }}
       >
         <Flex justify="start" gap={'xs'}>
-          <Input
-            prefix={<SearchOutlined />}
-            placeholder={t('settings.SearchPlaceholder')}
-            onChange={(e) => setSearchValue(e.target.value)}
-            value={searchValue}
-          />
-          <Checkbox
-            onChange={(e) => setChangedOptionFilter(e.target.checked)}
-            style={{ whiteSpace: 'nowrap' }}
-          >
-            {t('settings.ShowOnlyChanged')}
-          </Checkbox>
-          <Button
-            icon={<RedoOutlined />}
-            onClick={() => setIsOpenResetChangesModal()}
-          >
-            {t('button.Reset')}
-          </Button>
+          {!!showSearchBar && (
+            <Input
+              prefix={<SearchOutlined />}
+              placeholder={t('settings.SearchPlaceholder')}
+              onChange={(e) => setSearchValue(e.target.value)}
+              value={searchValue}
+            />
+          )}
+          {!!showChangedOptionFilter && (
+            <Checkbox
+              onChange={(e) => setChangedOptionFilter(e.target.checked)}
+              style={{ whiteSpace: 'nowrap' }}
+            >
+              {t('settings.ShowOnlyChanged')}
+            </Checkbox>
+          )}
+          {!!showResetButton && (
+            <Button
+              icon={<RedoOutlined />}
+              onClick={() => setIsOpenResetChangesModal()}
+            >
+              {t('button.Reset')}
+            </Button>
+          )}
         </Flex>
         <Tabs
           className={styles.TabStyles}

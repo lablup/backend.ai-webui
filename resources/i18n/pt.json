@@ -1,4 +1,5 @@
 {
+  "$schema": "../i18n.schema.json",
   "webui": {
     "menu": {
       "WelcomeMessage": "Bem vindo, {{userName }}.",
@@ -35,7 +36,6 @@
       "NewPasswordMismatch": "Duas novas senhas não correspondem.",
       "PasswordMismatch": "Senha incorreta",
       "PasswordUpdated": "A senha foi atualizada com sucesso.",
-      "FullnameUpdated": "O nome completo foi atualizado com sucesso.",
       "TermsOfService": "Termos de serviço",
       "PrivacyPolicy": "Política de Privacidade",
       "LeaveService": "Deixar o serviço",
@@ -65,17 +65,18 @@
       "InvalidBlankEmail": "Digite seu e-mail",
       "DisMatchUserEmail": "E-mail do usuário não corresponde",
       "MyEnvironments": "Meus ambientes",
-      "ResourcePolicy": "Política de Recursos"
+      "ResourcePolicy": "Política de Recursos",
+      "FullNameUpdated": "O nome completo foi atualizado com sucesso."
     },
     "YouAreOffline": "Desligado: Não está ligado a nenhuma rede.",
     "YouAreOnline": "Agora você está online",
-    "NOTFOUND": " <p> Ops! <br/> Página não encontrada ... </p>",
-    "DescNOTFOUND": "Desculpe, a página que você está procurando não foi encontrada.",
-    "UNAUTHORIZEDACCESS": "Acesso não autorizado",
     "AdminOnlyPage": "Você não tem permissão para acessar esta página. <br /> Clique no botão abaixo para redirecionar para a página de resumo.",
     "CleanUpLoginSession": "Limpar sessão de login ...",
     "CleanUpNow": "Limpe agora ...",
-    "NetworkSoftTimeout": "O servidor está a demorar mais tempo a responder. Por favor, aguarde um momento"
+    "NetworkSoftTimeout": "O servidor está a demorar mais tempo a responder. Por favor, aguarde um momento",
+    "NotFound": " <p> Ops! <br/> Página não encontrada ... </p>",
+    "DescNotFound": "Desculpe, a página que você está procurando não foi encontrada.",
+    "UnauthorizedAccess": "Acesso não autorizado"
   },
   "summary": {
     "StartMenu": "Menu Iniciar",
@@ -83,7 +84,6 @@
     "ActiveSessions": "Sessões ativas",
     "ResourceStatistics": "Estatísticas de recursos",
     "CoresReserved": "Núcleos reservados",
-    "reserved": "reservado",
     "FractionalGPUScalingEnabled": "Escalonamento de GPU fracionário ativado",
     "ROCMGPUEnabled": "GPU ROCm habilitado",
     "TPUEnabled": "TPU ativado",
@@ -110,7 +110,6 @@
     "NoInvitations": "Não há convites para exibir.",
     "AcceptSharedVFolder": "Agora você pode acessar a pasta:",
     "DeclineSharedVFolder": "O convite da pasta foi excluído:",
-    "connectingToCluster": "Conectando ao cluster Backend.AI ...",
     "IPUEnabled": "IPU NPU Activada",
     "ATOMEnabled": "ATOM NPU Ativado",
     "WarboyEnabled": "NPU do Warboy activada",
@@ -118,7 +117,9 @@
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "LPU Hyperaccel habilitada",
     "ATOMPlusEnabled": "ATOM+ NPU habilitado",
-    "RNGDEnabled": "RNGD ativado"
+    "RNGDEnabled": "RNGD ativado",
+    "ReservedShort": "reservado",
+    "ConnectingToCluster": "Conectando ao cluster Backend.AI ..."
   },
   "session": {
     "launcher": {
@@ -179,7 +180,6 @@
       "StartImportedNotebook": "Iniciar Bloco de Notas Importado",
       "DuplicatedSessionName": "Nome de sessão duplicado não permitido",
       "SessionNameAllowCondition": "O nome da sessão deve ter 4-64 alfabetos / números sem nenhum espaço em branco.",
-      "sessionStillPreparing": "A sessão ainda está em preparação. Após o início da sessão, toque no ícone do aplicativo para iniciá-lo.",
       "ResourceMonitorToggle": "Veja o monitor de recursos",
       "SharedMemorySettingIsReduced": "A configuração da memória compartilhada é reduzida para menos do que a memória alocada.",
       "NoActiveKeypair": "Nenhum par de chaves ativo",
@@ -290,7 +290,8 @@
       "BatchJobTimeoutDuration": "Duração do tempo limite do trabalho em lote",
       "BatchJobTimeoutDurationDesc": "Defina o tempo máximo de execução para trabalhos em lote. \nA sessão será encerrada automaticamente se o tempo especificado for excedido.",
       "SetBatchJobTimeoutDuration": "Definir duração do tempo limite do trabalho em lote",
-      "PreOpen": "pré-abrir"
+      "PreOpen": "pré-abrir",
+      "SessionStillPreparing": "A sessão ainda está em preparação. Após o início da sessão, toque no ícone do aplicativo para iniciá-lo."
     },
     "Preparing": "Preparando...",
     "PreparingSession": "Preparando sessão ...",
@@ -331,7 +332,7 @@
     "UseYourFavoriteMSTSCApp": "Use seu aplicativo MS Remote Desktop favorito",
     "Architecture": "Arquitetura",
     "SessionType": "Tipo de sessão",
-    "Validation": {
+    "validation": {
       "EnterValidSessionName": "Insira uma combinação de pelo menos quatro letras do alfabeto, ou números, ou hífen, ou sublinhado.",
       "SessionNameRequired": "O nome da sessão é obrigatório",
       "SluggedStrings": "Cadeias de caracteres com slugged (>3 caracteres)",
@@ -346,8 +347,6 @@
     "Interactive": "Interativo",
     "Batch": "Lote",
     "Inference": "Inferência",
-    "Readmore": "Ler mais...",
-    "Readless": "Ler menos",
     "AllowedClientIps": "IPs de clientes permitidos",
     "CommaSeparated": "separada por vírgulas",
     "UseSubdomain": "UsarSubdomínio",
@@ -431,7 +430,10 @@
       "SSHConnectionExampleClipboardCopy": "O exemplo de ligação SSH foi copiado para a área de transferência."
     },
     "ExportCSV": "exportar CSV",
-    "FGPU": "fGPU"
+    "FGPU": "fGPU",
+    "ReadLess": "Ler menos",
+    "ReadMore": "Ler mais...",
+    "CommitImageName": "Nome da imagem confirmada"
   },
   "button": {
     "Cancel": "Cancelar",
@@ -637,9 +639,6 @@
     "Create": "Crio",
     "Update": "Atualizar",
     "FolderNameRequired": "O nome da pasta é obrigatório",
-    "FileandFoldernameRequired": "O nome do arquivo / pasta é obrigatório",
-    "Allowslettersnumbersand-_dot": "Permite letras, números e -_.",
-    "Allowslettersnumbersand-_": "Permite letras, números e -_",
     "FolderNameTooLong": "Digite o nome da pasta com menos de 64 caracteres",
     "EnterDifferentValue": "Insira um valor diferente do nome do arquivo ou pasta existente. Verifique se o caractere de espaço no campo de entrada ou não.",
     "Host": "Hospedeiro",
@@ -815,7 +814,6 @@
       "InferenceEngineVersion": "Versão do mecanismo de inferência",
       "ReplicaNumber": "Número da réplica",
       "ImportAndStartService": "Importar e iniciar serviço",
-      "huggingFaceUrlPlaceholder": "Insira o URL Hugging Face",
       "ImportOnly": "Somente importação",
       "StartWithHuggingFaceUrl": "Deve começar com https://huggingface.co",
       "CheckHuggingFaceUrl": "Verificar",
@@ -836,9 +834,13 @@
       "ImportOnlySuccessDesc": "A nova pasta do modelo está pronta. \nInicie o serviço agora e experimente a operação desejada.",
       "ImportAndStartServiceSuccessDesc": "A pasta e o serviço do novo modelo estão prontos. \nClique no botão 'Ver informações de serviço' para verificar os detalhes do modelo e iniciar a operação desejada.",
       "AddedItems": "Itens adicionados",
-      "ModelFolderName": "Nome da pasta do modelo"
+      "ModelFolderName": "Nome da pasta do modelo",
+      "HuggingFaceUrlPlaceholder": "Insira o URL Hugging Face"
     },
-    "UserQuotaScopeId": "Quota Scope ID"
+    "UserQuotaScopeId": "Quota Scope ID",
+    "FileAndFolderNameRequired": "O nome do arquivo / pasta é obrigatório",
+    "AllowsLettersNumbersAnd-_": "Permite letras, números e -_",
+    "AllowsLettersNumbersAnd-_Dot": "Permite letras, números e -_."
   },
   "dialog": {
     "warning": {
@@ -1166,7 +1168,7 @@
   "maintenance": {
     "Fix": "Fixar",
     "MatchDatabase": "Combine o banco de dados de uso com o estado atual",
-    "DescMatchDatabase": "Recalcule o banco de dados de uso com o estado atual. <br/> Útil se o docker falhar por acidente ou se algumas sessões forem encerradas à força.",
+    "DescMatchDatabase": "Recalcule o banco de dados de uso com o estado atual. Útil se o docker falhar por acidente ou se algumas sessões forem encerradas à força.",
     "RecalculateUsage": "Recalcular uso",
     "ImagesEnvironment": "Imagens / Ambiente",
     "RescanImages": "Reexaminar imagens",
@@ -1174,7 +1176,7 @@
     "DescCleanupOldImages": "Limpe as imagens antigas da lista de imagens do docker.",
     "CleanupImages": "Limpar imagens",
     "RescanImageList": "Verificar novamente a lista de imagens do repositório",
-    "DescRescanImageList": "Verifique novamente a lista de imagens dos repositórios registrados. <br /> Pode demorar muito, então aguarde a execução.",
+    "DescRescanImageList": "Verifique novamente a lista de imagens dos repositórios registrados. Pode demorar muito, então aguarde a execução.",
     "Recalculating": "Recalculando ...",
     "RecalculationFinished": "Recálculo concluído",
     "RecalculationFailed": "O recálculo falhou",
@@ -1232,10 +1234,7 @@
     "Scaling": "Dimensionamento",
     "AllowAgentSideRegistration": "Permitir registro do lado do agente",
     "DescAllowAgentSideRegistration": "Permitir que o agente se registre no gerente. <br/> Use apenas se o cluster Backend.AI for gerenciado em local seguro.",
-    "DescCUDAGPUsupport": "Suporte para GPU NVIDIA CUDA. <br/> Requer Backend.AI CUDA Plugin.",
     "CUDAGPUdisabledByFGPUsupport": "Desativado porque o sistema usa o plugin de GPU fracionário",
-    "ROCMGPUsupport": "Suporte para GPU ROCm",
-    "DescROCMGPUsupport": "Suporte a GPU AMD ROCm. <br/> Requer Backend.AI ROCm Plugin.",
     "Scheduler": "Agendador",
     "SchedulerConfiguration": "Configuração por agendador de trabalho.",
     "Require2003orAbove": "Requer Backend.AI 20.03 ou superior.",
@@ -1269,24 +1268,15 @@
     },
     "OverlayNetwork": "Rede de sobreposição",
     "OverlayNetworkConfiguration": "Configuração a utilizar na criação de redes sobrepostas.",
-    "IPUsupport": "IPU",
-    "DescIPUsupport": "Usar o acelerador de IPU GraphCore",
     "RequireIPUPlugin": "Requer o plug-in IPU Backend.AI.",
-    "ATOMsupport": "ATOM",
-    "DescATOMsupport": "Utilizar o acelerador ATOM da Rebellions",
     "RequireATOMPlugin": "Requer o plug-in Backend.AI ATOM.",
-    "Warboysupport": "Rapaz de guerra",
-    "DescWarboysupport": "Utilizar o suporte do Furiosa Warboy",
     "RequireWarboyPlugin": "Requer o plugin Backend.AI Warboy.",
     "OverlayNetworkSettings": "Definições de rede de sobreposição",
     "OverlayNetworkSettingsDescription": "Uma rede de sobreposição é uma rede de computadores que é colocada em camadas sobre outra rede. A rede de sobreposição cria uma rede distribuída entre vários hosts daemon do Docker do gerenciador Backend.AI.",
     "MTUDescription": "Unidade máxima de transmissão, o tamanho do maior pacote que um protocolo de rede pode transmitir.",
     "OutOfRange": "Fora de alcance.",
     "Plugins": "Plug-ins",
-    "OpenSourceCUDAGPUsupport": "Suporte para GPU CUDA de código aberto",
     "ShowOnlyChanged": "Exibir apenas alterações",
-    "HyperaccelLPUsupport": "Hyperaccel LPU",
-    "DescHyperaccelLPUsupport": "Use o acelerador Hyperaccel LPU.",
     "RequireHyperaccelLPUPlugin": "Requer plug-in Backend.AI Hyperaccel LPU.",
     "SearchPlaceholder": "Pesquisar",
     "Gaudi2Support": "Apoio Gaudí 2",
@@ -1295,9 +1285,21 @@
     "ATOMPlusSupport": "Suporte ATOM+",
     "RequireATOMPlusPlugin": "Requer plug-in Backend.AI ATOM+.",
     "DescATOMPlusSupport": "Use o acelerador Rebellions ATOM+.",
-    "RNGDsupport": "RNGD",
-    "DescRNGDsupport": "Use o suporte Furiosa RNGD",
-    "RequireRNGDPlugin": "Requer plug-in Backend.AI RNGD."
+    "RequireRNGDPlugin": "Requer plug-in Backend.AI RNGD.",
+    "IPUSupport": "IPU",
+    "DescWarboySupport": "Utilizar o suporte do Furiosa Warboy",
+    "DescIPUSupport": "Usar o acelerador de IPU GraphCore",
+    "DescATOMSupport": "Utilizar o acelerador ATOM da Rebellions",
+    "DescCudaGPUSupport": "Suporte para GPU NVIDIA CUDA. <br/> Requer Backend.AI CUDA Plugin.",
+    "DescHyperaccelLPUSupport": "Use o acelerador Hyperaccel LPU.",
+    "DescRNGDSupport": "Use o suporte Furiosa RNGD",
+    "DescRocmGPUSupport": "Suporte a GPU AMD ROCm. <br/> Requer Backend.AI ROCm Plugin.",
+    "HyperaccelLPUSupport": "Hyperaccel LPU",
+    "OpenSourceCudaGPUSupport": "Suporte para GPU CUDA de código aberto",
+    "WarboySupport": "Rapaz de guerra",
+    "ATOMSupport": "ATOM",
+    "RNGDSupport": "RNGD",
+    "ROCMGPUSupport": "Suporte para GPU ROCm"
   },
   "notification": {
     "SuccessfullyUpdated": "Atualizado com sucesso",
@@ -1379,7 +1381,7 @@
     "EndpointInfo": "Sobre o Endpoint",
     "DescEndpoint": "<p>No ENDPOINT da API, deve ser introduzido o URL do Backend.AI Webserver, que retransmite o pedido ao Manager.</p><p>Por exemplo, http://127.0.0.1:8090/</p>",
     "EndpointStartWith": "O ponto final deve começar por http:// ou https://.",
-    "SingleSignOn": {
+    "singleSignOn": {
       "LoginWithSAML": "Iniciar sessão com SAML",
       "LoginWithRealm": "Iniciar sessão com {{ realmName }}"
     },
@@ -1457,7 +1459,7 @@
     "GitlabRepoWillBeFolder": "Os repositórios GitLab importados são convertidos em pastas e podem ser montados quando a sessão é iniciada.",
     "GitlabURL": "URL do GitLab",
     "GitlabDefaultBranch": "Nome do ramo do GitLab",
-    "InvalidNotebookURL": "URL inválido do Notbook."
+    "InvalidNotebookURL": "URL do bloco de notas inválido."
   },
   "license": {
     "Perpetual": "Perpétuo",
@@ -1573,7 +1575,6 @@
     "ServiceName": "Nome do serviço",
     "ServiceNameRule": "Permitir apenas alfanumérico, sublinhado (_) e hífen (-) e deve terminar com um caractere alfanumérico.",
     "OpenToPublic": "Aberto ao público",
-    "DesiredRoutingCount": "Contagem de roteiros desejada",
     "ServingRouteErrorModalTitle": "Erro de rota de serviço",
     "SessionId": "ID da sessão",
     "Services": "Serviços",
@@ -1586,7 +1587,6 @@
     "SessionOwner": "Proprietário da sessão",
     "ServiceEndpoint": "Ponto final do serviço",
     "NoServiceEndpoint": "Nenhum ponto final de serviço",
-    "resources": "Recursos",
     "GeneratedTokens": "Tokens gerados",
     "GenerateToken": "Gerar Token",
     "RoutesInfo": "Informações sobre as rotas",
@@ -1631,7 +1631,9 @@
     "Chatting": "Conversando",
     "ServiceNameMinLength": "Por favor insira pelo menos 4 caracteres.",
     "ServiceNameMaxLength": "Insira 24 caracteres ou menos.",
-    "ServiceNameCannotStartWithHyphen": "Hífens (-) não podem ser usados ​​em nenhuma das extremidades."
+    "ServiceNameCannotStartWithHyphen": "Hífens (-) não podem ser usados ​​em nenhuma das extremidades.",
+    "Resources": "Recursos",
+    "NumberOfReplicas": "Número de réplicas"
   },
   "totp": {
     "TotpSetupCompleted": "Ativado 2FA",
@@ -1675,7 +1677,6 @@
     "Task": "Tarefa",
     "CloneAsFolder": "Clonar como Pasta",
     "CloneSuccess": "O pedido de clone foi enviado com sucesso.",
-    "category": "Categoria",
     "CloneInfo": "Ele será clonado como sua pasta de tipo de usuário.",
     "CloneToFolder": "Clonar para uma pasta",
     "FolderAlreadyExists": "Já existe uma pasta com este nome.",

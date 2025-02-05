@@ -1,8 +1,8 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
-import { EnvironmentImage } from './ImageList';
 import { ManageAppsModalMutation } from './__generated__/ManageAppsModalMutation.graphql';
+import { ManageAppsModal_image$key } from './__generated__/ManageAppsModal_image.graphql';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import {
   Input,
@@ -18,11 +18,11 @@ import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useMutation } from 'react-relay';
+import { useFragment, useMutation } from 'react-relay';
 
 interface ManageAppsModalProps extends BAIModalProps {
   open: boolean;
-  image: EnvironmentImage | null;
+  imageFrgmt: ManageAppsModal_image$key | null;
   onRequestClose: (success: boolean) => void;
 }
 
@@ -30,7 +30,7 @@ type ServicePort = { app: string; protocol: string; port: number };
 
 const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
   open,
-  image,
+  imageFrgmt,
   onRequestClose,
   ...baiModalProps
 }) => {
@@ -40,6 +40,24 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
   const app = App.useApp();
 
   const { token } = theme.useToken();
+
+  const image = useFragment(
+    graphql`
+      fragment ManageAppsModal_image on Image {
+        labels {
+          key
+          value
+        }
+        registry
+        name @deprecatedSince(version: "24.12.0")
+        namespace @since(version: "24.12.0")
+        architecture
+        installed
+        tag
+      }
+    `,
+    imageFrgmt,
+  );
 
   const [commitModifyImageInput, isInFlightModifyImageInput] =
     useMutation<ManageAppsModalMutation>(graphql`
@@ -109,7 +127,7 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
         const commitRequest = () =>
           commitModifyImageInput({
             variables: {
-              target: `${image?.registry}/${image?.name}:${image?.tag}`,
+              target: `${image?.registry}/${image?.name ?? image.namespace}:${image?.tag}`,
               architecture: image?.architecture,
               props: {
                 labels: labels,

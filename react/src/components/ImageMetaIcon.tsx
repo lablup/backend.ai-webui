@@ -4,11 +4,9 @@ import React from 'react';
 const ImageMetaIcon: React.FC<{
   image: string | null;
   style?: React.CSSProperties;
-  border?: boolean;
-  alt?: string | null;
-}> = ({ image, style = {} }, bordered, alt = '') => {
+  alt?: string;
+}> = ({ image, style = {}, alt = '' }) => {
   const [, { getImageIcon }] = useBackendAIImageMetaData();
-
   return (
     <img
       src={getImageIcon(image)}

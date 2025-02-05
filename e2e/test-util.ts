@@ -7,8 +7,6 @@ import {
   expect,
   request,
 } from '@playwright/test';
-import fs from 'fs/promises';
-import path from 'path';
 
 export const webuiEndpoint = 'http://127.0.0.1:9081';
 export const webServerEndpoint = 'http://127.0.0.1:8090';

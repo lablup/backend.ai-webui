@@ -104,6 +104,17 @@ export type BackendAIClient = {
       end?: string | Date | number | null,
     ) => string;
   };
+  maintenance: {
+    rescan_images: (registry?: string) => Promise<{
+      rescan_images: {
+        msg: string;
+        ok: boolean;
+        task_id: string;
+      };
+    }>;
+    recalculate_usage: () => Promise<any>;
+    [key: string]: any;
+  };
 };
 export const useSuspendedBackendaiClient = () => {
   const { data: client } = useSuspenseTanQuery<any>({

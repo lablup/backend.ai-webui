@@ -1,4 +1,5 @@
 {
+  "$schema": "../i18n.schema.json",
   "webui": {
     "menu": {
       "WelcomeMessage": "Welcome, {{ userName }}.",
@@ -38,7 +39,6 @@
       "PasswordMismatch": "Password mismatch",
       "PleaseConfirmYourPassword": "Please confirm your password",
       "PasswordUpdated": "Password is successfully updated.",
-      "FullnameUpdated": "Full name is successfully updated.",
       "TermsOfService": "Terms of Service",
       "PrivacyPolicy": "Privacy Policy",
       "LeaveService": "Leave service",
@@ -64,17 +64,18 @@
       "InvalidBlankEmail": "Enter your e-mail",
       "DisMatchUserEmail": "User E-mail does not match",
       "MyEnvironments": "My Environments",
-      "ResourcePolicy": "Resource Policy"
+      "ResourcePolicy": "Resource Policy",
+      "FullNameUpdated": "Full name is successfully updated."
     },
     "YouAreOffline": "Offline: Not connected to any networks.",
     "YouAreOnline": "You are now online",
-    "NOTFOUND": "<p>Oops!<br/>Page not Found...</p>",
-    "DescNOTFOUND": "Sorry, the page you are looking for could not be found.",
-    "UNAUTHORIZEDACCESS": "Unauthorized Access",
     "AdminOnlyPage": "You don't have permission to access this page.<br />Click the button below to redirect to summary page.",
     "CleanUpLoginSession": "Clean up login session...",
     "CleanUpNow": "Clean up now...",
-    "NetworkSoftTimeout": "The server is taking longer to respond. Please wait a moment"
+    "NetworkSoftTimeout": "The server is taking longer to respond. Please wait a moment",
+    "NotFound": "<p>Oops!<br/>Page not Found...</p>",
+    "DescNotFound": "Sorry, the page you are looking for could not be found.",
+    "UnauthorizedAccess": "Unauthorized Access"
   },
   "totp": {
     "ScanQRToEnable": "Scan QR code with your authenticator to start setting up two-factor authentication.",
@@ -95,7 +96,6 @@
     "ActiveSessions": "Active Sessions",
     "ResourceStatistics": "Resource Statistics",
     "CoresReserved": "Cores reserved",
-    "reserved": "reserved",
     "FractionalGPUScalingEnabled": "Fractional GPU scaling enabled",
     "ROCMGPUEnabled": "ROCm GPU enabled",
     "TPUEnabled": "TPU Enabled",
@@ -122,7 +122,6 @@
     "NoInvitations": "There is no invitations to display.",
     "AcceptSharedVFolder": "You can now access folder: ",
     "DeclineSharedVFolder": "Folder invitation is deleted: ",
-    "connectingToCluster": "Connecting to Backend.AI Cluster...",
     "DownloadWebUIApp": "Download Desktop App",
     "IPUEnabled": "IPU NPU Enabled",
     "ATOMEnabled": "ATOM NPU Enabled",
@@ -130,7 +129,9 @@
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "Hyperaccel LPU Enabled",
     "ATOMPlusEnabled": "ATOM+ NPU Enabled",
-    "RNGDEnabled": "RNGD Enabled"
+    "RNGDEnabled": "RNGD Enabled",
+    "ReservedShort": "reserved",
+    "ConnectingToCluster": "Connecting to Backend.AI Cluster..."
   },
   "session": {
     "launcher": {
@@ -208,7 +209,6 @@
       "DuplicatedSessionName": "Duplicated session name not allowed",
       "SessionNameAllowCondition": "Session name should have 4-64 alphabets/numbers without any whitespaces.",
       "SessionAlreadyExists": "Session name already exists",
-      "sessionStillPreparing": "The session is still in preparation. After the session starts, tap the app icon to start the app.",
       "ResourceMonitorToggle": "See resource monitor",
       "SharedMemorySettingIsReduced": "Shared memory setting is reduced to below the allocated memory.",
       "NoActiveKeypair": "No Active Keypair",
@@ -303,7 +303,8 @@
       "BatchJobTimeoutDuration": "Batch Job Timeout Duration",
       "BatchJobTimeoutDurationDesc": "Set the maximum execution time for batch jobs. The session will automatically terminate if the specified time is exceeded.",
       "SetBatchJobTimeoutDuration": "Set batch job timeout duration",
-      "PreOpen": "preopen"
+      "PreOpen": "preopen",
+      "SessionStillPreparing": "The session is still in preparation. After the session starts, tap the app icon to start the app."
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
@@ -337,8 +338,6 @@
     "TryPreferredPort": "Try preferred port",
     "SFTPDescription": "You can upload files quickly and securely through an SSH/SFTP client. If you haven't uploaded your SSH key pair beforehand, please click the \"DOWNLOAD SSH KEY\" button to save your SSH key first. You can then use that key to execute commands such as SFTP, SCP, and Rsync. On the \"Session - Upload Session\" page, you can manage the list of sessions for file uploads.",
     "SFTPExtraNotification": "It is recommended to delete sessions after they have been used, as there is a limit on the number of sessions. Sessions that are not used for uploading files within a certain period of time may be automatically deleted.",
-    "Readmore": "Read More...",
-    "Readless": "Read less",
     "ConnectionInformation": "Connection Information",
     "VNCconnection": "VNC connection",
     "CheckAgainDialog": "This action cannot be undone. Do you want to proceed?",
@@ -366,7 +365,7 @@
     "OnlyOneFolderAttached": "Only one folder is attached.",
     "NoLogMsgAvailable": "No log message available on current state",
     "SessionRenamed": "Session renamed",
-    "Validation": {
+    "validation": {
       "SessionNameRequired": "Session name is required",
       "SluggedStrings": "Slugged strings (>3 chars)",
       "EnterValidSessionName": "Please enter a combination of at least 4 alphabet letters, or numbers, or hyphen, or underscore.",
@@ -444,14 +443,16 @@
       "SSHConnectionExampleClipboardCopy": "SSH Connection Example has been copied to the clipboard."
     },
     "ExportCSV": "export CSV",
-    "FGPU": "fGPU"
+    "FGPU": "fGPU",
+    "ReadLess": "Read less",
+    "ReadMore": "Read More...",
+    "CommitImageName": "Committed image name"
   },
   "modelService": {
     "Services": "Services",
     "StartNewServing": "Start new serving",
     "ServiceName": "Service Name",
     "OpenToPublic": "Open To Public",
-    "DesiredRoutingCount": "Desired Routing Count",
     "DesiredSessionCount": "Desired Session Count",
     "EndpointName": "Endpoint Name",
     "EndpointId": "Endpoint ID",
@@ -497,7 +498,6 @@
     "ServiceNameRule": "Only allow alphanumeric, underscore(_), and hyphen(-) and it must end with an alphanumeric character.",
     "FormValidationFailed": "Form validation failed",
     "CannotValidateNow": "Cannot validate service now. Please check resource allocation or other configurations.",
-    "resources": "Resources",
     "Image": "Image",
     "Owner": "Owner",
     "Processing": "Processing...",
@@ -523,7 +523,9 @@
     "Chatting": "Chatting",
     "ServiceNameMinLength": "Please enter at least 4 characters.",
     "ServiceNameMaxLength": "Please enter 24 characters or less.",
-    "ServiceNameCannotStartWithHyphen": "Hyphens (-) cannot be used at either end."
+    "ServiceNameCannotStartWithHyphen": "Hyphens (-) cannot be used at either end.",
+    "Resources": "Resources",
+    "NumberOfReplicas": "Number of replicas"
   },
   "button": {
     "Cancel": "Cancel",
@@ -764,9 +766,6 @@
     "Create": "Create",
     "Update": "Update",
     "FolderNameRequired": "Folder name is required",
-    "FileandFoldernameRequired": "File/Folder name is required",
-    "Allowslettersnumbersand-_dot": "Allows letters, numbers and -_.",
-    "Allowslettersnumbersand-_": "Allows letters, numbers and -_",
     "FolderNameTooLong": "Enter folder name less than 64 characters",
     "EnterDifferentValue": "Please enter a value different from the existing file or folder name. Please Check whether space character in the input field or not.",
     "Host": "Host",
@@ -942,7 +941,6 @@
       "InferenceEngineVersion": "Inference Engine Version",
       "ReplicaNumber": "Replica Number",
       "ImportAndStartService": "Import & Start Service",
-      "huggingFaceUrlPlaceholder": "Input Hugging Face URL",
       "ImportOnly": "Import only",
       "StartWithHuggingFaceUrl": "It should start with https://huggingface.co",
       "CheckHuggingFaceUrl": "Check",
@@ -951,23 +949,25 @@
       "InvalidHuggingFaceUrl": "Invalid Hugging Face URL.",
       "ModelStoreFolderName": "Model store folder name",
       "ServiceName": "Service name",
-      "HuggingFaceURL": "Higging Face",
       "NewModelStoreFolderHasBeenCreated": "A new model store folder has been created",
       "NewServiceHasBeenCreated": "A new service has been created",
       "OpenModelFolder": "Open model folder",
       "ViewServiceInfo": "View service info",
       "NotSupportedModel": "The model is not supported. Please use the LLM model.",
       "NewModelFolderHasBeenCreated": "A new model folder has been created",
-      "UpdateCurrentProject": "",
       "ChangeTheCurrentProjectToModelStore": "Change the current project to 'model-store'.",
       "ImportSucceeded": "The model has been successfully imported",
       "ImportAndStartServiceSucceeded": "The model has been successfully imported and the service was executed",
       "ImportOnlySuccessDesc": "The new model folder is ready. Start the service now and try the operation you want.",
       "ImportAndStartServiceSuccessDesc": "The new model folder and service are ready. Click the 'View service info' button to check the model details and start the desired operation.",
       "AddedItems": "Added items",
-      "ModelFolderName": "Model folder name"
+      "ModelFolderName": "Model folder name",
+      "HuggingFaceUrlPlaceholder": "Input Hugging Face URL"
     },
-    "UserQuotaScopeId": "Quota Scope ID"
+    "UserQuotaScopeId": "Quota Scope ID",
+    "FileAndFolderNameRequired": "File/Folder name is required",
+    "AllowsLettersNumbersAnd-_": "Allows letters, numbers and -_",
+    "AllowsLettersNumbersAnd-_Dot": "Allows letters, numbers and -_."
   },
   "dialog": {
     "warning": {
@@ -1295,7 +1295,7 @@
   "maintenance": {
     "Fix": "Fix",
     "MatchDatabase": "Match usage database with current state",
-    "DescMatchDatabase": "Recalculate usage database with current state.<br/>Useful if docker fails by accident, or some sessions have been forcibly terminated.",
+    "DescMatchDatabase": "Recalculate usage database with current state. Useful if docker fails by accident, or some sessions have been forcibly terminated.",
     "RecalculateUsage": "Recalculate Usage",
     "ImagesEnvironment": "Images / Environment",
     "RescanImages": "Rescan Images",
@@ -1303,7 +1303,7 @@
     "DescCleanupOldImages": "Clean up old images from docker image list.",
     "CleanupImages": "Cleanup Images",
     "RescanImageList": "Rescan image list from repository",
-    "DescRescanImageList": "Rescan image list from registered repositories.<br />It may take a long time, so please wait after execution.",
+    "DescRescanImageList": "Rescan image list from registered repositories. It may take a long time, so please wait after execution.",
     "Recalculating": "Recalculating...",
     "RecalculationFinished": "Recalculation finished",
     "RecalculationFailed": "Recalculation failed",
@@ -1361,10 +1361,7 @@
     "Scaling": "Scaling",
     "AllowAgentSideRegistration": "Allow agent-side registration",
     "DescAllowAgentSideRegistration": "Allow agent to register itself to manager.<br/>Use only if Backend.AI cluster is managed on secure location.",
-    "DescCUDAGPUsupport": "NVIDIA CUDA GPU support. <br/>Requires Backend.AI CUDA Plugin.",
     "CUDAGPUdisabledByFGPUsupport": "Disabled because system uses Fractional GPU plugin",
-    "ROCMGPUsupport": "ROCm GPU support",
-    "DescROCMGPUsupport": "AMD ROCm GPU support. <br/>Requires Backend.AI ROCm Plugin.",
     "Scheduler": "Scheduler",
     "SchedulerConfiguration": "Configuration per job scheduler.",
     "Require2003orAbove": "Requires Backend.AI 20.03 or above.",
@@ -1402,20 +1399,11 @@
     "OverlayNetworkSettings": "Overlay Network settings",
     "OverlayNetworkSettingsDescription": "An overlay network is a computer network that is layered on top of another network. The overlay network creates a distributed network among multiple Docker daemon hosts of the Backend.AI manager.",
     "MTUDescription": "Maximum transmission unit, the size of the largest packet that a network protocol can transmit.",
-    "IPUsupport": "IPU",
-    "DescIPUsupport": "Use GraphCore IPU accelerator",
-    "ATOMsupport": "ATOM",
-    "DescATOMsupport": "Use Rebellions ATOM accelerator",
     "RequireIPUPlugin": "Requires Backend.AI IPU Plugin.",
     "RequireATOMPlugin": "Requires Backend.AI ATOM Plugin.",
-    "Warboysupport": "Warboy",
-    "DescWarboysupport": "Use Furiosa Warboy support",
     "RequireWarboyPlugin": "Requires Backend.AI Warboy Plugin.",
     "Plugins": "Plugins",
-    "OpenSourceCUDAGPUsupport": "Open Source CUDA GPU support",
     "ShowOnlyChanged": "Display Only Changes",
-    "HyperaccelLPUsupport": "Hyperaccel LPU",
-    "DescHyperaccelLPUsupport": "Use Hyperaccel LPU accelerator.",
     "RequireHyperaccelLPUPlugin": "Requires Backend.AI Hyperaccel LPU Plugin.",
     "SearchPlaceholder": "Search",
     "Gaudi2Support": "Gaudi 2 Support",
@@ -1424,9 +1412,21 @@
     "ATOMPlusSupport": "ATOM+ Support",
     "RequireATOMPlusPlugin": "Requires Backend.AI ATOM+ Plugin.",
     "DescATOMPlusSupport": "Use Rebellions ATOM+ accelerator.",
-    "RNGDsupport": "RNGD",
-    "DescRNGDsupport": "Use Furiosa RNGD support",
-    "RequireRNGDPlugin": "Requires Backend.AI RNGD Plugin."
+    "RequireRNGDPlugin": "Requires Backend.AI RNGD Plugin.",
+    "IPUSupport": "IPU",
+    "DescWarboySupport": "Use Furiosa Warboy support",
+    "DescIPUSupport": "Use GraphCore IPU accelerator",
+    "DescATOMSupport": "Use Rebellions ATOM accelerator",
+    "DescCudaGPUSupport": "NVIDIA CUDA GPU support. <br/>Requires Backend.AI CUDA Plugin.",
+    "DescHyperaccelLPUSupport": "Use Hyperaccel LPU accelerator.",
+    "DescRNGDSupport": "Use Furiosa RNGD support",
+    "DescRocmGPUSupport": "AMD ROCm GPU support. <br/>Requires Backend.AI ROCm Plugin.",
+    "HyperaccelLPUSupport": "Hyperaccel LPU",
+    "OpenSourceCudaGPUSupport": "Open Source CUDA GPU support",
+    "WarboySupport": "Warboy",
+    "ATOMSupport": "ATOM",
+    "RNGDSupport": "RNGD",
+    "ROCMGPUSupport": "ROCm GPU support"
   },
   "notification": {
     "SuccessfullyUpdated": "Successfully Updated",
@@ -1507,7 +1507,7 @@
     "InvalidChangePasswordTokenMessage": "Issued token to change password has error. Please send another email for changing password and try again.",
     "PleaseInputLoginInfo": "Please input ID and password for login.",
     "TooManyAttempt": "There were too many login attempts. Login attempts have been blocked for a while.",
-    "SingleSignOn": {
+    "singleSignOn": {
       "LoginWithSAML": "Login with SAML",
       "LoginWithRealm": "Login with {{ realmName }}"
     },
@@ -1586,7 +1586,7 @@
     "GitlabRepoWillBeFolder": "Imported GitLab repositories are converted to folders and can be mounted when session starts.",
     "GitlabURL": "GitLab URL",
     "GitlabDefaultBranch": "GitLab Branch Name",
-    "InvalidNotebookURL": "Invalid Notbook URL."
+    "InvalidNotebookURL": "Invalid Notebook URL."
   },
   "license": {
     "Perpetual": "Perpetual",
@@ -1684,7 +1684,6 @@
     "CloneAsFolder": "Clone as Folder",
     "CloneSuccess": "The clone request has been sent successfully.",
     "CloneInfo": "It will be cloned as your user type folder.",
-    "category": "Category",
     "CloneToFolder": "Clone to a folder",
     "FolderAlreadyExists": "A folder with this name already exists.",
     "FinetuneModel": "Finetune Model"

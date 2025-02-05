@@ -29,11 +29,11 @@ const Page404 = () => {
         />
         <Flex direction="column" align="start" gap={'lg'}>
           <Typography.Title level={2} style={{ margin: 0 }}>
-            {/* t('webui.NOTFOUND') */}
-            <Trans i18nKey={'webui.NOTFOUND'} />
+            {/* t('webui.NotFound') */}
+            <Trans i18nKey={'webui.NotFound'} />
           </Typography.Title>
           <Typography.Text type="secondary" style={{ margin: 0 }}>
-            {t('webui.DescNOTFOUND')}
+            {t('webui.DescNotFound')}
           </Typography.Text>
           <Button
             size="large"

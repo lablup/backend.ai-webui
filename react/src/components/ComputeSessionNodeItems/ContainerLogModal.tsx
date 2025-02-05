@@ -264,7 +264,6 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
             startFollowing={true}
             render={({ follow, onScroll }) => (
               <LazyLog
-                enableLinks
                 caseInsensitive
                 enableSearch
                 enableSearchNavigation
