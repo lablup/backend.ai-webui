@@ -2,7 +2,7 @@ import { filterEmptyItem } from '../helper';
 import useControllableState from '../hooks/useControllableState';
 import Flex from './Flex';
 import { CloseCircleOutlined } from '@ant-design/icons';
-import { useDynamicList } from 'ahooks';
+import { useControllableValue } from 'ahooks';
 import {
   AutoComplete,
   AutoCompleteProps,
@@ -19,7 +19,6 @@ import _ from 'lodash';
 import React, {
   ComponentProps,
   ReactNode,
-  useEffect,
   useMemo,
   useRef,
   useState,
@@ -41,6 +40,7 @@ export type FilterProperty = {
     validate: (value: string) => boolean;
   };
 };
+
 export interface BAIPropertyFilterProps
   extends Omit<ComponentProps<typeof Flex>, 'value' | 'onChange'> {
   value?: string;
@@ -146,17 +146,19 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
   const autoCompleteRef = useRef<GetRef<typeof AutoComplete>>(null);
   const [isOpenAutoComplete, setIsOpenAutoComplete] = useState(false);
 
-  const [value, setValue] = useControllableState<string | undefined>({
+  const [value, setValue] = useControllableValue<string | undefined>({
     value: propValue,
     defaultValue: defaultValue,
     onChange: propOnChange,
   });
+
   const filtersFromValue = useMemo(() => {
-    if (value === undefined) return [];
+    if (value === undefined || value === '') return [];
     const filters = value.split('&').map((filter) => filter.trim());
-    return filters.map((filter) => {
+    return filters.map((filter, index) => {
       const { property, operator, value } = parseFilterValue(filter);
       return {
+        key: index + value,
         property,
         operator,
         value,
@@ -170,34 +172,43 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
   }, [value, filterProperties]);
 
   const { t } = useTranslation();
-  const options = _.map(filterProperties, (filterProperty) => {
-    return {
-      label: filterProperty.propertyLabel,
-      value: filterProperty.key,
-      filter: filterProperty,
-    };
-  });
+  const options = _.map(filterProperties, (filterProperty) => ({
+    label: filterProperty.propertyLabel,
+    value: filterProperty.key,
+    filter: filterProperty,
+  }));
   const [selectedProperty, setSelectedProperty] = useState(options[0].filter);
-  const { list, remove, push, resetList, getKey } =
-    useDynamicList<FilterInput>(filtersFromValue);
 
   const { token } = theme.useToken();
 
   const [isValid, setIsValid] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
 
-  useEffect(() => {
-    if (list.length === 0) {
+  const updateFiltersValue = (filters: FilterInput[]) => {
+    if (filters.length === 0) {
       setValue(undefined);
     } else {
-      const filterStrings = _.map(list, (item) => {
+      const newFilterString = _.map(filters, (item) => {
         const valueStringInResult =
           item.type === 'string' ? `"${item.value}"` : item.value;
         return `${item.property} ${item.operator} ${valueStringInResult}`;
       });
-      setValue(combineFilters(filterStrings, '&'));
+      setValue(combineFilters(newFilterString, '&'));
     }
-  }, [list, setValue]);
+  };
+
+  const push = (item: FilterInput) => {
+    updateFiltersValue([...filtersFromValue, item]);
+  };
+
+  const remove = (key: string) => {
+    const newFilters = filtersFromValue.filter((item) => item.key !== key);
+    updateFiltersValue(newFilters);
+  };
+
+  const resetList = () => {
+    updateFiltersValue([]);
+  };
 
   const onSearch = (value: string) => {
     if (_.isEmpty(value)) return;
@@ -232,6 +243,7 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
       type: selectedProperty.type,
     });
   };
+
   return (
     <Flex direction="column" gap={'xs'} style={{ flex: 1 }} align="start">
       <Space.Compact>
@@ -260,8 +272,6 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
             value={search}
             open={isOpenAutoComplete}
             onDropdownVisibleChange={setIsOpenAutoComplete}
-            // https://ant.design/components/auto-complete#why-doesnt-the-text-composition-system-work-well-with-onsearch-in-controlled-mode
-            // onSearch={(value) => {}}
             onSelect={onSearch}
             onChange={(value) => {
               setIsValid(true);
@@ -296,29 +306,25 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
           </AutoComplete>
         </Tooltip>
       </Space.Compact>
-      {list.length > 0 && (
+      {filtersFromValue.length}
+      {filtersFromValue.length > 0 && (
         <Flex
           direction="row"
           gap={'xs'}
           wrap="wrap"
           style={{ alignSelf: 'stretch' }}
         >
-          {_.map(list, (item, index) => {
-            return (
-              <Tag
-                key={getKey(index)}
-                closable
-                onClose={() => {
-                  remove(index);
-                }}
-                style={{ margin: 0 }}
-              >
-                {item.propertyLabel}:{' '}
-                {item.label || trimFilterValue(item.value)}
-              </Tag>
-            );
-          })}
-          {list.length > 1 && (
+          {_.map(filtersFromValue, (item) => (
+            <Tag
+              key={item.key}
+              closable
+              onClose={() => remove(item.key)}
+              style={{ margin: 0 }}
+            >
+              {item.propertyLabel}: {trimFilterValue(item.value)}
+            </Tag>
+          ))}
+          {filtersFromValue.length > 1 && (
             <Tooltip title={t('propertyFilter.ResetFilter')}>
               <Button
                 size="small"
@@ -328,9 +334,7 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
                   />
                 }
                 type="text"
-                onClick={() => {
-                  resetList([]);
-                }}
+                onClick={resetList}
               />
             </Tooltip>
           )}
