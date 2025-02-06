@@ -199,7 +199,7 @@ const SessionList: React.FC<SessionListProps> = ({
           {
             title: t('session.Configuration'),
             dataIndex: 'mounts',
-            render(value: string[], record) {
+            render(value, record) {
               return (
                 <>
                   {value.length > 0 ? (
@@ -209,7 +209,7 @@ const SessionList: React.FC<SessionListProps> = ({
                         ellipsis={{
                           tooltip: {
                             overlayInnerStyle: { width: 'max-content' },
-                            title: _.uniq(value).map((mountedFolder) => {
+                            title: _.map(value, (mountedFolder) => {
                               return <div>{mountedFolder}</div>;
                             }),
                           },
