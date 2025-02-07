@@ -433,7 +433,8 @@
     "FGPU": "fGPU",
     "ReadLess": "Διαβάστε λιγότερα",
     "ReadMore": "Διαβάστε Περισσότερα...",
-    "CommitImageName": "Όνομα δεσμευμένης εικόνας"
+    "CommitImageName": "Όνομα δεσμευμένης εικόνας",
+    "IdleCheckExpirationWarning": "Οι συνεδρίες ενδέχεται να τερματιστούν με βάση τα αποτελέσματα των Ελέγχων αδράνειας."
   },
   "button": {
     "Cancel": "Ματαίωση",
@@ -476,7 +477,8 @@
     "Expand": "Επεκτείνουν",
     "Clear": "Διαγράφω",
     "Apply": "Εφαρμογή",
-    "CopySomething": "Αντιγραφή {{name}}"
+    "CopySomething": "Αντιγραφή {{name}}",
+    "ClickForMoreDetails": "Κάντε κλικ για περισσότερες λεπτομέρειες"
   },
   "agent": {
     "Endpoint": "Τελικό σημείο",

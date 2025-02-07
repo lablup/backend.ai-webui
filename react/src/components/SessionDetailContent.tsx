@@ -1,20 +1,26 @@
 import SessionKernelTags from '../components/ImageTags';
 import { toGlobalId } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
 import EditableSessionName from './ComputeSessionNodeItems/EditableSessionName';
 import SessionActionButtons from './ComputeSessionNodeItems/SessionActionButtons';
+import SessionIdleChecks, {
+  IdleChecks,
+} from './ComputeSessionNodeItems/SessionIdleChecks';
 import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
 import SessionTypeTag from './ComputeSessionNodeItems/SessionTypeTag';
 import Flex from './Flex';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
+import IdleCheckDescriptionModal from './IdleCheckDescriptionModal';
 import ImageMetaIcon from './ImageMetaIcon';
 import SessionUsageMonitor from './SessionUsageMonitor';
 import { SessionDetailContentLegacyQuery } from './__generated__/SessionDetailContentLegacyQuery.graphql';
 import { SessionDetailContentQuery } from './__generated__/SessionDetailContentQuery.graphql';
 import { FolderOutlined } from '@ant-design/icons';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import {
   Alert,
   Button,
@@ -28,20 +34,24 @@ import {
 import Title from 'antd/es/typography/Title';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
 const SessionDetailContent: React.FC<{
   id: string;
   fetchKey?: string;
-}> = ({ id, fetchKey = 'initial' }) => {
+}> = ({ id, fetchKey }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { open } = useFolderExplorerOpener();
+  const { md } = Grid.useBreakpoint();
   const currentProject = useCurrentProjectValue();
   const userRole = useCurrentUserRole();
+  const baiClient = useSuspendedBackendaiClient();
+  const [openIdleCheckDescriptionModal, setOpenIdleCheckDescriptionModal] =
+    useState<boolean>(false);
 
-  const { md } = Grid.useBreakpoint();
   // TODO: remove and refactor this waterfall request after v24.12.0
   // get the project id of the session for <= v24.12.0.
   const { session_for_project_id } =
@@ -96,6 +106,7 @@ const SessionDetailContent: React.FC<{
             scaling_group
             agent_ids
             requested_slots
+            idle_checks @since(version: "24.12.0")
 
             ...SessionStatusTagFragment
             ...SessionActionButtonsFragment
@@ -107,12 +118,15 @@ const SessionDetailContent: React.FC<{
             ...ContainerLogModalFragment
             ...SessionUsageMonitorFragment
             ...ContainerCommitModalFragment
+            ...SessionIdleChecksNodeFragment
           }
           legacy_session: compute_session(id: $uuid) {
             image
             mounts
             user_email
             architecture
+            idle_checks @since(version: "24.09.0")
+            ...SessionIdleChecksFragment
           }
         }
       `,
@@ -131,10 +145,27 @@ const SessionDetailContent: React.FC<{
     legacy_session?.image &&
     legacy_session?.architecture &&
     legacy_session.image + '@' + legacy_session.architecture;
+
+  const idleChecks: IdleChecks = JSON.parse(
+    session?.idle_checks || legacy_session?.idle_checks || '{}',
+  );
+  const imminentExpirationTime = _.min(
+    _.values(idleChecks)
+      .map((check) => check.remaining)
+      .filter(Boolean),
+  );
+
   return session ? (
     <Flex direction="column" gap={'sm'} align="stretch">
       {session_for_project_id?.group_id !== currentProject.id && (
         <Alert message={t('session.NotInProject')} type="warning" showIcon />
+      )}
+      {imminentExpirationTime && imminentExpirationTime < 3600 && (
+        <Alert
+          message={t('session.IdleCheckExpirationWarning')}
+          type="warning"
+          showIcon
+        />
       )}
       <Flex
         direction="row"
@@ -234,10 +265,38 @@ const SessionDetailContent: React.FC<{
             <SessionReservation sessionFrgmt={session} />
           </Flex>
         </Descriptions.Item>
+        {baiClient.supports('idle-checks-gql') &&
+        session.status === 'RUNNING' &&
+        imminentExpirationTime ? (
+          <Descriptions.Item
+            label={
+              <Flex gap="xxs">
+                {t('session.IdleChecks')}
+                <Tooltip title={t('button.ClickForMoreDetails')}>
+                  <InfoCircleOutlined
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => setOpenIdleCheckDescriptionModal(true)}
+                  />
+                </Tooltip>
+              </Flex>
+            }
+            span={md ? 2 : 1}
+          >
+            <SessionIdleChecks
+              sessionNodeFrgmt={session}
+              sessionFrgmt={legacy_session}
+              direction={md ? 'row' : 'column'}
+            />
+          </Descriptions.Item>
+        ) : null}
         <Descriptions.Item label={'Resource Usage'} span={md ? 2 : 1}>
           <SessionUsageMonitor sessionFrgmt={session} />
         </Descriptions.Item>
       </Descriptions>
+      <IdleCheckDescriptionModal
+        open={openIdleCheckDescriptionModal}
+        onCancel={() => setOpenIdleCheckDescriptionModal(false)}
+      />
     </Flex>
   ) : (
     <Alert

@@ -444,7 +444,8 @@
     "FGPU": "fGPU",
     "ReadLess": "อ่านน้อยลง",
     "ReadMore": "อ่านเพิ่มเติม...",
-    "CommitImageName": "ชื่อภาพที่มุ่งมั่น"
+    "CommitImageName": "ชื่อภาพที่มุ่งมั่น",
+    "IdleCheckExpirationWarning": "เซสชันอาจถูกยกเลิกโดยขึ้นอยู่กับผลลัพธ์ของการตรวจสอบความไม่มีการใช้งาน"
   },
   "modelService": {
     "Services": "บริการ",
@@ -566,7 +567,8 @@
     "Expand": "ขยาย",
     "Clear": "ล้าง",
     "Apply": "นำมาใช้",
-    "CopySomething": "คัดลอก {{name}}"
+    "CopySomething": "คัดลอก {{name}}",
+    "ClickForMoreDetails": "คลิกเพื่อดูรายละเอียดเพิ่มเติม"
   },
   "agent": {
     "Endpoint": "จุดสิ้นสุด",

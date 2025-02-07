@@ -140,7 +140,8 @@
     "Expand": "Laajentaa",
     "Clear": "Poistaa",
     "Apply": "Hae",
-    "CopySomething": "Kopioi {{name}}"
+    "CopySomething": "Kopioi {{name}}",
+    "ClickForMoreDetails": "Napsauta saadaksesi lisätietoja"
   },
   "credential": {
     "AccessKeyOptional": "Pääsyavain (valinnainen)",
@@ -1323,7 +1324,8 @@
     "FGPU": "fGPU",
     "ReadLess": "Lue vähemmän",
     "ReadMore": "Lue lisää...",
-    "CommitImageName": "Sitoutunut kuvan nimi"
+    "CommitImageName": "Sitoutunut kuvan nimi",
+    "IdleCheckExpirationWarning": "Istunnot voidaan lopettaa joutokäyntitarkastusten tulosten perusteella."
   },
   "settings": {
     "AllowAgentSideRegistration": "Salli agenttipuolen rekisteröinti",

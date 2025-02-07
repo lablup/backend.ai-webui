@@ -433,7 +433,8 @@
     "FGPU": "fGPU",
     "ReadLess": "Kurangkan membaca",
     "ReadMore": "Baca Lagi...",
-    "CommitImageName": "Nama imej komited"
+    "CommitImageName": "Nama imej komited",
+    "IdleCheckExpirationWarning": "Sesi boleh ditamatkan berdasarkan keputusan Semakan Kemalasan."
   },
   "button": {
     "Cancel": "Batal",
@@ -476,7 +477,8 @@
     "Expand": "Kembangkan",
     "Clear": "Padam",
     "Apply": "Mohon",
-    "CopySomething": "Salin {{name}}"
+    "CopySomething": "Salin {{name}}",
+    "ClickForMoreDetails": "Klik untuk maklumat lanjut"
   },
   "agent": {
     "Endpoint": "Titik Akhir",

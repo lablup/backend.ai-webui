@@ -434,7 +434,8 @@
     "FGPU": "fGPU",
     "ReadLess": "Baca lebih sedikit",
     "ReadMore": "Baca Selengkapnya...",
-    "CommitImageName": "Nama gambar yang berkomitmen"
+    "CommitImageName": "Nama gambar yang berkomitmen",
+    "IdleCheckExpirationWarning": "Sesi dapat dihentikan berdasarkan hasil Pemeriksaan Idleness."
   },
   "button": {
     "Cancel": "Batalkan",
@@ -477,7 +478,8 @@
     "Expand": "Memperluas",
     "Clear": "Menghapus",
     "Apply": "Menerapkan",
-    "CopySomething": "Salin {{name}}"
+    "CopySomething": "Salin {{name}}",
+    "ClickForMoreDetails": "Klik untuk detail lebih lanjut"
   },
   "agent": {
     "Endpoint": "Titik akhir",

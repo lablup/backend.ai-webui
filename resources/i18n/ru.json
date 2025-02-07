@@ -433,7 +433,8 @@
     "FGPU": "фГПУ",
     "ReadLess": "Читать далее",
     "ReadMore": "Читать далее...",
-    "CommitImageName": "Имя зафиксированного изображения"
+    "CommitImageName": "Имя зафиксированного изображения",
+    "IdleCheckExpirationWarning": "Сеансы могут быть прекращены по результатам проверок простоя."
   },
   "button": {
     "Cancel": "Отмена",
@@ -476,7 +477,8 @@
     "Expand": "Расширять",
     "Clear": "Удалить",
     "Apply": "Применить",
-    "CopySomething": "Копировать {{name}}"
+    "CopySomething": "Копировать {{name}}",
+    "ClickForMoreDetails": "Нажмите для получения более подробной информации"
   },
   "agent": {
     "Endpoint": "Конечная точка",

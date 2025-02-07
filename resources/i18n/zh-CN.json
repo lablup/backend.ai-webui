@@ -433,7 +433,8 @@
     "FGPU": "GPU",
     "ReadLess": "更多信息",
     "ReadMore": "阅读全文...",
-    "CommitImageName": "提交的图片名称"
+    "CommitImageName": "提交的图片名称",
+    "IdleCheckExpirationWarning": "会话可能会根据空闲检查的结果而终止。"
   },
   "button": {
     "Cancel": "取消",
@@ -476,7 +477,8 @@
     "Expand": "扩张",
     "Clear": "删除",
     "Apply": "申请",
-    "CopySomething": "复制 {{name}}"
+    "CopySomething": "复制 {{name}}",
+    "ClickForMoreDetails": "点击以获取更多详细信息"
   },
   "agent": {
     "Endpoint": "端点",

@@ -434,7 +434,8 @@
     "FGPU": "fGPU",
     "ReadLess": "내용 접기",
     "ReadMore": "더 알아보기...",
-    "CommitImageName": "커밋 이미지 이름"
+    "CommitImageName": "커밋 이미지 이름",
+    "IdleCheckExpirationWarning": "유휴 상태 확인 결과에 따라 세션이 종료될 수 있습니다."
   },
   "modelService": {
     "Services": "모델 서비스",
@@ -556,7 +557,8 @@
     "Expand": "펼치기",
     "Clear": "삭제",
     "Apply": "적용",
-    "CopySomething": "{{name}} 복사하기"
+    "CopySomething": "{{name}} 복사하기",
+    "ClickForMoreDetails": "클릭하여 자세히 보기"
   },
   "agent": {
     "Endpoint": "엔드포인트",
@@ -1135,7 +1137,6 @@
     "DescClassicSessionLauncher": "최신의 NEO 세션 런처 대신 Classic 세션 런처를 사용합니다. Classic 세션 런처에는 최신 기능이 지원되지 않을 수 있습니다.",
     "ExperimentalFeatures": "실험적 기능",
     "NEOSessionList": "NEO 세션 목록"
-
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "웹 터미널 고급 사용법: 터미널 내용 복사하기",

@@ -433,7 +433,8 @@
     "FGPU": "fGPU",
     "ReadLess": "内容折りたたみ",
     "ReadMore": "もっと詳しく...",
-    "CommitImageName": "コミットされたイメージ名"
+    "CommitImageName": "コミットされたイメージ名",
+    "IdleCheckExpirationWarning": "セッションはアイドル状態チェックの結果に基づいて終了される場合があります。"
   },
   "button": {
     "Cancel": "キャンセル",
@@ -476,7 +477,8 @@
     "Expand": "拡大する",
     "Clear": "消去",
     "Apply": "応募する",
-    "CopySomething": "{{name}} をコピー"
+    "CopySomething": "{{name}} をコピー",
+    "ClickForMoreDetails": "詳細については、クリックしてください"
   },
   "agent": {
     "Endpoint": "終点",

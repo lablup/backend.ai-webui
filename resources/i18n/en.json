@@ -446,7 +446,8 @@
     "FGPU": "fGPU",
     "ReadLess": "Read less",
     "ReadMore": "Read More...",
-    "CommitImageName": "Committed image name"
+    "CommitImageName": "Committed image name",
+    "IdleCheckExpirationWarning": "Sessions may be terminated based on the results of Idleness Checks."
   },
   "modelService": {
     "Services": "Services",
@@ -568,7 +569,8 @@
     "Expand": "Expand",
     "Clear": "Clear",
     "Apply": "Apply",
-    "CopySomething": "Copy {{name}}"
+    "CopySomething": "Copy {{name}}",
+    "ClickForMoreDetails": "Click for more details"
   },
   "agent": {
     "Endpoint": "Endpoint",

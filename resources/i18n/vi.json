@@ -433,7 +433,8 @@
     "FGPU": "fGPU",
     "ReadLess": "Đọc ít hơn",
     "ReadMore": "Đọc thêm...",
-    "CommitImageName": "Tên hình ảnh đã cam kết"
+    "CommitImageName": "Tên hình ảnh đã cam kết",
+    "IdleCheckExpirationWarning": "Các phiên có thể bị chấm dứt dựa trên kết quả Kiểm tra trạng thái rảnh rỗi."
   },
   "button": {
     "Cancel": "Huỷ bỏ",
@@ -476,7 +477,8 @@
     "Expand": "Mở rộng",
     "Clear": "Xóa bỏ",
     "Apply": "Áp dụng",
-    "CopySomething": "Sao chép {{name}}"
+    "CopySomething": "Sao chép {{name}}",
+    "ClickForMoreDetails": "Bấm để biết thêm chi tiết"
   },
   "agent": {
     "Endpoint": "Điểm cuối",

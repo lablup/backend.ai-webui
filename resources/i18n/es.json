@@ -140,7 +140,8 @@
     "Expand": "Expandir",
     "Clear": "Borrar",
     "Apply": "Solicitar",
-    "CopySomething": "Copiar {{name}}"
+    "CopySomething": "Copiar {{name}}",
+    "ClickForMoreDetails": "Haga clic para más detalles"
   },
   "credential": {
     "AccessKeyOptional": "Clave de acceso (opcional)",
@@ -1324,7 +1325,8 @@
     "FGPU": "fGPU",
     "ReadLess": "Leer menos",
     "ReadMore": "Leer más...",
-    "CommitImageName": "Nombre de la imagen confirmada"
+    "CommitImageName": "Nombre de la imagen confirmada",
+    "IdleCheckExpirationWarning": "Las sesiones pueden finalizarse según los resultados de los controles de inactividad."
   },
   "settings": {
     "AllowAgentSideRegistration": "Permitir el registro del agente",

@@ -433,7 +433,8 @@
     "FGPU": "fGPU",
     "ReadLess": "Weniger lesen",
     "ReadMore": "Mehr lesen...",
-    "CommitImageName": "Festgeschriebener Bildname"
+    "CommitImageName": "Festgeschriebener Bildname",
+    "IdleCheckExpirationWarning": "Sitzungen können basierend auf den Ergebnissen der Inaktivitätsprüfungen beendet werden."
   },
   "button": {
     "Cancel": "Stornieren",
@@ -476,7 +477,8 @@
     "Expand": "Expandieren",
     "Clear": "Löschen",
     "Apply": "Bewerbung",
-    "CopySomething": "Kopieren Sie {{name}}"
+    "CopySomething": "Kopieren Sie {{name}}",
+    "ClickForMoreDetails": "Klicken Sie für weitere Details"
   },
   "agent": {
     "Endpoint": "Endpunkt",

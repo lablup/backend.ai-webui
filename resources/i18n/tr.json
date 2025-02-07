@@ -432,7 +432,8 @@
     "FGPU": "fGPU",
     "ReadLess": "Daha az oku",
     "ReadMore": "Daha Fazlasını Oku...",
-    "CommitImageName": "Taahhüt edilen resim adı"
+    "CommitImageName": "Taahhüt edilen resim adı",
+    "IdleCheckExpirationWarning": "Idleness Check sonuçlarına göre oturumlar sonlandırılabilir."
   },
   "button": {
     "Cancel": "İptal etmek",
@@ -475,7 +476,8 @@
     "Expand": "Genişletmek",
     "Clear": "Silmek",
     "Apply": "Başvurmak",
-    "CopySomething": "Kopyala {{name}}"
+    "CopySomething": "Kopyala {{name}}",
+    "ClickForMoreDetails": "Daha fazla ayrıntı için tıklayın"
   },
   "agent": {
     "Endpoint": "uç nokta",

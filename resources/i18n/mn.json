@@ -434,7 +434,8 @@
     "FGPU": "fGPU",
     "ReadLess": "Бага унш",
     "ReadMore": "Цааш унших...",
-    "CommitImageName": "Оруулсан зургийн нэр"
+    "CommitImageName": "Оруулсан зургийн нэр",
+    "IdleCheckExpirationWarning": "Сул зогсолтын шалгалтын үр дүнд үндэслэн хуралдааныг зогсоож болно."
   },
   "button": {
     "Cancel": "Цуцлах",
@@ -477,7 +478,8 @@
     "Expand": "Өргөтгөх",
     "Clear": "Устгах",
     "Apply": "Өргөдөл гаргах",
-    "CopySomething": "{{name}}-г хуулах"
+    "CopySomething": "{{name}}-г хуулах",
+    "ClickForMoreDetails": "Дэлгэрэнгүй мэдээллийг дарна уу"
   },
   "agent": {
     "Endpoint": "Төгсгөлийн цэг",

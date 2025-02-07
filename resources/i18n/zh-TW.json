@@ -432,7 +432,8 @@
     "FGPU": "GPU",
     "ReadLess": "更多信息",
     "ReadMore": "阅读全文...",
-    "CommitImageName": "提交的圖片名稱"
+    "CommitImageName": "提交的圖片名稱",
+    "IdleCheckExpirationWarning": "會話可能會根據空閒檢查的結果而終止。"
   },
   "button": {
     "Cancel": "取消",
@@ -475,7 +476,8 @@
     "Expand": "擴張",
     "Clear": "刪除",
     "Apply": "申请",
-    "CopySomething": "复制 {{name}}"
+    "CopySomething": "复制 {{name}}",
+    "ClickForMoreDetails": "點擊以獲取更多詳細信息"
   },
   "agent": {
     "Endpoint": "端點",
