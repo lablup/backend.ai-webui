@@ -204,6 +204,7 @@ class Client {
   public abortController: any;
   public abortSignal: any;
   public requestTimeout: number;
+  public requestSoftTimeout: number;
   static ERR_REQUEST: any;
   static ERR_RESPONSE: any;
   static ERR_ABORT: any;
@@ -271,7 +272,8 @@ class Client {
     this._features = {}; // feature support list
     this.abortController = new AbortController();
     this.abortSignal = this.abortController.signal;
-    this.requestTimeout = 30000;
+    this.requestTimeout = 30_000;
+    this.requestSoftTimeout = 15_000;
     if (localStorage.getItem('backendaiwebui.sessionid')) {
       this._loginSessionId = localStorage.getItem('backendaiwebui.sessionid');
     } else {
@@ -318,7 +320,8 @@ class Client {
     let errorTitle = '';
     let errorMsg;
     let errorDesc = '';
-    let resp, body, requestTimer;
+    let resp, body, requestTimer, requestTimerForSoftTimeout;
+    let isSoftTimeoutTriggered = false;
     try {
       if (rqst.method === 'GET') {
         rqst.body = undefined;
@@ -342,10 +345,25 @@ class Client {
           timeout === 0 ? this.requestTimeout : timeout,
         );
       }
+      requestTimerForSoftTimeout = setTimeout(
+        () => {
+          document?.dispatchEvent(new CustomEvent('backend-ai-network-soft-time-out'));
+          isSoftTimeoutTriggered = true;
+        },
+        this.requestSoftTimeout
+      );
       resp = await fetch(rqst.uri, rqst);
       if (typeof requestTimer !== 'undefined') {
         clearTimeout(requestTimer);
       }
+      if (typeof requestTimerForSoftTimeout !== 'undefined') {
+        clearTimeout(requestTimerForSoftTimeout);
+        if(!isSoftTimeoutTriggered) {
+          document?.dispatchEvent(new CustomEvent('backend-ai-network-success-without-soft-time-out'));
+          isSoftTimeoutTriggered = true;
+        }
+      }
+      
       let loginSessionId = resp.headers.get('X-BackendAI-SessionID'); // Login session ID handler
       if (loginSessionId) {
         this._loginSessionId = loginSessionId;
@@ -1035,7 +1053,7 @@ class Client {
     kernelType: string,
     sessionId: string,
     resources = {},
-    timeout: number = 30000,
+    timeout?: number,
     architecture: string = 'x86_64',
     batchTimeout?: string,
   ) {
@@ -4242,8 +4260,7 @@ class Resources {
       null,
     );
     // return this.client._wrapWithPromise(rqst);
-    // FIXME: temporally use hardcoded timeout value (10sec) for preventing timeout error on fetching data
-    return this.client._wrapWithPromise(rqst, false, null, 10 * 1000);
+    return this.client._wrapWithPromise(rqst, false, null);
   }
 }
 
@@ -4498,7 +4515,7 @@ class Maintenance {
           `}`;
         v = {};
       }
-      return this.client.query(q, v, null, 600 * 1000);
+      return this.client.query(q, v, null);
     } else {
       return Promise.resolve(false);
     }
@@ -4511,6 +4528,7 @@ class Maintenance {
         `${this.urlPrefix}/recalculate-usage`,
         null,
       );
+      // Set specific timeout due to time for recalculate
       return this.client._wrapWithPromise(rqst, false, null, 60 * 1000);
     }
   }

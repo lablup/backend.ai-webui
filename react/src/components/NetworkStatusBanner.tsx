@@ -1,55 +1,83 @@
-import { useNetwork } from 'ahooks';
+import { useDebounce, useNetwork } from 'ahooks';
 import { Alert } from 'antd';
 import { createStyles } from 'antd-style';
-import { atom, useAtom } from 'jotai';
+import { atom, useSetAtom } from 'jotai';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const networkSoftTimeoutAtom = atom(false);
+const isDisplayedNetworkStatusState = atom(false);
 
 const useStyles = createStyles(({ token, css }) => ({
   borderError: css`
     border-bottom: 1px solid ${token.colorErrorBorder} !important;
+    padding-left: ${token.marginLG}px;
+    padding-right: ${token.marginLG}px;
   `,
   borderWarning: css`
     border-bottom: 1px solid ${token.colorWarningBorder} !important;
+    padding-left: ${token.marginLG}px;
+    padding-right: ${token.marginLG}px;
   `,
 }));
 const NetworkStatusBanner = () => {
   const { t } = useTranslation();
   const network = useNetwork();
-
+  const setDisplayedStatus = useSetAtom(isDisplayedNetworkStatusState);
   const { styles } = useStyles();
+  const [showSoftTimeoutAlert, setShowSoftTimeoutAlert] = useState(false);
+  const [dismissSoftTimeoutAlert, setDismissSoftTimeoutAlert] = useState(false);
 
-  const [softTimeout, setSoftTimeout] = useAtom(networkSoftTimeoutAtom);
+  useEffect(() => {
+    const softHandler = () => {
+      setShowSoftTimeoutAlert(true);
+    };
+    const successHandler = () => {
+      setShowSoftTimeoutAlert(false);
+    };
+    document.addEventListener('backend-ai-network-soft-time-out', softHandler);
+    document.addEventListener(
+      'backend-ai-network-success-without-soft-time-out',
+      successHandler,
+    );
+  }, []);
 
-  // const handler = (()=>{
-  // });
+  const debouncedShowAlert = useDebounce(showSoftTimeoutAlert, {
+    leading: true,
+    trailing: true,
+    wait: 5_000,
+  });
 
-  // useEffect(()=>{
-  //   document.addEventListener('backendai.client.softtimeout', handler);
-  //   return ()=>{
-  //     document.removeEventListener('backendai.client.softtimeout', handler);
-  //   }
-  // },[])
+  const shouldOpenOfflineAlert = !network.online;
+  const shouldOpenSoftAlert =
+    !shouldOpenOfflineAlert && debouncedShowAlert && !dismissSoftTimeoutAlert;
 
-  return !network.online ? (
-    <Alert
-      message={t('webui.YouAreOffline')}
-      className={styles.borderError}
-      type="error"
-      banner
-    />
-  ) : softTimeout ? (
-    <Alert
-      message={t('webui.NetworkSoftTimeout')}
-      className={styles.borderWarning}
-      banner
-      closable
-      onClose={() => {
-        setSoftTimeout(false);
-      }}
-    />
-  ) : null;
+  useEffect(() => {
+    setDisplayedStatus(shouldOpenOfflineAlert || shouldOpenSoftAlert);
+  }, [setDisplayedStatus, shouldOpenOfflineAlert, shouldOpenSoftAlert]);
+
+  return (
+    <>
+      {shouldOpenOfflineAlert && (
+        <Alert
+          message={t('webui.YouAreOffline')}
+          className={styles.borderError}
+          type="error"
+          banner
+        />
+      )}
+      {shouldOpenSoftAlert && (
+        <Alert
+          message={t('webui.NetworkSoftTimeout')}
+          className={styles.borderWarning}
+          banner
+          closable
+          onClose={() => {
+            setDismissSoftTimeoutAlert(true);
+          }}
+        />
+      )}
+    </>
+  );
 };
 
 export default NetworkStatusBanner;

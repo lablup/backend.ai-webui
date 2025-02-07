@@ -187,11 +187,11 @@ function MainLayout() {
                     zIndex: HEADER_Z_INDEX_IN_MAIN_LAYOUT,
                   }}
                 >
-                  <NetworkStatusBanner />
                   <WebUIHeader
                     onClickMenuIcon={() => setSideCollapsed((v) => !v)}
                     containerElement={contentScrollFlexRef.current}
                   />
+                  <NetworkStatusBanner />
                 </div>
               </Suspense>
               <Suspense>
