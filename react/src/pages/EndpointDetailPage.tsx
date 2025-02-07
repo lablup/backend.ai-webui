@@ -203,6 +203,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             ...EndpointOwnerInfoFragment
             ...EndpointStatusTagFragment
             ...ChatUIModalFragment
+            ...ServiceLauncherPageContentFragment
           }
           endpoint_token_list(
             offset: $tokenListOffset
