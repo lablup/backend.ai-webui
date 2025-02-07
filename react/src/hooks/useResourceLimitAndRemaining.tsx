@@ -223,7 +223,7 @@ export const useResourceLimitAndRemaining = ({
     [baiClient._config],
   );
 
-  const resourceLimits: MergedResourceLimits = {
+  const mergedResourceLimit: MergedResourceLimits = {
     cpu:
       resourceSlots?.cpu === undefined
         ? undefined
@@ -349,7 +349,7 @@ export const useResourceLimitAndRemaining = ({
   return [
     {
       resourceGroupResourceSize,
-      resourceLimits,
+      mergedResourceLimit,
       remaining,
       currentImageMinM,
       isRefetching,
