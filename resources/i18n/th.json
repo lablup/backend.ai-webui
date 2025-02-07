@@ -1739,5 +1739,13 @@
     "ReloadPage": "โหลดหน้าใหม่",
     "ResetErrorBoundary": "รีเซ็ต ErrorBoundary",
     "Title": "เกิดข้อผิดพลาด"
+  },
+  "kernel": {
+    "KernelId": "ID เคอร์เนล",
+    "Role": "บทบาท",
+    "Status": "สถานะ",
+    "AgentId": "ID ตัวแทน",
+    "ContainerId": "ID คอนเทนเนอร์",
+    "Kernels": "เมล็ด"
   }
 }

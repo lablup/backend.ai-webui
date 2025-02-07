@@ -1758,5 +1758,13 @@
     "ReloadPage": "Sayfayı yeniden yükle",
     "ResetErrorBoundary": "ErrorBoundary'yi Sıfırla",
     "Title": "Bir hata oluştu."
+  },
+  "kernel": {
+    "KernelId": "Çekirdek kimliği",
+    "Role": "Rol",
+    "Status": "Durum",
+    "AgentId": "Ajan kimliği",
+    "ContainerId": "Konteyner kimliği",
+    "Kernels": "Çekirdek"
   }
 }

@@ -1759,5 +1759,13 @@
     "ReloadPage": "Επαναφόρτωση της σελίδας",
     "ResetErrorBoundary": "Επαναφορά ErrorBoundary",
     "Title": "Εμφανίστηκε σφάλμα."
+  },
+  "kernel": {
+    "KernelId": "Αναγνωριστικό πυρήνα",
+    "Role": "Ρόλος",
+    "Status": "Κατάσταση",
+    "AgentId": "Αναγνωριστικό πράκτορα",
+    "ContainerId": "Αναγνωριστικό δοχείου",
+    "Kernels": "Πυρήνες"
   }
 }

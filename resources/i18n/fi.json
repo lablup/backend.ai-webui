@@ -1758,5 +1758,13 @@
     "ReloadPage": "Lataa sivu uudelleen",
     "ResetErrorBoundary": "Nollaa ErrorBoundary",
     "Title": "On tapahtunut virhe."
+  },
+  "kernel": {
+    "KernelId": "Ytimen tunnus",
+    "Role": "Rooli",
+    "Status": "Status",
+    "AgentId": "Agenttitunnus",
+    "ContainerId": "Konttitunnus",
+    "Kernels": "Ytimet"
   }
 }

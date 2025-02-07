@@ -1757,5 +1757,13 @@
     "ReloadPage": "Ricarica la pagina",
     "ResetErrorBoundary": "Azzeramento di ErrorBoundary",
     "Title": "Si è verificato un errore."
+  },
+  "kernel": {
+    "KernelId": "Kernel ID",
+    "Role": "Ruolo",
+    "Status": "Stato",
+    "AgentId": "ID agente",
+    "ContainerId": "ID contenitore",
+    "Kernels": "Kernels"
   }
 }

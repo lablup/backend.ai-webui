@@ -1759,5 +1759,13 @@
     "ReloadPage": "Przeładuj stronę",
     "ResetErrorBoundary": "Reset ErrorBoundary",
     "Title": "Wystąpił błąd."
+  },
+  "kernel": {
+    "KernelId": "ID jądra",
+    "Role": "Rola",
+    "Status": "Status",
+    "AgentId": "Identyfikator agenta",
+    "ContainerId": "Identyfikator kontenera",
+    "Kernels": "Jądra"
   }
 }

@@ -1759,5 +1759,13 @@
     "ReloadPage": "Tải lại trang",
     "ResetErrorBoundary": "Đặt lại ranh giới lỗi",
     "Title": "Một lỗi đã xảy ra."
+  },
+  "kernel": {
+    "KernelId": "Kernel Id",
+    "Role": "Vai trò",
+    "Status": "Trạng thái",
+    "AgentId": "Id đại lý",
+    "ContainerId": "ID container",
+    "Kernels": "Hạt nhân"
   }
 }

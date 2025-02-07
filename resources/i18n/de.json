@@ -1759,5 +1759,13 @@
     "ReloadPage": "Laden Sie die Seite neu",
     "ResetErrorBoundary": "ErrorBoundary zurücksetzen",
     "Title": "Es ist ein Fehler aufgetreten."
+  },
+  "kernel": {
+    "KernelId": "Kernel ID",
+    "Role": "Rolle",
+    "Status": "Status",
+    "AgentId": "Agenten -ID",
+    "ContainerId": "Container -ID",
+    "Kernels": "Kerne"
   }
 }

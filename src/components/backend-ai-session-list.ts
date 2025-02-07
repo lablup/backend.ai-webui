@@ -3119,6 +3119,10 @@ export default class BackendAISessionList extends BackendAIPage {
               word-break: break-all;
               cursor: pointer;
             }
+            #session-name-field:hover {
+              text-decoration: underline;
+              color: var(--token-colorLink);
+            }
             #session-rename-field {
               display: none;
               white-space: normal;

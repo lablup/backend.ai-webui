@@ -447,5 +447,6 @@ type BackendAIConfig = {
   allowNonAuthTCP: boolean;
   enableExtendLoginSession: boolean;
   showNonInstalledImages: boolean;
+  showKernelList: boolean;
   [key: string]: any;
 };

@@ -1759,5 +1759,13 @@
     "ReloadPage": "Recharger la page",
     "ResetErrorBoundary": "Réinitialisation de la limite d'erreur",
     "Title": "Une erreur s'est produite."
+  },
+  "kernel": {
+    "KernelId": "ID du noyau",
+    "Role": "Rôle",
+    "Status": "Statut",
+    "AgentId": "ID d'agent",
+    "ContainerId": "ID de conteneur",
+    "Kernels": "Graines"
   }
 }

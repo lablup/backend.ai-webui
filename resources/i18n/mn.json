@@ -1758,5 +1758,13 @@
     "ReloadPage": "Хуудсыг дахин ачаална уу",
     "ResetErrorBoundary": "Алдааны хил хязгаарыг дахин тохируулах",
     "Title": "Алдаа гарсан байна."
+  },
+  "kernel": {
+    "KernelId": "Kernel ID",
+    "Role": "Дүрэм",
+    "Status": "Байдал",
+    "AgentId": "Хийнний ID",
+    "ContainerId": "Контейнер ID",
+    "Kernels": "Кернел"
   }
 }

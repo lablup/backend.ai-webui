@@ -1759,5 +1759,13 @@
     "ReloadPage": "Recargar la página",
     "ResetErrorBoundary": "Restablecer ErrorBoundary",
     "Title": "Se ha producido un error."
+  },
+  "kernel": {
+    "KernelId": "ID de núcleo",
+    "Role": "Role",
+    "Status": "Estado",
+    "AgentId": "ID de agente",
+    "ContainerId": "ID de contenedor",
+    "Kernels": "Núcleo"
   }
 }

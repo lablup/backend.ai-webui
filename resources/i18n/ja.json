@@ -1759,5 +1759,13 @@
     "ReloadPage": "ページの更新",
     "ResetErrorBoundary": "ErrorBoundaryの初期化",
     "Title": "エラーが発生しました。"
+  },
+  "kernel": {
+    "KernelId": "カーネルID",
+    "Role": "役割",
+    "Status": "状態",
+    "AgentId": "エージェントID",
+    "ContainerId": "コンテナID",
+    "Kernels": "カーネル"
   }
 }

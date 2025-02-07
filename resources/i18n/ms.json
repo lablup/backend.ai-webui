@@ -1759,5 +1759,13 @@
     "ReloadPage": "Muat semula halaman",
     "ResetErrorBoundary": "Tetapkan Semula ErrorBoundary",
     "Title": "Ralat telah berlaku."
+  },
+  "kernel": {
+    "KernelId": "ID Kernel",
+    "Role": "Peranan",
+    "Status": "Status",
+    "AgentId": "Id ejen",
+    "ContainerId": "ID kontena",
+    "Kernels": "Biji"
   }
 }

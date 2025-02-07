@@ -1759,5 +1759,13 @@
     "ReloadPage": "Muat ulang halaman",
     "ResetErrorBoundary": "Setel Ulang Batas Kesalahan",
     "Title": "Telah terjadi kesalahan."
+  },
+  "kernel": {
+    "KernelId": "ID kernel",
+    "Role": "Peran",
+    "Status": "Status",
+    "AgentId": "ID Agen",
+    "ContainerId": "ID Kontainer",
+    "Kernels": "Kernel"
   }
 }

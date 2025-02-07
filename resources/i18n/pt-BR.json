@@ -1759,5 +1759,13 @@
     "ReloadPage": "Recarregar a página",
     "ResetErrorBoundary": "Repor ErrorBoundary",
     "Title": "Ocorreu um erro."
+  },
+  "kernel": {
+    "KernelId": "ID do kernel",
+    "Role": "Papel",
+    "Status": "Status",
+    "AgentId": "ID do agente",
+    "ContainerId": "ID do contêiner",
+    "Kernels": "Kernels"
   }
 }

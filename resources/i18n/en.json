@@ -1760,5 +1760,13 @@
     "ReloadPage": "Reload the page",
     "ResetErrorBoundary": "Reset ErrorBoundary",
     "Title": "An error has occurred."
+  },
+  "kernel": {
+    "KernelId": "Kernel ID",
+    "Role": "Role",
+    "Status": "Status",
+    "AgentId": "Agent ID",
+    "ContainerId": "Container ID",
+    "Kernels": "Kernels"
   }
 }

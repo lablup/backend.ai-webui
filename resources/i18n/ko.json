@@ -1761,5 +1761,13 @@
     "ReloadPage": "페이지 새로고침",
     "ResetErrorBoundary": "ErrorBoundary 초기화",
     "Title": "에러가 발생했습니다."
+  },
+  "kernel": {
+    "KernelId": "커널 ID",
+    "Role": "역할",
+    "Status": "상태",
+    "AgentId": "에이전트 ID",
+    "ContainerId": "컨테이너 ID",
+    "Kernels": "커널"
   }
 }

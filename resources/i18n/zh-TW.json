@@ -1758,5 +1758,13 @@
     "ReloadPage": "重新载入页面",
     "ResetErrorBoundary": "重置错误边界",
     "Title": "发生错误。"
+  },
+  "kernel": {
+    "KernelId": "內核ID",
+    "Role": "角色",
+    "Status": "地位",
+    "AgentId": "代理ID",
+    "ContainerId": "容器ID",
+    "Kernels": "內核"
   }
 }
