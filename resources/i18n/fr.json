@@ -1776,7 +1776,10 @@
     "MinReplicas": "Répliques min",
     "MaxReplicas": "Répliques maximales",
     "MetricName": "Nom métrique",
-    "MetricSource": "Source métrique"
+    "MetricSource": "Source métrique",
+    "MIN/MAXReplicas": "Répliques min / max",
+    "LastTriggered": "Dernière déclenché",
+    "CreatedAt": "Temps créé"
   },
   "kernel": {
     "KernelId": "ID du noyau",

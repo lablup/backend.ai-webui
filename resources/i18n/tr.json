@@ -1775,7 +1775,10 @@
     "MinReplicas": "Min kopyalar",
     "MaxReplicas": "Maksimum kopya",
     "MetricName": "Metrik adı",
-    "MetricSource": "Metrik kaynağı"
+    "MetricSource": "Metrik kaynağı",
+    "MIN/MAXReplicas": "Min / Max Replicas",
+    "LastTriggered": "Son tetiklendi",
+    "CreatedAt": "Yaratılan Zaman"
   },
   "kernel": {
     "KernelId": "Çekirdek kimliği",
