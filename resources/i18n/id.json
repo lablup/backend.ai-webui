@@ -1511,7 +1511,9 @@
     "WrongAPIServerAddress": "Alamat server API salah.",
     "ReachedResourceLimitPleaseContact": "Mencapai batas sumber daya Anda. \nSilakan hubungi administrator.",
     "InvalidUrl": "Ini bukan URL yang valid",
-    "AllowsPositiveNumberOnly": "Izinkan angka positif saja."
+    "AllowsPositiveNumberOnly": "Izinkan angka positif saja.",
+    "OnlyIntegersAreAllowed": "Hanya bilangan bulat yang diizinkan.",
+    "OnlyPositiveIntegersAreAllowed": "Hanya bilangan bulat positif yang diizinkan."
   },
   "maxLength": {
     "64chars": "(maksimum 64 karakter)",
@@ -1654,7 +1656,9 @@
     "ServiceNameMaxLength": "Silakan masukkan 24 karakter atau kurang.",
     "ServiceNameCannotStartWithHyphen": "Tanda hubung (-) tidak dapat digunakan pada kedua ujungnya.",
     "Resources": "Sumber daya",
-    "NumberOfReplicas": "Jumlah replika"
+    "NumberOfReplicas": "Jumlah replika",
+    "AutoScalingRules": "Aturan penskalaan otomatis",
+    "AddRules": "Tambahkan aturan"
   },
   "modelStore": {
     "Description": "Keterangan",
@@ -1759,6 +1763,20 @@
     "ReloadPage": "Muat ulang halaman",
     "ResetErrorBoundary": "Setel Ulang Batas Kesalahan",
     "Title": "Telah terjadi kesalahan."
+  },
+  "autoScalingRule": {
+    "AddAutoScalingRule": "Tambahkan aturan penskalaan otomatis",
+    "CoolDownSeconds": "Pendinginan detik",
+    "SuccessfullyUpdated": "Aturan penskalaan otomatis telah berhasil diperbarui.",
+    "SuccessfullyCreated": "Aturan penskalaan otomatis telah berhasil dibuat.",
+    "EditAutoScalingRule": "Edit Aturan Penskalaan Otomatis",
+    "Comparator": "Pembanding",
+    "Threshold": "Ambang",
+    "StepSize": "Ukuran langkah",
+    "MinReplicas": "Replika min",
+    "MaxReplicas": "Replika maks",
+    "MetricName": "Nama metrik",
+    "MetricSource": "Sumber metrik"
   },
   "kernel": {
     "KernelId": "ID kernel",

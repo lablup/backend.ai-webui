@@ -909,40 +909,42 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                       ) : null}
                     </>
                   )}
-                  <Form.Item
-                    label={t('modelService.NumberOfReplicas')}
-                    name={'replicas'}
-                    rules={[
-                      {
-                        required: true,
-                      },
-                      {
-                        type: 'number',
-                        min: 0,
-                      },
-                      {
-                        type: 'number',
-                        max:
-                          user_resource_policy?.max_session_count_per_model_session ??
-                          0,
-                      },
-                    ]}
-                  >
-                    <InputNumberWithSlider
-                      min={0}
-                      max={
-                        user_resource_policy?.max_session_count_per_model_session ??
-                        0
-                      }
-                      inputNumberProps={{
-                        //TODO: change unit based on resource limit
-                        addonAfter: '#',
-                      }}
-                      step={1}
-                    />
-                  </Form.Item>
+                </Card>
+                <Card>
                   {(baiClient.supports('modify-endpoint') || !endpoint) && (
                     <>
+                      <Form.Item
+                        label={t('modelService.NumberOfReplicas')}
+                        name={'replicas'}
+                        rules={[
+                          {
+                            required: true,
+                          },
+                          {
+                            type: 'number',
+                            min: 0,
+                          },
+                          {
+                            type: 'number',
+                            max:
+                              user_resource_policy?.max_session_count_per_model_session ??
+                              0,
+                          },
+                        ]}
+                      >
+                        <InputNumberWithSlider
+                          min={0}
+                          max={
+                            user_resource_policy?.max_session_count_per_model_session ??
+                            0
+                          }
+                          inputNumberProps={{
+                            //TODO: change unit based on resource limit
+                            addonAfter: '#',
+                          }}
+                          step={1}
+                        />
+                      </Form.Item>
                       <ImageEnvironmentSelectFormItems
                       // //TODO: test with real inference images
                       // filter={(image) => {

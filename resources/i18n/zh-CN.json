@@ -1510,7 +1510,9 @@
     "WrongAPIServerAddress": "错误的 API 服务器地址。",
     "ReachedResourceLimitPleaseContact": "已达到您的资源限制。\n请联系管理员。",
     "InvalidUrl": "这不是一个有效的 URL",
-    "AllowsPositiveNumberOnly": "仅允许正数。"
+    "AllowsPositiveNumberOnly": "仅允许正数。",
+    "OnlyIntegersAreAllowed": "只允许整数。",
+    "OnlyPositiveIntegersAreAllowed": "仅允许积极的整数。"
   },
   "maxLength": {
     "64chars": "（最多 64 个字符）",
@@ -1637,7 +1639,9 @@
     "ServiceNameMaxLength": "请输入 24 个或更少的字符。",
     "ServiceNameCannotStartWithHyphen": "两端不能使用连字符 (-)。",
     "Resources": "资源",
-    "NumberOfReplicas": "副本数量"
+    "NumberOfReplicas": "副本数量",
+    "AutoScalingRules": "自动缩放规则",
+    "AddRules": "添加规则"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",
@@ -1759,6 +1763,20 @@
     "ReloadPage": "重新载入页面",
     "ResetErrorBoundary": "重置错误边界",
     "Title": "发生错误。"
+  },
+  "autoScalingRule": {
+    "AddAutoScalingRule": "添加自动缩放规则",
+    "CoolDownSeconds": "冷却几秒钟",
+    "SuccessfullyUpdated": "自动缩放规则已成功更新。",
+    "SuccessfullyCreated": "自动缩放规则已成功创建。",
+    "EditAutoScalingRule": "编辑自动缩放规则",
+    "Comparator": "比较器",
+    "Threshold": "临界点",
+    "StepSize": "步长",
+    "MinReplicas": "最小复制品",
+    "MaxReplicas": "最大复制品",
+    "MetricName": "公制名称",
+    "MetricSource": "公制源"
   },
   "kernel": {
     "KernelId": "内核ID",

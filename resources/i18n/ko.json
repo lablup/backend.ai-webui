@@ -514,7 +514,9 @@
     "ServiceNameMaxLength": "24자 이하로 입력해주세요.",
     "ServiceNameCannotStartWithHyphen": "하이픈(-)은 양쪽 끝에 사용할 수 없습니다.",
     "Resources": "자원",
-    "NumberOfReplicas": "복제본 수"
+    "NumberOfReplicas": "복제본 수",
+    "AutoScalingRules": "오토스케일링 규칙",
+    "AddRules": "규칙 추가"
   },
   "button": {
     "Cancel": "취소",
@@ -1626,7 +1628,9 @@
     "APINotSupported": "지원하지 않는 API입니다. 최신 버전의 Backend.AI 매니저가 필요합니다.",
     "ReachedResourceLimitPleaseContact": "자원 제한에 도달했습니다. 관리자에게 문의하세요.",
     "InvalidUrl": "유효한 URL이 아닙니다.",
-    "AllowsPositiveNumberOnly": "양수만 허용합니다."
+    "AllowsPositiveNumberOnly": "양수만 허용합니다.",
+    "OnlyIntegersAreAllowed": "정수만 허용됩니다.",
+    "OnlyPositiveIntegersAreAllowed": "양의 정수만 허용됩니다."
   },
   "maxLength": {
     "64chars": "(최대 길이 64자)",
@@ -1761,6 +1765,22 @@
     "ReloadPage": "페이지 새로고침",
     "ResetErrorBoundary": "ErrorBoundary 초기화",
     "Title": "에러가 발생했습니다."
+  },
+  "autoScalingRule": {
+    "AddAutoScalingRule": "오토스케일링 규칙 추가",
+    "CoolDownSeconds": "쿨다운 시간(초)",
+    "MinReplicas": "최소 복제본 수 ",
+    "MaxReplicas": "최대 복제본 수",
+    "Threshold": "기준값",
+    "SuccessfullyUpdated": "오토스케일링 규칙이 성공적으로 수정되었습니다.",
+    "SuccessfullyDeleted": "오토스케일링 규칙이 성공적으로 삭제되었습니다.",
+    "ConfirmDeleteAutoScalingRule": "정말로 오토스케일링 규칙 {{ autoScalingRule }} 을 삭제하시겠습니까?",
+    "EditAutoScalingRule": "오토스케일링 규칙 수정",
+    "StepSize": "단계 크기",
+    "SuccessfullyCreated": "오토스케일링 규칙이 성공적으로 작성되었습니다.",
+    "Comparator": "연산자",
+    "MetricName": "메트릭",
+    "MetricSource": "메트릭 소스"
   },
   "kernel": {
     "KernelId": "커널 ID",

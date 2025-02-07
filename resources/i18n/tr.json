@@ -1509,7 +1509,9 @@
     "WrongAPIServerAddress": "Yanlış API sunucu adresi.",
     "ReachedResourceLimitPleaseContact": "Kaynak sınırınıza ulaştınız. \nLütfen yöneticiyle iletişime geçin.",
     "InvalidUrl": "Geçerli bir URL değil",
-    "AllowsPositiveNumberOnly": "Yalnızca pozitif sayıya izin ver."
+    "AllowsPositiveNumberOnly": "Yalnızca pozitif sayıya izin ver.",
+    "OnlyIntegersAreAllowed": "Sadece tamsayılara izin verilir.",
+    "OnlyPositiveIntegersAreAllowed": "Sadece pozitif tamsayılara izin verilir."
   },
   "maxLength": {
     "64chars": "(maksimum 64 karakter)",
@@ -1601,7 +1603,9 @@
     "ServiceNameMaxLength": "Lütfen 24 veya daha az karakter girin.",
     "ServiceNameCannotStartWithHyphen": "Kısa çizgi (-) her iki uçta da kullanılamaz.",
     "Resources": "Kaynaklar",
-    "NumberOfReplicas": "Kopya sayısı"
+    "NumberOfReplicas": "Kopya sayısı",
+    "AutoScalingRules": "Otomatik Ölçeklendirme Kuralları",
+    "AddRules": "Kurallar Ekle"
   },
   "storageHost": {
     "quotaSettings": {
@@ -1758,6 +1762,20 @@
     "ReloadPage": "Sayfayı yeniden yükle",
     "ResetErrorBoundary": "ErrorBoundary'yi Sıfırla",
     "Title": "Bir hata oluştu."
+  },
+  "autoScalingRule": {
+    "AddAutoScalingRule": "Otomatik ölçeklendirme kuralı ekleyin",
+    "CoolDownSeconds": "Saniyeler serin",
+    "SuccessfullyUpdated": "Otomatik ölçeklendirme kuralı başarıyla güncellendi.",
+    "SuccessfullyCreated": "Otomatik ölçeklendirme kuralı başarıyla oluşturuldu.",
+    "EditAutoScalingRule": "Otomatik ölçeklendirme kuralını düzenle",
+    "Comparator": "Karşılaştırıcı",
+    "Threshold": "Eşik",
+    "StepSize": "Adım Boyutu",
+    "MinReplicas": "Min kopyalar",
+    "MaxReplicas": "Maksimum kopya",
+    "MetricName": "Metrik adı",
+    "MetricSource": "Metrik kaynağı"
   },
   "kernel": {
     "KernelId": "Çekirdek kimliği",

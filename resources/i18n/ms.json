@@ -1510,7 +1510,9 @@
     "WrongAPIServerAddress": "Alamat pelayan API salah.",
     "ReachedResourceLimitPleaseContact": "Mencapai had sumber anda. \nSila hubungi pentadbir.",
     "InvalidUrl": "Ia bukan URL yang sah",
-    "AllowsPositiveNumberOnly": "Benarkan nombor positif sahaja."
+    "AllowsPositiveNumberOnly": "Benarkan nombor positif sahaja.",
+    "OnlyIntegersAreAllowed": "Hanya bilangan bulat yang dibenarkan.",
+    "OnlyPositiveIntegersAreAllowed": "Hanya bilangan bulat positif yang dibenarkan."
   },
   "maxLength": {
     "64chars": "(maksimum 64 watak)",
@@ -1637,7 +1639,9 @@
     "ServiceNameMaxLength": "Sila masukkan 24 aksara atau kurang.",
     "ServiceNameCannotStartWithHyphen": "Tanda sempang (-) tidak boleh digunakan pada kedua-dua hujung.",
     "Resources": "Sumber",
-    "NumberOfReplicas": "Bilangan replika"
+    "NumberOfReplicas": "Bilangan replika",
+    "AutoScalingRules": "Peraturan penskalaan automatik",
+    "AddRules": "Tambah peraturan"
   },
   "totp": {
     "TotpSetupCompleted": "Didayakan 2FA",
@@ -1759,6 +1763,20 @@
     "ReloadPage": "Muat semula halaman",
     "ResetErrorBoundary": "Tetapkan Semula ErrorBoundary",
     "Title": "Ralat telah berlaku."
+  },
+  "autoScalingRule": {
+    "AddAutoScalingRule": "Tambahkan peraturan penskalaan automatik",
+    "CoolDownSeconds": "Sejukkan detik",
+    "SuccessfullyUpdated": "Peraturan penskalaan automatik telah berjaya dikemas kini.",
+    "SuccessfullyCreated": "Peraturan penskalaan auto telah berjaya dibuat.",
+    "EditAutoScalingRule": "Edit peraturan penskalaan automatik",
+    "Comparator": "Komparator",
+    "Threshold": "Ambang",
+    "StepSize": "Saiz langkah",
+    "MinReplicas": "Min Replicas",
+    "MaxReplicas": "Max Replicas",
+    "MetricName": "Nama metrik",
+    "MetricSource": "Sumber metrik"
   },
   "kernel": {
     "KernelId": "ID Kernel",

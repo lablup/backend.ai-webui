@@ -1510,7 +1510,9 @@
     "WrongAPIServerAddress": "Mauvaise adresse du serveur API.",
     "ReachedResourceLimitPleaseContact": "Vous avez atteint votre limite de ressources. \nVeuillez contacter l'administrateur.",
     "InvalidUrl": "Ce n'est pas une URL valide",
-    "AllowsPositiveNumberOnly": "Autoriser uniquement les nombres positifs."
+    "AllowsPositiveNumberOnly": "Autoriser uniquement les nombres positifs.",
+    "OnlyIntegersAreAllowed": "Seuls les entiers sont autorisés.",
+    "OnlyPositiveIntegersAreAllowed": "Seuls les entiers positifs sont autorisés."
   },
   "maxLength": {
     "64chars": "(maximum 64 caractères)",
@@ -1654,7 +1656,9 @@
     "ServiceNameMaxLength": "Veuillez saisir 24 caractères ou moins.",
     "ServiceNameCannotStartWithHyphen": "Les tirets (-) ne peuvent pas être utilisés à chaque extrémité.",
     "Resources": "Ressources",
-    "NumberOfReplicas": "Nombre de répliques"
+    "NumberOfReplicas": "Nombre de répliques",
+    "AutoScalingRules": "Règles de mise à l'échelle automatique",
+    "AddRules": "Ajouter des règles"
   },
   "modelStore": {
     "Description": "Description",
@@ -1759,6 +1763,20 @@
     "ReloadPage": "Recharger la page",
     "ResetErrorBoundary": "Réinitialisation de la limite d'erreur",
     "Title": "Une erreur s'est produite."
+  },
+  "autoScalingRule": {
+    "AddAutoScalingRule": "Ajouter la règle de mise à l'échelle automatique",
+    "CoolDownSeconds": "Refroidir les secondes",
+    "SuccessfullyUpdated": "La règle de mise à l'échelle automatique a été mise à jour avec succès.",
+    "SuccessfullyCreated": "La règle de mise à l'échelle automatique a été créée avec succès.",
+    "EditAutoScalingRule": "Modifier la règle de mise à l'échelle automatique",
+    "Comparator": "Comparateur",
+    "Threshold": "Seuil",
+    "StepSize": "Taille de pas",
+    "MinReplicas": "Répliques min",
+    "MaxReplicas": "Répliques maximales",
+    "MetricName": "Nom métrique",
+    "MetricSource": "Source métrique"
   },
   "kernel": {
     "KernelId": "ID du noyau",

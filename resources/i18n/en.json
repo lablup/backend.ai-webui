@@ -526,7 +526,9 @@
     "ServiceNameMaxLength": "Please enter 24 characters or less.",
     "ServiceNameCannotStartWithHyphen": "Hyphens (-) cannot be used at either end.",
     "Resources": "Resources",
-    "NumberOfReplicas": "Number of replicas"
+    "NumberOfReplicas": "Number of replicas",
+    "AutoScalingRules": "Auto Scaling Rules",
+    "AddRules": "Add Rules"
   },
   "button": {
     "Cancel": "Cancel",
@@ -1638,7 +1640,12 @@
     "ErrorFetchingExternalContent": "Error fetching external content:",
     "ReachedResourceLimitPleaseContact": "Reached your resource limit. Please contact the administrator.",
     "InvalidUrl": "It is not a valid URL",
-    "AllowsPositiveNumberOnly": "Allow positive number only."
+    "AllowsPositiveNumberOnly": "Allow positive number only.",
+    "AllowPositiveIntegerOnly": "",
+    "OnlyPositiveIntegerAllowed": "",
+    "OnlyPositiveIntegersAllowed": "",
+    "OnlyIntegersAreAllowed": "Only integers are allowed.",
+    "OnlyPositiveIntegersAreAllowed": "Only positive integers are allowed."
   },
   "maxLength": {
     "64chars": "(maximum 64 chars)",
@@ -1760,6 +1767,22 @@
     "ReloadPage": "Reload the page",
     "ResetErrorBoundary": "Reset ErrorBoundary",
     "Title": "An error has occurred."
+  },
+  "autoScalingRule": {
+    "AddAutoScalingRule": "Add Auto Scaling Rule",
+    "MetricSource": "Metric Source",
+    "MetricName": "Metric Name",
+    "Comparator": "Comparator",
+    "CoolDownSeconds": "Cool Down Seconds",
+    "MinReplicas": "Min Replicas",
+    "MaxReplicas": "Max Replicas",
+    "Threshold": "Threshold",
+    "SuccessfullyCreated": "Auto scaling rule has been successfully created.",
+    "SuccessfullyUpdated": "Auto scaling rule has been successfully updated.",
+    "SuccessfullyDeleted": "Auto scaling rule has been successfuly deleted.",
+    "ConfirmDeleteAutoScalingRule": "Are you sure to delete auto scaling rule {{ autoScalingRule }} ?",
+    "EditAutoScalingRule": "Edit Auto Scaling Rule",
+    "StepSize": "Step Size"
   },
   "kernel": {
     "KernelId": "Kernel ID",

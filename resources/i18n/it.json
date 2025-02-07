@@ -1509,7 +1509,9 @@
     "WrongAPIServerAddress": "Indirizzo del server API errato.",
     "ReachedResourceLimitPleaseContact": "Raggiunto il limite delle risorse. \nSi prega di contattare l'amministratore.",
     "InvalidUrl": "Non è un URL valido",
-    "AllowsPositiveNumberOnly": "Consenti solo numeri positivi."
+    "AllowsPositiveNumberOnly": "Consenti solo numeri positivi.",
+    "OnlyIntegersAreAllowed": "Sono ammessi solo numeri interi.",
+    "OnlyPositiveIntegersAreAllowed": "Sono consentiti solo numeri interi positivi."
   },
   "maxLength": {
     "64chars": "(massimo 64 caratteri)",
@@ -1600,7 +1602,9 @@
     "ServiceNameMaxLength": "Inserisci 24 caratteri o meno.",
     "ServiceNameCannotStartWithHyphen": "I trattini (-) non possono essere utilizzati alle due estremità.",
     "Resources": "Risorse",
-    "NumberOfReplicas": "Numero di repliche"
+    "NumberOfReplicas": "Numero di repliche",
+    "AutoScalingRules": "Regole di ridimensionamento automatico",
+    "AddRules": "Aggiungi regole"
   },
   "storageHost": {
     "quotaSettings": {
@@ -1757,6 +1761,20 @@
     "ReloadPage": "Ricarica la pagina",
     "ResetErrorBoundary": "Azzeramento di ErrorBoundary",
     "Title": "Si è verificato un errore."
+  },
+  "autoScalingRule": {
+    "AddAutoScalingRule": "Aggiungi regola di ridimensionamento automatico",
+    "CoolDownSeconds": "Raffreddare secondi",
+    "SuccessfullyUpdated": "La regola di ridimensionamento automatico è stata aggiornata con successo.",
+    "SuccessfullyCreated": "La regola del ridimensionamento automatico è stata creata con successo.",
+    "EditAutoScalingRule": "Modifica la regola di ridimensionamento automatico",
+    "Comparator": "Comparatore",
+    "Threshold": "Soglia",
+    "StepSize": "Dimensione del passaggio",
+    "MinReplicas": "Repliche min",
+    "MaxReplicas": "Repliche massime",
+    "MetricName": "Nome metrico",
+    "MetricSource": "Fonte metrica"
   },
   "kernel": {
     "KernelId": "Kernel ID",

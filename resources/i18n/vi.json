@@ -1510,7 +1510,9 @@
     "WrongAPIServerAddress": "Địa chỉ máy chủ API sai.",
     "ReachedResourceLimitPleaseContact": "Đã đạt đến giới hạn tài nguyên của bạn. \nVui lòng liên hệ với quản trị viên.",
     "InvalidUrl": "Đó không phải là một URL hợp lệ",
-    "AllowsPositiveNumberOnly": "Chỉ cho phép số dương."
+    "AllowsPositiveNumberOnly": "Chỉ cho phép số dương.",
+    "OnlyIntegersAreAllowed": "Chỉ có số nguyên được cho phép.",
+    "OnlyPositiveIntegersAreAllowed": "Chỉ cho phép số nguyên dương được cho phép."
   },
   "maxLength": {
     "64chars": "(tối đa 64 ký tự)",
@@ -1637,7 +1639,9 @@
     "ServiceNameMaxLength": "Vui lòng nhập 24 ký tự trở xuống.",
     "ServiceNameCannotStartWithHyphen": "Dấu gạch nối (-) không thể được sử dụng ở cả hai đầu.",
     "Resources": "Tài nguyên",
-    "NumberOfReplicas": "Số lượng bản sao"
+    "NumberOfReplicas": "Số lượng bản sao",
+    "AutoScalingRules": "Quy tắc mở rộng tự động",
+    "AddRules": "Thêm quy tắc"
   },
   "totp": {
     "TotpSetupCompleted": "Đã bật 2FA",
@@ -1759,6 +1763,20 @@
     "ReloadPage": "Tải lại trang",
     "ResetErrorBoundary": "Đặt lại ranh giới lỗi",
     "Title": "Một lỗi đã xảy ra."
+  },
+  "autoScalingRule": {
+    "AddAutoScalingRule": "Thêm quy tắc tỷ lệ tự động",
+    "CoolDownSeconds": "Làm mát vài giây",
+    "SuccessfullyUpdated": "Quy tắc tỷ lệ tự động đã được cập nhật thành công.",
+    "SuccessfullyCreated": "Quy tắc tỷ lệ tự động đã được tạo thành công.",
+    "EditAutoScalingRule": "Chỉnh sửa quy tắc tỷ lệ tự động",
+    "Comparator": "Người so sánh",
+    "Threshold": "Ngưỡng",
+    "StepSize": "Kích thước bước",
+    "MinReplicas": "Tối thiểu bản sao",
+    "MaxReplicas": "Tối đa bản sao",
+    "MetricName": "Tên số liệu",
+    "MetricSource": "Nguồn số liệu"
   },
   "kernel": {
     "KernelId": "Kernel Id",

@@ -524,7 +524,9 @@
     "ServiceNameMaxLength": "โปรดป้อนอักขระ 24 ตัวหรือน้อยกว่า",
     "ServiceNameCannotStartWithHyphen": "เครื่องหมายยัติภังค์ (-) ไม่สามารถใช้ที่ปลายทั้งสองข้างได้",
     "Resources": "ทรัพยากร",
-    "NumberOfReplicas": "จำนวนแบบจำลอง"
+    "NumberOfReplicas": "จำนวนแบบจำลอง",
+    "AutoScalingRules": "กฎการปรับขนาดอัตโนมัติ",
+    "AddRules": "เพิ่มกฎ"
   },
   "button": {
     "Cancel": "ยกเลิก",
@@ -1617,7 +1619,9 @@
     "ErrorFetchingExternalContent": "เกิดข้อผิดพลาดในการดึงเนื้อหาภายนอก:",
     "ReachedResourceLimitPleaseContact": "ถึงขีดจำกัดทรัพยากรของคุณแล้ว กรุณาติดต่อผู้ดูแลระบบ",
     "InvalidUrl": "ไม่ใช่ URL ที่ถูกต้อง",
-    "AllowsPositiveNumberOnly": "อนุญาตให้ใช้จำนวนบวกเท่านั้น"
+    "AllowsPositiveNumberOnly": "อนุญาตให้ใช้จำนวนบวกเท่านั้น",
+    "OnlyIntegersAreAllowed": "อนุญาตให้มีจำนวนเต็มเท่านั้น",
+    "OnlyPositiveIntegersAreAllowed": "อนุญาตให้มีจำนวนเต็มบวกเท่านั้น"
   },
   "maxLength": {
     "64chars": "(สูงสุด 64 ตัวอักษร)",
@@ -1739,6 +1743,20 @@
     "ReloadPage": "โหลดหน้าใหม่",
     "ResetErrorBoundary": "รีเซ็ต ErrorBoundary",
     "Title": "เกิดข้อผิดพลาด"
+  },
+  "autoScalingRule": {
+    "AddAutoScalingRule": "เพิ่มกฎการปรับขนาดอัตโนมัติ",
+    "CoolDownSeconds": "เย็นลงไม่กี่วินาที",
+    "SuccessfullyUpdated": "กฎการปรับขนาดอัตโนมัติได้รับการอัปเดตสำเร็จแล้ว",
+    "SuccessfullyCreated": "กฎการปรับขนาดอัตโนมัติถูกสร้างขึ้นสำเร็จ",
+    "EditAutoScalingRule": "แก้ไขกฎการปรับขนาดอัตโนมัติ",
+    "Comparator": "เครื่องเปรียบเทียบ",
+    "Threshold": "เกณฑ์",
+    "StepSize": "ขนาดขั้นตอน",
+    "MinReplicas": "แบบจำลองขั้นต่ำ",
+    "MaxReplicas": "แบบจำลองสูงสุด",
+    "MetricName": "ชื่อเมตริก",
+    "MetricSource": "แหล่งวัด"
   },
   "kernel": {
     "KernelId": "ID เคอร์เนล",

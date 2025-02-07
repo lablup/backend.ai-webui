@@ -14,6 +14,7 @@ interface InputNumberWithSliderProps {
   step?: number | null;
   disabled?: boolean;
   value?: number;
+  allowNegative?: boolean;
   onChange?: (value: number) => void;
   inputNumberProps?: OmitControlledProps<InputNumberProps>;
   sliderProps?:
@@ -27,14 +28,17 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
   disabled,
   inputNumberProps,
   sliderProps,
+  allowNegative,
   ...otherProps
 }) => {
   const [value, setValue] = useControllableState(otherProps);
   const inputRef = React.useRef<HTMLInputElement>(null);
   useEffect(() => {
-    // when step is 1, make sure the value is integer
-    if (step === 1 && value % 1 !== 0) {
-      setValue(_.max([Math.round(value), min]));
+    if (!allowNegative) {
+      // when step is 1, make sure the value is integer
+      if (step === 1 && value % 1 !== 0) {
+        setValue(_.max([Math.round(value), min]));
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step]);
@@ -42,9 +46,11 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
   // FIXME: this is a workaround to fix the issue that the value is not updated when the value is controlled
   const [key, updateKey] = useUpdatableState('first');
   useEffect(() => {
-    setTimeout(() => {
-      updateKey(value);
-    }, 0);
+    if (!allowNegative) {
+      setTimeout(() => {
+        updateKey(value);
+      }, 0);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -93,7 +99,7 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
       <Flex direction="column" align="stretch" style={{ flex: 3 }}>
         <Slider
           max={max}
-          min={0}
+          min={min}
           step={step}
           disabled={disabled}
           value={value}

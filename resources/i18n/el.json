@@ -1510,7 +1510,9 @@
     "WrongAPIServerAddress": "Λάθος διεύθυνση διακομιστή API.",
     "ReachedResourceLimitPleaseContact": "Φτάσατε το όριο των πόρων σας. \nΕπικοινωνήστε με τον διαχειριστή.",
     "InvalidUrl": "Δεν είναι έγκυρη διεύθυνση URL",
-    "AllowsPositiveNumberOnly": "Να επιτρέπεται μόνο θετικός αριθμός."
+    "AllowsPositiveNumberOnly": "Να επιτρέπεται μόνο θετικός αριθμός.",
+    "OnlyIntegersAreAllowed": "Επιτρέπονται μόνο ακέραιοι.",
+    "OnlyPositiveIntegersAreAllowed": "Επιτρέπονται μόνο θετικοί ακέραιοι ακέραιοι."
   },
   "maxLength": {
     "64chars": "(έως 64 χαρακτήρες)",
@@ -1602,7 +1604,9 @@
     "ServiceNameMaxLength": "Εισαγάγετε 24 χαρακτήρες ή λιγότερους.",
     "ServiceNameCannotStartWithHyphen": "Οι παύλες (-) δεν μπορούν να χρησιμοποιηθούν σε κανένα άκρο.",
     "Resources": "Πόροι",
-    "NumberOfReplicas": "Αριθμός αντιγράφων"
+    "NumberOfReplicas": "Αριθμός αντιγράφων",
+    "AutoScalingRules": "Κανόνες αυτόματης κλιμάκωσης",
+    "AddRules": "Προσθέστε κανόνες"
   },
   "storageHost": {
     "quotaSettings": {
@@ -1759,6 +1763,20 @@
     "ReloadPage": "Επαναφόρτωση της σελίδας",
     "ResetErrorBoundary": "Επαναφορά ErrorBoundary",
     "Title": "Εμφανίστηκε σφάλμα."
+  },
+  "autoScalingRule": {
+    "AddAutoScalingRule": "Προσθέστε κανόνα αυτόματης κλιμάκωσης",
+    "CoolDownSeconds": "Δροσερό δευτερόλεπτα",
+    "SuccessfullyUpdated": "Ο κανόνας αυτόματης κλιμάκωσης έχει ενημερωθεί με επιτυχία.",
+    "SuccessfullyCreated": "Ο κανόνας αυτόματης κλιμάκωσης έχει δημιουργηθεί με επιτυχία.",
+    "EditAutoScalingRule": "Επεξεργασία κανόνα κλιμάκωσης αυτόματης",
+    "Comparator": "Συγκριτής",
+    "Threshold": "Κατώφλι",
+    "StepSize": "Μέγεθος βήματος",
+    "MinReplicas": "Λεπτά αντίγραφα",
+    "MaxReplicas": "Μέγιστα αντίγραφα",
+    "MetricName": "Μετρικό όνομα",
+    "MetricSource": "Μετρική πηγή"
   },
   "kernel": {
     "KernelId": "Αναγνωριστικό πυρήνα",

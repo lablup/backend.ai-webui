@@ -1509,7 +1509,9 @@
     "ResourceLimitExceed": "Нөөцийн хязгаар хэтэрсэн. \nБоломжтой нөөцийн хэмжээг шалгана уу.",
     "ReachedResourceLimitPleaseContact": "Таны нөөцийн хязгаарт хүрсэн. \nАдминтай холбогдоно уу.",
     "InvalidUrl": "Энэ нь хүчинтэй URL биш байна",
-    "AllowsPositiveNumberOnly": "Зөвхөн эерэг тоог зөвшөөрөх."
+    "AllowsPositiveNumberOnly": "Зөвхөн эерэг тоог зөвшөөрөх.",
+    "OnlyIntegersAreAllowed": "Зөвхөн бүхэл тоо зөвшөөрнө.",
+    "OnlyPositiveIntegersAreAllowed": "Зөвхөн эерэг бүхэл тоо зөвшөөрөгдсөн."
   },
   "maxLength": {
     "64chars": "(хамгийн ихдээ 64 тэмдэгт)",
@@ -1653,7 +1655,9 @@
     "ServiceNameMaxLength": "24 ба түүнээс бага тэмдэгт оруулна уу.",
     "ServiceNameCannotStartWithHyphen": "Хоёр төгсгөлд зураас (-) ашиглах боломжгүй.",
     "Resources": "Нөөц",
-    "NumberOfReplicas": "Хуулбаруудын тоо"
+    "NumberOfReplicas": "Хуулбаруудын тоо",
+    "AutoScalingRules": "Автомат масштабын дүрэм",
+    "AddRules": "Дүрмийг нэмэх"
   },
   "modelStore": {
     "Description": "Тодорхойлолт",
@@ -1758,6 +1762,20 @@
     "ReloadPage": "Хуудсыг дахин ачаална уу",
     "ResetErrorBoundary": "Алдааны хил хязгаарыг дахин тохируулах",
     "Title": "Алдаа гарсан байна."
+  },
+  "autoScalingRule": {
+    "AddAutoScalingRule": "Автомат масштабыг нэмэх",
+    "CoolDownSeconds": "Секундэд хөргөнө",
+    "SuccessfullyUpdated": "Автомат масштабын дүрэм амжилттай шинэчлэгдэв.",
+    "SuccessfullyCreated": "Автомат масштабын дүрмийг амжилттай бүтээсэн.",
+    "EditAutoScalingRule": "Автомат масштабыг засах дүрмийг засах",
+    "Comparator": "Автоматлагч",
+    "Threshold": "Босго",
+    "StepSize": "Үед Хсгэрүүлийн хэмжээ",
+    "MinReplicas": "Min хуулбар",
+    "MaxReplicas": "Макс хуулбарууд",
+    "MetricName": "Хнхийн нэр",
+    "MetricSource": "Метрийн эх сургай"
   },
   "kernel": {
     "KernelId": "Kernel ID",

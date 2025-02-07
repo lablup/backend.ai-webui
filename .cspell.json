@@ -8,6 +8,7 @@
     "backendaiclient",
     "backendaioptions",
     "baseversion",
+    "cooldown",
     "cssinjs",
     "cuda",
     "FGPU",
@@ -30,6 +31,7 @@
     "shmem",
     "Signout",
     "superadmin",
+    "Talkativot",
     "Tensorboard",
     "textbox",
     "Totp",
@@ -39,16 +41,7 @@
     "Warboy",
     "webcomponent",
     "webui",
-    "wsproxy",
-    "ahooks",
-    "lucide",
-    "Signout",
-    "Totp",
-    "Keypairs",
-    "Hyperaccel",
-    "Tensorboard",
-    "Automount",
-    "Talkativot"
+    "wsproxy"
   ],
   "flagWords": [
     "데이터레이크",
