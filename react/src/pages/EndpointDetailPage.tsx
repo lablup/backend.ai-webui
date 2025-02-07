@@ -126,6 +126,8 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   const webuiNavigate = useWebUINavigate();
   const { open } = useFolderExplorerOpener();
   const [selectedSessionId, setSelectedSessionId] = useState<string>();
+  const isSupportAutoScalingRule =
+    baiClient.isManagerVersionCompatibleWith('25.1.0');
   const { endpoint, endpoint_token_list, endpoint_auto_scaling_rules } =
     useLazyLoadQuery<EndpointDetailPageQuery>(
       graphql`
@@ -141,6 +143,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           $autoScalingRules_after: String
           $autoScalingRules_first: Int
           $autoScalingRules_last: Int
+          $skipScalingRules: Boolean!
         ) {
           endpoint(endpoint_id: $endpointId) {
             name
@@ -232,7 +235,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             after: $autoScalingRules_after
             first: $autoScalingRules_first
             last: $autoScalingRules_last
-          ) {
+          ) @skipOnClient(if: $skipScalingRules) {
             pageInfo {
               hasNextPage
               hasPreviousPage
@@ -268,6 +271,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         autoScalingRules_after: undefined,
         autoScalingRules_first: undefined,
         autoScalingRules_last: undefined,
+        skipScalingRules: !isSupportAutoScalingRule,
       },
       {
         fetchPolicy:
@@ -610,227 +614,232 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           items={items}
         ></Descriptions>
       </Card>
-      <Card
-        title={t('modelService.AutoScalingRules')}
-        extra={
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            disabled={isDestroyingStatus(
-              endpoint?.replicas ?? endpoint?.desired_session_count,
-              endpoint?.status,
-            )}
-            onClick={() => {
-              setIsOpenAutoScalingRuleModal(true);
-            }}
-          >
-            {t('modelService.AddRules')}
-          </Button>
-        }
-      >
-        <Table
-          scroll={{ x: 'max-content' }}
-          rowKey={'id'}
-          columns={[
-            {
-              title: '#',
-              fixed: 'left',
-              render: (id, record, index) => {
-                ++index;
-                return index;
+      {isSupportAutoScalingRule && (
+        <Card
+          title={t('modelService.AutoScalingRules')}
+          extra={
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              disabled={isDestroyingStatus(
+                endpoint?.replicas ?? endpoint?.desired_session_count,
+                endpoint?.status,
+              )}
+              onClick={() => {
+                setIsOpenAutoScalingRuleModal(true);
+              }}
+            >
+              {t('modelService.AddRules')}
+            </Button>
+          }
+        >
+          <Table
+            scroll={{ x: 'max-content' }}
+            rowKey={'id'}
+            columns={[
+              {
+                title: '#',
+                fixed: 'left',
+                render: (id, record, index) => {
+                  ++index;
+                  return index;
+                },
               },
-            },
-            {
-              title: t('autoScalingRule.MetricName'),
-              dataIndex: 'metric_name',
-              fixed: 'left',
-              render: (text, row) => (
-                <Typography.Text ellipsis copyable style={{ width: 150 }}>
-                  {row?.metric_name}
-                </Typography.Text>
-              ),
-            },
-            {
-              title: t('modelService.Controls'),
-              dataIndex: 'controls',
-              key: 'controls',
-              render: (text, row) => (
-                <Flex direction="row" align="stretch">
-                  <Button
-                    type="text"
-                    icon={<SettingOutlined />}
-                    style={
-                      isDestroyingStatus(
-                        endpoint?.replicas ?? endpoint?.desired_session_count,
-                        endpoint?.status,
-                      ) ||
-                      (!!endpoint?.created_user_email &&
-                        endpoint?.created_user_email !== currentUser.email)
-                        ? {
-                            color: token.colorTextDisabled,
-                          }
-                        : {
-                            color: token.colorInfo,
-                          }
-                    }
-                    disabled={
-                      isDestroyingStatus(
-                        endpoint?.replicas ?? endpoint?.desired_session_count,
-                        endpoint?.status,
-                      ) ||
-                      (!!endpoint?.created_user_email &&
-                        endpoint?.created_user_email !== currentUser.email)
-                    }
-                    onClick={() => {
-                      if (row) {
-                        setEditingAutoScalingRule(row);
-                        setIsOpenAutoScalingRuleModal(true);
-                      }
-                    }}
-                  />
-                  <Popconfirm
-                    title={t('dialog.warning.CannotBeUndone')}
-                    okText={t('button.Delete')}
-                    okButtonProps={{
-                      danger: true,
-                    }}
-                    disabled={isInFlightDeleteAutoScalingRuleMutation}
-                    onConfirm={() => {
-                      if (autoScalingRules) {
-                        commitDeleteAutoScalingRuleMutation({
-                          variables: {
-                            id: row?.id as string,
-                          },
-                          onCompleted: (res, errors) => {
-                            if (
-                              !res?.delete_endpoint_auto_scaling_rule_node?.ok
-                            ) {
-                              message.error(
-                                res?.delete_endpoint_auto_scaling_rule_node
-                                  ?.msg,
-                              );
-                            } else if (errors && errors.length > 0) {
-                              const errorMsgList = _.map(
-                                errors,
-                                (error) =>
-                                  error.message || t('dialog.ErrorOccurred'),
-                              );
-                              for (const error of errorMsgList) {
-                                message.error(error, 2.5);
-                              }
-                            } else {
-                              setEditingAutoScalingRule(null);
-                              startRefetchTransition(() => {
-                                updateFetchKey();
-                              });
-                              message.success({
-                                key: 'autoscaling-rule-deleted',
-                                content: t(
-                                  'autoScalingRule.SuccessfullyDeleted',
-                                ),
-                              });
-                            }
-                          },
-                          onError: (error) => {
-                            message.error(
-                              error?.message || t('dialog.ErrorOccurred'),
-                            );
-                          },
-                        });
-                      }
-                    }}
-                  >
+              {
+                title: t('autoScalingRule.MetricName'),
+                dataIndex: 'metric_name',
+                fixed: 'left',
+                render: (text, row) => (
+                  <Typography.Text ellipsis copyable style={{ width: 150 }}>
+                    {row?.metric_name}
+                  </Typography.Text>
+                ),
+              },
+              {
+                title: t('modelService.Controls'),
+                dataIndex: 'controls',
+                key: 'controls',
+                render: (text, row) => (
+                  <Flex direction="row" align="stretch">
                     <Button
                       type="text"
-                      icon={
-                        <DeleteOutlined
-                          style={
-                            isDestroyingStatus(
-                              endpoint?.replicas ??
-                                endpoint?.desired_session_count,
-                              endpoint?.status,
-                            )
-                              ? undefined
-                              : {
-                                  color: token.colorError,
-                                }
-                          }
-                        />
+                      icon={<SettingOutlined />}
+                      style={
+                        isDestroyingStatus(
+                          endpoint?.replicas ?? endpoint?.desired_session_count,
+                          endpoint?.status,
+                        ) ||
+                        (!!endpoint?.created_user_email &&
+                          endpoint?.created_user_email !== currentUser.email)
+                          ? {
+                              color: token.colorTextDisabled,
+                            }
+                          : {
+                              color: token.colorInfo,
+                            }
                       }
-                      disabled={false}
+                      disabled={
+                        isDestroyingStatus(
+                          endpoint?.replicas ?? endpoint?.desired_session_count,
+                          endpoint?.status,
+                        ) ||
+                        (!!endpoint?.created_user_email &&
+                          endpoint?.created_user_email !== currentUser.email)
+                      }
                       onClick={() => {
                         if (row) {
                           setEditingAutoScalingRule(row);
+                          setIsOpenAutoScalingRuleModal(true);
                         }
                       }}
                     />
-                  </Popconfirm>
-                </Flex>
-              ),
-            },
-            {
-              title: t('autoScalingRule.MetricSource'),
-              dataIndex: 'metric_source',
-              render: (text, row) => <Tag>{row?.metric_source}</Tag>,
-            },
-            {
-              title: t('autoScalingRule.Comparator'),
-              dataIndex: 'comparator',
-              render: (text, row) => (
-                // @ts-ignore
-                <Tooltip title={text}>{COMPARATOR_LABELS[text]}</Tooltip>
-              ),
-            },
-            {
-              title: t('autoScalingRule.Threshold'),
-              render: (text, row) => <span>{row?.threshold}</span>,
-            },
-            {
-              title: t('autoScalingRule.StepSize'),
-              dataIndex: 'step_size',
-            },
-            {
-              title: t('autoScalingRule.MIN/MAXReplicas'),
-              render: (text, row) => (
-                <span>
-                  Min: {row?.min_replicas} / Max: {row?.max_replicas}
-                </span>
-              ),
-            },
-            {
-              title: t('autoScalingRule.CoolDownSeconds'),
-              dataIndex: 'cooldown_seconds',
-              // render: (text, row) => <span>{row?.cooldown_seconds}</span>,
-            },
-            {
-              title: t('autoScalingRule.LastTriggered'),
-              render: (text, row) => {
-                return (
-                  <span>
-                    {row?.last_triggered_at
-                      ? dayjs.utc(row?.last_triggered_at).tz().format('ll LTS')
-                      : `-`}
-                  </span>
-                );
+                    <Popconfirm
+                      title={t('dialog.warning.CannotBeUndone')}
+                      okText={t('button.Delete')}
+                      okButtonProps={{
+                        danger: true,
+                      }}
+                      disabled={isInFlightDeleteAutoScalingRuleMutation}
+                      onConfirm={() => {
+                        if (autoScalingRules) {
+                          commitDeleteAutoScalingRuleMutation({
+                            variables: {
+                              id: row?.id as string,
+                            },
+                            onCompleted: (res, errors) => {
+                              if (
+                                !res?.delete_endpoint_auto_scaling_rule_node?.ok
+                              ) {
+                                message.error(
+                                  res?.delete_endpoint_auto_scaling_rule_node
+                                    ?.msg,
+                                );
+                              } else if (errors && errors.length > 0) {
+                                const errorMsgList = _.map(
+                                  errors,
+                                  (error) =>
+                                    error.message || t('dialog.ErrorOccurred'),
+                                );
+                                for (const error of errorMsgList) {
+                                  message.error(error, 2.5);
+                                }
+                              } else {
+                                setEditingAutoScalingRule(null);
+                                startRefetchTransition(() => {
+                                  updateFetchKey();
+                                });
+                                message.success({
+                                  key: 'autoscaling-rule-deleted',
+                                  content: t(
+                                    'autoScalingRule.SuccessfullyDeleted',
+                                  ),
+                                });
+                              }
+                            },
+                            onError: (error) => {
+                              message.error(
+                                error?.message || t('dialog.ErrorOccurred'),
+                              );
+                            },
+                          });
+                        }
+                      }}
+                    >
+                      <Button
+                        type="text"
+                        icon={
+                          <DeleteOutlined
+                            style={
+                              isDestroyingStatus(
+                                endpoint?.replicas ??
+                                  endpoint?.desired_session_count,
+                                endpoint?.status,
+                              )
+                                ? undefined
+                                : {
+                                    color: token.colorError,
+                                  }
+                            }
+                          />
+                        }
+                        disabled={false}
+                        onClick={() => {
+                          if (row) {
+                            setEditingAutoScalingRule(row);
+                          }
+                        }}
+                      />
+                    </Popconfirm>
+                  </Flex>
+                ),
               },
-              sorter: dayDiff,
-            },
-            {
-              title: t('autoScalingRule.CreatedAt'),
-              dataIndex: 'created_at',
-              render: (text, row) => (
-                <span>{dayjs(row?.created_at).format('ll LT')}</span>
-              ),
-              sorter: dayDiff,
-            },
-          ]}
-          pagination={false}
-          sortDirections={['descend', 'ascend', 'descend']}
-          showSorterTooltip={false}
-          dataSource={autoScalingRules}
-          bordered
-        ></Table>
-      </Card>
+              {
+                title: t('autoScalingRule.MetricSource'),
+                dataIndex: 'metric_source',
+                render: (text, row) => <Tag>{row?.metric_source}</Tag>,
+              },
+              {
+                title: t('autoScalingRule.Comparator'),
+                dataIndex: 'comparator',
+                render: (text, row) => (
+                  // @ts-ignore
+                  <Tooltip title={text}>{COMPARATOR_LABELS[text]}</Tooltip>
+                ),
+              },
+              {
+                title: t('autoScalingRule.Threshold'),
+                render: (text, row) => <span>{row?.threshold}</span>,
+              },
+              {
+                title: t('autoScalingRule.StepSize'),
+                dataIndex: 'step_size',
+              },
+              {
+                title: t('autoScalingRule.MIN/MAXReplicas'),
+                render: (text, row) => (
+                  <span>
+                    Min: {row?.min_replicas} / Max: {row?.max_replicas}
+                  </span>
+                ),
+              },
+              {
+                title: t('autoScalingRule.CoolDownSeconds'),
+                dataIndex: 'cooldown_seconds',
+                // render: (text, row) => <span>{row?.cooldown_seconds}</span>,
+              },
+              {
+                title: t('autoScalingRule.LastTriggered'),
+                render: (text, row) => {
+                  return (
+                    <span>
+                      {row?.last_triggered_at
+                        ? dayjs
+                            .utc(row?.last_triggered_at)
+                            .tz()
+                            .format('ll LTS')
+                        : `-`}
+                    </span>
+                  );
+                },
+                sorter: dayDiff,
+              },
+              {
+                title: t('autoScalingRule.CreatedAt'),
+                dataIndex: 'created_at',
+                render: (text, row) => (
+                  <span>{dayjs(row?.created_at).format('ll LT')}</span>
+                ),
+                sorter: dayDiff,
+              },
+            ]}
+            pagination={false}
+            sortDirections={['descend', 'ascend', 'descend']}
+            showSorterTooltip={false}
+            dataSource={autoScalingRules}
+            bordered
+          ></Table>
+        </Card>
+      )}
       <Card
         title={t('modelService.GeneratedTokens')}
         extra={
@@ -1035,20 +1044,22 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           setOpenChatModal(false);
         }}
       />
-      <AutoScalingRuleEditorModal
-        open={isOpenAutoScalingRuleModal}
-        endpoint_id={endpoint?.endpoint_id as string}
-        autoScalingRuleFrgmt={editingAutoScalingRule}
-        onRequestClose={(success) => {
-          setIsOpenAutoScalingRuleModal(!isOpenAutoScalingRuleModal);
-          setEditingAutoScalingRule(null);
-          if (success) {
-            startRefetchTransition(() => {
-              updateFetchKey();
-            });
-          }
-        }}
-      ></AutoScalingRuleEditorModal>
+      {isSupportAutoScalingRule && (
+        <AutoScalingRuleEditorModal
+          open={isOpenAutoScalingRuleModal}
+          endpoint_id={endpoint?.endpoint_id as string}
+          autoScalingRuleFrgmt={editingAutoScalingRule}
+          onRequestClose={(success) => {
+            setIsOpenAutoScalingRuleModal(!isOpenAutoScalingRuleModal);
+            setEditingAutoScalingRule(null);
+            if (success) {
+              startRefetchTransition(() => {
+                updateFetchKey();
+              });
+            }
+          }}
+        />
+      )}
       <SessionDetailDrawer
         open={!selectedSessionId}
         sessionId={selectedSessionId}
