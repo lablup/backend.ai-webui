@@ -228,7 +228,7 @@ function MainLayout() {
   );
 }
 
-const NotificationForAnonymous = () => {
+export const NotificationForAnonymous = () => {
   const app = App.useApp();
   useEffect(() => {
     const handler = (e: any) => {
