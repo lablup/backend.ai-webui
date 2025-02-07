@@ -63,8 +63,8 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
       style={{
         height: token.Layout?.headerHeight || 60,
         backgroundColor: token.Layout?.headerBg,
-        paddingRight: token.marginMD,
-        paddingLeft: token.marginMD,
+        paddingRight: token.marginLG,
+        paddingLeft: token.marginLG,
         color: token.colorBgBase,
       }}
       className={styles.webuiHeader}
@@ -145,6 +145,12 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
               <ReverseThemeProvider>{btn}</ReverseThemeProvider>
             </div>
           )}
+          style={{
+            marginLeft: token.marginXXS,
+            marginRight: token.marginSM * -1,
+            paddingLeft: token.paddingSM,
+            paddingRight: token.paddingSM,
+          }}
         />
       </Flex>
     </Flex>

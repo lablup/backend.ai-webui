@@ -433,7 +433,8 @@
     "FGPU": "fGPU",
     "ReadLess": "内容折りたたみ",
     "ReadMore": "もっと詳しく...",
-    "CommitImageName": "コミットされたイメージ名"
+    "CommitImageName": "コミットされたイメージ名",
+    "IdleCheckExpirationWarning": "セッションはアイドル状態チェックの結果に基づいて終了される場合があります。"
   },
   "button": {
     "Cancel": "キャンセル",
@@ -476,7 +477,8 @@
     "Expand": "拡大する",
     "Clear": "消去",
     "Apply": "応募する",
-    "CopySomething": "{{name}} をコピー"
+    "CopySomething": "{{name}} をコピー",
+    "ClickForMoreDetails": "詳細については、クリックしてください"
   },
   "agent": {
     "Endpoint": "終点",
@@ -1508,7 +1510,9 @@
     "WrongAPIServerAddress": "APIサーバーのアドレスが間違っています。",
     "ReachedResourceLimitPleaseContact": "リソース制限に達しました。\n管理者にお問い合わせください。",
     "InvalidUrl": "有効な URL ではありません",
-    "AllowsPositiveNumberOnly": "正の数のみを許可します。"
+    "AllowsPositiveNumberOnly": "正の数のみを許可します。",
+    "OnlyIntegersAreAllowed": "整数のみが許可されています。",
+    "OnlyPositiveIntegersAreAllowed": "正の整数のみが許可されています。"
   },
   "maxLength": {
     "64chars": "（最大64文字）",
@@ -1600,7 +1604,9 @@
     "ServiceNameMaxLength": "24文字以内で入力してください。",
     "ServiceNameCannotStartWithHyphen": "両端にハイフン（-）を使用することはできません。",
     "Resources": "リソース",
-    "NumberOfReplicas": "レプリカの数"
+    "NumberOfReplicas": "レプリカの数",
+    "AutoScalingRules": "自動スケーリングルール",
+    "AddRules": "ルールを追加します"
   },
   "storageHost": {
     "quotaSettings": {
@@ -1757,5 +1763,27 @@
     "ReloadPage": "ページの更新",
     "ResetErrorBoundary": "ErrorBoundaryの初期化",
     "Title": "エラーが発生しました。"
+  },
+  "autoScalingRule": {
+    "AddAutoScalingRule": "自動スケーリングルールを追加します",
+    "CoolDownSeconds": "数秒を冷やします",
+    "SuccessfullyUpdated": "自動スケーリングルールが正常に更新されました。",
+    "SuccessfullyCreated": "自動スケーリングルールが正常に作成されました。",
+    "EditAutoScalingRule": "自動スケーリングルールを編集します",
+    "Comparator": "コンパレータ",
+    "Threshold": "しきい値",
+    "StepSize": "ステップサイズ",
+    "MinReplicas": "最小レプリカ",
+    "MaxReplicas": "マックスレプリカ",
+    "MetricName": "メトリック名",
+    "MetricSource": "メトリックソース"
+  },
+  "kernel": {
+    "KernelId": "カーネルID",
+    "Role": "役割",
+    "Status": "状態",
+    "AgentId": "エージェントID",
+    "ContainerId": "コンテナID",
+    "Kernels": "カーネル"
   }
 }

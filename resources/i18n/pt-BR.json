@@ -433,7 +433,8 @@
     "FGPU": "fGPU",
     "ReadLess": "Ler menos",
     "ReadMore": "Ler mais...",
-    "CommitImageName": "Nome da imagem confirmada"
+    "CommitImageName": "Nome da imagem confirmada",
+    "IdleCheckExpirationWarning": "As sessões podem ser encerradas com base nos resultados das verificações de inatividade."
   },
   "button": {
     "Cancel": "Cancelar",
@@ -476,7 +477,8 @@
     "Expand": "Expandir",
     "Clear": "Excluir",
     "Apply": "Aplicar",
-    "CopySomething": "Copiar {{name}}"
+    "CopySomething": "Copiar {{name}}",
+    "ClickForMoreDetails": "Clique para mais detalhes"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -1508,7 +1510,9 @@
     "WrongAPIServerAddress": "Endereço do servidor API incorreto.",
     "ReachedResourceLimitPleaseContact": "Atingiu seu limite de recursos. \nEntre em contato com o administrador.",
     "InvalidUrl": "Não é um URL válido",
-    "AllowsPositiveNumberOnly": "Permitir apenas números positivos."
+    "AllowsPositiveNumberOnly": "Permitir apenas números positivos.",
+    "OnlyIntegersAreAllowed": "Somente números inteiros são permitidos.",
+    "OnlyPositiveIntegersAreAllowed": "Apenas números inteiros positivos são permitidos."
   },
   "maxLength": {
     "64chars": "(máximo de 64 caracteres)",
@@ -1635,7 +1639,9 @@
     "ServiceNameMaxLength": "Insira 24 caracteres ou menos.",
     "ServiceNameCannotStartWithHyphen": "Hífens (-) não podem ser usados ​​em nenhuma das extremidades.",
     "Resources": "Recursos",
-    "NumberOfReplicas": "Número de réplicas"
+    "NumberOfReplicas": "Número de réplicas",
+    "AutoScalingRules": "Regras de escala automática",
+    "AddRules": "Adicione regras"
   },
   "totp": {
     "TotpSetupCompleted": "Ativado 2FA",
@@ -1757,5 +1763,27 @@
     "ReloadPage": "Recarregar a página",
     "ResetErrorBoundary": "Repor ErrorBoundary",
     "Title": "Ocorreu um erro."
+  },
+  "autoScalingRule": {
+    "AddAutoScalingRule": "Adicionar regra de escala automática",
+    "CoolDownSeconds": "Esfriar segundos",
+    "SuccessfullyUpdated": "A regra de escala automática foi atualizada com sucesso.",
+    "SuccessfullyCreated": "A regra de escala automática foi criada com sucesso.",
+    "EditAutoScalingRule": "Editar regra de escala automática",
+    "Comparator": "Comparador",
+    "Threshold": "Limite",
+    "StepSize": "Tamanho da etapa",
+    "MinReplicas": "Min Replicas",
+    "MaxReplicas": "Réplicas máximas",
+    "MetricName": "Nome métrico",
+    "MetricSource": "Fonte métrica"
+  },
+  "kernel": {
+    "KernelId": "ID do kernel",
+    "Role": "Papel",
+    "Status": "Status",
+    "AgentId": "ID do agente",
+    "ContainerId": "ID do contêiner",
+    "Kernels": "Kernels"
   }
 }

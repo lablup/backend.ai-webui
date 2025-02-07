@@ -58,7 +58,6 @@ interface GroupData {
 @customElement('backend-ai-data-view')
 export default class BackendAIData extends BackendAIPage {
   @property({ type: String }) apiMajorVersion = '';
-  @property({ type: String }) folderListFetchKey = 'first';
   @property({ type: Boolean }) is_admin = false;
   @property({ type: Boolean }) enableStorageProxy = false;
   @property({ type: Boolean }) enableInferenceWorkload = false;
@@ -814,9 +813,6 @@ export default class BackendAIData extends BackendAIPage {
       // already connected
       this._getStorageProxyInformation();
     }
-    document.addEventListener('backend-ai-folder-list-changed', () => {
-      this.folderListFetchKey = new Date().toISOString();
-    });
     document.addEventListener('backend-ai-vfolder-cloning', (e: any) => {
       if (e.detail) {
         const selectedItems = e.detail;

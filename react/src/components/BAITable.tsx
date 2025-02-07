@@ -1,9 +1,10 @@
+import { useThemeMode } from '../hooks/useThemeMode';
 import { useDebounce } from 'ahooks';
 import { ConfigProvider, GetProps, Table } from 'antd';
 import { createStyles } from 'antd-style';
 import { ColumnsType, ColumnType } from 'antd/es/table';
 import { TableProps } from 'antd/lib';
-import { ComponentToken } from 'antd/lib/table/style';
+import classNames from 'classnames';
 import _ from 'lodash';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Resizable, ResizeCallbackData } from 'react-resizable';
@@ -24,7 +25,8 @@ const useStyles = createStyles(({ token, css }) => ({
       whitespace: 'pre';
       wordwrap: 'break-word';
     }
-
+  `,
+  neoHeader: css`
     thead.ant-table-thead > tr > th.ant-table-cell {
       font-weight: 500;
       color: ${token.colorTextTertiary};
@@ -100,7 +102,7 @@ const ResizableTitle = (
 interface BAITableProps<RecordType extends object = any>
   extends TableProps<RecordType> {
   resizable?: boolean;
-  tableComponentToken?: ComponentToken;
+  neoStyle?: boolean;
 }
 
 const columnKeyOrIndexKey = (column: any, index: number) =>
@@ -117,11 +119,11 @@ const BAITable = <RecordType extends object = any>({
   resizable = false,
   columns,
   components,
-  tableComponentToken,
+  neoStyle,
   ...tableProps
 }: BAITableProps<RecordType>) => {
   const { styles } = useStyles();
-
+  const { isDarkMode } = useThemeMode();
   const [resizedColumnWidths, setResizedColumnWidths] = useState<
     Record<string, number>
   >(generateResizedColumnWidths(columns));
@@ -154,21 +156,24 @@ const BAITable = <RecordType extends object = any>({
 
   return (
     <ConfigProvider
-      theme={
-        tableComponentToken
-          ? {
-              components: {
-                Table: tableComponentToken,
-              },
-            }
-          : undefined
-      }
+      theme={{
+        components: {
+          Table:
+            !isDarkMode && neoStyle
+              ? {
+                  headerBg: '#E3E3E3',
+                }
+              : undefined,
+        },
+      }}
     >
       <Table
-        size="small"
         sortDirections={['descend', 'ascend', 'descend']}
         showSorterTooltip={false}
-        className={resizable ? styles.resizableTable : ''}
+        className={classNames(
+          resizable && styles.resizableTable,
+          neoStyle && styles.neoHeader,
+        )}
         components={
           resizable
             ? _.merge(components || {}, {

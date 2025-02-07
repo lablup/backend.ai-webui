@@ -24,6 +24,7 @@ const SessionReservation: React.FC<{
     `,
     sessionFrgmt,
   );
+
   return (
     <>
       {mode !== 'simple-elapsed' && dayjs(session.created_at).format('lll')}

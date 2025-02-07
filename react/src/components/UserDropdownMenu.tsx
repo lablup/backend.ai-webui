@@ -28,7 +28,7 @@ import {
   theme,
 } from 'antd';
 import _ from 'lodash';
-import React, { Suspense, useTransition } from 'react';
+import React, { CSSProperties, Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryLoader } from 'react-relay';
 
@@ -38,7 +38,8 @@ const UserProfileSettingModal = React.lazy(
 
 const UserDropdownMenu: React.FC<{
   buttonRender?: (defaultButton: React.ReactNode) => React.ReactNode;
-}> = ({ buttonRender = (btn) => btn }) => {
+  style?: CSSProperties;
+}> = ({ buttonRender = (btn) => btn, style }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [userInfo] = useCurrentUserInfo();
@@ -193,6 +194,7 @@ const UserDropdownMenu: React.FC<{
               justifyContent: 'center',
               marginTop: -2,
               fontSize: token.fontSizeLG,
+              ...style,
             }}
             // icon={<UserOutlined />}
             icon={
