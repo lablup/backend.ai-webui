@@ -1782,7 +1782,10 @@
     "SuccessfullyDeleted": "Auto scaling rule has been successfuly deleted.",
     "ConfirmDeleteAutoScalingRule": "Are you sure to delete auto scaling rule {{ autoScalingRule }} ?",
     "EditAutoScalingRule": "Edit Auto Scaling Rule",
-    "StepSize": "Step Size"
+    "StepSize": "Step Size",
+    "MIN/MAXReplicas": "Min / MAX Replicas",
+    "LastTriggered": "Last Triggered",
+    "CreatedAt": "Created At"
   },
   "kernel": {
     "KernelId": "Kernel ID",

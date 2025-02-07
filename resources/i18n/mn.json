@@ -1775,7 +1775,10 @@
     "MinReplicas": "Min хуулбар",
     "MaxReplicas": "Макс хуулбарууд",
     "MetricName": "Хнхийн нэр",
-    "MetricSource": "Метрийн эх сургай"
+    "MetricSource": "Метрийн эх сургай",
+    "MIN/MAXReplicas": "Мин / Макс хуулбарууд",
+    "LastTriggered": "Хамгийн сүүлд өдөөсөн",
+    "CreatedAt": "Үед"
   },
   "kernel": {
     "KernelId": "Kernel ID",

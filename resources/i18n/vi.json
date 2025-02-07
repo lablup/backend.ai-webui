@@ -1776,7 +1776,10 @@
     "MinReplicas": "Tối thiểu bản sao",
     "MaxReplicas": "Tối đa bản sao",
     "MetricName": "Tên số liệu",
-    "MetricSource": "Nguồn số liệu"
+    "MetricSource": "Nguồn số liệu",
+    "MIN/MAXReplicas": "Bản sao tối thiểu / Max",
+    "LastTriggered": "Lần cuối cùng được kích hoạt",
+    "CreatedAt": "Đã tạo thời gian"
   },
   "kernel": {
     "KernelId": "Kernel Id",

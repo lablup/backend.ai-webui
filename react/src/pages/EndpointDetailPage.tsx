@@ -640,7 +640,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               },
             },
             {
-              title: 'Metric Name',
+              title: t('autoScalingRule.MetricName'),
               dataIndex: 'metric_name',
               fixed: 'left',
               render: (text, row) => (
@@ -768,7 +768,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               ),
             },
             {
-              title: 'Metric Source',
+              title: t('autoScalingRule.MetricSource'),
               dataIndex: 'metric_source',
               render: (text, row) => <Tag>{row?.metric_source}</Tag>,
             },
@@ -789,7 +789,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               dataIndex: 'step_size',
             },
             {
-              title: 'Min/Max Replicas',
+              title: t('autoScalingRule.MIN/MAXReplicas'),
               render: (text, row) => (
                 <span>
                   Min: {row?.min_replicas} / Max: {row?.max_replicas}
@@ -802,7 +802,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               // render: (text, row) => <span>{row?.cooldown_seconds}</span>,
             },
             {
-              title: 'Last Triggered',
+              title: t('autoScalingRule.LastTriggered'),
               render: (text, row) => {
                 return (
                   <span>
@@ -815,7 +815,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               sorter: dayDiff,
             },
             {
-              title: 'Created at',
+              title: t('autoScalingRule.CreatedAt'),
               dataIndex: 'created_at',
               render: (text, row) => (
                 <span>{dayjs(row?.created_at).format('ll LT')}</span>

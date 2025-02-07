@@ -1756,7 +1756,10 @@
     "MinReplicas": "แบบจำลองขั้นต่ำ",
     "MaxReplicas": "แบบจำลองสูงสุด",
     "MetricName": "ชื่อเมตริก",
-    "MetricSource": "แหล่งวัด"
+    "MetricSource": "แหล่งวัด",
+    "MIN/MAXReplicas": "แบบจำลองขั้นต่ำ / สูงสุด",
+    "LastTriggered": "ทริกเกอร์ครั้งสุดท้าย",
+    "CreatedAt": "สร้างเวลา"
   },
   "kernel": {
     "KernelId": "ID เคอร์เนล",

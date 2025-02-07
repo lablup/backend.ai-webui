@@ -1776,7 +1776,10 @@
     "MinReplicas": "Repliki min",
     "MaxReplicas": "Max Replicas",
     "MetricName": "Nazwa metryczna",
-    "MetricSource": "Źródło metryczne"
+    "MetricSource": "Źródło metryczne",
+    "MIN/MAXReplicas": "Repliki min / max",
+    "LastTriggered": "Ostatni wyzwolenie",
+    "CreatedAt": "Utworzony czas"
   },
   "kernel": {
     "KernelId": "ID jądra",

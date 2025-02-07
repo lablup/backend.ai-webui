@@ -1775,7 +1775,10 @@
     "MinReplicas": "Min Replicas",
     "MaxReplicas": "Max replicas",
     "MetricName": "Metrinen nimi",
-    "MetricSource": "Metrilähde"
+    "MetricSource": "Metrilähde",
+    "MIN/MAXReplicas": "Min / max -kopiot",
+    "LastTriggered": "Viimeksi laukaistu",
+    "CreatedAt": "Luotu aika"
   },
   "kernel": {
     "KernelId": "Ytimen tunnus",
