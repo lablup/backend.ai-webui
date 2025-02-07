@@ -128,6 +128,20 @@ test.describe.parallel('config.toml', () => {
         )
         .click();
       await page
+        .locator('.ant-input-number-wrapper', {
+          hasText: 'Core',
+        })
+        .locator('input')
+        .fill('1');
+
+      await page
+        .locator('.ant-input-number-wrapper', {
+          hasText: 'Mem',
+        })
+        .locator('input.ant-input-number-input')
+        .fill('1');
+
+      await page
         .getByRole('button', { name: 'Skip to review double-right' })
         .click();
       await page.getByRole('button', { name: 'Copy' }).click();
