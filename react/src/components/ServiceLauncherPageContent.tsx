@@ -713,6 +713,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         }),
         vFolderID: model ? model : undefined,
         resourceGroup: currentGlobalResourceGroup,
+        allocationPreset: 'auto-select',
       };
 
   return (
