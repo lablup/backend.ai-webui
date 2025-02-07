@@ -1780,7 +1780,10 @@
     "SuccessfullyCreated": "오토스케일링 규칙이 성공적으로 작성되었습니다.",
     "Comparator": "연산자",
     "MetricName": "메트릭",
-    "MetricSource": "메트릭 소스"
+    "MetricSource": "메트릭 소스",
+    "MIN/MAXReplicas": "최소 / 최대 복제본 수",
+    "LastTriggered": "최근 실행 시점",
+    "CreatedAt": "생성 시간"
   },
   "kernel": {
     "KernelId": "커널 ID",

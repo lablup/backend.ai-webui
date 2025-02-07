@@ -1775,7 +1775,10 @@
     "MinReplicas": "最小複製品",
     "MaxReplicas": "最大復製品",
     "MetricName": "公制名稱",
-    "MetricSource": "公制源"
+    "MetricSource": "公制源",
+    "MIN/MAXReplicas": "最小複製品",
+    "LastTriggered": "最後觸發",
+    "CreatedAt": "創建的時間"
   },
   "kernel": {
     "KernelId": "內核ID",

@@ -270,7 +270,15 @@ const router = createBrowserRouter([
             handle: { labelKey: 'modelService.UpdateService' },
             element: (
               <BAIErrorBoundary>
-                <ServiceLauncherUpdatePage />
+                <Suspense
+                  fallback={
+                    <Flex direction="column" style={{ maxWidth: 700 }}>
+                      <Skeleton active />
+                    </Flex>
+                  }
+                >
+                  <ServiceLauncherUpdatePage />
+                </Suspense>
               </BAIErrorBoundary>
             ),
           },
