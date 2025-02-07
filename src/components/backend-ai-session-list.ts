@@ -3117,9 +3117,11 @@ export default class BackendAISessionList extends BackendAIPage {
               white-space: pre-wrap;
               white-space-collapse: collapse;
               word-break: break-all;
+            }
+            #session-name-field[data-allow-detail-panel='true'] {
               cursor: pointer;
             }
-            #session-name-field:hover {
+            #session-name-field[data-allow-detail-panel='true']:hover {
               text-decoration: underline;
               color: var(--token-colorLink);
             }
@@ -3147,6 +3149,9 @@ export default class BackendAISessionList extends BackendAIPage {
             <div class="horizontal center center-justified layout">
               <pre
                 id="session-name-field"
+                data-allow-detail-panel=${globalThis.backendaiclient.supports(
+                  'session-node',
+                )}
                 @click="${() => this.triggerOpenSessionDetailDrawer(rowData)}"
                 @keyup="${() => {}}"
               >

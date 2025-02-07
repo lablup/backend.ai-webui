@@ -654,7 +654,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               title: t('modelService.SessionId'),
               dataIndex: 'session',
               render: (sessionId) => {
-                return (
+                return baiClient.supports('session-node') ? (
                   <Typography.Link
                     onClick={() => {
                       setSelectedSessionId(sessionId);
@@ -662,6 +662,8 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                   >
                     {sessionId}
                   </Typography.Link>
+                ) : (
+                  <Typography.Text>{sessionId}</Typography.Text>
                 );
               },
             },

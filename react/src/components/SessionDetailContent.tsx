@@ -220,25 +220,27 @@ const SessionDetailContent: React.FC<{
             )}
           </Descriptions.Item>
           <Descriptions.Item label={t('session.launcher.MountedFolders')}>
-            {_.map(
-              _.zip(legacy_session?.mounts, session?.vfolder_mounts),
-              (mountInfo) => {
-                const [name, id] = mountInfo;
-                return (
-                  <Button
-                    key={id}
-                    type="link"
-                    size="small"
-                    icon={<FolderOutlined />}
-                    onClick={() => {
-                      open(id ?? '');
-                    }}
-                  >
-                    {name}
-                  </Button>
-                );
-              },
-            )}
+            {baiClient.supports('vfolder-mounts')
+              ? _.map(
+                  _.zip(legacy_session?.mounts, session?.vfolder_mounts),
+                  (mountInfo) => {
+                    const [name, id] = mountInfo;
+                    return (
+                      <Button
+                        key={id}
+                        type="link"
+                        size="small"
+                        icon={<FolderOutlined />}
+                        onClick={() => {
+                          open(id ?? '');
+                        }}
+                      >
+                        {name}
+                      </Button>
+                    );
+                  },
+                )
+              : legacy_session?.mounts?.join(', ')}
           </Descriptions.Item>
           <Descriptions.Item label={t('session.launcher.ResourceAllocation')}>
             <Flex gap={'sm'} wrap="wrap">
