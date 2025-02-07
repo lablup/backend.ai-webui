@@ -46,9 +46,11 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
     <>
       <BAITable<(typeof filteredSessions)[0]>
         resizable
+        neoStyle
         // TODO: fix type
         // @ts-ignore
         rowKey={(record) => record.row_id as string}
+        size="small"
         dataSource={filteredSessions}
         scroll={{ x: 'max-content' }}
         columns={[
