@@ -60,7 +60,7 @@ const fetchFn: FetchFunction = async (
   const result =
     //@ts-ignore
     (await globalThis.backendaiclient
-      ?._wrapWithPromise(reqInfo, false, null, 10000, 0)
+      ?._wrapWithPromise(reqInfo)
       .catch((err: any) => {
         if (err.isError && err.statusCode === 401) {
           const error = new Error('GraphQL Authorization Error');

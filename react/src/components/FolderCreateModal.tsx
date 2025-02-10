@@ -135,6 +135,9 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
             document.dispatchEvent(
               new CustomEvent('backend-ai-folder-list-changed'),
             );
+            document.dispatchEvent(
+              new CustomEvent('backend-ai-folder-created'),
+            );
             onRequestClose(result);
           },
           onError: (error) => {

@@ -2,6 +2,7 @@ import { filterEmptyItem } from '../../helper';
 import { useCustomThemeConfig } from '../../helper/customThemeConfig';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
+import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import usePrimaryColors from '../../hooks/usePrimaryColors';
 import EndpointsIcon from '../BAIIcons/EndpointsIcon';
 import MyEnvironmentsIcon from '../BAIIcons/MyEnvironmentsIcon';
@@ -84,6 +85,9 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const gridBreakpoint = Grid.useBreakpoint();
   const primaryColors = usePrimaryColors();
 
+  const [experimentalNeoSessionList] = useBAISettingUserState(
+    'experimental_neo_session_list',
+  );
   const generalMenu = filterEmptyItem<ItemType>([
     {
       label: <WebUILink to="/summary">{t('webui.menu.Summary')}</WebUILink>,
@@ -91,7 +95,11 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       key: 'summary',
     },
     {
-      label: <WebUILink to="/job">{t('webui.menu.Sessions')}</WebUILink>,
+      label: (
+        <WebUILink to={experimentalNeoSessionList ? '/session' : '/job'}>
+          {t('webui.menu.Sessions')}
+        </WebUILink>
+      ),
       icon: <SessionsIcon style={{ color: token.colorPrimary }} />,
       key: 'job',
     },

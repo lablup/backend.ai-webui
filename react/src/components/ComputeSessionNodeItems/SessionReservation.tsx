@@ -1,4 +1,4 @@
-import { useSuspendedBackendaiClient } from '../../hooks';
+import { formatDurationAsDays } from '../../helper';
 import BAIIntervalView from '../BAIIntervalView';
 import DoubleTag from '../DoubleTag';
 import { SessionReservationFragment$key } from './__generated__/SessionReservationFragment.graphql';
@@ -10,40 +10,45 @@ import { useFragment } from 'react-relay';
 
 const SessionReservation: React.FC<{
   sessionFrgmt: SessionReservationFragment$key;
-}> = ({ sessionFrgmt }) => {
-  const baiClient = useSuspendedBackendaiClient();
+  mode?: 'simple-elapsed' | 'detail';
+}> = ({ sessionFrgmt, mode = 'detail' }) => {
   const { t } = useTranslation();
   const session = useFragment(
     graphql`
       fragment SessionReservationFragment on ComputeSessionNode {
         id
         created_at
+        starts_at
         terminated_at
       }
     `,
     sessionFrgmt,
   );
+
   return (
     <>
-      {dayjs(session.created_at).format('lll')}
+      {mode !== 'simple-elapsed' && dayjs(session.created_at).format('lll')}
       <BAIIntervalView
+        key={session.id}
         callback={() => {
-          return session?.created_at
-            ? baiClient.utils.elapsedTime(
-                session.created_at,
-                session?.terminated_at,
-              )
+          const begin = session?.starts_at || session?.created_at;
+          return begin && dayjs(begin).isBefore()
+            ? formatDurationAsDays(begin, session?.terminated_at)
             : '-';
         }}
         delay={1000}
-        render={(intervalValue) => (
-          <DoubleTag
-            values={[
-              { label: t('session.ElapsedTime') },
-              { label: intervalValue },
-            ]}
-          />
-        )}
+        render={(intervalValue) =>
+          mode === 'simple-elapsed' ? (
+            intervalValue
+          ) : (
+            <DoubleTag
+              values={[
+                { label: t('session.ElapsedTime') },
+                { label: intervalValue },
+              ]}
+            />
+          )
+        }
       />
     </>
   );

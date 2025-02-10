@@ -532,7 +532,7 @@ const SessionLauncherPage = () => {
                 sessionInfo.kernelName,
                 formattedSessionName,
                 sessionInfo.config,
-                30000,
+                undefined,
                 sessionInfo.architecture,
                 sessionInfo.batchTimeout,
               )
@@ -570,7 +570,7 @@ const SessionLauncherPage = () => {
           backgroundTask: {
             promise: Promise.all(sessionPromises),
             status: 'pending',
-            statusDescriptions: {
+            onChange: {
               pending: t('session.PreparingSession'),
               resolved: t('eduapi.ComputeSessionPrepared'),
             },

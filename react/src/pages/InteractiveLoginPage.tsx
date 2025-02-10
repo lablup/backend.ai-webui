@@ -1,5 +1,8 @@
 import Flex from '../components/Flex';
-import { CSSTokenVariables } from '../components/MainLayout/MainLayout';
+import {
+  CSSTokenVariables,
+  NotificationForAnonymous,
+} from '../components/MainLayout/MainLayout';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { Button, Card, Descriptions } from 'antd';
@@ -12,6 +15,7 @@ const InteractiveLoginPage = () => {
   return (
     <>
       <CSSTokenVariables />
+      <NotificationForAnonymous />
       {/* @ts-ignore */}
       <backend-ai-webui id="webui-shell" />
       <Suspense>

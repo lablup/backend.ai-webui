@@ -1,3 +1,6 @@
+import AutoScalingRuleEditorModal, {
+  COMPARATOR_LABELS,
+} from '../components/AutoScalingRuleEditorModal';
 import CopyableCodeText from '../components/CopyableCodeText';
 import EndpointOwnerInfo from '../components/EndpointOwnerInfo';
 import EndpointStatusTag from '../components/EndpointStatusTag';
@@ -9,6 +12,7 @@ import InferenceSessionErrorModal from '../components/InferenceSessionErrorModal
 import ResourceNumber from '../components/ResourceNumber';
 import SessionDetailDrawer from '../components/SessionDetailDrawer';
 import VFolderLazyView from '../components/VFolderLazyView';
+import { AutoScalingRuleEditorModalFragment$key } from '../components/__generated__/AutoScalingRuleEditorModalFragment.graphql';
 import { InferenceSessionErrorModalFragment$key } from '../components/__generated__/InferenceSessionErrorModalFragment.graphql';
 import ChatUIModal from '../components/lablupTalkativotUI/ChatUIModal';
 import { baiSignedRequestWithPromise, filterNonNullItems } from '../helper';
@@ -21,6 +25,7 @@ import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { isDestroyingStatus } from './EndpointListPage';
+import { EndpointDetailPageAutoScalingRuleDeleteMutation } from './__generated__/EndpointDetailPageAutoScalingRuleDeleteMutation.graphql';
 import {
   EndpointDetailPageQuery,
   EndpointDetailPageQuery$data,
@@ -29,6 +34,7 @@ import {
   ArrowRightOutlined,
   CheckOutlined,
   CloseOutlined,
+  DeleteOutlined,
   FolderOutlined,
   LoadingOutlined,
   PlusOutlined,
@@ -44,6 +50,7 @@ import {
   Button,
   Card,
   Descriptions,
+  Popconfirm,
   Spin,
   Table,
   Tag,
@@ -58,7 +65,7 @@ import _ from 'lodash';
 import { BotMessageSquareIcon } from 'lucide-react';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { useLazyLoadQuery, useMutation } from 'react-relay';
 import { useParams } from 'react-router-dom';
 
 interface RoutingInfo {
@@ -83,7 +90,6 @@ interface EndpointDetailPageProps {}
 
 type EndPoint = NonNullable<EndpointDetailPageQuery$data['endpoint']>;
 type Routing = NonNullable<NonNullable<EndPoint['routings']>[0]>;
-
 const dayDiff = (a: any, b: any) => {
   const date1 = dayjs(a.created_at);
   const date2 = dayjs(b.created_at);
@@ -106,22 +112,38 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   const [isPendingClearError, startClearErrorTransition] = useTransition();
   const [selectedSessionErrorForModal, setSelectedSessionErrorForModal] =
     useState<InferenceSessionErrorModalFragment$key | null>(null);
+
+  const [editingAutoScalingRule, setEditingAutoScalingRule] =
+    useState<AutoScalingRuleEditorModalFragment$key | null>(null);
   const [isOpenTokenGenerationModal, setIsOpenTokenGenerationModal] =
     useState(false);
   const [openChatModal, setOpenChatModal] = useState(false);
+  const [isOpenAutoScalingRuleModal, setIsOpenAutoScalingRuleModal] =
+    useState(false);
   const [currentUser] = useCurrentUserInfo();
   // const curProject = useCurrentProjectValue();
   const baiClient = useSuspendedBackendaiClient();
   const webuiNavigate = useWebUINavigate();
   const { open } = useFolderExplorerOpener();
   const [selectedSessionId, setSelectedSessionId] = useState<string>();
-  const { endpoint, endpoint_token_list } =
+  const isSupportAutoScalingRule =
+    baiClient.isManagerVersionCompatibleWith('25.1.0');
+  const { endpoint, endpoint_token_list, endpoint_auto_scaling_rules } =
     useLazyLoadQuery<EndpointDetailPageQuery>(
       graphql`
         query EndpointDetailPageQuery(
           $endpointId: UUID!
           $tokenListOffset: Int!
           $tokenListLimit: Int!
+          $autoScalingRules_endpointId: String!
+          $autoScalingRules_filter: String
+          $autoScalingRules_offset: Int
+          $autoScalingRules_order: String
+          $autoScalingRules_before: String
+          $autoScalingRules_after: String
+          $autoScalingRules_first: Int
+          $autoScalingRules_last: Int
+          $skipScalingRules: Boolean!
         ) {
           endpoint(endpoint_id: $endpointId) {
             name
@@ -184,6 +206,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             ...EndpointOwnerInfoFragment
             ...EndpointStatusTagFragment
             ...ChatUIModalFragment
+            ...ServiceLauncherPageContentFragment
           }
           endpoint_token_list(
             offset: $tokenListOffset
@@ -203,12 +226,52 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             }
             ...ChatUIModalEndpointTokenListFragment
           }
+          endpoint_auto_scaling_rules: endpoint_auto_scaling_rule_nodes(
+            endpoint: $autoScalingRules_endpointId
+            filter: $autoScalingRules_filter
+            order: $autoScalingRules_order
+            offset: $autoScalingRules_offset
+            before: $autoScalingRules_before
+            after: $autoScalingRules_after
+            first: $autoScalingRules_first
+            last: $autoScalingRules_last
+          ) @skipOnClient(if: $skipScalingRules) {
+            pageInfo {
+              hasNextPage
+              hasPreviousPage
+            }
+            edges {
+              node {
+                id
+                endpoint
+                metric_name
+                metric_source
+                threshold
+                comparator
+                step_size
+                cooldown_seconds
+                min_replicas
+                max_replicas
+                created_at
+                last_triggered_at
+                ...AutoScalingRuleEditorModalFragment
+              }
+            }
+          }
         }
       `,
       {
         tokenListOffset: baiPaginationOption.offset,
         tokenListLimit: baiPaginationOption.limit,
         endpointId: serviceId || '',
+        autoScalingRules_endpointId: serviceId as string,
+        autoScalingRules_filter: undefined,
+        autoScalingRules_offset: undefined,
+        autoScalingRules_before: undefined,
+        autoScalingRules_after: undefined,
+        autoScalingRules_first: undefined,
+        autoScalingRules_last: undefined,
+        skipScalingRules: !isSupportAutoScalingRule,
       },
       {
         fetchPolicy:
@@ -250,7 +313,18 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     );
     setSelectedSessionErrorForModal(firstMatchedSessionError || null);
   };
-  // const { t } = useTranslation();
+
+  const [
+    commitDeleteAutoScalingRuleMutation,
+    isInFlightDeleteAutoScalingRuleMutation,
+  ] = useMutation<EndpointDetailPageAutoScalingRuleDeleteMutation>(graphql`
+    mutation EndpointDetailPageAutoScalingRuleDeleteMutation($id: String!) {
+      delete_endpoint_auto_scaling_rule_node(id: $id) {
+        ok
+        msg
+      }
+    }
+  `);
 
   // return color of tag by status
   const applyStatusColor = (status: string = '') => {
@@ -268,6 +342,10 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     }
     return color;
   };
+
+  const autoScalingRules = _.map(endpoint_auto_scaling_rules?.edges, (edge) => {
+    return edge?.node;
+  });
 
   const fullImageString =
     baiClient.supports('modify-endpoint') && endpoint?.image_object
@@ -432,6 +510,20 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     },
   });
 
+  // TODO: show current Autoscaling Rule in human-friendly way
+  // items.push({
+  //   label: 'Autoscaling Rule',
+  //   children: (
+  //     <>
+  //       <Tag>vllm_avg_prompt_throughput_toks_per_s</Tag>
+  //       <Tag>LESS_THAN</Tag>
+  //       <Tag>Cool down sec: 300</Tag>
+  //       <Tag>Min Replica #: 1</Tag>
+  //       <Tag>Max Replica #: 3</Tag>
+  //     </>
+  //   ),
+  // });
+
   return (
     <Flex direction="column" align="stretch" gap="sm">
       <Breadcrumb
@@ -522,6 +614,232 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           items={items}
         ></Descriptions>
       </Card>
+      {isSupportAutoScalingRule && (
+        <Card
+          title={t('modelService.AutoScalingRules')}
+          extra={
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              disabled={isDestroyingStatus(
+                endpoint?.replicas ?? endpoint?.desired_session_count,
+                endpoint?.status,
+              )}
+              onClick={() => {
+                setIsOpenAutoScalingRuleModal(true);
+              }}
+            >
+              {t('modelService.AddRules')}
+            </Button>
+          }
+        >
+          <Table
+            scroll={{ x: 'max-content' }}
+            rowKey={'id'}
+            columns={[
+              {
+                title: '#',
+                fixed: 'left',
+                render: (id, record, index) => {
+                  ++index;
+                  return index;
+                },
+              },
+              {
+                title: t('autoScalingRule.MetricName'),
+                dataIndex: 'metric_name',
+                fixed: 'left',
+                render: (text, row) => (
+                  <Typography.Text ellipsis copyable style={{ width: 150 }}>
+                    {row?.metric_name}
+                  </Typography.Text>
+                ),
+              },
+              {
+                title: t('modelService.Controls'),
+                dataIndex: 'controls',
+                key: 'controls',
+                render: (text, row) => (
+                  <Flex direction="row" align="stretch">
+                    <Button
+                      type="text"
+                      icon={<SettingOutlined />}
+                      style={
+                        isDestroyingStatus(
+                          endpoint?.replicas ?? endpoint?.desired_session_count,
+                          endpoint?.status,
+                        ) ||
+                        (!!endpoint?.created_user_email &&
+                          endpoint?.created_user_email !== currentUser.email)
+                          ? {
+                              color: token.colorTextDisabled,
+                            }
+                          : {
+                              color: token.colorInfo,
+                            }
+                      }
+                      disabled={
+                        isDestroyingStatus(
+                          endpoint?.replicas ?? endpoint?.desired_session_count,
+                          endpoint?.status,
+                        ) ||
+                        (!!endpoint?.created_user_email &&
+                          endpoint?.created_user_email !== currentUser.email)
+                      }
+                      onClick={() => {
+                        if (row) {
+                          setEditingAutoScalingRule(row);
+                          setIsOpenAutoScalingRuleModal(true);
+                        }
+                      }}
+                    />
+                    <Popconfirm
+                      title={t('dialog.warning.CannotBeUndone')}
+                      okText={t('button.Delete')}
+                      okButtonProps={{
+                        danger: true,
+                      }}
+                      disabled={isInFlightDeleteAutoScalingRuleMutation}
+                      onConfirm={() => {
+                        if (autoScalingRules) {
+                          commitDeleteAutoScalingRuleMutation({
+                            variables: {
+                              id: row?.id as string,
+                            },
+                            onCompleted: (res, errors) => {
+                              if (
+                                !res?.delete_endpoint_auto_scaling_rule_node?.ok
+                              ) {
+                                message.error(
+                                  res?.delete_endpoint_auto_scaling_rule_node
+                                    ?.msg,
+                                );
+                              } else if (errors && errors.length > 0) {
+                                const errorMsgList = _.map(
+                                  errors,
+                                  (error) =>
+                                    error.message || t('dialog.ErrorOccurred'),
+                                );
+                                for (const error of errorMsgList) {
+                                  message.error(error, 2.5);
+                                }
+                              } else {
+                                setEditingAutoScalingRule(null);
+                                startRefetchTransition(() => {
+                                  updateFetchKey();
+                                });
+                                message.success({
+                                  key: 'autoscaling-rule-deleted',
+                                  content: t(
+                                    'autoScalingRule.SuccessfullyDeleted',
+                                  ),
+                                });
+                              }
+                            },
+                            onError: (error) => {
+                              message.error(
+                                error?.message || t('dialog.ErrorOccurred'),
+                              );
+                            },
+                          });
+                        }
+                      }}
+                    >
+                      <Button
+                        type="text"
+                        icon={
+                          <DeleteOutlined
+                            style={
+                              isDestroyingStatus(
+                                endpoint?.replicas ??
+                                  endpoint?.desired_session_count,
+                                endpoint?.status,
+                              )
+                                ? undefined
+                                : {
+                                    color: token.colorError,
+                                  }
+                            }
+                          />
+                        }
+                        disabled={false}
+                        onClick={() => {
+                          if (row) {
+                            setEditingAutoScalingRule(row);
+                          }
+                        }}
+                      />
+                    </Popconfirm>
+                  </Flex>
+                ),
+              },
+              {
+                title: t('autoScalingRule.MetricSource'),
+                dataIndex: 'metric_source',
+                render: (text, row) => <Tag>{row?.metric_source}</Tag>,
+              },
+              {
+                title: t('autoScalingRule.Comparator'),
+                dataIndex: 'comparator',
+                render: (text, row) => (
+                  // @ts-ignore
+                  <Tooltip title={text}>{COMPARATOR_LABELS[text]}</Tooltip>
+                ),
+              },
+              {
+                title: t('autoScalingRule.Threshold'),
+                render: (text, row) => <span>{row?.threshold}</span>,
+              },
+              {
+                title: t('autoScalingRule.StepSize'),
+                dataIndex: 'step_size',
+              },
+              {
+                title: t('autoScalingRule.MIN/MAXReplicas'),
+                render: (text, row) => (
+                  <span>
+                    Min: {row?.min_replicas} / Max: {row?.max_replicas}
+                  </span>
+                ),
+              },
+              {
+                title: t('autoScalingRule.CoolDownSeconds'),
+                dataIndex: 'cooldown_seconds',
+                // render: (text, row) => <span>{row?.cooldown_seconds}</span>,
+              },
+              {
+                title: t('autoScalingRule.LastTriggered'),
+                render: (text, row) => {
+                  return (
+                    <span>
+                      {row?.last_triggered_at
+                        ? dayjs
+                            .utc(row?.last_triggered_at)
+                            .tz()
+                            .format('ll LTS')
+                        : `-`}
+                    </span>
+                  );
+                },
+                sorter: dayDiff,
+              },
+              {
+                title: t('autoScalingRule.CreatedAt'),
+                dataIndex: 'created_at',
+                render: (text, row) => (
+                  <span>{dayjs(row?.created_at).format('ll LT')}</span>
+                ),
+                sorter: dayDiff,
+              },
+            ]}
+            pagination={false}
+            sortDirections={['descend', 'ascend', 'descend']}
+            showSorterTooltip={false}
+            dataSource={autoScalingRules}
+            bordered
+          ></Table>
+        </Card>
+      )}
       <Card
         title={t('modelService.GeneratedTokens')}
         extra={
@@ -551,7 +869,6 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                 ++index;
                 return index;
               },
-              showSorterTooltip: false,
             },
             {
               title: 'Token',
@@ -587,8 +904,6 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                   }
                 </span>
               ),
-              defaultSortOrder: 'descend',
-              sortDirections: ['descend', 'ascend', 'descend'],
               sorter: dayDiff,
             },
             {
@@ -597,11 +912,11 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               render: (text, row) => (
                 <span>{dayjs(row.created_at).format('ll LT')}</span>
               ),
-              defaultSortOrder: 'descend',
-              sortDirections: ['descend', 'ascend', 'descend'],
               sorter: dayDiff,
             },
           ]}
+          sortDirections={['descend', 'ascend', 'descend']}
+          showSorterTooltip={false}
           pagination={false}
           dataSource={filterNonNullItems(endpoint_token_list?.items)}
           bordered
@@ -654,7 +969,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               title: t('modelService.SessionId'),
               dataIndex: 'session',
               render: (sessionId) => {
-                return (
+                return baiClient.supports('session-node') ? (
                   <Typography.Link
                     onClick={() => {
                       setSelectedSessionId(sessionId);
@@ -662,6 +977,8 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                   >
                     {sessionId}
                   </Typography.Link>
+                ) : (
+                  <Typography.Text>{sessionId}</Typography.Text>
                 );
               },
             },
@@ -727,6 +1044,22 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           setOpenChatModal(false);
         }}
       />
+      {isSupportAutoScalingRule && (
+        <AutoScalingRuleEditorModal
+          open={isOpenAutoScalingRuleModal}
+          endpoint_id={endpoint?.endpoint_id as string}
+          autoScalingRuleFrgmt={editingAutoScalingRule}
+          onRequestClose={(success) => {
+            setIsOpenAutoScalingRuleModal(!isOpenAutoScalingRuleModal);
+            setEditingAutoScalingRule(null);
+            if (success) {
+              startRefetchTransition(() => {
+                updateFetchKey();
+              });
+            }
+          }}
+        />
+      )}
       <SessionDetailDrawer
         open={!selectedSessionId}
         sessionId={selectedSessionId}

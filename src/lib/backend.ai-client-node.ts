@@ -3747,7 +3747,7 @@ class Maintenance {
           `}`;
         v = {};
       }
-      return this.client.query(q, v, null, 600 * 1000);
+      return this.client.query(q, v, null);
     } else {
       return Promise.resolve(false);
     }

@@ -1,4 +1,5 @@
 import Flex from './Flex';
+import { HEADER_Z_INDEX_IN_MAIN_LAYOUT } from './MainLayout/MainLayout';
 import { Button, ConfigProvider, theme, Tooltip, Typography } from 'antd';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import React from 'react';
@@ -27,7 +28,7 @@ const SiderToggleButton: React.FC<SiderToggleButtonProps> = ({
         right: 0,
         transform: 'translateX(12px)',
         paddingTop: buttonTop,
-        zIndex: 1,
+        zIndex: HEADER_Z_INDEX_IN_MAIN_LAYOUT + 1,
       }}
       direction="column"
       justify={buttonTop ? 'start' : 'center'}
