@@ -767,7 +767,8 @@
       "RenameAFolder": "フォルダー名の変更",
       "Filename": "ファイル名",
       "RemoveFileExtension": "取り除く ",
-      "NoSharedFolders": "共有フォルダーはありません"
+      "NoSharedFolders": "共有フォルダーはありません",
+      "Allowed": "許可された"
     },
     "invitation": {
       "NoValidEmails": "有効なメールが入力されていません",
@@ -1092,7 +1093,9 @@
     "MemorySizeExceedsLimit": "メモリ サイズは 300 PiB 未満である必要があります",
     "MaxNetworkCount": "最大ネットワーク数",
     "MaxPendingSessionCount": "最大保留セッション数",
-    "MaxConcurrentSFTPSessions": "最大同時SFTPセッション数"
+    "MaxConcurrentSFTPSessions": "最大同時SFTPセッション数",
+    "DefaultForUnspecified": "未指定のデフォルト",
+    "MaxPendingSessionResourceSlots": "保留中のセッション リソースの最大数"
   },
   "registry": {
     "Hostname": "ホスト名",

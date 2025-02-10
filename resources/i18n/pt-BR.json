@@ -767,7 +767,8 @@
       "RenameAFolder": "Renomear pasta",
       "Filename": "Nome do arquivo",
       "RemoveFileExtension": "Remover ",
-      "NoSharedFolders": "Nenhuma pasta compartilhada"
+      "NoSharedFolders": "Nenhuma pasta compartilhada",
+      "Allowed": "Permitido"
     },
     "invitation": {
       "NoValidEmails": "Nenhum e-mail válido foi inserido",
@@ -1092,7 +1093,9 @@
     "MemorySizeExceedsLimit": "O tamanho da memória deve ser inferior a 300 PiB",
     "MaxNetworkCount": "Contagem máxima de rede",
     "MaxPendingSessionCount": "Contagem máxima de sessões pendentes",
-    "MaxConcurrentSFTPSessions": "Máximo de sessões SFTP simultâneas"
+    "MaxConcurrentSFTPSessions": "Máximo de sessões SFTP simultâneas",
+    "DefaultForUnspecified": "Padrão para não especificado",
+    "MaxPendingSessionResourceSlots": "Máximo de recursos de sessão pendente"
   },
   "registry": {
     "Hostname": "nome de anfitrião",
