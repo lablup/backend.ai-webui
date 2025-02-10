@@ -18,7 +18,7 @@ const ServiceLauncherPage: React.FC = () => {
       endpointId: endpointId || '',
     },
     {
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'store-and-network',
     },
   );
 

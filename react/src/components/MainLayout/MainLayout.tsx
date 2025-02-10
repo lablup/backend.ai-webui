@@ -187,11 +187,11 @@ function MainLayout() {
                     zIndex: HEADER_Z_INDEX_IN_MAIN_LAYOUT,
                   }}
                 >
-                  <NetworkStatusBanner />
                   <WebUIHeader
                     onClickMenuIcon={() => setSideCollapsed((v) => !v)}
                     containerElement={contentScrollFlexRef.current}
                   />
+                  <NetworkStatusBanner />
                 </div>
               </Suspense>
               <Suspense>
@@ -228,7 +228,7 @@ function MainLayout() {
   );
 }
 
-const NotificationForAnonymous = () => {
+export const NotificationForAnonymous = () => {
   const app = App.useApp();
   useEffect(() => {
     const handler = (e: any) => {

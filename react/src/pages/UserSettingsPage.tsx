@@ -46,6 +46,8 @@ const UserPreferencesPage = () => {
   ] = useToggle(false);
   const [preserveLogin, setPreserveLogin] =
     useBAISettingUserState('preserve_login');
+  const [experimentalNeoSessionList, setExperimentalNeoSessionList] =
+    useBAISettingUserState('experimental_neo_session_list');
   const [shellInfo, setShellInfo] = useState<ShellScriptType>('bootstrap');
   const [isOpenShellScriptEditModal, { toggle: toggleShellScriptEditModal }] =
     useToggle(false);
@@ -236,6 +238,22 @@ const UserPreferencesPage = () => {
               {t('button.Config')}
             </Button>
           ),
+        },
+      ],
+    },
+    {
+      title: t('userSettings.ExperimentalFeatures'),
+      settingItems: [
+        {
+          type: 'checkbox',
+          title: t('userSettings.NEOSessionList'),
+          description: t('general.Enabled'),
+          defaultValue: false,
+          value: experimentalNeoSessionList,
+          setValue: setExperimentalNeoSessionList,
+          onChange: (e) => {
+            setExperimentalNeoSessionList(e.target.checked);
+          },
         },
       ],
     },

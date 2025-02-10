@@ -1,8 +1,10 @@
+import { useThemeMode } from '../hooks/useThemeMode';
 import { useDebounce } from 'ahooks';
-import { GetProps, Table } from 'antd';
+import { ConfigProvider, GetProps, Table } from 'antd';
 import { createStyles } from 'antd-style';
 import { ColumnsType, ColumnType } from 'antd/es/table';
 import { TableProps } from 'antd/lib';
+import classNames from 'classnames';
 import _ from 'lodash';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Resizable, ResizeCallbackData } from 'react-resizable';
@@ -22,6 +24,12 @@ const useStyles = createStyles(({ token, css }) => ({
       overflow: hidden;
       whitespace: 'pre';
       wordwrap: 'break-word';
+    }
+  `,
+  neoHeader: css`
+    thead.ant-table-thead > tr > th.ant-table-cell {
+      font-weight: 500;
+      color: ${token.colorTextTertiary};
     }
   `,
 }));
@@ -94,6 +102,7 @@ const ResizableTitle = (
 interface BAITableProps<RecordType extends object = any>
   extends TableProps<RecordType> {
   resizable?: boolean;
+  neoStyle?: boolean;
 }
 
 const columnKeyOrIndexKey = (column: any, index: number) =>
@@ -110,10 +119,11 @@ const BAITable = <RecordType extends object = any>({
   resizable = false,
   columns,
   components,
+  neoStyle,
   ...tableProps
 }: BAITableProps<RecordType>) => {
   const { styles } = useStyles();
-
+  const { isDarkMode } = useThemeMode();
   const [resizedColumnWidths, setResizedColumnWidths] = useState<
     Record<string, number>
   >(generateResizedColumnWidths(columns));
@@ -145,22 +155,38 @@ const BAITable = <RecordType extends object = any>({
   }, [resizable, columns, resizedColumnWidths]);
 
   return (
-    <Table
-      sortDirections={['descend', 'ascend', 'descend']}
-      showSorterTooltip={false}
-      className={resizable ? styles.resizableTable : ''}
-      components={
-        resizable
-          ? _.merge(components || {}, {
-              header: {
-                cell: ResizableTitle,
-              },
-            })
-          : components
-      }
-      columns={mergedColumns}
-      {...tableProps}
-    />
+    <ConfigProvider
+      theme={{
+        components: {
+          Table:
+            !isDarkMode && neoStyle
+              ? {
+                  headerBg: '#E3E3E3',
+                }
+              : undefined,
+        },
+      }}
+    >
+      <Table
+        sortDirections={['descend', 'ascend', 'descend']}
+        showSorterTooltip={false}
+        className={classNames(
+          resizable && styles.resizableTable,
+          neoStyle && styles.neoHeader,
+        )}
+        components={
+          resizable
+            ? _.merge(components || {}, {
+                header: {
+                  cell: ResizableTitle,
+                },
+              })
+            : components
+        }
+        columns={mergedColumns}
+        {...tableProps}
+      />
+    </ConfigProvider>
   );
 };
 

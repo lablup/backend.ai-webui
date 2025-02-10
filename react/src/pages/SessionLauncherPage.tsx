@@ -532,7 +532,7 @@ const SessionLauncherPage = () => {
                 sessionInfo.kernelName,
                 formattedSessionName,
                 sessionInfo.config,
-                30000,
+                undefined,
                 sessionInfo.architecture,
                 sessionInfo.batchTimeout,
               )

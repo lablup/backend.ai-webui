@@ -200,6 +200,7 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
     `,
     sessionFrgmt,
   );
+
   const [isForce, setIsForce] = useState(false);
   const userRole = useCurrentUserRole();
 

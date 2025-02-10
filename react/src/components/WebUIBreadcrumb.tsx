@@ -85,7 +85,7 @@ const WebUIBreadcrumb: React.FC<WebUIBreadcrumbProps> = (props) => {
               style={{
                 margin: 0,
                 padding: 0,
-                height: 'unset'
+                height: 'unset',
               }}
             >
               {currentRoute.title}

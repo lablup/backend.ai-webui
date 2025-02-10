@@ -63,6 +63,7 @@ const MaintenanceSettingList = () => {
                     },
                   },
                 },
+                duration: 0,
               };
             } else {
               throw new Error(t('maintenance.RescanFailed'));

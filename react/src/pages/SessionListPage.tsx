@@ -9,7 +9,7 @@ import { Alert, Button, Card, Segmented, Typography, theme } from 'antd';
 import React, { PropsWithChildren, Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const RUNNINGS = [
+export const RUNNINGS = [
   'RUNNING',
   'RESTARTING',
   'TERMINATING',
