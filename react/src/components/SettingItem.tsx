@@ -67,9 +67,6 @@ const SettingItem: React.FC<SettingItemProps> = ({
           onChange={onChange}
           disabled={disabled}
           className={styles.baiSettingItemCheckbox}
-          style={{
-            marginTop: token.marginXS,
-          }}
         >
           {description}
         </Checkbox>
