@@ -1,6 +1,7 @@
 import Flex from './Flex';
 import { Badge, Checkbox, Select, SelectProps, Typography, theme } from 'antd';
 import { createStyles } from 'antd-style';
+import _ from 'lodash';
 import React, { ReactElement, ReactNode } from 'react';
 
 export interface SettingItemProps {
@@ -57,7 +58,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
       {type === 'custom' && (
         <>
           {description}
-          {children}
+          <div style={{ marginTop: token.marginXS }}>{children}</div>
         </>
       )}
       {type === 'checkbox' && (
@@ -66,6 +67,9 @@ const SettingItem: React.FC<SettingItemProps> = ({
           onChange={onChange}
           disabled={disabled}
           className={styles.baiSettingItemCheckbox}
+          style={{
+            marginTop: token.marginXS,
+          }}
         >
           {description}
         </Checkbox>
@@ -78,7 +82,11 @@ const SettingItem: React.FC<SettingItemProps> = ({
             popupMatchSelectWidth={false}
             onChange={onChange}
             disabled={disabled}
-            {...selectProps}
+            style={{
+              ...selectProps?.style,
+              marginTop: token.marginXS,
+            }}
+            {..._.omit(selectProps, ['style'])}
           ></Select>
         </>
       )}
