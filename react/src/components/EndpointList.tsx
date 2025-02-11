@@ -1,8 +1,3 @@
-import BAIPropertyFilter from '../components/BAIPropertyFilter';
-import EndpointOwnerInfo from '../components/EndpointOwnerInfo';
-import EndpointStatusTag from '../components/EndpointStatusTag';
-import Flex from '../components/Flex';
-import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
 import {
   baiSignedRequestWithPromise,
   filterEmptyItem,
@@ -20,24 +15,31 @@ import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOption
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
+import BAIPropertyFilter from './BAIPropertyFilter';
+import BAIRadioGroup from './BAIRadioGroup';
+import BAITable from './BAITable';
+import EndpointOwnerInfo from './EndpointOwnerInfo';
+import EndpointStatusTag from './EndpointStatusTag';
+import Flex from './Flex';
+import TableColumnsSettingModal from './TableColumnsSettingModal';
 import {
-  EndpointListPageQuery,
-  EndpointListPageQuery$data,
-} from './__generated__/EndpointListPageQuery.graphql';
+  EndpointListQuery,
+  EndpointListQuery$data,
+} from './__generated__/EndpointListQuery.graphql';
 import {
   CheckOutlined,
   CloseOutlined,
   DeleteOutlined,
-  LoadingOutlined,
   ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 import { useRafInterval, useToggle } from 'ahooks';
-import { Button, Table, Typography, theme, Radio, App } from 'antd';
+import { Button, Typography, theme, App, Tooltip } from 'antd';
 import { ColumnType } from 'antd/lib/table';
 import graphql from 'babel-plugin-relay/macro';
 import { default as dayjs } from 'dayjs';
 import _ from 'lodash';
+import { InfoIcon } from 'lucide-react';
 import React, {
   PropsWithChildren,
   useState,
@@ -51,9 +53,7 @@ import { StringParam, useQueryParam } from 'use-query-params';
 
 export type Endpoint = NonNullable<
   NonNullable<
-    NonNullable<
-      NonNullable<EndpointListPageQuery$data>['endpoint_list']
-    >['items']
+    NonNullable<NonNullable<EndpointListQuery$data>['endpoint_list']>['items']
   >[0]
 >;
 export const isDestroyingStatus = (
@@ -68,7 +68,10 @@ export const isDestroyingStatus = (
 
 type LifecycleStage = 'created&destroying' | 'destroyed';
 
-const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
+interface EndpointListProps extends PropsWithChildren {
+  style?: React.CSSProperties;
+}
+const EndpointList: React.FC<EndpointListProps> = ({ style, children }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message, modal } = App.useApp();
@@ -286,12 +289,15 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
     },
     {
       title: (
-        <Flex direction="column" align="start">
+        <Flex direction="row" align="center" gap={'xs'}>
           {t('modelService.RoutingsCount')}
-          <br />
+          <Tooltip title={t('modelService.Active/Total')}>
+            <InfoIcon />
+          </Tooltip>
+          {/* <br />
           <Typography.Text type="secondary" style={{ fontWeight: 'normal' }}>
             ({t('modelService.Active/Total')})
-          </Typography.Text>
+          </Typography.Text> */}
         </Flex>
       ),
       // dataIndex: "active_route_count",
@@ -326,9 +332,9 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
   }, 7000);
 
   const { endpoint_list: modelServiceList } =
-    useLazyLoadQuery<EndpointListPageQuery>(
+    useLazyLoadQuery<EndpointListQuery>(
       graphql`
-        query EndpointListPageQuery(
+        query EndpointListQuery(
           $offset: Int!
           $limit: Int!
           $projectID: UUID
@@ -419,18 +425,13 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
   });
 
   return (
-    <Flex direction="column" align="stretch">
+    <Flex direction="column" align="stretch" style={style} gap={'sm'}>
       <Flex
         direction="row"
         justify="between"
         align="start"
         wrap="wrap"
         gap={'xs'}
-        style={{
-          padding: token.paddingContentVertical,
-          paddingLeft: token.paddingContentHorizontalSM,
-          paddingRight: token.paddingContentHorizontalSM,
-        }}
       >
         <Flex
           direction="row"
@@ -441,7 +442,7 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
         >
           {baiClient.supports('endpoint-lifecycle-stage-filter') && (
             <>
-              <Radio.Group
+              <BAIRadioGroup
                 value={selectedLifecycleStage}
                 onChange={(e) => {
                   startPageChangeTransition(() => {
@@ -532,70 +533,66 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
           </Flex>
         </Flex>
       </Flex>
-      <Table
-        loading={{
-          spinning: isFilterPending || isPendingPageChange,
-          indicator: <LoadingOutlined />,
-        }}
-        scroll={{ x: 'max-content' }}
-        rowKey={'endpoint_id'}
-        dataSource={filterNonNullItems(modelServiceList?.items)}
-        columns={_.filter(
-          columns,
-          (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),
-        )}
-        sortDirections={['descend', 'ascend', 'descend']}
-        pagination={{
-          pageSize: tablePaginationOption.pageSize,
-          current: tablePaginationOption.current,
-          pageSizeOptions: ['10', '20', '50'],
-          total: modelServiceList?.total_count || 0,
-          showSizeChanger: true,
-          style: { marginRight: token.marginXS },
-        }}
-        onChange={({ pageSize, current }, filter, sorter) => {
-          startPageChangeTransition(() => {
-            if (_.isNumber(current) && _.isNumber(pageSize)) {
-              setTablePaginationOption({
-                current,
-                pageSize,
-              });
-            }
-            setOrder(transformSorterToOrderString(sorter));
-          });
-        }}
-      />
-      <Flex
-        justify="end"
-        style={{
-          padding: token.paddingXXS,
-        }}
-      >
-        <Button
-          type="text"
-          icon={<SettingOutlined />}
-          onClick={() => {
-            toggleColumnSettingModal();
+      <Flex direction="column" align="stretch">
+        <BAITable
+          neoStyle
+          size="small"
+          loading={isFilterPending || isPendingPageChange}
+          scroll={{ x: 'max-content' }}
+          rowKey={'endpoint_id'}
+          dataSource={filterNonNullItems(modelServiceList?.items)}
+          columns={_.filter(
+            columns,
+            (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),
+          )}
+          sortDirections={['descend', 'ascend', 'descend']}
+          pagination={{
+            pageSize: tablePaginationOption.pageSize,
+            current: tablePaginationOption.current,
+            pageSizeOptions: ['10', '20', '50'],
+            total: modelServiceList?.total_count || 0,
+            showSizeChanger: true,
+            style: { marginRight: token.marginXS },
+          }}
+          onChange={({ pageSize, current }, filter, sorter) => {
+            startPageChangeTransition(() => {
+              if (_.isNumber(current) && _.isNumber(pageSize)) {
+                setTablePaginationOption({
+                  current,
+                  pageSize,
+                });
+              }
+              setOrder(transformSorterToOrderString(sorter));
+            });
           }}
         />
+        <Flex justify="end">
+          <Button
+            type="text"
+            icon={<SettingOutlined />}
+            onClick={() => {
+              toggleColumnSettingModal();
+            }}
+          />
+        </Flex>
+        <TableColumnsSettingModal
+          open={visibleColumnSettingModal}
+          onRequestClose={(values) => {
+            values?.selectedColumnKeys &&
+              setHiddenColumnKeys(
+                _.difference(
+                  columns.map((column) => _.toString(column.key)),
+                  values?.selectedColumnKeys,
+                ),
+              );
+            toggleColumnSettingModal();
+          }}
+          columns={columns}
+          hiddenColumnKeys={hiddenColumnKeys}
+        />
       </Flex>
-      <TableColumnsSettingModal
-        open={visibleColumnSettingModal}
-        onRequestClose={(values) => {
-          values?.selectedColumnKeys &&
-            setHiddenColumnKeys(
-              _.difference(
-                columns.map((column) => _.toString(column.key)),
-                values?.selectedColumnKeys,
-              ),
-            );
-          toggleColumnSettingModal();
-        }}
-        columns={columns}
-        hiddenColumnKeys={hiddenColumnKeys}
-      />
     </Flex>
   );
 };
 
-export default EndpointListPage;
+export default EndpointList;
