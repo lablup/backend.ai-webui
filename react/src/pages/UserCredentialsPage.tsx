@@ -36,6 +36,7 @@ const UserCredentialsPage: React.FC = () => {
 
   return (
     <BAICard
+      showDivider
       className={styles.card}
       activeTabKey={curTabKey}
       onTabChange={setCurTabKey}

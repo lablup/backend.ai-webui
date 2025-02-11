@@ -1,7 +1,10 @@
+import BAICard from '../components/BAICard';
 import BAILink from '../components/BAILink';
 import BAIPropertyFilter, {
   mergeFilterValues,
 } from '../components/BAIPropertyFilter';
+import BAIRadioGroup from '../components/BAIRadioGroup';
+import BAITabs from '../components/BAITabs';
 import Flex from '../components/Flex';
 import SessionNodes from '../components/SessionNodes';
 import { filterNonNullItems, transformSorterToOrderString } from '../helper';
@@ -12,7 +15,7 @@ import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
 import { useInterval } from '../hooks/useIntervalValue';
 import { ComputeSessionListPageQuery } from './__generated__/ComputeSessionListPageQuery.graphql';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Badge, Button, Card, Radio, Spin, Tabs, theme } from 'antd';
+import { Badge, Button, ConfigProvider, Spin, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { startTransition, useRef, useTransition } from 'react';
@@ -128,7 +131,7 @@ const ComputeSessionListPage = () => {
     <>
       {/* TODO: add legacy opener */}
       {/* <SessionDetailAndContainerLogOpenerForLegacy /> */}
-      <Card
+      <BAICard
         bordered={false}
         title={t('webui.menu.Sessions')}
         extra={[
@@ -136,68 +139,66 @@ const ComputeSessionListPage = () => {
             <Button type="primary">{t('session.launcher.Start')}</Button>
           </BAILink>,
         ]}
-        styles={{
-          header: {
-            borderBottom: 'none',
-          },
-          body: {
-            paddingTop: 0,
-          },
-        }}
       >
         {/* {mergeFilterValues([statusFilter, queryParams.filter, typeFilter])} */}
-        <Tabs
-          type="card"
-          activeKey={queryParams.type}
-          onChange={(key) => {
-            startTabChangeTransition(() => {
-              const storedQuery = queryMapRef.current[key] || {
-                statusCategory: 'running',
-              };
-              setQuery(
-                { ...storedQuery, type: key as TypeFilterType },
-                'replace',
-              );
-              setTablePaginationOption({ current: 1 });
-            });
-          }}
-          items={_.map(
-            {
-              all: t('general.All'),
-              interactive: t('session.Interactive'),
-              batch: t('session.Batch'),
-              inference: t('session.Inference'),
-              system: t('session.System'),
+        <ConfigProvider
+          theme={{
+            token: {
+              // colorBorderSecondary: 'red'
             },
-            (label, key) => ({
-              key,
-              label: (
-                <Flex justify="center" gap={10}>
-                  {label}
-                  {key === 'all' && (
-                    <Badge
-                      count={allRunningSessionForCount?.count}
-                      color={token.colorPrimary}
-                      size="small"
-                      showZero
-                      style={{
-                        paddingRight: token.paddingXS,
-                        paddingLeft: token.paddingXS,
-                        fontSize: 10,
-                      }}
-                    />
-                  )}
-                  {/*  */}
-                </Flex>
-              ),
-            }),
-          )}
-        />
+          }}
+        >
+          <BAITabs
+            activeKey={queryParams.type}
+            onChange={(key) => {
+              startTabChangeTransition(() => {
+                const storedQuery = queryMapRef.current[key] || {
+                  statusCategory: 'running',
+                };
+                setQuery(
+                  { ...storedQuery, type: key as TypeFilterType },
+                  'replace',
+                );
+                setTablePaginationOption({ current: 1 });
+              });
+            }}
+            items={_.map(
+              {
+                all: t('general.All'),
+                interactive: t('session.Interactive'),
+                batch: t('session.Batch'),
+                inference: t('session.Inference'),
+                system: t('session.System'),
+              },
+              (label, key) => ({
+                key,
+                label: (
+                  <Flex justify="center" gap={10}>
+                    {label}
+                    {key === 'all' && (
+                      <Badge
+                        count={allRunningSessionForCount?.count}
+                        color={token.colorPrimary}
+                        size="small"
+                        showZero
+                        style={{
+                          paddingRight: token.paddingXS,
+                          paddingLeft: token.paddingXS,
+                          fontSize: 10,
+                        }}
+                      />
+                    )}
+                    {/*  */}
+                  </Flex>
+                ),
+              }),
+            )}
+          />
+        </ConfigProvider>
         <Spin spinning={isPendingTabChange} indicator={<LoadingOutlined />}>
           <Flex direction="column" align="stretch" gap={'sm'}>
             <Flex gap={'sm'} align="start">
-              <Radio.Group
-                optionType="button"
+              <BAIRadioGroup
                 value={queryParams.statusCategory}
                 onChange={(e) => {
                   startFilterChangeTransition(() => {
@@ -277,7 +278,7 @@ const ComputeSessionListPage = () => {
             />
           </Flex>
         </Spin>
-      </Card>
+      </BAICard>
     </>
   );
 };
