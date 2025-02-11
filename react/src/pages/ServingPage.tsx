@@ -57,7 +57,11 @@ const ServingPage: React.FC<ServingPageProps> = ({ ...props }) => {
           <Suspense
             fallback={<Skeleton active style={{ padding: token.paddingMD }} />}
           >
-            <EndpointListPage />
+            <EndpointListPage
+              style={{
+                padding: token.paddingMD,
+              }}
+            />
           </Suspense>
         ) : null}
       </Card>
