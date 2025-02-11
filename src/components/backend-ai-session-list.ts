@@ -3062,6 +3062,22 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   /**
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   */
+  triggerOpenSessionDetailDrawer(rowData) {
+    const queryParams = new URLSearchParams(window.location.search);
+    queryParams.set('sessionDetail', rowData.item.id);
+    document.dispatchEvent(
+      new CustomEvent('react-navigate', {
+        detail: {
+          pathname: '/job',
+          search: queryParams.toString(),
+        },
+      }),
+    );
+  }
+
+  /**
    * Render session information - category, color, description, etc.
    *
    * @param {Element} root - the row details content DOM element
@@ -3102,6 +3118,13 @@ export default class BackendAISessionList extends BackendAIPage {
               white-space-collapse: collapse;
               word-break: break-all;
             }
+            #session-name-field[data-allow-detail-panel='true'] {
+              cursor: pointer;
+            }
+            #session-name-field[data-allow-detail-panel='true']:hover {
+              text-decoration: underline;
+              color: var(--token-colorLink);
+            }
             #session-rename-field {
               display: none;
               white-space: normal;
@@ -3124,8 +3147,16 @@ export default class BackendAISessionList extends BackendAIPage {
           </style>
           <div class="layout vertical start">
             <div class="horizontal center center-justified layout">
-              <pre id="session-name-field">
-${rowData.item[this.sessionNameField]}</pre
+              <pre
+                id="session-name-field"
+                data-allow-detail-panel=${globalThis.backendaiclient.supports(
+                  'session-node',
+                )}
+                @click="${() => this.triggerOpenSessionDetailDrawer(rowData)}"
+                @keyup="${() => {}}"
+              >
+                ${rowData.item[this.sessionNameField]}
+              </pre
               >
               ${this._isRunning &&
               !this._isPreparing(rowData.item.status) &&

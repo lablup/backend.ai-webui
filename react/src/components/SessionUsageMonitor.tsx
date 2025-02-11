@@ -1,21 +1,14 @@
 import {
   convertBinarySizeUnit,
   convertDecimalSizeUnit,
+  filterEmptyItem,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import Flex from './Flex';
 import { SessionUsageMonitorFragment$key } from './__generated__/SessionUsageMonitorFragment.graphql';
-import {
-  Progress,
-  ProgressProps,
-  Tooltip,
-  Typography,
-  theme,
-  Row,
-  Col,
-} from 'antd';
+import { ProgressProps, Tooltip, Typography, theme, Row, Col } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { useMemo } from 'react';
@@ -26,11 +19,78 @@ interface SessionUsageMonitorProps extends ProgressProps {
   size?: 'small' | 'default';
 }
 
+interface SessionUtilItemProps {
+  size: 'small' | 'default';
+  title: React.ReactNode;
+  percent: string;
+  tooltipTitle?: React.ReactNode;
+  description?: React.ReactNode;
+}
+
+const SessionUtilItem: React.FC<SessionUtilItemProps> = ({
+  size,
+  title,
+  percent,
+  tooltipTitle,
+  description,
+}) => {
+  const { token } = theme.useToken();
+
+  const formattedPercent = toFixedFloorWithoutTrailingZeros(percent || 0, 1);
+  const percentLabel = formattedPercent + '%';
+
+  if (size === 'default') {
+    return (
+      <>
+        <Flex justify="between">
+          <Typography.Text>{title}</Typography.Text>
+          {description && (
+            <Typography.Text
+              type="secondary"
+              style={{ fontSize: token.fontSizeSM }}
+            >
+              {description}
+            </Typography.Text>
+          )}
+        </Flex>
+        <BAIProgressWithLabel
+          percent={_.toNumber(percent)}
+          valueLabel={percentLabel}
+          strokeColor="#BFBFBF"
+          progressStyle={{ border: 'none' }}
+        />
+      </>
+    );
+  }
+
+  return (
+    <Tooltip title={tooltipTitle || title} placement="left">
+      <Flex direction="row" gap={'xxs'}>
+        <Flex
+          style={{
+            // Max width is 140px, min width is 3px
+            width: _.max([Math.round(_.toNumber(percent) * 1.4), 3]),
+            height: 12,
+            backgroundColor: '#BFBFBF',
+          }}
+        ></Flex>
+        <Typography.Text
+          style={{
+            fontSize: token.fontSizeSM,
+            lineHeight: `${token.fontSizeSM}px`,
+          }}
+        >
+          {_.toNumber(percent).toFixed(0) + '%'}
+        </Typography.Text>
+      </Flex>
+    </Tooltip>
+  );
+};
+
 const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
   sessionFrgmt,
   size = 'default',
 }) => {
-  const { token } = theme.useToken();
   const { mergedResourceSlots } = useResourceSlotsDetails();
 
   const sessionNode = useFragment(
@@ -93,217 +153,110 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
     } GiB`;
   };
 
-  return (
-    <Row gutter={[16, 16]}>
-      {sortedLiveStat?.cpu_util ? (
-        <Col xs={24} sm={12}>
+  const utilItems = filterEmptyItem([
+    sortedLiveStat?.cpu_util && (
+      <SessionUtilItem
+        key={'cpu'}
+        size={size}
+        title={mergedResourceSlots?.['cpu']?.human_readable_name}
+        percent={sortedLiveStat?.cpu_util?.pct || 0}
+      />
+    ),
+    sortedLiveStat?.mem && (
+      <SessionUtilItem
+        key={'mem'}
+        size={size}
+        title={mergedResourceSlots?.['mem']?.human_readable_name}
+        percent={sortedLiveStat?.mem?.pct || 0}
+        description={displayMemoryUsage(
+          sortedLiveStat?.mem?.current,
+          occupiedSlots?.mem,
+        )}
+        tooltipTitle={
           <Flex direction="column" align="stretch">
-            {size === 'default' ? (
+            {mergedResourceSlots?.['mem']?.human_readable_name}
+            <br />
+            {displayMemoryUsage(
+              sortedLiveStat?.mem?.current,
+              occupiedSlots?.mem,
+            )}
+          </Flex>
+        }
+      />
+    ),
+    ..._.map(
+      _.omit(sortedLiveStat, 'cpu_util', 'cpu_used', 'mem'),
+      (value, key) => {
+        const deviceName = _.split(key, '_')[0];
+        let deviceKey = _.find(resourceSlotNames, (name) =>
+          _.includes(name, deviceName),
+        );
+
+        if (size === 'small' && !key?.endsWith('mem')) {
+          deviceKey = undefined;
+        }
+
+        return deviceKey ? (
+          <SessionUtilItem
+            key={key}
+            size={size}
+            title={
               <>
-                <Typography.Text>
-                  {mergedResourceSlots?.['cpu']?.human_readable_name}
+                {mergedResourceSlots?.[deviceKey]?.human_readable_name}
+                <Typography.Text type="secondary">
+                  {_.includes(key, 'util') && ' (util)'}
+                  {_.includes(key, 'mem') && ' (mem)'}
                 </Typography.Text>
-                <BAIProgressWithLabel
-                  percent={sortedLiveStat?.cpu_util?.pct || 0}
-                  valueLabel={
-                    toFixedFloorWithoutTrailingZeros(
-                      liveStat?.cpu_util?.pct || 0,
-                      1,
-                    ) + '%'
-                  }
-                  strokeColor="#BFBFBF"
-                  progressStyle={{ border: 'none' }}
-                />
               </>
-            ) : (
-              <Tooltip
-                title={mergedResourceSlots?.['cpu']?.human_readable_name}
-              >
-                <Progress
-                  format={(percent) => (
-                    <Typography.Text style={{ fontSize: token.fontSizeSM }}>
-                      {percent + '%'}
-                    </Typography.Text>
-                  )}
-                  percent={
-                    _.toNumber(
-                      toFixedFloorWithoutTrailingZeros(
-                        sortedLiveStat?.cpu_util?.pct,
-                        1,
-                      ),
-                    ) || 0
-                  }
-                  strokeColor="#BFBFBF"
-                  strokeLinecap="butt"
-                />
-              </Tooltip>
-            )}
-          </Flex>
-        </Col>
-      ) : null}
-
-      {sortedLiveStat?.mem ? (
-        <Col xs={24} sm={12}>
-          <Flex direction="column" align="stretch">
-            {size === 'default' ? (
-              <>
-                <Flex justify="between">
-                  <Typography.Text>
-                    {mergedResourceSlots?.['mem']?.human_readable_name}
-                  </Typography.Text>
-                  <Typography.Text
-                    type="secondary"
-                    style={{ fontSize: token.fontSizeSM }}
-                  >
-                    {displayMemoryUsage(
-                      sortedLiveStat?.mem?.current,
-                      // mem.capacity does not report total amount of memory allocated to
-                      // the container, so, we just replace with the value of occupied slot.
-                      // NOTE: this assumes every containers in a session have the same
-                      // amount of memory.
-                      occupiedSlots?.mem,
-                    )}
-                  </Typography.Text>
-                </Flex>
-                <BAIProgressWithLabel
-                  percent={sortedLiveStat?.mem?.pct || 0}
-                  valueLabel={
-                    toFixedFloorWithoutTrailingZeros(
-                      liveStat?.mem?.pct || 0,
-                      1,
-                    ) + '%'
-                  }
-                  strokeColor="#BFBFBF"
-                  progressStyle={{ border: 'none' }}
-                />
-              </>
-            ) : (
-              <Tooltip
-                title={
-                  <Flex direction="column" align="stretch">
-                    {mergedResourceSlots?.['mem']?.human_readable_name}
-                    <br />
-                    {displayMemoryUsage(
-                      sortedLiveStat?.mem?.current,
-                      // mem.capacity does not report total amount of memory allocated to
-                      // the container, so, we just replace with the value of occupied slot.
-                      // NOTE: this assumes every containers in a session have the same
-                      // amount of memory.
-                      occupiedSlots?.mem,
-                    )}
-                  </Flex>
-                }
-              >
-                <Progress
-                  format={(percent) => (
-                    <Typography.Text style={{ fontSize: token.fontSizeSM }}>
-                      {percent + '%'}
-                    </Typography.Text>
-                  )}
-                  percent={
-                    _.toNumber(
-                      toFixedFloorWithoutTrailingZeros(
-                        sortedLiveStat?.mem?.pct,
-                        1,
-                      ),
-                    ) || 0
-                  }
-                  strokeColor="#BFBFBF"
-                  strokeLinecap="butt"
-                />
-              </Tooltip>
-            )}
-          </Flex>
-        </Col>
-      ) : null}
-
-      {_.map(
-        _.omit(sortedLiveStat, 'cpu_util', 'cpu_used', 'mem'),
-        (value, key) => {
-          const deviceName = _.split(key, '_')[0];
-          const deviceKey = _.find(resourceSlotNames, (name) =>
-            _.includes(name, deviceName),
-          );
-
-          return deviceKey ? (
-            <Col xs={24} sm={12} key={key}>
+            }
+            percent={value.pct || 0}
+            description={
+              _.includes(key, 'mem')
+                ? displayMemoryUsage(value?.current, value?.capacity)
+                : undefined
+            }
+            tooltipTitle={
               <Flex direction="column" align="stretch">
-                {size === 'default' ? (
+                {mergedResourceSlots?.[deviceKey]?.human_readable_name}
+                {_.includes(key, 'mem') && (
                   <>
-                    <Flex justify="between">
-                      <Typography.Text>
-                        {mergedResourceSlots?.[deviceKey]?.human_readable_name}
-                        <Typography.Text type="secondary">
-                          {_.includes(key, 'util') && ' (util)'}
-                          {_.includes(key, 'mem') && ' (mem)'}
-                        </Typography.Text>
-                      </Typography.Text>
-                      {_.includes(key, 'mem') ? (
-                        <Typography.Text
-                          type="secondary"
-                          style={{ fontSize: token.fontSizeSM }}
-                        >
-                          {displayMemoryUsage(value?.current, value?.capacity)}
-                        </Typography.Text>
-                      ) : null}
-                    </Flex>
-
-                    <BAIProgressWithLabel
-                      percent={value.pct || 0}
-                      valueLabel={
-                        toFixedFloorWithoutTrailingZeros(value.pct || 0, 1) +
-                        '%'
-                      }
-                      strokeColor="#BFBFBF"
-                      progressStyle={{ border: 'none' }}
-                    />
+                    (mem)
+                    <br />
+                    {displayMemoryUsage(value?.current, value?.capacity)}
                   </>
-                ) : (
-                  <Tooltip
-                    title={
-                      <Flex direction="column" align="stretch">
-                        {mergedResourceSlots?.[deviceKey]?.human_readable_name}
-                        {_.includes(key, 'mem') && (
-                          <>
-                            (mem)
-                            <br />
-                            {displayMemoryUsage(
-                              value?.current,
-                              value?.capacity,
-                            )}
-                          </>
-                        )}
-                      </Flex>
-                    }
-                  >
-                    <Progress
-                      format={(percent) => (
-                        <Typography.Text style={{ fontSize: token.fontSizeSM }}>
-                          {percent + '%'}
-                        </Typography.Text>
-                      )}
-                      percent={
-                        _.toNumber(
-                          toFixedFloorWithoutTrailingZeros(value?.pct, 1),
-                        ) || 0
-                      }
-                      strokeColor="#BFBFBF"
-                      strokeLinecap="butt"
-                    />
-                  </Tooltip>
                 )}
               </Flex>
-            </Col>
-          ) : null;
-        },
-      )}
-      <Col span={24}>
-        <Flex justify="end">
-          <Typography.Text>
-            {`I/O Read: ${convertDecimalSizeUnit(sortedLiveStat?.io_read?.current, 'm')?.numberUnit ?? '-'}B / Write: ${convertDecimalSizeUnit(sortedLiveStat?.io_write?.current, 'm')?.numberUnit ?? '-'}B`}
-          </Typography.Text>
+            }
+          />
+        ) : null;
+      },
+    ),
+  ]);
+
+  return (
+    <Row gutter={[16, 16]}>
+      {size === 'default' ? (
+        _.map(utilItems, (item, index) => (
+          <Col xs={24} sm={12} key={index}>
+            <Flex direction="column" align="stretch">
+              {item}
+            </Flex>
+          </Col>
+        ))
+      ) : (
+        <Flex direction="column" align="stretch" gap={3}>
+          {utilItems}
         </Flex>
-      </Col>
+      )}
+      {size === 'default' && (
+        <Col span={24}>
+          <Flex justify="end">
+            <Typography.Text>
+              {`I/O Read: ${convertDecimalSizeUnit(sortedLiveStat?.io_read?.current, 'm')?.numberUnit ?? '-'}B / Write: ${convertDecimalSizeUnit(sortedLiveStat?.io_write?.current, 'm')?.numberUnit ?? '-'}B`}
+            </Typography.Text>
+          </Flex>
+        </Col>
+      )}
     </Row>
   );
 };
