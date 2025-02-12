@@ -186,7 +186,7 @@ const SessionDetailContent: React.FC<{
           </Button.Group>
         </Flex>
 
-        <Descriptions bordered column={md ? 2 : 1}>
+        <Descriptions bordered column={md ? 2 : 1} style={{ width: '100%' }}>
           <Descriptions.Item label={t('session.SessionId')} span={md ? 2 : 1}>
             <Typography.Text copyable style={{ fontFamily: 'monospace' }}>
               {session.row_id}
