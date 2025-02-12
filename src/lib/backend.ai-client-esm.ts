@@ -2543,17 +2543,17 @@ class VFolder {
   /**
    * Request a download and get the token for direct download.
    *
-   * @param {Array<string>} files - Files to download. Should contain full path.
+   * @param {Array<string>} file - Files to download. Should contain full path.
    * @param {string} name - Virtual folder name that files are in.
    * @param {boolean} archive - Download target directory as an archive.
    */
   async request_download_token(
-    files,
+    file,
     name = false,
     archive = false,
   ): Promise<any> {
     let body = {
-      files,
+      file,
       archive,
     };
     let rqstUrl;
@@ -2563,6 +2563,16 @@ class VFolder {
       rqstUrl = `${this.urlPrefix}/${name}/request-download`;
     }
     const rqst = this.client.newSignedRequest('POST', rqstUrl, body);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  async request_multi_download_token(files, id, zip_name, format): Promise<any> {
+    let body = {
+      files,
+      zip_name,
+      format,
+    }
+    const rqst = this.client.newSignedRequest("POST", `${this.urlPrefix}/${id}/download`, body);
     return this.client._wrapWithPromise(rqst);
   }
 

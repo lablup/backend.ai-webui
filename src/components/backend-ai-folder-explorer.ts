@@ -496,7 +496,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
     const fn = e.target.getAttribute('filename');
     const path = this.breadcrumb.concat(fn).join('/');
     const job = globalThis.backendaiclient.vfolder.request_download_token(
-      [path],
+      path,
       this.vfolderName,
       archive,
     );
@@ -559,42 +559,42 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
       type: file.type,
     }));
     try {
-      const isArchive =
-        files.length === 1 ? files[0].type === 'DIRECTORY' : true;
       const { token, url } =
-        await globalThis.backendaiclient.vfolder.request_download_token(
+        await globalThis.backendaiclient.vfolder.request_multi_download_token(
           files.map((file) => file.name),
+          this.vfolderID,
           this.vfolderName,
-          isArchive,
+          'zip',
         );
-      let downloadURL;
-      if (this._APIMajorVersion < 6) {
-        downloadURL =
-          globalThis.backendaiclient.vfolder.get_download_url_with_token(token);
-      } else {
-        downloadURL = `${url}?token=${token}&archive=${isArchive}`;
-      }
-      if (globalThis.iOSSafari) {
-        this.downloadURL = downloadURL;
-        // this.downloadFileDialog.show();
-        URL.revokeObjectURL(downloadURL);
-      } else {
-        const a = document.createElement('a');
-        a.style.display = 'none';
-        a.addEventListener('click', function (e) {
-          e.stopPropagation();
-        });
-        a.href = downloadURL;
+      console.log(token, url);
+      // let downloadURL;
+      // if (this._APIMajorVersion < 6) {
+      //   downloadURL =
+      //     globalThis.backendaiclient.vfolder.get_download_url_with_token(token);
+      // } else {
+      //   downloadURL = `${url}?token=${token}&archive=${isArchive}`;
+      // }
+      // if (globalThis.iOSSafari) {
+      //   this.downloadURL = downloadURL;
+      //   // this.downloadFileDialog.show();
+      //   URL.revokeObjectURL(downloadURL);
+      // } else {
+      //   const a = document.createElement('a');
+      //   a.style.display = 'none';
+      //   a.addEventListener('click', function (e) {
+      //     e.stopPropagation();
+      //   });
+      //   a.href = downloadURL;
 
-        a.download =
-          files.length === 1
-            ? (files[0].name.split('/').pop() as string)
-            : this.vfolderName;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(downloadURL);
-      }
+      //   a.download =
+      //     files.length === 1
+      //       ? (files[0].name.split('/').pop() as string)
+      //       : this.vfolderName;
+      //   document.body.appendChild(a);
+      //   a.click();
+      //   document.body.removeChild(a);
+      //   URL.revokeObjectURL(downloadURL);
+      // }
     } catch (err) {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
