@@ -3,7 +3,7 @@ import AutoScalingRuleEditorModal, {
 } from '../components/AutoScalingRuleEditorModal';
 import BAIJSONViewerModal from '../components/BAIJSONViewerModal';
 import CopyableCodeText from '../components/CopyableCodeText';
-import { isDestroyingStatus } from '../components/EndpointList';
+import { isEndpointInDestroyingCategory } from '../components/EndpointList';
 import EndpointOwnerInfo from '../components/EndpointOwnerInfo';
 import EndpointStatusTag from '../components/EndpointStatusTag';
 import EndpointTokenGenerationModal from '../components/EndpointTokenGenerationModal';
@@ -566,10 +566,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           <Button
             loading={isPendingRefetch}
             icon={<ReloadOutlined />}
-            disabled={isDestroyingStatus(
-              endpoint?.replicas ?? endpoint?.desired_session_count,
-              endpoint?.status,
-            )}
+            disabled={isEndpointInDestroyingCategory(endpoint)}
             onClick={() => {
               startRefetchTransition(() => {
                 updateFetchKey();
@@ -587,10 +584,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             type="primary"
             icon={<SettingOutlined />}
             disabled={
-              isDestroyingStatus(
-                endpoint?.replicas ?? endpoint?.desired_session_count,
-                endpoint?.status,
-              ) ||
+              isEndpointInDestroyingCategory(endpoint) ||
               (!!endpoint?.created_user_email &&
                 endpoint?.created_user_email !== currentUser.email)
             }
@@ -618,10 +612,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             <Button
               type="primary"
               icon={<PlusOutlined />}
-              disabled={isDestroyingStatus(
-                endpoint?.replicas ?? endpoint?.desired_session_count,
-                endpoint?.status,
-              )}
+              disabled={isEndpointInDestroyingCategory(endpoint)}
               onClick={() => {
                 setIsOpenAutoScalingRuleModal(true);
               }}
@@ -675,10 +666,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                       type="text"
                       icon={<SettingOutlined />}
                       style={
-                        isDestroyingStatus(
-                          endpoint?.replicas ?? endpoint?.desired_session_count,
-                          endpoint?.status,
-                        ) ||
+                        isEndpointInDestroyingCategory(endpoint) ||
                         (!!endpoint?.created_user_email &&
                           endpoint?.created_user_email !== currentUser.email)
                           ? {
@@ -689,10 +677,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                             }
                       }
                       disabled={
-                        isDestroyingStatus(
-                          endpoint?.replicas ?? endpoint?.desired_session_count,
-                          endpoint?.status,
-                        ) ||
+                        isEndpointInDestroyingCategory(endpoint) ||
                         (!!endpoint?.created_user_email &&
                           endpoint?.created_user_email !== currentUser.email)
                       }
@@ -760,11 +745,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                         icon={
                           <DeleteOutlined
                             style={
-                              isDestroyingStatus(
-                                endpoint?.replicas ??
-                                  endpoint?.desired_session_count,
-                                endpoint?.status,
-                              )
+                              isEndpointInDestroyingCategory(endpoint)
                                 ? undefined
                                 : {
                                     color: token.colorError,
@@ -863,10 +844,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           <Button
             type="primary"
             icon={<PlusOutlined />}
-            disabled={isDestroyingStatus(
-              endpoint?.replicas ?? endpoint?.desired_session_count,
-              endpoint?.status,
-            )}
+            disabled={isEndpointInDestroyingCategory(endpoint)}
             onClick={() => {
               setIsOpenTokenGenerationModal(true);
             }}
@@ -946,10 +924,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             <Button
               icon={<SyncOutlined />}
               loading={mutationToSyncRoutes.isPending}
-              disabled={isDestroyingStatus(
-                endpoint?.replicas ?? endpoint?.desired_session_count,
-                endpoint?.status,
-              )}
+              disabled={isEndpointInDestroyingCategory(endpoint)}
               onClick={() => {
                 endpoint?.endpoint_id &&
                   mutationToSyncRoutes.mutateAsync(endpoint?.endpoint_id, {
