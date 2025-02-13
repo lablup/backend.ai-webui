@@ -562,39 +562,28 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
       const { token, url } =
         await globalThis.backendaiclient.vfolder.request_multi_download_token(
           files.map((file) => file.name),
-          this.vfolderID,
+          this.vfolder,
           this.vfolderName,
           'zip',
         );
-      console.log(token, url);
-      // let downloadURL;
-      // if (this._APIMajorVersion < 6) {
-      //   downloadURL =
-      //     globalThis.backendaiclient.vfolder.get_download_url_with_token(token);
-      // } else {
-      //   downloadURL = `${url}?token=${token}&archive=${isArchive}`;
-      // }
-      // if (globalThis.iOSSafari) {
-      //   this.downloadURL = downloadURL;
-      //   // this.downloadFileDialog.show();
-      //   URL.revokeObjectURL(downloadURL);
-      // } else {
-      //   const a = document.createElement('a');
-      //   a.style.display = 'none';
-      //   a.addEventListener('click', function (e) {
-      //     e.stopPropagation();
-      //   });
-      //   a.href = downloadURL;
+      const downloadURL = `${url}?token=${token}`;
+      if (globalThis.iOSSafari) {
+        this.downloadURL = downloadURL;
+        // this.downloadFileDialog.show();
+        URL.revokeObjectURL(downloadURL);
+      } else {
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.addEventListener('click', function (e) {
+          e.stopPropagation();
+        });
+        a.href = downloadURL;
 
-      //   a.download =
-      //     files.length === 1
-      //       ? (files[0].name.split('/').pop() as string)
-      //       : this.vfolderName;
-      //   document.body.appendChild(a);
-      //   a.click();
-      //   document.body.removeChild(a);
-      //   URL.revokeObjectURL(downloadURL);
-      // }
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(downloadURL);
+      }
     } catch (err) {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
