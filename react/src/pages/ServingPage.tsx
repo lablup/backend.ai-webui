@@ -9,7 +9,7 @@ import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 // FIXME: need to apply filtering type of service later
 type TabKey = 'services' | 'chatting'; //  "running" | "finished" | "others";
 
-const EndpointListPage = React.lazy(() => import('./EndpointListPage'));
+const EndpointListPage = React.lazy(() => import('../components/EndpointList'));
 const ChattingPage = React.lazy(
   () => import('../components/lablupTalkativotUI/LLMPlaygroundPage'),
 );
@@ -66,7 +66,11 @@ const ServingPage: React.FC<ServingPageProps> = ({ ...props }) => {
           <Suspense
             fallback={<Skeleton active style={{ padding: token.paddingMD }} />}
           >
-            <EndpointListPage />
+            <EndpointListPage
+              style={{
+                padding: token.paddingMD,
+              }}
+            />
           </Suspense>
         ) : null}
         {curTabKey === 'chatting' && baiClient._config.enableLLMPlayground ? (
