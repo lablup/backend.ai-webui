@@ -529,7 +529,7 @@
     "Session": "Σύνοδος",
     "General": "Γενικά",
     "Disabled": "Άτομα με ειδικές ανάγκες",
-    "NSelected": "Επιλεγμένο {{count}} στοιχείο(α)",
+    "NSelected": "{{count}} selected",
     "RemainingLoginSessionTime": "Χρόνος μέχρι την αυτόματη αποσύνδεση",
     "Change": "Αλλαγή",
     "MaxValueNotification": "{{name}} πρέπει να είναι το μέγιστο {{max}}",

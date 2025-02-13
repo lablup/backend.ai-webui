@@ -578,7 +578,7 @@
     "Session": "Istunto",
     "General": "Yleistä",
     "Disabled": "Vammaiset",
-    "NSelected": "Valittu {{count}} kohde(t)",
+    "NSelected": "{{count}} valittu",
     "RemainingLoginSessionTime": "Aika automaattiseen uloskirjautumiseen asti",
     "Change": "Muuta",
     "MaxValueNotification": "{{name}} on oltava maksimi {{max}}",

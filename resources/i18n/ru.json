@@ -529,7 +529,7 @@
     "Session": "Сессия",
     "General": "Общие сведения",
     "Disabled": "Инвалид",
-    "NSelected": "Выбранный {{count}} элемент(ы)",
+    "NSelected": "{{count}} выбран",
     "RemainingLoginSessionTime": "Время до автоматического выхода из системы",
     "Change": "Изменить",
     "MaxValueNotification": "{{name}} должен быть максимальным {{max}}",

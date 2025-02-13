@@ -661,7 +661,8 @@
     "MaxValueNotification": "{{name}} ต้องมีค่าสูงสุด {{max}}",
     "TotalItems": "รวม {{total}} รายการ",
     "ExtendLoginSession": "ขยายเซสชันการเข้าสู่ระบบ",
-    "Cores": "คอร์"
+    "Cores": "คอร์",
+    "NSelected": "{{count}} เลือก"
   },
   "credential": {
     "Permission": "สิทธิ์",
