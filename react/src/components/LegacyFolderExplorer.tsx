@@ -51,6 +51,7 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
   const { lg } = Grid.useBreakpoint();
   const [isWritable, setIsWritable] = useState<boolean>(false);
   const [isSelected, setIsSelected] = useState<boolean>(false);
+  const baiClient = useSuspendedBackendaiClient();
   // TODO: Events are sent and received as normal,
   // but the Lit Element is not rendered and the values inside are not available but ref is available.
   const folderExplorerRef = useRef<HTMLDivElement>(null);
@@ -105,16 +106,18 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
             >
               {lg && t('button.Delete')}
             </Button>
-            <Button
-              disabled={!isSelected || !isWritable}
-              icon={<CloudDownloadOutlined />}
-              onClick={() => {
-                // @ts-ignore
-                folderExplorerRef.current?._downloadMultipleFiles();
-              }}
-            >
-              {lg && t('button.Download')}
-            </Button>
+            {baiClient.isManagerVersionCompatibleWith('25.2.0') && (
+              <Button
+                disabled={!isSelected || !isWritable}
+                icon={<CloudDownloadOutlined />}
+                onClick={() => {
+                  // @ts-ignore
+                  folderExplorerRef.current?._downloadMultipleFiles();
+                }}
+              >
+                {lg && t('button.Download')}
+              </Button>
+            )}
             <Button
               disabled={!isWritable}
               icon={<FolderAddOutlined />}
