@@ -7,16 +7,22 @@ import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
 import Flex from './Flex';
 import SessionDetailDrawer from './SessionDetailDrawer';
 import SessionUsageMonitor from './SessionUsageMonitor';
-import { SessionNodesFragment$key } from './__generated__/SessionNodesFragment.graphql';
+import {
+  SessionNodesFragment$data,
+  SessionNodesFragment$key,
+} from './__generated__/SessionNodesFragment.graphql';
 import { TableProps, theme } from 'antd/lib';
 import graphql from 'babel-plugin-relay/macro';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
 
-interface SessionNodesProps extends Omit<TableProps, 'dataSource' | 'columns'> {
+export type SessionNodeInList = NonNullable<SessionNodesFragment$data[number]>;
+interface SessionNodesProps
+  extends Omit<TableProps<SessionNodeInList>, 'dataSource' | 'columns'> {
   sessionsFrgmt: SessionNodesFragment$key;
 }
+
 const SessionNodes: React.FC<SessionNodesProps> = ({
   sessionsFrgmt,
   ...tableProps
@@ -28,7 +34,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
   const sessions = useFragment(
     graphql`
       fragment SessionNodesFragment on ComputeSessionNode @relay(plural: true) {
-        id
+        id @required(action: NONE)
         row_id @required(action: NONE)
         name
         ...SessionStatusTagFragment
@@ -49,7 +55,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         neoStyle
         // TODO: fix type
         // @ts-ignore
-        rowKey={(record) => record.row_id as string}
+        rowKey={(record) => record.id as string}
         size="small"
         dataSource={filteredSessions}
         scroll={{ x: 'max-content' }}

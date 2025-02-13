@@ -529,7 +529,7 @@
     "Session": "Sesja",
     "General": "Ogólne",
     "Disabled": "Wyłączony",
-    "NSelected": "Wybrane elementy {{count}}",
+    "NSelected": "{{count}} wybrany",
     "RemainingLoginSessionTime": "Czas do automatycznego wylogowania",
     "Change": "Zmiana",
     "MaxValueNotification": "{{name}} musi być maksymalna {{max}}.",
