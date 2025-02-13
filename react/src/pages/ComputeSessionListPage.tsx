@@ -2,30 +2,45 @@ import BAILink from '../components/BAILink';
 import BAIPropertyFilter, {
   mergeFilterValues,
 } from '../components/BAIPropertyFilter';
+import TerminateSessionModal from '../components/ComputeSessionNodeItems/TerminateSessionModal';
 import Flex from '../components/Flex';
-import SessionNodes from '../components/SessionNodes';
-import { filterNonNullItems, transformSorterToOrderString } from '../helper';
+import SessionNodes, { SessionNodeInList } from '../components/SessionNodes';
+import {
+  filterEmptyItem,
+  filterNonNullItems,
+  transformSorterToOrderString,
+} from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
 import { useInterval } from '../hooks/useIntervalValue';
-import { ComputeSessionListPageQuery } from './__generated__/ComputeSessionListPageQuery.graphql';
+import {
+  ComputeSessionListPageQuery,
+  ComputeSessionListPageQuery$data,
+} from './__generated__/ComputeSessionListPageQuery.graphql';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Badge, Button, Card, Radio, Spin, Tabs, theme } from 'antd';
+import { useDynamicList } from 'ahooks';
+import { Badge, Button, Card, Radio, Spin, Tabs, theme, Tooltip } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import { startTransition, useRef, useTransition } from 'react';
+import { PowerOffIcon } from 'lucide-react';
+import { Key, startTransition, useRef, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 import { StringParam, withDefault } from 'use-query-params';
 
 type TypeFilterType = 'all' | 'interactive' | 'batch' | 'inference' | 'system';
+// type SessionNode = NonNullableNodeOnEdges<
+//   ComputeSessionListPageQuery$data['compute_session_nodes']
+// >;
 const ComputeSessionListPage = () => {
   const currentProject = useCurrentProjectValue();
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const selectedSessionList = useDynamicList<Key>();
+  const [isOpenTerminateModal, setOpenTerminateModal] = useState(false);
 
   const {
     baiPaginationOption,
@@ -84,8 +99,9 @@ const ComputeSessionListPage = () => {
           ) {
             edges @required(action: THROW) {
               node @required(action: THROW) {
-                id
+                id @required(action: NONE)
                 ...SessionNodesFragment
+                ...TerminateSessionModalFragment
               }
             }
             count
@@ -195,56 +211,72 @@ const ComputeSessionListPage = () => {
         />
         <Spin spinning={isPendingTabChange} indicator={<LoadingOutlined />}>
           <Flex direction="column" align="stretch" gap={'sm'}>
-            <Flex gap={'sm'} align="start">
-              <Radio.Group
-                optionType="button"
-                value={queryParams.statusCategory}
-                onChange={(e) => {
-                  startFilterChangeTransition(() => {
-                    setQuery({ statusCategory: e.target.value }, 'replaceIn');
-                    setTablePaginationOption({ current: 1 });
-                  });
-                }}
-                options={[
-                  {
-                    label: 'Running',
-                    value: 'running',
-                  },
-                  {
-                    label: 'Finished',
-                    value: 'finished',
-                  },
-                ]}
-              />
-              <BAIPropertyFilter
-                filterProperties={[
-                  {
-                    key: 'name',
-                    propertyLabel: t('session.SessionName'),
-                    type: 'string',
-                  },
-                ]}
-                value={queryParams.filter || undefined}
-                onChange={(value) => {
-                  startFilterChangeTransition(() => {
-                    setQuery({ filter: value }, 'replaceIn');
-                    setTablePaginationOption({ current: 1 });
-                  });
-                }}
-              />
+            <Flex justify="between">
+              <Flex gap={'sm'} align="start">
+                <Radio.Group
+                  optionType="button"
+                  value={queryParams.statusCategory}
+                  onChange={(e) => {
+                    startFilterChangeTransition(() => {
+                      setQuery({ statusCategory: e.target.value }, 'replaceIn');
+                      setTablePaginationOption({ current: 1 });
+                    });
+                  }}
+                  options={[
+                    {
+                      label: 'Running',
+                      value: 'running',
+                    },
+                    {
+                      label: 'Finished',
+                      value: 'finished',
+                    },
+                  ]}
+                />
+                <BAIPropertyFilter
+                  filterProperties={[
+                    {
+                      key: 'name',
+                      propertyLabel: t('session.SessionName'),
+                      type: 'string',
+                    },
+                  ]}
+                  value={queryParams.filter || undefined}
+                  onChange={(value) => {
+                    startFilterChangeTransition(() => {
+                      setQuery({ filter: value }, 'replaceIn');
+                      setTablePaginationOption({ current: 1 });
+                    });
+                  }}
+                />
+              </Flex>
+              <Flex gap={'sm'}>
+                {selectedSessionList.list.length > 0 && (
+                  <>
+                    {selectedSessionList.list.length} selected
+                    <Tooltip title={t('session.TerminateSession')}>
+                      <Button
+                        icon={<PowerOffIcon color={token.colorError} />}
+                        onClick={() => {
+                          setOpenTerminateModal(true);
+                        }}
+                      />
+                    </Tooltip>
+                  </>
+                )}
+              </Flex>
             </Flex>
             <SessionNodes
               rowSelection={
-                queryParams.statusCategory !== 'finished'
+                // queryParams.statusCategory !== 'finished'
+                true
                   ? {
                       type: 'checkbox',
-                      // onChange: (selectedRowKeys, selectedRows) => {
-                      //   console.log(
-                      //     `selectedRowKeys: ${selectedRowKeys}`,
-                      //     'selectedRows: ',
-                      //     selectedRows,
-                      //   );
-                      // },
+                      preserveSelectedRowKeys: true,
+                      onChange: (selectedRowKeys, selectedRows) => {
+                        selectedSessionList.resetList(selectedRowKeys);
+                      },
+                      selectedRowKeys: selectedSessionList.list,
                     }
                   : undefined
               }
@@ -278,6 +310,23 @@ const ComputeSessionListPage = () => {
           </Flex>
         </Spin>
       </Card>
+      <TerminateSessionModal
+        open={isOpenTerminateModal}
+        sessionFrgmts={filterEmptyItem(
+          _.chain(compute_session_nodes?.edges)
+            .map((edge) => {
+              return edge?.node;
+            })
+            .filter((n) => selectedSessionList.list.includes(n?.id || ''))
+            .value(),
+        )}
+        onRequestClose={(success) => {
+          setOpenTerminateModal(false);
+          if (success) {
+            selectedSessionList.resetList([]);
+          }
+        }}
+      />
     </>
   );
 };
