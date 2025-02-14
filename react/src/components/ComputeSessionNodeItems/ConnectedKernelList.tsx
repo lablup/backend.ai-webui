@@ -4,7 +4,6 @@ import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import BAITable from '../BAITable';
 import DoubleTag from '../DoubleTag';
 import Flex from '../Flex';
-import UnmountModalAfterClose from '../UnmountModalAfterClose';
 import ContainerLogModal from './ContainerLogModal';
 import { ConnectedKernelListLegacyQuery } from './__generated__/ConnectedKernelListLegacyQuery.graphql';
 import {
@@ -226,8 +225,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
         // TODO: implement pagination when compute_session_node query supports pagination
         pagination={false}
       />
-
-      <UnmountModalAfterClose>
+      {kernelIdForLogModal && (
         <ContainerLogModal
           open={!!kernelIdForLogModal}
           sessionFrgmt={session || null}
@@ -236,7 +234,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
             setKernelIdForLogModal(undefined);
           }}
         />
-      </UnmountModalAfterClose>
+      )}
     </Flex>
   );
 };
