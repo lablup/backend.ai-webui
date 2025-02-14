@@ -1,6 +1,7 @@
 import AutoScalingRuleEditorModal, {
   COMPARATOR_LABELS,
 } from '../components/AutoScalingRuleEditorModal';
+import ChatUIModal from '../components/Chat/ChatUIModal';
 import CopyableCodeText from '../components/CopyableCodeText';
 import EndpointOwnerInfo from '../components/EndpointOwnerInfo';
 import EndpointStatusTag from '../components/EndpointStatusTag';
@@ -14,7 +15,6 @@ import SessionDetailDrawer from '../components/SessionDetailDrawer';
 import VFolderLazyView from '../components/VFolderLazyView';
 import { AutoScalingRuleEditorModalFragment$key } from '../components/__generated__/AutoScalingRuleEditorModalFragment.graphql';
 import { InferenceSessionErrorModalFragment$key } from '../components/__generated__/InferenceSessionErrorModalFragment.graphql';
-import ChatUIModal from '../components/lablupTalkativotUI/ChatUIModal';
 import { baiSignedRequestWithPromise, filterNonNullItems } from '../helper';
 import {
   useSuspendedBackendaiClient,

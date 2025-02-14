@@ -25,6 +25,7 @@ import {
   FileDoneOutlined,
   HddOutlined,
   InfoCircleOutlined,
+  MessageOutlined,
   SolutionOutlined,
   ToolOutlined,
   UserOutlined,
@@ -107,6 +108,11 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       label: <WebUILink to="/serving">{t('webui.menu.Serving')}</WebUILink>,
       icon: <EndpointsIcon style={{ color: token.colorPrimary }} />,
       key: 'serving',
+    },
+    {
+      label: <WebUILink to="/chat">{t('webui.menu.Chat')}</WebUILink>,
+      icon: <MessageOutlined style={{ color: token.colorPrimary }} />,
+      key: 'chat',
     },
     {
       label: <WebUILink to="/import">{t('webui.menu.Import&Run')}</WebUILink>,

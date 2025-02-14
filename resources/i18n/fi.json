@@ -41,7 +41,8 @@
     "ATOMPlusEnabled": "ATOM+ NPU käytössä",
     "RNGDEnabled": "RNGD käytössä",
     "ReservedShort": "varattu",
-    "ConnectingToCluster": "Yhteyden muodostaminen Backend.AI-klusteriin..."
+    "ConnectingToCluster": "Yhteyden muodostaminen Backend.AI-klusteriin...",
+    "Chat": "Chat"
   },
   "error": {
     "WrongAPIServerAddress": "Väärä API-palvelimen osoite.",

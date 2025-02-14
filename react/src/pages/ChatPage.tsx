@@ -1,6 +1,6 @@
-import Flex from '../Flex';
-import EndpointLLMChatCard from './EndpointLLMChatCard';
-import { LLMPlaygroundPageQuery } from './__generated__/LLMPlaygroundPageQuery.graphql';
+import EndpointLLMChatCard from '../components/Chat/EndpointLLMChatCard';
+import Flex from '../components/Flex';
+import { ChatPageQuery } from './__generated__/ChatPageQuery.graphql';
 import { PlusOutlined } from '@ant-design/icons';
 import { useDynamicList } from 'ahooks';
 import { Button, Card, Skeleton, Switch, theme, Typography } from 'antd';
@@ -11,13 +11,13 @@ import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 import { StringParam, useQueryParam } from 'use-query-params';
 
-interface LLMPlaygroundPageProps {}
+interface ChatPageProps {}
 
-const LLMPlaygroundPage: React.FC<LLMPlaygroundPageProps> = ({ ...props }) => {
+const ChatPage: React.FC<ChatPageProps> = ({ ...props }) => {
   const { token } = theme.useToken();
   const { t } = useTranslation();
   // Set the initial list to have two items
-  const { list, remove, getKey, push } = useDynamicList(['0', '1']);
+  const { list, remove, getKey, push } = useDynamicList(['0']);
 
   const [isSynchronous, setSynchronous] = useState(false);
 
@@ -25,12 +25,9 @@ const LLMPlaygroundPage: React.FC<LLMPlaygroundPageProps> = ({ ...props }) => {
   const [modelId] = useQueryParam('modelId', StringParam);
   const isEmptyEndpointId = !endpointId;
 
-  const { endpoint, endpoint_list } = useLazyLoadQuery<LLMPlaygroundPageQuery>(
+  const { endpoint, endpoint_list } = useLazyLoadQuery<ChatPageQuery>(
     graphql`
-      query LLMPlaygroundPageQuery(
-        $endpointId: UUID!
-        $isEmptyEndpointId: Boolean!
-      ) {
+      query ChatPageQuery($endpointId: UUID!, $isEmptyEndpointId: Boolean!) {
         endpoint(endpoint_id: $endpointId)
           @skipOnClient(if: $isEmptyEndpointId) {
           ...EndpointLLMChatCard_endpoint
@@ -143,4 +140,4 @@ const LLMPlaygroundPage: React.FC<LLMPlaygroundPageProps> = ({ ...props }) => {
   );
 };
 
-export default LLMPlaygroundPage;
+export default ChatPage;
