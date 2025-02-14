@@ -4,15 +4,18 @@ import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import BAITable from '../BAITable';
 import DoubleTag from '../DoubleTag';
 import Flex from '../Flex';
+import ContainerLogModal from './ContainerLogModal';
 import { ConnectedKernelListLegacyQuery } from './__generated__/ConnectedKernelListLegacyQuery.graphql';
 import {
   ConnectedKernelListQuery,
   ConnectedKernelListQuery$data,
 } from './__generated__/ConnectedKernelListQuery.graphql';
-import { Tag, Typography } from 'antd';
+import { Button, Tag, Tooltip, Typography } from 'antd';
 import { ColumnType } from 'antd/lib/table';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
+import { ScrollTextIcon } from 'lucide-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
@@ -57,6 +60,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
 }) => {
   const { t } = useTranslation();
   const currentProject = useCurrentProjectValue();
+  const [kernelIdForLogModal, setKernelIdForLogModal] = useState<string>();
 
   // get the project id of the session for <= v24.12.0.
   const { session_for_project_id } =
@@ -94,6 +98,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
             }
             count
           }
+          ...ContainerLogModalFragment
         }
       }
     `,
@@ -127,6 +132,15 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
           <Typography.Text copyable ellipsis>
             {row_id}
           </Typography.Text>
+          <Tooltip title={t('session.SeeContainerLogs')}>
+            <Button
+              icon={<ScrollTextIcon />}
+              type="link"
+              onClick={() => {
+                setKernelIdForLogModal(row_id);
+              }}
+            />
+          </Tooltip>
         </>
       ),
     },
@@ -211,6 +225,16 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
         // TODO: implement pagination when compute_session_node query supports pagination
         pagination={false}
       />
+      {kernelIdForLogModal && (
+        <ContainerLogModal
+          open={!!kernelIdForLogModal}
+          sessionFrgmt={session || null}
+          defaultKernelId={kernelIdForLogModal}
+          onCancel={() => {
+            setKernelIdForLogModal(undefined);
+          }}
+        />
+      )}
     </Flex>
   );
 };

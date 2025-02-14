@@ -19,10 +19,12 @@ import { useFragment } from 'react-relay';
 
 interface ContainerLogModalProps extends BAIModalProps {
   sessionFrgmt: ContainerLogModalFragment$key | null;
+  defaultKernelId?: string;
 }
 
 const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
   sessionFrgmt,
+  defaultKernelId,
   ...modalProps
 }) => {
   const baiClient = useSuspendedBackendaiClient();
@@ -55,7 +57,8 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
 
   const kernelNodes = session?.kernel_nodes?.edges?.map((e) => e?.node) || [];
   const [selectedKernelId, setSelectedKernelId] = useState(
-    _.find(kernelNodes, (e) => e?.cluster_role === 'main')?.row_id ||
+    defaultKernelId ||
+      _.find(kernelNodes, (e) => e?.cluster_role === 'main')?.row_id ||
       kernelNodes[0]?.row_id,
   );
 
