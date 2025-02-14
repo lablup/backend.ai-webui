@@ -28,6 +28,7 @@ import { useTranslation } from 'react-i18next';
 
 interface ModelTryContentProps {
   modelStorageHost?: string;
+  modelStoreName?: string;
   modelName?: string;
   minAIAcclResource: number;
   title?: string;
@@ -36,6 +37,7 @@ interface ModelTryContentProps {
 const ModelTryContent: React.FC<ModelTryContentProps> = ({
   modelName,
   modelStorageHost,
+  modelStoreName,
   minAIAcclResource,
   title,
   ...props
@@ -220,7 +222,7 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
         image: {
           registry: 'cr.backend.ai',
           name: (() => {
-            if (modelName?.includes('stable-diffusion')) {
+            if (['stable-diffusion', 'phi-4'].includes(modelName as string)) {
               return 'testing/ngc-pytorch';
             }
             switch (runtimeVariant) {
@@ -233,7 +235,7 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
             }
           })(),
           tag: (() => {
-            if (modelName?.includes('stable-diffusion')) {
+            if (['stable-diffusion', 'phi-4'].includes(modelName as string)) {
               return '24.07-pytorch2.4-py310-cuda12.5';
             }
             switch (runtimeVariant) {
@@ -264,7 +266,9 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
         version: '',
       },
       // FIXME: temporally hard-coded runtime variant
-      runtimeVariant: modelName?.includes('stable-diffusion')
+      runtimeVariant: ['stable-diffusion', 'phi-4'].includes(
+        modelName as string,
+      )
         ? 'custom'
         : runtimeVariant,
       cluster_size: 1,
@@ -308,10 +312,10 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
             cloneable: true,
             permission: 'wd', // write-delete permission
             target_host: modelStorageHost, // lowestUsageHost, // clone to accessible and lowest usage storage host
-            target_name: `${modelName === 'Talkativot UI' ? 'talkativot-standalone-1' : modelName}`,
+            target_name: `${modelName === 'Talkativot UI' ? 'talkativot-standalone-1' : modelName + '-1'}`,
             usage_mode: 'model',
           },
-          name: `${modelName === 'Talkativot UI' ? 'talkativot-standalone' : modelName}`,
+          name: `${modelName === 'Talkativot UI' ? 'talkativot-standalone' : modelStoreName}`,
         },
         {
           onSuccess: (data) => {
@@ -530,7 +534,8 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
         type="primary"
         disabled={
           modelName?.includes('stable-diffusion') ||
-          modelName?.includes('Talkativot UI')
+          modelName?.includes('Talkativot UI') ||
+          modelName?.includes('phi-4')
         }
         onClick={() => {
           cloneOrCreateModelService('vllm');
@@ -547,7 +552,8 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
           modelName?.includes('stable-diffusion') ||
           modelName?.includes('gemma-2-27b-it') ||
           modelName?.includes('Llama-3.2-11B-Vision-Instruct') ||
-          modelName?.includes('Talkativot UI')
+          modelName?.includes('Talkativot UI') ||
+          modelName?.includes('phi-4')
         }
         type="primary"
         onClick={() => {
