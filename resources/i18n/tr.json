@@ -528,7 +528,7 @@
     "Session": "Oturum",
     "General": "Genel",
     "Disabled": "Engelli",
-    "NSelected": "Seçilen {{count}} öğe(ler)",
+    "NSelected": "{{count}} seçildi",
     "RemainingLoginSessionTime": "Otomatik Çıkışa Kadar Geçen Süre",
     "Change": "Değişim",
     "MaxValueNotification": "{{name}} maksimum {{max}} olmalıdır",

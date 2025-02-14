@@ -529,7 +529,7 @@
     "Session": "Sessão",
     "General": "Geral",
     "Disabled": "Desativado",
-    "NSelected": "Item(ns) {{contagem}} selecionado(s)",
+    "NSelected": "{{contagem}} selecionado",
     "RemainingLoginSessionTime": "Tempo até ao encerramento automático da sessão",
     "Change": "Alterar",
     "MaxValueNotification": "{{nome}} deve ser o máximo {{max}}",

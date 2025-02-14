@@ -529,7 +529,7 @@
     "Session": "セッション",
     "General": "一般",
     "Disabled": "無効",
-    "NSelected": "選択された{{count}}項目（複数可）",
+    "NSelected": "{count}}を選択",
     "RemainingLoginSessionTime": "自動ログアウトまでの時間",
     "Change": "変更",
     "MaxValueNotification": "{{ name }}最大値は{{ max }}です",

@@ -528,7 +528,7 @@
     "Session": "會話",
     "General": "一般情况",
     "Disabled": "残疾",
-    "NSelected": "已选择的 {{count}} 项目",
+    "NSelected": "{{count}}已选择",
     "RemainingLoginSessionTime": "自动注销前的时间",
     "Change": "改变",
     "MaxValueNotification": "{{name}} 必须是最大值 {{max}}",

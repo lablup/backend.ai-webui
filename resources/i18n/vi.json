@@ -529,7 +529,7 @@
     "Session": "Phiên họp",
     "General": "Tổng quan",
     "Disabled": "Tàn tật",
-    "NSelected": "Đã chọn {{count}} mục",
+    "NSelected": "{{Count}} Đã chọn",
     "RemainingLoginSessionTime": "Thời gian cho đến khi tự động đăng xuất",
     "Change": "Thay đổi",
     "MaxValueNotification": "{{name}} phải tối đa {{max}}",
