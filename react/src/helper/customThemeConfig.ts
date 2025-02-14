@@ -4,18 +4,11 @@ import { useEffect, useState } from 'react';
 
 type LogoConfig = {
   src: string;
-  srcCollapsed: string;
   srcDark?: string;
-  srcCollapsedDark?: string;
-  logoTitle?: string;
-  logoTitleCollapsed?: string;
+  title?: string;
   alt?: string;
   href?: string;
   size?: {
-    width?: number;
-    height?: number;
-  };
-  sizeCollapsed?: {
     width?: number;
     height?: number;
   };
@@ -32,6 +25,7 @@ let _customTheme:
       light: ThemeConfig;
       dark: ThemeConfig;
       logo: LogoConfig;
+      logoCollapsed: LogoConfig;
       sider?: SiderConfig;
       branding?: BrandingConfig;
     }
@@ -42,7 +36,12 @@ export const loadCustomThemeConfig = () => {
     .then((response) => response.json())
     .then((theme) => {
       if (_.isUndefined(theme.light)) {
-        _customTheme = { light: theme, dark: theme, logo: theme.logo };
+        _customTheme = {
+          light: theme,
+          dark: theme,
+          logo: theme.logo,
+          logoCollapsed: theme.logoCollapsed,
+        };
       } else {
         _customTheme = theme;
       }
