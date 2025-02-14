@@ -138,6 +138,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
             value
           }
           version @since(version: "24.12.0")
+          supported_accelerators
         }
       }
     `,

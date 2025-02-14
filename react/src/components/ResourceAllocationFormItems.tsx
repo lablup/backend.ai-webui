@@ -17,7 +17,6 @@ import AgentSelect from './AgentSelect';
 import BAISelect from './BAISelect';
 import DynamicUnitInputNumberWithSlider from './DynamicUnitInputNumberWithSlider';
 import Flex from './Flex';
-// import FormItemControl from './FormItemControl';
 import {
   Image,
   ImageEnvironmentFormInput,
@@ -130,27 +129,22 @@ const ResourceAllocationFormItems: React.FC<
     preserve: true,
   });
 
-  const [{ currentImageMinM, remaining, resourceLimits, checkPresetInfo }] =
-    useResourceLimitAndRemaining({
-      currentProjectName: currentProject.name,
-      currentResourceGroup: currentResourceGroupInForm || undefined, // global currentResourceGroup can be null
-      currentImage: currentImage,
-    });
+  const [
+    { currentImageMinM, remaining, mergedResourceLimit, checkPresetInfo },
+  ] = useResourceLimitAndRemaining({
+    currentProjectName: currentProject.name,
+    currentResourceGroup: currentResourceGroupInForm || undefined, // global currentResourceGroup can be null
+    currentImage: currentImage,
+  });
 
   const { mergedResourceSlots, resourceSlotsInRG } = useResourceSlotsDetails(
     currentResourceGroupInForm || undefined,
   );
 
   // When undefined, it means that the resourceSlots are not loaded yet.
-  const acceleratorSlots = resourceSlotsInRG
+  const acceleratorSlotsInRG = resourceSlotsInRG
     ? _.omitBy(resourceSlotsInRG, (value, key) => {
         if (['cpu', 'mem', 'shmem'].includes(key)) return true;
-
-        if (
-          !resourceLimits.accelerators[key]?.max ||
-          resourceLimits.accelerators[key]?.max === 0
-        )
-          return true;
         return false;
       })
     : undefined;
@@ -166,23 +160,34 @@ const ResourceAllocationFormItems: React.FC<
     [currentImage],
   );
 
-  // Disable accelerator input when there is no accelerator slot or no accelerator required in the selected image
-  // TODO: use `supported_accelerators` information from the image instead of `currentImageAcceleratorLimits` (FR-55)
-  const isAcceleratorInputDisabled =
-    (!_.isUndefined(acceleratorSlots) && _.isEmpty(acceleratorSlots)) ||
-    (currentImageAcceleratorLimits &&
-      currentImageAcceleratorLimits.length === 0 &&
-      _.isEmpty(currentEnvironmentManual));
+  const enabledAcceleratorKeysInRGForImage = useMemo(() => {
+    if (!currentImage || !acceleratorSlotsInRG) return undefined;
+    return _.chain(acceleratorSlotsInRG)
+      .pickBy((value, key) => {
+        if (
+          currentImage?.supported_accelerators?.[0] === '*' ||
+          !_.isEmpty(currentEnvironmentManual)
+        )
+          return true;
+        return _.find(
+          currentImage?.supported_accelerators,
+          (supportedAccelerator) => supportedAccelerator === key.split('.')[0],
+        );
+      })
+      .keys()
+      .value();
+  }, [currentImage, acceleratorSlotsInRG, currentEnvironmentManual]);
 
   useEffect(() => {
-    if (isAcceleratorInputDisabled) {
+    // if the current image or resource group doesn't support any AI accelerator, set the value to 0
+    if (enabledAcceleratorKeysInRGForImage?.length === 0) {
       form.setFieldsValue({
         resource: {
           accelerator: 0,
         },
       });
     }
-  }, [isAcceleratorInputDisabled, form]);
+  }, [enabledAcceleratorKeysInRGForImage, form]);
 
   const sessionSliderLimitAndRemaining = {
     min: 1,
@@ -193,10 +198,10 @@ const ResourceAllocationFormItems: React.FC<
   const allocatablePresetNames = useMemo(() => {
     return getAllocatablePresetNames(
       checkPresetInfo?.presets,
-      resourceLimits,
+      mergedResourceLimit,
       currentImage,
     );
-  }, [checkPresetInfo?.presets, resourceLimits, currentImage]);
+  }, [checkPresetInfo?.presets, mergedResourceLimit, currentImage]);
 
   const ensureValidAcceleratorType = useEventNotStable(() => {
     const currentAcceleratorType = form.getFieldValue([
@@ -205,9 +210,9 @@ const ResourceAllocationFormItems: React.FC<
     ]);
     // If the current accelerator type is not available,
     // change accelerator type to the first supported accelerator
-    const nextAcceleratorType = acceleratorSlots?.[currentAcceleratorType]
+    const nextAcceleratorType = acceleratorSlotsInRG?.[currentAcceleratorType]
       ? currentAcceleratorType
-      : _.keys(acceleratorSlots)[0];
+      : _.keys(acceleratorSlotsInRG)[0];
 
     form.setFieldsValue({
       resource: {
@@ -221,13 +226,13 @@ const ResourceAllocationFormItems: React.FC<
       // when image changed, set value of resources to min value only if it's larger than current value
       const minimumResources: Partial<ResourceAllocationFormValue['resource']> =
         {
-          cpu: resourceLimits.cpu?.min,
+          cpu: mergedResourceLimit.cpu?.min,
           mem:
             convertBinarySizeUnit(
-              (convertBinarySizeUnit(resourceLimits.shmem?.min, 'm')?.number ||
-                0) +
-                (convertBinarySizeUnit(resourceLimits.mem?.min, 'm')?.number ||
-                  0) +
+              (convertBinarySizeUnit(mergedResourceLimit.shmem?.min, 'm')
+                ?.number || 0) +
+                (convertBinarySizeUnit(mergedResourceLimit.mem?.min, 'm')
+                  ?.number || 0) +
                 'm',
               'g',
             )?.number + 'g', //to prevent loosing precision
@@ -252,7 +257,7 @@ const ResourceAllocationFormItems: React.FC<
             'acceleratorType',
           ]);
           minimumResources.accelerator =
-            resourceLimits.accelerators[
+            mergedResourceLimit.accelerators[
               form.getFieldValue(['resource', 'acceleratorType'])
             ]?.min;
         } else {
@@ -268,7 +273,7 @@ const ResourceAllocationFormItems: React.FC<
 
           if (nextImageSelectorType) {
             minimumResources.accelerator =
-              resourceLimits.accelerators[nextImageSelectorType]?.min;
+              mergedResourceLimit.accelerators[nextImageSelectorType]?.min;
             minimumResources.acceleratorType = nextImageSelectorType;
           }
         }
@@ -343,7 +348,7 @@ const ResourceAllocationFormItems: React.FC<
 
       // Select the first matched AI accelerator type and value
       const firstMatchedAcceleratorType = _.find(
-        _.keys(acceleratorSlots),
+        _.keys(acceleratorSlotsInRG),
         (value) => acceleratorObj[value] !== undefined,
       );
 
@@ -546,22 +551,22 @@ const ResourceAllocationFormItems: React.FC<
                       },
                       {
                         type: 'number',
-                        min: resourceLimits.cpu?.min,
+                        min: mergedResourceLimit.cpu?.min,
                         // TODO: set message
                       },
                       {
                         type: 'number',
-                        max: resourceLimits.cpu?.max,
+                        max: mergedResourceLimit.cpu?.max,
                       },
                       {
                         warningOnly: true,
                         validator: async (rule, value: number) => {
                           if (
-                            _.isNumber(resourceLimits.cpu?.min) &&
-                            _.isNumber(resourceLimits.cpu?.max) &&
+                            _.isNumber(mergedResourceLimit.cpu?.min) &&
+                            _.isNumber(mergedResourceLimit.cpu?.max) &&
                             isMinOversMaxValue(
-                              resourceLimits.cpu?.min,
-                              resourceLimits.cpu?.max,
+                              mergedResourceLimit.cpu?.min,
+                              mergedResourceLimit.cpu?.max,
                             )
                           ) {
                             return Promise.reject(
@@ -603,26 +608,26 @@ const ResourceAllocationFormItems: React.FC<
                                 },
                               }
                             : {}),
-                          ...(resourceLimits.cpu?.min
+                          ...(mergedResourceLimit.cpu?.min
                             ? {
-                                [resourceLimits.cpu?.min]:
-                                  resourceLimits.cpu?.min,
+                                [mergedResourceLimit.cpu?.min]:
+                                  mergedResourceLimit.cpu?.min,
                               }
                             : {}),
-                          ...(resourceLimits.cpu?.max
+                          ...(mergedResourceLimit.cpu?.max
                             ? {
-                                [resourceLimits.cpu?.max]: {
+                                [mergedResourceLimit.cpu?.max]: {
                                   style: {
                                     color: token.colorTextSecondary,
                                   },
-                                  label: resourceLimits.cpu?.max,
+                                  label: mergedResourceLimit.cpu?.max,
                                 },
                               }
                             : {}),
                         },
                       }}
-                      min={resourceLimits.cpu?.min}
-                      max={resourceLimits.cpu?.max}
+                      min={mergedResourceLimit.cpu?.min}
+                      max={mergedResourceLimit.cpu?.max}
                       step={1}
                       onChange={() => {
                         form.setFieldValue('allocationPreset', 'custom');
@@ -678,10 +683,10 @@ const ResourceAllocationFormItems: React.FC<
                                 validator: async (rule, value: string) => {
                                   if (
                                     _.isString(value) &&
-                                    resourceLimits.mem?.max &&
+                                    mergedResourceLimit.mem?.max &&
                                     compareNumberWithUnits(
                                       value,
-                                      resourceLimits.mem?.max,
+                                      mergedResourceLimit.mem?.max,
                                     ) > 0
                                   ) {
                                     return Promise.reject(
@@ -689,7 +694,8 @@ const ResourceAllocationFormItems: React.FC<
                                         name: t('session.launcher.Memory'),
                                         max:
                                           _.toUpper(
-                                            resourceLimits.mem?.max || '0g',
+                                            mergedResourceLimit.mem?.max ||
+                                              '0g',
                                           ) + 'iB',
                                       }),
                                       // t('session.launcher.MinMemory', {
@@ -714,16 +720,16 @@ const ResourceAllocationFormItems: React.FC<
 
                                   if (
                                     !_.isElement(value) &&
-                                    resourceLimits.mem?.min &&
+                                    mergedResourceLimit.mem?.min &&
                                     compareNumberWithUnits(
                                       value,
-                                      resourceLimits.mem?.min || '0g',
+                                      mergedResourceLimit.mem?.min || '0g',
                                     ) < 0
                                   ) {
                                     return Promise.reject(
                                       t('session.launcher.MinMemory', {
                                         size: _.toUpper(
-                                          resourceLimits.mem?.min || '0g',
+                                          mergedResourceLimit.mem?.min || '0g',
                                         ),
                                       }),
                                     );
@@ -737,8 +743,8 @@ const ResourceAllocationFormItems: React.FC<
                                 validator: async (rule, value: string) => {
                                   if (
                                     compareNumberWithUnits(
-                                      resourceLimits.mem?.min as string,
-                                      resourceLimits.mem?.max as string,
+                                      mergedResourceLimit.mem?.min as string,
+                                      mergedResourceLimit.mem?.max as string,
                                     ) > 0
                                   ) {
                                     return Promise.reject(
@@ -750,7 +756,7 @@ const ResourceAllocationFormItems: React.FC<
                                   if (showRemainingWarning) {
                                     if (
                                       !_.isElement(value) &&
-                                      resourceLimits.mem &&
+                                      mergedResourceLimit.mem &&
                                       compareNumberWithUnits(
                                         value,
                                         remaining.mem + 'b',
@@ -769,14 +775,14 @@ const ResourceAllocationFormItems: React.FC<
                             ]}
                           >
                             <DynamicUnitInputNumberWithSlider
-                              max={resourceLimits.mem?.max}
+                              max={mergedResourceLimit.mem?.max}
                               // min="256m"
                               // min={'0g'}
                               // min={addNumberWithUnits(
                               //   resourceLimits.mem?.min,
                               //   form.getFieldValue(['resource', 'shmem']) || '0g',
                               // )}
-                              min={resourceLimits.mem?.min}
+                              min={mergedResourceLimit.mem?.min}
                               // warn={
                               //   checkPresetInfo?.scaling_group_remaining.mem ===
                               //   undefined
@@ -931,7 +937,7 @@ const ResourceAllocationFormItems: React.FC<
                               <DynamicUnitInputNumberWithSlider
                                 // shmem max is mem max
                                 // min={resourceLimits.shmem?.min}
-                                min={resourceLimits.shmem?.min}
+                                min={mergedResourceLimit.shmem?.min}
                                 // max={resourceLimits.mem?.max || '0g'}
                                 addonBefore={'SHM'}
                                 max={
@@ -985,16 +991,15 @@ const ResourceAllocationFormItems: React.FC<
                         rules={[
                           {
                             required:
-                              currentImageAcceleratorLimits &&
-                              currentImageAcceleratorLimits.length > 0,
+                              enabledAcceleratorKeysInRGForImage?.length !== 0,
                           },
                           {
                             type: 'number',
                             min:
-                              resourceLimits.accelerators[
+                              mergedResourceLimit.accelerators[
                                 currentAcceleratorType
                               ]?.min || 0,
-                            max: resourceLimits.accelerators[
+                            max: mergedResourceLimit.accelerators[
                               currentAcceleratorType
                             ]?.max,
                           },
@@ -1020,20 +1025,20 @@ const ResourceAllocationFormItems: React.FC<
                             validator: async (rule: any, value: number) => {
                               if (
                                 _.isNumber(
-                                  resourceLimits.accelerators[
+                                  mergedResourceLimit.accelerators[
                                     currentAcceleratorType
                                   ]?.min,
                                 ) &&
                                 _.isNumber(
-                                  resourceLimits.accelerators[
+                                  mergedResourceLimit.accelerators[
                                     currentAcceleratorType
                                   ]?.max,
                                 ) &&
                                 isMinOversMaxValue(
-                                  resourceLimits.accelerators[
+                                  mergedResourceLimit.accelerators[
                                     currentAcceleratorType
                                   ]?.min,
-                                  resourceLimits.accelerators[
+                                  mergedResourceLimit.accelerators[
                                     currentAcceleratorType
                                   ]?.max,
                                 )
@@ -1083,16 +1088,16 @@ const ResourceAllocationFormItems: React.FC<
                                   }
                                 : {}),
                               ...(_.isNumber(
-                                resourceLimits.accelerators[
+                                mergedResourceLimit.accelerators[
                                   currentAcceleratorType
                                 ]?.max,
                               )
                                 ? {
                                     // @ts-ignore
-                                    [resourceLimits.accelerators[
+                                    [mergedResourceLimit.accelerators[
                                       currentAcceleratorType
                                     ]?.max]:
-                                      resourceLimits.accelerators[
+                                      mergedResourceLimit.accelerators[
                                         currentAcceleratorType
                                       ]?.max,
                                   }
@@ -1102,16 +1107,20 @@ const ResourceAllocationFormItems: React.FC<
                               formatter: (value = 0) => {
                                 return `${value} ${mergedResourceSlots?.[currentAcceleratorType]?.display_unit || ''}`;
                               },
-                              open: isAcceleratorInputDisabled
-                                ? false
-                                : undefined,
+                              open:
+                                enabledAcceleratorKeysInRGForImage?.length === 0
+                                  ? false
+                                  : undefined,
                             },
                           }}
-                          disabled={isAcceleratorInputDisabled}
+                          disabled={
+                            enabledAcceleratorKeysInRGForImage?.length === 0
+                          }
                           min={0}
                           max={
-                            resourceLimits.accelerators[currentAcceleratorType]
-                              ?.max
+                            mergedResourceLimit.accelerators[
+                              currentAcceleratorType
+                            ]?.max
                           }
                           step={
                             _.endsWith(currentAcceleratorType, 'shares') &&
@@ -1127,21 +1136,27 @@ const ResourceAllocationFormItems: React.FC<
                               <Form.Item
                                 noStyle
                                 name={['resource', 'acceleratorType']}
-                                initialValue={_.keys(acceleratorSlots)[0]}
-                                hidden={isAcceleratorInputDisabled}
+                                initialValue={
+                                  enabledAcceleratorKeysInRGForImage?.[0]
+                                }
+                                hidden={
+                                  !enabledAcceleratorKeysInRGForImage ||
+                                  enabledAcceleratorKeysInRGForImage?.length ===
+                                    0
+                                }
                               >
                                 <BAISelect
                                   autoSelectOption
                                   tabIndex={-1}
                                   // Do not delete disabled prop. It is necessary to prevent the user from changing the value.
                                   suffixIcon={
-                                    _.size(acceleratorSlots) > 1
+                                    _.size(acceleratorSlotsInRG) > 1
                                       ? undefined
                                       : null
                                   }
                                   popupMatchSelectWidth={false}
                                   options={_.map(
-                                    acceleratorSlots,
+                                    acceleratorSlotsInRG,
                                     (value, name) => {
                                       return {
                                         value: name,
@@ -1149,13 +1164,10 @@ const ResourceAllocationFormItems: React.FC<
                                           mergedResourceSlots?.[name]
                                             ?.display_unit || 'UNIT',
                                         disabled:
-                                          currentImageAcceleratorLimits &&
-                                          currentImageAcceleratorLimits.length >
-                                            0 &&
-                                          !_.find(
-                                            currentImageAcceleratorLimits,
-                                            (limit) => limit?.key === name,
-                                          ),
+                                          // When enabledAcceleratorKeysInRGForImage is undefined, it means that enabledAcceleratorKeysInRGForImage is not determined yet.
+                                          enabledAcceleratorKeysInRGForImage?.includes(
+                                            name,
+                                          ) === false,
                                       };
                                     },
                                   )}
@@ -1334,7 +1346,7 @@ const ResourceAllocationFormItems: React.FC<
                     >
                       {() => {
                         const derivedClusterSizeMaxLimit = _.min([
-                          resourceLimits.cpu?.max,
+                          mergedResourceLimit.cpu?.max,
                           keypairResourcePolicy.max_containers_per_session,
                         ]);
                         const clusterUnit =
@@ -1513,6 +1525,7 @@ export const getAllocatablePresetNames = (
         if (['mem', 'cpu', 'shmem'].includes(key)) return true;
       },
     );
+
     if (currentImageAcceleratorLimits.length === 0) {
       // When current image doesn't require any accelerator,
       // It's available if the preset doesn't have any accelerator
@@ -1537,7 +1550,32 @@ export const getAllocatablePresetNames = (
       );
     }
   }).map((preset) => preset.name);
+
+  const byImageSupportedAccelerator = _.filter(presets, (preset) => {
+    const acceleratorResourceOfPreset = _.omitBy(
+      preset.resource_slots,
+      (value, key) => {
+        if (['mem', 'cpu', 'shmem'].includes(key)) return true;
+      },
+    );
+
+    if (currentImage?.supported_accelerators?.[0] === '*') {
+      return true;
+    } else {
+      return _.some(acceleratorResourceOfPreset, (value, key) => {
+        return (
+          !!currentImage?.supported_accelerators?.includes(key.split('.')[0]) ||
+          value === '0'
+        );
+      });
+    }
+  }).map((preset) => preset.name);
+
   return currentImageAcceleratorLimits.length === 0
-    ? bySliderLimit
-    : _.intersection(bySliderLimit, byImageAcceleratorLimits);
+    ? _.intersection(bySliderLimit, byImageSupportedAccelerator)
+    : _.intersection(
+        bySliderLimit,
+        byImageAcceleratorLimits,
+        byImageSupportedAccelerator,
+      );
 };
