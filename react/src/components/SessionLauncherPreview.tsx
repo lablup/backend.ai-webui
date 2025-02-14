@@ -57,6 +57,7 @@ const SessionLauncherPreview: React.FC<{
     <>
       <BAICard
         title={t('session.launcher.SessionType')}
+        showDivider
         size="small"
         status={
           form.getFieldError('sessionName').length > 0 ||
@@ -136,6 +137,7 @@ const SessionLauncherPreview: React.FC<{
       />
       <BAICard
         title={t('session.launcher.Environments')}
+        showDivider
         size="small"
         status={
           _.some(
@@ -373,6 +375,7 @@ const SessionLauncherPreview: React.FC<{
       </BAICard>
       <BAICard
         title={t('session.launcher.ResourceAllocation')}
+        showDivider
         status={
           _.some(form.getFieldValue('resource'), (v, key) => {
             return (
@@ -516,6 +519,7 @@ const SessionLauncherPreview: React.FC<{
       </BAICard>
       <BAICard
         title={t('webui.menu.Data&Storage')}
+        showDivider
         size="small"
         status={
           form.getFieldError('vfoldersAliasMap').length > 0
@@ -586,6 +590,7 @@ const SessionLauncherPreview: React.FC<{
       </BAICard>
       <BAICard
         title="Network"
+        showDivider
         size="small"
         status={form.getFieldError('ports').length > 0 ? 'error' : undefined}
         extraButtonTitle={t('button.Edit')}

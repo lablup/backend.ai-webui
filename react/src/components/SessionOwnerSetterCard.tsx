@@ -283,6 +283,7 @@ export const SessionOwnerSetterPreviewCard: React.FC<BAICardProps> = (
     isActive && (
       <BAICard
         title={t('session.launcher.SetSessionOwner')}
+        showDivider
         size="small"
         status={
           form.getFieldError(['owner', 'email']).length > 0 ||
