@@ -1090,7 +1090,8 @@
     "ExportCSV": "eksport CSV",
     "Tools": "Alatan",
     "MemorySizeExceedsLimit": "Saiz memori hendaklah kurang daripada 300 PiB",
-    "MaxNetworkCount": "Kiraan Rangkaian Maks"
+    "MaxNetworkCount": "Kiraan Rangkaian Maks",
+    "CannotUpdateResourcePolicy": "Tidak dapat mengemas kini dasar sumber. \nSila periksa nilai input."
   },
   "registry": {
     "Hostname": "Nama Hos",

@@ -1194,6 +1194,7 @@
     "Name": "Name",
     "AllowedHosts": "Allowed hosts",
     "CannotCreateResourcePolicy": "Cannot create Resource Policy. Please check input values.",
+    "CannotUpdateResourcePolicy": "Cannot update Resource Policy. Please check input values.",
     "SuccessfullyCreated": "Resource policy successfully created.",
     "SuccessfullyUpdated": "Resource policy successfully updated.",
     "SuccessfullyDeleted": "Resource policy successfully deleted.",

@@ -1090,7 +1090,8 @@
     "ExportCSV": "CSVエクスポート",
     "Tools": "ツール",
     "MemorySizeExceedsLimit": "メモリ サイズは 300 PiB 未満である必要があります",
-    "MaxNetworkCount": "最大ネットワーク数"
+    "MaxNetworkCount": "最大ネットワーク数",
+    "CannotUpdateResourcePolicy": "リソースポリシーを更新することはできません。\n入力値を確認してください。"
   },
   "registry": {
     "Hostname": "ホスト名",
