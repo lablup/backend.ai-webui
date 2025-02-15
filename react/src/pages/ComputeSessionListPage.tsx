@@ -5,7 +5,11 @@ import BAIPropertyFilter, {
 import TerminateSessionModal from '../components/ComputeSessionNodeItems/TerminateSessionModal';
 import Flex from '../components/Flex';
 import SessionNodes from '../components/SessionNodes';
-import { filterNonNullItems, transformSorterToOrderString } from '../helper';
+import {
+  filterNonNullItems,
+  handleRowSelectionChange,
+  transformSorterToOrderString,
+} from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -283,34 +287,13 @@ const ComputeSessionListPage = () => {
               },
               onChange: (selectedRowKeys) => {
                 // Using selectedRowKeys to retrieve selected rows since selectedRows lack nested fragment types
-
-                const notSelectedRowsInCurrentPage = _.chain(
-                  compute_session_nodes?.edges,
-                )
-                  .map((edge) => edge?.node)
-                  .filter((node) => {
-                    return !selectedRowKeys.includes(node?.id || '');
-                  })
-                  .value();
-
-                const selectedRowsInCurrentPage = _.chain(selectedRowKeys)
-                  .map((id) => {
-                    return _.find(
-                      compute_session_nodes?.edges,
-                      (edge) => edge?.node?.id === id,
-                    )?.node;
-                  })
-                  .filter((n) => n !== undefined)
-                  .value();
-
-                setSelectedSessionList((list) => {
-                  return _.uniqBy(
-                    [...list, ...selectedRowsInCurrentPage],
-                    'id',
-                  ).filter((node) => {
-                    return !notSelectedRowsInCurrentPage.includes(node);
-                  });
-                });
+                handleRowSelectionChange(
+                  selectedRowKeys,
+                  filterNonNullItems(
+                    compute_session_nodes?.edges.map((e) => e?.node),
+                  ),
+                  setSelectedSessionList,
+                );
               },
               selectedRowKeys: _.map(selectedSessionList, (i) => i.id),
             }}
