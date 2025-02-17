@@ -529,7 +529,7 @@
     "Session": "Sessione",
     "General": "Generale",
     "Disabled": "Disabili",
-    "NSelected": "Articolo/i selezionato/i {{count}}",
+    "NSelected": "{{count}} selezionato",
     "RemainingLoginSessionTime": "Tempo fino alla disconnessione automatica",
     "Change": "Cambiamento",
     "MaxValueNotification": "{{nome}} deve essere massimo {{max}}",

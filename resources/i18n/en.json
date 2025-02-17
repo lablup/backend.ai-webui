@@ -659,7 +659,7 @@
     "Session": "Session",
     "General": "General",
     "Disabled": "Disabled",
-    "NSelected": "Selected {{count}} item(s)",
+    "NSelected": "{{count}} selected",
     "RemainingLoginSessionTime": "Time until auto logout",
     "Change": "Change",
     "MaxValueNotification": "{{name}} must be maximum {{max}}",

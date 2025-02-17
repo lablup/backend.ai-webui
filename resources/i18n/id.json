@@ -530,7 +530,7 @@
     "Session": "Sesi",
     "General": "Umum",
     "Disabled": "Dinonaktifkan",
-    "NSelected": "Item {{hitung}} yang dipilih",
+    "NSelected": "{{count}} dipilih",
     "RemainingLoginSessionTime": "Waktu Hingga Keluar Otomatis",
     "Change": "Perubahan",
     "MaxValueNotification": "{{nama}} harus maksimal {{max}}",

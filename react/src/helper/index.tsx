@@ -471,3 +471,34 @@ export function formatDurationAsDays(
 
   return `${asDays ? `${asDays}${dayLabel}` : ''}${hours}:${minutes}:${seconds}`;
 }
+
+export const handleRowSelectionChange = <T extends object, K extends keyof T>(
+  selectedRowKeys: React.Key[],
+  currentPageItems: T[],
+  setSelectedItems: React.Dispatch<React.SetStateAction<T[]>>,
+  keyField: K = 'id' as unknown as K,
+) => {
+  // Find items that are no longer selected on current page
+  const deselectedItemsOnCurrentPage = currentPageItems.filter(
+    (item) => !selectedRowKeys.includes(item[keyField] as React.Key),
+  );
+
+  // Find newly selected items on current page
+  const selectedItemsOnCurrentPage = selectedRowKeys
+    .map((key) => currentPageItems.find((item) => item[keyField] === key))
+    .filter((item): item is T => item !== undefined);
+
+  setSelectedItems((prevSelected) => {
+    // Combine previous selection with new selections
+    const combinedSelection = [...prevSelected, ...selectedItemsOnCurrentPage];
+
+    // Remove duplicates and deselected items
+    return _.uniqBy(combinedSelection, keyField as string).filter(
+      (item) =>
+        !_.some(
+          deselectedItemsOnCurrentPage,
+          (di) => di[keyField] === item[keyField],
+        ),
+    );
+  });
+};

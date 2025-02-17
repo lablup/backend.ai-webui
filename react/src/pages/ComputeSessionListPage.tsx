@@ -2,30 +2,47 @@ import BAILink from '../components/BAILink';
 import BAIPropertyFilter, {
   mergeFilterValues,
 } from '../components/BAIPropertyFilter';
+import TerminateSessionModal from '../components/ComputeSessionNodeItems/TerminateSessionModal';
 import Flex from '../components/Flex';
 import SessionNodes from '../components/SessionNodes';
-import { filterNonNullItems, transformSorterToOrderString } from '../helper';
+import {
+  filterNonNullItems,
+  handleRowSelectionChange,
+  transformSorterToOrderString,
+} from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
 import { useInterval } from '../hooks/useIntervalValue';
-import { ComputeSessionListPageQuery } from './__generated__/ComputeSessionListPageQuery.graphql';
+import {
+  ComputeSessionListPageQuery,
+  ComputeSessionListPageQuery$data,
+  ComputeSessionListPageQuery$variables,
+} from './__generated__/ComputeSessionListPageQuery.graphql';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Badge, Button, Card, Radio, Spin, Tabs, theme } from 'antd';
+import { Badge, Button, Card, Radio, Tabs, theme, Tooltip } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import { startTransition, useRef, useTransition } from 'react';
+import { PowerOffIcon } from 'lucide-react';
+import { startTransition, useDeferredValue, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
-import { StringParam, withDefault } from 'use-query-params';
+import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 type TypeFilterType = 'all' | 'interactive' | 'batch' | 'inference' | 'system';
+type SessionNode = NonNullableNodeOnEdges<
+  ComputeSessionListPageQuery$data['compute_session_nodes']
+>;
 const ComputeSessionListPage = () => {
   const currentProject = useCurrentProjectValue();
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const [selectedSessionList, setSelectedSessionList] = useState<
+    Array<SessionNode>
+  >([]);
+  const [isOpenTerminateModal, setOpenTerminateModal] = useState(false);
 
   const {
     baiPaginationOption,
@@ -35,9 +52,6 @@ const ComputeSessionListPage = () => {
     current: 1,
     pageSize: 10,
   });
-  const [isPendingPageOnChange, startTableOnChangeTransition] = useTransition();
-  const [isPendingFilterChange, startFilterChangeTransition] = useTransition();
-  const [isPendingTabChange, startTabChangeTransition] = useTransition();
 
   const [queryParams, setQuery] = useDeferredQueryParams({
     order: StringParam,
@@ -45,6 +59,8 @@ const ComputeSessionListPage = () => {
     type: withDefault(StringParam, 'all'),
     statusCategory: withDefault(StringParam, 'running'),
   });
+
+  const [, setSessionDetailId] = useQueryParam('sessionDetail', StringParam);
   const queryMapRef = useRef({
     [queryParams.type]: queryParams,
   });
@@ -62,7 +78,22 @@ const ComputeSessionListPage = () => {
       ? 'status != "TERMINATED" & status != "CANCELLED"'
       : 'status == "TERMINATED" | status == "CANCELLED"';
 
+  const isNotRunningCategory = (status?: string | null) => {
+    return status === 'TERMINATED' || status === 'CANCELLED';
+  };
+
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
+
+  const queryVariables: ComputeSessionListPageQuery$variables = {
+    projectId: currentProject.id,
+    offset: baiPaginationOption.offset,
+    first: baiPaginationOption.first,
+    filter: mergeFilterValues([statusFilter, queryParams.filter, typeFilter]),
+    order: queryParams.order,
+    runningTypeFilter: 'status != "TERMINATED" & status != "CANCELLED"',
+  };
+
+  const deferredQueryVariables = useDeferredValue(queryVariables);
 
   const { compute_session_nodes, allRunningSessionForCount } =
     useLazyLoadQuery<ComputeSessionListPageQuery>(
@@ -84,8 +115,9 @@ const ComputeSessionListPage = () => {
           ) {
             edges @required(action: THROW) {
               node @required(action: THROW) {
-                id
+                id @required(action: THROW)
                 ...SessionNodesFragment
+                ...TerminateSessionModalFragment
               }
             }
             count
@@ -100,18 +132,7 @@ const ComputeSessionListPage = () => {
           }
         }
       `,
-      {
-        projectId: currentProject.id,
-        offset: baiPaginationOption.offset,
-        first: baiPaginationOption.first,
-        filter: mergeFilterValues([
-          statusFilter,
-          queryParams.filter,
-          typeFilter,
-        ]),
-        order: queryParams.order,
-        runningTypeFilter: 'status != "TERMINATED" & status != "CANCELLED"',
-      },
+      deferredQueryVariables,
       {
         fetchPolicy: 'network-only',
         fetchKey,
@@ -150,16 +171,15 @@ const ComputeSessionListPage = () => {
           type="card"
           activeKey={queryParams.type}
           onChange={(key) => {
-            startTabChangeTransition(() => {
-              const storedQuery = queryMapRef.current[key] || {
-                statusCategory: 'running',
-              };
-              setQuery(
-                { ...storedQuery, type: key as TypeFilterType },
-                'replace',
-              );
-              setTablePaginationOption({ current: 1 });
-            });
+            const storedQuery = queryMapRef.current[key] || {
+              statusCategory: 'running',
+            };
+            setQuery(
+              { ...storedQuery, type: key as TypeFilterType },
+              'replace',
+            );
+            setTablePaginationOption({ current: 1 });
+            setSelectedSessionList([]);
           }}
           items={_.map(
             {
@@ -193,17 +213,16 @@ const ComputeSessionListPage = () => {
             }),
           )}
         />
-        <Spin spinning={isPendingTabChange} indicator={<LoadingOutlined />}>
-          <Flex direction="column" align="stretch" gap={'sm'}>
+        <Flex direction="column" align="stretch" gap={'sm'}>
+          <Flex justify="between">
             <Flex gap={'sm'} align="start">
               <Radio.Group
                 optionType="button"
                 value={queryParams.statusCategory}
                 onChange={(e) => {
-                  startFilterChangeTransition(() => {
-                    setQuery({ statusCategory: e.target.value }, 'replaceIn');
-                    setTablePaginationOption({ current: 1 });
-                  });
+                  setQuery({ statusCategory: e.target.value }, 'replaceIn');
+                  setTablePaginationOption({ current: 1 });
+                  setSelectedSessionList([]);
                 }}
                 options={[
                   {
@@ -226,58 +245,95 @@ const ComputeSessionListPage = () => {
                 ]}
                 value={queryParams.filter || undefined}
                 onChange={(value) => {
-                  startFilterChangeTransition(() => {
-                    setQuery({ filter: value }, 'replaceIn');
-                    setTablePaginationOption({ current: 1 });
-                  });
+                  setQuery({ filter: value }, 'replaceIn');
+                  setTablePaginationOption({ current: 1 });
+                  setSelectedSessionList([]);
                 }}
               />
             </Flex>
-            <SessionNodes
-              rowSelection={
-                queryParams.statusCategory !== 'finished'
-                  ? {
-                      type: 'checkbox',
-                      // onChange: (selectedRowKeys, selectedRows) => {
-                      //   console.log(
-                      //     `selectedRowKeys: ${selectedRowKeys}`,
-                      //     'selectedRows: ',
-                      //     selectedRows,
-                      //   );
-                      // },
-                    }
-                  : undefined
-              }
-              sessionsFrgmt={filterNonNullItems(
-                compute_session_nodes?.edges.map((e) => e?.node),
+            <Flex gap={'sm'}>
+              {selectedSessionList.length > 0 && (
+                <>
+                  {t('general.NSelected', {
+                    count: selectedSessionList.length,
+                  })}
+                  <Tooltip
+                    title={t('session.TerminateSession')}
+                    placement="topLeft"
+                  >
+                    <Button
+                      icon={<PowerOffIcon color={token.colorError} />}
+                      onClick={() => {
+                        setOpenTerminateModal(true);
+                      }}
+                    />
+                  </Tooltip>
+                </>
               )}
-              pagination={{
-                pageSize: tablePaginationOption.pageSize,
-                current: tablePaginationOption.current,
-                total: compute_session_nodes?.count ?? 0,
-                // showTotal: (total) => {
-                //   return total;
-                // },
-              }}
-              loading={{
-                spinning: isPendingPageOnChange || isPendingFilterChange,
-                indicator: <LoadingOutlined />,
-              }}
-              onChange={({ current, pageSize }, filters, sorter) => {
-                startTableOnChangeTransition(() => {
-                  if (_.isNumber(current) && _.isNumber(pageSize)) {
-                    setTablePaginationOption({ current, pageSize });
-                  }
-                  setQuery(
-                    { order: transformSorterToOrderString(sorter) },
-                    'replaceIn',
-                  );
-                });
-              }}
-            />
+            </Flex>
           </Flex>
-        </Spin>
+          <SessionNodes
+            onClickSessionName={(session) => {
+              setSessionDetailId(session.row_id);
+            }}
+            rowSelection={{
+              type: 'checkbox',
+              // Preserve selected rows between pages, but clear when filter changes
+              preserveSelectedRowKeys: true,
+              getCheckboxProps(record) {
+                return {
+                  disabled: isNotRunningCategory(record.status),
+                };
+              },
+              onChange: (selectedRowKeys) => {
+                // Using selectedRowKeys to retrieve selected rows since selectedRows lack nested fragment types
+                handleRowSelectionChange(
+                  selectedRowKeys,
+                  filterNonNullItems(
+                    compute_session_nodes?.edges.map((e) => e?.node),
+                  ),
+                  setSelectedSessionList,
+                );
+              },
+              selectedRowKeys: _.map(selectedSessionList, (i) => i.id),
+            }}
+            sessionsFrgmt={filterNonNullItems(
+              compute_session_nodes?.edges.map((e) => e?.node),
+            )}
+            pagination={{
+              pageSize: tablePaginationOption.pageSize,
+              current: tablePaginationOption.current,
+              total: compute_session_nodes?.count ?? 0,
+              // showTotal: (total) => {
+              //   return total;
+              // },
+            }}
+            loading={{
+              spinning: queryVariables !== deferredQueryVariables,
+              indicator: <LoadingOutlined />,
+            }}
+            onChange={({ current, pageSize }, filters, sorter) => {
+              if (_.isNumber(current) && _.isNumber(pageSize)) {
+                setTablePaginationOption({ current, pageSize });
+              }
+              setQuery(
+                { order: transformSorterToOrderString(sorter) },
+                'replaceIn',
+              );
+            }}
+          />
+        </Flex>
       </Card>
+      <TerminateSessionModal
+        open={isOpenTerminateModal}
+        sessionFrgmts={selectedSessionList}
+        onRequestClose={(success) => {
+          setOpenTerminateModal(false);
+          if (success) {
+            setSelectedSessionList([]);
+          }
+        }}
+      />
     </>
   );
 };

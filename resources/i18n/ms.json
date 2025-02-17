@@ -529,7 +529,7 @@
     "Session": "Sesi",
     "General": "Umum",
     "Disabled": "Dilumpuhkan",
-    "NSelected": "{{count}} item yang dipilih",
+    "NSelected": "{{count}} dipilih",
     "RemainingLoginSessionTime": "__NOT_TRANSLATED__",
     "Change": "Berubah",
     "MaxValueNotification": "{{nama}} mestilah maksimum {{maks}}",

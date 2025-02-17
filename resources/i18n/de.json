@@ -529,7 +529,7 @@
     "Session": "Sitzung",
     "General": "Allgemein",
     "Disabled": "Behinderte",
-    "NSelected": "Ausgewählte(r) {{count}} Artikel",
+    "NSelected": "{{Zahl}} ausgewählt",
     "RemainingLoginSessionTime": "Zeit bis zur automatischen Abmeldung",
     "Change": "Ändern Sie",
     "MaxValueNotification": "{{name}} muss maximal {{max}} sein",
