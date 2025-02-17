@@ -2,6 +2,7 @@ import BAILink from '../components/BAILink';
 import BAIPropertyFilter, {
   mergeFilterValues,
 } from '../components/BAIPropertyFilter';
+import ComputeSessionResourcePanelCard from '../components/ComputeSessionResourcePanelCard';
 import Flex from '../components/Flex';
 import SessionNodes from '../components/SessionNodes';
 import { filterNonNullItems, transformSorterToOrderString } from '../helper';
@@ -125,9 +126,10 @@ const ComputeSessionListPage = () => {
   }, 15_000);
 
   return (
-    <>
+    <Flex gap="lg" direction="column" align="stretch">
       {/* TODO: add legacy opener */}
       {/* <SessionDetailAndContainerLogOpenerForLegacy /> */}
+      <ComputeSessionResourcePanelCard />
       <Card
         bordered={false}
         title={t('webui.menu.Sessions')}
@@ -278,7 +280,7 @@ const ComputeSessionListPage = () => {
           </Flex>
         </Spin>
       </Card>
-    </>
+    </Flex>
   );
 };
 
