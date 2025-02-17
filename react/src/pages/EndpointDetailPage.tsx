@@ -642,6 +642,11 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                 },
               },
               {
+                title: t('autoScalingRule.MetricSource'),
+                dataIndex: 'metric_source',
+                render: (text, row) => <Tag>{row?.metric_source}</Tag>,
+              },
+              {
                 title: t('autoScalingRule.MetricName'),
                 dataIndex: 'metric_name',
                 fixed: 'left',
@@ -768,11 +773,6 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                     </Popconfirm>
                   </Flex>
                 ),
-              },
-              {
-                title: t('autoScalingRule.MetricSource'),
-                dataIndex: 'metric_source',
-                render: (text, row) => <Tag>{row?.metric_source}</Tag>,
               },
               {
                 title: t('autoScalingRule.Comparator'),

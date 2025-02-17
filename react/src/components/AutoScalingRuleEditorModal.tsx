@@ -256,13 +256,6 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
         }
       >
         <Form.Item
-          label={t('autoScalingRule.MetricName')}
-          name={'metric_name'}
-          rules={[{ required: true }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
           label={t('autoScalingRule.MetricSource')}
           name={'metric_source'}
           rules={[{ required: true }]}
@@ -273,6 +266,13 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
             </Select.Option>
             <Select.Option value={'KERNEL'}>Kernel</Select.Option>
           </Select>
+        </Form.Item>
+        <Form.Item
+          label={t('autoScalingRule.MetricName')}
+          name={'metric_name'}
+          rules={[{ required: true }]}
+        >
+          <Input />
         </Form.Item>
         <Flex
           direction="row"
