@@ -385,7 +385,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               type="link"
               icon={<BotMessageSquareIcon />}
               onClick={() => {
-                setOpenChatModal(true);
+                webuiNavigate(`/chat?endpointId=${endpoint?.endpoint_id}`);
               }}
               disabled={endpoint?.status !== 'HEALTHY'}
             />
