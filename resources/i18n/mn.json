@@ -437,7 +437,12 @@
     "ReadMore": "Цааш унших...",
     "CommitImageName": "Оруулсан зургийн нэр",
     "IdleCheckExpirationWarning": "Сул зогсолтын шалгалтын үр дүнд үндэслэн хуралдааныг зогсоож болно.",
-    "FailToRenameSession": "Сешн нэрийг өөрчлөх хүсэлтийг өөрчлөх ажиллагаа амжилтгүй боллоо."
+    "FailToRenameSession": "Сешн нэрийг өөрчлөх хүсэлтийг өөрчлөх ажиллагаа амжилтгүй боллоо.",
+    "KernelExitCode": "Цөмийн гарах код",
+    "SessionStatus": "Хүлээн авах стлал",
+    "PredicateChecks": "Урьдчилан шалгалт",
+    "AgentId": "Хийнний ID",
+    "Traceback": "TraceBack"
   },
   "button": {
     "Cancel": "Цуцлах",

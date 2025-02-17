@@ -1,20 +1,24 @@
 import Flex from '../Flex';
+import SessionStatusDetailModal, {
+  statusInfoTagColor,
+} from './SessionStatusDetailModal';
 import {
   SessionStatusTagFragment$data,
   SessionStatusTagFragment$key,
 } from './__generated__/SessionStatusTagFragment.graphql';
-import { LoadingOutlined } from '@ant-design/icons';
-import { Tag, theme } from 'antd';
+import { LoadingOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { Tag, Tooltip, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React from 'react';
+import React, { Suspense, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
 
 interface SessionStatusTagProps {
   sessionFrgmt?: SessionStatusTagFragment$key | null;
   showInfo?: boolean;
 }
-const statusTagColor = {
+export const statusTagColor = {
   //prepare
   RESTARTING: 'blue',
   PREPARING: 'blue',
@@ -41,31 +45,30 @@ const isTransitional = (session: SessionStatusTagFragment$data) => {
   ].includes(session?.status || '');
 };
 
-const statusInfoTagColor = {
-  // 'idle-timeout': undefined,
-  // 'user-requested': undefined,
-  // scheduled: undefined,
-  // 'self-terminated': undefined,
-  'no-available-instances': 'red',
-  'failed-to-start': 'red',
-  'creation-failed': 'red',
-};
 const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
   sessionFrgmt,
   showInfo,
 }) => {
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
+  const [openStatusDetailModal, setOpenStatusDetailModal] =
+    useState<boolean>(false);
+
   const session = useFragment(
     graphql`
       fragment SessionStatusTagFragment on ComputeSessionNode {
         id
-        name
         status
         status_info
+        status_data
+
+        ...SessionStatusDetailModalFragment
       }
     `,
     sessionFrgmt,
   );
-  const { token } = theme.useToken();
+
+  const hasDetail = session?.status_data && session?.status_data !== '{}';
 
   return session ? (
     _.isEmpty(session.status_info) || !showInfo ? (
@@ -85,14 +88,28 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
       </Tag>
     ) : (
       <Flex>
-        <Tag
-          style={{ margin: 0, zIndex: 1 }}
-          color={
-            session.status ? _.get(statusTagColor, session.status) : undefined
-          }
+        <Tooltip
+          title={hasDetail ? t('button.ClickForMoreDetails') : undefined}
         >
-          {session.status}
-        </Tag>
+          <Tag
+            color={
+              session.status ? _.get(statusTagColor, session.status) : undefined
+            }
+            icon={hasDetail ? <QuestionCircleOutlined /> : undefined}
+            style={{
+              margin: 0,
+              zIndex: 1,
+              cursor: hasDetail ? 'pointer' : 'auto',
+            }}
+            onClick={() => {
+              if (hasDetail) {
+                setOpenStatusDetailModal(true);
+              }
+            }}
+          >
+            {session.status}
+          </Tag>
+        </Tooltip>
         <Tag
           style={{
             margin: 0,
@@ -112,6 +129,13 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
         >
           {session.status_info}
         </Tag>
+        <Suspense fallback={null}>
+          <SessionStatusDetailModal
+            sessionFrgmt={session}
+            open={openStatusDetailModal}
+            onCancel={() => setOpenStatusDetailModal(false)}
+          />
+        </Suspense>
       </Flex>
     )
   ) : null;

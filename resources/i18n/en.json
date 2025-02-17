@@ -449,7 +449,12 @@
     "ReadMore": "Read More...",
     "CommitImageName": "Committed image name",
     "IdleCheckExpirationWarning": "Sessions may be terminated based on the results of Idleness Checks.",
-    "FailToRenameSession": "The session rename request failed."
+    "FailToRenameSession": "The session rename request failed.",
+    "KernelExitCode": "Kernel Exit Code",
+    "SessionStatus": "Session Status",
+    "PredicateChecks": "Predicate Checks",
+    "AgentId": "Agent ID",
+    "Traceback": "Traceback"
   },
   "modelService": {
     "Services": "Services",

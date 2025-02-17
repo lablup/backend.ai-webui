@@ -436,7 +436,12 @@
     "ReadMore": "Читать далее...",
     "CommitImageName": "Имя зафиксированного изображения",
     "IdleCheckExpirationWarning": "Сеансы могут быть прекращены по результатам проверок простоя.",
-    "FailToRenameSession": "Запрос на изменение имени сеанса завершился неудачей."
+    "FailToRenameSession": "Запрос на изменение имени сеанса завершился неудачей.",
+    "KernelExitCode": "Код выхода ядра",
+    "SessionStatus": "Статус сеанса",
+    "PredicateChecks": "ПРЕДИСКИЕ ПРОВЕРКИ",
+    "AgentId": "Идентификатор агента",
+    "Traceback": "Трайсбек"
   },
   "button": {
     "Cancel": "Отмена",
