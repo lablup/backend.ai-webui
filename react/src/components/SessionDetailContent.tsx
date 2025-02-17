@@ -20,8 +20,7 @@ import ImageMetaIcon from './ImageMetaIcon';
 import SessionUsageMonitor from './SessionUsageMonitor';
 import { SessionDetailContentLegacyQuery } from './__generated__/SessionDetailContentLegacyQuery.graphql';
 import { SessionDetailContentQuery } from './__generated__/SessionDetailContentQuery.graphql';
-import { FolderOutlined } from '@ant-design/icons';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import { FolderOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import {
   Alert,
   Button,
@@ -89,6 +88,7 @@ const SessionDetailContent: React.FC<{
             user_id
             resource_opts
             status
+            status_data
             vfolder_mounts
             created_at @required(action: NONE)
             terminated_at
@@ -268,7 +268,7 @@ const SessionDetailContent: React.FC<{
                 <Flex gap="xxs">
                   {t('session.IdleChecks')}
                   <Tooltip title={t('button.ClickForMoreDetails')}>
-                    <InfoCircleOutlined
+                    <QuestionCircleOutlined
                       style={{ cursor: 'pointer' }}
                       onClick={() => setOpenIdleCheckDescriptionModal(true)}
                     />
