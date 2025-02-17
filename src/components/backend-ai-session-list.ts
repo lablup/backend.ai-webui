@@ -889,7 +889,12 @@ export default class BackendAISessionList extends BackendAIPage {
       .then((response) => {
         this.total_session_count =
           response?.compute_session_list?.total_count || 0;
-        let sessions = response?.compute_session_list?.items;
+        let sessions = response?.compute_session_list?.items?.map(
+          (s: { mounts: string[] }) => {
+            const mounts = new Set(s.mounts);
+            return { ...s, mounts: [...mounts] };
+          },
+        );
         if (this.total_session_count === 0) {
           this.listCondition = 'no-data';
           this._listStatus?.show();
