@@ -90,7 +90,6 @@ const ComputeSessionListPage = () => {
       first: baiPaginationOption.first,
       filter: mergeFilterValues([statusFilter, queryParams.filter, typeFilter]),
       order: queryParams.order,
-      runningTypeFilter: 'status != "TERMINATED" & status != "CANCELLED"',
     }),
     [
       currentProject.id,
@@ -106,7 +105,7 @@ const ComputeSessionListPage = () => {
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  const { compute_session_nodes, allRunningSessionForCount } =
+  const { compute_session_nodes, ...sessionCounts } =
     useLazyLoadQuery<ComputeSessionListPageQuery>(
       graphql`
         query ComputeSessionListPageQuery(
@@ -115,7 +114,6 @@ const ComputeSessionListPage = () => {
           $offset: Int = 0
           $filter: String
           $order: String
-          $runningTypeFilter: String!
         ) {
           compute_session_nodes(
             project_id: $projectId
@@ -133,11 +131,43 @@ const ComputeSessionListPage = () => {
             }
             count
           }
-          allRunningSessionForCount: compute_session_nodes(
+          all: compute_session_nodes(
             project_id: $projectId
             first: 0
             offset: 0
-            filter: $runningTypeFilter
+            filter: "status != \"TERMINATED\" & status != \"CANCELLED\""
+          ) {
+            count
+          }
+          interactive: compute_session_nodes(
+            project_id: $projectId
+            first: 0
+            offset: 0
+            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"interactive\""
+          ) {
+            count
+          }
+          inference: compute_session_nodes(
+            project_id: $projectId
+            first: 0
+            offset: 0
+            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"inference\""
+          ) {
+            count
+          }
+          batch: compute_session_nodes(
+            project_id: $projectId
+            first: 0
+            offset: 0
+            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"batch\""
+          ) {
+            count
+          }
+          system: compute_session_nodes(
+            project_id: $projectId
+            first: 0
+            offset: 0
+            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"system\""
           ) {
             count
           }
@@ -213,23 +243,28 @@ const ComputeSessionListPage = () => {
               label: (
                 <Flex justify="center" gap={10}>
                   {label}
-                  {key === 'all' && (
-                    <Badge
-                      count={allRunningSessionForCount?.count}
-                      color={
-                        queryParams.type === key
-                          ? token.colorPrimary
-                          : token.colorTextDisabled
-                      }
-                      size="small"
-                      showZero
-                      style={{
-                        paddingRight: token.paddingXS,
-                        paddingLeft: token.paddingXS,
-                        fontSize: 10,
-                      }}
-                    />
-                  )}
+                  {
+                    // display badge only if count is greater than 0
+                    // @ts-ignore
+                    (sessionCounts[key]?.count || 0) > 0 && (
+                      <Badge
+                        // @ts-ignore
+                        count={sessionCounts[key].count}
+                        color={
+                          queryParams.type === key
+                            ? token.colorPrimary
+                            : token.colorTextDisabled
+                        }
+                        size="small"
+                        showZero
+                        style={{
+                          paddingRight: token.paddingXS,
+                          paddingLeft: token.paddingXS,
+                          fontSize: 10,
+                        }}
+                      />
+                    )
+                  }
                   {/*  */}
                 </Flex>
               ),
