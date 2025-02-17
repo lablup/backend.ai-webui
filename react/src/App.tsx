@@ -65,6 +65,7 @@ const ComputeSessionListPage = React.lazy(
 );
 const AgentSummaryPage = React.lazy(() => import('./pages/AgentSummaryPage'));
 const MaintenancePage = React.lazy(() => import('./pages/MaintenancePage'));
+const StatisticsPage = React.lazy(() => import('./pages/StatisticsPage'));
 const SessionDetailAndContainerLogOpenerLegacy = React.lazy(
   () => import('./components/SessionDetailAndContainerLogOpenerLegacy'),
 );
@@ -360,7 +361,7 @@ const router = createBrowserRouter([
         path: '/maintenance',
         element: (
           <BAIErrorBoundary>
-            <MaintenancePage />
+            <StatisticsPage />
           </BAIErrorBoundary>
         ),
         handle: { labelKey: 'webui.menu.Maintenance' },

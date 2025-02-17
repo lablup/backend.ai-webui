@@ -304,6 +304,7 @@ export default class BackendAIUsageList extends BackendAIPage {
           };
         });
         this.collection = collection;
+        console.log(collection);
         return this.updateComplete;
       })
       .catch((e) => {
