@@ -66,7 +66,9 @@
       "DisMatchUserEmail": "Το email χρήστη δεν ταιριάζει",
       "MyEnvironments": "Τα περιβάλλοντα μου",
       "ResourcePolicy": "Πολιτική Πόρων",
-      "FullNameUpdated": "Το πλήρες όνομα ενημερώθηκε με επιτυχία."
+      "FullNameUpdated": "Το πλήρες όνομα ενημερώθηκε με επιτυχία.",
+      "Playground": "Παιδική χαρά",
+      "ModelStore": "Κατάστημα μοντέλων"
     },
     "YouAreOffline": "Offline: Δεν είναι συνδεδεμένος σε κανένα δίκτυο.",
     "YouAreOnline": "Είστε πλέον συνδεδεμένοι",
@@ -1691,7 +1693,10 @@
     "CloneInfo": "Θα κλωνοποιηθεί ως φάκελος τύπου χρήστη.",
     "CloneToFolder": "Κλωνοποίηση σε φάκελο",
     "FolderAlreadyExists": "Ένας φάκελος με αυτό το όνομα υπάρχει ήδη.",
-    "FinetuneModel": "Μοντέλο Finetune"
+    "FinetuneModel": "Μοντέλο Finetune",
+    "Experience": "Εμπειρία",
+    "ModelCard": "Κάρτα μοντέλου",
+    "ImportFromHuggingFace": "Εισαγωγή από το πρόσωπο που αγκαλιάζει"
   },
   "table": {
     "SettingTable": "Ρύθμιση πίνακα",
@@ -1791,5 +1796,12 @@
     "AgentId": "Αναγνωριστικό πράκτορα",
     "ContainerId": "Αναγνωριστικό δοχείου",
     "Kernels": "Πυρήνες"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelServices": "Υπηρεσίες μοντέλου",
+      "ModelList": "Λίστα μοντέλων",
+      "MyServices": "Οι υπηρεσίες μου"
+    }
   }
 }
