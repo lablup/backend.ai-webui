@@ -1091,7 +1091,8 @@
     "ExportCSV": "CSV экспортлох",
     "Tools": "Багаж хэрэгсэл",
     "MemorySizeExceedsLimit": "Санах ойн хэмжээ 300 PiB-ээс бага байх ёстой",
-    "MaxNetworkCount": "Хамгийн их сүлжээний тоо"
+    "MaxNetworkCount": "Хамгийн их сүлжээний тоо",
+    "CannotUpdateResourcePolicy": "Нөөцийн бодлогыг шинэчлэх боломжгүй. \nОролтын утгыг шалгана уу."
   },
   "registry": {
     "Hostname": "Хостын нэр",
