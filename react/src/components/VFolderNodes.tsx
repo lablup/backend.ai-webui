@@ -302,25 +302,25 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                   {/* Delete from trash bin & Disabled delete button */}
                   {isDeletedCategory(vfolder?.status) && (
                     <Tooltip title={t('data.folders.Delete')} placement="right">
-                    <Button
-                      size="small"
-                      type="text"
-                      icon={<TrashBinIcon />}
-                      style={{
-                        color:
-                          vfolder?.status !== 'delete-pending'
-                            ? token.colorTextDisabled
-                            : token.colorError,
-                        background:
-                          vfolder?.status !== 'delete-pending'
-                            ? token.colorBgContainerDisabled
-                            : token.colorErrorBg,
-                      }}
-                      disabled={vfolder?.status !== 'delete-pending'}
-                      onClick={() => {
-                        setCurrentVFolder(vfolder ?? null);
-                      }}
-                    />
+                      <Button
+                        size="small"
+                        type="text"
+                        icon={<TrashBinIcon />}
+                        style={{
+                          color:
+                            vfolder?.status !== 'delete-pending'
+                              ? token.colorTextDisabled
+                              : token.colorError,
+                          background:
+                            vfolder?.status !== 'delete-pending'
+                              ? token.colorBgContainerDisabled
+                              : token.colorErrorBg,
+                        }}
+                        disabled={vfolder?.status !== 'delete-pending'}
+                        onClick={() => {
+                          setCurrentVFolder(vfolder ?? null);
+                        }}
+                      />
                     </Tooltip>
                   )}
                 </Flex>

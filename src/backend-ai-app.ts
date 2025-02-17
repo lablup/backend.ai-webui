@@ -117,9 +117,6 @@ const loadPage =
       case 'settings':
         import('./components/backend-ai-settings-view.js');
         break;
-      case 'statistics':
-        import('./components/backend-ai-statistics-view.js');
-        break;
       case 'verify-email':
         import('./components/backend-ai-email-verification-view.js');
         break;
@@ -161,16 +158,9 @@ const loadPage =
   };
 
 const updatePage = (page, params) => {
-  return {
-    type: UPDATE_PAGE,
-    page,
-    params,
-  };
+  return { type: UPDATE_PAGE, page, params };
 };
 
 export const updateDrawerState = (opened) => {
-  return {
-    type: UPDATE_DRAWER_STATE,
-    opened,
-  };
+  return { type: UPDATE_DRAWER_STATE, opened };
 };

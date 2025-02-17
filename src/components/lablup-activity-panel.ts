@@ -68,6 +68,7 @@ export default class LablupActivityPanel extends LitElement {
           line-height: 1.1;
           color: var(--token-colorText);
           border: 1px solid var(--token-colorBorderSecondary, #424242);
+          overflow: hidden;
         }
 
         div.card > h4 {
