@@ -273,7 +273,7 @@ class Client {
     this.abortController = new AbortController();
     this.abortSignal = this.abortController.signal;
     this.requestTimeout = 30_000;
-    this.requestSoftTimeout = 15_000;
+    this.requestSoftTimeout = 20_000;
     if (localStorage.getItem('backendaiwebui.sessionid')) {
       this._loginSessionId = localStorage.getItem('backendaiwebui.sessionid');
     } else {
