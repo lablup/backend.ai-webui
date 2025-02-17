@@ -18,7 +18,7 @@ import {
 } from '@ant-design/icons';
 import { Attachments, AttachmentsProps, Sender } from '@ant-design/x';
 import { useControllableValue } from 'ahooks';
-import { streamText } from 'ai';
+import { ChatRequestOptions, streamText } from 'ai';
 import {
   Alert,
   Badge,
@@ -63,10 +63,12 @@ export interface LLMChatCardProps extends CardProps {
   alert?: React.ReactNode;
   leftExtra?: React.ReactNode;
   inputMessage?: string;
+  inputAttachment?: AttachmentsProps['items'];
   submitKey?: string;
   onAgentChange?: (agentId: string) => void;
   onModelChange?: (modelId: string) => void;
   onInputChange?: (input: string) => void;
+  onAttachmentChange?: (attachment: AttachmentsProps['items']) => void;
   onSubmitChange?: () => void;
   showCompareMenuItem?: boolean;
   modelToken?: string;
@@ -84,8 +86,10 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
   alert,
   leftExtra,
   inputMessage,
+  inputAttachment,
   submitKey,
   onInputChange,
+  onAttachmentChange,
   onSubmitChange,
   showCompareMenuItem,
   modelToken,
@@ -93,6 +97,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
 }) => {
   const webuiNavigate = useWebUINavigate();
   const [isOpenAttachments, setIsOpenAttachments] = useState(false);
+  const [files, setFiles] = useState<AttachmentsProps['items']>([]);
 
   const [modelId, setModelId] = useControllableValue(cardProps, {
     valuePropName: 'modelId',
@@ -160,12 +165,38 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
     }
   }, [inputMessage, setInput]);
 
+  // If the `inputAttachment` prop exists, the `files` state has to follow it.
+  useEffect(() => {
+    if (!_.isUndefined(inputAttachment) && !_.isEqual(files, inputAttachment)) {
+      setFiles(inputAttachment);
+      setIsOpenAttachments(true);
+    }
+  }, [inputAttachment, files]);
+
+  const createDataTransferFiles = (files: AttachmentsProps['items']) => {
+    const fileList = _.map(files, (item) => item.originFileObj as File);
+    const dataTransfer = new DataTransfer();
+    _.forEach(fileList, (file) => {
+      dataTransfer.items.add(file);
+    });
+    return dataTransfer.files;
+  };
+
   useEffect(() => {
     if (!_.isUndefined(submitKey) && input) {
-      append({
-        role: 'user',
-        content: input,
-      });
+      const chatRequestOptions: ChatRequestOptions = {
+        experimental_attachments: !_.isEmpty(files)
+          ? createDataTransferFiles(files)
+          : undefined,
+      };
+
+      append(
+        {
+          role: 'user',
+          content: input,
+        },
+        chatRequestOptions,
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitKey]);
@@ -193,8 +224,6 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
       ? lastAssistantTokenCount / ((Date.now() - startTime) / 1000)
       : 0;
   }, [lastAssistantTokenCount, startTime]);
-
-  const [files, setFiles] = useState<AttachmentsProps['items']>([]);
 
   const items: MenuProps['items'] = filterEmptyItem([
     showCompareMenuItem && {
@@ -310,7 +339,10 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
                 getDropContainer={() => cardRef.current}
                 accept="image/*,text/*"
                 items={files}
-                onChange={({ fileList }) => setFiles(fileList)}
+                onChange={({ fileList }) => {
+                  setFiles(fileList);
+                  onAttachmentChange?.(fileList);
+                }}
                 placeholder={(type) =>
                   type === 'drop'
                     ? {
@@ -333,6 +365,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
               items={files}
               onChange={({ fileList }) => {
                 setFiles(fileList);
+                onAttachmentChange?.(fileList);
                 setIsOpenAttachments(true);
               }}
               placeholder={(type) =>
@@ -364,24 +397,13 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
           }}
           onSend={() => {
             if (input || !_.isEmpty(files)) {
-              const fileList = _.map(
-                files,
-                (item) => item.originFileObj as File,
-              );
-              // Filter after converting to `File`
-              const fileListArray = _.filter(fileList, Boolean);
-              const dataTransfer = new DataTransfer();
-              _.forEach(fileListArray, (file) => {
-                dataTransfer.items.add(file);
-              });
-
               append(
                 {
                   role: 'user',
                   content: input,
                 },
                 {
-                  experimental_attachments: dataTransfer.files,
+                  experimental_attachments: createDataTransferFiles(files),
                 },
               );
 
