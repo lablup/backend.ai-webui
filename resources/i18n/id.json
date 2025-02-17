@@ -846,7 +846,10 @@
     "UserQuotaScopeId": "Quota Scope ID",
     "FileAndFolderNameRequired": "Nama File/Folder wajib diisi",
     "AllowsLettersNumbersAnd-_": "Mengizinkan huruf, angka, dan -_",
-    "AllowsLettersNumbersAnd-_Dot": "Mengizinkan huruf, angka, dan -_."
+    "AllowsLettersNumbersAnd-_Dot": "Mengizinkan huruf, angka, dan -_.",
+    "CreatedFolders": "Folder yang dibuat",
+    "ProjectFolders": "Folder Proyek",
+    "InvitedFolders": "Folder yang diundang"
   },
   "dialog": {
     "warning": {

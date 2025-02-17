@@ -845,7 +845,10 @@
     "UserQuotaScopeId": "Quota Scope ID",
     "FileAndFolderNameRequired": "Le nom du fichier/dossier est requis",
     "AllowsLettersNumbersAnd-_": "Autorise les lettres, les chiffres et -_",
-    "AllowsLettersNumbersAnd-_Dot": "Autorise les lettres, les chiffres et -_."
+    "AllowsLettersNumbersAnd-_Dot": "Autorise les lettres, les chiffres et -_.",
+    "CreatedFolders": "Dossiers créés",
+    "ProjectFolders": "Dossiers de projet",
+    "InvitedFolders": "Dossiers invités"
   },
   "dialog": {
     "warning": {

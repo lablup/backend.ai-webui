@@ -845,7 +845,10 @@
     "UserQuotaScopeId": "Quota Scope ID",
     "FileAndFolderNameRequired": "Απαιτείται όνομα αρχείου / φακέλου",
     "AllowsLettersNumbersAnd-_": "Επιτρέπει γράμματα, αριθμούς και -_",
-    "AllowsLettersNumbersAnd-_Dot": "Επιτρέπει γράμματα, αριθμούς και -_."
+    "AllowsLettersNumbersAnd-_Dot": "Επιτρέπει γράμματα, αριθμούς και -_.",
+    "CreatedFolders": "Δημιουργημένοι φάκελοι",
+    "ProjectFolders": "Φακέλοι έργου",
+    "InvitedFolders": "Προσκεκλημένοι φακέλοι"
   },
   "dialog": {
     "warning": {

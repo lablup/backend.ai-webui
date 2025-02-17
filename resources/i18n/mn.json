@@ -845,7 +845,10 @@
     "UserQuotaScopeId": "Quota Scope ID",
     "FileAndFolderNameRequired": "Файл / Фолдерын нэр шаардлагатай",
     "AllowsLettersNumbersAnd-_": "Үсэг, тоо ба -_ зөвшөөрдөг",
-    "AllowsLettersNumbersAnd-_Dot": "Үсэг, тоо ба -_-г зөвшөөрдөг."
+    "AllowsLettersNumbersAnd-_Dot": "Үсэг, тоо ба -_-г зөвшөөрдөг.",
+    "CreatedFolders": "Хавтасыг бий болгосон",
+    "ProjectFolders": "Төслийн хавтас",
+    "InvitedFolders": "Уригдсан хавтаснууд"
   },
   "dialog": {
     "warning": {

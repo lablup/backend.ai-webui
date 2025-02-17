@@ -845,7 +845,10 @@
     "UserQuotaScopeId": "Quota Scope ID",
     "FileAndFolderNameRequired": "Требуется имя файла / папки.",
     "AllowsLettersNumbersAnd-_": "Допускает буквы, цифры и -_",
-    "AllowsLettersNumbersAnd-_Dot": "Допускает буквы, цифры и -_."
+    "AllowsLettersNumbersAnd-_Dot": "Допускает буквы, цифры и -_.",
+    "CreatedFolders": "Созданные папки",
+    "ProjectFolders": "Проектные папки",
+    "InvitedFolders": "Приглашенные папки"
   },
   "dialog": {
     "warning": {

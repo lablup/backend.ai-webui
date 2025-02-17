@@ -20,7 +20,16 @@ import {
   ComputeSessionListPageQuery$data,
   ComputeSessionListPageQuery$variables,
 } from './__generated__/ComputeSessionListPageQuery.graphql';
-import { Badge, Button, Card, Radio, Tabs, theme, Tooltip, Typography } from 'antd';
+import {
+  Badge,
+  Button,
+  Card,
+  Radio,
+  Tabs,
+  theme,
+  Tooltip,
+  Typography,
+} from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { PowerOffIcon } from 'lucide-react';

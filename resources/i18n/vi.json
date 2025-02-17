@@ -845,7 +845,10 @@
     "UserQuotaScopeId": "Quota Scope ID",
     "FileAndFolderNameRequired": "Tên tệp / thư mục là bắt buộc",
     "AllowsLettersNumbersAnd-_": "Cho phép các chữ cái, số và -_",
-    "AllowsLettersNumbersAnd-_Dot": "Cho phép các chữ cái, số và -_."
+    "AllowsLettersNumbersAnd-_Dot": "Cho phép các chữ cái, số và -_.",
+    "CreatedFolders": "Đã tạo ra các thư mục",
+    "ProjectFolders": "Thư mục dự án",
+    "InvitedFolders": "Thư mục được mời"
   },
   "dialog": {
     "warning": {

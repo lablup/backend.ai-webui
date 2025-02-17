@@ -450,7 +450,10 @@
     "UserQuotaScopeId": "Quota Scope ID",
     "FileAndFolderNameRequired": "Tiedoston/kansioiden nimi vaaditaan",
     "AllowsLettersNumbersAnd-_": "Sallii kirjaimet, numerot ja -_",
-    "AllowsLettersNumbersAnd-_Dot": "Sallii kirjaimet, numerot ja -_."
+    "AllowsLettersNumbersAnd-_Dot": "Sallii kirjaimet, numerot ja -_.",
+    "CreatedFolders": "Luotuja kansioita",
+    "ProjectFolders": "Projektikansiot",
+    "InvitedFolders": "Kutsutut kansiot"
   },
   "dialog": {
     "warning": {
