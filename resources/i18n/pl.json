@@ -436,7 +436,12 @@
     "ReadMore": "Czytaj więcej...",
     "CommitImageName": "Zatwierdzona nazwa obrazu",
     "IdleCheckExpirationWarning": "Sesje mogą zostać zakończone na podstawie wyników kontroli bezczynności.",
-    "FailToRenameSession": "Żądanie zmiany nazwy sesji nie powiodło się."
+    "FailToRenameSession": "Żądanie zmiany nazwy sesji nie powiodło się.",
+    "KernelExitCode": "Kod wyjściowy jądra",
+    "SessionStatus": "Status sesji",
+    "PredicateChecks": "Kontrole predykatu",
+    "AgentId": "Identyfikator agenta",
+    "Traceback": "Traceback"
   },
   "button": {
     "Cancel": "Anuluj",

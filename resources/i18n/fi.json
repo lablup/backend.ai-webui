@@ -1333,7 +1333,12 @@
     "ReadMore": "Lue lisää...",
     "CommitImageName": "Sitoutunut kuvan nimi",
     "IdleCheckExpirationWarning": "Istunnot voidaan lopettaa joutokäyntitarkastusten tulosten perusteella.",
-    "FailToRenameSession": "Pyyntö istunnon nimen muuttamiseksi epäonnistui."
+    "FailToRenameSession": "Pyyntö istunnon nimen muuttamiseksi epäonnistui.",
+    "KernelExitCode": "Ytimen poistumiskoodi",
+    "SessionStatus": "Istunnon tila",
+    "PredicateChecks": "Predikaatin tarkistukset",
+    "AgentId": "Agenttitunnus",
+    "Traceback": "Jäljitys"
   },
   "settings": {
     "AllowAgentSideRegistration": "Salli agenttipuolen rekisteröinti",

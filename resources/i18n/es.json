@@ -1334,7 +1334,12 @@
     "ReadMore": "Leer más...",
     "CommitImageName": "Nombre de la imagen confirmada",
     "IdleCheckExpirationWarning": "Las sesiones pueden finalizarse según los resultados de los controles de inactividad.",
-    "FailToRenameSession": "La solicitud para cambiar el nombre de la sesión ha fallado."
+    "FailToRenameSession": "La solicitud para cambiar el nombre de la sesión ha fallado.",
+    "KernelExitCode": "Código de salida del kernel",
+    "SessionStatus": "Estado de sesión",
+    "PredicateChecks": "Controles de predicado",
+    "AgentId": "ID de agente",
+    "Traceback": "Rastreo"
   },
   "settings": {
     "AllowAgentSideRegistration": "Permitir el registro del agente",

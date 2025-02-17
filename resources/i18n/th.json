@@ -447,7 +447,12 @@
     "ReadMore": "อ่านเพิ่มเติม...",
     "CommitImageName": "ชื่อภาพที่มุ่งมั่น",
     "IdleCheckExpirationWarning": "เซสชันอาจถูกยกเลิกโดยขึ้นอยู่กับผลลัพธ์ของการตรวจสอบความไม่มีการใช้งาน",
-    "FailToRenameSession": "คำขอเปลี่ยนชื่อเซสชันล้มเหลว"
+    "FailToRenameSession": "คำขอเปลี่ยนชื่อเซสชันล้มเหลว",
+    "KernelExitCode": "รหัสทางออกเคอร์เนล",
+    "SessionStatus": "สถานะเซสชัน",
+    "PredicateChecks": "การตรวจสอบภาคแสดง",
+    "AgentId": "ID ตัวแทน",
+    "Traceback": "ร่องรอย"
   },
   "modelService": {
     "Services": "บริการ",

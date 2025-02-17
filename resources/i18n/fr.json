@@ -436,7 +436,12 @@
     "ReadMore": "Lire la suite...",
     "CommitImageName": "Nom de l'image validée",
     "IdleCheckExpirationWarning": "Les sessions peuvent être interrompues en fonction des résultats des contrôles d'inactivité.",
-    "FailToRenameSession": "La demande de modification du nom de la session a échoué."
+    "FailToRenameSession": "La demande de modification du nom de la session a échoué.",
+    "KernelExitCode": "Code de sortie du noyau",
+    "SessionStatus": "Statut de session",
+    "PredicateChecks": "Contrôles de prédicat",
+    "AgentId": "ID d'agent",
+    "Traceback": "Trace"
   },
   "button": {
     "Cancel": "Annuler",

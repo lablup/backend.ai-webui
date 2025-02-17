@@ -435,7 +435,12 @@
     "ReadMore": "阅读全文...",
     "CommitImageName": "提交的圖片名稱",
     "IdleCheckExpirationWarning": "會話可能會根據空閒檢查的結果而終止。",
-    "FailToRenameSession": "更改会话名称的请求失败。"
+    "FailToRenameSession": "更改会话名称的请求失败。",
+    "KernelExitCode": "內核退出代碼",
+    "SessionStatus": "會話狀態",
+    "PredicateChecks": "謂詞檢查",
+    "AgentId": "代理ID",
+    "Traceback": "追溯"
   },
   "button": {
     "Cancel": "取消",

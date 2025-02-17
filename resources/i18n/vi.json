@@ -436,7 +436,12 @@
     "ReadMore": "Đọc thêm...",
     "CommitImageName": "Tên hình ảnh đã cam kết",
     "IdleCheckExpirationWarning": "Các phiên có thể bị chấm dứt dựa trên kết quả Kiểm tra trạng thái rảnh rỗi.",
-    "FailToRenameSession": "Yêu cầu thay đổi tên phiên không thành công."
+    "FailToRenameSession": "Yêu cầu thay đổi tên phiên không thành công.",
+    "KernelExitCode": "Mã thoát Kernel",
+    "SessionStatus": "Trạng thái phiên",
+    "PredicateChecks": "Kiểm tra vị ngữ",
+    "AgentId": "Id đại lý",
+    "Traceback": "Traceback"
   },
   "button": {
     "Cancel": "Huỷ bỏ",

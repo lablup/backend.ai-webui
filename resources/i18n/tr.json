@@ -435,7 +435,12 @@
     "ReadMore": "Daha Fazlasını Oku...",
     "CommitImageName": "Taahhüt edilen resim adı",
     "IdleCheckExpirationWarning": "Idleness Check sonuçlarına göre oturumlar sonlandırılabilir.",
-    "FailToRenameSession": "Oturum adını değiştirme isteği başarısız oldu."
+    "FailToRenameSession": "Oturum adını değiştirme isteği başarısız oldu.",
+    "KernelExitCode": "Çekirdek çıkış kodu",
+    "SessionStatus": "Oturum Durumu",
+    "PredicateChecks": "Yumurlamalı Çekler",
+    "AgentId": "Ajan kimliği",
+    "Traceback": "İzleme"
   },
   "button": {
     "Cancel": "İptal etmek",

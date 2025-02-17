@@ -436,7 +436,12 @@
     "ReadMore": "Per saperne di più...",
     "CommitImageName": "Nome dell'immagine confermata",
     "IdleCheckExpirationWarning": "Le sessioni possono essere interrotte in base ai risultati dei controlli di inattività.",
-    "FailToRenameSession": "La richiesta di modifica del nome della sessione è fallita."
+    "FailToRenameSession": "La richiesta di modifica del nome della sessione è fallita.",
+    "KernelExitCode": "Codice di uscita del kernel",
+    "SessionStatus": "Stato della sessione",
+    "PredicateChecks": "Controlli predicati",
+    "AgentId": "ID agente",
+    "Traceback": "Traceback"
   },
   "button": {
     "Cancel": "Annulla",

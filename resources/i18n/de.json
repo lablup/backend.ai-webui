@@ -436,7 +436,12 @@
     "ReadMore": "Mehr lesen...",
     "CommitImageName": "Festgeschriebener Bildname",
     "IdleCheckExpirationWarning": "Sitzungen können basierend auf den Ergebnissen der Inaktivitätsprüfungen beendet werden.",
-    "FailToRenameSession": "Die Anfrage zum Ändern des Sitzungsnamens ist fehlgeschlagen."
+    "FailToRenameSession": "Die Anfrage zum Ändern des Sitzungsnamens ist fehlgeschlagen.",
+    "KernelExitCode": "Kernel Exit Code",
+    "SessionStatus": "Sitzungsstatus",
+    "PredicateChecks": "Prädikatüberprüfungen",
+    "AgentId": "Agenten -ID",
+    "Traceback": "Traceback"
   },
   "button": {
     "Cancel": "Stornieren",
