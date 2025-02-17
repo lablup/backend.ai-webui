@@ -58,11 +58,7 @@ const ChatPage: React.FC<ChatPageProps> = ({ ...props }) => {
             paddingRight: token.paddingContentHorizontalSM,
           }}
         >
-          <Flex direction="column" align="start">
-            <Typography.Text style={{ margin: 0, padding: 0 }}>
-              LLM Playground
-            </Typography.Text>
-          </Flex>
+          <Flex direction="column" align="start"></Flex>
           <Flex
             direction="row"
             gap={'xs'}
