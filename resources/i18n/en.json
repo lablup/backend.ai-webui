@@ -1775,7 +1775,7 @@
     "MetricSource": "Metric Source",
     "MetricName": "Metric Name",
     "Comparator": "Comparator",
-    "CoolDownSeconds": "Cool Down Seconds",
+    "CoolDownSeconds": "CoolDown Seconds",
     "MinReplicas": "Min Replicas",
     "MaxReplicas": "Max Replicas",
     "Threshold": "Threshold",
