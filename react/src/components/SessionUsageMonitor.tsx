@@ -68,8 +68,11 @@ const SessionUtilItem: React.FC<SessionUtilItemProps> = ({
       <Flex direction="row" gap={'xxs'}>
         <Flex
           style={{
-            // Max width is 140px, min width is 3px
-            width: _.max([Math.round(_.toNumber(percent) * 1.4), 3]),
+            // Max width is 140px (even if over 100%), min width is 3px
+            width: _.min([
+              _.max([Math.round(_.toNumber(percent) * 1.4), 3]),
+              140,
+            ]),
             height: 12,
             backgroundColor: '#BFBFBF',
           }}

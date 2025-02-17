@@ -214,8 +214,15 @@ const ComputeSessionListPage = () => {
           )}
         />
         <Flex direction="column" align="stretch" gap={'sm'}>
-          <Flex justify="between">
-            <Flex gap={'sm'} align="start">
+          <Flex justify="between" wrap="wrap" gap={'sm'}>
+            <Flex
+              gap={'sm'}
+              align="start"
+              style={{
+                flexShrink: 1,
+              }}
+              wrap="wrap"
+            >
               <Radio.Group
                 optionType="button"
                 value={queryParams.statusCategory}
