@@ -1729,7 +1729,9 @@
     "Attachments": "Attachments",
     "DropFileHere": "Drop file here",
     "UploadFiles": "Upload files",
-    "UploadFilesDescription": "Click or drag files to this area to upload"
+    "UploadFilesDescription": "Click or drag files to this area to upload",
+    "Thinking": "Thinking",
+    "ViewReasoning": "View reasoning"
   },
   "time": {
     "Day": "day",

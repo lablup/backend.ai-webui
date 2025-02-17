@@ -1723,7 +1723,9 @@
     "Attachments": "Allegati",
     "DropFileHere": "Rilascia il file qui",
     "UploadFiles": "Carica file",
-    "UploadFilesDescription": "Fare clic o trascinare i file in quest'area per caricarli"
+    "UploadFilesDescription": "Fare clic o trascinare i file in quest'area per caricarli",
+    "Thinking": "Pensiero",
+    "ViewReasoning": "Visualizzare il ragionamento"
   },
   "time": {
     "Day": "day",

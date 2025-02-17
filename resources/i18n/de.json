@@ -1725,7 +1725,9 @@
     "Attachments": "Anhänge",
     "DropFileHere": "Datei hier ablegen",
     "UploadFiles": "Dateien hochladen",
-    "UploadFilesDescription": "Klicken oder ziehen Sie Dateien zum Hochladen in diesen Bereich"
+    "UploadFilesDescription": "Klicken oder ziehen Sie Dateien zum Hochladen in diesen Bereich",
+    "Thinking": "Denken",
+    "ViewReasoning": "Argumentation anzeigen"
   },
   "time": {
     "Day": "day",

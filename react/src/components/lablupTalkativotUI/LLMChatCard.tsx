@@ -18,7 +18,7 @@ import {
 } from '@ant-design/icons';
 import { Attachments, AttachmentsProps, Sender } from '@ant-design/x';
 import { useControllableValue } from 'ahooks';
-import { streamText } from 'ai';
+import { streamText, extractReasoningMiddleware, wrapLanguageModel } from 'ai';
 import {
   Alert,
   Badge,
@@ -132,17 +132,22 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
               ? customModelFormRef.current?.getFieldValue('token')
               : apiKey) || 'dummy',
         });
-        const result = await streamText({
+        const result = streamText({
           abortSignal: init?.signal || undefined,
-          model: provider(
-            allowCustomModel
-              ? customModelFormRef.current?.getFieldValue('modelId')
-              : modelId,
-          ),
+          model: wrapLanguageModel({
+            model: provider(
+              allowCustomModel
+                ? customModelFormRef.current?.getFieldValue('modelId')
+                : modelId,
+            ),
+            middleware: extractReasoningMiddleware({ tagName: 'think' }),
+          }),
           messages: body?.messages,
         });
         setStartTime(Date.now());
-        return result.toDataStreamResponse();
+        return result.toDataStreamResponse({
+          sendReasoning: true,
+        });
       } else {
         return fetch(input, init);
       }

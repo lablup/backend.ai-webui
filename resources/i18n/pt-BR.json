@@ -1725,7 +1725,9 @@
     "Attachments": "Anexos",
     "DropFileHere": "Solte o arquivo aqui",
     "UploadFiles": "Carregar arquivos",
-    "UploadFilesDescription": "Clique ou arraste os arquivos para esta área para fazer upload"
+    "UploadFilesDescription": "Clique ou arraste os arquivos para esta área para fazer upload",
+    "Thinking": "Pensamento",
+    "ViewReasoning": "Ver raciocínio"
   },
   "time": {
     "Day": "day",

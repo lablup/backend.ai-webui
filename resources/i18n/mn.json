@@ -1724,7 +1724,9 @@
     "Attachments": "Хавсралтууд",
     "DropFileHere": "Файлыг энд буулгана уу",
     "UploadFiles": "Файлуудыг байршуулах",
-    "UploadFilesDescription": "Байршуулахын тулд файлуудыг энэ хэсэгт товшиж эсвэл чирнэ үү"
+    "UploadFilesDescription": "Байршуулахын тулд файлуудыг энэ хэсэгт товшиж эсвэл чирнэ үү",
+    "Thinking": "Төсөөлж",
+    "ViewReasoning": "Шалтгааныг харах"
   },
   "time": {
     "Day": "day",

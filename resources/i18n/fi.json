@@ -1724,7 +1724,9 @@
     "Attachments": "Liitteet",
     "DropFileHere": "Pudota tiedosto tähän",
     "UploadFiles": "Lataa tiedostoja",
-    "UploadFilesDescription": "Napsauta tai vedä tiedostoja tälle alueelle ladataksesi"
+    "UploadFilesDescription": "Napsauta tai vedä tiedostoja tälle alueelle ladataksesi",
+    "Thinking": "Ajattelu",
+    "ViewReasoning": "Näytä päättely"
   },
   "time": {
     "Day": "day",

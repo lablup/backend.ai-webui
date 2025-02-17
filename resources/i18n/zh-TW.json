@@ -1724,7 +1724,9 @@
     "Attachments": "附件",
     "DropFileHere": "將文件拖放到此處",
     "UploadFiles": "上傳文件",
-    "UploadFilesDescription": "點選或拖曳文件到該區域即可上傳"
+    "UploadFilesDescription": "點選或拖曳文件到該區域即可上傳",
+    "Thinking": "思維",
+    "ViewReasoning": "查看推理"
   },
   "time": {
     "Ms": "ms",

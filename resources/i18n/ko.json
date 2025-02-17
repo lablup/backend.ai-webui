@@ -1727,7 +1727,9 @@
     "Attachments": "첨부파일",
     "DropFileHere": "파일을 여기에 놓아주세요.",
     "UploadFiles": "파일 업로드",
-    "UploadFilesDescription": "파일을 여기 끌어다 놓거나 이 영역을 클릭하세요"
+    "UploadFilesDescription": "파일을 여기 끌어다 놓거나 이 영역을 클릭하세요",
+    "Thinking": "추론중",
+    "ViewReasoning": "추론 결과 보기"
   },
   "time": {
     "Day": "일",

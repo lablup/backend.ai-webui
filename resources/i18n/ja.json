@@ -1725,7 +1725,9 @@
     "Attachments": "添付ファイル",
     "DropFileHere": "ここにファイルをドロップします",
     "UploadFiles": "ファイルをアップロードする",
-    "UploadFilesDescription": "ファイルをクリックまたはこの領域にドラッグしてアップロードします"
+    "UploadFilesDescription": "ファイルをクリックまたはこの領域にドラッグしてアップロードします",
+    "Thinking": "考え",
+    "ViewReasoning": "推論を見る"
   },
   "time": {
     "Day": "日",
