@@ -10,9 +10,6 @@ import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 type TabKey = 'services' | 'chatting'; //  "running" | "finished" | "others";
 
 const EndpointListPage = React.lazy(() => import('./EndpointListPage'));
-const ChattingPage = React.lazy(
-  () => import('../components/lablupTalkativotUI/LLMPlaygroundPage'),
-);
 
 interface ServingPageProps {}
 
@@ -67,13 +64,6 @@ const ServingPage: React.FC<ServingPageProps> = ({ ...props }) => {
             fallback={<Skeleton active style={{ padding: token.paddingMD }} />}
           >
             <EndpointListPage />
-          </Suspense>
-        ) : null}
-        {curTabKey === 'chatting' && baiClient._config.enableLLMPlayground ? (
-          <Suspense
-            fallback={<Skeleton active style={{ padding: token.paddingMD }} />}
-          >
-            <ChattingPage />
           </Suspense>
         ) : null}
       </Card>
