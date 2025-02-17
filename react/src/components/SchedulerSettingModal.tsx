@@ -60,14 +60,17 @@ const SchedulerSettingModal = ({
       onCancel={onRequestClose}
       footer={[
         <Button
-          key="overlayNetworkClose"
+          key="schedulerDelete"
           onClick={() => {
-            if (formRef.current) {
+            if (
+              formRef.current &&
+              formRef.current.getFieldValue('schedulerType')
+            ) {
               onDelete(formRef.current.getFieldValue('schedulerType'));
               const formValues = formRef.current.getFieldsValue();
               const newValues = Object.keys(formValues).reduce(
                 (acc, key) => {
-                  acc[key] = null;
+                  acc[key] = 0;
                   return acc;
                 },
                 {} as Record<keyof SchedulerOptions, any>,
@@ -80,6 +83,27 @@ const SchedulerSettingModal = ({
         >
           {t('button.DeleteAll')}
         </Button>,
+        <Button
+          key="schedulerSave"
+          type="primary"
+          onClick={() => {
+            if (formRef.current) {
+              formRef.current
+                .validateFields()
+                .then((values) => {
+                  if (values.schedulerType) {
+                    onSave(
+                      values.schedulerType,
+                      _.omit(values, 'schedulerType'),
+                    );
+                  }
+                })
+                .catch(() => {});
+            }
+          }}
+        >
+          {t('button.Save')}
+        </Button>,
       ]}
       destroyOnClose
     >
@@ -88,6 +112,12 @@ const SchedulerSettingModal = ({
           label={t('settings.Scheduler')}
           name="schedulerType"
           required
+          rules={[
+            {
+              required: true,
+              message: t('data.explorer.ValueRequired'),
+            },
+          ]}
         >
           <Select
             popupMatchSelectWidth={false}
@@ -128,23 +158,18 @@ const SchedulerSettingModal = ({
               }
               name={key}
               required
+              rules={[
+                {
+                  required: true,
+                  message: t('data.explorer.ValueRequired'),
+                },
+              ]}
               key={key}
             >
               <InputNumber
                 min={optionRange[key].min}
                 max={optionRange[key].max}
                 style={{ width: '100%' }}
-                onBlur={(e) => {
-                  if (e.target.value) {
-                    formRef.current?.validateFields().then((values) => {
-                      if (values.schedulerType) {
-                        onSave(values.schedulerType, {
-                          [key]: values[key],
-                        });
-                      }
-                    });
-                  }
-                }}
               />
             </Form.Item>
           ))}

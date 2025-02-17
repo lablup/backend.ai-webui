@@ -1,5 +1,5 @@
 import { useSuspendedBackendaiClient } from '.';
-import { useSetBAINotification } from './useBAINotification';
+import { App } from 'antd';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -95,7 +95,7 @@ const useBAIConfigurationsSetting = () => {
     ...defaultConfigurationsSettings,
   });
   const baiClient = useSuspendedBackendaiClient();
-  const { upsertNotification } = useSetBAINotification();
+  const { message } = App.useApp();
   const { t } = useTranslation();
 
   const updatePulling = async () => {
@@ -117,10 +117,7 @@ const useBAIConfigurationsSetting = () => {
       );
       if (result === 'ok') {
         updatePulling();
-        upsertNotification({
-          description: t('notification.SuccessfullyUpdated'),
-          open: true,
-        });
+        message.success(t('notification.SuccessfullyUpdated'));
       }
     }
   };
@@ -142,10 +139,7 @@ const useBAIConfigurationsSetting = () => {
     const { result } = await baiClient.setting.set('network/overlay', value);
     if (result === 'ok') {
       updateNetwork();
-      upsertNotification({
-        description: t('notification.SuccessfullyUpdated'),
-        open: true,
-      });
+      message.success(t('notification.SuccessfullyUpdated'));
     }
   };
 
@@ -168,7 +162,7 @@ const useBAIConfigurationsSetting = () => {
     value: { num_retries_to_skip: string },
   ) => {
     if (key !== 'fifo' && value.num_retries_to_skip !== '0') {
-      upsertNotification({ description: t('settings.FifoOnly'), open: true });
+      message.error(t('settings.FifoOnly'));
       return;
     }
 
@@ -177,10 +171,7 @@ const useBAIConfigurationsSetting = () => {
       value,
     );
     if (result === 'ok') {
-      upsertNotification({
-        description: t('notification.SuccessfullyUpdated'),
-        open: true,
-      });
+      message.success(t('notification.SuccessfullyUpdated'));
     }
   };
 

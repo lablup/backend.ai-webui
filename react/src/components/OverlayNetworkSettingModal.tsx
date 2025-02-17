@@ -68,6 +68,22 @@ const OverlayNetworkSettingModal = ({
         >
           {t('button.DeleteAll')}
         </Button>,
+        <Button
+          key="overlayNetworkSave"
+          onClick={() => {
+            if (formRef.current) {
+              formRef.current
+                .validateFields()
+                .then((values) => {
+                  onSave(values);
+                })
+                .catch(() => {});
+            }
+          }}
+          type="primary"
+        >
+          {t('button.Save')}
+        </Button>,
       ]}
       destroyOnClose
     >
@@ -83,6 +99,12 @@ const OverlayNetworkSettingModal = ({
               </Flex>
             }
             required
+            rules={[
+              {
+                required: true,
+                message: t('data.explorer.ValueRequired'),
+              },
+            ]}
             name={key}
             key={key}
           >
@@ -91,13 +113,6 @@ const OverlayNetworkSettingModal = ({
               max={optionRange[key].max}
               style={{
                 width: '100%',
-              }}
-              onBlur={(e) => {
-                if (e.target.value && formRef.current) {
-                  formRef.current.validateFields().then((values) => {
-                    onSave({ [key]: values[key] });
-                  });
-                }
               }}
             />
           </Form.Item>

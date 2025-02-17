@@ -8,7 +8,7 @@ import SchedulerSettingModal from './SchedulerSettingModal';
 import SettingList, { SettingGroup } from './SettingList';
 import { SettingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Button } from 'antd';
+import { Alert, Button, theme } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 const ConfigurationsSettingList = () => {
@@ -25,6 +25,8 @@ const ConfigurationsSettingList = () => {
     useToggle(false);
   const [isOpenSchedulerModal, { toggle: toggleSchedulerModal }] =
     useToggle(false);
+
+  const { token } = theme.useToken();
 
   const settingGroupList: SettingGroup = [
     {
@@ -291,6 +293,15 @@ const ConfigurationsSettingList = () => {
 
   return (
     <>
+      <Alert
+        message={t('settings.EnvConfigWillDisappear')}
+        showIcon
+        type="warning"
+        style={{
+          marginInline: token.paddingContentHorizontal,
+          marginTop: token.paddingContentHorizontal,
+        }}
+      />
       <SettingList
         settingGroup={settingGroupList}
         showSearchBar
@@ -303,8 +314,9 @@ const ConfigurationsSettingList = () => {
         networkOptions={options.network}
         onSave={async (value: { [key: keyof NetworkOptions]: string }) => {
           await setNetwork(value);
+          toggleOverlayNetworkModal();
         }}
-        onDelete={async () => await deleteSetting('network/overlay', true)}
+        onDelete={() => deleteSetting('network/overlay', true)}
       />
       <SchedulerSettingModal
         onRequestClose={toggleSchedulerModal}
@@ -313,12 +325,13 @@ const ConfigurationsSettingList = () => {
           await setScheduler(key, {
             num_retries_to_skip: value.num_retries_to_skip.toString(),
           });
+          toggleSchedulerModal();
         }}
         onSchedulerTypeChange={async (schedulerType) =>
-          await updateSelectedScheduler(schedulerType)
+          updateSelectedScheduler(schedulerType)
         }
-        onDelete={async (key: SchedulerType) =>
-          await deleteSetting(`scheduler/${key}`, true)
+        onDelete={(key: SchedulerType) =>
+          deleteSetting(`plugins/scheduler/${key}`, true)
         }
       />
     </>
