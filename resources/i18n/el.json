@@ -535,7 +535,8 @@
     "MaxValueNotification": "{{name}} πρέπει να είναι το μέγιστο {{max}}",
     "TotalItems": "Σύνολο {{total}} στοιχείων",
     "ExtendLoginSession": "Επέκταση μιας περιόδου σύνδεσης",
-    "Cores": "πυρήνες"
+    "Cores": "πυρήνες",
+    "InvalidJSONFormat": "Μη έγκυρη μορφή JSON."
   },
   "credential": {
     "Permission": "Αδεια",
@@ -1606,7 +1607,8 @@
     "Resources": "Πόροι",
     "NumberOfReplicas": "Αριθμός αντιγράφων",
     "AutoScalingRules": "Κανόνες αυτόματης κλιμάκωσης",
-    "AddRules": "Προσθέστε κανόνες"
+    "AddRules": "Προσθέστε κανόνες",
+    "RouteError": "Σφάλμα διαδρομής"
   },
   "storageHost": {
     "quotaSettings": {

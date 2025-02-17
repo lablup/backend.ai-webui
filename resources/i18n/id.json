@@ -536,7 +536,8 @@
     "MaxValueNotification": "{{nama}} harus maksimal {{max}}",
     "TotalItems": "Total item {{total}}",
     "ExtendLoginSession": "Memperpanjang sesi masuk",
-    "Cores": "core"
+    "Cores": "core",
+    "InvalidJSONFormat": "Format JSON tidak valid."
   },
   "credential": {
     "Permission": "Izin",
@@ -1658,7 +1659,8 @@
     "Resources": "Sumber daya",
     "NumberOfReplicas": "Jumlah replika",
     "AutoScalingRules": "Aturan penskalaan otomatis",
-    "AddRules": "Tambahkan aturan"
+    "AddRules": "Tambahkan aturan",
+    "RouteError": "Kesalahan Rute"
   },
   "modelStore": {
     "Description": "Keterangan",

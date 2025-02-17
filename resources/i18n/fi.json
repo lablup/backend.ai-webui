@@ -584,7 +584,8 @@
     "MaxValueNotification": "{{name}} on oltava maksimi {{max}}",
     "TotalItems": "Yhteensä {{total}} kohteita",
     "ExtendLoginSession": "Sisäänkirjautumisistunnon laajentaminen",
-    "Cores": "ytimet"
+    "Cores": "ytimet",
+    "InvalidJSONFormat": "Väärä JSON-muoto."
   },
   "import": {
     "CleanUpImportTask": "Tuontitehtävän siivous...",
@@ -856,7 +857,8 @@
     "Resources": "Resurssit",
     "NumberOfReplicas": "Kopioiden määrä",
     "AutoScalingRules": "Automaattiset skaalaussäännöt",
-    "AddRules": "Lisää sääntöjä"
+    "AddRules": "Lisää sääntöjä",
+    "RouteError": "Reittivirhe"
   },
   "notification": {
     "Initializing": "Aloitetaan...",

@@ -535,7 +535,8 @@
     "MaxValueNotification": "{{nama}} mestilah maksimum {{maks}}",
     "TotalItems": "Jumlah {{total}} item",
     "ExtendLoginSession": "Lanjutkan sesi log masuk",
-    "Cores": "teras"
+    "Cores": "teras",
+    "InvalidJSONFormat": "Format JSON yang salah."
   },
   "credential": {
     "Permission": "Kebenaran",
@@ -1641,7 +1642,8 @@
     "Resources": "Sumber",
     "NumberOfReplicas": "Bilangan replika",
     "AutoScalingRules": "Peraturan penskalaan automatik",
-    "AddRules": "Tambah peraturan"
+    "AddRules": "Tambah peraturan",
+    "RouteError": "Ralat laluan"
   },
   "totp": {
     "TotpSetupCompleted": "Didayakan 2FA",

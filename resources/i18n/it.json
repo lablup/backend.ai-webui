@@ -535,7 +535,8 @@
     "MaxValueNotification": "{{nome}} deve essere massimo {{max}}",
     "TotalItems": "Totale articoli {{totale}}",
     "ExtendLoginSession": "Estendere una sessione di login",
-    "Cores": "core"
+    "Cores": "core",
+    "InvalidJSONFormat": "Formato JSON non valido."
   },
   "credential": {
     "Permission": "Autorizzazione",
@@ -1604,7 +1605,8 @@
     "Resources": "Risorse",
     "NumberOfReplicas": "Numero di repliche",
     "AutoScalingRules": "Regole di ridimensionamento automatico",
-    "AddRules": "Aggiungi regole"
+    "AddRules": "Aggiungi regole",
+    "RouteError": "Errore di percorso"
   },
   "storageHost": {
     "quotaSettings": {

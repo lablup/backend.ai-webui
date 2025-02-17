@@ -535,7 +535,8 @@
     "MaxValueNotification": "{{ name }}最大値は{{ max }}です",
     "TotalItems": "合計{{total}}項目",
     "ExtendLoginSession": "ログインセッションの延長",
-    "Cores": "コア"
+    "Cores": "コア",
+    "InvalidJSONFormat": "JSON形式が間違っています。"
   },
   "credential": {
     "Permission": "許可",
@@ -1606,7 +1607,8 @@
     "Resources": "リソース",
     "NumberOfReplicas": "レプリカの数",
     "AutoScalingRules": "自動スケーリングルール",
-    "AddRules": "ルールを追加します"
+    "AddRules": "ルールを追加します",
+    "RouteError": "ルートエラー"
   },
   "storageHost": {
     "quotaSettings": {

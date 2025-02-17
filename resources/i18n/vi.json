@@ -535,7 +535,8 @@
     "MaxValueNotification": "{{name}} phải tối đa {{max}}",
     "TotalItems": "Tổng số {{total}} mặt hàng",
     "ExtendLoginSession": "Gia hạn phiên đăng nhập",
-    "Cores": "lõi"
+    "Cores": "lõi",
+    "InvalidJSONFormat": "Định dạng JSON không chính xác."
   },
   "credential": {
     "Permission": "Sự cho phép",
@@ -1641,7 +1642,8 @@
     "Resources": "Tài nguyên",
     "NumberOfReplicas": "Số lượng bản sao",
     "AutoScalingRules": "Quy tắc mở rộng tự động",
-    "AddRules": "Thêm quy tắc"
+    "AddRules": "Thêm quy tắc",
+    "RouteError": "Lỗi tuyến đường"
   },
   "totp": {
     "TotpSetupCompleted": "Đã bật 2FA",

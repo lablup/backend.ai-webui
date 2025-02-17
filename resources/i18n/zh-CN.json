@@ -535,7 +535,8 @@
     "MaxValueNotification": "{{name}} 必须是最大值 {{max}}",
     "TotalItems": "{{总计}}项目总数",
     "ExtendLoginSession": "延长登录会话",
-    "Cores": "核心"
+    "Cores": "核心",
+    "InvalidJSONFormat": "JSON 格式无效。"
   },
   "credential": {
     "Permission": "允许",
@@ -1641,7 +1642,8 @@
     "Resources": "资源",
     "NumberOfReplicas": "副本数量",
     "AutoScalingRules": "自动缩放规则",
-    "AddRules": "添加规则"
+    "AddRules": "添加规则",
+    "RouteError": "路线错误"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",

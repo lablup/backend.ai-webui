@@ -535,7 +535,8 @@
     "MaxValueNotification": "{{nom}} doit être maximum {{max}}",
     "TotalItems": "Total des éléments {{total}}",
     "ExtendLoginSession": "Prolonger une session de connexion",
-    "Cores": "cœurs"
+    "Cores": "cœurs",
+    "InvalidJSONFormat": "Format JSON non valide."
   },
   "credential": {
     "Permission": "Autorisation",
@@ -1658,7 +1659,8 @@
     "Resources": "Ressources",
     "NumberOfReplicas": "Nombre de répliques",
     "AutoScalingRules": "Règles de mise à l'échelle automatique",
-    "AddRules": "Ajouter des règles"
+    "AddRules": "Ajouter des règles",
+    "RouteError": "Erreur d'itinéraire"
   },
   "modelStore": {
     "Description": "Description",

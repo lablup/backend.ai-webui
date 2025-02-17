@@ -526,7 +526,8 @@
     "Resources": "ทรัพยากร",
     "NumberOfReplicas": "จำนวนแบบจำลอง",
     "AutoScalingRules": "กฎการปรับขนาดอัตโนมัติ",
-    "AddRules": "เพิ่มกฎ"
+    "AddRules": "เพิ่มกฎ",
+    "RouteError": "ข้อผิดพลาดเส้นทาง"
   },
   "button": {
     "Cancel": "ยกเลิก",
@@ -661,7 +662,8 @@
     "MaxValueNotification": "{{name}} ต้องมีค่าสูงสุด {{max}}",
     "TotalItems": "รวม {{total}} รายการ",
     "ExtendLoginSession": "ขยายเซสชันการเข้าสู่ระบบ",
-    "Cores": "คอร์"
+    "Cores": "คอร์",
+    "InvalidJSONFormat": "รูปแบบ JSON ไม่ถูกต้อง"
   },
   "credential": {
     "Permission": "สิทธิ์",

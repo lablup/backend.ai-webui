@@ -584,7 +584,8 @@
     "MaxValueNotification": "{{name}} debe ser máximo {{max}}",
     "TotalItems": "Total {{total}} artículos",
     "ExtendLoginSession": "Prolongar una sesión de inicio de sesión",
-    "Cores": "núcleos"
+    "Cores": "núcleos",
+    "InvalidJSONFormat": "Formato JSON no válido."
   },
   "import": {
     "CleanUpImportTask": "Tarea de importación de limpieza...",
@@ -857,7 +858,8 @@
     "Resources": "Recursos",
     "NumberOfReplicas": "Número de réplicas",
     "AutoScalingRules": "Reglas de escala automática",
-    "AddRules": "Agregar reglas"
+    "AddRules": "Agregar reglas",
+    "RouteError": "Error de ruta"
   },
   "notification": {
     "Initializing": "Inicializando...",

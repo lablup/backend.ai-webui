@@ -535,7 +535,8 @@
     "MaxValueNotification": "{{name}} muss maximal {{max}} sein",
     "TotalItems": "Insgesamt {{Gesamt}} Artikel",
     "ExtendLoginSession": "Eine Anmeldesitzung verlängern",
-    "Cores": "Kerne"
+    "Cores": "Kerne",
+    "InvalidJSONFormat": "Ungültiges JSON-Format."
   },
   "credential": {
     "Permission": "Genehmigung",
@@ -1606,7 +1607,8 @@
     "Resources": "Ressourcen",
     "NumberOfReplicas": "Anzahl der Replikate",
     "AutoScalingRules": "Automatische Skalierungsregeln",
-    "AddRules": "Fügen Sie Regeln hinzu"
+    "AddRules": "Fügen Sie Regeln hinzu",
+    "RouteError": "Routenfehler"
   },
   "storageHost": {
     "quotaSettings": {

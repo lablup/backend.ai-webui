@@ -528,7 +528,8 @@
     "Resources": "Resources",
     "NumberOfReplicas": "Number of replicas",
     "AutoScalingRules": "Auto Scaling Rules",
-    "AddRules": "Add Rules"
+    "AddRules": "Add Rules",
+    "RouteError": "Route Error"
   },
   "button": {
     "Cancel": "Cancel",
@@ -664,7 +665,8 @@
     "MaxValueNotification": "{{name}} must be maximum {{max}}",
     "TotalItems": "Total {{total}} items",
     "ExtendLoginSession": "Extend login session",
-    "Cores": "cores"
+    "Cores": "cores",
+    "InvalidJSONFormat": "Invalid JSON format."
   },
   "credential": {
     "Permission": "Permission",

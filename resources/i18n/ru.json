@@ -535,7 +535,8 @@
     "MaxValueNotification": "{{name}} должен быть максимальным {{max}}",
     "TotalItems": "Всего {{total}} предметов",
     "ExtendLoginSession": "Продление сеанса входа в систему",
-    "Cores": "ядра"
+    "Cores": "ядра",
+    "InvalidJSONFormat": "Неверный формат JSON."
   },
   "credential": {
     "Permission": "Разрешение",
@@ -1658,7 +1659,8 @@
     "Resources": "Ресурсы",
     "NumberOfReplicas": "Количество реплик",
     "AutoScalingRules": "Автоматические правила",
-    "AddRules": "Добавить правила"
+    "AddRules": "Добавить правила",
+    "RouteError": "Ошибка маршрута"
   },
   "modelStore": {
     "Description": "Описание",

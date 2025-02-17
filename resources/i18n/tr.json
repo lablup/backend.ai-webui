@@ -534,7 +534,8 @@
     "MaxValueNotification": "{{name}} maksimum {{max}} olmalıdır",
     "TotalItems": "Toplam {{toplam}} öğe",
     "ExtendLoginSession": "Oturum açma oturumunu uzatma",
-    "Cores": "çekirdek"
+    "Cores": "çekirdek",
+    "InvalidJSONFormat": "Geçersiz JSON biçimi."
   },
   "credential": {
     "Permission": "izin",
@@ -1605,7 +1606,8 @@
     "Resources": "Kaynaklar",
     "NumberOfReplicas": "Kopya sayısı",
     "AutoScalingRules": "Otomatik Ölçeklendirme Kuralları",
-    "AddRules": "Kurallar Ekle"
+    "AddRules": "Kurallar Ekle",
+    "RouteError": "Rota Hatası"
   },
   "storageHost": {
     "quotaSettings": {
