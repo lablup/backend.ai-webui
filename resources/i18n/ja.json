@@ -415,7 +415,10 @@
     "UserQuotaScopeId": "Quota Scope ID",
     "FileAndFolderNameRequired": "ファイル/フォルダ名が必要です",
     "AllowsLettersNumbersAnd-_": "文字、数字、および-_を許可します",
-    "AllowsLettersNumbersAnd-_Dot": "文字、数字、および-_を許可します。"
+    "AllowsLettersNumbersAnd-_Dot": "文字、数字、および-_を許可します。",
+    "CreatedFolders": "作成されたフォルダー",
+    "ProjectFolders": "プロジェクトフォルダー",
+    "InvitedFolders": "招待されたフォルダー"
   },
   "dialog": {
     "warning": {

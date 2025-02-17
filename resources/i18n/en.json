@@ -417,7 +417,10 @@
     "UserQuotaScopeId": "Quota Scope ID",
     "FileAndFolderNameRequired": "File/Folder name is required",
     "AllowsLettersNumbersAnd-_": "Allows letters, numbers and -_",
-    "AllowsLettersNumbersAnd-_Dot": "Allows letters, numbers and -_."
+    "AllowsLettersNumbersAnd-_Dot": "Allows letters, numbers and -_.",
+    "CreatedFolders": "Created Folders",
+    "ProjectFolders": "Project Folders",
+    "InvitedFolders": "Invited Folders"
   },
   "dialog": {
     "warning": {

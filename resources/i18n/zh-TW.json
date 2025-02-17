@@ -416,7 +416,10 @@
     "UserQuotaScopeId": "Quota Scope ID",
     "FileAndFolderNameRequired": "需要文件/文件夾名稱",
     "AllowsLettersNumbersAnd-_": "允許字母、數字和 -_",
-    "AllowsLettersNumbersAnd-_Dot": "允許字母、數字和 -_。"
+    "AllowsLettersNumbersAnd-_Dot": "允許字母、數字和 -_。",
+    "CreatedFolders": "創建的文件夾",
+    "ProjectFolders": "項目文件夾",
+    "InvitedFolders": "邀請的文件夾"
   },
   "dialog": {
     "warning": {
