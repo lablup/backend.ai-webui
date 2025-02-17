@@ -585,7 +585,8 @@
     "TotalItems": "Yhteensä {{total}} kohteita",
     "ExtendLoginSession": "Sisäänkirjautumisistunnon laajentaminen",
     "Cores": "ytimet",
-    "InvalidJSONFormat": "Väärä JSON-muoto."
+    "InvalidJSONFormat": "Väärä JSON-muoto.",
+    "LastUpdated": "Viimeksi päivitetty"
   },
   "import": {
     "CleanUpImportTask": "Tuontitehtävän siivous...",

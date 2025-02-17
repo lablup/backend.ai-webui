@@ -536,7 +536,8 @@
     "TotalItems": "Tổng số {{total}} mặt hàng",
     "ExtendLoginSession": "Gia hạn phiên đăng nhập",
     "Cores": "lõi",
-    "InvalidJSONFormat": "Định dạng JSON không chính xác."
+    "InvalidJSONFormat": "Định dạng JSON không chính xác.",
+    "LastUpdated": "Cập nhật lần cuối"
   },
   "credential": {
     "Permission": "Sự cho phép",

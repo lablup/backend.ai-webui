@@ -655,7 +655,8 @@
     "ExtendLoginSession": "로그인 세션 연장",
     "Cores": "코어",
     "Enable": "활성화",
-    "InvalidJSONFormat": "잘못된 JSON 형식입니다."
+    "InvalidJSONFormat": "잘못된 JSON 형식입니다.",
+    "LastUpdated": "최근 업데이트"
   },
   "credential": {
     "Permission": "권한",

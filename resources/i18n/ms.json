@@ -536,7 +536,8 @@
     "TotalItems": "Jumlah {{total}} item",
     "ExtendLoginSession": "Lanjutkan sesi log masuk",
     "Cores": "teras",
-    "InvalidJSONFormat": "Format JSON yang salah."
+    "InvalidJSONFormat": "Format JSON yang salah.",
+    "LastUpdated": "Dikemas kini terakhir"
   },
   "credential": {
     "Permission": "Kebenaran",

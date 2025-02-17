@@ -585,7 +585,8 @@
     "TotalItems": "Total {{total}} artículos",
     "ExtendLoginSession": "Prolongar una sesión de inicio de sesión",
     "Cores": "núcleos",
-    "InvalidJSONFormat": "Formato JSON no válido."
+    "InvalidJSONFormat": "Formato JSON no válido.",
+    "LastUpdated": "Última actualización"
   },
   "import": {
     "CleanUpImportTask": "Tarea de importación de limpieza...",

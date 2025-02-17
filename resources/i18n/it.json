@@ -536,7 +536,8 @@
     "TotalItems": "Totale articoli {{totale}}",
     "ExtendLoginSession": "Estendere una sessione di login",
     "Cores": "core",
-    "InvalidJSONFormat": "Formato JSON non valido."
+    "InvalidJSONFormat": "Formato JSON non valido.",
+    "LastUpdated": "Ultimo aggiornamento"
   },
   "credential": {
     "Permission": "Autorizzazione",

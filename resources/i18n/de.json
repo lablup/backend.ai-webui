@@ -536,7 +536,8 @@
     "TotalItems": "Insgesamt {{Gesamt}} Artikel",
     "ExtendLoginSession": "Eine Anmeldesitzung verlängern",
     "Cores": "Kerne",
-    "InvalidJSONFormat": "Ungültiges JSON-Format."
+    "InvalidJSONFormat": "Ungültiges JSON-Format.",
+    "LastUpdated": "Zuletzt aktualisiert"
   },
   "credential": {
     "Permission": "Genehmigung",

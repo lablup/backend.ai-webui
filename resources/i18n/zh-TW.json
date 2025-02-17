@@ -535,7 +535,8 @@
     "TotalItems": "{{总计}}项目总数",
     "ExtendLoginSession": "延长登录会话",
     "Cores": "核心",
-    "InvalidJSONFormat": "JSON 格式无效。"
+    "InvalidJSONFormat": "JSON 格式无效。",
+    "LastUpdated": "最后更新"
   },
   "credential": {
     "Permission": "允許",

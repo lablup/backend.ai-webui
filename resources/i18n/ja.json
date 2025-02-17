@@ -536,7 +536,8 @@
     "TotalItems": "合計{{total}}項目",
     "ExtendLoginSession": "ログインセッションの延長",
     "Cores": "コア",
-    "InvalidJSONFormat": "JSON形式が間違っています。"
+    "InvalidJSONFormat": "JSON形式が間違っています。",
+    "LastUpdated": "最終更新日"
   },
   "credential": {
     "Permission": "許可",

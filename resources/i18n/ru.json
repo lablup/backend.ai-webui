@@ -536,7 +536,8 @@
     "TotalItems": "Всего {{total}} предметов",
     "ExtendLoginSession": "Продление сеанса входа в систему",
     "Cores": "ядра",
-    "InvalidJSONFormat": "Неверный формат JSON."
+    "InvalidJSONFormat": "Неверный формат JSON.",
+    "LastUpdated": "Последнее обновление"
   },
   "credential": {
     "Permission": "Разрешение",

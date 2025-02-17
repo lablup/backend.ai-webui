@@ -53,7 +53,7 @@ export function useDeferredQueryParams<QPCMap extends QueryParamConfigMap>(
 
       // Update Jotai state
       if (updateType === 'replaceIn' || updateType === 'pushIn') {
-        setLocalQuery((prev) => ({ ...prev, ...newQuery }));
+        setLocalQuery({ ...localQuery, ...newQuery });
       } else {
         setLocalQuery(newQuery as DecodedValueMap<QPCMap>);
       }

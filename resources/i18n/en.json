@@ -666,7 +666,8 @@
     "TotalItems": "Total {{total}} items",
     "ExtendLoginSession": "Extend login session",
     "Cores": "cores",
-    "InvalidJSONFormat": "Invalid JSON format."
+    "InvalidJSONFormat": "Invalid JSON format.",
+    "LastUpdated": "Last Updated"
   },
   "credential": {
     "Permission": "Permission",

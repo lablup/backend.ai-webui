@@ -535,7 +535,8 @@
     "TotalItems": "Toplam {{toplam}} öğe",
     "ExtendLoginSession": "Oturum açma oturumunu uzatma",
     "Cores": "çekirdek",
-    "InvalidJSONFormat": "Geçersiz JSON biçimi."
+    "InvalidJSONFormat": "Geçersiz JSON biçimi.",
+    "LastUpdated": "Son Güncelleme"
   },
   "credential": {
     "Permission": "izin",

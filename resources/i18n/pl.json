@@ -536,7 +536,8 @@
     "TotalItems": "Łącznie {{total}} pozycji",
     "ExtendLoginSession": "Przedłużanie sesji logowania",
     "Cores": "rdzenie",
-    "InvalidJSONFormat": "Nieprawidłowy format JSON."
+    "InvalidJSONFormat": "Nieprawidłowy format JSON.",
+    "LastUpdated": "Ostatnia aktualizacja"
   },
   "credential": {
     "Permission": "Pozwolenie",

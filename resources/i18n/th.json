@@ -664,7 +664,9 @@
     "TotalItems": "รวม {{total}} รายการ",
     "ExtendLoginSession": "ขยายเซสชันการเข้าสู่ระบบ",
     "Cores": "คอร์",
-    "InvalidJSONFormat": "รูปแบบ JSON ไม่ถูกต้อง"
+    "InvalidJSONFormat": "รูปแบบ JSON ไม่ถูกต้อง",
+    "NSelected": "{{count}} เลือก",
+    "LastUpdated": "อัปเดตล่าสุด"
   },
   "credential": {
     "Permission": "สิทธิ์",

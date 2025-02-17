@@ -1,3 +1,4 @@
+import BAIFetchKeyButton from '../components/BAIFetchKeyButton';
 import BAILink from '../components/BAILink';
 import BAIPropertyFilter, {
   mergeFilterValues,
@@ -14,18 +15,16 @@ import { useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
-import { useInterval } from '../hooks/useIntervalValue';
 import {
   ComputeSessionListPageQuery,
   ComputeSessionListPageQuery$data,
   ComputeSessionListPageQuery$variables,
 } from './__generated__/ComputeSessionListPageQuery.graphql';
-import { LoadingOutlined } from '@ant-design/icons';
-import { Badge, Button, Card, Radio, Tabs, theme, Tooltip } from 'antd';
+import { Badge, Button, Card, Radio, Tabs, theme, Tooltip, Typography } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { PowerOffIcon } from 'lucide-react';
-import { startTransition, useDeferredValue, useRef, useState } from 'react';
+import { useDeferredValue, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
@@ -84,16 +83,28 @@ const ComputeSessionListPage = () => {
 
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
 
-  const queryVariables: ComputeSessionListPageQuery$variables = {
-    projectId: currentProject.id,
-    offset: baiPaginationOption.offset,
-    first: baiPaginationOption.first,
-    filter: mergeFilterValues([statusFilter, queryParams.filter, typeFilter]),
-    order: queryParams.order,
-    runningTypeFilter: 'status != "TERMINATED" & status != "CANCELLED"',
-  };
+  const queryVariables: ComputeSessionListPageQuery$variables = useMemo(
+    () => ({
+      projectId: currentProject.id,
+      offset: baiPaginationOption.offset,
+      first: baiPaginationOption.first,
+      filter: mergeFilterValues([statusFilter, queryParams.filter, typeFilter]),
+      order: queryParams.order,
+      runningTypeFilter: 'status != "TERMINATED" & status != "CANCELLED"',
+    }),
+    [
+      currentProject.id,
+      baiPaginationOption.offset,
+      baiPaginationOption.first,
+      statusFilter,
+      queryParams.filter,
+      typeFilter,
+      queryParams.order,
+    ],
+  );
 
   const deferredQueryVariables = useDeferredValue(queryVariables);
+  const deferredFetchKey = useDeferredValue(fetchKey);
 
   const { compute_session_nodes, allRunningSessionForCount } =
     useLazyLoadQuery<ComputeSessionListPageQuery>(
@@ -135,15 +146,9 @@ const ComputeSessionListPage = () => {
       deferredQueryVariables,
       {
         fetchPolicy: 'network-only',
-        fetchKey,
+        fetchKey: deferredFetchKey,
       },
     );
-
-  useInterval(() => {
-    startTransition(() => {
-      updateFetchKey();
-    });
-  }, 15_000);
 
   return (
     <>
@@ -152,11 +157,25 @@ const ComputeSessionListPage = () => {
       <Card
         bordered={false}
         title={t('webui.menu.Sessions')}
-        extra={[
-          <BAILink to={'/session/start'} key={'start-session'}>
-            <Button type="primary">{t('session.launcher.Start')}</Button>
-          </BAILink>,
-        ]}
+        extra={
+          <Flex gap={'xs'}>
+            <BAIFetchKeyButton
+              loading={
+                deferredQueryVariables !== queryVariables ||
+                deferredFetchKey !== fetchKey
+              }
+              autoUpdateDelay={15_000}
+              // showLastLoadTime
+              value={fetchKey}
+              onChange={(newFetchKey) => {
+                updateFetchKey(newFetchKey);
+              }}
+            />
+            <BAILink to={'/session/start'}>
+              <Button type="primary">{t('session.launcher.Start')}</Button>
+            </BAILink>
+          </Flex>
+        }
         styles={{
           header: {
             borderBottom: 'none',
@@ -197,7 +216,11 @@ const ComputeSessionListPage = () => {
                   {key === 'all' && (
                     <Badge
                       count={allRunningSessionForCount?.count}
-                      color={token.colorPrimary}
+                      color={
+                        queryParams.type === key
+                          ? token.colorPrimary
+                          : token.colorTextDisabled
+                      }
                       size="small"
                       showZero
                       style={{
@@ -283,6 +306,7 @@ const ComputeSessionListPage = () => {
             onClickSessionName={(session) => {
               setSessionDetailId(session.row_id);
             }}
+            loading={deferredQueryVariables !== queryVariables}
             rowSelection={{
               type: 'checkbox',
               // Preserve selected rows between pages, but clear when filter changes
@@ -311,13 +335,11 @@ const ComputeSessionListPage = () => {
               pageSize: tablePaginationOption.pageSize,
               current: tablePaginationOption.current,
               total: compute_session_nodes?.count ?? 0,
-              // showTotal: (total) => {
-              //   return total;
-              // },
-            }}
-            loading={{
-              spinning: queryVariables !== deferredQueryVariables,
-              indicator: <LoadingOutlined />,
+              showTotal: (total) => (
+                <Typography.Text type="secondary">
+                  {t('general.TotalItems', { total: total })}
+                </Typography.Text>
+              ),
             }}
             onChange={({ current, pageSize }, filters, sorter) => {
               if (_.isNumber(current) && _.isNumber(pageSize)) {

@@ -537,7 +537,8 @@
     "TotalItems": "Нийт {{total}} зүйл",
     "ExtendLoginSession": "Нэвтрэх сессийг сунгах",
     "Cores": "цөм",
-    "InvalidJSONFormat": "Буруу JSON формат."
+    "InvalidJSONFormat": "Буруу JSON формат.",
+    "LastUpdated": "Өнөөхээр нь онуулсан өдөр"
   },
   "credential": {
     "Permission": "Зөвшөөрөл",

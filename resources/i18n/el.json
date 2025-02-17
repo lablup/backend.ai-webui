@@ -536,7 +536,8 @@
     "TotalItems": "Σύνολο {{total}} στοιχείων",
     "ExtendLoginSession": "Επέκταση μιας περιόδου σύνδεσης",
     "Cores": "πυρήνες",
-    "InvalidJSONFormat": "Μη έγκυρη μορφή JSON."
+    "InvalidJSONFormat": "Μη έγκυρη μορφή JSON.",
+    "LastUpdated": "Τελευταία ενημέρωση"
   },
   "credential": {
     "Permission": "Αδεια",
