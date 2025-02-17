@@ -4,14 +4,14 @@ import {
   useCurrentResourceGroupState,
   useResourceGroupsForCurrentProject,
 } from '../hooks/useCurrentProject';
+import BAISelect, { BAISelectProps } from './BAISelect';
 import TextHighlighter from './TextHighlighter';
-import { Select, SelectProps } from 'antd';
 import _ from 'lodash';
 import React, { useEffect, useState, useTransition } from 'react';
 
 interface ResourceGroupSelectForCurrentProjectProps
   extends Omit<
-    SelectProps,
+    BAISelectProps,
     'defaultValue' | 'value' | 'allowClear' | 'onClear'
   > {
   // filter?: (projectName: string) => boolean;
@@ -53,7 +53,7 @@ const ResourceGroupSelectForCurrentProject: React.FC<
   const [optimisticValue, setOptimisticValue] = useState(currentResourceGroup);
 
   const searchProps: Pick<
-    SelectProps,
+    BAISelectProps,
     'onSearch' | 'searchValue' | 'showSearch'
   > = selectProps.showSearch
     ? {
@@ -64,7 +64,7 @@ const ResourceGroupSelectForCurrentProject: React.FC<
     : {};
 
   return (
-    <Select
+    <BAISelect
       defaultActiveFirstOption
       loading={isPendingLoading}
       options={_.map(resourceGroups, (resourceGroup) => {

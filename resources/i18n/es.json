@@ -450,7 +450,10 @@
     "UserQuotaScopeId": "Quota Scope ID",
     "FileAndFolderNameRequired": "Se requiere el nombre del archivo/carpeta",
     "AllowsLettersNumbersAnd-_": "Permite letras, números y -_",
-    "AllowsLettersNumbersAnd-_Dot": "Permite letras, números y -_."
+    "AllowsLettersNumbersAnd-_Dot": "Permite letras, números y -_.",
+    "CreatedFolders": "Carpetas creadas",
+    "ProjectFolders": "Carpetas de proyectos",
+    "InvitedFolders": "Carpetas invitadas"
   },
   "dialog": {
     "warning": {

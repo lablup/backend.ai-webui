@@ -17,6 +17,9 @@ import { useTranslation } from 'react-i18next';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 const ModelStoreListPage = React.lazy(() => import('./ModelStoreListPage'));
+const StorageStatusPanelCard = React.lazy(
+  () => import('../components/StorageStatusPanelCard'),
+);
 const StorageStatusPanel = React.lazy(
   () => import('../components/StorageStatusPanel'),
 );
@@ -115,9 +118,12 @@ const VFolderListPage: React.FC<VFolderListPageProps> = (props) => {
   ]);
   return (
     <Flex direction="column" align="stretch" gap={'md'}>
-      <Suspense fallback={<StorageStatusPanelFallback />}>
-        <StorageStatusPanel fetchKey={fetchKey} />
-      </Suspense>
+      <Flex gap={'md'}>
+        <Suspense fallback={<StorageStatusPanelFallback />}>
+          <StorageStatusPanelCard />
+          <StorageStatusPanel fetchKey={fetchKey} />
+        </Suspense>
+      </Flex>
       <Card
         activeTabKey={curTabKey}
         onTabChange={(key) => {
