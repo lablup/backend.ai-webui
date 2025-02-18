@@ -69,6 +69,8 @@ const SessionDetailAndContainerLogOpenerLegacy = React.lazy(
   () => import('./components/SessionDetailAndContainerLogOpenerLegacy'),
 );
 
+const AgentPage = React.lazy(() => import('./pages/AgentsPage'));
+
 interface CustomHandle {
   title?: string;
   labelKey?: string;
@@ -402,6 +404,11 @@ const router = createBrowserRouter([
       {
         path: '*',
         element: <></>,
+      },
+      {
+        path: '/agents',
+        handle: { labelKey: 'webui.menu.Agents' },
+        Component: AgentPage,
       },
     ],
   },
