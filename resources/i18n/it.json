@@ -434,7 +434,8 @@
     "ReadLess": "Leggi di più",
     "ReadMore": "Per saperne di più...",
     "CommitImageName": "Nome dell'immagine confermata",
-    "IdleCheckExpirationWarning": "Le sessioni possono essere interrotte in base ai risultati dei controlli di inattività."
+    "IdleCheckExpirationWarning": "Le sessioni possono essere interrotte in base ai risultati dei controlli di inattività.",
+    "FailToRenameSession": "La richiesta di modifica del nome della sessione è fallita."
   },
   "button": {
     "Cancel": "Annulla",

@@ -434,7 +434,8 @@
     "ReadLess": "Lire moins",
     "ReadMore": "Lire la suite...",
     "CommitImageName": "Nom de l'image validée",
-    "IdleCheckExpirationWarning": "Les sessions peuvent être interrompues en fonction des résultats des contrôles d'inactivité."
+    "IdleCheckExpirationWarning": "Les sessions peuvent être interrompues en fonction des résultats des contrôles d'inactivité.",
+    "FailToRenameSession": "La demande de modification du nom de la session a échoué."
   },
   "button": {
     "Cancel": "Annuler",

@@ -434,7 +434,8 @@
     "ReadLess": "Đọc ít hơn",
     "ReadMore": "Đọc thêm...",
     "CommitImageName": "Tên hình ảnh đã cam kết",
-    "IdleCheckExpirationWarning": "Các phiên có thể bị chấm dứt dựa trên kết quả Kiểm tra trạng thái rảnh rỗi."
+    "IdleCheckExpirationWarning": "Các phiên có thể bị chấm dứt dựa trên kết quả Kiểm tra trạng thái rảnh rỗi.",
+    "FailToRenameSession": "Yêu cầu thay đổi tên phiên không thành công."
   },
   "button": {
     "Cancel": "Huỷ bỏ",

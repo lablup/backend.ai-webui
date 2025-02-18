@@ -434,7 +434,8 @@
     "ReadLess": "Czytaj mniej",
     "ReadMore": "Czytaj więcej...",
     "CommitImageName": "Zatwierdzona nazwa obrazu",
-    "IdleCheckExpirationWarning": "Sesje mogą zostać zakończone na podstawie wyników kontroli bezczynności."
+    "IdleCheckExpirationWarning": "Sesje mogą zostać zakończone na podstawie wyników kontroli bezczynności.",
+    "FailToRenameSession": "Żądanie zmiany nazwy sesji nie powiodło się."
   },
   "button": {
     "Cancel": "Anuluj",

@@ -434,7 +434,8 @@
     "ReadLess": "Kurangkan membaca",
     "ReadMore": "Baca Lagi...",
     "CommitImageName": "Nama imej komited",
-    "IdleCheckExpirationWarning": "Sesi boleh ditamatkan berdasarkan keputusan Semakan Kemalasan."
+    "IdleCheckExpirationWarning": "Sesi boleh ditamatkan berdasarkan keputusan Semakan Kemalasan.",
+    "FailToRenameSession": "Permintaan perubahan nama sesi gagal."
   },
   "button": {
     "Cancel": "Batal",

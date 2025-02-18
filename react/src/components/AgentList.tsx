@@ -507,7 +507,7 @@ const AgentList: React.FC<AgentListProps> = ({
                   {mergedResourceSlots?.mem?.human_readable_name}
                 </Typography.Text>
                 <BAIProgressWithLabel
-                  percent={liveStat.mem_util.ratio}
+                  percent={liveStat.mem_util.ratio * 100}
                   width={120}
                   valueLabel={
                     convertBinarySizeUnit(
