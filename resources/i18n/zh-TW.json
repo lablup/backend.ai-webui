@@ -433,7 +433,8 @@
     "ReadLess": "更多信息",
     "ReadMore": "阅读全文...",
     "CommitImageName": "提交的圖片名稱",
-    "IdleCheckExpirationWarning": "會話可能會根據空閒檢查的結果而終止。"
+    "IdleCheckExpirationWarning": "會話可能會根據空閒檢查的結果而終止。",
+    "FailToRenameSession": "更改会话名称的请求失败。"
   },
   "button": {
     "Cancel": "取消",

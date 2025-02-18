@@ -445,7 +445,8 @@
     "ReadLess": "อ่านน้อยลง",
     "ReadMore": "อ่านเพิ่มเติม...",
     "CommitImageName": "ชื่อภาพที่มุ่งมั่น",
-    "IdleCheckExpirationWarning": "เซสชันอาจถูกยกเลิกโดยขึ้นอยู่กับผลลัพธ์ของการตรวจสอบความไม่มีการใช้งาน"
+    "IdleCheckExpirationWarning": "เซสชันอาจถูกยกเลิกโดยขึ้นอยู่กับผลลัพธ์ของการตรวจสอบความไม่มีการใช้งาน",
+    "FailToRenameSession": "คำขอเปลี่ยนชื่อเซสชันล้มเหลว"
   },
   "modelService": {
     "Services": "บริการ",
@@ -665,7 +666,6 @@
     "ExtendLoginSession": "ขยายเซสชันการเข้าสู่ระบบ",
     "Cores": "คอร์",
     "InvalidJSONFormat": "รูปแบบ JSON ไม่ถูกต้อง",
-    "NSelected": "{{count}} เลือก",
     "LastUpdated": "อัปเดตล่าสุด"
   },
   "credential": {

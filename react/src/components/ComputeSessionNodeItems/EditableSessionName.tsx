@@ -2,7 +2,7 @@ import { useCurrentUserInfo } from '../../hooks/backendai';
 import { getSessionNameRules } from '../SessionNameFormItem';
 import { EditableSessionNameFragment$key } from './__generated__/EditableSessionNameFragment.graphql';
 import { EditableSessionNameMutation } from './__generated__/EditableSessionNameMutation.graphql';
-import { theme, Form, Input } from 'antd';
+import { theme, Form, Input, App } from 'antd';
 import Text, { TextProps } from 'antd/es/typography/Text';
 import Title, { TitleProps } from 'antd/es/typography/Title';
 import graphql from 'babel-plugin-relay/macro';
@@ -43,7 +43,7 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
   const [commitEditMutation, isPendingEditMutation] =
     useMutation<EditableSessionNameMutation>(graphql`
       mutation EditableSessionNameMutation($input: ModifyComputeSessionInput!) {
-        modify_compute_session(input: $input) {
+        modify_compute_session(input: $input) @catch {
           item {
             id
             name
@@ -55,6 +55,7 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [isEditing, setIsEditing] = useState(false);
+  const { message } = App.useApp();
 
   const isNotPreparingCategoryStatus = ![
     'RESTARTING',
@@ -107,8 +108,28 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
                   name: values.sessionName,
                 },
               },
-              onCompleted(response, errors) {},
-              onError(error) {},
+              onCompleted(response, errors) {
+                if (response.modify_compute_session.ok) {
+                  // TODO: remove below dispatchEvent  after session list migration to React
+                  document.dispatchEvent(
+                    new CustomEvent('backend-ai-session-list-refreshed'),
+                  );
+                } else {
+                  // With @catch directive, errors should be in response.modify_compute_session.errors
+                  // However, it's empty, so we use errors from onCompleted instead
+                  const errMessage = errors?.[0]?.message || '';
+                  if (errMessage.includes('Duplicate session name.')) {
+                    message.error(t('session.launcher.SessionAlreadyExists'));
+                  } else {
+                    if (errors?.[0]?.message) {
+                      message.error(t('session.FailToRenameSession'));
+                    }
+                  }
+                }
+              },
+              onError(error) {
+                message.error(t('session.FailToRenameSession'));
+              },
             });
           }}
           initialValues={{

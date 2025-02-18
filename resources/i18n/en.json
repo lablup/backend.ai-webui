@@ -447,7 +447,8 @@
     "ReadLess": "Read less",
     "ReadMore": "Read More...",
     "CommitImageName": "Committed image name",
-    "IdleCheckExpirationWarning": "Sessions may be terminated based on the results of Idleness Checks."
+    "IdleCheckExpirationWarning": "Sessions may be terminated based on the results of Idleness Checks.",
+    "FailToRenameSession": "The session rename request failed."
   },
   "modelService": {
     "Services": "Services",

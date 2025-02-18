@@ -435,7 +435,8 @@
     "ReadLess": "Baca lebih sedikit",
     "ReadMore": "Baca Selengkapnya...",
     "CommitImageName": "Nama gambar yang berkomitmen",
-    "IdleCheckExpirationWarning": "Sesi dapat dihentikan berdasarkan hasil Pemeriksaan Idleness."
+    "IdleCheckExpirationWarning": "Sesi dapat dihentikan berdasarkan hasil Pemeriksaan Idleness.",
+    "FailToRenameSession": "Permintaan untuk mengubah nama sesi gagal."
   },
   "button": {
     "Cancel": "Batalkan",

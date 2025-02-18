@@ -434,7 +434,8 @@
     "ReadLess": "Weniger lesen",
     "ReadMore": "Mehr lesen...",
     "CommitImageName": "Festgeschriebener Bildname",
-    "IdleCheckExpirationWarning": "Sitzungen können basierend auf den Ergebnissen der Inaktivitätsprüfungen beendet werden."
+    "IdleCheckExpirationWarning": "Sitzungen können basierend auf den Ergebnissen der Inaktivitätsprüfungen beendet werden.",
+    "FailToRenameSession": "Die Anfrage zum Ändern des Sitzungsnamens ist fehlgeschlagen."
   },
   "button": {
     "Cancel": "Stornieren",

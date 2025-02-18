@@ -433,7 +433,8 @@
     "ReadLess": "Daha az oku",
     "ReadMore": "Daha Fazlasını Oku...",
     "CommitImageName": "Taahhüt edilen resim adı",
-    "IdleCheckExpirationWarning": "Idleness Check sonuçlarına göre oturumlar sonlandırılabilir."
+    "IdleCheckExpirationWarning": "Idleness Check sonuçlarına göre oturumlar sonlandırılabilir.",
+    "FailToRenameSession": "Oturum adını değiştirme isteği başarısız oldu."
   },
   "button": {
     "Cancel": "İptal etmek",

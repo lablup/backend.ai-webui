@@ -434,7 +434,8 @@
     "ReadLess": "Ler menos",
     "ReadMore": "Ler mais...",
     "CommitImageName": "Nome da imagem confirmada",
-    "IdleCheckExpirationWarning": "As sessões podem ser encerradas com base nos resultados das verificações de inatividade."
+    "IdleCheckExpirationWarning": "As sessões podem ser encerradas com base nos resultados das verificações de inatividade.",
+    "FailToRenameSession": "O pedido de alteração do nome da sessão falhou."
   },
   "button": {
     "Cancel": "Cancelar",

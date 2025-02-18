@@ -434,7 +434,8 @@
     "ReadLess": "内容折りたたみ",
     "ReadMore": "もっと詳しく...",
     "CommitImageName": "コミットされたイメージ名",
-    "IdleCheckExpirationWarning": "セッションはアイドル状態チェックの結果に基づいて終了される場合があります。"
+    "IdleCheckExpirationWarning": "セッションはアイドル状態チェックの結果に基づいて終了される場合があります。",
+    "FailToRenameSession": "セッション名変更要求が失敗しました。"
   },
   "button": {
     "Cancel": "キャンセル",

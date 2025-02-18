@@ -435,7 +435,8 @@
     "ReadLess": "내용 접기",
     "ReadMore": "더 알아보기...",
     "CommitImageName": "커밋 이미지 이름",
-    "IdleCheckExpirationWarning": "유휴 상태 확인 결과에 따라 세션이 종료될 수 있습니다."
+    "IdleCheckExpirationWarning": "유휴 상태 확인 결과에 따라 세션이 종료될 수 있습니다.",
+    "FailToRenameSession": "세션 이름 변경 요청이 실패했습니다."
   },
   "modelService": {
     "Services": "모델 서비스",

@@ -1332,7 +1332,8 @@
     "ReadLess": "Lue vähemmän",
     "ReadMore": "Lue lisää...",
     "CommitImageName": "Sitoutunut kuvan nimi",
-    "IdleCheckExpirationWarning": "Istunnot voidaan lopettaa joutokäyntitarkastusten tulosten perusteella."
+    "IdleCheckExpirationWarning": "Istunnot voidaan lopettaa joutokäyntitarkastusten tulosten perusteella.",
+    "FailToRenameSession": "Pyyntö istunnon nimen muuttamiseksi epäonnistui."
   },
   "settings": {
     "AllowAgentSideRegistration": "Salli agenttipuolen rekisteröinti",
