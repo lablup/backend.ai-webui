@@ -120,6 +120,7 @@ const BAITable = <RecordType extends object = any>({
   columns,
   components,
   neoStyle,
+  loading,
   ...tableProps
 }: BAITableProps<RecordType>) => {
   const { styles } = useStyles();
@@ -174,6 +175,10 @@ const BAITable = <RecordType extends object = any>({
           resizable && styles.resizableTable,
           neoStyle && styles.neoHeader,
         )}
+        style={{
+          opacity: loading ? 0.7 : 1,
+          transition: 'opacity 0.3s ease',
+        }}
         components={
           resizable
             ? _.merge(components || {}, {

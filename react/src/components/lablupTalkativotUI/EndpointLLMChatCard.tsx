@@ -5,6 +5,7 @@ import { Model } from './ChatUIModal';
 import LLMChatCard, { BAIModel } from './LLMChatCard';
 import { EndpointLLMChatCard_endpoint$key } from './__generated__/EndpointLLMChatCard_endpoint.graphql';
 import { CloseOutlined, ReloadOutlined } from '@ant-design/icons';
+import { AttachmentsProps } from '@ant-design/x';
 import { Alert, Button, CardProps, Popconfirm, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import { atom, useAtom } from 'jotai';
@@ -14,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
 
 const synchronizedMessageState = atom<string>('');
+const synchronizedAttachmentState = atom<AttachmentsProps['items']>();
 const chatSubmitKeyInfoState = atom<{ id: string; key: string } | undefined>(
   undefined,
 );
@@ -57,6 +59,9 @@ const EndpointLLMChatCard: React.FC<EndpointLLMChatCardProps> = ({
 
   const [synchronizedMessage, setSynchronizedMessage] = useAtom(
     synchronizedMessageState,
+  );
+  const [synchronizedAttachment, setSynchronizedAttachment] = useAtom(
+    synchronizedAttachmentState,
   );
 
   const [chatSubmitKeyInfo, setChatSubmitKeyInfo] = useAtom(
@@ -169,11 +174,16 @@ const EndpointLLMChatCard: React.FC<EndpointLLMChatCardProps> = ({
       onInputChange={(v) => {
         setSynchronizedMessage(v);
       }}
+      inputAttachment={isSynchronous ? synchronizedAttachment : undefined}
+      onAttachmentChange={(attachment) => {
+        setSynchronizedAttachment(attachment);
+      }}
       submitKey={
         chatSubmitKeyInfo?.id === submitId ? undefined : chatSubmitKeyInfo?.key
       }
       onSubmitChange={() => {
         setSynchronizedMessage('');
+        setSynchronizedAttachment([]);
         if (isSynchronous) {
           setChatSubmitKeyInfo({
             id: submitId,

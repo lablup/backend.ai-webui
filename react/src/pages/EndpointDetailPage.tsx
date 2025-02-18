@@ -1,6 +1,7 @@
 import AutoScalingRuleEditorModal, {
   COMPARATOR_LABELS,
 } from '../components/AutoScalingRuleEditorModal';
+import BAIJSONViewerModal from '../components/BAIJSONViewerModal';
 import CopyableCodeText from '../components/CopyableCodeText';
 import EndpointOwnerInfo from '../components/EndpointOwnerInfo';
 import EndpointStatusTag from '../components/EndpointStatusTag';
@@ -35,10 +36,10 @@ import {
   CheckOutlined,
   CloseOutlined,
   DeleteOutlined,
+  ExclamationCircleOutlined,
   FolderOutlined,
   LoadingOutlined,
   PlusOutlined,
-  QuestionCircleOutlined,
   ReloadOutlined,
   SettingOutlined,
   SyncOutlined,
@@ -128,6 +129,8 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   const [selectedSessionId, setSelectedSessionId] = useState<string>();
   const isSupportAutoScalingRule =
     baiClient.isManagerVersionCompatibleWith('25.1.0');
+
+  const [errorDataForJSONModal, setErrorDataForJSONModal] = useState<string>();
   const { endpoint, endpoint_token_list, endpoint_auto_scaling_rules } =
     useLazyLoadQuery<EndpointDetailPageQuery>(
       graphql`
@@ -201,6 +204,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               traffic_ratio
               endpoint
               status
+              error_data
             }
             created_user_email @since(version: "23.09.8")
             ...EndpointOwnerInfoFragment
@@ -305,14 +309,6 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       });
     },
   });
-  const openSessionErrorModal = (session: string) => {
-    if (endpoint === null) return;
-    const { errors } = endpoint || {};
-    const firstMatchedSessionError = errors?.find(
-      ({ session_id }) => session === session_id,
-    );
-    setSelectedSessionErrorForModal(firstMatchedSessionError || null);
-  };
 
   const [
     commitDeleteAutoScalingRuleMutation,
@@ -964,27 +960,61 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               title: t('modelService.RouteId'),
               dataIndex: 'routing_id',
               fixed: 'left',
+              render: (text, row) => (
+                <Typography.Text ellipsis>
+                  {row.routing_id}
+                  {!_.isEmpty(row.error_data) && (
+                    <Button
+                      size="small"
+                      type="text"
+                      icon={<ExclamationCircleOutlined />}
+                      style={{ color: token.colorError }}
+                      onClick={() => {
+                        setErrorDataForJSONModal(row?.error_data || ' ');
+                      }}
+                    />
+                  )}
+                </Typography.Text>
+              ),
             },
             {
               title: t('modelService.SessionId'),
               dataIndex: 'session',
               render: (sessionId) => {
-                return baiClient.supports('session-node') ? (
-                  <Typography.Link
-                    onClick={() => {
-                      setSelectedSessionId(sessionId);
-                    }}
-                  >
-                    {sessionId}
-                  </Typography.Link>
-                ) : (
-                  <Typography.Text>{sessionId}</Typography.Text>
+                const matchedSessionError = endpoint?.errors?.find(
+                  (sessionError) => sessionError.session_id === sessionId,
+                );
+                return (
+                  <>
+                    {baiClient.supports('session-node') ? (
+                      <Typography.Link
+                        onClick={() => {
+                          setSelectedSessionId(sessionId);
+                        }}
+                      >
+                        {sessionId}
+                      </Typography.Link>
+                    ) : (
+                      <Typography.Text>{sessionId}</Typography.Text>
+                    )}
+                    {matchedSessionError && (
+                      <Button
+                        size="small"
+                        type="text"
+                        icon={<ExclamationCircleOutlined />}
+                        style={{ color: token.colorError }}
+                        onClick={() => {
+                          setSelectedSessionErrorForModal(matchedSessionError);
+                        }}
+                      />
+                    )}
+                  </>
                 );
               },
             },
             {
               title: t('modelService.Status'),
-              render: (_, row) =>
+              render: (text, row) =>
                 row.status && (
                   <>
                     <Tag
@@ -994,17 +1024,6 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                     >
                       {row.status.toUpperCase()}
                     </Tag>
-                    {row.status === 'FAILED_TO_START' && row.session && (
-                      <Button
-                        size="small"
-                        type="text"
-                        icon={<QuestionCircleOutlined />}
-                        style={{ color: token.colorTextSecondary }}
-                        onClick={() => {
-                          row.session && openSessionErrorModal(row.session);
-                        }}
-                      />
-                    )}
                   </>
                 ),
             },
@@ -1065,6 +1084,14 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         sessionId={selectedSessionId}
         onClose={() => {
           setSelectedSessionId(undefined);
+        }}
+      />
+      <BAIJSONViewerModal
+        open={!!errorDataForJSONModal}
+        title={t('modelService.RouteError')}
+        json={errorDataForJSONModal}
+        onCancel={() => {
+          setErrorDataForJSONModal(undefined);
         }}
       />
     </Flex>

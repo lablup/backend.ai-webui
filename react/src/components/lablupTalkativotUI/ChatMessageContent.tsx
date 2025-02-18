@@ -1,5 +1,7 @@
 import CopyButton from './CopyButton';
 import { Card, Typography } from 'antd';
+// `rehype-katex` does not import the CSS file, so we need to import it manually.
+import 'katex/dist/katex.min.css';
 import React from 'react';
 import Markdown from 'react-markdown';
 import {
@@ -7,6 +9,9 @@ import {
   SyntaxHighlighterProps,
 } from 'react-syntax-highlighter';
 import { oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import rehypeKatex from 'rehype-katex';
+import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
 
 const { Text } = Typography;
 
@@ -15,6 +20,8 @@ const ChatMessageContent: React.FC<{
 }> = ({ children }) => {
   return (
     <Markdown
+      remarkPlugins={[remarkGfm, remarkMath]}
+      rehypePlugins={[rehypeKatex]}
       components={{
         p({ node, ...props }) {
           // @ts-ignore

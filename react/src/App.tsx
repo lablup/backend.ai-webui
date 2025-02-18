@@ -183,6 +183,7 @@ const router = createBrowserRouter([
                     }
                   >
                     <ComputeSessionListPage />
+                    <SessionDetailAndContainerLogOpenerLegacy />
                   </Suspense>
                 </BAIErrorBoundary>
               ) : (
