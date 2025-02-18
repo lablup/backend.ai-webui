@@ -659,14 +659,15 @@
     "Session": "Session",
     "General": "General",
     "Disabled": "Disabled",
-    "NSelected": "Selected {{count}} item(s)",
+    "NSelected": "{{count}} selected",
     "RemainingLoginSessionTime": "Time until auto logout",
     "Change": "Change",
     "MaxValueNotification": "{{name}} must be maximum {{max}}",
     "TotalItems": "Total {{total}} items",
     "ExtendLoginSession": "Extend login session",
     "Cores": "cores",
-    "InvalidJSONFormat": "Invalid JSON format."
+    "InvalidJSONFormat": "Invalid JSON format.",
+    "LastUpdated": "Last Updated"
   },
   "credential": {
     "Permission": "Permission",
@@ -1728,7 +1729,9 @@
     "Attachments": "Attachments",
     "DropFileHere": "Drop file here",
     "UploadFiles": "Upload files",
-    "UploadFilesDescription": "Click or drag files to this area to upload"
+    "UploadFilesDescription": "Click or drag files to this area to upload",
+    "Thinking": "Thinking",
+    "ViewReasoning": "View reasoning"
   },
   "time": {
     "Day": "day",

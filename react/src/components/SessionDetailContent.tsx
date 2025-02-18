@@ -157,7 +157,7 @@ const SessionDetailContent: React.FC<{
           showIcon
         />
       )}
-      <Flex direction="column" gap={'sm'}>
+      <Flex direction="column" gap={'sm'} align="stretch">
         <Flex
           direction="row"
           justify="between"

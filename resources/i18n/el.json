@@ -529,14 +529,15 @@
     "Session": "Σύνοδος",
     "General": "Γενικά",
     "Disabled": "Άτομα με ειδικές ανάγκες",
-    "NSelected": "Επιλεγμένο {{count}} στοιχείο(α)",
+    "NSelected": "{{count}} selected",
     "RemainingLoginSessionTime": "Χρόνος μέχρι την αυτόματη αποσύνδεση",
     "Change": "Αλλαγή",
     "MaxValueNotification": "{{name}} πρέπει να είναι το μέγιστο {{max}}",
     "TotalItems": "Σύνολο {{total}} στοιχείων",
     "ExtendLoginSession": "Επέκταση μιας περιόδου σύνδεσης",
     "Cores": "πυρήνες",
-    "InvalidJSONFormat": "Μη έγκυρη μορφή JSON."
+    "InvalidJSONFormat": "Μη έγκυρη μορφή JSON.",
+    "LastUpdated": "Τελευταία ενημέρωση"
   },
   "credential": {
     "Permission": "Αδεια",
@@ -1724,7 +1725,9 @@
     "Attachments": "Συνημμένα",
     "DropFileHere": "Αποθέστε το αρχείο εδώ",
     "UploadFiles": "Μεταφόρτωση αρχείων",
-    "UploadFilesDescription": "Κάντε κλικ ή σύρετε αρχεία σε αυτήν την περιοχή για μεταφόρτωση"
+    "UploadFilesDescription": "Κάντε κλικ ή σύρετε αρχεία σε αυτήν την περιοχή για μεταφόρτωση",
+    "Thinking": "Σκέψη",
+    "ViewReasoning": "Προβολή λογικής"
   },
   "time": {
     "Day": "day",

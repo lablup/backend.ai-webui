@@ -4,13 +4,14 @@ import ChatMessageContent from './ChatMessageContent';
 import { Message } from '@ai-sdk/react';
 import { Attachments } from '@ant-design/x';
 import { useThrottle } from 'ahooks';
-import { Avatar, theme, Image } from 'antd';
+import { Avatar, theme, Image, Collapse, Typography, Spin } from 'antd';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import _ from 'lodash';
 import React from 'react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 dayjs.extend(localizedFormat);
 dayjs.extend(relativeTime);
@@ -32,8 +33,12 @@ const ChatMessage: React.FC<{
   isStreaming,
 }) => {
   const { token } = theme.useToken();
+  const { t } = useTranslation();
   const [isHovered, setIsHovered] = useState(false);
 
+  const throttledMessageReasoning = useThrottle(message.reasoning, {
+    wait: 50,
+  });
   const throttledMessageContent = useThrottle(message.content, { wait: 50 });
 
   return (
@@ -113,8 +118,37 @@ const ChatMessage: React.FC<{
                 ? token.colorBgContainer
                 : token.colorBgContainerDisabled,
             maxWidth: '100%',
+            width: _.trim(message.reasoning) ? '100%' : 'auto',
           }}
         >
+          {_.trim(message.reasoning) && (
+            <Collapse
+              style={{
+                marginTop: token.margin,
+                width: '100%',
+              }}
+              items={[
+                {
+                  key: 'reasoning',
+                  label: _.isEmpty(throttledMessageContent) ? (
+                    <Flex gap="xs">
+                      <Typography.Text>{t('chatui.Thinking')}</Typography.Text>
+                      <Spin size="small" />
+                    </Flex>
+                  ) : (
+                    <Typography.Text>
+                      {t('chatui.ViewReasoning')}
+                    </Typography.Text>
+                  ),
+                  children: (
+                    <ChatMessageContent>
+                      {throttledMessageReasoning}
+                    </ChatMessageContent>
+                  ),
+                },
+              ]}
+            />
+          )}
           <ChatMessageContent>
             {throttledMessageContent + (isStreaming ? '\n●' : '')}
           </ChatMessageContent>

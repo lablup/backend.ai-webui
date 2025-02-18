@@ -2,6 +2,7 @@ import { CommittedImage } from '../components/CustomizedImageList';
 import { Image } from '../components/ImageEnvironmentSelectFormItems';
 import { EnvironmentImage } from '../components/ImageList';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { AttachmentsProps } from '@ant-design/x';
 import { SorterResult } from 'antd/es/table/interface';
 import dayjs from 'dayjs';
 import { Duration } from 'dayjs/plugin/duration';
@@ -470,4 +471,44 @@ export function formatDurationAsDays(
   const seconds = diff.seconds().toString().padStart(2, '0');
 
   return `${asDays ? `${asDays}${dayLabel}` : ''}${hours}:${minutes}:${seconds}`;
+}
+
+export const handleRowSelectionChange = <T extends object, K extends keyof T>(
+  selectedRowKeys: React.Key[],
+  currentPageItems: T[],
+  setSelectedItems: React.Dispatch<React.SetStateAction<T[]>>,
+  keyField: K = 'id' as unknown as K,
+) => {
+  // Find items that are no longer selected on current page
+  const deselectedItemsOnCurrentPage = currentPageItems.filter(
+    (item) => !selectedRowKeys.includes(item[keyField] as React.Key),
+  );
+
+  // Find newly selected items on current page
+  const selectedItemsOnCurrentPage = selectedRowKeys
+    .map((key) => currentPageItems.find((item) => item[keyField] === key))
+    .filter((item): item is T => item !== undefined);
+
+  setSelectedItems((prevSelected) => {
+    // Combine previous selection with new selections
+    const combinedSelection = [...prevSelected, ...selectedItemsOnCurrentPage];
+
+    // Remove duplicates and deselected items
+    return _.uniqBy(combinedSelection, keyField as string).filter(
+      (item) =>
+        !_.some(
+          deselectedItemsOnCurrentPage,
+          (di) => di[keyField] === item[keyField],
+        ),
+    );
+  });
+};
+
+export function createDataTransferFiles(files: AttachmentsProps['items']) {
+  const fileList = _.map(files, (item) => item.originFileObj as File);
+  const dataTransfer = new DataTransfer();
+  _.forEach(fileList, (file) => {
+    dataTransfer.items.add(file);
+  });
+  return dataTransfer.files;
 }

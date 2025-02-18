@@ -529,14 +529,15 @@
     "Session": "Sessão",
     "General": "Geral",
     "Disabled": "Desativado",
-    "NSelected": "Item(ns) {{contagem}} selecionado(s)",
+    "NSelected": "{{contagem}} selecionado",
     "RemainingLoginSessionTime": "Tempo até ao encerramento automático da sessão",
     "Change": "Alterar",
     "MaxValueNotification": "{{nome}} deve ser o máximo {{max}}",
     "TotalItems": "Total de itens {{total}}",
     "ExtendLoginSession": "Prolongar uma sessão de início de sessão",
     "Cores": "núcleos",
-    "InvalidJSONFormat": "Formato JSON inválido."
+    "InvalidJSONFormat": "Formato JSON inválido.",
+    "LastUpdated": "Última atualização"
   },
   "credential": {
     "Permission": "Permissão",
@@ -1724,7 +1725,9 @@
     "Attachments": "Anexos",
     "DropFileHere": "Solte o arquivo aqui",
     "UploadFiles": "Carregar arquivos",
-    "UploadFilesDescription": "Clique ou arraste os arquivos para esta área para fazer upload"
+    "UploadFilesDescription": "Clique ou arraste os arquivos para esta área para fazer upload",
+    "Thinking": "Pensamento",
+    "ViewReasoning": "Ver raciocínio"
   },
   "time": {
     "Day": "day",
