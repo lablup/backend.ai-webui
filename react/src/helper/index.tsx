@@ -2,6 +2,7 @@ import { CommittedImage } from '../components/CustomizedImageList';
 import { Image } from '../components/ImageEnvironmentSelectFormItems';
 import { EnvironmentImage } from '../components/ImageList';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { AttachmentsProps } from '@ant-design/x';
 import { SorterResult } from 'antd/es/table/interface';
 import dayjs from 'dayjs';
 import { Duration } from 'dayjs/plugin/duration';
@@ -502,3 +503,12 @@ export const handleRowSelectionChange = <T extends object, K extends keyof T>(
     );
   });
 };
+
+export function createDataTransferFiles(files: AttachmentsProps['items']) {
+  const fileList = _.map(files, (item) => item.originFileObj as File);
+  const dataTransfer = new DataTransfer();
+  _.forEach(fileList, (file) => {
+    dataTransfer.items.add(file);
+  });
+  return dataTransfer.files;
+}
