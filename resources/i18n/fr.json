@@ -1785,7 +1785,12 @@
     "MetricSource": "Source métrique",
     "MIN/MAXReplicas": "Répliques min / max",
     "LastTriggered": "Dernière déclenché",
-    "CreatedAt": "Temps créé"
+    "CreatedAt": "Temps créé",
+    "ConditionTooltip": "Vous pouvez saisir librement n'importe quelle mesure prise en charge par l'environnement d'exécution.\nPar exemple : \"cuda_mem\", \"cuda_util\", etc : \"cuda_mem\", \"cuda_util\"",
+    "ScalingType": "Type",
+    "ScaleUp": "Augmentation d'échelle",
+    "ScaleDown": "Réduction d'échelle",
+    "Condition": "Condition"
   },
   "kernel": {
     "KernelId": "ID du noyau",

@@ -1784,7 +1784,12 @@
     "MetricSource": "Метрийн эх сургай",
     "MIN/MAXReplicas": "Мин / Макс хуулбарууд",
     "LastTriggered": "Хамгийн сүүлд өдөөсөн",
-    "CreatedAt": "Үед"
+    "CreatedAt": "Үед",
+    "ConditionTooltip": "Ажиллах цагийн орчинд ямар ч хэмжигдэхүүнийг чөлөөтэй оруулж болно.\n\nЖишээлбэл: \"Cuda_mem\", \"Cuda_util\"",
+    "ScalingType": "Маяг",
+    "ScaleUp": "Газар дамжуулах",
+    "ScaleDown": "Хэмжээ",
+    "Condition": "Болзол"
   },
   "kernel": {
     "KernelId": "Kernel ID",

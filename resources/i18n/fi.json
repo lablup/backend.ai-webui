@@ -1784,7 +1784,12 @@
     "MetricSource": "Metrilähde",
     "MIN/MAXReplicas": "Min / max -kopiot",
     "LastTriggered": "Viimeksi laukaistu",
-    "CreatedAt": "Luotu aika"
+    "CreatedAt": "Luotu aika",
+    "ConditionTooltip": "Voit syöttää vapaasti minkä tahansa ajoympäristön tukeman mittarin.\nEsimerkiksi: \"cuda_mem\", \"cuda_util\".",
+    "ScalingType": "Tyyppi",
+    "ScaleUp": "Laajentaminen",
+    "ScaleDown": "Pienennä mittakaavaa",
+    "Condition": "Kunto"
   },
   "kernel": {
     "KernelId": "Ytimen tunnus",

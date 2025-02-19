@@ -1785,7 +1785,12 @@
     "MetricSource": "Metrische Quelle",
     "MIN/MAXReplicas": "Min / Max Replikas",
     "LastTriggered": "Zuletzt ausgelöst",
-    "CreatedAt": "Zeit erstellt"
+    "CreatedAt": "Zeit erstellt",
+    "ConditionTooltip": "Sie können jede von der Laufzeitumgebung unterstützte Metrik frei eingeben.\nZum Beispiel: \"cuda_mem\", \"cuda_util\"",
+    "ScalingType": "Typ",
+    "ScaleUp": "Hochskalieren",
+    "ScaleDown": "Verkleinern",
+    "Condition": "Zustand"
   },
   "kernel": {
     "KernelId": "Kernel ID",

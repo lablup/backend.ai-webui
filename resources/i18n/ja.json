@@ -1785,7 +1785,12 @@
     "MetricSource": "メトリックソース",
     "MIN/MAXReplicas": "min / maxレプリカ",
     "LastTriggered": "最後にトリガーされました",
-    "CreatedAt": "作成された時間"
+    "CreatedAt": "作成された時間",
+    "ConditionTooltip": "ランタイム環境でサポートされている任意の指標を自由に入力することができる。\nたとえば\"cuda_mem\"、\"cuda_util\"",
+    "ScalingType": "タイプ",
+    "ScaleUp": "スケールアップ",
+    "ScaleDown": "スケールダウン",
+    "Condition": "コンディション"
   },
   "kernel": {
     "KernelId": "カーネルID",
