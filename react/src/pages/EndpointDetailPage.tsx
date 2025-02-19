@@ -787,7 +787,6 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                   </Flex>
                 ),
               },
-
               {
                 title: t('autoScalingRule.StepSize'),
                 dataIndex: 'step_size',
