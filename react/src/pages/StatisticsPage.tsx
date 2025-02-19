@@ -1,15 +1,29 @@
 import BAICard from '../components/BAICard';
 import Flex from '../components/Flex';
-import useUserStats, { Period, UsageHistoryKey } from '../hooks/useUserStats';
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useThemeMode } from '../hooks/useThemeMode';
+import useUserStats, {
+  Period,
+  UsageHistoryKey,
+  UnitHint,
+} from '../hooks/useUserStats';
 import { Column, ColumnConfig, Line, LineConfig } from '@ant-design/charts';
-import { Alert, Select, theme, Typography } from 'antd';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { Alert, Card, Select, theme, Typography } from 'antd';
 import { format } from 'date-fns';
-import { useState } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
+type UsageHistoryTitle =
+  | 'Sessions'
+  | 'CPU'
+  | 'Memory'
+  | 'GPU'
+  | 'IO-Read'
+  | 'IO-Write';
 interface GraphContainerProps {
-  title: string;
+  title: UsageHistoryTitle;
   graph: 'line' | 'column';
   config: LineConfig | ColumnConfig;
   height?: number;
@@ -23,6 +37,13 @@ const GraphContainer = ({
   const { token } = theme.useToken();
   return (
     <>
+      {/* <Card type="inner" title={title} style={{ width: '100%' }}>
+        {graph === 'line' ? (
+          <Line height={height} {...(config as LineConfig)} />
+        ) : (
+          <Column height={height} {...(config as ColumnConfig)} />
+        )}
+      </Card> */}
       <Typography.Title level={5} style={{ marginBottom: token.marginLG }}>
         {title}
       </Typography.Title>
@@ -37,16 +58,18 @@ const GraphContainer = ({
   );
 };
 
-const lineConfig = (data: any, period: Period, color: string): LineConfig => ({
+const lineConfig = (
+  data: any,
+  period: Period,
+  unitHint: UnitHint,
+  isDarkMode: boolean,
+): LineConfig => ({
   data,
   xField: 'date',
   yField: 'value',
   point: {
-    shapeField: 'circle',
-    sizeField: 3,
     style: {
-      fill: color,
-      stroke: color,
+      // stroke: color,
     },
   },
   interaction: {
@@ -56,7 +79,7 @@ const lineConfig = (data: any, period: Period, color: string): LineConfig => ({
   },
   style: {
     lineWidth: 2,
-    stroke: color,
+    // stroke: color,
   },
   axis: {
     x: {
@@ -64,71 +87,105 @@ const lineConfig = (data: any, period: Period, color: string): LineConfig => ({
       tickFilter: (_: any, index: any) =>
         index % (period === '1D' ? 12 : 48) === 0,
     },
+    y: {
+      title: unitHint,
+    },
   },
+  theme: isDarkMode ? 'dark' : 'light',
 });
 
 const columnConfig = (
   data: any,
   period: Period,
-  color: string,
+  unitHint: UnitHint,
+  isDarkMode: boolean,
 ): ColumnConfig => ({
   data,
   xField: 'date',
   yField: 'value',
-  style: {
-    fill: color,
-  },
   axis: {
     x: {
       labelAutoHide: true,
       tickFilter: (_: any, index: any) =>
         index % (period === '1D' ? 12 : 48) === 0,
     },
+    y: {
+      title: unitHint,
+    },
   },
   animate: { enter: { type: 'growInY' } },
+  theme: isDarkMode ? 'dark' : 'light',
 });
 
-const UsageHistoryStatistics = () => {
-  const { t } = useTranslation();
-  const { token } = theme.useToken();
-  const [period] = useQueryParam('period', periodParam);
-  console.log(period);
-  const keys: Partial<{
-    [key in UsageHistoryKey]: {
-      type: 'line' | 'column';
-      color: string;
-    };
-  }> = {
-    num_sessions: {
-      type: 'column',
-      color: '#ec407a',
-    },
-    cpu_allocated: {
-      type: 'column',
-      color: '#9ccc65',
-    },
-    mem_allocated: {
-      type: 'line',
-      color: '#ffa726',
-    },
-    gpu_allocated: {
-      type: 'line',
-      color: '#26c6da',
-    },
-    io_read_bytes: {
-      type: 'line',
-      color: '#3677eb',
-    },
-    io_write_bytes: {
-      type: 'line',
-      color: '#003f5c',
-    },
+const byteConverter = {
+  toB: (bytes: number) => bytes,
+  toKB: (bytes: number) => bytes / 1024,
+  toMB: (bytes: number) => bytes / (1024 * 1024),
+  toGB: (bytes: number) => bytes / (1024 * 1024 * 1024),
+  toTB: (bytes: number) => bytes / (1024 * 1024 * 1024 * 1024),
+  log1024: (n: number) => (n <= 0 ? 0 : Math.log(n) / Math.log(1024)),
+  readableUnit: function (bytes: number) {
+    return ['B', 'KB', 'MB', 'GB', 'TB'][Math.floor(this.log1024(bytes))];
+  },
+};
+
+const periodParam = withDefault(StringParam, '1D');
+
+const keys: Partial<{
+  [key in UsageHistoryKey]: {
+    type: 'line' | 'column';
+    unitHint: UnitHint;
+    title: UsageHistoryTitle;
   };
+}> = {
+  num_sessions: {
+    type: 'column',
+    unitHint: 'count',
+    title: 'Sessions',
+  },
+  cpu_allocated: {
+    type: 'column',
+    unitHint: 'count',
+    title: 'CPU',
+  },
+  mem_allocated: {
+    type: 'line',
+    unitHint: 'MB',
+    title: 'Memory',
+  },
+  gpu_allocated: {
+    type: 'line',
+    unitHint: 'count',
+    title: 'GPU',
+  },
+  io_read_bytes: {
+    type: 'line',
+    unitHint: 'MB',
+    title: 'IO-Read',
+  },
+  io_write_bytes: {
+    type: 'line',
+    unitHint: 'MB',
+    title: 'IO-Write',
+  },
+};
+const formatValue = (value: number, unitHint: UnitHint) => {
+  if (unitHint === 'count') {
+    return value;
+  } else {
+    return byteConverter[`to${unitHint}`](value);
+  }
+};
+interface UsageHistoryStatisticsProps {
+  period: Period;
+}
+const UsageHistoryStatistics = ({ period }: UsageHistoryStatisticsProps) => {
+  const { token } = theme.useToken();
+  const { isDarkMode } = useThemeMode();
   const { data: userStats } = useUserStats(
     Object.keys(keys) as UsageHistoryKey[],
     period as Period,
   );
-
   return (
     <Flex
       direction="column"
@@ -136,25 +193,25 @@ const UsageHistoryStatistics = () => {
         padding: token.paddingContentHorizontal,
       }}
       align="start"
+      gap="md"
     >
-      <Alert showIcon message={t('statistics.UsageHistoryNote')} type="info" />
-      {Object.entries(keys).map(([key, { type, color }]) => {
+      {Object.entries(keys).map(([key, { type, unitHint, title }]) => {
         const data = userStats.map((d) => {
           return {
             date: format(d.date.toString(), 'MMM dd HH:mm'),
-            value: d.data[key].value,
+            value: formatValue(d.data[key].value, unitHint),
           };
         });
 
         return (
           <GraphContainer
             key={key}
-            title={key}
+            title={title}
             graph={type}
             config={
               type === 'line'
-                ? lineConfig(data, period as Period, color)
-                : columnConfig(data, period as Period, color)
+                ? lineConfig(data, period as Period, unitHint, isDarkMode)
+                : columnConfig(data, period as Period, unitHint, isDarkMode)
             }
           />
         );
@@ -163,43 +220,95 @@ const UsageHistoryStatistics = () => {
   );
 };
 
-type TabKey = 'usageHistory';
-
-const tabParam = withDefault(StringParam, 'usageHistory');
-const periodParam = withDefault(StringParam, '1D');
-
-const StatisticsPage = () => {
+interface StatisticsLayoutProps {
+  children: React.ReactNode;
+  period: Period;
+  onChange: (value: Period) => void;
+}
+const StatisticsLayout = ({
+  children,
+  period,
+  onChange,
+}: StatisticsLayoutProps) => {
   const { t } = useTranslation();
-  const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
-  const [period, setPeriod] = useQueryParam('period', periodParam);
-  console.log(period);
+  const { token } = theme.useToken();
+  const baiClient = useSuspendedBackendaiClient();
 
+  const {
+    data: {
+      keypair: { created_at },
+    },
+  } = useSuspenseQuery({
+    queryKey: [baiClient._config.accessKey],
+    queryFn: () =>
+      baiClient.keypair.info(baiClient._config.accessKey, ['created_at']),
+    staleTime: 3 * 60 * 1000,
+  });
+
+  const isUserOlderThan7Days = useMemo(() => {
+    const seconds = Math.floor(
+      (new Date().getTime() - new Date(created_at).getTime()) / 1000,
+    );
+    const days = Math.floor(seconds / (24 * 60 * 60));
+    return days > 7;
+  }, [created_at]);
+
+  let periodOptions: [
+    {
+      label: string;
+      value: Period;
+    },
+  ] = [
+    {
+      label: t('statistics.1Day'),
+      value: '1D',
+    },
+  ];
+
+  if (isUserOlderThan7Days) {
+    periodOptions.push({
+      label: t('statistics.1Week'),
+      value: '1W',
+    });
+  }
   return (
     <BAICard
       activeTabKey="usageHistory"
-      title={t('webui.menu.Statistics')}
-      onTabChange={(key) => setCurTabKey(key as TabKey)}
-      tabList={[
-        {
-          key: 'usageHistory',
-          tab: t('statistics.UsageHistory'),
-        },
-      ]}
+      title={t('statistics.UsageHistory')}
       styles={{ body: { padding: 0 } }}
       extra={
         <Select
           popupMatchSelectWidth={false}
-          options={[
-            { label: '1D', value: '1D' },
-            { label: '1W', value: '1W' },
-          ]}
+          options={periodOptions}
           value={period}
-          onChange={(value) => setPeriod(value)}
+          onChange={onChange}
         />
       }
     >
-      {curTabKey === 'usageHistory' && <UsageHistoryStatistics />}
+      <Alert
+        showIcon
+        message={`${t('statistics.UsageHistoryNote')} ${isUserOlderThan7Days ? '' : t('statistics.UsageHistoryNoteUnder7Days')}`}
+        type="info"
+        style={{
+          marginInline: token.paddingContentHorizontal,
+          marginTop: token.marginMD,
+        }}
+      />
+      {children}
     </BAICard>
+  );
+};
+
+const StatisticsPage = () => {
+  const [period, setPeriod] = useQueryParam('period', periodParam);
+
+  return (
+    <StatisticsLayout
+      period={period as Period}
+      onChange={(value: Period) => setPeriod(value)}
+    >
+      <UsageHistoryStatistics period={period as Period} />
+    </StatisticsLayout>
   );
 };
 

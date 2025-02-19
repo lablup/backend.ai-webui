@@ -4,6 +4,7 @@ import _ from 'lodash';
 
 export type UsageHistoryKey = keyof Omit<UserStatsData, 'date'>;
 export type Period = '1D' | '1W';
+export type UnitHint = 'count' | 'B' | 'KB' | 'MB' | 'GB' | 'TB';
 
 type Options = {
   staleTime: number;
