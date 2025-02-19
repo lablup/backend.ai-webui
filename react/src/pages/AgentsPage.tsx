@@ -10,43 +10,41 @@ const useStyles = createStyles(({ css, token }) => {
       .and-col {
         height: calc(100% - ${token.marginMD});
       }
-      .ant-card-extra {
-        position: relative;
-        top: 28px;
+      .ant-tag {
+        margin-inline-end: 0;
       }
     `,
   };
 });
 
-const { Meta, Grid } = Card;
+const { Meta } = Card;
 
 const AgentCard = ({ agent }: { agent: Agent }) => {
   const tags = agent.meta.tags || [];
   return (
-    <Card hoverable>
+    <Card
+      hoverable
+      style={{
+        height: '100%',
+      }}
+    >
       <Flex
         direction="column"
-        align="center"
+        align="stretch"
+        gap="xs"
         justify="between"
-        gap="lg"
-        style={{
-          minHeight: '160px',
-        }}
+        style={{ minHeight: '200px' }}
       >
         <Meta
           title={agent.meta.title}
-          avatar={<Avatar src={agent.meta.avatar} size={56} />}
-          description={
-            (agent.meta.descriptions?.length ?? 0) > 80
-              ? `${agent.meta.descriptions?.substring(0, 80)}...`
-              : agent.meta.descriptions
-          }
+          avatar={<Avatar src={agent.meta.avatar} size={150} />}
+          description={agent.meta.descriptions}
         />
         <Flex
           direction="row"
           justify="start"
           style={{ width: '100%', flexShrink: 1 }}
-          gap={2}
+          gap={6}
           wrap="wrap"
         >
           {tags.map((tag, index) => (
@@ -64,10 +62,10 @@ const AgentCardList = ({ agents }: { agents: Agent[] }) => {
   return (
     <List
       className={styles.cardList}
-      grid={{ gutter: 16, xs: 1, sm: 2, md: 2, lg: 2, xl: 3, xxl: 3 }}
+      grid={{ gutter: 16, column: 2 }}
       dataSource={agents}
       renderItem={(agent) => (
-        <List.Item>
+        <List.Item style={{ height: '100%' }}>
           <AgentCard agent={agent} />
         </List.Item>
       )}
@@ -75,17 +73,18 @@ const AgentCardList = ({ agents }: { agents: Agent[] }) => {
   );
 };
 
+const AgentSearchBar = () => {
+  return <>Search</>;
+};
+
 const AgentsPage: React.FC = () => {
   const { token } = theme.useToken();
   const { agents } = useAgents();
-
-  console.log(agents);
 
   return (
     <Suspense
       fallback={<Skeleton active style={{ padding: token.paddingMD }} />}
     >
-      <div>Agents Page</div>
       <Flex
         direction="column"
         align="stretch"
@@ -93,6 +92,7 @@ const AgentsPage: React.FC = () => {
         gap="lg"
         style={{ padding: token.paddingLG }}
       >
+        <AgentSearchBar />
         <AgentCardList agents={agents} />
       </Flex>
     </Suspense>
