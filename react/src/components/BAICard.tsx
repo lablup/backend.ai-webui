@@ -8,6 +8,7 @@ export interface BAICardProps extends CardProps {
   extraButtonTitle?: string | ReactNode;
   onClickExtraButton?: () => void;
   ref?: React.LegacyRef<HTMLDivElement> | undefined;
+  avatar?: string;
 }
 
 const BAICard: React.FC<BAICardProps> = ({
@@ -16,6 +17,8 @@ const BAICard: React.FC<BAICardProps> = ({
   onClickExtraButton,
   extra,
   style,
+  avatar,
+  children,
   ...cardProps
 }) => {
   const { token } = theme.useToken();
@@ -37,6 +40,26 @@ const BAICard: React.FC<BAICardProps> = ({
       </Button>
     )) ||
     undefined;
+  const cardBody = (
+    <>
+      {avatar && (
+        <div style={{ textAlign: 'center', margin: '16px 0' }}>
+          <img
+            src={avatar}
+            alt="Avatar"
+            style={{
+              width: '64px',
+              height: '64px',
+              borderRadius: '50%',
+              objectFit: 'cover',
+            }}
+          />
+        </div>
+      )}
+      {children}
+    </>
+  );
+
   return (
     <Card
       className={status === 'error' ? 'bai-card-error' : ''}
@@ -52,7 +75,9 @@ const BAICard: React.FC<BAICardProps> = ({
       })}
       extra={_extra}
       {...cardProps}
-    />
+    >
+      {cardBody}
+    </Card>
   );
 };
 
