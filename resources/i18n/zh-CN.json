@@ -1785,7 +1785,12 @@
     "MetricSource": "公制源",
     "MIN/MAXReplicas": "最小复制品",
     "LastTriggered": "最后触发",
-    "CreatedAt": "创建的时间"
+    "CreatedAt": "创建的时间",
+    "ConditionTooltip": "您可以自由输入运行环境支持的任何指标。\n例如\"cuda_mem\"、\"cuda_util\"",
+    "ScalingType": "类型",
+    "ScaleUp": "扩大规模",
+    "ScaleDown": "缩小规模",
+    "Condition": "条件"
   },
   "kernel": {
     "KernelId": "内核ID",

@@ -1785,7 +1785,12 @@
     "MetricSource": "Fonte métrica",
     "MIN/MAXReplicas": "Min / Max Replicas",
     "LastTriggered": "Último desencadeado",
-    "CreatedAt": "Tempo criado"
+    "CreatedAt": "Tempo criado",
+    "ConditionTooltip": "Pode introduzir livremente qualquer métrica suportada pelo ambiente de tempo de execução.\nPor exemplo: \"cuda_mem\", \"cuda_util\"",
+    "ScalingType": "Tipo",
+    "ScaleUp": "Aumentar a escala",
+    "ScaleDown": "Reduzir a escala",
+    "Condition": "Estado"
   },
   "kernel": {
     "KernelId": "ID do kernel",

@@ -1785,7 +1785,12 @@
     "MetricSource": "Μετρική πηγή",
     "MIN/MAXReplicas": "Min / Max Replicas",
     "LastTriggered": "Τελευταία ενεργοποιημένη",
-    "CreatedAt": "Δημιουργήθηκε ώρα"
+    "CreatedAt": "Δημιουργήθηκε ώρα",
+    "ConditionTooltip": "Μπορείτε να εισαγάγετε ελεύθερα οποιαδήποτε μετρική που υποστηρίζεται από το περιβάλλον εκτέλεσης.\nΓια παράδειγμα: \"cuda_mem\", \"cuda_util\".",
+    "ScalingType": "Τύπος",
+    "ScaleUp": "Κλιμάκωση",
+    "ScaleDown": "Κλιμάκωση προς τα κάτω",
+    "Condition": "Κατάσταση"
   },
   "kernel": {
     "KernelId": "Αναγνωριστικό πυρήνα",

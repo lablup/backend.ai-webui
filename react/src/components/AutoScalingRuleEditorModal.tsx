@@ -1,28 +1,29 @@
-import {
-  SIGNED_32BIT_MAX_INT,
-  SIGNED_32BIT_MIN_INT,
-} from '../helper/const-vars';
+import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import {
   AutoScalingMetricComparator,
   AutoScalingMetricSource,
   AutoScalingRuleEditorModalCreateMutation,
+  EndpointAutoScalingRuleInput,
 } from './__generated__/AutoScalingRuleEditorModalCreateMutation.graphql';
 import { AutoScalingRuleEditorModalFragment$key } from './__generated__/AutoScalingRuleEditorModalFragment.graphql';
 import { AutoScalingRuleEditorModalModifyMutation } from './__generated__/AutoScalingRuleEditorModalModifyMutation.graphql';
 import {
   App,
+  AutoComplete,
   Form,
   FormInstance,
   Input,
   InputNumber,
   Radio,
   Select,
+  Space,
+  Typography,
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment, useMutation } from 'react-relay';
 
@@ -34,6 +35,7 @@ interface AutoScalingRuleEditorModalProps
 }
 
 type AutoScalingRuleInput = {
+  type: 'up' | 'down';
   metric_source: AutoScalingMetricSource;
   metric_name: string;
   threshold: string;
@@ -51,6 +53,13 @@ export const COMPARATOR_LABELS = {
   GREATER_THAN_OR_EQUAL: '≥',
 };
 
+const METRIC_NAMES_MAP: Partial<{
+  [key in AutoScalingMetricSource]: Array<String>;
+}> = {
+  KERNEL: ['cpu_util', 'mem', 'net_rx', 'net_tx'],
+  INFERENCE_FRAMEWORK: [],
+};
+
 const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
   onRequestClose,
   onCancel,
@@ -60,6 +69,10 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const { message } = App.useApp();
+
+  const [nameOptions, setNameOptions] = useState<Array<String>>(
+    METRIC_NAMES_MAP.KERNEL || [],
+  );
 
   const autoScalingRule = useFragment(
     graphql`
@@ -135,20 +148,29 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
     return formRef.current
       ?.validateFields()
       .then((values) => {
+        const props: EndpointAutoScalingRuleInput = {
+          metric_name: values.metric_name,
+          metric_source: values.metric_source as AutoScalingMetricSource,
+          threshold: values.threshold,
+          comparator: values.comparator,
+          step_size: values.step_size * (values.type === 'up' ? 1 : -1),
+          cooldown_seconds: values.cooldown_seconds,
+          min_replicas: values.min_replicas,
+          max_replicas: values.max_replicas,
+        };
+
+        // set min and max replicas as same value to avoid validation error
+        if (values.type === 'up') {
+          delete props.min_replicas;
+        } else {
+          delete props.max_replicas;
+        }
+
         if (autoScalingRule) {
           commitModifyAutoScalingRule({
             variables: {
               id: autoScalingRule.id,
-              props: {
-                metric_name: values.metric_name,
-                metric_source: values.metric_source as AutoScalingMetricSource,
-                threshold: values.threshold,
-                comparator: values.comparator,
-                step_size: values.step_size,
-                cooldown_seconds: values.cooldown_seconds,
-                min_replicas: values.min_replicas,
-                max_replicas: values.max_replicas,
-              },
+              props,
             },
             onCompleted: (res, errors) => {
               if (!res?.modify_endpoint_auto_scaling_rule_node?.ok) {
@@ -176,16 +198,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
           commitAddAutoScalingRule({
             variables: {
               endpoint: endpoint_id ?? '',
-              props: {
-                metric_name: values.metric_name,
-                metric_source: values.metric_source as AutoScalingMetricSource,
-                threshold: values.threshold,
-                comparator: values.comparator,
-                step_size: values.step_size,
-                cooldown_seconds: values.cooldown_seconds,
-                min_replicas: values.min_replicas,
-                max_replicas: values.max_replicas,
-              },
+              props,
             },
             onCompleted: (res, errors) => {
               if (!res?.create_endpoint_auto_scaling_rule_node?.ok) {
@@ -238,140 +251,150 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
     >
       <Form
         ref={formRef}
-        preserve={false}
         layout={'vertical'}
         requiredMark={'optional'}
         initialValues={
           autoScalingRule
-            ? autoScalingRule
+            ? {
+                ...autoScalingRule,
+                step_size: Math.abs(autoScalingRule.step_size),
+                type: autoScalingRule.step_size >= 0 ? 'up' : 'down',
+              }
             : {
+                type: 'up',
                 metric_source: 'KERNEL',
-                comparators: 'LESS_THAN',
-                threshold: '10',
-                step_size: 0,
+                comparator: 'GREATER_THAN',
+                step_size: 1,
                 cooldown_seconds: 300,
                 min_replicas: 0,
-                max_replicas: 3,
+                max_replicas: 5,
               }
         }
       >
         <Form.Item
-          label={t('autoScalingRule.MetricName')}
-          name={'metric_name'}
+          label={t('autoScalingRule.ScalingType')}
+          name={'type'}
           rules={[{ required: true }]}
         >
-          <Input />
+          <Radio.Group
+            options={[
+              {
+                label: <Flex gap={'xs'}>{t('autoScalingRule.ScaleUp')}</Flex>,
+                value: 'up',
+              },
+              {
+                label: <Flex gap={'xs'}>{t('autoScalingRule.ScaleDown')}</Flex>,
+                value: 'down',
+              },
+            ]}
+            onChange={(e) => {
+              e.target.value === 'down'
+                ? formRef.current?.setFieldsValue({ max_replicas: 1 })
+                : formRef.current?.setFieldsValue({ min_replicas: 1 });
+            }}
+          />
         </Form.Item>
         <Form.Item
           label={t('autoScalingRule.MetricSource')}
           name={'metric_source'}
           rules={[{ required: true }]}
         >
-          <Select>
-            <Select.Option value={'INFERENCE_FRAMEWORK'}>
-              Inference Framework
-            </Select.Option>
-            <Select.Option value={'KERNEL'}>Kernel</Select.Option>
-          </Select>
+          <Select
+            onChange={(value) => {
+              // @ts-ignore
+              setNameOptions(METRIC_NAMES_MAP[value] || []);
+            }}
+            options={[
+              {
+                label: 'Inference Framework',
+                value: 'INFERENCE_FRAMEWORK',
+              },
+              {
+                label: 'Kernel',
+                value: 'KERNEL',
+              },
+            ]}
+          />
         </Form.Item>
-        <Flex
-          direction="row"
-          justify="around"
-          align="stretch"
-          style={{ width: '100%' }}
-          gap={'md'}
+
+        <Form.Item
+          label={t('autoScalingRule.Condition')}
+          required
+          tooltip={t('autoScalingRule.ConditionTooltip')}
+          dependencies={['metric_source']}
         >
-          <Form.Item
-            label={t('autoScalingRule.Comparator')}
-            name={'comparator'}
-            rules={[{ required: true }]}
-            style={{ flex: 3 }}
-          >
-            <Radio.Group
-              block
-              size={'small'}
-              options={_.map(COMPARATOR_LABELS, (label, value) => ({
-                label,
-                value,
-              }))}
-              optionType={'button'}
-            ></Radio.Group>
-          </Form.Item>
-          <Form.Item
-            label={t('autoScalingRule.Threshold')}
-            name={'threshold'}
-            rules={[{ required: true }]}
-            style={{ flex: 1 }}
-          >
-            <Input></Input>
-          </Form.Item>
-        </Flex>
-        <Flex
-          direction="row"
-          justify="around"
-          align="stretch"
-          style={{ width: '100%' }}
-          gap={'xs'}
-        >
-          <Form.Item
-            label={t('autoScalingRule.MinReplicas')}
-            name={'min_replicas'}
-            style={{ width: '100%' }}
-            rules={[
-              {
-                required: true,
-                min: 0,
-                max: SIGNED_32BIT_MAX_INT,
-                type: 'number',
-              },
-              {
-                validator: (_, value) => {
-                  if (value % 1 !== 0) {
-                    return Promise.reject(
-                      new Error(t('error.OnlyPositiveIntegersAreAllowed')),
-                    );
-                  }
-                  return Promise.resolve();
-                },
-              },
-            ]}
-          >
-            <InputNumber
-              min={0}
-              max={SIGNED_32BIT_MAX_INT}
-              style={{ width: '100%' }}
-            />
-          </Form.Item>
-          <Form.Item
-            label={t('autoScalingRule.MaxReplicas')}
-            name={'max_replicas'}
-            style={{ width: '100%' }}
-            rules={[
-              {
-                required: true,
-                min: 0,
-                max: SIGNED_32BIT_MAX_INT,
-                type: 'number',
-              },
-              {
-                validator: (_, value) => {
-                  if (value % 1 !== 0) {
-                    return Promise.reject(
-                      new Error(t('error.OnlyPositiveIntegersAreAllowed')),
-                    );
-                  }
-                  return Promise.resolve();
-                },
-              },
-            ]}
-          >
-            <InputNumber
-              min={0}
-              max={SIGNED_32BIT_MAX_INT}
-              style={{ width: '100%' }}
-            />
-          </Form.Item>
-        </Flex>
+          {({ getFieldValue }: FormInstance<AutoScalingRuleInput>) => {
+            return (
+              <Space.Compact
+                style={{
+                  width: '100%',
+                }}
+              >
+                <Form.Item
+                  name={'metric_name'}
+                  rules={[{ required: true }]}
+                  style={{ flex: 1 }}
+                  noStyle
+                >
+                  <AutoComplete
+                    placeholder={t('autoScalingRule.MetricName')}
+                    options={_.map(nameOptions, (name) => ({
+                      label: name,
+                      value: name,
+                    }))}
+                    onSearch={(text) =>
+                      setNameOptions(
+                        _.filter(
+                          // @ts-ignore
+                          METRIC_NAMES_MAP[getFieldValue('metric_source')],
+                          (name) => name.includes(text),
+                        ),
+                      )
+                    }
+                    allowClear
+                    popupMatchSelectWidth={false}
+                  />
+                </Form.Item>
+                <Form.Item
+                  label={t('autoScalingRule.Comparator')}
+                  name={'comparator'}
+                  rules={[{ required: true }]}
+                  noStyle
+                >
+                  <Select
+                    style={{ width: 100 }}
+                    options={_.map(COMPARATOR_LABELS, (label, value) => ({
+                      label: (
+                        <Flex gap={'xs'}>
+                          {label}
+                          <Typography.Text type="secondary">
+                            ({value})
+                          </Typography.Text>
+                        </Flex>
+                      ),
+                      value,
+                      selectedLabel: label,
+                    }))}
+                    optionLabelProp="selectedLabel"
+                    popupMatchSelectWidth={false}
+                  />
+                </Form.Item>
+                <Form.Item
+                  name={'threshold'}
+                  rules={[{ required: true }]}
+                  noStyle
+                >
+                  <Input
+                    suffix={
+                      getFieldValue('metric_source') === 'KERNEL' ? '%' : ''
+                    }
+                    placeholder={t('autoScalingRule.Threshold')}
+                  />
+                </Form.Item>
+              </Space.Compact>
+            );
+          }}
+        </Form.Item>
         <Form.Item
           label={t('autoScalingRule.StepSize')}
           name={'step_size'}
@@ -379,14 +402,14 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
             { required: true },
             {
               type: 'number',
-              min: SIGNED_32BIT_MIN_INT,
+              min: 1,
               max: SIGNED_32BIT_MAX_INT,
             },
             {
               validator: (_, value) => {
                 if (value % 1 !== 0) {
                   return Promise.reject(
-                    new Error(t('error.OnlyIntegersAreAllowed')),
+                    new Error(t('error.OnlyPositiveIntegersAreAllowed')),
                   );
                 }
                 return Promise.resolve();
@@ -394,7 +417,76 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
             },
           ]}
         >
-          <InputNumber step={1} style={{ width: '100%' }} />
+          <InputNumber min={1} step={1} style={{ width: '100%' }} />
+        </Form.Item>
+        <Form.Item noStyle dependencies={['type']}>
+          {({ getFieldValue }) => {
+            return getFieldValue('type') === 'up' ? (
+              <Form.Item
+                label={t('autoScalingRule.MaxReplicas')}
+                name={'max_replicas'}
+                style={{ width: '100%' }}
+                rules={[
+                  {
+                    required: true,
+                  },
+                  {
+                    min: 0,
+                    max: SIGNED_32BIT_MAX_INT,
+                    type: 'number',
+                  },
+                  {
+                    validator: (_, value) => {
+                      if (value % 1 !== 0) {
+                        return Promise.reject(
+                          new Error(t('error.OnlyPositiveIntegersAreAllowed')),
+                        );
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+              >
+                <InputNumber
+                  min={0}
+                  max={SIGNED_32BIT_MAX_INT}
+                  style={{ width: '100%' }}
+                />
+              </Form.Item>
+            ) : (
+              <Form.Item
+                label={t('autoScalingRule.MinReplicas')}
+                name={'min_replicas'}
+                style={{ width: '100%' }}
+                rules={[
+                  {
+                    required: true,
+                  },
+                  {
+                    min: 0,
+                    max: SIGNED_32BIT_MAX_INT,
+                    type: 'number',
+                  },
+                  {
+                    validator: (_, value) => {
+                      if (value % 1 !== 0) {
+                        return Promise.reject(
+                          new Error(t('error.OnlyPositiveIntegersAreAllowed')),
+                        );
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+              >
+                <InputNumber
+                  min={0}
+                  max={SIGNED_32BIT_MAX_INT}
+                  style={{ width: '100%' }}
+                />
+              </Form.Item>
+            );
+          }}
         </Form.Item>
         <Form.Item
           label={t('autoScalingRule.CoolDownSeconds')}
@@ -402,6 +494,8 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
           rules={[
             {
               required: true,
+            },
+            {
               min: 0,
               type: 'number',
             },

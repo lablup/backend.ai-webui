@@ -1766,7 +1766,12 @@
     "MetricSource": "แหล่งวัด",
     "MIN/MAXReplicas": "แบบจำลองขั้นต่ำ / สูงสุด",
     "LastTriggered": "ทริกเกอร์ครั้งสุดท้าย",
-    "CreatedAt": "สร้างเวลา"
+    "CreatedAt": "สร้างเวลา",
+    "ConditionTooltip": "คุณสามารถป้อนตัวชี้วัดใด ๆ ที่รองรับโดยสภาพแวดล้อมรันไทม์ได้อย่างอิสระ\n\nตัวอย่างเช่น: \"cuda_mem\", \"cuda_util\"",
+    "ScalingType": "พิมพ์",
+    "ScaleUp": "ขยาย",
+    "ScaleDown": "ลดขนาดลง",
+    "Condition": "เงื่อนไข"
   },
   "kernel": {
     "KernelId": "ID เคอร์เนล",

@@ -1785,7 +1785,12 @@
     "MetricSource": "Sumber metrik",
     "MIN/MAXReplicas": "Replika min / maks",
     "LastTriggered": "Terakhir dipicu",
-    "CreatedAt": "Waktu yang dibuat"
+    "CreatedAt": "Waktu yang dibuat",
+    "ConditionTooltip": "Anda dapat dengan bebas memasukkan metrik apa pun yang didukung oleh lingkungan runtime.\nSebagai contoh: \"cuda_mem\", \"cuda_util\"",
+    "ScalingType": "Jenis",
+    "ScaleUp": "Meningkatkan Skala",
+    "ScaleDown": "Skala Turun",
+    "Condition": "Kondisi"
   },
   "kernel": {
     "KernelId": "ID kernel",

@@ -1789,7 +1789,12 @@
     "MetricSource": "메트릭 소스",
     "MIN/MAXReplicas": "최소 / 최대 복제본 수",
     "LastTriggered": "최근 실행 시점",
-    "CreatedAt": "생성 시간"
+    "CreatedAt": "생성 시간",
+    "ScaleUp": "스케일 업",
+    "ScaleDown": "스케일 다운",
+    "Condition": "조건",
+    "ConditionTooltip": "실행 환경에서 지원하는 메트릭을 자유롭게 입력할 수 있습니다. 예) \"cuda_mem\", \"cuda_util\"",
+    "ScalingType": "타입"
   },
   "kernel": {
     "KernelId": "커널 ID",

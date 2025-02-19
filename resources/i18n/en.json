@@ -1791,7 +1791,12 @@
     "StepSize": "Step Size",
     "MIN/MAXReplicas": "Min / MAX Replicas",
     "LastTriggered": "Last Triggered",
-    "CreatedAt": "Created At"
+    "CreatedAt": "Created At",
+    "ScaleUp": "Scale Up",
+    "ScaleDown": "Scale Down",
+    "Condition": "Condition",
+    "ConditionTooltip": "You can freely input any metric supported by the runtime environment.\nFor example: \"cuda_mem\", \"cuda_util\"",
+    "ScalingType": "Type"
   },
   "kernel": {
     "KernelId": "Kernel ID",

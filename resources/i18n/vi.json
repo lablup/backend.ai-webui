@@ -1785,7 +1785,12 @@
     "MetricSource": "Nguồn số liệu",
     "MIN/MAXReplicas": "Bản sao tối thiểu / Max",
     "LastTriggered": "Lần cuối cùng được kích hoạt",
-    "CreatedAt": "Đã tạo thời gian"
+    "CreatedAt": "Đã tạo thời gian",
+    "ConditionTooltip": "Bạn có thể tự do nhập bất kỳ số liệu nào được hỗ trợ bởi môi trường thời gian chạy.\n\nVí dụ: \"CUDA_MEM\", \"Cuda_util\"",
+    "ScalingType": "Kiểu",
+    "ScaleUp": "Quy mô lên",
+    "ScaleDown": "Quy mô xuống",
+    "Condition": "Tình trạng"
   },
   "kernel": {
     "KernelId": "Kernel Id",

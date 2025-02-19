@@ -1784,7 +1784,12 @@
     "MetricSource": "Metrik kaynağı",
     "MIN/MAXReplicas": "Min / Max Replicas",
     "LastTriggered": "Son tetiklendi",
-    "CreatedAt": "Yaratılan Zaman"
+    "CreatedAt": "Yaratılan Zaman",
+    "ConditionTooltip": "Çalışma zamanı ortamı tarafından desteklenen herhangi bir metriği serbestçe girebilirsiniz.\nÖrneğin: \"cuda_mem\", \"cuda_util\"",
+    "ScalingType": "Tip",
+    "ScaleUp": "Ölçek Büyütme",
+    "ScaleDown": "Ölçek Düşürme",
+    "Condition": "Durum"
   },
   "kernel": {
     "KernelId": "Çekirdek kimliği",
