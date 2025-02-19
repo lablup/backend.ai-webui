@@ -384,7 +384,12 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
                   rules={[{ required: true }]}
                   noStyle
                 >
-                  <Input placeholder={t('autoScalingRule.Threshold')} />
+                  <Input
+                    suffix={
+                      getFieldValue('metric_source') === 'KERNEL' ? '%' : ''
+                    }
+                    placeholder={t('autoScalingRule.Threshold')}
+                  />
                 </Form.Item>
               </Space.Compact>
             );

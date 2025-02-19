@@ -665,6 +665,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                       '-'
                     )}
                     {row?.threshold}
+                    {row?.metric_source === 'KERNEL' ? '%' : ''}
                   </Flex>
                 ),
               },
