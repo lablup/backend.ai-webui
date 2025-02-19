@@ -1,8 +1,10 @@
 // import { offset_to_cursor } from "../helper";
 import { LazyLoadQueryOptions } from '../helper/types';
+import { useDeferredQueryParams } from './useDeferredQueryParams';
+import { useEventNotStable } from './useEventNotStable';
 import { SorterResult } from 'antd/lib/table/interface';
 import _ from 'lodash';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   fetchQuery,
   GraphQLTaggedNode,
@@ -304,11 +306,18 @@ interface BAIPaginationOptionState {
 export const useBAIPaginationOptionState = (
   initialOptions: InitialPaginationOption,
 ): BAIPaginationOptionState => {
-  const [options, setOptions] =
-    useState<AntdBasicPaginationOption>(initialOptions);
+  const [options, setOptions] = useDeferredQueryParams({
+    current: NumberParam,
+    pageSize: NumberParam,
+  });
 
-  const { pageSize, current } = options;
-  return useMemo<BAIPaginationOptionState>(() => {
+  const mergeOptions = _.merge(initialOptions, options);
+
+  const { pageSize, current } = mergeOptions;
+  const memoizedOptions = useMemo<{
+    baiPaginationOption: BAIPaginationOption;
+    tablePaginationOption: AntdBasicPaginationOption;
+  }>(() => {
     return {
       baiPaginationOption: {
         limit: pageSize,
@@ -319,19 +328,27 @@ export const useBAIPaginationOptionState = (
         pageSize: pageSize,
         current: current,
       },
-      setTablePaginationOption: (pagination) => {
-        if (
-          !_.isEqual(pagination, {
-            pageSize,
-            current,
-          })
-        ) {
-          setOptions((current) => ({
-            ...current,
-            ...pagination,
-          }));
-        }
-      },
     };
   }, [pageSize, current]);
+
+  return {
+    ...memoizedOptions,
+    setTablePaginationOption: (pagination: Partial<AntdBasicPaginationOption>) => {
+      // console.log('###', pagination);
+      if (
+        !_.isEqual(pagination, {
+          pageSize,
+          current,
+        })
+      ) {
+        setOptions(
+          (current) => ({
+            ...current,
+            ...pagination,
+          }),
+          'replaceIn',
+        );
+      }
+    }
+  };
 };
