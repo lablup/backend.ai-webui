@@ -4,17 +4,31 @@ import {
 } from '../hooks/useBAIConfigurationsSetting';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
+import FormItemWithCheckbox from './FormItemWithCheckbox';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { Button, Form, InputNumber, Tooltip } from 'antd';
+import {
+  Button,
+  Checkbox,
+  Form,
+  FormItemProps,
+  InputNumber,
+  Tooltip,
+} from 'antd';
 import { FormInstance } from 'antd/lib';
-import { useRef } from 'react';
+import {
+  cloneElement,
+  isValidElement,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface OverlayNetworkSettingsModalProps extends BAIModalProps {
   onRequestClose: () => void;
   networkOptions: NetworkOptions;
   onSave: (value: { [key: keyof NetworkOptions]: string }) => void;
-  onDelete: () => void;
+  onDelete: (key: string) => void;
 }
 
 const OverlayNetworkSettingModal = ({
@@ -49,24 +63,8 @@ const OverlayNetworkSettingModal = ({
       centered
       width={'auto'}
       footer={[
-        <Button
-          key="overlayNetworkClose"
-          onClick={() => {
-            onDelete();
-            if (formRef.current) {
-              const formValues = formRef.current.getFieldsValue();
-              const newValues = Object.keys(formValues).reduce(
-                (acc, key) => {
-                  acc[key] = null;
-                  return acc;
-                },
-                {} as Record<keyof NetworkOptions, any>,
-              );
-              formRef.current.setFieldsValue(newValues);
-            }
-          }}
-        >
-          {t('button.DeleteAll')}
+        <Button key="overlayNetworkClose" onClick={onRequestClose}>
+          {t('button.Cancel')}
         </Button>,
         <Button
           key="overlayNetworkSave"
@@ -75,7 +73,16 @@ const OverlayNetworkSettingModal = ({
               formRef.current
                 .validateFields()
                 .then((values) => {
-                  onSave(values);
+                  Object.entries(values).forEach(([key, value]) => {
+                    if (value === null || !value || value === '') {
+                      onDelete(key);
+                    } else {
+                      onSave({ [key]: value } as {
+                        [key: keyof NetworkOptions]: string;
+                      });
+                    }
+                  });
+                  onRequestClose();
                 })
                 .catch(() => {});
             }
@@ -87,9 +94,9 @@ const OverlayNetworkSettingModal = ({
       ]}
       destroyOnClose
     >
-      <Form ref={formRef} initialValues={networkOptions}>
+      <Form ref={formRef} layout="vertical" initialValues={networkOptions}>
         {Object.keys(networkOptions).map((key) => (
-          <Form.Item
+          <FormItemWithCheckbox
             label={
               <Flex>
                 {labels[key]}
@@ -99,23 +106,15 @@ const OverlayNetworkSettingModal = ({
               </Flex>
             }
             required
-            rules={[
-              {
-                required: true,
-                message: t('data.explorer.ValueRequired'),
-              },
-            ]}
             name={key}
             key={key}
           >
             <InputNumber
               min={optionRange[key].min}
               max={optionRange[key].max}
-              style={{
-                width: '100%',
-              }}
+              width={'100%'}
             />
-          </Form.Item>
+          </FormItemWithCheckbox>
         ))}
       </Form>
     </BAIModal>

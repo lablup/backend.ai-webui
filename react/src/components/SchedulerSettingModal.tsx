@@ -5,6 +5,7 @@ import {
 } from '../hooks/useBAIConfigurationsSetting';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
+import FormItemWithCheckbox from './FormItemWithCheckbox';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Button, Form, InputNumber, Select, Tooltip, Typography } from 'antd';
 import { FormInstance } from 'antd/lib';
@@ -21,7 +22,7 @@ interface SchedulerSettingModalProps extends BAIModalProps {
   onSchedulerTypeChange: (
     schedulerType: SchedulerType,
   ) => Promise<SchedulerOptions>;
-  onDelete: (key: SchedulerType) => void;
+  onDelete: (schedulerType: SchedulerType, key: string) => void;
 }
 
 const SchedulerSettingModal = ({
@@ -62,26 +63,27 @@ const SchedulerSettingModal = ({
         <Button
           key="schedulerDelete"
           onClick={() => {
-            if (
-              formRef.current &&
-              formRef.current.getFieldValue('schedulerType')
-            ) {
-              onDelete(formRef.current.getFieldValue('schedulerType'));
-              const formValues = formRef.current.getFieldsValue();
-              const newValues = Object.keys(formValues).reduce(
-                (acc, key) => {
-                  acc[key] = 0;
-                  return acc;
-                },
-                {} as Record<keyof SchedulerOptions, any>,
-              );
-              formRef.current.setFieldsValue(
-                _.omit(newValues, 'schedulerType'),
-              );
-            }
+            // if (
+            //   formRef.current &&
+            //   formRef.current.getFieldValue('schedulerType')
+            // ) {
+            //   onDelete(formRef.current.getFieldValue('schedulerType'));
+            //   const formValues = formRef.current.getFieldsValue();
+            //   const newValues = Object.keys(formValues).reduce(
+            //     (acc, key) => {
+            //       acc[key] = 0;
+            //       return acc;
+            //     },
+            //     {} as Record<keyof SchedulerOptions, any>,
+            //   );
+            //   formRef.current.setFieldsValue(
+            //     _.omit(newValues, 'schedulerType'),
+            //   );
+            // }
+            onRequestClose();
           }}
         >
-          {t('button.DeleteAll')}
+          {t('button.Cancel')}
         </Button>,
         <Button
           key="schedulerSave"
@@ -92,10 +94,20 @@ const SchedulerSettingModal = ({
                 .validateFields()
                 .then((values) => {
                   if (values.schedulerType) {
-                    onSave(
-                      values.schedulerType,
-                      _.omit(values, 'schedulerType'),
+                    Object.entries(_.omit(values, 'schedulerType')).forEach(
+                      ([key, value]) => {
+                        console.log(key, value);
+                        if (value === null || value === '' || !value) {
+                          onDelete(values.schedulerType, key);
+                        } else {
+                          onSave(values.schedulerType, { [key]: value });
+                        }
+                      },
                     );
+                    // onSave(
+                    //   values.schedulerType,
+                    //   _.omit(values, 'schedulerType'),
+                    // );
                   }
                 })
                 .catch(() => {});
@@ -107,7 +119,7 @@ const SchedulerSettingModal = ({
       ]}
       destroyOnClose
     >
-      <Form ref={formRef}>
+      <Form ref={formRef} layout="vertical">
         <Form.Item
           label={t('settings.Scheduler')}
           name="schedulerType"
@@ -147,7 +159,7 @@ const SchedulerSettingModal = ({
             {t('settings.SchedulerOptions')}
           </Typography.Text>
           {scheduleOptions.map((key) => (
-            <Form.Item
+            <FormItemWithCheckbox
               label={
                 <Flex align="center">
                   {labels[key]}
@@ -156,14 +168,8 @@ const SchedulerSettingModal = ({
                   </Tooltip>
                 </Flex>
               }
-              name={key}
               required
-              rules={[
-                {
-                  required: true,
-                  message: t('data.explorer.ValueRequired'),
-                },
-              ]}
+              name={key}
               key={key}
             >
               <InputNumber
@@ -171,7 +177,32 @@ const SchedulerSettingModal = ({
                 max={optionRange[key].max}
                 style={{ width: '100%' }}
               />
-            </Form.Item>
+            </FormItemWithCheckbox>
+            // <Form.Item
+            //   label={
+            //     <Flex align="center">
+            //       {labels[key]}
+            //       <Tooltip title={tooltipText[key]}>
+            //         <Button type="link" icon={<InfoCircleOutlined />} />
+            //       </Tooltip>
+            //     </Flex>
+            //   }
+            //   name={key}
+            //   required
+            //   rules={[
+            //     {
+            //       required: true,
+            //       message: t('data.explorer.ValueRequired'),
+            //     },
+            //   ]}
+            //   key={key}
+            // >
+            //   <InputNumber
+            //     min={optionRange[key].min}
+            //     max={optionRange[key].max}
+            //     style={{ width: '100%' }}
+            //   />
+            // </Form.Item>
           ))}
         </Flex>
       </Form>

@@ -8,7 +8,7 @@ import SchedulerSettingModal from './SchedulerSettingModal';
 import SettingList, { SettingGroup } from './SettingList';
 import { SettingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Alert, Button, theme } from 'antd';
+import { Button, theme } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 const ConfigurationsSettingList = () => {
@@ -25,8 +25,6 @@ const ConfigurationsSettingList = () => {
     useToggle(false);
   const [isOpenSchedulerModal, { toggle: toggleSchedulerModal }] =
     useToggle(false);
-
-  const { token } = theme.useToken();
 
   const settingGroupList: SettingGroup = [
     {
@@ -293,15 +291,6 @@ const ConfigurationsSettingList = () => {
 
   return (
     <>
-      <Alert
-        message={t('settings.EnvConfigWillDisappear')}
-        showIcon
-        type="warning"
-        style={{
-          marginInline: token.paddingContentHorizontal,
-          marginTop: token.paddingContentHorizontal,
-        }}
-      />
       <SettingList
         settingGroup={settingGroupList}
         showSearchBar
@@ -312,26 +301,26 @@ const ConfigurationsSettingList = () => {
         onRequestClose={toggleOverlayNetworkModal}
         open={isOpenOverlayNetworkModal}
         networkOptions={options.network}
-        onSave={async (value: { [key: keyof NetworkOptions]: string }) => {
-          await setNetwork(value);
-          toggleOverlayNetworkModal();
+        onSave={(value: { [key: keyof NetworkOptions]: string }) => {
+          setNetwork(value);
         }}
-        onDelete={() => deleteSetting('network/overlay', true)}
+        onDelete={(key: string) => {
+          deleteSetting(`network/overlay/${key}`);
+        }}
       />
       <SchedulerSettingModal
         onRequestClose={toggleSchedulerModal}
         open={isOpenSchedulerModal}
-        onSave={async (key, value) => {
-          await setScheduler(key, {
+        onSave={(key, value) => {
+          setScheduler(key, {
             num_retries_to_skip: value.num_retries_to_skip.toString(),
           });
-          toggleSchedulerModal();
         }}
         onSchedulerTypeChange={async (schedulerType) =>
           updateSelectedScheduler(schedulerType)
         }
-        onDelete={(key: SchedulerType) =>
-          deleteSetting(`plugins/scheduler/${key}`, true)
+        onDelete={(schedulerType: SchedulerType, key: string) =>
+          deleteSetting(`plugins/scheduler/${schedulerType}/${key}`, true)
         }
       />
     </>
