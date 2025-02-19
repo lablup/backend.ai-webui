@@ -1202,7 +1202,8 @@
     "GPUDesc": "Jumlah unit GPU yang dialokasikan untuk sesi komputasi. Jika fitur GPU Pecahan diaktifkan, fitur ini mungkin tidak cocok dengan GPU fisika.",
     "IOReadDesc": "Jumlah data yang dibaca dari sesi komputasi. (Jumlah data yang dibaca dari perangkat yang dipasang secara eksternal seperti folder data tidak disertakan).",
     "IOWriteDesc": "Jumlah penulisan data dari sesi komputasi. (Jumlah penulisan data dari perangkat yang dipasang secara eksternal seperti folder data tidak disertakan).",
-    "UsageHistoryNote": "Riwayat penggunaan yang ditampilkan di sini didasarkan pada sesi komputasi yang dihentikan. Selain itu, riwayat penggunaan selama satu minggu mungkin tidak ditampilkan untuk pengguna yang akunnya dibuat tidak lebih dari satu minggu."
+    "UsageHistoryNote": "Riwayat penggunaan yang ditampilkan di sini didasarkan pada sesi komputasi yang diakhiri.",
+    "UsageHistoryNoteUnder7Days": "Juga, riwayat penggunaan satu minggu mungkin tidak ditampilkan untuk pengguna yang akunnya dibuat tidak lebih dari seminggu."
   },
   "language": {
     "English": "English",

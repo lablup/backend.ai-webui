@@ -1201,7 +1201,8 @@
     "GPUDesc": "Le nombre d'unités GPU allouées aux sessions de calcul. Si la fonction GPU fractionnaire est activée, elle peut ne pas correspondre au GPU physique.",
     "IOReadDesc": "Cette quantité de données lues à partir de la session de calcul. (La quantité de données lues à partir de périphériques montés en externe, tels que des dossiers de données, n'est pas incluse).",
     "IOWriteDesc": "La quantité de données écrites par la session de calcul. (La quantité de données écrites à partir de périphériques montés en externe, tels que des dossiers de données, n'est pas incluse).",
-    "UsageHistoryNote": "L'historique d'utilisation présenté ici est basé sur les sessions de calcul terminées. En outre, l'historique d'utilisation d'une semaine peut ne pas être affiché pour les utilisateurs dont le compte n'est pas créé plus d'une semaine."
+    "UsageHistoryNote": "L'historique d'utilisation montré ici est basé sur des séances de calcul terminées.",
+    "UsageHistoryNoteUnder7Days": "De plus, l'historique d'une semaine peut ne pas être affiché pour les utilisateurs dont le compte n'est pas créé d'une semaine."
   },
   "language": {
     "English": "English",

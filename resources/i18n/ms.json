@@ -1194,14 +1194,15 @@
     "1Day": "1 hari",
     "1Week": "1 minggu",
     "UsageHistory": "Sejarah Penggunaan",
-    "UsageHistoryNote": "Sejarah penggunaan yang ditunjukkan di sini adalah berdasarkan sesi pengiraan yang ditamatkan. \nSelain itu, sejarah penggunaan seminggu mungkin tidak ditunjukkan untuk pengguna yang akaunnya dibuat tidak lebih daripada seminggu.",
+    "UsageHistoryNote": "Sejarah penggunaan yang ditunjukkan di sini adalah berdasarkan sesi pengiraan yang ditamatkan.",
     "UsageHistoryDesc": "Pada tab Sejarah Penggunaan, anda boleh menyemak statistik mudah yang berkaitan dengan penggunaan sesi pengiraan melalui graf. \nAnda boleh menyemak statistik sejarah penggunaan untuk sehari atau seminggu dengan memilih tempoh penggunaan daripada menu tempoh pilihan di sebelah kiri atas. \nItem yang dipaparkan adalah seperti berikut.",
     "SessionsDesc": "Bilangan sesi pengiraan yang dibuat.",
     "CPUDesc": "Bilangan teras CPU yang diperuntukkan kepada sesi pengiraan.",
     "MemoryDesc": "Jumlah memori yang diperuntukkan kepada sesi pengiraan.",
     "GPUDesc": "Bilangan unit GPU yang diperuntukkan kepada sesi pengiraan. \nJika ciri GPU Pecahan didayakan, ia mungkin tidak sepadan dengan GPU fizik.",
     "IOReadDesc": "Jumlah data ini dibaca daripada sesi pengiraan. \n(Jumlah data yang dibaca daripada peranti yang dipasang secara luaran seperti folder data tidak disertakan.)",
-    "IOWriteDesc": "Jumlah penulisan data daripada sesi pengiraan. \n(Jumlah penulisan data daripada peranti yang dipasang secara luaran seperti folder data tidak disertakan.)"
+    "IOWriteDesc": "Jumlah penulisan data daripada sesi pengiraan. \n(Jumlah penulisan data daripada peranti yang dipasang secara luaran seperti folder data tidak disertakan.)",
+    "UsageHistoryNoteUnder7Days": "Juga, sejarah penggunaan satu minggu tidak boleh ditunjukkan untuk pengguna yang akaunnya dibuat tidak lebih dari seminggu."
   },
   "language": {
     "English": "English",

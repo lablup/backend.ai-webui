@@ -1194,14 +1194,15 @@
     "1Day": "1 Tag",
     "1Week": "1 Woche",
     "UsageHistory": "Geschichte der Verwendung",
-    "UsageHistoryNote": "Der hier gezeigte Nutzungsverlauf basiert auf beendeten Rechensitzungen. Für Benutzer, deren Konto nicht länger als eine Woche angelegt ist, wird der Nutzungsverlauf einer Woche möglicherweise nicht angezeigt.",
+    "UsageHistoryNote": "Die hier gezeigte Nutzungsgeschichte basiert auf beendeten Berechnungssitzungen.",
     "UsageHistoryDesc": "Auf der Registerkarte Nutzungsverlauf können Sie einfache Statistiken über die Nutzung von Rechensitzungen anhand eines Diagramms überprüfen. Sie können die Nutzungsstatistiken für einen Tag oder eine Woche prüfen, indem Sie den Nutzungszeitraum aus dem Menü \"Zeitraum auswählen\" oben links auswählen. Es werden folgende Punkte angezeigt.",
     "SessionsDesc": "Die Anzahl der erstellten Rechensitzungen.",
     "CPUDesc": "Die Anzahl der CPU-Kerne, die den Rechensitzungen zugewiesen sind.",
     "MemoryDesc": "Die Menge an Speicher, die den Rechensitzungen zugewiesen wurde.",
     "GPUDesc": "Die Anzahl der GPU-Einheiten, die den Berechnungssitzungen zugewiesen sind. Wenn die Funktion \"Fractional GPU\" aktiviert ist, stimmt sie möglicherweise nicht mit der Physik-GPU überein.",
     "IOReadDesc": "Dies ist die Menge der von der Computersitzung gelesenen Daten. (Die Datenmenge, die von extern angeschlossenen Geräten wie z. B. Datenordnern gelesen wird, ist nicht enthalten).",
-    "IOWriteDesc": "Die Menge der von der Computersitzung geschriebenen Daten. (Die Datenmenge, die von extern angeschlossenen Geräten wie Datenordnern geschrieben wird, ist nicht enthalten)."
+    "IOWriteDesc": "Die Menge der von der Computersitzung geschriebenen Daten. (Die Datenmenge, die von extern angeschlossenen Geräten wie Datenordnern geschrieben wird, ist nicht enthalten).",
+    "UsageHistoryNoteUnder7Days": "Außerdem kann eine Woche lang nicht mehr als eine Woche erstellt werden."
   },
   "language": {
     "English": "English",

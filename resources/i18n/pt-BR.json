@@ -1194,14 +1194,15 @@
     "1Day": "1 dia",
     "1Week": "1 semana",
     "UsageHistory": "Histórico de utilização",
-    "UsageHistoryNote": "O histórico de utilização aqui apresentado baseia-se em sessões de computação terminadas. Além disso, o histórico de utilização de uma semana pode não ser apresentado para os utilizadores cuja conta é criada há menos de uma semana.",
+    "UsageHistoryNote": "O histórico de uso mostrado aqui é baseado em sessões de computação encerradas.",
     "UsageHistoryDesc": "No separador Histórico de utilização, pode verificar estatísticas simples relacionadas com a utilização de sessões de computação através de um gráfico. Pode verificar as estatísticas do histórico de utilização para um dia ou uma semana, seleccionando o período de utilização no menu de seleção de período no canto superior esquerdo. Os itens exibidos são os seguintes.",
     "SessionsDesc": "O número de sessões de computação criadas.",
     "CPUDesc": "O número de núcleos de CPU atribuídos às sessões de computação.",
     "MemoryDesc": "A quantidade de memória atribuída às sessões de computação.",
     "GPUDesc": "O número de unidades de GPU atribuídas às sessões de computação. Se a funcionalidade GPU fraccionada estiver activada, pode não corresponder à GPU física.",
     "IOReadDesc": "Esta quantidade de dados lidos da sessão de computação. (A quantidade de dados lidos de dispositivos montados externamente, como pastas de dados, não está incluída).",
-    "IOWriteDesc": "A quantidade de dados gravados a partir da sessão de computação. (A quantidade de gravação de dados de dispositivos montados externamente, como pastas de dados, não está incluída)."
+    "IOWriteDesc": "A quantidade de dados gravados a partir da sessão de computação. (A quantidade de gravação de dados de dispositivos montados externamente, como pastas de dados, não está incluída).",
+    "UsageHistoryNoteUnder7Days": "Além disso, o histórico de uso de uma semana não pode ser mostrado para os usuários cuja conta é criada não mais de uma semana."
   },
   "language": {
     "English": "English",

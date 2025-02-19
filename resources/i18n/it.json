@@ -1193,14 +1193,15 @@
     "1Day": "1 giorno",
     "1Week": "1 settimana",
     "UsageHistory": "Storia dell'uso",
-    "UsageHistoryNote": "La cronologia di utilizzo qui riportata si basa sulle sessioni di calcolo terminate. Inoltre, la cronologia di utilizzo di una settimana potrebbe non essere mostrata per gli utenti il cui account è stato creato da non più di una settimana.",
+    "UsageHistoryNote": "La cronologia dell'utilizzo qui mostrata si basa su sessioni di calcolo terminate.",
     "UsageHistoryDesc": "Nella scheda Cronologia d'uso è possibile controllare semplici statistiche relative all'uso delle sessioni di calcolo tramite un grafico. È possibile controllare le statistiche della cronologia di utilizzo per un giorno o una settimana selezionando il periodo di utilizzo dal menu Seleziona periodo in alto a sinistra. Le voci visualizzate sono le seguenti.",
     "SessionsDesc": "Il numero di sessioni di calcolo create.",
     "CPUDesc": "Il numero di core CPU assegnati alle sessioni di calcolo.",
     "MemoryDesc": "La quantità di memoria allocata alle sessioni di calcolo.",
     "GPUDesc": "Il numero di unità GPU assegnate alle sessioni di calcolo. Se la funzione GPU frazionale è abilitata, potrebbe non corrispondere alla GPU fisica.",
     "IOReadDesc": "La quantità di dati letti dalla sessione di calcolo. (La quantità di dati letti da dispositivi montati esternamente, come le cartelle dati, non è inclusa).",
-    "IOWriteDesc": "La quantità di dati scritti dalla sessione di calcolo. (La quantità di dati scritti da dispositivi montati esternamente, come le cartelle dati, non è inclusa)."
+    "IOWriteDesc": "La quantità di dati scritti dalla sessione di calcolo. (La quantità di dati scritti da dispositivi montati esternamente, come le cartelle dati, non è inclusa).",
+    "UsageHistoryNoteUnder7Days": "Inoltre, la cronologia dell'utilizzo di una settimana potrebbe non essere mostrata per gli utenti il ​​cui account è stato creato non più di una settimana."
   },
   "language": {
     "English": "English",

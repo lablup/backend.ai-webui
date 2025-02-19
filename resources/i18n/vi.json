@@ -1194,14 +1194,15 @@
     "1Day": "1 ngày",
     "1Week": "1 tuần",
     "UsageHistory": "Lịch sử sử dụng",
-    "UsageHistoryNote": "Lịch sử sử dụng hiển thị ở đây dựa trên các phiên điện toán đã chấm dứt. \nNgoài ra, lịch sử sử dụng một tuần có thể không được hiển thị đối với người dùng có tài khoản được tạo không quá một tuần.",
+    "UsageHistoryNote": "Lịch sử sử dụng được hiển thị ở đây dựa trên các phiên tính toán chấm dứt.",
     "UsageHistoryDesc": "Trên tab Lịch sử sử dụng, bạn có thể kiểm tra số liệu thống kê đơn giản liên quan đến việc sử dụng các phiên điện toán thông qua biểu đồ. \nBạn có thể kiểm tra số liệu thống kê lịch sử sử dụng trong một ngày hoặc một tuần bằng cách chọn khoảng thời gian sử dụng từ menu chọn khoảng thời gian ở phía trên bên trái. \nCác mục được hiển thị như sau.",
     "SessionsDesc": "Số lượng phiên điện toán được tạo.",
     "CPUDesc": "Số lượng lõi CPU được phân bổ cho các phiên điện toán.",
     "MemoryDesc": "Dung lượng bộ nhớ được phân bổ cho các phiên điện toán.",
     "GPUDesc": "Số lượng đơn vị GPU được phân bổ cho các phiên điện toán. \nNếu tính năng GPU Fractional được bật, nó có thể không khớp với GPU vật lý.",
     "IOReadDesc": "Lượng dữ liệu này được đọc từ phiên điện toán. \n(Không bao gồm lượng dữ liệu được đọc từ các thiết bị gắn bên ngoài như thư mục dữ liệu.)",
-    "IOWriteDesc": "Lượng dữ liệu được ghi từ phiên điện toán. \n(Không bao gồm lượng dữ liệu ghi từ các thiết bị gắn bên ngoài như thư mục dữ liệu.)"
+    "IOWriteDesc": "Lượng dữ liệu được ghi từ phiên điện toán. \n(Không bao gồm lượng dữ liệu ghi từ các thiết bị gắn bên ngoài như thư mục dữ liệu.)",
+    "UsageHistoryNoteUnder7Days": "Ngoài ra, lịch sử sử dụng một tuần có thể không được hiển thị cho người dùng có tài khoản được tạo không lâu hơn một tuần."
   },
   "language": {
     "English": "English",
