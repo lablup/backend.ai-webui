@@ -1,3 +1,4 @@
+import ImageNodeSimpleView from '../ImageNodeSimpleView';
 import AutoScalingRuleEditorModal, {
   COMPARATOR_LABELS,
 } from '../components/AutoScalingRuleEditorModal';
@@ -16,7 +17,6 @@ import UnmountModalAfterClose from '../components/UnmountModalAfterClose';
 import VFolderLazyView from '../components/VFolderLazyView';
 import { AutoScalingRuleEditorModalFragment$key } from '../components/__generated__/AutoScalingRuleEditorModalFragment.graphql';
 import { InferenceSessionErrorModalFragment$key } from '../components/__generated__/InferenceSessionErrorModalFragment.graphql';
-import ChatUIModal from '../components/lablupTalkativotUI/ChatUIModal';
 import { baiSignedRequestWithPromise, filterNonNullItems } from '../helper';
 import {
   useSuspendedBackendaiClient,
@@ -123,7 +123,6 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     useState<AutoScalingRuleEditorModalFragment$key | null>(null);
   const [isOpenTokenGenerationModal, setIsOpenTokenGenerationModal] =
     useState(false);
-  const [openChatModal, setOpenChatModal] = useState(false);
   const [isOpenAutoScalingRuleModal, setIsOpenAutoScalingRuleModal] =
     useState(false);
   const [currentUser] = useCurrentUserInfo();
@@ -178,6 +177,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               }
               size_bytes
               supported_accelerators
+              ...ImageNodeSimpleViewFragment
             }
             desired_session_count @deprecatedSince(version: "24.12.0")
             replicas @since(version: "24.12.0")
@@ -214,7 +214,6 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             created_user_email @since(version: "23.09.8")
             ...EndpointOwnerInfoFragment
             ...EndpointStatusTagFragment
-            ...ChatUIModalFragment
             ...ServiceLauncherPageContentFragment
           }
           endpoint_token_list(
@@ -233,7 +232,6 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               created_at
               valid_until
             }
-            ...ChatUIModalEndpointTokenListFragment
           }
           endpoint_auto_scaling_rules: endpoint_auto_scaling_rule_nodes(
             endpoint: $autoScalingRules_endpointId
@@ -386,7 +384,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               type="link"
               icon={<BotMessageSquareIcon />}
               onClick={() => {
-                setOpenChatModal(true);
+                webuiNavigate(`/chat?endpointId=${endpoint?.endpoint_id}`);
               }}
               disabled={endpoint?.status !== 'HEALTHY'}
             />
@@ -495,9 +493,9 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
 
   items.push({
     label: t('modelService.Image'),
-    children: (baiClient.supports('modify-endpoint')
-      ? endpoint?.image_object
-      : endpoint?.image) && (
+    children: endpoint?.image_object ? (
+      <ImageNodeSimpleView imageFrgmt={endpoint.image_object} />
+    ) : endpoint?.image ? (
       <Flex direction="row" gap={'xs'}>
         <ImageMetaIcon image={fullImageString || null} />
         <CopyableCodeText>{fullImageString}</CopyableCodeText>
@@ -505,7 +503,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           <Tag>{endpoint?.runtime_variant?.human_readable_name}</Tag>
         ) : null}
       </Flex>
-    ),
+    ) : null,
     span: {
       xl: 3,
     },
@@ -1081,14 +1079,6 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         }}
         endpoint_id={endpoint?.endpoint_id || ''}
       ></EndpointTokenGenerationModal>
-      <ChatUIModal
-        endpointFrgmt={endpoint}
-        endpointTokenFrgmt={endpoint_token_list}
-        open={openChatModal}
-        onCancel={() => {
-          setOpenChatModal(false);
-        }}
-      />
       {isSupportAutoScalingRule && (
         <UnmountModalAfterClose>
           <AutoScalingRuleEditorModal
