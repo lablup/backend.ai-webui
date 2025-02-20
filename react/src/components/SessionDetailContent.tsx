@@ -20,8 +20,7 @@ import ImageMetaIcon from './ImageMetaIcon';
 import SessionUsageMonitor from './SessionUsageMonitor';
 import { SessionDetailContentLegacyQuery } from './__generated__/SessionDetailContentLegacyQuery.graphql';
 import { SessionDetailContentQuery } from './__generated__/SessionDetailContentQuery.graphql';
-import { FolderOutlined } from '@ant-design/icons';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import { FolderOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import {
   Alert,
   Button,
@@ -108,6 +107,9 @@ const SessionDetailContent: React.FC<{
             ...SessionUsageMonitorFragment
             ...ContainerCommitModalFragment
             ...SessionIdleChecksNodeFragment
+            # fix: This fragment is not used in this component, but it is required by the SessionStatusDetailModal.
+            # It might be a bug in relay
+            ...SessionStatusDetailModalFragment
           }
           legacy_session: compute_session(id: $uuid) {
             image
@@ -202,7 +204,6 @@ const SessionDetailContent: React.FC<{
             contentStyle={{ display: 'flex', gap: token.marginSM }}
           >
             <SessionStatusTag sessionFrgmt={session} showInfo />
-            {/* <Button type="text" icon={<TriangleAlertIcon />} /> */}
           </Descriptions.Item>
           <Descriptions.Item label={t('session.SessionType')}>
             <SessionTypeTag sessionFrgmt={session} />
@@ -268,7 +269,7 @@ const SessionDetailContent: React.FC<{
                 <Flex gap="xxs">
                   {t('session.IdleChecks')}
                   <Tooltip title={t('button.ClickForMoreDetails')}>
-                    <InfoCircleOutlined
+                    <QuestionCircleOutlined
                       style={{ cursor: 'pointer' }}
                       onClick={() => setOpenIdleCheckDescriptionModal(true)}
                     />

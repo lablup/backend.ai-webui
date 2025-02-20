@@ -436,7 +436,12 @@
     "ReadMore": "もっと詳しく...",
     "CommitImageName": "コミットされたイメージ名",
     "IdleCheckExpirationWarning": "セッションはアイドル状態チェックの結果に基づいて終了される場合があります。",
-    "FailToRenameSession": "セッション名変更要求が失敗しました。"
+    "FailToRenameSession": "セッション名変更要求が失敗しました。",
+    "KernelExitCode": "カーネル出口コード",
+    "SessionStatus": "セッションステータス",
+    "PredicateChecks": "述語チェック",
+    "AgentId": "エージェントID",
+    "Traceback": "トレースバック"
   },
   "button": {
     "Cancel": "キャンセル",

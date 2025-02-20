@@ -436,7 +436,12 @@
     "ReadMore": "Baca Lagi...",
     "CommitImageName": "Nama imej komited",
     "IdleCheckExpirationWarning": "Sesi boleh ditamatkan berdasarkan keputusan Semakan Kemalasan.",
-    "FailToRenameSession": "Permintaan perubahan nama sesi gagal."
+    "FailToRenameSession": "Permintaan perubahan nama sesi gagal.",
+    "KernelExitCode": "Kod Keluar Kernel",
+    "SessionStatus": "Status sesi",
+    "PredicateChecks": "Pemeriksaan predikat",
+    "AgentId": "Id ejen",
+    "Traceback": "Traceback"
   },
   "button": {
     "Cancel": "Batal",
