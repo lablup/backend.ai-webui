@@ -172,6 +172,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     'session',
     'session/start',
     'interactive-login',
+    'agents',
   ]; // temporally block pipeline from available pages 'pipeline', 'pipeline-job'
   @property({ type: Array }) adminOnlyPages = [
     'experiment',
