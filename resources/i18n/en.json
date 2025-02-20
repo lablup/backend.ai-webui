@@ -637,7 +637,8 @@
       "QuotaScopeSuccessfullyUpdated": "Updated Quota Scope",
       "AllowNumberAndDot": "Allows positive numbers and .(dot) only"
     },
-    "StorageSetting": "Storage Setting"
+    "StorageSetting": "Storage Setting",
+    "HardLimitInodes": "Hard Limit Inodes"
   },
   "general": {
     "ResourceGroup": "Resource Group",

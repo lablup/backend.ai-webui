@@ -38,6 +38,7 @@ const QuotaScopeCard: React.FC<Props> = ({
         storage_host_name
         details {
           hard_limit_bytes
+          hard_limit_inodes
           usage_bytes
         }
         ...QuotaSettingModalFragment
@@ -62,6 +63,7 @@ const QuotaScopeCard: React.FC<Props> = ({
             storage_host_name
             details {
               hard_limit_bytes
+              hard_limit_inodes
             }
           }
         }
@@ -100,6 +102,8 @@ const QuotaScopeCard: React.FC<Props> = ({
     <Table
       bordered
       rowKey="id"
+      scroll={{ x: 'max-content' }}
+      showSorterTooltip={false}
       columns={[
         {
           title: t('storageHost.quotaSettings.QuotaScopeId'),
@@ -112,6 +116,12 @@ const QuotaScopeCard: React.FC<Props> = ({
           dataIndex: ['details', 'hard_limit_bytes'],
           key: 'hard_limit_bytes',
           render: (value) => <>{bytesToGB(value)}</>,
+        },
+        {
+          title: t('storageHost.HardLimitInodes'),
+          dataIndex: ['details', 'hard_limit_inodes'],
+          key: 'hard_limit_inodes',
+          render: (value) => <>{value ?? '-'}</>,
         },
         {
           title: t('storageHost.Usage') + ' (GB)',
