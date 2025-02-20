@@ -66,7 +66,9 @@
       "DisMatchUserEmail": "E-mail do usuário não corresponde",
       "MyEnvironments": "Meus ambientes",
       "ResourcePolicy": "Política de Recursos",
-      "FullNameUpdated": "O nome completo foi atualizado com sucesso."
+      "FullNameUpdated": "O nome completo foi atualizado com sucesso.",
+      "Playground": "Parque infantil",
+      "ModelStore": "Loja de modelos"
     },
     "YouAreOffline": "Desligado: Não está ligado a nenhuma rede.",
     "YouAreOnline": "Agora você está online",
@@ -1692,7 +1694,10 @@
     "CloneInfo": "Será clonada como a pasta do seu tipo de utilizador.",
     "CloneToFolder": "Clonar para uma pasta",
     "FolderAlreadyExists": "Já existe uma pasta com este nome.",
-    "FinetuneModel": "Modelo de ajuste fino"
+    "FinetuneModel": "Modelo de ajuste fino",
+    "Experience": "Experiência",
+    "ModelCard": "Cartão Modelo",
+    "ImportFromHuggingFace": "Importar do rosto abraçado"
   },
   "table": {
     "SettingTable": "Configuração de mesa",
@@ -1799,5 +1804,12 @@
     "AgentId": "ID do agente",
     "ContainerId": "ID do contêiner",
     "Kernels": "Kernels"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelServices": "Serviços de modelo",
+      "ModelList": "Lista de modelos",
+      "MyServices": "Meus serviços"
+    }
   }
 }

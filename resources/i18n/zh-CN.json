@@ -66,7 +66,9 @@
       "DisMatchUserEmail": "用户电子邮件不匹配",
       "MyEnvironments": "我的环境",
       "ResourcePolicy": "资源政策",
-      "FullNameUpdated": "全名更新成功。"
+      "FullNameUpdated": "全名更新成功。",
+      "Playground": "操场",
+      "ModelStore": "模型店"
     },
     "YouAreOffline": "脱机：未连接任何网络。",
     "YouAreOnline": "您现在在线",
@@ -1692,7 +1694,10 @@
     "CloneInfo": "它将被克隆为用户类型文件夹。",
     "CloneToFolder": "克隆到文件夹",
     "FolderAlreadyExists": "该名称的文件夹已经存在。",
-    "FinetuneModel": "微调模型"
+    "FinetuneModel": "微调模型",
+    "Experience": "经验",
+    "ModelCard": "型号卡",
+    "ImportFromHuggingFace": "从拥抱脸导入"
   },
   "table": {
     "SettingTable": "桌面设置",
@@ -1799,5 +1804,11 @@
     "AgentId": "代理ID",
     "ContainerId": "容器ID",
     "Kernels": "内核"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelList": "型号列表",
+      "MyServices": "我的服务"
+    }
   }
 }

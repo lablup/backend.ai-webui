@@ -69,6 +69,13 @@ const SessionDetailAndContainerLogOpenerLegacy = React.lazy(
   () => import('./components/SessionDetailAndContainerLogOpenerLegacy'),
 );
 
+/**
+ * Pages for Model Player
+ */
+const PlaygroundPage = React.lazy(
+  () => import('./components/lablupTalkativotUI/LLMPlaygroundPage'),
+);
+const ModelStorePage = React.lazy(() => import('./pages/ModelStorePage'));
 interface CustomHandle {
   title?: string;
   labelKey?: string;
@@ -110,17 +117,17 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <WebUINavigate to="/summary" replace />,
+        element: <WebUINavigate to="/playground" replace />,
       },
       {
         //for electron dev mode
         path: '/build/electron-app/app/index.html',
-        element: <WebUINavigate to="/summary" replace />,
+        element: <WebUINavigate to="/playground" replace />,
       },
       {
         //for electron prod mode
         path: '/app/index.html',
-        element: <WebUINavigate to="/summary" replace />,
+        element: <WebUINavigate to="/playground" replace />,
       },
       {
         path: '/summary',
@@ -402,6 +409,19 @@ const router = createBrowserRouter([
       {
         path: '*',
         element: <></>,
+      },
+      /**
+       * Pages for Model Player
+       */
+      {
+        path: '/playground',
+        handle: { labelKey: 'webui.menu.Playground' },
+        Component: PlaygroundPage,
+      },
+      {
+        path: '/model-store',
+        handle: { labelKey: 'webui.menu.ModelStore' },
+        Component: ModelStorePage,
       },
     ],
   },

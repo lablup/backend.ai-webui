@@ -66,7 +66,9 @@
       "DisMatchUserEmail": "อีเมลผู้ใช้ไม่ตรงกัน",
       "MyEnvironments": "สภาพแวดล้อมของฉัน",
       "ResourcePolicy": "นโยบายทรัพยากร",
-      "FullNameUpdated": "อัปเดตชื่อเต็มเรียบร้อยแล้ว"
+      "FullNameUpdated": "อัปเดตชื่อเต็มเรียบร้อยแล้ว",
+      "Playground": "สนามเด็กเล่น",
+      "ModelStore": "ร้านโมเดล"
     },
     "YouAreOffline": "ออฟไลน์: ไม่ได้เชื่อมต่อกับเครือข่ายใดๆ",
     "YouAreOnline": "คุณออนไลน์แล้ว",
@@ -1678,7 +1680,10 @@
     "CloneInfo": "จะถูกโคลนเป็นโฟลเดอร์ประเภทผู้ใช้ของคุณ",
     "CloneToFolder": "โคลนไปยังโฟลเดอร์",
     "FolderAlreadyExists": "มีโฟลเดอร์ชื่อนี้อยู่แล้ว",
-    "FinetuneModel": "ปรับแต่งโมเดล"
+    "FinetuneModel": "ปรับแต่งโมเดล",
+    "Experience": "ประสบการณ์",
+    "ModelCard": "การ์ดโมเดล",
+    "ImportFromHuggingFace": "นำเข้าจากกอดใบหน้า"
   },
   "sourceCodeViewer": {
     "Copy": "คัดลอก",
@@ -1780,5 +1785,12 @@
     "AgentId": "ID ตัวแทน",
     "ContainerId": "ID คอนเทนเนอร์",
     "Kernels": "เมล็ด"
+  },
+  "modelserving": {
+    "menu": {
+      "ModelServices": "บริการโมเดล",
+      "ModelList": "รายการรุ่น",
+      "MyServices": "บริการของฉัน"
+    }
   }
 }
