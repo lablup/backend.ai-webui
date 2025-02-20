@@ -1213,7 +1213,7 @@ export default class BackendAILogin extends BackendAIPage {
           .href;
         return webuiEl._parseConfig(webserverConfigURL, true).then((config) => {
           // Monkey patch for backwards compatibility.
-          // From 24.04, we use `logoTitle` and `logoTitleCollapsed` of /resources/theme.json instead of `general.siteDescription`.
+          // From 24.04, we use `logo.title` and `logoCollapsed.title` of /resources/theme.json instead of `general.siteDescription`.
           this.siteDescription =
             config?.['general.siteDescription'] || this.siteDescription || '';
           fieldsToExclude.forEach((key) => {
