@@ -1,4 +1,5 @@
 import AnnouncementAlert from './components/AnnouncementAlert';
+import BAICard from './components/BAICard';
 import BAIErrorBoundary, { ErrorView } from './components/BAIErrorBoundary';
 import {
   DefaultProvidersForReactRoot,
@@ -15,6 +16,7 @@ import VFolderListPage from './pages/VFolderListPage';
 import { Skeleton, theme } from 'antd';
 import React, { Suspense } from 'react';
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   IndexRouteObject,
   RouterProvider,
@@ -176,14 +178,13 @@ const router = createBrowserRouter([
               const [experimentalNeoSessionList] = useBAISettingUserState(
                 'experimental_neo_session_list',
               );
+              const { t } = useTranslation();
 
               return experimentalNeoSessionList ? (
                 <BAIErrorBoundary>
                   <Suspense
                     fallback={
-                      <Flex direction="column" style={{ maxWidth: 700 }}>
-                        <Skeleton active />
-                      </Flex>
+                      <BAICard title={t('webui.menu.Sessions')} loading />
                     }
                   >
                     <ComputeSessionListPage />
