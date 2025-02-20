@@ -188,7 +188,11 @@ const SessionDetailContent: React.FC<{
 
         <Descriptions bordered column={md ? 2 : 1}>
           <Descriptions.Item label={t('session.SessionId')} span={md ? 2 : 1}>
-            <Typography.Text copyable style={{ fontFamily: 'monospace' }}>
+            <Typography.Text
+              ellipsis
+              copyable
+              style={{ fontFamily: 'monospace' }}
+            >
               {session.row_id}
             </Typography.Text>
           </Descriptions.Item>
@@ -202,18 +206,18 @@ const SessionDetailContent: React.FC<{
             contentStyle={{ display: 'flex', gap: token.marginSM }}
           >
             <SessionStatusTag sessionFrgmt={session} showInfo />
-            {/* <Button type="text" icon={<TriangleAlertIcon />} /> */}
           </Descriptions.Item>
           <Descriptions.Item label={t('session.SessionType')}>
             <SessionTypeTag sessionFrgmt={session} />
           </Descriptions.Item>
           <Descriptions.Item label={t('session.launcher.Environments')}>
             {imageFullName ? (
-              <Flex gap={'sm'}>
-                <ImageMetaIcon image={imageFullName} />
-                <Flex>
-                  <SessionKernelTags image={imageFullName} />
-                </Flex>
+              <Flex gap={['xs', 0]} wrap="wrap">
+                <ImageMetaIcon
+                  image={imageFullName}
+                  style={{ marginRight: token.marginXS }}
+                />
+                <SessionKernelTags image={imageFullName} />
               </Flex>
             ) : (
               '-'
