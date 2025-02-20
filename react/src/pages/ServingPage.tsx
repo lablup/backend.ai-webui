@@ -1,6 +1,5 @@
 import Flex from '../components/Flex';
 import { filterEmptyItem } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { Card, Skeleton, theme } from 'antd';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -10,9 +9,6 @@ import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 type TabKey = 'services' | 'chatting'; //  "running" | "finished" | "others";
 
 const EndpointListPage = React.lazy(() => import('./EndpointListPage'));
-const ChattingPage = React.lazy(
-  () => import('../components/lablupTalkativotUI/LLMPlaygroundPage'),
-);
 
 interface ServingPageProps {}
 
@@ -24,7 +20,6 @@ const ServingPage: React.FC<ServingPageProps> = ({ ...props }) => {
   const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam, {
     updateType: 'replace',
   });
-  const baiClient = useSuspendedBackendaiClient();
 
   const tabList = filterEmptyItem([
     { key: 'services', label: t('modelService.Services') },
@@ -41,10 +36,6 @@ const ServingPage: React.FC<ServingPageProps> = ({ ...props }) => {
     //   key: "others",
     //   label: t("session.Others"),
     // },
-    baiClient._config.enableLLMPlayground && {
-      key: 'chatting',
-      label: 'LLM Playground',
-    },
   ]);
   return (
     <Flex direction="column" align="stretch" gap={'md'}>
@@ -67,13 +58,6 @@ const ServingPage: React.FC<ServingPageProps> = ({ ...props }) => {
             fallback={<Skeleton active style={{ padding: token.paddingMD }} />}
           >
             <EndpointListPage />
-          </Suspense>
-        ) : null}
-        {curTabKey === 'chatting' && baiClient._config.enableLLMPlayground ? (
-          <Suspense
-            fallback={<Skeleton active style={{ padding: token.paddingMD }} />}
-          >
-            <ChattingPage />
           </Suspense>
         ) : null}
       </Card>
