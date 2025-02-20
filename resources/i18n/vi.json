@@ -1094,7 +1094,8 @@
     "ExportCSV": "xuất CSV",
     "Tools": "Công cụ",
     "MemorySizeExceedsLimit": "Kích thước bộ nhớ phải nhỏ hơn 300 PiB",
-    "MaxNetworkCount": "Số lượng mạng tối đa"
+    "MaxNetworkCount": "Số lượng mạng tối đa",
+    "CannotUpdateResourcePolicy": "Không thể cập nhật chính sách tài nguyên. \nVui lòng kiểm tra các giá trị đầu vào."
   },
   "registry": {
     "Hostname": "Tên máy chủ",

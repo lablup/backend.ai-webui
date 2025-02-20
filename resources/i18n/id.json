@@ -1095,7 +1095,8 @@
     "ExportCSV": "ekspor CSV",
     "Tools": "Peralatan",
     "MemorySizeExceedsLimit": "Ukuran memori harus kurang dari 300 PiB",
-    "MaxNetworkCount": "Jumlah Jaringan Maks"
+    "MaxNetworkCount": "Jumlah Jaringan Maks",
+    "CannotUpdateResourcePolicy": "Tidak dapat memperbarui kebijakan sumber daya. \nHarap periksa nilai input."
   },
   "registry": {
     "Hostname": "Nama host",
