@@ -7,7 +7,8 @@
       "colorLink": "#FF7A00",
       "colorText": "#141414",
       "colorInfo": "#028DF2",
-      "colorError": "#FF4D4F"
+      "colorError": "#FF4D4F",
+      "colorFillSecondary": "#D9D9D9"
     },
     "components": {
       "Tag": {
@@ -30,7 +31,8 @@
       "colorLink": "#DC6B03",
       "colorText": "#FFF",
       "colorInfo": "#009BDD",
-      "colorError": "#DC4446"
+      "colorError": "#DC4446",
+      "colorFillSecondary": "#262626"
     },
     "components": {
       "Tag": {

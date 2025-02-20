@@ -10,7 +10,7 @@ import {
   PlusOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Alert, Button, Card, Skeleton, theme } from 'antd';
+import { Alert, Button, Card, Col, Row, Skeleton, theme } from 'antd';
 import _ from 'lodash';
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -19,6 +19,9 @@ import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 const ModelStoreListPage = React.lazy(() => import('./ModelStoreListPage'));
 const StorageStatusPanelCard = React.lazy(
   () => import('../components/StorageStatusPanelCard'),
+);
+const QuotaPerStorageVolumePanelCard = React.lazy(
+  () => import('../components/QuotaPerStorageVolumePanelCard'),
 );
 // const StorageStatusPanel = React.lazy(
 //   () => import('../components/StorageStatusPanel'),
@@ -117,14 +120,25 @@ const VFolderListPage: React.FC<VFolderListPageProps> = (props) => {
   ]);
   return (
     <Flex direction="column" align="stretch" gap={'md'}>
-      <Flex gap={'md'}>
-        <Suspense
-          fallback={<BAIFallbackCard title={t('data.StorageStatus')} />}
-        >
-          <StorageStatusPanelCard style={{ width: '100%' }} />
-          {/* <StorageStatusPanel fetchKey={fetchKey} /> */}
-        </Suspense>
-      </Flex>
+      <Row gutter={[16, 16]}>
+        <Col xs={24} lg={12}>
+          <Suspense
+            fallback={<BAIFallbackCard title={t('data.StorageStatus')} />}
+          >
+            <StorageStatusPanelCard style={{ height: 200 }} />
+            {/* <StorageStatusPanel fetchKey={fetchKey} /> */}
+          </Suspense>
+        </Col>
+        <Col xs={24} lg={12}>
+          <Suspense
+            fallback={
+              <BAIFallbackCard title={t('data.QuotaPerStorageVolume')} />
+            }
+          >
+            <QuotaPerStorageVolumePanelCard style={{ height: 200 }} />
+          </Suspense>
+        </Col>
+      </Row>
       <Card
         activeTabKey={curTabKey}
         onTabChange={(key) => {
