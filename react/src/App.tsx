@@ -65,6 +65,9 @@ const ComputeSessionListPage = React.lazy(
 );
 const AgentSummaryPage = React.lazy(() => import('./pages/AgentSummaryPage'));
 const MaintenancePage = React.lazy(() => import('./pages/MaintenancePage'));
+const ConfigurationsPage = React.lazy(
+  () => import('./pages/ConfigurationsPage'),
+);
 const SessionDetailAndContainerLogOpenerLegacy = React.lazy(
   () => import('./components/SessionDetailAndContainerLogOpenerLegacy'),
 );
@@ -361,7 +364,11 @@ const router = createBrowserRouter([
       },
       {
         path: '/settings',
-        handle: { labelKey: 'webui.menu.Configurations' },
+        element: (
+          <BAIErrorBoundary>
+            <ConfigurationsPage />
+          </BAIErrorBoundary>
+        ),
       },
       {
         path: '/maintenance',
