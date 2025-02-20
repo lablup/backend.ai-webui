@@ -965,7 +965,10 @@
     "UserQuotaScopeId": "Quota Scope ID",
     "FileAndFolderNameRequired": "파일 및 폴더 이름이 필요합니다.",
     "AllowsLettersNumbersAnd-_": "문자, 숫자 및 -_ 만 허용됩니다.",
-    "AllowsLettersNumbersAnd-_Dot": "문자, 숫자 및 -_. 만 허용됩니다."
+    "AllowsLettersNumbersAnd-_Dot": "문자, 숫자 및 -_. 만 허용됩니다.",
+    "CreatedFolders": "생성된 폴더",
+    "ProjectFolders": "프로젝트 폴더",
+    "InvitedFolders": "초대된 폴더"
   },
   "dialog": {
     "warning": {

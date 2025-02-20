@@ -968,7 +968,10 @@
     "UserQuotaScopeId": "รหัสขอบเขตโควตาผู้ใช้",
     "FileAndFolderNameRequired": "ต้องระบุชื่อไฟล์/โฟลเดอร์",
     "AllowsLettersNumbersAnd-_": "อนุญาตตัวอักษร ตัวเลข และ -_",
-    "AllowsLettersNumbersAnd-_Dot": "อนุญาตตัวอักษร ตัวเลข และ -_."
+    "AllowsLettersNumbersAnd-_Dot": "อนุญาตตัวอักษร ตัวเลข และ -_.",
+    "CreatedFolders": "โฟลเดอร์ที่สร้างขึ้น",
+    "ProjectFolders": "โฟลเดอร์โครงการ",
+    "InvitedFolders": "โฟลเดอร์ที่ได้รับเชิญ"
   },
   "dialog": {
     "warning": {

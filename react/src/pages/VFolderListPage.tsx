@@ -17,13 +17,14 @@ import { useTranslation } from 'react-i18next';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 const ModelStoreListPage = React.lazy(() => import('./ModelStoreListPage'));
-const StorageStatusPanel = React.lazy(
-  () => import('../components/StorageStatusPanel'),
+const StorageStatusPanelCard = React.lazy(
+  () => import('../components/StorageStatusPanelCard'),
 );
-const StorageStatusPanelFallback = React.lazy(() =>
-  import('../components/StorageStatusPanel').then((m) => ({
-    default: m.StorageStatusPanelFallback,
-  })),
+// const StorageStatusPanel = React.lazy(
+//   () => import('../components/StorageStatusPanel'),
+// );
+const BAIFallbackCard = React.lazy(
+  () => import('../components/BAIFallbackCard'),
 );
 
 type TabKey =
@@ -44,7 +45,8 @@ const VFolderListPage: React.FC<VFolderListPageProps> = (props) => {
   const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam, {
     updateType: 'replace',
   });
-  const [fetchKey, updateFetchKey] = useUpdatableState('first');
+  // const [fetchKey, updateFetchKey] = useUpdatableState('first');
+  const [, updateFetchKey] = useUpdatableState('first');
   const [isOpenCreateModal, { toggle: openCreateModal }] = useToggle(false);
   const [inviteFolderId, setInviteFolderId] = useState<string | null>(null);
   const [
@@ -115,9 +117,14 @@ const VFolderListPage: React.FC<VFolderListPageProps> = (props) => {
   ]);
   return (
     <Flex direction="column" align="stretch" gap={'md'}>
-      <Suspense fallback={<StorageStatusPanelFallback />}>
-        <StorageStatusPanel fetchKey={fetchKey} />
-      </Suspense>
+      <Flex gap={'md'}>
+        <Suspense
+          fallback={<BAIFallbackCard title={t('data.StorageStatus')} />}
+        >
+          <StorageStatusPanelCard style={{ width: '100%' }} />
+          {/* <StorageStatusPanel fetchKey={fetchKey} /> */}
+        </Suspense>
+      </Flex>
       <Card
         activeTabKey={curTabKey}
         onTabChange={(key) => {

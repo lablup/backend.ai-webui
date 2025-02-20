@@ -846,7 +846,10 @@
     "UserQuotaScopeId": "Quota Scope ID",
     "FileAndFolderNameRequired": "Il nome del file/cartella è obbligatorio",
     "AllowsLettersNumbersAnd-_": "Consente lettere, numeri e -_",
-    "AllowsLettersNumbersAnd-_Dot": "Consente lettere, numeri e -_."
+    "AllowsLettersNumbersAnd-_Dot": "Consente lettere, numeri e -_.",
+    "CreatedFolders": "Cartelle create",
+    "ProjectFolders": "Cartelle di progetto",
+    "InvitedFolders": "Cartelle invitate"
   },
   "dialog": {
     "warning": {
