@@ -4,11 +4,7 @@ import {
   filterNonNullItems,
   transformSorterToOrderString,
 } from '../helper';
-import {
-  useSuspendedBackendaiClient,
-  useUpdatableState,
-  useWebUINavigate,
-} from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 // import { getSortOrderByName } from '../hooks/reactPaginationQueryOptions';
@@ -30,22 +26,16 @@ import {
   CheckOutlined,
   CloseOutlined,
   DeleteOutlined,
-  ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import { useRafInterval, useToggle } from 'ahooks';
+import { useToggle } from 'ahooks';
 import { Button, Typography, theme, App, Tooltip } from 'antd';
 import { ColumnType } from 'antd/lib/table';
 import graphql from 'babel-plugin-relay/macro';
 import { default as dayjs } from 'dayjs';
 import _ from 'lodash';
 import { InfoIcon } from 'lucide-react';
-import React, {
-  PropsWithChildren,
-  useState,
-  useTransition,
-  startTransition as startTransitionWithoutPendingState,
-} from 'react';
+import React, { PropsWithChildren, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 import { Link } from 'react-router-dom';
@@ -75,8 +65,15 @@ type LifecycleStage = 'created&destroying' | 'destroyed';
 
 interface EndpointListProps extends PropsWithChildren {
   style?: React.CSSProperties;
+  fetchKey?: string;
+  onDeleted?: (endpoint: Endpoint) => void;
 }
-const EndpointList: React.FC<EndpointListProps> = ({ style, children }) => {
+const EndpointList: React.FC<EndpointListProps> = ({
+  style,
+  fetchKey,
+  onDeleted,
+  children,
+}) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message, modal } = App.useApp();
@@ -98,11 +95,8 @@ const EndpointList: React.FC<EndpointListProps> = ({ style, children }) => {
       ? `lifecycle_stage == "created" | lifecycle_stage == "destroying"`
       : `lifecycle_stage == "${selectedLifecycleStage}"`;
 
-  const [isRefetchPending, startRefetchTransition] = useTransition();
   const [isFilterPending, startFilterTransition] = useTransition();
   const [isPendingPageChange, startPageChangeTransition] = useTransition();
-  const [servicesFetchKey, updateServicesFetchKey] =
-    useUpdatableState('initial-fetch');
   const [optimisticDeletingId, setOptimisticDeletingId] = useState<
     string | null
   >();
@@ -212,9 +206,7 @@ const EndpointList: React.FC<EndpointListProps> = ({ style, children }) => {
                   row.endpoint_id &&
                     terminateModelServiceMutation.mutate(row?.endpoint_id, {
                       onSuccess: (res) => {
-                        startRefetchTransition(() => {
-                          updateServicesFetchKey();
-                        });
+                        onDeleted?.(row);
                         // FIXME: temporally refer to mutate input to message
                         if (res.success) {
                           message.success(
@@ -318,12 +310,6 @@ const EndpointList: React.FC<EndpointListProps> = ({ style, children }) => {
   const [hiddenColumnKeys, setHiddenColumnKeys] =
     useHiddenColumnKeysSetting('EndpointListPage');
 
-  useRafInterval(() => {
-    startTransitionWithoutPendingState(() => {
-      updateServicesFetchKey();
-    });
-  }, 7000);
-
   const { endpoint_list: modelServiceList } =
     useLazyLoadQuery<EndpointListQuery>(
       graphql`
@@ -388,7 +374,7 @@ const EndpointList: React.FC<EndpointListProps> = ({ style, children }) => {
       },
       {
         fetchPolicy: 'network-only',
-        fetchKey: servicesFetchKey,
+        fetchKey,
       },
     );
 
@@ -505,25 +491,6 @@ const EndpointList: React.FC<EndpointListProps> = ({ style, children }) => {
               />
             </>
           )}
-        </Flex>
-        <Flex direction="row" gap={'xs'}>
-          <Flex gap={'xs'}>
-            <Button
-              icon={<ReloadOutlined />}
-              loading={isRefetchPending}
-              onClick={() => {
-                startRefetchTransition(() => updateServicesFetchKey());
-              }}
-            />
-            <Button
-              type="primary"
-              onClick={() => {
-                webuiNavigate('/service/start');
-              }}
-            >
-              {t('modelService.StartService')}
-            </Button>
-          </Flex>
         </Flex>
       </Flex>
       <Flex direction="column" align="stretch">
