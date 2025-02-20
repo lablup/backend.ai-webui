@@ -1094,7 +1094,9 @@
     "ExportCSV": "exporter au format CSV",
     "Tools": "Outils",
     "MemorySizeExceedsLimit": "La taille de la mémoire doit être inférieure à 300 PiB",
-    "MaxNetworkCount": "Nombre maximum de réseaux"
+    "MaxNetworkCount": "Nombre maximum de réseaux",
+    "MaxPendingSessionCount": "Nombre maximum de sessions en attente",
+    "MaxConcurrentSFTPSessions": "Nombre maximal de sessions SFTP simultanées"
   },
   "registry": {
     "Hostname": "Nom d'hôte",

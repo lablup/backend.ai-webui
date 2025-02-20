@@ -1094,7 +1094,9 @@
     "ExportCSV": "CSVエクスポート",
     "Tools": "ツール",
     "MemorySizeExceedsLimit": "メモリ サイズは 300 PiB 未満である必要があります",
-    "MaxNetworkCount": "最大ネットワーク数"
+    "MaxNetworkCount": "最大ネットワーク数",
+    "MaxPendingSessionCount": "最大保留セッション数",
+    "MaxConcurrentSFTPSessions": "最大同時SFTPセッション数"
   },
   "registry": {
     "Hostname": "ホスト名",

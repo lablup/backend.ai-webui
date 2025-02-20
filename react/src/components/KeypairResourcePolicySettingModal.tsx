@@ -1,8 +1,5 @@
 import { convertBinarySizeUnit } from '../helper';
-import {
-  UNLIMITED_MAX_CONCURRENT_SESSIONS,
-  UNLIMITED_MAX_CONTAINERS_PER_SESSIONS,
-} from '../helper/const-vars';
+import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
 import AllowedHostNamesSelect from './AllowedHostNamesSelect';
@@ -28,7 +25,6 @@ import {
   Input,
   InputNumber,
   Row,
-  theme,
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
@@ -54,7 +50,6 @@ const KeypairResourcePolicySettingModal: React.FC<
   ...props
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message } = App.useApp();
   const formRef = useRef<FormInstance>(null);
   const [resourceSlots] = useResourceSlots();
@@ -76,6 +71,8 @@ const KeypairResourcePolicySettingModal: React.FC<
         idle_timeout
         allowed_vfolder_hosts
         max_vfolder_count @deprecatedSince(version: "23.09.4")
+        max_pending_session_count @since(version: "24.03.4")
+        max_concurrent_sftp_sessions @since(version: "24.03.4")
       }
     `,
     keypairResourcePolicyFrgmt,
@@ -120,51 +117,57 @@ const KeypairResourcePolicySettingModal: React.FC<
     `);
 
   const initialValues = useMemo(() => {
-    const parsedTotalResourceSlots = JSON.parse(
-      keypairResourcePolicy?.total_resource_slots || '{}',
+    const parsedVfolderHosts = JSON.parse(
+      keypairResourcePolicy?.allowed_vfolder_hosts ?? '{}',
     );
-
+    const parsedTotalResourceSlots = JSON.parse(
+      keypairResourcePolicy?.total_resource_slots ?? '{}',
+    );
     if (parsedTotalResourceSlots?.mem) {
-      parsedTotalResourceSlots.mem = convertBinarySizeUnit(
+      let autoUniResult = convertBinarySizeUnit(
         parsedTotalResourceSlots?.mem + 'b',
-        'g',
+        'auto',
         2,
         true,
-      )?.numberUnit;
-    }
+      );
 
-    let unlimitedValues = {};
-    if (keypairResourcePolicy === null) {
-      // Initialize unlimited values as a default
-      unlimitedValues = {
-        max_session_lifetime: 0,
-        max_concurrent_sessions: UNLIMITED_MAX_CONCURRENT_SESSIONS,
-        max_containers_per_session: UNLIMITED_MAX_CONTAINERS_PER_SESSIONS,
-        idle_timeout: 0,
-      };
+      if (autoUniResult?.unit === 'B' || autoUniResult?.unit === 'K') {
+        autoUniResult = convertBinarySizeUnit(
+          parsedTotalResourceSlots?.mem + 'b',
+          'M',
+          3,
+          true,
+        );
+      }
+      parsedTotalResourceSlots.mem = autoUniResult?.numberUnit || '0G';
     }
 
     return {
-      parsedTotalResourceSlots,
-      allowedVfolderHostNames: _.keys(
-        JSON.parse(keypairResourcePolicy?.allowed_vfolder_hosts || '{}'),
-      ),
-      ...unlimitedValues,
-      ...keypairResourcePolicy,
+      name: keypairResourcePolicy?.name ?? '',
+      total_resource_slots: parsedTotalResourceSlots ?? {},
+      max_session_lifetime: keypairResourcePolicy?.max_session_lifetime ?? 0,
+      max_concurrent_sessions:
+        keypairResourcePolicy?.max_concurrent_sessions ?? 0,
+      max_containers_per_session:
+        keypairResourcePolicy?.max_containers_per_session ?? 1,
+      idle_timeout: keypairResourcePolicy?.idle_timeout ?? 0,
+      allowed_vfolder_hosts: _.keys(parsedVfolderHosts) ?? [],
+      max_pending_session_count:
+        keypairResourcePolicy?.max_pending_session_count ?? null,
+      max_concurrent_sftp_sessions:
+        keypairResourcePolicy?.max_concurrent_sftp_sessions ?? 0,
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    keypairResourcePolicy,
-    keypairResourcePolicy?.total_resource_slots,
-    keypairResourcePolicy?.allowed_vfolder_hosts,
-  ]);
+  }, [keypairResourcePolicy]);
 
   const handleOk = () => {
     return formRef?.current
       ?.validateFields()
       .then((values) => {
-        let totalResourceSlots = _.mapValues(
-          values?.parsedTotalResourceSlots,
+        const total_resource_slots = _.mapValues(
+          _.pickBy(
+            values.total_resource_slots,
+            (value) => !_.isUndefined(value),
+          ),
           (value, key) => {
             if (_.includes(key, 'mem')) {
               return convertBinarySizeUnit(value, 'b', 0)?.numberFixed;
@@ -172,43 +175,51 @@ const KeypairResourcePolicySettingModal: React.FC<
             return value;
           },
         );
-        // Remove undefined values
-        totalResourceSlots = _.pickBy(
-          totalResourceSlots,
-          _.negate(_.isUndefined),
-        );
 
-        const parsedAllowedVfolderHosts: Record<string, string[] | undefined> =
-          keypairResourcePolicy
-            ? JSON.parse(keypairResourcePolicy.allowed_vfolder_hosts || '{}')
-            : {};
-        const allowedVfolderHosts: Record<string, string[] | undefined> =
+        const allowed_vfolder_hosts: Record<string, string[] | undefined> =
           _.fromPairs(
-            _.map(values.allowedVfolderHostNames, (hostName) => {
-              const permissions = _.get(
-                parsedAllowedVfolderHosts,
+            _.map(values.allowed_vfolder_hosts, (hostName) => {
+              if (initialValues?.allowed_vfolder_hosts?.includes(hostName)) {
+                const initialPermissions = JSON.parse(
+                  keypairResourcePolicy?.allowed_vfolder_hosts || '{}',
+                );
+                return [hostName, initialPermissions[hostName]];
+              }
+              const defaultPermissions = _.get(
+                values,
                 hostName,
-                // TODO: Comment out if allow all permissions by default
-                // vfolder_host_permissions?.vfolder_host_permission_list,
-                [], // Default value if undefined
+                [
+                  'create-vfolder',
+                  'modify-vfolder',
+                  'delete-vfolder',
+                  'mount-in-session',
+                  'upload-file',
+                  'download-file',
+                  'invite-others',
+                  'set-user-specific-permission',
+                ], // Default permissions
               );
-              return [hostName, permissions];
+              return [hostName, defaultPermissions];
             }),
           );
 
+        const { name, ...restValues } = values;
         const props:
           | CreateKeyPairResourcePolicyInput
           | ModifyKeyPairResourcePolicyInput = {
+          ..._.omit(restValues, 'parsedTotalResourceSlots'),
+          total_resource_slots: JSON.stringify(total_resource_slots),
+          allowed_vfolder_hosts: JSON.stringify(allowed_vfolder_hosts),
           default_for_unspecified: 'UNLIMITED',
-          total_resource_slots: JSON.stringify(totalResourceSlots || '{}'),
-          max_session_lifetime: values?.max_session_lifetime,
-          max_concurrent_sessions: values?.max_concurrent_sessions,
-          max_containers_per_session: values?.max_containers_per_session,
-          idle_timeout: values?.idle_timeout,
-          allowed_vfolder_hosts: JSON.stringify(allowedVfolderHosts || '{}'),
         };
         if (!isDeprecatedMaxVfolderCountInKeypairResourcePolicy) {
           props.max_vfolder_count = values?.max_vfolder_count;
+        }
+        if (!baiClient.supports('max-pending-session-count')) {
+          delete props?.max_pending_session_count;
+        }
+        if (!baiClient.supports('max-concurrent-sftp-sessions')) {
+          delete props?.max_concurrent_sftp_sessions;
         }
 
         if (keypairResourcePolicy === null) {
@@ -272,6 +283,7 @@ const KeypairResourcePolicySettingModal: React.FC<
 
   return (
     <BAIModal
+      width={800}
       title={
         keypairResourcePolicy === null
           ? t('resourcePolicy.CreateResourcePolicy')
@@ -286,9 +298,11 @@ const KeypairResourcePolicySettingModal: React.FC<
       {...props}
     >
       <Form
+        // Remove the required mark for the label because it has too many optional fields
+        requiredMark={false}
         ref={formRef}
         layout="vertical"
-        requiredMark="optional"
+        // requiredMark="optional"
         initialValues={initialValues}
         preserve={false}
       >
@@ -322,22 +336,17 @@ const KeypairResourcePolicySettingModal: React.FC<
           <Input disabled={!!keypairResourcePolicy} />
         </Form.Item>
         <Form.Item label={t('resourcePolicy.ResourcePolicy')} required>
-          <Card
-            styles={{
-              body: {
-                paddingBottom: 0,
-              },
-            }}
-          >
+          <Card>
             {_.map(
               _.chunk(_.keys(resourceSlots), 2),
               (resourceSlotKeys, index) => (
-                <Row gutter={[16, 16]} key={index}>
+                <Row gutter={[24, 16]} key={index}>
                   {_.map(resourceSlotKeys, (resourceSlotKey) => (
                     <Col
-                      span={12}
+                      xs={{ flex: '50%' }}
+                      md={{ flex: '33.3%' }}
                       key={resourceSlotKey}
-                      style={{ alignSelf: 'end', marginBottom: token.marginLG }}
+                      style={{ alignSelf: 'end' }}
                     >
                       <FormItemWithUnlimited
                         unlimitedValue={undefined}
@@ -345,7 +354,7 @@ const KeypairResourcePolicySettingModal: React.FC<
                           _.get(mergedResourceSlots, resourceSlotKey)
                             ?.description || resourceSlotKey
                         }
-                        name={['parsedTotalResourceSlots', resourceSlotKey]}
+                        name={['total_resource_slots', resourceSlotKey]}
                         rules={[
                           {
                             validator(__, value) {
@@ -367,9 +376,10 @@ const KeypairResourcePolicySettingModal: React.FC<
                             },
                           },
                         ]}
+                        style={{ margin: 0, width: '100%' }}
                       >
                         {_.includes(resourceSlotKey, 'mem') ? (
-                          <DynamicUnitInputNumber />
+                          <DynamicUnitInputNumber style={{ width: '100%' }} />
                         ) : (
                           <InputNumber
                             min={0}
@@ -380,6 +390,7 @@ const KeypairResourcePolicySettingModal: React.FC<
                               _.get(mergedResourceSlots, resourceSlotKey)
                                 ?.display_unit
                             }
+                            style={{ width: '100%' }}
                           />
                         )}
                       </FormItemWithUnlimited>
@@ -391,68 +402,116 @@ const KeypairResourcePolicySettingModal: React.FC<
           </Card>
         </Form.Item>
         <Form.Item label={t('resourcePolicy.Sessions')} required>
-          <Card
-            styles={{
-              body: {
-                paddingBottom: 0,
-              },
-            }}
-          >
-            <Row gutter={16}>
+          <Card>
+            <Row gutter={[24, 16]} style={{ alignSelf: 'end' }}>
               <Col
-                span={12}
-                style={{ alignSelf: 'end', marginBottom: token.marginLG }}
+                xs={{ flex: '50%' }}
+                md={{ flex: '33.3%' }}
+                style={{ alignSelf: 'end' }}
               >
                 <FormItemWithUnlimited
-                  name={'max_containers_per_session'}
-                  unlimitedValue={UNLIMITED_MAX_CONCURRENT_SESSIONS}
-                  label={t('resourcePolicy.ContainerPerSession')}
+                  label={t('resourcePolicy.ClusterSize')}
+                  name="max_containers_per_session"
+                  style={{ margin: 0, width: '100%' }}
+                  disableUnlimited
                 >
-                  <InputNumber min={0} max={100} style={{ width: '100%' }} />
+                  <InputNumber
+                    min={0}
+                    max={SIGNED_32BIT_MAX_INT}
+                    style={{ width: '100%' }}
+                  />
                 </FormItemWithUnlimited>
               </Col>
               <Col
-                span={12}
-                style={{ alignSelf: 'end', marginBottom: token.marginLG }}
+                xs={{ flex: '50%' }}
+                md={{ flex: '33.3%' }}
+                style={{ alignSelf: 'end' }}
               >
                 <FormItemWithUnlimited
                   name={'max_session_lifetime'}
                   unlimitedValue={0}
                   label={t('resourcePolicy.MaxSessionLifetime')}
+                  style={{ margin: 0, width: '100%' }}
                 >
                   <InputNumber min={0} max={100} style={{ width: '100%' }} />
                 </FormItemWithUnlimited>
               </Col>
-            </Row>
-            <Row gutter={16}>
+              {baiClient.supports('max-pending-session-count') ? (
+                <Col
+                  xs={{ flex: '50%' }}
+                  md={{ flex: '33.3%' }}
+                  style={{ alignSelf: 'end' }}
+                >
+                  <FormItemWithUnlimited
+                    name={'max_pending_session_count'}
+                    unlimitedValue={null}
+                    label={t('resourcePolicy.MaxPendingSessionCount')}
+                    style={{ margin: 0, width: '100%' }}
+                  >
+                    <InputNumber
+                      min={0}
+                      max={SIGNED_32BIT_MAX_INT}
+                      style={{ width: '100%' }}
+                    />
+                  </FormItemWithUnlimited>
+                </Col>
+              ) : null}
               <Col
-                span={12}
-                style={{ alignSelf: 'end', marginBottom: token.marginLG }}
+                xs={{ flex: '50%' }}
+                md={{ flex: '33.3%' }}
+                style={{ alignSelf: 'end' }}
               >
                 <FormItemWithUnlimited
                   name={'max_concurrent_sessions'}
-                  unlimitedValue={UNLIMITED_MAX_CONTAINERS_PER_SESSIONS}
                   label={t('resourcePolicy.ConcurrentJobs')}
+                  unlimitedValue={0}
+                  style={{ margin: 0, width: '100%' }}
                 >
-                  <InputNumber min={0} max={100} style={{ width: '100%' }} />
+                  <InputNumber
+                    min={0}
+                    max={SIGNED_32BIT_MAX_INT}
+                    style={{ width: '100%' }}
+                  />
                 </FormItemWithUnlimited>
               </Col>
               <Col
-                span={12}
-                style={{ alignSelf: 'end', marginBottom: token.marginLG }}
+                xs={{ flex: '50%' }}
+                md={{ flex: '33.3%' }}
+                style={{ alignSelf: 'end' }}
               >
                 <FormItemWithUnlimited
                   name={'idle_timeout'}
                   unlimitedValue={0}
                   label={t('resourcePolicy.IdleTimeoutSec')}
+                  style={{ margin: 0, width: '100%' }}
                 >
                   <InputNumber
                     min={0}
-                    max={15552000}
+                    max={Number.MAX_SAFE_INTEGER}
                     style={{ width: '100%' }}
                   />
                 </FormItemWithUnlimited>
               </Col>
+              {baiClient.supports('max-concurrent-sftp-sessions') ? (
+                <Col
+                  xs={{ flex: '50%' }}
+                  md={{ flex: '33.3%' }}
+                  style={{ alignSelf: 'end' }}
+                >
+                  <FormItemWithUnlimited
+                    name={'max_concurrent_sftp_sessions'}
+                    unlimitedValue={0}
+                    label={t('resourcePolicy.MaxConcurrentSFTPSessions')}
+                    style={{ margin: 0, width: '100%' }}
+                  >
+                    <InputNumber
+                      min={0}
+                      max={SIGNED_32BIT_MAX_INT}
+                      style={{ width: '100%' }}
+                    />
+                  </FormItemWithUnlimited>
+                </Col>
+              ) : null}
             </Row>
           </Card>
         </Form.Item>
@@ -460,7 +519,7 @@ const KeypairResourcePolicySettingModal: React.FC<
           <Card>
             <Form.Item
               label={t('resourcePolicy.AllowedHosts')}
-              name="allowedVfolderHostNames"
+              name="allowed_vfolder_hosts"
             >
               <AllowedHostNamesSelect mode="multiple" />
             </Form.Item>

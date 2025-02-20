@@ -1093,7 +1093,9 @@
     "ExportCSV": "CSV'yi dışa aktar",
     "Tools": "Aletler",
     "MemorySizeExceedsLimit": "Bellek boyutu 300 PiB'den az olmalıdır",
-    "MaxNetworkCount": "Maksimum Ağ Sayısı"
+    "MaxNetworkCount": "Maksimum Ağ Sayısı",
+    "MaxPendingSessionCount": "Maksimum Bekleyen Oturum Sayısı",
+    "MaxConcurrentSFTPSessions": "Maksimum Eşzamanlı SFTP Oturumu Sayısı"
   },
   "registry": {
     "Hostname": "ana bilgisayar adı",

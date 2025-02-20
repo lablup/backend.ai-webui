@@ -1094,7 +1094,9 @@
     "ExportCSV": "εξαγωγή CSV",
     "Tools": "Εργαλεία",
     "MemorySizeExceedsLimit": "Το μέγεθος της μνήμης πρέπει να είναι μικρότερο από 300 PiB",
-    "MaxNetworkCount": "Μέγιστος αριθμός δικτύου"
+    "MaxNetworkCount": "Μέγιστος αριθμός δικτύου",
+    "MaxPendingSessionCount": "Μέγιστος αριθμός συνεδριών σε εκκρεμότητα",
+    "MaxConcurrentSFTPSessions": "Μέγιστες ταυτόχρονες συνεδρίες SFTP"
   },
   "registry": {
     "Hostname": "Όνομα κεντρικού υπολογιστή",

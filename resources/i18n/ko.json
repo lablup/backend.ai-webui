@@ -1213,7 +1213,9 @@
     "ExportCSV": "CSV로 내보내기",
     "Tools": "도구",
     "MemorySizeExceedsLimit": "메모리 크기는 300PiB 미만이어야 합니다.",
-    "MaxNetworkCount": "최대 네트워크 수"
+    "MaxNetworkCount": "최대 네트워크 수",
+    "MaxPendingSessionCount": "최대 대기 세션 수",
+    "MaxConcurrentSFTPSessions": "최대 동시 SFTP 세션"
   },
   "registry": {
     "Hostname": "호스트명",
