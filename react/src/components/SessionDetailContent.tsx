@@ -108,6 +108,7 @@ const SessionDetailContent: React.FC<{
             ...SessionUsageMonitorFragment
             ...ContainerCommitModalFragment
             ...SessionIdleChecksNodeFragment
+            ...AppLauncherModalFragment
           }
           legacy_session: compute_session(id: $uuid) {
             image

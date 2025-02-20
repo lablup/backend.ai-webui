@@ -478,6 +478,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const appServicesOption: Record<string, unknown> =
       'app-services-option' in controls ? controls['app-services-option'] : {};
     const servicePorts = controls['service-ports'];
+    //TODO: 이부분은 어떤 코드인지..?
     if ('runtime' in controls) {
       const param: Record<string, unknown> = {};
       param['mode'] = mode;
