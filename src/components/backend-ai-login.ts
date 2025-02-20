@@ -447,6 +447,94 @@ export default class BackendAILogin extends BackendAIPage {
         #loading-message {
           margin-left: 10px;
         }
+
+        .margin-0-25px {
+          margin: 0 25px;
+        }
+
+        .font-weight-700 {
+          font-weight: 700;
+        }
+
+        .min-height-40px {
+          min-height: 40px;
+        }
+
+        .padding-bottom-10px {
+          padding-bottom: 10px;
+        }
+
+        .justify-content-space-between {
+          justify-content: space-between;
+        }
+
+        .flex-1 {
+          flex: 1;
+        }
+
+        .white-space-normal {
+          white-space: normal;
+        }
+
+        .overflow-wrap-break-word {
+          overflow-wrap: break-word;
+        }
+
+        .word-break-break-word {
+          word-break: break-word;
+        }
+
+        .margin-right-10px {
+          margin-right: 10px;
+        }
+
+        .text-align-right {
+          text-align: right;
+        }
+
+        .padding-top-10px {
+          padding-top: 10px;
+        }
+
+        .width-365px {
+          width: 365px;
+        }
+
+        .margin-top-4px {
+          margin-top: 4px;
+        }
+
+        .display-none {
+          display: none !important;
+        }
+
+        .display-flex {
+          display: flex !important;
+        }
+
+        .padding-1em {
+          padding: 1em;
+        }
+
+        .font-size-14px {
+          font-size: 14px;
+        }
+
+        .margin-10px {
+          margin: 10px;
+        }
+
+        .text-align-center {
+          text-align: center;
+        }
+
+        .padding-top-15px {
+          padding-top: 15px;
+        }
+
+        .align-items-flex-end {
+          align-items: flex-end;
+        }
       `,
     ];
   }
@@ -657,8 +745,10 @@ export default class BackendAILogin extends BackendAIPage {
       value: generalConfig?.apiEndpoint,
     } as ConfigValueObject) as string;
     if (this.api_endpoint === '') {
-      this.apiEndpointContainer.style.display = 'flex';
-      this.apiEndpointHumanizedInput.style.display = 'none';
+      this.apiEndpointContainer.classList.toggle('display-none');
+      this.apiEndpointContainer.classList.add('display-flex');
+      this.apiEndpointContainer.classList.toggle('display-flex');
+      this.apiEndpointHumanizedInput.classList.add('display-none');
     } else {
       // API endpoint text value with additional styles
       const apiEndpointText = this._getConfigValueByExists(generalConfig, {
@@ -667,8 +757,10 @@ export default class BackendAILogin extends BackendAIPage {
         value: generalConfig?.apiEndpointText,
       } as ConfigValueObject) as string;
       if (apiEndpointText === '') {
-        this.apiEndpointContainer.style.display = 'flex';
-        this.apiEndpointHumanizedInput.style.display = 'none';
+        this.apiEndpointContainer.classList.toggle('display-none');
+        this.apiEndpointContainer.classList.add('display-flex');
+        this.apiEndpointContainer.classList.toggle('display-flex');
+        this.apiEndpointHumanizedInput.classList.add('display-none');
         (
           this.shadowRoot?.querySelector('#endpoint-button') as IconButton
         ).disabled = true;
@@ -2099,11 +2191,10 @@ export default class BackendAILogin extends BackendAIPage {
         </div>
         <div slot="content" class="login-panel intro centered">
           <div
-            class="horizontal center layout"
-            style="margin: 0 25px;font-weight:700;min-height:40px; padding-bottom:10px; justify-content: space-between;"
+            class="horizontal center layout margin-0-25px font-weight-700 min-height-40px padding-bottom-10px justify-content-space-between"
           >
             <h3
-              style="flex: 1; white-space: normal; overflow-wrap: break-word; word-break: break-word; margin-right: 10px;"
+              class="flex-1 white-space-normal overflow-wrap-break-word word-break-break-word margin-right-10px"
             >
               ${this.connection_mode === 'SESSION'
                 ? _t('login.LoginWithE-mailOrUsername')
@@ -2113,8 +2204,7 @@ export default class BackendAILogin extends BackendAIPage {
               ? html`
                   <div
                     id="change-signin-area"
-                    class="vertical center-justified layout"
-                    style="flex: 1; text-align: right;"
+                    class="vertical center-justified layout flex-1 text-align-right"
                   >
                     <div id="change-signin-message">
                       ${_t('login.LoginAnotherWay')}
@@ -2182,13 +2272,15 @@ export default class BackendAILogin extends BackendAIPage {
                     off
                     onIcon="visibility"
                     offIcon="visibility_off"
-                    style="align-self:center;"
+                    class="align-self-center"
                     @click="${(e) => this._togglePasswordVisibility(e.target)}"
                   ></mwc-icon-button-toggle>
                 </div>
                 <div
-                  class="horizontal flex layout login-input-without-trailing-icon"
-                  style="display: ${this.otpRequired ? 'flex' : 'none'};"
+                  class="horizontal flex layout login-input-without-trailing-icon ${this
+                    .otpRequired
+                    ? 'display-flex'
+                    : 'display-none'}"
                 >
                   <mwc-icon-button
                     icon="pin"
@@ -2249,9 +2341,8 @@ export default class BackendAILogin extends BackendAIPage {
             <form>
               <fieldset class="login-input">
                 <div
-                  class="horizontal layout"
+                  class="horizontal layout display-none"
                   id="id_api_endpoint_container"
-                  style="display:none;"
                 >
                   <mwc-icon-button
                     id="endpoint-button"
@@ -2276,8 +2367,7 @@ export default class BackendAILogin extends BackendAIPage {
                       (item) => html`
                         <mwc-list-item value="${item}">
                           <div
-                            class="horizontal justified center flex layout"
-                            style="width:365px;"
+                            class="horizontal justified center flex layout width-365px"
                           >
                             <span>${item}</span>
                             <span class="flex"></span>
@@ -2305,8 +2395,7 @@ export default class BackendAILogin extends BackendAIPage {
                   ></mwc-textfield>
                   <mwc-icon-button
                     icon="info"
-                    class="info"
-                    style="margin-top:4px;"
+                    class="info margin-top-4px"
                     @click="${(e) => this._showEndpointDescription(e)}"
                   ></mwc-icon-button>
                 </div>
@@ -2315,7 +2404,7 @@ export default class BackendAILogin extends BackendAIPage {
                   type="text"
                   id="id_api_endpoint_humanized"
                   maxLength="2048"
-                  style="display:none;"
+                  class="display-none"
                   label="${_t('login.Endpoint')}"
                   icon="cloud"
                   value=""
@@ -2325,7 +2414,7 @@ export default class BackendAILogin extends BackendAIPage {
                   fullwidth
                   id="login-button"
                   icon="check"
-                  style="padding-top: 10px;"
+                  class="padding-top-10px"
                   label="${_t('login.Login')}"
                   @click="${() => this._login()}"
                 ></mwc-button>
@@ -2354,7 +2443,7 @@ export default class BackendAILogin extends BackendAIPage {
                 <div
                   id="additional-action-area"
                   class="layout horizontal"
-                  style="align-items: flex-end;"
+                  class="align-items-flex-end"
                 >
                   ${this.signup_support
                     ? html`
@@ -2427,7 +2516,7 @@ export default class BackendAILogin extends BackendAIPage {
         <span slot="title">${_t('login.SendChangePasswordEmail')}</span>
         <div slot="content">
           <section>
-            <div style="padding:1em">
+            <div class="padding-1em">
               ${_t('login.DescChangePasswordEmail')}
             </div>
           </section>
@@ -2467,7 +2556,7 @@ export default class BackendAILogin extends BackendAIPage {
                     <span slot="title" id="work-title">${this.blockType}</span>
                   `
                 : html``}
-              <div slot="content" style="text-align:center;padding-top:15px;">
+              <div slot="content" class="text-align-center padding-top-15px;">
                 ${this.blockMessage}
               </div>
               <div
@@ -2486,14 +2575,8 @@ export default class BackendAILogin extends BackendAIPage {
       </backend-ai-dialog>
       <backend-ai-dialog id="help-description" fixed backdrop>
         <span slot="title">${this._helpDescriptionTitle}</span>
-        <div
-          slot="content"
-          class="horizontal layout center"
-          style="margin:10px;"
-        >
-          <div style="font-size:14px;">
-            ${unsafeHTML(this._helpDescription)}
-          </div>
+        <div slot="content" class="horizontal layout center margin-10px">
+          <div class="font-size-14px">${unsafeHTML(this._helpDescription)}</div>
         </div>
       </backend-ai-dialog>
       <backend-ai-signup id="signup-dialog"></backend-ai-signup>
