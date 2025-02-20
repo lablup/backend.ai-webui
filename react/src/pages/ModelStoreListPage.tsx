@@ -202,7 +202,7 @@ const ModelStoreListPage: React.FC = () => {
       </Flex>
       <List
         className={styles.cardList}
-        grid={{ gutter: 16, xs: 1, sm: 2, md: 2, lg: 3, xl: 4, xxl: 5 }}
+        grid={{ gutter: 16, column: 2 }}
         dataSource={model_cards?.edges
           ?.map((edge) => edge?.node)
           .filter((info) => {
@@ -262,57 +262,69 @@ const ModelStoreListPage: React.FC = () => {
               style={{
                 height: '100%',
               }}
-              size="small"
-            >
-              <Flex direction="row" wrap="wrap" gap={'xs'}>
-                {item?.description && (
-                  <Typography.Paragraph
-                    ellipsis={{ rows: 3, expandable: false }}
-                  >
-                    <TextHighlighter keyword={search}>
-                      {item?.description}
-                    </TextHighlighter>
-                  </Typography.Paragraph>
-                )}
-                {item?.category && (
-                  <Tag bordered={false}>
-                    <TextHighlighter keyword={search}>
-                      {item?.category}
-                    </TextHighlighter>
-                  </Tag>
-                )}
-                {item?.task && (
-                  <Tag bordered={false} color="success">
-                    <TextHighlighter keyword={search}>
-                      {item?.task}
-                    </TextHighlighter>
-                  </Tag>
-                )}
-                {item?.label &&
-                  _.map(item?.label, (label) => (
-                    <Tag key={label} bordered={false} color="blue">
+              children={
+                <Flex direction="column" align="stretch" gap="xs">
+                  <Flex direction="row" align="start" gap="xs">
+                    <img
+                      alt="example"
+                      src={`/resources/images/model-player/${_.replace(item?.name as string, ' ', '-')}.jpeg`}
+                      style={{
+                        marginRight: token.marginXS,
+                        width: 200,
+                        height: 200,
+                      }}
+                    />
+                    <Typography.Paragraph
+                      ellipsis={{ rows: 3, expandable: false }}
+                      style={{ flex: 1 }}
+                    >
                       <TextHighlighter keyword={search}>
-                        {label}
+                        {item?.description}
                       </TextHighlighter>
-                    </Tag>
-                  ))}
-                {item?.error_msg && (
-                  <Alert
-                    style={{ width: '100%' }}
-                    message={
-                      <Typography.Paragraph
-                        ellipsis={{ rows: 6 }}
-                        style={{ marginBottom: 0 }}
-                      >
-                        {item.error_msg}
-                      </Typography.Paragraph>
-                    }
-                    type="error"
-                    showIcon
-                  />
-                )}
-              </Flex>
-            </Card>
+                    </Typography.Paragraph>
+                  </Flex>
+                  <Flex direction="row" wrap="wrap" gap={'xs'}>
+                    {item?.category && (
+                      <Tag bordered={false}>
+                        <TextHighlighter keyword={search}>
+                          {item?.category}
+                        </TextHighlighter>
+                      </Tag>
+                    )}
+                    {item?.task && (
+                      <Tag bordered={false} color="success">
+                        <TextHighlighter keyword={search}>
+                          {item?.task}
+                        </TextHighlighter>
+                      </Tag>
+                    )}
+                    {item?.label &&
+                      _.map(item?.label, (label) => (
+                        <Tag key={label} bordered={false} color="blue">
+                          <TextHighlighter keyword={search}>
+                            {label}
+                          </TextHighlighter>
+                        </Tag>
+                      ))}
+                    {item?.error_msg && (
+                      <Alert
+                        style={{ width: '100%' }}
+                        message={
+                          <Typography.Paragraph
+                            ellipsis={{ rows: 6 }}
+                            style={{ marginBottom: 0 }}
+                          >
+                            {item.error_msg}
+                          </Typography.Paragraph>
+                        }
+                        type="error"
+                        showIcon
+                      />
+                    )}
+                  </Flex>
+                </Flex>
+              }
+            ></Card>
           </List.Item>
         )}
       />
