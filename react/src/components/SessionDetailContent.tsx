@@ -54,6 +54,8 @@ const SessionDetailContent: React.FC<{
   const [openIdleCheckDescriptionModal, setOpenIdleCheckDescriptionModal] =
     useState<boolean>(false);
 
+  console.log(id);
+
   // TODO: remove and refactor this waterfall request after v24.12.0
   // get the project id of the session for <= v24.12.0.
   const { session_for_project_id } =
@@ -108,6 +110,7 @@ const SessionDetailContent: React.FC<{
             ...SessionUsageMonitorFragment
             ...ContainerCommitModalFragment
             ...SessionIdleChecksNodeFragment
+            ...AppLauncherModalFragment
           }
           legacy_session: compute_session(id: $uuid) {
             image
