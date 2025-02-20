@@ -448,5 +448,6 @@ type BackendAIConfig = {
   enableExtendLoginSession: boolean;
   showNonInstalledImages: boolean;
   showKernelList: boolean;
+  debug: boolean;
   [key: string]: any;
 };
