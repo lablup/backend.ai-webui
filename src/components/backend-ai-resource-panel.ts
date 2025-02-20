@@ -789,7 +789,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                           this.cuda_fgpu_total,
                                           2,
                                         )} CUDA FGPUs ${_t(
-                                          'summary.reserved',
+                                          'summary.Reserved',
                                         )}."
                                       ></lablup-progress-bar>
                                       <lablup-progress-bar
