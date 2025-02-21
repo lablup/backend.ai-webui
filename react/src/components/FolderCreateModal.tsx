@@ -7,7 +7,17 @@ import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import ProjectSelect from './ProjectSelect';
 import StorageSelect from './StorageSelect';
-import { App, Button, Divider, Form, Input, Radio, Switch, theme } from 'antd';
+import {
+  App,
+  Button,
+  Divider,
+  Form,
+  Input,
+  Radio,
+  Skeleton,
+  Switch,
+  theme,
+} from 'antd';
 import { createStyles } from 'antd-style';
 import { FormInstance } from 'antd/lib';
 import _ from 'lodash';
@@ -216,14 +226,16 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         <Divider />
 
         <Form.Item label={t('data.Host')} name={'host'}>
-          <StorageSelect
-            onChange={(value) => {
-              formRef.current?.setFieldValue('host', value);
-            }}
-            showUsageStatus
-            autoSelectType="usage"
-            showSearch
-          />
+          <Suspense fallback={<Skeleton.Input active />}>
+            <StorageSelect
+              onChange={(value) => {
+                formRef.current?.setFieldValue('host', value);
+              }}
+              showUsageStatus
+              autoSelectType="usage"
+              showSearch
+            />
+          </Suspense>
         </Form.Item>
         <Divider />
 

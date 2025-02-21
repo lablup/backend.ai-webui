@@ -244,7 +244,7 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
   };
 
   return (
-    <Flex direction="column" gap={'xs'} style={{ flex: 1 }} align="start">
+    <Flex direction="column" gap={'xs'} align="start">
       <Space.Compact>
         <Select
           popupMatchSelectWidth={false}

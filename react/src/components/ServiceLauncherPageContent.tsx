@@ -280,9 +280,12 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
 
   const mutationToCreateService = useTanMutation<
     unknown,
-    {
-      message?: string;
-    },
+    | {
+        message?: string;
+        title?: string;
+        description?: string;
+      }
+    | undefined,
     ServiceLauncherFormValue
   >({
     mutationFn: (values) => {
@@ -582,7 +585,6 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                 webuiNavigate(`/serving/${endpoint?.endpoint_id}`);
               },
               onError: (error) => {
-                console.log(error);
                 message.error(t('modelService.FailedToUpdateService'));
               },
             });

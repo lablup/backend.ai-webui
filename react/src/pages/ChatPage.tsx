@@ -1,6 +1,7 @@
-import Flex from '../Flex';
-import EndpointLLMChatCard from './EndpointLLMChatCard';
-import { LLMPlaygroundPageQuery } from './__generated__/LLMPlaygroundPageQuery.graphql';
+import BAICard from '../components/BAICard';
+import EndpointLLMChatCard from '../components/Chat/EndpointLLMChatCard';
+import Flex from '../components/Flex';
+import { ChatPageQuery } from './__generated__/ChatPageQuery.graphql';
 import { PlusOutlined } from '@ant-design/icons';
 import { useDynamicList } from 'ahooks';
 import { Button, Card, Skeleton, Switch, theme, Typography } from 'antd';
@@ -11,13 +12,13 @@ import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 import { StringParam, useQueryParam } from 'use-query-params';
 
-interface LLMPlaygroundPageProps {}
+interface ChatPageProps {}
 
-const LLMPlaygroundPage: React.FC<LLMPlaygroundPageProps> = ({ ...props }) => {
+const ChatPage: React.FC<ChatPageProps> = ({ ...props }) => {
   const { token } = theme.useToken();
   const { t } = useTranslation();
   // Set the initial list to have two items
-  const { list, remove, getKey, push } = useDynamicList(['0', '1']);
+  const { list, remove, getKey, push } = useDynamicList(['0']);
 
   const [isSynchronous, setSynchronous] = useState(false);
 
@@ -25,12 +26,9 @@ const LLMPlaygroundPage: React.FC<LLMPlaygroundPageProps> = ({ ...props }) => {
   const [modelId] = useQueryParam('modelId', StringParam);
   const isEmptyEndpointId = !endpointId;
 
-  const { endpoint, endpoint_list } = useLazyLoadQuery<LLMPlaygroundPageQuery>(
+  const { endpoint, endpoint_list } = useLazyLoadQuery<ChatPageQuery>(
     graphql`
-      query LLMPlaygroundPageQuery(
-        $endpointId: UUID!
-        $isEmptyEndpointId: Boolean!
-      ) {
+      query ChatPageQuery($endpointId: UUID!, $isEmptyEndpointId: Boolean!) {
         endpoint(endpoint_id: $endpointId)
           @skipOnClient(if: $isEmptyEndpointId) {
           ...EndpointLLMChatCard_endpoint
@@ -48,49 +46,47 @@ const LLMPlaygroundPage: React.FC<LLMPlaygroundPageProps> = ({ ...props }) => {
     },
   );
   return (
-    <>
-      <Flex direction="column" align="stretch">
-        <Flex
-          direction="row"
-          justify="between"
-          wrap="wrap"
-          gap={'xs'}
-          style={{
-            padding: token.paddingContentVertical,
-            paddingLeft: token.paddingContentHorizontalSM,
-            paddingRight: token.paddingContentHorizontalSM,
-          }}
-        >
-          <Flex direction="column" align="start">
-            <Typography.Text style={{ margin: 0, padding: 0 }}>
-              LLM Playground
+    <BAICard
+      title={t('webui.menu.Chat')}
+      styles={{
+        body: {
+          padding: 0,
+          paddingTop: 1,
+          overflow: 'hidden',
+        },
+      }}
+      extra={
+        <Flex direction="row" gap={'xs'} wrap="wrap" style={{ flexShrink: 1 }}>
+          <Flex gap={'xs'}>
+            <Typography.Text type="secondary">
+              {t('chatui.SyncInput')}
             </Typography.Text>
-          </Flex>
-          <Flex
-            direction="row"
-            gap={'xs'}
-            wrap="wrap"
-            style={{ flexShrink: 1 }}
-          >
-            <Flex gap={'xs'}>
-              <Typography.Text type="secondary">
-                {t('chatui.SyncInput')}
-              </Typography.Text>
-              <Switch
-                value={isSynchronous}
-                onClick={(v) => {
-                  setSynchronous(v);
-                }}
-              />
-              <Button
-                onClick={() => {
-                  push(new Date().toString());
-                }}
-                icon={<PlusOutlined />}
-              />
-            </Flex>
+            <Switch
+              value={isSynchronous}
+              onClick={(v) => {
+                setSynchronous(v);
+              }}
+            />
+            <Button
+              onClick={() => {
+                push(new Date().toString());
+              }}
+              icon={<PlusOutlined />}
+            />
           </Flex>
         </Flex>
+      }
+    >
+      <Flex
+        direction="column"
+        align="stretch"
+        gap={'xs'}
+        style={{
+          padding: token.paddingContentVertical,
+          paddingLeft: token.paddingContentHorizontalSM,
+          paddingRight: token.paddingContentHorizontalSM,
+        }}
+      >
         <Flex
           gap={'xs'}
           direction="row"
@@ -139,8 +135,8 @@ const LLMPlaygroundPage: React.FC<LLMPlaygroundPageProps> = ({ ...props }) => {
           ))}
         </Flex>
       </Flex>
-    </>
+    </BAICard>
   );
 };
 
-export default LLMPlaygroundPage;
+export default ChatPage;
