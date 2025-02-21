@@ -1,9 +1,11 @@
-import BAIFetchKeyButton from '../components/BAIFetchKeyButton';
 import BAICard from '../components/BAICard';
+import BAIFetchKeyButton from '../components/BAIFetchKeyButton';
 import BAILink from '../components/BAILink';
 import BAIPropertyFilter, {
   mergeFilterValues,
 } from '../components/BAIPropertyFilter';
+import BAIRadioGroup from '../components/BAIRadioGroup';
+import BAITabs from '../components/BAITabs';
 import TerminateSessionModal from '../components/ComputeSessionNodeItems/TerminateSessionModal';
 import Flex from '../components/Flex';
 import SessionNodes from '../components/SessionNodes';
@@ -29,8 +31,6 @@ import { useDeferredValue, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
-import BAITabs from '../components/BAITabs';
-import BAIRadioGroup from '../components/BAIRadioGroup';
 
 type TypeFilterType = 'all' | 'interactive' | 'batch' | 'inference' | 'system';
 type SessionNode = NonNullableNodeOnEdges<
@@ -84,7 +84,7 @@ const ComputeSessionListPage = () => {
     return status === 'TERMINATED' || status === 'CANCELLED';
   };
 
-  const [fetchKey, updateFetchKey] = useUpdatableState('first');
+  const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
 
   const queryVariables: ComputeSessionListPageQuery$variables = useMemo(
     () => ({
@@ -178,8 +178,15 @@ const ComputeSessionListPage = () => {
       `,
       deferredQueryVariables,
       {
-        fetchPolicy: 'network-only',
-        fetchKey: deferredFetchKey,
+        // fetchPolicy: 'network-only',
+        // fetchKey: deferredFetchKey,
+
+        fetchPolicy:
+          deferredFetchKey === 'initial-fetch'
+            ? 'store-and-network'
+            : 'network-only',
+        fetchKey:
+          deferredFetchKey === 'initial-fetch' ? undefined : deferredFetchKey,
       },
     );
 
