@@ -232,11 +232,20 @@ const router = createBrowserRouter([
         children: [
           {
             path: '',
-            element: (
-              <BAIErrorBoundary>
-                <ServingPage />
-              </BAIErrorBoundary>
-            ),
+            Component: () => {
+              const { t } = useTranslation();
+              return (
+                <BAIErrorBoundary>
+                  <Suspense
+                    fallback={
+                      <BAICard title={t('webui.menu.Serving')} loading />
+                    }
+                  >
+                    <ServingPage />
+                  </Suspense>
+                </BAIErrorBoundary>
+              );
+            },
           },
           {
             path: '/serving/:serviceId',
