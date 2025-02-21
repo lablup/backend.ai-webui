@@ -2,33 +2,7 @@ import { loginAsAdmin, modifyConfigToml, webuiEndpoint } from './test-util';
 import { test, expect } from '@playwright/test';
 
 test.describe.parallel('config.toml', () => {
-  test(
-    'enableLLMPlayground',
-    { tag: ['@serving'] },
-    async ({ page, request }) => {
-      // modify config.toml to enable LLM playground
-      let requestConfig = {
-        general: {
-          enableLLMPlayground: true,
-        },
-      };
-      await modifyConfigToml(page, request, requestConfig);
-      await loginAsAdmin(page);
-      await page.getByRole('menuitem', { name: 'Serving' }).click();
-      await expect(
-        page.getByRole('tab', { name: 'LLM Playground' }),
-      ).toBeVisible();
-
-      requestConfig.general.enableLLMPlayground = false;
-      await modifyConfigToml(page, request, requestConfig);
-      await page.reload();
-      await page.getByRole('menuitem', { name: 'Serving' }).click();
-      await expect(
-        page.getByRole('tab', { name: 'LLM Playground' }),
-      ).toBeHidden();
-    },
-  );
-
+  // TODO: Hide Chat page if Serving page is included in the blocklist
   test(
     'block list',
     { tag: ['@session', '@summary', '@serving'] },

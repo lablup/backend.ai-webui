@@ -52,7 +52,7 @@ test.describe('Create user', () => {
     // Create a User
     const emailInput = await page
       .locator('#new-user-dialog label')
-      .filter({ hasText: 'E-Mail' })
+      .filter({ hasText: 'Email' })
       .locator('input');
     const passwordInput = await page
       .locator('#new-user-dialog label')
@@ -97,7 +97,7 @@ test.describe('Delete user', () => {
     //   await loginAsCreatedAccount(page, EMAIL, PASSWORD),
     // ).toThrow();
     await logout(page);
-    await page.getByLabel('E-mail or Username').fill(EMAIL);
+    await page.getByLabel('Email or Username').fill(EMAIL);
     await page.getByRole('textbox', { name: 'Password' }).fill(PASSWORD);
     await page.getByRole('textbox', { name: 'Endpoint' }).fill(webuiEndpoint);
     await page.getByLabel('Login', { exact: true }).click();
@@ -190,7 +190,7 @@ test.describe('Update user', () => {
     //   await loginAsCreatedAccount(page, EMAIL, PASSWORD),
     // ).toThrow();
     await logout(page);
-    await page.getByLabel('E-mail or Username').fill(EMAIL);
+    await page.getByLabel('Email or Username').fill(EMAIL);
     await page.getByRole('textbox', { name: 'Password' }).fill(NEW_PASSWORD);
     await page.getByRole('textbox', { name: 'Endpoint' }).fill(webuiEndpoint);
     await page.getByLabel('Login', { exact: true }).click();
