@@ -110,14 +110,14 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       key: 'serving',
     },
     {
-      label: <WebUILink to="/import">{t('webui.menu.Import&Run')}</WebUILink>,
-      icon: <PlayIcon style={{ color: token.colorPrimary }} />,
-      key: 'import',
-    },
-    {
       label: <WebUILink to="/chat">{t('webui.menu.Chat')}</WebUILink>,
       icon: <MessageOutlined style={{ color: token.colorPrimary }} />,
       key: 'chat',
+    },
+    {
+      label: <WebUILink to="/import">{t('webui.menu.Import&Run')}</WebUILink>,
+      icon: <PlayIcon style={{ color: token.colorPrimary }} />,
+      key: 'import',
     },
     {
       label: <WebUILink to="/data">{t('webui.menu.Data&Storage')}</WebUILink>,
