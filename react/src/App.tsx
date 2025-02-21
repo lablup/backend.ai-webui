@@ -362,6 +362,7 @@ const router = createBrowserRouter([
             <ConfigurationsPage />
           </BAIErrorBoundary>
         ),
+        handle: { labelKey: 'webui.menu.Configurations' },
       },
       {
         path: '/maintenance',
