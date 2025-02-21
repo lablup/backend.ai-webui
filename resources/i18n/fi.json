@@ -225,7 +225,7 @@
     "NoStorageDescriptionFound": "Ei kuvausta.",
     "NumberOfFolders": "Kansioiden määrä",
     "Permission": "Lupa",
-    "Pipeline": "Putkiston kansiot",
+    "Pipeline": "Putkilinja",
     "Project": "Hanke",
     "ProjectFolder": "Projektikansio",
     "QuotaPerStorageVolume": "Kiintiö tallennustilavuutta kohti",
@@ -350,7 +350,8 @@
       "FolderDeletedForever": "Kansio {{ folderName }} on poistettu pysyvästi.",
       "FolderCloneFailed": "Kansiota ei onnistuttu kloonaamaan.",
       "FolderClonePending": "Kansion kloonaus on käynnissä.",
-      "MoveToTrashDescription": "Haluatko varmasti siirtää \"{{ folderName }}\" roskakoriin?"
+      "MoveToTrashDescription": "Haluatko varmasti siirtää \"{{ folderName }}\" roskakoriin?",
+      "MountPermission": "Kiinnityslupa"
     },
     "invitation": {
       "FolderSharingNotAvailableToUser": "Kansioiden jakaminen ei ole käytettävissä pyydetyille käyttäjille:",
@@ -417,7 +418,15 @@
     "AllowsLettersNumbersAnd-_Dot": "Sallii kirjaimet, numerot ja -_.",
     "CreatedFolders": "Luotuja kansioita",
     "ProjectFolders": "Projektikansiot",
-    "InvitedFolders": "Kutsutut kansiot"
+    "InvitedFolders": "Kutsutut kansiot",
+    "ReadOnly": "Vain lue",
+    "ReadWrite": "Lue ja kirjoita",
+    "CreateFolder": "Luo kansio",
+    "Deleted": "Poistettu",
+    "All": "Kaikki",
+    "General": "Yleinen",
+    "AutoMount": "Automaattinen kiinnitys",
+    "CreateFolderAndUploadFiles": "Luo kansio ja lataa tiedostoja"
   },
   "dialog": {
     "warning": {

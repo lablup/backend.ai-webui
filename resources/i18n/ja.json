@@ -285,7 +285,8 @@
       "MovedToTrashBin": "{{ folderName }} フォルダーはゴミ箱に移動されました。",
       "FolderCloneFailed": "フォルダのクローンに失敗しました。",
       "FolderClonePending": "フォルダのクローンを作成中です。",
-      "MoveToTrashDescription": "\"{{ folderName }}\" をゴミ箱に移動してもよろしいですか?"
+      "MoveToTrashDescription": "\"{{ folderName }}\" をゴミ箱に移動してもよろしいですか?",
+      "MountPermission": "マウント許可"
     },
     "explorer": {
       "Delete": "削除...",
@@ -373,7 +374,7 @@
     "QuotaPerStorageVolume": "ストレージボリューム別利用可能量",
     "HostDetails": "選択したストレージホストの空き容量情報を表示します。",
     "Used": "使用済み",
-    "Pipeline": "パイプラインフォルダ",
+    "Pipeline": "パイプライン",
     "DialogDataFolder": "FastTrackでパイプライン作成時に自動的に生成されるパイプライン専用フォルダ。",
     "DialogModelFolder": "モデルを選択して実行したり、モデルを管理することができます。",
     "SearchByName": "名前で検索",
@@ -418,7 +419,15 @@
     "AllowsLettersNumbersAnd-_Dot": "文字、数字、および-_を許可します。",
     "CreatedFolders": "作成されたフォルダー",
     "ProjectFolders": "プロジェクトフォルダー",
-    "InvitedFolders": "招待されたフォルダー"
+    "InvitedFolders": "招待されたフォルダー",
+    "ReadOnly": "読むだけです",
+    "ReadWrite": "読んで書きます",
+    "CreateFolder": "フォルダーを作成します",
+    "Deleted": "削除されました",
+    "All": "全て",
+    "General": "一般的な",
+    "AutoMount": "オートマウント",
+    "CreateFolderAndUploadFiles": "フォルダーを作成し、ファイルをアップロードします"
   },
   "dialog": {
     "warning": {

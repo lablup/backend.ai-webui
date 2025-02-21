@@ -285,7 +285,8 @@
       "MoveToTrash": "Pindah ke sampah",
       "FolderCloneFailed": "Gagal mengkloning folder.",
       "FolderClonePending": "Kloning folder sedang berlangsung.",
-      "MoveToTrashDescription": "Yakin ingin memindahkan \"{{ folderName }}\" ke sampah?"
+      "MoveToTrashDescription": "Yakin ingin memindahkan \"{{ folderName }}\" ke sampah?",
+      "MountPermission": "MUNGGAL Izin"
     },
     "explorer": {
       "Delete": "Menghapus...",
@@ -374,7 +375,7 @@
     "QuotaPerStorageVolume": "Kuota per volume penyimpanan",
     "HostDetails": "Menampilkan informasi kuota untuk host penyimpanan yang dipilih.",
     "Used": "Digunakan",
-    "Pipeline": "Folder Pipa",
+    "Pipeline": "Pipa",
     "DialogDataFolder": "Folder khusus pipeline yang secara otomatis dibuat saat membuat pipeline di FastTrack.",
     "SearchByName": "Cari berdasarkan nama",
     "ModelStore": "Toko Model",
@@ -418,7 +419,15 @@
     "AllowsLettersNumbersAnd-_Dot": "Mengizinkan huruf, angka, dan -_.",
     "CreatedFolders": "Folder yang dibuat",
     "ProjectFolders": "Folder Proyek",
-    "InvitedFolders": "Folder yang diundang"
+    "InvitedFolders": "Folder yang diundang",
+    "ReadOnly": "Baca saja",
+    "ReadWrite": "Baca dan tulis",
+    "CreateFolder": "Buat folder",
+    "Deleted": "Dihapus",
+    "All": "Semua",
+    "General": "Umum",
+    "AutoMount": "Pemasangan otomatis",
+    "CreateFolderAndUploadFiles": "Buat folder dan unggah file"
   },
   "dialog": {
     "warning": {

@@ -296,7 +296,8 @@
       "MovedToTrashBin": "{{ folderName }} 폴더가 휴지통으로 이동되었습니다.",
       "FolderCloneFailed": "폴더 복제에 실패했습니다.",
       "FolderClonePending": "폴더 복제가 진행중입니다.",
-      "MoveToTrashDescription": "\"{{ folderName }}\"을(를) 휴지통으로 이동하시겠습니까?"
+      "MoveToTrashDescription": "\"{{ folderName }}\"을(를) 휴지통으로 이동하시겠습니까?",
+      "MountPermission": "마운트 권한"
     },
     "explorer": {
       "Delete": "삭제",
@@ -377,7 +378,7 @@
     "Limit": "제한",
     "HostDetails": "선택한 스토리지 호스트의 가용량 정보를 보여줍니다.",
     "ProjectFolder": "프로젝트 폴더",
-    "Pipeline": "파이프라인 폴더",
+    "Pipeline": "파이프라인",
     "DialogDataFolder": "FastTrack에서 파이프라인 생성 시 자동으로 생성되는 파이프라인 전용 폴더.",
     "ModelStore": "모델 스토어",
     "New": "새로운",
@@ -420,7 +421,15 @@
     "AllowsLettersNumbersAnd-_Dot": "문자, 숫자 및 -_. 만 허용됩니다.",
     "CreatedFolders": "생성된 폴더",
     "ProjectFolders": "프로젝트 폴더",
-    "InvitedFolders": "초대된 폴더"
+    "InvitedFolders": "초대된 폴더",
+    "ReadOnly": "읽기 전용",
+    "ReadWrite": "읽기 및 쓰기",
+    "CreateFolder": "폴더 생성",
+    "Deleted": "삭제됨",
+    "All": "전체",
+    "General": "일반",
+    "AutoMount": "자동 마운트",
+    "CreateFolderAndUploadFiles": "폴더 생성 및 파일 업로드"
   },
   "dialog": {
     "warning": {

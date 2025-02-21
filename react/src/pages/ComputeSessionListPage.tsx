@@ -267,7 +267,6 @@ const ComputeSessionListPage = () => {
                       />
                     )
                   }
-                  {/*  */}
                 </Flex>
               ),
             }),

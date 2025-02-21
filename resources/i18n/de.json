@@ -285,7 +285,8 @@
       "MovedToTrashBin": "Der Ordner {{ folderName }} wurde in den Papierkorb verschoben.",
       "FolderCloneFailed": "Der Ordner konnte nicht geklont werden.",
       "FolderClonePending": "Das Klonen des Ordners ist im Gange.",
-      "MoveToTrashDescription": "Sind Sie sicher, dass Sie \"{{ folderName }}\" in den Papierkorb verschieben möchten?"
+      "MoveToTrashDescription": "Sind Sie sicher, dass Sie \"{{ folderName }}\" in den Papierkorb verschieben möchten?",
+      "MountPermission": "Erlaubnis montieren"
     },
     "explorer": {
       "Delete": "Löschen...",
@@ -373,7 +374,7 @@
     "QuotaPerStorageVolume": "Kontingent pro Speichervolumen",
     "HostDetails": "Zeigt Kontingentinformationen für den ausgewählten Speicherhost an.",
     "Used": "Gebraucht",
-    "Pipeline": "Pipeline-Ordner",
+    "Pipeline": "Pipeline",
     "DialogDataFolder": "Pipeline-spezifische Ordner, die bei der Erstellung von Pipelines in FastTrack automatisch erstellt werden.",
     "DialogModelFolder": "Sie können Modelle bedienen und verwalten.",
     "SearchByName": "Suche mit Name",
@@ -418,7 +419,15 @@
     "AllowsLettersNumbersAnd-_Dot": "Erlaubt Buchstaben, Zahlen und -_.",
     "CreatedFolders": "Ordner erstellt",
     "ProjectFolders": "Projektordner",
-    "InvitedFolders": "Eingeladene Ordner"
+    "InvitedFolders": "Eingeladene Ordner",
+    "ReadOnly": "Nur lesen",
+    "ReadWrite": "Lesen und schreiben",
+    "CreateFolder": "Ordner erstellen",
+    "Deleted": "Gelöscht",
+    "All": "Alle",
+    "General": "Allgemein",
+    "AutoMount": "Autohalterung",
+    "CreateFolderAndUploadFiles": "Ordner erstellen und Dateien hochladen"
   },
   "dialog": {
     "warning": {

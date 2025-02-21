@@ -286,7 +286,8 @@
       "MovedToTrashBin": "{{ folderName }} 資料夾已移至垃圾箱。",
       "FolderCloneFailed": "克隆文件夹失败。",
       "FolderClonePending": "正在克隆文件夹。",
-      "MoveToTrashDescription": "您確定要將 \"{{ folderName }}\" 移至回收站嗎？"
+      "MoveToTrashDescription": "您確定要將 \"{{ folderName }}\" 移至回收站嗎？",
+      "MountPermission": "安裝許可"
     },
     "explorer": {
       "Delete": "刪除...",
@@ -374,7 +375,7 @@
       "Status": "现状",
       "Used": "用過的"
     },
-    "Pipeline": "管道文件夹",
+    "Pipeline": "管道",
     "DialogDataFolder": "在 FastTrack 中创建管道时自动创建的管道专用文件夹。",
     "DialogModelFolder": "您可以服务和管理模型。",
     "SearchByName": "按名稱搜尋",
@@ -419,7 +420,15 @@
     "AllowsLettersNumbersAnd-_Dot": "允許字母、數字和 -_。",
     "CreatedFolders": "創建的文件夾",
     "ProjectFolders": "項目文件夾",
-    "InvitedFolders": "邀請的文件夾"
+    "InvitedFolders": "邀請的文件夾",
+    "ReadOnly": "只讀",
+    "ReadWrite": "讀寫",
+    "CreateFolder": "創建文件夾",
+    "Deleted": "刪除",
+    "All": "全部",
+    "General": "一般的",
+    "AutoMount": "自動安裝",
+    "CreateFolderAndUploadFiles": "創建文件夾和上傳文件"
   },
   "dialog": {
     "warning": {

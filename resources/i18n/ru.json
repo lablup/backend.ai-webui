@@ -285,7 +285,8 @@
       "MovedToTrashBin": "Папка {{ folderName }} была перемещена в корзину.",
       "FolderCloneFailed": "Не удалось клонировать папку.",
       "FolderClonePending": "Выполняется клонирование папки.",
-      "MoveToTrashDescription": "Вы уверены, что хотите переместить папку \"{{ folderName }}\" в корзину?"
+      "MoveToTrashDescription": "Вы уверены, что хотите переместить папку \"{{ folderName }}\" в корзину?",
+      "MountPermission": "Разрешение на крепление"
     },
     "explorer": {
       "Delete": "Удалить...",
@@ -374,7 +375,7 @@
     "QuotaPerStorageVolume": "Квота на один том хранения",
     "HostDetails": "Отображает информацию о квотах для выбранного узла хранения.",
     "Used": "Используется",
-    "Pipeline": "Трубопроводные папки",
+    "Pipeline": "Трубопровод",
     "DialogDataFolder": "Специальные папки для трубопроводов, которые автоматически создаются при создании трубопроводов в FastTrack.",
     "SearchByName": "Поиск по имени",
     "ModelStore": "Модельный магазин",
@@ -418,7 +419,15 @@
     "AllowsLettersNumbersAnd-_Dot": "Допускает буквы, цифры и -_.",
     "CreatedFolders": "Созданные папки",
     "ProjectFolders": "Проектные папки",
-    "InvitedFolders": "Приглашенные папки"
+    "InvitedFolders": "Приглашенные папки",
+    "ReadOnly": "Читать только",
+    "ReadWrite": "Читать и написать",
+    "CreateFolder": "Создать папку",
+    "Deleted": "Удален",
+    "All": "Все",
+    "General": "Общий",
+    "AutoMount": "Автоф",
+    "CreateFolderAndUploadFiles": "Создать файлы папки и загрузки"
   },
   "dialog": {
     "warning": {

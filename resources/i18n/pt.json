@@ -285,7 +285,8 @@
       "MovedToTrashBin": "A pasta {{ folderName }} foi movida para a lixeira.",
       "FolderCloneFailed": "Falha ao clonar a pasta.",
       "FolderClonePending": "A clonagem da pasta está a decorrer.",
-      "MoveToTrashDescription": "Tem certeza de que deseja mover \"{{ folderName }}\" para a lixeira?"
+      "MoveToTrashDescription": "Tem certeza de que deseja mover \"{{ folderName }}\" para a lixeira?",
+      "MountPermission": "Permissão de montagem"
     },
     "explorer": {
       "Delete": "Excluir...",
@@ -373,7 +374,7 @@
       "Status": "Estado",
       "Used": "utilizado"
     },
-    "Pipeline": "Pastas de pipelines",
+    "Pipeline": "Oleoduto",
     "DialogDataFolder": "Pastas dedicadas ao pipeline que são criadas automaticamente ao criar pipelines no FastTrack.",
     "DialogModelFolder": "Pode servir e gerir modelos.",
     "SearchByName": "Procura por nome",
@@ -418,7 +419,15 @@
     "AllowsLettersNumbersAnd-_Dot": "Permite letras, números e -_.",
     "CreatedFolders": "Pastas criadas",
     "ProjectFolders": "Pastas de projeto",
-    "InvitedFolders": "Pastas convidadas"
+    "InvitedFolders": "Pastas convidadas",
+    "ReadOnly": "Somente leitura",
+    "ReadWrite": "Leia e escreva",
+    "CreateFolder": "Crie pasta",
+    "Deleted": "Excluído",
+    "All": "Todos",
+    "General": "Em geral",
+    "AutoMount": "Montagem automática",
+    "CreateFolderAndUploadFiles": "Crie arquivos de pasta e upload"
   },
   "dialog": {
     "warning": {
