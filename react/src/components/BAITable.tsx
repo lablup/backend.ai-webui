@@ -1,6 +1,6 @@
 import { useThemeMode } from '../hooks/useThemeMode';
 import { useDebounce } from 'ahooks';
-import { ConfigProvider, GetProps, Table } from 'antd';
+import { ConfigProvider, GetProps, Table, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import { ColumnsType, ColumnType } from 'antd/es/table';
 import { TableProps } from 'antd/lib';
@@ -124,6 +124,7 @@ const BAITable = <RecordType extends object = any>({
   ...tableProps
 }: BAITableProps<RecordType>) => {
   const { styles } = useStyles();
+  const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
   const [resizedColumnWidths, setResizedColumnWidths] = useState<
     Record<string, number>
@@ -163,6 +164,8 @@ const BAITable = <RecordType extends object = any>({
             !isDarkMode && neoStyle
               ? {
                   headerBg: '#E3E3E3',
+                  headerSplitColor: token.colorTextQuaternary,
+                  // headerSplitColor: token.colorTextQuaternary
                 }
               : undefined,
         },

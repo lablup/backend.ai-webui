@@ -6,6 +6,7 @@ import React, { ReactNode } from 'react';
 export interface BAICardProps extends CardProps {
   status?: 'success' | 'error' | 'warning' | 'default';
   extraButtonTitle?: string | ReactNode;
+  showDivider?: boolean;
   onClickExtraButton?: () => void;
   ref?: React.LegacyRef<HTMLDivElement> | undefined;
 }
@@ -16,6 +17,8 @@ const BAICard: React.FC<BAICardProps> = ({
   onClickExtraButton,
   extra,
   style,
+  styles,
+  showDivider,
   ...cardProps
 }) => {
   const { token } = theme.useToken();
@@ -50,6 +53,19 @@ const BAICard: React.FC<BAICardProps> = ({
                 ? token.colorSuccess
                 : style?.borderColor, // default
       })}
+      styles={_.merge(
+        showDivider
+          ? {}
+          : {
+              header: {
+                borderBottom: 'none',
+              },
+              body: {
+                paddingTop: token.marginXS,
+              },
+            },
+        styles,
+      )}
       extra={_extra}
       {...cardProps}
     />

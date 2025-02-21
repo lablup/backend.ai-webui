@@ -8,7 +8,7 @@ import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 // FIXME: need to apply filtering type of service later
 type TabKey = 'services' | 'chatting'; //  "running" | "finished" | "others";
 
-const EndpointListPage = React.lazy(() => import('./EndpointListPage'));
+const EndpointListPage = React.lazy(() => import('../components/EndpointList'));
 
 interface ServingPageProps {}
 
@@ -57,7 +57,11 @@ const ServingPage: React.FC<ServingPageProps> = ({ ...props }) => {
           <Suspense
             fallback={<Skeleton active style={{ padding: token.paddingMD }} />}
           >
-            <EndpointListPage />
+            <EndpointListPage
+              style={{
+                padding: token.paddingMD,
+              }}
+            />
           </Suspense>
         ) : null}
       </Card>

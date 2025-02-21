@@ -7,6 +7,7 @@ import {
 } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
+import BAIRadioGroup from './BAIRadioGroup';
 import UserInfoModal from './UserInfoModal';
 import UserSettingModal from './UserSettingModal';
 import { UserNodeListModifyMutation } from './__generated__/UserNodeListModifyMutation.graphql';
@@ -17,7 +18,7 @@ import {
   InfoCircleOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import { Tooltip, Button, Table, theme, Radio, Popconfirm, App } from 'antd';
+import { Tooltip, Button, Table, theme, Popconfirm, App } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -134,7 +135,7 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
         wrap="wrap"
       >
         <Flex direction="row" gap={'sm'} align="start" wrap="wrap">
-          <Radio.Group
+          <BAIRadioGroup
             value={activeFilter}
             onChange={(e) => {
               startStatusFetchTransition(() => {
