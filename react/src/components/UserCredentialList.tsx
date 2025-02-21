@@ -21,7 +21,6 @@ import {
 import {
   DeleteOutlined,
   InfoCircleOutlined,
-  LoadingOutlined,
   ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
@@ -255,14 +254,12 @@ const UserCredentialList: React.FC = () => {
         // resizable
         rowKey={'id'}
         scroll={{ x: 'max-content' }}
-        loading={{
-          spinning:
-            isActiveTypePending ||
-            isPendingRefresh ||
-            isPendingPageChange ||
-            isPendingFilter,
-          indicator: <LoadingOutlined />,
-        }}
+        loading={
+          isActiveTypePending ||
+          isPendingRefresh ||
+          isPendingPageChange ||
+          isPendingFilter
+        }
         dataSource={filterNonNullItems(keypair_list?.items)}
         columns={filterEmptyItem([
           {
