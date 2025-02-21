@@ -56,13 +56,18 @@ export type Endpoint = NonNullable<
     NonNullable<NonNullable<EndpointListQuery$data>['endpoint_list']>['items']
   >[0]
 >;
-export const isDestroyingStatus = (
-  desiredSessionCount: number | null | undefined,
-  status: string | null | undefined,
+
+export const isEndpointInDestroyingCategory = (
+  endpoint?: {
+    desired_session_count: number | null | undefined;
+    replicas: number | null | undefined;
+    status: string | null | undefined;
+  } | null,
 ) => {
+  const count = endpoint?.replicas ?? endpoint?.desired_session_count;
+  const status = endpoint?.status;
   return (
-    (desiredSessionCount ?? 0) < 0 ||
-    _.includes(['DESTROYED', 'DESTROYING'], status ?? '')
+    (count ?? 0) < 0 || _.includes(['DESTROYED', 'DESTROYING'], status ?? '')
   );
 };
 
@@ -153,10 +158,7 @@ const EndpointList: React.FC<EndpointListProps> = ({ style, children }) => {
             type="text"
             icon={<SettingOutlined />}
             style={
-              isDestroyingStatus(
-                row.replicas ?? row.desired_session_count,
-                row.status,
-              ) ||
+              isEndpointInDestroyingCategory(row) ||
               (!!row.created_user_email &&
                 row.created_user_email !== currentUser.email)
                 ? {
@@ -167,10 +169,7 @@ const EndpointList: React.FC<EndpointListProps> = ({ style, children }) => {
                   }
             }
             disabled={
-              isDestroyingStatus(
-                row.replicas ?? row.desired_session_count,
-                row.status,
-              ) ||
+              isEndpointInDestroyingCategory(row) ||
               (!!row.created_user_email &&
                 row.created_user_email !== currentUser.email)
             }
@@ -183,10 +182,7 @@ const EndpointList: React.FC<EndpointListProps> = ({ style, children }) => {
             icon={
               <DeleteOutlined
                 style={
-                  isDestroyingStatus(
-                    row.replicas ?? row.desired_session_count,
-                    row.status,
-                  )
+                  isEndpointInDestroyingCategory(row)
                     ? undefined
                     : {
                         color: token.colorError,
@@ -198,10 +194,7 @@ const EndpointList: React.FC<EndpointListProps> = ({ style, children }) => {
               terminateModelServiceMutation.isPending &&
               optimisticDeletingId === row.endpoint_id
             }
-            disabled={isDestroyingStatus(
-              row.replicas ?? row.desired_session_count,
-              row.status,
-            )}
+            disabled={isEndpointInDestroyingCategory(row)}
             onClick={() => {
               modal.confirm({
                 title: t('dialog.ask.DoYouWantToDeleteSomething', {
