@@ -69,6 +69,8 @@ const SessionDetailAndContainerLogOpenerLegacy = React.lazy(
   () => import('./components/SessionDetailAndContainerLogOpenerLegacy'),
 );
 
+const ChatPage = React.lazy(() => import('./pages/ChatPage'));
+
 interface CustomHandle {
   title?: string;
   labelKey?: string;
@@ -121,6 +123,11 @@ const router = createBrowserRouter([
         //for electron prod mode
         path: '/app/index.html',
         element: <WebUINavigate to="/summary" replace />,
+      },
+      {
+        path: '/chat',
+        handle: { labelKey: 'webui.menu.Chat' },
+        Component: ChatPage,
       },
       {
         path: '/summary',

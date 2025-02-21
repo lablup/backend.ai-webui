@@ -33,6 +33,7 @@ export const navigate =
         '/information',
         '/github',
         '/import',
+        '/chat',
       ].includes(path) !== true
     ) {
       // Fallback for Electron Shell/Windows OS

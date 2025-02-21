@@ -1,4 +1,5 @@
 import BAIFetchKeyButton from '../components/BAIFetchKeyButton';
+import BAICard from '../components/BAICard';
 import BAILink from '../components/BAILink';
 import BAIPropertyFilter, {
   mergeFilterValues,
@@ -20,7 +21,7 @@ import {
   ComputeSessionListPageQuery$data,
   ComputeSessionListPageQuery$variables,
 } from './__generated__/ComputeSessionListPageQuery.graphql';
-import { Badge, Button, Card, Radio, Tabs, theme, Tooltip, Typography } from 'antd';
+import { Badge, Button, theme, Tooltip, Typography } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { PowerOffIcon } from 'lucide-react';
@@ -28,6 +29,8 @@ import { useDeferredValue, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
+import BAITabs from '../components/BAITabs';
+import BAIRadioGroup from '../components/BAIRadioGroup';
 
 type TypeFilterType = 'all' | 'interactive' | 'batch' | 'inference' | 'system';
 type SessionNode = NonNullableNodeOnEdges<
@@ -184,7 +187,7 @@ const ComputeSessionListPage = () => {
     <>
       {/* TODO: add legacy opener */}
       {/* <SessionDetailAndContainerLogOpenerForLegacy /> */}
-      <Card
+      <BAICard
         bordered={false}
         title={t('webui.menu.Sessions')}
         extra={
@@ -216,8 +219,7 @@ const ComputeSessionListPage = () => {
         }}
       >
         {/* {mergeFilterValues([statusFilter, queryParams.filter, typeFilter])} */}
-        <Tabs
-          type="card"
+        <BAITabs
           activeKey={queryParams.type}
           onChange={(key) => {
             const storedQuery = queryMapRef.current[key] || {
@@ -281,7 +283,7 @@ const ComputeSessionListPage = () => {
               }}
               wrap="wrap"
             >
-              <Radio.Group
+              <BAIRadioGroup
                 optionType="button"
                 value={queryParams.statusCategory}
                 onChange={(e) => {
@@ -387,7 +389,7 @@ const ComputeSessionListPage = () => {
             }}
           />
         </Flex>
-      </Card>
+      </BAICard>
       <TerminateSessionModal
         open={isOpenTerminateModal}
         sessionFrgmts={selectedSessionList}

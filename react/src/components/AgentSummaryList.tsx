@@ -11,6 +11,7 @@ import { useResourceGroupsForCurrentProject } from '../hooks/useCurrentProject';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import BAIPropertyFilter from './BAIPropertyFilter';
+import BAIRadioGroup from './BAIRadioGroup';
 import Flex from './Flex';
 import { ResourceTypeIcon } from './ResourceNumber';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
@@ -26,15 +27,7 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import {
-  Button,
-  Segmented,
-  Table,
-  TableProps,
-  theme,
-  Tooltip,
-  Typography,
-} from 'antd';
+import { Button, Table, TableProps, theme, Tooltip, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
@@ -374,7 +367,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
           style={{ flex: 1 }}
           wrap="wrap"
         >
-          <Segmented
+          <BAIRadioGroup
             options={[
               {
                 label: t('agent.Connected'),
@@ -388,7 +381,8 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
             value={
               isPendingStatusFetch ? optimisticSelectedStatus : selectedStatus
             }
-            onChange={(value) => {
+            onChange={(e) => {
+              const value = e.target.value;
               setOptimisticSelectedStatus(value);
               startStatusFetchTransition(() => {
                 setSelectedStatus(value);
