@@ -8,7 +8,15 @@ import { useResourceSlotsDetails } from '../hooks/backendai';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import Flex from './Flex';
 import { SessionUsageMonitorFragment$key } from './__generated__/SessionUsageMonitorFragment.graphql';
-import { ProgressProps, Tooltip, Typography, theme, Row, Col } from 'antd';
+import {
+  ProgressProps,
+  Tooltip,
+  Typography,
+  theme,
+  Row,
+  Col,
+  Progress,
+} from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { useMemo } from 'react';
@@ -47,17 +55,18 @@ const SessionUtilItem: React.FC<SessionUtilItemProps> = ({
           {description && (
             <Typography.Text
               type="secondary"
-              style={{ fontSize: token.fontSizeSM }}
+              // style={{ fontSize: token.fontSizeSM }}
             >
               {description}
             </Typography.Text>
           )}
         </Flex>
-        <BAIProgressWithLabel
+        <Progress
+          strokeColor={token.colorTextQuaternary}
+          strokeLinecap="butt"
           percent={_.toNumber(percent)}
-          valueLabel={percentLabel}
-          strokeColor="#BFBFBF"
-          progressStyle={{ border: 'none' }}
+          showInfo={false}
+          style={{ lineHeight: '8px' }}
         />
       </>
     );
@@ -151,9 +160,17 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
     capacity: string,
     decimalSize: number = 2,
   ) => {
-    return `${convertBinarySizeUnit(current, 'g', decimalSize)?.numberFixed ?? '-'} / ${
-      convertBinarySizeUnit(capacity, 'g', decimalSize)?.numberFixed ?? '-'
-    } GiB`;
+    return (
+      <>
+        <Typography.Text>
+          {convertBinarySizeUnit(current, 'g', decimalSize)?.numberFixed ?? '-'}{' '}
+        </Typography.Text>{' '}
+        &nbsp;/&nbsp;
+        {convertBinarySizeUnit(capacity, 'g', decimalSize)?.numberFixed ??
+          '-'}{' '}
+        GiB
+      </>
+    );
   };
 
   const utilItems = filterEmptyItem([
@@ -163,6 +180,14 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
         size={size}
         title={mergedResourceSlots?.['cpu']?.human_readable_name}
         percent={sortedLiveStat?.cpu_util?.pct || 0}
+        description={
+          <>
+            <Typography.Text>
+              {sortedLiveStat?.cpu_util?.pct || 0}
+            </Typography.Text>
+            &nbsp;%
+          </>
+        }
       />
     ),
     sortedLiveStat?.mem && (
@@ -206,17 +231,19 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
             title={
               <>
                 {mergedResourceSlots?.[deviceKey]?.human_readable_name}
-                <Typography.Text type="secondary">
-                  {_.includes(key, 'util') && ' (util)'}
-                  {_.includes(key, 'mem') && ' (mem)'}
-                </Typography.Text>
+                {_.includes(key, 'util') && ' (util)'}
+                {_.includes(key, 'mem') && ' (mem)'}
               </>
             }
             percent={value.pct || 0}
             description={
-              _.includes(key, 'mem')
-                ? displayMemoryUsage(value?.current, value?.capacity)
-                : undefined
+              _.includes(key, 'mem') ? (
+                displayMemoryUsage(value?.current, value?.capacity)
+              ) : _.includes(key, 'util') ? (
+                <>
+                  <Typography.Text>{value.pct || 0}</Typography.Text>&nbsp;%
+                </>
+              ) : undefined
             }
             tooltipTitle={
               <Flex direction="column" align="stretch">
@@ -254,9 +281,7 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
       {size === 'default' && (
         <Col span={24}>
           <Flex justify="end">
-            <Typography.Text>
-              {`I/O Read: ${convertDecimalSizeUnit(sortedLiveStat?.io_read?.current, 'm')?.numberUnit ?? '-'}B / Write: ${convertDecimalSizeUnit(sortedLiveStat?.io_write?.current, 'm')?.numberUnit ?? '-'}B`}
-            </Typography.Text>
+            {`I/O: Read ${convertDecimalSizeUnit(sortedLiveStat?.io_read?.current, 'm')?.numberFixed ?? '-'} MB, Write ${convertDecimalSizeUnit(sortedLiveStat?.io_write?.current, 'm')?.numberFixed ?? '-'} MB`}
           </Flex>
         </Col>
       )}
