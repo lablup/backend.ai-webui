@@ -9,9 +9,13 @@ import Flex from './components/Flex';
 import LocationStateBreadCrumb from './components/LocationStateBreadCrumb';
 import MainLayout from './components/MainLayout/MainLayout';
 import WebUINavigate from './components/WebUINavigate';
+import { useSuspendedBackendaiClient } from './hooks';
 import { useBAISettingUserState } from './hooks/useBAISetting';
+// Hight priority to import the component
+import ComputeSessionListPage from './pages/ComputeSessionListPage';
 import Page401 from './pages/Page401';
 import Page404 from './pages/Page404';
+import ServingPage from './pages/ServingPage';
 import VFolderListPage from './pages/VFolderListPage';
 import VFolderNodeListPage from './pages/VFolderNodeListPage';
 import { Skeleton, theme } from 'antd';
@@ -28,7 +32,6 @@ import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 
 const Information = React.lazy(() => import('./components/Information'));
-const ServingPage = React.lazy(() => import('./pages/ServingPage'));
 const EndpointDetailPage = React.lazy(
   () => import('./pages/EndpointDetailPage'),
 );
@@ -63,9 +66,6 @@ const UserCredentialsPage = React.lazy(
   () => import('./pages/UserCredentialsPage'),
 );
 
-const ComputeSessionListPage = React.lazy(
-  () => import('./pages/ComputeSessionListPage'),
-);
 const AgentSummaryPage = React.lazy(() => import('./pages/AgentSummaryPage'));
 const MaintenancePage = React.lazy(() => import('./pages/MaintenancePage'));
 const SessionDetailAndContainerLogOpenerLegacy = React.lazy(
@@ -187,6 +187,8 @@ const router = createBrowserRouter([
               );
               const { t } = useTranslation();
 
+              useSuspendedBackendaiClient();
+
               return experimentalNeoSessionList ? (
                 <BAIErrorBoundary>
                   <Suspense
@@ -241,6 +243,7 @@ const router = createBrowserRouter([
             path: '',
             Component: () => {
               const { t } = useTranslation();
+              useSuspendedBackendaiClient();
               return (
                 <BAIErrorBoundary>
                   <Suspense
