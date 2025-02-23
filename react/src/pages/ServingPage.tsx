@@ -6,7 +6,7 @@ import BAIPropertyFilter, {
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import EndpointList from '../components/EndpointList';
 import Flex from '../components/Flex';
-import { filterEmptyItem } from '../helper';
+import { filterEmptyItem, transformSorterToOrderString } from '../helper';
 import { useUpdatableState, useWebUINavigate } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
@@ -15,6 +15,7 @@ import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
 import { ServingPageQuery } from './__generated__/ServingPageQuery.graphql';
 import { Button, Skeleton, theme, Typography } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
+import _ from 'lodash';
 import React, { Suspense, useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
@@ -172,7 +173,8 @@ const ServingPage: React.FC = () => {
                     type: 'string',
                     propertyLabel: t('modelService.ServiceEndpoint'),
                   },
-                  currentUserRole === 'admin' && {
+                  (currentUserRole === 'admin' ||
+                    currentUserRole === 'superadmin') && {
                     key: 'created_user_email',
                     type: 'string',
                     propertyLabel: t('modelService.Owner'),

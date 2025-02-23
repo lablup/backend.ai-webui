@@ -2,9 +2,8 @@ import {
   baiSignedRequestWithPromise,
   filterEmptyItem,
   filterNonNullItems,
-  transformSorterToOrderString,
 } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAITable from './BAITable';
@@ -42,7 +41,8 @@ import { Link } from 'react-router-dom';
 
 type Endpoint = EndpointListFragment$data[number];
 
-interface EndpointListProps extends Omit<TableProps<Endpoint>, 'dataSource' | 'columns'> {
+interface EndpointListProps
+  extends Omit<TableProps<Endpoint>, 'dataSource' | 'columns'> {
   endpointsFrgmt: EndpointListFragment$key;
   loading?: boolean;
   pagination: TablePaginationConfig;
@@ -78,6 +78,7 @@ const EndpointList: React.FC<EndpointListProps> = ({
   const [currentUser] = useCurrentUserInfo();
   const baiClient = useSuspendedBackendaiClient();
   const [optimisticDeletingId, setOptimisticDeletingId] = useState<string>();
+  const webuiNavigate = useWebUINavigate();
 
   const endpoints = useFragment(
     graphql`
@@ -174,7 +175,7 @@ const EndpointList: React.FC<EndpointListProps> = ({
                 row.created_user_email !== currentUser.email)
             }
             onClick={() => {
-              // webuiNavigate('/service/update/' + row.endpoint_id);
+              webuiNavigate('/service/update/' + row.endpoint_id);
             }}
           />
           <Button

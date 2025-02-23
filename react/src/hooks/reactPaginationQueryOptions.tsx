@@ -2,7 +2,7 @@
 import { LazyLoadQueryOptions } from '../helper/types';
 import { SorterResult } from 'antd/lib/table/interface';
 import _ from 'lodash';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   fetchQuery,
   GraphQLTaggedNode,
@@ -293,35 +293,45 @@ interface AntdBasicPaginationOption {
 interface InitialPaginationOption
   extends AntdBasicPaginationOption,
     Omit<BAIPaginationOption, 'limit' | 'offset'> {}
-export const useBAIPaginationOptionState = (
-  initialOptions: InitialPaginationOption,
-): {
+
+interface BAIPaginationOptionState {
   baiPaginationOption: BAIPaginationOption;
   tablePaginationOption: AntdBasicPaginationOption;
   setTablePaginationOption: (
     pagination: Partial<AntdBasicPaginationOption>,
   ) => void;
-} => {
+}
+export const useBAIPaginationOptionState = (
+  initialOptions: InitialPaginationOption,
+): BAIPaginationOptionState => {
   const [options, setOptions] =
     useState<AntdBasicPaginationOption>(initialOptions);
-  return {
-    baiPaginationOption: {
-      limit: options.pageSize,
-      first: options.pageSize,
-      offset:
-        options.current > 1 ? (options.current - 1) * options.pageSize : 0,
-    },
-    tablePaginationOption: {
-      pageSize: options.pageSize,
-      current: options.current,
-    },
-    setTablePaginationOption: (pagination) => {
-      if (!_.isEqual(pagination, options)) {
-        setOptions((current) => ({
-          ...current,
-          ...pagination,
-        }));
-      }
-    },
-  };
+
+  const { pageSize, current } = options;
+  return useMemo<BAIPaginationOptionState>(() => {
+    return {
+      baiPaginationOption: {
+        limit: pageSize,
+        first: pageSize,
+        offset: current > 1 ? (current - 1) * pageSize : 0,
+      },
+      tablePaginationOption: {
+        pageSize: pageSize,
+        current: current,
+      },
+      setTablePaginationOption: (pagination) => {
+        if (
+          !_.isEqual(pagination, {
+            pageSize,
+            current,
+          })
+        ) {
+          setOptions((current) => ({
+            ...current,
+            ...pagination,
+          }));
+        }
+      },
+    };
+  }, [pageSize, current]);
 };
