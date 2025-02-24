@@ -1093,7 +1093,8 @@
     "ExportCSV": "CSV'yi dışa aktar",
     "Tools": "Aletler",
     "MemorySizeExceedsLimit": "Bellek boyutu 300 PiB'den az olmalıdır",
-    "MaxNetworkCount": "Maksimum Ağ Sayısı"
+    "MaxNetworkCount": "Maksimum Ağ Sayısı",
+    "CannotUpdateResourcePolicy": "Kaynak politikasını güncelleyemiyor. \nLütfen giriş değerlerini kontrol edin."
   },
   "registry": {
     "Hostname": "ana bilgisayar adı",

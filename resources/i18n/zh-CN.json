@@ -1094,7 +1094,8 @@
     "ExportCSV": "导出 CSV",
     "Tools": "工具",
     "MemorySizeExceedsLimit": "内存大小应小于 300 PiB",
-    "MaxNetworkCount": "最大网络数"
+    "MaxNetworkCount": "最大网络数",
+    "CannotUpdateResourcePolicy": "无法更新资源策略。\n请检查输入值。"
   },
   "registry": {
     "Hostname": "主机名",

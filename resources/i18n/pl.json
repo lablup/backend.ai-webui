@@ -1094,7 +1094,8 @@
     "ExportCSV": "eksportuj plik CSV",
     "Tools": "Narzędzia",
     "MemorySizeExceedsLimit": "Rozmiar pamięci powinien być mniejszy niż 300 PiB",
-    "MaxNetworkCount": "Maksymalna liczba sieci"
+    "MaxNetworkCount": "Maksymalna liczba sieci",
+    "CannotUpdateResourcePolicy": "Nie można zaktualizować zasad zasobów. \nSprawdź wartości wejściowe."
   },
   "registry": {
     "Hostname": "Nazwa hosta",
