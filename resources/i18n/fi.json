@@ -1,79 +1,5 @@
 {
   "$schema": "../i18n.schema.json",
-  "summary": {
-    "FastTrack": "FastTrack",
-    "ATOMEnabled": "ATOM NPU käytössä",
-    "Accept": "Hyväksy",
-    "AcceptSharedVFolder": "Voit nyt käyttää kansiota:",
-    "ActiveSessions": "Aktiiviset istunnot",
-    "Announcement": "Ilmoitus",
-    "ChangeSystemSetting": "Vaihda järjestelmäasetusta",
-    "CheckResources": "Tarkista resurssit",
-    "ConnectedNodes": "Yhdistetyt<br/>Solmut",
-    "CoresReserved": "Varatut ytimet",
-    "CreateANewKeypair": "Luo uusi avainpari",
-    "CurrentVersion": "Nykyinen versio",
-    "Decline": "Lasku",
-    "DeclineSharedVFolder": "Kansiokutsu on poistettu:",
-    "DownloadWebUIApp": "Lataa työpöytäsovellus",
-    "FolderName": "Kansion nimi",
-    "FractionalGPUScalingEnabled": "Murto-osittainen GPU-skaalaus käytössä",
-    "IPUEnabled": "IPU NPU käytössä",
-    "Invitation": "Kutsu",
-    "MaintainKeypairs": "Ylläpidä avainpareja",
-    "NoAnnouncement": "Näytettävää ilmoitusta ei ole.",
-    "NoInvitations": "Näytettäviä kutsuja ei ole.",
-    "Permission": "Lupa",
-    "ROCMGPUEnabled": "ROCm GPU käytössä",
-    "Reserved": "Varattu",
-    "ResourceStatistics": "Resurssitilastot",
-    "StartMenu": "Käynnistä-valikko",
-    "SystemMaintenance": "Järjestelmän ylläpito",
-    "SystemResources": "Järjestelmäresurssit",
-    "TPUEnabled": "TPU käytössä",
-    "Total": "Yhteensä",
-    "UpdateEnvironmentImages": "Päivitä ympäristökuvat",
-    "UploadFiles": "Lataa tiedostoja",
-    "Used": "Käytetty",
-    "Using": "Käyttämällä",
-    "WarboyEnabled": "Warboy NPU käytössä",
-    "HyperaccelLPUEnabled": "Hyperaccel LPU käytössä",
-    "ATOMPlusEnabled": "ATOM+ NPU käytössä",
-    "RNGDEnabled": "RNGD käytössä",
-    "ReservedShort": "varattu",
-    "ConnectingToCluster": "Yhteyden muodostaminen Backend.AI-klusteriin..."
-  },
-  "error": {
-    "WrongAPIServerAddress": "Väärä API-palvelimen osoite.",
-    "APIEndpointIsEmpty": "API-päätepiste on tyhjä. Määritä Backend.AI API-päätepiste rekisteröitymistä varten.",
-    "APINotSupported": "API ei tuettu. Vaatii Backend.AI managerin uusimman version.",
-    "AuthenticationFailed": "Tunnistautuminen epäonnistui. Tarkista tiedot ja managerin tila.",
-    "CannotChangeVirtualFolderOption": "Et voi muuttaa sellaisen v-kansion asetuksia, joka ei ole minun omistuksessani.",
-    "CannotSharePrivateAutomountFolder": "Automaattisesti kiinnitettyjä v-kansioita ei voida jakaa käytäntöjen mukaisesti.",
-    "FolderSharingNotAvailableToUser": "Kansioiden jakaminen ei ole käytettävissä pyydetyille käyttäjille.",
-    "InvalidSignupToken": "Virheellinen kirjautumistunniste",
-    "LoginFailed": "Kirjautuminen epäonnistui. Tarkista kirjautumistiedot.",
-    "LoginInformationMismatch": "Kirjautumistietojen epäsuhta. Tarkista tietosi",
-    "LoginSucceededManagerNotResponding": "Sisäänkirjautuminen onnistuu, mutta johtaja ei vastaa.",
-    "MaximumVfolderCreation": "Et voi luoda lisää v-kansioita resurssikäytännön vuoksi.",
-    "NetworkConnectionFailed": "Verkkoyhteys epäonnistui. Tarkista verkon tila.",
-    "ReachedResourceLimit": "Resurssiraja saavutettu. Tarkista resurssit ja istunnot.",
-    "ResourceLimitExceed": "Resurssiraja ylitetty. Tarkista vapaat resurssit.",
-    "ResourcePolicyAlreadyExist": "Samanniminen resurssikäytäntö on jo olemassa.",
-    "ResourcePolicyStillReferenced": "On olemassa avainpareja, jotka viittaavat tähän resurssikäytäntöön.",
-    "ScalingGroupAlreadyExist": "Samanniminen resurssiryhmä on jo olemassa.",
-    "SmallerResourceThenImageRequires": "Resurssipyyntösi on pienempi kuin kuvan edellyttämä minimi. Kokeile lisää resursseja.",
-    "TooManyLoginFailures": "Kirjautumishäiriöitä on ollut liian monta lyhyessä ajassa. Sisäänkirjautuminen on estetty jonkin aikaa.",
-    "UpdateError": "Päivitysvirhe",
-    "UserHasNoGroup": "Käyttäjällä ei ole ryhmää. Ota yhteyttä ylläpitäjään sen korjaamiseksi.",
-    "UserNameAlreadyExist": "Käyttäjätunnus on jo olemassa. Sitä ei voi kopioida.",
-    "VirtualFolderAlreadyExist": "Samanniminen virtuaalikansio on jo olemassa. Poista oma kansiosi tai hylkää kutsu.",
-    "ReachedResourceLimitPleaseContact": "Resurssiraja saavutettu. \nOta yhteyttä ylläpitäjään.",
-    "InvalidUrl": "Se ei ole kelvollinen URL-osoite",
-    "AllowsPositiveNumberOnly": "Salli vain positiivinen luku.",
-    "OnlyIntegersAreAllowed": "Vain kokonaisluvut ovat sallittuja.",
-    "OnlyPositiveIntegersAreAllowed": "Vain positiiviset kokonaisluvut ovat sallittuja."
-  },
   "agent": {
     "AgentSetting": "Agentin asetukset",
     "AgentSettingUpdated": "Agentin asetus päivitetty.",
@@ -100,6 +26,28 @@
     "Utilization": "Käyttö",
     "AutoRefreshEvery5s": "Automaattinen päivitys 5 sekunnin välein",
     "Agent": "Agentti"
+  },
+  "autoScalingRule": {
+    "AddAutoScalingRule": "Lisää automaattinen skaalaussääntö",
+    "CoolDownSeconds": "Jäähtyä sekuntia",
+    "SuccessfullyUpdated": "Automaattinen skaalaussääntö on päivitetty onnistuneesti.",
+    "SuccessfullyCreated": "Automaattinen skaalaussääntö on luotu onnistuneesti.",
+    "EditAutoScalingRule": "Muokkaa automaattisen skaalaussääntöä",
+    "Comparator": "Vertailu",
+    "Threshold": "Kynnys",
+    "StepSize": "Askelkoko",
+    "MinReplicas": "Min Replicas",
+    "MaxReplicas": "Max replicas",
+    "MetricName": "Metrinen nimi",
+    "MetricSource": "Metrilähde",
+    "MIN/MAXReplicas": "Min / max -kopiot",
+    "LastTriggered": "Viimeksi laukaistu",
+    "CreatedAt": "Luotu aika",
+    "ConditionTooltip": "Voit syöttää vapaasti minkä tahansa ajoympäristön tukeman mittarin.\nEsimerkiksi: \"cuda_mem\", \"cuda_util\".",
+    "ScalingType": "Tyyppi",
+    "ScaleUp": "Laajentaminen",
+    "ScaleDown": "Pienennä mittakaavaa",
+    "Condition": "Kunto"
   },
   "button": {
     "Add": "Lisää",
@@ -144,6 +92,22 @@
     "Apply": "Hae",
     "CopySomething": "Kopioi {{name}}",
     "ClickForMoreDetails": "Napsauta saadaksesi lisätietoja"
+  },
+  "chatui": {
+    "CannotFindModel": "LLM-malleja ei löydy. \nMukauta mallia.",
+    "SelectEndpoint": "Valitse Päätepiste",
+    "DeleteChattingSession": "Poista chat-istunto",
+    "DeleteChattingSessionDescription": "Olet poistamassa tätä aihetta. \nKun se on poistettu, sitä ei voi palauttaa. \nOle hyvä ja jatka varoen.",
+    "DeleteChatHistory": "Poista keskusteluhistoria",
+    "SelectModel": "Valitse Malli",
+    "SyncInput": "Synkronoi sisääntulo",
+    "CompareWithOtherModels": "Vertaa muihin malleihin",
+    "Attachments": "Liitteet",
+    "DropFileHere": "Pudota tiedosto tähän",
+    "UploadFiles": "Lataa tiedostoja",
+    "UploadFilesDescription": "Napsauta tai vedä tiedostoja tälle alueelle ladataksesi",
+    "Thinking": "Ajattelu",
+    "ViewReasoning": "Näytä päättely"
   },
   "credential": {
     "AccessKeyOptional": "Pääsyavain (valinnainen)",
@@ -552,6 +516,45 @@
     "FullImagePath": "Koko kuvan polku",
     "SuccessfullyCreated": "Luotu onnistuneesti"
   },
+  "error": {
+    "WrongAPIServerAddress": "Väärä API-palvelimen osoite.",
+    "APIEndpointIsEmpty": "API-päätepiste on tyhjä. Määritä Backend.AI API-päätepiste rekisteröitymistä varten.",
+    "APINotSupported": "API ei tuettu. Vaatii Backend.AI managerin uusimman version.",
+    "AuthenticationFailed": "Tunnistautuminen epäonnistui. Tarkista tiedot ja managerin tila.",
+    "CannotChangeVirtualFolderOption": "Et voi muuttaa sellaisen v-kansion asetuksia, joka ei ole minun omistuksessani.",
+    "CannotSharePrivateAutomountFolder": "Automaattisesti kiinnitettyjä v-kansioita ei voida jakaa käytäntöjen mukaisesti.",
+    "FolderSharingNotAvailableToUser": "Kansioiden jakaminen ei ole käytettävissä pyydetyille käyttäjille.",
+    "InvalidSignupToken": "Virheellinen kirjautumistunniste",
+    "LoginFailed": "Kirjautuminen epäonnistui. Tarkista kirjautumistiedot.",
+    "LoginInformationMismatch": "Kirjautumistietojen epäsuhta. Tarkista tietosi",
+    "LoginSucceededManagerNotResponding": "Sisäänkirjautuminen onnistuu, mutta johtaja ei vastaa.",
+    "MaximumVfolderCreation": "Et voi luoda lisää v-kansioita resurssikäytännön vuoksi.",
+    "NetworkConnectionFailed": "Verkkoyhteys epäonnistui. Tarkista verkon tila.",
+    "ReachedResourceLimit": "Resurssiraja saavutettu. Tarkista resurssit ja istunnot.",
+    "ResourceLimitExceed": "Resurssiraja ylitetty. Tarkista vapaat resurssit.",
+    "ResourcePolicyAlreadyExist": "Samanniminen resurssikäytäntö on jo olemassa.",
+    "ResourcePolicyStillReferenced": "On olemassa avainpareja, jotka viittaavat tähän resurssikäytäntöön.",
+    "ScalingGroupAlreadyExist": "Samanniminen resurssiryhmä on jo olemassa.",
+    "SmallerResourceThenImageRequires": "Resurssipyyntösi on pienempi kuin kuvan edellyttämä minimi. Kokeile lisää resursseja.",
+    "TooManyLoginFailures": "Kirjautumishäiriöitä on ollut liian monta lyhyessä ajassa. Sisäänkirjautuminen on estetty jonkin aikaa.",
+    "UpdateError": "Päivitysvirhe",
+    "UserHasNoGroup": "Käyttäjällä ei ole ryhmää. Ota yhteyttä ylläpitäjään sen korjaamiseksi.",
+    "UserNameAlreadyExist": "Käyttäjätunnus on jo olemassa. Sitä ei voi kopioida.",
+    "VirtualFolderAlreadyExist": "Samanniminen virtuaalikansio on jo olemassa. Poista oma kansiosi tai hylkää kutsu.",
+    "ReachedResourceLimitPleaseContact": "Resurssiraja saavutettu. \nOta yhteyttä ylläpitäjään.",
+    "InvalidUrl": "Se ei ole kelvollinen URL-osoite",
+    "AllowsPositiveNumberOnly": "Salli vain positiivinen luku.",
+    "OnlyIntegersAreAllowed": "Vain kokonaisluvut ovat sallittuja.",
+    "OnlyPositiveIntegersAreAllowed": "Vain positiiviset kokonaisluvut ovat sallittuja."
+  },
+  "errorBoundary": {
+    "DisplayOnlyDevEnv": "Tämä virhelohko näytetään vain WebUI-kehitysympäristössä.",
+    "ExpiredLoginSessionReLogin": "Kirjaudu sisään",
+    "ExpiredLoginSessionTitle": "Kirjautumisistuntosi on päättynyt.",
+    "ReloadPage": "Lataa sivu uudelleen",
+    "ResetErrorBoundary": "Nollaa ErrorBoundary",
+    "Title": "On tapahtunut virhe."
+  },
   "explorer": {
     "InputTooShort": "InputTooShort",
     "ValueRequired": "ValueRequired"
@@ -663,6 +666,20 @@
   "inputLimit": {
     "4to64chars": "(4~64 merkkiä)",
     "4to32chars": "(4-32 merkkiä)"
+  },
+  "interactiveLogin": {
+    "InteractiveLoginWithBackendAI": "Kirjaudu sisään Backend.AI-tililläsi",
+    "ServiceName": "Palvelun nimi",
+    "UseAnotherAccount": "Kirjaudu sisään eri tilillä",
+    "ConfirmLoginMessage": "Haluatko kirjautua sisään {{käyttäjätunnus}} ({{email}}) tilille?"
+  },
+  "kernel": {
+    "KernelId": "Ytimen tunnus",
+    "Role": "Rooli",
+    "Status": "Status",
+    "AgentId": "Agenttitunnus",
+    "ContainerId": "Konttitunnus",
+    "Kernels": "Ytimet"
   },
   "language": {
     "English": "English",
@@ -861,6 +878,36 @@
     "AddRules": "Lisää sääntöjä",
     "RouteError": "Reittivirhe"
   },
+  "modelStore": {
+    "Author": "Tekijä",
+    "Category": "Kategoria",
+    "CloneAsFolder": "Kloonaa kansioksi",
+    "CloneInfo": "Se kloonataan käyttäjätyypin kansioksi.",
+    "CloneSuccess": "Kloonipyyntö on lähetetty onnistuneesti.",
+    "Created": "Luotu",
+    "Description": "Kuvaus",
+    "FilterByName": "Suodata nimen mukaan",
+    "Framework": "puitteet",
+    "Label": "Label",
+    "HealthCheck": "Terveystarkastus",
+    "LastModified": "Viimeksi muokattu",
+    "MaxRetries": "Max Uudelleenyritykset",
+    "Metadata": "Metatiedot",
+    "MinResource": "Vähimmäisresurssi",
+    "Model": "Malli",
+    "ModelPath": "Mallin polku",
+    "Path": "Polku",
+    "Port": "Portti",
+    "PreStartActions": "Aloitustoiminnot",
+    "SearchModels": "Hae malleja",
+    "ServiceDetails": "Palvelun tiedot",
+    "StartCommand": "Käynnistä komento",
+    "Task": "Tehtävä",
+    "Version": "Versio",
+    "CloneToFolder": "Kloonaa kansioon",
+    "FolderAlreadyExists": "Tämän niminen kansio on jo olemassa.",
+    "FinetuneModel": "Finetune malli"
+  },
   "notification": {
     "Initializing": "Aloitetaan...",
     "SeeDetail": "Katso lisätietoja",
@@ -870,6 +917,10 @@
     "Notifications": "Ilmoitukset",
     "ClearNotifications": "Tyhjennä ilmoitukset",
     "AreYouSureToClearAllNotifications": "Oletko varma, että tyhjennät kaikki ilmoitukset?"
+  },
+  "propertyFilter": {
+    "ResetFilter": "Nollaa suodattimet",
+    "PlaceHolder": "Etsi"
   },
   "registry": {
     "AddRegistry": "Lisää rekisteri",
@@ -1413,6 +1464,13 @@
     "RNGDSupport": "RNGD",
     "ROCMGPUSupport": "ROCm GPU-tuki"
   },
+  "sidePanel": {
+    "BackgroundTasks": "Tehtävien suorittaminen",
+    "NoBackgroundTask": "Ei tehtävää.",
+    "NoNotification": "Ei ilmoitusta.",
+    "Notification": "Ilmoitus",
+    "Running": "Juoksu..."
+  },
   "signUp": {
     "E-mail": "Sähköposti",
     "EmailInputRequired": "Sähköpostiosoite vaaditaan.",
@@ -1445,6 +1503,10 @@
     "SignUpBETA": "Rekisteröityminen (vain beta-kutsu)",
     "SignUp": "Rekisteröityminen",
     "SignUpSucceeded": "Onnistunut rekisteröityminen."
+  },
+  "sourceCodeViewer": {
+    "Copy": "Kopio",
+    "Copied": "Kopioitu"
   },
   "statistics": {
     "1Day": "1 päivä",
@@ -1495,6 +1557,62 @@
     },
     "StorageSetting": "Tallennusasetus"
   },
+  "summary": {
+    "FastTrack": "FastTrack",
+    "ATOMEnabled": "ATOM NPU käytössä",
+    "Accept": "Hyväksy",
+    "AcceptSharedVFolder": "Voit nyt käyttää kansiota:",
+    "ActiveSessions": "Aktiiviset istunnot",
+    "Announcement": "Ilmoitus",
+    "ChangeSystemSetting": "Vaihda järjestelmäasetusta",
+    "CheckResources": "Tarkista resurssit",
+    "ConnectedNodes": "Yhdistetyt<br/>Solmut",
+    "CoresReserved": "Varatut ytimet",
+    "CreateANewKeypair": "Luo uusi avainpari",
+    "CurrentVersion": "Nykyinen versio",
+    "Decline": "Lasku",
+    "DeclineSharedVFolder": "Kansiokutsu on poistettu:",
+    "DownloadWebUIApp": "Lataa työpöytäsovellus",
+    "FolderName": "Kansion nimi",
+    "FractionalGPUScalingEnabled": "Murto-osittainen GPU-skaalaus käytössä",
+    "IPUEnabled": "IPU NPU käytössä",
+    "Invitation": "Kutsu",
+    "MaintainKeypairs": "Ylläpidä avainpareja",
+    "NoAnnouncement": "Näytettävää ilmoitusta ei ole.",
+    "NoInvitations": "Näytettäviä kutsuja ei ole.",
+    "Permission": "Lupa",
+    "ROCMGPUEnabled": "ROCm GPU käytössä",
+    "Reserved": "Varattu",
+    "ResourceStatistics": "Resurssitilastot",
+    "StartMenu": "Käynnistä-valikko",
+    "SystemMaintenance": "Järjestelmän ylläpito",
+    "SystemResources": "Järjestelmäresurssit",
+    "TPUEnabled": "TPU käytössä",
+    "Total": "Yhteensä",
+    "UpdateEnvironmentImages": "Päivitä ympäristökuvat",
+    "UploadFiles": "Lataa tiedostoja",
+    "Used": "Käytetty",
+    "Using": "Käyttämällä",
+    "WarboyEnabled": "Warboy NPU käytössä",
+    "HyperaccelLPUEnabled": "Hyperaccel LPU käytössä",
+    "ATOMPlusEnabled": "ATOM+ NPU käytössä",
+    "RNGDEnabled": "RNGD käytössä",
+    "ReservedShort": "varattu",
+    "ConnectingToCluster": "Yhteyden muodostaminen Backend.AI-klusteriin..."
+  },
+  "table": {
+    "SettingTable": "Kattaus",
+    "SelectColumnToDisplay": "Valitse näytettävät sarakkeet",
+    "SearchTableColumn": "Hae taulukon sarakkeita"
+  },
+  "time": {
+    "Day": "day",
+    "Hour": "tunnin",
+    "Min": "min",
+    "Ms": "ms",
+    "Sec": "sek",
+    "Week": "viikko"
+  },
   "totp": {
     "ConfirmTotpRemovalBody": "Oletko varma, ettet halua käyttää kaksitekijätodennusta?",
     "InvalidTotpCode": "Virheellinen OTP",
@@ -1508,8 +1626,25 @@
     "EnterConfirmationCode": "Anna nyt autentikaattorin luoma OTP vahvistaaksesi.",
     "RequireOTP": "Kirjoita OTP."
   },
+  "tourGuide": {
+    "neoSessionLauncher": {
+      "FixErrorAndTryAgainText": "Jos virhekenttä on, Launch session -painike ei ole käytössä. \nKorjaa virhe ja yritä uudelleen.",
+      "FixErrorFieldByModifyButton": "Voit muokata virhekenttää suoraan oikeassa yläkulmassa olevasta Muokkaa-painikkeesta.",
+      "ValidationErrorText": "Jos et syötä arvoa pakolliseen kenttään tai kirjoitat virheellisen arvon, kenttään tulee virheilmoitus.",
+      "ValidationErrorTitle": "Syöttökentän vahvistusvirheet"
+    }
+  },
   "update": {
     "NewWebUIVersionAvailable": "Uusi versio on saatavilla:"
+  },
+  "usagePanel": {
+    "CpuUsedTime": "CPU:n käytetty aika",
+    "DiskUsed": "Levyn käyttö",
+    "GpuUsedTime": "GPU:n käyttöaika",
+    "NumSessions": "Istuntojen määrä",
+    "StatisticsForThisMonth": "Tämän kuukauden tilastot",
+    "TrafficUsed": "Liikenteen käyttö",
+    "UsedTime": "Käytetty aika"
   },
   "userSettings": {
     "AutoLogout": "Automaattinen uloskirjautuminen",
@@ -1664,140 +1799,5 @@
     "NotFound": "<p>Oops!<br/>Sivua ei löydy...</p>",
     "DescNotFound": "Valitettavasti etsimääsi sivua ei löytynyt.",
     "UnauthorizedAccess": "Luvaton pääsy"
-  },
-  "modelStore": {
-    "Author": "Tekijä",
-    "Category": "Kategoria",
-    "CloneAsFolder": "Kloonaa kansioksi",
-    "CloneInfo": "Se kloonataan käyttäjätyypin kansioksi.",
-    "CloneSuccess": "Kloonipyyntö on lähetetty onnistuneesti.",
-    "Created": "Luotu",
-    "Description": "Kuvaus",
-    "FilterByName": "Suodata nimen mukaan",
-    "Framework": "puitteet",
-    "Label": "Label",
-    "HealthCheck": "Terveystarkastus",
-    "LastModified": "Viimeksi muokattu",
-    "MaxRetries": "Max Uudelleenyritykset",
-    "Metadata": "Metatiedot",
-    "MinResource": "Vähimmäisresurssi",
-    "Model": "Malli",
-    "ModelPath": "Mallin polku",
-    "Path": "Polku",
-    "Port": "Portti",
-    "PreStartActions": "Aloitustoiminnot",
-    "SearchModels": "Hae malleja",
-    "ServiceDetails": "Palvelun tiedot",
-    "StartCommand": "Käynnistä komento",
-    "Task": "Tehtävä",
-    "Version": "Versio",
-    "CloneToFolder": "Kloonaa kansioon",
-    "FolderAlreadyExists": "Tämän niminen kansio on jo olemassa.",
-    "FinetuneModel": "Finetune malli"
-  },
-  "table": {
-    "SettingTable": "Kattaus",
-    "SelectColumnToDisplay": "Valitse näytettävät sarakkeet",
-    "SearchTableColumn": "Hae taulukon sarakkeita"
-  },
-  "sourceCodeViewer": {
-    "Copy": "Kopio",
-    "Copied": "Kopioitu"
-  },
-  "propertyFilter": {
-    "ResetFilter": "Nollaa suodattimet",
-    "PlaceHolder": "Etsi"
-  },
-  "interactiveLogin": {
-    "InteractiveLoginWithBackendAI": "Kirjaudu sisään Backend.AI-tililläsi",
-    "ServiceName": "Palvelun nimi",
-    "UseAnotherAccount": "Kirjaudu sisään eri tilillä",
-    "ConfirmLoginMessage": "Haluatko kirjautua sisään {{käyttäjätunnus}} ({{email}}) tilille?"
-  },
-  "chatui": {
-    "CannotFindModel": "LLM-malleja ei löydy. \nMukauta mallia.",
-    "SelectEndpoint": "Valitse Päätepiste",
-    "DeleteChattingSession": "Poista chat-istunto",
-    "DeleteChattingSessionDescription": "Olet poistamassa tätä aihetta. \nKun se on poistettu, sitä ei voi palauttaa. \nOle hyvä ja jatka varoen.",
-    "DeleteChatHistory": "Poista keskusteluhistoria",
-    "SelectModel": "Valitse Malli",
-    "SyncInput": "Synkronoi sisääntulo",
-    "CompareWithOtherModels": "Vertaa muihin malleihin",
-    "Attachments": "Liitteet",
-    "DropFileHere": "Pudota tiedosto tähän",
-    "UploadFiles": "Lataa tiedostoja",
-    "UploadFilesDescription": "Napsauta tai vedä tiedostoja tälle alueelle ladataksesi",
-    "Thinking": "Ajattelu",
-    "ViewReasoning": "Näytä päättely"
-  },
-  "time": {
-    "Day": "day",
-    "Hour": "tunnin",
-    "Min": "min",
-    "Ms": "ms",
-    "Sec": "sek",
-    "Week": "viikko"
-  },
-  "usagePanel": {
-    "CpuUsedTime": "CPU:n käytetty aika",
-    "DiskUsed": "Levyn käyttö",
-    "GpuUsedTime": "GPU:n käyttöaika",
-    "NumSessions": "Istuntojen määrä",
-    "StatisticsForThisMonth": "Tämän kuukauden tilastot",
-    "TrafficUsed": "Liikenteen käyttö",
-    "UsedTime": "Käytetty aika"
-  },
-  "sidePanel": {
-    "BackgroundTasks": "Tehtävien suorittaminen",
-    "NoBackgroundTask": "Ei tehtävää.",
-    "NoNotification": "Ei ilmoitusta.",
-    "Notification": "Ilmoitus",
-    "Running": "Juoksu..."
-  },
-  "tourGuide": {
-    "neoSessionLauncher": {
-      "FixErrorAndTryAgainText": "Jos virhekenttä on, Launch session -painike ei ole käytössä. \nKorjaa virhe ja yritä uudelleen.",
-      "FixErrorFieldByModifyButton": "Voit muokata virhekenttää suoraan oikeassa yläkulmassa olevasta Muokkaa-painikkeesta.",
-      "ValidationErrorText": "Jos et syötä arvoa pakolliseen kenttään tai kirjoitat virheellisen arvon, kenttään tulee virheilmoitus.",
-      "ValidationErrorTitle": "Syöttökentän vahvistusvirheet"
-    }
-  },
-  "errorBoundary": {
-    "DisplayOnlyDevEnv": "Tämä virhelohko näytetään vain WebUI-kehitysympäristössä.",
-    "ExpiredLoginSessionReLogin": "Kirjaudu sisään",
-    "ExpiredLoginSessionTitle": "Kirjautumisistuntosi on päättynyt.",
-    "ReloadPage": "Lataa sivu uudelleen",
-    "ResetErrorBoundary": "Nollaa ErrorBoundary",
-    "Title": "On tapahtunut virhe."
-  },
-  "autoScalingRule": {
-    "AddAutoScalingRule": "Lisää automaattinen skaalaussääntö",
-    "CoolDownSeconds": "Jäähtyä sekuntia",
-    "SuccessfullyUpdated": "Automaattinen skaalaussääntö on päivitetty onnistuneesti.",
-    "SuccessfullyCreated": "Automaattinen skaalaussääntö on luotu onnistuneesti.",
-    "EditAutoScalingRule": "Muokkaa automaattisen skaalaussääntöä",
-    "Comparator": "Vertailu",
-    "Threshold": "Kynnys",
-    "StepSize": "Askelkoko",
-    "MinReplicas": "Min Replicas",
-    "MaxReplicas": "Max replicas",
-    "MetricName": "Metrinen nimi",
-    "MetricSource": "Metrilähde",
-    "MIN/MAXReplicas": "Min / max -kopiot",
-    "LastTriggered": "Viimeksi laukaistu",
-    "CreatedAt": "Luotu aika",
-    "ConditionTooltip": "Voit syöttää vapaasti minkä tahansa ajoympäristön tukeman mittarin.\nEsimerkiksi: \"cuda_mem\", \"cuda_util\".",
-    "ScalingType": "Tyyppi",
-    "ScaleUp": "Laajentaminen",
-    "ScaleDown": "Pienennä mittakaavaa",
-    "Condition": "Kunto"
-  },
-  "kernel": {
-    "KernelId": "Ytimen tunnus",
-    "Role": "Rooli",
-    "Status": "Status",
-    "AgentId": "Agenttitunnus",
-    "ContainerId": "Konttitunnus",
-    "Kernels": "Ytimet"
   }
 }
