@@ -7,7 +7,7 @@ test.beforeEach(async ({ page }) => {
 
 test.describe('Before login', () => {
   test('should display the login form', async ({ page }) => {
-    await expect(page.getByLabel('E-mail or Username')).toBeVisible();
+    await expect(page.getByLabel('Email or Username')).toBeVisible();
     await expect(page.locator('#id_password label')).toBeVisible();
     await expect(page.getByLabel('Login', { exact: true })).toBeVisible();
   });
