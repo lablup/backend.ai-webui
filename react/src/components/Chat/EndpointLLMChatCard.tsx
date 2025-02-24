@@ -1,6 +1,6 @@
 import { useUpdatableState } from '../../hooks';
 import { useSuspenseTanQuery } from '../../hooks/reactQueryAlias';
-import { Agent, useAgents } from '../../hooks/useAgents';
+import { useAgents } from '../../hooks/useAgents';
 import AgentSelect from '../Agent/AgentSelect';
 import EndpointSelect from '../EndpointSelect';
 import { Model } from './ChatUIModal';
