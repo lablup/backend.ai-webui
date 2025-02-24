@@ -41,7 +41,7 @@ import {
 } from 'antd';
 import { ItemType } from 'antd/lib/menu/interface';
 import _ from 'lodash';
-import { PlayIcon } from 'lucide-react';
+import { BotMessageSquare, PlayIcon } from 'lucide-react';
 import React, { useContext, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -108,6 +108,16 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       label: <WebUILink to="/serving">{t('webui.menu.Serving')}</WebUILink>,
       icon: <EndpointsIcon style={{ color: token.colorPrimary }} />,
       key: 'serving',
+    },
+    {
+      label: <WebUILink to="/agents">{t('webui.menu.Agents')}</WebUILink>,
+      icon: <BotMessageSquare style={{ color: token.colorPrimary }} />,
+      key: 'agents',
+    },
+    {
+      label: <WebUILink to="/import">{t('webui.menu.Import&Run')}</WebUILink>,
+      icon: <PlayIcon style={{ color: token.colorPrimary }} />,
+      key: 'import',
     },
     {
       label: <WebUILink to="/chat">{t('webui.menu.Chat')}</WebUILink>,

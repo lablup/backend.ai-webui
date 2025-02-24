@@ -34,6 +34,7 @@ export const navigate =
         '/github',
         '/import',
         '/chat',
+        '/agents',
       ].includes(path) !== true
     ) {
       // Fallback for Electron Shell/Windows OS
