@@ -226,7 +226,7 @@
     "NoStorageDescriptionFound": "Sin descripción.",
     "NumberOfFolders": "Número de carpetas",
     "Permission": "Permiso",
-    "Pipeline": "Carpetas de tuberías",
+    "Pipeline": "Tubería",
     "Project": "Proyecto",
     "ProjectFolder": "Carpeta de proyectos",
     "QuotaPerStorageVolume": "Cuota por volumen de almacenamiento",
@@ -351,7 +351,8 @@
       "FolderDeletedForever": "La carpeta {{ folderName }} se ha eliminado para siempre.",
       "FolderCloneFailed": "Error al clonar la carpeta.",
       "FolderClonePending": "La clonación de la carpeta está en curso.",
-      "MoveToTrashDescription": "¿Estás seguro de que quieres mover \"{{ folderName }}\" a la papelera?"
+      "MoveToTrashDescription": "¿Estás seguro de que quieres mover \"{{ folderName }}\" a la papelera?",
+      "MountPermission": "Montar permiso"
     },
     "invitation": {
       "FolderSharingNotAvailableToUser": "El uso compartido de carpetas no está disponible para los usuarios solicitados:",
@@ -418,7 +419,15 @@
     "AllowsLettersNumbersAnd-_Dot": "Permite letras, números y -_.",
     "CreatedFolders": "Carpetas creadas",
     "ProjectFolders": "Carpetas de proyectos",
-    "InvitedFolders": "Carpetas invitadas"
+    "InvitedFolders": "Carpetas invitadas",
+    "ReadOnly": "Solo lectura",
+    "ReadWrite": "Leer y escribir",
+    "CreateFolder": "Crear carpeta",
+    "Deleted": "Eliminado",
+    "All": "Todo",
+    "General": "General",
+    "AutoMount": "Montaje automático",
+    "CreateFolderAndUploadFiles": "Crear carpetas y cargar archivos"
   },
   "dialog": {
     "warning": {

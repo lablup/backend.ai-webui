@@ -293,7 +293,8 @@
       "MoveToTrash": "ย้ายไปถังขยะ",
       "FolderCloneFailed": "การโคลนโฟลเดอร์ล้มเหลว",
       "FolderClonePending": "กำลังดำเนินการโคลนโฟลเดอร์",
-      "MoveToTrashDescription": "คุณแน่ใจหรือไม่ที่จะย้าย \"{{ folderName }}\" ไปยังถังขยะ?"
+      "MoveToTrashDescription": "คุณแน่ใจหรือไม่ที่จะย้าย \"{{ folderName }}\" ไปยังถังขยะ?",
+      "MountPermission": "การอนุญาตเมานต์"
     },
     "explorer": {
       "Delete": "ลบ",
@@ -374,7 +375,7 @@
     "Limit": "ขีดจำกัด",
     "HostDetails": "แสดงข้อมูลโควตาสำหรับโฮสต์จัดเก็บที่เลือก",
     "ProjectFolder": "โฟลเดอร์โครงการ",
-    "Pipeline": "โฟลเดอร์ไปป์ไลน์",
+    "Pipeline": "ท่อส่งน้ำ",
     "DialogDataFolder": "โฟลเดอร์ที่สร้างขึ้นโดยอัตโนมัติเมื่อสร้างไปป์ไลน์ใน FastTrack",
     "SearchByName": "ค้นหาตามชื่อ",
     "ModelStore": "คลังโมเดล",
@@ -412,7 +413,15 @@
     "AllowsLettersNumbersAnd-_Dot": "อนุญาตตัวอักษร ตัวเลข และ -_.",
     "CreatedFolders": "โฟลเดอร์ที่สร้างขึ้น",
     "ProjectFolders": "โฟลเดอร์โครงการ",
-    "InvitedFolders": "โฟลเดอร์ที่ได้รับเชิญ"
+    "InvitedFolders": "โฟลเดอร์ที่ได้รับเชิญ",
+    "ReadOnly": "อ่านเท่านั้น",
+    "ReadWrite": "อ่านและเขียน",
+    "CreateFolder": "สร้างโฟลเดอร์",
+    "Deleted": "ถูกลบออก",
+    "All": "ทั้งหมด",
+    "General": "ทั่วไป",
+    "AutoMount": "ติดตั้งอัตโนมัติ",
+    "CreateFolderAndUploadFiles": "สร้างโฟลเดอร์และอัปโหลดไฟล์"
   },
   "dialog": {
     "warning": {

@@ -285,7 +285,8 @@
       "MovedToTrashBin": "Thư mục {{ folderName }} đã được chuyển vào thùng rác.",
       "FolderCloneFailed": "Không sao chép được thư mục.",
       "FolderClonePending": "Đang nhân bản thư mục.",
-      "MoveToTrashDescription": "Bạn có chắc chắn muốn chuyển \"{{ folderName }}\" vào thùng rác không?"
+      "MoveToTrashDescription": "Bạn có chắc chắn muốn chuyển \"{{ folderName }}\" vào thùng rác không?",
+      "MountPermission": "Gắn kết quyền"
     },
     "explorer": {
       "Delete": "Xóa bỏ...",
@@ -373,7 +374,7 @@
       "Status": "Trạng thái",
       "Used": "đã sử dụng"
     },
-    "Pipeline": "Thư mục đường ống",
+    "Pipeline": "Đường ống",
     "DialogDataFolder": "Các thư mục dành riêng cho đường dẫn được tạo tự động khi tạo đường dẫn trong FastTrack.",
     "DialogModelFolder": "Bạn có thể phục vụ và quản lý các mô hình.",
     "SearchByName": "Tìm kiếm theo tên",
@@ -418,7 +419,15 @@
     "AllowsLettersNumbersAnd-_Dot": "Cho phép các chữ cái, số và -_.",
     "CreatedFolders": "Đã tạo ra các thư mục",
     "ProjectFolders": "Thư mục dự án",
-    "InvitedFolders": "Thư mục được mời"
+    "InvitedFolders": "Thư mục được mời",
+    "ReadOnly": "Chỉ đọc",
+    "ReadWrite": "Đọc và viết",
+    "CreateFolder": "Tạo thư mục",
+    "Deleted": "Đã xóa",
+    "All": "Tất cả",
+    "General": "Tổng quan",
+    "AutoMount": "Khai thác tự động",
+    "CreateFolderAndUploadFiles": "Tạo thư mục và tải lên các tệp"
   },
   "dialog": {
     "warning": {

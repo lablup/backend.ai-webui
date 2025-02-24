@@ -285,7 +285,8 @@
       "FolderDeletedForever": "Folder {{ folderName }} telah dipadamkan selama-lamanya.",
       "FolderCloneFailed": "Gagal mengklon folder.",
       "FolderClonePending": "Pengklonan folder sedang dijalankan.",
-      "MoveToTrashDescription": "Adakah anda pasti mahu mengalihkan \"{{ folderName }}\" ke sampah?"
+      "MoveToTrashDescription": "Adakah anda pasti mahu mengalihkan \"{{ folderName }}\" ke sampah?",
+      "MountPermission": "Izin gunung"
     },
     "explorer": {
       "Delete": "Padamkan ...",
@@ -373,7 +374,7 @@
       "Status": "Status",
       "Used": "digunakan"
     },
-    "Pipeline": "Folder Saluran Paip",
+    "Pipeline": "Saluran paip",
     "DialogDataFolder": "Folder khusus saluran paip yang dibuat secara automatik apabila membuat saluran paip dalam FastTrack.",
     "DialogModelFolder": "Anda boleh berkhidmat dan mengurus model.",
     "SearchByName": "Cari mengikut nama",
@@ -418,7 +419,15 @@
     "AllowsLettersNumbersAnd-_Dot": "Membolehkan huruf, nombor dan -_.",
     "CreatedFolders": "Folder yang dicipta",
     "ProjectFolders": "Folder Projek",
-    "InvitedFolders": "Folder yang dijemput"
+    "InvitedFolders": "Folder yang dijemput",
+    "ReadOnly": "Baca sahaja",
+    "ReadWrite": "Baca dan tulis",
+    "CreateFolder": "Buat folder",
+    "Deleted": "Dipadam",
+    "All": "Semua",
+    "General": "Umum",
+    "AutoMount": "Auto Mount",
+    "CreateFolderAndUploadFiles": "Buat folder dan muat naik fail"
   },
   "dialog": {
     "warning": {

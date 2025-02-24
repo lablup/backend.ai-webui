@@ -285,7 +285,8 @@
       "MovedToTrashBin": "{{ folderName }} klasörü çöp kutusuna taşındı.",
       "FolderCloneFailed": "Klasör klonlanamadı.",
       "FolderClonePending": "Klasörün klonlanması devam ediyor.",
-      "MoveToTrashDescription": "\"{{ folderName }}\" dosyasını çöp kutusuna taşımak istediğinizden emin misiniz?"
+      "MoveToTrashDescription": "\"{{ folderName }}\" dosyasını çöp kutusuna taşımak istediğinizden emin misiniz?",
+      "MountPermission": "Montaj İzni"
     },
     "explorer": {
       "Delete": "Sil...",
@@ -373,7 +374,7 @@
     "QuotaPerStorageVolume": "Depolama birimi başına kota",
     "HostDetails": "Seçili depolama ana bilgisayarı için kota bilgilerini görüntüler.",
     "Used": "Kullanılmış",
-    "Pipeline": "Boru Hattı Klasörleri",
+    "Pipeline": "Boru hattı",
     "DialogDataFolder": "FastTrack'te boru hatları oluşturulurken otomatik olarak oluşturulan boru hattına özel klasörler.",
     "DialogModelFolder": "Modellere hizmet verebilir ve yönetebilirsiniz.",
     "SearchByName": "Ada göre ara",
@@ -418,7 +419,15 @@
     "AllowsLettersNumbersAnd-_Dot": "Harflere, sayılara ve -_'ye izin verir.",
     "CreatedFolders": "Oluşturulan klasörler",
     "ProjectFolders": "Proje Klasörleri",
-    "InvitedFolders": "Davet edilen klasörler"
+    "InvitedFolders": "Davet edilen klasörler",
+    "ReadOnly": "Sadece oku",
+    "ReadWrite": "Oku ve Yaz",
+    "CreateFolder": "Klasör Oluştur",
+    "Deleted": "Silinmiş",
+    "All": "Tüm",
+    "General": "Genel",
+    "AutoMount": "Otomatik montaj",
+    "CreateFolderAndUploadFiles": "Klasör oluşturun ve dosyaları yükleyin"
   },
   "dialog": {
     "warning": {

@@ -285,7 +285,8 @@
       "MoveToTrash": "Хогийн сав руу шилжүүлэх",
       "FolderCloneFailed": "Фолдерыг хуулбарлаж чадсангүй.",
       "FolderClonePending": "Фолдерыг хуулбарлаж байна.",
-      "MoveToTrashDescription": "Та \"{{ folderName }}\"-г хогийн сав руу зөөхдөө итгэлтэй байна уу?"
+      "MoveToTrashDescription": "Та \"{{ folderName }}\"-г хогийн сав руу зөөхдөө итгэлтэй байна уу?",
+      "MountPermission": "ЗОРИУЛСАН"
     },
     "explorer": {
       "Delete": "Устгах ...",
@@ -374,7 +375,7 @@
     "QuotaPerStorageVolume": "Хадгалах хэмжээ тус бүрийн квот",
     "HostDetails": "Сонгосон хадгалах сангийн хостын квотын мэдээллийг харуулна.",
     "Used": "Ашигласан",
-    "Pipeline": "Дамжуулах хоолойн хавтас",
+    "Pipeline": "Нүүрэг зүү",
     "DialogDataFolder": "FastTrack-д дамжуулах шугам үүсгэх үед автоматаар үүсгэгддэг дамжуулах хоолойд зориулагдсан фолдерууд.",
     "SearchByName": "Нэрээр нь хайх",
     "ModelStore": "Загварын дэлгүүр",
@@ -417,7 +418,15 @@
     "AllowsLettersNumbersAnd-_Dot": "Үсэг, тоо ба -_-г зөвшөөрдөг.",
     "CreatedFolders": "Хавтасыг бий болгосон",
     "ProjectFolders": "Төслийн хавтас",
-    "InvitedFolders": "Уригдсан хавтаснууд"
+    "InvitedFolders": "Уригдсан хавтаснууд",
+    "ReadOnly": "Зөвхөн унших",
+    "ReadWrite": "Уншаад бичнэ үү",
+    "CreateFolder": "Үүсгэх",
+    "Deleted": "Уавлид",
+    "All": "Бүгд",
+    "General": "Жанжин",
+    "AutoMount": "Автомат холболт",
+    "CreateFolderAndUploadFiles": "Фолдер үүсгэж, файл байршуулах"
   },
   "dialog": {
     "warning": {

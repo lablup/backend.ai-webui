@@ -285,7 +285,8 @@
       "MovedToTrashBin": "Le dossier {{ folderName }} a été déplacé vers la corbeille.",
       "FolderCloneFailed": "Échec du clonage du dossier.",
       "FolderClonePending": "Le clonage du dossier est en cours.",
-      "MoveToTrashDescription": "Êtes-vous sûr de vouloir déplacer \"{{ folderName }}\" vers la corbeille ?"
+      "MoveToTrashDescription": "Êtes-vous sûr de vouloir déplacer \"{{ folderName }}\" vers la corbeille ?",
+      "MountPermission": "Autorisation de montage"
     },
     "explorer": {
       "Delete": "Effacer...",
@@ -374,7 +375,7 @@
     "QuotaPerStorageVolume": "Quota par volume de stockage",
     "HostDetails": "Affiche les informations sur les quotas pour l'hôte de stockage sélectionné.",
     "Used": "Utilisé",
-    "Pipeline": "Dossiers du pipeline",
+    "Pipeline": "Pipeline",
     "DialogDataFolder": "Dossiers dédiés aux pipelines qui sont automatiquement créés lors de la création de pipelines dans FastTrack.",
     "SearchByName": "Rechercher par nom",
     "ModelStore": "Magasin de modèles",
@@ -418,7 +419,15 @@
     "AllowsLettersNumbersAnd-_Dot": "Autorise les lettres, les chiffres et -_.",
     "CreatedFolders": "Dossiers créés",
     "ProjectFolders": "Dossiers de projet",
-    "InvitedFolders": "Dossiers invités"
+    "InvitedFolders": "Dossiers invités",
+    "ReadOnly": "Lire uniquement",
+    "ReadWrite": "Lire et écrire",
+    "CreateFolder": "Créer un dossier",
+    "Deleted": "Supprimé",
+    "All": "Tous",
+    "General": "Général",
+    "AutoMount": "Monture automatique",
+    "CreateFolderAndUploadFiles": "Créer un dossier et télécharger des fichiers"
   },
   "dialog": {
     "warning": {

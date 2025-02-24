@@ -243,7 +243,7 @@
       "Permission": "Permission",
       "Cloneable": "Cloneable",
       "Owner": "Owner",
-      "Control": "Control",
+      "Control": "Controls",
       "Name": "Name",
       "CloneAFolder": "Clone folder",
       "LeaveAFolder": "Leave folder",
@@ -295,7 +295,8 @@
       "MoveToTrash": "Move to trash",
       "FolderCloneFailed": "Failed to clone the folder.",
       "FolderClonePending": "Cloning the folder is in progress.",
-      "MoveToTrashDescription": "Are you sure you want to move \"{{ folderName }}\" to trash?"
+      "MoveToTrashDescription": "Are you sure you want to move \"{{ folderName }}\" to trash?",
+      "MountPermission": "Mount Permission"
     },
     "explorer": {
       "Delete": "Delete",
@@ -376,7 +377,7 @@
     "Limit": "Limit",
     "HostDetails": "Displays quota information for the selected storage host.",
     "ProjectFolder": "Project Folder",
-    "Pipeline": "Pipeline Folders",
+    "Pipeline": "Pipeline",
     "DialogDataFolder": "Pipeline dedicated folders that are automatically created when creating pipelines in FastTrack.",
     "SearchByName": "Search by name",
     "ModelStore": "Model Store",
@@ -420,7 +421,15 @@
     "AllowsLettersNumbersAnd-_Dot": "Allows letters, numbers and -_.",
     "CreatedFolders": "Created Folders",
     "ProjectFolders": "Project Folders",
-    "InvitedFolders": "Invited Folders"
+    "InvitedFolders": "Invited Folders",
+    "CreateFolderAndUploadFiles": "Create Folder and Upload Files",
+    "CreateFolder": "Create Folder",
+    "ReadOnly": "Read only",
+    "ReadWrite": "Read & Write",
+    "Deleted": "Deleted",
+    "All": "All",
+    "General": "General",
+    "AutoMount": "Auto Mount"
   },
   "dialog": {
     "warning": {

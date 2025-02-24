@@ -285,7 +285,8 @@
       "MovedToTrashBin": "Folder {{ folderName }} został przeniesiony do kosza.",
       "FolderCloneFailed": "Nie udało się sklonować folderu.",
       "FolderClonePending": "Klonowanie folderu jest w toku.",
-      "MoveToTrashDescription": "Czy na pewno chcesz przenieść folder \"{{ folderName }}\" do kosza?"
+      "MoveToTrashDescription": "Czy na pewno chcesz przenieść folder \"{{ folderName }}\" do kosza?",
+      "MountPermission": "Zamontować pozwolenie"
     },
     "explorer": {
       "Delete": "Kasować...",
@@ -373,7 +374,7 @@
     "QuotaPerStorageVolume": "Limit na wolumin pamięci masowej",
     "HostDetails": "Wyświetla informacje o przydziale dla wybranego hosta pamięci masowej.",
     "Used": "Używany",
-    "Pipeline": "Foldery rurociągów",
+    "Pipeline": "Rurociąg",
     "DialogDataFolder": "Dedykowane potokom foldery, które są automatycznie tworzone podczas tworzenia potoków w FastTrack.",
     "DialogModelFolder": "Możesz obsługiwać modele i zarządzać nimi.",
     "SearchByName": "Szukaj według nazwy",
@@ -418,7 +419,15 @@
     "AllowsLettersNumbersAnd-_Dot": "Dopuszcza litery, cyfry i -_.",
     "CreatedFolders": "Utworzone foldery",
     "ProjectFolders": "Foldery projektu",
-    "InvitedFolders": "Zaproszone foldery"
+    "InvitedFolders": "Zaproszone foldery",
+    "ReadOnly": "Czytaj tylko",
+    "ReadWrite": "Przeczytaj i napisz",
+    "CreateFolder": "Utwórz folder",
+    "Deleted": "Usunięte",
+    "All": "Wszystko",
+    "General": "Ogólny",
+    "AutoMount": "Automatyczne mocowanie",
+    "CreateFolderAndUploadFiles": "Utwórz folder i prześlij pliki"
   },
   "dialog": {
     "warning": {
