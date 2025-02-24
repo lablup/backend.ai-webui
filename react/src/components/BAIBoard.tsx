@@ -1,7 +1,6 @@
-import Flex from './Flex';
 import Board, { BoardProps } from '@cloudscape-design/board-components/board';
 import BoardItem from '@cloudscape-design/board-components/board-item';
-import { Skeleton, Typography } from 'antd';
+import { Skeleton } from 'antd';
 import { createStyles } from 'antd-style';
 import { Suspense } from 'react';
 
@@ -23,29 +22,31 @@ const useStyles = createStyles(({ css }) => {
     board: css`
       ${defaultBoard}
     `,
-    disableCustomize: css`
-      ${defaultBoard}
-      .bai_board_handle {
-        display: none !important;
-      }
+    disableResize: css`
       .bai_board_resizer {
         display: none !important;
       }
+    `,
+    disableMove: css`
+      .bai_board_handle {
+        display: none !important;
+      }
       .bai_board_header {
-        height: var(--token-boardHeaderHeight, 55px) !important;
+        display: none !important;
       }
     `,
     boardItems: css`
       & > div:first-child {
-        border: 1px solid var(--token-colorBorder) !important ;
+        border: none !important ;
         border-radius: var(--token-borderRadius) !important ;
         background-color: var(--token-colorBgContainer) !important ;
       }
 
       & > div:first-child > div:first-child > div:first-child {
-        border-bottom: 1px solid var(--token-colorBorder) !important;
         margin-bottom: var(--token-margin);
         background-color: var(--token-colorBgContainer) !important ;
+        position: absolute;
+        z-index: 1;
       }
     `,
   };
@@ -56,19 +57,27 @@ interface BAICustomizableGridProps {
   onItemsChange: (
     event: CustomEvent<BoardProps.ItemsChangeDetail<unknown>>,
   ) => void;
-  customizable?: boolean;
+  resizable?: boolean;
+  movable?: boolean;
 }
 
 const BAIBoard: React.FC<BAICustomizableGridProps> = ({
   items: parsedItems,
-  customizable = false,
+  resizable = false,
+  movable = false,
   ...BoardProps
 }) => {
   const { styles } = useStyles();
+
+  const boardStyles = [
+    styles.board,
+    !movable && styles.disableMove,
+    !resizable && styles.disableResize,
+  ].join(' ');
+
   return (
     <Board
-      //@ts-ignore
-      className={customizable ? styles.board : styles.disableCustomize}
+      className={boardStyles}
       empty
       renderItem={(item: any) => {
         return (
@@ -82,11 +91,6 @@ const BAIBoard: React.FC<BAICustomizableGridProps> = ({
               resizeHandleAriaLabel: '',
               resizeHandleAriaDescription: '',
             }}
-            header={
-              <Flex style={{ height: '100%' }} align="center">
-                <Typography.Text strong>{item.data.title}</Typography.Text>
-              </Flex>
-            }
           >
             <Suspense fallback={<Skeleton active />}>
               {item.data.content}

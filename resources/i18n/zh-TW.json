@@ -67,7 +67,8 @@
       "MyEnvironments": "我的環境",
       "ResourcePolicy": "資源政策",
       "FullNameUpdated": "全名更新成功。",
-      "Chat": "聊天"
+      "Chat": "聊天",
+      "Start": "開始"
     },
     "YouAreOffline": "脱机：未连接任何网络。",
     "YouAreOnline": "您現在在線",
@@ -1799,5 +1800,26 @@
     "AgentId": "代理ID",
     "ContainerId": "容器ID",
     "Kernels": "內核"
+  },
+  "start": {
+    "CreateFolder": "建立新的儲存資料夾",
+    "button": {
+      "CreateFolder": "建立資料夾",
+      "StartSession": "開始會話",
+      "ModelService": "啟動服務",
+      "StartNow": "現在開始",
+      "StartBatchSession": "從 URL 開始"
+    },
+    "CreateFolderDesc": "建立資料夾和上傳檔案對於訓練模型或對外提供服務至關重要。\n請先上傳文件。",
+    "StartSession": "開始互動會話",
+    "StartSessionDesc": "想訓練模型嗎？\n按一下該按鈕即可立即建立會話。\n選擇您喜歡的環境和資源來執行程式碼和其他任務。",
+    "StartBatchSession": "開始批量會話",
+    "StartBatchSessionDesc": "對於預先定義檔案或排程任務，請嘗試批次會話。\n輸入命令，設定日期和時間，然後根據需要運行。",
+    "ModelService": "啟動模型服務",
+    "ModelServiceDesc": "準備好與其他人分享您訓練過的模型了嗎？\n點選按鈕建立服務。",
+    "StartFromExample": "從例子開始",
+    "StartFromExampleDesc": "探索各種範例程式碼並開始使用。",
+    "StartFromURL": "從網址開始",
+    "StartFromURLDesc": "從各種環境（例如 GitHub、GitLab、Notebook 等）匯入您的專案和程式碼。"
   }
 }

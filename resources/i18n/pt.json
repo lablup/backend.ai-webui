@@ -67,7 +67,8 @@
       "MyEnvironments": "Meus ambientes",
       "ResourcePolicy": "Política de Recursos",
       "FullNameUpdated": "O nome completo foi atualizado com sucesso.",
-      "Chat": "Conversa"
+      "Chat": "Conversa",
+      "Start": "Começar"
     },
     "YouAreOffline": "Desligado: Não está ligado a nenhuma rede.",
     "YouAreOnline": "Agora você está online",
@@ -1800,5 +1801,26 @@
     "AgentId": "ID do agente",
     "ContainerId": "ID do contêiner",
     "Kernels": "Kernels"
+  },
+  "start": {
+    "CreateFolder": "Crie uma nova pasta de armazenamento",
+    "button": {
+      "CreateFolder": "Criar pasta",
+      "StartSession": "Iniciar sessão",
+      "ModelService": "Iniciar serviço",
+      "StartNow": "Comece agora",
+      "StartBatchSession": "Comece a partir de um URL"
+    },
+    "CreateFolderDesc": "Criar uma pasta e fazer upload de arquivos são cruciais para treinar modelos ou fornecer serviços externamente. \nComece enviando os arquivos.",
+    "StartSession": "Iniciar uma sessão interativa",
+    "StartSessionDesc": "Quer treinar um modelo? \nClique no botão para criar uma sessão instantaneamente. \nEscolha seu ambiente e recursos preferidos para executar código e outras tarefas.",
+    "StartBatchSession": "Iniciar sessão em lote",
+    "StartBatchSessionDesc": "Para arquivos predefinidos ou tarefas agendadas, experimente sessões em lote. \nDigite o comando, defina a data e a hora e execute conforme necessário.",
+    "ModelService": "Iniciar serviço de modelo",
+    "ModelServiceDesc": "Pronto para compartilhar seu modelo treinado com outras pessoas? \nClique no botão para criar um serviço.",
+    "StartFromExample": "Comece pelo exemplo",
+    "StartFromExampleDesc": "Explore vários exemplos de códigos e comece.",
+    "StartFromURL": "Começar do URL",
+    "StartFromURLDesc": "Importe seu projeto e código de vários ambientes como GitHub, GitLab, Notebook, etc."
   }
 }

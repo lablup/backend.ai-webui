@@ -67,7 +67,8 @@
       "MyEnvironments": "Lingkungan Saya",
       "ResourcePolicy": "Kebijakan Sumber Daya",
       "FullNameUpdated": "Nama lengkap berhasil diperbarui.",
-      "Chat": "Mengobrol"
+      "Chat": "Mengobrol",
+      "Start": "Awal"
     },
     "YouAreOffline": "Offline: Tidak terhubung ke jaringan apa pun.",
     "YouAreOnline": "Anda sekarang online",
@@ -1800,5 +1801,26 @@
     "AgentId": "ID Agen",
     "ContainerId": "ID Kontainer",
     "Kernels": "Kernel"
+  },
+  "start": {
+    "CreateFolder": "Buat Folder Penyimpanan Baru",
+    "button": {
+      "CreateFolder": "Buat Folder",
+      "StartSession": "Mulai Sesi",
+      "ModelService": "Mulai Layanan",
+      "StartNow": "Mulai Sekarang",
+      "StartBatchSession": "Mulai dari URL"
+    },
+    "CreateFolderDesc": "Membuat folder dan mengunggah file sangat penting untuk melatih model atau menyediakan layanan secara eksternal. \nSilakan mulai dengan mengunggah file.",
+    "StartSession": "Mulai Sesi Interaktif",
+    "StartSessionDesc": "Ingin melatih model? \nKlik tombol untuk membuat sesi secara instan. \nPilih lingkungan dan sumber daya pilihan Anda untuk menjalankan kode dan tugas lainnya.",
+    "StartBatchSession": "Mulai Sesi Batch",
+    "StartBatchSessionDesc": "Untuk file yang telah ditentukan sebelumnya atau tugas terjadwal, cobalah sesi Batch. \nMasukkan perintah, atur tanggal dan waktu, dan jalankan sesuai kebutuhan.",
+    "ModelService": "Mulai Layanan Model",
+    "ModelServiceDesc": "Siap membagikan model terlatih Anda kepada orang lain? \nKlik tombol untuk membuat layanan.",
+    "StartFromExample": "Mulailah dari Contoh",
+    "StartFromExampleDesc": "Jelajahi berbagai contoh kode dan mulailah.",
+    "StartFromURL": "Mulai Dari URL",
+    "StartFromURLDesc": "Impor proyek dan kode Anda dari berbagai lingkungan seperti GitHub, GitLab, Notebook, dll."
   }
 }

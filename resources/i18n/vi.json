@@ -67,7 +67,8 @@
       "MyEnvironments": "Môi trường của tôi",
       "ResourcePolicy": "Chính sách tài nguyên",
       "FullNameUpdated": "Tên đầy đủ được cập nhật thành công.",
-      "Chat": "Trò chuyện"
+      "Chat": "Trò chuyện",
+      "Start": "Bắt đầu"
     },
     "YouAreOffline": "Ngoại tuyến: Không kết nối với bất kỳ mạng nào.",
     "YouAreOnline": "Bạn hiện đang trực tuyến",
@@ -1800,5 +1801,26 @@
     "AgentId": "Id đại lý",
     "ContainerId": "ID container",
     "Kernels": "Hạt nhân"
+  },
+  "start": {
+    "CreateFolder": "Tạo thư mục lưu trữ mới",
+    "button": {
+      "CreateFolder": "Tạo thư mục",
+      "StartSession": "Bắt đầu phiên",
+      "ModelService": "Bắt đầu dịch vụ",
+      "StartNow": "Bắt đầu ngay bây giờ",
+      "StartBatchSession": "Bắt đầu từ một URL"
+    },
+    "CreateFolderDesc": "Việc tạo thư mục và tải tệp lên là rất quan trọng đối với việc đào tạo mô hình hoặc cung cấp dịch vụ bên ngoài. \nHãy bắt đầu bằng cách tải lên các tập tin.",
+    "StartSession": "Bắt đầu một phiên tương tác",
+    "StartSessionDesc": "Bạn muốn đào tạo một người mẫu? \nNhấp vào nút để tạo phiên ngay lập tức. \nChọn môi trường và tài nguyên ưa thích của bạn để chạy mã và các tác vụ khác.",
+    "StartBatchSession": "Bắt đầu phiên hàng loạt",
+    "StartBatchSessionDesc": "Đối với các tệp được xác định trước hoặc các tác vụ đã lên lịch, hãy thử phiên Batch. \nNhập lệnh, đặt ngày giờ và chạy khi cần.",
+    "ModelService": "Bắt đầu dịch vụ mẫu",
+    "ModelServiceDesc": "Sẵn sàng chia sẻ mô hình được đào tạo của bạn với người khác? \nNhấp vào nút để tạo một dịch vụ.",
+    "StartFromExample": "Bắt đầu từ ví dụ",
+    "StartFromExampleDesc": "Khám phá các mã ví dụ khác nhau và bắt đầu.",
+    "StartFromURL": "Bắt đầu từ URL",
+    "StartFromURLDesc": "Nhập dự án và mã của bạn từ nhiều môi trường khác nhau như GitHub, GitLab, Notebook, v.v."
   }
 }

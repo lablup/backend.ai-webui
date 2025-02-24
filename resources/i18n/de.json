@@ -67,7 +67,8 @@
       "MyEnvironments": "Meine Umgebungen",
       "ResourcePolicy": "Ressourcenpolitik",
       "FullNameUpdated": "Der vollständige Name wurde erfolgreich aktualisiert.",
-      "Chat": "Chat"
+      "Chat": "Chat",
+      "Start": "Start"
     },
     "YouAreOffline": "Offline: Keine Verbindung zu einem Netzwerk.",
     "YouAreOnline": "Sie sind jetzt online",
@@ -1800,5 +1801,26 @@
     "AgentId": "Agenten -ID",
     "ContainerId": "Container -ID",
     "Kernels": "Kerne"
+  },
+  "start": {
+    "CreateFolder": "Erstellen Sie einen neuen Speicherordner",
+    "button": {
+      "CreateFolder": "Ordner erstellen",
+      "StartSession": "Sitzung starten",
+      "ModelService": "Dienst starten",
+      "StartNow": "Beginnen Sie jetzt",
+      "StartBatchSession": "Beginnen Sie mit einer URL"
+    },
+    "CreateFolderDesc": "Für das Training von Modellen oder die externe Bereitstellung von Diensten sind das Erstellen eines Ordners und das Hochladen von Dateien von entscheidender Bedeutung. \nBitte beginnen Sie mit dem Hochladen der Dateien.",
+    "StartSession": "Starten Sie eine interaktive Sitzung",
+    "StartSessionDesc": "Möchten Sie ein Model trainieren? \nKlicken Sie auf die Schaltfläche, um sofort eine Sitzung zu erstellen. \nWählen Sie Ihre bevorzugte Umgebung und Ressourcen zum Ausführen von Code und anderen Aufgaben.",
+    "StartBatchSession": "Starten Sie die Batch-Sitzung",
+    "StartBatchSessionDesc": "Versuchen Sie für vordefinierte Dateien oder geplante Aufgaben Batch-Sitzungen. \nGeben Sie den Befehl ein, stellen Sie Datum und Uhrzeit ein und führen Sie ihn nach Bedarf aus.",
+    "ModelService": "Modelldienst starten",
+    "ModelServiceDesc": "Sind Sie bereit, Ihr trainiertes Modell mit anderen zu teilen? \nKlicken Sie auf die Schaltfläche, um einen Dienst zu erstellen.",
+    "StartFromExample": "Beginnen Sie mit dem Beispiel",
+    "StartFromExampleDesc": "Entdecken Sie verschiedene Beispielcodes und legen Sie los.",
+    "StartFromURL": "Beginnen Sie mit der URL",
+    "StartFromURLDesc": "Importieren Sie Ihr Projekt und Ihren Code aus verschiedenen Umgebungen wie GitHub, GitLab, Notebook usw."
   }
 }
