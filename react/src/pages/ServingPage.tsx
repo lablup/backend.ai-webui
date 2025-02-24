@@ -20,7 +20,7 @@ import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 import { StringParam, withDefault } from 'use-query-params';
 
-type LifecycleStage = 'created&destroying' | 'destroyed';
+type LifecycleStage = 'active' | 'destroyed';
 
 const ServingPage: React.FC = () => {
   const { t } = useTranslation();
@@ -32,7 +32,7 @@ const ServingPage: React.FC = () => {
   const [queryParams, setQuery] = useDeferredQueryParams({
     order: StringParam,
     filter: StringParam,
-    lifecycleStage: withDefault(StringParam, 'created&destroying'),
+    lifecycleStage: withDefault(StringParam, 'active'),
   });
 
   const {
@@ -47,7 +47,7 @@ const ServingPage: React.FC = () => {
   const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
 
   const lifecycleStageFilter =
-    queryParams.lifecycleStage === 'created&destroying'
+    queryParams.lifecycleStage === 'active'
       ? `lifecycle_stage == "created" | lifecycle_stage == "destroying"`
       : `lifecycle_stage == "${queryParams.lifecycleStage}"`;
 
@@ -154,7 +154,7 @@ const ServingPage: React.FC = () => {
                 options={[
                   {
                     label: 'Active',
-                    value: 'created&destroying',
+                    value: 'active',
                   },
                   {
                     label: 'Destroyed',
