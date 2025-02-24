@@ -1094,7 +1094,9 @@
     "ExportCSV": "导出 CSV",
     "Tools": "工具",
     "MemorySizeExceedsLimit": "内存大小应小于 300 PiB",
-    "MaxNetworkCount": "最大网络数"
+    "MaxNetworkCount": "最大网络数",
+    "MaxPendingSessionCount": "最大待处理会话数",
+    "MaxConcurrentSFTPSessions": "最大并发 SFTP 会话数"
   },
   "registry": {
     "Hostname": "主机名",

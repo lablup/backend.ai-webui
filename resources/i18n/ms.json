@@ -1094,7 +1094,9 @@
     "ExportCSV": "eksport CSV",
     "Tools": "Alatan",
     "MemorySizeExceedsLimit": "Saiz memori hendaklah kurang daripada 300 PiB",
-    "MaxNetworkCount": "Kiraan Rangkaian Maks"
+    "MaxNetworkCount": "Kiraan Rangkaian Maks",
+    "MaxPendingSessionCount": "Kiraan Sesi Menunggu Maks",
+    "MaxConcurrentSFTPSessions": "Sesi SFTP Serentak Maks"
   },
   "registry": {
     "Hostname": "Nama Hos",

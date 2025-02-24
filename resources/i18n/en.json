@@ -1224,7 +1224,9 @@
     "ExportCSV": "export CSV",
     "Tools": "Tools",
     "MemorySizeExceedsLimit": "Memory size should be less than 300 PiB",
-    "MaxNetworkCount": "Max Network Count"
+    "MaxNetworkCount": "Max Network Count",
+    "MaxPendingSessionCount": "Max Pending Session Count",
+    "MaxConcurrentSFTPSessions": "Max Concurrent SFTP Sessions"
   },
   "registry": {
     "Hostname": "Hostname",

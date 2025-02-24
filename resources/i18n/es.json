@@ -993,7 +993,9 @@
     "ExportCSV": "exportar CSV",
     "Tools": "Herramientas",
     "MemorySizeExceedsLimit": "El tamaño de la memoria debe ser inferior a 300 PiB",
-    "MaxNetworkCount": "Recuento máximo de red"
+    "MaxNetworkCount": "Recuento máximo de red",
+    "MaxPendingSessionCount": "Recuento máximo de sesiones pendientes",
+    "MaxConcurrentSFTPSessions": "Sesiones SFTP simultáneas máximas"
   },
   "resourcePreset": {
     "AboutToDeletePreset": "Está a punto de borrar este preajuste:",

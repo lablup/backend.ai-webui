@@ -1094,7 +1094,9 @@
     "ExportCSV": "xuất CSV",
     "Tools": "Công cụ",
     "MemorySizeExceedsLimit": "Kích thước bộ nhớ phải nhỏ hơn 300 PiB",
-    "MaxNetworkCount": "Số lượng mạng tối đa"
+    "MaxNetworkCount": "Số lượng mạng tối đa",
+    "MaxPendingSessionCount": "Số phiên chờ xử lý tối đa",
+    "MaxConcurrentSFTPSessions": "Phiên SFTP đồng thời tối đa"
   },
   "registry": {
     "Hostname": "Tên máy chủ",

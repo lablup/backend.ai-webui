@@ -1093,7 +1093,9 @@
     "ExportCSV": "匯出 CSV",
     "Tools": "工具",
     "MemorySizeExceedsLimit": "記憶體大小應小於 300 PiB",
-    "MaxNetworkCount": "最大網路數"
+    "MaxNetworkCount": "最大網路數",
+    "MaxPendingSessionCount": "最大待處理會話數",
+    "MaxConcurrentSFTPSessions": "最大並發 SFTP 會話數"
   },
   "registry": {
     "Hostname": "主機名",
