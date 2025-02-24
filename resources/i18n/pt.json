@@ -415,7 +415,10 @@
     "UserQuotaScopeId": "Quota Scope ID",
     "FileAndFolderNameRequired": "O nome do arquivo / pasta é obrigatório",
     "AllowsLettersNumbersAnd-_": "Permite letras, números e -_",
-    "AllowsLettersNumbersAnd-_Dot": "Permite letras, números e -_."
+    "AllowsLettersNumbersAnd-_Dot": "Permite letras, números e -_.",
+    "CreatedFolders": "Pastas criadas",
+    "ProjectFolders": "Pastas de projeto",
+    "InvitedFolders": "Pastas convidadas"
   },
   "dialog": {
     "warning": {

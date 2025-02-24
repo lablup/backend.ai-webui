@@ -415,7 +415,10 @@
     "UserQuotaScopeId": "Quota Scope ID",
     "FileAndFolderNameRequired": "Dosya/Klasör adı gerekli",
     "AllowsLettersNumbersAnd-_": "Harflere, sayılara ve -_'ye izin verir",
-    "AllowsLettersNumbersAnd-_Dot": "Harflere, sayılara ve -_'ye izin verir."
+    "AllowsLettersNumbersAnd-_Dot": "Harflere, sayılara ve -_'ye izin verir.",
+    "CreatedFolders": "Oluşturulan klasörler",
+    "ProjectFolders": "Proje Klasörleri",
+    "InvitedFolders": "Davet edilen klasörler"
   },
   "dialog": {
     "warning": {
