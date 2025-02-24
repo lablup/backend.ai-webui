@@ -67,7 +67,8 @@
       "MyEnvironments": "Ortamlarım",
       "ResourcePolicy": "Kaynak Politikası",
       "FullNameUpdated": "Tam ad başarıyla güncellendi.",
-      "Chat": "Sohbet"
+      "Chat": "Sohbet",
+      "Agents": "Ajanlar"
     },
     "YouAreOffline": "Çevrimdışı: Herhangi bir ağa bağlı değil.",
     "YouAreOnline": "artık çevrimiçisin",

@@ -1658,7 +1658,8 @@
       "MyEnvironments": "Omat ympäristöt",
       "ResourcePolicy": "Resurssipolitiikka",
       "FullNameUpdated": "Koko nimi on päivitetty onnistuneesti.",
-      "Chat": "Chat"
+      "Chat": "Chat",
+      "Agents": "Asiamiehet"
     },
     "NetworkSoftTimeout": "Palvelimen vastaus kestää kauemmin. Odota hetki",
     "NotFound": "<p>Oops!<br/>Sivua ei löydy...</p>",

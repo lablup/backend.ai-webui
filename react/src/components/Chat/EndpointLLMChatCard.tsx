@@ -1,5 +1,7 @@
 import { useUpdatableState } from '../../hooks';
 import { useSuspenseTanQuery } from '../../hooks/reactQueryAlias';
+import { useAgents } from '../../hooks/useAgents';
+import AgentSelect from '../Agent/AgentSelect';
 import EndpointSelect from '../EndpointSelect';
 import { Model } from './ChatUIModal';
 import LLMChatCard, { BAIModel } from './LLMChatCard';
@@ -10,7 +12,7 @@ import { Alert, Button, CardProps, Popconfirm, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import { atom, useAtom } from 'jotai';
 import _ from 'lodash';
-import React, { startTransition, useId, useState } from 'react';
+import React, { startTransition, useId, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
 
@@ -25,6 +27,7 @@ interface EndpointLLMChatCardProps extends CardProps {
   closable?: boolean;
   defaultModelId?: string;
   defaultEndpoint?: EndpointLLMChatCard_endpoint$key;
+  defaultAgentId?: string;
   isSynchronous?: boolean;
   onRequestClose?: () => void;
   onModelChange?: (modelId: string) => void;
@@ -35,6 +38,7 @@ const EndpointLLMChatCard: React.FC<EndpointLLMChatCardProps> = ({
   closable,
   defaultModelId,
   defaultEndpoint,
+  defaultAgentId,
   isSynchronous,
   onRequestClose,
   onModelChange,
@@ -93,37 +97,59 @@ const EndpointLLMChatCard: React.FC<EndpointLLMChatCardProps> = ({
 
   const submitId = useId();
 
+  const { agents } = useAgents();
+  const [agentId, setAgentId] = useState(defaultAgentId);
+  const systemPrompt = useMemo(
+    () => agents.filter((a) => a.id === agentId)[0]?.config.system_prompt,
+    [agents, agentId],
+  );
+
   return (
     <LLMChatCard
       {...cardProps}
+      chatId={`${endpoint?.endpoint_id}_${agentId}`}
       baseURL={
         endpoint?.url
           ? new URL(basePath, endpoint?.url ?? undefined).toString()
           : undefined
       }
       models={models}
+      systemPrompt={systemPrompt}
       fetchOnClient
       leftExtra={
-        <EndpointSelect
-          placeholder={t('chatui.SelectEndpoint')}
-          style={{
-            fontWeight: 'normal',
-          }}
-          fetchKey={fetchKey}
-          showSearch
-          loading={promisingEndpoint?.endpoint_id !== endpoint?.endpoint_id}
-          onChange={(v, endpoint) => {
-            // TODO: fix type definitions
-            // @ts-ignore
-            setPromisingEndpoint(endpoint);
-            startTransition(() => {
+        <>
+          {agentId && (
+            <AgentSelect
+              agents={agents}
+              value={agentId}
+              onChange={(agent) => {
+                startTransition(() => {
+                  setAgentId(agent);
+                });
+              }}
+            />
+          )}
+          <EndpointSelect
+            placeholder={t('chatui.SelectEndpoint')}
+            style={{
+              fontWeight: 'normal',
+            }}
+            fetchKey={fetchKey}
+            showSearch
+            loading={promisingEndpoint?.endpoint_id !== endpoint?.endpoint_id}
+            onChange={(v, endpoint) => {
+              // TODO: fix type definitions
               // @ts-ignore
-              setEndpointFrgmt(endpoint);
-            });
-          }}
-          value={endpoint?.endpoint_id}
-          popupMatchSelectWidth={false}
-        />
+              setPromisingEndpoint(endpoint);
+              startTransition(() => {
+                // @ts-ignore
+                setEndpointFrgmt(endpoint);
+              });
+            }}
+            value={endpoint?.endpoint_id}
+            popupMatchSelectWidth={false}
+          />
+        </>
       }
       modelId={
         defaultModelId &&

@@ -67,7 +67,8 @@
       "MyEnvironments": "สภาพแวดล้อมของฉัน",
       "ResourcePolicy": "นโยบายทรัพยากร",
       "FullNameUpdated": "อัปเดตชื่อเต็มเรียบร้อยแล้ว",
-      "Chat": "แชท"
+      "Chat": "แชท",
+      "Agents": "ตัวแทน"
     },
     "YouAreOffline": "ออฟไลน์: ไม่ได้เชื่อมต่อกับเครือข่ายใดๆ",
     "YouAreOnline": "คุณออนไลน์แล้ว",

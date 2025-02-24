@@ -1658,7 +1658,8 @@
       "MyEnvironments": "Mis ambientes",
       "ResourcePolicy": "Política de recursos",
       "FullNameUpdated": "El nombre completo se ha actualizado correctamente.",
-      "Chat": "Chat"
+      "Chat": "Chat",
+      "Agents": "Agentes"
     },
     "NetworkSoftTimeout": "El servidor está tardando más en responder. Por favor, espere un momento",
     "NotFound": "<p>¡Oops!<br/>Página no encontrada...</p>",

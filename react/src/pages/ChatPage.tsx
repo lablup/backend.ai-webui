@@ -24,6 +24,7 @@ const ChatPage: React.FC<ChatPageProps> = ({ ...props }) => {
 
   const [endpointId] = useQueryParam('endpointId', StringParam);
   const [modelId] = useQueryParam('modelId', StringParam);
+  const [agentId] = useQueryParam('agentId', StringParam);
   const isEmptyEndpointId = !endpointId;
 
   const { endpoint, endpoint_list } = useLazyLoadQuery<ChatPageQuery>(
@@ -123,6 +124,7 @@ const ChatPage: React.FC<ChatPageProps> = ({ ...props }) => {
                     ? endpoint
                     : endpoint_list?.items?.[0] || undefined
                 }
+                defaultAgentId={agentId || undefined}
                 key={getKey(index)}
                 style={{ flex: 1 }}
                 onRequestClose={() => {

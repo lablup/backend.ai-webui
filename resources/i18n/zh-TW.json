@@ -67,7 +67,8 @@
       "MyEnvironments": "我的環境",
       "ResourcePolicy": "資源政策",
       "FullNameUpdated": "全名更新成功。",
-      "Chat": "聊天"
+      "Chat": "聊天",
+      "Agents": "代理商"
     },
     "YouAreOffline": "脱机：未连接任何网络。",
     "YouAreOnline": "您現在在線",

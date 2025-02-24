@@ -67,7 +67,8 @@
       "MyEnvironments": "私の環境",
       "ResourcePolicy": "リソースポリシー",
       "FullNameUpdated": "フルネームが正常に更新されました。",
-      "Chat": "チャット"
+      "Chat": "チャット",
+      "Agents": "代理店"
     },
     "YouAreOffline": "オフライン：どのネットワークにも接続されていない。",
     "YouAreOnline": "あなたは今オンラインです",
