@@ -1,10 +1,9 @@
 // import { offset_to_cursor } from "../helper";
 import { LazyLoadQueryOptions } from '../helper/types';
 import { useDeferredQueryParams } from './useDeferredQueryParams';
-import { useEventNotStable } from './useEventNotStable';
 import { SorterResult } from 'antd/lib/table/interface';
 import _ from 'lodash';
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   fetchQuery,
   GraphQLTaggedNode,
@@ -287,6 +286,7 @@ interface BAIPaginationOption {
   // filter?: string;
   // order?: string;
 }
+
 interface AntdBasicPaginationOption {
   pageSize: number;
   current: number;
@@ -303,7 +303,43 @@ interface BAIPaginationOptionState {
     pagination: Partial<AntdBasicPaginationOption>,
   ) => void;
 }
+
 export const useBAIPaginationOptionState = (
+  initialOptions: InitialPaginationOption,
+): BAIPaginationOptionState => {
+  const [options, setOptions] =
+    useState<AntdBasicPaginationOption>(initialOptions);
+
+  const { pageSize, current } = options;
+  return useMemo<BAIPaginationOptionState>(() => {
+    return {
+      baiPaginationOption: {
+        limit: pageSize,
+        first: pageSize,
+        offset: current > 1 ? (current - 1) * pageSize : 0,
+      },
+      tablePaginationOption: {
+        pageSize: pageSize,
+        current: current,
+      },
+      setTablePaginationOption: (pagination) => {
+        if (
+          !_.isEqual(pagination, {
+            pageSize,
+            current,
+          })
+        ) {
+          setOptions((current) => ({
+            ...current,
+            ...pagination,
+          }));
+        }
+      },
+    };
+  }, [pageSize, current]);
+};
+
+export const useBAIPaginationOptionStateOnSearchParam = (
   initialOptions: InitialPaginationOption,
 ): BAIPaginationOptionState => {
   const [options, setOptions] = useDeferredQueryParams({
@@ -333,8 +369,9 @@ export const useBAIPaginationOptionState = (
 
   return {
     ...memoizedOptions,
-    setTablePaginationOption: (pagination: Partial<AntdBasicPaginationOption>) => {
-      // console.log('###', pagination);
+    setTablePaginationOption: (
+      pagination: Partial<AntdBasicPaginationOption>,
+    ) => {
       if (
         !_.isEqual(pagination, {
           pageSize,
@@ -349,6 +386,6 @@ export const useBAIPaginationOptionState = (
           'replaceIn',
         );
       }
-    }
+    },
   };
 };
