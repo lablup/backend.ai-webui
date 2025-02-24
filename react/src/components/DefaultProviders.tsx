@@ -327,6 +327,8 @@ export const DefaultProvidersForReactRoot: React.FC<
                   ? theme.darkAlgorithm
                   : theme.defaultAlgorithm,
               }}
+              // @ts-ignore
+              csp={{ nonce: globalThis.baiNonce }}
             >
               <App {...commonAppProps}>
                 {/* <StyleProvider container={shadowRoot} cache={cache}> */}
