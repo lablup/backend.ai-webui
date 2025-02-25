@@ -17,7 +17,7 @@ export async function login(
   endpoint: string,
 ) {
   await page.goto(webuiEndpoint);
-  await page.getByLabel('E-mail or Username').fill(username);
+  await page.getByLabel('Email or Username').fill(username);
   await page.getByRole('textbox', { name: 'Password' }).fill(password);
   await page.getByRole('textbox', { name: 'Endpoint' }).fill(endpoint);
   await page.getByLabel('Login', { exact: true }).click();
@@ -221,10 +221,8 @@ export async function createSession(page: Page, sessionName: string) {
   await page.getByRole('button', { name: 'Start' }).click();
 
   // Wait for App dialog and close it
-  await page
-    .getByRole('heading', { name: 'App close' })
-    .getByLabel('close')
-    .click({ timeout: 30000 });
+  await page.locator('[id="\\30 -apps"]').click({ timeout: 30000 });
+  await page.getByRole('button', { name: 'close' }).click();
 
   // Verify that a cell exists to display the session name
   const session = page

@@ -28,8 +28,8 @@ test.describe('Agent list', () => {
       .first();
     await checkActiveTab(firstCard.locator('.ant-tabs'), 'Agent');
 
-    const selectedSegment = await page.locator('.ant-segmented-item-selected');
-    await expect(selectedSegment).toContainText('Connected');
+    await page.getByText('Connected', { exact: true }).click();
+    await expect(page.getByRole('main')).toContainText('Connected');
 
     const rows = await agentListTable.locator('.ant-table-row');
     const rowCount = await rows.count();
