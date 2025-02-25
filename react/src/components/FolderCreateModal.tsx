@@ -56,7 +56,7 @@ interface FolderCreateFormItemsType {
   group: string | undefined;
   usage_mode: 'general' | 'model';
   type: 'user' | 'project';
-  permission: 'rw' | 'ro' | 'wd';
+  permission: 'rw' | 'ro';
   cloneable: boolean;
 }
 
@@ -69,7 +69,7 @@ export interface FolderCreationResponse {
   quota_scope_id: string;
   host: string;
   usage_mode: 'general' | 'model';
-  permission: 'rw' | 'ro' | 'wd';
+  permission: 'rw' | 'ro';
   max_size: number;
   creator: string;
   ownership_type: 'user' | 'project';
@@ -303,7 +303,6 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
           <Radio.Group>
             <Radio value={'rw'}>Read & Write</Radio>
             <Radio value={'ro'}>Read Only</Radio>
-            <Radio value={'wd'}>Delete</Radio>
           </Radio.Group>
         </Form.Item>
 
