@@ -223,6 +223,7 @@
     "EnterDifferentValue": "Insira um valor diferente do nome do arquivo ou pasta existente. Verifique se o caractere de espaço no campo de entrada ou não.",
     "ExistingFolderName": "Nome da pasta existente",
     "FileAndFolderNameRequired": "O nome do arquivo / pasta é obrigatório",
+    "FolderAlreadyExists": "Uma pasta com este nome já existe",
     "FolderNameRequired": "O nome da pasta é obrigatório",
     "FolderNameTooLong": "Digite o nome da pasta com menos de 64 caracteres",
     "FolderToCopy": "Pasta para copiar",

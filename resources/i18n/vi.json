@@ -223,6 +223,7 @@
     "EnterDifferentValue": "Vui lòng nhập một giá trị khác với tên tệp hoặc thư mục hiện có. Vui lòng kiểm tra xem có ký tự khoảng trắng trong trường nhập hay không.",
     "ExistingFolderName": "Tên thư mục hiện có",
     "FileAndFolderNameRequired": "Tên tệp / thư mục là bắt buộc",
+    "FolderAlreadyExists": "Một thư mục có tên này đã tồn tại",
     "FolderNameRequired": "Tên thư mục là bắt buộc",
     "FolderNameTooLong": "Nhập tên thư mục ít hơn 64 ký tự",
     "FolderToCopy": "Thư mục để sao chép",

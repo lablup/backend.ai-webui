@@ -223,6 +223,7 @@
     "EnterDifferentValue": "Veuillez saisir une valeur différente du nom de fichier ou de dossier existant. Veuillez vérifier s'il y a un espace dans le champ de saisie ou non.",
     "ExistingFolderName": "Nom du dossier existant",
     "FileAndFolderNameRequired": "Le nom du fichier/dossier est requis",
+    "FolderAlreadyExists": "Un dossier avec ce nom existe déjà",
     "FolderNameRequired": "Le nom du dossier est requis",
     "FolderNameTooLong": "Saisissez un nom de dossier inférieur à 64 caractères",
     "FolderToCopy": "Dossier à copier",
