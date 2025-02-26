@@ -47,7 +47,6 @@ import {
 } from '@ant-design/icons';
 import {
   App,
-  Breadcrumb,
   Button,
   Card,
   Descriptions,
@@ -523,21 +522,6 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
 
   return (
     <Flex direction="column" align="stretch" gap="sm">
-      <Breadcrumb
-        items={[
-          {
-            title: t('modelService.Services'),
-            onClick: (e) => {
-              e.preventDefault();
-              webuiNavigate('/serving');
-            },
-            href: '/serving',
-          },
-          {
-            title: t('modelService.RoutingInfo'),
-          },
-        ]}
-      />
       <Flex direction="row" justify="between">
         <Typography.Title level={3} style={{ margin: 0 }}>
           {endpoint?.name || ''}

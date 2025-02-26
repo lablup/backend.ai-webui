@@ -6,10 +6,9 @@ import BAICard, { BAICardProps } from './BAICard';
 import Flex from './Flex';
 import ResourceGroupSelectForCurrentProject from './ResourceGroupSelectForCurrentProject';
 import { ReloadOutlined } from '@ant-design/icons';
-import { useUpdateEffect } from 'ahooks';
 import { Button, theme, Tooltip, Typography } from 'antd';
 import _ from 'lodash';
-import React, { useDeferredValue, useState } from 'react';
+import React, { useDeferredValue, useEffect, useState } from 'react';
 
 interface AvailableResourcesCardProps extends BAICardProps {
   fetchKey?: string;
@@ -30,11 +29,10 @@ const AvailableResourcesCard: React.FC<AvailableResourcesCardProps> = ({
     deferredSelectedResourceGroup || 'default',
   );
 
-  useUpdateEffect(() => {
+  useEffect(() => {
     refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchKey]);
-
-  console.log(resourceSlotsDetails);
 
   const acceleratorSlotsDetails = _.chain(
     resourceSlotsDetails?.resourceSlotsInRG,
