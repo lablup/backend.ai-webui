@@ -136,7 +136,17 @@ const router = createBrowserRouter([
       {
         path: '/chat',
         handle: { labelKey: 'webui.menu.Chat' },
-        Component: ChatPage,
+        Component: () => {
+          const { t } = useTranslation();
+          useSuspendedBackendaiClient();
+          return (
+            <Suspense
+              fallback={<BAICard title={t('webui.menu.Chat')} loading />}
+            >
+              <ChatPage />
+            </Suspense>
+          );
+        },
       },
       {
         path: '/summary',
@@ -260,7 +270,9 @@ const router = createBrowserRouter([
             path: '/serving/:serviceId',
             element: (
               <BAIErrorBoundary>
-                <EndpointDetailPage />
+                <Suspense fallback={<Skeleton active />}>
+                  <EndpointDetailPage />
+                </Suspense>
               </BAIErrorBoundary>
             ),
             handle: { labelKey: 'modelService.RoutingInfo' },
@@ -437,9 +449,11 @@ const router = createBrowserRouter([
             'experimental_ai_agents',
           );
           return experimentalAIAgents ? (
-            <AIAgentPage />
+            <Suspense fallback={<Skeleton active />}>
+              <AIAgentPage />
+            </Suspense>
           ) : (
-            <WebUINavigate to={'/'} replace />
+            <WebUINavigate to={'/start'} replace />
           );
         },
       },
