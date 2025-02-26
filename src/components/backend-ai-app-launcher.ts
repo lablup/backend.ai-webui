@@ -1840,16 +1840,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               work
             </div>
             <div>
-              <span>SSH URL:</span>
-              <a href="ssh://${this.tcpHost}:${this.tcpPort}">
-                ssh://${this.tcpHost}
-              </a>
-            </div>
-            <div>
-              <span>SFTP URL:</span>
-              <a href="sftp://${this.tcpHost}:${this.tcpPort}">
-                sftp://${this.tcpHost}
-              </a>
+              <span>Host: </span>
+                ${`${this.tcpHost}`}
             </div>
             <div>
               <span>Port:</span>
