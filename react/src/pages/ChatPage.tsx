@@ -50,8 +50,6 @@ const ChatPage: React.FC<ChatPageProps> = ({ ...props }) => {
       title={t('webui.menu.Chat')}
       styles={{
         body: {
-          padding: 0,
-          paddingTop: 1,
           overflow: 'hidden',
         },
       }}
@@ -77,22 +75,11 @@ const ChatPage: React.FC<ChatPageProps> = ({ ...props }) => {
         </Flex>
       }
     >
-      <Flex
-        direction="column"
-        align="stretch"
-        gap={'xs'}
-        style={{
-          padding: token.paddingContentVertical,
-          paddingLeft: token.paddingContentHorizontalSM,
-          paddingRight: token.paddingContentHorizontalSM,
-        }}
-      >
+      <Flex direction="column" align="stretch" gap={'xs'}>
         <Flex
           gap={'xs'}
           direction="row"
           style={{
-            margin: token.margin,
-            marginTop: 0,
             overflow: 'auto',
             height: 'calc(100vh - 215px)',
           }}
