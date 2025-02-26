@@ -15,7 +15,7 @@ import {
   transformSorterToOrderString,
 } from '../helper';
 import { useUpdatableState } from '../hooks';
-import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
 import {
@@ -50,7 +50,7 @@ const ComputeSessionListPage = () => {
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionState({
+  } = useBAIPaginationOptionStateOnSearchParam({
     current: 1,
     pageSize: 10,
   });
@@ -64,10 +64,16 @@ const ComputeSessionListPage = () => {
 
   const [, setSessionDetailId] = useQueryParam('sessionDetail', StringParam);
   const queryMapRef = useRef({
-    [queryParams.type]: queryParams,
+    [queryParams.type]: {
+      queryParams,
+      tablePaginationOption,
+    },
   });
-  //
-  queryMapRef.current[queryParams.type] = queryParams;
+
+  queryMapRef.current[queryParams.type] = {
+    queryParams,
+    tablePaginationOption,
+  };
 
   const typeFilter =
     queryParams.type === 'all' || queryParams.type === undefined
@@ -230,13 +236,17 @@ const ComputeSessionListPage = () => {
           activeKey={queryParams.type}
           onChange={(key) => {
             const storedQuery = queryMapRef.current[key] || {
-              statusCategory: 'running',
+              queryParams: {
+                statusCategory: 'running',
+              },
             };
             setQuery(
-              { ...storedQuery, type: key as TypeFilterType },
+              { ...storedQuery.queryParams, type: key as TypeFilterType },
               'replace',
             );
-            setTablePaginationOption({ current: 1 });
+            setTablePaginationOption(
+              storedQuery.tablePaginationOption || { current: 1 },
+            );
             setSelectedSessionList([]);
           }}
           items={_.map(

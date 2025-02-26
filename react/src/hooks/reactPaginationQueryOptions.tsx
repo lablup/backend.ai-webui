@@ -1,5 +1,6 @@
 // import { offset_to_cursor } from "../helper";
 import { LazyLoadQueryOptions } from '../helper/types';
+import { useDeferredQueryParams } from './useDeferredQueryParams';
 import { SorterResult } from 'antd/lib/table/interface';
 import _ from 'lodash';
 import { useMemo, useState } from 'react';
@@ -285,6 +286,7 @@ interface BAIPaginationOption {
   // filter?: string;
   // order?: string;
 }
+
 interface AntdBasicPaginationOption {
   pageSize: number;
   current: number;
@@ -301,6 +303,7 @@ interface BAIPaginationOptionState {
     pagination: Partial<AntdBasicPaginationOption>,
   ) => void;
 }
+
 export const useBAIPaginationOptionState = (
   initialOptions: InitialPaginationOption,
 ): BAIPaginationOptionState => {
@@ -334,4 +337,55 @@ export const useBAIPaginationOptionState = (
       },
     };
   }, [pageSize, current]);
+};
+
+export const useBAIPaginationOptionStateOnSearchParam = (
+  initialOptions: InitialPaginationOption,
+): BAIPaginationOptionState => {
+  const [options, setOptions] = useDeferredQueryParams({
+    current: NumberParam,
+    pageSize: NumberParam,
+  });
+
+  const mergeOptions = _.merge(initialOptions, options);
+
+  const { pageSize, current } = mergeOptions;
+  const memoizedOptions = useMemo<{
+    baiPaginationOption: BAIPaginationOption;
+    tablePaginationOption: AntdBasicPaginationOption;
+  }>(() => {
+    return {
+      baiPaginationOption: {
+        limit: pageSize,
+        first: pageSize,
+        offset: current > 1 ? (current - 1) * pageSize : 0,
+      },
+      tablePaginationOption: {
+        pageSize: pageSize,
+        current: current,
+      },
+    };
+  }, [pageSize, current]);
+
+  return {
+    ...memoizedOptions,
+    setTablePaginationOption: (
+      pagination: Partial<AntdBasicPaginationOption>,
+    ) => {
+      if (
+        !_.isEqual(pagination, {
+          pageSize,
+          current,
+        })
+      ) {
+        setOptions(
+          (current) => ({
+            ...current,
+            ...pagination,
+          }),
+          'replaceIn',
+        );
+      }
+    },
+  };
 };

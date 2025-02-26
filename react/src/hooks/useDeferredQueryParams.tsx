@@ -63,7 +63,7 @@ export function useDeferredQueryParams<QPCMap extends QueryParamConfigMap>(
   );
 
   let localQuery = useAtomValue(selectiveQueryAtom);
-  const setLocalQuery = useSetAtom(queryParamsAtom);
+  const setSharedQuery = useSetAtom(queryParamsAtom);
 
   const setDeferredQuery = useCallback(
     (
@@ -79,9 +79,16 @@ export function useDeferredQueryParams<QPCMap extends QueryParamConfigMap>(
 
       // Update Jotai state
       if (updateType === 'replaceIn' || updateType === 'pushIn') {
-        setLocalQuery({ ...localQuery, ...newQuery });
+        setSharedQuery((prev) => ({
+          ...prev,
+          ...localQuery,
+          ...newQuery,
+        }));
       } else {
-        setLocalQuery(newQuery as DecodedValueMap<QPCMap>);
+        setSharedQuery((prev) => ({
+          ...prev,
+          ...(newQuery as DecodedValueMap<QPCMap>),
+        }));
       }
 
       // Sync all(merged) query parameters with URL
@@ -93,7 +100,7 @@ export function useDeferredQueryParams<QPCMap extends QueryParamConfigMap>(
         updateType,
       );
     },
-    [localQuery, setQuery, setLocalQuery],
+    [localQuery, setQuery, setSharedQuery],
   );
 
   return [localQuery, setDeferredQuery] as const;
