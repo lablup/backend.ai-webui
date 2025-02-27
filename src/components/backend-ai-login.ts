@@ -144,6 +144,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Boolean }) enableLLMPlayground = false;
   @property({ type: Boolean }) enableImportFromHuggingFace = false;
   @property({ type: Boolean }) enableExtendLoginSession = false;
+  @property({ type: Boolean }) enableModelFolders = true;
   @property({ type: Boolean }) showNonInstalledImages = false;
   @property({ type: Boolean }) showKernelList = false;
   @property({ type: String }) eduAppNamePrefix;
@@ -881,11 +882,17 @@ export default class BackendAILogin extends BackendAIPage {
         value: generalConfig?.enableExtendLoginSession,
       } as ConfigValueObject,
     ) as boolean;
-
+    // Enable kernel info to the session detail panel
     this.showKernelList = this._getConfigValueByExists(generalConfig, {
       valueType: 'boolean',
       defaultValue: false,
       value: generalConfig?.showKernelList,
+    } as ConfigValueObject) as boolean;
+    // Enable model folders support
+    this.enableModelFolders = this._getConfigValueByExists(generalConfig, {
+      valueType: 'boolean',
+      defaultValue: true,
+      value: generalConfig?.enableModelFolders,
     } as ConfigValueObject) as boolean;
   }
 
@@ -1924,6 +1931,8 @@ export default class BackendAILogin extends BackendAIPage {
         globalThis.backendaiclient._config.enableExtendLoginSession =
           this.enableExtendLoginSession;
         globalThis.backendaiclient._config.showKernelList = this.showKernelList;
+        globalThis.backendaiclient._config.enableModelFolders =
+          this.enableModelFolders;
         globalThis.backendaiclient._config.pluginPages = this.pluginPages;
         globalThis.backendaiclient._config.blockList = this.blockList;
         globalThis.backendaiclient._config.inactiveList = this.inactiveList;
