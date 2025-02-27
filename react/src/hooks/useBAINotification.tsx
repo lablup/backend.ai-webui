@@ -11,13 +11,14 @@ import { v4 as uuidv4 } from 'uuid';
 const _activeNotificationKeys: Key[] = [];
 
 export interface NotificationState
-  extends Omit<ArgsProps, 'placement' | 'key'> {
+  extends Omit<ArgsProps, 'placement' | 'key' | 'icon'> {
   key: React.Key;
   created?: string;
   toTextKey?: string;
   toText?: string;
   to?: string | To;
   open?: boolean;
+  icon?: 'folder';
   backgroundTask?: {
     taskId?: string;
     percent?: number;
@@ -351,6 +352,7 @@ export const useSetBAINotification = () => {
           }
           app.notification.open({
             ...newNotification,
+            icon: undefined, // override icon to remove default icon from notification, icon displayed in BAINotificationItem
             type: undefined, // override type to remove default icon from notification, icon displayed in BAINotificationItem
             placement: 'bottomRight',
             message: undefined,

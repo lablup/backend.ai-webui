@@ -2,6 +2,7 @@ import { useBaiSignedRequestWithPromise } from '../helper';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
+import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
@@ -93,6 +94,8 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
   const currentDomain = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
 
+  const { upsertNotification } = useSetBAINotification();
+
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
 
   const { data: allowedTypes, isFetching: isFetchingAllowedTypes } =
@@ -141,7 +144,16 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
       .then((values) => {
         mutationToCreateFolder.mutate(values, {
           onSuccess: (result) => {
-            message.success(t('data.folders.FolderCreated'));
+            upsertNotification({
+              key: 'folder-create-success',
+              icon: 'folder',
+              message: `${result.name}: ${t('data.folders.FolderCreated')}`,
+              toText: t('data.folders.OpenAFolder'),
+              to: {
+                search: `?folder=${result.id}`,
+              },
+              open: true,
+            });
             document.dispatchEvent(
               new CustomEvent('backend-ai-folder-list-changed'),
             );
