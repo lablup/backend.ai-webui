@@ -278,23 +278,23 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           className="logo-collapsed"
           alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
           src={
-            currentSiderTheme === 'dark' && themeConfig?.logo?.srcCollapsedDark
-              ? themeConfig?.logo?.srcCollapsedDark ||
+            currentSiderTheme === 'dark' && themeConfig?.logoCollapsed?.srcDark
+              ? themeConfig?.logoCollapsed?.srcDark ||
                 '/manifest/backend.ai-brand-simple-bgdark.svg'
-              : themeConfig?.logo?.srcCollapsed ||
+              : themeConfig?.logoCollapsed?.src ||
                 '/manifest/backend.ai-brand-simple.svg'
           }
           style={{
-            width: themeConfig?.logo.sizeCollapsed?.width ?? 24,
-            height: themeConfig?.logo.sizeCollapsed?.height ?? 24,
+            width: themeConfig?.logoCollapsed.size?.width ?? 24,
+            height: themeConfig?.logoCollapsed.size?.height ?? 24,
             cursor: 'pointer',
           }}
           onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
         />
       }
-      logoTitle={themeConfig?.logo?.logoTitle || siteDescription || 'WebUI'}
+      logoTitle={themeConfig?.logo?.title || siteDescription || 'WebUI'}
       logoTitleCollapsed={
-        themeConfig?.logo?.logoTitleCollapsed || siteDescription || 'WebUI'
+        themeConfig?.logoCollapsed?.title || siteDescription || 'WebUI'
       }
       {...props}
     >
