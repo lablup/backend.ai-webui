@@ -36,6 +36,7 @@ export const navigate =
         '/import',
         '/chat',
         '/ai-agent',
+        '/model-store',
       ].includes(path) !== true
     ) {
       // Fallback for Electron Shell/Windows OS
