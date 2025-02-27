@@ -1797,6 +1797,8 @@
       "Data&Model": "Veri",
       "Data&Storage": "Veri depolama",
       "DisMatchUserEmail": "Kullanıcı E-postası eşleşmiyor",
+      "Endpoint": "Bitiş Noktası",
+      "Endpoints": "Uç Noktalar",
       "Environments": "ortamlar",
       "Environments&Presets": "Ortamlar ve Ön Ayarlar",
       "Experiments": "deneyler",
@@ -1851,7 +1853,15 @@
       "UserCredentials&Policies": "Kullanıcı Kimlik Bilgileri ve Politikaları",
       "Users": "Kullanıcılar",
       "WelcomeMessage": "Hoş geldiniz, {{ userName }}.",
-      "YouMushChangeYourPassword": "Güvenlik nedeniyle şifrenizi periyodik olarak değiştirmeniz önerilir. Şifrenizi en son değiştirdiğinizden bu yana belirli bir süre geçtiğinden, hizmeti kullanmaya devam etmek için şifrenizi değiştirmeniz gerekir."
+      "YouMushChangeYourPassword": "Güvenlik nedeniyle şifrenizi periyodik olarak değiştirmeniz önerilir. Şifrenizi en son değiştirdiğinizden bu yana belirli bir süre geçtiğinden, hizmeti kullanmaya devam etmek için şifrenizi değiştirmeniz gerekir.",
+      "groupName": {
+        "Metrics": "Metrikler",
+        "Mlops": "MLOps",
+        "Playground": "Oyun Alanı",
+        "Service": "Hizmet",
+        "Storage": "Depolama",
+        "Workload": "İş Yükü"
+      }
     }
   }
 }
