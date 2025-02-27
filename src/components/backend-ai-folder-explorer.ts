@@ -148,6 +148,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
           color: #637282;
           font-size: 1em;
           margin-bottom: 10px;
+          max-width: 65%;
         }
 
         div.breadcrumb span:first-child {
@@ -207,7 +208,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
         mwc-icon-button {
           --mdc-icon-size: 24px;
           --mdc-icon-button-size: 28px;
-          padding: 4px;
+          padding: 0px;
         }
 
         mwc-button {
@@ -1733,7 +1734,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
                 <ul style="padding: 0;">
                   ${this.breadcrumb.map(
                     (item) => html`
-                      <li>
+                      <li style="white-space: nowrap;">
                         ${item === '.'
                           ? html`
                               <mwc-icon-button
@@ -1749,6 +1750,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
                                 path="item"
                                 @click="${(e) => this._gotoFolder(e)}"
                                 dest="${item}"
+                                style="white-space: normal; word-break: break-all;"
                               >
                                 ${item}
                               </a>

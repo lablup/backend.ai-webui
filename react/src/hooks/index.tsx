@@ -97,6 +97,7 @@ export type BackendAIClient = {
     restore_from_trash_bin: (id: string) => Promise<any>;
     delete_from_trash_bin: (id: string) => Promise<any>;
     rename: (newName: string, id: string) => Promise<any>;
+    update_folder: (input: any, id: string) => Promise<any>;
   };
   supports: (feature: string) => boolean;
   [key: string]: any;
