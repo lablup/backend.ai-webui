@@ -108,8 +108,9 @@ const ChatMessage: React.FC<{
           direction="column"
           style={{
             borderRadius: token.borderRadius,
-            borderColor: token.colorBorderSecondary,
-            borderWidth: token.lineWidth,
+            border: _.isEmpty(message.experimental_attachments)
+              ? `${token.lineWidth}px solid ${token.colorBorderSecondary}`
+              : 'none',
             padding: '1em',
             paddingTop: 0,
             paddingBottom: 0,
