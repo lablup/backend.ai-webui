@@ -431,6 +431,10 @@ export const toGlobalId = (type: string, id: string): string => {
   return btoa(`${type}:${id}`);
 };
 
+export const toLocalId = (globalId: string): string => {
+  return atob(globalId).split(':')?.[1];
+};
+
 export function preserveDotStartCase(str: string = '') {
   // Temporarily replace periods with a unique placeholder
   const placeholder = '<<<DOT>>>';
