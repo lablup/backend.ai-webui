@@ -98,6 +98,13 @@ export type BackendAIClient = {
     delete_from_trash_bin: (id: string) => Promise<any>;
     rename: (newName: string, id: string) => Promise<any>;
     update_folder: (input: any, id: string) => Promise<any>;
+    invite: (perm: string, emails: string[], id: string) => Promise<any>;
+    delete_invitation: (inv_id: string) => Promise<any>;
+    modify_invitee_permission(input: {
+      perm: string | null;
+      user: string;
+      vfolder: string;
+    }): Promise<any>;
   };
   supports: (feature: string) => boolean;
   [key: string]: any;
