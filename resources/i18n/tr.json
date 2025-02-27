@@ -223,6 +223,7 @@
     "EnterDifferentValue": "Lütfen mevcut dosya veya klasör adından farklı bir değer girin. Lütfen giriş alanında boşluk karakteri olup olmadığını kontrol edin.",
     "ExistingFolderName": "Mevcut klasör adı",
     "FileAndFolderNameRequired": "Dosya/Klasör adı gerekli",
+    "FolderAlreadyExists": "Bu isme sahip bir klasör zaten var",
     "FolderNameRequired": "Klasör adı gerekli",
     "FolderNameTooLong": "64 karakterden az klasör adı girin",
     "FolderToCopy": "Kopyalanacak klasör",

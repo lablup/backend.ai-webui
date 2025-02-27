@@ -223,6 +223,7 @@
     "EnterDifferentValue": "Masukkan nilai yang berbeza dengan nama fail atau folder yang ada. Sila Periksa sama ada watak ruang di ruang input atau tidak.",
     "ExistingFolderName": "Nama folder yang ada",
     "FileAndFolderNameRequired": "Nama fail / Folder diperlukan",
+    "FolderAlreadyExists": "Folder dengan nama ini sudah ada",
     "FolderNameRequired": "Nama folder diperlukan",
     "FolderNameTooLong": "Masukkan nama folder kurang daripada 64 aksara",
     "FolderToCopy": "Folder untuk disalin",

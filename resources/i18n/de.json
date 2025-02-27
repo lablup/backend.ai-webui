@@ -223,6 +223,7 @@
     "EnterDifferentValue": "Geben Sie einen anderen Wert als den vorhandenen Datei- oder Ordnernamen ein. Bitte prüfen Sie, ob Leerzeichen im Eingabefeld vorhanden sind oder nicht.",
     "ExistingFolderName": "Vorhandener Ordnername",
     "FileAndFolderNameRequired": "Datei-/Ordnername ist erforderlich",
+    "FolderAlreadyExists": "Ein Ordner mit diesem Namen gibt es bereits",
     "FolderNameRequired": "Ordnername ist erforderlich",
     "FolderNameTooLong": "Geben Sie einen Ordnernamen mit weniger als 64 Zeichen ein",
     "FolderToCopy": "Ordner zum Kopieren",

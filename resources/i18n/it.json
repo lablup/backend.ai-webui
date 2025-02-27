@@ -223,6 +223,7 @@
     "EnterDifferentValue": "Inserisci un valore diverso dal nome del file o della cartella esistente. Si prega di verificare se il carattere spazio nel campo di input o meno.",
     "ExistingFolderName": "Nome della cartella esistente",
     "FileAndFolderNameRequired": "Il nome del file/cartella è obbligatorio",
+    "FolderAlreadyExists": "Una cartella con questo nome esiste già",
     "FolderNameRequired": "Il nome della cartella è obbligatorio",
     "FolderNameTooLong": "Inserisci il nome della cartella con meno di 64 caratteri",
     "FolderToCopy": "Cartella da copiare",
