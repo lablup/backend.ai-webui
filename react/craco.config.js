@@ -20,7 +20,11 @@ module.exports = {
       '../resources/**/*',
     ],
   },
-
+  babel: {
+    plugins: [
+      '@babel/plugin-syntax-import-attributes',
+    ],
+  },
   webpack: {
     // When you change the this value, you might need to clear cache restart the dev server.
     // you can use `rm -rf node_modules/.cache` to clear cache.

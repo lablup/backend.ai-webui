@@ -5,12 +5,13 @@ import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import AIAgentSelect from '../AIAgentSelect';
 import EndpointSelect from '../EndpointSelect';
 import Flex from '../Flex';
+import { FluentEmojiIcon } from '../FluentEmojiIcon';
 import { Model } from './ChatUIModal';
 import LLMChatCard, { BAIModel } from './LLMChatCard';
 import { EndpointLLMChatCard_endpoint$key } from './__generated__/EndpointLLMChatCard_endpoint.graphql';
 import { CloseOutlined, ReloadOutlined } from '@ant-design/icons';
 import { AttachmentsProps } from '@ant-design/x';
-import { Alert, Avatar, Button, CardProps, Popconfirm, theme } from 'antd';
+import { Alert, Button, CardProps, Popconfirm, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import { atom, useAtom } from 'jotai';
 import _ from 'lodash';
@@ -134,7 +135,11 @@ const EndpointLLMChatCard: React.FC<EndpointLLMChatCardProps> = ({
         <>
           {experimentalAIAgents && agent && (
             <Flex gap="xs">
-              <Avatar src={agent?.meta.avatar} />
+              <FluentEmojiIcon
+                name={agent.meta.avatar}
+                height={32}
+                width={32}
+              />
               <AIAgentSelect
                 agents={agents}
                 value={agentId}

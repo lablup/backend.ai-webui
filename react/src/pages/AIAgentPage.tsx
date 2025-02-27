@@ -1,7 +1,8 @@
 import Flex from '../components/Flex';
+import { FluentEmojiIcon } from '../components/FluentEmojiIcon';
 import { useWebUINavigate } from '../hooks';
 import { AIAgent, useAIAgent } from '../hooks/useAIAgent';
-import { Avatar, Card, List, Skeleton, Tag, theme } from 'antd';
+import { Card, List, Skeleton, Tag, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { Suspense } from 'react';
 
@@ -41,7 +42,13 @@ const AIAgentCard = ({ agent }: { agent: AIAgent }) => {
       >
         <Meta
           title={agent.meta.title}
-          avatar={<Avatar src={agent.meta.avatar} size={150} />}
+          avatar={
+            <FluentEmojiIcon
+              name={agent.meta.avatar}
+              height={150}
+              width={150}
+            />
+          }
           description={agent.meta.descriptions}
           className={styles.meta}
         />
