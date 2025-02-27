@@ -9,9 +9,13 @@ import Flex from './components/Flex';
 import LocationStateBreadCrumb from './components/LocationStateBreadCrumb';
 import MainLayout from './components/MainLayout/MainLayout';
 import WebUINavigate from './components/WebUINavigate';
+import { useSuspendedBackendaiClient } from './hooks';
 import { useBAISettingUserState } from './hooks/useBAISetting';
+// Hight priority to import the component
+import ComputeSessionListPage from './pages/ComputeSessionListPage';
 import Page401 from './pages/Page401';
 import Page404 from './pages/Page404';
+import ServingPage from './pages/ServingPage';
 import VFolderListPage from './pages/VFolderListPage';
 import { Skeleton, theme } from 'antd';
 import React, { Suspense } from 'react';
@@ -27,7 +31,6 @@ import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 
 const Information = React.lazy(() => import('./components/Information'));
-const ServingPage = React.lazy(() => import('./pages/ServingPage'));
 const EndpointDetailPage = React.lazy(
   () => import('./pages/EndpointDetailPage'),
 );
@@ -62,9 +65,6 @@ const UserCredentialsPage = React.lazy(
   () => import('./pages/UserCredentialsPage'),
 );
 
-const ComputeSessionListPage = React.lazy(
-  () => import('./pages/ComputeSessionListPage'),
-);
 const AgentSummaryPage = React.lazy(() => import('./pages/AgentSummaryPage'));
 const MaintenancePage = React.lazy(() => import('./pages/MaintenancePage'));
 const SessionDetailAndContainerLogOpenerLegacy = React.lazy(
@@ -136,7 +136,17 @@ const router = createBrowserRouter([
       {
         path: '/chat',
         handle: { labelKey: 'webui.menu.Chat' },
-        Component: ChatPage,
+        Component: () => {
+          const { t } = useTranslation();
+          useSuspendedBackendaiClient();
+          return (
+            <Suspense
+              fallback={<BAICard title={t('webui.menu.Chat')} loading />}
+            >
+              <ChatPage />
+            </Suspense>
+          );
+        },
       },
       {
         path: '/summary',
@@ -185,6 +195,8 @@ const router = createBrowserRouter([
                 'experimental_neo_session_list',
               );
               const { t } = useTranslation();
+
+              useSuspendedBackendaiClient();
 
               return experimentalNeoSessionList ? (
                 <BAIErrorBoundary>
@@ -240,6 +252,7 @@ const router = createBrowserRouter([
             path: '',
             Component: () => {
               const { t } = useTranslation();
+              useSuspendedBackendaiClient();
               return (
                 <BAIErrorBoundary>
                   <Suspense
@@ -257,7 +270,9 @@ const router = createBrowserRouter([
             path: '/serving/:serviceId',
             element: (
               <BAIErrorBoundary>
-                <EndpointDetailPage />
+                <Suspense fallback={<Skeleton active />}>
+                  <EndpointDetailPage />
+                </Suspense>
               </BAIErrorBoundary>
             ),
             handle: { labelKey: 'modelService.RoutingInfo' },
@@ -434,9 +449,11 @@ const router = createBrowserRouter([
             'experimental_ai_agents',
           );
           return experimentalAIAgents ? (
-            <AIAgentPage />
+            <Suspense fallback={<Skeleton active />}>
+              <AIAgentPage />
+            </Suspense>
           ) : (
-            <WebUINavigate to={'/'} replace />
+            <WebUINavigate to={'/start'} replace />
           );
         },
       },

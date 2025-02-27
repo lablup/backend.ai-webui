@@ -4,7 +4,7 @@ import Flex from '../components/Flex';
 import { ChatPageQuery } from './__generated__/ChatPageQuery.graphql';
 import { PlusOutlined } from '@ant-design/icons';
 import { useDynamicList } from 'ahooks';
-import { Button, Card, Skeleton, Switch, theme, Typography } from 'antd';
+import { Button, Card, Skeleton, Switch, Typography } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { Suspense, useState } from 'react';
@@ -15,7 +15,6 @@ import { StringParam, useQueryParam } from 'use-query-params';
 interface ChatPageProps {}
 
 const ChatPage: React.FC<ChatPageProps> = ({ ...props }) => {
-  const { token } = theme.useToken();
   const { t } = useTranslation();
   // Set the initial list to have two items
   const { list, remove, getKey, push } = useDynamicList(['0']);
@@ -52,8 +51,6 @@ const ChatPage: React.FC<ChatPageProps> = ({ ...props }) => {
       title={t('webui.menu.Chat')}
       styles={{
         body: {
-          padding: 0,
-          paddingTop: 1,
           overflow: 'hidden',
         },
       }}
@@ -79,22 +76,11 @@ const ChatPage: React.FC<ChatPageProps> = ({ ...props }) => {
         </Flex>
       }
     >
-      <Flex
-        direction="column"
-        align="stretch"
-        gap={'xs'}
-        style={{
-          padding: token.paddingContentVertical,
-          paddingLeft: token.paddingContentHorizontalSM,
-          paddingRight: token.paddingContentHorizontalSM,
-        }}
-      >
+      <Flex direction="column" align="stretch" gap={'xs'}>
         <Flex
           gap={'xs'}
           direction="row"
           style={{
-            margin: token.margin,
-            marginTop: 0,
             overflow: 'auto',
             height: 'calc(100vh - 240px)',
           }}
