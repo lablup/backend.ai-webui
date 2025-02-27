@@ -79,7 +79,7 @@ const MaintenanceSettingList = () => {
     });
   };
 
-  const settingGroupList: SettingGroup = [
+  const settingGroupList: Array<SettingGroup> = [
     {
       title: t('maintenance.Fix'),
       settingItems: [
@@ -124,7 +124,7 @@ const MaintenanceSettingList = () => {
     },
   ];
 
-  return <SettingList settingGroup={settingGroupList} showSearchBar />;
+  return <SettingList settingGroups={settingGroupList} showSearchBar />;
 };
 
 export default MaintenanceSettingList;

@@ -293,7 +293,7 @@ const UserPreferencesPage = () => {
       >
         {curTabKey === 'general' && (
           <SettingList
-            settingGroup={settingGroup}
+            settingGroups={settingGroup}
             showChangedOptionFilter
             showResetButton
             showSearchBar
