@@ -1,10 +1,11 @@
 import Flex from '../Flex';
+import { statusInfoTagColor } from './SessionStatusDetailModal';
 import {
   SessionStatusTagFragment$data,
   SessionStatusTagFragment$key,
 } from './__generated__/SessionStatusTagFragment.graphql';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Tag, theme, Tooltip } from 'antd';
+import { Tag, Tooltip, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React from 'react';
@@ -14,7 +15,7 @@ interface SessionStatusTagProps {
   sessionFrgmt?: SessionStatusTagFragment$key | null;
   showInfo?: boolean;
 }
-const statusTagColor = {
+export const statusTagColor = {
   //prepare
   RESTARTING: 'blue',
   PREPARING: 'blue',
@@ -41,31 +42,23 @@ const isTransitional = (session: SessionStatusTagFragment$data) => {
   ].includes(session?.status || '');
 };
 
-const statusInfoTagColor = {
-  // 'idle-timeout': undefined,
-  // 'user-requested': undefined,
-  // scheduled: undefined,
-  // 'self-terminated': undefined,
-  'no-available-instances': 'red',
-  'failed-to-start': 'red',
-  'creation-failed': 'red',
-};
 const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
   sessionFrgmt,
   showInfo,
 }) => {
+  const { token } = theme.useToken();
+
   const session = useFragment(
     graphql`
       fragment SessionStatusTagFragment on ComputeSessionNode {
         id
-        name
         status
         status_info
+        status_data
       }
     `,
     sessionFrgmt,
   );
-  const { token } = theme.useToken();
 
   return session ? (
     _.isEmpty(session.status_info) || !showInfo ? (

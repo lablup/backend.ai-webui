@@ -1073,6 +1073,10 @@
   },
   "session": {
     "Agent": "Agen",
+<<<<<<< HEAD
+=======
+    "AgentId": "ID Agen",
+>>>>>>> 1da113c7 (feat: Introduce session status info modal in session detail panel)
     "Agents": "Agen",
     "AllowedClientIps": "IP klien yang diizinkan",
     "AlreadyTerminatingSession": "Sudah mengakhiri sesi.",
@@ -1125,6 +1129,7 @@
     "Inference": "Kesimpulan",
     "InputTensorboardPath": "Harap masukkan direktori log yang akan dirujuk oleh TensorBoard. Perhatikan bahwa direktori log tidak akan dibuat secara otomatis..",
     "Interactive": "Interaktif",
+    "KernelExitCode": "Kode keluar kernel",
     "LastTry": "Percobaan Terakhir",
     "MEM": "Memori",
     "MaxSessionLifetime": "Sesi Maksimal Seumur Hidup",
@@ -1141,6 +1146,7 @@
     "OnlyOneFolderAttached": "Hanya satu folder yang dilampirkan.",
     "OpenToPublic": "Buka aplikasi untuk publik",
     "Others": "Lainnya",
+    "PredicateChecks": "Pemeriksaan Predikat",
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",
     "ReadLess": "Baca lebih sedikit",
@@ -1158,6 +1164,7 @@
     "SessionName": "Nama Sesi",
     "SessionNotFound": "Anda tidak memiliki izin untuk mengakses sesi ini atau sesi tersebut tidak ada.",
     "SessionRenamed": "Sesi diganti namanya",
+    "SessionStatus": "Status Sesi",
     "SessionTerminated": "Sesi dihentikan.",
     "SessionType": "Jenis Sesi",
     "SessionsTerminated": "Sesi-sesi dihentikan.",
@@ -1172,6 +1179,7 @@
     "Threshold": "Ambang batas",
     "TimeoutExceeded": "Waktu tercapai. Memeriksa...",
     "TotalRetries": "Total Percobaan Ulang",
+    "Traceback": "Traceback",
     "TryPreferredPort": "Coba port pilihan",
     "Usage": "Pemakaian",
     "UseSubdomain": "GunakanSubdomain",

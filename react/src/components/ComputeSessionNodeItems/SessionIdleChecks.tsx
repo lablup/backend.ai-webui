@@ -7,7 +7,7 @@ import DoubleTag from '../DoubleTag';
 import Flex from '../Flex';
 import { SessionIdleChecksFragment$key } from './__generated__/SessionIdleChecksFragment.graphql';
 import { SessionIdleChecksNodeFragment$key } from './__generated__/SessionIdleChecksNodeFragment.graphql';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import { Tooltip, Typography, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
@@ -211,7 +211,7 @@ const SessionIdleChecks: React.FC<SessionIdleChecksProps> = ({
                     </>
                   }
                 >
-                  <QuestionCircleOutlined
+                  <InfoCircleOutlined
                     style={{
                       color: token.colorTextSecondary,
                       cursor: 'pointer',

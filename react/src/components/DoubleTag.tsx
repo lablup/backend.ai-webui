@@ -7,6 +7,7 @@ import React from 'react';
 export type DoubleTagObjectValue = {
   label: string;
   color?: string;
+  style?: React.CSSProperties; // style 속성 추가
 };
 
 const DoubleTag: React.FC<{
@@ -36,11 +37,12 @@ const DoubleTag: React.FC<{
         !_.isEmpty(objValue.label) ? (
           <Tag
             key={idx}
-            style={
-              _.last(objectValues) === objValue
-                ? undefined
-                : { margin: 0, marginRight: -1 }
-            }
+            style={{
+              ...(_.last(objectValues) === objValue
+                ? {}
+                : { margin: 0, marginRight: -1 }),
+              ...objValue.style,
+            }}
             color={objValue.color}
           >
             {!_.isUndefined(highlightKeyword) ? (

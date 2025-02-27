@@ -140,6 +140,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
               onClick={() => {
                 setKernelIdForLogModal(row_id);
               }}
+              style={{ width: 22 }}
             />
           </Tooltip>
         </>
