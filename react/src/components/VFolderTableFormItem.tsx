@@ -7,7 +7,7 @@ import VFolderTable, {
 } from './VFolderTable';
 import { Form, FormItemProps, Input } from 'antd';
 import _ from 'lodash';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface VFolderTableFormItemProps extends Omit<FormItemProps, 'name'> {
@@ -30,6 +30,22 @@ const VFolderTableFormItem: React.FC<VFolderTableFormItemProps> = ({
 }) => {
   const form = Form.useFormInstance();
   const { t } = useTranslation();
+
+  const ownerInfo = form.getFieldValue('owner');
+  // The API for getting vfolder list check internally passed owner email is valid or not.
+  // When the owner email is not valid, the API will return an error not the empty list.
+  const isValidOwner =
+    ownerInfo?.enabled &&
+    (!_.isEmpty(ownerInfo)
+      ? _.every(_.omit(ownerInfo, 'enabled'), (key, value) => {
+          return key !== undefined;
+        })
+      : false);
+  const ownerEmail = isValidOwner ? ownerInfo.email : undefined;
+  useEffect(() => {
+    form.setFieldsValue({ mounts: undefined, vfolderAliasMap: {} });
+  }, [isValidOwner, form]);
+
   return (
     <>
       <Form.Item
@@ -96,6 +112,7 @@ const VFolderTableFormItem: React.FC<VFolderTableFormItemProps> = ({
           onChangeAutoMountedFolders={(names) => {
             form.setFieldValue('autoMountedFolderNames', names);
           }}
+          ownerEmail={ownerEmail}
           {...tableProps}
         />
       </Form.Item>
