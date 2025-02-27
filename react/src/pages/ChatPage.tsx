@@ -24,13 +24,15 @@ const ChatPage: React.FC<ChatPageProps> = ({ ...props }) => {
 
   const [endpointId] = useQueryParam('endpointId', StringParam);
   const [modelId] = useQueryParam('modelId', StringParam);
+  const [agentId] = useQueryParam('agentId', StringParam);
   const isEmptyEndpointId = !endpointId;
 
   const { endpoint, endpoint_list } = useLazyLoadQuery<ChatPageQuery>(
     graphql`
       query ChatPageQuery($endpointId: UUID!, $isEmptyEndpointId: Boolean!) {
         endpoint(endpoint_id: $endpointId)
-          @skipOnClient(if: $isEmptyEndpointId) {
+          @skipOnClient(if: $isEmptyEndpointId)
+          @catch {
           ...EndpointLLMChatCard_endpoint
         }
         endpoint_list(limit: 1, offset: 0) {
@@ -94,7 +96,7 @@ const ChatPage: React.FC<ChatPageProps> = ({ ...props }) => {
             margin: token.margin,
             marginTop: 0,
             overflow: 'auto',
-            height: 'calc(100vh - 215px)',
+            height: 'calc(100vh - 240px)',
           }}
           align="stretch"
         >
@@ -116,13 +118,14 @@ const ChatPage: React.FC<ChatPageProps> = ({ ...props }) => {
             >
               <EndpointLLMChatCard
                 defaultModelId={
-                  index === 0 && endpoint && modelId ? modelId : undefined
+                  index === 0 && endpoint.ok && modelId ? modelId : undefined
                 }
                 defaultEndpoint={
-                  index === 0 && endpoint
-                    ? endpoint
+                  index === 0 && endpoint.ok
+                    ? endpoint.value || undefined
                     : endpoint_list?.items?.[0] || undefined
                 }
+                defaultAgentId={agentId || undefined}
                 key={getKey(index)}
                 style={{ flex: 1 }}
                 onRequestClose={() => {

@@ -1754,6 +1754,7 @@
     "YouAreOnline": "artık çevrimiçisin",
     "menu": {
       "AIAccelerator": "Yapay Zeka Hızlandırıcı",
+      "AIAgents": "Yapay Zeka Ajanları",
       "AboutBackendAI": "Backend.AI hakkında",
       "Administration": "yönetim",
       "AgentSummary": "Temsilci Özeti",

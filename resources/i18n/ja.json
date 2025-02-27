@@ -1755,6 +1755,7 @@
     "YouAreOnline": "あなたは今オンラインです",
     "menu": {
       "AIAccelerator": "AIアクセラレータ",
+      "AIAgents": "AIエージェント",
       "AboutBackendAI": "Backend.AIについて",
       "Administration": "管理",
       "AgentSummary": "リソース概要",

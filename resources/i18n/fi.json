@@ -1753,6 +1753,7 @@
     "YouAreOnline": "Olet nyt verkossa",
     "menu": {
       "AIAccelerator": "AI-kiihdyttämö",
+      "AIAgents": "AI-agentit",
       "AboutBackendAI": "Tietoja Backend.AI:sta",
       "Administration": "Hallinto",
       "AgentSummary": "Agentin yhteenveto",

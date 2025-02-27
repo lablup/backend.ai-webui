@@ -42,7 +42,7 @@ import {
 } from 'antd';
 import { ItemType } from 'antd/lib/menu/interface';
 import _ from 'lodash';
-import { PlayIcon } from 'lucide-react';
+import { BotMessageSquare, PlayIcon } from 'lucide-react';
 import React, { useContext, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -90,6 +90,9 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const [experimentalNeoSessionList] = useBAISettingUserState(
     'experimental_neo_session_list',
   );
+  const [experimentalAIAgents] = useBAISettingUserState(
+    'experimental_ai_agents',
+  );
   const generalMenu = filterEmptyItem<ItemType>([
     {
       label: <WebUILink to="/start">{t('webui.menu.Start')}</WebUILink>,
@@ -114,6 +117,11 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       label: <WebUILink to="/serving">{t('webui.menu.Serving')}</WebUILink>,
       icon: <EndpointsIcon style={{ color: token.colorPrimary }} />,
       key: 'serving',
+    },
+    experimentalAIAgents && {
+      label: <WebUILink to="/ai-agent">{t('webui.menu.AIAgents')}</WebUILink>,
+      icon: <BotMessageSquare style={{ color: token.colorPrimary }} />,
+      key: 'ai-agent',
     },
     {
       label: <WebUILink to="/chat">{t('webui.menu.Chat')}</WebUILink>,

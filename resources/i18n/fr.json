@@ -1755,6 +1755,7 @@
     "YouAreOnline": "Vous êtes maintenant en ligne",
     "menu": {
       "AIAccelerator": "Accélérateur d'IA",
+      "AIAgents": "Agents d'intelligence artificielle",
       "AboutBackendAI": "À propos de Backend.AI",
       "Administration": "Administration",
       "AgentSummary": "Résumé de l'agent",

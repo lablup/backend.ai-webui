@@ -1755,6 +1755,7 @@
     "YouAreOnline": "Είστε πλέον συνδεδεμένοι",
     "menu": {
       "AIAccelerator": "Επιταχυντής AI",
+      "AIAgents": "Πράκτορες AI",
       "AboutBackendAI": "Σχετικά με το Backend.AI",
       "Administration": "Διαχείριση",
       "AgentSummary": "Περίληψη πράκτορα",

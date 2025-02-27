@@ -1759,6 +1759,7 @@
     "YouAreOnline": "온라인 상태가 되었습니다",
     "menu": {
       "AIAccelerator": "AI 가속기",
+      "AIAgents": "AI 에이전트",
       "AboutBackendAI": "Backend.AI에 대하여",
       "Administration": "관리",
       "AgentSummary": "자원 요약",

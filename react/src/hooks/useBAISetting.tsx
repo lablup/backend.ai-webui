@@ -19,6 +19,7 @@ interface UserSettings {
   recentSessionHistory?: Array<SessionHistory>;
   experimental_neo_session_list?: boolean;
   start_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
+  experimental_ai_agents?: boolean;
   [key: `hiddenColumnKeys.${string}`]: Array<string>;
 }
 
