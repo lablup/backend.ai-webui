@@ -1510,6 +1510,27 @@
     "Copied": "Đã sao chép",
     "Copy": "Sao chép"
   },
+  "start": {
+    "CreateFolder": "Tạo thư mục lưu trữ mới",
+    "CreateFolderDesc": "Việc tạo thư mục và tải tệp lên là rất quan trọng đối với việc đào tạo mô hình hoặc cung cấp dịch vụ bên ngoài. \nHãy bắt đầu bằng cách tải lên các tập tin.",
+    "ModelService": "Bắt đầu dịch vụ mẫu",
+    "ModelServiceDesc": "Sẵn sàng chia sẻ mô hình được đào tạo của bạn với người khác? \nNhấp vào nút để tạo một dịch vụ.",
+    "StartBatchSession": "Bắt đầu phiên hàng loạt",
+    "StartBatchSessionDesc": "Đối với các tệp được xác định trước hoặc các tác vụ đã lên lịch, hãy thử phiên Batch. \nNhập lệnh, đặt ngày giờ và chạy khi cần.",
+    "StartFromExample": "Bắt đầu từ ví dụ",
+    "StartFromExampleDesc": "Khám phá các mã ví dụ khác nhau và bắt đầu.",
+    "StartFromURL": "Bắt đầu từ URL",
+    "StartFromURLDesc": "Nhập dự án và mã của bạn từ nhiều môi trường khác nhau như GitHub, GitLab, Notebook, v.v.",
+    "StartSession": "Bắt đầu một phiên tương tác",
+    "StartSessionDesc": "Bạn muốn đào tạo một người mẫu? \nNhấp vào nút để tạo phiên ngay lập tức. \nChọn môi trường và tài nguyên ưa thích của bạn để chạy mã và các tác vụ khác.",
+    "button": {
+      "CreateFolder": "Tạo thư mục",
+      "ModelService": "Bắt đầu dịch vụ",
+      "StartBatchSession": "Bắt đầu từ một URL",
+      "StartNow": "Bắt đầu ngay bây giờ",
+      "StartSession": "Bắt đầu phiên"
+    }
+  },
   "statistics": {
     "1Day": "1 ngày",
     "1Week": "1 tuần",
@@ -1789,6 +1810,7 @@
       "Settings": "Cài đặt",
       "Settings&Logs": "Cài đặt & Nhật ký",
       "SetupTotp": "Thiết lập 2FA",
+      "Start": "Bắt đầu",
       "Statistics": "Số liệu thống kê",
       "Summary": "Tóm lược",
       "Tasks": "Nhiệm vụ",

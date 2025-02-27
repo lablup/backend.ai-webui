@@ -1510,6 +1510,27 @@
     "Copied": "コピーされました",
     "Copy": "コピー"
   },
+  "start": {
+    "CreateFolder": "新しい保存フォルダーを作成する",
+    "CreateFolderDesc": "フォルダーの作成とファイルのアップロードは、モデルをトレーニングしたり、外部にサービスを提供したりするために重要です。\nファイルをアップロードすることから始めてください。",
+    "ModelService": "モデルサービスの開始",
+    "ModelServiceDesc": "トレーニングされたモデルを他の人と共有する準備はできていますか?\nボタンをクリックしてサービスを作成します。",
+    "StartBatchSession": "バッチセッションの開始",
+    "StartBatchSessionDesc": "事前定義されたファイルまたはスケジュールされたタスクについては、バッチ セッションを試してください。\nコマンドを入力し、日付と時刻を設定し、必要に応じて実行します。",
+    "StartFromExample": "例から始める",
+    "StartFromExampleDesc": "さまざまなコード例を調べて開始してください。",
+    "StartFromURL": "URLから開始",
+    "StartFromURLDesc": "GitHub、GitLab、Notebook などのさまざまな環境からプロジェクトとコードをインポートします。",
+    "StartSession": "インタラクティブセッションを開始する",
+    "StartSessionDesc": "モデルをトレーニングしたいですか?\nボタンをクリックすると、セッションが即座に作成されます。\nコードやその他のタスクを実行するための優先環境とリソースを選択します。",
+    "button": {
+      "CreateFolder": "フォルダーの作成",
+      "ModelService": "サービス開始",
+      "StartBatchSession": "URLから開始",
+      "StartNow": "今すぐ始めましょう",
+      "StartSession": "セッションの開始"
+    }
+  },
   "statistics": {
     "1Day": "1日",
     "1Week": "1週間",
@@ -1789,6 +1810,7 @@
       "Settings": "設定",
       "Settings&Logs": "設定とログ",
       "SetupTotp": "二要素認証を有効にする",
+      "Start": "始める",
       "Statistics": "統計",
       "Summary": "要約",
       "Tasks": "作業",

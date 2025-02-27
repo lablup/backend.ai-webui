@@ -1508,6 +1508,27 @@
     "Copied": "Kopioitu",
     "Copy": "Kopio"
   },
+  "start": {
+    "CreateFolder": "Luo uusi tallennuskansio",
+    "CreateFolderDesc": "Kansion luominen ja tiedostojen lataaminen ovat tärkeitä koulutusmallien tai palvelujen tarjoamisen kannalta. \nAloita lataamalla tiedostot.",
+    "ModelService": "Käynnistä mallipalvelu",
+    "ModelServiceDesc": "Oletko valmis jakamaan koulutetun mallisi muiden kanssa? \nNapsauta painiketta luodaksesi palvelun.",
+    "StartBatchSession": "Aloita eräistunto",
+    "StartBatchSessionDesc": "Jos haluat käyttää ennalta määritettyjä tiedostoja tai ajoitettuja tehtäviä, kokeile eräistuntoja. \nAnna komento, aseta päivämäärä ja aika ja suorita tarvittaessa.",
+    "StartFromExample": "Aloita esimerkistä",
+    "StartFromExampleDesc": "Tutustu erilaisiin esimerkkikoodeihin ja aloita.",
+    "StartFromURL": "Aloita URL-osoitteesta",
+    "StartFromURLDesc": "Tuo projektisi ja koodisi eri ympäristöistä, kuten GitHubista, GitLabista, Notebookista jne.",
+    "StartSession": "Aloita interaktiivinen istunto",
+    "StartSessionDesc": "Haluatko kouluttaa mallia? \nNapsauta painiketta luodaksesi istunnon välittömästi. \nValitse haluamasi ympäristö ja resurssit koodin ja muiden tehtävien suorittamista varten.",
+    "button": {
+      "CreateFolder": "Luo kansio",
+      "ModelService": "Aloita palvelu",
+      "StartBatchSession": "Aloita URL-osoitteesta",
+      "StartNow": "Aloita nyt",
+      "StartSession": "Aloita istunto"
+    }
+  },
   "statistics": {
     "1Day": "1 päivä",
     "1Week": "1 viikko",
@@ -1788,6 +1809,7 @@
       "Settings": "Asetukset",
       "Settings&Logs": "Asetukset & lokit",
       "SetupTotp": "2FA-asetus",
+      "Start": "Aloita",
       "Statistics": "Tilastot",
       "Summary": "Yhteenveto",
       "Tasks": "Tehtävät",

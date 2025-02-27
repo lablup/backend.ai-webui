@@ -1510,6 +1510,27 @@
     "Copied": "Kopiert",
     "Copy": "Kopieren"
   },
+  "start": {
+    "CreateFolder": "Erstellen Sie einen neuen Speicherordner",
+    "CreateFolderDesc": "Für das Training von Modellen oder die externe Bereitstellung von Diensten sind das Erstellen eines Ordners und das Hochladen von Dateien von entscheidender Bedeutung. \nBitte beginnen Sie mit dem Hochladen der Dateien.",
+    "ModelService": "Modelldienst starten",
+    "ModelServiceDesc": "Sind Sie bereit, Ihr trainiertes Modell mit anderen zu teilen? \nKlicken Sie auf die Schaltfläche, um einen Dienst zu erstellen.",
+    "StartBatchSession": "Starten Sie die Batch-Sitzung",
+    "StartBatchSessionDesc": "Versuchen Sie für vordefinierte Dateien oder geplante Aufgaben Batch-Sitzungen. \nGeben Sie den Befehl ein, stellen Sie Datum und Uhrzeit ein und führen Sie ihn nach Bedarf aus.",
+    "StartFromExample": "Beginnen Sie mit dem Beispiel",
+    "StartFromExampleDesc": "Entdecken Sie verschiedene Beispielcodes und legen Sie los.",
+    "StartFromURL": "Beginnen Sie mit der URL",
+    "StartFromURLDesc": "Importieren Sie Ihr Projekt und Ihren Code aus verschiedenen Umgebungen wie GitHub, GitLab, Notebook usw.",
+    "StartSession": "Starten Sie eine interaktive Sitzung",
+    "StartSessionDesc": "Möchten Sie ein Model trainieren? \nKlicken Sie auf die Schaltfläche, um sofort eine Sitzung zu erstellen. \nWählen Sie Ihre bevorzugte Umgebung und Ressourcen zum Ausführen von Code und anderen Aufgaben.",
+    "button": {
+      "CreateFolder": "Ordner erstellen",
+      "ModelService": "Dienst starten",
+      "StartBatchSession": "Beginnen Sie mit einer URL",
+      "StartNow": "Beginnen Sie jetzt",
+      "StartSession": "Sitzung starten"
+    }
+  },
   "statistics": {
     "1Day": "1 Tag",
     "1Week": "1 Woche",
@@ -1789,6 +1810,7 @@
       "Settings": "die Einstellungen",
       "Settings&Logs": "Einstellungen & Protokolle",
       "SetupTotp": "2FA-Einrichtung",
+      "Start": "Start",
       "Statistics": "Statistiken",
       "Summary": "Zusammenfassung",
       "Tasks": "Aufgaben",

@@ -1510,6 +1510,27 @@
     "Copied": "disalin",
     "Copy": "Salinan"
   },
+  "start": {
+    "CreateFolder": "Buat Folder Storan Baharu",
+    "CreateFolderDesc": "Mencipta folder dan memuat naik fail adalah penting untuk model latihan atau menyediakan perkhidmatan secara luaran. \nSila mulakan dengan memuat naik fail.",
+    "ModelService": "Mulakan Perkhidmatan Model",
+    "ModelServiceDesc": "Bersedia untuk berkongsi model terlatih anda dengan orang lain? \nKlik butang untuk membuat perkhidmatan.",
+    "StartBatchSession": "Mulakan Sesi Kelompok",
+    "StartBatchSessionDesc": "Untuk fail yang dipratentukan atau tugasan yang dijadualkan, cuba sesi Kelompok. \nMasukkan arahan, tetapkan tarikh dan masa, dan jalankan seperti yang diperlukan.",
+    "StartFromExample": "Mulakan daripada Contoh",
+    "StartFromExampleDesc": "Terokai pelbagai contoh kod dan mulakan.",
+    "StartFromURL": "Mulakan Dari URL",
+    "StartFromURLDesc": "Import projek dan kod anda daripada pelbagai persekitaran seperti GitHub, GitLab, Notebook, dsb.",
+    "StartSession": "Mulakan Sesi Interaktif",
+    "StartSessionDesc": "Ingin melatih model? \nKlik butang untuk membuat sesi serta-merta. \nPilih persekitaran dan sumber pilihan anda untuk menjalankan kod dan tugasan lain.",
+    "button": {
+      "CreateFolder": "Buat Folder",
+      "ModelService": "Mulakan Perkhidmatan",
+      "StartBatchSession": "Mulakan daripada URL",
+      "StartNow": "Mulakan Sekarang",
+      "StartSession": "Mulakan Sesi"
+    }
+  },
   "statistics": {
     "1Day": "1 hari",
     "1Week": "1 minggu",
@@ -1789,6 +1810,7 @@
       "Settings": "Tetapan",
       "Settings&Logs": "Tetapan & Log",
       "SetupTotp": "Persediaan 2FA",
+      "Start": "Mulakan",
       "Statistics": "Statistik",
       "Summary": "Ringkasan",
       "Tasks": "Tugasan",

@@ -1517,6 +1517,27 @@
     "Copied": "Copied",
     "Copy": "Copy"
   },
+  "start": {
+    "CreateFolder": "Create New Storage Folder",
+    "CreateFolderDesc": "Create folders and upload files. To train models or provide external services, it is essential to create folders and upload files.",
+    "ModelService": "Start Model Service",
+    "ModelServiceDesc": "Select to share your trained model with others. This action will create a model service.",
+    "StartBatchSession": "Start Batch Session",
+    "StartBatchSessionDesc": "Create a batch session for predefined files or scheduled tasks. Enter the command, set the date and time, and run the session on demand.",
+    "StartFromExample": "Start from the Example",
+    "StartFromExampleDesc": "Explore various example codes and get started.",
+    "StartFromURL": "Start From URL",
+    "StartFromURLDesc": "Import your project and code from various environments such as GitHub, GitLab, Notebook, etc.",
+    "StartSession": "Start Interactive Session",
+    "StartSessionDesc": "Create a session to train a model. Choose your preferred environment and resources to run a code.",
+    "button": {
+      "CreateFolder": "Create Folder",
+      "ModelService": "Start Service",
+      "StartBatchSession": "Start from a URL",
+      "StartNow": "Start Now",
+      "StartSession": "Start Session"
+    }
+  },
   "statistics": {
     "1Day": "1 Day",
     "1Week": "1 Week",
@@ -1795,6 +1816,7 @@
       "Settings": "Settings",
       "Settings&Logs": "Settings & Logs",
       "SetupTotp": "2FA Setup",
+      "Start": "Start",
       "Statistics": "Statistics",
       "Summary": "Summary",
       "Tasks": "Tasks",

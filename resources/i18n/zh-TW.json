@@ -1509,6 +1509,27 @@
     "Copied": "已複製",
     "Copy": "複製"
   },
+  "start": {
+    "CreateFolder": "建立新的儲存資料夾",
+    "CreateFolderDesc": "建立資料夾和上傳檔案對於訓練模型或對外提供服務至關重要。\n請先上傳文件。",
+    "ModelService": "啟動模型服務",
+    "ModelServiceDesc": "準備好與其他人分享您訓練過的模型了嗎？\n點選按鈕建立服務。",
+    "StartBatchSession": "開始批量會話",
+    "StartBatchSessionDesc": "對於預先定義檔案或排程任務，請嘗試批次會話。\n輸入命令，設定日期和時間，然後根據需要運行。",
+    "StartFromExample": "從例子開始",
+    "StartFromExampleDesc": "探索各種範例程式碼並開始使用。",
+    "StartFromURL": "從網址開始",
+    "StartFromURLDesc": "從各種環境（例如 GitHub、GitLab、Notebook 等）匯入您的專案和程式碼。",
+    "StartSession": "開始互動會話",
+    "StartSessionDesc": "想訓練模型嗎？\n按一下該按鈕即可立即建立會話。\n選擇您喜歡的環境和資源來執行程式碼和其他任務。",
+    "button": {
+      "CreateFolder": "建立資料夾",
+      "ModelService": "啟動服務",
+      "StartBatchSession": "從 URL 開始",
+      "StartNow": "現在開始",
+      "StartSession": "開始會話"
+    }
+  },
   "statistics": {
     "1Day": "1天",
     "1Week": "1週",
@@ -1788,6 +1809,7 @@
       "Settings": "設置",
       "Settings&Logs": "設置和日誌",
       "SetupTotp": "2FA 设置",
+      "Start": "開始",
       "Statistics": "統計數據",
       "Summary": "概括",
       "Tasks": "任务",

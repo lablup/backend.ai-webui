@@ -1514,6 +1514,27 @@
     "Copied": "복사됨",
     "Copy": "복사"
   },
+  "start": {
+    "CreateFolder": "새 스토리지 폴더 생성하기",
+    "CreateFolderDesc": "폴더를 만들고 파일을 업로드합니다. 모델을 학습시키거나 외부 서비스를 제공하려면 해당 작업은 필수적입니다.",
+    "ModelService": "모델 서비스 시작",
+    "ModelServiceDesc": "학습이 끝난 모델을 다른 사람과 공유하고 싶다면, 버튼을 클릭하여 서비스를 생성하세요.",
+    "StartBatchSession": "Batch 세션 생성",
+    "StartBatchSessionDesc": "미리 정의된 파일 또는 예약된 작업에 대한 배치 세션을 생성합니다. 명령을 입력하고 날짜와 시간을 설정한 다음 필요에 따라 세션을 실행하세요.",
+    "StartFromExample": "가져오기 및 실행",
+    "StartFromExampleDesc": "다양한 예제 코드를 살펴보고, 해당 코드로부터 실행할 수 있습니다.",
+    "StartFromURL": "URL 로 시작",
+    "StartFromURLDesc": "GitHub, GitLab, Notebook 등 다양한 환경에서 프로젝트와 코드를 가져오고, 실행할 수 있습니다. ",
+    "StartSession": "Interactive 세션 생성",
+    "StartSessionDesc": "모델을 학습시킬 세션을 생성합니다. 원하는 환경과 리소스를 선택하여 코드를 실행하세요.",
+    "button": {
+      "CreateFolder": "폴더 생성하기",
+      "ModelService": "서비스 생성",
+      "StartBatchSession": "URL로 시작하기",
+      "StartNow": "지금 시작하기",
+      "StartSession": "세션 생성"
+    }
+  },
   "statistics": {
     "1Day": "1일",
     "1Week": "1주",
@@ -1793,6 +1814,7 @@
       "Settings": "설정",
       "Settings&Logs": "설정 및 로그",
       "SetupTotp": "이중 인증 활성화",
+      "Start": "시작",
       "Statistics": "통계",
       "Summary": "요약",
       "Tasks": "작업",

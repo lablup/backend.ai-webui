@@ -1510,6 +1510,27 @@
     "Copied": "Copié",
     "Copy": "Copie"
   },
+  "start": {
+    "CreateFolder": "Créer un nouveau dossier de stockage",
+    "CreateFolderDesc": "La création d'un dossier et le téléchargement de fichiers sont cruciaux pour former des modèles ou fournir des services en externe. \nVeuillez commencer par télécharger les fichiers.",
+    "ModelService": "Démarrer le service de modèle",
+    "ModelServiceDesc": "Prêt à partager votre modèle formé avec d'autres ? \nCliquez sur le bouton pour créer un service.",
+    "StartBatchSession": "Démarrer une session par lots",
+    "StartBatchSessionDesc": "Pour les fichiers prédéfinis ou les tâches planifiées, essayez les sessions par lots. \nEntrez la commande, définissez la date et l'heure et exécutez-la selon vos besoins.",
+    "StartFromExample": "Partir de l'exemple",
+    "StartFromExampleDesc": "Explorez divers exemples de codes et commencez.",
+    "StartFromURL": "Commencer à partir de l'URL",
+    "StartFromURLDesc": "Importez votre projet et votre code depuis divers environnements tels que GitHub, GitLab, Notebook, etc.",
+    "StartSession": "Démarrer une session interactive",
+    "StartSessionDesc": "Vous souhaitez former un modèle ? \nCliquez sur le bouton pour créer une session instantanément. \nChoisissez votre environnement et vos ressources préférés pour exécuter du code et d'autres tâches.",
+    "button": {
+      "CreateFolder": "Créer un dossier",
+      "ModelService": "Démarrer le service",
+      "StartBatchSession": "Commencer à partir d'une URL",
+      "StartNow": "Commencez maintenant",
+      "StartSession": "Démarrer la session"
+    }
+  },
   "statistics": {
     "1Day": "Un jour",
     "1Week": "1 semaine",
@@ -1789,6 +1810,7 @@
       "Settings": "Paramètres",
       "Settings&Logs": "Paramètres et journaux",
       "SetupTotp": "Configuration de 2FA",
+      "Start": "Commencer",
       "Statistics": "Statistiques",
       "Summary": "Résumé",
       "Tasks": "Tâches",

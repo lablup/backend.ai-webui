@@ -1509,6 +1509,27 @@
     "Copied": "Kopyalandı",
     "Copy": "Kopyala"
   },
+  "start": {
+    "CreateFolder": "Yeni Bir Depolama Klasörü Oluşturun",
+    "CreateFolderDesc": "Bir klasör oluşturmak ve dosyaları yüklemek, modellerin eğitimi veya dışarıdan hizmet sağlanması için çok önemlidir. \nLütfen dosyaları yükleyerek başlayın.",
+    "ModelService": "Model Hizmetini Başlat",
+    "ModelServiceDesc": "Eğitimli modelinizi başkalarıyla paylaşmaya hazır mısınız? \nBir hizmet oluşturmak için düğmeye tıklayın.",
+    "StartBatchSession": "Toplu Oturumu Başlat",
+    "StartBatchSessionDesc": "Önceden tanımlanmış dosyalar veya zamanlanmış görevler için Toplu oturumları deneyin. \nKomutu girin, tarih ve saati ayarlayın ve gerektiği gibi çalıştırın.",
+    "StartFromExample": "Örnekten Başlayın",
+    "StartFromExampleDesc": "Çeşitli örnek kodları keşfedin ve başlayın.",
+    "StartFromURL": "URL'den Başla",
+    "StartFromURLDesc": "Projenizi ve kodunuzu GitHub, GitLab, Notebook vb. çeşitli ortamlardan içe aktarın.",
+    "StartSession": "Etkileşimli Bir Oturum Başlatın",
+    "StartSessionDesc": "Bir model yetiştirmek ister misiniz? \nAnında oturum oluşturmak için düğmeye tıklayın. \nKod çalıştırmak ve diğer görevler için tercih ettiğiniz ortamı ve kaynakları seçin.",
+    "button": {
+      "CreateFolder": "Klasör Oluştur",
+      "ModelService": "Hizmeti Başlat",
+      "StartBatchSession": "Bir URL'den başlayın",
+      "StartNow": "Şimdi Başla",
+      "StartSession": "Oturumu Başlat"
+    }
+  },
   "statistics": {
     "1Day": "1 gün",
     "1Week": "1 hafta",
@@ -1788,6 +1809,7 @@
       "Settings": "Ayarlar",
       "Settings&Logs": "Ayarlar ve Günlükler",
       "SetupTotp": "2FA Kurulumu",
+      "Start": "Başlangıç",
       "Statistics": "İstatistik",
       "Summary": "Özet",
       "Tasks": "Görevler",

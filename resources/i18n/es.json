@@ -1510,6 +1510,27 @@
     "Copied": "Copiado",
     "Copy": "Copiar"
   },
+  "start": {
+    "CreateFolder": "Crear una nueva carpeta de almacenamiento",
+    "CreateFolderDesc": "Crear una carpeta y cargar archivos es crucial para entrenar modelos o brindar servicios externamente. \nComience subiendo los archivos.",
+    "ModelService": "Iniciar servicio de modelo",
+    "ModelServiceDesc": "¿Listo para compartir su modelo entrenado con otros? \nHaga clic en el botón para crear un servicio.",
+    "StartBatchSession": "Iniciar sesión por lotes",
+    "StartBatchSessionDesc": "Para archivos predefinidos o tareas programadas, pruebe las sesiones por lotes. \nIngrese el comando, establezca la fecha y la hora y ejecútelo según sea necesario.",
+    "StartFromExample": "Empezar desde el ejemplo",
+    "StartFromExampleDesc": "Explore varios códigos de ejemplo y comience.",
+    "StartFromURL": "Empezar desde URL",
+    "StartFromURLDesc": "Importe su proyecto y código desde varios entornos como GitHub, GitLab, Notebook, etc.",
+    "StartSession": "Iniciar una sesión interactiva",
+    "StartSessionDesc": "¿Quieres entrenar un modelo? \nHaga clic en el botón para crear una sesión al instante. \nElija su entorno y recursos preferidos para ejecutar código y otras tareas.",
+    "button": {
+      "CreateFolder": "Crear carpeta",
+      "ModelService": "Iniciar servicio",
+      "StartBatchSession": "Comenzar desde una URL",
+      "StartNow": "Empezar ahora",
+      "StartSession": "Iniciar sesión"
+    }
+  },
   "statistics": {
     "1Day": "1 día",
     "1Week": "1 semana",
@@ -1789,6 +1810,7 @@
       "Settings": "Ajustes",
       "Settings&Logs": "Ajustes y registros",
       "SetupTotp": "Configuración 2FA",
+      "Start": "Comenzar",
       "Statistics": "Estadísticas",
       "Summary": "Resumen",
       "Tasks": "Tareas",

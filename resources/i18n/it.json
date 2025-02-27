@@ -1508,6 +1508,27 @@
     "Copied": "Copiato",
     "Copy": "copia"
   },
+  "start": {
+    "CreateFolder": "Crea una nuova cartella di archiviazione",
+    "CreateFolderDesc": "La creazione di una cartella e il caricamento di file sono fondamentali per la formazione di modelli o la fornitura di servizi esternamente. \nInizia caricando i file.",
+    "ModelService": "Avvia il servizio modello",
+    "ModelServiceDesc": "Pronto a condividere il tuo modello addestrato con altri? \nFare clic sul pulsante per creare un servizio.",
+    "StartBatchSession": "Avvia sessione batch",
+    "StartBatchSessionDesc": "Per file predefiniti o attività pianificate, prova le sessioni batch. \nImmettere il comando, impostare la data e l'ora ed eseguirlo secondo necessità.",
+    "StartFromExample": "Partire dall'Esempio",
+    "StartFromExampleDesc": "Esplora vari codici di esempio e inizia.",
+    "StartFromURL": "Inizia dall'URL",
+    "StartFromURLDesc": "Importa il tuo progetto e codice da vari ambienti come GitHub, GitLab, Notebook, ecc.",
+    "StartSession": "Avvia una sessione interattiva",
+    "StartSessionDesc": "Vuoi addestrare un modello? \nFare clic sul pulsante per creare immediatamente una sessione. \nScegli l'ambiente e le risorse preferiti per l'esecuzione del codice e altre attività.",
+    "button": {
+      "CreateFolder": "Crea cartella",
+      "ModelService": "Avvia servizio",
+      "StartBatchSession": "Inizia da un URL",
+      "StartNow": "Inizia ora",
+      "StartSession": "Avvia sessione"
+    }
+  },
   "statistics": {
     "1Day": "1 giorno",
     "1Week": "1 settimana",
@@ -1787,6 +1808,7 @@
       "Settings": "impostazioni",
       "Settings&Logs": "Impostazioni e registri",
       "SetupTotp": "Impostazione 2FA",
+      "Start": "Inizio",
       "Statistics": "Statistiche",
       "Summary": "Sommario",
       "Tasks": "Compiti",

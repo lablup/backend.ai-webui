@@ -494,7 +494,7 @@ export default class BackendAISummary extends BackendAIPage {
    * @param {string} search
    */
   _moveTo(url = '', search: string | undefined = undefined) {
-    const page = url !== '' ? url : 'summary';
+    const page = url !== '' ? url : 'start';
     // globalThis.history.pushState({}, '', page);
     store.dispatch(navigate(decodeURIComponent(page), {}));
 
@@ -513,66 +513,8 @@ export default class BackendAISummary extends BackendAIPage {
     return html`
       <link rel="stylesheet" href="/resources/fonts/font-awesome-all.min.css" />
       <link rel="stylesheet" href="resources/custom.css" />
-      <div class="item" elevation="1" class="vertical layout center wrap flex">
+      <div class="item" elevation="1" class="vertical layout center flex">
         <div class="horizontal wrap layout" style="gap:24px;">
-          <lablup-activity-panel
-            title="${_t('summary.StartMenu')}"
-            elevation="1"
-            height="500"
-          >
-            <div slot="message">
-              <img
-                src="/resources/images/launcher-background.png"
-                style="width:300px;margin-bottom:30px;"
-              />
-              <div class="horizontal center-justified layout wrap">
-                <backend-ai-session-launcher
-                  location="summary"
-                  id="session-launcher"
-                  ?active="${this.active === true}"
-                  ?allowNEOSessionLauncher="${true}"
-                ></backend-ai-session-launcher>
-              </div>
-              <div class="horizontal center-justified layout wrap">
-                <button
-                  @click="${() => {
-                    this._moveTo('/data');
-                  }}"
-                  class="vertical center center-justified layout start-menu-items link-button"
-                >
-                  <i class="fas fa-upload fa-2x"></i>
-                  <span>${_t('summary.UploadFiles')}</span>
-                </button>
-                ${this.is_admin
-                  ? html`
-                      <button
-                        @click="${() => {
-                          this._moveTo(
-                            '/credential',
-                            '?tab=credentials&action=add',
-                          );
-                        }}"
-                        class="vertical center center-justified layout start-menu-items link-button"
-                        style="border-left:1px solid var(--token-colorBorder, #ccc);"
-                      >
-                        <i class="fas fa-key fa-2x"></i>
-                        <span>${_t('summary.CreateANewKeypair')}</span>
-                      </button>
-                      <button
-                        @click="${() => {
-                          this._moveTo('/credential', '?tab=credentials');
-                        }}"
-                        class="vertical center center-justified layout start-menu-items link-button"
-                        style="border-left:1px solid var(--token-colorBorder, #ccc);"
-                      >
-                        <i class="fas fa-cogs fa-2x"></i>
-                        <span>${_t('summary.MaintainKeypairs')}</span>
-                      </button>
-                    `
-                  : html``}
-              </div>
-            </div>
-          </lablup-activity-panel>
           <lablup-activity-panel
             title="${_t('summary.ResourceStatistics')}"
             elevation="1"
@@ -594,133 +536,141 @@ export default class BackendAISummary extends BackendAIPage {
             ?active="${this.active === true}"
             height="500"
           ></backend-ai-resource-panel>
-          <lablup-activity-panel
-            title="${_t('summary.Invitation')}"
-            elevation="1"
-            narrow
-            height="245"
-            scrollableY="true"
-          >
-            <div
-              class="layout vertical"
-              slot="message"
-              style="padding: 10px; gap: 10px;"
+
+          <!-- Vertical container for the two 245px panels -->
+          <div class="vertical layout" style="gap:10px;">
+            <lablup-activity-panel
+              title="${_t('summary.Invitation')}"
+              elevation="1"
+              narrow
+              height="245"
+              scrollableY="true"
             >
-              ${this.invitations.length > 0
-                ? this.invitations.map(
-                    (invitation, index) => html`
-                      <lablup-activity-panel
-                        class="inner-panel"
-                        noheader
-                        autowidth
-                        elevation="0"
-                        height="130"
-                      >
-                        <div slot="message">
-                          <div class="wrap layout">
-                            <h3 style="padding-top:10px;">
-                              From ${invitation.inviter}
-                            </h3>
-                            <div class="invitation_folder_name">
-                              ${_t('summary.FolderName')}:
-                              ${invitation.vfolder_name}
-                            </div>
-                            <div class="horizontal center layout">
-                              ${_t('summary.Permission')}:
-                              ${[...invitation.perm].map(
-                                (c) => html`
-                                  <lablup-shields
-                                    app=""
-                                    color="${['green', 'blue', 'red', 'yellow'][
-                                      ['r', 'w', 'd', 'o'].indexOf(c)
-                                    ]}"
-                                    description="${c.toUpperCase()}"
-                                    ui="flat"
-                                  ></lablup-shields>
-                                `,
-                              )}
-                            </div>
-                            <div
-                              style="margin:15px auto; gap: 8px;"
-                              class="horizontal layout end-justified"
-                            >
-                              <mwc-button
-                                outlined
-                                label="${_t('summary.Decline')}"
-                                @click="${(e) =>
-                                  this._deleteInvitation(e, invitation)}"
-                              ></mwc-button>
-                              <mwc-button
-                                unelevated
-                                label="${_t('summary.Accept')}"
-                                @click="${(e) =>
-                                  this._acceptInvitation(e, invitation)}"
-                              ></mwc-button>
-                              <span class="flex"></span>
+              <div
+                class="layout vertical"
+                slot="message"
+                style="padding: 10px; gap: 10px;"
+              >
+                ${this.invitations.length > 0
+                  ? this.invitations.map(
+                      (invitation, index) => html`
+                        <lablup-activity-panel
+                          class="inner-panel"
+                          noheader
+                          autowidth
+                          elevation="1"
+                          height="130"
+                        >
+                          <div slot="message">
+                            <div class="wrap layout">
+                              <h3 style="padding-top:10px;">
+                                From ${invitation.inviter}
+                              </h3>
+                              <div class="invitation_folder_name">
+                                ${_t('summary.FolderName')}:
+                                ${invitation.vfolder_name}
+                              </div>
+                              <div class="horizontal center layout">
+                                ${_t('summary.Permission')}:
+                                ${[...invitation.perm].map(
+                                  (c) => html`
+                                    <lablup-shields
+                                      app=""
+                                      color="${[
+                                        'green',
+                                        'blue',
+                                        'red',
+                                        'yellow',
+                                      ][['r', 'w', 'd', 'o'].indexOf(c)]}"
+                                      description="${c.toUpperCase()}"
+                                      ui="flat"
+                                    ></lablup-shields>
+                                  `,
+                                )}
+                              </div>
+                              <div
+                                style="margin:15px auto; gap: 8px;"
+                                class="horizontal layout end-justified"
+                              >
+                                <mwc-button
+                                  outlined
+                                  label="${_t('summary.Decline')}"
+                                  @click="${(e) =>
+                                    this._deleteInvitation(e, invitation)}"
+                                ></mwc-button>
+                                <mwc-button
+                                  unelevated
+                                  label="${_t('summary.Accept')}"
+                                  @click="${(e) =>
+                                    this._acceptInvitation(e, invitation)}"
+                                ></mwc-button>
+                                <span class="flex"></span>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </lablup-activity-panel>
-                    `,
-                  )
-                : html`
-                    <p>${_text('summary.NoInvitations')}</p>
-                  `}
-            </div>
-          </lablup-activity-panel>
-          ${!globalThis.isElectron && this.allowAppDownloadPanel
-            ? html`
-                <lablup-activity-panel
-                  title="${_t('summary.DownloadWebUIApp')}"
-                  elevation="1"
-                  height="245"
-                >
-                  <div slot="message">
-                    <div
-                      id="download-app-os-select-box"
-                      class="horizontal layout center-justified"
-                    >
-                      <mwc-select
-                        outlined
-                        @selected="${(e) =>
-                          this._updateSelectedDownloadAppOS(e)}"
+                        </lablup-activity-panel>
+                      `,
+                    )
+                  : html`
+                      <p>${_text('summary.NoInvitations')}</p>
+                    `}
+              </div>
+            </lablup-activity-panel>
+
+            ${!globalThis.isElectron && this.allowAppDownloadPanel
+              ? html`
+                  <lablup-activity-panel
+                    title="${_t('summary.DownloadWebUIApp')}"
+                    elevation=""
+                    height="245"
+                  >
+                    <div slot="message">
+                      <div
+                        id="download-app-os-select-box"
+                        class="horizontal layout center-justified"
                       >
-                        ${Object.keys(this.appDownloadMap).map(
-                          (item) => html`
-                            <mwc-list-item
-                              value="${item}"
-                              ?selected="${item === this.downloadAppOS}"
+                        <mwc-select
+                          outlined
+                          @selected="${(e) =>
+                            this._updateSelectedDownloadAppOS(e)}"
+                        >
+                          ${Object.keys(this.appDownloadMap).map(
+                            (item) => html`
+                              <mwc-list-item
+                                value="${item}"
+                                ?selected="${item === this.downloadAppOS}"
+                              >
+                                ${item}
+                              </mwc-list-item>
+                            `,
+                          )}
+                        </mwc-select>
+                      </div>
+                      <div
+                        class="horizontal layout center-justified"
+                        style="gap:20px"
+                      >
+                        ${this.downloadAppOS &&
+                        this.appDownloadMap[this.downloadAppOS][
+                          'architecture'
+                        ].map(
+                          (arch) => html`
+                            <mwc-button
+                              icon="cloud_download"
+                              outlined
+                              style="margin:10px 0 10px 0;flex-basis:50%;"
+                              @click="${(e) => this._downloadApplication(e)}"
                             >
-                              ${item}
-                            </mwc-list-item>
+                              ${arch}
+                            </mwc-button>
                           `,
                         )}
-                      </mwc-select>
+                      </div>
                     </div>
-                    <div
-                      class="horizontal layout center-justified"
-                      style="gap:20px"
-                    >
-                      ${this.downloadAppOS &&
-                      this.appDownloadMap[this.downloadAppOS][
-                        'architecture'
-                      ].map(
-                        (arch) => html`
-                          <mwc-button
-                            icon="cloud_download"
-                            outlined
-                            style="margin:10px 0 10px 0;flex-basis:50%;"
-                            @click="${(e) => this._downloadApplication(e)}"
-                          >
-                            ${arch}
-                          </mwc-button>
-                        `,
-                      )}
-                    </div>
-                  </div>
-                </lablup-activity-panel>
-              `
-            : html``}
+                  </lablup-activity-panel>
+                `
+              : html``}
+          </div>
         </div>
         <div class="vertical layout">
           ${this.is_admin

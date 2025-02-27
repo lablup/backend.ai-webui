@@ -1510,6 +1510,27 @@
     "Copied": "Disalin",
     "Copy": "Menyalin"
   },
+  "start": {
+    "CreateFolder": "Buat Folder Penyimpanan Baru",
+    "CreateFolderDesc": "Membuat folder dan mengunggah file sangat penting untuk melatih model atau menyediakan layanan secara eksternal. \nSilakan mulai dengan mengunggah file.",
+    "ModelService": "Mulai Layanan Model",
+    "ModelServiceDesc": "Siap membagikan model terlatih Anda kepada orang lain? \nKlik tombol untuk membuat layanan.",
+    "StartBatchSession": "Mulai Sesi Batch",
+    "StartBatchSessionDesc": "Untuk file yang telah ditentukan sebelumnya atau tugas terjadwal, cobalah sesi Batch. \nMasukkan perintah, atur tanggal dan waktu, dan jalankan sesuai kebutuhan.",
+    "StartFromExample": "Mulailah dari Contoh",
+    "StartFromExampleDesc": "Jelajahi berbagai contoh kode dan mulailah.",
+    "StartFromURL": "Mulai Dari URL",
+    "StartFromURLDesc": "Impor proyek dan kode Anda dari berbagai lingkungan seperti GitHub, GitLab, Notebook, dll.",
+    "StartSession": "Mulai Sesi Interaktif",
+    "StartSessionDesc": "Ingin melatih model? \nKlik tombol untuk membuat sesi secara instan. \nPilih lingkungan dan sumber daya pilihan Anda untuk menjalankan kode dan tugas lainnya.",
+    "button": {
+      "CreateFolder": "Buat Folder",
+      "ModelService": "Mulai Layanan",
+      "StartBatchSession": "Mulai dari URL",
+      "StartNow": "Mulai Sekarang",
+      "StartSession": "Mulai Sesi"
+    }
+  },
   "statistics": {
     "1Day": "1 Hari",
     "1Week": "1 Minggu",
@@ -1789,6 +1810,7 @@
       "Settings": "Pengaturan",
       "Settings&Logs": "Pengaturan & Log",
       "SetupTotp": "Pengaturan 2FA",
+      "Start": "Awal",
       "Statistics": "Statistik",
       "Summary": "Ringkasan",
       "Tasks": "Tugas",
