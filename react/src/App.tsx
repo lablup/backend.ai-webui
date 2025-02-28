@@ -12,7 +12,7 @@ import WebUINavigate from './components/WebUINavigate';
 import { useBAISettingUserState } from './hooks/useBAISetting';
 import Page401 from './pages/Page401';
 import Page404 from './pages/Page404';
-import VFolderListPage from './pages/VFolderListPage';
+import VFolderNodeListPage from './pages/VFolderNodeListPage';
 import { Skeleton, theme } from 'antd';
 import React, { Suspense } from 'react';
 import { FC } from 'react';
@@ -334,7 +334,8 @@ const router = createBrowserRouter([
         handle: { labelKey: 'webui.menu.Data&Storage' },
         element: (
           <BAIErrorBoundary>
-            <VFolderListPage />
+            <VFolderNodeListPage />
+            {/* <VFolderListPage /> */}
           </BAIErrorBoundary>
         ),
       },

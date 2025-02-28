@@ -99,7 +99,7 @@ const ResizableTitle = (
   );
 };
 
-interface BAITableProps<RecordType extends object = any>
+export interface BAITableProps<RecordType extends object = any>
   extends TableProps<RecordType> {
   resizable?: boolean;
   neoStyle?: boolean;

@@ -38,6 +38,9 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
       return baiClient.vfolder.list(currentProject?.id);
     },
   });
+
+  // FIXME: vfolder_node query does not provide a information about the vfolder's owner.
+  // So, even if we use fragment, we still need to filter the vfolders by each conditions in client side.
   const createdCount = vfolders?.filter(
     (item: any) =>
       item.is_owner &&

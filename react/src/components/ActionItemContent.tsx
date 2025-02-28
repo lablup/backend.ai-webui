@@ -1,16 +1,17 @@
 import Flex from './Flex';
 // import useResizeObserver from '@react-hook/resize-observer';
 import { Button, Divider, Typography, theme } from 'antd';
-import { useRef } from 'react';
+import { ReactNode, useRef } from 'react';
 
 interface StartItemContentProps {
-  title: string;
+  title: string | ReactNode;
   description?: string;
   icon?: React.ReactNode;
   buttonText: string;
   onClick?: () => void;
   themeColor?: string;
   itemRole?: 'user' | 'admin';
+  type?: 'simple' | 'default';
 }
 
 const ActionItemContent: React.FC<StartItemContentProps> = ({
@@ -20,6 +21,7 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
   buttonText,
   onClick,
   themeColor,
+  type = 'default',
   itemRole = 'user',
 }) => {
   const { token } = theme.useToken();
@@ -35,12 +37,11 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
       style={{
         height: '100%',
         textAlign: 'center',
+        overflowY: 'auto',
         padding: token.marginMD,
-        paddingBottom: 0,
-        overflow: 'auto',
       }}
     >
-      <Flex direction="column" gap={token.marginSM}>
+      <Flex direction="column" gap={type === 'default' ? 'sm' : 'xxs'}>
         <Flex
           align="center"
           justify="center"
@@ -56,19 +57,23 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
           {icon}
         </Flex>
         <Flex style={{ minHeight: 60 }}>
-          <Typography.Text
-            strong
-            style={{
-              fontSize: token.fontSizeHeading4,
-              color: themeColor
-                ? themeColor
-                : itemRole === 'user'
-                  ? token.colorPrimary
-                  : token.colorInfo,
-            }}
-          >
-            {title}
-          </Typography.Text>
+          {typeof title === 'string' ? (
+            <Typography.Text
+              strong
+              style={{
+                fontSize: token.fontSizeHeading4,
+                color: themeColor
+                  ? themeColor
+                  : itemRole === 'user'
+                    ? token.colorPrimary
+                    : token.colorInfo,
+              }}
+            >
+              {title}
+            </Typography.Text>
+          ) : (
+            title
+          )}
         </Flex>
         <Typography.Text
           type="secondary"
@@ -83,9 +88,10 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
           width: '100%',
           position: 'sticky',
           bottom: 0,
-          backgroundColor: token.colorBgContainer,
-          marginTop: token.marginSM,
-          paddingBottom: token.marginMD,
+          backgroundColor:
+            type === 'default' ? token.colorBgContainer : undefined,
+          marginTop: type === 'default' ? token.marginSM : undefined,
+          paddingBottom: type === 'default' ? token.marginMD : undefined,
         }}
       >
         {description && (
@@ -93,30 +99,30 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
             style={{ margin: token.marginSM, marginTop: 0, borderWidth: 2 }}
           />
         )}
-        <Flex style={{ width: '100%', padding: `0 ${token.paddingMD}px` }}>
-          <Button
-            type="primary"
+        {/* <Flex style={{ width: '100%', padding: `0 ${token.paddingMD}px` }}> */}
+        <Button
+          type="primary"
+          style={{
+            width: '100%',
+            height: 40,
+            backgroundColor: themeColor
+              ? themeColor
+              : itemRole === 'user'
+                ? token.colorPrimary
+                : token.colorInfo,
+          }}
+          onClick={onClick}
+        >
+          <Typography.Text
             style={{
-              width: '100%',
-              height: 40,
-              backgroundColor: themeColor
-                ? themeColor
-                : itemRole === 'user'
-                  ? token.colorPrimary
-                  : token.colorInfo,
+              fontSize: token.fontSizeHeading5,
+              color: token.colorWhite,
             }}
-            onClick={onClick}
           >
-            <Typography.Text
-              style={{
-                fontSize: token.fontSizeHeading5,
-                color: token.colorWhite,
-              }}
-            >
-              {buttonText}
-            </Typography.Text>
-          </Button>
-        </Flex>
+            {buttonText}
+          </Typography.Text>
+        </Button>
+        {/* </Flex> */}
       </Flex>
     </Flex>
   );
