@@ -1537,6 +1537,7 @@
     "Copy": "Kopio"
   },
   "start": {
+    "CreateASession": "Luo istunto",
     "CreateFolder": "Luo uusi tallennuskansio",
     "CreateFolderDesc": "Kansion luominen ja tiedostojen lataaminen ovat tärkeitä koulutusmallien tai palvelujen tarjoamisen kannalta. \nAloita lataamalla tiedostot.",
     "ModelService": "Käynnistä mallipalvelu",

@@ -1539,6 +1539,7 @@
     "Copy": "Copie"
   },
   "start": {
+    "CreateASession": "Créer une session",
     "CreateFolder": "Créer un nouveau dossier de stockage",
     "CreateFolderDesc": "La création d'un dossier et le téléchargement de fichiers sont cruciaux pour former des modèles ou fournir des services en externe. \nVeuillez commencer par télécharger les fichiers.",
     "ModelService": "Démarrer le service de modèle",

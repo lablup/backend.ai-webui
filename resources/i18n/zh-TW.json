@@ -1538,6 +1538,7 @@
     "Copy": "複製"
   },
   "start": {
+    "CreateASession": "创建会话",
     "CreateFolder": "建立新的儲存資料夾",
     "CreateFolderDesc": "建立資料夾和上傳檔案對於訓練模型或對外提供服務至關重要。\n請先上傳文件。",
     "ModelService": "啟動模型服務",

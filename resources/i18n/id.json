@@ -1538,6 +1538,7 @@
     "Copy": "Menyalin"
   },
   "start": {
+    "CreateASession": "Membuat Sesi",
     "CreateFolder": "Buat Folder Penyimpanan Baru",
     "CreateFolderDesc": "Membuat folder dan mengunggah file sangat penting untuk melatih model atau menyediakan layanan secara eksternal. \nSilakan mulai dengan mengunggah file.",
     "ModelService": "Mulai Layanan Model",

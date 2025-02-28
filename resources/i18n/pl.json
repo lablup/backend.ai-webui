@@ -1539,6 +1539,7 @@
     "Copy": "Kopiuj"
   },
   "start": {
+    "CreateASession": "Utwórz sesję",
     "CreateFolder": "Utwórz nowy folder przechowywania",
     "CreateFolderDesc": "Utworzenie folderu i przesłanie plików jest kluczowe w przypadku uczenia modeli lub świadczenia usług na zewnątrz. \nRozpocznij od przesłania plików.",
     "ModelService": "Uruchom usługę modelową",

@@ -1539,6 +1539,7 @@
     "Copy": "cópia de"
   },
   "start": {
+    "CreateASession": "Criar uma sessão",
     "CreateFolder": "Crie uma nova pasta de armazenamento",
     "CreateFolderDesc": "Criar uma pasta e fazer upload de arquivos são cruciais para treinar modelos ou fornecer serviços externamente. \nComece enviando os arquivos.",
     "ModelService": "Iniciar serviço de modelo",

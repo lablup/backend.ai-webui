@@ -1539,6 +1539,7 @@
     "Copy": "Kopieren"
   },
   "start": {
+    "CreateASession": "Eine Sitzung erstellen",
     "CreateFolder": "Erstellen Sie einen neuen Speicherordner",
     "CreateFolderDesc": "Für das Training von Modellen oder die externe Bereitstellung von Diensten sind das Erstellen eines Ordners und das Hochladen von Dateien von entscheidender Bedeutung. \nBitte beginnen Sie mit dem Hochladen der Dateien.",
     "ModelService": "Modelldienst starten",
