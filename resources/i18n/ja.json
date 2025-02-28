@@ -1797,6 +1797,8 @@
       "Data&Model": "データ",
       "Data&Storage": "データストレージ",
       "DisMatchUserEmail": "ユーザーの電子メールが一致しません",
+      "Endpoint": "エンドポイント",
+      "Endpoints": "エンドポイント",
       "Environments": "環境設定",
       "Environments&Presets": "環境とプリセット",
       "Experiments": "実験",
@@ -1851,7 +1853,15 @@
       "UserCredentials&Policies": "ユーザーの資格情報とポリシー",
       "Users": "ユーザー管理",
       "WelcomeMessage": "ようこそ、{{ userName }}.",
-      "YouMushChangeYourPassword": "セキュリティのため、定期的にパスワードを変更することをお勧めします。パスワードを変更してから一定時間が経過したため、サービスを継続して利用するには、パスワードを変更する必要があります。"
+      "YouMushChangeYourPassword": "セキュリティのため、定期的にパスワードを変更することをお勧めします。パスワードを変更してから一定時間が経過したため、サービスを継続して利用するには、パスワードを変更する必要があります。",
+      "groupName": {
+        "Metrics": "指標",
+        "Mlops": "MLOps",
+        "Playground": "遊び場",
+        "Service": "サービス",
+        "Storage": "ストレージ",
+        "Workload": "ワークロード"
+      }
     }
   }
 }

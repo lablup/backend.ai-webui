@@ -1797,6 +1797,8 @@
       "Data&Model": "數據",
       "Data&Storage": "數據存儲",
       "DisMatchUserEmail": "使用者電子郵件不符",
+      "Endpoint": "终点",
+      "Endpoints": "终点",
       "Environments": "環境",
       "Environments&Presets": "環境和預設",
       "Experiments": "實驗",
@@ -1851,7 +1853,15 @@
       "UserCredentials&Policies": "用戶憑證和政策",
       "Users": "用戶",
       "WelcomeMessage": "歡迎，{{ userName }}",
-      "YouMushChangeYourPassword": "出于安全考虑，建议您定期更改密码。由于距离上次更改密码已过去一定时间，您必须更改密码才能继续使用服务。"
+      "YouMushChangeYourPassword": "出于安全考虑，建议您定期更改密码。由于距离上次更改密码已过去一定时间，您必须更改密码才能继续使用服务。",
+      "groupName": {
+        "Metrics": "衡量标准",
+        "Mlops": "MLOps",
+        "Playground": "游乐场",
+        "Service": "服务",
+        "Storage": "存储",
+        "Workload": "工作量"
+      }
     }
   }
 }

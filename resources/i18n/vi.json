@@ -1798,6 +1798,8 @@
       "Data&Model": "Dữ liệu",
       "Data&Storage": "Dữ liệu & Lưu trữ",
       "DisMatchUserEmail": "E-mail của người dùng không khớp",
+      "Endpoint": "Điểm cuối",
+      "Endpoints": "Điểm cuối",
       "Environments": "Môi trường",
       "Environments&Presets": "Môi trường & Cài đặt sẵn",
       "Experiments": "Thí nghiệm",
@@ -1852,7 +1854,15 @@
       "UserCredentials&Policies": "Chính sách & Thông tin đăng nhập Người dùng",
       "Users": "Người dùng",
       "WelcomeMessage": "Chào mừng, {{ userName }}.",
-      "YouMushChangeYourPassword": "Bạn nên thay đổi mật khẩu định kỳ vì lý do bảo mật. \nVì một khoảng thời gian nhất định đã trôi qua kể từ lần cuối bạn thay đổi mật khẩu, bạn phải thay đổi mật khẩu để tiếp tục sử dụng dịch vụ."
+      "YouMushChangeYourPassword": "Bạn nên thay đổi mật khẩu định kỳ vì lý do bảo mật. \nVì một khoảng thời gian nhất định đã trôi qua kể từ lần cuối bạn thay đổi mật khẩu, bạn phải thay đổi mật khẩu để tiếp tục sử dụng dịch vụ.",
+      "groupName": {
+        "Metrics": "Số liệu",
+        "Mlops": "MLOps",
+        "Playground": "Sân chơi",
+        "Service": "Dịch vụ",
+        "Storage": "Kho",
+        "Workload": "Khối lượng công việc"
+      }
     }
   }
 }
