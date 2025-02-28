@@ -199,6 +199,7 @@ const ComputeSessionListPage = () => {
         // fetchPolicy: 'network-only',
         // fetchKey: deferredFetchKey,
 
+        // fetchPolicy:'store-only',
         fetchPolicy:
           deferredFetchKey === 'initial-fetch'
             ? 'store-and-network'
@@ -254,6 +255,7 @@ const ComputeSessionListPage = () => {
               style={{
                 height: lg ? 200 : undefined,
               }}
+              fetchKey={fetchKey}
             />
           </Suspense>
         </Col>
