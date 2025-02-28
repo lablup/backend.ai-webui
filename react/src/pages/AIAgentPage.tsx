@@ -22,6 +22,9 @@ const useStyles = createStyles(({ css, token }) => {
         overflow: hidden;
         text-overflow: ellipsis;
       }
+      .ant-card-meta-title {
+        white-space: normal;
+      }
     `,
   };
 });
