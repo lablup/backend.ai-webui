@@ -134,7 +134,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       key: 'import',
     },
     {
-      label: <WebUILink to="/data">{t('webui.menu.Data&Storage')}</WebUILink>,
+      label: <WebUILink to="/data">{t('webui.menu.Data')}</WebUILink>,
       icon: <CloudUploadOutlined style={{ color: token.colorPrimary }} />,
       key: 'data',
     },
