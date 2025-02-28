@@ -222,6 +222,7 @@
     "EnterDifferentValue": "Anna jokin muu arvo kuin olemassa olevan tiedoston tai kansion nimi. Tarkista, onko syöttökentässä välilyönti vai ei.",
     "ExistingFolderName": "Olemassa olevan kansion nimi",
     "FileAndFolderNameRequired": "Tiedoston/kansioiden nimi vaaditaan",
+    "FolderAlreadyExists": "Kansio, jolla on tämä nimi, on jo olemassa",
     "FolderNameRequired": "Kansion nimi vaaditaan",
     "FolderNameTooLong": "Kirjoita kansion nimi alle 64 merkkiä",
     "FolderToCopy": "Kopioitava kansio",

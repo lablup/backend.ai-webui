@@ -223,6 +223,7 @@
     "EnterDifferentValue": "请输入与现有文件或文件夹名称不同的值。请检查输入字段中是否有空格字符。",
     "ExistingFolderName": "现有文件夹名称",
     "FileAndFolderNameRequired": "需要文件/文件夹名称",
+    "FolderAlreadyExists": "这个名称的文件夹已经存在",
     "FolderNameRequired": "文件夹名称为必填项",
     "FolderNameTooLong": "输入少于 64 个字符的文件夹名称",
     "FolderToCopy": "要复制的文件夹",

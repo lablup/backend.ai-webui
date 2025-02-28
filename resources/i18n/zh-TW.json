@@ -223,6 +223,7 @@
     "EnterDifferentValue": "請輸入與現有文件或文件夾名稱不同的值。請檢查輸入字段中是否有空格字符。",
     "ExistingFolderName": "現有文件夾名稱",
     "FileAndFolderNameRequired": "需要文件/文件夾名稱",
+    "FolderAlreadyExists": "這個名稱的文件夾已經存在",
     "FolderNameRequired": "文件夾名稱為必填項",
     "FolderNameTooLong": "輸入少於 64 個字符的文件夾名稱",
     "FolderToCopy": "要復制的文件夾",

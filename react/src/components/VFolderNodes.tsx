@@ -14,7 +14,9 @@ import UserUnionIcon from './BAIIcons/UserUnionIcon';
 import BAILink from './BAILink';
 import BAITable, { BAITableProps } from './BAITable';
 import BAITag from './BAITag';
+import EditableVFolderName from './EditableVFolderName';
 import Flex from './Flex';
+import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderPermissionCell from './VFolderPermissionCell';
 import {
   VFolderNodesFragment$data,
@@ -55,13 +57,11 @@ export type VFolderNodeInList = NonNullable<VFolderNodesFragment$data[number]>;
 interface VFolderNodesProps
   extends Omit<BAITableProps<VFolderNodeInList>, 'dataSource' | 'columns'> {
   vfoldersFrgmt: VFolderNodesFragment$key;
-  onClickVFolderName?: (vfolder: VFolderNodeInList) => void;
   onRequestChange?: () => void;
 }
 
 const VFolderNodes: React.FC<VFolderNodesProps> = ({
   vfoldersFrgmt,
-  onClickVFolderName,
   onRequestChange,
   ...tableProps
 }) => {
@@ -72,8 +72,11 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
   const currentProject = useCurrentProjectValue();
   const baiClient = useSuspendedBackendaiClient();
   const painKiller = usePainKiller();
-  const { upsertNotification } = useSetBAINotification();
   const [currentUser] = useCurrentUserInfo();
+  const [hoveredColumn, setHoveredColumn] = useState<string | null>();
+  const [editingColumn, setEditingColumn] = useState<string | null>(null);
+  const { upsertNotification } = useSetBAINotification();
+  const { generateFolderPath } = useFolderExplorerOpener();
 
   const [currentVFolder, setCurrentVFolder] =
     useState<VFolderNodeInList | null>(null);
@@ -89,6 +92,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         user
         group
         ...VFolderPermissionCellFragment
+        ...EditableVFolderNameFragment
       }
     `,
     vfoldersFrgmt,
@@ -145,19 +149,48 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
             key: 'name',
             title: t('data.folders.Name'),
             dataIndex: 'name',
-            render: (name: string, vfolder) => {
-              return onClickVFolderName ? (
+            render: (name, vfolder) => {
+              return vfolder?.id === hoveredColumn ? (
+                <EditableVFolderName
+                  vfolderFrgmt={vfolder}
+                  style={{ color: token.colorLink }}
+                  editable={
+                    !isDeletedCategory(vfolder?.status) &&
+                    vfolder?.id !== editingColumn
+                  }
+                  onEditEnd={() => {
+                    setEditingColumn(null);
+                  }}
+                  onEditStart={() => {
+                    setEditingColumn(vfolder?.id);
+                  }}
+                  existingNames={_.compact(_.map(filteredVFolders, 'name'))}
+                />
+              ) : (
                 <BAILink
                   type="hover"
-                  onClick={(e) => {
-                    // onClickVFolderName(vfolder?.id);
-                  }}
+                  to={generateFolderPath(toLocalId(vfolder?.id))}
                 >
-                  {name}
+                  {vfolder.name}
                 </BAILink>
-              ) : (
-                name
               );
+            },
+            onCell: (vfolder) => {
+              return {
+                onMouseEnter: () => {
+                  if (!editingColumn) {
+                    setHoveredColumn(vfolder?.id);
+                  }
+                },
+                onMouseLeave: () => {
+                  if (!editingColumn) {
+                    setHoveredColumn(null);
+                  }
+                },
+                // onClick: () => {
+                //   setEditingColumn(vfolder?.id);
+                // },
+              };
             },
             sorter: true,
           },

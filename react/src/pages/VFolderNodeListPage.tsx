@@ -159,8 +159,8 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
       graphql`
         query VFolderNodeListPageQuery(
           $projectId: UUID 
-          $offset: Int!
-          $first: Int!
+          $offset: Int
+          $first: Int
           $filter: String
           $order: String
           $permission: VFolderPermissionValueField
@@ -179,6 +179,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 status
                 ...VFolderNodesFragment
                 ...DeleteVFolderModalFragment
+                ...EditableVFolderNameFragment
               }
             }
             count

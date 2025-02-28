@@ -223,6 +223,7 @@
     "EnterDifferentValue": "Wprowadź wartość inną niż istniejąca nazwa pliku lub folderu. Sprawdź, czy znak spacji w polu wejściowym, czy nie.",
     "ExistingFolderName": "Istniejąca nazwa folderu",
     "FileAndFolderNameRequired": "Nazwa pliku/folderu jest wymagana",
+    "FolderAlreadyExists": "Folder o tej nazwie już istnieje",
     "FolderNameRequired": "Nazwa folderu jest wymagana",
     "FolderNameTooLong": "Wpisz nazwę folderu krótszą niż 64 znaki",
     "FolderToCopy": "Folder do skopiowania",

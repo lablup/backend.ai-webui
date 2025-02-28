@@ -223,6 +223,7 @@
     "EnterDifferentValue": "Por favor, introduzca un valor diferente del nombre de archivo o carpeta existente. Compruebe si hay espacios en blanco en el campo de entrada.",
     "ExistingFolderName": "Nombre de la carpeta existente",
     "FileAndFolderNameRequired": "Se requiere el nombre del archivo/carpeta",
+    "FolderAlreadyExists": "Ya existe una carpeta con este nombre",
     "FolderNameRequired": "El nombre de la carpeta es obligatorio",
     "FolderNameTooLong": "Introduzca un nombre de carpeta de menos de 64 caracteres",
     "FolderToCopy": "Carpeta a copiar",

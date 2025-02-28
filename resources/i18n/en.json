@@ -225,6 +225,7 @@
     "EnterDifferentValue": "Please enter a value different from the existing file or folder name. Please Check whether space character in the input field or not.",
     "ExistingFolderName": "Existing folder name",
     "FileAndFolderNameRequired": "File/Folder name is required",
+    "FolderAlreadyExists": "A folder with this name already exists",
     "FolderNameRequired": "Folder name is required",
     "FolderNameTooLong": "Enter folder name less than 64 characters",
     "FolderToCopy": "Folder to copy",

@@ -223,6 +223,7 @@
     "EnterDifferentValue": "Harap masukkan nilai yang berbeda dari nama file atau folder yang ada. Silakan periksa apakah ada karakter spasi di bidang input atau tidak.",
     "ExistingFolderName": "Nama folder yang ada",
     "FileAndFolderNameRequired": "Nama File/Folder wajib diisi",
+    "FolderAlreadyExists": "Folder dengan nama ini sudah ada",
     "FolderNameRequired": "Nama folder wajib diisi",
     "FolderNameTooLong": "Masukkan nama folder yang kurang dari 64 karakter",
     "FolderToCopy": "Folder untuk disalin",

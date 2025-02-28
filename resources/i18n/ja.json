@@ -223,6 +223,7 @@
     "EnterDifferentValue": "既存のファイル名またはフォルダ名とは異なる値を入力してください。入力フィールドにスペース文字があるかどうかを確認してください。",
     "ExistingFolderName": "既存のフォルダ名",
     "FileAndFolderNameRequired": "ファイル/フォルダ名が必要です",
+    "FolderAlreadyExists": "この名前のフォルダーはすでに存在しています",
     "FolderNameRequired": "フォルダ名が必要です",
     "FolderNameTooLong": "64文字未満のフォルダ名を入力してください",
     "FolderToCopy": "コピーするフォルダ",
