@@ -11,7 +11,7 @@ import MainLayout from './components/MainLayout/MainLayout';
 import WebUINavigate from './components/WebUINavigate';
 import { useSuspendedBackendaiClient } from './hooks';
 import { useBAISettingUserState } from './hooks/useBAISetting';
-// Hight priority to import the component
+// High priority to import the component
 import ComputeSessionListPage from './pages/ComputeSessionListPage';
 import Page401 from './pages/Page401';
 import Page404 from './pages/Page404';
