@@ -1,8 +1,13 @@
-import { formatToUUID } from '../helper';
+import { toGlobalId } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useTanMutation } from '../hooks/reactQueryAlias';
+import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal, { BAIModalProps } from './BAIModal';
+import BAISelect from './BAISelect';
 import Flex from './Flex';
-import { LegacyFolderExplorerVFolderNameTitleQuery } from './__generated__/LegacyFolderExplorerVFolderNameTitleQuery.graphql';
+import { LegacyFolderExplorerQuery } from './__generated__/LegacyFolderExplorerQuery.graphql';
+import { LegacyFolderExplorerVFolderFragment$key } from './__generated__/LegacyFolderExplorerVFolderFragment.graphql';
+import { LegacyFolderExplorerVFolderNodeFragment$key } from './__generated__/LegacyFolderExplorerVFolderNodeFragment.graphql';
 import {
   DeleteOutlined,
   FileAddOutlined,
@@ -10,6 +15,7 @@ import {
   UploadOutlined,
 } from '@ant-design/icons';
 import {
+  App,
   Button,
   Dropdown,
   Grid,
@@ -23,7 +29,7 @@ import { createStyles } from 'antd-style';
 import graphql from 'babel-plugin-relay/macro';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { useLazyLoadQuery, useFragment } from 'react-relay';
 
 const useStyles = createStyles(({ token, css }) => ({
   baiModalHeader: css`
@@ -48,11 +54,16 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
   const { token } = theme.useToken();
   const { styles } = useStyles();
   const { lg } = Grid.useBreakpoint();
+  const { message } = App.useApp();
+
   const [isWritable, setIsWritable] = useState<boolean>(false);
   const [isSelected, setIsSelected] = useState<boolean>(false);
   // TODO: Events are sent and received as normal,
   // but the Lit Element is not rendered and the values inside are not available but ref is available.
   const folderExplorerRef = useRef<HTMLDivElement>(null);
+  const baiClient = useSuspendedBackendaiClient();
+  const painKiller = usePainKiller();
+
   // ensure the client is connected
   useSuspendedBackendaiClient();
   useEffect(() => {
@@ -78,6 +89,39 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
     };
   }, []);
 
+  const { vfolder, vfolder_node } = useLazyLoadQuery<LegacyFolderExplorerQuery>(
+    graphql`
+      query LegacyFolderExplorerQuery(
+        $vfolderID: String
+        $vfolderUUID: String!
+      ) {
+        vfolder(id: $vfolderID) @deprecatedSince(version: "24.03.4") {
+          id
+          permission
+          ...LegacyFolderExplorerVFolderFragment
+        }
+        vfolder_node(id: $vfolderUUID) @since(version: "24.03.4") {
+          id
+          permission
+          ...LegacyFolderExplorerVFolderNodeFragment
+        }
+      }
+    `,
+    {
+      vfolderID,
+      vfolderUUID: toGlobalId('VirtualFolderNode', vfolderID),
+    },
+    {
+      fetchPolicy: modalProps.open ? 'network-only' : 'store-only',
+    },
+  );
+
+  const updateMutation = useTanMutation({
+    mutationFn: ({ permission, id }: { permission: string; id: string }) => {
+      return baiClient.vfolder.update_folder({ permission }, id);
+    },
+  });
+
   return (
     <BAIModal
       className={styles.baiModalHeader}
@@ -89,58 +133,19 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
         <Flex justify="between" gap={token.marginMD} style={{ width: '100%' }}>
           <Flex gap={token.marginMD} style={{ flex: 1 }}>
             <Suspense fallback={<Skeleton.Input active />}>
-              <VFolderNameTitle vfolderID={vfolderID} />
+              <VFolderNameTitle
+                vfolderFrgmt={vfolder ?? undefined}
+                vfolderNodeFrgmt={vfolder_node ?? undefined}
+              />
             </Suspense>
           </Flex>
-          <Flex justify="end" gap={token.marginSM} style={{ flex: lg ? 2 : 1 }}>
-            <Button
-              danger
-              disabled={!isSelected || !isWritable}
-              icon={<DeleteOutlined />}
-              onClick={() => {
-                // @ts-ignore
-                folderExplorerRef.current?._openDeleteMultipleFileDialog();
-              }}
-            >
-              {lg && t('button.Delete')}
-            </Button>
-            <Button
-              disabled={!isWritable}
-              icon={<FolderAddOutlined />}
-              onClick={() => {
-                //@ts-ignore
-                folderExplorerRef.current?.openMkdirDialog();
-              }}
-            >
-              {lg && t('button.Create')}
-            </Button>
-            <Dropdown
-              disabled={!isWritable}
-              menu={{
-                items: [
-                  {
-                    key: 'upload files',
-                    label: t('data.explorer.UploadFiles'),
-                    icon: <FileAddOutlined />,
-                    onClick: () => {
-                      // @ts-ignore
-                      folderExplorerRef.current?.handleUpload('file');
-                    },
-                  },
-                  {
-                    key: 'upload folder',
-                    label: t('data.explorer.UploadFolder'),
-                    icon: <FolderAddOutlined />,
-                    onClick: () => {
-                      // @ts-ignore
-                      folderExplorerRef.current?.handleUpload('folder');
-                    },
-                  },
-                ],
-              }}
-            >
-              <Button icon={<UploadOutlined />}>{lg && 'Upload'}</Button>
-            </Dropdown>
+          <Flex
+            justify="end"
+            gap={token.marginSM}
+            style={{
+              flex: lg ? 2 : 1,
+            }}
+          >
             <Button
               icon={
                 <Image
@@ -173,6 +178,28 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
             >
               {lg && t('data.explorer.RunSSH/SFTPserver')}
             </Button>
+            <BAISelect
+              tooltip={t('data.folders.MountPermission')}
+              defaultValue={vfolder_node?.permission || vfolder?.permission}
+              options={[
+                { value: 'ro', label: t('data.ReadOnly') },
+                { value: 'rw', label: t('data.ReadWrite') },
+              ]}
+              onChange={(value) => {
+                updateMutation.mutate(
+                  { permission: value, id: vfolderID },
+                  {
+                    onSuccess: () => {
+                      message.success(t('data.permission.PermissionModified'));
+                    },
+                    onError: (error) => {
+                      message.error(painKiller.relieve(error?.message));
+                    },
+                  },
+                );
+              }}
+              popupMatchSelectWidth={false}
+            />
           </Flex>
         </Flex>
       }
@@ -181,6 +208,64 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
       }}
       {...modalProps}
     >
+      <Flex
+        justify="end"
+        gap={token.marginSM}
+        style={{
+          position: 'absolute',
+          top: `calc(var(--general-modal-header-height, 69px) + 9px)`,
+          right: token.paddingLG,
+        }}
+      >
+        <Button
+          danger
+          disabled={!isSelected || !isWritable}
+          icon={<DeleteOutlined />}
+          onClick={() => {
+            // @ts-ignore
+            folderExplorerRef.current?._openDeleteMultipleFileDialog();
+          }}
+        >
+          {lg && t('button.Delete')}
+        </Button>
+        <Button
+          disabled={!isWritable}
+          icon={<FolderAddOutlined />}
+          onClick={() => {
+            //@ts-ignore
+            folderExplorerRef.current?.openMkdirDialog();
+          }}
+        >
+          {lg && t('button.Create')}
+        </Button>
+        <Dropdown
+          disabled={!isWritable}
+          menu={{
+            items: [
+              {
+                key: 'upload files',
+                label: t('data.explorer.UploadFiles'),
+                icon: <FileAddOutlined />,
+                onClick: () => {
+                  // @ts-ignore
+                  folderExplorerRef.current?.handleUpload('file');
+                },
+              },
+              {
+                key: 'upload folder',
+                label: t('data.explorer.UploadFolder'),
+                icon: <FolderAddOutlined />,
+                onClick: () => {
+                  // @ts-ignore
+                  folderExplorerRef.current?.handleUpload('folder');
+                },
+              },
+            ],
+          }}
+        >
+          <Button icon={<UploadOutlined />}>{lg && 'Upload'}</Button>
+        </Dropdown>
+      </Flex>
       {/* <script type="module" src="./dist/components/backend-ai-folder-explorer.js"></script> */}
       {/* @ts-ignore */}
       <backend-ai-folder-explorer
@@ -193,37 +278,32 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
 };
 
 const VFolderNameTitle: React.FC<{
-  vfolderID: string;
-}> = ({ vfolderID }) => {
+  vfolderFrgmt?: LegacyFolderExplorerVFolderFragment$key;
+  vfolderNodeFrgmt?: LegacyFolderExplorerVFolderNodeFragment$key;
+}> = ({ vfolderFrgmt, vfolderNodeFrgmt, ...props }) => {
   const { token } = theme.useToken();
-  const { vfolder, vfolder_node } =
-    useLazyLoadQuery<LegacyFolderExplorerVFolderNameTitleQuery>(
-      graphql`
-        query LegacyFolderExplorerVFolderNameTitleQuery(
-          $vfolderID: String!
-          $vfolderUUID: String!
-        ) {
-          # TODO: version compatibility
-          vfolder(id: $vfolderID) @deprecatedSince(version: "24.03.4") {
-            id
-            name
-          }
-          vfolder_node(id: $vfolderUUID) @since(version: "24.03.4") {
-            id
-            name
-          }
-        }
-      `,
-      {
-        vfolderID,
-        vfolderUUID: btoa('VirtualFolderNode:' + formatToUUID(vfolderID)),
-      },
-      {
-        fetchPolicy: 'store-and-network',
-      },
-    );
 
-  const vfolderName = vfolder?.name || vfolder_node?.name || '';
+  const vfolder = useFragment(
+    graphql`
+      fragment LegacyFolderExplorerVFolderFragment on VirtualFolder {
+        id
+        name
+      }
+    `,
+    vfolderFrgmt,
+  );
+
+  const vfolderNode = useFragment(
+    graphql`
+      fragment LegacyFolderExplorerVFolderNodeFragment on VirtualFolderNode {
+        id
+        name
+      }
+    `,
+    vfolderNodeFrgmt,
+  );
+  const vfolderName = vfolderNode?.name || vfolder?.name || '';
+
   return (
     <Tooltip title={vfolderName}>
       <Typography.Title

@@ -61,7 +61,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
             display: 'flex',
             alignItems: 'center',
             height: 'var(--general-modal-header-height, 69px)',
-            padding: 'var(--general-modal-header-padding, 10px 20px)',
+            padding: 'var(--general-modal-header-padding, 10px 24px)',
             ...styles?.header,
           },
           body: {
