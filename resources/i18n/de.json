@@ -1798,6 +1798,8 @@
       "Data&Model": "Daten",
       "Data&Storage": "Datenspeicher",
       "DisMatchUserEmail": "Die E-Mail-Adresse des Benutzers stimmt nicht überein",
+      "Endpoint": "Endpunkt",
+      "Endpoints": "Endpunkte",
       "Environments": "Umgebungen",
       "Environments&Presets": "Umgebungen & Voreinstellungen",
       "Experiments": "Experimente",
@@ -1852,7 +1854,15 @@
       "UserCredentials&Policies": "Benutzeranmeldeinformationen und -richtlinien",
       "Users": "Benutzer",
       "WelcomeMessage": "Willkommen, {{ userName }}.",
-      "YouMushChangeYourPassword": "Es wird empfohlen, Ihr Passwort aus Sicherheitsgründen regelmäßig zu ändern. Da seit der letzten Änderung Ihres Passworts eine gewisse Zeit verstrichen ist, müssen Sie es ändern, um den Dienst weiterhin nutzen zu können."
+      "YouMushChangeYourPassword": "Es wird empfohlen, Ihr Passwort aus Sicherheitsgründen regelmäßig zu ändern. Da seit der letzten Änderung Ihres Passworts eine gewisse Zeit verstrichen ist, müssen Sie es ändern, um den Dienst weiterhin nutzen zu können.",
+      "groupName": {
+        "Metrics": "Metriken",
+        "Mlops": "MLOps",
+        "Playground": "Spielplatz",
+        "Service": "Dienst",
+        "Storage": "Lagerung",
+        "Workload": "Arbeitsbelastung"
+      }
     }
   }
 }

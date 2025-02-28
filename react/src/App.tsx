@@ -13,6 +13,7 @@ import { useSuspendedBackendaiClient } from './hooks';
 import { useBAISettingUserState } from './hooks/useBAISetting';
 // High priority to import the component
 import ComputeSessionListPage from './pages/ComputeSessionListPage';
+import ModelStoreListPage from './pages/ModelStoreListPage';
 import Page401 from './pages/Page401';
 import Page404 from './pages/Page404';
 import ServingPage from './pages/ServingPage';
@@ -195,7 +196,6 @@ const router = createBrowserRouter([
               const [experimentalNeoSessionList] = useBAISettingUserState(
                 'experimental_neo_session_list',
               );
-              const { t } = useTranslation();
 
               useSuspendedBackendaiClient();
 
@@ -324,6 +324,23 @@ const router = createBrowserRouter([
             ),
           },
         ],
+      },
+      {
+        path: '/model-store',
+        handle: { labelKey: 'data.ModelStore' },
+        element: (
+          <BAIErrorBoundary>
+            <Suspense
+              fallback={
+                <Flex direction="column" style={{ maxWidth: 700 }}>
+                  <Skeleton active />
+                </Flex>
+              }
+            >
+              <ModelStoreListPage />
+            </Suspense>
+          </BAIErrorBoundary>
+        ),
       },
       {
         path: '/import',
