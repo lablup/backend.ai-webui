@@ -8,9 +8,9 @@ import BAIPropertyFilter, {
 } from '../components/BAIPropertyFilter';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
+import DeleteVFolderModal from '../components/DeleteVFolderModal';
 import Flex from '../components/Flex';
 import FolderCreateModal from '../components/FolderCreateModal';
-import ImportFromHuggingFaceModal from '../components/ImportFromHuggingFaceModal';
 import InviteFolderPermissionSettingModal from '../components/InviteFolderPermissionSettingModal';
 import QuotaPerStorageVolumePanelCard from '../components/QuotaPerStorageVolumePanelCard';
 import StorageStatusPanelCard from '../components/StorageStatusPanelCard';
@@ -30,16 +30,7 @@ import {
   VFolderNodeListPageQuery$variables,
 } from './__generated__/VFolderNodeListPageQuery.graphql';
 import { useToggle } from 'ahooks';
-import {
-  Badge,
-  Button,
-  Col,
-  Grid,
-  Row,
-  theme,
-  Tooltip,
-  Typography,
-} from 'antd';
+import { Badge, Button, Col, Grid, Row, theme, Typography } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, {
@@ -91,10 +82,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   >([]);
   const [inviteFolderId, setInviteFolderId] = useState<string | null>(null);
   const [isOpenCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
-  const [
-    isVisibleImportFromHuggingFaceModal,
-    { toggle: toggleImportFromHuggingFaceModal },
-  ] = useToggle(false);
+  const [isOpenDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
   const {
     baiPaginationOption,
     tablePaginationOption,
@@ -139,7 +127,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   }
   const usageModeFilter = getUsageModeFilter(queryParams.mode);
 
-  const [fetchKey, updateFetchKey] = useUpdatableState('first');
+  const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
   const queryVariables: VFolderNodeListPageQuery$variables = useMemo(
     () => ({
       projectId: currentProject.id,
@@ -190,6 +178,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 id @required(action: THROW)
                 status
                 ...VFolderNodesFragment
+                ...DeleteVFolderModalFragment
               }
             }
             count
@@ -216,8 +205,12 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
       `,
       deferredQueryVariables,
       {
-        fetchPolicy: 'network-only',
-        fetchKey: deferredFetchKey,
+        fetchPolicy:
+          deferredFetchKey === 'initial-fetch'
+            ? 'store-and-network'
+            : 'network-only',
+        fetchKey:
+          deferredFetchKey === 'initial-fetch' ? undefined : deferredFetchKey,
       },
     );
 
@@ -237,7 +230,12 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             >
               <ActionItemContent
                 title={
-                  <Typography.Text style={{ maxWidth: lg ? 120 : undefined }}>
+                  <Typography.Text
+                    style={{
+                      maxWidth: lg ? 120 : undefined,
+                      wordBreak: 'keep-all',
+                    }}
+                  >
                     {t('data.CreateFolderAndUploadFiles')}
                   </Typography.Text>
                 }
@@ -255,7 +253,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               <StorageStatusPanelCard
                 style={{ height: lg ? 200 : undefined }}
               />
-              {/* <StorageStatusPanel fetchKey={fetchKey} /> */}
             </Suspense>
           </Col>
           <Col xs={24} xl={12}>
@@ -452,15 +449,15 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                   {t('general.NSelected', {
                     count: selectedFolderList.length,
                   })}
-                  <Tooltip title={t('data.folders.Delete')} placement="topLeft">
-                    <Button
-                      style={{
-                        color: token.colorError,
-                      }}
-                      icon={<TrashBinIcon />}
-                      onClick={() => {}}
-                    />
-                  </Tooltip>
+                  <Button
+                    style={{
+                      color: token.colorError,
+                    }}
+                    icon={<TrashBinIcon />}
+                    onClick={() => {
+                      toggleDeleteModal();
+                    }}
+                  />
                 </>
               )}
             </Flex>
@@ -510,6 +507,9 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 'replaceIn',
               );
             }}
+            onRequestChange={() => {
+              updateFetchKey();
+            }}
           />
         </Flex>
       </BAICard>
@@ -520,12 +520,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
         vfolderId={inviteFolderId}
         open={inviteFolderId !== null}
       />
-      <ImportFromHuggingFaceModal
-        open={isVisibleImportFromHuggingFaceModal}
-        onRequestClose={() => {
-          toggleImportFromHuggingFaceModal();
-        }}
-      />
       <FolderCreateModal
         open={isOpenCreateModal}
         onRequestClose={(success) => {
@@ -533,6 +527,17 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             updateFetchKey();
           }
           toggleCreateModal();
+        }}
+      />
+      <DeleteVFolderModal
+        vfolderFrgmts={selectedFolderList}
+        open={isOpenDeleteModal}
+        onRequestClose={(success) => {
+          if (success) {
+            updateFetchKey();
+            setSelectedFolderList([]);
+          }
+          toggleDeleteModal();
         }}
       />
     </Flex>

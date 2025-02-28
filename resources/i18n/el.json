@@ -216,10 +216,7 @@
     "CreateFolderAndUploadFiles": "Δημιουργία αρχείων φακέλου και μεταφόρτωσης",
     "Created": "δημιουργήθηκε",
     "CreatedFolders": "Δημιουργημένοι φάκελοι",
-<<<<<<< HEAD
-=======
     "Deleted": "Διαγραμμένος",
->>>>>>> 6b62c4c8e (feat(FR-581): Add NEO vFolder list page)
     "DialogDataFolder": "Ειδικοί φάκελοι αγωγών που δημιουργούνται αυτόματα κατά τη δημιουργία αγωγών στο FastTrack.",
     "DialogFolderStartingWithDotAutomount": "Οι φάκελοι που ξεκινούν με. (Dot) προσαρμόζονται αυτόματα όταν ξεκινά μια νέα περίοδος σύνδεσης.",
     "DialogModelFolder": "Μπορείτε να εξυπηρετείτε και να διαχειρίζεστε μοντέλα.",
@@ -356,8 +353,10 @@
       "MountPermission": "Τοποθετημένος άδεια",
       "MoveToTrash": "Μετακίνηση στον κάδο απορριμμάτων",
       "MoveToTrashDescription": "Είστε βέβαιοι ότι θέλετε να μετακινήσετε το \"{{ folderName }}\" στον κάδο απορριμμάτων;",
+      "MoveToTrashMultipleDescription": "Είστε σίγουροι ότι θέλετε να μετακινήσετε τους φακέλους {{ folderLength }} στον κάδο απορριμμάτων;",
       "MovedToTrashBin": "Ο φάκελος {{ folderName }} έχει μετακινηθεί στον κάδο απορριμμάτων.",
       "MultipleFilesDeleted": "Διαγράφηκαν πολλά αρχεία",
+      "MultipleFolderDeleted": "Επιλεγμένα {{FolderLength}} Φάκελοι έχει διαγραφεί.",
       "Name": "Ονομα",
       "NoFolderToDisplay": "Δεν εμφανίζονται φάκελοι",
       "NumberOfFiles": "Αριθμός αρχείων",
