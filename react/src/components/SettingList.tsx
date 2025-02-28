@@ -4,13 +4,22 @@ import SettingItem from './SettingItem';
 import { SettingItemProps } from './SettingItem';
 import { RedoOutlined, SearchOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Alert, Button, Checkbox, Input, Tabs, Typography, theme } from 'antd';
+import {
+  Alert,
+  Button,
+  Checkbox,
+  Divider,
+  Input,
+  Tabs,
+  Typography,
+  theme,
+} from 'antd';
 import { createStyles } from 'antd-style';
 import _ from 'lodash';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const useStyles = createStyles(({ css }) => ({
+const useStyles = createStyles(({ css, token }) => ({
   TabStyles: css`
     .ant-tabs-tab-active {
       font-weight: var(--token-fontWeightSuperStrong, 700);
@@ -21,21 +30,78 @@ const useStyles = createStyles(({ css }) => ({
   `,
 }));
 
-export type SettingGroup = Array<{
+export type SettingGroup = {
   title: string;
   settingItems: SettingItemProps[];
-}>;
+};
 
 interface SettingPageProps {
-  settingGroup: SettingGroup;
+  settingGroups: Array<SettingGroup>;
   tabDirection?: 'top' | 'left';
   showChangedOptionFilter?: boolean;
   showResetButton?: boolean;
   showSearchBar?: boolean;
 }
 
+const TabTitle: React.FC<{
+  title: string;
+  count: number;
+}> = ({ title, count }) => {
+  return (
+    <>
+      <Typography.Text>{title}</Typography.Text>
+      <Typography.Text type="secondary">{` (${count})`}</Typography.Text>
+    </>
+  );
+};
+
+const GroupSettingItems: React.FC<{
+  group: SettingGroup;
+  hideEmpty?: boolean;
+}> = ({ group, hideEmpty }) => {
+  const { token } = theme.useToken();
+  if (hideEmpty && group.settingItems.length === 0) return false;
+  return (
+    <Flex
+      direction="column"
+      align="stretch"
+      style={{
+        marginBottom: token.marginMD,
+      }}
+    >
+      <Flex
+        direction="column"
+        align="stretch"
+        style={{
+          // position: 'sticky',
+          // top: token.Layout?.headerHeight || 60,
+          zIndex: 1,
+          marginBottom: token.marginMD,
+          background: token.colorBgContainer,
+        }}
+      >
+        <Typography.Title
+          level={5}
+          style={{
+            marginTop: 0,
+          }}
+        >
+          {group.title}
+        </Typography.Title>
+        <Divider style={{ marginTop: 0, marginBottom: 0 }} />
+      </Flex>
+      {/* {_.map(settingGroup).} */}
+      <Flex direction="column" align="start" gap={'lg'}>
+        {group.settingItems.map((item) => (
+          <SettingItem {...item} />
+        ))}
+      </Flex>
+    </Flex>
+  );
+};
+
 const SettingList: React.FC<SettingPageProps> = ({
-  settingGroup,
+  settingGroups,
   tabDirection = 'left',
   showChangedOptionFilter,
   showResetButton,
@@ -48,17 +114,7 @@ const SettingList: React.FC<SettingPageProps> = ({
   const [changedOptionFilter, setChangedOptionFilter] = useState(false);
   const [isOpenResetChangesModal, { toggle: setIsOpenResetChangesModal }] =
     useToggle(false);
-
-  const appendedAllSettingGroup = useMemo(() => {
-    return [
-      {
-        title: t('general.All'),
-        settingItems: _.flatMap(settingGroup, (item) => item.settingItems),
-      },
-      ...settingGroup,
-    ];
-    // eslint-disable-next-line
-  }, [settingGroup]);
+  const [activeTabKey, setActiveTabKey] = useState('all');
 
   const searchedItemFilter = (item: SettingItemProps) => {
     return (
@@ -74,6 +130,19 @@ const SettingList: React.FC<SettingPageProps> = ({
     }
     return item.value !== item.defaultValue;
   };
+
+  const filteredSettingGroups = _.map(settingGroups, (group) => {
+    return {
+      ...group,
+      settingItems: _.filter(
+        group.settingItems,
+        (item) =>
+          (!changedOptionFilter || changedItemValidator(item)) &&
+          searchedItemFilter(item),
+      ),
+    };
+  });
+
   return (
     <>
       <Flex
@@ -112,33 +181,47 @@ const SettingList: React.FC<SettingPageProps> = ({
           )}
         </Flex>
         <Tabs
+          activeKey={activeTabKey}
+          onChange={setActiveTabKey}
           className={styles.TabStyles}
           tabPosition={tabDirection ? 'left' : 'top'}
           tabBarStyle={{ minWidth: 200 }}
-          items={_.map(appendedAllSettingGroup, (settingGroup) => {
-            const filteredItems = settingGroup.settingItems.filter((item) => {
-              return (
-                (!changedOptionFilter || changedItemValidator(item)) &&
-                searchedItemFilter(item)
-              );
-            });
-            return {
-              key: settingGroup.title,
+          items={[
+            {
+              key: 'all',
               label: (
-                <>
-                  <Typography.Text>{settingGroup.title}</Typography.Text>
-                  <Typography.Text type="secondary">{` (${filteredItems.length})`}</Typography.Text>
-                </>
+                <TabTitle
+                  title={t('general.All')}
+                  count={_.sumBy(
+                    filteredSettingGroups,
+                    (group) => group.settingItems.length,
+                  )}
+                />
               ),
               children: (
-                <Flex direction="column" gap={'lg'} align="start">
-                  {filteredItems.map((item) => (
-                    <SettingItem {...item} />
+                <Flex direction="column" align="stretch" gap={'xl'}>
+                  {_.map(filteredSettingGroups, (group) => (
+                    <GroupSettingItems group={group} hideEmpty />
                   ))}
                 </Flex>
               ),
-            };
-          })}
+            },
+            ..._.map(filteredSettingGroups, (group, idx) => ({
+              key: `index${idx}`,
+              label: (
+                <TabTitle
+                  title={group.title}
+                  count={group.settingItems.length}
+                />
+              ),
+              children: (
+                <GroupSettingItems
+                  group={filteredSettingGroups[idx]}
+                  hideEmpty
+                />
+              ),
+            })),
+          ]}
         />
       </Flex>
       <BAIModal
@@ -147,7 +230,7 @@ const SettingList: React.FC<SettingPageProps> = ({
         okText={t('button.Reset')}
         okButtonProps={{ danger: true }}
         onOk={() => {
-          _.flatMap(settingGroup, (item) => item.settingItems).forEach(
+          _.flatMap(settingGroups, (item) => item.settingItems).forEach(
             (option) => {
               option?.setValue && option.setValue(option.defaultValue);
             },
