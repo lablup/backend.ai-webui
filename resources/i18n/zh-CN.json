@@ -1539,6 +1539,7 @@
     "Copy": "复制"
   },
   "start": {
+    "CreateASession": "创建会话",
     "CreateFolder": "创建新的存储文件夹",
     "CreateFolderDesc": "创建文件夹和上传文件对于训练模型或对外提供服务至关重要。\n请首先上传文件。",
     "ModelService": "启动模型服务",

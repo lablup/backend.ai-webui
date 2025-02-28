@@ -1539,6 +1539,7 @@
     "Copy": "Sao chép"
   },
   "start": {
+    "CreateASession": "Tạo một phiên",
     "CreateFolder": "Tạo thư mục lưu trữ mới",
     "CreateFolderDesc": "Việc tạo thư mục và tải tệp lên là rất quan trọng đối với việc đào tạo mô hình hoặc cung cấp dịch vụ bên ngoài. \nHãy bắt đầu bằng cách tải lên các tập tin.",
     "ModelService": "Bắt đầu dịch vụ mẫu",

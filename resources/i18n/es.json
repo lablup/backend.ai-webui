@@ -1539,6 +1539,7 @@
     "Copy": "Copiar"
   },
   "start": {
+    "CreateASession": "Crear una sesión",
     "CreateFolder": "Crear una nueva carpeta de almacenamiento",
     "CreateFolderDesc": "Crear una carpeta y cargar archivos es crucial para entrenar modelos o brindar servicios externamente. \nComience subiendo los archivos.",
     "ModelService": "Iniciar servicio de modelo",

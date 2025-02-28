@@ -1,7 +1,9 @@
 import Flex from './Flex';
+import WebUILink from './WebUILink';
 // import useResizeObserver from '@react-hook/resize-observer';
 import { Button, Divider, Typography, theme } from 'antd';
 import { ReactNode, useRef } from 'react';
+import { To } from 'react-router-dom';
 
 interface StartItemContentProps {
   title: string | ReactNode;
@@ -9,6 +11,7 @@ interface StartItemContentProps {
   icon?: React.ReactNode;
   buttonText: string;
   onClick?: () => void;
+  to?: To;
   themeColor?: string;
   itemRole?: 'user' | 'admin';
   type?: 'simple' | 'default';
@@ -20,6 +23,7 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
   icon,
   buttonText,
   onClick,
+  to,
   themeColor,
   type = 'default',
   itemRole = 'user',
@@ -28,6 +32,30 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const colorPrimaryWithAlpha = `rgba(${parseInt(token.colorPrimary.slice(1, 3), 16)}, ${parseInt(token.colorPrimary.slice(3, 5), 16)}, ${parseInt(token.colorPrimary.slice(5, 7), 16)}, 0.15)`;
 
+  const actionButton = (
+    <Button
+      type="primary"
+      style={{
+        width: '100%',
+        height: 40,
+        backgroundColor: themeColor
+          ? themeColor
+          : itemRole === 'user'
+            ? token.colorPrimary
+            : token.colorInfo,
+      }}
+      onClick={onClick}
+    >
+      <Typography.Text
+        style={{
+          fontSize: token.fontSizeHeading5,
+          color: token.colorWhite,
+        }}
+      >
+        {buttonText}
+      </Typography.Text>
+    </Button>
+  );
   return (
     <Flex
       ref={containerRef}
@@ -99,30 +127,7 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
             style={{ margin: token.marginSM, marginTop: 0, borderWidth: 2 }}
           />
         )}
-        {/* <Flex style={{ width: '100%', padding: `0 ${token.paddingMD}px` }}> */}
-        <Button
-          type="primary"
-          style={{
-            width: '100%',
-            height: 40,
-            backgroundColor: themeColor
-              ? themeColor
-              : itemRole === 'user'
-                ? token.colorPrimary
-                : token.colorInfo,
-          }}
-          onClick={onClick}
-        >
-          <Typography.Text
-            style={{
-              fontSize: token.fontSizeHeading5,
-              color: token.colorWhite,
-            }}
-          >
-            {buttonText}
-          </Typography.Text>
-        </Button>
-        {/* </Flex> */}
+        {to ? <WebUILink to={to}>{actionButton}</WebUILink> : actionButton}
       </Flex>
     </Flex>
   );

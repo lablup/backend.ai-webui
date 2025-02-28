@@ -1538,6 +1538,7 @@
     "Copy": "Kopyala"
   },
   "start": {
+    "CreateASession": "Oturum Oluşturma",
     "CreateFolder": "Yeni Bir Depolama Klasörü Oluşturun",
     "CreateFolderDesc": "Bir klasör oluşturmak ve dosyaları yüklemek, modellerin eğitimi veya dışarıdan hizmet sağlanması için çok önemlidir. \nLütfen dosyaları yükleyerek başlayın.",
     "ModelService": "Model Hizmetini Başlat",

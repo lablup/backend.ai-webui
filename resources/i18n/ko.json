@@ -1543,6 +1543,7 @@
     "Copy": "복사"
   },
   "start": {
+    "CreateASession": "세션을 만들어 보세요",
     "CreateFolder": "새 스토리지 폴더 생성하기",
     "CreateFolderDesc": "폴더를 만들고 파일을 업로드합니다. 모델을 학습시키거나 외부 서비스를 제공하려면 해당 작업은 필수적입니다.",
     "ModelService": "모델 서비스 시작",
@@ -1560,7 +1561,7 @@
       "ModelService": "서비스 생성",
       "StartBatchSession": "URL로 시작하기",
       "StartNow": "지금 시작하기",
-      "StartSession": "세션 생성"
+      "StartSession": "세션 시작"
     }
   },
   "statistics": {

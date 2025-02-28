@@ -1,5 +1,8 @@
+import ActionItemContent from '../components/ActionItemContent';
+import AvailableResourcesCard from '../components/AvailableResourcesCard';
 import BAICard from '../components/BAICard';
 import BAIFetchKeyButton from '../components/BAIFetchKeyButton';
+import SessionsIcon from '../components/BAIIcons/SessionsIcon';
 import BAILink from '../components/BAILink';
 import BAIPropertyFilter, {
   mergeFilterValues,
@@ -23,11 +26,20 @@ import {
   ComputeSessionListPageQuery$data,
   ComputeSessionListPageQuery$variables,
 } from './__generated__/ComputeSessionListPageQuery.graphql';
-import { Badge, Button, theme, Tooltip, Typography } from 'antd';
+import {
+  Badge,
+  Button,
+  Col,
+  Grid,
+  Row,
+  theme,
+  Tooltip,
+  Typography,
+} from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { PowerOffIcon } from 'lucide-react';
-import { useDeferredValue, useMemo, useRef, useState } from 'react';
+import { Suspense, useDeferredValue, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
@@ -195,11 +207,57 @@ const ComputeSessionListPage = () => {
           deferredFetchKey === 'initial-fetch' ? undefined : deferredFetchKey,
       },
     );
+  const { lg } = Grid.useBreakpoint();
 
   return (
-    <>
-      {/* TODO: add legacy opener */}
-      {/* <SessionDetailAndContainerLogOpenerForLegacy /> */}
+    <Flex direction="column" align="stretch" gap={'md'}>
+      <Row gutter={[16, 16]}>
+        <Col xs={24} lg={8} xl={4}>
+          <BAICard
+            styles={{
+              body: {
+                padding: 0,
+              },
+            }}
+            style={{ height: lg ? 200 : undefined }}
+            // size={lg ? undefined : 'small'}
+          >
+            <ActionItemContent
+              title={
+                <Typography.Text
+                  style={{
+                    maxWidth: lg ? 120 : undefined,
+                    wordBreak: 'keep-all',
+                  }}
+                >
+                  {t('start.CreateASession')}
+                </Typography.Text>
+              }
+              buttonText={t('start.button.StartSession')}
+              icon={<SessionsIcon />}
+              type="simple"
+              to={'/session/start'}
+            />
+          </BAICard>
+        </Col>
+        <Col xs={24} lg={16} xl={20}>
+          <Suspense
+            fallback={
+              <BAICard
+                style={{ height: 200 }}
+                title={t('Allocated Resources')}
+                loading
+              />
+            }
+          >
+            <AvailableResourcesCard
+              style={{
+                height: lg ? 200 : undefined,
+              }}
+            />
+          </Suspense>
+        </Col>
+      </Row>
       <BAICard
         bordered={false}
         title={t('webui.menu.Sessions')}
@@ -218,7 +276,7 @@ const ComputeSessionListPage = () => {
               }}
             />
             <BAILink to={'/session/start'}>
-              <Button type="primary">{t('session.launcher.Start')}</Button>
+              <Button type="primary">{t('start.button.StartSession')}</Button>
             </BAILink>
           </Flex>
         }
@@ -231,7 +289,6 @@ const ComputeSessionListPage = () => {
           },
         }}
       >
-        {/* {mergeFilterValues([statusFilter, queryParams.filter, typeFilter])} */}
         <BAITabs
           activeKey={queryParams.type}
           onChange={(key) => {
@@ -416,7 +473,7 @@ const ComputeSessionListPage = () => {
           }
         }}
       />
-    </>
+    </Flex>
   );
 };
 

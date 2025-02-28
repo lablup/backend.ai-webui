@@ -1546,6 +1546,7 @@
     "Copy": "Copy"
   },
   "start": {
+    "CreateASession": "Create a Session",
     "CreateFolder": "Create New Storage Folder",
     "CreateFolderDesc": "Create folders and upload files. To train models or provide external services, it is essential to create folders and upload files.",
     "ModelService": "Start Model Service",
