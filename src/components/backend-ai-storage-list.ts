@@ -938,64 +938,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           </mwc-list>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="share-folder-dialog" fixed backdrop>
-        <span slot="title">${_t('data.explorer.ShareFolder')}</span>
-        <div slot="content" role="listbox" style="margin: 0;width:100%;">
-          <div style="margin: 10px 0px">${_t('data.explorer.People')}</div>
-          <div class="vertical layout flex" id="textfields">
-            <div class="horizontal layout">
-              <div style="flex-grow: 2">
-                <mwc-textfield
-                  class="share-email"
-                  type="email"
-                  id="first-email"
-                  label="${_t('data.explorer.EnterEmailAddress')}"
-                  maxLength="64"
-                  placeholder="${_text('maxLength.64chars')}"
-                ></mwc-textfield>
-              </div>
-              <div>
-                <mwc-icon-button
-                  icon="add"
-                  @click="${() => this._addTextField()}"
-                ></mwc-icon-button>
-                <mwc-icon-button
-                  icon="remove"
-                  @click="${() => this._removeTextField()}"
-                ></mwc-icon-button>
-              </div>
-            </div>
-          </div>
-          <div style="margin: 10px 0px">${_t('data.explorer.Permissions')}</div>
-          <div style="display: flex; justify-content: space-evenly;">
-            <mwc-formfield label="${_t('data.folders.View')}">
-              <mwc-radio
-                name="share-folder-permission"
-                checked
-                value="ro"
-              ></mwc-radio>
-            </mwc-formfield>
-            <mwc-formfield label="${_t('data.folders.Edit')}">
-              <mwc-radio name="share-folder-permission" value="rw"></mwc-radio>
-            </mwc-formfield>
-            <mwc-formfield label="${_t('data.folders.EditDelete')}">
-              <mwc-radio name="share-folder-permission" value="wd"></mwc-radio>
-            </mwc-formfield>
-          </div>
-        </div>
-        <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button
-            icon="share"
-            type="button"
-            unelevated
-            fullwidth
-            id="share-button"
-            @click=${(e) => this._shareFolder(e)}
-          >
-            ${_t('button.Share')}
-          </mwc-button>
-        </div>
-      </backend-ai-dialog>
       <backend-ai-dialog id="delete-from-trash-bin-dialog" fixed backdrop>
         <span slot="title">${_t('dialog.title.DeleteForever')}</span>
         <div slot="content">
@@ -1254,33 +1196,6 @@ export default class BackendAiStorageList extends BackendAIPage {
     );
   }
 
-  /**
-   * Add textfield to write email.
-   *
-   * */
-  _addTextField() {
-    const newTextField = document.createElement('mwc-textfield');
-    newTextField.label = _text('data.explorer.EnterEmailAddress');
-    newTextField.type = 'email';
-    newTextField.className = 'share-email';
-    newTextField.style.width = 'auto';
-    newTextField.style.marginRight = '83px';
-    this.shadowRoot?.querySelector('#textfields')?.appendChild(newTextField);
-  }
-
-  /**
-   * Remove existing email textfield.
-   *
-   */
-  _removeTextField() {
-    const textfields = this.shadowRoot?.querySelector(
-      '#textfields',
-    ) as HTMLDivElement;
-    if (textfields.children.length > 1 && textfields.lastChild) {
-      textfields.removeChild(textfields.lastChild);
-    }
-  }
-
   indexRenderer(root, column?, rowData?) {
     render(
       // language=HTML
@@ -1365,25 +1280,8 @@ export default class BackendAiStorageList extends BackendAIPage {
           ${rowData.item.is_owner
             ? html`
                 <mwc-icon-button
-                  class="fg ${rowData.item.type == 'user'
-                    ? 'blue'
-                    : 'green'} controls-running"
-                  icon="share"
-                  @click="${(e) => this._shareFolderDialog(e)}"
-                  ?disabled="${this._isUncontrollableStatus(
-                    rowData.item.status,
-                  )}"
-                  style="display: ${isSharingAllowed ? '' : 'none'}"
-                  id="${rowData.item.id + '-share'}"
-                ></mwc-icon-button>
-                <vaadin-tooltip
-                  for="${rowData.item.id + '-share'}"
-                  text="${_t('data.folders.ShareFolder')}"
-                  position="top-start"
-                ></vaadin-tooltip>
-                <mwc-icon-button
                   class="fg blue controls-running"
-                  icon="perm_identity"
+                  icon="share"
                   @click=${(e) =>
                     this._showPermissionSettingModal(rowData.item.id)}
                   ?disabled="${this._isUncontrollableStatus(
@@ -2458,116 +2356,6 @@ export default class BackendAiStorageList extends BackendAIPage {
       bubbles: true,
     });
     document.dispatchEvent(event);
-  }
-
-  /**
-   * Share the folder to people with the email user entered.
-   *
-   * @param {Event} e - click the share-button
-   * */
-  _shareFolder(e) {
-    const emailHtmlCollection = this.shadowRoot?.querySelectorAll(
-      'mwc-textfield.share-email',
-    ) as NodeListOf<TextField>;
-
-    // filter invalid and empty fields
-    const emailArray = Array.prototype.filter
-      .call(emailHtmlCollection, (e) => e.isUiValid && e.value !== '')
-      .map((e) => e.value.trim());
-    const permission = (
-      this.shadowRoot?.querySelector(
-        'mwc-radio[name=share-folder-permission][checked]',
-      ) as Radio
-    ).value;
-
-    if (emailArray.length === 0) {
-      this.notification.text = _text('data.invitation.NoValidEmails');
-      this.notification.show();
-      this.shareFolderDialog.hide();
-      for (const element of Array.from(emailHtmlCollection)) {
-        element.value = '';
-      }
-      return;
-    }
-
-    let rqstJob;
-    if (this.selectedFolderType === 'user') {
-      rqstJob = globalThis.backendaiclient.vfolder.invite(
-        permission,
-        emailArray,
-        this.selectedFolder,
-      );
-    } else {
-      rqstJob = globalThis.backendaiclient.vfolder.share(
-        permission,
-        emailArray,
-        this.selectedFolder,
-      );
-    }
-
-    const getRqstFailedEmailList = (requestedEmailList, resultEmailList) => {
-      return requestedEmailList.filter(
-        (email) => !resultEmailList.includes(email),
-      );
-    };
-
-    rqstJob
-      .then((res) => {
-        let msg;
-        // FIXME:
-        // we need to replace more proper word to distinguish folder sharing on user and group(project).
-        // For now, invite means sharing `user` folder and share means sharing `group(project)` folder
-        if (this.selectedFolderType === 'user') {
-          if (res.invited_ids && res.invited_ids.length > 0) {
-            msg = _text('data.invitation.Invited');
-            const failedInvitingEmailList = getRqstFailedEmailList(
-              emailArray,
-              res.invited_ids,
-            );
-            if (failedInvitingEmailList.length > 0) {
-              msg =
-                _text('data.invitation.FolderSharingNotAvailableToUser') +
-                failedInvitingEmailList.join(', ');
-            }
-          } else {
-            msg = _text('data.invitation.NoOneWasInvited');
-          }
-        } else {
-          if (res.shared_emails && res.shared_emails.length > 0) {
-            msg = _text('data.invitation.Shared');
-            const failedSharingEmailList = getRqstFailedEmailList(
-              emailArray,
-              res.shared_emails,
-            );
-            if (failedSharingEmailList.length > 0) {
-              msg =
-                _text('data.invitation.FolderSharingNotAvailableToUser') +
-                failedSharingEmailList.join(', ');
-            }
-          } else {
-            msg = _text('data.invitation.NoOneWasShared');
-          }
-        }
-        this.notification.text = msg;
-        this.notification.show();
-        this.shareFolderDialog.hide();
-        for (let i = emailHtmlCollection.length - 1; i > 0; i--) {
-          const element = emailHtmlCollection[i];
-          element.parentElement?.removeChild(element);
-        }
-      })
-      .catch((err) => {
-        // if (this.selectedFolderType === 'user') {
-        //   this.notification.text = _text('data.invitation.InvitationError');
-        // } else {
-        //   this.notification.text = _text('data.invitation.SharingError');
-        // }
-        if (err && err.message) {
-          this.notification.text = PainKiller.relieve(err.message);
-          this.notification.detail = err.message;
-        }
-        this.notification.show();
-      });
   }
 
   /**

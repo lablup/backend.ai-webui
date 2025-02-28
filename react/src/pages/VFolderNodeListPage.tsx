@@ -11,7 +11,7 @@ import BAITabs from '../components/BAITabs';
 import DeleteVFolderModal from '../components/DeleteVFolderModal';
 import Flex from '../components/Flex';
 import FolderCreateModal from '../components/FolderCreateModal';
-import InviteFolderPermissionSettingModal from '../components/InviteFolderPermissionSettingModal';
+import InviteFolderSettingModal from '../components/InviteFolderSettingModal';
 import QuotaPerStorageVolumePanelCard from '../components/QuotaPerStorageVolumePanelCard';
 import StorageStatusPanelCard from '../components/StorageStatusPanelCard';
 import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
@@ -514,7 +514,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           />
         </Flex>
       </BAICard>
-      <InviteFolderPermissionSettingModal
+      <InviteFolderSettingModal
         onRequestClose={() => {
           setInviteFolderId(null);
         }}

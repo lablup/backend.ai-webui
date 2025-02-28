@@ -17,6 +17,7 @@ import BAITag from './BAITag';
 import EditableVFolderName from './EditableVFolderName';
 import Flex from './Flex';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
+import InviteFolderSettingModal from './InviteFolderSettingModal';
 import VFolderPermissionCell from './VFolderPermissionCell';
 import {
   VFolderNodesFragment$data,
@@ -75,6 +76,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
   const [currentUser] = useCurrentUserInfo();
   const [hoveredColumn, setHoveredColumn] = useState<string | null>();
   const [editingColumn, setEditingColumn] = useState<string | null>(null);
+  const [inviteFolderId, setInviteFolderId] = useState<string | null>(null);
   const { upsertNotification } = useSetBAINotification();
   const { generateFolderPath } = useFolderExplorerOpener();
 
@@ -202,15 +204,20 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                 <Flex gap={'xs'}>
                   {/* Share */}
                   {!isDeletedCategory(vfolder?.status) && (
-                    <Button
-                      size="small"
-                      type="text"
-                      icon={<ShareAltIcon />}
-                      style={{
-                        color: token.colorInfo,
-                        background: token.colorInfoBg,
-                      }}
-                    />
+                    <Tooltip title={t('button.Share')} placement="left">
+                      <Button
+                        size="small"
+                        type="text"
+                        icon={<ShareAltIcon />}
+                        style={{
+                          color: token.colorInfo,
+                          background: token.colorInfoBg,
+                        }}
+                        onClick={() => {
+                          setInviteFolderId(toLocalId(vfolder?.id ?? null));
+                        }}
+                      />
+                    </Tooltip>
                   )}
                   {/* Restore */}
                   {isDeletedCategory(vfolder?.status) && (
@@ -432,6 +439,13 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         }
         title={t('dialog.title.DeleteForever')}
         okText={t('data.folders.DeleteForever')}
+      />
+      <InviteFolderSettingModal
+        onRequestClose={() => {
+          setInviteFolderId(null);
+        }}
+        vfolderId={inviteFolderId}
+        open={!!inviteFolderId}
       />
     </>
   );

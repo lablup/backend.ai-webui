@@ -232,6 +232,7 @@
     "General": "Umum",
     "Host": "Host",
     "HostDetails": "Menampilkan informasi kuota untuk host penyimpanan yang dipilih.",
+    "InvalidEmail": "Alamat email yang tidak valid",
     "Invited": "diundang",
     "InvitedFolders": "Folder yang diundang",
     "Limit": "Batas",
@@ -289,6 +290,7 @@
       "NoImagesSupportingFileBrowser": "Belum ada image yang mendukung file browser. Setidaknya satu atau lebih image yang mendukung file browser diperlukan untuk mengunggah folder.",
       "NoImagesSupportingSystemSession": "Belum ada image yang mendukung SSH / SFTP. Setidaknya satu atau lebih image yang mendukung image peran sistem untuk menggunakan SSH / SFTP.",
       "NoSharedFolders": "Tidak ada folder bersama",
+      "NoSharedUsers": "Tidak ada yang diundang",
       "NotEnoughResourceForFileBrowserSession": "Tidak ada sumber daya yang cukup (cpu: 1 Core, mem: 0.5GB) untuk membuat sesi untuk filebrowser. Mohon periksa sumber daya yang tersedia.",
       "NumberOfSFTPSessionsExceededBody": "Anda menjalankan semua sesi unggahan yang tersedia yang diizinkan untuk Anda buat. Hentikan sesi unggahan yang tidak terpakai sebelum memulai sesi baru.",
       "NumberOfSFTPSessionsExceededTitle": "Mencapai batas jumlah sesi unggahan yang sedang berjalan",
@@ -344,6 +346,7 @@
       "FolderUpdated": "Opsi folder diperbarui",
       "FolderUsage": "Penggunaan folder",
       "FolderUsing": "Menggunakan",
+      "InviteUsers": "Undang Pengguna",
       "KickOut": "Keluarkan pengguna",
       "Leave": "Tinggalkan",
       "LeaveAFolder": "Tinggalkan folder",
@@ -371,7 +374,10 @@
       "SelectPermission": "Pilih izin",
       "Serve": "Model penyajian",
       "ShareFolder": "Folder berbagi",
+      "SharedUser": "Pengguna bersama",
+      "SharedUserDesc": "Hanya pengguna yang menerima undangan yang ditampilkan dalam daftar.\n\nPengguna yang masih mengundang tidak ditampilkan.",
       "Status": "Status",
+      "TrashBin": "Sampah",
       "Type": "Tipe",
       "TypeFolderNameToDelete": "Ketik nama folder untuk dihapus",
       "TypeFolderNameToLeave": "Ketik nama folder untuk ditinggalkan",
@@ -1089,10 +1095,7 @@
   },
   "session": {
     "Agent": "Agen",
-<<<<<<< HEAD
-=======
     "AgentId": "ID Agen",
->>>>>>> 1da113c7 (feat: Introduce session status info modal in session detail panel)
     "Agents": "Agen",
     "AllowedClientIps": "IP klien yang diizinkan",
     "AlreadyTerminatingSession": "Sudah mengakhiri sesi.",
