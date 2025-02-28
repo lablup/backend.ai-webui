@@ -1,6 +1,6 @@
 {
   "$schema": "./theme.schema.json",
-  "light" : {
+  "light": {
     "token": {
       "fontFamily": "'Ubuntu', Roboto, sans-serif",
       "colorPrimary": "#FF7A00",
@@ -8,7 +8,8 @@
       "colorText": "#141414",
       "colorInfo": "#028DF2",
       "colorError": "#FF4D4F",
-      "colorSuccess": "#00BD9B"
+      "colorSuccess": "#00BD9B",
+      "colorFillSecondary": "#D9D9D9"
     },
     "components": {
       "Tag": {
@@ -32,7 +33,8 @@
       "colorText": "#FFF",
       "colorInfo": "#009BDD",
       "colorError": "#DC4446",
-      "colorSuccess": "#03A487"
+      "colorSuccess": "#03A487",
+      "colorFillSecondary": "#262626"
     },
     "components": {
       "Tag": {
@@ -59,8 +61,7 @@
       "height": 34
     }
   },
-  "sider": {
-  },
+  "sider": {},
   "branding": {
     "companyName": "Lablup Inc.",
     "brandName": "Backend.AI"
