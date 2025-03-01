@@ -1,10 +1,8 @@
 import ActionItemContent from '../components/ActionItemContent';
-import BAIBoard, { BAIBoardItem } from '../components/BAIBoard';
 import FolderCreateModal from '../components/FolderCreateModal';
 import ThemeSecondaryProvider from '../components/ThemeSecondaryProvider';
 import { filterEmptyItem } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { SessionLauncherFormValue } from './SessionLauncherPage';
 import {
   AppstoreAddOutlined,
