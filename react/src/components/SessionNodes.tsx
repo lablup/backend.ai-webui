@@ -12,6 +12,7 @@ import {
 } from './__generated__/SessionNodesFragment.graphql';
 import { TableProps, theme } from 'antd/lib';
 import graphql from 'babel-plugin-relay/macro';
+import dayjs from 'dayjs';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
@@ -38,6 +39,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         row_id @required(action: NONE)
         name
         status
+        created_at
         ...SessionStatusTagFragment
         ...SessionReservationFragment
         ...SessionSlotCellFragment
@@ -140,6 +142,15 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
                 />
               );
             },
+          },
+          {
+            key: 'created_at',
+            title: t('general.CreatedAt'),
+            dataIndex: 'created_at',
+            render: (createdAt) => {
+              return createdAt ? dayjs(createdAt).format('lll') : '-';
+            },
+            sorter: true,
           },
         ]}
         {...tableProps}

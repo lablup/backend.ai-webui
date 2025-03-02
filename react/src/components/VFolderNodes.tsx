@@ -34,7 +34,8 @@ import {
   Typography,
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
-import _ from 'lodash';
+import dayjs from 'dayjs';
+import _, { sortBy } from 'lodash';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
@@ -93,6 +94,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         ownership_type
         user
         group
+        created_at
         ...VFolderPermissionCellFragment
         ...EditableVFolderNameFragment
       }
@@ -302,25 +304,25 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                   {/* Delete from trash bin & Disabled delete button */}
                   {isDeletedCategory(vfolder?.status) && (
                     <Tooltip title={t('data.folders.Delete')} placement="right">
-                    <Button
-                      size="small"
-                      type="text"
-                      icon={<TrashBinIcon />}
-                      style={{
-                        color:
-                          vfolder?.status !== 'delete-pending'
-                            ? token.colorTextDisabled
-                            : token.colorError,
-                        background:
-                          vfolder?.status !== 'delete-pending'
-                            ? token.colorBgContainerDisabled
-                            : token.colorErrorBg,
-                      }}
-                      disabled={vfolder?.status !== 'delete-pending'}
-                      onClick={() => {
-                        setCurrentVFolder(vfolder ?? null);
-                      }}
-                    />
+                      <Button
+                        size="small"
+                        type="text"
+                        icon={<TrashBinIcon />}
+                        style={{
+                          color:
+                            vfolder?.status !== 'delete-pending'
+                              ? token.colorTextDisabled
+                              : token.colorError,
+                          background:
+                            vfolder?.status !== 'delete-pending'
+                              ? token.colorBgContainerDisabled
+                              : token.colorErrorBg,
+                        }}
+                        disabled={vfolder?.status !== 'delete-pending'}
+                        onClick={() => {
+                          setCurrentVFolder(vfolder ?? null);
+                        }}
+                      />
                     </Tooltip>
                   )}
                 </Flex>
@@ -388,6 +390,15 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                   <CheckCircleOutlined />
                 </Flex>
               ) : null,
+          },
+          {
+            key: 'created_at',
+            title: t('general.CreatedAt'),
+            dataIndex: 'created_at',
+            render: (createdAt) => {
+              return createdAt ? dayjs(createdAt).format('lll') : '-';
+            },
+            sorter: true,
           },
         ]}
         {...tableProps}
