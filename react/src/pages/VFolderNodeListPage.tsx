@@ -93,7 +93,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   });
 
   const [queryParams, setQuery] = useDeferredQueryParams({
-    order: StringParam,
+    order: withDefault(StringParam, '-created_at'),
     filter: StringParam,
     statusCategory: withDefault(StringParam, 'created'),
     mode: withDefault(StringParam, 'all'),
@@ -249,7 +249,13 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           </Col>
           <Col xs={24} lg={16} xl={8}>
             <Suspense
-              fallback={<BAICard style={{height: 200}} title={t('data.StorageStatus')} loading />}
+              fallback={
+                <BAICard
+                  style={{ height: 200 }}
+                  title={t('data.StorageStatus')}
+                  loading
+                />
+              }
             >
               <StorageStatusPanelCard
                 style={{ height: lg ? 200 : undefined }}
@@ -259,7 +265,11 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           <Col xs={24} xl={12}>
             <Suspense
               fallback={
-                <BAICard style={{height: 200}} title={t('data.QuotaPerStorageVolume')} loading />
+                <BAICard
+                  style={{ height: 200 }}
+                  title={t('data.QuotaPerStorageVolume')}
+                  loading
+                />
               }
             >
               <QuotaPerStorageVolumePanelCard
