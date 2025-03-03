@@ -872,7 +872,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           ? html`
               <div class="layout horizontal center flex">
                 <div class="layout horizontal configuration">
-                  <mwc-icon class="fg green indicator">view_module</mwc-icon>
+                  <img
+                    class="indicator-icon fg green"
+                    src="/resources/icons/tpu.svg"
+                    alt="TPU"
+                  />
                   <span>${rowData.item.tpu_device_limit_min}</span>
                   ~
                   <span>
@@ -887,7 +891,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           ? html`
               <div class="layout horizontal center flex">
                 <div class="layout horizontal configuration">
-                  <mwc-icon class="fg green indicator">view_module</mwc-icon>
+                  <img
+                    class="indicator-icon fg green"
+                    src="/resources/icons/ipu.svg"
+                    alt="IPU"
+                  />
                   <span>${rowData.item.ipu_device_limit_min}</span>
                   ~
                   <span>
