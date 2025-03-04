@@ -126,6 +126,7 @@ const SessionDetailContent: React.FC<{
             ...ContainerCommitModalFragment
             ...SessionIdleChecksNodeFragment
             ...SessionStatusDetailModalFragment
+            ...AppLauncherModalFragment
           }
           legacy_session: compute_session(id: $uuid) {
             image
@@ -134,6 +135,10 @@ const SessionDetailContent: React.FC<{
             architecture
             idle_checks @since(version: "24.09.0")
             ...SessionIdleChecksFragment
+            # fix: This fragment is not used in this component, but it is required by the SessionActionButtonsFragment.
+            # It might be a bug in relay
+            ...SessionActionButtonsLegacyFragment
+            ...AppLauncherModalLegacyFragment
           }
         }
       `,
@@ -200,7 +205,10 @@ const SessionDetailContent: React.FC<{
             }
           />
           <Button.Group size="large">
-            <SessionActionButtons sessionFrgmt={session} />
+            <SessionActionButtons
+              sessionFrgmt={session}
+              legacySessionFrgmt={legacy_session}
+            />
           </Button.Group>
         </Flex>
 

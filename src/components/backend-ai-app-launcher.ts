@@ -72,6 +72,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({ type: Object }) appEnvs = Object();
   @property({ type: Object }) appArgs = Object();
   @property({ type: String }) vscodeDesktopPassword = '';
+  @property({ type: String }) clientIps = '';
+  @property({ type: Number }) userPort = 10250;
+  @property({ type: Boolean }) useV1Proxy = false;
+  @property({ type: Boolean }) useV2Proxy = false;
+  @property({ type: String }) subDomain = '';
   @query('#app-dialog') dialog!: BackendAIDialog;
   @query('#app-port') appPort!: TextField;
   @query('#custom-subdomain') customSubdomain!: TextField;
@@ -87,12 +92,18 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @query('#vnc-dialog') vncDialog!: BackendAIDialog;
   @query('#xrdp-dialog') xrdpDialog!: BackendAIDialog;
   @query('#vscode-desktop-dialog') vscodeDesktopDialog!: BackendAIDialog;
+  @query('#allowed-client-ips') allowedClientIpsInput!: TextField;
 
   constructor() {
     super();
     this.appSupportList = [];
     this.preOpenedPortList = [];
     this.appSupportOption = [];
+    this.clientIps = '';
+    this.userPort = 10250;
+    this.subDomain = '';
+    this.useV1Proxy = false;
+    this.useV2Proxy = false;
   }
 
   static get styles(): CSSResultGroup {
@@ -432,8 +443,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    */
   async _getWSProxyVersion(sessionUuid) {
     if (globalThis.backendaiwebui.debug === true) {
-      if (this.forceUseV1Proxy?.checked) return 'v1';
-      else if (this.forceUseV2Proxy?.checked) return 'v2';
+      if (this.forceUseV1Proxy?.checked || this.useV1Proxy) return 'v1';
+      else if (this.forceUseV2Proxy?.checked || this.useV2Proxy) return 'v2';
     }
 
     const kInfo = await globalThis.backendaiclient.computeSession.get(
@@ -594,7 +605,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
       }
     });
-
     if (
       globalThis.backendaiclient.supports('local-vscode-remote-connection') &&
       this.allowTCPApps &&
@@ -779,9 +789,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this.indicator.end();
       return Promise.resolve(false);
     }
-    const allowedClientIps = (
-      this.shadowRoot?.querySelector('#allowed-client-ips') as TextField
-    )?.value;
+    const allowedClientIps =
+      this.clientIps ||
+      (this.shadowRoot?.querySelector('#allowed-client-ips') as TextField)
+        ?.value;
+
+    console.log('#', this.clientIps, allowedClientIps);
     let openToPublic = false;
     if (this.checkOpenToPublic == null) {
       // Null or undefined check. When user click console button without app launcher dialog, it will be undefined.
@@ -805,8 +818,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (args !== null && Object.keys(args).length > 0) {
       uri = uri + '&args=' + encodeURI(JSON.stringify(args));
     }
-    if (this.customSubdomain?.value) {
-      uri = uri + '&subdomain=' + encodeURI(this.customSubdomain.value);
+    if (this.subDomain || this.customSubdomain?.value) {
+      uri =
+        uri +
+        '&subdomain=' +
+        encodeURI(this.subDomain || this.customSubdomain.value);
     }
     if (servicePortInfo.is_inference) {
       uri = uri + '&is_inference=true';
@@ -1154,19 +1170,19 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
         sendAppName = 'sshd';
       }
-      const userPort =
+      this.userPort =
         this.appPort === null || this.appPort === undefined
           ? defaultPreferredPortNumber
           : parseInt(this.appPort?.value);
       if (
         this.checkPreferredPort !== null &&
         this.checkPreferredPort?.checked &&
-        userPort
+        this.userPort
       ) {
-        port = userPort;
+        port = this.userPort;
       }
-      this._open_wsproxy(sessionUuid, sendAppName, port, envs, args).then(
-        async (response) => {
+      this._open_wsproxy(sessionUuid, sendAppName, port, envs, args)
+        .then(async (response) => {
           const { appConnectUrl, reused } = await this._connectToProxyWorker(
             response.url,
             urlPostfix,
@@ -1255,8 +1271,28 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               // console.log(sessionUuid);
             }, 1000);
           }
-        },
-      );
+        })
+        .finally(() => {
+          // The properties below are variables for launching the app in the react AppLauncherModal
+          // TODO: After the `useBackendAIAppLauncher` hook completes, the following variables should be deleted
+          if (this.allowedClientIpsInput?.value) {
+            this.allowedClientIpsInput.value = '';
+          }
+          this.clientIps = '';
+          this.userPort = 10250;
+          if (this.customSubdomain?.value) {
+            this.customSubdomain.value = '';
+          }
+          this.subDomain = '';
+          if (this.forceUseV1Proxy?.checked) {
+            this.forceUseV1Proxy.checked = false;
+          }
+          this.useV1Proxy = false;
+          if (this.forceUseV2Proxy?.checked) {
+            this.forceUseV2Proxy.checked = false;
+          }
+          this.useV2Proxy = false;
+        });
     }
   }
 
@@ -2021,7 +2057,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             }%3A${this.tcpPort}/home/work"
           >
             <mwc-button unelevated fullwidth>
-        applauncher.OpenVSCodeRemoteVSCodeRemote')}
+              ${_t('session.appLauncher.OpenVSCodeRemote')}
             </mwc-button>
           </a>
         </div>
