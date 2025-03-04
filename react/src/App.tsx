@@ -386,6 +386,19 @@ const router = createBrowserRouter([
       {
         path: '/statistics',
         handle: { labelKey: 'webui.menu.Statistics' },
+        element: (
+          <BAIErrorBoundary>
+            <Suspense
+              fallback={
+                <Flex direction="column" style={{ maxWidth: 700 }}>
+                  <Skeleton active />
+                </Flex>
+              }
+            >
+              <StatisticsPage />
+            </Suspense>
+          </BAIErrorBoundary>
+        ),
       },
       {
         path: '/environment',
@@ -410,7 +423,7 @@ const router = createBrowserRouter([
         path: '/maintenance',
         element: (
           <BAIErrorBoundary>
-            <StatisticsPage />
+            <MaintenancePage />
           </BAIErrorBoundary>
         ),
         handle: { labelKey: 'webui.menu.Maintenance' },
