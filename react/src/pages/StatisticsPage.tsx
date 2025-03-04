@@ -1,6 +1,7 @@
 import BAICard from '../components/BAICard';
 import Flex from '../components/Flex';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { useThemeMode } from '../hooks/useThemeMode';
 import useUserStats, {
   Period,
@@ -8,8 +9,7 @@ import useUserStats, {
   UnitHint,
 } from '../hooks/useUserStats';
 import { Column, ColumnConfig, Line, LineConfig } from '@ant-design/charts';
-import { useSuspenseQuery } from '@tanstack/react-query';
-import { Alert, Card, Select, theme, Typography } from 'antd';
+import { Alert, Card, Select, theme } from 'antd';
 import { format } from 'date-fns';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -34,27 +34,14 @@ const GraphContainer = ({
   config,
   height = 200,
 }: GraphContainerProps) => {
-  const { token } = theme.useToken();
   return (
-    <>
-      {/* <Card type="inner" title={title} style={{ width: '100%' }}>
-        {graph === 'line' ? (
-          <Line height={height} {...(config as LineConfig)} />
-        ) : (
-          <Column height={height} {...(config as ColumnConfig)} />
-        )}
-      </Card> */}
-      <Typography.Title level={5} style={{ marginBottom: token.marginLG }}>
-        {title}
-      </Typography.Title>
-      <div style={{ width: '100%' }}>
-        {graph === 'line' ? (
-          <Line height={height} {...(config as LineConfig)} />
-        ) : (
-          <Column height={height} {...(config as ColumnConfig)} />
-        )}
-      </div>
-    </>
+    <Card type="inner" title={title} style={{ width: '100%' }}>
+      {graph === 'line' ? (
+        <Line height={height} {...(config as LineConfig)} />
+      ) : (
+        <Column height={height} {...(config as ColumnConfig)} />
+      )}
+    </Card>
   );
 };
 
@@ -67,11 +54,7 @@ const lineConfig = (
   data,
   xField: 'date',
   yField: 'value',
-  point: {
-    style: {
-      // stroke: color,
-    },
-  },
+  point: {},
   interaction: {
     tooltip: {
       marker: false,
@@ -79,7 +62,6 @@ const lineConfig = (
   },
   style: {
     lineWidth: 2,
-    // stroke: color,
   },
   axis: {
     x: {
@@ -169,6 +151,8 @@ const keys: Partial<{
     title: 'IO-Write',
   },
 };
+const usageHistoryKeys = Object.keys(keys) as UsageHistoryKey[];
+
 const formatValue = (value: number, unitHint: UnitHint) => {
   if (unitHint === 'count') {
     return value;
@@ -182,10 +166,7 @@ interface UsageHistoryStatisticsProps {
 const UsageHistoryStatistics = ({ period }: UsageHistoryStatisticsProps) => {
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
-  const { data: userStats } = useUserStats(
-    Object.keys(keys) as UsageHistoryKey[],
-    period as Period,
-  );
+  const { data: userStats } = useUserStats(usageHistoryKeys, period as Period);
   return (
     <Flex
       direction="column"
@@ -199,7 +180,7 @@ const UsageHistoryStatistics = ({ period }: UsageHistoryStatisticsProps) => {
         const data = userStats.map((d) => {
           return {
             date: format(d.date.toString(), 'MMM dd HH:mm'),
-            value: formatValue(d.data[key].value, unitHint),
+            value: formatValue(d.data[key as UsageHistoryKey].value, unitHint),
           };
         });
 
@@ -238,8 +219,8 @@ const StatisticsLayout = ({
     data: {
       keypair: { created_at },
     },
-  } = useSuspenseQuery({
-    queryKey: [baiClient._config.accessKey],
+  } = useSuspenseTanQuery({
+    queryKey: ['UserCreateAt', baiClient._config.accessKey],
     queryFn: () =>
       baiClient.keypair.info(baiClient._config.accessKey, ['created_at']),
     staleTime: 3 * 60 * 1000,

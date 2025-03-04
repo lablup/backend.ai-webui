@@ -12,6 +12,7 @@ export const navigate =
     // Extract the page name from path.
     if (
       [
+        '/start',
         '/summary',
         '/job',
         '/session',
@@ -33,6 +34,8 @@ export const navigate =
         '/information',
         '/github',
         '/import',
+        '/chat',
+        '/ai-agent',
       ].includes(path) !== true
     ) {
       // Fallback for Electron Shell/Windows OS
@@ -48,7 +51,7 @@ export const navigate =
     }
     let page;
     if (['/', 'build', '/build', 'app', '/app'].includes(path)) {
-      page = 'summary';
+      page = 'start';
     } else if (path[0] === '/') {
       page = path.slice(1);
     } else {

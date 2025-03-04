@@ -1,9 +1,10 @@
+import { filterEmptyItem } from '../../helper';
 import { BackendAIClient, useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
-import { useTanMutation } from '../../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { usePainKiller } from '../../hooks/usePainKiller';
+import { usePromiseTracker } from '../../usePromiseTracker';
 import BAIModal from '../BAIModal';
 import Flex from '../Flex';
 import {
@@ -21,9 +22,11 @@ import { fetchQuery, useFragment, useRelayEnvironment } from 'react-relay';
 
 interface TerminateSessionModalProps
   extends Omit<ModalProps, 'onOk' | 'onCancel'> {
-  sessionFrgmts: TerminateSessionModalFragment$key;
+  sessionFrgmts?: TerminateSessionModalFragment$key;
   onRequestClose: (success: boolean) => void;
 }
+
+// Cannot destroy sessions in scheduled/preparing/pulling/prepared/creating/terminating/error status
 
 const useStyle = createStyles(({ css, token }) => {
   return {
@@ -40,7 +43,9 @@ type KernelType = NonNullableNodeOnEdges<
   NonNullable<TerminateSessionModalFragment$data[number]>['kernel_nodes']
 >;
 
-type Session = NonNullable<TerminateSessionModalFragment$data[number]>;
+type SessionForTerminateModal = NonNullable<
+  TerminateSessionModalFragment$data[number]
+>;
 
 const sendRequest = async (
   rqst: {
@@ -135,7 +140,7 @@ const getProxyURL = async (
 };
 
 const terminateApp = async (
-  session: Session,
+  session: SessionForTerminateModal,
   accessKey: string,
   currentProjectId: string,
   baiClient: BackendAIClient,
@@ -173,7 +178,7 @@ const terminateApp = async (
 };
 
 const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
-  sessionFrgmts: sessionFrgmt,
+  sessionFrgmts,
   onRequestClose,
   ...modalProps
 }) => {
@@ -184,7 +189,7 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
     graphql`
       fragment TerminateSessionModalFragment on ComputeSessionNode
       @relay(plural: true) {
-        id
+        id @required(action: THROW)
         row_id
         name
         scaling_group @required(action: NONE)
@@ -198,7 +203,7 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
         }
       }
     `,
-    sessionFrgmt,
+    sessionFrgmts,
   );
 
   const [isForce, setIsForce] = useState(false);
@@ -208,39 +213,40 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
 
   const currentProject = useCurrentProjectValue();
 
-  const terminateMutation = useTanMutation({
-    mutationFn: async (session: Session) => {
-      return terminateApp(
-        session,
-        baiClient._config.accessKey,
-        currentProject.id,
-        baiClient,
-      )
-        .catch((e) => {
-          return {
-            error: e,
-          };
-        })
-        .then((result) => {
-          const err = result?.error;
-          if (
-            err === undefined || //no error
-            (err && // Even if wsproxy address is invalid, session must be deleted.
-              err.message &&
-              (err.statusCode === 404 || err.statusCode === 500))
-          ) {
-            // BAI client destroy try to request 3times as default
-            return baiClient.destroy(
-              session.row_id,
-              baiClient._config.accessKey,
-              isForce,
-            );
-          } else {
-            throw err;
-          }
-        });
-    },
-  });
+  const { pendingCount, trackPromise } = usePromiseTracker();
+
+  const terminiateSession = (session: SessionForTerminateModal) => {
+    return terminateApp(
+      session,
+      baiClient._config.accessKey,
+      currentProject.id,
+      baiClient,
+    )
+      .catch((e) => {
+        return {
+          error: e,
+        };
+      })
+      .then((result) => {
+        const err = result?.error;
+        if (
+          err === undefined || //no error
+          (err && // Even if wsproxy address is invalid, session must be deleted.
+            err.message &&
+            (err.statusCode === 404 || err.statusCode === 500))
+        ) {
+          // BAI client destroy try to request 3times as default
+          return baiClient.destroy(
+            session.row_id,
+            baiClient._config.accessKey,
+            isForce,
+          );
+        } else {
+          throw err;
+        }
+      });
+  };
+
   const relayEvn = useRelayEnvironment();
   const painKiller = usePainKiller();
   const { upsertNotification } = useSetBAINotification();
@@ -250,54 +256,52 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
       centered
       title={t('session.TerminateSession')}
       open={openTerminateModal}
-      confirmLoading={terminateMutation.isPending}
+      confirmLoading={pendingCount > 0}
       onOk={() => {
-        if (sessions[0]?.row_id) {
-          const session = sessions[0];
-          terminateMutation
-            .mutateAsync(session)
-            .then(() => {
-              setIsForce(false);
-              onRequestClose(true);
-            })
-            .catch((err) => {
-              upsertNotification({
-                message: painKiller.relieve(err?.title),
-                description: err?.message,
-                open: true,
-              });
-            })
-            .finally(() => {
-              // TODO: remove below code after session list migration to React
-              const event = new CustomEvent(
-                'backend-ai-session-list-refreshed',
-                {
-                  detail: 'running',
-                },
-              );
-              document.dispatchEvent(event);
-
-              // refetch session node
-              return fetchQuery<TerminateSessionModalRefetchQuery>(
-                relayEvn,
-                graphql`
-                  query TerminateSessionModalRefetchQuery(
-                    $id: GlobalIDField!
-                    $project_id: UUID!
-                  ) {
-                    compute_session_node(id: $id, project_id: $project_id) {
-                      id
-                      status
+        const promises = _.map(
+          filterEmptyItem(_.castArray(sessions)),
+          (session) => {
+            return terminiateSession(session)
+              .catch((err) => {
+                upsertNotification({
+                  message: painKiller.relieve(err?.title),
+                  description: err?.description,
+                  open: true,
+                });
+              })
+              .finally(() => {
+                // refetch session node
+                return fetchQuery<TerminateSessionModalRefetchQuery>(
+                  relayEvn,
+                  graphql`
+                    query TerminateSessionModalRefetchQuery(
+                      $id: GlobalIDField!
+                      $project_id: UUID!
+                    ) {
+                      compute_session_node(id: $id, project_id: $project_id) {
+                        id
+                        status
+                      }
                     }
-                  }
-                `,
-                {
-                  id: session.id,
-                  project_id: currentProject.id,
-                },
-              ).toPromise();
-            });
-        }
+                  `,
+                  {
+                    id: session.id,
+                    project_id: currentProject.id,
+                  },
+                ).toPromise();
+              });
+          },
+        );
+        promises.map(trackPromise);
+        Promise.allSettled(promises).then((results) => {
+          setIsForce(false);
+          onRequestClose(true);
+          // TODO: remove below code after session list migration to React
+          const event = new CustomEvent('backend-ai-session-list-refreshed', {
+            detail: 'running',
+          });
+          document.dispatchEvent(event);
+        });
       }}
       okText={isForce ? t('button.ForceTerminate') : t('session.Terminate')}
       okType="danger"
@@ -320,9 +324,9 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
           {t('userSettings.SessionTerminationDialog')}
         </Typography.Text>
         <Typography.Text mark>
-          {sessions.length === 1
-            ? sessions[0]?.name
-            : `${sessions.length} sessions`}
+          {sessions?.length === 1
+            ? sessions?.[0]?.name
+            : `${sessions?.length} sessions`}
         </Typography.Text>
         <Checkbox
           checked={isForce}

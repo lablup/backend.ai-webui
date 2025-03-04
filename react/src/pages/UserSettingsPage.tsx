@@ -48,6 +48,10 @@ const UserPreferencesPage = () => {
     useBAISettingUserState('preserve_login');
   const [experimentalNeoSessionList, setExperimentalNeoSessionList] =
     useBAISettingUserState('experimental_neo_session_list');
+  const [experimentalAIAgents, setExperimentalAIAgents] =
+    useBAISettingUserState('experimental_ai_agents');
+  const [experimentalNeoDataPage, setExperimentalNeoDataPage] =
+    useBAISettingUserState('experimental_neo_data_page');
   const [shellInfo, setShellInfo] = useState<ShellScriptType>('bootstrap');
   const [isOpenShellScriptEditModal, { toggle: toggleShellScriptEditModal }] =
     useToggle(false);
@@ -253,6 +257,28 @@ const UserPreferencesPage = () => {
           setValue: setExperimentalNeoSessionList,
           onChange: (e) => {
             setExperimentalNeoSessionList(e.target.checked);
+          },
+        },
+        {
+          type: 'checkbox',
+          title: t('userSettings.AIAgents'),
+          description: t('general.Enabled'),
+          defaultValue: false,
+          value: experimentalAIAgents,
+          setValue: setExperimentalAIAgents,
+          onChange: (e) => {
+            setExperimentalAIAgents(e.target.checked);
+          },
+        },
+        {
+          type: 'checkbox',
+          title: t('userSettings.NEODataPage'),
+          description: t('general.Enabled'),
+          defaultValue: false,
+          value: experimentalNeoDataPage,
+          setValue: setExperimentalNeoDataPage,
+          onChange: (e) => {
+            setExperimentalNeoDataPage(e.target.checked);
           },
         },
       ],

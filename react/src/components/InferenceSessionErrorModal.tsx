@@ -32,14 +32,6 @@ const InferenceSessionErrorModal: React.FC<Props> = ({
     inferenceSessionErrorFrgmt,
   );
 
-  // const { errors } = endpoint
-  // const targetSession = errors.filter(({ session_id }) => session === session_id)
-  // if (targetSession.length > 0) {
-  //   // setErrorJSONModalSessionID(session)
-  //   // setErrorJSONModalError(targetSession[0].errors[0].repr)
-  //   // setShowErrorJSONModal(true)
-  // }
-
   const columnSetting: DescriptionsProps['column'] = {
     xxl: 1,
     xl: 1,

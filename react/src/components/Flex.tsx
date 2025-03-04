@@ -1,15 +1,17 @@
 import { theme } from 'antd';
 import React, { CSSProperties, PropsWithChildren } from 'react';
 
+type GapSize = number | 'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
+type GapProp = GapSize | [GapSize, GapSize];
+
 export interface FlexProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'dir'>,
     PropsWithChildren {
   direction?: 'row' | 'row-reverse' | 'column' | 'column-reverse';
   wrap?: 'nowrap' | 'wrap' | 'wrap-reverse';
   justify?: 'start' | 'end' | 'center' | 'between' | 'around';
-  // | "evenly";
   align?: 'start' | 'end' | 'center' | 'baseline' | 'stretch';
-  gap?: number | 'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
+  gap?: GapProp;
 }
 
 const Flex = React.forwardRef<HTMLDivElement, FlexProps>(
@@ -27,6 +29,17 @@ const Flex = React.forwardRef<HTMLDivElement, FlexProps>(
     ref,
   ) => {
     const { token } = theme.useToken();
+
+    const getGapSize = (size: GapSize) => {
+      return typeof size === 'string'
+        ? // @ts-ignore
+          token['padding' + size.toUpperCase()]
+        : size;
+    };
+
+    const gapStyle = Array.isArray(gap)
+      ? `${getGapSize(gap[0])}px ${getGapSize(gap[1])}px`
+      : getGapSize(gap);
 
     const transferConst = [justify, align];
     const transferConstStyle = transferConst.map((el) => {
@@ -78,11 +91,7 @@ const Flex = React.forwardRef<HTMLDivElement, FlexProps>(
           padding: 0,
           position: 'relative',
           textDecoration: 'none',
-          gap:
-            typeof gap === 'string'
-              ? // @ts-ignore
-                token['padding' + gap.toUpperCase()]
-              : gap,
+          gap: gapStyle,
           ...flexStyle,
         }}
         {...restProps}

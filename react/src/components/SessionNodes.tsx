@@ -5,36 +5,45 @@ import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionSlotCell from './ComputeSessionNodeItems/SessionSlotCell';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
 import Flex from './Flex';
-import SessionDetailDrawer from './SessionDetailDrawer';
 import SessionUsageMonitor from './SessionUsageMonitor';
-import { SessionNodesFragment$key } from './__generated__/SessionNodesFragment.graphql';
+import {
+  SessionNodesFragment$data,
+  SessionNodesFragment$key,
+} from './__generated__/SessionNodesFragment.graphql';
 import { TableProps, theme } from 'antd/lib';
 import graphql from 'babel-plugin-relay/macro';
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
 
-interface SessionNodesProps extends Omit<TableProps, 'dataSource' | 'columns'> {
+export type SessionNodeInList = NonNullable<SessionNodesFragment$data[number]>;
+interface SessionNodesProps
+  extends Omit<TableProps<SessionNodeInList>, 'dataSource' | 'columns'> {
   sessionsFrgmt: SessionNodesFragment$key;
+  onClickSessionName?: (session: SessionNodeInList) => void;
 }
+
 const SessionNodes: React.FC<SessionNodesProps> = ({
   sessionsFrgmt,
+  onClickSessionName,
   ...tableProps
 }) => {
   const { t } = useTranslation();
-  const [selectedSessionId, setSelectedSessionId] = useState<string>();
   const { token } = theme.useToken();
 
   const sessions = useFragment(
     graphql`
       fragment SessionNodesFragment on ComputeSessionNode @relay(plural: true) {
-        id
+        id @required(action: NONE)
         row_id @required(action: NONE)
         name
+        status
         ...SessionStatusTagFragment
         ...SessionReservationFragment
         ...SessionSlotCellFragment
         ...SessionUsageMonitorFragment
+        # fix: This fragment is not used in this component, but it is required by the SessionStatusDetailModal.
+        # It might be a bug in relay
       }
     `,
     sessionsFrgmt,
@@ -49,7 +58,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         neoStyle
         // TODO: fix type
         // @ts-ignore
-        rowKey={(record) => record.row_id as string}
+        rowKey={(record) => record.id as string}
         size="small"
         dataSource={filteredSessions}
         scroll={{ x: 'max-content' }}
@@ -59,16 +68,17 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
             title: t('session.SessionName'),
             dataIndex: 'name',
             render: (name: string, session) => {
-              return (
+              return onClickSessionName ? (
                 <BAILink
-                  to={'#'}
                   type="hover"
                   onClick={(e) => {
-                    session.row_id && setSelectedSessionId(session.row_id);
+                    onClickSessionName(session);
                   }}
                 >
                   {name}
                 </BAILink>
+              ) : (
+                name
               );
             },
             sorter: true,
@@ -133,13 +143,6 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
           },
         ]}
         {...tableProps}
-      />
-      <SessionDetailDrawer
-        open={!selectedSessionId}
-        sessionId={selectedSessionId}
-        onClose={() => {
-          setSelectedSessionId(undefined);
-        }}
       />
     </>
   );

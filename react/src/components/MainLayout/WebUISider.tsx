@@ -10,7 +10,7 @@ import SessionsIcon from '../BAIIcons/SessionsIcon';
 import BAIMenu from '../BAIMenu';
 import BAISider, { BAISiderProps } from '../BAISider';
 import Flex from '../Flex';
-import ReverseThemeProvider from '../ReverseThemeProvider';
+import ThemeReverseProvider from '../ReverseThemeProvider';
 import SiderToggleButton from '../SiderToggleButton';
 import SignoutModal from '../SignoutModal';
 import WebUILink from '../WebUILink';
@@ -25,6 +25,8 @@ import {
   FileDoneOutlined,
   HddOutlined,
   InfoCircleOutlined,
+  MessageOutlined,
+  PlayCircleOutlined,
   SolutionOutlined,
   ToolOutlined,
   UserOutlined,
@@ -40,7 +42,7 @@ import {
 } from 'antd';
 import { ItemType } from 'antd/lib/menu/interface';
 import _ from 'lodash';
-import { PlayIcon } from 'lucide-react';
+import { BotMessageSquare, PlayIcon } from 'lucide-react';
 import React, { useContext, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -88,7 +90,15 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const [experimentalNeoSessionList] = useBAISettingUserState(
     'experimental_neo_session_list',
   );
+  const [experimentalAIAgents] = useBAISettingUserState(
+    'experimental_ai_agents',
+  );
   const generalMenu = filterEmptyItem<ItemType>([
+    {
+      label: <WebUILink to="/start">{t('webui.menu.Start')}</WebUILink>,
+      icon: <PlayCircleOutlined style={{ color: token.colorPrimary }} />,
+      key: 'start',
+    },
     {
       label: <WebUILink to="/summary">{t('webui.menu.Summary')}</WebUILink>,
       icon: <DashboardOutlined style={{ color: token.colorPrimary }} />,
@@ -108,13 +118,23 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       icon: <EndpointsIcon style={{ color: token.colorPrimary }} />,
       key: 'serving',
     },
+    experimentalAIAgents && {
+      label: <WebUILink to="/ai-agent">{t('webui.menu.AIAgents')}</WebUILink>,
+      icon: <BotMessageSquare style={{ color: token.colorPrimary }} />,
+      key: 'ai-agent',
+    },
+    {
+      label: <WebUILink to="/chat">{t('webui.menu.Chat')}</WebUILink>,
+      icon: <MessageOutlined style={{ color: token.colorPrimary }} />,
+      key: 'chat',
+    },
     {
       label: <WebUILink to="/import">{t('webui.menu.Import&Run')}</WebUILink>,
       icon: <PlayIcon style={{ color: token.colorPrimary }} />,
       key: 'import',
     },
     {
-      label: <WebUILink to="/data">{t('webui.menu.Data&Storage')}</WebUILink>,
+      label: <WebUILink to="/data">{t('webui.menu.Data')}</WebUILink>,
       icon: <CloudUploadOutlined style={{ color: token.colorPrimary }} />,
       key: 'data',
     },
@@ -263,7 +283,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             height: themeConfig?.logo?.size?.height || 24,
             cursor: 'pointer',
           }}
-          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
+          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/start')}
         />
       }
       theme={currentSiderTheme}
@@ -283,7 +303,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             height: themeConfig?.logo.sizeCollapsed?.height ?? 24,
             cursor: 'pointer',
           }}
-          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
+          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/start')}
         />
       }
       logoTitle={themeConfig?.logo?.logoTitle || siteDescription || 'WebUI'}
@@ -315,7 +335,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
         <BAIMenu
           collapsed={props.collapsed}
           selectedKeys={[
-            location.pathname.split('/')[1] || 'summary',
+            location.pathname.split('/')[1] || 'start',
             // TODO: After matching first path of 'storage-settings' and 'agent', remove this code
             location.pathname.split('/')[1] === 'storage-settings'
               ? 'agent'
@@ -337,7 +357,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             <BAIMenu
               collapsed={props.collapsed}
               selectedKeys={[
-                location.pathname.split('/')[1] || 'summary',
+                location.pathname.split('/')[1] || 'start',
                 // TODO: After matching first path of 'storage-settings' and 'agent', remove this code
                 location.pathname.split('/')[1] === 'storage-settings'
                   ? 'agent'
@@ -502,9 +522,9 @@ const WebUISiderWithCustomTheme: React.FC<WebUISiderProps> = (props) => {
     (!isParentDark && themeConfig?.sider?.theme === 'dark');
 
   return shouldReverse ? (
-    <ReverseThemeProvider>
+    <ThemeReverseProvider>
       <WebUISider {...props} />
-    </ReverseThemeProvider>
+    </ThemeReverseProvider>
   ) : (
     <WebUISider {...props} />
   );

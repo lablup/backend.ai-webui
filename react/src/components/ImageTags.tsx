@@ -170,7 +170,7 @@ export const ImageTags: React.FC<ImageTagsProps> = ({
   const [, { getTags, tagAlias }] = useBackendAIImageMetaData();
   const tags = getTags(tag, labels);
   return (
-    <Flex direction="row" align="start">
+    <>
       {_.map(tags, (tag: { key: string; value: string }, index) => {
         const isCustomized = tag.key === 'Customized';
         const aliasedTag = tagAlias(tag.key + tag.value);
@@ -200,6 +200,6 @@ export const ImageTags: React.FC<ImageTagsProps> = ({
           </Tag>
         );
       })}
-    </Flex>
+    </>
   );
 };

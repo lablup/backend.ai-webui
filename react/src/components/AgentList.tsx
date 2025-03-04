@@ -15,6 +15,7 @@ import AgentSettingModal from './AgentSettingModal';
 import BAIIntervalView from './BAIIntervalView';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import BAIPropertyFilter from './BAIPropertyFilter';
+import BAIRadioGroup from './BAIRadioGroup';
 import DoubleTag from './DoubleTag';
 import Flex from './Flex';
 import { ResourceTypeIcon } from './ResourceNumber';
@@ -36,7 +37,6 @@ import {
 import { useToggle } from 'ahooks';
 import {
   Button,
-  Segmented,
   Table,
   TableProps,
   Tag,
@@ -507,7 +507,7 @@ const AgentList: React.FC<AgentListProps> = ({
                   {mergedResourceSlots?.mem?.human_readable_name}
                 </Typography.Text>
                 <BAIProgressWithLabel
-                  percent={liveStat.mem_util.ratio}
+                  percent={liveStat.mem_util.ratio * 100}
                   width={120}
                   valueLabel={
                     convertBinarySizeUnit(
@@ -778,7 +778,7 @@ const AgentList: React.FC<AgentListProps> = ({
           style={{ flex: 1 }}
           wrap="wrap"
         >
-          <Segmented
+          <BAIRadioGroup
             options={[
               {
                 label: t('agent.Connected'),
@@ -792,7 +792,8 @@ const AgentList: React.FC<AgentListProps> = ({
             value={
               isPendingStatusFetch ? optimisticSelectedStatus : selectedStatus
             }
-            onChange={(value) => {
+            onChange={(e) => {
+              const value = e.target.value;
               setOptimisticSelectedStatus(value);
               startStatusFetchTransition(() => {
                 setSelectedStatus(value);

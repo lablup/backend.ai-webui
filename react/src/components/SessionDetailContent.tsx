@@ -11,6 +11,7 @@ import SessionIdleChecks, {
   IdleChecks,
 } from './ComputeSessionNodeItems/SessionIdleChecks';
 import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
+import SessionStatusDetailModal from './ComputeSessionNodeItems/SessionStatusDetailModal';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
 import SessionTypeTag from './ComputeSessionNodeItems/SessionTypeTag';
 import Flex from './Flex';
@@ -20,8 +21,11 @@ import ImageMetaIcon from './ImageMetaIcon';
 import SessionUsageMonitor from './SessionUsageMonitor';
 import { SessionDetailContentLegacyQuery } from './__generated__/SessionDetailContentLegacyQuery.graphql';
 import { SessionDetailContentQuery } from './__generated__/SessionDetailContentQuery.graphql';
-import { FolderOutlined } from '@ant-design/icons';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import {
+  FolderOutlined,
+  InfoCircleOutlined,
+  QuestionCircleOutlined,
+} from '@ant-design/icons';
 import {
   Alert,
   Button,
@@ -52,6 +56,8 @@ const SessionDetailContent: React.FC<{
   const userRole = useCurrentUserRole();
   const baiClient = useSuspendedBackendaiClient();
   const [openIdleCheckDescriptionModal, setOpenIdleCheckDescriptionModal] =
+    useState<boolean>(false);
+  const [openStatusDetailModal, setOpenStatusDetailModal] =
     useState<boolean>(false);
 
   // TODO: remove and refactor this waterfall request after v24.12.0
@@ -89,6 +95,7 @@ const SessionDetailContent: React.FC<{
             user_id
             resource_opts
             status
+            status_data
             vfolder_mounts
             created_at @required(action: NONE)
             terminated_at
@@ -108,6 +115,7 @@ const SessionDetailContent: React.FC<{
             ...SessionUsageMonitorFragment
             ...ContainerCommitModalFragment
             ...SessionIdleChecksNodeFragment
+            ...SessionStatusDetailModalFragment
           }
           legacy_session: compute_session(id: $uuid) {
             image
@@ -157,7 +165,7 @@ const SessionDetailContent: React.FC<{
           showIcon
         />
       )}
-      <Flex direction="column" gap={'sm'}>
+      <Flex direction="column" gap={'sm'} align="stretch">
         <Flex
           direction="row"
           justify="between"
@@ -188,32 +196,51 @@ const SessionDetailContent: React.FC<{
 
         <Descriptions bordered column={md ? 2 : 1}>
           <Descriptions.Item label={t('session.SessionId')} span={md ? 2 : 1}>
-            <Typography.Text copyable style={{ fontFamily: 'monospace' }}>
+            <Typography.Text
+              ellipsis
+              copyable
+              style={{ fontFamily: 'monospace' }}
+            >
               {session.row_id}
             </Typography.Text>
           </Descriptions.Item>
           {(userRole === 'admin' || userRole === 'superadmin') && (
             <Descriptions.Item label={t('credential.UserID')} span={md ? 2 : 1}>
-              {legacy_session?.user_email}
+              <Typography.Text copyable>
+                {legacy_session?.user_email}
+              </Typography.Text>
             </Descriptions.Item>
           )}
           <Descriptions.Item
             label={t('session.Status')}
             contentStyle={{ display: 'flex', gap: token.marginSM }}
           >
-            <SessionStatusTag sessionFrgmt={session} showInfo />
-            {/* <Button type="text" icon={<TriangleAlertIcon />} /> */}
+            <Flex>
+              <SessionStatusTag sessionFrgmt={session} showInfo />
+              {session?.status_data && session?.status_data !== '{}' ? (
+                <Tooltip title={t('button.ClickForMoreDetails')}>
+                  <Button
+                    type="link"
+                    icon={<InfoCircleOutlined />}
+                    onClick={() => {
+                      setOpenStatusDetailModal(true);
+                    }}
+                  />
+                </Tooltip>
+              ) : null}
+            </Flex>
           </Descriptions.Item>
           <Descriptions.Item label={t('session.SessionType')}>
             <SessionTypeTag sessionFrgmt={session} />
           </Descriptions.Item>
           <Descriptions.Item label={t('session.launcher.Environments')}>
             {imageFullName ? (
-              <Flex gap={'sm'}>
-                <ImageMetaIcon image={imageFullName} />
-                <Flex>
-                  <SessionKernelTags image={imageFullName} />
-                </Flex>
+              <Flex gap={['xs', 0]} wrap="wrap">
+                <ImageMetaIcon
+                  image={imageFullName}
+                  style={{ marginRight: token.marginXS }}
+                />
+                <SessionKernelTags image={imageFullName} />
               </Flex>
             ) : (
               '-'
@@ -268,7 +295,7 @@ const SessionDetailContent: React.FC<{
                 <Flex gap="xxs">
                   {t('session.IdleChecks')}
                   <Tooltip title={t('button.ClickForMoreDetails')}>
-                    <InfoCircleOutlined
+                    <QuestionCircleOutlined
                       style={{ cursor: 'pointer' }}
                       onClick={() => setOpenIdleCheckDescriptionModal(true)}
                     />
@@ -302,6 +329,11 @@ const SessionDetailContent: React.FC<{
       <IdleCheckDescriptionModal
         open={openIdleCheckDescriptionModal}
         onCancel={() => setOpenIdleCheckDescriptionModal(false)}
+      />
+      <SessionStatusDetailModal
+        sessionFrgmt={session}
+        open={openStatusDetailModal}
+        onCancel={() => setOpenStatusDetailModal(false)}
       />
     </Flex>
   ) : (

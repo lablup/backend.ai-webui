@@ -1,5 +1,5 @@
+import { BAIBoardItem } from '../components/BAIBoard';
 import { jotaiStore } from '../components/DefaultProviders';
-import { SummaryItem } from '../pages/SummaryPage';
 import { atom, useAtom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 
@@ -14,11 +14,13 @@ interface UserSettings {
   last_window_close_time?: number;
   endpoints?: Array<string>;
   auto_logout?: boolean;
-  summary_items?: Array<Omit<SummaryItem, 'data'>>;
   selected_language?: string;
   classic_session_launcher?: boolean;
   recentSessionHistory?: Array<SessionHistory>;
   experimental_neo_session_list?: boolean;
+  start_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
+  experimental_ai_agents?: boolean;
+  experimental_neo_data_page?: boolean;
   [key: `hiddenColumnKeys.${string}`]: Array<string>;
 }
 

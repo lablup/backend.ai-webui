@@ -1,8 +1,9 @@
 // import { offset_to_cursor } from "../helper";
 import { LazyLoadQueryOptions } from '../helper/types';
+import { useDeferredQueryParams } from './useDeferredQueryParams';
 import { SorterResult } from 'antd/lib/table/interface';
 import _ from 'lodash';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   fetchQuery,
   GraphQLTaggedNode,
@@ -285,6 +286,7 @@ interface BAIPaginationOption {
   // filter?: string;
   // order?: string;
 }
+
 interface AntdBasicPaginationOption {
   pageSize: number;
   current: number;
@@ -293,34 +295,96 @@ interface AntdBasicPaginationOption {
 interface InitialPaginationOption
   extends AntdBasicPaginationOption,
     Omit<BAIPaginationOption, 'limit' | 'offset'> {}
-export const useBAIPaginationOptionState = (
-  initialOptions: InitialPaginationOption,
-): {
+
+interface BAIPaginationOptionState {
   baiPaginationOption: BAIPaginationOption;
   tablePaginationOption: AntdBasicPaginationOption;
   setTablePaginationOption: (
     pagination: Partial<AntdBasicPaginationOption>,
   ) => void;
-} => {
+}
+
+export const useBAIPaginationOptionState = (
+  initialOptions: InitialPaginationOption,
+): BAIPaginationOptionState => {
   const [options, setOptions] =
     useState<AntdBasicPaginationOption>(initialOptions);
+
+  const { pageSize, current } = options;
+  return useMemo<BAIPaginationOptionState>(() => {
+    return {
+      baiPaginationOption: {
+        limit: pageSize,
+        first: pageSize,
+        offset: current > 1 ? (current - 1) * pageSize : 0,
+      },
+      tablePaginationOption: {
+        pageSize: pageSize,
+        current: current,
+      },
+      setTablePaginationOption: (pagination) => {
+        if (
+          !_.isEqual(pagination, {
+            pageSize,
+            current,
+          })
+        ) {
+          setOptions((current) => ({
+            ...current,
+            ...pagination,
+          }));
+        }
+      },
+    };
+  }, [pageSize, current]);
+};
+
+export const useBAIPaginationOptionStateOnSearchParam = (
+  initialOptions: InitialPaginationOption,
+): BAIPaginationOptionState => {
+  const [options, setOptions] = useDeferredQueryParams({
+    current: NumberParam,
+    pageSize: NumberParam,
+  });
+
+  const mergeOptions = _.merge(initialOptions, options);
+
+  const { pageSize, current } = mergeOptions;
+  const memoizedOptions = useMemo<{
+    baiPaginationOption: BAIPaginationOption;
+    tablePaginationOption: AntdBasicPaginationOption;
+  }>(() => {
+    return {
+      baiPaginationOption: {
+        limit: pageSize,
+        first: pageSize,
+        offset: current > 1 ? (current - 1) * pageSize : 0,
+      },
+      tablePaginationOption: {
+        pageSize: pageSize,
+        current: current,
+      },
+    };
+  }, [pageSize, current]);
+
   return {
-    baiPaginationOption: {
-      limit: options.pageSize,
-      first: options.pageSize,
-      offset:
-        options.current > 1 ? (options.current - 1) * options.pageSize : 0,
-    },
-    tablePaginationOption: {
-      pageSize: options.pageSize,
-      current: options.current,
-    },
-    setTablePaginationOption: (pagination) => {
-      if (!_.isEqual(pagination, options)) {
-        setOptions((current) => ({
-          ...current,
-          ...pagination,
-        }));
+    ...memoizedOptions,
+    setTablePaginationOption: (
+      pagination: Partial<AntdBasicPaginationOption>,
+    ) => {
+      if (
+        !_.isEqual(pagination, {
+          pageSize,
+          current,
+        })
+      ) {
+        setOptions(
+          (current) => ({
+            ...current,
+            ...pagination,
+          }),
+          'replaceIn',
+        );
       }
     },
   };

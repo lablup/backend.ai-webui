@@ -41,7 +41,6 @@ const BAIMenu: React.FC<BAIMenuProps> = ({ collapsed, ...props }) => {
             itemHeight: 40,
             itemBorderRadius: 20,
             itemMarginInline: token.margin,
-            itemMarginBlock: 0,
             itemSelectedBg: colorPrimaryWithAlpha,
             fontSize: token.fontSizeLG,
           },

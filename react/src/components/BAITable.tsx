@@ -1,6 +1,6 @@
 import { useThemeMode } from '../hooks/useThemeMode';
 import { useDebounce } from 'ahooks';
-import { ConfigProvider, GetProps, Table } from 'antd';
+import { ConfigProvider, GetProps, Table, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import { ColumnsType, ColumnType } from 'antd/es/table';
 import { TableProps } from 'antd/lib';
@@ -99,7 +99,7 @@ const ResizableTitle = (
   );
 };
 
-interface BAITableProps<RecordType extends object = any>
+export interface BAITableProps<RecordType extends object = any>
   extends TableProps<RecordType> {
   resizable?: boolean;
   neoStyle?: boolean;
@@ -120,9 +120,11 @@ const BAITable = <RecordType extends object = any>({
   columns,
   components,
   neoStyle,
+  loading,
   ...tableProps
 }: BAITableProps<RecordType>) => {
   const { styles } = useStyles();
+  const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
   const [resizedColumnWidths, setResizedColumnWidths] = useState<
     Record<string, number>
@@ -162,6 +164,8 @@ const BAITable = <RecordType extends object = any>({
             !isDarkMode && neoStyle
               ? {
                   headerBg: '#E3E3E3',
+                  headerSplitColor: token.colorTextQuaternary,
+                  // headerSplitColor: token.colorTextQuaternary
                 }
               : undefined,
         },
@@ -174,6 +178,10 @@ const BAITable = <RecordType extends object = any>({
           resizable && styles.resizableTable,
           neoStyle && styles.neoHeader,
         )}
+        style={{
+          opacity: loading ? 0.7 : 1,
+          transition: 'opacity 0.3s ease',
+        }}
         components={
           resizable
             ? _.merge(components || {}, {

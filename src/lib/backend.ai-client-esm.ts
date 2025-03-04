@@ -273,7 +273,7 @@ class Client {
     this.abortController = new AbortController();
     this.abortSignal = this.abortController.signal;
     this.requestTimeout = 30_000;
-    this.requestSoftTimeout = 15_000;
+    this.requestSoftTimeout = 20_000;
     if (localStorage.getItem('backendaiwebui.sessionid')) {
       this._loginSessionId = localStorage.getItem('backendaiwebui.sessionid');
     } else {
@@ -2283,10 +2283,11 @@ class VFolder {
    * Rename a Virtual folder.
    *
    * @param {string} new_name - New virtual folder name.
+   * @param {string} vfolder_id - Virtual folder id.
    */
-  async rename(new_name = null): Promise<any> {
+  async rename(new_name = null, vfolder_id = null): Promise<any> {
     const body = { new_name };
-    const vfolder = this.client.supports('vfolder-id-based') ? this.id : this.name;
+    const vfolder = vfolder_id ? vfolder_id : this.client.supports('vfolder-id-based') ? this.id : this.name;
     let rqst = this.client.newSignedRequest(
       'POST',
       `${this.urlPrefix}/${vfolder}/rename`,
