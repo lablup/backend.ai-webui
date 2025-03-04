@@ -756,7 +756,7 @@ class Client {
     if (this.isManagerVersionCompatibleWith(['25.1.0', '24.09.6', '24.03.12'])) {
       this._features['vfolder-id-based'] = true;
     }
-    if (this.isManagerVersionCompatibleWith(['25.1.1', '24.09.6'])) {
+    if (this.isManagerVersionCompatibleWith(['25.3.0', '24.09.8'])) {
       this._features['vfolder-mounts'] = true;
     }
   }
