@@ -1,10 +1,12 @@
 import { toGlobalId } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import BAISelect from './BAISelect';
 import Flex from './Flex';
+import { LegacyFolderExplorerPermissionRefreshQuery } from './__generated__/LegacyFolderExplorerPermissionRefreshQuery.graphql';
 import { LegacyFolderExplorerQuery } from './__generated__/LegacyFolderExplorerQuery.graphql';
 import { LegacyFolderExplorerVFolderFragment$key } from './__generated__/LegacyFolderExplorerVFolderFragment.graphql';
 import { LegacyFolderExplorerVFolderNodeFragment$key } from './__generated__/LegacyFolderExplorerVFolderNodeFragment.graphql';
@@ -29,7 +31,12 @@ import { createStyles } from 'antd-style';
 import graphql from 'babel-plugin-relay/macro';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery, useFragment } from 'react-relay';
+import {
+  useLazyLoadQuery,
+  useFragment,
+  fetchQuery,
+  useRelayEnvironment,
+} from 'react-relay';
 
 const useStyles = createStyles(({ token, css }) => ({
   baiModalHeader: css`
@@ -55,6 +62,7 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
   const { styles } = useStyles();
   const { lg } = Grid.useBreakpoint();
   const { message } = App.useApp();
+  const [currentUser] = useCurrentUserInfo();
 
   const [isWritable, setIsWritable] = useState<boolean>(false);
   const [isSelected, setIsSelected] = useState<boolean>(false);
@@ -63,6 +71,7 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
   const folderExplorerRef = useRef<HTMLDivElement>(null);
   const baiClient = useSuspendedBackendaiClient();
   const painKiller = usePainKiller();
+  const relayEnv = useRelayEnvironment();
 
   // ensure the client is connected
   useSuspendedBackendaiClient();
@@ -102,6 +111,7 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
         }
         vfolder_node(id: $vfolderUUID) @since(version: "24.03.4") {
           id
+          user
           permission
           ...LegacyFolderExplorerVFolderNodeFragment
         }
@@ -178,28 +188,53 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
             >
               {lg && t('data.explorer.RunSSH/SFTPserver')}
             </Button>
-            <BAISelect
-              tooltip={t('data.folders.MountPermission')}
-              defaultValue={vfolder_node?.permission || vfolder?.permission}
-              options={[
-                { value: 'ro', label: t('data.ReadOnly') },
-                { value: 'rw', label: t('data.ReadWrite') },
-              ]}
-              onChange={(value) => {
-                updateMutation.mutate(
-                  { permission: value, id: vfolderID },
-                  {
-                    onSuccess: () => {
-                      message.success(t('data.permission.PermissionModified'));
+            {vfolder_node?.user === currentUser.uuid && (
+              <BAISelect
+                tooltip={t('data.folders.MountPermission')}
+                defaultValue={vfolder_node?.permission || vfolder?.permission}
+                options={[
+                  { value: 'ro', label: t('data.ReadOnly') },
+                  { value: 'rw', label: t('data.ReadWrite') },
+                ]}
+                onChange={(value) => {
+                  updateMutation.mutate(
+                    { permission: value, id: vfolderID },
+                    {
+                      onSuccess: () => {
+                        message.success(
+                          t('data.permission.PermissionModified'),
+                        );
+                        document.dispatchEvent(
+                          new CustomEvent('backend-ai-folder-updated'),
+                        );
+
+                        // To update GraphQL relay node
+                        fetchQuery<LegacyFolderExplorerPermissionRefreshQuery>(
+                          relayEnv,
+                          graphql`
+                            query LegacyFolderExplorerPermissionRefreshQuery(
+                              $id: String!
+                            ) {
+                              vfolder_node(id: $id) {
+                                permission
+                                permissions
+                              }
+                            }
+                          `,
+                          {
+                            id: vfolder_node.id,
+                          },
+                        ).toPromise();
+                      },
+                      onError: (error) => {
+                        message.error(painKiller.relieve(error?.message));
+                      },
                     },
-                    onError: (error) => {
-                      message.error(painKiller.relieve(error?.message));
-                    },
-                  },
-                );
-              }}
-              popupMatchSelectWidth={false}
-            />
+                  );
+                }}
+                popupMatchSelectWidth={false}
+              />
+            )}
           </Flex>
         </Flex>
       }
