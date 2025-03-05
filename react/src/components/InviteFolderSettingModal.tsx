@@ -2,10 +2,9 @@ import { localeCompare, useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import { usePainKiller } from '../hooks/usePainKiller';
-import TrashBinIcon from './BAIIcons/TrashBinIcon';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import {
   App,
   Button,
@@ -13,6 +12,7 @@ import {
   Form,
   FormInstance,
   Input,
+  Popconfirm,
   Select,
   Table,
   Tooltip,
@@ -262,7 +262,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
                   dataIndex: 'perm',
                   render: (perm, record) => {
                     return (
-                      <Flex gap="sm">
+                      <Flex gap="xxs">
                         <Select
                           style={{ minWidth: 130 }}
                           options={[
@@ -274,22 +274,32 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
                             handlePermission(record.shared_to.uuid, perm);
                           }}
                         />
-                        <Tooltip
-                          title={t('data.folders.KickOut')}
-                          placement="right"
+                        <Popconfirm
+                          title={t('data.folders.KickOutConfirm', {
+                            email: record.shared_to.email,
+                          })}
+                          okText={t('button.Confirm')}
+                          okButtonProps={{
+                            danger: true,
+                          }}
+                          onConfirm={() => {
+                            handlePermission(record.shared_to.uuid);
+                          }}
                         >
-                          <Button
-                            type="text"
-                            style={{
-                              color: token.colorError,
-                              background: token.colorErrorBg,
-                            }}
-                            icon={<TrashBinIcon />}
-                            onClick={() => {
-                              handlePermission(record.shared_to.uuid);
-                            }}
-                          />
-                        </Tooltip>
+                          <Tooltip
+                            title={t('data.folders.KickOut')}
+                            placement="right"
+                            trigger={['hover', 'click']}
+                          >
+                            <Button
+                              type="text"
+                              style={{
+                                color: token.colorError,
+                              }}
+                              icon={<CloseCircleOutlined />}
+                            />
+                          </Tooltip>
+                        </Popconfirm>
                       </Flex>
                     );
                   },
