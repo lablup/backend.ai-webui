@@ -74,22 +74,30 @@ const Children = () => {
             justify="between"
             style={{ alignSelf: 'stretch' }}
           >
-            <Button
-              size="large"
-              onClick={() => {
-                const event: CustomEvent = new CustomEvent(
-                  'backend-ai-logout',
-                  {
-                    detail: {
-                      callbackURL: `${pathname}${search}`,
-                    },
-                  },
-                );
-                document.dispatchEvent(event);
-              }}
-            >
-              {t('interactiveLogin.UseAnotherAccount')}
-            </Button>
+            {
+              // @ts-ignore
+              globalThis?.backendaiclient?._config
+                ?.enableInteractiveLoginAccountSwitch ? (
+                <Button
+                  size="large"
+                  onClick={() => {
+                    const event: CustomEvent = new CustomEvent(
+                      'backend-ai-logout',
+                      {
+                        detail: {
+                          callbackURL: `${pathname}${search}`,
+                        },
+                      },
+                    );
+                    document.dispatchEvent(event);
+                  }}
+                >
+                  {t('interactiveLogin.UseAnotherAccount')}
+                </Button>
+              ) : (
+                <div></div>
+              )
+            }
             <Button
               size="large"
               type="primary"
