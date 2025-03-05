@@ -429,13 +429,10 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     },
     {
       label: t('session.launcher.ModelStorage'),
-      children: (
+      children: endpoint?.model ? (
         <Suspense fallback={<Spin indicator={<LoadingOutlined spin />} />}>
           <Flex direction="column" align="start">
-            <VFolderLazyView
-              uuid={endpoint?.model as string}
-              clickable={true}
-            />
+            <VFolderLazyView uuid={endpoint?.model} clickable={true} />
             {baiClient.supports('endpoint-extra-mounts') &&
               endpoint?.model_mount_destination && (
                 <Flex direction="row" align="center" gap={'xxs'}>
@@ -447,7 +444,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               )}
           </Flex>
         </Suspense>
-      ),
+      ) : null,
     },
   ];
 
