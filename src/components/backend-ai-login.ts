@@ -145,7 +145,6 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Boolean }) enableImportFromHuggingFace = false;
   @property({ type: Boolean }) enableExtendLoginSession = false;
   @property({ type: Boolean }) showNonInstalledImages = false;
-  @property({ type: Boolean }) showKernelList = false;
   @property({ type: String }) eduAppNamePrefix;
   @property({ type: String }) pluginPages;
   @property({ type: Array }) blockList = [] as string[];
@@ -881,12 +880,6 @@ export default class BackendAILogin extends BackendAIPage {
         value: generalConfig?.enableExtendLoginSession,
       } as ConfigValueObject,
     ) as boolean;
-
-    this.showKernelList = this._getConfigValueByExists(generalConfig, {
-      valueType: 'boolean',
-      defaultValue: false,
-      value: generalConfig?.showKernelList,
-    } as ConfigValueObject) as boolean;
   }
 
   /**
@@ -1923,7 +1916,6 @@ export default class BackendAILogin extends BackendAIPage {
           this.enableImportFromHuggingFace;
         globalThis.backendaiclient._config.enableExtendLoginSession =
           this.enableExtendLoginSession;
-        globalThis.backendaiclient._config.showKernelList = this.showKernelList;
         globalThis.backendaiclient._config.pluginPages = this.pluginPages;
         globalThis.backendaiclient._config.blockList = this.blockList;
         globalThis.backendaiclient._config.inactiveList = this.inactiveList;
