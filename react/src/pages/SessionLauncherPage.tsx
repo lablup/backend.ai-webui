@@ -143,8 +143,8 @@ interface SessionLauncherValue {
   envvars: EnvVarFormListValue[];
   hpcOptimization: {
     autoEnabled: boolean;
-    OMP_NUM_THREADS: string;
-    OPENBLAS_NUM_THREADS: string;
+    OMP_NUM_THREADS?: string;
+    OPENBLAS_NUM_THREADS?: string;
   };
   bootstrap_script?: string;
 }
@@ -200,8 +200,6 @@ const SessionLauncherPage = () => {
       allocationPreset: 'auto-select',
       hpcOptimization: {
         autoEnabled: true,
-        OMP_NUM_THREADS: '1',
-        OPENBLAS_NUM_THREADS: '1',
       },
       batch: {
         enabled: false,
@@ -506,7 +504,9 @@ const SessionLauncherPage = () => {
             env: {
               ..._.fromPairs(values.envvars.map((v) => [v.variable, v.value])),
               // set hpcOptimization options: "OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS"
-              ..._.omit(values.hpcOptimization, 'autoEnabled'),
+              ...(values.hpcOptimization.autoEnabled
+                ? {}
+                : _.omit(values.hpcOptimization, 'autoEnabled')),
             },
             preopen_ports: transformPortValuesToNumbers(values.ports),
             ...(baiClient.supports('agent-select') &&
@@ -1255,11 +1255,21 @@ const SessionLauncherPage = () => {
                           unCheckedChildren={'OFF'}
                           onChange={(checked) => {
                             if (checked) {
-                              form.setFieldsValue(
-                                _.pick(INITIAL_FORM_VALUES, [
-                                  'hpcOptimization',
-                                ]),
-                              );
+                              form.setFieldsValue({
+                                hpcOptimization: {
+                                  autoEnabled: true,
+                                  OMP_NUM_THREADS: undefined,
+                                  OPENBLAS_NUM_THREADS: undefined,
+                                },
+                              });
+                            } else {
+                              form.setFieldsValue({
+                                hpcOptimization: {
+                                  autoEnabled: false,
+                                  OMP_NUM_THREADS: '1',
+                                  OPENBLAS_NUM_THREADS: '1',
+                                },
+                              });
                             }
                           }}
                         />
@@ -1306,7 +1316,7 @@ const SessionLauncherPage = () => {
                               required
                             >
                               <InputNumber
-                                min={0}
+                                min={1}
                                 max={1000}
                                 step={1}
                                 stringMode
@@ -1332,7 +1342,7 @@ const SessionLauncherPage = () => {
                               required
                             >
                               <InputNumber
-                                min={0}
+                                min={1}
                                 max={1000}
                                 step={1}
                                 stringMode
