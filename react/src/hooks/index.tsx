@@ -444,6 +444,7 @@ type BackendAIConfig = {
   enableLLMPlayground: boolean;
   enableImportFromHuggingFace: boolean;
   enableContainerCommit: boolean;
+  enableModelFolders: boolean;
   appDownloadUrl: string;
   systemSSHImage: string;
   fasttrackEndpoint: string;
