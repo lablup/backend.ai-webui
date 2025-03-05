@@ -2,9 +2,9 @@ import { convertBinarySizeUnit, SizeUnit } from '../helper';
 import { useThemeMode } from '../hooks/useThemeMode';
 import useUserStats, { Period, UsageHistoryKey } from '../hooks/useUserStats';
 import Flex from './Flex';
+import InfoIconWithTooltip from './InfoIconWithTooltip';
 import { Column, ColumnConfig } from '@ant-design/charts';
-import { InfoCircleOutlined } from '@ant-design/icons';
-import { Button, Card, theme, Tooltip } from 'antd';
+import { Card, theme } from 'antd';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 
@@ -29,15 +29,14 @@ const GraphContainer = ({
   tooltipText,
   height = 200,
 }: GraphContainerProps) => {
+  const { token } = theme.useToken();
   return (
     <Card
       type="inner"
       title={
-        <Flex>
+        <Flex gap={'xxs'}>
           {title}
-          <Tooltip title={tooltipText}>
-            <Button type="link" size="middle" icon={<InfoCircleOutlined />} />
-          </Tooltip>
+          <InfoIconWithTooltip title={tooltipText} />
         </Flex>
       }
       style={{ width: '100%' }}
@@ -159,7 +158,7 @@ const UsageHistoryStatistics = ({ period }: UsageHistoryStatisticsProps) => {
             title={title}
             tooltipText={desc[key as UsageHistoryKey] ?? ''}
             config={columnConfig(data, period as Period, unit, isDarkMode)}
-          />
+          ></GraphContainer>
         );
       })}
     </Flex>

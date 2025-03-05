@@ -1581,7 +1581,7 @@
     "SelectPeriod": "Period",
     "SessionsDesc": "The number of compute sessions created.",
     "UsageHistory": "Usage History",
-    "UsageHistoryDesc": "On the Usage History tab, you can check simple statistics related to the use of compute sessions via a graph. You can check the usage history statistics for a day or a week by selecting the usage period from the select period menu on the upper right.",
+    "UsageHistoryDesc": "On the Usage History page, you can check simple statistics related to the use of compute sessions via a graph. You can check the usage history statistics for a day or a week by selecting the usage period from the select period menu on the upper right.",
     "UsageHistoryNote": "The usage history shown here are based on terminated compute sessions.",
     "UsageHistoryNoteUnder7Days": "Also, one week usage history may not be shown for the users whose account is created no longer than a week."
   },

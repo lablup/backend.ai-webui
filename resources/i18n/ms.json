@@ -1572,7 +1572,7 @@
     "SelectPeriod": "Tempoh",
     "SessionsDesc": "Bilangan sesi pengiraan yang dibuat.",
     "UsageHistory": "Sejarah Penggunaan",
-    "UsageHistoryDesc": "Pada tab Sejarah Penggunaan, anda boleh menyemak statistik mudah yang berkaitan dengan penggunaan sesi pengiraan melalui graf. \nAnda boleh menyemak statistik sejarah penggunaan selama sehari atau seminggu dengan memilih tempoh penggunaan dari menu Tempoh Pilih di sebelah kanan atas.",
+    "UsageHistoryDesc": "Pada halaman sejarah penggunaan, anda boleh menyemak statistik mudah yang berkaitan dengan penggunaan sesi pengiraan melalui graf. \nAnda boleh menyemak statistik sejarah penggunaan selama sehari atau seminggu dengan memilih tempoh penggunaan dari menu Tempoh Pilih di sebelah kanan atas.",
     "UsageHistoryNote": "Sejarah penggunaan yang ditunjukkan di sini adalah berdasarkan sesi pengiraan yang ditamatkan.",
     "UsageHistoryNoteUnder7Days": "Juga, sejarah penggunaan satu minggu tidak boleh ditunjukkan untuk pengguna yang akaunnya dibuat tidak lebih dari seminggu."
   },

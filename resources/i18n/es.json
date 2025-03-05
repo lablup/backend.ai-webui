@@ -1574,7 +1574,7 @@
     "SelectPeriod": "Período",
     "SessionsDesc": "Número de sesiones de cálculo creadas.",
     "UsageHistory": "Historial de uso",
-    "UsageHistoryDesc": "En la pestaña Historial de uso, puede verificar estadísticas simples relacionadas con el uso de sesiones de cómputo a través de un gráfico. \nPuede verificar las estadísticas del historial de uso durante un día o una semana seleccionando el período de uso del menú Seleccionar Período en la parte superior derecha.",
+    "UsageHistoryDesc": "En la página Historial de uso, puede consultar estadísticas sencillas relacionadas con el uso de las sesiones de cálculo a través de un gráfico. Puede consultar las estadísticas del historial de uso de un día o de una semana seleccionando el periodo de uso en el menú de selección de periodos situado en la parte superior derecha.",
     "UsageHistoryNote": "El historial de uso que se muestra aquí se basa en sesiones de cómputo terminadas.",
     "UsageHistoryNoteUnder7Days": "Además, no se puede mostrar el historial de uso de una semana para los usuarios cuya cuenta se crea no más de una semana."
   },

@@ -1573,7 +1573,7 @@
     "SelectPeriod": "Dönem",
     "SessionsDesc": "Oluşturulan hesaplama oturumlarının sayısı.",
     "UsageHistory": "Kullanım Geçmişi",
-    "UsageHistoryDesc": "Kullanım Geçmişi sekmesinde, bir grafik üzerinden hesaplama oturumlarının kullanımı ile ilgili basit istatistikleri kontrol edebilirsiniz. \nKullanım geçmişi istatistiklerini, sağ üstteki Seçim Menüsü'nden kullanım süresini seçerek bir gün veya bir hafta boyunca kontrol edebilirsiniz.",
+    "UsageHistoryDesc": "Kullanım Geçmişi sayfasında, hesaplama oturumlarının kullanımıyla ilgili basit istatistikleri bir grafik aracılığıyla kontrol edebilirsiniz. Sağ üstteki dönem seç menüsünden kullanım dönemini seçerek bir gün veya bir hafta için kullanım geçmişi istatistiklerini kontrol edebilirsiniz.",
     "UsageHistoryNote": "Burada gösterilen kullanım geçmişi, sonlandırılmış hesaplama oturumlarına dayanmaktadır.",
     "UsageHistoryNoteUnder7Days": "Ayrıca, hesabı bir haftadan fazla oluşturulan kullanıcılar için bir haftalık kullanım geçmişi gösterilmeyebilir."
   },

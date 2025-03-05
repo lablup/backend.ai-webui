@@ -1574,7 +1574,7 @@
     "SelectPeriod": "Giai đoạn",
     "SessionsDesc": "Số lượng phiên điện toán được tạo.",
     "UsageHistory": "Lịch sử sử dụng",
-    "UsageHistoryDesc": "Trên tab Lịch sử sử dụng, bạn có thể kiểm tra các số liệu thống kê đơn giản liên quan đến việc sử dụng các phiên tính toán thông qua biểu đồ. \nBạn có thể kiểm tra số liệu thống kê lịch sử sử dụng trong một ngày hoặc một tuần bằng cách chọn thời gian sử dụng từ menu thời gian chọn ở phía trên bên phải.",
+    "UsageHistoryDesc": "Trên trang Lịch sử sử dụng, bạn có thể kiểm tra các số liệu thống kê đơn giản liên quan đến việc sử dụng các phiên tính toán thông qua biểu đồ. \nBạn có thể kiểm tra số liệu thống kê lịch sử sử dụng trong một ngày hoặc một tuần bằng cách chọn thời gian sử dụng từ menu thời gian chọn ở phía trên bên phải.",
     "UsageHistoryNote": "Lịch sử sử dụng được hiển thị ở đây dựa trên các phiên tính toán chấm dứt.",
     "UsageHistoryNoteUnder7Days": "Ngoài ra, lịch sử sử dụng một tuần có thể không được hiển thị cho người dùng có tài khoản được tạo không lâu hơn một tuần."
   },
