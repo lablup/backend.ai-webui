@@ -68,7 +68,7 @@ const ComputeSessionListPage = () => {
   });
 
   const [queryParams, setQuery] = useDeferredQueryParams({
-    order: StringParam,
+    order: withDefault(StringParam, '-created_at'),
     filter: StringParam,
     type: withDefault(StringParam, 'all'),
     statusCategory: withDefault(StringParam, 'running'),
