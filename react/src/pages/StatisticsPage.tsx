@@ -1,9 +1,11 @@
 import BAICard from '../components/BAICard';
+import Flex from '../components/Flex';
 import UsageHistoryStatistics from '../components/UsageHistoryStatistics';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { Period } from '../hooks/useUserStats';
-import { Alert, Select, theme } from 'antd';
+import { InfoCircleOutlined } from '@ant-design/icons';
+import { Alert, Button, Select, theme, Tooltip } from 'antd';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
@@ -64,7 +66,14 @@ const StatisticsLayout = ({
   return (
     <BAICard
       activeTabKey="usageHistory"
-      title={t('statistics.UsageHistory')}
+      title={
+        <Flex>
+          {t('statistics.UsageHistory')}
+          <Tooltip title={t('statistics.UsageHistoryDesc')}>
+            <Button type="link" size="large" icon={<InfoCircleOutlined />} />
+          </Tooltip>
+        </Flex>
+      }
       styles={{ body: { padding: 0 } }}
       extra={
         <Select

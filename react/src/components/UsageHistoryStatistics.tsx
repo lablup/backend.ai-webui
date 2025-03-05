@@ -5,9 +5,11 @@ import useUserStats, {
   UsageHistoryKey,
 } from '../hooks/useUserStats';
 import Flex from './Flex';
-import { Column, ColumnConfig, Line, LineConfig } from '@ant-design/charts';
-import { Card, theme } from 'antd';
+import { Column, ColumnConfig } from '@ant-design/charts';
+import { InfoCircleOutlined } from '@ant-design/icons';
+import { Button, Card, theme, Tooltip } from 'antd';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 type UsageHistoryTitle =
   | 'Sessions'
@@ -18,57 +20,33 @@ type UsageHistoryTitle =
   | 'IO-Write';
 interface GraphContainerProps {
   title: UsageHistoryTitle;
-  graph: 'line' | 'column';
-  config: LineConfig | ColumnConfig;
+  config: ColumnConfig;
+  tooltipText: string;
   height?: number;
 }
 const GraphContainer = ({
   title,
-  graph,
   config,
+  tooltipText,
   height = 200,
 }: GraphContainerProps) => {
   return (
-    <Card type="inner" title={title} style={{ width: '100%' }}>
-      {graph === 'line' ? (
-        <Line height={height} {...(config as LineConfig)} />
-      ) : (
-        <Column height={height} {...(config as ColumnConfig)} />
-      )}
+    <Card
+      type="inner"
+      title={
+        <Flex>
+          {title}
+          <Tooltip title={tooltipText}>
+            <Button type="link" size="middle" icon={<InfoCircleOutlined />} />
+          </Tooltip>
+        </Flex>
+      }
+      style={{ width: '100%' }}
+    >
+      <Column height={height} {...(config as ColumnConfig)} />
     </Card>
   );
 };
-
-const lineConfig = (
-  data: any,
-  period: Period,
-  unitHint: UnitHint,
-  isDarkMode: boolean,
-): LineConfig => ({
-  data,
-  xField: 'date',
-  yField: 'value',
-  point: {},
-  interaction: {
-    tooltip: {
-      marker: false,
-    },
-  },
-  style: {
-    lineWidth: 2,
-  },
-  axis: {
-    x: {
-      labelAutoHide: true,
-      tickFilter: (_: any, index: any) =>
-        index % (period === '1D' ? 12 : 48) === 0,
-    },
-    y: {
-      title: unitHint,
-    },
-  },
-  theme: isDarkMode ? 'dark' : 'light',
-});
 
 const columnConfig = (
   data: any,
@@ -107,38 +85,31 @@ const byteConverter = {
 
 const keys: Partial<{
   [key in UsageHistoryKey]: {
-    type: 'line' | 'column';
     unitHint: UnitHint;
     title: UsageHistoryTitle;
   };
 }> = {
   num_sessions: {
-    type: 'column',
     unitHint: 'count',
     title: 'Sessions',
   },
   cpu_allocated: {
-    type: 'column',
     unitHint: 'count',
     title: 'CPU',
   },
   mem_allocated: {
-    type: 'line',
     unitHint: 'MB',
     title: 'Memory',
   },
   gpu_allocated: {
-    type: 'line',
     unitHint: 'count',
     title: 'GPU',
   },
   io_read_bytes: {
-    type: 'line',
     unitHint: 'MB',
     title: 'IO-Read',
   },
   io_write_bytes: {
-    type: 'line',
     unitHint: 'MB',
     title: 'IO-Write',
   },
@@ -159,6 +130,18 @@ const UsageHistoryStatistics = ({ period }: UsageHistoryStatisticsProps) => {
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
   const { data: userStats } = useUserStats(usageHistoryKeys, period as Period);
+  const { t } = useTranslation();
+
+  const desc: Partial<{
+    [key in UsageHistoryKey]: string;
+  }> = {
+    num_sessions: t('statistics.SessionsDesc'),
+    cpu_allocated: t('statistics.CPUDesc'),
+    mem_allocated: t('statistics.MemoryDesc'),
+    gpu_allocated: t('statistics.GPUDesc'),
+    io_read_bytes: t('statistics.IOReadDesc'),
+    io_write_bytes: t('statistics.IOWriteDesc'),
+  };
   return (
     <Flex
       direction="column"
@@ -168,7 +151,7 @@ const UsageHistoryStatistics = ({ period }: UsageHistoryStatisticsProps) => {
       align="start"
       gap="md"
     >
-      {Object.entries(keys).map(([key, { type, unitHint, title }]) => {
+      {Object.entries(keys).map(([key, { unitHint, title }]) => {
         const data = userStats.map((d) => {
           return {
             date: format(d.date.toString(), 'MMM dd HH:mm'),
@@ -180,12 +163,8 @@ const UsageHistoryStatistics = ({ period }: UsageHistoryStatisticsProps) => {
           <GraphContainer
             key={key}
             title={title}
-            graph={type}
-            config={
-              type === 'line'
-                ? lineConfig(data, period as Period, unitHint, isDarkMode)
-                : columnConfig(data, period as Period, unitHint, isDarkMode)
-            }
+            tooltipText={desc[key as UsageHistoryKey] ?? ''}
+            config={columnConfig(data, period as Period, unitHint, isDarkMode)}
           />
         );
       })}
