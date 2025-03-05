@@ -1568,10 +1568,10 @@
     "IOReadDesc": "Esta quantidade de dados lidos da sessão de computação. (A quantidade de dados lidos de dispositivos montados externamente, como pastas de dados, não está incluída).",
     "IOWriteDesc": "A quantidade de dados gravados a partir da sessão de computação. (A quantidade de gravação de dados de dispositivos montados externamente, como pastas de dados, não está incluída).",
     "MemoryDesc": "A quantidade de memória atribuída às sessões de computação.",
-    "SelectPeriod": "Selecione o período",
+    "SelectPeriod": "Período",
     "SessionsDesc": "O número de sessões de computação criadas.",
     "UsageHistory": "Histórico de utilização",
-    "UsageHistoryDesc": "No separador Histórico de utilização, pode verificar estatísticas simples relacionadas com a utilização de sessões de computação através de um gráfico. Pode verificar as estatísticas do histórico de utilização para um dia ou uma semana, seleccionando o período de utilização no menu de seleção de período no canto superior esquerdo. Os itens exibidos são os seguintes.",
+    "UsageHistoryDesc": "Na guia Histórico de uso, você pode verificar estatísticas simples relacionadas ao uso de sessões de computação por meio de um gráfico. \nVocê pode verificar as estatísticas do histórico de uso por um dia ou uma semana selecionando o período de uso no menu de período de seleção no canto superior direito.",
     "UsageHistoryNote": "O histórico de uso mostrado aqui é baseado em sessões de computação encerradas.",
     "UsageHistoryNoteUnder7Days": "Além disso, o histórico de uso de uma semana não pode ser mostrado para os usuários cuja conta é criada não mais de uma semana."
   },

@@ -1568,10 +1568,10 @@
     "IOReadDesc": "Cette quantité de données lues à partir de la session de calcul. (La quantité de données lues à partir de périphériques montés en externe, tels que des dossiers de données, n'est pas incluse).",
     "IOWriteDesc": "La quantité de données écrites par la session de calcul. (La quantité de données écrites à partir de périphériques montés en externe, tels que des dossiers de données, n'est pas incluse).",
     "MemoryDesc": "La quantité de mémoire allouée aux sessions de calcul.",
-    "SelectPeriod": "Sélectionnez la période",
+    "SelectPeriod": "Période",
     "SessionsDesc": "Le nombre de sessions de calcul créées.",
     "UsageHistory": "Usage Historique",
-    "UsageHistoryDesc": "Dans l'onglet Historique d'utilisation, vous pouvez consulter des statistiques simples liées à l'utilisation des sessions de calcul à l'aide d'un graphique. Vous pouvez vérifier les statistiques de l'historique d'utilisation pour un jour ou une semaine en sélectionnant la période d'utilisation dans le menu de sélection de la période en haut à gauche. Les éléments affichés sont les suivants.",
+    "UsageHistoryDesc": "Dans l'onglet Historique d'utilisation, vous pouvez vérifier des statistiques simples liées à l'utilisation de sessions de calcul via un graphique. \nVous pouvez consulter les statistiques sur l'historique d'utilisation pendant une journée ou une semaine en sélectionnant la période d'utilisation dans le menu de la période de sélection en haut à droite.",
     "UsageHistoryNote": "L'historique d'utilisation montré ici est basé sur des séances de calcul terminées.",
     "UsageHistoryNoteUnder7Days": "De plus, l'historique d'une semaine peut ne pas être affiché pour les utilisateurs dont le compte n'est pas plus d'une semaine."
   },

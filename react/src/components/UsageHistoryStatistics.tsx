@@ -1,15 +1,14 @@
+import { convertBinarySizeUnit, SizeUnit } from '../helper';
 import { useThemeMode } from '../hooks/useThemeMode';
-import useUserStats, {
-  Period,
-  UnitHint,
-  UsageHistoryKey,
-} from '../hooks/useUserStats';
+import useUserStats, { Period, UsageHistoryKey } from '../hooks/useUserStats';
 import Flex from './Flex';
 import { Column, ColumnConfig } from '@ant-design/charts';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Button, Card, theme, Tooltip } from 'antd';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
+
+type Unit = 'B' | 'KiB' | 'MiB' | 'GiB' | 'TiB' | 'PiB' | 'EiB';
 
 type UsageHistoryTitle =
   | 'Sessions'
@@ -51,7 +50,7 @@ const GraphContainer = ({
 const columnConfig = (
   data: any,
   period: Period,
-  unitHint: UnitHint,
+  unitHint: Unit | 'count',
   isDarkMode: boolean,
 ): ColumnConfig => ({
   data,
@@ -71,56 +70,51 @@ const columnConfig = (
   theme: isDarkMode ? 'dark' : 'light',
 });
 
-const byteConverter = {
-  toB: (bytes: number) => bytes,
-  toKB: (bytes: number) => bytes / 1024,
-  toMB: (bytes: number) => bytes / (1024 * 1024),
-  toGB: (bytes: number) => bytes / (1024 * 1024 * 1024),
-  toTB: (bytes: number) => bytes / (1024 * 1024 * 1024 * 1024),
-  log1024: (n: number) => (n <= 0 ? 0 : Math.log(n) / Math.log(1024)),
-  readableUnit: function (bytes: number) {
-    return ['B', 'KB', 'MB', 'GB', 'TB'][Math.floor(this.log1024(bytes))];
-  },
-};
-
 const keys: Partial<{
   [key in UsageHistoryKey]: {
-    unitHint: UnitHint;
+    unitHint: SizeUnit | 'count';
+    unit: 'count' | Unit;
     title: UsageHistoryTitle;
   };
 }> = {
   num_sessions: {
     unitHint: 'count',
+    unit: 'count',
     title: 'Sessions',
   },
   cpu_allocated: {
     unitHint: 'count',
+    unit: 'count',
     title: 'CPU',
   },
   mem_allocated: {
-    unitHint: 'MB',
+    unitHint: 'G',
+    unit: 'GiB',
     title: 'Memory',
   },
   gpu_allocated: {
     unitHint: 'count',
+    unit: 'count',
     title: 'GPU',
   },
   io_read_bytes: {
-    unitHint: 'MB',
+    unitHint: 'M',
+    unit: 'MiB',
     title: 'IO-Read',
   },
   io_write_bytes: {
-    unitHint: 'MB',
+    unitHint: 'M',
+    unit: 'MiB',
     title: 'IO-Write',
   },
 };
 const usageHistoryKeys = Object.keys(keys) as UsageHistoryKey[];
 
-const formatValue = (value: number, unitHint: UnitHint) => {
+const formatValue = (value: number, unitHint: SizeUnit | 'count') => {
   if (unitHint === 'count') {
     return value;
   } else {
-    return byteConverter[`to${unitHint}`](value);
+    return convertBinarySizeUnit(value.toString() + 'B', unitHint)?.number ?? 0;
   }
 };
 interface UsageHistoryStatisticsProps {
@@ -151,7 +145,7 @@ const UsageHistoryStatistics = ({ period }: UsageHistoryStatisticsProps) => {
       align="start"
       gap="md"
     >
-      {Object.entries(keys).map(([key, { unitHint, title }]) => {
+      {Object.entries(keys).map(([key, { unitHint, title, unit }]) => {
         const data = userStats.map((d) => {
           return {
             date: format(d.date.toString(), 'MMM dd HH:mm'),
@@ -164,7 +158,7 @@ const UsageHistoryStatistics = ({ period }: UsageHistoryStatisticsProps) => {
             key={key}
             title={title}
             tooltipText={desc[key as UsageHistoryKey] ?? ''}
-            config={columnConfig(data, period as Period, unitHint, isDarkMode)}
+            config={columnConfig(data, period as Period, unit, isDarkMode)}
           />
         );
       })}

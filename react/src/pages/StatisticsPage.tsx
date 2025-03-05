@@ -5,7 +5,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { Period } from '../hooks/useUserStats';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { Alert, Button, Select, theme, Tooltip } from 'antd';
+import { Alert, Button, Form, Select, theme, Tooltip } from 'antd';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
@@ -45,12 +45,10 @@ const StatisticsLayout = ({
     return days > 7;
   }, [created_at]);
 
-  let periodOptions: [
-    {
-      label: string;
-      value: Period;
-    },
-  ] = [
+  let periodOptions: Array<{
+    label: string;
+    value: Period;
+  }> = [
     {
       label: t('statistics.1Day'),
       value: '1D',
@@ -76,12 +74,17 @@ const StatisticsLayout = ({
       }
       styles={{ body: { padding: 0 } }}
       extra={
-        <Select
-          popupMatchSelectWidth={false}
-          options={periodOptions}
-          value={period}
-          onChange={onChange}
-        />
+        <Form.Item
+          label={t('statistics.SelectPeriod')}
+          style={{ marginBottom: 0 }}
+        >
+          <Select
+            popupMatchSelectWidth={false}
+            options={periodOptions}
+            value={period}
+            onChange={onChange}
+          />
+        </Form.Item>
       }
     >
       <Alert
