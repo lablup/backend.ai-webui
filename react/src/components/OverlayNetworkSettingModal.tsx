@@ -112,7 +112,7 @@ const OverlayNetworkSettingModal = ({
             <InputNumber
               min={optionRange[key].min}
               max={optionRange[key].max}
-              width={'100%'}
+              style={{ width: '100%' }}
             />
           </FormItemWithCheckbox>
         ))}
