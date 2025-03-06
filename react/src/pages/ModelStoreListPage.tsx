@@ -1,6 +1,7 @@
 import Flex from '../components/Flex';
 import ModelCardModal from '../components/ModelCardModal';
 import TextHighlighter from '../components/TextHighlighter';
+import UnmountModalAfterClose from '../components/UnmountModalAfterClose';
 import { ModelCardModalFragment$key } from '../components/__generated__/ModelCardModalFragment.graphql';
 import { useUpdatableState } from '../hooks';
 import { ModelStoreListPageQuery } from './__generated__/ModelStoreListPageQuery.graphql';
@@ -124,7 +125,6 @@ const ModelStoreListPage: React.FC = () => {
       align="stretch"
       justify="center"
       gap="lg"
-      style={{ padding: token.paddingLG }}
     >
       <Flex
         direction="column"
@@ -132,8 +132,9 @@ const ModelStoreListPage: React.FC = () => {
         className="filterWrap"
         gap={'xs'}
       >
-        <Flex direction="row" gap={'md'}>
+        <Flex direction="row" gap={'sm'}>
           <Input
+            size="large"
             prefix={<SearchOutlined />}
             placeholder={t('modelStore.SearchModels')}
             allowClear
@@ -143,6 +144,7 @@ const ModelStoreListPage: React.FC = () => {
             autoComplete="off"
           />
           <Button
+            size="large"
             icon={<ReloadOutlined />}
             onClick={() => {
               startRefetchingTransition(() => {
@@ -316,13 +318,15 @@ const ModelStoreListPage: React.FC = () => {
           </List.Item>
         )}
       />
-      <ModelCardModal
-        modelCardModalFrgmt={currentModelInfo}
-        open={!!currentModelInfo}
-        onRequestClose={() => {
-          setCurrentModelInfo(null);
-        }}
-      />
+      <UnmountModalAfterClose>
+        <ModelCardModal
+          modelCardModalFrgmt={currentModelInfo}
+          open={!!currentModelInfo}
+          onRequestClose={() => {
+            setCurrentModelInfo(null);
+          }}
+        />
+      </UnmountModalAfterClose>
     </Flex>
   );
 };

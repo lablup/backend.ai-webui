@@ -1810,6 +1810,8 @@
       "Data&Model": "Data & Model",
       "Data&Storage": "Data & Storage",
       "DisMatchUserEmail": "User email does not match",
+      "Endpoint": "Endpoint",
+      "Endpoints": "Endpoints",
       "Environments": "Environments",
       "Environments&Presets": "Environments & Presets",
       "Experiments": "Experiments",
@@ -1863,7 +1865,15 @@
       "UserCredentials&Policies": "User Credentials & Policies",
       "Users": "Users",
       "WelcomeMessage": "Welcome, {{ userName }}.",
-      "YouMushChangeYourPassword": "It is recommended to periodically change your password for security reasons. Since a certain amount of time has passed since you last changed your password, you must change it in order to continue using the service."
+      "YouMushChangeYourPassword": "It is recommended to periodically change your password for security reasons. Since a certain amount of time has passed since you last changed your password, you must change it in order to continue using the service.",
+      "groupName": {
+        "Metrics": "Metrics",
+        "Mlops": "MLOps",
+        "Playground": "Playground",
+        "Service": "Service",
+        "Storage": "Storage",
+        "Workload": "Workload"
+      }
     }
   }
 }

@@ -5,7 +5,10 @@ import { useCurrentUserRole } from '../../hooks/backendai';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import usePrimaryColors from '../../hooks/usePrimaryColors';
 import EndpointsIcon from '../BAIIcons/EndpointsIcon';
+import ExampleStartIcon from '../BAIIcons/ExampleStart';
+import ModelStoreIcon from '../BAIIcons/ModelStoreIcon';
 import MyEnvironmentsIcon from '../BAIIcons/MyEnvironmentsIcon';
+import PipelinesIcon from '../BAIIcons/PipelinesIcon';
 import SessionsIcon from '../BAIIcons/SessionsIcon';
 import BAIMenu from '../BAIMenu';
 import BAISider, { BAISiderProps } from '../BAISider';
@@ -21,7 +24,6 @@ import {
   CloudUploadOutlined,
   ControlOutlined,
   DashboardOutlined,
-  ExportOutlined,
   FileDoneOutlined,
   HddOutlined,
   InfoCircleOutlined,
@@ -40,9 +42,9 @@ import {
   Divider,
   Grid,
 } from 'antd';
-import { ItemType } from 'antd/lib/menu/interface';
+import { MenuItemType } from 'antd/lib/menu/interface';
 import _ from 'lodash';
-import { BotMessageSquare, PlayIcon } from 'lucide-react';
+import { BotMessageSquare } from 'lucide-react';
 import React, { useContext, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -57,6 +59,20 @@ interface WebUISiderProps
   webuiplugins?: WebUIPluginType;
   onCollapse?: (collapsed: boolean) => void;
 }
+
+type GroupName =
+  | 'none'
+  | 'playground'
+  | 'storage'
+  | 'workload'
+  | 'service'
+  | 'metrics'
+  | 'mlops';
+
+interface WebUIGeneralMenuItemType extends MenuItemType {
+  group: GroupName;
+}
+
 const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -93,16 +109,18 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const [experimentalAIAgents] = useBAISettingUserState(
     'experimental_ai_agents',
   );
-  const generalMenu = filterEmptyItem<ItemType>([
+  const generalMenu = filterEmptyItem<WebUIGeneralMenuItemType>([
     {
       label: <WebUILink to="/start">{t('webui.menu.Start')}</WebUILink>,
       icon: <PlayCircleOutlined style={{ color: token.colorPrimary }} />,
       key: 'start',
+      group: 'none',
     },
     {
       label: <WebUILink to="/summary">{t('webui.menu.Summary')}</WebUILink>,
       icon: <DashboardOutlined style={{ color: token.colorPrimary }} />,
       key: 'summary',
+      group: 'none',
     },
     {
       label: (
@@ -112,31 +130,43 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       ),
       icon: <SessionsIcon style={{ color: token.colorPrimary }} />,
       key: 'job',
+      group: 'workload',
     },
     supportServing && {
       label: <WebUILink to="/serving">{t('webui.menu.Serving')}</WebUILink>,
       icon: <EndpointsIcon style={{ color: token.colorPrimary }} />,
       key: 'serving',
+      group: 'service',
+    },
+    {
+      label: <WebUILink to="/model-store">{t('data.ModelStore')}</WebUILink>,
+      icon: <ModelStoreIcon style={{ color: token.colorPrimary }} />,
+      key: 'model-store',
+      group: 'service',
     },
     experimentalAIAgents && {
       label: <WebUILink to="/ai-agent">{t('webui.menu.AIAgents')}</WebUILink>,
       icon: <BotMessageSquare style={{ color: token.colorPrimary }} />,
       key: 'ai-agent',
+      group: 'playground',
     },
     {
       label: <WebUILink to="/chat">{t('webui.menu.Chat')}</WebUILink>,
       icon: <MessageOutlined style={{ color: token.colorPrimary }} />,
       key: 'chat',
+      group: 'playground',
     },
     {
       label: <WebUILink to="/import">{t('webui.menu.Import&Run')}</WebUILink>,
-      icon: <PlayIcon style={{ color: token.colorPrimary }} />,
+      icon: <ExampleStartIcon style={{ color: token.colorPrimary }} />,
       key: 'import',
+      group: 'workload',
     },
     {
       label: <WebUILink to="/data">{t('webui.menu.Data')}</WebUILink>,
       icon: <CloudUploadOutlined style={{ color: token.colorPrimary }} />,
       key: 'data',
+      group: 'storage',
     },
     supportUserCommittedImage && {
       label: (
@@ -146,6 +176,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       ),
       icon: <MyEnvironmentsIcon style={{ color: token.colorPrimary }} />,
       key: 'my-environment',
+      group: 'workload',
     },
     !isHideAgents && {
       label: (
@@ -155,6 +186,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       ),
       icon: <HddOutlined style={{ color: token.colorPrimary }} />,
       key: 'agent-summary',
+      group: 'metrics',
     },
     {
       label: (
@@ -162,14 +194,16 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       ),
       icon: <BarChartOutlined style={{ color: token.colorPrimary }} />,
       key: 'statistics',
+      group: 'metrics',
     },
     !!fasttrackEndpoint && {
       label: t('webui.menu.FastTrack'),
-      icon: <ExportOutlined style={{ color: token.colorPrimary }} />,
+      icon: <PipelinesIcon style={{ color: token.colorPrimary }} />,
       key: 'pipeline',
       onClick: () => {
         window.open(fasttrackEndpoint, '_blank', 'noopener noreferrer');
       },
+      group: 'mlops',
     },
   ]);
 
@@ -265,6 +299,58 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     });
   });
 
+  const aliasGroupNameMap: {
+    [key in GroupName]: string;
+  } = {
+    none: '',
+    storage: t('webui.menu.groupName.Storage'),
+    workload: t('webui.menu.groupName.Workload'),
+    playground: t('webui.menu.groupName.Playground'),
+    service: t('webui.menu.groupName.Service'),
+    mlops: t('webui.menu.groupName.Mlops'),
+    metrics: t('webui.menu.groupName.Metrics'),
+  };
+  const groupedGeneralMenu = _.chain(generalMenu)
+    .groupBy('group')
+    .map((items, group) => {
+      if (group === 'none') {
+        return items;
+      }
+      return {
+        type: 'group',
+        name: group,
+        label: (
+          <Flex
+            style={{
+              borderBottom: `1px solid ${token.colorBorder}`,
+            }}
+          >
+            {!props.collapsed && (
+              <Typography.Text type="secondary" ellipsis>
+                {aliasGroupNameMap[group as GroupName]}
+              </Typography.Text>
+            )}
+          </Flex>
+        ),
+        children: items,
+      };
+    })
+    .sort((a, b) => {
+      const order: Array<GroupName> = [
+        'none',
+        'storage',
+        'workload',
+        'playground',
+        'service',
+        'mlops',
+        'metrics',
+      ];
+      // @ts-ignore
+      return order.indexOf(a.name) - order.indexOf(b.name);
+    })
+    .flatten()
+    .value();
+
   return (
     <BAISider
       ref={siderRef}
@@ -344,7 +430,8 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             //       and change 'job' key to 'session'
             location.pathname.split('/')[1] === 'session' ? 'job' : '',
           ]}
-          items={generalMenu}
+          // @ts-ignore
+          items={groupedGeneralMenu}
         />
         {(currentUserRole === 'superadmin' || currentUserRole === 'admin') && (
           <ConfigProvider
