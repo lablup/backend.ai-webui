@@ -61,6 +61,8 @@ jobs:
           BAI_APP_SIGN_KEYCHAIN_PASSWORD: ${{ secrets.BAI_APP_SIGN_KEYCHAIN_PASSWORD }}
       - name: Bundle static resources into zip package
         run: make bundle
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
       - name: Upload application to latest release
         run: node upload-release.js app
         env:
