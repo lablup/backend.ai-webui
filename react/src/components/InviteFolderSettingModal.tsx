@@ -270,8 +270,8 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
                             { label: t('data.folders.Edit'), value: 'rw' },
                           ]}
                           defaultValue={perm}
-                          onChange={() => {
-                            handlePermission(record.shared_to.uuid, perm);
+                          onChange={(nextPerm) => {
+                            handlePermission(record.shared_to.uuid, nextPerm);
                           }}
                         />
                         <Popconfirm

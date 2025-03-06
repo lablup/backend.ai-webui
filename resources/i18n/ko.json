@@ -1806,6 +1806,8 @@
       "Data&Model": "데이터 & 모델",
       "Data&Storage": "데이터 & 폴더",
       "DisMatchUserEmail": "사용자 이메일이 일치하지 않습니다.",
+      "Endpoint": "엔드포인트",
+      "Endpoints": "엔드포인트",
       "Environments": "실행 환경",
       "Environments&Presets": "실행환경 및 프리셋",
       "Experiments": "실험",
@@ -1860,7 +1862,15 @@
       "UserCredentials&Policies": "자격 증명 및 정책",
       "Users": "사용자",
       "WelcomeMessage": "환영합니다. {{ userName }}님",
-      "YouMushChangeYourPassword": "보안을 위해 비밀번호를 주기적으로 변경하는 것이 좋습니다. 비밀번호를 변경한 지 일정 시간이 지났으므로, 서비스를 계속 이용하려면 비밀번호를 변경해야 합니다."
+      "YouMushChangeYourPassword": "보안을 위해 비밀번호를 주기적으로 변경하는 것이 좋습니다. 비밀번호를 변경한 지 일정 시간이 지났으므로, 서비스를 계속 이용하려면 비밀번호를 변경해야 합니다.",
+      "groupName": {
+        "Metrics": "메트릭",
+        "Mlops": "MLOps",
+        "Playground": "플레이그라운드",
+        "Service": "서비스",
+        "Storage": "스토리지",
+        "Workload": "워크로드"
+      }
     }
   }
 }

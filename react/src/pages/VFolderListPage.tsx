@@ -103,11 +103,6 @@ const VFolderListPage: React.FC<VFolderListPageProps> = (props) => {
       key: 'model',
       tab: t('data.Models'),
     },
-    baiClient.supports('model-store') &&
-      baiClient._config.enableModelStore && {
-        key: 'model-store',
-        tab: t('data.ModelStore'),
-      },
     baiClient.supports('vfolder-trash-bin') && {
       key: 'trash-bin',
       tab: <DeleteOutlined />,

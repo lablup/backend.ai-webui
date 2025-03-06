@@ -166,7 +166,6 @@ const SessionDetailContent: React.FC<{
       .map((check) => check.remaining)
       .filter(Boolean),
   );
-  const showKernelList = baiClient._config.showKernelList;
 
   return session ? (
     <Flex direction="column" gap={'lg'} align="stretch">
@@ -353,16 +352,14 @@ const SessionDetailContent: React.FC<{
           </Descriptions.Item>
         </Descriptions>
       </Flex>
-      {showKernelList ? (
-        <Suspense fallback={<Skeleton />}>
-          <Flex direction="column" gap={'sm'} align="stretch">
-            <Typography.Title level={4} style={{ margin: 0 }}>
-              {t('kernel.Kernels')}
-            </Typography.Title>
-            <ConnectedKernelList id={id} fetchKey={fetchKey} />
-          </Flex>
-        </Suspense>
-      ) : null}
+      <Suspense fallback={<Skeleton />}>
+        <Flex direction="column" gap={'sm'} align="stretch">
+          <Typography.Title level={4} style={{ margin: 0 }}>
+            {t('kernel.Kernels')}
+          </Typography.Title>
+          <ConnectedKernelList id={id} fetchKey={fetchKey} />
+        </Flex>
+      </Suspense>
       <IdleCheckDescriptionModal
         open={openIdleCheckDescriptionModal}
         onCancel={() => setOpenIdleCheckDescriptionModal(false)}

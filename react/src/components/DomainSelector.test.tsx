@@ -38,20 +38,16 @@ describe('DomainSelect', () => {
 
     expect(screen.getByText('loading...')).toBeInTheDocument();
 
-    act(() => {
-      environment.mock.resolveMostRecentOperation((operation) =>
-        MockPayloadGenerator.generate(operation, {
-          String() {
-            return 'abcd';
-          },
-        }),
-      );
-    });
+    environment.mock.resolveMostRecentOperation((operation) =>
+      MockPayloadGenerator.generate(operation, {
+        String() {
+          return 'abcd';
+        },
+      }),
+    );
 
     expect(await screen.findByText('Please select domain')).toBeInTheDocument();
-    await act(async () => {
-      await userEvent.click(screen.getByRole('combobox'));
-    });
+    await userEvent.click(screen.getByRole('combobox'));
     expect(screen.getAllByText('abcd')[0]).toBeInTheDocument();
     expect(asFragment()).toMatchSnapshot();
   });
