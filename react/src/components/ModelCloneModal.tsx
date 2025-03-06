@@ -23,32 +23,26 @@ import { useFragment } from 'react-relay';
 
 interface ModelCloneModalProps extends BAIModalProps {
   vfolderNode: ModelCloneModalVFolderFragment$key | null;
-  deprecatedVFolderInfo?: {
-    id: string;
-    name: string;
-    host: string;
-  };
 }
 const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
   // sourceFolderName,
   // sourceFolderHost,
   vfolderNode,
-  deprecatedVFolderInfo,
   ...props
 }) => {
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  const vfolder =
-    useFragment(
-      graphql`
-        fragment ModelCloneModalVFolderFragment on VirtualFolderNode {
-          id
-          name
-          host
-        }
-      `,
-      vfolderNode,
-    ) || deprecatedVFolderInfo;
+  const vfolder = useFragment(
+    graphql`
+      fragment ModelCloneModalVFolderFragment on VirtualFolderNode {
+        id
+        row_id
+        name
+        host
+      }
+    `,
+    vfolderNode,
+  );
 
   const formRef = useRef<
     FormInstance<{
@@ -94,11 +88,11 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
         formRef.current
           ?.validateFields()
           .then((values) => {
-            if (vfolder?.id && vfolder.host) {
+            if (vfolder?.row_id && vfolder.host) {
               mutationToClone.mutate(
                 {
                   input: values,
-                  name: vfolder.id,
+                  name: vfolder.row_id,
                 },
                 {
                   onSuccess(data) {
