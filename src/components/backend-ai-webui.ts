@@ -605,11 +605,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         curtain?.classList.add('hidden');
         this.is_connected = true;
       },
-      {
-        capture: false,
-        once: true,
-        passive: false,
-      },
+      { capture: false, once: true, passive: false },
     );
     // redirect to unauthorized page when user's role is neither admin nor superadmin
     if (!this.is_admin && !this.is_superadmin) {
@@ -634,18 +630,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       'user-committed-image',
     );
     this.optionalPages = [
-      {
-        page: 'agent-summary',
-        available: !this.isHideAgents,
-      },
-      {
-        page: 'serving',
-        available: this.supportServing,
-      },
-      {
-        page: 'my-environment',
-        available: this.supportUserCommittedImage,
-      },
+      { page: 'agent-summary', available: !this.isHideAgents },
+      { page: 'serving', available: this.supportServing },
+      { page: 'my-environment', available: this.supportUserCommittedImage },
     ];
 
     if (this._page === 'start') {
@@ -870,9 +857,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
 
     !fromReact &&
       document.dispatchEvent(
-        new CustomEvent('react-navigate', {
-          detail: url,
-        }),
+        new CustomEvent('react-navigate', { detail: url }),
       );
   }
 
@@ -931,13 +916,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         >
           <mwc-circular-progress indeterminate></mwc-circular-progress>
         </backend-ai-settings-view>
-        <backend-ai-statistics-view
-          class="page"
-          name="statistics"
-          ?active="${this._page === 'statistics'}"
-        >
-          <mwc-circular-progress indeterminate></mwc-circular-progress>
-        </backend-ai-statistics-view>
         <backend-ai-email-verification-view
           class="page"
           name="email-verification"

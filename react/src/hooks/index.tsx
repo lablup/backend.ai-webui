@@ -85,6 +85,52 @@ export const useAnonymousBackendaiClient = ({
   return client;
 };
 
+export type UserStatsData = {
+  date: number;
+  cpu_allocated: {
+    value: number;
+    unit_hint: string;
+  };
+  num_sessions: {
+    value: number;
+    unit_hint: string;
+  };
+  mem_allocated: {
+    value: number;
+    unit_hint: string;
+  };
+  gpu_allocated: {
+    value: number;
+    unit_hint: string;
+  };
+  io_read_bytes: {
+    value: number;
+    unit_hint: string;
+  };
+  io_write_bytes: {
+    value: number;
+    unit_hint: string;
+  };
+  disk_used: {
+    value: number;
+    unit_hint: string;
+  };
+};
+
+type KeypairInfoField =
+  | 'access_key'
+  | 'secret_key'
+  | 'is_active'
+  | 'is_admin'
+  | 'user_id'
+  | 'created_at'
+  | 'last_used'
+  | 'concurrency_limit'
+  | 'concurrency_used'
+  | 'rate_limit'
+  | 'num_queries'
+  | 'resource_policy';
+
 export type BackendAIClient = {
   vfolder: {
     list: (path: string) => Promise<any>;
@@ -125,6 +171,14 @@ export type BackendAIClient = {
       };
     }>;
     recalculate_usage: () => Promise<any>;
+    [key: string]: any;
+  };
+  resources: {
+    user_stats: () => Promise<UserStatsData[]>;
+    [key: string]: any;
+  };
+  keypair: {
+    info: (accessKey: string, fields: KeypairInfoField[]) => Promise<any>;
     [key: string]: any;
   };
 };
