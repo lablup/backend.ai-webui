@@ -1800,6 +1800,8 @@
       "Data&Model": "Data",
       "Data&Storage": "Simpanan data",
       "DisMatchUserEmail": "E-mel Pengguna tidak sepadan",
+      "Endpoint": "Titik akhir",
+      "Endpoints": "Titik akhir",
       "Environments": "Persekitaran",
       "Environments&Presets": "Persekitaran & Pratetap",
       "Experiments": "Eksperimen",
@@ -1854,7 +1856,14 @@
       "UserCredentials&Policies": "Kepercayaan & Dasar Pengguna",
       "Users": "Pengguna",
       "WelcomeMessage": "Selamat datang, {{ userName }}.",
-      "YouMushChangeYourPassword": "Adalah disyorkan untuk menukar kata laluan anda secara berkala atas sebab keselamatan. \nMemandangkan tempoh masa tertentu telah berlalu sejak kali terakhir anda menukar kata laluan anda, anda mesti menukarnya untuk terus menggunakan perkhidmatan tersebut."
+      "YouMushChangeYourPassword": "Adalah disyorkan untuk menukar kata laluan anda secara berkala atas sebab keselamatan. \nMemandangkan tempoh masa tertentu telah berlalu sejak kali terakhir anda menukar kata laluan anda, anda mesti menukarnya untuk terus menggunakan perkhidmatan tersebut.",
+      "groupName": {
+        "Metrics": "Metrik",
+        "Mlops": "MLOps",
+        "Playground": "Taman permainan",
+        "Storage": "Penyimpanan",
+        "Workload": "Beban kerja"
+      }
     }
   }
 }

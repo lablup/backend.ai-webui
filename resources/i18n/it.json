@@ -1799,6 +1799,8 @@
       "Data&Model": "Dati",
       "Data&Storage": "Archivio dati",
       "DisMatchUserEmail": "L'e-mail dell'utente non corrisponde",
+      "Endpoint": "Punto finale",
+      "Endpoints": "Punti finali",
       "Environments": "Ambienti",
       "Environments&Presets": "Ambienti e preset",
       "Experiments": "esperimenti",
@@ -1853,7 +1855,15 @@
       "UserCredentials&Policies": "Credenziali utente e criteri",
       "Users": "Utenti",
       "WelcomeMessage": "Benvenuto, {{ userName }}.",
-      "YouMushChangeYourPassword": "Per motivi di sicurezza, si consiglia di modificare periodicamente la password. Poiché è trascorso un certo periodo di tempo dall'ultima modifica della password, è necessario cambiarla per poter continuare a utilizzare il servizio."
+      "YouMushChangeYourPassword": "Per motivi di sicurezza, si consiglia di modificare periodicamente la password. Poiché è trascorso un certo periodo di tempo dall'ultima modifica della password, è necessario cambiarla per poter continuare a utilizzare il servizio.",
+      "groupName": {
+        "Metrics": "Metriche",
+        "Mlops": "MLOps",
+        "Playground": "Parco giochi",
+        "Service": "Servizio",
+        "Storage": "Immagazzinamento",
+        "Workload": "Carico di lavoro"
+      }
     }
   }
 }

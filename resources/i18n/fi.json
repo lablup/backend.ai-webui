@@ -1800,6 +1800,8 @@
       "Data&Model": "Data",
       "Data&Storage": "Data & varastointi",
       "DisMatchUserEmail": "Käyttäjän sähköpostiosoite ei täsmää",
+      "Endpoint": "Loppupiste",
+      "Endpoints": "Loppupisteet",
       "Environments": "Ympäristöt",
       "Environments&Presets": "Ympäristöt & esiasetukset",
       "Experiments": "Kokeet",
@@ -1855,7 +1857,15 @@
       "UserCredentials&Policies": "Käyttäjien valtakirjat ja käytännöt",
       "Users": "Käyttäjät",
       "WelcomeMessage": "Tervetuloa, {{ userName }}.",
-      "YouMushChangeYourPassword": "On suositeltavaa vaihtaa salasana säännöllisesti turvallisuussyistä. Koska salasanasi viimeisimmästä vaihtamisesta on kulunut tietty aika, sinun on vaihdettava se, jotta voit jatkaa palvelun käyttöä."
+      "YouMushChangeYourPassword": "On suositeltavaa vaihtaa salasana säännöllisesti turvallisuussyistä. Koska salasanasi viimeisimmästä vaihtamisesta on kulunut tietty aika, sinun on vaihdettava se, jotta voit jatkaa palvelun käyttöä.",
+      "groupName": {
+        "Metrics": "Mittarit",
+        "Mlops": "MLOps",
+        "Playground": "Leikkipaikka",
+        "Service": "Palvelu",
+        "Storage": "Varastointi",
+        "Workload": "Työmäärä"
+      }
     }
   }
 }
