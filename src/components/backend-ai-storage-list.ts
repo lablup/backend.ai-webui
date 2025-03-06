@@ -994,6 +994,9 @@ export default class BackendAiStorageList extends BackendAIPage {
     document.addEventListener('backend-ai-folder-created', (e) =>
       this._refreshFolderList(true, 'folder-updated'),
     );
+    document.addEventListener('backend-ai-folder-updated', (e) =>
+      this._refreshFolderList(true, 'folder-updated'),
+    );
   }
 
   _isUncontrollableStatus(status: VFolderOperationStatus) {
