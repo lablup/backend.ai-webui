@@ -9,8 +9,9 @@ import {
 import { ResourcePresetSettingModalFragment$key } from './__generated__/ResourcePresetSettingModalFragment.graphql';
 import {
   ModifyResourcePresetInput,
-  ResourcePresetSettingModalModifyMutation,
-} from './__generated__/ResourcePresetSettingModalModifyMutation.graphql';
+  ResourcePresetSettingModalModifyByIdMutation,
+} from './__generated__/ResourcePresetSettingModalModifyByIdMutation.graphql';
+import { ResourcePresetSettingModalModifyByNameMutation } from './__generated__/ResourcePresetSettingModalModifyByNameMutation.graphql';
 import { App, Col, Form, FormInstance, Input, InputNumber, Row } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
@@ -40,6 +41,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
   const resourcePreset = useFragment(
     graphql`
       fragment ResourcePresetSettingModalFragment on ResourcePreset {
+        id @since(version: "25.4.0")
         name
         resource_slots
         shared_memory
@@ -61,18 +63,34 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
       }
     `);
 
-  const [commitModifyResourcePreset, isInFlightCommitModifyResourcePreset] =
-    useMutation<ResourcePresetSettingModalModifyMutation>(graphql`
-      mutation ResourcePresetSettingModalModifyMutation(
-        $name: String!
-        $props: ModifyResourcePresetInput!
-      ) {
-        modify_resource_preset(name: $name, props: $props) {
-          ok
-          msg
-        }
+  const [
+    commitModifyResourcePresetByName,
+    isInFlightCommitModifyResourcePresetByName,
+  ] = useMutation<ResourcePresetSettingModalModifyByNameMutation>(graphql`
+    mutation ResourcePresetSettingModalModifyByNameMutation(
+      $name: String!
+      $props: ModifyResourcePresetInput!
+    ) {
+      modify_resource_preset(name: $name, props: $props) {
+        ok
+        msg
       }
-    `);
+    }
+  `);
+  const [
+    commitModifyResourcePresetById,
+    isInFlightCommitModifyResourcePresetById,
+  ] = useMutation<ResourcePresetSettingModalModifyByIdMutation>(graphql`
+    mutation ResourcePresetSettingModalModifyByIdMutation(
+      $id: UUID!
+      $props: ModifyResourcePresetInput!
+    ) {
+      modify_resource_preset(id: $id, props: $props) {
+        ok
+        msg
+      }
+    }
+  `);
 
   const handleOk = () => {
     return formRef.current
@@ -121,30 +139,58 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
             },
           });
         } else {
-          commitModifyResourcePreset({
-            variables: {
-              name: values?.name,
-              props: props as ModifyResourcePresetInput,
-            },
-            onCompleted: (res, errors) => {
-              if (!res?.modify_resource_preset?.ok) {
-                message.error(res?.modify_resource_preset?.msg);
-                onRequestClose(false);
-              } else if (errors && errors?.length > 0) {
-                const errorMsgList = _.map(errors, (err) => err?.message);
-                _.forEach(errorMsgList, (err) => {
-                  message.error(err, 2.5);
-                });
-                onRequestClose(false);
-              } else {
-                message.success(t('resourcePreset.Updated'));
-                onRequestClose(true);
-              }
-            },
-            onError(err) {
-              message.error(err?.message);
-            },
-          });
+          if (resourcePreset.id) {
+            commitModifyResourcePresetById({
+              variables: {
+                id: resourcePreset.id,
+                props: props as ModifyResourcePresetInput,
+              },
+              onCompleted: (res, errors) => {
+                if (!res?.modify_resource_preset?.ok) {
+                  message.error(res?.modify_resource_preset?.msg);
+                  onRequestClose(false);
+                } else if (errors && errors?.length > 0) {
+                  const errorMsgList = _.map(errors, (err) => err?.message);
+                  _.forEach(errorMsgList, (err) => {
+                    message.error(err, 2.5);
+                  });
+                  onRequestClose(false);
+                } else {
+                  message.success(t('resourcePreset.Updated'));
+                  onRequestClose(true);
+                }
+              },
+              onError(err) {
+                message.error(err?.message);
+              },
+            });
+          } else {
+            // TODO: if support for "name" is discontinued after version 25.4.0, this block should be removed
+            commitModifyResourcePresetByName({
+              variables: {
+                name: values?.name,
+                props: props as ModifyResourcePresetInput,
+              },
+              onCompleted: (res, errors) => {
+                if (!res?.modify_resource_preset?.ok) {
+                  message.error(res?.modify_resource_preset?.msg);
+                  onRequestClose(false);
+                } else if (errors && errors?.length > 0) {
+                  const errorMsgList = _.map(errors, (err) => err?.message);
+                  _.forEach(errorMsgList, (err) => {
+                    message.error(err, 2.5);
+                  });
+                  onRequestClose(false);
+                } else {
+                  message.success(t('resourcePreset.Updated'));
+                  onRequestClose(true);
+                }
+              },
+              onError(err) {
+                message.error(err?.message);
+              },
+            });
+          }
         }
       })
       .catch(() => {});
@@ -163,7 +209,8 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
       destroyOnClose
       confirmLoading={
         isInFlightCommitCreateResourcePreset ||
-        isInFlightCommitModifyResourcePreset
+        isInFlightCommitModifyResourcePresetByName ||
+        isInFlightCommitModifyResourcePresetById
       }
     >
       <Form
