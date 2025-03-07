@@ -1,5 +1,4 @@
 import { convertBinarySizeUnit } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import DynamicUnitInputNumber from './DynamicUnitInputNumber';
@@ -34,7 +33,6 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const { message } = App.useApp();
-  const baiClient = useSuspendedBackendaiClient();
   const formRef = useRef<FormInstance>(null);
 
   const [resourceSlots] = useResourceSlots();
@@ -141,10 +139,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
             },
           });
         } else {
-          if (
-            resourcePreset.id &&
-            baiClient.isManagerVersionCompatibleWith('25.4.0')
-          ) {
+          if (resourcePreset.id) {
             commitModifyResourcePresetById({
               variables: {
                 id: resourcePreset.id,
@@ -170,6 +165,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
               },
             });
           } else {
+            // TODO: if support for "name" is discontinued after version 25.4.0, this block should be removed.
             commitModifyResourcePresetByName({
               variables: {
                 name: values?.name,
