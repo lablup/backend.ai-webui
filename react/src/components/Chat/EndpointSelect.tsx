@@ -1,4 +1,4 @@
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient } from '../../hooks';
 import {
   EndpointSelectQuery,
   EndpointSelectQuery$data,
@@ -8,6 +8,7 @@ import { Select, SelectProps } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useState, useTransition } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
 interface EndpointSelectProps extends Omit<SelectProps, 'options'> {
@@ -27,6 +28,7 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
   loading,
   ...selectPropsWithoutLoading
 }) => {
+  const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
   const [controllableValue, setControllableValue] =
     useControllableValue<string>(selectPropsWithoutLoading);
@@ -58,13 +60,13 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
             name
             endpoint_id
             url
-            ...EndpointLLMChatCard_endpoint
+            ...ChatCard_endpoint
           }
         }
         endpoint(endpoint_id: $endpoint_id) @skipOnClient(if: $skipEndpoint) {
           name
           endpoint_id
-          ...EndpointLLMChatCard_endpoint
+          ...ChatCard_endpoint
         }
       }
     `,
@@ -84,15 +86,6 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
       fetchKey: fetchKey,
     },
   );
-
-  // useEffect(() => {
-  //   if (autoSelectDefault && _.isEmpty(controllableValue)) {
-  //     setControllableValue(
-  //       endpoint_list?.items?.[0]?.endpoint_id,
-  //       endpoint_list?.items?.[0],
-  //     );
-  //   }
-  // }, []);
 
   const selectOptions = endpoint
     ? _.map(
@@ -115,6 +108,10 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
 
   return (
     <Select
+      placeholder={t('chatui.SelectEndpoint')}
+      style={{
+        fontWeight: 'normal',
+      }}
       showSearch
       onSearch={(v) => {
         startSearchTransition(() => {
