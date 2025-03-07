@@ -1,130 +1,168 @@
 import BAICard from '../components/BAICard';
+import { Conversation } from '../components/Chat/Conversation';
 import EndpointLLMChatCard from '../components/Chat/EndpointLLMChatCard';
 import Flex from '../components/Flex';
+import { ChatContext, ChatProvider, ConversationType } from './ChatProvider';
 import { ChatPageQuery } from './__generated__/ChatPageQuery.graphql';
 import { PlusOutlined } from '@ant-design/icons';
+import { useLocalStorageState } from 'ahooks';
 import { useDynamicList } from 'ahooks';
-import { Button, Card, Skeleton, Switch, Typography } from 'antd';
+import {
+  Button,
+  Card,
+  Skeleton,
+  Switch,
+  Tabs,
+  Typography,
+  TabsProps,
+  CardProps,
+} from 'antd';
+import { CardTabListType } from 'antd/lib/card';
 import graphql from 'babel-plugin-relay/macro';
+import { t } from 'i18next';
 import _ from 'lodash';
-import React, { Suspense, useState } from 'react';
+import React, {
+  Suspense,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
-import { StringParam, useQueryParam } from 'use-query-params';
+import { StringParam, useQueryParam, useQueryParams } from 'use-query-params';
 
-interface ChatPageProps {}
+const PageStyle = {
+  header: {
+    padding: '24px 24px',
+  },
+  body: {
+    overflow: 'hidden',
+  },
+};
 
-const ChatPage: React.FC<ChatPageProps> = ({ ...props }) => {
-  const { t } = useTranslation();
-  // Set the initial list to have two items
-  const { list, remove, getKey, push } = useDynamicList(['0']);
+type TabsType = TabsProps['items'];
+type TabType = NonNullable<TabsType>[number];
 
-  const [isSynchronous, setSynchronous] = useState(false);
-
-  const [endpointId] = useQueryParam('endpointId', StringParam);
-  const [modelId] = useQueryParam('modelId', StringParam);
-  const [agentId] = useQueryParam('agentId', StringParam);
-  const isEmptyEndpointId = !endpointId;
-
+function useEndpoint(endpointId: string, isEmptyEndpointId: boolean) {
   const { endpoint, endpoint_list } = useLazyLoadQuery<ChatPageQuery>(
     graphql`
       query ChatPageQuery($endpointId: UUID!, $isEmptyEndpointId: Boolean!) {
         endpoint(endpoint_id: $endpointId)
           @skipOnClient(if: $isEmptyEndpointId)
           @catch {
+          endpoint_id
           ...EndpointLLMChatCard_endpoint
         }
         endpoint_list(limit: 1, offset: 0) {
           items {
+            endpoint_id
             ...EndpointLLMChatCard_endpoint
           }
         }
       }
     `,
     {
-      endpointId: endpointId || '',
+      endpointId: endpointId,
       isEmptyEndpointId: isEmptyEndpointId,
     },
   );
-  return (
-    <BAICard
-      title={t('webui.menu.Chat')}
-      styles={{
-        body: {
-          overflow: 'hidden',
-        },
-      }}
-      extra={
-        <Flex direction="row" gap={'xs'} wrap="wrap" style={{ flexShrink: 1 }}>
-          <Flex gap={'xs'}>
-            <Typography.Text type="secondary">
-              {t('chatui.SyncInput')}
-            </Typography.Text>
-            <Switch
-              value={isSynchronous}
-              onClick={(v) => {
-                setSynchronous(v);
-              }}
-            />
-            <Button
-              onClick={() => {
-                push(new Date().toString());
-              }}
-              icon={<PlusOutlined />}
-            />
-          </Flex>
-        </Flex>
+
+  return {
+    endpoint:
+      (endpoint.ok ? endpoint.value : endpoint_list?.items?.[0]) ?? undefined,
+  };
+}
+
+type ChatPageProps = {};
+
+const ChatInnerPage: React.FC<ChatPageProps> = ({ ...props }) => {
+  const chatContext = useContext(ChatContext);
+
+  if (!chatContext) {
+    throw new Error('ChatInput must be used within a ChatProvider');
+  }
+
+  const { conversations, setConversations } = chatContext;
+
+  const { t } = useTranslation();
+
+  const [{ endpointId, modelId, agentId }] = useQueryParams({
+    endpointId: StringParam,
+    modelId: StringParam,
+    agentId: StringParam,
+  });
+
+  // const { endpoint, endpoint_list, default_endpoint } = useEndpoint(
+  //   endpointId ?? '',
+  //   !endpointId,
+  // );
+
+  const [activeTabKey, setActiveTabKey] = useState<string>('1');
+
+  const handleTabChange = (key: string) => {
+    setActiveTabKey(key);
+  };
+
+  const handleTabEdit = useCallback(
+    (_: any, action: 'add' | 'remove') => {
+      if (action === 'add') {
+        const key = String((conversations?.length ?? 0) + 1);
+        setConversations([
+          ...(conversations ?? []),
+          {
+            key: String(key),
+            label: `Chat ${key}`,
+            chats: [],
+          },
+        ]);
+        setActiveTabKey(key);
       }
-    >
-      <Flex direction="column" align="stretch" gap={'xs'}>
-        <Flex
-          gap={'xs'}
-          direction="row"
-          style={{
-            overflow: 'auto',
-            height: 'calc(100vh - 240px)',
-          }}
-          align="stretch"
-        >
-          {_.map(list, (__, index) => (
-            <Suspense
-              fallback={
-                <Card
-                  bordered
-                  style={{
-                    width: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                  }}
-                >
-                  <Skeleton active />
-                </Card>
-              }
-              key={getKey(index)}
-            >
-              <EndpointLLMChatCard
-                defaultModelId={
-                  index === 0 && endpoint.ok && modelId ? modelId : undefined
-                }
-                defaultEndpoint={
-                  index === 0 && endpoint.ok
-                    ? endpoint.value || undefined
-                    : endpoint_list?.items?.[0] || undefined
-                }
-                defaultAgentId={agentId || undefined}
-                key={getKey(index)}
-                style={{ flex: 1 }}
-                onRequestClose={() => {
-                  remove(index);
-                }}
-                closable={list.length > 1}
-                isSynchronous={isSynchronous}
-              />
-            </Suspense>
-          ))}
+    },
+    [conversations, setConversations],
+  );
+
+  const tabList = conversations?.map(
+    (conversation: ConversationType, index: number) => {
+      return {
+        index,
+        key: conversation.key,
+        label: conversation.label,
+      };
+    },
+  );
+
+  return (
+    <ChatProvider>
+      <BAICard
+        styles={PageStyle}
+        tabList={tabList}
+        tabProps={{
+          size: 'large',
+          type: 'editable-card',
+          onEdit: handleTabEdit,
+        }}
+        activeTabKey={activeTabKey}
+        onTabChange={handleTabChange}
+      >
+        {
+          // @TODO pass activeTabKey to prevent whole screen rendering?
+        }
+        <Flex style={{ height: 'calc(100vh - 240px)' }}>
+          <Conversation
+            conversation={conversations[Number(activeTabKey) - 1]}
+          />
         </Flex>
-      </Flex>
-    </BAICard>
+      </BAICard>
+    </ChatProvider>
+  );
+};
+
+const ChatPage: React.FC<ChatPageProps> = () => {
+  return (
+    <ChatProvider>
+      <ChatInnerPage />
+    </ChatProvider>
   );
 };
 
