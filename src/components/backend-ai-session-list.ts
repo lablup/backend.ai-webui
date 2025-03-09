@@ -1525,23 +1525,6 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   /**
-   * Render index of rowData
-   *
-   * @param {Element} root - the row details content DOM element
-   * @param {Element} column - the column element that controls the state of the host element
-   * @param {Object} rowData - the object with the properties related with the rendered item
-   * */
-  _indexRenderer(root, column, rowData) {
-    const idx = rowData.index + 1;
-    render(
-      html`
-        <div>${idx}</div>
-      `,
-      root,
-    );
-  }
-
-  /**
    * Send request according to rqst method.
    *
    * @param {XMLHttpRequest} rqst
@@ -4926,13 +4909,6 @@ export default class BackendAISessionList extends BackendAIPage {
                         ></vaadin-grid-selection-column>
                       `
                     : html``}
-                  <vaadin-grid-column
-                    frozen
-                    width="40px"
-                    flex-grow="0"
-                    header="#"
-                    .renderer="${this._indexRenderer}"
-                  ></vaadin-grid-column>
                   ${this.is_admin
                     ? html`
                         <lablup-grid-sort-filter-column
