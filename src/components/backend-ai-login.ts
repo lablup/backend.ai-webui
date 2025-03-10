@@ -71,7 +71,6 @@ type ConfigValueObject = {
 export default class BackendAILogin extends BackendAIPage {
   shadowRoot!: ShadowRoot | null;
 
-  @property({ type: String }) siteDescription = '';
   @property({ type: String }) api_key = '';
   @property({ type: String }) secret_key = '';
   @property({ type: String }) user_id = '';
@@ -140,8 +139,6 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Number }) maxCountForPreopenPorts = 10;
   @property({ type: Boolean }) allowCustomResourceAllocation = true;
   @property({ type: Boolean }) isDirectorySizeVisible = true;
-  @property({ type: Boolean }) enableModelStore = false;
-  @property({ type: Boolean }) enableLLMPlayground = false;
   @property({ type: Boolean }) enableImportFromHuggingFace = false;
   @property({ type: Boolean }) enableExtendLoginSession = false;
   @property({ type: Boolean }) enableModelFolders = true;
@@ -571,13 +568,6 @@ export default class BackendAILogin extends BackendAIPage {
       console.log('Debug flag is set to true');
     }
 
-    // Default session environment value
-    this.siteDescription = this._getConfigValueByExists(generalConfig, {
-      valueType: 'string',
-      defaultValue: 'WebUI',
-      value: generalConfig?.siteDescription,
-    } as ConfigValueObject) as string;
-
     // Signup support flag
     this.signup_support = this._getConfigValueByExists(generalConfig, {
       valueType: 'boolean',
@@ -848,20 +838,6 @@ export default class BackendAILogin extends BackendAIPage {
       defaultValue: '',
       value: generalConfig?.eduAppNamePrefix,
     } as ConfigValueObject) as string;
-
-    // Enable model store support
-    this.enableModelStore = this._getConfigValueByExists(generalConfig, {
-      valueType: 'boolean',
-      defaultValue: false,
-      value: generalConfig?.enableModelStore,
-    } as ConfigValueObject) as boolean;
-
-    // Enable LLM Playground support
-    this.enableLLMPlayground = this._getConfigValueByExists(generalConfig, {
-      valueType: 'boolean',
-      defaultValue: false,
-      value: generalConfig?.enableLLMPlayground,
-    } as ConfigValueObject) as boolean;
 
     // Enable importing from Hugging Face support
     this.enableImportFromHuggingFace = this._getConfigValueByExists(
@@ -1222,10 +1198,6 @@ export default class BackendAILogin extends BackendAIPage {
         const webserverConfigURL = new URL('./config.toml', this.api_endpoint)
           .href;
         return webuiEl._parseConfig(webserverConfigURL, true).then((config) => {
-          // Monkey patch for backwards compatibility.
-          // From 24.04, we use `logoTitle` and `logoTitleCollapsed` of /resources/theme.json instead of `general.siteDescription`.
-          this.siteDescription =
-            config?.['general.siteDescription'] || this.siteDescription || '';
           fieldsToExclude.forEach((key) => {
             globalThis.backendaiutils.deleteNestedKeyFromObject(config, key);
           });
@@ -1853,8 +1825,6 @@ export default class BackendAILogin extends BackendAIPage {
             globalThis.backendaiclient.current_group
           ];
         };
-        globalThis.backendaiclient._config.siteDescription =
-          this.siteDescription;
         globalThis.backendaiclient._config._proxyURL = this.proxy_url;
         globalThis.backendaiclient._config._proxyToken = '';
         globalThis.backendaiclient._config.domainName = this.domain_name;
@@ -1925,10 +1895,6 @@ export default class BackendAILogin extends BackendAIPage {
           this.allowCustomResourceAllocation;
         globalThis.backendaiclient._config.isDirectorySizeVisible =
           this.isDirectorySizeVisible;
-        globalThis.backendaiclient._config.enableModelStore =
-          this.enableModelStore;
-        globalThis.backendaiclient._config.enableLLMPlayground =
-          this.enableLLMPlayground;
         globalThis.backendaiclient._config.enableImportFromHuggingFace =
           this.enableImportFromHuggingFace;
         globalThis.backendaiclient._config.enableExtendLoginSession =

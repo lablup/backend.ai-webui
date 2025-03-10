@@ -7,8 +7,6 @@ type LogoConfig = {
   srcCollapsed: string;
   srcDark?: string;
   srcCollapsedDark?: string;
-  logoTitle?: string;
-  logoTitleCollapsed?: string;
   alt?: string;
   href?: string;
   size?: {

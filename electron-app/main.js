@@ -2,13 +2,24 @@
  @license
  Copyright (c) 2015-2025 Lablup Inc. All rights reserved.
  */
-const {app, Menu, shell, BrowserWindow, protocol, session, clipboard, dialog, ipcMain} = require('electron');
+const {
+  app,
+  Menu,
+  shell,
+  BrowserWindow,
+  protocol,
+  session,
+  clipboard,
+  dialog,
+  ipcMain,
+} = require('electron');
 process.env.electronPath = app.getAppPath();
 function isDev() {
   return process.argv[2] == '--dev';
 }
 let debugMode = true;
-if (isDev()) { // Dev mode from Makefile
+if (isDev()) {
+  // Dev mode from Makefile
   process.env.serveMode = 'dev'; // Prod OR debug
 } else {
   process.env.serveMode = 'prod'; // Prod OR debug
@@ -22,7 +33,11 @@ const fs = require('fs').promises;
 const mime = require('mime-types');
 const npjoin = require('path').join;
 const BASE_DIR = __dirname;
-let ProxyManager; let versions; let es6Path; let electronPath; let mainIndex;
+let ProxyManager;
+let versions;
+let es6Path;
+let electronPath;
+let mainIndex;
 if (process.env.serveMode == 'dev') {
   ProxyManager = require('./build/electron-app/app/wsproxy/wsproxy.js');
   versions = require('./version');
@@ -41,7 +56,15 @@ const windowWidth = 1280;
 const windowHeight = 970;
 
 protocol.registerSchemesAsPrivileged([
-  {scheme: 'es6', privileges: {standard: true, secure: true, bypassCSP: true, supportFetchAPI: true}}
+  {
+    scheme: 'es6',
+    privileges: {
+      standard: true,
+      secure: true,
+      bypassCSP: true,
+      supportFetchAPI: true,
+    },
+  },
 ]);
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -52,7 +75,7 @@ let devtools;
 const manager = new ProxyManager();
 let mainURL;
 
-app.once('ready', function() {
+app.once('ready', function () {
   let template;
   if (process.platform === 'darwin') {
     template = [
@@ -61,71 +84,88 @@ app.once('ready', function() {
         submenu: [
           {
             label: 'About Backend.AI Desktop',
-            click: function() {
-              mainContent.executeJavaScript('let event = new CustomEvent("backend-ai-show-splash", {"detail": ""});' +
-                '    document.dispatchEvent(event);');
-            }
+            click: function () {
+              mainContent.executeJavaScript(
+                'let event = new CustomEvent("backend-ai-show-splash", {"detail": ""});' +
+                  '    document.dispatchEvent(event);',
+              );
+            },
           },
           {
-            label: 'App version ' + versions.package +' (rev.' + versions.revision + ')',
-            click: function() {
-              clipboard.writeText(versions.package +' (rev.' + versions.revision + ')');
-              const response = dialog.showMessageBox({type: 'info', message: 'Version information is copied to clipboard.'});
-            }
+            label:
+              'App version ' +
+              versions.package +
+              ' (rev.' +
+              versions.revision +
+              ')',
+            click: function () {
+              clipboard.writeText(
+                versions.package + ' (rev.' + versions.revision + ')',
+              );
+              const response = dialog.showMessageBox({
+                type: 'info',
+                message: 'Version information is copied to clipboard.',
+              });
+            },
           },
           {
-            type: 'separator'
+            type: 'separator',
           },
           {
             label: 'Refresh App',
             accelerator: 'Command+R',
-            click: function() {
+            click: function () {
               // mainContent.reloadIgnoringCache();
               const proxyUrl = `http://localhost:${manager.port}/`;
-              mainWindow.loadURL(url.format({ // Load HTML into new Window
-                pathname: path.join(mainIndex),
-                protocol: 'file',
-                slashes: true
-              }));
-              mainContent.executeJavaScript(`window.__local_proxy = {}; window.__local_proxy.url = '${proxyUrl}';`);
+              mainWindow.loadURL(
+                url.format({
+                  // Load HTML into new Window
+                  pathname: path.join(mainIndex),
+                  protocol: 'file',
+                  slashes: true,
+                }),
+              );
+              mainContent.executeJavaScript(
+                `window.__local_proxy = {}; window.__local_proxy.url = '${proxyUrl}';`,
+              );
               console.log('Re-connected to proxy: ' + proxyUrl);
-            }
+            },
           },
           {
-            type: 'separator'
+            type: 'separator',
           },
           {
             label: 'Services',
-            submenu: []
+            submenu: [],
           },
           {
-            type: 'separator'
+            type: 'separator',
           },
           {
             label: 'Hide Backend.AI Desktop',
             accelerator: 'Command+H',
-            selector: 'hide:'
+            selector: 'hide:',
           },
           {
             label: 'Hide Others',
             accelerator: 'Command+Shift+H',
-            selector: 'hideOtherApplications:'
+            selector: 'hideOtherApplications:',
           },
           {
             label: 'Show All',
-            selector: 'unhideAllApplications:'
+            selector: 'unhideAllApplications:',
           },
           {
-            type: 'separator'
+            type: 'separator',
           },
           {
             label: 'Quit',
             accelerator: 'Command+Q',
-            click: function() {
+            click: function () {
               app.quit();
-            }
+            },
           },
-        ]
+        ],
       },
       {
         label: 'Edit',
@@ -133,37 +173,37 @@ app.once('ready', function() {
           {
             label: 'Undo',
             accelerator: 'Command+Z',
-            selector: 'undo:'
+            selector: 'undo:',
           },
           {
             label: 'Redo',
             accelerator: 'Shift+Command+Z',
-            selector: 'redo:'
+            selector: 'redo:',
           },
           {
-            type: 'separator'
+            type: 'separator',
           },
           {
             label: 'Cut',
             accelerator: 'Command+X',
-            selector: 'cut:'
+            selector: 'cut:',
           },
           {
             label: 'Copy',
             accelerator: 'Command+C',
-            selector: 'copy:'
+            selector: 'copy:',
           },
           {
             label: 'Paste',
             accelerator: 'Command+V',
-            selector: 'paste:'
+            selector: 'paste:',
           },
           {
             label: 'Select All',
             accelerator: 'Command+A',
-            selector: 'selectAll:'
+            selector: 'selectAll:',
           },
-        ]
+        ],
       },
       {
         label: 'View',
@@ -171,29 +211,29 @@ app.once('ready', function() {
           {
             label: 'Zoom In',
             accelerator: 'Command+=',
-            role: 'zoomin'
+            role: 'zoomin',
           },
           {
             label: 'Zoom Out',
             accelerator: 'Command+-',
-            role: 'zoomout'
+            role: 'zoomout',
           },
           {
             label: 'Actual Size',
             accelerator: 'Command+0',
-            role: 'resetzoom'
+            role: 'resetzoom',
           },
           {
             label: 'Toggle Full Screen',
             accelerator: 'Ctrl+Command+F',
-            click: function() {
+            click: function () {
               const focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow) {
                 focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
               }
-            }
+            },
           },
-        ]
+        ],
       },
       {
         label: 'Window',
@@ -201,39 +241,39 @@ app.once('ready', function() {
           {
             label: 'Minimize',
             accelerator: 'Command+M',
-            selector: 'performMiniaturize:'
+            selector: 'performMiniaturize:',
           },
           {
             label: 'Close',
             accelerator: 'Command+W',
-            selector: 'performClose:'
+            selector: 'performClose:',
           },
           {
-            type: 'separator'
+            type: 'separator',
           },
           {
             label: 'Bring All to Front',
-            selector: 'arrangeInFront:'
+            selector: 'arrangeInFront:',
           },
-        ]
+        ],
       },
       {
         label: 'Help',
         submenu: [
           {
             label: 'Online Manual',
-            click: function() {
+            click: function () {
               shell.openExternal('https://webui.docs.backend.ai/');
-            }
+            },
           },
           {
             label: 'Backend.AI Project Site',
-            click: function() {
+            click: function () {
               shell.openExternal('https://www.backend.ai/');
-            }
-          }
-        ]
-      }
+            },
+          },
+        ],
+      },
     ];
   } else {
     template = [
@@ -243,31 +283,36 @@ app.once('ready', function() {
           {
             label: 'Refresh App',
             accelerator: 'CmdOrCtrl+R',
-            click: function() {
+            click: function () {
               const proxyUrl = `http://localhost:${manager.port}/`;
-              mainWindow.loadURL(url.format({ // Load HTML into new Window
-                pathname: path.join(mainIndex),
-                protocol: 'file',
-                slashes: true
-              }));
-              mainContent.executeJavaScript(`window.__local_proxy = {}; window.__local_proxy.url = '${proxyUrl}';`);
+              mainWindow.loadURL(
+                url.format({
+                  // Load HTML into new Window
+                  pathname: path.join(mainIndex),
+                  protocol: 'file',
+                  slashes: true,
+                }),
+              );
+              mainContent.executeJavaScript(
+                `window.__local_proxy = {}; window.__local_proxy.url = '${proxyUrl}';`,
+              );
               console.log('Re-connected to proxy: ' + proxyUrl);
-            }
+            },
           },
           {
-            type: 'separator'
+            type: 'separator',
           },
           {
             label: '&Close',
             accelerator: 'Ctrl+W',
-            click: function() {
+            click: function () {
               const focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow) {
                 focusedWindow.close();
               }
-            }
+            },
           },
-        ]
+        ],
       },
       {
         label: '&View',
@@ -275,49 +320,48 @@ app.once('ready', function() {
           {
             label: 'Zoom In',
             accelerator: 'CmdOrCtrl+=',
-            role: 'zoomin'
+            role: 'zoomin',
           },
           {
             label: 'Zoom Out',
             accelerator: 'CmdOrCtrl+-',
-            role: 'zoomout'
+            role: 'zoomout',
           },
           {
             label: 'Actual Size',
             accelerator: 'CmdOrCtrl+0',
-            role: 'resetzoom'
+            role: 'resetzoom',
           },
           {
             label: 'Toggle &Full Screen',
             accelerator: 'F11',
-            role: 'togglefullscreen'
+            role: 'togglefullscreen',
           },
-        ]
+        ],
       },
       {
         label: 'Help',
         submenu: [
           {
             label: 'Online Manual',
-            click: function() {
+            click: function () {
               shell.openExternal('https://webui.docs.backend.ai/');
-            }
+            },
           },
           {
             label: 'Backend.AI Project Site',
-            click: function() {
+            click: function () {
               shell.openExternal('https://www.backend.ai/');
-            }
-          }
-        ]
-      }
+            },
+          },
+        ],
+      },
     ];
   }
 
   const appmenu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(appmenu);
 });
-
 
 function createWindow() {
   // Create the browser window.
@@ -333,10 +377,10 @@ function createWindow() {
       nativeWindowOpen: true,
       nodeIntegration: false,
       preload: path.join(electronPath, 'preload.js'),
-      devTools: (debugMode === true),
+      devTools: debugMode === true,
       worldSafeExecuteJavaScript: false,
-      contextIsolation: true
-    }
+      contextIsolation: true,
+    },
   });
   // and load the index.html of the app.
   if (process.env.LIVE_DEBUG === '1') {
@@ -348,28 +392,31 @@ function createWindow() {
   } else {
     // Load HTML into new Window (file-based serving)
     nfs.readFile(path.join(es6Path, 'config.toml'), 'utf-8', (err, data) => {
-      console.log("Running on build-resource debug mode...");
+      console.log('Running on build-resource debug mode...');
       if (err) {
         console.log('No configuration file found.');
         return;
       }
       const config = toml(data);
-      if ('wsproxy' in config && 'disableCertCheck' in config.wsproxy && config.wsproxy.disableCertCheck == true) {
+      if (
+        'wsproxy' in config &&
+        'disableCertCheck' in config.wsproxy &&
+        config.wsproxy.disableCertCheck == true
+      ) {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
       }
-      if ('server' in config && 'webServerURL' in config.server && config.server.webServerURL != '') {
+      if (
+        'server' in config &&
+        'webServerURL' in config.server &&
+        config.server.webServerURL != ''
+      ) {
         mainURL = config.server.webServerURL;
       } else {
         mainURL = url.format({
           pathname: path.join(mainIndex),
           protocol: 'file',
-          slashes: true
+          slashes: true,
         });
-      }
-      if ('general' in config && 'siteDescription' in config.general) {
-        process.env.siteDescription = config.general.siteDescription;
-      } else {
-        process.env.siteDescription = '';
       }
       mainWindow.loadURL(mainURL);
     });
@@ -378,7 +425,7 @@ function createWindow() {
   if (debugMode === true) {
     devtools = new BrowserWindow();
     mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
-    mainWindow.webContents.openDevTools({mode: 'detach'});
+    mainWindow.webContents.openDevTools({ mode: 'detach' });
   }
   // Emitted when the window is closed.
   mainWindow.on('close', (e) => {
@@ -398,7 +445,8 @@ function createWindow() {
   });
 
   ipcMain.on('app-closed', (_) => {
-    if (process.platform !== 'darwin') { // Force close app when it is closed even on macOS.
+    if (process.platform !== 'darwin') {
+      // Force close app when it is closed even on macOS.
       // app.quit()
     }
     mainWindow = null;
@@ -406,7 +454,7 @@ function createWindow() {
     devtools = null;
     app.quit();
   });
-  mainWindow.on('closed', function() {
+  mainWindow.on('closed', function () {
     mainWindow = null;
     mainContent = null;
     devtools = null;
@@ -415,7 +463,6 @@ function createWindow() {
   mainWindow.webContents.setWindowOpenHandler((details) => {
     return newPopupWindow(details);
   });
-
 }
 
 function newPopupWindow(details) {
@@ -429,10 +476,10 @@ function newPopupWindow(details) {
     width: windowWidth,
     height: windowHeight,
     closable: true,
-    webPreferences: {}
+    webPreferences: {},
   };
   Object.assign(options.webPreferences, {
-    javascript: true
+    javascript: true,
   });
   if (details.frameName === 'modal') {
     options.modal = true;
@@ -445,7 +492,7 @@ function newPopupWindow(details) {
   if (debugMode === true) {
     devtools = new BrowserWindow();
     newGuest.webContents.setDevToolsWebContents(devtools.webContents);
-    newGuest.webContents.openDevTools({mode: 'detach'});
+    newGuest.webContents.openDevTools({ mode: 'detach' });
   }
   newGuest.webContents.setWindowOpenHandler((details) => {
     return newPopupWindow(details);
@@ -456,19 +503,24 @@ function newPopupWindow(details) {
       c.destroy();
     }
   });
-  return { action: 'deny'};
+  return { action: 'deny' };
 }
 
-function setSameSitePolicy(){
-	const filter = { urls: ["http://*/*", "https://*/*"] };
-	session.defaultSession.webRequest.onHeadersReceived(filter, (details, callback) => {
-		const cookies = (details.responseHeaders['Set-Cookie'] || []);
-    cookies.map(cookie => cookie.replace('SameSite=Lax', 'SameSite=None')); // Override SameSite Lax option to None for App mode cookie.
-		if(cookies.length > 0 && !cookies.includes('SameSite')) { // Add SameSite policy if not present.
-      details.responseHeaders['Set-Cookie'] = cookies + '; SameSite=None; Secure';
-    }
-    callback({ cancel: false, responseHeaders: details.responseHeaders });
-	});
+function setSameSitePolicy() {
+  const filter = { urls: ['http://*/*', 'https://*/*'] };
+  session.defaultSession.webRequest.onHeadersReceived(
+    filter,
+    (details, callback) => {
+      const cookies = details.responseHeaders['Set-Cookie'] || [];
+      cookies.map((cookie) => cookie.replace('SameSite=Lax', 'SameSite=None')); // Override SameSite Lax option to None for App mode cookie.
+      if (cookies.length > 0 && !cookies.includes('SameSite')) {
+        // Add SameSite policy if not present.
+        details.responseHeaders['Set-Cookie'] =
+          cookies + '; SameSite=None; Secure';
+      }
+      callback({ cancel: false, responseHeaders: details.responseHeaders });
+    },
+  );
 }
 
 app.on('ready', () => {
@@ -479,9 +531,7 @@ app.on('ready', () => {
     try {
       const data = await fs.readFile(normalizedPath);
       const mimeType = mime.lookup(normalizedPath);
-      return new Response(
-        data,
-        { headers: { 'content-type': mimeType } } );
+      return new Response(data, { headers: { 'content-type': mimeType } });
     } catch (err) {
       console.error('Error reading file:', err);
       return { error: -2 }; // -2 corresponds to net::ERR_FAILED in Chromium
@@ -493,9 +543,9 @@ app.on('ready', () => {
     const fullPath = npjoin(es6Path, filePath);
     try {
       const data = await fs.readFile(fullPath);
-      return new Response(
-        data,
-        { headers: { 'content-type': 'text/javascript' } } );
+      return new Response(data, {
+        headers: { 'content-type': 'text/javascript' },
+      });
     } catch (err) {
       console.error('Error reading file:', err);
       return { error: -2 };
@@ -505,26 +555,27 @@ app.on('ready', () => {
 });
 
 // Quit when all windows are closed.
-app.on('window-all-closed', function() {
+app.on('window-all-closed', function () {
   if (mainWindow) {
     e.preventDefault();
     mainWindow.webContents.send('app-close-window');
   }
 });
 
-
-app.on('activate', function() {
+app.on('activate', function () {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {
     createWindow();
   }
 });
-app.on('certificate-error', function(event, webContents, url, error,
-    certificate, callback) {
-  event.preventDefault();
-  callback(true);
-});
+app.on(
+  'certificate-error',
+  function (event, webContents, url, error, certificate, callback) {
+    event.preventDefault();
+    callback(true);
+  },
+);
 // Let windows without node integration
 app.on('web-contents-created', (event, contents) => {
   contents.on('will-attach-webview', (event, webPreferences, params) => {
