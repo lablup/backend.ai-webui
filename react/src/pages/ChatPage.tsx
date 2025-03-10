@@ -3,24 +3,11 @@ import { Conversation } from '../components/Chat/Conversation';
 import EndpointLLMChatCard from '../components/Chat/EndpointLLMChatCard';
 import Flex from '../components/Flex';
 import { ChatContext, ChatProvider, ConversationType } from './ChatProvider';
-import { ChatPageQuery } from './__generated__/ChatPageQuery.graphql';
 import { PlusOutlined } from '@ant-design/icons';
 import { useLocalStorageState } from 'ahooks';
 import { useDynamicList } from 'ahooks';
-import {
-  Button,
-  Card,
-  Skeleton,
-  Switch,
-  Tabs,
-  Typography,
-  TabsProps,
-  CardProps,
-} from 'antd';
-import { CardTabListType } from 'antd/lib/card';
-import graphql from 'babel-plugin-relay/macro';
+import { TabsProps } from 'antd';
 import { t } from 'i18next';
-import _ from 'lodash';
 import React, {
   Suspense,
   useCallback,
@@ -34,45 +21,16 @@ import { StringParam, useQueryParam, useQueryParams } from 'use-query-params';
 
 const PageStyle = {
   header: {
-    padding: '24px 24px',
+    padding: '24px 24px 0 24px',
   },
   body: {
     overflow: 'hidden',
+    paddingTop: 0,
   },
 };
 
 type TabsType = TabsProps['items'];
 type TabType = NonNullable<TabsType>[number];
-
-function useEndpoint(endpointId: string, isEmptyEndpointId: boolean) {
-  const { endpoint, endpoint_list } = useLazyLoadQuery<ChatPageQuery>(
-    graphql`
-      query ChatPageQuery($endpointId: UUID!, $isEmptyEndpointId: Boolean!) {
-        endpoint(endpoint_id: $endpointId)
-          @skipOnClient(if: $isEmptyEndpointId)
-          @catch {
-          endpoint_id
-          ...EndpointLLMChatCard_endpoint
-        }
-        endpoint_list(limit: 1, offset: 0) {
-          items {
-            endpoint_id
-            ...EndpointLLMChatCard_endpoint
-          }
-        }
-      }
-    `,
-    {
-      endpointId: endpointId,
-      isEmptyEndpointId: isEmptyEndpointId,
-    },
-  );
-
-  return {
-    endpoint:
-      (endpoint.ok ? endpoint.value : endpoint_list?.items?.[0]) ?? undefined,
-  };
-}
 
 type ChatPageProps = {};
 
@@ -83,22 +41,16 @@ const ChatInnerPage: React.FC<ChatPageProps> = ({ ...props }) => {
     throw new Error('ChatInput must be used within a ChatProvider');
   }
 
-  const { conversations, setConversations } = chatContext;
-
-  const { t } = useTranslation();
+  const { conversations, setConversations, setOption } = chatContext;
 
   const [{ endpointId, modelId, agentId }] = useQueryParams({
     endpointId: StringParam,
-    modelId: StringParam,
     agentId: StringParam,
+    modelId: StringParam,
   });
 
-  // const { endpoint, endpoint_list, default_endpoint } = useEndpoint(
-  //   endpointId ?? '',
-  //   !endpointId,
-  // );
-
-  const [activeTabKey, setActiveTabKey] = useState<string>('1');
+  // @FIXME, setActiveTab with latest focused
+  const [activeTabKey, setActiveTabKey] = useState<string>('0');
 
   const handleTabChange = (key: string) => {
     setActiveTabKey(key);
@@ -107,7 +59,7 @@ const ChatInnerPage: React.FC<ChatPageProps> = ({ ...props }) => {
   const handleTabEdit = useCallback(
     (_: any, action: 'add' | 'remove') => {
       if (action === 'add') {
-        const key = String((conversations?.length ?? 0) + 1);
+        const key = String(conversations?.length ?? 0);
         setConversations([
           ...(conversations ?? []),
           {
@@ -132,6 +84,14 @@ const ChatInnerPage: React.FC<ChatPageProps> = ({ ...props }) => {
     },
   );
 
+  useEffect(() => {
+    setOption({
+      agentId: agentId,
+      endpointId: endpointId,
+      modelId: modelId,
+    });
+  }, [agentId, endpointId, modelId, setOption]);
+
   return (
     <ChatProvider>
       <BAICard
@@ -145,14 +105,7 @@ const ChatInnerPage: React.FC<ChatPageProps> = ({ ...props }) => {
         activeTabKey={activeTabKey}
         onTabChange={handleTabChange}
       >
-        {
-          // @TODO pass activeTabKey to prevent whole screen rendering?
-        }
-        <Flex style={{ height: 'calc(100vh - 240px)' }}>
-          <Conversation
-            conversation={conversations[Number(activeTabKey) - 1]}
-          />
-        </Flex>
+        <Conversation activeTabKey={activeTabKey} />
       </BAICard>
     </ChatProvider>
   );
