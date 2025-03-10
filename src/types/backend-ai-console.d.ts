@@ -46,7 +46,6 @@ declare const BackendAIWebUI_base: (new (...args: any[]) => {
 export default class BackendAIWebUI extends BackendAIWebUI_base {
   hasLoadedStrings: boolean;
   menuTitle: string;
-  siteDescription: string;
   user_id: string;
   full_name: string;
   domain: string;

@@ -8,23 +8,13 @@ import React, { forwardRef } from 'react';
 export interface BAISiderProps extends SiderProps {
   logoCollapsed?: React.ReactNode;
   logo?: React.ReactNode;
-  logoTitleCollapsed?: React.ReactNode;
-  logoTitle?: React.ReactNode;
 }
 
 export const COLLAPSED_SIDER_WIDTH = 74;
 export const SIDER_WIDTH = 240;
 const BAISider = forwardRef<HTMLDivElement, BAISiderProps>(
   (
-    {
-      children,
-      logo,
-      logoCollapsed,
-      logoTitle,
-      logoTitleCollapsed,
-      theme: siderTheme,
-      ...otherProps
-    },
+    { children, logo, logoCollapsed, theme: siderTheme, ...otherProps },
     ref,
   ) => {
     const { token } = theme.useToken();
