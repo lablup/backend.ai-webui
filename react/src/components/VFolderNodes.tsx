@@ -132,22 +132,6 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         scroll={{ x: 'max-content' }}
         columns={[
           {
-            key: '#',
-            title: '#',
-            render: (id, record, index) => {
-              const [current, pageSize] =
-                tableProps.pagination &&
-                tableProps.pagination.current &&
-                tableProps.pagination.pageSize
-                  ? [
-                      tableProps.pagination.current,
-                      tableProps.pagination.pageSize,
-                    ]
-                  : [1, 0];
-              return index + 1 + (current - 1) * pageSize;
-            },
-          },
-          {
             key: 'name',
             title: t('data.folders.Name'),
             dataIndex: 'name',
@@ -302,25 +286,25 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                   {/* Delete from trash bin & Disabled delete button */}
                   {isDeletedCategory(vfolder?.status) && (
                     <Tooltip title={t('data.folders.Delete')} placement="right">
-                    <Button
-                      size="small"
-                      type="text"
-                      icon={<TrashBinIcon />}
-                      style={{
-                        color:
-                          vfolder?.status !== 'delete-pending'
-                            ? token.colorTextDisabled
-                            : token.colorError,
-                        background:
-                          vfolder?.status !== 'delete-pending'
-                            ? token.colorBgContainerDisabled
-                            : token.colorErrorBg,
-                      }}
-                      disabled={vfolder?.status !== 'delete-pending'}
-                      onClick={() => {
-                        setCurrentVFolder(vfolder ?? null);
-                      }}
-                    />
+                      <Button
+                        size="small"
+                        type="text"
+                        icon={<TrashBinIcon />}
+                        style={{
+                          color:
+                            vfolder?.status !== 'delete-pending'
+                              ? token.colorTextDisabled
+                              : token.colorError,
+                          background:
+                            vfolder?.status !== 'delete-pending'
+                              ? token.colorBgContainerDisabled
+                              : token.colorErrorBg,
+                        }}
+                        disabled={vfolder?.status !== 'delete-pending'}
+                        onClick={() => {
+                          setCurrentVFolder(vfolder ?? null);
+                        }}
+                      />
                     </Tooltip>
                   )}
                 </Flex>
