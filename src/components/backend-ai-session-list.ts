@@ -3021,7 +3021,6 @@ export default class BackendAISessionList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    */
   sessionTypeRenderer(root, column?, rowData?) {
-    const inferenceMetrics = JSON.parse(rowData.item.inference_metrics || '{}');
     render(
       html`
         <div class="layout vertical start">
@@ -3030,17 +3029,6 @@ export default class BackendAISessionList extends BackendAIPage {
             description="${rowData.item.type}"
             ui="round"
           ></lablup-shields>
-          ${rowData.item.type === 'INFERENCE'
-            ? html`
-                <span style="font-size:12px;margin-top:5px;">
-                  Inference requests: ${inferenceMetrics.requests}
-                </span>
-                <span style="font-size:12px;">
-                  Inference API last response time (ms):
-                  ${inferenceMetrics.last_response_ms}
-                </span>
-              `
-            : ``}
         </div>
       `,
       root,

@@ -1,6 +1,7 @@
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 import { atomWithDefault } from 'jotai/utils';
 import _ from 'lodash';
+import { useRef } from 'react';
 import { useCallback, useMemo } from 'react';
 import {
   useQueryParams,
@@ -9,35 +10,60 @@ import {
   UrlUpdateType,
 } from 'use-query-params';
 
-// Create a global atom to store query params
 const queryParamsAtom = atom<Record<string, any>>({});
 
+/**
+ * A custom hook that synchronizes URL search parameters with application state while handling React transitions.
+ * This hook solves the issue where URL parameter changes within React transitions are not properly reflected
+ * in the rendering cycle, as search parameter changes are detected through events rather than React's state system.
+ *
+ * @template QPCMap - Type extending QueryParamConfigMap that defines the structure of URL parameters
+ * @param {QPCMap} paramConfigMap - Configuration object that defines the URL parameters to be managed
+ *
+ * @returns {[
+ *   DecodedValueMap<QPCMap>,
+ *   (nextQuery: Partial<DecodedValueMap<QPCMap>> | ((prevQuery: DecodedValueMap<QPCMap>) => Partial<DecodedValueMap<QPCMap>>),
+ *    updateType: UrlUpdateType) => void,
+ *   boolean
+ * ]} A tuple containing:
+ *   - localQuery: The current state of the URL parameters
+ *   - setDeferredQuery: Function to update URL parameters with transition support
+ *   - isPending: Boolean indicating if a transition is in progress
+ *
+ * @example
+ * const [query, setQuery, isPending] = useDeferredQueryParams({
+ *   page: NumberParam,
+ *   search: StringParam
+ * });
+ *
+ * // Update URL parameters
+ * setQuery({ page: 2 }, 'pushIn');
+ */
 export function useDeferredQueryParams<QPCMap extends QueryParamConfigMap>(
   paramConfigMap: QPCMap,
 ) {
   const [query, setQuery] = useQueryParams(paramConfigMap);
 
+  const isBeforeInitializingRef = useRef(true);
   const selectiveQueryAtom = useMemo(
-    () =>
-      atomWithDefault((get) => {
+    () => {
+      return atomWithDefault((get) => {
         const globalParams = get(queryParamsAtom);
         const selectedParams = _.pick(
-          globalParams,
+          // Use query parameters from URL on initial render
+          isBeforeInitializingRef.current ? query : globalParams,
           Object.keys(paramConfigMap),
         );
-        if (_.isEmpty(selectedParams)) {
-          // If the global state is empty, return the query
-          return query;
-        }
-        // Use the value from the global state if it exists
+        isBeforeInitializingRef.current = false;
         return selectedParams as DecodedValueMap<QPCMap>;
-      }),
+      });
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [JSON.stringify(paramConfigMap)],
   );
 
   let localQuery = useAtomValue(selectiveQueryAtom);
-  const setLocalQuery = useSetAtom(queryParamsAtom);
+  const setSharedQuery = useSetAtom(queryParamsAtom);
 
   const setDeferredQuery = useCallback(
     (
@@ -53,14 +79,28 @@ export function useDeferredQueryParams<QPCMap extends QueryParamConfigMap>(
 
       // Update Jotai state
       if (updateType === 'replaceIn' || updateType === 'pushIn') {
-        setLocalQuery({ ...localQuery, ...newQuery });
+        setSharedQuery((prev) => ({
+          ...prev,
+          ...localQuery,
+          ...newQuery,
+        }));
       } else {
-        setLocalQuery(newQuery as DecodedValueMap<QPCMap>);
+        setSharedQuery((prev) => ({
+          ...prev,
+          ...(newQuery as DecodedValueMap<QPCMap>),
+        }));
       }
-      // Update URL params
-      setQuery(newQuery, updateType);
+
+      // Sync all(merged) query parameters with URL
+      setQuery(
+        {
+          ...localQuery,
+          ...newQuery,
+        },
+        updateType,
+      );
     },
-    [localQuery, setQuery, setLocalQuery],
+    [localQuery, setQuery, setSharedQuery],
   );
 
   return [localQuery, setDeferredQuery] as const;

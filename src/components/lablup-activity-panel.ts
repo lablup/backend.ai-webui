@@ -78,7 +78,8 @@ export default class LablupActivityPanel extends LitElement {
           height: 48px;
           padding: 5px 15px 5px 20px;
           margin: 0 0 10px 0;
-          border-radius: 5px 5px 0 0;
+          border-radius: var(--token-borderRadiusLG) var(--token-borderRadiusLG)
+            0 0;
           border-bottom: 1px solid var(--token-colorBorderSecondary, #ddd);
           display: flex;
           white-space: nowrap;

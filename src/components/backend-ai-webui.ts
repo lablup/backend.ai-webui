@@ -145,6 +145,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({ type: Number }) sidepanelWidth = 250;
   @property({ type: Object }) supports = Object();
   @property({ type: Array }) availablePages = [
+    'start',
     'summary',
     'verify-email',
     'change-password',
@@ -172,6 +173,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     'session',
     'session/start',
     'interactive-login',
+    'chat',
+    'ai-agent',
+    'model-store',
   ]; // temporally block pipeline from available pages 'pipeline', 'pipeline-job'
   @property({ type: Array }) adminOnlyPages = [
     'experiment',
@@ -645,6 +649,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       },
     ];
 
+    if (this._page === 'start') {
+      this._moveTo('/start');
+    }
+
     // redirect to error page when blocked by config option or the page is not available page.
     if (
       this.optionalPages
@@ -719,7 +727,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    */
   _loadPageElement() {
     if (this._page === 'index.html' || this._page === '') {
-      this._page = 'summary';
+      this._page = 'start';
       navigate(decodeURIComponent('/'));
     }
   }

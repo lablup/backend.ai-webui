@@ -8,6 +8,7 @@ import {
 import { Card, List, Progress, Typography, theme } from 'antd';
 import dayjs from 'dayjs';
 import _ from 'lodash';
+import { FolderIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -22,6 +23,21 @@ const BAINotificationItem: React.FC<{
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [showExtraDescription, setShowExtraDescription] = useState(false);
+
+  const explicitIcon = notification.icon === 'folder' ? <FolderIcon /> : null;
+  const icon =
+    explicitIcon ||
+    (notification.backgroundTask &&
+      {
+        pending: <ClockCircleOutlined style={{ color: token.colorInfo }} />,
+        resolved: <CheckCircleOutlined style={{ color: token.colorSuccess }} />,
+        rejected: <CloseCircleOutlined style={{ color: token.colorError }} />,
+      }[notification.backgroundTask.status]) ||
+    (notification.type === 'error' ? (
+      <CloseCircleOutlined style={{ color: token.colorError }} />
+    ) : notification.type === 'success' ? (
+      <CheckCircleOutlined style={{ color: token.colorSuccess }} />
+    ) : null);
   return (
     <List.Item>
       <Flex direction="column" align="stretch" gap={'xxs'}>
@@ -33,25 +49,7 @@ const BAINotificationItem: React.FC<{
             paddingRight: token.paddingMD,
           }}
         >
-          <Flex style={{ height: 22 }}>
-            {notification.backgroundTask &&
-              {
-                pending: (
-                  <ClockCircleOutlined style={{ color: token.colorInfo }} />
-                ),
-                resolved: (
-                  <CheckCircleOutlined style={{ color: token.colorSuccess }} />
-                ),
-                rejected: (
-                  <CloseCircleOutlined style={{ color: token.colorError }} />
-                ),
-              }[notification.backgroundTask.status]}
-            {notification.type === 'error' ? (
-              <CloseCircleOutlined style={{ color: token.colorError }} />
-            ) : notification.type === 'success' ? (
-              <CheckCircleOutlined style={{ color: token.colorSuccess }} />
-            ) : null}
-          </Flex>
+          {icon && <Flex style={{ height: 22 }}>{icon}</Flex>}
           <Typography.Paragraph
             style={{
               fontWeight: 500,

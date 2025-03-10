@@ -3,6 +3,7 @@ import AutoScalingRuleEditorModal, {
 } from '../components/AutoScalingRuleEditorModal';
 import BAIJSONViewerModal from '../components/BAIJSONViewerModal';
 import CopyableCodeText from '../components/CopyableCodeText';
+import { isEndpointInDestroyingCategory } from '../components/EndpointList';
 import EndpointOwnerInfo from '../components/EndpointOwnerInfo';
 import EndpointStatusTag from '../components/EndpointStatusTag';
 import EndpointTokenGenerationModal from '../components/EndpointTokenGenerationModal';
@@ -12,10 +13,10 @@ import ImageMetaIcon from '../components/ImageMetaIcon';
 import InferenceSessionErrorModal from '../components/InferenceSessionErrorModal';
 import ResourceNumber from '../components/ResourceNumber';
 import SessionDetailDrawer from '../components/SessionDetailDrawer';
+import UnmountModalAfterClose from '../components/UnmountModalAfterClose';
 import VFolderLazyView from '../components/VFolderLazyView';
 import { AutoScalingRuleEditorModalFragment$key } from '../components/__generated__/AutoScalingRuleEditorModalFragment.graphql';
 import { InferenceSessionErrorModalFragment$key } from '../components/__generated__/InferenceSessionErrorModalFragment.graphql';
-import ChatUIModal from '../components/lablupTalkativotUI/ChatUIModal';
 import { baiSignedRequestWithPromise, filterNonNullItems } from '../helper';
 import {
   useSuspendedBackendaiClient,
@@ -25,7 +26,6 @@ import {
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { isDestroyingStatus } from './EndpointListPage';
 import { EndpointDetailPageAutoScalingRuleDeleteMutation } from './__generated__/EndpointDetailPageAutoScalingRuleDeleteMutation.graphql';
 import {
   EndpointDetailPageQuery,
@@ -47,7 +47,6 @@ import {
 } from '@ant-design/icons';
 import {
   App,
-  Breadcrumb,
   Button,
   Card,
   Descriptions,
@@ -63,7 +62,11 @@ import { DescriptionsItemType } from 'antd/es/descriptions';
 import graphql from 'babel-plugin-relay/macro';
 import { default as dayjs } from 'dayjs';
 import _ from 'lodash';
-import { BotMessageSquareIcon } from 'lucide-react';
+import {
+  BotMessageSquareIcon,
+  CircleArrowDownIcon,
+  CircleArrowUpIcon,
+} from 'lucide-react';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery, useMutation } from 'react-relay';
@@ -118,7 +121,6 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     useState<AutoScalingRuleEditorModalFragment$key | null>(null);
   const [isOpenTokenGenerationModal, setIsOpenTokenGenerationModal] =
     useState(false);
-  const [openChatModal, setOpenChatModal] = useState(false);
   const [isOpenAutoScalingRuleModal, setIsOpenAutoScalingRuleModal] =
     useState(false);
   const [currentUser] = useCurrentUserInfo();
@@ -209,7 +211,6 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             created_user_email @since(version: "23.09.8")
             ...EndpointOwnerInfoFragment
             ...EndpointStatusTagFragment
-            ...ChatUIModalFragment
             ...ServiceLauncherPageContentFragment
           }
           endpoint_token_list(
@@ -228,7 +229,6 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               created_at
               valid_until
             }
-            ...ChatUIModalEndpointTokenListFragment
           }
           endpoint_auto_scaling_rules: endpoint_auto_scaling_rule_nodes(
             endpoint: $autoScalingRules_endpointId
@@ -381,7 +381,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               type="link"
               icon={<BotMessageSquareIcon />}
               onClick={() => {
-                setOpenChatModal(true);
+                webuiNavigate(`/chat?endpointId=${endpoint?.endpoint_id}`);
               }}
               disabled={endpoint?.status !== 'HEALTHY'}
             />
@@ -429,13 +429,10 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     },
     {
       label: t('session.launcher.ModelStorage'),
-      children: (
+      children: endpoint?.model ? (
         <Suspense fallback={<Spin indicator={<LoadingOutlined spin />} />}>
           <Flex direction="column" align="start">
-            <VFolderLazyView
-              uuid={endpoint?.model as string}
-              clickable={true}
-            />
+            <VFolderLazyView uuid={endpoint?.model} clickable={true} />
             {baiClient.supports('endpoint-extra-mounts') &&
               endpoint?.model_mount_destination && (
                 <Flex direction="row" align="center" gap={'xxs'}>
@@ -447,7 +444,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               )}
           </Flex>
         </Suspense>
-      ),
+      ) : null,
     },
   ];
 
@@ -522,21 +519,6 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
 
   return (
     <Flex direction="column" align="stretch" gap="sm">
-      <Breadcrumb
-        items={[
-          {
-            title: t('modelService.Services'),
-            onClick: (e) => {
-              e.preventDefault();
-              webuiNavigate('/serving');
-            },
-            href: '/serving',
-          },
-          {
-            title: t('modelService.RoutingInfo'),
-          },
-        ]}
-      />
       <Flex direction="row" justify="between">
         <Typography.Title level={3} style={{ margin: 0 }}>
           {endpoint?.name || ''}
@@ -565,10 +547,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           <Button
             loading={isPendingRefetch}
             icon={<ReloadOutlined />}
-            disabled={isDestroyingStatus(
-              endpoint?.replicas ?? endpoint?.desired_session_count,
-              endpoint?.status,
-            )}
+            disabled={isEndpointInDestroyingCategory(endpoint)}
             onClick={() => {
               startRefetchTransition(() => {
                 updateFetchKey();
@@ -586,10 +565,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             type="primary"
             icon={<SettingOutlined />}
             disabled={
-              isDestroyingStatus(
-                endpoint?.replicas ?? endpoint?.desired_session_count,
-                endpoint?.status,
-              ) ||
+              isEndpointInDestroyingCategory(endpoint) ||
               (!!endpoint?.created_user_email &&
                 endpoint?.created_user_email !== currentUser.email)
             }
@@ -617,10 +593,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             <Button
               type="primary"
               icon={<PlusOutlined />}
-              disabled={isDestroyingStatus(
-                endpoint?.replicas ?? endpoint?.desired_session_count,
-                endpoint?.status,
-              )}
+              disabled={isEndpointInDestroyingCategory(endpoint)}
               onClick={() => {
                 setIsOpenAutoScalingRuleModal(true);
               }}
@@ -634,21 +607,34 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             rowKey={'id'}
             columns={[
               {
-                title: '#',
+                title: t('autoScalingRule.ScalingType'),
                 fixed: 'left',
-                render: (id, record, index) => {
-                  ++index;
-                  return index;
-                },
+                render: (text, row) =>
+                  (row?.step_size || 0) > 0 ? 'Up' : 'Down',
               },
               {
-                title: t('autoScalingRule.MetricName'),
+                title: t('autoScalingRule.MetricSource'),
+                dataIndex: 'metric_source',
+                // render: (text, row) => <Tag>{row?.metric_source}</Tag>,
+              },
+              {
+                title: t('autoScalingRule.Condition'),
                 dataIndex: 'metric_name',
                 fixed: 'left',
                 render: (text, row) => (
-                  <Typography.Text ellipsis copyable style={{ width: 150 }}>
-                    {row?.metric_name}
-                  </Typography.Text>
+                  <Flex gap={'xs'}>
+                    <Tag>{row?.metric_name}</Tag>
+                    {row?.comparator ? (
+                      <Tooltip title={row.comparator}>
+                        {/* @ts-ignore */}
+                        {COMPARATOR_LABELS[row.comparator]}
+                      </Tooltip>
+                    ) : (
+                      '-'
+                    )}
+                    {row?.threshold}
+                    {row?.metric_source === 'KERNEL' ? '%' : ''}
+                  </Flex>
                 ),
               },
               {
@@ -661,10 +647,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                       type="text"
                       icon={<SettingOutlined />}
                       style={
-                        isDestroyingStatus(
-                          endpoint?.replicas ?? endpoint?.desired_session_count,
-                          endpoint?.status,
-                        ) ||
+                        isEndpointInDestroyingCategory(endpoint) ||
                         (!!endpoint?.created_user_email &&
                           endpoint?.created_user_email !== currentUser.email)
                           ? {
@@ -675,10 +658,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                             }
                       }
                       disabled={
-                        isDestroyingStatus(
-                          endpoint?.replicas ?? endpoint?.desired_session_count,
-                          endpoint?.status,
-                        ) ||
+                        isEndpointInDestroyingCategory(endpoint) ||
                         (!!endpoint?.created_user_email &&
                           endpoint?.created_user_email !== currentUser.email)
                       }
@@ -746,11 +726,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                         icon={
                           <DeleteOutlined
                             style={
-                              isDestroyingStatus(
-                                endpoint?.replicas ??
-                                  endpoint?.desired_session_count,
-                                endpoint?.status,
-                              )
+                              isEndpointInDestroyingCategory(endpoint)
                                 ? undefined
                                 : {
                                     color: token.colorError,
@@ -770,31 +746,38 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                 ),
               },
               {
-                title: t('autoScalingRule.MetricSource'),
-                dataIndex: 'metric_source',
-                render: (text, row) => <Tag>{row?.metric_source}</Tag>,
-              },
-              {
-                title: t('autoScalingRule.Comparator'),
-                dataIndex: 'comparator',
-                render: (text, row) => (
-                  // @ts-ignore
-                  <Tooltip title={text}>{COMPARATOR_LABELS[text]}</Tooltip>
-                ),
-              },
-              {
-                title: t('autoScalingRule.Threshold'),
-                render: (text, row) => <span>{row?.threshold}</span>,
-              },
-              {
                 title: t('autoScalingRule.StepSize'),
                 dataIndex: 'step_size',
+                render: (text, row) => {
+                  if (row?.step_size) {
+                    return (
+                      <Flex gap={'xs'}>
+                        <Typography.Text>
+                          {row?.step_size > 0 ? (
+                            <CircleArrowUpIcon />
+                          ) : (
+                            <CircleArrowDownIcon />
+                          )}
+                        </Typography.Text>
+                        <Typography.Text>
+                          {Math.abs(row?.step_size)}
+                        </Typography.Text>
+                      </Flex>
+                    );
+                  } else {
+                    return '-';
+                  }
+                },
               },
               {
                 title: t('autoScalingRule.MIN/MAXReplicas'),
                 render: (text, row) => (
                   <span>
-                    Min: {row?.min_replicas} / Max: {row?.max_replicas}
+                    {row?.step_size
+                      ? row?.step_size > 0
+                        ? `Max: ${row?.max_replicas}`
+                        : `Min: ${row?.min_replicas}`
+                      : '-'}
                   </span>
                 ),
               },
@@ -842,10 +825,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           <Button
             type="primary"
             icon={<PlusOutlined />}
-            disabled={isDestroyingStatus(
-              endpoint?.replicas ?? endpoint?.desired_session_count,
-              endpoint?.status,
-            )}
+            disabled={isEndpointInDestroyingCategory(endpoint)}
             onClick={() => {
               setIsOpenTokenGenerationModal(true);
             }}
@@ -925,10 +905,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             <Button
               icon={<SyncOutlined />}
               loading={mutationToSyncRoutes.isPending}
-              disabled={isDestroyingStatus(
-                endpoint?.replicas ?? endpoint?.desired_session_count,
-                endpoint?.status,
-              )}
+              disabled={isEndpointInDestroyingCategory(endpoint)}
               onClick={() => {
                 endpoint?.endpoint_id &&
                   mutationToSyncRoutes.mutateAsync(endpoint?.endpoint_id, {
@@ -1055,29 +1032,23 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         }}
         endpoint_id={endpoint?.endpoint_id || ''}
       ></EndpointTokenGenerationModal>
-      <ChatUIModal
-        endpointFrgmt={endpoint}
-        endpointTokenFrgmt={endpoint_token_list}
-        open={openChatModal}
-        onCancel={() => {
-          setOpenChatModal(false);
-        }}
-      />
       {isSupportAutoScalingRule && (
-        <AutoScalingRuleEditorModal
-          open={isOpenAutoScalingRuleModal}
-          endpoint_id={endpoint?.endpoint_id as string}
-          autoScalingRuleFrgmt={editingAutoScalingRule}
-          onRequestClose={(success) => {
-            setIsOpenAutoScalingRuleModal(!isOpenAutoScalingRuleModal);
-            setEditingAutoScalingRule(null);
-            if (success) {
-              startRefetchTransition(() => {
-                updateFetchKey();
-              });
-            }
-          }}
-        />
+        <UnmountModalAfterClose>
+          <AutoScalingRuleEditorModal
+            open={isOpenAutoScalingRuleModal}
+            endpoint_id={endpoint?.endpoint_id as string}
+            autoScalingRuleFrgmt={editingAutoScalingRule}
+            onRequestClose={(success) => {
+              setIsOpenAutoScalingRuleModal(!isOpenAutoScalingRuleModal);
+              setEditingAutoScalingRule(null);
+              if (success) {
+                startRefetchTransition(() => {
+                  updateFetchKey();
+                });
+              }
+            }}
+          />
+        </UnmountModalAfterClose>
       )}
       <SessionDetailDrawer
         open={!selectedSessionId}

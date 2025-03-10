@@ -6,5 +6,10 @@ div > div.ant-modal-wrap.draggable.ant-modal-centered {
   width: var(--general-modal-header-width, 26px);
   height: var(--general-modal-header-height, 26px);
   top: 22px;
+  right: 18px;
   -webkit-app-region: no-drag;
+}
+
+.ant-modal.bai-modal .ant-modal-title {
+  margin-right: 36px;
 }

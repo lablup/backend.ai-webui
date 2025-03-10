@@ -1,7 +1,7 @@
 import Flex from '../components/Flex';
 import FolderCreateModal from '../components/FolderCreateModal';
 import ImportFromHuggingFaceModal from '../components/ImportFromHuggingFaceModal';
-import InviteFolderPermissionSettingModal from '../components/InviteFolderPermissionSettingModal';
+import InviteFolderSettingModal from '../components/InviteFolderSettingModal';
 import { filterEmptyItem } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import {
@@ -103,11 +103,6 @@ const VFolderListPage: React.FC<VFolderListPageProps> = (props) => {
       key: 'model',
       tab: t('data.Models'),
     },
-    baiClient.supports('model-store') &&
-      baiClient._config.enableModelStore && {
-        key: 'model-store',
-        tab: t('data.ModelStore'),
-      },
     baiClient.supports('vfolder-trash-bin') && {
       key: 'trash-bin',
       tab: <DeleteOutlined />,
@@ -169,7 +164,7 @@ const VFolderListPage: React.FC<VFolderListPageProps> = (props) => {
         {/* @ts-ignore  */}
         <backend-ai-data-view ref={dataViewRef} active _activeTab={curTabKey} />
       </Card>
-      <InviteFolderPermissionSettingModal
+      <InviteFolderSettingModal
         onRequestClose={() => {
           setInviteFolderId(null);
         }}

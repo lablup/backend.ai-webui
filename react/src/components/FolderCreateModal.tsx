@@ -2,12 +2,23 @@ import { useBaiSignedRequestWithPromise } from '../helper';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
+import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import ProjectSelect from './ProjectSelect';
 import StorageSelect from './StorageSelect';
-import { App, Button, Divider, Form, Input, Radio, Switch, theme } from 'antd';
+import {
+  App,
+  Button,
+  Divider,
+  Form,
+  Input,
+  Radio,
+  Skeleton,
+  Switch,
+  theme,
+} from 'antd';
 import { createStyles } from 'antd-style';
 import { FormInstance } from 'antd/lib';
 import _ from 'lodash';
@@ -45,7 +56,7 @@ interface FolderCreateFormItemsType {
   group: string | undefined;
   usage_mode: 'general' | 'model';
   type: 'user' | 'project';
-  permission: 'rw' | 'ro' | 'wd';
+  permission: 'rw' | 'ro';
   cloneable: boolean;
 }
 
@@ -58,7 +69,7 @@ export interface FolderCreationResponse {
   quota_scope_id: string;
   host: string;
   usage_mode: 'general' | 'model';
-  permission: 'rw' | 'ro' | 'wd';
+  permission: 'rw' | 'ro';
   max_size: number;
   creator: string;
   ownership_type: 'user' | 'project';
@@ -82,6 +93,8 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
   const userRole = useCurrentUserRole();
   const currentDomain = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
+
+  const { upsertNotification } = useSetBAINotification();
 
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
 
@@ -131,7 +144,16 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
       .then((values) => {
         mutationToCreateFolder.mutate(values, {
           onSuccess: (result) => {
-            message.success(t('data.folders.FolderCreated'));
+            upsertNotification({
+              key: 'folder-create-success',
+              icon: 'folder',
+              message: `${result.name}: ${t('data.folders.FolderCreated')}`,
+              toText: t('data.folders.OpenAFolder'),
+              to: {
+                search: `?folder=${result.id}`,
+              },
+              open: true,
+            });
             document.dispatchEvent(
               new CustomEvent('backend-ai-folder-list-changed'),
             );
@@ -216,14 +238,16 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         <Divider />
 
         <Form.Item label={t('data.Host')} name={'host'}>
-          <StorageSelect
-            onChange={(value) => {
-              formRef.current?.setFieldValue('host', value);
-            }}
-            showUsageStatus
-            autoSelectType="usage"
-            showSearch
-          />
+          <Suspense fallback={<Skeleton.Input active />}>
+            <StorageSelect
+              onChange={(value) => {
+                formRef.current?.setFieldValue('host', value);
+              }}
+              showUsageStatus
+              autoSelectType="usage"
+              showSearch
+            />
+          </Suspense>
         </Form.Item>
         <Divider />
 
@@ -279,7 +303,6 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
           <Radio.Group>
             <Radio value={'rw'}>Read & Write</Radio>
             <Radio value={'ro'}>Read Only</Radio>
-            <Radio value={'wd'}>Delete</Radio>
           </Radio.Group>
         </Form.Item>
 

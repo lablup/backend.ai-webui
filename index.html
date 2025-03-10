@@ -20,7 +20,7 @@
   <title>Backend.AI</title>
   <script src="./src/lib/webcomponents-loader.js"></script>
   <script src="./src/lib/web-animations-js/web-animations-next-lite.min.js"></script>
-  <script>
+  <script nonce="{{nonce}}">
     globalThis.isElectron = isElectron();
     if (isElectron) {
       globalThis.electronInitialHref = window.location.href;
@@ -34,14 +34,15 @@
     };
     globalThis.packageVersion = "25.3.0-alpha.0";
     globalThis.buildNumber = "6477";
-
+    globalThis.litNonce = "{{nonce}}";
+    globalThis.baiNonce = "{{nonce}}";
   </script>
   <!-- DO NOT CHANGE BELOW LINE -->
   <!-- REACT_BUNDLE_INJECTING FOR DEV-->
 </head>
 
 <body>
-  <script>
+  <script nonce="{{nonce}}">
     //To avoid flickering when first loading the page, we add a class to the body to indicate the theme.
     const userPrefersDark = localStorage.getItem('backendaiwebui.settings.isDarkMode');
     const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -84,7 +85,7 @@
       <p>Could not render Backend.AI Web UI. Check that JavaScript is enabled.</p>
     </noscript>
     <script src="./dist/components/backend-ai-webui.js" type="module"></script>
-    <script>
+    <script nonce="{{nonce}}">
       document.getElementById('version-detail').innerText = globalThis.packageVersion;
       document.getElementById('build-detail').innerText = ' Build ' + globalThis.buildVersion;
       document.getElementById('license-detail').innerText = '';

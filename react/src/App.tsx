@@ -1,4 +1,5 @@
 import AnnouncementAlert from './components/AnnouncementAlert';
+import BAICard from './components/BAICard';
 import BAIErrorBoundary, { ErrorView } from './components/BAIErrorBoundary';
 import {
   DefaultProvidersForReactRoot,
@@ -8,13 +9,20 @@ import Flex from './components/Flex';
 import LocationStateBreadCrumb from './components/LocationStateBreadCrumb';
 import MainLayout from './components/MainLayout/MainLayout';
 import WebUINavigate from './components/WebUINavigate';
+import { useSuspendedBackendaiClient } from './hooks';
 import { useBAISettingUserState } from './hooks/useBAISetting';
+// High priority to import the component
+import ComputeSessionListPage from './pages/ComputeSessionListPage';
+import ModelStoreListPage from './pages/ModelStoreListPage';
 import Page401 from './pages/Page401';
 import Page404 from './pages/Page404';
+import ServingPage from './pages/ServingPage';
 import VFolderListPage from './pages/VFolderListPage';
+import VFolderNodeListPage from './pages/VFolderNodeListPage';
 import { Skeleton, theme } from 'antd';
 import React, { Suspense } from 'react';
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   IndexRouteObject,
   RouterProvider,
@@ -25,11 +33,10 @@ import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 
 const Information = React.lazy(() => import('./components/Information'));
-const ServingPage = React.lazy(() => import('./pages/ServingPage'));
 const EndpointDetailPage = React.lazy(
   () => import('./pages/EndpointDetailPage'),
 );
-// const SummaryPage = React.lazy(() => import('./pages/SummaryPage'));
+const StartPage = React.lazy(() => import('./pages/StartPage'));
 const EnvironmentPage = React.lazy(() => import('./pages/EnvironmentPage'));
 const MyEnvironmentPage = React.lazy(() => import('./pages/MyEnvironmentPage'));
 const StorageHostSettingPage = React.lazy(
@@ -60,9 +67,6 @@ const UserCredentialsPage = React.lazy(
   () => import('./pages/UserCredentialsPage'),
 );
 
-const ComputeSessionListPage = React.lazy(
-  () => import('./pages/ComputeSessionListPage'),
-);
 const AgentSummaryPage = React.lazy(() => import('./pages/AgentSummaryPage'));
 const MaintenancePage = React.lazy(() => import('./pages/MaintenancePage'));
 const ConfigurationsPage = React.lazy(
@@ -71,6 +75,10 @@ const ConfigurationsPage = React.lazy(
 const SessionDetailAndContainerLogOpenerLegacy = React.lazy(
   () => import('./components/SessionDetailAndContainerLogOpenerLegacy'),
 );
+
+const ChatPage = React.lazy(() => import('./pages/ChatPage'));
+
+const AIAgentPage = React.lazy(() => import('./pages/AIAgentPage'));
 
 interface CustomHandle {
   title?: string;
@@ -112,18 +120,38 @@ const router = createBrowserRouter([
     ),
     children: [
       {
-        path: '/',
-        element: <WebUINavigate to="/summary" replace />,
+        path: '/start',
+        element: (
+          <BAIErrorBoundary>
+            <StartPage />
+          </BAIErrorBoundary>
+        ),
+        handle: { labelKey: 'webui.menu.Start' },
       },
       {
         //for electron dev mode
         path: '/build/electron-app/app/index.html',
-        element: <WebUINavigate to="/summary" replace />,
+        element: <WebUINavigate to="/start" replace />,
       },
       {
         //for electron prod mode
         path: '/app/index.html',
-        element: <WebUINavigate to="/summary" replace />,
+        element: <WebUINavigate to="/start" replace />,
+      },
+      {
+        path: '/chat',
+        handle: { labelKey: 'webui.menu.Chat' },
+        Component: () => {
+          const { t } = useTranslation();
+          useSuspendedBackendaiClient();
+          return (
+            <Suspense
+              fallback={<BAICard title={t('webui.menu.Chat')} loading />}
+            >
+              <ChatPage />
+            </Suspense>
+          );
+        },
       },
       {
         path: '/summary',
@@ -138,7 +166,6 @@ const router = createBrowserRouter([
                 style={{ marginBottom: token.paddingContentVerticalLG }}
                 closable
               />
-              {/* <SummaryPage /> */}
             </>
           );
         },
@@ -173,13 +200,14 @@ const router = createBrowserRouter([
                 'experimental_neo_session_list',
               );
 
+              useSuspendedBackendaiClient();
+
               return experimentalNeoSessionList ? (
                 <BAIErrorBoundary>
                   <Suspense
                     fallback={
-                      <Flex direction="column" style={{ maxWidth: 700 }}>
-                        <Skeleton active />
-                      </Flex>
+                      <Skeleton active />
+                      // <BAICard title={t('webui.menu.Sessions')} loading />
                     }
                   >
                     <ComputeSessionListPage />
@@ -227,17 +255,29 @@ const router = createBrowserRouter([
         children: [
           {
             path: '',
-            element: (
-              <BAIErrorBoundary>
-                <ServingPage />
-              </BAIErrorBoundary>
-            ),
+            Component: () => {
+              const { t } = useTranslation();
+              useSuspendedBackendaiClient();
+              return (
+                <BAIErrorBoundary>
+                  <Suspense
+                    fallback={
+                      <BAICard title={t('webui.menu.Serving')} loading />
+                    }
+                  >
+                    <ServingPage />
+                  </Suspense>
+                </BAIErrorBoundary>
+              );
+            },
           },
           {
             path: '/serving/:serviceId',
             element: (
               <BAIErrorBoundary>
-                <EndpointDetailPage />
+                <Suspense fallback={<Skeleton active />}>
+                  <EndpointDetailPage />
+                </Suspense>
               </BAIErrorBoundary>
             ),
             handle: { labelKey: 'modelService.RoutingInfo' },
@@ -289,6 +329,23 @@ const router = createBrowserRouter([
         ],
       },
       {
+        path: '/model-store',
+        handle: { labelKey: 'data.ModelStore' },
+        element: (
+          <BAIErrorBoundary>
+            <Suspense
+              fallback={
+                <Flex direction="column" style={{ maxWidth: 700 }}>
+                  <Skeleton active />
+                </Flex>
+              }
+            >
+              <ModelStoreListPage />
+            </Suspense>
+          </BAIErrorBoundary>
+        ),
+      },
+      {
         path: '/import',
         handle: { labelKey: 'webui.menu.Import&Run' },
         Component: () => {
@@ -311,12 +368,21 @@ const router = createBrowserRouter([
       },
       {
         path: '/data',
-        handle: { labelKey: 'webui.menu.Data&Storage' },
-        element: (
-          <BAIErrorBoundary>
-            <VFolderListPage />
-          </BAIErrorBoundary>
-        ),
+        handle: { labelKey: 'webui.menu.Data' },
+        Component: () => {
+          const [experimentalNeoDataPage] = useBAISettingUserState(
+            'experimental_neo_data_page',
+          );
+          return (
+            <BAIErrorBoundary>
+              {experimentalNeoDataPage ? (
+                <VFolderNodeListPage />
+              ) : (
+                <VFolderListPage />
+              )}
+            </BAIErrorBoundary>
+          );
+        },
       },
       {
         path: '/my-environment',
@@ -410,6 +476,22 @@ const router = createBrowserRouter([
       {
         path: '*',
         element: <></>,
+      },
+      {
+        path: '/ai-agent',
+        handle: { labelKey: 'webui.menu.AIAgents' },
+        Component: () => {
+          const [experimentalAIAgents] = useBAISettingUserState(
+            'experimental_ai_agents',
+          );
+          return experimentalAIAgents ? (
+            <Suspense fallback={<Skeleton active />}>
+              <AIAgentPage />
+            </Suspense>
+          ) : (
+            <WebUINavigate to={'/start'} replace />
+          );
+        },
       },
     ],
   },

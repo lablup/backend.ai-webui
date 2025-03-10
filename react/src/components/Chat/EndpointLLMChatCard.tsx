@@ -1,6 +1,11 @@
 import { useUpdatableState } from '../../hooks';
 import { useSuspenseTanQuery } from '../../hooks/reactQueryAlias';
+import { useAIAgent } from '../../hooks/useAIAgent';
+import { useBAISettingUserState } from '../../hooks/useBAISetting';
+import AIAgentSelect from '../AIAgentSelect';
 import EndpointSelect from '../EndpointSelect';
+import Flex from '../Flex';
+import { FluentEmojiIcon } from '../FluentEmojiIcon';
 import { Model } from './ChatUIModal';
 import LLMChatCard, { BAIModel } from './LLMChatCard';
 import { EndpointLLMChatCard_endpoint$key } from './__generated__/EndpointLLMChatCard_endpoint.graphql';
@@ -10,7 +15,13 @@ import { Alert, Button, CardProps, Popconfirm, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import { atom, useAtom } from 'jotai';
 import _ from 'lodash';
-import React, { startTransition, useId, useState } from 'react';
+import React, {
+  startTransition,
+  useEffect,
+  useId,
+  useMemo,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
 
@@ -25,6 +36,7 @@ interface EndpointLLMChatCardProps extends CardProps {
   closable?: boolean;
   defaultModelId?: string;
   defaultEndpoint?: EndpointLLMChatCard_endpoint$key;
+  defaultAgentId?: string;
   isSynchronous?: boolean;
   onRequestClose?: () => void;
   onModelChange?: (modelId: string) => void;
@@ -35,6 +47,7 @@ const EndpointLLMChatCard: React.FC<EndpointLLMChatCardProps> = ({
   closable,
   defaultModelId,
   defaultEndpoint,
+  defaultAgentId,
   isSynchronous,
   onRequestClose,
   onModelChange,
@@ -93,37 +106,72 @@ const EndpointLLMChatCard: React.FC<EndpointLLMChatCardProps> = ({
 
   const submitId = useId();
 
+  const { agents } = useAIAgent();
+  const [agentId, setAgentId] = useState(defaultAgentId);
+  const agent = useMemo(() => {
+    return agents.find((a) => a.id === agentId);
+  }, [agents, agentId]);
+  const [experimentalAIAgents] = useBAISettingUserState(
+    'experimental_ai_agents',
+  );
+
+  useEffect(() => {
+    setAgentId(defaultAgentId);
+  }, [defaultAgentId]);
+
   return (
     <LLMChatCard
       {...cardProps}
+      chatId={`${endpoint?.endpoint_id}_${agentId}`}
       baseURL={
         endpoint?.url
           ? new URL(basePath, endpoint?.url ?? undefined).toString()
           : undefined
       }
       models={models}
+      systemPrompt={agent?.config?.system_prompt}
       fetchOnClient
       leftExtra={
-        <EndpointSelect
-          placeholder={t('chatui.SelectEndpoint')}
-          style={{
-            fontWeight: 'normal',
-          }}
-          fetchKey={fetchKey}
-          showSearch
-          loading={promisingEndpoint?.endpoint_id !== endpoint?.endpoint_id}
-          onChange={(v, endpoint) => {
-            // TODO: fix type definitions
-            // @ts-ignore
-            setPromisingEndpoint(endpoint);
-            startTransition(() => {
+        <>
+          {experimentalAIAgents && agent && (
+            <Flex gap="xs">
+              <FluentEmojiIcon
+                name={agent.meta.avatar}
+                height={32}
+                width={32}
+              />
+              <AIAgentSelect
+                agents={agents}
+                value={agentId}
+                onChange={(agent) => {
+                  startTransition(() => {
+                    setAgentId(agent);
+                  });
+                }}
+              />
+            </Flex>
+          )}
+          <EndpointSelect
+            placeholder={t('chatui.SelectEndpoint')}
+            style={{
+              fontWeight: 'normal',
+            }}
+            fetchKey={fetchKey}
+            showSearch
+            loading={promisingEndpoint?.endpoint_id !== endpoint?.endpoint_id}
+            onChange={(v, endpoint) => {
+              // TODO: fix type definitions
               // @ts-ignore
-              setEndpointFrgmt(endpoint);
-            });
-          }}
-          value={endpoint?.endpoint_id}
-          popupMatchSelectWidth={false}
-        />
+              setPromisingEndpoint(endpoint);
+              startTransition(() => {
+                // @ts-ignore
+                setEndpointFrgmt(endpoint);
+              });
+            }}
+            value={endpoint?.endpoint_id}
+            popupMatchSelectWidth={false}
+          />
+        </>
       }
       modelId={
         defaultModelId &&

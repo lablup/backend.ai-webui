@@ -59,6 +59,8 @@ export interface LLMChatCardProps extends CardProps {
   modelId?: string;
   agentId?: string;
   endpointId?: string;
+  systemPrompt?: string;
+  chatId?: string;
   baseURL?: string;
   apiKey?: string;
   headers?: Record<string, string> | Headers;
@@ -82,6 +84,8 @@ export interface LLMChatCardProps extends CardProps {
 const LLMChatCard: React.FC<LLMChatCardProps> = ({
   models = [],
   endpointId,
+  systemPrompt,
+  chatId,
   baseURL,
   headers,
   credentials,
@@ -124,8 +128,8 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
     setMessages,
     // ...chatHelpers,
   } = useChat({
+    id: chatId,
     api: baseURL,
-    headers,
     credentials,
     body: {
       modelId: modelId,
@@ -153,6 +157,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
             middleware: extractReasoningMiddleware({ tagName: 'think' }),
           }),
           messages: body?.messages,
+          system: systemPrompt,
         });
         setStartTime(Date.now());
         return result.toDataStreamResponse({

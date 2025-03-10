@@ -42,6 +42,8 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         ...SessionReservationFragment
         ...SessionSlotCellFragment
         ...SessionUsageMonitorFragment
+        # fix: This fragment is not used in this component, but it is required by the SessionStatusDetailModal.
+        # It might be a bug in relay
       }
     `,
     sessionsFrgmt,

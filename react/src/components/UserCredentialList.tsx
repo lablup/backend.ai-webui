@@ -6,6 +6,7 @@ import {
 import { useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import BAIPropertyFilter from './BAIPropertyFilter';
+import BAIRadioGroup from './BAIRadioGroup';
 import BAITable from './BAITable';
 import Flex from './Flex';
 import KeypairInfoModal from './KeypairInfoModal';
@@ -20,20 +21,10 @@ import {
 import {
   DeleteOutlined,
   InfoCircleOutlined,
-  LoadingOutlined,
   ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import {
-  App,
-  Button,
-  Popconfirm,
-  Radio,
-  Tag,
-  Tooltip,
-  Typography,
-  theme,
-} from 'antd';
+import { App, Button, Popconfirm, Tag, Tooltip, Typography, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -169,7 +160,7 @@ const UserCredentialList: React.FC = () => {
         wrap="wrap"
       >
         <Flex gap={'sm'} align="start">
-          <Radio.Group
+          <BAIRadioGroup
             value={activeType}
             onChange={(value) => {
               startActiveTypeTransition(() => {
@@ -263,14 +254,12 @@ const UserCredentialList: React.FC = () => {
         // resizable
         rowKey={'id'}
         scroll={{ x: 'max-content' }}
-        loading={{
-          spinning:
-            isActiveTypePending ||
-            isPendingRefresh ||
-            isPendingPageChange ||
-            isPendingFilter,
-          indicator: <LoadingOutlined />,
-        }}
+        loading={
+          isActiveTypePending ||
+          isPendingRefresh ||
+          isPendingPageChange ||
+          isPendingFilter
+        }
         dataSource={filterNonNullItems(keypair_list?.items)}
         columns={filterEmptyItem([
           {

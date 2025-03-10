@@ -10,6 +10,7 @@ const ImportAndRunPage = () => {
   return (
     <BAICard
       title={t('import.ImportNotebook')}
+      showDivider
       style={{
         maxWidth: 728,
         marginBottom: token.paddingMD,

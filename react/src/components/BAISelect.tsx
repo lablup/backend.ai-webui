@@ -1,4 +1,4 @@
-import { Select, SelectProps } from 'antd';
+import { Select, SelectProps, Tooltip } from 'antd';
 import { createStyles } from 'antd-style';
 import classNames from 'classnames';
 import _ from 'lodash';
@@ -41,6 +41,7 @@ const useStyles = createStyles(({ css, token }) => ({
 export interface BAISelectProps extends SelectProps {
   ghost?: boolean;
   autoSelectOption?: boolean | ((options: SelectProps['options']) => any);
+  tooltip?: string;
 }
 /**
  * BAISelect component.
@@ -56,6 +57,7 @@ export interface BAISelectProps extends SelectProps {
 const BAISelect: React.FC<BAISelectProps> = ({
   autoSelectOption,
   ghost,
+  tooltip = '',
   ...selectProps
 }) => {
   const { value, options, onChange } = selectProps;
@@ -72,14 +74,16 @@ const BAISelect: React.FC<BAISelectProps> = ({
   }, [value, options, onChange, autoSelectOption]);
 
   return (
-    <Select
-      {...selectProps}
-      className={
-        ghost
-          ? classNames(styles.ghostSelect, selectProps.className)
-          : selectProps.className
-      }
-    />
+    <Tooltip title={tooltip}>
+      <Select
+        {...selectProps}
+        className={
+          ghost
+            ? classNames(styles.ghostSelect, selectProps.className)
+            : selectProps.className
+        }
+      />
+    </Tooltip>
   );
 };
 

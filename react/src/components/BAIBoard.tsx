@@ -1,79 +1,89 @@
-import Flex from './Flex';
 import Board, { BoardProps } from '@cloudscape-design/board-components/board';
 import BoardItem from '@cloudscape-design/board-components/board-item';
-import { Skeleton, Typography } from 'antd';
+import { Skeleton } from 'antd';
 import { createStyles } from 'antd-style';
+import classNames from 'classnames';
 import { Suspense } from 'react';
 
-const useStyles = createStyles(({ css }) => {
-  const defaultBoard = css`
-    .bai_board_placeholder {
-      border-radius: var(--token-borderRadius) !important;
-    }
-    .bai_board_placeholder--active {
-      background-color: var(--token-colorSplit) !important ;
-    }
-    .bai_board_placeholder--hover {
-      background-color: var(--token-colorPrimaryHover) !important ;
-      // FIXME: global token doesn't exist, so opacity fits color
-      opacity: 0.3;
-    }
-  `;
+const useStyles = createStyles(({ css, token }) => {
   return {
     board: css`
-      ${defaultBoard}
-    `,
-    disableCustomize: css`
-      ${defaultBoard}
-      .bai_board_handle {
-        display: none !important;
+      .bai_board_placeholder {
+        border-radius: var(--token-borderRadius) !important;
       }
+      .bai_board_placeholder--active {
+        background-color: var(--token-colorSplit) !important ;
+      }
+      .bai_board_placeholder--hover {
+        background-color: var(--token-colorPrimaryHover) !important ;
+        // FIXME: global token doesn't exist, so opacity fits color
+        opacity: 0.3;
+      }
+
+      .bai_board_handle button span {
+        color: ${token.colorTextTertiary} !important;
+      }
+    `,
+    disableResize: css`
       .bai_board_resizer {
         display: none !important;
       }
+    `,
+    disableMove: css`
+      .bai_board_handle {
+        display: none !important;
+      }
       .bai_board_header {
-        height: var(--token-boardHeaderHeight, 55px) !important;
+        display: none !important;
       }
     `,
     boardItems: css`
       & > div:first-child {
-        border: 1px solid var(--token-colorBorder) !important ;
+        border: none !important ;
         border-radius: var(--token-borderRadius) !important ;
         background-color: var(--token-colorBgContainer) !important ;
       }
 
       & > div:first-child > div:first-child > div:first-child {
-        border-bottom: 1px solid var(--token-colorBorder) !important;
         margin-bottom: var(--token-margin);
         background-color: var(--token-colorBgContainer) !important ;
+        position: absolute;
+        z-index: 1;
       }
     `,
   };
 });
 
-interface BAICustomizableGridProps {
-  items: Array<BoardProps.Item>;
-  onItemsChange: (
-    event: CustomEvent<BoardProps.ItemsChangeDetail<unknown>>,
-  ) => void;
-  customizable?: boolean;
+export interface BAIBoardDataType {
+  content?: React.ReactNode;
 }
 
-const BAIBoard: React.FC<BAICustomizableGridProps> = ({
-  items: parsedItems,
-  customizable = false,
+export type BAIBoardItem = BoardProps.Item<BAIBoardDataType>;
+export interface BAIBoardProps<T extends BAIBoardDataType = BAIBoardDataType> {
+  items: Array<BoardProps.Item<T>>;
+  onItemsChange: (event: CustomEvent<BoardProps.ItemsChangeDetail<T>>) => void;
+  resizable?: boolean;
+  movable?: boolean;
+}
+
+const BAIBoard = <T extends BAIBoardDataType>({
+  items,
+  resizable = false,
+  movable = false,
   ...BoardProps
-}) => {
+}: BAIBoardProps<T>) => {
   const { styles } = useStyles();
   return (
-    <Board
-      //@ts-ignore
-      className={customizable ? styles.board : styles.disableCustomize}
+    <Board<T>
+      className={classNames(
+        styles.board,
+        !movable && styles.disableMove,
+        !resizable && styles.disableResize,
+      )}
       empty
-      renderItem={(item: any) => {
+      renderItem={(item: BoardProps.Item<T>) => {
         return (
           <BoardItem
-            //@ts-ignore
             className={styles.boardItems}
             key={item.id}
             i18nStrings={{
@@ -82,11 +92,6 @@ const BAIBoard: React.FC<BAICustomizableGridProps> = ({
               resizeHandleAriaLabel: '',
               resizeHandleAriaDescription: '',
             }}
-            header={
-              <Flex style={{ height: '100%' }} align="center">
-                <Typography.Text strong>{item.data.title}</Typography.Text>
-              </Flex>
-            }
           >
             <Suspense fallback={<Skeleton active />}>
               {item.data.content}
@@ -94,7 +99,7 @@ const BAIBoard: React.FC<BAICustomizableGridProps> = ({
           </BoardItem>
         );
       }}
-      items={parsedItems}
+      items={items}
       i18nStrings={(() => {
         const createAnnouncement = (
           operationAnnouncement: any,

@@ -42,9 +42,9 @@ test.describe('VFolder sharing', () => {
     ).toBeVisible();
     await expect(page.getByRole('button', { name: 'share' })).toHaveCount(1);
     await page.getByRole('button', { name: 'share' }).click();
-    await page.getByRole('textbox', { name: 'Enter E-Mail address' }).click();
+    await page.getByRole('textbox', { name: 'Enter email address' }).click();
     await page
-      .getByRole('textbox', { name: 'Enter E-Mail address' })
+      .getByRole('textbox', { name: 'Enter email address' })
       .fill('user2@lablup.com');
     await page
       .locator('#share-folder-dialog')
@@ -110,9 +110,9 @@ test.describe('VFolder sharing', () => {
     ).toBeVisible();
     await expect(page.getByRole('button', { name: 'share' })).toHaveCount(1);
     await page.getByRole('button', { name: 'share' }).click();
-    await page.getByRole('textbox', { name: 'Enter E-Mail address' }).click();
+    await page.getByRole('textbox', { name: 'Enter email address' }).click();
     await page
-      .getByRole('textbox', { name: 'Enter E-Mail address' })
+      .getByRole('textbox', { name: 'Enter email address' })
       .fill('user2@lablup.com');
     await page
       .locator('#share-folder-dialog')
@@ -162,9 +162,9 @@ test.describe('VFolder sharing', () => {
     ).toBeVisible();
     await expect(page.getByRole('button', { name: 'share' })).toHaveCount(1);
     await page.getByRole('button', { name: 'share' }).click();
-    await page.getByRole('textbox', { name: 'Enter E-Mail address' }).click();
+    await page.getByRole('textbox', { name: 'Enter email address' }).click();
     await page
-      .getByRole('textbox', { name: 'Enter E-Mail address' })
+      .getByRole('textbox', { name: 'Enter email address' })
       .fill('user2@lablup.com');
     await page
       .locator('#share-folder-dialog')
