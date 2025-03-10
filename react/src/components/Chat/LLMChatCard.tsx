@@ -5,6 +5,7 @@ import { useWebUINavigate } from '../../hooks';
 import { useTokenCount } from '../../hooks/useTokenizer';
 import Flex from '../Flex';
 import ChatSender from './ChatSender';
+import ChatTokenCounter from './ChatTokenCounter';
 import ModelSelect from './ModelSelect';
 import VirtualChatMessageList from './VirtualChatMessageList';
 import { createOpenAI } from '@ai-sdk/openai';
@@ -35,13 +36,12 @@ import {
   FormInstance,
   Input,
   MenuProps,
-  Tag,
   theme,
-  Typography,
 } from 'antd';
+import equal from 'fast-deep-equal';
 import _ from 'lodash';
 import { Scale } from 'lucide-react';
-import React, { useEffect, useRef, useState, useMemo } from 'react';
+import React, { useEffect, useRef, useState, useMemo, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export type BAIModel = {
@@ -80,6 +80,12 @@ export interface LLMChatCardProps extends CardProps {
   showCompareMenuItem?: boolean;
   modelToken?: string;
 }
+
+const ChatMessageList = memo(VirtualChatMessageList, (prevProps, nextProps) => {
+  if (!equal(prevProps.messages, nextProps.messages)) return false;
+  if (prevProps.isStreaming !== nextProps.isStreaming) return false;
+  return true;
+});
 
 const LLMChatCard: React.FC<LLMChatCardProps> = ({
   models = [],
@@ -126,7 +132,6 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
     isLoading,
     append,
     setMessages,
-    // ...chatHelpers,
   } = useChat({
     id: chatId,
     api: baseURL,
@@ -213,30 +218,6 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitKey]);
 
-  const inputTokenCount = useTokenCount(input);
-
-  const allChatMessageString = useMemo(() => {
-    return _.map(messages, (message) => message?.content).join('');
-  }, [messages]);
-  const chatsTokenCount = useTokenCount(allChatMessageString);
-  const totalTokenCount = inputTokenCount + chatsTokenCount;
-
-  const lastAssistantMessageString = useMemo(() => {
-    const lastAssistantMessage = _.last(messages);
-    if (lastAssistantMessage?.role === 'assistant') {
-      return lastAssistantMessage?.content;
-    } else {
-      return '';
-    }
-  }, [messages]);
-
-  const lastAssistantTokenCount = useTokenCount(lastAssistantMessageString);
-  const tokenPerSecond = useMemo(() => {
-    return lastAssistantTokenCount > 0 && startTime
-      ? lastAssistantTokenCount / ((Date.now() - startTime) / 1000)
-      : 0;
-  }, [lastAssistantTokenCount, startTime]);
-
   const items: MenuProps['items'] = filterEmptyItem([
     showCompareMenuItem && {
       key: 'compare',
@@ -266,26 +247,10 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
     <Card
       ref={cardRef}
       bordered
-      extra={
-        [
-          // <Checkbox key="sync">Sync</Checkbox>,
-          // <Button key="setting" type="text" icon={<SlidersHorizontalIcon/>}></Button>,
-        ]
-      }
       {...cardProps}
       title={
         <Flex direction="column" align="stretch" gap={'sm'}>
           <Flex direction="row" gap={'xs'}>
-            {/* <Select
-            options={[
-              {
-                label: "Default Agent",
-                value: "default",
-              },
-            ]}
-            value={"default"}
-            popupMatchSelectWidth={false}
-          ></Select> */}
             {leftExtra}
             <ModelSelect
               models={models}
@@ -490,7 +455,6 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
           </Form.Item>
         </Form>
       </Flex>
-      {/* <ChatMessageList messages={messages}  /> */}
       {!_.isEmpty(error?.message) ? (
         <Alert
           message={error?.message}
@@ -502,22 +466,12 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
           closable
         />
       ) : null}
-      <VirtualChatMessageList messages={messages} isStreaming={isLoading} />
-      <Flex justify="end" align="end" style={{ margin: token.marginSM }}>
-        <Tag>
-          <Flex gap={'xs'}>
-            <RocketOutlined />
-            <Flex gap={'xxs'}>
-              <Typography.Text>{tokenPerSecond.toFixed(2)}</Typography.Text>
-              <Typography.Text type="secondary">tok/s</Typography.Text>
-            </Flex>
-            <Flex gap={'xxs'}>
-              <Typography.Text>{totalTokenCount}</Typography.Text>
-              <Typography.Text type="secondary">total tokens</Typography.Text>
-            </Flex>
-          </Flex>
-        </Tag>
-      </Flex>
+      <ChatMessageList messages={messages} isStreaming={isLoading} />
+      <ChatTokenCounter
+        messages={messages}
+        input={input}
+        startTime={startTime}
+      />
     </Card>
   );
 };
