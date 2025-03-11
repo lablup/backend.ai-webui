@@ -1576,7 +1576,7 @@
     "SelectPeriod": "Ajanjakso",
     "SessionsDesc": "Luotujen laskenta-istuntojen määrä.",
     "UsageHistory": "Käyttöhistoria",
-    "UsageHistoryDesc": "Käyttöhistoria-sivulla voit tarkistaa yksinkertaisia tilastotietoja laskenta-istuntojen käytöstä graafin avulla. Voit tarkistaa käyttöhistoriatilastot päivän tai viikon ajalta valitsemalla käyttöjakson oikeassa yläkulmassa olevasta Valitse ajanjakso -valikosta.",
+    "UsageHistoryDesc": "Käyttöhistoriasivulla voit tarkistaa yksinkertaiset tilastot, jotka liittyvät laskentaistuntojen käyttöön kuvaajan kautta. \nVoit tarkistaa käyttöhistorian tilastot päivän tai viikon valitsemalla käyttöjakson oikeassa yläkulmassa olevasta valintajakson valikosta.",
     "UsageHistoryNote": "Tässä esitetty käyttöhistoria perustuu lopetettuihin laskentaistuntoihin.",
     "UsageHistoryNoteUnder7Days": "Yhden viikon käyttöhistoriaa ei myöskään välttämättä näy käyttäjille, joiden tili on luotu kauemmin kuin viikko."
   },
