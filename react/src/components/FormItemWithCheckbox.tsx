@@ -42,7 +42,7 @@ const FormItemWithCheckbox = ({
           {childrenWithProps}
         </Form.Item>
         {isDisabled && (
-          <Form.Item style={{ marginBottom: 0 }} {...formItemProps}>
+          <Form.Item style={{ marginBottom: 0, flex: 1 }} {...formItemProps}>
             {childrenWithNullValue}
           </Form.Item>
         )}

@@ -1,27 +1,11 @@
-import {
-  NetworkOptions,
-  optionRange,
-} from '../hooks/useBAIConfigurationsSetting';
 import BAIModal, { BAIModalProps } from './BAIModal';
+import { NetworkOptions } from './ConfigurationsSettingList';
 import Flex from './Flex';
 import FormItemWithCheckbox from './FormItemWithCheckbox';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import {
-  Button,
-  Checkbox,
-  Form,
-  FormItemProps,
-  InputNumber,
-  Tooltip,
-} from 'antd';
+import { Button, Form, InputNumber, theme, Tooltip } from 'antd';
 import { FormInstance } from 'antd/lib';
-import {
-  cloneElement,
-  isValidElement,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface OverlayNetworkSettingsModalProps extends BAIModalProps {
@@ -39,23 +23,21 @@ const OverlayNetworkSettingModal = ({
   onDelete,
 }: OverlayNetworkSettingsModalProps) => {
   const { t } = useTranslation();
-
+  const { token } = theme.useToken();
   const formRef = useRef<FormInstance>(null);
-  const labels: { [key: keyof NetworkOptions]: string } = {
-    mtu: 'MTU',
-  };
-  const tooltipText: { [key: keyof NetworkOptions]: string } = {
-    mtu: t('settings.MTUDescription'),
-  };
 
   return (
     <BAIModal
       open={open}
       title={
-        <Flex align="center">
+        <Flex gap="xs">
           {t('settings.OverlayNetworkSettings')}
           <Tooltip title={t('settings.OverlayNetworkSettingsDescription')}>
-            <Button type="link" size="large" icon={<InfoCircleOutlined />} />
+            <InfoCircleOutlined
+              style={{
+                color: token.colorTextTertiary,
+              }}
+            />
           </Tooltip>
         </Flex>
       }
@@ -95,27 +77,14 @@ const OverlayNetworkSettingModal = ({
       destroyOnClose
     >
       <Form ref={formRef} layout="vertical" initialValues={networkOptions}>
-        {Object.keys(networkOptions).map((key) => (
-          <FormItemWithCheckbox
-            label={
-              <Flex>
-                {labels[key]}
-                <Tooltip title={tooltipText[key]}>
-                  <Button type="link" icon={<InfoCircleOutlined />} />
-                </Tooltip>
-              </Flex>
-            }
-            required
-            name={key}
-            key={key}
-          >
-            <InputNumber
-              min={optionRange[key].min}
-              max={optionRange[key].max}
-              style={{ width: '100%' }}
-            />
-          </FormItemWithCheckbox>
-        ))}
+        <FormItemWithCheckbox
+          label="MTU"
+          tooltip={t('settings.MTUDescription')}
+          required
+          name="mtu"
+        >
+          <InputNumber min={0} max={15000} style={{ width: '100%' }} />
+        </FormItemWithCheckbox>
       </Form>
     </BAIModal>
   );

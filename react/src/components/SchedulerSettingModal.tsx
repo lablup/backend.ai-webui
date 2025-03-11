@@ -1,9 +1,5 @@
-import {
-  optionRange,
-  SchedulerOptions,
-  SchedulerType,
-} from '../hooks/useBAIConfigurationsSetting';
 import BAIModal, { BAIModalProps } from './BAIModal';
+import { SchedulerOptions, SchedulerType } from './ConfigurationsSettingList';
 import Flex from './Flex';
 import FormItemWithCheckbox from './FormItemWithCheckbox';
 import { InfoCircleOutlined } from '@ant-design/icons';
@@ -35,15 +31,6 @@ const SchedulerSettingModal = ({
   const { t } = useTranslation();
 
   const formRef = useRef<FormInstance>(null);
-  const labels: {
-    [key: keyof SchedulerOptions]: string;
-  } = {
-    num_retries_to_skip: t('settings.SessionCreationRetries'),
-  };
-  const tooltipText: { [key: keyof SchedulerOptions]: string } = {
-    num_retries_to_skip: t('settings.ConfigPerJobSchdulerDescription'),
-  };
-  const scheduleOptions: (keyof SchedulerOptions)[] = ['num_retries_to_skip'];
 
   return (
     <BAIModal
@@ -61,7 +48,7 @@ const SchedulerSettingModal = ({
       onCancel={onRequestClose}
       footer={[
         <Button
-          key="schedulerDelete"
+          key="schedulerCancel"
           onClick={() => {
             // if (
             //   formRef.current &&
@@ -104,10 +91,6 @@ const SchedulerSettingModal = ({
                         }
                       },
                     );
-                    // onSave(
-                    //   values.schedulerType,
-                    //   _.omit(values, 'schedulerType'),
-                    // );
                   }
                 })
                 .catch(() => {});
@@ -158,52 +141,20 @@ const SchedulerSettingModal = ({
           <Typography.Text strong>
             {t('settings.SchedulerOptions')}
           </Typography.Text>
-          {scheduleOptions.map((key) => (
-            <FormItemWithCheckbox
-              label={
-                <Flex align="center">
-                  {labels[key]}
-                  <Tooltip title={tooltipText[key]}>
-                    <Button type="link" icon={<InfoCircleOutlined />} />
-                  </Tooltip>
-                </Flex>
-              }
-              required
-              name={key}
-              key={key}
-            >
-              <InputNumber
-                min={optionRange[key].min}
-                max={optionRange[key].max}
-                style={{ width: '100%' }}
-              />
-            </FormItemWithCheckbox>
-            // <Form.Item
-            //   label={
-            //     <Flex align="center">
-            //       {labels[key]}
-            //       <Tooltip title={tooltipText[key]}>
-            //         <Button type="link" icon={<InfoCircleOutlined />} />
-            //       </Tooltip>
-            //     </Flex>
-            //   }
-            //   name={key}
-            //   required
-            //   rules={[
-            //     {
-            //       required: true,
-            //       message: t('data.explorer.ValueRequired'),
-            //     },
-            //   ]}
-            //   key={key}
-            // >
-            //   <InputNumber
-            //     min={optionRange[key].min}
-            //     max={optionRange[key].max}
-            //     style={{ width: '100%' }}
-            //   />
-            // </Form.Item>
-          ))}
+          <FormItemWithCheckbox
+            label={
+              <Flex align="center">
+                {t('settings.SessionCreationRetries')}
+                <Tooltip title={t('settings.ConfigPerJobSchdulerDescription')}>
+                  <Button type="link" icon={<InfoCircleOutlined />} />
+                </Tooltip>
+              </Flex>
+            }
+            required
+            name="num_retries_to_skip"
+          >
+            <InputNumber min={0} max={1000} style={{ width: '100%' }} />
+          </FormItemWithCheckbox>
         </Flex>
       </Form>
     </BAIModal>

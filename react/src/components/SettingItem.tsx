@@ -80,8 +80,8 @@ const SettingItem: React.FC<SettingItemProps> = ({
             onChange={onChange}
             disabled={disabled}
             style={{
-              ...selectProps?.style,
               marginTop: token.marginXS,
+              ...selectProps?.style,
             }}
             {..._.omit(selectProps, ['style'])}
           ></Select>
