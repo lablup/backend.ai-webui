@@ -614,7 +614,8 @@
     "Session": "會話",
     "StorageProxies": "存儲",
     "TotalItems": "{{总计}}项目总数",
-    "Username": "用戶名"
+    "Username": "用戶名",
+    "ValueRequired": "请输入 {{ 姓名 }}"
   },
   "import": {
     "CleanUpImportTask": "清理導入任務...",
@@ -895,6 +896,7 @@
     "SyncRoutesFailed": "路由同步请求失败。",
     "SyncRoutesRequested": "已請求路由同步。",
     "TimeStamp": "時間戳",
+    "Token": "代币",
     "TokenExpiredDateError": "令牌过期时间必须在当前时间之后",
     "TokenExpiredDateHelp": "默认令牌过期时间为 24 小时后。",
     "TokenGenerated": "生成的令牌",

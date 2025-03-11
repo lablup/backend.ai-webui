@@ -614,7 +614,8 @@
     "Session": "Sesión",
     "StorageProxies": "Almacenes",
     "TotalItems": "Total {{total}} artículos",
-    "Username": "Nombre de usuario"
+    "Username": "Nombre de usuario",
+    "ValueRequired": "Por favor, introduzca {{ nombre }}"
   },
   "import": {
     "CleanUpImportTask": "Tarea de importación de limpieza...",
@@ -895,6 +896,7 @@
     "SyncRoutesFailed": "La solicitud de sincronización de ruta ha fallado.",
     "SyncRoutesRequested": "Se ha solicitado sincronización de ruta.",
     "TimeStamp": "Marca de tiempo",
+    "Token": "Ficha",
     "TokenExpiredDateError": "La hora de caducidad del token debe ser posterior a la hora actual",
     "TokenExpiredDateHelp": "Por defecto, el token caduca a las 24 horas.",
     "TokenGenerated": "Token generado",

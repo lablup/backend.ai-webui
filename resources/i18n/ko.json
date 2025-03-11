@@ -617,7 +617,8 @@
     "Session": "세션",
     "StorageProxies": "스토리지",
     "TotalItems": "총 {{ total }}개",
-    "Username": "사용자 이름"
+    "Username": "사용자 이름",
+    "ValueRequired": "{{ name }} 값을 입력해주세요"
   },
   "import": {
     "CleanUpImportTask": "가져오기를 완료하는 중...",
@@ -835,7 +836,7 @@
     "Chatting": "채팅",
     "ClearErrors": "오류 지우고 재시도",
     "Controls": "제어",
-    "CreatedAt": "생성 시각",
+    "CreatedAt": "생성 시간",
     "CurrentTime": "현재 시각",
     "DesiredSessionCount": "원하는 세션 수",
     "EditModelService": "모델 서비스 수정",
@@ -898,6 +899,7 @@
     "SyncRoutesFailed": "라우트 동기화 요청이 실패했습니다.",
     "SyncRoutesRequested": "라우트 동기화를 요청했습니다.",
     "TimeStamp": "타임스탬프",
+    "Token": "토큰",
     "TokenExpiredDateError": "토큰 만료 시간은 현재 시간 이후여야 합니다.",
     "TokenExpiredDateHelp": "토큰 만료 시각 기본 값은 24시간 뒤입니다.",
     "TokenGenerated": "토큰 생성이 완료되었습니다.",

@@ -613,7 +613,8 @@
     "Session": "セッション",
     "StorageProxies": "ストレージ",
     "TotalItems": "合計{{total}}項目",
-    "Username": "ユーザー名"
+    "Username": "ユーザー名",
+    "ValueRequired": "名前}}を入力してください。"
   },
   "import": {
     "CleanUpImportTask": "インポートタスクのクリーンアップ...",
@@ -894,6 +895,7 @@
     "SyncRoutesFailed": "ルート同期要求に失敗しました。",
     "SyncRoutesRequested": "ルート同期をリクエストしました。",
     "TimeStamp": "タイムスタンプ",
+    "Token": "トークン",
     "TokenExpiredDateError": "トークンの有効期限は現在の時間以降でなければなりません。",
     "TokenExpiredDateHelp": "トークン有効期限のデフォルト値は24時間後です。",
     "TokenGenerated": "トークン生成が完了しました。",

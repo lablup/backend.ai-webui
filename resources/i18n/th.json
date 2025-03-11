@@ -603,7 +603,8 @@
     "Session": "เซสชัน",
     "StorageProxies": "ที่เก็บข้อมูล",
     "TotalItems": "รวม {{total}} รายการ",
-    "Username": "ชื่อผู้ใช้"
+    "Username": "ชื่อผู้ใช้",
+    "ValueRequired": "โปรดป้อน {{name}}"
   },
   "import": {
     "CleanUpImportTask": "กำลังทำความสะอาดงานนำเข้า...",
@@ -884,6 +885,7 @@
     "SyncRoutesFailed": "คำขอซิงโครไนซ์เส้นทางล้มเหลว",
     "SyncRoutesRequested": "ขอซิงโครไนซ์เส้นทางแล้ว",
     "TimeStamp": "ประทับเวลา",
+    "Token": "โทเค็น",
     "TokenExpiredDateError": "เวลาหมดอายุของโทเคนต้องอยู่หลังเวลาปัจจุบัน",
     "TokenExpiredDateHelp": "เวลาหมดอายุของโทเคนเริ่มต้นคือ 24 ชั่วโมงถัดไป",
     "TokenGenerated": "สร้างโทเคนแล้ว",

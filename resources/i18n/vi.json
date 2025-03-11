@@ -614,7 +614,8 @@
     "Session": "Phiên họp",
     "StorageProxies": "Kho lưu trữ",
     "TotalItems": "Tổng số {{total}} mặt hàng",
-    "Username": "tên tài khoản"
+    "Username": "tên tài khoản",
+    "ValueRequired": "Vui lòng nhập {{name}}"
   },
   "import": {
     "CleanUpImportTask": "Tác vụ nhập dọn dẹp ...",
@@ -895,6 +896,7 @@
     "SyncRoutesFailed": "Yêu cầu đồng bộ hóa tuyến đường không thành công.",
     "SyncRoutesRequested": "Đồng bộ hóa tuyến đường đã được yêu cầu.",
     "TimeStamp": "Dấu thời gian",
+    "Token": "Mã thông báo",
     "TokenExpiredDateError": "Thời gian hết hạn của mã thông báo phải sau thời điểm hiện tại",
     "TokenExpiredDateHelp": "Thời gian hết hạn mã thông báo mặc định là 24 giờ sau.",
     "TokenGenerated": "Mã thông báo được tạo",

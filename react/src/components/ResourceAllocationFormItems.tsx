@@ -673,6 +673,9 @@ const ResourceAllocationFormItems: React.FC<
                             rules={[
                               {
                                 required: true,
+                                message: t('general.ValueRequired', {
+                                  name: t('session.launcher.Memory'),
+                                }),
                               },
                               {
                                 validator: async (rule, value: string) => {
@@ -713,7 +716,7 @@ const ResourceAllocationFormItems: React.FC<
                                   //   ) || '0b';
 
                                   if (
-                                    !_.isElement(value) &&
+                                    !_.isEmpty(value) &&
                                     resourceLimits.mem?.min &&
                                     compareNumberWithUnits(
                                       value,

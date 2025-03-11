@@ -612,7 +612,8 @@
     "Session": "Сессия",
     "StorageProxies": "Хадгалах сан",
     "TotalItems": "Нийт {{total}} зүйл",
-    "Username": "Хэрэглэгчийн нэр"
+    "Username": "Хэрэглэгчийн нэр",
+    "ValueRequired": "{{Нэр}}}}"
   },
   "import": {
     "CleanUpImportTask": "Импортын ажлыг цэвэрлэх ...",
@@ -893,6 +894,7 @@
     "SyncRoutesFailed": "Маршрутын синхрончлолын хүсэлт амжилтгүй боллоо.",
     "SyncRoutesRequested": "Маршрутыг синхрончлох хүсэлт тавьсан.",
     "TimeStamp": "Цагийн тэмдэг",
+    "Token": "Томог",
     "TokenExpiredDateError": "Токен дуусах хугацаа нь одоогийн цагаас хойш байх ёстой",
     "TokenExpiredDateHelp": "Өгөгдмөл токен дуусах хугацаа нь 24 цагийн дараа байна.",
     "TokenGenerated": "Токен үүсгэсэн",

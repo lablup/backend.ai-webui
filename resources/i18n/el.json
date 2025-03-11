@@ -610,7 +610,8 @@
     "Session": "Σύνοδος",
     "StorageProxies": "Αποθήκες",
     "TotalItems": "Σύνολο {{total}} στοιχείων",
-    "Username": "Όνομα χρήστη"
+    "Username": "Όνομα χρήστη",
+    "ValueRequired": "Παρακαλώ εισάγετε {{ όνομα }}"
   },
   "import": {
     "CleanUpImportTask": "Εργασία εισαγωγής καθαρισμού ...",
@@ -891,6 +892,7 @@
     "SyncRoutesFailed": "Το αίτημα συγχρονισμού διαδρομής απέτυχε.",
     "SyncRoutesRequested": "Ζητήθηκε συγχρονισμός διαδρομής.",
     "TimeStamp": "Χρονική σήμανση",
+    "Token": "Token",
     "TokenExpiredDateError": "Ο χρόνος λήξης του κουπονιού πρέπει να είναι μετά την τρέχουσα ώρα.",
     "TokenExpiredDateHelp": "Ο προεπιλεγμένος χρόνος λήξης του κουπονιού είναι 24 ώρες αργότερα.",
     "TokenGenerated": "Παραγόμενο Token",
