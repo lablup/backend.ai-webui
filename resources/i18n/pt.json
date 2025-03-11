@@ -614,7 +614,8 @@
     "Session": "Sessão",
     "StorageProxies": "Armazéns",
     "TotalItems": "Total de itens {{total}}",
-    "Username": "Nome do usuário"
+    "Username": "Nome do usuário",
+    "ValueRequired": "Introduzir {{ nome }}"
   },
   "import": {
     "CleanUpImportTask": "Limpar tarefa de importação ...",
@@ -895,6 +896,7 @@
     "SyncRoutesFailed": "O pedido de sincronização de rotas falhou.",
     "SyncRoutesRequested": "A sincronização de rota foi solicitada.",
     "TimeStamp": "Carimbo de data e hora",
+    "Token": "Ficha",
     "TokenExpiredDateError": "A hora de expiração do token deve ser posterior à hora atual",
     "TokenExpiredDateHelp": "O tempo de expiração do token predefinido é 24 horas depois.",
     "TokenGenerated": "Token gerado",

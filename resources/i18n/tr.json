@@ -614,7 +614,8 @@
     "Session": "Oturum",
     "StorageProxies": "Depolar",
     "TotalItems": "Toplam {{toplam}} öğe",
-    "Username": "Kullanıcı adı"
+    "Username": "Kullanıcı adı",
+    "ValueRequired": "Lütfen {{isim }} girin"
   },
   "import": {
     "CleanUpImportTask": "İçe aktarma görevini temizle...",
@@ -895,6 +896,7 @@
     "SyncRoutesFailed": "Rota senkronizasyon isteği başarısız oldu.",
     "SyncRoutesRequested": "Rota senkronizasyonu talep edildi.",
     "TimeStamp": "Zaman damgası",
+    "Token": "Jeton",
     "TokenExpiredDateError": "Belirteç sona erme süresi geçerli saatten sonra olmalıdır",
     "TokenExpiredDateHelp": "Varsayılan token sona erme süresi 24 saat sonradır.",
     "TokenGenerated": "Token oluşturuldu",

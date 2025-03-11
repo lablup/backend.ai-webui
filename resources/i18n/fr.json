@@ -614,7 +614,8 @@
     "Session": "Session",
     "StorageProxies": "Stockages",
     "TotalItems": "Total des éléments {{total}}",
-    "Username": "Nom d'utilisateur"
+    "Username": "Nom d'utilisateur",
+    "ValueRequired": "Veuillez saisir {{ nom }}"
   },
   "import": {
     "CleanUpImportTask": "Nettoyage de la tâche d'importation...",
@@ -895,6 +896,7 @@
     "SyncRoutesFailed": "La demande de synchronisation des routes a échoué.",
     "SyncRoutesRequested": "La synchronisation de l'itinéraire a été demandée.",
     "TimeStamp": "Horodatage",
+    "Token": "Jeton",
     "TokenExpiredDateError": "L'heure d'expiration du jeton doit être postérieure à l'heure actuelle.",
     "TokenExpiredDateHelp": "Le délai d'expiration par défaut du jeton est de 24 heures.",
     "TokenGenerated": "Jeton généré",

@@ -155,7 +155,11 @@ class BackendAiResourcePresetList extends BackendAIPage {
           ${rowData.item.resource_slots['cuda.device']
             ? html`
                 <div class="layout horizontal configuration">
-                  <mwc-icon class="fg green">view_module</mwc-icon>
+                  <img
+                    class="indicator-icon fg green"
+                    src="/resources/icons/file_type_cuda.svg"
+                    alt="CUDA"
+                  />
                   <span>
                     ${this._markIfUnlimited(
                       rowData.item.resource_slots['cuda.device'],
@@ -168,7 +172,11 @@ class BackendAiResourcePresetList extends BackendAIPage {
           ${rowData.item.resource_slots['cuda.shares']
             ? html`
                 <div class="layout horizontal configuration">
-                  <mwc-icon class="fg green">view_module</mwc-icon>
+                  <img
+                    class="indicator-icon fg green"
+                    src="/resources/icons/file_type_cuda.svg"
+                    alt="CUDA"
+                  />
                   <span>
                     ${this._markIfUnlimited(
                       rowData.item.resource_slots['cuda.shares'],

@@ -614,7 +614,8 @@
     "Session": "Sitzung",
     "StorageProxies": "Speicher",
     "TotalItems": "Insgesamt {{Gesamt}} Artikel",
-    "Username": "Nutzername"
+    "Username": "Nutzername",
+    "ValueRequired": "Bitte geben Sie {{ Name }}"
   },
   "import": {
     "CleanUpImportTask": "Importaufgabe bereinigen...",
@@ -895,6 +896,7 @@
     "SyncRoutesFailed": "Die Anfrage zur Routensynchronisierung ist fehlgeschlagen.",
     "SyncRoutesRequested": "Routensynchronisierung wurde angefordert.",
     "TimeStamp": "Zeitstempel",
+    "Token": "Token",
     "TokenExpiredDateError": "Die Ablaufzeit des Tokens muss nach der aktuellen Zeit liegen",
     "TokenExpiredDateHelp": "Standardmäßig läuft das Token 24 Stunden später ab.",
     "TokenGenerated": "Token erzeugt",

@@ -613,7 +613,8 @@
     "Session": "Istunto",
     "StorageProxies": "Varastot",
     "TotalItems": "Yhteensä {{total}} kohteita",
-    "Username": "Käyttäjätunnus"
+    "Username": "Käyttäjätunnus",
+    "ValueRequired": "Kirjoita {{ nimi }}"
   },
   "import": {
     "CleanUpImportTask": "Tuontitehtävän siivous...",
@@ -893,6 +894,7 @@
     "SyncRoutesFailed": "Reitin synkronointipyyntö epäonnistui.",
     "SyncRoutesRequested": "Reitin synkronointia on pyydetty.",
     "TimeStamp": "Aikaleima",
+    "Token": "Merkki",
     "TokenExpiredDateError": "Merkin voimassaoloajan on oltava nykyisen ajan jälkeen.",
     "TokenExpiredDateHelp": "Tokenin oletusarvoinen vanhentumisaika on 24 tuntia myöhemmin.",
     "TokenGenerated": "Tuotettu merkki",

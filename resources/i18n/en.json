@@ -620,7 +620,8 @@
     "Session": "Session",
     "StorageProxies": "Storages",
     "TotalItems": "Total {{total}} items",
-    "Username": "Username"
+    "Username": "Username",
+    "ValueRequired": "Please enter {{ name }}"
   },
   "import": {
     "CleanUpImportTask": "Cleanup import task...",
@@ -901,6 +902,7 @@
     "SyncRoutesFailed": "The route synchronization request failed.",
     "SyncRoutesRequested": "The route synchronization requested.",
     "TimeStamp": "Timestamp",
+    "Token": "Token",
     "TokenExpiredDateError": "The token expiration time must be after the current time",
     "TokenExpiredDateHelp": "The default token expiration time is 24 hours later.",
     "TokenGenerated": "Token generated",

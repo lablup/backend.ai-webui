@@ -839,15 +839,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           rowKey={'token'}
           columns={[
             {
-              title: '#',
-              fixed: 'left',
-              render: (id, record, index) => {
-                ++index;
-                return index;
-              },
-            },
-            {
-              title: 'Token',
+              title: t('modelService.Token'),
               dataIndex: 'token',
               fixed: 'left',
               render: (text, row) => (
@@ -857,7 +849,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               ),
             },
             {
-              title: 'Status',
+              title: t('modelService.Status'),
               render: (text, row) => {
                 const isExpired = dayjs.utc(row.valid_until).isBefore();
                 return (
@@ -868,7 +860,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               },
             },
             {
-              title: 'Valid Until',
+              title: t('modelService.ExpiredDate'),
               dataIndex: 'valid_until',
               render: (text, row) => (
                 <span>
@@ -883,7 +875,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               sorter: dayDiff,
             },
             {
-              title: 'Created at',
+              title: t('modelService.CreatedAt'),
               dataIndex: 'created_at',
               render: (text, row) => (
                 <span>{dayjs(row.created_at).format('ll LT')}</span>

@@ -613,7 +613,8 @@
     "Session": "Sesi",
     "StorageProxies": "Penyimpanan",
     "TotalItems": "Total item {{total}}",
-    "Username": "Nama pengguna"
+    "Username": "Nama pengguna",
+    "ValueRequired": "Silakan masukkan {{ nama }}"
   },
   "import": {
     "CleanUpImportTask": "Membersihkan tugas impor...",
@@ -893,6 +894,7 @@
     "SyncRoutesFailed": "Permintaan sinkronisasi rute gagal.",
     "SyncRoutesRequested": "Sinkronisasi rute telah diminta.",
     "TimeStamp": "Stempel waktu",
+    "Token": "Token",
     "TokenExpiredDateError": "Waktu kedaluwarsa token harus setelah waktu saat ini",
     "TokenExpiredDateHelp": "Waktu kedaluwarsa token default adalah 24 jam kemudian.",
     "TokenGenerated": "Token yang dihasilkan",

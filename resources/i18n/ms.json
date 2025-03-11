@@ -613,7 +613,8 @@
     "Session": "Sesi",
     "StorageProxies": "Stor",
     "TotalItems": "Jumlah {{total}} item",
-    "Username": "Nama pengguna"
+    "Username": "Nama pengguna",
+    "ValueRequired": "Sila masukkan {{name}}"
   },
   "import": {
     "CleanUpImportTask": "Tugas import pembersihan ...",
@@ -894,6 +895,7 @@
     "SyncRoutesFailed": "Permintaan penyegerakan laluan gagal.",
     "SyncRoutesRequested": "Penyegerakan laluan telah diminta.",
     "TimeStamp": "Cap masa",
+    "Token": "Token",
     "TokenExpiredDateError": "Masa tamat tempoh token mestilah selepas masa semasa",
     "TokenExpiredDateHelp": "Masa tamat tempoh token lalai ialah 24 jam kemudian.",
     "TokenGenerated": "Token dijana",

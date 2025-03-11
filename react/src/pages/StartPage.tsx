@@ -6,11 +6,7 @@ import { filterEmptyItem } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 // import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { SessionLauncherFormValue } from './SessionLauncherPage';
-import {
-  AppstoreAddOutlined,
-  FolderAddOutlined,
-  LinkOutlined,
-} from '@ant-design/icons';
+import { AppstoreAddOutlined, FolderAddOutlined } from '@ant-design/icons';
 import { Card, Col, Grid, Row } from 'antd';
 import _ from 'lodash';
 import { useState } from 'react';
@@ -114,25 +110,25 @@ const StartPage: React.FC = () => {
         ),
       },
     },
-    {
-      id: 'startFromURL',
-      rowSpan: 3,
-      columnSpan: 1,
-      columnOffset: { 6: 1, 4: 1 },
-      data: {
-        content: (
-          <ThemeSecondaryProvider>
-            <ActionItemContent
-              title={t('start.StartFromURL')}
-              description={t('start.StartFromURLDesc')}
-              buttonText={t('start.button.StartNow')}
-              icon={<LinkOutlined />}
-              onClick={() => webuiNavigate('/import')}
-            />
-          </ThemeSecondaryProvider>
-        ),
-      },
-    },
+    // {
+    //   id: 'startFromURL',
+    //   rowSpan: 3,
+    //   columnSpan: 1,
+    //   columnOffset: { 6: 1, 4: 1 },
+    //   data: {
+    //     content: (
+    //       <ThemeSecondaryProvider>
+    //         <ActionItemContent
+    //           title={t('start.StartFromURL')}
+    //           description={t('start.StartFromURLDesc')}
+    //           buttonText={t('start.button.StartNow')}
+    //           icon={<LinkOutlined />}
+    //           onClick={() => webuiNavigate('/import')}
+    //         />
+    //       </ThemeSecondaryProvider>
+    //     ),
+    //   },
+    // },
     // {
     //   id: 'startFromExample',
     //   rowSpan: 3,

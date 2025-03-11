@@ -3597,14 +3597,22 @@ export default class BackendAISessionList extends BackendAIPage {
                 : html``}
               ${rowData.item.tpu_slot
                 ? html`
-                    <mwc-icon class="fg green indicator">view_module</mwc-icon>
+                    <img
+                      class="indicator-icon fg green"
+                      src="/resources/icons/tpu.svg"
+                      alt="TPU"
+                    />
                     <span>${rowData.item.tpu_slot}</span>
                     <span class="indicator">TPU</span>
                   `
                 : html``}
               ${rowData.item.ipu_slot
                 ? html`
-                    <mwc-icon class="fg green indicator">view_module</mwc-icon>
+                    <img
+                      class="indicator-icon fg green"
+                      src="/resources/icons/ipu.svg"
+                      alt="IPU"
+                    />
                     <span>${rowData.item.ipu_slot}</span>
                     <span class="indicator">IPU</span>
                   `

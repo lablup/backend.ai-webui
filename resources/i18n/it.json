@@ -613,7 +613,8 @@
     "Session": "Sessione",
     "StorageProxies": "Depositi",
     "TotalItems": "Totale articoli {{totale}}",
-    "Username": "Nome utente"
+    "Username": "Nome utente",
+    "ValueRequired": "Inserisci {{ nome }}"
   },
   "import": {
     "CleanUpImportTask": "Attività di importazione di pulizia...",
@@ -893,6 +894,7 @@
     "SyncRoutesFailed": "La richiesta di sincronizzazione del percorso non è riuscita.",
     "SyncRoutesRequested": "È stata richiesta la sincronizzazione del percorso.",
     "TimeStamp": "Timestamp",
+    "Token": "Gettone",
     "TokenExpiredDateError": "L'ora di scadenza del token deve essere successiva all'ora corrente.",
     "TokenExpiredDateHelp": "La scadenza predefinita del token è di 24 ore dopo.",
     "TokenGenerated": "Gettone generato",
