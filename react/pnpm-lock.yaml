@@ -6,10 +6,10 @@ settings:
 
 patchedDependencies:
   '@cloudscape-design/board-components@3.0.60':
-    hash: sl2ax5liun5nztm65pxt6fd2ku
+    hash: e5f7292ea99891428ed900a78f687de7a439f023f0cdafae3322f7e22e19cb70
     path: patches/@cloudscape-design__board-components@3.0.60.patch
   rc-field-form:
-    hash: l7v7gre5halb2xnps2zwnqbqte
+    hash: e4841378d1c17439be3359cd395e44bb49a9b3d1f594e48cba191ea19ecf0b32
     path: patches/rc-field-form.patch
 
 importers:
@@ -36,7 +36,7 @@ importers:
         version: 1.0.5(antd@5.23.3(date-fns@2.30.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@cloudscape-design/board-components':
         specifier: 3.0.60
-        version: 3.0.60(patch_hash=sl2ax5liun5nztm65pxt6fd2ku)(@cloudscape-design/components@3.0.677(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(@cloudscape-design/design-tokens@3.0.40)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        version: 3.0.60(patch_hash=e5f7292ea99891428ed900a78f687de7a439f023f0cdafae3322f7e22e19cb70)(@cloudscape-design/components@3.0.677(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(@cloudscape-design/design-tokens@3.0.40)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@codemirror/language':
         specifier: ^6.10.3
         version: 6.10.3
@@ -9502,7 +9502,7 @@ snapshots:
 
   '@bcoe/v8-coverage@0.2.3': {}
 
-  '@cloudscape-design/board-components@3.0.60(patch_hash=sl2ax5liun5nztm65pxt6fd2ku)(@cloudscape-design/components@3.0.677(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(@cloudscape-design/design-tokens@3.0.40)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+  '@cloudscape-design/board-components@3.0.60(patch_hash=e5f7292ea99891428ed900a78f687de7a439f023f0cdafae3322f7e22e19cb70)(@cloudscape-design/components@3.0.677(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(@cloudscape-design/design-tokens@3.0.40)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
       '@cloudscape-design/component-toolkit': 1.0.0-beta.64
       '@cloudscape-design/components': 3.0.677(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -12089,7 +12089,7 @@ snapshots:
       rc-dialog: 9.6.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       rc-drawer: 7.2.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       rc-dropdown: 4.2.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      rc-field-form: 2.7.0(patch_hash=l7v7gre5halb2xnps2zwnqbqte)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      rc-field-form: 2.7.0(patch_hash=e4841378d1c17439be3359cd395e44bb49a9b3d1f594e48cba191ea19ecf0b32)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       rc-image: 7.11.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       rc-input: 1.7.2(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       rc-input-number: 9.4.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -16624,7 +16624,7 @@ snapshots:
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
 
-  rc-field-form@2.7.0(patch_hash=l7v7gre5halb2xnps2zwnqbqte)(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+  rc-field-form@2.7.0(patch_hash=e4841378d1c17439be3359cd395e44bb49a9b3d1f594e48cba191ea19ecf0b32)(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:
       '@babel/runtime': 7.26.0
       '@rc-component/async-validator': 5.0.4
