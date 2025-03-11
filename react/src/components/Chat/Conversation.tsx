@@ -1,7 +1,7 @@
 import { ChatContext, ConversationType } from '../../pages/ChatProvider';
 import BAICard from '../BAICard';
 import Flex from '../Flex';
-import EndpointLLMChatCard from './EndpointLLMChatCard';
+import ChatCard from './ChatCard';
 import { ConversationQuery } from './__generated__/ConversationQuery.graphql';
 import { PlusOutlined } from '@ant-design/icons';
 import { useDynamicList } from 'ahooks';
@@ -11,15 +11,6 @@ import { t } from 'i18next';
 import { map } from 'lodash';
 import { Suspense, useContext, useState } from 'react';
 import { useLazyLoadQuery } from 'react-relay';
-
-type Chat = {
-  endpointId: any;
-  agentId: string;
-};
-
-type Endpoint = {
-  defaultId: string;
-};
 
 export type ConversationProps = {
   // conversation: ConversationType;
@@ -40,12 +31,12 @@ function useEndpoint(
           @skipOnClient(if: $isEmptyEndpointId)
           @catch {
           endpoint_id
-          ...EndpointLLMChatCard_endpoint
+          ...ChatCard_endpoint
         }
         endpoint_list(limit: 1, offset: 0) {
           items {
             endpoint_id
-            ...EndpointLLMChatCard_endpoint
+            ...ChatCard_endpoint
           }
         }
       }
@@ -142,14 +133,16 @@ export const Conversation: React.FC<ConversationProps> = ({
                     <Skeleton active />
                   </Card>
                 }
+                key={index}
               >
-                <EndpointLLMChatCard
+                <ChatCard
                   defaultModelId={defaultModelId ?? undefined}
                   defaultEndpoint={defaultEndpoint}
                   defaultAgentId={undefined}
-                  style={{ flex: 1 }}
+                  style={{ flex: 1, overflow: 'hidden' }} // Add overflow handling here
                   onRequestClose={() => {}}
-                  closable={false}
+                  closable={list.length > 1}
+                  key={index}
                 />
               </Suspense>
             ))

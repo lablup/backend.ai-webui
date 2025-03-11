@@ -1,6 +1,5 @@
 import BAICard from '../components/BAICard';
 import { Conversation } from '../components/Chat/Conversation';
-import EndpointLLMChatCard from '../components/Chat/EndpointLLMChatCard';
 import Flex from '../components/Flex';
 import { ChatContext, ChatProvider, ConversationType } from './ChatProvider';
 import { PlusOutlined } from '@ant-design/icons';

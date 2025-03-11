@@ -455,6 +455,9 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
           </Form.Item>
         </Form>
       </Flex>
+      {
+        // @FIXME move to chatboxy
+      }
       {!_.isEmpty(error?.message) ? (
         <Alert
           message={error?.message}
