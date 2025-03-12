@@ -5,12 +5,12 @@ import {
 } from '../helper';
 import { UserStatsData, UserStatsDataKey } from '../hooks';
 import { useThemeMode } from '../hooks/useThemeMode';
-import useUserStats from '../hooks/useUserStats';
+import useUserUsageStats from '../hooks/useUserUsageStats';
 import { Period } from '../pages/StatisticsPage';
 import Flex from './Flex';
-import InfoIconWithTooltip from './InfoIconWithTooltip';
+import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import { Column, ColumnConfig } from '@ant-design/charts';
-import { Card, theme } from 'antd';
+import { Card } from 'antd';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 
@@ -31,7 +31,7 @@ const GraphCard = ({ title, tooltipText, children }: GraphCardProps) => (
     title={
       <Flex gap={'xxs'}>
         {title}
-        <InfoIconWithTooltip title={tooltipText} />
+        <QuestionIconWithTooltip title={tooltipText} />
       </Flex>
     }
     style={{ width: '100%' }}
@@ -107,21 +107,21 @@ const getColumnConfig = ({
 
 interface UsageHistoryStatisticsProps {
   period: Period;
+  fetchKey?: string;
 }
 
-const UsageHistoryStatistics = ({ period }: UsageHistoryStatisticsProps) => {
-  const { token } = theme.useToken();
+const UsageHistoryStatistics = ({
+  period,
+  fetchKey,
+}: UsageHistoryStatisticsProps) => {
   const { t } = useTranslation();
-  const { data } = useUserStats();
+  const { data } = useUserUsageStats({
+    fetchKey,
+  });
   const { isDarkMode } = useThemeMode();
 
   return (
-    <Flex
-      direction="column"
-      style={{ padding: token.paddingContentHorizontal }}
-      align="start"
-      gap="md"
-    >
+    <Flex direction="column" align="start" gap="md">
       <GraphCard title="Sessions" tooltipText={t('statistics.SessionsDesc')}>
         <Column
           height={200}

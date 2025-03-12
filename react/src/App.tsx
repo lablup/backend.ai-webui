@@ -403,19 +403,22 @@ const router = createBrowserRouter([
       {
         path: '/statistics',
         handle: { labelKey: 'webui.menu.Statistics' },
-        element: (
-          <BAIErrorBoundary>
-            <Suspense
-              fallback={
-                <Flex direction="column" style={{ maxWidth: 700 }}>
-                  <Skeleton active />
-                </Flex>
-              }
-            >
-              <StatisticsPage />
-            </Suspense>
-          </BAIErrorBoundary>
-        ),
+        Component: () => {
+          useSuspendedBackendaiClient();
+          return (
+            <BAIErrorBoundary>
+              <Suspense
+                fallback={
+                  <Flex direction="column" style={{ maxWidth: 700 }}>
+                    <Skeleton active />
+                  </Flex>
+                }
+              >
+                <StatisticsPage />
+              </Suspense>
+            </BAIErrorBoundary>
+          );
+        },
       },
       {
         path: '/environment',

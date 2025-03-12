@@ -1,41 +1,26 @@
 import BAICard from '../components/BAICard';
+import BAIFetchKeyButton from '../components/BAIFetchKeyButton';
+import BAITabs from '../components/BAITabs';
 import Flex from '../components/Flex';
-import InfoIconWithTooltip from '../components/InfoIconWithTooltip';
 import UsageHistoryStatistics from '../components/UsageHistoryStatistics';
-import { useSuspendedBackendaiClient } from '../hooks';
-import { useTanQuery } from '../hooks/reactQueryAlias';
-import { Alert, Form, Select, theme } from 'antd';
-import { useMemo } from 'react';
+import { useUpdatableState } from '../hooks';
+import { Alert, Form, Select, Skeleton } from 'antd';
+import { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StringParam, useQueryParam, withDefault } from 'use-query-params';
+import { createEnumParam, useQueryParam, withDefault } from 'use-query-params';
 
 export type Period = '1D' | '1W';
-const periodParam = withDefault(StringParam, '1D');
+const periodParam = withDefault(createEnumParam<Period>(['1D', '1W']), '1D');
 
 const StatisticsPage = () => {
-  const [period, setPeriod] = useQueryParam('period', periodParam);
+  const [selectedPeriod, setSelectedPeriod] = useQueryParam(
+    'period',
+    periodParam,
+  );
   const { t } = useTranslation();
-  const { token } = theme.useToken();
-  const baiClient = useSuspendedBackendaiClient();
-  const { data } = useTanQuery({
-    queryKey: ['UserCreateAt', baiClient._config.accessKey],
-    queryFn: () =>
-      baiClient.keypair.info(baiClient._config.accessKey, ['created_at']),
-    staleTime: 3 * 60 * 1000,
-  });
 
-  const isUserOlderThan7Days = useMemo(() => {
-    if (!data?.keypair?.created_at) {
-      return false;
-    }
-    const seconds = Math.floor(
-      (new Date().getTime() - new Date(data.keypair.created_at).getTime()) /
-        1000,
-    );
-    const days = Math.floor(seconds / (24 * 60 * 60));
-    return days > 7;
-  }, [data]);
-
+  const [usageFetchKey, updateUsageFetchKey] = useUpdatableState('first');
+  const [isPendingUsageTransition, startUsageTransition] = useTransition();
   let periodOptions: Array<{
     label: string;
     value: Period;
@@ -44,48 +29,64 @@ const StatisticsPage = () => {
       label: t('statistics.1Day'),
       value: '1D',
     },
-  ];
-
-  if (isUserOlderThan7Days) {
-    periodOptions.push({
+    {
       label: t('statistics.1Week'),
       value: '1W',
-    });
-  }
+    },
+  ];
 
   return (
-    <BAICard
-      activeTabKey="usageHistory"
-      title={
-        <Flex gap={'xs'}>
-          {t('statistics.UsageHistory')}
-          <InfoIconWithTooltip title={t('statistics.UsageHistoryDesc')} />
-        </Flex>
-      }
-      styles={{ body: { padding: 0 } }}
-      extra={
-        <Form.Item
-          label={t('statistics.SelectPeriod')}
-          style={{ marginBottom: 0 }}
-        >
-          <Select
-            popupMatchSelectWidth={false}
-            options={periodOptions}
-            value={period}
-            onChange={(value) => setPeriod(value)}
+    <BAICard activeTabKey="usageHistory" title={t('statistics.UsageHistory')}>
+      <Flex direction="column" align="stretch" gap={'md'}>
+        <Alert
+          showIcon
+          message={t('statistics.UsageHistoryNote')}
+          type="info"
+        />
+        <Flex gap={'sm'} justify="between">
+          <Form.Item
+            label={t('statistics.SelectPeriod')}
+            style={{ marginBottom: 0 }}
+          >
+            <Select
+              popupMatchSelectWidth={false}
+              options={periodOptions}
+              value={selectedPeriod}
+              onChange={(value) => setSelectedPeriod(value)}
+            />
+          </Form.Item>
+          <BAIFetchKeyButton
+            loading={isPendingUsageTransition}
+            value={usageFetchKey}
+            onChange={() => {
+              startUsageTransition(() => {
+                updateUsageFetchKey();
+              });
+            }}
           />
-        </Form.Item>
-      }
-    >
-      <Alert
-        showIcon
-        message={`${t('statistics.UsageHistoryNote')} ${isUserOlderThan7Days ? '' : t('statistics.UsageHistoryNoteUnder7Days')}`}
-        type="info"
-        style={{
-          marginInline: token.paddingContentHorizontal,
-        }}
-      />
-      <UsageHistoryStatistics period={period as Period} />
+        </Flex>
+        <Suspense fallback={<Skeleton active />}>
+          <UsageHistoryStatistics
+            period={selectedPeriod || '1D'}
+            fetchKey={usageFetchKey}
+          />
+        </Suspense>
+      </Flex>
+      {/* <BAITabs
+        items={[
+          {
+            label: t('statistics.UsageHistory'),
+            key: 'usageHistory',
+            children: (
+            //  
+            ),
+          },
+          {
+            label: 'Live Stats',
+            key: 'liveStats',
+          },
+        ]}
+      /> */}
     </BAICard>
   );
 };

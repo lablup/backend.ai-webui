@@ -1,20 +1,20 @@
-import { InfoCircleOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import { theme, Tooltip } from 'antd';
 import { TooltipPropsWithTitle } from 'antd/es/tooltip';
 import React from 'react';
 
-interface InfoIconWithTooltipProps
+interface QuestionIconWithTooltipProps
   extends Omit<TooltipPropsWithTitle, 'children'> {
-  iconProps?: React.ComponentProps<typeof InfoCircleOutlined>;
+  iconProps?: React.ComponentProps<typeof QuestionCircleOutlined>;
 }
-const InfoIconWithTooltip = ({
+const QuestionIconWithTooltip = ({
   iconProps,
   ...tooltipProps
-}: InfoIconWithTooltipProps) => {
+}: QuestionIconWithTooltipProps) => {
   const { token } = theme.useToken();
   return (
     <Tooltip {...tooltipProps}>
-      <InfoCircleOutlined
+      <QuestionCircleOutlined
         style={{
           color: token.colorTextTertiary,
         }}
@@ -24,4 +24,4 @@ const InfoIconWithTooltip = ({
   );
 };
 
-export default InfoIconWithTooltip;
+export default QuestionIconWithTooltip;
