@@ -46,9 +46,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = (props) => {
             />
           }
         >
-          <AgentSummaryList
-            containerStyle={{ marginLeft: -1, marginRight: -1 }}
-          />
+          <AgentSummaryList />
         </Suspense>
       ) : null}
     </Card>

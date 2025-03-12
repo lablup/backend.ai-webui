@@ -1583,7 +1583,10 @@
     "SelectPeriod": "Ajanjakso",
     "SessionsDesc": "Luotujen laskenta-istuntojen määrä.",
     "UsageHistory": "Käyttöhistoria",
-    "UsageHistoryNote": "Tässä esitetty käyttöhistoria perustuu lopetettuihin laskentaistuntoihin."
+    "UsageHistoryNote": "Tässä esitetty käyttöhistoria perustuu lopetettuihin laskentaistuntoihin.",
+    "prometheus": {
+      "noMetricsToDisplay": "Ei mittareita, joita on saatavana seurantaan"
+    }
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "Resurssikäytännön muuttaminen voi vaikuttaa kaikkiin projekteihin, jotka käyttävät kyseistä projektin resurssikäytäntöä, joten käytä sitä varoen.",
@@ -1866,7 +1869,9 @@
       "TermsOfService": "Käyttöehdot",
       "TotpActivated": "2FA käytössä",
       "Update": "Päivitys",
+      "UsageHistory": "Käyttöhistoria",
       "UserCredentials&Policies": "Käyttäjien valtakirjat ja käytännöt",
+      "UserSessionHistory": "Käyttäjäistunnon historia",
       "Users": "Käyttäjät",
       "WelcomeMessage": "Tervetuloa, {{ userName }}.",
       "YouMushChangeYourPassword": "On suositeltavaa vaihtaa salasana säännöllisesti turvallisuussyistä. Koska salasanasi viimeisimmästä vaihtamisesta on kulunut tietty aika, sinun on vaihdettava se, jotta voit jatkaa palvelun käyttöä.",
