@@ -17,7 +17,6 @@ import ModelStoreListPage from './pages/ModelStoreListPage';
 import Page401 from './pages/Page401';
 import Page404 from './pages/Page404';
 import ServingPage from './pages/ServingPage';
-import VFolderListPage from './pages/VFolderListPage';
 import VFolderNodeListPage from './pages/VFolderNodeListPage';
 import { Skeleton, theme } from 'antd';
 import React, { Suspense } from 'react';
@@ -368,16 +367,9 @@ const router = createBrowserRouter([
         path: '/data',
         handle: { labelKey: 'webui.menu.Data' },
         Component: () => {
-          const [experimentalNeoDataPage] = useBAISettingUserState(
-            'experimental_neo_data_page',
-          );
           return (
             <BAIErrorBoundary>
-              {experimentalNeoDataPage ? (
-                <VFolderNodeListPage />
-              ) : (
-                <VFolderListPage />
-              )}
+              <VFolderNodeListPage />
             </BAIErrorBoundary>
           );
         },
