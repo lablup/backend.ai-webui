@@ -294,110 +294,111 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
           zIndex: 1,
         },
       }}
-      actions={[
-        <ChatSender
-          autoFocus
-          value={input}
-          placeholder="Say something..."
-          header={
-            <Sender.Header
-              closable={false}
-              title={t('chatui.Attachments')}
-              open={!!isOpenAttachments && !_.isEmpty(files)}
-              onOpenChange={setIsOpenAttachments}
-              styles={{
-                content: {
-                  padding: 0,
-                },
-              }}
-            >
-              <Attachments
-                beforeUpload={() => false}
-                getDropContainer={() => cardRef.current}
-                accept="image/*,text/*"
-                items={files}
-                onChange={({ fileList }) => {
-                  setFiles(fileList);
-                  onAttachmentChange?.(fileList);
-                }}
-                placeholder={(type) =>
-                  type === 'drop'
-                    ? {
-                        title: t('chatui.DropFileHere'),
-                      }
-                    : {
-                        icon: <CloudUploadOutlined />,
-                        title: t('chatui.UploadFiles'),
-                        description: t('chatui.UploadFilesDescription'),
-                      }
-                }
-              />
-            </Sender.Header>
-          }
-          prefix={
-            <Attachments
-              beforeUpload={() => false}
-              getDropContainer={() => cardRef.current}
-              accept="image/*,text/*"
-              items={files}
-              onChange={({ fileList }) => {
-                setFiles(fileList);
-                onAttachmentChange?.(fileList);
-                setIsOpenAttachments(true);
-              }}
-              placeholder={(type) =>
-                type === 'drop'
-                  ? {
-                      title: t('chatui.DropFileHere'),
-                    }
-                  : {
-                      icon: <CloudUploadOutlined />,
-                      title: t('chatui.UploadFiles'),
-                      description: t('chatui.UploadFilesDescription'),
-                    }
-              }
-            >
-              <Badge dot={!_.isEmpty(files) && !isOpenAttachments}>
-                <Button type="text" icon={<LinkOutlined />} />
-              </Badge>
-            </Attachments>
-          }
-          onChange={(v: string) => {
-            setInput(v);
-            if (onInputChange) {
-              onInputChange(v);
-            }
-          }}
-          loading={isLoading}
-          onStop={() => {
-            stop();
-          }}
-          onSend={() => {
-            if (input || !_.isEmpty(files)) {
-              const chatRequestOptions: ChatRequestOptions = {};
-              if (!_.isEmpty(files)) {
-                chatRequestOptions.experimental_attachments =
-                  createDataTransferFiles(files);
-              }
-              append(
-                {
-                  role: 'user',
-                  content: input,
-                },
-                chatRequestOptions,
-              );
-
-              setTimeout(() => {
-                setInput('');
-                setFiles([]);
-                setIsOpenAttachments(false);
-              }, 0);
-              onSubmitChange?.();
-            }
-          }}
-          style={{ flex: 1 }}
-        />,
-      ]}
+      actions={
+        [
+          // <ChatSender
+          //   autoFocus
+          //   value={input}
+          //   placeholder="Say something..."
+          //   header={
+          //     <Sender.Header
+          //       closable={false}
+          //       title={t('chatui.Attachments')}
+          //       open={!!isOpenAttachments && !_.isEmpty(files)}
+          //       onOpenChange={setIsOpenAttachments}
+          //       styles={{
+          //         content: {
+          //           padding: 0,
+          //         },
+          //       }}
+          //     >
+          //       <Attachments
+          //         beforeUpload={() => false}
+          //         getDropContainer={() => cardRef.current}
+          //         accept="image/*,text/*"
+          //         items={files}
+          //         onChange={({ fileList }) => {
+          //           setFiles(fileList);
+          //           onAttachmentChange?.(fileList);
+          //         }}
+          //         placeholder={(type) =>
+          //           type === 'drop'
+          //             ? {
+          //                 title: t('chatui.DropFileHere'),
+          //               }
+          //             : {
+          //                 icon: <CloudUploadOutlined />,
+          //                 title: t('chatui.UploadFiles'),
+          //                 description: t('chatui.UploadFilesDescription'),
+          //               }
+          //         }
+          //       />
+          //     </Sender.Header>
+          //   }
+          //   prefix={
+          //     <Attachments
+          //       beforeUpload={() => false}
+          //       getDropContainer={() => cardRef.current}
+          //       accept="image/*,text/*"
+          //       items={files}
+          //       onChange={({ fileList }) => {
+          //         setFiles(fileList);
+          //         onAttachmentChange?.(fileList);
+          //         setIsOpenAttachments(true);
+          //       }}
+          //       placeholder={(type) =>
+          //         type === 'drop'
+          //           ? {
+          //               title: t('chatui.DropFileHere'),
+          //             }
+          //           : {
+          //               icon: <CloudUploadOutlined />,
+          //               title: t('chatui.UploadFiles'),
+          //               description: t('chatui.UploadFilesDescription'),
+          //             }
+          //       }
+          //     >
+          //       <Badge dot={!_.isEmpty(files) && !isOpenAttachments}>
+          //         <Button type="text" icon={<LinkOutlined />} />
+          //       </Badge>
+          //     </Attachments>
+          //   }
+          //   onChange={(v: string) => {
+          //     setInput(v);
+          //     if (onInputChange) {
+          //       onInputChange(v);
+          //     }
+          //   }}
+          //   loading={isLoading}
+          //   // onStop={() => {
+          //   //   stop();
+          //   // }}
+          //   // onSend={() => {
+          //   //   if (input || !_.isEmpty(files)) {
+          //   //     const chatRequestOptions: ChatRequestOptions = {};
+          //   //     if (!_.isEmpty(files)) {
+          //   //       chatRequestOptions.experimental_attachments =
+          //   //         createDataTransferFiles(files);
+          //   //     }
+          //   //     append(
+          //   //       {
+          //   //         role: 'user',
+          //   //         content: input,
+          //   //       },
+          //   //       chatRequestOptions,
+          //   //     );
+          //   //     setTimeout(() => {
+          //   //       setInput('');
+          //   //       setFiles([]);
+          //   //       setIsOpenAttachments(false);
+          //   //     }, 0);
+          //   //     onSubmitChange?.();
+          //   //   }
+          //   // }}
+          //   style={{ flex: 1 }}
+          // />,
+        ]
+      }
     >
       <Flex
         direction="row"

@@ -1,17 +1,21 @@
+import { createDataTransferFiles } from '../../helper';
 import Flex from '../Flex';
-import ChatSender from './ChatSender';
+import ChatSender, { ChatSenderEvents } from './ChatSender';
 import ChatTokenCounter from './ChatTokenCounter';
 import VirtualChatMessageList from './VirtualChatMessageList';
 import { createOpenAI } from '@ai-sdk/openai';
 import { useChat } from '@ai-sdk/react';
-import { CloudUploadOutlined, LinkOutlined } from '@ant-design/icons';
-import { Attachments, AttachmentsProps, Sender } from '@ant-design/x';
-import { streamText, wrapLanguageModel, extractReasoningMiddleware } from 'ai';
-import { Badge, Button, theme } from 'antd';
+import type { AttachmentsProps } from '@ant-design/x';
+import {
+  streamText,
+  wrapLanguageModel,
+  extractReasoningMiddleware,
+  ChatRequestOptions,
+} from 'ai';
+import { theme } from 'antd';
 import equal from 'fast-deep-equal';
-import { t } from 'i18next';
 import { isEmpty } from 'lodash';
-import React, { memo, useRef, useState } from 'react';
+import React, { memo, useCallback, useRef, useState } from 'react';
 
 const ChatMessageList = memo(VirtualChatMessageList, (prevProps, nextProps) => {
   if (!equal(prevProps.messages, nextProps.messages)) return false;
@@ -116,10 +120,60 @@ const ChatBody: React.FC<ChatBodyProps> = ({
     padding: token.paddingContentVertical,
   };
 
-  // input
+  // @FIXME sync file attachment between sender
+
+  // @FIXME move into ChatSender?
   const [isOpenAttachments, setIsOpenAttachments] = useState(false);
   const [files, setFiles] = useState<AttachmentsProps['items']>([]);
   const cardRef = useRef<HTMLDivElement>(null);
+
+  const handleChatSenderChange = useCallback(
+    (event: ChatSenderEvents, data: any) => {
+      console.log('data', data);
+
+      if (event === 'input-change') {
+        setInput(data);
+        // @FIXME: add sync messages and attachment, onInputChange
+        // if (onInputChange) {
+        //   onInputChange(v);
+        // }
+      } else if (event === 'input-cancel') {
+        stop();
+      } else if (event === 'input-submit') {
+        if (input || !isEmpty(files)) {
+          const chatRequestOptions: ChatRequestOptions = {};
+          if (!isEmpty(files)) {
+            chatRequestOptions.experimental_attachments =
+              createDataTransferFiles(files);
+          }
+          append(
+            {
+              role: 'user',
+              content: input,
+            },
+            chatRequestOptions,
+          );
+          setTimeout(() => {
+            setInput('');
+            setFiles([]);
+            setIsOpenAttachments(false);
+          }, 0);
+          // @FIXME: add sync messages and attachment, onSubmitChange
+        }
+      } else if (event === 'attachment-change') {
+        const fileList = data.info.fileList;
+        setFiles(fileList);
+
+        if (data.type === 'prefix') {
+          setIsOpenAttachments(true);
+        }
+        // @FIXME: add sync messages and attachment, onAttachmentChange?
+      } else if (event === 'attachment-open-change') {
+        setIsOpenAttachments(data);
+      }
+    },
+    [append, files, input, setInput, stop],
+  );
 
   return (
     <>
@@ -133,105 +187,14 @@ const ChatBody: React.FC<ChatBodyProps> = ({
       </Flex>
       <Flex style={ChatInputStyle} direction="column" align="center">
         <ChatSender
+          placeholder="Say something..."
           autoFocus
           value={input}
-          placeholder="Say something..."
-          header={
-            <Sender.Header
-              closable={false}
-              title={t('chatui.Attachments')}
-              open={!!isOpenAttachments && !isEmpty(files)}
-              onOpenChange={setIsOpenAttachments}
-              styles={{
-                content: {
-                  padding: 0,
-                },
-              }}
-            >
-              <Attachments
-                beforeUpload={() => false}
-                getDropContainer={() => cardRef.current}
-                accept="image/*,text/*"
-                items={files}
-                onChange={({ fileList }) => {
-                  //   setFiles(fileList);
-                  //   onAttachmentChange?.(fileList);
-                }}
-                placeholder={(type) =>
-                  type === 'drop'
-                    ? {
-                        title: t('chatui.DropFileHere'),
-                      }
-                    : {
-                        icon: <CloudUploadOutlined />,
-                        title: t('chatui.UploadFiles'),
-                        description: t('chatui.UploadFilesDescription'),
-                      }
-                }
-              />
-            </Sender.Header>
-          }
-          prefix={
-            <Attachments
-              beforeUpload={() => false}
-              getDropContainer={() => cardRef.current}
-              accept="image/*,text/*"
-              items={files}
-              onChange={({ fileList }) => {
-                // setFiles(fileList);
-                // onAttachmentChange?.(fileList);
-                // setIsOpenAttachments(true);
-              }}
-              placeholder={(type) =>
-                type === 'drop'
-                  ? {
-                      title: t('chatui.DropFileHere'),
-                    }
-                  : {
-                      icon: <CloudUploadOutlined />,
-                      title: t('chatui.UploadFiles'),
-                      description: t('chatui.UploadFilesDescription'),
-                    }
-              }
-            >
-              <Badge dot={!isEmpty(files) && !isOpenAttachments}>
-                <Button type="text" icon={<LinkOutlined />} />
-              </Badge>
-            </Attachments>
-          }
-          onChange={(v: string) => {
-            setInput(v);
-            // if (onInputChange) {
-            //   onInputChange(v);
-            // }
-          }}
+          items={files}
+          openAttachment={isOpenAttachments}
+          dropContainerRef={cardRef}
+          onChange={handleChatSenderChange}
           loading={isLoading}
-          onStop={() => {
-            stop();
-          }}
-          onSend={() => {
-            // if (input || !isEmpty(files)) {
-            //   const chatRequestOptions: ChatRequestOptions = {};
-            //   if (!isEmpty(files)) {
-            //     chatRequestOptions.experimental_attachments =
-            //       createDataTransferFiles(files);
-            //   }
-            //   append(
-            //     {
-            //       role: 'user',
-            //       content: input,
-            //     },
-            //     chatRequestOptions,
-            //   );
-            //   setTimeout(() => {
-            //     setInput('');
-            //     setFiles([]);
-            //     setIsOpenAttachments(false);
-            //   }, 0);
-            //   onSubmitChange?.();
-            // }
-          }}
-          style={{ flex: 1 }}
         />
       </Flex>
     </>
