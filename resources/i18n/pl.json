@@ -1578,9 +1578,7 @@
     "SelectPeriod": "Okres",
     "SessionsDesc": "Liczba utworzonych sesji obliczeniowych.",
     "UsageHistory": "Historia użytkowania",
-    "UsageHistoryDesc": "Na stronie historii użytkowania możesz sprawdzić proste statystyki związane z użyciem sesji obliczeniowych za pomocą wykresu. \nMożesz sprawdzić statystyki historii użytkowania na dzień lub tydzień, wybierając okres użytkowania z menu Wybierz okres w prawym górnym rogu.",
-    "UsageHistoryNote": "Pokazana tutaj historia użytkowania oparta jest na zakończonych sesjach obliczeniowych.",
-    "UsageHistoryNoteUnder7Days": "Ponadto tygodniowa historia użytkowania może nie być wyświetlana dla użytkowników, których konto jest tworzone nie dłużej niż tydzień."
+    "UsageHistoryNote": "Pokazana tutaj historia użytkowania oparta jest na zakończonych sesjach obliczeniowych."
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "Zmiana polityki zasobów może mieć wpływ na wszystkie projekty korzystające z tej polityki zasobów projektu, więc należy jej używać ostrożnie.",

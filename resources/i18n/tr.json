@@ -1577,9 +1577,7 @@
     "SelectPeriod": "Dönem",
     "SessionsDesc": "Oluşturulan hesaplama oturumlarının sayısı.",
     "UsageHistory": "Kullanım Geçmişi",
-    "UsageHistoryDesc": "Kullanım Geçmişi sayfasında, bir grafik aracılığıyla hesaplama oturumlarının kullanımıyla ilgili basit istatistikleri kontrol edebilirsiniz. \nKullanım geçmişi istatistiklerini, sağ üstteki Seçim Menüsü'nden kullanım süresini seçerek bir gün veya bir hafta boyunca kontrol edebilirsiniz.",
-    "UsageHistoryNote": "Burada gösterilen kullanım geçmişi, sonlandırılmış hesaplama oturumlarına dayanmaktadır.",
-    "UsageHistoryNoteUnder7Days": "Ayrıca, hesabı bir haftadan fazla oluşturulan kullanıcılar için bir haftalık kullanım geçmişi gösterilmeyebilir."
+    "UsageHistoryNote": "Burada gösterilen kullanım geçmişi, sonlandırılmış hesaplama oturumlarına dayanmaktadır."
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "Bir kaynak ilkesinin değiştirilmesi, o proje kaynak ilkesini kullanan tüm projeleri etkileyebilir, bu nedenle dikkatli kullanın.",

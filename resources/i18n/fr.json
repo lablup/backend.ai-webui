@@ -1578,9 +1578,7 @@
     "SelectPeriod": "Période",
     "SessionsDesc": "Le nombre de sessions de calcul créées.",
     "UsageHistory": "Usage Historique",
-    "UsageHistoryDesc": "Sur la page de l'historique d'utilisation, vous pouvez consulter des statistiques simples liées à l'utilisation de sessions de calcul via un graphique. \nVous pouvez consulter les statistiques sur l'historique d'utilisation pendant une journée ou une semaine en sélectionnant la période d'utilisation dans le menu de la période de sélection en haut à droite.",
-    "UsageHistoryNote": "L'historique d'utilisation montré ici est basé sur des séances de calcul terminées.",
-    "UsageHistoryNoteUnder7Days": "De plus, l'historique d'une semaine peut ne pas être affiché pour les utilisateurs dont le compte n'est pas créé d'une semaine."
+    "UsageHistoryNote": "L'historique d'utilisation montré ici est basé sur des séances de calcul terminées."
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "La modification d'une politique de ressources peut affecter tous les projets qui utilisent cette politique de ressources, il convient donc de l'utiliser avec précaution.",

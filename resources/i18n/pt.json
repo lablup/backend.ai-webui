@@ -1578,9 +1578,7 @@
     "SelectPeriod": "Período",
     "SessionsDesc": "O número de sessões de computação criadas.",
     "UsageHistory": "Histórico de utilização",
-    "UsageHistoryDesc": "Na página de histórico de uso, você pode verificar estatísticas simples relacionadas ao uso de sessões de computação por meio de um gráfico. \nVocê pode verificar as estatísticas do histórico de uso por um dia ou uma semana selecionando o período de uso no menu de período de seleção no canto superior direito.",
-    "UsageHistoryNote": "O histórico de uso mostrado aqui é baseado em sessões de computação encerradas.",
-    "UsageHistoryNoteUnder7Days": "Além disso, o histórico de uso de uma semana não pode ser mostrado para os usuários cuja conta é criada não mais de uma semana."
+    "UsageHistoryNote": "O histórico de uso mostrado aqui é baseado em sessões de computação encerradas."
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "A alteração de uma política de recursos pode afetar todos os projectos que utilizam essa política de recursos do projeto, pelo que deve ser utilizada com cuidado.",

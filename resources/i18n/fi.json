@@ -1576,9 +1576,7 @@
     "SelectPeriod": "Ajanjakso",
     "SessionsDesc": "Luotujen laskenta-istuntojen määrä.",
     "UsageHistory": "Käyttöhistoria",
-    "UsageHistoryDesc": "Käyttöhistoriasivulla voit tarkistaa yksinkertaiset tilastot, jotka liittyvät laskentaistuntojen käyttöön kuvaajan kautta. \nVoit tarkistaa käyttöhistorian tilastot päivän tai viikon valitsemalla käyttöjakson oikeassa yläkulmassa olevasta valintajakson valikosta.",
-    "UsageHistoryNote": "Tässä esitetty käyttöhistoria perustuu lopetettuihin laskentaistuntoihin.",
-    "UsageHistoryNoteUnder7Days": "Yhden viikon käyttöhistoriaa ei myöskään välttämättä näy käyttäjille, joiden tili on luotu kauemmin kuin viikko."
+    "UsageHistoryNote": "Tässä esitetty käyttöhistoria perustuu lopetettuihin laskentaistuntoihin."
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "Resurssikäytännön muuttaminen voi vaikuttaa kaikkiin projekteihin, jotka käyttävät kyseistä projektin resurssikäytäntöä, joten käytä sitä varoen.",

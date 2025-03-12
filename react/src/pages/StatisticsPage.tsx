@@ -1,6 +1,6 @@
 import BAICard from '../components/BAICard';
 import BAIFetchKeyButton from '../components/BAIFetchKeyButton';
-import BAITabs from '../components/BAITabs';
+// import BAITabs from '../components/BAITabs';
 import Flex from '../components/Flex';
 import UsageHistoryStatistics from '../components/UsageHistoryStatistics';
 import { useUpdatableState } from '../hooks';

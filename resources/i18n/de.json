@@ -1578,9 +1578,7 @@
     "SelectPeriod": "Zeitraum",
     "SessionsDesc": "Die Anzahl der erstellten Rechensitzungen.",
     "UsageHistory": "Geschichte der Verwendung",
-    "UsageHistoryDesc": "Auf der Seite \"Nutzungsverlauf\" können Sie einfache Statistiken über die Verwendung von Rechensitzungen über ein Diagramm überprüfen. \nSie können die Verwendungsverlaufsstatistik für einen Tag oder eine Woche überprüfen, indem Sie den Nutzungszeitraum aus dem Menü \"Auswahlperiode\" oben rechts auswählen.",
-    "UsageHistoryNote": "Die hier gezeigte Nutzungsgeschichte basiert auf beendeten Berechnungssitzungen.",
-    "UsageHistoryNoteUnder7Days": "Außerdem kann eine Woche lang nicht mehr als eine Woche erstellt werden."
+    "UsageHistoryNote": "Die hier gezeigte Nutzungsgeschichte basiert auf beendeten Berechnungssitzungen."
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "Die Änderung einer Ressourcenrichtlinie kann sich auf alle Projekte auswirken, die diese Projektressourcenrichtlinie verwenden, daher ist sie mit Vorsicht zu genießen.",

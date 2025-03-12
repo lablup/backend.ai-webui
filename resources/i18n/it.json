@@ -1575,9 +1575,7 @@
     "SelectPeriod": "Periodo",
     "SessionsDesc": "Il numero di sessioni di calcolo create.",
     "UsageHistory": "Storia dell'uso",
-    "UsageHistoryDesc": "Nella pagina Cronologia dell'utilizzo, è possibile controllare le statistiche semplici relative all'uso delle sessioni di calcolo tramite un grafico. \nPuoi controllare le statistiche sulla cronologia dell'utilizzo per un giorno o una settimana selezionando il periodo di utilizzo dal menu del periodo selezionato in alto a destra.",
-    "UsageHistoryNote": "La cronologia dell'utilizzo qui mostrata si basa su sessioni di calcolo terminate.",
-    "UsageHistoryNoteUnder7Days": "Inoltre, la cronologia dell'utilizzo di una settimana potrebbe non essere mostrata per gli utenti il ​​cui account è stato creato non più di una settimana."
+    "UsageHistoryNote": "La cronologia dell'utilizzo qui mostrata si basa su sessioni di calcolo terminate."
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "La modifica di un criterio di risorse può influire su tutti i progetti che utilizzano quel criterio di risorse del progetto, quindi va usata con cautela.",
