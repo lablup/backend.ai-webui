@@ -189,11 +189,14 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
       onCell: () => ({
         style: { maxWidth: 250 },
       }),
-      render: (id) => (
-        <Typography.Text copyable ellipsis>
-          {id}
-        </Typography.Text>
-      ),
+      render: (id) =>
+        _.isEmpty(id) ? (
+          '-'
+        ) : (
+          <Typography.Text copyable ellipsis>
+            {id}
+          </Typography.Text>
+        ),
     },
     {
       title: t('kernel.AgentId'),
