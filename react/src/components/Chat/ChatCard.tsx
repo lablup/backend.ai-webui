@@ -1,14 +1,14 @@
 import { useUpdatableState } from '../../hooks';
 import { useSuspenseTanQuery } from '../../hooks/reactQueryAlias';
-import Flex from '../Flex';
 import ChatBody from './ChatBody';
-import ChatTitle from './ChatTitle';
+// import Flex from '../Flex';
+// import ChatBody from './ChatBody';
+import ChatHeader from './ChatHeader';
 import { Model } from './ChatUIModal';
-import CustomModelForm from './CustomModelForm';
+import { CustomModelForm, CustomModelAlert } from './CustomModelForm';
 import { ChatCard_endpoint$key } from './__generated__/ChatCard_endpoint.graphql';
-import { ReloadOutlined } from '@ant-design/icons';
 import { AttachmentsProps } from '@ant-design/x';
-import { Alert, Button, CardProps, FormInstance } from 'antd';
+import { Card, CardProps, FormInstance, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import { atom, useAtom } from 'jotai';
 import _, { isEmpty } from 'lodash';
@@ -65,6 +65,38 @@ interface ChatCardProps extends CardProps {
   isSynchronous?: boolean;
   onRequestClose?: () => void;
   onModelChange?: (modelId: string) => void;
+}
+
+function useChatCardStyles() {
+  const { token } = theme.useToken();
+
+  return {
+    style: {
+      height: '100%',
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'column' as const,
+    },
+    styles: {
+      body: {
+        backgroundColor: token.colorFillQuaternary,
+        borderRadius: 0,
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column' as const,
+        padding: 0,
+        height: '50%',
+        position: 'relative' as React.CSSProperties['position'],
+      },
+      actions: {
+        paddingLeft: token.paddingContentHorizontal,
+        paddingRight: token.paddingContentHorizontal,
+      },
+      header: {
+        zIndex: 1,
+      },
+    },
+  };
 }
 
 const ChatCard: React.FC<ChatCardProps> = ({
@@ -130,32 +162,6 @@ const ChatCard: React.FC<ChatCardProps> = ({
     setAgentId(defaultAgentId);
   }, [defaultAgentId]);
 
-  const ChatCardStyle = {
-    borderRadius: '8px',
-    border: '1px solid #f0f0f0',
-    // width: '100%',
-    // flex: 1,
-    flexGrow: 1,
-  };
-
-  const ChatHeaderStyle = {
-    margin: 0,
-    padding: 0,
-    borderBottom: '1px solid #f0f0f0',
-    zIndex: 1,
-    // width: '100%'
-  };
-
-  const ChatBodyStyle = {
-    margin: 0,
-    borderRadius: 0,
-    flex: '1 1 0%',
-    padding: 0,
-    height: '50%',
-    position: 'relative' as const,
-    backgroundColor: 'rgba(0, 0, 0, 0.02)',
-  };
-
   const customModelFormRef = useRef<FormInstance>(null);
 
   const baseURL = endpoint?.url
@@ -164,47 +170,33 @@ const ChatCard: React.FC<ChatCardProps> = ({
 
   const isEmptyModel = isEmpty(models);
 
+  const { style, styles } = useChatCardStyles();
+
   return (
-    <Flex style={ChatCardStyle} direction="column" align="stretch">
-      <Flex style={ChatHeaderStyle} align="center">
-        <ChatTitle
+    <Card
+      bordered
+      style={style}
+      styles={{ ...styles }}
+      title={
+        <ChatHeader
           setModelId={onModelChange}
           models={models}
           setEndpointFrgmt={setEndpointFrgmt}
           setPromisingEndpoint={setPromisingEndpoint}
           closable={closable}
         />
-        <CustomModelForm
-          baseURL={baseURL}
-          customModelFormRef={customModelFormRef}
-          allowCustomModel={isEmptyModel}
-          // move to the component, expose on click event
-          // only pass isEmptyModel
-          alert={
-            isEmptyModel && (
-              <Alert
-                type="warning"
-                showIcon
-                message={t('chatui.CannotFindModel')}
-                action={
-                  <Button
-                    icon={<ReloadOutlined />}
-                    onClick={() => {
-                      updateFetchKey();
-                    }}
-                  >
-                    {t('button.Refresh')}
-                  </Button>
-                }
-              />
-            )
-          }
-        />
-      </Flex>
-      <Flex style={ChatBodyStyle} direction="column" align="stretch">
-        <ChatBody baseURL={baseURL} agentId={agentId} modelId={modelId} />
-      </Flex>
-    </Flex>
+      }
+    >
+      <CustomModelForm
+        baseURL={baseURL}
+        customModelFormRef={customModelFormRef}
+        allowCustomModel={isEmptyModel}
+        alert={
+          isEmptyModel && <CustomModelAlert onClick={() => updateFetchKey()} />
+        }
+      />
+      <ChatBody baseURL={baseURL} agentId={agentId} modelId={modelId} />
+    </Card>
   );
 };
 

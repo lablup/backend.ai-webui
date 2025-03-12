@@ -1,5 +1,15 @@
 import Flex from '../Flex';
-import { Form, FormInstance, Input, theme } from 'antd';
+import { ReloadOutlined } from '@ant-design/icons';
+import {
+  Alert,
+  Button,
+  ButtonProps,
+  Form,
+  FormInstance,
+  Input,
+  theme,
+} from 'antd';
+import { useTranslation } from 'react-i18next';
 
 type CustomModelFormProps = {
   baseURL?: string;
@@ -77,4 +87,25 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
   );
 };
 
-export default CustomModelForm;
+type CustomModelAlertProp = {
+  onClick?: ButtonProps['onClick'];
+};
+
+const CustomModelAlert: React.FC<CustomModelAlertProp> = ({ onClick }) => {
+  const { t } = useTranslation();
+
+  return (
+    <Alert
+      type="warning"
+      showIcon
+      message={t('chatui.CannotFindModel')}
+      action={
+        <Button icon={<ReloadOutlined />} onClick={onClick}>
+          {t('button.Refresh')}
+        </Button>
+      }
+    />
+  );
+};
+
+export { CustomModelForm, CustomModelAlert };

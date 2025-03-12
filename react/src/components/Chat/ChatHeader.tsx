@@ -13,7 +13,7 @@ import { Scale } from 'lucide-react';
 import React, { useState, startTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface ChatTitleProps {
+interface ChatHeaderProps {
   modelId?: string;
   setModelId?: (modelId: string) => void;
   endpointId?: string;
@@ -27,7 +27,7 @@ interface ChatTitleProps {
   closable?: boolean;
 }
 
-const ChatTitle: React.FC<ChatTitleProps> = ({
+const ChatHeader: React.FC<ChatHeaderProps> = ({
   modelId,
   setModelId,
   models,
@@ -80,7 +80,6 @@ const ChatTitle: React.FC<ChatTitleProps> = ({
 
   const CardHeadStyle = {
     minHeight: '56px',
-    padding: '0 24px',
     width: '100%',
   };
 
@@ -89,6 +88,11 @@ const ChatTitle: React.FC<ChatTitleProps> = ({
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
     flexGrow: 1,
+  };
+
+  const CardExtraStyle = {
+    marginInlineStart: 'auto',
+    color: '#141414',
   };
 
   return (
@@ -134,7 +138,7 @@ const ChatTitle: React.FC<ChatTitleProps> = ({
           />
         </Dropdown>
       </Flex>
-      <Flex>
+      <Flex style={CardExtraStyle} justify="between">
         {closable ? (
           <Popconfirm
             title={t('chatui.DeleteChattingSession')}
@@ -158,4 +162,4 @@ const ChatTitle: React.FC<ChatTitleProps> = ({
   );
 };
 
-export default ChatTitle;
+export default ChatHeader;
