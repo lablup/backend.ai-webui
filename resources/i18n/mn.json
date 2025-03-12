@@ -1233,7 +1233,8 @@
       "NoExistingConnectionExample": "Хуулбарлах холболтын жишээ байхгүй.",
       "OpenVSCodeRemote": "Орон нутгийн Visual Studio кодыг нээнэ үү",
       "Prepared": "Бэлтгэсэн",
-      "SSHConnectionExampleClipboardCopy": "SSH холболтын жишээг санах ой руу хуулсан."
+      "SSHConnectionExampleClipboardCopy": "SSH холболтын жишээг санах ой руу хуулсан.",
+      "TCPConnection": "TCP холболт"
     },
     "launcher": {
       "AIAccelerator": "AI хурдасгуур",

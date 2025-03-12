@@ -1224,7 +1224,8 @@
       "NoExistingConnectionExample": "ไม่มีตัวอย่างการเชื่อมต่อที่จะคัดลอก",
       "OpenVSCodeRemote": "เปิด Visual Studio Code ในเครื่อง",
       "Prepared": "เตรียมพร้อมแล้ว",
-      "SSHConnectionExampleClipboardCopy": "คัดลอกตัวอย่างการเชื่อมต่อ SSH ไปยังคลิปบอร์ดแล้ว"
+      "SSHConnectionExampleClipboardCopy": "คัดลอกตัวอย่างการเชื่อมต่อ SSH ไปยังคลิปบอร์ดแล้ว",
+      "TCPConnection": "การเชื่อมต่อ TCP"
     },
     "launcher": {
       "AIAccelerator": "ตัวเร่ง AI",

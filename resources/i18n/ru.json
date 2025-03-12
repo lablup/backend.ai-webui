@@ -1236,7 +1236,8 @@
       "NoExistingConnectionExample": "Нет примера подключения для копирования.",
       "OpenVSCodeRemote": "Открыть локальный Visual Studio Code",
       "Prepared": "Готовый",
-      "SSHConnectionExampleClipboardCopy": "Пример подключения SSH скопирован в буфер обмена."
+      "SSHConnectionExampleClipboardCopy": "Пример подключения SSH скопирован в буфер обмена.",
+      "TCPConnection": "Соединение TCP"
     },
     "launcher": {
       "AIAccelerator": "Ускоритель искусственного интеллекта",

@@ -1239,7 +1239,8 @@
       "NoExistingConnectionExample": "복사할 접속 예제가 없습니다.",
       "OpenVSCodeRemote": "로컬 Visual Studio Code 열기",
       "Prepared": "준비되었습니다",
-      "SSHConnectionExampleClipboardCopy": "SSH 접속 예제가 클립보드에 복사되었습니다."
+      "SSHConnectionExampleClipboardCopy": "SSH 접속 예제가 클립보드에 복사되었습니다.",
+      "TCPConnection": "TCP 연결"
     },
     "launcher": {
       "AIAccelerator": "AI 가속기",

@@ -1236,7 +1236,8 @@
       "NoExistingConnectionExample": "Không có ví dụ kết nối nào được sao chép.",
       "OpenVSCodeRemote": "Mở mã Visual Studio cục bộ",
       "Prepared": "Chuẩn bị",
-      "SSHConnectionExampleClipboardCopy": "Ví dụ về kết nối SSH đã được sao chép vào bảng nhớ tạm."
+      "SSHConnectionExampleClipboardCopy": "Ví dụ về kết nối SSH đã được sao chép vào bảng nhớ tạm.",
+      "TCPConnection": "Kết nối TCP"
     },
     "launcher": {
       "AIAccelerator": "Máy gia tốc AI",

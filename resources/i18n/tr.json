@@ -1235,7 +1235,8 @@
       "NoExistingConnectionExample": "Kopyalanacak Bağlantı Örneği Yok.",
       "OpenVSCodeRemote": "Yerel Visual Studio Kodunu açın",
       "Prepared": "Hazırlanmış",
-      "SSHConnectionExampleClipboardCopy": "SSH Bağlantı Örneği panoya kopyalandı."
+      "SSHConnectionExampleClipboardCopy": "SSH Bağlantı Örneği panoya kopyalandı.",
+      "TCPConnection": "TCP bağlantısı"
     },
     "launcher": {
       "AIAccelerator": "Yapay Zeka Hızlandırıcı",

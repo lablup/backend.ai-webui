@@ -1235,7 +1235,8 @@
       "NoExistingConnectionExample": "Tiada Contoh Sambungan untuk disalin.",
       "OpenVSCodeRemote": "Buka Kod Visual Studio tempatan",
       "Prepared": "Bersedia",
-      "SSHConnectionExampleClipboardCopy": "Contoh Sambungan SSH telah disalin ke papan keratan."
+      "SSHConnectionExampleClipboardCopy": "Contoh Sambungan SSH telah disalin ke papan keratan.",
+      "TCPConnection": "Sambungan TCP"
     },
     "launcher": {
       "AIAccelerator": "Pemecut AI",

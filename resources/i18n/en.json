@@ -1242,7 +1242,8 @@
       "NoExistingConnectionExample": "No Connection Example to be copied.",
       "OpenVSCodeRemote": "Open local Visual Studio Code",
       "Prepared": "Prepared",
-      "SSHConnectionExampleClipboardCopy": "SSH Connection Example has been copied to the clipboard."
+      "SSHConnectionExampleClipboardCopy": "SSH Connection Example has been copied to the clipboard.",
+      "TCPConnection": "TCP connection"
     },
     "launcher": {
       "AIAccelerator": "AI Accelerator",

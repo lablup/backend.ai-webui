@@ -1232,7 +1232,8 @@
       "NoExistingConnectionExample": "Δεν υπάρχει σύνδεση Παράδειγμα προς αντιγραφή.",
       "OpenVSCodeRemote": "Ανοίξτε τον τοπικό κώδικα του Visual Studio",
       "Prepared": "Ετοιμος",
-      "SSHConnectionExampleClipboardCopy": "Το παράδειγμα σύνδεσης SSH έχει αντιγραφεί στο πρόχειρο."
+      "SSHConnectionExampleClipboardCopy": "Το παράδειγμα σύνδεσης SSH έχει αντιγραφεί στο πρόχειρο.",
+      "TCPConnection": "Σύνδεση TCP"
     },
     "launcher": {
       "AIAccelerator": "Επιταχυντής AI",

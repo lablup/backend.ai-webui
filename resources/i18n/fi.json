@@ -1234,7 +1234,8 @@
       "NoExistingConnectionExample": "Ei yhteyttä Kopioitava esimerkki.",
       "OpenVSCodeRemote": "Avaa paikallinen Visual Studio Code",
       "Prepared": "Valmisteltu",
-      "SSHConnectionExampleClipboardCopy": "SSH-yhteys Esimerkki on kopioitu leikepöydälle."
+      "SSHConnectionExampleClipboardCopy": "SSH-yhteys Esimerkki on kopioitu leikepöydälle.",
+      "TCPConnection": "TCP -yhteys"
     },
     "launcher": {
       "AIAccelerator": "AI-kiihdyttämö",

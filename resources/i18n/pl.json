@@ -1236,7 +1236,8 @@
       "NoExistingConnectionExample": "Brak przykładu połączenia do skopiowania.",
       "OpenVSCodeRemote": "Otwórz lokalny kod Visual Studio",
       "Prepared": "Przygotowany",
-      "SSHConnectionExampleClipboardCopy": "Przykład połączenia SSH został skopiowany do schowka."
+      "SSHConnectionExampleClipboardCopy": "Przykład połączenia SSH został skopiowany do schowka.",
+      "TCPConnection": "Połączenie TCP"
     },
     "launcher": {
       "AIAccelerator": "Akcelerator AI",

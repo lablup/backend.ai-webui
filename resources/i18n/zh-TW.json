@@ -1235,7 +1235,8 @@
       "NoExistingConnectionExample": "无连接示例可复制。",
       "OpenVSCodeRemote": "打开本地 Visual Studio 代码",
       "Prepared": "準備好了",
-      "SSHConnectionExampleClipboardCopy": "SSH 连接示例已复制到剪贴板。"
+      "SSHConnectionExampleClipboardCopy": "SSH 连接示例已复制到剪贴板。",
+      "TCPConnection": "TCP連接"
     },
     "launcher": {
       "AIAccelerator": "人工智能加速器",

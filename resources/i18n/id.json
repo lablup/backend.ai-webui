@@ -1234,7 +1234,8 @@
       "NoExistingConnectionExample": "Tidak Ada Koneksi Contoh untuk disalin.",
       "OpenVSCodeRemote": "Buka kode Visual Studio lokal",
       "Prepared": "Siap",
-      "SSHConnectionExampleClipboardCopy": "Contoh Koneksi SSH telah disalin ke clipboard."
+      "SSHConnectionExampleClipboardCopy": "Contoh Koneksi SSH telah disalin ke clipboard.",
+      "TCPConnection": "Koneksi TCP"
     },
     "launcher": {
       "AIAccelerator": "Akselerator AI",

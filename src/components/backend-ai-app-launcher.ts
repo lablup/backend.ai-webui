@@ -93,6 +93,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @query('#xrdp-dialog') xrdpDialog!: BackendAIDialog;
   @query('#vscode-desktop-dialog') vscodeDesktopDialog!: BackendAIDialog;
   @query('#allowed-client-ips') allowedClientIpsInput!: TextField;
+  @query('#tcp-dialog') tcpDialog!: BackendAIDialog;
 
   constructor() {
     super();
@@ -295,6 +296,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
         .ssh-connection-example > span {
           word-break: break-word;
+        }
+
+        #tcp-dialog {
+          --component-min-width: 350px;
         }
 
         @media screen and (max-width: 810px) {
@@ -794,7 +799,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       (this.shadowRoot?.querySelector('#allowed-client-ips') as TextField)
         ?.value;
 
-    console.log('#', this.clientIps, allowedClientIps);
     let openToPublic = false;
     if (this.checkOpenToPublic == null) {
       // Null or undefined check. When user click console button without app launcher dialog, it will be undefined.
@@ -1079,7 +1083,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       );
       rqstUrl = new URL(rqstUrl.href);
     }
-    return { appConnectUrl: rqstUrl, reused };
+    return {
+      appConnectUrl: rqstUrl,
+      reused,
+      redirectUrl: resp.redirect_url || null,
+    };
   }
 
   async _sleep(ms) {
@@ -1183,11 +1191,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       }
       this._open_wsproxy(sessionUuid, sendAppName, port, envs, args)
         .then(async (response) => {
-          const { appConnectUrl, reused } = await this._connectToProxyWorker(
-            response.url,
-            urlPostfix,
-            TCP_APPS.indexOf(appName) === -1 || globalThis.isElectron,
-          );
+          const { appConnectUrl, reused, redirectUrl } =
+            await this._connectToProxyWorker(
+              response.url,
+              urlPostfix,
+              TCP_APPS.indexOf(appName) === -1 || globalThis.isElectron,
+            );
 
           // eligiblity for spawning TCP-based apps are already verified when first loading the app launcher icons, so here we assume that either non-auth TCP mode is enabled on system or user is using electron app
           if (TCP_APPS.indexOf(appName) !== -1 && this.allowTCPApps) {
@@ -1262,6 +1271,28 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             }, 1000);
           } else if (response.url) {
             this.indicator.set(100, _text('session.appLauncher.Prepared'));
+            if (response.url.includes('protocol=tcp') && redirectUrl) {
+              const redirectResponse = await fetch(redirectUrl);
+              const redirectBody = await redirectResponse.json();
+              const finalUrl = redirectBody?.redirect;
+              const decodedUrl = decodeURIComponent(finalUrl);
+              const gatewayMatch = decodedUrl?.match(
+                /gateway=tcp:\/\/([^:]+):(\d+)/,
+              );
+
+              const gatewayHost = gatewayMatch ? gatewayMatch[1] : null;
+              const gatewayPort = gatewayMatch ? gatewayMatch[2] : null;
+
+              if (!!gatewayHost && !!gatewayPort) {
+                this.tcpHost = gatewayHost;
+                this.tcpPort = gatewayPort;
+                this._openTCPDialog();
+                return;
+              } else {
+                console.error('Gateway host or port not found in the URL');
+              }
+            }
+
             setTimeout(() => {
               globalThis.open(
                 appConnectUrl?.href || response.url + urlPostfix,
@@ -1410,6 +1441,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    */
   _hideTensorboardDialog() {
     this.tensorboardDialog.hide();
+  }
+
+  /**
+   * Open a TCP dialog.
+   */
+  _openTCPDialog() {
+    this.tcpDialog.show();
   }
 
   /**
@@ -2060,6 +2098,26 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               ${_t('session.appLauncher.OpenVSCodeRemote')}
             </mwc-button>
           </a>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="tcp-dialog" fixed backdrop>
+        <span slot="title">${_t('session.appLauncher.TCPConnection')}</span>
+        <div slot="content">
+          <section class="vertical layout wrap start start-justified">
+            <h4 style="margin-top:0;">${_t('session.ConnectionInformation')}</h4>
+            <div>
+              <span>${_t('environment.AppName')}:</span>
+              ${this.appController['app-name']}
+            </div>
+            <div>
+              <span>Host:</span>
+              ${this.tcpHost}
+            </div>
+            <div>
+              <span>Port:</span>
+              ${this.tcpPort}
+            </div>
+          </section>
         </div>
       </backend-ai-dialog>
     `;

@@ -1235,7 +1235,8 @@
       "NoExistingConnectionExample": "コピーする接続例がありません。",
       "OpenVSCodeRemote": "ローカルVisual Studio Codeを開く",
       "Prepared": "準備",
-      "SSHConnectionExampleClipboardCopy": "SSH接続例がクリップボードにコピーされました。"
+      "SSHConnectionExampleClipboardCopy": "SSH接続例がクリップボードにコピーされました。",
+      "TCPConnection": "TCP接続"
     },
     "launcher": {
       "AIAccelerator": "AIアクセラレータ",
