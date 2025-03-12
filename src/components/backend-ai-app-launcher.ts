@@ -561,7 +561,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         this.appTemplate[elm].push({
           name: elm,
           title: elm,
-          category: '99.',
+          category: '0.Default',
           redirect: '',
           src: './resources/icons/default_app.svg',
         });
