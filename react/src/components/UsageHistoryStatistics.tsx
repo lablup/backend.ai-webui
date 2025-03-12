@@ -6,9 +6,9 @@ import {
 import { UserStatsData, UserStatsDataKey } from '../hooks';
 import { useThemeMode } from '../hooks/useThemeMode';
 import useUserUsageStats from '../hooks/useUserUsageStats';
-import { Period } from '../pages/StatisticsPage';
 import Flex from './Flex';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
+import { Period } from './UsageHistory';
 import { Column, ColumnConfig } from '@ant-design/charts';
 import { Card } from 'antd';
 import dayjs from 'dayjs';
@@ -22,16 +22,16 @@ const WEEK_LENGTH = DAY_LENGTH * 7;
 
 interface GraphCardProps {
   title: string;
-  tooltipText: string;
+  tooltipText?: string;
   children: React.ReactNode;
 }
-const GraphCard = ({ title, tooltipText, children }: GraphCardProps) => (
+export const GraphCard = ({ title, tooltipText, children }: GraphCardProps) => (
   <Card
     type="inner"
     title={
       <Flex gap={'xxs'}>
         {title}
-        <QuestionIconWithTooltip title={tooltipText} />
+        {tooltipText ? <QuestionIconWithTooltip title={tooltipText} /> : null}
       </Flex>
     }
     style={{ width: '100%' }}
