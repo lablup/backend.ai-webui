@@ -1857,6 +1857,7 @@
       "TermsOfService": "Условия использования",
       "TotpActivated": "2FA Enabled",
       "Update": "Обновить",
+      "UsageHistory": "История использования",
       "UserCredentials&Policies": "Учетные данные и политики пользователя",
       "Users": "Пользователи",
       "WelcomeMessage": "Добро пожаловать, {{ userName }}.",

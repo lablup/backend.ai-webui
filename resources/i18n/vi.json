@@ -1857,6 +1857,7 @@
       "TermsOfService": "Điều khoản dịch vụ",
       "TotpActivated": "Đã bật 2FA",
       "Update": "Cập nhật",
+      "UsageHistory": "Lịch sử sử dụng",
       "UserCredentials&Policies": "Chính sách & Thông tin đăng nhập Người dùng",
       "Users": "Người dùng",
       "WelcomeMessage": "Chào mừng, {{ userName }}.",
