@@ -13,11 +13,13 @@ import { useLazyLoadQuery } from 'react-relay';
 interface ModelCardChatProps {
   modelName?: string;
   basePath?: string;
+  style?: React.CSSProperties;
 }
 
 const ModelCardChat: React.FC<ModelCardChatProps> = ({
   modelName,
   basePath = 'v1',
+  style,
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -76,7 +78,7 @@ const ModelCardChat: React.FC<ModelCardChatProps> = ({
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
-        minHeight: '50vh',
+        ...style,
       }}
       styles={{
         body: {

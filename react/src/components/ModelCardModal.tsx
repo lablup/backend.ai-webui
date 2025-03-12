@@ -12,12 +12,10 @@ import {
   Alert,
   Button,
   Card,
-  Col,
   Descriptions,
   Divider,
   Empty,
   Grid,
-  Row,
   Tag,
   Typography,
   Tabs,
@@ -35,7 +33,6 @@ import { useFragment } from 'react-relay';
 
 interface ModelCardModalProps extends BAIModalProps {
   modelCardModalFrgmt?: ModelCardModalFragment$key | null;
-  // basePath?: string;
   onRequestClose: () => void;
 }
 const ModelCardModal: React.FC<ModelCardModalProps> = ({
@@ -89,16 +86,6 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
     modelCardModalFrgmt,
   );
 
-  const colSize = {
-    xs: { span: 24 },
-    lg: {
-      span:
-        _.compact([model_card?.description, model_card?.readme]).length === 2
-          ? 12
-          : 24,
-    },
-  };
-
   return (
     <BAIModal
       {...props}
@@ -150,10 +137,9 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
             wrap="wrap"
             align="center"
             gap={'sm'}
-            style={{ flex: 1 }}
+            style={{ flex: 2, width: '100%' }}
           >
             {model_card?.name === 'Talkativot UI' ? (
-              // FIXME: temporally add iframe for Talkativot UI
               <iframe
                 src="https://talkativot-aiot-demo.asia03.app.backend.ai/chat"
                 style={{
@@ -177,16 +163,30 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                       ? 'llama-vision-11b'
                       : model_card?.name || ''
                 }
+                style={{
+                  height: '500px',
+                }}
               />
             )}
+            <ModelTryContent
+              modelStorageHost={model_card?.vfolder?.host as string}
+              modelName={model_card?.name as string}
+              minAIAcclResource={(() => {
+                const minResource = _.toNumber(model_card?.min_resource);
+                if (_.isNaN(minResource) || minResource === 0) {
+                  return 10;
+                }
+                return minResource;
+              })()}
+            />
           </Flex>
           <Divider type="vertical" style={{ height: '100%' }} />
           <Flex
-            direction="row"
+            direction="column"
             wrap="wrap"
             align="center"
             gap={'sm'}
-            style={{ flex: 1 }}
+            style={{ flex: 2, width: '100%' }}
           >
             {model_card?.error_msg ? (
               <Flex direction="column" wrap="wrap" align="stretch" gap={'sm'}>
@@ -253,45 +253,17 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                       </Tag>
                     )}
                   </Flex>
-                  <Flex direction="row" justify="end" gap={'sm'}>
-                    {/* <Button
-                  type="primary"
-                  ghost
-                  icon={<DownloadOutlined />}
-                  size="small"
-                  disabled
-                >
-                  {t('button.Download')}
-                </Button> */}
-                    {/* <Button disabled ghost size="small" icon={<Cog />}>
-                      {t('modelStore.FinetuneModel')}
-                    </Button>
-                    <Button
-                      type="primary"
-                      ghost
-                      icon={<CopyOutlined />}
-                      size="small"
-                      disabled={!model_card?.vfolder?.cloneable}
-                      onClick={() => {
-                        // const event = new CustomEvent('backend-ai-vfolder-cloning', {
-                        //   detail: {
-                        //     // TODO: change this to vfolder name
-                        //     name: mode_card?.name,
-                        //   },
-                        // });
-                        // onRequestClose();
-                        // document.dispatchEvent(event);
-                        setVisibleCloneModal(true);
-                      }}
-                    >
-                      {t('modelStore.CloneToFolder')}
-                    </Button> */}
-                  </Flex>
+                  <Flex direction="row" justify="end" gap={'sm'}></Flex>
                 </Flex>
-                <Flex direction="row" wrap="wrap" align="center" gap={'sm'}>
+                <Flex
+                  direction="column"
+                  wrap="wrap"
+                  align="center"
+                  gap={'sm'}
+                  style={{ width: '100%' }}
+                >
                   <Descriptions
-                    style={{ marginTop: token.marginMD }}
-                    // title={t('modelStore.Metadata')}
+                    style={{ marginTop: token.marginMD, width: '100%' }}
                     column={2}
                     size="small"
                     bordered
@@ -376,7 +348,6 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                                   return (
                                     <ResourceNumber
                                       key={type}
-                                      // @ts-ignore
                                       type={type}
                                       value={_.toString(value)}
                                     />
@@ -397,14 +368,16 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                           README.md
                         </Flex>
                       }
-                      styles={{
-                        body: {
-                          padding: token.paddingLG,
-                          overflow: 'auto',
-                          width: 'auto',
-                          height: screen.lg ? 'calc(100vh - 287px)' : undefined,
-                          minHeight: 200,
-                        },
+                      style={{
+                        width: '100%',
+                        marginTop: token.marginMD,
+                      }}
+                      bodyStyle={{
+                        padding: token.paddingLG,
+                        overflowBlock: 'scroll',
+                        overflowY: 'auto',
+                        height: '300px',
+                        minHeight: 200,
                       }}
                     >
                       <Markdown>{model_card?.readme || ''}</Markdown>
@@ -416,20 +389,6 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
           </Flex>
         </Flex>
       </Suspense>
-      <Flex direction="row" align="stretch" gap="xl" style={{ flex: 1 }}>
-        <ModelTryContent
-          modelStorageHost={model_card?.vfolder?.host as string}
-          modelName={model_card?.name as string}
-          minAIAcclResource={(() => {
-            const minResource = _.toNumber(model_card?.min_resource);
-            if (_.isNaN(minResource) || minResource === 0) {
-              return 10;
-            }
-            return minResource;
-          })()}
-          // title={'PALI run on my cloud: '}
-        />
-      </Flex>
       <Suspense>
         <ModelCloneModal
           vfolderNode={model_card?.vfolder_node || null}
