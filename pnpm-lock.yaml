@@ -4,6 +4,14 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@cloudscape-design/board-components@3.0.60':
+    hash: sl2ax5liun5nztm65pxt6fd2ku
+    path: react/patches/@cloudscape-design__board-components@3.0.60.patch
+  rc-field-form:
+    hash: l7v7gre5halb2xnps2zwnqbqte
+    path: react/patches/rc-field-form.patch
+
 importers:
 
   .:

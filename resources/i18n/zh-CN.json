@@ -1857,6 +1857,7 @@
       "TermsOfService": "服务条款",
       "TotpActivated": "已启用 2FA",
       "Update": "更新",
+      "UsageHistory": "用法历史",
       "UserCredentials&Policies": "用户凭证和政策",
       "Users": "用户",
       "WelcomeMessage": "欢迎，{{ userName }}.",

@@ -1855,6 +1855,7 @@
       "TermsOfService": "Syarat Perkhidmatan",
       "TotpActivated": "2FA Didayakan",
       "Update": "Kemas kini",
+      "UsageHistory": "Sejarah Penggunaan",
       "UserCredentials&Policies": "Kepercayaan & Dasar Pengguna",
       "Users": "Pengguna",
       "WelcomeMessage": "Selamat datang, {{ userName }}.",

@@ -1856,6 +1856,7 @@
       "TermsOfService": "Kullanım Şartları",
       "TotpActivated": "2FA Etkin",
       "Update": "Güncelleme",
+      "UsageHistory": "Kullanım tarihi",
       "UserCredentials&Policies": "Kullanıcı Kimlik Bilgileri ve Politikaları",
       "Users": "Kullanıcılar",
       "WelcomeMessage": "Hoş geldiniz, {{ userName }}.",
