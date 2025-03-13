@@ -163,9 +163,6 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                       ? 'llama-vision-11b'
                       : model_card?.name || ''
                 }
-                style={{
-                  height: '500px',
-                }}
               />
             )}
             <ModelTryContent
