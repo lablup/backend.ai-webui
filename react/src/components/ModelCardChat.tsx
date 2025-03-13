@@ -89,7 +89,7 @@ const ModelCardChat: React.FC<ModelCardChatProps> = ({
           display: 'flex',
           flexDirection: 'column',
           padding: 0,
-          height: '50%',
+          // height: '50%',
           position: 'relative',
         },
         actions: {

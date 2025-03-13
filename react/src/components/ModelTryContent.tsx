@@ -15,6 +15,7 @@ import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import NvidiaIcon from './BAIIcons/Nvidia';
 import VLLMIcon from './BAIIcons/VLLMIcon';
+import Flex from './Flex';
 import {
   ServiceCreateType,
   ServiceLauncherFormValue,
@@ -23,7 +24,7 @@ import { VFolder } from './VFolderSelect';
 import { BuildOutlined } from '@ant-design/icons';
 import { theme, Typography, Button } from 'antd';
 import _ from 'lodash';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface ModelTryContentProps {
@@ -524,7 +525,7 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
   };
 
   return (
-    <>
+    <Flex direction="row" align="stretch" gap={'sm'} style={{ width: '100%' }}>
       {title && (
         <Typography.Title level={5} style={{ marginTop: 0 }}>
           {title}
@@ -542,6 +543,7 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
         }}
         icon={<VLLMIcon size={token.sizeLG} />}
         style={{
+          width: '100%',
           height: token.sizeXXL,
         }}
       >
@@ -560,6 +562,7 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
           cloneOrCreateModelService('nim');
         }}
         style={{
+          width: '100%',
           height: token.sizeXXL,
         }}
         icon={<NvidiaIcon size={token.sizeLG} />}
@@ -572,13 +575,14 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
           cloneOrCreateModelService('custom');
         }}
         style={{
+          width: '100%',
           height: token.sizeXXL,
         }}
         icon={<BuildOutlined style={{ fontSize: token.sizeLG }} />}
       >
         Custom
       </Button>
-    </>
+    </Flex>
   );
 };
 
