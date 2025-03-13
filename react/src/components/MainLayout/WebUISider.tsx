@@ -111,36 +111,23 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     'experimental_ai_agents',
   );
   const generalMenu = filterEmptyItem<WebUIGeneralMenuItemType>([
-    /*
-    {
-      label: <WebUILink to="/start">{t('webui.menu.Start')}</WebUILink>,
-      icon: <PlayCircleOutlined style={{ color: token.colorPrimary }} />,
-      key: 'start',
-      group: 'none',
-    },
-    {
-      label: <WebUILink to="/summary">{t('webui.menu.Summary')}</WebUILink>,
-      icon: <DashboardOutlined style={{ color: token.colorPrimary }} />,
-      key: 'summary',
-      group: 'none',
-      label: (
-        <WebUILink to="/playground">{t('webui.menu.Playground')}</WebUILink>
-      ),
-      icon: <MessageOutlined style={{ color: token.colorPrimary }} />,
-      key: 'playground',
-    },
-    */
     {
       label: <WebUILink to="/chat">{t('webui.menu.Chat')}</WebUILink>,
       icon: <MessageOutlined style={{ color: token.colorPrimary }} />,
       key: 'chat',
+      group: 'playground',
+    },
+    experimentalAIAgents && {
+      label: <WebUILink to="/ai-agent">{t('webui.menu.AIAgents')}</WebUILink>,
+      icon: <BotMessageSquare style={{ color: token.colorPrimary }} />,
+      key: 'ai-agent',
+      group: 'playground',
     },
     {
-      label: (
-        <WebUILink to="/model-store">{t('webui.menu.ModelStore')}</WebUILink>
-      ),
-      icon: <AppstoreOutlined style={{ color: token.colorPrimary }} />,
+      label: <WebUILink to="/model-store">{t('data.ModelStore')}</WebUILink>,
+      icon: <ModelStoreIcon style={{ color: token.colorPrimary }} />,
       key: 'model-store',
+      group: 'service',
     },
     supportServing && {
       label: (
@@ -149,18 +136,6 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       icon: <EndpointsIcon style={{ color: token.colorPrimary }} />,
       key: 'serving',
       group: 'service',
-    },
-    {
-      label: <WebUILink to="/model-store">{t('data.ModelStore')}</WebUILink>,
-      icon: <ModelStoreIcon style={{ color: token.colorPrimary }} />,
-      key: 'model-store',
-      group: 'service',
-    },
-    experimentalAIAgents && {
-      label: <WebUILink to="/ai-agent">{t('webui.menu.AIAgents')}</WebUILink>,
-      icon: <BotMessageSquare style={{ color: token.colorPrimary }} />,
-      key: 'ai-agent',
-      group: 'playground',
     },
     /*
     {
