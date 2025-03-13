@@ -214,7 +214,9 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
         ? 'llama-vision-11b'
         : modelName?.includes('Talkativot UI')
           ? 'talkativot'
-          : modelName;
+          : modelName?.includes('Meta-Llama-3-8B-Instruct')
+            ? 'llama-3-8b'
+            : modelName;
     return {
       serviceName: `${model}-${generateRandomString(4)}`,
       replicas: 1,
@@ -245,7 +247,7 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
               default:
                 return '0.6.6-cuda12.4-ubuntu22.04'; // '0.6.2-cuda12.1-ubuntu22.04';
               case 'nim':
-                return 'ngc-nim:1.0.0-llama3.8b-h100x1-fp16';
+                return '1.0.0-llama3.8b'; //'ngc-nim:1.0.0-llama3.8b-h100x1-fp16';
             }
           })(),
           architecture: 'x86_64',
@@ -299,6 +301,16 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
               },
             ]
           : []),
+        ...(modelName?.includes('Meta-Llama-3-8B-Instruct')
+          ? [
+              // FIXME: hardcoded adding NGC_API_KEY
+              {
+                variable: 'NGC_API_KEY',
+                value:
+                  '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',
+              },
+            ]
+          : []),
       ],
       enabledAutomaticShmem: false,
     };
@@ -311,6 +323,8 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
       default:
         break;
       case 'nim':
+        modelId = 'nim-model';
+        break;
       case 'custom':
         modelId = 'custom';
         break;
@@ -358,7 +372,12 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
                 },
                 onResolve: () => {
                   mutationToCreateService.mutate(
-                    getServiceInputByRuntimeVariant('vllm', `${modelName}-1`),
+                    getServiceInputByRuntimeVariant(
+                      modelName === 'Meta-Llama-3-8B-Instruct'
+                        ? 'nim-model'
+                        : 'vllm',
+                      `${modelName}-1`,
+                    ),
                     {
                       onSuccess: (result: any) => {
                         upsertNotification({
@@ -371,7 +390,7 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
                               let progress = 0;
                               const interval = setInterval(async () => {
                                 try {
-                                  progress += 5;
+                                  progress += _.random(2, 5);
                                   upsertNotification({
                                     key: result?.endpoint_id,
                                     backgroundTask: {
@@ -403,6 +422,7 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
                             percent: 0,
                             onResolve: () => {
                               upsertNotification({
+                                open: true,
                                 duration: 0,
                                 key: result?.endpoint_id,
                                 backgroundTask: {
@@ -462,7 +482,7 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
                   let progress = 0;
                   const interval = setInterval(async () => {
                     try {
-                      progress += 5;
+                      progress += _.random(2, 5);
                       upsertNotification({
                         key: result?.endpoint_id,
                         backgroundTask: {
@@ -497,9 +517,11 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
                 },
                 status: 'pending',
                 percent: 0,
+                // FIXME: somewhat it doesn't work properly not called.
                 onResolve: () => {
                   upsertNotification({
                     duration: 0,
+                    open: true,
                     key: result?.endpoint_id,
                     backgroundTask: {
                       status: 'resolved',

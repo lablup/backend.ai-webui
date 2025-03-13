@@ -24,7 +24,7 @@ import {
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
-import _, { head } from 'lodash';
+import _ from 'lodash';
 import { FolderX } from 'lucide-react';
 import Markdown from 'markdown-to-jsx';
 import React, { Suspense, useState } from 'react';
@@ -161,7 +161,9 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                     ? 'stable-diffusion-3m'
                     : model_card?.name === 'Llama-3.2-11B-Vision-Instruct'
                       ? 'llama-vision-11b'
-                      : model_card?.name || ''
+                      : model_card?.name === 'Meta-Llama-3-8B-Instruct'
+                        ? 'llama-3-8b'
+                        : model_card?.name || ''
                 }
               />
             )}
@@ -169,9 +171,20 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
               modelStorageHost={model_card?.vfolder?.host as string}
               modelName={model_card?.name as string}
               minAIAcclResource={(() => {
-                const minResource = _.toNumber(model_card?.min_resource);
+                // FIXME: need to get proper FGPU based on actual memory, not FGPU count.
+
+                const minResource = _.ceil(
+                  _.toNumber(
+                    JSON.parse(model_card?.min_resource ?? '{}')['cuda.shares'],
+                  ),
+                  0,
+                );
                 if (_.isNaN(minResource) || minResource === 0) {
                   return 10;
+                }
+                // FIXME: temporally set 12 as minimum resource for Meta-Llama-3-8B-Instruct
+                if (model_card?.name === 'Meta-Llama-3-8B-Instruct') {
+                  return 12;
                 }
                 return minResource;
               })()}
