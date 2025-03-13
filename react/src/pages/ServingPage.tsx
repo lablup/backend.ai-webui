@@ -9,7 +9,7 @@ import Flex from '../components/Flex';
 import { filterEmptyItem, transformSorterToOrderString } from '../helper';
 import { useUpdatableState, useWebUINavigate } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
-import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
 import { ServingPageQuery } from './__generated__/ServingPageQuery.graphql';
@@ -31,14 +31,14 @@ const ServingPage: React.FC = () => {
   const [queryParams, setQuery] = useDeferredQueryParams({
     order: StringParam,
     filter: StringParam,
-    lifecycleStage: withDefault(StringParam, 'created&destroying'),
+    lifecycleStage: withDefault(StringParam, 'active'),
   });
 
   const {
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionState({
+  } = useBAIPaginationOptionStateOnSearchParam({
     current: 1,
     pageSize: 10,
   });
@@ -46,7 +46,7 @@ const ServingPage: React.FC = () => {
   const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
 
   const lifecycleStageFilter =
-    queryParams.lifecycleStage === 'created&destroying'
+    queryParams.lifecycleStage === 'active'
       ? `lifecycle_stage == "created" | lifecycle_stage == "destroying"`
       : `lifecycle_stage == "${queryParams.lifecycleStage}"`;
 
@@ -153,7 +153,7 @@ const ServingPage: React.FC = () => {
                 options={[
                   {
                     label: 'Active',
-                    value: 'created&destroying',
+                    value: 'active',
                   },
                   {
                     label: 'Destroyed',
