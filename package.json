@@ -1,11 +1,10 @@
 {
   "name": "backend.ai-webui",
   "productName": "Backend.AI Desktop",
-  "version": "25.3.0-alpha.0",
+  "version": "25.5.0-alpha.0",
   "repository": "https://github.com/lablup/backend.ai-webui.git",
   "author": "Lablup Inc. <contact@lablup.com>",
   "license": "LGPL-3.0-or-later",
-  "main": "main.js",
   "scripts": {
     "lint": "eslint src -c ./.eslintrc.json --quiet --ext .js,.ts; exit 0",
     "lint-fix": "eslint src -c ./.eslintrc.json  --quiet --ext .js,.ts --fix;exit 0",
@@ -31,7 +30,7 @@
     "copyindex": "cp index.html build/rollup",
     "docs": "jsdoc -c ./jsdoc.json",
     "update": "pnpm dlx tsc",
-    "postinstall": "concurrently -c \"auto\" --names \"react-dependencies,patch-package\" \"pnpm recursive install --filter ./react\" \"patch-package\"",
+    "postinstall": "concurrently -c \"auto\" --names \"patch-package\"  \"patch-package\"",
     "patch:lit-translate": "unzip -o ./scripts/lit-translate.zip -d ./node_modules/lit-translate && cp -f ./scripts/lit-translate-index.js ./node_modules/lit-translate/index.js",
     "prepare": "husky",
     "theme-schema:update": "pnpm dlx typescript-json-schema \"./react/node_modules/antd/es/config-provider/context.d.ts\" ThemeConfig -o ./resources/antdThemeConfig.schema.json --esModuleInterop"
@@ -225,5 +224,11 @@
   },
   "relay": {
     "rootDirectory": "react"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "@cloudscape-design/board-components@3.0.60": "react/patches/@cloudscape-design__board-components@3.0.60.patch",
+      "rc-field-form@2.7.0": "react/patches/rc-field-form.patch"
+    }
   }
 }
