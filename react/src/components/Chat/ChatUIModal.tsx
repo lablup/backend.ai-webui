@@ -152,7 +152,7 @@ const EndpointChatContent: React.FC<ChatUIBasicProps> = ({
         )
       }
       modelId={modelsResult?.data?.[0].id ?? 'custom'}
-      modelToken={newestValidToken}
+      apiKey={newestValidToken}
       showCompareMenuItem
     />
   );

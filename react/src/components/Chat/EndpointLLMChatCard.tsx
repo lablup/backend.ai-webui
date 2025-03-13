@@ -119,15 +119,17 @@ const EndpointLLMChatCard: React.FC<EndpointLLMChatCardProps> = ({
     setAgentId(defaultAgentId);
   }, [defaultAgentId]);
 
+  const targetURL = agent?.endpoint_url ?? endpoint?.url;
   return (
     <LLMChatCard
       {...cardProps}
       chatId={`${endpoint?.endpoint_id}_${agentId}`}
       baseURL={
-        endpoint?.url
-          ? new URL(basePath, endpoint?.url ?? undefined).toString()
+        targetURL
+          ? new URL(basePath, targetURL ?? undefined).toString()
           : undefined
       }
+      apiKey={agent?.endpoint_token}
       models={models}
       systemPrompt={agent?.config?.system_prompt}
       fetchOnClient
@@ -151,33 +153,40 @@ const EndpointLLMChatCard: React.FC<EndpointLLMChatCardProps> = ({
               />
             </Flex>
           )}
-          <EndpointSelect
-            placeholder={t('chatui.SelectEndpoint')}
-            style={{
-              fontWeight: 'normal',
-            }}
-            fetchKey={fetchKey}
-            showSearch
-            loading={promisingEndpoint?.endpoint_id !== endpoint?.endpoint_id}
-            onChange={(v, endpoint) => {
-              // TODO: fix type definitions
-              // @ts-ignore
-              setPromisingEndpoint(endpoint);
-              startTransition(() => {
+          {_.isEmpty(agent?.endpoint_url) && (
+            <EndpointSelect
+              placeholder={t('chatui.SelectEndpoint')}
+              style={{
+                fontWeight: 'normal',
+              }}
+              fetchKey={fetchKey}
+              showSearch
+              loading={promisingEndpoint?.endpoint_id !== endpoint?.endpoint_id}
+              onChange={(v, endpoint) => {
+                // TODO: fix type definitions
                 // @ts-ignore
-                setEndpointFrgmt(endpoint);
-              });
-            }}
-            value={endpoint?.endpoint_id}
-            popupMatchSelectWidth={false}
-          />
+                setPromisingEndpoint(endpoint);
+                startTransition(() => {
+                  // @ts-ignore
+                  setEndpointFrgmt(endpoint);
+                });
+              }}
+              value={endpoint?.endpoint_id}
+              popupMatchSelectWidth={false}
+            />
+          )}
         </>
       }
       modelId={
-        defaultModelId &&
+        agent?.config.default_model ||
+        (defaultModelId &&
         _.includes(_.map(modelsResult?.data, 'id'), defaultModelId)
           ? defaultModelId
-          : (modelsResult?.data?.[0]?.id ?? 'custom')
+          : (modelsResult?.data?.[0]?.id ?? 'custom'))
+      }
+      hideModelSelect={
+        !_.isEmpty(agent?.endpoint_url) &&
+        !_.isEmpty(agent?.config.default_model)
       }
       extra={
         closable ? (

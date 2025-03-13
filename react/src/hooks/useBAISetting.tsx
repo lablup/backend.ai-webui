@@ -1,5 +1,6 @@
 import { BAIBoardItem } from '../components/BAIBoard';
 import { jotaiStore } from '../components/DefaultProviders';
+import { AIAgent } from './useAIAgent';
 import { atom, useAtom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 
@@ -20,6 +21,7 @@ interface UserSettings {
   experimental_neo_session_list?: boolean;
   start_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   experimental_ai_agents?: boolean;
+  extra_ai_agents?: Array<AIAgent>;
   experimental_neo_data_page?: boolean;
   [key: `hiddenColumnKeys.${string}`]: Array<string>;
 }
