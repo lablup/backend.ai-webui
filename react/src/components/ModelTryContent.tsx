@@ -285,7 +285,17 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
       modelMountDestination: '/models',
       modelDefinitionPath: '',
       vfoldersAliasMap: {},
-      envvars: [],
+      envvars: [
+        // FIXME: hardcoded adding VLLM_EXTRA_ARGS for Llama-3.2-11B-Vision-Instruct
+        ...(modelName?.includes('Llama-3.2-11B-Vision-Instruct')
+          ? [
+              {
+                variable: 'VLLM_EXTRA_ARGS',
+                value: '--max-num-seq 16 --enforce-eager',
+              },
+            ]
+          : []),
+      ],
       enabledAutomaticShmem: false,
     };
   };
