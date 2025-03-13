@@ -964,6 +964,11 @@
     "Task": "작업",
     "Version": "버전"
   },
+  "modelserving": {
+    "menu": {
+      "MyServices": "나의 서비스"
+    }
+  },
   "notification": {
     "AreYouSureToClearAllNotifications": "모든 알림을 삭제하시겠습니까?",
     "ClearNotifications": "모든 알림 삭제",

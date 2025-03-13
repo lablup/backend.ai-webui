@@ -950,6 +950,11 @@
     "Task": "งาน",
     "Version": "เวอร์ชัน"
   },
+  "modelserving": {
+    "menu": {
+      "MyServices": "บริการของฉัน"
+    }
+  },
   "notification": {
     "AreYouSureToClearAllNotifications": "คุณแน่ใจหรือไม่ที่จะล้างการแจ้งเตือนทั้งหมด?",
     "ClearNotifications": "ล้างการแจ้งเตือน",

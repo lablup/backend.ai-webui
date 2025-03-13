@@ -960,6 +960,11 @@
     "Task": "タスク",
     "Version": "バージョン"
   },
+  "modelserving": {
+    "menu": {
+      "MyServices": "私のサービス"
+    }
+  },
   "notification": {
     "AreYouSureToClearAllNotifications": "すべての通知をクリアしてもよろしいですか?",
     "ClearNotifications": "通知をクリアする",

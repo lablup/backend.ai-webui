@@ -961,6 +961,11 @@
     "Task": "Tâche",
     "Version": "Version"
   },
+  "modelserving": {
+    "menu": {
+      "MyServices": "Mes services"
+    }
+  },
   "notification": {
     "AreYouSureToClearAllNotifications": "Êtes-vous sûr d'avoir effacé toutes les notifications ?",
     "ClearNotifications": "Effacer les notifications",

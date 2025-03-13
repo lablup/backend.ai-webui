@@ -961,6 +961,11 @@
     "Task": "任务",
     "Version": "版本"
   },
+  "modelserving": {
+    "menu": {
+      "MyServices": "我的服務"
+    }
+  },
   "notification": {
     "AreYouSureToClearAllNotifications": "您確定清除所有通知嗎？",
     "ClearNotifications": "清除通知",

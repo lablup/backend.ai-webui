@@ -957,6 +957,11 @@
     "Task": "Εργασία",
     "Version": "Εκδοχή"
   },
+  "modelserving": {
+    "menu": {
+      "MyServices": "Οι υπηρεσίες μου"
+    }
+  },
   "notification": {
     "AreYouSureToClearAllNotifications": "Είστε βέβαιοι ότι θα διαγράψετε όλες τις ειδοποιήσεις;",
     "ClearNotifications": "Εκκαθάριση ειδοποιήσεων",

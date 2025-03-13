@@ -967,6 +967,11 @@
     "Task": "Task",
     "Version": "Version"
   },
+  "modelserving": {
+    "menu": {
+      "MyServices": "My Services"
+    }
+  },
   "notification": {
     "AreYouSureToClearAllNotifications": "Are you sure to clear all notifications?",
     "ClearNotifications": "Clear Notifications",

@@ -961,6 +961,11 @@
     "Task": "Задание",
     "Version": "Версия"
   },
+  "modelserving": {
+    "menu": {
+      "MyServices": "Мои услуги"
+    }
+  },
   "notification": {
     "AreYouSureToClearAllNotifications": "Вы уверены, что удалите все уведомления?",
     "ClearNotifications": "Очистить уведомления",

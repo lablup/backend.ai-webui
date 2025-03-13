@@ -961,6 +961,11 @@
     "Task": "Nhiệm vụ",
     "Version": "Phiên bản"
   },
+  "modelserving": {
+    "menu": {
+      "MyServices": "Dịch vụ của tôi"
+    }
+  },
   "notification": {
     "AreYouSureToClearAllNotifications": "Bạn có chắc chắn xóa tất cả thông báo không?",
     "ClearNotifications": "Xóa thông báo",

@@ -959,6 +959,11 @@
     "Task": "Tugas",
     "Version": "Versi: kapan"
   },
+  "modelserving": {
+    "menu": {
+      "MyServices": "Layanan saya"
+    }
+  },
   "notification": {
     "AreYouSureToClearAllNotifications": "Apakah Anda yakin untuk menghapus semua notifikasi?",
     "ClearNotifications": "Hapus Notifikasi",

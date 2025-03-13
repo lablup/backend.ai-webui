@@ -960,6 +960,11 @@
     "Task": "Tugasan",
     "Version": "Versi"
   },
+  "modelserving": {
+    "menu": {
+      "MyServices": "Perkhidmatan saya"
+    }
+  },
   "notification": {
     "AreYouSureToClearAllNotifications": "Adakah anda pasti mengosongkan semua pemberitahuan?",
     "ClearNotifications": "Kosongkan Pemberitahuan",

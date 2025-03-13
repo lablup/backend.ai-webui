@@ -959,6 +959,11 @@
     "Task": "Tehtävä",
     "Version": "Versio"
   },
+  "modelserving": {
+    "menu": {
+      "MyServices": "Minun palveluni"
+    }
+  },
   "notification": {
     "AreYouSureToClearAllNotifications": "Oletko varma, että tyhjennät kaikki ilmoitukset?",
     "ClearNotifications": "Tyhjennä ilmoitukset",

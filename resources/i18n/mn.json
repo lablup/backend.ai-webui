@@ -959,6 +959,11 @@
     "Task": "Даалгавар",
     "Version": "Хувилбар"
   },
+  "modelserving": {
+    "menu": {
+      "MyServices": "Миний үйлчилгээ"
+    }
+  },
   "notification": {
     "AreYouSureToClearAllNotifications": "Та бүх мэдэгдлийг арилгахдаа итгэлтэй байна уу?",
     "ClearNotifications": "Мэдэгдлийг арилгах",

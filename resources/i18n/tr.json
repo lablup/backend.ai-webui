@@ -961,6 +961,11 @@
     "Task": "Görev",
     "Version": "Sürüm"
   },
+  "modelserving": {
+    "menu": {
+      "MyServices": "Hizmetlerim"
+    }
+  },
   "notification": {
     "AreYouSureToClearAllNotifications": "Tüm bildirimleri temizlediğinizden emin misiniz?",
     "ClearNotifications": "Bildirimleri Temizle",
