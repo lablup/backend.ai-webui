@@ -120,12 +120,7 @@ const ModelStoreListPage: React.FC = () => {
     return result;
   }, [model_cards?.edges]);
   return (
-    <Flex
-      direction="column"
-      align="stretch"
-      justify="center"
-      gap="lg"
-    >
+    <Flex direction="column" align="stretch" justify="center" gap="lg">
       <Flex
         direction="column"
         align="stretch"
