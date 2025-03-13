@@ -2,56 +2,22 @@ import { useUpdatableState } from '../../hooks';
 import { useSuspenseTanQuery } from '../../hooks/reactQueryAlias';
 import { ChatContext, ChatType } from '../../pages/ChatProvider';
 import ChatBody from './ChatBody';
+import { ChatBodyRef } from './ChatBody';
 import ChatHeader from './ChatHeader';
 import { Model } from './ChatUIModal';
 import { CustomModelForm, CustomModelAlert } from './CustomModelForm';
 import { ChatCard_endpoint$key } from './__generated__/ChatCard_endpoint.graphql';
-import { AttachmentsProps } from '@ant-design/x';
 import { Card, CardProps, FormInstance, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
-import { atom, useAtom } from 'jotai';
 import _, { isEmpty } from 'lodash';
 import React, {
   useCallback,
   useContext,
   useEffect,
-  useId,
   useRef,
   useState,
 } from 'react';
 import { useFragment } from 'react-relay';
-
-// @FIXME: how to share messages
-const synchronizedMessageState = atom<string>('');
-const synchronizedAttachmentState = atom<AttachmentsProps['items']>();
-const chatSubmitKeyInfoState = atom<{ id: string; key: string } | undefined>(
-  undefined,
-);
-
-function useSynconizedMessage() {
-  const [synchronizedMessage, setSynchronizedMessage] = useAtom(
-    synchronizedMessageState,
-  );
-  const [synchronizedAttachment, setSynchronizedAttachment] = useAtom(
-    synchronizedAttachmentState,
-  );
-
-  const [chatSubmitKeyInfo, setChatSubmitKeyInfo] = useAtom(
-    chatSubmitKeyInfoState,
-  );
-
-  const submitId = useId();
-
-  return {
-    synchronizedMessage,
-    setSynchronizedMessage,
-    synchronizedAttachment,
-    setSynchronizedAttachment,
-    chatSubmitKeyInfo,
-    setChatSubmitKeyInfo,
-    submitId,
-  };
-}
 
 export type BAIModel = {
   id: string;
@@ -117,7 +83,6 @@ const ChatCard: React.FC<ChatCardProps> = ({
   closable,
   onRequestClose,
   onModelChange,
-  ...cardProps
 }) => {
   const { conversations, setConversations } = useContext(ChatContext);
 
@@ -166,13 +131,12 @@ const ChatCard: React.FC<ChatCardProps> = ({
 
   const [agentId, setAgentId] = useState<string | undefined>();
 
-  // const submitId = useId();
-
   useEffect(() => {
     setAgentId(chatParams.agentId);
   }, [chatParams.agentId]);
 
   const customModelFormRef = useRef<FormInstance>(null);
+  const chatBodyRef = useRef<ChatBodyRef>(null);
 
   const baseURL = endpoint?.url
     ? new URL(chatParams.basePath, endpoint?.url ?? undefined).toString()
@@ -186,7 +150,9 @@ const ChatCard: React.FC<ChatCardProps> = ({
     const conversation = conversations.find((c) => c.key === conversationId);
 
     if (conversation) {
+      // @FIXME: event propagation, bubbling, should be happend at the conversations
       conversation.chats.push({
+        key: String(conversation.chats.length),
         sync: false,
         agentId: agentId,
         endpointId: baseURL,
@@ -195,7 +161,36 @@ const ChatCard: React.FC<ChatCardProps> = ({
 
       setConversations([...conversations]);
     }
+  }, [
+    agentId,
+    baseURL,
+    conversationId,
+    conversations,
+    modelId,
+    setConversations,
+  ]);
+
+  const handleClickChatSync = useCallback(
+    (sync: boolean) => {
+      const conversation = conversations.find((c) => c.key === conversationId);
+
+      if (conversation) {
+        const targetChat = conversation.chats.find((c) => c.key === chat.key);
+        if (targetChat) {
+          targetChat.sync = sync;
+          setConversations([...conversations]);
+        }
+      }
+    },
+    [chat.key, conversationId, conversations, setConversations],
+  );
+
+  const handleClickClear = useCallback(() => {
+    if (chatBodyRef.current) {
+      chatBodyRef.current.clearChat();
+    }
   }, []);
+
   return (
     <Card
       bordered
@@ -203,6 +198,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
       styles={{ ...styles }}
       title={
         <ChatHeader
+          chat={chat}
           setModelId={onModelChange}
           models={models}
           setEndpointFrgmt={setEndpointFrgmt}
@@ -211,6 +207,8 @@ const ChatCard: React.FC<ChatCardProps> = ({
           endpoint={endpoint}
           promisingEndpoint={promisingEndpoint}
           onClickNewChat={handleClickNewChat}
+          onClickChatSync={handleClickChatSync}
+          onClickClear={handleClickClear}
         />
       }
     >
@@ -222,7 +220,13 @@ const ChatCard: React.FC<ChatCardProps> = ({
           isEmptyModel && <CustomModelAlert onClick={() => updateFetchKey()} />
         }
       />
-      <ChatBody baseURL={baseURL} agentId={agentId} modelId={modelId} />
+      <ChatBody
+        ref={chatBodyRef}
+        chat={chat}
+        baseURL={baseURL}
+        agentId={agentId}
+        modelId={modelId}
+      />
     </Card>
   );
 };

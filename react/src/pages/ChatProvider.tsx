@@ -6,6 +6,7 @@ interface ChatProviderProps {
 }
 
 export type ChatType = {
+  key: string;
   sync: boolean;
   agentId?: string | null;
   endpointId?: string | null;
@@ -35,6 +36,13 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     defaultValue: [],
   });
 
+  // @FIXME: state management,
+  // focused conversations
+  // focused chat
+  // get current conversations
+  // update chat
+  // update conversations
+  //
   return (
     <ChatContext.Provider
       value={{

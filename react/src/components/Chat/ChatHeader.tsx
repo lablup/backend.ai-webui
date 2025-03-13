@@ -1,6 +1,7 @@
 import { filterEmptyItem } from '../../helper';
 import { useUpdatableState, useWebUINavigate } from '../../hooks';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
+import { ChatType } from '../../pages/ChatProvider';
 import Flex from '../Flex';
 import AIAgentSelect from './AIAgentSelect';
 import EndpointSelect from './EndpointSelect';
@@ -25,6 +26,7 @@ import React, { useState, startTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface ChatHeaderProps {
+  chat: ChatType;
   modelId?: string;
   setModelId?: (modelId: string) => void;
   endpointId?: string;
@@ -37,6 +39,8 @@ interface ChatHeaderProps {
   promisingEndpoint?: any;
   closable?: boolean;
   onClickNewChat?: () => void;
+  onClickChatSync?: (sync: boolean) => void;
+  onClickClear?: () => void;
 }
 
 const CardHeadStyle = {
@@ -57,6 +61,7 @@ const CardExtraStyle = {
 };
 
 const ChatHeader: React.FC<ChatHeaderProps> = ({
+  chat,
   modelId,
   setModelId,
   models,
@@ -69,6 +74,8 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   endpointId,
   closable,
   onClickNewChat,
+  onClickChatSync,
+  onClickClear,
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -98,8 +105,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
       label: t('chatui.DeleteChatHistory'),
       icon: <DeleteOutlined />,
       onClick: () => {
-        // @FIXME send to useChat
-        // setMessages([]);
+        onClickClear?.();
       },
     },
   ]);
@@ -158,21 +164,14 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
               {t('chatui.SyncInput')}
             </Typography.Text>
             <Switch
-              value={false}
+              value={chat.sync}
               onClick={(v) => {
-                // setSynchronous(v);
+                onClickChatSync?.(v);
               }}
             />
             <Button
               onClick={() => {
                 onClickNewChat?.();
-                // push(new Date().toString());
-                // conversation?.chats.push({
-                //   sync: false,
-                //   agentId: agentId,
-                //   endpointId: endpointId,
-                //   modelId: modelId
-                // })
               }}
               icon={<PlusOutlined />}
             />

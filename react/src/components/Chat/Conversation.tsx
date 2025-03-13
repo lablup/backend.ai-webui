@@ -95,6 +95,7 @@ export const Conversation: React.FC<ConversationProps> = ({
   useEffect(() => {
     if (conversation?.chats.length === 0) {
       conversation?.chats.push({
+        key: String(conversation?.chats.length),
         sync: false,
         agentId: agentId,
         endpointId: endpointId,
@@ -116,6 +117,7 @@ export const Conversation: React.FC<ConversationProps> = ({
       <Flex direction="column" align="stretch" gap={'xs'}>
         <Flex gap={'xs'} direction="row" style={ChatViewStyle} align="stretch">
           {// @FIXME mode to chat context to manage chats in conversioans
+          // @FIXME prevent rerendering
           conversation?.chats.map((chat, index) => (
             <Suspense
               fallback={

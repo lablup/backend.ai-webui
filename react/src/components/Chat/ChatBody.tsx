@@ -1,4 +1,5 @@
 import { createDataTransferFiles } from '../../helper';
+import { ChatType } from '../../pages/ChatProvider';
 import Flex from '../Flex';
 import ChatSender, { ChatSenderEvents } from './ChatSender';
 import ChatTokenCounter from './ChatTokenCounter';
@@ -14,14 +15,30 @@ import {
 } from 'ai';
 import { theme } from 'antd';
 import equal from 'fast-deep-equal';
-import { isEmpty } from 'lodash';
-import React, { memo, useCallback, useRef, useState } from 'react';
+import { atom, useAtom } from 'jotai';
+import { isEmpty, isEqual, isUndefined } from 'lodash';
+import React, {
+  memo,
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  forwardRef,
+  useImperativeHandle,
+} from 'react';
 
 const ChatMessageList = memo(VirtualChatMessageList, (prevProps, nextProps) => {
   if (!equal(prevProps.messages, nextProps.messages)) return false;
   if (prevProps.isStreaming !== nextProps.isStreaming) return false;
   return true;
 });
+
+const synchronizedMessageState = atom<string>('');
+const synchronizedAttachmentState = atom<AttachmentsProps['items']>();
+const chatSubmitKeyInfoState = atom<{ id: string; key: string } | undefined>(
+  undefined,
+);
 
 export type BAIModel = {
   id: string;
@@ -52,12 +69,18 @@ interface ChatSession {
   baseURL?: string;
 }
 
+export interface ChatBodyRef {
+  clearChat: () => void;
+}
+
 // @CHANGE: use multiple interface for clear props modeling
 interface ChatBodyProps extends ChatRequest, ChatSession {
+  chat: ChatType;
   allowCustomModel?: boolean;
 }
 
-const ChatBody: React.FC<ChatBodyProps> = ({
+const ChatBody: React.FC<ChatBodyProps & React.RefAttributes<ChatBodyRef>> = ({
+  chat,
   baseURL,
   chatId,
   modelId,
@@ -65,6 +88,7 @@ const ChatBody: React.FC<ChatBodyProps> = ({
   systemPrompt,
   credentials,
   fetchOnClient,
+  ref,
 }) => {
   const [startTime, setStartTime] = useState<number | null>(null);
 
@@ -127,16 +151,87 @@ const ChatBody: React.FC<ChatBodyProps> = ({
   const [files, setFiles] = useState<AttachmentsProps['items']>([]);
   const cardRef = useRef<HTMLDivElement>(null);
 
+  const [synchronizedMessage, setSynchronizedMessage] = useAtom(
+    synchronizedMessageState,
+  );
+
+  const [synchronizedAttachment, setSynchronizedAttachment] = useAtom(
+    synchronizedAttachmentState,
+  );
+
+  const [chatSubmitKeyInfo, setChatSubmitKeyInfo] = useAtom(
+    chatSubmitKeyInfoState,
+  );
+
+  const submitId = useId();
+  const submitKey =
+    chatSubmitKeyInfo?.id === submitId ? undefined : chatSubmitKeyInfo?.key;
+
+  const prevSyncRef = useRef(chat.sync);
+  useEffect(() => {
+    if (prevSyncRef.current !== chat.sync) {
+      setInput('');
+      prevSyncRef.current = chat.sync;
+    }
+  }, [chat.sync, setInput]);
+
+  useEffect(() => {
+    if (chat.sync && !isUndefined(synchronizedMessage)) {
+      setInput(synchronizedMessage);
+    }
+  }, [synchronizedMessage, setInput, chat.sync]);
+
+  const setFilesFromInputAttachment = (
+    inputAttachment: AttachmentsProps['items'],
+  ) => {
+    if (!isUndefined(inputAttachment) && !isEqual(files, inputAttachment)) {
+      setFiles(inputAttachment);
+      setIsOpenAttachments(true);
+    }
+  };
+
+  // If the `inputAttachment` prop exists, the `files` state has to follow it.
+  useEffect(() => {
+    setFilesFromInputAttachment(synchronizedAttachment);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [synchronizedAttachment]);
+
+  // Expose the clearChat function to the parent component via ref
+  useImperativeHandle(
+    ref,
+    () => ({
+      clearChat: () => {
+        setMessages([]);
+      },
+    }),
+    [setMessages],
+  );
+
+  useEffect(() => {
+    if (!isUndefined(submitKey) && input) {
+      const chatRequestOptions: ChatRequestOptions = {};
+      if (!isEmpty(files)) {
+        chatRequestOptions.experimental_attachments =
+          createDataTransferFiles(files);
+      }
+      append(
+        {
+          role: 'user',
+          content: input,
+        },
+        chatRequestOptions,
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [submitKey]);
+
   const handleChatSenderChange = useCallback(
     (event: ChatSenderEvents, data: any) => {
-      console.log('data', data);
-
       if (event === 'input-change') {
         setInput(data);
-        // @FIXME: add sync messages and attachment, onInputChange
-        // if (onInputChange) {
-        //   onInputChange(v);
-        // }
+        if (chat.sync) {
+          setSynchronizedMessage(data);
+        }
       } else if (event === 'input-cancel') {
         stop();
       } else if (event === 'input-submit') {
@@ -158,7 +253,15 @@ const ChatBody: React.FC<ChatBodyProps> = ({
             setFiles([]);
             setIsOpenAttachments(false);
           }, 0);
-          // @FIXME: add sync messages and attachment, onSubmitChange
+
+          setSynchronizedMessage('');
+          setSynchronizedAttachment([]);
+          if (chat.sync) {
+            setChatSubmitKeyInfo({
+              id: submitId,
+              key: new Date().toString(),
+            });
+          }
         }
       } else if (event === 'attachment-change') {
         const fileList = data.info.fileList;
@@ -167,12 +270,26 @@ const ChatBody: React.FC<ChatBodyProps> = ({
         if (data.type === 'prefix') {
           setIsOpenAttachments(true);
         }
-        // @FIXME: add sync messages and attachment, onAttachmentChange?
+
+        if (chat.sync) {
+          setSynchronizedAttachment(fileList);
+        }
       } else if (event === 'attachment-open-change') {
         setIsOpenAttachments(data);
       }
     },
-    [append, files, input, setInput, stop],
+    [
+      append,
+      chat.sync,
+      files,
+      input,
+      setChatSubmitKeyInfo,
+      setInput,
+      setSynchronizedAttachment,
+      setSynchronizedMessage,
+      stop,
+      submitId,
+    ],
   );
 
   return (
