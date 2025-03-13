@@ -1,16 +1,12 @@
 import { useLocalStorageState } from 'ahooks';
-import { createContext, useState } from 'react';
+import { createContext } from 'react';
 
 interface ChatProviderProps {
   children: React.ReactNode;
 }
 
-type Chat = {
-  endpointId: any;
-  agentId: string;
-};
-
-type ChatOption = {
+export type ChatType = {
+  sync: boolean;
   agentId?: string | null;
   endpointId?: string | null;
   modelId?: string | null;
@@ -19,60 +15,31 @@ type ChatOption = {
 export type ConversationType = {
   key: string;
   label: string;
-  chats: Chat[];
-};
-
-type ConversationListType = {
-  conversations?: ConversationType[];
+  chats: ChatType[];
 };
 
 interface ChatContextProps {
-  message: string;
-  setMessage: (message: string) => void;
   conversations: ConversationType[];
-  setConversations: (conversations: ConversationType[]) => void;
-  option: ChatOption | undefined;
-  setOption: (option: ChatOption) => void;
-  isSynchronous: boolean;
-  setSynchronous: (isSynchronous: boolean) => void;
+  setConversations: (update: ConversationType[]) => void;
 }
 
-export const ChatContext = createContext<ChatContextProps | undefined>(
-  undefined,
-);
+export const ChatContext = createContext<ChatContextProps>({
+  conversations: [],
+  setConversations: () => {},
+});
 
 export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
-  const [message, setMessage] = useState<string>('');
-  const [option, setOption] = useState<ChatOption | undefined>(undefined);
-  const [isSynchronous, setSynchronous] = useState(false);
-  const [conversationList, setConversationList] =
-    useLocalStorageState<ConversationListType>('CHAT_LOCAL_HISTORY10', {
-      defaultValue: {
-        conversations: [
-          {
-            key: '0',
-            label: 'Chat',
-            chats: [],
-          },
-        ],
-      },
-    });
-
-  const conversations = conversationList?.conversations || [];
-  const setConversations = (convs: ConversationType[]) =>
-    setConversationList({ conversations: convs });
+  const [conversations, setConversations] = useLocalStorageState<
+    ConversationType[]
+  >('CHAT_LOCAL_HISTORY37', {
+    defaultValue: [],
+  });
 
   return (
     <ChatContext.Provider
       value={{
-        message,
-        setMessage,
-        conversations,
+        conversations: conversations ?? [],
         setConversations,
-        option,
-        setOption,
-        isSynchronous, // @FIXME should be belong to each conversation
-        setSynchronous,
       }}
     >
       {children}

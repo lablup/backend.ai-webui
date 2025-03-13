@@ -1,24 +1,10 @@
 import BAICard from '../components/BAICard';
 import { Conversation } from '../components/Chat/Conversation';
-import Flex from '../components/Flex';
 import { ChatContext, ChatProvider, ConversationType } from './ChatProvider';
-import { PlusOutlined } from '@ant-design/icons';
-import { useLocalStorageState } from 'ahooks';
-import { useDynamicList } from 'ahooks';
-import { TabsProps } from 'antd';
-import { t } from 'i18next';
-import React, {
-  Suspense,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
-import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
-import { StringParam, useQueryParam, useQueryParams } from 'use-query-params';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { StringParam, useQueryParams } from 'use-query-params';
 
-const PageStyle = {
+const ChatPageStyle = {
   header: {
     padding: '24px 24px 0 24px',
   },
@@ -28,19 +14,10 @@ const PageStyle = {
   },
 };
 
-type TabsType = TabsProps['items'];
-type TabType = NonNullable<TabsType>[number];
-
 type ChatPageProps = {};
 
 const ChatInnerPage: React.FC<ChatPageProps> = ({ ...props }) => {
-  const chatContext = useContext(ChatContext);
-
-  if (!chatContext) {
-    throw new Error('ChatInput must be used within a ChatProvider');
-  }
-
-  const { conversations, setConversations, setOption } = chatContext;
+  const { conversations, setConversations } = useContext(ChatContext);
 
   const [{ endpointId, modelId, agentId }] = useQueryParams({
     endpointId: StringParam,
@@ -48,7 +25,6 @@ const ChatInnerPage: React.FC<ChatPageProps> = ({ ...props }) => {
     modelId: StringParam,
   });
 
-  // @FIXME, setActiveTab with latest focused
   const [activeTabKey, setActiveTabKey] = useState<string>('0');
 
   const handleTabChange = (key: string) => {
@@ -58,55 +34,61 @@ const ChatInnerPage: React.FC<ChatPageProps> = ({ ...props }) => {
   const handleTabEdit = useCallback(
     (_: any, action: 'add' | 'remove') => {
       if (action === 'add') {
-        const key = String(conversations?.length ?? 0);
-        setConversations([
-          ...(conversations ?? []),
-          {
-            key: String(key),
-            label: `Chat ${key}`,
-            chats: [],
-          },
-        ]);
+        const key = String(conversations.length);
+        conversations.push({
+          key,
+          label: `Chat ${key}`,
+          chats: [],
+        });
+        setConversations([...conversations]);
         setActiveTabKey(key);
       }
     },
     [conversations, setConversations],
   );
 
-  const tabList = conversations?.map(
-    (conversation: ConversationType, index: number) => {
-      return {
-        index,
-        key: conversation.key,
-        label: conversation.label,
-      };
-    },
-  );
-
   useEffect(() => {
-    setOption({
-      agentId: agentId,
-      endpointId: endpointId,
-      modelId: modelId,
-    });
-  }, [agentId, endpointId, modelId, setOption]);
+    // @FIXME: stop creating if enpointId matched with last conversation
+    if (endpointId || conversations.length === 0) {
+      const key = String(conversations.length);
+      conversations.push({
+        key,
+        label: `Chat ${key}`,
+        chats: [],
+      });
+
+      setConversations([...conversations]);
+      setActiveTabKey(key);
+    }
+  }, [conversations, endpointId, setConversations]);
+
+  const tabList = conversations.map((conversation: ConversationType) => {
+    return {
+      key: conversation.key,
+      label: conversation.label,
+    };
+  });
 
   return (
-    <ChatProvider>
-      <BAICard
-        styles={PageStyle}
-        tabList={tabList}
-        tabProps={{
-          size: 'large',
-          type: 'editable-card',
-          onEdit: handleTabEdit,
-        }}
-        activeTabKey={activeTabKey}
-        onTabChange={handleTabChange}
-      >
-        <Conversation activeTabKey={activeTabKey} />
-      </BAICard>
-    </ChatProvider>
+    <BAICard
+      styles={ChatPageStyle}
+      tabList={tabList}
+      tabProps={{
+        size: 'large',
+        type: 'editable-card',
+        onEdit: handleTabEdit,
+      }}
+      activeTabKey={activeTabKey}
+      onTabChange={handleTabChange}
+    >
+      <Conversation
+        conversation={conversations[Number(activeTabKey)]}
+        conversationId={activeTabKey}
+        endpointId={endpointId}
+        modelId={modelId}
+        agentId={agentId}
+      />
+    </BAICard>
   );
 };
 

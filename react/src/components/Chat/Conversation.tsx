@@ -3,19 +3,37 @@ import BAICard from '../BAICard';
 import Flex from '../Flex';
 import ChatCard from './ChatCard';
 import { ConversationQuery } from './__generated__/ConversationQuery.graphql';
-import { PlusOutlined } from '@ant-design/icons';
-import { useDynamicList } from 'ahooks';
-import { Button, Card, Skeleton, Switch, Typography } from 'antd';
+import { Card, Skeleton } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
-import { t } from 'i18next';
-import { map } from 'lodash';
-import { Suspense, useContext, useState } from 'react';
+import { Suspense, useContext, useEffect } from 'react';
 import { useLazyLoadQuery } from 'react-relay';
 
 export type ConversationProps = {
-  // conversation: ConversationType;
-  activeTabKey: string;
+  conversation: ConversationType;
+  conversationId: string;
+  endpointId?: string | null;
+  modelId?: string | null;
+  agentId?: string | null;
 };
+
+const ConversationViewStyle = {
+  body: {
+    overflow: 'hidden',
+  },
+};
+
+const ChatViewStyle = {
+  overflow: 'auto',
+  height: 'calc(100vh - 240px)',
+};
+
+const ChatSkeletonStyle = {
+  width: '100%',
+  display: 'flex',
+  flexDirection: 'column' as const,
+};
+
+const ChatCardStyle = { flex: 1, overflow: 'hidden' };
 
 function useEndpoint(
   endpointId: string | null | undefined,
@@ -54,99 +72,74 @@ function useEndpoint(
 }
 
 export const Conversation: React.FC<ConversationProps> = ({
-  activeTabKey,
-  ...props
+  // @FIXME cleanup props
+  conversation,
+  conversationId,
+  endpointId,
+  modelId,
+  agentId,
 }) => {
-  const chatContext = useContext(ChatContext);
+  const { conversations, setConversations } = useContext(ChatContext);
 
-  if (!chatContext) {
-    throw new Error('ChatInput must be used within a ChatProvider');
-  }
+  const { endpoint } = useEndpoint(endpointId, !endpointId);
 
-  const { option, isSynchronous, setSynchronous } = chatContext;
+  const getChatParams = (index: number) => {
+    return {
+      basePath: 'v1',
+      modelId: (index === 0 && endpoint ? modelId : undefined) ?? undefined,
+      endpoint: index === 0 && endpoint ? endpoint : undefined,
+      agentId: agentId ?? undefined,
+    };
+  };
 
-  const { endpoint } = useEndpoint(option?.endpointId, !option?.endpointId);
-
-  // @FIXME double check
-  const defaultModelId =
-    activeTabKey === '0' && endpoint ? option?.modelId : undefined;
-  const defaultEndpoint =
-    activeTabKey === '0' && endpoint ? endpoint : undefined;
-
-  console.log('defaultEndpoint', activeTabKey, endpoint, defaultEndpoint);
-
-  // @FIXME mode to chat context to manage chats in conversioans
-  const { list, remove, getKey, push } = useDynamicList(['0']);
+  useEffect(() => {
+    if (conversation?.chats.length === 0) {
+      conversation?.chats.push({
+        sync: false,
+        agentId: agentId,
+        endpointId: endpointId,
+        modelId: modelId,
+      });
+      setConversations([...conversations]);
+    }
+  }, [
+    agentId,
+    conversation,
+    conversations,
+    endpointId,
+    modelId,
+    setConversations,
+  ]);
 
   return (
-    <BAICard
-      styles={{
-        body: {
-          overflow: 'hidden',
-        },
-      }}
-      extra={
-        <Flex direction="row" gap={'xs'} wrap="wrap" style={{ flexShrink: 1 }}>
-          <Flex gap={'xs'}>
-            <Typography.Text type="secondary">
-              {t('chatui.SyncInput')}
-            </Typography.Text>
-            <Switch
-              value={isSynchronous}
-              onClick={(v) => {
-                setSynchronous(v);
-              }}
-            />
-            <Button
-              onClick={() => {
-                push(new Date().toString());
-              }}
-              icon={<PlusOutlined />}
-            />
-          </Flex>
-        </Flex>
-      }
-    >
+    <BAICard styles={ConversationViewStyle}>
       <Flex direction="column" align="stretch" gap={'xs'}>
-        <Flex
-          gap={'xs'}
-          direction="row"
-          style={{
-            overflow: 'auto',
-            height: 'calc(100vh - 240px)',
-          }}
-          align="stretch"
-        >
-          {
-            // @FIXME mode to chat context to manage chats in conversioans
-            map(list, (__, index) => (
-              <Suspense
-                fallback={
-                  <Card
-                    bordered
-                    style={{
-                      width: '100%',
-                      display: 'flex',
-                      flexDirection: 'column',
-                    }}
-                  >
-                    <Skeleton active />
-                  </Card>
+        <Flex gap={'xs'} direction="row" style={ChatViewStyle} align="stretch">
+          {// @FIXME mode to chat context to manage chats in conversioans
+          conversation?.chats.map((chat, index) => (
+            <Suspense
+              fallback={
+                <Card bordered style={ChatSkeletonStyle}>
+                  <Skeleton active />
+                </Card>
+              }
+              key={index}
+            >
+              <ChatCard
+                // @FIXME: cleanup props
+                // @FIXME: defaults from endpoint or stored data
+                chat={chat}
+                conversationId={conversationId}
+                chatParams={getChatParams(index)}
+                style={ChatCardStyle}
+                onRequestClose={() => {}}
+                closable={
+                  conversation?.chats ? conversation.chats.length > 1 : false
                 }
                 key={index}
-              >
-                <ChatCard
-                  defaultModelId={defaultModelId ?? undefined}
-                  defaultEndpoint={defaultEndpoint}
-                  defaultAgentId={undefined}
-                  style={{ flex: 1, overflow: 'hidden' }} // Add overflow handling here
-                  onRequestClose={() => {}}
-                  closable={list.length > 1}
-                  key={index}
-                />
-              </Suspense>
-            ))
-          }
+              />
+            </Suspense>
+          ))}
         </Flex>
       </Flex>
     </BAICard>

@@ -1,8 +1,7 @@
 import { useUpdatableState } from '../../hooks';
 import { useSuspenseTanQuery } from '../../hooks/reactQueryAlias';
+import { ChatContext, ChatType } from '../../pages/ChatProvider';
 import ChatBody from './ChatBody';
-// import Flex from '../Flex';
-// import ChatBody from './ChatBody';
 import ChatHeader from './ChatHeader';
 import { Model } from './ChatUIModal';
 import { CustomModelForm, CustomModelAlert } from './CustomModelForm';
@@ -12,10 +11,17 @@ import { Card, CardProps, FormInstance, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import { atom, useAtom } from 'jotai';
 import _, { isEmpty } from 'lodash';
-import React, { useEffect, useId, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from 'react';
 import { useFragment } from 'react-relay';
 
+// @FIXME: how to share messages
 const synchronizedMessageState = atom<string>('');
 const synchronizedAttachmentState = atom<AttachmentsProps['items']>();
 const chatSubmitKeyInfoState = atom<{ id: string; key: string } | undefined>(
@@ -56,13 +62,18 @@ export type BAIModel = {
   description?: string;
 };
 
+export type ChatCardParamsType = {
+  basePath: string;
+  modelId?: string;
+  endpoint?: ChatCard_endpoint$key;
+  agentId?: string;
+};
+
 interface ChatCardProps extends CardProps {
-  basePath?: string;
+  chat: ChatType;
+  conversationId: string;
+  chatParams: ChatCardParamsType;
   closable?: boolean;
-  defaultModelId?: string;
-  defaultEndpoint?: ChatCard_endpoint$key;
-  defaultAgentId?: string;
-  isSynchronous?: boolean;
   onRequestClose?: () => void;
   onModelChange?: (modelId: string) => void;
 }
@@ -100,20 +111,19 @@ function useChatCardStyles() {
 }
 
 const ChatCard: React.FC<ChatCardProps> = ({
-  basePath = 'v1',
+  chat,
+  conversationId,
+  chatParams,
   closable,
-  defaultModelId,
-  defaultEndpoint,
-  defaultAgentId,
-  isSynchronous,
   onRequestClose,
   onModelChange,
   ...cardProps
 }) => {
-  const { t } = useTranslation();
+  const { conversations, setConversations } = useContext(ChatContext);
+
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [endpointFrgmt, setEndpointFrgmt] =
-    useState<ChatCard_endpoint$key | null>(defaultEndpoint || null);
+    useState<ChatCard_endpoint$key | null>(chatParams.endpoint || null);
   const endpoint = useFragment(
     graphql`
       fragment ChatCard_endpoint on Endpoint {
@@ -133,7 +143,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
       return endpoint?.url
         ? fetch(
             new URL(
-              basePath + '/models',
+              chatParams.basePath + '/models',
               endpoint?.url ?? undefined,
             ).toString(),
           )
@@ -149,9 +159,9 @@ const ChatCard: React.FC<ChatCardProps> = ({
   })) as BAIModel[];
 
   const modelId =
-    defaultModelId &&
-    _.includes(_.map(modelsResult?.data, 'id'), defaultModelId)
-      ? defaultModelId
+    chatParams.modelId &&
+    _.includes(_.map(modelsResult?.data, 'id'), chatParams.modelId)
+      ? chatParams.modelId
       : (modelsResult?.data?.[0]?.id ?? 'custom');
 
   const [agentId, setAgentId] = useState<string | undefined>();
@@ -159,19 +169,33 @@ const ChatCard: React.FC<ChatCardProps> = ({
   // const submitId = useId();
 
   useEffect(() => {
-    setAgentId(defaultAgentId);
-  }, [defaultAgentId]);
+    setAgentId(chatParams.agentId);
+  }, [chatParams.agentId]);
 
   const customModelFormRef = useRef<FormInstance>(null);
 
   const baseURL = endpoint?.url
-    ? new URL(basePath, endpoint?.url ?? undefined).toString()
+    ? new URL(chatParams.basePath, endpoint?.url ?? undefined).toString()
     : undefined;
 
   const isEmptyModel = isEmpty(models);
 
   const { style, styles } = useChatCardStyles();
 
+  const handleClickNewChat = useCallback(() => {
+    const conversation = conversations.find((c) => c.key === conversationId);
+
+    if (conversation) {
+      conversation.chats.push({
+        sync: false,
+        agentId: agentId,
+        endpointId: baseURL,
+        modelId: modelId,
+      });
+
+      setConversations([...conversations]);
+    }
+  }, []);
   return (
     <Card
       bordered
@@ -184,6 +208,9 @@ const ChatCard: React.FC<ChatCardProps> = ({
           setEndpointFrgmt={setEndpointFrgmt}
           setPromisingEndpoint={setPromisingEndpoint}
           closable={closable}
+          endpoint={endpoint}
+          promisingEndpoint={promisingEndpoint}
+          onClickNewChat={handleClickNewChat}
         />
       }
     >

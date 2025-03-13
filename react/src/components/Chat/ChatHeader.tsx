@@ -5,10 +5,21 @@ import Flex from '../Flex';
 import AIAgentSelect from './AIAgentSelect';
 import EndpointSelect from './EndpointSelect';
 import ModelSelect from './ModelSelect';
-// Replace 'some-flex-library' with the actual library name
-import { CloseOutlined, DeleteOutlined, MoreOutlined } from '@ant-design/icons';
-import { Dropdown, Button, theme, MenuProps, Popconfirm } from 'antd';
-import { t } from 'i18next';
+import {
+  CloseOutlined,
+  DeleteOutlined,
+  MoreOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
+import {
+  Dropdown,
+  Button,
+  theme,
+  MenuProps,
+  Popconfirm,
+  Typography,
+  Switch,
+} from 'antd';
 import { Scale } from 'lucide-react';
 import React, { useState, startTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -25,7 +36,25 @@ interface ChatHeaderProps {
   setPromisingEndpoint: (endpoint: any) => void;
   promisingEndpoint?: any;
   closable?: boolean;
+  onClickNewChat?: () => void;
 }
+
+const CardHeadStyle = {
+  minHeight: '56px',
+  width: '100%',
+};
+
+const CardTitleStyle = {
+  overflow: 'hidden',
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
+  flexGrow: 1,
+};
+
+const CardExtraStyle = {
+  marginInlineStart: 'auto',
+  color: '#141414',
+};
 
 const ChatHeader: React.FC<ChatHeaderProps> = ({
   modelId,
@@ -39,12 +68,13 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   promisingEndpoint,
   endpointId,
   closable,
+  onClickNewChat,
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const webuiNavigate = useWebUINavigate();
 
-  const [fetchKey, updateFetchKey] = useUpdatableState('first');
+  const [fetchKey] = useUpdatableState('first');
 
   const [agentId, setAgentId] = useState<string | undefined>();
 
@@ -77,23 +107,6 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   const [experimentalAIAgents] = useBAISettingUserState(
     'experimental_ai_agents',
   );
-
-  const CardHeadStyle = {
-    minHeight: '56px',
-    width: '100%',
-  };
-
-  const CardTitleStyle = {
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
-    flexGrow: 1,
-  };
-
-  const CardExtraStyle = {
-    marginInlineStart: 'auto',
-    color: '#141414',
-  };
 
   return (
     <Flex direction="row" style={CardHeadStyle} align="center">
@@ -139,6 +152,32 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
         </Dropdown>
       </Flex>
       <Flex style={CardExtraStyle} justify="between">
+        <Flex direction="row" gap={'xs'} wrap="wrap" style={{ flexShrink: 1 }}>
+          <Flex gap={'xs'}>
+            <Typography.Text type="secondary">
+              {t('chatui.SyncInput')}
+            </Typography.Text>
+            <Switch
+              value={false}
+              onClick={(v) => {
+                // setSynchronous(v);
+              }}
+            />
+            <Button
+              onClick={() => {
+                onClickNewChat?.();
+                // push(new Date().toString());
+                // conversation?.chats.push({
+                //   sync: false,
+                //   agentId: agentId,
+                //   endpointId: endpointId,
+                //   modelId: modelId
+                // })
+              }}
+              icon={<PlusOutlined />}
+            />
+          </Flex>
+        </Flex>
         {closable ? (
           <Popconfirm
             title={t('chatui.DeleteChattingSession')}
