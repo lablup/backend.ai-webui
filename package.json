@@ -165,7 +165,7 @@
     "tinyify": "^4.0.0",
     "ts-jest": "^29.2.4",
     "tslib": "^2.6.3",
-    "typescript": "^5.5.4",
+    "typescript": "~5.5.4",
     "underscore": "^1.13.7",
     "vis-util": "^5.0.7",
     "web-animations-js": "^2.3.2",
