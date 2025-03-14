@@ -301,16 +301,6 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
     );
   }
 
-  _indexRenderer(root, column, rowData) {
-    const idx = rowData.index + 1;
-    render(
-      html`
-        <div>${idx}</div>
-      `,
-      root,
-    );
-  }
-
   _launchDialogById(id: string) {
     (this.shadowRoot?.querySelector(id) as BackendAIDialog).show();
   }
@@ -755,13 +745,6 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           aria-label="Job list"
           .items="${this.resourceGroups}"
         >
-          <vaadin-grid-column
-            frozen
-            flex-grow="0"
-            header="#"
-            width="40px"
-            .renderer=${this._indexRenderer}
-          ></vaadin-grid-column>
           <vaadin-grid-column
             frozen
             flex-grow="1"

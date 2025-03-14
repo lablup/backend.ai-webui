@@ -261,23 +261,6 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
   }
 
   /**
-   * Render an index.
-   *
-   * @param {DOMelement} root
-   * @param {object} column (<vaadin-grid-column> element)
-   * @param {object} rowData
-   */
-  _indexRenderer(root, column, rowData) {
-    const idx = rowData.index + 1;
-    render(
-      html`
-        <div>${idx}</div>
-      `,
-      root,
-    );
-  }
-
-  /**
    * Render endpoint with IP and name.
    *
    * @param {DOMelement} root
@@ -516,13 +499,6 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
           aria-label="Job list"
           .items="${this.storages}"
         >
-          <vaadin-grid-column
-            width="40px"
-            flex-grow="0"
-            header="#"
-            text-align="center"
-            .renderer="${this._indexRenderer}"
-          ></vaadin-grid-column>
           <vaadin-grid-column
             resizable
             width="80px"
