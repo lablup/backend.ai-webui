@@ -40,6 +40,7 @@ versiontag:
 	@sed -i -E 's/globalThis.packageVersion = "\([^"]*\)"/globalThis.packageVersion = "${BUILD_VERSION}"/g' index.html
 	@sed -i -E 's/"version": "\([^"]*\)"/"version": "${BUILD_VERSION}"/g' manifest.json
 	@sed -i -E 's/"version": "\([^"]*\)"/"version": "${BUILD_VERSION}"/g' react/package.json
+	@sed -i -E 's/"version": "\([^"]*\)"/"version": "${BUILD_VERSION}"/g' electron-app/package.json
 	@sed -i -E 's/globalThis.buildNumber = "\([^"]*\)"/globalThis.buildNumber = "${BUILD_NUMBER}"/g' index.html
 	@sed -i -E 's/\<small class="sidebar-footer" style="font-size:9px;"\>\([^"]*\)\<\/small\>/\<small class="sidebar-footer" style="font-size:9px;"\>${BUILD_VERSION}.${BUILD_NUMBER}\<\/small\>/g' ./src/components/backend-ai-webui.ts
 	@printf "$(YELLOW)Finished$(NC)\n"
@@ -67,8 +68,9 @@ dep:
 		make compile_wsproxy; \
 		rm -rf build/electron-app; \
 		mkdir -p build/electron-app; \
-		cp ./package.json ./build/electron-app/package.json; \
-		cp ./main.js ./build/electron-app/main.js; \
+		cp -r electron-app/* build/electron-app/;\
+		cp electron-app/.npmrc build/electron-app/;\
+		pnpm i --prefix ./build/electron-app --ignore-workspace;\
 		cp -Rp build/rollup build/electron-app/app; \
 		cp -Rp build/rollup/resources build/electron-app; \
 		cp -Rp build/rollup/manifest build/electron-app; \
@@ -77,16 +79,6 @@ dep:
 		sed -i -E 's/\.\/dist\/components\/backend-ai-webui.js/es6:\/\/dist\/components\/backend-ai-webui.js/g' build/electron-app/app/index.html; \
 		mkdir -p ./build/electron-app/app/wsproxy; \
 		cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy/wsproxy.js; \
-		mkdir -p ./build/electron-app/node_modules/markty; \
-		mkdir -p ./build/electron-app/node_modules/markty-toml; \
-		mkdir -p ./build/electron-app/node_modules/mime-types; \
-		mkdir -p ./build/electron-app/node_modules/mime-db; \
-		mkdir -p ./build/electron-app/node_modules/@vanillawc/wc-codemirror/theme; \
-		cp -Rp ./node_modules/markty ./build/electron-app/node_modules; \
-		cp -Rp ./node_modules/markty-toml ./build/electron-app/node_modules; \
-		cp -Rp ./node_modules/mime-types ./build/electron-app/node_modules; \
-		cp -Rp ./node_modules/mime-db ./build/electron-app/node_modules; \
-		cp -Rp ./node_modules/@vanillawc/wc-codemirror/theme/monokai.css ./build/electron-app/node_modules/@vanillawc/wc-codemirror/theme/monokai.css; \
 		cp ./preload.js ./build/electron-app/preload.js; \
 	fi
 web:
@@ -144,7 +136,7 @@ ifdef BAI_APP_SIGN_KEYCHAIN
 endif
 	@rm -rf ./app/backend.ai-desktop-$(os)-$(arch)
 	@cd app; mv "Backend.AI Desktop-darwin-$(arch)" backend.ai-desktop-$(os)-$(arch);
-	@pnpm dlx electron-installer-dmg './app/backend.ai-desktop-$(os)-$(arch)/Backend.AI Desktop.app' ./app/backend.ai-desktop-$(arch)-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
+	@npx electron-installer-dmg './app/backend.ai-desktop-$(os)-$(arch)/Backend.AI Desktop.app' ./app/backend.ai-desktop-$(arch)-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
 ifeq ($(site),main)
 	@mv ./app/backend.ai-desktop-$(arch)-$(BUILD_DATE).dmg ./app/backend.ai-desktop-$(BUILD_VERSION)-$(os)-$(arch).dmg
 else

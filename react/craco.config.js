@@ -92,6 +92,7 @@ module.exports = {
             ...webpackConfig.resolve.fallback,
             buffer: require.resolve('buffer'),
             stream: require.resolve('stream-browserify'),
+            child_process: false
           },
         },
         ignoreWarnings: [
