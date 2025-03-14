@@ -11,7 +11,7 @@ import {
   ConnectedKernelListQuery,
   ConnectedKernelListQuery$data,
 } from './__generated__/ConnectedKernelListQuery.graphql';
-import { Button, Tag, Tooltip, Typography } from 'antd';
+import { Button, Tag, theme, Tooltip, Typography } from 'antd';
 import { ColumnType } from 'antd/lib/table';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
@@ -62,6 +62,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
   const { t } = useTranslation();
   const currentProject = useCurrentProjectValue();
   const [kernelIdForLogModal, setKernelIdForLogModal] = useState<string>();
+  const { token } = theme.useToken();
 
   // get the project id of the session for <= v24.12.0.
   const { session_for_project_id } =
@@ -140,7 +141,12 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
               onClick={() => {
                 setKernelIdForLogModal(row_id);
               }}
-              style={{ width: 22 }}
+              style={{
+                width: 'auto',
+                height: 'auto',
+                marginInlineStart: token.marginXXS,
+                border: 'none',
+              }}
             />
           </Tooltip>
         </>
@@ -183,11 +189,14 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
       onCell: () => ({
         style: { maxWidth: 250 },
       }),
-      render: (id) => (
-        <Typography.Text copyable ellipsis>
-          {id}
-        </Typography.Text>
-      ),
+      render: (id) =>
+        _.isEmpty(id) ? (
+          '-'
+        ) : (
+          <Typography.Text copyable ellipsis>
+            {id}
+          </Typography.Text>
+        ),
     },
     {
       title: t('kernel.AgentId'),
