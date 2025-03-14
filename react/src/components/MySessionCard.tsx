@@ -3,7 +3,7 @@ import BAICard, { BAICardProps } from './BAICard';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import BAIPanelItem from './BAIPanelItem';
 import { MySessionCardQuery } from './__generated__/MySessionCardQuery.graphql';
-import { Col, Row, theme } from 'antd';
+import { Col, Divider, Row, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -78,9 +78,8 @@ const MySessionCard: React.FC<MySessionCardProps> = ({ ...props }) => {
     >
       <Row gutter={[24, 16]}>
         <Col
-          span={6}
+          span={5}
           style={{
-            borderRight: `1px solid ${token.colorBorderSecondary}`,
             justifyItems: 'center',
             overflow: 'break-word',
             whiteSpace: 'nowrap',
@@ -92,9 +91,26 @@ const MySessionCard: React.FC<MySessionCardProps> = ({ ...props }) => {
           />
         </Col>
         <Col
-          span={6}
+          span={1}
           style={{
-            borderRight: `1px solid ${token.colorBorderSecondary}`,
+            justifyItems: 'center',
+            textAlign: 'center',
+            paddingTop: token.paddingSM,
+            paddingBottom: token.paddingSM,
+            paddingLeft: 0,
+            paddingRight: 0,
+          }}
+        >
+          <Divider
+            type="vertical"
+            style={{
+              height: '100%',
+            }}
+          />
+        </Col>
+        <Col
+          span={5}
+          style={{
             justifyItems: 'center',
             overflow: 'break-word',
             whiteSpace: 'nowrap',
@@ -103,10 +119,27 @@ const MySessionCard: React.FC<MySessionCardProps> = ({ ...props }) => {
           <BAIPanelItem title={t('session.Batch')} value={batch?.count || 0} />
         </Col>
         <Col
-          span={6}
+          span={1}
           style={{
             justifyItems: 'center',
-            borderRight: `1px solid ${token.colorBorderSecondary}`,
+            textAlign: 'center',
+            paddingTop: token.paddingSM,
+            paddingBottom: token.paddingSM,
+            paddingLeft: 0,
+            paddingRight: 0,
+          }}
+        >
+          <Divider
+            type="vertical"
+            style={{
+              height: '100%',
+            }}
+          />
+        </Col>
+        <Col
+          span={5}
+          style={{
+            justifyItems: 'center',
             overflow: 'break-word',
             whiteSpace: 'nowrap',
           }}
@@ -114,6 +147,24 @@ const MySessionCard: React.FC<MySessionCardProps> = ({ ...props }) => {
           <BAIPanelItem
             title={t('session.Inference')}
             value={inference?.count || 0}
+          />
+        </Col>
+        <Col
+          span={1}
+          style={{
+            justifyItems: 'center',
+            textAlign: 'center',
+            paddingTop: token.paddingSM,
+            paddingBottom: token.paddingSM,
+            paddingLeft: 0,
+            paddingRight: 0,
+          }}
+        >
+          <Divider
+            type="vertical"
+            style={{
+              height: '100%',
+            }}
           />
         </Col>
         <Col
