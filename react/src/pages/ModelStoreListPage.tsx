@@ -130,12 +130,7 @@ const ModelStoreListPage: React.FC = () => {
     return result;
   }, [model_cards?.edges]);
   return (
-    <Flex
-      direction="column"
-      align="stretch"
-      justify="center"
-      gap="lg"
-    >
+    <Flex direction="column" align="stretch" justify="center" gap="lg">
       <ImportFromHuggingFacePanel />
       <Flex
         direction="column"
@@ -245,6 +240,8 @@ const ModelStoreListPage: React.FC = () => {
           })
           .sort((a, b) => {
             const specialNames = [
+              // FIXME: NIM supported image need to be located first.
+              'Meta-Llama-3-8B-Instruct',
               'gemma-2-27b-it',
               'Llama-3.2-11B-Vision-Instruct',
               'stable-diffusion-3-medium',
