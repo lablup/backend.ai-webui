@@ -33,6 +33,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
   const { t } = useTranslation();
   const [currentUser] = useCurrentUserInfo();
   const baiClient = useSuspendedBackendaiClient();
+  const blockList = baiClient?._config?.blockList ?? null;
 
   const [value, setValue] = useControllableState(selectProps);
   const userRole = useCurrentUserRole();
@@ -77,9 +78,9 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
         email: currentUser.email,
         type:
           (userRole === 'admin' || userRole === 'superadmin') &&
-          baiClient._config.enableModelStore
-            ? ['GENERAL', 'MODEL_STORE']
-            : ['GENERAL'],
+          _.includes(blockList, 'model-store')
+            ? ['GENERAL']
+            : ['GENERAL', 'MODEL_STORE'],
       },
       {
         fetchPolicy: 'store-and-network',

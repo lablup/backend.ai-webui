@@ -80,7 +80,6 @@ globalThis.backendaiutils = new BackendAICommonUtils();
 export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({ type: Boolean }) hasLoadedStrings = false;
   @property({ type: String }) menuTitle = 'LOGIN REQUIRED';
-  @property({ type: String }) siteDescription = '';
   @property({ type: String }) user_id = 'DISCONNECTED';
   @property({ type: String }) full_name = 'DISCONNECTED';
   @property({ type: String }) domain = 'CLICK TO CONNECT';
@@ -426,12 +425,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   loadConfig(config): void {
     if (
       typeof config.general !== 'undefined' &&
-      'siteDescription' in config.general
-    ) {
-      this.siteDescription = config.general.siteDescription;
-    }
-    if (
-      typeof config.general !== 'undefined' &&
       'connectionMode' in config.general
     ) {
       this.connection_mode = config.general.connectionMode;
@@ -683,11 +676,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       if (config?.general?.apiEndpointText) {
         config.general.apiEndpointText = JSON.parse(
           `"${config.general.apiEndpointText}"`,
-        );
-      }
-      if (config?.general?.siteDescription) {
-        config.general.siteDescription = JSON.parse(
-          `"${config.general.siteDescription}"`,
         );
       }
     };
