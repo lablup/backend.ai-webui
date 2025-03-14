@@ -2,13 +2,17 @@ import {
   filterNonNullItems,
   convertBinarySizeUnit,
   localeCompare,
+  filterEmptyItem,
 } from '../helper';
-import { useUpdatableState } from '../hooks';
+import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import Flex from './Flex';
 import ResourceNumber from './ResourceNumber';
 import ResourcePresetSettingModal from './ResourcePresetSettingModal';
 import { ResourcePresetListDeleteMutation } from './__generated__/ResourcePresetListDeleteMutation.graphql';
-import { ResourcePresetListQuery } from './__generated__/ResourcePresetListQuery.graphql';
+import {
+  ResourcePresetListQuery,
+  ResourcePresetListQuery$data,
+} from './__generated__/ResourcePresetListQuery.graphql';
 import { ResourcePresetSettingModalFragment$key } from './__generated__/ResourcePresetSettingModalFragment.graphql';
 import {
   ReloadOutlined,
@@ -17,11 +21,16 @@ import {
   DeleteOutlined,
 } from '@ant-design/icons';
 import { Tooltip, Button, theme, Table, App, Typography } from 'antd';
+import { ColumnType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery, useMutation } from 'react-relay';
+
+type ResourcePresetList = NonNullable<
+  ResourcePresetListQuery$data['resource_presets']
+>[number];
 
 interface ResourcePresetListProps {}
 
@@ -37,6 +46,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
   const [editingResourcePreset, setEditingResourcePreset] =
     useState<ResourcePresetSettingModalFragment$key | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const baiClient = useSuspendedBackendaiClient();
 
   const { resource_presets } = useLazyLoadQuery<ResourcePresetListQuery>(
     graphql`
@@ -45,6 +55,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
           name
           resource_slots
           shared_memory
+          scaling_group_name @since(version: "25.4.0")
           ...ResourcePresetSettingModalFragment
         }
       }
@@ -68,6 +79,119 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
         }
       }
     `);
+
+  const columns = filterEmptyItem<ColumnType<ResourcePresetList>>([
+    {
+      title: t('resourcePreset.Name'),
+      dataIndex: 'name',
+      sorter: true,
+    },
+    {
+      title: t('resourcePreset.Resources'),
+      dataIndex: 'resource_slots',
+      render: (text) => (
+        <Flex gap="xxs">
+          {!_.isEmpty(text)
+            ? _.map(JSON.parse(text), (value, key) => (
+                <ResourceNumber key={key} type={key} value={value} />
+              ))
+            : '-'}
+        </Flex>
+      ),
+    },
+    {
+      title: t('resourcePreset.SharedMemory'),
+      dataIndex: 'shared_memory',
+      render: (text) =>
+        text ? convertBinarySizeUnit(text + '', 'g')?.number : '-',
+      sorter: true,
+    },
+    baiClient?.supports('resource-presets-per-resource-group') && {
+      title: t('general.ResourceGroup'),
+      dataIndex: 'scaling_group_name',
+      sorter: (a, b) =>
+        localeCompare(a?.scaling_group_name, b?.scaling_group_name),
+      render: (text) => text ?? '-',
+    },
+    {
+      title: t('general.Control'),
+      key: 'control',
+      fixed: 'right',
+      render: (text, record) => (
+        <Flex align="stretch">
+          <Tooltip title={t('button.Edit')}>
+            <Button
+              type="text"
+              size="large"
+              icon={<SettingOutlined />}
+              style={{
+                color: token.colorInfo,
+              }}
+              onClick={() => {
+                if (record) {
+                  setEditingResourcePreset(record);
+                }
+              }}
+            />
+          </Tooltip>
+          <Tooltip title={t('button.Delete')}>
+            <Button
+              type="text"
+              size="large"
+              icon={
+                <DeleteOutlined
+                  style={{
+                    color: token.colorError,
+                  }}
+                />
+              }
+              loading={
+                isInflightDelete &&
+                inFlightResourcePresetName ===
+                  record?.name + resourcePresetsFetchKey
+              }
+              disabled={
+                isInflightDelete &&
+                inFlightResourcePresetName !==
+                  record?.name + resourcePresetsFetchKey
+              }
+              onClick={() => {
+                modal.confirm({
+                  title: t('resourcePreset.DeleteResourcePreset'),
+                  content: (
+                    <>
+                      {t('resourcePreset.AboutToDeletePreset')}{' '}
+                      <Typography.Text strong>{record?.name}</Typography.Text>
+                    </>
+                  ),
+                  onOk: () => {
+                    setInFlightResourcePresetName(
+                      record?.name + resourcePresetsFetchKey,
+                    );
+                    commitDelete({
+                      variables: {
+                        name: record?.name ?? '',
+                      },
+                      onCompleted: () => {
+                        startRefetchTransition(() => {
+                          updateResourcePresetsFetchKey();
+                        });
+                      },
+                    });
+                  },
+                  okText: t('button.Delete'),
+                  okType: 'primary',
+                  okButtonProps: {
+                    danger: true,
+                  },
+                });
+              }}
+            />
+          </Tooltip>
+        </Flex>
+      ),
+    },
+  ]);
 
   return (
     <Flex direction="column" align="stretch">
@@ -112,111 +236,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
         pagination={false}
         sortDirections={['descend', 'ascend', 'descend']}
         showSorterTooltip={false}
-        columns={[
-          {
-            title: t('resourcePreset.Name'),
-            dataIndex: 'name',
-            sorter: (a, b) => localeCompare(a.name, b.name),
-          },
-          {
-            title: t('resourcePreset.Resources'),
-            dataIndex: 'resource_slots',
-            render: (text) => (
-              <Flex gap="xxs">
-                {!_.isEmpty(text)
-                  ? _.map(JSON.parse(text), (value, key) => (
-                      <ResourceNumber key={key} type={key} value={value} />
-                    ))
-                  : '-'}
-              </Flex>
-            ),
-          },
-          {
-            title: t('resourcePreset.SharedMemory'),
-            dataIndex: 'shared_memory',
-            render: (text) =>
-              text ? convertBinarySizeUnit(text + '', 'g')?.number : '-',
-            sorter: (a, b) => a.shared_memory - b.shared_memory,
-          },
-          {
-            title: t('general.Control'),
-            key: 'control',
-            fixed: 'right',
-            render: (text, record) => (
-              <Flex align="stretch">
-                <Tooltip title={t('button.Edit')}>
-                  <Button
-                    type="text"
-                    size="large"
-                    icon={<SettingOutlined />}
-                    style={{
-                      color: token.colorInfo,
-                    }}
-                    onClick={() => {
-                      setEditingResourcePreset(record);
-                    }}
-                  />
-                </Tooltip>
-                <Tooltip title={t('button.Delete')}>
-                  <Button
-                    type="text"
-                    size="large"
-                    icon={
-                      <DeleteOutlined
-                        style={{
-                          color: token.colorError,
-                        }}
-                      />
-                    }
-                    loading={
-                      isInflightDelete &&
-                      inFlightResourcePresetName ===
-                        record?.name + resourcePresetsFetchKey
-                    }
-                    disabled={
-                      isInflightDelete &&
-                      inFlightResourcePresetName !==
-                        record?.name + resourcePresetsFetchKey
-                    }
-                    onClick={() => {
-                      modal.confirm({
-                        title: t('resourcePreset.DeleteResourcePreset'),
-                        content: (
-                          <>
-                            {t('resourcePreset.AboutToDeletePreset')}{' '}
-                            <Typography.Text strong>
-                              {record?.name}
-                            </Typography.Text>
-                          </>
-                        ),
-                        onOk: () => {
-                          setInFlightResourcePresetName(
-                            record?.name + resourcePresetsFetchKey,
-                          );
-                          commitDelete({
-                            variables: {
-                              name: record?.name ?? '',
-                            },
-                            onCompleted: () => {
-                              startRefetchTransition(() => {
-                                updateResourcePresetsFetchKey();
-                              });
-                            },
-                          });
-                        },
-                        okText: t('button.Delete'),
-                        okType: 'primary',
-                        okButtonProps: {
-                          danger: true,
-                        },
-                      });
-                    }}
-                  />
-                </Tooltip>
-              </Flex>
-            ),
-          },
-        ]}
+        columns={columns}
       />
       <Suspense fallback={null}>
         <ResourcePresetSettingModal
