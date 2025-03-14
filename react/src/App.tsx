@@ -69,6 +69,7 @@ const UserCredentialsPage = React.lazy(
 
 const AgentSummaryPage = React.lazy(() => import('./pages/AgentSummaryPage'));
 const MaintenancePage = React.lazy(() => import('./pages/MaintenancePage'));
+const StatisticsPage = React.lazy(() => import('./pages/StatisticsPage'));
 const SessionDetailAndContainerLogOpenerLegacy = React.lazy(
   () => import('./components/SessionDetailAndContainerLogOpenerLegacy'),
 );
@@ -402,6 +403,22 @@ const router = createBrowserRouter([
       {
         path: '/statistics',
         handle: { labelKey: 'webui.menu.Statistics' },
+        Component: () => {
+          useSuspendedBackendaiClient();
+          return (
+            <BAIErrorBoundary>
+              <Suspense
+                fallback={
+                  <Flex direction="column" style={{ maxWidth: 700 }}>
+                    <Skeleton active />
+                  </Flex>
+                }
+              >
+                <StatisticsPage />
+              </Suspense>
+            </BAIErrorBoundary>
+          );
+        },
       },
       {
         path: '/environment',

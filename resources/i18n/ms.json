@@ -1573,11 +1573,10 @@
     "IOReadDesc": "Jumlah data ini dibaca daripada sesi pengiraan. \n(Jumlah data yang dibaca daripada peranti yang dipasang secara luaran seperti folder data tidak disertakan.)",
     "IOWriteDesc": "Jumlah penulisan data daripada sesi pengiraan. \n(Jumlah penulisan data daripada peranti yang dipasang secara luaran seperti folder data tidak disertakan.)",
     "MemoryDesc": "Jumlah memori yang diperuntukkan kepada sesi pengiraan.",
-    "SelectPeriod": "Pilih Tempoh",
+    "SelectPeriod": "Tempoh",
     "SessionsDesc": "Bilangan sesi pengiraan yang dibuat.",
     "UsageHistory": "Sejarah Penggunaan",
-    "UsageHistoryDesc": "Pada tab Sejarah Penggunaan, anda boleh menyemak statistik mudah yang berkaitan dengan penggunaan sesi pengiraan melalui graf. \nAnda boleh menyemak statistik sejarah penggunaan untuk sehari atau seminggu dengan memilih tempoh penggunaan daripada menu tempoh pilihan di sebelah kiri atas. \nItem yang dipaparkan adalah seperti berikut.",
-    "UsageHistoryNote": "Sejarah penggunaan yang ditunjukkan di sini adalah berdasarkan sesi pengiraan yang ditamatkan. \nSelain itu, sejarah penggunaan seminggu mungkin tidak ditunjukkan untuk pengguna yang akaunnya dibuat tidak lebih daripada seminggu."
+    "UsageHistoryNote": "Sejarah penggunaan yang ditunjukkan di sini adalah berdasarkan sesi pengiraan yang ditamatkan."
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "Menukar dasar sumber boleh menjejaskan semua projek yang menggunakan dasar sumber projek itu, jadi gunakannya dengan berhati-hati.",

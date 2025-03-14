@@ -1575,11 +1575,10 @@
     "IOReadDesc": "Lượng dữ liệu này được đọc từ phiên điện toán. \n(Không bao gồm lượng dữ liệu được đọc từ các thiết bị gắn bên ngoài như thư mục dữ liệu.)",
     "IOWriteDesc": "Lượng dữ liệu được ghi từ phiên điện toán. \n(Không bao gồm lượng dữ liệu ghi từ các thiết bị gắn bên ngoài như thư mục dữ liệu.)",
     "MemoryDesc": "Dung lượng bộ nhớ được phân bổ cho các phiên điện toán.",
-    "SelectPeriod": "Chọn khoảng thời gian",
+    "SelectPeriod": "Giai đoạn",
     "SessionsDesc": "Số lượng phiên điện toán được tạo.",
     "UsageHistory": "Lịch sử sử dụng",
-    "UsageHistoryDesc": "Trên tab Lịch sử sử dụng, bạn có thể kiểm tra số liệu thống kê đơn giản liên quan đến việc sử dụng các phiên điện toán thông qua biểu đồ. \nBạn có thể kiểm tra số liệu thống kê lịch sử sử dụng trong một ngày hoặc một tuần bằng cách chọn khoảng thời gian sử dụng từ menu chọn khoảng thời gian ở phía trên bên trái. \nCác mục được hiển thị như sau.",
-    "UsageHistoryNote": "Lịch sử sử dụng hiển thị ở đây dựa trên các phiên điện toán đã chấm dứt. \nNgoài ra, lịch sử sử dụng một tuần có thể không được hiển thị đối với người dùng có tài khoản được tạo không quá một tuần."
+    "UsageHistoryNote": "Lịch sử sử dụng được hiển thị ở đây dựa trên các phiên tính toán chấm dứt."
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "Việc thay đổi chính sách tài nguyên có thể ảnh hưởng đến tất cả các dự án sử dụng chính sách tài nguyên dự án đó, vì vậy hãy cẩn thận khi sử dụng chính sách này.",

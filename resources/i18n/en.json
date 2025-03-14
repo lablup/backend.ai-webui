@@ -1582,11 +1582,10 @@
     "IOReadDesc": "This amount of the data read from the compute session. (The amount of data read from externally mounted devices such as data folders is not included.)",
     "IOWriteDesc": "The amount of the data write from the compute session. (The amount of data write from externally mounted devices such as data folders is not included.)",
     "MemoryDesc": "The amount of memory allocated to the compute sessions.",
-    "SelectPeriod": "Select Period",
+    "SelectPeriod": "Period",
     "SessionsDesc": "The number of compute sessions created.",
     "UsageHistory": "Usage History",
-    "UsageHistoryDesc": "On the Usage History tab, you can check simple statistics related to the use of compute sessions via a graph. You can check the usage history statistics for a day or a week by selecting the usage period from the select period menu on the upper left. Displayed items are as follows.",
-    "UsageHistoryNote": "The usage history shown here are based on terminated compute sessions. Also, one week usage history may not be shown for the users whose account is created no longer than a week."
+    "UsageHistoryNote": "The usage history shown here are based on terminated compute sessions."
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "Changing a resource policy can affect all projects that use that project resource policy, so use it with care.",

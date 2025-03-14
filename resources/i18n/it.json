@@ -1572,11 +1572,10 @@
     "IOReadDesc": "La quantità di dati letti dalla sessione di calcolo. (La quantità di dati letti da dispositivi montati esternamente, come le cartelle dati, non è inclusa).",
     "IOWriteDesc": "La quantità di dati scritti dalla sessione di calcolo. (La quantità di dati scritti da dispositivi montati esternamente, come le cartelle dati, non è inclusa).",
     "MemoryDesc": "La quantità di memoria allocata alle sessioni di calcolo.",
-    "SelectPeriod": "Seleziona periodo",
+    "SelectPeriod": "Periodo",
     "SessionsDesc": "Il numero di sessioni di calcolo create.",
     "UsageHistory": "Storia dell'uso",
-    "UsageHistoryDesc": "Nella scheda Cronologia d'uso è possibile controllare semplici statistiche relative all'uso delle sessioni di calcolo tramite un grafico. È possibile controllare le statistiche della cronologia di utilizzo per un giorno o una settimana selezionando il periodo di utilizzo dal menu Seleziona periodo in alto a sinistra. Le voci visualizzate sono le seguenti.",
-    "UsageHistoryNote": "La cronologia di utilizzo qui riportata si basa sulle sessioni di calcolo terminate. Inoltre, la cronologia di utilizzo di una settimana potrebbe non essere mostrata per gli utenti il cui account è stato creato da non più di una settimana."
+    "UsageHistoryNote": "La cronologia dell'utilizzo qui mostrata si basa su sessioni di calcolo terminate."
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "La modifica di un criterio di risorse può influire su tutti i progetti che utilizzano quel criterio di risorse del progetto, quindi va usata con cautela.",

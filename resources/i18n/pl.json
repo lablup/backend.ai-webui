@@ -1575,11 +1575,10 @@
     "IOReadDesc": "Ta ilość danych odczytanych z sesji obliczeniowej. (Ilość danych odczytanych z urządzeń zamontowanych zewnętrznie, takich jak foldery danych, nie jest uwzględniana).",
     "IOWriteDesc": "Ilość danych zapisanych z sesji obliczeniowej. (Ilość zapisu danych z urządzeń zamontowanych zewnętrznie, takich jak foldery danych, nie jest uwzględniana).",
     "MemoryDesc": "Ilość pamięci przydzielonej sesjom obliczeniowym.",
-    "SelectPeriod": "Wybierz okres",
+    "SelectPeriod": "Okres",
     "SessionsDesc": "Liczba utworzonych sesji obliczeniowych.",
     "UsageHistory": "Historia użytkowania",
-    "UsageHistoryDesc": "Na karcie Historia użycia można sprawdzić proste statystyki związane z korzystaniem z sesji obliczeniowych za pomocą wykresu. Statystyki historii użytkowania można sprawdzić dla dnia lub tygodnia, wybierając okres użytkowania z menu wyboru okresu w lewym górnym rogu. Wyświetlane elementy są następujące.",
-    "UsageHistoryNote": "Pokazana tutaj historia użycia jest oparta na zakończonych sesjach obliczeniowych. Ponadto tygodniowa historia użycia może nie być wyświetlana dla użytkowników, których konto zostało utworzone nie dłużej niż tydzień."
+    "UsageHistoryNote": "Pokazana tutaj historia użytkowania oparta jest na zakończonych sesjach obliczeniowych."
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "Zmiana polityki zasobów może mieć wpływ na wszystkie projekty korzystające z tej polityki zasobów projektu, więc należy jej używać ostrożnie.",

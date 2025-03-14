@@ -1574,11 +1574,10 @@
     "IOReadDesc": "Jumlah data yang dibaca dari sesi komputasi. (Jumlah data yang dibaca dari perangkat yang dipasang secara eksternal seperti folder data tidak disertakan).",
     "IOWriteDesc": "Jumlah penulisan data dari sesi komputasi. (Jumlah penulisan data dari perangkat yang dipasang secara eksternal seperti folder data tidak disertakan).",
     "MemoryDesc": "Jumlah memori yang dialokasikan untuk sesi komputasi.",
-    "SelectPeriod": "Pilih Periode",
+    "SelectPeriod": "Periode",
     "SessionsDesc": "Jumlah sesi komputasi yang dibuat.",
     "UsageHistory": "Riwayat Penggunaan",
-    "UsageHistoryDesc": "Pada tab Riwayat Penggunaan, Anda dapat memeriksa statistik sederhana yang terkait dengan penggunaan sesi komputasi melalui grafik. Anda dapat memeriksa statistik riwayat penggunaan untuk satu hari atau satu minggu dengan memilih periode penggunaan dari menu pilih periode di kiri atas. Item yang ditampilkan adalah sebagai berikut.",
-    "UsageHistoryNote": "Riwayat penggunaan yang ditampilkan di sini didasarkan pada sesi komputasi yang dihentikan. Selain itu, riwayat penggunaan selama satu minggu mungkin tidak ditampilkan untuk pengguna yang akunnya dibuat tidak lebih dari satu minggu."
+    "UsageHistoryNote": "Riwayat penggunaan yang ditampilkan di sini didasarkan pada sesi komputasi yang diakhiri."
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "Mengubah kebijakan sumber daya dapat memengaruhi semua proyek yang menggunakan kebijakan sumber daya proyek tersebut, jadi gunakanlah dengan hati-hati.",

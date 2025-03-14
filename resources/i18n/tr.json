@@ -1574,11 +1574,10 @@
     "IOReadDesc": "Bu miktar, hesaplama oturumundan okunan veri miktarıdır. (Veri klasörleri gibi harici olarak bağlanan aygıtlardan okunan veri miktarı dahil değildir).",
     "IOWriteDesc": "Hesaplama oturumundan yazılan veri miktarı. (Veri klasörleri gibi harici olarak bağlanan aygıtlardan yazılan veri miktarı dahil değildir).",
     "MemoryDesc": "Hesaplama oturumlarına tahsis edilen bellek miktarı.",
-    "SelectPeriod": "Dönem Seç",
+    "SelectPeriod": "Dönem",
     "SessionsDesc": "Oluşturulan hesaplama oturumlarının sayısı.",
     "UsageHistory": "Kullanım Geçmişi",
-    "UsageHistoryDesc": "Kullanım Geçmişi sekmesinde, hesaplama oturumlarının kullanımıyla ilgili basit istatistikleri bir grafik aracılığıyla kontrol edebilirsiniz. Sol üstteki dönem seç menüsünden kullanım dönemini seçerek bir gün veya bir hafta için kullanım geçmişi istatistiklerini kontrol edebilirsiniz. Görüntülenen öğeler aşağıdaki gibidir.",
-    "UsageHistoryNote": "Burada gösterilen kullanım geçmişi sonlandırılmış hesaplama oturumlarına dayanmaktadır. Ayrıca, hesabı bir haftadan daha uzun süre oluşturulmayan kullanıcılar için bir haftalık kullanım geçmişi gösterilmeyebilir."
+    "UsageHistoryNote": "Burada gösterilen kullanım geçmişi, sonlandırılmış hesaplama oturumlarına dayanmaktadır."
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "Bir kaynak ilkesinin değiştirilmesi, o proje kaynak ilkesini kullanan tüm projeleri etkileyebilir, bu nedenle dikkatli kullanın.",

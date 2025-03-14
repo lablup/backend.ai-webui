@@ -1573,11 +1573,10 @@
     "IOReadDesc": "Tämä laskenta-istunnosta luetun datan määrä. (Ulkoisesti asennetuista laitteista, kuten tietokansioista, luetun datan määrää ei lasketa mukaan.)",
     "IOWriteDesc": "Laskenta-istunnosta kirjoitetun datan määrä. (Ulkoisesti asennetuista laitteista, kuten tietokansioista, kirjoitetun datan määrää ei oteta huomioon.)",
     "MemoryDesc": "Laskenta-istunnoille varatun muistin määrä.",
-    "SelectPeriod": "Valitse ajanjakso",
+    "SelectPeriod": "Ajanjakso",
     "SessionsDesc": "Luotujen laskenta-istuntojen määrä.",
     "UsageHistory": "Käyttöhistoria",
-    "UsageHistoryDesc": "Käyttöhistoria-välilehdeltä voit tarkistaa yksinkertaiset tilastotiedot laskenta-istuntojen käytöstä graafin avulla. Voit tarkistaa käyttöhistoriatilastot päivän tai viikon ajalta valitsemalla käyttöjakson vasemmassa yläkulmassa olevasta Valitse ajanjakso -valikosta. Näytettävät kohteet ovat seuraavat.",
-    "UsageHistoryNote": "Tässä esitetty käyttöhistoria perustuu päättyneisiin laskenta-istuntoihin. Myöskään viikon käyttöhistoriaa ei välttämättä näytetä käyttäjille, joiden tili on luotu enintään viikon ajan."
+    "UsageHistoryNote": "Tässä esitetty käyttöhistoria perustuu lopetettuihin laskentaistuntoihin."
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "Resurssikäytännön muuttaminen voi vaikuttaa kaikkiin projekteihin, jotka käyttävät kyseistä projektin resurssikäytäntöä, joten käytä sitä varoen.",

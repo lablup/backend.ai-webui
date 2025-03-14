@@ -1575,11 +1575,10 @@
     "IOReadDesc": "Dies ist die Menge der von der Computersitzung gelesenen Daten. (Die Datenmenge, die von extern angeschlossenen Geräten wie z. B. Datenordnern gelesen wird, ist nicht enthalten).",
     "IOWriteDesc": "Die Menge der von der Computersitzung geschriebenen Daten. (Die Datenmenge, die von extern angeschlossenen Geräten wie Datenordnern geschrieben wird, ist nicht enthalten).",
     "MemoryDesc": "Die Menge an Speicher, die den Rechensitzungen zugewiesen wurde.",
-    "SelectPeriod": "Zeitraum auswählen",
+    "SelectPeriod": "Zeitraum",
     "SessionsDesc": "Die Anzahl der erstellten Rechensitzungen.",
     "UsageHistory": "Geschichte der Verwendung",
-    "UsageHistoryDesc": "Auf der Registerkarte Nutzungsverlauf können Sie einfache Statistiken über die Nutzung von Rechensitzungen anhand eines Diagramms überprüfen. Sie können die Nutzungsstatistiken für einen Tag oder eine Woche prüfen, indem Sie den Nutzungszeitraum aus dem Menü \"Zeitraum auswählen\" oben links auswählen. Es werden folgende Punkte angezeigt.",
-    "UsageHistoryNote": "Der hier gezeigte Nutzungsverlauf basiert auf beendeten Rechensitzungen. Für Benutzer, deren Konto nicht länger als eine Woche angelegt ist, wird der Nutzungsverlauf einer Woche möglicherweise nicht angezeigt."
+    "UsageHistoryNote": "Die hier gezeigte Nutzungsgeschichte basiert auf beendeten Berechnungssitzungen."
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "Die Änderung einer Ressourcenrichtlinie kann sich auf alle Projekte auswirken, die diese Projektressourcenrichtlinie verwenden, daher ist sie mit Vorsicht zu genießen.",

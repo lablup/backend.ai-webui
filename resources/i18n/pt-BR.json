@@ -1575,11 +1575,10 @@
     "IOReadDesc": "Esta quantidade de dados lidos da sessão de computação. (A quantidade de dados lidos de dispositivos montados externamente, como pastas de dados, não está incluída).",
     "IOWriteDesc": "A quantidade de dados gravados a partir da sessão de computação. (A quantidade de gravação de dados de dispositivos montados externamente, como pastas de dados, não está incluída).",
     "MemoryDesc": "A quantidade de memória atribuída às sessões de computação.",
-    "SelectPeriod": "Selecione o período",
+    "SelectPeriod": "Período",
     "SessionsDesc": "O número de sessões de computação criadas.",
     "UsageHistory": "Histórico de utilização",
-    "UsageHistoryDesc": "No separador Histórico de utilização, pode verificar estatísticas simples relacionadas com a utilização de sessões de computação através de um gráfico. Pode verificar as estatísticas do histórico de utilização para um dia ou uma semana, seleccionando o período de utilização no menu de seleção de período no canto superior esquerdo. Os itens exibidos são os seguintes.",
-    "UsageHistoryNote": "O histórico de utilização aqui apresentado baseia-se em sessões de computação terminadas. Além disso, o histórico de utilização de uma semana pode não ser apresentado para os utilizadores cuja conta é criada há menos de uma semana."
+    "UsageHistoryNote": "O histórico de uso mostrado aqui é baseado em sessões de computação encerradas."
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "A alteração de uma política de recursos pode afetar todos os projectos que utilizam essa política de recursos do projeto, pelo que deve ser utilizada com cuidado.",
