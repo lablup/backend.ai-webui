@@ -582,6 +582,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           }
           toggleCreateModal();
         }}
+        usageMode={queryParams.mode === 'model' ? 'model' : undefined}
       />
       <DeleteVFolderModal
         vfolderFrgmts={selectedFolderList}
