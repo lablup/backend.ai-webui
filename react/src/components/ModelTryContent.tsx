@@ -507,40 +507,37 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
                 }),
                 onChange: {
                   pending: 'Model service is starting...',
-                  resolved: 'Model service is now ready!',
-                  rejected:
-                    'Model service failed to start. Please check the service status.',
+                  resolved: (_data, _notification) => {
+                    return {
+                      duration: 0,
+                      open: true,
+                      key: result?.endpoint_id,
+                      backgroundTask: {
+                        status: 'resolved',
+                        percent: 100,
+                      },
+                      message: 'Model service is successfully started.',
+                      to: `/chat?endpointId=${result?.endpoint_id}&modelId=${modelId}`, // PATH to playground page
+                      toText: 'Play your model now!',
+                    };
+                  },
+                  rejected: (_data, _notification) => {
+                    return {
+                      duration: 0,
+                      key: result?.endpoint_id,
+                      backgroundTask: {
+                        status: 'rejected',
+                        percent: 99,
+                      },
+                      message:
+                        'Model service failed to start. Please check the service status.',
+                      to: `/serving/${result?.endpoint_id}`,
+                      toText: 'Go to service detail page',
+                    };
+                  },
                 },
                 status: 'pending',
                 percent: 0,
-                // FIXME: somewhat it doesn't work properly not called.
-                onResolve: () => {
-                  upsertNotification({
-                    duration: 0,
-                    open: true,
-                    key: result?.endpoint_id,
-                    backgroundTask: {
-                      status: 'resolved',
-                      percent: 100,
-                    },
-                    message: '',
-                    to: `/playground?endpointId=${result?.endpoint_id}&modelId=${modelId}`, // PATH to playground page
-                    toText: 'Play your model now!',
-                  });
-                },
-                onFailed: () => {
-                  upsertNotification({
-                    duration: 0,
-                    key: result?.endpoint_id,
-                    backgroundTask: {
-                      status: 'rejected',
-                      percent: 99,
-                    },
-                    message: '',
-                    to: `/serving/${result?.endpoint_id}`,
-                    toText: 'Go to service detail page',
-                  });
-                },
               },
             });
           },
