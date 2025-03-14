@@ -28,7 +28,7 @@ import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery, useMutation } from 'react-relay';
 
-type ResourcePresetList = NonNullable<
+type ResourcePreset = NonNullable<
   ResourcePresetListQuery$data['resource_presets']
 >[number];
 
@@ -80,7 +80,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
       }
     `);
 
-  const columns = filterEmptyItem<ColumnType<ResourcePresetList>>([
+  const columns = filterEmptyItem<ColumnType<ResourcePreset>>([
     {
       title: t('resourcePreset.Name'),
       dataIndex: 'name',
