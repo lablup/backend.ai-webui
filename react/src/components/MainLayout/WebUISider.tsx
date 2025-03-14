@@ -117,11 +117,17 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       group: 'none',
     },
     {
-      label: <WebUILink to="/summary">{t('webui.menu.Summary')}</WebUILink>,
+      label: <WebUILink to="/dashboard">{t('webui.menu.Dashboard')}</WebUILink>,
       icon: <DashboardOutlined style={{ color: token.colorPrimary }} />,
-      key: 'summary',
+      key: 'dashboard',
       group: 'none',
     },
+    // {
+    //   label: <WebUILink to="/summary">{t('webui.menu.Summary')}</WebUILink>,
+    //   icon: <DashboardOutlined style={{ color: token.colorPrimary }} />,
+    //   key: 'summary',
+    //   group: 'none',
+    // },
     {
       label: (
         <WebUILink to={experimentalNeoSessionList ? '/session' : '/job'}>
