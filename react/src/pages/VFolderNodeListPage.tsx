@@ -146,6 +146,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
       offset: baiPaginationOption.offset,
       first: baiPaginationOption.first ?? 20,
       filter: mergeFilterValues([
+        'status != "DELETE_COMPLETE"',
         statusFilter,
         queryParams.filter,
         usageModeFilter,
@@ -210,7 +211,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             project_id: $projectId
             first: 0
             offset: 0
-            filter: "status in [\"DELETE_PENDING\", \"DELETE_ONGOING\",\"DELETE_COMPLETE\", \"DELETE_ERROR\"]",
+            filter: "status in [\"DELETE_PENDING\", \"DELETE_ONGOING\", \"DELETE_ERROR\"]",
             permission: $permission
           ) {
             count
