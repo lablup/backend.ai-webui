@@ -759,6 +759,9 @@ class Client {
     if (this.isManagerVersionCompatibleWith(['25.3.0', '24.09.8'])) {
       this._features['vfolder-mounts'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('25.4.0')) {
+      this._features['resource-presets-per-resource-group'] = true;
+    }
   }
 
   /**

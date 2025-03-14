@@ -1,7 +1,10 @@
 import { convertBinarySizeUnit } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import DynamicUnitInputNumber from './DynamicUnitInputNumber';
+import ResourceGroupSelect from './ResourceGroupSelect';
 import {
   CreateResourcePresetInput,
   ResourcePresetSettingModalCreateMutation,
@@ -34,6 +37,8 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
   const { t } = useTranslation();
   const { message } = App.useApp();
   const formRef = useRef<FormInstance>(null);
+  const baiClient = useSuspendedBackendaiClient();
+  const currentProject = useCurrentProjectValue();
 
   const [resourceSlots] = useResourceSlots();
   const { mergedResourceSlots } = useResourceSlotsDetails();
@@ -45,6 +50,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
         name
         resource_slots
         shared_memory
+        scaling_group_name @since(version: "25.4.0")
       }
     `,
     resourcePresetFrgmt,
@@ -113,6 +119,9 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
             ? convertBinarySizeUnit(values?.shared_memory, 'b', 0)?.numberFixed
             : null,
         };
+        if (baiClient?.supports('resource-presets-per-resource-group')) {
+          props.scaling_group_name = values?.scaling_group_name || null;
+        }
         if (_.isEmpty(resourcePreset)) {
           commitCreateResourcePreset({
             variables: {
@@ -221,7 +230,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
         initialValues={
           resourcePreset
             ? {
-                name: resourcePreset.name,
+                ...resourcePreset,
                 resource_slots:
                   _.mapValues(
                     JSON.parse(resourcePreset?.resource_slots || '{}'),
@@ -266,6 +275,18 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
         >
           <Input disabled={!!resourcePreset} />
         </Form.Item>
+        {baiClient?.supports('resource-presets-per-resource-group') && (
+          <Form.Item
+            label={t('general.ResourceGroup')}
+            name="scaling_group_name"
+          >
+            <ResourceGroupSelect
+              projectName={currentProject.name}
+              allowClear
+              popupMatchSelectWidth={false}
+            />
+          </Form.Item>
+        )}
         <Form.Item label={t('resourcePreset.ResourcePreset')}>
           <Row gutter={16}>
             {_.map(

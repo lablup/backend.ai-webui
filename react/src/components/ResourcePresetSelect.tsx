@@ -2,6 +2,7 @@ import { localeCompare } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
 import useControllableState from '../hooks/useControllableState';
+import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
 import Flex from './Flex';
 import ResourceNumber from './ResourceNumber';
 import {
@@ -37,11 +38,13 @@ export interface ResourcePresetSelectProps
   allocatablePresetNames?: string[];
   showMinimumRequired?: boolean;
   showCustom?: boolean;
+  perResourceGroup?: boolean;
 }
 const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   allocatablePresetNames,
   showCustom,
   showMinimumRequired,
+  perResourceGroup,
   ...selectProps
 }) => {
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
@@ -61,6 +64,8 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
       updateFetchKeyThrottled();
     });
   };
+  const currentResourceGroupByProject = useCurrentResourceGroupValue();
+
   const { resource_presets } = useLazyLoadQuery<ResourcePresetSelectQuery>(
     graphql`
       query ResourcePresetSelectQuery {
@@ -68,6 +73,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
           name
           resource_slots
           shared_memory
+          scaling_group_name @since(version: "25.4.0")
         }
       }
     `,
@@ -77,6 +83,15 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
       fetchPolicy: fetchKey === 'first' ? 'store-and-network' : 'network-only',
     },
   );
+
+  const resourcePresets = perResourceGroup
+    ? _.filter(
+        resource_presets,
+        (preset) =>
+          preset?.scaling_group_name === currentResourceGroupByProject ||
+          preset?.scaling_group_name === null,
+      )
+    : resource_presets;
 
   return (
     <Select
@@ -121,7 +136,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
           // value: 'preset1',
           label: 'Preset',
           // @ts-ignore
-          options: _.map(resource_presets, (preset, index) => {
+          options: _.map(resourcePresets, (preset, index) => {
             const slotsInfo: {
               [key in ResourceSlotName]: string;
             } = JSON.parse(preset?.resource_slots || '{}');
