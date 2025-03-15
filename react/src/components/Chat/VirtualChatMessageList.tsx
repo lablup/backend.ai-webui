@@ -59,7 +59,7 @@ const VirtualChatMessageList: React.FC<VirtualizedListProps> = ({
               }
               enableExtraHover={m.role === 'user'}
               extra={
-                m.role !== 'user' ? (
+                m.role !== 'user' && m.content ? (
                   <Compact>
                     <CopyButton
                       type="text"
