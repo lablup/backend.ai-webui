@@ -1,130 +1,102 @@
 import BAICard from '../components/BAICard';
-import EndpointLLMChatCard from '../components/Chat/EndpointLLMChatCard';
-import Flex from '../components/Flex';
-import { ChatPageQuery } from './__generated__/ChatPageQuery.graphql';
-import { PlusOutlined } from '@ant-design/icons';
-import { useDynamicList } from 'ahooks';
-import { Button, Card, Skeleton, Switch, Typography } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
-import _ from 'lodash';
-import React, { Suspense, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
-import { StringParam, useQueryParam } from 'use-query-params';
+import { Conversation } from '../components/Chat/Conversation';
+import { ChatContext, ChatProvider, ConversationType } from './ChatProvider';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { StringParam, useQueryParams } from 'use-query-params';
 
-interface ChatPageProps {}
+const ChatPageStyle = {
+  header: {
+    padding: '24px 24px 0 24px',
+  },
+  body: {
+    overflow: 'hidden',
+    paddingTop: 0,
+  },
+};
 
-const ChatPage: React.FC<ChatPageProps> = ({ ...props }) => {
-  const { t } = useTranslation();
-  // Set the initial list to have two items
-  const { list, remove, getKey, push } = useDynamicList(['0']);
+type ChatPageProps = {};
 
-  const [isSynchronous, setSynchronous] = useState(false);
+const ChatInnerPage: React.FC<ChatPageProps> = ({ ...props }) => {
+  const { conversations, setConversations } = useContext(ChatContext);
 
-  const [endpointId] = useQueryParam('endpointId', StringParam);
-  const [modelId] = useQueryParam('modelId', StringParam);
-  const [agentId] = useQueryParam('agentId', StringParam);
-  const isEmptyEndpointId = !endpointId;
+  const [{ endpointId, modelId, agentId }] = useQueryParams({
+    endpointId: StringParam,
+    agentId: StringParam,
+    modelId: StringParam,
+  });
 
-  const { endpoint, endpoint_list } = useLazyLoadQuery<ChatPageQuery>(
-    graphql`
-      query ChatPageQuery($endpointId: UUID!, $isEmptyEndpointId: Boolean!) {
-        endpoint(endpoint_id: $endpointId)
-          @skipOnClient(if: $isEmptyEndpointId)
-          @catch {
-          ...EndpointLLMChatCard_endpoint
-        }
-        endpoint_list(limit: 1, offset: 0) {
-          items {
-            ...EndpointLLMChatCard_endpoint
-          }
-        }
+  const [activeTabKey, setActiveTabKey] = useState<string>('0');
+
+  const handleTabChange = (key: string) => {
+    setActiveTabKey(key);
+  };
+
+  const handleTabEdit = useCallback(
+    (_: any, action: 'add' | 'remove') => {
+      if (action === 'add') {
+        const key = String(conversations.length);
+        conversations.push({
+          key,
+          label: `Chat ${key}`,
+          chats: [],
+        });
+        setConversations([...conversations]);
+        setActiveTabKey(key);
       }
-    `,
-    {
-      endpointId: endpointId || '',
-      isEmptyEndpointId: isEmptyEndpointId,
     },
+    [conversations, setConversations],
   );
+
+  useEffect(() => {
+    // @FIXME: stop creating if enpointId matched with last conversation
+    if (endpointId || conversations.length === 0) {
+      const key = String(conversations.length);
+      conversations.push({
+        key,
+        label: `Chat ${key}`,
+        chats: [],
+      });
+
+      setConversations([...conversations]);
+      setActiveTabKey(key);
+    }
+  }, [conversations, endpointId, setConversations]);
+
+  const tabList = conversations.map((conversation: ConversationType) => {
+    return {
+      key: conversation.key,
+      label: conversation.label,
+    };
+  });
+
   return (
     <BAICard
-      title={t('webui.menu.Chat')}
-      styles={{
-        body: {
-          overflow: 'hidden',
-        },
+      styles={ChatPageStyle}
+      tabList={tabList}
+      tabProps={{
+        size: 'large',
+        type: 'editable-card',
+        onEdit: handleTabEdit,
       }}
-      extra={
-        <Flex direction="row" gap={'xs'} wrap="wrap" style={{ flexShrink: 1 }}>
-          <Flex gap={'xs'}>
-            <Typography.Text type="secondary">
-              {t('chatui.SyncInput')}
-            </Typography.Text>
-            <Switch
-              value={isSynchronous}
-              onClick={(v) => {
-                setSynchronous(v);
-              }}
-            />
-            <Button
-              onClick={() => {
-                push(new Date().toString());
-              }}
-              icon={<PlusOutlined />}
-            />
-          </Flex>
-        </Flex>
-      }
+      activeTabKey={activeTabKey}
+      onTabChange={handleTabChange}
     >
-      <Flex direction="column" align="stretch" gap={'xs'}>
-        <Flex
-          gap={'xs'}
-          direction="row"
-          style={{
-            overflow: 'auto',
-            height: 'calc(100vh - 240px)',
-          }}
-          align="stretch"
-        >
-          {_.map(list, (__, index) => (
-            <Suspense
-              fallback={
-                <Card
-                  bordered
-                  style={{
-                    width: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                  }}
-                >
-                  <Skeleton active />
-                </Card>
-              }
-              key={getKey(index)}
-            >
-              <EndpointLLMChatCard
-                defaultModelId={
-                  index === 0 && endpoint.ok && modelId ? modelId : undefined
-                }
-                defaultEndpoint={
-                  index === 0 && endpoint.ok
-                    ? endpoint.value || undefined
-                    : endpoint_list?.items?.[0] || undefined
-                }
-                defaultAgentId={agentId || undefined}
-                key={getKey(index)}
-                style={{ flex: 1 }}
-                onRequestClose={() => {
-                  remove(index);
-                }}
-                closable={list.length > 1}
-                isSynchronous={isSynchronous}
-              />
-            </Suspense>
-          ))}
-        </Flex>
-      </Flex>
+      <Conversation
+        conversation={conversations[Number(activeTabKey)]}
+        conversationId={activeTabKey}
+        endpointId={endpointId}
+        modelId={modelId}
+        agentId={agentId}
+      />
     </BAICard>
+  );
+};
+
+const ChatPage: React.FC<ChatPageProps> = () => {
+  return (
+    <ChatProvider>
+      <ChatInnerPage />
+    </ChatProvider>
   );
 };
 
