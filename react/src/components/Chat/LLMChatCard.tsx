@@ -78,7 +78,7 @@ export interface LLMChatCardProps extends CardProps {
   onAttachmentChange?: (attachment: AttachmentsProps['items']) => void;
   onSubmitChange?: () => void;
   showCompareMenuItem?: boolean;
-  modelToken?: string;
+  hideModelSelect?: boolean;
 }
 
 const LLMChatCard: React.FC<LLMChatCardProps> = ({
@@ -101,7 +101,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
   onAttachmentChange,
   onSubmitChange,
   showCompareMenuItem,
-  modelToken,
+  hideModelSelect,
   ...cardProps
 }) => {
   const webuiNavigate = useWebUINavigate();
@@ -151,7 +151,8 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
           model: wrapLanguageModel({
             model: provider(
               allowCustomModel
-                ? customModelFormRef.current?.getFieldValue('modelId')
+                ? (customModelFormRef.current?.getFieldValue('modelId') ??
+                    modelId)
                 : modelId,
             ),
             middleware: extractReasoningMiddleware({ tagName: 'think' }),
@@ -287,12 +288,14 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
             popupMatchSelectWidth={false}
           ></Select> */}
             {leftExtra}
-            <ModelSelect
-              models={models}
-              value={modelId}
-              onChange={setModelId}
-              allowCustomModel={allowCustomModel}
-            />
+            {!hideModelSelect && (
+              <ModelSelect
+                models={models}
+                value={modelId}
+                onChange={setModelId}
+                allowCustomModel={allowCustomModel}
+              />
+            )}
             <Dropdown menu={{ items }} trigger={['click']}>
               <Button
                 type="link"
@@ -454,7 +457,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
           key={baseURL}
           initialValues={{
             baseURL: baseURL,
-            token: modelToken,
+            token: apiKey,
           }}
         >
           {alert ? (
@@ -490,7 +493,6 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
           </Form.Item>
         </Form>
       </Flex>
-      {/* <ChatMessageList messages={messages}  /> */}
       {!_.isEmpty(error?.message) ? (
         <Alert
           message={error?.message}

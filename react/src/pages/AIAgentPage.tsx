@@ -1,10 +1,14 @@
+import AgentEditorModal from '../components/AgentEditorModal';
 import Flex from '../components/Flex';
 import { FluentEmojiIcon } from '../components/FluentEmojiIcon';
 import { useWebUINavigate } from '../hooks';
 import { AIAgent, useAIAgent } from '../hooks/useAIAgent';
-import { Card, List, Skeleton, Tag, theme } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { Button, Card, List, Skeleton, Tag, theme, Typography } from 'antd';
 import { createStyles } from 'antd-style';
-import React, { Suspense } from 'react';
+import { MoreVerticalIcon } from 'lucide-react';
+import React, { Suspense, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const useStyles = createStyles(({ css, token }) => {
   return {
@@ -14,6 +18,11 @@ const useStyles = createStyles(({ css, token }) => {
       }
       .ant-tag {
         margin-inline-end: 0;
+      }
+
+      .ant-card:hover .more-button {
+        /* display: block; */
+        opacity: 1 !important;
       }
     `,
     meta: css`
@@ -31,9 +40,16 @@ const useStyles = createStyles(({ css, token }) => {
 
 const { Meta } = Card;
 
-const AIAgentCard = ({ agent }: { agent: AIAgent }) => {
+const AIAgentCard = ({
+  agent,
+  onClickMore,
+}: {
+  agent: AIAgent;
+  onClickMore?: (agent: AIAgent) => void;
+}) => {
   const tags = agent.meta.tags || [];
   const { styles } = useStyles();
+  const { token } = theme.useToken();
   return (
     <Card hoverable>
       <Flex
@@ -43,6 +59,27 @@ const AIAgentCard = ({ agent }: { agent: AIAgent }) => {
         justify="between"
         style={{ minHeight: '200px' }}
       >
+        {onClickMore && (
+          <Button
+            type="text"
+            className="more-button"
+            icon={<MoreVerticalIcon />}
+            size="small"
+            style={{
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              zIndex: 1,
+              marginRight: token.marginXS * -1,
+              color: token.colorTextSecondary,
+              opacity: 0,
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onClickMore(agent);
+            }}
+          />
+        )}
         <Meta
           title={agent.meta.title}
           avatar={
@@ -77,9 +114,11 @@ const AIAgentCard = ({ agent }: { agent: AIAgent }) => {
 const AIAgentCardList = ({
   agents,
   onClickAgent,
+  onClickMore,
 }: {
   agents: AIAgent[];
   onClickAgent: (agent: AIAgent) => void;
+  onClickMore?: (agent: AIAgent) => void;
 }) => {
   const { styles } = useStyles();
 
@@ -93,7 +132,7 @@ const AIAgentCardList = ({
           style={{ height: '100%' }}
           onClick={() => onClickAgent(agent)}
         >
-          <AIAgentCard agent={agent} />
+          <AIAgentCard agent={agent} onClickMore={onClickMore} />
         </List.Item>
       )}
     ></List>
@@ -104,18 +143,45 @@ const AIAgentPage: React.FC = () => {
   const { token } = theme.useToken();
   const { agents } = useAIAgent();
   const webuiNavigate = useWebUINavigate();
-
+  const { t } = useTranslation();
+  const [isCreatingAgent, setIsCreatingAgent] = useState(false);
+  const [selectedAgent, setSelectedAgent] = useState<AIAgent>();
   return (
     <Suspense
       fallback={<Skeleton active style={{ padding: token.paddingMD }} />}
     >
-      <Flex direction="column" align="stretch" justify="center" gap="lg">
+      <Flex direction="column" align="stretch" justify="center" gap="sm">
+        <Flex direction="row" justify="between" align="center">
+          <Typography.Title level={4} style={{ margin: 0 }}>
+            {t('webui.menu.AIAgents')}
+          </Typography.Title>
+          <Button
+            icon={<PlusOutlined />}
+            onClick={() => {
+              setIsCreatingAgent(true);
+            }}
+          >
+            {t('button.Add')}
+          </Button>
+        </Flex>
         <AIAgentCardList
           agents={agents}
           onClickAgent={(agent) => {
             webuiNavigate(
               `/chat?endpointId=${agent.endpoint_id}&agentId=${agent.id}`,
             );
+          }}
+          onClickMore={(agent) => {
+            setSelectedAgent(agent);
+            setIsCreatingAgent(true);
+          }}
+        />
+        <AgentEditorModal
+          open={isCreatingAgent || selectedAgent !== undefined}
+          agent={selectedAgent}
+          onRequestClose={() => {
+            setIsCreatingAgent(false);
+            setSelectedAgent(undefined);
           }}
         />
       </Flex>
