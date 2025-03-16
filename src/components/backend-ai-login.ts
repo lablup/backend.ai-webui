@@ -146,6 +146,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Boolean }) enableInteractiveLoginAccountSwitch = true;
   @property({ type: String }) eduAppNamePrefix;
   @property({ type: String }) pluginPages;
+  @property({ type: String }) ngcAPIKey;
   @property({ type: Array }) blockList = [] as string[];
   @property({ type: Array }) inactiveList = [] as string[];
   private _enableContainerCommit = false;
@@ -1064,6 +1065,13 @@ export default class BackendAILogin extends BackendAIPage {
         value: environmentsConfig?.showNonInstalledImages,
       } as ConfigValueObject,
     ) as boolean;
+
+    // Set NGC API Key
+    this.ngcAPIKey = this._getConfigValueByExists(environmentsConfig, {
+      valueType: 'string',
+      defaultValue: '',
+      value: environmentsConfig?.ngcAPIKey,
+    } as ConfigValueObject) as string;
   }
 
   /**
@@ -1872,6 +1880,7 @@ export default class BackendAILogin extends BackendAIPage {
           this.allow_image_list;
         globalThis.backendaiclient._config.showNonInstalledImages =
           this.showNonInstalledImages;
+        globalThis.backendaiclient._config.ngcAPIKey = this.ngcAPIKey;
         globalThis.backendaiclient._config.maskUserInfo = this.maskUserInfo;
         globalThis.backendaiclient._config.singleSignOnVendors =
           this.singleSignOnVendors;
