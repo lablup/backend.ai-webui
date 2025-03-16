@@ -6,7 +6,7 @@
     "@ai-sdk/openai": "^1.1.5",
     "@ai-sdk/react": "^1.1.7",
     "@ant-design/charts": "^2.2.6",
-    "@ant-design/cssinjs": "^1.22.0",
+    "@ant-design/cssinjs": "^1.23.0",
     "@ant-design/icons": "^5.5.1",
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
     "@ant-design/x": "^1.0.4",
