@@ -302,8 +302,7 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
               // FIXME: hardcoded adding NGC_API_KEY
               {
                 variable: 'NGC_API_KEY',
-                value:
-                  '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',
+                value: baiClient._config.ngcAPIKey || 'NGC_API_KEY_NOT_SET',
               },
             ]
           : []),
