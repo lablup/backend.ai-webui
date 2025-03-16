@@ -500,6 +500,7 @@ type BackendAIConfig = {
   enableExtendLoginSession: boolean;
   showNonInstalledImages: boolean;
   enableInteractiveLoginAccountSwitch: boolean;
+  ngcAPIKey: string;
   debug: boolean;
   [key: string]: any;
 };
