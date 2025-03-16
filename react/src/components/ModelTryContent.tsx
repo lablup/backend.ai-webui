@@ -303,7 +303,7 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
               {
                 variable: 'NGC_API_KEY',
                 value:
-                  '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',
+                  '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',
               },
             ]
           : []),
