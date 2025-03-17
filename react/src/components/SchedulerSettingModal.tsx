@@ -6,7 +6,7 @@ import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import { Button, Form, InputNumber, Select, Typography } from 'antd';
 import { FormInstance } from 'antd/lib';
 import _ from 'lodash';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface SchedulerSettingModalProps extends BAIModalProps {
@@ -59,11 +59,7 @@ const SchedulerSettingModal = ({
                 .validateFields()
                 .then((values) => {
                   if (values.schedulerType) {
-                    if (
-                      values.num_retries_to_skip_checkbox ||
-                      values.num_retries_to_skip === null ||
-                      values.num_retries_to_skip === undefined
-                    ) {
+                    if (values.num_retries_to_skip_checkbox) {
                       onDelete(values.schedulerType, 'num_retries_to_skip');
                     } else {
                       onSave(values.schedulerType, {
@@ -98,7 +94,6 @@ const SchedulerSettingModal = ({
             onChange={async (value) => {
               const newOptions: SchedulerOptions =
                 await onSchedulerTypeChange(value);
-              console.log(newOptions);
               formRef.current?.setFieldsValue(newOptions);
             }}
             options={[
@@ -126,6 +121,12 @@ const SchedulerSettingModal = ({
             required
             tooltip={t('settings.ConfigPerJobSchdulerDescription')}
             name="num_retries_to_skip"
+            rules={[
+              {
+                required: true,
+                message: t('data.explorer.ValueRequired'),
+              },
+            ]}
           >
             <InputNumber min={0} max={1000} style={{ width: '100%' }} />
           </FormItemWithCheckbox>

@@ -11,11 +11,11 @@ const FormItemWithCheckbox = ({
   name,
   label,
   tooltip,
+  required,
   ...formItemProps
 }: FormItemWithCheckboxProps) => {
   const [isDisabled, setIsDisabled] = useState(false);
   const { t } = useTranslation();
-  const form = Form.useFormInstance();
 
   const childrenWithProps = isValidElement(children)
     ? cloneElement(children, {
@@ -34,7 +34,7 @@ const FormItemWithCheckbox = ({
       : null;
 
   return (
-    <Form.Item label={label} tooltip={tooltip}>
+    <Form.Item label={label} tooltip={tooltip} required={required}>
       <Flex gap="sm" align="center">
         <Form.Item
           name={name}
@@ -57,11 +57,6 @@ const FormItemWithCheckbox = ({
           <Checkbox
             onChange={(e) => {
               setIsDisabled(e.target.checked);
-              if (e.target.checked) {
-                form.setFieldValue(name, null);
-              } else {
-                form.resetFields([name]);
-              }
             }}
             checked={isDisabled}
           >
