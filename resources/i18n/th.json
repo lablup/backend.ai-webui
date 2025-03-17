@@ -1478,6 +1478,7 @@
     "SessionCreationRetriesDescription": "หากการสร้างเซสชันล้มเหลว การสร้างเซสชันจะถูกลองใหม่ตามจำนวนครั้งที่ระบุไว้ที่นี่ หากไม่สามารถสร้างเซสชันได้ภายในจำนวนครั้งที่ลอง คำขอจะถูกละเว้นและ Backend.AI จะดำเนินการคำขอถัดไป",
     "ShowOnlyChanged": "แสดงเฉพาะรายการที่เปลี่ยนแปลง",
     "TPU": "TPU",
+    "Unset": "ทำให้ไม่ได้",
     "UseCLIonGUI": "ใช้ Backend.AI CLI บน GUI",
     "UseGUIonWeb": "ใช้ Backend.AI GUI บนเว็บ",
     "WarboySupport": "Warboy",

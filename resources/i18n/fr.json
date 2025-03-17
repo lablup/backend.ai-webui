@@ -1497,6 +1497,7 @@
     "SessionCreationRetriesDescription": "Si la création de session échoue, la création de session est retentée pour la valeur spécifiée ici. Si la session ne peut pas être créée pendant les essais, la demande sera ignorée et Backend.AI traitera la demande suivante.",
     "ShowOnlyChanged": "Afficher uniquement les modifications",
     "TPU": "TPU",
+    "Unset": "Décollé",
     "UseCLIonGUI": "Utiliser Backend.AI CLI sur l'interface graphique",
     "UseGUIonWeb": "Utiliser l'interface graphique Backend.AI sur le Web",
     "WarboySupport": "Warboy",

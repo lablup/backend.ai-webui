@@ -1497,6 +1497,7 @@
     "SessionCreationRetriesDescription": "Jeśli tworzenie sesji nie powiedzie się, tworzenie sesji jest ponawiane dla wartości określonej w tym miejscu. Jeśli sesji nie można utworzyć w ramach prób, żądanie zostanie zignorowane, a Backend.AI przetworzy następne żądanie.",
     "ShowOnlyChanged": "Wyświetl tylko zmiany",
     "TPU": "TPU",
+    "Unset": "Nieoprawny",
     "UseCLIonGUI": "Użyj Backend.AI CLI na GUI",
     "UseGUIonWeb": "Użyj GUI Backend.AI w sieci",
     "WarboySupport": "Warboy",

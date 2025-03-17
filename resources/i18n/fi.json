@@ -1495,6 +1495,7 @@
     "SessionCreationRetriesDescription": "Jos istunnon luominen epäonnistuu, istunnon luomista yritetään uudelleen tässä määritetyllä arvolla. Jos istuntoa ei voida luoda kokeilujen kuluessa, pyyntö jätetään huomiotta ja Backend.AI käsittelee seuraavan pyynnön.",
     "ShowOnlyChanged": "Vain näyttö muuttuu",
     "TPU": "TPU",
+    "Unset": "Irrottaa",
     "UseCLIonGUI": "Backend.AI CLI:n käyttö GUI:ssa",
     "UseGUIonWeb": "Backend.AI GUI:n käyttö Webissä",
     "WarboySupport": "Warboy",

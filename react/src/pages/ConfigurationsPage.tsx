@@ -12,21 +12,19 @@ const ConfigurationsPage = () => {
   const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
 
   return (
-    <>
-      <Card
-        activeTabKey="configurations"
-        onTabChange={(key) => setCurTabKey(key as TabKey)}
-        tabList={[
-          {
-            key: 'configurations',
-            tab: t('webui.menu.Configurations'),
-          },
-        ]}
-        styles={{ body: { padding: 0 } }}
-      >
-        {curTabKey === 'configurations' && <ConfigurationsSettingList />}
-      </Card>
-    </>
+    <Card
+      activeTabKey="configurations"
+      onTabChange={(key) => setCurTabKey(key as TabKey)}
+      tabList={[
+        {
+          key: 'configurations',
+          tab: t('webui.menu.Configurations'),
+        },
+      ]}
+      styles={{ body: { padding: 0 } }}
+    >
+      {curTabKey === 'configurations' && <ConfigurationsSettingList />}
+    </Card>
   );
 };
 
