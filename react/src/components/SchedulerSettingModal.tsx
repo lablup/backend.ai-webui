@@ -122,8 +122,19 @@ const SchedulerSettingModal = ({
             name="num_retries_to_skip"
             rules={[
               {
-                required: true,
-                message: t('data.explorer.ValueRequired'),
+                validator(_, value) {
+                  const isUnset = formRef.current?.getFieldValue(
+                    'num_retries_to_skip_checkbox',
+                  );
+
+                  if (isUnset) {
+                    return Promise.resolve();
+                  }
+                  if (value === null || value === undefined) {
+                    return Promise.reject(t('data.explorer.ValueRequired'));
+                  }
+                  return Promise.resolve();
+                },
               },
             ]}
           >
