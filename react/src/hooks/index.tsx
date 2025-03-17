@@ -481,7 +481,6 @@ type BackendAIConfig = {
   singleSignOnVendors: string[];
   ssoRealmName: string;
   enableModelStore: boolean;
-  enableLLMPlayground: boolean;
   enableImportFromHuggingFace: boolean;
   enableContainerCommit: boolean;
   appDownloadUrl: string;
