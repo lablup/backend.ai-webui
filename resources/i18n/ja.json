@@ -1491,6 +1491,7 @@
     "SessionCreationRetriesDescription": "セッションの作成が失敗した場合、ここで指定された値に対してセッションの作成が再試行されます。トライアル内でセッションを作成できない場合、リクエストは無視され、Backend.AIが次のリクエストを処理します。",
     "ShowOnlyChanged": "表示のみの変更",
     "TPU": "TPU",
+    "Unset": "解き放つ",
     "UseCLIonGUI": "GUIでBackend.AICLIを使用する",
     "UseGUIonWeb": "WebでBackend.AIGUIを使用する",
     "WarboySupport": "Warboyサポート",

@@ -1491,6 +1491,7 @@
     "SessionCreationRetriesDescription": "如果會話創建失敗，將針對此處指定的值重試會話創建。如果無法在試驗中創建會話，則該請求將被忽略，Backend.AI 將處理下一個請求。",
     "ShowOnlyChanged": "僅顯示更改",
     "TPU": "熱塑性聚氨酯",
+    "Unset": "不設置",
     "UseCLIonGUI": "在 GUI 上使用 Backend.AI CLI",
     "UseGUIonWeb": "在 Web 上使用 Backend.AI GUI",
     "WarboySupport": "战郎",

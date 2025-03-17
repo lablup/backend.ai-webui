@@ -1491,6 +1491,7 @@
     "SessionCreationRetriesDescription": "Oturum oluşturma başarısız olursa, oturum oluşturma burada belirtilen değer için yeniden denenir. Denemeler içinde oturum oluşturulamıyorsa, istek yok sayılacak ve Backend.AI bir sonraki isteği işleme koyacaktır.",
     "ShowOnlyChanged": "Yalnızca Değişiklikleri Görüntüle",
     "TPU": "TPU",
+    "Unset": "Yok etmek",
     "UseCLIonGUI": "GUI'de Backend.AI CLI'yi kullanın",
     "UseGUIonWeb": "Web'de Backend.AI GUI'yi kullanın",
     "WarboySupport": "Savaş Çocuğu",

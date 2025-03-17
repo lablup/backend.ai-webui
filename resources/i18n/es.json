@@ -1492,6 +1492,7 @@
     "SessionCreationRetriesDescription": "Si la creación de la sesión falla, se vuelve a intentar la creación de la sesión para el valor especificado aquí. Si la sesión no se puede crear dentro de los ensayos, la solicitud será ignorada y Backend.AI procesará la siguiente solicitud.",
     "ShowOnlyChanged": "Mostrar solo cambios",
     "TPU": "TPU",
+    "Unset": "Desacio",
     "UseCLIonGUI": "Utilizar Backend.AI CLI en GUI",
     "UseGUIonWeb": "Utilizar la GUI Backend.AI en la Web",
     "WarboySupport": "Warboy",

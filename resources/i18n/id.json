@@ -1491,6 +1491,7 @@
     "SessionCreationRetriesDescription": "Jika pembuatan sesi gagal, pembuatan sesi dicoba ulang untuk nilai yang ditentukan di sini. Jika sesi tidak dapat dibuat dalam uji coba, permintaan akan diabaikan dan Backend.AI akan memproses permintaan berikutnya.",
     "ShowOnlyChanged": "Hanya Tampilan yang Berubah",
     "TPU": "TPU",
+    "Unset": "Tidak ada",
     "UseCLIonGUI": "Gunakan Backend.AI CLI di GUI",
     "UseGUIonWeb": "Gunakan GUI Backend.AI di Web",
     "WarboySupport": "Warboy",

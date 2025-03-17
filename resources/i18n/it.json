@@ -1489,6 +1489,7 @@
     "SessionCreationRetriesDescription": "Se la creazione della sessione non riesce, la creazione della sessione viene ritentata per il valore specificato qui. Se la sessione non può essere creata durante le prove, la richiesta verrà ignorata e Backend.AI elaborerà la richiesta successiva.",
     "ShowOnlyChanged": "Visualizza solo modifiche",
     "TPU": "TPU",
+    "Unset": "Dist",
     "UseCLIonGUI": "Usa la CLI di Backend.AI sulla GUI",
     "UseGUIonWeb": "Usa la GUI di Backend.AI sul Web",
     "WarboySupport": "Ragazzo di guerra",

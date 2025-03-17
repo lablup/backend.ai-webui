@@ -1492,6 +1492,7 @@
     "SessionCreationRetriesDescription": "Wenn die Sitzungserstellung fehlschlägt, wird die Sitzungserstellung für den hier angegebenen Wert wiederholt. Wenn die Sitzung innerhalb der Testversionen nicht erstellt werden kann, wird die Anfrage ignoriert und Backend.AI verarbeitet die nächste Anfrage.",
     "ShowOnlyChanged": "Nur Änderungen anzeigen",
     "TPU": "TPU",
+    "Unset": "Ungehindert",
     "UseCLIonGUI": "Verwenden Sie die Backend.AI-CLI auf der GUI",
     "UseGUIonWeb": "Verwenden Sie die Backend.AI-GUI im Web",
     "WarboySupport": "Warboy",

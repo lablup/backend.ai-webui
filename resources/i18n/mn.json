@@ -1490,6 +1490,7 @@
     "SessionCreationRetriesDescription": "Хэрэв session үүсгэх амжилтгүй болбол Session үүсгэхийг энд заасан утгаар дахин оролдоно. Хэрэв туршилтын хугацаанд Session үүсгэх боломжгүй бол хүсэлтийг үл тоомсорлож, Backend.AI дараагийн хүсэлтийг шийдвэрлэнэ.",
     "ShowOnlyChanged": "Зөвхөн өөрчлөлтүүдийг харуулах",
     "TPU": "TPU",
+    "Unset": "Тодорхой болоогүй",
     "UseCLIonGUI": "GUI дээр Backend.AI CLI ашиглана уу",
     "UseGUIonWeb": "Вэб дээр Backend.AI GUI ашиглана уу",
     "WarboySupport": "Дайчин",

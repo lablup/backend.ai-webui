@@ -1499,6 +1499,7 @@
     "SessionCreationRetriesDescription": "If the session creation fails, the session creation is retried for the value specified in here. If the session cannot be created within the trials, the request will be ignored and Backend.AI will process the next request.",
     "ShowOnlyChanged": "Display Only Changes",
     "TPU": "TPU",
+    "Unset": "Unset",
     "UseCLIonGUI": "Use Backend.AI CLI on GUI",
     "UseGUIonWeb": "Use Backend.AI GUI on Web",
     "WarboySupport": "Warboy",
