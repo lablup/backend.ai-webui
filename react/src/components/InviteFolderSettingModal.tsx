@@ -242,16 +242,6 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
               rowKey={(record) => record.shared_to.uuid}
               columns={[
                 {
-                  title: '#',
-                  fixed: 'left',
-                  render: (text, record, index) => {
-                    ++index;
-                    return index;
-                  },
-                  showSorterTooltip: false,
-                  rowScope: 'row',
-                },
-                {
                   title: t('data.explorer.InviteeEmail'),
                   dataIndex: ['shared_to', 'email'],
                   sorter: (a, b) =>
