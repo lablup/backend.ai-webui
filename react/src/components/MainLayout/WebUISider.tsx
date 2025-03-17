@@ -109,6 +109,9 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const [experimentalAIAgents] = useBAISettingUserState(
     'experimental_ai_agents',
   );
+  const [experimentalDashboard] = useBAISettingUserState(
+    'experimental_dashboard',
+  );
   const generalMenu = filterEmptyItem<WebUIGeneralMenuItemType>([
     {
       label: <WebUILink to="/start">{t('webui.menu.Start')}</WebUILink>,
@@ -116,18 +119,18 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       key: 'start',
       group: 'none',
     },
-    {
+    experimentalDashboard && {
       label: <WebUILink to="/dashboard">{t('webui.menu.Dashboard')}</WebUILink>,
       icon: <DashboardOutlined style={{ color: token.colorPrimary }} />,
       key: 'dashboard',
       group: 'none',
     },
-    // {
-    //   label: <WebUILink to="/summary">{t('webui.menu.Summary')}</WebUILink>,
-    //   icon: <DashboardOutlined style={{ color: token.colorPrimary }} />,
-    //   key: 'summary',
-    //   group: 'none',
-    // },
+    !experimentalDashboard && {
+      label: <WebUILink to="/summary">{t('webui.menu.Summary')}</WebUILink>,
+      icon: <DashboardOutlined style={{ color: token.colorPrimary }} />,
+      key: 'summary',
+      group: 'none',
+    },
     {
       label: (
         <WebUILink to={experimentalNeoSessionList ? '/session' : '/job'}>
