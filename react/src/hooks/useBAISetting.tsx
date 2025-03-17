@@ -21,6 +21,7 @@ interface UserSettings {
   start_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   experimental_ai_agents?: boolean;
   experimental_neo_data_page?: boolean;
+  experimental_dashboard?: boolean;
   [key: `hiddenColumnKeys.${string}`]: Array<string>;
 }
 
