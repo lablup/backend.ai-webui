@@ -103,9 +103,6 @@ module.exports = {
           {
             module: /@antv\//,
             message: /Failed to parse source map/,
-//             WARNING in ../node_modules/.pnpm/@antv+util@3.3.10/node_modules/@antv/util/esm/lodash/for-in.js
-// Module Warning (from ../node_modules/.pnpm/source-map-loader@3.0.2_webpack@5.97.1_esbuild@0.19.12_webpack-cli@5.1.4_webpack@5.93.0__/node_modules/source-map-loader/dist/cjs.js):
-// Failed to parse source map from '/Users/codejong/Workspace/lablup/webui/node_modules/.pnpm/@antv+util@3.3.10/node_modules/@antv/util/esm/lodash/src/lodash/for-in.ts' file: Error: ENOENT: no such file or directory, open '/Users/codejong/Workspace/lablup/webui/node_modules/.pnpm/@antv+util@3.3.10/node_modules/@antv/util/esm/lodash/src/lodash/for-in.ts'
           }
         ],
       };
