@@ -2,8 +2,8 @@ import BAIModal, { BAIModalProps } from './BAIModal';
 import { NetworkOptions } from './ConfigurationsSettingList';
 import Flex from './Flex';
 import FormItemWithCheckbox from './FormItemWithCheckbox';
-import { InfoCircleOutlined } from '@ant-design/icons';
-import { Button, Form, InputNumber, theme, Tooltip } from 'antd';
+import QuestionIconWithTooltip from './QuestionIconWithTooltip';
+import { Button, Form, InputNumber } from 'antd';
 import { FormInstance } from 'antd/lib';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -23,22 +23,17 @@ const OverlayNetworkSettingModal = ({
   onDelete,
 }: OverlayNetworkSettingsModalProps) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const formRef = useRef<FormInstance>(null);
 
   return (
     <BAIModal
       open={open}
       title={
-        <Flex gap="xs">
+        <Flex gap="xxs">
           {t('settings.OverlayNetworkSettings')}
-          <Tooltip title={t('settings.OverlayNetworkSettingsDescription')}>
-            <InfoCircleOutlined
-              style={{
-                color: token.colorTextTertiary,
-              }}
-            />
-          </Tooltip>
+          <QuestionIconWithTooltip
+            title={t('settings.OverlayNetworkSettingsDescription')}
+          />
         </Flex>
       }
       onCancel={onRequestClose}

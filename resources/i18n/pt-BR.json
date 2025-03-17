@@ -1497,6 +1497,7 @@
     "SessionCreationRetriesDescription": "Se a criação da sessão falhar, a criação da sessão será repetida para o valor especificado aqui. Se a sessão não puder ser criada durante as avaliações, a solicitação será ignorada e o Backend.AI processará a próxima solicitação.",
     "ShowOnlyChanged": "Exibir apenas alterações",
     "TPU": "TPU",
+    "Unset": "Desmembrado",
     "UseCLIonGUI": "Use Backend.AI CLI na GUI",
     "UseGUIonWeb": "Use Backend.AI GUI na Web",
     "WarboySupport": "Rapaz de guerra",

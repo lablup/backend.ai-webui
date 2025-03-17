@@ -2,8 +2,8 @@ import BAIModal, { BAIModalProps } from './BAIModal';
 import { SchedulerOptions, SchedulerType } from './ConfigurationsSettingList';
 import Flex from './Flex';
 import FormItemWithCheckbox from './FormItemWithCheckbox';
-import { InfoCircleOutlined } from '@ant-design/icons';
-import { Button, Form, InputNumber, Select, Tooltip, Typography } from 'antd';
+import QuestionIconWithTooltip from './QuestionIconWithTooltip';
+import { Button, Form, InputNumber, Select, Typography } from 'antd';
 import { FormInstance } from 'antd/lib';
 import _ from 'lodash';
 import { useRef } from 'react';
@@ -35,11 +35,11 @@ const SchedulerSettingModal = ({
   return (
     <BAIModal
       title={
-        <Flex align="center">
+        <Flex align="center" gap="xxs">
           {t('settings.ConfigPerJobSchduler')}
-          <Tooltip title={t('settingConfigPerJobSchdulerDescriptions.')}>
-            <Button type="link" size="large" icon={<InfoCircleOutlined />} />
-          </Tooltip>
+          <QuestionIconWithTooltip
+            title={t('settings.ConfigPerJobSchdulerDescription')}
+          />
         </Flex>
       }
       open={open}
@@ -47,29 +47,7 @@ const SchedulerSettingModal = ({
       width={'auto'}
       onCancel={onRequestClose}
       footer={[
-        <Button
-          key="schedulerCancel"
-          onClick={() => {
-            // if (
-            //   formRef.current &&
-            //   formRef.current.getFieldValue('schedulerType')
-            // ) {
-            //   onDelete(formRef.current.getFieldValue('schedulerType'));
-            //   const formValues = formRef.current.getFieldsValue();
-            //   const newValues = Object.keys(formValues).reduce(
-            //     (acc, key) => {
-            //       acc[key] = 0;
-            //       return acc;
-            //     },
-            //     {} as Record<keyof SchedulerOptions, any>,
-            //   );
-            //   formRef.current.setFieldsValue(
-            //     _.omit(newValues, 'schedulerType'),
-            //   );
-            // }
-            onRequestClose();
-          }}
-        >
+        <Button key="schedulerCancel" onClick={onRequestClose}>
           {t('button.Cancel')}
         </Button>,
         <Button
@@ -81,16 +59,17 @@ const SchedulerSettingModal = ({
                 .validateFields()
                 .then((values) => {
                   if (values.schedulerType) {
-                    Object.entries(_.omit(values, 'schedulerType')).forEach(
-                      ([key, value]) => {
-                        console.log(key, value);
-                        if (value === null || value === '' || !value) {
-                          onDelete(values.schedulerType, key);
-                        } else {
-                          onSave(values.schedulerType, { [key]: value });
-                        }
-                      },
-                    );
+                    if (
+                      values.num_retries_to_skip_checkbox ||
+                      values.num_retries_to_skip === null ||
+                      values.num_retries_to_skip === undefined
+                    ) {
+                      onDelete(values.schedulerType, 'num_retries_to_skip');
+                    } else {
+                      onSave(values.schedulerType, {
+                        num_retries_to_skip: values.num_retries_to_skip,
+                      });
+                    }
                   }
                 })
                 .catch(() => {});
@@ -119,6 +98,7 @@ const SchedulerSettingModal = ({
             onChange={async (value) => {
               const newOptions: SchedulerOptions =
                 await onSchedulerTypeChange(value);
+              console.log(newOptions);
               formRef.current?.setFieldsValue(newOptions);
             }}
             options={[
@@ -142,15 +122,9 @@ const SchedulerSettingModal = ({
             {t('settings.SchedulerOptions')}
           </Typography.Text>
           <FormItemWithCheckbox
-            label={
-              <Flex align="center">
-                {t('settings.SessionCreationRetries')}
-                <Tooltip title={t('settings.ConfigPerJobSchdulerDescription')}>
-                  <Button type="link" icon={<InfoCircleOutlined />} />
-                </Tooltip>
-              </Flex>
-            }
+            label={t('settings.SessionCreationRetries')}
             required
+            tooltip={t('settings.ConfigPerJobSchdulerDescription')}
             name="num_retries_to_skip"
           >
             <InputNumber min={0} max={1000} style={{ width: '100%' }} />

@@ -1,6 +1,7 @@
 import Flex from './Flex';
 import { Checkbox, Form, FormItemProps } from 'antd';
-import { cloneElement, isValidElement, useState } from 'react';
+import { cloneElement, isValidElement, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface FormItemWithCheckboxProps extends FormItemProps {
   children: React.ReactNode;
@@ -9,9 +10,11 @@ const FormItemWithCheckbox = ({
   children,
   name,
   label,
+  tooltip,
   ...formItemProps
 }: FormItemWithCheckboxProps) => {
   const [isDisabled, setIsDisabled] = useState(false);
+  const { t } = useTranslation();
   const form = Form.useFormInstance();
 
   const childrenWithProps = isValidElement(children)
@@ -31,7 +34,7 @@ const FormItemWithCheckbox = ({
       : null;
 
   return (
-    <Form.Item label={label}>
+    <Form.Item label={label} tooltip={tooltip}>
       <Flex gap="sm" align="center">
         <Form.Item
           name={name}
@@ -46,17 +49,25 @@ const FormItemWithCheckbox = ({
             {childrenWithNullValue}
           </Form.Item>
         )}
-        <Checkbox
-          onChange={(e) => {
-            setIsDisabled(e.target.checked);
-            if (e.target.checked) {
-              form.setFieldValue(name, null);
-            }
-          }}
-          checked={isDisabled}
+        <Form.Item
+          style={{ marginBottom: 0 }}
+          name={`${name}_checkbox`}
+          valuePropName="checked"
         >
-          지정 안함
-        </Checkbox>
+          <Checkbox
+            onChange={(e) => {
+              setIsDisabled(e.target.checked);
+              if (e.target.checked) {
+                form.setFieldValue(name, null);
+              } else {
+                form.resetFields([name]);
+              }
+            }}
+            checked={isDisabled}
+          >
+            {t('settings.Unset')}
+          </Checkbox>
+        </Form.Item>
       </Flex>
     </Form.Item>
   );

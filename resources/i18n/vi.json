@@ -1497,6 +1497,7 @@
     "SessionCreationRetriesDescription": "Nếu quá trình tạo phiên không thành công, quá trình tạo phiên sẽ được thử lại cho giá trị được chỉ định tại đây. Nếu không thể tạo phiên trong bản dùng thử, yêu cầu sẽ bị bỏ qua và Backend.AI sẽ xử lý yêu cầu tiếp theo.",
     "ShowOnlyChanged": "Chỉ hiển thị các thay đổi",
     "TPU": "TPU",
+    "Unset": "Unst",
     "UseCLIonGUI": "Sử dụng Backend.AI CLI trên GUI",
     "UseGUIonWeb": "Sử dụng Backend.AI GUI trên Web",
     "WarboySupport": "chiến binh",

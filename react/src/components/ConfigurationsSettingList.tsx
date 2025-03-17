@@ -172,8 +172,8 @@ const ConfigurationsSettingList = () => {
       });
     });
 
-  const updateSettings = async () => {
-    await Promise.all([
+  const updateSettings = () => {
+    return Promise.all([
       updatePulling(),
       updateResourceSlots(),
       updateNetwork(),
@@ -481,13 +481,15 @@ const ConfigurationsSettingList = () => {
           setScheduler(key, {
             num_retries_to_skip: value.num_retries_to_skip.toString(),
           });
+          toggleSchedulerModal();
         }}
         onSchedulerTypeChange={async (schedulerType) =>
           updateSelectedScheduler(schedulerType)
         }
-        onDelete={(schedulerType: SchedulerType, key: string) =>
-          deleteSetting(`plugins/scheduler/${schedulerType}/${key}`, true)
-        }
+        onDelete={(schedulerType: SchedulerType, key: string) => {
+          deleteSetting(`plugins/scheduler/${schedulerType}/${key}`, true);
+          toggleSchedulerModal();
+        }}
       />
     </>
   );
