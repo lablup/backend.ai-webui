@@ -3,12 +3,10 @@ import MySessionCard from '../components/MySessionCard';
 import RecentlyCreatedSessionCard from '../components/RecentlyCreatedSessionCard';
 import { filterEmptyItem } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { Card, Col, Row, theme } from 'antd';
+import { Card, Col, Row } from 'antd';
 import _ from 'lodash';
 
 const DashboardPage: React.FC = () => {
-  const { token } = theme.useToken();
-
   // to avoid flickering
   useSuspendedBackendaiClient();
 
@@ -28,11 +26,7 @@ const DashboardPage: React.FC = () => {
       columnSpan: 1,
       columnOffset: { 6: 1, 4: 1 },
       data: {
-        content: (
-          <AvailableResourcesCard
-            style={{ width: '100%', paddingBottom: token.paddingLG }}
-          />
-        ),
+        content: <AvailableResourcesCard />,
       },
     },
     {
