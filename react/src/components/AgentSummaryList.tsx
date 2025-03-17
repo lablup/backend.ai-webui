@@ -132,19 +132,6 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
 
   const columns: ColumnsType<AgentSummary> = [
     {
-      title: '#',
-      fixed: 'left',
-      render: (id, record, index) => {
-        return (
-          index +
-          1 +
-          (tablePaginationOption.current - 1) * tablePaginationOption.pageSize
-        );
-      },
-      showSorterTooltip: false,
-      rowScope: 'row',
-    },
-    {
       title: <>ID</>,
       key: 'id',
       dataIndex: 'id',
