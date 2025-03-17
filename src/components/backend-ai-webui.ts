@@ -23,8 +23,6 @@ import { BackendAIPage } from './backend-ai-page';
 import './backend-ai-project-switcher';
 import './backend-ai-resource-broker';
 import BackendAISettingsStore from './backend-ai-settings-store';
-import './backend-ai-sidepanel-notification';
-import './backend-ai-sidepanel-task';
 import './backend-ai-splash';
 import BackendAITasker from './backend-ai-tasker';
 import { BackendAIWebUIStyles } from './backend-ai-webui-styles';
