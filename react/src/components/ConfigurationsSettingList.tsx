@@ -184,6 +184,7 @@ const ConfigurationsSettingList = () => {
     const { result } = await baiClient.setting.delete(key, prefix);
     if (result === 'ok') {
       updateSettings();
+      message.success(t('notification.SuccessfullyUpdated'));
     }
   };
 
@@ -469,9 +470,11 @@ const ConfigurationsSettingList = () => {
         networkOptions={options.network}
         onSave={(value: { [key: keyof NetworkOptions]: string }) => {
           setNetwork(value);
+          toggleOverlayNetworkModal();
         }}
         onDelete={(key: string) => {
           deleteSetting(`network/overlay/${key}`);
+          toggleOverlayNetworkModal();
         }}
       />
       <SchedulerSettingModal

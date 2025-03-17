@@ -50,16 +50,12 @@ const OverlayNetworkSettingModal = ({
               formRef.current
                 .validateFields()
                 .then((values) => {
-                  Object.entries(values).forEach(([key, value]) => {
-                    if (value === null || !value || value === '') {
-                      onDelete(key);
-                    } else {
-                      onSave({ [key]: value } as {
-                        [key: keyof NetworkOptions]: string;
-                      });
-                    }
-                  });
-                  onRequestClose();
+                  const isUnset = values.mtu_checkbox;
+                  if (isUnset) {
+                    onDelete('mtu');
+                  } else {
+                    onSave({ mtu: values.mtu });
+                  }
                 })
                 .catch(() => {});
             }
@@ -77,6 +73,21 @@ const OverlayNetworkSettingModal = ({
           tooltip={t('settings.MTUDescription')}
           required
           name="mtu"
+          rules={[
+            {
+              validator(_, value) {
+                const isUnset = formRef.current?.getFieldValue('mtu_checkbox');
+
+                if (value === '' && isUnset) {
+                  return Promise.resolve();
+                }
+                if (value === '' || value === null || value === undefined) {
+                  return Promise.reject(t('data.explorer.ValueRequired'));
+                }
+                return Promise.resolve();
+              },
+            },
+          ]}
         >
           <InputNumber min={0} max={15000} style={{ width: '100%' }} />
         </FormItemWithCheckbox>
