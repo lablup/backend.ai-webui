@@ -5,8 +5,7 @@ import FormItemWithCheckbox from './FormItemWithCheckbox';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import { Button, Form, InputNumber, Select, Typography } from 'antd';
 import { FormInstance } from 'antd/lib';
-import _ from 'lodash';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface SchedulerSettingModalProps extends BAIModalProps {

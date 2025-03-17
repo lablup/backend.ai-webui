@@ -1,6 +1,6 @@
 import Flex from './Flex';
 import { Checkbox, Form, FormItemProps } from 'antd';
-import { cloneElement, isValidElement, useEffect, useState } from 'react';
+import { cloneElement, isValidElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface FormItemWithCheckboxProps extends FormItemProps {
