@@ -9,4 +9,7 @@ onlyBuiltDependencies:
   - esbuild
   - utf-8-validate
 ignoredBuiltDependencies:
-  - '@vaadin/vaadin-usage-statistics'
+  - "@vaadin/vaadin-usage-statistics"
+patchedDependencies:
+  "@cloudscape-design/board-components@3.0.60": "react/patches/@cloudscape-design__board-components@3.0.60.patch"
+  "rc-field-form@2.7.0": "react/patches/rc-field-form.patch"
