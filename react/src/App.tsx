@@ -125,7 +125,7 @@ const router = createBrowserRouter([
         path: '/chat',
         element: (
           <BAIErrorBoundary>
-            <StartPage />
+            <ChatPage />
           </BAIErrorBoundary>
         ),
         handle: { labelKey: 'webui.menu.Chat' },
@@ -517,6 +517,12 @@ const router = createBrowserRouter([
       {
         path: '/model-store',
         handle: { labelKey: 'webui.menu.ModelStore' },
+        Component: ModelStorePage,
+      },
+      // default page: modelstore
+      {
+        path: '',
+        handle: { labelKey: 'webui.menu.Start' },
         Component: ModelStorePage,
       },
     ],
