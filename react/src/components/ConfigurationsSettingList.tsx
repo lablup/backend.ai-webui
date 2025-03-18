@@ -82,6 +82,7 @@ const ConfigurationsSettingList = () => {
   const [options, setOptions] = useState<BAIConfigurationsSetting>({
     ...defaultConfigurationsSettings,
   });
+
   const baiClient = useSuspendedBackendaiClient();
   const { message } = App.useApp();
 
@@ -164,12 +165,15 @@ const ConfigurationsSettingList = () => {
 
   const updateResourceSlots = () =>
     baiClient.get_resource_slots().then((response) => {
-      const newOptions: BAIConfigurationsSetting = { ...options };
-      Object.keys(resourcesSlots).forEach((key) => {
-        if (key in response) {
-          newOptions[resourcesSlots[key]] = true;
-        }
-      });
+      setOptions((prev) => ({
+        ...prev,
+        ...Object.fromEntries(
+          Object.keys(resourcesSlots).map((key) => [
+            resourcesSlots[key],
+            key in response,
+          ]),
+        ),
+      }));
     });
 
   const updateSettings = () => {
@@ -198,14 +202,6 @@ const ConfigurationsSettingList = () => {
       title: t('settings.Image'),
       settingItems: [
         {
-          type: 'checkbox',
-          title: t('settings.RegisterNewImagesFromRepo'),
-          description: t('settings.DescRegisterNewImagesFromRepo'),
-          value: false,
-          defaultValue: false,
-          disabled: true,
-        },
-        {
           type: 'select',
           title: t('settings.ImagePullBehavior'),
           description: (
@@ -230,37 +226,8 @@ const ConfigurationsSettingList = () => {
       ],
     },
     {
-      title: t('settings.GUI'),
-      settingItems: [
-        {
-          type: 'checkbox',
-          title: t('settings.UseCLIonGUI'),
-          description: t('settings.DescUseCLIonGUI'),
-          value: false,
-          defaultValue: false,
-          disabled: true,
-        },
-        {
-          type: 'checkbox',
-          title: t('settings.UseGUIonWeb'),
-          description: t('settings.DescUseGUIonWeb'),
-          value: false,
-          defaultValue: false,
-          disabled: true,
-        },
-      ],
-    },
-    {
       title: t('settings.Scaling'),
       settingItems: [
-        {
-          type: 'checkbox',
-          title: t('settings.AllowAgentSideRegistration'),
-          description: t('settings.DescAllowAgentSideRegistration'),
-          value: true,
-          defaultValue: true,
-          disabled: true,
-        },
         {
           type: 'custom',
           title: t('settings.OverlayNetwork'),
@@ -337,7 +304,7 @@ const ConfigurationsSettingList = () => {
             </>
           ),
           value: options.cuda_fgpu,
-          defaultValue: defaultConfigurationsSettings.cuda_fgpu,
+          defaultValue: options.cuda_fgpu,
           disabled: true,
         },
         {
@@ -351,7 +318,7 @@ const ConfigurationsSettingList = () => {
             </>
           ),
           value: options.tpu,
-          defaultValue: defaultConfigurationsSettings.tpu,
+          defaultValue: options.tpu,
           disabled: true,
         },
         {
@@ -365,7 +332,7 @@ const ConfigurationsSettingList = () => {
             </>
           ),
           value: options.ipu,
-          defaultValue: defaultConfigurationsSettings.ipu,
+          defaultValue: options.ipu,
           disabled: true,
         },
         {
@@ -379,7 +346,7 @@ const ConfigurationsSettingList = () => {
             </>
           ),
           value: options.atom,
-          defaultValue: defaultConfigurationsSettings.atom,
+          defaultValue: options.atom,
           disabled: true,
         },
         {
@@ -393,7 +360,7 @@ const ConfigurationsSettingList = () => {
             </>
           ),
           value: options.atom_plus,
-          defaultValue: defaultConfigurationsSettings.atom_plus,
+          defaultValue: options.atom_plus,
           disabled: true,
         },
         {
@@ -407,7 +374,7 @@ const ConfigurationsSettingList = () => {
             </>
           ),
           value: options.gaudi2,
-          defaultValue: defaultConfigurationsSettings.gaudi2,
+          defaultValue: options.gaudi2,
           disabled: true,
         },
         {
@@ -421,7 +388,7 @@ const ConfigurationsSettingList = () => {
             </>
           ),
           value: options.warboy,
-          defaultValue: defaultConfigurationsSettings.warboy,
+          defaultValue: options.warboy,
           disabled: true,
         },
         {
@@ -435,7 +402,7 @@ const ConfigurationsSettingList = () => {
             </>
           ),
           value: options.rngd,
-          defaultValue: defaultConfigurationsSettings.rngd,
+          defaultValue: options.rngd,
           disabled: true,
         },
         {
@@ -449,7 +416,7 @@ const ConfigurationsSettingList = () => {
             </>
           ),
           value: options.hyperaccel_lpu,
-          defaultValue: defaultConfigurationsSettings.hyperaccel_lpu,
+          defaultValue: options.hyperaccel_lpu,
           disabled: true,
         },
       ],
