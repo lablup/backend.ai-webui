@@ -92,11 +92,16 @@ module.exports = {
             ...webpackConfig.resolve.fallback,
             buffer: require.resolve('buffer'),
             stream: require.resolve('stream-browserify'),
+            child_process: false
           },
         },
         ignoreWarnings: [
           {
             module: /@melloware\/react-logviewer/,
+            message: /Failed to parse source map/,
+          },
+          {
+            module: /@antv\//,
             message: /Failed to parse source map/,
           }
         ],

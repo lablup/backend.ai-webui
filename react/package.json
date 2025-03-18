@@ -1,12 +1,12 @@
 {
   "name": "backend-ai-webui-react",
-  "version": "25.3.0-alpha.0",
+  "version": "25.5.0-alpha.0",
   "private": true,
   "dependencies": {
     "@ai-sdk/openai": "^1.1.5",
     "@ai-sdk/react": "^1.1.7",
     "@ant-design/charts": "^2.2.6",
-    "@ant-design/cssinjs": "^1.22.0",
+    "@ant-design/cssinjs": "^1.23.0",
     "@ant-design/icons": "^5.5.1",
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
     "@ant-design/x": "^1.0.4",
@@ -17,22 +17,21 @@
     "@react-hook/resize-observer": "^2.0.2",
     "@storybook/test": "^8.4.5",
     "@tanstack/react-query": "^5.61.0",
-    "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.1.0",
+    "@testing-library/react": "^16.2.0",
     "@uiw/codemirror-extensions-langs": "^4.23.6",
     "@uiw/react-codemirror": "^4.23.6",
-    "ahooks": "^3.8.1",
-    "ai": "^4.1.13",
+    "ahooks": "^3.8.4",
+    "ai": "^4.1.61",
     "ansi_up": "^6.0.2",
-    "antd": "^5.23.3",
+    "antd": "^5.24.3",
     "antd-style": "^3.7.1",
     "classnames": "^2.5.1",
     "dayjs": "^1.11.13",
-    "gpt-tokenizer": "^2.8.1",
-    "graphql": "^16.9.0",
+    "gpt-tokenizer": "^2.9.0",
+    "graphql": "^16.10.0",
     "i18next": "^23.16.8",
     "i18next-http-backend": "^3.0.1",
-    "jotai": "^2.10.3",
+    "jotai": "^2.12.2",
     "jotai-effect": "^1.0.3",
     "katex": "^0.16.21",
     "lodash": "^4.17.21",
@@ -109,7 +108,8 @@
     "@storybook/react-webpack5": "^8.4.5",
     "@storybook/testing-library": "^0.2.2",
     "@tanstack/eslint-plugin-query": "^5.60.1",
-    "@testing-library/user-event": "^14.5.2",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/user-event": "^14.6.1",
     "@types/jest": "^29.5.14",
     "@types/lodash": "^4.17.13",
     "@types/node": "^20.17.6",
@@ -140,11 +140,5 @@
     "stream-browserify": "^3.0.0",
     "webpack": "^5.96.1"
   },
-  "proxy": "http://localhost:3081",
-  "pnpm": {
-    "patchedDependencies": {
-      "@cloudscape-design/board-components@3.0.60": "patches/@cloudscape-design__board-components@3.0.60.patch",
-      "rc-field-form": "patches/rc-field-form.patch"
-    }
-  }
+  "proxy": "http://localhost:3081"
 }

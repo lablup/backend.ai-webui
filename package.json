@@ -1,11 +1,10 @@
 {
   "name": "backend.ai-webui",
   "productName": "Backend.AI Desktop",
-  "version": "25.3.0-alpha.0",
+  "version": "25.5.0-alpha.0",
   "repository": "https://github.com/lablup/backend.ai-webui.git",
   "author": "Lablup Inc. <contact@lablup.com>",
   "license": "LGPL-3.0-or-later",
-  "main": "main.js",
   "scripts": {
     "lint": "eslint src -c ./.eslintrc.json --quiet --ext .js,.ts; exit 0",
     "lint-fix": "eslint src -c ./.eslintrc.json  --quiet --ext .js,.ts --fix;exit 0",
@@ -31,7 +30,7 @@
     "copyindex": "cp index.html build/rollup",
     "docs": "jsdoc -c ./jsdoc.json",
     "update": "pnpm dlx tsc",
-    "postinstall": "concurrently -c \"auto\" --names \"react-dependencies,patch-package\" \"pnpm recursive install --filter ./react\" \"patch-package\"",
+    "postinstall": "concurrently -c \"auto\" --names \"patch-package\"  \"patch-package\"",
     "patch:lit-translate": "unzip -o ./scripts/lit-translate.zip -d ./node_modules/lit-translate && cp -f ./scripts/lit-translate-index.js ./node_modules/lit-translate/index.js",
     "prepare": "husky",
     "theme-schema:update": "pnpm dlx typescript-json-schema \"./react/node_modules/antd/es/config-provider/context.d.ts\" ThemeConfig -o ./resources/antdThemeConfig.schema.json --esModuleInterop"
@@ -138,8 +137,6 @@
     "cors": "^2.8.5",
     "crypto-es": "^2.1.0",
     "electron": "^30.3.1",
-    "electron-installer-debian": "^3.2.0",
-    "electron-installer-dmg": "^4.0.0",
     "eslint": "^8.57.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^9.1.0",
@@ -168,7 +165,7 @@
     "tinyify": "^4.0.0",
     "ts-jest": "^29.2.4",
     "tslib": "^2.6.3",
-    "typescript": "^5.5.4",
+    "typescript": "~5.5.4",
     "underscore": "^1.13.7",
     "vis-util": "^5.0.7",
     "web-animations-js": "^2.3.2",
@@ -179,9 +176,6 @@
     "workbox-strategies": "^7.1.0",
     "workbox-sw": "^7.1.0",
     "ws": "^8.18.0"
-  },
-  "optionalDependencies": {
-    "macos-alias": "^0.2.11"
   },
   "overrides": {
     "eslint": "^8.57.0"
