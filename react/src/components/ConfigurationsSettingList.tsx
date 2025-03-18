@@ -269,7 +269,7 @@ const ConfigurationsSettingList = () => {
           title: t('settings.ROCMGPUSupport'),
           description: t('settings.DescRocmGPUSupport'),
           value: options.rocm_gpu,
-          defaultValue: options.rocm_gpu,
+          defaultValue: defaultConfigurationsSettings.rocm_gpu,
           disabled: true,
         },
         {
@@ -304,7 +304,7 @@ const ConfigurationsSettingList = () => {
             </>
           ),
           value: options.cuda_fgpu,
-          defaultValue: options.cuda_fgpu,
+          defaultValue: defaultConfigurationsSettings.cuda_fgpu,
           disabled: true,
         },
         {
@@ -318,7 +318,7 @@ const ConfigurationsSettingList = () => {
             </>
           ),
           value: options.tpu,
-          defaultValue: options.tpu,
+          defaultValue: defaultConfigurationsSettings.tpu,
           disabled: true,
         },
         {
@@ -332,7 +332,7 @@ const ConfigurationsSettingList = () => {
             </>
           ),
           value: options.ipu,
-          defaultValue: options.ipu,
+          defaultValue: defaultConfigurationsSettings.ipu,
           disabled: true,
         },
         {
@@ -346,7 +346,7 @@ const ConfigurationsSettingList = () => {
             </>
           ),
           value: options.atom,
-          defaultValue: options.atom,
+          defaultValue: defaultConfigurationsSettings.atom,
           disabled: true,
         },
         {
@@ -360,7 +360,7 @@ const ConfigurationsSettingList = () => {
             </>
           ),
           value: options.atom_plus,
-          defaultValue: options.atom_plus,
+          defaultValue: defaultConfigurationsSettings.atom_plus,
           disabled: true,
         },
         {
@@ -374,7 +374,7 @@ const ConfigurationsSettingList = () => {
             </>
           ),
           value: options.gaudi2,
-          defaultValue: options.gaudi2,
+          defaultValue: defaultConfigurationsSettings.gaudi2,
           disabled: true,
         },
         {
@@ -388,7 +388,7 @@ const ConfigurationsSettingList = () => {
             </>
           ),
           value: options.warboy,
-          defaultValue: options.warboy,
+          defaultValue: defaultConfigurationsSettings.warboy,
           disabled: true,
         },
         {
@@ -402,7 +402,7 @@ const ConfigurationsSettingList = () => {
             </>
           ),
           value: options.rngd,
-          defaultValue: options.rngd,
+          defaultValue: defaultConfigurationsSettings.rngd,
           disabled: true,
         },
         {
@@ -416,7 +416,7 @@ const ConfigurationsSettingList = () => {
             </>
           ),
           value: options.hyperaccel_lpu,
-          defaultValue: options.hyperaccel_lpu,
+          defaultValue: defaultConfigurationsSettings.hyperaccel_lpu,
           disabled: true,
         },
       ],
