@@ -2,6 +2,7 @@ import ActionItemContent from '../components/ActionItemContent';
 import BAICard from '../components/BAICard';
 import BAIFetchKeyButton from '../components/BAIFetchKeyButton';
 import NewFolderIcon from '../components/BAIIcons/NewFolderIcon';
+import RestoreIcon from '../components/BAIIcons/RestoreIcon';
 import TrashBinIcon from '../components/BAIIcons/TrashBinIcon';
 import BAIPropertyFilter, {
   mergeFilterValues,
@@ -13,6 +14,7 @@ import Flex from '../components/Flex';
 import FolderCreateModal from '../components/FolderCreateModal';
 import InviteFolderSettingModal from '../components/InviteFolderSettingModal';
 import QuotaPerStorageVolumePanelCard from '../components/QuotaPerStorageVolumePanelCard';
+import RestoreVFolderModal from '../components/RestoreVFolderModal';
 import StorageStatusPanelCard from '../components/StorageStatusPanelCard';
 import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
 import {
@@ -30,7 +32,16 @@ import {
   VFolderNodeListPageQuery$variables,
 } from './__generated__/VFolderNodeListPageQuery.graphql';
 import { useToggle } from 'ahooks';
-import { Badge, Button, Col, Grid, Row, theme, Typography } from 'antd';
+import {
+  Badge,
+  Button,
+  Col,
+  Grid,
+  Row,
+  theme,
+  Tooltip,
+  Typography,
+} from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, {
@@ -83,6 +94,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const [inviteFolderId, setInviteFolderId] = useState<string | null>(null);
   const [isOpenCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
   const [isOpenDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
+  const [isOpenRestoreModal, { toggle: toggleRestoreModal }] = useToggle(false);
   const {
     baiPaginationOption,
     tablePaginationOption,
@@ -180,6 +192,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 ...VFolderNodesFragment
                 ...DeleteVFolderModalFragment
                 ...EditableVFolderNameFragment
+                ...RestoreVFolderModalFragment
               }
             }
             count
@@ -455,22 +468,50 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               />
             </Flex>
             <Flex gap={'sm'}>
-              {selectedFolderList.length > 0 && (
-                <>
-                  {t('general.NSelected', {
-                    count: selectedFolderList.length,
-                  })}
-                  <Button
-                    style={{
-                      color: token.colorError,
-                    }}
-                    icon={<TrashBinIcon />}
-                    onClick={() => {
-                      toggleDeleteModal();
-                    }}
-                  />
-                </>
-              )}
+              {selectedFolderList.length > 0 &&
+                queryParams.statusCategory === 'created' && (
+                  <>
+                    {t('general.NSelected', {
+                      count: selectedFolderList.length,
+                    })}
+                    <Tooltip title={t('data.folders.MoveToTrash')}>
+                      <Button
+                        style={{
+                          color: token.colorError,
+                          borderColor: token.colorBorder,
+                        }}
+                        type="text"
+                        variant="outlined"
+                        icon={<TrashBinIcon />}
+                        onClick={() => {
+                          toggleDeleteModal();
+                        }}
+                      />
+                    </Tooltip>
+                  </>
+                )}
+              {selectedFolderList.length > 0 &&
+                queryParams.statusCategory === 'deleted' && (
+                  <>
+                    {t('general.NSelected', {
+                      count: selectedFolderList.length,
+                    })}
+                    <Tooltip title={t('data.folders.Restore')}>
+                      <Button
+                        style={{
+                          color: token.colorInfo,
+                          borderColor: token.colorBorder,
+                        }}
+                        type="text"
+                        variant="outlined"
+                        icon={<RestoreIcon />}
+                        onClick={() => {
+                          toggleRestoreModal();
+                        }}
+                      />
+                    </Tooltip>
+                  </>
+                )}
             </Flex>
           </Flex>
           <VFolderNodes
@@ -484,7 +525,9 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               preserveSelectedRowKeys: true,
               getCheckboxProps(record: VFolderNodeInList) {
                 return {
-                  disabled: isDeletedCategory(record.status),
+                  disabled:
+                    isDeletedCategory(record.status) &&
+                    record.status !== 'delete-pending',
                 };
               },
               onChange: (selectedRowKeys) => {
@@ -549,6 +592,17 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             setSelectedFolderList([]);
           }
           toggleDeleteModal();
+        }}
+      />
+      <RestoreVFolderModal
+        vfolderFrgmts={selectedFolderList}
+        open={isOpenRestoreModal}
+        onRequestClose={(success) => {
+          if (success) {
+            updateFetchKey();
+            setSelectedFolderList([]);
+          }
+          toggleRestoreModal();
         }}
       />
     </Flex>
