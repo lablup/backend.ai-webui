@@ -35,6 +35,7 @@ enableLLMPlayground = false             # Enable LLM Playground feature. (From B
 enableExtendLoginSession = false        # If true, enables login session extension UI. (From Backend.AI 24.09)
 enableImportFromHuggingFace = false     # Enable import from Hugging Face feature. (From Backend.AI 24.09)
 enableInteractiveLoginAccountSwitch = true  # If false, hide the "Sign in with a different account" button from the interactive login page.
+enableModelFolders = true               # Enable model folders feature. (From Backend.AI 23.03)
 
 [wsproxy]
 proxyURL = "[Proxy URL]"
