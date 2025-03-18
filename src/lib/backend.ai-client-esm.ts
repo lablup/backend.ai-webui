@@ -762,6 +762,9 @@ class Client {
     if (this.isManagerVersionCompatibleWith('25.4.0')) {
       this._features['resource-presets-per-resource-group'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('25.5.0')) {
+      this._features['custom-accelerator-quantum-size'] = true;
+    }
   }
 
   /**
