@@ -1,5 +1,13 @@
 import Flex from './Flex';
-import { Badge, Checkbox, Select, SelectProps, Typography, theme } from 'antd';
+import {
+  Badge,
+  Checkbox,
+  ConfigProvider,
+  Select,
+  SelectProps,
+  Typography,
+  theme,
+} from 'antd';
 import { createStyles } from 'antd-style';
 import _ from 'lodash';
 import React, { ReactElement, ReactNode } from 'react';
@@ -62,14 +70,25 @@ const SettingItem: React.FC<SettingItemProps> = ({
         </>
       )}
       {type === 'checkbox' && (
-        <Checkbox
-          checked={value}
-          onChange={onChange}
-          disabled={disabled}
-          className={styles.baiSettingItemCheckbox}
+        <ConfigProvider
+          theme={{
+            token: {
+              colorTextDisabled: token.colorText,
+            },
+          }}
         >
-          {description}
-        </Checkbox>
+          <Checkbox
+            checked={value}
+            onChange={onChange}
+            disabled={disabled}
+            style={{
+              color: token.colorText,
+            }}
+            className={styles.baiSettingItemCheckbox}
+          >
+            {description}
+          </Checkbox>
+        </ConfigProvider>
       )}
       {type === 'select' && (
         <>
