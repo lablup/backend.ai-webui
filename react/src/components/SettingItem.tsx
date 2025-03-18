@@ -59,9 +59,10 @@ const SettingItem: React.FC<SettingItemProps> = ({
         >
           {title}
         </Typography.Text>
-        {value !== undefined && value !== null && defaultValue !== value && (
-          <Badge dot status="warning" />
-        )}
+        {!disabled &&
+          value !== undefined &&
+          value !== null &&
+          defaultValue !== value && <Badge dot status="warning" />}
       </Flex>
       {type === 'custom' && (
         <>
