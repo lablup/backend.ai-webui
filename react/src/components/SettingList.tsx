@@ -131,7 +131,7 @@ const SettingList: React.FC<SettingPageProps> = ({
   };
 
   const changedItemValidator = (item: SettingItemProps) => {
-    if (item.value === null || item.value === undefined) {
+    if (item.value === null || item.value === undefined || !!item.disabled) {
       return false;
     }
     return item.value !== item.defaultValue;
@@ -242,7 +242,9 @@ const SettingList: React.FC<SettingPageProps> = ({
         onOk={() => {
           _.flatMap(settingGroups, (item) => item.settingItems).forEach(
             (option) => {
-              option?.setValue && option.setValue(option.defaultValue);
+              !option.disabled &&
+                option?.setValue &&
+                option.setValue(option.defaultValue);
             },
           );
           setIsOpenResetChangesModal();
