@@ -24,6 +24,8 @@ import {
   VFolderNodesFragment$key,
 } from './__generated__/VFolderNodesFragment.graphql';
 import { CheckCircleOutlined, UserOutlined } from '@ant-design/icons';
+import { shapes } from '@dicebear/collection';
+import { createAvatar } from '@dicebear/core';
 import {
   Alert,
   App,
@@ -152,29 +154,44 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
             title: t('data.folders.Name'),
             dataIndex: 'name',
             render: (name, vfolder) => {
-              return vfolder?.id === hoveredColumn ? (
-                <EditableVFolderName
-                  vfolderFrgmt={vfolder}
-                  style={{ color: token.colorLink }}
-                  editable={
-                    !isDeletedCategory(vfolder?.status) &&
-                    vfolder?.id !== editingColumn
-                  }
-                  onEditEnd={() => {
-                    setEditingColumn(null);
-                  }}
-                  onEditStart={() => {
-                    setEditingColumn(vfolder?.id);
-                  }}
-                  existingNames={_.compact(_.map(filteredVFolders, 'name'))}
-                />
-              ) : (
-                <BAILink
-                  type="hover"
-                  to={generateFolderPath(toLocalId(vfolder?.id))}
-                >
-                  {vfolder.name}
-                </BAILink>
+              return (
+                <Flex align="center" gap="xs">
+                  <img
+                    style={{
+                      width: token.size,
+                      height: token.size,
+                      borderRadius: token.borderRadiusSM,
+                    }}
+                    src={createAvatar(shapes, {
+                      seed: vfolder?.id + vfolder?.name,
+                      shape3: [],
+                    })?.toDataUri()}
+                  />
+                  {vfolder?.id === hoveredColumn ? (
+                    <EditableVFolderName
+                      vfolderFrgmt={vfolder}
+                      style={{ color: token.colorLink }}
+                      editable={
+                        !isDeletedCategory(vfolder?.status) &&
+                        vfolder?.id !== editingColumn
+                      }
+                      onEditEnd={() => {
+                        setEditingColumn(null);
+                      }}
+                      onEditStart={() => {
+                        setEditingColumn(vfolder?.id);
+                      }}
+                      existingNames={_.compact(_.map(filteredVFolders, 'name'))}
+                    />
+                  ) : (
+                    <BAILink
+                      type="hover"
+                      to={generateFolderPath(toLocalId(vfolder?.id))}
+                    >
+                      {vfolder.name}
+                    </BAILink>
+                  )}
+                </Flex>
               );
             },
             onCell: (vfolder) => {
