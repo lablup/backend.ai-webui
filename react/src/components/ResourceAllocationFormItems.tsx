@@ -507,7 +507,7 @@ const ResourceAllocationFormItems: React.FC<
               }
             }}
             allocatablePresetNames={allocatablePresetNames}
-            perResourceGroup
+            resourceGroup={currentResourceGroupInForm}
           />
         </Form.Item>
       ) : null}

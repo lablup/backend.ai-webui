@@ -2,7 +2,6 @@ import { localeCompare } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
 import useControllableState from '../hooks/useControllableState';
-import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
 import Flex from './Flex';
 import ResourceNumber from './ResourceNumber';
 import {
@@ -38,13 +37,13 @@ export interface ResourcePresetSelectProps
   allocatablePresetNames?: string[];
   showMinimumRequired?: boolean;
   showCustom?: boolean;
-  perResourceGroup?: boolean;
+  resourceGroup?: string;
 }
 const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   allocatablePresetNames,
   showCustom,
   showMinimumRequired,
-  perResourceGroup,
+  resourceGroup,
   ...selectProps
 }) => {
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
@@ -64,7 +63,6 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
       updateFetchKeyThrottled();
     });
   };
-  const currentResourceGroupByProject = useCurrentResourceGroupValue();
 
   const { resource_presets } = useLazyLoadQuery<ResourcePresetSelectQuery>(
     graphql`
@@ -84,11 +82,11 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     },
   );
 
-  const resourcePresets = perResourceGroup
+  const resourcePresets = resourceGroup
     ? _.filter(
         resource_presets,
         (preset) =>
-          preset?.scaling_group_name === currentResourceGroupByProject ||
+          preset?.scaling_group_name === resourceGroup ||
           preset?.scaling_group_name === null,
       )
     : resource_presets;
