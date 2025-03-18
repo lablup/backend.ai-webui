@@ -102,4 +102,5 @@ const Flex = React.forwardRef<HTMLDivElement, FlexProps>(
   },
 );
 
+Flex.displayName = 'Flex';
 export default Flex;

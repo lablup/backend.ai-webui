@@ -48,15 +48,15 @@ const InferenceSessionErrorModal: React.FC<Props> = ({
       onCancel={() => {
         onRequestClose();
       }}
-      footer={[
+      footer={
         <Button
           onClick={() => {
             onRequestClose();
           }}
         >
           {t('button.Close')}
-        </Button>,
-      ]}
+        </Button>
+      }
       {...baiModalProps}
     >
       <Descriptions
