@@ -1,6 +1,7 @@
 import BAICard from '../components/BAICard';
 import EndpointLLMChatCard from '../components/Chat/EndpointLLMChatCard';
 import Flex from '../components/Flex';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { ChatPageQuery } from './__generated__/ChatPageQuery.graphql';
 import { PlusOutlined } from '@ant-design/icons';
 import { useDynamicList } from 'ahooks';
@@ -18,6 +19,7 @@ const ChatPage: React.FC<ChatPageProps> = ({ ...props }) => {
   const { t } = useTranslation();
   // Set the initial list to have two items
   const { list, remove, getKey, push } = useDynamicList(['0']);
+  const baiClient = useSuspendedBackendaiClient();
 
   const [isSynchronous, setSynchronous] = useState(false);
 
@@ -28,13 +30,17 @@ const ChatPage: React.FC<ChatPageProps> = ({ ...props }) => {
 
   const { endpoint, endpoint_list } = useLazyLoadQuery<ChatPageQuery>(
     graphql`
-      query ChatPageQuery($endpointId: UUID!, $isEmptyEndpointId: Boolean!) {
+      query ChatPageQuery(
+        $endpointId: UUID!
+        $isEmptyEndpointId: Boolean!
+        $filter: String
+      ) {
         endpoint(endpoint_id: $endpointId)
           @skipOnClient(if: $isEmptyEndpointId)
           @catch {
           ...EndpointLLMChatCard_endpoint
         }
-        endpoint_list(limit: 1, offset: 0) {
+        endpoint_list(limit: 1, offset: 0, filter: $filter) {
           items {
             ...EndpointLLMChatCard_endpoint
           }
@@ -44,6 +50,9 @@ const ChatPage: React.FC<ChatPageProps> = ({ ...props }) => {
     {
       endpointId: endpointId || '',
       isEmptyEndpointId: isEmptyEndpointId,
+      filter: baiClient.supports('endpoint-lifecycle-stage-filter')
+        ? 'lifecycle_stage == "created"'
+        : undefined,
     },
   );
   return (
