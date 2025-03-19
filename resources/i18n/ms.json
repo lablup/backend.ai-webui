@@ -1459,7 +1459,7 @@
     "InputRequired": "Bidang ini diperlukan.",
     "InvalidValue": "Sila masukkan nilai input yang betul.",
     "MTUDescription": "Unit penghantaran maksimum, saiz paket terbesar yang boleh dihantar oleh protokol rangkaian.",
-    "NoteAboutFixedSetup": "Catatan: Tetapan di bawah ini diterapkan secara automatik bergantung pada lingkungan dan status pemasangan.",
+    "NoteAboutFixedSetup": "Tetapan di bawah digunakan secara automatik bergantung kepada persekitaran dan status pemasangan.",
     "OpenSourceCudaGPUSupport": "Sokongan GPU CUDA Sumber Terbuka",
     "OutOfRange": "Luar kawasan.",
     "OverlayNetwork": "Rangkaian Tindanan",

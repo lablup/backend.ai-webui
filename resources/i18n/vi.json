@@ -1460,7 +1460,7 @@
     "InputRequired": "Trường này là bắt buộc.",
     "InvalidValue": "Vui lòng nhập giá trị đầu vào chính xác.",
     "MTUDescription": "Đơn vị truyền tối đa, kích thước của gói lớn nhất mà giao thức mạng có thể truyền.",
-    "NoteAboutFixedSetup": "Lưu ý: Các cài đặt bên dưới được tự động áp dụng tùy thuộc vào môi trường và trạng thái cài đặt.",
+    "NoteAboutFixedSetup": "Các cài đặt bên dưới được tự động áp dụng tùy thuộc vào môi trường và trạng thái cài đặt.",
     "OpenSourceCudaGPUSupport": "Hỗ trợ GPU CUDA mã nguồn mở",
     "OutOfRange": "Ngoài phạm vi.",
     "OverlayNetwork": "Mạng che phủ",

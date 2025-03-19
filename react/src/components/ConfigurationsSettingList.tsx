@@ -4,7 +4,7 @@ import SchedulerSettingModal from './SchedulerSettingModal';
 import SettingList, { SettingGroup } from './SettingList';
 import { SettingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App, Button } from 'antd';
+import { Alert, App, Button } from 'antd';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -227,6 +227,13 @@ const ConfigurationsSettingList = () => {
     },
     {
       title: t('settings.Scaling'),
+      description: (
+        <Alert
+          message={t('settings.NoteAboutFixedSetup')}
+          type="info"
+          showIcon
+        />
+      ),
       settingItems: [
         {
           type: 'custom',
@@ -245,6 +252,13 @@ const ConfigurationsSettingList = () => {
     },
     {
       title: t('settings.Plugins'),
+      description: (
+        <Alert
+          message={t('settings.NoteAboutFixedSetup')}
+          type="info"
+          showIcon
+        />
+      ),
       settingItems: [
         {
           type: 'checkbox',
@@ -292,6 +306,13 @@ const ConfigurationsSettingList = () => {
     },
     {
       title: t('settings.EnterpriseFeatures'),
+      description: (
+        <Alert
+          message={t('settings.NoteAboutFixedSetup')}
+          type="info"
+          showIcon
+        />
+      ),
       settingItems: [
         {
           type: 'checkbox',

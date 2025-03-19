@@ -1460,7 +1460,7 @@
     "InputRequired": "Este campo es obligatorio.",
     "InvalidValue": "Por favor, ponga el valor de entrada correcto.",
     "MTUDescription": "Unidad máxima de transmisión, el tamaño del paquete más grande que puede transmitir un protocolo de red.",
-    "NoteAboutFixedSetup": "Nota: Los ajustes que se indican a continuación se aplican automáticamente en función del entorno y el estado de la instalación.",
+    "NoteAboutFixedSetup": "Las configuraciones a continuación se aplican automáticamente según el entorno y el estado de instalación.",
     "OpenSourceCudaGPUSupport": "Compatibilidad con GPU CUDA de código abierto",
     "OutOfRange": "Fuera de alcance.",
     "OverlayNetwork": "Red superpuesta",
