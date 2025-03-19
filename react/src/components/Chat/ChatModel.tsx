@@ -3,7 +3,6 @@ import {
   ChatCard_endpoint$data,
   ChatCard_endpoint$key,
 } from './__generated__/ChatCard_endpoint.graphql';
-import _ from 'lodash';
 
 export type ChatProviderType = {
   baseURL?: string;
