@@ -23,7 +23,7 @@ import { Alert, Card, CardProps, FormInstance, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import { isEmpty } from 'lodash';
 import _ from 'lodash';
-import React, { useEffect, useMemo, useRef, useState, memo } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useFragment } from 'react-relay';
 
 interface ChatCardProps extends CardProps, ChatLifecycleEventType {
