@@ -1465,7 +1465,7 @@
     "InputRequired": "To pole jest wymagane.",
     "InvalidValue": "Podaj poprawną wartość wejściową.",
     "MTUDescription": "Maksymalna jednostka transmisji, rozmiar największego pakietu, jaki może przesłać protokół sieciowy.",
-    "NoteAboutFixedSetup": "Uwaga: poniższe ustawienia są stosowane automatycznie w zależności od środowiska instalacji i stanu.",
+    "NoteAboutFixedSetup": "Poniższe ustawienia są automatycznie stosowane w zależności od środowiska instalacji i statusu.",
     "OpenSourceCudaGPUSupport": "Obsługa procesorów graficznych Open Source CUDA",
     "OutOfRange": "Poza zasięgiem.",
     "OverlayNetwork": "Sieć nakładkowa",
