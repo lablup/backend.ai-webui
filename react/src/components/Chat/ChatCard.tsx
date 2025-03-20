@@ -19,7 +19,7 @@ import {
 import { createOpenAI } from '@ai-sdk/openai';
 import { useChat } from '@ai-sdk/react';
 import { extractReasoningMiddleware, streamText, wrapLanguageModel } from 'ai';
-import { Alert, Card, CardProps, FormInstance, theme } from 'antd';
+import { Alert, Card, CardProps, FormInstance } from 'antd';
 import { createStyles } from 'antd-style';
 import graphql from 'babel-plugin-relay/macro';
 import { isEmpty } from 'lodash';
