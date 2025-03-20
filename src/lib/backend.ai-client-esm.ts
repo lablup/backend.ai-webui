@@ -2018,7 +2018,10 @@ class ResourcePreset {
   /**
    * Return the GraphQL Promise object containing resource preset checking result.
    */
-  async check(param = null): Promise<any> {
+  async check(param: {group: string, scaling_group?: string}): Promise<any> {
+    if (param && (param.scaling_group === null || param.scaling_group === '')) {
+      delete param.scaling_group;
+    }
     let rqst = this.client.newSignedRequest(
       'POST',
       `${this.urlPrefix}/check-presets`,

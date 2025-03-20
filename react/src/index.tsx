@@ -49,6 +49,9 @@ const ResetPasswordRequired = React.lazy(
 const CopyableCodeText = React.lazy(
   () => import('./components/CopyableCodeText'),
 );
+
+const BAIAlert = React.lazy(() => import('./components/BAIAlert'));
+
 const SignoutModal = React.lazy(() => import('./components/SignoutModal'));
 
 const BatchSessionScheduledTimeSetting = React.lazy(
@@ -105,6 +108,17 @@ const SourceCodeViewerInWebComponent = (props: ReactWebComponentProps) => {
 };
 
 customElements.define(
+  'backend-ai-react-description',
+  reactToWebComponent((props: ReactWebComponentProps) => {
+    return (
+      <DefaultProviders {...props}>
+        <BAIAlert message={props.value} />
+      </DefaultProviders>
+    );
+  }),
+);
+
+customElements.define(
   'backend-ai-react-resource-group-select',
   reactToWebComponent((props) => {
     return (
@@ -146,7 +160,10 @@ const ResourceGroupSelectInWebComponent = (props: ReactWebComponentProps) => {
       <ResourceGroupSelectForCurrentProject
         size="large"
         showSearch
-        disabled={currentResourceGroupByProject !== props.value}
+        disabled={
+          currentResourceGroupByProject !== props.value ||
+          currentResourceGroupByProject === ''
+        }
         loading={currentResourceGroupByProject !== props.value}
         onChange={(value) => {
           // setValue(value);

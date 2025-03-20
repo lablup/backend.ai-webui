@@ -122,12 +122,17 @@ export const useResourceLimitAndRemaining = ({
         currentResourceGroup &&
         _.some(resourceGroups, (rg) => rg.name === currentResourceGroup)
       ) {
+        const requestPayload: any = {
+          group: currentProjectName,
+        };
+        if (currentProjectName !== 'model-store') {
+          requestPayload.scaling_group = currentResourceGroup;
+        }
         return baiClient.resourcePreset
-          .check({
-            group: currentProjectName,
-            scaling_group: currentResourceGroup,
-          })
-          .catch(() => {});
+          .check(requestPayload)
+          .catch((err: any) => {
+            console.log(err);
+          });
       } else {
         return null;
       }
