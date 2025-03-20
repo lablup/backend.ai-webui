@@ -1,7 +1,7 @@
 import { useTokenCount } from '../../hooks/useTokenizer';
 import Flex from '../Flex';
-import type { Message } from '@ai-sdk/ui-utils';
 import { RocketOutlined } from '@ant-design/icons';
+import { Message } from 'ai';
 import { Typography } from 'antd';
 import { Tag, theme } from 'antd';
 import { map, last } from 'lodash';

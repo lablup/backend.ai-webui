@@ -20,6 +20,7 @@ import { createOpenAI } from '@ai-sdk/openai';
 import { useChat } from '@ai-sdk/react';
 import { extractReasoningMiddleware, streamText, wrapLanguageModel } from 'ai';
 import { Alert, Card, CardProps, FormInstance, theme } from 'antd';
+import { createStyles } from 'antd-style';
 import graphql from 'babel-plugin-relay/macro';
 import { isEmpty } from 'lodash';
 import _ from 'lodash';
@@ -33,40 +34,34 @@ interface ChatCardProps extends CardProps, ChatLifecycleEventType {
   fetchOnClient?: boolean;
 }
 
-function useChatCardStyles() {
-  const { token } = theme.useToken();
-
-  return {
-    style: {
-      height: '100%',
-      width: '100%',
-      display: 'flex',
-      flexDirection: 'column' as const,
-    },
-    styles: {
-      body: {
-        backgroundColor: token.colorFillQuaternary,
-        borderRadius: 0,
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column' as const,
-        padding: 0,
-        height: '50%',
-        position: 'relative' as React.CSSProperties['position'],
-      },
-      actions: {
-        paddingLeft: token.paddingContentHorizontal,
-        paddingRight: token.paddingContentHorizontal,
-      },
-      header: {
-        zIndex: 1,
-      },
-    },
-    alertStyle: {
-      margin: token.marginSM,
-    },
-  };
-}
+const useStyles = createStyles(({ token, css }) => ({
+  chatCard: css`
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  `,
+  body: css`
+    background-color: ${token.colorFillQuaternary};
+    border-radius: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    height: 50%;
+    position: relative;
+  `,
+  actions: css`
+    padding-left: ${token.paddingContentHorizontal};
+    padding-right: ${token.paddingContentHorizontal};
+  `,
+  header: css`
+    zindex: 1;
+  `,
+  alert: css`
+    margin: ${token.marginSM};
+  `,
+}));
 
 function useEndpoint(selectedEndpoint?: ChatCard_endpoint$key | null) {
   const [endpointKey, setEndpoint] = useState<ChatCard_endpoint$key | null>(
@@ -158,6 +153,7 @@ const ChatHeader = React.memo(PureChatHeader, (prev, next) => {
 const ChatInput = React.memo(PureChatInput, (prev, next) => {
   if (prev.input !== next.input) return false;
   if (prev.sync !== next.sync) return false;
+  if (prev.isLoading !== next.isLoading) return false;
   return true;
 });
 
@@ -169,7 +165,9 @@ const ChatCard: React.FC<ChatCardProps> = ({
   onRequestClose,
   onCreateNewChat,
 }) => {
-  const { style, styles, alertStyle } = useChatCardStyles();
+  const {
+    styles: { chatCard: chatCardStyle, alert: alertStyle, ...chatCardStyles },
+  } = useStyles();
   const formRef = useRef<FormInstance>(null);
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [startTime, setStartTime] = useState<number | null>(null);
@@ -247,8 +245,8 @@ const ChatCard: React.FC<ChatCardProps> = ({
   return (
     <Card
       bordered
-      style={style}
-      styles={{ ...styles }}
+      className={chatCardStyle}
+      classNames={chatCardStyles}
       title={
         <ChatHeader
           chat={chat}
@@ -276,14 +274,18 @@ const ChatCard: React.FC<ChatCardProps> = ({
         baseURL={baseURL}
         formRef={formRef}
         allowCustomModel={allowCustomModel}
-        alert={formRef && <CustomModelAlert onClick={() => updateFetchKey()} />}
+        alert={
+          formRef && (
+            <CustomModelAlert onClick={() => updateFetchKey(baseURL)} />
+          )
+        }
       />
       {!_.isEmpty(error?.message) ? (
         <Alert
           message={error?.message}
           type="error"
           showIcon
-          style={alertStyle}
+          className={alertStyle}
           closable
         />
       ) : null}

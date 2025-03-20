@@ -4,28 +4,35 @@ import { ChatProviderType, ChatType, ConversationType } from './ChatModel';
 import { ConversationQuery } from './__generated__/ConversationQuery.graphql';
 import { useDynamicList } from 'ahooks';
 import { Card, Skeleton } from 'antd';
+import { createStyles } from 'antd-style';
 import graphql from 'babel-plugin-relay/macro';
 import { map } from 'lodash';
 import { Suspense, useId } from 'react';
 import { useLazyLoadQuery } from 'react-relay';
 
+const useStyles = createStyles(({ token, css }) => ({
+  chatView: css`
+    overflow: auto;
+    height: calc(100vh - 240px);
+  `,
+  skeleton: css`
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  `,
+  chatCard: css`
+    flex: 1;
+    overflow: 'hidden';
+  `,
+  conversation: css`
+    overflow: hidden;
+  `,
+}));
+
 export type ConversationProps = {
   conversation: ConversationType;
   provider: ChatProviderType;
 };
-
-const ChatViewStyle = {
-  overflow: 'auto',
-  height: 'calc(100vh - 240px)',
-};
-
-const ChatSkeletonStyle = {
-  width: '100%',
-  display: 'flex',
-  flexDirection: 'column' as const,
-};
-
-const ChatCardStyle = { flex: 1, overflow: 'hidden' };
 
 function useSelectedEndpoint(endpointId?: string) {
   const { endpoint, endpoint_list } = useLazyLoadQuery<ConversationQuery>(
@@ -71,10 +78,6 @@ function createNewChat(
   };
 }
 
-const ConversationStyle = {
-  overflow: 'hidden',
-};
-
 export const Conversation: React.FC<ConversationProps> = ({
   conversation,
   provider,
@@ -82,26 +85,31 @@ export const Conversation: React.FC<ConversationProps> = ({
   const selectedEndpoint = useSelectedEndpoint(provider.endpointId);
   const chat = createNewChat(useId(), conversation.id, provider);
   const { list, remove, push } = useDynamicList<ChatType>([chat]);
-
+  const { styles } = useStyles();
   return (
     <Flex
-      style={ConversationStyle}
+      className={styles.conversation}
       direction="column"
       align="stretch"
       gap={'xs'}
     >
-      <Flex style={ChatViewStyle} gap={'xs'} direction="row" align="stretch">
+      <Flex
+        className={styles.chatView}
+        gap={'xs'}
+        direction="row"
+        align="stretch"
+      >
         {map(list, (chat, index) => (
           <Suspense
             fallback={
-              <Card style={ChatSkeletonStyle} bordered>
+              <Card className={styles.skeleton} bordered>
                 <Skeleton active />
               </Card>
             }
             key={index}
           >
             <ChatCard
-              style={ChatCardStyle}
+              className={styles.chatCard}
               selectedEndpoint={selectedEndpoint}
               chat={chat}
               fetchOnClient

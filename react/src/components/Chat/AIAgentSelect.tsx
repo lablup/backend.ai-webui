@@ -2,7 +2,7 @@ import { AIAgent } from '../../hooks/useAIAgent';
 import Flex from '../Flex';
 import { FluentEmojiIcon } from '../FluentEmojiIcon';
 import { useControllableValue } from 'ahooks';
-import { Select, SelectProps } from 'antd';
+import { Select, SelectProps, theme } from 'antd';
 import React, { useState, useTransition } from 'react';
 
 interface ChatAgentSelectProps extends Omit<SelectProps, 'options'> {
@@ -28,6 +28,7 @@ const AIAgentSelect: React.FC<ChatAgentSelectProps> = ({
   selectedAgent,
   ...props
 }) => {
+  const { token } = theme.useToken();
   const [controllableValue, setControllableValue] =
     useControllableValue<AIAgent>(props, {
       valuePropName: 'value',
@@ -38,16 +39,14 @@ const AIAgentSelect: React.FC<ChatAgentSelectProps> = ({
   const [searchAgent, setSearchAgent] = useState<string>();
   const [isSearchPending, startSearchTransition] = useTransition();
 
-  console.log('selectedAgent', selectedAgent);
-
   return (
     <>
       {selectedAgent && (
         <Flex gap="xs">
           <FluentEmojiIcon
             name={selectedAgent.meta.avatar}
-            height={32}
-            width={32}
+            height={token.sizeXL}
+            width={token.sizeXL}
           />
           <Select
             showSearch
