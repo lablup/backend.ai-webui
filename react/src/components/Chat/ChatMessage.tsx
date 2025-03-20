@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import _ from 'lodash';
-import React from 'react';
+import React, { useDeferredValue } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -36,10 +36,8 @@ const ChatMessage: React.FC<{
   const { t } = useTranslation();
   const [isHovered, setIsHovered] = useState(false);
 
-  const throttledMessageReasoning = useThrottle(message.reasoning, {
-    wait: 50,
-  });
-  const throttledMessageContent = useThrottle(message.content, { wait: 50 });
+  const deferredReasoning = useDeferredValue(message.reasoning);
+  const deferredContent = useDeferredValue(message.content);
 
   return (
     <Flex
@@ -130,7 +128,7 @@ const ChatMessage: React.FC<{
               items={[
                 {
                   key: 'reasoning',
-                  label: _.isEmpty(throttledMessageContent) ? (
+                  label: _.isEmpty(deferredContent) ? (
                     <Flex gap="xs">
                       <Typography.Text>{t('chatui.Thinking')}</Typography.Text>
                       <Spin size="small" />
@@ -141,16 +139,14 @@ const ChatMessage: React.FC<{
                     </Typography.Text>
                   ),
                   children: (
-                    <ChatMessageContent>
-                      {throttledMessageReasoning}
-                    </ChatMessageContent>
+                    <ChatMessageContent>{deferredReasoning}</ChatMessageContent>
                   ),
                 },
               ]}
             />
           )}
           <ChatMessageContent>
-            {throttledMessageContent + (isStreaming ? '\n●' : '')}
+            {deferredContent + (isStreaming ? '\n●' : '')}
           </ChatMessageContent>
         </Flex>
         <Flex
