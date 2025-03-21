@@ -71,22 +71,16 @@ const SettingItem: React.FC<SettingItemProps> = ({
         </>
       )}
       {type === 'checkbox' && (
-        <ConfigProvider
-          theme={{
-            token: {
-              colorTextDisabled: token.colorText,
-            },
-          }}
+        <Checkbox
+          checked={value}
+          onChange={onChange}
+          disabled={disabled}
+          className={styles.baiSettingItemCheckbox}
         >
-          <Checkbox
-            checked={value}
-            onChange={onChange}
-            disabled={disabled}
-            className={styles.baiSettingItemCheckbox}
-          >
+          <Typography.Text type={disabled ? 'secondary' : undefined}>
             {description}
-          </Checkbox>
-        </ConfigProvider>
+          </Typography.Text>
+        </Checkbox>
       )}
       {type === 'select' && (
         <>
