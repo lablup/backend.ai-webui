@@ -19,7 +19,7 @@ import {
   PlusOutlined,
 } from '@ant-design/icons';
 import { Dropdown, Button, theme, MenuProps, Typography, Switch } from 'antd';
-import { Scale } from 'lucide-react';
+import { Scale, Eraser } from 'lucide-react';
 import React, { useState, startTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -102,7 +102,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
     {
       key: 'clear',
       label: t('chatui.DeleteChatHistory'),
-      icon: <DeleteOutlined />,
+      icon: <Eraser />,
       onClick: () => {
         setMessages([]);
       },
