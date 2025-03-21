@@ -98,8 +98,8 @@ const GroupSettingItems: React.FC<{
         )}
       </Flex>
       <Flex direction="column" align="start" gap={'lg'}>
-        {group.settingItems.map((item) => (
-          <SettingItem {...item} />
+        {group.settingItems.map((item, idx) => (
+          <SettingItem key={item.title + idx} {...item} />
         ))}
       </Flex>
     </Flex>
@@ -207,7 +207,11 @@ const SettingList: React.FC<SettingPageProps> = ({
               children: (
                 <Flex direction="column" align="stretch" gap={'xl'}>
                   {_.map(filteredSettingGroups, (group) => (
-                    <GroupSettingItems group={group} hideEmpty />
+                    <GroupSettingItems
+                      key={group.title}
+                      group={group}
+                      hideEmpty
+                    />
                   ))}
                 </Flex>
               ),

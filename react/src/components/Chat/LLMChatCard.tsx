@@ -331,6 +331,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
       }}
       actions={[
         <ChatSender
+          key="chatSender"
           autoFocus
           value={input}
           placeholder="Say something..."

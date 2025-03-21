@@ -123,4 +123,5 @@ const BAISider = forwardRef<HTMLDivElement, BAISiderProps>(
   },
 );
 
+BAISider.displayName = 'BAISider';
 export default BAISider;
