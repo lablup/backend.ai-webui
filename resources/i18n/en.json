@@ -1752,6 +1752,7 @@
     "Edit_ShellScriptTitle_1": "Edit ",
     "Edit_ShellScriptTitle_2": " shell script",
     "ExperimentalFeatures": "Experimental features",
+    "ExperimentalFeaturesDesc": "Try out new and experimental features before they are officially released. These features may change or be removed in future updates.",
     "General": "General",
     "InvalidPortNumber": "Port number should be positive number between 1025~65534",
     "KeepLoginSessionInformation": "Keep Login Session Information while Logout",

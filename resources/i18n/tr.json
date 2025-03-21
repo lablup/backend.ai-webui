@@ -1743,6 +1743,7 @@
     "Edit_ShellScriptTitle_1": "Düzenle",
     "Edit_ShellScriptTitle_2": " kabuk komut dosyası",
     "ExperimentalFeatures": "Deneysel özellikler",
+    "ExperimentalFeaturesDesc": "Yeni ve deneysel özellikleri resmi olarak yayınlanmadan önce deneyin. Bu özellikler gelecekteki güncellemelerde değişebilir veya kaldırılabilir.",
     "General": "Genel",
     "InvalidPortNumber": "Port numarası 1025~65534 arasında pozitif bir sayı olmalıdır",
     "KeepLoginSessionInformation": "Oturumu Kapatırken Oturum Açma Bilgilerini Saklayın",

@@ -1744,6 +1744,7 @@
     "Edit_ShellScriptTitle_1": "Edytować",
     "Edit_ShellScriptTitle_2": " Skrypt powłoki",
     "ExperimentalFeatures": "Cechy eksperymentalne",
+    "ExperimentalFeaturesDesc": "Wypróbuj nowe i eksperymentalne funkcje, zanim zostaną oficjalnie udostępnione. Funkcje te mogą ulec zmianie lub zostać usunięte w przyszłych aktualizacjach.",
     "General": "Generał",
     "InvalidPortNumber": "Numer portu powinien być liczbą dodatnią z zakresu 1025~65534",
     "KeepLoginSessionInformation": "Zachowaj informacje o sesji logowania podczas wylogowania",

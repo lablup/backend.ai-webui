@@ -1748,6 +1748,7 @@
     "Edit_ShellScriptTitle_1": " ",
     "Edit_ShellScriptTitle_2": " 셀 스크립트 수정하기",
     "ExperimentalFeatures": "실험적 기능",
+    "ExperimentalFeaturesDesc": "공식 출시 전에 새로운 실험적 기능을 사용해볼 수 있습니다. 이 기능은 향후 업데이트에서 변경되거나 제거될 수 있습니다.",
     "General": "일반",
     "InvalidPortNumber": "포트 번호는 1025~65534 사이의 양수여야 합니다.",
     "KeepLoginSessionInformation": "로그아웃 후 로그인 정보 유지",

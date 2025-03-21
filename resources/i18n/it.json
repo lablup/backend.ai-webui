@@ -1741,6 +1741,7 @@
     "Edit_ShellScriptTitle_1": "modificare",
     "Edit_ShellScriptTitle_2": " script di shell",
     "ExperimentalFeatures": "Caratteristiche sperimentali",
+    "ExperimentalFeaturesDesc": "Provate le nuove funzioni sperimentali prima che vengano rilasciate ufficialmente. Queste funzioni potrebbero essere modificate o rimosse nei prossimi aggiornamenti.",
     "General": "Generale",
     "InvalidPortNumber": "Il numero della porta deve essere un numero positivo compreso tra 1025~65534",
     "KeepLoginSessionInformation": "Mantieni le informazioni sulla sessione di accesso durante il logout",

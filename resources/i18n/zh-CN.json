@@ -1744,6 +1744,7 @@
     "Edit_ShellScriptTitle_1": "编辑",
     "Edit_ShellScriptTitle_2": " 外壳脚本",
     "ExperimentalFeatures": "实验特点",
+    "ExperimentalFeaturesDesc": "在正式发布前试用新功能和实验性功能。这些功能可能会在未来的更新中更改或删除。",
     "General": "一般的",
     "InvalidPortNumber": "端口号应为 1025~65534 之间的正数",
     "KeepLoginSessionInformation": "注销时保留登录会话信息",

@@ -1,8 +1,7 @@
 import ErrorLogList from '../components/ErrorLogList';
 import MyKeypairInfoModal from '../components/MyKeypairInfoModal';
 import SSHKeypairManagementModal from '../components/SSHKeypairManagementModal';
-import { SettingItemProps } from '../components/SettingItem';
-import SettingList from '../components/SettingList';
+import SettingList, { SettingGroup } from '../components/SettingList';
 import ShellScriptEditModal from '../components/ShellScriptEditModal';
 import {
   useBAISettingGeneralState,
@@ -56,7 +55,7 @@ const UserPreferencesPage = () => {
   const [isOpenShellScriptEditModal, { toggle: toggleShellScriptEditModal }] =
     useToggle(false);
 
-  const settingGroup: { title: string; settingItems: SettingItemProps[] }[] = [
+  const settingGroups: Array<SettingGroup> = [
     {
       title: t('userSettings.Preferences'),
       settingItems: [
@@ -247,6 +246,7 @@ const UserPreferencesPage = () => {
     },
     {
       title: t('userSettings.ExperimentalFeatures'),
+      description: t('userSettings.ExperimentalFeaturesDesc'),
       settingItems: [
         {
           type: 'checkbox',
@@ -306,7 +306,7 @@ const UserPreferencesPage = () => {
       >
         {curTabKey === 'general' && (
           <SettingList
-            settingGroups={settingGroup}
+            settingGroups={settingGroups}
             showChangedOptionFilter
             showResetButton
             showSearchBar

@@ -1743,6 +1743,7 @@
     "Edit_ShellScriptTitle_1": "編集",
     "Edit_ShellScriptTitle_2": " シェルスクリプト",
     "ExperimentalFeatures": "実験的特徴",
+    "ExperimentalFeaturesDesc": "正式にリリースされる前に、新しい機能や実験的な機能をお試しください。これらの機能は将来のアップデートで変更または削除される可能性があります。",
     "General": "一般",
     "InvalidPortNumber": "ポート番号は1025〜65534の正の数である必要があります",
     "KeepLoginSessionInformation": "ログアウト中はログインセッション情報を保持する",

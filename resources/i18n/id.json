@@ -1743,6 +1743,7 @@
     "Edit_ShellScriptTitle_1": "Sunting",
     "Edit_ShellScriptTitle_2": " skrip shell",
     "ExperimentalFeatures": "Fitur eksperimental",
+    "ExperimentalFeaturesDesc": "Cobalah fitur-fitur baru dan eksperimental sebelum fitur-fitur tersebut dirilis secara resmi. Fitur-fitur ini dapat berubah atau dihapus dalam pembaruan di masa mendatang.",
     "General": "Umum",
     "InvalidPortNumber": "Nomor port harus berupa angka positif antara 1025~65534",
     "KeepLoginSessionInformation": "Simpan Informasi Login saat Keluar",

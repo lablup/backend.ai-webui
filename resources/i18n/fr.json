@@ -1744,6 +1744,7 @@
     "Edit_ShellScriptTitle_1": "Éditer",
     "Edit_ShellScriptTitle_2": " script shell",
     "ExperimentalFeatures": "Caractéristiques expérimentales",
+    "ExperimentalFeaturesDesc": "Essayez les nouvelles fonctionnalités et les fonctionnalités expérimentales avant qu'elles ne soient officiellement publiées. Ces fonctionnalités peuvent être modifiées ou supprimées dans les prochaines mises à jour.",
     "General": "Général",
     "InvalidPortNumber": "Le numéro de port doit être un nombre positif compris entre 1025 et 65534",
     "KeepLoginSessionInformation": "Conserver les informations de session de connexion pendant la déconnexion",

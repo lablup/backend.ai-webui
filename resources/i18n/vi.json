@@ -1744,6 +1744,7 @@
     "Edit_ShellScriptTitle_1": "Biên tập",
     "Edit_ShellScriptTitle_2": " kịch bản shell",
     "ExperimentalFeatures": "Các tính năng thử nghiệm",
+    "ExperimentalFeaturesDesc": "Hãy thử các tính năng mới và thử nghiệm trước khi chúng được phát hành chính thức. \nCác tính năng này có thể thay đổi hoặc được xóa trong các bản cập nhật trong tương lai.",
     "General": "Chung",
     "InvalidPortNumber": "Số cổng phải là số dương trong khoảng 1025 ~ 65534",
     "KeepLoginSessionInformation": "Giữ thông tin phiên đăng nhập trong khi đăng xuất",

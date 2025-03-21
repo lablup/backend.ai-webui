@@ -1742,6 +1742,7 @@
     "Edit_ShellScriptTitle_1": "Muokkaa",
     "Edit_ShellScriptTitle_2": " komentosarjan komentosarja",
     "ExperimentalFeatures": "Kokeelliset ominaisuudet",
+    "ExperimentalFeaturesDesc": "Kokeile uusia ja kokeellisia ominaisuuksia ennen kuin ne julkaistaan virallisesti. Nämä ominaisuudet saattavat muuttua tai poistua tulevissa päivityksissä.",
     "General": "Yleistä",
     "InvalidPortNumber": "Portin numeron on oltava positiivinen numero välillä 1025~65534.",
     "KeepLoginSessionInformation": "Pidä kirjautumisistunnon tiedot uloskirjautumisen aikana",

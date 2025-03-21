@@ -1744,6 +1744,7 @@
     "Edit_ShellScriptTitle_1": "Bearbeiten",
     "Edit_ShellScriptTitle_2": " Shell-Skript",
     "ExperimentalFeatures": "Experimentelle Merkmale",
+    "ExperimentalFeaturesDesc": "Probieren Sie neue und experimentelle Funktionen aus, bevor sie offiziell veröffentlicht werden. Diese Funktionen können sich in zukünftigen Updates ändern oder entfernt werden.",
     "General": "Allgemeines",
     "InvalidPortNumber": "Die Portnummer sollte eine positive Zahl zwischen 1025 und 65534 sein",
     "KeepLoginSessionInformation": "Behalten Sie die Informationen zur Anmeldesitzung beim Abmelden bei",
