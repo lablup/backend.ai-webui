@@ -12,14 +12,9 @@ import {
   ChatCard_endpoint$key,
 } from './__generated__/ChatCard_endpoint.graphql';
 import { Message } from '@ai-sdk/react';
-import {
-  CloseOutlined,
-  DeleteOutlined,
-  MoreOutlined,
-  PlusOutlined,
-} from '@ant-design/icons';
+import { CloseOutlined, MoreOutlined, PlusOutlined } from '@ant-design/icons';
 import { Dropdown, Button, theme, MenuProps, Typography, Switch } from 'antd';
-import { Scale, Eraser } from 'lucide-react';
+import { Scale as ScaleIcon, Eraser as EraserIcon } from 'lucide-react';
 import React, { useState, startTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -89,7 +84,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
     showCompareMenuItem && {
       key: 'compare',
       label: t('chatui.CompareWithOtherModels'),
-      icon: <Scale />,
+      icon: <ScaleIcon />,
       onClick: () => {
         webuiNavigate(
           `/serving?tab=chatting&endpointId=${endpoint?.endpoint_id}&modelId=${modelId}`,
@@ -102,7 +97,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
     {
       key: 'clear',
       label: t('chatui.DeleteChatHistory'),
-      icon: <Eraser />,
+      icon: <EraserIcon />,
       onClick: () => {
         setMessages([]);
       },
