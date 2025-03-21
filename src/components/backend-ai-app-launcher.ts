@@ -541,7 +541,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         // Force push terminal
         name: 'ttyd',
         title: 'Console',
-        category: '0.Default',
+        category: '99.Custom',
         redirect: '',
         src: './resources/icons/terminal.svg',
       });
@@ -561,7 +561,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         this.appTemplate[elm].push({
           name: elm,
           title: elm,
-          category: '99.',
+          category: '99.Custom',
           redirect: '',
           src: './resources/icons/default_app.svg',
         });
@@ -585,8 +585,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         if (elm !== 'sshd' || (elm === 'sshd' && this.allowTCPApps)) {
           if (interText !== this.appTemplate[elm][0].category) {
             this.appSupportList.push({
-              name: this.appTemplate[elm][0].category.substring(2),
-              title: this.appTemplate[elm][0].category.substring(2),
+              name: this.appTemplate[elm][0].category?.split('.')[1],
+              title: this.appTemplate[elm][0].category?.split('.')[1],
               category: 'divider',
               redirect: '',
               src: '',
@@ -599,11 +599,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
       } else {
         if (!['ttyd', 'ipython'].includes(elm)) {
-          // They are default apps from Backend.AI agent.
+          // They are custom apps from Backend.AI agent.
           this.appSupportList.push({
             name: elm,
             title: elm,
-            category: 'Default',
+            category: 'Custom',
             redirect: '',
             src: './resources/icons/default_app.svg',
           });
