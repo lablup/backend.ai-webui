@@ -15,6 +15,7 @@ import '@ant-design/v5-patch-for-react-19';
 import { Tag, theme } from 'antd';
 import dayjs from 'dayjs';
 import { Provider as JotaiProvider } from 'jotai';
+import _ from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { useTranslation } from 'react-i18next';
@@ -147,7 +148,10 @@ const ResourceGroupSelectInWebComponent = (props: ReactWebComponentProps) => {
         size="large"
         showSearch
         disabled={currentResourceGroupByProject !== props.value}
-        loading={currentResourceGroupByProject !== props.value}
+        loading={
+          !_.isEmpty(currentResourceGroupByProject) &&
+          currentResourceGroupByProject !== props.value
+        }
         onChange={(value) => {
           // setValue(value);
           props.dispatchEvent('change', value);
