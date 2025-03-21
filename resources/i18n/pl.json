@@ -1449,6 +1449,7 @@
     "DescWarboySupport": "Użyj wsparcia Furiosa Warboy",
     "EnterpriseFeatures": "Funkcje korporacyjne",
     "EnvConfigWillDisappear": "Każda niezapisana zmienna środowiskowa i wartość znikną.",
+    "FailedToSaveSettings": "Nie udało się zapisać ustawień.",
     "FifoOnly": "Obecnie zmiany są możliwe tylko wtedy, gdy harmonogramem jest FIFO.",
     "FractionalGPU": "Ułamkowy procesor graficzny",
     "GUI": "GUI",

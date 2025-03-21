@@ -1448,6 +1448,7 @@
     "DescWarboySupport": "Backend.AI Warboyプラグインが必要です。",
     "EnterpriseFeatures": "エンタープライズ機能",
     "EnvConfigWillDisappear": "救われていない環境変数と価値は消えます。",
+    "FailedToSaveSettings": "設定を保存できませんでした。",
     "FifoOnly": "現在、変更はスケジューラがFIFOの場合にのみ可能です。",
     "FractionalGPU": "フラクショナルGPU",
     "GUI": "GUI",

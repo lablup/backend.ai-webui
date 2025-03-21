@@ -1453,6 +1453,7 @@
     "DescWarboySupport": "Furiosa Warboy 가속기를 사용합니다.",
     "EnterpriseFeatures": "엔터프라이즈 기능",
     "EnvConfigWillDisappear": "저장되지 않은 환경 변수 설정값은 사라집니다.",
+    "FailedToSaveSettings": "저장에 실패했습니다.",
     "FifoOnly": "현재는 스케줄러가 FIFO일 때만 변경 가능합니다.",
     "FractionalGPU": "부분 GPU 가상화",
     "GUI": "그래픽 사용자 환경",

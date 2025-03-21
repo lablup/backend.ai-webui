@@ -1449,6 +1449,7 @@
     "DescWarboySupport": "Sử dụng hỗ trợ Furiosa Warboy",
     "EnterpriseFeatures": "Tính năng doanh nghiệp",
     "EnvConfigWillDisappear": "Bất kỳ biến môi trường chưa được lưu và giá trị sẽ biến mất.",
+    "FailedToSaveSettings": "Không thể lưu cài đặt.",
     "FifoOnly": "Hiện tại, các thay đổi chỉ có thể thực hiện được khi bộ lập lịch là FIFO.",
     "FractionalGPU": "GPU phân số",
     "GUI": "GUI",

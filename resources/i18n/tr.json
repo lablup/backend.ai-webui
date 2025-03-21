@@ -1448,6 +1448,7 @@
     "DescWarboySupport": "Furiosa Warboy desteğini kullanın",
     "EnterpriseFeatures": "Kurumsal Özellikler",
     "EnvConfigWillDisappear": "Kaydedilmemiş herhangi bir ortam değişkeni ve değer kaybolacaktır.",
+    "FailedToSaveSettings": "Ayarları kaydedemedi.",
     "FifoOnly": "Şu anda, değişiklikler yalnızca zamanlayıcı FIFO olduğunda mümkündür.",
     "FractionalGPU": "kesirli GPU",
     "GUI": "GUI",

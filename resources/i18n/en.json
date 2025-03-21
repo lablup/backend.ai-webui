@@ -1456,6 +1456,7 @@
     "DescWarboySupport": "Use Furiosa Warboy support",
     "EnterpriseFeatures": "Enterprise Features",
     "EnvConfigWillDisappear": "Any unsaved environment variable and value will disappear.",
+    "FailedToSaveSettings": "Failed to save settings.",
     "FifoOnly": "Currently, changes are only possible when the scheduler is FIFO.",
     "FractionalGPU": "Fractional GPU",
     "GUI": "GUI",

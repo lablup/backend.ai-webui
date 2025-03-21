@@ -1445,6 +1445,7 @@
     "DescWarboySupport": "Χρησιμοποιήστε την υποστήριξη Furiosa Warboy",
     "EnterpriseFeatures": "Επιχειρηματικά χαρακτηριστικά",
     "EnvConfigWillDisappear": "Οποιαδήποτε μεταβλητή και η αξία του περιβάλλοντος δεν θα εξαφανιστεί.",
+    "FailedToSaveSettings": "Αποτυχία αποθήκευσης ρυθμίσεων.",
     "FifoOnly": "Προς το παρόν, οι αλλαγές είναι δυνατές μόνο όταν ο προγραμματιστής είναι FIFO.",
     "FractionalGPU": "Κλασματική GPU",
     "GUI": "GUI",

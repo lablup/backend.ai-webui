@@ -1449,6 +1449,7 @@
     "DescWarboySupport": "Используйте поддержку Furiosa Warboy",
     "EnterpriseFeatures": "Корпоративные функции",
     "EnvConfigWillDisappear": "Любая неспасенная переменная среды и значение исчезнет.",
+    "FailedToSaveSettings": "Не удалось сохранить настройки.",
     "FifoOnly": "В настоящее время изменения возможны только при использовании планировщика FIFO.",
     "FractionalGPU": "Дробный GPU",
     "GUI": "GUI",
