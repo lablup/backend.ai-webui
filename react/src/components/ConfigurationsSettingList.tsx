@@ -235,7 +235,7 @@ const ConfigurationsSettingList = () => {
 
   const settingGroupList: SettingGroup[] = [
     {
-      title: t('settings.Image'),
+      title: t('settings.General'),
       settingItems: [
         {
           type: 'select',
@@ -259,18 +259,6 @@ const ConfigurationsSettingList = () => {
           value: options.image_pulling_behavior,
           onChange: (value) => setImagePullingBehavior(value),
         },
-      ],
-    },
-    {
-      title: t('settings.Scaling'),
-      description: (
-        <Alert
-          message={t('settings.NoteAboutFixedSetup')}
-          type="info"
-          showIcon
-        />
-      ),
-      settingItems: [
         {
           type: 'custom',
           title: t('settings.OverlayNetwork'),
@@ -280,6 +268,22 @@ const ConfigurationsSettingList = () => {
               icon={<SettingOutlined />}
               onClick={toggleOverlayNetworkModal}
             >
+              {t('settings.Config')}
+            </Button>
+          ),
+        },
+        {
+          type: 'custom',
+          title: t('settings.Scheduler'),
+          description: (
+            <>
+              {t('settings.SchedulerConfiguration')}
+              <br />
+              {t('settings.Require2009orAbove')}
+            </>
+          ),
+          children: (
+            <Button icon={<SettingOutlined />} onClick={toggleSchedulerModal}>
               {t('settings.Config')}
             </Button>
           ),
@@ -321,22 +325,6 @@ const ConfigurationsSettingList = () => {
           value: options.rocm_gpu,
           defaultValue: defaultConfigurationsSettings.rocm_gpu,
           disabled: true,
-        },
-        {
-          type: 'custom',
-          title: t('settings.Scheduler'),
-          description: (
-            <>
-              {t('settings.SchedulerConfiguration')}
-              <br />
-              {t('settings.Require2009orAbove')}
-            </>
-          ),
-          children: (
-            <Button icon={<SettingOutlined />} onClick={toggleSchedulerModal}>
-              {t('settings.Config')}
-            </Button>
-          ),
         },
       ],
     },
