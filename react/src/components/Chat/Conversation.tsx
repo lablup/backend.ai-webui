@@ -73,7 +73,7 @@ function createNewChat(
     id,
     conversationId,
     label: 'Chat',
-    sync: false,
+    sync: true,
     provider,
   };
 }

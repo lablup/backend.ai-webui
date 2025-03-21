@@ -35,6 +35,25 @@ const CardExtraStyle = {
   color: '#141414',
 };
 
+interface SyncSwitchProps {
+  sync: boolean;
+  onClick: (sync: boolean) => void;
+}
+
+const SyncSwitch: React.FC<SyncSwitchProps> = ({ sync, onClick }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      {sync && (
+        <Typography.Text type="secondary">
+          {t('chatui.SyncInput')}
+        </Typography.Text>
+      )}
+      <Switch checked={sync} onClick={onClick} />
+    </>
+  );
+};
+
 interface ChatHeaderProps extends ChatLifecycleEventType {
   chat: ChatType;
   showCompareMenuItem?: boolean;
@@ -161,32 +180,29 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
       <Flex style={CardExtraStyle} justify="between">
         <Flex direction="row" gap={'xs'} wrap="wrap" style={{ flexShrink: 1 }}>
           <Flex gap={'xs'}>
-            {sync && (
-              <Typography.Text type="secondary">
-                {t('chatui.SyncInput')}
-              </Typography.Text>
+            {closable && (
+              <SyncSwitch
+                sync={sync}
+                onClick={(checked) => {
+                  startTransition(() => {
+                    setSync(checked);
+                  });
+                }}
+              />
             )}
-            <Switch
-              value={sync}
-              onClick={(checked) => {
-                startTransition(() => {
-                  setSync(checked);
-                });
-              }}
-            />
             <Button
               onClick={() => onCreateNewChat?.()}
               icon={<PlusOutlined />}
             />
+            <Dropdown menu={{ items }} trigger={['click']}>
+              <Button
+                type="link"
+                onClick={(e) => e.preventDefault()}
+                icon={<MoreOutlined />}
+                style={{ color: token.colorTextSecondary, width: token.sizeMS }}
+              />
+            </Dropdown>
           </Flex>
-          <Dropdown menu={{ items }} trigger={['click']}>
-            <Button
-              type="link"
-              onClick={(e) => e.preventDefault()}
-              icon={<MoreOutlined />}
-              style={{ color: token.colorTextSecondary, width: token.sizeMS }}
-            />
-          </Dropdown>
         </Flex>
       </Flex>
     </Flex>
