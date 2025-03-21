@@ -18,15 +18,7 @@ import {
   MoreOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
-import {
-  Dropdown,
-  Button,
-  theme,
-  MenuProps,
-  Popconfirm,
-  Typography,
-  Switch,
-} from 'antd';
+import { Dropdown, Button, theme, MenuProps, Typography, Switch } from 'antd';
 import { Scale } from 'lucide-react';
 import React, { useState, startTransition } from 'react';
 import { useTranslation } from 'react-i18next';
