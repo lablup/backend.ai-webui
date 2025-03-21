@@ -82,9 +82,6 @@ const SettingItem: React.FC<SettingItemProps> = ({
             checked={value}
             onChange={onChange}
             disabled={disabled}
-            style={{
-              color: token.colorText,
-            }}
             className={styles.baiSettingItemCheckbox}
           >
             {description}
