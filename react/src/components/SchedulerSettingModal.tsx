@@ -9,6 +9,10 @@ import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface SchedulerSettingModalProps extends BAIModalProps {
+  initialValues: {
+    schedulerType: SchedulerType;
+    num_retries_to_skip: string;
+  };
   onRequestClose: () => void;
   onSave: (
     key: SchedulerType,
@@ -21,6 +25,7 @@ interface SchedulerSettingModalProps extends BAIModalProps {
 }
 
 const SchedulerSettingModal = ({
+  initialValues,
   onRequestClose,
   open,
   onSave,
@@ -76,7 +81,7 @@ const SchedulerSettingModal = ({
       ]}
       destroyOnClose
     >
-      <Form ref={formRef} layout="vertical">
+      <Form ref={formRef} layout="vertical" initialValues={initialValues}>
         <Form.Item
           label={t('settings.Scheduler')}
           name="schedulerType"

@@ -131,6 +131,16 @@ const ConfigurationsSettingList = () => {
     }
   };
 
+  const updateScheduler = async () => {
+    const newSchedulerType = await updateSelectedScheduler(
+      options.schedulerType,
+    );
+    setOptions((prev) => ({
+      ...prev,
+      scheduler: newSchedulerType,
+    }));
+  };
+
   const updateSelectedScheduler = async (
     schedulerType: SchedulerType,
   ): Promise<SchedulerOptions> => {
@@ -160,6 +170,7 @@ const ConfigurationsSettingList = () => {
     );
     if (result === 'ok') {
       message.success(t('notification.SuccessfullyUpdated'));
+      updateScheduler();
     }
   };
 
@@ -181,6 +192,7 @@ const ConfigurationsSettingList = () => {
       updatePulling(),
       updateResourceSlots(),
       updateNetwork(),
+      updateScheduler(),
     ]);
   };
 
@@ -466,6 +478,10 @@ const ConfigurationsSettingList = () => {
         }}
       />
       <SchedulerSettingModal
+        initialValues={{
+          schedulerType: options.schedulerType,
+          num_retries_to_skip: options.scheduler.num_retries_to_skip,
+        }}
         onRequestClose={toggleSchedulerModal}
         open={isOpenSchedulerModal}
         onSave={(key, value) => {
