@@ -1006,6 +1006,7 @@
     "Name": "Nama",
     "NoChangesMade": "Tidak ada perubahan yang dibuat",
     "NoGroupToDisplay": "NoGroupToDisplay",
+    "NoScalingGroupAssignedToThisProject": "Tiada kumpulan sumber yang diberikan kepada projek ini.",
     "Public": "Awam",
     "PublicStatus": "Status Awam",
     "ResourceGroupAlreadyExist": "Kumpulan sumber dengan nama yang sama sudah ada.",

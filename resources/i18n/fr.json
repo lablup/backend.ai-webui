@@ -1007,6 +1007,7 @@
     "Name": "Nom",
     "NoChangesMade": "Aucune modification apportée",
     "NoGroupToDisplay": "NoGroupToDisplay",
+    "NoScalingGroupAssignedToThisProject": "Aucun groupe de ressources n'est affecté à ce projet.",
     "Public": "Public",
     "PublicStatus": "Statut public",
     "ResourceGroupAlreadyExist": "Un groupe de ressources du même nom existe déjà.",

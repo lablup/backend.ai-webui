@@ -1007,6 +1007,7 @@
     "Name": "Имя",
     "NoChangesMade": "Никаких изменений не внесено",
     "NoGroupToDisplay": "NoGroupToDisplay",
+    "NoScalingGroupAssignedToThisProject": "Никакая группа ресурсов не назначена в этот проект.",
     "Public": "Публичный",
     "PublicStatus": "Общественный статус",
     "ResourceGroupAlreadyExist": "Группа ресурсов с таким именем уже существует.",

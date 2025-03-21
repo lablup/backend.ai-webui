@@ -1007,6 +1007,7 @@
     "Name": "isim",
     "NoChangesMade": "Değişiklik yapılmadı",
     "NoGroupToDisplay": "NoGroupToDisplay",
+    "NoScalingGroupAssignedToThisProject": "Bu projeye hiçbir kaynak grubu atanmadı.",
     "Public": "Kamu",
     "PublicStatus": "Kamu Statüsü",
     "ResourceGroupAlreadyExist": "Aynı ada sahip bir kaynak grubu zaten var.",
