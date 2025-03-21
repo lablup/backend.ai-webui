@@ -106,6 +106,8 @@ const ConfigurationsSettingList = () => {
       if (result === 'ok') {
         updatePulling();
         message.success(t('notification.SuccessfullyUpdated'));
+      } else {
+        message.error(t('settings.FailedToSaveSettings'));
       }
     }
   };
@@ -128,6 +130,8 @@ const ConfigurationsSettingList = () => {
     if (result === 'ok') {
       updateNetwork();
       message.success(t('notification.SuccessfullyUpdated'));
+    } else {
+      message.error(t('settings.FailedToSaveSettings'));
     }
   };
 
@@ -171,6 +175,8 @@ const ConfigurationsSettingList = () => {
     if (result === 'ok') {
       message.success(t('notification.SuccessfullyUpdated'));
       updateScheduler();
+    } else {
+      message.error(t('settings.FailedToSaveSettings'));
     }
   };
 
@@ -201,6 +207,8 @@ const ConfigurationsSettingList = () => {
     if (result === 'ok') {
       updateSettings();
       message.success(t('notification.SuccessfullyUpdated'));
+    } else {
+      message.error(t('settings.FailedToSaveSettings'));
     }
   };
 

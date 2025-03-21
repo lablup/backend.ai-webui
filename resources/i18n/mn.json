@@ -1452,6 +1452,7 @@
     "DescWarboySupport": "Furiosa Warboy дэмжлэгийг ашигла",
     "EnterpriseFeatures": "Аж ахуйн нэгжийн онцлог шинж чанарууд",
     "EnvConfigWillDisappear": "Ямар ч хараагүй орчинд хувьсах хувьсагч, утга алга болно.",
+    "FailedToSaveSettings": "Тохиргоог хадгалж чадсангүй.",
     "FifoOnly": "Одоогоор хуваарь гаргагч нь FIFO байх үед л өөрчлөлт хийх боломжтой.",
     "FractionalGPU": "Бутархай GPU",
     "GUI": "GUI",

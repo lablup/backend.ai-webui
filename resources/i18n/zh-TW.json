@@ -1453,6 +1453,7 @@
     "DescWarboySupport": "使用 Furiosa Warboy 支持",
     "EnterpriseFeatures": "企業特色",
     "EnvConfigWillDisappear": "任何未保存的環境變量和價值都將消失。",
+    "FailedToSaveSettings": "無法保存設置。",
     "FifoOnly": "目前，只有在調度程序為 FIFO 時才能進行更改。",
     "FractionalGPU": "分數 GPU",
     "GUI": "圖形用戶界面",

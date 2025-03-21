@@ -1438,6 +1438,7 @@
     "DescWarboySupport": "ใช้การสนับสนุน Furiosa Warboy",
     "EnterpriseFeatures": "คุณสมบัติสำหรับองค์กร",
     "EnvConfigWillDisappear": "ตัวแปรสภาพแวดล้อมที่ไม่ได้บันทึกและค่าจะหายไป",
+    "FailedToSaveSettings": "ไม่สามารถบันทึกการตั้งค่าได้",
     "FifoOnly": "ปัจจุบัน การเปลี่ยนแปลงสามารถทำได้เฉพาะเมื่อตัวจัดกำหนดการเป็นแบบ FIFO เท่านั้น",
     "FractionalGPU": "Fractional GPU",
     "GUI": "GUI",

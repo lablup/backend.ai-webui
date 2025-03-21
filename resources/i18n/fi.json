@@ -1452,6 +1452,7 @@
     "DescWarboySupport": "Käytä Furiosa Warboy -tukea",
     "EnterpriseFeatures": "Yrityksen ominaisuudet",
     "EnvConfigWillDisappear": "Kaikki pelastamaton ympäristömuuttuja ja arvo katoaa.",
+    "FailedToSaveSettings": "Asetusten tallentaminen epäonnistui.",
     "FifoOnly": "Tällä hetkellä muutokset ovat mahdollisia vain silloin, kun aikatauluttaja on FIFO.",
     "FractionalGPU": "Murto-osa GPU",
     "GUI": "GUI",
