@@ -1437,6 +1437,7 @@
     "FifoOnly": "ปัจจุบัน การเปลี่ยนแปลงสามารถทำได้เฉพาะเมื่อตัวจัดกำหนดการเป็นแบบ FIFO เท่านั้น",
     "FractionalGPU": "Fractional GPU",
     "GUI": "GUI",
+    "General": "ทั่วไป",
     "HyperaccelLPUSupport": "Hyperaccel LPU",
     "IPUSupport": "IPU",
     "Image": "อิมเมจ",

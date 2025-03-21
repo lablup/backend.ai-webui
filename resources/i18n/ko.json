@@ -1458,6 +1458,7 @@
     "FractionalGPU": "부분 GPU 가상화",
     "GUI": "그래픽 사용자 환경",
     "Gaudi2Support": "Gaudi 2 지원",
+    "General": "일반",
     "HyperaccelLPUSupport": "Hyperaccel LPU",
     "IPUSupport": "IPU 지원",
     "Image": "계산 환경 이미지",
