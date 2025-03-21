@@ -1454,6 +1454,7 @@
     "DescWarboySupport": "Furiosa Warboy-Unterstützung verwenden",
     "EnterpriseFeatures": "Unternehmensfunktionen",
     "EnvConfigWillDisappear": "Jede nicht gerettete Umgebungsvariable und -wert verschwinden.",
+    "FailedToSaveSettings": "Einstellungen nicht speichern.",
     "FifoOnly": "Derzeit sind Änderungen nur möglich, wenn der Scheduler FIFO ist.",
     "FractionalGPU": "Teil-GPU",
     "GUI": "GUI",

@@ -1454,6 +1454,7 @@
     "DescWarboySupport": "Utilizar o suporte do Furiosa Warboy",
     "EnterpriseFeatures": "Recursos da empresa",
     "EnvConfigWillDisappear": "Qualquer variável e valor de ambiente não salvo desaparecerá.",
+    "FailedToSaveSettings": "Falha ao salvar as configurações.",
     "FifoOnly": "Atualmente, as alterações só são possíveis quando o escalonador é FIFO.",
     "FractionalGPU": "GPU fracionário",
     "GUI": "GUI",

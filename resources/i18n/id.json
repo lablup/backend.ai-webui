@@ -1453,6 +1453,7 @@
     "DescWarboySupport": "Gunakan dukungan Furiosa Warboy",
     "EnterpriseFeatures": "Fitur Perusahaan",
     "EnvConfigWillDisappear": "Variabel dan nilai lingkungan yang belum disimpan akan hilang.",
+    "FailedToSaveSettings": "Gagal menyimpan pengaturan.",
     "FifoOnly": "Saat ini, perubahan hanya dimungkinkan jika penjadwalnya adalah FIFO.",
     "FractionalGPU": "GPU pecahan",
     "GUI": "GUI",

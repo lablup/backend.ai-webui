@@ -1454,6 +1454,7 @@
     "DescWarboySupport": "Utiliser le support Furiosa Warboy",
     "EnterpriseFeatures": "Fonctionnalités d'entreprise",
     "EnvConfigWillDisappear": "Toute variable et valeur d'environnement non sauvées disparaîtront.",
+    "FailedToSaveSettings": "Échec de l'enregistrement des paramètres.",
     "FifoOnly": "Actuellement, les modifications ne sont possibles que lorsque l'ordonnanceur est FIFO.",
     "FractionalGPU": "GPU fractionnaire",
     "GUI": "IHM graphique",
