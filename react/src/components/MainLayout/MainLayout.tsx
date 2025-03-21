@@ -8,6 +8,7 @@ import BAISider from '../BAISider';
 import Flex from '../Flex';
 import ForceTOTPChecker from '../ForceTOTPChecker';
 import NetworkStatusBanner from '../NetworkStatusBanner';
+import NoResourceGroupBanner from '../NoResourceGroupBanner';
 import PasswordChangeRequestAlert from '../PasswordChangeRequestAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIBreadcrumb from '../WebUIBreadcrumb';
@@ -192,6 +193,7 @@ function MainLayout() {
                     containerElement={contentScrollFlexRef.current}
                   />
                   <NetworkStatusBanner />
+                  <NoResourceGroupBanner />
                 </div>
               </Suspense>
               <Suspense>

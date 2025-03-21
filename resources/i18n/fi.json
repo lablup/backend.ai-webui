@@ -1005,7 +1005,7 @@
     "Name": "Nimi",
     "NoChangesMade": "Ei muutoksia",
     "NoGroupToDisplay": "NoGroupToDisplay",
-    "NoScalingGroupAssignedToThisProject": "Resurssiryhmää ei ole osoitettu tähän projektiin.",
+    "NoScalingGroupAssignedToThisProject": "Resurssiryhmää ei ole osoitettu tähän projektiin. \nIstunnon luominen ja mallipalvelun luominen rajoitetaan.",
     "Public": "Julkinen",
     "PublicStatus": "Julkinen asema",
     "ResourceGroupAlreadyExist": "Samanniminen resurssiryhmä on jo olemassa.",
