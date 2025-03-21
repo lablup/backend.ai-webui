@@ -82,15 +82,6 @@ const MyKeypairInfoModal: React.FC<MyKeypairInfoModalProps> = ({
         dataSource={keypairs}
         columns={[
           {
-            title: '#',
-            fixed: 'left',
-            render: (id, record, index) => {
-              ++index;
-              return index;
-            },
-            rowScope: 'row',
-          },
-          {
             title: t('general.AccessKey'),
             key: 'accessKey',
             dataIndex: 'access_key',

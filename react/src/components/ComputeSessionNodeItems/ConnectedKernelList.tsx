@@ -117,15 +117,6 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
 
   const columns = filterEmptyItem<ColumnType<Kernel>>([
     {
-      title: '#',
-      fixed: 'left',
-      render: (id, record, index) => {
-        return index + 1;
-      },
-      showSorterTooltip: false,
-      rowScope: 'row',
-    },
-    {
       title: t('kernel.KernelId'),
       fixed: 'left',
       dataIndex: 'row_id',
