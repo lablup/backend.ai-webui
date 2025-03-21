@@ -147,6 +147,7 @@ const ChatHeader = React.memo(PureChatHeader, (prev, next) => {
   if (prev.agent !== next.agent) return false;
   if (prev.fetchKey !== next.fetchKey) return false;
   if (prev.sync !== next.sync) return false;
+  if (prev.closable !== next.closable) return false;
   return true;
 });
 

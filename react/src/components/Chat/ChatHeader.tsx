@@ -109,11 +109,22 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
     },
     {
       key: 'clear',
-      danger: true,
       label: t('chatui.DeleteChatHistory'),
       icon: <DeleteOutlined />,
       onClick: () => {
         setMessages([]);
+      },
+    },
+    closable && {
+      type: 'divider',
+    },
+    closable && {
+      key: 'close',
+      danger: true,
+      label: t('chatui.DeleteChattingSession'),
+      icon: <CloseOutlined />,
+      onClick: () => {
+        onRequestClose?.(chat);
       },
     },
   ]);
@@ -159,21 +170,15 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
           }}
           allowCustomModel={allowCustomModel}
         />
-        <Dropdown menu={{ items }} trigger={['click']}>
-          <Button
-            type="link"
-            onClick={(e) => e.preventDefault()}
-            icon={<MoreOutlined />}
-            style={{ color: token.colorTextSecondary, width: token.sizeMS }}
-          />
-        </Dropdown>
       </Flex>
       <Flex style={CardExtraStyle} justify="between">
         <Flex direction="row" gap={'xs'} wrap="wrap" style={{ flexShrink: 1 }}>
           <Flex gap={'xs'}>
-            <Typography.Text type="secondary">
-              {t('chatui.SyncInput')}
-            </Typography.Text>
+            {sync && (
+              <Typography.Text type="secondary">
+                {t('chatui.SyncInput')}
+              </Typography.Text>
+            )}
             <Switch
               value={sync}
               onClick={(checked) => {
@@ -187,22 +192,15 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
               icon={<PlusOutlined />}
             />
           </Flex>
-        </Flex>
-        {closable ? (
-          <Popconfirm
-            title={t('chatui.DeleteChattingSession')}
-            description={t('chatui.DeleteChattingSessionDescription')}
-            onConfirm={() => onRequestClose?.(chat)}
-            okText={t('button.Delete')}
-            okButtonProps={{ danger: true }}
-          >
+          <Dropdown menu={{ items }} trigger={['click']}>
             <Button
-              icon={<CloseOutlined />}
-              type="text"
-              style={{ color: token.colorIcon }}
+              type="link"
+              onClick={(e) => e.preventDefault()}
+              icon={<MoreOutlined />}
+              style={{ color: token.colorTextSecondary, width: token.sizeMS }}
             />
-          </Popconfirm>
-        ) : undefined}
+          </Dropdown>
+        </Flex>
       </Flex>
     </Flex>
   );
