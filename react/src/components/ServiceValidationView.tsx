@@ -34,7 +34,7 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
 
   async function getLogs(sessionId: string) {
     return baiClient
-      .get_logs(sessionId, baiClient._config.accessKey, 0)
+      .get_logs(sessionId, baiClient._config.accessKey)
       .then((req: any) => {
         const ansi_up = new AnsiUp();
         const logs = ansi_up.ansi_to_html(req.result.logs);
@@ -142,7 +142,7 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
           // something went wrong during validation
           setValidationStatus('error');
           message.error(t('modelService.CannotValidateNow'));
-        }, 10000);
+        }, 30000);
 
         sse?.addEventListener('bgtask_updated', async (e) => {
           const data = JSON.parse(e['data']);
