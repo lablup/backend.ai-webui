@@ -167,6 +167,12 @@ export type BackendAIClient = {
     info: (accessKey: string, fields: KeypairInfoField[]) => Promise<any>;
     [key: string]: any;
   };
+  setting: {
+    get: (key: string) => Promise<any>;
+    set: (key: string, value: any) => Promise<any>;
+    delete: (key: string, prefix: boolean) => Promise<any>;
+  };
+  get_resource_slots: () => Promise<any>;
 };
 export const useSuspendedBackendaiClient = () => {
   const { data: client } = useSuspenseTanQuery<any>({
