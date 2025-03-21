@@ -155,9 +155,23 @@ type Queries {
   user_resource_policies: [UserResourcePolicy]
   project_resource_policies: [ProjectResourcePolicy]
   resource_preset(name: String): ResourcePreset
-  resource_presets: [ResourcePreset]
+
+  """Added in 25.4.0."""
+  resource_preset_by_id(id: UUID): ResourcePreset
+  resource_presets(
+    """Added in 25.4.0."""
+    filter: String
+
+    """Added in 25.4.0."""
+    order: String
+  ): [ResourcePreset]
   scaling_group(name: String): ScalingGroup
   scaling_groups(name: String, is_active: Boolean): [ScalingGroup]
+
+  """
+  Added in 25.5.0. This query is available for all users. It returns the resource groups(=scaling groups) that the user has access to. Only name, is_active, own_session_occupied_resource_slots and accelerator_quantum_size fields are returned.
+  """
+  accessible_scaling_groups(project_id: UUID!): [ScalingGroup]
   scaling_groups_for_domain(domain: String!, is_active: Boolean): [ScalingGroup]
   scaling_groups_for_user_group(user_group: String!, is_active: Boolean): [ScalingGroup]
   scaling_groups_for_keypair(access_key: String!, is_active: Boolean): [ScalingGroup]
@@ -209,9 +223,7 @@ type Queries {
 
   """Added in 24.09.0."""
   compute_session_nodes(
-    """
-    Added in 25.2.0. Default value `system` queries across the entire system.
-    """
+    """Added in 24.12.0."""
     scope_id: ScopeField
 
     """Added in 24.09.0."""
@@ -1214,6 +1226,9 @@ type ScalingGroup {
   scheduler_opts: JSONString
   use_host_network: Boolean
 
+  """Added in 25.5.0."""
+  accelerator_quantum_size: Float
+
   """Added in 24.03.7."""
   agent_count_by_status(
     """
@@ -1997,7 +2012,11 @@ type Mutations {
     name: String = null @deprecated(reason: "Deprecated since 25.4.0.")
     props: ModifyResourcePresetInput!
   ): ModifyResourcePreset
-  delete_resource_preset(name: String!): DeleteResourcePreset
+  delete_resource_preset(
+    """Added in 25.4.0. ID of the resource preset."""
+    id: UUID = null
+    name: String = null @deprecated(reason: "Deprecated since 25.4.0.")
+  ): DeleteResourcePreset
   create_scaling_group(name: String!, props: CreateScalingGroupInput!): CreateScalingGroup
   modify_scaling_group(name: String!, props: ModifyScalingGroupInput!): ModifyScalingGroup
   delete_scaling_group(name: String!): DeleteScalingGroup
@@ -2433,6 +2452,11 @@ type PurgeUser {
 
 input PurgeUserInput {
   purge_shared_vfolders: Boolean
+
+  """
+  Added in 25.4.0. The default value is `false`. Indicates whether the user's existing endpoints are delegated to the requester.
+  """
+  delegate_endpoint_ownership: Boolean
 }
 
 """Added in 25.4.0."""
