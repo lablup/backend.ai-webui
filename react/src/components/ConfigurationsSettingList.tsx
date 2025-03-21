@@ -99,14 +99,18 @@ const ConfigurationsSettingList = () => {
 
   const setImagePullingBehavior = async (value: ImagePullingBehavior) => {
     if (value !== options.image_pulling_behavior) {
-      const { result } = await baiClient.setting.set(
-        'docker/image/auto_pull',
-        value,
-      );
-      if (result === 'ok') {
-        updatePulling();
-        message.success(t('notification.SuccessfullyUpdated'));
-      } else {
+      try {
+        const { result } = await baiClient.setting.set(
+          'docker/image/auto_pull',
+          value,
+        );
+        if (result === 'ok') {
+          updatePulling();
+          message.success(t('notification.SuccessfullyUpdated'));
+        } else {
+          message.error(t('settings.FailedToSaveSettings'));
+        }
+      } catch (e) {
         message.error(t('settings.FailedToSaveSettings'));
       }
     }
@@ -126,11 +130,15 @@ const ConfigurationsSettingList = () => {
   };
 
   const setNetwork = async (value: { [key: string]: string }) => {
-    const { result } = await baiClient.setting.set('network/overlay', value);
-    if (result === 'ok') {
-      updateNetwork();
-      message.success(t('notification.SuccessfullyUpdated'));
-    } else {
+    try {
+      const { result } = await baiClient.setting.set('network/overlay', value);
+      if (result === 'ok') {
+        updateNetwork();
+        message.success(t('notification.SuccessfullyUpdated'));
+      } else {
+        message.error(t('settings.FailedToSaveSettings'));
+      }
+    } catch (e) {
       message.error(t('settings.FailedToSaveSettings'));
     }
   };
@@ -168,14 +176,18 @@ const ConfigurationsSettingList = () => {
       return;
     }
 
-    const { result } = await baiClient.setting.set(
-      `plugins/scheduler/${key}`,
-      value,
-    );
-    if (result === 'ok') {
-      message.success(t('notification.SuccessfullyUpdated'));
-      updateScheduler();
-    } else {
+    try {
+      const { result } = await baiClient.setting.set(
+        `plugins/scheduler/${key}`,
+        value,
+      );
+      if (result === 'ok') {
+        message.success(t('notification.SuccessfullyUpdated'));
+        updateScheduler();
+      } else {
+        message.error(t('settings.FailedToSaveSettings'));
+      }
+    } catch (e) {
       message.error(t('settings.FailedToSaveSettings'));
     }
   };
@@ -203,11 +215,15 @@ const ConfigurationsSettingList = () => {
   };
 
   const deleteSetting = async (key: string, prefix: boolean = false) => {
-    const { result } = await baiClient.setting.delete(key, prefix);
-    if (result === 'ok') {
-      updateSettings();
-      message.success(t('notification.SuccessfullyUpdated'));
-    } else {
+    try {
+      const { result } = await baiClient.setting.delete(key, prefix);
+      if (result === 'ok') {
+        updateSettings();
+        message.success(t('notification.SuccessfullyUpdated'));
+      } else {
+        message.error(t('settings.FailedToSaveSettings'));
+      }
+    } catch (e) {
       message.error(t('settings.FailedToSaveSettings'));
     }
   };
