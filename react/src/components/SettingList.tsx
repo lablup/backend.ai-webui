@@ -16,7 +16,7 @@ import {
 } from 'antd';
 import { createStyles } from 'antd-style';
 import _ from 'lodash';
-import { useState } from 'react';
+import { useState, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const useStyles = createStyles(({ css, token }) => ({
@@ -32,6 +32,7 @@ const useStyles = createStyles(({ css, token }) => ({
 
 export type SettingGroup = {
   title: string;
+  description?: ReactNode;
   settingItems: SettingItemProps[];
 };
 
@@ -87,6 +88,14 @@ const GroupSettingItems: React.FC<{
           {group.title}
         </Typography.Title>
         <Divider style={{ marginTop: 0, marginBottom: 0 }} />
+        {group.description && (
+          <Typography.Text
+            type="secondary"
+            style={{ marginTop: token.marginSM }}
+          >
+            {group.description}
+          </Typography.Text>
+        )}
       </Flex>
       <Flex direction="column" align="start" gap={'lg'}>
         {group.settingItems.map((item) => (
