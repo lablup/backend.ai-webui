@@ -1362,14 +1362,39 @@ const SessionLauncherPage = () => {
                     display: currentStepKey === 'storage' ? 'block' : 'none',
                   }}
                 >
-                  <VFolderTableFormItem
-                    filter={(vfolder) => {
+                  <Form.Item noStyle dependencies={['owner']}>
+                    {({ getFieldValue, setFieldsValue }) => {
+                      const ownerInfo = getFieldValue('owner');
+                      const isValidOwner =
+                        ownerInfo?.enabled &&
+                        _.every(_.omit(ownerInfo, 'enabled'), (key, value) => {
+                          return key !== undefined;
+                        });
+
+                      if (isValidOwner) {
+                        setFieldsValue({
+                          mounts: undefined,
+                          vfolderAliasMap: {},
+                        });
+                      }
+
                       return (
-                        vfolder.status === 'ready' &&
-                        !vfolder.name?.startsWith('.')
+                        <VFolderTableFormItem
+                          filter={(vfolder) => {
+                            return (
+                              vfolder.status === 'ready' &&
+                              !vfolder.name?.startsWith('.')
+                            );
+                          }}
+                          tableProps={{
+                            ownerEmail: isValidOwner
+                              ? ownerInfo?.email
+                              : undefined,
+                          }}
+                        />
                       );
                     }}
-                  />
+                  </Form.Item>
                   {/* <VFolderTable /> */}
                 </Card>
 
