@@ -1858,6 +1858,7 @@
       "TermsOfService": "Condiciones de uso",
       "TotpActivated": "2FA Activado",
       "Update": "Actualización",
+      "UsageHistory": "Historia de uso",
       "UserCredentials&Policies": "Credenciales de usuario y políticas",
       "Users": "Usuarios",
       "WelcomeMessage": "Bienvenido, {{ userName }}.",

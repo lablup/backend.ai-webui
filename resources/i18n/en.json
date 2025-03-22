@@ -1865,6 +1865,7 @@
       "TermsOfService": "Terms of Service",
       "TotpActivated": "2FA Enabled",
       "Update": "Update",
+      "UsageHistory": "Usage History",
       "UserCredentials&Policies": "User Credentials & Policies",
       "Users": "Users",
       "WelcomeMessage": "Welcome, {{ userName }}.",

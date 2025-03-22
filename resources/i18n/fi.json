@@ -1857,6 +1857,7 @@
       "TermsOfService": "Käyttöehdot",
       "TotpActivated": "2FA käytössä",
       "Update": "Päivitys",
+      "UsageHistory": "Käyttöhistoria",
       "UserCredentials&Policies": "Käyttäjien valtakirjat ja käytännöt",
       "Users": "Käyttäjät",
       "WelcomeMessage": "Tervetuloa, {{ userName }}.",

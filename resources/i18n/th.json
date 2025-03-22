@@ -1839,6 +1839,7 @@
       "TermsOfService": "ข้อตกลงการใช้บริการ",
       "TotpActivated": "เปิดใช้งาน 2FA แล้ว",
       "Update": "อัปเดต",
+      "UsageHistory": "ประวัติการใช้งาน",
       "UserCredentials&Policies": "ข้อมูลประจำตัวผู้ใช้และนโยบาย",
       "Users": "ผู้ใช้",
       "WelcomeMessage": "ยินดีต้อนรับ, {{ userName }}",

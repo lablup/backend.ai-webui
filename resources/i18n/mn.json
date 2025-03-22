@@ -1856,6 +1856,7 @@
       "TermsOfService": "Үйлчилгээний нөхцөл",
       "TotpActivated": "2FA идэвхжүүлсэн",
       "Update": "Шинэчлэх",
+      "UsageHistory": "Хэрэглээний түүх",
       "UserCredentials&Policies": "Хэрэглэгчийн итгэмжлэл ба тохиргоо",
       "Users": "Хэрэглэгчид",
       "WelcomeMessage": "Тавтай морилно уу, {{ userName }}.",

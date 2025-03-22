@@ -1862,6 +1862,7 @@
       "TermsOfService": "약관",
       "TotpActivated": "이중 인증 사용",
       "Update": "변경",
+      "UsageHistory": "사용 기록",
       "UserCredentials&Policies": "자격 증명 및 정책",
       "Users": "사용자",
       "WelcomeMessage": "환영합니다. {{ userName }}님",

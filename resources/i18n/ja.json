@@ -1857,6 +1857,7 @@
       "TermsOfService": "利用規約",
       "TotpActivated": "二要素認証の使用",
       "Update": "更新",
+      "UsageHistory": "使用履歴",
       "UserCredentials&Policies": "ユーザーの資格情報とポリシー",
       "Users": "ユーザー管理",
       "WelcomeMessage": "ようこそ、{{ userName }}.",

@@ -1855,6 +1855,7 @@
       "TermsOfService": "Termini di servizio",
       "TotpActivated": "2FA abilitato",
       "Update": "Aggiornare",
+      "UsageHistory": "Storia di utilizzo",
       "UserCredentials&Policies": "Credenziali utente e criteri",
       "Users": "Utenti",
       "WelcomeMessage": "Benvenuto, {{ userName }}.",
