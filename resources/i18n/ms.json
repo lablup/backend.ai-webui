@@ -1344,6 +1344,7 @@
       "NumOpenMPthreads": "Bilangan utas OpenMP",
       "NumberOfContainer": "Bilangan bekas",
       "OnlyAllowsDiscreteNumberByClusterSize": "Hanya integer dibenarkan apabila saiz kelompok tidak kurang daripada 2.",
+      "OnlyAllowsDiscreteNumberByQuantumSize": "Nilai mestilah berganda {{stepSize}}",
       "OpenMPOptimization": "Pengoptimuman OpenMP/OpenBLAS",
       "OwnerAccessKey": "Kunci akses pemilik",
       "OwnerEmail": "E-mel Pemilik",

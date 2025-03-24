@@ -1343,6 +1343,7 @@
       "NumOpenMPthreads": "OpenMP-säikeiden määrä",
       "NumberOfContainer": "Säiliön numero",
       "OnlyAllowsDiscreteNumberByClusterSize": "Vain kokonaisluku on sallittu, kun klusterin koko on vähintään 2.",
+      "OnlyAllowsDiscreteNumberByQuantumSize": "Arvon on oltava {{stepSize}}:n monikerta.",
       "OpenMPOptimization": "OpenMP/OpenBLAS-optimointi",
       "OwnerAccessKey": "Omistajan käyttöoikeusavain",
       "OwnerEmail": "Omistajan sähköpostiosoite",

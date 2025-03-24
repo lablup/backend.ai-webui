@@ -1345,6 +1345,7 @@
       "NumOpenMPthreads": "Número de threads OpenMP",
       "NumberOfContainer": "Número de contentores",
       "OnlyAllowsDiscreteNumberByClusterSize": "Somente números inteiros são permitidos quando o tamanho do cluster não é menor que 2.",
+      "OnlyAllowsDiscreteNumberByQuantumSize": "O valor tem de ser um múltiplo de {{stepSize}}",
       "OpenMPOptimization": "Otimização OpenMP/OpenBLAS",
       "OwnerAccessKey": "Chave de acesso do proprietário",
       "OwnerEmail": "Email do proprietário",

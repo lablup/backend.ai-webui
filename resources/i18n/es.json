@@ -1345,6 +1345,7 @@
       "NumOpenMPthreads": "Número de hilos OpenMP",
       "NumberOfContainer": "Número de contenedor",
       "OnlyAllowsDiscreteNumberByClusterSize": "Solo se permiten números enteros cuando el tamaño del clúster no es inferior a 2.",
+      "OnlyAllowsDiscreteNumberByQuantumSize": "El valor debe ser múltiplo de {{stepSize}}.",
       "OpenMPOptimization": "Optimización OpenMP/OpenBLAS",
       "OwnerAccessKey": "Clave de acceso del propietario",
       "OwnerEmail": "Correo electrónico del propietario",

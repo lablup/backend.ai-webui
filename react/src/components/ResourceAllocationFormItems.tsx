@@ -25,6 +25,7 @@ import {
 import InputNumberWithSlider from './InputNumberWithSlider';
 import ResourceGroupSelect from './ResourceGroupSelect';
 import ResourcePresetSelect from './ResourcePresetSelect';
+import { ResourceAllocationFormItemsQuery } from './__generated__/ResourceAllocationFormItemsQuery.graphql';
 import { CaretDownOutlined, ReloadOutlined } from '@ant-design/icons';
 import {
   Button,
@@ -37,9 +38,11 @@ import {
   Switch,
   theme,
 } from 'antd';
+import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { Suspense, useEffect, useMemo, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import { useLazyLoadQuery } from 'react-relay';
 
 export const AUTOMATIC_DEFAULT_SHMEM = '64m';
 export const RESOURCE_ALLOCATION_INITIAL_FORM_VALUES: DeepPartial<ResourceAllocationFormValue> =
@@ -117,6 +120,33 @@ const ResourceAllocationFormItems: React.FC<
       preserve: true,
     }) || form.getFieldValue('resourceGroup');
 
+  const { accessible_scaling_groups } =
+    useLazyLoadQuery<ResourceAllocationFormItemsQuery>(
+      graphql`
+        query ResourceAllocationFormItemsQuery($projectID: UUID!) {
+          accessible_scaling_groups(project_id: $projectID) {
+            accelerator_quantum_size
+            name
+            is_active
+          }
+        }
+      `,
+      {
+        projectID: currentProject.id,
+      },
+      {
+        fetchPolicy:
+          baiClient.supports('custom-accelerator-quantum-size') &&
+          currentProject.id
+            ? 'store-and-network'
+            : 'store-only', //to skip network request when accessible_scaling_groups is not available
+      },
+    );
+
+  const currentResourceGroupInfo = _.find(
+    accessible_scaling_groups,
+    (group) => group?.name === currentResourceGroupInForm,
+  );
   const currentImage = Form.useWatch(['environments', 'image'], {
     form,
     preserve: true,
@@ -974,6 +1004,44 @@ const ResourceAllocationFormItems: React.FC<
                       'resource',
                       'acceleratorType',
                     ]);
+
+                    // Determine the accelerator step size based on the type and cluster settings
+                    const isSharesType = _.endsWith(
+                      currentAcceleratorType,
+                      'shares',
+                    );
+                    const isSingleCluster =
+                      form.getFieldValue('cluster_size') < 2;
+                    const hasQuantumSize = _.isNumber(
+                      currentResourceGroupInfo?.accelerator_quantum_size,
+                    );
+
+                    let currentAcceleratorStep;
+                    if (isSharesType && isSingleCluster) {
+                      // For single cluster with shares type, use quantum size if available
+                      // otherwise, use default step of 0.1
+                      if (hasQuantumSize) {
+                        currentAcceleratorStep =
+                          currentResourceGroupInfo.accelerator_quantum_size;
+                      } else {
+                        currentAcceleratorStep = 0.1;
+                      }
+                    } else {
+                      // For non-shares accelerators, always use step of 1
+                      currentAcceleratorStep = 1;
+                    }
+
+                    // Calculates the adjusted remaining value for a specific accelerator type,
+                    // aligned to the accelerator's step size.
+                    const adjustedRemainingMarkValue = _.isNumber(
+                      remaining.accelerators[currentAcceleratorType],
+                    )
+                      ? Math.floor(
+                          remaining.accelerators[currentAcceleratorType] /
+                            currentAcceleratorStep,
+                        ) * currentAcceleratorStep
+                      : undefined;
+
                     return (
                       <Form.Item
                         name={['resource', 'accelerator']}
@@ -1012,6 +1080,27 @@ const ResourceAllocationFormItems: React.FC<
                                 return Promise.reject(
                                   t(
                                     'session.launcher.OnlyAllowsDiscreteNumberByClusterSize',
+                                  ),
+                                );
+                              } else {
+                                return Promise.resolve();
+                              }
+                            },
+                          },
+                          {
+                            validator: async (rule: any, value: number) => {
+                              if (
+                                _.isNumber(currentAcceleratorStep) &&
+                                ![0, currentAcceleratorStep].includes(
+                                  _.round(value % currentAcceleratorStep, 5),
+                                )
+                              ) {
+                                return Promise.reject(
+                                  t(
+                                    'session.launcher.OnlyAllowsDiscreteNumberByQuantumSize',
+                                    {
+                                      stepSize: currentAcceleratorStep,
+                                    },
                                   ),
                                 );
                               } else {
@@ -1077,11 +1166,9 @@ const ResourceAllocationFormItems: React.FC<
                             marks: {
                               0: 0,
                               // remaining mark code should be located before max mark code to prevent overlapping when it is same value
-                              ...(remaining.accelerators[currentAcceleratorType]
+                              ...(adjustedRemainingMarkValue
                                 ? {
-                                    [remaining.accelerators[
-                                      currentAcceleratorType
-                                    ]]: {
+                                    [adjustedRemainingMarkValue]: {
                                       label: <RemainingMark />,
                                     },
                                   }
@@ -1117,12 +1204,7 @@ const ResourceAllocationFormItems: React.FC<
                             resourceLimits.accelerators[currentAcceleratorType]
                               ?.max
                           }
-                          step={
-                            _.endsWith(currentAcceleratorType, 'shares') &&
-                            form.getFieldValue('cluster_size') < 2
-                              ? 0.1
-                              : 1
-                          }
+                          step={currentAcceleratorStep}
                           onChange={() => {
                             form.setFieldValue('allocationPreset', 'custom');
                           }}

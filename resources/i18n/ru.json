@@ -1345,6 +1345,7 @@
       "NumOpenMPthreads": "Количество потоков OpenMP",
       "NumberOfContainer": "Количество контейнеров",
       "OnlyAllowsDiscreteNumberByClusterSize": "Допускается только целое число, если размер кластера не меньше 2.",
+      "OnlyAllowsDiscreteNumberByQuantumSize": "Значение должно быть кратным {{stepSize}}.",
       "OpenMPOptimization": "Оптимизация OpenMP/OpenBLAS",
       "OwnerAccessKey": "Ключ доступа владельца",
       "OwnerEmail": "Электронная почта владельца",

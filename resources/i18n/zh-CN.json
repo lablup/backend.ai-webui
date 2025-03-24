@@ -1345,6 +1345,7 @@
       "NumOpenMPthreads": "OpenMP 线程数",
       "NumberOfContainer": "集装箱数量",
       "OnlyAllowsDiscreteNumberByClusterSize": "当簇大小不小于 2 时，只允许使用整数。",
+      "OnlyAllowsDiscreteNumberByQuantumSize": "数值必须是 {{stepSize}} 的倍数。",
       "OpenMPOptimization": "OpenMP/OpenBLAS 优化",
       "OwnerAccessKey": "所有者访问密钥",
       "OwnerEmail": "所有者电子邮件",

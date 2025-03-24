@@ -1349,6 +1349,7 @@
       "NumOpenMPthreads": "OpenMP 스레드 수",
       "NumberOfContainer": "컨테이너 개수",
       "OnlyAllowsDiscreteNumberByClusterSize": "클러스터 크기가 2 이상인 경우 정수만 허용됩니다.",
+      "OnlyAllowsDiscreteNumberByQuantumSize": "입력 값은 {{stepSize}}의 배수여야 합니다.",
       "OpenMPOptimization": "OpenMP/OpenBLAS 최적화",
       "OwnerAccessKey": "소유자 접근키",
       "OwnerEmail": "사용자 이메일",

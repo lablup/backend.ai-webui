@@ -1343,6 +1343,7 @@
       "NumOpenMPthreads": "OpenMP хэлхээний тоо",
       "NumberOfContainer": "Савны тоо",
       "OnlyAllowsDiscreteNumberByClusterSize": "Кластерын хэмжээ 2-оос багагүй тохиолдолд зөвхөн бүхэл тоог зөвшөөрнө.",
+      "OnlyAllowsDiscreteNumberByQuantumSize": "Утга нь {{stepSize}} -ээс олон байх ёстой}}}.",
       "OpenMPOptimization": "OpenMP/OpenBLAS оновчлол",
       "OwnerAccessKey": "Эзэмшигчийн нэвтрэх түлхүүр",
       "OwnerEmail": "Эзэмшигчийн имэйл",

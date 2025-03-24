@@ -1344,6 +1344,7 @@
       "NumOpenMPthreads": "OpenMP iş parçacığı sayısı",
       "NumberOfContainer": "Konteyner sayısı",
       "OnlyAllowsDiscreteNumberByClusterSize": "Küme boyutu 2'den az olmadığında yalnızca tam sayılara izin verilir.",
+      "OnlyAllowsDiscreteNumberByQuantumSize": "Değer {{stepSize}} değerinin katı olmalıdır.",
       "OpenMPOptimization": "OpenMP/OpenBLAS Optimizasyonu",
       "OwnerAccessKey": "Sahip erişim anahtarı",
       "OwnerEmail": "Sahip E-postası",

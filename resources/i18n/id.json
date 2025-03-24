@@ -1344,6 +1344,7 @@
       "NumOpenMPthreads": "Jumlah utas OpenMP",
       "NumberOfContainer": "Jumlah kontainer",
       "OnlyAllowsDiscreteNumberByClusterSize": "Hanya bilangan bulat yang diperbolehkan jika ukuran cluster tidak kurang dari 2.",
+      "OnlyAllowsDiscreteNumberByQuantumSize": "Nilai harus merupakan kelipatan dari {{stepSize}}.",
       "OpenMPOptimization": "Pengoptimalan OpenMP/OpenBLAS",
       "OwnerAccessKey": "Kunci akses pemilik",
       "OwnerEmail": "Email Pemilik",

@@ -1341,6 +1341,7 @@
       "NumOpenMPthreads": "Αριθμός νημάτων OpenMP",
       "NumberOfContainer": "Αριθμός εμπορευματοκιβωτίων",
       "OnlyAllowsDiscreteNumberByClusterSize": "Μόνο ακέραιος επιτρέπεται όταν το μέγεθος του συμπλέγματος δεν είναι μικρότερο από 2.",
+      "OnlyAllowsDiscreteNumberByQuantumSize": "Η τιμή πρέπει να είναι πολλαπλάσιο του {{stepSize}}.",
       "OpenMPOptimization": "Βελτιστοποίηση OpenMP/OpenBLAS",
       "OwnerAccessKey": "Κλειδί πρόσβασης κατόχου",
       "OwnerEmail": "Ηλεκτρονικό ταχυδρομείο κατόχου",

@@ -1351,6 +1351,7 @@
       "NumOpenMPthreads": "Number of OpenMP threads",
       "NumberOfContainer": "Number of container",
       "OnlyAllowsDiscreteNumberByClusterSize": "Only integer is allowed when cluster size is not less than 2.",
+      "OnlyAllowsDiscreteNumberByQuantumSize": "The value must be a multiple of {{stepSize}}.",
       "OpenMPOptimization": "OpenMP/OpenBLAS Optimization",
       "OwnerAccessKey": "Owner access key",
       "OwnerEmail": "Owner Email",

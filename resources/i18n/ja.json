@@ -1344,6 +1344,7 @@
       "NumOpenMPthreads": "OpenMPスレッド数",
       "NumberOfContainer": "コンテナ数",
       "OnlyAllowsDiscreteNumberByClusterSize": "クラスター サイズが 2 以上の場合は、整数のみが許可されます。",
+      "OnlyAllowsDiscreteNumberByQuantumSize": "{{stepSize}}の倍数でなければならない。",
       "OpenMPOptimization": "OpenMP/OpenBLASの最適化",
       "OwnerAccessKey": "所有者アクセスキー",
       "OwnerEmail": "所有者の電子メール",

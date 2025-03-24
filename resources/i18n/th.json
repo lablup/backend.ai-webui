@@ -1332,6 +1332,7 @@
       "NumOpenMPthreads": "จำนวนเธรด OpenMP",
       "NumberOfContainer": "จำนวนคอนเทนเนอร์",
       "OnlyAllowsDiscreteNumberByClusterSize": "อนุญาตเฉพาะจำนวนเต็มเมื่อขนาดคลัสเตอร์ไม่น้อยกว่า 2",
+      "OnlyAllowsDiscreteNumberByQuantumSize": "ค่าจะต้องเป็นมัลติของ {{stepSize}}",
       "OpenMPOptimization": "การปรับแต่ง OpenMP/OpenBLAS",
       "OwnerAccessKey": "คีย์การเข้าถึงของเจ้าของ",
       "OwnerEmail": "อีเมลเจ้าของ",

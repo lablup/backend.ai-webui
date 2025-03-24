@@ -1345,6 +1345,7 @@
       "NumOpenMPthreads": "Anzahl der OpenMP-Threads",
       "NumberOfContainer": "Nummer des Behälters",
       "OnlyAllowsDiscreteNumberByClusterSize": "Nur Ganzzahlen sind zulässig, wenn die Clustergröße nicht weniger als 2 beträgt.",
+      "OnlyAllowsDiscreteNumberByQuantumSize": "Der Wert muss ein Vielfaches von {{stepSize}} sein.",
       "OpenMPOptimization": "OpenMP/OpenBLAS-Optimierung",
       "OwnerAccessKey": "Zugriffsschlüssel für den Besitzer",
       "OwnerEmail": "Eigentümer-E-Mail",

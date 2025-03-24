@@ -1345,6 +1345,7 @@
       "NumOpenMPthreads": "Liczba wątków OpenMP",
       "NumberOfContainer": "Liczba pojemników",
       "OnlyAllowsDiscreteNumberByClusterSize": "Jeśli rozmiar klastra jest nie mniejszy niż 2, dozwolona jest tylko liczba całkowita.",
+      "OnlyAllowsDiscreteNumberByQuantumSize": "Wartość musi być wielokrotnością {{stepSize}}.",
       "OpenMPOptimization": "Optymalizacja OpenMP/OpenBLAS",
       "OwnerAccessKey": "Klucz dostępu właściciela",
       "OwnerEmail": "E-mail właściciela",

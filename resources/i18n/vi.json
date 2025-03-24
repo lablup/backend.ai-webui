@@ -1345,6 +1345,7 @@
       "NumOpenMPthreads": "Số lượng luồng OpenMP",
       "NumberOfContainer": "Số lượng thùng chứa",
       "OnlyAllowsDiscreteNumberByClusterSize": "Chỉ cho phép số nguyên khi kích thước cụm không nhỏ hơn 2.",
+      "OnlyAllowsDiscreteNumberByQuantumSize": "Giá trị phải là bội số của {{stepSize}}",
       "OpenMPOptimization": "Tối ưu hóa OpenMP/OpenBLAS",
       "OwnerAccessKey": "Khóa truy cập của chủ sở hữu",
       "OwnerEmail": "Email của chủ sở hữu",
