@@ -239,7 +239,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         </Form.Item>
         <Divider />
 
-        <Form.Item label={t('data.Host')} name={'host'}>
+        <Form.Item label={t('data.folders.Location')} name={'host'}>
           <Suspense fallback={<Skeleton.Input active />}>
             <StorageSelect
               onChange={(value) => {
@@ -256,7 +256,9 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         <Form.Item label={t('data.UsageMode')} name={'usage_mode'}>
           <Radio.Group>
             <Radio value={'general'}>General</Radio>
-            <Radio value={'model'}>Model</Radio>
+            {baiClient._config.enableModelFolders ? (
+              <Radio value={'model'}>Model</Radio>
+            ) : null}
           </Radio.Group>
         </Form.Item>
         <Divider />

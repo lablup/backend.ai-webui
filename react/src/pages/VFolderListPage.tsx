@@ -99,7 +99,7 @@ const VFolderListPage: React.FC<VFolderListPageProps> = (props) => {
       key: 'automount',
       tab: t('data.AutomountFolders'),
     },
-    {
+    baiClient._config.enableModelFolders && {
       key: 'model',
       tab: t('data.Models'),
     },

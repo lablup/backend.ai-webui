@@ -18,11 +18,12 @@ import RestoreVFolderModal from '../components/RestoreVFolderModal';
 import StorageStatusPanelCard from '../components/StorageStatusPanelCard';
 import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
 import {
+  filterEmptyItem,
   filterNonNullItems,
   handleRowSelectionChange,
   transformSorterToOrderString,
 } from '../helper';
-import { useUpdatableState } from '../hooks';
+import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
@@ -92,6 +93,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const { token } = theme.useToken();
   const { lg } = Grid.useBreakpoint();
   const currentProject = useCurrentProjectValue();
+  const baiClient = useSuspendedBackendaiClient();
 
   const [selectedFolderList, setSelectedFolderList] = useState<
     Array<VFolderNodesType>
@@ -401,7 +403,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                   setTablePaginationOption({ current: 1 });
                   setSelectedFolderList([]);
                 }}
-                options={[
+                options={filterEmptyItem([
                   {
                     label: t('data.All'),
                     value: 'all',
@@ -418,11 +420,11 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                     label: t('data.AutoMount'),
                     value: 'automount',
                   },
-                  {
+                  baiClient._config.enableModelFolders && {
                     label: t('data.Models'),
                     value: 'model',
                   },
-                ]}
+                ])}
               />
               <BAIPropertyFilter
                 filterProperties={[
