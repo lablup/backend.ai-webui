@@ -78,11 +78,11 @@ export const useSuspendedFilteredAppTemplate = (
         if (app.name === 'sshd' && !allowTCPApps) {
           return null;
         }
-        // They are default apps from Backend.AI agent.
+        // They are custom apps from Backend.AI agent.
         return {
           name: app.name,
           title: template?.title || app.name,
-          category: template?.category || '0.Default',
+          category: template?.category || '99.Custom',
           redirect: template?.redirect || '',
           src: template?.src || './resources/icons/default_app.svg',
         };
@@ -96,7 +96,7 @@ export const useSuspendedFilteredAppTemplate = (
     baseAppTemplate.push({
       name: appTemplate['ttyd'][0].name,
       title: appTemplate['ttyd'][0].title,
-      category: '0.Default',
+      category: '99.Custom',
       redirect: appTemplate['ttyd'][0].redirect,
       src: appTemplate['ttyd'][0].src,
     });
