@@ -91,7 +91,6 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const fasttrackEndpoint = baiClient?._config?.fasttrackEndpoint ?? null;
   const blockList = baiClient?._config?.blockList ?? null;
   const inactiveList = baiClient?._config?.inactiveList ?? null;
-  const siteDescription = baiClient?._config?.siteDescription ?? null;
   const supportServing = baiClient?.supports('model-serving') ?? false;
   const supportUserCommittedImage =
     baiClient?.supports('user-committed-image') ?? false;
@@ -391,10 +390,6 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           }}
           onClick={() => webuiNavigate(themeConfig?.logo?.href || '/start')}
         />
-      }
-      logoTitle={themeConfig?.logo?.logoTitle || siteDescription || 'WebUI'}
-      logoTitleCollapsed={
-        themeConfig?.logo?.logoTitleCollapsed || siteDescription || 'WebUI'
       }
       {...props}
     >

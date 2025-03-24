@@ -126,6 +126,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   const [currentUser] = useCurrentUserInfo();
   // const curProject = useCurrentProjectValue();
   const baiClient = useSuspendedBackendaiClient();
+  const blockList = baiClient?._config?.blockList ?? null;
   const webuiNavigate = useWebUINavigate();
   const { open } = useFolderExplorerOpener();
   const [selectedSessionId, setSelectedSessionId] = useState<string>();
@@ -376,16 +377,18 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       children: endpoint?.url ? (
         <>
           <Typography.Text copyable>{endpoint?.url}</Typography.Text>
-          <Tooltip title={'LLM Chat Test'}>
-            <Button
-              type="link"
-              icon={<BotMessageSquareIcon />}
-              onClick={() => {
-                webuiNavigate(`/chat?endpointId=${endpoint?.endpoint_id}`);
-              }}
-              disabled={endpoint?.status !== 'HEALTHY'}
-            />
-          </Tooltip>
+          {!_.includes(blockList, 'chat') ? (
+            <Tooltip title={'LLM Chat Test'}>
+              <Button
+                type="link"
+                icon={<BotMessageSquareIcon />}
+                onClick={() => {
+                  webuiNavigate(`/chat?endpointId=${endpoint?.endpoint_id}`);
+                }}
+                disabled={endpoint?.status !== 'HEALTHY'}
+              />
+            </Tooltip>
+          ) : null}
         </>
       ) : (
         <Typography.Text type="secondary">
