@@ -80,6 +80,11 @@ const VFOLDER_STATUSES = [
 
 interface VFolderNodeListPageProps {}
 
+const FILTER_BY_STATUS_CATEGORY = {
+  created: 'status in ["READY", "PERFORMING", "CLONING", "MOUNTED", "ERROR"]',
+  deleted: 'status in ["DELETE_PENDING", "DELETE_ONGOING", "DELETE_ERROR"]',
+};
+
 const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   ...props
 }) => {
@@ -119,8 +124,8 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const statusFilter =
     queryParams.statusCategory === 'created' ||
     queryParams.statusCategory === undefined
-      ? 'status in ["READY", "PERFORMING", "CLONING", "MOUNTED", "ERROR"]'
-      : 'status in ["DELETE_PENDING", "DELETE_ONGOING","DELETE_COMPLETE", "DELETE_ERROR"]';
+      ? FILTER_BY_STATUS_CATEGORY['created']
+      : FILTER_BY_STATUS_CATEGORY['deleted'];
 
   function getUsageModeFilter(mode: string) {
     switch (mode) {
@@ -170,12 +175,14 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     useLazyLoadQuery<VFolderNodeListPageQuery>(
       graphql`
         query VFolderNodeListPageQuery(
-          $projectId: UUID 
+          $projectId: UUID
           $offset: Int
           $first: Int
           $filter: String
           $order: String
           $permission: VFolderPermissionValueField
+          $filterForCreatedCount: String
+          $filterForDeletedCount: String
         ) {
           vfolder_nodes(
             project_id: $projectId
@@ -201,7 +208,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             project_id: $projectId
             first: 0
             offset: 0
-            filter: "status in [\"READY\", \"PERFORMING\", \"CLONING\", \"MOUNTED\", \"ERROR\"]"
+            filter: $filterForCreatedCount
             permission: $permission
           ) {
             count
@@ -210,14 +217,18 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             project_id: $projectId
             first: 0
             offset: 0
-            filter: "status in [\"DELETE_PENDING\", \"DELETE_ONGOING\",\"DELETE_COMPLETE\", \"DELETE_ERROR\"]",
+            filter: $filterForDeletedCount
             permission: $permission
           ) {
             count
           }
         }
       `,
-      deferredQueryVariables,
+      {
+        ...deferredQueryVariables,
+        filterForCreatedCount: FILTER_BY_STATUS_CATEGORY['created'],
+        filterForDeletedCount: FILTER_BY_STATUS_CATEGORY['deleted'],
+      },
       {
         fetchPolicy:
           deferredFetchKey === 'initial-fetch'
