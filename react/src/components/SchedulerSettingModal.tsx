@@ -5,7 +5,7 @@ import FormItemWithCheckbox from './FormItemWithCheckbox';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import { Button, Form, InputNumber, Select, Typography } from 'antd';
 import { FormInstance } from 'antd/lib';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface SchedulerSettingModalProps extends BAIModalProps {
@@ -33,6 +33,10 @@ const SchedulerSettingModal = ({
   onDelete,
 }: SchedulerSettingModalProps) => {
   const { t } = useTranslation();
+  const [schedulerType, setSchedulerType] = useState<SchedulerType>(
+    initialValues.schedulerType,
+  );
+  console.log(schedulerType);
 
   const formRef = useRef<FormInstance>(null);
 
@@ -63,11 +67,18 @@ const SchedulerSettingModal = ({
                 .validateFields()
                 .then((values) => {
                   if (values.schedulerType) {
-                    if (values.num_retries_to_skip_checkbox) {
+                    console.log(values);
+                    const numRetries =
+                      values[`${values.schedulerType}_num_retries_to_skip`];
+                    const isUnset =
+                      values[
+                        `${values.schedulerType}_num_retries_to_skip_checkbox`
+                      ];
+                    if (isUnset) {
                       onDelete(values.schedulerType, 'num_retries_to_skip');
                     } else {
                       onSave(values.schedulerType, {
-                        num_retries_to_skip: values.num_retries_to_skip,
+                        num_retries_to_skip: numRetries,
                       });
                     }
                   }
@@ -81,7 +92,17 @@ const SchedulerSettingModal = ({
       ]}
       destroyOnClose
     >
-      <Form ref={formRef} layout="vertical" initialValues={initialValues}>
+      <Form
+        ref={formRef}
+        layout="vertical"
+        initialValues={{
+          schedulerType: schedulerType,
+          [`${schedulerType}_num_retries_to_skip`]:
+            initialValues.num_retries_to_skip,
+          [`${schedulerType}_num_retries_to_skip_checkbox`]:
+            initialValues.num_retries_to_skip === '0',
+        }}
+      >
         <Form.Item
           label={t('settings.Scheduler')}
           name="schedulerType"
@@ -98,8 +119,13 @@ const SchedulerSettingModal = ({
             onChange={async (value) => {
               const newOptions: SchedulerOptions =
                 await onSchedulerTypeChange(value);
-              formRef.current?.setFieldsValue(newOptions);
+              setSchedulerType(value);
+              formRef.current?.setFieldsValue({
+                [`${value}_num_retries_to_skip`]:
+                  newOptions.num_retries_to_skip,
+              });
             }}
+            defaultActiveFirstOption
             options={[
               {
                 label: 'FIFO',
@@ -124,12 +150,12 @@ const SchedulerSettingModal = ({
             label={t('settings.SessionCreationRetries')}
             required
             tooltip={t('settings.ConfigPerJobSchdulerDescription')}
-            name="num_retries_to_skip"
+            name={`${schedulerType}_num_retries_to_skip`}
             rules={[
               {
                 validator(_, value) {
                   const isUnset = formRef.current?.getFieldValue(
-                    'num_retries_to_skip_checkbox',
+                    `${schedulerType}_num_retries_to_skip_checkbox`,
                   );
 
                   if (isUnset) {
@@ -142,6 +168,7 @@ const SchedulerSettingModal = ({
                 },
               },
             ]}
+            checkedValue="0"
           >
             <InputNumber min={0} max={1000} style={{ width: '100%' }} />
           </FormItemWithCheckbox>

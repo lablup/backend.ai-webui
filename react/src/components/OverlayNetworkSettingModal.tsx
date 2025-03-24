@@ -73,6 +73,7 @@ const OverlayNetworkSettingModal = ({
           tooltip={t('settings.MTUDescription')}
           required
           name="mtu"
+          checkedValue=""
           rules={[
             {
               validator(_, value) {
