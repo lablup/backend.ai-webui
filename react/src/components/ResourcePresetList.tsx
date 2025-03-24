@@ -84,7 +84,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
     {
       title: t('resourcePreset.Name'),
       dataIndex: 'name',
-      sorter: true,
+      sorter: (a, b) => localeCompare(a?.name, b?.name),
     },
     {
       title: t('resourcePreset.Resources'),
@@ -104,7 +104,6 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
       dataIndex: 'shared_memory',
       render: (text) =>
         text ? convertBinarySizeUnit(text + '', 'g')?.number : '-',
-      sorter: true,
     },
     baiClient?.supports('resource-presets-per-resource-group') && {
       title: t('general.ResourceGroup'),
