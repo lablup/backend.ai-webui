@@ -176,9 +176,10 @@ const ErrorLogList: React.FC<{
     const raw: LogType[] = JSON.parse(
       localStorage.getItem('backendaiwebui.logs') || '[]',
     );
-    return _.map(raw, (log) => {
+    return _.map(raw, (log, index) => {
       return {
         ...log,
+        key: index,
         formattedTimeStamp: dayjs(log.timestamp).format('ll LTS'),
       };
     });

@@ -40,4 +40,5 @@ const DatePickerISO = React.forwardRef<
   );
 });
 
+DatePickerISO.displayName = 'DatePickerISO';
 export default DatePickerISO;

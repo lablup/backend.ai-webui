@@ -603,8 +603,8 @@ const SessionLauncherPreview: React.FC<{
             <Flex direction="row" gap="xs" style={{ flex: 1 }} wrap="wrap">
               {/* {form.getFieldValue('environments').image} */}
               {_.sortBy(form.getFieldValue('ports'), (v) => parseInt(v)).map(
-                (v) => (
-                  <PortTag value={v} style={{ margin: 0 }}>
+                (v, idx) => (
+                  <PortTag key={idx + v} value={v} style={{ margin: 0 }}>
                     {v}
                   </PortTag>
                 ),

@@ -88,7 +88,7 @@ const SummaryItemInvitation: React.FC = () => {
       {invitations.length > 0 ? (
         <>
           {invitations.map((invitation: any) => (
-            <BAICard showDivider style={{ width: '100%' }}>
+            <BAICard key={invitation.id} showDivider style={{ width: '100%' }}>
               <Descriptions title={`From: ${invitation.inviter}`} column={1}>
                 <Descriptions.Item
                   label={t('summary.FolderName')}

@@ -531,6 +531,7 @@ const AgentList: React.FC<AgentListProps> = ({
                   const deviceName = _.split(statKey, '_')[0] + '.device';
                   return (
                     <Flex
+                      key={statKey}
                       justify="between"
                       style={{ minWidth: 200, width: 'min-content' }}
                       gap="xxs"
@@ -564,6 +565,7 @@ const AgentList: React.FC<AgentListProps> = ({
                   const deviceName = _.split(statKey, '_')[0] + '.device';
                   return (
                     <Flex
+                      key={statKey}
                       justify="between"
                       style={{ minWidth: 200, width: 'min-content' }}
                       gap="xxs"

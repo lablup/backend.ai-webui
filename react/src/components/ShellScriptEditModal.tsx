@@ -204,7 +204,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
       }
       onCancel={() => onRequestClose()}
       okText={t('button.Save')}
-      footer={[
+      footer={
         <Flex justify="between" style={{ width: '100%' }}>
           <Flex>
             <Dropdown.Button
@@ -278,8 +278,8 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
               {t('button.SaveAndClose')}
             </Dropdown.Button>
           </Flex>
-        </Flex>,
-      ]}
+        </Flex>
+      }
       destroyOnClose
       {...modalProps}
     >

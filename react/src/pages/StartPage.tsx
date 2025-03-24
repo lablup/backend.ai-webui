@@ -162,11 +162,11 @@ const StartPage: React.FC = () => {
         }}
       /> */}
       <Row gutter={[16, 16]}>
-        {_.map(items, (item) => {
+        {_.map(items, (item, idx) => {
           return item.id === 'empty' ? (
-            <Col xs={24} md={12} xl={6}></Col>
+            <Col key={'empty' + idx} xs={24} md={12} xl={6}></Col>
           ) : (
-            <Col xs={24} md={12} xl={6}>
+            <Col key={item.id} xs={24} md={12} xl={6}>
               <Card
                 style={{ height: 340 }}
                 styles={{

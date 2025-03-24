@@ -323,6 +323,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         <Flex direction="row" gap="xxs">
           {row?.resource_limits?.map((resource_limit) => (
             <ResourceNumber
+              key={resource_limit?.key}
               type={resource_limit?.key || ''}
               value={resource_limit?.min || '0'}
               max={resource_limit?.max || 'Infinity'}
