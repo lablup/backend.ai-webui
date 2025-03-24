@@ -62,6 +62,7 @@ interface FolderCreateFormItemsType {
 
 interface FolderCreateModalProps extends BAIModalProps {
   onRequestClose: (response?: FolderCreationResponse) => void;
+  usageMode?: 'general' | 'model';
 }
 export interface FolderCreationResponse {
   id: string;
@@ -81,6 +82,7 @@ export interface FolderCreationResponse {
 
 const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
   onRequestClose,
+  usageMode,
   ...modalProps
 }) => {
   const { t } = useTranslation();
@@ -132,7 +134,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
     name: '',
     host: undefined,
     group: currentProject.name,
-    usage_mode: 'general',
+    usage_mode: usageMode ?? 'general',
     type: 'user',
     permission: 'rw',
     cloneable: false,
