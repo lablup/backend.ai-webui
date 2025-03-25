@@ -29,6 +29,7 @@
     "dayjs": "^1.11.13",
     "gpt-tokenizer": "^2.9.0",
     "graphql": "^16.10.0",
+    "fast-deep-equal": "^3.1.3",
     "i18next": "^23.16.8",
     "i18next-http-backend": "^3.0.1",
     "jotai": "^2.12.2",

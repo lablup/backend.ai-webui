@@ -1,4 +1,4 @@
-import { BAIModel } from './LLMChatCard';
+import { BAIModel } from './ChatModel';
 import { Select, SelectProps } from 'antd';
 import _ from 'lodash';
 import React from 'react';
