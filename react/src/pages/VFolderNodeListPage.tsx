@@ -202,6 +202,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 ...DeleteVFolderModalFragment
                 ...EditableVFolderNameFragment
                 ...RestoreVFolderModalFragment
+                ...VFolderNodeIdenticonFragment
               }
             }
             count
@@ -306,7 +307,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
         </Row>
       </Flex>
       <BAICard
-        bordered={false}
+        variant="borderless"
         title={t('data.Folders')}
         extra={
           <Flex gap={'xs'}>
