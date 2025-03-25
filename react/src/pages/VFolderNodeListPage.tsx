@@ -135,7 +135,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
       case undefined:
         return undefined;
       case 'general':
-        return `! name ilike ".%" & usage_mode == "${mode}"`;
+        return `(! name ilike ".%")&(usage_mode == "${mode}")`;
       case 'pipeline':
         return `usage_mode == "data"`;
       case 'automount':
