@@ -549,6 +549,9 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         }
         param['scaling_group'] = this.scaling_group;
       }
+      if (!param['scaling_group']) {
+        delete param['scaling_group'];
+      }
       const resourcePresetInfo =
         await globalThis.backendaiclient.resourcePreset.check(param);
       const resource_remaining = resourcePresetInfo.keypair_remaining;

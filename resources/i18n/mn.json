@@ -1008,6 +1008,7 @@
     "Name": "Нэр",
     "NoChangesMade": "Өөрчлөлт оруулаагүй болно",
     "NoGroupToDisplay": "NoGroupToDisplay",
+    "NoScalingGroupAssignedToThisProject": "Энэ төсөлд нөөцийн бүлэгт хуваарилагдаагүй байна. \nХуралдаан үүсгэх ба загвар үйлчилгээний үйлдвэрлэлийг хязгаарлах болно.",
     "Public": "Олон нийтийн",
     "PublicStatus": "Олон нийтийн статус",
     "ResourceGroupAlreadyExist": "Ижил нэртэй нөөцийн бүлэг аль хэдийн бий болсон.",

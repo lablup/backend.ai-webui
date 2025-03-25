@@ -1010,6 +1010,7 @@
     "Name": "名稱",
     "NoChangesMade": "未做任何更改",
     "NoGroupToDisplay": "无组显示",
+    "NoScalingGroupAssignedToThisProject": "沒有資源組分配給該項目。\n會話創建和模型服務創建將受到限制。",
     "Public": "公众",
     "PublicStatus": "公众地位",
     "ResourceGroupAlreadyExist": "已存在同名的資源組。",

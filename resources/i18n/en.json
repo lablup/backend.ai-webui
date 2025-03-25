@@ -1016,6 +1016,7 @@
     "Name": "Name",
     "NoChangesMade": "No changes made",
     "NoGroupToDisplay": "NoGroupToDisplay",
+    "NoScalingGroupAssignedToThisProject": "No resource group is assigned to this project. Session creation and model service creation will be restricted.",
     "Public": "Public",
     "PublicStatus": "Public Status",
     "ResourceGroupAlreadyExist": "A resource group with the same name already exists.",

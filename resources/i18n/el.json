@@ -1006,6 +1006,7 @@
     "Name": "Ονομα",
     "NoChangesMade": "Δεν έγιναν αλλαγές",
     "NoGroupToDisplay": "NoGroupToDisplay",
+    "NoScalingGroupAssignedToThisProject": "Καμία ομάδα πόρων δεν έχει ανατεθεί σε αυτό το έργο. \nΗ δημιουργία συνόδων και η δημιουργία υπηρεσιών μοντέλων θα περιοριστεί.",
     "Public": "Δημόσιο",
     "PublicStatus": "Δημόσια κατάσταση",
     "ResourceGroupAlreadyExist": "Υπάρχει ήδη μια ομάδα πόρων με το ίδιο όνομα.",

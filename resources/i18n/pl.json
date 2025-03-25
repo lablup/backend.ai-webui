@@ -1010,6 +1010,7 @@
     "Name": "Nazwa",
     "NoChangesMade": "Nie wprowadzono żadnych zmian",
     "NoGroupToDisplay": "NoGroupToDisplay",
+    "NoScalingGroupAssignedToThisProject": "Do tego projektu nie jest przypisywana grupa zasobów. \nTworzenie sesji i tworzenie usług modelowych będą ograniczone.",
     "Public": "Publiczny",
     "PublicStatus": "Status publiczny",
     "ResourceGroupAlreadyExist": "Grupa zasobów o tej samej nazwie już istnieje.",

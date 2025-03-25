@@ -1010,6 +1010,7 @@
     "Name": "Tên",
     "NoChangesMade": "Không có thay đổi nào được thực hiện",
     "NoGroupToDisplay": "Không có nhóm để hiển thị",
+    "NoScalingGroupAssignedToThisProject": "Không có nhóm tài nguyên nào được gán cho dự án này. \nTạo phiên và tạo dịch vụ mô hình sẽ bị hạn chế.",
     "Public": "Công cộng",
     "PublicStatus": "Trạng thái công khai",
     "ResourceGroupAlreadyExist": "Một nhóm tài nguyên có cùng tên đã tồn tại.",

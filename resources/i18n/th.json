@@ -999,6 +999,7 @@
     "Name": "ชื่อ",
     "NoChangesMade": "ไม่มีการเปลี่ยนแปลง",
     "NoGroupToDisplay": "ไม่มีกลุ่มที่จะแสดง",
+    "NoScalingGroupAssignedToThisProject": "ไม่มีกลุ่มทรัพยากรที่ได้รับมอบหมายให้โครงการนี้ \nการสร้างเซสชันและการสร้างบริการแบบจำลองจะถูก จำกัด",
     "Public": "สาธารณะ",
     "PublicStatus": "สถานะสาธารณะ",
     "ResourceGroupAlreadyExist": "มีกลุ่มทรัพยากรชื่อเดียวกันอยู่แล้ว",

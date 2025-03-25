@@ -1010,6 +1010,7 @@
     "Name": "Имя",
     "NoChangesMade": "Никаких изменений не внесено",
     "NoGroupToDisplay": "NoGroupToDisplay",
+    "NoScalingGroupAssignedToThisProject": "Никакая группа ресурсов не назначена в этот проект. \nСоздание сеанса и создание моделей службы будет ограничено.",
     "Public": "Публичный",
     "PublicStatus": "Общественный статус",
     "ResourceGroupAlreadyExist": "Группа ресурсов с таким именем уже существует.",

@@ -1010,6 +1010,7 @@
     "Name": "Name",
     "NoChangesMade": "Keine Änderungen vorgenommen",
     "NoGroupToDisplay": "NoGroupToDisplay",
+    "NoScalingGroupAssignedToThisProject": "Dieses Projekt wird keine Ressourcengruppe zugewiesen. \nDie Erstellung der Sitzung und die Erstellung von Modelldienstleistungen werden eingeschränkt.",
     "Public": "Öffentlich",
     "PublicStatus": "Öffentlicher Status",
     "ResourceGroupAlreadyExist": "Eine Ressourcengruppe mit demselben Namen ist bereits vorhanden.",

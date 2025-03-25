@@ -21,6 +21,7 @@ export const useCurrentProjectValue = () => {
 const previousSelectedResourceGroupNameAtom = atom<string | null>(null);
 
 export const useCurrentResourceGroupValue = () => {
+  useSuspendedBackendaiClient();
   const { resourceGroups } = useAtomValue(resourceGroupsForCurrentProjectAtom);
   const [prevSelectedRGName, setPrevSelectedRGName] = useAtom(
     previousSelectedResourceGroupNameAtom,
@@ -63,6 +64,7 @@ export const useCurrentResourceGroupState = () => {
 };
 
 const resourceGroupsForCurrentProjectAtom = atom(async (get) => {
+  // NOTE: cannot use hook inside atom
   const currentProject = get(currentProjectAtom);
   const [resourceGroups, vhostInfo] = await Promise.all([
     // @ts-ignore

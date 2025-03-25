@@ -1009,6 +1009,7 @@
     "Name": "Nama",
     "NoChangesMade": "Tidak ada perubahan yang dibuat",
     "NoGroupToDisplay": "NoGroupToDisplay",
+    "NoScalingGroupAssignedToThisProject": "Tiada kumpulan sumber yang diberikan kepada projek ini. \nPenciptaan sesi dan penciptaan perkhidmatan model akan dihadkan.",
     "Public": "Awam",
     "PublicStatus": "Status Awam",
     "ResourceGroupAlreadyExist": "Kumpulan sumber dengan nama yang sama sudah ada.",

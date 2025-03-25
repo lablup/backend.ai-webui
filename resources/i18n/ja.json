@@ -1009,6 +1009,7 @@
     "Name": "名前",
     "NoChangesMade": "変更はありません",
     "NoGroupToDisplay": "グループがありません。",
+    "NoScalingGroupAssignedToThisProject": "このプロジェクトにはリソースグループが割り当てられていません。\nセッションの作成とモデルサービスの作成は制限されます。",
     "Public": "公開",
     "PublicStatus": "公開状況",
     "ResourceGroupAlreadyExist": "同じ名前のリソースグループがすでに存在します。",

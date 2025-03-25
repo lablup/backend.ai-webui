@@ -1008,6 +1008,7 @@
     "Name": "Nama",
     "NoChangesMade": "Tidak ada perubahan yang dilakukan",
     "NoGroupToDisplay": "NoGroupToDisplay",
+    "NoScalingGroupAssignedToThisProject": "Tidak ada grup sumber daya yang ditugaskan untuk proyek ini. \nPembuatan Sesi dan Pembuatan Layanan Model akan dibatasi.",
     "Public": "Publik",
     "PublicStatus": "Status Publik",
     "ResourceGroupAlreadyExist": "Grup sumber daya dengan nama yang sama sudah ada.",

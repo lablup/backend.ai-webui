@@ -1008,6 +1008,7 @@
     "Name": "Nome",
     "NoChangesMade": "Nessuna modifica effettuata",
     "NoGroupToDisplay": "NoGroupToDisplay",
+    "NoScalingGroupAssignedToThisProject": "Nessun gruppo di risorse è assegnato a questo progetto. \nLa creazione di sessione e la creazione del servizio modello saranno limitate.",
     "Public": "Pubblico",
     "PublicStatus": "Stato pubblico",
     "ResourceGroupAlreadyExist": "Esiste già un gruppo di risorse con lo stesso nome.",
