@@ -8,13 +8,14 @@ import BAISider from '../BAISider';
 import Flex from '../Flex';
 import ForceTOTPChecker from '../ForceTOTPChecker';
 import NetworkStatusBanner from '../NetworkStatusBanner';
-import NoResourceGroupBanner from '../NoResourceGroupBanner';
+import NoResourceGroupAlert from '../NoResourceGroupAlert';
 import PasswordChangeRequestAlert from '../PasswordChangeRequestAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIBreadcrumb from '../WebUIBreadcrumb';
 import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
 import { App, Layout, theme } from 'antd';
+import { createStyles } from 'antd-style';
 import { atom, useSetAtom } from 'jotai';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
@@ -40,11 +41,24 @@ export const mainContentDivRefState = atom<React.RefObject<HTMLElement | null>>(
   },
 );
 
+const useStyle = createStyles(({ css, token }) => ({
+  alertWrapper: css`
+    & > *:first-child {
+      margin-top: ${token.margin}px;
+    }
+    & > *:last-child {
+      margin-bottom: ${token.margin}px;
+    }
+  `,
+}));
+
 function MainLayout() {
   const navigate = useNavigate();
   const [compactSidebarActive] = useBAISettingUserState('compact_sidebar');
   const [sideCollapsed, setSideCollapsed] =
     useState<boolean>(!!compactSidebarActive);
+
+  const { styles } = useStyle();
 
   useEffect(() => {
     if (sideCollapsed !== compactSidebarActive) {
@@ -192,18 +206,28 @@ function MainLayout() {
                     onClickMenuIcon={() => setSideCollapsed((v) => !v)}
                     containerElement={contentScrollFlexRef.current}
                   />
-                  <NetworkStatusBanner />
-                  <NoResourceGroupBanner />
+                  {/* sticky Alert components with banner props */}
+                  <Suspense fallback={null}>
+                    <NetworkStatusBanner />
+                  </Suspense>
                 </div>
               </Suspense>
+              {/* Non sticky Alert components */}
               <Suspense>
-                <PasswordChangeRequestAlert
-                  showIcon
-                  icon={undefined}
-                  banner={false}
-                  style={{ marginBottom: token.paddingContentVerticalLG }}
-                  closable
-                />
+                <Flex
+                  direction="column"
+                  gap={'sm'}
+                  align="stretch"
+                  className={styles.alertWrapper}
+                >
+                  <NoResourceGroupAlert />
+                  <PasswordChangeRequestAlert
+                    showIcon
+                    icon={undefined}
+                    banner={false}
+                    closable
+                  />
+                </Flex>
               </Suspense>
               <Suspense>
                 <ForceTOTPChecker />
