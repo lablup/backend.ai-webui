@@ -264,46 +264,58 @@ const SessionDetailContent: React.FC<{
             )}
           </Descriptions.Item>
           <Descriptions.Item label={t('session.launcher.MountedFolders')}>
-            {session.vfolder_nodes
-              ? _.map(session?.vfolder_nodes?.edges, (vfolder) => {
-                  return (
-                    <Button
-                      key={vfolder?.node?.id}
-                      type="link"
-                      size="small"
-                      icon={<FolderOutlined />}
-                      onClick={() => {
-                        open(vfolder?.node?.row_id ?? '');
-                      }}
-                    >
-                      {vfolder?.node?.name}
-                    </Button>
-                  );
-                })
-              : baiClient.supports('vfolder-mounts')
-                ? _.map(
-                    // compute_session_node query's vfolder_mounts is not include name.
-                    // To provide vfolder name in compute_session_node, schema must be changed.
-                    // legacy_session.mounts (name) and session.vfolder_mounts (id) give vfolder information in same order.
-                    _.zip(legacy_session?.mounts, session?.vfolder_mounts),
-                    (mountInfo) => {
-                      const [name, id] = mountInfo;
-                      return (
-                        <Button
-                          key={id}
-                          type="link"
-                          size="small"
-                          icon={<FolderOutlined />}
-                          onClick={() => {
-                            open(id ?? '');
-                          }}
-                        >
-                          {name}
-                        </Button>
-                      );
-                    },
-                  )
-                : legacy_session?.mounts?.join(', ')}
+            <Flex gap="xs" wrap="wrap">
+              {session.vfolder_nodes
+                ? _.map(session?.vfolder_nodes?.edges, (vfolder) => {
+                    return (
+                      <Button
+                        key={vfolder?.node?.id}
+                        type="link"
+                        size="small"
+                        icon={<FolderOutlined />}
+                        onClick={() => {
+                          open(vfolder?.node?.row_id ?? '');
+                        }}
+                        style={{
+                          overflowWrap: 'break-word',
+                          whiteSpace: 'normal',
+                          height: 'auto',
+                        }}
+                      >
+                        {vfolder?.node?.name}
+                      </Button>
+                    );
+                  })
+                : baiClient.supports('vfolder-mounts')
+                  ? _.map(
+                      // compute_session_node query's vfolder_mounts is not include name.
+                      // To provide vfolder name in compute_session_node, schema must be changed.
+                      // legacy_session.mounts (name) and session.vfolder_mounts (id) give vfolder information in same order.
+                      _.zip(legacy_session?.mounts, session?.vfolder_mounts),
+                      (mountInfo) => {
+                        const [name, id] = mountInfo;
+                        return (
+                          <Button
+                            key={id}
+                            type="link"
+                            size="small"
+                            icon={<FolderOutlined />}
+                            onClick={() => {
+                              open(id ?? '');
+                            }}
+                            style={{
+                              overflowWrap: 'break-word',
+                              whiteSpace: 'normal',
+                              height: 'auto',
+                            }}
+                          >
+                            {name}
+                          </Button>
+                        );
+                      },
+                    )
+                  : legacy_session?.mounts?.join(', ')}
+            </Flex>
           </Descriptions.Item>
           <Descriptions.Item label={t('session.launcher.ResourceAllocation')}>
             <Flex gap={'sm'} wrap="wrap">
