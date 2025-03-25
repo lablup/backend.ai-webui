@@ -3,7 +3,7 @@ import useControllableState from '../hooks/useControllableState';
 import { usePrevious } from 'ahooks';
 import { InputNumber, InputNumberProps, Select, Typography } from 'antd';
 import _ from 'lodash';
-import React, { useEffect, useRef } from 'react';
+import React, { RefObject, useEffect, useRef } from 'react';
 
 export interface DynamicUnitInputNumberProps
   extends Omit<
@@ -18,6 +18,7 @@ export interface DynamicUnitInputNumberProps
   units?: string[];
   roundStep?: number;
   onChange?: (value: string) => void;
+  ref?: RefObject<HTMLInputElement | null>;
 }
 
 const DynamicUnitInputNumber: React.FC<DynamicUnitInputNumberProps> = ({
@@ -42,6 +43,15 @@ const DynamicUnitInputNumber: React.FC<DynamicUnitInputNumberProps> = ({
 
   const [minNumValue, minUnit] = parseUnit(min);
   const [maxNumValue, maxUnit] = parseUnit(max);
+
+  const minNumValueForCurrentUnit = convertBinarySizeUnit(
+    min,
+    unit as SizeUnit,
+  )?.number;
+  const maxNumValueForCurrentUnit = convertBinarySizeUnit(
+    max,
+    unit as SizeUnit,
+  )?.number;
 
   const ref = useRef<HTMLInputElement>(null);
   useEffect(() => {
@@ -68,25 +78,33 @@ const DynamicUnitInputNumber: React.FC<DynamicUnitInputNumberProps> = ({
 
   return (
     <InputNumber
-      ref={ref}
       {...inputNumberProps}
+      ref={(node) => {
+        ref.current = node;
+        return _.isFunction(inputNumberProps.ref) && inputNumberProps.ref(node);
+      }}
       onBlur={() => {
         if (_.isNumber(roundStep) && roundStep > 0) {
-          const decimalCount = roundStep.toString().split('.')[1]?.length || 0;
+          const nextRoundedNumValue =
+            Math.round(_.toNumber(ref.current?.value || '0') / roundStep) *
+            roundStep;
+
+          if (isNaN(nextRoundedNumValue)) {
+            return;
+          }
+
           if (
-            isNaN(
-              Math.round(_.toNumber(ref.current?.value || '0') / roundStep) *
-                roundStep,
-            )
+            (minNumValueForCurrentUnit &&
+              minNumValueForCurrentUnit >= nextRoundedNumValue) ||
+            (maxNumValueForCurrentUnit &&
+              maxNumValueForCurrentUnit <= nextRoundedNumValue)
           ) {
             return;
           }
-          setValue(
-            `${(
-              Math.round(_.toNumber(ref.current?.value || '0') / roundStep) *
-              roundStep
-            ).toFixed(decimalCount)}${unit}`,
-          );
+
+          // The value is adjusted based on the roundStep.
+          const decimalCount = roundStep.toString().split('.')[1]?.length || 0;
+          setValue(`${nextRoundedNumValue.toFixed(decimalCount)}${unit}`);
         }
       }}
       value={numValue}

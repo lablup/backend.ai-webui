@@ -804,59 +804,9 @@ const ResourceAllocationFormItems: React.FC<
                           >
                             <DynamicUnitInputNumberWithSlider
                               max={resourceLimits.mem?.max}
-                              // min="256m"
-                              // min={'0g'}
-                              // min={addNumberWithUnits(
-                              //   resourceLimits.mem?.min,
-                              //   form.getFieldValue(['resource', 'shmem']) || '0g',
-                              // )}
                               min={resourceLimits.mem?.min}
-                              // warn={
-                              //   checkPresetInfo?.scaling_group_remaining.mem ===
-                              //   undefined
-                              //     ? undefined
-                              //     : checkPresetInfo?.scaling_group_remaining.mem + 'g'
-                              // }
                               addonBefore={'MEM'}
                               extraMarks={{
-                                // ...(checkPresetInfo?.scaling_group_remaining.mem
-                                //   ? {
-                                //       // @ts-ignore
-                                //       [iSizeToSize(
-                                //         checkPresetInfo?.scaling_group_remaining
-                                //           .mem,
-                                //         'g',
-                                //         3,
-                                //       ).numberFixed]: {
-                                //         label: '-',
-                                //       },
-                                //     }
-                                //   : {}),
-                                // ...(form.getFieldValue(['resource', 'shmem'])
-                                //   ? {
-                                //       [iSizeToSize(
-                                //         form.getFieldValue([
-                                //           'resource',
-                                //           'shmem',
-                                //         ]),
-                                //         'g',
-                                //       )?.number || 0]: (
-                                //         <Flex
-                                //           style={{
-                                //             height: 8,
-                                //             width: 8,
-                                //             borderRadius: 4,
-                                //             backgroundColor: token.colorInfo,
-                                //             position: 'absolute',
-                                //             top: -10,
-                                //             transform: 'translateX(-50%)',
-                                //             opacity: 0.5,
-                                //             pointerEvents: 'none',
-                                //           }}
-                                //         ></Flex>
-                                //       ),
-                                //     }
-                                //   : undefined),
                                 ...(remaining.mem
                                   ? {
                                       //@ts-ignore
