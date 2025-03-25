@@ -3,7 +3,6 @@ import Flex from '../Flex';
 import ChatMessageContent from './ChatMessageContent';
 import { Message } from '@ai-sdk/react';
 import { Attachments } from '@ant-design/x';
-import { useThrottle } from 'ahooks';
 import { Avatar, theme, Image, Collapse, Typography, Spin } from 'antd';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
