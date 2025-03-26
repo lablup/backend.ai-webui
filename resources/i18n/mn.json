@@ -1491,6 +1491,7 @@
     "SchedulerConfiguration": "Ажлын хуваарь гаргагчийн тохиргоо.",
     "SchedulerOptions": "Хуваарилагчийн сонголтууд",
     "SchedulerRequired": "Хуваарьлагч шаардлагатай.",
+    "SchedulerSelectComment": "Сонголтуудыг өөрчлөхийн тулд хуваарийг сонгоно уу.",
     "SearchPlaceholder": "Хайх",
     "SessionCreationRetries": "Session үүсгэх давталт",
     "SessionCreationRetriesDescription": "Хэрэв session үүсгэх амжилтгүй болбол Session үүсгэхийг энд заасан утгаар дахин оролдоно. Хэрэв туршилтын хугацаанд Session үүсгэх боломжгүй бол хүсэлтийг үл тоомсорлож, Backend.AI дараагийн хүсэлтийг шийдвэрлэнэ.",

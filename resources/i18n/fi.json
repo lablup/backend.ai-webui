@@ -1492,6 +1492,7 @@
     "SchedulerConfiguration": "Työnsuunnittelijakohtainen konfigurointi.",
     "SchedulerOptions": "Aikataulun asetukset",
     "SchedulerRequired": "Tarvitaan aikatauluttaja.",
+    "SchedulerSelectComment": "Valitse Aikataulu muuttaaksesi asetuksia.",
     "SearchPlaceholder": "Etsi",
     "SessionCreationRetries": "Istunnon luomisen uusintayritykset",
     "SessionCreationRetriesDescription": "Jos istunnon luominen epäonnistuu, istunnon luomista yritetään uudelleen tässä määritetyllä arvolla. Jos istuntoa ei voida luoda kokeilujen kuluessa, pyyntö jätetään huomiotta ja Backend.AI käsittelee seuraavan pyynnön.",

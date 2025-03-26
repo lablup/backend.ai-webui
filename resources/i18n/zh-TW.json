@@ -1493,6 +1493,7 @@
     "SchedulerConfiguration": "每個作業調度程序的配置。",
     "SchedulerOptions": "調度程序選項",
     "SchedulerRequired": "需要調度程序。",
+    "SchedulerSelectComment": "選擇調度程序以更改選項。",
     "SearchPlaceholder": "搜索",
     "SessionCreationRetries": "會話創建重試",
     "SessionCreationRetriesDescription": "如果會話創建失敗，將針對此處指定的值重試會話創建。如果無法在試驗中創建會話，則該請求將被忽略，Backend.AI 將處理下一個請求。",

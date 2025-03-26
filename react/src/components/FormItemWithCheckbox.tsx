@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 interface FormItemWithCheckboxProps extends FormItemProps {
   children: React.ReactNode;
   checkedValue?: any;
+  disabled?: boolean;
 }
 const FormItemWithCheckbox = ({
   children,
@@ -14,6 +15,7 @@ const FormItemWithCheckbox = ({
   tooltip,
   required,
   checkedValue,
+  disabled,
   ...formItemProps
 }: FormItemWithCheckboxProps) => {
   const [isDisabled, setIsDisabled] = useState(false);
@@ -38,14 +40,20 @@ const FormItemWithCheckbox = ({
 
   useEffect(() => {
     const fieldValue = form.getFieldValue(name);
-
+    if (disabled) {
+      setIsDisabled(true);
+      form.setFieldsValue({
+        [`${name}_checkbox`]: false,
+      });
+      return;
+    }
     if (checkedValue !== undefined) {
       setIsDisabled(fieldValue === checkedValue);
       form.setFieldsValue({
         [`${name}_checkbox`]: fieldValue === checkedValue,
       });
     }
-  }, [form, name, checkedValue]);
+  }, [form, name, checkedValue, disabled]);
   return (
     <Form.Item label={label} tooltip={tooltip} required={required}>
       <Flex gap="sm" align="center">
@@ -76,6 +84,7 @@ const FormItemWithCheckbox = ({
                 });
               }
             }}
+            disabled={disabled}
             value={checkedValue}
           >
             {t('settings.Unset')}

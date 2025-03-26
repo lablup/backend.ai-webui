@@ -1494,6 +1494,7 @@
     "SchedulerConfiguration": "Cấu hình cho mỗi bộ lập lịch công việc.",
     "SchedulerOptions": "Tùy chọn bộ lập lịch",
     "SchedulerRequired": "Lập lịch là bắt buộc.",
+    "SchedulerSelectComment": "Chọn Trình lập lịch để thay đổi các tùy chọn.",
     "SearchPlaceholder": "Tìm kiếm",
     "SessionCreationRetries": "Thử lại quá trình tạo phiên",
     "SessionCreationRetriesDescription": "Nếu quá trình tạo phiên không thành công, quá trình tạo phiên sẽ được thử lại cho giá trị được chỉ định tại đây. Nếu không thể tạo phiên trong bản dùng thử, yêu cầu sẽ bị bỏ qua và Backend.AI sẽ xử lý yêu cầu tiếp theo.",

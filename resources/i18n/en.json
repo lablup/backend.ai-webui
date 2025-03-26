@@ -1501,6 +1501,7 @@
     "SchedulerConfiguration": "Configuration per job scheduler.",
     "SchedulerOptions": "Scheduler Options",
     "SchedulerRequired": "Scheduler is required.",
+    "SchedulerSelectComment": "Select the scheduler to change the options.",
     "SearchPlaceholder": "Search",
     "SessionCreationRetries": "Session creation retries",
     "SessionCreationRetriesDescription": "If the session creation fails, the session creation is retried for the value specified in here. If the session cannot be created within the trials, the request will be ignored and Backend.AI will process the next request.",

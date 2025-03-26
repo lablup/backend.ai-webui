@@ -1493,6 +1493,7 @@
     "SchedulerConfiguration": "ジョブスケジューラごとの構成。",
     "SchedulerOptions": "スケジューラオプション",
     "SchedulerRequired": "スケジューラが必要です。",
+    "SchedulerSelectComment": "オプションを変更するには、スケジューラを選択します。",
     "SearchPlaceholder": "検索",
     "SessionCreationRetries": "セッション作成の再試行",
     "SessionCreationRetriesDescription": "セッションの作成が失敗した場合、ここで指定された値に対してセッションの作成が再試行されます。トライアル内でセッションを作成できない場合、リクエストは無視され、Backend.AIが次のリクエストを処理します。",

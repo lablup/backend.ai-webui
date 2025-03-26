@@ -1493,6 +1493,7 @@
     "SchedulerConfiguration": "Konfigurasi setiap penjadual kerja.",
     "SchedulerOptions": "Pilihan Penjadual",
     "SchedulerRequired": "Penjadual diperlukan.",
+    "SchedulerSelectComment": "Pilih penjadual untuk menukar pilihan.",
     "SearchPlaceholder": "Cari",
     "SessionCreationRetries": "Pembuatan sesi dicuba lagi",
     "SessionCreationRetriesDescription": "Sekiranya penciptaan sesi gagal, penciptaan sesi dicuba semula untuk nilai yang dinyatakan di sini. Sekiranya sesi tidak dapat dibuat dalam percobaan, permintaan akan diabaikan dan Backend.AI akan memproses permintaan berikutnya.",

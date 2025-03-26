@@ -144,8 +144,6 @@ const ConfigurationsSettingList = () => {
   };
 
   const updateScheduler = async () => {
-    // const { result } = await baiClient.setting.get('plugins/scheduler');
-    // console.log(result);
     const newSchedulerType = await updateSelectedScheduler(
       options.schedulerType,
     );
@@ -159,8 +157,6 @@ const ConfigurationsSettingList = () => {
     schedulerType: SchedulerType,
   ): Promise<SchedulerOptions> => {
     let newOptions: SchedulerOptions = { ...options.scheduler };
-    const res = await baiClient.setting.get(`plugins/scheduler-type`);
-    console.log(res);
 
     for (const [key] of Object.entries(newOptions)) {
       const { result } = await baiClient.setting.get(
@@ -494,10 +490,6 @@ const ConfigurationsSettingList = () => {
         }}
       />
       <SchedulerSettingModal
-        initialValues={{
-          schedulerType: options.schedulerType,
-          num_retries_to_skip: options.scheduler.num_retries_to_skip,
-        }}
         onRequestClose={toggleSchedulerModal}
         open={isOpenSchedulerModal}
         onSave={(key, value) => {
