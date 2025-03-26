@@ -160,7 +160,7 @@ const SchedulerSettingModal = ({
                 },
               ]}
               disabled={schedulerType === null}
-              checkedValue="0"
+              checkedValue={null}
             >
               <InputNumber
                 disabled
