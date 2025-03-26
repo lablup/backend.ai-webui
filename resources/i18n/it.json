@@ -1491,6 +1491,7 @@
     "SchedulerConfiguration": "Configurazione per pianificatore di lavoro.",
     "SchedulerOptions": "Opzioni di pianificazione",
     "SchedulerRequired": "Il pianificatore è obbligatorio.",
+    "SchedulerSelectComment": "Seleziona lo scheduler per modificare le opzioni.",
     "SearchPlaceholder": "Ricerca",
     "SessionCreationRetries": "Tentativi di creazione della sessione",
     "SessionCreationRetriesDescription": "Se la creazione della sessione non riesce, la creazione della sessione viene ritentata per il valore specificato qui. Se la sessione non può essere creata durante le prove, la richiesta verrà ignorata e Backend.AI elaborerà la richiesta successiva.",

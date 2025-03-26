@@ -1494,6 +1494,7 @@
     "SchedulerConfiguration": "Konfiguracja na harmonogram zadań.",
     "SchedulerOptions": "Opcje harmonogramu",
     "SchedulerRequired": "Harmonogram jest wymagany.",
+    "SchedulerSelectComment": "Wybierz harmonogram, aby zmienić opcje.",
     "SearchPlaceholder": "Wyszukiwanie",
     "SessionCreationRetries": "Ponowne próby utworzenia sesji",
     "SessionCreationRetriesDescription": "Jeśli tworzenie sesji nie powiedzie się, tworzenie sesji jest ponawiane dla wartości określonej w tym miejscu. Jeśli sesji nie można utworzyć w ramach prób, żądanie zostanie zignorowane, a Backend.AI przetworzy następne żądanie.",

@@ -1494,6 +1494,7 @@
     "SchedulerConfiguration": "Konfiguration pro Job-Scheduler.",
     "SchedulerOptions": "Scheduler-Optionen",
     "SchedulerRequired": "Planer ist erforderlich.",
+    "SchedulerSelectComment": "Wählen Sie den Scheduler aus, um die Optionen zu ändern.",
     "SearchPlaceholder": "Suche",
     "SessionCreationRetries": "Versuche zur Sitzungserstellung",
     "SessionCreationRetriesDescription": "Wenn die Sitzungserstellung fehlschlägt, wird die Sitzungserstellung für den hier angegebenen Wert wiederholt. Wenn die Sitzung innerhalb der Testversionen nicht erstellt werden kann, wird die Anfrage ignoriert und Backend.AI verarbeitet die nächste Anfrage.",

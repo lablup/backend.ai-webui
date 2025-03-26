@@ -5,14 +5,10 @@ import FormItemWithCheckbox from './FormItemWithCheckbox';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import { Button, Form, InputNumber, Select, Typography } from 'antd';
 import { FormInstance } from 'antd/lib';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface SchedulerSettingModalProps extends BAIModalProps {
-  initialValues: {
-    schedulerType: SchedulerType;
-    num_retries_to_skip: string;
-  };
   onRequestClose: () => void;
   onSave: (
     key: SchedulerType,
@@ -25,7 +21,6 @@ interface SchedulerSettingModalProps extends BAIModalProps {
 }
 
 const SchedulerSettingModal = ({
-  initialValues,
   onRequestClose,
   open,
   onSave,
@@ -33,12 +28,16 @@ const SchedulerSettingModal = ({
   onDelete,
 }: SchedulerSettingModalProps) => {
   const { t } = useTranslation();
-  const [schedulerType, setSchedulerType] = useState<SchedulerType>(
-    initialValues.schedulerType,
+  const [schedulerType, setSchedulerType] = useState<SchedulerType | null>(
+    null,
   );
-  console.log(schedulerType);
-
   const formRef = useRef<FormInstance>(null);
+
+  useEffect(() => {
+    if (open) {
+      setSchedulerType(null);
+    }
+  }, [open]);
 
   return (
     <BAIModal
@@ -92,17 +91,7 @@ const SchedulerSettingModal = ({
       ]}
       destroyOnClose
     >
-      <Form
-        ref={formRef}
-        layout="vertical"
-        initialValues={{
-          schedulerType: schedulerType,
-          [`${schedulerType}_num_retries_to_skip`]:
-            initialValues.num_retries_to_skip,
-          [`${schedulerType}_num_retries_to_skip_checkbox`]:
-            initialValues.num_retries_to_skip === '0',
-        }}
-      >
+      <Form ref={formRef} layout="vertical">
         <Form.Item
           label={t('settings.Scheduler')}
           name="schedulerType"
@@ -110,12 +99,14 @@ const SchedulerSettingModal = ({
           rules={[
             {
               required: true,
-              message: t('data.explorer.ValueRequired'),
+              message: t('settings.SchedulerRequired'),
             },
           ]}
+          extra={t('settings.SchedulerSelectComment')}
         >
           <Select
             popupMatchSelectWidth={false}
+            value={schedulerType}
             onChange={async (value) => {
               const newOptions: SchedulerOptions =
                 await onSchedulerTypeChange(value);
@@ -125,7 +116,6 @@ const SchedulerSettingModal = ({
                   newOptions.num_retries_to_skip,
               });
             }}
-            defaultActiveFirstOption
             options={[
               {
                 label: 'FIFO',
@@ -146,32 +136,40 @@ const SchedulerSettingModal = ({
           <Typography.Text strong>
             {t('settings.SchedulerOptions')}
           </Typography.Text>
-          <FormItemWithCheckbox
-            label={t('settings.SessionCreationRetries')}
-            required
-            tooltip={t('settings.ConfigPerJobSchdulerDescription')}
-            name={`${schedulerType}_num_retries_to_skip`}
-            rules={[
-              {
-                validator(_, value) {
-                  const isUnset = formRef.current?.getFieldValue(
-                    `${schedulerType}_num_retries_to_skip_checkbox`,
-                  );
+          {
+            <FormItemWithCheckbox
+              label={t('settings.SessionCreationRetries')}
+              required
+              tooltip={t('settings.ConfigPerJobSchdulerDescription')}
+              name={`${schedulerType}_num_retries_to_skip`}
+              rules={[
+                {
+                  validator(_, value) {
+                    const isUnset = formRef.current?.getFieldValue(
+                      `${schedulerType}_num_retries_to_skip_checkbox`,
+                    );
 
-                  if (isUnset) {
+                    if (isUnset) {
+                      return Promise.resolve();
+                    }
+                    if (value === null || value === undefined) {
+                      return Promise.reject(t('data.explorer.ValueRequired'));
+                    }
                     return Promise.resolve();
-                  }
-                  if (value === null || value === undefined) {
-                    return Promise.reject(t('data.explorer.ValueRequired'));
-                  }
-                  return Promise.resolve();
+                  },
                 },
-              },
-            ]}
-            checkedValue="0"
-          >
-            <InputNumber min={0} max={1000} style={{ width: '100%' }} />
-          </FormItemWithCheckbox>
+              ]}
+              disabled={schedulerType === null}
+              checkedValue="0"
+            >
+              <InputNumber
+                disabled
+                min={0}
+                max={1000}
+                style={{ width: '100%' }}
+              />
+            </FormItemWithCheckbox>
+          }
         </Flex>
       </Form>
     </BAIModal>

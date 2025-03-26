@@ -1494,6 +1494,7 @@
     "SchedulerConfiguration": "Configuration par planificateur de tâches.",
     "SchedulerOptions": "Options du planificateur",
     "SchedulerRequired": "Le planificateur est requis.",
+    "SchedulerSelectComment": "Sélectionnez le planificateur pour modifier les options.",
     "SearchPlaceholder": "Recherche",
     "SessionCreationRetries": "Tentatives de création de session",
     "SessionCreationRetriesDescription": "Si la création de session échoue, la création de session est retentée pour la valeur spécifiée ici. Si la session ne peut pas être créée pendant les essais, la demande sera ignorée et Backend.AI traitera la demande suivante.",

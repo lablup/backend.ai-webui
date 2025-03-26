@@ -1493,6 +1493,7 @@
     "SchedulerConfiguration": "İş zamanlayıcı başına yapılandırma.",
     "SchedulerOptions": "Zamanlayıcı Seçenekleri",
     "SchedulerRequired": "Zamanlayıcı gerekli.",
+    "SchedulerSelectComment": "Seçenekleri değiştirmek için zamanlayıcı seçin.",
     "SearchPlaceholder": "Arama",
     "SessionCreationRetries": "Oturum oluşturma yeniden denemeleri",
     "SessionCreationRetriesDescription": "Oturum oluşturma başarısız olursa, oturum oluşturma burada belirtilen değer için yeniden denenir. Denemeler içinde oturum oluşturulamıyorsa, istek yok sayılacak ve Backend.AI bir sonraki isteği işleme koyacaktır.",

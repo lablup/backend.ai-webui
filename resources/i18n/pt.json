@@ -1494,6 +1494,7 @@
     "SchedulerConfiguration": "Configuração por agendador de trabalho.",
     "SchedulerOptions": "Opções do agendador",
     "SchedulerRequired": "O agendador é obrigatório.",
+    "SchedulerSelectComment": "Selecione o agendador para alterar as opções.",
     "SearchPlaceholder": "Pesquisar",
     "SessionCreationRetries": "Tentativas de criação de sessão",
     "SessionCreationRetriesDescription": "Se a criação da sessão falhar, a criação da sessão será repetida para o valor especificado aqui. Se a sessão não puder ser criada durante as avaliações, a solicitação será ignorada e o Backend.AI processará a próxima solicitação.",
