@@ -1,13 +1,5 @@
 import Flex from './Flex';
-import {
-  Badge,
-  Checkbox,
-  ConfigProvider,
-  Select,
-  SelectProps,
-  Typography,
-  theme,
-} from 'antd';
+import { Badge, Checkbox, Select, SelectProps, Typography, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import _ from 'lodash';
 import React, { ReactElement, ReactNode } from 'react';

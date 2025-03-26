@@ -1,7 +1,6 @@
 import Flex from './Flex';
 import { Checkbox, Form, FormItemProps } from 'antd';
 import { cloneElement, isValidElement, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 interface FormItemWithCheckboxProps extends FormItemProps {
   children: React.ReactNode;
@@ -22,7 +21,6 @@ const FormItemWithCheckbox = ({
 }: FormItemWithCheckboxProps) => {
   const [isDisabled, setIsDisabled] = useState(false);
   const form = Form.useFormInstance();
-  const { t } = useTranslation();
 
   const childrenWithProps = isValidElement(children)
     ? cloneElement(children, {
