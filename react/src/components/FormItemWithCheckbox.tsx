@@ -7,6 +7,7 @@ interface FormItemWithCheckboxProps extends FormItemProps {
   children: React.ReactNode;
   checkedValue?: any;
   disabled?: boolean;
+  checkboxText: string;
 }
 const FormItemWithCheckbox = ({
   children,
@@ -16,6 +17,7 @@ const FormItemWithCheckbox = ({
   required,
   checkedValue,
   disabled,
+  checkboxText,
   ...formItemProps
 }: FormItemWithCheckboxProps) => {
   const [isDisabled, setIsDisabled] = useState(false);
@@ -87,7 +89,7 @@ const FormItemWithCheckbox = ({
             disabled={disabled}
             value={checkedValue}
           >
-            {t('settings.Unset')}
+            {checkboxText}
           </Checkbox>
         </Form.Item>
       </Flex>

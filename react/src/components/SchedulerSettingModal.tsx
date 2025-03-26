@@ -3,7 +3,7 @@ import { SchedulerOptions, SchedulerType } from './ConfigurationsSettingList';
 import Flex from './Flex';
 import FormItemWithCheckbox from './FormItemWithCheckbox';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
-import { Button, Form, InputNumber, Select, Typography } from 'antd';
+import { Button, Form, InputNumber, Select, theme, Typography } from 'antd';
 import { FormInstance } from 'antd/lib';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -32,6 +32,7 @@ const SchedulerSettingModal = ({
     null,
   );
   const formRef = useRef<FormInstance>(null);
+  const { token } = theme.useToken();
 
   useEffect(() => {
     if (open) {
@@ -102,7 +103,14 @@ const SchedulerSettingModal = ({
               message: t('settings.SchedulerRequired'),
             },
           ]}
-          extra={t('settings.SchedulerSelectComment')}
+          extra={
+            <Typography.Text
+              type="secondary"
+              style={{ fontSize: token.fontSizeSM }}
+            >
+              {t('settings.SchedulerSelectComment')}
+            </Typography.Text>
+          }
         >
           <Select
             popupMatchSelectWidth={false}
@@ -139,6 +147,7 @@ const SchedulerSettingModal = ({
           {
             <FormItemWithCheckbox
               label={t('settings.SessionCreationRetries')}
+              checkboxText={t('button.Delete')}
               required
               tooltip={t('settings.ConfigPerJobSchdulerDescription')}
               name={`${schedulerType}_num_retries_to_skip`}

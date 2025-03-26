@@ -70,6 +70,7 @@ const OverlayNetworkSettingModal = ({
       <Form ref={formRef} layout="vertical" initialValues={networkOptions}>
         <FormItemWithCheckbox
           label="MTU"
+          checkboxText={t('button.Delete')}
           tooltip={t('settings.MTUDescription')}
           required
           name="mtu"
