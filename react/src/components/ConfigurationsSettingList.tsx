@@ -162,7 +162,7 @@ const ConfigurationsSettingList = () => {
       const { result } = await baiClient.setting.get(
         `plugins/scheduler/${schedulerType}/${key}`,
       );
-      newOptions[key] = result || '0';
+      newOptions[key] = result;
     }
     return newOptions;
   };
