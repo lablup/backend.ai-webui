@@ -360,6 +360,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
 
   return (
     <BAISider
+      className="webui-sider"
       ref={siderRef}
       logo={
         <img
@@ -507,6 +508,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       {props.collapsed ? null : (
         <Flex
           justify="center"
+          className="sider-footer-wrap"
           direction="column"
           style={{
             width: '100%',
