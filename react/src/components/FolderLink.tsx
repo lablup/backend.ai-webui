@@ -1,5 +1,7 @@
 import BAILink from './BAILink';
+import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { FolderLink_vfolderNode$key } from './__generated__/FolderLink_vfolderNode.graphql';
+import { FolderOutlined } from '@ant-design/icons';
 import graphql from 'babel-plugin-relay/macro';
 import { useFragment } from 'react-relay';
 
@@ -21,19 +23,29 @@ interface FolderLinkWithIdAndName extends FolderLinkBase {
 
 type FolderLinkProps = FolderLinkWithFragment | FolderLinkWithIdAndName;
 
-const FolderLink = ({ vfolderNodeFragment }: FolderLinkProps) => {
+const FolderLink = ({
+  vfolderNodeFragment,
+  id,
+  name,
+  showIcon,
+}: FolderLinkProps) => {
+  const { generateFolderPath } = useFolderExplorerOpener();
   const vfolderNode = useFragment(
     graphql`
       fragment FolderLink_vfolderNode on VirtualFolderNode {
-        id
         row_id
         name
       }
     `,
     vfolderNodeFragment,
   );
-  console.log(vfolderNode);
-  return <BAILink />;
+
+  return (
+    <BAILink to={generateFolderPath(id ?? vfolderNode?.row_id ?? '')}>
+      {showIcon && <FolderOutlined />} &nbsp;
+      {name ?? vfolderNode?.name ?? ''}
+    </BAILink>
+  );
 };
 
 export default FolderLink;

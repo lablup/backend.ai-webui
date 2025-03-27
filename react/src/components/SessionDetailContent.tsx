@@ -15,18 +15,13 @@ import SessionStatusDetailModal from './ComputeSessionNodeItems/SessionStatusDet
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
 import SessionTypeTag from './ComputeSessionNodeItems/SessionTypeTag';
 import Flex from './Flex';
-import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import FolderLink from './FolderLink';
 import IdleCheckDescriptionModal from './IdleCheckDescriptionModal';
 import ImageMetaIcon from './ImageMetaIcon';
 import SessionUsageMonitor from './SessionUsageMonitor';
 import { SessionDetailContentLegacyQuery } from './__generated__/SessionDetailContentLegacyQuery.graphql';
 import { SessionDetailContentQuery } from './__generated__/SessionDetailContentQuery.graphql';
-import {
-  FolderOutlined,
-  InfoCircleOutlined,
-  QuestionCircleOutlined,
-} from '@ant-design/icons';
+import { InfoCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import {
   Alert,
   Button,
@@ -52,7 +47,6 @@ const SessionDetailContent: React.FC<{
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { md } = Grid.useBreakpoint();
-  const { open } = useFolderExplorerOpener();
   const currentProject = useCurrentProjectValue();
   const userRole = useCurrentUserRole();
   const baiClient = useSuspendedBackendaiClient();
@@ -265,33 +259,15 @@ const SessionDetailContent: React.FC<{
           <Descriptions.Item label={t('session.launcher.MountedFolders')}>
             <Flex gap="xs" wrap="wrap">
               {session.vfolder_nodes
-                ? session.vfolder_nodes.edges.map((vfolder) => {
+                ? session.vfolder_nodes.edges.map((vfolder, idx) => {
                     return (
                       vfolder?.node && (
-                        <FolderLink vfolderNodeFragment={vfolder.node} />
+                        <FolderLink
+                          key={`mounted-vfolder-${idx}`}
+                          showIcon
+                          vfolderNodeFragment={vfolder.node}
+                        />
                       )
-                    );
-                  })
-                : null}
-              {/* {session.vfolder_nodes
-                ? _.map(session?.vfolder_nodes?.edges, (vfolder) => {
-                    return (
-                      <Button
-                        key={vfolder?.node?.id}
-                        type="link"
-                        size="small"
-                        icon={<FolderOutlined />}
-                        onClick={() => {
-                          open(vfolder?.node?.row_id ?? '');
-                        }}
-                        style={{
-                          overflowWrap: 'break-word',
-                          whiteSpace: 'normal',
-                          height: 'auto',
-                        }}
-                      >
-                        {vfolder?.node?.name}
-                      </Button>
                     );
                   })
                 : baiClient.supports('vfolder-mounts')
@@ -303,26 +279,16 @@ const SessionDetailContent: React.FC<{
                       (mountInfo) => {
                         const [name, id] = mountInfo;
                         return (
-                          <Button
+                          <FolderLink
                             key={id}
-                            type="link"
-                            size="small"
-                            icon={<FolderOutlined />}
-                            onClick={() => {
-                              open(id ?? '');
-                            }}
-                            style={{
-                              overflowWrap: 'break-word',
-                              whiteSpace: 'normal',
-                              height: 'auto',
-                            }}
-                          >
-                            {name}
-                          </Button>
+                            id={id ?? ''}
+                            name={name ?? ''}
+                            showIcon
+                          />
                         );
                       },
                     )
-                  : legacy_session?.mounts?.join(', ')} */}
+                  : legacy_session?.mounts?.join(', ')}
             </Flex>
           </Descriptions.Item>
           <Descriptions.Item label={t('session.launcher.ResourceAllocation')}>
