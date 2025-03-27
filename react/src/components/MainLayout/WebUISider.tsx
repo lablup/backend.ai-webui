@@ -44,14 +44,15 @@ import {
 } from 'antd';
 import { MenuItemType } from 'antd/lib/menu/interface';
 import _ from 'lodash';
-import { BotMessageSquare } from 'lucide-react';
-import React, { useContext, useRef } from 'react';
+import { BotMessageSquare, ExternalLinkIcon, LinkIcon } from 'lucide-react';
+import React, { ReactNode, useContext, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
 type MenuItem = {
-  label: string;
+  label: ReactNode;
   icon: React.ReactNode;
+  group?: string;
   key: string;
 };
 interface WebUISiderProps
@@ -265,6 +266,12 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     'menuitem-superadmin': superAdminMenu,
   };
 
+  const pluginIconMap: {
+    [key: string]: React.ReactNode;
+  } = {
+    link: <LinkIcon />,
+    externalLink: <ExternalLinkIcon />,
+  };
   // Add plugin pages according to the user role.
   // Iterates over own enumerable string keyed properties of an object and invokes iteratee for each property.
   _.forOwn(props.webuiplugins, (value, key) => {
@@ -277,9 +284,10 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
         const page = _.find(pluginPages, { name: name }) as PluginPage;
         if (page) {
           const menuItem: MenuItem = {
-            label: page?.menuitem,
-            icon: <ApiOutlined />,
+            label: <WebUILink to={`/${page?.url}`}>{page?.menuitem}</WebUILink>,
+            icon: pluginIconMap[page.icon || ''] || <ApiOutlined />,
             key: page?.url,
+            group: page.group || 'none',
           };
           menu?.push(menuItem);
         }
