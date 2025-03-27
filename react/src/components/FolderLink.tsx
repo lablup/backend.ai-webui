@@ -11,22 +11,22 @@ interface FolderLinkBase {
 
 interface FolderLinkWithFragment extends FolderLinkBase {
   vfolderNodeFragment: FolderLink_vfolderNode$key;
-  id?: never;
-  name?: never;
+  folderId?: never;
+  folderName?: never;
 }
 
 interface FolderLinkWithIdAndName extends FolderLinkBase {
   vfolderNodeFragment?: never;
-  id: string;
-  name: string;
+  folderId: string;
+  folderName: string;
 }
 
 type FolderLinkProps = FolderLinkWithFragment | FolderLinkWithIdAndName;
 
 const FolderLink = ({
   vfolderNodeFragment,
-  id,
-  name,
+  folderId,
+  folderName,
   showIcon,
 }: FolderLinkProps) => {
   const { generateFolderPath } = useFolderExplorerOpener();
@@ -41,9 +41,9 @@ const FolderLink = ({
   );
 
   return (
-    <BAILink to={generateFolderPath(id ?? vfolderNode?.row_id ?? '')}>
+    <BAILink to={generateFolderPath(folderId ?? vfolderNode?.row_id ?? '')}>
       {showIcon && <FolderOutlined />} &nbsp;
-      {name ?? vfolderNode?.name ?? ''}
+      {folderName ?? vfolderNode?.name ?? ''}
     </BAILink>
   );
 };
