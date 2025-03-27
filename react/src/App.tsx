@@ -1,4 +1,3 @@
-import AnnouncementAlert from './components/AnnouncementAlert';
 import BAICard from './components/BAICard';
 import BAIErrorBoundary, { ErrorView } from './components/BAIErrorBoundary';
 import {
@@ -152,20 +151,6 @@ const router = createBrowserRouter([
       },
       {
         path: '/summary',
-        Component: () => {
-          const { token } = theme.useToken();
-          return (
-            <>
-              <AnnouncementAlert
-                showIcon
-                icon={undefined}
-                banner={false}
-                style={{ marginBottom: token.paddingContentVerticalLG }}
-                closable
-              />
-            </>
-          );
-        },
         handle: { labelKey: 'webui.menu.Summary' },
       },
       {

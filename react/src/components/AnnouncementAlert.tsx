@@ -1,12 +1,12 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
-import { Alert, theme } from 'antd';
-import { AlertProps } from 'antd/lib';
+import BAIAlert, { BAIAlertProps } from './BAIAlert';
+import { theme } from 'antd';
 import _ from 'lodash';
 import Markdown from 'markdown-to-jsx';
 import React from 'react';
 
-interface Props extends AlertProps {}
+interface Props extends BAIAlertProps {}
 const AnnouncementAlert: React.FC<Props> = ({ style, ...otherProps }) => {
   const baiClient = useSuspendedBackendaiClient();
   const { token } = theme.useToken();
@@ -18,21 +18,7 @@ const AnnouncementAlert: React.FC<Props> = ({ style, ...otherProps }) => {
   });
 
   return !_.isEmpty(announcement.message) ? (
-    <Alert
-      banner
-      style={{
-        // alignItems: 'flex-start',
-        // overflow: 'auto',
-        ...style,
-      }}
-      // icon={
-      //   //use <> because tag border is not displayed normally when Tag component is used only
-      //   <>
-      //     <Tag color="error" style={{ fontSize: token.fontSize }}>
-      //       Notice
-      //     </Tag>
-      //   </>
-      // }
+    <BAIAlert
       description={
         <div style={{ marginBottom: token.marginSM * -1 }}>
           <Markdown

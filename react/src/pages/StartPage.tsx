@@ -1,4 +1,6 @@
 import ActionItemContent from '../components/ActionItemContent';
+import AnnouncementAlert from '../components/AnnouncementAlert';
+import Flex from '../components/Flex';
 // import BAIBoard, { BAIBoardItem } from '../components/BAIBoard';
 import FolderCreateModal from '../components/FolderCreateModal';
 import ThemeSecondaryProvider from '../components/ThemeSecondaryProvider';
@@ -151,7 +153,7 @@ const StartPage: React.FC = () => {
   ]);
 
   return (
-    <>
+    <Flex direction="column" gap={'md'} align="stretch">
       {/* <BAIBoard
         items={items}
         onItemsChange={(event) => {
@@ -161,6 +163,7 @@ const StartPage: React.FC = () => {
           setItemSettings(_.map(changedItems, (item) => _.omit(item, 'data')));
         }}
       /> */}
+      <AnnouncementAlert showIcon closable />
       <Row gutter={[16, 16]}>
         {_.map(items, (item, idx) => {
           return item.id === 'empty' ? (
@@ -191,7 +194,7 @@ const StartPage: React.FC = () => {
           }
         }}
       />
-    </>
+    </Flex>
   );
 };
 export default StartPage;
