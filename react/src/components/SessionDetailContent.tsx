@@ -221,10 +221,7 @@ const SessionDetailContent: React.FC<{
               </Typography.Text>
             </Descriptions.Item>
           )}
-          <Descriptions.Item
-            label={t('session.Status')}
-            contentStyle={{ display: 'flex', gap: token.marginSM }}
-          >
+          <Descriptions.Item label={t('session.Status')}>
             <Flex>
               <SessionStatusTag sessionFrgmt={session} showInfo />
               {session?.status_data && session?.status_data !== '{}' ? (
