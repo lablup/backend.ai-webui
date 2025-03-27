@@ -1,3 +1,4 @@
+import ImageNodeSimpleView from '../ImageNodeSimpleView';
 import AutoScalingRuleEditorModal, {
   COMPARATOR_LABELS,
 } from '../components/AutoScalingRuleEditorModal';
@@ -176,6 +177,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               }
               size_bytes
               supported_accelerators
+              ...ImageNodeSimpleViewFragment
             }
             desired_session_count @deprecatedSince(version: "24.12.0")
             replicas @since(version: "24.12.0")
@@ -490,9 +492,9 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
 
   items.push({
     label: t('modelService.Image'),
-    children: (baiClient.supports('modify-endpoint')
-      ? endpoint?.image_object
-      : endpoint?.image) && (
+    children: endpoint?.image_object ? (
+      <ImageNodeSimpleView imageFrgmt={endpoint.image_object} />
+    ) : endpoint?.image ? (
       <Flex direction="row" gap={'xs'}>
         <ImageMetaIcon image={fullImageString || null} />
         <CopyableCodeText>{fullImageString}</CopyableCodeText>
@@ -500,7 +502,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           <Tag>{endpoint?.runtime_variant?.human_readable_name}</Tag>
         ) : null}
       </Flex>
-    ),
+    ) : null,
     span: {
       xl: 3,
     },
