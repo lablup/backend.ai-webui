@@ -42,7 +42,11 @@ const FolderLink = ({
 
   return (
     <BAILink to={generateFolderPath(folderId ?? vfolderNode?.row_id ?? '')}>
-      {showIcon && <FolderOutlined />} &nbsp;
+      {showIcon && (
+        <>
+          <FolderOutlined /> &nbsp;
+        </>
+      )}
       {folderName ?? vfolderNode?.name ?? ''}
     </BAILink>
   );
