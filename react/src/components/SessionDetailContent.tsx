@@ -16,6 +16,7 @@ import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
 import SessionTypeTag from './ComputeSessionNodeItems/SessionTypeTag';
 import Flex from './Flex';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
+import FolderLink from './FolderLink';
 import IdleCheckDescriptionModal from './IdleCheckDescriptionModal';
 import ImageMetaIcon from './ImageMetaIcon';
 import SessionUsageMonitor from './SessionUsageMonitor';
@@ -100,9 +101,7 @@ const SessionDetailContent: React.FC<{
             vfolder_nodes @since(version: "25.4.0") {
               edges {
                 node {
-                  id
-                  row_id
-                  name
+                  ...FolderLink_vfolderNode
                 }
               }
               count
@@ -266,6 +265,15 @@ const SessionDetailContent: React.FC<{
           <Descriptions.Item label={t('session.launcher.MountedFolders')}>
             <Flex gap="xs" wrap="wrap">
               {session.vfolder_nodes
+                ? session.vfolder_nodes.edges.map((vfolder) => {
+                    return (
+                      vfolder?.node && (
+                        <FolderLink vfolderNodeFragment={vfolder.node} />
+                      )
+                    );
+                  })
+                : null}
+              {/* {session.vfolder_nodes
                 ? _.map(session?.vfolder_nodes?.edges, (vfolder) => {
                     return (
                       <Button
@@ -314,7 +322,7 @@ const SessionDetailContent: React.FC<{
                         );
                       },
                     )
-                  : legacy_session?.mounts?.join(', ')}
+                  : legacy_session?.mounts?.join(', ')} */}
             </Flex>
           </Descriptions.Item>
           <Descriptions.Item label={t('session.launcher.ResourceAllocation')}>
