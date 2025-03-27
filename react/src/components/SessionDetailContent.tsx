@@ -278,8 +278,8 @@ const SessionDetailContent: React.FC<{
                         return (
                           <FolderLink
                             key={id}
-                            id={id ?? ''}
-                            name={name ?? ''}
+                            folderId={id ?? ''}
+                            folderName={name ?? ''}
                             showIcon
                           />
                         );
