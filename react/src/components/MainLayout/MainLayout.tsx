@@ -25,6 +25,8 @@ export type PluginPage = {
   name: string;
   url: string;
   menuitem: string;
+  icon?: string;
+  group?: string;
 };
 
 export type WebUIPluginType = {

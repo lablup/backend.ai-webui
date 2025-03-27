@@ -539,6 +539,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                 name: page,
                 url: page,
                 menuitem: pageItem.menuitem,
+                icon: pageItem.icon,
+                group: pageItem.group,
               });
               return Promise.resolve(true);
             }),
