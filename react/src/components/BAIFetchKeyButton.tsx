@@ -15,6 +15,7 @@ interface BAIAutoRefetchButtonProps {
   size?: ButtonProps['size'];
   onChange: (fetchKey: string) => void;
   hidden?: boolean;
+  buttonProps?: ButtonProps;
 }
 const BAIFetchKeyButton: React.FC<BAIAutoRefetchButtonProps> = ({
   value,
@@ -24,6 +25,7 @@ const BAIFetchKeyButton: React.FC<BAIAutoRefetchButtonProps> = ({
   autoUpdateDelay = null,
   size,
   hidden,
+  buttonProps,
   ...props
 }) => {
   const { t } = useTranslation();
@@ -92,6 +94,7 @@ const BAIFetchKeyButton: React.FC<BAIAutoRefetchButtonProps> = ({
         onClick={() => {
           onChange(new Date().toISOString());
         }}
+        {...buttonProps}
       />
     </Tooltip>
   );
