@@ -6,6 +6,7 @@ import BAICard, { BAICardProps } from './BAICard';
 import Flex from './Flex';
 import ResourceGroupSelectForCurrentProject from './ResourceGroupSelectForCurrentProject';
 import { ReloadOutlined } from '@ant-design/icons';
+import { Row, Col, Divider } from 'antd';
 import { Button, theme, Tooltip, Typography } from 'antd';
 import _ from 'lodash';
 import React, { useDeferredValue, useEffect, useState } from 'react';
@@ -79,28 +80,21 @@ const AvailableResourcesCard: React.FC<AvailableResourcesCardProps> = ({
         </Flex>
       }
       {...props}
-      styles={{
-        body: {
-          paddingTop: 0,
-          paddingBottom: 0,
-          height: 120,
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'stretch',
-        },
-      }}
     >
-      <Flex direction="row" align="center">
+      <Row gutter={[40, 16]} align="middle">
         {resourceSlotsDetails?.resourceSlotsInRG?.['cpu'] && (
-          <ResourceWithSteppedProgress
-            current={_.toNumber(checkPresetInfo?.keypair_using.cpu)}
-            total={_.toNumber(checkPresetInfo?.keypair_limits.cpu)}
-            title={
-              resourceSlotsDetails.resourceSlotsInRG['cpu'].human_readable_name
-            }
-            unit={resourceSlotsDetails.resourceSlotsInRG['cpu'].display_unit}
-            steps={12}
-          />
+          <Col style={{ justifyItems: 'center', overflow: 'break-word' }}>
+            <ResourceWithSteppedProgress
+              current={_.toNumber(checkPresetInfo?.keypair_using.cpu)}
+              total={_.toNumber(checkPresetInfo?.keypair_limits.cpu)}
+              title={
+                resourceSlotsDetails.resourceSlotsInRG['cpu']
+                  .human_readable_name
+              }
+              unit={resourceSlotsDetails.resourceSlotsInRG['cpu'].display_unit}
+              steps={12}
+            />
+          </Col>
         )}
 
         {!_.isNaN(
@@ -109,81 +103,127 @@ const AvailableResourcesCard: React.FC<AvailableResourcesCardProps> = ({
         ) &&
           resourceSlotsDetails?.resourceSlotsInRG?.['mem'] && (
             <>
-              <Flex
+              <Col
+                flex={'1px'}
                 style={{
-                  width: 1,
+                  justifyItems: 'center',
+                  textAlign: 'center',
                   height: 84,
-                  backgroundColor: token.colorBorder,
-                  marginRight: 40,
-                  marginLeft: 40,
+                  paddingLeft: 0,
+                  paddingRight: 0,
                 }}
-              ></Flex>
-
-              <ResourceWithSteppedProgress
-                current={_.toNumber(
-                  convertBinarySizeUnit(checkPresetInfo?.keypair_using.mem, 'G')
-                    ?.numberFixed,
-                )}
-                total={_.toNumber(
-                  convertBinarySizeUnit(
-                    checkPresetInfo?.keypair_limits.mem,
-                    'G',
-                  )?.numberFixed,
-                )}
-                title={
-                  resourceSlotsDetails.resourceSlotsInRG['mem']
-                    .human_readable_name
-                }
-                unit={
-                  resourceSlotsDetails.resourceSlotsInRG['mem'].display_unit
-                }
-                steps={12}
-              />
+              >
+                <Divider
+                  type="vertical"
+                  style={{
+                    height: '100%',
+                  }}
+                />
+              </Col>
+              <Col style={{ justifyItems: 'center', overflow: 'break-word' }}>
+                <ResourceWithSteppedProgress
+                  current={_.toNumber(
+                    convertBinarySizeUnit(
+                      checkPresetInfo?.keypair_using.mem,
+                      'G',
+                    )?.numberFixed,
+                  )}
+                  total={_.toNumber(
+                    convertBinarySizeUnit(
+                      checkPresetInfo?.keypair_limits.mem,
+                      'G',
+                    )?.numberFixed,
+                  )}
+                  title={
+                    resourceSlotsDetails.resourceSlotsInRG['mem']
+                      .human_readable_name
+                  }
+                  unit={
+                    resourceSlotsDetails.resourceSlotsInRG['mem'].display_unit
+                  }
+                  steps={12}
+                />
+              </Col>
             </>
           )}
 
         {acceleratorSlotsDetails.length > 0 && (
-          <Flex
-            direction="row"
-            align="center"
-            style={{
-              padding: '14px 40px',
-              marginLeft: 40,
-              backgroundColor: token.colorSuccessBg,
-              borderRadius: token.borderRadiusLG,
-            }}
-          >
-            {_.map(acceleratorSlotsDetails, ({ key, resourceSlot }, index) => {
-              return (
+          <>
+            {/* Added a hidden divider to create an even margin between columns. */}
+            <Col
+              flex={'1px'}
+              style={{
+                justifyItems: 'center',
+                textAlign: 'center',
+                paddingLeft: 0,
+                paddingRight: 0,
+                visibility: 'hidden',
+              }}
+            >
+              <Divider
+                type="vertical"
+                style={{
+                  height: '100%',
+                }}
+              />
+            </Col>
+            {_.map(
+              acceleratorSlotsDetails,
+              ({ key, resourceSlot }, index) =>
                 !!resourceSlot && (
-                  <React.Fragment key={key}>
+                  <Flex
+                    key={key}
+                    style={{
+                      backgroundColor: token.colorSuccessBg,
+                      borderRadius: token.borderRadiusLG,
+                    }}
+                  >
                     {index > 0 && (
-                      <Flex
+                      <Col
+                        flex={'1px'}
                         style={{
-                          width: 1,
+                          justifyItems: 'center',
+                          textAlign: 'center',
                           height: 84,
-                          backgroundColor: token.colorBorder,
-                          marginRight: 40,
-                          marginLeft: 40,
+                          paddingLeft: 0,
+                          paddingRight: 0,
                         }}
-                      ></Flex>
+                      >
+                        <Divider
+                          type="vertical"
+                          style={{
+                            height: '100%',
+                          }}
+                        />
+                      </Col>
                     )}
-                    <ResourceWithSteppedProgress
-                      // @ts-ignore
-                      current={_.toNumber(checkPresetInfo?.keypair_using[key])}
-                      // @ts-ignore
-                      total={_.toNumber(checkPresetInfo?.keypair_limits[key])}
-                      title={resourceSlot.human_readable_name}
-                      unit={resourceSlot.display_unit}
-                      steps={12}
-                    />
-                  </React.Fragment>
-                )
-              );
-            })}
-          </Flex>
+                    <Col
+                      key={key}
+                      style={{
+                        justifyItems: 'center',
+                        overflow: 'break-word',
+                        paddingTop: token.fontSize,
+                        paddingBottom: token.fontSize,
+                      }}
+                    >
+                      <ResourceWithSteppedProgress
+                        current={_.toNumber(
+                          // @ts-ignore
+                          checkPresetInfo?.keypair_using[key],
+                        )}
+                        // @ts-ignore
+                        total={_.toNumber(checkPresetInfo?.keypair_limits[key])}
+                        title={resourceSlot.human_readable_name}
+                        unit={resourceSlot.display_unit}
+                        steps={12}
+                      />
+                    </Col>
+                  </Flex>
+                ),
+            )}
+          </>
         )}
-      </Flex>
+      </Row>
     </BAICard>
   );
 };

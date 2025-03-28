@@ -41,7 +41,13 @@ const BAIPanelItem: React.FC<BAIPanelItemProps> = ({
       wrap="wrap"
     >
       {_.isString(title) ? (
-        <Typography.Text strong style={{ fontSize: token.fontSizeHeading5 }}>
+        <Typography.Text
+          strong
+          style={{
+            fontSize: token.fontSizeHeading5,
+            wordBreak: 'keep-all',
+          }}
+        >
           {title}
         </Typography.Text>
       ) : (
