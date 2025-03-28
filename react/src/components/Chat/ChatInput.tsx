@@ -30,7 +30,7 @@ interface ChatInputProps extends ChatRequest {
     message: Message | CreateMessage,
     chatRequestOptions?: ChatRequestOptions,
   ) => Promise<string | null | undefined>;
-  isLoading: boolean;
+  isStreaming: boolean;
 }
 
 const ChatInput: React.FC<ChatInputProps> = ({
@@ -39,7 +39,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
   setInput,
   stop,
   append,
-  isLoading,
+  isStreaming,
 }) => {
   const { token } = theme.useToken();
 
@@ -205,7 +205,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
           items={files}
           openAttachment={isOpenAttachments}
           dropContainerRef={cardRef}
-          loading={isLoading}
+          loading={isStreaming}
           onInputChange={handleInputChange}
           onInputSubmit={handleInputSubmit}
           onInputCancel={handleInputCancel}

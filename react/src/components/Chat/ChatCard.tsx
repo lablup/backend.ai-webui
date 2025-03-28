@@ -154,7 +154,7 @@ const ChatHeader = React.memo(PureChatHeader, (prev, next) => {
 const ChatInput = React.memo(PureChatInput, (prev, next) => {
   if (prev.input !== next.input) return false;
   if (prev.sync !== next.sync) return false;
-  if (prev.isLoading !== next.isLoading) return false;
+  if (prev.isStreaming !== next.isStreaming) return false;
   return true;
 });
 
@@ -205,7 +205,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
     input,
     setInput,
     stop,
-    isLoading,
+    status,
     append,
     setMessages,
   } = useChat({
@@ -243,6 +243,16 @@ const ChatCard: React.FC<ChatCardProps> = ({
       }
     },
   });
+
+  useEffect(() => {
+    setTimeout(() => {
+      setInput('자바스크립트 함수에 대해서 긴 예제를 많이 넣어서 설명해줘');
+    }, 100);
+  }, [setInput]);
+
+  const isStreaming = useMemo(() => {
+    return status === 'streaming' || status === 'submitted';
+  }, [status]);
 
   return (
     <Card
@@ -294,7 +304,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
       <ChatMessages
         messages={messages}
         input={input}
-        isLoading={isLoading}
+        isStreaming={isStreaming}
         startTime={startTime}
       />
       <ChatInput
@@ -303,7 +313,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
         setInput={setInput}
         stop={stop}
         append={append}
-        isLoading={isLoading}
+        isStreaming={isStreaming}
       />
     </Card>
   );
