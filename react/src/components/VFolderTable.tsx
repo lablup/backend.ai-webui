@@ -6,7 +6,6 @@ import useControllableState from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useEventNotStable } from '../hooks/useEventNotStable';
 import BAILink from './BAILink';
-import { useShadowRoot } from './DefaultProviders';
 import Flex from './Flex';
 import FolderCreateModal from './FolderCreateModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -286,8 +285,6 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(selectedRowKeys), handleAliasUpdate]);
 
-  const shadowRoot = useShadowRoot();
-
   const columns: ColumnsType<VFolder> = [
     {
       title: (
@@ -302,8 +299,6 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                 ({t('session.launcher.FolderAlias')}{' '}
                 <Tooltip
                   title={<Trans i18nKey={'session.launcher.DescFolderAlias'} />}
-                  // @ts-ignore
-                  getPopupContainer={() => shadowRoot}
                 >
                   <QuestionCircleOutlined />
                 </Tooltip>

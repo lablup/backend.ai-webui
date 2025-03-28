@@ -2,7 +2,6 @@ import { usageIndicatorColor } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState from '../hooks/useControllableState';
-import { useShadowRoot } from './DefaultProviders';
 import Flex from './Flex';
 import TextHighlighter from './TextHighlighter';
 import { Select, SelectProps, Badge, Tooltip } from 'antd';
@@ -38,7 +37,6 @@ const StorageSelect: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
 
-  const shadowRoot = useShadowRoot();
   const baiClient = useSuspendedBackendaiClient();
 
   const { data: vhostInfo, isLoading: isLoadingVhostInfo } =
@@ -93,10 +91,7 @@ const StorageSelect: React.FC<Props> = ({
       filterOption={true}
       placeholder={t('data.SelectStorageHost')}
       loading={isLoadingVhostInfo}
-      style={{
-        // TODO: not good to hardcode
-        minWidth: 165,
-      }}
+      popupMatchSelectWidth={false}
       value={controllableState}
       onChange={(host) => {
         setControllableState(host, {
@@ -109,7 +104,7 @@ const StorageSelect: React.FC<Props> = ({
       optionLabelProp={showUsageStatus ? 'label' : 'value'}
       options={_.map(vhostInfo?.allowed, (host) => ({
         label: showUsageStatus ? (
-          <Flex align="center" gap={'xs'}>
+          <Flex align="center">
             {vhostInfo?.volume_info?.[host]?.usage && (
               <Tooltip
                 title={`${t('data.Host')} ${t('data.usage.Status')}:
@@ -120,14 +115,14 @@ const StorageSelect: React.FC<Props> = ({
                       ? t('data.usage.Caution')
                       : t('data.usage.Insufficient')
                 }`}
-                // @ts-ignore
-                getPopupContainer={() => shadowRoot}
               >
                 <Badge
                   color={usageIndicatorColor(
                     vhostInfo?.volume_info[host]?.usage?.percentage,
                   )}
                 />
+                {/* Use &nbsp; instead of Flex gap to fix Tooltip  */}
+                &nbsp;&nbsp;
               </Tooltip>
             )}
             <TextHighlighter keyword={controllableSearchValue}>
