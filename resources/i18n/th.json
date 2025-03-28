@@ -1461,8 +1461,6 @@
     "RNGDSupport": "RNGD",
     "ROCMGPUSupport": "การสนับสนุน GPU ROCm",
     "RegisterNewImagesFromRepo": "ลงทะเบียนอิมเมจใหม่จากพื้นที่เก็บข้อมูล",
-    "Require2003orAbove": "ต้องใช้ Backend.AI 20.03 หรือสูงกว่า",
-    "Require2009orAbove": "ต้องใช้ Backend.AI 20.09 หรือสูงกว่า",
     "RequireATOMPlugin": "ต้องใช้ปลั๊กอิน Backend.AI ATOM",
     "RequireFGPUPlugin": "ต้องใช้ปลั๊กอิน Backend.AI Virtual CUDA API Layer",
     "RequireHyperaccelLPUPlugin": "ต้องใช้ปลั๊กอิน Backend.AI Hyperaccel LPU",

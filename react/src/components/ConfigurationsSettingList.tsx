@@ -240,13 +240,7 @@ const ConfigurationsSettingList = () => {
         {
           type: 'select',
           title: t('settings.ImagePullBehavior'),
-          description: (
-            <>
-              {t('settings.DescImagePullBehavior')}
-              <br />
-              {t('settings.Require2003orAbove')}
-            </>
-          ),
+          description: t('settings.DescImagePullBehavior'),
           selectProps: {
             options: [
               { label: t('settings.image.Digest'), value: 'digest' },
@@ -275,13 +269,7 @@ const ConfigurationsSettingList = () => {
         {
           type: 'custom',
           title: t('settings.Scheduler'),
-          description: (
-            <>
-              {t('settings.SchedulerConfiguration')}
-              <br />
-              {t('settings.Require2009orAbove')}
-            </>
-          ),
+          description: t('settings.SchedulerConfiguration'),
           children: (
             <Button icon={<SettingOutlined />} onClick={toggleSchedulerModal}>
               {t('settings.Config')}

@@ -1477,8 +1477,6 @@
     "RNGDSupport": "RNGD",
     "ROCMGPUSupport": "Sokongan GPU ROCm",
     "RegisterNewImagesFromRepo": "Daftarkan gambar baru dari repositori",
-    "Require2003orAbove": "Memerlukan Backend.AI 20.03 atau lebih tinggi.",
-    "Require2009orAbove": "Memerlukan Backend.AI 20.09 atau lebih tinggi.",
     "RequireATOMPlugin": "Memerlukan Pemalam ATOM Backend.AI.",
     "RequireATOMPlusPlugin": "Memerlukan Plugin Backend.AI ATOM+.",
     "RequireFGPUPlugin": "Memerlukan Backend.AI Virtual CUDA API Layer Plugin.",

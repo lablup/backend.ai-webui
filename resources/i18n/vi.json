@@ -1478,8 +1478,6 @@
     "RNGDSupport": "RNGD",
     "ROCMGPUSupport": "Hỗ trợ GPU ROCm",
     "RegisterNewImagesFromRepo": "Đăng ký hình ảnh mới từ kho",
-    "Require2003orAbove": "Yêu cầu Backend.AI 20.03 trở lên.",
-    "Require2009orAbove": "Yêu cầu Backend.AI 20.09 trở lên.",
     "RequireATOMPlugin": "Yêu cầu Plugin Backend.AI ATOM.",
     "RequireATOMPlusPlugin": "Yêu cầu Plugin Backend.AI ATOM+.",
     "RequireFGPUPlugin": "Yêu cầu Plugin lớp API CUDA ảo Backend.AI.",
