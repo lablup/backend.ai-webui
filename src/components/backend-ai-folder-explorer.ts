@@ -92,7 +92,6 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
   // [SSH / SFTP]
   @property({ type: Object }) volumeInfo = Object();
   // [renderers]
-  @property({ type: Object }) _boundIndexRenderer = Object();
   @property({ type: Object }) _boundFileNameRenderer = Object();
   @property({ type: Object }) _boundCreatedTimeRenderer = Object();
   @property({ type: Object }) _boundSizeRenderer = Object();
@@ -225,7 +224,6 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
 
   constructor() {
     super();
-    this._boundIndexRenderer = this.indexRenderer.bind(this);
     this._boundFileNameRenderer = this.fileNameRenderer.bind(this);
     this._boundCreatedTimeRenderer = this.createdTimeRenderer.bind(this);
     this._boundSizeRenderer = this.sizeRenderer.bind(this);
@@ -268,16 +266,6 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
         new CustomEvent('folderExplorer:columnSelected', { detail: false }),
       );
     }
-  }
-
-  indexRenderer(root, column?, rowData?) {
-    render(
-      // language=HTML
-      html`
-        ${this._indexFrom1(rowData.index)}
-      `,
-      root,
-    );
   }
 
   closeDialog(id) {
@@ -1772,13 +1760,6 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
           <vaadin-grid-selection-column
             auto-select
           ></vaadin-grid-selection-column>
-          <vaadin-grid-column
-            width="40px"
-            flex-grow="0"
-            resizable
-            header="#"
-            .renderer="${this._boundIndexRenderer}"
-          ></vaadin-grid-column>
           <vaadin-grid-sort-column
             auto-width
             resizable

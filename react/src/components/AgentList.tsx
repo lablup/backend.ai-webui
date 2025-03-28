@@ -158,19 +158,6 @@ const AgentList: React.FC<AgentListProps> = ({
 
   const columns: ColumnsType<Agent> = [
     {
-      title: '#',
-      fixed: 'left',
-      render: (id, record, index) => {
-        return (
-          index +
-          1 +
-          (tablePaginationOption.current - 1) * tablePaginationOption.pageSize
-        );
-      },
-      showSorterTooltip: false,
-      rowScope: 'row',
-    },
-    {
       title: <>ID / {t('agent.Endpoint')}</>,
       key: 'id',
       dataIndex: 'id',

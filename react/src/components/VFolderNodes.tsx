@@ -134,22 +134,6 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         scroll={{ x: 'max-content' }}
         columns={[
           {
-            key: '#',
-            title: '#',
-            render: (id, record, index) => {
-              const [current, pageSize] =
-                tableProps.pagination &&
-                tableProps.pagination.current &&
-                tableProps.pagination.pageSize
-                  ? [
-                      tableProps.pagination.current,
-                      tableProps.pagination.pageSize,
-                    ]
-                  : [1, 0];
-              return index + 1 + (current - 1) * pageSize;
-            },
-          },
-          {
             key: 'name',
             title: t('data.folders.Name'),
             dataIndex: 'name',

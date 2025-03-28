@@ -563,23 +563,6 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   /**
-   * Render index of each row corresponding to element in registry list. Starts from 1.
-   *
-   * @param {Element} root - the row details content DOM element
-   * @param {Element} column - the column element that controls the state of the host element
-   * @param {Object} rowData - the object with the properties related with the rendered item
-   */
-  private _indexRenderer(root: HTMLElement, column: HTMLElement, rowData) {
-    const idx = rowData.index + 1;
-    render(
-      html`
-        <div>${idx}</div>
-      `,
-      root,
-    );
-  }
-
-  /**
    * Render hostname (string) usually represented by string without protocol of registry url.
    *
    * @param {Element} root - the row details content DOM element
@@ -737,13 +720,6 @@ class BackendAIRegistryList extends BackendAIPage {
           aria-label="Registry list"
           .items="${this._registryList}"
         >
-          <vaadin-grid-column
-            flex-grow="0"
-            width="40px"
-            header="#"
-            text-align="center"
-            .renderer=${this._indexRenderer}
-          ></vaadin-grid-column>
           <vaadin-grid-column
             flex-grow="1"
             auto-width

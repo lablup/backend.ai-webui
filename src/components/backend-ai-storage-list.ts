@@ -116,7 +116,6 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({ type: Object }) notification = Object();
   @property({ type: String }) listCondition: StatusCondition = 'loading';
   @property({ type: Array }) allowed_folder_type = [];
-  @property({ type: Object }) _boundIndexRenderer = Object();
   @property({ type: Object }) _boundTypeRenderer = Object();
   @property({ type: Object }) _boundFolderListRenderer = Object();
   @property({ type: Object }) _boundControlFolderListRenderer = Object();
@@ -184,7 +183,6 @@ export default class BackendAiStorageList extends BackendAIPage {
   @state() private _unionedAllowedPermissionByVolume = Object();
   constructor() {
     super();
-    this._boundIndexRenderer = this.indexRenderer.bind(this);
     this._boundTypeRenderer = this.typeRenderer.bind(this);
     this._boundControlFolderListRenderer =
       this.controlFolderListRenderer.bind(this);
@@ -454,14 +452,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           aria-label="Folder list"
           .items="${this.folders}"
         >
-          <vaadin-grid-column
-            width="40px"
-            flex-grow="0"
-            resizable
-            header="#"
-            text-align="center"
-            .renderer="${this._boundIndexRenderer}"
-          ></vaadin-grid-column>
           <lablup-grid-sort-filter-column
             path="name"
             width="80px"
@@ -1193,16 +1183,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           description="${rowData.item.status}"
           ui="flat"
         ></lablup-shields>
-      `,
-      root,
-    );
-  }
-
-  indexRenderer(root, column?, rowData?) {
-    render(
-      // language=HTML
-      html`
-        ${this._indexFrom1(rowData.index)}
       `,
       root,
     );
