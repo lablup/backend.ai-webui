@@ -24,7 +24,7 @@ import {
   transformSorterToOrderString,
 } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
-import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
 import {
@@ -106,7 +106,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionState({
+  } = useBAIPaginationOptionStateOnSearchParam({
     current: 1,
     pageSize: 10,
   });
@@ -119,9 +119,12 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   });
 
   const queryMapRef = useRef({
-    [queryParams.statusCategory]: queryParams,
+    [queryParams.statusCategory]: { queryParams, tablePaginationOption },
   });
-  queryMapRef.current[queryParams.statusCategory] = queryParams;
+  queryMapRef.current[queryParams.statusCategory] = {
+    queryParams,
+    tablePaginationOption,
+  };
 
   const statusFilter =
     queryParams.statusCategory === 'created' ||
@@ -343,10 +346,15 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               mode: 'all',
             };
             setQuery(
-              { ...storedQuery, statusCategory: key as 'created' | 'deleted' },
+              {
+                ...storedQuery.queryParams,
+                statusCategory: key as 'created' | 'deleted',
+              },
               'replace',
             );
-            setTablePaginationOption({ current: 1 });
+            setTablePaginationOption(
+              storedQuery.tablePaginationOption || { current: 1 },
+            );
             setSelectedFolderList([]);
           }}
           items={_.map(
