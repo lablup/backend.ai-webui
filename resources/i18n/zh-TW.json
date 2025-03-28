@@ -1165,6 +1165,7 @@
     "MaxSessionLifetimeDesc": "在会话创建后的这段时间内强制终止会话。它可以防止会话无限运行。",
     "Message": "留言",
     "ModifyArguments": "修改參數",
+    "MySessions": "我的會議",
     "NetworkIdleTimeout": "网络空闲超时",
     "NetworkIdleTimeoutDesc": "强制终止在这段时间后不与用户（浏览器或网络应用）交换数据的会话。当用户通过键盘输入、创建 Jupyter 单元等方式与终端或 Jupyter 等应用程序交互时，用户与计算会话之间的流量会持续发生。创建 Jupyter 单元等如果在一段时间内没有交互，就会满足垃圾回收的条件。即使计算会话中有执行作业的进程，如果没有用户交互，也会被终止。",
     "NoLogMsgAvailable": "没有关于当前状态的日志信息",

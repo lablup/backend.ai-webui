@@ -1166,6 +1166,7 @@
     "MaxSessionLifetimeDesc": "Fuerza la finalización de las sesiones después de este tiempo desde su creación. Evita que la sesión se ejecute infinitamente.",
     "Message": "Mensaje",
     "ModifyArguments": "Modificar argumentos",
+    "MySessions": "Mis sesiones",
     "NetworkIdleTimeout": "Tiempo de espera de inactividad de la red",
     "NetworkIdleTimeoutDesc": "Forzar la finalización de las sesiones que no intercambian datos con el usuario (navegador o aplicación web) después de este tiempo. El tráfico entre el usuario y la sesión de cálculo se produce continuamente cuando el usuario interactúa con una aplicación, como el terminal o Jupyter, mediante la introducción de datos con el teclado, la creación de celdas Jupyter, etc. creación de celdas Jupyter, etc. Si no hay interacción durante un cierto periodo, se cumplirá la condición de recolección de basura. Incluso si hay un proceso ejecutando un trabajo en la sesión de computación, está sujeto a terminación si no hay interacción del usuario.",
     "NoLogMsgAvailable": "No hay mensaje de registro disponible sobre el estado actual",

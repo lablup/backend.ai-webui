@@ -84,6 +84,7 @@ const RecentlyCreatedSessionCard: React.FC<RecentlyCreatedSessionCardProps> = ({
             setSessionDetailId(toLocalId(session.id));
           }}
           pagination={false}
+          isSorterDisabled
         />
         <SessionDetailDrawer
           open={!!sessionDetailId}

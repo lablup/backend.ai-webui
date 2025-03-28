@@ -1166,6 +1166,7 @@
     "MaxSessionLifetimeDesc": "Buộc chấm dứt các phiên sau thời gian này kể từ khi tạo. \nNó ngăn phiên chạy vô tận.",
     "Message": "Tin nhắn",
     "ModifyArguments": "Sửa đổi đối số",
+    "MySessions": "Các phiên của tôi",
     "NetworkIdleTimeout": "Hết thời gian chờ mạng",
     "NetworkIdleTimeoutDesc": "Buộc chấm dứt các phiên không trao đổi dữ liệu với người dùng (trình duyệt hoặc ứng dụng web) sau thời gian này. \nLưu lượng giữa người dùng và phiên điện toán liên tục xảy ra khi người dùng tương tác với một ứng dụng, như thiết bị đầu cuối hoặc Jupyter, bằng cách nhập bằng bàn phím, tạo ô Jupyter, v.v. Tạo ô Jupyter, v.v. Nếu không có tương tác trong một khoảng thời gian nhất định, thì \nsẽ đáp ứng được điều kiện thu gom rác. \nNgay cả khi có một quy trình đang thực thi công việc trong phiên điện toán, nó vẫn có thể bị chấm dứt nếu không có sự tương tác của người dùng.",
     "NoLogMsgAvailable": "Không có thông điệp tường trình nào ở trạng thái hiện tại",

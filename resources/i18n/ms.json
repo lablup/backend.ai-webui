@@ -1165,6 +1165,7 @@
     "MaxSessionLifetimeDesc": "Paksa tamatkan sesi selepas masa ini daripada penciptaan. \nIa menghalang sesi daripada berjalan tanpa had.",
     "Message": "Mesej",
     "ModifyArguments": "Ubahsuai hujah",
+    "MySessions": "Sesi saya",
     "NetworkIdleTimeout": "Tamat Masa Terbiar Rangkaian",
     "NetworkIdleTimeoutDesc": "Tamatkan paksa sesi yang tidak bertukar data dengan pengguna (pelayar atau apl web) selepas masa ini. \nTrafik antara pengguna dan sesi pengiraan berterusan berlaku apabila pengguna berinteraksi dengan apl, seperti terminal atau Jupyter, melalui input papan kekunci, penciptaan sel Jupyter, dsb. Penciptaan sel Jupyter, dsb. Jika tiada interaksi untuk tempoh tertentu, \nsyarat kutipan sampah akan dipenuhi. \nWalaupun terdapat proses melaksanakan tugas dalam sesi pengiraan, ia tertakluk kepada penamatan jika tiada interaksi pengguna.",
     "NoLogMsgAvailable": "Tiada mesej log tersedia pada keadaan semasa",

@@ -1163,6 +1163,7 @@
     "MaxSessionLifetimeDesc": "Forza l'interruzione delle sessioni dopo questo tempo dalla creazione. Impedisce che la sessione venga eseguita all'infinito.",
     "Message": "Messaggio",
     "ModifyArguments": "Modifica argomenti",
+    "MySessions": "Le mie sessioni",
     "NetworkIdleTimeout": "Timeout di inattività della rete",
     "NetworkIdleTimeoutDesc": "Terminare forzatamente le sessioni che non scambiano dati con l'utente (browser o web app) dopo questo tempo. Il traffico tra l'utente e la sessione di calcolo avviene continuamente quando l'utente interagisce con un'applicazione, come il terminale o Jupyter, tramite input da tastiera, creazione di celle Jupyter, ecc. creazione di celle Jupyter, ecc. Se non c'è interazione per un certo periodo, si verifica la condizione di garbage collection. Anche se c'è un processo che esegue un lavoro nella sessione di calcolo, è soggetto a terminare se non c'è interazione da parte dell'utente.",
     "NoLogMsgAvailable": "Non è disponibile alcun messaggio di log sullo stato attuale",

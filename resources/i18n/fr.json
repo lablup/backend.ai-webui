@@ -1166,6 +1166,7 @@
     "MaxSessionLifetimeDesc": "Force l'arrêt des sessions après ce délai de création. Cela empêche la session de fonctionner à l'infini.",
     "Message": "Message",
     "ModifyArguments": "Modifier les arguments",
+    "MySessions": "Mes sessions",
     "NetworkIdleTimeout": "Délai d'inactivité du réseau",
     "NetworkIdleTimeoutDesc": "Forcer l'arrêt des sessions qui n'échangent pas de données avec l'utilisateur (navigateur ou application web) après ce délai. Le trafic entre l'utilisateur et la session de calcul se produit continuellement lorsque l'utilisateur interagit avec une application, comme le terminal ou Jupyter, par la saisie au clavier, la création de cellules Jupyter, etc. Création de cellules Jupyter, etc. S'il n'y a pas d'interaction pendant un certain temps, la condition du ramassage des ordures sera remplie. Même si un processus exécute un travail dans la session de calcul, il est susceptible d'être interrompu en l'absence d'interaction avec l'utilisateur.",
     "NoLogMsgAvailable": "Pas de message de journal disponible sur l'état actuel",

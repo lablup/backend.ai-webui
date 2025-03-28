@@ -1166,6 +1166,7 @@
     "MaxSessionLifetimeDesc": "Oluşturulduktan bu süre sonra oturumları sonlandırmaya zorla. Oturumun sonsuza kadar çalışmasını engeller.",
     "Message": "Mesaj",
     "ModifyArguments": "Argümanları değiştir",
+    "MySessions": "Seanslarım",
     "NetworkIdleTimeout": "Ağ Boşta Zaman Aşımı",
     "NetworkIdleTimeoutDesc": "Bu süreden sonra kullanıcıyla (tarayıcı veya web uygulaması) veri alışverişi yapmayan oturumları zorla sonlandırın. Kullanıcı ve hesaplama oturumu arasındaki trafik, kullanıcı terminal veya Jupyter gibi bir uygulama ile klavye girişi, Jupyter hücresi oluşturma vb. yollarla etkileşime girdiğinde sürekli olarak gerçekleşir. Jupyter hücresi oluşturma vb. Belirli bir süre boyunca etkileşim olmazsa çöp toplama koşulu yerine getirilir. Hesaplama oturumunda bir işi yürüten bir süreç olsa bile, kullanıcı etkileşimi yoksa sonlandırmaya tabidir.",
     "NoLogMsgAvailable": "Mevcut durumla ilgili günlük mesajı yok",

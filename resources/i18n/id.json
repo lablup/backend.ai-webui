@@ -1164,6 +1164,7 @@
     "MaxSessionLifetimeDesc": "Menghentikan paksa sesi setelah waktu pembuatan ini. Ini mencegah sesi berjalan tanpa batas.",
     "Message": "Pesan",
     "ModifyArguments": "Ubah argumen",
+    "MySessions": "Sesi saya",
     "NetworkIdleTimeout": "Batas Waktu Menganggur Jaringan",
     "NetworkIdleTimeoutDesc": "Menghentikan paksa sesi yang tidak bertukar data dengan pengguna (browser atau aplikasi web) setelah waktu ini. Lalu lintas antara pengguna dan sesi komputasi terus terjadi ketika pengguna berinteraksi dengan aplikasi, seperti terminal atau Jupyter, melalui input keyboard, pembuatan sel Jupyter, dll. Pembuatan sel Jupyter, dll. Jika tidak ada interaksi selama periode tertentu, kondisi pengumpulan sampah akan terpenuhi. Bahkan jika ada proses yang mengeksekusi pekerjaan dalam sesi komputasi, proses tersebut akan dihentikan jika tidak ada interaksi pengguna.",
     "NoLogMsgAvailable": "Tidak ada pesan log yang tersedia pada status saat ini",

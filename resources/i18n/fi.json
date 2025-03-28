@@ -1164,6 +1164,7 @@
     "MaxSessionLifetimeDesc": "Pakottaa lopettamaan istunnot tämän ajan kuluttua luomisesta. Se estää istuntoa toimimasta loputtomiin.",
     "Message": "Viesti",
     "ModifyArguments": "Muokkaa argumentteja",
+    "MySessions": "Istunnoni",
     "NetworkIdleTimeout": "Verkon tyhjäkäynnin aikakatkaisu",
     "NetworkIdleTimeoutDesc": "Pakota lopettamaan istunnot, jotka eivät vaihda tietoja käyttäjän (selaimen tai verkkosovelluksen) kanssa tämän ajan kuluttua. Käyttäjän ja laskenta-istunnon välistä liikennettä tapahtuu jatkuvasti, kun käyttäjä on vuorovaikutuksessa sovelluksen, kuten terminaalin tai Jupyterin, kanssa näppäimistösyötön, Jupyter-solujen luomisen jne. avulla. Jupyter-solujen luominen jne. Jos vuorovaikutusta ei tapahdu tiettyyn ajanjaksoon, roskienkeräyksen ehto täyttyy. Vaikka laskenta-istunnossa olisi prosessi, joka suorittaa työtä, se lopetetaan, jos käyttäjän vuorovaikutusta ei ole.",
     "NoLogMsgAvailable": "Nykyisestä tilasta ei ole saatavilla lokiviestiä",
