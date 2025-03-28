@@ -145,6 +145,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({ type: Object }) supports = Object();
   @property({ type: Array }) availablePages = [
     'start',
+    'dashboard',
     'summary',
     'verify-email',
     'change-password',

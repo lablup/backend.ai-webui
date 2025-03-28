@@ -1,6 +1,7 @@
 import { filterNonNullItems, toLocalId } from '../helper';
 import BAICard, { BAICardProps } from './BAICard';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
+import Flex from './Flex';
 import SessionDetailDrawer from './SessionDetailDrawer';
 import SessionNodes from './SessionNodes';
 import { RecentlyCreatedSessionCardFragment$key } from './__generated__/RecentlyCreatedSessionCardFragment.graphql';
@@ -55,24 +56,35 @@ const RecentlyCreatedSessionCard: React.FC<RecentlyCreatedSessionCardProps> = ({
       <BAICard
         title={t('session.RecentlyCreatedSessions')}
         extra={
-          <BAIFetchKeyButton
-            loading={isPendingRefetch}
-            autoUpdateDelay={15_000}
-            value=""
-            onChange={(newFetchKey) => {
-              startRefetchTransition(() => {
-                refetch(
-                  {},
-                  {
-                    fetchPolicy: 'network-only',
-                  },
-                );
-              });
+          <Flex
+            direction="row"
+            gap="sm"
+            style={{
+              marginRight: -8,
             }}
-            buttonProps={{
-              type: 'text',
-            }}
-          />
+          >
+            <BAIFetchKeyButton
+              loading={isPendingRefetch}
+              autoUpdateDelay={15_000}
+              value=""
+              onChange={(newFetchKey) => {
+                startRefetchTransition(() => {
+                  refetch(
+                    {},
+                    {
+                      fetchPolicy: 'network-only',
+                    },
+                  );
+                });
+              }}
+              buttonProps={{
+                type: 'text',
+                style: {
+                  backgroundColor: 'transparent',
+                },
+              }}
+            />
+          </Flex>
         }
         {...props}
       >

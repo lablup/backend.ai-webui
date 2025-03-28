@@ -21,10 +21,11 @@ const AvailableResourcesCard: React.FC<AvailableResourcesCardProps> = ({
   const currentProject = useCurrentProjectValue();
   const [selectedResourceGroup, setSelectedResourceGroup] = useState();
   const deferredSelectedResourceGroup = useDeferredValue(selectedResourceGroup);
-  const [{ checkPresetInfo }, { refetch }] = useResourceLimitAndRemaining({
-    currentProjectName: currentProject.name,
-    currentResourceGroup: deferredSelectedResourceGroup || 'default',
-  });
+  const [{ checkPresetInfo, isRefetching }, { refetch }] =
+    useResourceLimitAndRemaining({
+      currentProjectName: currentProject.name,
+      currentResourceGroup: deferredSelectedResourceGroup || 'default',
+    });
   const resourceSlotsDetails = useResourceSlotsDetails(
     deferredSelectedResourceGroup || 'default',
   );
@@ -69,6 +70,10 @@ const AvailableResourcesCard: React.FC<AvailableResourcesCardProps> = ({
             type="text"
             onClick={() => {
               refetch();
+            }}
+            loading={isRefetching}
+            style={{
+              backgroundColor: 'transparent',
             }}
           />
         </Flex>

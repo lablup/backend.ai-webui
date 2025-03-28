@@ -1,6 +1,7 @@
 import BAICard, { BAICardProps } from './BAICard';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import BAIPanelItem from './BAIPanelItem';
+import Flex from './Flex';
 import { MySessionCardQueryFragment$key } from './__generated__/MySessionCardQueryFragment.graphql';
 import { Col, Divider, Row, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
@@ -66,24 +67,35 @@ const MySessionCard: React.FC<MySessionCardProps> = ({
       {...props}
       title={t('session.MySessions')}
       extra={
-        <BAIFetchKeyButton
-          loading={isPendingRefetch}
-          autoUpdateDelay={15_000}
-          value=""
-          onChange={(newFetchKey) => {
-            startRefetchTransition(() => {
-              refetch(
-                {},
-                {
-                  fetchPolicy: 'network-only',
-                },
-              );
-            });
+        <Flex
+          direction="row"
+          gap="sm"
+          style={{
+            marginRight: -8,
           }}
-          buttonProps={{
-            type: 'text',
-          }}
-        />
+        >
+          <BAIFetchKeyButton
+            loading={isPendingRefetch}
+            autoUpdateDelay={15_000}
+            value=""
+            onChange={(newFetchKey) => {
+              startRefetchTransition(() => {
+                refetch(
+                  {},
+                  {
+                    fetchPolicy: 'network-only',
+                  },
+                );
+              });
+            }}
+            buttonProps={{
+              type: 'text',
+              style: {
+                backgroundColor: 'transparent',
+              },
+            }}
+          />
+        </Flex>
       }
     >
       <Row gutter={[24, 16]}>

@@ -1,3 +1,4 @@
+// import AnnouncementAlert from './components/AnnouncementAlert';
 import BAICard from './components/BAICard';
 import BAIErrorBoundary, { ErrorView } from './components/BAIErrorBoundary';
 import {
@@ -35,6 +36,7 @@ const EndpointDetailPage = React.lazy(
   () => import('./pages/EndpointDetailPage'),
 );
 const StartPage = React.lazy(() => import('./pages/StartPage'));
+const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
 const EnvironmentPage = React.lazy(() => import('./pages/EnvironmentPage'));
 const MyEnvironmentPage = React.lazy(() => import('./pages/MyEnvironmentPage'));
 const StorageHostSettingPage = React.lazy(
@@ -125,6 +127,15 @@ const router = createBrowserRouter([
         handle: { labelKey: 'webui.menu.Start' },
       },
       {
+        path: '/dashboard',
+        element: (
+          <BAIErrorBoundary>
+            <DashboardPage />
+          </BAIErrorBoundary>
+        ),
+        handle: { labelKey: 'webui.menu.Dashboard' },
+      },
+      {
         //for electron dev mode
         path: '/build/electron-app/app/index.html',
         element: <WebUINavigate to="/start" replace />,
@@ -149,10 +160,24 @@ const router = createBrowserRouter([
           );
         },
       },
-      {
-        path: '/summary',
-        handle: { labelKey: 'webui.menu.Summary' },
-      },
+      // {
+      //   path: '/summary',
+      //   Component: () => {
+      //     const { token } = theme.useToken();
+      //     return (
+      //       <>
+      //         <AnnouncementAlert
+      //           showIcon
+      //           icon={undefined}
+      //           banner={false}
+      //           style={{ marginBottom: token.paddingContentVerticalLG }}
+      //           closable
+      //         />
+      //       </>
+      //     );
+      //   },
+      //   handle: { labelKey: 'webui.menu.Summary' },
+      // },
       {
         path: '/job',
         handle: { labelKey: 'webui.menu.Sessions' },
