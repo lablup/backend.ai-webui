@@ -1482,8 +1482,6 @@
     "RNGDSupport": "RNGD",
     "ROCMGPUSupport": "ROCm GPU 지원",
     "RegisterNewImagesFromRepo": "새 계산환경 이미지를 저장소로부터 등록",
-    "Require2003orAbove": "Backend.AI 20.03 이상의 버전이 필요합니다.",
-    "Require2009orAbove": "Backend.AI 20.09 이상의 버전이 필요합니다.",
     "RequireATOMPlugin": "Backend.AI ATOM 플러그인이 필요합니다.",
     "RequireATOMPlusPlugin": "Backend.AI ATOM+ 플러그인이 필요합니다.",
     "RequireFGPUPlugin": "Backend.AI Virtual CUDA API 층 플러그인이 필요합니다.",

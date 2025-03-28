@@ -1476,8 +1476,6 @@
     "RNGDSupport": "RNGD",
     "ROCMGPUSupport": "ROCm GPU-tuki",
     "RegisterNewImagesFromRepo": "Rekisteröi uudet kuvat arkistosta",
-    "Require2003orAbove": "Vaatii Backend.AI 20.03 tai uudemman version.",
-    "Require2009orAbove": "Vaatii Backend.AI 20.09 tai uudemman version.",
     "RequireATOMPlugin": "Vaatii Backend.AI ATOM Pluginin.",
     "RequireATOMPlusPlugin": "Vaatii Backend.AI ATOM+ laajennuksen.",
     "RequireFGPUPlugin": "Vaatii Backend.AI Virtual CUDA API Layer -lisäosan.",

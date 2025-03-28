@@ -1477,8 +1477,6 @@
     "RNGDSupport": "RNGD",
     "ROCMGPUSupport": "ROCm GPU desteği",
     "RegisterNewImagesFromRepo": "Depodan yeni görüntüler kaydet",
-    "Require2003orAbove": "Backend.AI 20.03 veya üstünü gerektirir.",
-    "Require2009orAbove": "Backend.AI 20.09 veya üstünü gerektirir.",
     "RequireATOMPlugin": "Backend.AI ATOM Eklentisi gerektirir.",
     "RequireATOMPlusPlugin": "Backend.AI ATOM+ Eklentisi gerektirir.",
     "RequireFGPUPlugin": "Backend.AI Sanal CUDA API Katmanı Eklentisi gerektirir.",

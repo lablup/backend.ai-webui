@@ -1478,8 +1478,6 @@
     "RNGDSupport": "RNGD",
     "ROCMGPUSupport": "Suporte para GPU ROCm",
     "RegisterNewImagesFromRepo": "Registre novas imagens do repositório",
-    "Require2003orAbove": "Requer Backend.AI 20.03 ou superior.",
-    "Require2009orAbove": "Requer Backend.AI 20.09 ou superior.",
     "RequireATOMPlugin": "Requer o plug-in Backend.AI ATOM.",
     "RequireATOMPlusPlugin": "Requer plug-in Backend.AI ATOM+.",
     "RequireFGPUPlugin": "Requer Backend.AI Virtual CUDA API Layer Plugin.",

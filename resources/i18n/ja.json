@@ -1477,8 +1477,6 @@
     "RNGDSupport": "RNGD",
     "ROCMGPUSupport": "ROCmGPUサポート",
     "RegisterNewImagesFromRepo": "リポジトリから新しい画像を登録する",
-    "Require2003orAbove": "Backend.AI20.03以降が必要です。",
-    "Require2009orAbove": "Backend.AI20.09以降が必要です。",
     "RequireATOMPlugin": "Backend.AI ATOMプラグインが必要です。",
     "RequireATOMPlusPlugin": "Backend.AI ATOM+プラグインが必要です。",
     "RequireFGPUPlugin": "Backend.AI Virtual CUDA APILayerプラグインが必要です。",

@@ -1478,8 +1478,6 @@
     "RNGDSupport": "RNGD",
     "ROCMGPUSupport": "ROCm GPU 支持",
     "RegisterNewImagesFromRepo": "从存储库注册新图像",
-    "Require2003orAbove": "需要 Backend.AI 20.03 或更高版本。",
-    "Require2009orAbove": "需要 Backend.AI 20.09 或更高版本。",
     "RequireATOMPlugin": "需要 Backend.AI ATOM 插件。",
     "RequireATOMPlusPlugin": "需要 Backend.AI ATOM+ 插件。",
     "RequireFGPUPlugin": "需要 Backend.AI 虚拟 CUDA API 层插件。",

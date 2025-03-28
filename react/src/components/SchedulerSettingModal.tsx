@@ -54,42 +54,35 @@ const SchedulerSettingModal = ({
       centered
       width={'auto'}
       onCancel={onRequestClose}
-      footer={[
-        <Button key="schedulerCancel" onClick={onRequestClose}>
-          {t('button.Cancel')}
-        </Button>,
-        <Button
-          key="schedulerSave"
-          type="primary"
-          onClick={() => {
-            if (formRef.current) {
-              formRef.current
-                .validateFields()
-                .then((values) => {
-                  if (values.schedulerType) {
-                    console.log(values);
-                    const numRetries =
-                      values[`${values.schedulerType}_num_retries_to_skip`];
-                    const isUnset =
-                      values[
-                        `${values.schedulerType}_num_retries_to_skip_checkbox`
-                      ];
-                    if (isUnset) {
-                      onDelete(values.schedulerType, 'num_retries_to_skip');
-                    } else {
-                      onSave(values.schedulerType, {
-                        num_retries_to_skip: numRetries,
-                      });
-                    }
-                  }
-                })
-                .catch(() => {});
-            }
-          }}
-        >
-          {t('button.Save')}
-        </Button>,
-      ]}
+      onOk={() => {
+        if (formRef.current) {
+          formRef.current
+            .validateFields()
+            .then((values) => {
+              if (values.schedulerType) {
+                const numRetries =
+                  values[`${values.schedulerType}_num_retries_to_skip`];
+                const isUnset =
+                  values[
+                    `${values.schedulerType}_num_retries_to_skip_checkbox`
+                  ];
+                if (isUnset) {
+                  onDelete(values.schedulerType, 'num_retries_to_skip');
+                } else {
+                  onSave(values.schedulerType, {
+                    num_retries_to_skip: numRetries,
+                  });
+                }
+              }
+            })
+            .catch(() => {});
+        }
+      }}
+      cancelText={t('button.Cancel')}
+      okText={t('button.Save')}
+      okButtonProps={{
+        type: 'primary',
+      }}
       destroyOnClose
     >
       <Form ref={formRef} layout="vertical">
