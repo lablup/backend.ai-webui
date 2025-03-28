@@ -44,9 +44,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
   const { token } = theme.useToken();
 
   const ChatInputStyle = {
-    background: '#ffffff',
-    borderTop: '1px solid #f0f0f0',
-    borderRadius: '0 0 8px 8px',
+    borderTop: `1px solid ${token.colorBorderSecondary}`,
     padding: token.paddingContentVertical,
   };
 
