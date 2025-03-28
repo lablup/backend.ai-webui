@@ -1775,7 +1775,8 @@
     "ShellEnvironments": "Środowiska powłoki",
     "ThemeMode": "Tryb tematyczny",
     "UseCompactSidebar": "Używaj domyślnie kompaktowego paska bocznego",
-    "UseSystemSetting": "Użyj ustawień systemowych"
+    "UseSystemSetting": "Użyj ustawień systemowych",
+    "UserConfigScript": "Skrypt konfiguracji użytkownika"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Zaawansowane korzystanie z terminala internetowego: Skopiuj zawartość terminala",

@@ -1783,7 +1783,8 @@
     "ShellEnvironments": "Shell Environments",
     "ThemeMode": "Theme Mode",
     "UseCompactSidebar": "Use Compact Sidebar by default",
-    "UseSystemSetting": "Use System Setting"
+    "UseSystemSetting": "Use System Setting",
+    "UserConfigScript": "User Config Script"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Advanced Web Terminal Usage: Copy terminal contents",

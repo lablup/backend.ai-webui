@@ -1770,7 +1770,8 @@
     "ShellEnvironments": "Περιβάλλον Shell",
     "ThemeMode": "Λειτουργία θέματος",
     "UseCompactSidebar": "Χρησιμοποιήστε το Compact Sidebar από προεπιλογή",
-    "UseSystemSetting": "Χρησιμοποιήστε τη ρύθμιση συστήματος"
+    "UseSystemSetting": "Χρησιμοποιήστε τη ρύθμιση συστήματος",
+    "UserConfigScript": "Σενάριο διαμόρφωσης χρήστη"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Σύνθετη χρήση τερματικού Web: Αντιγραφή περιεχομένου τερματικού",

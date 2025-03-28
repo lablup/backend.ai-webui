@@ -1775,7 +1775,8 @@
     "ShellEnvironments": "Shell-Umgebungen",
     "ThemeMode": "Themenmodus",
     "UseCompactSidebar": "Standardmäßig die kompakte Seitenleiste verwenden",
-    "UseSystemSetting": "Verwenden Sie die Systemeinstellungen"
+    "UseSystemSetting": "Verwenden Sie die Systemeinstellungen",
+    "UserConfigScript": "Benutzerkonfigurationsskript"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Erweiterte Web-Terminal-Nutzung: Terminal-Inhalte kopieren",

@@ -1773,7 +1773,8 @@
     "ShellEnvironments": "Shell-ympäristöt",
     "ThemeMode": "Teematila",
     "UseCompactSidebar": "Käytä kompakti sivupalkki oletusarvoisesti",
-    "UseSystemSetting": "Käytä järjestelmäasetuksia"
+    "UseSystemSetting": "Käytä järjestelmäasetuksia",
+    "UserConfigScript": "Käyttäjän määrityskomentosarja"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Edistynyt verkkopäätteen käyttö: Kopioi terminaalin sisältö",

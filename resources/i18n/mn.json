@@ -1773,7 +1773,8 @@
     "ShellEnvironments": "Shell Environments",
     "ThemeMode": "Загварын горим",
     "UseCompactSidebar": "Анхдагч байдлаар Compact Sidebar ашиглана уу",
-    "UseSystemSetting": "Системийн тохиргоог ашиглана уу"
+    "UseSystemSetting": "Системийн тохиргоог ашиглана уу",
+    "UserConfigScript": "Хэрэглэгчийн тохиргоог скрипт"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Дэвшилтэт вэб терминалын хэрэглээ: Терминалын агуулгыг хуулах",

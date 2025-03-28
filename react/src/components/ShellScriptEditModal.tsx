@@ -5,7 +5,7 @@ import BAICodeEditor from './BAICodeEditor';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import { DeleteOutlined } from '@ant-design/icons';
-import { App, Button, Dropdown, Select, Typography } from 'antd';
+import { App, Button, Dropdown, Form, Select, Typography } from 'antd';
 import _ from 'lodash';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -284,26 +284,37 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
       {...modalProps}
     >
       <Flex direction="column" align="stretch" gap={'sm'}>
-        <Typography.Text>
-          {t('userSettings.BootstrapScriptDescription')}
-        </Typography.Text>
+        {shellInfo === 'bootstrap' && (
+          <Typography.Text>
+            {t('userSettings.BootstrapScriptDescription')}
+          </Typography.Text>
+        )}
         {shellInfo === 'userconfig' && (
-          <Select
-            defaultValue={'.bashrc'}
-            onChange={(value) => {
-              const selectedScript = _.find(userConfigScript, { path: value });
-              setScript(selectedScript?.data || '');
-              setRcfileNames(value);
+          <Form.Item
+            style={{
+              marginBottom: 0,
             }}
-            options={[
-              { value: '.bashrc' },
-              { value: '.zshrc' },
-              { value: '.tmux.conf.local' },
-              { value: '.vimrc' },
-              { value: '.Renviron' },
-            ]}
-            style={{ width: '200px' }}
-          />
+            label={t('userSettings.UserConfigScript')}
+          >
+            <Select
+              defaultValue={'.bashrc'}
+              onChange={(value) => {
+                const selectedScript = _.find(userConfigScript, {
+                  path: value,
+                });
+                setScript(selectedScript?.data || '');
+                setRcfileNames(value);
+              }}
+              options={[
+                { value: '.bashrc' },
+                { value: '.zshrc' },
+                { value: '.tmux.conf.local' },
+                { value: '.vimrc' },
+                { value: '.Renviron' },
+              ]}
+              style={{ width: '200px' }}
+            />
+          </Form.Item>
         )}
         <BAICodeEditor
           onChange={(value) => setScript(value)}

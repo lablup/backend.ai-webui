@@ -1779,7 +1779,8 @@
     "ShellEnvironments": "쉘 스크립트 환경",
     "ThemeMode": "화면 모드",
     "UseCompactSidebar": "간결한 사이드바 기본 사용",
-    "UseSystemSetting": "시스템 설정 사용"
+    "UseSystemSetting": "시스템 설정 사용",
+    "UserConfigScript": "사용자 환경 스크립트"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "웹 터미널 고급 사용법: 터미널 내용 복사하기",

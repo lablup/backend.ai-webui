@@ -1775,7 +1775,8 @@
     "ShellEnvironments": "外壳环境",
     "ThemeMode": "主题模式",
     "UseCompactSidebar": "默认使用精简侧边栏",
-    "UseSystemSetting": "使用系统设置"
+    "UseSystemSetting": "使用系统设置",
+    "UserConfigScript": "用户配置脚本"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "高级 Web 终端使用：复制终端内容",

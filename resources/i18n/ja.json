@@ -1774,7 +1774,8 @@
     "ShellEnvironments": "シェル環境",
     "ThemeMode": "テーマモード",
     "UseCompactSidebar": "デフォルトでコンパクトサイドバーを使用",
-    "UseSystemSetting": "システム設定を使用する"
+    "UseSystemSetting": "システム設定を使用する",
+    "UserConfigScript": "ユーザー構成スクリプト"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "高度なWeb端末の使用法：端末の内容をコピーする",

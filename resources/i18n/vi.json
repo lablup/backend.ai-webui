@@ -1775,7 +1775,8 @@
     "ShellEnvironments": "Môi trường Shell",
     "ThemeMode": "Chế độ chủ đề",
     "UseCompactSidebar": "Sử dụng Thanh bên nhỏ gọn theo mặc định",
-    "UseSystemSetting": "Sử dụng cài đặt hệ thống"
+    "UseSystemSetting": "Sử dụng cài đặt hệ thống",
+    "UserConfigScript": "Tập lệnh cấu hình người dùng"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Sử dụng đầu cuối web nâng cao: Sao chép nội dung đầu cuối",

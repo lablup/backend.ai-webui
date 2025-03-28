@@ -1756,7 +1756,8 @@
     "ShellEnvironments": "สภาพแวดล้อมเชลล์",
     "ThemeMode": "โหมดธีม",
     "UseCompactSidebar": "ใช้แถบด้านข้างแบบกะทัดรัดเป็นค่าเริ่มต้น",
-    "UseSystemSetting": "ใช้การตั้งค่าระบบ"
+    "UseSystemSetting": "ใช้การตั้งค่าระบบ",
+    "UserConfigScript": "สคริปต์การกำหนดค่าผู้ใช้"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "คำแนะนำการใช้งานเทอร์มินัลเว็บขั้นสูง: คัดลอกเนื้อหาเทอร์มินัล",

@@ -1774,7 +1774,8 @@
     "ShellEnvironments": "Kabuk Ortamları",
     "ThemeMode": "Tema Modu",
     "UseCompactSidebar": "Varsayılan olarak Kompakt Kenar Çubuğunu kullan",
-    "UseSystemSetting": "Sistem Ayarını Kullan"
+    "UseSystemSetting": "Sistem Ayarını Kullan",
+    "UserConfigScript": "Kullanıcı yapılandırma komut dosyası"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Gelişmiş Web Terminali Kullanımı: Terminal içeriğini kopyalayın",

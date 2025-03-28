@@ -1772,7 +1772,8 @@
     "ShellEnvironments": "Persekitaran Shell",
     "ThemeMode": "Mod Tema",
     "UseCompactSidebar": "Gunakan Bilah Sisi Padat secara lalai",
-    "UseSystemSetting": "Gunakan Tetapan Sistem"
+    "UseSystemSetting": "Gunakan Tetapan Sistem",
+    "UserConfigScript": "Skrip konfigurasi pengguna"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Penggunaan Terminal Web Lanjutan: Salin kandungan terminal",

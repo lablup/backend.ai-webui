@@ -1775,7 +1775,8 @@
     "ShellEnvironments": "Ambientes Shell",
     "ThemeMode": "Modo Tema",
     "UseCompactSidebar": "Use a barra lateral compacta por padrão",
-    "UseSystemSetting": "Usar configuração do sistema"
+    "UseSystemSetting": "Usar configuração do sistema",
+    "UserConfigScript": "Script de configuração do usuário"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Uso avançado do terminal da Web: Copiar o conteúdo do terminal",
