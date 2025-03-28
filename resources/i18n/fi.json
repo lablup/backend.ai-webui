@@ -1727,6 +1727,7 @@
     "DescBetaFeatures": "Käytä web-käyttöliittymän beta-ominaisuuksia.<br />Beta-ominaisuudet voivat olla epävakaita. Joitakin beta-ominaisuuksia ei ehkä hyväksytä viralliseksi ominaisuudeksi.",
     "DescClassicSessionLauncher": "Käytä Classic-istunnonkäynnistysohjelmaa NEO-istunnonkäynnistimen sijaan. \nClassic istunnonkäynnistysohjelmassa ei välttämättä ole uusimpia ominaisuuksia.",
     "DescDesktopNotification": "Ota työpöytäilmoitukset käyttöön tai poista ne käytöstä. <br />Jos se on päällä, Backend.AI käyttää myös käyttöjärjestelmän sisäänrakennettua ilmoitusjärjestelmää. Tämän vaihtoehdon kytkeminen pois päältä ei vaikuta ilmoituksiin web-käyttöliittymässä.",
+    "DescExperimentalDashboard": "Käytä kojelaudan sivua yhteenvetosivun sijasta.",
     "DescKeepLoginSessionInformation": "Anna webui-sovelluksen säilyttää nykyisen kirjautumisistunnon tiedot seuraavalla kerralla.<br />Jos vaihtoehto on pois päältä, kirjautumistiedot tyhjennetään jokaisen uloskirjautumisen yhteydessä.",
     "DescLanguage": "Aseta käyttöliittymän kieli.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "Päivitä skripti ei-tyhjällä arvolla.",

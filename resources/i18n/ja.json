@@ -1728,6 +1728,7 @@
     "DescBetaFeatures": "WebUIのベータ機能を使用します。 <br />ベータ機能が不安定な場合があります。一部のベータ機能は、公式機能として採用されない場合があります。",
     "DescClassicSessionLauncher": "NEO セッション ランチャーの代わりに Classic セッション ランチャーを使用します。\nClassic セッション ランチャーには最新の機能が含まれていない可能性があります。",
     "DescDesktopNotification": "デスクトップ通知をオンまたはオフにします。 <br />オンにすると、Backend.AIはOS組み込みの通知システムも使用します。このオプションをオフにしても、WebUI内の通知には影響しません。",
+    "DescExperimentalDashboard": "要約ページの代わりにダッシュボードページを使用します。",
     "DescKeepLoginSessionInformation": "次回、webuiアプリに現在のログインセッション情報を保持させます。 <br />オプションがオフの場合、ログイン情報はログアウトごとにクリアされます。",
     "DescLanguage": "UI言語を設定します。",
     "DescLetUserUpdateScriptWithNonEmptyValue": "空でない値でスクリプトを更新してください。",

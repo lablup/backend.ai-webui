@@ -1726,6 +1726,7 @@
     "DescBetaFeatures": "Utilizza le funzionalità beta per l'interfaccia utente Web. <br /> Le funzionalità beta potrebbero essere instabili. Alcune funzionalità beta potrebbero non essere adottate come funzionalità ufficiali.",
     "DescClassicSessionLauncher": "Utilizza l'avvio della sessione Classic anziché l'avvio della sessione NEO. \nIl launcher della sessione Classic potrebbe non avere le funzionalità più recenti.",
     "DescDesktopNotification": "Attiva o disattiva la notifica sul desktop. <br /> Se attivato, Backend.AI utilizza anche il sistema di notifica integrato nel sistema operativo. La disattivazione di questa opzione non influisce sulle notifiche all'interno dell'interfaccia utente web.",
+    "DescExperimentalDashboard": "Usa la pagina Dashboard anziché la pagina di riepilogo.",
     "DescKeepLoginSessionInformation": "Consenti all'app webui di conservare le informazioni sulla sessione di accesso corrente la prossima volta. <br /> Se l'opzione è disattivata, le informazioni di accesso verranno cancellate ad ogni logout.",
     "DescLanguage": "Imposta la lingua dell'interfaccia utente.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "Aggiorna lo script con un valore non vuoto.",

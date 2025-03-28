@@ -1,4 +1,4 @@
-// import AnnouncementAlert from './components/AnnouncementAlert';
+import AnnouncementAlert from './components/AnnouncementAlert';
 import BAICard from './components/BAICard';
 import BAIErrorBoundary, { ErrorView } from './components/BAIErrorBoundary';
 import {
@@ -127,15 +127,6 @@ const router = createBrowserRouter([
         handle: { labelKey: 'webui.menu.Start' },
       },
       {
-        path: '/dashboard',
-        element: (
-          <BAIErrorBoundary>
-            <DashboardPage />
-          </BAIErrorBoundary>
-        ),
-        handle: { labelKey: 'webui.menu.Dashboard' },
-      },
-      {
         //for electron dev mode
         path: '/build/electron-app/app/index.html',
         element: <WebUINavigate to="/start" replace />,
@@ -160,24 +151,48 @@ const router = createBrowserRouter([
           );
         },
       },
-      // {
-      //   path: '/summary',
-      //   Component: () => {
-      //     const { token } = theme.useToken();
-      //     return (
-      //       <>
-      //         <AnnouncementAlert
-      //           showIcon
-      //           icon={undefined}
-      //           banner={false}
-      //           style={{ marginBottom: token.paddingContentVerticalLG }}
-      //           closable
-      //         />
-      //       </>
-      //     );
-      //   },
-      //   handle: { labelKey: 'webui.menu.Summary' },
-      // },
+      {
+        path: '/summary',
+        Component: () => {
+          const { token } = theme.useToken();
+          const location = useLocation();
+          const [experimentalDashboard] = useBAISettingUserState(
+            'experimental_dashboard',
+          );
+          return (
+            <>
+              <AnnouncementAlert
+                showIcon
+                icon={undefined}
+                banner={false}
+                style={{ marginBottom: token.paddingContentVerticalLG }}
+                closable
+              />
+              {experimentalDashboard ? (
+                <WebUINavigate to={'/dashboard' + location.search} replace />
+              ) : null}
+            </>
+          );
+        },
+        handle: { labelKey: 'webui.menu.Summary' },
+      },
+      {
+        path: '/dashboard',
+        handle: { labelKey: 'webui.menu.Dashboard' },
+        Component: () => {
+          const location = useLocation();
+          const [experimentalDashboard] = useBAISettingUserState(
+            'experimental_dashboard',
+          );
+          return experimentalDashboard ? (
+            <BAIErrorBoundary>
+              <DashboardPage />
+            </BAIErrorBoundary>
+          ) : (
+            <WebUINavigate to={'/summary' + location.search} replace />
+          );
+        },
+      },
       {
         path: '/job',
         handle: { labelKey: 'webui.menu.Sessions' },

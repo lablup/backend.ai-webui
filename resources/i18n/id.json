@@ -1728,6 +1728,7 @@
     "DescBetaFeatures": "Gunakan fitur beta untuk UI Web. <br />Fitur beta mungkin tidak stabil. Beberapa fitur beta mungkin tidak diadopsi sebagai fitur resmi.",
     "DescClassicSessionLauncher": "Gunakan peluncur sesi Classic alih-alih peluncur sesi NEO. \nPeluncur sesi Classic mungkin tidak memiliki fitur terbaru.",
     "DescDesktopNotification": "Mengaktifkan atau menonaktifkan notifikasi desktop. <br />Jika diaktifkan, Backend.AI juga menggunakan sistem notifikasi bawaan OS. Menonaktifkan opsi ini tidak memengaruhi notifikasi dalam UI web.",
+    "DescExperimentalDashboard": "Gunakan halaman dasbor alih -alih halaman ringkasan.",
     "DescKeepLoginSessionInformation": "Biarkan aplikasi UI web menyimpan informasi sesi login saat ini di lain waktu. <br />Jika opsi dimatikan, informasi login akan dihapus setiap keluar.",
     "DescLanguage": "Setel bahasa UI.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "Harap perbarui skrip dengan nilai yang tidak kosong.",

@@ -1728,6 +1728,7 @@
     "DescBetaFeatures": "使用 Web UI 的測試版功能。 <br /> Beta 功能可能不穩定。某些測試版功能可能不會被採用為正式功能。",
     "DescClassicSessionLauncher": "使用 Classic 會話啟動器而不是 NEO 會話啟動器。 \nClassic 會話啟動器可能不具有最新功能。",
     "DescDesktopNotification": "打開或關閉桌面通知。 <br /> 如果開啟，Backend.AI 也會使用操作系統內置的通知系統。關閉此選項不會影響 Web UI 中的通知。",
+    "DescExperimentalDashboard": "使用儀表板頁面而不是摘要頁面。",
     "DescKeepLoginSessionInformation": "下次讓 webui 應用程序保留當前登錄會話信息。 <br /> 如果關閉該選項，則每次註銷時都會清除登錄信息。",
     "DescLanguage": "設置界面語言。",
     "DescLetUserUpdateScriptWithNonEmptyValue": "請使用非空值更新腳本。",

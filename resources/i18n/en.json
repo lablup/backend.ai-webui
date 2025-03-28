@@ -1737,6 +1737,7 @@
     "DescBetaFeatures": "Use beta features for Web UI.<br />Beta features may be unstable. Some beta features may not be adopted as official feature.",
     "DescClassicSessionLauncher": "Use the Classic session launcher instead of the NEO session launcher. Classic session launcher may not have the latest features.",
     "DescDesktopNotification": "Enables desktop notification. <br />If turned on, Backend.AI uses OS built-in notification system too. Turning off this option does not affect notifications within web UI.",
+    "DescExperimentalDashboard": "Use Dashboard page instead of Summary page.",
     "DescKeepLoginSessionInformation": "Let webui app keep current login session information next time.<br />If the option is turned off, login information will be cleared each logout.",
     "DescLanguage": "Set the UI language.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "Please update script with non empty value.",

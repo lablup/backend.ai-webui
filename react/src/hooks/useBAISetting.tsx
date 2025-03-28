@@ -20,6 +20,7 @@ interface UserSettings {
   experimental_neo_session_list?: boolean;
   start_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   experimental_ai_agents?: boolean;
+  experimental_dashboard?: boolean;
   [key: `hiddenColumnKeys.${string}`]: Array<string>;
 }
 

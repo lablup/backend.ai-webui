@@ -1733,6 +1733,7 @@
     "DescBetaFeatures": "GUI용으로 테스트중인 기능을 사용합니다.<br />베타 기능은 불안정할 수 있으며, 정식 버전에서는 채택되지 않을 수 있습니다.",
     "DescClassicSessionLauncher": "최신의 NEO 세션 런처 대신 Classic 세션 런처를 사용합니다. Classic 세션 런처에는 최신 기능이 지원되지 않을 수 있습니다.",
     "DescDesktopNotification": "데스크탑 알림을 사용합니다.<br />이 옵션이 켜져 있을때, Backend.AI는 운영체제의 알림 기능을 함께 사용합니다. 이 옵션을 꺼도 웹 UI내의 알림은 계속 동작합니다.",
+    "DescExperimentalDashboard": "요약 페이지 대신 대시보드 페이지를 사용합니다.",
     "DescKeepLoginSessionInformation": "웹 UI 앱이 다음 앱 사용시까지 로그인 세션 정보를 저장합니다.<br />이 옵션이 꺼져있을 경우, 매 종료시마다 로그인 정보가 자동으로 삭제됩니다.",
     "DescLanguage": "인터페이스 언어를 설정합니다.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "스크립트 수정을 위한 내용을 입력하세요.",

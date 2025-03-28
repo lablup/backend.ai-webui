@@ -49,6 +49,8 @@ const UserPreferencesPage = () => {
     useBAISettingUserState('experimental_neo_session_list');
   const [experimentalAIAgents, setExperimentalAIAgents] =
     useBAISettingUserState('experimental_ai_agents');
+  const [experimentalDashboard, setExperimentalDashboard] =
+    useBAISettingUserState('experimental_dashboard');
   const [shellInfo, setShellInfo] = useState<ShellScriptType>('bootstrap');
   const [isOpenShellScriptEditModal, { toggle: toggleShellScriptEditModal }] =
     useToggle(false);
@@ -266,6 +268,17 @@ const UserPreferencesPage = () => {
           setValue: setExperimentalAIAgents,
           onChange: (e) => {
             setExperimentalAIAgents(e.target.checked);
+          },
+        },
+        {
+          type: 'checkbox',
+          title: t('webui.menu.Dashboard'),
+          description: t('userSettings.DescExperimentalDashboard'),
+          defaultValue: false,
+          value: experimentalDashboard,
+          setValue: setExperimentalDashboard,
+          onChange: (e) => {
+            setExperimentalDashboard(e.target.checked);
           },
         },
       ],
