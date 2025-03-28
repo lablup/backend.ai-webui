@@ -1582,7 +1582,10 @@
     "SelectPeriod": "Periode",
     "SessionsDesc": "Jumlah sesi komputasi yang dibuat.",
     "UsageHistory": "Riwayat Penggunaan",
-    "UsageHistoryNote": "Riwayat penggunaan yang ditampilkan di sini didasarkan pada sesi komputasi yang diakhiri."
+    "UsageHistoryNote": "Riwayat penggunaan yang ditampilkan di sini didasarkan pada sesi komputasi yang diakhiri.",
+    "prometheus": {
+      "noMetricsToDisplay": "Tidak ada metrik yang tersedia untuk pelacakan"
+    }
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "Mengubah kebijakan sumber daya dapat memengaruhi semua proyek yang menggunakan kebijakan sumber daya proyek tersebut, jadi gunakanlah dengan hati-hati.",
@@ -1862,7 +1865,9 @@
       "TermsOfService": "Persyaratan Layanan",
       "TotpActivated": "2FA Diaktifkan",
       "Update": "Perbarui",
+      "UsageHistory": "Sejarah Penggunaan",
       "UserCredentials&Policies": "Kredensial & Kebijakan Pengguna",
+      "UserSessionHistory": "Riwayat sesi pengguna",
       "Users": "Pengguna",
       "WelcomeMessage": "Selamat datang, {{ userName }}.",
       "YouMushChangeYourPassword": "Disarankan untuk mengubah kata sandi Anda secara berkala untuk alasan keamanan. Karena sejumlah waktu telah berlalu sejak terakhir kali Anda mengubah kata sandi, Anda harus mengubahnya agar dapat terus menggunakan layanan ini.",
