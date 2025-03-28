@@ -132,16 +132,22 @@ const QuotaPerStorageVolumePanelCard: React.FC<
         </Flex>
       }
       extra={
-        <StorageSelect
-          value={selectedVolumeInfo?.id}
-          onChange={(__, vInfo) => {
-            setSelectedVolumeInfo(vInfo);
+        <Flex
+          style={{
+            marginRight: -8,
           }}
-          autoSelectType="usage"
-          showUsageStatus
-          showSearch
-          allowClear
-        />
+        >
+          <StorageSelect
+            value={selectedVolumeInfo?.id}
+            onChange={(__, vInfo) => {
+              setSelectedVolumeInfo(vInfo);
+            }}
+            autoSelectType="usage"
+            showUsageStatus
+            showSearch
+            variant="borderless"
+          />
+        </Flex>
       }
       styles={{
         body: {

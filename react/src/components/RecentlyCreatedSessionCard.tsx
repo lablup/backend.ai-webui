@@ -13,10 +13,12 @@ import { useQueryParam, StringParam } from 'use-query-params';
 
 interface RecentlyCreatedSessionCardProps extends BAICardProps {
   queryRef: RecentlyCreatedSessionCardFragment$key;
+  isRefetching?: boolean;
 }
 
 const RecentlyCreatedSessionCard: React.FC<RecentlyCreatedSessionCardProps> = ({
   queryRef,
+  isRefetching,
   ...props
 }) => {
   const { t } = useTranslation();
@@ -64,8 +66,7 @@ const RecentlyCreatedSessionCard: React.FC<RecentlyCreatedSessionCardProps> = ({
             }}
           >
             <BAIFetchKeyButton
-              loading={isPendingRefetch}
-              autoUpdateDelay={15_000}
+              loading={isPendingRefetch || isRefetching}
               value=""
               onChange={(newFetchKey) => {
                 startRefetchTransition(() => {
@@ -77,11 +78,9 @@ const RecentlyCreatedSessionCard: React.FC<RecentlyCreatedSessionCardProps> = ({
                   );
                 });
               }}
-              buttonProps={{
-                type: 'text',
-                style: {
-                  backgroundColor: 'transparent',
-                },
+              type="text"
+              style={{
+                backgroundColor: 'transparent',
               }}
             />
           </Flex>
@@ -96,7 +95,7 @@ const RecentlyCreatedSessionCard: React.FC<RecentlyCreatedSessionCardProps> = ({
             setSessionDetailId(toLocalId(session.id));
           }}
           pagination={false}
-          isSorterDisabled
+          disableSorter
         />
         <SessionDetailDrawer
           open={!!sessionDetailId}

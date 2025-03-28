@@ -6,7 +6,8 @@ import dayjs from 'dayjs';
 import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface BAIAutoRefetchButtonProps {
+interface BAIAutoRefetchButtonProps
+  extends Omit<ButtonProps, 'value' | 'onChange' | 'loading'> {
   value: string;
   loading?: boolean;
   lastLoadTime?: Date;
@@ -15,7 +16,6 @@ interface BAIAutoRefetchButtonProps {
   size?: ButtonProps['size'];
   onChange: (fetchKey: string) => void;
   hidden?: boolean;
-  buttonProps?: ButtonProps;
 }
 const BAIFetchKeyButton: React.FC<BAIAutoRefetchButtonProps> = ({
   value,
@@ -25,13 +25,13 @@ const BAIFetchKeyButton: React.FC<BAIAutoRefetchButtonProps> = ({
   autoUpdateDelay = null,
   size,
   hidden,
-  buttonProps,
-  ...props
+  lastLoadTime: lastLoadTimeProp,
+  ...buttonProps
 }) => {
   const { t } = useTranslation();
   const [lastLoadTime, setLastLoadTime] = useControllableState(
     {
-      value: props.lastLoadTime,
+      value: lastLoadTimeProp,
     },
     {
       defaultValue: new Date(),

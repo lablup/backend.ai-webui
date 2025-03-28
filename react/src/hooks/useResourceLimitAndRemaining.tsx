@@ -97,6 +97,7 @@ interface Props {
   currentImage?: Image;
   currentResourceGroup?: string;
   ignorePerContainerConfig?: boolean;
+  fetchKey?: string;
 }
 
 // determine resource limits and remaining for current resource group and current image in current project
@@ -105,6 +106,7 @@ export const useResourceLimitAndRemaining = ({
   currentResourceGroup = '',
   currentProjectName,
   ignorePerContainerConfig = false,
+  fetchKey,
 }: Props) => {
   const baiClient = useSuspendedBackendaiClient();
   const [resourceSlots] = useResourceSlots();
@@ -116,7 +118,12 @@ export const useResourceLimitAndRemaining = ({
     refetch,
     isRefetching,
   } = useSuspenseTanQuery<ResourceAllocation | null>({
-    queryKey: ['check-presets', currentProjectName, currentResourceGroup],
+    queryKey: [
+      'check-presets',
+      currentProjectName,
+      currentResourceGroup,
+      fetchKey,
+    ],
     queryFn: () => {
       if (
         currentResourceGroup &&

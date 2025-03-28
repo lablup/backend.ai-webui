@@ -2,9 +2,10 @@ import { usageIndicatorColor } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState from '../hooks/useControllableState';
+import BAISelect, { BAISelectProps } from './BAISelect';
 import Flex from './Flex';
 import TextHighlighter from './TextHighlighter';
-import { Select, SelectProps, Badge, Tooltip } from 'antd';
+import { Badge, Tooltip } from 'antd';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -18,7 +19,7 @@ export type VolumeInfo = {
   };
   sftp_scaling_groups: string[];
 };
-interface Props extends Omit<SelectProps, 'value' | 'onChange'> {
+interface Props extends Omit<BAISelectProps, 'value' | 'onChange'> {
   autoSelectType?: 'usage' | 'default';
   showUsageStatus?: boolean;
   value?: string;
@@ -87,7 +88,7 @@ const StorageSelect: React.FC<Props> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vhostInfo]);
   return (
-    <Select
+    <BAISelect
       filterOption={true}
       placeholder={t('data.SelectStorageHost')}
       loading={isLoadingVhostInfo}

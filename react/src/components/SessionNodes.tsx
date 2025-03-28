@@ -23,13 +23,13 @@ interface SessionNodesProps
   extends Omit<TableProps<SessionNodeInList>, 'dataSource' | 'columns'> {
   sessionsFrgmt: SessionNodesFragment$key;
   onClickSessionName?: (session: SessionNodeInList) => void;
-  isSorterDisabled?: boolean;
+  disableSorter?: boolean;
 }
 
 const SessionNodes: React.FC<SessionNodesProps> = ({
   sessionsFrgmt,
   onClickSessionName,
-  isSorterDisabled,
+  disableSorter,
   ...tableProps
 }) => {
   const { t } = useTranslation();
@@ -132,7 +132,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
       },
     ]),
     (column) => {
-      return isSorterDisabled ? _.omit(column, 'sorter') : column;
+      return disableSorter ? _.omit(column, 'sorter') : column;
     },
   );
 

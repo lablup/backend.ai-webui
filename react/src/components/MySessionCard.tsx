@@ -11,10 +11,12 @@ import { useRefetchableFragment } from 'react-relay';
 
 interface MySessionCardProps extends BAICardProps {
   queryRef: MySessionCardQueryFragment$key;
+  isRefetching?: boolean;
 }
 
 const MySessionCard: React.FC<MySessionCardProps> = ({
   queryRef,
+  isRefetching,
   ...props
 }) => {
   const { t } = useTranslation();
@@ -75,8 +77,7 @@ const MySessionCard: React.FC<MySessionCardProps> = ({
           }}
         >
           <BAIFetchKeyButton
-            loading={isPendingRefetch}
-            autoUpdateDelay={15_000}
+            loading={isPendingRefetch || isRefetching}
             value=""
             onChange={(newFetchKey) => {
               startRefetchTransition(() => {
@@ -88,11 +89,9 @@ const MySessionCard: React.FC<MySessionCardProps> = ({
                 );
               });
             }}
-            buttonProps={{
-              type: 'text',
-              style: {
-                backgroundColor: 'transparent',
-              },
+            type="text"
+            style={{
+              backgroundColor: 'transparent',
             }}
           />
         </Flex>

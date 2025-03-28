@@ -3,38 +3,38 @@ import { useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
 import BAICard, { BAICardProps } from './BAICard';
+import BAIFetchKeyButton from './BAIFetchKeyButton';
 import Flex from './Flex';
 import ResourceGroupSelectForCurrentProject from './ResourceGroupSelectForCurrentProject';
-import { ReloadOutlined } from '@ant-design/icons';
 import { Row, Col, Divider } from 'antd';
-import { Button, theme, Tooltip, Typography } from 'antd';
+import { theme, Tooltip, Typography } from 'antd';
 import _ from 'lodash';
-import React, { useDeferredValue, useEffect, useState } from 'react';
+import React, { useDeferredValue, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface AvailableResourcesCardProps extends BAICardProps {
   fetchKey?: string;
+  isRefetching?: boolean;
 }
 const AvailableResourcesCard: React.FC<AvailableResourcesCardProps> = ({
   fetchKey,
+  isRefetching,
   ...props
 }) => {
   const { token } = theme.useToken();
   const currentProject = useCurrentProjectValue();
   const [selectedResourceGroup, setSelectedResourceGroup] = useState();
   const deferredSelectedResourceGroup = useDeferredValue(selectedResourceGroup);
-  const [{ checkPresetInfo, isRefetching }, { refetch }] =
+  const { t } = useTranslation();
+  const [{ checkPresetInfo, isRefetching: internalIsRefetching }, { refetch }] =
     useResourceLimitAndRemaining({
       currentProjectName: currentProject.name,
       currentResourceGroup: deferredSelectedResourceGroup || 'default',
+      fetchKey,
     });
   const resourceSlotsDetails = useResourceSlotsDetails(
     deferredSelectedResourceGroup || 'default',
   );
-
-  useEffect(() => {
-    refetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchKey]);
 
   const acceleratorSlotsDetails = _.chain(
     resourceSlotsDetails?.resourceSlotsInRG,
@@ -54,7 +54,6 @@ const AvailableResourcesCard: React.FC<AvailableResourcesCardProps> = ({
       extra={
         <Flex
           direction="row"
-          gap="sm"
           style={{
             marginRight: -8,
           }}
@@ -65,14 +64,16 @@ const AvailableResourcesCard: React.FC<AvailableResourcesCardProps> = ({
             onChange={(v) => setSelectedResourceGroup(v)}
             loading={selectedResourceGroup !== deferredSelectedResourceGroup}
             popupMatchSelectWidth={false}
+            variant="borderless"
+            tooltip={t('general.ResourceGroup')}
           />
-          <Button
-            icon={<ReloadOutlined />}
-            type="text"
-            onClick={() => {
+          <BAIFetchKeyButton
+            loading={isRefetching || internalIsRefetching}
+            value={''}
+            onChange={(newFetchKey) => {
               refetch();
             }}
-            loading={isRefetching}
+            type="text"
             style={{
               backgroundColor: 'transparent',
             }}
