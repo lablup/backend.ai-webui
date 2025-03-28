@@ -1,6 +1,7 @@
 import Flex from './Flex';
 import { Badge, Checkbox, Select, SelectProps, Typography, theme } from 'antd';
 import { createStyles } from 'antd-style';
+import _ from 'lodash';
 import React, { ReactElement, ReactNode } from 'react';
 
 export interface SettingItemProps {
@@ -13,6 +14,7 @@ export interface SettingItemProps {
   setValue?: (value: any) => void;
   selectProps?: Omit<SelectProps, 'value' | 'onChange' | 'defaultValue'>;
   onChange?: (value: any) => void;
+  disabled?: boolean;
 }
 
 const useStyles = createStyles(({ css }) => ({
@@ -33,6 +35,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
   value,
   selectProps,
   onChange,
+  disabled,
 }) => {
   const { token } = theme.useToken();
   const { styles } = useStyles();
@@ -48,23 +51,27 @@ const SettingItem: React.FC<SettingItemProps> = ({
         >
           {title}
         </Typography.Text>
-        {value !== undefined && value !== null && defaultValue !== value && (
-          <Badge dot status="warning" />
-        )}
+        {!disabled &&
+          value !== undefined &&
+          value !== null &&
+          defaultValue !== value && <Badge dot status="warning" />}
       </Flex>
       {type === 'custom' && (
         <>
           {description}
-          {children}
+          <div style={{ marginTop: token.marginXS }}>{children}</div>
         </>
       )}
       {type === 'checkbox' && (
         <Checkbox
           checked={value}
           onChange={onChange}
+          disabled={disabled}
           className={styles.baiSettingItemCheckbox}
         >
-          {description}
+          <Typography.Text type={disabled ? 'secondary' : undefined}>
+            {description}
+          </Typography.Text>
         </Checkbox>
       )}
       {type === 'select' && (
@@ -74,7 +81,12 @@ const SettingItem: React.FC<SettingItemProps> = ({
             value={value}
             popupMatchSelectWidth={false}
             onChange={onChange}
-            {...selectProps}
+            disabled={disabled}
+            style={{
+              marginTop: token.marginXS,
+              ...selectProps?.style,
+            }}
+            {..._.omit(selectProps, ['style'])}
           ></Select>
         </>
       )}
