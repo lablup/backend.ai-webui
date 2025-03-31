@@ -15,17 +15,18 @@ export const AssistantChatMessage: React.FC<ChatMessageProps> = ({
       isStreaming={isStreaming}
       enableExtraHover={false}
       extra={
-        !isStreaming && (
-          <Compact>
-            <CopyButton
-              type="text"
-              size="small"
-              copyable={{
-                text: message.content,
-              }}
-            />
-          </Compact>
-        )
+        <Compact>
+          <CopyButton
+            type="text"
+            size="small"
+            copyable={{
+              text: message.content,
+            }}
+            style={{
+              display: isStreaming ? 'none' : 'block',
+            }}
+          />
+        </Compact>
       }
       avatar={'🤖'}
     />
