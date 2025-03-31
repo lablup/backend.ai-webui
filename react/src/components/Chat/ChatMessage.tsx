@@ -7,7 +7,7 @@ import {
 import ChatMessageContent from './ChatMessageContent';
 import { Message } from '@ai-sdk/react';
 import { Attachments } from '@ant-design/x';
-import { Avatar, theme, Image, Collapse, Typography, Spin } from 'antd';
+import { theme, Image, Collapse, Typography, Spin } from 'antd';
 import _ from 'lodash';
 import React, { memo, useDeferredValue } from 'react';
 import { useState } from 'react';

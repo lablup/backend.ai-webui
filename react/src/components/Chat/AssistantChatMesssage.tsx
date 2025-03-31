@@ -1,5 +1,5 @@
 import ChatMessage from './ChatMessage';
-import { ChatMessagePlacement } from './ChatMessageContainer';
+import type { ChatMessagePlacement } from './ChatMessageContainer';
 import CopyButton from './CopyButton';
 import { Message } from '@ai-sdk/react';
 import Compact from 'antd/es/space/Compact';
