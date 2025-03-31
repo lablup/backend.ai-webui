@@ -153,11 +153,26 @@ const SchedulerSettingModal = ({
           <Typography.Text strong>
             {t('settings.SchedulerOptions')}
           </Typography.Text>
-          <Form.Item label={t('settings.SessionCreationRetries')} required>
-            <Flex gap="sm" align="center">
+          <Form.Item
+            label={t('settings.SessionCreationRetries')}
+            required
+            style={{
+              width: '100%',
+            }}
+          >
+            <Flex
+              gap="sm"
+              align="center"
+              style={{
+                width: '100%',
+              }}
+            >
               <Form.Item
                 noStyle
                 dependencies={['schedulerType', 'num_retries_to_skip_checkbox']}
+                style={{
+                  width: '100%',
+                }}
               >
                 {() => {
                   return (
@@ -196,7 +211,7 @@ const SchedulerSettingModal = ({
                           isUpdatingSchedulerOptions
                         }
                         style={{
-                          width: '100%',
+                          flex: 1,
                         }}
                       />
                     </Form.Item>
@@ -223,7 +238,7 @@ const SchedulerSettingModal = ({
                         }
                       }}
                     >
-                      Unset
+                      {t('settings.Unset')}
                     </Checkbox>
                   </Form.Item>
                 )}

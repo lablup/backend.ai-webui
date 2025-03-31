@@ -149,7 +149,7 @@ const OverlayNetworkSettingModal = ({
                   }
                 }}
               >
-                unset
+                {t('settings.Unset')}
               </Checkbox>
             </Form.Item>
           </Flex>
