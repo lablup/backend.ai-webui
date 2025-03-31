@@ -215,7 +215,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
     body: {
       modelId: modelId,
     },
-    experimental_throttle: 50,
+    experimental_throttle: 100,
     fetch: async (input, init) => {
       if (fetchOnClient || modelId === 'custom') {
         const body = JSON.parse(init?.body as string);
@@ -243,12 +243,6 @@ const ChatCard: React.FC<ChatCardProps> = ({
       }
     },
   });
-
-  useEffect(() => {
-    setTimeout(() => {
-      setInput('자바스크립트 함수에 대해서 긴 예제를 많이 넣어서 설명해줘');
-    }, 100);
-  }, [setInput]);
 
   const isStreaming = useMemo(() => {
     return status === 'streaming' || status === 'submitted';
