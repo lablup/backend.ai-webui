@@ -1,22 +1,12 @@
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useTanQuery } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import { SchedulerOptions, SchedulerType } from './ConfigurationsSettingList';
+import { SchedulerType } from './ConfigurationsSettingList';
 import Flex from './Flex';
-import FormItemWithCheckbox from './FormItemWithCheckbox';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
-import {
-  App,
-  Button,
-  Form,
-  InputNumber,
-  Select,
-  theme,
-  Typography,
-} from 'antd';
+import { App, Form, InputNumber, Select, theme, Typography } from 'antd';
 import Checkbox from 'antd/es/checkbox/Checkbox';
 import { FormInstance } from 'antd/lib';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface SchedulerSettingModalProps extends BAIModalProps {
@@ -176,7 +166,29 @@ const SchedulerSettingModal = ({
                     ),
                   );
                   return (
-                    <Form.Item noStyle name="num_retries_to_skip">
+                    <Form.Item
+                      noStyle
+                      name="num_retries_to_skip"
+                      rules={[
+                        {
+                          validator: (_, value) => {
+                            if (
+                              formRef.current?.getFieldValue(
+                                'num_retries_to_skip_checkbox',
+                              ) === true
+                            ) {
+                              return Promise.resolve();
+                            }
+                            if (value === undefined || value === null) {
+                              return Promise.reject(
+                                t('data.explorer.ValueRequired'),
+                              );
+                            }
+                            return Promise.resolve();
+                          },
+                        },
+                      ]}
+                    >
                       <InputNumber
                         min={0}
                         max={1000}

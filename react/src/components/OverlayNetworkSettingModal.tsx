@@ -1,29 +1,39 @@
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useTanQuery } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import { NetworkOptions } from './ConfigurationsSettingList';
 import Flex from './Flex';
-import FormItemWithCheckbox from './FormItemWithCheckbox';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
-import { Button, Form, InputNumber } from 'antd';
+import { App, Checkbox, Form, InputNumber } from 'antd';
 import { FormInstance } from 'antd/lib';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface OverlayNetworkSettingsModalProps extends BAIModalProps {
   onRequestClose: () => void;
-  networkOptions: NetworkOptions;
-  onSave: (value: { [key: keyof NetworkOptions]: string }) => void;
-  onDelete: (key: string) => void;
 }
 
 const OverlayNetworkSettingModal = ({
   onRequestClose,
   open,
-  networkOptions,
-  onSave,
-  onDelete,
 }: OverlayNetworkSettingsModalProps) => {
   const { t } = useTranslation();
+  const { message } = App.useApp();
   const formRef = useRef<FormInstance>(null);
+  const [isUpdatingNetworkOverlay, setIsUpdatingNetworkOverlay] =
+    useState(false);
+  const baiClient = useSuspendedBackendaiClient();
+  const { isLoading: isFetchingMtu } = useTanQuery({
+    queryKey: ['mtu'],
+    queryFn: async () => {
+      const { result } = await baiClient.setting.get('network/overlay/mtu');
+      formRef.current?.setFieldsValue({
+        mtu: result,
+        mtu_checkbox: result === null || result === undefined || result === '',
+      });
+      return result;
+    },
+    enabled: open,
+  });
 
   return (
     <BAIModal
@@ -37,62 +47,101 @@ const OverlayNetworkSettingModal = ({
         </Flex>
       }
       onCancel={onRequestClose}
+      confirmLoading={isUpdatingNetworkOverlay}
       centered
       width={'auto'}
-      footer={[
-        <Button key="overlayNetworkClose" onClick={onRequestClose}>
-          {t('button.Cancel')}
-        </Button>,
-        <Button
-          key="overlayNetworkSave"
-          onClick={() => {
-            if (formRef.current) {
-              formRef.current
-                .validateFields()
-                .then((values) => {
-                  const isUnset = values.mtu_checkbox;
-                  if (isUnset) {
-                    onDelete('mtu');
+      okText={t('button.Save')}
+      onOk={() => {
+        if (formRef.current) {
+          formRef.current
+            .validateFields()
+            .then(async (values) => {
+              try {
+                if (values.mtu_checkbox) {
+                  setIsUpdatingNetworkOverlay(true);
+                  const { result } = await baiClient.setting.delete(
+                    'network/overlay/mtu',
+                    true,
+                  );
+                  if (result === 'ok') {
+                    message.success(t('notification.SuccessfullyUpdated'));
+                    onRequestClose();
                   } else {
-                    onSave({ mtu: values.mtu });
+                    throw new Error();
                   }
-                })
-                .catch(() => {});
-            }
-          }}
-          type="primary"
-        >
-          {t('button.Save')}
-        </Button>,
-      ]}
+                } else {
+                  setIsUpdatingNetworkOverlay(true);
+                  const { result } = await baiClient.setting.set(
+                    'network/overlay/mtu',
+                    values.mtu,
+                  );
+                  if (result === 'ok') {
+                    message.success(t('notification.SuccessfullyUpdated'));
+                    onRequestClose();
+                  } else {
+                    throw new Error();
+                  }
+                }
+              } catch (e: any) {
+                message.error(e?.message ?? t('settings.FailedToSaveSettings'));
+              } finally {
+                setIsUpdatingNetworkOverlay(false);
+              }
+            })
+            .catch(() => {});
+        }
+      }}
+      cancelText={t('button.Cancel')}
       destroyOnClose
     >
-      <Form ref={formRef} layout="vertical" initialValues={networkOptions}>
-        <FormItemWithCheckbox
-          label="MTU"
-          checkboxText={t('button.Delete')}
-          tooltip={t('settings.MTUDescription')}
-          required
-          name="mtu"
-          checkedValue=""
-          rules={[
-            {
-              validator(_, value) {
-                const isUnset = formRef.current?.getFieldValue('mtu_checkbox');
-
-                if (value === '' && isUnset) {
-                  return Promise.resolve();
-                }
-                if (value === '' || value === null || value === undefined) {
-                  return Promise.reject(t('data.explorer.ValueRequired'));
-                }
-                return Promise.resolve();
-              },
-            },
-          ]}
-        >
-          <InputNumber min={0} max={15000} style={{ width: '100%' }} />
-        </FormItemWithCheckbox>
+      <Form ref={formRef} layout="vertical">
+        <Form.Item label="MTU" tooltip={t('settings.MTUDescription')} required>
+          <Flex gap="sm" align="center">
+            <Form.Item noStyle dependencies={['mtu_checkbox']}>
+              {() => {
+                return (
+                  <Form.Item
+                    noStyle
+                    name="mtu"
+                    rules={[
+                      {
+                        validator: (_, value) => {
+                          if (
+                            formRef.current?.getFieldValue('mtu_checkbox') ===
+                            true
+                          ) {
+                            return Promise.resolve();
+                          }
+                          if (value === undefined || value === null) {
+                            return Promise.reject(
+                              t('data.explorer.ValueRequired'),
+                            );
+                          }
+                          return Promise.resolve();
+                        },
+                      },
+                    ]}
+                  >
+                    <InputNumber
+                      style={{
+                        flex: 1,
+                      }}
+                      min={0}
+                      max={15000}
+                      disabled={
+                        formRef.current?.getFieldValue('mtu_checkbox') ===
+                          true || isFetchingMtu
+                      }
+                    />
+                  </Form.Item>
+                );
+              }}
+            </Form.Item>
+            <Form.Item noStyle name="mtu_checkbox" valuePropName="checked">
+              <Checkbox disabled={isFetchingMtu}>unset</Checkbox>
+            </Form.Item>
+          </Flex>
+        </Form.Item>
       </Form>
     </BAIModal>
   );

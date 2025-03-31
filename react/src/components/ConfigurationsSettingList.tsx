@@ -129,20 +129,6 @@ const ConfigurationsSettingList = () => {
     });
   };
 
-  const setNetwork = async (value: { [key: string]: string }) => {
-    try {
-      const { result } = await baiClient.setting.set('network/overlay', value);
-      if (result === 'ok') {
-        updateNetwork();
-        message.success(t('notification.SuccessfullyUpdated'));
-      } else {
-        message.error(t('settings.FailedToSaveSettings'));
-      }
-    } catch (e) {
-      message.error(t('settings.FailedToSaveSettings'));
-    }
-  };
-
   const updateResourceSlots = () =>
     baiClient.get_resource_slots().then((response) => {
       setOptions((prev) => ({
@@ -162,20 +148,6 @@ const ConfigurationsSettingList = () => {
       updateResourceSlots(),
       updateNetwork(),
     ]);
-  };
-
-  const deleteSetting = async (key: string, prefix: boolean = false) => {
-    try {
-      const { result } = await baiClient.setting.delete(key, prefix);
-      if (result === 'ok') {
-        updateSettings();
-        message.success(t('notification.SuccessfullyUpdated'));
-      } else {
-        message.error(t('settings.FailedToSaveSettings'));
-      }
-    } catch (e) {
-      message.error(t('settings.FailedToSaveSettings'));
-    }
   };
 
   useEffect(() => {
@@ -417,15 +389,6 @@ const ConfigurationsSettingList = () => {
       <OverlayNetworkSettingModal
         onRequestClose={toggleOverlayNetworkModal}
         open={isOpenOverlayNetworkModal}
-        networkOptions={options.network}
-        onSave={(value: { [key: keyof NetworkOptions]: string }) => {
-          setNetwork(value);
-          toggleOverlayNetworkModal();
-        }}
-        onDelete={(key: string) => {
-          deleteSetting(`network/overlay/${key}`);
-          toggleOverlayNetworkModal();
-        }}
       />
       <SchedulerSettingModal
         onRequestClose={toggleSchedulerModal}
