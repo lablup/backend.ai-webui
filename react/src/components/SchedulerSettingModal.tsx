@@ -1,44 +1,41 @@
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useTanQuery } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { SchedulerOptions, SchedulerType } from './ConfigurationsSettingList';
 import Flex from './Flex';
 import FormItemWithCheckbox from './FormItemWithCheckbox';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
-import { Button, Form, InputNumber, Select, theme, Typography } from 'antd';
+import {
+  App,
+  Button,
+  Form,
+  InputNumber,
+  Select,
+  theme,
+  Typography,
+} from 'antd';
+import Checkbox from 'antd/es/checkbox/Checkbox';
 import { FormInstance } from 'antd/lib';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface SchedulerSettingModalProps extends BAIModalProps {
   onRequestClose: () => void;
-  onSave: (
-    key: SchedulerType,
-    value: { [key: keyof SchedulerOptions | string]: string },
-  ) => void;
-  onSchedulerTypeChange: (
-    schedulerType: SchedulerType,
-  ) => Promise<SchedulerOptions>;
-  onDelete: (schedulerType: SchedulerType, key: string) => void;
 }
 
 const SchedulerSettingModal = ({
   onRequestClose,
   open,
-  onSave,
-  onSchedulerTypeChange,
-  onDelete,
 }: SchedulerSettingModalProps) => {
   const { t } = useTranslation();
-  const [schedulerType, setSchedulerType] = useState<SchedulerType | null>(
-    null,
-  );
+  const [isFetchingSchedulerOptions, setIsFetchingSchedulerOptions] =
+    useState(false);
+  const [isUpdatingSchedulerOptions, setIsUpdatingSchedulerOptions] =
+    useState(false);
   const formRef = useRef<FormInstance>(null);
   const { token } = theme.useToken();
-
-  useEffect(() => {
-    if (open) {
-      setSchedulerType(null);
-    }
-  }, [open]);
+  const baiClient = useSuspendedBackendaiClient();
+  const { message } = App.useApp();
 
   return (
     <BAIModal
@@ -50,6 +47,7 @@ const SchedulerSettingModal = ({
           />
         </Flex>
       }
+      confirmLoading={isFetchingSchedulerOptions}
       open={open}
       centered
       width={'auto'}
@@ -58,21 +56,42 @@ const SchedulerSettingModal = ({
         if (formRef.current) {
           formRef.current
             .validateFields()
-            .then((values) => {
-              if (values.schedulerType) {
-                const numRetries =
-                  values[`${values.schedulerType}_num_retries_to_skip`];
-                const isUnset =
-                  values[
-                    `${values.schedulerType}_num_retries_to_skip_checkbox`
-                  ];
-                if (isUnset) {
-                  onDelete(values.schedulerType, 'num_retries_to_skip');
+            .then(async (values) => {
+              const schedulerType = values.schedulerType as SchedulerType;
+              const numRetriesToSkip = values.num_retries_to_skip;
+              try {
+                if (values.num_retries_to_skip_checkbox) {
+                  setIsFetchingSchedulerOptions(true);
+                  const { result } = await baiClient.setting.delete(
+                    `plugins/scheduler/${schedulerType}/num_retries_to_skip`,
+                    true,
+                  );
+                  if (result === 'ok') {
+                    message.success(t('notification.SuccessfullyUpdated'));
+                    onRequestClose();
+                  } else {
+                    throw new Error();
+                  }
                 } else {
-                  onSave(values.schedulerType, {
-                    num_retries_to_skip: numRetries,
-                  });
+                  if (schedulerType !== 'fifo' && numRetriesToSkip !== '0') {
+                    throw new Error(t('settings.FifoOnly'));
+                  }
+                  setIsFetchingSchedulerOptions(true);
+                  const { result } = await baiClient.setting.set(
+                    `plugins/scheduler/${schedulerType}`,
+                    numRetriesToSkip,
+                  );
+                  if (result === 'ok') {
+                    message.success(t('notification.SuccessfullyUpdated'));
+                    onRequestClose();
+                  } else {
+                    throw new Error();
+                  }
                 }
+              } catch (e: any) {
+                message.error(e?.message ?? t('settings.FailedToSaveSettings'));
+              } finally {
+                setIsFetchingSchedulerOptions(false);
               }
             })
             .catch(() => {});
@@ -106,16 +125,23 @@ const SchedulerSettingModal = ({
           }
         >
           <Select
+            loading={isUpdatingSchedulerOptions}
             popupMatchSelectWidth={false}
-            value={schedulerType}
-            onChange={async (value) => {
-              const newOptions: SchedulerOptions =
-                await onSchedulerTypeChange(value);
-              setSchedulerType(value);
-              formRef.current?.setFieldsValue({
-                [`${value}_num_retries_to_skip`]:
-                  newOptions.num_retries_to_skip,
-              });
+            onChange={(value) => {
+              if (value !== null) {
+                setIsUpdatingSchedulerOptions(true);
+                baiClient.setting
+                  .get(`plugins/scheduler/${value}/num_retries_to_skip`)
+                  .then((res) => {
+                    formRef.current?.setFieldsValue({
+                      num_retries_to_skip: res.result,
+                      num_retries_to_skip_checkbox: res.result === null,
+                    });
+                  })
+                  .finally(() => {
+                    setIsUpdatingSchedulerOptions(false);
+                  });
+              }
             }}
             options={[
               {
@@ -137,41 +163,59 @@ const SchedulerSettingModal = ({
           <Typography.Text strong>
             {t('settings.SchedulerOptions')}
           </Typography.Text>
-          {
-            <FormItemWithCheckbox
-              label={t('settings.SessionCreationRetries')}
-              checkboxText={t('button.Delete')}
-              required
-              tooltip={t('settings.ConfigPerJobSchdulerDescription')}
-              name={`${schedulerType}_num_retries_to_skip`}
-              rules={[
-                {
-                  validator(_, value) {
-                    const isUnset = formRef.current?.getFieldValue(
-                      `${schedulerType}_num_retries_to_skip_checkbox`,
-                    );
-
-                    if (isUnset) {
-                      return Promise.resolve();
-                    }
-                    if (value === null || value === undefined) {
-                      return Promise.reject(t('data.explorer.ValueRequired'));
-                    }
-                    return Promise.resolve();
-                  },
-                },
-              ]}
-              disabled={schedulerType === null}
-              checkedValue={null}
-            >
-              <InputNumber
-                disabled
-                min={0}
-                max={1000}
-                style={{ width: '100%' }}
-              />
-            </FormItemWithCheckbox>
-          }
+          <Form.Item label={t('settings.SessionCreationRetries')} required>
+            <Flex gap="sm" align="center">
+              <Form.Item
+                noStyle
+                dependencies={['schedulerType', 'num_retries_to_skip_checkbox']}
+              >
+                {() => {
+                  console.log(
+                    formRef.current?.getFieldValue(
+                      'num_retries_to_skip_checkbox',
+                    ),
+                  );
+                  return (
+                    <Form.Item noStyle name="num_retries_to_skip">
+                      <InputNumber
+                        min={0}
+                        max={1000}
+                        disabled={
+                          formRef.current?.getFieldValue(
+                            'num_retries_to_skip_checkbox',
+                          ) === true ||
+                          formRef.current?.getFieldValue('schedulerType') ===
+                            undefined ||
+                          isUpdatingSchedulerOptions
+                        }
+                        style={{
+                          width: '100%',
+                        }}
+                      />
+                    </Form.Item>
+                  );
+                }}
+              </Form.Item>
+              <Form.Item noStyle dependencies={['schedulerType']}>
+                {() => (
+                  <Form.Item
+                    noStyle
+                    name="num_retries_to_skip_checkbox"
+                    valuePropName="checked"
+                  >
+                    <Checkbox
+                      disabled={
+                        formRef.current?.getFieldValue('schedulerType') ===
+                          undefined || isUpdatingSchedulerOptions
+                      }
+                    >
+                      Unset
+                    </Checkbox>
+                  </Form.Item>
+                )}
+              </Form.Item>
+            </Flex>
+          </Form.Item>
         </Flex>
       </Form>
     </BAIModal>

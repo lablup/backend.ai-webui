@@ -143,55 +143,6 @@ const ConfigurationsSettingList = () => {
     }
   };
 
-  const updateScheduler = async () => {
-    const newSchedulerType = await updateSelectedScheduler(
-      options.schedulerType,
-    );
-    setOptions((prev) => ({
-      ...prev,
-      scheduler: newSchedulerType,
-    }));
-  };
-
-  const updateSelectedScheduler = async (
-    schedulerType: SchedulerType,
-  ): Promise<SchedulerOptions> => {
-    let newOptions: SchedulerOptions = { ...options.scheduler };
-
-    for (const [key] of Object.entries(newOptions)) {
-      const { result } = await baiClient.setting.get(
-        `plugins/scheduler/${schedulerType}/${key}`,
-      );
-      newOptions[key] = result;
-    }
-    return newOptions;
-  };
-
-  const setScheduler = async (
-    key: SchedulerType,
-    value: { num_retries_to_skip: string },
-  ) => {
-    if (key !== 'fifo' && value.num_retries_to_skip !== '0') {
-      message.error(t('settings.FifoOnly'));
-      return;
-    }
-
-    try {
-      const { result } = await baiClient.setting.set(
-        `plugins/scheduler/${key}`,
-        value,
-      );
-      if (result === 'ok') {
-        message.success(t('notification.SuccessfullyUpdated'));
-        updateScheduler();
-      } else {
-        message.error(t('settings.FailedToSaveSettings'));
-      }
-    } catch (e) {
-      message.error(t('settings.FailedToSaveSettings'));
-    }
-  };
-
   const updateResourceSlots = () =>
     baiClient.get_resource_slots().then((response) => {
       setOptions((prev) => ({
@@ -210,7 +161,6 @@ const ConfigurationsSettingList = () => {
       updatePulling(),
       updateResourceSlots(),
       updateNetwork(),
-      updateScheduler(),
     ]);
   };
 
@@ -480,19 +430,6 @@ const ConfigurationsSettingList = () => {
       <SchedulerSettingModal
         onRequestClose={toggleSchedulerModal}
         open={isOpenSchedulerModal}
-        onSave={(key, value) => {
-          setScheduler(key, {
-            num_retries_to_skip: value.num_retries_to_skip.toString(),
-          });
-          toggleSchedulerModal();
-        }}
-        onSchedulerTypeChange={async (schedulerType) =>
-          updateSelectedScheduler(schedulerType)
-        }
-        onDelete={(schedulerType: SchedulerType, key: string) => {
-          deleteSetting(`plugins/scheduler/${schedulerType}/${key}`, true);
-          toggleSchedulerModal();
-        }}
       />
     </>
   );
