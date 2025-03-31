@@ -160,11 +160,6 @@ const SchedulerSettingModal = ({
                 dependencies={['schedulerType', 'num_retries_to_skip_checkbox']}
               >
                 {() => {
-                  console.log(
-                    formRef.current?.getFieldValue(
-                      'num_retries_to_skip_checkbox',
-                    ),
-                  );
                   return (
                     <Form.Item
                       noStyle
@@ -220,6 +215,13 @@ const SchedulerSettingModal = ({
                         formRef.current?.getFieldValue('schedulerType') ===
                           undefined || isUpdatingSchedulerOptions
                       }
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          formRef.current?.setFieldsValue({
+                            num_retries_to_skip: null,
+                          });
+                        }
+                      }}
                     >
                       Unset
                     </Checkbox>

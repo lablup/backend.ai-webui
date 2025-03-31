@@ -116,19 +116,6 @@ const ConfigurationsSettingList = () => {
     }
   };
 
-  const updateNetwork = async () => {
-    Object.keys(options.network).forEach(async (key) => {
-      const { result } = await baiClient.setting.get(`network/overlay/${key}`);
-      setOptions((prev) => ({
-        ...prev,
-        network: {
-          ...prev.network,
-          [key]: result || '',
-        },
-      }));
-    });
-  };
-
   const updateResourceSlots = () =>
     baiClient.get_resource_slots().then((response) => {
       setOptions((prev) => ({
@@ -143,11 +130,7 @@ const ConfigurationsSettingList = () => {
     });
 
   const updateSettings = () => {
-    return Promise.all([
-      updatePulling(),
-      updateResourceSlots(),
-      updateNetwork(),
-    ]);
+    return Promise.all([updatePulling(), updateResourceSlots()]);
   };
 
   useEffect(() => {

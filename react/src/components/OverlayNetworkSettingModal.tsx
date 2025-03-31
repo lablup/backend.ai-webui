@@ -22,7 +22,8 @@ const OverlayNetworkSettingModal = ({
   const [isUpdatingNetworkOverlay, setIsUpdatingNetworkOverlay] =
     useState(false);
   const baiClient = useSuspendedBackendaiClient();
-  const { isLoading: isFetchingMtu } = useTanQuery({
+
+  const { isFetching: isFetchingMtu } = useTanQuery({
     queryKey: ['mtu'],
     queryFn: async () => {
       const { result } = await baiClient.setting.get('network/overlay/mtu');
@@ -138,7 +139,18 @@ const OverlayNetworkSettingModal = ({
               }}
             </Form.Item>
             <Form.Item noStyle name="mtu_checkbox" valuePropName="checked">
-              <Checkbox disabled={isFetchingMtu}>unset</Checkbox>
+              <Checkbox
+                disabled={isFetchingMtu}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    formRef.current?.setFieldsValue({
+                      mtu: null,
+                    });
+                  }
+                }}
+              >
+                unset
+              </Checkbox>
             </Form.Item>
           </Flex>
         </Form.Item>
