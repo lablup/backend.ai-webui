@@ -122,7 +122,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
           />
         )}
         <ChatMessageContent isStreaming={isStreaming}>
-          {deferredContent + (isStreaming ? '\n●' : '')}
+          {deferredContent + (isStreaming ? '\n' : '')}
         </ChatMessageContent>
       </Flex>
       <Flex

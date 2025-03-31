@@ -1,16 +1,8 @@
-import ChatMessage from './ChatMessage';
-import type { ChatMessagePlacement } from './ChatMessageContainer';
+import ChatMessage, { ChatMessageProps } from './ChatMessage';
 import CopyButton from './CopyButton';
-import { Message } from '@ai-sdk/react';
 import Compact from 'antd/es/space/Compact';
 
-interface AssistantChatMessageProps {
-  message: Message;
-  isStreaming: boolean;
-  placement?: ChatMessagePlacement;
-}
-
-export const AssistantChatMessage: React.FC<AssistantChatMessageProps> = ({
+export const AssistantChatMessage: React.FC<ChatMessageProps> = ({
   message,
   isStreaming,
   placement,

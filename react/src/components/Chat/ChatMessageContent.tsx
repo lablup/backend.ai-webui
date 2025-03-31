@@ -29,38 +29,26 @@ const CodeBlock = memo<SyntaxHighlighterProps>(({ children, ...props }) => (
 
 CodeBlock.displayName = 'CodeBlock';
 
-const cardStyles = {
-  card: {
-    border: '1px solid #f0f0f0',
-    margin: '0',
-    padding: '0',
-    borderRadius: '8px',
-  },
-  head: {
-    margin: '0',
-    minHeight: '38px',
-    padding: '0 12px',
-    background: 'rgba(0, 0, 0, 0.02)',
-    width: '100%',
-  },
-  title: {
-    display: 'inline-block',
-    flex: '1',
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
-  },
-  body: {
-    width: '100%',
-    padding: '12px',
-    borderRadius: '0 0 8px 8px',
-  },
-};
-
 const CodeHead = memo<{ lang: string; extra?: React.ReactNode }>(
   ({ lang, extra }) => (
-    <Flex style={cardStyles.head}>
-      <Flex style={cardStyles.title}>
+    <Flex
+      style={{
+        margin: '0',
+        minHeight: '38px',
+        padding: '0 12px',
+        background: 'rgba(0, 0, 0, 0.02)',
+        width: '100%',
+      }}
+    >
+      <Flex
+        style={{
+          display: 'inline-block',
+          flex: '1',
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
+          textOverflow: 'ellipsis',
+        }}
+      >
         <LangType lang={lang} />
       </Flex>
       <Flex>{extra}</Flex>
@@ -86,28 +74,45 @@ const ChatMessageContent: React.FC<{
       const content = String(children).replace(/\n$/, '');
 
       return match ? (
-        <Flex direction={'column'} style={cardStyles.card}>
+        <Flex
+          direction={'column'}
+          style={{
+            border: '1px solid #f0f0f0',
+            margin: '0',
+            padding: '0',
+            borderRadius: '8px',
+          }}
+        >
           <CodeHead
             lang={match[1]}
             extra={
-              isStreaming ? null : (
-                <CopyButton type="text" copyable={{ text: content ?? '' }} />
-              )
+              <CopyButton
+                type="text"
+                copyable={{ text: content ?? '' }}
+                style={{
+                  display: isStreaming ? 'none' : 'block',
+                }}
+              />
             }
           />
-          <Flex style={cardStyles.body}>
-            <div style={{ margin: '-0.5em 0', width: '100%' }}>
-              <CodeBlock
-                {...rest}
-                PreTag="div"
-                language={match[1]}
-                style={oneLight}
-                wrapLongLines
-                wrapLines
-              >
-                {content}
-              </CodeBlock>
-            </div>
+          <Flex
+            style={{
+              width: '100%',
+              padding: '12px',
+              borderRadius: '0 0 8px 8px',
+              margin: '-0.5em 0',
+            }}
+          >
+            <CodeBlock
+              {...rest}
+              PreTag="div"
+              language={match[1]}
+              style={oneLight}
+              wrapLongLines
+              wrapLines
+            >
+              {content}
+            </CodeBlock>
           </Flex>
         </Flex>
       ) : (

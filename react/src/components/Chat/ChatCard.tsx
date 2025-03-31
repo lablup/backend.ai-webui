@@ -215,7 +215,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
     body: {
       modelId: modelId,
     },
-    experimental_throttle: 100,
+    experimental_throttle: 50,
     fetch: async (input, init) => {
       if (fetchOnClient || modelId === 'custom') {
         const body = JSON.parse(init?.body as string);
