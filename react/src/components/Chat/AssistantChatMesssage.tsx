@@ -1,25 +1,25 @@
 import ChatMessage from './ChatMessage';
-import type { ChatMessageProps } from './ChatMessage';
 import { ChatMessagePlacement } from './ChatMessageContainer';
 import CopyButton from './CopyButton';
 import { Message } from '@ai-sdk/react';
 import Compact from 'antd/es/space/Compact';
 
-interface AssistantChatMessageProps
-  extends Omit<ChatMessageProps, 'placement,extra,enableExtraHover'> {
+interface AssistantChatMessageProps {
   message: Message;
   isStreaming: boolean;
+  placement?: ChatMessagePlacement;
 }
 
 export const AssistantChatMessage: React.FC<AssistantChatMessageProps> = ({
   message,
   isStreaming,
+  placement,
 }) => {
   return (
     <ChatMessage
       key={message.id}
       message={message}
-      placement={ChatMessagePlacement.Left}
+      placement={{ ...placement, left: true }}
       isStreaming={isStreaming}
       enableExtraHover={false}
       extra={

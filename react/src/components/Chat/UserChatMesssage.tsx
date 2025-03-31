@@ -1,24 +1,24 @@
 import ChatMessage from './ChatMessage';
-import type { ChatMessageProps } from './ChatMessage';
 import { ChatMessagePlacement } from './ChatMessageContainer';
 import { Message } from '@ai-sdk/react';
 import Compact from 'antd/es/space/Compact';
 
-interface UserChatMessageProps
-  extends Omit<ChatMessageProps, 'placement,extra,enableExtraHover'> {
+interface UserChatMessageProps {
   message: Message;
   isStreaming: boolean;
+  placement?: ChatMessagePlacement;
 }
 
 export const UserChatMessage: React.FC<UserChatMessageProps> = ({
   message,
   isStreaming,
+  placement,
 }) => {
   return (
     <ChatMessage
       key={message.id}
       message={message}
-      placement={ChatMessagePlacement.Right}
+      placement={{ ...placement, right: true }}
       isStreaming={isStreaming}
       enableExtraHover={true}
       extra={<Compact>{null}</Compact>}

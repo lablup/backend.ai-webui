@@ -1,6 +1,5 @@
 import Flex from '../Flex';
 import { AssistantChatMessage } from './AssistantChatMesssage';
-import { ChatMessageAbove, ChatMessageBelow } from './ChatMessageContainer';
 import ScrollBottomHandlerButton from './ScrollBottomHandlerButton';
 import { UserChatMessage } from './UserChatMesssage';
 import { Message } from '@ai-sdk/react';
@@ -37,13 +36,15 @@ const VirtualChatMessageList: React.FC<VirtualizedListProps> = ({
 
       return (
         <>
-          {index === 0 ? <ChatMessageAbove /> : null}
           <RenderChatMessage
             key={message.id}
             message={message}
             isStreaming={isStreaming ?? false}
+            placement={{
+              top: index === 0,
+              bottom: index === messages.length - 1,
+            }}
           />
-          {index === messages.length - 1 ? <ChatMessageBelow /> : null}
         </>
       );
     },

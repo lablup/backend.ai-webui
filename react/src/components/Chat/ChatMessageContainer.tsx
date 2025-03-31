@@ -1,86 +1,55 @@
 import Flex, { FlexProps } from '../Flex';
-import { theme } from 'antd';
+import { Avatar, theme } from 'antd';
 import React, { memo } from 'react';
 
-export enum ChatMessagePlacement {
-  Left,
-  Right,
-}
+export type ChatMessagePlacement = {
+  top?: boolean;
+  left?: boolean;
+  right?: boolean;
+  bottom?: boolean;
+};
 
 export interface ChatMessageContainerProps extends FlexProps {
   placement?: ChatMessagePlacement;
   containerStyle?: React.CSSProperties;
+  avatar?: React.ReactNode;
   children?: React.ReactNode;
 }
 
 export const ChatMessageContainer: React.FC<ChatMessageContainerProps> = memo(
-  ({
-    children,
-    placement = ChatMessagePlacement.Left,
-    containerStyle,
-    onMouseEnter,
-    onMouseLeave,
-  }) => {
+  ({ children, placement = {}, avatar, onMouseEnter, onMouseLeave }) => {
+    const { token } = theme.useToken();
+
     return (
       <Flex
-        direction={
-          placement === ChatMessagePlacement.Left ? 'row' : 'row-reverse'
-        }
+        direction={placement.left ? 'row' : 'row-reverse'}
         justify={'start'}
         align="baseline"
         style={{
-          marginLeft: placement === ChatMessagePlacement.Left ? '0' : '15%',
-          marginRight: placement === ChatMessagePlacement.Right ? '0' : 20,
-          ...containerStyle,
+          marginLeft: placement.left ? 0 : '15%',
+          marginRight: placement.right ? 0 : 20,
+          paddingLeft: token.paddingMD,
+          paddingRight: token.paddingMD,
+          paddingTop: placement.top ? token.paddingMD : 0,
+          paddingBottom: placement.bottom ? token.paddingMD : 0,
         }}
         gap={'sm'}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
       >
-        {children}
+        <Avatar icon={avatar} style={{ fontSize: token.fontSizeHeading3 }} />
+        <Flex
+          direction="column"
+          align={placement.left ? 'start' : 'end'}
+          wrap="wrap"
+          style={{ flex: 1 }}
+          gap={'xs'}
+        >
+          {children}
+        </Flex>
       </Flex>
     );
   },
 );
 
 ChatMessageContainer.displayName = 'ChatMessageContainer';
-
-export const ChatMessageAbove: React.FC<ChatMessageContainerProps> = memo(
-  ({ placement = ChatMessagePlacement.Left }) => {
-    const { token } = theme.useToken();
-
-    return (
-      <ChatMessageContainer
-        placement={placement}
-        containerStyle={{
-          paddingLeft: token.paddingMD,
-          paddingRight: token.paddingMD,
-          paddingTop: token.paddingMD,
-          paddingBottom: 0,
-        }}
-      />
-    );
-  },
-);
-
-ChatMessageAbove.displayName = 'ChatMessageAbove';
-
-export const ChatMessageBelow: React.FC<ChatMessageContainerProps> = memo(
-  ({ placement = ChatMessagePlacement.Left }) => {
-    const { token } = theme.useToken();
-
-    return (
-      <ChatMessageContainer
-        placement={placement}
-        containerStyle={{
-          paddingLeft: token.paddingMD,
-          paddingRight: token.paddingMD,
-          paddingTop: token.paddingMD,
-          paddingBottom: 0,
-        }}
-      />
-    );
-  },
-);
-
-ChatMessageBelow.displayName = 'ChatMessageBelow';
