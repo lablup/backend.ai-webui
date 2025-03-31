@@ -68,7 +68,7 @@ const SchedulerSettingModal = ({
                   }
                   setIsFetchingSchedulerOptions(true);
                   const { result } = await baiClient.setting.set(
-                    `plugins/scheduler/${schedulerType}`,
+                    `plugins/scheduler/${schedulerType}/num_retries_to_skip`,
                     numRetriesToSkip,
                   );
                   if (result === 'ok') {
