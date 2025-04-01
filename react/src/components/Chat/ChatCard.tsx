@@ -172,6 +172,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
   const formRef = useRef<FormInstance>(null);
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [startTime, setStartTime] = useState<number | null>(null);
+  const [id, setId] = useState(chat.id);
 
   const { endpoint, setEndpoint } = useEndpoint(selectedEndpoint);
   const { models, modelId, setModelId } = useModels(
@@ -187,17 +188,12 @@ const ChatCard: React.FC<ChatCardProps> = ({
     : undefined;
 
   const allowCustomModel = isEmpty(models);
-  const providerSettings = {
-    baseURL: allowCustomModel
-      ? formRef.current?.getFieldValue('baseURL')
-      : baseURL,
-    modelId: allowCustomModel
-      ? formRef.current?.getFieldValue('modelId')
-      : modelId,
-    apiKey: allowCustomModel
-      ? formRef.current?.getFieldValue('token')
-      : chat.provider.apiKey,
-  };
+
+  useEffect(() => {
+    setId(
+      `${chat.id}-${endpoint?.endpoint_id}-${agent?.id ?? 'none'}-${modelId}}`,
+    );
+  }, [chat.id, endpoint?.endpoint_id, agent?.id, modelId, id]);
 
   const {
     error,
@@ -209,7 +205,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
     append,
     setMessages,
   } = useChat({
-    id: `${chat.id}-${endpoint?.endpoint_id}-${agent?.id ?? 'none'}-${modelId}`,
+    id,
     api: baseURL,
     credentials: chat.provider.credentials,
     body: {
@@ -218,15 +214,21 @@ const ChatCard: React.FC<ChatCardProps> = ({
     experimental_throttle: 100,
     fetch: async (input, init) => {
       if (fetchOnClient || modelId === 'custom') {
+        const getFormValue = (name: string, defaultValue?: string) => {
+          return allowCustomModel
+            ? (formRef.current?.getFieldValue(name) ?? defaultValue)
+            : defaultValue;
+        };
         const body = JSON.parse(init?.body as string);
         const provider = createOpenAI({
-          baseURL: providerSettings.baseURL,
-          apiKey: providerSettings.apiKey || 'dummy',
+          baseURL: getFormValue('baseURL', baseURL),
+          apiKey: getFormValue('token', chat.provider.apiKey) || 'dummy',
         });
+
         const result = streamText({
           abortSignal: init?.signal || undefined,
           model: wrapLanguageModel({
-            model: provider(providerSettings.modelId),
+            model: provider(getFormValue('modelId', modelId)),
             middleware: extractReasoningMiddleware({ tagName: 'think' }),
           }),
           messages: body?.messages,
