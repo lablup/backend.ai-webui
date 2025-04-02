@@ -255,9 +255,13 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
 
         <Form.Item label={t('data.UsageMode')} name={'usage_mode'}>
           <Radio.Group>
-            <Radio value={'general'}>General</Radio>
+            <Radio value={'general'} data-testid="general-usage-mode">
+              General
+            </Radio>
             {baiClient._config.enableModelFolders ? (
-              <Radio value={'model'}>Model</Radio>
+              <Radio value={'model'} data-testid="model-usage-mode">
+                Model
+              </Radio>
             ) : null}
           </Radio.Group>
         </Form.Item>
@@ -276,11 +280,15 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
              * so we need both checks for proper access control
              */}
             {_.includes(allowedTypes, 'user') ? (
-              <Radio value={'user'}>User</Radio>
+              <Radio value={'user'} data-testid="user-type">
+                User
+              </Radio>
             ) : null}
             {(userRole === 'admin' || userRole === 'superadmin') &&
             _.includes(allowedTypes, 'group') ? (
-              <Radio value={'project'}>Project</Radio>
+              <Radio value={'project'} data-testid="project-type">
+                Project
+              </Radio>
             ) : null}
           </Radio.Group>
         </Form.Item>
@@ -305,8 +313,12 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
 
         <Form.Item label={t('data.Permission')} name={'permission'}>
           <Radio.Group>
-            <Radio value={'rw'}>Read & Write</Radio>
-            <Radio value={'ro'}>Read Only</Radio>
+            <Radio value={'rw'} data-testid="rw-permission">
+              Read & Write
+            </Radio>
+            <Radio value={'ro'} data-testid="ro-permission">
+              Read Only
+            </Radio>
           </Radio.Group>
         </Form.Item>
 
