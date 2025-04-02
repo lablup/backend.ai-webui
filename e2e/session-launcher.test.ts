@@ -5,6 +5,7 @@ import {
   loginAsUser,
   navigateTo,
 } from './utils/test-util';
+import { getCardItemByCardTitle, getMenuItem } from './utils/test-util-antd';
 import { test, expect } from '@playwright/test';
 
 test.describe('NEO Sessions Launcher', () => {
@@ -13,8 +14,55 @@ test.describe('NEO Sessions Launcher', () => {
     testInfo.setTimeout(60_000);
     await loginAsUser(page);
   });
-
   const sessionName = 'e2e-test-session' + new Date().getTime();
+
+  test.describe('Session Creation', () => {
+    test.afterEach(async ({ page }) => {
+      // delete session after each test
+      await deleteSession(page, sessionName);
+    });
+    test('User can create interactive session on the Start page', async ({
+      page,
+    }) => {
+      // move to start page
+      await getMenuItem(page, 'start').click();
+      await expect(page).toHaveURL(/\/start/);
+      // click Start Session button and move to session start page
+      const card = getCardItemByCardTitle(page, 'Start Interactive Session');
+      expect(card).toBeVisible();
+      const creationButton = card.getByRole('button', {
+        name: 'Start Session',
+      });
+      await creationButton.click();
+      await expect(page).toHaveURL(/\/session\/start/);
+      // interactive radio button is selected by default
+      const interactiveRadioButton = page
+        .locator('label')
+        .filter({ hasText: 'Interactive' })
+        .locator('input[type="radio"]');
+      await expect(interactiveRadioButton).toBeChecked();
+      // create session
+      const sessionNameInput = page.locator('#sessionName');
+      await sessionNameInput.fill(sessionName);
+      await page.getByRole('button', { name: 'Skip to review' }).click();
+
+      await page.locator('button').filter({ hasText: 'Launch' }).click();
+      await expect(page.locator('.ant-modal-confirm-title')).toHaveText(
+        'No storage folder is mounted',
+      );
+      await page.getByRole('button', { name: 'Start' }).click();
+
+      // Wait for App dialog and close it
+      await page.getByRole('button', { name: 'close' }).click();
+
+      // Verify that a cell exists to display the session name
+      const session = page
+        .locator('vaadin-grid-cell-content')
+        .filter({ hasText: `${sessionName} edit done` });
+      // it takes time to show the created session
+      await expect(session).toBeVisible({ timeout: 10000 });
+    });
+  });
   test('User can create session in NEO', async ({ page }) => {
     await createSession(page, sessionName);
     await deleteSession(page, sessionName);
