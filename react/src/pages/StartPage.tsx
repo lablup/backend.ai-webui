@@ -3,6 +3,7 @@ import AnnouncementAlert from '../components/AnnouncementAlert';
 import Flex from '../components/Flex';
 // import BAIBoard, { BAIBoardItem } from '../components/BAIBoard';
 import FolderCreateModal from '../components/FolderCreateModal';
+import { MenuKeys } from '../components/MainLayout/WebUISider';
 import ThemeSecondaryProvider from '../components/ThemeSecondaryProvider';
 import { filterEmptyItem } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
@@ -18,15 +19,27 @@ const StartPage: React.FC = () => {
   const { t } = useTranslation();
 
   // to avoid flickering
-  useSuspendedBackendaiClient();
+  const baiClient = useSuspendedBackendaiClient();
+  const blockList = (baiClient?._config?.blockList as MenuKeys[]) ?? [];
+  const inactiveList = (baiClient?._config?.inactiveList as MenuKeys[]) ?? [];
 
   const webuiNavigate = useWebUINavigate();
   const [isOpenCreateModal, setIsOpenCreateModal] = useState<boolean>(false);
   const { xl } = Grid.useBreakpoint();
 
-  const items = filterEmptyItem([
+  const items = filterEmptyItem<{
+    id: string;
+    menuKey: MenuKeys;
+    rowSpan: number;
+    columnSpan: number;
+    columnOffset: Record<number, number>;
+    data: {
+      content: React.ReactNode;
+    };
+  }>([
     {
       id: 'createFolder',
+      menuKey: 'data',
       rowSpan: 3,
       columnSpan: 1,
       columnOffset: { 6: 0, 4: 0 },
@@ -44,6 +57,7 @@ const StartPage: React.FC = () => {
     },
     {
       id: 'startSession',
+      menuKey: 'job',
       rowSpan: 3,
       columnSpan: 1,
       columnOffset: { 6: 1, 4: 1 },
@@ -61,6 +75,7 @@ const StartPage: React.FC = () => {
     },
     {
       id: 'startBatchSession',
+      menuKey: 'job',
       rowSpan: 3,
       columnSpan: 1,
       columnOffset: { 6: 2, 4: 2 },
@@ -84,18 +99,10 @@ const StartPage: React.FC = () => {
         ),
       },
     },
-    xl && {
-      id: 'empty',
-      rowSpan: 3,
-      columnSpan: 1,
-      columnOffset: { 6: 0, 4: 0 },
-      data: {
-        content: <></>,
-      },
-    },
     {
       id: 'modelService',
       rowSpan: 3,
+      menuKey: 'serving',
       columnSpan: 1,
       columnOffset: { 6: 0, 4: 0 },
       data: {
@@ -150,7 +157,11 @@ const StartPage: React.FC = () => {
     //     ),
     //   },
     // },
-  ]);
+  ]).filter(
+    (item) =>
+      _.includes(blockList, item.menuKey) === false &&
+      _.includes(inactiveList, item.menuKey) === false,
+  );
 
   return (
     <Flex direction="column" gap={'md'} align="stretch">
@@ -166,22 +177,25 @@ const StartPage: React.FC = () => {
       <AnnouncementAlert showIcon closable />
       <Row gutter={[16, 16]}>
         {_.map(items, (item, idx) => {
-          return item.id === 'empty' ? (
-            <Col key={'empty' + idx} xs={24} md={12} xl={6}></Col>
-          ) : (
-            <Col key={item.id} xs={24} md={12} xl={6}>
-              <Card
-                style={{ height: 340 }}
-                styles={{
-                  body: {
-                    height: '100%',
-                    padding: 0,
-                  },
-                }}
-              >
-                {item.data.content}
-              </Card>
-            </Col>
+          return (
+            <>
+              {xl && idx > 0 && idx % 3 === 0 && (
+                <Col key={'empty' + idx} xs={24} md={12} xl={6} />
+              )}
+              <Col key={item.id} xs={24} md={12} xl={6}>
+                <Card
+                  style={{ height: 340 }}
+                  styles={{
+                    body: {
+                      height: '100%',
+                      padding: 0,
+                    },
+                  }}
+                >
+                  {item.data.content}
+                </Card>
+              </Col>
+            </>
           );
         })}
       </Row>
