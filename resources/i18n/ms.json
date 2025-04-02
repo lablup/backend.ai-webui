@@ -251,6 +251,7 @@
     "InvalidEmail": "Alamat e -mel tidak sah",
     "Invited": "dijemput",
     "InvitedFolders": "Folder yang dijemput",
+    "InvitedFoldersTooltip": "{{ count }} Jemputan folder sedang menunggu tindak balas.",
     "Limit": "Had",
     "ModelStore": "Kedai Model",
     "Models": "Model",

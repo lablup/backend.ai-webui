@@ -254,6 +254,7 @@
     "InvalidEmail": "Invalid email address",
     "Invited": "Invited",
     "InvitedFolders": "Invited Folders",
+    "InvitedFoldersTooltip": "{{ count }} folder invitations are pending response.",
     "Limit": "Limit",
     "ModelStore": "Model Store",
     "Models": "Models",
