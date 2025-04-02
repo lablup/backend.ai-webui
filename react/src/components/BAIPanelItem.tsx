@@ -6,7 +6,7 @@ import React, { ReactNode } from 'react';
 
 interface BAIPanelItemProps {
   title: ReactNode | string;
-  value: string | number;
+  value: ReactNode | string | number;
   unit?: string;
   percent?: number;
   color?: string;
@@ -54,15 +54,19 @@ const BAIPanelItem: React.FC<BAIPanelItemProps> = ({
         title
       )}
       <Flex align="baseline" gap={'xxs'}>
-        <Typography.Text
-          strong
-          style={{
-            fontSize: token.fontSizeHeading1,
-            color: color ?? token.Layout?.headerBg,
-          }}
-        >
-          {value}
-        </Typography.Text>
+        {_.isString(value) || _.isNumber(value) ? (
+          <Typography.Text
+            strong
+            style={{
+              fontSize: token.fontSizeHeading1,
+              color: color ?? token.Layout?.headerBg,
+            }}
+          >
+            {value}
+          </Typography.Text>
+        ) : (
+          value
+        )}
         {unit && <Typography.Text>{unit}</Typography.Text>}
       </Flex>
       {_.isNumber(percent) && (
