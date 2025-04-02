@@ -1,5 +1,6 @@
 import ActionItemContent from '../components/ActionItemContent';
 import AnnouncementAlert from '../components/AnnouncementAlert';
+import BAIAlert from '../components/BAIAlert';
 import Flex from '../components/Flex';
 // import BAIBoard, { BAIBoardItem } from '../components/BAIBoard';
 import FolderCreateModal from '../components/FolderCreateModal';
@@ -18,7 +19,6 @@ import { useTranslation } from 'react-i18next';
 const StartPage: React.FC = () => {
   const { t } = useTranslation();
 
-  // to avoid flickering
   const baiClient = useSuspendedBackendaiClient();
   const blockList = (baiClient?._config?.blockList as MenuKeys[]) ?? [];
   const inactiveList = (baiClient?._config?.inactiveList as MenuKeys[]) ?? [];
@@ -175,6 +175,9 @@ const StartPage: React.FC = () => {
         }}
       /> */}
       <AnnouncementAlert showIcon closable />
+      {items.length === 0 && (
+        <BAIAlert type="info" description={t('start.NoStartItems')} showIcon />
+      )}
       <Row gutter={[16, 16]}>
         {_.map(items, (item, idx) => {
           return (
