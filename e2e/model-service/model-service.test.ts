@@ -9,7 +9,9 @@ test.beforeEach(async ({ page }) => {
 
 // Create a test for service creation
 // Test condition: executing simple-http-server
-test('Service creation-with-cleanup', async ({ page }) => {
+test('user create model-service with public endpoint from start menu', async ({
+  page,
+}) => {
   // Create a service with random name
   const randomName = `model-service-${Math.random().toString(36).substring(2, 6)}`;
   await page.getByRole('link', { name: 'Start' }).click();
@@ -35,8 +37,6 @@ test('Service creation-with-cleanup', async ({ page }) => {
     )
     .click();
   await page.getByRole('button', { name: 'Create' }).click();
-  // Wait for the service to be created
-  await page.waitForTimeout(3000);
   await page.getByRole('link', { name: randomName }).click();
   await expect(page.getByRole('cell', { name: randomName })).toContainText(
     randomName,
@@ -51,8 +51,6 @@ test('Service creation-with-cleanup', async ({ page }) => {
     .click();
   await page.getByRole('row', { name: randomName }).locator('div').click();
   await page.getByRole('button', { name: 'Delete', exact: true }).click();
-  // Wait for the service to be created
-  await page.waitForTimeout(3000);
   await page.locator('label').filter({ hasText: 'Destroyed' }).click();
   // Check whether the service is destroyed
   await expect(page.getByRole('cell', { name: randomName })).toContainText(
