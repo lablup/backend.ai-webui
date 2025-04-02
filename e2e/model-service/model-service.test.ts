@@ -1,4 +1,4 @@
-import { loginAsUser } from './test-util';
+import { loginAsUser } from '../test-util';
 import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
