@@ -53,7 +53,7 @@ test.describe.parallel('config.toml', () => {
   );
 
   test(
-    'showNonInstalledImages',
+    'showNonInstalledImages: Allow users to select non-installed images when creating sessions',
     { tag: ['@session'] },
     async ({ page, context, request }) => {
       // modify config.toml to show non-installed images
@@ -66,7 +66,10 @@ test.describe.parallel('config.toml', () => {
 
       await loginAsAdmin(page);
 
-      await page.getByRole('group').getByText('Environments').click();
+      await page
+        .getByRole('group')
+        .getByText('Environments', { exact: true })
+        .click();
       await page
         .getByRole('columnheader', { name: 'Status' })
         .locator('div')
@@ -81,7 +84,8 @@ test.describe.parallel('config.toml', () => {
       ).jsonValue();
 
       await page.goto(webuiEndpoint);
-      await page.getByLabel('power_settings_new').click();
+      // await page.getByLabel('power_settings_new').click();
+      await page.getByRole('button', { name: 'Start Session' }).first().click();
       await page
         .getByRole('button', { name: '2 Environments & Resource' })
         .click();

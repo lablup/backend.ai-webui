@@ -19,9 +19,9 @@ test.describe('Login using the admin account', () => {
   });
 
   test('should redirect to the Summary', async ({ page }) => {
-    await expect(page).toHaveURL(/\/summary/);
+    await expect(page).toHaveURL(/\/start/);
     await expect(
-      page.getByTestId('webui-breadcrumb').getByText('Summary'),
+      page.getByTestId('webui-breadcrumb').getByText('Start'),
     ).toBeVisible();
   });
 });
