@@ -17,7 +17,7 @@ const SessionSlotCell: React.FC<OccupiedSlotViewProps> = ({
   sessionFrgmt,
   mode = 'requested',
 }) => {
-  const { deviceMetadata } = useResourceSlotsDetails();
+  const { mergedResourceSlots } = useResourceSlotsDetails('');
   const session = useFragment(
     graphql`
       fragment SessionSlotCellFragment on ComputeSessionNode {
@@ -38,18 +38,25 @@ const SessionSlotCell: React.FC<OccupiedSlotViewProps> = ({
     return slots.cpu ?? '-';
   } else if (type === 'mem') {
     const mem = slots.mem ?? '-';
-    return mem === '-' ? mem : convertBinarySizeUnit(mem, 'G')?.number + ' GiB';
+    return mem === '-'
+      ? mem
+      : convertBinarySizeUnit(mem, 'G', 3)?.numberFixed + ' GiB';
   } else if (type === 'accelerator') {
     const occupiedAccelerators = _.omit(slots, ['cpu', 'mem']);
-    return _.isEmpty(occupiedAccelerators)
+
+    const filteredAccelerators = _.omitBy(
+      occupiedAccelerators,
+      (value) => _.toNumber(value) <= 0 || _.isNaN(_.toNumber(value)),
+    );
+    return _.every(filteredAccelerators, (value) => value === 0)
       ? '-'
-      : _.map(occupiedAccelerators, (value, key) => {
+      : _.map(filteredAccelerators, (value, key) => {
           return (
             <Fragment key={key}>
               <Typography.Text>{value}</Typography.Text>
               <Divider type="vertical" />
               <Typography.Text>
-                {deviceMetadata?.[key]?.human_readable_name}
+                {mergedResourceSlots?.[key]?.display_unit}
               </Typography.Text>
             </Fragment>
           );

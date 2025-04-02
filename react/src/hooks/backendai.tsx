@@ -86,20 +86,18 @@ export const useResourceSlotsDetails = (resourceGroupName?: string) => {
   }>({
     queryKey: ['useResourceSlots', resourceGroupName, key],
     queryFn: () => {
-      // return baiClient.get_resource_slots();
-      if (
-        !resourceGroupName ||
-        !baiClient.isManagerVersionCompatibleWith('23.09.0')
-      ) {
-        return undefined;
+      if (!baiClient.isManagerVersionCompatibleWith('23.09.0')) {
+        return {};
       } else {
         // `/resource-slots/details` is available since 23.09
         // https://github.com/lablup/backend.ai/issues/1589
         const search = new URLSearchParams();
-        search.set('sgroup', resourceGroupName);
+        resourceGroupName && search.set('sgroup', resourceGroupName);
+        const searchParamString = search.toString();
         return baiRequestWithPromise({
           method: 'GET',
-          url: `/config/resource-slots/details?${search.toString()}`,
+          // if `sgroup` is not provided, it will return all resource slots of all resource groups
+          url: `/config/resource-slots/details${searchParamString ? '?' + search.toString() : ''}`,
         });
       }
     },
