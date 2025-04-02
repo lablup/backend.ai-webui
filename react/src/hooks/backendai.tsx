@@ -305,3 +305,63 @@ export const useAllowedHostNames = () => {
   });
   return allowedHosts?.allowed;
 };
+
+export const useVFolderInvitations = () => {
+  const baiClient = useSuspendedBackendaiClient();
+  const { data: vfolderInvitations } = useTanQuery({
+    queryKey: ['vfolderInvitations'],
+    queryFn: () => {
+      return baiClient.vfolder.invitations();
+    },
+  });
+
+  const mutationToAcceptInvitation = useTanMutation({
+    mutationFn: (values: { inv_id: string }) => {
+      return baiClient.vfolder.accept_invitation(values.inv_id);
+    },
+  });
+
+  const mutationToRejectInvitation = useTanMutation({
+    mutationFn: (values: { inv_id: string }) => {
+      return baiClient.vfolder.delete_invitation(values.inv_id);
+    },
+  });
+
+  return [
+    {
+      ...vfolderInvitations?.invitations,
+      count: vfolderInvitations?.invitations?.length,
+      isPendingMutation:
+        mutationToAcceptInvitation.isPending ||
+        mutationToRejectInvitation.isPending,
+    },
+    {
+      acceptInvitation: (inv_id: string, options?: mutationOptions<string>) => {
+        mutationToAcceptInvitation.mutate(
+          { inv_id },
+          {
+            onSuccess: () => {
+              options?.onSuccess && options.onSuccess(inv_id);
+            },
+            onError: (error: any) => {
+              options?.onError && options.onError(error);
+            },
+          },
+        );
+      },
+      rejectInvitation: (inv_id: string, options?: mutationOptions<string>) => {
+        mutationToRejectInvitation.mutate(
+          { inv_id },
+          {
+            onSuccess: () => {
+              options?.onSuccess && options.onSuccess(inv_id);
+            },
+            onError: (error: any) => {
+              options?.onError && options.onError(error);
+            },
+          },
+        );
+      },
+    },
+  ] as const;
+};
