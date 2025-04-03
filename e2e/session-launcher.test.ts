@@ -1,5 +1,4 @@
 import {
-  createSession,
   deleteSession,
   loginAsAdmin,
   loginAsUser,
@@ -7,6 +6,58 @@ import {
 } from './utils/test-util';
 import { getCardItemByCardTitle, getMenuItem } from './utils/test-util-antd';
 import { test, expect } from '@playwright/test';
+
+const getStartSessionButton = (page: Page) => {
+  return page.getByLabel('power_settings_new');
+};
+
+const createInteractiveSessionOnSessionStartPage = async (
+  page: Page,
+  sessionName: string,
+) => {
+  const batchRadioButton = page
+    .locator('label')
+    .filter({ hasText: 'Interactive' })
+    .locator('input[type="radio"]');
+  await batchRadioButton.check();
+  const sessionNameInput = page.locator('#sessionName');
+  await sessionNameInput.fill(sessionName);
+  await page.getByRole('button', { name: 'Skip to review' }).click();
+
+  await page.locator('button').filter({ hasText: 'Launch' }).click();
+  await expect(page.locator('.ant-modal-confirm-title')).toHaveText(
+    'No storage folder is mounted',
+  );
+  await page.getByRole('button', { name: 'Start' }).click();
+};
+
+const createBatchSessionOnSessionStartPage = async (
+  page: Page,
+  sessionName: string,
+) => {
+  const batchRadioButton = page
+    .locator('label')
+    .filter({ hasText: 'Batch' })
+    .locator('input[type="radio"]');
+  await batchRadioButton.check();
+  const sessionNameInput = page.locator('#sessionName');
+  await sessionNameInput.fill(sessionName);
+  const BatchModeConfigurationCard = page.locator(
+    'div.ant-card:has-text("Batch Mode Configuration")',
+  );
+  expect(BatchModeConfigurationCard).toBeVisible();
+  const startupCommand =
+    BatchModeConfigurationCard.getByLabel('Startup Command');
+  expect(startupCommand).toBeVisible();
+  await startupCommand.fill('sleep 30');
+  await page.getByRole('button', { name: 'Skip to review' }).click();
+
+  await page.locator('button').filter({ hasText: 'Launch' }).click();
+  await expect(page.locator('.ant-modal-confirm-title')).toHaveText(
+    'No storage folder is mounted',
+  );
+  await page.getByRole('button', { name: 'Start' }).click();
+};
 
 test.describe('NEO Sessions Launcher', () => {
   test.beforeEach(async ({ page }, testInfo) => {
@@ -42,19 +93,9 @@ test.describe('NEO Sessions Launcher', () => {
         .locator('input[type="radio"]');
       await expect(interactiveRadioButton).toBeChecked();
       // create session
-      const sessionNameInput = page.locator('#sessionName');
-      await sessionNameInput.fill(sessionName);
-      await page.getByRole('button', { name: 'Skip to review' }).click();
-
-      await page.locator('button').filter({ hasText: 'Launch' }).click();
-      await expect(page.locator('.ant-modal-confirm-title')).toHaveText(
-        'No storage folder is mounted',
-      );
-      await page.getByRole('button', { name: 'Start' }).click();
-
-      // Wait for App dialog and close it
+      await createInteractiveSessionOnSessionStartPage(page, sessionName);
+      // close app dialog
       await page.getByRole('button', { name: 'close' }).click();
-
       // Verify that a cell exists to display the session name
       const session = page
         .locator('vaadin-grid-cell-content')
@@ -62,10 +103,78 @@ test.describe('NEO Sessions Launcher', () => {
       // it takes time to show the created session
       await expect(session).toBeVisible({ timeout: 10000 });
     });
-  });
-  test('User can create session in NEO', async ({ page }) => {
-    await createSession(page, sessionName);
-    await deleteSession(page, sessionName);
+
+    test('User can create batch session on the Start page', async ({
+      page,
+    }) => {
+      // move to start page
+      await getMenuItem(page, 'start').click();
+      await expect(page).toHaveURL(/\/start/);
+      // click Start Session button and move to session start page
+      const card = getCardItemByCardTitle(page, 'Start Batch Session');
+      expect(card).toBeVisible();
+      const creationButton = card.getByRole('button', {
+        name: 'Start Session',
+      });
+      await creationButton.click();
+      await expect(page).toHaveURL(/\/session\/start/);
+      // batch radio button is selected by default
+      const batchRadioButton = page
+        .locator('label')
+        .filter({ hasText: 'Batch' })
+        .locator('input[type="radio"]');
+      await expect(batchRadioButton).toBeChecked();
+      // create session
+      await createBatchSessionOnSessionStartPage(page, sessionName);
+      // Verify that a cell exists to display the session name
+      const session = page
+        .locator('vaadin-grid-cell-content')
+        .filter({ hasText: `${sessionName} edit done` });
+      // it takes time to show the created session
+      await expect(session).toBeVisible({ timeout: 10000 });
+    });
+
+    test('User can create interactive session on the Sessions page', async ({
+      page,
+    }) => {
+      // move to sessions page
+      await getMenuItem(page, 'sessions').click();
+      await expect(page).toHaveURL(/\/job/);
+      // click start button to create session
+      const startButton = getStartSessionButton(page);
+      expect(startButton).toBeVisible();
+      await startButton.click();
+      await expect(page).toHaveURL(/\/session\/start/);
+      await createInteractiveSessionOnSessionStartPage(page, sessionName);
+      // close app dialog
+      await page.getByRole('button', { name: 'close' }).click();
+      // Verify that a cell exists to display the session name
+      const session = page
+        .locator('vaadin-grid-cell-content')
+        .filter({ hasText: `${sessionName} edit done` });
+      // it takes time to show the created session
+      await expect(session).toBeVisible({ timeout: 10000 });
+    });
+
+    test('User can create batch session on the Sessions page', async ({
+      page,
+    }) => {
+      // move to sessions page
+      await getMenuItem(page, 'sessions').click();
+      await expect(page).toHaveURL(/\/job/);
+      // click start button to create session
+      const startButton = getStartSessionButton(page);
+      expect(startButton).toBeVisible();
+      await startButton.click();
+      await expect(page).toHaveURL(/\/session\/start/);
+      await createBatchSessionOnSessionStartPage(page, sessionName);
+      // Verify that a cell exists to display the session name
+      const session = page
+        .locator('vaadin-grid-cell-content')
+        .filter({ hasText: `${sessionName} edit done` });
+      // it takes time to show the created session
+      await expect(session).toBeVisible({ timeout: 10000 });
+    });
   });
 
   test('Sensitive environment variables are cleared when the browser is reloaded.', async ({
