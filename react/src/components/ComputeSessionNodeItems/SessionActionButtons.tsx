@@ -182,7 +182,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = (props) => {
         />
         <Tooltip title={t('session.TerminateSession')}>
           <Button
-            disabled={session.status !== 'RUNNING'}
+            disabled={!isActive(session)}
             icon={
               <TerminateIcon
                 style={{
