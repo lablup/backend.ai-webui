@@ -122,6 +122,36 @@ export async function fillOutVaadinGridCellFilter(
   await nameInput.fill(inputValue);
 }
 
+async function removeSearchButton(page: Page, folderName: string) {
+  await page
+    .getByTestId('vfolder-filter')
+    .locator('div')
+    .filter({ hasText: `Name: ${folderName}` })
+    .locator('svg')
+    .first()
+    .click();
+}
+
+export async function verifyVFolder(
+  page: Page,
+  folderName: string,
+  statusTab: 'Created' | 'Trash' = 'Created',
+) {
+  await page.getByRole('link', { name: 'Data' }).click();
+  await page.getByRole('tab', { name: statusTab }).click();
+  await page.getByTestId('vfolder-filter').locator('div').nth(2).click();
+  await page.getByRole('option', { name: 'Name' }).locator('div').click();
+  const searchInput = page.locator('#rc_select_8');
+  await searchInput.fill(folderName);
+  await page.getByRole('button', { name: 'search' }).click();
+  await expect(
+    page
+      .getByRole('cell', { name: `VFolder Identicon ${folderName}` })
+      .filter({ hasText: folderName }),
+  ).toBeVisible();
+  await removeSearchButton(page, folderName);
+}
+
 export async function createVFolderAndVerify(
   page: Page,
   folderName: string,
@@ -129,7 +159,7 @@ export async function createVFolderAndVerify(
   type: 'user' | 'project' = 'user',
   permission: 'rw' | 'ro' = 'rw',
 ) {
-  await navigateTo(page, 'data');
+  await page.getByRole('link', { name: 'Data' }).click();
 
   await page.getByRole('button', { name: 'Create Folder' }).nth(1).click();
   await page.getByRole('textbox', { name: 'Folder name' }).fill(folderName);
@@ -140,63 +170,55 @@ export async function createVFolderAndVerify(
   await page.getByTestId(`${permission}-permission`).click();
 
   await page.getByRole('button', { name: 'Create', exact: true }).click();
-  await page.reload();
+  await verifyVFolder(page, folderName);
+}
+
+export async function moveToTrashAndVerify(page: Page, folderName: string) {
+  await page.getByRole('link', { name: 'Data' }).click();
   await page.getByTestId('vfolder-filter').locator('div').nth(2).click();
   await page.getByRole('option', { name: 'Name' }).locator('div').click();
-  await page.locator('#rc_select_8').fill(folderName);
+  const searchInput = page.locator('#rc_select_8');
+  await searchInput.fill(folderName);
   await page.getByRole('button', { name: 'search' }).click();
-  await page.getByRole('link', { name: folderName }).click();
+  await page
+    .getByRole('row', { name: 'VFolder Identicon e2e-test-' })
+    .getByRole('button')
+    .nth(1)
+    .click();
+  await page.getByRole('button', { name: 'Move' }).click();
+  await removeSearchButton(page, folderName);
+  await verifyVFolder(page, folderName, 'Trash');
+}
+
+export async function deleteForeverAndVerifyFromTrash(
+  page: Page,
+  folderName: string,
+) {
+  await page.getByRole('link', { name: 'Data' }).click();
+  await page.getByRole('tab', { name: 'Trash' }).click();
+  const searchInput = page.locator('#rc_select_8');
+  await searchInput.fill(folderName);
+  await page.getByRole('button', { name: 'search' }).click();
+  // Delete forever
+  await page
+    .getByRole('row', { name: 'VFolder Identicon e2e-test-' })
+    .getByRole('button')
+    .nth(1)
+    .click();
+  await page.locator('#confirmText').click();
+  await page.locator('#confirmText').fill(folderName);
+  await page.getByRole('button', { name: 'Delete forever' }).click();
+  // Verify
+  await page.getByTestId('vfolder-filter').locator('div').nth(2).click();
+  await page.getByRole('option', { name: 'Name' }).locator('div').click();
+  await searchInput.fill(folderName);
+  await page.getByRole('button', { name: 'search' }).click();
   await expect(
     page
       .getByRole('cell', { name: `VFolder Identicon ${folderName}` })
       .filter({ hasText: folderName }),
-  ).toBeVisible();
-}
-
-export async function deleteVFolderAndVerify(page: Page, folderName: string) {
-  await navigateTo(page, 'data');
-  const nameInput = page
-    .locator('#general-folder-storage vaadin-grid-cell-content')
-    .filter({ hasText: 'Name' })
-    .locator('vaadin-text-field')
-    .nth(1)
-    .locator('input');
-  await nameInput.click();
-  await nameInput.fill(folderName);
-  await page.waitForTimeout(1000);
-  await page.getByRole('button', { name: 'delete' }).first().click();
-  await page
-    .locator('#delete-without-confirm-button')
-    .getByLabel('delete')
-    .click();
-  await page.waitForLoadState('networkidle');
-  await page.getByRole('tab', { name: 'delete' }).click();
-  const nameInputInTrash = page
-    .locator('#trash-bin-folder-storage vaadin-grid-cell-content')
-    .filter({ hasText: 'Name' })
-    .locator('vaadin-text-field')
-    .nth(1)
-    .locator('input');
-  await nameInputInTrash.fill(folderName);
-  // after filling the input, the vaadin-grid will be updated asynchronously. So we need to wait for the grid to be updated.
-  await page.waitForTimeout(1000);
-  await page
-    .locator('vaadin-grid-cell-content')
-    .filter({ hasText: folderName })
-    .locator('//following-sibling::*[7]')
-    .getByRole('button', { name: 'delete_forever' })
-    .click();
-  await page
-    .getByRole('textbox', { name: 'Type folder name to delete' })
-    .fill(folderName);
-  await page.getByRole('button', { name: 'Delete forever' }).click();
-  await expect(
-    page
-      .locator('vaadin-grid-cell-content')
-      .filter({ hasText: folderName })
-      .locator(':visible'),
   ).toHaveCount(0);
-  await nameInputInTrash.fill('');
+  await removeSearchButton(page, folderName);
 }
 
 export async function createSession(page: Page, sessionName: string) {
