@@ -1,4 +1,5 @@
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
+import { mergeFilterValues } from './BAIPropertyFilter';
 import Flex from './Flex';
 import ResourceNumber from './ResourceNumber';
 import { AgentSelectQuery } from './__generated__/AgentSelectQuery.graphql';
@@ -6,7 +7,7 @@ import { useControllableValue } from 'ahooks';
 import { Select, SelectProps } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React from 'react';
+import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
@@ -23,10 +24,12 @@ const AgentSelect: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   const [value, setValue] = useControllableValue(selectProps);
+  const [searchFilter, setSearchFilter] = useState<string | null>(null);
+  const [isSearchPending, startSearchTransition] = useTransition();
 
   const { baiPaginationOption } = useBAIPaginationOptionState({
     current: 1,
-    pageSize: 20,
+    pageSize: 50,
   });
 
   const { agent_summary_list } = useLazyLoadQuery<AgentSelectQuery>(
@@ -61,7 +64,7 @@ const AgentSelect: React.FC<Props> = ({
       limit: baiPaginationOption.limit,
       offset: baiPaginationOption.offset,
       status: 'ALIVE',
-      filter: 'schedulable is true', // true, false, null
+      filter: mergeFilterValues(['schedulable is true', searchFilter]),
       scaling_group: resourceGroup,
     },
     {
@@ -115,6 +118,14 @@ const AgentSelect: React.FC<Props> = ({
     <Select
       onChange={(value, option) => {
         setValue(value, option);
+      }}
+      loading={isSearchPending}
+      filterOption={false}
+      showSearch
+      onSearch={(v) => {
+        startSearchTransition(() => {
+          setSearchFilter(v ? `id ilike "%${v}%"` : null);
+        });
       }}
       {...selectProps}
       value={value}
