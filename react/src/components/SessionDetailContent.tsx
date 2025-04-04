@@ -15,17 +15,13 @@ import SessionStatusDetailModal from './ComputeSessionNodeItems/SessionStatusDet
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
 import SessionTypeTag from './ComputeSessionNodeItems/SessionTypeTag';
 import Flex from './Flex';
-import { useFolderExplorerOpener } from './FolderExplorerOpener';
+import FolderLink from './FolderLink';
 import IdleCheckDescriptionModal from './IdleCheckDescriptionModal';
 import ImageMetaIcon from './ImageMetaIcon';
 import SessionUsageMonitor from './SessionUsageMonitor';
 import { SessionDetailContentLegacyQuery } from './__generated__/SessionDetailContentLegacyQuery.graphql';
 import { SessionDetailContentQuery } from './__generated__/SessionDetailContentQuery.graphql';
-import {
-  FolderOutlined,
-  InfoCircleOutlined,
-  QuestionCircleOutlined,
-} from '@ant-design/icons';
+import { InfoCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import {
   Alert,
   Button,
@@ -51,7 +47,6 @@ const SessionDetailContent: React.FC<{
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { md } = Grid.useBreakpoint();
-  const { open } = useFolderExplorerOpener();
   const currentProject = useCurrentProjectValue();
   const userRole = useCurrentUserRole();
   const baiClient = useSuspendedBackendaiClient();
@@ -100,9 +95,7 @@ const SessionDetailContent: React.FC<{
             vfolder_nodes @since(version: "25.4.0") {
               edges {
                 node {
-                  id
-                  row_id
-                  name
+                  ...FolderLink_vfolderNode
                 }
               }
               count
@@ -228,10 +221,7 @@ const SessionDetailContent: React.FC<{
               </Typography.Text>
             </Descriptions.Item>
           )}
-          <Descriptions.Item
-            label={t('session.Status')}
-            contentStyle={{ display: 'flex', gap: token.marginSM }}
-          >
+          <Descriptions.Item label={t('session.Status')}>
             <Flex>
               <SessionStatusTag sessionFrgmt={session} showInfo />
               {session?.status_data && session?.status_data !== '{}' ? (
@@ -264,46 +254,39 @@ const SessionDetailContent: React.FC<{
             )}
           </Descriptions.Item>
           <Descriptions.Item label={t('session.launcher.MountedFolders')}>
-            {session.vfolder_nodes
-              ? _.map(session?.vfolder_nodes?.edges, (vfolder) => {
-                  return (
-                    <Button
-                      key={vfolder?.node?.id}
-                      type="link"
-                      size="small"
-                      icon={<FolderOutlined />}
-                      onClick={() => {
-                        open(vfolder?.node?.row_id ?? '');
-                      }}
-                    >
-                      {vfolder?.node?.name}
-                    </Button>
-                  );
-                })
-              : baiClient.supports('vfolder-mounts')
-                ? _.map(
-                    // compute_session_node query's vfolder_mounts is not include name.
-                    // To provide vfolder name in compute_session_node, schema must be changed.
-                    // legacy_session.mounts (name) and session.vfolder_mounts (id) give vfolder information in same order.
-                    _.zip(legacy_session?.mounts, session?.vfolder_mounts),
-                    (mountInfo) => {
-                      const [name, id] = mountInfo;
-                      return (
-                        <Button
-                          key={id}
-                          type="link"
-                          size="small"
-                          icon={<FolderOutlined />}
-                          onClick={() => {
-                            open(id ?? '');
-                          }}
-                        >
-                          {name}
-                        </Button>
-                      );
-                    },
-                  )
-                : legacy_session?.mounts?.join(', ')}
+            <Flex gap="xs" wrap="wrap">
+              {session.vfolder_nodes
+                ? session.vfolder_nodes.edges.map((vfolder, idx) => {
+                    return (
+                      vfolder?.node && (
+                        <FolderLink
+                          key={`mounted-vfolder-${idx}`}
+                          showIcon
+                          vfolderNodeFragment={vfolder.node}
+                        />
+                      )
+                    );
+                  })
+                : baiClient.supports('vfolder-mounts')
+                  ? _.map(
+                      // compute_session_node query's vfolder_mounts is not include name.
+                      // To provide vfolder name in compute_session_node, schema must be changed.
+                      // legacy_session.mounts (name) and session.vfolder_mounts (id) give vfolder information in same order.
+                      _.zip(legacy_session?.mounts, session?.vfolder_mounts),
+                      (mountInfo) => {
+                        const [name, id] = mountInfo;
+                        return (
+                          <FolderLink
+                            key={id}
+                            folderId={id ?? ''}
+                            folderName={name ?? ''}
+                            showIcon
+                          />
+                        );
+                      },
+                    )
+                  : legacy_session?.mounts?.join(', ')}
+            </Flex>
           </Descriptions.Item>
           <Descriptions.Item label={t('session.launcher.ResourceAllocation')}>
             <Flex gap={'sm'} wrap="wrap">
