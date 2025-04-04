@@ -1,3 +1,4 @@
+import { useSuspendedBackendaiClient } from '../../hooks';
 import Flex from '../Flex';
 import ChatCard from './ChatCard';
 import { ChatProviderType, ChatType, ConversationType } from './ChatModel';
@@ -35,11 +36,13 @@ export type ConversationProps = {
 };
 
 function useSelectedEndpoint(endpointId?: string) {
+  const baiClient = useSuspendedBackendaiClient();
   const { endpoint, endpoint_list } = useLazyLoadQuery<ConversationQuery>(
     graphql`
       query ConversationQuery(
         $endpointId: UUID!
         $isEmptyEndpointId: Boolean!
+        $filter: String
       ) {
         endpoint(endpoint_id: $endpointId)
           @skipOnClient(if: $isEmptyEndpointId)
@@ -47,7 +50,7 @@ function useSelectedEndpoint(endpointId?: string) {
           endpoint_id
           ...ChatCard_endpoint
         }
-        endpoint_list(limit: 1, offset: 0) {
+        endpoint_list(limit: 1, offset: 0, filter: $filter) {
           items {
             endpoint_id
             ...ChatCard_endpoint
@@ -58,6 +61,9 @@ function useSelectedEndpoint(endpointId?: string) {
     {
       endpointId: endpointId || '',
       isEmptyEndpointId: !endpointId,
+      filter: baiClient.supports('endpoint-lifecycle-stage-filter')
+        ? 'lifecycle_stage == "created"'
+        : undefined,
     },
   );
 
