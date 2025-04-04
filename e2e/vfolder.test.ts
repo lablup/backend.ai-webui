@@ -1,21 +1,27 @@
 import {
   createVFolderAndVerify,
-  deleteVFolderAndVerify,
+  deleteForeverAndVerifyFromTrash,
   fillOutVaadinGridCellFilter,
   loginAsUser,
   loginAsUser2,
   logout,
+  moveToTrashAndVerify,
   navigateTo,
   userInfo,
 } from './test-util';
 import { test, expect } from '@playwright/test';
 
 test.describe('VFolder ', () => {
-  test('User can create and delete vFolder', async ({ page }) => {
+  test.beforeEach(async ({ page }) => {
     await loginAsUser(page);
-    const folderName = 'e2e-test-folder-user-creation' + new Date().getTime();
+  });
+  const folderName = 'e2e-test-folder-user-creation' + new Date().getTime();
+  test('User can create and delete, delete forever vFolder', async ({
+    page,
+  }) => {
     await createVFolderAndVerify(page, folderName);
-    await deleteVFolderAndVerify(page, folderName);
+    await moveToTrashAndVerify(page, folderName);
+    await deleteForeverAndVerifyFromTrash(page, folderName);
   });
 });
 
@@ -89,7 +95,8 @@ test.describe('VFolder sharing', () => {
     await page2.getByLabel('Type folder name to leave').fill(sharingFolderName);
     await page2.getByRole('button', { name: 'Leave' }).click();
     // delete folder
-    await deleteVFolderAndVerify(page, sharingFolderName);
+    await moveToTrashAndVerify(page, sharingFolderName);
+    await deleteForeverAndVerifyFromTrash(page, sharingFolderName);
     await page.close();
     await page2.close();
   });
@@ -129,7 +136,8 @@ test.describe('VFolder sharing', () => {
         .filter({ hasText: sharingFolderName }),
     ).toBeVisible();
     // Delete folder as User before User2 accept the invitation
-    await deleteVFolderAndVerify(page, sharingFolderName);
+    await moveToTrashAndVerify(page, sharingFolderName);
+    await deleteForeverAndVerifyFromTrash(page, sharingFolderName);
     // check the invitation is disappeared
     await page2.reload();
     await expect(
@@ -181,7 +189,8 @@ test.describe('VFolder sharing', () => {
         .filter({ hasText: sharingFolderName }),
     ).toBeVisible();
     // User delete the folder when User2 is trying to accept
-    await deleteVFolderAndVerify(page, sharingFolderName);
+    await moveToTrashAndVerify(page, sharingFolderName);
+    await deleteForeverAndVerifyFromTrash(page, sharingFolderName);
     // User2 accept the invitation
     await page2
       .getByText(`From ${userInfo.user.email}`)
