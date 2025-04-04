@@ -127,36 +127,30 @@ export async function createVFolderAndVerify(
   folderName: string,
   usageMode: 'general' | 'model' = 'general',
   type: 'user' | 'project' = 'user',
-  permission: 'rw' | 'ro' | 'wd' = 'rw',
+  permission: 'rw' | 'ro' = 'rw',
 ) {
-  const permissionMap = {
-    rw: 'Read & Write',
-    ro: 'Read only',
-    wd: 'Delete',
-  };
   await navigateTo(page, 'data');
 
-  await page.getByRole('button', { name: 'plus Add' }).click();
+  await page.getByRole('button', { name: 'Create Folder' }).nth(1).click();
   await page.getByRole('textbox', { name: 'Folder name' }).fill(folderName);
+
   // select parsed parameters in create modal form
-  await page.getByRole('radio', { name: usageMode }).click();
-  await page.getByRole('radio', { name: type }).click();
-  await page.getByRole('radio', { name: permissionMap[permission] }).click();
+  await page.getByTestId(`${usageMode}-usage-mode`).click();
+  await page.getByTestId(`${type}-type`).click();
+  await page.getByTestId(`${permission}-permission`).click();
 
   await page.getByRole('button', { name: 'Create', exact: true }).click();
   await page.reload();
-  const nameInput = page
-    .locator('#general-folder-storage vaadin-grid-cell-content')
-    .filter({ hasText: 'Name' })
-    .locator('vaadin-text-field')
-    .nth(1)
-    .locator('input');
-  await nameInput.click();
-  await nameInput.fill(folderName);
+  await page.getByTestId('vfolder-filter').locator('div').nth(2).click();
+  await page.getByRole('option', { name: 'Name' }).locator('div').click();
+  await page.locator('#rc_select_8').fill(folderName);
+  await page.getByRole('button', { name: 'search' }).click();
+  await page.getByRole('link', { name: folderName }).click();
   await expect(
-    page.locator('vaadin-grid-cell-content').filter({ hasText: folderName }),
+    page
+      .getByRole('cell', { name: `VFolder Identicon ${folderName}` })
+      .filter({ hasText: folderName }),
   ).toBeVisible();
-  await nameInput.fill('');
 }
 
 export async function deleteVFolderAndVerify(page: Page, folderName: string) {

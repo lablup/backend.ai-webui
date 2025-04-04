@@ -436,6 +436,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 ])}
               />
               <BAIPropertyFilter
+                data-testid="vfolder-filter"
                 filterProperties={[
                   {
                     key: 'name',
