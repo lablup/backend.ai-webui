@@ -1,7 +1,7 @@
 import Flex from '../Flex';
 import CopyButton from './CopyButton';
 import { SyntaxHighlighter, SyntaxHighlighterProps } from './SyntaxHighight';
-import { Typography } from 'antd';
+import { theme, Typography } from 'antd';
 // `rehype-katex` does not import the CSS file, so we need to import it manually.
 import 'katex/dist/katex.min.css';
 import { marked } from 'marked';
@@ -26,32 +26,36 @@ const CodeBlock = memo<SyntaxHighlighterProps>(({ children, ...props }) => (
 CodeBlock.displayName = 'CodeBlock';
 
 const CodeHead = memo<{ lang: string; extra?: React.ReactNode }>(
-  ({ lang, extra }) => (
-    <Flex
-      style={{
-        margin: '0',
-        minHeight: '38px',
-        padding: '0 12px',
-        background: 'rgba(0, 0, 0, 0.02)',
-        width: '100%',
-      }}
-    >
+  ({ lang, extra }) => {
+    const { token } = theme.useToken();
+
+    return (
       <Flex
         style={{
-          display: 'inline-block',
-          flex: '1',
-          overflow: 'hidden',
-          whiteSpace: 'nowrap',
-          textOverflow: 'ellipsis',
+          margin: '0',
+          minHeight: '38px',
+          padding: `0 ${token.paddingSM}px`,
+          background: 'rgba(0, 0, 0, 0.02)',
+          width: '100%',
         }}
       >
-        <Text style={{ fontWeight: 'normal' }} type="secondary">
-          {lang}
-        </Text>
+        <Flex
+          style={{
+            display: 'inline-block',
+            flex: '1',
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
+            textOverflow: 'ellipsis',
+          }}
+        >
+          <Text style={{ fontWeight: 'normal' }} type="secondary">
+            {lang}
+          </Text>
+        </Flex>
+        <Flex>{extra}</Flex>
       </Flex>
-      <Flex>{extra}</Flex>
-    </Flex>
-  ),
+    );
+  },
 );
 
 CodeHead.displayName = 'CodeHead';
@@ -63,6 +67,7 @@ const ChatMessageContentBlock = memo<{ block?: string; isStreaming?: boolean }>(
         const { children, className, node, ref, ...rest } = props;
         const match = /language-(\w+)/.exec(className || '');
         const content = String(children).replace(/\n$/, '');
+        const { token } = theme.useToken();
 
         return match ? (
           <Flex
@@ -71,7 +76,7 @@ const ChatMessageContentBlock = memo<{ block?: string; isStreaming?: boolean }>(
               border: '1px solid #f0f0f0',
               margin: '0',
               padding: '0',
-              borderRadius: '8px',
+              borderRadius: token.borderRadiusLG,
               overflow: 'hidden',
             }}
           >
@@ -90,8 +95,8 @@ const ChatMessageContentBlock = memo<{ block?: string; isStreaming?: boolean }>(
             <Flex
               style={{
                 width: '100%',
-                padding: '12px',
-                borderRadius: '0 0 8px 8px',
+                padding: token.paddingSM,
+                borderRadius: `0 0 ${token.borderRadiusLG}px ${token.borderRadiusLG}px`,
                 margin: '-0.5em 0',
               }}
             >
