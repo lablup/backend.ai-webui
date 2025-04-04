@@ -1584,7 +1584,10 @@
     "SelectPeriod": "Dönem",
     "SessionsDesc": "Oluşturulan hesaplama oturumlarının sayısı.",
     "UsageHistory": "Kullanım Geçmişi",
-    "UsageHistoryNote": "Burada gösterilen kullanım geçmişi, sonlandırılmış hesaplama oturumlarına dayanmaktadır."
+    "UsageHistoryNote": "Burada gösterilen kullanım geçmişi, sonlandırılmış hesaplama oturumlarına dayanmaktadır.",
+    "prometheus": {
+      "noMetricsToDisplay": "İzleme için Avalifable Metrics yok"
+    }
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "Bir kaynak ilkesinin değiştirilmesi, o proje kaynak ilkesini kullanan tüm projeleri etkileyebilir, bu nedenle dikkatli kullanın.",
@@ -1866,7 +1869,9 @@
       "TermsOfService": "Kullanım Şartları",
       "TotpActivated": "2FA Etkin",
       "Update": "Güncelleme",
+      "UsageHistory": "Kullanım tarihi",
       "UserCredentials&Policies": "Kullanıcı Kimlik Bilgileri ve Politikaları",
+      "UserSessionHistory": "Kullanıcı Oturumu Geçmişi",
       "Users": "Kullanıcılar",
       "WelcomeMessage": "Hoş geldiniz, {{ userName }}.",
       "YouMushChangeYourPassword": "Güvenlik nedeniyle şifrenizi periyodik olarak değiştirmeniz önerilir. Şifrenizi en son değiştirdiğinizden bu yana belirli bir süre geçtiğinden, hizmeti kullanmaya devam etmek için şifrenizi değiştirmeniz gerekir.",
