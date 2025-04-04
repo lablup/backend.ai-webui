@@ -215,7 +215,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
     body: {
       modelId: modelId,
     },
-    experimental_throttle: 100,
+    experimental_throttle: 50,
     fetch: async (input, init) => {
       if (fetchOnClient || modelId === 'custom') {
         const body = JSON.parse(init?.body as string);
@@ -250,7 +250,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
 
   return (
     <Card
-      bordered
+      variant="outlined"
       className={chatCardStyle}
       classNames={chatCardStyles}
       title={
@@ -275,17 +275,19 @@ const ChatCard: React.FC<ChatCardProps> = ({
         />
       }
     >
-      <CustomModelForm
-        modelId={modelId}
-        baseURL={baseURL}
-        formRef={formRef}
-        allowCustomModel={allowCustomModel}
-        alert={
-          formRef && (
-            <CustomModelAlert onClick={() => updateFetchKey(baseURL)} />
-          )
-        }
-      />
+      {allowCustomModel ? (
+        <CustomModelForm
+          modelId={modelId}
+          baseURL={baseURL}
+          formRef={formRef}
+          allowCustomModel={allowCustomModel}
+          alert={
+            formRef && (
+              <CustomModelAlert onClick={() => updateFetchKey(baseURL)} />
+            )
+          }
+        />
+      ) : null}
       {!_.isEmpty(error?.message) ? (
         <Alert
           message={error?.message}
