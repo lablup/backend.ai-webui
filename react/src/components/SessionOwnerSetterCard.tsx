@@ -89,6 +89,7 @@ const SessionOwnerSetterCard: React.FC<CardProps> = (props) => {
   const owner = form.getFieldValue(['owner', 'email']) ? data?.user : undefined;
 
   const nonExistentOwner = !isFetching && fetchingEmail && !owner;
+
   return (
     <Card
       title={t('session.launcher.SetSessionOwner')}
@@ -143,7 +144,6 @@ const SessionOwnerSetterCard: React.FC<CardProps> = (props) => {
                   <Input.Search
                     onSearch={(v) => {
                       // startTransition(()=>{
-
                       form
                         .validateFields([['owner', 'email']])
                         .then(() => {
