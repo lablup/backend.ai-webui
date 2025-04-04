@@ -177,6 +177,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
       loading={isFetchingAllowedTypes}
       className={styles.modal}
       title={t('data.CreateANewStorageFolder')}
+      data-testid="create-folder-modal"
       footer={
         <Flex justify="between">
           <Button

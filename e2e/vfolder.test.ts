@@ -8,8 +8,8 @@ import {
   restoreVFolderAndVerify,
   shareVFolderAndVerify,
   userInfo,
-} from './test-util';
-import { test } from '@playwright/test';
+} from './utils/test-util';
+import { test, expect } from '@playwright/test';
 
 test.describe('VFolder ', () => {
   test.beforeEach(async ({ page }) => {
