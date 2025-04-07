@@ -233,6 +233,7 @@
     "FolderToCopy": "Folder to copy",
     "Foldername": "Folder name",
     "Folders": "Folders",
+    "From": "From",
     "General": "General",
     "Host": "Host",
     "HostDetails": "Displays quota information for the selected storage host.",

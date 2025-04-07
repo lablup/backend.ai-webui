@@ -329,7 +329,7 @@ export const useVFolderInvitations = () => {
 
   return [
     {
-      ...vfolderInvitations?.invitations,
+      invitations: vfolderInvitations?.invitations,
       count: vfolderInvitations?.invitations?.length,
       isPendingMutation:
         mutationToAcceptInvitation.isPending ||

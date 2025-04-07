@@ -3,52 +3,64 @@ import { VFolderPermissionCellFragment$key } from './__generated__/VFolderPermis
 import { Typography } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
 
 interface VFolderPermissionCellProps {
-  vfolderFrgmt: VFolderPermissionCellFragment$key;
+  vfolderFrgmt?: VFolderPermissionCellFragment$key;
+  permission?: string;
 }
 
 const VFolderPermissionCell: React.FC<VFolderPermissionCellProps> = ({
   vfolderFrgmt,
+  permission: permissionProp,
   ...props
 }) => {
   const { t } = useTranslation();
 
-  // rwd is deprecated.
-  const permissionMap: { [key: string]: { label: string; icon: string } } = {
-    ro: {
-      label: t('data.ReadOnly'),
-      icon: 'R',
-    },
-    rw: {
-      label: t('data.ReadWrite'),
-      icon: 'RW',
-    },
-    wd: {
-      label: t('data.ReadWrite'),
-      icon: 'RW',
-    },
-  };
-
-  const vfolder = useFragment(
+  const vfolderData = useFragment(
     graphql`
       fragment VFolderPermissionCellFragment on VirtualFolderNode {
         permissions
       }
     `,
-    vfolderFrgmt,
+    vfolderFrgmt ?? null,
   );
 
-  const permission = _.includes(vfolder?.permissions, 'mount_rw') ? 'rw' : 'ro';
+  const { permissionInfo } = useMemo(() => {
+    const permissionMap: { [key: string]: { label: string; icon: string } } = {
+      ro: {
+        label: t('data.ReadOnly'),
+        icon: 'R',
+      },
+      rw: {
+        label: t('data.ReadWrite'),
+        icon: 'RW',
+      },
+      // wd is deprecated.
+      wd: {
+        label: t('data.ReadWrite'),
+        icon: 'RW',
+      },
+    };
+    const perm = vfolderData?.permissions
+      ? _.includes(vfolderData.permissions, 'mount_rw')
+        ? 'rw'
+        : 'ro'
+      : permissionProp === 'wd'
+        ? 'rw'
+        : permissionProp || 'ro';
+    return {
+      permissionInfo: permissionMap[perm],
+    };
+  }, [permissionProp, vfolderData, t]);
 
   return (
-    <Flex gap={'xs'}>
-      <Typography.Text>{permissionMap[permission]?.label}</Typography.Text>
+    <Flex gap={'xs'} {...props}>
+      <Typography.Text>{permissionInfo?.label}</Typography.Text>
       <Flex>
-        {_.map(permissionMap[permission]?.icon, (tag) => (
+        {_.map(permissionInfo?.icon, (tag) => (
           <Typography.Text key={tag} code>
             {_.toUpper(tag)}
           </Typography.Text>
