@@ -76,6 +76,7 @@ export interface VFolderTableProps extends Omit<TableProps<VFolder>, 'rowKey'> {
   rowKey: string | number;
   onChangeAutoMountedFolders?: (names: Array<string>) => void;
   showAutoMountedFoldersSection?: boolean;
+  ownerEmail?: string;
 }
 
 export const vFolderAliasNameRegExp = /^[a-zA-Z0-9_/.-]*$/;
@@ -91,6 +92,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   rowKey = 'name',
   onChangeAutoMountedFolders,
   showAutoMountedFoldersSection,
+  ownerEmail,
   ...tableProps
 }) => {
   const { generateFolderPath } = useFolderExplorerOpener();
@@ -150,10 +152,11 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const { data: allFolderList } = useSuspenseTanQuery({
-    queryKey: ['VFolderSelectQuery', fetchKey, currentProject.id],
+    queryKey: ['VFolderSelectQuery', fetchKey, currentProject.id, ownerEmail],
     queryFn: () => {
       const search = new URLSearchParams();
       search.set('group_id', currentProject.id);
+      ownerEmail && search.set('owner_user_email', ownerEmail);
       return baiRequestWithPromise({
         method: 'GET',
         url: `/folders?${search.toString()}`,
