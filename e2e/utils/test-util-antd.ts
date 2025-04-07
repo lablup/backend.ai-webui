@@ -39,6 +39,7 @@ export function getNotificationDescriptionBox(page: Page) {
 export const getMenuItem = (page: Page, menuName: string) => {
   return page.getByRole('link', { name: menuName });
 };
+
 export const getCardItemByCardTitle = (page: Page, title: string) => {
   return page.locator(`.ant-card:has-text("${title}")`);
 };
