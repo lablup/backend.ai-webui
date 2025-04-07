@@ -111,9 +111,6 @@ const loadPage =
       case 'storage-settings':
         import('./components/backend-ai-storage-host-settings-view.js');
         break;
-      case 'settings':
-        import('./components/backend-ai-settings-view.js');
-        break;
       case 'verify-email':
         import('./components/backend-ai-email-verification-view.js');
         break;
