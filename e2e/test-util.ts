@@ -220,6 +220,52 @@ export async function deleteForeverAndVerifyFromTrash(
   await removeSearchButton(page, folderName);
 }
 
+export async function shareVFolderAndVerify(
+  page: Page,
+  folderName: string,
+  invitedUser: string,
+) {
+  await navigateTo(page, 'data');
+
+  await page.locator('#rc_select_8').fill(folderName);
+  await page.getByRole('button', { name: 'search' }).click();
+
+  // share folder
+  await page
+    .locator('.ant-table-row')
+    .locator('td')
+    .nth(2)
+    .getByRole('button')
+    .nth(0)
+    .click();
+  await page.locator('.ant-modal').getByRole('textbox').fill(invitedUser);
+  await page.getByRole('button', { name: 'Add' }).click();
+  await page
+    .locator('.ant-modal')
+    .getByRole('button', { name: 'close' })
+    .click();
+  await removeSearchButton(page, folderName);
+}
+
+export async function acceptAllInvitationAndVerifySpecificFolder(
+  page: Page,
+  folderName: string,
+) {
+  await navigateTo(page, 'summary');
+  await page.waitForLoadState('networkidle');
+  const invitations = await page.getByLabel('Accept').all();
+  for (const invitation of invitations) {
+    await invitation.click();
+  }
+
+  await navigateTo(page, 'data');
+  await page.locator('#rc_select_8').fill(folderName);
+  await page.getByRole('button', { name: 'search' }).click();
+  expect(
+    page.locator('.ant-table-row').locator('td').nth(1).getByText(folderName),
+  );
+}
+
 export async function restoreVFolderAndVerify(page: Page, folderName: string) {
   await page.getByRole('link', { name: 'Data' }).click();
   await page.getByRole('tab', { name: 'Trash' }).click();
