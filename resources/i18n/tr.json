@@ -263,6 +263,7 @@
     "UserQuotaScopeId": "Quota Scope ID",
     "explorer": {
       "Actions": "Hareketler",
+      "Allowed": "İzin verilmiş",
       "ClickFilebrowserButton": "Klasör(ler)i yüklemek için lütfen Dosya tarayıcıyı çalıştır düğmesini tıklayın.",
       "CreateANewFolder": "Yeni bir klasör oluştur",
       "Created": "oluşturuldu",
@@ -1042,6 +1043,7 @@
     "ContainerPerSession": "Oturum Başına Kapsayıcı",
     "CreateResourcePolicy": "Kaynak Politikası Oluşturun",
     "CreatedAt": "Oluşturulma Tarihi",
+    "DefaultForUnspecified": "Belirtilmemiş için varsayılan",
     "DeletePolicy": "Politikayı sil",
     "DeletePolicyDescription": "Bu politikayı silmek üzeresiniz:",
     "ExportCSV": "CSV'yi dışa aktar",
@@ -1055,6 +1057,7 @@
     "MaxFolderCount": "Maksimum Klasör Sayısı",
     "MaxNetworkCount": "Maksimum Ağ Sayısı",
     "MaxPendingSessionCount": "Max bekleyen oturum sayısı",
+    "MaxPendingSessionResourceSlots": "Max Bekleyen Oturum Kaynak Yuvaları",
     "MaxQuotaScopeSize": "Maksimum Kota Kapsamı Boyutu (GB)",
     "MaxSessionCountPerModelSession": "Model Oturumu Başına Maksimum Oturum Sayısı",
     "MaxSessionLifetime": "Oturum Ömrü (sn.)",
