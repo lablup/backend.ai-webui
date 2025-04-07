@@ -1560,6 +1560,7 @@
     "CreateFolderDesc": "Utworzenie folderu i przesłanie plików jest kluczowe w przypadku uczenia modeli lub świadczenia usług na zewnątrz. \nRozpocznij od przesłania plików.",
     "ModelService": "Uruchom usługę modelową",
     "ModelServiceDesc": "Chcesz udostępnić wytrenowany model innym? \nKliknij przycisk, aby utworzyć usługę.",
+    "NoStartItems": "Bez dostępnych elementów startowych.",
     "StartBatchSession": "Rozpocznij sesję wsadową",
     "StartBatchSessionDesc": "W przypadku wstępnie zdefiniowanych plików lub zaplanowanych zadań wypróbuj sesje wsadowe. \nWprowadź polecenie, ustaw datę i godzinę i uruchom w razie potrzeby.",
     "StartFromExample": "Zacznij od przykładu",

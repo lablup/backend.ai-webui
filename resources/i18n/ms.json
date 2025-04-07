@@ -1558,6 +1558,7 @@
     "CreateFolderDesc": "Mencipta folder dan memuat naik fail adalah penting untuk model latihan atau menyediakan perkhidmatan secara luaran. \nSila mulakan dengan memuat naik fail.",
     "ModelService": "Mulakan Perkhidmatan Model",
     "ModelServiceDesc": "Bersedia untuk berkongsi model terlatih anda dengan orang lain? \nKlik butang untuk membuat perkhidmatan.",
+    "NoStartItems": "Tiada item permulaan yang boleh didapati.",
     "StartBatchSession": "Mulakan Sesi Kelompok",
     "StartBatchSessionDesc": "Untuk fail yang dipratentukan atau tugasan yang dijadualkan, cuba sesi Kelompok. \nMasukkan arahan, tetapkan tarikh dan masa, dan jalankan seperti yang diperlukan.",
     "StartFromExample": "Mulakan daripada Contoh",

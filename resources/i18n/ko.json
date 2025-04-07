@@ -1564,6 +1564,7 @@
     "CreateFolderDesc": "폴더를 만들고 파일을 업로드합니다. 모델을 학습시키거나 외부 서비스를 제공하려면 해당 작업은 필수적입니다.",
     "ModelService": "모델 서비스 시작",
     "ModelServiceDesc": "학습이 끝난 모델을 다른 사람과 공유하고 싶다면, 버튼을 클릭하여 서비스를 생성하세요.",
+    "NoStartItems": "사용가능한 Start 항목이 없습니다.",
     "StartBatchSession": "Batch 세션 생성",
     "StartBatchSessionDesc": "미리 정의된 파일 또는 예약된 작업에 대한 배치 세션을 생성합니다. 명령을 입력하고 날짜와 시간을 설정한 다음 필요에 따라 세션을 실행하세요.",
     "StartFromExample": "가져오기 및 실행",

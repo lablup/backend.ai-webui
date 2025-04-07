@@ -1559,6 +1559,7 @@
     "CreateFolderDesc": "Bir klasör oluşturmak ve dosyaları yüklemek, modellerin eğitimi veya dışarıdan hizmet sağlanması için çok önemlidir. \nLütfen dosyaları yükleyerek başlayın.",
     "ModelService": "Model Hizmetini Başlat",
     "ModelServiceDesc": "Eğitimli modelinizi başkalarıyla paylaşmaya hazır mısınız? \nBir hizmet oluşturmak için düğmeye tıklayın.",
+    "NoStartItems": "Kullanılabilir başlangıç ​​öğeleri yok.",
     "StartBatchSession": "Toplu Oturumu Başlat",
     "StartBatchSessionDesc": "Önceden tanımlanmış dosyalar veya zamanlanmış görevler için Toplu oturumları deneyin. \nKomutu girin, tarih ve saati ayarlayın ve gerektiği gibi çalıştırın.",
     "StartFromExample": "Örnekten Başlayın",

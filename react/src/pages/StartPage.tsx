@@ -1,15 +1,15 @@
 import ActionItemContent from '../components/ActionItemContent';
 import AnnouncementAlert from '../components/AnnouncementAlert';
+import BAIAlert from '../components/BAIAlert';
 import Flex from '../components/Flex';
-// import BAIBoard, { BAIBoardItem } from '../components/BAIBoard';
 import FolderCreateModal from '../components/FolderCreateModal';
+import { MenuKeys } from '../components/MainLayout/WebUISider';
 import ThemeSecondaryProvider from '../components/ThemeSecondaryProvider';
 import { filterEmptyItem } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-// import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { SessionLauncherFormValue } from './SessionLauncherPage';
 import { AppstoreAddOutlined, FolderAddOutlined } from '@ant-design/icons';
-import { Card, Col, Grid, Row } from 'antd';
+import { Card, Col, Row } from 'antd';
 import _ from 'lodash';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -17,16 +17,26 @@ import { useTranslation } from 'react-i18next';
 const StartPage: React.FC = () => {
   const { t } = useTranslation();
 
-  // to avoid flickering
-  useSuspendedBackendaiClient();
+  const baiClient = useSuspendedBackendaiClient();
+  const blockList = baiClient?._config?.blockList ?? [];
+  const inactiveList = baiClient?._config?.inactiveList ?? [];
 
   const webuiNavigate = useWebUINavigate();
   const [isOpenCreateModal, setIsOpenCreateModal] = useState<boolean>(false);
-  const { xl } = Grid.useBreakpoint();
 
-  const items = filterEmptyItem([
+  const items = filterEmptyItem<{
+    id: string;
+    requiredMenuKey: MenuKeys;
+    rowSpan: number;
+    columnSpan: number;
+    columnOffset: Record<number, number>;
+    data: {
+      content: React.ReactNode;
+    };
+  }>([
     {
       id: 'createFolder',
+      requiredMenuKey: 'data',
       rowSpan: 3,
       columnSpan: 1,
       columnOffset: { 6: 0, 4: 0 },
@@ -44,6 +54,7 @@ const StartPage: React.FC = () => {
     },
     {
       id: 'startSession',
+      requiredMenuKey: 'job',
       rowSpan: 3,
       columnSpan: 1,
       columnOffset: { 6: 1, 4: 1 },
@@ -61,6 +72,7 @@ const StartPage: React.FC = () => {
     },
     {
       id: 'startBatchSession',
+      requiredMenuKey: 'job',
       rowSpan: 3,
       columnSpan: 1,
       columnOffset: { 6: 2, 4: 2 },
@@ -84,18 +96,10 @@ const StartPage: React.FC = () => {
         ),
       },
     },
-    xl && {
-      id: 'empty',
-      rowSpan: 3,
-      columnSpan: 1,
-      columnOffset: { 6: 0, 4: 0 },
-      data: {
-        content: <></>,
-      },
-    },
     {
       id: 'modelService',
       rowSpan: 3,
+      requiredMenuKey: 'serving',
       columnSpan: 1,
       columnOffset: { 6: 0, 4: 0 },
       data: {
@@ -150,7 +154,11 @@ const StartPage: React.FC = () => {
     //     ),
     //   },
     // },
-  ]);
+  ]).filter(
+    (item) =>
+      !_.includes(blockList, item.requiredMenuKey) &&
+      !_.includes(inactiveList, item.requiredMenuKey),
+  );
 
   return (
     <Flex direction="column" gap={'md'} align="stretch">
@@ -164,11 +172,12 @@ const StartPage: React.FC = () => {
         }}
       /> */}
       <AnnouncementAlert showIcon closable />
+      {_.isEmpty(items) && (
+        <BAIAlert type="info" description={t('start.NoStartItems')} showIcon />
+      )}
       <Row gutter={[16, 16]}>
         {_.map(items, (item, idx) => {
-          return item.id === 'empty' ? (
-            <Col key={'empty' + idx} xs={24} md={12} xl={6}></Col>
-          ) : (
+          return (
             <Col key={item.id} xs={24} md={12} xl={6}>
               <Card
                 style={{ height: 340 }}
@@ -197,4 +206,5 @@ const StartPage: React.FC = () => {
     </Flex>
   );
 };
+
 export default StartPage;

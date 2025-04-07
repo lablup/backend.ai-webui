@@ -1560,6 +1560,7 @@
     "CreateFolderDesc": "Für das Training von Modellen oder die externe Bereitstellung von Diensten sind das Erstellen eines Ordners und das Hochladen von Dateien von entscheidender Bedeutung. \nBitte beginnen Sie mit dem Hochladen der Dateien.",
     "ModelService": "Modelldienst starten",
     "ModelServiceDesc": "Sind Sie bereit, Ihr trainiertes Modell mit anderen zu teilen? \nKlicken Sie auf die Schaltfläche, um einen Dienst zu erstellen.",
+    "NoStartItems": "Keine verfügbaren Startartikel.",
     "StartBatchSession": "Starten Sie die Batch-Sitzung",
     "StartBatchSessionDesc": "Versuchen Sie für vordefinierte Dateien oder geplante Aufgaben Batch-Sitzungen. \nGeben Sie den Befehl ein, stellen Sie Datum und Uhrzeit ein und führen Sie ihn nach Bedarf aus.",
     "StartFromExample": "Beginnen Sie mit dem Beispiel",

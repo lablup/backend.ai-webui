@@ -1560,6 +1560,7 @@
     "CreateFolderDesc": "Crear una carpeta y cargar archivos es crucial para entrenar modelos o brindar servicios externamente. \nComience subiendo los archivos.",
     "ModelService": "Iniciar servicio de modelo",
     "ModelServiceDesc": "¿Listo para compartir su modelo entrenado con otros? \nHaga clic en el botón para crear un servicio.",
+    "NoStartItems": "Sin exceso de artículos de inicio.",
     "StartBatchSession": "Iniciar sesión por lotes",
     "StartBatchSessionDesc": "Para archivos predefinidos o tareas programadas, pruebe las sesiones por lotes. \nIngrese el comando, establezca la fecha y la hora y ejecútelo según sea necesario.",
     "StartFromExample": "Empezar desde el ejemplo",

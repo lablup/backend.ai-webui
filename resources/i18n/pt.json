@@ -1560,6 +1560,7 @@
     "CreateFolderDesc": "Criar uma pasta e fazer upload de arquivos são cruciais para treinar modelos ou fornecer serviços externamente. \nComece enviando os arquivos.",
     "ModelService": "Iniciar serviço de modelo",
     "ModelServiceDesc": "Pronto para compartilhar seu modelo treinado com outras pessoas? \nClique no botão para criar um serviço.",
+    "NoStartItems": "Sem itens de início disponíveis.",
     "StartBatchSession": "Iniciar sessão em lote",
     "StartBatchSessionDesc": "Para arquivos predefinidos ou tarefas agendadas, experimente sessões em lote. \nDigite o comando, defina a data e a hora e execute conforme necessário.",
     "StartFromExample": "Comece pelo exemplo",

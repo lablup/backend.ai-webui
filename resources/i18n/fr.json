@@ -1560,6 +1560,7 @@
     "CreateFolderDesc": "La création d'un dossier et le téléchargement de fichiers sont cruciaux pour former des modèles ou fournir des services en externe. \nVeuillez commencer par télécharger les fichiers.",
     "ModelService": "Démarrer le service de modèle",
     "ModelServiceDesc": "Prêt à partager votre modèle formé avec d'autres ? \nCliquez sur le bouton pour créer un service.",
+    "NoStartItems": "Pas d'articles de démarrage disponibles.",
     "StartBatchSession": "Démarrer une session par lots",
     "StartBatchSessionDesc": "Pour les fichiers prédéfinis ou les tâches planifiées, essayez les sessions par lots. \nEntrez la commande, définissez la date et l'heure et exécutez-la selon vos besoins.",
     "StartFromExample": "Partir de l'exemple",

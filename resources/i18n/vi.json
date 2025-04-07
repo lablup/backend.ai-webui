@@ -1560,6 +1560,7 @@
     "CreateFolderDesc": "Việc tạo thư mục và tải tệp lên là rất quan trọng đối với việc đào tạo mô hình hoặc cung cấp dịch vụ bên ngoài. \nHãy bắt đầu bằng cách tải lên các tập tin.",
     "ModelService": "Bắt đầu dịch vụ mẫu",
     "ModelServiceDesc": "Sẵn sàng chia sẻ mô hình được đào tạo của bạn với người khác? \nNhấp vào nút để tạo một dịch vụ.",
+    "NoStartItems": "Không có mục bắt đầu có sẵn.",
     "StartBatchSession": "Bắt đầu phiên hàng loạt",
     "StartBatchSessionDesc": "Đối với các tệp được xác định trước hoặc các tác vụ đã lên lịch, hãy thử phiên Batch. \nNhập lệnh, đặt ngày giờ và chạy khi cần.",
     "StartFromExample": "Bắt đầu từ ví dụ",

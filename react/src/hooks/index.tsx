@@ -1,3 +1,4 @@
+import { MenuKeys } from '../components/MainLayout/WebUISider';
 import { preserveDotStartCase } from '../helper';
 import { useSuspenseTanQuery } from './reactQueryAlias';
 import { useEventNotStable } from './useEventNotStable';
@@ -498,8 +499,8 @@ type BackendAIConfig = {
   directoryBasedUsage: boolean;
   maxCountForPreopenPorts: number;
   pluginPages: string;
-  blockList: string[];
-  inactiveList: string[];
+  blockList: MenuKeys[];
+  inactiveList: MenuKeys[];
   allowSignout: boolean;
   allowNonAuthTCP: boolean;
   enableExtendLoginSession: boolean;

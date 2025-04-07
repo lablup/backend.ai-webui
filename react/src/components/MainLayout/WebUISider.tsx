@@ -70,8 +70,35 @@ type GroupName =
   | 'metrics'
   | 'mlops';
 
+export type MenuKeys =
+  // generalMenu keys
+  | 'start'
+  | 'dashboard'
+  | 'summary'
+  | 'job'
+  | 'serving'
+  | 'model-store'
+  | 'ai-agent'
+  | 'chat'
+  | 'import'
+  | 'data'
+  | 'my-environment'
+  | 'agent-summary'
+  | 'statistics'
+  | 'pipeline'
+  // adminMenu keys
+  | 'credential'
+  | 'environment'
+  | 'resource-policy'
+  // superAdminMenu keys
+  | 'agent'
+  | 'settings'
+  | 'maintenance'
+  | 'information';
+
 interface WebUIGeneralMenuItemType extends MenuItemType {
   group: GroupName;
+  key: MenuKeys;
 }
 
 const WebUISider: React.FC<WebUISiderProps> = (props) => {

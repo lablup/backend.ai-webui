@@ -1558,6 +1558,7 @@
     "CreateFolderDesc": "Kansion luominen ja tiedostojen lataaminen ovat tärkeitä koulutusmallien tai palvelujen tarjoamisen kannalta. \nAloita lataamalla tiedostot.",
     "ModelService": "Käynnistä mallipalvelu",
     "ModelServiceDesc": "Oletko valmis jakamaan koulutetun mallisi muiden kanssa? \nNapsauta painiketta luodaksesi palvelun.",
+    "NoStartItems": "Ei käytettävissä olevia aloitustuotteita.",
     "StartBatchSession": "Aloita eräistunto",
     "StartBatchSessionDesc": "Jos haluat käyttää ennalta määritettyjä tiedostoja tai ajoitettuja tehtäviä, kokeile eräistuntoja. \nAnna komento, aseta päivämäärä ja aika ja suorita tarvittaessa.",
     "StartFromExample": "Aloita esimerkistä",

@@ -1559,6 +1559,7 @@
     "CreateFolderDesc": "建立資料夾和上傳檔案對於訓練模型或對外提供服務至關重要。\n請先上傳文件。",
     "ModelService": "啟動模型服務",
     "ModelServiceDesc": "準備好與其他人分享您訓練過的模型了嗎？\n點選按鈕建立服務。",
+    "NoStartItems": "沒有可用的開始項目。",
     "StartBatchSession": "開始批量會話",
     "StartBatchSessionDesc": "對於預先定義檔案或排程任務，請嘗試批次會話。\n輸入命令，設定日期和時間，然後根據需要運行。",
     "StartFromExample": "從例子開始",

@@ -1557,6 +1557,7 @@
     "CreateFolderDesc": "La creazione di una cartella e il caricamento di file sono fondamentali per la formazione di modelli o la fornitura di servizi esternamente. \nInizia caricando i file.",
     "ModelService": "Avvia il servizio modello",
     "ModelServiceDesc": "Pronto a condividere il tuo modello addestrato con altri? \nFare clic sul pulsante per creare un servizio.",
+    "NoStartItems": "NESSUNA PROPRIETÀ DI AVVIBILE DISPONIBILI.",
     "StartBatchSession": "Avvia sessione batch",
     "StartBatchSessionDesc": "Per file predefiniti o attività pianificate, prova le sessioni batch. \nImmettere il comando, impostare la data e l'ora ed eseguirlo secondo necessità.",
     "StartFromExample": "Partire dall'Esempio",

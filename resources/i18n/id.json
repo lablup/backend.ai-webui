@@ -1559,6 +1559,7 @@
     "CreateFolderDesc": "Membuat folder dan mengunggah file sangat penting untuk melatih model atau menyediakan layanan secara eksternal. \nSilakan mulai dengan mengunggah file.",
     "ModelService": "Mulai Layanan Model",
     "ModelServiceDesc": "Siap membagikan model terlatih Anda kepada orang lain? \nKlik tombol untuk membuat layanan.",
+    "NoStartItems": "Tidak ada item mulai yang tersedia.",
     "StartBatchSession": "Mulai Sesi Batch",
     "StartBatchSessionDesc": "Untuk file yang telah ditentukan sebelumnya atau tugas terjadwal, cobalah sesi Batch. \nMasukkan perintah, atur tanggal dan waktu, dan jalankan sesuai kebutuhan.",
     "StartFromExample": "Mulailah dari Contoh",

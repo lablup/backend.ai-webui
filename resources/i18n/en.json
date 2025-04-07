@@ -1567,6 +1567,7 @@
     "CreateFolderDesc": "Create folders and upload files. To train models or provide external services, it is essential to create folders and upload files.",
     "ModelService": "Start Model Service",
     "ModelServiceDesc": "Select to share your trained model with others. This action will create a model service.",
+    "NoStartItems": "No availiable Start items.",
     "StartBatchSession": "Start Batch Session",
     "StartBatchSessionDesc": "Create a batch session for predefined files or scheduled tasks. Enter the command, set the date and time, and run the session on demand.",
     "StartFromExample": "Start from the Example",
