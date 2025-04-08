@@ -29,4 +29,12 @@ export class FolderCreationModal {
     await expect(locationSelector).toBeVisible();
     return locationSelector;
   }
+
+  async getRadioByLabel(label: string): Promise<Locator> {
+    const RadioContainer = this.modal.locator(
+      `ant-form-item-row:has-text("${label}")`,
+    );
+    await expect(RadioContainer).toBeVisible();
+    return RadioContainer;
+  }
 }
