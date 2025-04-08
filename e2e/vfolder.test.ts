@@ -1,3 +1,4 @@
+import { FolderCreationModal } from './utils/classes/FolderCreationModal';
 import {
   acceptAllInvitationAndVerifySpecificFolder,
   createVFolderAndVerify,
@@ -16,6 +17,64 @@ test.describe('VFolder ', () => {
     await loginAsUser(page);
   });
   const folderName = 'e2e-test-folder-user-creation' + new Date().getTime();
+  test.describe('vFolder Creation', () => {
+    test.beforeEach(async ({ page }) => {
+      await page.getByRole('link', { name: 'Data' }).click();
+      await page.getByRole('button', { name: 'Create Folder' }).nth(1).click();
+    });
+    test.afterEach(async ({ page }) => {
+      await moveToTrashAndVerify(page, folderName);
+      await deleteForeverAndVerifyFromTrash(page, folderName);
+    });
+    test('User can create a vFolder by selecting a specific location', async ({
+      page,
+    }) => {
+      const folderCreationModal = new FolderCreationModal(page);
+      await folderCreationModal.modalToBeVisible();
+      await folderCreationModal.fillFolderName(folderName);
+      await folderCreationModal.fillLocationSelector('local');
+      await folderCreationModal.selectLocationOptionByText('local');
+      await folderCreationModal.clickCreateButton();
+    });
+    test('User can create default vFolder', async ({ page }) => {
+      const folderCreationModal = new FolderCreationModal(page);
+      await folderCreationModal.modalToBeVisible();
+      await folderCreationModal.fillFolderName(folderName);
+      await folderCreationModal.clickCreateButton();
+    });
+    test('User can create Model vFolder', async ({ page }) => {
+      const folderCreationModal = new FolderCreationModal(page);
+      await folderCreationModal.modalToBeVisible();
+      await folderCreationModal.fillFolderName(folderName);
+      await folderCreationModal.selectModelUsageMode();
+      await folderCreationModal.clickCreateButton();
+    });
+    test('User can create cloneable Model vFolder', async ({ page }) => {
+      const folderCreationModal = new FolderCreationModal(page);
+      await folderCreationModal.modalToBeVisible();
+      await folderCreationModal.fillFolderName(folderName);
+      await folderCreationModal.selectModelUsageMode();
+      await folderCreationModal.clickCloneableSwitchButton();
+      await expect(
+        await folderCreationModal.getCloneableSwitchButton(),
+      ).toBeChecked();
+      await folderCreationModal.clickCreateButton();
+    });
+    test('User can create Read & Write vFolder', async ({ page }) => {
+      const folderCreationModal = new FolderCreationModal(page);
+      await folderCreationModal.modalToBeVisible();
+      await folderCreationModal.fillFolderName(folderName);
+      await folderCreationModal.selectReadWritePermission();
+      await folderCreationModal.clickCreateButton();
+    });
+    test('User can create Read Only vFolder', async ({ page }) => {
+      const folderCreationModal = new FolderCreationModal(page);
+      await folderCreationModal.modalToBeVisible();
+      await folderCreationModal.fillFolderName(folderName);
+      await folderCreationModal.selectReadOnlyPermission();
+      await folderCreationModal.clickCreateButton();
+    });
+  });
   test('User can create and delete, delete forever vFolder', async ({
     page,
   }) => {
