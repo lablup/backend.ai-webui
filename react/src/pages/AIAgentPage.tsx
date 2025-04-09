@@ -123,7 +123,6 @@ const AIAgentPage: React.FC = () => {
     };
 
     window.addEventListener('popstate', handlePopState);
-
     return () => {
       window.removeEventListener('popstate', handlePopState);
     };
@@ -133,16 +132,40 @@ const AIAgentPage: React.FC = () => {
     <Suspense
       fallback={<Skeleton active style={{ padding: token.paddingMD }} />}
     >
-      <Flex direction="column" align="stretch" justify="center" gap="lg">
-        <AIAgentCardList
-          agents={agents}
-          onClickAgent={(agent) => {
-            webuiNavigate(
-              `/chat?endpointId=${agent.endpoint_id}&agentId=${agent.id}`,
+      {iframeUrl ? (
+        <iframe
+          src={iframeUrl}
+          title="AI Agent Content"
+          style={{
+            width: '100%',
+            height: '100vh',
+            border: 'none',
+            borderRadius: token.borderRadius,
+          }}
+          onLoad={() => {
+            window.history.pushState(
+              null,
+              '',
+              window.location.href + '#iframe',
             );
           }}
         />
-      </Flex>
+      ) : (
+        <Flex direction="column" align="stretch" justify="center" gap="lg">
+          <AIAgentCardList
+            agents={agents}
+            onClickAgent={(agent) => {
+              if (agent.type === 'external') {
+                setIframeUrl(agent.config.url);
+              } else {
+                webuiNavigate(
+                  `/chat?endpointId=${agent.endpoint_id}&agentId=${agent.id}`,
+                );
+              }
+            }}
+          />
+        </Flex>
+      )}
     </Suspense>
   );
 };
