@@ -130,12 +130,7 @@ const ModelStoreListPage: React.FC = () => {
     return result;
   }, [model_cards?.edges]);
   return (
-    <Flex
-      direction="column"
-      align="stretch"
-      justify="center"
-      gap="lg"
-    >
+    <Flex direction="column" align="stretch" justify="center" gap="lg">
       <ImportFromHuggingFacePanel />
       <Flex
         direction="column"
@@ -245,6 +240,8 @@ const ModelStoreListPage: React.FC = () => {
           })
           .sort((a, b) => {
             const specialNames = [
+              // FIXME: NIM supported image need to be located first.
+              'Meta-Llama-3-8B-Instruct',
               'gemma-2-27b-it',
               'Llama-3.2-11B-Vision-Instruct',
               'stable-diffusion-3-medium',
@@ -295,67 +292,66 @@ const ModelStoreListPage: React.FC = () => {
               style={{
                 height: '100%',
               }}
-              children={
-                <Flex direction="column" align="stretch" gap="xs">
-                  <Flex direction="row" align="start" gap="xs">
-                    <Image
-                      width={150}
-                      preview={false}
-                      src={`/resources/images/model-player/${_.replace(item?.name as string, ' ', '-')}.jpeg`}
-                      fallback="/resources/images/model-player/default.jpeg"
-                      loading={'lazy'}
-                    />
-                    <Typography.Paragraph
-                      ellipsis={{ rows: 3, expandable: false }}
-                      style={{ flex: 1 }}
-                    >
-                      <TextHighlighter keyword={search}>
-                        {item?.description}
-                      </TextHighlighter>
-                    </Typography.Paragraph>
-                  </Flex>
-                  <Flex direction="row" wrap="wrap" gap={'xs'}>
-                    {item?.category && (
-                      <Tag bordered={false}>
-                        <TextHighlighter keyword={search}>
-                          {item?.category}
-                        </TextHighlighter>
-                      </Tag>
-                    )}
-                    {item?.task && (
-                      <Tag bordered={false} color="success">
-                        <TextHighlighter keyword={search}>
-                          {item?.task}
-                        </TextHighlighter>
-                      </Tag>
-                    )}
-                    {item?.label &&
-                      _.map(item?.label, (label) => (
-                        <Tag key={label} bordered={false} color="blue">
-                          <TextHighlighter keyword={search}>
-                            {label}
-                          </TextHighlighter>
-                        </Tag>
-                      ))}
-                    {item?.error_msg && (
-                      <Alert
-                        style={{ width: '100%' }}
-                        message={
-                          <Typography.Paragraph
-                            ellipsis={{ rows: 6 }}
-                            style={{ marginBottom: 0 }}
-                          >
-                            {item.error_msg}
-                          </Typography.Paragraph>
-                        }
-                        type="error"
-                        showIcon
-                      />
-                    )}
-                  </Flex>
+            >
+              <Flex direction="column" align="stretch" gap="xs">
+                <Flex direction="row" align="start" gap="xs">
+                  <Image
+                    width={150}
+                    preview={false}
+                    src={`/resources/images/model-player/${_.replace(item?.name as string, ' ', '-')}.jpeg`}
+                    fallback="/resources/images/model-player/default.jpeg"
+                    loading={'lazy'}
+                  />
+                  <Typography.Paragraph
+                    ellipsis={{ rows: 3, expandable: false }}
+                    style={{ flex: 1 }}
+                  >
+                    <TextHighlighter keyword={search}>
+                      {item?.description}
+                    </TextHighlighter>
+                  </Typography.Paragraph>
                 </Flex>
-              }
-            ></Card>
+                <Flex direction="row" wrap="wrap" gap={'xs'}>
+                  {item?.category && (
+                    <Tag bordered={false}>
+                      <TextHighlighter keyword={search}>
+                        {item?.category}
+                      </TextHighlighter>
+                    </Tag>
+                  )}
+                  {item?.task && (
+                    <Tag bordered={false} color="success">
+                      <TextHighlighter keyword={search}>
+                        {item?.task}
+                      </TextHighlighter>
+                    </Tag>
+                  )}
+                  {item?.label &&
+                    _.map(item?.label, (label) => (
+                      <Tag key={label} bordered={false} color="blue">
+                        <TextHighlighter keyword={search}>
+                          {label}
+                        </TextHighlighter>
+                      </Tag>
+                    ))}
+                  {item?.error_msg && (
+                    <Alert
+                      style={{ width: '100%' }}
+                      message={
+                        <Typography.Paragraph
+                          ellipsis={{ rows: 6 }}
+                          style={{ marginBottom: 0 }}
+                        >
+                          {item.error_msg}
+                        </Typography.Paragraph>
+                      }
+                      type="error"
+                      showIcon
+                    />
+                  )}
+                </Flex>
+              </Flex>
+            </Card>
           </List.Item>
         )}
       />

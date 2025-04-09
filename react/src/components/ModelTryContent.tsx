@@ -15,6 +15,7 @@ import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import NvidiaIcon from './BAIIcons/Nvidia';
 import VLLMIcon from './BAIIcons/VLLMIcon';
+import Flex from './Flex';
 import {
   ServiceCreateType,
   ServiceLauncherFormValue,
@@ -23,7 +24,7 @@ import { VFolder } from './VFolderSelect';
 import { BuildOutlined } from '@ant-design/icons';
 import { theme, Typography, Button } from 'antd';
 import _ from 'lodash';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface ModelTryContentProps {
@@ -211,7 +212,9 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
         ? 'llama-vision-11b'
         : modelName?.includes('Talkativot UI')
           ? 'talkativot'
-          : modelName;
+          : modelName?.includes('Meta-Llama-3-8B-Instruct')
+            ? 'llama-3-8b'
+            : modelName;
     return {
       serviceName: `${model}-${generateRandomString(4)}`,
       replicas: 1,
@@ -242,7 +245,7 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
               default:
                 return '0.6.6-cuda12.4-ubuntu22.04'; // '0.6.2-cuda12.1-ubuntu22.04';
               case 'nim':
-                return 'ngc-nim:1.0.0-llama3.8b-h100x1-fp16';
+                return '1.0.0-llama3.8b'; //'ngc-nim:1.0.0-llama3.8b-h100x1-fp16';
             }
           })(),
           architecture: 'x86_64',
@@ -284,7 +287,26 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
       modelMountDestination: '/models',
       modelDefinitionPath: '',
       vfoldersAliasMap: {},
-      envvars: [],
+      envvars: [
+        // FIXME: hardcoded adding VLLM_EXTRA_ARGS for Llama-3.2-11B-Vision-Instruct
+        ...(modelName?.includes('Llama-3.2-11B-Vision-Instruct')
+          ? [
+              {
+                variable: 'VLLM_EXTRA_ARGS',
+                value: '--max-num-seq 16 --enforce-eager',
+              },
+            ]
+          : []),
+        ...(modelName?.includes('Meta-Llama-3-8B-Instruct')
+          ? [
+              // FIXME: hardcoded adding NGC_API_KEY
+              {
+                variable: 'NGC_API_KEY',
+                value: baiClient._config.ngcAPIKey || 'NGC_API_KEY_NOT_SET',
+              },
+            ]
+          : []),
+      ],
       enabledAutomaticShmem: false,
     };
   };
@@ -296,6 +318,8 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
       default:
         break;
       case 'nim':
+        modelId = 'nim-model';
+        break;
       case 'custom':
         modelId = 'custom';
         break;
@@ -343,7 +367,12 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
                 },
                 onResolve: () => {
                   mutationToCreateService.mutate(
-                    getServiceInputByRuntimeVariant('vllm', `${modelName}-1`),
+                    getServiceInputByRuntimeVariant(
+                      modelName === 'Meta-Llama-3-8B-Instruct'
+                        ? 'nim-model'
+                        : 'vllm',
+                      `${modelName}-1`,
+                    ),
                     {
                       onSuccess: (result: any) => {
                         upsertNotification({
@@ -356,7 +385,7 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
                               let progress = 0;
                               const interval = setInterval(async () => {
                                 try {
-                                  progress += 5;
+                                  progress += _.random(2, 5);
                                   upsertNotification({
                                     key: result?.endpoint_id,
                                     backgroundTask: {
@@ -388,6 +417,7 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
                             percent: 0,
                             onResolve: () => {
                               upsertNotification({
+                                open: true,
                                 duration: 0,
                                 key: result?.endpoint_id,
                                 backgroundTask: {
@@ -447,7 +477,7 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
                   let progress = 0;
                   const interval = setInterval(async () => {
                     try {
-                      progress += 5;
+                      progress += _.random(2, 5);
                       upsertNotification({
                         key: result?.endpoint_id,
                         backgroundTask: {
@@ -476,38 +506,37 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
                 }),
                 onChange: {
                   pending: 'Model service is starting...',
-                  resolved: 'Model service is now ready!',
-                  rejected:
-                    'Model service failed to start. Please check the service status.',
+                  resolved: (_data, _notification) => {
+                    return {
+                      duration: 0,
+                      open: true,
+                      key: result?.endpoint_id,
+                      backgroundTask: {
+                        status: 'resolved',
+                        percent: 100,
+                      },
+                      message: 'Model service is successfully started.',
+                      to: `/chat?endpointId=${result?.endpoint_id}&modelId=${modelId}`, // PATH to playground page
+                      toText: 'Play your model now!',
+                    };
+                  },
+                  rejected: (_data, _notification) => {
+                    return {
+                      duration: 0,
+                      key: result?.endpoint_id,
+                      backgroundTask: {
+                        status: 'rejected',
+                        percent: 99,
+                      },
+                      message:
+                        'Model service failed to start. Please check the service status.',
+                      to: `/serving/${result?.endpoint_id}`,
+                      toText: 'Go to service detail page',
+                    };
+                  },
                 },
                 status: 'pending',
                 percent: 0,
-                onResolve: () => {
-                  upsertNotification({
-                    duration: 0,
-                    key: result?.endpoint_id,
-                    backgroundTask: {
-                      status: 'resolved',
-                      percent: 100,
-                    },
-                    message: '',
-                    to: `/playground?endpointId=${result?.endpoint_id}&modelId=${modelId}`, // PATH to playground page
-                    toText: 'Play your model now!',
-                  });
-                },
-                onFailed: () => {
-                  upsertNotification({
-                    duration: 0,
-                    key: result?.endpoint_id,
-                    backgroundTask: {
-                      status: 'rejected',
-                      percent: 99,
-                    },
-                    message: '',
-                    to: `/serving/${result?.endpoint_id}`,
-                    toText: 'Go to service detail page',
-                  });
-                },
               },
             });
           },
@@ -520,7 +549,7 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
   };
 
   return (
-    <>
+    <Flex direction="row" align="stretch" gap={'sm'} style={{ width: '100%' }}>
       {title && (
         <Typography.Title level={5} style={{ marginTop: 0 }}>
           {title}
@@ -537,6 +566,7 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
         }}
         icon={<VLLMIcon size={token.sizeLG} />}
         style={{
+          width: '100%',
           height: token.sizeXXL,
         }}
       >
@@ -554,6 +584,7 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
           cloneOrCreateModelService('nim');
         }}
         style={{
+          width: '100%',
           height: token.sizeXXL,
         }}
         icon={<NvidiaIcon size={token.sizeLG} />}
@@ -566,13 +597,14 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
           cloneOrCreateModelService('custom');
         }}
         style={{
+          width: '100%',
           height: token.sizeXXL,
         }}
         icon={<BuildOutlined style={{ fontSize: token.sizeLG }} />}
       >
         Custom
       </Button>
-    </>
+    </Flex>
   );
 };
 

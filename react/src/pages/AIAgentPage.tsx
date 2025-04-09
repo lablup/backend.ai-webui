@@ -34,6 +34,19 @@ const { Meta } = Card;
 const AIAgentCard = ({ agent }: { agent: AIAgent }) => {
   const tags = agent.meta.tags || [];
   const { styles } = useStyles();
+  const avatar =
+    agent.type === 'external' ? (
+      <img
+        src={agent.meta.avatar}
+        alt={agent.meta.title}
+        height={150}
+        width={150}
+        style={{ borderRadius: '50%' }}
+      />
+    ) : (
+      <FluentEmojiIcon name={agent.meta.avatar} height={150} width={150} />
+    );
+
   return (
     <Card hoverable>
       <Flex
@@ -45,13 +58,7 @@ const AIAgentCard = ({ agent }: { agent: AIAgent }) => {
       >
         <Meta
           title={agent.meta.title}
-          avatar={
-            <FluentEmojiIcon
-              name={agent.meta.avatar}
-              height={150}
-              width={150}
-            />
-          }
+          avatar={avatar}
           description={agent.meta.descriptions}
           className={styles.meta}
         />
@@ -104,21 +111,61 @@ const AIAgentPage: React.FC = () => {
   const { token } = theme.useToken();
   const { agents } = useAIAgent();
   const webuiNavigate = useWebUINavigate();
+  const [iframeUrl, setIframeUrl] = React.useState<string | undefined>(
+    undefined,
+  );
+
+  React.useEffect(() => {
+    const handlePopState = () => {
+      if (iframeUrl) {
+        setIframeUrl(undefined);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [iframeUrl]);
 
   return (
     <Suspense
       fallback={<Skeleton active style={{ padding: token.paddingMD }} />}
     >
-      <Flex direction="column" align="stretch" justify="center" gap="lg">
-        <AIAgentCardList
-          agents={agents}
-          onClickAgent={(agent) => {
-            webuiNavigate(
-              `/chat?endpointId=${agent.endpoint_id}&agentId=${agent.id}`,
+      {iframeUrl ? (
+        <iframe
+          src={iframeUrl}
+          title="AI Agent Content"
+          style={{
+            width: '100%',
+            height: '100vh',
+            border: 'none',
+            borderRadius: token.borderRadius,
+          }}
+          onLoad={() => {
+            window.history.pushState(
+              null,
+              '',
+              window.location.href + '#iframe',
             );
           }}
         />
-      </Flex>
+      ) : (
+        <Flex direction="column" align="stretch" justify="center" gap="lg">
+          <AIAgentCardList
+            agents={agents}
+            onClickAgent={(agent) => {
+              if (agent.type === 'external') {
+                setIframeUrl(agent.config.url);
+              } else {
+                webuiNavigate(
+                  `/chat?endpointId=${agent.endpoint_id}&agentId=${agent.id}`,
+                );
+              }
+            }}
+          />
+        </Flex>
+      )}
     </Suspense>
   );
 };

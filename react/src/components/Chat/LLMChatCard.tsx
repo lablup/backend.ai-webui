@@ -305,7 +305,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
         </Flex>
       }
       style={{
-        height: '100%',
+        height: '80%',
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
@@ -319,7 +319,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
           display: 'flex',
           flexDirection: 'column',
           padding: 0,
-          height: '50%',
+          // height: '50%',
           position: 'relative',
         },
         actions: {
