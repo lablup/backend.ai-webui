@@ -1469,6 +1469,7 @@
     "InputRequired": "Dieses Feld wird benötigt.",
     "InvalidValue": "Bitte geben Sie den richtigen Eingabewert ein.",
     "MTUDescription": "Maximale Übertragungseinheit, die Größe des größten Pakets, das ein Netzprotokoll übertragen kann.",
+    "NoChangesToDisplay": "Es gibt keine Änderungen zu Anzeigen",
     "NoteAboutFixedSetup": "Die folgenden Einstellungen werden je nach Installationsumgebung und Status automatisch angewendet.",
     "OpenSourceCudaGPUSupport": "Open Source CUDA GPU Unterstützung",
     "OutOfRange": "Außerhalb der Reichweite.",

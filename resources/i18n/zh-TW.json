@@ -1468,6 +1468,7 @@
     "InputRequired": "此字段是必需的。",
     "InvalidValue": "請輸入正確的輸入值。",
     "MTUDescription": "最大传输单位，网络协议可传输的最大数据包的大小。",
+    "NoChangesToDisplay": "沒有更改可以顯示",
     "NoteAboutFixedSetup": "下面的設置將根據安裝環境和狀態自動應用。",
     "OpenSourceCudaGPUSupport": "開源 CUDA GPU 支援",
     "OutOfRange": "超出范围。",

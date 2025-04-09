@@ -1468,6 +1468,7 @@
     "InputRequired": "Bagian ini diperlukan.",
     "InvalidValue": "Harap masukkan nilai input yang benar.",
     "MTUDescription": "Unit transmisi maksimum, ukuran paket terbesar yang dapat ditransmisikan oleh protokol jaringan.",
+    "NoChangesToDisplay": "Tidak ada perubahan untuk ditampilkan",
     "NoteAboutFixedSetup": "Pengaturan di bawah ini diterapkan secara otomatis tergantung pada lingkungan dan status pemasangan.",
     "OpenSourceCudaGPUSupport": "Dukungan GPU CUDA Sumber Terbuka",
     "OutOfRange": "Di luar jangkauan.",

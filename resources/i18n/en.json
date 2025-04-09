@@ -1476,6 +1476,7 @@
     "InputRequired": "This field is required.",
     "InvalidValue": "Please put the correct input value.",
     "MTUDescription": "Maximum transmission unit, the size of the largest packet that a network protocol can transmit.",
+    "NoChangesToDisplay": "There are no changes to display",
     "NoteAboutFixedSetup": "The settings below are automatically applied depending on the installation environment and status.",
     "OpenSourceCudaGPUSupport": "Open Source CUDA GPU support",
     "OutOfRange": "Out of range.",

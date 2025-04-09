@@ -1468,6 +1468,7 @@
     "InputRequired": "Bu alan gereklidir.",
     "InvalidValue": "Lütfen doğru giriş değerini girin.",
     "MTUDescription": "Maksimum iletim birimi, bir ağ protokolünün iletebileceği en büyük paketin boyutu.",
+    "NoChangesToDisplay": "Görüntülenecek değişiklik yok",
     "NoteAboutFixedSetup": "Aşağıdaki ayarlar, kurulum ortamına ve durumuna bağlı olarak otomatik olarak uygulanır.",
     "OpenSourceCudaGPUSupport": "Açık Kaynak CUDA GPU desteği",
     "OutOfRange": "Menzil dışında.",

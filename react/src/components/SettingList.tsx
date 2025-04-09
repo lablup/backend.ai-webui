@@ -9,6 +9,7 @@ import {
   Button,
   Checkbox,
   Divider,
+  Empty,
   Input,
   Tabs,
   Typography,
@@ -206,13 +207,23 @@ const SettingList: React.FC<SettingPageProps> = ({
               ),
               children: (
                 <Flex direction="column" align="stretch" gap={'xl'}>
-                  {_.map(filteredSettingGroups, (group) => (
-                    <GroupSettingItems
-                      key={group.title}
-                      group={group}
-                      hideEmpty
+                  {_.sumBy(
+                    filteredSettingGroups,
+                    (group) => group.settingItems.length,
+                  ) > 0 ? (
+                    _.map(filteredSettingGroups, (group) => (
+                      <GroupSettingItems
+                        key={group.title}
+                        group={group}
+                        hideEmpty
+                      />
+                    ))
+                  ) : (
+                    <Empty
+                      image={Empty.PRESENTED_IMAGE_SIMPLE}
+                      description={t('settings.NoChangesToDisplay')}
                     />
-                  ))}
+                  )}
                 </Flex>
               ),
             },
@@ -224,12 +235,15 @@ const SettingList: React.FC<SettingPageProps> = ({
                   count={group.settingItems.length}
                 />
               ),
-              children: (
-                <GroupSettingItems
-                  group={filteredSettingGroups[idx]}
-                  hideEmpty
-                />
-              ),
+              children:
+                group.settingItems.length > 0 ? (
+                  <GroupSettingItems group={group} hideEmpty />
+                ) : (
+                  <Empty
+                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    description={t('settings.NoChangesToDisplay')}
+                  />
+                ),
             })),
           ]}
         />

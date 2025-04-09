@@ -1468,6 +1468,7 @@
     "InputRequired": "この項目は必須です。",
     "InvalidValue": "正しい入力値を入力してください。",
     "MTUDescription": "最大送信単位 - 当該レイヤーが送信できる最大プロトコルデータ単位のサイズです。",
+    "NoChangesToDisplay": "表示する変更はありません",
     "NoteAboutFixedSetup": "以下の設定は、インストール環境とステータスに応じて自動的に適用されます。",
     "OpenSourceCudaGPUSupport": "オープンソースのCUDA GPUのサポート",
     "OutOfRange": "入力範囲外です。",

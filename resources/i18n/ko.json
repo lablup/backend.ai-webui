@@ -1473,6 +1473,7 @@
     "InputRequired": "필수 입력입니다.",
     "InvalidValue": "올바른 입력값을 넣어주세요.",
     "MTUDescription": "최대 전송 단위 - 해당 레이어가 전송할 수 있는 최대 프로토콜 데이터 단위의 크기입니다.",
+    "NoChangesToDisplay": "표시 할 수정 사항이 없습니다",
     "NoteAboutFixedSetup": "아래의 설정들은 설치 환경 및 상태에 따라 자동으로 지정된 값입니다.",
     "OpenSourceCudaGPUSupport": "오픈소스 CUDA GPU 지원",
     "OutOfRange": "입력 범위를 벗어났습니다.",

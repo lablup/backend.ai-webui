@@ -1467,6 +1467,7 @@
     "InputRequired": "Tämä kenttä on pakollinen.",
     "InvalidValue": "Laita oikea syöttöarvo.",
     "MTUDescription": "Suurin lähetysyksikkö, suurimman paketin koko, jonka verkkoprotokolla voi lähettää.",
+    "NoChangesToDisplay": "Näyttöön ei ole muutoksia",
     "NoteAboutFixedSetup": "Alla olevia asetuksia sovelletaan automaattisesti asennusympäristöstä ja tilasta riippuen.",
     "OpenSourceCudaGPUSupport": "Avoimen lähdekoodin CUDA GPU-tuki",
     "OutOfRange": "Alueen ulkopuolella.",

@@ -1469,6 +1469,7 @@
     "InputRequired": "Ce champ est requis.",
     "InvalidValue": "Veuillez mettre la valeur d'entrée correcte.",
     "MTUDescription": "Unité de transmission maximale, la taille du plus grand paquet qu'un protocole de réseau peut transmettre.",
+    "NoChangesToDisplay": "Il n'y a aucun changement à afficher",
     "NoteAboutFixedSetup": "Les paramètres ci-dessous sont automatiquement appliqués en fonction de l'environnement d'installation et de l'état.",
     "OpenSourceCudaGPUSupport": "Prise en charge des GPU CUDA Open Source",
     "OutOfRange": "Hors de portée.",
