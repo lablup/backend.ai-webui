@@ -4,6 +4,7 @@ import {
   loginAsUser,
   navigateTo,
 } from './utils/test-util';
+import { getCardItemByCardTitle, getMenuItem } from './utils/test-util-antd';
 import { test, expect, Page } from '@playwright/test';
 
 const getStartSessionButton = (page: Page) => {
@@ -21,6 +22,30 @@ const createInteractiveSessionOnSessionStartPage = async (
   await batchRadioButton.check();
   const sessionNameInput = page.locator('#sessionName');
   await sessionNameInput.fill(sessionName);
+  await page.getByRole('button', { name: 'Next' }).click();
+  await page.waitForLoadState('networkidle');
+
+  // select default resource group
+  const resourceGroup = page
+    .locator('.ant-form-item-row:has-text("Resource Group")')
+    .locator(
+      '.ant-form-item-control-input-content > .ant-select > .ant-select-selector',
+    )
+    .locator('input');
+  await expect(resourceGroup).toBeVisible();
+  await resourceGroup.fill('default');
+  await page.locator('.ant-select-dropdown:has-text("default")').click();
+  // select Minimum Requirements
+  const ResourcePreset = page
+    .locator('.ant-form-item-row:has-text("Resource Presets")')
+    .locator(
+      '.ant-form-item-control-input-content > .ant-select > .ant-select-selector',
+    )
+    .locator('input');
+  await expect(ResourcePreset).toBeVisible();
+  await ResourcePreset.fill('minimum');
+  await page.locator('.ant-select-dropdown:has-text("minimum")').click();
+  // launch
   await page.getByRole('button', { name: 'Skip to review' }).click();
 
   await page.locator('button').filter({ hasText: 'Launch' }).click();
@@ -48,9 +73,31 @@ const createBatchSessionOnSessionStartPage = async (
   await BatchModeConfigurationCard.getByLabel('Startup Command').fill(
     'sleep 30',
   );
+  await page.getByRole('button', { name: 'Next' }).click();
+  await page.waitForLoadState('networkidle');
 
+  // select default resource group
+  const resourceGroup = page
+    .locator('.ant-form-item-row:has-text("Resource Group")')
+    .locator(
+      '.ant-form-item-control-input-content > .ant-select > .ant-select-selector',
+    )
+    .locator('input');
+  await expect(resourceGroup).toBeVisible();
+  await resourceGroup.fill('default');
+  await page.locator('.ant-select-dropdown:has-text("default")').click();
+  // select Minimum Requirements
+  const ResourcePreset = page
+    .locator('.ant-form-item-row:has-text("Resource Presets")')
+    .locator(
+      '.ant-form-item-control-input-content > .ant-select > .ant-select-selector',
+    )
+    .locator('input');
+  await expect(ResourcePreset).toBeVisible();
+  await ResourcePreset.fill('minimum');
+  await page.locator('.ant-select-dropdown:has-text("minimum")').click();
+  // launch
   await page.getByRole('button', { name: 'Skip to review' }).click();
-
   await page.locator('button').filter({ hasText: 'Launch' }).click();
   await expect(page.locator('.ant-modal-confirm-title')).toHaveText(
     'No storage folder is mounted',
@@ -61,9 +108,7 @@ const createBatchSessionOnSessionStartPage = async (
 test.describe('Session Creation', () => {
   const sessionName = 'e2e-test-session' + new Date().getTime();
 
-  test.beforeEach(async ({ page }, testInfo) => {
-    // session test code needs more time to run
-    testInfo.setTimeout(60_000);
+  test.beforeEach(async ({ page }) => {
     await loginAsUser(page);
   });
   test.afterEach(async ({ page }) => {
@@ -85,6 +130,7 @@ test.describe('Session Creation', () => {
     });
     await creationButton.click();
     await expect(page).toHaveURL(/\/session\/start/);
+    await page.waitForLoadState('networkidle');
     // interactive radio button is selected by default
     const interactiveRadioButton = page
       .locator('label')
@@ -115,6 +161,7 @@ test.describe('Session Creation', () => {
     });
     await creationButton.click();
     await expect(page).toHaveURL(/\/session\/start/);
+    await page.waitForLoadState('networkidle');
     // batch radio button is selected by default
     const batchRadioButton = page
       .locator('label')
@@ -142,6 +189,7 @@ test.describe('Session Creation', () => {
     expect(startButton).toBeVisible();
     await startButton.click();
     await expect(page).toHaveURL(/\/session\/start/);
+    await page.waitForLoadState('networkidle');
     await createInteractiveSessionOnSessionStartPage(page, sessionName);
     // close app dialog
     await page.getByRole('button', { name: 'close' }).click();
@@ -164,6 +212,8 @@ test.describe('Session Creation', () => {
     expect(startButton).toBeVisible();
     await startButton.click();
     await expect(page).toHaveURL(/\/session\/start/);
+    await page.waitForLoadState('networkidle');
+
     await createBatchSessionOnSessionStartPage(page, sessionName);
     // Verify that a cell exists to display the session name
     const session = page
@@ -175,9 +225,7 @@ test.describe('Session Creation', () => {
 });
 
 test.describe('NEO Sessions Launcher', () => {
-  test.beforeEach(async ({ page }, testInfo) => {
-    // session test code needs more time to run
-    testInfo.setTimeout(60_000);
+  test.beforeEach(async ({ page }) => {
     await loginAsUser(page);
   });
 
@@ -191,9 +239,9 @@ test.describe('NEO Sessions Launcher', () => {
     await page
       .getByRole('button', { name: 'plus Add environment variables' })
       .click();
-    await page.getByPlaceholder('Variable').fill('abc');
-    await page.getByPlaceholder('Variable').press('Tab');
-    await page.getByPlaceholder('Value').fill('123');
+    await page.locator('#envvars_0_variable').fill('abc');
+    await page.locator('#envvars_0_variable').press('Tab');
+    await page.locator('#envvars_0_value').fill('123');
     await page
       .getByRole('button', { name: 'plus Add environment variables' })
       .click();
@@ -206,7 +254,12 @@ test.describe('NEO Sessions Launcher', () => {
     await page.locator('#envvars_2_variable').fill('api_key');
     await page.locator('#envvars_2_variable').press('Tab');
     await page.locator('#envvars_2_value').fill('secret');
-    await page.waitForTimeout(1000); // Wait for the form state to be saved as query param.
+
+    await page.waitForFunction(() => {
+      // Wait for the form state to be saved as query param.
+      return window.location.search.includes('variable');
+    });
+
     await page.reload();
     await expect(
       page.locator('#envvars_1_value_help').getByText('Please enter a value.'),
