@@ -62,9 +62,7 @@ const createBatchSessionOnSessionStartPage = async (
 test.describe('Session Creation', () => {
   const sessionName = 'e2e-test-session' + new Date().getTime();
 
-  test.beforeEach(async ({ page }, testInfo) => {
-    // session test code needs more time to run
-    testInfo.setTimeout(60_000);
+  test.beforeEach(async ({ page }) => {
     await loginAsUser(page);
   });
   test.afterEach(async ({ page }) => {
@@ -176,9 +174,7 @@ test.describe('Session Creation', () => {
 });
 
 test.describe('NEO Sessions Launcher', () => {
-  test.beforeEach(async ({ page }, testInfo) => {
-    // session test code needs more time to run
-    testInfo.setTimeout(60_000);
+  test.beforeEach(async ({ page }) => {
     await loginAsUser(page);
   });
 
@@ -207,7 +203,12 @@ test.describe('NEO Sessions Launcher', () => {
     await page.locator('#envvars_2_variable').fill('api_key');
     await page.locator('#envvars_2_variable').press('Tab');
     await page.locator('#envvars_2_value').fill('secret');
-    await page.waitForTimeout(1000); // Wait for the form state to be saved as query param.
+
+    await page.waitForFunction(() => {
+      // Wait for the form state to be saved as query param.
+      return window.location.search.includes('variable');
+    });
+
     await page.reload();
     await expect(
       page.locator('#envvars_1_value_help').getByText('Please enter a value.'),
