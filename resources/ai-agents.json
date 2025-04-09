@@ -2,6 +2,7 @@
   "$schema": "./ai-agents.schema.json",
   "agents": [
     {
+      "type": "agent",
       "id": "d3b07384-d9a1-4d3b-9d3b-97384d9a1d5b",
       "meta": {
         "title": "Lablup Customer Support Bot",
@@ -24,6 +25,23 @@
       }
     },
     {
+      "type": "external",
+      "id": "d3b07384-d9a1-4d3b-9d3b-17384d9a1d5b",
+      "meta": {
+        "title": "3D Modeling Expert",
+        "avatar": "artist-palette",
+        "background": "linear-gradient(135deg, #00416A 0%, #E4E5E6 100%)",
+        "descriptions": "Generating 3D objects from text or image input prompt.",
+        "tags": ["lablup", "backendai", "3d", "rendering"]
+      },
+      "endpoint": "hunyuan3d-2",
+      "endpoint_id": "",
+      "config": {
+        "url": "https://hunyuan3d.asia03.app.backend.ai/"
+      }
+    },
+    {
+      "type": "agent",
       "id": "d3b07384-d9a1-4d3b-9d3b-07384d9a1d3b",
       "meta": {
         "title": "General Assistant",
@@ -46,6 +64,7 @@
       }
     },
     {
+      "type": "agent",
       "id": "d3b07384-d9a1-4d3b-9d3b-07384d9a1d4b",
       "meta": {
         "title": "Code Expert",
@@ -69,6 +88,7 @@
       }
     },
     {
+      "type": "agent",
       "id": "d3b07384-d9a1-4d3b-9d3b-07384d9a1d5b",
       "meta": {
         "title": "Data Analyst",
@@ -91,6 +111,7 @@
       }
     },
     {
+      "type": "agent",
       "id": "d3b07384-d9a1-4d3b-9d3b-07384d9a1d6b",
       "meta": {
         "title": "Creative Writer",
@@ -113,6 +134,7 @@
       }
     },
     {
+      "type": "agent",
       "id": "d3b07384-d9a1-4d3b-9d3b-07384d9a1d7b",
       "meta": {
         "title": "Math Tutor",
@@ -135,6 +157,7 @@
       }
     },
     {
+      "type": "agent",
       "id": "d3b07384-d9a1-4d3b-9d3b-07384d9a1d8b",
       "meta": {
         "title": "Research Assistant",
@@ -157,6 +180,7 @@
       }
     },
     {
+      "type": "agent",
       "id": "d3b07384-d9a1-4d3b-9d3b-07384d9a1d9b",
       "meta": {
         "title": "Language Teacher",
@@ -179,6 +203,7 @@
       }
     },
     {
+      "type": "agent",
       "id": "d3b07384-d9a1-4d3b-9d3b-07384d9a1d0a",
       "meta": {
         "title": "Business Consultant",
@@ -201,6 +226,7 @@
       }
     },
     {
+      "type": "agent",
       "id": "d3b07384-d9a1-4d3b-9d3b-07384d9a1d1a",
       "meta": {
         "title": "Legal Assistant",
@@ -223,6 +249,7 @@
       }
     },
     {
+      "type": "agent",
       "id": "d3b07384-d9a1-4d3b-9d3b-07384d9a1d2a",
       "meta": {
         "title": "UX Designer",
@@ -245,6 +272,7 @@
       }
     },
     {
+      "type": "agent",
       "id": "d3b07384-d9a1-4d3b-9d3b-07384d9a1d3a",
       "meta": {
         "title": "Marketing Strategist",
@@ -267,6 +295,7 @@
       }
     },
     {
+      "type": "agent",
       "id": "d3b07384-d9a1-4d3b-9d3b-07384d9a1d4a",
       "meta": {
         "title": "Science Educator",
@@ -289,6 +318,7 @@
       }
     },
     {
+      "type": "agent",
       "id": "d3b07384-d9a1-4d3b-9d3b-07384d9a1d5a",
       "meta": {
         "title": "Project Manager",
@@ -311,6 +341,7 @@
       }
     },
     {
+      "type": "agent",
       "id": "d3b07384-d9a1-4d3b-9d3b-07384d9a1d6a",
       "meta": {
         "title": "Financial Advisor",
@@ -333,6 +364,7 @@
       }
     },
     {
+      "type": "agent",
       "id": "d3b07384-d9a1-4d3b-9d3b-07384d9a1d7a",
       "meta": {
         "title": "Health Coach",
@@ -355,6 +387,7 @@
       }
     },
     {
+      "type": "agent",
       "id": "d3b07384-d9a1-4d3b-9d3b-07384d9a1d8a",
       "meta": {
         "title": "Technical Writer",
@@ -377,6 +410,7 @@
       }
     },
     {
+      "type": "agent",
       "id": "d3b07384-d9a1-4d3b-9d3b-07384d9a1d9a",
       "meta": {
         "title": "Career Coach",

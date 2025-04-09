@@ -113,9 +113,13 @@ const AIAgentPage: React.FC = () => {
         <AIAgentCardList
           agents={agents}
           onClickAgent={(agent) => {
-            webuiNavigate(
-              `/chat?endpointId=${agent.endpoint_id}&agentId=${agent.id}`,
-            );
+            if (agent.type === 'external') {
+              window.location.href = agent.config.url;
+            } else {
+              webuiNavigate(
+                `/chat?endpointId=${agent.endpoint_id}&agentId=${agent.id}`,
+              );
+            }
           }}
         />
       </Flex>
