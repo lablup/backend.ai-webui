@@ -6,8 +6,12 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["config", "meta", "endpoint", "endpoint_id"],
+        "required": ["type", "config", "meta", "endpoint", "endpoint_id"],
         "properties": {
+          "type": {
+            "type": "string",
+            "description": "The type of agent (e.g., 'llm', 'tool', 'external', etc.)"
+          },
           "id": {
             "type": "string",
             "description": "The agent identifier"
@@ -55,11 +59,15 @@
           },
           "config": {
             "type": "object",
-            "required": ["system_prompt"],
+            "required": [],
             "properties": {
               "system_prompt": {
                 "type": "string",
                 "description": "The system prompt for the agent"
+              },
+              "url": {
+                "type": "string",
+                "description": "The URL of the agent's API endpoint"
               }
             },
             "additionalProperties": true
