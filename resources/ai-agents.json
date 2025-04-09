@@ -29,7 +29,7 @@
       "id": "d3b07384-d9a1-4d3b-9d3b-17384d9a1d5b",
       "meta": {
         "title": "3D Modeling Expert",
-        "avatar": "artist-palette",
+        "avatar": "/resources/agents/3dgen_fluentstyle.png",
         "background": "linear-gradient(135deg, #00416A 0%, #E4E5E6 100%)",
         "descriptions": "Generating 3D objects from text or image input prompt.",
         "tags": ["lablup", "backendai", "3d", "rendering"]
