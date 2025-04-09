@@ -102,6 +102,7 @@ const ModelCardChat: React.FC<ModelCardChatProps> = ({
       }}
       actions={[
         <Alert
+          key="no-chat-ui"
           message="Chat UI is not provided yet. Why don't you create a new one?"
           type="warning"
           showIcon
