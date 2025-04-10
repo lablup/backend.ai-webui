@@ -182,7 +182,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
           <Button
             danger
             onClick={() => {
-              formRef.current?.setFieldsValue(INITIAL_FORM_VALUES);
+              formRef.current?.resetFields();
             }}
           >
             {t('button.Reset')}
