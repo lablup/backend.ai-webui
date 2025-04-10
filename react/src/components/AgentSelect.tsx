@@ -1,4 +1,6 @@
+import { filterEmptyItem } from '../helper';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
+import { mergeFilterValues } from './BAIPropertyFilter';
 import Flex from './Flex';
 import ResourceNumber from './ResourceNumber';
 import { AgentSelectQuery } from './__generated__/AgentSelectQuery.graphql';
@@ -6,7 +8,7 @@ import { useControllableValue } from 'ahooks';
 import { Select, SelectProps } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React from 'react';
+import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
@@ -23,10 +25,12 @@ const AgentSelect: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   const [value, setValue] = useControllableValue(selectProps);
+  const [searchStr, setSearchStr] = useState<string | undefined>(undefined);
+  const deferredSearchStr = useDeferredValue(searchStr);
 
   const { baiPaginationOption } = useBAIPaginationOptionState({
     current: 1,
-    pageSize: 20,
+    pageSize: 50,
   });
 
   const { agent_summary_list } = useLazyLoadQuery<AgentSelectQuery>(
@@ -61,7 +65,10 @@ const AgentSelect: React.FC<Props> = ({
       limit: baiPaginationOption.limit,
       offset: baiPaginationOption.offset,
       status: 'ALIVE',
-      filter: 'schedulable is true', // true, false, null
+      filter: mergeFilterValues([
+        'schedulable is true',
+        deferredSearchStr ? `id ilike "%${deferredSearchStr}%"` : null,
+      ]),
       scaling_group: resourceGroup,
     },
     {
@@ -111,17 +118,26 @@ const AgentSelect: React.FC<Props> = ({
     };
   });
 
+  const autoSelectIfMatch = t('session.launcher.AutoSelect')
+    .toLowerCase()
+    .includes(deferredSearchStr?.toLowerCase() ?? '')
+    ? { label: t('session.launcher.AutoSelect'), value: 'auto' }
+    : undefined;
   return (
     <Select
       onChange={(value, option) => {
         setValue(value, option);
       }}
+      loading={searchStr !== deferredSearchStr}
+      filterOption={false}
+      showSearch
+      searchValue={searchStr}
+      onSearch={(v) => {
+        setSearchStr(v);
+      }}
       {...selectProps}
       value={value}
-      options={[
-        { label: t('session.launcher.AutoSelect'), value: 'auto' },
-        ...agentOptions,
-      ]}
+      options={filterEmptyItem([autoSelectIfMatch, ...agentOptions])}
     />
   );
 };
