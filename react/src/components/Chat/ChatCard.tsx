@@ -151,12 +151,7 @@ const ChatHeader = React.memo(PureChatHeader, (prev, next) => {
   return true;
 });
 
-const ChatInput = React.memo(PureChatInput, (prev, next) => {
-  if (prev.input !== next.input) return false;
-  if (prev.sync !== next.sync) return false;
-  if (prev.isLoading !== next.isLoading) return false;
-  return true;
-});
+const ChatInput = React.memo(PureChatInput);
 
 const ChatCard: React.FC<ChatCardProps> = ({
   chat,
