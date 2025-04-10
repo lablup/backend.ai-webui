@@ -165,6 +165,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
     styles: { chatCard: chatCardStyle, alert: alertStyle, ...chatCardStyles },
   } = useStyles();
   const formRef = useRef<FormInstance>(null);
+  const dropContainerRef = useRef<HTMLDivElement>(null);
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [startTime, setStartTime] = useState<number | null>(null);
 
@@ -265,6 +266,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
           setMessages={setMessages}
         />
       }
+      ref={dropContainerRef}
     >
       <CustomModelForm
         modelId={modelId}
@@ -299,6 +301,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
         stop={stop}
         append={append}
         isLoading={isLoading}
+        dropContainerRef={dropContainerRef}
       />
     </Card>
   );

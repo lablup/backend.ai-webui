@@ -1,6 +1,9 @@
 import { createDataTransferFiles } from '../../helper';
 import Flex from '../Flex';
-import ChatSender, { AttachmentChangeInfo } from './ChatSender';
+import ChatSender, {
+  AttachmentChangeInfo,
+  ChatAttachmentsProps,
+} from './ChatSender';
 import { CreateMessage, Message } from '@ai-sdk/react';
 import type { AttachmentsProps } from '@ant-design/x';
 import { ChatRequestOptions } from 'ai';
@@ -21,7 +24,7 @@ interface ChatRequest {
   fetchOnClient?: boolean;
 }
 
-interface ChatInputProps extends ChatRequest {
+interface ChatInputProps extends ChatRequest, ChatAttachmentsProps {
   sync: boolean;
   input: string;
   setInput: (input: string) => void;
@@ -40,6 +43,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
   stop,
   append,
   isLoading,
+  dropContainerRef,
 }) => {
   const { token } = theme.useToken();
 
@@ -50,7 +54,6 @@ const ChatInput: React.FC<ChatInputProps> = ({
 
   const [isOpenAttachments, setIsOpenAttachments] = useState(false);
   const [files, setFiles] = useState<AttachmentsProps['items']>([]);
-  const cardRef = useRef<HTMLDivElement>(null);
 
   const [synchronizedMessage, setSynchronizedMessage] = useAtom(
     synchronizedMessageState,
@@ -202,7 +205,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
           value={input}
           items={files}
           openAttachment={isOpenAttachments}
-          dropContainerRef={cardRef}
+          dropContainerRef={dropContainerRef}
           loading={isLoading}
           onInputChange={handleInputChange}
           onInputSubmit={handleInputSubmit}

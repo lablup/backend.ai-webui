@@ -11,11 +11,11 @@ import { isEmpty } from 'lodash';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface ChageAttachmentsProps extends AttachmentsProps {
+export interface ChatAttachmentsProps {
   dropContainerRef: React.RefObject<HTMLElement | null>;
 }
 
-const ChatAttachments: React.FC<ChageAttachmentsProps> = ({
+const ChatAttachments: React.FC<ChatAttachmentsProps & AttachmentsProps> = ({
   items,
   onChange,
   dropContainerRef,
@@ -51,12 +51,13 @@ export type AttachmentChangeInfo = Parameters<
   NonNullable<UploadProps['onChange']>
 >[0];
 
-interface ChatSenderProps extends Omit<SenderProps, 'onChange'> {
+interface ChatSenderProps
+  extends Omit<SenderProps, 'onChange'>,
+    ChatAttachmentsProps {
   loading?: boolean;
   autoFocus?: boolean;
   items?: Attachment[];
   openAttachment?: boolean;
-  dropContainerRef: React.RefObject<HTMLDivElement | null>;
   onInputChange?: (value: string) => void;
   onInputSubmit?: () => void;
   onInputCancel?: () => void;
