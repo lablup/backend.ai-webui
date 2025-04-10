@@ -15,14 +15,15 @@ import {
 } from '../hooks/useResourceLimitAndRemaining';
 import AgentSelect from './AgentSelect';
 import BAISelect from './BAISelect';
+import DynamicUnitInputNumber from './DynamicUnitInputNumber';
 import DynamicUnitInputNumberWithSlider from './DynamicUnitInputNumberWithSlider';
 import Flex from './Flex';
-// import FormItemControl from './FormItemControl';
 import {
   Image,
   ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
 import InputNumberWithSlider from './InputNumberWithSlider';
+import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import ResourceGroupSelect from './ResourceGroupSelect';
 import ResourcePresetSelect from './ResourcePresetSelect';
 import { ResourceAllocationFormItemsQuery } from './__generated__/ResourceAllocationFormItemsQuery.graphql';
@@ -31,10 +32,12 @@ import {
   Button,
   Card,
   Col,
+  ConfigProvider,
   Divider,
   Form,
   Radio,
   Row,
+  Slider,
   Switch,
   theme,
 } from 'antd';
@@ -675,16 +678,16 @@ const ResourceAllocationFormItems: React.FC<
                           onClick={(e) => e.preventDefault()}
                         >
                           <Trans i18nKey={'session.launcher.DescMemory'} />
-                          {/* <Divider
+                          <Divider
                             style={{
                               margin: 0,
                               backgroundColor: token.colorBorderSecondary,
                             }}
                           />
-                         
+
                           <Trans
                             i18nKey={'session.launcher.DescSharedMemory'}
-                          /> */}
+                          />
                         </Flex>
                       ),
                     }}
@@ -838,8 +841,274 @@ const ResourceAllocationFormItems: React.FC<
                         );
                       }}
                     </Form.Item>
+                    <Form.Item
+                      noStyle
+                      dependencies={[
+                        ['resource', 'mem'],
+                        ['resource', 'shmem'],
+                        ['enabledAutomaticShmem'],
+                      ]}
+                    >
+                      {({ getFieldValue }) => {
+                        const mem = getFieldValue(['resource', 'mem']) || '0g';
+                        const shmem =
+                          getFieldValue(['resource', 'shmem']) || '0g';
+                        const memUnitResult = convertBinarySizeUnit(
+                          mem,
+                          'auto',
+                          2,
+                        );
+                        const shmemUnitResult = convertBinarySizeUnit(
+                          shmem,
+                          'auto',
+                          2,
+                        );
+                        const appMemUnitResult = convertBinarySizeUnit(
+                          _.max([
+                            0,
+                            (convertBinarySizeUnit(mem, 'm')?.number || 0) -
+                              (convertBinarySizeUnit(shmem, 'm')?.number || 0),
+                          ]) + 'm',
+                          memUnitResult?.unit,
+                        );
+                        // const isAutoShmem = getFieldValue(
+                        //   'enabledAutomaticShmem',
+                        // );
 
-                    <Flex direction="column" gap={'xxs'} align="start">
+                        return (
+                          <Flex direction="column" align="stretch" gap="xs">
+                            <Flex direction="row" gap={'sm'}>
+                              <ConfigProvider
+                                theme={{
+                                  components: {
+                                    Slider: {
+                                      railBg: token.colorWarning,
+                                      railHoverBg: token.colorWarning,
+                                      trackBg: token.colorSuccess,
+                                      trackHoverBg: token.colorSuccess,
+                                      railSize: token.fontSize,
+                                    },
+                                  },
+                                }}
+                              >
+                                <Slider
+                                  style={{
+                                    flex: 1,
+                                    margin: 0,
+                                    cursor: 'default',
+                                    padding: 0,
+                                  }}
+                                  styles={{
+                                    handle: {
+                                      // display: isAutoShmem ? 'none' : undefined,
+                                      display: 'none',
+                                      top: 2,
+                                    },
+                                    root: {
+                                      height: '1em',
+                                    },
+                                  }}
+                                  step={0.001}
+                                  value={appMemUnitResult?.number}
+                                  // Set to 1 to fix UI update issue where slider doesn't rerender when both value and max are 0
+                                  max={memUnitResult?.number || 1}
+                                />
+                              </ConfigProvider>
+                            </Flex>
+                            <Flex
+                              direction="row"
+                              gap={'xxs'}
+                              justify="between"
+                              wrap="wrap"
+                              style={{
+                                minHeight: token.controlHeightSM,
+                              }}
+                            >
+                              <Flex gap={'xxs'}>
+                                <div
+                                  style={{
+                                    height: token.fontSize,
+                                    width: token.fontSize,
+                                    backgroundColor: token.colorSuccess,
+                                  }}
+                                ></div>
+                                Application MEM {appMemUnitResult?.numberUnit}
+                              </Flex>
+                              <Flex gap={'xxs'}>
+                                <div
+                                  style={{
+                                    height: token.fontSize,
+                                    width: token.fontSize,
+                                    backgroundColor: token.colorWarning,
+                                  }}
+                                ></div>
+
+                                {getFieldValue('enabledAutomaticShmem') ? (
+                                  `SHMEM ${shmemUnitResult?.numberUnit}`
+                                ) : (
+                                  <Form.Item
+                                    noStyle
+                                    name={['resource', 'shmem']}
+                                    // initialValue={'0g'}
+                                    // label={t('session.launcher.SharedMemory')}
+                                    hidden={form.getFieldValue(
+                                      'enabledAutomaticShmem',
+                                    )}
+                                    tooltip={
+                                      <Trans
+                                        i18nKey={
+                                          'session.launcher.DescSharedMemory'
+                                        }
+                                      />
+                                    }
+                                    dependencies={[['resource', 'mem']]}
+                                    rules={[
+                                      {
+                                        required: true,
+                                        message: t('general.ValueRequired', {
+                                          name: t(
+                                            'session.launcher.SharedMemory',
+                                          ),
+                                        }),
+                                      },
+                                      {},
+                                      {
+                                        warningOnly: true,
+                                        validator: async (
+                                          rule,
+                                          value: string,
+                                        ) => {
+                                          const applicationMem =
+                                            appMemUnitResult?.numberUnit;
+                                          const shmem = value;
+
+                                          if (
+                                            _.isEmpty(applicationMem) ||
+                                            _.isEmpty(shmem)
+                                          ) {
+                                            return Promise.resolve();
+                                          }
+
+                                          if (
+                                            (convertBinarySizeUnit(
+                                              applicationMem,
+                                              'M',
+                                            )?.number || 0) <
+                                            (convertBinarySizeUnit(shmem, 'M')
+                                              ?.number || 0) *
+                                              2
+                                          ) {
+                                            // throw '공유 메모리는 Application MEM의 절반 이하가 권장됩니다.';
+                                            throw t(
+                                              'session.launcher.SHMEMShouldBeLessThanHalfOfAppMemory',
+                                            );
+                                          } else {
+                                            return Promise.resolve();
+                                          }
+                                        },
+                                      },
+
+                                      {
+                                        validator: async (
+                                          rule,
+                                          value: string,
+                                        ) => {
+                                          if (
+                                            _.isEmpty(
+                                              getFieldValue('resource')?.mem,
+                                            ) ||
+                                            _.isEmpty(value) ||
+                                            compareNumberWithUnits(
+                                              getFieldValue('resource')?.mem,
+                                              value,
+                                            ) >= 0
+                                          ) {
+                                            return Promise.resolve();
+                                          } else {
+                                            throw t(
+                                              'resourcePreset.SHMEMShouldBeSmallerThanMemory',
+                                            );
+                                          }
+                                        },
+                                      },
+                                    ]}
+                                  >
+                                    <DynamicUnitInputNumber
+                                      // shmem max is mem max
+                                      // min={resourceLimits.shmem?.min}
+                                      min={resourceLimits.shmem?.min}
+                                      size="small"
+                                      // max={resourceLimits.mem?.max || '0g'}
+                                      addonBefore={'SHM'}
+                                      max={
+                                        form.getFieldValue([
+                                          'resource',
+                                          'mem',
+                                        ]) || '0g'
+                                      }
+                                      style={{
+                                        width: 200,
+                                      }}
+                                      onChange={() => {
+                                        form.setFieldValue(
+                                          'allocationPreset',
+                                          'custom',
+                                        );
+                                      }}
+                                    />
+                                  </Form.Item>
+                                  // <DynamicUnitInputNumber
+                                  //   value={shmem}
+                                  //   onChange={() => {}}
+                                  //   size="small"
+                                  //   variant="outlined"
+                                  //   addonBefore={'SHMEM'}
+                                  //   style={{
+                                  //     width: 200,
+                                  //   }}
+                                  // />
+                                )}
+                                <Flex direction="row" gap="xs">
+                                  <Form.Item
+                                    noStyle
+                                    name={'enabledAutomaticShmem'}
+                                    valuePropName="checked"
+                                  >
+                                    <Switch
+                                      size="small"
+                                      title="auto"
+                                      checkedChildren={'AUTO'}
+                                      unCheckedChildren={'MANUAL'}
+                                      onChange={(checked) => {
+                                        if (checked) {
+                                          runShmemAutomationRule(
+                                            form.getFieldValue([
+                                              'resource',
+                                              'mem',
+                                            ]) || '0g',
+                                          );
+                                        }
+                                        form.setFieldValue(
+                                          'allocationPreset',
+                                          'custom',
+                                        );
+                                      }}
+                                    />
+                                  </Form.Item>
+                                  <QuestionIconWithTooltip
+                                    title={t(
+                                      'session.launcher.AutoSharedMemoryTooltip',
+                                    )}
+                                  />
+                                </Flex>
+                              </Flex>
+                            </Flex>
+                          </Flex>
+                        );
+                      }}
+                    </Form.Item>
+
+                    {/* <Flex direction="column" gap={'xxs'} align="start">
                       <Flex direction="row" gap={'xs'}>
                         {t('session.launcher.EnableAutomaticMiniumShmem')}{' '}
                         <Form.Item
@@ -870,6 +1139,7 @@ const ResourceAllocationFormItems: React.FC<
                         }
                       >
                         {() => {
+                          return null;
                           return (
                             <Form.Item
                               noStyle
@@ -934,9 +1204,10 @@ const ResourceAllocationFormItems: React.FC<
                           );
                         }}
                       </Form.Item>
-                    </Flex>
+                    </Flex> */}
                   </Form.Item>
                 )}
+
                 <Form.Item
                   noStyle
                   shouldUpdate={(prev, next) => {

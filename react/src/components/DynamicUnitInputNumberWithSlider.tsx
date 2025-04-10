@@ -6,7 +6,7 @@ import DynamicUnitInputNumber, {
 } from './DynamicUnitInputNumber';
 import Flex from './Flex';
 import { Slider, theme } from 'antd';
-import { SliderMarks } from 'antd/es/slider';
+import { SliderMarks, SliderProps } from 'antd/es/slider';
 import _ from 'lodash';
 import React, { useEffect, useMemo } from 'react';
 
@@ -16,6 +16,7 @@ export interface DynamicUnitInputNumberWithSliderProps
   hideSlider?: boolean;
   warn?: string;
   step?: number;
+  sliderProps?: SliderProps;
 }
 const DynamicUnitInputNumberWithSlider: React.FC<
   DynamicUnitInputNumberWithSliderProps

@@ -201,7 +201,7 @@ function convertSizeUnit(
   return {
     number: finalBytes,
     numberFixed,
-    unit: sizes[targetIndex],
+    unit: sizes[targetIndex] as SizeUnit,
     numberUnit: `${numberFixed}${sizes[targetIndex]}`,
   };
 }
@@ -261,6 +261,19 @@ export function addNumberWithUnits(
 ) {
   return convertBinarySizeUnit(
     (convertBinarySizeUnit(size1, 'b')?.number || 0) +
+      (convertBinarySizeUnit(size2, 'b')?.number || 0) +
+      'b',
+    targetUnit,
+  )?.numberUnit;
+}
+
+export function subNumberWihUnits(
+  size1: string,
+  size2: string,
+  targetUnit: SizeUnit = 'm',
+) {
+  return convertBinarySizeUnit(
+    (convertBinarySizeUnit(size1, 'b')?.number || 0) -
       (convertBinarySizeUnit(size2, 'b')?.number || 0) +
       'b',
     targetUnit,
