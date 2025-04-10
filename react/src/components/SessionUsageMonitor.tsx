@@ -17,6 +17,7 @@ import { useFragment } from 'react-relay';
 interface SessionUsageMonitorProps extends ProgressProps {
   sessionFrgmt: SessionUsageMonitorFragment$key | null;
   size?: 'small' | 'default';
+  displayTarget?: 'max' | 'avg' | 'current';
 }
 
 interface SessionUtilItemProps {
@@ -93,6 +94,7 @@ const SessionUtilItem: React.FC<SessionUtilItemProps> = ({
 const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
   sessionFrgmt,
   size = 'default',
+  displayTarget = 'current',
 }) => {
   const { mergedResourceSlots } = useResourceSlotsDetails();
 
@@ -156,23 +158,43 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
     } GiB`;
   };
 
+  const displayTargetName =
+    displayTarget === 'current'
+      ? 'current'
+      : (`stats.${displayTarget}` as const);
   const utilItems = filterEmptyItem([
     sortedLiveStat?.cpu_util && (
       <SessionUtilItem
         key={'cpu'}
         size={size}
         title={mergedResourceSlots?.['cpu']?.human_readable_name}
-        percent={sortedLiveStat?.cpu_util?.pct || 0}
+        percent={
+          displayTarget === 'current'
+            ? (sortedLiveStat?.cpu_util?.pct ?? '0')
+            : (sortedLiveStat?.cpu_util?.[displayTargetName] ?? '0')
+        }
       />
     ),
-    sortedLiveStat?.mem && (
+    sortedLiveStat?.mem && sortedLiveStat?.mem?.[displayTargetName] && (
       <SessionUtilItem
         key={'mem'}
         size={size}
         title={mergedResourceSlots?.['mem']?.human_readable_name}
-        percent={sortedLiveStat?.mem?.pct || 0}
+        percent={
+          displayTarget === 'current'
+            ? sortedLiveStat?.mem?.pct || '0'
+            : _.toString(
+                ((convertBinarySizeUnit(
+                  sortedLiveStat?.mem?.[displayTargetName],
+                  'g',
+                )?.number ?? 0) /
+                  (convertBinarySizeUnit(sortedLiveStat?.mem?.capacity, 'g')
+                    ?.number || 1)) *
+                  100,
+              )
+        }
         description={displayMemoryUsage(
-          sortedLiveStat?.mem?.current,
+          sortedLiveStat?.mem?.[displayTargetName],
           occupiedSlots?.mem,
         )}
         tooltipTitle={
@@ -180,7 +202,7 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
             {mergedResourceSlots?.['mem']?.human_readable_name}
             <br />
             {displayMemoryUsage(
-              sortedLiveStat?.mem?.current,
+              sortedLiveStat?.mem?.[displayTargetName],
               occupiedSlots?.mem,
             )}
           </Flex>
@@ -198,8 +220,7 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
         if (size === 'small' && !key?.endsWith('mem')) {
           deviceKey = undefined;
         }
-
-        return deviceKey ? (
+        return deviceKey && value?.[displayTargetName] ? (
           <SessionUtilItem
             key={key}
             size={size}
@@ -212,10 +233,25 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
                 </Typography.Text>
               </>
             }
-            percent={value.pct || 0}
+            percent={
+              displayTarget === 'current'
+                ? value?.pct || '0'
+                : _.includes(key, 'util')
+                  ? value?.[displayTargetName]
+                  : _.toString(
+                      ((convertBinarySizeUnit(value?.[displayTargetName], 'g')
+                        ?.number ?? 0) /
+                        (convertBinarySizeUnit(value?.capacity, 'g')?.number ||
+                          1)) *
+                        100,
+                    )
+            }
             description={
               _.includes(key, 'mem')
-                ? displayMemoryUsage(value?.current, value?.capacity)
+                ? displayMemoryUsage(
+                    value?.[displayTargetName],
+                    value?.capacity,
+                  )
                 : undefined
             }
             tooltipTitle={
@@ -225,7 +261,10 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
                   <>
                     (mem)
                     <br />
-                    {displayMemoryUsage(value?.current, value?.capacity)}
+                    {displayMemoryUsage(
+                      value?.[displayTargetName],
+                      value?.capacity,
+                    )}
                   </>
                 )}
               </Flex>

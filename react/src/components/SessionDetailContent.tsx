@@ -27,6 +27,7 @@ import {
   Button,
   Descriptions,
   Grid,
+  Select,
   Skeleton,
   Tag,
   theme,
@@ -54,6 +55,9 @@ const SessionDetailContent: React.FC<{
     useState<boolean>(false);
   const [openStatusDetailModal, setOpenStatusDetailModal] =
     useState<boolean>(false);
+  const [usageMonitorDisplayTarget, setUsageMonitorDisplayTarget] = useState<
+    'max' | 'avg' | 'current'
+  >('current');
 
   // TODO: remove and refactor this waterfall request after v24.12.0
   // get the project id of the session for <= v24.12.0.
@@ -330,8 +334,44 @@ const SessionDetailContent: React.FC<{
               />
             </Descriptions.Item>
           ) : null}
-          <Descriptions.Item label={'Resource Usage'} span={md ? 2 : 1}>
-            <SessionUsageMonitor sessionFrgmt={session} />
+          <Descriptions.Item
+            label={
+              <Flex direction="column" align="start" gap={token.marginSM}>
+                <Typography.Text style={{ color: token.colorTextSecondary }}>
+                  {t('session.ResourceUsage')}
+                </Typography.Text>
+                <Select
+                  size="small"
+                  popupMatchSelectWidth={false}
+                  style={{ width: '100%', display: 'none' }}
+                  variant="filled"
+                  defaultValue={'current'}
+                  options={[
+                    {
+                      label: t('session.CurrentUsage'),
+                      value: 'current',
+                    },
+                    {
+                      label: t('session.MaxUsage'),
+                      value: 'max',
+                    },
+                    {
+                      label: t('session.AverageUsage'),
+                      value: 'avg',
+                    },
+                  ]}
+                  onChange={(value: 'current' | 'max' | 'avg') => {
+                    setUsageMonitorDisplayTarget(value);
+                  }}
+                />
+              </Flex>
+            }
+            span={md ? 2 : 1}
+          >
+            <SessionUsageMonitor
+              sessionFrgmt={session}
+              displayTarget={usageMonitorDisplayTarget}
+            />
           </Descriptions.Item>
         </Descriptions>
       </Flex>
