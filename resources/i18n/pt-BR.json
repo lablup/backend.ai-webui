@@ -1354,6 +1354,7 @@
       "OwnerEmail": "Email do proprietário",
       "OwnerGroup": "Projeto do proprietário",
       "OwnerResourceGroup": "Grupo de recursos do proprietário",
+      "PinnedHistoryTooltip": "Clique no ícone de fixação para fixar o registo. Os registos fixados são mantidos.",
       "PleaseCompleteForm": "O formulário está incompleto ou contém erros. Por favor, verifique os seus dados.",
       "PleaseWaitInitializing": "Aguarde enquanto inicializando ...",
       "PortsTitleWithRange": "Valor da porta (entre 1024 ~ 65535)",
@@ -1386,6 +1387,7 @@
       "SessionName": "Nome da sessão",
       "SessionNameAllowCondition": "O nome da sessão deve ter 4-64 alfabetos / números sem nenhum espaço em branco.",
       "SessionNameOptional": "Nome da sessão (opcional)",
+      "SessionNameShort": "Nome",
       "SessionStartTime": "Início da sessão",
       "SessionStillPreparing": "A sessão ainda está em preparação. Após o início da sessão, toque no ícone do aplicativo para iniciá-lo.",
       "SessionType": "Tipo de sessão",
@@ -1415,7 +1417,8 @@
       "TitleSession": "Sessão (Backend.AI)",
       "TotalAllocation": "Alocação Total",
       "UserResourceLimit": "Limite de recursos do usuário",
-      "Version": "Versão"
+      "Version": "Versão",
+      "YouCanStartWithHistory": "Estes são os registos de sessão criados recentemente. Clique no nome de uma sessão para iniciar uma nova sessão."
     },
     "validation": {
       "EnterValidSessionName": "Insira uma combinação de pelo menos quatro letras do alfabeto, ou números, ou hífen, ou sublinhado.",

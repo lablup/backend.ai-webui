@@ -1353,6 +1353,7 @@
       "OwnerEmail": "所有者の電子メール",
       "OwnerGroup": "オーナー・プロジェクト",
       "OwnerResourceGroup": "オーナーリソースグループ",
+      "PinnedHistoryTooltip": "ピンアイコンをクリックすると、記録を固定することができます。固定された記録は保持されます。",
       "PleaseCompleteForm": "フォームに不備またはエラーがあります。入力内容をご確認ください。",
       "PleaseWaitInitializing": "初期化中はお待ちください...",
       "PortsTitleWithRange": "ポート値 (1024 ~ 65535 の間)",
@@ -1385,6 +1386,7 @@
       "SessionName": "セッション名",
       "SessionNameAllowCondition": "セッション名には、空白を含まない4〜64個のアルファベット/数字を含める必要があります。",
       "SessionNameOptional": "セッション名（オプション）",
+      "SessionNameShort": "商品名",
       "SessionStartTime": "セッション開始時間",
       "SessionStillPreparing": "セッションはまだ準備中です。セッションが開始したら、アプリアイコンをタップしてアプリを起動します。",
       "SessionType": "セッションタイプ",
@@ -1414,7 +1416,8 @@
       "TitleSession": "セッション（Backend.AI）",
       "TotalAllocation": "総割り当て",
       "UserResourceLimit": "ユーザーリソースの制限",
-      "Version": "バージョン"
+      "Version": "バージョン",
+      "YouCanStartWithHistory": "これらは最近作成されたセッション記録です。セッション名をクリックすると、新しいセッションが開始されます。"
     },
     "validation": {
       "EnterValidSessionName": "アルファベット、数字、ハイフン、アンダースコアを 4 文字以上組み合わせて入力してください。",

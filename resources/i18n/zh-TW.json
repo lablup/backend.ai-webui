@@ -1353,6 +1353,7 @@
       "OwnerEmail": "所有者電子郵件",
       "OwnerGroup": "业主项目",
       "OwnerResourceGroup": "所有者資源組",
+      "PinnedHistoryTooltip": "单击 \"固定 \"图标固定历史记录。钉住的项目将被保留。",
       "PleaseCompleteForm": "表格不完整或包含错误。请检查输入内容。",
       "PleaseWaitInitializing": "正在初始化，請稍候...",
       "PortsTitleWithRange": "端口值（1024 ~ 65535 之间）",
@@ -1385,6 +1386,7 @@
       "SessionName": "會話名稱",
       "SessionNameAllowCondition": "會話名稱應該有 4-64 個字母/數字，沒有任何空格。",
       "SessionNameOptional": "會話名稱（可選）",
+      "SessionNameShort": "名称",
       "SessionStartTime": "会议开始",
       "SessionStillPreparing": "會議仍在籌備中。會話開始後，點擊應用程序圖標以啟動應用程序。",
       "SessionType": "会议类型",
@@ -1414,7 +1416,8 @@
       "TitleSession": "會話（後端.AI）",
       "TotalAllocation": "總分配",
       "UserResourceLimit": "用戶資源限制",
-      "Version": "版本"
+      "Version": "版本",
+      "YouCanStartWithHistory": "这些是您最近创建的会话记录。点击会话名称即可开始新的会话。"
     },
     "validation": {
       "EnterValidSessionName": "請輸入至少 4 個字母、數字、連字號或底線的組合。",

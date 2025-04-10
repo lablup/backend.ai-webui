@@ -1,17 +1,34 @@
 import { useBackendAIImageMetaData } from '../hooks';
-import { useRecentSessionHistory } from '../hooks/useRecentSessionHistory';
+import { SessionHistory } from '../hooks/useBAISetting';
+import {
+  usePinnedSessionHistory,
+  useRecentSessionHistory,
+} from '../hooks/useRecentSessionHistory';
 import {
   ResourceNumbersOfSession,
   SessionLauncherFormValue,
 } from '../pages/SessionLauncherPage';
+import BAILink from './BAILink';
 import BAIModal, { BAIModalProps } from './BAIModal';
+import BAITable from './BAITable';
 import Flex from './Flex';
 import ImageMetaIcon from './ImageMetaIcon';
-import { Divider, Table, Typography } from 'antd';
+import QuestionIconWithTooltip from './QuestionIconWithTooltip';
+import { Button, theme, Tooltip, Typography } from 'antd';
+import { createStyles } from 'antd-style';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import React, { useMemo, useState } from 'react';
+import { PinIcon } from 'lucide-react';
+import React, { Key, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+const useStyle = createStyles(({ token, css }) => ({
+  fixEditableVerticalAlign: css`
+    & {
+      margin-top: 0px !important;
+    }
+  `,
+}));
 
 interface SessionTemplateModalProps
   extends Omit<BAIModalProps, 'onOk' | 'onCancel'> {
@@ -21,128 +38,215 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
   ...modalProps
 }) => {
   const { t } = useTranslation();
-  const [sessionHistory] = useRecentSessionHistory();
+  const { styles } = useStyle();
+  const [sessionHistory, { update: updateSessionHistory }] =
+    useRecentSessionHistory();
+  const [hoverRowKey, setHoverRowKey] = useState<Key | null>(null);
 
   const [, { getImageAliasName, getBaseVersion }] = useBackendAIImageMetaData();
+  const [pinnedSessionHistory, { pin, unpin, update: updatePinnedHistory }] =
+    usePinnedSessionHistory();
 
-  const [selectedHistoryId, setSelectedHistoryId] = useState<string>();
+  const [, setSelectedHistoryId] = useState<string>();
+  const { token } = theme.useToken();
 
   const parsedSessionHistory = useMemo(() => {
-    return _.map(sessionHistory, (history) => {
+    const parseToFormValues = (history: SessionHistory, isPinned: boolean) => {
       const params = new URLSearchParams(history.params);
       const formValues: SessionLauncherFormValue = JSON.parse(
         params.get('formValues') || '{}',
       );
       return {
-        ...history,
         ...formValues,
-        // resourceAllocation: `${history.cpu}CPU ${history.memory}GB`,
+        pinned: isPinned,
+        name: history.name,
       };
-    });
-  }, [sessionHistory]);
+    };
+
+    // const params = new URLSearchParams(history.params);
+    //   const formValues: SessionLauncherFormValue = JSON.parse(
+    //     params.get('formValues') || '{}',
+    //   );
+    const recent = _.map(sessionHistory, (history) => ({
+      ...history,
+      ...parseToFormValues(history, false),
+    }));
+
+    const pinned = _.map(pinnedSessionHistory, (history) => ({
+      ...history,
+      ...parseToFormValues(history, true),
+    }));
+
+    return _.chain([...pinned, ...recent])
+      .unionBy('id')
+      .value();
+  }, [sessionHistory, pinnedSessionHistory]);
 
   return (
     <BAIModal
       width={800}
       title={t('session.launcher.RecentHistory')}
-      okButtonProps={{ disabled: !selectedHistoryId }}
-      okText={t('button.Apply')}
-      {...modalProps}
-      onOk={(e) => {
-        const params = _.find(sessionHistory, {
-          id: selectedHistoryId,
-        })?.params;
-        modalProps.onRequestClose?.(
-          JSON.parse(new URLSearchParams(params).get('formValues') || '{}'),
-        );
-      }}
+      footer={null}
       onCancel={() => {
         // reset
         setSelectedHistoryId(undefined);
         modalProps.onRequestClose();
       }}
+      {...modalProps}
     >
-      <Divider style={{ margin: 0 }} />
-      <Table
-        showHeader={false}
-        scroll={{ x: 'max-content' }}
-        dataSource={parsedSessionHistory}
-        pagination={false}
-        rowSelection={{
-          type: 'radio',
-          selectedRowKeys: selectedHistoryId ? [selectedHistoryId] : [],
-          onSelect: (record) => {
-            setSelectedHistoryId(record.id);
-          },
-        }}
-        onRow={(record) => ({
-          onClick: () => {
-            setSelectedHistoryId(record.id);
-          },
-        })}
-        rowKey={(record) => record.id}
-        columns={[
-          // {
-          //   title: t('session.launcher.SessionName'),
-          //   dataIndex: 'sessionName',
-          //   render: (sessionName, record) => {
-          //     return sessionName ?? '-';
-          //   },
-          // },
-          {
-            title: t('general.Image'),
-            dataIndex: ['environments', 'version'],
-            render: (version, record) => {
-              const imageStr =
-                record.environments.version || record.environments.manual;
-              return (
-                !!imageStr && (
-                  <Flex gap={'xs'}>
-                    <ImageMetaIcon image={imageStr} />
-                    <Typography.Text>
-                      {getImageAliasName(imageStr)}
-                    </Typography.Text>
-                    <Typography.Text>
-                      {getBaseVersion(imageStr)}
-                    </Typography.Text>
-                    <Typography.Text>
-                      {record.sessionName ? `(${record.sessionName})` : null}
-                    </Typography.Text>
-                  </Flex>
-                )
-              );
-            },
-            // onCell: () => ({
-            //   style: { maxWidth: 250, textOverflow: 'ellipsis' },
-            // }),
-          },
-          {
-            title: t('session.launcher.ResourceAllocation'),
-            dataIndex: 'resource',
-            render: (resource) => {
-              // return JSON.stringify(resource)
-              return (
-                <Flex>
-                  <ResourceNumbersOfSession resource={resource} />
+      <Flex direction="column" align="stretch" gap="sm">
+        <Typography.Text>
+          {t('session.launcher.YouCanStartWithHistory')}
+        </Typography.Text>
+        <BAITable
+          rowSelection={{
+            selectedRowKeys: pinnedSessionHistory?.map((item) => item.id),
+            columnWidth: 0,
+            hideSelectAll: true,
+            renderCell: () => null,
+          }}
+          scroll={{ x: 'max-content' }}
+          dataSource={parsedSessionHistory}
+          pagination={false}
+          onRow={(record) => ({
+            onMouseEnter: () => setHoverRowKey(record.id),
+            onMouseLeave: () => setHoverRowKey(null),
+          })}
+          rowKey={(record) => record.id}
+          columns={[
+            {
+              title: (
+                <Flex gap={'xxs'}>
+                  <PinIcon />
+                  <QuestionIconWithTooltip
+                    title={t('session.launcher.PinnedHistoryTooltip')}
+                  />
                 </Flex>
-              );
+              ),
+              dataIndex: 'pinned',
+              width: 40,
+              render: (value, record) => {
+                const isPinned = !!record.pinned;
+                const isHovered = hoverRowKey === record.id;
+                return isPinned ? (
+                  <Button
+                    size="small"
+                    onClick={() => {
+                      unpin(record.id);
+                      // TODO: add it to recent session history
+                    }}
+                    type="link"
+                  >
+                    <PinIcon />
+                  </Button>
+                ) : (
+                  <Button
+                    size="small"
+                    onClick={() => pin(record.id)}
+                    type="link"
+                  >
+                    <PinIcon
+                      style={{
+                        color: isHovered
+                          ? token.colorTextQuaternary
+                          : 'transparent',
+                      }}
+                    />
+                  </Button>
+                );
+              },
             },
-          },
-          // {
-          //   dataIndex: 'mounts',
-          //   render: (value, record) => {
-          //     record.mou
-          //   }
-          // },
-          {
-            title: t('session.launcher.CreatedAt'),
-            dataIndex: 'createdAt',
-            render: (createdAt: string) => {
-              return dayjs(createdAt).fromNow();
+            {
+              title: t('session.launcher.SessionNameShort'),
+              dataIndex: 'name',
+              render: (name, record) => {
+                const displayName = name || record.id.split('-')[0];
+                return (
+                  <Typography.Link
+                    className={styles.fixEditableVerticalAlign}
+                    editable={{
+                      onChange(value) {
+                        if (!_.isEmpty(value)) {
+                          updateSessionHistory(record.id, value);
+                          record.pinned &&
+                            updatePinnedHistory(record.id, value);
+                        }
+                      },
+                      text: displayName,
+                    }}
+                  >
+                    <BAILink
+                      type="hover"
+                      onClick={() => {
+                        const params = _.find(sessionHistory, {
+                          id: record.id,
+                        })?.params;
+                        modalProps.onRequestClose?.(
+                          JSON.parse(
+                            new URLSearchParams(params).get('formValues') ||
+                              '{}',
+                          ),
+                        );
+                      }}
+                    >
+                      {displayName}
+                    </BAILink>
+                  </Typography.Link>
+                );
+              },
             },
-          },
-        ]}
-      />
+            {
+              title: t('session.launcher.Environments'),
+              dataIndex: ['environments', 'version'],
+              render: (version, record) => {
+                const imageStr =
+                  record.environments.version || record.environments.manual;
+                return (
+                  imageStr && (
+                    <Tooltip title={imageStr} placement="right">
+                      <Flex gap={'xxs'}>
+                        <ImageMetaIcon image={imageStr} />
+                        <Typography.Text>
+                          {getImageAliasName(imageStr)}{' '}
+                          {getBaseVersion(imageStr)}
+                        </Typography.Text>
+                      </Flex>
+                    </Tooltip>
+                  )
+                );
+              },
+              onCell: () => ({
+                style: { maxWidth: 250, textOverflow: 'ellipsis' },
+              }),
+            },
+            {
+              title: t('session.launcher.ResourceAllocation'),
+              dataIndex: 'resource',
+              render: (resource) => {
+                // return JSON.stringify(resource)
+                return (
+                  <Flex gap={'xs'}>
+                    <ResourceNumbersOfSession resource={resource} />
+                  </Flex>
+                );
+              },
+            },
+            // {
+            //   dataIndex: 'mounts',
+            //   render: (value, record) => {
+            //     return _.join(record.mounts,', ');
+            //   }
+            // },
+            {
+              title: t('session.launcher.CreatedAt'),
+              dataIndex: 'createdAt',
+              render: (createdAt: string) => {
+                return dayjs(createdAt).fromNow();
+              },
+            },
+          ]}
+        />
+      </Flex>
       {/* <Tabs
         defaultActiveKey="history"
         items={[

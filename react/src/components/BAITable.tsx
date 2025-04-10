@@ -32,6 +32,12 @@ const useStyles = createStyles(({ token, css }) => ({
       color: ${token.colorTextTertiary};
     }
   `,
+  zeroWithSelectionColumn: css`
+    .ant-table-selection-column {
+      /* display: none !important; */
+      padding: 0 !important;
+    }
+  `,
 }));
 
 const ResizableTitle = (
@@ -177,6 +183,8 @@ const BAITable = <RecordType extends object = any>({
         className={classNames(
           resizable && styles.resizableTable,
           neoStyle && styles.neoHeader,
+          tableProps.rowSelection?.columnWidth === 0 &&
+            styles.zeroWithSelectionColumn,
         )}
         style={{
           opacity: loading ? 0.7 : 1,

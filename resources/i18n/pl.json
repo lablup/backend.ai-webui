@@ -1354,6 +1354,7 @@
       "OwnerEmail": "E-mail właściciela",
       "OwnerGroup": "Projekt właściciela",
       "OwnerResourceGroup": "Grupa zasobów właściciela",
+      "PinnedHistoryTooltip": "Kliknij ikonę przypięcia, aby przypiąć rekord. Przypięte rekordy są zachowywane.",
       "PleaseCompleteForm": "Formularz jest niekompletny lub zawiera błędy. Sprawdź wprowadzone dane.",
       "PleaseWaitInitializing": "Proszę czekać podczas inicjowania...",
       "PortsTitleWithRange": "Wartość portu (między 1024 ~ 65535)",
@@ -1386,6 +1387,7 @@
       "SessionName": "Nazwa sesji",
       "SessionNameAllowCondition": "Nazwa sesji powinna zawierać 4–64 litery/cyfry bez spacji.",
       "SessionNameOptional": "Nazwa sesji (opcjonalnie)",
+      "SessionNameShort": "Nazwa",
       "SessionStartTime": "Początek sesji",
       "SessionStillPreparing": "Sesja jest wciąż w przygotowaniu. Po rozpoczęciu sesji dotknij ikony aplikacji, aby uruchomić aplikację.",
       "SessionType": "Typ sesji",
@@ -1415,7 +1417,8 @@
       "TitleSession": "Sesja (Backend.AI)",
       "TotalAllocation": "Całkowity przydział",
       "UserResourceLimit": "Limit zasobów użytkownika",
-      "Version": "Wersja"
+      "Version": "Wersja",
+      "YouCanStartWithHistory": "Są to ostatnio utworzone rekordy sesji. Kliknij nazwę sesji, aby rozpocząć nową sesję."
     },
     "validation": {
       "EnterValidSessionName": "Wprowadź kombinację co najmniej 4 liter alfabetu, cyfr, łącznika lub podkreślenia.",

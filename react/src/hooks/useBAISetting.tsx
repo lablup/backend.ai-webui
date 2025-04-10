@@ -17,6 +17,7 @@ interface UserSettings {
   selected_language?: string;
   classic_session_launcher?: boolean;
   recentSessionHistory?: Array<SessionHistory>;
+  pinnedSessionHistory?: Array<SessionHistory>;
   experimental_neo_session_list?: boolean;
   start_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   experimental_ai_agents?: boolean;

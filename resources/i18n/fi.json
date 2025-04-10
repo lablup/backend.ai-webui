@@ -1352,6 +1352,7 @@
       "OwnerEmail": "Omistajan sähköpostiosoite",
       "OwnerGroup": "Omistajan hanke",
       "OwnerResourceGroup": "Omistajan resurssiryhmä",
+      "PinnedHistoryTooltip": "Kiinnitä historia napsauttamalla pin-kuvaketta. Kiinnitetty kohde säilyy.",
       "PleaseCompleteForm": "Lomake on puutteellinen tai sisältää virheitä. Tarkista syöttämäsi tiedot.",
       "PleaseWaitInitializing": "Odota alustuksen aikana...",
       "PortsTitleWithRange": "Portin arvo (välillä 1024 ~ 65535)",
@@ -1384,6 +1385,7 @@
       "SessionName": "Istunnon nimi",
       "SessionNameAllowCondition": "Istunnon nimessä tulisi olla 4-64 aakkosta/numeroa ilman välilyöntejä.",
       "SessionNameOptional": "Istunnon nimi (valinnainen)",
+      "SessionNameShort": "Nimi",
       "SessionStartTime": "Istunto alkaa",
       "SessionStillPreparing": "Istuntoa valmistellaan edelleen. Kun istunto on alkanut, käynnistä sovellus napauttamalla sovelluskuvaketta.",
       "SessionType": "Istunnon tyyppi",
@@ -1413,7 +1415,8 @@
       "TitleSession": "Istunto (Backend.AI)",
       "TotalAllocation": "Kokonaismääräraha",
       "UserResourceLimit": "Käyttäjän resurssirajoitus",
-      "Version": "Versio"
+      "Version": "Versio",
+      "YouCanStartWithHistory": "Nämä ovat äskettäin luotuja istuntotietueita. Aloita uusi istunto napsauttamalla istunnon nimeä."
     },
     "validation": {
       "EnterValidSessionName": "Anna vähintään neljän aakkosten kirjaimen tai numeron tai yhdysviivan tai alaviivan yhdistelmä.",

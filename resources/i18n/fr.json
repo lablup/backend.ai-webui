@@ -1354,6 +1354,7 @@
       "OwnerEmail": "Courriel du propriétaire",
       "OwnerGroup": "Projet du propriétaire",
       "OwnerResourceGroup": "Groupe de ressources propriétaire",
+      "PinnedHistoryTooltip": "Cliquez sur l'icône d'épinglage pour épingler l'enregistrement. Les enregistrements épinglés sont conservés.",
       "PleaseCompleteForm": "Le formulaire est incomplet ou contient des erreurs. Veuillez vérifier vos données.",
       "PleaseWaitInitializing": "Veuillez patienter pendant l'initialisation...",
       "PortsTitleWithRange": "Valeur du port (entre 1024 ~ 65535)",
@@ -1386,6 +1387,7 @@
       "SessionName": "Nom de la séance",
       "SessionNameAllowCondition": "Le nom de la session doit comporter de 4 à 64 alphabets/chiffres sans aucun espace.",
       "SessionNameOptional": "Nom de la session (facultatif)",
+      "SessionNameShort": "Nom",
       "SessionStartTime": "Début de la session",
       "SessionStillPreparing": "La séance est encore en préparation. Une fois la session démarrée, appuyez sur l'icône de l'application pour démarrer l'application.",
       "SessionType": "Type de session",
@@ -1415,7 +1417,8 @@
       "TitleSession": "Session (Backend.AI)",
       "TotalAllocation": "Allocation totale",
       "UserResourceLimit": "Limite de ressources utilisateur",
-      "Version": "Version"
+      "Version": "Version",
+      "YouCanStartWithHistory": "Il s'agit des enregistrements de session récemment créés. Cliquez sur le nom d'une session pour en démarrer une nouvelle."
     },
     "validation": {
       "EnterValidSessionName": "Veuillez saisir une combinaison d'au moins 4 lettres de l'alphabet, ou chiffres, ou trait d'union, ou trait de soulignement.",

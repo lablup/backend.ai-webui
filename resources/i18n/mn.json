@@ -1352,6 +1352,7 @@
       "OwnerEmail": "Эзэмшигчийн имэйл",
       "OwnerGroup": "Эзэмшигч төсөл",
       "OwnerResourceGroup": "Эзэмшигчийн нөөцийн бүлэг",
+      "PinnedHistoryTooltip": "Түүхийг зүүсэн PIN ICON дээр дарна уу. \nЗүүсэн зүйлийг хадгалах болно.",
       "PleaseCompleteForm": "Маягт дутуу эсвэл алдаатай байна. \nОруулсан мэдээллээ шалгана уу.",
       "PleaseWaitInitializing": "Эхлүүлэхдээ түр хүлээнэ үү ...",
       "PortsTitleWithRange": "Портын утга (1024 ~ 65535 хооронд)",
@@ -1384,6 +1385,7 @@
       "SessionName": "Сеанс нэр",
       "SessionNameAllowCondition": "Хичээлийн нэр нь ямар ч хоосон зайгүй 4-64 цагаан толгой / тоо байх ёстой.",
       "SessionNameOptional": "Session нэр (заавал биш)",
+      "SessionNameShort": "нэр",
       "SessionStartTime": "Сессия эхлэх",
       "SessionStillPreparing": "Чуулганы бэлтгэл ажил үргэлжилж байна. Session эхэлсний дараа програмыг эхлүүлэхийн тулд програмын дүрсийг товшино уу.",
       "SessionType": "Сеанс төрөл",
@@ -1413,7 +1415,8 @@
       "TitleSession": "Чуулган (Backend.AI)",
       "TotalAllocation": "Нийт хуваарилалт",
       "UserResourceLimit": "Хэрэглэгчийн нөөцийн хязгаарлалт",
-      "Version": "Хувилбар"
+      "Version": "Хувилбар",
+      "YouCanStartWithHistory": "Эдгээр нь таны саяхан бүтээсэн сешний бүртгэл юм. \nШинэ хуралдаан эхлэхийн тулд хуралдааны нэр дээр дарна уу."
     },
     "validation": {
       "EnterValidSessionName": "Дор хаяж 4 цагаан толгойн үсэг, тоо, зураас, доогуур зураасын хослолыг оруулна уу.",

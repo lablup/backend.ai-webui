@@ -1353,6 +1353,7 @@
       "OwnerEmail": "Sahip E-postası",
       "OwnerGroup": "Proje sahibi",
       "OwnerResourceGroup": "Sahip kaynak grubu",
+      "PinnedHistoryTooltip": "Kaydı sabitlemek için sabitle simgesine tıklayın. Sabitlenen kayıtlar korunur.",
       "PleaseCompleteForm": "Form eksik veya hatalar içeriyor. Lütfen girdilerinizi kontrol edin.",
       "PleaseWaitInitializing": "Başlatılırken lütfen bekleyin...",
       "PortsTitleWithRange": "Port değeri (1024 ~ 65535 arasında)",
@@ -1385,6 +1386,7 @@
       "SessionName": "Oturum adı",
       "SessionNameAllowCondition": "Oturum adı, boşluk olmadan 4-64 harf/rakam içermelidir.",
       "SessionNameOptional": "Oturum adı (isteğe bağlı)",
+      "SessionNameShort": "İsim",
       "SessionStartTime": "Oturum Başlıyor",
       "SessionStillPreparing": "Seansın hazırlıkları devam ediyor. Oturum başladıktan sonra uygulamayı başlatmak için uygulama simgesine dokunun.",
       "SessionType": "Oturum Türü",
@@ -1414,7 +1416,8 @@
       "TitleSession": "Oturum (Arka Uç.AI)",
       "TotalAllocation": "Toplam Tahsis",
       "UserResourceLimit": "Kullanıcı Kaynak Sınırı",
-      "Version": "Sürüm"
+      "Version": "Sürüm",
+      "YouCanStartWithHistory": "Bunlar en son oluşturduğunuz oturum kayıtlarıdır. Yeni bir oturum başlatmak için bir oturum adına tıklayın."
     },
     "validation": {
       "EnterValidSessionName": "Lütfen en az 4 alfabe harfi veya rakamı, kısa çizgi veya alt çizgiden oluşan bir kombinasyon girin.",

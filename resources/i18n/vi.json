@@ -1354,6 +1354,7 @@
       "OwnerEmail": "Email của chủ sở hữu",
       "OwnerGroup": "Dự án chủ sở hữu",
       "OwnerResourceGroup": "Nhóm tài nguyên chủ sở hữu",
+      "PinnedHistoryTooltip": "Nhấp vào biểu tượng PIN để sửa bản ghi. Hồ sơ cố định được duy trì.",
       "PleaseCompleteForm": "Biểu mẫu không đầy đủ hoặc có lỗi. \nVui lòng kiểm tra đầu vào của bạn.",
       "PleaseWaitInitializing": "Vui lòng đợi trong khi khởi tạo ...",
       "PortsTitleWithRange": "Giá trị cổng (trong khoảng 1024 ~ 65535)",
@@ -1386,6 +1387,7 @@
       "SessionName": "Tên phiên",
       "SessionNameAllowCondition": "Tên phiên phải có 4-64 bảng chữ cái / số mà không có bất kỳ khoảng trắng nào.",
       "SessionNameOptional": "Tên phiên (tùy chọn)",
+      "SessionNameShort": "tên",
       "SessionStartTime": "Phiên bắt đầu",
       "SessionStillPreparing": "Phiên họp vẫn đang trong quá trình chuẩn bị. Sau khi phiên bắt đầu, hãy nhấn vào biểu tượng ứng dụng để khởi động ứng dụng.",
       "SessionType": "Loại phiên",
@@ -1415,7 +1417,8 @@
       "TitleSession": "Phiên (Backend.AI)",
       "TotalAllocation": "Tổng phân bổ",
       "UserResourceLimit": "Giới hạn tài nguyên người dùng",
-      "Version": "Phiên bản"
+      "Version": "Phiên bản",
+      "YouCanStartWithHistory": "Đây là hồ sơ phiên được tạo gần đây của bạn. \nNhấp vào tên phiên để bắt đầu một phiên mới."
     },
     "validation": {
       "EnterValidSessionName": "Vui lòng nhập kết hợp ít nhất 4 chữ cái trong bảng chữ cái, hoặc số, hoặc dấu gạch ngang hoặc dấu gạch dưới.",

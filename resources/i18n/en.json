@@ -1360,6 +1360,7 @@
       "OwnerEmail": "Owner Email",
       "OwnerGroup": "Owner project",
       "OwnerResourceGroup": "Owner resource group",
+      "PinnedHistoryTooltip": "Click the pin icon to pin the history. Pinned item will be retained.",
       "PleaseCompleteForm": "Form is incomplete or contains errors. Please check your inputs.",
       "PleaseWaitInitializing": "Please wait while initializing...",
       "PortsTitleWithRange": "Port value (between 1024 ~ 65535)",
@@ -1393,6 +1394,7 @@
       "SessionName": "Session name",
       "SessionNameAllowCondition": "Session name should have 4-64 alphabets/numbers without any whitespaces.",
       "SessionNameOptional": "Session name (optional)",
+      "SessionNameShort": "Name",
       "SessionStartTime": "Session Starts",
       "SessionStillPreparing": "The session is still in preparation. After the session starts, tap the app icon to start the app.",
       "SessionType": "Session Type",
@@ -1422,7 +1424,8 @@
       "TitleSession": "Session (Backend.AI)",
       "TotalAllocation": "Total Allocation",
       "UserResourceLimit": "User Resource Limit",
-      "Version": "Version"
+      "Version": "Version",
+      "YouCanStartWithHistory": "These are your recently created session records. Click a session name to start a new session."
     },
     "validation": {
       "EnterValidSessionName": "Please enter a combination of at least 4 alphabet letters, or numbers, or hyphen, or underscore.",

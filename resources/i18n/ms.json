@@ -1353,6 +1353,7 @@
       "OwnerEmail": "E-mel Pemilik",
       "OwnerGroup": "Projek pemilik",
       "OwnerResourceGroup": "Kumpulan sumber pemilik",
+      "PinnedHistoryTooltip": "Klik ikon PIN untuk menetapkan rekod. Rekod tetap dikekalkan.",
       "PleaseCompleteForm": "Borang tidak lengkap atau mengandungi ralat. \nSila semak input anda.",
       "PleaseWaitInitializing": "Sila tunggu semasa memulakan ...",
       "PortsTitleWithRange": "Nilai port (antara 1024 ~ 65535)",
@@ -1385,6 +1386,7 @@
       "SessionName": "Nama sesi",
       "SessionNameAllowCondition": "Nama sesi harus mempunyai 4-64 abjad / nombor tanpa ruang kosong.",
       "SessionNameOptional": "Nama sesi (pilihan)",
+      "SessionNameShort": "nama",
       "SessionStartTime": "Sesi Bermula",
       "SessionStillPreparing": "Sesi masih dalam persiapan. Setelah sesi dimulakan, ketuk ikon aplikasi untuk memulakan aplikasi.",
       "SessionType": "Jenis Sesi",
@@ -1414,7 +1416,8 @@
       "TitleSession": "Sesi (Backend.AI)",
       "TotalAllocation": "Jumlah Peruntukan",
       "UserResourceLimit": "Had Sumber Pengguna",
-      "Version": "Versi"
+      "Version": "Versi",
+      "YouCanStartWithHistory": "Ini adalah rekod sesi yang anda baru -baru ini. \nKlik nama sesi untuk memulakan sesi baru."
     },
     "validation": {
       "EnterValidSessionName": "Sila masukkan gabungan sekurang-kurangnya 4 huruf abjad, atau nombor, atau sempang, atau garis bawah.",

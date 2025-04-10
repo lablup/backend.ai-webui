@@ -1354,6 +1354,7 @@
       "OwnerEmail": "Correo electrónico del propietario",
       "OwnerGroup": "Proyecto propietario",
       "OwnerResourceGroup": "Grupo de recursos propietario",
+      "PinnedHistoryTooltip": "Haga clic en el icono de anclaje para anclar el registro. Los registros anclados se conservan.",
       "PleaseCompleteForm": "El formulario está incompleto o contiene errores. Compruebe los datos introducidos.",
       "PleaseWaitInitializing": "Por favor, espere mientras se inicializa...",
       "PortsTitleWithRange": "Valor del puerto (entre 1024 ~ 65535)",
@@ -1386,6 +1387,7 @@
       "SessionName": "Nombre de la sesión",
       "SessionNameAllowCondition": "El nombre de la sesión debe tener de 4 a 64 letras/números sin espacios en blanco.",
       "SessionNameOptional": "Nombre de la sesión (opcional)",
+      "SessionNameShort": "Nombre",
       "SessionStartTime": "Comienza la sesión",
       "SessionStillPreparing": "La sesión aún está en preparación. Una vez iniciada la sesión, pulse el icono de la aplicación para iniciarla.",
       "SessionType": "Tipo de sesión",
@@ -1415,7 +1417,8 @@
       "TitleSession": "Sesión (Backend.AI)",
       "TotalAllocation": "Asignación total",
       "UserResourceLimit": "Límite de recursos de usuario",
-      "Version": "Versión"
+      "Version": "Versión",
+      "YouCanStartWithHistory": "Estos son sus registros de sesión creados recientemente. Haga clic en un nombre de sesión para iniciar una nueva sesión."
     },
     "validation": {
       "EnterValidSessionName": "Ingrese una combinación de al menos 4 letras del alfabeto, números, guiones o guiones bajos.",

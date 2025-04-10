@@ -579,6 +579,12 @@ const SessionLauncherPage = () => {
           message: t('general.Session') + ': ' + sessionName,
           open: true,
         });
+
+        pushSessionHistory({
+          params: usedSearchParams,
+          name: sessionName,
+        });
+
         await Promise.all(sessionPromises)
           .then(
             ([firstSession]: Array<{
@@ -591,11 +597,6 @@ const SessionLauncherPage = () => {
               upsertNotification({
                 key: 'session-launcher:' + sessionName,
                 to: `/session?sessionDetail=${firstSession.sessionId}`,
-              });
-              pushSessionHistory({
-                id: firstSession.sessionId,
-                params: usedSearchParams,
-                name: firstSession.sessionName,
               });
               if (
                 values.num_of_sessions === 1 &&

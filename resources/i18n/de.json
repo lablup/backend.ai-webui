@@ -1354,6 +1354,7 @@
       "OwnerEmail": "Eigentümer-E-Mail",
       "OwnerGroup": "Projekt des Eigentümers",
       "OwnerResourceGroup": "Eigentümerressourcengruppe Owner",
+      "PinnedHistoryTooltip": "Klicken Sie auf das Pinsymbol, um den Datensatz anzuheften. Angepinnte Datensätze werden beibehalten.",
       "PleaseCompleteForm": "Das Formular ist unvollständig oder enthält Fehler. Bitte überprüfen Sie Ihre Eingaben.",
       "PleaseWaitInitializing": "Bitte warten Sie während der Initialisierung...",
       "PortsTitleWithRange": "Port-Wert (zwischen 1024 ~ 65535)",
@@ -1386,6 +1387,7 @@
       "SessionName": "Sitzungsname",
       "SessionNameAllowCondition": "Der Sitzungsname sollte 4-64 Buchstaben/Zahlen ohne Leerzeichen enthalten.",
       "SessionNameOptional": "Sitzungsname (optional)",
+      "SessionNameShort": "Name",
       "SessionStartTime": "Die Sitzung beginnt",
       "SessionStillPreparing": "Die Sitzung ist noch in Vorbereitung. Tippen Sie nach dem Start der Sitzung auf das App-Symbol, um die App zu starten.",
       "SessionType": "Sitzungstyp",
@@ -1415,7 +1417,8 @@
       "TitleSession": "Sitzung (Backend.AI)",
       "TotalAllocation": "Gesamtzuweisung",
       "UserResourceLimit": "Beschränkung der Benutzerressourcen",
-      "Version": "Ausführung"
+      "Version": "Ausführung",
+      "YouCanStartWithHistory": "Dies sind Ihre kürzlich erstellten Sitzungsaufzeichnungen. Klicken Sie auf einen Sitzungsnamen, um eine neue Sitzung zu starten."
     },
     "validation": {
       "EnterValidSessionName": "Bitte geben Sie eine Kombination aus mindestens 4 Buchstaben, Zahlen, Bindestrichen oder Unterstrichen ein.",
