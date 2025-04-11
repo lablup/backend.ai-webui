@@ -122,7 +122,7 @@ export const useResourceLimitAndRemaining = ({
     graphql`
       fragment useResourceLimitAndRemainingFragment on ScalingGroup {
         name
-        resource_slot_limit @since(version: "25.6.0")
+        resource_allocation_limit_for_sessions @since(version: "25.6.0")
       }
     `,
     currentResourceGroupFrgmt,
@@ -130,7 +130,8 @@ export const useResourceLimitAndRemaining = ({
 
   const currentResourceGroupSlotLimits = useMemo(() => {
     return JSON.parse(
-      currentResourceGroupForLimit?.resource_slot_limit || '{}',
+      currentResourceGroupForLimit?.resource_allocation_limit_for_sessions ||
+        '{}',
     ) as ResourceSlots;
   }, [currentResourceGroupForLimit]);
 
