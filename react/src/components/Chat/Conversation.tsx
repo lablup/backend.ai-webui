@@ -108,7 +108,7 @@ export const Conversation: React.FC<ConversationProps> = ({
         {map(list, (chat, index) => (
           <Suspense
             fallback={
-              <Card className={styles.skeleton} bordered>
+              <Card className={styles.skeleton} variant="outlined">
                 <Skeleton active />
               </Card>
             }

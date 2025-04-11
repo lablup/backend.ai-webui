@@ -19,7 +19,7 @@ export type ChatType = {
   conversationId: string;
   label: string;
   sync: boolean;
-  provider: ChatProviderType; // @FIXME: request
+  provider: ChatProviderType;
   agent?: AIAgent;
 };
 
