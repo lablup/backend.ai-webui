@@ -3,7 +3,7 @@ import {
   loginAsCreatedAccount,
   logout,
   webuiEndpoint,
-} from './test-util';
+} from './utils/test-util';
 import test, { expect } from '@playwright/test';
 
 const EMAIL = 'e2e-test-user@lablup.com';
