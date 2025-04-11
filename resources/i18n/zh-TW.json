@@ -371,6 +371,7 @@
       "Owner": "所有者",
       "Ownership": "所有權",
       "Permission": "允許",
+      "ProjectFolderDeletionRequiresAdmin": "項目文件夾刪除需要項目經理授權。",
       "Rename": "改名",
       "RenameAFolder": "重命名文件夾",
       "Restore": "恢復",

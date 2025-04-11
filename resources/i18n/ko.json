@@ -373,6 +373,7 @@
       "Owner": "소유자 여부",
       "Ownership": "소유",
       "Permission": "권한",
+      "ProjectFolderDeletionRequiresAdmin": "프로젝트 폴더 삭제는 프로젝트 관리자 승인이 필요합니다.",
       "Rename": "이름 변경",
       "Restore": "복원",
       "RestoreDescription": "\"{{ folderName }}\" 폴더를 복원 하시겠습니까?",

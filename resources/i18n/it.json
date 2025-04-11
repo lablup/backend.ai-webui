@@ -370,6 +370,7 @@
       "Owner": "Proprietario",
       "Ownership": "Proprietà",
       "Permission": "Autorizzazione",
+      "ProjectFolderDeletionRequiresAdmin": "La cancellazione della cartella del progetto richiede l'autorizzazione del project manager.",
       "Rename": "Rinominare",
       "Restore": "Ristabilire",
       "RestoreDescription": "Vuoi ripristinare la cartella \"{{ folderName }}\"?",

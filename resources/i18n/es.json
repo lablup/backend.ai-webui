@@ -371,6 +371,7 @@
       "Owner": "Propietario",
       "Ownership": "Propiedad",
       "Permission": "Permiso",
+      "ProjectFolderDeletionRequiresAdmin": "La eliminación de la carpeta del proyecto requiere la autorización del administrador del proyecto.",
       "Rename": "Cambie el nombre de",
       "Restore": "Restaurar",
       "RestoreDescription": "¿Quieres restaurar la carpeta \"{{ folderName }}\"?",

@@ -371,6 +371,7 @@
       "Owner": "Inhaber",
       "Ownership": "Eigentum",
       "Permission": "Genehmigung",
+      "ProjectFolderDeletionRequiresAdmin": "Für die Löschung des Projektordners erfordert die Genehmigung des Projektmanagers.",
       "Rename": "Umbenennen",
       "Restore": "Wiederherstellen",
       "RestoreDescription": "Möchten Sie \"{{ folderName }}\" -Fordner wiederherstellen?",

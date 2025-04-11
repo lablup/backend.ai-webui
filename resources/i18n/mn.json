@@ -370,6 +370,7 @@
       "Owner": "Эзэмшигч",
       "Ownership": "Эзэмшил",
       "Permission": "Зөвшөөрөл",
+      "ProjectFolderDeletionRequiresAdmin": "Төслийн хавтас устгах нь төслийн менежерийн зөвшөөрлийг шаарддаг.",
       "Rename": "Нэрийг нь өөрчлөх",
       "Restore": "Сэргээх",
       "RestoreDescription": "Та сэргээхийг хүсч байна уу \"{{ folderName }}\" хавтас?",

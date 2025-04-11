@@ -370,6 +370,7 @@
       "Owner": "オーナー",
       "Ownership": "所有",
       "Permission": "許可",
+      "ProjectFolderDeletionRequiresAdmin": "プロジェクトフォルダーの削除には、プロジェクトマネージャーの承認が必要です。",
       "Rename": "名前を変更",
       "Restore": "復元する",
       "RestoreDescription": "\"{{ folderName }}\"フォルダーを復元しますか？",

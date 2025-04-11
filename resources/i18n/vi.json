@@ -371,6 +371,7 @@
       "Owner": "Chủ nhân",
       "Ownership": "Quyền sở hữu",
       "Permission": "Sự cho phép",
+      "ProjectFolderDeletionRequiresAdmin": "Việc xóa thư mục dự án yêu cầu ủy quyền quản lý dự án.",
       "Rename": "Đổi tên",
       "Restore": "Khôi phục",
       "RestoreDescription": "Bạn có muốn khôi phục thư mục \"{{ folderName }}\" không?",

@@ -371,6 +371,7 @@
       "Owner": "Владелец",
       "Ownership": "Владение",
       "Permission": "Разрешение",
+      "ProjectFolderDeletionRequiresAdmin": "Удаление папки проекта требует авторизации менеджера проекта.",
       "Rename": "Переименовать",
       "Restore": "Восстановить",
       "RestoreDescription": "Вы хотите восстановить \"{{ folderName }}\" папка?",

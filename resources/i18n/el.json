@@ -368,6 +368,7 @@
       "Owner": "Ιδιοκτήτης",
       "Ownership": "Ιδιοκτησία",
       "Permission": "Αδεια",
+      "ProjectFolderDeletionRequiresAdmin": "Η διαγραφή του φακέλου του έργου απαιτεί την εξουσιοδότηση του διαχειριστή έργου.",
       "Rename": "Μετονομάζω",
       "Restore": "Επαναφέρω",
       "RestoreDescription": "Θέλετε να επαναφέρετε \"{{ folderName }}\" \"Φάκελος;",

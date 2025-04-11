@@ -370,6 +370,7 @@
       "Owner": "Omistaja",
       "Ownership": "Omistus",
       "Permission": "Lupa",
+      "ProjectFolderDeletionRequiresAdmin": "Projektikansioiden poisto vaatii projektipäällikön valtuutusta.",
       "Rename": "Nimeä uudelleen",
       "Restore": "Palauttaa",
       "RestoreDescription": "Haluatko palauttaa \"{{ folderName }}\" -kansio?",

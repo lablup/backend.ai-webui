@@ -373,6 +373,7 @@
       "Owner": "Owner",
       "Ownership": "Ownership",
       "Permission": "Permission",
+      "ProjectFolderDeletionRequiresAdmin": "The project folder deletion requires project manager authorization.",
       "Rename": "Rename",
       "Restore": "Restore",
       "RestoreDescription": "Do you want to restore \"{{ folderName }}\" folder?",

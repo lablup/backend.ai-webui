@@ -371,6 +371,7 @@
       "Owner": "所有者",
       "Ownership": "所有权",
       "Permission": "允许",
+      "ProjectFolderDeletionRequiresAdmin": "项目文件夹删除需要项目经理授权。",
       "Rename": "改名",
       "Restore": "恢复",
       "RestoreDescription": "您要还原“{{ folderName }}”文件夹？",

@@ -370,6 +370,7 @@
       "Owner": "Pemilik",
       "Ownership": "Kepemilikan",
       "Permission": "Izin",
+      "ProjectFolderDeletionRequiresAdmin": "Penghapusan folder proyek membutuhkan otorisasi manajer proyek.",
       "Rename": "Ganti nama",
       "Restore": "Memulihkan",
       "RestoreDescription": "Apakah Anda ingin mengembalikan \"{{ folderName }}\"?",

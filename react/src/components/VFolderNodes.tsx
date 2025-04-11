@@ -1,6 +1,6 @@
 import { filterNonNullItems, toLocalId } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useCurrentUserInfo } from '../hooks/backendai';
+import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -72,6 +72,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
   const { message } = App.useApp();
 
   const currentProject = useCurrentProjectValue();
+  const userRole = useCurrentUserRole();
   const baiClient = useSuspendedBackendaiClient();
   const painKiller = usePainKiller();
   const [currentUser] = useCurrentUserInfo();
@@ -120,6 +121,10 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
       return baiClient.vfolder.delete_from_trash_bin(toLocalId(id));
     },
   });
+
+  const isMoveToTrashDisabled = (vfolder: VFolderNodeInList) => {
+    return userRole === 'user' && vfolder?.ownership_type === 'group';
+  };
 
   return (
     <>
@@ -280,18 +285,30 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                       }}
                       okText={t('button.Move')}
                       okButtonProps={{ danger: true }}
+                      disabled={isMoveToTrashDisabled(vfolder)}
                     >
                       <Tooltip
-                        title={t('data.folders.MoveToTrash')}
+                        title={
+                          isMoveToTrashDisabled(vfolder)
+                            ? t(
+                                'data.folders.ProjectFolderDeletionRequiresAdmin',
+                              )
+                            : t('data.folders.MoveToTrash')
+                        }
                         placement="right"
                       >
                         <Button
                           size="small"
                           type="text"
                           icon={<TrashBinIcon />}
+                          disabled={isMoveToTrashDisabled(vfolder)}
                           style={{
-                            color: token.colorError,
-                            background: token.colorErrorBg,
+                            color: isMoveToTrashDisabled(vfolder)
+                              ? token.colorTextDisabled
+                              : token.colorError,
+                            background: isMoveToTrashDisabled(vfolder)
+                              ? token.colorBgContainerDisabled
+                              : token.colorErrorBg,
                           }}
                         />
                       </Tooltip>

@@ -371,6 +371,7 @@
       "Owner": "Proprietário",
       "Ownership": "Propriedade",
       "Permission": "Permissão",
+      "ProjectFolderDeletionRequiresAdmin": "A exclusão da pasta do projeto requer autorização do gerente de projeto.",
       "Rename": "Renomear",
       "Restore": "Restaurar",
       "RestoreDescription": "Deseja restaurar a pasta \"{{ folderName }}\"?",

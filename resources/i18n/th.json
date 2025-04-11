@@ -371,6 +371,7 @@
       "Owner": "เจ้าของ",
       "Ownership": "ความเป็นเจ้าของ",
       "Permission": "สิทธิ์",
+      "ProjectFolderDeletionRequiresAdmin": "การลบโฟลเดอร์โครงการต้องการการอนุญาตผู้จัดการโครงการ",
       "Rename": "เปลี่ยนชื่อ",
       "Restore": "กู้คืน",
       "RestoreDescription": "คุณต้องการกู้คืนโฟลเดอร์ \"{{ folderName }}\" หรือไม่?",

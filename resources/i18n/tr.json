@@ -371,6 +371,7 @@
       "Owner": "Sahip",
       "Ownership": "Mülkiyet",
       "Permission": "izin",
+      "ProjectFolderDeletionRequiresAdmin": "Proje klasörü silme, proje yöneticisi yetkilendirilmesini gerektirir.",
       "Rename": "Adını değiştirmek",
       "Restore": "Eski haline getirmek",
       "RestoreDescription": "\"{{ folderName }}\" klasörünü geri yüklemek istiyor musunuz?",
