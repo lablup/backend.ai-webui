@@ -128,6 +128,7 @@ const ResourceAllocationFormItems: React.FC<
             accelerator_quantum_size
             name
             is_active
+            ...useResourceLimitAndRemainingFragment
           }
         }
       `,
@@ -164,6 +165,7 @@ const ResourceAllocationFormItems: React.FC<
     useResourceLimitAndRemaining({
       currentProjectName: currentProject.name,
       currentResourceGroup: currentResourceGroupInForm || undefined, // global currentResourceGroup can be null
+      currentResourceGroupFrgmtForLimit: currentResourceGroupInfo,
       currentImage: currentImage,
     });
 

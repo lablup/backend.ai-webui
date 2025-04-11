@@ -1,4 +1,8 @@
-import { compareNumberWithUnits, convertBinarySizeUnit } from '../helper';
+import {
+  compareNumberWithUnits,
+  convertBinarySizeUnit,
+  toFixedFloorWithoutTrailingZeros,
+} from '../helper';
 import { useUpdatableState } from '../hooks';
 import useControllableState from '../hooks/useControllableState';
 import DynamicUnitInputNumber, {
@@ -222,8 +226,12 @@ const DynamicUnitInputNumberWithSlider: React.FC<
                     maxGiB.number === 0
                       ? maxGiB.number
                       : maxGiB.number >= 1
-                        ? maxGiB.number + 'g'
-                        : maxGiB.number * 1024 + 'm',
+                        ? toFixedFloorWithoutTrailingZeros(maxGiB.number, 2) +
+                          'g'
+                        : toFixedFloorWithoutTrailingZeros(
+                            maxGiB.number * 1024,
+                            2,
+                          ) + 'm',
                 },
               }),
             })}

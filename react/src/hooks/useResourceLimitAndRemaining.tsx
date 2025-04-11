@@ -3,10 +3,13 @@ import { Image } from '../components/ImageEnvironmentSelectFormItems';
 import { AUTOMATIC_DEFAULT_SHMEM } from '../components/ResourceAllocationFormItems';
 import { addNumberWithUnits, convertBinarySizeUnit } from '../helper';
 import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
+import { useResourceLimitAndRemainingFragment$key } from './__generated__/useResourceLimitAndRemainingFragment.graphql';
 import { useSuspenseTanQuery } from './reactQueryAlias';
 import { useResourceGroupsForCurrentProject } from './useCurrentProject';
+import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { useMemo } from 'react';
+import { useFragment } from 'react-relay';
 
 const maxPerContainerRegex = /^max([A-Za-z0-9]+)PerContainer$/;
 
@@ -96,6 +99,7 @@ interface Props {
   currentProjectName: string;
   currentImage?: Image;
   currentResourceGroup?: string;
+  currentResourceGroupFrgmtForLimit?: useResourceLimitAndRemainingFragment$key | null;
   ignorePerContainerConfig?: boolean;
   fetchKey?: string;
 }
@@ -104,6 +108,7 @@ interface Props {
 export const useResourceLimitAndRemaining = ({
   currentImage,
   currentResourceGroup = '',
+  currentResourceGroupFrgmtForLimit: currentResourceGroupFrgmt = null,
   currentProjectName,
   ignorePerContainerConfig = false,
   fetchKey,
@@ -112,6 +117,22 @@ export const useResourceLimitAndRemaining = ({
   const [resourceSlots] = useResourceSlots();
   const acceleratorSlots = _.omit(resourceSlots, ['cpu', 'mem', 'shmem']);
   const { resourceGroups } = useResourceGroupsForCurrentProject();
+
+  const currentResourceGroupForLimit = useFragment(
+    graphql`
+      fragment useResourceLimitAndRemainingFragment on ScalingGroup {
+        name
+        resource_slot_limit @since(version: "25.6.0")
+      }
+    `,
+    currentResourceGroupFrgmt,
+  );
+
+  const currentResourceGroupSlotLimits = useMemo(() => {
+    return JSON.parse(
+      currentResourceGroupForLimit?.resource_slot_limit || '{}',
+    ) as ResourceSlots;
+  }, [currentResourceGroupForLimit]);
 
   const {
     data: checkPresetInfo,
@@ -247,6 +268,7 @@ export const useResourceLimitAndRemaining = ({
                 : baiClient._config.maxCPUCoresPerContainer,
               limitParser(checkPresetInfo?.keypair_limits.cpu),
               limitParser(checkPresetInfo?.group_limits.cpu),
+              limitParser(currentResourceGroupSlotLimits.cpu),
               // resourceGroupResourceSize?.cpu,
             ]),
           },
@@ -282,6 +304,11 @@ export const useResourceLimitAndRemaining = ({
                     limitParser(checkPresetInfo?.group_limits.mem) + '',
                     'g',
                   )?.number,
+                limitParser(currentResourceGroupSlotLimits.mem) &&
+                  convertBinarySizeUnit(
+                    limitParser(currentResourceGroupSlotLimits.mem) + '',
+                    'g',
+                  )?.number,
                 // scaling group all mem (using + remaining), string type
                 // resourceGroupResourceSize?.mem &&
                 //   iSizeToSize(resourceGroupResourceSize?.mem + '', 'g')?.number,
@@ -310,6 +337,9 @@ export const useResourceLimitAndRemaining = ({
               checkPresetInfo?.keypair_limits[key as ResourceSlotName],
             ),
             limitParser(checkPresetInfo?.group_limits[key as ResourceSlotName]),
+            limitParser(
+              currentResourceGroupSlotLimits[key as ResourceSlotName],
+            ),
             // scaling group all cpu (using + remaining), string type
             // resourceGroupResourceSize.accelerators[key],
           ]),
