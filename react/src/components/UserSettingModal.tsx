@@ -427,8 +427,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             })}
           />
         </Form.Item>
-        {!!user?.role &&
-          !!currentUserRole &&
+        {!!currentUserRole &&
           currentUserRole in permissionRangeOfRoleChanges && (
             <Form.Item name="role" label={t('credential.Role')}>
               <Select
