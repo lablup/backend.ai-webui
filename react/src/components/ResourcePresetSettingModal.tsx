@@ -1,4 +1,7 @@
-import { convertBinarySizeUnit } from '../helper';
+import {
+  convertBinarySizeUnit,
+  toFixedFloorWithoutTrailingZeros,
+} from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -107,6 +110,9 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
           (value, key) => {
             if (_.includes(key, 'mem')) {
               return convertBinarySizeUnit(value, 'b', 0)?.numberFixed;
+            }
+            if (_.includes(key, '.shares')) {
+              return toFixedFloorWithoutTrailingZeros(value, 2);
             }
             return value;
           },
