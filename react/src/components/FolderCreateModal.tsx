@@ -115,11 +115,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
   >({
     mutationFn: (values) => {
       const body = {
-        name: values.name,
-        host: values.host,
-        group: values.group,
-        usage_mode: values.usage_mode,
-        permission: values.permission,
+        ...values,
         cloneable: values.cloneable ?? false,
       };
       return baiRequestWithPromise({
