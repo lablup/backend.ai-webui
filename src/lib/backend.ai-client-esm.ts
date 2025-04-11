@@ -764,6 +764,7 @@ class Client {
     }
     if (this.isManagerVersionCompatibleWith('25.5.0')) {
       this._features['custom-accelerator-quantum-size'] = true;
+      this._features['user-metrics'] = true;
     }
   }
 
