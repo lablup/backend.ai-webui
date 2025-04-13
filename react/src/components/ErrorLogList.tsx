@@ -277,7 +277,13 @@ const ErrorLogList: React.FC<{
               }
             : false
         }
-        scroll={{ x: 'max-content', y: 'calc(100vh - 400px)' }}
+        scroll={{
+          x: 'max-content',
+          y:
+            _.filter(filteredLogData, (log) => log.isError).length === 0
+              ? undefined
+              : 'calc(100vh - 400px)',
+        }}
         dataSource={
           checkedShowOnlyError
             ? _.filter(filteredLogData, (log) => {
