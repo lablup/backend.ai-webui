@@ -21,7 +21,13 @@ import { Alert, App, Card, CardProps } from 'antd';
 import { createStyles } from 'antd-style';
 import graphql from 'babel-plugin-relay/macro';
 import { includes, isEmpty, map } from 'lodash';
-import React, { startTransition, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  startTransition,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useFragment } from 'react-relay';
 
 interface ChatCardProps extends CardProps, ChatLifecycleEventType {
@@ -163,8 +169,8 @@ const ChatHeader = React.memo(PureChatHeader, (prev, next) => {
 
 const ChatInput = React.memo(PureChatInput);
 
-function createBaseURL(endpointUrl?: string | null) {
-  return endpointUrl ? new URL('v1', endpointUrl).toString() : undefined;
+function createBaseURL(basePath: string, endpointUrl?: string | null) {
+  return endpointUrl ? new URL(basePath, endpointUrl).toString() : undefined;
 }
 
 const ChatCard: React.FC<ChatCardProps> = ({
@@ -184,7 +190,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
 
   const { endpoint, setEndpoint } = useEndpoint(selectedEndpoint);
   const [baseURL, setBaseURL] = useState<string | undefined>(
-    createBaseURL(endpoint?.url),
+    createBaseURL(chat.provider.basePath, endpoint?.url),
   );
   const [token, setToken] = useState<string | undefined>();
   const { models, modelId, setModelId } = useModels(
@@ -243,10 +249,10 @@ const ChatCard: React.FC<ChatCardProps> = ({
 
   useEffect(() => {
     startTransition(() => {
-      setBaseURL(createBaseURL(endpoint?.url));
+      setBaseURL(createBaseURL(chat.provider.basePath, endpoint?.url));
       setToken(undefined);
     });
-  }, [endpoint?.url]);
+  }, [endpoint?.url, chat.provider.basePath]);
 
   const isStreaming = status === 'streaming' || status === 'submitted';
 
