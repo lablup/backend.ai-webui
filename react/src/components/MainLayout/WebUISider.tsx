@@ -56,9 +56,11 @@ type MenuItem = {
   key: string;
 };
 interface WebUISiderProps
-  extends Pick<BAISiderProps, 'collapsed' | 'collapsedWidth' | 'onBreakpoint'> {
+  extends Pick<
+    BAISiderProps,
+    'collapsed' | 'collapsedWidth' | 'onBreakpoint' | 'onCollapse'
+  > {
   webuiplugins?: WebUIPluginType;
-  onCollapse?: (collapsed: boolean) => void;
 }
 
 type GroupName =
@@ -443,7 +445,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
         buttonTop={68}
         // buttonTop={18}
         onClick={(collapsed) => {
-          props.onCollapse?.(collapsed);
+          props.onCollapse?.(collapsed, 'clickTrigger');
         }}
         hidden={!gridBreakpoint.sm || !isSiderHover}
       />

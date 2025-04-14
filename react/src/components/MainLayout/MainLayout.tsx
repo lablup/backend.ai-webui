@@ -162,8 +162,8 @@ function MainLayout() {
               !compactSidebarActive && setSideCollapsed(false);
             }
           }}
-          onCollapse={(collapsed) => {
-            setSideCollapsed(collapsed);
+          onCollapse={(collapsed, type) => {
+            type === 'clickTrigger' && setSideCollapsed(collapsed);
           }}
           webuiplugins={webUIPlugins}
         />
