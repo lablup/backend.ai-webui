@@ -1597,7 +1597,20 @@
     "SelectPeriod": "Período",
     "SessionsDesc": "Número de sesiones de cálculo creadas.",
     "UsageHistory": "Historial de uso",
-    "UsageHistoryNote": "El historial de uso que se muestra aquí se basa en sesiones de cómputo terminadas."
+    "UsageHistoryNote": "El historial de uso que se muestra aquí se basa en sesiones de cómputo terminadas.",
+    "prometheus": {
+      "DataMissingInLowUsageDesc": "Si el uso es bajo, los datos para algunas fechas pueden no estar disponibles. \nVuelva a intentarlo con un rango de fecha más corto.",
+      "noMetricsToDisplay": "No hay métricas disponibles para el seguimiento"
+    },
+    "timeRange": {
+      "Last12Hours": "Últimas 12 horas",
+      "Last3Hours": "Últimas 3 horas",
+      "Last7Days": "Últimos 7 días",
+      "LastDay": "Último 1 día"
+    },
+    "timeRanges": {
+      "LastHour": "Última 1 hora"
+    }
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "Cambiar una política de recursos puede afectar a todos los proyectos que utilicen esa política de recursos de proyecto, así que utilícela con cuidado.",
@@ -1879,7 +1892,9 @@
       "TermsOfService": "Condiciones de uso",
       "TotpActivated": "2FA Activado",
       "Update": "Actualización",
+      "UsageHistory": "Historial de asignación",
       "UserCredentials&Policies": "Credenciales de usuario y políticas",
+      "UserSessionHistory": "Historial de la sesión de usuario",
       "Users": "Usuarios",
       "WelcomeMessage": "Bienvenido, {{ userName }}.",
       "YouMushChangeYourPassword": "Se recomienda cambiar periódicamente la contraseña por razones de seguridad. Dado que ha transcurrido cierto tiempo desde la última vez que cambió su contraseña, deberá cambiarla para poder seguir utilizando el servicio.",

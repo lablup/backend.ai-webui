@@ -1597,7 +1597,20 @@
     "SelectPeriod": "Giai đoạn",
     "SessionsDesc": "Số lượng phiên điện toán được tạo.",
     "UsageHistory": "Lịch sử sử dụng",
-    "UsageHistoryNote": "Lịch sử sử dụng được hiển thị ở đây dựa trên các phiên tính toán chấm dứt."
+    "UsageHistoryNote": "Lịch sử sử dụng được hiển thị ở đây dựa trên các phiên tính toán chấm dứt.",
+    "prometheus": {
+      "DataMissingInLowUsageDesc": "Nếu việc sử dụng thấp, dữ liệu cho một số ngày có thể không có sẵn. \nVui lòng thử lại với phạm vi ngày ngắn hơn.",
+      "noMetricsToDisplay": "Không có số liệu có giá trị để theo dõi"
+    },
+    "timeRange": {
+      "Last12Hours": "12 giờ cuối cùng",
+      "Last3Hours": "3 giờ cuối cùng",
+      "Last7Days": "7 ngày qua",
+      "LastDay": "1 ngày trước"
+    },
+    "timeRanges": {
+      "LastHour": "1 giờ cuối cùng"
+    }
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "Việc thay đổi chính sách tài nguyên có thể ảnh hưởng đến tất cả các dự án sử dụng chính sách tài nguyên dự án đó, vì vậy hãy cẩn thận khi sử dụng chính sách này.",
@@ -1879,7 +1892,9 @@
       "TermsOfService": "Điều khoản dịch vụ",
       "TotpActivated": "Đã bật 2FA",
       "Update": "Cập nhật",
+      "UsageHistory": "Lịch sử phân bổ",
       "UserCredentials&Policies": "Chính sách & Thông tin đăng nhập Người dùng",
+      "UserSessionHistory": "Lịch sử phiên người dùng",
       "Users": "Người dùng",
       "WelcomeMessage": "Chào mừng, {{ userName }}.",
       "YouMushChangeYourPassword": "Bạn nên thay đổi mật khẩu định kỳ vì lý do bảo mật. \nVì một khoảng thời gian nhất định đã trôi qua kể từ lần cuối bạn thay đổi mật khẩu, bạn phải thay đổi mật khẩu để tiếp tục sử dụng dịch vụ.",

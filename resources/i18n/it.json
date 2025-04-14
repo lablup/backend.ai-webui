@@ -1594,7 +1594,20 @@
     "SelectPeriod": "Periodo",
     "SessionsDesc": "Il numero di sessioni di calcolo create.",
     "UsageHistory": "Storia dell'uso",
-    "UsageHistoryNote": "La cronologia dell'utilizzo qui mostrata si basa su sessioni di calcolo terminate."
+    "UsageHistoryNote": "La cronologia dell'utilizzo qui mostrata si basa su sessioni di calcolo terminate.",
+    "prometheus": {
+      "DataMissingInLowUsageDesc": "Se l'utilizzo è basso, i dati per alcune date potrebbero non essere disponibili. \nRiprova con un intervallo di date più breve.",
+      "noMetricsToDisplay": "Nessuna metrica disponibile per il monitoraggio"
+    },
+    "timeRange": {
+      "Last12Hours": "Ultime 12 ore",
+      "Last3Hours": "Ultime 3 ore",
+      "Last7Days": "Ultimi 7 giorni",
+      "LastDay": "Ultimo giorno"
+    },
+    "timeRanges": {
+      "LastHour": "Ultima 1 ora"
+    }
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "La modifica di un criterio di risorse può influire su tutti i progetti che utilizzano quel criterio di risorse del progetto, quindi va usata con cautela.",
@@ -1876,7 +1889,9 @@
       "TermsOfService": "Termini di servizio",
       "TotpActivated": "2FA abilitato",
       "Update": "Aggiornare",
+      "UsageHistory": "Storia di allocazione",
       "UserCredentials&Policies": "Credenziali utente e criteri",
+      "UserSessionHistory": "Cronologia della sessione utente",
       "Users": "Utenti",
       "WelcomeMessage": "Benvenuto, {{ userName }}.",
       "YouMushChangeYourPassword": "Per motivi di sicurezza, si consiglia di modificare periodicamente la password. Poiché è trascorso un certo periodo di tempo dall'ultima modifica della password, è necessario cambiarla per poter continuare a utilizzare il servizio.",

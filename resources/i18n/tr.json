@@ -1596,7 +1596,20 @@
     "SelectPeriod": "Dönem",
     "SessionsDesc": "Oluşturulan hesaplama oturumlarının sayısı.",
     "UsageHistory": "Kullanım Geçmişi",
-    "UsageHistoryNote": "Burada gösterilen kullanım geçmişi, sonlandırılmış hesaplama oturumlarına dayanmaktadır."
+    "UsageHistoryNote": "Burada gösterilen kullanım geçmişi, sonlandırılmış hesaplama oturumlarına dayanmaktadır.",
+    "prometheus": {
+      "DataMissingInLowUsageDesc": "Kullanım düşükse, bazı tarihler için veriler mevcut olmayabilir. \nLütfen daha kısa bir tarih aralığı ile tekrar deneyin.",
+      "noMetricsToDisplay": "İzleme için Avalifable Metrics yok"
+    },
+    "timeRange": {
+      "Last12Hours": "Son 12 Saat",
+      "Last3Hours": "Son 3 Saat",
+      "Last7Days": "Son 7 Gün",
+      "LastDay": "Son 1 Gün"
+    },
+    "timeRanges": {
+      "LastHour": "Son 1 Saat"
+    }
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "Bir kaynak ilkesinin değiştirilmesi, o proje kaynak ilkesini kullanan tüm projeleri etkileyebilir, bu nedenle dikkatli kullanın.",
@@ -1878,7 +1891,9 @@
       "TermsOfService": "Kullanım Şartları",
       "TotpActivated": "2FA Etkin",
       "Update": "Güncelleme",
+      "UsageHistory": "Tahsis geçmişi",
       "UserCredentials&Policies": "Kullanıcı Kimlik Bilgileri ve Politikaları",
+      "UserSessionHistory": "Kullanıcı Oturumu Geçmişi",
       "Users": "Kullanıcılar",
       "WelcomeMessage": "Hoş geldiniz, {{ userName }}.",
       "YouMushChangeYourPassword": "Güvenlik nedeniyle şifrenizi periyodik olarak değiştirmeniz önerilir. Şifrenizi en son değiştirdiğinizden bu yana belirli bir süre geçtiğinden, hizmeti kullanmaya devam etmek için şifrenizi değiştirmeniz gerekir.",

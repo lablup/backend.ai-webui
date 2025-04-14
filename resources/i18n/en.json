@@ -1604,7 +1604,20 @@
     "SelectPeriod": "Period",
     "SessionsDesc": "The number of compute sessions created.",
     "UsageHistory": "Usage History",
-    "UsageHistoryNote": "The usage history shown here are based on terminated compute sessions."
+    "UsageHistoryNote": "The usage history shown here are based on terminated compute sessions.",
+    "prometheus": {
+      "DataMissingInLowUsageDesc": "If usage is low, data for some dates may not be available. Please try again with a shorter date range.",
+      "noMetricsToDisplay": "No metrics avaliable for tracking"
+    },
+    "timeRange": {
+      "Last12Hours": "Last 12 Hours",
+      "Last3Hours": "Last 3 Hours",
+      "Last7Days": "Last 7 Days",
+      "LastDay": "Last 1 Day"
+    },
+    "timeRanges": {
+      "LastHour": "Last 1 Hour"
+    }
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "Changing a resource policy can affect all projects that use that project resource policy, so use it with care.",
@@ -1887,7 +1900,9 @@
       "TermsOfService": "Terms of Service",
       "TotpActivated": "2FA Enabled",
       "Update": "Update",
+      "UsageHistory": "Allocation History",
       "UserCredentials&Policies": "User Credentials & Policies",
+      "UserSessionHistory": "User Session History",
       "Users": "Users",
       "WelcomeMessage": "Welcome, {{ userName }}.",
       "YouMushChangeYourPassword": "It is recommended to periodically change your password for security reasons. Since a certain amount of time has passed since you last changed your password, you must change it in order to continue using the service.",

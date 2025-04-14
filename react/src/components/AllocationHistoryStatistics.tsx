@@ -3,16 +3,39 @@ import {
   convertDecimalSizeUnit,
   SizeUnit,
 } from '../helper';
-import { UserStatsData, UserStatsDataKey } from '../hooks';
+import {
+  UserStatsData,
+  UserStatsDataKey,
+  useSuspendedBackendaiClient,
+} from '../hooks';
 import { useThemeMode } from '../hooks/useThemeMode';
 import useUserUsageStats from '../hooks/useUserUsageStats';
-import { Period } from '../pages/StatisticsPage';
+import { Period } from './AllocationHistory';
 import Flex from './Flex';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import { Column, ColumnConfig } from '@ant-design/charts';
 import { Card } from 'antd';
+import { createStyles } from 'antd-style';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
+
+const useStyles = createStyles(({ css, token }) => ({
+  graphCard: css`
+    .g2-tooltip {
+      background-color: ${token.colorBgSpotlight} !important;
+      border: none !important;
+    }
+    .g2-tooltip-title {
+      color: ${token.colorTextLightSolid} !important;
+    }
+    .g2-tooltip-list-item-name {
+      color: ${token.colorTextLightSolid} !important;
+    }
+    .g2-tooltip-list-item-value {
+      color: ${token.colorTextLightSolid} !important;
+    }
+  `,
+}));
 
 type ByteUnit = 'B' | 'KiB' | 'MiB' | 'GiB' | 'TiB' | 'PiB' | 'EiB';
 type DecimalUnit = 'B' | 'KB' | 'MB' | 'GB' | 'TB' | 'PB' | 'EB';
@@ -22,16 +45,16 @@ const WEEK_LENGTH = DAY_LENGTH * 7;
 
 interface GraphCardProps {
   title: string;
-  tooltipText: string;
+  tooltipText?: string;
   children: React.ReactNode;
 }
-const GraphCard = ({ title, tooltipText, children }: GraphCardProps) => (
+export const GraphCard = ({ title, tooltipText, children }: GraphCardProps) => (
   <Card
     type="inner"
     title={
       <Flex gap={'xxs'}>
         {title}
-        <QuestionIconWithTooltip title={tooltipText} />
+        {tooltipText ? <QuestionIconWithTooltip title={tooltipText} /> : null}
       </Flex>
     }
     style={{ width: '100%' }}
@@ -105,23 +128,29 @@ const getColumnConfig = ({
   };
 };
 
-interface UsageHistoryStatisticsProps {
+interface AllocationHistoryStatisticsProps {
   period: Period;
   fetchKey?: string;
 }
 
-const UsageHistoryStatistics = ({
-  period,
-  fetchKey,
-}: UsageHistoryStatisticsProps) => {
+const AllocationHistoryStatistics: React.FC<
+  AllocationHistoryStatisticsProps
+> = ({ period, fetchKey }) => {
   const { t } = useTranslation();
   const { data } = useUserUsageStats({
     fetchKey,
   });
   const { isDarkMode } = useThemeMode();
+  const { styles } = useStyles();
+  const baiClient = useSuspendedBackendaiClient();
 
   return (
-    <Flex direction="column" align="start" gap="md">
+    <Flex
+      className={styles.graphCard}
+      direction="column"
+      align="start"
+      gap="md"
+    >
       <GraphCard title="Sessions" tooltipText={t('statistics.SessionsDesc')}>
         <Column
           height={200}
@@ -178,36 +207,40 @@ const UsageHistoryStatistics = ({
           })}
         />
       </GraphCard>
-      <GraphCard title="IO-Read" tooltipText={t('statistics.IOReadDesc')}>
-        <Column
-          height={200}
-          {...getColumnConfig({
-            data,
-            key: 'io_read_bytes',
-            period,
-            targetUnit: 'M',
-            displayUnit: 'MiB',
-            unitType: 'decimal',
-            isDarkMode,
-          })}
-        />
-      </GraphCard>
-      <GraphCard title="IO-Write" tooltipText={t('statistics.IOWriteDesc')}>
-        <Column
-          height={200}
-          {...getColumnConfig({
-            data,
-            key: 'io_write_bytes',
-            period,
-            targetUnit: 'M',
-            displayUnit: 'MiB',
-            unitType: 'decimal',
-            isDarkMode,
-          })}
-        />
-      </GraphCard>
+      {!baiClient?.supports('user-metrics') ? (
+        <>
+          <GraphCard title="IO-Read" tooltipText={t('statistics.IOReadDesc')}>
+            <Column
+              height={200}
+              {...getColumnConfig({
+                data,
+                key: 'io_read_bytes',
+                period,
+                targetUnit: 'M',
+                displayUnit: 'MiB',
+                unitType: 'decimal',
+                isDarkMode,
+              })}
+            />
+          </GraphCard>
+          <GraphCard title="IO-Write" tooltipText={t('statistics.IOWriteDesc')}>
+            <Column
+              height={200}
+              {...getColumnConfig({
+                data,
+                key: 'io_write_bytes',
+                period,
+                targetUnit: 'M',
+                displayUnit: 'MiB',
+                unitType: 'decimal',
+                isDarkMode,
+              })}
+            />
+          </GraphCard>
+        </>
+      ) : null}
     </Flex>
   );
 };
 
-export default UsageHistoryStatistics;
+export default AllocationHistoryStatistics;

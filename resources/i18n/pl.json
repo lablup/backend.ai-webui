@@ -1597,7 +1597,20 @@
     "SelectPeriod": "Okres",
     "SessionsDesc": "Liczba utworzonych sesji obliczeniowych.",
     "UsageHistory": "Historia użytkowania",
-    "UsageHistoryNote": "Pokazana tutaj historia użytkowania oparta jest na zakończonych sesjach obliczeniowych."
+    "UsageHistoryNote": "Pokazana tutaj historia użytkowania oparta jest na zakończonych sesjach obliczeniowych.",
+    "prometheus": {
+      "DataMissingInLowUsageDesc": "Jeśli użycie jest niskie, dane dla niektórych dat mogą nie być dostępne. \nSpróbuj ponownie z krótszym zakresem dat.",
+      "noMetricsToDisplay": "Brak metryk do śledzenia"
+    },
+    "timeRange": {
+      "Last12Hours": "Ostatnie 12 godzin",
+      "Last3Hours": "Ostatnie 3 godziny",
+      "Last7Days": "Ostatnie 7 dni",
+      "LastDay": "Ostatni 1 dzień"
+    },
+    "timeRanges": {
+      "LastHour": "Ostatnia 1 godzina"
+    }
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "Zmiana polityki zasobów może mieć wpływ na wszystkie projekty korzystające z tej polityki zasobów projektu, więc należy jej używać ostrożnie.",
@@ -1879,7 +1892,9 @@
       "TermsOfService": "Warunki usługi",
       "TotpActivated": "Włączone 2FA",
       "Update": "Aktualizacja",
+      "UsageHistory": "Historia alokacji",
       "UserCredentials&Policies": "Poświadczenia użytkownika i zasady",
+      "UserSessionHistory": "Historia sesji użytkownika",
       "Users": "Użytkownicy",
       "WelcomeMessage": "Witamy, {{nazwa użytkownika }}.",
       "YouMushChangeYourPassword": "Ze względów bezpieczeństwa zaleca się okresową zmianę hasła. Po upływie określonego czasu od ostatniej zmiany hasła należy je zmienić, aby móc nadal korzystać z usługi.",

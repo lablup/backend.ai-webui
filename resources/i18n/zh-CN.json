@@ -1597,7 +1597,20 @@
     "SelectPeriod": "时期",
     "SessionsDesc": "创建的计算会话数。",
     "UsageHistory": "使用历史",
-    "UsageHistoryNote": "此处显示的用法历史记录基于终止的计算会议。"
+    "UsageHistoryNote": "此处显示的用法历史记录基于终止的计算会议。",
+    "prometheus": {
+      "DataMissingInLowUsageDesc": "如果用法较低，则可能无法提供某些日期的数据。\n请在较短的日期范围内重试。",
+      "noMetricsToDisplay": "没有可用的指标来跟踪"
+    },
+    "timeRange": {
+      "Last12Hours": "最近12个小时",
+      "Last3Hours": "最近3个小时",
+      "Last7Days": "最近7天",
+      "LastDay": "最后一天"
+    },
+    "timeRanges": {
+      "LastHour": "最后1小时"
+    }
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "更改资源策略会影响使用该项目资源策略的所有项目，因此请谨慎使用。",
@@ -1879,7 +1892,9 @@
       "TermsOfService": "服务条款",
       "TotpActivated": "已启用 2FA",
       "Update": "更新",
+      "UsageHistory": "分配历史",
       "UserCredentials&Policies": "用户凭证和政策",
+      "UserSessionHistory": "用户会话历史记录",
       "Users": "用户",
       "WelcomeMessage": "欢迎，{{ userName }}.",
       "YouMushChangeYourPassword": "出于安全考虑，建议您定期更改密码。由于距离上次更改密码已过去一定时间，您必须更改密码才能继续使用服务。",

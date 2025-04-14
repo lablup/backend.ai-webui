@@ -1595,7 +1595,20 @@
     "SelectPeriod": "Tempoh",
     "SessionsDesc": "Bilangan sesi pengiraan yang dibuat.",
     "UsageHistory": "Sejarah Penggunaan",
-    "UsageHistoryNote": "Sejarah penggunaan yang ditunjukkan di sini adalah berdasarkan sesi pengiraan yang ditamatkan."
+    "UsageHistoryNote": "Sejarah penggunaan yang ditunjukkan di sini adalah berdasarkan sesi pengiraan yang ditamatkan.",
+    "prometheus": {
+      "DataMissingInLowUsageDesc": "Jika penggunaan adalah rendah, data untuk beberapa tarikh mungkin tidak tersedia. \nSila cuba lagi dengan julat tarikh yang lebih pendek.",
+      "noMetricsToDisplay": "Tiada metrik yang boleh didapati untuk menjejaki"
+    },
+    "timeRange": {
+      "Last12Hours": "12 jam terakhir",
+      "Last3Hours": "3 jam terakhir",
+      "Last7Days": "7 hari terakhir",
+      "LastDay": "1 hari terakhir"
+    },
+    "timeRanges": {
+      "LastHour": "1 jam terakhir"
+    }
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "Menukar dasar sumber boleh menjejaskan semua projek yang menggunakan dasar sumber projek itu, jadi gunakannya dengan berhati-hati.",
@@ -1876,7 +1889,9 @@
       "TermsOfService": "Syarat Perkhidmatan",
       "TotpActivated": "2FA Didayakan",
       "Update": "Kemas kini",
+      "UsageHistory": "Sejarah peruntukan",
       "UserCredentials&Policies": "Kepercayaan & Dasar Pengguna",
+      "UserSessionHistory": "Sejarah Sesi Pengguna",
       "Users": "Pengguna",
       "WelcomeMessage": "Selamat datang, {{ userName }}.",
       "YouMushChangeYourPassword": "Adalah disyorkan untuk menukar kata laluan anda secara berkala atas sebab keselamatan. \nMemandangkan tempoh masa tertentu telah berlalu sejak kali terakhir anda menukar kata laluan anda, anda mesti menukarnya untuk terus menggunakan perkhidmatan tersebut.",

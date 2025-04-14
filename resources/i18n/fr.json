@@ -1597,7 +1597,20 @@
     "SelectPeriod": "Période",
     "SessionsDesc": "Le nombre de sessions de calcul créées.",
     "UsageHistory": "Usage Historique",
-    "UsageHistoryNote": "L'historique d'utilisation montré ici est basé sur des séances de calcul terminées."
+    "UsageHistoryNote": "L'historique d'utilisation montré ici est basé sur des séances de calcul terminées.",
+    "prometheus": {
+      "DataMissingInLowUsageDesc": "Si l'utilisation est faible, les données pour certaines dates peuvent ne pas être disponibles. \nVeuillez réessayer avec une plage de dates plus courte.",
+      "noMetricsToDisplay": "Aucune métrique avaliable pour le suivi"
+    },
+    "timeRange": {
+      "Last12Hours": "12 dernières heures",
+      "Last3Hours": "3 dernières heures",
+      "Last7Days": "7 derniers jours",
+      "LastDay": "Dernier 1 jour"
+    },
+    "timeRanges": {
+      "LastHour": "Dernière 1 heure"
+    }
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "La modification d'une politique de ressources peut affecter tous les projets qui utilisent cette politique de ressources, il convient donc de l'utiliser avec précaution.",
@@ -1879,7 +1892,9 @@
       "TermsOfService": "Conditions d'utilisation",
       "TotpActivated": "2FA activé",
       "Update": "Mettre à jour",
+      "UsageHistory": "Historique d'allocation",
       "UserCredentials&Policies": "Identifiants et politiques",
+      "UserSessionHistory": "Historique des sessions utilisateur",
       "Users": "Utilisateurs",
       "WelcomeMessage": "Bienvenue, {{ userName }}.",
       "YouMushChangeYourPassword": "Il est recommandé de modifier périodiquement votre mot de passe pour des raisons de sécurité. Étant donné qu'un certain temps s'est écoulé depuis la dernière modification de votre mot de passe, vous devez le modifier pour pouvoir continuer à utiliser le service.",

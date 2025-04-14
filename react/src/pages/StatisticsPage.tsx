@@ -1,94 +1,76 @@
+import AllocationHistory from '../components/AllocationHistory';
 import BAICard from '../components/BAICard';
-import BAIFetchKeyButton from '../components/BAIFetchKeyButton';
-// import BAITabs from '../components/BAITabs';
-import Flex from '../components/Flex';
-import UsageHistoryStatistics from '../components/UsageHistoryStatistics';
-import { useUpdatableState } from '../hooks';
-import { Alert, Form, Select, Skeleton } from 'antd';
-import { Suspense, useTransition } from 'react';
+import UserSessionsMetrics from '../components/UserSessionsMetrics';
+import { filterEmptyItem } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
+import { Skeleton, theme } from 'antd';
+import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { createEnumParam, useQueryParam, withDefault } from 'use-query-params';
+import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
-export type Period = '1D' | '1W';
-const periodParam = withDefault(createEnumParam<Period>(['1D', '1W']), '1D');
+type TabKey = 'allocation-history' | 'prometheus-metrics';
 
-const StatisticsPage = () => {
-  const [selectedPeriod, setSelectedPeriod] = useQueryParam(
-    'period',
-    periodParam,
-  );
+interface ResourcesPageProps {}
+
+const tabParam = withDefault(StringParam, 'allocation-history');
+
+const ResourcesPage: React.FC<ResourcesPageProps> = (props) => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
+  const baiClient = useSuspendedBackendaiClient();
 
-  const [usageFetchKey, updateUsageFetchKey] = useUpdatableState('first');
-  const [isPendingUsageTransition, startUsageTransition] = useTransition();
-  let periodOptions: Array<{
-    label: string;
-    value: Period;
-  }> = [
-    {
-      label: t('statistics.1Day'),
-      value: '1D',
-    },
-    {
-      label: t('statistics.1Week'),
-      value: '1W',
-    },
-  ];
+  const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam, {
+    updateType: 'replace',
+  });
 
   return (
-    <BAICard activeTabKey="usageHistory" title={t('statistics.UsageHistory')}>
-      <Flex direction="column" align="stretch" gap={'md'}>
-        <Alert
-          showIcon
-          message={t('statistics.UsageHistoryNote')}
-          type="info"
-        />
-        <Flex gap={'sm'} justify="between">
-          <Form.Item
-            label={t('statistics.SelectPeriod')}
-            style={{ marginBottom: 0 }}
-          >
-            <Select
-              popupMatchSelectWidth={false}
-              options={periodOptions}
-              value={selectedPeriod}
-              onChange={(value) => setSelectedPeriod(value)}
+    <BAICard
+      activeTabKey={curTabKey}
+      onTabChange={(key) => setCurTabKey(key as TabKey)}
+      tabList={filterEmptyItem([
+        {
+          key: 'allocation-history',
+          tab: t('webui.menu.UsageHistory'),
+        },
+        baiClient?.supports('user-metrics') && {
+          key: 'prometheus-metrics',
+          tab: t('webui.menu.UserSessionHistory'),
+        },
+      ])}
+      styles={{
+        body: {
+          padding: 0,
+          paddingTop: 1,
+          overflow: 'hidden',
+        },
+      }}
+    >
+      {curTabKey === 'allocation-history' ? (
+        <Suspense
+          fallback={
+            <Skeleton
+              active
+              style={{ padding: token.paddingContentVerticalLG }}
             />
-          </Form.Item>
-          <BAIFetchKeyButton
-            loading={isPendingUsageTransition}
-            value={usageFetchKey}
-            onChange={() => {
-              startUsageTransition(() => {
-                updateUsageFetchKey();
-              });
-            }}
-          />
-        </Flex>
-        <Suspense fallback={<Skeleton active />}>
-          <UsageHistoryStatistics
-            period={selectedPeriod || '1D'}
-            fetchKey={usageFetchKey}
-          />
+          }
+        >
+          <AllocationHistory />
         </Suspense>
-      </Flex>
-      {/* <BAITabs
-        items={[
-          {
-            label: t('statistics.UsageHistory'),
-            key: 'usageHistory',
-            children: (
-            //  
-            ),
-          },
-          {
-            label: 'Live Stats',
-            key: 'liveStats',
-          },
-        ]}
-      /> */}
+      ) : null}
+      {curTabKey === 'prometheus-metrics' ? (
+        <Suspense
+          fallback={
+            <Skeleton
+              active
+              style={{ padding: token.paddingContentVerticalLG }}
+            />
+          }
+        >
+          <UserSessionsMetrics />
+        </Suspense>
+      ) : null}
     </BAICard>
   );
 };
 
-export default StatisticsPage;
+export default ResourcesPage;

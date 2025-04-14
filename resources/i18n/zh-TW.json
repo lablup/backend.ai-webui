@@ -1596,7 +1596,20 @@
     "SelectPeriod": "時期",
     "SessionsDesc": "创建的计算会话数。",
     "UsageHistory": "使用历史",
-    "UsageHistoryNote": "此處顯示的用法歷史記錄基於終止的計算會議。"
+    "UsageHistoryNote": "此處顯示的用法歷史記錄基於終止的計算會議。",
+    "prometheus": {
+      "DataMissingInLowUsageDesc": "如果用法較低，則可能無法提供某些日期的數據。請在較短的日期範圍內重試。",
+      "noMetricsToDisplay": "沒有可用的指標來跟踪"
+    },
+    "timeRange": {
+      "Last12Hours": "最近12個小時",
+      "Last3Hours": "最近3個小時",
+      "Last7Days": "最近7天",
+      "LastDay": "最後一天"
+    },
+    "timeRanges": {
+      "LastHour": "最後1小時"
+    }
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "更改资源策略会影响使用该项目资源策略的所有项目，因此请谨慎使用。",
@@ -1878,7 +1891,9 @@
       "TermsOfService": "服務條款",
       "TotpActivated": "已启用 2FA",
       "Update": "更新",
+      "UsageHistory": "分配歷史",
       "UserCredentials&Policies": "用戶憑證和政策",
+      "UserSessionHistory": "用戶會話歷史記錄",
       "Users": "用戶",
       "WelcomeMessage": "歡迎，{{ userName }}",
       "YouMushChangeYourPassword": "出于安全考虑，建议您定期更改密码。由于距离上次更改密码已过去一定时间，您必须更改密码才能继续使用服务。",

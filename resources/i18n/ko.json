@@ -1601,7 +1601,20 @@
     "SelectPeriod": "기간",
     "SessionsDesc": "생성된 연산 세션의 수입니다.",
     "UsageHistory": "사용 기록",
-    "UsageHistoryNote": "여기에 나타나는 통계는 종료된 연산 세션을 기준으로 합니다."
+    "UsageHistoryNote": "여기에 나타나는 통계는 종료된 연산 세션을 기준으로 합니다.",
+    "prometheus": {
+      "DataMissingInLowUsageDesc": "누적 사용량이 많지 않은 경우, 일부 날짜의 데이터가 표시되지 않을 수 있습니다. 조회 기간을 더 짧게 설정한 후 다시 시도해 주세요.",
+      "noMetricsToDisplay": "조회 가능한 메트릭이 없습니다"
+    },
+    "timeRange": {
+      "Last12Hours": "최근 12시간",
+      "Last3Hours": "최근 3시간",
+      "Last7Days": "최근 7일",
+      "LastDay": "최근 1일"
+    },
+    "timeRanges": {
+      "LastHour": "최근 1시간"
+    }
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "자원 정책을 변경하면 해당 자원 정책을 사용하고 있는 모든 프로젝트에 영향을 줄 수 있으니, 주의 깊게 사용하세요.",
@@ -1884,7 +1897,9 @@
       "TermsOfService": "약관",
       "TotpActivated": "이중 인증 사용",
       "Update": "변경",
+      "UsageHistory": "할당 기록",
       "UserCredentials&Policies": "자격 증명 및 정책",
+      "UserSessionHistory": "사용자 세션 기록",
       "Users": "사용자",
       "WelcomeMessage": "환영합니다. {{ userName }}님",
       "YouMushChangeYourPassword": "보안을 위해 비밀번호를 주기적으로 변경하는 것이 좋습니다. 비밀번호를 변경한 지 일정 시간이 지났으므로, 서비스를 계속 이용하려면 비밀번호를 변경해야 합니다.",
