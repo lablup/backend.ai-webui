@@ -103,7 +103,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
       title: t('resourcePreset.SharedMemory'),
       dataIndex: 'shared_memory',
       render: (text) =>
-        text ? convertBinarySizeUnit(text + '', 'g')?.number : '-',
+        text ? convertBinarySizeUnit(text + '', 'g')?.numberFixed : '-',
     },
     baiClient?.supports('resource-presets-per-resource-group') && {
       title: t('general.ResourceGroup'),
