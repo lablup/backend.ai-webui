@@ -3,7 +3,7 @@ import EndpointTokenSelect from './EndpointTokenSelect';
 import { ReloadOutlined } from '@ant-design/icons';
 import { Alert, Button, Form, Input, theme } from 'antd';
 import type { FormInstance } from 'antd';
-import { startTransition, useRef, useTransition } from 'react';
+import { useRef, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export type CustomModelFormValues = {
