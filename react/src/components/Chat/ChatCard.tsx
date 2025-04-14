@@ -98,11 +98,11 @@ function useModels(
       try {
         if (baseURL) {
           const { protocol, host, pathname: path } = new URL(baseURL);
+          const authToken = token || provider.apiKey;
           const url = new URL(`${path}/models`, protocol + host).toString();
           const res = await fetch(url, {
             headers: {
-              Authorization: `Bearer ${token || provider.apiKey || 'dummy'}`,
-              'Content-Type': 'application/json',
+              Authorization: authToken ? `Bearer ${authToken}` : '',
             },
           });
 
