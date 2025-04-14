@@ -96,7 +96,7 @@
   },
   "chatui": {
     "Attachments": "附件",
-    "CannotFindModel": "找不到 LLM 模型。\n請客製化型號。",
+    "CannotFindModel": "未找到 LLM 模型。验证路径和令牌与 OpenAI 的兼容性，然后按 \"刷新模型",
     "CompareWithOtherModels": "與其他型號比較",
     "DeleteChatHistory": "清晰聊天",
     "DeleteChattingSession": "删除聊天",

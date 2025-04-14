@@ -96,7 +96,7 @@
   },
   "chatui": {
     "Attachments": "Tệp đính kèm",
-    "CannotFindModel": "Không thể tìm thấy mô hình LLM. \nVui lòng tùy chỉnh mô hình.",
+    "CannotFindModel": "Các mô hình LLM không tìm thấy. \nXác minh đường dẫn và khả năng tương thích mã thông báo với Openai, sau đó nhấn 'Làm mới các mô hình'",
     "CompareWithOtherModels": "So sánh với các mô hình khác",
     "DeleteChatHistory": "Trò chuyện rõ ràng",
     "DeleteChattingSession": "Xóa trò chuyện",

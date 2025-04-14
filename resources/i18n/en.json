@@ -85,7 +85,7 @@
     "Okay": "Okay",
     "Previous": "Previous",
     "PushToImage": "Push session to customized image",
-    "Refresh": "Refresh",
+    "Refresh": "Refresh Models",
     "Reset": "Reset",
     "Save": "Save",
     "SaveAndClose": "Save And Close",
@@ -98,7 +98,7 @@
   },
   "chatui": {
     "Attachments": "Attachments",
-    "CannotFindModel": "LLM models cannot be found. Please customize the model.",
+    "CannotFindModel": "LLM models not found. Verify the path and token compatibility with OpenAI, then press 'Refresh Models'",
     "CompareWithOtherModels": "Compare with other models",
     "DeleteChatHistory": "Clear Chat",
     "DeleteChattingSession": "Delete Chat",

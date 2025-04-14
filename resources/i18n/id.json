@@ -95,7 +95,7 @@
   },
   "chatui": {
     "Attachments": "Lampiran",
-    "CannotFindModel": "Model LLM tidak dapat ditemukan. \nSilakan sesuaikan modelnya.",
+    "CannotFindModel": "Model LLM tidak ditemukan. Verifikasi kompatibilitas jalur dan token dengan OpenAI, lalu tekan 'Refresh Models'",
     "CompareWithOtherModels": "Bandingkan dengan model lain",
     "DeleteChatHistory": "Hapus Obrolan",
     "DeleteChattingSession": "Menghapus Obrolan",

@@ -17,6 +17,14 @@ type CustomModelFormProps = {
   onSubmit?: (formData: CustomModelFormValues) => void;
 };
 
+function parseBaseURL(baseURL: string) {
+  const { origin, pathname } = new URL(baseURL || '');
+  return {
+    origin: `${origin}/`,
+    pathname: pathname.replace(/^\//, ''),
+  };
+}
+
 const CustomModelForm: React.FC<CustomModelFormProps> = ({
   baseURL,
   endpointId,
@@ -27,6 +35,7 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
   const formRef = useRef<FormInstance>(null);
 
   const [isPendingSubmit, startSubmitTransition] = useTransition();
+  const { origin, pathname } = parseBaseURL(baseURL || '');
 
   return (
     <Flex
@@ -58,18 +67,19 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
           />
         </div>
         <Form.Item
-          label="Base URL"
-          name="baseURL"
+          label="Base Path"
+          name="basePath"
           rules={[
-            {
-              type: 'url',
-            },
             {
               required: true,
             },
           ]}
         >
-          <Input placeholder="https://domain/v1" />
+          <Input
+            placeholder="v1"
+            addonBefore={origin}
+            defaultValue={pathname}
+          />
         </Form.Item>
         <Form.Item label="Token" name="token">
           <EndpointTokenSelect
@@ -82,8 +92,10 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
           loading={isPendingSubmit}
           onClick={() => {
             startSubmitTransition(() => {
+              const basePath =
+                formRef.current?.getFieldValue('basePath') ?? 'v1';
               onSubmit?.({
-                baseURL: formRef.current?.getFieldValue('baseURL'),
+                baseURL: new URL(basePath, origin).href,
                 token: formRef.current?.getFieldValue('token'),
               });
             });
