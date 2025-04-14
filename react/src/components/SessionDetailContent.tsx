@@ -303,7 +303,7 @@ const SessionDetailContent: React.FC<{
             </Flex>
           </Descriptions.Item>
           <Descriptions.Item label={t('session.Agent')}>
-            {session.agent_ids || '-'}
+            {_.uniq(session.agent_ids).join(', ') || '-'}
           </Descriptions.Item>
           <Descriptions.Item label={t('session.Reservation')} span={md ? 2 : 1}>
             <Flex gap={'xs'} wrap={'wrap'}>
