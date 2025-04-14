@@ -77,3 +77,28 @@ export type ChatOptions = {
   agents: AIAgent[];
   agentId?: string;
 };
+
+export class ChatModelError extends Error {
+  status: number;
+
+  constructor(status: number) {
+    super(ChatModelError.errorMessage(status));
+    this.name = 'ModelsError';
+    this.status = status;
+  }
+
+  static errorMessage(status: number) {
+    switch (status) {
+      case 401:
+        return 'Unauthorized. Please check your token.';
+      case 404:
+        return 'Not Found. Please check your base URL.';
+      case 500:
+        return 'Internal Server Error. Please try again later.';
+      case 503:
+        return 'Service Unavailable. Please try again later.';
+      default:
+        return `An unknown error occurred. Please try again. with status ${status}`;
+    }
+  }
+}

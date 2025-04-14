@@ -1,34 +1,32 @@
 import Flex from '../Flex';
+import EndpointTokenSelect from './EndpointTokenSelect';
 import { ReloadOutlined } from '@ant-design/icons';
-import {
-  Alert,
-  Button,
-  ButtonProps,
-  Form,
-  FormInstance,
-  Input,
-  theme,
-} from 'antd';
+import { Alert, Button, Form, Input, theme } from 'antd';
+import type { FormInstance } from 'antd';
+import { startTransition, useRef, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
+
+export type CustomModelFormValues = {
+  baseURL?: string;
+  token?: string;
+};
 
 type CustomModelFormProps = {
   baseURL?: string;
-  token?: string;
-  allowCustomModel?: boolean;
-  alert?: React.ReactNode;
-  modelId?: string;
-  formRef: React.RefObject<FormInstance<any> | null>;
+  endpointId?: string | null;
+  onSubmit?: (formData: CustomModelFormValues) => void;
 };
 
 const CustomModelForm: React.FC<CustomModelFormProps> = ({
   baseURL,
-  token,
-  allowCustomModel,
-  alert,
-  modelId,
-  formRef,
+  endpointId,
+  onSubmit,
 }) => {
+  const { t } = useTranslation();
   const { token: themeToken } = theme.useToken();
+  const formRef = useRef<FormInstance>(null);
+
+  const [isPendingSubmit, startSubmitTransition] = useTransition();
 
   return (
     <Flex
@@ -38,8 +36,6 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
         paddingRight: themeToken.paddingContentHorizontalLG,
         paddingLeft: themeToken.paddingContentHorizontalLG,
         backgroundColor: themeToken.colorBgContainer,
-        // @FIXME: check the condition at the parent component
-        display: (allowCustomModel && modelId === 'custom' && 'flex') || 'none',
       }}
     >
       <Form
@@ -51,14 +47,18 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
         key={baseURL}
         initialValues={{
           baseURL: baseURL,
-          token: token,
+          token: undefined,
         }}
       >
-        {alert ? (
-          <div style={{ marginBottom: themeToken.size }}>{alert}</div>
-        ) : null}
+        <div style={{ marginBottom: themeToken.size }}>
+          <Alert
+            type="warning"
+            showIcon
+            message={t('chatui.CannotFindModel')}
+          />
+        </div>
         <Form.Item
-          label="baseURL"
+          label="Base URL"
           name="baseURL"
           rules={[
             {
@@ -71,44 +71,29 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
         >
           <Input placeholder="https://domain/v1" />
         </Form.Item>
-        <Form.Item
-          label="Model ID"
-          name="modelId"
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <Input placeholder="llm-model" />
-        </Form.Item>
         <Form.Item label="Token" name="token">
-          <Input />
+          <EndpointTokenSelect
+            loading={isPendingSubmit}
+            endpointId={endpointId}
+          />
         </Form.Item>
+        <Button
+          icon={<ReloadOutlined />}
+          loading={isPendingSubmit}
+          onClick={() => {
+            startSubmitTransition(() => {
+              onSubmit?.({
+                baseURL: formRef.current?.getFieldValue('baseURL'),
+                token: formRef.current?.getFieldValue('token'),
+              });
+            });
+          }}
+        >
+          {t('button.Refresh')}
+        </Button>
       </Form>
     </Flex>
   );
 };
 
-type CustomModelAlertProp = {
-  onClick?: ButtonProps['onClick'];
-};
-
-const CustomModelAlert: React.FC<CustomModelAlertProp> = ({ onClick }) => {
-  const { t } = useTranslation();
-
-  return (
-    <Alert
-      type="warning"
-      showIcon
-      message={t('chatui.CannotFindModel')}
-      action={
-        <Button icon={<ReloadOutlined />} onClick={onClick}>
-          {t('button.Refresh')}
-        </Button>
-      }
-    />
-  );
-};
-
-export { CustomModelForm, CustomModelAlert };
+export { CustomModelForm };
