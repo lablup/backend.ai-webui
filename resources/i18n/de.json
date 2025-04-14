@@ -593,6 +593,7 @@
     "Add": "Hinzufügen",
     "Advanced": "Fortgeschritten",
     "All": "Alle",
+    "Auto": "Auto",
     "Change": "Ändern Sie",
     "ConfirmPassword": "Kennwort bestätigen",
     "Control": "Steuerung",
@@ -607,6 +608,7 @@
     "InProgress": "In Arbeit",
     "InvalidJSONFormat": "Ungültiges JSON-Format.",
     "LastUpdated": "Zuletzt aktualisiert",
+    "Manual": "Handbuch",
     "MaxValueNotification": "{{name}} muss maximal {{max}} sein",
     "NSelected": "{{Zahl}} ausgewählt",
     "NewPassword": "Neues Kennwort",
@@ -1259,6 +1261,7 @@
       "AllocateNode": "Cluster-Modus",
       "Architecture": "Architektur",
       "AutoSelect": "Automatische Auswahl",
+      "AutoSharedMemoryTooltip": "Sie können die Größe des gemeinsamen Speichers innerhalb des zugewiesenen Speichers automatisch auswählen oder manuell eingeben.",
       "Base": "Base",
       "BatchJobTimeoutDuration": "Dauer des Batch-Job-Timeouts",
       "BatchJobTimeoutDurationDesc": "Legen Sie die maximale Ausführungszeit für Batch-Jobs fest. \nDie Sitzung wird automatisch beendet, wenn die angegebene Zeit überschritten wird.",
@@ -1384,6 +1387,7 @@
       "ResourceAllocationPerContainer": "Ressourcenzuweisung pro Container",
       "ResourceGroup": "Ressourcengruppe",
       "ResourceMonitorToggle": "Siehe Ressourcenmonitor",
+      "SHMEMShouldBeLessThanHalfOfAppMemory": "Es wird empfohlen, dass der gemeinsam genutzte Speicher weniger als die Hälfte des Anwendungsspeichers beträgt.",
       "ScheduleTime": "Zeit einplanen (optional)",
       "ScheduleTimeSimple": "Startzeit einstellen",
       "SelectAgent": "Wählen Sie Agent aus",
@@ -1597,7 +1601,20 @@
     "SelectPeriod": "Zeitraum",
     "SessionsDesc": "Die Anzahl der erstellten Rechensitzungen.",
     "UsageHistory": "Geschichte der Verwendung",
-    "UsageHistoryNote": "Die hier gezeigte Nutzungsgeschichte basiert auf beendeten Berechnungssitzungen."
+    "UsageHistoryNote": "Die hier gezeigte Nutzungsgeschichte basiert auf beendeten Berechnungssitzungen.",
+    "prometheus": {
+      "DataMissingInLowUsageDesc": "Wenn die Verwendung niedrig ist, sind Daten für einige Daten möglicherweise nicht verfügbar. \nBitte versuchen Sie es erneut mit einem kürzeren Datumsbereich.",
+      "noMetricsToDisplay": "Keine Metriken für die Verfolgung"
+    },
+    "timeRange": {
+      "Last12Hours": "Letzte 12 Stunden",
+      "Last3Hours": "Letzte 3 Stunden",
+      "Last7Days": "Letzten 7 Tage",
+      "LastDay": "Letzte 1 Tag"
+    },
+    "timeRanges": {
+      "LastHour": "Letzte 1 Stunde"
+    }
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "Die Änderung einer Ressourcenrichtlinie kann sich auf alle Projekte auswirken, die diese Projektressourcenrichtlinie verwenden, daher ist sie mit Vorsicht zu genießen.",
@@ -1879,7 +1896,9 @@
       "TermsOfService": "Nutzungsbedingungen",
       "TotpActivated": "2FA Aktiviert",
       "Update": "Aktualisieren",
+      "UsageHistory": "Allokationsgeschichte",
       "UserCredentials&Policies": "Benutzeranmeldeinformationen und -richtlinien",
+      "UserSessionHistory": "Benutzersitzungsverlauf",
       "Users": "Benutzer",
       "WelcomeMessage": "Willkommen, {{ userName }}.",
       "YouMushChangeYourPassword": "Es wird empfohlen, Ihr Passwort aus Sicherheitsgründen regelmäßig zu ändern. Da seit der letzten Änderung Ihres Passworts eine gewisse Zeit verstrichen ist, müssen Sie es ändern, um den Dienst weiterhin nutzen zu können.",

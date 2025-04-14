@@ -331,6 +331,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
                           <DynamicUnitInputNumber />
                         ) : (
                           <InputNumber
+                            stringMode
                             min={resourceSlotKey === 'cpu' ? 1 : 0}
                             step={
                               _.includes(resourceSlotKey, '.shares') ? 0.1 : 1

@@ -592,6 +592,7 @@
     "Add": "Lisää",
     "Advanced": "Edistynyt",
     "All": "Kaikki",
+    "Auto": "Auto",
     "Change": "Muuta",
     "ConfirmPassword": "Vahvista salasana",
     "Control": "Valvonta",
@@ -606,6 +607,7 @@
     "InProgress": "Käynnissä",
     "InvalidJSONFormat": "Väärä JSON-muoto.",
     "LastUpdated": "Viimeksi päivitetty",
+    "Manual": "Manuaalinen",
     "MaxValueNotification": "{{name}} on oltava maksimi {{max}}",
     "NSelected": "{{count}} valittu",
     "NewPassword": "Uusi salasana",
@@ -1257,6 +1259,7 @@
       "AllocateNode": "Cluster-tila",
       "Architecture": "Arkkitehtuuri",
       "AutoSelect": "Automaattinen valinta",
+      "AutoSharedMemoryTooltip": "Voit valita jaetun muistin koon automaattisesti tai syöttää sen manuaalisesti jaetun muistin sisällä.",
       "Base": "Base",
       "BatchJobTimeoutDuration": "Erätyön aikakatkaisun kesto",
       "BatchJobTimeoutDurationDesc": "Aseta erätöiden enimmäissuoritusaika. \nIstunto päättyy automaattisesti, jos määritetty aika ylittyy.",
@@ -1382,6 +1385,7 @@
       "ResourceAllocationPerContainer": "Resurssien jakaminen konttia kohti",
       "ResourceGroup": "Resurssiryhmä",
       "ResourceMonitorToggle": "Katso resurssimonitori",
+      "SHMEMShouldBeLessThanHalfOfAppMemory": "Jaetun muistin suositellaan olevan alle puolet sovelluksen muistista.",
       "ScheduleTime": "Aikatauluaika (valinnainen)",
       "ScheduleTimeSimple": "Aseta aloitusaika",
       "SelectAgent": "Valitse Agentti",
@@ -1595,7 +1599,20 @@
     "SelectPeriod": "Ajanjakso",
     "SessionsDesc": "Luotujen laskenta-istuntojen määrä.",
     "UsageHistory": "Käyttöhistoria",
-    "UsageHistoryNote": "Tässä esitetty käyttöhistoria perustuu lopetettuihin laskentaistuntoihin."
+    "UsageHistoryNote": "Tässä esitetty käyttöhistoria perustuu lopetettuihin laskentaistuntoihin.",
+    "prometheus": {
+      "DataMissingInLowUsageDesc": "Jos käyttö on alhainen, joihinkin päivämääriin tietoja ei välttämättä ole käytettävissä. \nYritä uudelleen lyhyemmällä ajanjaksolla.",
+      "noMetricsToDisplay": "Ei mittareita, joita on saatavana seurantaan"
+    },
+    "timeRange": {
+      "Last12Hours": "Viimeiset 12 tuntia",
+      "Last3Hours": "Viimeiset 3 tuntia",
+      "Last7Days": "Viimeiset 7 päivää",
+      "LastDay": "1 päivä"
+    },
+    "timeRanges": {
+      "LastHour": "1 tunti"
+    }
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "Resurssikäytännön muuttaminen voi vaikuttaa kaikkiin projekteihin, jotka käyttävät kyseistä projektin resurssikäytäntöä, joten käytä sitä varoen.",
@@ -1878,7 +1895,9 @@
       "TermsOfService": "Käyttöehdot",
       "TotpActivated": "2FA käytössä",
       "Update": "Päivitys",
+      "UsageHistory": "Allokaatiohistoria",
       "UserCredentials&Policies": "Käyttäjien valtakirjat ja käytännöt",
+      "UserSessionHistory": "Käyttäjäistunnon historia",
       "Users": "Käyttäjät",
       "WelcomeMessage": "Tervetuloa, {{ userName }}.",
       "YouMushChangeYourPassword": "On suositeltavaa vaihtaa salasana säännöllisesti turvallisuussyistä. Koska salasanasi viimeisimmästä vaihtamisesta on kulunut tietty aika, sinun on vaihdettava se, jotta voit jatkaa palvelun käyttöä.",

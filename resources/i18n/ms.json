@@ -592,6 +592,7 @@
     "Add": "Tambah",
     "Advanced": "Mahir",
     "All": "keseluruhan",
+    "Auto": "Auto",
     "Change": "Berubah",
     "ConfirmPassword": "Sahkan Kata Laluan",
     "Control": "Kawal",
@@ -606,6 +607,7 @@
     "InProgress": "Prosiding",
     "InvalidJSONFormat": "Format JSON yang salah.",
     "LastUpdated": "Dikemas kini terakhir",
+    "Manual": "Manual",
     "MaxValueNotification": "{{nama}} mestilah maksimum {{maks}}",
     "NSelected": "{{count}} dipilih",
     "NewPassword": "Kata laluan baharu",
@@ -1258,6 +1260,7 @@
       "AllocateNode": "Mod kluster",
       "Architecture": "Seni bina",
       "AutoSelect": "Pilih Auto",
+      "AutoSharedMemoryTooltip": "Anda secara automatik boleh memilih atau secara manual memasukkan saiz memori bersama dalam memori yang diperuntukkan.",
       "Base": "Pangkalan",
       "BatchJobTimeoutDuration": "Tempoh Tamat Kerja Berkelompok",
       "BatchJobTimeoutDurationDesc": "Tetapkan masa pelaksanaan maksimum untuk kerja kelompok. \nSesi akan ditamatkan secara automatik jika melebihi masa yang ditetapkan.",
@@ -1383,6 +1386,7 @@
       "ResourceAllocationPerContainer": "Peruntukan Sumber Setiap Bekas",
       "ResourceGroup": "Kumpulan Sumber",
       "ResourceMonitorToggle": "Lihat monitor sumber",
+      "SHMEMShouldBeLessThanHalfOfAppMemory": "Memori yang dikongsi disyorkan untuk menjadi kurang daripada separuh daripada memori permohonan.",
       "ScheduleTime": "Jadual masa (pilihan)",
       "ScheduleTimeSimple": "Tetapkan masa mula",
       "SelectAgent": "Pilih Ejen",
@@ -1595,7 +1599,20 @@
     "SelectPeriod": "Tempoh",
     "SessionsDesc": "Bilangan sesi pengiraan yang dibuat.",
     "UsageHistory": "Sejarah Penggunaan",
-    "UsageHistoryNote": "Sejarah penggunaan yang ditunjukkan di sini adalah berdasarkan sesi pengiraan yang ditamatkan."
+    "UsageHistoryNote": "Sejarah penggunaan yang ditunjukkan di sini adalah berdasarkan sesi pengiraan yang ditamatkan.",
+    "prometheus": {
+      "DataMissingInLowUsageDesc": "Jika penggunaan adalah rendah, data untuk beberapa tarikh mungkin tidak tersedia. \nSila cuba lagi dengan julat tarikh yang lebih pendek.",
+      "noMetricsToDisplay": "Tiada metrik yang boleh didapati untuk menjejaki"
+    },
+    "timeRange": {
+      "Last12Hours": "12 jam terakhir",
+      "Last3Hours": "3 jam terakhir",
+      "Last7Days": "7 hari terakhir",
+      "LastDay": "1 hari terakhir"
+    },
+    "timeRanges": {
+      "LastHour": "1 jam terakhir"
+    }
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "Menukar dasar sumber boleh menjejaskan semua projek yang menggunakan dasar sumber projek itu, jadi gunakannya dengan berhati-hati.",
@@ -1876,7 +1893,9 @@
       "TermsOfService": "Syarat Perkhidmatan",
       "TotpActivated": "2FA Didayakan",
       "Update": "Kemas kini",
+      "UsageHistory": "Sejarah peruntukan",
       "UserCredentials&Policies": "Kepercayaan & Dasar Pengguna",
+      "UserSessionHistory": "Sejarah Sesi Pengguna",
       "Users": "Pengguna",
       "WelcomeMessage": "Selamat datang, {{ userName }}.",
       "YouMushChangeYourPassword": "Adalah disyorkan untuk menukar kata laluan anda secara berkala atas sebab keselamatan. \nMemandangkan tempoh masa tertentu telah berlalu sejak kali terakhir anda menukar kata laluan anda, anda mesti menukarnya untuk terus menggunakan perkhidmatan tersebut.",

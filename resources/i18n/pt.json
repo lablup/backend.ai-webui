@@ -593,6 +593,7 @@
     "Add": "Adicionar",
     "Advanced": "Avançado",
     "All": "Todos",
+    "Auto": "Automóvel",
     "Change": "Alterar",
     "ConfirmPassword": "Confirme a Senha",
     "Control": "Ao controle",
@@ -607,6 +608,7 @@
     "InProgress": "Em curso",
     "InvalidJSONFormat": "Formato JSON inválido.",
     "LastUpdated": "Última atualização",
+    "Manual": "Manual",
     "MaxValueNotification": "{{nome}} deve ser o máximo {{max}}",
     "NSelected": "{{contagem}} selecionado",
     "NewPassword": "Nova Senha",
@@ -1259,6 +1261,7 @@
       "AllocateNode": "Modo de cluster",
       "Architecture": "Arquitetura",
       "AutoSelect": "Auto seleção",
+      "AutoSharedMemoryTooltip": "É possível selecionar automaticamente ou introduzir manualmente o tamanho da memória partilhada dentro da memória atribuída.",
       "Base": "Base",
       "BatchJobTimeoutDuration": "Duração do tempo limite do trabalho em lote",
       "BatchJobTimeoutDurationDesc": "Defina o tempo máximo de execução para trabalhos em lote. \nA sessão será encerrada automaticamente se o tempo especificado for excedido.",
@@ -1384,6 +1387,7 @@
       "ResourceAllocationPerContainer": "Atribuição de recursos por contentor",
       "ResourceGroup": "Grupo de Recursos",
       "ResourceMonitorToggle": "Veja o monitor de recursos",
+      "SHMEMShouldBeLessThanHalfOfAppMemory": "Recomenda-se que a memória partilhada seja inferior a metade da memória da aplicação.",
       "ScheduleTime": "Programar a hora (opcional)",
       "ScheduleTimeSimple": "Definir horário de início",
       "SelectAgent": "Selecione Agente",
@@ -1597,7 +1601,20 @@
     "SelectPeriod": "Período",
     "SessionsDesc": "O número de sessões de computação criadas.",
     "UsageHistory": "Histórico de utilização",
-    "UsageHistoryNote": "O histórico de uso mostrado aqui é baseado em sessões de computação encerradas."
+    "UsageHistoryNote": "O histórico de uso mostrado aqui é baseado em sessões de computação encerradas.",
+    "prometheus": {
+      "DataMissingInLowUsageDesc": "Se o uso for baixo, os dados para algumas datas podem não estar disponíveis. \nPor favor, tente novamente com um intervalo mais curto.",
+      "noMetricsToDisplay": "Sem métricas disponíveis para rastrear"
+    },
+    "timeRange": {
+      "Last12Hours": "Últimas 12 horas",
+      "Last3Hours": "Últimas 3 horas",
+      "Last7Days": "Últimos 7 dias",
+      "LastDay": "Último 1 dia"
+    },
+    "timeRanges": {
+      "LastHour": "Última 1 hora"
+    }
   },
   "storageHost": {
     "BeCarefulToSetProjectResourcePolicy": "A alteração de uma política de recursos pode afetar todos os projectos que utilizam essa política de recursos do projeto, pelo que deve ser utilizada com cuidado.",
@@ -1879,7 +1896,9 @@
       "TermsOfService": "Termos de serviço",
       "TotpActivated": "2FA ativado",
       "Update": "Atualizar",
+      "UsageHistory": "Histórico de alocação",
       "UserCredentials&Policies": "Credenciais e políticas do usuário",
+      "UserSessionHistory": "Histórico da sessão do usuário",
       "Users": "Comercial",
       "WelcomeMessage": "Bem vindo, {{userName }}.",
       "YouMushChangeYourPassword": "Recomenda-se que altere periodicamente a sua palavra-passe por razões de segurança. Uma vez que passou um certo tempo desde a última vez que alterou a sua palavra-passe, deve alterá-la para poder continuar a utilizar o serviço.",

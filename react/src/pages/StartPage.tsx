@@ -178,7 +178,7 @@ const StartPage: React.FC = () => {
       <Row gutter={[16, 16]}>
         {_.map(items, (item, idx) => {
           return (
-            <Col key={item.id} xs={24} md={12} xl={6}>
+            <Col key={item.id} xs={24} md={12} xl={6} xxl={4}>
               <Card
                 style={{ height: 340 }}
                 styles={{

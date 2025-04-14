@@ -1,4 +1,3 @@
-import AnnouncementAlert from './components/AnnouncementAlert';
 import BAICard from './components/BAICard';
 import BAIErrorBoundary, { ErrorView } from './components/BAIErrorBoundary';
 import {
@@ -70,7 +69,9 @@ const UserCredentialsPage = React.lazy(
 const AgentSummaryPage = React.lazy(() => import('./pages/AgentSummaryPage'));
 const MaintenancePage = React.lazy(() => import('./pages/MaintenancePage'));
 const StatisticsPage = React.lazy(() => import('./pages/StatisticsPage'));
-const ConfigurationsPage = React.lazy(() => import('./pages/ConfigurationsPage'));
+const ConfigurationsPage = React.lazy(
+  () => import('./pages/ConfigurationsPage'),
+);
 const SessionDetailAndContainerLogOpenerLegacy = React.lazy(
   () => import('./components/SessionDetailAndContainerLogOpenerLegacy'),
 );
@@ -155,25 +156,13 @@ const router = createBrowserRouter([
       {
         path: '/summary',
         Component: () => {
-          const { token } = theme.useToken();
           const location = useLocation();
           const [experimentalDashboard] = useBAISettingUserState(
             'experimental_dashboard',
           );
-          return (
-            <>
-              <AnnouncementAlert
-                showIcon
-                icon={undefined}
-                banner={false}
-                style={{ marginBottom: token.paddingContentVerticalLG }}
-                closable
-              />
-              {experimentalDashboard ? (
-                <WebUINavigate to={'/dashboard' + location.search} replace />
-              ) : null}
-            </>
-          );
+          return experimentalDashboard ? (
+            <WebUINavigate to={'/dashboard' + location.search} replace />
+          ) : null;
         },
         handle: { labelKey: 'webui.menu.Summary' },
       },
