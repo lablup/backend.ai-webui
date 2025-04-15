@@ -15,7 +15,6 @@ import BackendAIListStatus, { StatusCondition } from './backend-ai-list-status';
 import './backend-ai-list-status';
 import { BackendAIPage } from './backend-ai-page';
 import { default as PainKiller } from './backend-ai-painkiller';
-import './backend-ai-storage-host-settings-view';
 import './lablup-progress-bar';
 import '@material/mwc-icon-button';
 import '@material/mwc-icon/mwc-icon';
