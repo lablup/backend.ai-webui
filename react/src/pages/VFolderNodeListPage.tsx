@@ -82,7 +82,8 @@ const VFOLDER_STATUSES = [
 interface VFolderNodeListPageProps {}
 
 const FILTER_BY_STATUS_CATEGORY = {
-  created: 'status in ["READY", "PERFORMING", "CLONING", "MOUNTED", "ERROR"]',
+  active:
+    'status != "DELETE_PENDING" & status != "DELETE_ONGOING" & status != "DELETE_ERROR" & status != "DELETE_COMPLETE"',
   deleted: 'status in ["DELETE_PENDING", "DELETE_ONGOING", "DELETE_ERROR"]',
 };
 
@@ -114,7 +115,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const [queryParams, setQuery] = useDeferredQueryParams({
     order: withDefault(StringParam, '-created_at'),
     filter: StringParam,
-    statusCategory: withDefault(StringParam, 'created'),
+    statusCategory: withDefault(StringParam, 'active'),
     mode: withDefault(StringParam, 'all'),
   });
 
@@ -127,9 +128,9 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   };
 
   const statusFilter =
-    queryParams.statusCategory === 'created' ||
+    queryParams.statusCategory === 'active' ||
     queryParams.statusCategory === undefined
-      ? FILTER_BY_STATUS_CATEGORY['created']
+      ? FILTER_BY_STATUS_CATEGORY['active']
       : FILTER_BY_STATUS_CATEGORY['deleted'];
 
   function getUsageModeFilter(mode: string) {
@@ -186,7 +187,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           $filter: String
           $order: String
           $permission: VFolderPermissionValueField
-          $filterForCreatedCount: String
+          $filterForActiveCount: String
           $filterForDeletedCount: String
         ) {
           vfolder_nodes(
@@ -210,11 +211,11 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             }
             count
           }
-          created: vfolder_nodes(
+          active: vfolder_nodes(
             project_id: $projectId
             first: 0
             offset: 0
-            filter: $filterForCreatedCount
+            filter: $filterForActiveCount
             permission: $permission
           ) {
             count
@@ -232,7 +233,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
       `,
       {
         ...deferredQueryVariables,
-        filterForCreatedCount: FILTER_BY_STATUS_CATEGORY['created'],
+        filterForActiveCount: FILTER_BY_STATUS_CATEGORY['active'],
         filterForDeletedCount: FILTER_BY_STATUS_CATEGORY['deleted'],
       },
       {
@@ -246,7 +247,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     );
 
   return (
-    <Flex direction="column" align="stretch" gap={'md'}>
+    <Flex direction="column" align="stretch" gap={'md'} {...props}>
       <Flex direction="column" align="stretch">
         <Row gutter={[16, 16]}>
           <Col xs={24} lg={8} xl={4}>
@@ -289,6 +290,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             >
               <StorageStatusPanelCard
                 style={{ height: lg ? 200 : undefined }}
+                fetchKey={fetchKey}
               />
             </Suspense>
           </Col>
@@ -348,7 +350,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             setQuery(
               {
                 ...storedQuery.queryParams,
-                statusCategory: key as 'created' | 'deleted',
+                statusCategory: key as 'active' | 'deleted',
               },
               'replace',
             );
@@ -359,7 +361,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           }}
           items={_.map(
             {
-              created: t('data.Created'),
+              active: t('data.Active'),
               deleted: t('data.folders.TrashBin'),
             },
             (label, key) => ({
@@ -492,7 +494,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             </Flex>
             <Flex gap={'sm'}>
               {selectedFolderList.length > 0 &&
-                queryParams.statusCategory === 'created' && (
+                queryParams.statusCategory === 'active' && (
                   <>
                     {t('general.NSelected', {
                       count: selectedFolderList.length,

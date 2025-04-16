@@ -460,6 +460,9 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   async importRepoFromURL(url, folderName) {
+    const defaultImage =
+      globalThis.backendaiclient._config.default_import_environment;
+    const [kernelName, architecture] = defaultImage.split('@');
     // Create folder to
     const imageResource: Record<string, unknown> = {};
     imageResource['cpu'] = 1;
@@ -484,11 +487,11 @@ export default class BackendAIImport extends BackendAIPage {
         // let results = response;
         indicator.set(50, _text('import.Downloading'));
         return globalThis.backendaiclient.createIfNotExists(
-          globalThis.backendaiclient._config.default_import_environment,
+          kernelName,
           null,
           imageResource,
           60000,
-          undefined,
+          architecture || 'x86_64',
         );
       })
       .then(async (response) => {

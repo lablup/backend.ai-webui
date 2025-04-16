@@ -86,7 +86,7 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
           }}
         >
           <BAIPanelItem
-            title={t('data.CreatedFolders')}
+            title={t('data.MyFolders')}
             value={createdCount}
             unit={
               user_resource_policy?.max_vfolder_count

@@ -6,8 +6,6 @@ import './backend-ai-indicator-pool';
 import './backend-ai-login';
 import './backend-ai-resource-broker';
 import './backend-ai-settings-store';
-import './backend-ai-sidepanel-notification';
-import './backend-ai-sidepanel-task';
 import './backend-ai-splash';
 import './lablup-notification';
 import './lablup-terms-of-service';
