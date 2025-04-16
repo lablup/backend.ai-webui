@@ -111,62 +111,25 @@ const AIAgentPage: React.FC = () => {
   const { token } = theme.useToken();
   const { agents } = useAIAgent();
   const webuiNavigate = useWebUINavigate();
-  const [iframeUrl, setIframeUrl] = React.useState<string | undefined>(
-    undefined,
-  );
-
-  React.useEffect(() => {
-    const handlePopState = () => {
-      if (iframeUrl) {
-        setIframeUrl(undefined);
-      }
-    };
-
-    window.addEventListener('popstate', handlePopState);
-
-    return () => {
-      window.removeEventListener('popstate', handlePopState);
-    };
-  }, [iframeUrl]);
 
   return (
     <Suspense
       fallback={<Skeleton active style={{ padding: token.paddingMD }} />}
     >
-      {iframeUrl ? (
-        <iframe
-          src={iframeUrl}
-          title="AI Agent Content"
-          style={{
-            width: '100%',
-            height: '100vh',
-            border: 'none',
-            borderRadius: token.borderRadius,
-          }}
-          onLoad={() => {
-            window.history.pushState(
-              null,
-              '',
-              window.location.href + '#iframe',
-            );
+      <Flex direction="column" align="stretch" justify="center" gap="lg">
+        <AIAgentCardList
+          agents={agents}
+          onClickAgent={(agent) => {
+            if (agent.type === 'external') {
+              webuiNavigate(`/ai-agent/external?url=${agent.config.url}`);
+            } else {
+              webuiNavigate(
+                `/chat?endpointId=${agent.endpoint_id}&agentId=${agent.id}`,
+              );
+            }
           }}
         />
-      ) : (
-        <Flex direction="column" align="stretch" justify="center" gap="lg">
-          <AIAgentCardList
-            agents={agents}
-            onClickAgent={(agent) => {
-              if (agent.type === 'external') {
-                setIframeUrl(agent.config.url);
-              } else {
-                webuiNavigate(
-                  `/chat?endpointId=${agent.endpoint_id}&agentId=${agent.id}`,
-                );
-              }
-            }}
-          />
-        </Flex>
-      )}
+      </Flex>
     </Suspense>
   );
 };
