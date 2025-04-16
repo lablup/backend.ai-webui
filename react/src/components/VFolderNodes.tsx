@@ -95,6 +95,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         ownership_type
         user
         group
+        permissions
         ...VFolderPermissionCellFragment
         ...EditableVFolderNameFragment
         ...VFolderNodeIdenticonFragment
@@ -102,6 +103,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
     `,
     vfoldersFrgmt,
   );
+
   const filteredVFolders = filterNonNullItems(vfolders);
 
   const deleteMutation = useTanMutation({
@@ -121,10 +123,6 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
       return baiClient.vfolder.delete_from_trash_bin(toLocalId(id));
     },
   });
-
-  const isMoveToTrashDisabled = (vfolder: VFolderNodeInList) => {
-    return userRole === 'user' && vfolder?.ownership_type === 'group';
-  };
 
   return (
     <>
@@ -203,6 +201,10 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
             key: 'controls',
             title: t('data.folders.Control'),
             render: (__, vfolder) => {
+              const hasDeletePermission = _.includes(
+                vfolder?.permissions,
+                'delete_vfolder',
+              );
               return (
                 <Flex gap={'xs'}>
                   {/* Share */}
@@ -285,15 +287,13 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                       }}
                       okText={t('button.Move')}
                       okButtonProps={{ danger: true }}
-                      disabled={isMoveToTrashDisabled(vfolder)}
+                      disabled={!hasDeletePermission}
                     >
                       <Tooltip
                         title={
-                          isMoveToTrashDisabled(vfolder)
-                            ? t(
-                                'data.folders.ProjectFolderDeletionRequiresAdmin',
-                              )
-                            : t('data.folders.MoveToTrash')
+                          hasDeletePermission
+                            ? t('data.folders.MoveToTrash')
+                            : t('data.folders.NoDeletePermission')
                         }
                         placement="right"
                       >
@@ -301,12 +301,18 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                           size="small"
                           type="text"
                           icon={<TrashBinIcon />}
-                          disabled={isMoveToTrashDisabled(vfolder)}
+                          disabled={!hasDeletePermission}
                           style={{
-                            color: isMoveToTrashDisabled(vfolder)
+                            color: !_.includes(
+                              vfolder?.permissions,
+                              'delete_vfolder',
+                            )
                               ? token.colorTextDisabled
                               : token.colorError,
-                            background: isMoveToTrashDisabled(vfolder)
+                            background: !_.includes(
+                              vfolder?.permissions,
+                              'delete_vfolder',
+                            )
                               ? token.colorBgContainerDisabled
                               : token.colorErrorBg,
                           }}
