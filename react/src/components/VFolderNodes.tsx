@@ -398,7 +398,8 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
             title: t('data.folders.Owner'),
             render: (__, vfolder) =>
               vfolder?.user === currentUser?.uuid ||
-              vfolder?.group === currentProject?.id ? (
+              (vfolder?.group === currentProject?.id &&
+                userRole === 'admin') ? (
                 <Flex justify="center">
                   <CheckCircleOutlined />
                 </Flex>
