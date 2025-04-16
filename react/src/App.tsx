@@ -79,6 +79,7 @@ const SessionDetailAndContainerLogOpenerLegacy = React.lazy(
 const ChatPage = React.lazy(() => import('./pages/ChatPage'));
 
 const AIAgentPage = React.lazy(() => import('./pages/AIAgentPage'));
+const AIAgentIFramePage = React.lazy(() => import('./pages/AIAgentIFramePage'));
 
 interface CustomHandle {
   title?: string;
@@ -513,6 +514,15 @@ const router = createBrowserRouter([
             <WebUINavigate to={'/start'} replace />
           );
         },
+      },
+      {
+        path: '/ai-agent/external',
+        handle: { labelKey: 'webui.menu.AIAgents' },
+        Component: () => (
+          <Suspense fallback={<Skeleton active />}>
+            <AIAgentIFramePage />
+          </Suspense>
+        ),
       },
     ],
   },
