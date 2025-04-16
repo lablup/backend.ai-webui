@@ -56,6 +56,22 @@
       }
     },
     {
+      "type": "external",
+      "id": "d3b07384-d9a1-4d3b-9d3b-17384d9a1d5b",
+      "meta": {
+        "title": "Key Fact Extractor",
+        "avatar": "/resources/agents/key-extractor-fluentstyle.png",
+        "background": "linear-gradient(135deg, #00416A 0%, #E4E5E6 100%)",
+        "descriptions": "Helps summarization & key factor extraction from text input.",
+        "tags": ["lablup", "backendai", "extractor", "rag"]
+      },
+      "endpoint": "xaas_key",
+      "endpoint_id": "",
+      "config": {
+        "url": "https://xaas_key_extraction.asia03.app.backend.ai/"
+      }
+    },
+    {
       "type": "agent",
       "id": "d3b07384-d9a1-4d3b-9d3b-07384d9a1d3b",
       "meta": {
