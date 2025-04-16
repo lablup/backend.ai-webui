@@ -79,6 +79,7 @@ const SessionDetailAndContainerLogOpenerLegacy = React.lazy(
 const ChatPage = React.lazy(() => import('./pages/ChatPage'));
 
 const AIAgentPage = React.lazy(() => import('./pages/AIAgentPage'));
+const AIAgentIFramePage = React.lazy(() => import('./pages/AIAgentIFramePage'));
 
 /**
  * Pages for Model Player
@@ -536,6 +537,15 @@ const router = createBrowserRouter([
         path: '',
         handle: { labelKey: 'webui.menu.Start' },
         Component: ModelStorePage,
+      },
+      {
+        path: '/ai-agent/external',
+        handle: { labelKey: 'webui.menu.AIAgents' },
+        Component: () => (
+          <Suspense fallback={<Skeleton active />}>
+            <AIAgentIFramePage />
+          </Suspense>
+        ),
       },
     ],
   },
