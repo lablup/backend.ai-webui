@@ -2,6 +2,7 @@ import {
   convertBinarySizeUnit,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
+import { useResourceSlotsDetails } from '../hooks/backendai';
 import BAICard from './BAICard';
 import {
   SessionMetricGraphQuery,
@@ -68,6 +69,7 @@ const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
 }) => {
   const { token } = theme.useToken();
   const { styles } = useStyle();
+  const { mergedResourceSlots } = useResourceSlotsDetails();
 
   const { capacity_metric, current_metric } =
     useLazyLoadQuery<SessionMetricGraphQuery>(
@@ -142,9 +144,22 @@ const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
     dayDiff < 7 ? '5m' : dayDiff < 30 ? '1h' : '1d',
   );
 
+  const getMetricTitle = () => {
+    const [key, ...rest] = _.split(metricName, '_');
+    const restLabel = _.startCase(rest.join(' '));
+
+    if (_.has(mergedResourceSlots, key)) {
+      return `${mergedResourceSlots[key]?.human_readable_name} ${restLabel}`;
+    }
+    if (_.includes(metricName, 'io')) {
+      return `${_.upperCase(key)} ${restLabel}`;
+    }
+    return `${_.startCase(metricName.replaceAll('_', ' '))}`;
+  };
+
   return (
     <BAICard
-      title={_.startCase(metricName.replaceAll('_', ' '))}
+      title={getMetricTitle()}
       type="inner"
       styles={{
         body: {
