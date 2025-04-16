@@ -152,6 +152,7 @@ const EditableVFolderName: React.FC<EditableVFolderNameProps> = ({
                   ).toPromise();
                 },
                 onError: (error) => {
+                  onEditEnd?.();
                   message.error(painKiller.relieve(error?.message));
                   setOptimisticName(vfolder.name);
                 },

@@ -157,7 +157,8 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                       style={{ color: token.colorLink }}
                       editable={
                         !isDeletedCategory(vfolder?.status) &&
-                        vfolder?.id !== editingColumn
+                        vfolder?.id !== editingColumn &&
+                        _.includes(vfolder?.permissions, 'update_attribute')
                       }
                       onEditEnd={() => {
                         setEditingColumn(null);
