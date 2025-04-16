@@ -206,6 +206,7 @@
     }
   },
   "data": {
+    "Active": "Active",
     "Add": "Add",
     "All": "All",
     "AllowsLettersNumbersAnd-_": "Allows letters, numbers and -_",
@@ -241,6 +242,7 @@
     "Limit": "Limit",
     "ModelStore": "Model Store",
     "Models": "Models",
+    "MyFolders": "My Folders",
     "New": "New",
     "NewFolder": "New Folder",
     "NewFolderName": "New folder name",

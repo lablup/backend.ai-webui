@@ -204,6 +204,7 @@
     }
   },
   "data": {
+    "Active": "Actif",
     "Add": "Ajouter",
     "All": "Tous",
     "AllowsLettersNumbersAnd-_": "Autorise les lettres, les chiffres et -_",
@@ -239,6 +240,7 @@
     "Limit": "Limite",
     "ModelStore": "Magasin de modèles",
     "Models": "Des modèles",
+    "MyFolders": "Mes dossiers",
     "New": "Nouveau",
     "NewFolder": "Nouveau dossier",
     "NewFolderName": "Nouveau nom de dossier",

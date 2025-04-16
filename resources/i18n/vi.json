@@ -204,6 +204,7 @@
     }
   },
   "data": {
+    "Active": "Tích cực",
     "Add": "Thêm vào",
     "All": "Tất cả",
     "AllowsLettersNumbersAnd-_": "Cho phép các chữ cái, số và -_",
@@ -239,6 +240,7 @@
     "Limit": "Giới hạn",
     "ModelStore": "Cửa hàng mô hình",
     "Models": "Mô hình",
+    "MyFolders": "Thư mục của tôi",
     "New": "Mới",
     "NewFolder": "Thư mục mới",
     "NewFolderName": "Tên thư mục mới",

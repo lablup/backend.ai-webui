@@ -203,6 +203,7 @@
     }
   },
   "data": {
+    "Active": "Aktif",
     "Add": "Tambah",
     "All": "Semua",
     "AllowsLettersNumbersAnd-_": "Membolehkan huruf, nombor dan -_",
@@ -238,6 +239,7 @@
     "Limit": "Had",
     "ModelStore": "Kedai Model",
     "Models": "Model",
+    "MyFolders": "Folder saya",
     "New": "Baru",
     "NewFolder": "Fail baharu",
     "NewFolderName": "Nama folder baharu",

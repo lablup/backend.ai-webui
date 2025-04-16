@@ -204,6 +204,7 @@
     }
   },
   "data": {
+    "Active": "積極的",
     "Add": "添加",
     "All": "全部",
     "AllowsLettersNumbersAnd-_": "允許字母、數字和 -_",
@@ -239,6 +240,7 @@
     "Limit": "限制",
     "ModelStore": "模型店",
     "Models": "楷模",
+    "MyFolders": "我的文件夾",
     "New": "新的",
     "NewFolder": "新建文件夾",
     "NewFolderName": "新文件夹名称",

@@ -203,6 +203,7 @@
     }
   },
   "data": {
+    "Active": "アクティブ",
     "Add": "追加",
     "All": "全て",
     "AllowsLettersNumbersAnd-_": "文字、数字、および-_を許可します",
@@ -238,6 +239,7 @@
     "Limit": "制限",
     "ModelStore": "模型店",
     "Models": "モデル",
+    "MyFolders": "私のフォルダー",
     "New": "新しい",
     "NewFolder": "新しいフォルダ",
     "NewFolderName": "新しいフォルダ名",

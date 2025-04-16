@@ -206,6 +206,7 @@
     }
   },
   "data": {
+    "Active": "활성",
     "Add": "추가",
     "All": "전체",
     "AllowsLettersNumbersAnd-_": "문자, 숫자 및 -_ 만 허용됩니다.",
@@ -241,6 +242,7 @@
     "Limit": "제한",
     "ModelStore": "모델 스토어",
     "Models": "모델",
+    "MyFolders": "내 폴더",
     "New": "새로운",
     "NewFolder": "새 폴더",
     "NewFolderName": "새 폴더 이름",

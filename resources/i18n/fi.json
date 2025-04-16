@@ -203,6 +203,7 @@
     }
   },
   "data": {
+    "Active": "Aktiivinen",
     "Add": "Lisätä",
     "All": "Kaikki",
     "AllowsLettersNumbersAnd-_": "Sallii kirjaimet, numerot ja -_",
@@ -238,6 +239,7 @@
     "Limit": "Raja",
     "ModelStore": "Mallikauppa",
     "Models": "Mallit",
+    "MyFolders": "Kansioni",
     "New": "Uusi",
     "NewFolder": "Uusi kansio",
     "NewFolderName": "Uusi kansion nimi",

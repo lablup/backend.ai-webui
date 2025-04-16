@@ -204,6 +204,7 @@
     }
   },
   "data": {
+    "Active": "Aktywny",
     "Add": "Dodaj",
     "All": "Wszystko",
     "AllowsLettersNumbersAnd-_": "Zezwala na litery, cyfry i -_",
@@ -239,6 +240,7 @@
     "Limit": "Limit",
     "ModelStore": "Sklep modelarski",
     "Models": "Modele",
+    "MyFolders": "Moje foldery",
     "New": "Nowy",
     "NewFolder": "Nowy folder",
     "NewFolderName": "Nowa nazwa folderu",

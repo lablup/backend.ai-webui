@@ -204,6 +204,7 @@
     }
   },
   "data": {
+    "Active": "Aktif",
     "Add": "Ekle",
     "All": "Tüm",
     "AllowsLettersNumbersAnd-_": "Harflere, sayılara ve -_'ye izin verir",
@@ -239,6 +240,7 @@
     "Limit": "Limit",
     "ModelStore": "Model Mağazası",
     "Models": "Modeller",
+    "MyFolders": "Klasörlerim",
     "New": "Yeni",
     "NewFolder": "Yeni dosya",
     "NewFolderName": "Yeni klasör adı",

@@ -204,6 +204,7 @@
     }
   },
   "data": {
+    "Active": "Aktiv",
     "Add": "hinzufügen",
     "All": "Alle",
     "AllowsLettersNumbersAnd-_": "Erlaubt Buchstaben, Zahlen und -_",
@@ -239,6 +240,7 @@
     "Limit": "Grenze",
     "ModelStore": "Modellladen",
     "Models": "Modelle",
+    "MyFolders": "Meine Ordner",
     "New": "Neu",
     "NewFolder": "Neuer Ordner",
     "NewFolderName": "Neuer Ordnername",

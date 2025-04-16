@@ -204,6 +204,7 @@
     }
   },
   "data": {
+    "Active": "Activo",
     "Add": "Añadir",
     "All": "Todo",
     "AllowsLettersNumbersAnd-_": "Permite letras, números y -_",
@@ -239,6 +240,7 @@
     "Limit": "Límite",
     "ModelStore": "Tienda de modelos",
     "Models": "Modelos",
+    "MyFolders": "Mis carpetas",
     "New": "Nuevo",
     "NewFolder": "Nueva carpeta",
     "NewFolderName": "Nuevo nombre de carpeta",
