@@ -246,7 +246,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     );
 
   return (
-    <Flex direction="column" align="stretch" gap={'md'}>
+    <Flex direction="column" align="stretch" gap={'md'} {...props}>
       <Flex direction="column" align="stretch">
         <Row gutter={[16, 16]}>
           <Col xs={24} lg={8} xl={4}>
@@ -289,6 +289,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             >
               <StorageStatusPanelCard
                 style={{ height: lg ? 200 : undefined }}
+                fetchKey={fetchKey}
               />
             </Suspense>
           </Col>
