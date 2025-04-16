@@ -694,7 +694,7 @@ export default class BackendAILogin extends BackendAIPage {
       generalConfig,
       {
         valueType: 'string',
-        defaultValue: 'cr.backend.ai/stable/python', // 'index.docker.io/lablup/python:3.8-ubuntu18.04'
+        defaultValue: 'cr.backend.ai/multiarch/python:3.9-ubuntu20.04',
         value: generalConfig?.defaultImportEnvironment,
       } as ConfigValueObject,
     ) as string;
