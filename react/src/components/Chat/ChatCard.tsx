@@ -7,24 +7,27 @@ import ChatMessages from './ChatMessages';
 import {
   BAIModel,
   ChatLifecycleEventType,
+  ChatModelError,
   ChatProviderType,
   ChatType,
   Model,
 } from './ChatModel';
-import { CustomModelAlert, CustomModelForm } from './CustomModelForm';
-import {
-  ChatCard_endpoint$data,
-  ChatCard_endpoint$key,
-} from './__generated__/ChatCard_endpoint.graphql';
+import { CustomModelForm } from './CustomModelForm';
+import { ChatCard_endpoint$key } from './__generated__/ChatCard_endpoint.graphql';
 import { createOpenAI } from '@ai-sdk/openai';
 import { useChat } from '@ai-sdk/react';
 import { extractReasoningMiddleware, streamText, wrapLanguageModel } from 'ai';
-import { Alert, Card, CardProps, FormInstance } from 'antd';
+import { Alert, App, Card, CardProps } from 'antd';
 import { createStyles } from 'antd-style';
 import graphql from 'babel-plugin-relay/macro';
-import { isEmpty } from 'lodash';
-import _ from 'lodash';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { includes, isEmpty, map } from 'lodash';
+import React, {
+  startTransition,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useFragment } from 'react-relay';
 
 interface ChatCardProps extends CardProps, ChatLifecycleEventType {
@@ -83,27 +86,40 @@ function useEndpoint(selectedEndpoint?: ChatCard_endpoint$key | null) {
 function useModels(
   provider: ChatProviderType,
   fetchKey: string,
-  endpoint?: ChatCard_endpoint$data | null,
+  baseURL?: string,
+  token?: string,
 ) {
+  const { message: appMessage } = App.useApp();
   const { data: modelsResult } = useSuspenseTanQuery<{
     data: Array<Model>;
   }>({
-    queryKey: ['models', fetchKey, endpoint?.endpoint_id],
-    queryFn: () => {
-      return endpoint?.url
-        ? fetch(
-            new URL(
-              provider.basePath + '/models',
-              endpoint?.url ?? undefined,
-            ).toString(),
-          )
-            .then((res) => res.json())
-            .catch((e) => ({ data: [] }))
-        : Promise.resolve({ data: [] });
+    queryKey: ['models', fetchKey, baseURL, token],
+    queryFn: async () => {
+      try {
+        if (baseURL) {
+          const { protocol, host, pathname: path } = new URL(baseURL);
+          const authToken = token || provider.apiKey;
+          const url = new URL(`${path}/models`, protocol + host).toString();
+          const res = await fetch(url, {
+            headers: {
+              Authorization: authToken ? `Bearer ${authToken}` : '',
+            },
+          });
+
+          if (!res.ok) {
+            throw new ChatModelError(res.status);
+          }
+
+          return await res.json();
+        }
+      } catch (error: any) {
+        appMessage.error(`Error fetching models: ${error.message}`, 5);
+      }
+      return { data: [] };
     },
   });
 
-  const models = _.map(modelsResult?.data, (m) => ({
+  const models = map(modelsResult?.data, (m) => ({
     id: m.id,
     name: m.id,
   })) as BAIModel[];
@@ -111,7 +127,7 @@ function useModels(
   const selectedModelId = useMemo(
     () =>
       provider.modelId &&
-      _.includes(_.map(modelsResult?.data, 'id'), provider.modelId)
+      includes(map(modelsResult?.data, 'id'), provider.modelId)
         ? provider.modelId
         : (modelsResult?.data?.[0]?.id ?? 'custom'),
     [modelsResult?.data, provider.modelId],
@@ -153,6 +169,10 @@ const ChatHeader = React.memo(PureChatHeader, (prev, next) => {
 
 const ChatInput = React.memo(PureChatInput);
 
+function createBaseURL(basePath: string, endpointUrl?: string | null) {
+  return endpointUrl ? new URL(basePath, endpointUrl).toString() : undefined;
+}
+
 const ChatCard: React.FC<ChatCardProps> = ({
   chat,
   selectedEndpoint,
@@ -164,36 +184,23 @@ const ChatCard: React.FC<ChatCardProps> = ({
   const {
     styles: { chatCard: chatCardStyle, alert: alertStyle, ...chatCardStyles },
   } = useStyles();
-  const formRef = useRef<FormInstance>(null);
   const dropContainerRef = useRef<HTMLDivElement>(null);
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [startTime, setStartTime] = useState<number | null>(null);
 
   const { endpoint, setEndpoint } = useEndpoint(selectedEndpoint);
+  const [baseURL, setBaseURL] = useState<string | undefined>(
+    createBaseURL(chat.provider.basePath, endpoint?.url),
+  );
+  const [token, setToken] = useState<string | undefined>();
   const { models, modelId, setModelId } = useModels(
     chat.provider,
     fetchKey,
-    endpoint,
+    baseURL,
+    token,
   );
   const { agents, agent, setAgent } = useAgents(chat.provider);
   const [sync, setSync] = useState(chat.sync);
-
-  const baseURL = endpoint?.url
-    ? new URL(chat.provider.basePath, endpoint?.url ?? undefined).toString()
-    : undefined;
-
-  const allowCustomModel = isEmpty(models);
-  const providerSettings = {
-    baseURL: allowCustomModel
-      ? formRef.current?.getFieldValue('baseURL')
-      : baseURL,
-    modelId: allowCustomModel
-      ? formRef.current?.getFieldValue('modelId')
-      : modelId,
-    apiKey: allowCustomModel
-      ? formRef.current?.getFieldValue('token')
-      : chat.provider.apiKey,
-  };
 
   const {
     error,
@@ -216,13 +223,13 @@ const ChatCard: React.FC<ChatCardProps> = ({
       if (fetchOnClient || modelId === 'custom') {
         const body = JSON.parse(init?.body as string);
         const provider = createOpenAI({
-          baseURL: providerSettings.baseURL,
-          apiKey: providerSettings.apiKey || 'dummy',
+          baseURL: baseURL,
+          apiKey: token || chat.provider.apiKey || 'dummy',
         });
         const result = streamText({
           abortSignal: init?.signal || undefined,
           model: wrapLanguageModel({
-            model: provider(providerSettings.modelId),
+            model: provider(modelId),
             middleware: extractReasoningMiddleware({ tagName: 'think' }),
           }),
           messages: body?.messages,
@@ -234,13 +241,21 @@ const ChatCard: React.FC<ChatCardProps> = ({
         return result.toDataStreamResponse({
           sendReasoning: true,
         });
-      } else {
-        return fetch(input, init);
       }
+
+      return fetch(input, init);
     },
   });
 
+  useEffect(() => {
+    startTransition(() => {
+      setBaseURL(createBaseURL(chat.provider.basePath, endpoint?.url));
+      setToken(undefined);
+    });
+  }, [endpoint?.url, chat.provider.basePath]);
+
   const isStreaming = status === 'streaming' || status === 'submitted';
+
   return (
     <Card
       variant="outlined"
@@ -249,7 +264,6 @@ const ChatCard: React.FC<ChatCardProps> = ({
       title={
         <ChatHeader
           chat={chat}
-          allowCustomModel={allowCustomModel}
           models={models}
           modelId={modelId}
           setModelId={setModelId}
@@ -269,20 +283,18 @@ const ChatCard: React.FC<ChatCardProps> = ({
       }
       ref={dropContainerRef}
     >
-      {allowCustomModel ? (
+      {isEmpty(models) && (
         <CustomModelForm
-          modelId={modelId}
           baseURL={baseURL}
-          formRef={formRef}
-          allowCustomModel={allowCustomModel}
-          alert={
-            formRef && (
-              <CustomModelAlert onClick={() => updateFetchKey(baseURL)} />
-            )
-          }
+          endpointId={endpoint?.endpoint_id}
+          onSubmit={(data) => {
+            updateFetchKey();
+            setBaseURL(data.baseURL);
+            setToken(data.token);
+          }}
         />
-      ) : null}
-      {!_.isEmpty(error?.message) ? (
+      )}
+      {!isEmpty(error?.message) ? (
         <Alert
           message={error?.message}
           type="error"

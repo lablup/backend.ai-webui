@@ -96,7 +96,7 @@
   },
   "chatui": {
     "Attachments": "Załączniki",
-    "CannotFindModel": "Nie można znaleźć modeli LLM. \nProszę dostosować model.",
+    "CannotFindModel": "Nie znaleziono modeli LLM. Sprawdź ścieżkę i zgodność tokena z OpenAI, a następnie naciśnij \"Odśwież modele\".",
     "CompareWithOtherModels": "Porównaj z innymi modelami",
     "DeleteChatHistory": "Przejrzysty czat",
     "DeleteChattingSession": "Usuń czat",

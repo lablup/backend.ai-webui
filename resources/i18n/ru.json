@@ -96,7 +96,7 @@
   },
   "chatui": {
     "Attachments": "Вложения",
-    "CannotFindModel": "Модели LLM не могут быть найдены. \nПожалуйста, настройте модель.",
+    "CannotFindModel": "Модели LLM не найдены. Проверьте путь и совместимость токена с OpenAI, затем нажмите 'Refresh Models'.",
     "CompareWithOtherModels": "Сравнить с другими моделями",
     "DeleteChatHistory": "Четкий чат",
     "DeleteChattingSession": "Удалить чат",

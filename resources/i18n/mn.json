@@ -95,7 +95,7 @@
   },
   "chatui": {
     "Attachments": "Хавсралтууд",
-    "CannotFindModel": "LLM загвар олдохгүй байна. \nЗагвараа тохируулна уу.",
+    "CannotFindModel": "Llm загварууд олдсонгүй. \nOpenai-тай хамт зам, токентай нийцтэй байдлыг баталгаажуул, дараа нь 'Reedesh загварууд' дарна уу",
     "CompareWithOtherModels": "Бусад загваруудтай харьцуул",
     "DeleteChatHistory": "Цэвэр яриа",
     "DeleteChattingSession": "Унцыг устгана уу",

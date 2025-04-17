@@ -95,7 +95,7 @@
   },
   "chatui": {
     "Attachments": "添付ファイル",
-    "CannotFindModel": "LLM モデルが見つかりません。\nモデルをカスタマイズしてください。",
+    "CannotFindModel": "LLM モデルが見つかりません。OpenAI とのパスとトークンの互換性を確認し、'Refresh Models' を押してください。",
     "CompareWithOtherModels": "他モデルとの比較",
     "DeleteChatHistory": "クリア・チャット",
     "DeleteChattingSession": "チャット削除",

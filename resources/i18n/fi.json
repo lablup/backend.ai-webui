@@ -96,7 +96,7 @@
   },
   "chatui": {
     "Attachments": "Liitteet",
-    "CannotFindModel": "LLM-malleja ei löydy. \nMukauta mallia.",
+    "CannotFindModel": "LLM-malleja ei löydy. Tarkista polku ja tokenin yhteensopivuus OpenAI:n kanssa ja paina sitten 'Päivitä mallit'.",
     "CompareWithOtherModels": "Vertaa muihin malleihin",
     "DeleteChatHistory": "Selkeä keskustelu",
     "DeleteChattingSession": "Poista keskustelu",
