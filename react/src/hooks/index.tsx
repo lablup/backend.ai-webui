@@ -138,6 +138,7 @@ export type BackendAIClient = {
       user: string;
       vfolder: string;
     }): Promise<any>;
+    leave_invited(name: string | null): Promise<any>;
   };
   supports: (feature: string) => boolean;
   [key: string]: any;

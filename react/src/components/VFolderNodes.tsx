@@ -18,6 +18,7 @@ import EditableVFolderName from './EditableVFolderName';
 import Flex from './Flex';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import InviteFolderSettingModal from './InviteFolderSettingModal';
+import SharedFolderPermissionInfoModal from './SharedFolderPermissionInfoModal';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import VFolderPermissionCell from './VFolderPermissionCell';
 import {
@@ -84,6 +85,8 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
 
   const [currentVFolder, setCurrentVFolder] =
     useState<VFolderNodeInList | null>(null);
+  const [currentSharedVFolder, setCurrentSharedVFolder] =
+    useState<VFolderNodeInList | null>(null);
 
   const vfolders = useFragment(
     graphql`
@@ -99,6 +102,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         ...VFolderPermissionCellFragment
         ...EditableVFolderNameFragment
         ...VFolderNodeIdenticonFragment
+        ...SharedFolderPermissionInfoModalFragment
       }
     `,
     vfoldersFrgmt,
@@ -220,7 +224,9 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                           background: token.colorInfoBg,
                         }}
                         onClick={() => {
-                          setInviteFolderId(toLocalId(vfolder?.id ?? null));
+                          vfolder?.user === currentUser?.uuid
+                            ? setInviteFolderId(toLocalId(vfolder?.id ?? null))
+                            : setCurrentSharedVFolder(vfolder);
                         }}
                       />
                     </Tooltip>
@@ -469,6 +475,16 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         }}
         vfolderId={inviteFolderId}
         open={!!inviteFolderId}
+      />
+      <SharedFolderPermissionInfoModal
+        vfolderFrgmt={currentSharedVFolder}
+        open={!!currentSharedVFolder}
+        onRequestClose={(success?: boolean) => {
+          setCurrentSharedVFolder(null);
+          if (success) {
+            onRequestChange?.();
+          }
+        }}
       />
     </>
   );
