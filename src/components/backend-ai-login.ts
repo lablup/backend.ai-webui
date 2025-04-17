@@ -1450,7 +1450,7 @@ export default class BackendAILogin extends BackendAIPage {
       );
     }
 
-    this.api_endpoint = this.apiEndpointInput.value.replace(/\/+$/, '');
+    this.api_endpoint = this.apiEndpointInput.value.replace(/\/+$/, '').trim();
     if (this.api_endpoint === '') {
       this.notification.text = _text('login.APIEndpointEmpty');
       this.notification.show();
@@ -1459,9 +1459,9 @@ export default class BackendAILogin extends BackendAIPage {
 
     this._disableUserInput();
     if (this.connection_mode === 'SESSION') {
-      this.user_id = this.userIdInput.value;
+      this.user_id = this.userIdInput.value.trim();
       this.password = this.passwordInput.value;
-      this.otp = this.otpInput.value;
+      this.otp = this.otpInput.value.trim();
 
       // show error message when id or password input is empty
       if (
