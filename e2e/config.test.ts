@@ -1,4 +1,8 @@
-import { loginAsAdmin, modifyConfigToml, webuiEndpoint } from './test-util';
+import {
+  loginAsAdmin,
+  modifyConfigToml,
+  webuiEndpoint,
+} from './utils/test-util';
 import { test, expect } from '@playwright/test';
 
 test.describe.parallel('config.toml', () => {
