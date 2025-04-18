@@ -1759,6 +1759,7 @@
     "ConfigFilename": "구성 파일 이름 선택",
     "CurrentSSHPublicKey": "현재 공개 키: ",
     "DarkMode": "다크 모드",
+    "Default": "기본",
     "DescAutoLogout": "세션 내 앱을 실행하기 위해 생성된 페이지를 제외한 모든 Backend.AI 웹 UI 페이지가 닫힐 경우 자동으로 로그아웃됩니다.",
     "DescAutomaticUpdateCheck": "새로운 웹 UI 버전이 출시된 경우 알려줍니다.<br />오프라인 또는 인터넷 연결 상태가 불안정한 환경에서는 몇 차례 시도후 자동으로 사용이 중지됩니다. 이 경우 이 스위치를 켜서 다시 자동 업데이트 체크를 시작할 수 있습니다.",
     "DescBetaFeatures": "GUI용으로 테스트중인 기능을 사용합니다.<br />베타 기능은 불안정할 수 있으며, 정식 버전에서는 채택되지 않을 수 있습니다.",

@@ -9,8 +9,9 @@ import {
 } from '../hooks/useBAISetting';
 import { SettingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Button } from 'antd';
+import { Button, Typography } from 'antd';
 import Card from 'antd/es/card/Card';
+import _ from 'lodash';
 import { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
@@ -55,6 +56,39 @@ const UserPreferencesPage = () => {
   const [isOpenShellScriptEditModal, { toggle: toggleShellScriptEditModal }] =
     useToggle(false);
 
+  const languageOptions = [
+    { label: t('language.English'), value: 'en' },
+    { label: t('language.Korean'), value: 'ko' },
+    { label: t('language.Brazilian'), value: 'pt-BR' },
+    { label: t('language.Chinese'), value: 'zh-CN' },
+    {
+      label: t('language.Chinese (Simplified)'),
+      value: 'zh-TW',
+    },
+    { label: t('language.French'), value: 'fr' },
+    { label: t('language.Finnish'), value: 'fi' },
+    { label: t('language.German'), value: 'de' },
+    { label: t('language.Greek'), value: 'el' },
+    { label: t('language.Indonesian'), value: 'id' },
+    { label: t('language.Italian'), value: 'it' },
+    { label: t('language.Japanese'), value: 'ja' },
+    { label: t('language.Mongolian'), value: 'mn' },
+    { label: t('language.Polish'), value: 'pl' },
+    { label: t('language.Portuguese'), value: 'pt' },
+    { label: t('language.Russian'), value: 'ru' },
+    { label: t('language.Spanish'), value: 'es' },
+    { label: t('language.Thai'), value: 'th' },
+    { label: t('language.Turkish'), value: 'tr' },
+    { label: t('language.Vietnamese'), value: 'vi' },
+  ];
+  let defaultLanguage = globalThis.navigator.language;
+  defaultLanguage = _.includes(['zh-CN', 'zh-TW', 'pt-BR'], defaultLanguage)
+    ? defaultLanguage
+    : defaultLanguage.split('-')[0];
+  defaultLanguage =
+    languageOptions.find((item) => item.value === defaultLanguage)?.value ??
+    'en';
+
   const settingGroups: Array<SettingGroup> = [
     {
       title: t('userSettings.Preferences'),
@@ -86,46 +120,34 @@ const UserPreferencesPage = () => {
           title: t('userSettings.Language'),
           description: t('userSettings.DescLanguage'),
           selectProps: {
-            options: [
-              { label: t('language.OSDefault'), value: 'default' },
-              { label: t('language.English'), value: 'en' },
-              { label: t('language.Korean'), value: 'ko' },
-              { label: t('language.Brazilian'), value: 'pt-BR' },
-              { label: t('language.Chinese'), value: 'zh-CN' },
-              {
-                label: t('language.Chinese (Simplified)'),
-                value: 'zh-TW',
-              },
-              { label: t('language.French'), value: 'fr' },
-              { label: t('language.Finnish'), value: 'fi' },
-              { label: t('language.German'), value: 'de' },
-              { label: t('language.Greek'), value: 'el' },
-              { label: t('language.Indonesian'), value: 'id' },
-              { label: t('language.Italian'), value: 'it' },
-              { label: t('language.Japanese'), value: 'ja' },
-              { label: t('language.Mongolian'), value: 'mn' },
-              { label: t('language.Polish'), value: 'pl' },
-              { label: t('language.Portuguese'), value: 'pt' },
-              { label: t('language.Russian'), value: 'ru' },
-              { label: t('language.Spanish'), value: 'es' },
-              { label: t('language.Thai'), value: 'th' },
-              { label: t('language.Turkish'), value: 'tr' },
-              { label: t('language.Vietnamese'), value: 'vi' },
-            ],
+            options: languageOptions.map((item) =>
+              item.value === defaultLanguage
+                ? {
+                    ...item,
+                    label: (
+                      <>
+                        {item.label}&nbsp;
+                        <Typography.Text type="secondary">
+                          ({t('userSettings.Default')})
+                        </Typography.Text>
+                      </>
+                    ),
+                  }
+                : item,
+            ),
             showSearch: true,
           },
-          defaultValue: 'default',
-          value: selectedLanguage || 'default',
+          defaultValue: defaultLanguage,
+          value: selectedLanguage || defaultLanguage,
           setValue: setSelectedLanguage,
           onChange: (value) => {
             setSelectedLanguage(value);
-            const defaultLanguage = globalThis.navigator.language.split('-')[0];
             const event = new CustomEvent('language-changed', {
               detail: {
-                language: value === 'default' ? defaultLanguage : value,
+                language: value,
               },
             });
-            setLanguage(value === 'default' ? defaultLanguage : value);
+            setLanguage(value);
             document.dispatchEvent(event);
             //@ts-ignore
             console.log(globalThis.backendaioptions.get('selected_language'));

@@ -1763,6 +1763,7 @@
     "ConfigFilename": "Config file name",
     "CurrentSSHPublicKey": "Current public key: ",
     "DarkMode": "Dark mode",
+    "Default": "Default",
     "DescAutoLogout": "Log out automatically if all logined pages are closed except session originated pages for apps(e.g. jupyter notebook, web terminal, etc.)",
     "DescAutomaticUpdateCheck": "Notify when a new webui version is released.<br />In where the Internet is unstable or offline, this option will be automatically turned off. You can toggle this switch to start the automatic update check again.",
     "DescBetaFeatures": "Use beta features for Web UI.<br />Beta features may be unstable. Some beta features may not be adopted as official feature.",

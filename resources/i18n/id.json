@@ -1754,6 +1754,7 @@
     "ConfigFilename": "Nama file konfigurasi",
     "CurrentSSHPublicKey": "Kunci publik saat ini: ",
     "DarkMode": "Mode Gelap",
+    "Default": "Bawaan",
     "DescAutoLogout": "Keluar secara otomatis jika semua halaman yang masuk ditutup kecuali halaman yang berasal dari sesi untuk aplikasi (mis. Jupyter notebook, terminal web, dll.)",
     "DescAutomaticUpdateCheck": "Beri tahu saat versi UI web baru dirilis. <br /> Di mana Internet tidak stabil atau offline, opsi ini akan dimatikan secara otomatis. Anda dapat mengaktifkan opsi ini untuk memulai lagi pemeriksaan pembaruan otomatis.",
     "DescBetaFeatures": "Gunakan fitur beta untuk UI Web. <br />Fitur beta mungkin tidak stabil. Beberapa fitur beta mungkin tidak diadopsi sebagai fitur resmi.",
