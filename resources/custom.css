@@ -4,6 +4,25 @@
 backend-ai-webui {
 }
 
+vaadin-grid-sorter::part(indicators)::before {
+  content: "▲" !important;
+}
+
+vaadin-grid-sorter[direction="desc"]::part(indicators)::before {
+  content: "▼" !important;
+}
+
+vaadin-select::part(toggle-button)::before {
+  content: '⌄' !important;
+  font-size: small;
+}
+
+vaadin-select-item::part(checkmark)::before {
+  content: '✓';
+  font-size: small;
+  padding-left: 0.5em;
+}
+
 /* .ant-tabs {
   background-color: #2A2C30;
 } */
