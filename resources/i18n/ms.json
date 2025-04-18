@@ -1753,6 +1753,7 @@
     "ConfigFilename": "Konfigurasi nama fail",
     "CurrentSSHPublicKey": "Kunci awam semasa:",
     "DarkMode": "Mod Gelap",
+    "Default": "Lalai",
     "DescAutoLogout": "Log keluar secara automatik jika semua halaman log masuk ditutup kecuali halaman yang berasal dari sesi untuk aplikasi (mis. Notebook jupyter, terminal web, dll.)",
     "DescAutomaticUpdateCheck": "Beritahu bila versi webui baru dikeluarkan. <br /> Di mana Internet tidak stabil atau di luar talian, pilihan ini akan dimatikan secara automatik. Anda boleh menukar suis ini untuk memulakan pemeriksaan kemas kini automatik sekali lagi.",
     "DescBetaFeatures": "Gunakan ciri beta untuk UI Web. <br /> Ciri-ciri beta mungkin tidak stabil. Beberapa ciri beta mungkin tidak digunakan sebagai ciri rasmi.",
