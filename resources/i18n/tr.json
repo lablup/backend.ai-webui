@@ -1129,7 +1129,7 @@
     "ResourcePresets": "Kaynak Ön Ayarları",
     "Resources": "Kaynaklar",
     "SHMEMShouldBeSmallerThanMemory": "Paylaşılan bellek, bellekten daha küçük olmalıdır",
-    "SharedMemory": "Paylaşılan bellek (GB)",
+    "SharedMemory": "Paylaşılan Bellek",
     "Updated": "Kaynak ön ayarı güncellendi"
   },
   "session": {

@@ -1129,7 +1129,7 @@
     "ResourcePresets": "Предустановки ресурсов",
     "Resources": "Ресурсы",
     "SHMEMShouldBeSmallerThanMemory": "Общая память должна быть меньше памяти",
-    "SharedMemory": "Общая память (ГБ)",
+    "SharedMemory": "Общая память",
     "Updated": "Предустановка ресурса обновлена"
   },
   "session": {
