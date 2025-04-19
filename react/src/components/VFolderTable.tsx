@@ -5,6 +5,7 @@ import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useEventNotStable } from '../hooks/useEventNotStable';
+import UserUnionIcon from './BAIIcons/UserUnionIcon';
 import BAILink from './BAILink';
 import Flex from './Flex';
 import FolderCreateModal from './FolderCreateModal';
@@ -26,6 +27,7 @@ import {
   Table,
   TableProps,
   Tag,
+  theme,
   Tooltip,
   Typography,
 } from 'antd';
@@ -147,6 +149,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   }, [aliasMap, internalForm, aliasBasePath]);
 
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const currentProject = useCurrentProjectValue();
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
@@ -447,15 +450,20 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
       title: t('data.Type'),
       dataIndex: 'type',
       sorter: (a, b) => a.type.localeCompare(b.type),
-      render: (value, record) => {
+      render: (_, record) => {
         return (
           <Flex direction="column">
-            {record.type === 'user' ? (
-              <UserOutlined title="User" />
+            {record.ownership_type === 'user' ? (
+              <Flex gap={'xs'}>
+                <Typography.Text>{t('data.User')}</Typography.Text>
+                <UserOutlined style={{ color: token.colorTextTertiary }} />
+              </Flex>
             ) : (
-              <div>Group</div>
+              <Flex gap={'xs'}>
+                <Typography.Text>{t('data.Project')}</Typography.Text>
+                <UserUnionIcon style={{ color: token.colorTextTertiary }} />
+              </Flex>
             )}
-            {record.type === 'group' && `(${record.group_name})`}
           </Flex>
         );
       },
