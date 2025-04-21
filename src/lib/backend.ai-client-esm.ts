@@ -279,6 +279,9 @@ class Client {
     } else {
       this._loginSessionId = '';
     }
+    this.email = '';
+    this.full_name = '';
+    this.user_uuid = '';
     //if (this._config.connectionMode === 'API') {
     //this.getManagerVersion();
     //}

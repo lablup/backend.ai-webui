@@ -2,6 +2,7 @@ import { toGlobalId } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import BAISelect from './BAISelect';
@@ -63,6 +64,7 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
   const { lg } = Grid.useBreakpoint();
   const { message } = App.useApp();
   const [currentUser] = useCurrentUserInfo();
+  const currentProject = useCurrentProjectValue();
 
   const [isWritable, setIsWritable] = useState<boolean>(false);
   const [isSelected, setIsSelected] = useState<boolean>(false);
@@ -107,11 +109,13 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
         vfolder(id: $vfolderID) @deprecatedSince(version: "24.03.4") {
           id
           permission
+          group
           ...LegacyFolderExplorerVFolderFragment
         }
         vfolder_node(id: $vfolderUUID) @since(version: "24.03.4") {
           id
           user
+          group
           permission
           ...LegacyFolderExplorerVFolderNodeFragment
         }
@@ -188,7 +192,10 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
             >
               {lg && t('data.explorer.RunSSH/SFTPserver')}
             </Button>
-            {vfolder_node?.user === currentUser.uuid && (
+            {(vfolder_node?.user === currentUser.uuid ||
+              (baiClient.is_admin &&
+                (vfolder_node?.group === currentProject?.id ||
+                  vfolder?.group === currentProject?.id))) && (
               <BAISelect
                 tooltip={t('data.folders.MountPermission')}
                 defaultValue={vfolder_node?.permission || vfolder?.permission}
@@ -222,7 +229,7 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
                             }
                           `,
                           {
-                            id: vfolder_node.id,
+                            id: vfolder_node?.id ?? '',
                           },
                         ).toPromise();
                         // @ts-ignore
