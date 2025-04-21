@@ -242,6 +242,7 @@ const ModelStoreListPage: React.FC = () => {
             const specialNames = [
               'phi-4',
               // FIXME: NIM supported image need to be located first.
+              'calm3-22b-chat',
               'Meta-Llama-3-8B-Instruct',
               'gemma-2-27b-it',
               'Llama-3.2-11B-Vision-Instruct',
