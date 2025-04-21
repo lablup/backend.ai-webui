@@ -152,8 +152,8 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const [experimentalAIAgents] = useBAISettingUserState(
     'experimental_ai_agents',
   );
-  const [experimentalDashboard] = useBAISettingUserState(
-    'experimental_dashboard',
+  const [isClassicDashboardPage] = useBAISettingUserState(
+    'classic_dashboard_page',
   );
   const generalMenu = filterOutEmpty<WebUIGeneralMenuItemType>([
     {
@@ -162,13 +162,13 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       key: 'start',
       group: 'none',
     },
-    experimentalDashboard && {
+    !isClassicDashboardPage && {
       label: <WebUILink to="/dashboard">{t('webui.menu.Dashboard')}</WebUILink>,
       icon: <DashboardOutlined style={{ color: token.colorPrimary }} />,
       key: 'dashboard',
       group: 'none',
     },
-    !experimentalDashboard && {
+    isClassicDashboardPage && {
       label: <WebUILink to="/summary">{t('webui.menu.Summary')}</WebUILink>,
       icon: <DashboardOutlined style={{ color: token.colorPrimary }} />,
       key: 'summary',
