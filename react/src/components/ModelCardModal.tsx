@@ -163,7 +163,9 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                       ? 'llama-vision-11b'
                       : model_card?.name === 'Meta-Llama-3-8B-Instruct'
                         ? 'llama-3-8b'
-                        : model_card?.name || ''
+                        : model_card?.name === 'calm3-22b-chat'
+                          ? 'calm3-22b-chat'
+                          : model_card?.name || ''
                 }
               />
             )}
@@ -181,6 +183,9 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                 );
                 if (_.isNaN(minResource) || minResource === 0) {
                   return 10;
+                }
+                if (model_card?.name === 'calm3-22b-chat') {
+                  return 20;
                 }
                 // FIXME: temporally set 12 as minimum resource for Meta-Llama-3-8B-Instruct
                 if (model_card?.name === 'Meta-Llama-3-8B-Instruct') {
