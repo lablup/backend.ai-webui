@@ -225,7 +225,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
               return _.isEqual(
                 aliasedTag,
                 preserveDotStartCase(tag.key + tagValue),
-              ) ? (
+              ) || isCustomized ? (
                 <DoubleTag
                   key={tag.key}
                   highlightKeyword={imageSearch}

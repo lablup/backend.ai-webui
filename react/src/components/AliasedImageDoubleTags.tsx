@@ -50,7 +50,7 @@ const AliasedImageDoubleTags: React.FC<AliasedImageDoubleTagsProps> = ({
         return _.isEqual(
           aliasedTag,
           preserveDotStartCase(tag.key + tagValue),
-        ) ? (
+        ) || isCustomized ? (
           <DoubleTag
             key={tag.key}
             highlightKeyword={highlightKeyword}
