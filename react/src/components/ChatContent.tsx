@@ -1,5 +1,5 @@
 import { useTanQuery } from '../hooks/reactQueryAlias';
-import { Model } from './Chat/ChatUIModal';
+import { Model } from './Chat/ChatModel';
 import LLMChatCard from './Chat/LLMChatCard';
 import { ChatContentEndpointDetailQuery } from './__generated__/ChatContentEndpointDetailQuery.graphql';
 import { ReloadOutlined } from '@ant-design/icons';

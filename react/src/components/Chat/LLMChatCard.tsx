@@ -121,6 +121,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
 
   const customModelFormRef = useRef<FormInstance>(null);
   const cardRef = useRef<HTMLDivElement>(null);
+  const dropContainerRef = useRef<HTMLDivElement>(null);
 
   const {
     messages,
@@ -366,6 +367,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
       }}
       actions={[
         <ChatSender
+          dropContainerRef={dropContainerRef}
           key="chatSender"
           autoFocus
           //@ts-ignore
@@ -439,17 +441,17 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
               </Badge>
             </Attachments>
           }
-          onChange={(v: string) => {
+          onInputChange={(v: string) => {
             setInput(v);
             if (onInputChange) {
               onInputChange(v);
             }
           }}
-          loading={isLoading || loadingImageGeneration}
-          onStop={() => {
+          loading={isLoading}
+          onInputCancel={() => {
             stop();
           }}
-          onSend={async () => {
+          onInputSubmit={() => {
             if (input || !_.isEmpty(files)) {
               const chatRequestOptions: ChatRequestOptions = {};
               if (!_.isEmpty(files)) {
