@@ -13,6 +13,7 @@ const ImageMetaIcon: React.FC<{
       style={{
         width: '1em',
         height: '1em',
+        verticalAlign: 'middle',
         ...style,
       }}
       alt={alt}

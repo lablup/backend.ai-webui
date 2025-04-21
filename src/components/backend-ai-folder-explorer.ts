@@ -348,7 +348,11 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
                 <span class="monospace">-</span>
               `
             : html`
-                <span>${rowData.item.size}</span>
+                <span>
+                  ${globalThis.backendaiutils._humanReadableFileSize(
+                    rowData.item.size,
+                  )}
+                </span>
               `}
         </div>
       `,

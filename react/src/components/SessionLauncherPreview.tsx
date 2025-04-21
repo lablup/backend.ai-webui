@@ -228,7 +228,7 @@ const SessionLauncherPreview: React.FC<{
                             return _.isEqual(
                               aliasedTag,
                               preserveDotStartCase(tag.key + tagValue),
-                            ) ? (
+                            ) || isCustomized ? (
                               <DoubleTag
                                 key={tag.key}
                                 values={[

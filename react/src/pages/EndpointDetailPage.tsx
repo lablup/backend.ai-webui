@@ -2,14 +2,13 @@ import AutoScalingRuleEditorModal, {
   COMPARATOR_LABELS,
 } from '../components/AutoScalingRuleEditorModal';
 import BAIJSONViewerModal from '../components/BAIJSONViewerModal';
-import CopyableCodeText from '../components/CopyableCodeText';
 import { isEndpointInDestroyingCategory } from '../components/EndpointList';
 import EndpointOwnerInfo from '../components/EndpointOwnerInfo';
 import EndpointStatusTag from '../components/EndpointStatusTag';
 import EndpointTokenGenerationModal from '../components/EndpointTokenGenerationModal';
 import Flex from '../components/Flex';
 import { useFolderExplorerOpener } from '../components/FolderExplorerOpener';
-import ImageMetaIcon from '../components/ImageMetaIcon';
+import ImageNodeSimpleTag from '../components/ImageNodeSimpleTag';
 import InferenceSessionErrorModal from '../components/InferenceSessionErrorModal';
 import ResourceNumber from '../components/ResourceNumber';
 import SessionDetailDrawer from '../components/SessionDetailDrawer';
@@ -155,7 +154,6 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             name
             status
             endpoint_id
-            image @deprecatedSince(version: "23.09.9")
             image_object @since(version: "23.09.9") {
               name
               namespace @since(version: "24.12.0")
@@ -176,6 +174,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               }
               size_bytes
               supported_accelerators
+              ...ImageNodeSimpleTagFragment
             }
             desired_session_count @deprecatedSince(version: "24.12.0")
             replicas @since(version: "24.12.0")
@@ -344,11 +343,6 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     return edge?.node;
   });
 
-  const fullImageString =
-    baiClient.supports('modify-endpoint') && endpoint?.image_object
-      ? `${endpoint.image_object.registry}/${endpoint.image_object.namespace ?? endpoint.image_object.name}:${endpoint.image_object.tag}@${endpoint.image_object.architecture}`
-      : endpoint?.image;
-
   const resource_opts = JSON.parse(endpoint?.resource_opts || '{}');
 
   const items: DescriptionsItemType[] = [
@@ -490,17 +484,9 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
 
   items.push({
     label: t('modelService.Image'),
-    children: (baiClient.supports('modify-endpoint')
-      ? endpoint?.image_object
-      : endpoint?.image) && (
-      <Flex direction="row" gap={'xs'}>
-        <ImageMetaIcon image={fullImageString || null} />
-        <CopyableCodeText>{fullImageString}</CopyableCodeText>
-        {endpoint?.runtime_variant?.human_readable_name ? (
-          <Tag>{endpoint?.runtime_variant?.human_readable_name}</Tag>
-        ) : null}
-      </Flex>
-    ),
+    children: endpoint?.image_object ? (
+      <ImageNodeSimpleTag imageFrgmt={endpoint.image_object} />
+    ) : null,
     span: {
       xl: 3,
     },

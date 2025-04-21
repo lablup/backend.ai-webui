@@ -225,6 +225,8 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
                             id: vfolder_node.id,
                           },
                         ).toPromise();
+                        // @ts-ignore
+                        folderExplorerRef.current?._fetchVFolder();
                       },
                       onError: (error) => {
                         message.error(painKiller.relieve(error?.message));
