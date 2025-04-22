@@ -28,7 +28,9 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
         webUINavigate(
           {
             pathname: '/resource-policy',
-            search: `?tab=${key}`,
+            search: new URLSearchParams({
+              tab: key,
+            }).toString(),
           },
           {
             params: {
