@@ -2194,7 +2194,7 @@ class VFolder {
    *
    * @param {json} input - parameters for cloning Vfolder
    * @param {boolean} input.cloneable - whether new cloned Vfolder is cloneable or not
-   * @param {string} input.permission - permission for new cloned Vfolder. permission should one of the following: 'ro', 'rw', 'wd'
+   * @param {string} input.permission - permission for new cloned Vfolder. permission should one of the following: 'ro', 'rw'
    * @param {string} input.target_host - target_host for new cloned Vfolder
    * @param {string} input.target_name - name for new cloned Vfolder
    * @param {string} input.usage_mode - Cloned virtual folder's purpose of use. Can be "general" (normal folders), "data" (data storage), and "model" (pre-trained model storage).
@@ -2215,7 +2215,7 @@ class VFolder {
    *
    * @param {json} input - parameters for updating folder options of Vfolder
    * @param {boolean} input.cloneable - whether Vfolder is cloneable or not
-   * @param {string} input.permission - permission for Vfolder. permission should one of the following: 'ro', 'rw', 'wd'
+   * @param {string} input.permission - permission for Vfolder. permission should one of the following: 'ro', 'rw'
    * @param name - source Vfolder name
    */
   async update_folder(input, name = null): Promise<any> {
@@ -2717,7 +2717,7 @@ class VFolder {
    * Modify an invitee's permission to a shared vfolder
    *
    * @param {json} input - parameters for permission modification
-   * @param {string} input.perm - invitee's new permission. permission should one of the following: 'ro', 'rw', 'wd'
+   * @param {string} input.perm - invitee's new permission. permission should one of the following: 'ro', 'rw'
    * @param {string} input.user - invitee's uuid
    * @param {string} input.vfolder - id of the vfolder that has been shared to the invitee
    */

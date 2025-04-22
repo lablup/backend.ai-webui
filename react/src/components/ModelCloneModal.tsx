@@ -288,10 +288,6 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
                   label: 'Read-Only',
                   value: 'ro',
                 },
-                {
-                  label: 'Delete',
-                  value: 'wd',
-                },
               ]}
             />
           </Form.Item>

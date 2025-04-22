@@ -126,6 +126,8 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
     },
   );
 
+  const permission = vfolder_node?.permission || vfolder?.permission;
+
   const updateMutation = useTanMutation({
     mutationFn: ({ permission, id }: { permission: string; id: string }) => {
       return baiClient.vfolder.update_folder({ permission }, id);
@@ -191,7 +193,7 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
             {vfolder_node?.user === currentUser.uuid && (
               <BAISelect
                 tooltip={t('data.folders.MountPermission')}
-                defaultValue={vfolder_node?.permission || vfolder?.permission}
+                defaultValue={permission === 'wd' ? 'rw' : permission}
                 options={[
                   { value: 'ro', label: t('data.ReadOnly') },
                   { value: 'rw', label: t('data.ReadWrite') },
