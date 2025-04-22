@@ -128,9 +128,12 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
     queryKey: ['huggingFaceReadme', huggingFaceURL],
     queryFn: () => {
       if (_.isEmpty(huggingFaceURL)) return Promise.resolve({});
+      const searchParams = new URLSearchParams({
+        huggingface_url: huggingFaceURL ?? '',
+      });
       return baiSignedRequestWithPromise({
         method: 'GET',
-        url: `/services/_/huggingface/models?huggingface_url=${huggingFaceURL}`,
+        url: `/services/_/huggingface/models?${searchParams.toString()}`,
         client: baiClient,
       })
         .then((result: any) => {
@@ -419,9 +422,13 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
                         baiClient?.is_admin && group?.type !== 'MODEL_STORE'
                       }
                       onClick={() => {
-                        webuiNavigate(
-                          `/data?tab=model&folder=${importResult.folder.id}`,
-                        );
+                        webuiNavigate({
+                          pathname: '/data',
+                          search: new URLSearchParams({
+                            tab: 'model',
+                            folder: importResult.folder.id,
+                          }).toString(),
+                        });
                       }}
                     >
                       {t('data.modelStore.OpenModelFolder')}

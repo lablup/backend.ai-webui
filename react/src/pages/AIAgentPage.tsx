@@ -113,9 +113,13 @@ const AIAgentPage: React.FC = () => {
         <AIAgentCardList
           agents={agents}
           onClickAgent={(agent) => {
-            webuiNavigate(
-              `/chat?endpointId=${agent.endpoint_id}&agentId=${agent.id}`,
-            );
+            webuiNavigate({
+              pathname: '/chat',
+              search: new URLSearchParams({
+                endpointId: agent.endpoint_id,
+                agentId: agent.id,
+              }).toString(),
+            });
           }}
         />
       </Flex>
