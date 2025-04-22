@@ -233,6 +233,7 @@
     "FolderToCopy": "복사할 폴더 이름",
     "Foldername": "폴더 이름",
     "Folders": "폴더",
+    "From": "보낸 사람",
     "General": "일반",
     "Host": "호스트",
     "HostDetails": "선택한 스토리지 호스트의 가용량 정보를 보여줍니다.",
