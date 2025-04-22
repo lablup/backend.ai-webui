@@ -438,12 +438,9 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
    * @return {string} UTC time string
    * */
   _humanReadableTime(d) {
-    const date = new Date(d);
-    const offset = date.getTimezoneOffset() / 60;
-    const hours = date.getHours();
-    date.setHours(hours - offset);
-
-    return date.toUTCString();
+    const locale =
+      globalThis.backendaioptions.get('selected_language') ?? 'en-US';
+    return new Date(d).toLocaleString(locale);
   }
 
   _enqueueFolder(e) {
