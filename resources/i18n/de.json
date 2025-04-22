@@ -1755,6 +1755,7 @@
     "ConfigFilename": "Name der Konfigurationsdatei",
     "CurrentSSHPublicKey": "Aktueller öffentlicher Schlüssel:",
     "DarkMode": "Dunkler Modus",
+    "Default": "Standard",
     "DescAutoLogout": "Melden Sie sich automatisch ab, wenn alle angemeldeten Seiten geschlossen sind, mit Ausnahme von sitzungsbasierten Seiten für Apps (z. B. Jupyter Notebook, Webterminal usw.)",
     "DescAutomaticUpdateCheck": "Benachrichtigen, wenn eine neue Webui-Version veröffentlicht wird. <br /> Wenn das Internet instabil oder offline ist, wird diese Option automatisch deaktiviert. Sie können diesen Schalter umschalten, um die automatische Updateprüfung erneut zu starten.",
     "DescBetaFeatures": "Verwenden Sie Betafunktionen für die Web-Benutzeroberfläche. <br /> Beta-Funktionen können instabil sein. Einige Betafunktionen werden möglicherweise nicht als offizielle Funktionen übernommen.",

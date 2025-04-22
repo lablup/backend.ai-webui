@@ -1752,6 +1752,7 @@
     "ConfigFilename": "Nome del file di configurazione",
     "CurrentSSHPublicKey": "Chiave pubblica attuale:",
     "DarkMode": "Modalità scura",
+    "Default": "Predefinito",
     "DescAutoLogout": "Disconnettersi automaticamente se tutte le pagine di accesso vengono chiuse eccetto le pagine originate dalla sessione per le app (ad es.",
     "DescAutomaticUpdateCheck": "Avvisa quando viene rilasciata una nuova versione di webui. <br /> Nei casi in cui Internet è instabile o offline, questa opzione verrà automaticamente disattivata. Puoi attivare questo interruttore per avviare nuovamente il controllo automatico degli aggiornamenti.",
     "DescBetaFeatures": "Utilizza le funzionalità beta per l'interfaccia utente Web. <br /> Le funzionalità beta potrebbero essere instabili. Alcune funzionalità beta potrebbero non essere adottate come funzionalità ufficiali.",

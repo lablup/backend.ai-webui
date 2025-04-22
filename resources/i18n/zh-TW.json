@@ -1754,6 +1754,7 @@
     "ConfigFilename": "配置文件名",
     "CurrentSSHPublicKey": "當前公鑰：",
     "DarkMode": "深色模式",
+    "Default": "預設",
     "DescAutoLogout": "如果所有登錄頁面都關閉，除了應用程序的會話發起頁面（例如 jupyter 筆記本、網絡終端等），則自動註銷",
     "DescAutomaticUpdateCheck": "發布新的 webui 版本時通知。 <br /> 在互聯網不穩定或離線的情況下，此選項將自動關閉。您可以切換此開關以再次啟動自動更新檢查。",
     "DescBetaFeatures": "使用 Web UI 的測試版功能。 <br /> Beta 功能可能不穩定。某些測試版功能可能不會被採用為正式功能。",

@@ -1755,6 +1755,7 @@
     "ConfigFilename": "Nazwa pliku konfiguracyjnego",
     "CurrentSSHPublicKey": "Aktualny klucz publiczny:",
     "DarkMode": "Tryb ciemny",
+    "Default": "Domyślny",
     "DescAutoLogout": "Wyloguj się automatycznie, jeśli wszystkie zalogowane strony są zamknięte, z wyjątkiem stron pochodzących z sesji dla aplikacji (np. notatnik jupyter, terminal internetowy itp.)",
     "DescAutomaticUpdateCheck": "Powiadom o wydaniu nowej wersji webui. <br /> W przypadku, gdy Internet jest niestabilny lub offline, ta opcja zostanie automatycznie wyłączona. Możesz przełączyć ten przełącznik, aby ponownie rozpocząć automatyczne sprawdzanie aktualizacji.",
     "DescBetaFeatures": "Korzystaj z funkcji beta interfejsu internetowego. <br /> Funkcje beta mogą być niestabilne. Niektóre funkcje beta mogą nie zostać przyjęte jako funkcja oficjalna.",

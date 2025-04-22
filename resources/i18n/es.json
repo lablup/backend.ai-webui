@@ -1755,6 +1755,7 @@
     "ConfigFilename": "Nombre del archivo de configuración",
     "CurrentSSHPublicKey": "Clave pública actual:",
     "DarkMode": "Modo oscuro",
+    "Default": "Por defecto",
     "DescAutoLogout": "Cierre de sesión automático si se cierran todas las páginas de inicio de sesión, excepto las páginas de inicio de sesión para aplicaciones (p. ej., cuaderno jupyter, terminal web, etc.).",
     "DescAutomaticUpdateCheck": "Notificar cuando se publique una nueva versión de webui.<br />En los casos en que Internet sea inestable o esté desconectado, esta opción se desactivará automáticamente. Puede activar este interruptor para iniciar la comprobación de actualización automática de nuevo.",
     "DescBetaFeatures": "Utilice las funciones beta para la interfaz de usuario web.<br />Las funciones beta pueden ser inestables. Es posible que algunas funciones beta no se adopten como funciones oficiales.",

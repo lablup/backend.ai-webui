@@ -1754,6 +1754,7 @@
     "ConfigFilename": "Yapılandırma dosyası adı",
     "CurrentSSHPublicKey": "Geçerli ortak anahtar:",
     "DarkMode": "Karanlık Mod",
+    "Default": "Varsayılan",
     "DescAutoLogout": "Uygulamalar için oturum kaynaklı sayfalar (örneğin jupyter notebook, web terminal, vb.)",
     "DescAutomaticUpdateCheck": "Yeni bir webui sürümü yayınlandığında bildir. <br /> İnternetin kararsız veya çevrimdışı olduğu durumlarda bu seçenek otomatik olarak kapatılacaktır. Otomatik güncelleme kontrolünü yeniden başlatmak için bu anahtarı değiştirebilirsiniz.",
     "DescBetaFeatures": "Web kullanıcı arayüzü için beta özelliklerini kullanın. <br /> Beta özellikleri kararsız olabilir. Bazı beta özellikler resmi özellik olarak kabul edilmeyebilir.",

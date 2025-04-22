@@ -1755,6 +1755,7 @@
     "ConfigFilename": "Định cấu hình tên tệp",
     "CurrentSSHPublicKey": "Khóa công khai hiện tại:",
     "DarkMode": "Chế độ tối",
+    "Default": "Mặc định",
     "DescAutoLogout": "Tự động đăng xuất nếu tất cả các trang đã đăng nhập đều bị đóng ngoại trừ các trang gốc phiên cho ứng dụng (ví dụ: sổ ghi chép jupyter, thiết bị đầu cuối web, v.v.)",
     "DescAutomaticUpdateCheck": "Thông báo khi phiên bản webui mới được phát hành. <br /> Trong trường hợp Internet không ổn định hoặc ngoại tuyến, tùy chọn này sẽ tự động bị tắt. Bạn có thể bật công tắc này để bắt đầu lại quá trình kiểm tra cập nhật tự động.",
     "DescBetaFeatures": "Sử dụng các tính năng beta cho giao diện người dùng Web. <br /> Các tính năng beta có thể không ổn định. Một số tính năng beta có thể không được chấp nhận làm tính năng chính thức.",

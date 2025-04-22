@@ -1753,6 +1753,7 @@
     "ConfigFilename": "Konfigurointitiedoston nimi",
     "CurrentSSHPublicKey": "Nykyinen julkinen avain:",
     "DarkMode": "Tumma tila",
+    "Default": "Laiminlyönti",
     "DescAutoLogout": "Kirjaudu ulos automaattisesti, jos kaikki kirjautuneet sivut suljetaan, lukuun ottamatta sovellusten (esim. jupyter notebook, verkkopääte jne.) istunnon luomia sivuja.",
     "DescAutomaticUpdateCheck": "Ilmoita, kun uusi webui-versio julkaistaan.<br />Jos Internet on epävakaa tai offline, tämä vaihtoehto kytkeytyy automaattisesti pois päältä. Voit vaihtaa tätä kytkintä käynnistääksesi automaattisen päivityksen tarkistuksen uudelleen.",
     "DescBetaFeatures": "Käytä web-käyttöliittymän beta-ominaisuuksia.<br />Beta-ominaisuudet voivat olla epävakaita. Joitakin beta-ominaisuuksia ei ehkä hyväksytä viralliseksi ominaisuudeksi.",

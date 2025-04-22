@@ -1755,6 +1755,7 @@
     "ConfigFilename": "Nom du fichier de configuration",
     "CurrentSSHPublicKey": "Clé publique actuelle :",
     "DarkMode": "Mode sombre",
+    "Default": "Défaut",
     "DescAutoLogout": "Déconnectez-vous automatiquement si toutes les pages connectées sont fermées, à l'exception des pages d'origine de session pour les applications (par exemple, bloc-notes jupyter, terminal Web, etc.)",
     "DescAutomaticUpdateCheck": "Avertir lorsqu'une nouvelle version de webui est publiée. <br /> Dans les cas où Internet est instable ou hors ligne, cette option sera automatiquement désactivée. Vous pouvez basculer ce commutateur pour relancer la vérification automatique des mises à jour.",
     "DescBetaFeatures": "Utilisez les fonctionnalités bêta pour l'interface utilisateur Web. <br /> Les fonctionnalités bêta peuvent être instables. Certaines fonctionnalités bêta peuvent ne pas être adoptées comme fonctionnalité officielle.",
