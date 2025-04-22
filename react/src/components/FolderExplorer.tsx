@@ -211,7 +211,7 @@ const FolderExplorer: React.FC<Props> = ({
             title: 'Size',
             dataIndex: 'size',
             align: 'right',
-            sorter: (a, b) => dayjs(a.size).diff(b.size),
+            sorter: (a, b) => a.size - b.size,
             // render: (text) => {
           },
           {
