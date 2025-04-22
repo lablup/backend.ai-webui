@@ -12,7 +12,6 @@ import BAITabs from '../components/BAITabs';
 import DeleteVFolderModal from '../components/DeleteVFolderModal';
 import Flex from '../components/Flex';
 import FolderCreateModal from '../components/FolderCreateModal';
-import InviteFolderSettingModal from '../components/InviteFolderSettingModal';
 import QuotaPerStorageVolumePanelCard from '../components/QuotaPerStorageVolumePanelCard';
 import RestoreVFolderModal from '../components/RestoreVFolderModal';
 import StorageStatusPanelCard from '../components/StorageStatusPanelCard';
@@ -99,7 +98,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const [selectedFolderList, setSelectedFolderList] = useState<
     Array<VFolderNodesType>
   >([]);
-  const [inviteFolderId, setInviteFolderId] = useState<string | null>(null);
   const [isOpenCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
   const [isOpenDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
   const [isOpenRestoreModal, { toggle: toggleRestoreModal }] = useToggle(false);
@@ -207,6 +205,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 ...EditableVFolderNameFragment
                 ...RestoreVFolderModalFragment
                 ...VFolderNodeIdenticonFragment
+                ...SharedFolderPermissionInfoModalFragment
               }
             }
             count
@@ -592,13 +591,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           />
         </Flex>
       </BAICard>
-      <InviteFolderSettingModal
-        onRequestClose={() => {
-          setInviteFolderId(null);
-        }}
-        vfolderId={inviteFolderId}
-        open={inviteFolderId !== null}
-      />
       <FolderCreateModal
         open={isOpenCreateModal}
         onRequestClose={(success) => {
