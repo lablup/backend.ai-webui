@@ -111,7 +111,13 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
                       },
                       message: values.target_name,
                       toText: t('data.folders.OpenAFolder'),
-                      to: `/data?tab=model&folder=${data.id}`,
+                      to: {
+                        pathname: '/data',
+                        search: new URLSearchParams({
+                          tab: 'model',
+                          folder: data.id,
+                        }).toString(),
+                      },
                     });
                     props.onOk?.(e);
                   },
