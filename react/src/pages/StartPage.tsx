@@ -96,7 +96,7 @@ const StartPage: React.FC = () => {
         ),
       },
     },
-    {
+    baiClient._config.enableModelFolders && {
       id: 'modelService',
       rowSpan: 3,
       requiredMenuKey: 'serving',
