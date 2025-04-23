@@ -308,6 +308,12 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
       },
     },
     {
+      title: t('general.ResourceGroup'),
+      key: 'scaling_group',
+      dataIndex: 'scaling_group',
+      sorter: true,
+    },
+    {
       title: t('agent.Schedulable'),
       key: 'schedulable',
       dataIndex: 'schedulable',
