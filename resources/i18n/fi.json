@@ -594,6 +594,7 @@
   },
   "explorer": {
     "InputTooShort": "InputTooShort",
+    "NoExplorerSupportForUnmanagedFolder": "Hallitsemattomat kansiot eivät tue tiedostotutkijaa.",
     "ValueRequired": "ValueRequired"
   },
   "general": {
@@ -1612,7 +1613,7 @@
     "UsageHistoryNote": "Tässä esitetty käyttöhistoria perustuu lopetettuihin laskentaistuntoihin.",
     "prometheus": {
       "DataMissingInLowUsageDesc": "Jos käyttö on alhainen, joihinkin päivämääriin tietoja ei välttämättä ole käytettävissä. \nYritä uudelleen lyhyemmällä ajanjaksolla.",
-      "noMetricsToDisplay": "Ei mittareita, joita on saatavana seurantaan"
+      "NoMetricsToDisplay": "Ei mittareita, joita on saatavana seurantaan"
     },
     "timeRange": {
       "Last12Hours": "Viimeiset 12 tuntia",

@@ -595,6 +595,7 @@
   },
   "explorer": {
     "InputTooShort": "GirişÇok Kısa",
+    "NoExplorerSupportForUnmanagedFolder": "Yönetilmeyen klasörler Dosya Gezgini'ni desteklemez.",
     "ValueRequired": "DeğerGerekli"
   },
   "general": {
@@ -1613,7 +1614,7 @@
     "UsageHistoryNote": "Burada gösterilen kullanım geçmişi, sonlandırılmış hesaplama oturumlarına dayanmaktadır.",
     "prometheus": {
       "DataMissingInLowUsageDesc": "Kullanım düşükse, bazı tarihler için veriler mevcut olmayabilir. \nLütfen daha kısa bir tarih aralığı ile tekrar deneyin.",
-      "noMetricsToDisplay": "İzleme için Avalifable Metrics yok"
+      "NoMetricsToDisplay": "İzleme için Avalifable Metrics yok"
     },
     "timeRange": {
       "Last12Hours": "Son 12 Saat",

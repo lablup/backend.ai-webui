@@ -584,6 +584,7 @@
   },
   "explorer": {
     "InputTooShort": "ข้อมูลที่ป้อนสั้นเกินไป",
+    "NoExplorerSupportForUnmanagedFolder": "โฟลเดอร์ที่ไม่มีการจัดการไม่รองรับ File Explorer",
     "ValueRequired": "ต้องระบุค่า"
   },
   "general": {
@@ -1595,7 +1596,7 @@
     "UsageHistoryNote": "ประวัติการใช้งานที่แสดงที่นี่จะขึ้นอยู่กับเซสชันการคำนวณที่สิ้นสุด",
     "prometheus": {
       "DataMissingInLowUsageDesc": "หากการใช้งานต่ำข้อมูลสำหรับวันที่บางวันอาจไม่สามารถใช้ได้ \nโปรดลองอีกครั้งด้วยช่วงวันที่ที่สั้นกว่า",
-      "noMetricsToDisplay": "ไม่มีตัวชี้วัดที่มีความสามารถในการติดตาม"
+      "NoMetricsToDisplay": "ไม่มีตัวชี้วัดที่มีความสามารถในการติดตาม"
     },
     "timeRange": {
       "Last12Hours": "12 ชั่วโมงสุดท้าย",

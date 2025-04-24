@@ -17,6 +17,7 @@ import {
   UploadOutlined,
 } from '@ant-design/icons';
 import {
+  Alert,
   App,
   Button,
   Dropdown,
@@ -113,6 +114,7 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
           id
           user
           permission
+          unmanaged_path @since(version: "25.04.0")
           ...LegacyFolderExplorerVFolderNodeFragment
         }
       }
@@ -158,38 +160,42 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
               flex: lg ? 2 : 1,
             }}
           >
-            <Button
-              icon={
-                <Image
-                  width="18px"
-                  src="/resources/icons/filebrowser.svg"
-                  alt="File Browser"
-                  preview={false}
-                />
-              }
-              onClick={() =>
-                // @ts-ignore
-                folderExplorerRef.current?._executeFileBrowser()
-              }
-            >
-              {lg && t('data.explorer.ExecuteFileBrowser')}
-            </Button>
-            <Button
-              icon={
-                <Image
-                  width="18px"
-                  src="/resources/icons/sftp.png"
-                  alt="SSH / SFTP"
-                  preview={false}
-                />
-              }
-              onClick={() => {
-                // @ts-ignore
-                folderExplorerRef.current?._executeSSHProxyAgent();
-              }}
-            >
-              {lg && t('data.explorer.RunSSH/SFTPserver')}
-            </Button>
+            {!vfolder_node?.unmanaged_path ? (
+              <>
+                <Button
+                  icon={
+                    <Image
+                      width="18px"
+                      src="/resources/icons/filebrowser.svg"
+                      alt="File Browser"
+                      preview={false}
+                    />
+                  }
+                  onClick={() =>
+                    // @ts-ignore
+                    folderExplorerRef.current?._executeFileBrowser()
+                  }
+                >
+                  {lg && t('data.explorer.ExecuteFileBrowser')}
+                </Button>
+                <Button
+                  icon={
+                    <Image
+                      width="18px"
+                      src="/resources/icons/sftp.png"
+                      alt="SSH / SFTP"
+                      preview={false}
+                    />
+                  }
+                  onClick={() => {
+                    // @ts-ignore
+                    folderExplorerRef.current?._executeSSHProxyAgent();
+                  }}
+                >
+                  {lg && t('data.explorer.RunSSH/SFTPserver')}
+                </Button>
+              </>
+            ) : null}
             {vfolder_node?.user === currentUser.uuid && (
               <BAISelect
                 tooltip={t('data.folders.MountPermission')}
@@ -245,73 +251,87 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
       onCancel={() => {
         onRequestClose();
       }}
+      styles={{
+        body: {
+          minHeight: '475px',
+        },
+      }}
       {...modalProps}
     >
-      <Flex
-        justify="end"
-        gap={token.marginSM}
-        style={{
-          position: 'absolute',
-          top: `calc(var(--general-modal-header-height, 69px) + 9px)`,
-          right: token.paddingLG,
-        }}
-      >
-        <Button
-          danger
-          disabled={!isSelected || !isWritable}
-          icon={<DeleteOutlined />}
-          onClick={() => {
-            // @ts-ignore
-            folderExplorerRef.current?._openDeleteMultipleFileDialog();
-          }}
-        >
-          {lg && t('button.Delete')}
-        </Button>
-        <Button
-          disabled={!isWritable}
-          icon={<FolderAddOutlined />}
-          onClick={() => {
-            //@ts-ignore
-            folderExplorerRef.current?.openMkdirDialog();
-          }}
-        >
-          {lg && t('button.Create')}
-        </Button>
-        <Dropdown
-          disabled={!isWritable}
-          menu={{
-            items: [
-              {
-                key: 'upload files',
-                label: t('data.explorer.UploadFiles'),
-                icon: <FileAddOutlined />,
-                onClick: () => {
-                  // @ts-ignore
-                  folderExplorerRef.current?.handleUpload('file');
-                },
-              },
-              {
-                key: 'upload folder',
-                label: t('data.explorer.UploadFolder'),
-                icon: <FolderAddOutlined />,
-                onClick: () => {
-                  // @ts-ignore
-                  folderExplorerRef.current?.handleUpload('folder');
-                },
-              },
-            ],
-          }}
-        >
-          <Button icon={<UploadOutlined />}>{lg && 'Upload'}</Button>
-        </Dropdown>
-      </Flex>
-      {/* <script type="module" src="./dist/components/backend-ai-folder-explorer.js"></script> */}
-      {/* @ts-ignore */}
-      <backend-ai-folder-explorer
-        ref={folderExplorerRef}
-        active
-        vfolderID={vfolderID}
-      />
+      {vfolder_node?.unmanaged_path ? (
+        <Alert
+          message={t('explorer.NoExplorerSupportForUnmanagedFolder')}
+          showIcon
+        />
+      ) : (
+        <>
+          <Flex
+            justify="end"
+            gap={token.marginSM}
+            style={{
+              position: 'absolute',
+              top: `calc(var(--general-modal-header-height, 69px) + 9px)`,
+              right: token.paddingLG,
+            }}
+          >
+            <Button
+              danger
+              disabled={!isSelected || !isWritable}
+              icon={<DeleteOutlined />}
+              onClick={() => {
+                // @ts-ignore
+                folderExplorerRef.current?._openDeleteMultipleFileDialog();
+              }}
+            >
+              {lg && t('button.Delete')}
+            </Button>
+            <Button
+              disabled={!isWritable}
+              icon={<FolderAddOutlined />}
+              onClick={() => {
+                //@ts-ignore
+                folderExplorerRef.current?.openMkdirDialog();
+              }}
+            >
+              {lg && t('button.Create')}
+            </Button>
+            <Dropdown
+              disabled={!isWritable}
+              menu={{
+                items: [
+                  {
+                    key: 'upload files',
+                    label: t('data.explorer.UploadFiles'),
+                    icon: <FileAddOutlined />,
+                    onClick: () => {
+                      // @ts-ignore
+                      folderExplorerRef.current?.handleUpload('file');
+                    },
+                  },
+                  {
+                    key: 'upload folder',
+                    label: t('data.explorer.UploadFolder'),
+                    icon: <FolderAddOutlined />,
+                    onClick: () => {
+                      // @ts-ignore
+                      folderExplorerRef.current?.handleUpload('folder');
+                    },
+                  },
+                ],
+              }}
+            >
+              <Button icon={<UploadOutlined />}>{lg && 'Upload'}</Button>
+            </Dropdown>
+          </Flex>
+          {/* <script type="module" src="./dist/components/backend-ai-folder-explorer.js"></script> */}
+          {/* @ts-ignore */}
+          <backend-ai-folder-explorer
+            ref={folderExplorerRef}
+            active
+            vfolderID={vfolderID}
+          />
+        </>
+      )}
     </BAIModal>
   );
 };

@@ -594,6 +594,7 @@
   },
   "explorer": {
     "InputTooShort": "MasukanTerlaluPendek",
+    "NoExplorerSupportForUnmanagedFolder": "Folder yang tidak dikelola tidak mendukung file explorer.",
     "ValueRequired": "NilaiDiperlukan"
   },
   "general": {
@@ -1613,7 +1614,7 @@
     "UsageHistoryNote": "Riwayat penggunaan yang ditampilkan di sini didasarkan pada sesi komputasi yang diakhiri.",
     "prometheus": {
       "DataMissingInLowUsageDesc": "Jika penggunaan rendah, data untuk beberapa tanggal mungkin tidak tersedia. \nSilakan coba lagi dengan kisaran tanggal yang lebih pendek.",
-      "noMetricsToDisplay": "Tidak ada metrik yang tersedia untuk pelacakan"
+      "NoMetricsToDisplay": "Tidak ada metrik yang tersedia untuk pelacakan"
     },
     "timeRange": {
       "Last12Hours": "12 jam terakhir",

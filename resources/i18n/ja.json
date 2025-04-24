@@ -594,6 +594,7 @@
   },
   "explorer": {
     "InputTooShort": "InputTooShort",
+    "NoExplorerSupportForUnmanagedFolder": "管理されていないフォルダーは、ファイルエクスプローラーをサポートしていません。",
     "ValueRequired": "ValueRequired"
   },
   "general": {
@@ -1613,7 +1614,7 @@
     "UsageHistoryNote": "ここに示す使用履歴は、終了した計算セッションに基づいています。",
     "prometheus": {
       "DataMissingInLowUsageDesc": "使用法が低い場合、一部の日付のデータは利用できない場合があります。\n短い日付範囲で再試行してください。",
-      "noMetricsToDisplay": "追跡に利用可能なメトリックはありません"
+      "NoMetricsToDisplay": "追跡に利用可能なメトリックはありません"
     },
     "timeRange": {
       "Last12Hours": "過去12時間",

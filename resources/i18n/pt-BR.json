@@ -595,6 +595,7 @@
   },
   "explorer": {
     "InputTooShort": "InputTooShort",
+    "NoExplorerSupportForUnmanagedFolder": "Pastas não gerenciadas não suportam o File Explorer.",
     "ValueRequired": "ValueRequired"
   },
   "general": {
@@ -1614,7 +1615,7 @@
     "UsageHistoryNote": "O histórico de uso mostrado aqui é baseado em sessões de computação encerradas.",
     "prometheus": {
       "DataMissingInLowUsageDesc": "Se o uso for baixo, os dados para algumas datas podem não estar disponíveis. \nPor favor, tente novamente com um intervalo mais curto.",
-      "noMetricsToDisplay": "Sem métricas disponíveis para rastrear"
+      "NoMetricsToDisplay": "Sem métricas disponíveis para rastrear"
     },
     "timeRange": {
       "Last12Hours": "Últimas 12 horas",

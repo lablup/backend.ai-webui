@@ -138,7 +138,7 @@ const UserSessionsMetrics: React.FC<PrometheusMetricProps> = () => {
         {_.isEmpty(container_utilization_metric_metadata?.metric_names) ? (
           <Empty
             image={Empty.PRESENTED_IMAGE_SIMPLE}
-            description={t('statistics.prometheus.noMetricsToDisplay')}
+            description={t('statistics.prometheus.NoMetricsToDisplay')}
           />
         ) : (
           _.map(_.omit(sortedMetricMetadata), (metric: string) => {

@@ -593,6 +593,7 @@
   },
   "explorer": {
     "InputTooShort": "Хэт богино байна",
+    "NoExplorerSupportForUnmanagedFolder": "НҮБ-нээгүй хавтас нь файлын Explorer-ийг дэмждэггүй.",
     "ValueRequired": "Утга Шаардлагатай"
   },
   "general": {
@@ -1611,7 +1612,7 @@
     "UsageHistoryNote": "Ашиглалтын түүхийг энд харуулав.",
     "prometheus": {
       "DataMissingInLowUsageDesc": "Хэрэв USERES бага бол зарим болзоонд өгөгдөл байхгүй байж магадгүй юм. \nБогино хугацаанд дахин оролдоно уу.",
-      "noMetricsToDisplay": "Хяналт хийх боломжтой хэмжигдэхүүн байхгүй"
+      "NoMetricsToDisplay": "Хяналт хийх боломжтой хэмжигдэхүүн байхгүй"
     },
     "timeRange": {
       "Last12Hours": "Сүүлийн 12 цаг",

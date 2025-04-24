@@ -595,6 +595,7 @@
   },
   "explorer": {
     "InputTooShort": "輸入太短",
+    "NoExplorerSupportForUnmanagedFolder": "未管理的文件夾不支持文件資源管理器。",
     "ValueRequired": "需要值"
   },
   "general": {
@@ -1613,7 +1614,7 @@
     "UsageHistoryNote": "此處顯示的用法歷史記錄基於終止的計算會議。",
     "prometheus": {
       "DataMissingInLowUsageDesc": "如果用法較低，則可能無法提供某些日期的數據。請在較短的日期範圍內重試。",
-      "noMetricsToDisplay": "沒有可用的指標來跟踪"
+      "NoMetricsToDisplay": "沒有可用的指標來跟踪"
     },
     "timeRange": {
       "Last12Hours": "最近12個小時",

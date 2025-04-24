@@ -595,6 +595,7 @@
   },
   "explorer": {
     "InputTooShort": "EingabeTooShort",
+    "NoExplorerSupportForUnmanagedFolder": "Nicht verwaltete Ordner unterstützen den Datei -Explorer nicht.",
     "ValueRequired": "WertErforderlich"
   },
   "general": {
@@ -1614,7 +1615,7 @@
     "UsageHistoryNote": "Die hier gezeigte Nutzungsgeschichte basiert auf beendeten Berechnungssitzungen.",
     "prometheus": {
       "DataMissingInLowUsageDesc": "Wenn die Verwendung niedrig ist, sind Daten für einige Daten möglicherweise nicht verfügbar. \nBitte versuchen Sie es erneut mit einem kürzeren Datumsbereich.",
-      "noMetricsToDisplay": "Keine Metriken für die Verfolgung"
+      "NoMetricsToDisplay": "Keine Metriken für die Verfolgung"
     },
     "timeRange": {
       "Last12Hours": "Letzte 12 Stunden",

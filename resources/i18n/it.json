@@ -594,6 +594,7 @@
   },
   "explorer": {
     "InputTooShort": "Inputtroppo corto",
+    "NoExplorerSupportForUnmanagedFolder": "Le cartelle non gestite non supportano l'esploratore dei file.",
     "ValueRequired": "ValoreRichiesto"
   },
   "general": {
@@ -1611,7 +1612,7 @@
     "UsageHistoryNote": "La cronologia dell'utilizzo qui mostrata si basa su sessioni di calcolo terminate.",
     "prometheus": {
       "DataMissingInLowUsageDesc": "Se l'utilizzo è basso, i dati per alcune date potrebbero non essere disponibili. \nRiprova con un intervallo di date più breve.",
-      "noMetricsToDisplay": "Nessuna metrica disponibile per il monitoraggio"
+      "NoMetricsToDisplay": "Nessuna metrica disponibile per il monitoraggio"
     },
     "timeRange": {
       "Last12Hours": "Ultime 12 ore",

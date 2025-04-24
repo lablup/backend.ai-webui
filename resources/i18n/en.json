@@ -601,6 +601,7 @@
   },
   "explorer": {
     "InputTooShort": "InputTooShort",
+    "NoExplorerSupportForUnmanagedFolder": "Unmanaged folders do not support the file explorer.",
     "ValueRequired": "ValueRequired"
   },
   "general": {
@@ -1621,7 +1622,7 @@
     "UsageHistoryNote": "The usage history shown here are based on terminated compute sessions.",
     "prometheus": {
       "DataMissingInLowUsageDesc": "If usage is low, data for some dates may not be available. Please try again with a shorter date range.",
-      "noMetricsToDisplay": "No metrics avaliable for tracking"
+      "NoMetricsToDisplay": "No metrics avaliable for tracking"
     },
     "timeRange": {
       "Last12Hours": "Last 12 Hours",

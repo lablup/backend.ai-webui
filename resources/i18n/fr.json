@@ -595,6 +595,7 @@
   },
   "explorer": {
     "InputTooShort": "Entrée Trop Courte",
+    "NoExplorerSupportForUnmanagedFolder": "Les dossiers non gérés ne prennent pas en charge l'explorateur de fichiers.",
     "ValueRequired": "ValeurRequis"
   },
   "general": {
@@ -1614,7 +1615,7 @@
     "UsageHistoryNote": "L'historique d'utilisation montré ici est basé sur des séances de calcul terminées.",
     "prometheus": {
       "DataMissingInLowUsageDesc": "Si l'utilisation est faible, les données pour certaines dates peuvent ne pas être disponibles. \nVeuillez réessayer avec une plage de dates plus courte.",
-      "noMetricsToDisplay": "Aucune métrique avaliable pour le suivi"
+      "NoMetricsToDisplay": "Aucune métrique avaliable pour le suivi"
     },
     "timeRange": {
       "Last12Hours": "12 dernières heures",

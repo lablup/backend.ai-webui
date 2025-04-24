@@ -595,6 +595,7 @@
   },
   "explorer": {
     "InputTooShort": "InputTooShort",
+    "NoExplorerSupportForUnmanagedFolder": "Các thư mục không được quản lý không hỗ trợ trình thám hiểm tệp.",
     "ValueRequired": "Giá trị bắt buộc"
   },
   "general": {
@@ -1614,7 +1615,7 @@
     "UsageHistoryNote": "Lịch sử sử dụng được hiển thị ở đây dựa trên các phiên tính toán chấm dứt.",
     "prometheus": {
       "DataMissingInLowUsageDesc": "Nếu việc sử dụng thấp, dữ liệu cho một số ngày có thể không có sẵn. \nVui lòng thử lại với phạm vi ngày ngắn hơn.",
-      "noMetricsToDisplay": "Không có số liệu có giá trị để theo dõi"
+      "NoMetricsToDisplay": "Không có số liệu có giá trị để theo dõi"
     },
     "timeRange": {
       "Last12Hours": "12 giờ cuối cùng",

@@ -595,6 +595,7 @@
   },
   "explorer": {
     "InputTooShort": "输入太短",
+    "NoExplorerSupportForUnmanagedFolder": "未管理的文件夹不支持文件资源管理器。",
     "ValueRequired": "需要值"
   },
   "general": {
@@ -1614,7 +1615,7 @@
     "UsageHistoryNote": "此处显示的用法历史记录基于终止的计算会议。",
     "prometheus": {
       "DataMissingInLowUsageDesc": "如果用法较低，则可能无法提供某些日期的数据。\n请在较短的日期范围内重试。",
-      "noMetricsToDisplay": "没有可用的指标来跟踪"
+      "NoMetricsToDisplay": "没有可用的指标来跟踪"
     },
     "timeRange": {
       "Last12Hours": "最近12个小时",
