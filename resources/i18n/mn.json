@@ -1055,6 +1055,7 @@
     "AboutToDeleteResourcePolicy": "Та энэ нөөцийн бодлогыг устгах гэж байна:",
     "AllowedHosts": "Зөвшөөрөгдсөн хостууд",
     "CannotCreateResourcePolicy": "Нөөцийн бодлого үүсгэх боломжгүй. Оролтын утгыг шалгана уу.",
+    "CannotUpdateResourcePolicy": "Нөөцийн бодлогыг шинэчлэх боломжгүй.",
     "Capacity": "Чадавхи",
     "ClusterSize": "Кластерийн хэмжээ",
     "Concurrency": "Зэрэгцээ байдал",

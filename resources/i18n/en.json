@@ -1063,6 +1063,7 @@
     "AboutToDeleteResourcePolicy": "You are about to delete this resource policy: ",
     "AllowedHosts": "Allowed hosts",
     "CannotCreateResourcePolicy": "Cannot create Resource Policy. Please check input values.",
+    "CannotUpdateResourcePolicy": "Cannot update Resource Policy.",
     "Capacity": "Capacity",
     "ClusterSize": "Cluster Size",
     "Concurrency": "Concurrency",

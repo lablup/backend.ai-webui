@@ -1057,6 +1057,7 @@
     "AboutToDeleteResourcePolicy": "您即将删除此资源策略：",
     "AllowedHosts": "允许的主机",
     "CannotCreateResourcePolicy": "无法创建资源策略。请检查输入值。",
+    "CannotUpdateResourcePolicy": "无法更新资源策略。",
     "Capacity": "容量",
     "ClusterSize": "簇的大小",
     "Concurrency": "并发",

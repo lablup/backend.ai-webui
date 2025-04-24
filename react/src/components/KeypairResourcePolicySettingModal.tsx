@@ -1,5 +1,6 @@
 import { convertBinarySizeUnit } from '../helper';
 import {
+  MAX_CPU_QUOTA,
   UNLIMITED_MAX_CONCURRENT_SESSIONS,
   UNLIMITED_MAX_CONTAINERS_PER_SESSIONS,
 } from '../helper/const-vars';
@@ -218,24 +219,27 @@ const KeypairResourcePolicySettingModal: React.FC<
               props: props as CreateKeyPairResourcePolicyInput,
             },
             onCompleted: (res, errors) => {
-              if (!res?.create_keypair_resource_policy?.ok) {
-                message.error(res?.create_keypair_resource_policy?.msg);
-                onRequestClose();
+              if (
+                !res?.create_keypair_resource_policy?.ok &&
+                res.create_keypair_resource_policy?.msg
+              ) {
+                message.error(res.create_keypair_resource_policy.msg);
+                onRequestClose(false);
                 return;
               }
-              if (errors && errors?.length > 0) {
-                const errorMsgList = _.map(errors, (error) => error.message);
-                for (const error of errorMsgList) {
-                  message.error(error, 2.5);
-                }
-                onRequestClose();
-              } else {
-                message.success(t('resourcePolicy.SuccessfullyCreated'));
-                onRequestClose(true);
+              if (errors && errors.length > 0) {
+                errors.forEach((error) => message.error(error.message, 2.5));
+                onRequestClose(false);
+                return;
               }
+
+              message.success(t('resourcePolicy.SuccessfullyCreated'));
+              onRequestClose(true);
             },
             onError(err) {
-              message.error(err.message);
+              message.error(
+                err?.message || t('resourcePolicy.CannotCreateResourcePolicy'),
+              );
             },
           });
         } else {
@@ -245,24 +249,27 @@ const KeypairResourcePolicySettingModal: React.FC<
               props: props as ModifyKeyPairResourcePolicyInput,
             },
             onCompleted: (res, errors) => {
-              if (!res?.modify_keypair_resource_policy?.ok) {
-                message.error(res?.modify_keypair_resource_policy?.msg);
-                onRequestClose();
+              if (
+                !res?.modify_keypair_resource_policy?.ok &&
+                res.modify_keypair_resource_policy?.msg
+              ) {
+                message.error(res.modify_keypair_resource_policy.msg);
+                onRequestClose(false);
                 return;
               }
-              if (errors && errors?.length > 0) {
-                const errorMsgList = _.map(errors, (error) => error.message);
-                for (const error of errorMsgList) {
-                  message.error(error, 2.5);
-                }
-                onRequestClose();
-              } else {
-                message.success(t('resourcePolicy.SuccessfullyUpdated'));
-                onRequestClose(true);
+              if (errors && errors.length > 0) {
+                errors.forEach((error) => message.error(error.message, 2.5));
+                onRequestClose(false);
+                return;
               }
+
+              message.success(t('resourcePolicy.SuccessfullyUpdated'));
+              onRequestClose(true);
             },
             onError(err) {
-              message.error(err.message);
+              message.error(
+                err?.message || t('resourcePolicy.CannotUpdateResourcePolicy'),
+              );
             },
           });
         }
@@ -329,15 +336,19 @@ const KeypairResourcePolicySettingModal: React.FC<
               },
             }}
           >
-            {_.map(
-              _.chunk(_.keys(resourceSlots), 2),
-              (resourceSlotKeys, index) => (
+            {_.chain(resourceSlots)
+              .keys()
+              .chunk(2)
+              .map((resourceSlotKeys, index) => (
                 <Row gutter={[16, 16]} key={index}>
                   {_.map(resourceSlotKeys, (resourceSlotKey) => (
                     <Col
                       span={12}
                       key={resourceSlotKey}
-                      style={{ alignSelf: 'end', marginBottom: token.marginLG }}
+                      style={{
+                        alignSelf: 'end',
+                        marginBottom: token.marginLG,
+                      }}
                     >
                       <FormItemWithUnlimited
                         unlimitedValue={undefined}
@@ -373,6 +384,7 @@ const KeypairResourcePolicySettingModal: React.FC<
                         ) : (
                           <InputNumber
                             min={0}
+                            max={MAX_CPU_QUOTA}
                             step={
                               _.includes(resourceSlotKey, '.shares') ? 0.1 : 1
                             }
@@ -386,8 +398,8 @@ const KeypairResourcePolicySettingModal: React.FC<
                     </Col>
                   ))}
                 </Row>
-              ),
-            )}
+              ))
+              .value()}
           </Card>
         </Form.Item>
         <Form.Item label={t('resourcePolicy.Sessions')} required>

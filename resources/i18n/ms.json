@@ -1056,6 +1056,7 @@
     "AboutToDeleteResourcePolicy": "Anda akan memadamkan dasar sumber ini:",
     "AllowedHosts": "Tuan rumah yang dibenarkan",
     "CannotCreateResourcePolicy": "Tidak dapat membuat Dasar Sumber. Sila periksa nilai input.",
+    "CannotUpdateResourcePolicy": "Tidak dapat mengemas kini dasar sumber.",
     "Capacity": "Kapasiti",
     "ClusterSize": "Saiz Kluster",
     "Concurrency": "Serentak",

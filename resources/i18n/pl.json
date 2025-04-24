@@ -1057,6 +1057,7 @@
     "AboutToDeleteResourcePolicy": "Zamierzasz usunąć tę zasadę dotyczącą zasobów:",
     "AllowedHosts": "Dozwolone hosty",
     "CannotCreateResourcePolicy": "Nie można utworzyć polityki zasobów. Sprawdź wprowadzone wartości.",
+    "CannotUpdateResourcePolicy": "Nie można zaktualizować zasad zasobów.",
     "Capacity": "Pojemność",
     "ClusterSize": "Wielkość klastra",
     "Concurrency": "Konkurencja",

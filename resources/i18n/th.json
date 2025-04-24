@@ -1046,6 +1046,7 @@
     "AboutToDeleteResourcePolicy": "คุณกำลังจะลบนโยบายทรัพยากรนี้: ",
     "AllowedHosts": "โฮสต์ที่อนุญาต",
     "CannotCreateResourcePolicy": "ไม่สามารถสร้างนโยบายทรัพยากร กรุณาตรวจสอบค่าที่ป้อน",
+    "CannotUpdateResourcePolicy": "ไม่สามารถอัปเดตนโยบายทรัพยากร",
     "Capacity": "ความจุ",
     "ClusterSize": "ขนาดคลัสเตอร์",
     "Concurrency": "การทำงานพร้อมกัน",

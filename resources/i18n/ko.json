@@ -1060,6 +1060,7 @@
     "AboutToDeleteResourcePolicy": "아래의 자원 정책을 삭제하려고 합니다: ",
     "AllowedHosts": "허용된 호스트",
     "CannotCreateResourcePolicy": "자원 정책 생성에 실패했습니다. 입력 값을 확인해주세요.",
+    "CannotUpdateResourcePolicy": "자원 정책 갱신에 실패했습니다.",
     "Capacity": "용량",
     "ClusterSize": "클러스터 크기",
     "Concurrency": "동시실행수",

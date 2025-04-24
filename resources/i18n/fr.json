@@ -1057,6 +1057,7 @@
     "AboutToDeleteResourcePolicy": "Vous êtes sur le point de supprimer cette stratégie de ressources :",
     "AllowedHosts": "Hôtes autorisés",
     "CannotCreateResourcePolicy": "Impossible de créer une stratégie de ressources. Veuillez vérifier les valeurs d'entrée.",
+    "CannotUpdateResourcePolicy": "Impossible de mettre à jour la politique de ressources.",
     "Capacity": "Capacité",
     "ClusterSize": "Taille de cluster",
     "Concurrency": "Concurrence",

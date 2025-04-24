@@ -1057,6 +1057,7 @@
     "AboutToDeleteResourcePolicy": "Você está prestes a excluir esta política de recursos:",
     "AllowedHosts": "Hosts permitidos",
     "CannotCreateResourcePolicy": "Não é possível criar Política de Recursos. Verifique os valores de entrada.",
+    "CannotUpdateResourcePolicy": "Não é possível atualizar a política de recursos.",
     "Capacity": "Capacidade",
     "ClusterSize": "Tamanho do Cluster",
     "Concurrency": "Simultaneidade",

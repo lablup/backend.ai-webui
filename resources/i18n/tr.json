@@ -1057,6 +1057,7 @@
     "AboutToDeleteResourcePolicy": "Bu kaynak politikasını silmek üzeresiniz:",
     "AllowedHosts": "İzin verilen ana bilgisayarlar",
     "CannotCreateResourcePolicy": "Kaynak Politikası oluşturulamıyor. Lütfen giriş değerlerini kontrol edin.",
+    "CannotUpdateResourcePolicy": "Kaynak politikasını güncelleyemiyor.",
     "Capacity": "Kapasite",
     "ClusterSize": "Küme boyutu",
     "Concurrency": "eşzamanlılık",

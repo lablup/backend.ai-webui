@@ -1053,6 +1053,7 @@
     "AboutToDeleteResourcePolicy": "Πρόκειται να διαγράψετε αυτήν την πολιτική πόρων:",
     "AllowedHosts": "Επιτρεπόμενοι οικοδεσπότες",
     "CannotCreateResourcePolicy": "Δεν είναι δυνατή η δημιουργία πολιτικής πόρων. Ελέγξτε τις τιμές εισαγωγής.",
+    "CannotUpdateResourcePolicy": "Δεν είναι δυνατή η ενημέρωση της πολιτικής πόρων.",
     "Capacity": "Χωρητικότητα",
     "ClusterSize": "Μέγεθος συμπλέγματος",
     "Concurrency": "Συγχρονισμός",

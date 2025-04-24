@@ -1057,6 +1057,7 @@
     "AboutToDeleteResourcePolicy": "您即將刪除此資源策略：",
     "AllowedHosts": "允許的主機",
     "CannotCreateResourcePolicy": "無法創建資源策略。請檢查輸入值。",
+    "CannotUpdateResourcePolicy": "無法更新資源策略。",
     "Capacity": "容量",
     "ClusterSize": "簇的大小",
     "Concurrency": "並發",

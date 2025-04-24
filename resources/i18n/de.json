@@ -1057,6 +1057,7 @@
     "AboutToDeleteResourcePolicy": "Sie sind im Begriff, diese Ressourcenrichtlinie zu löschen:",
     "AllowedHosts": "Zulässige Gastgeber",
     "CannotCreateResourcePolicy": "Ressourcenrichtlinie kann nicht erstellt werden. Bitte Eingabewerte prüfen.",
+    "CannotUpdateResourcePolicy": "Ressourcenrichtlinien nicht aktualisieren.",
     "Capacity": "Kapazität",
     "ClusterSize": "Clustergröße",
     "Concurrency": "Gleichzeitigkeit",

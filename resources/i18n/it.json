@@ -1055,6 +1055,7 @@
     "AboutToDeleteResourcePolicy": "Stai per eliminare questa policy sulle risorse:",
     "AllowedHosts": "Host consentiti",
     "CannotCreateResourcePolicy": "Impossibile creare criteri per le risorse. Si prega di controllare i valori di input.",
+    "CannotUpdateResourcePolicy": "Impossibile aggiornare la politica delle risorse.",
     "Capacity": "Capacità",
     "ClusterSize": "Dimensione del cluster",
     "Concurrency": "Concorrenza",

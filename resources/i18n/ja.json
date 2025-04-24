@@ -1056,6 +1056,7 @@
     "AboutToDeleteResourcePolicy": "このリソースポリシーを削除しようとしています。",
     "AllowedHosts": "許可されたホスト",
     "CannotCreateResourcePolicy": "リソースポリシーを作成できません。入力値を確認してください。",
+    "CannotUpdateResourcePolicy": "リソースポリシーを更新することはできません。",
     "Capacity": "容量",
     "ClusterSize": "クラスターサイズ",
     "Concurrency": "並行性",

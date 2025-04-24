@@ -1055,6 +1055,7 @@
     "AboutToDeleteResourcePolicy": "Anda akan menghapus kebijakan sumber daya ini:",
     "AllowedHosts": "Host yang diizinkan",
     "CannotCreateResourcePolicy": "Tidak dapat membuat Kebijakan Sumber Daya. Silakan periksa kembali nilai masukan.",
+    "CannotUpdateResourcePolicy": "Tidak dapat memperbarui kebijakan sumber daya.",
     "Capacity": "Kapasitas",
     "ClusterSize": "Ukuran Klaster",
     "Concurrency": "Konkurensi",

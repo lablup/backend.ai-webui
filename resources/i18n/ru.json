@@ -1057,6 +1057,7 @@
     "AboutToDeleteResourcePolicy": "Вы собираетесь удалить эту политику ресурсов:",
     "AllowedHosts": "Разрешенные хосты",
     "CannotCreateResourcePolicy": "Невозможно создать политику ресурсов. Пожалуйста, проверьте введенные значения.",
+    "CannotUpdateResourcePolicy": "Не может обновить политику ресурсов.",
     "Capacity": "Вместимость",
     "ClusterSize": "Размер кластера",
     "Concurrency": "Параллелизм",

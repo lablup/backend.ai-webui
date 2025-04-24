@@ -1055,6 +1055,7 @@
     "AboutToDeleteResourcePolicy": "Olet poistamassa tätä resurssikäytäntöä:",
     "AllowedHosts": "Sallitut isännät",
     "CannotCreateResourcePolicy": "Resurssikäytäntöä ei voida luoda. Tarkista syöttöarvot.",
+    "CannotUpdateResourcePolicy": "Resurssien käytäntö ei voi päivittää.",
     "Capacity": "Kapasiteetti",
     "ClusterSize": "Klusterin koko",
     "Concurrency": "Samanaikaisuus",

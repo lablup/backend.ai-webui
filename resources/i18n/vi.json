@@ -1057,6 +1057,7 @@
     "AboutToDeleteResourcePolicy": "Bạn sắp xóa chính sách tài nguyên này:",
     "AllowedHosts": "Máy chủ được phép",
     "CannotCreateResourcePolicy": "Không thể tạo Chính sách tài nguyên. Vui lòng kiểm tra các giá trị đầu vào.",
+    "CannotUpdateResourcePolicy": "Không thể cập nhật chính sách tài nguyên.",
     "Capacity": "Sức chứa",
     "ClusterSize": "Kích thước cụm",
     "Concurrency": "Đồng thời",
