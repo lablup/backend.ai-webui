@@ -11,20 +11,23 @@ import {
   ChatType,
   Model,
 } from './ChatModel';
-import { CustomModelAlert, CustomModelForm } from './CustomModelForm';
-import {
-  ChatCard_endpoint$data,
-  ChatCard_endpoint$key,
-} from './__generated__/ChatCard_endpoint.graphql';
+import { CustomModelForm } from './CustomModelForm';
+import { ChatCard_endpoint$key } from './__generated__/ChatCard_endpoint.graphql';
 import { createOpenAI } from '@ai-sdk/openai';
 import { useChat } from '@ai-sdk/react';
 import { extractReasoningMiddleware, streamText, wrapLanguageModel } from 'ai';
-import { Alert, Card, CardProps, FormInstance } from 'antd';
+import { Alert, App, Card, CardProps } from 'antd';
 import { createStyles } from 'antd-style';
 import graphql from 'babel-plugin-relay/macro';
-import { isEmpty } from 'lodash';
 import _ from 'lodash';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  startTransition,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
 import { useFragment } from 'react-relay';
 
 interface ChatCardProps extends CardProps, ChatLifecycleEventType {
@@ -80,30 +83,68 @@ function useEndpoint(selectedEndpoint?: ChatCard_endpoint$key | null) {
   return { endpoint, setEndpoint } as const;
 }
 
+function createModelsURL(baseURL: string) {
+  const { origin, port, pathname: path } = new URL(baseURL.trim());
+  const host = port.length > 0 ? `${origin}:${port}` : origin;
+  const normalizedPath = path === '/' ? '/models' : `${path}/models`;
+
+  return new URL(normalizedPath, host).toString();
+}
+
 function useModels(
   provider: ChatProviderType,
   fetchKey: string,
-  endpoint?: ChatCard_endpoint$data | null,
+  baseURL?: string,
+  token?: string,
 ) {
+  const { t } = useTranslation();
+  const getModelsErrorMessage = (status?: number) => {
+    switch (status) {
+      case 401:
+        return t('error.UnauthorizedToken');
+      case 404:
+        return t('error.NotFoundBasePath');
+      case 500:
+        return t('error.InternalServerError');
+      case 503:
+        return t('error.ServiceUnavailable');
+      default:
+        return t('error.UnknownError');
+    }
+  };
+
   const { data: modelsResult } = useSuspenseTanQuery<{
     data: Array<Model>;
   }>({
-    queryKey: ['models', fetchKey, endpoint?.endpoint_id],
-    queryFn: () => {
-      return endpoint?.url
-        ? fetch(
-            new URL(
-              provider.basePath + '/models',
-              endpoint?.url ?? undefined,
-            ).toString(),
-          )
-            .then((res) => res.json())
-            .catch((e) => ({ data: [] }))
-        : Promise.resolve({ data: [] });
+    queryKey: ['models', fetchKey, baseURL, token],
+    queryFn: async () => {
+      try {
+        if (baseURL) {
+          const url = createModelsURL(baseURL);
+          const authToken = token || provider.apiKey;
+          const res = await fetch(url, {
+            headers: {
+              Authorization: authToken ? `Bearer ${authToken}` : '',
+            },
+          });
+
+      const url = createModelsURL(baseURL);
+      const authToken = provider.apiKey;
+      const res = await fetch(url, {
+        headers: {
+          Authorization: authToken ? `Bearer ${authToken}` : '',
+        },
+      });
+
+      if (!res.ok) {
+        return { data: [], error: res.status };
+      }
+
+      return await res.json();
     },
   });
 
-  const models = _.map(modelsResult?.data, (m) => ({
+  const models = _.map(modelsResult?.data || [], (m) => ({
     id: m.id,
     name: m.id,
   })) as BAIModel[];
@@ -111,7 +152,7 @@ function useModels(
   const selectedModelId = useMemo(
     () =>
       provider.modelId &&
-      _.includes(_.map(modelsResult?.data, 'id'), provider.modelId)
+      _.includes(_.map(modelsResult?.data || [], 'id'), provider.modelId)
         ? provider.modelId
         : (modelsResult?.data?.[0]?.id ?? 'custom'),
     [modelsResult?.data, provider.modelId],
@@ -153,6 +194,10 @@ const ChatHeader = React.memo(PureChatHeader, (prev, next) => {
 
 const ChatInput = React.memo(PureChatInput);
 
+function createBaseURL(basePath: string, endpointUrl?: string | null) {
+  return endpointUrl ? new URL(basePath, endpointUrl).toString() : undefined;
+}
+
 const ChatCard: React.FC<ChatCardProps> = ({
   chat,
   selectedEndpoint,
@@ -164,36 +209,25 @@ const ChatCard: React.FC<ChatCardProps> = ({
   const {
     styles: { chatCard: chatCardStyle, alert: alertStyle, ...chatCardStyles },
   } = useStyles();
-  const formRef = useRef<FormInstance>(null);
+  const [isPendingUpdate, startUpdateTransition] = useTransition();
+
   const dropContainerRef = useRef<HTMLDivElement>(null);
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [startTime, setStartTime] = useState<number | null>(null);
 
   const { endpoint, setEndpoint } = useEndpoint(selectedEndpoint);
+  const [baseURL, setBaseURL] = useState<string | undefined>(
+    createBaseURL(chat.provider.basePath, endpoint?.url),
+  );
+  const [token, setToken] = useState<string | undefined>();
   const { models, modelId, setModelId } = useModels(
     chat.provider,
     fetchKey,
-    endpoint,
+    baseURL,
+    token,
   );
   const { agents, agent, setAgent } = useAgents(chat.provider);
   const [sync, setSync] = useState(chat.sync);
-
-  const baseURL = endpoint?.url
-    ? new URL(chat.provider.basePath, endpoint?.url ?? undefined).toString()
-    : undefined;
-
-  const allowCustomModel = isEmpty(models);
-  const providerSettings = {
-    baseURL: allowCustomModel
-      ? formRef.current?.getFieldValue('baseURL')
-      : baseURL,
-    modelId: allowCustomModel
-      ? formRef.current?.getFieldValue('modelId')
-      : modelId,
-    apiKey: allowCustomModel
-      ? formRef.current?.getFieldValue('token')
-      : chat.provider.apiKey,
-  };
 
   const {
     error,
@@ -216,13 +250,13 @@ const ChatCard: React.FC<ChatCardProps> = ({
       if (fetchOnClient || modelId === 'custom') {
         const body = JSON.parse(init?.body as string);
         const provider = createOpenAI({
-          baseURL: providerSettings.baseURL,
-          apiKey: providerSettings.apiKey || 'dummy',
+          baseURL: baseURL,
+          apiKey: token || chat.provider.apiKey || 'dummy',
         });
         const result = streamText({
           abortSignal: init?.signal || undefined,
           model: wrapLanguageModel({
-            model: provider(providerSettings.modelId),
+            model: provider(modelId),
             middleware: extractReasoningMiddleware({ tagName: 'think' }),
           }),
           messages: body?.messages,
@@ -234,13 +268,22 @@ const ChatCard: React.FC<ChatCardProps> = ({
         return result.toDataStreamResponse({
           sendReasoning: true,
         });
-      } else {
-        return fetch(input, init);
       }
+
+      return fetch(input, init);
     },
   });
 
+  useEffect(() => {
+    startTransition(() => {
+      setBaseURL(createBaseURL(chat.provider.basePath, endpoint?.url));
+      setToken(undefined);
+      updateFetchKey('first');
+    });
+  }, [endpoint?.url, chat.provider.basePath, updateFetchKey]);
+
   const isStreaming = status === 'streaming' || status === 'submitted';
+
   return (
     <Card
       variant="outlined"
@@ -249,7 +292,6 @@ const ChatCard: React.FC<ChatCardProps> = ({
       title={
         <ChatHeader
           chat={chat}
-          allowCustomModel={allowCustomModel}
           models={models}
           modelId={modelId}
           setModelId={setModelId}
@@ -269,19 +311,21 @@ const ChatCard: React.FC<ChatCardProps> = ({
       }
       ref={dropContainerRef}
     >
-      {allowCustomModel ? (
+      {_.isEmpty(models) && (
         <CustomModelForm
-          modelId={modelId}
           baseURL={baseURL}
-          formRef={formRef}
-          allowCustomModel={allowCustomModel}
-          alert={
-            formRef && (
-              <CustomModelAlert onClick={() => updateFetchKey(baseURL)} />
-            )
-          }
+          token={token}
+          endpointId={endpoint?.endpoint_id}
+          loading={isPendingUpdate}
+          onSubmit={(data) => {
+            startUpdateTransition(() => {
+              updateFetchKey();
+              setBaseURL(data.baseURL);
+              setToken(data.token);
+            });
+          }}
         />
-      ) : null}
+      )}
       {!_.isEmpty(error?.message) ? (
         <Alert
           message={error?.message}

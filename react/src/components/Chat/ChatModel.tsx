@@ -3,6 +3,7 @@ import {
   ChatCard_endpoint$data,
   ChatCard_endpoint$key,
 } from './__generated__/ChatCard_endpoint.graphql';
+import i18n from 'i18next';
 
 export type ChatProviderType = {
   baseURL?: string;
@@ -77,3 +78,32 @@ export type ChatOptions = {
   agents: AIAgent[];
   agentId?: string;
 };
+
+export class ChatModelError extends Error {
+  status: number;
+
+  constructor(status: number) {
+    super(ChatModelError.errorMessage(status));
+    this.name = 'ModelsError';
+    this.status = status;
+  }
+
+  static errorMessage(status: number) {
+    const messageKey = (() => {
+      switch (status) {
+        case 401:
+          return 'error.UnauthorizedToken';
+        case 404:
+          return 'error.NotFoundBasePath';
+        case 500:
+          return 'error.InternalServerError';
+        case 503:
+          return 'error.ServiceUnavailable';
+        default:
+          return 'error.UnknownError';
+      }
+    })();
+
+    return i18n.t(messageKey, { status });
+  }
+}
