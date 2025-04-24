@@ -1,4 +1,4 @@
-import { loginAsAdmin, webuiEndpoint } from './test-util';
+import { loginAsAdmin, webuiEndpoint } from './utils/test-util';
 import { test } from '@playwright/test';
 import * as path from 'path';
 
