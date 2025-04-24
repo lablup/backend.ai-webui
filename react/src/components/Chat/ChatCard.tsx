@@ -1,6 +1,6 @@
 import { useUpdatableState } from '../../hooks';
 import { useSuspenseTanQuery } from '../../hooks/reactQueryAlias';
-import { AIAgent, useAIAgent } from '../../hooks/useAIAgent';
+import { useAIAgent } from '../../hooks/useAIAgent';
 import PureChatHeader from './ChatHeader';
 import PureChatInput from './ChatInput';
 import ChatMessages from './ChatMessages';
@@ -12,7 +12,7 @@ import {
   Model,
 } from './ChatModel';
 import { CustomModelForm } from './CustomModelForm';
-import { ChatCard_endpoint$key } from './__generated__/ChatCard_endpoint.graphql';
+import { ChatCardQuery } from './__generated__/ChatCardQuery.graphql';
 import { createOpenAI } from '@ai-sdk/openai';
 import { useChat } from '@ai-sdk/react';
 import { extractReasoningMiddleware, streamText, wrapLanguageModel } from 'ai';
@@ -21,20 +21,21 @@ import { createStyles } from 'antd-style';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, {
-  startTransition,
   useEffect,
   useMemo,
   useRef,
   useState,
   useTransition,
 } from 'react';
-import { useFragment } from 'react-relay';
+import { useTranslation } from 'react-i18next';
+import { useLazyLoadQuery } from 'react-relay';
 
 interface ChatCardProps extends CardProps, ChatLifecycleEventType {
   chat: ChatType;
-  selectedEndpoint: ChatCard_endpoint$key | null;
+  onUpdateChat?: (partialChat: DeepPartial<ChatType>) => void;
   closable?: boolean;
   fetchOnClient?: boolean;
+  defaultEndpointId?: string;
 }
 
 const useStyles = createStyles(({ token, css }) => ({
@@ -66,23 +67,6 @@ const useStyles = createStyles(({ token, css }) => ({
   `,
 }));
 
-function useEndpoint(selectedEndpoint?: ChatCard_endpoint$key | null) {
-  const [endpointKey, setEndpoint] = useState<ChatCard_endpoint$key | null>(
-    selectedEndpoint || null,
-  );
-  const endpoint = useFragment(
-    graphql`
-      fragment ChatCard_endpoint on Endpoint {
-        endpoint_id
-        url
-      }
-    `,
-    endpointKey,
-  );
-
-  return { endpoint, setEndpoint } as const;
-}
-
 function createModelsURL(baseURL: string) {
   const { origin, port, pathname: path } = new URL(baseURL.trim());
   const host = port.length > 0 ? `${origin}:${port}` : origin;
@@ -95,7 +79,6 @@ function useModels(
   provider: ChatProviderType,
   fetchKey: string,
   baseURL?: string,
-  token?: string,
 ) {
   const { t } = useTranslation();
   const getModelsErrorMessage = (status?: number) => {
@@ -108,6 +91,7 @@ function useModels(
         return t('error.InternalServerError');
       case 503:
         return t('error.ServiceUnavailable');
+      case -1:
       default:
         return t('error.UnknownError');
     }
@@ -115,18 +99,13 @@ function useModels(
 
   const { data: modelsResult } = useSuspenseTanQuery<{
     data: Array<Model>;
+    error?: number;
   }>({
-    queryKey: ['models', fetchKey, baseURL, token],
+    queryKey: ['models', fetchKey, baseURL, provider.apiKey],
     queryFn: async () => {
-      try {
-        if (baseURL) {
-          const url = createModelsURL(baseURL);
-          const authToken = token || provider.apiKey;
-          const res = await fetch(url, {
-            headers: {
-              Authorization: authToken ? `Bearer ${authToken}` : '',
-            },
-          });
+      if (!baseURL) {
+        return { data: [] };
+      }
 
       const url = createModelsURL(baseURL);
       const authToken = provider.apiKey;
@@ -134,13 +113,18 @@ function useModels(
         headers: {
           Authorization: authToken ? `Bearer ${authToken}` : '',
         },
+      }).catch((e) => {
+        return {
+          ok: false,
+          status: -1,
+        } as const;
       });
 
-      if (!res.ok) {
-        return { data: [], error: res.status };
+      if (res.ok) {
+        return await res.json();
+      } else {
+        return { data: [], error: res?.status };
       }
-
-      return await res.json();
     },
   });
 
@@ -149,7 +133,7 @@ function useModels(
     name: m.id,
   })) as BAIModel[];
 
-  const selectedModelId = useMemo(
+  const modelId = useMemo(
     () =>
       provider.modelId &&
       _.includes(_.map(modelsResult?.data || [], 'id'), provider.modelId)
@@ -158,39 +142,17 @@ function useModels(
     [modelsResult?.data, provider.modelId],
   );
 
-  const [modelId, setModelId] = useState<string>(selectedModelId);
+  const modelsError =
+    modelsResult.error && getModelsErrorMessage(modelsResult.error);
 
-  useEffect(() => {
-    setModelId(selectedModelId);
-  }, [selectedModelId]);
-
-  return { models, modelId, setModelId } as const;
+  return {
+    models,
+    modelId,
+    modelsError,
+  } as const;
 }
 
-function useAgents(provider: ChatProviderType) {
-  const { agents } = useAIAgent();
-  const [agent, setAgent] = useState<AIAgent | undefined>(undefined);
-
-  const selectedAgent = useMemo(() => {
-    return agents.find((a) => a.id === provider.agentId);
-  }, [agents, provider.agentId]);
-
-  useEffect(() => {
-    setAgent(selectedAgent);
-  }, [selectedAgent]);
-
-  return { agents, agent, setAgent } as const;
-}
-
-const ChatHeader = React.memo(PureChatHeader, (prev, next) => {
-  if (prev.modelId !== next.modelId) return false;
-  if (prev.endpoint !== next.endpoint) return false;
-  if (prev.agent !== next.agent) return false;
-  if (prev.fetchKey !== next.fetchKey) return false;
-  if (prev.sync !== next.sync) return false;
-  if (prev.closable !== next.closable) return false;
-  return true;
-});
+const ChatHeader = PureChatHeader;
 
 const ChatInput = React.memo(PureChatInput);
 
@@ -200,12 +162,33 @@ function createBaseURL(basePath: string, endpointUrl?: string | null) {
 
 const ChatCard: React.FC<ChatCardProps> = ({
   chat,
-  selectedEndpoint,
+  onUpdateChat,
   closable,
   fetchOnClient,
   onRequestClose,
   onCreateNewChat,
 }) => {
+  const { message: appMessage } = App.useApp();
+  const endpointResult = useLazyLoadQuery<ChatCardQuery>(
+    graphql`
+      query ChatCardQuery($endpointId: UUID!) {
+        endpoint(endpoint_id: $endpointId) @catch {
+          endpoint_id
+          url
+          ...ChatHeader_Endpoint
+        }
+      }
+    `,
+    {
+      endpointId: chat.provider.endpointId || '',
+    },
+    {
+      fetchPolicy: chat.provider.endpointId ? 'store-or-network' : 'store-only',
+    },
+  );
+  const endpoint = endpointResult.endpoint.ok
+    ? endpointResult.endpoint.value
+    : null;
   const {
     styles: { chatCard: chatCardStyle, alert: alertStyle, ...chatCardStyles },
   } = useStyles();
@@ -215,19 +198,14 @@ const ChatCard: React.FC<ChatCardProps> = ({
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [startTime, setStartTime] = useState<number | null>(null);
 
-  const { endpoint, setEndpoint } = useEndpoint(selectedEndpoint);
-  const [baseURL, setBaseURL] = useState<string | undefined>(
-    createBaseURL(chat.provider.basePath, endpoint?.url),
-  );
-  const [token, setToken] = useState<string | undefined>();
-  const { models, modelId, setModelId } = useModels(
+  const baseURL = createBaseURL(chat.provider.basePath, endpoint?.url);
+  const { models, modelId, modelsError } = useModels(
     chat.provider,
     fetchKey,
     baseURL,
-    token,
   );
-  const { agents, agent, setAgent } = useAgents(chat.provider);
-  const [sync, setSync] = useState(chat.sync);
+  const { agents } = useAIAgent();
+  const agent = agents.find((a) => a.id === chat.provider.agentId);
 
   const {
     error,
@@ -251,7 +229,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
         const body = JSON.parse(init?.body as string);
         const provider = createOpenAI({
           baseURL: baseURL,
-          apiKey: token || chat.provider.apiKey || 'dummy',
+          apiKey: chat.provider.apiKey || 'dummy',
         });
         const result = streamText({
           abortSignal: init?.signal || undefined,
@@ -274,15 +252,14 @@ const ChatCard: React.FC<ChatCardProps> = ({
     },
   });
 
-  useEffect(() => {
-    startTransition(() => {
-      setBaseURL(createBaseURL(chat.provider.basePath, endpoint?.url));
-      setToken(undefined);
-      updateFetchKey('first');
-    });
-  }, [endpoint?.url, chat.provider.basePath, updateFetchKey]);
-
   const isStreaming = status === 'streaming' || status === 'submitted';
+
+  useEffect(() => {
+    // prevent to show the error message as failed fetching in the first time
+    if (modelsError && fetchKey !== 'first') {
+      appMessage.error(`Error fetching models: ${modelsError}`, 5);
+    }
+  }, [modelsError, fetchKey, appMessage]);
 
   return (
     <Card
@@ -291,37 +268,74 @@ const ChatCard: React.FC<ChatCardProps> = ({
       classNames={chatCardStyles}
       title={
         <ChatHeader
-          chat={chat}
+          // model
           models={models}
           modelId={modelId}
-          setModelId={setModelId}
-          endpoint={endpoint}
-          setEndpoint={setEndpoint}
+          onChangeModel={(modelId) => {
+            onUpdateChat?.({
+              provider: {
+                modelId,
+              },
+            });
+          }}
+          // agent
           agents={agents}
           agent={agent}
-          setAgent={setAgent}
-          sync={sync}
-          setSync={setSync}
+          onChangeAgent={(agent) => {
+            onUpdateChat?.({
+              provider: {
+                agentId: agent.id,
+                endpointId: agent.endpoint_id,
+              },
+            });
+          }}
+          // endpoint
+          endpointFrgmt={endpoint}
+          onChangeEndpoint={(endpointId) => {
+            onUpdateChat?.({
+              provider: {
+                endpointId,
+              },
+            });
+          }}
+          // sync
+          sync={chat.sync}
+          onChangeSync={(sync) => {
+            onUpdateChat?.({
+              sync,
+            });
+          }}
+          // others
           fetchKey={fetchKey}
           closable={closable}
-          onCreateNewChat={onCreateNewChat}
-          onRequestClose={onRequestClose}
-          setMessages={setMessages}
+          onClickCreate={onCreateNewChat}
+          onClickClose={() => {
+            onRequestClose?.(chat);
+          }}
+          onClickDeleteChatHistory={() => {
+            setMessages([]);
+          }}
         />
       }
       ref={dropContainerRef}
     >
-      {_.isEmpty(models) && (
+      {endpoint && _.isEmpty(models) && (
         <CustomModelForm
           baseURL={baseURL}
-          token={token}
+          token={chat.provider.apiKey}
           endpointId={endpoint?.endpoint_id}
           loading={isPendingUpdate}
           onSubmit={(data) => {
             startUpdateTransition(() => {
               updateFetchKey();
-              setBaseURL(data.baseURL);
-              setToken(data.token);
+              onUpdateChat?.({
+                ...chat,
+                provider: {
+                  ...chat.provider,
+                  baseURL: data.baseURL,
+                  apiKey: data.token,
+                },
+              });
             });
           }}
         />
@@ -342,7 +356,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
         startTime={startTime}
       />
       <ChatInput
-        sync={sync}
+        sync={chat.sync}
         input={input}
         setInput={setInput}
         stop={stop}

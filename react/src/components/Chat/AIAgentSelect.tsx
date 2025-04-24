@@ -1,14 +1,11 @@
-import { AIAgent } from '../../hooks/useAIAgent';
+import { AIAgent, useAIAgent } from '../../hooks/useAIAgent';
 import Flex from '../Flex';
 import { FluentEmojiIcon } from '../FluentEmojiIcon';
 import { useControllableValue } from 'ahooks';
 import { Select, SelectProps, theme } from 'antd';
 import React, { useState, useTransition } from 'react';
 
-interface ChatAgentSelectProps extends Omit<SelectProps, 'options'> {
-  agents: AIAgent[];
-  selectedAgent?: AIAgent;
-}
+interface ChatAgentSelectProps extends Omit<SelectProps, 'options'> {}
 
 function makeAgentOptions(agents: AIAgent[], filter?: string) {
   return agents
@@ -24,20 +21,16 @@ function makeAgentOptions(agents: AIAgent[], filter?: string) {
 
 const AIAgentSelect: React.FC<ChatAgentSelectProps> = ({
   loading,
-  agents,
-  selectedAgent,
   ...props
 }) => {
   const { token } = theme.useToken();
-  const [controllableValue, setControllableValue] =
-    useControllableValue<AIAgent>(props, {
-      valuePropName: 'value',
-      trigger: 'onChange',
-      defaultValue: props.value,
-    });
+  const [controllableValue, setControllableValue] = useControllableValue(props);
 
   const [searchAgent, setSearchAgent] = useState<string>();
   const [isSearchPending, startSearchTransition] = useTransition();
+
+  const { agents } = useAIAgent();
+  const selectedAgent = agents.find((agent) => agent.id === controllableValue);
 
   return (
     <>
