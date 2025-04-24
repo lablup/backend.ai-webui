@@ -377,7 +377,7 @@ const ContainerRegistryList: React.FC<{
                     });
                   }
 
-                  message.info({
+                  message.success({
                     key: 'registry-enabled',
                     content: isOn
                       ? t('registry.RegistryTurnedOn')
@@ -550,12 +550,12 @@ const ContainerRegistryList: React.FC<{
         open={!!editingRegistry || isNewModalOpen}
         onOk={(type) => {
           if (type === 'create') {
-            message.info({
+            message.success({
               key: 'registry-added',
               content: t('registry.RegistrySuccessfullyAdded'),
             });
           } else if (type === 'modify') {
-            message.info({
+            message.success({
               key: 'registry-modified',
               content: t('registry.RegistrySuccessfullyModified'),
             });
@@ -603,7 +603,7 @@ const ContainerRegistryList: React.FC<{
                   startReloadTransition(() => {
                     updateFetchKey();
                   });
-                  message.info({
+                  message.success({
                     key: 'registry-deleted',
                     content: t('registry.RegistrySuccessfullyDeleted'),
                   });
