@@ -73,6 +73,7 @@ const UserSessionsMetrics: React.FC<PrometheusMetricProps> = () => {
     >
       <Flex align="stretch" justify="between">
         <RangePicker
+          allowClear={false}
           showTime={{ format: 'HH:mm' }}
           maxDate={dayjs()}
           onChange={(_, [startDate, endDate]) => {
