@@ -7,7 +7,7 @@ import { useControllableValue } from 'ahooks';
 import { Select, SelectProps } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React, { useState, useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
@@ -134,8 +134,8 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
       {...selectPropsWithoutLoading}
       // override value and onChange
       value={controllableValue}
-      onChange={(v, option) => {
-        setControllableValue(v, _.castArray(option)?.[0].endpoint);
+      onChange={(v) => {
+        setControllableValue(v);
       }}
     />
   );
