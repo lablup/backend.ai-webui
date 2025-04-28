@@ -5,11 +5,10 @@ import PureChatHeader from './ChatHeader';
 import PureChatInput from './ChatInput';
 import ChatMessages from './ChatMessages';
 import {
-  BAIModel,
   ChatLifecycleEventType,
-  ChatProviderType,
-  ChatType,
-  Model,
+  ChatProviderData,
+  ChatData,
+  ChatModel,
 } from './ChatModel';
 import { CustomModelForm } from './CustomModelForm';
 import { ChatCardQuery } from './__generated__/ChatCardQuery.graphql';
@@ -31,8 +30,8 @@ import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
 interface ChatCardProps extends CardProps, ChatLifecycleEventType {
-  chat: ChatType;
-  onUpdateChat?: (partialChat: DeepPartial<ChatType>) => void;
+  chat: ChatData;
+  onUpdateChat?: (partialChat: DeepPartial<ChatData>) => void;
   closable?: boolean;
   fetchOnClient?: boolean;
   defaultEndpointId?: string;
@@ -76,7 +75,7 @@ function createModelsURL(baseURL: string) {
 }
 
 function useModels(
-  provider: ChatProviderType,
+  provider: ChatProviderData,
   fetchKey: string,
   baseURL?: string,
 ) {
@@ -91,14 +90,13 @@ function useModels(
         return t('error.InternalServerError');
       case 503:
         return t('error.ServiceUnavailable');
-      case -1:
       default:
         return t('error.UnknownError');
     }
   };
 
   const { data: modelsResult } = useSuspenseTanQuery<{
-    data: Array<Model>;
+    data: Array<ChatModel>;
     error?: number;
   }>({
     queryKey: ['models', fetchKey, baseURL, provider.apiKey],
@@ -122,16 +120,19 @@ function useModels(
 
       if (res.ok) {
         return await res.json();
-      } else {
-        return { data: [], error: res?.status };
       }
-    },
-  });
 
-  const models = _.map(modelsResult?.data || [], (m) => ({
-    id: m.id,
-    name: m.id,
-  })) as BAIModel[];
+      return { data: [], error: res?.status };
+    },
+    select: (res) => ({
+      data: res
+        ? res.data.map((model) => ({
+            id: model.id,
+            name: model.id,
+          }))
+        : [],
+    }),
+  });
 
   const modelId = useMemo(
     () =>
@@ -146,7 +147,7 @@ function useModels(
     modelsResult.error && getModelsErrorMessage(modelsResult.error);
 
   return {
-    models,
+    models: modelsResult?.data,
     modelId,
     modelsError,
   } as const;
@@ -156,8 +157,10 @@ const ChatHeader = PureChatHeader;
 
 const ChatInput = React.memo(PureChatInput);
 
-function createBaseURL(basePath: string, endpointUrl?: string | null) {
-  return endpointUrl ? new URL(basePath, endpointUrl).toString() : undefined;
+function createBaseURL(basePath?: string, endpointUrl?: string | null) {
+  return endpointUrl
+    ? new URL(basePath ?? '', endpointUrl).toString()
+    : undefined;
 }
 
 const ChatCard: React.FC<ChatCardProps> = ({
@@ -218,9 +221,8 @@ const ChatCard: React.FC<ChatCardProps> = ({
     append,
     setMessages,
   } = useChat({
-    id: `${chat.id}-${endpoint?.endpoint_id}-${agent?.id ?? 'none'}-${modelId}`,
+    id: chat.id,
     api: baseURL,
-    credentials: chat.provider.credentials,
     body: {
       modelId: modelId,
     },

@@ -1,14 +1,13 @@
 import Flex from '../Flex';
+import { useConversation } from './ChatCacheProvider';
 import ChatCard from './ChatCard';
-import { ChatProviderType, ChatType, ConversationType } from './ChatModel';
-import { useDynamicList } from 'ahooks';
+import type { ChatProviderData } from './ChatModel';
 import { Card, Skeleton } from 'antd';
 import { createStyles } from 'antd-style';
 import _ from 'lodash';
-import { map } from 'lodash';
-import { Suspense, useId } from 'react';
+import { Suspense } from 'react';
 
-const useStyles = createStyles(({ token, css }) => ({
+const useStyles = createStyles(({ css }) => ({
   chatView: css`
     overflow: auto;
     height: calc(100vh - 240px);
@@ -28,33 +27,18 @@ const useStyles = createStyles(({ token, css }) => ({
 }));
 
 export type ConversationProps = {
-  conversation: ConversationType;
-  provider: ChatProviderType;
+  conversationId: string;
+  provider: ChatProviderData;
 };
 
-function createNewChat(
-  id: string,
-  conversationId: string,
-  provider: ChatProviderType,
-) {
-  return {
-    id,
-    conversationId,
-    label: 'Chat',
-    sync: true,
-    provider,
-  };
-}
-
-export const Conversation: React.FC<ConversationProps> = ({
-  conversation,
+export const ChatConversation: React.FC<ConversationProps> = ({
+  conversationId,
   provider,
 }) => {
-  const defaultChat = createNewChat(useId(), conversation.id, provider);
-  const { list, remove, push, replace } = useDynamicList<ChatType>([
-    defaultChat,
-  ]);
+  const { chats, addChat, removeChat, updateChat } =
+    useConversation(conversationId);
   const { styles } = useStyles();
+
   return (
     <Flex
       className={styles.conversation}
@@ -68,7 +52,7 @@ export const Conversation: React.FC<ConversationProps> = ({
         direction="row"
         align="stretch"
       >
-        {map(list, (chat, index) => (
+        {_.map(chats, (chat) => (
           <Suspense
             fallback={
               <Card className={styles.skeleton} variant="outlined">
@@ -81,21 +65,16 @@ export const Conversation: React.FC<ConversationProps> = ({
               className={styles.chatCard}
               chat={chat}
               onUpdateChat={(newChatProperties) => {
-                const mergedChat = _.merge({}, chat, newChatProperties);
-                replace(index, mergedChat);
+                updateChat(chat.id, newChatProperties);
               }}
               fetchOnClient
-              onRequestClose={() => remove(index)}
-              onCreateNewChat={() => {
-                push(
-                  createNewChat(
-                    list.length.toString(),
-                    conversation.id,
-                    chat.provider,
-                  ),
-                );
+              onRequestClose={() => {
+                removeChat(chat.id);
               }}
-              closable={list.length > 1}
+              onCreateNewChat={() => {
+                addChat(provider);
+              }}
+              closable={chats.length > 1}
             />
           </Suspense>
         ))}
