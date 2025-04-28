@@ -4,7 +4,7 @@ import { AIAgent } from '../../hooks/useAIAgent';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import Flex from '../Flex';
 import AIAgentSelect from './AIAgentSelect';
-import { BAIModel, ChatParameters } from './ChatModel';
+import type { ChatModel, ChatParameters } from './ChatModel';
 import { ChatParametersSliders } from './ChatParametersSliders';
 import EndpointSelect, { EndpointSelectProps } from './EndpointSelect';
 import ModelSelect from './ModelSelect';
@@ -53,7 +53,7 @@ const SyncSwitch: React.FC<SyncSwitchProps> = ({ sync, onClick }) => {
 interface ChatHeaderProps {
   showCompareMenuItem?: boolean;
   closable?: boolean;
-  models: BAIModel[];
+  models: ChatModel[];
   modelId: string;
   onChangeModel: (modelId: string) => void;
   endpointFrgmt?: ChatHeader_Endpoint$key | null;
