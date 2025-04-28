@@ -550,7 +550,6 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             },
           })}
           showSorterTooltip={false}
-          sortDirections={['descend', 'ascend', 'descend']}
         />
         <Flex
           justify="end"

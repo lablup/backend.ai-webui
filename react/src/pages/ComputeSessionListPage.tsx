@@ -68,8 +68,8 @@ const ComputeSessionListPage = () => {
   });
 
   const [queryParams, setQuery] = useDeferredQueryParams({
-    order: withDefault(StringParam, '-created_at'),
-    filter: StringParam,
+    order: withDefault(StringParam, undefined),
+    filter: withDefault(StringParam, undefined),
     type: withDefault(StringParam, 'all'),
     statusCategory: withDefault(StringParam, 'running'),
   });
@@ -110,7 +110,7 @@ const ComputeSessionListPage = () => {
       offset: baiPaginationOption.offset,
       first: baiPaginationOption.first,
       filter: mergeFilterValues([statusFilter, queryParams.filter, typeFilter]),
-      order: queryParams.order,
+      order: queryParams.order || '-created_at',
     }),
     [
       currentProject.id,
@@ -415,6 +415,7 @@ const ComputeSessionListPage = () => {
             </Flex>
           </Flex>
           <SessionNodes
+            orderString={queryParams.order}
             onClickSessionName={(session) => {
               setSessionDetailId(session.row_id);
             }}

@@ -6,7 +6,7 @@ import {
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import BAITable from './BAITable';
+import BAITable, { BAITableProps } from './BAITable';
 import EndpointOwnerInfo from './EndpointOwnerInfo';
 import EndpointStatusTag from './EndpointStatusTag';
 import Flex from './Flex';
@@ -27,7 +27,6 @@ import {
   App,
   TablePaginationConfig,
   Tooltip,
-  TableProps,
 } from 'antd';
 import { ColumnType } from 'antd/lib/table';
 import graphql from 'babel-plugin-relay/macro';
@@ -42,7 +41,7 @@ import { Link } from 'react-router-dom';
 type Endpoint = EndpointListFragment$data[number];
 
 interface EndpointListProps
-  extends Omit<TableProps<Endpoint>, 'dataSource' | 'columns'> {
+  extends Omit<BAITableProps<Endpoint>, 'dataSource' | 'columns'> {
   endpointsFrgmt: EndpointListFragment$key;
   loading?: boolean;
   pagination: TablePaginationConfig;
@@ -261,8 +260,6 @@ const EndpointList: React.FC<EndpointListProps> = ({
       render: (created_at) => {
         return dayjs(created_at).format('ll LT');
       },
-      defaultSortOrder: 'descend',
-      sortDirections: ['descend', 'ascend', 'descend'],
       sorter: (a, b) => {
         const date1 = dayjs(a.created_at);
         const date2 = dayjs(b.created_at);
@@ -324,7 +321,6 @@ const EndpointList: React.FC<EndpointListProps> = ({
       rowKey={'endpoint_id'}
       dataSource={filterNonNullItems(endpoints)}
       columns={columns}
-      sortDirections={['descend', 'ascend', 'descend']}
       pagination={pagination}
       {...tableProps}
     />

@@ -134,7 +134,6 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         resizable
         neoStyle
         showSorterTooltip={false}
-        sortDirections={['descend', 'ascend', 'descend']}
         rowKey={(record) => record.id}
         size="small"
         dataSource={filteredVFolders}

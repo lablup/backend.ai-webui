@@ -109,6 +109,7 @@ export interface BAITableProps<RecordType extends object = any>
   extends TableProps<RecordType> {
   resizable?: boolean;
   neoStyle?: boolean;
+  orderString?: string;
 }
 
 const columnKeyOrIndexKey = (column: any, index: number) =>
@@ -127,6 +128,7 @@ const BAITable = <RecordType extends object = any>({
   components,
   neoStyle,
   loading,
+  orderString,
   ...tableProps
 }: BAITableProps<RecordType>) => {
   const { styles } = useStyles();
@@ -137,10 +139,41 @@ const BAITable = <RecordType extends object = any>({
   >(generateResizedColumnWidths(columns));
 
   const mergedColumns = useMemo(() => {
+    let processedColumns = columns;
+
+    // Apply sort direction based on orderString
+    if (orderString && columns) {
+      processedColumns = columns.map((column) => {
+        // Skip column groups (with children) or columns without dataIndex
+        if ('children' in column || !column.dataIndex || !column.sorter) {
+          return column;
+        }
+
+        const dataIndex = Array.isArray(column.dataIndex)
+          ? column.dataIndex.join('.')
+          : column.dataIndex.toString();
+
+        // Check if this column matches the field in orderString
+        // Remove the "-" prefix if present to compare the field name
+        const orderField = orderString.startsWith('-')
+          ? orderString.substring(1)
+          : orderString;
+
+        if (dataIndex === orderField) {
+          return {
+            ...column,
+            sortOrder: orderString.startsWith('-') ? 'descend' : 'ascend',
+          };
+        }
+
+        return column;
+      });
+    }
+
     return !resizable
-      ? columns
+      ? processedColumns
       : _.map(
-          columns,
+          processedColumns,
           (column, index) =>
             ({
               ...column,
@@ -160,7 +193,7 @@ const BAITable = <RecordType extends object = any>({
               },
             }) as ColumnType<RecordType>,
         );
-  }, [resizable, columns, resizedColumnWidths]);
+  }, [resizable, columns, resizedColumnWidths, orderString]);
 
   return (
     <ConfigProvider
@@ -178,7 +211,6 @@ const BAITable = <RecordType extends object = any>({
       }}
     >
       <Table
-        sortDirections={['descend', 'ascend', 'descend']}
         showSorterTooltip={false}
         className={classNames(
           resizable && styles.resizableTable,

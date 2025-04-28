@@ -247,7 +247,6 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
         dataSource={filterNonNullItems(resource_presets)}
         scroll={{ x: 'max-content' }}
         pagination={false}
-        sortDirections={['descend', 'ascend', 'descend']}
         showSorterTooltip={false}
         columns={columns}
       />

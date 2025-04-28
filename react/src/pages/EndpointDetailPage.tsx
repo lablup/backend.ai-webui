@@ -801,7 +801,6 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               },
             ]}
             pagination={false}
-            sortDirections={['descend', 'ascend', 'descend']}
             showSorterTooltip={false}
             dataSource={autoScalingRules}
             bordered
@@ -872,7 +871,6 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               sorter: dayDiff,
             },
           ]}
-          sortDirections={['descend', 'ascend', 'descend']}
           showSorterTooltip={false}
           pagination={false}
           dataSource={filterNonNullItems(endpoint_token_list?.items)}
