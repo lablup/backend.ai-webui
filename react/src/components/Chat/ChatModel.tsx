@@ -1,8 +1,4 @@
 import { AIAgent } from '../../hooks/useAIAgent';
-import {
-  ChatCard_endpoint$data,
-  ChatCard_endpoint$key,
-} from './__generated__/ChatCard_endpoint.graphql';
 
 export type ChatProviderType = {
   baseURL?: string;
@@ -67,13 +63,4 @@ export type BAIModel = {
   group?: string;
   created?: string;
   description?: string;
-};
-
-export type ChatOptions = {
-  models: BAIModel[];
-  modelId: string;
-  endpoint?: ChatCard_endpoint$data | null;
-  endpointKey?: ChatCard_endpoint$key | null;
-  agents: AIAgent[];
-  agentId?: string;
 };

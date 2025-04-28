@@ -1,15 +1,12 @@
-import { useSuspendedBackendaiClient } from '../../hooks';
 import Flex from '../Flex';
 import ChatCard from './ChatCard';
 import { ChatProviderType, ChatType, ConversationType } from './ChatModel';
-import { ConversationQuery } from './__generated__/ConversationQuery.graphql';
 import { useDynamicList } from 'ahooks';
 import { Card, Skeleton } from 'antd';
 import { createStyles } from 'antd-style';
-import graphql from 'babel-plugin-relay/macro';
+import _ from 'lodash';
 import { map } from 'lodash';
 import { Suspense, useId } from 'react';
-import { useLazyLoadQuery } from 'react-relay';
 
 const useStyles = createStyles(({ token, css }) => ({
   chatView: css`
@@ -35,41 +32,6 @@ export type ConversationProps = {
   provider: ChatProviderType;
 };
 
-function useSelectedEndpoint(endpointId?: string) {
-  const baiClient = useSuspendedBackendaiClient();
-  const { endpoint, endpoint_list } = useLazyLoadQuery<ConversationQuery>(
-    graphql`
-      query ConversationQuery(
-        $endpointId: UUID!
-        $isEmptyEndpointId: Boolean!
-        $filter: String
-      ) {
-        endpoint(endpoint_id: $endpointId)
-          @skipOnClient(if: $isEmptyEndpointId)
-          @catch {
-          endpoint_id
-          ...ChatCard_endpoint
-        }
-        endpoint_list(limit: 1, offset: 0, filter: $filter) {
-          items {
-            endpoint_id
-            ...ChatCard_endpoint
-          }
-        }
-      }
-    `,
-    {
-      endpointId: endpointId || '',
-      isEmptyEndpointId: !endpointId,
-      filter: baiClient.supports('endpoint-lifecycle-stage-filter')
-        ? 'lifecycle_stage == "created"'
-        : undefined,
-    },
-  );
-
-  return (endpoint.ok ? endpoint.value : endpoint_list?.items?.[0]) ?? null;
-}
-
 function createNewChat(
   id: string,
   conversationId: string,
@@ -88,9 +50,10 @@ export const Conversation: React.FC<ConversationProps> = ({
   conversation,
   provider,
 }) => {
-  const selectedEndpoint = useSelectedEndpoint(provider.endpointId);
-  const chat = createNewChat(useId(), conversation.id, provider);
-  const { list, remove, push } = useDynamicList<ChatType>([chat]);
+  const defaultChat = createNewChat(useId(), conversation.id, provider);
+  const { list, remove, push, replace } = useDynamicList<ChatType>([
+    defaultChat,
+  ]);
   const { styles } = useStyles();
   return (
     <Flex
@@ -112,12 +75,15 @@ export const Conversation: React.FC<ConversationProps> = ({
                 <Skeleton active />
               </Card>
             }
-            key={index}
+            key={chat.id}
           >
             <ChatCard
               className={styles.chatCard}
-              selectedEndpoint={selectedEndpoint}
               chat={chat}
+              onUpdateChat={(newChatProperties) => {
+                const mergedChat = _.merge({}, chat, newChatProperties);
+                replace(index, mergedChat);
+              }}
               fetchOnClient
               onRequestClose={() => remove(index)}
               onCreateNewChat={() => {
@@ -125,12 +91,11 @@ export const Conversation: React.FC<ConversationProps> = ({
                   createNewChat(
                     list.length.toString(),
                     conversation.id,
-                    provider,
+                    chat.provider,
                   ),
                 );
               }}
               closable={list.length > 1}
-              key={index}
             />
           </Suspense>
         ))}

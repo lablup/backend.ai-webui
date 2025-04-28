@@ -4,19 +4,18 @@ import { AIAgent } from '../../hooks/useAIAgent';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import Flex from '../Flex';
 import AIAgentSelect from './AIAgentSelect';
-import { BAIModel, ChatLifecycleEventType, ChatType } from './ChatModel';
-import EndpointSelect from './EndpointSelect';
+import { BAIModel } from './ChatModel';
+import EndpointSelect, { EndpointSelectProps } from './EndpointSelect';
 import ModelSelect from './ModelSelect';
-import {
-  ChatCard_endpoint$data,
-  ChatCard_endpoint$key,
-} from './__generated__/ChatCard_endpoint.graphql';
-import { Message } from '@ai-sdk/react';
+import { ChatHeader_Endpoint$key } from './__generated__/ChatHeader_Endpoint.graphql';
 import { CloseOutlined, MoreOutlined, PlusOutlined } from '@ant-design/icons';
 import { Dropdown, Button, theme, MenuProps, Typography, Switch } from 'antd';
+import graphql from 'babel-plugin-relay/macro';
+import { isEmpty } from 'lodash';
 import { Scale as ScaleIcon, Eraser as EraserIcon } from 'lucide-react';
-import React, { useState, startTransition } from 'react';
+import React, { startTransition, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useFragment } from 'react-relay';
 
 interface SyncSwitchProps {
   sync: boolean;
@@ -37,50 +36,60 @@ const SyncSwitch: React.FC<SyncSwitchProps> = ({ sync, onClick }) => {
   );
 };
 
-interface ChatHeaderProps extends ChatLifecycleEventType {
-  chat: ChatType;
+interface ChatHeaderProps {
   showCompareMenuItem?: boolean;
-  allowCustomModel?: boolean;
   closable?: boolean;
   models: BAIModel[];
   modelId: string;
-  setModelId: (modelId: string) => void;
-  endpoint?: ChatCard_endpoint$data | null;
-  setEndpoint: (endpoint: ChatCard_endpoint$key) => void;
+  onChangeModel: (modelId: string) => void;
+  endpointFrgmt?: ChatHeader_Endpoint$key | null;
+  onChangeEndpoint: EndpointSelectProps['onChange'];
   agents: AIAgent[];
   agent?: AIAgent;
-  setAgent: (agent: AIAgent) => void;
+  onChangeAgent: (agent: AIAgent) => void;
   sync: boolean;
-  setSync: (sync: boolean) => void;
+  onChangeSync: (sync: boolean) => void;
   fetchKey: string;
-  setMessages: (messages: Message[]) => void;
+  onClickDeleteChatHistory?: () => void;
+  onClickClose?: () => void;
+  onClickCreate?: () => void;
 }
 
 const ChatHeader: React.FC<ChatHeaderProps> = ({
-  chat,
   showCompareMenuItem,
-  allowCustomModel,
   closable,
   models,
   modelId,
-  setModelId,
-  endpoint,
-  setEndpoint,
+  onChangeModel,
+  endpointFrgmt,
+  onChangeEndpoint,
   agents,
   agent,
-  setAgent,
+  onChangeAgent,
   sync,
-  setSync,
-  onRequestClose,
-  onCreateNewChat,
+  onChangeSync,
+  onClickClose,
+  onClickCreate,
   fetchKey,
-  setMessages,
+  onClickDeleteChatHistory,
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const webuiNavigate = useWebUINavigate();
 
-  const [promisingEndpoint, setPromisingEndpoint] = useState(endpoint);
+  const [isPendingEndpointTransition, startEndpointTransition] =
+    useTransition();
+  const [isPendingAgentTransition, startAgentTransition] = useTransition();
+
+  // Using fragment instead of just endpoint_id to support future EndpointSelect extensions
+  const endpoint = useFragment(
+    graphql`
+      fragment ChatHeader_Endpoint on Endpoint {
+        endpoint_id
+      }
+    `,
+    endpointFrgmt,
+  );
 
   const items: MenuProps['items'] = filterEmptyItem([
     showCompareMenuItem && {
@@ -101,7 +110,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
       label: t('chatui.DeleteChatHistory'),
       icon: <EraserIcon />,
       onClick: () => {
-        setMessages([]);
+        onClickDeleteChatHistory?.();
       },
     },
     closable && {
@@ -113,7 +122,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
       label: t('chatui.DeleteChattingSession'),
       icon: <CloseOutlined />,
       onClick: () => {
-        onRequestClose?.(chat);
+        onClickClose?.();
       },
     },
   ]);
@@ -147,38 +156,37 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
       >
         {experimentalAIAgents && (
           <AIAgentSelect
-            agents={agents}
-            selectedAgent={agent}
+            loading={isPendingAgentTransition}
             value={agent?.id}
             onChange={(_, agent: any) => {
-              startTransition(() => {
-                setAgent(agent);
+              startAgentTransition(() => {
+                onChangeAgent(agent);
               });
             }}
           />
         )}
         <EndpointSelect
           fetchKey={fetchKey}
-          loading={promisingEndpoint?.endpoint_id !== endpoint?.endpoint_id}
-          onChange={(_, endpoint: any) => {
-            setPromisingEndpoint(endpoint);
-            startTransition(() => {
-              setEndpoint(endpoint);
+          loading={isPendingEndpointTransition}
+          onChange={(id) => {
+            startEndpointTransition(() => {
+              onChangeEndpoint?.(id);
             });
           }}
           value={endpoint?.endpoint_id}
           popupMatchSelectWidth={false}
         />
-        <ModelSelect
-          models={models}
-          value={modelId}
-          onChange={(modelId) => {
-            startTransition(() => {
-              setModelId(modelId);
-            });
-          }}
-          allowCustomModel={allowCustomModel}
-        />
+        {!isEmpty(models) && (
+          <ModelSelect
+            models={models}
+            value={modelId}
+            onChange={(modelId) => {
+              startTransition(() => {
+                onChangeModel(modelId);
+              });
+            }}
+          />
+        )}
       </Flex>
       <Flex gap={'xs'}>
         {closable && (
@@ -186,12 +194,12 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             sync={sync}
             onClick={(checked) => {
               startTransition(() => {
-                setSync(checked);
+                onChangeSync(checked);
               });
             }}
           />
         )}
-        <Button onClick={() => onCreateNewChat?.()} icon={<PlusOutlined />} />
+        <Button onClick={() => onClickCreate?.()} icon={<PlusOutlined />} />
         <Dropdown menu={{ items }} trigger={['click']}>
           <Button
             type="link"

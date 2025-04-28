@@ -371,7 +371,6 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
           },
         ])}
         showSorterTooltip={false}
-        sortDirections={['descend', 'ascend', 'descend']}
         pagination={{
           pageSize: tablePaginationOption.pageSize,
           showSizeChanger: true,

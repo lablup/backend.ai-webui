@@ -1,6 +1,6 @@
 import { filterEmptyItem, filterNonNullItems } from '../helper';
 import BAILink from './BAILink';
-import BAITable from './BAITable';
+import BAITable, { BAITableProps } from './BAITable';
 import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionSlotCell from './ComputeSessionNodeItems/SessionSlotCell';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
@@ -11,7 +11,7 @@ import {
   SessionNodesFragment$key,
 } from './__generated__/SessionNodesFragment.graphql';
 import { ColumnType } from 'antd/es/table';
-import { TableProps, theme } from 'antd/lib';
+import { theme } from 'antd/lib';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React from 'react';
@@ -20,7 +20,7 @@ import { useFragment } from 'react-relay';
 
 export type SessionNodeInList = NonNullable<SessionNodesFragment$data[number]>;
 interface SessionNodesProps
-  extends Omit<TableProps<SessionNodeInList>, 'dataSource' | 'columns'> {
+  extends Omit<BAITableProps<SessionNodeInList>, 'dataSource' | 'columns'> {
   sessionsFrgmt: SessionNodesFragment$key;
   onClickSessionName?: (session: SessionNodeInList) => void;
   disableSorter?: boolean;

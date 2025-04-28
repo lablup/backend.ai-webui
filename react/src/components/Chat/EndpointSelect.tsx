@@ -11,14 +11,25 @@ import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
-interface EndpointSelectProps extends Omit<SelectProps, 'options'> {
+export type Endpoint = NonNullable<
+  NonNullableItem<EndpointSelectQuery$data['endpoint_list']>
+>;
+
+export interface EndpointSelectProps
+  extends Omit<
+    SelectProps<
+      string,
+      {
+        label?: string | null;
+        value?: string | null;
+        endpoint?: Endpoint | null;
+      }
+    >,
+    'options'
+  > {
   fetchKey?: string;
   lifecycleStageFilter?: LifecycleStage[];
 }
-
-export type Endpoint = NonNullableItem<
-  EndpointSelectQuery$data['endpoint_list']
->;
 
 type LifecycleStage = 'created' | 'destroying' | 'destroyed';
 
@@ -60,13 +71,12 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
             name
             endpoint_id
             url
-            ...ChatCard_endpoint
           }
         }
         endpoint(endpoint_id: $endpoint_id) @skipOnClient(if: $skipEndpoint) {
           name
           endpoint_id
-          ...ChatCard_endpoint
+          url
         }
       }
     `,

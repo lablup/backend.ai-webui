@@ -193,6 +193,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
             </Button>
             <Button
               type="primary"
+              data-testid="create-folder-button"
               onClick={() => {
                 handleOk();
               }}

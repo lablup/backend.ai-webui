@@ -37,7 +37,7 @@ interface ResourcePresetListProps {}
 const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { modal } = App.useApp();
+  const { modal, message } = App.useApp();
   const [isRefetchPending, startRefetchTransition] = useTransition();
   const [resourcePresetsFetchKey, updateResourcePresetsFetchKey] =
     useUpdatableState('initial-fetch');
@@ -171,10 +171,24 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
                       variables: {
                         name: record?.name ?? '',
                       },
-                      onCompleted: () => {
-                        startRefetchTransition(() => {
-                          updateResourcePresetsFetchKey();
-                        });
+                      onCompleted: (res, errors) => {
+                        if (!res?.delete_resource_preset?.ok) {
+                          message.error(res?.delete_resource_preset?.msg);
+                        } else if (errors && errors?.length > 0) {
+                          const errorMsgList = _.map(
+                            errors,
+                            (err) => err?.message,
+                          );
+                          _.forEach(errorMsgList, (err) => message.error(err));
+                        } else {
+                          message.success(t('resourcePreset.Deleted'));
+                          startRefetchTransition(() => {
+                            updateResourcePresetsFetchKey();
+                          });
+                        }
+                      },
+                      onError: (error) => {
+                        message.error(error?.message);
                       },
                     });
                   },
@@ -233,7 +247,6 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
         dataSource={filterNonNullItems(resource_presets)}
         scroll={{ x: 'max-content' }}
         pagination={false}
-        sortDirections={['descend', 'ascend', 'descend']}
         showSorterTooltip={false}
         columns={columns}
       />

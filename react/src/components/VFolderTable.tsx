@@ -595,7 +595,6 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
               },
             };
           }}
-          sortDirections={['ascend', 'descend']}
           {...tableProps}
         />
       </Form>

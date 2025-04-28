@@ -236,7 +236,6 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
               pagination={false}
               showSorterTooltip={false}
               loading={isFetching}
-              sortDirections={['descend', 'ascend', 'descend']}
               dataSource={shared || []}
               scroll={{ x: 'max-content' }}
               rowKey={(record) => record.shared_to.uuid}

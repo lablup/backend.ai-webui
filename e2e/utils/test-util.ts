@@ -135,7 +135,7 @@ async function removeSearchButton(page: Page, folderName: string) {
 export async function verifyVFolder(
   page: Page,
   folderName: string,
-  statusTab: 'Created' | 'Trash' = 'Created',
+  statusTab: 'Active' | 'Trash' = 'Active',
 ) {
   await page.getByRole('link', { name: 'Data' }).click();
   await page.getByRole('tab', { name: statusTab }).click();
@@ -279,7 +279,7 @@ export async function restoreVFolderAndVerify(page: Page, folderName: string) {
     .getByRole('button')
     .first()
     .click();
-  await verifyVFolder(page, folderName, 'Created');
+  await verifyVFolder(page, folderName, 'Active');
 }
 
 export async function createSession(page: Page, sessionName: string) {
@@ -298,13 +298,13 @@ export async function createSession(page: Page, sessionName: string) {
   await page.getByRole('button', { name: 'Start' }).click();
 
   // Wait for App dialog and close it
-  await page.locator('[id="\\30 -apps"]').click({ timeout: 30000 });
+  await expect(page.getByRole('heading', { name: 'App close' })).toBeVisible;
   await page.getByRole('button', { name: 'close' }).click();
 
   // Verify that a cell exists to display the session name
   const session = page
     .locator('vaadin-grid-cell-content')
-    .filter({ hasText: `${sessionName} edit done` });
+    .filter({ hasText: `${sessionName}` });
   // it takes time to show the created session
   await expect(session).toBeVisible({ timeout: 10000 });
 }
@@ -314,7 +314,7 @@ export async function deleteSession(page: Page, sessionName: string) {
   const sessionList = page.locator('#running-jobs').locator('#list-grid');
   const searchSessionInfo = sessionList
     .locator('vaadin-grid-cell-content')
-    .nth(2)
+    .nth(1)
     .locator('vaadin-text-field')
     .nth(1)
     .locator('input');

@@ -29,7 +29,7 @@ const ServingPage: React.FC = () => {
   const currentProject = useCurrentProjectValue();
 
   const [queryParams, setQuery] = useDeferredQueryParams({
-    order: StringParam,
+    order: withDefault(StringParam, undefined),
     filter: StringParam,
     lifecycleStage: withDefault(StringParam, 'active'),
   });
@@ -56,7 +56,7 @@ const ServingPage: React.FC = () => {
       limit: baiPaginationOption.limit,
       projectID: currentProject.id,
       filter: mergeFilterValues([lifecycleStageFilter, queryParams.filter]),
-      order: queryParams.order,
+      order: queryParams.order || '-created_at',
     }),
     [baiPaginationOption, currentProject.id, lifecycleStageFilter, queryParams],
   );
@@ -202,6 +202,7 @@ const ServingPage: React.FC = () => {
                   </Typography.Text>
                 ),
               }}
+              orderString={queryParams.order}
               loading={deferredQueryVariables !== queryVariables}
               onChange={({ current, pageSize }, filters, sorter) => {
                 if (_.isNumber(current) && _.isNumber(pageSize)) {
