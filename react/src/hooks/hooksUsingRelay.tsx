@@ -1,5 +1,5 @@
 import { useSuspendedBackendaiClient, useUpdatableState } from '.';
-import { UNLIMITED_MAX_CONCURRENT_SESSIONS } from '../helper/const-vars';
+import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { hooksUsingRelay_KeyPairQuery } from './__generated__/hooksUsingRelay_KeyPairQuery.graphql';
 import { hooksUsingRelay_KeyPairResourcePolicyQuery } from './__generated__/hooksUsingRelay_KeyPairResourcePolicyQuery.graphql';
 import graphql from 'babel-plugin-relay/macro';
@@ -85,7 +85,7 @@ export const useCurrentKeyPairResourcePolicyLazyLoadQuery = (
       sessionLimitAndRemaining: {
         max: _.min([
           (keypair_resource_policy || {}).max_concurrent_sessions ||
-            UNLIMITED_MAX_CONCURRENT_SESSIONS,
+            SIGNED_32BIT_MAX_INT,
           3, //BackendAiResourceBroker.DEFAULT_CONCURRENT_SESSION_COUNT
         ]) as number,
         remaining:

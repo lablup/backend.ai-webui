@@ -2,6 +2,7 @@ import Flex from './Flex';
 import { Form, Checkbox, FormItemProps } from 'antd';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import React, {
+  Attributes,
   cloneElement,
   isValidElement,
   useEffect,
@@ -10,12 +11,14 @@ import React, {
 import { useTranslation } from 'react-i18next';
 
 interface FormItemWithUnlimitedProps extends FormItemProps {
-  unlimitedValue?: number | string;
+  unlimitedValue?: number | string | null;
+  disableUnlimited?: boolean;
 }
 
 const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
   name,
   unlimitedValue,
+  disableUnlimited,
   children,
   ...formItemPropsWithoutNameAndChildren
 }) => {
@@ -33,16 +36,16 @@ const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
   const childrenWithProps = isValidElement(children)
     ? cloneElement(children, {
         disabled: isUnlimited,
-      } as React.Attributes & { disabled?: boolean })
+      } as Attributes & { disabled?: boolean })
     : children;
 
-  const childrenWithNullValue =
+  const childrenWithUndefinedValue =
     isUnlimited && isValidElement(children)
       ? cloneElement(children, {
-          value: null,
+          value: undefined,
           disabled: isUnlimited,
-        } as React.Attributes & { value?: any })
-      : null;
+        } as Attributes & { value?: any })
+      : undefined;
 
   return (
     <Flex direction="column" align="start">
@@ -59,11 +62,12 @@ const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
           style={{ margin: 0 }}
           {...formItemPropsWithoutNameAndChildren}
         >
-          {childrenWithNullValue}
+          {childrenWithUndefinedValue}
         </Form.Item>
       ) : null}
       <Checkbox
         checked={isUnlimited}
+        disabled={disableUnlimited}
         onChange={(e: CheckboxChangeEvent) => {
           const checked = e.target.checked;
           setIsUnlimited(checked);

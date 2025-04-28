@@ -1,8 +1,9 @@
-import { localeCompare, numberSorterWithInfinityValue } from '../helper';
 import {
-  UNLIMITED_MAX_CONCURRENT_SESSIONS,
-  UNLIMITED_MAX_CONTAINERS_PER_SESSIONS,
-} from '../helper/const-vars';
+  localeCompare,
+  numberSorterWithInfinityValue,
+  filterEmptyItem,
+} from '../helper';
+import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
@@ -28,11 +29,11 @@ import {
   App,
   Button,
   Dropdown,
-  Popconfirm,
   Space,
   Table,
   Tag,
   theme,
+  Typography,
 } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
@@ -53,7 +54,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
 ) => {
   const { token } = theme.useToken();
   const { t } = useTranslation();
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
 
   const [keypairResourcePolicyFetchKey, updateKeypairResourcePolicyFetchKey] =
     useUpdatableState('initial-fetch');
@@ -67,8 +68,6 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
     useState<KeypairResourcePolicySettingModalFragment$key | null>();
 
   const baiClient = useSuspendedBackendaiClient();
-  const enableParsingStoragePermission =
-    baiClient?.supports('fine-grained-storage-permissions') ?? false;
 
   const { keypair_resource_policies } =
     useLazyLoadQuery<KeypairResourcePolicyListQuery>(
@@ -82,6 +81,8 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
             max_containers_per_session
             idle_timeout
             allowed_vfolder_hosts
+            max_pending_session_count @since(version: "24.03.4")
+            max_concurrent_sftp_sessions @since(version: "24.03.4")
             ...KeypairResourcePolicySettingModalFragment
           }
         }
@@ -106,7 +107,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
       }
     `);
 
-  const columns: ColumnsType<KeypairResourcePolicies> = [
+  const columns: ColumnsType<KeypairResourcePolicies> = filterEmptyItem([
     {
       title: t('resourcePolicy.Name'),
       dataIndex: 'name',
@@ -146,8 +147,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         a?.max_concurrent_sessions && b?.max_concurrent_sessions
           ? a.max_concurrent_sessions - b.max_concurrent_sessions
           : 1,
-      render: (text) =>
-        text === UNLIMITED_MAX_CONCURRENT_SESSIONS ? '∞' : text,
+      render: (text) => (text ? text : '∞'),
     },
     {
       title: t('resourcePolicy.ClusterSize'),
@@ -157,8 +157,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         a?.max_containers_per_session && b?.max_containers_per_session
           ? a.max_containers_per_session - b.max_containers_per_session
           : 1,
-      render: (text) =>
-        text === UNLIMITED_MAX_CONTAINERS_PER_SESSIONS ? '∞' : text,
+      render: (text) => (text === SIGNED_32BIT_MAX_INT ? '∞' : text),
     },
     {
       title: t('resourcePolicy.IdleTimeout'),
@@ -187,7 +186,9 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
       dataIndex: 'allowed_vfolder_hosts',
       key: 'allowed_vfolder_hosts',
       render: (text, row) => {
-        const allowedVFolderHosts = enableParsingStoragePermission
+        const allowedVFolderHosts = baiClient?.supports(
+          'fine-grained-storage-permissions',
+        )
           ? _.keys(JSON.parse(row?.allowed_vfolder_hosts || '{}'))
           : JSON.parse(row?.allowed_vfolder_hosts || '{}');
         return (
@@ -198,6 +199,30 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
           </>
         );
       },
+    },
+    baiClient?.supports('max-pending-session-count') && {
+      title: t('resourcePolicy.MaxPendingSessionCount'),
+      dataIndex: 'max_pending_session_count',
+      key: 'max_pending_session_count',
+      sorter: (a, b) =>
+        numberSorterWithInfinityValue(
+          a?.max_pending_session_count,
+          b?.max_pending_session_count,
+          0,
+        ),
+      render: (text) => (text ? text : '∞'),
+    },
+    baiClient?.supports('max-concurrent-sftp-sessions') && {
+      title: t('resourcePolicy.MaxConcurrentSFTPSessions'),
+      dataIndex: 'max_concurrent_sftp_sessions',
+      key: 'max_concurrent_sftp_sessions',
+      sorter: (a, b) =>
+        numberSorterWithInfinityValue(
+          a?.max_concurrent_sftp_sessions,
+          b?.max_concurrent_sftp_sessions,
+          0,
+        ),
+      render: (text) => (text ? text : '∞'),
     },
     {
       title: t('general.Control'),
@@ -216,73 +241,93 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
               setEditingKeypairResourcePolicy(row);
             }}
           />
-          <Popconfirm
-            title={t('dialog.ask.DoYouWantToProceed')}
-            description={t('dialog.warning.CannotBeUndone')}
-            okType="danger"
-            okText={t('button.Delete')}
-            onConfirm={() => {
-              if (row?.name) {
-                setInFlightResourcePolicyName(
-                  row.name + keypairResourcePolicyFetchKey,
-                );
-                commitDelete({
-                  variables: {
-                    name: row.name,
-                  },
-                  onCompleted: (res, errors) => {
-                    if (!res?.delete_keypair_resource_policy?.ok) {
-                      message.error(res?.delete_keypair_resource_policy?.msg);
-                      return;
-                    }
-                    if (errors && errors?.length > 0) {
-                      const errorMsgList = _.map(
-                        errors,
-                        (error) => error.message,
-                      );
-                      for (const error of errorMsgList) {
-                        message.error(error, 2.5);
-                      }
-                    } else {
-                      startRefetchTransition(() =>
-                        updateKeypairResourcePolicyFetchKey(),
-                      );
-                      message.success(t('resourcePolicy.SuccessfullyDeleted'));
-                    }
-                  },
-                  onError(err) {
-                    message.error(err?.message);
-                  },
-                });
-              }
+          <Button
+            type="text"
+            size="large"
+            icon={
+              <DeleteOutlined
+                style={{
+                  color: token.colorError,
+                }}
+              />
+            }
+            loading={
+              isInflightDelete &&
+              inFlightResourcePolicyName ===
+                row?.name + keypairResourcePolicyFetchKey
+            }
+            disabled={
+              isInflightDelete &&
+              inFlightResourcePolicyName !==
+                row?.name + keypairResourcePolicyFetchKey
+            }
+            onClick={() => {
+              modal.confirm({
+                title: t('resourcePolicy.DeletePolicy'),
+                content: (
+                  <Flex direction="column" align="stretch">
+                    <Flex gap={'xxs'}>
+                      <Typography.Text>
+                        {t('resourcePolicy.DeletePolicyDescription')}
+                      </Typography.Text>
+                      <Typography.Text strong>{row?.name}</Typography.Text>
+                    </Flex>
+                    <br />
+                    <Typography.Text type="danger">
+                      {t('dialog.warning.CannotBeUndone')}
+                    </Typography.Text>
+                  </Flex>
+                ),
+                okButtonProps: {
+                  danger: true,
+                },
+                okText: t('button.Delete'),
+                onOk: () => {
+                  if (row?.name) {
+                    setInFlightResourcePolicyName(
+                      row.name + keypairResourcePolicyFetchKey,
+                    );
+                    commitDelete({
+                      variables: {
+                        name: row.name,
+                      },
+                      onCompleted: (res, errors) => {
+                        if (!res?.delete_keypair_resource_policy?.ok) {
+                          message.error(
+                            res?.delete_keypair_resource_policy?.msg,
+                          );
+                          return;
+                        }
+                        if (errors && errors?.length > 0) {
+                          const errorMsgList = _.map(
+                            errors,
+                            (error) => error.message,
+                          );
+                          for (const error of errorMsgList) {
+                            message.error(error, 2.5);
+                          }
+                        } else {
+                          startRefetchTransition(() =>
+                            updateKeypairResourcePolicyFetchKey(),
+                          );
+                          message.success(
+                            t('resourcePolicy.SuccessfullyDeleted'),
+                          );
+                        }
+                      },
+                      onError(err) {
+                        message.error(err?.message);
+                      },
+                    });
+                  }
+                },
+              });
             }}
-          >
-            <Button
-              type="text"
-              size="large"
-              icon={
-                <DeleteOutlined
-                  style={{
-                    color: token.colorError,
-                  }}
-                />
-              }
-              loading={
-                isInflightDelete &&
-                inFlightResourcePolicyName ===
-                  row?.name + keypairResourcePolicyFetchKey
-              }
-              disabled={
-                isInflightDelete &&
-                inFlightResourcePolicyName !==
-                  row?.name + keypairResourcePolicyFetchKey
-              }
-            />
-          </Popconfirm>
+          />
         </Flex>
       ),
     },
-  ];
+  ]);
 
   const [hiddenColumnKeys, setHiddenColumnKeys] = useHiddenColumnKeysSetting(
     'KeypairResourcePolicyList',
@@ -311,10 +356,9 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
       {
         total_resource_slots: (text) =>
           _.isEmpty(text) ? '-' : JSON.stringify(text),
-        max_concurrent_sessions: (text) =>
-          text === UNLIMITED_MAX_CONCURRENT_SESSIONS ? '-' : text,
+        max_concurrent_sessions: (text) => (text ? text : '-'),
         max_containers_per_session: (text) =>
-          text === UNLIMITED_MAX_CONTAINERS_PER_SESSIONS ? '-' : text,
+          text === SIGNED_32BIT_MAX_INT ? '∞' : text,
         idle_timeout: (text) => (text ? text : '-'),
         max_session_lifetime: (text) => (text ? text : '-'),
         allowed_vfolder_hosts: (text) =>
@@ -324,7 +368,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
   };
 
   return (
-    <Flex direction="column" align="stretch">
+    <Flex direction="column" align="stretch" {...props}>
       <Flex
         direction="row"
         justify="between"
