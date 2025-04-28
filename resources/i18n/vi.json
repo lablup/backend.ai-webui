@@ -564,6 +564,7 @@
     "CannotSharePrivateAutomountFolder": "Không thể chia sẻ các thư mục vfolder tự động theo chính sách.",
     "FolderSharingNotAvailableToUser": "Chia sẻ thư mục không có sẵn cho (những) người dùng được yêu cầu.",
     "InternalServerError": "Lỗi máy chủ nội bộ. \nVui lòng thử lại sau.",
+    "InvalidBaseURL": "URL điểm cuối không hợp lệ.",
     "InvalidSignupToken": "Mã thông báo đăng ký không hợp lệ",
     "InvalidUrl": "Đó không phải là một URL hợp lệ",
     "LoginFailed": "Đăng nhập thất bại. \nKiểm tra thông tin đăng nhập.",

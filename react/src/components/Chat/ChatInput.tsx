@@ -34,6 +34,7 @@ interface ChatInputProps extends ChatRequest, ChatAttachmentsProps {
     chatRequestOptions?: ChatRequestOptions,
   ) => Promise<string | null | undefined>;
   isStreaming: boolean;
+  disabled?: boolean;
 }
 
 const ChatInput: React.FC<ChatInputProps> = ({
@@ -43,6 +44,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
   stop,
   append,
   isStreaming,
+  disabled,
   dropContainerRef,
 }) => {
   const { token } = theme.useToken();
@@ -200,6 +202,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
     <>
       <Flex style={ChatInputStyle} direction="column" align="center">
         <ChatSender
+          disabled={disabled}
           placeholder="Say something..."
           autoFocus
           value={input}

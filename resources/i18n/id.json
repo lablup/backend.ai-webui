@@ -563,6 +563,7 @@
     "CannotSharePrivateAutomountFolder": "Tidak dapat berbagi vfolder otomatis sesuai dengan kebijakan.",
     "FolderSharingNotAvailableToUser": "Berbagi folder tidak tersedia untuk pengguna yang diminta.",
     "InternalServerError": "Kesalahan Server Internal. Silakan coba lagi nanti.",
+    "InvalidBaseURL": "URL titik akhir tidak valid.",
     "InvalidSignupToken": "Token pendaftaran tidak valid",
     "InvalidUrl": "Ini bukan URL yang valid",
     "LoginFailed": "Login gagal. Periksa informasi login.",

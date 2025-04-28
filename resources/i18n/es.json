@@ -564,6 +564,7 @@
     "CannotSharePrivateAutomountFolder": "No se pueden compartir vfolders automount de acuerdo con la política.",
     "FolderSharingNotAvailableToUser": "El uso compartido de carpetas no está disponible para los usuarios solicitados.",
     "InternalServerError": "Error interno del servidor. Vuelva a intentarlo más tarde.",
+    "InvalidBaseURL": "La URL del punto final no es válida.",
     "InvalidSignupToken": "Ficha de registro no válida",
     "InvalidUrl": "No es una URL válida",
     "LoginFailed": "Error en el inicio de sesión. Compruebe la información de inicio de sesión.",

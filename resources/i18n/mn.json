@@ -562,6 +562,7 @@
     "CannotSharePrivateAutomountFolder": "Бодлогын дагуу автоматаар холбох vfolders хуваалцах боломжгүй.",
     "FolderSharingNotAvailableToUser": "Хүссэн хэрэглэгчдэд хавтас хуваалцах боломжгүй.",
     "InternalServerError": "Дотоод серверийн алдаа. \nДараа дахин оролдоно уу.",
+    "InvalidBaseURL": "EndPoint URL нь хүчин төгөлдөр бус байна.",
     "InvalidSignupToken": "Буруу бүртгүүлэх токен",
     "InvalidUrl": "Энэ нь хүчинтэй URL биш байна",
     "LoginFailed": "Нэвтэрч чадсангүй. \nНэвтрэх мэдээллийг шалгана уу.",

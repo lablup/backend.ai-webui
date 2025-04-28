@@ -563,6 +563,7 @@
     "CannotSharePrivateAutomountFolder": "Impossibile condividere le vfolders automount in linea con il criterio.",
     "FolderSharingNotAvailableToUser": "La condivisione delle cartelle non è disponibile per gli utenti richiesti.",
     "InternalServerError": "Errore interno del server. Riprovare più tardi.",
+    "InvalidBaseURL": "L'URL dell'endpoint non è valido.",
     "InvalidSignupToken": "Token di iscrizione non valido",
     "InvalidUrl": "Non è un URL valido",
     "LoginFailed": "Accesso non riuscito. Controllare le informazioni di accesso.",

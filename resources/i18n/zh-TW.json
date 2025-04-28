@@ -564,6 +564,7 @@
     "CannotSharePrivateAutomountFolder": "无法按照策略共享自动挂载 v 文件夹。",
     "FolderSharingNotAvailableToUser": "请求的用户无法共享文件夹。",
     "InternalServerError": "内部服务器错误。请稍后再试。",
+    "InvalidBaseURL": "端点 URL 无效。",
     "InvalidSignupToken": "无效注册令牌",
     "InvalidUrl": "這不是一個有效的 URL",
     "LoginFailed": "登录失败。检查登录信息。",

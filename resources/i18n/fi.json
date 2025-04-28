@@ -563,6 +563,7 @@
     "CannotSharePrivateAutomountFolder": "Automaattisesti kiinnitettyjä v-kansioita ei voida jakaa käytäntöjen mukaisesti.",
     "FolderSharingNotAvailableToUser": "Kansioiden jakaminen ei ole käytettävissä pyydetyille käyttäjille.",
     "InternalServerError": "Sisäinen palvelinvirhe. Yritä myöhemmin uudelleen.",
+    "InvalidBaseURL": "Päätepisteen URL-osoite ei ole kelvollinen.",
     "InvalidSignupToken": "Virheellinen kirjautumistunniste",
     "InvalidUrl": "Se ei ole kelvollinen URL-osoite",
     "LoginFailed": "Kirjautuminen epäonnistui. Tarkista kirjautumistiedot.",

@@ -564,6 +564,7 @@
     "CannotSharePrivateAutomountFolder": "Impossible de partager les dossiers virtuels d'automount conformément à la politique.",
     "FolderSharingNotAvailableToUser": "Le partage de dossiers n'est pas disponible pour le(s) utilisateur(s) demandé(s).",
     "InternalServerError": "Erreur de serveur interne. Veuillez réessayer plus tard.",
+    "InvalidBaseURL": "L'URL du point final n'est pas valide.",
     "InvalidSignupToken": "Jeton d'inscription invalide",
     "InvalidUrl": "Ce n'est pas une URL valide",
     "LoginFailed": "La connexion a échoué. Vérifier les informations de connexion.",

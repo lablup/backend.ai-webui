@@ -553,6 +553,7 @@
     "ErrorFetchingExternalContent": "เกิดข้อผิดพลาดในการดึงเนื้อหาภายนอก:",
     "FolderSharingNotAvailableToUser": "การแชร์โฟลเดอร์ไม่สามารถใช้ได้สำหรับผู้ใช้ที่ร้องขอ",
     "InternalServerError": "ข้อผิดพลาดของเซิร์ฟเวอร์ภายใน \nโปรดลองอีกครั้งในภายหลัง",
+    "InvalidBaseURL": "URL ปลายทางไม่ถูกต้อง",
     "InvalidSignupToken": "โทเคนการลงทะเบียนไม่ถูกต้อง",
     "InvalidUrl": "ไม่ใช่ URL ที่ถูกต้อง",
     "LoginFailed": "เข้าสู่ระบบล้มเหลว ตรวจสอบข้อมูลการเข้าสู่ระบบ",
