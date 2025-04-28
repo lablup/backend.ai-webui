@@ -168,6 +168,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
   onRequestClose,
   onCreateNewChat,
 }) => {
+  const { t } = useTranslation();
   const { message: appMessage } = App.useApp();
   const endpointResult = useLazyLoadQuery<ChatCardQuery>(
     graphql`
@@ -319,7 +320,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
       }
       ref={dropContainerRef}
     >
-      {endpoint && _.isEmpty(models) && (
+      {baseURL && endpoint && _.isEmpty(models) && (
         <CustomModelForm
           baseURL={baseURL}
           token={chat.provider.apiKey}
@@ -349,6 +350,15 @@ const ChatCard: React.FC<ChatCardProps> = ({
           closable
         />
       ) : null}
+      {!baseURL ? (
+        <Alert
+          message={t('error.InvalidBaseURL')}
+          type="error"
+          showIcon
+          className={alertStyle}
+          closable
+        />
+      ) : null}
       <ChatMessages
         messages={messages}
         input={input}
@@ -356,6 +366,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
         startTime={startTime}
       />
       <ChatInput
+        disabled={!baseURL}
         sync={chat.sync}
         input={input}
         setInput={setInput}

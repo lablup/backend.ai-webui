@@ -563,6 +563,7 @@
     "CannotSharePrivateAutomountFolder": "Tidak boleh berkongsi vfolder automount selaras dengan dasar.",
     "FolderSharingNotAvailableToUser": "Perkongsian folder tidak tersedia untuk pengguna yang diminta.",
     "InternalServerError": "Ralat pelayan dalaman. \nSila cuba lagi kemudian.",
+    "InvalidBaseURL": "URL Endpoint tidak sah.",
     "InvalidSignupToken": "Token pendaftaran tidak sah",
     "InvalidUrl": "Ia bukan URL yang sah",
     "LoginFailed": "Daftar masuk gagal. \nSemak maklumat log masuk.",

@@ -564,6 +564,7 @@
     "CannotSharePrivateAutomountFolder": "Nie można udostępniać folderów vfolder automount zgodnie z zasadami.",
     "FolderSharingNotAvailableToUser": "Udostępnianie folderów nie jest dostępne dla żądanych użytkowników.",
     "InternalServerError": "Wewnętrzny błąd serwera. Spróbuj ponownie później.",
+    "InvalidBaseURL": "Adres URL punktu końcowego jest nieprawidłowy.",
     "InvalidSignupToken": "Nieprawidłowy token rejestracji",
     "InvalidUrl": "To nie jest prawidłowy adres URL",
     "LoginFailed": "Logowanie nie powiodło się. Sprawdź dane logowania.",

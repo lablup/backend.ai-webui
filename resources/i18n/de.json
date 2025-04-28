@@ -564,6 +564,7 @@
     "CannotSharePrivateAutomountFolder": "Die Freigabe von automatisch eingehängten vOrdnern gemäß der Richtlinie ist nicht möglich.",
     "FolderSharingNotAvailableToUser": "Die gemeinsame Nutzung von Ordnern ist für den/die gewünschten Benutzer nicht verfügbar.",
     "InternalServerError": "Interner Serverfehler. Bitte versuchen Sie es später noch einmal.",
+    "InvalidBaseURL": "Die Endpunkt-URL ist nicht gültig.",
     "InvalidSignupToken": "Ungültiges Anmelde-Token",
     "InvalidUrl": "Es handelt sich nicht um eine gültige URL",
     "LoginFailed": "Anmeldung fehlgeschlagen. Überprüfen Sie die Anmeldeinformationen.",

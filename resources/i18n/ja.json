@@ -563,6 +563,7 @@
     "CannotSharePrivateAutomountFolder": "ポリシーに従って自動マウントVフォルダーを共有できない。",
     "FolderSharingNotAvailableToUser": "要求されたユーザーのフォルダ共有は利用できません。",
     "InternalServerError": "内部サーバーエラーです。後でもう一度お試しください。",
+    "InvalidBaseURL": "エンドポイント URL が無効です。",
     "InvalidSignupToken": "無効なサインアップトークン",
     "InvalidUrl": "有効な URL ではありません",
     "LoginFailed": "ログインに失敗しました。ログイン情報を確認してください。",

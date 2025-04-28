@@ -566,6 +566,7 @@
     "CannotSharePrivateAutomountFolder": "정책에 따라 자동마운트 폴더는 공유할 수 없습니다.",
     "FolderSharingNotAvailableToUser": "요청한 사용자는 폴더 공유가 불가능한 상태입니다.",
     "InternalServerError": "내부 서버 오류입니다. 나중에 다시 시도해 주세요.",
+    "InvalidBaseURL": "Endpoint URL 이 유효하지 않습니다.",
     "InvalidSignupToken": "잘못된 가입 토큰입니다",
     "InvalidUrl": "유효한 URL이 아닙니다.",
     "LoginFailed": "로그인하지 못했습니다. 로그인 정보를 확인하세요.",

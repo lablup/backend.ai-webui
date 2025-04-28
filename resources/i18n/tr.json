@@ -564,6 +564,7 @@
     "CannotSharePrivateAutomountFolder": "İlkeye uygun olarak automount vfolders paylaşılamıyor.",
     "FolderSharingNotAvailableToUser": "Klasör paylaşımı istenen kullanıcı(lar) için mevcut değil.",
     "InternalServerError": "Dahili Sunucu Hatası. Lütfen daha sonra tekrar deneyin.",
+    "InvalidBaseURL": "Bitiş noktası URL'si geçerli değil.",
     "InvalidSignupToken": "Geçersiz kayıt belirteci",
     "InvalidUrl": "Geçerli bir URL değil",
     "LoginFailed": "Giriş başarısız oldu. Giriş bilgilerini kontrol edin.",
