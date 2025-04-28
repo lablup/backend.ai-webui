@@ -151,7 +151,10 @@ export type BackendAIClient = {
     ) => string;
   };
   maintenance: {
-    rescan_images: (registry?: string) => Promise<{
+    rescan_images: (
+      registry?: string,
+      project?: string,
+    ) => Promise<{
       rescan_images: {
         msg: string;
         ok: boolean;
