@@ -35,7 +35,7 @@ export const ChatConversation: React.FC<ConversationProps> = ({
   conversationId,
   provider,
 }) => {
-  const { chats, addChat, removeChat, updateChat } =
+  const { chats, addChat, removeChat, updateChat, saveMessage } =
     useConversation(conversationId);
   const { styles } = useStyles();
 
@@ -73,6 +73,9 @@ export const ChatConversation: React.FC<ConversationProps> = ({
               }}
               onCreateNewChat={() => {
                 addChat(provider);
+              }}
+              onSaveMessage={(message) => {
+                saveMessage(chat.id, message);
               }}
               closable={chats.length > 1}
             />
