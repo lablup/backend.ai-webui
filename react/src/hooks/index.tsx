@@ -1,5 +1,5 @@
 import { MenuKeys } from '../components/MainLayout/WebUISider';
-import { preserveDotStartCase } from '../helper';
+import { getOS, preserveDotStartCase } from '../helper';
 import { useSuspenseTanQuery } from './reactQueryAlias';
 import { useEventNotStable } from './useEventNotStable';
 import _ from 'lodash';
@@ -446,6 +446,40 @@ export const useBackendAIImageMetaData = () => {
       ...imageParser,
     },
   ] as const;
+};
+
+export const useAppDownloadMap = () => {
+  const baiClient = useSuspendedBackendaiClient();
+  const appDownloadUrl = baiClient?._config?.appDownloadUrl || '';
+  const supportsWin = baiClient?.supports('use-win-instead-of-win32') || false;
+
+  const appDownloadMap = {
+    Linux: { os: 'linux', architecture: ['arm64', 'x64'], extension: 'zip' },
+    MacOS: { os: 'macos', architecture: ['arm64', 'x64'], extension: 'dmg' },
+    Windows: {
+      os: supportsWin ? 'win' : 'win32',
+      architecture: ['arm64', 'x64'],
+      extension: 'zip',
+    },
+  };
+  const detectedOS = getOS();
+  const [selectedOS, setSelectedOS] =
+    useState<keyof typeof appDownloadMap>(detectedOS);
+
+  const getDownloadLink = (architecture: 'arm64' | 'x64'): string => {
+    // @ts-ignore
+    const pkgVersion = globalThis.packageVersion;
+    const { os, extension } = appDownloadMap[selectedOS];
+    return `${appDownloadUrl}/v${pkgVersion}/backend.ai-desktop-${pkgVersion}-${os}-${architecture}.${extension}`;
+  };
+
+  return {
+    selectedOS,
+    setSelectedOS,
+    OS: _.keys(appDownloadMap) as Array<keyof typeof appDownloadMap>,
+    architectures: appDownloadMap[selectedOS]?.architecture || [],
+    getDownloadLink,
+  };
 };
 
 type BackendAIConfig = {

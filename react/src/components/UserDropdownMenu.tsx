@@ -1,9 +1,10 @@
-import { useWebUINavigate } from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import {
   useCurrentUserInfo,
   useCurrentUserRole,
   useTOTPSupported,
 } from '../hooks/backendai';
+import DesktopAppDownloadModal from './DesktopAppDownloadModal';
 import { UserProfileQuery } from './UserProfileSettingModalQuery';
 import { UserProfileSettingModalQuery } from './__generated__/UserProfileSettingModalQuery.graphql';
 import {
@@ -16,6 +17,7 @@ import {
   LogoutOutlined,
   LoadingOutlined,
   SettingOutlined,
+  DownloadOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
@@ -44,14 +46,12 @@ const UserDropdownMenu: React.FC<{
   const { token } = theme.useToken();
   const [userInfo] = useCurrentUserInfo();
   const screens = Grid.useBreakpoint();
+  const baiClient = useSuspendedBackendaiClient();
 
   const [isOpenUserSettingModal, { set: setIsOpenUserSettingModal }] =
     useToggle(false);
-  // const debouncedOpenToFixDropdownMenu = useDebounce(open, {
-  //   wait: 100,
-  //   leading: true,
-  //   trailing: false,
-  // });
+  const [isDownloadModalOpen, { toggle: toggleDownloadModal }] =
+    useToggle(false);
 
   const userRole = useCurrentUserRole();
 
@@ -158,6 +158,12 @@ const UserDropdownMenu: React.FC<{
         document.dispatchEvent(event);
       },
     },
+    baiClient._config.allowAppDownloadPanel && {
+      label: t('summary.DownloadWebUIApp'),
+      key: 'downloadDesktopApp',
+      icon: <DownloadOutlined />,
+      onClick: () => toggleDownloadModal(),
+    },
     {
       label: t('webui.menu.LogOut'),
       key: 'logout',
@@ -242,6 +248,10 @@ const UserDropdownMenu: React.FC<{
           />
         )}
       </Suspense>
+      <DesktopAppDownloadModal
+        open={isDownloadModalOpen}
+        onRequestClose={() => toggleDownloadModal()}
+      />
     </>
   );
 };

@@ -529,3 +529,11 @@ export function createDataTransferFiles(files: AttachmentsProps['items']) {
   });
   return dataTransfer.files;
 }
+
+export function getOS() {
+  const userAgent = navigator.userAgent.toLowerCase();
+  if (_.includes(userAgent, 'windows')) return 'Windows';
+  if (_.includes(userAgent, 'macintosh')) return 'MacOS';
+  if (_.includes(userAgent, 'linux')) return 'Linux';
+  return 'Linux';
+}
