@@ -1,5 +1,6 @@
 import BAICard from '../components/BAICard';
 import ChatCacheProvider, {
+  chatLocalStorageCache,
   useConversations,
 } from '../components/Chat/ChatCacheProvider';
 import { ChatConversation } from '../components/Chat/ChatConversation';
@@ -150,7 +151,7 @@ const PureChatPage: React.FC = () => {
 
 const ChatPage: React.FC = () => {
   return (
-    <ChatCacheProvider>
+    <ChatCacheProvider provider={chatLocalStorageCache}>
       <PureChatPage />
     </ChatCacheProvider>
   );
