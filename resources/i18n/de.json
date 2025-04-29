@@ -263,6 +263,7 @@
     "Type": "Art",
     "Update": "Aktualisieren",
     "UsageMode": "Nutzungsmodus",
+    "UseAutomountFolderName": "Ordner beginnen mit \".\" \nsind für die Automount -Nutzung reserviert. \nBitte wechseln Sie den Nutzungsmodus in Automount.",
     "Used": "Gebraucht",
     "User": "Benutzer",
     "UserQuotaScopeId": "Quota Scope ID",
