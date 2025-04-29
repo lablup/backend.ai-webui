@@ -8,7 +8,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { ChatPageQuery } from './__generated__/ChatPageQuery.graphql';
 import { Card, Skeleton } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
-import { Suspense, useCallback, useEffect, useState } from 'react';
+import { Suspense, useCallback, useEffect } from 'react';
 import { useLazyLoadQuery } from 'react-relay';
 import { StringParam, useQueryParams } from 'use-query-params';
 
