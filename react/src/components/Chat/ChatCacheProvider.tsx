@@ -14,6 +14,7 @@ import {
   type ReactNode,
   useCallback,
   useState,
+  useRef,
 } from 'react';
 
 const createIdGenerator = () => {
@@ -35,31 +36,22 @@ type ChatCacheDataType =
 
 type ChatCacheDataTypeSet = Map<string, ChatCacheDataType>;
 
-function chatLocalStorageProvider() {
-  const CHAT_CACHE_KEY = 'backendaiwebui.chat.message-cache';
+const CHAT_CACHE_KEY = 'backendaiwebui.chat.message-cache';
+
+export function chatLocalStorageCache() {
+  const cache = new Map<string, ChatCacheDataType>(
+    JSON.parse(localStorage.getItem(CHAT_CACHE_KEY) ?? '[]'),
+  );
+
   return {
-    get(): ChatCacheDataTypeSet {
-      return JSON.parse(localStorage.getItem(CHAT_CACHE_KEY) ?? '[]');
-    },
-    set(cache: ChatCacheDataTypeSet) {
+    cache,
+    save() {
       localStorage.setItem(
         CHAT_CACHE_KEY,
         JSON.stringify(Array.from(cache.entries())),
       );
     },
   };
-}
-
-function createChatLocalStorageCache(
-  provider: ReturnType<typeof chatLocalStorageProvider>,
-) {
-  const cache = new Map<string, ChatCacheDataType>(provider.get());
-
-  window.addEventListener('beforeunload', () => {
-    provider.set(cache);
-  });
-
-  return cache;
 }
 
 interface ChatCacheContextType {
@@ -80,17 +72,24 @@ export const useChatCache = () => {
 
 interface ChatCacheProviderProps {
   children: ReactNode;
+  provider: typeof chatLocalStorageCache;
 }
 
-const provider = chatLocalStorageProvider();
-const cache = createChatLocalStorageCache(provider);
-
 export const ChatCacheProvider: React.FC<ChatCacheProviderProps> = ({
+  provider,
   children,
 }) => {
+  const cacheRef = useRef<ReturnType<typeof chatLocalStorageCache>>(undefined);
+
+  if (!cacheRef.current) {
+    cacheRef.current = provider();
+  }
+
+  const cache = cacheRef.current;
+
   useEffect(() => {
     const updateCache = () => {
-      provider.set(cache);
+      cache.save();
     };
 
     document.addEventListener('locationPath:changed', updateCache);
@@ -98,11 +97,11 @@ export const ChatCacheProvider: React.FC<ChatCacheProviderProps> = ({
     return () => {
       document.removeEventListener('locationPath:changed', updateCache);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const value = {
-    provider: provider,
-    cache: cache,
+    cache: cache.cache,
   };
 
   return (
