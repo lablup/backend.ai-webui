@@ -2085,7 +2085,7 @@ export default class BackendAILogin extends BackendAIPage {
               style="flex: 1; white-space: normal; overflow-wrap: break-word; word-break: break-word; margin-right: 10px;"
             >
               ${this.connection_mode === 'SESSION'
-                ? _t('login.LoginWithE-mailOrUsername')
+                ? _t('login.LoginWithE-mail')
                 : _t('login.LoginWithIAM')}
             </h3>
             ${this.change_signin_support
@@ -2138,7 +2138,7 @@ export default class BackendAILogin extends BackendAIPage {
                     id="id_user_id"
                     maxlength="64"
                     autocomplete="username"
-                    label="${_t('login.E-mailOrUsername')}"
+                    label="${_t('general.E-Mail')}"
                     value="${this.user_id}"
                     @keyup="${this._submitIfEnter}"
                   ></mwc-textfield>
