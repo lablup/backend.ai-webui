@@ -11,16 +11,24 @@ import {
   ChatProviderData,
   ChatData,
   ChatModel,
+  getLatestUserMessage,
+  ChatMessage,
 } from './ChatModel';
 import { CustomModelForm } from './CustomModelForm';
 import { createOpenAI } from '@ai-sdk/openai';
 import { useChat } from '@ai-sdk/react';
-import { extractReasoningMiddleware, streamText, wrapLanguageModel } from 'ai';
+import {
+  extractReasoningMiddleware,
+  streamText,
+  UIMessage,
+  wrapLanguageModel,
+} from 'ai';
 import { Alert, App, Card, CardProps } from 'antd';
 import { createStyles } from 'antd-style';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, {
+  memo,
   useEffect,
   useMemo,
   useRef,
@@ -33,6 +41,7 @@ import { useLazyLoadQuery } from 'react-relay';
 interface ChatCardProps extends CardProps, ChatLifecycleEventType {
   chat: ChatData;
   onUpdateChat?: (partialChat: DeepPartial<ChatData>) => void;
+  onSaveMessage?: (message: ChatMessage) => void;
   closable?: boolean;
   fetchOnClient?: boolean;
   defaultEndpointId?: string;
@@ -166,13 +175,14 @@ function createBaseURL(basePath?: string, endpointUrl?: string | null) {
   }
 }
 
-const ChatCard: React.FC<ChatCardProps> = ({
+const PureChatCard: React.FC<ChatCardProps> = ({
   chat,
   onUpdateChat,
   closable,
   fetchOnClient,
   onRequestClose,
   onCreateNewChat,
+  onSaveMessage,
 }) => {
   const { t } = useTranslation();
   const { message: appMessage } = App.useApp();
@@ -248,6 +258,11 @@ const ChatCard: React.FC<ChatCardProps> = ({
           ...(chat.usingParameters ? chat.parameters : {}),
         });
 
+        const userMessage = getLatestUserMessage(body.messages);
+        if (userMessage) {
+          onSaveMessage?.(userMessage);
+        }
+
         setStartTime(Date.now());
 
         return result.toDataStreamResponse({
@@ -260,6 +275,9 @@ const ChatCard: React.FC<ChatCardProps> = ({
 
       return fetch(input, init);
     },
+    onFinish: (assistantMessage) => {
+      onSaveMessage?.(assistantMessage as UIMessage);
+    },
   });
 
   const isStreaming = status === 'streaming' || status === 'submitted';
@@ -270,6 +288,12 @@ const ChatCard: React.FC<ChatCardProps> = ({
       appMessage.error(`Error fetching models: ${modelsError}`, 5);
     }
   }, [modelsError, fetchKey, appMessage]);
+
+  useEffect(() => {
+    if (chat.messages.length > 0) {
+      setMessages(chat.messages);
+    }
+  }, [setMessages, chat.messages]);
 
   return (
     <Card
@@ -396,4 +420,4 @@ const ChatCard: React.FC<ChatCardProps> = ({
   );
 };
 
-export default ChatCard;
+export default memo(PureChatCard);

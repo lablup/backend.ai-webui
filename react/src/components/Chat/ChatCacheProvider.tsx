@@ -3,6 +3,7 @@ import {
   type ChatConversationData,
   type ChatData,
   type ChatProviderData,
+  type ChatMessage
 } from './ChatModel';
 import { useDynamicList } from 'ahooks';
 import _ from 'lodash';
@@ -13,7 +14,7 @@ import {
   useEffect,
   type ReactNode,
   useCallback,
-  useRef,
+  useState,
 } from 'react';
 
 const createIdGenerator = () => {
@@ -36,7 +37,7 @@ type ChatCacheDataType =
 type ChatCacheDataTypeSet = Map<string, ChatCacheDataType>;
 
 function chatLocalStorageProvider() {
-  const CHAT_CACHE_KEY = `chat-cache-${Math.random()}`;
+  const CHAT_CACHE_KEY = 'backendaiwebui.chat.message-cache';
   return {
     get(): ChatCacheDataTypeSet {
       return JSON.parse(localStorage.getItem(CHAT_CACHE_KEY) ?? '[]');
@@ -82,19 +83,27 @@ interface ChatCacheProviderProps {
   children: ReactNode;
 }
 
+const provider = chatLocalStorageProvider();
+const cache = createChatLocalStorageCache(provider);
+
 export const ChatCacheProvider: React.FC<ChatCacheProviderProps> = ({
   children,
 }) => {
-  const cache = useRef<ChatCacheDataTypeSet>(
-    new Map<string, ChatCacheDataType>(),
-  );
-
   useEffect(() => {
-    cache.current = createChatLocalStorageCache(chatLocalStorageProvider());
+    const updateCache = () => {
+      provider.set(cache);
+    };
+
+    document.addEventListener('locationPath:changed', updateCache);
+
+    return () => {
+      document.removeEventListener('locationPath:changed', updateCache);
+    };
   }, []);
 
   const value = {
-    cache: cache.current,
+    provider: provider,
+    cache: cache,
   };
 
   return (
@@ -106,6 +115,10 @@ export const ChatCacheProvider: React.FC<ChatCacheProviderProps> = ({
 
 export function useConversations() {
   const { cache } = useChatCache();
+  const [activeConversation, setActiveConversation] = useState<
+    string | undefined
+  >();
+
   const { list, remove, push, resetList } =
     useDynamicList<ChatConversationData>();
 
@@ -134,12 +147,15 @@ export function useConversations() {
         provider,
         usingParameters: false,
         parameters: defaultChatParameters,
+        messages: [],
       };
 
       cache.set(conversation.id, conversation);
       cache.set(chat.id, chat);
 
       push(conversation);
+
+      setActiveConversation(conversation.id);
 
       return conversation;
     },
@@ -163,9 +179,16 @@ export function useConversations() {
         // Clean up the conversations and list
         cache.delete(id);
         remove(index);
+
+        if (activeConversation === id) {
+          setActiveConversation((prevId) => {
+            const index = list.findIndex((id) => id.id === prevId);
+            return list[Math.max(index - 1, 0)].id;
+          });
+        }
       }
     },
-    [remove, list, cache],
+    [remove, list, cache, activeConversation],
   );
 
   const reset = useCallback(() => {
@@ -173,11 +196,15 @@ export function useConversations() {
       .filter((key) => key.startsWith('/conversation'))
       .map((key) => cache.get(key) as ChatConversationData);
     resetList([...conversations]);
+
+    setActiveConversation(conversations[0]?.id);
   }, [resetList, cache]);
 
-  const isEmptyCache = useCallback(() => cache.size === 0, [cache]);
+  const isEmptyCache = () => cache.size === 0;
 
   return {
+    activeConversation,
+    setActiveConversation,
     addConversation,
     removeConversation,
     reset,
@@ -200,6 +227,7 @@ export function useConversation(conversationId: string) {
         provider,
         usingParameters: false,
         parameters: defaultChatParameters,
+        messages: [],
       };
 
       cache.set(chat.id, chat);
@@ -244,10 +272,7 @@ export function useConversation(conversationId: string) {
 
         const index = list.findIndex((item) => item.id === id);
         replace(index, updatedChat);
-
-        return updatedChat;
       }
-      return undefined;
     },
     [cache, list, replace],
   );
@@ -257,6 +282,32 @@ export function useConversation(conversationId: string) {
       return (cache.get(id) as ChatData) || {};
     },
     [cache],
+  );
+
+  const saveMessage = useCallback(
+    (id: string, message: ChatMessage) => {
+      const chat = cache.get(id) as ChatData;
+      if (chat) {
+        const lastMessage = chat.messages.at(-1);
+
+        if (lastMessage?.id === id) {
+          updateChat(id, {
+            messages: [
+              ...chat.messages.slice(0, -1),
+              _.merge({}, lastMessage, {
+                content: message.content,
+                parts: message.parts,
+              }),
+            ],
+          });
+        } else {
+          updateChat(id, {
+            messages: [...chat.messages, message],
+          });
+        }
+      }
+    },
+    [cache, updateChat],
   );
 
   useEffect(() => {
@@ -274,6 +325,7 @@ export function useConversation(conversationId: string) {
     removeChat,
     updateChat,
     getChat,
+    saveMessage,
     chats: list,
   };
 }
