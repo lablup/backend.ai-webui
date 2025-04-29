@@ -39,9 +39,7 @@ function useDefaultEndpointId() {
   return endpoint_list?.items[0]?.endpoint_id || undefined;
 }
 
-// @FIXME: params and baseURL should be divided into two parts
 function useChatProvider(defaultEndpointId?: string): ChatProviderData {
-  const basePath = 'v1'; // Use OpenAPI 'v1' for OpenAI compatibility basePath,
   const [{ endpointId, modelId, agentId, apiKey }] = useQueryParams({
     endpointId: StringParam,
     agentId: StringParam,
@@ -50,7 +48,7 @@ function useChatProvider(defaultEndpointId?: string): ChatProviderData {
   });
 
   return {
-    basePath,
+    basePath: 'v1', // Use OpenAPI 'v1' for OpenAI compatibility basePath,
     baseURL: '',
     endpointId: endpointId ?? defaultEndpointId ?? undefined,
     agentId: agentId ?? undefined,
@@ -62,18 +60,17 @@ function useChatProvider(defaultEndpointId?: string): ChatProviderData {
 const PureChatPage: React.FC = () => {
   const defaultEndpointId = useDefaultEndpointId();
   const provider = useChatProvider(defaultEndpointId);
-  // @FIXME better api? conversations.push, conversations.remove, conversations.list
   const {
     conversations,
+    activeConversation,
+    setActiveConversation,
     addConversation,
     removeConversation,
     reset,
     isEmptyCache,
   } = useConversations();
-  // @FIXME: move to provider context
-  const [activeTabKey, setActiveTabKey] = useState<string | undefined>();
 
-  const tabList = conversations.map((conversation) => {
+  const tabList = conversations.map((conversation, index) => {
     return {
       key: conversation.id,
       label: conversation.label,
@@ -83,45 +80,29 @@ const PureChatPage: React.FC = () => {
   const handleTabEdit = useCallback(
     (e: TabClickEvent, action: 'add' | 'remove') => {
       if (action === 'add') {
-        const conversation = addConversation(provider);
-        setActiveTabKey(conversation.id);
+        addConversation(provider);
       } else if (action === 'remove') {
         if (conversations.length > 1) {
-          const selectTabKey = e as string;
-          removeConversation(selectTabKey);
-
-          if (activeTabKey === selectTabKey) {
-            setActiveTabKey((prevKey) => {
-              const index = conversations.findIndex(
-                (item) => item.id === prevKey,
-              );
-              return conversations[Math.max(index - 1, 0)].id;
-            });
-          }
+          removeConversation(e as string);
         }
       }
     },
-    [
-      addConversation,
-      removeConversation,
-      provider,
-      activeTabKey,
-      conversations,
-    ],
+    [addConversation, removeConversation, provider, conversations],
   );
 
-  const handleTabChange = useCallback((key: string) => {
-    setActiveTabKey(key);
-  }, []);
+  const handleTabChange = useCallback(
+    (key: string) => {
+      setActiveConversation(key);
+    },
+    [setActiveConversation],
+  );
 
-  // @FIXME: move to provider context
   useEffect(() => {
     // Check conversations cache once the component mounts first
     if (!isEmptyCache()) {
       reset();
     } else {
-      const conversation = addConversation(provider);
-      setActiveTabKey(conversation.id);
+      addConversation(provider);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -140,7 +121,7 @@ const PureChatPage: React.FC = () => {
         type: 'editable-card',
         onEdit: handleTabEdit,
       }}
-      activeTabKey={activeTabKey}
+      activeTabKey={activeConversation}
       onTabChange={handleTabChange}
     >
       <Suspense
@@ -156,8 +137,11 @@ const PureChatPage: React.FC = () => {
           </Card>
         }
       >
-        {activeTabKey && (
-          <ChatConversation conversationId={activeTabKey} provider={provider} />
+        {activeConversation && (
+          <ChatConversation
+            conversationId={activeConversation}
+            provider={provider}
+          />
         )}
       </Suspense>
     </BAICard>
