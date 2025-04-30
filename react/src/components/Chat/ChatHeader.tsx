@@ -39,6 +39,7 @@ const SyncSwitch: React.FC<SyncSwitchProps> = ({ sync, onClick }) => {
 interface ChatHeaderProps {
   showCompareMenuItem?: boolean;
   closable?: boolean;
+  clonable?: boolean;
   models: ChatModel[];
   modelId: string;
   onChangeModel: (modelId: string) => void;
@@ -50,7 +51,7 @@ interface ChatHeaderProps {
   sync: boolean;
   onChangeSync: (sync: boolean) => void;
   fetchKey: string;
-  onClickDeleteChatHistory?: () => void;
+  onClickClearChatMessages?: () => void;
   onClickClose?: () => void;
   onClickCreate?: () => void;
 }
@@ -58,6 +59,7 @@ interface ChatHeaderProps {
 const ChatHeader: React.FC<ChatHeaderProps> = ({
   showCompareMenuItem,
   closable,
+  clonable,
   models,
   modelId,
   onChangeModel,
@@ -70,7 +72,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   onClickClose,
   onClickCreate,
   fetchKey,
-  onClickDeleteChatHistory,
+  onClickClearChatMessages,
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -109,7 +111,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
       label: t('chatui.DeleteChatHistory'),
       icon: <EraserIcon />,
       onClick: () => {
-        onClickDeleteChatHistory?.();
+        onClickClearChatMessages?.();
       },
     },
     closable && {
@@ -198,7 +200,9 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             }}
           />
         )}
-        <Button onClick={() => onClickCreate?.()} icon={<PlusOutlined />} />
+        {clonable && (
+          <Button onClick={() => onClickCreate?.()} icon={<PlusOutlined />} />
+        )}
         <Dropdown menu={{ items }} trigger={['click']}>
           <Button
             type="link"
