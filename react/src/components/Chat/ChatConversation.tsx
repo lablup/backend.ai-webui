@@ -28,14 +28,12 @@ const useStyles = createStyles(({ css }) => ({
 
 export type ConversationProps = {
   conversationId: string;
-  provider: ChatProviderData;
 };
 
 export const ChatConversation: React.FC<ConversationProps> = ({
   conversationId,
-  provider,
 }) => {
-  const { chats, addChat, removeChat, updateChat, saveMessage } =
+  const { chats, addChat, removeChat, updateChat, saveMessage, clearMessages } =
     useConversation(conversationId);
   const { styles } = useStyles();
 
@@ -77,7 +75,11 @@ export const ChatConversation: React.FC<ConversationProps> = ({
               onSaveMessage={(message) => {
                 saveMessage(chat.id, message);
               }}
-              closable={chats.length > 1}
+              onClickClearChatMessages={(chat) => {
+                clearMessages(chat.id);
+              }}
+              closable={isClosable(chats?.length)}
+              clonable={isClonable(chats?.length)}
             />
           </Suspense>
         ))}
@@ -85,3 +87,11 @@ export const ChatConversation: React.FC<ConversationProps> = ({
     </Flex>
   );
 };
+
+function isClosable(chatLength: number) {
+  return chatLength > 1;
+}
+
+function isClonable(chatLength: number) {
+  return chatLength <= 10;
+}
