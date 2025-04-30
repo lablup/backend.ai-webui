@@ -34,9 +34,7 @@ type ChatCacheDataType =
   | string
   | string[];
 
-type ChatCacheDataTypeSet = Map<string, ChatCacheDataType>;
-
-const CHAT_CACHE_KEY = 'backendaiwebui.chat.message-cache';
+const CHAT_CACHE_KEY = 'backendaiwebui.chat.message_cache';
 
 export function chatLocalStorageCache() {
   const cache = new Map<string, ChatCacheDataType>(
@@ -51,11 +49,22 @@ export function chatLocalStorageCache() {
         JSON.stringify(Array.from(cache.entries())),
       );
     },
+    clear: () => {
+      cache.clear();
+      localStorage.removeItem(CHAT_CACHE_KEY);
+    },
   };
 }
 
 interface ChatCacheContextType {
-  cache: ChatCacheDataTypeSet;
+  cache: {
+    get: (key: string) => ChatCacheDataType | undefined;
+    set: (key: string, value: ChatCacheDataType) => void;
+    delete: (key: string) => void;
+    size: () => number;
+    keys: () => string[];
+    save: () => void;
+  };
 }
 
 const ChatCacheContext = createContext<ChatCacheContextType | undefined>(
@@ -85,24 +94,30 @@ export const ChatCacheProvider: React.FC<ChatCacheProviderProps> = ({
     cacheRef.current = provider();
   }
 
-  const cache = cacheRef.current;
-
-  useEffect(() => {
-    const updateCache = () => {
-      cache.save();
-    };
-
-    document.addEventListener('locationPath:changed', updateCache);
-
-    return () => {
-      document.removeEventListener('locationPath:changed', updateCache);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const value = {
-    cache: cache.cache,
+    cache: {
+      set: (key: string, value: ChatCacheDataType) => {
+        cacheRef.current?.cache.set(key, value);
+      },
+      get: (key: string) => {
+        return cacheRef.current?.cache.get(key);
+      },
+      delete: (key: string) => {
+        cacheRef.current?.cache.delete(key);
+      },
+      size: () => cacheRef.current?.cache.size ?? 0,
+      keys: () => {
+        return Array.from(cacheRef.current?.cache.keys() || []);
+      },
+      save: () => {
+        cacheRef.current?.save();
+      },
+    },
   };
+
+  document.addEventListener('backend-ai-logout', () => {
+    cacheRef.current?.clear();
+  });
 
   return (
     <ChatCacheContext.Provider value={value}>
@@ -110,6 +125,11 @@ export const ChatCacheProvider: React.FC<ChatCacheProviderProps> = ({
     </ChatCacheContext.Provider>
   );
 };
+
+function extarctLabelIndex(label: string) {
+  const match = label.match(/(\d+)/);
+  return match ? Number.parseInt(match[0], 10) : 0;
+}
 
 export function useConversations() {
   const { cache } = useChatCache();
@@ -126,17 +146,14 @@ export function useConversations() {
       const chatId = creatChatModelId('/chat');
       const maxLabelIndex =
         list.length > 0
-          ? Math.max(
-              ...list.map((c) =>
-                Number.parseInt(c.label.split(' ').pop() || '0', 10),
-              ),
-            )
+          ? Math.max(...list.map((c) => extarctLabelIndex(c.label)))
           : 0;
       const conversation = {
         id: conversationId,
         chats: [chatId],
         provider,
         label: `Chat ${maxLabelIndex + 1}`,
+        updatedAt: new Date().toISOString(),
       };
       const chat = {
         id: chatId,
@@ -148,6 +165,7 @@ export function useConversations() {
 
       cache.set(conversation.id, conversation);
       cache.set(chat.id, chat);
+      cache.save();
 
       push(conversation);
 
@@ -174,7 +192,18 @@ export function useConversations() {
 
         // Clean up the conversations and list
         cache.delete(id);
+        cache.save();
+
         remove(index);
+
+        // Change label without index if there are only one conversation
+        // list is not updated yet, so length is still 2
+        if (list.length === 2) {
+          const targetIndex = index === 0 ? 1 : 0;
+          list[targetIndex].label = 'Chat';
+          cache.set(list[targetIndex].id, list[targetIndex]);
+          cache.save();
+        }
 
         if (activeConversation === id) {
           setActiveConversation((prevId) => {
@@ -196,7 +225,7 @@ export function useConversations() {
     setActiveConversation(conversations[0]?.id);
   }, [resetList, cache]);
 
-  const isEmptyCache = () => cache.size === 0;
+  const isEmptyCache = () => cache.size() === 0;
 
   return {
     activeConversation,
@@ -212,10 +241,23 @@ export function useConversations() {
 export function useConversation(conversationId: string) {
   const { cache } = useChatCache();
   const { list, remove, push, replace, resetList } = useDynamicList<ChatData>();
+  const conversationRef = useRef(
+    cache.get(conversationId) as ChatConversationData,
+  );
+  const conversation = conversationRef.current;
+
+  const updateConversation = useCallback(
+    (data: ChatConversationData) => {
+      const updatedConversation: ChatConversationData = _.merge({}, data, {
+        updateAt: new Date().toISOString(),
+      });
+      cache.set(conversation.id, updatedConversation);
+    },
+    [cache, conversation],
+  );
 
   const addChat = useCallback(
     (provider: ChatProviderData) => {
-      const conversation = cache.get(conversationId) as ChatConversationData;
       const chat = {
         id: creatChatModelId('/chat'),
         conversationId: conversation.id,
@@ -225,14 +267,17 @@ export function useConversation(conversationId: string) {
       };
 
       cache.set(chat.id, chat);
-      cache.set(conversation.id, conversation);
 
       conversation.chats.push(chat.id);
+      updateConversation(conversation);
+
+      cache.save();
+
       push(chat);
 
       return chat.id;
     },
-    [push, conversationId, cache],
+    [push, cache, updateConversation, conversation],
   );
 
   const removeChat = useCallback(
@@ -242,18 +287,15 @@ export function useConversation(conversationId: string) {
         return;
       }
 
-      const conversation = cache.get(conversationId) as ChatConversationData;
-      if (conversation) {
-        conversation.chats = conversation.chats.filter(
-          (chatId) => chatId !== id,
-        );
-        cache.set(conversation.id, conversation);
-      }
+      conversation.chats = conversation.chats.filter((chatId) => chatId !== id);
+      updateConversation(conversation);
 
       cache.delete(id);
+      cache.save();
+
       remove(index);
     },
-    [remove, list, conversationId, cache],
+    [remove, list, updateConversation, cache, conversation],
   );
 
   const updateChat = useCallback(
@@ -261,14 +303,17 @@ export function useConversation(conversationId: string) {
       const chat = cache.get(id) as ChatData;
 
       if (chat) {
+        updateConversation(conversation);
+
         const updatedChat: ChatData = _.merge({}, chat, data);
         cache.set(id, updatedChat);
+        cache.save();
 
         const index = list.findIndex((item) => item.id === id);
         replace(index, updatedChat);
       }
     },
-    [cache, list, replace],
+    [cache, list, replace, updateConversation, conversation],
   );
 
   const getChat = useCallback(
@@ -282,8 +327,9 @@ export function useConversation(conversationId: string) {
     (id: string, message: ChatMessage) => {
       const chat = cache.get(id) as ChatData;
       if (chat) {
-        const lastMessage = chat.messages.at(-1);
+        updateConversation(conversation);
 
+        const lastMessage = chat.messages.at(-1);
         if (lastMessage?.id === id) {
           updateChat(id, {
             messages: [
@@ -301,7 +347,7 @@ export function useConversation(conversationId: string) {
         }
       }
     },
-    [cache, updateChat],
+    [cache, updateChat, updateConversation, conversation],
   );
 
   useEffect(() => {
