@@ -38,11 +38,12 @@ export interface ChatConversationData {
   chats: string[];
   provider: ChatProviderData;
   label: string;
+  updatedAt: string;
 }
 
 export interface ChatLifecycleEventType {
   onRequestClose?: (chat: ChatData) => void;
-  onCreateNewChat?: () => void;
+  onCreateNewChat?: (chat: ChatData) => void;
   onChangeEndpoint?: (endpointId: string) => void;
   onChangeModel?: (modelId: string) => void;
   onChangeAgent?: (agentId: string) => void;
