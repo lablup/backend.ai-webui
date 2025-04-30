@@ -799,6 +799,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                             valuePropName="id"
                             autoSelectDefault={!model}
                             disabled={!!endpoint}
+                            allowFolderExplorer
+                            allowCreateFolder
                           />
                         </Form.Item>
                       ) : (

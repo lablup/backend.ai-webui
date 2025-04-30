@@ -3,9 +3,15 @@ import { useUpdatableState } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { Select, SelectProps } from 'antd';
+import BAILink from './BAILink';
+import Flex from './Flex';
+import FolderCreateModal from './FolderCreateModal';
+import { useFolderExplorerOpener } from './FolderExplorerOpener';
+import { Button, Select, SelectProps, Tooltip } from 'antd';
 import _ from 'lodash';
-import React, { startTransition, useEffect } from 'react';
+import { PlusIcon } from 'lucide-react';
+import React, { startTransition, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export type VFolder = {
   name: string;
@@ -32,19 +38,27 @@ export type VFolder = {
 
 interface VFolderSelectProps extends SelectProps {
   autoSelectDefault?: boolean;
+  allowFolderExplorer?: boolean;
+  allowCreateFolder?: boolean;
   valuePropName?: 'id' | 'name';
   filter?: (vFolder: VFolder) => boolean;
 }
 
 const VFolderSelect: React.FC<VFolderSelectProps> = ({
-  filter,
   autoSelectDefault,
+  allowFolderExplorer,
+  allowCreateFolder,
   valuePropName = 'name',
+  filter,
   ...selectProps
 }) => {
   const currentProject = useCurrentProjectValue();
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
+  const { generateFolderPath } = useFolderExplorerOpener();
+  const { t } = useTranslation();
   const [value, setValue] = useControllableState(selectProps);
+  const [key, checkUpdate] = useUpdatableState('first');
+  const [isOpenCreateModal, setIsOpenCreateModal] = useState(false);
   // const { vfolder_list } = useLazyLoadQuery<VFolderSelectQuery>(
   //   graphql`
   //     # query VFolderSelectQuery($group_id: UUID) {
@@ -72,7 +86,6 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
   //     fetchPolicy: "store-and-network",
   //   }
   // );
-  const [key, checkUpdate] = useUpdatableState('first');
 
   const { data } = useSuspenseTanQuery({
     queryKey: ['VFolderSelectQuery', key],
@@ -102,27 +115,82 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoSelectDefault]);
+
   return (
-    <Select
-      showSearch
-      optionFilterProp={'label'}
-      {...selectProps}
-      value={value}
-      onChange={setValue}
-      onDropdownVisibleChange={(open) => {
-        if (open) {
-          startTransition(() => {
-            checkUpdate();
-          });
+    <Flex gap="xs">
+      <Select
+        showSearch
+        optionFilterProp={'label'}
+        {...selectProps}
+        value={value}
+        labelRender={({ label, value }) =>
+          allowFolderExplorer ? (
+            <BAILink
+              type="hover"
+              to={generateFolderPath(_.toString(value))}
+              onClick={(e: React.MouseEvent<HTMLSpanElement>) => {
+                e.stopPropagation();
+              }}
+              onMouseDown={(e: React.MouseEvent<HTMLSpanElement>) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            >
+              {label}
+            </BAILink>
+          ) : (
+            label
+          )
         }
-      }}
-      options={_.map(filteredVFolders, (vfolder) => {
-        return {
-          label: vfolder?.name,
-          value: vfolder?.[valuePropName],
-        };
-      })}
-    />
+        onChange={setValue}
+        onDropdownVisibleChange={(open) => {
+          if (open) {
+            startTransition(() => {
+              checkUpdate();
+            });
+          }
+        }}
+        options={_.map(filteredVFolders, (vfolder) => {
+          return {
+            label: vfolder?.name,
+            value: vfolder?.[valuePropName],
+          };
+        })}
+      />
+      {allowCreateFolder ? (
+        <Tooltip title={t('data.CreateANewStorageFolder')}>
+          <Button
+            icon={<PlusIcon />}
+            type="primary"
+            ghost
+            onClick={() => {
+              setIsOpenCreateModal(true);
+            }}
+          />
+        </Tooltip>
+      ) : null}
+      <FolderCreateModal
+        usageMode="model"
+        open={isOpenCreateModal}
+        onRequestClose={(result) => {
+          setIsOpenCreateModal(false);
+          if (result) {
+            startTransition(() => {
+              checkUpdate();
+              setValue(
+                result.id,
+                _.map(filteredVFolders, (vfolder) => {
+                  return {
+                    label: vfolder?.name,
+                    value: vfolder?.[valuePropName],
+                  };
+                }),
+              );
+            });
+          }
+        }}
+      />
+    </Flex>
   );
 };
 
