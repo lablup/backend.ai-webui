@@ -770,6 +770,7 @@ export default class BackendAIImport extends BackendAIPage {
               <img
                 src="/resources/badge.svg"
                 style="margin-top:5px;margin-bottom:5px;"
+                width="147"
               />
               <mwc-textfield
                 id="notebook-badge-url"
