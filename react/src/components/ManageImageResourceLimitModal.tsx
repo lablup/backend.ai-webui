@@ -98,7 +98,7 @@ const ManageImageResourceLimitModal: React.FC<
           if (errors && errors?.length > 0) {
             const errorMsgList = _.map(errors, (error) => error.message);
             for (const error of errorMsgList) {
-              message.error(error, 2.5);
+              message.error(error);
             }
           } else {
             message.success(t('environment.DescImageResourceModified'));

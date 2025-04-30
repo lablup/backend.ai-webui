@@ -363,7 +363,7 @@ const ContainerRegistryListBefore2409: React.FC<{
                             (error) => error.message,
                           );
                           for (const error of errorMsgList) {
-                            message.error(error, 2.5);
+                            message.error(error);
                           }
                         } else {
                           startReloadTransition(() => {

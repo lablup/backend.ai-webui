@@ -686,7 +686,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                                     error.message || t('dialog.ErrorOccurred'),
                                 );
                                 for (const error of errorMsgList) {
-                                  message.error(error, 2.5);
+                                  message.error(error);
                                 }
                               } else {
                                 setEditingAutoScalingRule(null);

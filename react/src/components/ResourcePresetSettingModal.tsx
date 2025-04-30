@@ -135,7 +135,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
               } else if (errors && errors?.length > 0) {
                 const errorMsgList = _.map(errors, (err) => err.message);
                 _.forEach(errorMsgList, (err) => {
-                  message.error(err, 2.5);
+                  message.error(err);
                 });
                 onRequestClose(false);
               } else {
@@ -161,7 +161,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
                 } else if (errors && errors?.length > 0) {
                   const errorMsgList = _.map(errors, (err) => err?.message);
                   _.forEach(errorMsgList, (err) => {
-                    message.error(err, 2.5);
+                    message.error(err);
                   });
                   onRequestClose(false);
                 } else {
@@ -187,7 +187,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
                 } else if (errors && errors?.length > 0) {
                   const errorMsgList = _.map(errors, (err) => err?.message);
                   _.forEach(errorMsgList, (err) => {
-                    message.error(err, 2.5);
+                    message.error(err);
                   });
                   onRequestClose(false);
                 } else {

@@ -378,7 +378,7 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
                         (error) => error.message,
                       );
                       for (const error of errorMsgList) {
-                        message.error(error, 2.5);
+                        message.error(error);
                       }
                       return;
                     }

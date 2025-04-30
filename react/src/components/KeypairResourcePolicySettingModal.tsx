@@ -279,7 +279,7 @@ const KeypairResourcePolicySettingModal: React.FC<
                 return;
               }
               if (errors && errors.length > 0) {
-                errors.forEach((error) => message.error(error.message, 2.5));
+                errors.forEach((error) => message.error(error.message));
                 onRequestClose(false);
                 return;
               }
