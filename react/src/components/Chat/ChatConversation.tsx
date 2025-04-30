@@ -1,7 +1,6 @@
 import Flex from '../Flex';
 import { useConversation } from './ChatCacheProvider';
 import ChatCard from './ChatCard';
-import type { ChatProviderData } from './ChatModel';
 import { Card, Skeleton } from 'antd';
 import { createStyles } from 'antd-style';
 import _ from 'lodash';
