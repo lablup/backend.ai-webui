@@ -1,7 +1,7 @@
 import Flex from '../Flex';
 import EndpointTokenSelect from './EndpointTokenSelect';
 import { ReloadOutlined } from '@ant-design/icons';
-import { Alert, Button, Form, Input, theme } from 'antd';
+import { Alert, Button, Form, Input, theme, Grid } from 'antd';
 import type { FormInstance } from 'antd';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -37,6 +37,7 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
   const { t } = useTranslation();
   const { token: themeToken } = theme.useToken();
   const formRef = useRef<FormInstance>(null);
+  const screens = Grid.useBreakpoint();
 
   const { origin, pathname: basePath } = parseBaseURL(baseURL);
 
@@ -48,6 +49,7 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
         paddingRight: themeToken.paddingContentHorizontalLG,
         paddingLeft: themeToken.paddingContentHorizontalLG,
         backgroundColor: themeToken.colorBgContainer,
+        overflow: 'hidden',
       }}
     >
       <Form
@@ -72,7 +74,7 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
         <Form.Item label={t('modelService.BasePath')} name="basePath">
           <Input
             placeholder="v1"
-            addonBefore={origin}
+            addonBefore={screens.xxl ? origin : undefined}
             defaultValue={basePath}
           />
         </Form.Item>
