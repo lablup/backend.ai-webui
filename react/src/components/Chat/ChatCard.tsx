@@ -42,7 +42,9 @@ interface ChatCardProps extends CardProps, ChatLifecycleEventType {
   chat: ChatData;
   onUpdateChat?: (partialChat: DeepPartial<ChatData>) => void;
   onSaveMessage?: (message: ChatMessage) => void;
+  onClickClearChatMessages?: (chat: ChatData) => void;
   closable?: boolean;
+  clonable?: boolean;
   fetchOnClient?: boolean;
   defaultEndpointId?: string;
 }
@@ -179,10 +181,12 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   chat,
   onUpdateChat,
   closable,
+  clonable,
   fetchOnClient,
   onRequestClose,
   onCreateNewChat,
   onSaveMessage,
+  onClickClearChatMessages,
 }) => {
   const { t } = useTranslation();
   const { message: appMessage } = App.useApp();
@@ -345,13 +349,15 @@ const PureChatCard: React.FC<ChatCardProps> = ({
           // others
           fetchKey={fetchKey}
           closable={closable}
+          clonable={clonable}
           onClickCreate={() => {
             onCreateNewChat?.(chat);
           }}
           onClickClose={() => {
             onRequestClose?.(chat);
           }}
-          onClickDeleteChatHistory={() => {
+          onClickClearChatMessages={() => {
+            onClickClearChatMessages?.(chat);
             setMessages([]);
           }}
           parameters={chat.parameters}

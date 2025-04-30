@@ -310,7 +310,7 @@ export function useConversation(conversationId: string) {
       if (chat) {
         updateConversation(conversation);
 
-        const updatedChat: ChatData = _.merge({}, chat, data);
+        const updatedChat = _.merge({}, chat, data);
         cache.set(id, updatedChat);
         cache.save();
 
@@ -355,6 +355,23 @@ export function useConversation(conversationId: string) {
     [cache, updateChat, updateConversation, conversation],
   );
 
+  const clearMessages = useCallback(
+    (id: string) => {
+      const chat = cache.get(id) as ChatData;
+      if (chat) {
+        updateConversation(conversation);
+        chat.messages = [];
+
+        cache.set(id, chat);
+        cache.save();
+
+        const index = list.findIndex((item) => item.id === id);
+        replace(index, chat);
+      }
+    },
+    [cache, replace, updateConversation, conversation],
+  );
+
   useEffect(() => {
     const conversation = cache.get(conversationId) as ChatConversationData;
     if (conversation) {
@@ -371,6 +388,7 @@ export function useConversation(conversationId: string) {
     updateChat,
     getChat,
     saveMessage,
+    clearMessages,
     chats: list,
   };
 }

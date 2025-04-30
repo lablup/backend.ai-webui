@@ -7,7 +7,7 @@ import ChatCacheProvider, {
 import { ChatConversation } from '../components/Chat/ChatConversation';
 import type { ChatProviderData } from '../components/Chat/ChatModel';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { Card, Skeleton } from 'antd';
+import { App, Card, Skeleton } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import { Suspense, useCallback, useEffect } from 'react';
 import { useLazyLoadQuery } from 'react-relay';
@@ -59,6 +59,7 @@ function useChatProvider(defaultEndpointId?: string): ChatProviderData {
 }
 
 const PureChatPage: React.FC = () => {
+  const { message: appMessage } = App.useApp();
   const defaultEndpointId = useDefaultEndpointId();
   const provider = useChatProvider(defaultEndpointId);
   const {
@@ -81,14 +82,18 @@ const PureChatPage: React.FC = () => {
   const handleTabEdit = useCallback(
     (e: TabClickEvent, action: 'add' | 'remove') => {
       if (action === 'add') {
-        addConversation(provider);
+        if (conversations.length < 10) {
+          addConversation(provider);
+        } else {
+          appMessage.error(`You can't add more than 10 conversations`, 5);
+        }
       } else if (action === 'remove') {
         if (conversations.length > 1) {
           removeConversation(e as string);
         }
       }
     },
-    [addConversation, removeConversation, provider, conversations],
+    [addConversation, removeConversation, provider, conversations, appMessage],
   );
 
   const handleTabChange = useCallback(
@@ -139,10 +144,7 @@ const PureChatPage: React.FC = () => {
         }
       >
         {activeConversation && (
-          <ChatConversation
-            conversationId={activeConversation}
-            provider={provider}
-          />
+          <ChatConversation conversationId={activeConversation} />
         )}
       </Suspense>
     </BAICard>
