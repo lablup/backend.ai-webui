@@ -364,7 +364,7 @@ export function useConversation(conversationId: string) {
         replace(index, chat);
       }
     },
-    [cache, replace, updateConversation, conversation],
+    [cache, replace, list, updateConversation, conversation],
   );
 
   useEffect(() => {
