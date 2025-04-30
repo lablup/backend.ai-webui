@@ -239,6 +239,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
     body: {
       modelId: modelId,
     },
+    initialMessages: chat.messages,
     experimental_throttle: 50,
     fetch: async (input, init) => {
       if (fetchOnClient || modelId === 'custom') {
@@ -275,8 +276,10 @@ const PureChatCard: React.FC<ChatCardProps> = ({
 
       return fetch(input, init);
     },
-    onFinish: (assistantMessage) => {
-      onSaveMessage?.(assistantMessage as UIMessage);
+    onFinish: (assistantMessage, { finishReason }) => {
+      if (finishReason === 'stop') {
+        onSaveMessage?.(assistantMessage as UIMessage);
+      }
     },
   });
 
@@ -342,7 +345,9 @@ const PureChatCard: React.FC<ChatCardProps> = ({
           // others
           fetchKey={fetchKey}
           closable={closable}
-          onClickCreate={onCreateNewChat}
+          onClickCreate={() => {
+            onCreateNewChat?.(chat);
+          }}
           onClickClose={() => {
             onRequestClose?.(chat);
           }}
