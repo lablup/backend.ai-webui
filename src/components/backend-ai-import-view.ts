@@ -748,6 +748,7 @@ export default class BackendAIImport extends BackendAIPage {
           width="352"
           height="490"
           narrow
+          scrollableY
         >
           <div slot="message">
             <backend-ai-resource-monitor
