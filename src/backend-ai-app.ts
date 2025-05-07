@@ -106,7 +106,6 @@ const loadPage =
       case 'agent':
       case 'resource':
         import('./components/backend-ai-resource-group-list.js');
-        import('./components/backend-ai-storage-proxy-list.js');
         break;
       case 'verify-email':
         import('./components/backend-ai-email-verification-view.js');

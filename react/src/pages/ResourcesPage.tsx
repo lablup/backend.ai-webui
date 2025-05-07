@@ -1,4 +1,5 @@
 import AgentList from '../components/AgentList';
+import StorageProxyList from '../components/StorageProxyList';
 import { Card, Skeleton, theme } from 'antd';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -58,8 +59,16 @@ const ResourcesPage: React.FC<ResourcesPageProps> = (props) => {
         </Suspense>
       ) : null}
       {curTabKey === 'storages' ? (
-        // @ts-ignore
-        <backend-ai-storage-proxy-list active />
+        <Suspense
+          fallback={
+            <Skeleton
+              active
+              style={{ padding: token.paddingContentVerticalLG }}
+            />
+          }
+        >
+          <StorageProxyList />
+        </Suspense>
       ) : null}
       {curTabKey === 'resourceGroup' ? (
         // @ts-ignore
