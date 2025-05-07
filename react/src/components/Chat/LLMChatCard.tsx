@@ -292,7 +292,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
               models={models}
               value={modelId}
               onChange={setModelId}
-              allowCustomModel={allowCustomModel}
+              // allowCustomModel={allowCustomModel}
             />
             <Dropdown menu={{ items }} trigger={['click']}>
               <Button
