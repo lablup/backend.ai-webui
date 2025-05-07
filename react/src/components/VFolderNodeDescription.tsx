@@ -1,14 +1,19 @@
-import { convertDecimalSizeUnit, toLocalId } from '../helper';
+import { convertDecimalSizeUnit, filterEmptyItem, toLocalId } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
+import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { usePainKiller } from '../hooks/usePainKiller';
 import UserUnionIcon from './BAIIcons/UserUnionIcon';
+import BAISelect from './BAISelect';
 import BAITag from './BAITag';
 import Flex from './Flex';
 import { statusTagColor } from './VFolderNodes';
-import VFolderPermissionCell from './VFolderPermissionCell';
 import { VFolderNodeDescriptionFragment$key } from './__generated__/VFolderNodeDescriptionFragment.graphql';
+import { VFolderNodeDescriptionPermissionRefreshQuery } from './__generated__/VFolderNodeDescriptionPermissionRefreshQuery.graphql';
 import { CheckCircleOutlined, UserOutlined } from '@ant-design/icons';
 import {
+  App,
   Descriptions,
   theme,
   Tooltip,
@@ -20,7 +25,7 @@ import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useFragment } from 'react-relay';
+import { fetchQuery, useFragment, useRelayEnvironment } from 'react-relay';
 
 const useStyle = createStyles(({ css }) => {
   return {
@@ -36,19 +41,31 @@ const useStyle = createStyles(({ css }) => {
 
 interface VFolderNodeDescriptionProps extends DescriptionsProps {
   vfolderNodeFrgmt?: VFolderNodeDescriptionFragment$key | null;
+  onRequestRefresh?: () => void;
 }
 
 const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
   vfolderNodeFrgmt,
+  onRequestRefresh,
   ...props
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { styles } = useStyle();
+  const { message } = App.useApp();
 
+  const relayEnv = useRelayEnvironment();
   const currentProject = useCurrentProjectValue();
   const userRole = useCurrentUserRole();
+  const painKiller = usePainKiller();
+  const baiClient = useSuspendedBackendaiClient();
   const [currentUser] = useCurrentUserInfo();
+
+  const updateMutation = useTanMutation({
+    mutationFn: ({ permission, id }: { permission: string; id: string }) => {
+      return baiClient.vfolder.update_folder({ permission }, id);
+    },
+  });
 
   const vfolderNode = useFragment(
     graphql`
@@ -91,20 +108,24 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
     vfolderId.slice(4),
   ];
 
-  const items: DescriptionsProps['items'] = [
+  const items: DescriptionsProps['items'] = filterEmptyItem([
     {
       key: 'path',
       label: (
-        <Typography.Text
-          copyable={{
-            text: `${quotaScopeId}/${vfolderIdPrefix1}/${vfolderIdPrefix2}/${vfolderIdRest}`,
-          }}
-          style={{
-            color: token.colorTextLabel,
-          }}
+        <Tooltip
+          title={`${quotaScopeId}/${vfolderIdPrefix1}/${vfolderIdPrefix2}/${vfolderIdRest}`}
         >
-          {t('data.folders.Path')}
-        </Typography.Text>
+          <Typography.Text
+            copyable={{
+              text: `${quotaScopeId}/${vfolderIdPrefix1}/${vfolderIdPrefix2}/${vfolderIdRest}`,
+            }}
+            style={{
+              color: token.colorTextLabel,
+            }}
+          >
+            {t('data.folders.Path')}
+          </Typography.Text>
+        </Tooltip>
       ),
       children: (
         <Flex align="start" gap={'xxs'} wrap="wrap">
@@ -124,9 +145,12 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
               >
                 {quotaScopeId}
               </Typography.Text>
-              <Typography.Text type="secondary">
-                Quota scope ID ({_.split(vfolderNode?.quota_scope_id, ':')?.[0]}
-                )
+              <Typography.Text
+                type="secondary"
+                style={{ fontSize: token.fontSizeSM }}
+              >
+                Quota Scope ID (
+                {_.upperFirst(_.split(vfolderNode?.quota_scope_id, ':')?.[0])})
               </Typography.Text>
             </Flex>
           </Tooltip>
@@ -152,7 +176,12 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
                   {vfolderIdRest}
                 </Typography.Text>
               </Flex>
-              <Typography.Text type="secondary">VFolder ID</Typography.Text>
+              <Typography.Text
+                type="secondary"
+                style={{ fontSize: token.fontSizeSM }}
+              >
+                VFolder ID
+              </Typography.Text>
             </Flex>
           </Tooltip>
         </Flex>
@@ -196,10 +225,56 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
           </Flex>
         ),
     },
-    {
+    vfolderNode?.user === currentUser.uuid && {
       key: 'permission',
-      label: t('data.folders.Permission'),
-      children: <VFolderPermissionCell vfolderFrgmt={vfolderNode} />,
+      label: t('data.folders.MountPermission'),
+      children: (
+        <BAISelect
+          defaultValue={
+            vfolderNode.permission === 'wd' ? 'rw' : vfolderNode.permission
+          }
+          options={[
+            { value: 'ro', label: t('data.ReadOnly') },
+            { value: 'rw', label: t('data.ReadWrite') },
+          ]}
+          onChange={(value) => {
+            updateMutation.mutate(
+              { permission: value, id: vfolderId },
+              {
+                onSuccess: () => {
+                  message.success(t('data.permission.PermissionModified'));
+                  document.dispatchEvent(
+                    new CustomEvent('backend-ai-folder-updated'),
+                  );
+
+                  // To update GraphQL relay node
+                  fetchQuery<VFolderNodeDescriptionPermissionRefreshQuery>(
+                    relayEnv,
+                    graphql`
+                      query VFolderNodeDescriptionPermissionRefreshQuery(
+                        $id: String!
+                      ) {
+                        vfolder_node(id: $id) {
+                          permission
+                          permissions
+                        }
+                      }
+                    `,
+                    {
+                      id: vfolderNode.id,
+                    },
+                  ).toPromise();
+                  onRequestRefresh?.();
+                },
+                onError: (error: { message: string }) => {
+                  message.error(painKiller.relieve(error?.message));
+                },
+              },
+            );
+          }}
+          popupMatchSelectWidth={false}
+        />
+      ),
     },
     {
       key: 'owner',
@@ -212,23 +287,15 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
           </Flex>
         ) : null,
     },
-    {
+    vfolderNode.user !== null && {
       key: 'user',
       label: t('data.User'),
-      children: (
-        <Typography.Text copyable={vfolderNode.user !== null}>
-          {vfolderNode.user}
-        </Typography.Text>
-      ),
+      children: <Typography.Text copyable>{vfolderNode.user}</Typography.Text>,
     },
-    {
+    vfolderNode.group !== null && {
       key: 'group',
       label: t('data.Project'),
-      children: (
-        <Typography.Text copyable={vfolderNode.group !== null}>
-          {vfolderNode.group}
-        </Typography.Text>
-      ),
+      children: <Typography.Text copyable>{vfolderNode.group}</Typography.Text>,
     },
     {
       key: 'cloneable',
@@ -256,7 +323,7 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
       label: t('data.folders.CreatedAt'),
       children: dayjs(vfolderNode.created_at).format('lll'),
     },
-  ];
+  ]);
 
   return (
     <Descriptions
