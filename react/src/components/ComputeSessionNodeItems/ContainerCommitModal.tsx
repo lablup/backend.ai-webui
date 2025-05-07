@@ -27,11 +27,10 @@ const ContainerCommitModal: React.FC<ContainerCommitModalProps> = ({
   ...modalProps
 }) => {
   const { t } = useTranslation();
-  const formRef = useRef<FormInstance>(null);
-  const baiClient = useSuspendedBackendaiClient();
-
   const { upsertNotification } = useSetBAINotification();
   const [isConfirmLoading, setIsConfirmLoading] = useState<boolean>(false);
+  const formRef = useRef<FormInstance>(null);
+  const baiClient = useSuspendedBackendaiClient();
 
   const session = useFragment(
     graphql`
@@ -49,39 +48,51 @@ const ContainerCommitModal: React.FC<ContainerCommitModalProps> = ({
     formRef?.current
       ?.validateFields()
       .then((values: { imageName: string }) => {
-        baiClient.computeSession
-          .convertSessionToImage(session?.name ?? '', values.imageName)
-          .then((res: { task_id: string }) => {
-            onRequestClose();
-            upsertNotification({
-              key: 'commitSession:' + session?.name,
-              backgroundTask: {
-                taskId: res.task_id,
-                status: 'pending',
-                onChange: {
-                  pending: t('session.CommitOnGoing'),
-                  resolved: t('session.CommitFinished'),
-                  rejected: t('session.CommitFailed'),
-                },
+        upsertNotification({
+          message: 'commitSession: ' + session?.name,
+          open: true,
+          backgroundTask: {
+            status: 'pending',
+            promise: baiClient.computeSession.convertSessionToImage(
+              session?.name ?? '',
+              values.imageName,
+            ),
+            onChange: {
+              pending: t('session.CommitOnGoing'),
+              resolved: (data) => {
+                const task_id = (data as { task_id: string }).task_id;
+                onRequestClose();
+                return {
+                  backgroundTask: {
+                    status: 'pending',
+                    taskId: task_id,
+                    promise: null,
+                    percent: 0,
+                    onChange: {
+                      pending: t('session.CommitOnGoing'),
+                      resolved: t('session.CommitFinished'),
+                      rejected: t('session.CommitFailed'),
+                    },
+                  },
+                };
               },
-              duration: 0,
-              message: 'commitSession: ' + session?.name,
-              open: true,
-            });
-          })
-          .catch((err: any) => {
-            if (err?.message) {
-              throw new Error(err.message);
-            } else {
-              throw err;
-            }
-          })
-          .finally(() => {
-            setIsConfirmLoading(false);
-          });
+              rejected: (err: any) => {
+                return {
+                  open: true,
+                  type: 'error',
+                  message: 'commitSession: ' + session?.name,
+                  description: err?.message,
+                  toText: t('button.SeeErrorLogs'),
+                  to: `/usersettings?tab=logs`,
+                };
+              },
+            },
+          },
+        });
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {})
+      .finally(() => {
+        setIsConfirmLoading(false);
       });
   };
 
