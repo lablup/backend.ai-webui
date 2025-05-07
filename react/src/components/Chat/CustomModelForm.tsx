@@ -74,7 +74,9 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
         <Form.Item label={t('modelService.BasePath')} name="basePath">
           <Input
             placeholder="v1"
-            addonBefore={screens.xxl ? origin : undefined}
+            addonBefore={
+              screens.xxl || screens.xl || screens.lg ? origin : undefined
+            }
             defaultValue={basePath}
           />
         </Form.Item>
