@@ -193,6 +193,7 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
         row_id
         name
         scaling_group @required(action: NONE)
+        access_key
         kernel_nodes {
           edges {
             node {
@@ -236,11 +237,7 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
             (err.statusCode === 404 || err.statusCode === 500))
         ) {
           // BAI client destroy try to request 3times as default
-          return baiClient.destroy(
-            session.row_id,
-            baiClient._config.accessKey,
-            isForce,
-          );
+          return baiClient.destroy(session.row_id, session.access_key, isForce);
         } else {
           throw err;
         }
