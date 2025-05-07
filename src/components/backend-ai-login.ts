@@ -1550,6 +1550,8 @@ export default class BackendAILogin extends BackendAIPage {
                   this.notification.show();
                 }
                 return Promise.resolve(false);
+                // TODO: check if force2FA is enabled and User is not registered
+                // If so, show the dialog to register OTP(React component)
               } else if (response.fail_reason) {
                 this.open();
                 if (response.fail_reason == 'OTP not provided') {
