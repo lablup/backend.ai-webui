@@ -169,7 +169,7 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
             size="small"
             dataSource={imagesToInstall.map(
               (image) =>
-                `${image?.registry}/${image?.namespace ?? image?.name}/${image?.tag}`,
+                `${image?.registry}/${image?.namespace ?? image?.name}:${image?.tag}`,
             )}
             style={{
               width: '100%',
