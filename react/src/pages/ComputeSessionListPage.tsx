@@ -255,7 +255,8 @@ const ComputeSessionListPage = () => {
               style={{
                 height: lg ? 200 : undefined,
               }}
-              fetchKey={fetchKey}
+              isRefetching={deferredFetchKey !== fetchKey}
+              fetchKey={deferredFetchKey}
             />
           </Suspense>
         </Col>
