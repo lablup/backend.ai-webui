@@ -238,6 +238,7 @@
     "InvalidEmail": "Virheellinen sähköpostiosoite",
     "Invited": "Kutsuttu",
     "InvitedFolders": "Kutsutut kansiot",
+    "InvitedFoldersTooltip": "{{ count }} -kansiokutsut odottavat vastausta.",
     "Limit": "Raja",
     "ModelStore": "Mallikauppa",
     "Models": "Mallit",
