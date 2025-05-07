@@ -117,6 +117,7 @@ function MainLayout() {
     };
   }, [navigate]);
 
+  // alert(1);
   return (
     <Layout>
       <CSSTokenVariables />
@@ -232,6 +233,7 @@ function MainLayout() {
                 </Flex>
               </Suspense>
               <Suspense>
+                {/* TODO: create Component to receive "required totp registration" event from backend-ai-login */}
                 <ForceTOTPChecker />
               </Suspense>
               <Suspense>
