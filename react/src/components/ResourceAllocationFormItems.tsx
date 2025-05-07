@@ -468,10 +468,12 @@ const ResourceAllocationFormItems: React.FC<
           });
           updateResourceFieldsBasedOnPreset(autoSelectedPreset);
         } else {
-          // if the current preset is not available in the current resource group, set to custom
-          form.setFieldsValue({
-            allocationPreset: 'custom',
-          });
+          // if the current preset is not available in the current resource group, set to "minimum-required".
+          if (baiClient._config.allowCustomResourceAllocation) {
+            form.setFieldValue('allocationPreset', 'minimum-required');
+          } else {
+            form.setFieldValue('allocationPreset', null);
+          }
         }
       }
       ensureValidAcceleratorType();
@@ -492,6 +494,7 @@ const ResourceAllocationFormItems: React.FC<
     // below are functions wrapped by useEventNotStable
     ensureValidAcceleratorType,
     updateResourceFieldsBasedOnPreset,
+    baiClient._config.allowCustomResourceAllocation,
   ]);
 
   // This effect is for auto updating the resource fields when minimum-required preset is selected
@@ -519,8 +522,12 @@ const ResourceAllocationFormItems: React.FC<
         <Form.Item
           label={t('resourcePreset.ResourcePresets')}
           name="allocationPreset"
-          required
           style={{ marginBottom: token.marginXS }}
+          rules={[
+            {
+              required: true,
+            },
+          ]}
         >
           <ResourcePresetSelect
             showCustom={baiClient._config.allowCustomResourceAllocation}
