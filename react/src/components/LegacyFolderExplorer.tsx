@@ -6,6 +6,7 @@ import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import BAISelect from './BAISelect';
 import Flex from './Flex';
+import VFolderNodeDescription from './VFolderNodeDescription';
 import { LegacyFolderExplorerPermissionRefreshQuery } from './__generated__/LegacyFolderExplorerPermissionRefreshQuery.graphql';
 import { LegacyFolderExplorerQuery } from './__generated__/LegacyFolderExplorerQuery.graphql';
 import { LegacyFolderExplorerVFolderFragment$key } from './__generated__/LegacyFolderExplorerVFolderFragment.graphql';
@@ -24,6 +25,7 @@ import {
   Grid,
   Image,
   Skeleton,
+  Splitter,
   Tooltip,
   Typography,
   theme,
@@ -67,6 +69,8 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
 
   const [isWritable, setIsWritable] = useState<boolean>(false);
   const [isSelected, setIsSelected] = useState<boolean>(false);
+  // Use a state because the Splitter component has an issue with defaultSize not working properly when refreshing.
+  const [sizes, setSizes] = useState<Array<string | number>>(['60%', '40%']);
   // TODO: Events are sent and received as normal,
   // but the Lit Element is not rendered and the values inside are not available but ref is available.
   const folderExplorerRef = useRef<HTMLDivElement>(null);
@@ -116,6 +120,7 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
           permission
           unmanaged_path @since(version: "25.04.0")
           ...LegacyFolderExplorerVFolderNodeFragment
+          ...VFolderNodeDescriptionFragment
         }
       }
     `,
@@ -254,84 +259,101 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
       styles={{
         body: {
           minHeight: '475px',
+          height: sizes[sizes.length - 1] === 0 ? 475 : undefined,
         },
       }}
       {...modalProps}
     >
-      {vfolder_node?.unmanaged_path ? (
-        <Alert
-          message={t('explorer.NoExplorerSupportForUnmanagedFolder')}
-          showIcon
-        />
-      ) : (
-        <>
-          <Flex
-            justify="end"
-            gap={token.marginSM}
-            style={{
-              position: 'absolute',
-              top: `calc(var(--general-modal-header-height, 69px) + 9px)`,
-              right: token.paddingLG,
-            }}
-          >
-            <Button
-              danger
-              disabled={!isSelected || !isWritable}
-              icon={<DeleteOutlined />}
-              onClick={() => {
-                // @ts-ignore
-                folderExplorerRef.current?._openDeleteMultipleFileDialog();
+      <Splitter
+        layout={lg ? 'horizontal' : 'vertical'}
+        style={{ gap: token.size, maxHeight: 'calc(100vh - 200px)' }}
+        onResize={setSizes}
+      >
+        {vfolder_node?.unmanaged_path ? (
+          <Splitter.Panel size={sizes[0]}>
+            <Alert
+              message={t('explorer.NoExplorerSupportForUnmanagedFolder')}
+              showIcon
+            />
+          </Splitter.Panel>
+        ) : (
+          <Splitter.Panel size={sizes[0]} style={{ position: 'relative' }}>
+            <Flex
+              justify="end"
+              gap={token.marginSM}
+              style={{
+                position: 'absolute',
+                right: 0,
               }}
             >
-              {lg && t('button.Delete')}
-            </Button>
-            <Button
-              disabled={!isWritable}
-              icon={<FolderAddOutlined />}
-              onClick={() => {
-                //@ts-ignore
-                folderExplorerRef.current?.openMkdirDialog();
-              }}
-            >
-              {lg && t('button.Create')}
-            </Button>
-            <Dropdown
-              disabled={!isWritable}
-              menu={{
-                items: [
-                  {
-                    key: 'upload files',
-                    label: t('data.explorer.UploadFiles'),
-                    icon: <FileAddOutlined />,
-                    onClick: () => {
-                      // @ts-ignore
-                      folderExplorerRef.current?.handleUpload('file');
+              <Button
+                danger
+                disabled={!isSelected || !isWritable}
+                icon={<DeleteOutlined />}
+                onClick={() => {
+                  // @ts-ignore
+                  folderExplorerRef.current?._openDeleteMultipleFileDialog();
+                }}
+              >
+                {lg && t('button.Delete')}
+              </Button>
+              <Button
+                disabled={!isWritable}
+                icon={<FolderAddOutlined />}
+                onClick={() => {
+                  //@ts-ignore
+                  folderExplorerRef.current?.openMkdirDialog();
+                }}
+              >
+                {lg && t('button.Create')}
+              </Button>
+              <Dropdown
+                disabled={!isWritable}
+                menu={{
+                  items: [
+                    {
+                      key: 'upload files',
+                      label: t('data.explorer.UploadFiles'),
+                      icon: <FileAddOutlined />,
+                      onClick: () => {
+                        // @ts-ignore
+                        folderExplorerRef.current?.handleUpload('file');
+                      },
                     },
-                  },
-                  {
-                    key: 'upload folder',
-                    label: t('data.explorer.UploadFolder'),
-                    icon: <FolderAddOutlined />,
-                    onClick: () => {
-                      // @ts-ignore
-                      folderExplorerRef.current?.handleUpload('folder');
+                    {
+                      key: 'upload folder',
+                      label: t('data.explorer.UploadFolder'),
+                      icon: <FolderAddOutlined />,
+                      onClick: () => {
+                        // @ts-ignore
+                        folderExplorerRef.current?.handleUpload('folder');
+                      },
                     },
-                  },
-                ],
-              }}
-            >
-              <Button icon={<UploadOutlined />}>{lg && 'Upload'}</Button>
-            </Dropdown>
-          </Flex>
-          {/* <script type="module" src="./dist/components/backend-ai-folder-explorer.js"></script> */}
-          {/* @ts-ignore */}
-          <backend-ai-folder-explorer
-            ref={folderExplorerRef}
-            active
-            vfolderID={vfolderID}
-          />
-        </>
-      )}
+                  ],
+                }}
+              >
+                <Button icon={<UploadOutlined />}>{lg && 'Upload'}</Button>
+              </Dropdown>
+            </Flex>
+            {/* <script type="module" src="./dist/components/backend-ai-folder-explorer.js"></script> */}
+            {/* @ts-ignore */}
+            <backend-ai-folder-explorer
+              ref={folderExplorerRef}
+              active
+              vfolderID={vfolderID}
+            />
+          </Splitter.Panel>
+        )}
+        <Splitter.Panel
+          size={sizes[1]}
+          min={lg ? 400 : undefined}
+          // FIXME: Antd Splitter bug: Splitter with vertical layout continuously changes panel size upon repeated collapses
+          // issue: https://github.com/ant-design/ant-design/issues/53751//
+          collapsible={lg ? true : false}
+        >
+          <VFolderNodeDescription vfolderNodeFrgmt={vfolder_node} />
+        </Splitter.Panel>
+      </Splitter>
     </BAIModal>
   );
 };
