@@ -487,7 +487,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
     const path = this.breadcrumb.concat(fn).join('/');
     const job = globalThis.backendaiclient.vfolder.request_download_token(
       path,
-      this.vfolder,
+      this.vfolderName,
       archive,
     );
     job
@@ -527,6 +527,60 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
           this.notification.show(true, err);
         }
       });
+  }
+  /**
+   * Downloads multiple selected files.
+   * If one of the downloads fails, it is skipped, and the remaining files are downloaded.
+   *
+   * @return {Promise<void>}
+   */
+  async _downloadMultipleFiles() {
+    if (!this._isDownloadable(this.vhost)) {
+      this.notification.text = _text('data.explorer.DownloadNotAllowed');
+      this.notification.show();
+      return;
+    }
+
+    const files: Array<{
+      name: string;
+      type: 'FILE' | 'DIRECTORY';
+    }> = this.fileListGrid.selectedItems.map((file) => ({
+      name: this.breadcrumb.concat(file.name).join('/'),
+      type: file.type,
+    }));
+    try {
+      const { token, url } =
+        await globalThis.backendaiclient.vfolder.request_multi_download_token(
+          files.map((file) => file.name),
+          this.vfolder,
+          this.vfolderName,
+          'zip',
+        );
+      const downloadURL = `${url}?token=${token}`;
+      if (globalThis.iOSSafari) {
+        this.downloadURL = downloadURL;
+        // this.downloadFileDialog.show();
+        URL.revokeObjectURL(downloadURL);
+      } else {
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.addEventListener('click', function (e) {
+          e.stopPropagation();
+        });
+        a.href = downloadURL;
+
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(downloadURL);
+      }
+    } catch (err) {
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+    }
   }
 
   /* File upload and download */
