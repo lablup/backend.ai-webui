@@ -3,6 +3,8 @@ import {
   convertBinarySizeUnit,
   localeCompare,
   filterEmptyItem,
+  sizeUnitToBinarySizeUnit,
+  SizeUnit,
 } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import Flex from './Flex';
@@ -102,8 +104,41 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
     {
       title: t('resourcePreset.SharedMemory'),
       dataIndex: 'shared_memory',
-      render: (text) =>
-        text ? convertBinarySizeUnit(text + '', 'g')?.numberFixed : '-',
+      render: (text) => {
+        if (!text) {
+          return '-';
+        }
+        const convertedValue = convertBinarySizeUnit(text + 'b', 'g', 2, true);
+        const convertedValueByAuto = convertBinarySizeUnit(
+          text + 'b',
+          'auto',
+          2,
+          true,
+        );
+        return (
+          <Flex gap="xxs">
+            <Typography.Text>
+              {Number(convertedValue?.numberFixed).toString()}
+            </Typography.Text>
+            <div>
+              <Typography.Text type="secondary">
+                {sizeUnitToBinarySizeUnit(convertedValue?.unit as SizeUnit)}
+                {Number(convertedValue?.numberFixed).toString() === '0' &&
+                text !== '0' ? (
+                  <>
+                    &#40;{Number(convertedValueByAuto?.numberFixed).toString()}
+                    &nbsp;
+                    {sizeUnitToBinarySizeUnit(
+                      convertedValueByAuto?.unit as SizeUnit,
+                    )}
+                    &#41;
+                  </>
+                ) : null}
+              </Typography.Text>
+            </div>
+          </Flex>
+        );
+      },
     },
     baiClient?.supports('resource-presets-per-resource-group') && {
       title: t('general.ResourceGroup'),

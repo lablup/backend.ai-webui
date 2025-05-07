@@ -1,4 +1,8 @@
-import { convertBinarySizeUnit } from '../helper';
+import {
+  convertBinarySizeUnit,
+  SizeUnit,
+  sizeUnitToBinarySizeUnit,
+} from '../helper';
 import {
   BaseResourceSlotName,
   KnownAcceleratorResourceSlotName,
@@ -53,6 +57,9 @@ const ResourceNumber: React.FC<ResourceNumberProps> = ({
         : amount;
   };
 
+  const convertedAmount = formatAmount(amount);
+  const convertedAmountByAuto = convertBinarySizeUnit(amount, 'auto', 2, true);
+
   return (
     <Flex direction="row" gap="xxs">
       {mergedResourceSlots?.[type] ? (
@@ -62,16 +69,30 @@ const ResourceNumber: React.FC<ResourceNumberProps> = ({
       )}
 
       <Typography.Text>
-        {formatAmount(amount)}
+        {convertedAmount}
         {_.isUndefined(max)
           ? null
           : max === 'Infinity'
             ? '~∞'
             : `~${formatAmount(max)}`}
       </Typography.Text>
-      <Typography.Text type="secondary">
-        {mergedResourceSlots?.[type]?.display_unit || ''}
-      </Typography.Text>
+      <div>
+        <Typography.Text type="secondary">
+          {mergedResourceSlots?.[type]?.display_unit || ''}
+          {mergedResourceSlots?.[type]?.number_format.binary &&
+          convertedAmount === '0' &&
+          amount !== '0' ? (
+            <>
+              &#40;{Number(convertedAmountByAuto?.numberFixed).toString()}&nbsp;
+              {sizeUnitToBinarySizeUnit(
+                convertedAmountByAuto?.unit as SizeUnit,
+              )}
+              &#41;
+            </>
+          ) : null}
+        </Typography.Text>
+      </div>
+
       {type === 'mem' && opts?.shmem && opts?.shmem > 0 ? (
         <Typography.Text
           type="secondary"
