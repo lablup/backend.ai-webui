@@ -374,7 +374,8 @@ const PureChatCard: React.FC<ChatCardProps> = ({
     >
       {baseURL && endpoint && _.isEmpty(models) && (
         <CustomModelForm
-          baseURL={baseURL}
+          endpointUrl={endpoint?.url ?? ''}
+          basePath={chat.provider.basePath}
           token={chat.provider.apiKey}
           endpointId={endpoint?.endpoint_id}
           loading={isPendingUpdate}
@@ -385,7 +386,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
                 ...chat,
                 provider: {
                   ...chat.provider,
-                  baseURL: data.baseURL,
+                  basePath: data.basePath,
                   apiKey: data.token,
                 },
               });
