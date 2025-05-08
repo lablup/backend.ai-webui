@@ -927,6 +927,7 @@
     "TokenGenerated": "Token erzeugt",
     "TokenGenerationFailed": "Token-Generierung fehlgeschlagen. Bitte versuchen Sie es erneut.",
     "TrafficRatio": "Verkehrsdichte",
+    "TryModelOnYourOwn": "Probieren Sie den Modelldienst alleine aus",
     "UpdateService": "Update-Service",
     "Validate": "Bestätigen",
     "ValidationInfo": "Validierungsinformationen"

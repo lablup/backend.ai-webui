@@ -916,6 +916,7 @@
     "TokenGenerated": "สร้างโทเคนแล้ว",
     "TokenGenerationFailed": "การสร้างโทเคนล้มเหลว กรุณาลองอีกครั้ง",
     "TrafficRatio": "สัดส่วนการจราจร",
+    "TryModelOnYourOwn": "ลองใช้บริการรุ่นด้วยตัวคุณเอง",
     "UpdateService": "อัปเดตบริการ",
     "Validate": "ตรวจสอบ",
     "ValidationInfo": "ข้อมูลการตรวจสอบ"

@@ -927,6 +927,7 @@
     "TokenGenerated": "Jeton généré",
     "TokenGenerationFailed": "La génération de jetons a échoué. Veuillez réessayer.",
     "TrafficRatio": "Ratio de trafic",
+    "TryModelOnYourOwn": "Essayez le service modèle par vous-même",
     "UpdateService": "Service de mise à jour",
     "Validate": "Valider",
     "ValidationInfo": "Informations de validation"

@@ -933,6 +933,7 @@
     "TokenGenerated": "Token generated",
     "TokenGenerationFailed": "Token generation failed. please try again.",
     "TrafficRatio": "Traffic Ratio",
+    "TryModelOnYourOwn": "Try model service on your own",
     "UpdateService": "Update Service",
     "Validate": "Validate",
     "ValidationInfo": "Validation Info"

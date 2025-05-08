@@ -930,6 +930,7 @@
     "TokenGenerated": "토큰 생성이 완료되었습니다.",
     "TokenGenerationFailed": "토큰 생성에 실패했습니다. 잠시 후 다시 시도해주세요.",
     "TrafficRatio": "트래픽 비율",
+    "TryModelOnYourOwn": "나만의 모델 서비스 만들기",
     "UpdateService": "서비스 업데이트",
     "Validate": "유효성 검사",
     "ValidationInfo": "유효성 검사 결과"

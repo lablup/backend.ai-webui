@@ -927,6 +927,7 @@
     "TokenGenerated": "Mã thông báo được tạo",
     "TokenGenerationFailed": "Tạo mã thông báo không thành công. \nvui lòng thử lại.",
     "TrafficRatio": "Tỷ lệ lưu lượng truy cập",
+    "TryModelOnYourOwn": "Hãy tự mình thử dịch vụ mô hình",
     "UpdateService": "Dịch vụ cập nhật",
     "Validate": "Xác thực",
     "ValidationInfo": "Thông tin xác thực"

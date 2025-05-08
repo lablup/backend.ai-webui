@@ -926,6 +926,7 @@
     "TokenGenerated": "トークン生成が完了しました。",
     "TokenGenerationFailed": "トークン生成に失敗しました。しばらくしてから再試行してください。",
     "TrafficRatio": "トラフィック率",
+    "TryModelOnYourOwn": "自分でモデルサービスを試してください",
     "UpdateService": "アップデートサービス",
     "Validate": "検証",
     "ValidationInfo": "検証情報"

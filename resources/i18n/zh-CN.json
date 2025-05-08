@@ -927,6 +927,7 @@
     "TokenGenerated": "生成的令牌",
     "TokenGenerationFailed": "令牌生成失败，请重试。",
     "TrafficRatio": "交通比率",
+    "TryModelOnYourOwn": "自己尝试模型服务",
     "UpdateService": "更新服务",
     "Validate": "证实",
     "ValidationInfo": "验证信息"

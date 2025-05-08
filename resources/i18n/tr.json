@@ -927,6 +927,7 @@
     "TokenGenerated": "Token oluşturuldu",
     "TokenGenerationFailed": "Jeton üretimi başarısız oldu. lütfen tekrar deneyin.",
     "TrafficRatio": "Trafik Oranı",
+    "TryModelOnYourOwn": "Model hizmetini kendi başınıza deneyin",
     "UpdateService": "Güncelleme Hizmeti",
     "Validate": "Doğrula",
     "ValidationInfo": "Doğrulama Bilgisi"
