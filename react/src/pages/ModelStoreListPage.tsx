@@ -5,6 +5,7 @@ import TextHighlighter from '../components/TextHighlighter';
 import UnmountModalAfterClose from '../components/UnmountModalAfterClose';
 import { ModelCardModalFragment$key } from '../components/__generated__/ModelCardModalFragment.graphql';
 import { useUpdatableState } from '../hooks';
+import { useModelConfig } from '../hooks/useModelConfig';
 import { ModelStoreListPageQuery } from './__generated__/ModelStoreListPageQuery.graphql';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import {
@@ -54,6 +55,7 @@ const ModelStoreListPage: React.FC = () => {
     pageSize: 100,
   });
   const { styles } = useStyles();
+  const { sorting } = useModelConfig();
 
   const [currentModelInfo, setCurrentModelInfo] =
     useState<ModelCardModalFragment$key | null>();
@@ -227,7 +229,6 @@ const ModelStoreListPage: React.FC = () => {
                 ) ||
                 false;
             }
-
             return (
               (_.isEmpty(selectedCategories) ||
                 _.includes(selectedCategories, info?.category)) &&
@@ -239,17 +240,8 @@ const ModelStoreListPage: React.FC = () => {
             );
           })
           .sort((a, b) => {
-            const specialNames = [
-              // FIXME: NIM supported image need to be located first.
-              'calm3-22b-chat',
-              'Meta-Llama-3-8B-Instruct',
-              'gemma-2-27b-it',
-              'Llama-3.2-11B-Vision-Instruct',
-              'stable-diffusion-3-medium',
-              'Talkativot UI',
-            ];
-            const aIndex = specialNames.indexOf(a?.name || '');
-            const bIndex = specialNames.indexOf(b?.name || '');
+            const aIndex = sorting.indexOf(a?.name || '');
+            const bIndex = sorting.indexOf(b?.name || '');
 
             if (aIndex !== -1 && bIndex !== -1) {
               return aIndex - bIndex;

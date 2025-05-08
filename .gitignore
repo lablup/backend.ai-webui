@@ -134,6 +134,8 @@ src/plugins/*
 #
 !.vscode/i18n-ally-*
 
+# Ignore model_config.json
+/src/resources/model_config.json
 
 # Ignore all other lock files
 package-lock.json
