@@ -774,6 +774,9 @@ class Client {
     if (this.isManagerVersionCompatibleWith('25.6.0')) {
       this._features['user-metrics'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('25.1.0')) {
+      this._features['image_rescan_by_project'] = true
+    }
   }
 
   /**
@@ -4507,30 +4510,42 @@ class Maintenance {
   /**
    * Rescan image from repository
    * @param {string} registry - registry. default is ''
+   * @param {string | undefined} project - project.
    */
-  async rescan_images(registry = ''): Promise<any> {
+  async rescan_images(registry = '', project?: string): Promise<any> {
     if (this.client.is_admin === true) {
       let q, v;
+      const params: Record<string, string> = {};
+      
       if (registry !== '') {
         registry = decodeURIComponent(registry);
-        q =
-          `mutation($registry: String) {` +
-          `  rescan_images(registry: $registry) {` +
-          `    ok msg task_id ` +
-          `  }` +
-          `}`;
-        v = {
-          registry: registry,
-        };
+        params.registry = registry;
+
+        if (project !== undefined) {
+        // The 'project' parameter is only applicable when 'registry' is provided.
+          params.project = project
+        }
+      }
+  
+      if (Object.keys(params).length > 0) {
+        const paramList = Object.keys(params).map(p => `$${p}: String`).join(', ');
+        const argList = Object.keys(params).map(p => `${p}: $${p}`).join(', ');
+        
+        q = `mutation(${paramList}) {
+          rescan_images(${argList}) {
+            ok msg task_id
+          }
+        }`;
+        v = params;
       } else {
-        q =
-          `mutation {` +
-          `  rescan_images {` +
-          `    ok msg task_id ` +
-          `  }` +
-          `}`;
+        q = `mutation {
+          rescan_images {
+            ok msg task_id
+          }
+        }`;
         v = {};
       }
+      
       return this.client.query(q, v, null);
     } else {
       return Promise.resolve(false);
