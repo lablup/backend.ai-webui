@@ -379,6 +379,7 @@ export function useConversation(conversationId: string) {
         (chatId) => cache.get(chatId) as ChatData,
       );
       resetList([...chats]);
+      conversationRef.current = conversation;
     }
   }, [conversationId, resetList, cache]);
 
