@@ -930,6 +930,7 @@
     "TokenGenerated": "Gettone generato",
     "TokenGenerationFailed": "La generazione del token non è riuscita. Riprovare.",
     "TrafficRatio": "Rapporto di traffico",
+    "TryModelOnYourOwn": "Prova il servizio modello da solo",
     "UpdateService": "Servizio di aggiornamento",
     "Validate": "Convalidare",
     "ValidationInfo": "Informazioni sulla convalida"
