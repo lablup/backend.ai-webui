@@ -93,6 +93,7 @@
     "Share": "Jaa",
     "Unset": "Unset",
     "Update": "Päivitys",
+    "Upload": "Lataa",
     "Yes": "Kyllä"
   },
   "chatui": {
@@ -327,6 +328,7 @@
       "CloneFolder": "Kloonattu kansio",
       "Cloneable": "Kloonattavissa",
       "Control": "Valvonta",
+      "CreatedAt": "Luotu jhk",
       "Delete": "Poista",
       "DeleteAFolder": "Poista kansio",
       "DeleteForever": "Poista ikuisesti",
@@ -359,6 +361,7 @@
       "LeaveFolder": "Jätä kansio",
       "Location": "Sijainti",
       "MaxFolderQuota": "Kansioiden enimmäiskiintiö",
+      "MaxSize": "Enimmäiskoko",
       "ModifyPermissions": "Muokkaa käyttöoikeuksia",
       "MountPermission": "Kiinnityslupa",
       "MoveToTrash": "Siirry roskakoriin",
@@ -375,6 +378,7 @@
       "OpenAFolder": "Avaa kansio",
       "Owner": "Omistaja",
       "Ownership": "Omistus",
+      "Path": "Säilytyspolku",
       "Permission": "Lupa",
       "ProjectFolderAlertDesc": "Tämä kansio on jaettu kaikkien projektin jäsenten kanssa",
       "Rename": "Nimeä uudelleen",

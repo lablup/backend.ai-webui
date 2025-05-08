@@ -93,6 +93,7 @@
     "Share": "分享",
     "Unset": "未设置",
     "Update": "更新",
+    "Upload": "上傳",
     "Yes": "是的"
   },
   "chatui": {
@@ -328,6 +329,7 @@
       "CloneFolder": "克隆文件夹",
       "Cloneable": "可克隆",
       "Control": "控制",
+      "CreatedAt": "創建在",
       "Delete": "刪除",
       "DeleteAFolder": "刪除文件夾",
       "DeleteForever": "永久刪除",
@@ -360,6 +362,7 @@
       "LeaveFolder": "离开文件夹",
       "Location": "地點",
       "MaxFolderQuota": "最大文件夹配额",
+      "MaxSize": "最大尺寸",
       "ModifyPermissions": "修改权限",
       "MountPermission": "安裝許可",
       "MoveToTrash": "移至垃圾箱",
@@ -376,6 +379,7 @@
       "OpenAFolder": "打开文件夹",
       "Owner": "所有者",
       "Ownership": "所有權",
+      "Path": "存儲路徑",
       "Permission": "允許",
       "ProjectFolderAlertDesc": "該文件夾與項目的所有成員共享",
       "Rename": "改名",

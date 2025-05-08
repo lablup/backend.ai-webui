@@ -92,6 +92,7 @@
     "Share": "Хуваалцах",
     "Unset": "Тохируулаагүй",
     "Update": "Шинэчлэх",
+    "Upload": "Байршуулах",
     "Yes": "Тийм ээ"
   },
   "chatui": {
@@ -327,6 +328,7 @@
       "CloneFolder": "Фолдерыг хувилах",
       "Cloneable": "Cloneable",
       "Control": "Хяналт",
+      "CreatedAt": "Бүтэмж дээр бүтсэн",
       "Delete": "Устгах",
       "DeleteAFolder": "Фолдер устгах",
       "DeleteForever": "Бүрмөсөн устгах",
@@ -359,6 +361,7 @@
       "LeaveFolder": "Фолдерыг орхи",
       "Location": "Байршил",
       "MaxFolderQuota": "Фолдерын хамгийн их квот",
+      "MaxSize": "Хамгийн их хэмжээ",
       "ModifyPermissions": "Зөвшөөрлийг өөрчлөх",
       "MountPermission": "ЗОРИУЛСАН",
       "MoveToTrash": "Хогийн сав руу шилжих",
@@ -375,6 +378,7 @@
       "OpenAFolder": "Фолдер нээх",
       "Owner": "Эзэмшигч",
       "Ownership": "Эзэмшил",
+      "Path": "Агуулахын зам",
       "Permission": "Зөвшөөрөл",
       "ProjectFolderAlertDesc": "Энэ фолдерыг төслийн бүх гишүүдээр хуваалцаж байна",
       "Rename": "Нэрийг нь өөрчлөх",

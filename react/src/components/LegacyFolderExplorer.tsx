@@ -1,12 +1,8 @@
 import { toGlobalId } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useCurrentUserInfo } from '../hooks/backendai';
-import { useTanMutation } from '../hooks/reactQueryAlias';
-import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import BAISelect from './BAISelect';
 import Flex from './Flex';
-import { LegacyFolderExplorerPermissionRefreshQuery } from './__generated__/LegacyFolderExplorerPermissionRefreshQuery.graphql';
+import VFolderNodeDescription from './VFolderNodeDescription';
 import { LegacyFolderExplorerQuery } from './__generated__/LegacyFolderExplorerQuery.graphql';
 import { LegacyFolderExplorerVFolderFragment$key } from './__generated__/LegacyFolderExplorerVFolderFragment.graphql';
 import { LegacyFolderExplorerVFolderNodeFragment$key } from './__generated__/LegacyFolderExplorerVFolderNodeFragment.graphql';
@@ -18,12 +14,12 @@ import {
 } from '@ant-design/icons';
 import {
   Alert,
-  App,
   Button,
   Dropdown,
   Grid,
   Image,
   Skeleton,
+  Splitter,
   Tooltip,
   Typography,
   theme,
@@ -32,12 +28,7 @@ import { createStyles } from 'antd-style';
 import graphql from 'babel-plugin-relay/macro';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  useLazyLoadQuery,
-  useFragment,
-  fetchQuery,
-  useRelayEnvironment,
-} from 'react-relay';
+import { useLazyLoadQuery, useFragment } from 'react-relay';
 
 const useStyles = createStyles(({ token, css }) => ({
   baiModalHeader: css`
@@ -62,17 +53,14 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
   const { token } = theme.useToken();
   const { styles } = useStyles();
   const { lg } = Grid.useBreakpoint();
-  const { message } = App.useApp();
-  const [currentUser] = useCurrentUserInfo();
 
   const [isWritable, setIsWritable] = useState<boolean>(false);
   const [isSelected, setIsSelected] = useState<boolean>(false);
+  // Use a state because the Splitter component has an issue with defaultSize not working properly when refreshing.
+  const [sizes, setSizes] = useState<Array<string | number>>(['60%', '40%']);
   // TODO: Events are sent and received as normal,
   // but the Lit Element is not rendered and the values inside are not available but ref is available.
   const folderExplorerRef = useRef<HTMLDivElement>(null);
-  const baiClient = useSuspendedBackendaiClient();
-  const painKiller = usePainKiller();
-  const relayEnv = useRelayEnvironment();
 
   // ensure the client is connected
   useSuspendedBackendaiClient();
@@ -116,6 +104,7 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
           permission
           unmanaged_path @since(version: "25.04.0")
           ...LegacyFolderExplorerVFolderNodeFragment
+          ...VFolderNodeDescriptionFragment
         }
       }
     `,
@@ -127,14 +116,6 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
       fetchPolicy: modalProps.open ? 'network-only' : 'store-only',
     },
   );
-
-  const permission = vfolder_node?.permission || vfolder?.permission;
-
-  const updateMutation = useTanMutation({
-    mutationFn: ({ permission, id }: { permission: string; id: string }) => {
-      return baiClient.vfolder.update_folder({ permission }, id);
-    },
-  });
 
   return (
     <BAIModal
@@ -162,89 +143,44 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
           >
             {!vfolder_node?.unmanaged_path ? (
               <>
-                <Button
-                  icon={
-                    <Image
-                      width="18px"
-                      src="/resources/icons/filebrowser.svg"
-                      alt="File Browser"
-                      preview={false}
-                    />
-                  }
-                  onClick={() =>
-                    // @ts-ignore
-                    folderExplorerRef.current?._executeFileBrowser()
-                  }
-                >
-                  {lg && t('data.explorer.ExecuteFileBrowser')}
-                </Button>
-                <Button
-                  icon={
-                    <Image
-                      width="18px"
-                      src="/resources/icons/sftp.png"
-                      alt="SSH / SFTP"
-                      preview={false}
-                    />
-                  }
-                  onClick={() => {
-                    // @ts-ignore
-                    folderExplorerRef.current?._executeSSHProxyAgent();
-                  }}
-                >
-                  {lg && t('data.explorer.RunSSH/SFTPserver')}
-                </Button>
+                <Tooltip title={!lg && t('data.explorer.ExecuteFileBrowser')}>
+                  <Button
+                    icon={
+                      <Image
+                        width="18px"
+                        src="/resources/icons/filebrowser.svg"
+                        alt="File Browser"
+                        preview={false}
+                      />
+                    }
+                    onClick={() =>
+                      // @ts-ignore
+                      folderExplorerRef.current?._executeFileBrowser()
+                    }
+                  >
+                    {lg && t('data.explorer.ExecuteFileBrowser')}
+                  </Button>
+                </Tooltip>
+                <Tooltip title={!lg && t('data.explorer.RunSSH/SFTPserver')}>
+                  <Button
+                    icon={
+                      <Image
+                        width="18px"
+                        src="/resources/icons/sftp.png"
+                        alt="SSH / SFTP"
+                        preview={false}
+                      />
+                    }
+                    onClick={() => {
+                      // @ts-ignore
+                      folderExplorerRef.current?._executeSSHProxyAgent();
+                    }}
+                  >
+                    {lg && t('data.explorer.RunSSH/SFTPserver')}
+                  </Button>
+                </Tooltip>
               </>
             ) : null}
-            {vfolder_node?.user === currentUser.uuid && (
-              <BAISelect
-                tooltip={t('data.folders.MountPermission')}
-                defaultValue={permission === 'wd' ? 'rw' : permission}
-                options={[
-                  { value: 'ro', label: t('data.ReadOnly') },
-                  { value: 'rw', label: t('data.ReadWrite') },
-                ]}
-                onChange={(value) => {
-                  updateMutation.mutate(
-                    { permission: value, id: vfolderID },
-                    {
-                      onSuccess: () => {
-                        message.success(
-                          t('data.permission.PermissionModified'),
-                        );
-                        document.dispatchEvent(
-                          new CustomEvent('backend-ai-folder-updated'),
-                        );
-
-                        // To update GraphQL relay node
-                        fetchQuery<LegacyFolderExplorerPermissionRefreshQuery>(
-                          relayEnv,
-                          graphql`
-                            query LegacyFolderExplorerPermissionRefreshQuery(
-                              $id: String!
-                            ) {
-                              vfolder_node(id: $id) {
-                                permission
-                                permissions
-                              }
-                            }
-                          `,
-                          {
-                            id: vfolder_node.id,
-                          },
-                        ).toPromise();
-                        // @ts-ignore
-                        folderExplorerRef.current?._fetchVFolder();
-                      },
-                      onError: (error) => {
-                        message.error(painKiller.relieve(error?.message));
-                      },
-                    },
-                  );
-                }}
-                popupMatchSelectWidth={false}
-              />
-            )}
           </Flex>
         </Flex>
       }
@@ -253,85 +189,120 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
       }}
       styles={{
         body: {
-          minHeight: '475px',
+          minHeight: token.screenXSMax,
+          // Set height to avoid the modal from growing too large when description is collapsed
+          height: sizes[sizes.length - 1] === 0 ? token.screenXSMax : undefined,
         },
       }}
       {...modalProps}
     >
-      {vfolder_node?.unmanaged_path ? (
-        <Alert
-          message={t('explorer.NoExplorerSupportForUnmanagedFolder')}
-          showIcon
-        />
-      ) : (
-        <>
-          <Flex
-            justify="end"
-            gap={token.marginSM}
-            style={{
-              position: 'absolute',
-              top: `calc(var(--general-modal-header-height, 69px) + 9px)`,
-              right: token.paddingLG,
-            }}
+      <Splitter
+        layout={lg ? 'horizontal' : 'vertical'}
+        style={{ gap: token.size, maxHeight: 'calc(100vh - 200px)' }}
+        onResize={setSizes}
+      >
+        {vfolder_node?.unmanaged_path ? (
+          <Splitter.Panel size={sizes[0]}>
+            <Alert
+              message={t('explorer.NoExplorerSupportForUnmanagedFolder')}
+              showIcon
+            />
+          </Splitter.Panel>
+        ) : (
+          <Splitter.Panel
+            size={sizes[0]}
+            min={lg ? 400 : undefined}
+            style={{ position: 'relative' }}
           >
-            <Button
-              danger
-              disabled={!isSelected || !isWritable}
-              icon={<DeleteOutlined />}
-              onClick={() => {
-                // @ts-ignore
-                folderExplorerRef.current?._openDeleteMultipleFileDialog();
+            <Flex
+              justify="end"
+              gap={token.marginSM}
+              style={{
+                right: 0,
               }}
             >
-              {lg && t('button.Delete')}
-            </Button>
-            <Button
-              disabled={!isWritable}
-              icon={<FolderAddOutlined />}
-              onClick={() => {
-                //@ts-ignore
-                folderExplorerRef.current?.openMkdirDialog();
-              }}
-            >
-              {lg && t('button.Create')}
-            </Button>
-            <Dropdown
-              disabled={!isWritable}
-              menu={{
-                items: [
-                  {
-                    key: 'upload files',
-                    label: t('data.explorer.UploadFiles'),
-                    icon: <FileAddOutlined />,
-                    onClick: () => {
-                      // @ts-ignore
-                      folderExplorerRef.current?.handleUpload('file');
+              <Tooltip title={!lg && t('button.Delete')}>
+                <Button
+                  danger
+                  disabled={!isSelected || !isWritable}
+                  icon={<DeleteOutlined />}
+                  onClick={() => {
+                    // @ts-ignore
+                    folderExplorerRef.current?._openDeleteMultipleFileDialog();
+                  }}
+                >
+                  {lg && t('button.Delete')}
+                </Button>
+              </Tooltip>
+              <Tooltip title={!lg && t('button.Create')}>
+                <Button
+                  disabled={!isWritable}
+                  icon={<FileAddOutlined />}
+                  onClick={() => {
+                    // @ts-ignore
+                    folderExplorerRef.current?.openCreateFileDialog();
+                  }}
+                >
+                  {lg && t('button.Create')}
+                </Button>
+              </Tooltip>
+              <Dropdown
+                disabled={!isWritable}
+                menu={{
+                  items: [
+                    {
+                      key: 'upload files',
+                      label: t('data.explorer.UploadFiles'),
+                      icon: <FileAddOutlined />,
+                      onClick: () => {
+                        // @ts-ignore
+                        folderExplorerRef.current?.handleUpload('file');
+                      },
                     },
-                  },
-                  {
-                    key: 'upload folder',
-                    label: t('data.explorer.UploadFolder'),
-                    icon: <FolderAddOutlined />,
-                    onClick: () => {
-                      // @ts-ignore
-                      folderExplorerRef.current?.handleUpload('folder');
+                    {
+                      key: 'upload folder',
+                      label: t('data.explorer.UploadFolder'),
+                      icon: <FolderAddOutlined />,
+                      onClick: () => {
+                        // @ts-ignore
+                        folderExplorerRef.current?.handleUpload('folder');
+                      },
                     },
-                  },
-                ],
-              }}
-            >
-              <Button icon={<UploadOutlined />}>{lg && 'Upload'}</Button>
-            </Dropdown>
-          </Flex>
-          {/* <script type="module" src="./dist/components/backend-ai-folder-explorer.js"></script> */}
-          {/* @ts-ignore */}
-          <backend-ai-folder-explorer
-            ref={folderExplorerRef}
-            active
-            vfolderID={vfolderID}
+                  ],
+                }}
+              >
+                <Tooltip title={!lg && t('button.Upload')}>
+                  <Button disabled={!isWritable} icon={<UploadOutlined />}>
+                    {lg && t('button.Upload')}
+                  </Button>
+                </Tooltip>
+              </Dropdown>
+            </Flex>
+            {/* <script type="module" src="./dist/components/backend-ai-folder-explorer.js"></script> */}
+            {/* @ts-ignore */}
+            <backend-ai-folder-explorer
+              ref={folderExplorerRef}
+              active
+              vfolderID={vfolderID}
+            />
+          </Splitter.Panel>
+        )}
+        <Splitter.Panel
+          size={sizes[1]}
+          min={lg ? 400 : undefined}
+          // FIXME: Antd Splitter bug: Splitter with vertical layout continuously changes panel size upon repeated collapses
+          // issue: https://github.com/ant-design/ant-design/issues/53751//
+          collapsible={lg ? true : false}
+        >
+          <VFolderNodeDescription
+            vfolderNodeFrgmt={vfolder_node}
+            onRequestRefresh={() => {
+              // @ts-ignore
+              folderExplorerRef.current?._fetchVFolder();
+            }}
           />
-        </>
-      )}
+        </Splitter.Panel>
+      </Splitter>
     </BAIModal>
   );
 };

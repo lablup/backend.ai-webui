@@ -93,6 +93,7 @@
     "Share": "Поделиться",
     "Unset": "Unset",
     "Update": "Обновлять",
+    "Upload": "Загрузить",
     "Yes": "Да"
   },
   "chatui": {
@@ -328,6 +329,7 @@
       "CloneFolder": "Клонировать папку",
       "Cloneable": "Клонируемый",
       "Control": "Контроль",
+      "CreatedAt": "Создан в",
       "Delete": "Удалить",
       "DeleteAFolder": "Удалить папку",
       "DeleteForever": "Удалить навсегда",
@@ -360,6 +362,7 @@
       "LeaveFolder": "Папка-скоросшиватель",
       "Location": "Место расположения",
       "MaxFolderQuota": "Максимальная квота на папки",
+      "MaxSize": "Максимальный размер",
       "ModifyPermissions": "Изменение прав доступа",
       "MountPermission": "Разрешение на крепление",
       "MoveToTrash": "Переехать в мусорное ведро",
@@ -376,6 +379,7 @@
       "OpenAFolder": "Открыть папку",
       "Owner": "Владелец",
       "Ownership": "Владение",
+      "Path": "Путь хранения",
       "Permission": "Разрешение",
       "ProjectFolderAlertDesc": "Эта папка передается всем членам проекта",
       "Rename": "Переименовать",

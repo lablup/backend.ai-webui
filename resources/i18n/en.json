@@ -95,6 +95,7 @@
     "Share": "Share",
     "Unset": "Unset",
     "Update": "Update",
+    "Upload": "Upload",
     "Yes": "Yes"
   },
   "chatui": {
@@ -330,6 +331,7 @@
       "CloneFolder": "Clone folder",
       "Cloneable": "Cloneable",
       "Control": "Controls",
+      "CreatedAt": "Created At",
       "Delete": "Delete",
       "DeleteAFolder": "Delete folder",
       "DeleteForever": "Delete forever",
@@ -362,6 +364,7 @@
       "LeaveFolder": "Leave folder",
       "Location": "Location",
       "MaxFolderQuota": "Max Folder Quota",
+      "MaxSize": "Max Size",
       "ModifyPermissions": "Modify permissions",
       "MountPermission": "Mount Permission",
       "MoveToTrash": "Move to trash bin",
@@ -378,6 +381,7 @@
       "OpenAFolder": "Open folder",
       "Owner": "Owner",
       "Ownership": "Ownership",
+      "Path": "Path",
       "Permission": "Permission",
       "ProjectFolderAlertDesc": "This folder is shared with all members of the project",
       "Rename": "Rename",

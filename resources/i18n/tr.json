@@ -93,6 +93,7 @@
     "Share": "Paylaş",
     "Unset": "Ayarlanmamış",
     "Update": "Güncelleme",
+    "Upload": "Yüklemek",
     "Yes": "Evet"
   },
   "chatui": {
@@ -328,6 +329,7 @@
       "CloneFolder": "Klasör klonlama",
       "Cloneable": "klonlanabilir",
       "Control": "Kontrol",
+      "CreatedAt": "Yaratılmış",
       "Delete": "Sil",
       "DeleteAFolder": "Klasörü sil",
       "DeleteForever": "Tamamen sil",
@@ -360,6 +362,7 @@
       "LeaveFolder": "Klasörden ayrıl",
       "Location": "yer",
       "MaxFolderQuota": "Maksimum Klasör Kotası",
+      "MaxSize": "Maksimum Boyut",
       "ModifyPermissions": "İzinleri değiştirme",
       "MountPermission": "Montaj İzni",
       "MoveToTrash": "Çöp kutusuna geç",
@@ -376,6 +379,7 @@
       "OpenAFolder": "Bir klasör açın",
       "Owner": "Sahip",
       "Ownership": "Mülkiyet",
+      "Path": "Depolama yolu",
       "Permission": "izin",
       "ProjectFolderAlertDesc": "Bu klasör projenin tüm üyeleriyle paylaşılıyor",
       "Rename": "Adını değiştirmek",

@@ -93,6 +93,7 @@
     "Share": "Compartilhar",
     "Unset": "Não definido",
     "Update": "Atualizar",
+    "Upload": "Carregar",
     "Yes": "sim"
   },
   "chatui": {
@@ -328,6 +329,7 @@
       "CloneFolder": "Clonar pasta",
       "Cloneable": "Clonável",
       "Control": "Ao controle",
+      "CreatedAt": "Criado em",
       "Delete": "Excluir",
       "DeleteAFolder": "Excluir uma pasta",
       "DeleteForever": "Apagar para sempre",
@@ -360,6 +362,7 @@
       "LeaveFolder": "Pasta de saída",
       "Location": "Localização",
       "MaxFolderQuota": "Quota máxima de pastas",
+      "MaxSize": "Tamanho máximo",
       "ModifyPermissions": "Modificar permissões",
       "MountPermission": "Permissão de montagem",
       "MoveToTrash": "Mover para a lixeira",
@@ -376,6 +379,7 @@
       "OpenAFolder": "Abrir uma pasta",
       "Owner": "Proprietário",
       "Ownership": "Propriedade",
+      "Path": "Caminho de armazenamento",
       "Permission": "Permissão",
       "ProjectFolderAlertDesc": "Esta pasta é compartilhada com todos os membros do projeto",
       "Rename": "Renomear",
