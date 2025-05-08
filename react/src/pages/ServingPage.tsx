@@ -6,7 +6,7 @@ import BAIPropertyFilter, {
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import EndpointList from '../components/EndpointList';
 import Flex from '../components/Flex';
-import { filterEmptyItem, transformSorterToOrderString } from '../helper';
+import { filterEmptyItem } from '../helper';
 import { useUpdatableState, useWebUINavigate } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -201,17 +201,16 @@ const ServingPage: React.FC = () => {
                     {t('general.TotalItems', { total: total })}
                   </Typography.Text>
                 ),
+                onChange(current, pageSize) {
+                  if (_.isNumber(current) && _.isNumber(pageSize)) {
+                    setTablePaginationOption({ current, pageSize });
+                  }
+                },
               }}
-              orderString={queryParams.order}
+              order={queryParams.order}
               loading={deferredQueryVariables !== queryVariables}
-              onChange={({ current, pageSize }, filters, sorter) => {
-                if (_.isNumber(current) && _.isNumber(pageSize)) {
-                  setTablePaginationOption({ current, pageSize });
-                }
-                setQuery(
-                  { order: transformSorterToOrderString(sorter) },
-                  'replaceIn',
-                );
+              onChangeOrder={(order) => {
+                setQuery({ order }, 'replaceIn');
               }}
               onDeleted={() => {
                 updateFetchKey();

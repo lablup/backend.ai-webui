@@ -12,11 +12,7 @@ import BAITabs from '../components/BAITabs';
 import TerminateSessionModal from '../components/ComputeSessionNodeItems/TerminateSessionModal';
 import Flex from '../components/Flex';
 import SessionNodes from '../components/SessionNodes';
-import {
-  filterNonNullItems,
-  handleRowSelectionChange,
-  transformSorterToOrderString,
-} from '../helper';
+import { filterNonNullItems, handleRowSelectionChange } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -416,7 +412,7 @@ const ComputeSessionListPage = () => {
             </Flex>
           </Flex>
           <SessionNodes
-            orderString={queryParams.order}
+            order={queryParams.order}
             onClickSessionName={(session) => {
               setSessionDetailId(session.row_id);
             }}
@@ -454,15 +450,14 @@ const ComputeSessionListPage = () => {
                   {t('general.TotalItems', { total: total })}
                 </Typography.Text>
               ),
+              onChange: (current, pageSize) => {
+                if (_.isNumber(current) && _.isNumber(pageSize)) {
+                  setTablePaginationOption({ current, pageSize });
+                }
+              },
             }}
-            onChange={({ current, pageSize }, filters, sorter) => {
-              if (_.isNumber(current) && _.isNumber(pageSize)) {
-                setTablePaginationOption({ current, pageSize });
-              }
-              setQuery(
-                { order: transformSorterToOrderString(sorter) },
-                'replaceIn',
-              );
+            onChangeOrder={(order) => {
+              setQuery({ order }, 'replaceIn');
             }}
           />
         </Flex>
