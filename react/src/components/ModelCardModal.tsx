@@ -1,5 +1,6 @@
 import { useBackendAIImageMetaData } from '../hooks';
 import { useUpdatableState } from '../hooks';
+import { useModelConfig } from '../hooks/useModelConfig';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import ModelCardChat from './ModelCardChat';
@@ -47,6 +48,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
 
   const [metadata] = useBackendAIImageMetaData();
   const screen = Grid.useBreakpoint();
+  const { modelConfig, talkativot } = useModelConfig();
   const model_card = useFragment(
     graphql`
       fragment ModelCardModalFragment on ModelCard {
@@ -84,6 +86,10 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
       }
     `,
     modelCardModalFrgmt,
+  );
+
+  const modelConfigItem = modelConfig.find(
+    (item) => model_card?.name === item.name,
   );
 
   return (
@@ -141,13 +147,13 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
           >
             {model_card?.name === 'Talkativot UI' ? (
               <iframe
-                src="https://talkativot-aiot-demo.asia03.app.backend.ai/chat"
+                src={talkativot?.src}
                 style={{
                   width: '100%',
                   height: '100%',
                   border: 'none',
                 }}
-                title="Talkativot AIOT Demo"
+                title={talkativot?.title}
               />
             ) : (
               <ModelCardChat
@@ -157,43 +163,10 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                     : 'v1'
                 }
                 modelName={
-                  model_card?.name === 'stable-diffusion-3-medium'
-                    ? 'stable-diffusion-3m'
-                    : model_card?.name === 'Llama-3.2-11B-Vision-Instruct'
-                      ? 'llama-vision-11b'
-                      : model_card?.name === 'Meta-Llama-3-8B-Instruct'
-                        ? 'llama-3-8b'
-                        : model_card?.name === 'calm3-22b-chat'
-                          ? 'calm3-22b-chat'
-                          : model_card?.name || ''
+                  modelConfigItem?.serviceName || model_card?.name || ''
                 }
               />
             )}
-            <ModelTryContent
-              modelStorageHost={model_card?.vfolder?.host as string}
-              modelName={model_card?.name as string}
-              minAIAcclResource={(() => {
-                // FIXME: need to get proper FGPU based on actual memory, not FGPU count.
-
-                const minResource = _.ceil(
-                  _.toNumber(
-                    JSON.parse(model_card?.min_resource ?? '{}')['cuda.shares'],
-                  ),
-                  0,
-                );
-                if (_.isNaN(minResource) || minResource === 0) {
-                  return 10;
-                }
-                if (model_card?.name === 'calm3-22b-chat') {
-                  return 20;
-                }
-                // FIXME: temporally set 12 as minimum resource for Meta-Llama-3-8B-Instruct
-                if (model_card?.name === 'Meta-Llama-3-8B-Instruct') {
-                  return 12;
-                }
-                return minResource;
-              })()}
-            />
           </Flex>
           <Divider type="vertical" style={{ height: '100%' }} />
           <Flex
@@ -267,8 +240,12 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                         {model_card?.license}
                       </Tag>
                     )}
+                    <ModelTryContent
+                      modelStorageHost={model_card?.vfolder?.host as string}
+                      modelConfigItem={modelConfigItem || null}
+                      modelName={model_card?.name as string}
+                    />
                   </Flex>
-                  <Flex direction="row" justify="end" gap={'sm'}></Flex>
                 </Flex>
                 <Flex
                   direction="column"
