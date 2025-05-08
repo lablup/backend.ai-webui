@@ -69,7 +69,7 @@ export const ChatConversation: React.FC<ConversationProps> = ({
                 removeChat(chat.id);
               }}
               onCreateNewChat={(chat) => {
-                addChat(chat.provider);
+                addChat(chat);
               }}
               onSaveMessage={(message) => {
                 saveMessage(chat.id, message);
