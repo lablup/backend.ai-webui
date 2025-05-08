@@ -8,28 +8,46 @@
                 "type": "string"
             }
         },
+        "talkativot" : {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string"
+                },
+                "src": {
+                    "type": "string"
+                }
+            },
+            "required": ["title", "src"]
+        },
         "models": {
             "type": "array",
             "items": {
                 "type": "object",
                 "properties": {
-                    "modelName": {
+                    "name": {
                         "type": "string"
                     },
-                    "shortName": {
+                    "serviceName": {
                         "type": "string"
                     },
                     "environments": {
                         "type": "object",
                         "properties": {
-                            "registry": {
-                                "type": "string"
-                            },
-                            "name": {
-                                "type": "string"
-                            },
-                            "tag": {
-                                "type": "string"
+                            "image": {
+                                "type": "object",
+                                "properties": {
+                                    "registry": {
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "tag": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": ["registry", "name", "tag"]
                             },
                             "architecture": {
                                 "type": "string"
@@ -96,8 +114,8 @@
                     }
                 },
                 "required": [
-                    "modelName",
-                    "shortName",
+                    "name",
+                    "serviceName",
                     "environments",
                     "runtimeVariant",
                     "cluster_size",
