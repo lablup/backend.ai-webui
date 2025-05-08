@@ -1,34 +1,30 @@
 import Flex from '../Flex';
 import EndpointTokenSelect from './EndpointTokenSelect';
 import { ReloadOutlined } from '@ant-design/icons';
-import { Alert, Button, Form, Input, theme, Grid } from 'antd';
+import useResizeObserver from '@react-hook/resize-observer';
+import { Alert, Button, Form, Input, theme } from 'antd';
 import type { FormInstance } from 'antd';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export type CustomModelFormValues = {
   baseURL?: string;
+  basePath?: string;
   token?: string;
 };
 
 type CustomModelFormProps = {
-  baseURL?: string;
+  endpointUrl?: string;
+  basePath?: string;
   token?: string;
   endpointId?: string | null;
   loading: boolean;
   onSubmit?: (formData: CustomModelFormValues) => void;
 };
 
-function parseBaseURL(baseURL?: string) {
-  const { origin, pathname } = new URL(baseURL || '');
-  return {
-    origin: `${origin}/`,
-    pathname: pathname.replace(/^\//, ''),
-  };
-}
-
 const CustomModelForm: React.FC<CustomModelFormProps> = ({
-  baseURL,
+  endpointUrl,
+  basePath,
   token,
   endpointId,
   loading,
@@ -37,9 +33,13 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
   const { t } = useTranslation();
   const { token: themeToken } = theme.useToken();
   const formRef = useRef<FormInstance>(null);
-  const screens = Grid.useBreakpoint();
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const { origin, pathname: basePath } = parseBaseURL(baseURL);
+  const [toggleURLAddon, setToggleURLAddon] = useState<boolean>(true);
+
+  useResizeObserver(containerRef.current, ({ contentRect }) => {
+    setToggleURLAddon(contentRect.width < 480);
+  });
 
   return (
     <Flex
@@ -51,6 +51,7 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
         backgroundColor: themeToken.colorBgContainer,
         overflow: 'hidden',
       }}
+      ref={containerRef}
     >
       <Form
         ref={formRef}
@@ -58,7 +59,7 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
         size="small"
         requiredMark="optional"
         style={{ flex: 1 }}
-        key={baseURL}
+        key={endpointUrl}
         initialValues={{
           basePath: basePath,
           token: token,
@@ -74,9 +75,7 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
         <Form.Item label={t('modelService.BasePath')} name="basePath">
           <Input
             placeholder="v1"
-            addonBefore={
-              screens.xxl || screens.xl || screens.lg ? origin : undefined
-            }
+            addonBefore={toggleURLAddon ? undefined : endpointUrl}
             defaultValue={basePath}
           />
         </Form.Item>
@@ -88,10 +87,7 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
           loading={loading}
           onClick={() => {
             onSubmit?.({
-              baseURL: new URL(
-                formRef.current?.getFieldValue('basePath') ?? '',
-                origin,
-              ).toString(),
+              basePath: formRef.current?.getFieldValue('basePath') ?? '',
               token: formRef.current?.getFieldValue('token'),
             });
           }}
