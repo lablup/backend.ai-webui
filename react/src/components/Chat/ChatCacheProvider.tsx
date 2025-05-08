@@ -240,7 +240,8 @@ export function useConversations() {
 
 export function useConversation(conversationId: string) {
   const { cache } = useChatCache();
-  const { list, remove, push, replace, resetList } = useDynamicList<ChatData>();
+  const { list, remove, push, insert, replace, resetList } =
+    useDynamicList<ChatData>();
   const conversationRef = useRef(
     cache.get(conversationId) as ChatConversationData,
   );
@@ -257,27 +258,33 @@ export function useConversation(conversationId: string) {
   );
 
   const addChat = useCallback(
-    (provider: ChatProviderData) => {
+    ({ provider, id }: ChatData) => {
       const chat = {
         id: creatChatModelId('/chat'),
         conversationId: conversation.id,
         sync: true,
-        provider,
+        provider: provider,
         messages: [],
       };
 
       cache.set(chat.id, chat);
 
-      conversation.chats.push(chat.id);
+      const index = conversation.chats.indexOf(id);
+      if (index !== -1) {
+        conversation.chats.splice(index + 1, 0, chat.id);
+        insert(index + 1, chat);
+      } else {
+        conversation.chats.push(chat.id);
+        push(chat);
+      }
+
       updateConversation(conversation);
 
       cache.save();
 
-      push(chat);
-
       return chat.id;
     },
-    [push, cache, updateConversation, conversation],
+    [push, insert, cache, updateConversation, conversation],
   );
 
   const removeChat = useCallback(
