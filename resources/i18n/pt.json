@@ -97,6 +97,11 @@
     "Upload": "Carregar",
     "Yes": "sim"
   },
+  "chat": {
+    "error": {
+      "maxConversationsReached": "Não é possível adicionar mais de 10 conversas"
+    }
+  },
   "chatui": {
     "Attachments": "Anexos",
     "CannotFindModel": "Modelos LLM não encontrados. Verifique o caminho de base e a compatibilidade do token com o OpenAI e, em seguida, prima \"Atualizar modelos",

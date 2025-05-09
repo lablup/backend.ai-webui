@@ -10,6 +10,7 @@ import { ChatPageQuery } from './__generated__/ChatPageQuery.graphql';
 import { App, Card, Skeleton } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import { Suspense, useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 import { StringParam, useQueryParams } from 'use-query-params';
 
@@ -60,6 +61,7 @@ function useChatProvider(defaultEndpointId?: string): ChatProviderData {
 
 const PureChatPage: React.FC = () => {
   const { message: appMessage } = App.useApp();
+  const { t } = useTranslation();
   const defaultEndpointId = useDefaultEndpointId();
   const provider = useChatProvider(defaultEndpointId);
   const {
@@ -85,7 +87,7 @@ const PureChatPage: React.FC = () => {
         if (conversations.length < 10) {
           addConversation(provider);
         } else {
-          appMessage.error(`You can't add more than 10 conversations`, 5);
+          appMessage.error(t('chat.error.maxConversationsReached'), 5);
         }
       } else if (action === 'remove') {
         if (conversations.length > 1) {

@@ -127,7 +127,7 @@ export const ChatCacheProvider: React.FC<ChatCacheProviderProps> = ({
   );
 };
 
-function extarctLabelIndex(label: string) {
+function extractLabelIndex(label: string) {
   const match = label.match(/(\d+)/);
   return match ? Number.parseInt(match[0], 10) : 0;
 }
@@ -147,7 +147,7 @@ export function useConversations() {
       const chatId = creatChatModelId('/chat');
       const maxLabelIndex =
         list.length > 0
-          ? Math.max(...list.map((c) => extarctLabelIndex(c.label)))
+          ? Math.max(...list.map((c) => extractLabelIndex(c.label)))
           : 0;
       const conversation = {
         id: conversationId,
