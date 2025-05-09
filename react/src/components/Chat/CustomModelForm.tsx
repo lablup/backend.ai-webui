@@ -35,10 +35,10 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
   const formRef = useRef<FormInstance>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const [toggleURLAddon, setToggleURLAddon] = useState<boolean>(true);
+  const [shrinkControlSize, setShrinkControlSize] = useState<boolean>(true);
 
   useResizeObserver(containerRef.current, ({ contentRect }) => {
-    setToggleURLAddon(contentRect.width < 480);
+    setShrinkControlSize(contentRect.width < 480);
   });
 
   return (
@@ -75,12 +75,18 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
         <Form.Item label={t('modelService.BasePath')} name="basePath">
           <Input
             placeholder="v1"
-            addonBefore={toggleURLAddon ? undefined : endpointUrl}
+            addonBefore={shrinkControlSize ? undefined : endpointUrl}
             defaultValue={basePath}
           />
         </Form.Item>
         <Form.Item label={t('modelService.Token')} name="token">
-          <EndpointTokenSelect loading={loading} endpointId={endpointId} />
+          <EndpointTokenSelect
+            loading={loading}
+            endpointId={endpointId}
+            style={{
+              width: shrinkControlSize ? '100%' : '200px',
+            }}
+          />
         </Form.Item>
         <Button
           icon={<ReloadOutlined />}
