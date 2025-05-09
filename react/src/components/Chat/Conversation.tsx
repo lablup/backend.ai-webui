@@ -1,6 +1,12 @@
 import Flex from '../Flex';
 import ChatCard from './ChatCard';
-import { ChatProviderType, ChatType, ConversationType } from './ChatModel';
+import {
+  ChatParameter,
+  ChatProviderType,
+  ChatType,
+  ConversationType,
+  DefaultChatParameter,
+} from './ChatModel';
 import { useDynamicList } from 'ahooks';
 import { Card, Skeleton } from 'antd';
 import { createStyles } from 'antd-style';
@@ -36,6 +42,7 @@ function createNewChat(
   id: string,
   conversationId: string,
   provider: ChatProviderType,
+  parameter: ChatParameter = DefaultChatParameter,
 ) {
   return {
     id,
@@ -43,6 +50,7 @@ function createNewChat(
     label: 'Chat',
     sync: true,
     provider,
+    parameter,
   };
 }
 

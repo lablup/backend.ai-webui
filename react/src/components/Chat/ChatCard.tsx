@@ -240,6 +240,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
           }),
           messages: body?.messages,
           system: agent ? (agent.config.system_prompt ?? '') : '',
+          ...chat.parameter,
         });
 
         setStartTime(Date.now());
@@ -315,6 +316,12 @@ const ChatCard: React.FC<ChatCardProps> = ({
           }}
           onClickDeleteChatHistory={() => {
             setMessages([]);
+          }}
+          parameter={chat.parameter}
+          onChangeParameter={(parameter) => {
+            onUpdateChat?.({
+              parameter,
+            });
           }}
         />
       }

@@ -113,7 +113,17 @@
     "Thinking": "Thinking",
     "UploadFiles": "Upload files",
     "UploadFilesDescription": "Click or drag files to this area to upload",
-    "ViewReasoning": "View reasoning"
+    "ViewReasoning": "View reasoning",
+    "chat": {
+      "parameter": {
+        "frequencyPenalty": "Controls the frequency of the output",
+        "maxTokens": "The maximum number of tokens to generate in the output",
+        "presencePenalty": "Controls the presence of the output",
+        "temperature": "Controls the randomness of the output",
+        "topK": "Controls the diversity of the output",
+        "topP": "Controls the diversity of the output"
+      }
+    }
   },
   "credential": {
     "AccessKey": "Access Key",

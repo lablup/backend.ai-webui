@@ -10,12 +10,22 @@ export type ChatProviderType = {
   credentials?: RequestCredentials;
 };
 
+export interface ChatParameter {
+  maxOutputTokens?: number;
+  temperature?: number;
+  topP?: number;
+  topK?: number;
+  frequencyPenalty?: number;
+  presencePenalty?: number;
+}
+
 export type ChatType = {
   id: string;
   conversationId: string;
   label: string;
   sync: boolean;
   provider: ChatProviderType;
+  parameter: ChatParameter;
   agent?: AIAgent;
 };
 
@@ -64,3 +74,21 @@ export type BAIModel = {
   created?: string;
   description?: string;
 };
+
+export const DefaultChatParameter = {
+  maxTokens: 16394 / 2,
+  temperature: 0.7,
+  topP: 1,
+  topK: 1,
+  frequencyPenalty: 1,
+  presencePenalty: 1,
+};
+
+// @FIXME: use this enum to generate the parameter
+type ChatParameterType =
+  | 'maxTokens'
+  | 'temperature'
+  | 'topP'
+  | 'topK'
+  | 'frequencyPenalty'
+  | 'presencePenalty';
