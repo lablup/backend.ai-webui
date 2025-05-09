@@ -1,5 +1,5 @@
 {
-    "$schema": "./ai-agents.schema.json",
+    "$schema": "./model_config.schema.json",
     "sorting": [
         "calm3-22b-chat",
         "Meta-Llama-3-8B-Instruct",
@@ -8,14 +8,20 @@
         "stable-diffusion-3-medium",
         "Talkativot UI"
     ],
+    "talkativot": {
+        "title": "Talkativot AIOT",
+        "src": "https://talkativot-aiot-demo.asia03.app.backend.ai/chat"
+    },
     "models": [
     {
-        "modelName": "stable-diffusion-3-medium",
-        "shortName": "stable-diffusion-3m",
+        "name": "stable-diffusion-3-medium",
+        "serviceName": "stable-diffusion-3m",
         "environments": {
-            "registry": "cr.backend.ai",
-            "name": "testing/ngc-pytorch",
-            "tag": "24.07-pytorch2.4-py310-cuda12.5",
+            "image": {
+                "registry": "cr.backend.ai",
+                "name": "testing/ngc-pytorch",
+                "tag": "24.07-pytorch2.4-py310-cuda12.5"
+            },
             "architecture": "x86_64",
             "environment": "",
             "version": "1.0.0"
@@ -35,12 +41,14 @@
         "enabledAutomaticShmem": false
     },
     {
-        "modelName": "Llama-3.2-11B-Vision-Instruct",
-        "shortName": "llama-vision-11b",
+        "name": "Llama-3.2-11B-Vision-Instruct",
+        "serviceName": "llama-vision-11b",
         "environments": {
-            "registry": "cr.backend.ai",
-            "name": "testing/vllm",
-            "tag": "0.6.6-cuda12.4-ubuntu22.04",
+            "image": {
+                "registry": "cr.backend.ai",
+                "name": "testing/vllm",
+                "tag": "0.6.6-cuda12.4-ubuntu22.04"
+            },
             "architecture": "x86_64",
             "environment": "",
             "version": "1.0.0"
@@ -59,18 +67,20 @@
         "envvars": [
             {
                 "variable": "VLLM_EXTRA_ARGS",
-                "value": "--max-num-seq 16 --enforce-eager",
+                "value": "--max-num-seq 16 --enforce-eager"
             }
         ],
         "enabledAutomaticShmem": false
     },
     {
-        "modelName": "Talkativot UI",
-        "shortName": "talkativot",
+        "name": "Talkativot UI",
+        "serviceName": "talkativot-standalone-1",
         "environments": {
-            "registry": "cr.backend.ai",
-            "name": "testing/vllm",
-            "tag": "0.6.6-cuda12.4-ubuntu22.04",
+            "image": {
+                "registry": "cr.backend.ai",
+                "name": "testing/vllm",
+                "tag": "0.6.6-cuda12.4-ubuntu22.04"
+            },
             "architecture": "x86_64",
             "environment": "[{'tokenLimit':1024,'vision':false,'apiEndpoint':'https://llama_kor_bllossom.asia03.app.backend.ai','id':'Llama-3.2-Korean-Bllossom-3B','name':'Llama-3.2-Korean-Bllossom-3B'},{'tokenLimit':2048,'vision':false,'apiEndpoint':'https://gemma2_9b.asia03.app.backend.ai/','id':'gemma-2-9b-it','name':'gemma-2-9b-it'},{'tokenLimit':4096,'vision':true,'apiEndpoint':'https://llama-vision.asia03.app.backend.ai/','id':'Llama-3.2-11B-Vision-Instruct','name':'Llama-3.2-11B-Vision-Instruct'}]",
             "version": "1.0.0"
@@ -90,12 +100,14 @@
         "enabledAutomaticShmem": false
     },
     {
-        "modelName": "Meta-Llama-3-8B-Instruct",
-        "shortName": "llama-3-8b",
+        "name": "Meta-Llama-3-8B-Instruct",
+        "serviceName": "llama-3-8b",
         "environments": {
-            "registry": "cr.backend.ai",
-            "name": "testing/nim",
-            "tag": "1.0.0-llama3.8b",
+            "image": {
+                "registry": "cr.backend.ai",
+                "name": "testing/nim",
+                "tag": "1.0.0-llama3.8b"
+            },
             "architecture": "x86_64",
             "environment": "",
             "version": "1.0.0"
@@ -107,7 +119,7 @@
         "resource": {
             "cpu": 4,
             "mem": "32g",
-            "accelerator": "10",
+            "accelerator": "12",
             "acceleratorType": "cuda.shares",
             "shmem": "1g"
         },
