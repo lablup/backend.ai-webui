@@ -94,6 +94,11 @@
     "Update": "Kemas kini",
     "Yes": "Ya"
   },
+  "chat": {
+    "error": {
+      "maxConversationsReached": "Anda tidak dapat menambah lebih daripada 10 perbualan"
+    }
+  },
   "chatui": {
     "Attachments": "Lampiran",
     "CannotFindModel": "Model LLM tidak dijumpai. \nSahkan laluan asas dan keserasian token dengan Openai, kemudian tekan 'Model Refresh'",

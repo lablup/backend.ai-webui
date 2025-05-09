@@ -9,7 +9,15 @@ import EndpointSelect, { EndpointSelectProps } from './EndpointSelect';
 import ModelSelect from './ModelSelect';
 import { ChatHeader_Endpoint$key } from './__generated__/ChatHeader_Endpoint.graphql';
 import { CloseOutlined, MoreOutlined, PlusOutlined } from '@ant-design/icons';
-import { Dropdown, Button, theme, MenuProps, Typography, Switch } from 'antd';
+import {
+  Dropdown,
+  Button,
+  theme,
+  MenuProps,
+  Typography,
+  Switch,
+  Tooltip,
+} from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import { isEmpty } from 'lodash';
 import { Scale as ScaleIcon, Eraser as EraserIcon } from 'lucide-react';

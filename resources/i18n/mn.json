@@ -94,6 +94,11 @@
     "Update": "Шинэчлэх",
     "Yes": "Тийм ээ"
   },
+  "chat": {
+    "error": {
+      "maxConversationsReached": "Та 10-аас дээш харилцан яриаг нэмж чадахгүй"
+    }
+  },
   "chatui": {
     "Attachments": "Хавсралтууд",
     "CannotFindModel": "Llm загварууд олдсонгүй. \nOpenai-тай баазын болон токентай нийцтэй байдлыг баталгаажуул, дараа нь 'Reedesh Models' товчийг дарна уу.",
