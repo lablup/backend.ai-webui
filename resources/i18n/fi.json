@@ -95,6 +95,11 @@
     "Update": "Päivitys",
     "Yes": "Kyllä"
   },
+  "chat": {
+    "error": {
+      "maxConversationsReached": "Voit lisätä enintään 10 keskustelua."
+    }
+  },
   "chatui": {
     "Attachments": "Liitteet",
     "CannotFindModel": "LLM-malleja ei löydy. Tarkista peruspolku ja tokenin yhteensopivuus OpenAI:n kanssa ja paina sitten 'Päivitä mallit'.",

@@ -95,6 +95,11 @@
     "Update": "อัปเดต",
     "Yes": "ใช่"
   },
+  "chat": {
+    "error": {
+      "maxConversationsReached": "คุณไม่สามารถเพิ่มการสนทนาได้มากกว่า 10 ครั้ง"
+    }
+  },
   "chatui": {
     "Attachments": "ไฟล์แนบ",
     "CannotFindModel": "ไม่พบรุ่น LLM \nตรวจสอบเส้นทางพื้นฐานและความเข้ากันได้ของโทเค็นกับ OpenAI จากนั้นกด 'Refresh Models'",

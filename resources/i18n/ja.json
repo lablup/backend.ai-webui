@@ -94,6 +94,11 @@
     "Update": "更新",
     "Yes": "はい"
   },
+  "chat": {
+    "error": {
+      "maxConversationsReached": "10以上の会話を追加することはできません。"
+    }
+  },
   "chatui": {
     "Attachments": "添付ファイル",
     "CannotFindModel": "LLM モデルが見つかりません。ベースパスと OpenAI とのトークンの互換性を確認し、'Refresh Models' を押してください。",
