@@ -1,11 +1,10 @@
 import { useBackendAIImageMetaData } from '../hooks';
-import { useUpdatableState } from '../hooks';
 import { useModelConfig } from '../hooks/useModelConfig';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import ModelCardChat from './ModelCardChat';
 import ModelCloneModal from './ModelCloneModal';
-import ModelTryContent from './ModelTryContent';
+import ModelTryContentButton from './ModelTryContentButton';
 import ResourceNumber from './ResourceNumber';
 import { ModelCardModalFragment$key } from './__generated__/ModelCardModalFragment.graphql';
 import { BankOutlined, FileOutlined } from '@ant-design/icons';
@@ -19,7 +18,6 @@ import {
   Grid,
   Tag,
   Typography,
-  Tabs,
   theme,
   Skeleton,
 } from 'antd';
@@ -120,6 +118,12 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
             : '90%'
       }
       footer={[
+        <ModelTryContentButton
+          modelStorageHost={model_card?.vfolder?.host as string}
+          modelConfigItem={modelConfigItem || null}
+          modelName={model_card?.name as string}
+          key="try"
+        />,
         <Button
           onClick={() => {
             onRequestClose();
@@ -240,11 +244,6 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                         {model_card?.license}
                       </Tag>
                     )}
-                    <ModelTryContent
-                      modelStorageHost={model_card?.vfolder?.host as string}
-                      modelConfigItem={modelConfigItem || null}
-                      modelName={model_card?.name as string}
-                    />
                   </Flex>
                 </Flex>
                 <Flex

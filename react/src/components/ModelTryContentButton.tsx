@@ -25,14 +25,14 @@ import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface ModelTryContentProps {
+interface ModelTryContentButtonProps {
   modelStorageHost?: string;
   modelConfigItem?: ModelConfigMeta | null;
   modelName?: string;
   title?: string;
 }
 
-const ModelTryContent: React.FC<ModelTryContentProps> = ({
+const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
   modelName,
   modelConfigItem,
   modelStorageHost,
@@ -471,28 +471,18 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
   };
 
   return (
-    <Flex direction="row" align="stretch" gap={'sm'} style={{ width: '100%' }}>
-      {title && (
-        <Typography.Title level={5} style={{ marginTop: 0 }}>
-          {title}
-        </Typography.Title>
-      )}
-      <Button
-        type="primary"
-        onClick={() => {
-          cloneOrCreateModelService(
-            modelConfigItem?.runtimeVariant || 'custom',
-          );
-        }}
-        style={{
-          width: '100%',
-          height: token.sizeXXL,
-        }}
-      >
-        {t('modelService.TryModelOnYourOwn')}
-      </Button>
-    </Flex>
+    <Button
+      type="primary"
+      onClick={() => {
+        cloneOrCreateModelService(modelConfigItem?.runtimeVariant || 'custom');
+      }}
+      style={{
+        width: 'auto',
+      }}
+    >
+      {t('modelService.TryModelOnYourOwn')}
+    </Button>
   );
 };
 
-export default ModelTryContent;
+export default ModelTryContentButton;
