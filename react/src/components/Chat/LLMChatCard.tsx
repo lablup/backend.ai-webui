@@ -116,6 +116,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
 
   const customModelFormRef = useRef<FormInstance>(null);
   const cardRef = useRef<HTMLDivElement>(null);
+  const dropContainerRef = useRef<HTMLDivElement>(null);
 
   const {
     messages,
@@ -291,7 +292,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
               models={models}
               value={modelId}
               onChange={setModelId}
-              allowCustomModel={allowCustomModel}
+              // allowCustomModel={allowCustomModel}
             />
             <Dropdown menu={{ items }} trigger={['click']}>
               <Button
@@ -305,7 +306,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
         </Flex>
       }
       style={{
-        height: '100%',
+        height: '80%',
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
@@ -319,7 +320,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
           display: 'flex',
           flexDirection: 'column',
           padding: 0,
-          height: '50%',
+          // height: '50%',
           position: 'relative',
         },
         actions: {
@@ -332,6 +333,7 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
       }}
       actions={[
         <ChatSender
+          dropContainerRef={dropContainerRef}
           key="chatSender"
           autoFocus
           value={input}
@@ -399,17 +401,17 @@ const LLMChatCard: React.FC<LLMChatCardProps> = ({
               </Badge>
             </Attachments>
           }
-          onChange={(v: string) => {
+          onInputChange={(v: string) => {
             setInput(v);
             if (onInputChange) {
               onInputChange(v);
             }
           }}
           loading={isLoading}
-          onStop={() => {
+          onInputCancel={() => {
             stop();
           }}
-          onSend={() => {
+          onInputSubmit={() => {
             if (input || !_.isEmpty(files)) {
               const chatRequestOptions: ChatRequestOptions = {};
               if (!_.isEmpty(files)) {

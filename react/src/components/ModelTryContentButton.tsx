@@ -13,30 +13,29 @@ import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import NvidiaIcon from './BAIIcons/Nvidia';
-import VLLMIcon from './BAIIcons/VLLMIcon';
+import { ModelConfigMeta } from '../hooks/useModelConfig';
+import Flex from './Flex';
 import {
   ServiceCreateType,
   ServiceLauncherFormValue,
 } from './ServiceLauncherPageContent';
 import { VFolder } from './VFolderSelect';
-import { BuildOutlined } from '@ant-design/icons';
 import { theme, Typography, Button } from 'antd';
 import _ from 'lodash';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface ModelTryContentProps {
+interface ModelTryContentButtonProps {
   modelStorageHost?: string;
+  modelConfigItem?: ModelConfigMeta | null;
   modelName?: string;
-  minAIAcclResource: number;
   title?: string;
 }
 
-const ModelTryContent: React.FC<ModelTryContentProps> = ({
+const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
   modelName,
+  modelConfigItem,
   modelStorageHost,
-  minAIAcclResource,
   title,
   ...props
 }) => {
@@ -170,7 +169,7 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
           model_version: 1, // FIXME: hardcoded. change it with option later
           model_mount_destination: '/models', // FIXME: hardcoded. change it with option later
           environ, // FIXME: hardcoded. change it with option later
-          scaling_group: 'nvidia-H100', // FIXME: hardcoded. change it with option later as well, values.resourceGroup,
+          scaling_group: currentResourceGroupByProject ?? '', // FIXME: hardcoded. change it with option later as well, values.resourceGroup,
           resources: {
             // FIXME: manually convert to string since server-side only allows [str,str] tuple
             cpu: values.resource.cpu.toString(),
@@ -205,78 +204,25 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
     runtimeVariant: string,
     vfolderID: string,
   ): ServiceLauncherFormValue => {
-    const model = modelName?.includes('stable-diffusion-3-medium')
-      ? 'stable-diffusion-3m'
-      : modelName?.includes('Llama-3.2-11B-Vision-Instruct')
-        ? 'llama-vision-11b'
-        : modelName?.includes('Talkativot UI')
-          ? 'talkativot'
-          : modelName;
+    const model = modelConfigItem?.name || modelName;
     return {
       serviceName: `${model}-${generateRandomString(4)}`,
       replicas: 1,
-      // FIXME: hard-coded images for vLLM, NIM, Custom
-      environments: {
-        image: {
-          registry: 'cr.backend.ai',
-          name: (() => {
-            if (modelName?.includes('stable-diffusion')) {
-              return 'testing/ngc-pytorch';
-            }
-            switch (runtimeVariant) {
-              case 'nim':
-                return 'testing/ngc-nim';
-              case 'vllm':
-              case 'custom':
-              default:
-                return 'testing/vllm';
-            }
-          })(),
-          tag: (() => {
-            if (modelName?.includes('stable-diffusion')) {
-              return '24.07-pytorch2.4-py310-cuda12.5';
-            }
-            switch (runtimeVariant) {
-              case 'vllm':
-              case 'custom':
-              default:
-                return '0.6.6-cuda12.4-ubuntu22.04'; // '0.6.2-cuda12.1-ubuntu22.04';
-              case 'nim':
-                return 'ngc-nim:1.0.0-llama3.8b-h100x1-fp16';
-            }
-          })(),
-          architecture: 'x86_64',
-          base_image_name: undefined,
-          digest: undefined,
-          humanized_name: undefined,
-          id: undefined,
-          installed: undefined,
-          labels: undefined,
-          namespace: undefined,
-          resource_limits: undefined,
-          tags: undefined,
-          version: undefined,
-        },
-        // FIXME: temporarily hard-coded environment variable
-        environment: modelName?.includes('Talkativot UI')
-          ? '[{"tokenLimit":1024,"vision":false,"apiEndpoint":"https://llama_kor_bllossom.asia03.app.backend.ai","id":"Llama-3.2-Korean-Bllossom-3B","name":"Llama-3.2-Korean-Bllossom-3B"},{"tokenLimit":2048,"vision":false,"apiEndpoint":"https://gemma2_9b.asia03.app.backend.ai/","id":"gemma-2-9b-it","name":"gemma-2-9b-it"},{"tokenLimit":4096,"vision":true,"apiEndpoint":"https://llama-vision.asia03.app.backend.ai/","id":"Llama-3.2-11B-Vision-Instruct","name":"Llama-3.2-11B-Vision-Instruct"}]'
-          : '',
+      environments: modelConfigItem?.environments || {
+        environment: '',
         version: '',
+        image: null,
       },
       // FIXME: temporally hard-coded runtime variant
-      runtimeVariant: modelName?.includes('stable-diffusion')
-        ? 'custom'
-        : runtimeVariant,
+      runtimeVariant: modelConfigItem?.runtimeVariant || 'custom',
       cluster_size: 1,
       cluster_mode: 'single-node',
       openToPublic: true,
       resourceGroup: currentResourceGroupByProject as string,
-      resource: {
+      resource: modelConfigItem?.resource || {
         cpu: 4,
         mem: '32g',
-        accelerator: modelName?.includes('Talkativot UI')
-          ? 0
-          : minAIAcclResource,
+        accelerator: 10,
         acceleratorType: 'cuda.shares',
         shmem: '1g',
       },
@@ -284,7 +230,7 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
       modelMountDestination: '/models',
       modelDefinitionPath: '',
       vfoldersAliasMap: {},
-      envvars: [],
+      envvars: modelConfigItem?.envvars || [],
       enabledAutomaticShmem: false,
     };
   };
@@ -296,6 +242,8 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
       default:
         break;
       case 'nim':
+        modelId = 'nim-model';
+        break;
       case 'custom':
         modelId = 'custom';
         break;
@@ -308,7 +256,7 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
             cloneable: true,
             permission: 'wd', // write-delete permission
             target_host: modelStorageHost, // lowestUsageHost, // clone to accessible and lowest usage storage host
-            target_name: `${modelName === 'Talkativot UI' ? 'talkativot-standalone-1' : modelName}`,
+            target_name: `${modelConfigItem?.serviceName || modelName}`, // TODO: add suffix to avoid name conflict
             usage_mode: 'model',
           },
           name: `${modelName === 'Talkativot UI' ? 'talkativot-standalone' : modelName}`,
@@ -343,7 +291,10 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
                 },
                 onResolve: () => {
                   mutationToCreateService.mutate(
-                    getServiceInputByRuntimeVariant('vllm', `${modelName}-1`),
+                    getServiceInputByRuntimeVariant(
+                      modelConfigItem?.runtimeVariant || 'custom',
+                      `${modelName}-1`,
+                    ),
                     {
                       onSuccess: (result: any) => {
                         upsertNotification({
@@ -356,7 +307,7 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
                               let progress = 0;
                               const interval = setInterval(async () => {
                                 try {
-                                  progress += 5;
+                                  progress += _.random(2, 5);
                                   upsertNotification({
                                     key: result?.endpoint_id,
                                     backgroundTask: {
@@ -388,6 +339,7 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
                             percent: 0,
                             onResolve: () => {
                               upsertNotification({
+                                open: true,
                                 duration: 0,
                                 key: result?.endpoint_id,
                                 backgroundTask: {
@@ -447,7 +399,7 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
                   let progress = 0;
                   const interval = setInterval(async () => {
                     try {
-                      progress += 5;
+                      progress += _.random(2, 5);
                       upsertNotification({
                         key: result?.endpoint_id,
                         backgroundTask: {
@@ -476,38 +428,37 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
                 }),
                 onChange: {
                   pending: 'Model service is starting...',
-                  resolved: 'Model service is now ready!',
-                  rejected:
-                    'Model service failed to start. Please check the service status.',
+                  resolved: (_data, _notification) => {
+                    return {
+                      duration: 0,
+                      open: true,
+                      key: result?.endpoint_id,
+                      backgroundTask: {
+                        status: 'resolved',
+                        percent: 100,
+                      },
+                      message: 'Model service is successfully started.',
+                      to: `/chat?endpointId=${result?.endpoint_id}&modelId=${modelId}`, // PATH to playground page
+                      toText: 'Play your model now!',
+                    };
+                  },
+                  rejected: (_data, _notification) => {
+                    return {
+                      duration: 0,
+                      key: result?.endpoint_id,
+                      backgroundTask: {
+                        status: 'rejected',
+                        percent: 99,
+                      },
+                      message:
+                        'Model service failed to start. Please check the service status.',
+                      to: `/serving/${result?.endpoint_id}`,
+                      toText: 'Go to service detail page',
+                    };
+                  },
                 },
                 status: 'pending',
                 percent: 0,
-                onResolve: () => {
-                  upsertNotification({
-                    duration: 0,
-                    key: result?.endpoint_id,
-                    backgroundTask: {
-                      status: 'resolved',
-                      percent: 100,
-                    },
-                    message: '',
-                    to: `/playground?endpointId=${result?.endpoint_id}&modelId=${modelId}`, // PATH to playground page
-                    toText: 'Play your model now!',
-                  });
-                },
-                onFailed: () => {
-                  upsertNotification({
-                    duration: 0,
-                    key: result?.endpoint_id,
-                    backgroundTask: {
-                      status: 'rejected',
-                      percent: 99,
-                    },
-                    message: '',
-                    to: `/serving/${result?.endpoint_id}`,
-                    toText: 'Go to service detail page',
-                  });
-                },
               },
             });
           },
@@ -520,60 +471,18 @@ const ModelTryContent: React.FC<ModelTryContentProps> = ({
   };
 
   return (
-    <>
-      {title && (
-        <Typography.Title level={5} style={{ marginTop: 0 }}>
-          {title}
-        </Typography.Title>
-      )}
-      <Button
-        type="primary"
-        disabled={
-          modelName?.includes('stable-diffusion') ||
-          modelName?.includes('Talkativot UI')
-        }
-        onClick={() => {
-          cloneOrCreateModelService('vllm');
-        }}
-        icon={<VLLMIcon size={token.sizeLG} />}
-        style={{
-          height: token.sizeXXL,
-        }}
-      >
-        vLLM
-      </Button>
-      <Button
-        disabled={
-          modelName?.includes('stable-diffusion') ||
-          modelName?.includes('gemma-2-27b-it') ||
-          modelName?.includes('Llama-3.2-11B-Vision-Instruct') ||
-          modelName?.includes('Talkativot UI')
-        }
-        type="primary"
-        onClick={() => {
-          cloneOrCreateModelService('nim');
-        }}
-        style={{
-          height: token.sizeXXL,
-        }}
-        icon={<NvidiaIcon size={token.sizeLG} />}
-      >
-        NIM
-      </Button>
-      <Button
-        type="primary"
-        onClick={() => {
-          cloneOrCreateModelService('custom');
-        }}
-        style={{
-          height: token.sizeXXL,
-        }}
-        icon={<BuildOutlined style={{ fontSize: token.sizeLG }} />}
-      >
-        Custom
-      </Button>
-    </>
+    <Button
+      type="primary"
+      onClick={() => {
+        cloneOrCreateModelService(modelConfigItem?.runtimeVariant || 'custom');
+      }}
+      style={{
+        width: 'auto',
+      }}
+    >
+      {t('modelService.TryModelOnYourOwn')}
+    </Button>
   );
 };
 
-export default ModelTryContent;
+export default ModelTryContentButton;

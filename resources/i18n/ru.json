@@ -927,6 +927,7 @@
     "TokenGenerated": "Сгенерированный токен",
     "TokenGenerationFailed": "Не удалось сгенерировать токен. Пожалуйста, попробуйте еще раз.",
     "TrafficRatio": "Коэффициент трафика",
+    "TryModelOnYourOwn": "Попробуйте модельную службу самостоятельно",
     "UpdateService": "Служба обновлений",
     "Validate": "Подтвердить",
     "ValidationInfo": "Информация о проверке"
@@ -960,6 +961,11 @@
     "StartCommand": "Запустить команду",
     "Task": "Задание",
     "Version": "Версия"
+  },
+  "modelserving": {
+    "menu": {
+      "MyServices": "Мои услуги"
+    }
   },
   "notification": {
     "AreYouSureToClearAllNotifications": "Вы уверены, что удалите все уведомления?",
@@ -1787,6 +1793,7 @@
     "DescClassicSessionLauncher": "__NOT_TRANSLATED__",
     "DescDesktopNotification": "Включение или отключение уведомлений на рабочем столе. <br /> Если включено, Backend.AI также использует встроенную систему уведомлений ОС. Отключение этого параметра не влияет на уведомления в веб-интерфейсе.",
     "DescExperimentalDashboard": "Используйте страницу панели приборной панели вместо сводной страницы.",
+    "DescExperimentalPALI": "Используйте пали вместо WebUI.",
     "DescKeepLoginSessionInformation": "Разрешите приложению webui в следующий раз сохранить текущую информацию о сеансе входа. <br /> Если опция выключена, информация для входа в систему будет очищаться при каждом выходе из системы.",
     "DescLanguage": "Установите язык пользовательского интерфейса.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "Пожалуйста, обновите скрипт с непустым значением.",
@@ -1903,6 +1910,7 @@
       "NewPasswordMismatch": "Два новых пароля не совпадают.",
       "Notifications": "Уведомления",
       "OriginalPassword": "Оригинальный пароль",
+      "PALI": "PALI",
       "PasswordChangePlace": "Нажмите на иконку с изображением человека на верхней панели и перейдите в меню \"Мой счет\".",
       "PasswordMismatch": "Пароли не совпадают",
       "PasswordUpdated": "Пароль успешно обновлен.",
