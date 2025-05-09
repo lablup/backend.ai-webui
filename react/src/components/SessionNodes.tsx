@@ -4,8 +4,6 @@ import BAITable, { BAITableProps } from './BAITable';
 import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionSlotCell from './ComputeSessionNodeItems/SessionSlotCell';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
-import Flex from './Flex';
-import SessionUsageMonitor from './SessionUsageMonitor';
 import {
   SessionNodesFragment$data,
   SessionNodesFragment$key,
@@ -33,7 +31,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
   ...tableProps
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  // const { token } = theme.useToken();
 
   const sessions = useFragment(
     graphql`
@@ -46,8 +44,6 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         ...SessionReservationFragment
         ...SessionSlotCellFragment
         ...SessionUsageMonitorFragment
-        # fix: This fragment is not used in this component, but it is required by the SessionStatusDetailModal.
-        # It might be a bug in relay
       }
     `,
     sessionsFrgmt,
@@ -85,21 +81,21 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
           return <SessionStatusTag sessionFrgmt={session} />;
         },
       },
-      {
-        key: 'utils',
-        title: t('session.Utilization'),
-        render: (__, session) => {
-          return (
-            <Flex
-              style={{
-                paddingLeft: token.paddingXS,
-              }}
-            >
-              <SessionUsageMonitor size="small" sessionFrgmt={session} />
-            </Flex>
-          );
-        },
-      },
+      // {
+      //   key: 'utils',
+      //   title: t('session.Utilization'),
+      //   render: (__, session) => {
+      //     return (
+      //       <Flex
+      //         style={{
+      //           paddingLeft: token.paddingXS,
+      //         }}
+      //       >
+      //         <SessionUsageMonitor size="small" sessionFrgmt={session} />
+      //       </Flex>
+      //     );
+      //   },
+      // },
       {
         key: 'accelerator',
         title: t('session.launcher.AIAccelerator'),
