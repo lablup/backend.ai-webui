@@ -955,13 +955,13 @@ const ResourceAllocationFormItems: React.FC<
                                     hidden={form.getFieldValue(
                                       'enabledAutomaticShmem',
                                     )}
-                                    tooltip={
-                                      <Trans
-                                        i18nKey={
-                                          'session.launcher.DescSharedMemory'
-                                        }
-                                      />
-                                    }
+                                    // tooltip={
+                                    //   <Trans
+                                    //     i18nKey={
+                                    //       'session.launcher.DescSharedMemory'
+                                    //     }
+                                    //   />
+                                    // }
                                     dependencies={[['resource', 'mem']]}
                                     rules={[
                                       {
@@ -1083,7 +1083,7 @@ const ResourceAllocationFormItems: React.FC<
                                         <Divider
                                           style={{
                                             margin: 0,
-                                            marginTop: token.marginSM,
+                                            marginBlock: token.marginSM,
                                             backgroundColor:
                                               token.colorBorderSecondary,
                                           }}
@@ -1091,6 +1091,13 @@ const ResourceAllocationFormItems: React.FC<
                                         <Trans
                                           i18nKey={
                                             'session.launcher.DescSharedMemory'
+                                          }
+                                        />
+                                        <br />
+                                        <br />
+                                        <Trans
+                                          i18nKey={
+                                            'session.launcher.DescSharedMemoryContext'
                                           }
                                         />
                                       </Flex>
