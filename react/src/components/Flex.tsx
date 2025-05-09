@@ -1,7 +1,7 @@
 import { theme } from 'antd';
 import React, { CSSProperties, PropsWithChildren } from 'react';
 
-type GapSize = number | 'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
+type GapSize = number | 'xxs' | 'xs' | 'sm' | 'ms' | 'md' | 'lg' | 'xl' | 'xxl';
 type GapProp = GapSize | [GapSize, GapSize];
 
 export interface FlexProps
@@ -33,7 +33,7 @@ const Flex = React.forwardRef<HTMLDivElement, FlexProps>(
     const getGapSize = (size: GapSize) => {
       return typeof size === 'string'
         ? // @ts-ignore
-          token['padding' + size.toUpperCase()]
+          token['size' + size.toUpperCase()]
         : size;
     };
 
