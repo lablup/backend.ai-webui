@@ -142,7 +142,8 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const [experimentalDashboard] = useBAISettingUserState(
     'experimental_dashboard',
   );
-  const generalMenu = filterEmptyItem<WebUIGeneralMenuItemType>([
+  const [experimentalPALI] = useBAISettingUserState('experimental_PALI');
+  const paliMenu = filterEmptyItem<WebUIGeneralMenuItemType>([
     {
       label: <WebUILink to="/chat">{t('webui.menu.Chat')}</WebUILink>,
       icon: <MessageOutlined style={{ color: token.colorPrimary }} />,
@@ -169,12 +170,26 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       key: 'serving',
       group: 'service',
     },
-    /*
+  ]);
+  const generalMenu = filterEmptyItem<WebUIGeneralMenuItemType>([
+    ...paliMenu,
     {
-      label: <WebUILink to="/chat">{t('webui.menu.Chat')}</WebUILink>,
-      icon: <MessageOutlined style={{ color: token.colorPrimary }} />,
-      key: 'chat',
-      group: 'playground',
+      label: <WebUILink to="/start">{t('webui.menu.Start')}</WebUILink>,
+      icon: <PlayCircleOutlined style={{ color: token.colorPrimary }} />,
+      key: 'start',
+      group: 'none',
+    },
+    experimentalDashboard && {
+      label: <WebUILink to="/dashboard">{t('webui.menu.Dashboard')}</WebUILink>,
+      icon: <DashboardOutlined style={{ color: token.colorPrimary }} />,
+      key: 'dashboard',
+      group: 'none',
+    },
+    !experimentalDashboard && {
+      label: <WebUILink to="/summary">{t('webui.menu.Summary')}</WebUILink>,
+      icon: <DashboardOutlined style={{ color: token.colorPrimary }} />,
+      key: 'summary',
+      group: 'none',
     },
     {
       label: <WebUILink to="/import">{t('webui.menu.Import&Run')}</WebUILink>,
@@ -225,11 +240,9 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       },
       group: 'mlops',
     },
-    */
   ]);
 
-  const adminMenu: MenuProps['items'] = [];
-  /*[
+  const adminMenu: MenuProps['items'] = [
     {
       label: <WebUILink to="/credential">{t('webui.menu.Users')}</WebUILink>,
       icon: <UserOutlined style={{ color: token.colorInfo }} />,
@@ -252,10 +265,8 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       key: 'resource-policy',
     },
   ];
-  */
 
-  const superAdminMenu: MenuProps['items'] = [];
-  /*[
+  const superAdminMenu: MenuProps['items'] = [
     {
       label: <WebUILink to="/agent">{t('webui.menu.Resources')}</WebUILink>,
       icon: <HddOutlined style={{ color: token.colorInfo }} />,
@@ -282,7 +293,8 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       icon: <InfoCircleOutlined style={{ color: token.colorInfo }} />,
       key: 'information',
     },
-  ]*/ const pluginMap: Record<string, MenuProps['items']> = {
+  ];
+  const pluginMap: Record<string, MenuProps['items']> = {
     'menuitem-user': generalMenu,
     'menuitem-admin': adminMenu,
     'menuitem-superadmin': superAdminMenu,
@@ -317,7 +329,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     }
   });
 
-  _.forEach([generalMenu, adminMenu, superAdminMenu], (menu) => {
+  _.forEach([generalMenu, adminMenu, superAdminMenu, paliMenu], (menu) => {
     // Remove menu items that are in blockList
     _.remove(menu, (item) => _.includes(blockList, item?.key));
     // Disable menu items that are in inactiveList
@@ -340,6 +352,47 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     metrics: t('webui.menu.groupName.Metrics'),
   };
   const groupedGeneralMenu = _.chain(generalMenu)
+    .groupBy('group')
+    .map((items, group) => {
+      if (group === 'none') {
+        return items;
+      }
+      return {
+        type: 'group',
+        name: group,
+        label: (
+          <Flex
+            style={{
+              borderBottom: `1px solid ${token.colorBorder}`,
+            }}
+          >
+            {!props.collapsed && (
+              <Typography.Text type="secondary" ellipsis>
+                {aliasGroupNameMap[group as GroupName]}
+              </Typography.Text>
+            )}
+          </Flex>
+        ),
+        children: items,
+      };
+    })
+    .sort((a, b) => {
+      const order: Array<GroupName> = [
+        'none',
+        'storage',
+        'workload',
+        'playground',
+        'service',
+        'mlops',
+        'metrics',
+      ];
+      // @ts-ignore
+      return order.indexOf(a.name) - order.indexOf(b.name);
+    })
+    .flatten()
+    .value();
+
+  const groupedPaliMenu = _.chain(paliMenu)
     .groupBy('group')
     .map((items, group) => {
       if (group === 'none') {
@@ -457,7 +510,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             location.pathname.split('/')[1] === 'session' ? 'job' : '',
           ]}
           // @ts-ignore
-          items={groupedGeneralMenu}
+          items={experimentalPALI ? groupedPaliMenu : groupedGeneralMenu}
         />
         {(currentUserRole === 'superadmin' || currentUserRole === 'admin') && (
           <ConfigProvider
