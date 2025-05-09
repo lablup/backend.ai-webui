@@ -34,6 +34,13 @@ interface SessionTemplateModalProps
   extends Omit<BAIModalProps, 'onOk' | 'onCancel'> {
   onRequestClose: (formValue?: SessionLauncherFormValue) => void;
 }
+
+interface ParsedSessionHistory
+  extends SessionLauncherFormValue,
+    SessionHistory {
+  pinned?: boolean;
+}
+
 const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
   ...modalProps
 }) => {
@@ -50,7 +57,7 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
   const [, setSelectedHistoryId] = useState<string>();
   const { token } = theme.useToken();
 
-  const parsedSessionHistory = useMemo(() => {
+  const parsedSessionHistory: Array<ParsedSessionHistory> = useMemo(() => {
     const parseToFormValues = (history: SessionHistory, isPinned: boolean) => {
       const params = new URLSearchParams(history.params);
       const formValues: SessionLauncherFormValue = JSON.parse(
@@ -98,7 +105,7 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
         <Typography.Text>
           {t('session.launcher.YouCanStartWithHistory')}
         </Typography.Text>
-        <BAITable
+        <BAITable<ParsedSessionHistory>
           rowSelection={{
             selectedRowKeys: pinnedSessionHistory?.map((item) => item.id),
             columnWidth: 0,

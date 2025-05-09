@@ -138,7 +138,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
 
   return (
     <>
-      <BAITable<(typeof filteredSessions)[0]>
+      <BAITable
         resizable
         neoStyle
         rowKey={'id'}
