@@ -94,6 +94,11 @@
     "Update": "Aggiornare",
     "Yes": "sì"
   },
+  "chat": {
+    "error": {
+      "maxConversationsReached": "Non è possibile aggiungere più di 10 conversazioni."
+    }
+  },
   "chatui": {
     "Attachments": "Allegati",
     "CannotFindModel": "Modelli LLM non trovati. Verificare il percorso di base e la compatibilità del token con OpenAI, quindi premere 'Aggiorna modelli'.",

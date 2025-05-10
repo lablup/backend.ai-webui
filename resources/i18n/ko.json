@@ -97,6 +97,11 @@
     "Update": "업데이트",
     "Yes": "네"
   },
+  "chat": {
+    "error": {
+      "maxConversationsReached": "10개 이상의 대화를 추가할 수 없습니다."
+    }
+  },
   "chatui": {
     "Attachments": "첨부파일",
     "CannotFindModel": "LLM 모델 정보를 찾을 수 없습니다. OpenAI 호환 기본 경로와 토큰을 확인후 '모델 정보 새로고침' 버튼을 눌러주세요.",

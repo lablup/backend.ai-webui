@@ -95,6 +95,11 @@
     "Update": "Cập nhật",
     "Yes": "Đúng"
   },
+  "chat": {
+    "error": {
+      "maxConversationsReached": "Bạn không thể thêm nhiều hơn 10 cuộc trò chuyện"
+    }
+  },
   "chatui": {
     "Attachments": "Tệp đính kèm",
     "CannotFindModel": "Các mô hình LLM không tìm thấy. \nXác minh đường dẫn cơ sở và khả năng tương thích mã thông báo với OpenAI, sau đó nhấn 'Làm mới các mô hình'",
