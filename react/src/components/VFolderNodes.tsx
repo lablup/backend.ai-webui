@@ -60,7 +60,7 @@ export type VFolderNodeInList = NonNullable<VFolderNodesFragment$data[number]>;
 interface VFolderNodesProps
   extends Omit<BAITableProps<VFolderNodeInList>, 'dataSource' | 'columns'> {
   vfoldersFrgmt: VFolderNodesFragment$key;
-  onRequestChange?: () => void;
+  onRequestChange?: (updatedFolderId?: string) => void;
 }
 
 const VFolderNodes: React.FC<VFolderNodesProps> = ({
@@ -250,8 +250,8 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                         disabled={vfolder?.status !== 'delete-pending'}
                         onClick={() => {
                           restoreMutation.mutate(vfolder?.id, {
-                            onSuccess: (result) => {
-                              onRequestChange?.();
+                            onSuccess: (result, variables) => {
+                              onRequestChange?.(variables);
                               message.success(
                                 t('data.folders.FolderRestored', {
                                   folderName: vfolder?.name,
@@ -275,8 +275,8 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                       title={t('data.folders.MoveToTrash')}
                       onConfirm={() => {
                         deleteMutation.mutate(vfolder?.id, {
-                          onSuccess: () => {
-                            onRequestChange?.();
+                          onSuccess: (result, variables) => {
+                            onRequestChange?.(variables);
                             message.success(
                               t('data.folders.MovedToTrashBin', {
                                 folderName: vfolder?.name,

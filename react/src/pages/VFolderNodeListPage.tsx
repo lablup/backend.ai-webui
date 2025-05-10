@@ -586,7 +586,13 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 'replaceIn',
               );
             }}
-            onRequestChange={() => {
+            onRequestChange={(updatedFolderId) => {
+              setSelectedFolderList((prevSelected) =>
+                _.filter(
+                  prevSelected,
+                  (folder) => folder.id !== updatedFolderId,
+                ),
+              );
               updateFetchKey();
             }}
           />
