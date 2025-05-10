@@ -1,5 +1,6 @@
 packages:
   - react
+  - backendai-ui
 onlyBuiltDependencies:
   - bufferutil
   - core-js
