@@ -1036,6 +1036,7 @@
     "Driver": "Kuljettaja",
     "DriverOptions": "Kuljettajan vaihtoehdot",
     "EnterValidResourceGroupName": "Syötä kelvollinen resurssiryhmän nimi",
+    "Information": "Tiedot",
     "ModifyResourceGroup": "Resurssiryhmän muokkaaminen",
     "Name": "Nimi",
     "NoChangesMade": "Ei muutoksia",

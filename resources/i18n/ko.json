@@ -1041,6 +1041,7 @@
     "Driver": "드라이버",
     "DriverOptions": "드라이버 옵션",
     "EnterValidResourceGroupName": "올바른 자원 그룹 이름을 입력해주세요.",
+    "Information": "정보",
     "ModifyResourceGroup": "자원 그룹 수정",
     "Name": "이름",
     "NoChangesMade": "변경사항이 없습니다",

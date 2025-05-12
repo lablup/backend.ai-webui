@@ -1044,6 +1044,7 @@
     "Driver": "Driver",
     "DriverOptions": "Driver Options",
     "EnterValidResourceGroupName": "Enter valid Resource group name",
+    "Information": "Information",
     "ModifyResourceGroup": "Modify Resource Group",
     "Name": "Name",
     "NoChangesMade": "No changes made",
