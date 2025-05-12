@@ -1,14 +1,17 @@
 import { filterEmptyItem, filterNonNullItems } from '../helper';
 import { useUpdatableState } from '../hooks';
+import BAIConfirmModalWithInput from './BAIConfirmModalWithInput';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import BAIRadioGroup from './BAIRadioGroup';
 import BAITable from './BAITable';
 import Flex from './Flex';
 import ResourceGroupSettingModal from './ResourceGroupSettingModal';
+import { ResourceGroupListDeleteMutation } from './__generated__/ResourceGroupListDeleteMutation.graphql';
 import {
   ResourceGroupListQuery,
   ResourceGroupListQuery$data,
 } from './__generated__/ResourceGroupListQuery.graphql';
+import { ResourceGroupListUpdateMutation } from './__generated__/ResourceGroupListUpdateMutation.graphql';
 import {
   CheckOutlined,
   CloseOutlined,
@@ -17,13 +20,23 @@ import {
   PlusOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import { Button, theme } from 'antd';
+import {
+  Alert,
+  App,
+  Button,
+  Popconfirm,
+  Tooltip,
+  Typography,
+  theme,
+} from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
+import { BanIcon, UndoIcon } from 'lucide-react';
 import { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { useLazyLoadQuery, useMutation } from 'react-relay';
+import { PayloadError } from 'relay-runtime';
 
 type ResourceGroup = NonNullable<
   NonNullable<
@@ -34,10 +47,13 @@ type ResourceGroup = NonNullable<
 const ResourceGroupList: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const { message } = App.useApp();
   const [openCreateModal, setOpenCreateModal] = useState<boolean>(false);
   const [activeType, setActiveType] = useState<'active' | 'inactive'>('active');
   const [selectedResourceGroup, setSelectedResourceGroup] =
     useState<ResourceGroup>();
+  const [selectedResourceGroupName, setSelectedResourceGroupName] =
+    useState<string>();
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [isActiveTypePending, startActiveTypeTransition] = useTransition();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
@@ -48,6 +64,7 @@ const ResourceGroupList: React.FC = () => {
         scaling_groups(is_active: $is_active) {
           name
           description
+          is_active
           is_public
           driver
           scheduler
@@ -65,6 +82,29 @@ const ResourceGroupList: React.FC = () => {
       fetchKey,
     },
   );
+
+  const [commitUpdateResourceGroup, isInflightCommitUpdateResourceGroup] =
+    useMutation<ResourceGroupListUpdateMutation>(graphql`
+      mutation ResourceGroupListUpdateMutation(
+        $name: String!
+        $input: ModifyScalingGroupInput!
+      ) {
+        modify_scaling_group(name: $name, props: $input) {
+          ok
+          msg
+        }
+      }
+    `);
+
+  const [commitDeleteResourceGroup, isInflightCommitDeleteResourceGroup] =
+    useMutation<ResourceGroupListDeleteMutation>(graphql`
+      mutation ResourceGroupListDeleteMutation($name: String!) {
+        delete_scaling_group(name: $name) {
+          ok
+          msg
+        }
+      }
+    `);
 
   const columns: ColumnsType<ResourceGroup> = filterEmptyItem([
     {
@@ -132,17 +172,85 @@ const ResourceGroupList: React.FC = () => {
                 setOpenCreateModal(true);
               }}
             />
-            <Button
-              type="text"
-              size="large"
-              icon={
-                <DeleteOutlined
-                  style={{
-                    color: token.colorError,
-                  }}
-                />
+            <Tooltip
+              title={
+                record.is_active
+                  ? t('resourceGroup.Deactivate')
+                  : t('resourceGroup.Activate')
               }
-            />
+            >
+              <Popconfirm
+                title={
+                  record.is_active
+                    ? t('resourceGroup.DeactivateResourceGroup')
+                    : t('resourceGroup.ActivateResourceGroup')
+                }
+                placement="left"
+                okType={record.is_active ? 'danger' : 'primary'}
+                okText={
+                  record.is_active
+                    ? t('resourceGroup.Deactivate')
+                    : t('resourceGroup.Activate')
+                }
+                description={record?.name}
+                onConfirm={() => {
+                  commitUpdateResourceGroup({
+                    variables: {
+                      name: record.name ?? '',
+                      input: {
+                        is_active: !record.is_active,
+                      },
+                    },
+                    onCompleted: ({ modify_scaling_group: res }, errors) => {
+                      if (!res?.ok) {
+                        message.error(res?.msg);
+                        return;
+                      }
+                      if (errors && errors.length > 0) {
+                        const errorMsgList = _.map(
+                          errors,
+                          (error: PayloadError) => error.message,
+                        );
+                        for (const error of errorMsgList) {
+                          message.error(error);
+                        }
+                        return;
+                      }
+                      message.success(t('resourceGroup.ResourceGroupModified'));
+                      startRefetchTransition(() => {
+                        updateFetchKey();
+                      });
+                    },
+                    onError: (err) => {
+                      message.error(err.message);
+                    },
+                  });
+                }}
+              >
+                <Button
+                  type="text"
+                  danger={!!record.is_active}
+                  icon={record.is_active ? <BanIcon /> : <UndoIcon />}
+                  loading={isInflightCommitUpdateResourceGroup}
+                />
+              </Popconfirm>
+            </Tooltip>
+            <Tooltip title={t('button.Delete')}>
+              <Button
+                type="text"
+                size="large"
+                icon={
+                  <DeleteOutlined
+                    style={{
+                      color: token.colorError,
+                    }}
+                  />
+                }
+                onClick={() => {
+                  setSelectedResourceGroupName(record?.name || '');
+                }}
+              />
+            </Tooltip>
           </Flex>
         );
       },
@@ -202,6 +310,67 @@ const ResourceGroupList: React.FC = () => {
         loading={isActiveTypePending}
       />
 
+      <BAIConfirmModalWithInput
+        open={!!selectedResourceGroupName}
+        title={t('resourceGroup.DeleteResourceGroup')}
+        content={
+          <Flex
+            direction="column"
+            gap="md"
+            align="stretch"
+            style={{ marginBottom: token.marginXS, width: '100%' }}
+          >
+            <Alert
+              type="warning"
+              message={t('dialog.warning.DeleteForeverDesc')}
+              style={{ width: '100%' }}
+            />
+            <Flex>
+              <Typography.Text style={{ marginRight: token.marginXXS }}>
+                {t('resourceGroup.TypeResourceGroupNameToDelete')}
+              </Typography.Text>
+              (
+              <Typography.Text code>
+                {selectedResourceGroupName}
+              </Typography.Text>
+              )
+            </Flex>
+          </Flex>
+        }
+        confirmText={selectedResourceGroupName ?? ''}
+        onOk={() => {
+          commitDeleteResourceGroup({
+            variables: {
+              name: selectedResourceGroupName ?? '',
+            },
+            onCompleted: ({ delete_scaling_group: res }, errors) => {
+              if (!res?.ok) {
+                message.error(res?.msg);
+                return;
+              }
+              if (errors && errors.length > 0) {
+                const errorMsgList = _.map(errors, (error) => error.message);
+                for (const error of errorMsgList) {
+                  message.error(error);
+                }
+                return;
+              }
+              message.success(t('resourceGroup.ResourceGroupDeleted'));
+              setSelectedResourceGroupName(undefined);
+              startRefetchTransition(() => {
+                updateFetchKey();
+              });
+            },
+            onError: (err) => {
+              message.error(err.message);
+            },
+          });
+        }}
+        okButtonProps={{ loading: isInflightCommitDeleteResourceGroup }}
+        onCancel={() => {
+          setSelectedResourceGroupName(undefined);
+        }}
+      />
       <ResourceGroupSettingModal
         open={openCreateModal}
         resourceGroupFrgmt={selectedResourceGroup}
