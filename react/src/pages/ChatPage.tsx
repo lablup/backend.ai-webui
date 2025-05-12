@@ -95,7 +95,14 @@ const PureChatPage: React.FC = () => {
         }
       }
     },
-    [addConversation, removeConversation, provider, conversations, appMessage],
+    [
+      addConversation,
+      removeConversation,
+      provider,
+      conversations,
+      appMessage,
+      t,
+    ],
   );
 
   const handleTabChange = useCallback(
