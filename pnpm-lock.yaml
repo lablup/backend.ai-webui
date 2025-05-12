@@ -437,6 +437,9 @@ importers:
 
   packages/backendai-ui:
     dependencies:
+      antd:
+        specifier: ^5.24.5
+        version: 5.24.5(date-fns@3.6.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       react:
         specifier: ^19.0.0
         version: 19.0.0
