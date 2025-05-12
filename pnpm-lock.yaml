@@ -430,6 +430,9 @@ importers:
 
   packages/backendai-ui:
     dependencies:
+      antd:
+        specifier: ^5.24.5
+        version: 5.24.5(date-fns@3.6.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       react:
         specifier: ^19.0.0
         version: 19.0.0
@@ -18538,6 +18541,7 @@ packages:
     engines: { node: ">=0.6.0", teleport: ">=0.2.0" }
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qs@6.11.0:
