@@ -27,7 +27,7 @@ const MySessionCard: React.FC<MySessionCardProps> = ({
     graphql`
         fragment  MySessionCardQueryFragment on Queries
         @argumentDefinitions(
-          projectId: { type: UUID }
+          projectId: { type: "UUID!" }
         ) 
         @refetchable(queryName: "MySessionCardQueryFragmentRefetchQuery") {
           myInteractive: compute_session_nodes(

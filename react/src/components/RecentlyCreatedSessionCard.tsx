@@ -32,7 +32,7 @@ const RecentlyCreatedSessionCard: React.FC<RecentlyCreatedSessionCardProps> = ({
     graphql`
       fragment RecentlyCreatedSessionCardFragment on Queries
       @argumentDefinitions(
-        projectId: { type: "UUID" }
+        projectId: { type: "UUID!" }
       )
       @refetchable(queryName: "RecentlyCreatedSessionCardRefetchQuery") {
         compute_session_nodes(

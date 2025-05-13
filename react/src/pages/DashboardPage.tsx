@@ -23,7 +23,7 @@ const DashboardPage: React.FC = () => {
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const queryRef = useLazyLoadQuery<DashboardPageQuery>(
     graphql`
-      query DashboardPageQuery($projectId: UUID) {
+      query DashboardPageQuery($projectId: UUID!) {
         ...MySessionCardQueryFragment @arguments(projectId: $projectId)
         ...RecentlyCreatedSessionCardFragment @arguments(projectId: $projectId)
       }
