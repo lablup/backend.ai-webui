@@ -23,11 +23,18 @@
     "clean": "rimraf dist"
   },
   "peerDependencies": {
+    "antd": "^5.24.5",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "antd": "^5.24.5"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@storybook/addon-essentials": "^8.6.12",
+    "@storybook/addon-interactions": "^8.6.12",
+    "@storybook/addon-onboarding": "^8.6.12",
+    "@storybook/blocks": "^8.6.12",
+    "@storybook/react": "^8.6.12",
+    "@storybook/react-vite": "^8.6.12",
+    "@storybook/test": "^8.6.12",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.5.0",
