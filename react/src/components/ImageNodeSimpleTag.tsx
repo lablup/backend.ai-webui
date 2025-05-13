@@ -1,6 +1,11 @@
 import { preserveDotStartCase } from '../helper';
-import { useBackendAIImageMetaData } from '../hooks';
+import {
+  useBackendAIImageMetaData,
+  useSuspendedBackendaiClient,
+} from '../hooks';
+import CopyableCodeText from './CopyableCodeText';
 import DoubleTag from './DoubleTag';
+import Flex from './Flex';
 import ImageMetaIcon from './ImageMetaIcon';
 import { ImageNodeSimpleTagFragment$key } from './__generated__/ImageNodeSimpleTagFragment.graphql';
 import { Divider, Tag, Typography, theme } from 'antd';
@@ -19,15 +24,16 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
   copyable = true,
 }) => {
   const [, { tagAlias }] = useBackendAIImageMetaData();
-
   const { token } = theme.useToken();
+  const baiClient = useSuspendedBackendaiClient();
   const image = useFragment(
     graphql`
       fragment ImageNodeSimpleTagFragment on ImageNode {
-        base_image_name @required(action: NONE)
-        version
+        base_image_name @since(version: "24.12.0")
+        version @since(version: "24.12.0")
         architecture
-        tags {
+        name
+        tags @since(version: "24.12.0") {
           key
           value
         }
@@ -36,7 +42,7 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
           value
         }
         registry
-        namespace
+        namespace @since(version: "24.12.0")
         tag
       }
     `,
@@ -46,7 +52,11 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
   if (!image) return null;
 
   const fullName = `${image.registry}/${image.namespace}:${image.tag}@${image.architecture}`;
-  return (
+  const legacyFullImageString = `${image.registry}/${image.name}:${image.tag}@${image.architecture}`;
+  const isSupportBaseImageName =
+    baiClient.isManagerVersionCompatibleWith('24.12.0');
+
+  return isSupportBaseImageName ? (
     <>
       <ImageMetaIcon
         image={fullName}
@@ -54,13 +64,13 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
           marginRight: token.marginXS,
         }}
       />
-      <Typography.Text>{tagAlias(image?.base_image_name)}</Typography.Text>
+      <Typography.Text>{tagAlias(image.base_image_name || '')}</Typography.Text>
       <Divider type="vertical" />
-      <Typography.Text>{image?.version}</Typography.Text>
+      <Typography.Text>{image.version}</Typography.Text>
       <Divider type="vertical" />
-      <Typography.Text>{image?.architecture}</Typography.Text>
+      <Typography.Text>{image.architecture}</Typography.Text>
       <Divider type="vertical" />
-      {_.map(image?.tags, (tag) => {
+      {_.map(image.tags, (tag) => {
         const isCustomized = tag?.key && _.includes(tag.key, 'customized_');
         const tagValue =
           (isCustomized
@@ -97,6 +107,11 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
         />
       )}
     </>
+  ) : (
+    <Flex direction="row" gap={'xs'}>
+      <ImageMetaIcon image={legacyFullImageString || null} />
+      <CopyableCodeText>{legacyFullImageString}</CopyableCodeText>
+    </Flex>
   );
 };
 

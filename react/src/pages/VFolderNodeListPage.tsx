@@ -179,7 +179,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     useLazyLoadQuery<VFolderNodeListPageQuery>(
       graphql`
         query VFolderNodeListPageQuery(
-          $projectId: UUID
+          $projectId: UUID!
           $offset: Int
           $first: Int
           $filter: String

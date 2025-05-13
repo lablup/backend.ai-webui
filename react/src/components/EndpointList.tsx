@@ -88,7 +88,7 @@ const EndpointList: React.FC<EndpointListProps> = ({
         url
         open_to_public
         created_at
-        replicas
+        replicas @since(version: "24.12.0")
         desired_session_count
         routings {
           status
