@@ -95,6 +95,7 @@
     "Share": "공유",
     "Unset": "초기화",
     "Update": "업데이트",
+    "Upload": "업로드",
     "Yes": "네"
   },
   "chatui": {
@@ -330,6 +331,7 @@
       "CloneFolder": "폴더 클론",
       "Cloneable": "복사 가능 여부",
       "Control": "제어",
+      "CreatedAt": "생성 시간",
       "Delete": "삭제",
       "DeleteAFolder": "폴더 삭제",
       "DeleteForever": "영구 삭제",
@@ -362,6 +364,7 @@
       "LeaveFolder": "초대된 폴더 나가기",
       "Location": "위치",
       "MaxFolderQuota": "최대 할당 가능 용량",
+      "MaxSize": "최대 크기",
       "ModifyPermissions": "권한 수정",
       "MountPermission": "마운트 권한",
       "MoveToTrash": "휴지통으로 이동",
@@ -378,6 +381,7 @@
       "OpenAFolder": "폴더 열기",
       "Owner": "소유자",
       "Ownership": "소유",
+      "Path": "경로",
       "Permission": "권한",
       "ProjectFolderAlertDesc": "이 폴더는 프로젝트 구성원 모두에게 공유되는 폴더입니다. ",
       "Rename": "이름 변경",

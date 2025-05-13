@@ -92,6 +92,7 @@
     "Share": "シェア",
     "Unset": "初期化",
     "Update": "更新",
+    "Upload": "アップロード",
     "Yes": "はい"
   },
   "chatui": {
@@ -327,6 +328,7 @@
       "CloneFolder": "フォルダクローン",
       "Cloneable": "クローン可能",
       "Control": "コントロール",
+      "CreatedAt": "で作成されました",
       "Delete": "削除",
       "DeleteAFolder": "フォルダを削除する",
       "DeleteForever": "永久に削除",
@@ -359,6 +361,7 @@
       "LeaveFolder": "招待されたフォルダを出る",
       "Location": "ロケーション",
       "MaxFolderQuota": "最大割り当て可能容量",
+      "MaxSize": "最大サイズ",
       "ModifyPermissions": "権限修正",
       "MountPermission": "マウント許可",
       "MoveToTrash": "ゴミ箱に移動します",
@@ -375,6 +378,7 @@
       "OpenAFolder": "フォルダを開く",
       "Owner": "オーナー",
       "Ownership": "所有",
+      "Path": "ストレージパス",
       "Permission": "許可",
       "ProjectFolderAlertDesc": "このフォルダはプロジェクトのすべてのメンバーと共有されます",
       "Rename": "名前を変更",

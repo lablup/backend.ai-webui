@@ -92,6 +92,7 @@
     "Share": "Berkongsi",
     "Unset": "Tidak ditetapkan",
     "Update": "Kemas kini",
+    "Upload": "Muat naik",
     "Yes": "Ya"
   },
   "chatui": {
@@ -327,6 +328,7 @@
       "CloneFolder": "Klon folder",
       "Cloneable": "Boleh diklon",
       "Control": "Kawal",
+      "CreatedAt": "Dicipta di",
       "Delete": "Padam",
       "DeleteAFolder": "Padamkan folder",
       "DeleteForever": "Padam selama-lamanya",
@@ -359,6 +361,7 @@
       "LeaveFolder": "Tinggalkan folder",
       "Location": "Lokasi",
       "MaxFolderQuota": "Kuota Folder Maks",
+      "MaxSize": "Saiz maks",
       "ModifyPermissions": "Ubah suai kebenaran",
       "MountPermission": "Izin gunung",
       "MoveToTrash": "Pindah ke Tong sampah",
@@ -375,6 +378,7 @@
       "OpenAFolder": "Buka folder",
       "Owner": "Pemilik",
       "Ownership": "Pemilikan",
+      "Path": "Laluan penyimpanan",
       "Permission": "Kebenaran",
       "ProjectFolderAlertDesc": "Folder ini dikongsi dengan semua ahli projek",
       "Rename": "Namakan semula",

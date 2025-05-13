@@ -93,6 +93,7 @@
     "Share": "Chia sẻ",
     "Unset": "Bỏ đặt",
     "Update": "Cập nhật",
+    "Upload": "Tải lên",
     "Yes": "Đúng"
   },
   "chatui": {
@@ -328,6 +329,7 @@
       "CloneFolder": "Sao chép thư mục",
       "Cloneable": "Có thể nhân bản",
       "Control": "Điều khiển",
+      "CreatedAt": "Được tạo ra tại",
       "Delete": "Xóa bỏ",
       "DeleteAFolder": "Xóa một thư mục",
       "DeleteForever": "Xóa vĩnh viễn",
@@ -360,6 +362,7 @@
       "LeaveFolder": "Rời khỏi thư mục",
       "Location": "Vị trí",
       "MaxFolderQuota": "Hạn ngạch thư mục tối đa",
+      "MaxSize": "Kích thước tối đa",
       "ModifyPermissions": "Sửa đổi quyền",
       "MountPermission": "Gắn kết quyền",
       "MoveToTrash": "Di chuyển đến thùng rác",
@@ -376,6 +379,7 @@
       "OpenAFolder": "Mở một thư mục",
       "Owner": "Chủ nhân",
       "Ownership": "Quyền sở hữu",
+      "Path": "Đường dẫn lưu trữ",
       "Permission": "Sự cho phép",
       "ProjectFolderAlertDesc": "Thư mục này được chia sẻ với tất cả các thành viên của dự án",
       "Rename": "Đổi tên",

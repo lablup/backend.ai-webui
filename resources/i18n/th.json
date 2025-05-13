@@ -93,6 +93,7 @@
     "Share": "แชร์",
     "Unset": "ยกเลิกการตั้งค่า",
     "Update": "อัปเดต",
+    "Upload": "อัพโหลด",
     "Yes": "ใช่"
   },
   "chatui": {
@@ -328,6 +329,7 @@
       "CloneFolder": "โคลนโฟลเดอร์",
       "Cloneable": "สามารถโคลนได้",
       "Control": "ควบคุม",
+      "CreatedAt": "สร้างขึ้นที่",
       "Delete": "ลบ",
       "DeleteAFolder": "ลบโฟลเดอร์",
       "DeleteForever": "ลบถาวร",
@@ -360,6 +362,7 @@
       "LeaveFolder": "ออกจากโฟลเดอร์",
       "Location": "ตำแหน่ง",
       "MaxFolderQuota": "โควตาโฟลเดอร์สูงสุด",
+      "MaxSize": "ขนาดสูงสุด",
       "ModifyPermissions": "แก้ไขสิทธิ์",
       "MountPermission": "การอนุญาตเมานต์",
       "MoveToTrash": "ย้ายไปที่ถังขยะ",
@@ -376,6 +379,7 @@
       "OpenAFolder": "เปิดโฟลเดอร์",
       "Owner": "เจ้าของ",
       "Ownership": "ความเป็นเจ้าของ",
+      "Path": "เส้นทางการจัดเก็บ",
       "Permission": "สิทธิ์",
       "ProjectFolderAlertDesc": "โฟลเดอร์นี้แบ่งปันกับสมาชิกทุกคนในโครงการ",
       "Rename": "เปลี่ยนชื่อ",

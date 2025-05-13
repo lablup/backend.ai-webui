@@ -41,7 +41,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
 
-const statusTagColor = {
+export const statusTagColor = {
   // mountable
   ready: 'warning',
   performing: 'warning',

@@ -92,6 +92,7 @@
     "Share": "Condividere",
     "Unset": "Non impostato",
     "Update": "Aggiornare",
+    "Upload": "Caricamento",
     "Yes": "sì"
   },
   "chatui": {
@@ -327,6 +328,7 @@
       "CloneFolder": "Clona la cartella",
       "Cloneable": "Clonabile",
       "Control": "Controllo",
+      "CreatedAt": "Creato a",
       "Delete": "Elimina",
       "DeleteAFolder": "Elimina una cartella",
       "DeleteForever": "Elimina per sempre",
@@ -359,6 +361,7 @@
       "LeaveFolder": "Lasciare la cartella",
       "Location": "Posizione",
       "MaxFolderQuota": "Quota massima della cartella",
+      "MaxSize": "Dimensione massima",
       "ModifyPermissions": "Modificare le autorizzazioni",
       "MountPermission": "Autorizzazione del montaggio",
       "MoveToTrash": "Passa al cestino della spazzatura",
@@ -375,6 +378,7 @@
       "OpenAFolder": "Aprire una cartella",
       "Owner": "Proprietario",
       "Ownership": "Proprietà",
+      "Path": "Percorso di archiviazione",
       "Permission": "Autorizzazione",
       "ProjectFolderAlertDesc": "Questa cartella è condivisa con tutti i membri del progetto",
       "Rename": "Rinominare",
