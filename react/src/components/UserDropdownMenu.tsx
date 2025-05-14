@@ -4,6 +4,7 @@ import {
   useCurrentUserRole,
   useTOTPSupported,
 } from '../hooks/backendai';
+import AboutBackendAIModal from './AboutBackendAIModal';
 import DesktopAppDownloadModal from './DesktopAppDownloadModal';
 import { UserProfileQuery } from './UserProfileSettingModalQuery';
 import { UserProfileSettingModalQuery } from './__generated__/UserProfileSettingModalQuery.graphql';
@@ -51,6 +52,8 @@ const UserDropdownMenu: React.FC<{
   const [isOpenUserSettingModal, { set: setIsOpenUserSettingModal }] =
     useToggle(false);
   const [isDownloadModalOpen, { toggle: toggleDownloadModal }] =
+    useToggle(false);
+  const [isOpenAboutBAIModal, { toggle: toggleAboutBAIModal }] =
     useToggle(false);
 
   const userRole = useCurrentUserRole();
@@ -103,8 +106,7 @@ const UserDropdownMenu: React.FC<{
       key: 'description',
       icon: <ExclamationCircleOutlined />,
       onClick: () => {
-        const event: CustomEvent = new CustomEvent('backend-ai-show-splash');
-        document.dispatchEvent(event);
+        toggleAboutBAIModal();
       },
     },
     {
@@ -251,6 +253,10 @@ const UserDropdownMenu: React.FC<{
       <DesktopAppDownloadModal
         open={isDownloadModalOpen}
         onRequestClose={() => toggleDownloadModal()}
+      />
+      <AboutBackendAIModal
+        open={isOpenAboutBAIModal}
+        onRequestClose={toggleAboutBAIModal}
       />
     </>
   );
