@@ -6,7 +6,6 @@ import './backend-ai-indicator-pool';
 import './backend-ai-login';
 import './backend-ai-resource-broker';
 import './backend-ai-settings-store';
-import './backend-ai-splash';
 import './lablup-notification';
 import './lablup-terms-of-service';
 import '@material/mwc-icon';
