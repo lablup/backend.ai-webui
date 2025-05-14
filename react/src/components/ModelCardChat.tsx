@@ -66,13 +66,16 @@ const ModelCardChat: React.FC<ModelCardChatProps> = ({
 
   // FIXME: temporally render chat UI only if at least one endpoint is healthy.
   return healthyEndpoint.length > 0 ? (
-    <ChatContent
-      endpointId={healthyEndpoint[0]?.endpoint_id as string}
-      endpointUrl={healthyEndpoint[0]?.url as string}
-      endpointName={healthyEndpoint[0]?.name as string}
-      basePath={basePath}
-    />
+    // TODO: use ChatCard component instead of ChatContent
+    <></>
   ) : (
+    // <ChatCard></ChatCard>
+    // <ChatContent
+    //   endpointId={healthyEndpoint[0]?.endpoint_id as string}
+    //   endpointUrl={healthyEndpoint[0]?.url as string}
+    //   endpointName={healthyEndpoint[0]?.name as string}
+    //   basePath={basePath}
+    // />
     <Card
       style={{
         height: '100%',

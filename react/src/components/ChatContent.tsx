@@ -86,46 +86,47 @@ const ChatContent: React.FC<ChatContentProps> = ({
   });
 
   return (
-    <LLMChatCard
-      endpointId={endpointId || ''}
-      baseURL={
-        endpointUrl
-          ? isTextToImageModel
-            ? new URL('/generate-image', endpointUrl || '').toString()
-            : new URL(basePath, endpointUrl || '').toString()
-          : ''
-      }
-      isImageGeneration={isTextToImageModel}
-      models={_.map(modelsResult?.data, (m) => ({
-        id: m.id,
-        name: m.id,
-      }))}
-      apiKey={newestValidToken}
-      fetchOnClient
-      style={{ flex: 1 }}
-      allowCustomModel={false}
-      alert={
-        _.isEmpty(modelsResult?.data) && (
-          <Alert
-            type="warning"
-            showIcon
-            message={t('chatui.CannotFindModel')}
-            action={
-              <Button
-                icon={<ReloadOutlined />}
-                onClick={() => {
-                  refetch();
-                }}
-              >
-                {t('button.Refresh')}
-              </Button>
-            }
-          />
-        )
-      }
-      modelId={modelsResult?.data?.[0].id ?? 'custom'}
-      modelToken={newestValidToken}
-    />
+    <></>
+    // <LLMChatCard
+    //   endpointId={endpointId || ''}
+    //   baseURL={
+    //     endpointUrl
+    //       ? isTextToImageModel
+    //         ? new URL('/generate-image', endpointUrl || '').toString()
+    //         : new URL(basePath, endpointUrl || '').toString()
+    //       : ''
+    //   }
+    //   isImageGeneration={isTextToImageModel}
+    //   models={_.map(modelsResult?.data, (m) => ({
+    //     id: m.id,
+    //     name: m.id,
+    //   }))}
+    //   apiKey={newestValidToken}
+    //   fetchOnClient
+    //   style={{ flex: 1 }}
+    //   allowCustomModel={false}
+    //   alert={
+    //     _.isEmpty(modelsResult?.data) && (
+    //       <Alert
+    //         type="warning"
+    //         showIcon
+    //         message={t('chatui.CannotFindModel')}
+    //         action={
+    //           <Button
+    //             icon={<ReloadOutlined />}
+    //             onClick={() => {
+    //               refetch();
+    //             }}
+    //           >
+    //             {t('button.Refresh')}
+    //           </Button>
+    //         }
+    //       />
+    //     )
+    //   }
+    //   modelId={modelsResult?.data?.[0].id ?? 'custom'}
+    //   modelToken={newestValidToken}
+    // />
   );
 };
 
