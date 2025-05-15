@@ -1027,6 +1027,7 @@
     "Driver": "ไดรเวอร์",
     "DriverOptions": "ตัวเลือกไดรเวอร์",
     "EnterValidResourceGroupName": "ป้อนชื่อกลุ่มทรัพยากรที่ถูกต้อง",
+    "Information": "ข้อมูล",
     "ModifyResourceGroup": "แก้ไขกลุ่มทรัพยากร",
     "Name": "ชื่อ",
     "NoChangesMade": "ไม่มีการเปลี่ยนแปลง",

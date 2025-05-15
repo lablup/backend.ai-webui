@@ -70,20 +70,16 @@ const ResourcesPage: React.FC<ResourcesPageProps> = (props) => {
         </Suspense>
       ) : null}
       {curTabKey === 'resourceGroup' ? (
-        <>
-          <Suspense
-            fallback={
-              <Skeleton
-                active
-                style={{ padding: token.paddingContentVerticalLG }}
-              />
-            }
-          >
-            <ResourceGroupList />
-          </Suspense>
-          {/* @ts-ignore */}
-          {/* <backend-ai-resource-group-list active /> */}
-        </>
+        <Suspense
+          fallback={
+            <Skeleton
+              active
+              style={{ padding: token.paddingContentVerticalLG }}
+            />
+          }
+        >
+          <ResourceGroupList />
+        </Suspense>
       ) : null}
     </BAICard>
   );

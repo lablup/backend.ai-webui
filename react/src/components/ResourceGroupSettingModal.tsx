@@ -3,6 +3,7 @@ import { useCurrentDomainValue } from '../hooks';
 import BAICard from './BAICard';
 import BAIModal from './BAIModal';
 import DomainSelector from './DomainSelector';
+import { ScalingGroupOpts } from './ResourceGroupList';
 import { ResourceGroupSettingModalAssociateDomainMutation } from './__generated__/ResourceGroupSettingModalAssociateDomainMutation.graphql';
 import { ResourceGroupSettingModalCreateMutation } from './__generated__/ResourceGroupSettingModalCreateMutation.graphql';
 import { ResourceGroupSettingModalFragment$key } from './__generated__/ResourceGroupSettingModalFragment.graphql';
@@ -119,7 +120,9 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
       }
     `);
 
-  const schedulerOpts = JSON.parse(resourceGroup?.scheduler_opts || '{}');
+  const schedulerOpts: Partial<ScalingGroupOpts> = JSON.parse(
+    resourceGroup?.scheduler_opts || '{}',
+  );
 
   const INITIAL_FORM_VALUES = filterEmptyValues({
     name: resourceGroup?.name,

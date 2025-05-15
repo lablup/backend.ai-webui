@@ -1038,6 +1038,7 @@
     "Driver": "Conductor",
     "DriverOptions": "Opciones del conductor",
     "EnterValidResourceGroupName": "Introduzca un nombre de grupo de recursos válido",
+    "Information": "Información",
     "ModifyResourceGroup": "Modificar grupo de recursos",
     "Name": "Nombre",
     "NoChangesMade": "No se han realizado cambios",

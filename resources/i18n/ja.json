@@ -1037,6 +1037,7 @@
     "Driver": "運転者",
     "DriverOptions": "ドライバーオプション",
     "EnterValidResourceGroupName": "有効なリソースグループ名を入力してください",
+    "Information": "情報",
     "ModifyResourceGroup": "リソースグループの変更",
     "Name": "名前",
     "NoChangesMade": "変更はありません",

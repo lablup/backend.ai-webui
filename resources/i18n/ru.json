@@ -1038,6 +1038,7 @@
     "Driver": "Драйвер",
     "DriverOptions": "Параметры драйвера",
     "EnterValidResourceGroupName": "Введите действительное имя группы ресурсов",
+    "Information": "Информация",
     "ModifyResourceGroup": "Изменить группу ресурсов",
     "Name": "Имя",
     "NoChangesMade": "Никаких изменений не внесено",

@@ -1038,6 +1038,7 @@
     "Driver": "Kierowca",
     "DriverOptions": "Opcje sterownika",
     "EnterValidResourceGroupName": "Wpisz poprawną nazwę grupy zasobów",
+    "Information": "Informacja",
     "ModifyResourceGroup": "Modyfikuj grupę zasobów",
     "Name": "Nazwa",
     "NoChangesMade": "Nie wprowadzono żadnych zmian",

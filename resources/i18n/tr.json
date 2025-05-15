@@ -1038,6 +1038,7 @@
     "Driver": "sürücü",
     "DriverOptions": "Sürücü Seçenekleri",
     "EnterValidResourceGroupName": "Geçerli Kaynak grubu adını girin",
+    "Information": "Bilgi",
     "ModifyResourceGroup": "Kaynak Grubunu Değiştir",
     "Name": "isim",
     "NoChangesMade": "Değişiklik yapılmadı",
