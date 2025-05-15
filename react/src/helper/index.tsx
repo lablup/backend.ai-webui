@@ -537,3 +537,13 @@ export function getOS() {
   if (_.includes(userAgent, 'linux')) return 'Linux';
   return 'Linux';
 }
+
+export const filterEmptyValues = <T extends Record<string, any>>(
+  input: T,
+): Partial<T> => {
+  return Object.fromEntries(
+    Object.entries(input).filter(
+      ([_, value]) => value !== null && value !== undefined,
+    ),
+  ) as Partial<T>;
+};
