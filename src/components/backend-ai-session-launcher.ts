@@ -3788,7 +3788,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       },
       shmem: {
         name: _text('session.launcher.SharedMemory'),
-        desc: _text('session.launcher.DescSharedMemory'),
+        desc: `${_text('session.launcher.DescSharedMemory')} <br /> <br /> ${_text('session.launcher.DescSharedMemoryContext')}`,
       },
       gpu: {
         name: _text('session.launcher.AIAccelerator'),
