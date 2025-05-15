@@ -1792,7 +1792,7 @@
     "DescDesktopNotification": "打開或關閉桌面通知。 <br /> 如果開啟，Backend.AI 也會使用操作系統內置的通知系統。關閉此選項不會影響 Web UI 中的通知。",
     "DescExperimentalDashboard": "使用儀表板頁面而不是摘要頁面。",
     "DescKeepLoginSessionInformation": "下次讓 webui 應用程序保留當前登錄會話信息。 <br /> 如果關閉該選項，則每次註銷時都會清除登錄信息。",
-    "DescLanguage": "設置界面語言。",
+    "DescLanguage": "設置接口語言。英語和韓文以外的語言將通過機器翻譯提供。",
     "DescLetUserUpdateScriptWithNonEmptyValue": "請使用非空值更新腳本。",
     "DescMyKeypairInfo": "查看我的密鑰對訊息",
     "DescNewUserConfigFileCreated": "可以使用非空數據創建新用戶配置文件。",

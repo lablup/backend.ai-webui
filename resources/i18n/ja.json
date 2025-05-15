@@ -1792,7 +1792,7 @@
     "DescDesktopNotification": "デスクトップ通知をオンまたはオフにします。 <br />オンにすると、Backend.AIはOS組み込みの通知システムも使用します。このオプションをオフにしても、WebUI内の通知には影響しません。",
     "DescExperimentalDashboard": "要約ページの代わりにダッシュボードページを使用します。",
     "DescKeepLoginSessionInformation": "次回、webuiアプリに現在のログインセッション情報を保持させます。 <br />オプションがオフの場合、ログイン情報はログアウトごとにクリアされます。",
-    "DescLanguage": "UI言語を設定します。",
+    "DescLanguage": "インターフェイス言語を設定します。英語と韓国以外の言語は、機械翻訳によって提供されます。",
     "DescLetUserUpdateScriptWithNonEmptyValue": "空でない値でスクリプトを更新してください。",
     "DescMyKeypairInfo": "私のキーペア情報を参照してください",
     "DescNewUserConfigFileCreated": "空でないデータを使用して、新しいユーザー構成ファイルを作成できます。",

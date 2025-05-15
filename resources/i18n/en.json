@@ -1801,7 +1801,7 @@
     "DescDesktopNotification": "Enables desktop notification. <br />If turned on, Backend.AI uses OS built-in notification system too. Turning off this option does not affect notifications within web UI.",
     "DescExperimentalDashboard": "Use Dashboard page instead of Summary page.",
     "DescKeepLoginSessionInformation": "Let webui app keep current login session information next time.<br />If the option is turned off, login information will be cleared each logout.",
-    "DescLanguage": "Set the UI language.",
+    "DescLanguage": "Set interface language. Languages other than English and Korean will be provided via machine translation.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "Please update script with non empty value.",
     "DescMyKeypairInfo": "See my keypair information",
     "DescNewUserConfigFileCreated": "New User config file can be created with non-empty data.",

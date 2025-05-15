@@ -1790,7 +1790,7 @@
     "DescDesktopNotification": "Aktivieren oder deaktivieren Sie die Desktop-Benachrichtigung. <br /> Wenn aktiviert, verwendet Backend.AI auch das im Betriebssystem integrierte Benachrichtigungssystem. Das Deaktivieren dieser Option wirkt sich nicht auf Benachrichtigungen in der Web-Benutzeroberfläche aus.",
     "DescExperimentalDashboard": "Verwenden Sie die Dashboard -Seite anstelle einer zusammenfassenden Seite.",
     "DescKeepLoginSessionInformation": "Lassen Sie die Webui-App beim nächsten Mal die aktuellen Anmeldesitzungsinformationen beibehalten. <br /> Wenn die Option deaktiviert ist, werden die Anmeldeinformationen bei jeder Abmeldung gelöscht.",
-    "DescLanguage": "Legen Sie die Sprache der Benutzeroberfläche fest.",
+    "DescLanguage": "Setzen Sie die Schnittstelle. Andere Sprachen als Englisch und Koreanisch werden per maschineller Übersetzung bereitgestellt.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "Bitte aktualisieren Sie das Skript mit einem nicht leeren Wert.",
     "DescMyKeypairInfo": "Siehe meine Schlüsselpaarinformationen",
     "DescNewUserConfigFileCreated": "Eine neue Benutzerkonfigurationsdatei kann mit nicht leeren Daten erstellt werden.",

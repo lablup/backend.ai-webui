@@ -1793,7 +1793,7 @@
     "DescDesktopNotification": "Bật hoặc tắt thông báo trên màn hình. <br /> Nếu được bật, Backend.AI cũng sử dụng hệ thống thông báo tích hợp sẵn của OS. Tắt tùy chọn này không ảnh hưởng đến các thông báo trong giao diện người dùng web.",
     "DescExperimentalDashboard": "Sử dụng trang bảng điều khiển thay vì trang tóm tắt.",
     "DescKeepLoginSessionInformation": "Hãy để ứng dụng webui giữ thông tin phiên đăng nhập hiện tại vào lần sau. <br /> Nếu tùy chọn bị tắt, thông tin đăng nhập sẽ bị xóa mỗi lần đăng xuất.",
-    "DescLanguage": "Đặt ngôn ngữ giao diện người dùng.",
+    "DescLanguage": "Đặt ngôn ngữ giao diện. Các ngôn ngữ khác ngoài tiếng Anh và tiếng Hàn sẽ được cung cấp thông qua dịch máy.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "Vui lòng cập nhật tập lệnh với giá trị không trống.",
     "DescMyKeypairInfo": "Xem thông tin cặp khóa của tôi",
     "DescNewUserConfigFileCreated": "Tệp cấu hình Người dùng mới có thể được tạo bằng dữ liệu không trống.",

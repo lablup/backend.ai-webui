@@ -1792,7 +1792,7 @@
     "DescDesktopNotification": "Mengaktifkan atau menonaktifkan notifikasi desktop. <br />Jika diaktifkan, Backend.AI juga menggunakan sistem notifikasi bawaan OS. Menonaktifkan opsi ini tidak memengaruhi notifikasi dalam UI web.",
     "DescExperimentalDashboard": "Gunakan halaman dasbor alih -alih halaman ringkasan.",
     "DescKeepLoginSessionInformation": "Biarkan aplikasi UI web menyimpan informasi sesi login saat ini di lain waktu. <br />Jika opsi dimatikan, informasi login akan dihapus setiap keluar.",
-    "DescLanguage": "Setel bahasa UI.",
+    "DescLanguage": "Atur bahasa antarmuka. Bahasa selain bahasa Inggris dan Korea akan disediakan melalui terjemahan mesin.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "Harap perbarui skrip dengan nilai yang tidak kosong.",
     "DescMyKeypairInfo": "Lihat informasi keypair saya",
     "DescNewUserConfigFileCreated": "File konfigurasi pengguna baru dapat dibuat dengan data yang tidak kosong.",

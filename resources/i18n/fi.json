@@ -1791,7 +1791,7 @@
     "DescDesktopNotification": "Ota työpöytäilmoitukset käyttöön tai poista ne käytöstä. <br />Jos se on päällä, Backend.AI käyttää myös käyttöjärjestelmän sisäänrakennettua ilmoitusjärjestelmää. Tämän vaihtoehdon kytkeminen pois päältä ei vaikuta ilmoituksiin web-käyttöliittymässä.",
     "DescExperimentalDashboard": "Käytä kojelaudan sivua yhteenvetosivun sijasta.",
     "DescKeepLoginSessionInformation": "Anna webui-sovelluksen säilyttää nykyisen kirjautumisistunnon tiedot seuraavalla kerralla.<br />Jos vaihtoehto on pois päältä, kirjautumistiedot tyhjennetään jokaisen uloskirjautumisen yhteydessä.",
-    "DescLanguage": "Aseta käyttöliittymän kieli.",
+    "DescLanguage": "Aseta käyttöliittymäkieli. Muut kielet kuin englanti ja korea tarjotaan koneen käännöksen kautta.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "Päivitä skripti ei-tyhjällä arvolla.",
     "DescMyKeypairInfo": "Katso avainparini tiedot",
     "DescNewUserConfigFileCreated": "Uusi User config-tiedosto voidaan luoda ei-tyhjillä tiedoilla.",

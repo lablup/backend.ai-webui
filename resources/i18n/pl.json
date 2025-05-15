@@ -1793,7 +1793,7 @@
     "DescDesktopNotification": "Włącz lub wyłącz powiadomienia na pulpicie. <br /> Jeśli jest włączony, Backend.AI używa również wbudowanego systemu powiadomień. Wyłączenie tej opcji nie wpływa na powiadomienia w interfejsie internetowym.",
     "DescExperimentalDashboard": "Użyj strony Dashboard zamiast strony podsumowującej.",
     "DescKeepLoginSessionInformation": "Pozwól aplikacji webui zachować bieżące informacje o sesji logowania następnym razem. <br /> Jeśli opcja jest wyłączona, dane logowania będą usuwane przy każdym wylogowaniu.",
-    "DescLanguage": "Ustaw język interfejsu.",
+    "DescLanguage": "Ustaw język interfejsu. Języki inne niż angielski i koreański będą dostarczane przez tłumaczenie maszynowe.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "Proszę zaktualizować skrypt o niepustą wartość.",
     "DescMyKeypairInfo": "Zobacz informacje o mojej parze kluczy",
     "DescNewUserConfigFileCreated": "Nowy plik konfiguracji użytkownika można utworzyć z niepustymi danymi.",

@@ -1792,7 +1792,7 @@
     "DescDesktopNotification": "Masaüstü bildirimini açın veya kapatın. <br /> Açıksa, Backend.AI, OS yerleşik bildirim sistemini de kullanır. Bu seçeneği kapatmak, web kullanıcı arayüzündeki bildirimleri etkilemez.",
     "DescExperimentalDashboard": "Özet sayfası yerine gösterge paneli sayfasını kullanın.",
     "DescKeepLoginSessionInformation": "Webui uygulamasının bir dahaki sefere mevcut oturum açma bilgilerini tutmasına izin verin. <br /> Seçenek kapatılırsa, oturum açma bilgileri her oturum kapatıldığında temizlenir.",
-    "DescLanguage": "UI dilini ayarlayın.",
+    "DescLanguage": "Arayüz dilini ayarlayın. İngilizce ve Korece dışındaki diller makine çevirisi ile sağlanacaktır.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "Lütfen komut dosyasını boş olmayan bir değerle güncelleyin.",
     "DescMyKeypairInfo": "Anahtar çifti bilgilerimi görün",
     "DescNewUserConfigFileCreated": "Boş olmayan verilerle yeni Kullanıcı yapılandırma dosyası oluşturulabilir.",

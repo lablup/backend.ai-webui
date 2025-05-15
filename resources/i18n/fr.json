@@ -1793,7 +1793,7 @@
     "DescDesktopNotification": "Activez ou désactivez la notification sur le bureau. <br /> S'il est activé, Backend.AI utilise également le système de notification intégré au système d'exploitation. La désactivation de cette option n'affecte pas les notifications dans l'interface utilisateur Web.",
     "DescExperimentalDashboard": "Utilisez la page de tableau de bord au lieu de la page Résumé.",
     "DescKeepLoginSessionInformation": "Laissez l'application webui conserver les informations de session de connexion actuelles la prochaine fois. <br /> Si l'option est désactivée, les informations de connexion seront effacées à chaque déconnexion.",
-    "DescLanguage": "Définissez la langue de l'interface utilisateur.",
+    "DescLanguage": "Définir la langue d'interface. Des langues autres que l'anglais et le coréen seront fournies par traduction automatique.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "Veuillez mettre à jour le script avec une valeur non vide.",
     "DescMyKeypairInfo": "Voir les informations de ma paire de clés",
     "DescNewUserConfigFileCreated": "Un nouveau fichier de configuration utilisateur peut être créé avec des données non vides.",

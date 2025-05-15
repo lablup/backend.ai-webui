@@ -1793,7 +1793,7 @@
     "DescDesktopNotification": "Ative ou desative a notificação na área de trabalho. <br /> Se ativado, o Backend.AI também usa o sistema de notificação integrado do SO. Desativar esta opção não afeta as notificações na IU da web.",
     "DescExperimentalDashboard": "Use a página do painel em vez da página de resumo.",
     "DescKeepLoginSessionInformation": "Deixe o aplicativo webui manter as informações atuais da sessão de login na próxima vez. <br /> Se a opção for desligada, as informações de login serão apagadas a cada logout.",
-    "DescLanguage": "Defina o idioma da IU.",
+    "DescLanguage": "Definir linguagem de interface. Outros idiomas que não o inglês e o coreano serão fornecidos via tradução da máquina.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "Atualize o script com um valor não vazio.",
     "DescMyKeypairInfo": "Ver as informações do meu par de chaves",
     "DescNewUserConfigFileCreated": "O novo arquivo de configuração do usuário pode ser criado com dados não vazios.",
