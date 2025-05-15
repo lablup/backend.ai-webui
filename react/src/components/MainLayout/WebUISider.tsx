@@ -16,6 +16,7 @@ import Flex from '../Flex';
 import ThemeReverseProvider from '../ReverseThemeProvider';
 import SiderToggleButton from '../SiderToggleButton';
 import SignoutModal from '../SignoutModal';
+import TermsOfServiceModal from '../TermsOfServiceModal';
 import WebUILink from '../WebUILink';
 import { PluginPage, WebUIPluginType } from './MainLayout';
 import {
@@ -126,6 +127,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     baiClient?.supports('user-committed-image') ?? false;
 
   const [isOpenSignoutModal, { toggle: toggleSignoutModal }] = useToggle(false);
+  const [isOpenTOSModal, { toggle: toggleTOSModal }] = useToggle(false);
 
   const siderRef = useRef<HTMLDivElement>(null);
   const isSiderHover = useHover(siderRef);
@@ -573,9 +575,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                   type="secondary"
                   style={{ fontSize: 11 }}
                   onClick={() => {
-                    document.dispatchEvent(
-                      new CustomEvent('show-TOS-agreement'),
-                    );
+                    toggleTOSModal();
                   }}
                 >
                   {t('webui.menu.TermsOfService')}
@@ -638,6 +638,10 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           </Typography.Text>
         </Flex>
       )}
+      <TermsOfServiceModal
+        open={isOpenTOSModal}
+        onRequestClose={toggleTOSModal}
+      />
     </BAISider>
   );
 };
