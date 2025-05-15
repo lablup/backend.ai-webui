@@ -349,6 +349,27 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
       },
     );
+    if (
+      typeof globalThis.backendaiclient === 'undefined' ||
+      globalThis.backendaiclient === null ||
+      globalThis.backendaiclient.ready === false
+    ) {
+      document.addEventListener(
+        'backend-ai-connected',
+        () => {
+          this.allowTCPApps =
+            globalThis.isElectron ||
+            globalThis.backendaiclient._config.allowNonAuthTCP;
+        },
+        {
+          once: true,
+        },
+      );
+    } else {
+      this.allowTCPApps =
+        globalThis.isElectron ||
+        globalThis.backendaiclient._config.allowNonAuthTCP;
+    }
   }
 
   async _viewStateChanged(active) {
@@ -576,9 +597,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (Object.keys(appServicesOption).length > 0) {
       this.appSupportOption = appServicesOption;
     }
-    this.allowTCPApps =
-      globalThis.isElectron ||
-      globalThis.backendaiclient._config.allowNonAuthTCP;
 
     filteredAppServices.forEach((elm) => {
       if (elm in this.appTemplate) {
@@ -1197,7 +1215,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               urlPostfix,
               TCP_APPS.indexOf(appName) === -1 || globalThis.isElectron,
             );
-
           // eligiblity for spawning TCP-based apps are already verified when first loading the app launcher icons, so here we assume that either non-auth TCP mode is enabled on system or user is using electron app
           if (TCP_APPS.indexOf(appName) !== -1 && this.allowTCPApps) {
             if (globalThis.isElectron) {
