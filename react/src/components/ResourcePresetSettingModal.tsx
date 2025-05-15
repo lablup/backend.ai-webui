@@ -105,13 +105,14 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
         let resourceSlots = _.mapValues(
           values?.resource_slots,
           (value, key) => {
-            if (_.includes(key, 'mem')) {
+            if (value && _.includes(key, 'mem')) {
               return convertBinarySizeUnit(value, 'b', 0)?.numberFixed;
             }
             return value;
           },
         );
-        resourceSlots = _.pickBy(resourceSlots, _.negate(_.isUndefined));
+
+        resourceSlots = _.pickBy(resourceSlots, _.negate(_.isNil));
 
         const props: CreateResourcePresetInput | ModifyResourcePresetInput = {
           resource_slots: JSON.stringify(resourceSlots || {}),
@@ -221,6 +222,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
         isInFlightCommitModifyResourcePresetByName ||
         isInFlightCommitModifyResourcePresetById
       }
+      okText={resourcePreset ? t('button.Save') : t('button.Create')}
     >
       <Form
         ref={formRef}
@@ -246,7 +248,12 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
                     )?.numberUnit
                   : null,
               }
-            : {}
+            : {
+                resource_slots: {
+                  mem: null,
+                },
+                shared_memory: null,
+              }
         }
       >
         <Form.Item
@@ -306,6 +313,12 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
                         }
                         name={['resource_slots', resourceSlotKey]}
                         rules={[
+                          _.includes(['cpu', 'mem'], resourceSlotKey)
+                            ? {
+                                required: true,
+                                message: t('data.explorer.ValueRequired'),
+                              }
+                            : {},
                           {
                             validator(__, value) {
                               if (
