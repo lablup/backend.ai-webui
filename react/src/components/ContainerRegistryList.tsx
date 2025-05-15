@@ -177,7 +177,10 @@ const ContainerRegistryList: React.FC<{
 
   // const deferredInFlightDomainName = useDeferredValue(inFlightDomainName);
 
-  const rescanImage = async (registry_name: string) => {
+  const rescanImage = async (
+    registry_name: string,
+    project: string | undefined | null,
+  ) => {
     // const indicator: any =
     //   // @ts-ignore
     //   await globalThis.lablupIndicator.start('indeterminate');
@@ -185,7 +188,7 @@ const ContainerRegistryList: React.FC<{
     // indicator.set(10, t('registry.UpdatingRegistryInfo'));
     const notiKey = upsertNotification({
       // key: notiKey,
-      message: `${registry_name} ${t('maintenance.RescanImages')}`,
+      message: `${t('maintenance.RescanImages')}: ${registry_name}${project ? `/${project}` : ''}`,
       description: t('registry.UpdatingRegistryInfo'),
       open: true,
       backgroundTask: {
@@ -211,8 +214,14 @@ const ContainerRegistryList: React.FC<{
         globalThis.lablupNotification.show(true, err);
       }
     };
+    const isSupportImageRescanByProject = baiClient.supports(
+      'image_rescan_by_project',
+    );
     baiClient.maintenance
-      .rescan_images(registry_name)
+      .rescan_images(
+        registry_name,
+        isSupportImageRescanByProject ? (project ?? undefined) : undefined,
+      )
       .then(({ rescan_images }: any) => {
         if (rescan_images.ok) {
           upsertNotification({
@@ -430,7 +439,8 @@ const ContainerRegistryList: React.FC<{
                 icon={
                   <SyncOutlined
                     onClick={() => {
-                      record.registry_name && rescanImage(record.registry_name);
+                      record.registry_name &&
+                        rescanImage(record.registry_name, record.project);
                     }}
                   />
                 }
