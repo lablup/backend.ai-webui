@@ -97,6 +97,11 @@
     "Upload": "Yüklemek",
     "Yes": "Evet"
   },
+  "chat": {
+    "error": {
+      "maxConversationsReached": "10'dan fazla konuşma ekleyemezsiniz"
+    }
+  },
   "chatui": {
     "Attachments": "Ekler",
     "CannotFindModel": "LLM modelleri bulunamadı. OpenAI ile temel yolu ve belirteç uyumluluğunu doğrulayın, ardından 'Modelleri Yenile' düğmesine basın",

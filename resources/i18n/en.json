@@ -99,6 +99,11 @@
     "Upload": "Upload",
     "Yes": "Yes"
   },
+  "chat": {
+    "error": {
+      "maxConversationsReached": "You can't add more than 10 conversations"
+    }
+  },
   "chatui": {
     "Attachments": "Attachments",
     "CannotFindModel": "LLM models not found. Verify the base path and token compatibility with OpenAI, then press 'Refresh Model Information'",

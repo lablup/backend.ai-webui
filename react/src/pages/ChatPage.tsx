@@ -1,24 +1,23 @@
 import BAICard from '../components/BAICard';
-import {
-  ChatProviderType,
-  ConversationType,
-} from '../components/Chat/ChatModel';
-import { Conversation } from '../components/Chat/Conversation';
+import ChatCacheProvider, {
+  chatLocalStorageCache,
+  useConversations,
+} from '../components/Chat/ChatCacheProvider';
+import { ChatConversation } from '../components/Chat/ChatConversation';
+import type { ChatProviderData } from '../components/Chat/ChatModel';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { ChatPageQuery } from './__generated__/ChatPageQuery.graphql';
+import { App, Card, Skeleton } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
-import { t } from 'i18next';
-import React, { useId } from 'react';
+import { Suspense, useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 import { StringParam, useQueryParams } from 'use-query-params';
 
-const ChatPageStyle = {
-  body: {
-    overflow: 'hidden',
-  },
-};
-
-type ChatPageProps = {};
+type TabClickEvent =
+  | string
+  | React.MouseEvent<Element, MouseEvent>
+  | React.KeyboardEvent<Element>;
 
 function useDefaultEndpointId() {
   const baiClient = useSuspendedBackendaiClient();
@@ -42,32 +41,130 @@ function useDefaultEndpointId() {
   return endpoint_list?.items[0]?.endpoint_id || undefined;
 }
 
-const ChatPage: React.FC<ChatPageProps> = () => {
-  const [{ endpointId, modelId, agentId }] = useQueryParams({
+function useChatProvider(defaultEndpointId?: string): ChatProviderData {
+  const [{ endpointId, modelId, agentId, apiKey }] = useQueryParams({
     endpointId: StringParam,
     agentId: StringParam,
     modelId: StringParam,
+    apiKey: StringParam,
   });
 
-  const defaultEndpointId = useDefaultEndpointId();
-
-  const conversation: ConversationType = {
-    id: useId(),
-    label: t('webui.menu.Chat'),
-    chats: [],
-  };
-
-  const provider: ChatProviderType = {
-    basePath: 'v1',
-    agentId: agentId ?? undefined,
+  return {
+    basePath: 'v1', // Use OpenAPI 'v1' for OpenAI compatibility basePath,
+    baseURL: '',
     endpointId: endpointId ?? defaultEndpointId ?? undefined,
+    agentId: agentId ?? undefined,
     modelId: modelId ?? undefined,
+    apiKey: apiKey ?? undefined,
   };
+}
+
+const PureChatPage: React.FC = () => {
+  const { message: appMessage } = App.useApp();
+  const { t } = useTranslation();
+  const defaultEndpointId = useDefaultEndpointId();
+  const provider = useChatProvider(defaultEndpointId);
+  const {
+    conversations,
+    activeConversation,
+    setActiveConversation,
+    addConversation,
+    removeConversation,
+    reset,
+    isEmptyCache,
+  } = useConversations();
+
+  const tabList = conversations.map((conversation, index) => {
+    return {
+      key: conversation.id,
+      label: conversation.label,
+    };
+  });
+
+  const handleTabEdit = useCallback(
+    (e: TabClickEvent, action: 'add' | 'remove') => {
+      if (action === 'add') {
+        if (conversations.length < 10) {
+          addConversation(provider);
+        } else {
+          appMessage.error(t('chat.error.maxConversationsReached'), 5);
+        }
+      } else if (action === 'remove') {
+        if (conversations.length > 1) {
+          removeConversation(e as string);
+        }
+      }
+    },
+    [
+      addConversation,
+      removeConversation,
+      provider,
+      conversations,
+      appMessage,
+      t,
+    ],
+  );
+
+  const handleTabChange = useCallback(
+    (key: string) => {
+      setActiveConversation(key);
+    },
+    [setActiveConversation],
+  );
+
+  useEffect(() => {
+    // Check conversations cache once the component mounts first
+    if (!isEmptyCache()) {
+      reset();
+    } else {
+      addConversation(provider);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
-    <BAICard title={t('webui.menu.Chat')} styles={ChatPageStyle}>
-      <Conversation conversation={conversation} provider={provider} />
+    <BAICard
+      styles={{
+        header: {
+          padding: 0,
+        },
+        body: { overflow: 'hidden' },
+      }}
+      tabList={tabList}
+      tabProps={{
+        size: 'large',
+        type: 'editable-card',
+        onEdit: handleTabEdit,
+      }}
+      activeTabKey={activeConversation}
+      onTabChange={handleTabChange}
+    >
+      <Suspense
+        fallback={
+          <Card
+            style={{
+              overflow: 'auto',
+              height: 'calc(100vh - 240px)',
+            }}
+            variant="outlined"
+          >
+            <Skeleton active />
+          </Card>
+        }
+      >
+        {activeConversation && (
+          <ChatConversation conversationId={activeConversation} />
+        )}
+      </Suspense>
     </BAICard>
+  );
+};
+
+const ChatPage: React.FC = () => {
+  return (
+    <ChatCacheProvider provider={chatLocalStorageCache}>
+      <PureChatPage />
+    </ChatCacheProvider>
   );
 };
 
