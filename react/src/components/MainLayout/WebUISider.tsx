@@ -13,6 +13,7 @@ import SessionsIcon from '../BAIIcons/SessionsIcon';
 import BAIMenu from '../BAIMenu';
 import BAISider, { BAISiderProps } from '../BAISider';
 import Flex from '../Flex';
+import PrivacyPolicyModal from '../PrivacyPolicyModal';
 import ThemeReverseProvider from '../ReverseThemeProvider';
 import SiderToggleButton from '../SiderToggleButton';
 import SignoutModal from '../SignoutModal';
@@ -128,6 +129,8 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
 
   const [isOpenSignoutModal, { toggle: toggleSignoutModal }] = useToggle(false);
   const [isOpenTOSModal, { toggle: toggleTOSModal }] = useToggle(false);
+  const [isOpenPrivacyPolicyModal, { toggle: togglePrivacyPolicyModal }] =
+    useToggle(false);
 
   const siderRef = useRef<HTMLDivElement>(null);
   const isSiderHover = useHover(siderRef);
@@ -585,9 +588,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                   type="secondary"
                   style={{ fontSize: 11 }}
                   onClick={() => {
-                    document.dispatchEvent(
-                      new CustomEvent('show-PP-agreement'),
-                    );
+                    togglePrivacyPolicyModal();
                   }}
                 >
                   {t('webui.menu.PrivacyPolicy')}
@@ -641,6 +642,10 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       <TermsOfServiceModal
         open={isOpenTOSModal}
         onRequestClose={toggleTOSModal}
+      />
+      <PrivacyPolicyModal
+        open={isOpenPrivacyPolicyModal}
+        onRequestClose={togglePrivacyPolicyModal}
       />
     </BAISider>
   );
