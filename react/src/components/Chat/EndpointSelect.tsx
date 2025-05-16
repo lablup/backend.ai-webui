@@ -1,4 +1,5 @@
 import { useSuspendedBackendaiClient } from '../../hooks';
+import BAISelect from '../BAISelect';
 import {
   EndpointSelectQuery,
   EndpointSelectQuery$data,
@@ -117,7 +118,7 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
       });
 
   return (
-    <Select
+    <BAISelect
       placeholder={t('chatui.SelectEndpoint')}
       style={{
         fontWeight: 'normal',
@@ -136,6 +137,13 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
       value={controllableValue}
       onChange={(v, option) => {
         setControllableValue(v, _.castArray(option)?.[0].endpoint);
+      }}
+      atBottomThreshold={30}
+      atBottomStateChange={(atBottom) => {
+        console.log('atBottom', atBottom);
+        // if (atBottom) {
+        //   setSearchStr(undefined);
+        // }
       }}
     />
   );
