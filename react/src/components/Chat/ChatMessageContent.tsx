@@ -98,6 +98,7 @@ const ChatMessageContentBlock = memo<{ block?: string; isStreaming?: boolean }>(
                 padding: token.paddingSM,
                 borderRadius: `0 0 ${token.borderRadiusLG}px ${token.borderRadiusLG}px`,
                 margin: '-0.5em 0',
+                overflow: 'scroll',
               }}
             >
               <CodeBlock
@@ -113,14 +114,24 @@ const ChatMessageContentBlock = memo<{ block?: string; isStreaming?: boolean }>(
             </Flex>
           </Flex>
         ) : (
-          <code
-            {...rest}
-            style={{ whiteSpace: 'pre-wrap' }}
-            className={className}
+          <Flex
+            style={{
+              width: '100%',
+              padding: token.paddingSM,
+              borderRadius: `0 0 ${token.borderRadiusLG}px ${token.borderRadiusLG}px`,
+              margin: '-0.5em 0',
+              overflow: 'scroll',
+            }}
           >
-            {/* @ts-ignore */}
-            {children}
-          </code>
+            <code
+              {...rest}
+              style={{ whiteSpace: 'pre-wrap' }}
+              className={className}
+            >
+              {/* @ts-ignore */}
+              {children}
+            </code>
+          </Flex>
         );
       },
       [isStreaming],
