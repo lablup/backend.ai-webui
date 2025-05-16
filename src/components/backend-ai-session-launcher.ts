@@ -4718,6 +4718,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         id="launch-session"
         ?disabled="${!this.enableLaunchButton}"
         icon="power_settings_new"
+        data-testid="start-session-button"
         @click="${() => this._launchSessionDialog()}"
       >
         ${_t('session.launcher.Start')}
