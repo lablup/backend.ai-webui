@@ -112,7 +112,18 @@
     "Thinking": "Pensiero",
     "UploadFiles": "Carica file",
     "UploadFilesDescription": "Fare clic o trascinare i file in quest'area per caricarli",
-    "ViewReasoning": "Visualizzare il ragionamento"
+    "ViewReasoning": "Visualizzare il ragionamento",
+    "chat": {
+      "parameter": {
+        "FrequencyPenalty": "Penalizza i token frequenti per ridurre la ripetizione.",
+        "MaxTokens": " Limita il numero di token nell'output",
+        "PresencePenalty": "Penalizza i token già apparsi per incoraggiare nuovi argomenti",
+        "Temperature": "Controlla la casualità; più basso è più concentrato, più alto è più creativo",
+        "Title": "Parametri",
+        "TopK": "Esempi dei primi K token più probabili",
+        "TopP": "Campioni di token la cui probabilità cumulativa è entro P"
+      }
+    }
   },
   "credential": {
     "AccessKey": "Chiave di accesso",

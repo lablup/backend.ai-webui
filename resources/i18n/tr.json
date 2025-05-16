@@ -113,7 +113,18 @@
     "Thinking": "Düşünme",
     "UploadFiles": "Dosyaları yükle",
     "UploadFilesDescription": "Yüklemek için dosyaları bu alana tıklayın veya sürükleyin",
-    "ViewReasoning": "Muhakemeyi görüntüleyin"
+    "ViewReasoning": "Muhakemeyi görüntüleyin",
+    "chat": {
+      "parameter": {
+        "FrequencyPenalty": "Tekrarı azaltmak için sık kullanılan belirteçleri cezalandırır",
+        "MaxTokens": " Çıktıdaki belirteç sayısını sınırlar",
+        "PresencePenalty": "Yeni konuları teşvik etmek için daha önce ortaya çıkmış olan belirteçleri cezalandırır",
+        "Temperature": "Rastgeleliği kontrol eder; düşük daha odaklanmış, yüksek daha yaratıcıdır",
+        "Title": "Parametreler",
+        "TopK": "En olası K belirteçten örnekler",
+        "TopP": "Kümülatif olasılığı P içinde olan belirteçlerden örnekler"
+      }
+    }
   },
   "credential": {
     "AccessKey": "Erişim Anahtarı",

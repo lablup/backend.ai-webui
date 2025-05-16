@@ -115,7 +115,18 @@
     "Thinking": "추론중",
     "UploadFiles": "파일 업로드",
     "UploadFilesDescription": "파일을 여기 끌어다 놓거나 이 영역을 클릭하세요",
-    "ViewReasoning": "추론 결과 보기"
+    "ViewReasoning": "추론 결과 보기",
+    "chat": {
+      "parameter": {
+        "FrequencyPenalty": "자주 등장한 단어에 패널티를 주어 반복을 줄입니다",
+        "MaxTokens": "응답의 최대 토큰 수를 제한합니다",
+        "PresencePenalty": "이미 등장한 단어에 패널티를 주어 새로운 주제를 유도합니다",
+        "Temperature": "출력의 무작위성을 조절합니다. 낮을수록 집중되고, 높을수록 창의적입니다",
+        "Title": "파라미터",
+        "TopK": "확률이 높은 상위 K개의 단어 중에서 선택합니다.",
+        "TopP": "누적 확률이 P 이하인 단어들 중에서 선택합니다"
+      }
+    }
   },
   "credential": {
     "AccessKey": "접근키",

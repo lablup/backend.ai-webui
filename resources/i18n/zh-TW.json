@@ -113,7 +113,18 @@
     "Thinking": "思維",
     "UploadFiles": "上傳文件",
     "UploadFilesDescription": "點選或拖曳文件到該區域即可上傳",
-    "ViewReasoning": "查看推理"
+    "ViewReasoning": "查看推理",
+    "chat": {
+      "parameter": {
+        "FrequencyPenalty": "对频繁出现的标记进行惩罚，以减少重复",
+        "MaxTokens": "限制输出中的标记数",
+        "PresencePenalty": "惩罚已出现的代币，鼓励新话题的出现",
+        "Temperature": "控制随机性；越低越专注，越高越有创造力",
+        "Title": "参数",
+        "TopK": "从 K 个最有可能的代币中提取样本",
+        "TopP": "从累计概率在 P"
+      }
+    }
   },
   "credential": {
     "AccessKey": "存取密鑰",

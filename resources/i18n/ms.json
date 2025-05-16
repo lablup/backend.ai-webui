@@ -112,7 +112,18 @@
     "Thinking": "Berfikir",
     "UploadFiles": "Muat naik fail",
     "UploadFilesDescription": "Klik atau seret fail ke kawasan ini untuk memuat naik",
-    "ViewReasoning": "Lihat penalaran"
+    "ViewReasoning": "Lihat penalaran",
+    "chat": {
+      "parameter": {
+        "FrequencyPenalty": "Hukuman token yang kerap untuk mengurangkan pengulangan",
+        "MaxTokens": "Mengehadkan bilangan token dalam output",
+        "PresencePenalty": "Token yang dihukum yang telah muncul untuk menggalakkan topik baru",
+        "Temperature": "Mengawal rawak; \nlebih rendah lebih terfokus, lebih tinggi lebih kreatif",
+        "Title": "Parameter",
+        "TopK": "Sampel dari Token K Kemungkinan besar",
+        "TopP": "Sampel dari token yang kebarangkalian kumulatif berada dalam p"
+      }
+    }
   },
   "credential": {
     "AccessKey": "Kunci Akses",

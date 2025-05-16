@@ -113,7 +113,18 @@
     "Thinking": "Suy nghĩ",
     "UploadFiles": "Tải tập tin lên",
     "UploadFilesDescription": "Nhấp hoặc kéo tệp vào khu vực này để tải lên",
-    "ViewReasoning": "Xem lý luận"
+    "ViewReasoning": "Xem lý luận",
+    "chat": {
+      "parameter": {
+        "FrequencyPenalty": "Áp dụng hình phạt đối với các token xuất hiện thường xuyên để giảm thiểu sự lặp lại.",
+        "MaxTokens": " Giới hạn số lượng token trong đầu ra",
+        "PresencePenalty": "Phạt các token đã xuất hiện để khuyến khích các chủ đề mới.",
+        "Temperature": "Kiểm soát tính ngẫu nhiên; giá trị thấp hơn mang lại sự tập trung cao hơn, giá trị cao hơn mang lại sự sáng tạo hơn.",
+        "Title": "Tham số",
+        "TopK": "Mẫu từ K token có khả năng cao nhất",
+        "TopP": "Mẫu từ các token có xác suất tích lũy nằm trong khoảng P"
+      }
+    }
   },
   "credential": {
     "AccessKey": "Khóa truy cập",

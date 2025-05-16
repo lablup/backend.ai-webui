@@ -113,7 +113,18 @@
     "Thinking": "Pensamiento",
     "UploadFiles": "Subir archivos",
     "UploadFilesDescription": "Haga clic o arrastre archivos a esta área para cargarlos",
-    "ViewReasoning": "Ver razonamiento"
+    "ViewReasoning": "Ver razonamiento",
+    "chat": {
+      "parameter": {
+        "FrequencyPenalty": "Penaliza las fichas frecuentes para reducir la repetición",
+        "MaxTokens": " Limita el número de tokens en la salida",
+        "PresencePenalty": "Penaliza las fichas que ya han aparecido para fomentar nuevos temas",
+        "Temperature": "Controla la aleatoriedad; más bajo es más centrado, más alto es más creativo",
+        "Title": "Parámetros",
+        "TopK": "Muestras de las K fichas más probables",
+        "TopP": "Muestras de fichas cuya probabilidad acumulada está dentro de P"
+      }
+    }
   },
   "credential": {
     "AccessKey": "Clave de acceso",

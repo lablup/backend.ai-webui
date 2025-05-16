@@ -112,7 +112,18 @@
     "Thinking": "Ajattelu",
     "UploadFiles": "Lataa tiedostoja",
     "UploadFilesDescription": "Napsauta tai vedä tiedostoja tälle alueelle ladataksesi",
-    "ViewReasoning": "Näytä päättely"
+    "ViewReasoning": "Näytä päättely",
+    "chat": {
+      "parameter": {
+        "FrequencyPenalty": "Rankaisee usein esiintyviä merkkejä toiston vähentämiseksi.",
+        "MaxTokens": " Rajoittaa merkkien lukumäärää tulosteessa.",
+        "PresencePenalty": "Rankaisee jo ilmestyneitä merkkejä uusien aiheiden edistämiseksi.",
+        "Temperature": "Säätelee satunnaisuutta; alempi on keskittyneempi, korkeampi on luovempi.",
+        "Title": "Parametrit",
+        "TopK": "Näytteet K todennäköisimmän merkin joukosta.",
+        "TopP": "Näytteet merkinnöistä, joiden kumulatiivinen todennäköisyys on P:n sisällä."
+      }
+    }
   },
   "credential": {
     "AccessKey": "Pääsyavain",

@@ -113,7 +113,18 @@
     "Thinking": "Pensamento",
     "UploadFiles": "Carregar arquivos",
     "UploadFilesDescription": "Clique ou arraste os arquivos para esta área para fazer upload",
-    "ViewReasoning": "Ver raciocínio"
+    "ViewReasoning": "Ver raciocínio",
+    "chat": {
+      "parameter": {
+        "FrequencyPenalty": "Penaliza os tokens frequentes para reduzir a repetição",
+        "MaxTokens": " Limita o número de tokens na saída",
+        "PresencePenalty": "Penaliza os tokens que já apareceram para incentivar novos tópicos",
+        "Temperature": "Controla a aleatoriedade; mais baixo é mais concentrado, mais alto é mais criativo",
+        "Title": "Parâmetros",
+        "TopK": "Amostras dos K tokens mais prováveis",
+        "TopP": "Amostras de tokens cuja probabilidade acumulada está dentro de P"
+      }
+    }
   },
   "credential": {
     "AccessKey": "Chave de acesso",

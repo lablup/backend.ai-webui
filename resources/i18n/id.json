@@ -112,7 +112,18 @@
     "Thinking": "Pemikiran",
     "UploadFiles": "Unggah file",
     "UploadFilesDescription": "Klik atau seret file ke area ini untuk diunggah",
-    "ViewReasoning": "Lihat alasan"
+    "ViewReasoning": "Lihat alasan",
+    "chat": {
+      "parameter": {
+        "FrequencyPenalty": "Menghukum token yang sering digunakan untuk mengurangi pengulangan",
+        "MaxTokens": " Membatasi jumlah token dalam output",
+        "PresencePenalty": "Menghukum token yang sudah muncul untuk mendorong topik baru",
+        "Temperature": "Mengontrol keacakan; lebih rendah lebih fokus, lebih tinggi lebih kreatif",
+        "Title": "Parameter",
+        "TopK": "Sampel dari K teratas kemungkinan besar token",
+        "TopP": "Sampel dari token yang probabilitas kumulatifnya berada di dalam P"
+      }
+    }
   },
   "credential": {
     "AccessKey": "Kunci Akses",

@@ -113,7 +113,18 @@
     "Thinking": "Pensée",
     "UploadFiles": "Télécharger des fichiers",
     "UploadFilesDescription": "Cliquez ou faites glisser les fichiers vers cette zone pour les télécharger",
-    "ViewReasoning": "Voir le raisonnement"
+    "ViewReasoning": "Voir le raisonnement",
+    "chat": {
+      "parameter": {
+        "FrequencyPenalty": "Pénalise les jetons fréquents afin de réduire les répétitions",
+        "MaxTokens": " Limite le nombre de tokens dans la sortie",
+        "PresencePenalty": "Pénalise les jetons qui sont déjà apparus afin d'encourager les nouveaux sujets.",
+        "Temperature": "Contrôle le caractère aléatoire ; plus la valeur est basse, plus la concentration est importante, plus la valeur est élevée, plus la créativité est grande.",
+        "Title": "Paramètres",
+        "TopK": "Échantillons des K jetons les plus probables",
+        "TopP": "Échantillons de tokens dont la probabilité cumulée est inférieure à P"
+      }
+    }
   },
   "credential": {
     "AccessKey": "Clé d'accès",

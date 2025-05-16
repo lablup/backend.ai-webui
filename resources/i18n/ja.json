@@ -112,7 +112,18 @@
     "Thinking": "考え",
     "UploadFiles": "ファイルをアップロードする",
     "UploadFilesDescription": "ファイルをクリックまたはこの領域にドラッグしてアップロードします",
-    "ViewReasoning": "推論を見る"
+    "ViewReasoning": "推論を見る",
+    "chat": {
+      "parameter": {
+        "FrequencyPenalty": "頻繁なトークンにペナルティを与え、繰り返しを減らす",
+        "MaxTokens": "出力のトークン数を制限する",
+        "PresencePenalty": "新しいトピックを奨励するため、すでに出現したトークンにペナルティを課す。",
+        "Temperature": "ランダム性をコントロールし、低ければより集中し、高ければより創造的になる。",
+        "Title": "パラメータ",
+        "TopK": "最も可能性の高い上位K個のトークンからのサンプル",
+        "TopP": "累積確率がPの範囲内にあるトークンからのサンプル"
+      }
+    }
   },
   "credential": {
     "AccessKey": "アクセスキー",
