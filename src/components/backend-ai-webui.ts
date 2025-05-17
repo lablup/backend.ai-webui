@@ -23,7 +23,6 @@ import { BackendAIPage } from './backend-ai-page';
 import './backend-ai-project-switcher';
 import './backend-ai-resource-broker';
 import BackendAISettingsStore from './backend-ai-settings-store';
-import './backend-ai-splash';
 import BackendAITasker from './backend-ai-tasker';
 import { BackendAIWebUIStyles } from './backend-ai-webui-styles';
 import './lablup-notification';
@@ -202,7 +201,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @query('#login-panel') loginPanel: any;
   @query('#main-toolbar') mainToolbar: any;
   @query('#terms-of-service') TOSdialog!: LablupTermsOfService;
-  @query('backend-ai-splash') splash: any;
   @query('#dropdown-button') _dropdownMenuIcon!: IconButton;
 
   constructor() {
@@ -939,7 +937,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       </div>
 
       <backend-ai-login active id="login-panel"></backend-ai-login>
-      <backend-ai-splash id="about-backendai-panel"></backend-ai-splash>
       <lablup-notification id="notification"></lablup-notification>
       <backend-ai-indicator-pool id="indicator"></backend-ai-indicator-pool>
       <lablup-terms-of-service

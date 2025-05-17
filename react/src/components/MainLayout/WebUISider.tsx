@@ -4,6 +4,7 @@ import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import usePrimaryColors from '../../hooks/usePrimaryColors';
+import AboutBackendAIModal from '../AboutBackendAIModal';
 import EndpointsIcon from '../BAIIcons/EndpointsIcon';
 import ExampleStartIcon from '../BAIIcons/ExampleStart';
 import ModelStoreIcon from '../BAIIcons/ModelStoreIcon';
@@ -130,6 +131,8 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const [isOpenSignoutModal, { toggle: toggleSignoutModal }] = useToggle(false);
   const [isOpenTOSModal, { toggle: toggleTOSModal }] = useToggle(false);
   const [isOpenPrivacyPolicyModal, { toggle: togglePrivacyPolicyModal }] =
+    useToggle(false);
+  const [isOpenAboutBackendAIModal, { toggle: toggleAboutBackendAIModal }] =
     useToggle(false);
 
   const siderRef = useRef<HTMLDivElement>(null);
@@ -598,9 +601,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                   type="secondary"
                   style={{ fontSize: 11 }}
                   onClick={() => {
-                    document.dispatchEvent(
-                      new CustomEvent('show-about-backendai'),
-                    );
+                    toggleAboutBackendAIModal();
                   }}
                 >
                   {t('webui.menu.AboutBackendAI')}
@@ -646,6 +647,10 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       <PrivacyPolicyModal
         open={isOpenPrivacyPolicyModal}
         onRequestClose={togglePrivacyPolicyModal}
+      />
+      <AboutBackendAIModal
+        open={isOpenAboutBackendAIModal}
+        onRequestClose={toggleAboutBackendAIModal}
       />
     </BAISider>
   );
