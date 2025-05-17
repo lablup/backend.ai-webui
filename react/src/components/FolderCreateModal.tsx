@@ -9,6 +9,7 @@ import Flex from './Flex';
 import ProjectSelect from './ProjectSelect';
 import StorageSelect from './StorageSelect';
 import {
+  Alert,
   App,
   Button,
   Divider,
@@ -54,7 +55,7 @@ interface FolderCreateFormItemsType {
   name: string;
   host: string | undefined;
   group: string | undefined;
-  usage_mode: 'general' | 'model';
+  usage_mode: 'general' | 'model' | 'automount';
   type: 'user' | 'project';
   permission: 'rw' | 'ro';
   cloneable: boolean;
@@ -62,14 +63,14 @@ interface FolderCreateFormItemsType {
 
 interface FolderCreateModalProps extends BAIModalProps {
   onRequestClose: (response?: FolderCreationResponse) => void;
-  usageMode?: 'general' | 'model';
+  usageMode?: 'general' | 'model' | 'automount';
 }
 export interface FolderCreationResponse {
   id: string;
   name: string;
   quota_scope_id: string;
   host: string;
-  usage_mode: 'general' | 'model';
+  usage_mode: 'general' | 'model' | 'automount';
   permission: 'rw' | 'ro';
   max_size: number;
   creator: string;
@@ -116,7 +117,13 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
     mutationFn: (values) => {
       const body = {
         ...values,
-        cloneable: values.cloneable ?? false,
+        cloneable: !!values.cloneable,
+        usage_mode:
+          values.usage_mode === 'automount' ? 'general' : values.usage_mode,
+        name:
+          values.usage_mode === 'automount' && !_.startsWith(values.name, '.')
+            ? `.${values.name}`
+            : values.name,
       };
       return baiRequestWithPromise({
         method: 'POST',
@@ -217,9 +224,42 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         initialValues={INITIAL_FORM_VALUES}
         labelCol={{ span: 8 }}
       >
+        <Form.Item noStyle dependencies={['usage_mode']}>
+          {({ getFieldValue }) => {
+            return (
+              getFieldValue('usage_mode') === 'automount' && (
+                <Alert
+                  message={t('data.AutomountFolderCreationDesc')}
+                  style={{ marginBottom: token.marginLG }}
+                  type="info"
+                  showIcon
+                />
+              )
+            );
+          }}
+        </Form.Item>
+
+        <Form.Item label={t('data.UsageMode')} name={'usage_mode'}>
+          <Radio.Group>
+            <Radio value={'general'} data-testid="general-usage-mode">
+              {t('data.General')}
+            </Radio>
+            {baiClient._config.enableModelFolders ? (
+              <Radio value={'model'} data-testid="model-usage-mode">
+                {t('data.Models')}
+              </Radio>
+            ) : null}
+            <Radio value={'automount'} data-testid="automount-usage-mode">
+              {t('data.AutoMount')}
+            </Radio>
+          </Radio.Group>
+        </Form.Item>
+        <Divider />
+
         <Form.Item
           label={t('data.Foldername')}
           name={'name'}
+          dependencies={['usage_mode']}
           rules={[
             { required: true },
             {
@@ -230,6 +270,19 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
               max: 64,
               message: t('data.FolderNameTooLong'),
             },
+            ({ getFieldValue }) => ({
+              validator(rule, value) {
+                if (
+                  getFieldValue('usage_mode') !== 'automount' &&
+                  _.startsWith(value, '.')
+                ) {
+                  return Promise.reject(
+                    new Error(t('data.UseAutomountFolderName')),
+                  );
+                }
+                return Promise.resolve();
+              },
+            }),
           ]}
         >
           <Input placeholder={t('maxLength.64chars')} />
@@ -250,20 +303,6 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         </Form.Item>
         <Divider />
 
-        <Form.Item label={t('data.UsageMode')} name={'usage_mode'}>
-          <Radio.Group>
-            <Radio value={'general'} data-testid="general-usage-mode">
-              General
-            </Radio>
-            {baiClient._config.enableModelFolders ? (
-              <Radio value={'model'} data-testid="model-usage-mode">
-                Model
-              </Radio>
-            ) : null}
-          </Radio.Group>
-        </Form.Item>
-        <Divider />
-
         <Form.Item
           label={t('data.Type')}
           name={'type'}
@@ -278,13 +317,13 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
              */}
             {_.includes(allowedTypes, 'user') ? (
               <Radio value={'user'} data-testid="user-type">
-                User
+                {t('data.User')}
               </Radio>
             ) : null}
             {(userRole === 'admin' || userRole === 'superadmin') &&
             _.includes(allowedTypes, 'group') ? (
               <Radio value={'project'} data-testid="project-type">
-                Project
+                {t('data.Project')}
               </Radio>
             ) : null}
           </Radio.Group>
@@ -311,10 +350,10 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         <Form.Item label={t('data.Permission')} name={'permission'}>
           <Radio.Group>
             <Radio value={'rw'} data-testid="rw-permission">
-              Read & Write
+              {t('data.ReadWrite')}
             </Radio>
             <Radio value={'ro'} data-testid="ro-permission">
-              Read Only
+              {t('data.ReadOnly')}
             </Radio>
           </Radio.Group>
         </Form.Item>
