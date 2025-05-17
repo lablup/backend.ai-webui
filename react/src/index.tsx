@@ -12,7 +12,7 @@ import { useSuspendedBackendaiClient } from './hooks';
 import { useCurrentResourceGroupValue } from './hooks/useCurrentProject';
 import { ThemeModeProvider } from './hooks/useThemeMode';
 import '@ant-design/v5-patch-for-react-19';
-import { Tag, theme } from 'antd';
+import { Modal, Tag, theme } from 'antd';
 import dayjs from 'dayjs';
 import { Provider as JotaiProvider } from 'jotai';
 import _ from 'lodash';
@@ -54,6 +54,21 @@ const SignoutModal = React.lazy(() => import('./components/SignoutModal'));
 
 const BatchSessionScheduledTimeSetting = React.lazy(
   () => import('./components/BatchSessionScheduledTimeSetting'),
+);
+const TOTPActivateModal = React.lazy(
+  () => import('./components/TOTPActivateModal'),
+);
+
+customElements.define(
+  'backend-ai-react-totp-registration-modal-before-login',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        {/* <TOTPActivateModal open={true} onRequestClose={() => {}} /> */}
+        <Modal open={true}>Modal</Modal>
+      </DefaultProviders>
+    );
+  }),
 );
 
 customElements.define(

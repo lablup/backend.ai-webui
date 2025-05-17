@@ -134,6 +134,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: String }) _helpDescriptionTitle = '';
   @property({ type: Boolean }) otpRequired = false;
   @property({ type: String }) otp;
+  @property({ type: Boolean }) needsOtpRegistration = true;
   @property({ type: Boolean }) needToResetPassword = false;
   @property({ type: Boolean }) directoryBasedUsage = false;
   @property({ type: Number }) maxCountForPreopenPorts = 10;
@@ -1550,6 +1551,8 @@ export default class BackendAILogin extends BackendAIPage {
                   this.notification.show();
                 }
                 return Promise.resolve(false);
+                // TODO: check if force2FA is enabled and User is not registered
+                // If so, show the dialog to register OTP(React component)
               } else if (response.fail_reason) {
                 this.open();
                 if (response.fail_reason == 'OTP not provided') {
@@ -2393,6 +2396,22 @@ export default class BackendAILogin extends BackendAIPage {
               this.notification.show();
             }}"
           ></backend-ai-react-reset-password-required-modal>
+          <backend-ai-react-totp-registration-modal-before-login
+            value="${JSON.stringify({
+              open: this.needsOtpRegistration,
+              username: this.user_id,
+              // currentPassword: this.password,
+              api_endpoint: this.api_endpoint,
+            })}"
+            @cancel="${(e) => (this.needsOtpRegistration = false)}"
+            @ok="${(e) => {
+              this.needsOtpRegistration = false;
+              // this.passwordInput.value = '';
+
+              // this.notification.text = _text('login.PasswordChanged');
+              // this.notification.show();
+            }}"
+          ></backend-ai-react-totp-registration-modal-before-login>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog
