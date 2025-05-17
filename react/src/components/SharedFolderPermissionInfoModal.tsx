@@ -72,6 +72,7 @@ const SharedFolderPermissionInfoModal: React.FC<
       title={t('data.SharedFolderPermission')}
       onCancel={() => onRequestClose()}
       footer={null}
+      keyboard
       {...modalProps}
     >
       <Flex direction="column" align="stretch" gap="lg">
