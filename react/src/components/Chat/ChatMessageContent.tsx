@@ -113,7 +113,11 @@ const ChatMessageContentBlock = memo<{ block?: string; isStreaming?: boolean }>(
             </Flex>
           </Flex>
         ) : (
-          <code {...rest} className={className}>
+          <code
+            {...rest}
+            style={{ whiteSpace: 'pre-wrap' }}
+            className={className}
+          >
             {/* @ts-ignore */}
             {children}
           </code>
