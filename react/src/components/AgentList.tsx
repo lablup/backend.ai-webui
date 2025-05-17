@@ -16,6 +16,7 @@ import BAIIntervalView from './BAIIntervalView';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import BAIPropertyFilter from './BAIPropertyFilter';
 import BAIRadioGroup from './BAIRadioGroup';
+import BAITable from './BAITable';
 import DoubleTag from './DoubleTag';
 import Flex from './Flex';
 import { ResourceTypeIcon } from './ResourceNumber';
@@ -29,21 +30,12 @@ import { AgentSettingModalFragment$key } from './__generated__/AgentSettingModal
 import {
   CheckCircleOutlined,
   InfoCircleOutlined,
-  LoadingOutlined,
   MinusCircleOutlined,
   ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import {
-  Button,
-  Table,
-  TableProps,
-  Tag,
-  theme,
-  Tooltip,
-  Typography,
-} from 'antd';
+import { Button, TableProps, Tag, theme, Tooltip, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
@@ -56,14 +48,10 @@ import { FetchPolicy, useLazyLoadQuery } from 'react-relay';
 type Agent = NonNullable<AgentListQuery$data['agent_list']>['items'][number];
 
 interface AgentListProps {
-  containerStyle?: React.CSSProperties;
   tableProps?: Omit<TableProps, 'dataSource'>;
 }
 
-const AgentList: React.FC<AgentListProps> = ({
-  containerStyle,
-  tableProps,
-}) => {
+const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
@@ -752,14 +740,8 @@ const AgentList: React.FC<AgentListProps> = ({
     useHiddenColumnKeysSetting('AgentList');
 
   return (
-    <Flex direction="column" align="stretch" style={containerStyle}>
-      <Flex
-        justify="between"
-        align="start"
-        gap="xs"
-        style={{ padding: token.paddingXS }}
-        wrap="wrap"
-      >
+    <Flex direction="column" align="stretch" gap="sm">
+      <Flex justify="between" align="start" wrap="wrap">
         <Flex
           direction="row"
           gap={'sm'}
@@ -837,60 +819,62 @@ const AgentList: React.FC<AgentListProps> = ({
           </Tooltip>
         </Flex>
       </Flex>
-      <Table
-        bordered
-        scroll={{ x: 'max-content' }}
-        rowKey={'id'}
-        dataSource={filterNonNullItems(agent_list?.items)}
-        showSorterTooltip={false}
-        columns={
-          _.filter(
-            columns,
-            (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),
-          ) as ColumnType<AnyObject>[]
-        }
-        pagination={{
-          pageSize: tablePaginationOption.pageSize,
-          showSizeChanger: true,
-          total: agent_list?.total_count,
-          current: tablePaginationOption.current,
-          showTotal(total, range) {
-            return `${range[0]}-${range[1]} of ${total} items`;
-          },
-          pageSizeOptions: ['10', '20', '50'],
-          style: { marginRight: token.marginXS },
-        }}
-        onChange={({ pageSize, current }, filters, sorter) => {
-          startPageChangeTransition(() => {
-            if (_.isNumber(current) && _.isNumber(pageSize)) {
-              setTablePaginationOption({
-                current,
-                pageSize,
-              });
-            }
-            setOrder(transformSorterToOrderString(sorter));
-          });
-        }}
-        loading={{
-          spinning:
-            isPendingPageChange || isPendingStatusFetch || isPendingFilter,
-          indicator: <LoadingOutlined />,
-        }}
-        {...tableProps}
-      />
-      <Flex
-        justify="end"
-        style={{
-          padding: token.paddingXXS,
-        }}
-      >
-        <Button
-          type="text"
-          icon={<SettingOutlined />}
-          onClick={() => {
-            toggleColumnSettingModal();
+
+      <Flex direction="column" align="stretch">
+        <BAITable
+          neoStyle
+          size="small"
+          scroll={{ x: 'max-content' }}
+          rowKey={'id'}
+          dataSource={filterNonNullItems(agent_list?.items)}
+          showSorterTooltip={false}
+          columns={
+            _.filter(
+              columns,
+              (column) =>
+                !_.includes(hiddenColumnKeys, _.toString(column?.key)),
+            ) as ColumnType<AnyObject>[]
+          }
+          pagination={{
+            pageSize: tablePaginationOption.pageSize,
+            showSizeChanger: true,
+            total: agent_list?.total_count,
+            current: tablePaginationOption.current,
+            showTotal(total, range) {
+              return `${range[0]}-${range[1]} of ${total} items`;
+            },
+            pageSizeOptions: ['10', '20', '50'],
           }}
+          onChange={({ pageSize, current }, filters, sorter) => {
+            startPageChangeTransition(() => {
+              if (_.isNumber(current) && _.isNumber(pageSize)) {
+                setTablePaginationOption({
+                  current,
+                  pageSize,
+                });
+              }
+              setOrder(transformSorterToOrderString(sorter));
+            });
+          }}
+          loading={
+            isPendingPageChange || isPendingStatusFetch || isPendingFilter
+          }
+          {...tableProps}
         />
+        <Flex
+          justify="end"
+          style={{
+            padding: token.paddingXXS,
+          }}
+        >
+          <Button
+            type="text"
+            icon={<SettingOutlined />}
+            onClick={() => {
+              toggleColumnSettingModal();
+            }}
+          />
+        </Flex>
       </Flex>
       <AgentDetailModal
         agentDetailModalFrgmt={currentAgentInfo}
