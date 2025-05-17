@@ -1,12 +1,15 @@
+import { transformSorterToOrderString } from '../helper';
 import { useThemeMode } from '../hooks/useThemeMode';
+import Flex from './Flex';
 import { useDebounce } from 'ahooks';
-import { ConfigProvider, GetProps, Table, theme } from 'antd';
+import { ConfigProvider, GetProps, Pagination, Table, theme } from 'antd';
 import { createStyles } from 'antd-style';
+import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
-import { TableProps } from 'antd/lib';
+import { TablePaginationConfig, TableProps } from 'antd/lib';
 import classNames from 'classnames';
 import _ from 'lodash';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { Resizable, ResizeCallbackData } from 'react-resizable';
 
 const useStyles = createStyles(({ token, css }) => ({
@@ -105,11 +108,21 @@ const ResizableTitle = (
   );
 };
 
-export interface BAITableProps<RecordType extends object = any>
-  extends TableProps<RecordType> {
+interface BAITablePaginationConfig
+  extends Omit<TablePaginationConfig, 'position'> {
+  extraContent?: ReactNode;
+}
+type BAITableBaseProps<RecordType> = Omit<TableProps<RecordType>, 'onChange'>;
+
+export interface BAITableProps<RecordType extends AnyObject>
+  extends BAITableBaseProps<RecordType> {
+  // customized
+  pagination?: false | BAITablePaginationConfig;
+  // new
   resizable?: boolean;
   neoStyle?: boolean;
-  orderString?: string;
+  order?: string;
+  onChangeOrder?: (order?: string) => void;
 }
 
 const columnKeyOrIndexKey = (column: any, index: number) =>
@@ -128,7 +141,8 @@ const BAITable = <RecordType extends object = any>({
   components,
   neoStyle,
   loading,
-  orderString,
+  order,
+  onChangeOrder,
   ...tableProps
 }: BAITableProps<RecordType>) => {
   const { styles } = useStyles();
@@ -142,7 +156,7 @@ const BAITable = <RecordType extends object = any>({
     let processedColumns = columns;
 
     // Apply sort direction based on orderString
-    if (orderString && columns) {
+    if (order && columns) {
       processedColumns = columns.map((column) => {
         // Skip column groups (with children) or columns without dataIndex
         if ('children' in column || !column.dataIndex || !column.sorter) {
@@ -155,14 +169,12 @@ const BAITable = <RecordType extends object = any>({
 
         // Check if this column matches the field in orderString
         // Remove the "-" prefix if present to compare the field name
-        const orderField = orderString.startsWith('-')
-          ? orderString.substring(1)
-          : orderString;
+        const orderField = order.startsWith('-') ? order.substring(1) : order;
 
         if (dataIndex === orderField) {
           return {
             ...column,
-            sortOrder: orderString.startsWith('-') ? 'descend' : 'ascend',
+            sortOrder: order.startsWith('-') ? 'descend' : 'ascend',
           };
         }
 
@@ -193,7 +205,7 @@ const BAITable = <RecordType extends object = any>({
               },
             }) as ColumnType<RecordType>,
         );
-  }, [resizable, columns, resizedColumnWidths, orderString]);
+  }, [resizable, columns, resizedColumnWidths, order]);
 
   return (
     <ConfigProvider
@@ -210,30 +222,51 @@ const BAITable = <RecordType extends object = any>({
         },
       }}
     >
-      <Table
-        showSorterTooltip={false}
-        className={classNames(
-          resizable && styles.resizableTable,
-          neoStyle && styles.neoHeader,
-          tableProps.rowSelection?.columnWidth === 0 &&
-            styles.zeroWithSelectionColumn,
+      <Flex direction="column" align="stretch" gap={'sm'}>
+        <Table
+          showSorterTooltip={false}
+          className={classNames(
+            resizable && styles.resizableTable,
+            neoStyle && styles.neoHeader,
+            tableProps.rowSelection?.columnWidth === 0 &&
+              styles.zeroWithSelectionColumn,
+          )}
+          style={{
+            opacity: loading ? 0.7 : 1,
+            transition: 'opacity 0.3s ease',
+          }}
+          components={
+            resizable
+              ? _.merge(components || {}, {
+                  header: {
+                    cell: ResizableTitle,
+                  },
+                })
+              : components
+          }
+          columns={mergedColumns}
+          {...tableProps}
+          onChange={(pagination, filters, sorter) => {
+            if (onChangeOrder) {
+              const nextOrder = transformSorterToOrderString(sorter);
+              if (nextOrder !== order) {
+                onChangeOrder(nextOrder);
+              }
+            }
+          }}
+          pagination={false}
+        />
+        {tableProps.pagination !== false && (
+          <Flex justify="end" gap={'xs'}>
+            <Pagination
+              size={tableProps.size === 'small' ? 'small' : 'default'}
+              align="end"
+              {...tableProps.pagination}
+            ></Pagination>
+            {tableProps.pagination && tableProps.pagination.extraContent}
+          </Flex>
         )}
-        style={{
-          opacity: loading ? 0.7 : 1,
-          transition: 'opacity 0.3s ease',
-        }}
-        components={
-          resizable
-            ? _.merge(components || {}, {
-                header: {
-                  cell: ResizableTitle,
-                },
-              })
-            : components
-        }
-        columns={mergedColumns}
-        {...tableProps}
-      />
+      </Flex>
     </ConfigProvider>
   );
 };

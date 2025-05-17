@@ -130,7 +130,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
 
   return (
     <>
-      <BAITable<(typeof filteredVFolders)[0]>
+      <BAITable
         resizable
         neoStyle
         showSorterTooltip={false}
