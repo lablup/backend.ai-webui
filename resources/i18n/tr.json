@@ -252,6 +252,7 @@
     "InvalidEmail": "Geçersiz e -posta adresi",
     "Invited": "davetli",
     "InvitedFolders": "Davet edilen klasörler",
+    "InvitedFoldersTooltip": "{{ count }} klasör davetiyeleri beklemededir.",
     "Limit": "Limit",
     "ModelStore": "Model Mağazası",
     "Models": "Modeller",

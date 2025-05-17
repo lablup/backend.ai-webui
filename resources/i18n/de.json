@@ -252,6 +252,7 @@
     "InvalidEmail": "Ungültige E -Mail -Adresse",
     "Invited": "eingeladen",
     "InvitedFolders": "Eingeladene Ordner",
+    "InvitedFoldersTooltip": "{{ count }} Ordnereinladungen sind eine Antwort aus.",
     "Limit": "Grenze",
     "ModelStore": "Modellladen",
     "Models": "Modelle",

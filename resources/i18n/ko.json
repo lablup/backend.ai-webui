@@ -254,6 +254,7 @@
     "InvalidEmail": "잘못된 이메일 주소 형식입니다.",
     "Invited": "초대 받음",
     "InvitedFolders": "초대된 폴더",
+    "InvitedFoldersTooltip": "응답 대기 중인 폴더 초대 {{ count }}개가 있습니다.",
     "Limit": "제한",
     "ModelStore": "모델 스토어",
     "Models": "모델",

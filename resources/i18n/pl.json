@@ -252,6 +252,7 @@
     "InvalidEmail": "Nieprawidłowy adres e -mail",
     "Invited": "zaproszony",
     "InvitedFolders": "Zaproszone foldery",
+    "InvitedFoldersTooltip": "{{ count }} Zaproszenia do folderów oczekują odpowiedzi.",
     "Limit": "Limit",
     "ModelStore": "Sklep modelarski",
     "Models": "Modele",

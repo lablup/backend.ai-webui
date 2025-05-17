@@ -252,6 +252,7 @@
     "InvalidEmail": "Adresse e-mail non valide",
     "Invited": "invité",
     "InvitedFolders": "Dossiers invités",
+    "InvitedFoldersTooltip": "{{ count }} Les invitations de dossiers sont en attente de réponse.",
     "Limit": "Limite",
     "ModelStore": "Magasin de modèles",
     "Models": "Des modèles",
