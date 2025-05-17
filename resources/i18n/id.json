@@ -1143,7 +1143,7 @@
     "ResourcePresets": "Preset Sumber Daya",
     "Resources": "Sumber Daya",
     "SHMEMShouldBeSmallerThanMemory": "Memori bersama harus lebih kecil dari memori",
-    "SharedMemory": "Memori bersama (GB)",
+    "SharedMemory": "Memori bersama",
     "Updated": "Preset sumber daya diperbarui"
   },
   "session": {
