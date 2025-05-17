@@ -158,7 +158,11 @@ const ChatHeader = PureChatHeader;
 const ChatInput = React.memo(PureChatInput);
 
 function createBaseURL(basePath: string, endpointUrl?: string | null) {
-  return endpointUrl ? new URL(basePath, endpointUrl).toString() : undefined;
+  try {
+    return endpointUrl ? new URL(basePath, endpointUrl).toString() : undefined;
+  } catch {
+    console.error('Invalid base URL:', basePath, 'endpointUrl', endpointUrl);
+  }
 }
 
 const ChatCard: React.FC<ChatCardProps> = ({
