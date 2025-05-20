@@ -113,7 +113,18 @@
     "Thinking": "Pensamento",
     "UploadFiles": "Carregar arquivos",
     "UploadFilesDescription": "Clique ou arraste os arquivos para esta área para fazer upload",
-    "ViewReasoning": "Ver raciocínio"
+    "ViewReasoning": "Ver raciocínio",
+    "chat": {
+      "parameter": {
+        "FrequencyPenalty": "Penaliza os tokens frequentes para reduzir a repetição",
+        "MaxTokens": " Limita o número de tokens na saída",
+        "PresencePenalty": "Penaliza os tokens que já apareceram para incentivar novos tópicos",
+        "Temperature": "Controla a aleatoriedade; mais baixo é mais concentrado, mais alto é mais criativo",
+        "Title": "Parâmetros",
+        "TopK": "Amostras dos K tokens mais prováveis",
+        "TopP": "Amostras de tokens cuja probabilidade acumulada está dentro de P"
+      }
+    }
   },
   "credential": {
     "AccessKey": "Chave de acesso",
@@ -1024,20 +1035,28 @@
     "UsernameOptional": "Nome de usuário (opcional)"
   },
   "resourceGroup": {
+    "Activate": "Ativar",
+    "ActivateResourceGroup": "Ativar Grupo de Recursos",
     "Active": "Ativo",
     "ActiveStatus": "Status Ativo",
     "AllowedSessionTypes": "Tipos de sessão permitidos",
     "CreateResourceGroup": "Criar Grupo de Recursos",
+    "Deactivate": "Desativar",
+    "DeactivateResourceGroup": "Grupo de Recursos Desativados",
+    "DeleteResourceGroup": "Excluir Grupo de Recursos",
     "Description": "Descrição",
     "Domain": "Domínio",
     "Driver": "Motorista",
     "DriverOptions": "Opções do driver",
     "EnterValidResourceGroupName": "Insira um nome de grupo de recursos válido",
+    "Information": "Informação",
     "ModifyResourceGroup": "Modificar Grupo de Recursos",
     "Name": "Nome",
     "NoChangesMade": "Nenhuma mudança feita",
     "NoGroupToDisplay": "NoGroupToDisplay",
     "NoScalingGroupAssignedToThisProject": "Nenhum grupo de recursos é atribuído a este projeto. \nA criação de sessões e a criação de serviços de modelo serão restritos.",
+    "PendingTimeout": "Aguardando tempo limite",
+    "PendingTimeoutDesc": "Tempo máximo Uma sessão pode permanecer no estado pendente.\n\nSe definido como 0, ele esperará indefinidamente sem um limite.\n\nSe deixado sem serem definidos, é padrão para 0.",
     "Public": "Público",
     "PublicStatus": "Estado público",
     "ResourceGroupAlreadyExist": "Já existe um grupo de recursos com o mesmo nome.",
@@ -1050,6 +1069,7 @@
     "ResourceGroupNameRequired": "O nome do grupo de recursos é obrigatório.",
     "ResourceGroups": "Grupos de Recursos",
     "RetriesToSkip": "Tempos",
+    "RetriesToSkipDesc": "EXPETIRAS PARA SUPER",
     "Scheduler": "Agendador",
     "SchedulerOptions": "Opções do agendador",
     "SelectDomain": "Selecione o domínio",

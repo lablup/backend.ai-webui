@@ -1,4 +1,5 @@
 import { AIAgent } from '../../hooks/useAIAgent';
+import { APICallError } from 'ai';
 
 export type ChatProviderType = {
   baseURL?: string;
@@ -10,12 +11,23 @@ export type ChatProviderType = {
   credentials?: RequestCredentials;
 };
 
+export interface ChatParameters {
+  maxTokens: number;
+  temperature: number;
+  topP: number;
+  topK: number;
+  frequencyPenalty: number;
+  presencePenalty: number;
+}
+
 export type ChatType = {
   id: string;
   conversationId: string;
   label: string;
   sync: boolean;
   provider: ChatProviderType;
+  usingParameters: boolean;
+  parameters: ChatParameters;
   agent?: AIAgent;
 };
 
@@ -64,3 +76,23 @@ export type BAIModel = {
   created?: string;
   description?: string;
 };
+
+export function getAIErrorMessage(error: unknown): string {
+  try {
+    if (APICallError.isInstance(error)) {
+      if (!error.responseBody) {
+        return error.message;
+      }
+
+      const errorBody = JSON.parse(error.responseBody || '{}');
+
+      return errorBody.message;
+    } else if (error instanceof Error) {
+      return error.message;
+    } else if (typeof error === 'string') {
+      return error;
+    }
+  } catch {}
+
+  return 'Unknown error:' + error;
+}

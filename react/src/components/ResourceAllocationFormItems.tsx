@@ -636,6 +636,7 @@ const ResourceAllocationFormItems: React.FC<
                           mergedResourceSlots?.cpu?.display_unit ||
                           t('session.launcher.Core'),
                       }}
+                      inputContainerMinWidth={190}
                       sliderProps={{
                         marks: {
                           // remaining mark code should be located before max mark code to prevent overlapping when it is same value
@@ -1281,6 +1282,7 @@ const ResourceAllocationFormItems: React.FC<
                         ]}
                       >
                         <InputNumberWithSlider
+                          inputContainerMinWidth={190}
                           sliderProps={{
                             marks: {
                               0: 0,
@@ -1422,6 +1424,7 @@ const ResourceAllocationFormItems: React.FC<
                   ]}
                 >
                   <InputNumberWithSlider
+                    inputContainerMinWidth={190}
                     inputNumberProps={{
                       addonAfter: '#',
                     }}
@@ -1574,6 +1577,7 @@ const ResourceAllocationFormItems: React.FC<
                             ]}
                           >
                             <InputNumberWithSlider
+                              inputContainerMinWidth={190}
                               min={1}
                               step={1}
                               // TODO: max cluster size

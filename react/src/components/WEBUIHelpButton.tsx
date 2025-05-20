@@ -15,6 +15,7 @@ const WEBUIHelpButton: React.FC<WEBUIHelpButtonProps> = ({ ...props }) => {
     summary: 'summary/summary.html',
     job: 'sessions_all/sessions_all.html',
     serving: 'model_serving/model_serving.html',
+    service: 'model_serving/model_serving.html',
     import: 'import_run/import_run.html',
     data: 'vfolder/vfolder.html',
     statistics: 'statistics/statistics.html',

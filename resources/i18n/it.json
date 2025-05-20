@@ -112,7 +112,18 @@
     "Thinking": "Pensiero",
     "UploadFiles": "Carica file",
     "UploadFilesDescription": "Fare clic o trascinare i file in quest'area per caricarli",
-    "ViewReasoning": "Visualizzare il ragionamento"
+    "ViewReasoning": "Visualizzare il ragionamento",
+    "chat": {
+      "parameter": {
+        "FrequencyPenalty": "Penalizza i token frequenti per ridurre la ripetizione.",
+        "MaxTokens": " Limita il numero di token nell'output",
+        "PresencePenalty": "Penalizza i token già apparsi per incoraggiare nuovi argomenti",
+        "Temperature": "Controlla la casualità; più basso è più concentrato, più alto è più creativo",
+        "Title": "Parametri",
+        "TopK": "Esempi dei primi K token più probabili",
+        "TopP": "Campioni di token la cui probabilità cumulativa è entro P"
+      }
+    }
   },
   "credential": {
     "AccessKey": "Chiave di accesso",
@@ -1022,20 +1033,28 @@
     "UsernameOptional": "Nome utente (facoltativo)"
   },
   "resourceGroup": {
+    "Activate": "Attivare",
+    "ActivateResourceGroup": "Attiva il gruppo di risorse",
     "Active": "Attivo",
     "ActiveStatus": "Stato attivo",
     "AllowedSessionTypes": "Tipi di sessione consentiti",
     "CreateResourceGroup": "Crea gruppo di risorse",
+    "Deactivate": "Disattivare",
+    "DeactivateResourceGroup": "Disattiva il gruppo di risorse",
+    "DeleteResourceGroup": "Elimina il gruppo delle risorse",
     "Description": "Descrizione",
     "Domain": "Dominio",
     "Driver": "autista",
     "DriverOptions": "Opzioni conducente Driver",
     "EnterValidResourceGroupName": "Inserisci un nome del gruppo di risorse valido",
+    "Information": "Informazioni",
     "ModifyResourceGroup": "Modifica gruppo di risorse",
     "Name": "Nome",
     "NoChangesMade": "Nessuna modifica effettuata",
     "NoGroupToDisplay": "NoGroupToDisplay",
     "NoScalingGroupAssignedToThisProject": "Nessun gruppo di risorse è assegnato a questo progetto. \nLa creazione di sessione e la creazione del servizio modello saranno limitate.",
+    "PendingTimeout": "In attesa di timeout",
+    "PendingTimeoutDesc": "Tempo massimo Una sessione può rimanere nello stato in sospeso.\n\nSe impostato su 0, aspetterà indefinitamente senza un limite.\n\nSe lasciato Unset, è default a 0.",
     "Public": "Pubblico",
     "PublicStatus": "Stato pubblico",
     "ResourceGroupAlreadyExist": "Esiste già un gruppo di risorse con lo stesso nome.",
@@ -1048,6 +1067,7 @@
     "ResourceGroupNameRequired": "Il nome del gruppo di risorse è obbligatorio.",
     "ResourceGroups": "Gruppi di risorse",
     "RetriesToSkip": "I tempi",
+    "RetriesToSkipDesc": "Riversi per saltare la sessione in sospeso",
     "Scheduler": "Pianificatore",
     "SchedulerOptions": "Opzioni di pianificazione",
     "SelectDomain": "Seleziona dominio",

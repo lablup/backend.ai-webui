@@ -113,7 +113,18 @@
     "Thinking": "Мышление",
     "UploadFiles": "Загрузить файлы",
     "UploadFilesDescription": "Нажмите или перетащите файлы в эту область, чтобы загрузить",
-    "ViewReasoning": "Просмотреть рассуждения"
+    "ViewReasoning": "Просмотреть рассуждения",
+    "chat": {
+      "parameter": {
+        "FrequencyPenalty": "Штрафные санкции за частое использование лексем для уменьшения количества повторений",
+        "MaxTokens": " Ограничивает количество лексем в выводе",
+        "PresencePenalty": "Штрафует уже появившиеся токены, чтобы поощрять новые темы",
+        "Temperature": "Контролирует случайность; низкий уровень - более сосредоточенный, высокий - более творческий",
+        "Title": "Параметры",
+        "TopK": "Выборки из K наиболее вероятных токенов",
+        "TopP": "Выборки из лексем, чья кумулятивная вероятность находится в пределах P"
+      }
+    }
   },
   "credential": {
     "AccessKey": "Ключ доступа",
@@ -1024,20 +1035,28 @@
     "UsernameOptional": "Имя пользователя (необязательно)"
   },
   "resourceGroup": {
+    "Activate": "Активировать",
+    "ActivateResourceGroup": "Активировать ресурсную группу",
     "Active": "Активный",
     "ActiveStatus": "Активный статус",
     "AllowedSessionTypes": "Разрешенные типы сессий",
     "CreateResourceGroup": "Создать группу ресурсов",
+    "Deactivate": "Деактивировать",
+    "DeactivateResourceGroup": "Деактивировать ресурсную группу",
+    "DeleteResourceGroup": "Удалить ресурсную группу",
     "Description": "Описание",
     "Domain": "Домен",
     "Driver": "Драйвер",
     "DriverOptions": "Параметры драйвера",
     "EnterValidResourceGroupName": "Введите действительное имя группы ресурсов",
+    "Information": "Информация",
     "ModifyResourceGroup": "Изменить группу ресурсов",
     "Name": "Имя",
     "NoChangesMade": "Никаких изменений не внесено",
     "NoGroupToDisplay": "NoGroupToDisplay",
     "NoScalingGroupAssignedToThisProject": "Никакая группа ресурсов не назначена в этот проект. \nСоздание сеанса и создание моделей службы будет ограничено.",
+    "PendingTimeout": "В ожидании тайм -аута",
+    "PendingTimeoutDesc": "Максимальное время, когда сессия может оставаться в ожидании.\n\nЕсли установлено на 0, он будет ждать бесконечно без ограничения.\n\nЕсли оставить нерешенность, это по умолчанию до 0.",
     "Public": "Публичный",
     "PublicStatus": "Общественный статус",
     "ResourceGroupAlreadyExist": "Группа ресурсов с таким именем уже существует.",
@@ -1050,6 +1069,7 @@
     "ResourceGroupNameRequired": "Укажите название группы ресурсов.",
     "ResourceGroups": "Группы ресурсов",
     "RetriesToSkip": "Times",
+    "RetriesToSkipDesc": "Понимает в Skip в ожидании сеанса",
     "Scheduler": "Планировщик",
     "SchedulerOptions": "Параметры планировщика",
     "SelectDomain": "Выбрать домен",

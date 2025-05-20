@@ -432,6 +432,23 @@ export const generateRandomString = (n = 3) => {
   return randStr;
 };
 
+/**
+ * Filters out empty values from an object.
+ *
+ * @template T - The type of the input object.
+ * @param input - The object to filter.
+ * @returns A new object containing only the non-empty values.
+ */
+export const filterEmptyValues = <T extends Record<string, any>>(
+  input: T,
+): Partial<T> => {
+  return Object.fromEntries(
+    Object.entries(input).filter(
+      ([_, value]) => value !== null && value !== undefined,
+    ),
+  ) as Partial<T>;
+};
+
 export function formatToUUID(str: string) {
   if (str.length !== 32) {
     throw new Error('Input string must be 32 characters long');

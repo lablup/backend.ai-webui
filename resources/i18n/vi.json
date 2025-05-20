@@ -113,7 +113,18 @@
     "Thinking": "Suy nghĩ",
     "UploadFiles": "Tải tập tin lên",
     "UploadFilesDescription": "Nhấp hoặc kéo tệp vào khu vực này để tải lên",
-    "ViewReasoning": "Xem lý luận"
+    "ViewReasoning": "Xem lý luận",
+    "chat": {
+      "parameter": {
+        "FrequencyPenalty": "Áp dụng hình phạt đối với các token xuất hiện thường xuyên để giảm thiểu sự lặp lại.",
+        "MaxTokens": " Giới hạn số lượng token trong đầu ra",
+        "PresencePenalty": "Phạt các token đã xuất hiện để khuyến khích các chủ đề mới.",
+        "Temperature": "Kiểm soát tính ngẫu nhiên; giá trị thấp hơn mang lại sự tập trung cao hơn, giá trị cao hơn mang lại sự sáng tạo hơn.",
+        "Title": "Tham số",
+        "TopK": "Mẫu từ K token có khả năng cao nhất",
+        "TopP": "Mẫu từ các token có xác suất tích lũy nằm trong khoảng P"
+      }
+    }
   },
   "credential": {
     "AccessKey": "Khóa truy cập",
@@ -1024,20 +1035,28 @@
     "UsernameOptional": "Tên người dùng (Tùy chọn)"
   },
   "resourceGroup": {
+    "Activate": "Kích hoạt",
+    "ActivateResourceGroup": "Kích hoạt nhóm tài nguyên",
     "Active": "Hoạt động",
     "ActiveStatus": "Trạng thái hoạt động",
     "AllowedSessionTypes": "Các loại phiên được phép",
     "CreateResourceGroup": "Tạo nhóm tài nguyên",
+    "Deactivate": "Vô hiệu hóa",
+    "DeactivateResourceGroup": "Vô hiệu hóa nhóm tài nguyên",
+    "DeleteResourceGroup": "Xóa nhóm tài nguyên",
     "Description": "Sự miêu tả",
     "Domain": "Lãnh địa",
     "Driver": "Người lái xe",
     "DriverOptions": "Tùy chọn trình điều khiển",
     "EnterValidResourceGroupName": "Nhập tên nhóm tài nguyên hợp lệ",
+    "Information": "Thông tin",
     "ModifyResourceGroup": "Sửa đổi nhóm tài nguyên",
     "Name": "Tên",
     "NoChangesMade": "Không có thay đổi nào được thực hiện",
     "NoGroupToDisplay": "Không có nhóm để hiển thị",
     "NoScalingGroupAssignedToThisProject": "Không có nhóm tài nguyên nào được gán cho dự án này. \nTạo phiên và tạo dịch vụ mô hình sẽ bị hạn chế.",
+    "PendingTimeout": "Chờ hết thời gian chờ",
+    "PendingTimeoutDesc": "Thời gian tối đa một phiên có thể ở trong trạng thái chờ xử lý.\n\nNếu được đặt thành 0, nó sẽ đợi vô thời hạn mà không có giới hạn.\n\nNếu bỏ lại, nó mặc định là 0.",
     "Public": "Công cộng",
     "PublicStatus": "Trạng thái công khai",
     "ResourceGroupAlreadyExist": "Một nhóm tài nguyên có cùng tên đã tồn tại.",
@@ -1050,6 +1069,7 @@
     "ResourceGroupNameRequired": "Tên nhóm tài nguyên là bắt buộc.",
     "ResourceGroups": "Nhóm tài nguyên",
     "RetriesToSkip": "lần",
+    "RetriesToSkipDesc": "Thử lại để bỏ qua phiên đang chờ xử lý",
     "Scheduler": "Người lập kế hoạch",
     "SchedulerOptions": "Tùy chọn bộ lập lịch",
     "SelectDomain": "Chọn miền",

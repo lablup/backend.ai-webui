@@ -20,7 +20,6 @@ import {
   filterEmptyItem,
   filterNonNullItems,
   handleRowSelectionChange,
-  transformSorterToOrderString,
 } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -539,7 +538,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             </Flex>
           </Flex>
           <VFolderNodes
-            orderString={queryParams.order}
+            order={queryParams.order}
             loading={deferredQueryVariables !== queryVariables}
             vfoldersFrgmt={filterNonNullItems(
               _.map(vfolder_nodes?.edges, 'node'),
@@ -576,15 +575,14 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                   {t('general.TotalItems', { total: total })}
                 </Typography.Text>
               ),
+              onChange(current, pageSize) {
+                if (_.isNumber(current) && _.isNumber(pageSize)) {
+                  setTablePaginationOption({ current, pageSize });
+                }
+              },
             }}
-            onChange={({ current, pageSize }, filters, sorter) => {
-              if (_.isNumber(current) && _.isNumber(pageSize)) {
-                setTablePaginationOption({ current, pageSize });
-              }
-              setQuery(
-                { order: transformSorterToOrderString(sorter) },
-                'replaceIn',
-              );
+            onChangeOrder={(order) => {
+              setQuery({ order }, 'replaceIn');
             }}
             onRequestChange={(updatedFolderId) => {
               setSelectedFolderList((prevSelected) =>

@@ -113,7 +113,18 @@
     "Thinking": "思维",
     "UploadFiles": "上传文件",
     "UploadFilesDescription": "点击或拖拽文件到该区域即可上传",
-    "ViewReasoning": "查看推理"
+    "ViewReasoning": "查看推理",
+    "chat": {
+      "parameter": {
+        "FrequencyPenalty": "对频繁出现的标记进行惩罚，以减少重复",
+        "MaxTokens": "限制输出中的标记数",
+        "PresencePenalty": "惩罚已出现的代币，鼓励新话题的出现",
+        "Temperature": "控制随机性；越低越专注，越高越有创造力",
+        "Title": "参数",
+        "TopK": "从 K 个最有可能的代币中提取样本",
+        "TopP": "从累计概率在 P"
+      }
+    }
   },
   "credential": {
     "AccessKey": "访问密钥",
@@ -1024,20 +1035,28 @@
     "UsernameOptional": "用户名（可选）"
   },
   "resourceGroup": {
+    "Activate": "激活",
+    "ActivateResourceGroup": "激活资源组",
     "Active": "积极的",
     "ActiveStatus": "活动状态",
     "AllowedSessionTypes": "允许的会话类型",
     "CreateResourceGroup": "创建资源组",
+    "Deactivate": "停用",
+    "DeactivateResourceGroup": "停用资源组",
+    "DeleteResourceGroup": "删除资源组",
     "Description": "描述",
     "Domain": "域名",
     "Driver": "司机",
     "DriverOptions": "驱动程序选项",
     "EnterValidResourceGroupName": "输入有效的资源组名称",
+    "Information": "信息",
     "ModifyResourceGroup": "修改资源组",
     "Name": "名称",
     "NoChangesMade": "未做任何更改",
     "NoGroupToDisplay": "无组显示",
     "NoScalingGroupAssignedToThisProject": "没有资源组分配给该项目。\n会话创建和模型服务创建将受到限制。",
+    "PendingTimeout": "等待暂停",
+    "PendingTimeoutDesc": "会话可以保持在待处理状态。\n\n如果设置为0，它将无限期地等待而无需限制。\n\n如果保持不设定，则默认为0。",
     "Public": "公众",
     "PublicStatus": "公众地位",
     "ResourceGroupAlreadyExist": "已存在同名的资源组。",
@@ -1050,6 +1069,7 @@
     "ResourceGroupNameRequired": "需要资源组名称。",
     "ResourceGroups": "资源组",
     "RetriesToSkip": "时代",
+    "RetriesToSkipDesc": "重试跳过待定会话",
     "Scheduler": "调度器",
     "SchedulerOptions": "调度程序选项",
     "SelectDomain": "选择域",

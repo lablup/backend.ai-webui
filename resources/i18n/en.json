@@ -115,7 +115,18 @@
     "Thinking": "Thinking",
     "UploadFiles": "Upload files",
     "UploadFilesDescription": "Click or drag files to this area to upload",
-    "ViewReasoning": "View reasoning"
+    "ViewReasoning": "View reasoning",
+    "chat": {
+      "parameter": {
+        "FrequencyPenalty": "Penalizes frequent tokens to reduce repetition",
+        "MaxTokens": " Limits the number of tokens in the output",
+        "PresencePenalty": "Penalizes tokens that have already appeared to encourage new topics",
+        "Temperature": "Controls randomness; lower is more focused, higher is more creative",
+        "Title": "Parameters",
+        "TopK": "Samples from the top K most likely tokens",
+        "TopP": "Samples from tokens whose cumulative probability is within P"
+      }
+    }
   },
   "credential": {
     "AccessKey": "Access Key",
@@ -1030,20 +1041,28 @@
     "UsernameOptional": "Username (Optional)"
   },
   "resourceGroup": {
+    "Activate": "Activate",
+    "ActivateResourceGroup": "Activate resource group",
     "Active": "Active",
     "ActiveStatus": "Active Status",
     "AllowedSessionTypes": "Allowed session types",
     "CreateResourceGroup": "Create Resource Group",
+    "Deactivate": "Deactivate",
+    "DeactivateResourceGroup": "Deactivate resource group",
+    "DeleteResourceGroup": "Delete Resource Group",
     "Description": "Description",
     "Domain": "Domain",
     "Driver": "Driver",
     "DriverOptions": "Driver Options",
     "EnterValidResourceGroupName": "Enter valid Resource group name",
+    "Information": "Information",
     "ModifyResourceGroup": "Modify Resource Group",
     "Name": "Name",
     "NoChangesMade": "No changes made",
     "NoGroupToDisplay": "NoGroupToDisplay",
     "NoScalingGroupAssignedToThisProject": "No resource group is assigned to this project. Session creation and model service creation will be restricted.",
+    "PendingTimeout": "Pending Timeout",
+    "PendingTimeoutDesc": "Maximum time a session can stay in pending state.\nIf set to 0, it will wait indefinitely without a limit.\nIf left unset, it defaults to 0.",
     "Public": "Public",
     "PublicStatus": "Public Status",
     "ResourceGroupAlreadyExist": "A resource group with the same name already exists.",
@@ -1056,6 +1075,7 @@
     "ResourceGroupNameRequired": "Resource group name is required.",
     "ResourceGroups": "Resource Groups",
     "RetriesToSkip": "Times",
+    "RetriesToSkipDesc": "Retries to skip pending session",
     "Scheduler": "Scheduler",
     "SchedulerOptions": "Scheduler Options",
     "SelectDomain": "Select Domain",

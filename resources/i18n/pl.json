@@ -113,7 +113,18 @@
     "Thinking": "Myślący",
     "UploadFiles": "Prześlij pliki",
     "UploadFilesDescription": "Kliknij lub przeciągnij pliki do tego obszaru, aby je przesłać",
-    "ViewReasoning": "Zobacz rozumowanie"
+    "ViewReasoning": "Zobacz rozumowanie",
+    "chat": {
+      "parameter": {
+        "FrequencyPenalty": "Karanie częstych tokenów w celu ograniczenia powtórzeń",
+        "MaxTokens": " Ogranicza liczbę tokenów w danych wyjściowych",
+        "PresencePenalty": "Karze tokeny, które już się pojawiły, aby zachęcić do nowych tematów.",
+        "Temperature": "Kontroluje losowość; niższy jest bardziej skoncentrowany, wyższy bardziej kreatywny.",
+        "Title": "Parametry",
+        "TopK": "Próbki z K najbardziej prawdopodobnych tokenów",
+        "TopP": "Próbki z tokenów, których łączne prawdopodobieństwo mieści się w zakresie P"
+      }
+    }
   },
   "credential": {
     "AccessKey": "Klucz dostępu",
@@ -1024,20 +1035,28 @@
     "UsernameOptional": "Nazwa użytkownika (opcjonalnie)"
   },
   "resourceGroup": {
+    "Activate": "Aktywować",
+    "ActivateResourceGroup": "Aktywuj grupę zasobów",
     "Active": "Aktywny",
     "ActiveStatus": "Stan aktywny",
     "AllowedSessionTypes": "Dozwolone typy sesji",
     "CreateResourceGroup": "Utwórz grupę zasobów",
+    "Deactivate": "Dezaktywować",
+    "DeactivateResourceGroup": "Dezaktywna grupa zasobów",
+    "DeleteResourceGroup": "Usuń grupę zasobów",
     "Description": "Opis",
     "Domain": "Domena",
     "Driver": "Kierowca",
     "DriverOptions": "Opcje sterownika",
     "EnterValidResourceGroupName": "Wpisz poprawną nazwę grupy zasobów",
+    "Information": "Informacja",
     "ModifyResourceGroup": "Modyfikuj grupę zasobów",
     "Name": "Nazwa",
     "NoChangesMade": "Nie wprowadzono żadnych zmian",
     "NoGroupToDisplay": "NoGroupToDisplay",
     "NoScalingGroupAssignedToThisProject": "Do tego projektu nie jest przypisywana grupa zasobów. \nTworzenie sesji i tworzenie usług modelowych będą ograniczone.",
+    "PendingTimeout": "Oczekujący limit czasu",
+    "PendingTimeoutDesc": "Maksymalny czas sesji może pozostać w stanie oczekiwanym.\n\nJeśli zostanie ustawiony na 0, będzie czekać na czas bez ograniczeń.\n\nJeśli pozostanie unset, domyślnie 0.",
     "Public": "Publiczny",
     "PublicStatus": "Status publiczny",
     "ResourceGroupAlreadyExist": "Grupa zasobów o tej samej nazwie już istnieje.",
@@ -1050,6 +1069,7 @@
     "ResourceGroupNameRequired": "Nazwa grupy zasobów jest wymagana.",
     "ResourceGroups": "Grupy zasobów",
     "RetriesToSkip": "Czasy",
+    "RetriesToSkipDesc": "Ponowne pominięcie trwającej sesji",
     "Scheduler": "Planista",
     "SchedulerOptions": "Opcje harmonogramu",
     "SelectDomain": "Wybierz domenę",

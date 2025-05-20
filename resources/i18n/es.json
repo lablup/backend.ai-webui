@@ -113,7 +113,18 @@
     "Thinking": "Pensamiento",
     "UploadFiles": "Subir archivos",
     "UploadFilesDescription": "Haga clic o arrastre archivos a esta área para cargarlos",
-    "ViewReasoning": "Ver razonamiento"
+    "ViewReasoning": "Ver razonamiento",
+    "chat": {
+      "parameter": {
+        "FrequencyPenalty": "Penaliza las fichas frecuentes para reducir la repetición",
+        "MaxTokens": " Limita el número de tokens en la salida",
+        "PresencePenalty": "Penaliza las fichas que ya han aparecido para fomentar nuevos temas",
+        "Temperature": "Controla la aleatoriedad; más bajo es más centrado, más alto es más creativo",
+        "Title": "Parámetros",
+        "TopK": "Muestras de las K fichas más probables",
+        "TopP": "Muestras de fichas cuya probabilidad acumulada está dentro de P"
+      }
+    }
   },
   "credential": {
     "AccessKey": "Clave de acceso",
@@ -1024,20 +1035,28 @@
     "UsernameOptional": "Nombre de usuario (opcional)"
   },
   "resourceGroup": {
+    "Activate": "Activar",
+    "ActivateResourceGroup": "Activar grupo de recursos",
     "Active": "Activo",
     "ActiveStatus": "Estado activo",
     "AllowedSessionTypes": "Tipos de sesión permitidos",
     "CreateResourceGroup": "Crear grupo de recursos",
+    "Deactivate": "Desactivar",
+    "DeactivateResourceGroup": "Desactivar el grupo de recursos",
+    "DeleteResourceGroup": "Eliminar el grupo de recursos",
     "Description": "Descripción",
     "Domain": "Dominio",
     "Driver": "Conductor",
     "DriverOptions": "Opciones del conductor",
     "EnterValidResourceGroupName": "Introduzca un nombre de grupo de recursos válido",
+    "Information": "Información",
     "ModifyResourceGroup": "Modificar grupo de recursos",
     "Name": "Nombre",
     "NoChangesMade": "No se han realizado cambios",
     "NoGroupToDisplay": "NoGroupToDisplay",
     "NoScalingGroupAssignedToThisProject": "No se asigna ningún grupo de recursos a este proyecto. \nLa creación de sesiones y la creación de servicios de modelo estarán restringidos.",
+    "PendingTimeout": "Tiempo de espera pendiente",
+    "PendingTimeoutDesc": "Tiempo máximo Una sesión puede permanecer en estado pendiente.\n\nSi se establece en 0, esperará indefinidamente sin un límite.\n\nSi se deja inseguro, es predeterminado a 0.",
     "Public": "Público",
     "PublicStatus": "Estado público",
     "ResourceGroupAlreadyExist": "Ya existe un grupo de recursos con el mismo nombre.",
@@ -1050,6 +1069,7 @@
     "ResourceGroupNameRequired": "El nombre del grupo de recursos es obligatorio.",
     "ResourceGroups": "Grupos de recursos",
     "RetriesToSkip": "Times",
+    "RetriesToSkipDesc": "Reescribe a omitir la sesión pendiente",
     "Scheduler": "Programador",
     "SchedulerOptions": "Opciones del programador",
     "SelectDomain": "Seleccionar dominio",

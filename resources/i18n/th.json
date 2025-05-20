@@ -113,7 +113,18 @@
     "Thinking": "ความคิด",
     "UploadFiles": "อัพโหลดไฟล์",
     "UploadFilesDescription": "คลิกหรือลากไฟล์ไปยังบริเวณนี้เพื่ออัปโหลด",
-    "ViewReasoning": "ดูเหตุผล"
+    "ViewReasoning": "ดูเหตุผล",
+    "chat": {
+      "parameter": {
+        "FrequencyPenalty": "ลงโทษโทเค็นบ่อยครั้งเพื่อลดการทำซ้ำ",
+        "MaxTokens": "จำกัด จำนวนโทเค็นในเอาต์พุต",
+        "PresencePenalty": "ลงโทษโทเค็นที่ปรากฏขึ้นเพื่อส่งเสริมหัวข้อใหม่",
+        "Temperature": "ควบคุมการสุ่ม; \nที่ต่ำกว่าเน้นมากขึ้นความคิดสร้างสรรค์ที่สูงขึ้น",
+        "Title": "พารามิเตอร์",
+        "TopK": "ตัวอย่างจากด้านบน k ที่เป็นไปได้มากที่สุด",
+        "TopP": "ตัวอย่างจากโทเค็นที่มีความน่าจะเป็นสะสมอยู่ภายใน P"
+      }
+    }
   },
   "credential": {
     "AccessKey": "คีย์การเข้าถึง",
@@ -1013,20 +1024,28 @@
     "UsernameOptional": "ชื่อผู้ใช้ (ไม่บังคับ)"
   },
   "resourceGroup": {
+    "Activate": "เปิดใช้งาน",
+    "ActivateResourceGroup": "เปิดใช้งานกลุ่มทรัพยากร",
     "Active": "ใช้งาน",
     "ActiveStatus": "สถานะใช้งาน",
     "AllowedSessionTypes": "ประเภทเซสชันที่อนุญาต",
     "CreateResourceGroup": "สร้างกลุ่มทรัพยากร",
+    "Deactivate": "ปิดใช้งาน",
+    "DeactivateResourceGroup": "ปิดการใช้งานกลุ่มทรัพยากร",
+    "DeleteResourceGroup": "ลบกลุ่มทรัพยากร",
     "Description": "คำอธิบาย",
     "Domain": "โดเมน",
     "Driver": "ไดรเวอร์",
     "DriverOptions": "ตัวเลือกไดรเวอร์",
     "EnterValidResourceGroupName": "ป้อนชื่อกลุ่มทรัพยากรที่ถูกต้อง",
+    "Information": "ข้อมูล",
     "ModifyResourceGroup": "แก้ไขกลุ่มทรัพยากร",
     "Name": "ชื่อ",
     "NoChangesMade": "ไม่มีการเปลี่ยนแปลง",
     "NoGroupToDisplay": "ไม่มีกลุ่มที่จะแสดง",
     "NoScalingGroupAssignedToThisProject": "ไม่มีกลุ่มทรัพยากรที่ได้รับมอบหมายให้โครงการนี้ \nการสร้างเซสชันและการสร้างบริการแบบจำลองจะถูก จำกัด",
+    "PendingTimeout": "การหมดเวลาที่รออยู่",
+    "PendingTimeoutDesc": "เวลาสูงสุดเซสชันสามารถอยู่ในสถานะที่รอดำเนินการ\n\nหากตั้งค่าเป็น 0 มันจะรออย่างไม่มีกำหนดโดยไม่มีการ จำกัด\n\nหากปล่อยทิ้งไว้จะมีค่าเริ่มต้นเป็น 0",
     "Public": "สาธารณะ",
     "PublicStatus": "สถานะสาธารณะ",
     "ResourceGroupAlreadyExist": "มีกลุ่มทรัพยากรชื่อเดียวกันอยู่แล้ว",
@@ -1039,6 +1058,7 @@
     "ResourceGroupNameRequired": "ต้องระบุชื่อกลุ่มทรัพยากร",
     "ResourceGroups": "กลุ่มทรัพยากร",
     "RetriesToSkip": "ครั้ง",
+    "RetriesToSkipDesc": "ลองข้ามเซสชันที่รอดำเนินการ",
     "Scheduler": "ตัวจัดกำหนดการ",
     "SchedulerOptions": "ตัวเลือกตัวจัดกำหนดการ",
     "SelectDomain": "เลือกโดเมน",

@@ -20,6 +20,7 @@ export interface DynamicUnitInputNumberWithSliderProps
   hideSlider?: boolean;
   warn?: string;
   step?: number;
+  inputMinWidth?: number;
 }
 const DynamicUnitInputNumberWithSlider: React.FC<
   DynamicUnitInputNumberWithSliderProps

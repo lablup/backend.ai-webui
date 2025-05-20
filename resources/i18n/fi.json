@@ -112,7 +112,18 @@
     "Thinking": "Ajattelu",
     "UploadFiles": "Lataa tiedostoja",
     "UploadFilesDescription": "Napsauta tai vedä tiedostoja tälle alueelle ladataksesi",
-    "ViewReasoning": "Näytä päättely"
+    "ViewReasoning": "Näytä päättely",
+    "chat": {
+      "parameter": {
+        "FrequencyPenalty": "Rankaisee usein esiintyviä merkkejä toiston vähentämiseksi.",
+        "MaxTokens": " Rajoittaa merkkien lukumäärää tulosteessa.",
+        "PresencePenalty": "Rankaisee jo ilmestyneitä merkkejä uusien aiheiden edistämiseksi.",
+        "Temperature": "Säätelee satunnaisuutta; alempi on keskittyneempi, korkeampi on luovempi.",
+        "Title": "Parametrit",
+        "TopK": "Näytteet K todennäköisimmän merkin joukosta.",
+        "TopP": "Näytteet merkinnöistä, joiden kumulatiivinen todennäköisyys on P:n sisällä."
+      }
+    }
   },
   "credential": {
     "AccessKey": "Pääsyavain",
@@ -1022,20 +1033,28 @@
     "UsernameOptional": "Käyttäjätunnus (valinnainen)"
   },
   "resourceGroup": {
+    "Activate": "Aktivoida",
+    "ActivateResourceGroup": "Aktivoi resurssiryhmä",
     "Active": "Aktiivinen",
     "ActiveStatus": "Aktiivinen tila",
     "AllowedSessionTypes": "Sallitut istuntotyypit",
     "CreateResourceGroup": "Luo resurssiryhmä",
+    "Deactivate": "Deaktivoida",
+    "DeactivateResourceGroup": "Deaktivoi resurssiryhmä",
+    "DeleteResourceGroup": "Poista resurssiryhmä",
     "Description": "Kuvaus",
     "Domain": "Verkkotunnus",
     "Driver": "Kuljettaja",
     "DriverOptions": "Kuljettajan vaihtoehdot",
     "EnterValidResourceGroupName": "Syötä kelvollinen resurssiryhmän nimi",
+    "Information": "Tiedot",
     "ModifyResourceGroup": "Resurssiryhmän muokkaaminen",
     "Name": "Nimi",
     "NoChangesMade": "Ei muutoksia",
     "NoGroupToDisplay": "NoGroupToDisplay",
     "NoScalingGroupAssignedToThisProject": "Resurssiryhmää ei ole osoitettu tähän projektiin. \nIstunnon luominen ja mallipalvelun luominen rajoitetaan.",
+    "PendingTimeout": "Odotettaessa aikakatkaisua",
+    "PendingTimeoutDesc": "Suurin aika, jonka istunto voi pysyä vireillä olevassa tilassa.\n\nJos se on asetettu 0: een, se odottaa määräämättömäksi sanottuna ilman rajaa.\n\nJos se on jätetty, se oletusarvo on 0.",
     "Public": "Julkinen",
     "PublicStatus": "Julkinen asema",
     "ResourceGroupAlreadyExist": "Samanniminen resurssiryhmä on jo olemassa.",
@@ -1048,6 +1067,7 @@
     "ResourceGroupNameRequired": "Resurssiryhmän nimi vaaditaan.",
     "ResourceGroups": "Resurssiryhmät",
     "RetriesToSkip": "Times",
+    "RetriesToSkipDesc": "Tarkastelee ohittamiseen vireillä olevaan istuntoon",
     "Scheduler": "Aikatauluttaja",
     "SchedulerOptions": "Aikataulun asetukset",
     "SelectDomain": "Valitse verkkotunnus",

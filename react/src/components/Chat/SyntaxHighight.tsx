@@ -14,7 +14,7 @@ export const SyntaxHighlighter = memo<SyntaxHighlighterProps>(
       <>
         {isLoading || !data ? (
           <pre>
-            <code>{children}</code>
+            <code style={{ whiteSpace: 'pre-wrap' }}>{children}</code>
           </pre>
         ) : (
           <div dangerouslySetInnerHTML={{ __html: data as string }} dir="ltr" />

@@ -113,7 +113,18 @@
     "Thinking": "Pensée",
     "UploadFiles": "Télécharger des fichiers",
     "UploadFilesDescription": "Cliquez ou faites glisser les fichiers vers cette zone pour les télécharger",
-    "ViewReasoning": "Voir le raisonnement"
+    "ViewReasoning": "Voir le raisonnement",
+    "chat": {
+      "parameter": {
+        "FrequencyPenalty": "Pénalise les jetons fréquents afin de réduire les répétitions",
+        "MaxTokens": " Limite le nombre de tokens dans la sortie",
+        "PresencePenalty": "Pénalise les jetons qui sont déjà apparus afin d'encourager les nouveaux sujets.",
+        "Temperature": "Contrôle le caractère aléatoire ; plus la valeur est basse, plus la concentration est importante, plus la valeur est élevée, plus la créativité est grande.",
+        "Title": "Paramètres",
+        "TopK": "Échantillons des K jetons les plus probables",
+        "TopP": "Échantillons de tokens dont la probabilité cumulée est inférieure à P"
+      }
+    }
   },
   "credential": {
     "AccessKey": "Clé d'accès",
@@ -1024,20 +1035,28 @@
     "UsernameOptional": "Nom d'utilisateur (facultatif)"
   },
   "resourceGroup": {
+    "Activate": "Activer",
+    "ActivateResourceGroup": "Activer le groupe de ressources",
     "Active": "actif",
     "ActiveStatus": "Statut Actif",
     "AllowedSessionTypes": "Types de session autorisés",
     "CreateResourceGroup": "Créer un groupe de ressources",
+    "Deactivate": "Désactiver",
+    "DeactivateResourceGroup": "Désactiver le groupe de ressources",
+    "DeleteResourceGroup": "Supprimer le groupe de ressources",
     "Description": "La description",
     "Domain": "Domaine",
     "Driver": "Conducteur",
     "DriverOptions": "Options de pilote",
     "EnterValidResourceGroupName": "Entrez un nom de groupe de ressources valide",
+    "Information": "Information",
     "ModifyResourceGroup": "Modifier le groupe de ressources",
     "Name": "Nom",
     "NoChangesMade": "Aucune modification apportée",
     "NoGroupToDisplay": "NoGroupToDisplay",
     "NoScalingGroupAssignedToThisProject": "Aucun groupe de ressources n'est affecté à ce projet. \nLa création de session et la création de services de modèle seront restreintes.",
+    "PendingTimeout": "Délai d'attente en attente",
+    "PendingTimeoutDesc": "Temps maximum Une session peut rester dans l'état en attente.\n\nS'il est réglé sur 0, il attendra indéfiniment sans limite.\n\nSi elle est restée, elle est par défaut à 0.",
     "Public": "Public",
     "PublicStatus": "Statut public",
     "ResourceGroupAlreadyExist": "Un groupe de ressources du même nom existe déjà.",
@@ -1050,6 +1069,7 @@
     "ResourceGroupNameRequired": "Le nom du groupe de ressources est requis.",
     "ResourceGroups": "Groupes de ressources",
     "RetriesToSkip": "Temps",
+    "RetriesToSkipDesc": "Retries à sauter la session en attente",
     "Scheduler": "Planificateur",
     "SchedulerOptions": "Options du planificateur",
     "SelectDomain": "Sélectionnez le domaine",

@@ -113,7 +113,18 @@
     "Thinking": "Düşünme",
     "UploadFiles": "Dosyaları yükle",
     "UploadFilesDescription": "Yüklemek için dosyaları bu alana tıklayın veya sürükleyin",
-    "ViewReasoning": "Muhakemeyi görüntüleyin"
+    "ViewReasoning": "Muhakemeyi görüntüleyin",
+    "chat": {
+      "parameter": {
+        "FrequencyPenalty": "Tekrarı azaltmak için sık kullanılan belirteçleri cezalandırır",
+        "MaxTokens": " Çıktıdaki belirteç sayısını sınırlar",
+        "PresencePenalty": "Yeni konuları teşvik etmek için daha önce ortaya çıkmış olan belirteçleri cezalandırır",
+        "Temperature": "Rastgeleliği kontrol eder; düşük daha odaklanmış, yüksek daha yaratıcıdır",
+        "Title": "Parametreler",
+        "TopK": "En olası K belirteçten örnekler",
+        "TopP": "Kümülatif olasılığı P içinde olan belirteçlerden örnekler"
+      }
+    }
   },
   "credential": {
     "AccessKey": "Erişim Anahtarı",
@@ -1024,20 +1035,28 @@
     "UsernameOptional": "Kullanıcı adı (İsteğe bağlı)"
   },
   "resourceGroup": {
+    "Activate": "Etkinleştirmek",
+    "ActivateResourceGroup": "Kaynak Grubunu Etkinleştir",
     "Active": "Aktif",
     "ActiveStatus": "Aktif Durum",
     "AllowedSessionTypes": "İzin verilen oturum türleri",
     "CreateResourceGroup": "Kaynak Grubu Oluştur",
+    "Deactivate": "Devre dışı bırakmak",
+    "DeactivateResourceGroup": "Kaynak grubunu devre dışı bırak",
+    "DeleteResourceGroup": "Kaynak Grubunu Sil",
     "Description": "Açıklama",
     "Domain": "Etki Alanı",
     "Driver": "sürücü",
     "DriverOptions": "Sürücü Seçenekleri",
     "EnterValidResourceGroupName": "Geçerli Kaynak grubu adını girin",
+    "Information": "Bilgi",
     "ModifyResourceGroup": "Kaynak Grubunu Değiştir",
     "Name": "isim",
     "NoChangesMade": "Değişiklik yapılmadı",
     "NoGroupToDisplay": "NoGroupToDisplay",
     "NoScalingGroupAssignedToThisProject": "Bu projeye hiçbir kaynak grubu atanmadı. \nOturum oluşturma ve model hizmeti oluşturma kısıtlanacaktır.",
+    "PendingTimeout": "Bekleyen zaman aşımı",
+    "PendingTimeoutDesc": "Maksimum Süre Bir oturum bekleyen durumda kalabilir.\n\n0 olarak ayarlanırsa, sınırsız süresiz olarak bekleyecektir.\n\nSet kalmazsa, varsayılan 0 olarakdır.",
     "Public": "Kamu",
     "PublicStatus": "Kamu Statüsü",
     "ResourceGroupAlreadyExist": "Aynı ada sahip bir kaynak grubu zaten var.",
@@ -1050,6 +1069,7 @@
     "ResourceGroupNameRequired": "Kaynak grubu adı gerekli.",
     "ResourceGroups": "Kaynak Grupları",
     "RetriesToSkip": "Times",
+    "RetriesToSkipDesc": "Bekleyen oturumu atlamak için yeniden deneme",
     "Scheduler": "zamanlayıcı",
     "SchedulerOptions": "Zamanlayıcı Seçenekleri",
     "SelectDomain": "Etki Alanı Seç",

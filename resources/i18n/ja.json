@@ -112,7 +112,18 @@
     "Thinking": "考え",
     "UploadFiles": "ファイルをアップロードする",
     "UploadFilesDescription": "ファイルをクリックまたはこの領域にドラッグしてアップロードします",
-    "ViewReasoning": "推論を見る"
+    "ViewReasoning": "推論を見る",
+    "chat": {
+      "parameter": {
+        "FrequencyPenalty": "頻繁なトークンにペナルティを与え、繰り返しを減らす",
+        "MaxTokens": "出力のトークン数を制限する",
+        "PresencePenalty": "新しいトピックを奨励するため、すでに出現したトークンにペナルティを課す。",
+        "Temperature": "ランダム性をコントロールし、低ければより集中し、高ければより創造的になる。",
+        "Title": "パラメータ",
+        "TopK": "最も可能性の高い上位K個のトークンからのサンプル",
+        "TopP": "累積確率がPの範囲内にあるトークンからのサンプル"
+      }
+    }
   },
   "credential": {
     "AccessKey": "アクセスキー",
@@ -1023,20 +1034,28 @@
     "UsernameOptional": "ユーザー名（オプション）"
   },
   "resourceGroup": {
+    "Activate": "活性化",
+    "ActivateResourceGroup": "リソースグループをアクティブにします",
     "Active": "アクティブ",
     "ActiveStatus": "アクティブステータス",
     "AllowedSessionTypes": "許可されたセッションタイプ",
     "CreateResourceGroup": "リソースグループの作成",
+    "Deactivate": "無効にします",
+    "DeactivateResourceGroup": "リソースグループを無効にします",
+    "DeleteResourceGroup": "リソースグループを削除します",
     "Description": "説明",
     "Domain": "ドメイン",
     "Driver": "運転者",
     "DriverOptions": "ドライバーオプション",
     "EnterValidResourceGroupName": "有効なリソースグループ名を入力してください",
+    "Information": "情報",
     "ModifyResourceGroup": "リソースグループの変更",
     "Name": "名前",
     "NoChangesMade": "変更はありません",
     "NoGroupToDisplay": "グループがありません。",
     "NoScalingGroupAssignedToThisProject": "このプロジェクトにはリソースグループが割り当てられていません。\nセッションの作成とモデルサービスの作成は制限されます。",
+    "PendingTimeout": "保留中のタイムアウト",
+    "PendingTimeoutDesc": "セッションが保留中の状態にとどまることができる最大時間。\n\n0に設定すると、制限なしに無期限に待機します。\n\n設定されたままにしておくと、デフォルトは0になります。",
     "Public": "公開",
     "PublicStatus": "公開状況",
     "ResourceGroupAlreadyExist": "同じ名前のリソースグループがすでに存在します。",
@@ -1049,6 +1068,7 @@
     "ResourceGroupNameRequired": "リソースグループ名が必要です。",
     "ResourceGroups": "リソースグループ",
     "RetriesToSkip": "回",
+    "RetriesToSkipDesc": "保留中のセッションをスキップするために再試行します",
     "Scheduler": "スケジューラー",
     "SchedulerOptions": "スケジューラオプション",
     "SelectDomain": "ドメインを選択",

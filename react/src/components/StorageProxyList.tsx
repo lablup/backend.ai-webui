@@ -5,7 +5,6 @@ import {
 } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
-import BAICard from './BAICard';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import CephIcon from './BAIIcons/CephIcon';
 import PureStorageIcon from './BAIIcons/PureStorageIcon';
@@ -124,55 +123,6 @@ const StorageProxyList = () => {
       },
     },
     {
-      title: t('general.Control'),
-      key: 'control',
-      width: 100,
-      render: (value, record) => {
-        let perfMetricDisabled;
-        try {
-          const performanceMetric = JSON.parse(record.performance_metric);
-          perfMetricDisabled = _.isEmpty(performanceMetric);
-        } catch (e) {
-          perfMetricDisabled = true;
-        }
-        return (
-          <>
-            <Button
-              size="large"
-              disabled={perfMetricDisabled}
-              style={{
-                color: perfMetricDisabled
-                  ? token.colorTextDisabled
-                  : token.colorSuccess,
-              }}
-              icon={<InfoCircleOutlined />}
-              onClick={() => {
-                // This event is being listened to by the plugin
-                const event = new CustomEvent(
-                  'backend-ai-selected-storage-proxy',
-                  {
-                    detail: record.id,
-                  },
-                );
-                document.dispatchEvent(event);
-              }}
-              type="text"
-            />
-            <BAILink to={`/storage-settings/${record.id}`}>
-              <Button
-                size="large"
-                style={{
-                  color: token.colorInfo,
-                }}
-                icon={<SettingOutlined />}
-                type="text"
-              />
-            </BAILink>
-          </>
-        );
-      },
-    },
-    {
       title: t('agent.BackendType'),
       key: 'backend',
       dataIndex: 'backend',
@@ -253,6 +203,56 @@ const StorageProxyList = () => {
         );
       },
     },
+    {
+      title: t('general.Control'),
+      key: 'control',
+      width: 100,
+      fixed: 'right',
+      render: (value, record) => {
+        let perfMetricDisabled;
+        try {
+          const performanceMetric = JSON.parse(record.performance_metric);
+          perfMetricDisabled = _.isEmpty(performanceMetric);
+        } catch (e) {
+          perfMetricDisabled = true;
+        }
+        return (
+          <>
+            <Button
+              size="large"
+              disabled={perfMetricDisabled}
+              style={{
+                color: perfMetricDisabled
+                  ? token.colorTextDisabled
+                  : token.colorSuccess,
+              }}
+              icon={<InfoCircleOutlined />}
+              onClick={() => {
+                // This event is being listened to by the plugin
+                const event = new CustomEvent(
+                  'backend-ai-selected-storage-proxy',
+                  {
+                    detail: record.id,
+                  },
+                );
+                document.dispatchEvent(event);
+              }}
+              type="text"
+            />
+            <BAILink to={`/storage-settings/${record.id}`}>
+              <Button
+                size="large"
+                style={{
+                  color: token.colorInfo,
+                }}
+                icon={<SettingOutlined />}
+                type="text"
+              />
+            </BAILink>
+          </>
+        );
+      },
+    },
   ];
 
   useEffect(() => {
@@ -264,17 +264,9 @@ const StorageProxyList = () => {
   }, [storage_volume_list]);
 
   return (
-    <BAICard
-      variant="borderless"
-      styles={{
-        header: {
-          borderBottom: 'none',
-        },
-      }}
-    >
-      <Flex direction="column" align="stretch" gap="sm">
-        <Flex justify="end" wrap="wrap" gap="sm">
-          {/* // TODO: implement filter when filter and order are supported
+    <Flex direction="column" align="stretch" gap="sm">
+      <Flex justify="end" wrap="wrap" gap="sm">
+        {/* // TODO: implement filter when filter and order are supported
           <BAIPropertyFilter
             filterProperties={[
               {
@@ -284,51 +276,50 @@ const StorageProxyList = () => {
               },
             ]}
           /> */}
-          <BAIFetchKeyButton
-            loading={
-              deferredFetchKey !== fetchKey ||
-              deferredQueryVariables !== queryVariables
-            }
-            autoUpdateDelay={15_000}
-            value={fetchKey}
-            onChange={() => {
-              updateFetchKey();
-            }}
-          />
-        </Flex>
-        <BAITable
-          resizable
-          neoStyle
-          size="small"
-          scroll={{ x: 'max-content' }}
-          rowKey={'id'}
-          dataSource={filterNonNullItems(storage_volume_list?.items)}
-          columns={columns}
+        <BAIFetchKeyButton
           loading={
-            deferredQueryVariables !== queryVariables ||
-            deferredFetchKey !== fetchKey
+            deferredFetchKey !== fetchKey ||
+            deferredQueryVariables !== queryVariables
           }
-          pagination={{
-            pageSize: tablePaginationOption.pageSize,
-            current: tablePaginationOption.current,
-            total: storage_volume_list?.total_count ?? 0,
-            showTotal: (total) => (
-              <Typography.Text type="secondary">
-                {t('general.TotalItems', { total: total })}
-              </Typography.Text>
-            ),
+          autoUpdateDelay={15_000}
+          value={fetchKey}
+          onChange={() => {
+            updateFetchKey();
           }}
-          onChange={({ pageSize, current }) => {
+        />
+      </Flex>
+      <BAITable
+        resizable
+        neoStyle
+        size="small"
+        scroll={{ x: 'max-content' }}
+        rowKey={'id'}
+        dataSource={filterNonNullItems(storage_volume_list?.items)}
+        columns={columns}
+        loading={
+          deferredQueryVariables !== queryVariables ||
+          deferredFetchKey !== fetchKey
+        }
+        pagination={{
+          pageSize: tablePaginationOption.pageSize,
+          current: tablePaginationOption.current,
+          total: storage_volume_list?.total_count ?? 0,
+          showTotal: (total) => (
+            <Typography.Text type="secondary">
+              {t('general.TotalItems', { total: total })}
+            </Typography.Text>
+          ),
+          onChange(current, pageSize) {
             if (_.isNumber(current) && _.isNumber(pageSize)) {
               setTablePaginationOption({
                 pageSize,
                 current,
               });
             }
-          }}
-        />
-      </Flex>
-    </BAICard>
+          },
+        }}
+      />
+    </Flex>
   );
 };
 

@@ -61,7 +61,7 @@ const BAICard: React.FC<BAICardProps> = ({
                 borderBottom: 'none',
               },
               body: {
-                paddingTop: token.marginXS,
+                paddingTop: cardProps.tabList ? token.margin : token.marginXS,
               },
             },
         styles,

@@ -112,7 +112,18 @@
     "Thinking": "Pemikiran",
     "UploadFiles": "Unggah file",
     "UploadFilesDescription": "Klik atau seret file ke area ini untuk diunggah",
-    "ViewReasoning": "Lihat alasan"
+    "ViewReasoning": "Lihat alasan",
+    "chat": {
+      "parameter": {
+        "FrequencyPenalty": "Menghukum token yang sering digunakan untuk mengurangi pengulangan",
+        "MaxTokens": " Membatasi jumlah token dalam output",
+        "PresencePenalty": "Menghukum token yang sudah muncul untuk mendorong topik baru",
+        "Temperature": "Mengontrol keacakan; lebih rendah lebih fokus, lebih tinggi lebih kreatif",
+        "Title": "Parameter",
+        "TopK": "Sampel dari K teratas kemungkinan besar token",
+        "TopP": "Sampel dari token yang probabilitas kumulatifnya berada di dalam P"
+      }
+    }
   },
   "credential": {
     "AccessKey": "Kunci Akses",
@@ -1022,20 +1033,28 @@
     "UsernameOptional": "Nama Pengguna (Opsional)"
   },
   "resourceGroup": {
+    "Activate": "Mengaktifkan",
+    "ActivateResourceGroup": "Aktifkan Grup Sumber Daya",
     "Active": "Aktif",
     "ActiveStatus": "Status Aktif",
     "AllowedSessionTypes": "Jenis sesi yang diizinkan",
     "CreateResourceGroup": "Buat Grup Sumber Daya",
+    "Deactivate": "Menonaktifkan",
+    "DeactivateResourceGroup": "Nonaktifkan Grup Sumber Daya",
+    "DeleteResourceGroup": "Hapus Grup Sumber Daya",
     "Description": "Deskripsi",
     "Domain": "Domain",
     "Driver": "Driver",
     "DriverOptions": "Opsi Driver",
     "EnterValidResourceGroupName": "Masukkan nama grup Sumber Daya yang valid",
+    "Information": "Informasi",
     "ModifyResourceGroup": "Ubah Grup Sumber Daya",
     "Name": "Nama",
     "NoChangesMade": "Tidak ada perubahan yang dilakukan",
     "NoGroupToDisplay": "NoGroupToDisplay",
     "NoScalingGroupAssignedToThisProject": "Tidak ada grup sumber daya yang ditugaskan untuk proyek ini. \nPembuatan Sesi dan Pembuatan Layanan Model akan dibatasi.",
+    "PendingTimeout": "Waktu tunggu yang tertunda",
+    "PendingTimeoutDesc": "Waktu maksimum sesi dapat tetap dalam keadaan tertunda.\n\nJika diatur ke 0, itu akan menunggu tanpa batas tanpa batas.\n\nJika dibiarkan tidak disetel, itu default ke 0.",
     "Public": "Publik",
     "PublicStatus": "Status Publik",
     "ResourceGroupAlreadyExist": "Grup sumber daya dengan nama yang sama sudah ada.",
@@ -1048,6 +1067,7 @@
     "ResourceGroupNameRequired": "Nama grup sumber daya wajib diisi.",
     "ResourceGroups": "Grup Sumber Daya",
     "RetriesToSkip": "Waktu",
+    "RetriesToSkipDesc": "Retries untuk melewatkan sesi yang tertunda",
     "Scheduler": "Penjadwal",
     "SchedulerOptions": "Opsi Penjadwal",
     "SelectDomain": "Pilih Domain",

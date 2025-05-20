@@ -938,6 +938,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         ]}
                       >
                         <InputNumberWithSlider
+                          inputContainerMinWidth={190}
                           min={0}
                           max={
                             user_resource_policy?.max_session_count_per_model_session ??

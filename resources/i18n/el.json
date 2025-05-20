@@ -113,7 +113,18 @@
     "Thinking": "Σκέψη",
     "UploadFiles": "Μεταφόρτωση αρχείων",
     "UploadFilesDescription": "Κάντε κλικ ή σύρετε αρχεία σε αυτήν την περιοχή για μεταφόρτωση",
-    "ViewReasoning": "Προβολή λογικής"
+    "ViewReasoning": "Προβολή λογικής",
+    "chat": {
+      "parameter": {
+        "FrequencyPenalty": "Τιμωρεί τις συχνές μάρκες για να μειώσει την επανάληψη",
+        "MaxTokens": " Περιορίζει τον αριθμό των tokens στην έξοδο",
+        "PresencePenalty": "Τιμωρεί τα σημεία που έχουν ήδη εμφανιστεί για να ενθαρρύνει νέα θέματα",
+        "Temperature": "Ελέγχει την τυχαιότητα- το χαμηλότερο είναι πιο εστιασμένο, το υψηλότερο είναι πιο δημιουργικό",
+        "Title": "Παράμετροι",
+        "TopK": "Δείγματα από τα K πιο πιθανά tokens",
+        "TopP": "Δείγματα από μάρκες των οποίων η αθροιστική πιθανότητα είναι εντός P"
+      }
+    }
   },
   "credential": {
     "AccessKey": "Κλειδί πρόσβασης",
@@ -1020,20 +1031,28 @@
     "UsernameOptional": "Όνομα χρήστη (προαιρετικό)"
   },
   "resourceGroup": {
+    "Activate": "Δραστηριοποιώ",
+    "ActivateResourceGroup": "Ενεργοποίηση ομάδας πόρων",
     "Active": "Ενεργός",
     "ActiveStatus": "Ενεργή κατάσταση",
     "AllowedSessionTypes": "Επιτρεπόμενοι τύποι συνόδου",
     "CreateResourceGroup": "Δημιουργία ομάδας πόρων",
+    "Deactivate": "Απενεργοποιούμαι",
+    "DeactivateResourceGroup": "Απενεργοποίηση ομάδας πόρων",
+    "DeleteResourceGroup": "Διαγραφή ομάδας πόρων",
     "Description": "Περιγραφή",
     "Domain": "Τομέας",
     "Driver": "Οδηγός",
     "DriverOptions": "Επιλογές προγράμματος οδήγησης",
     "EnterValidResourceGroupName": "Εισαγάγετε έγκυρο όνομα ομάδας πόρων",
+    "Information": "Πληροφορίες",
     "ModifyResourceGroup": "Τροποποίηση ομάδας πόρων",
     "Name": "Ονομα",
     "NoChangesMade": "Δεν έγιναν αλλαγές",
     "NoGroupToDisplay": "NoGroupToDisplay",
     "NoScalingGroupAssignedToThisProject": "Καμία ομάδα πόρων δεν έχει ανατεθεί σε αυτό το έργο. \nΗ δημιουργία συνόδων και η δημιουργία υπηρεσιών μοντέλων θα περιοριστεί.",
+    "PendingTimeout": "Εκκρεμή χρονικό όριο",
+    "PendingTimeoutDesc": "Μέγιστος χρόνος που μπορεί να παραμείνει σε εκκρεμούσα κατάσταση.\n\nΕάν ρυθμιστεί στο 0, θα περιμένει επ 'αόριστον χωρίς όριο.\n\nΕάν αφεθεί unset, προεπιλογές σε 0.",
     "Public": "Δημόσιο",
     "PublicStatus": "Δημόσια κατάσταση",
     "ResourceGroupAlreadyExist": "Υπάρχει ήδη μια ομάδα πόρων με το ίδιο όνομα.",
@@ -1046,6 +1065,7 @@
     "ResourceGroupNameRequired": "Απαιτείται όνομα ομάδας πόρων.",
     "ResourceGroups": "Ομάδες πόρων",
     "RetriesToSkip": "Times",
+    "RetriesToSkipDesc": "Επαναλαμβάνει την εκκρεμότητα",
     "Scheduler": "Χρονοδιάγραμμα",
     "SchedulerOptions": "Επιλογές προγραμματιστή",
     "SelectDomain": "Επιλέξτε τομέα",

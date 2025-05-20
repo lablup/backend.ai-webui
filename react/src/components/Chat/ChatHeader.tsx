@@ -4,12 +4,26 @@ import { AIAgent } from '../../hooks/useAIAgent';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import Flex from '../Flex';
 import AIAgentSelect from './AIAgentSelect';
-import { BAIModel } from './ChatModel';
+import { BAIModel, ChatParameters } from './ChatModel';
+import { ChatParametersSliders } from './ChatParametersSliders';
 import EndpointSelect, { EndpointSelectProps } from './EndpointSelect';
 import ModelSelect from './ModelSelect';
 import { ChatHeader_Endpoint$key } from './__generated__/ChatHeader_Endpoint.graphql';
-import { CloseOutlined, MoreOutlined, PlusOutlined } from '@ant-design/icons';
-import { Dropdown, Button, theme, MenuProps, Typography, Switch } from 'antd';
+import {
+  CloseOutlined,
+  ControlOutlined,
+  MoreOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
+import {
+  Dropdown,
+  Button,
+  theme,
+  MenuProps,
+  Typography,
+  Switch,
+  Popover,
+} from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import { isEmpty } from 'lodash';
 import { Scale as ScaleIcon, Eraser as EraserIcon } from 'lucide-react';
@@ -53,6 +67,12 @@ interface ChatHeaderProps {
   onClickDeleteChatHistory?: () => void;
   onClickClose?: () => void;
   onClickCreate?: () => void;
+  parameters: ChatParameters;
+  usingParameters: boolean;
+  onChangeParameter: (
+    usingParameters: boolean,
+    parameters: ChatParameters,
+  ) => void;
 }
 
 const ChatHeader: React.FC<ChatHeaderProps> = ({
@@ -63,7 +83,6 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   onChangeModel,
   endpointFrgmt,
   onChangeEndpoint,
-  agents,
   agent,
   onChangeAgent,
   sync,
@@ -72,6 +91,9 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   onClickCreate,
   fetchKey,
   onClickDeleteChatHistory,
+  parameters,
+  usingParameters,
+  onChangeParameter,
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -199,6 +221,33 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             }}
           />
         )}
+        <Popover
+          content={
+            <ChatParametersSliders
+              parameters={parameters}
+              onChangeParameter={(usingParameters, parameters) => {
+                startTransition(() => {
+                  onChangeParameter(usingParameters, parameters);
+                });
+              }}
+            />
+          }
+          trigger="click"
+          placement="bottom"
+          style={{
+            padding: token.paddingXS,
+          }}
+        >
+          <Button
+            icon={
+              <ControlOutlined
+                style={{
+                  color: usingParameters ? token.colorPrimary : undefined,
+                }}
+              />
+            }
+          />
+        </Popover>
         <Button onClick={() => onClickCreate?.()} icon={<PlusOutlined />} />
         <Dropdown menu={{ items }} trigger={['click']}>
           <Button

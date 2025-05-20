@@ -17,6 +17,7 @@ interface InputNumberWithSliderProps {
   allowNegative?: boolean;
   onChange?: (value: number) => void;
   inputNumberProps?: OmitControlledProps<InputNumberProps>;
+  inputContainerMinWidth?: number;
   sliderProps?:
     | OmitControlledProps<SliderSingleProps>
     | OmitControlledProps<SliderRangeProps>;
@@ -29,6 +30,7 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
   inputNumberProps,
   sliderProps,
   allowNegative,
+  inputContainerMinWidth,
   ...otherProps
 }) => {
   const [value, setValue] = useControllableState(otherProps);
@@ -57,7 +59,7 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
   return (
     <Flex direction="row" gap={'md'}>
       <Flex
-        style={{ flex: 2, minWidth: 190 }}
+        style={{ flex: 2, minWidth: inputContainerMinWidth }}
         align="stretch"
         direction="column"
       >
@@ -94,6 +96,10 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
             }
           }}
           {...inputNumberProps}
+          style={{
+            width: '100%',
+            ...inputNumberProps?.style,
+          }}
         />
       </Flex>
       <Flex direction="column" align="stretch" style={{ flex: 3 }}>

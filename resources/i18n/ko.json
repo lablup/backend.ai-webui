@@ -115,7 +115,18 @@
     "Thinking": "추론중",
     "UploadFiles": "파일 업로드",
     "UploadFilesDescription": "파일을 여기 끌어다 놓거나 이 영역을 클릭하세요",
-    "ViewReasoning": "추론 결과 보기"
+    "ViewReasoning": "추론 결과 보기",
+    "chat": {
+      "parameter": {
+        "FrequencyPenalty": "자주 등장한 단어에 패널티를 주어 반복을 줄입니다",
+        "MaxTokens": "응답의 최대 토큰 수를 제한합니다",
+        "PresencePenalty": "이미 등장한 단어에 패널티를 주어 새로운 주제를 유도합니다",
+        "Temperature": "출력의 무작위성을 조절합니다. 낮을수록 집중되고, 높을수록 창의적입니다",
+        "Title": "파라미터",
+        "TopK": "확률이 높은 상위 K개의 단어 중에서 선택합니다.",
+        "TopP": "누적 확률이 P 이하인 단어들 중에서 선택합니다"
+      }
+    }
   },
   "credential": {
     "AccessKey": "접근키",
@@ -1027,20 +1038,28 @@
     "UsernameOptional": "사용자 이름 (선택)"
   },
   "resourceGroup": {
+    "Activate": "활성화",
+    "ActivateResourceGroup": "자원그룹 활성화",
     "Active": "활성",
     "ActiveStatus": "활성 상태",
     "AllowedSessionTypes": "허용된 세션 타입",
     "CreateResourceGroup": "자원 그룹 추가",
+    "Deactivate": "비활성화",
+    "DeactivateResourceGroup": "자원그룹 비활성화",
+    "DeleteResourceGroup": "자원그룹 삭제",
     "Description": "설명",
     "Domain": "도메인",
     "Driver": "드라이버",
     "DriverOptions": "드라이버 옵션",
     "EnterValidResourceGroupName": "올바른 자원 그룹 이름을 입력해주세요.",
+    "Information": "정보",
     "ModifyResourceGroup": "자원 그룹 수정",
     "Name": "이름",
     "NoChangesMade": "변경사항이 없습니다",
     "NoGroupToDisplay": "그룹이 없습니다.",
     "NoScalingGroupAssignedToThisProject": "이 프로젝트에 할당된 자원그룹이 없습니다. 세션 및 모델 서비스 생성이 제한됩니다.",
+    "PendingTimeout": "대기 세션 유휴 시간",
+    "PendingTimeoutDesc": "세션이 pending 상태로 대기할 수 있는 최대 시간입니다. 0으로 설정하면 제한없이 무한히 대기합니다. 값을 설정하지 않으면 기본값 0이 적용됩니다. ",
     "Public": "공개",
     "PublicStatus": "공개 상태",
     "ResourceGroupAlreadyExist": "같은 이름의 자원 그룹이 이미 있습니다.",
@@ -1053,6 +1072,7 @@
     "ResourceGroupNameRequired": "자원 그룹 이름이 필요합니다.",
     "ResourceGroups": "자원 그룹",
     "RetriesToSkip": "회",
+    "RetriesToSkipDesc": "세션 생성 최대 재시도 횟수",
     "Scheduler": "스케줄",
     "SchedulerOptions": "스케줄러 옵션",
     "SelectDomain": "도메인 선택",

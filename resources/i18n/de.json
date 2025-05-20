@@ -113,7 +113,18 @@
     "Thinking": "Denken",
     "UploadFiles": "Dateien hochladen",
     "UploadFilesDescription": "Klicken oder ziehen Sie Dateien zum Hochladen in diesen Bereich",
-    "ViewReasoning": "Argumentation anzeigen"
+    "ViewReasoning": "Argumentation anzeigen",
+    "chat": {
+      "parameter": {
+        "FrequencyPenalty": "Bestraft häufige Token, um Wiederholungen zu reduzieren",
+        "MaxTokens": " Begrenzt die Anzahl der Token in der Ausgabe",
+        "PresencePenalty": "Bestrafung bereits erschienener Token, um neue Themen zu fördern",
+        "Temperature": "Steuert die Zufälligkeit; niedriger ist konzentrierter, höher ist kreativer",
+        "Title": "Parameter",
+        "TopK": "Stichproben aus den K wahrscheinlichsten Token",
+        "TopP": "Stichproben aus Token, deren kumulative Wahrscheinlichkeit innerhalb von P"
+      }
+    }
   },
   "credential": {
     "AccessKey": "Zugriffsschlüssel",
@@ -1024,20 +1035,28 @@
     "UsernameOptional": "Benutzername (optional)"
   },
   "resourceGroup": {
+    "Activate": "Aktivieren",
+    "ActivateResourceGroup": "Ressourcengruppe aktivieren",
     "Active": "Aktiv",
     "ActiveStatus": "Aktiver Status",
     "AllowedSessionTypes": "Erlaubte Sitzungstypen",
     "CreateResourceGroup": "Ressourcengruppe erstellen",
+    "Deactivate": "Deaktivieren",
+    "DeactivateResourceGroup": "Deaktivierung der Ressourcengruppe",
+    "DeleteResourceGroup": "Ressourcengruppe löschen",
     "Description": "Beschreibung",
     "Domain": "Bereich",
     "Driver": "Treiber",
     "DriverOptions": "Treiberoptionen",
     "EnterValidResourceGroupName": "Geben Sie einen gültigen Ressourcengruppennamen ein",
+    "Information": "Information",
     "ModifyResourceGroup": "Ressourcengruppe ändern",
     "Name": "Name",
     "NoChangesMade": "Keine Änderungen vorgenommen",
     "NoGroupToDisplay": "NoGroupToDisplay",
     "NoScalingGroupAssignedToThisProject": "Dieses Projekt wird keine Ressourcengruppe zugewiesen. \nDie Erstellung der Sitzung und die Erstellung von Modelldienstleistungen werden eingeschränkt.",
+    "PendingTimeout": "Ausstehende Auszeit",
+    "PendingTimeoutDesc": "Eine maximale Zeit, die eine Sitzung in einem anhängigen Zustand bleibt.\n\nWenn es auf 0 gesetzt ist, warten Sie auf unbestimmte Zeit ohne Grenzwert.\n\nWenn es nicht festgelegt wird, ist es standardmäßig 0.",
     "Public": "Öffentlich",
     "PublicStatus": "Öffentlicher Status",
     "ResourceGroupAlreadyExist": "Eine Ressourcengruppe mit demselben Namen ist bereits vorhanden.",
@@ -1050,6 +1069,7 @@
     "ResourceGroupNameRequired": "Der Name der Ressourcengruppe ist erforderlich.",
     "ResourceGroups": "Ressourcengruppen",
     "RetriesToSkip": "Zeiten",
+    "RetriesToSkipDesc": "Wiederholung zum Überspringen der ausstehenden Sitzung",
     "Scheduler": "Planer",
     "SchedulerOptions": "Scheduler-Optionen",
     "SelectDomain": "Domain auswählen",

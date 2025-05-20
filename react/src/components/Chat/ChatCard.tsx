@@ -9,6 +9,7 @@ import {
   ChatLifecycleEventType,
   ChatProviderType,
   ChatType,
+  getAIErrorMessage,
   Model,
 } from './ChatModel';
 import { CustomModelForm } from './CustomModelForm';
@@ -157,7 +158,11 @@ const ChatHeader = PureChatHeader;
 const ChatInput = React.memo(PureChatInput);
 
 function createBaseURL(basePath: string, endpointUrl?: string | null) {
-  return endpointUrl ? new URL(basePath, endpointUrl).toString() : undefined;
+  try {
+    return endpointUrl ? new URL(basePath, endpointUrl).toString() : undefined;
+  } catch {
+    console.error('Invalid base URL:', basePath, 'endpointUrl', endpointUrl);
+  }
 }
 
 const ChatCard: React.FC<ChatCardProps> = ({
@@ -240,12 +245,16 @@ const ChatCard: React.FC<ChatCardProps> = ({
           }),
           messages: body?.messages,
           system: agent ? (agent.config.system_prompt ?? '') : '',
+          ...(chat.usingParameters ? chat.parameters : {}),
         });
 
         setStartTime(Date.now());
 
         return result.toDataStreamResponse({
           sendReasoning: true,
+          getErrorMessage: (error) => {
+            return getAIErrorMessage(error);
+          },
         });
       }
 
@@ -315,6 +324,14 @@ const ChatCard: React.FC<ChatCardProps> = ({
           }}
           onClickDeleteChatHistory={() => {
             setMessages([]);
+          }}
+          parameters={chat.parameters}
+          usingParameters={chat.usingParameters}
+          onChangeParameter={(usingParameters, parameters) => {
+            onUpdateChat?.({
+              usingParameters,
+              parameters,
+            });
           }}
         />
       }
