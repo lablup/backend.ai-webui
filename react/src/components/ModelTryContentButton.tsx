@@ -20,7 +20,7 @@ import {
   ServiceLauncherFormValue,
 } from './ServiceLauncherPageContent';
 import { VFolder } from './VFolderSelect';
-import { theme, Typography, Button } from 'antd';
+import { theme, Button } from 'antd';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -40,17 +40,17 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
   ...props
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  // const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const currentDomain = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
   const currentResourceGroupByProject = useCurrentResourceGroupValue();
-  const [fetchKey, updateFetchKey] = useUpdatableState('first');
+  // const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const { upsertNotification } = useSetBAINotification();
 
   const { data: allFolderList } = useSuspenseTanQuery({
-    queryKey: ['allFolderList', fetchKey, currentProject.id],
+    queryKey: ['allFolderList', '', currentProject.id],
     queryFn: (): Promise<VFolder[]> => {
       const search = new URLSearchParams();
       search.set('group_id', currentProject.id);
@@ -62,24 +62,25 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
     staleTime: 1000,
   });
 
-  const { data: accessibleStorageHostList } = useSuspenseTanQuery({
-    queryKey: ['accessibleStorageHostList', fetchKey, currentProject.id],
-    queryFn: () => {
-      return baiRequestWithPromise({
-        method: 'GET',
-        url: `/folders/_/hosts`,
-      });
-    },
-    staleTime: 1000,
-  });
+  // const { data: accessibleStorageHostList } = useSuspenseTanQuery({
+  //   queryKey: ['accessibleStorageHostList', fetchKey, currentProject.id],
+  //   queryFn: () => {
+  //     return baiRequestWithPromise({
+  //       method: 'GET',
+  //       url: `/folders/_/hosts`,
+  //     });
+  //   },
+  //   staleTime: 1000,
+  // });
 
-  const lowestUsageHost = _.minBy(
-    _.map(accessibleStorageHostList?.allowed, (host) => ({
-      host,
-      volume_info: accessibleStorageHostList?.volume_info?.[host],
-    })),
-    'volume_info.usage.percentage',
-  )?.host;
+  // FIXME: need to check if the modelStorageHost is accessible
+  // const lowestUsageHost = _.minBy(
+  //   _.map(accessibleStorageHostList?.allowed, (host) => ({
+  //     host,
+  //     volume_info: accessibleStorageHostList?.volume_info?.[host],
+  //   })),
+  //   'volume_info.usage.percentage',
+  // )?.host;
 
   const myModelStoreList = _.filter(
     allFolderList,
