@@ -4,7 +4,7 @@ import { ModelCardChatQuery } from './__generated__/ModelCardChatQuery.graphql';
 import { Alert, Card, theme } from 'antd/lib';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React, { useEffect, useTransition } from 'react';
+import React from 'react';
 // import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
@@ -21,11 +21,6 @@ const ModelCardChat: React.FC<ModelCardChatProps> = ({
 }) => {
   // const { t } = useTranslation();
   const { token } = theme.useToken();
-  const [fetchKey, updateFetchKey] = useUpdatableState('first');
-
-  useEffect(() => {
-    updateFetchKey();
-  }, []);
 
   const { endpoint_list } = useLazyLoadQuery<ModelCardChatQuery>(
     graphql`
@@ -58,7 +53,6 @@ const ModelCardChat: React.FC<ModelCardChatProps> = ({
     },
     {
       fetchPolicy: 'network-only',
-      fetchKey,
     },
   );
 
