@@ -4,6 +4,7 @@ import BAIFetchKeyButton from './BAIFetchKeyButton';
 import BAIRadioGroup from './BAIRadioGroup';
 import BAITable from './BAITable';
 import Flex from './Flex';
+import ResourceGroupSettingModal from './ResourceGroupSettingModal';
 import {
   ResourceGroupListQuery,
   ResourceGroupListQuery$data,
@@ -13,6 +14,7 @@ import {
   CloseOutlined,
   DeleteOutlined,
   InfoCircleOutlined,
+  PlusOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 import { Button, theme } from 'antd';
@@ -32,7 +34,10 @@ type ResourceGroup = NonNullable<
 const ResourceGroupList: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const [openCreateModal, setOpenCreateModal] = useState<boolean>(false);
   const [activeType, setActiveType] = useState<'active' | 'inactive'>('active');
+  const [selectedResourceGroup, setSelectedResourceGroup] =
+    useState<ResourceGroup>();
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [isActiveTypePending, startActiveTypeTransition] = useTransition();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
@@ -47,6 +52,8 @@ const ResourceGroupList: React.FC = () => {
           driver
           scheduler
           wsproxy_addr
+
+          ...ResourceGroupSettingModalFragment
         }
       }
     `,
@@ -104,7 +111,7 @@ const ResourceGroupList: React.FC = () => {
       key: 'controls',
       title: t('general.Control'),
       fixed: 'right',
-      render: () => {
+      render: (_, record) => {
         return (
           <Flex>
             <Button
@@ -119,6 +126,10 @@ const ResourceGroupList: React.FC = () => {
               icon={<SettingOutlined />}
               style={{
                 color: token.colorInfo,
+              }}
+              onClick={() => {
+                setSelectedResourceGroup(record);
+                setOpenCreateModal(true);
               }}
             />
             <Button
@@ -160,15 +171,24 @@ const ResourceGroupList: React.FC = () => {
             },
           ]}
         />
-        <BAIFetchKeyButton
-          loading={isPendingRefetch}
-          value={fetchKey}
-          onChange={() => {
-            startRefetchTransition(() => {
-              updateFetchKey();
-            });
-          }}
-        />
+        <Flex gap="sm">
+          <BAIFetchKeyButton
+            loading={isPendingRefetch}
+            value={fetchKey}
+            onChange={() => {
+              startRefetchTransition(() => {
+                updateFetchKey();
+              });
+            }}
+          />
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => setOpenCreateModal(true)}
+          >
+            {t('button.Create')}
+          </Button>
+        </Flex>
       </Flex>
 
       <BAITable
@@ -180,6 +200,21 @@ const ResourceGroupList: React.FC = () => {
         columns={columns}
         dataSource={filterNonNullItems(scaling_groups)}
         loading={isActiveTypePending}
+      />
+
+      <ResourceGroupSettingModal
+        open={openCreateModal}
+        resourceGroupFrgmt={selectedResourceGroup}
+        onRequestClose={(success) => {
+          setOpenCreateModal(false);
+          setSelectedResourceGroup(undefined);
+
+          if (success) {
+            startRefetchTransition(() => {
+              updateFetchKey();
+            });
+          }
+        }}
       />
     </Flex>
   );
