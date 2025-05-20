@@ -1,7 +1,7 @@
+import { SessionReservationFragment$key } from '../../__generated__/SessionReservationFragment.graphql';
 import { formatDurationAsDays } from '../../helper';
 import BAIIntervalView from '../BAIIntervalView';
 import DoubleTag from '../DoubleTag';
-import { SessionReservationFragment$key } from './__generated__/SessionReservationFragment.graphql';
 import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import React from 'react';

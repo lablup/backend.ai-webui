@@ -1,6 +1,6 @@
+import { ContainerLogModalWithLazyQueryLoaderQuery } from '../../__generated__/ContainerLogModalWithLazyQueryLoaderQuery.graphql';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import ContainerLogModal from './ContainerLogModal';
-import { ContainerLogModalWithLazyQueryLoaderQuery } from './__generated__/ContainerLogModalWithLazyQueryLoaderQuery.graphql';
 import graphql from 'babel-plugin-relay/macro';
 import { useLazyLoadQuery } from 'react-relay';
 

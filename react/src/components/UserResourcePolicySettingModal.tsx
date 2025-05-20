@@ -1,18 +1,18 @@
+import {
+  CreateUserResourcePolicyInput,
+  UserResourcePolicySettingModalCreateMutation,
+} from '../__generated__/UserResourcePolicySettingModalCreateMutation.graphql';
+import { UserResourcePolicySettingModalFragment$key } from '../__generated__/UserResourcePolicySettingModalFragment.graphql';
+import {
+  ModifyUserResourcePolicyInput,
+  UserResourcePolicySettingModalModifyMutation,
+} from '../__generated__/UserResourcePolicySettingModalModifyMutation.graphql';
 import { GBToBytes, bytesToGB } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useSuspendedBackendaiClient } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
-import {
-  CreateUserResourcePolicyInput,
-  UserResourcePolicySettingModalCreateMutation,
-} from './__generated__/UserResourcePolicySettingModalCreateMutation.graphql';
-import { UserResourcePolicySettingModalFragment$key } from './__generated__/UserResourcePolicySettingModalFragment.graphql';
-import {
-  ModifyUserResourcePolicyInput,
-  UserResourcePolicySettingModalModifyMutation,
-} from './__generated__/UserResourcePolicySettingModalModifyMutation.graphql';
 import {
   Form,
   Input,

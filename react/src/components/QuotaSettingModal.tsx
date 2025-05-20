@@ -1,7 +1,7 @@
+import { QuotaSettingModalFragment$key } from '../__generated__/QuotaSettingModalFragment.graphql';
+import { QuotaSettingModalSetMutation } from '../__generated__/QuotaSettingModalSetMutation.graphql';
 import { GBToBytes, bytesToGB } from '../helper';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import { QuotaSettingModalFragment$key } from './__generated__/QuotaSettingModalFragment.graphql';
-import { QuotaSettingModalSetMutation } from './__generated__/QuotaSettingModalSetMutation.graphql';
 import { Form, FormInstance, Input, message } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import React, { useRef } from 'react';

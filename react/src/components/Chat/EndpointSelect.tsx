@@ -1,12 +1,12 @@
+import {
+  EndpointSelectQuery,
+  EndpointSelectQuery$data,
+} from '../../__generated__/EndpointSelectQuery.graphql';
+import { EndpointSelectValueQuery } from '../../__generated__/EndpointSelectValueQuery.graphql';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import BAISelect from '../BAISelect';
 import TotalFooter from '../TotalFooter';
-import {
-  EndpointSelectQuery,
-  EndpointSelectQuery$data,
-} from './__generated__/EndpointSelectQuery.graphql';
-import { EndpointSelectValueQuery } from './__generated__/EndpointSelectValueQuery.graphql';
 import { useControllableValue } from 'ahooks';
 import { GetRef, SelectProps, Skeleton } from 'antd';
 import graphql from 'babel-plugin-relay/macro';

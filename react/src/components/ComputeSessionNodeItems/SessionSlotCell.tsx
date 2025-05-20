@@ -1,3 +1,4 @@
+import { SessionSlotCellFragment$key } from '../../__generated__/SessionSlotCellFragment.graphql';
 import { convertBinarySizeUnit } from '../../helper';
 import {
   ResourceSlotName,
@@ -6,7 +7,6 @@ import {
 import { useSessionLiveStat } from '../../hooks/useSessionNodeLiveStat';
 import Flex from '../Flex';
 import { displayMemoryUsage } from '../SessionUsageMonitor';
-import { SessionSlotCellFragment$key } from './__generated__/SessionSlotCellFragment.graphql';
 import {
   Badge,
   BadgeProps,

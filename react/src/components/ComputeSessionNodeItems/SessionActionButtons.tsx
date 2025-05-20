@@ -1,3 +1,11 @@
+import {
+  SessionActionButtonsFragment$data,
+  SessionActionButtonsFragment$key,
+} from '../../__generated__/SessionActionButtonsFragment.graphql';
+import {
+  SessionActionButtonsLegacyFragment$data,
+  SessionActionButtonsLegacyFragment$key,
+} from '../../__generated__/SessionActionButtonsLegacyFragment.graphql';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useBackendAIAppLauncher } from '../../hooks/useBackendAIAppLauncher';
@@ -10,14 +18,6 @@ import AppLauncherModal from './AppLauncherModal';
 import ContainerCommitModal from './ContainerCommitModal';
 import ContainerLogModal from './ContainerLogModal';
 import TerminateSessionModal from './TerminateSessionModal';
-import {
-  SessionActionButtonsFragment$data,
-  SessionActionButtonsFragment$key,
-} from './__generated__/SessionActionButtonsFragment.graphql';
-import {
-  SessionActionButtonsLegacyFragment$data,
-  SessionActionButtonsLegacyFragment$key,
-} from './__generated__/SessionActionButtonsLegacyFragment.graphql';
 import { Tooltip, Button, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';

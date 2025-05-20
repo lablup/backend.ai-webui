@@ -1,4 +1,8 @@
 import {
+  EndpointListFragment$data,
+  EndpointListFragment$key,
+} from '../__generated__/EndpointListFragment.graphql';
+import {
   baiSignedRequestWithPromise,
   filterEmptyItem,
   filterNonNullItems,
@@ -10,10 +14,6 @@ import BAITable, { BAITableProps } from './BAITable';
 import EndpointOwnerInfo from './EndpointOwnerInfo';
 import EndpointStatusTag from './EndpointStatusTag';
 import Flex from './Flex';
-import {
-  EndpointListFragment$data,
-  EndpointListFragment$key,
-} from './__generated__/EndpointListFragment.graphql';
 import {
   CheckOutlined,
   CloseOutlined,

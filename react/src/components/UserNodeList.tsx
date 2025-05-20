@@ -1,3 +1,5 @@
+import { UserNodeListModifyMutation } from '../__generated__/UserNodeListModifyMutation.graphql';
+import { UserNodeListQuery } from '../__generated__/UserNodeListQuery.graphql';
 import BAIPropertyFilter from '../components/BAIPropertyFilter';
 import Flex from '../components/Flex';
 import {
@@ -10,8 +12,6 @@ import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOption
 import BAIRadioGroup from './BAIRadioGroup';
 import UserInfoModal from './UserInfoModal';
 import UserSettingModal from './UserSettingModal';
-import { UserNodeListModifyMutation } from './__generated__/UserNodeListModifyMutation.graphql';
-import { UserNodeListQuery } from './__generated__/UserNodeListQuery.graphql';
 import {
   ReloadOutlined,
   LoadingOutlined,

@@ -1,4 +1,4 @@
-import { SessionTypeTagFragment$key } from './__generated__/SessionTypeTagFragment.graphql';
+import { SessionTypeTagFragment$key } from '../../__generated__/SessionTypeTagFragment.graphql';
 import { Tag } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';

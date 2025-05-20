@@ -1,13 +1,13 @@
 import {
+  SessionMetricGraphQuery,
+  SessionMetricGraphQuery$data,
+} from '../__generated__/SessionMetricGraphQuery.graphql';
+import {
   convertBinarySizeUnit,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import BAICard from './BAICard';
-import {
-  SessionMetricGraphQuery,
-  SessionMetricGraphQuery$data,
-} from './__generated__/SessionMetricGraphQuery.graphql';
 import { Empty, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import graphql from 'babel-plugin-relay/macro';

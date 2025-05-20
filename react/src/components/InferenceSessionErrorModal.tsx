@@ -1,6 +1,6 @@
+import { InferenceSessionErrorModalFragment$key } from '../__generated__/InferenceSessionErrorModalFragment.graphql';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import CopyableCodeText from './CopyableCodeText';
-import { InferenceSessionErrorModalFragment$key } from './__generated__/InferenceSessionErrorModalFragment.graphql';
 import { Descriptions, DescriptionsProps, Button } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import React from 'react';

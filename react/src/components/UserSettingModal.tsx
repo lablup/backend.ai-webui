@@ -1,4 +1,13 @@
 import {
+  UserInput,
+  UserSettingModalCreateMutation,
+} from '../__generated__/UserSettingModalCreateMutation.graphql';
+import {
+  ModifyUserInput,
+  UserSettingModalModifyMutation,
+} from '../__generated__/UserSettingModalModifyMutation.graphql';
+import { UserSettingModalQuery } from '../__generated__/UserSettingModalQuery.graphql';
+import {
   useCurrentDomainValue,
   useSuspendedBackendaiClient,
   useUpdatableState,
@@ -8,15 +17,6 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import TOTPActivateModal from './TOTPActivateModal';
 import UserResourcePolicySelector from './UserResourcePolicySelector';
-import {
-  UserInput,
-  UserSettingModalCreateMutation,
-} from './__generated__/UserSettingModalCreateMutation.graphql';
-import {
-  ModifyUserInput,
-  UserSettingModalModifyMutation,
-} from './__generated__/UserSettingModalModifyMutation.graphql';
-import { UserSettingModalQuery } from './__generated__/UserSettingModalQuery.graphql';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {

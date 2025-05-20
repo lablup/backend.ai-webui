@@ -1,4 +1,4 @@
-import { VFolderNodeIdenticonFragment$key } from './__generated__/VFolderNodeIdenticonFragment.graphql';
+import { VFolderNodeIdenticonFragment$key } from '../__generated__/VFolderNodeIdenticonFragment.graphql';
 import { shapes } from '@dicebear/collection';
 import { createAvatar } from '@dicebear/core';
 import graphql from 'babel-plugin-relay/macro';

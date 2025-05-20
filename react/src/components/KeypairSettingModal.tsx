@@ -1,8 +1,8 @@
+import { KeypairSettingModalCreateMutation } from '../__generated__/KeypairSettingModalCreateMutation.graphql';
+import { KeypairSettingModalFragment$key } from '../__generated__/KeypairSettingModalFragment.graphql';
+import { KeypairSettingModalModifyMutation } from '../__generated__/KeypairSettingModalModifyMutation.graphql';
 import BAIModal from './BAIModal';
 import KeypairResourcePolicySelector from './KeypairResourcePolicySelector';
-import { KeypairSettingModalCreateMutation } from './__generated__/KeypairSettingModalCreateMutation.graphql';
-import { KeypairSettingModalFragment$key } from './__generated__/KeypairSettingModalFragment.graphql';
-import { KeypairSettingModalModifyMutation } from './__generated__/KeypairSettingModalModifyMutation.graphql';
 import { App, Col, Form, Input, InputNumber, ModalProps, Row } from 'antd';
 import { FormInstance } from 'antd/lib';
 import graphql from 'babel-plugin-relay/macro';

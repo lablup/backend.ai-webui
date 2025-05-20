@@ -1,10 +1,10 @@
+import { StorageStatusPanelCardQuery } from '../__generated__/StorageStatusPanelCardQuery.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useVFolderInvitations } from '../hooks/backendai';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import BAICard, { BAICardProps } from './BAICard';
 import BAIPanelItem from './BAIPanelItem';
-import { StorageStatusPanelCardQuery } from './__generated__/StorageStatusPanelCardQuery.graphql';
 import { Badge, Col, Row, theme, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import graphql from 'babel-plugin-relay/macro';

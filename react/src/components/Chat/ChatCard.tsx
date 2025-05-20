@@ -1,3 +1,4 @@
+import { ChatCardQuery } from '../../__generated__/ChatCardQuery.graphql';
 import { useUpdatableState } from '../../hooks';
 import { useSuspenseTanQuery } from '../../hooks/reactQueryAlias';
 import { useAIAgent } from '../../hooks/useAIAgent';
@@ -13,7 +14,6 @@ import {
   Model,
 } from './ChatModel';
 import { CustomModelForm } from './CustomModelForm';
-import { ChatCardQuery } from './__generated__/ChatCardQuery.graphql';
 import { createOpenAI } from '@ai-sdk/openai';
 import { useChat } from '@ai-sdk/react';
 import { extractReasoningMiddleware, streamText, wrapLanguageModel } from 'ai';

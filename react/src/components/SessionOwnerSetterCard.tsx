@@ -1,3 +1,4 @@
+import { SessionOwnerSetterCardQuery } from '../__generated__/SessionOwnerSetterCardQuery.graphql';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import BAICard, { BAICardProps } from './BAICard';
@@ -5,7 +6,6 @@ import BAISelect from './BAISelect';
 import Flex from './Flex';
 import HiddenFormItem from './HiddenFormItem';
 import ResourceGroupSelect from './ResourceGroupSelect';
-import { SessionOwnerSetterCardQuery } from './__generated__/SessionOwnerSetterCardQuery.graphql';
 import {
   Button,
   Card,

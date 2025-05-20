@@ -1,3 +1,9 @@
+import { KeypairResourcePolicyListMutation } from '../__generated__/KeypairResourcePolicyListMutation.graphql';
+import {
+  KeypairResourcePolicyListQuery,
+  KeypairResourcePolicyListQuery$data,
+} from '../__generated__/KeypairResourcePolicyListQuery.graphql';
+import { KeypairResourcePolicySettingModalFragment$key } from '../__generated__/KeypairResourcePolicySettingModalFragment.graphql';
 import {
   localeCompare,
   numberSorterWithInfinityValue,
@@ -11,12 +17,6 @@ import Flex from './Flex';
 import KeypairResourcePolicySettingModal from './KeypairResourcePolicySettingModal';
 import ResourceNumber from './ResourceNumber';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
-import { KeypairResourcePolicyListMutation } from './__generated__/KeypairResourcePolicyListMutation.graphql';
-import {
-  KeypairResourcePolicyListQuery,
-  KeypairResourcePolicyListQuery$data,
-} from './__generated__/KeypairResourcePolicyListQuery.graphql';
-import { KeypairResourcePolicySettingModalFragment$key } from './__generated__/KeypairResourcePolicySettingModalFragment.graphql';
 import {
   DeleteOutlined,
   DownOutlined,

@@ -1,5 +1,5 @@
+import { EndpointOwnerInfoFragment$key } from '../__generated__/EndpointOwnerInfoFragment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { EndpointOwnerInfoFragment$key } from './__generated__/EndpointOwnerInfoFragment.graphql';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, Tooltip, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';

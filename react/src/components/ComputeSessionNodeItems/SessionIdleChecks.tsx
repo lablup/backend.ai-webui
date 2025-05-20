@@ -1,3 +1,5 @@
+import { SessionIdleChecksFragment$key } from '../../__generated__/SessionIdleChecksFragment.graphql';
+import { SessionIdleChecksNodeFragment$key } from '../../__generated__/SessionIdleChecksNodeFragment.graphql';
 import {
   formatDurationAsDays,
   toFixedFloorWithoutTrailingZeros,
@@ -5,8 +7,6 @@ import {
 import { useResourceSlotsDetails } from '../../hooks/backendai';
 import DoubleTag from '../DoubleTag';
 import Flex from '../Flex';
-import { SessionIdleChecksFragment$key } from './__generated__/SessionIdleChecksFragment.graphql';
-import { SessionIdleChecksNodeFragment$key } from './__generated__/SessionIdleChecksNodeFragment.graphql';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Tooltip, Typography, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';

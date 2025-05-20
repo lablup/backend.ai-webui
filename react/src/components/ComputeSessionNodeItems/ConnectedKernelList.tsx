@@ -1,3 +1,8 @@
+import { ConnectedKernelListLegacyQuery } from '../../__generated__/ConnectedKernelListLegacyQuery.graphql';
+import {
+  ConnectedKernelListQuery,
+  ConnectedKernelListQuery$data,
+} from '../../__generated__/ConnectedKernelListQuery.graphql';
 import { filterEmptyItem, filterNonNullItems, toGlobalId } from '../../helper';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 // import BAIPropertyFilter from '../BAIPropertyFilter';
@@ -6,11 +11,6 @@ import DoubleTag from '../DoubleTag';
 import Flex from '../Flex';
 import UnmountModalAfterClose from '../UnmountModalAfterClose';
 import ContainerLogModal from './ContainerLogModal';
-import { ConnectedKernelListLegacyQuery } from './__generated__/ConnectedKernelListLegacyQuery.graphql';
-import {
-  ConnectedKernelListQuery,
-  ConnectedKernelListQuery$data,
-} from './__generated__/ConnectedKernelListQuery.graphql';
 import { Button, Tag, theme, Tooltip, Typography } from 'antd';
 import { ColumnType } from 'antd/lib/table';
 import graphql from 'babel-plugin-relay/macro';

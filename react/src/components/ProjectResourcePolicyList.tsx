@@ -1,3 +1,9 @@
+import { ProjectResourcePolicyListMutation } from '../__generated__/ProjectResourcePolicyListMutation.graphql';
+import {
+  ProjectResourcePolicyListQuery,
+  ProjectResourcePolicyListQuery$data,
+} from '../__generated__/ProjectResourcePolicyListQuery.graphql';
+import { ProjectResourcePolicySettingModalFragment$key } from '../__generated__/ProjectResourcePolicySettingModalFragment.graphql';
 import {
   bytesToGB,
   filterEmptyItem,
@@ -11,12 +17,6 @@ import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting'
 import Flex from './Flex';
 import ProjectResourcePolicySettingModal from './ProjectResourcePolicySettingModal';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
-import { ProjectResourcePolicyListMutation } from './__generated__/ProjectResourcePolicyListMutation.graphql';
-import {
-  ProjectResourcePolicyListQuery,
-  ProjectResourcePolicyListQuery$data,
-} from './__generated__/ProjectResourcePolicyListQuery.graphql';
-import { ProjectResourcePolicySettingModalFragment$key } from './__generated__/ProjectResourcePolicySettingModalFragment.graphql';
 import {
   DeleteOutlined,
   DownOutlined,

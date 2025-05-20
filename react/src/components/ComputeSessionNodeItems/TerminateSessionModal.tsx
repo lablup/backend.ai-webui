@@ -1,3 +1,8 @@
+import {
+  TerminateSessionModalFragment$data,
+  TerminateSessionModalFragment$key,
+} from '../../__generated__/TerminateSessionModalFragment.graphql';
+import { TerminateSessionModalRefetchQuery } from '../../__generated__/TerminateSessionModalRefetchQuery.graphql';
 import { filterEmptyItem } from '../../helper';
 import { BackendAIClient, useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
@@ -7,11 +12,6 @@ import { usePainKiller } from '../../hooks/usePainKiller';
 import { usePromiseTracker } from '../../usePromiseTracker';
 import BAIModal from '../BAIModal';
 import Flex from '../Flex';
-import {
-  TerminateSessionModalFragment$data,
-  TerminateSessionModalFragment$key,
-} from './__generated__/TerminateSessionModalFragment.graphql';
-import { TerminateSessionModalRefetchQuery } from './__generated__/TerminateSessionModalRefetchQuery.graphql';
 import { Card, Checkbox, ModalProps, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import graphql from 'babel-plugin-relay/macro';

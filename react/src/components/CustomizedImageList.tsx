@@ -1,3 +1,8 @@
+import { CustomizedImageListForgetAndUntagMutation } from '../__generated__/CustomizedImageListForgetAndUntagMutation.graphql';
+import {
+  CustomizedImageListQuery,
+  CustomizedImageListQuery$data,
+} from '../__generated__/CustomizedImageListQuery.graphql';
 import Flex from '../components/Flex';
 import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
 import {
@@ -16,11 +21,6 @@ import AliasedImageDoubleTags from './AliasedImageDoubleTags';
 import BAITable from './BAITable';
 import { ImageTags } from './ImageTags';
 import TextHighlighter from './TextHighlighter';
-import { CustomizedImageListForgetAndUntagMutation } from './__generated__/CustomizedImageListForgetAndUntagMutation.graphql';
-import {
-  CustomizedImageListQuery,
-  CustomizedImageListQuery$data,
-} from './__generated__/CustomizedImageListQuery.graphql';
 import {
   DeleteOutlined,
   ReloadOutlined,

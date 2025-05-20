@@ -1,3 +1,9 @@
+import { ResourceGroupListDeleteMutation } from '../__generated__/ResourceGroupListDeleteMutation.graphql';
+import {
+  ResourceGroupListQuery,
+  ResourceGroupListQuery$data,
+} from '../__generated__/ResourceGroupListQuery.graphql';
+import { ResourceGroupListUpdateMutation } from '../__generated__/ResourceGroupListUpdateMutation.graphql';
 import { filterEmptyItem, filterNonNullItems } from '../helper';
 import { useUpdatableState } from '../hooks';
 import BAIConfirmModalWithInput from './BAIConfirmModalWithInput';
@@ -7,12 +13,6 @@ import BAITable from './BAITable';
 import Flex from './Flex';
 import ResourceGroupInfoModal from './ResourceGroupInfoModal';
 import ResourceGroupSettingModal from './ResourceGroupSettingModal';
-import { ResourceGroupListDeleteMutation } from './__generated__/ResourceGroupListDeleteMutation.graphql';
-import {
-  ResourceGroupListQuery,
-  ResourceGroupListQuery$data,
-} from './__generated__/ResourceGroupListQuery.graphql';
-import { ResourceGroupListUpdateMutation } from './__generated__/ResourceGroupListUpdateMutation.graphql';
 import {
   CheckOutlined,
   CloseOutlined,

@@ -1,5 +1,5 @@
+import { useVirtualFolderNodePathFragment$key } from '../__generated__/useVirtualFolderNodePathFragment.graphql';
 import { toLocalId } from '../helper';
-import { useVirtualFolderNodePathFragment$key } from './__generated__/useVirtualFolderNodePathFragment.graphql';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { useFragment } from 'react-relay';

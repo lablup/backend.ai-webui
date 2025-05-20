@@ -1,3 +1,10 @@
+import { AutoScalingRuleEditorModalFragment$key } from '../__generated__/AutoScalingRuleEditorModalFragment.graphql';
+import { EndpointDetailPageAutoScalingRuleDeleteMutation } from '../__generated__/EndpointDetailPageAutoScalingRuleDeleteMutation.graphql';
+import {
+  EndpointDetailPageQuery,
+  EndpointDetailPageQuery$data,
+} from '../__generated__/EndpointDetailPageQuery.graphql';
+import { InferenceSessionErrorModalFragment$key } from '../__generated__/InferenceSessionErrorModalFragment.graphql';
 import AutoScalingRuleEditorModal, {
   COMPARATOR_LABELS,
 } from '../components/AutoScalingRuleEditorModal';
@@ -14,8 +21,6 @@ import ResourceNumber from '../components/ResourceNumber';
 import SessionDetailDrawer from '../components/SessionDetailDrawer';
 import UnmountModalAfterClose from '../components/UnmountModalAfterClose';
 import VFolderLazyView from '../components/VFolderLazyView';
-import { AutoScalingRuleEditorModalFragment$key } from '../components/__generated__/AutoScalingRuleEditorModalFragment.graphql';
-import { InferenceSessionErrorModalFragment$key } from '../components/__generated__/InferenceSessionErrorModalFragment.graphql';
 import { baiSignedRequestWithPromise, filterNonNullItems } from '../helper';
 import {
   useSuspendedBackendaiClient,
@@ -25,11 +30,6 @@ import {
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { EndpointDetailPageAutoScalingRuleDeleteMutation } from './__generated__/EndpointDetailPageAutoScalingRuleDeleteMutation.graphql';
-import {
-  EndpointDetailPageQuery,
-  EndpointDetailPageQuery$data,
-} from './__generated__/EndpointDetailPageQuery.graphql';
 import {
   ArrowRightOutlined,
   CheckOutlined,

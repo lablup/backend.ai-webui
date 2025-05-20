@@ -1,4 +1,8 @@
 import {
+  AgentSummaryListQuery,
+  AgentSummaryListQuery$data,
+} from '../__generated__/AgentSummaryListQuery.graphql';
+import {
   convertBinarySizeUnit,
   filterNonNullItems,
   toFixedFloorWithoutTrailingZeros,
@@ -15,10 +19,6 @@ import BAIRadioGroup from './BAIRadioGroup';
 import Flex from './Flex';
 import { ResourceTypeIcon } from './ResourceNumber';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
-import {
-  AgentSummaryListQuery,
-  AgentSummaryListQuery$data,
-} from './__generated__/AgentSummaryListQuery.graphql';
 import {
   CheckCircleOutlined,
   LoadingOutlined,

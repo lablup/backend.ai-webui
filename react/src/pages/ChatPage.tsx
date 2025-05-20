@@ -1,3 +1,4 @@
+import { ChatPageQuery } from '../__generated__/ChatPageQuery.graphql';
 import BAICard from '../components/BAICard';
 import {
   ChatProviderType,
@@ -5,7 +6,6 @@ import {
 } from '../components/Chat/ChatModel';
 import { Conversation } from '../components/Chat/Conversation';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { ChatPageQuery } from './__generated__/ChatPageQuery.graphql';
 import graphql from 'babel-plugin-relay/macro';
 import { t } from 'i18next';
 import React, { useId } from 'react';

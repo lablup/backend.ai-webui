@@ -1,3 +1,5 @@
+import { QuotaPerStorageVolumePanelCardQuery } from '../__generated__/QuotaPerStorageVolumePanelCardQuery.graphql';
+import { QuotaPerStorageVolumePanelCardUserQuery } from '../__generated__/QuotaPerStorageVolumePanelCardUserQuery.graphql';
 import { addQuotaScopeTypePrefix, convertDecimalSizeUnit } from '../helper';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -6,8 +8,6 @@ import BAIProgress from './BAIProgress';
 import Flex from './Flex';
 import FlexActivityIndicator from './FlexActivityIndicator';
 import StorageSelect from './StorageSelect';
-import { QuotaPerStorageVolumePanelCardQuery } from './__generated__/QuotaPerStorageVolumePanelCardQuery.graphql';
-import { QuotaPerStorageVolumePanelCardUserQuery } from './__generated__/QuotaPerStorageVolumePanelCardUserQuery.graphql';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Col, Empty, Row, theme, Tooltip, Typography } from 'antd';
 import graphql from 'babel-plugin-relay/macro';

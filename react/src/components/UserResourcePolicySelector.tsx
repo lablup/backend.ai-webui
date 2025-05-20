@@ -1,5 +1,5 @@
+import { UserResourcePolicySelectorQuery } from '../__generated__/UserResourcePolicySelectorQuery.graphql';
 import { localeCompare } from '../helper';
-import { UserResourcePolicySelectorQuery } from './__generated__/UserResourcePolicySelectorQuery.graphql';
 import { Select, SelectProps } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';

@@ -1,7 +1,7 @@
+import { ForceTOTPCheckerQuery } from '../__generated__/ForceTOTPCheckerQuery.graphql';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useTOTPSupported } from '../hooks/backendai';
 import TOTPActivateModal from './TOTPActivateModal';
-import { ForceTOTPCheckerQuery } from './__generated__/ForceTOTPCheckerQuery.graphql';
 import { useToggle } from 'ahooks';
 import graphql from 'babel-plugin-relay/macro';
 import { useLazyLoadQuery } from 'react-relay';

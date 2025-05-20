@@ -1,7 +1,7 @@
+import { QuotaScopeCardFragment$key } from '../__generated__/QuotaScopeCardFragment.graphql';
+import { QuotaScopeCardUnsetMutation } from '../__generated__/QuotaScopeCardUnsetMutation.graphql';
 import { bytesToGB } from '../helper/index';
 import Flex from './Flex';
-import { QuotaScopeCardFragment$key } from './__generated__/QuotaScopeCardFragment.graphql';
-import { QuotaScopeCardUnsetMutation } from './__generated__/QuotaScopeCardUnsetMutation.graphql';
 import { EditFilled, PlusOutlined, CloseOutlined } from '@ant-design/icons';
 import {
   CardProps,

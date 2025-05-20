@@ -1,6 +1,8 @@
+import { VFolderNodeDescriptionFragment$key } from '../__generated__/VFolderNodeDescriptionFragment.graphql';
+import { VFolderNodeDescriptionPermissionRefreshQuery } from '../__generated__/VFolderNodeDescriptionPermissionRefreshQuery.graphql';
+import { useVirtualFolderNodePathFragment$key } from '../__generated__/useVirtualFolderNodePathFragment.graphql';
 import { convertDecimalSizeUnit, filterEmptyItem, toLocalId } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useVirtualFolderNodePathFragment$key } from '../hooks/__generated__/useVirtualFolderNodePathFragment.graphql';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -12,8 +14,6 @@ import BAITag from './BAITag';
 import Flex from './Flex';
 import { statusTagColor } from './VFolderNodes';
 import VirtualFolderPath from './VirtualFolderNodeItems/VirtualFolderPath';
-import { VFolderNodeDescriptionFragment$key } from './__generated__/VFolderNodeDescriptionFragment.graphql';
-import { VFolderNodeDescriptionPermissionRefreshQuery } from './__generated__/VFolderNodeDescriptionPermissionRefreshQuery.graphql';
 import { CheckCircleOutlined, UserOutlined } from '@ant-design/icons';
 import {
   App,

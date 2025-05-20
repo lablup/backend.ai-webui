@@ -1,3 +1,4 @@
+import { StorageProxyListQuery } from '../__generated__/StorageProxyListQuery.graphql';
 import {
   filterNonNullItems,
   humanReadableDecimalSize,
@@ -13,7 +14,6 @@ import BAIProgressWithLabel from './BAIProgressWithLabel';
 import BAITable from './BAITable';
 import DoubleTag from './DoubleTag';
 import Flex from './Flex';
-import { StorageProxyListQuery } from './__generated__/StorageProxyListQuery.graphql';
 import { InfoCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import { Button, TableColumnsType, Tag, theme, Typography } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
