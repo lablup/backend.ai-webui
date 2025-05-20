@@ -20,17 +20,7 @@ export type Endpoint = NonNullable<
 >;
 
 export interface EndpointSelectProps
-  extends Omit<
-    SelectProps<
-      string,
-      {
-        label?: string | null;
-        value?: string | null;
-        endpoint?: Endpoint | null;
-      }
-    >,
-    'options' | 'labelInValue'
-  > {
+  extends Omit<SelectProps, 'options' | 'labelInValue'> {
   fetchKey?: string;
   lifecycleStageFilter?: LifecycleStage[];
 }
@@ -175,7 +165,6 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
     }
   }, [isValueMatched]);
   return (
-    // @ts-ignore
     <BAISelect
       ref={selectRef}
       placeholder={t('chatui.SelectEndpoint')}
