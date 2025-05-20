@@ -123,55 +123,6 @@ const StorageProxyList = () => {
       },
     },
     {
-      title: t('general.Control'),
-      key: 'control',
-      width: 100,
-      render: (value, record) => {
-        let perfMetricDisabled;
-        try {
-          const performanceMetric = JSON.parse(record.performance_metric);
-          perfMetricDisabled = _.isEmpty(performanceMetric);
-        } catch (e) {
-          perfMetricDisabled = true;
-        }
-        return (
-          <>
-            <Button
-              size="large"
-              disabled={perfMetricDisabled}
-              style={{
-                color: perfMetricDisabled
-                  ? token.colorTextDisabled
-                  : token.colorSuccess,
-              }}
-              icon={<InfoCircleOutlined />}
-              onClick={() => {
-                // This event is being listened to by the plugin
-                const event = new CustomEvent(
-                  'backend-ai-selected-storage-proxy',
-                  {
-                    detail: record.id,
-                  },
-                );
-                document.dispatchEvent(event);
-              }}
-              type="text"
-            />
-            <BAILink to={`/storage-settings/${record.id}`}>
-              <Button
-                size="large"
-                style={{
-                  color: token.colorInfo,
-                }}
-                icon={<SettingOutlined />}
-                type="text"
-              />
-            </BAILink>
-          </>
-        );
-      },
-    },
-    {
       title: t('agent.BackendType'),
       key: 'backend',
       dataIndex: 'backend',
@@ -249,6 +200,56 @@ const StorageProxyList = () => {
               </Tag>
             ))}
           </Flex>
+        );
+      },
+    },
+    {
+      title: t('general.Control'),
+      key: 'control',
+      width: 100,
+      fixed: 'right',
+      render: (value, record) => {
+        let perfMetricDisabled;
+        try {
+          const performanceMetric = JSON.parse(record.performance_metric);
+          perfMetricDisabled = _.isEmpty(performanceMetric);
+        } catch (e) {
+          perfMetricDisabled = true;
+        }
+        return (
+          <>
+            <Button
+              size="large"
+              disabled={perfMetricDisabled}
+              style={{
+                color: perfMetricDisabled
+                  ? token.colorTextDisabled
+                  : token.colorSuccess,
+              }}
+              icon={<InfoCircleOutlined />}
+              onClick={() => {
+                // This event is being listened to by the plugin
+                const event = new CustomEvent(
+                  'backend-ai-selected-storage-proxy',
+                  {
+                    detail: record.id,
+                  },
+                );
+                document.dispatchEvent(event);
+              }}
+              type="text"
+            />
+            <BAILink to={`/storage-settings/${record.id}`}>
+              <Button
+                size="large"
+                style={{
+                  color: token.colorInfo,
+                }}
+                icon={<SettingOutlined />}
+                type="text"
+              />
+            </BAILink>
+          </>
         );
       },
     },

@@ -47,14 +47,10 @@ import { useLazyLoadQuery } from 'react-relay';
 type Agent = NonNullable<AgentListQuery$data['agent_list']>['items'][number];
 
 interface AgentListProps {
-  containerStyle?: React.CSSProperties;
   tableProps?: Omit<TableProps, 'dataSource'>;
 }
 
-const AgentList: React.FC<AgentListProps> = ({
-  containerStyle,
-  tableProps,
-}) => {
+const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
@@ -742,8 +738,8 @@ const AgentList: React.FC<AgentListProps> = ({
     useHiddenColumnKeysSetting('AgentList');
 
   return (
-    <Flex direction="column" align="stretch" style={containerStyle} gap={'sm'}>
-      <Flex justify="between" align="start" gap="xs" wrap="wrap">
+    <Flex direction="column" align="stretch" gap="sm">
+      <Flex justify="between" align="start" wrap="wrap">
         <Flex
           direction="row"
           gap={'sm'}

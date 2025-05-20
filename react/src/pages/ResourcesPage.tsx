@@ -1,5 +1,6 @@
 import AgentList from '../components/AgentList';
 import BAICard from '../components/BAICard';
+import ResourceGroupList from '../components/ResourceGroupList';
 import StorageProxyList from '../components/StorageProxyList';
 import { Skeleton, theme } from 'antd';
 import React, { Suspense } from 'react';
@@ -38,35 +39,30 @@ const ResourcesPage: React.FC<ResourcesPageProps> = (props) => {
           tab: t('general.ResourceGroup'),
         },
       ]}
+      styles={{
+        body: {
+          padding: `${token.paddingSM}px ${token.paddingLG}px ${token.paddingLG}px ${token.paddingLG}px`,
+        },
+      }}
     >
       {curTabKey === 'agents' ? (
-        // To remove duplicated border in the bordered table, we need to remove margin of the container.
-        <Suspense
-          fallback={
-            <Skeleton
-              active
-              style={{ padding: token.paddingContentVerticalLG }}
-            />
-          }
-        >
+        <Suspense fallback={<Skeleton active />}>
           <AgentList />
         </Suspense>
       ) : null}
       {curTabKey === 'storages' ? (
-        <Suspense
-          fallback={
-            <Skeleton
-              active
-              style={{ padding: token.paddingContentVerticalLG }}
-            />
-          }
-        >
+        <Suspense fallback={<Skeleton active />}>
           <StorageProxyList />
         </Suspense>
       ) : null}
       {curTabKey === 'resourceGroup' ? (
-        // @ts-ignore
-        <backend-ai-resource-group-list active />
+        <>
+          <Suspense fallback={<Skeleton active />}>
+            <ResourceGroupList />
+          </Suspense>
+          {/* @ts-ignore */}
+          {/* <backend-ai-resource-group-list active /> */}
+        </>
       ) : null}
     </BAICard>
   );
