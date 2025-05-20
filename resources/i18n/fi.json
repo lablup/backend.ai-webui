@@ -1033,10 +1033,15 @@
     "UsernameOptional": "Käyttäjätunnus (valinnainen)"
   },
   "resourceGroup": {
+    "Activate": "Aktivoida",
+    "ActivateResourceGroup": "Aktivoi resurssiryhmä",
     "Active": "Aktiivinen",
     "ActiveStatus": "Aktiivinen tila",
     "AllowedSessionTypes": "Sallitut istuntotyypit",
     "CreateResourceGroup": "Luo resurssiryhmä",
+    "Deactivate": "Deaktivoida",
+    "DeactivateResourceGroup": "Deaktivoi resurssiryhmä",
+    "DeleteResourceGroup": "Poista resurssiryhmä",
     "Description": "Kuvaus",
     "Domain": "Verkkotunnus",
     "Driver": "Kuljettaja",

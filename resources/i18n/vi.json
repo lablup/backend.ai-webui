@@ -1035,10 +1035,15 @@
     "UsernameOptional": "Tên người dùng (Tùy chọn)"
   },
   "resourceGroup": {
+    "Activate": "Kích hoạt",
+    "ActivateResourceGroup": "Kích hoạt nhóm tài nguyên",
     "Active": "Hoạt động",
     "ActiveStatus": "Trạng thái hoạt động",
     "AllowedSessionTypes": "Các loại phiên được phép",
     "CreateResourceGroup": "Tạo nhóm tài nguyên",
+    "Deactivate": "Vô hiệu hóa",
+    "DeactivateResourceGroup": "Vô hiệu hóa nhóm tài nguyên",
+    "DeleteResourceGroup": "Xóa nhóm tài nguyên",
     "Description": "Sự miêu tả",
     "Domain": "Lãnh địa",
     "Driver": "Người lái xe",

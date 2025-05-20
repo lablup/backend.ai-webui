@@ -1033,10 +1033,15 @@
     "UsernameOptional": "Nome utente (facoltativo)"
   },
   "resourceGroup": {
+    "Activate": "Attivare",
+    "ActivateResourceGroup": "Attiva il gruppo di risorse",
     "Active": "Attivo",
     "ActiveStatus": "Stato attivo",
     "AllowedSessionTypes": "Tipi di sessione consentiti",
     "CreateResourceGroup": "Crea gruppo di risorse",
+    "Deactivate": "Disattivare",
+    "DeactivateResourceGroup": "Disattiva il gruppo di risorse",
+    "DeleteResourceGroup": "Elimina il gruppo delle risorse",
     "Description": "Descrizione",
     "Domain": "Dominio",
     "Driver": "autista",

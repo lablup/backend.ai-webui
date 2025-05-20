@@ -1033,10 +1033,15 @@
     "UsernameOptional": "Хэрэглэгчийн нэр (заавал биш)"
   },
   "resourceGroup": {
+    "Activate": "Идэвхжүүлэх",
+    "ActivateResourceGroup": "Нөөцийн бүлгийг идэвхжүүлэх",
     "Active": "Идэвхтэй",
     "ActiveStatus": "Идэвхтэй байдал",
     "AllowedSessionTypes": "Зөвшөөрөгдсөн сессийн төрлүүд",
     "CreateResourceGroup": "Нөөцийн бүлэг үүсгэх",
+    "Deactivate": "Идэвхгүй болгох",
+    "DeactivateResourceGroup": "Нөөцийн бүлгийг идэвхгүй болгох",
+    "DeleteResourceGroup": "Нөөцийн бүлгийг устгах",
     "Description": "Тодорхойлолт",
     "Domain": "Домэйн",
     "Driver": "Жолооч",

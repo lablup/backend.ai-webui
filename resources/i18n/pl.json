@@ -1035,10 +1035,15 @@
     "UsernameOptional": "Nazwa użytkownika (opcjonalnie)"
   },
   "resourceGroup": {
+    "Activate": "Aktywować",
+    "ActivateResourceGroup": "Aktywuj grupę zasobów",
     "Active": "Aktywny",
     "ActiveStatus": "Stan aktywny",
     "AllowedSessionTypes": "Dozwolone typy sesji",
     "CreateResourceGroup": "Utwórz grupę zasobów",
+    "Deactivate": "Dezaktywować",
+    "DeactivateResourceGroup": "Dezaktywna grupa zasobów",
+    "DeleteResourceGroup": "Usuń grupę zasobów",
     "Description": "Opis",
     "Domain": "Domena",
     "Driver": "Kierowca",

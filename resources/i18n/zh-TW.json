@@ -1035,10 +1035,15 @@
     "UsernameOptional": "用戶名（可選）"
   },
   "resourceGroup": {
+    "Activate": "啟用設定",
+    "ActivateResourceGroup": "激活資源組",
     "Active": "積極的",
     "ActiveStatus": "活動狀態",
     "AllowedSessionTypes": "允许的会话类型",
     "CreateResourceGroup": "創建資源組",
+    "Deactivate": "停用",
+    "DeactivateResourceGroup": "停用資源組",
+    "DeleteResourceGroup": "刪除資源組",
     "Description": "描述",
     "Domain": "域名",
     "Driver": "司機",

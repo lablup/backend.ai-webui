@@ -1035,10 +1035,15 @@
     "UsernameOptional": "Nom d'utilisateur (facultatif)"
   },
   "resourceGroup": {
+    "Activate": "Activer",
+    "ActivateResourceGroup": "Activer le groupe de ressources",
     "Active": "actif",
     "ActiveStatus": "Statut Actif",
     "AllowedSessionTypes": "Types de session autorisés",
     "CreateResourceGroup": "Créer un groupe de ressources",
+    "Deactivate": "Désactiver",
+    "DeactivateResourceGroup": "Désactiver le groupe de ressources",
+    "DeleteResourceGroup": "Supprimer le groupe de ressources",
     "Description": "La description",
     "Domain": "Domaine",
     "Driver": "Conducteur",

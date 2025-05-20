@@ -1035,10 +1035,15 @@
     "UsernameOptional": "Имя пользователя (необязательно)"
   },
   "resourceGroup": {
+    "Activate": "Активировать",
+    "ActivateResourceGroup": "Активировать ресурсную группу",
     "Active": "Активный",
     "ActiveStatus": "Активный статус",
     "AllowedSessionTypes": "Разрешенные типы сессий",
     "CreateResourceGroup": "Создать группу ресурсов",
+    "Deactivate": "Деактивировать",
+    "DeactivateResourceGroup": "Деактивировать ресурсную группу",
+    "DeleteResourceGroup": "Удалить ресурсную группу",
     "Description": "Описание",
     "Domain": "Домен",
     "Driver": "Драйвер",

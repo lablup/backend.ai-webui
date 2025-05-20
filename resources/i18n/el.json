@@ -1031,10 +1031,15 @@
     "UsernameOptional": "Όνομα χρήστη (προαιρετικό)"
   },
   "resourceGroup": {
+    "Activate": "Δραστηριοποιώ",
+    "ActivateResourceGroup": "Ενεργοποίηση ομάδας πόρων",
     "Active": "Ενεργός",
     "ActiveStatus": "Ενεργή κατάσταση",
     "AllowedSessionTypes": "Επιτρεπόμενοι τύποι συνόδου",
     "CreateResourceGroup": "Δημιουργία ομάδας πόρων",
+    "Deactivate": "Απενεργοποιούμαι",
+    "DeactivateResourceGroup": "Απενεργοποίηση ομάδας πόρων",
+    "DeleteResourceGroup": "Διαγραφή ομάδας πόρων",
     "Description": "Περιγραφή",
     "Domain": "Τομέας",
     "Driver": "Οδηγός",

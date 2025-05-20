@@ -1024,10 +1024,15 @@
     "UsernameOptional": "ชื่อผู้ใช้ (ไม่บังคับ)"
   },
   "resourceGroup": {
+    "Activate": "เปิดใช้งาน",
+    "ActivateResourceGroup": "เปิดใช้งานกลุ่มทรัพยากร",
     "Active": "ใช้งาน",
     "ActiveStatus": "สถานะใช้งาน",
     "AllowedSessionTypes": "ประเภทเซสชันที่อนุญาต",
     "CreateResourceGroup": "สร้างกลุ่มทรัพยากร",
+    "Deactivate": "ปิดใช้งาน",
+    "DeactivateResourceGroup": "ปิดการใช้งานกลุ่มทรัพยากร",
+    "DeleteResourceGroup": "ลบกลุ่มทรัพยากร",
     "Description": "คำอธิบาย",
     "Domain": "โดเมน",
     "Driver": "ไดรเวอร์",

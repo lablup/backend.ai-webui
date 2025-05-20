@@ -1033,10 +1033,15 @@
     "UsernameOptional": "Nama Pengguna (Opsional)"
   },
   "resourceGroup": {
+    "Activate": "Mengaktifkan",
+    "ActivateResourceGroup": "Aktifkan Grup Sumber Daya",
     "Active": "Aktif",
     "ActiveStatus": "Status Aktif",
     "AllowedSessionTypes": "Jenis sesi yang diizinkan",
     "CreateResourceGroup": "Buat Grup Sumber Daya",
+    "Deactivate": "Menonaktifkan",
+    "DeactivateResourceGroup": "Nonaktifkan Grup Sumber Daya",
+    "DeleteResourceGroup": "Hapus Grup Sumber Daya",
     "Description": "Deskripsi",
     "Domain": "Domain",
     "Driver": "Driver",

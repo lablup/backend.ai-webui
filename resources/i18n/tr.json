@@ -1035,10 +1035,15 @@
     "UsernameOptional": "Kullanıcı adı (İsteğe bağlı)"
   },
   "resourceGroup": {
+    "Activate": "Etkinleştirmek",
+    "ActivateResourceGroup": "Kaynak Grubunu Etkinleştir",
     "Active": "Aktif",
     "ActiveStatus": "Aktif Durum",
     "AllowedSessionTypes": "İzin verilen oturum türleri",
     "CreateResourceGroup": "Kaynak Grubu Oluştur",
+    "Deactivate": "Devre dışı bırakmak",
+    "DeactivateResourceGroup": "Kaynak grubunu devre dışı bırak",
+    "DeleteResourceGroup": "Kaynak Grubunu Sil",
     "Description": "Açıklama",
     "Domain": "Etki Alanı",
     "Driver": "sürücü",

@@ -1041,10 +1041,15 @@
     "UsernameOptional": "Username (Optional)"
   },
   "resourceGroup": {
+    "Activate": "Activate",
+    "ActivateResourceGroup": "Activate resource group",
     "Active": "Active",
     "ActiveStatus": "Active Status",
     "AllowedSessionTypes": "Allowed session types",
     "CreateResourceGroup": "Create Resource Group",
+    "Deactivate": "Deactivate",
+    "DeactivateResourceGroup": "Deactivate resource group",
+    "DeleteResourceGroup": "Delete Resource Group",
     "Description": "Description",
     "Domain": "Domain",
     "Driver": "Driver",

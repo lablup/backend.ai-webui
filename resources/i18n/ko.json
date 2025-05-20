@@ -1038,10 +1038,15 @@
     "UsernameOptional": "사용자 이름 (선택)"
   },
   "resourceGroup": {
+    "Activate": "활성화",
+    "ActivateResourceGroup": "자원그룹 활성화",
     "Active": "활성",
     "ActiveStatus": "활성 상태",
     "AllowedSessionTypes": "허용된 세션 타입",
     "CreateResourceGroup": "자원 그룹 추가",
+    "Deactivate": "비활성화",
+    "DeactivateResourceGroup": "자원그룹 비활성화",
+    "DeleteResourceGroup": "자원그룹 삭제",
     "Description": "설명",
     "Domain": "도메인",
     "Driver": "드라이버",

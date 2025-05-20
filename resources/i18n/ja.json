@@ -1034,10 +1034,15 @@
     "UsernameOptional": "ユーザー名（オプション）"
   },
   "resourceGroup": {
+    "Activate": "活性化",
+    "ActivateResourceGroup": "リソースグループをアクティブにします",
     "Active": "アクティブ",
     "ActiveStatus": "アクティブステータス",
     "AllowedSessionTypes": "許可されたセッションタイプ",
     "CreateResourceGroup": "リソースグループの作成",
+    "Deactivate": "無効にします",
+    "DeactivateResourceGroup": "リソースグループを無効にします",
+    "DeleteResourceGroup": "リソースグループを削除します",
     "Description": "説明",
     "Domain": "ドメイン",
     "Driver": "運転者",
