@@ -3,7 +3,6 @@ import {
   convertBinarySizeUnit,
   filterNonNullItems,
   toFixedFloorWithoutTrailingZeros,
-  transformSorterToOrderString,
 } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
@@ -16,6 +15,7 @@ import BAIIntervalView from './BAIIntervalView';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import BAIPropertyFilter from './BAIPropertyFilter';
 import BAIRadioGroup from './BAIRadioGroup';
+import BAITable from './BAITable';
 import DoubleTag from './DoubleTag';
 import Flex from './Flex';
 import { ResourceTypeIcon } from './ResourceNumber';
@@ -29,21 +29,12 @@ import { AgentSettingModalFragment$key } from './__generated__/AgentSettingModal
 import {
   CheckCircleOutlined,
   InfoCircleOutlined,
-  LoadingOutlined,
   MinusCircleOutlined,
   ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import {
-  Button,
-  Table,
-  TableProps,
-  Tag,
-  theme,
-  Tooltip,
-  Typography,
-} from 'antd';
+import { Button, TableProps, Tag, theme, Tooltip, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
@@ -51,7 +42,7 @@ import dayjs from 'dayjs';
 import _ from 'lodash';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FetchPolicy, useLazyLoadQuery } from 'react-relay';
+import { useLazyLoadQuery } from 'react-relay';
 
 type Agent = NonNullable<AgentListQuery$data['agent_list']>['items'][number];
 
@@ -96,7 +87,6 @@ const AgentList: React.FC<AgentListProps> = ({
   const [order, setOrder] = useState<string>();
 
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
-  const [fetchPolicy] = useState<FetchPolicy>('network-only');
   const updateFetchKeyInTransition = () =>
     startRefreshTransition(() => {
       updateFetchKey();
@@ -152,7 +142,7 @@ const AgentList: React.FC<AgentListProps> = ({
     },
     {
       fetchKey,
-      fetchPolicy,
+      fetchPolicy: fetchKey === 'first' ? 'store-and-network' : 'network-only',
     },
   );
 
@@ -752,14 +742,8 @@ const AgentList: React.FC<AgentListProps> = ({
     useHiddenColumnKeysSetting('AgentList');
 
   return (
-    <Flex direction="column" align="stretch" style={containerStyle}>
-      <Flex
-        justify="between"
-        align="start"
-        gap="xs"
-        style={{ padding: token.paddingXS }}
-        wrap="wrap"
-      >
+    <Flex direction="column" align="stretch" style={containerStyle} gap={'sm'}>
+      <Flex justify="between" align="start" gap="xs" wrap="wrap">
         <Flex
           direction="row"
           gap={'sm'}
@@ -837,8 +821,10 @@ const AgentList: React.FC<AgentListProps> = ({
           </Tooltip>
         </Flex>
       </Flex>
-      <Table
+      <BAITable
         bordered
+        size="small"
+        neoStyle
         scroll={{ x: 'max-content' }}
         rowKey={'id'}
         dataSource={filterNonNullItems(agent_list?.items)}
@@ -858,40 +844,34 @@ const AgentList: React.FC<AgentListProps> = ({
             return `${range[0]}-${range[1]} of ${total} items`;
           },
           pageSizeOptions: ['10', '20', '50'],
-          style: { marginRight: token.marginXS },
+          extraContent: (
+            <Button
+              type="text"
+              icon={<SettingOutlined />}
+              onClick={() => {
+                toggleColumnSettingModal();
+              }}
+            />
+          ),
+          onChange(current, pageSize) {
+            startPageChangeTransition(() => {
+              if (_.isNumber(current) && _.isNumber(pageSize)) {
+                setTablePaginationOption({
+                  current,
+                  pageSize,
+                });
+              }
+            });
+          },
         }}
-        onChange={({ pageSize, current }, filters, sorter) => {
+        onChangeOrder={(order) => {
           startPageChangeTransition(() => {
-            if (_.isNumber(current) && _.isNumber(pageSize)) {
-              setTablePaginationOption({
-                current,
-                pageSize,
-              });
-            }
-            setOrder(transformSorterToOrderString(sorter));
+            setOrder(order);
           });
         }}
-        loading={{
-          spinning:
-            isPendingPageChange || isPendingStatusFetch || isPendingFilter,
-          indicator: <LoadingOutlined />,
-        }}
+        loading={isPendingPageChange || isPendingStatusFetch || isPendingFilter}
         {...tableProps}
       />
-      <Flex
-        justify="end"
-        style={{
-          padding: token.paddingXXS,
-        }}
-      >
-        <Button
-          type="text"
-          icon={<SettingOutlined />}
-          onClick={() => {
-            toggleColumnSettingModal();
-          }}
-        />
-      </Flex>
       <AgentDetailModal
         agentDetailModalFrgmt={currentAgentInfo}
         open={!!currentAgentInfo}

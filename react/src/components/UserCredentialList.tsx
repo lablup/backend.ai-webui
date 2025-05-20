@@ -1,8 +1,4 @@
-import {
-  filterEmptyItem,
-  filterNonNullItems,
-  transformSorterToOrderString,
-} from '../helper';
+import { filterEmptyItem, filterNonNullItems } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import BAIPropertyFilter from './BAIPropertyFilter';
@@ -555,16 +551,20 @@ const UserCredentialList: React.FC = () => {
           // TODO: need to set more options to export CSV in current page's data
           pageSizeOptions: ['10', '20', '50'],
           style: { marginRight: token.marginXS },
+          onChange(current, pageSize) {
+            startPageChangeTransition(() => {
+              if (_.isNumber(current) && _.isNumber(pageSize)) {
+                setTablePaginationOption({
+                  current,
+                  pageSize,
+                });
+              }
+            });
+          },
         }}
-        onChange={({ pageSize, current }, filters, sorter) => {
+        onChangeOrder={(nextOrder) => {
           startPageChangeTransition(() => {
-            if (_.isNumber(current) && _.isNumber(pageSize)) {
-              setTablePaginationOption({
-                current,
-                pageSize,
-              });
-            }
-            setOrder(transformSorterToOrderString(sorter));
+            setOrder(nextOrder);
           });
         }}
       />

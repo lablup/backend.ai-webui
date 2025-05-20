@@ -1,6 +1,7 @@
 import AgentList from '../components/AgentList';
+import BAICard from '../components/BAICard';
 import StorageProxyList from '../components/StorageProxyList';
-import { Card, Skeleton, theme } from 'antd';
+import { Skeleton, theme } from 'antd';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
@@ -20,7 +21,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = (props) => {
   const { token } = theme.useToken();
 
   return (
-    <Card
+    <BAICard
       activeTabKey={curTabKey}
       onTabChange={(key) => setCurTabKey(key as TabKey)}
       tabList={[
@@ -37,13 +38,6 @@ const ResourcesPage: React.FC<ResourcesPageProps> = (props) => {
           tab: t('general.ResourceGroup'),
         },
       ]}
-      styles={{
-        body: {
-          padding: 0,
-          paddingTop: 1,
-          overflow: 'hidden',
-        },
-      }}
     >
       {curTabKey === 'agents' ? (
         // To remove duplicated border in the bordered table, we need to remove margin of the container.
@@ -55,7 +49,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = (props) => {
             />
           }
         >
-          <AgentList containerStyle={{ marginLeft: -1, marginRight: -1 }} />
+          <AgentList />
         </Suspense>
       ) : null}
       {curTabKey === 'storages' ? (
@@ -74,7 +68,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = (props) => {
         // @ts-ignore
         <backend-ai-resource-group-list active />
       ) : null}
-    </Card>
+    </BAICard>
   );
 };
 
