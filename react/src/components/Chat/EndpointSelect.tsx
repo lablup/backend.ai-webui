@@ -195,8 +195,10 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
       {...selectPropsWithoutLoading}
       // override value and onChange
       labelInValue // use labelInValue to display the selected option label
+      // @ts-ignore
       value={optimisticValueWithLabel}
       onChange={(v, option) => {
+        // @ts-ignore
         setOptimisticValueWithLabel(v);
         setControllableValue(v.value, _.castArray(option)?.[0].endpoint);
         selectPropsWithoutLoading.onChange?.(v.value || '', option);
