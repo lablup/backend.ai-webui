@@ -1,16 +1,18 @@
-import { filterEmptyValues } from '../helper';
+import { filterEmptyValues, newLineToBrElement } from '../helper';
 import { useCurrentDomainValue } from '../hooks';
 import BAICard from './BAICard';
 import BAIModal from './BAIModal';
 import DomainSelector from './DomainSelector';
+import Flex from './Flex';
+import { ScalingGroupOpts } from './ResourceGroupList';
 import { ResourceGroupSettingModalAssociateDomainMutation } from './__generated__/ResourceGroupSettingModalAssociateDomainMutation.graphql';
 import { ResourceGroupSettingModalCreateMutation } from './__generated__/ResourceGroupSettingModalCreateMutation.graphql';
 import { ResourceGroupSettingModalFragment$key } from './__generated__/ResourceGroupSettingModalFragment.graphql';
 import { ResourceGroupSettingModalUpdateMutation } from './__generated__/ResourceGroupSettingModalUpdateMutation.graphql';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import {
   App,
   Col,
-  Flex,
   Form,
   FormInstance,
   Input,
@@ -20,10 +22,12 @@ import {
   Select,
   Skeleton,
   Switch,
+  Tooltip,
+  theme,
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import { Suspense, useRef } from 'react';
+import { Suspense, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment, useMutation } from 'react-relay';
 
@@ -51,6 +55,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
   ...modalProps
 }) => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const { message } = App.useApp();
   const currentDomain = useCurrentDomainValue();
   const formRef = useRef<FormInstance>(null);
@@ -109,7 +114,10 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
       }
     `);
 
-  const schedulerOpts = JSON.parse(resourceGroup?.scheduler_opts || '{}');
+  const schedulerOpts: Partial<ScalingGroupOpts> = useMemo(
+    () => JSON.parse(resourceGroup?.scheduler_opts || '{}'),
+    [resourceGroup?.scheduler_opts],
+  );
 
   const INITIAL_FORM_VALUES = filterEmptyValues({
     name: resourceGroup?.name,
@@ -391,7 +399,21 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                   }}
                 >
                   <Form.Item
-                    label={t('resourceGroup.PendingTimeout')}
+                    labelCol={{ span: 24 }}
+                    label={
+                      <Flex gap="xxs">
+                        {t('resourceGroup.PendingTimeout')}
+                        <Tooltip
+                          title={newLineToBrElement(
+                            t('resourceGroup.PendingTimeoutDesc'),
+                          )}
+                        >
+                          <QuestionCircleOutlined
+                            style={{ color: token.colorTextSecondary }}
+                          />
+                        </Tooltip>
+                      </Flex>
+                    }
                     name="pendingTimeout"
                   >
                     <InputNumber

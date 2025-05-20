@@ -5,6 +5,7 @@ import BAIFetchKeyButton from './BAIFetchKeyButton';
 import BAIRadioGroup from './BAIRadioGroup';
 import BAITable from './BAITable';
 import Flex from './Flex';
+import ResourceGroupInfoModal from './ResourceGroupInfoModal';
 import ResourceGroupSettingModal from './ResourceGroupSettingModal';
 import { ResourceGroupListDeleteMutation } from './__generated__/ResourceGroupListDeleteMutation.graphql';
 import {
@@ -20,6 +21,7 @@ import {
   PlusOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
+import { useToggle } from 'ahooks';
 import {
   Alert,
   App,
@@ -38,6 +40,15 @@ import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery, useMutation } from 'react-relay';
 import { PayloadError } from 'relay-runtime';
 
+export interface ScalingGroupOpts {
+  allowed_session_types: ('interactive' | 'batch' | 'inference')[];
+  pending_timeout: number;
+  config: Record<string, any>;
+  agent_selection_strategy: ('dispersed' | 'concentrated')[];
+  agent_selector_config: Record<string, any>;
+  enforce_spreading_endpoint_replica: boolean;
+}
+
 type ResourceGroup = NonNullable<
   NonNullable<
     NonNullable<ResourceGroupListQuery$data>['scaling_groups']
@@ -48,8 +59,9 @@ const ResourceGroupList: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
-  const [openCreateModal, setOpenCreateModal] = useState<boolean>(false);
   const [activeType, setActiveType] = useState<'active' | 'inactive'>('active');
+  const [openCreateModal, { toggle: toggleOpenCreateModal }] = useToggle(false);
+  const [openInfoModal, { toggle: toggleOpenInfoModal }] = useToggle(false);
   const [selectedResourceGroup, setSelectedResourceGroup] =
     useState<ResourceGroup>();
   const [selectedResourceGroupName, setSelectedResourceGroupName] =
@@ -70,6 +82,7 @@ const ResourceGroupList: React.FC = () => {
           scheduler
           wsproxy_addr
 
+          ...ResourceGroupInfoModalFragment
           ...ResourceGroupSettingModalFragment
         }
       }
@@ -159,6 +172,10 @@ const ResourceGroupList: React.FC = () => {
               size="large"
               icon={<InfoCircleOutlined />}
               style={{ color: token.colorSuccess }}
+              onClick={() => {
+                setSelectedResourceGroup(record);
+                toggleOpenInfoModal();
+              }}
             />
             <Button
               type="text"
@@ -169,7 +186,7 @@ const ResourceGroupList: React.FC = () => {
               }}
               onClick={() => {
                 setSelectedResourceGroup(record);
-                setOpenCreateModal(true);
+                toggleOpenCreateModal();
               }}
             />
             <Tooltip
@@ -292,7 +309,7 @@ const ResourceGroupList: React.FC = () => {
           <Button
             type="primary"
             icon={<PlusOutlined />}
-            onClick={() => setOpenCreateModal(true)}
+            onClick={() => toggleOpenCreateModal()}
           >
             {t('button.Create')}
           </Button>
@@ -371,11 +388,19 @@ const ResourceGroupList: React.FC = () => {
           setSelectedResourceGroupName(undefined);
         }}
       />
+      <ResourceGroupInfoModal
+        open={openInfoModal && !!selectedResourceGroup}
+        resourceGroupFrgmt={selectedResourceGroup}
+        onRequestClose={() => {
+          toggleOpenInfoModal();
+          setSelectedResourceGroup(undefined);
+        }}
+      />
       <ResourceGroupSettingModal
         open={openCreateModal}
         resourceGroupFrgmt={selectedResourceGroup}
         onRequestClose={(success) => {
-          setOpenCreateModal(false);
+          toggleOpenCreateModal();
           setSelectedResourceGroup(undefined);
 
           if (success) {

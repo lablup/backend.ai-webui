@@ -157,8 +157,8 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
   const [optimisticValueWithLabel, setOptimisticValueWithLabel] = useState(
     selectedEndpoint
       ? {
-          label: selectedEndpoint?.name,
-          value: selectedEndpoint?.endpoint_id,
+          label: selectedEndpoint?.name || undefined,
+          value: selectedEndpoint?.endpoint_id || undefined,
         }
       : {
           label: controllableValue,
