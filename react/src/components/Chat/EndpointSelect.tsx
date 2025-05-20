@@ -1,13 +1,17 @@
 import { useSuspendedBackendaiClient } from '../../hooks';
+import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
+import BAISelect from '../BAISelect';
+import TotalFooter from '../TotalFooter';
 import {
   EndpointSelectQuery,
   EndpointSelectQuery$data,
 } from './__generated__/EndpointSelectQuery.graphql';
+import { EndpointSelectValueQuery } from './__generated__/EndpointSelectValueQuery.graphql';
 import { useControllableValue } from 'ahooks';
-import { Select, SelectProps } from 'antd';
+import { GetRef, SelectProps, Skeleton } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React, { useState, useTransition } from 'react';
+import React, { useDeferredValue, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
@@ -25,7 +29,7 @@ export interface EndpointSelectProps
         endpoint?: Endpoint | null;
       }
     >,
-    'options'
+    'options' | 'labelInValue'
   > {
   fetchKey?: string;
   lifecycleStageFilter?: LifecycleStage[];
@@ -41,24 +45,63 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
 }) => {
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  const [controllableValue, setControllableValue] =
-    useControllableValue<string>(selectPropsWithoutLoading);
+  const [controllableValue, setControllableValue] = useControllableValue<
+    string | undefined
+  >(selectPropsWithoutLoading);
+  const [controllableOpen, setControllableOpen] = useControllableValue<boolean>(
+    selectPropsWithoutLoading,
+    {
+      valuePropName: 'open',
+      trigger: 'onDropdownVisibleChange',
+    },
+  );
+  const deferredOpen = useDeferredValue(controllableOpen);
   const [searchStr, setSearchStr] = useState<string>();
-  const [isSearchPending, startSearchTransition] = useTransition();
+  const deferredSearchStr = useDeferredValue(searchStr);
+
+  const selectRef = useRef<GetRef<typeof BAISelect> | null>(null);
 
   const lifecycleStageFilterStr = lifecycleStageFilter
     .map((v) => `lifecycle_stage == "${v}"`)
     .join(' | ');
 
-  const { endpoint_list, endpoint } = useLazyLoadQuery<EndpointSelectQuery>(
+  const { endpoint: selectedEndpoint } =
+    useLazyLoadQuery<EndpointSelectValueQuery>(
+      graphql`
+        query EndpointSelectValueQuery($endpoint_id: UUID!) {
+          endpoint(endpoint_id: $endpoint_id) {
+            name
+            endpoint_id @required(action: NONE)
+            url
+          }
+        }
+      `,
+      {
+        endpoint_id: controllableValue ?? '',
+      },
+      {
+        // to skip the query when controllableValue is empty
+        fetchPolicy: controllableValue ? 'store-or-network' : 'store-only',
+      },
+    );
+
+  const {
+    paginationData,
+    result: { endpoint_list },
+    loadNext,
+    isLoadingNext,
+  } = useLazyPaginatedQuery<
+    EndpointSelectQuery,
+    NonNullable<
+      EndpointSelectQuery['response']['endpoint_list']
+    >['items'][number]
+  >(
     graphql`
       query EndpointSelectQuery(
         $offset: Int!
         $limit: Int!
         $projectID: UUID
         $filter: String
-        $endpoint_id: UUID!
-        $skipEndpoint: Boolean!
       ) {
         endpoint_list(
           offset: $offset
@@ -69,74 +112,115 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
           total_count
           items {
             name
-            endpoint_id
+            endpoint_id @required(action: NONE)
             url
           }
-        }
-        endpoint(endpoint_id: $endpoint_id) @skipOnClient(if: $skipEndpoint) {
-          name
-          endpoint_id
-          url
         }
       }
     `,
     {
       limit: 10,
-      offset: 0,
+    },
+    {
       filter: baiClient.supports('endpoint-lifecycle-stage-filter')
-        ? [lifecycleStageFilterStr, searchStr]
+        ? [
+            lifecycleStageFilterStr,
+            deferredSearchStr
+              ? `name ilike "%${deferredSearchStr}%"`
+              : undefined,
+          ]
             .filter(Boolean)
             .map((v) => `(${v})`)
             .join(' & ')
         : undefined,
-      endpoint_id: controllableValue,
-      skipEndpoint: !controllableValue,
+    },
+    // TODO: skip fetch when the option popover is closed
+    {
+      fetchKey,
+      fetchPolicy: deferredOpen ? 'network-only' : 'store-only',
     },
     {
-      fetchKey: fetchKey,
+      getTotal: (result) => result.endpoint_list?.total_count,
+      getItem: (result) => result.endpoint_list?.items,
+      getId: (item) => item?.endpoint_id,
     },
   );
 
-  const selectOptions = endpoint
-    ? _.map(
-        _.uniqBy(_.concat(endpoint_list?.items, endpoint), 'endpoint_id'),
-        (item) => {
-          return {
-            label: item?.name,
-            value: item?.endpoint_id,
-            endpoint: item,
-          };
-        },
-      )
-    : _.map(endpoint_list?.items, (item) => {
-        return {
-          label: item?.name,
-          value: item?.endpoint_id,
-          endpoint: item,
-        };
-      });
+  const selectOptions = _.map(paginationData, (item) => {
+    return {
+      label: item?.name,
+      value: item?.endpoint_id,
+      endpoint: item,
+    };
+  });
 
+  const [optimisticValueWithLabel, setOptimisticValueWithLabel] = useState(
+    selectedEndpoint
+      ? {
+          label: selectedEndpoint?.name,
+          value: selectedEndpoint?.endpoint_id,
+        }
+      : {
+          label: controllableValue,
+          value: controllableValue,
+        },
+  );
+
+  const isValueMatched = searchStr === deferredSearchStr;
+  useEffect(() => {
+    if (isValueMatched) {
+      // Scroll dropdown to top position when search completes (search value matches deferred value)
+      // This ensures users see the top results immediately after search processing
+      selectRef.current?.scrollTo(0);
+    }
+  }, [isValueMatched]);
   return (
-    <Select
+    // @ts-ignore
+    <BAISelect
+      ref={selectRef}
       placeholder={t('chatui.SelectEndpoint')}
       style={{
-        fontWeight: 'normal',
+        minWidth: 100,
       }}
       showSearch
+      searchValue={searchStr}
       onSearch={(v) => {
-        startSearchTransition(() => {
-          setSearchStr(v && `name ilike "%${v}%"`);
-        });
+        setSearchStr(v);
       }}
+      // TODO: Need to make it work properly when autoClearSearchValue is not specified
+      autoClearSearchValue
       filterOption={false}
-      loading={isSearchPending || loading}
+      loading={searchStr !== deferredSearchStr || loading}
       options={selectOptions}
       {...selectPropsWithoutLoading}
       // override value and onChange
-      value={controllableValue}
+      labelInValue // use labelInValue to display the selected option label
+      value={optimisticValueWithLabel}
       onChange={(v, option) => {
-        setControllableValue(v, _.castArray(option)?.[0].endpoint);
+        setOptimisticValueWithLabel(v);
+        setControllableValue(v.value, _.castArray(option)?.[0].endpoint);
+        selectPropsWithoutLoading.onChange?.(v.value || '', option);
       }}
+      endReached={() => {
+        loadNext();
+      }}
+      open={controllableOpen}
+      onDropdownVisibleChange={setControllableOpen}
+      notFoundContent={
+        _.isUndefined(paginationData) ? (
+          // For the first loading options
+          <Skeleton.Input active size="small" block />
+        ) : undefined
+      }
+      footer={
+        _.isNumber(endpoint_list?.total_count) &&
+        endpoint_list.total_count > 0 ? (
+          <TotalFooter
+            loading={isLoadingNext}
+            total={endpoint_list?.total_count}
+          />
+        ) : undefined
+      }
     />
   );
 };

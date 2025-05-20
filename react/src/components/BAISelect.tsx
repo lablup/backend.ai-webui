@@ -1,8 +1,11 @@
-import { Select, SelectProps, Tooltip } from 'antd';
+import Flex from './Flex';
+import { Divider, Select, SelectProps, theme, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
+import { BaseOptionType, DefaultOptionType } from 'antd/es/select';
+import { GetRef } from 'antd/lib';
 import classNames from 'classnames';
 import _ from 'lodash';
-import React, { useLayoutEffect } from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 
 const useStyles = createStyles(({ css, token }) => ({
   ghostSelect: css`
@@ -38,53 +41,140 @@ const useStyles = createStyles(({ css, token }) => ({
   `,
 }));
 
-export interface BAISelectProps extends SelectProps {
+export interface BAISelectProps<
+  ValueType = any,
+  OptionType extends BaseOptionType | DefaultOptionType = DefaultOptionType,
+> extends SelectProps<ValueType, OptionType> {
+  ref?: React.RefObject<GetRef<typeof Select<ValueType, OptionType>> | null>;
   ghost?: boolean;
-  autoSelectOption?: boolean | ((options: SelectProps['options']) => any);
+  autoSelectOption?:
+    | boolean
+    | ((options: SelectProps<ValueType, OptionType>['options']) => ValueType);
   tooltip?: string;
+  atBottomThreshold?: number;
+  atBottomStateChange?: (atBottom: boolean) => void;
+  bottomLoading?: boolean;
+  footer?: React.ReactNode;
+  endReached?: () => void; // New prop for endReached
 }
-/**
- * BAISelect component.
- *
- * @component
- * @param {Object} props - The component props.
- * @param {boolean | Function} props.autoSelectOption - Determines whether to automatically select an option.
- * @param {any} props.value - The current value of the select.
- * @param {Array} props.options - The available options for the select.
- * @param {Function} props.onChange - The callback function to handle value changes.
- * @returns {JSX.Element} The rendered BAISelect component.
- */
-const BAISelect: React.FC<BAISelectProps> = ({
+
+function BAISelect<
+  ValueType = any,
+  OptionType extends BaseOptionType | DefaultOptionType = DefaultOptionType,
+>({
+  ref,
   autoSelectOption,
   ghost,
   tooltip = '',
+  atBottomThreshold = 30,
+  atBottomStateChange,
+  bottomLoading,
+  footer,
+  endReached, // Destructure the new prop
   ...selectProps
-}) => {
+}: BAISelectProps<ValueType, OptionType>): React.ReactElement {
   const { value, options, onChange } = selectProps;
   const { styles } = useStyles();
+  // const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const lastScrollTop = useRef<number>(0);
+  const isAtBottom = useRef<boolean>(false);
+  const { token } = theme.useToken();
 
   useLayoutEffect(() => {
     if (autoSelectOption && _.isEmpty(value) && options?.[0]) {
       if (_.isBoolean(autoSelectOption)) {
         onChange?.(options?.[0].value || options?.[0], options?.[0]);
       } else if (_.isFunction(autoSelectOption)) {
-        onChange?.(autoSelectOption(options), options[0]);
+        onChange?.(autoSelectOption(options), options?.[0]);
       }
     }
   }, [value, options, onChange, autoSelectOption]);
 
+  // Function to check if the scroll has reached the bottom
+  const handlePopupScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    if (!atBottomStateChange && !endReached) return; // Check for endReached
+
+    const target = e.target as HTMLElement;
+    const scrollTop = target.scrollTop;
+    // const scrollDirection = scrollTop > lastScrollTop.current ? 'down' : 'up';
+    lastScrollTop.current = scrollTop;
+
+    const isAtBottomNow =
+      target.scrollHeight - scrollTop - target.clientHeight <=
+      atBottomThreshold;
+
+    // Only notify when the state changes
+    // ~~or when scrolling down at the bottom~~
+    if (
+      isAtBottomNow !== isAtBottom.current
+      // ||
+      // (isAtBottomNow && scrollDirection === 'down')
+    ) {
+      isAtBottom.current = isAtBottomNow;
+      atBottomStateChange?.(isAtBottomNow);
+
+      if (isAtBottomNow) {
+        endReached?.(); // Call endReached when at the bottom
+      }
+    }
+  };
+
   return (
     <Tooltip title={tooltip}>
-      <Select
+      <Select<ValueType, OptionType>
         {...selectProps}
+        ref={ref}
         className={
           ghost
             ? classNames(styles.ghostSelect, selectProps.className)
             : selectProps.className
         }
+        onPopupScroll={(e) => {
+          if (atBottomStateChange || endReached) handlePopupScroll(e);
+          selectProps.onPopupScroll?.(e);
+        }}
+        dropdownRender={
+          footer
+            ? (menu) => {
+                // Process with custom dropdownRender if provided
+                // const renderedMenu = selectProps.dropdownRender
+                //   ? selectProps.dropdownRender(menu)
+                //   : menu;
+
+                return (
+                  <Flex direction="column" align="stretch">
+                    {menu}
+                    <Divider
+                      style={{
+                        margin: 0,
+                        marginBottom: token.paddingXS,
+                      }}
+                    />
+                    <Flex
+                      direction="column"
+                      align="end"
+                      gap={'xs'}
+                      style={{
+                        paddingBottom: token.paddingXXS,
+                        paddingInline: token.paddingSM,
+                      }}
+                    >
+                      {_.isString(footer) ? (
+                        <Typography.Text type="secondary">
+                          {footer}
+                        </Typography.Text>
+                      ) : (
+                        footer
+                      )}
+                    </Flex>
+                  </Flex>
+                );
+              }
+            : undefined
+        }
       />
     </Tooltip>
   );
-};
+}
 
 export default BAISelect;
