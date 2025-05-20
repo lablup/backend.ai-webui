@@ -26,8 +26,11 @@ interface LegacyFolderExplorerProps extends BAIModalProps {
   vfolderID: string;
   onRequestClose: () => void;
 }
-interface FolderExplorerElement extends HTMLDivElement {
+export interface FolderExplorerElement extends HTMLDivElement {
   _fetchVFolder: () => void;
+  _openDeleteMultipleFileDialog: () => void;
+  openMkdirDialog: () => void;
+  handleUpload: (name: 'file' | 'folder') => void;
 }
 
 const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({

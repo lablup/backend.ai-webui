@@ -1,3 +1,4 @@
+import { FolderExplorerElement } from './LegacyFolderExplorer';
 import {
   DeleteOutlined,
   FileAddOutlined,
@@ -5,13 +6,13 @@ import {
   UploadOutlined,
 } from '@ant-design/icons';
 import { Button, Dropdown, Tooltip, Flex, theme } from 'antd';
-import React, { LegacyRef } from 'react';
+import React, { RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface FolderExplorerActionsProps {
   isSelected: boolean;
   isWritable: boolean;
-  folderExplorerRef: LegacyRef<HTMLDivElement>;
+  folderExplorerRef: RefObject<FolderExplorerElement | null>;
   size?: 'small' | 'default';
 }
 
@@ -38,7 +39,6 @@ const FolderExplorerActions: React.FC<FolderExplorerActionsProps> = ({
           disabled={!isSelected || !isWritable}
           icon={<DeleteOutlined />}
           onClick={() => {
-            // @ts-ignore
             folderExplorerRef.current?._openDeleteMultipleFileDialog();
           }}
         >
@@ -50,8 +50,7 @@ const FolderExplorerActions: React.FC<FolderExplorerActionsProps> = ({
           disabled={!isWritable}
           icon={<FileAddOutlined />}
           onClick={() => {
-            // @ts-ignore
-            folderExplorerRef.current?.openCreateFileDialog();
+            folderExplorerRef.current?.openMkdirDialog();
           }}
         >
           {size !== 'small' && t('button.Create')}
@@ -66,7 +65,6 @@ const FolderExplorerActions: React.FC<FolderExplorerActionsProps> = ({
               label: t('data.explorer.UploadFiles'),
               icon: <FileAddOutlined />,
               onClick: () => {
-                // @ts-ignore
                 folderExplorerRef.current?.handleUpload('file');
               },
             },
@@ -75,7 +73,6 @@ const FolderExplorerActions: React.FC<FolderExplorerActionsProps> = ({
               label: t('data.explorer.UploadFolder'),
               icon: <FolderAddOutlined />,
               onClick: () => {
-                // @ts-ignore
                 folderExplorerRef.current?.handleUpload('folder');
               },
             },
