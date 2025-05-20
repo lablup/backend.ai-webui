@@ -35,3 +35,11 @@ export function getNotificationMessageBox(page: Page) {
 export function getNotificationDescriptionBox(page: Page) {
   return getNotificationTextContainer(page).locator('li > div > div >> nth=1');
 }
+
+export const getMenuItem = (page: Page, menuName: string) => {
+  return page.getByRole('link', { name: menuName });
+};
+
+export const getCardItemByCardTitle = (page: Page, title: string) => {
+  return page.locator(`.ant-card:has-text("${title}")`);
+};
