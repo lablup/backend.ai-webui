@@ -104,8 +104,6 @@ const loadPage =
         import('./components/backend-ai-serving-view.js');
         break;
       case 'agent':
-      case 'resource':
-        import('./components/backend-ai-resource-group-list.js');
         break;
       case 'verify-email':
         import('./components/backend-ai-email-verification-view.js');
