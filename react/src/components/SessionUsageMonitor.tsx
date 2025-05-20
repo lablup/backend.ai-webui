@@ -148,16 +148,6 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
     [liveStat],
   );
 
-  const displayMemoryUsage = (
-    current: string,
-    capacity: string,
-    decimalSize: number = 2,
-  ) => {
-    return `${convertBinarySizeUnit(current, 'g', decimalSize)?.numberFixed ?? '-'} / ${
-      convertBinarySizeUnit(capacity, 'g', decimalSize)?.numberFixed ?? '-'
-    } GiB`;
-  };
-
   const displayTargetName =
     displayTarget === 'current'
       ? 'current'
@@ -301,6 +291,16 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
       )}
     </Row>
   );
+};
+
+export const displayMemoryUsage = (
+  current: string | undefined,
+  capacity: string | undefined,
+  decimalSize: number = 2,
+) => {
+  return `${convertBinarySizeUnit(current, 'g', decimalSize)?.numberFixed ?? '-'} GiB / ${
+    convertBinarySizeUnit(capacity, 'g', decimalSize)?.numberFixed ?? '-'
+  } GiB`;
 };
 
 export default SessionUsageMonitor;
