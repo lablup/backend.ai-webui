@@ -190,20 +190,18 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
     },
   });
 
-  const getServiceInputByRuntimeVariant = (
-    runtimeVariant: string,
+  const getServiceInputByModelNameAndVFolderId = (
+    modelName: string,
     vfolderID: string,
   ): ServiceLauncherFormValue => {
-    const model = modelConfigItem?.name || modelName;
     return {
-      serviceName: `${model}-${generateRandomString(4)}`,
+      serviceName: `${modelName}-${generateRandomString(4)}`,
       replicas: 1,
       environments: modelConfigItem?.environments || {
         environment: '',
         version: '',
         image: null,
       },
-      // FIXME: temporally hard-coded runtime variant
       runtimeVariant: modelConfigItem?.runtimeVariant || 'custom',
       cluster_size: 1,
       cluster_mode: 'single-node',
@@ -280,8 +278,8 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
                 },
                 onResolve: () => {
                   mutationToCreateService.mutate(
-                    getServiceInputByRuntimeVariant(
-                      modelConfigItem?.runtimeVariant || 'custom',
+                    getServiceInputByModelNameAndVFolderId(
+                      modelConfigItem?.name ?? '',
                       `${modelName}-1`,
                     ),
                     {
@@ -374,8 +372,8 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
       );
     } else {
       mutationToCreateService.mutate(
-        getServiceInputByRuntimeVariant(
-          runtimeVariant,
+        getServiceInputByModelNameAndVFolderId(
+          modelConfigItem?.name ?? '',
           filteredModelStoreList[0].id,
         ),
         {
