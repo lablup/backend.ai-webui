@@ -424,7 +424,8 @@
       "NoValidEmails": "Không có email hợp lệ nào được nhập",
       "Shared": "Đã chia sẻ thành công thư mục nhóm",
       "SharingError": "Chia sẻ không thành công. Người dùng có thể đã được chia sẻ hoặc không thuộc dự án thích hợp.",
-      "SuccessfullyLeftSharedFolder": "Thành công để lại thư mục chia sẻ"
+      "SuccessfullyLeftSharedFolder": "Thành công để lại thư mục chia sẻ",
+      "UserIsAlreadyInvited": "{{email}} đã được mời"
     },
     "modelStore": {
       "AddedItems": "Các mục đã thêm",

@@ -424,7 +424,8 @@
       "NoValidEmails": "Aucun e-mail valide n'a été saisi",
       "Shared": "Le dossier de groupe a été partagé avec succès",
       "SharingError": "Le partage a échoué. L'utilisateur est peut-être déjà partagé ou n'appartient pas au projet approprié.",
-      "SuccessfullyLeftSharedFolder": "Qui a réussi à quitter le dossier partagé"
+      "SuccessfullyLeftSharedFolder": "Qui a réussi à quitter le dossier partagé",
+      "UserIsAlreadyInvited": "{{email}} est déjà invité"
     },
     "modelStore": {
       "AddedItems": "Éléments ajoutés",

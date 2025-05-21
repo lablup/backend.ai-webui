@@ -423,7 +423,8 @@
       "NoValidEmails": "Tidak ada email valid yang dimasukkan",
       "Shared": "Folder grup berhasil dibagikan",
       "SharingError": "Gagal berbagi. Pengguna mungkin sudah dibagikan atau tidak ada dalamm proyek yang sesuai.",
-      "SuccessfullyLeftSharedFolder": "Berhasil meninggalkan folder bersama"
+      "SuccessfullyLeftSharedFolder": "Berhasil meninggalkan folder bersama",
+      "UserIsAlreadyInvited": "{{email}} sudah diundang"
     },
     "modelStore": {
       "AddedItems": "Item yang ditambahkan",

@@ -426,7 +426,8 @@
       "NoValidEmails": "입력하신 이메일이 존재하지 않는 것 같습니다. 주소를 다시 확인해주세요.",
       "Shared": "그룹 폴더를 공유했습니다",
       "SharingError": "공유에 실패했습니다. 이미 공유받은 사용자거나 프로젝트에 소속된 사용자가 아닐 수 있습니다.",
-      "SuccessfullyLeftSharedFolder": "공유 폴더 연결이 성공적으로 해제되었습니다"
+      "SuccessfullyLeftSharedFolder": "공유 폴더 연결이 성공적으로 해제되었습니다",
+      "UserIsAlreadyInvited": "{{email}}은 이미 초대되었습니다"
     },
     "modelStore": {
       "AddedItems": "추가된 항목",
