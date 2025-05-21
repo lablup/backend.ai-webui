@@ -113,8 +113,16 @@ export default class BackendAIPermissionDeniedView extends BackendAIPage {
    * @param {string} url - page to redirect from the current page.
    */
   _moveTo(url = '') {
-    const page = url !== '' ? url : 'chat';
-    globalThis.history.pushState({}, '', '/chat');
+    const isPALIEnabled = globalThis.backendaioptions(
+      'user.experimental_PALI',
+      false,
+    );
+    const page = url !== '' ? url : isPALIEnabled ? 'model-store' : 'start';
+    globalThis.history.pushState(
+      {},
+      '',
+      isPALIEnabled ? 'model-store' : 'start',
+    );
     store.dispatch(navigate(decodeURIComponent('/' + page), {}));
   }
 
@@ -135,7 +143,12 @@ export default class BackendAIPermissionDeniedView extends BackendAIPage {
               fullwidth
               id="go-to-summary"
               label="${_t('button.GoBackToSummaryPage')}"
-              @click="${() => this._moveTo('start')}"
+              @click="${() =>
+                this._moveTo(
+                  globalThis.backendaioptions('user.experimental_PALI', false)
+                    ? 'start'
+                    : 'chat',
+                )}"
             ></mwc-button>
           </div>
         </div>
