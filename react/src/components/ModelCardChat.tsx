@@ -1,4 +1,3 @@
-import { useUpdatableState } from '../hooks';
 import ChatContent from './ChatContent';
 import { ModelCardChatQuery } from './__generated__/ModelCardChatQuery.graphql';
 import { Alert, Card, theme } from 'antd/lib';
