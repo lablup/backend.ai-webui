@@ -267,7 +267,7 @@ export function addNumberWithUnits(
   )?.numberUnit;
 }
 
-export function subNumberWihUnits(
+export function subNumberWithUnits(
   size1: string,
   size2: string,
   targetUnit: SizeUnit = 'm',
