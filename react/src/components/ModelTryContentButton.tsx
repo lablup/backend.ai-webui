@@ -336,7 +336,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
                                   percent: 100,
                                 },
                                 message: '',
-                                to: `/playground?endpointId=${result?.endpoint_id}&modelId=vllm-model`, // PATH to playground page
+                                to: `/chat?endpointId=${result?.endpoint_id}&modelId=vllm-model`, // PATH to playground page
                                 toText: t('modelService.PlayYourModelNow'),
                               });
                             },
