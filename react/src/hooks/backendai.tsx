@@ -307,12 +307,14 @@ export const useAllowedHostNames = () => {
 };
 
 export const useVFolderInvitations = () => {
+  const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const baiClient = useSuspendedBackendaiClient();
-  const { data: vfolderInvitations } = useTanQuery({
-    queryKey: ['vfolderInvitations'],
+  const { data: vfolderInvitations, isFetching } = useTanQuery({
+    queryKey: ['vfolderInvitations', fetchKey],
     queryFn: () => {
       return baiClient.vfolder.invitations();
     },
+    staleTime: 0,
   });
 
   const mutationToAcceptInvitation = useTanMutation({
@@ -329,7 +331,8 @@ export const useVFolderInvitations = () => {
 
   return [
     {
-      ...vfolderInvitations?.invitations,
+      isFetching,
+      invitations: vfolderInvitations?.invitations,
       count: vfolderInvitations?.invitations?.length,
       isPendingMutation:
         mutationToAcceptInvitation.isPending ||
@@ -362,6 +365,12 @@ export const useVFolderInvitations = () => {
           },
         );
       },
+      refresh: useCallback(
+        (k?: string) => {
+          updateFetchKey(k);
+        },
+        [updateFetchKey],
+      ),
     },
   ] as const;
 };
