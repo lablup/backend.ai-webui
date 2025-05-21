@@ -137,7 +137,7 @@ const ContainerCommitModal: React.FC<ContainerCommitModalProps> = ({
               },
               {
                 pattern: /^[a-zA-Z0-9-_.]+$/,
-                message: t('session.Validation.EnterValidSessionName'),
+                message: t('session.validation.EnterValidSessionName'),
               },
             ]}
           >
