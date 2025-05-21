@@ -10,7 +10,9 @@ export interface SessionNameFormItemValue {
   sessionName: string;
 }
 
-export const getSessionNameRules = (t: TFunction): FormItemProps['rules'] => [
+export const getSessionNameRules = (
+  t: TFunction,
+): Exclude<FormItemProps['rules'], undefined> => [
   {
     min: 4,
     message: t('session.validation.SessionNameTooShort'),
