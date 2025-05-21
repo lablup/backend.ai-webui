@@ -57,25 +57,25 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
     staleTime: 1000,
   });
 
-  // const { data: accessibleStorageHostList } = useSuspenseTanQuery({
-  //   queryKey: ['accessibleStorageHostList', fetchKey, currentProject.id],
-  //   queryFn: () => {
-  //     return baiRequestWithPromise({
-  //       method: 'GET',
-  //       url: `/folders/_/hosts`,
-  //     });
-  //   },
-  //   staleTime: 1000,
-  // });
-
-  // FIXME: need to check if the modelStorageHost is accessible
-  // const lowestUsageHost = _.minBy(
-  //   _.map(accessibleStorageHostList?.allowed, (host) => ({
-  //     host,
-  //     volume_info: accessibleStorageHostList?.volume_info?.[host],
-  //   })),
-  //   'volume_info.usage.percentage',
-  // )?.host;
+  /* FIXME: need to check if the modelStorageHost is accessible & cloneable
+  const { data: accessibleStorageHostList } = useSuspenseTanQuery({
+    queryKey: ['accessibleStorageHostList', fetchKey, currentProject.id],
+    queryFn: () => {
+      return baiRequestWithPromise({
+        method: 'GET',
+        url: `/folders/_/hosts`,
+      });
+    },
+    staleTime: 1000,
+  });
+  const lowestUsageHost = _.minBy(
+    _.map(accessibleStorageHostList?.allowed, (host) => ({
+      host,
+      volume_info: accessibleStorageHostList?.volume_info?.[host],
+    })),
+    'volume_info.usage.percentage',
+  )?.host;
+  */
 
   const myModelStoreList = _.filter(
     allFolderList,
@@ -148,14 +148,6 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
         image:
           `${values.environments.image?.registry}/${values.environments.image?.name}:${values.environments.image?.tag}` as string,
         architecture: values.environments.image?.architecture as string,
-        // FIXME: hardcode this part by selected option (vLLM, NIM, Custom)
-        // ...getImageInfoFromInputInCreating(
-        //   checkManualImageAllowed(
-        //     baiClient._config.allow_manual_image_name_for_session,
-        //     values.environments?.manual,
-        //   ),
-        //   values,
-        // ),
         runtime_variant: values.runtimeVariant,
         group: baiClient.current_group, // current Project Group,
         domain: currentDomain, // current Domain Group,
@@ -164,10 +156,10 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
         open_to_public: values.openToPublic,
         config: {
           model: values.vFolderID,
-          model_version: 1, // FIXME: hardcoded. change it with option later
-          model_mount_destination: '/models', // FIXME: hardcoded. change it with option later
-          environ, // FIXME: hardcoded. change it with option later
-          scaling_group: currentResourceGroupByProject ?? '', // FIXME: hardcoded. change it with option later as well, values.resourceGroup,
+          model_version: 1,
+          model_mount_destination: '/models',
+          environ,
+          scaling_group: currentResourceGroupByProject ?? '',
           resources: {
             // FIXME: manually convert to string since server-side only allows [str,str] tuple
             cpu: values.resource.cpu.toString(),
@@ -282,10 +274,9 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
                 percent: 50,
                 taskId: data.bgtask_id,
                 onChange: {
-                  pending: 'Downloading model is in progress...', // t('data.folders.FolderClonePending'),
-                  resolved: 'Successfully downloaded model.', // t('data.folders.FolderCloned'),
-                  rejected:
-                    'Downloading model failed. Please check storage quota and try again.', // t('data.folders.FolderCloneFailed'),
+                  pending: t('data.folders.DownloadingModel'),
+                  resolved: t('data.folders.SuccessfullyModelDownloaded'),
+                  rejected: t('data.folders.FolderCloneFailed'),
                 },
                 onResolve: () => {
                   mutationToCreateService.mutate(
@@ -298,7 +289,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
                         upsertNotification({
                           key: result?.endpoint_id,
                           open: true,
-                          message: 'Starting model service...',
+                          message: t('modelService.StartingModelService'),
                           duration: 0,
                           backgroundTask: {
                             promise: new Promise<void>((resolve, reject) => {
@@ -324,7 +315,9 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
                                   }
                                   if (progress >= 100) {
                                     throw new Error(
-                                      'Model service failed to start. Please check the service status.',
+                                      t(
+                                        'modelService.ModelServiceFailedToStart',
+                                      ),
                                     );
                                   }
                                 } catch (error) {
@@ -346,7 +339,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
                                 },
                                 message: '',
                                 to: `/playground?endpointId=${result?.endpoint_id}&modelId=vllm-model`, // PATH to playground page
-                                toText: 'Play your model now!',
+                                toText: t('modelService.PlayYourModelNow'),
                               });
                             },
                             onFailed: () => {
@@ -359,7 +352,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
                                 },
                                 message: '',
                                 to: `/serving/${result?.endpoint_id}`,
-                                toText: 'Go to service detail page',
+                                toText: t('modelService.GoToServiceDetailPage'),
                               });
                             },
                           },
@@ -390,7 +383,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
             upsertNotification({
               key: result?.endpoint_id,
               open: true,
-              message: 'Starting model service...',
+              message: t('modelService.StartingModelService'),
               duration: 0,
               backgroundTask: {
                 promise: new Promise<void>((resolve, reject) => {
@@ -415,7 +408,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
                       }
                       if (progress >= 100) {
                         throw new Error(
-                          'Model service failed to start. Please check the service status.',
+                          t('modelService.ModelServiceFailedToStart'),
                         );
                       }
                     } catch (error) {
@@ -425,7 +418,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
                   }, 5000);
                 }),
                 onChange: {
-                  pending: 'Model service is starting...',
+                  pending: t('modelService.StartingModelService'),
                   resolved: (_data, _notification) => {
                     return {
                       duration: 0,
@@ -435,9 +428,9 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
                         status: 'resolved',
                         percent: 100,
                       },
-                      message: 'Model service is successfully started.',
+                      message: '',
                       to: `/chat?endpointId=${result?.endpoint_id}&modelId=${modelId}`, // PATH to playground page
-                      toText: 'Play your model now!',
+                      toText: t('modelService.PlayYourModelNow'),
                     };
                   },
                   rejected: (_data, _notification) => {
@@ -448,10 +441,9 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
                         status: 'rejected',
                         percent: 99,
                       },
-                      message:
-                        'Model service failed to start. Please check the service status.',
+                      message: '',
                       to: `/serving/${result?.endpoint_id}`,
-                      toText: 'Go to service detail page',
+                      toText: t('modelService.GoToServiceDetailPage'),
                     };
                   },
                 },
