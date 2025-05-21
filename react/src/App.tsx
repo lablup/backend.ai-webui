@@ -295,7 +295,7 @@ const routerPALI = createBrowserRouter([
        */
       {
         path: '/chat',
-        handle: { labelKey: 'webui.menu.Playground' },
+        handle: { labelKey: 'webui.menu.Chat' },
         Component: ChatPage,
       },
       {
