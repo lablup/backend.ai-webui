@@ -358,6 +358,15 @@ const router = createBrowserRouter([
     ),
     children: [
       {
+        path: '',
+        element: (
+          <BAIErrorBoundary>
+            <StartPage />
+          </BAIErrorBoundary>
+        ),
+        handle: { labelKey: 'webui.menu.Start' },
+      },
+      {
         path: '/start',
         element: (
           <BAIErrorBoundary>
