@@ -247,7 +247,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
             target_name: `${modelConfigItem?.serviceName || modelName}`, // TODO: add suffix to avoid name conflict
             usage_mode: 'model',
           },
-          name: `${modelName === 'Talkativot UI' ? 'talkativot-standalone' : modelName}`,
+          name: `${modelName === 'Talkativot UI' ? 'talkativot-standalone' : modelConfigItem?.serviceName}`,
         },
         {
           onSuccess: (data) => {
@@ -279,7 +279,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
                 onResolve: () => {
                   mutationToCreateService.mutate(
                     getServiceInputByModelNameAndVFolderId(
-                      modelConfigItem?.name ?? '',
+                      modelConfigItem?.serviceName ?? '',
                       `${modelName}-1`,
                     ),
                     {
@@ -373,7 +373,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
     } else {
       mutationToCreateService.mutate(
         getServiceInputByModelNameAndVFolderId(
-          modelConfigItem?.name ?? '',
+          modelConfigItem?.serviceName ?? '',
           filteredModelStoreList[0].id,
         ),
         {
