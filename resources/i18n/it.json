@@ -251,6 +251,7 @@
     "InvalidEmail": "Indirizzo e -mail non valido",
     "Invited": "invitato",
     "InvitedFolders": "Cartelle invitate",
+    "InvitedFoldersTooltip": "{{ count }} Gli inviti delle cartelle sono in attesa di risposta.",
     "Limit": "Limite",
     "ModelStore": "Negozio di modelli",
     "Models": "Modelli",
