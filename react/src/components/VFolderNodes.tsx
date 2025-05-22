@@ -1,6 +1,6 @@
 import { filterNonNullItems, toLocalId } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
+import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -73,7 +73,6 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
   const { message } = App.useApp();
 
   const currentProject = useCurrentProjectValue();
-  const userRole = useCurrentUserRole();
   const baiClient = useSuspendedBackendaiClient();
   const painKiller = usePainKiller();
   const [currentUser] = useCurrentUserInfo();
@@ -410,8 +409,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
             title: t('data.folders.Owner'),
             render: (__, vfolder) =>
               vfolder?.user === currentUser?.uuid ||
-              (vfolder?.group === currentProject?.id &&
-                userRole === 'admin') ? (
+              (vfolder?.group === currentProject?.id && baiClient.is_admin) ? (
                 <Flex justify="center">
                   <CheckCircleOutlined />
                 </Flex>
