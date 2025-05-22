@@ -687,7 +687,6 @@ class Client {
       this._features['sudo-session-enabled'] = true;
     }
     if (this.isManagerVersionCompatibleWith('23.09.2')) {
-      this._features['container-registry-gql'] = true;
       this._features['max-quota-scope-size-in-user-and-project-resource-policy'] = true;
       this._features['deprecated-max-vfolder-size-in-user-and-project-resource-policy'] = true;
       this._features['max-quota-scope-size'] = true;
