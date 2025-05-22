@@ -158,7 +158,8 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     queryKey: ['VFolderSelectQuery', fetchKey, currentProject.id, ownerEmail],
     queryFn: () => {
       const search = new URLSearchParams();
-      search.set('group_id', currentProject.id);
+      // FIXME: filter by group_id does not work
+      // search.set('group_id', currentProject.id);
       ownerEmail && search.set('owner_user_email', ownerEmail);
       return baiRequestWithPromise({
         method: 'GET',
@@ -198,7 +199,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
       },
     );
 
-  const filteredFolderListByPermission = useMemo(() => {
+  const filteredFolderList = useMemo(() => {
     const allowedVFolderHostsByDomain = JSON.parse(
       domain?.allowed_vfolder_hosts || '{}',
     );
@@ -220,18 +221,32 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
       (volume) => mergedVFolderPermissions[volume].includes('mount-in-session'),
     );
     // Need to filter allFolderList from allowed vfolder
-    return allFolderList?.filter((folder) =>
+    const filteredFolderListByPermission = allFolderList?.filter((folder) =>
       mountAllowedVolumes.includes(folder.host),
     );
-  }, [domain, group, keypair_resource_policy, allFolderList]);
+    const filteredFolderListByPermissionAndProject = _.filter(
+      filteredFolderListByPermission,
+      (folder) =>
+        folder.ownership_type === 'user' ||
+        !folder.group ||
+        folder.group === currentProject.id,
+    );
+    return filteredFolderListByPermissionAndProject;
+  }, [
+    domain,
+    group,
+    keypair_resource_policy,
+    allFolderList,
+    currentProject.id,
+  ]);
 
   const autoMountedFolderNamesByPermission = useMemo(
     () =>
-      _.chain(filteredFolderListByPermission)
+      _.chain(filteredFolderList)
         .filter((vf) => vf.status === 'ready' && vf.name?.startsWith('.'))
         .map((vf) => vf.name)
         .value(),
-    [filteredFolderListByPermission],
+    [filteredFolderList],
   );
 
   useEffect(() => {
@@ -241,8 +256,14 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoMountedFolderNamesByPermission]);
 
+  useEffect(() => {
+    setSelectedRowKeys([]);
+    // Reset selectedRowKeys when currentProject changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentProject.id]);
+
   const [searchKey, setSearchKey] = useState('');
-  const displayingFolders = _.chain(filteredFolderListByPermission)
+  const displayingFolders = _.chain(filteredFolderList)
     .filter((vf) => (filter ? filter(vf) : true))
     .filter((vf) => {
       if (selectedRowKeys.includes(getRowKey(vf))) {
