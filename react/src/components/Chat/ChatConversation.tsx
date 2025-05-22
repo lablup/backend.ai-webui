@@ -1,6 +1,7 @@
 import Flex from '../Flex';
-import { useConversation } from './ChatCacheProvider';
 import ChatCard from './ChatCard';
+import { useConversation } from './ChatHistoryProvider';
+import type { ChatProviderData } from './ChatModel';
 import { Card, Skeleton } from 'antd';
 import { createStyles } from 'antd-style';
 import _ from 'lodash';
@@ -26,15 +27,19 @@ const useStyles = createStyles(({ css }) => ({
 }));
 
 export type ConversationProps = {
-  conversationId: string;
+  id: string;
+  provider: ChatProviderData;
 };
 
 export const ChatConversation: React.FC<ConversationProps> = ({
-  conversationId,
+  id,
+  provider,
 }) => {
-  const { chats, addChat, removeChat, updateChat, saveMessage, clearMessages } =
-    useConversation(conversationId);
+  const { chats, addChat, removeChat, updateChat, updateChatMessage } =
+    useConversation(id, provider);
   const { styles } = useStyles();
+
+  console.log('chats', chats);
 
   return (
     <Flex
@@ -65,17 +70,17 @@ export const ChatConversation: React.FC<ConversationProps> = ({
                 updateChat(chat.id, newChatProperties);
               }}
               fetchOnClient
-              onRequestClose={() => {
+              onRemoveChat={() => {
                 removeChat(chat.id);
               }}
-              onCreateNewChat={(chat) => {
+              onAddChat={(chat) => {
                 addChat(chat);
               }}
               onSaveMessage={(message) => {
-                saveMessage(chat.id, message);
+                updateChatMessage(chat.id, message);
               }}
-              onClickClearChatMessages={(chat) => {
-                clearMessages(chat.id);
+              onClearMessage={(chat) => {
+                updateChatMessage(chat.id);
               }}
               closable={isClosable(chats?.length)}
               clonable={isClonable(chats?.length)}

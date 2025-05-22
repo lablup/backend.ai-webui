@@ -140,7 +140,7 @@ const router = createBrowserRouter([
         element: <WebUINavigate to="/start" replace />,
       },
       {
-        path: '/chat',
+        path: '/chat/:conversationId?',
         handle: { labelKey: 'webui.menu.Chat' },
         Component: () => {
           useSuspendedBackendaiClient();

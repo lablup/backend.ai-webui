@@ -1,23 +1,18 @@
 import BAICard from '../components/BAICard';
-import ChatCacheProvider, {
-  chatLocalStorageCache,
-  useConversations,
-} from '../components/Chat/ChatCacheProvider';
 import { ChatConversation } from '../components/Chat/ChatConversation';
+import ChatHistoryProvider, {
+  generateUUID,
+} from '../components/Chat/ChatHistoryProvider';
 import type { ChatProviderData } from '../components/Chat/ChatModel';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { ChatPageQuery } from './__generated__/ChatPageQuery.graphql';
-import { App, Card, Skeleton } from 'antd';
+import { Card, Skeleton } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
-import { Suspense, useCallback, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { t } from 'i18next';
+import { Suspense, useEffect, useState } from 'react';
 import { useLazyLoadQuery } from 'react-relay';
+import { useParams } from 'react-router-dom';
 import { StringParam, useQueryParams } from 'use-query-params';
-
-type TabClickEvent =
-  | string
-  | React.MouseEvent<Element, MouseEvent>
-  | React.KeyboardEvent<Element>;
 
 function useDefaultEndpointId() {
   const baiClient = useSuspendedBackendaiClient();
@@ -60,84 +55,28 @@ function useChatProvider(defaultEndpointId?: string): ChatProviderData {
 }
 
 const PureChatPage: React.FC = () => {
-  const { message: appMessage } = App.useApp();
-  const { t } = useTranslation();
   const defaultEndpointId = useDefaultEndpointId();
   const provider = useChatProvider(defaultEndpointId);
-  const {
-    conversations,
-    activeConversation,
-    setActiveConversation,
-    addConversation,
-    removeConversation,
-    reset,
-    isEmptyCache,
-  } = useConversations();
 
-  const tabList = conversations.map((conversation, index) => {
-    return {
-      key: conversation.id,
-      label: conversation.label,
-    };
-  });
+  const { conversationId } = useParams();
+  const [id, setId] = useState(conversationId);
 
-  const handleTabEdit = useCallback(
-    (e: TabClickEvent, action: 'add' | 'remove') => {
-      if (action === 'add') {
-        if (conversations.length < 10) {
-          addConversation(provider);
-        } else {
-          appMessage.error(t('chat.error.maxConversationsReached'), 5);
-        }
-      } else if (action === 'remove') {
-        if (conversations.length > 1) {
-          removeConversation(e as string);
-        }
-      }
-    },
-    [
-      addConversation,
-      removeConversation,
-      provider,
-      conversations,
-      appMessage,
-      t,
-    ],
-  );
-
-  const handleTabChange = useCallback(
-    (key: string) => {
-      setActiveConversation(key);
-    },
-    [setActiveConversation],
-  );
-
+  // @FIXME move to provider
   useEffect(() => {
-    // Check conversations cache once the component mounts first
-    if (!isEmptyCache()) {
-      reset();
-    } else {
-      addConversation(provider);
+    if (!conversationId) {
+      const id = generateUUID();
+      setId(id);
+      // @FIXME: back, forward doesn't work
+      window.history.replaceState({}, '', `/chat/${id}`);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [conversationId]);
 
   return (
     <BAICard
+      title={t('webui.menu.Chat')}
       styles={{
-        header: {
-          padding: 0,
-        },
-        body: { overflow: 'hidden' },
+        body: { overflow: 'hidden', paddingTop: 0 },
       }}
-      tabList={tabList}
-      tabProps={{
-        size: 'large',
-        type: 'editable-card',
-        onEdit: handleTabEdit,
-      }}
-      activeTabKey={activeConversation}
-      onTabChange={handleTabChange}
     >
       <Suspense
         fallback={
@@ -152,9 +91,7 @@ const PureChatPage: React.FC = () => {
           </Card>
         }
       >
-        {activeConversation && (
-          <ChatConversation conversationId={activeConversation} />
-        )}
+        {id && <ChatConversation id={id} provider={provider} />}
       </Suspense>
     </BAICard>
   );
@@ -162,9 +99,9 @@ const PureChatPage: React.FC = () => {
 
 const ChatPage: React.FC = () => {
   return (
-    <ChatCacheProvider provider={chatLocalStorageCache}>
+    <ChatHistoryProvider>
       <PureChatPage />
-    </ChatCacheProvider>
+    </ChatHistoryProvider>
   );
 };
 
