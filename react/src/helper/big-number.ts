@@ -24,7 +24,7 @@ export namespace BigNumber {
     if (value instanceof Big) {
       try {
         // Attempt to perform an operation to ensure the Big instance is valid
-        value.toString();
+        (value as Big).toString();
         return false;
       } catch {
         return true;
@@ -72,7 +72,7 @@ export namespace BigNumber {
     const sizes = ['B', 'K', 'M', 'G', 'T', 'P', 'E'];
     const [sizeValue, sizeUnit] = parseUnit(sizeWithUnit);
 
-    if (isNotNumber(sizeValue)) {
+    if (isInvalidNumber(sizeValue)) {
       throw new Error(`Invalid size value: ${sizeValue}`);
     }
 

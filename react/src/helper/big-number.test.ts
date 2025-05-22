@@ -14,7 +14,8 @@ expect.extend({
     const number =
       received[0] instanceof Big ? received[0].toString() : received[0];
     const numberMatches =
-      (BigNumber.isNotNumber(number) && BigNumber.isNotNumber(expected[0])) ||
+      (BigNumber.isInvalidNumber(number) &&
+        BigNumber.isInvalidNumber(expected[0])) ||
       number === expected[0];
 
     const pass = numberMatches && received[1] === expected[1];
