@@ -423,7 +423,8 @@
       "NoValidEmails": "有効なメールが入力されていません",
       "Shared": "グループフォルダを正常に共有しました",
       "SharingError": "共有に失敗しました。ユーザーはすでに共有されているか、適切なプロジェクトに属していない可能性があります。",
-      "SuccessfullyLeftSharedFolder": "共有フォルダーを正常に残しました"
+      "SuccessfullyLeftSharedFolder": "共有フォルダーを正常に残しました",
+      "UserIsAlreadyInvited": "{{email}}はすでに招待されています"
     },
     "modelStore": {
       "AddedItems": "追加された項目",

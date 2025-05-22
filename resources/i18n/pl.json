@@ -424,7 +424,8 @@
       "NoValidEmails": "Nie wprowadzono poprawnych adresów e-mail",
       "Shared": "Pomyślnie udostępniono folder grupy",
       "SharingError": "Udostępnianie nie powiodło się. Użytkownik może już być udostępniony lub nie należy do odpowiedniego projektu.",
-      "SuccessfullyLeftSharedFolder": "Z powodzeniem zostawił wspólny folder"
+      "SuccessfullyLeftSharedFolder": "Z powodzeniem zostawił wspólny folder",
+      "UserIsAlreadyInvited": "{{email}} jest już zaproszony"
     },
     "modelStore": {
       "AddedItems": "Dodane elementy",

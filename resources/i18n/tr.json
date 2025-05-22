@@ -424,7 +424,8 @@
       "NoValidEmails": "Geçerli e-posta girilmedi",
       "Shared": "Grup klasörü başarıyla paylaşıldı",
       "SharingError": "Paylaşım başarısız oldu. Kullanıcı zaten paylaşılmış olabilir veya uygun projeye ait değil.",
-      "SuccessfullyLeftSharedFolder": "Paylaşılan klasörü başarıyla bıraktı"
+      "SuccessfullyLeftSharedFolder": "Paylaşılan klasörü başarıyla bıraktı",
+      "UserIsAlreadyInvited": "{{email}} zaten davet edildi"
     },
     "modelStore": {
       "AddedItems": "Eklenen öğeler",
