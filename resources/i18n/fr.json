@@ -97,6 +97,11 @@
     "Upload": "Télécharger",
     "Yes": "Oui"
   },
+  "chat": {
+    "error": {
+      "maxConversationsReached": "Vous ne pouvez pas ajouter plus de 10 conversations"
+    }
+  },
   "chatui": {
     "Attachments": "Pièces jointes",
     "CannotFindModel": "Les modèles LLM ne sont pas trouvés. Vérifiez le chemin de base et la compatibilité des jetons avec OpenAI, puis cliquez sur \"Actualiser les modèles\".",

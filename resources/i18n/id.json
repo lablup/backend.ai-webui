@@ -96,6 +96,11 @@
     "Upload": "Mengunggah",
     "Yes": "Iya"
   },
+  "chat": {
+    "error": {
+      "maxConversationsReached": "Anda tidak dapat menambahkan lebih dari 10 percakapan"
+    }
+  },
   "chatui": {
     "Attachments": "Lampiran",
     "CannotFindModel": "Model LLM tidak ditemukan. Verifikasi jalur dasar dan kompatibilitas token dengan OpenAI, lalu tekan 'Refresh Models'",

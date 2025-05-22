@@ -97,6 +97,11 @@
     "Upload": "Загрузить",
     "Yes": "Да"
   },
+  "chat": {
+    "error": {
+      "maxConversationsReached": "Вы не можете добавить более 10 разговоров"
+    }
+  },
   "chatui": {
     "Attachments": "Вложения",
     "CannotFindModel": "Модели LLM не найдены. Проверьте путь к базе и совместимость токена с OpenAI, затем нажмите 'Refresh Models'.",
