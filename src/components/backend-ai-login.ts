@@ -134,6 +134,8 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: String }) _helpDescriptionTitle = '';
   @property({ type: Boolean }) otpRequired = false;
   @property({ type: String }) otp;
+  @property({ type: Boolean }) needsOtpRegistration = false;
+  @property({ type: String }) totp_registration_token = '';
   @property({ type: Boolean }) needToResetPassword = false;
   @property({ type: Boolean }) directoryBasedUsage = false;
   @property({ type: Number }) maxCountForPreopenPorts = 10;
@@ -1550,6 +1552,14 @@ export default class BackendAILogin extends BackendAIPage {
                   this.notification.show();
                 }
                 return Promise.resolve(false);
+                // TODO: check if force2FA is enabled and User is not registered
+                // If so, show the dialog to register OTP(React component)
+              } else if (
+                response.fail_reason === 'TOTP key registration required.'
+              ) {
+                this.totp_registration_token =
+                  response.data.totp_registration_token;
+                this.needsOtpRegistration = true;
               } else if (response.fail_reason) {
                 this.open();
                 if (response.fail_reason == 'OTP not provided') {
@@ -2393,6 +2403,23 @@ export default class BackendAILogin extends BackendAIPage {
               this.notification.show();
             }}"
           ></backend-ai-react-reset-password-required-modal>
+          <backend-ai-react-totp-registration-modal-before-login
+            value="${JSON.stringify({
+              open: this.needsOtpRegistration,
+              totp_registration_token: this.totp_registration_token,
+              api_endpoint: this.api_endpoint,
+            })}"
+            @cancel="${(e) => (this.needsOtpRegistration = false)}"
+            @ok="${async (e) => {
+              this.needsOtpRegistration = false;
+              this.otpRequired = true;
+              await this.otpInput.updateComplete;
+              this.otpInput.focus();
+
+              this._disableUserInput();
+              this.waitingAnimation.style.display = 'none';
+            }}"
+          ></backend-ai-react-totp-registration-modal-before-login>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog
