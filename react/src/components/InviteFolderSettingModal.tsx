@@ -63,7 +63,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
       baiModalProps.open
         ? baiRequestWithPromise({
             method: 'GET',
-            url: `/folders/_/shared${vfolderId ? `?vfolder_id=${vfolderId}` : ''}`,
+            url: `/folders/_/shared${vfolderId ? `?${new URLSearchParams({ vfolder_id: vfolderId }).toString()}` : ''}`,
           }).then((res: { shared: Array<Invitee> }) =>
             _.sortBy(res.shared, 'shared_to.email'),
           )

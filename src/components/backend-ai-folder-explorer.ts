@@ -500,7 +500,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
               token,
             );
         } else {
-          url = `${res.url}?token=${res.token}&archive=${archive}`;
+          url = `${res.url}?${new URLSearchParams({ token: res.token, archive: archive ? 'true' : 'false' }).toString()}`;
         }
         if (globalThis.iOSSafari) {
           this.downloadURL = url;
