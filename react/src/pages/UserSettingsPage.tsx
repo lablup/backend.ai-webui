@@ -52,6 +52,8 @@ const UserPreferencesPage = () => {
     useBAISettingUserState('experimental_ai_agents');
   const [experimentalDashboard, setExperimentalDashboard] =
     useBAISettingUserState('experimental_dashboard');
+  const [experimentalPALI, setExperimentalPALI] =
+    useBAISettingUserState('experimental_PALI');
   const [shellInfo, setShellInfo] = useState<ShellScriptType>('bootstrap');
   const [isOpenShellScriptEditModal, { toggle: toggleShellScriptEditModal }] =
     useToggle(false);
@@ -301,6 +303,17 @@ const UserPreferencesPage = () => {
           setValue: setExperimentalDashboard,
           onChange: (e) => {
             setExperimentalDashboard(e.target.checked);
+          },
+        },
+        {
+          type: 'checkbox',
+          title: t('webui.menu.PALI'),
+          description: t('userSettings.DescExperimentalPALI'),
+          defaultValue: false,
+          value: experimentalPALI,
+          setValue: setExperimentalPALI,
+          onChange: (e) => {
+            setExperimentalPALI(e.target.checked);
           },
         },
       ],
