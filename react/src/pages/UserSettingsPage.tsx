@@ -28,8 +28,6 @@ const UserPreferencesPage = () => {
   const [desktopNotification, setDesktopNotification] = useBAISettingUserState(
     'desktop_notification',
   );
-  const [isClassicSessionLauncher, setIsClassicSessionLauncher] =
-    useBAISettingUserState('classic_session_launcher');
   const [compactSidebar, setCompactSidebar] =
     useBAISettingUserState('compact_sidebar');
   const [selectedLanguage, setSelectedLanguage] =
@@ -218,16 +216,6 @@ const UserPreferencesPage = () => {
               {t('button.Config')}
             </Button>
           ),
-        },
-        {
-          type: 'checkbox',
-          title: t('userSettings.ClassicSessionLauncher'),
-          description: t('userSettings.DescClassicSessionLauncher'),
-          defaultValue: false,
-          value: isClassicSessionLauncher,
-          onChange: (e) => {
-            setIsClassicSessionLauncher(e.target.checked);
-          },
         },
       ],
     },

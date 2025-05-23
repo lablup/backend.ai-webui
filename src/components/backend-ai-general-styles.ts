@@ -117,12 +117,13 @@ export const BackendAiStyles = [
         --general-background-color,
         #ffffff
       );
-      --token-fontFamily: 'Ubuntu', Roboto, -apple-system, BlinkMacSystemFont,
-        'Segoe UI', Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji',
+      --token-fontFamily:
+        'Ubuntu', Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+        Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', AppleSDGothic, 'Apple SD Gothic Neo', NanumGothic,
         'NanumGothicOTF', 'Nanum Gothic', 'Malgun Gothic', sans-serif;
-      --general-monospace-font-family: 'Ubuntu Mono', Menlo, Courier,
-        'Courier New', RobotoMono, sans-serif;
+      --general-monospace-font-family:
+        'Ubuntu Mono', Menlo, Courier, 'Courier New', RobotoMono, sans-serif;
       --general-progress-bar-bg: var(--token-colorBorderSecondary, #e8e8e8);
       --general-progress-bar-reserved: var(--token-blue-7);
       --general-progress-bar-using: var(--token-green-7);
@@ -1112,24 +1113,6 @@ export const BackendAiStyles = [
     vaadin-grid {
       --lumo-font-family: var(--token-fontFamily);
       font-family: var(--token-fontFamily);
-    }
-
-    backend-ai-session-launcher#session-launcher {
-      --component-color: var(--general-background-color, #ffffff);
-      --component-bg: rgb(104, 185, 155);
-      --component-bg: linear-gradient(
-          rgba(56, 189, 115, 0.5),
-          rgba(56, 189, 115, 0.5)
-        ),
-        linear-gradient(to bottom, #69cee0 0%, #38bd73 100%);
-      --component-bg-hover: linear-gradient(
-        180deg,
-        rgba(98, 180, 131, 1) 0%,
-        rgba(104, 185, 155, 1) 50%,
-        rgba(93, 178, 113, 1) 100%
-      );
-      --component-bg-active: rgb(104, 185, 155);
-      --component-shadow-color: #37c995;
     }
 
     .temporarily-hide {

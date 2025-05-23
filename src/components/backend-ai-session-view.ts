@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2025 Lablup Inc. All rights reserved.
  */
+import { navigate } from '../backend-ai-app';
 import JsonToCsv from '../lib/json_to_csv';
 import {
   IronFlex,
@@ -9,10 +10,10 @@ import {
   IronFlexFactors,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
+import { store } from '../store';
 import { BackendAiStyles } from './backend-ai-general-styles';
 import { BackendAIPage } from './backend-ai-page';
 import './backend-ai-resource-monitor';
-import './backend-ai-session-launcher';
 import './backend-ai-session-list';
 import './lablup-activity-panel';
 import '@material/mwc-button';
@@ -123,10 +124,6 @@ export default class BackendAISessionView extends BackendAIPage {
           margin: 10px 50px;
         }
 
-        backend-ai-session-launcher#session-launcher {
-          --component-width: 100px;
-          --component-shadow-color: transparent;
-        }
         @media screen and (max-width: 805px) {
           mwc-tab {
             --mdc-typography-button-font-size: 10px;
@@ -522,6 +519,30 @@ export default class BackendAISessionView extends BackendAIPage {
       });
   }
 
+  async _launchSessionDialog() {
+    const queryParams = new URLSearchParams();
+    queryParams.set(
+      'formValues',
+      JSON.stringify({
+        resourceGroup: this.resourceBroker.scaling_group,
+      }),
+    );
+    store.dispatch(
+      navigate(
+        decodeURIComponent('/session/start?' + queryParams.toString()),
+        {},
+      ),
+    );
+    document.dispatchEvent(
+      new CustomEvent('react-navigate', {
+        detail: {
+          pathname: '/session/start',
+          search: queryParams.toString(),
+        },
+      }),
+    );
+  }
+
   render() {
     // language=HTML
     return html`
@@ -636,12 +657,15 @@ export default class BackendAISessionView extends BackendAIPage {
                 class="horizontal layout flex end-justified"
                 style="margin-right:20px;"
               >
-                <backend-ai-session-launcher
-                  location="session"
-                  id="session-launcher"
-                  ?active="${this.active === true}"
-                  ?allowNEOSessionLauncher="${true}"
-                ></backend-ai-session-launcher>
+                <mwc-button
+                  class="primary-action"
+                  id="launch-session"
+                  icon="power_settings_new"
+                  data-testid="start-session-button"
+                  @click="${() => this._launchSessionDialog()}"
+                >
+                  ${_t('session.launcher.Start')}
+                </mwc-button>
               </div>
             </h3>
             <div id="running-lists" class="tab-content">
