@@ -1644,10 +1644,9 @@
       "Last12Hours": "12 ชั่วโมงสุดท้าย",
       "Last3Hours": "3 ชั่วโมงสุดท้าย",
       "Last7Days": "7 วันสุดท้าย",
-      "LastDay": "1 วันสุดท้าย"
-    },
-    "timeRanges": {
-      "LastHour": "1 ชั่วโมงสุดท้าย"
+      "LastDay": "1 วันสุดท้าย",
+      "LastHour": "1 ชั่วโมงสุดท้าย",
+      "Today": "วันนี้"
     }
   },
   "storageHost": {
