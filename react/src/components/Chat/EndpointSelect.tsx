@@ -201,6 +201,7 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
           <Skeleton.Input active size="small" block />
         ) : undefined
       }
+      header={t('modelService.ServiceEndpoint')}
       footer={
         _.isNumber(endpoint_list?.total_count) &&
         endpoint_list.total_count > 0 ? (

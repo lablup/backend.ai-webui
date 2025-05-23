@@ -1,3 +1,4 @@
+import BAISelect from '../BAISelect';
 import { BAIModel } from './ChatModel';
 import { Select, SelectProps } from 'antd';
 import _ from 'lodash';
@@ -15,7 +16,8 @@ const ModelSelect: React.FC<ModelSelectProps> = ({
   const { t } = useTranslation();
 
   return (
-    <Select
+    <BAISelect
+      header={t('modelStore.Model')}
       placeholder={t('chatui.SelectModel')}
       style={{
         fontWeight: 'normal',

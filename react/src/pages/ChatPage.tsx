@@ -6,9 +6,12 @@ import {
 import { Conversation } from '../components/Chat/Conversation';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { ChatPageQuery } from './__generated__/ChatPageQuery.graphql';
+import { Alert, Button, Drawer, List, Switch } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
+import dayjs from 'dayjs';
 import { t } from 'i18next';
-import React, { useId } from 'react';
+import { HistoryIcon, PlusIcon, TrashIcon } from 'lucide-react';
+import React, { useId, useState } from 'react';
 import { useLazyLoadQuery } from 'react-relay';
 import { StringParam, useQueryParams } from 'use-query-params';
 
@@ -64,9 +67,64 @@ const ChatPage: React.FC<ChatPageProps> = () => {
     modelId: modelId ?? undefined,
   };
 
+  const [openHistory, setOpenHistory] = useState(false);
+
   return (
-    <BAICard title={t('webui.menu.Chat')} styles={ChatPageStyle}>
+    <BAICard
+      title={t('webui.menu.Chat')}
+      styles={ChatPageStyle}
+      extra={
+        <>
+          <Button type="text" icon={<PlusIcon />} onClick={() => {}} />
+          <Button
+            type="text"
+            icon={<HistoryIcon />}
+            onClick={() => {
+              setOpenHistory(true);
+            }}
+          />
+        </>
+      }
+      style={{
+        overflow: 'hidden',
+      }}
+      // styles={{
+      //   body:
+      // }}
+    >
       <Conversation conversation={conversation} provider={provider} />
+      <Drawer
+        getContainer={false}
+        open={openHistory}
+        onClose={() => setOpenHistory(false)}
+        mask={false}
+        title="History"
+        extra={<Switch />}
+      >
+        <Alert
+          type="warning"
+          showIcon
+          message="History는 브라우저 LocalStorage에 저장되며 로그아웃시 삭제됩니다."
+        />
+        <List
+          dataSource={[
+            { title: 'Chat 1', description: 'Description 1' },
+            { title: 'Chat 2', description: 'Description 2' },
+          ]}
+          renderItem={(item) => (
+            <List.Item
+              actions={[
+                <Button key="delete" type="text" icon={<TrashIcon />} />,
+              ]}
+            >
+              <List.Item.Meta
+                title={item.title}
+                description={dayjs().format('YYYY-MM-DD HH:mm:ss')}
+              />
+            </List.Item>
+          )}
+        />
+      </Drawer>
     </BAICard>
   );
 };

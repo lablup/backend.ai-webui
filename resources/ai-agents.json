@@ -2,6 +2,19 @@
   "$schema": "./ai-agents.schema.json",
   "agents": [
     {
+      "id": "default",
+      "meta": {
+        "title": "Default",
+        "avatar": "bust-in-silhouette",
+        "background": "#f0f2f5",
+        "descriptions": "Default agent for general inquiries.",
+        "tags": []
+      },
+      "config": {
+        "system_prompt": ""
+      }
+    },
+    {
       "id": "d3b07384-d9a1-4d3b-9d3b-97384d9a1d5b",
       "meta": {
         "title": "Lablup Customer Support Bot",

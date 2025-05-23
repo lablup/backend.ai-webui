@@ -54,6 +54,7 @@ export interface BAISelectProps<
   atBottomThreshold?: number;
   atBottomStateChange?: (atBottom: boolean) => void;
   bottomLoading?: boolean;
+  header?: React.ReactNode;
   footer?: React.ReactNode;
   endReached?: () => void; // New prop for endReached
 }
@@ -69,6 +70,7 @@ function BAISelect<
   atBottomThreshold = 30,
   atBottomStateChange,
   bottomLoading,
+  header,
   footer,
   endReached, // Destructure the new prop
   ...selectProps
@@ -134,7 +136,7 @@ function BAISelect<
           selectProps.onPopupScroll?.(e);
         }}
         dropdownRender={
-          footer
+          footer || header
             ? (menu) => {
                 // Process with custom dropdownRender if provided
                 // const renderedMenu = selectProps.dropdownRender
@@ -143,30 +145,60 @@ function BAISelect<
 
                 return (
                   <Flex direction="column" align="stretch">
+                    {_.isEmpty(header) ? null : (
+                      <>
+                        <Flex
+                          direction="column"
+                          align="start"
+                          gap={'xs'}
+                          style={{
+                            paddingBottom: token.paddingXXS,
+                            paddingInline: token.paddingXS,
+                          }}
+                        >
+                          {_.isString(header) ? (
+                            <Typography.Text type="secondary">
+                              {header}
+                            </Typography.Text>
+                          ) : (
+                            header
+                          )}
+                        </Flex>
+                        <Divider
+                          style={{
+                            margin: 0,
+                          }}
+                        />
+                      </>
+                    )}
                     {menu}
-                    <Divider
-                      style={{
-                        margin: 0,
-                        marginBottom: token.paddingXS,
-                      }}
-                    />
-                    <Flex
-                      direction="column"
-                      align="end"
-                      gap={'xs'}
-                      style={{
-                        paddingBottom: token.paddingXXS,
-                        paddingInline: token.paddingSM,
-                      }}
-                    >
-                      {_.isString(footer) ? (
-                        <Typography.Text type="secondary">
-                          {footer}
-                        </Typography.Text>
-                      ) : (
-                        footer
-                      )}
-                    </Flex>
+                    {_.isEmpty(footer) ? null : (
+                      <>
+                        <Divider
+                          style={{
+                            margin: 0,
+                            marginBottom: token.paddingXS,
+                          }}
+                        />
+                        <Flex
+                          direction="column"
+                          align="end"
+                          gap={'xs'}
+                          style={{
+                            paddingBottom: token.paddingXXS,
+                            paddingInline: token.paddingSM,
+                          }}
+                        >
+                          {_.isString(footer) ? (
+                            <Typography.Text type="secondary">
+                              {footer}
+                            </Typography.Text>
+                          ) : (
+                            footer
+                          )}
+                        </Flex>
+                      </>
+                    )}
                   </Flex>
                 );
               }
