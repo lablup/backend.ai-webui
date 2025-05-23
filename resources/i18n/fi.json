@@ -1661,10 +1661,9 @@
       "Last12Hours": "Viimeiset 12 tuntia",
       "Last3Hours": "Viimeiset 3 tuntia",
       "Last7Days": "Viimeiset 7 päivää",
-      "LastDay": "1 päivä"
-    },
-    "timeRanges": {
-      "LastHour": "1 tunti"
+      "LastDay": "1 päivä",
+      "LastHour": "1 tunti",
+      "Today": "Tänään"
     }
   },
   "storageHost": {

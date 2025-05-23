@@ -1660,10 +1660,9 @@
       "Last12Hours": "Сүүлийн 12 цаг",
       "Last3Hours": "Сүүлийн 3 цаг",
       "Last7Days": "Сүүлийн 7 өдөр",
-      "LastDay": "Стүүлийн 1 1 өдөр"
-    },
-    "timeRanges": {
-      "LastHour": "Сүүлийн 1 цаг"
+      "LastDay": "Стүүлийн 1 1 өдөр",
+      "LastHour": "Сүүлийн 1 цаг",
+      "Today": "Оноо"
     }
   },
   "storageHost": {

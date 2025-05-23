@@ -1662,10 +1662,9 @@
       "Last12Hours": "12 jam terakhir",
       "Last3Hours": "3 jam terakhir",
       "Last7Days": "7 hari terakhir",
-      "LastDay": "1 hari terakhir"
-    },
-    "timeRanges": {
-      "LastHour": "1 jam terakhir"
+      "LastDay": "1 hari terakhir",
+      "LastHour": "1 jam terakhir",
+      "Today": "Hari ini"
     }
   },
   "storageHost": {
