@@ -1,6 +1,6 @@
 import MaintenanceSettingList from '../components/MaintenanceSettingList';
 import { Card } from 'antd';
-import { Button } from 'backend.ai-ui';
+import { TestButton } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
@@ -25,7 +25,7 @@ const MaintenancePage = () => {
       styles={{ body: { padding: 0 } }}
     >
       {curTabKey === 'maintenance' && <MaintenanceSettingList />}
-      <Button>hello</Button>
+      <TestButton />
     </Card>
   );
 };
