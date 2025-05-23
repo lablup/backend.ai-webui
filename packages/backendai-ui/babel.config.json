@@ -1,0 +1,9 @@
+// babel.config.json
+{
+  "plugins": [
+    ["relay", { "artifactDirectory": "./src/__generated__" }],
+    "@babel/plugin-syntax-flow",
+    "@babel/preset-typescript",
+    "@babel/preset-react"
+  ]
+}
