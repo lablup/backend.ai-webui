@@ -19,3 +19,5 @@ yarn-error.log*
 merged_schema.graphql
 
 **/__generated__/*.graphql.ts
+
+*storybook.log
