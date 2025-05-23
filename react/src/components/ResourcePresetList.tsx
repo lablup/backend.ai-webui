@@ -1,11 +1,7 @@
-import {
-  filterNonNullItems,
-  convertBinarySizeUnit,
-  localeCompare,
-  filterEmptyItem,
-} from '../helper';
+import { filterNonNullItems, localeCompare, filterEmptyItem } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import Flex from './Flex';
+import NumberWithUnit from './NumberWithUnit';
 import ResourceNumber from './ResourceNumber';
 import ResourcePresetSettingModal from './ResourcePresetSettingModal';
 import { ResourcePresetListDeleteMutation } from './__generated__/ResourcePresetListDeleteMutation.graphql';
@@ -102,8 +98,18 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
     {
       title: t('resourcePreset.SharedMemory'),
       dataIndex: 'shared_memory',
-      render: (text) =>
-        text ? convertBinarySizeUnit(text + '', 'g')?.numberFixed : '-',
+      render: (text) => {
+        if (!text) {
+          return '-';
+        }
+        return (
+          <NumberWithUnit
+            numberUnit={text + 'b'}
+            targetUnit="g"
+            unitType="binary"
+          />
+        );
+      },
     },
     baiClient?.supports('resource-presets-per-resource-group') && {
       title: t('general.ResourceGroup'),
