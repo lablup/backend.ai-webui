@@ -1663,10 +1663,9 @@
       "Last12Hours": "12 giờ cuối cùng",
       "Last3Hours": "3 giờ cuối cùng",
       "Last7Days": "7 ngày qua",
-      "LastDay": "1 ngày trước"
-    },
-    "timeRanges": {
-      "LastHour": "1 giờ cuối cùng"
+      "LastDay": "1 ngày trước",
+      "LastHour": "1 giờ cuối cùng",
+      "Today": "Hôm nay"
     }
   },
   "storageHost": {

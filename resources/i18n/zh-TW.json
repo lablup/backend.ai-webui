@@ -1662,10 +1662,9 @@
       "Last12Hours": "最近12個小時",
       "Last3Hours": "最近3個小時",
       "Last7Days": "最近7天",
-      "LastDay": "最後一天"
-    },
-    "timeRanges": {
-      "LastHour": "最後1小時"
+      "LastDay": "最後一天",
+      "LastHour": "最後1小時",
+      "Today": "今天"
     }
   },
   "storageHost": {

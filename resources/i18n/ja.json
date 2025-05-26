@@ -1662,10 +1662,9 @@
       "Last12Hours": "過去12時間",
       "Last3Hours": "最後の3時間",
       "Last7Days": "過去7日間",
-      "LastDay": "最後の1日"
-    },
-    "timeRanges": {
-      "LastHour": "最後の1時間"
+      "LastDay": "最後の1日",
+      "LastHour": "最後の1時間",
+      "Today": "今日"
     }
   },
   "storageHost": {

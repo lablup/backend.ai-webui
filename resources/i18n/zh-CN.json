@@ -1663,10 +1663,9 @@
       "Last12Hours": "最近12个小时",
       "Last3Hours": "最近3个小时",
       "Last7Days": "最近7天",
-      "LastDay": "最后一天"
-    },
-    "timeRanges": {
-      "LastHour": "最后1小时"
+      "LastDay": "最后一天",
+      "LastHour": "最后1小时",
+      "Today": "今天"
     }
   },
   "storageHost": {

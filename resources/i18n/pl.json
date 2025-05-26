@@ -1663,10 +1663,9 @@
       "Last12Hours": "Ostatnie 12 godzin",
       "Last3Hours": "Ostatnie 3 godziny",
       "Last7Days": "Ostatnie 7 dni",
-      "LastDay": "Ostatni 1 dzień"
-    },
-    "timeRanges": {
-      "LastHour": "Ostatnia 1 godzina"
+      "LastDay": "Ostatni 1 dzień",
+      "LastHour": "Ostatnia 1 godzina",
+      "Today": "Dzisiaj"
     }
   },
   "storageHost": {

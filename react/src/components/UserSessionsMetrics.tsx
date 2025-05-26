@@ -83,7 +83,11 @@ const UserSessionsMetrics: React.FC<PrometheusMetricProps> = () => {
           defaultValue={[dayjs(startDate), dayjs(endDate)]}
           presets={[
             {
-              label: t('statistics.timeRanges.LastHour'),
+              label: t('statistics.timeRange.Today'),
+              value: [dayjs().startOf('day'), dayjs().endOf('day')],
+            },
+            {
+              label: t('statistics.timeRange.LastHour'),
               value: [
                 dayjs().subtract(1, 'hour'),
                 dayjs().subtract(1, 'second'),

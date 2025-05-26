@@ -1662,10 +1662,9 @@
       "Last12Hours": "Son 12 Saat",
       "Last3Hours": "Son 3 Saat",
       "Last7Days": "Son 7 Gün",
-      "LastDay": "Son 1 Gün"
-    },
-    "timeRanges": {
-      "LastHour": "Son 1 Saat"
+      "LastDay": "Son 1 Gün",
+      "LastHour": "Son 1 Saat",
+      "Today": "Bugün"
     }
   },
   "storageHost": {
