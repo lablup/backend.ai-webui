@@ -596,7 +596,12 @@ const SessionLauncherPage = () => {
               // After the session is created, add a "See Details" button to navigate to the session page.
               upsertNotification({
                 key: 'session-launcher:' + sessionName,
-                to: `/session?sessionDetail=${firstSession.sessionId}`,
+                to: {
+                  pathname: '/session',
+                  search: new URLSearchParams({
+                    sessionDetail: firstSession.sessionId,
+                  }).toString(),
+                },
               });
               if (
                 values.num_of_sessions === 1 &&

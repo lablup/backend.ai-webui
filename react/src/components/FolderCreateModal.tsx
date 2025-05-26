@@ -148,7 +148,9 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
               message: `${result.name}: ${t('data.folders.FolderCreated')}`,
               toText: t('data.folders.OpenAFolder'),
               to: {
-                search: `?folder=${result.id}`,
+                search: new URLSearchParams({
+                  folder: result.id,
+                }).toString(),
               },
               open: true,
             });

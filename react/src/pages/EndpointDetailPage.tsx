@@ -377,7 +377,12 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                 type="link"
                 icon={<BotMessageSquareIcon />}
                 onClick={() => {
-                  webuiNavigate(`/chat?endpointId=${endpoint?.endpoint_id}`);
+                  webuiNavigate({
+                    pathname: '/chat',
+                    search: new URLSearchParams({
+                      endpointId: endpoint?.endpoint_id ?? '',
+                    }).toString(),
+                  });
                 }}
                 disabled={endpoint?.status !== 'HEALTHY'}
               />

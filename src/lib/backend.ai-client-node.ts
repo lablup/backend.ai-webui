@@ -1097,7 +1097,8 @@ class Client {
   async get_info(sessionId, ownerKey = null) {
     let queryString = `${this.kernelPrefix}/${sessionId}`;
     if (ownerKey != null) {
-      queryString = `${queryString}?owner_access_key=${ownerKey}`;
+      const searchParams = new URLSearchParams({ owner_access_key: ownerKey });
+      queryString = `${queryString}?${searchParams.toString()}`;
     }
     let rqst = this.newSignedRequest('GET', queryString, null);
     return this._wrapWithPromise(rqst);
@@ -1113,7 +1114,8 @@ class Client {
   async get_logs(sessionId, ownerKey = null, timeout = 0) {
     let queryString = `${this.kernelPrefix}/${sessionId}/logs`;
     if (ownerKey != null) {
-      queryString = `${queryString}?owner_access_key=${ownerKey}`;
+      const searchParams = new URLSearchParams({ owner_access_key: ownerKey });
+      queryString = `${queryString}?${searchParams.toString()}`;
     }
     let rqst = this.newSignedRequest('GET', queryString, null);
     return this._wrapWithPromise(rqst, false, null, timeout);
@@ -1125,7 +1127,8 @@ class Client {
    * @param {string} sessionId - the sessionId given when created
    */
   getTaskLogs(sessionId) {
-    const queryString = `${this.kernelPrefix}/_/logs?session_name=${sessionId}`;
+    const searchParams = new URLSearchParams({ session_name: sessionId });
+    const queryString = `${this.kernelPrefix}/_/logs?${searchParams.toString()}`;
     let rqst = this.newSignedRequest('GET', queryString, null);
     return this._wrapWithPromise(rqst);
   }
@@ -1139,13 +1142,17 @@ class Client {
    */
   async destroy(sessionId, ownerKey = null, forced: boolean = false) {
     let queryString = `${this.kernelPrefix}/${sessionId}`;
+    const searchParams = new URLSearchParams();
     if (ownerKey !== null) {
-      queryString = `${queryString}?owner_access_key=${ownerKey}${
-        forced ? '&forced=true' : ''
-      }`;
-    } else {
-      queryString = `${queryString}${forced ? '?forced=true' : ''}`;
+      searchParams.set('owner_access_key', ownerKey);
     }
+    if (forced) {
+      searchParams.set('forced', 'true');
+    }
+    queryString =
+      searchParams.size > 0
+        ? `${queryString}?${searchParams.toString()}`
+        : queryString;
     let rqst = this.newSignedRequest('DELETE', queryString, null);
     return this._wrapWithPromise(rqst, false, null, 15000, 2); // 15 sec., two trial when error occurred.
   }
@@ -1158,7 +1165,8 @@ class Client {
   async restart(sessionId, ownerKey = null) {
     let queryString = `${this.kernelPrefix}/${sessionId}`;
     if (ownerKey != null) {
-      queryString = `${queryString}?owner_access_key=${ownerKey}`;
+      const searchParams = new URLSearchParams({ owner_access_key: ownerKey });
+      queryString = `${queryString}?${searchParams.toString()}`;
     }
     let rqst = this.newSignedRequest('PATCH', queryString, null);
     return this._wrapWithPromise(rqst);
@@ -1983,7 +1991,7 @@ class VFolder {
       }
       tusUrl = tusUrl + `${this.urlPrefix}/_/tus/upload/${token}`;
     } else {
-      tusUrl = `${res.url}?token=${token}`;
+      tusUrl = `${res.url}?${new URLSearchParams({ token: token }).toString()}`;
     }
     return Promise.resolve(tusUrl);
   }
@@ -2089,7 +2097,11 @@ class VFolder {
       return this.client._wrapWithPromise(rqst, true);
     } else {
       const res = await this.request_download_token(file, name);
-      const downloadUrl = `${res.url}?token=${res.token}&archive=${archive}&no_cache=${noCache}`;
+      const downloadUrl = `${res.url}?${new URLSearchParams({
+        token: res.token,
+        archive: archive ? 'true' : 'false',
+        no_cache: noCache ? 'true' : 'false',
+      }).toString()}`;
       return fetch(downloadUrl);
     }
   }
@@ -2247,8 +2259,12 @@ class VFolder {
    */
   async list_invitees(vfolder_id = null) {
     let queryString = '/folders/_/shared';
-    if (vfolder_id !== null)
-      queryString = `${queryString}?vfolder_id=${vfolder_id}`;
+    if (vfolder_id !== null) {
+      const searchParams = new URLSearchParams({
+        vfolder_id: vfolder_id,
+      });
+      queryString = `${queryString}?${searchParams.toString()}`;
+    }
     let rqst = this.client.newSignedRequest('GET', queryString, null);
     return this.client._wrapWithPromise(rqst);
   }
@@ -4052,7 +4068,8 @@ class ScalingGroup {
   }
 
   async list(group = 'default') {
-    const queryString = `/scaling-groups?group=${group}`;
+    const searchParams = new URLSearchParams({ group: group });
+    const queryString = `/scaling-groups?${searchParams.toString()}`;
     const rqst = this.client.newSignedRequest('GET', queryString, null);
     return this.client._wrapWithPromise(rqst);
   }
@@ -4068,7 +4085,7 @@ class ScalingGroup {
     if (!this.client.isManagerVersionCompatibleWith('21.09.0')) {
       return Promise.resolve({ wsproxy_version: 'v1' }); // for manager<=21.03 compatibility.
     }
-    const url = `/scaling-groups/${scalingGroup}/wsproxy-version?group=${groupId}`;
+    const url = `/scaling-groups/${scalingGroup}/wsproxy-version?${new URLSearchParams({ group: groupId }).toString()}`;
     const rqst = this.client.newSignedRequest('GET', url, null);
     return this.client._wrapWithPromise(rqst);
   }
@@ -4883,7 +4900,15 @@ class PipelineTaskInstance {
    */
   async list(pipelineJobId = '') {
     let queryString = `${this.urlPrefix}`;
-    queryString += pipelineJobId ? `?pipeline_job=${pipelineJobId}` : `/`;
+    const searchParams = new URLSearchParams();
+    if (pipelineJobId) {
+      searchParams.set('pipeline_job', pipelineJobId);
+    }
+    if (searchParams.size > 0) {
+      queryString += `?${searchParams.toString()}`;
+    } else {
+      queryString += `/`;
+    }
     let rqst = this.client.newSignedRequest(
       'GET',
       queryString,
@@ -4997,7 +5022,10 @@ class EduApp {
    * Get credential of user.
    */
   async get_user_credential(stoken: string) {
-    const rqst = this.client.newSignedRequest('GET', `/eduapp/credential?sToken=${stoken}`);
+    const rqst = this.client.newSignedRequest(
+      'GET',
+      `/eduapp/credential?${new URLSearchParams({ sToken: stoken }).toString()}`,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 }

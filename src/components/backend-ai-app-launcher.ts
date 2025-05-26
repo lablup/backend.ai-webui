@@ -710,8 +710,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       return;
     }
     const token = response.token;
-    return new URL(`proxy/${token}/${sessionUuid}/add?app=${app}`, proxyURL)
-      .href;
+    return new URL(
+      `proxy/${token}/${sessionUuid}/add?${new URLSearchParams({ app }).toString()}`,
+      proxyURL,
+    ).href;
   }
 
   /**
@@ -750,7 +752,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
     const token = tokenResponse.token;
     return new URL(
-      `v2/proxy/${token}/${sessionUuid}/add?app=${app}`,
+      `v2/proxy/${token}/${sessionUuid}/add?${new URLSearchParams({ app }).toString()}`,
       tokenResponse.wsproxy_addr,
     ).href;
   }
@@ -825,36 +827,41 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this.checkOpenToPublic.checked = false;
     }
 
+    const searchParams = new URLSearchParams();
+
     if (port !== null && port > 1024 && port < 65535) {
-      uri += `&port=${port}`;
+      searchParams.set('port', port.toString());
     }
     if (openToPublic) {
-      uri += '&open_to_public=true';
+      searchParams.set('open_to_public', 'true');
     }
     if (openToPublic && allowedClientIps?.length > 0) {
-      uri += '&allowed_client_ips=' + allowedClientIps.replace(/\s/g, '');
+      searchParams.set(
+        'allowed_client_ips',
+        allowedClientIps.replace(/\s/g, ''),
+      );
     }
     if (envs !== null && Object.keys(envs).length > 0) {
-      uri = uri + '&envs=' + encodeURI(JSON.stringify(envs));
+      searchParams.set('envs', JSON.stringify(envs));
     }
     if (args !== null && Object.keys(args).length > 0) {
-      uri = uri + '&args=' + encodeURI(JSON.stringify(args));
+      searchParams.set('args', JSON.stringify(args));
     }
     if (this.subDomain || this.customSubdomain?.value) {
-      uri =
-        uri +
-        '&subdomain=' +
-        encodeURI(this.subDomain || this.customSubdomain.value);
+      searchParams.set(
+        'subdomain',
+        this.subDomain || this.customSubdomain.value,
+      );
     }
     if (servicePortInfo.is_inference) {
-      uri = uri + '&is_inference=true';
+      searchParams.set('is_inference', 'true');
     }
-    uri += '&protocol=' + (servicePortInfo.protocol || 'tcp');
+    searchParams.set('protocol', servicePortInfo.protocol || 'tcp');
     this.indicator.set(50, _text('session.launcher.AddingKernelToSocketQueue'));
     const rqst_proxy = {
       method: 'GET',
       app: app,
-      uri: uri,
+      uri: `${uri}&${searchParams.toString()}`,
     };
     return this.sendRequest(rqst_proxy).catch((err) => {
       if (err && err.message) {
@@ -889,7 +896,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
     const token = globalThis.backendaiclient._config.accessKey;
     let uri: string | URL = await this._getProxyURL(sessionUuid);
-    uri = new URL(`proxy/${token}/${sessionUuid}/delete?app=${app}`, uri);
+    uri = new URL(
+      `proxy/${token}/${sessionUuid}/delete?${new URLSearchParams({ app }).toString()}`,
+      uri,
+    );
     if (localStorage.getItem('backendaiwebui.appproxy-permit-key')) {
       uri.searchParams.set(
         'permit_key',
