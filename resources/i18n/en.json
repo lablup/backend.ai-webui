@@ -426,7 +426,8 @@
       "NoValidEmails": "No valid emails were entered",
       "Shared": "Successfully shared the group folder",
       "SharingError": "Sharing failed. User may already be shared or does not belong to appropriate project.",
-      "SuccessfullyLeftSharedFolder": "Successfully left the shared folder"
+      "SuccessfullyLeftSharedFolder": "Successfully left the shared folder",
+      "UserIsAlreadyInvited": "{{email}} is already invited"
     },
     "modelStore": {
       "AddedItems": "Added items",

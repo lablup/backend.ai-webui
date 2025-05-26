@@ -424,7 +424,8 @@
       "NoValidEmails": "没有输入有效的电子邮件",
       "Shared": "已成功共享群组文件夹",
       "SharingError": "分享失败。用户可能已被共享或不属于适当的项目。",
-      "SuccessfullyLeftSharedFolder": "成功离开共享文件夹"
+      "SuccessfullyLeftSharedFolder": "成功离开共享文件夹",
+      "UserIsAlreadyInvited": "{{email}}已经被邀请"
     },
     "modelStore": {
       "AddedItems": "添加的项目",

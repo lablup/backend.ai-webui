@@ -423,7 +423,8 @@
       "NoValidEmails": "Non sono state inserite email valide",
       "Shared": "Condivisione riuscita della cartella del gruppo",
       "SharingError": "Condivisione non riuscita. L'utente potrebbe essere già condiviso o non appartenere al progetto appropriato.",
-      "SuccessfullyLeftSharedFolder": "Ha lasciato correttamente la cartella condivisa"
+      "SuccessfullyLeftSharedFolder": "Ha lasciato correttamente la cartella condivisa",
+      "UserIsAlreadyInvited": "{{email}} è già invitato"
     },
     "modelStore": {
       "AddedItems": "Elementi aggiunti",

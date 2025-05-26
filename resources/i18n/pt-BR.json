@@ -424,7 +424,8 @@
       "NoValidEmails": "Nenhum e-mail válido foi inserido",
       "Shared": "Compartilhou com sucesso a pasta do grupo",
       "SharingError": "O compartilhamento falhou. O usuário pode já estar compartilhado ou não pertencer ao projeto apropriado.",
-      "SuccessfullyLeftSharedFolder": "Deixou com sucesso a pasta compartilhada"
+      "SuccessfullyLeftSharedFolder": "Deixou com sucesso a pasta compartilhada",
+      "UserIsAlreadyInvited": "{{email}} já está convidado"
     },
     "modelStore": {
       "AddedItems": "Itens adicionados",

@@ -424,7 +424,8 @@
       "NoValidEmails": "No se han introducido correos electrónicos válidos",
       "Shared": "Compartida con éxito la carpeta de grupo",
       "SharingError": "Error al compartir. Es posible que el usuario ya esté compartido o que no pertenezca al proyecto adecuado.",
-      "SuccessfullyLeftSharedFolder": "Dejó con éxito la carpeta compartida"
+      "SuccessfullyLeftSharedFolder": "Dejó con éxito la carpeta compartida",
+      "UserIsAlreadyInvited": "{{email}} ya está invitado"
     },
     "modelStore": {
       "AddedItems": "Artículos agregados",

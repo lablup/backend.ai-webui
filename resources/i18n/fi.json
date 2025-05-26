@@ -423,7 +423,8 @@
       "NoValidEmails": "Kelvollisia sähköposteja ei ole syötetty",
       "Shared": "Ryhmäkansion jakaminen onnistui",
       "SharingError": "Jakaminen epäonnistui. Käyttäjä on ehkä jo jaettu tai ei kuulu asianmukaiseen projektiin.",
-      "SuccessfullyLeftSharedFolder": "Jäljellä jaetussa kansiossa"
+      "SuccessfullyLeftSharedFolder": "Jäljellä jaetussa kansiossa",
+      "UserIsAlreadyInvited": "{{email}} on jo kutsuttu"
     },
     "modelStore": {
       "AddedItems": "Lisätyt kohteet",

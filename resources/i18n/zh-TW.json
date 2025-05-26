@@ -425,7 +425,8 @@
       "NoValidEmails": "沒有輸入有效的電子郵件",
       "Shared": "已成功共享群組文件夾",
       "SharingError": "分享失敗。用戶可能已被共享或不屬於適當的項目。",
-      "SuccessfullyLeftSharedFolder": "成功離開共享文件夾"
+      "SuccessfullyLeftSharedFolder": "成功離開共享文件夾",
+      "UserIsAlreadyInvited": "{{email}}已經被邀請"
     },
     "modelStore": {
       "AddedItems": "新增的項目",
