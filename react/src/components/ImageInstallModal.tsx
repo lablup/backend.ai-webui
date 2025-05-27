@@ -3,7 +3,7 @@ import { useSetBAINotification } from '../hooks/useBAINotification';
 import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
-import { EnvironmentImage } from './ImageList';
+import { EnvironmentImage } from './ImageListBefore202506';
 import { List, Typography } from 'antd';
 import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
