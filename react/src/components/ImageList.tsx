@@ -1,487 +1,315 @@
 import {
-  ImageListQuery,
-  ImageListQuery$data,
-} from '../__generated__/ImageListQuery.graphql';
+  ImageListNodeQuery,
+  ImageListNodeQuery$data,
+  ImageListNodeQuery$variables,
+} from '../__generated__/ImageListNodeQuery.graphql';
 import Flex from '../components/Flex';
 import {
   filterEmptyItem,
   filterNonNullItems,
   getImageFullName,
-  localeCompare,
-  preserveDotStartCase,
 } from '../helper';
-import {
-  useBackendAIImageMetaData,
-  useSuspendedBackendaiClient,
-  useUpdatableState,
-} from '../hooks';
+import { useCurrentDomainValue, useUpdatableState } from '../hooks';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
+import BAIPropertyFilter from './BAIPropertyFilter';
 import BAITable from './BAITable';
-import DoubleTag from './DoubleTag';
 import ImageInstallModal from './ImageInstallModal';
-import { ImageTags } from './ImageTags';
+import ImageNodeSimpleTag from './ImageNodeSimpleTag';
 import ManageAppsModal from './ManageAppsModal';
 import ManageImageResourceLimitModal from './ManageImageResourceLimitModal';
 import ResourceNumber from './ResourceNumber';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
-import TextHighlighter from './TextHighlighter';
 import {
   AppstoreOutlined,
   ReloadOutlined,
-  SearchOutlined,
   SettingOutlined,
   VerticalAlignBottomOutlined,
 } from '@ant-design/icons';
-import { useToggle, useDebounceFn } from 'ahooks';
-import { App, Button, Input, Tag, theme, Tooltip, Typography } from 'antd';
-import { ColumnType } from 'antd/es/table';
+import { useToggle } from 'ahooks';
+import {
+  App,
+  Button,
+  TableColumnsType,
+  Tag,
+  theme,
+  Tooltip,
+  Typography,
+} from 'antd';
 import _ from 'lodash';
-import { Key, useMemo, useState, useTransition } from 'react';
+import { useDeferredValue, useMemo, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { useLazyLoadQuery, graphql } from 'react-relay';
+import { StringParam, withDefault } from 'use-query-params';
 
-export type EnvironmentImage = NonNullable<
-  NonNullable<ImageListQuery$data['images']>[number]
+export type ImageNode = NonNullable<
+  NonNullable<
+    NonNullable<ImageListNodeQuery$data['image_nodes']>['edges'][number]
+  >['node']
 >;
 
 const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   const { t } = useTranslation();
-  const [selectedRows, setSelectedRows] = useState<EnvironmentImage[]>([]);
-  const [, { getBaseVersion, getBaseImages, getBaseImage, tagAlias, getTags }] =
-    useBackendAIImageMetaData();
+  const [selectedRows, setSelectedRows] = useState<Map<string, ImageNode>>(
+    new Map(),
+  );
   const { token } = theme.useToken();
-  const [managingApp, setManagingApp] = useState<EnvironmentImage | null>(null);
+  const [managingApp, setManagingApp] = useState<ImageNode | null>(null);
   const [managingResourceLimit, setManagingResourceLimit] =
-    useState<EnvironmentImage | null>(null);
+    useState<ImageNode | null>(null);
   const [isOpenInstallModal, setIsOpenInstallModal] = useState<boolean>(false);
   const [environmentFetchKey, updateEnvironmentFetchKey] =
     useUpdatableState('initial-fetch');
   const [, startTransition] = useTransition();
   const [installingImages, setInstallingImages] = useState<string[]>([]);
   const { message } = App.useApp();
-  const [imageSearch, setImageSearch] = useState('');
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
     useToggle();
+  const [hiddenColumnKeys, setHiddenColumnKeys] =
+    useHiddenColumnKeysSetting('ImageList');
   const [isPendingRefreshTransition, startRefreshTransition] = useTransition();
-  const [isPendingSearchTransition, startSearchTransition] = useTransition();
-  const baiClient = useSuspendedBackendaiClient();
-  const supportExtendedImageInfo = baiClient?.supports('extended-image-info');
+  const [isPendingPageChange, startPageChangeTransition] = useTransition();
+  const currentDomain = useCurrentDomainValue();
 
-  const { run: debouncedSetImageSearch } = useDebounceFn(
-    (value: string) => {
-      startSearchTransition(() => setImageSearch(value));
-    },
-    { wait: 500 },
+  const {
+    baiPaginationOption,
+    tablePaginationOption,
+    setTablePaginationOption,
+  } = useBAIPaginationOptionStateOnSearchParam({
+    current: 1,
+    pageSize: 10,
+  });
+  const [queryParams, setQuery] = useDeferredQueryParams({
+    order: withDefault(StringParam, undefined),
+    filter: withDefault(StringParam, undefined),
+  });
+  const queryVariables: ImageListNodeQuery$variables = useMemo(
+    () => ({
+      scope_id: currentDomain ? `domain:${currentDomain}` : '',
+      offset: baiPaginationOption.offset,
+      first: baiPaginationOption.first,
+      order: queryParams.order || '-created_at',
+      filter: queryParams.filter,
+    }),
+    [
+      baiPaginationOption.offset,
+      baiPaginationOption.first,
+      queryParams.filter,
+      currentDomain,
+      queryParams.order,
+    ],
   );
+  const deferredQueryVariables = useDeferredValue(queryVariables);
+  const deferredFetchKey = useDeferredValue(environmentFetchKey);
 
-  const { images } = useLazyLoadQuery<ImageListQuery>(
+  const { image_nodes } = useLazyLoadQuery<ImageListNodeQuery>(
     graphql`
-      query ImageListQuery {
-        images {
-          id
-          name @deprecatedSince(version: "24.12.0")
-          tag
-          registry
-          architecture
-          digest
-          installed
-          labels {
-            key
-            value
+      query ImageListNodeQuery(
+        $scope_id: ScopeField!
+        $offset: Int
+        $first: Int
+        $order: String
+        $filter: String
+      ) {
+        image_nodes(
+          scope_id: $scope_id
+          offset: $offset
+          first: $first
+          order: $order
+          filter: $filter
+        ) {
+          count
+          edges {
+            node {
+              id
+              row_id
+              name @deprecatedSince(version: "24.12.0")
+              tag
+              registry
+              architecture
+              digest
+              labels {
+                key
+                value
+              }
+              humanized_name
+              resource_limits {
+                key
+                min
+                max
+              }
+              namespace @since(version: "24.12.0")
+              base_image_name @since(version: "24.12.0")
+              tags @since(version: "24.12.0") {
+                key
+                value
+              }
+              version @since(version: "24.12.0")
+              installed
+              ...ImageNodeSimpleTagFragment
+              ...ManageAppsModal_image
+              ...ManageImageResourceLimitModal_image
+            }
           }
-          humanized_name
-          resource_limits {
-            key
-            min
-            max
-          }
-          namespace @since(version: "24.12.0")
-          base_image_name @since(version: "24.12.0")
-          tags @since(version: "24.12.0") {
-            key
-            value
-          }
-          version @since(version: "24.12.0")
-          ...ManageImageResourceLimitModal_image
-          ...ManageAppsModal_image
         }
       }
     `,
-    {},
+    deferredQueryVariables,
     {
-      // fetchPolicy:
-      //   environmentFetchKey === 'initial-fetch'
-      //     ? 'store-and-network'
-      //     : 'network-only',
-      fetchPolicy: 'store-and-network',
-      fetchKey: environmentFetchKey,
+      fetchPolicy:
+        environmentFetchKey === 'initial-fetch'
+          ? 'store-and-network'
+          : 'network-only',
     },
   );
 
-  // Sort images by humanized_name to prevent the image list from jumping around when the images are updated
-  // TODO: after `images` query  supports sort order, we should remove this line
-  const defaultSortedImages = useMemo(
-    () => _.sortBy(images, (image) => image?.humanized_name),
-    [images],
-  );
+  const columns: TableColumnsType<ImageNode> = filterEmptyItem([
+    {
+      title: t('environment.Status'),
+      dataIndex: 'installed',
+      key: 'installed',
+      render: (text, row) => {
+        if (
+          !row?.id ||
+          (!row?.installed && !installingImages.includes(row.id))
+        ) {
+          return null;
+        }
 
-  const columns: Array<ColumnType<EnvironmentImage>> = useMemo(
-    () =>
-      filterEmptyItem([
-        {
-          title: t('environment.Status'),
-          dataIndex: 'installed',
-          key: 'installed',
-          defaultSortOrder: 'descend',
-          sorter: (a, b) => {
-            return (
-              _.toNumber(a?.installed || 0) - _.toNumber(b?.installed || 0)
-            );
-          },
-          render: (text, row) =>
-            row?.id && installingImages.includes(row.id) ? (
-              <Tag color="gold">
-                <TextHighlighter keyword={imageSearch}>
-                  {t('environment.Installing')}
-                </TextHighlighter>
-              </Tag>
-            ) : row?.installed ? (
-              <Tag color="gold">
-                <TextHighlighter keyword={imageSearch}>
-                  {t('environment.Installed')}
-                </TextHighlighter>
-              </Tag>
-            ) : null,
-        },
-        {
-          title: t('environment.FullImagePath'),
-          key: 'fullImagePath',
-          render: (row) => (
-            <Typography.Text
-              copyable={{
-                text: getImageFullName(row) || '',
-              }}
-            >
-              <TextHighlighter keyword={imageSearch}>
-                {getImageFullName(row) || ''}
-              </TextHighlighter>
-            </Typography.Text>
-          ),
-          sorter: (a, b) =>
-            localeCompare(getImageFullName(a), getImageFullName(b)),
-          width: token.screenXS,
-        },
-        {
-          title: t('environment.Registry'),
-          dataIndex: 'registry',
-          key: 'registry',
-          sorter: (a, b) => localeCompare(a?.registry, b?.registry),
-          render: (text) => (
-            <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
-          ),
-        },
-        {
-          title: t('environment.Architecture'),
-          dataIndex: 'architecture',
-          key: 'architecture',
-          sorter: (a, b) => localeCompare(a?.architecture, b?.architecture),
-          render: (text) => (
-            <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
-          ),
-        },
-        !supportExtendedImageInfo && {
-          title: t('environment.Namespace'),
-          key: 'namespace',
-          dataIndex: 'namespace',
-          sorter: (a, b) => localeCompare(a?.namespace, b?.namespace),
-          render: (text) => (
-            <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
-          ),
-        },
-        !supportExtendedImageInfo && {
-          title: t('environment.BaseImageName'),
-          key: 'base_image_name',
-          dataIndex: 'base_image_name',
-          sorter: (a, b) =>
-            localeCompare(a?.base_image_name, b?.base_image_name),
-          render: (text) => (
-            <TextHighlighter keyword={imageSearch}>
-              {tagAlias(text)}
-            </TextHighlighter>
-          ),
-        },
-        !supportExtendedImageInfo && {
-          title: t('environment.Version'),
-          key: 'version',
-          dataIndex: 'version',
-          sorter: (a, b) => localeCompare(a?.version, b?.version),
-          render: (text) => (
-            <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
-          ),
-        },
-        !supportExtendedImageInfo && {
-          title: t('environment.Tags'),
-          key: 'tags',
-          dataIndex: 'tags',
-          render: (text, row) => {
-            return (
-              <Flex direction="row" align="start">
-                {/* TODO: replace this with AliasedImageDoubleTags after image list query with ImageNode is implemented. */}
-                {_.map(text, (tag: { key: string; value: string }) => {
-                  const isCustomized = _.includes(tag.key, 'customized_');
-                  const tagValue = isCustomized
-                    ? _.find(row?.labels, {
-                        key: 'ai.backend.customized-image.name',
-                      })?.value
-                    : tag.value;
-                  const aliasedTag = tagAlias(tag.key + tagValue);
-                  return _.isEqual(
-                    aliasedTag,
-                    preserveDotStartCase(tag.key + tagValue),
-                  ) || isCustomized ? (
-                    <DoubleTag
-                      key={tag.key}
-                      highlightKeyword={imageSearch}
-                      values={[
-                        {
-                          label: tagAlias(tag.key),
-                          color: isCustomized ? 'cyan' : 'blue',
-                        },
-                        {
-                          label: tagValue ?? '',
-                          color: isCustomized ? 'cyan' : 'blue',
-                        },
-                      ]}
-                    />
-                  ) : (
-                    <Tag key={tag.key} color={isCustomized ? 'cyan' : 'blue'}>
-                      <TextHighlighter keyword={imageSearch}>
-                        {aliasedTag}
-                      </TextHighlighter>
-                    </Tag>
-                  );
-                })}
-              </Flex>
-            );
-          },
-        },
-        !supportExtendedImageInfo && {
-          title: t('environment.Namespace'),
-          key: 'name',
-          dataIndex: 'name',
-          sorter: (a, b) =>
-            localeCompare(getImageFullName(a), getImageFullName(b)),
-          render: (text) => (
-            <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
-          ),
-        },
-        !supportExtendedImageInfo && {
-          title: t('environment.Base'),
-          key: 'baseimage',
-          dataIndex: 'baseimage',
-          sorter: (a, b) =>
-            localeCompare(
-              getBaseImage(getImageFullName(a) || ''),
-              getBaseImage(getImageFullName(b) || ''),
-            ),
-          render: (text, row) => (
-            <TextHighlighter keyword={imageSearch}>
-              {tagAlias(getBaseImage(getImageFullName(row) || ''))}
-            </TextHighlighter>
-          ),
-        },
-        !supportExtendedImageInfo && {
-          title: t('environment.Version'),
-          key: 'baseversion',
-          dataIndex: 'baseversion',
-          sorter: (a, b) =>
-            localeCompare(
-              getBaseVersion(getImageFullName(a) || ''),
-              getBaseVersion(getImageFullName(b) || ''),
-            ),
-          render: (text, row) => (
-            <TextHighlighter keyword={imageSearch}>
-              {getBaseVersion(getImageFullName(row) || '')}
-            </TextHighlighter>
-          ),
-        },
-        !supportExtendedImageInfo && {
-          title: t('environment.Tags'),
-          key: 'tag',
-          dataIndex: 'tag',
-          sorter: (a, b) => localeCompare(a?.tag, b?.tag),
-          render: (text, row) => (
-            <ImageTags
-              tag={text}
-              labels={row.labels as Array<{ key: string; value: string }>}
-              highlightKeyword={imageSearch}
-            />
-          ),
-        },
-        {
-          title: t('environment.Digest'),
-          dataIndex: 'digest',
-          key: 'digest',
-          sorter: (a, b) => localeCompare(a?.digest || '', b?.digest || ''),
-          render: (text, row) => (
-            <Typography.Text
-              ellipsis={{ tooltip: true }}
-              style={{ maxWidth: 200 }}
-            >
-              <TextHighlighter keyword={imageSearch}>
-                {row.digest}
-              </TextHighlighter>
-            </Typography.Text>
-          ),
-        },
-        {
-          title: t('environment.ResourceLimit'),
-          dataIndex: 'resource_limits',
-          key: 'resource_limits',
-          render: (text, row) => (
-            <Flex direction="row" gap="xxs">
-              {row?.resource_limits?.map((resource_limit) => (
-                <ResourceNumber
-                  key={resource_limit?.key}
-                  type={resource_limit?.key || ''}
-                  value={resource_limit?.min || '0'}
-                  max={resource_limit?.max || 'Infinity'}
-                />
-              ))}
-            </Flex>
-          ),
-        },
-        {
-          title: t('general.Control'),
-          key: 'control',
-          dataIndex: 'control',
-          fixed: 'right',
-          render: (text, row) => (
-            <Flex
-              direction="row"
-              align="stretch"
-              justify="center"
-              gap="xxs"
-              onClick={(e) => {
-                // To prevent the click event from selecting the row
-                e.stopPropagation();
-              }}
-            >
-              <Button
-                type="text"
-                icon={
-                  <SettingOutlined
-                    style={{
-                      color: token.colorInfo,
-                    }}
-                  />
-                }
-                onClick={() => setManagingResourceLimit(row)}
-              />
-              <Button
-                type="text"
-                icon={
-                  <AppstoreOutlined
-                    style={{
-                      color: token.colorInfo,
-                    }}
-                  />
-                }
-                onClick={() => {
-                  setManagingApp(row);
-                }}
-              />
-            </Flex>
-          ),
-        },
-      ]),
-    [
-      t,
-      imageSearch,
-      installingImages,
-      token,
-      supportExtendedImageInfo,
-      getBaseImage,
-      getBaseVersion,
-      tagAlias,
-    ],
-  );
-
-  const [hiddenColumnKeys, setHiddenColumnKeys] =
-    useHiddenColumnKeysSetting('ImageList');
-
-  const imageFilterValues = useMemo(() => {
-    return defaultSortedImages?.map((image) => {
-      return {
-        namespace: supportExtendedImageInfo ? image?.namespace : image?.name,
-        fullName: getImageFullName(image) || '',
-        digest: image?.digest || '',
-        // ------------ need only before 24.12.0 ------------
-        baseversion: getBaseVersion(getImageFullName(image) || ''),
-        baseimage:
-          image?.tag && image?.name ? getBaseImages(image.tag, image.name) : [],
-        tag:
-          getTags(
-            image?.tag || '',
-            image?.labels as Array<{ key: string; value: string }>,
-          ) || [],
-        isCustomized: image?.tag
-          ? image.tag.indexOf('customized') !== -1
-          : false,
-        // -------------------------------------------------
-        // ------------ need only after 24.12.0 ------------
-        baseImageName: supportExtendedImageInfo ? image?.base_image_name : '',
-        tags: supportExtendedImageInfo ? image?.tags : [],
-        version: supportExtendedImageInfo ? image?.version : '',
-        // -------------------------------------------------
-      };
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultSortedImages]);
-
-  const filteredImageData = useMemo(() => {
-    if (_.isEmpty(imageSearch)) return defaultSortedImages;
-    const regExp = new RegExp(`${_.escapeRegExp(imageSearch)}`, 'i');
-    return _.filter(defaultSortedImages, (image, idx) => {
-      return _.some(image, (value, key) => {
-        if (key === 'id') return false;
-        if (['digest', 'architecture', 'registry'].includes(key))
-          return regExp.test(_.toString(value));
-        const curFilterValues = imageFilterValues[idx] || {};
-        const baseVersionMatch = regExp.test(curFilterValues.baseversion);
-        const baseImagesMatch = _.some(curFilterValues.baseimage, (value) =>
-          regExp.test(value),
-        );
-        const tagMatch = _.some(
-          curFilterValues.tag,
-          (tag) => regExp.test(tag.key) || regExp.test(tag.value),
-        );
-        const customizedMatch = curFilterValues.isCustomized
-          ? regExp.test('customized')
-          : false;
-        const namespaceMatch = regExp.test(curFilterValues.namespace || '');
-        const fullNameMatch = regExp.test(curFilterValues.fullName);
-        const tagsMatch = _.some(
-          curFilterValues.tags,
-          (tag: { key: string; value: string }) =>
-            regExp.test(tag.key) || regExp.test(tag.value),
-        );
-        const versionMatch = regExp.test(curFilterValues.version || '');
-        const digestMatch = regExp.test(curFilterValues.digest);
         return (
-          baseVersionMatch ||
-          baseImagesMatch ||
-          tagMatch ||
-          namespaceMatch ||
-          customizedMatch ||
-          fullNameMatch ||
-          tagsMatch ||
-          versionMatch ||
-          digestMatch
+          <Tag color="gold">
+            {row?.installed
+              ? t('environment.Installed')
+              : t('environment.Installing')}
+          </Tag>
         );
-      });
-    });
-  }, [imageSearch, imageFilterValues, defaultSortedImages]);
+      },
+    },
+    {
+      title: t('environment.FullImagePath'),
+      key: 'fullImagePath',
+      render: (row) => (
+        <Typography.Text
+          copyable={{
+            text: getImageFullName(row) || '',
+          }}
+        >
+          {getImageFullName(row) || ''}
+        </Typography.Text>
+      ),
+      width: token.screenXS,
+    },
+    {
+      title: t('environment.Registry'),
+      dataIndex: 'registry',
+      key: 'registry',
+      sorter: true,
+    },
+    {
+      title: t('environment.Architecture'),
+      dataIndex: 'architecture',
+      key: 'architecture',
+      sorter: true,
+    },
+    {
+      title: t('environment.Namespace'),
+      key: 'namespace',
+      dataIndex: 'namespace',
+      width: 150,
+    },
+    {
+      title: t('environment.Tags'),
+      key: 'tags',
+      width: 450,
+      render: (text, row) => {
+        return (
+          <Flex
+            wrap="wrap"
+            style={{
+              rowGap: token.marginXXS,
+            }}
+          >
+            <ImageNodeSimpleTag imageFrgmt={row} copyable={false} />
+          </Flex>
+        );
+      },
+    },
+    {
+      title: t('environment.Digest'),
+      dataIndex: 'digest',
+      key: 'digest',
+      render: (text, row) => (
+        <Typography.Text ellipsis={{ tooltip: true }} style={{ maxWidth: 200 }}>
+          {row.digest}
+        </Typography.Text>
+      ),
+    },
+    {
+      title: t('environment.ResourceLimit'),
+      dataIndex: 'resource_limits',
+      key: 'resource_limits',
+      render: (text, row) => (
+        <Flex direction="row" gap="xxs">
+          {row?.resource_limits?.map((resource_limit) => (
+            <ResourceNumber
+              key={resource_limit?.key}
+              type={resource_limit?.key || ''}
+              value={resource_limit?.min || '0'}
+              max={resource_limit?.max || 'Infinity'}
+            />
+          ))}
+        </Flex>
+      ),
+    },
+    {
+      title: t('general.Control'),
+      key: 'control',
+      dataIndex: 'control',
+      fixed: 'right',
+      render: (text, row) => (
+        <Flex
+          direction="row"
+          align="stretch"
+          justify="center"
+          gap="xxs"
+          onClick={(e) => {
+            // To prevent the click event from selecting the row
+            e.stopPropagation();
+          }}
+        >
+          <Tooltip title={t('button.Edit')}>
+            <Button
+              type="text"
+              icon={
+                <SettingOutlined
+                  style={{
+                    color: token.colorInfo,
+                  }}
+                />
+              }
+              onClick={() => setManagingResourceLimit(row)}
+            />
+          </Tooltip>
+          <Tooltip title={t('environment.ManageApps')}>
+            <Button
+              type="text"
+              icon={
+                <AppstoreOutlined
+                  style={{
+                    color: token.colorInfo,
+                  }}
+                />
+              }
+              onClick={() => {
+                setManagingApp(row);
+              }}
+            />
+          </Tooltip>
+        </Flex>
+      ),
+    },
+  ]);
 
   return (
     <>
@@ -494,23 +322,127 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         }}
         gap="sm"
       >
-        <Flex justify="between">
-          <Input
-            allowClear
-            prefix={<SearchOutlined />}
-            placeholder={t('environment.SearchImages')}
-            onChange={(e) => {
-              debouncedSetImageSearch(e.target.value);
-            }}
-            style={{
-              width: 200,
+        <Flex justify="between" align="start">
+          {/* // TODO: implement project_id filter when backend supports it */}
+          {/* <Form.Item
+              label={t('environment.Project')}
+              style={{ marginBottom: 0 }}
+            >
+              <ProjectSelect
+                domain={currentDomain}
+                value={queryParams.project}
+                onChange={(project) => {
+                  setQuery({ project }, 'replaceIn');
+                  setTablePaginationOption({ current: 1 });
+                  setSelectedRows([]);
+                }}
+                extraOptions={[
+                  {
+                    label: t('environment.All'),
+                    value: currentDomain,
+                  },
+                ]}
+              />
+            </Form.Item> */}
+          <BAIPropertyFilter
+            filterProperties={[
+              {
+                key: 'name',
+                propertyLabel: t('environment.Name'),
+                type: 'string',
+              },
+              {
+                key: 'id',
+                propertyLabel: t('environment.ID'),
+                type: 'string',
+              },
+              {
+                key: 'project',
+                propertyLabel: t('environment.Project'),
+                type: 'string',
+              },
+              {
+                key: 'image',
+                propertyLabel: t('environment.Image'),
+                type: 'string',
+              },
+              {
+                key: 'registry',
+                propertyLabel: t('environment.Registry'),
+                type: 'string',
+              },
+              {
+                key: 'registry_id',
+                propertyLabel: t('environment.RegistryID'),
+                type: 'string',
+              },
+              {
+                key: 'is_local',
+                propertyLabel: t('environment.IsLocal'),
+                type: 'boolean',
+              },
+              {
+                key: 'type',
+                propertyLabel: t('environment.Type'),
+                type: 'enum',
+                options: [
+                  {
+                    label: 'compute',
+                    value: 'compute',
+                  },
+                  {
+                    label: 'system',
+                    value: 'system',
+                  },
+                  {
+                    label: 'service',
+                    value: 'service',
+                  },
+                ],
+              },
+              {
+                key: 'accelerators',
+                propertyLabel: t('environment.Accelerators'),
+                type: 'string',
+              },
+              {
+                key: 'architecture',
+                propertyLabel: t('environment.Architecture'),
+                type: 'string',
+              },
+              {
+                key: 'tag',
+                propertyLabel: t('environment.Tag'),
+                type: 'string',
+              },
+              {
+                key: 'status',
+                propertyLabel: t('environment.Status'),
+                type: 'enum',
+                options: [
+                  {
+                    label: 'ALIVE',
+                    value: 'ALIVE',
+                  },
+                  {
+                    label: 'DELETED',
+                    value: 'DELETED',
+                  },
+                ],
+              },
+            ]}
+            value={queryParams.filter}
+            onChange={(value) => {
+              setQuery({ filter: value }, 'replaceIn');
+              setTablePaginationOption({ current: 1 });
+              setSelectedRows(new Map());
             }}
           />
-          <Flex gap={'xs'}>
-            {selectedRows.length > 0 ? (
+          <Flex gap={'xs'} align="center">
+            {selectedRows.size > 0 ? (
               <Typography.Text>
                 {t('general.NSelected', {
-                  count: selectedRows.length,
+                  count: selectedRows.size,
                 })}
               </Typography.Text>
             ) : null}
@@ -519,21 +451,19 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
                 icon={<ReloadOutlined />}
                 loading={isPendingRefreshTransition}
                 onClick={() => {
-                  setSelectedRows([]);
                   startRefreshTransition(() => updateEnvironmentFetchKey());
                 }}
               />
             </Tooltip>
-
             <Button
               icon={<VerticalAlignBottomOutlined />}
-              style={{ backgroundColor: token.colorPrimary, color: 'white' }}
+              type="primary"
               onClick={() => {
-                if (selectedRows.length === 0) {
+                if (selectedRows.size === 0) {
                   message.error(t('environment.NoImagesAreSelected'));
                   return;
                 }
-                if (selectedRows.some((image) => !image.installed)) {
+                if (selectedRows.values().some((image) => !image.installed)) {
                   setIsOpenInstallModal(true);
                   return;
                 }
@@ -550,7 +480,24 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           resizable
           rowKey="id"
           scroll={{ x: 'max-content' }}
+          showSorterTooltip={false}
+          dataSource={filterNonNullItems(
+            filterEmptyItem(image_nodes?.edges.map((edge) => edge?.node) || []),
+          )}
+          loading={
+            deferredQueryVariables !== queryVariables ||
+            deferredFetchKey !== environmentFetchKey ||
+            isPendingRefreshTransition ||
+            isPendingPageChange
+          }
+          columns={_.filter(
+            columns,
+            (column) => !_.includes(hiddenColumnKeys, _.toString(column.key)),
+          )}
           pagination={{
+            pageSize: tablePaginationOption.pageSize,
+            current: tablePaginationOption.current,
+            total: image_nodes?.count || 0,
             extraContent: (
               <Button
                 type="text"
@@ -560,35 +507,55 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
                 }}
               />
             ),
+            onChange(current, pageSize) {
+              startPageChangeTransition(() => {
+                if (_.isNumber(current) && _.isNumber(pageSize)) {
+                  setTablePaginationOption({
+                    pageSize,
+                    current,
+                  });
+                }
+              });
+            },
           }}
-          dataSource={filterNonNullItems(filteredImageData)}
-          columns={_.filter(
-            columns,
-            (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),
-          )}
-          loading={isPendingSearchTransition}
           rowSelection={{
             type: 'checkbox',
-            // hideSelectAll: true,
-            // columnWidth: 48,
-            onChange: (_, selectedRows) => {
-              setSelectedRows(selectedRows);
+            onChange: (selectedKeys, selectedData) => {
+              setSelectedRows((prev) => {
+                const newMap = new Map<string, ImageNode>(prev);
+                const selectedSet = new Set<string>(selectedKeys as string[]);
+                const items = new Set<string>(
+                  filterEmptyItem(
+                    image_nodes?.edges.map((edge) => edge?.node?.id) || [],
+                  ),
+                );
+                // add selected rows to the map
+                selectedData.forEach((row) => newMap.set(row.id, row));
+                // remove rows that are not selected based on current data source
+                items
+                  .difference(selectedSet)
+                  .forEach((item) => newMap.delete(item));
+                return newMap;
+              });
             },
-            selectedRowKeys: selectedRows.map((row) => row.id) as Key[],
+            selectedRowKeys: Array.from(selectedRows.keys()),
           }}
           onRow={(record) => ({
             onClick: (e) => {
-              // selected or deselect row
-              if (selectedRows.find((row) => row.id === record.id)) {
-                setSelectedRows((rows) =>
-                  rows.filter((row) => row.id !== record.id),
-                );
+              if (selectedRows.has(record.id)) {
+                selectedRows.delete(record.id);
               } else {
-                setSelectedRows((rows) => [...rows, record]);
+                selectedRows.set(record.id, record);
               }
+              setSelectedRows(new Map(selectedRows));
             },
           })}
-          showSorterTooltip={false}
+          order={queryParams.order}
+          onChangeOrder={(newOrder) => {
+            startPageChangeTransition(() => {
+              setQuery({ order: newOrder }, 'replaceIn');
+            });
+          }}
         />
       </Flex>
       <ManageImageResourceLimitModal
@@ -619,7 +586,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           setIsOpenInstallModal(false);
         }}
         setInstallingImages={setInstallingImages}
-        selectedRows={selectedRows}
+        selectedRows={Array.from(selectedRows.values())}
       />
       <TableColumnsSettingModal
         open={visibleColumnSettingModal}

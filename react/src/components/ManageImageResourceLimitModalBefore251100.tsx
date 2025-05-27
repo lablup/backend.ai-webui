@@ -1,9 +1,10 @@
 import {
-  ManageImageResourceLimitModalMutation,
+  ManageImageResourceLimitModalBefore251100Mutation,
   ResourceLimitInput,
-} from '../__generated__/ManageImageResourceLimitModalMutation.graphql';
-import { ManageImageResourceLimitModal_image$key } from '../__generated__/ManageImageResourceLimitModal_image.graphql';
+} from '../__generated__/ManageImageResourceLimitModalBefore251100Mutation.graphql';
+import { ManageImageResourceLimitModalBefore251100_image$key } from '../__generated__/ManageImageResourceLimitModalBefore251100_image.graphql';
 import { compareNumberWithUnits } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import DynamicUnitInputNumber from './DynamicUnitInputNumber';
@@ -16,15 +17,16 @@ import { graphql, useFragment, useMutation } from 'react-relay';
 const DEFAULT_MIN_MEMORY = '1g'; // Default minimum memory value for resource limits
 const DEFAULT_MIN_CPU = 1; // Default minimum CPU value for resource limits
 const DEFAULT_MIN_OTHER = 0; // Default minimum value for other resource limits (e.g., Accelerators like GPUs)
-interface ManageImageResourceLimitModalProps extends BAIModalProps {
-  imageFrgmt: ManageImageResourceLimitModal_image$key | null;
+interface ManageImageResourceLimitModalBefore251100Props extends BAIModalProps {
+  imageFrgmt: ManageImageResourceLimitModalBefore251100_image$key | null;
   open: boolean;
   onRequestClose: (success: boolean) => void;
 }
 
-const ManageImageResourceLimitModal: React.FC<
-  ManageImageResourceLimitModalProps
+const ManageImageResourceLimitModalBefore251100: React.FC<
+  ManageImageResourceLimitModalBefore251100Props
 > = ({ imageFrgmt, open, onRequestClose, ...BAIModalProps }) => {
+  const baiClient = useSuspendedBackendaiClient();
   // Differentiate default max value based on manager version.
   // The difference between validating a variable type as undefined or none for an unsupplied field value.
   // [Associated PR links] : https://github.com/lablup/backend.ai/pull/1941
@@ -36,7 +38,7 @@ const ManageImageResourceLimitModal: React.FC<
 
   const image = useFragment(
     graphql`
-      fragment ManageImageResourceLimitModal_image on ImageNode {
+      fragment ManageImageResourceLimitModalBefore251100_image on Image {
         resource_limits {
           key
           min
@@ -54,8 +56,8 @@ const ManageImageResourceLimitModal: React.FC<
   );
 
   const [commitModifyImageInput, isInFlightModifyImageInput] =
-    useMutation<ManageImageResourceLimitModalMutation>(graphql`
-      mutation ManageImageResourceLimitModalMutation(
+    useMutation<ManageImageResourceLimitModalBefore251100Mutation>(graphql`
+      mutation ManageImageResourceLimitModalBefore251100Mutation(
         $target: String!
         $architecture: String
         $props: ModifyImageInput!
@@ -82,8 +84,10 @@ const ManageImageResourceLimitModal: React.FC<
         key,
         min: _.toString(value) ?? '0',
         max:
-          image?.resource_limits?.find((item) => item?.key === key)?.max ??
-          undefined,
+          (image?.resource_limits?.find((item) => item?.key === key)?.max ??
+          baiClient.isManagerVersionCompatibleWith('24.03.4.*'))
+            ? undefined
+            : null,
       }))
       .filter((item) => !_.isEmpty(item?.min));
 
@@ -233,4 +237,4 @@ const ManageImageResourceLimitModal: React.FC<
   );
 };
 
-export default ManageImageResourceLimitModal;
+export default ManageImageResourceLimitModalBefore251100;

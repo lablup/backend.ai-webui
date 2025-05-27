@@ -15,7 +15,7 @@ type ProjectInfo = {
   projectResourcePolicy: any; // Replace 'any' with the actual type
   projectName: string;
 };
-export interface ProjectSelectProps extends BAISelectProps {
+export interface ProjectSelectProps extends Omit<BAISelectProps, 'options'> {
   onSelectProject?: (projectInfo: ProjectInfo) => void;
   domain: string;
   autoSelectDefault?: boolean;

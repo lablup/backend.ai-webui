@@ -45,7 +45,6 @@ type SessionNode = NonNullableNodeOnEdges<
 >;
 const ComputeSessionListPage = () => {
   const currentProject = useCurrentProjectValue();
-
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [selectedSessionList, setSelectedSessionList] = useState<
