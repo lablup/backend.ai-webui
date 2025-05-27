@@ -36,13 +36,13 @@ interface fileData {
 }
 
 /**
- Backend AI Session View
+ Backend AI Folder Explorer
 
  Example:
 
- <backend-ai-session-view active>
+ <backend-ai-folder-explorer>
  ...
- </backend-ai-settings-view>
+ </backend-ai-folder-explorer>
 
  @group Backend.AI Web UI
  @element backend-ai-folder-explorer

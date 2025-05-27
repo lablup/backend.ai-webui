@@ -17,7 +17,6 @@ import { default as PainKiller } from './backend-ai-painkiller';
 import './backend-ai-release-check';
 import './backend-ai-resource-monitor';
 import './backend-ai-resource-panel';
-import './backend-ai-session-launcher';
 import './lablup-activity-panel';
 import '@material/mwc-button';
 import '@material/mwc-icon';
