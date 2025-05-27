@@ -5,7 +5,8 @@ import { usePainKiller } from '../hooks/usePainKiller';
 import { SessionResources } from '../pages/SessionLauncherPage';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
-import { EnvironmentImage } from './ImageList';
+import { ImageNode } from './ImageList';
+import { EnvironmentImageBefore251100 } from './ImageListBefore251100';
 import { List, Typography } from 'antd';
 import _ from 'lodash';
 import { Dispatch, SetStateAction } from 'react';
@@ -13,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 
 interface ImageInstallModalInterface extends BAIModalProps {
   onRequestClose: () => void;
-  selectedRows: EnvironmentImage[];
+  selectedRows: ImageNode[] | EnvironmentImageBefore251100[];
   setInstallingImages: Dispatch<SetStateAction<string[]>>;
 }
 const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({

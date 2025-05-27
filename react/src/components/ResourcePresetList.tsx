@@ -208,18 +208,8 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
   ]);
 
   return (
-    <Flex direction="column" align="stretch">
-      <Flex
-        direction="row"
-        gap={'xs'}
-        justify="end"
-        wrap="wrap"
-        style={{
-          padding: token.paddingContentVertical,
-          paddingLeft: token.paddingContentHorizontalSM,
-          paddingRight: token.paddingContentHorizontalSM,
-        }}
-      >
+    <Flex direction="column" align="stretch" gap="sm">
+      <Flex direction="row" gap={'xs'} justify="end" wrap="wrap">
         <Flex direction="row" gap={'xs'} wrap="wrap" style={{ flexShrink: 1 }}>
           <Tooltip title={t('button.Refresh')}>
             <Button
