@@ -48,6 +48,7 @@ import _ from 'lodash';
 import React, {
   Suspense,
   useDeferredValue,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -99,6 +100,13 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const [selectedFolderList, setSelectedFolderList] = useState<
     Array<VFolderNodesType>
   >([]);
+
+  useEffect(() => {
+    setSelectedFolderList([]);
+    // Reset selectedRowKeys when currentProject changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentProject.id]);
+
   const [isOpenCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
   const [isOpenDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
   const [isOpenRestoreModal, { toggle: toggleRestoreModal }] = useToggle(false);
