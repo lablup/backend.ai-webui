@@ -252,6 +252,7 @@
     "InvalidEmail": "ที่อยู่อีเมลไม่ถูกต้อง",
     "Invited": "เชิญแล้ว",
     "InvitedFolders": "โฟลเดอร์ที่ได้รับเชิญ",
+    "InvitedFoldersTooltip": "{{ count }} คำเชิญโฟลเดอร์กำลังรอการตอบสนอง",
     "Limit": "ขีดจำกัด",
     "ModelStore": "คลังโมเดล",
     "Models": "โมเดล",

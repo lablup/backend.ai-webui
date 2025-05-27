@@ -251,6 +251,7 @@
     "InvalidEmail": "Хүчингүй мэйл хаяг",
     "Invited": "урьсан",
     "InvitedFolders": "Уригдсан хавтаснууд",
+    "InvitedFoldersTooltip": "{{ count }} Фолдерын урилга хариу арга хэмжээ хүлээж байна.",
     "Limit": "Хязгаар",
     "ModelStore": "Загварын дэлгүүр",
     "Models": "Загварууд",

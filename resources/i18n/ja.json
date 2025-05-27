@@ -251,6 +251,7 @@
     "InvalidEmail": "無効なメールアドレス",
     "Invited": "招待",
     "InvitedFolders": "招待されたフォルダー",
+    "InvitedFoldersTooltip": "{{ count }}フォルダーの招待状は、回答が保留されています。",
     "Limit": "制限",
     "ModelStore": "模型店",
     "Models": "モデル",

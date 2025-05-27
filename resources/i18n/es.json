@@ -252,6 +252,7 @@
     "InvalidEmail": "Dirección de correo electrónico no válida",
     "Invited": "Invitado",
     "InvitedFolders": "Carpetas invitadas",
+    "InvitedFoldersTooltip": "{{ count }} Las invitaciones de la carpeta están pendientes de respuesta.",
     "Limit": "Límite",
     "ModelStore": "Tienda de modelos",
     "Models": "Modelos",

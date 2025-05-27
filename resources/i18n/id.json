@@ -251,6 +251,7 @@
     "InvalidEmail": "Alamat email yang tidak valid",
     "Invited": "diundang",
     "InvitedFolders": "Folder yang diundang",
+    "InvitedFoldersTooltip": "{{ count }} Undangan folder sedang menunggu respons.",
     "Limit": "Batas",
     "ModelStore": "Toko Model",
     "Models": "Model",

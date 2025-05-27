@@ -252,6 +252,7 @@
     "InvalidEmail": "无效的电子邮件地址",
     "Invited": "受邀",
     "InvitedFolders": "邀请的文件夹",
+    "InvitedFoldersTooltip": "{{ count }}文件夹邀请正在待定响应。",
     "Limit": "限制",
     "ModelStore": "模型店",
     "Models": "楷模",

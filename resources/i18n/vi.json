@@ -252,6 +252,7 @@
     "InvalidEmail": "Địa chỉ email không hợp lệ",
     "Invited": "được mời",
     "InvitedFolders": "Thư mục được mời",
+    "InvitedFoldersTooltip": "{{ count }} Lời mời thư mục đang chờ phản hồi.",
     "Limit": "Giới hạn",
     "ModelStore": "Cửa hàng mô hình",
     "Models": "Mô hình",
