@@ -404,22 +404,14 @@ const ContainerRegistryList: React.FC<{
     <Flex
       direction="column"
       align="stretch"
+      gap="sm"
       style={{
         flex: 1,
         ...style,
         // height: 'calc(100vh - 183px)',
       }}
     >
-      <Flex
-        direction="row"
-        justify="end"
-        gap={'sm'}
-        style={{
-          padding: token.paddingContentVertical,
-          paddingLeft: token.paddingContentHorizontalSM,
-          paddingRight: token.paddingContentHorizontalSM,
-        }}
-      >
+      <Flex direction="row" justify="end" gap={'sm'}>
         <BAIPropertyFilter
           filterProperties={[
             {

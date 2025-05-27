@@ -31,7 +31,7 @@ export type FilterProperty = {
   defaultOperator?: string;
   propertyLabel: string;
   // TODO: support array, number
-  type: 'string' | 'boolean';
+  type: 'string' | 'boolean' | 'enum';
   options?: AutoCompleteProps['options'];
   strictSelection?: boolean;
   rule?: {
@@ -61,6 +61,7 @@ interface FilterInput {
 const DEFAULT_OPERATOR_OF_TYPES = {
   string: 'ilike',
   boolean: '==',
+  enum: '==',
 };
 
 const DEFAULT_OPTIONS_OF_TYPES: {
@@ -77,12 +78,14 @@ const DEFAULT_OPTIONS_OF_TYPES: {
     },
   ],
   string: undefined,
+  enum: undefined,
 };
 
 const DEFAULT_STRICT_SELECTION_OF_TYPES: {
   [key: string]: boolean | undefined;
 } = {
   boolean: true,
+  enum: true,
 };
 
 function trimFilterValue(filterValue: string): string {
@@ -189,7 +192,7 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
     } else {
       const newFilterString = _.map(filters, (item) => {
         const valueStringInResult =
-          item.type === 'string' ? `"${item.value}"` : item.value;
+          item.type === 'string' || item.type ? `"${item.value}"` : item.value;
         return `${item.property} ${item.operator} ${valueStringInResult}`;
       });
       setValue(combineFilters(newFilterString, '&'));

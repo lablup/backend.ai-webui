@@ -5,7 +5,7 @@ import { usePainKiller } from '../hooks/usePainKiller';
 import { SessionResources } from '../pages/SessionLauncherPage';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
-import { EnvironmentImage } from './ImageList';
+import { EnvironmentImage } from './ImageListBefore202506';
 import { List, Typography } from 'antd';
 import _ from 'lodash';
 import { Dispatch, SetStateAction } from 'react';

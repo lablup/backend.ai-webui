@@ -1,8 +1,8 @@
 import {
-  ManageImageResourceLimitModalMutation,
+  ManageImageResourceLimitModalBefore202506Mutation,
   ResourceLimitInput,
-} from '../__generated__/ManageImageResourceLimitModalMutation.graphql';
-import { ManageImageResourceLimitModal_image$key } from '../__generated__/ManageImageResourceLimitModal_image.graphql';
+} from '../__generated__/ManageImageResourceLimitModalBefore202506Mutation.graphql';
+import { ManageImageResourceLimitModalBefore202506_image$key } from '../__generated__/ManageImageResourceLimitModalBefore202506_image.graphql';
 import { compareNumberWithUnits } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlotsDetails } from '../hooks/backendai';
@@ -17,14 +17,14 @@ import { graphql, useFragment, useMutation } from 'react-relay';
 const DEFAULT_MIN_MEMORY = '1g'; // Default minimum memory value for resource limits
 const DEFAULT_MIN_CPU = 1; // Default minimum CPU value for resource limits
 const DEFAULT_MIN_OTHER = 0; // Default minimum value for other resource limits (e.g., Accelerators like GPUs)
-interface ManageImageResourceLimitModalProps extends BAIModalProps {
-  imageFrgmt: ManageImageResourceLimitModal_image$key | null;
+interface ManageImageResourceLimitModalBefore202506Props extends BAIModalProps {
+  imageFrgmt: ManageImageResourceLimitModalBefore202506_image$key | null;
   open: boolean;
   onRequestClose: (success: boolean) => void;
 }
 
-const ManageImageResourceLimitModal: React.FC<
-  ManageImageResourceLimitModalProps
+const ManageImageResourceLimitModalBefore202506: React.FC<
+  ManageImageResourceLimitModalBefore202506Props
 > = ({ imageFrgmt, open, onRequestClose, ...BAIModalProps }) => {
   const baiClient = useSuspendedBackendaiClient();
   // Differentiate default max value based on manager version.
@@ -38,7 +38,7 @@ const ManageImageResourceLimitModal: React.FC<
 
   const image = useFragment(
     graphql`
-      fragment ManageImageResourceLimitModal_image on ImageNode {
+      fragment ManageImageResourceLimitModalBefore202506_image on Image {
         resource_limits {
           key
           min
@@ -56,8 +56,8 @@ const ManageImageResourceLimitModal: React.FC<
   );
 
   const [commitModifyImageInput, isInFlightModifyImageInput] =
-    useMutation<ManageImageResourceLimitModalMutation>(graphql`
-      mutation ManageImageResourceLimitModalMutation(
+    useMutation<ManageImageResourceLimitModalBefore202506Mutation>(graphql`
+      mutation ManageImageResourceLimitModalBefore202506Mutation(
         $target: String!
         $architecture: String
         $props: ModifyImageInput!
@@ -237,4 +237,4 @@ const ManageImageResourceLimitModal: React.FC<
   );
 };
 
-export default ManageImageResourceLimitModal;
+export default ManageImageResourceLimitModalBefore202506;
