@@ -245,6 +245,7 @@
     "FolderToCopy": "Folder untuk disalin",
     "Foldername": "Nama folder",
     "Folders": "Folder",
+    "From": "Dari",
     "General": "Umum",
     "Host": "Tuan rumah",
     "HostDetails": "Memaparkan maklumat kuota untuk hos storan yang dipilih.",
@@ -414,6 +415,8 @@
       "View": "Pandangan"
     },
     "invitation": {
+      "FailedToAcceptInvitation": "Gagal menerima jemputan",
+      "FailedToDeclineInvitation": "Gagal menolak jemputan",
       "FolderSharingNotAvailableToUser": "Perkongsian folder tidak tersedia untuk pengguna yang diminta:",
       "InvitationError": "Jemputan gagal. Pengguna mungkin sudah dijemput.",
       "Invited": "Berjaya dijemput",
@@ -424,6 +427,8 @@
       "NoValidEmails": "Tidak ada e-mel yang sah dimasukkan",
       "Shared": "Berjaya berkongsi folder kumpulan",
       "SharingError": "Perkongsian gagal. Pengguna mungkin sudah dikongsi atau tidak tergolong dalam projek yang sesuai.",
+      "SuccessfullyAcceptedInvitation": "Jemputan yang berjaya diterima",
+      "SuccessfullyDeclinedInvitation": "Berjaya menolak jemputan",
       "SuccessfullyLeftSharedFolder": "Berjaya meninggalkan folder kongsi",
       "UserIsAlreadyInvited": "{{email}} sudah dijemput"
     },

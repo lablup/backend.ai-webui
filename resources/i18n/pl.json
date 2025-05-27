@@ -246,6 +246,7 @@
     "FolderToCopy": "Folder do skopiowania",
     "Foldername": "Nazwa folderu",
     "Folders": "Lornetka składana",
+    "From": "Z",
     "General": "Ogólny",
     "Host": "Gospodarz",
     "HostDetails": "Wyświetla informacje o przydziale dla wybranego hosta pamięci masowej.",
@@ -415,6 +416,8 @@
       "View": "Widok"
     },
     "invitation": {
+      "FailedToAcceptInvitation": "Nie przyjął zaproszenia",
+      "FailedToDeclineInvitation": "Nie udało się odmówić zaproszenia",
       "FolderSharingNotAvailableToUser": "Udostępnianie folderów nie jest dostępne dla żądanych użytkowników:",
       "InvitationError": "Zaproszenie nie powiodło się. Użytkownik może już zostać zaproszony.",
       "Invited": "Pomyślnie zaproszono",
@@ -425,6 +428,8 @@
       "NoValidEmails": "Nie wprowadzono poprawnych adresów e-mail",
       "Shared": "Pomyślnie udostępniono folder grupy",
       "SharingError": "Udostępnianie nie powiodło się. Użytkownik może już być udostępniony lub nie należy do odpowiedniego projektu.",
+      "SuccessfullyAcceptedInvitation": "Pomyślnie przyjęte zaproszenie",
+      "SuccessfullyDeclinedInvitation": "Pomyślnie odrzucił zaproszenie",
       "SuccessfullyLeftSharedFolder": "Z powodzeniem zostawił wspólny folder",
       "UserIsAlreadyInvited": "{{email}} jest już zaproszony"
     },

@@ -246,6 +246,7 @@
     "FolderToCopy": "Dossier à copier",
     "Foldername": "Nom de dossier",
     "Folders": "Dossiers",
+    "From": "Depuis",
     "General": "Général",
     "Host": "Hôte",
     "HostDetails": "Affiche les informations sur les quotas pour l'hôte de stockage sélectionné.",
@@ -415,6 +416,8 @@
       "View": "Vue"
     },
     "invitation": {
+      "FailedToAcceptInvitation": "Échec de l'acceptation de l'invitation",
+      "FailedToDeclineInvitation": "Échec de la baisse de l'invitation",
       "FolderSharingNotAvailableToUser": "Le partage de dossier n'est pas disponible pour le(s) utilisateur(s) demandé(s) :",
       "InvitationError": "L'invitation a échoué. L'utilisateur est peut-être déjà invité.",
       "Invited": "Invité avec succès",
@@ -425,6 +428,8 @@
       "NoValidEmails": "Aucun e-mail valide n'a été saisi",
       "Shared": "Le dossier de groupe a été partagé avec succès",
       "SharingError": "Le partage a échoué. L'utilisateur est peut-être déjà partagé ou n'appartient pas au projet approprié.",
+      "SuccessfullyAcceptedInvitation": "Invitation acceptée avec succès",
+      "SuccessfullyDeclinedInvitation": "Invitation refusée avec succès",
       "SuccessfullyLeftSharedFolder": "Qui a réussi à quitter le dossier partagé",
       "UserIsAlreadyInvited": "{{email}} est déjà invité"
     },

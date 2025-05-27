@@ -245,6 +245,7 @@
     "FolderToCopy": "Хуулах фолдер",
     "Foldername": "Фолдерын нэр",
     "Folders": "Фолдерууд",
+    "From": "Аас",
     "General": "Жанжин",
     "Host": "Хөтлөгч",
     "HostDetails": "Сонгосон хадгалах сангийн хостын квотын мэдээллийг харуулна.",
@@ -414,6 +415,8 @@
       "View": "Харах"
     },
     "invitation": {
+      "FailedToAcceptInvitation": "Урилга хүлээж авч чадсангүй",
+      "FailedToDeclineInvitation": "Урилгаас татгалзаж чадсангүй",
       "FolderSharingNotAvailableToUser": "Хүссэн хэрэглэгчдэд хавтас хуваалцах боломжгүй:",
       "InvitationError": "Урилга амжилтгүй боллоо. Хэрэглэгчийг аль хэдийн урьсан байж магадгүй.",
       "Invited": "Амжилттай урилаа",
@@ -424,6 +427,8 @@
       "NoValidEmails": "Хүчинтэй имэйл оруулаагүй болно",
       "Shared": "Бүлгийн фолдерыг амжилттай хуваалцав",
       "SharingError": "Хуваалцаж чадсангүй. Хэрэглэгчийг аль хэдийн хуваалцсан эсвэл зохих төсөлд хамрагдаагүй байж болзошгүй.",
+      "SuccessfullyAcceptedInvitation": "Амжилттай хүлээж авсан урилга",
+      "SuccessfullyDeclinedInvitation": "Амжилттай урилгаас татгалзсан",
       "SuccessfullyLeftSharedFolder": "Хуваалцсан фолдерыг амжилттай орхисон",
       "UserIsAlreadyInvited": "{{email}} нь аль хэдийн уригдсан байна"
     },

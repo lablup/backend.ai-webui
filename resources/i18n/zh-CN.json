@@ -246,6 +246,7 @@
     "FolderToCopy": "要复制的文件夹",
     "Foldername": "文件夹名称",
     "Folders": "文件夹",
+    "From": "从",
     "General": "一般的",
     "Host": "主持人",
     "HostDetails": "显示所选存储主机的配额信息。",
@@ -415,6 +416,8 @@
       "View": "看法"
     },
     "invitation": {
+      "FailedToAcceptInvitation": "未能接受邀请",
+      "FailedToDeclineInvitation": "未能拒绝邀请",
       "FolderSharingNotAvailableToUser": "请求的用户无法共享文件夹：",
       "InvitationError": "邀请失败。用户可能已被邀请。",
       "Invited": "已成功邀请",
@@ -425,6 +428,8 @@
       "NoValidEmails": "没有输入有效的电子邮件",
       "Shared": "已成功共享群组文件夹",
       "SharingError": "分享失败。用户可能已被共享或不属于适当的项目。",
+      "SuccessfullyAcceptedInvitation": "成功接受的邀请",
+      "SuccessfullyDeclinedInvitation": "成功拒绝了邀请",
       "SuccessfullyLeftSharedFolder": "成功离开共享文件夹",
       "UserIsAlreadyInvited": "{{email}}已经被邀请"
     },

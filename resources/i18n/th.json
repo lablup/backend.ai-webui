@@ -246,6 +246,7 @@
     "FolderToCopy": "โฟลเดอร์ที่จะคัดลอก",
     "Foldername": "ชื่อโฟลเดอร์",
     "Folders": "โฟลเดอร์",
+    "From": "จาก",
     "General": "ทั่วไป",
     "Host": "โฮสต์",
     "HostDetails": "แสดงข้อมูลโควตาสำหรับโฮสต์จัดเก็บที่เลือก",
@@ -415,6 +416,8 @@
       "View": "ดู"
     },
     "invitation": {
+      "FailedToAcceptInvitation": "ไม่ยอมรับคำเชิญ",
+      "FailedToDeclineInvitation": "ล้มเหลวในการปฏิเสธคำเชิญ",
       "FolderSharingNotAvailableToUser": "การแชร์โฟลเดอร์ไม่สามารถใช้ได้สำหรับผู้ใช้ที่ร้องขอ: ",
       "InvitationError": "การเชิญล้มเหลว ผู้ใช้อาจได้รับเชิญแล้ว",
       "Invited": "เชิญสำเร็จแล้ว",
@@ -425,6 +428,8 @@
       "NoValidEmails": "ไม่มีอีเมลที่ถูกต้องถูกป้อน",
       "Shared": "แชร์โฟลเดอร์กลุ่มสำเร็จแล้ว",
       "SharingError": "การแชร์ล้มเหลว ผู้ใช้อาจได้รับการแชร์แล้วหรือไม่ได้อยู่ในโครงการที่เหมาะสม",
+      "SuccessfullyAcceptedInvitation": "คำเชิญที่ยอมรับได้สำเร็จ",
+      "SuccessfullyDeclinedInvitation": "คำเชิญปฏิเสธสำเร็จ",
       "SuccessfullyLeftSharedFolder": "ออกจากโฟลเดอร์ที่ใช้ร่วมกันสำเร็จ",
       "UserIsAlreadyInvited": "{{email}} ได้รับเชิญไปแล้ว"
     },

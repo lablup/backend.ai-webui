@@ -246,6 +246,7 @@
     "FolderToCopy": "Ordner zum Kopieren",
     "Foldername": "Ordnernamen",
     "Folders": "Ordner",
+    "From": "Aus",
     "General": "Allgemein",
     "Host": "Gastgeber",
     "HostDetails": "Zeigt Kontingentinformationen für den ausgewählten Speicherhost an.",
@@ -415,6 +416,8 @@
       "View": "Aussicht"
     },
     "invitation": {
+      "FailedToAcceptInvitation": "Die Einladung nicht akzeptiert",
+      "FailedToDeclineInvitation": "Die Einladung versäumte es, die Einladung abzulehnen",
       "FolderSharingNotAvailableToUser": "Die gemeinsame Nutzung von Ordnern ist für den/die gewünschten Benutzer nicht verfügbar:",
       "InvitationError": "Einladung fehlgeschlagen. Der Benutzer ist möglicherweise bereits eingeladen.",
       "Invited": "Erfolgreich eingeladen",
@@ -425,6 +428,8 @@
       "NoValidEmails": "Es wurden keine gültigen E-Mails eingegeben",
       "Shared": "Gruppenordner erfolgreich freigegeben",
       "SharingError": "Die Freigabe ist fehlgeschlagen. Der Benutzer ist möglicherweise bereits freigegeben oder gehört nicht zu dem entsprechenden Projekt.",
+      "SuccessfullyAcceptedInvitation": "Erfolgreich akzeptierte Einladung",
+      "SuccessfullyDeclinedInvitation": "Erfolgreich abgelehnt Einladung",
       "SuccessfullyLeftSharedFolder": "Erfolgreich den gemeinsam genutzten Ordner verlassen",
       "UserIsAlreadyInvited": "{{email}} ist bereits eingeladen"
     },

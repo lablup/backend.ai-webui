@@ -246,6 +246,7 @@
     "FolderToCopy": "Kopyalanacak klasör",
     "Foldername": "Klasör adı",
     "Folders": "klasörler",
+    "From": "İtibaren",
     "General": "Genel",
     "Host": "ev sahibi",
     "HostDetails": "Seçili depolama ana bilgisayarı için kota bilgilerini görüntüler.",
@@ -415,6 +416,8 @@
       "View": "Görünüm"
     },
     "invitation": {
+      "FailedToAcceptInvitation": "Davetiyeyi kabul edemedi",
+      "FailedToDeclineInvitation": "Davetiyeyi reddetemedi",
       "FolderSharingNotAvailableToUser": "Klasör paylaşımı istenen kullanıcı(lar) için mevcut değil:",
       "InvitationError": "Davet başarısız oldu. Kullanıcı zaten davet edilmiş olabilir.",
       "Invited": "Başarıyla davet edildi",
@@ -425,6 +428,8 @@
       "NoValidEmails": "Geçerli e-posta girilmedi",
       "Shared": "Grup klasörü başarıyla paylaşıldı",
       "SharingError": "Paylaşım başarısız oldu. Kullanıcı zaten paylaşılmış olabilir veya uygun projeye ait değil.",
+      "SuccessfullyAcceptedInvitation": "Başarılı bir şekilde kabul edilen davetiye",
+      "SuccessfullyDeclinedInvitation": "Başarılı bir şekilde reddetti",
       "SuccessfullyLeftSharedFolder": "Paylaşılan klasörü başarıyla bıraktı",
       "UserIsAlreadyInvited": "{{email}} zaten davet edildi"
     },

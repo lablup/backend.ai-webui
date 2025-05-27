@@ -245,6 +245,7 @@
     "FolderToCopy": "Cartella da copiare",
     "Foldername": "Nome della cartella",
     "Folders": "cartelle",
+    "From": "Da",
     "General": "Generale",
     "Host": "Ospite",
     "HostDetails": "Visualizza le informazioni sulla quota per l'host di archiviazione selezionato.",
@@ -414,6 +415,8 @@
       "View": "Visualizza"
     },
     "invitation": {
+      "FailedToAcceptInvitation": "Impossibile accettare l'invito",
+      "FailedToDeclineInvitation": "Non ha rifiutato l'invito",
       "FolderSharingNotAvailableToUser": "La condivisione delle cartelle non è disponibile per gli utenti richiesti:",
       "InvitationError": "Invito non riuscito. L'utente potrebbe essere già stato invitato.",
       "Invited": "Invitato con successo",
@@ -424,6 +427,8 @@
       "NoValidEmails": "Non sono state inserite email valide",
       "Shared": "Condivisione riuscita della cartella del gruppo",
       "SharingError": "Condivisione non riuscita. L'utente potrebbe essere già condiviso o non appartenere al progetto appropriato.",
+      "SuccessfullyAcceptedInvitation": "Invito accettato con successo",
+      "SuccessfullyDeclinedInvitation": "Ha rifiutato con successo l'invito",
       "SuccessfullyLeftSharedFolder": "Ha lasciato correttamente la cartella condivisa",
       "UserIsAlreadyInvited": "{{email}} è già invitato"
     },

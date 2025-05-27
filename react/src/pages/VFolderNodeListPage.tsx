@@ -12,6 +12,7 @@ import BAITabs from '../components/BAITabs';
 import DeleteVFolderModal from '../components/DeleteVFolderModal';
 import Flex from '../components/Flex';
 import FolderCreateModal from '../components/FolderCreateModal';
+import FolderInvitationResponseModal from '../components/FolderInvitationResponseModal';
 import QuotaPerStorageVolumePanelCard from '../components/QuotaPerStorageVolumePanelCard';
 import RestoreVFolderModal from '../components/RestoreVFolderModal';
 import StorageStatusPanelCard from '../components/StorageStatusPanelCard';
@@ -22,6 +23,7 @@ import {
   handleRowSelectionChange,
 } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useVFolderInvitations } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
@@ -100,6 +102,9 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const [isOpenCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
   const [isOpenDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
   const [isOpenRestoreModal, { toggle: toggleRestoreModal }] = useToggle(false);
+  const [isInvitationResponseModalOpen, setIsInvitationResponseModalOpen] =
+    useState(false);
+
   const {
     baiPaginationOption,
     tablePaginationOption,
@@ -173,6 +178,9 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   );
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
+
+  const [{ count, isFetching, isPendingMutation }] =
+    useVFolderInvitations(deferredFetchKey);
 
   const { vfolder_nodes, ...folderCounts } =
     useLazyLoadQuery<VFolderNodeListPageQuery>(
@@ -288,7 +296,10 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             >
               <StorageStatusPanelCard
                 style={{ height: lg ? 200 : undefined }}
-                fetchKey={fetchKey}
+                fetchKey={deferredFetchKey}
+                onRequestBadgeClick={() => {
+                  setIsInvitationResponseModalOpen(true);
+                }}
               />
             </Suspense>
           </Col>
@@ -568,8 +579,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               pageSize: tablePaginationOption.pageSize,
               current: tablePaginationOption.current,
               total: vfolder_nodes?.count ?? 0,
-              showSizeChanger: true,
-              pageSizeOptions: ['10', '20', '50'],
               showTotal: (total) => (
                 <Typography.Text type="secondary">
                   {t('general.TotalItems', { total: total })}
@@ -628,6 +637,25 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           toggleRestoreModal();
         }}
       />
+      <Suspense>
+        <FolderInvitationResponseModal
+          open={isInvitationResponseModalOpen}
+          loading={
+            isFetching || isPendingMutation || deferredFetchKey !== fetchKey
+          }
+          fetchKey={deferredFetchKey}
+          onRequestClose={(success) => {
+            if (success) {
+              if (count === 1) {
+                setIsInvitationResponseModalOpen(false);
+              }
+              updateFetchKey();
+            } else {
+              setIsInvitationResponseModalOpen(false);
+            }
+          }}
+        />
+      </Suspense>
     </Flex>
   );
 };

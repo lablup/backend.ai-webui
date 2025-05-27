@@ -28,10 +28,12 @@ const useStyles = createStyles(({ css, token }) => ({
 
 interface StorageStatusPanelProps extends BAICardProps {
   fetchKey?: string;
+  onRequestBadgeClick?: () => void;
 }
 
 const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
   fetchKey,
+  onRequestBadgeClick,
   ...cardProps
 }) => {
   const { t } = useTranslation();
@@ -40,7 +42,7 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
   const baiClient = useSuspendedBackendaiClient();
   const currentProject = useCurrentProjectValue();
   const deferredFetchKey = useDeferredValue(fetchKey);
-  const [{ count }] = useVFolderInvitations();
+  const [{ count }] = useVFolderInvitations(deferredFetchKey);
 
   const isExcludedCount = (status: string) => {
     return _.includes(
@@ -50,7 +52,7 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
   };
 
   const { data: vfolders } = useSuspenseTanQuery({
-    queryKey: ['vfolders', { deferredFetchKey }],
+    queryKey: ['vfolders', { deferredFetchKey, id: currentProject?.id }],
     queryFn: () => {
       return baiClient.vfolder.list(currentProject?.id);
     },
@@ -92,96 +94,102 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
     );
 
   return (
-    <BAICard {...cardProps} title={t('data.StorageStatus')}>
-      <Row gutter={[24, 16]}>
-        <Col
-          span={8}
-          style={{
-            borderRight: `1px solid ${token.colorBorderSecondary}`,
-            justifyItems: 'center',
-          }}
-        >
-          <BAIPanelItem
-            title={t('data.MyFolders')}
-            value={createdCount}
-            unit={
-              user_resource_policy?.max_vfolder_count
-                ? `/ ${user_resource_policy?.max_vfolder_count}`
-                : undefined
-            }
-          />
-        </Col>
-        <Col
-          span={8}
-          style={{
-            borderRight: `1px solid ${token.colorBorderSecondary}`,
-            justifyItems: 'center',
-          }}
-        >
-          <BAIPanelItem
-            title={t('data.ProjectFolders')}
-            value={projectCount}
-            unit={
-              project_resource_policy?.max_vfolder_count
-                ? `/ ${project_resource_policy?.max_vfolder_count}`
-                : undefined
-            }
-          />
-        </Col>
-        <Col
-          span={8}
-          style={{
-            justifyItems: 'center',
-          }}
-        >
-          <BAIPanelItem
-            title={
-              count > 0 ? (
-                // Add a tag to the Tooltip to make it clickable
-                // eslint-disable-next-line
-                <a>
-                  <Tooltip
-                    title={
-                      count > 0
-                        ? t('data.InvitedFoldersTooltip', {
-                            count: count,
-                          })
-                        : null
-                    }
-                    rootClassName={styles.invitationTooltip}
-                    placement="topRight"
+    <>
+      <BAICard {...cardProps} title={t('data.StorageStatus')}>
+        <Row gutter={[24, 16]}>
+          <Col
+            span={8}
+            style={{
+              borderRight: `1px solid ${token.colorBorderSecondary}`,
+              justifyItems: 'center',
+            }}
+          >
+            <BAIPanelItem
+              title={t('data.MyFolders')}
+              value={createdCount}
+              unit={
+                user_resource_policy?.max_vfolder_count
+                  ? `/ ${user_resource_policy?.max_vfolder_count}`
+                  : undefined
+              }
+            />
+          </Col>
+          <Col
+            span={8}
+            style={{
+              borderRight: `1px solid ${token.colorBorderSecondary}`,
+              justifyItems: 'center',
+            }}
+          >
+            <BAIPanelItem
+              title={t('data.ProjectFolders')}
+              value={projectCount}
+              unit={
+                project_resource_policy?.max_vfolder_count
+                  ? `/ ${project_resource_policy?.max_vfolder_count}`
+                  : undefined
+              }
+            />
+          </Col>
+          <Col
+            span={8}
+            style={{
+              justifyItems: 'center',
+            }}
+          >
+            <BAIPanelItem
+              title={
+                count > 0 ? (
+                  // Add <a></a> to make tooltip clickable
+                  // eslint-disable-next-line
+                  <a
+                    onClick={() => {
+                      onRequestBadgeClick?.();
+                    }}
                   >
-                    <Badge
-                      count={count > 0 ? `+${count}` : null}
-                      offset={[0, -`${token.sizeXS}`]}
+                    <Tooltip
+                      title={
+                        count > 0
+                          ? t('data.InvitedFoldersTooltip', {
+                              count: count,
+                            })
+                          : null
+                      }
+                      rootClassName={styles.invitationTooltip}
+                      placement="topRight"
                     >
-                      <Typography.Title level={5} style={{ margin: 0 }}>
-                        {t('data.InvitedFolders')}
-                      </Typography.Title>
-                    </Badge>
-                  </Tooltip>
-                </a>
-              ) : (
-                <Typography.Title level={5} style={{ margin: 0 }}>
-                  {t('data.InvitedFolders')}
-                </Typography.Title>
-              )
-            }
-            value={
-              <Typography.Text
-                strong
-                style={{
-                  fontSize: token.fontSizeHeading1,
-                  color: token.Layout?.headerBg,
-                }}
-              >
-                {invitedCount}
-              </Typography.Text>
-            }
-          />
-        </Col>
-      </Row>
-    </BAICard>
+                      <Badge
+                        count={count > 0 ? `+${count}` : null}
+                        offset={[0, -`${token.sizeXS}`]}
+                      >
+                        <Typography.Title level={5} style={{ margin: 0 }}>
+                          {t('data.InvitedFolders')}
+                        </Typography.Title>
+                      </Badge>
+                    </Tooltip>
+                  </a>
+                ) : (
+                  <Typography.Title level={5} style={{ margin: 0 }}>
+                    {t('data.InvitedFolders')}
+                  </Typography.Title>
+                )
+              }
+              value={
+                <Typography.Text
+                  strong
+                  style={{
+                    fontSize: token.fontSizeHeading1,
+                    color: token.Layout?.headerBg,
+                  }}
+                >
+                  {invitedCount}
+                </Typography.Text>
+              }
+            />
+          </Col>
+        </Row>
+      </BAICard>
+    </>
   );
 };
 

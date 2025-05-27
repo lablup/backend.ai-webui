@@ -246,6 +246,7 @@
     "FolderToCopy": "Pasta para copiar",
     "Foldername": "Nome da pasta",
     "Folders": "Pastas",
+    "From": "De",
     "General": "Em geral",
     "Host": "Hospedeiro",
     "HostDetails": "Apresenta informações sobre quotas para o anfitrião de armazenamento selecionado.",
@@ -415,6 +416,8 @@
       "View": "Visualizar"
     },
     "invitation": {
+      "FailedToAcceptInvitation": "Falhou em aceitar convite",
+      "FailedToDeclineInvitation": "Falhou em recusar o convite",
       "FolderSharingNotAvailableToUser": "A partilha de pastas não está disponível para o(s) utilizador(es) solicitado(s):",
       "InvitationError": "O convite falhou. O usuário já pode ter sido convidado.",
       "Invited": "Convidado com sucesso",
@@ -425,6 +428,8 @@
       "NoValidEmails": "Nenhum e-mail válido foi inserido",
       "Shared": "Compartilhou com sucesso a pasta do grupo",
       "SharingError": "O compartilhamento falhou. O usuário pode já estar compartilhado ou não pertencer ao projeto apropriado.",
+      "SuccessfullyAcceptedInvitation": "Convite aceito com sucesso",
+      "SuccessfullyDeclinedInvitation": "Com sucesso recusou o convite",
       "SuccessfullyLeftSharedFolder": "Deixou com sucesso a pasta compartilhada",
       "UserIsAlreadyInvited": "{{email}} já está convidado"
     },

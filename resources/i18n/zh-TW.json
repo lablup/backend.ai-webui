@@ -246,6 +246,7 @@
     "FolderToCopy": "要復制的文件夾",
     "Foldername": "文件夾名稱",
     "Folders": "文件夾",
+    "From": "從",
     "General": "一般的",
     "Host": "主持人",
     "HostDetails": "显示所选存储主机的配额信息。",
@@ -416,6 +417,8 @@
       "View": "看法"
     },
     "invitation": {
+      "FailedToAcceptInvitation": "未能接受邀請",
+      "FailedToDeclineInvitation": "未能拒絕邀請",
       "FolderSharingNotAvailableToUser": "请求的用户无法共享文件夹：",
       "InvitationError": "邀請失敗。用戶可能已被邀請。",
       "Invited": "已成功邀請",
@@ -426,6 +429,8 @@
       "NoValidEmails": "沒有輸入有效的電子郵件",
       "Shared": "已成功共享群組文件夾",
       "SharingError": "分享失敗。用戶可能已被共享或不屬於適當的項目。",
+      "SuccessfullyAcceptedInvitation": "成功接受的邀請",
+      "SuccessfullyDeclinedInvitation": "成功拒絕了邀請",
       "SuccessfullyLeftSharedFolder": "成功離開共享文件夾",
       "UserIsAlreadyInvited": "{{email}}已經被邀請"
     },

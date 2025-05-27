@@ -245,6 +245,7 @@
     "FolderToCopy": "Folder untuk disalin",
     "Foldername": "Nama folder",
     "Folders": "Folder",
+    "From": "Dari",
     "General": "Umum",
     "Host": "Host",
     "HostDetails": "Menampilkan informasi kuota untuk host penyimpanan yang dipilih.",
@@ -414,6 +415,8 @@
       "View": "Lihat"
     },
     "invitation": {
+      "FailedToAcceptInvitation": "Gagal menerima undangan",
+      "FailedToDeclineInvitation": "Gagal menolak undangan",
       "FolderSharingNotAvailableToUser": "Berbagi folder tidak tersedia untuk pengguna yang diminta:",
       "InvitationError": "Undangan gagal. Pengguna mungkin sudah diundang.",
       "Invited": "Berhasil diundang",
@@ -424,6 +427,8 @@
       "NoValidEmails": "Tidak ada email valid yang dimasukkan",
       "Shared": "Folder grup berhasil dibagikan",
       "SharingError": "Gagal berbagi. Pengguna mungkin sudah dibagikan atau tidak ada dalamm proyek yang sesuai.",
+      "SuccessfullyAcceptedInvitation": "Undangan yang berhasil diterima",
+      "SuccessfullyDeclinedInvitation": "Undangan yang berhasil ditolak",
       "SuccessfullyLeftSharedFolder": "Berhasil meninggalkan folder bersama",
       "UserIsAlreadyInvited": "{{email}} sudah diundang"
     },

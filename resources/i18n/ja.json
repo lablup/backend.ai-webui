@@ -245,6 +245,7 @@
     "FolderToCopy": "コピーするフォルダ",
     "Foldername": "フォルダ名",
     "Folders": "フォルダー",
+    "From": "から",
     "General": "一般的な",
     "Host": "ホスト",
     "HostDetails": "選択したストレージホストの空き容量情報を表示します。",
@@ -414,6 +415,8 @@
       "View": "見る"
     },
     "invitation": {
+      "FailedToAcceptInvitation": "招待状を受け入れなかった",
+      "FailedToDeclineInvitation": "招待状を拒否できませんでした",
       "FolderSharingNotAvailableToUser": "次のユーザーはフォルダ共有ができない状態です：",
       "InvitationError": "招待に失敗しました。ユーザーはすでに招待されている可能性があります。",
       "Invited": "招待に成功",
@@ -424,6 +427,8 @@
       "NoValidEmails": "有効なメールが入力されていません",
       "Shared": "グループフォルダを正常に共有しました",
       "SharingError": "共有に失敗しました。ユーザーはすでに共有されているか、適切なプロジェクトに属していない可能性があります。",
+      "SuccessfullyAcceptedInvitation": "招待状に成功しました",
+      "SuccessfullyDeclinedInvitation": "招待状を成功裏に拒否しました",
       "SuccessfullyLeftSharedFolder": "共有フォルダーを正常に残しました",
       "UserIsAlreadyInvited": "{{email}}はすでに招待されています"
     },

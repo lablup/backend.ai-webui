@@ -248,6 +248,7 @@
     "FolderToCopy": "Folder to copy",
     "Foldername": "Folder name",
     "Folders": "Folders",
+    "From": "From",
     "General": "General",
     "Host": "Host",
     "HostDetails": "Displays quota information for the selected storage host.",
@@ -417,6 +418,8 @@
       "View": "View"
     },
     "invitation": {
+      "FailedToAcceptInvitation": "Failed to accept invitation",
+      "FailedToDeclineInvitation": "Failed to decline invitation",
       "FolderSharingNotAvailableToUser": "Folder sharing is not available for requested user(s): ",
       "InvitationError": "Invitation failed. User may already be invited.",
       "Invited": "Successfully invited",
@@ -427,6 +430,8 @@
       "NoValidEmails": "No valid emails were entered",
       "Shared": "Successfully shared the group folder",
       "SharingError": "Sharing failed. User may already be shared or does not belong to appropriate project.",
+      "SuccessfullyAcceptedInvitation": "Successfully accepted invitation",
+      "SuccessfullyDeclinedInvitation": "Successfully declined invitation",
       "SuccessfullyLeftSharedFolder": "Successfully left the shared folder",
       "UserIsAlreadyInvited": "{{email}} is already invited"
     },

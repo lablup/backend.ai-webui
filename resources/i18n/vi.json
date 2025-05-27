@@ -246,6 +246,7 @@
     "FolderToCopy": "Thư mục để sao chép",
     "Foldername": "Tên thư mục",
     "Folders": "Thư mục",
+    "From": "Từ",
     "General": "Tổng quan",
     "Host": "Tổ chức",
     "HostDetails": "Hiển thị thông tin hạn ngạch cho máy chủ lưu trữ đã chọn.",
@@ -415,6 +416,8 @@
       "View": "Lượt xem"
     },
     "invitation": {
+      "FailedToAcceptInvitation": "Không chấp nhận lời mời",
+      "FailedToDeclineInvitation": "Không thể từ chối lời mời",
       "FolderSharingNotAvailableToUser": "Chia sẻ thư mục không có sẵn cho (những) người dùng được yêu cầu:",
       "InvitationError": "Lời mời không thành công. Người dùng có thể đã được mời.",
       "Invited": "Đã mời thành công",
@@ -425,6 +428,8 @@
       "NoValidEmails": "Không có email hợp lệ nào được nhập",
       "Shared": "Đã chia sẻ thành công thư mục nhóm",
       "SharingError": "Chia sẻ không thành công. Người dùng có thể đã được chia sẻ hoặc không thuộc dự án thích hợp.",
+      "SuccessfullyAcceptedInvitation": "Lời mời được chấp nhận thành công",
+      "SuccessfullyDeclinedInvitation": "Lời mời từ chối thành công",
       "SuccessfullyLeftSharedFolder": "Thành công để lại thư mục chia sẻ",
       "UserIsAlreadyInvited": "{{email}} đã được mời"
     },

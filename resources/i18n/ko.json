@@ -248,6 +248,7 @@
     "FolderToCopy": "복사할 폴더 이름",
     "Foldername": "폴더 이름",
     "Folders": "폴더",
+    "From": "보낸 사람",
     "General": "일반",
     "Host": "호스트",
     "HostDetails": "선택한 스토리지 호스트의 가용량 정보를 보여줍니다.",
@@ -417,6 +418,8 @@
       "View": "읽기 전용"
     },
     "invitation": {
+      "FailedToAcceptInvitation": "초대를 수락하지 못했습니다",
+      "FailedToDeclineInvitation": "초대를 거절하지 못했습니다",
       "FolderSharingNotAvailableToUser": "다음 사용자는 폴더 공유가 불가능한 상태입니다: ",
       "InvitationError": "초대가 실패했습니다. 이미 초대된 사용자일 수 있습니다.",
       "Invited": "초대장을 보냈습니다",
@@ -427,6 +430,8 @@
       "NoValidEmails": "입력하신 이메일이 존재하지 않는 것 같습니다. 주소를 다시 확인해주세요.",
       "Shared": "그룹 폴더를 공유했습니다",
       "SharingError": "공유에 실패했습니다. 이미 공유받은 사용자거나 프로젝트에 소속된 사용자가 아닐 수 있습니다.",
+      "SuccessfullyAcceptedInvitation": "성공적으로 초대를 수락했습니다",
+      "SuccessfullyDeclinedInvitation": "초대를 거부했습니다",
       "SuccessfullyLeftSharedFolder": "공유 폴더 연결이 성공적으로 해제되었습니다",
       "UserIsAlreadyInvited": "{{email}}은 이미 초대되었습니다"
     },
