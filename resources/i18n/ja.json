@@ -476,6 +476,10 @@
       "Used": "使用中"
     }
   },
+  "desktopNotification": {
+    "NotSupported": "このブラウザは通知をサポートしていません。",
+    "PermissionDenied": "通知アクセスを拒否しました。\nアラートを使用するには、ブラウザの設定で許可してください。"
+  },
   "dialog": {
     "ErrorOccurred": "エラーが発生しました",
     "PleaseTypeToConfirm": "確認するには{{confirmText}}を入力してください。",
@@ -1814,7 +1818,8 @@
     "DescAutoLogout": "アプリのセッション開始ページ（jupyterノートブック、Webターミナルなど）を除き、ログインしたすべてのページが閉じている場合は、自動的にログアウトします。",
     "DescAutomaticUpdateCheck": "新しいwebuiバージョンがリリースされたときに通知します。 <br />インターネットが不安定またはオフラインの場合、このオプションは自動的にオフになります。このスイッチを切り替えると、自動更新チェックを再開できます。",
     "DescBetaFeatures": "WebUIのベータ機能を使用します。 <br />ベータ機能が不安定な場合があります。一部のベータ機能は、公式機能として採用されない場合があります。",
-    "DescDesktopNotification": "デスクトップ通知をオンまたはオフにします。 <br />オンにすると、Backend.AIはOS組み込みの通知システムも使用します。このオプションをオフにしても、WebUI内の通知には影響しません。",
+    "DescClassicSessionLauncher": "NEO セッション ランチャーの代わりに Classic セッション ランチャーを使用します。\nClassic セッション ランチャーには最新の機能が含まれていない可能性があります。",
+    "DescDesktopNotification": "デスクトップ通知を有効にします。 \n<br />オンになった場合、backend.aiはOSビルトイン通知システムも使用します。\nこのオプションをオフにしても、Web UI内の通知には影響しません。\nオペレーティングシステムに応じて、デスクトップ通知には、システム設定で通知アクセス許可を有効にする必要があります。",
     "DescExperimentalDashboard": "要約ページの代わりにダッシュボードページを使用します。",
     "DescKeepLoginSessionInformation": "次回、webuiアプリに現在のログインセッション情報を保持させます。 <br />オプションがオフの場合、ログイン情報はログアウトごとにクリアされます。",
     "DescLanguage": "インターフェイス言語を設定します。英語と韓国以外の言語は、機械翻訳によって提供されます。",

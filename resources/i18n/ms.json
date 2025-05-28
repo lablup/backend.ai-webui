@@ -476,6 +476,10 @@
       "Used": "digunakan"
     }
   },
+  "desktopNotification": {
+    "NotSupported": "Penyemak imbas ini tidak menyokong pemberitahuan.",
+    "PermissionDenied": "Anda telah menafikan akses pemberitahuan. \nUntuk menggunakan makluman, sila berikannya dalam tetapan penyemak imbas anda."
+  },
   "dialog": {
     "ErrorOccurred": "Ralat Berlaku",
     "PleaseTypeToConfirm": "Sila taipkan {{confirmText}} untuk mengesahkan.",
@@ -1813,7 +1817,8 @@
     "DescAutoLogout": "Log keluar secara automatik jika semua halaman log masuk ditutup kecuali halaman yang berasal dari sesi untuk aplikasi (mis. Notebook jupyter, terminal web, dll.)",
     "DescAutomaticUpdateCheck": "Beritahu bila versi webui baru dikeluarkan. <br /> Di mana Internet tidak stabil atau di luar talian, pilihan ini akan dimatikan secara automatik. Anda boleh menukar suis ini untuk memulakan pemeriksaan kemas kini automatik sekali lagi.",
     "DescBetaFeatures": "Gunakan ciri beta untuk UI Web. <br /> Ciri-ciri beta mungkin tidak stabil. Beberapa ciri beta mungkin tidak digunakan sebagai ciri rasmi.",
-    "DescDesktopNotification": "Hidupkan atau matikan pemberitahuan desktop. <br /> Jika dihidupkan, Backend.AI juga menggunakan sistem pemberitahuan terbina dalam OS. Mematikan pilihan ini tidak mempengaruhi pemberitahuan dalam UI web.",
+    "DescClassicSessionLauncher": "Gunakan pelancar sesi Classic dan bukannya pelancar sesi NEO. \nPelancar sesi Classic mungkin tidak mempunyai ciri terkini.",
+    "DescDesktopNotification": "Membolehkan pemberitahuan desktop. \n<br /> Jika dihidupkan, backend.ai menggunakan sistem pemberitahuan terbina dalam OS juga. \nMematikan pilihan ini tidak menjejaskan pemberitahuan dalam UI Web. \nBergantung pada sistem operasi, pemberitahuan desktop mungkin memerlukan keizinan pemberitahuan dalam tetapan sistem.",
     "DescExperimentalDashboard": "Gunakan halaman papan pemuka dan bukannya halaman ringkasan.",
     "DescKeepLoginSessionInformation": "Biarkan aplikasi webui menyimpan maklumat sesi log masuk semasa lain kali. <br /> Sekiranya pilihan dimatikan, maklumat log masuk akan dihapus setiap log keluar.",
     "DescLanguage": "Tetapkan bahasa antara muka. Bahasa selain bahasa Inggeris dan Korea akan disediakan melalui terjemahan mesin.",

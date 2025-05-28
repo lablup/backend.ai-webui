@@ -477,6 +477,10 @@
       "Used": "usado"
     }
   },
+  "desktopNotification": {
+    "NotSupported": "Este navegador no admite notificaciones.",
+    "PermissionDenied": "Has negado el acceso a la notificación. \nPara usar alertas, permítelo en la configuración de su navegador."
+  },
   "dialog": {
     "ErrorOccurred": "Se ha producido un error",
     "PleaseTypeToConfirm": "Escriba {{confirmText}} para confirmar.",
@@ -1815,7 +1819,8 @@
     "DescAutoLogout": "Cierre de sesión automático si se cierran todas las páginas de inicio de sesión, excepto las páginas de inicio de sesión para aplicaciones (p. ej., cuaderno jupyter, terminal web, etc.).",
     "DescAutomaticUpdateCheck": "Notificar cuando se publique una nueva versión de webui.<br />En los casos en que Internet sea inestable o esté desconectado, esta opción se desactivará automáticamente. Puede activar este interruptor para iniciar la comprobación de actualización automática de nuevo.",
     "DescBetaFeatures": "Utilice las funciones beta para la interfaz de usuario web.<br />Las funciones beta pueden ser inestables. Es posible que algunas funciones beta no se adopten como funciones oficiales.",
-    "DescDesktopNotification": "Activar o desactivar la notificación de escritorio. <br />Si se activa, Backend.AI también utiliza el sistema de notificaciones integrado en el sistema operativo. Desactivar esta opción no afecta a las notificaciones dentro de la interfaz web.",
+    "DescClassicSessionLauncher": "Utilice el iniciador de sesiones Classic en lugar del iniciador de sesiones NEO. \nEs posible que el iniciador de sesiones Classic no tenga las funciones más recientes.",
+    "DescDesktopNotification": "Habilita la notificación de escritorio. \n<br /> Si está activado, Backend.Ai usa el sistema de notificación integrado del sistema operativo también. \nDesactivar esta opción no afecta las notificaciones dentro de la interfaz de usuario web. \nDependiendo del sistema operativo, las notificaciones de escritorio pueden requerir habilitar los permisos de notificación en la configuración del sistema.",
     "DescExperimentalDashboard": "Use la página del tablero en lugar de la página de resumen.",
     "DescKeepLoginSessionInformation": "Permite que la aplicación webui conserve la información de la sesión de inicio de sesión actual la próxima vez.<br />Si la opción está desactivada, la información de inicio de sesión se borrará cada vez que se cierre la sesión.",
     "DescLanguage": "Establecer el lenguaje de la interfaz. Los idiomas que no sean inglés y coreano se proporcionarán a través de la traducción automática.",

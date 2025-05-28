@@ -476,6 +476,10 @@
       "Used": "käytetty"
     }
   },
+  "desktopNotification": {
+    "NotSupported": "Tämä selain ei tue ilmoituksia.",
+    "PermissionDenied": "Olet kiistänyt ilmoituskäytön. \nJos haluat käyttää hälytyksiä, salli se selaimen asetuksissa."
+  },
   "dialog": {
     "ErrorOccurred": "Tapahtunut virhe",
     "PleaseTypeToConfirm": "Kirjoita {{confirmText}} vahvistaaksesi.",
@@ -1813,7 +1817,8 @@
     "DescAutoLogout": "Kirjaudu ulos automaattisesti, jos kaikki kirjautuneet sivut suljetaan, lukuun ottamatta sovellusten (esim. jupyter notebook, verkkopääte jne.) istunnon luomia sivuja.",
     "DescAutomaticUpdateCheck": "Ilmoita, kun uusi webui-versio julkaistaan.<br />Jos Internet on epävakaa tai offline, tämä vaihtoehto kytkeytyy automaattisesti pois päältä. Voit vaihtaa tätä kytkintä käynnistääksesi automaattisen päivityksen tarkistuksen uudelleen.",
     "DescBetaFeatures": "Käytä web-käyttöliittymän beta-ominaisuuksia.<br />Beta-ominaisuudet voivat olla epävakaita. Joitakin beta-ominaisuuksia ei ehkä hyväksytä viralliseksi ominaisuudeksi.",
-    "DescDesktopNotification": "Ota työpöytäilmoitukset käyttöön tai poista ne käytöstä. <br />Jos se on päällä, Backend.AI käyttää myös käyttöjärjestelmän sisäänrakennettua ilmoitusjärjestelmää. Tämän vaihtoehdon kytkeminen pois päältä ei vaikuta ilmoituksiin web-käyttöliittymässä.",
+    "DescClassicSessionLauncher": "Käytä Classic-istunnonkäynnistysohjelmaa NEO-istunnonkäynnistimen sijaan. \nClassic istunnonkäynnistysohjelmassa ei välttämättä ole uusimpia ominaisuuksia.",
+    "DescDesktopNotification": "Mahdollistaa työpöytäilmoituksen. \n<br /> Jos kytketään päälle, backend.ai käyttää myös sisäänrakennettua ilmoitusjärjestelmää. \nTämän vaihtoehdon sammuttaminen ei vaikuta ilmoituksiin Web -käyttöliittymässä. \nKäyttöjärjestelmästä riippuen työpöytäilmoitukset voivat edellyttää ilmoitusoikeuksien mahdollistamista järjestelmä -asetuksissa.",
     "DescExperimentalDashboard": "Käytä kojelaudan sivua yhteenvetosivun sijasta.",
     "DescKeepLoginSessionInformation": "Anna webui-sovelluksen säilyttää nykyisen kirjautumisistunnon tiedot seuraavalla kerralla.<br />Jos vaihtoehto on pois päältä, kirjautumistiedot tyhjennetään jokaisen uloskirjautumisen yhteydessä.",
     "DescLanguage": "Aseta käyttöliittymäkieli. Muut kielet kuin englanti ja korea tarjotaan koneen käännöksen kautta.",

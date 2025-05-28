@@ -477,6 +477,10 @@
       "Used": "gebraucht"
     }
   },
+  "desktopNotification": {
+    "NotSupported": "Dieser Browser unterstützt keine Benachrichtigungen.",
+    "PermissionDenied": "Sie haben den Benachrichtigungszugriff abgelehnt. \nUm Warnungen zu verwenden, lassen Sie diese bitte in Ihren Browsereinstellungen zu."
+  },
   "dialog": {
     "ErrorOccurred": "Ein Fehler ist aufgetreten",
     "PleaseTypeToConfirm": "Bitte geben Sie {{confirmText}} ein, um zu bestätigen.",
@@ -1812,7 +1816,8 @@
     "DescAutoLogout": "Melden Sie sich automatisch ab, wenn alle angemeldeten Seiten geschlossen sind, mit Ausnahme von sitzungsbasierten Seiten für Apps (z. B. Jupyter Notebook, Webterminal usw.)",
     "DescAutomaticUpdateCheck": "Benachrichtigen, wenn eine neue Webui-Version veröffentlicht wird. <br /> Wenn das Internet instabil oder offline ist, wird diese Option automatisch deaktiviert. Sie können diesen Schalter umschalten, um die automatische Updateprüfung erneut zu starten.",
     "DescBetaFeatures": "Verwenden Sie Betafunktionen für die Web-Benutzeroberfläche. <br /> Beta-Funktionen können instabil sein. Einige Betafunktionen werden möglicherweise nicht als offizielle Funktionen übernommen.",
-    "DescDesktopNotification": "Aktivieren oder deaktivieren Sie die Desktop-Benachrichtigung. <br /> Wenn aktiviert, verwendet Backend.AI auch das im Betriebssystem integrierte Benachrichtigungssystem. Das Deaktivieren dieser Option wirkt sich nicht auf Benachrichtigungen in der Web-Benutzeroberfläche aus.",
+    "DescClassicSessionLauncher": "Verwenden Sie den Classic-Sitzungsstarter anstelle des NEO-Sitzungsstarters. \nDer Classic Sitzungsstarter verfügt möglicherweise nicht über die neuesten Funktionen.",
+    "DescDesktopNotification": "Aktiviert die Desktop -Benachrichtigung. \n<br /> Wenn er eingeschaltet ist, verwendet Backend.ai auch das integrierte Benachrichtigungssystem des Betriebssystems. \nDas Ausschalten dieser Option wirkt sich nicht auf Benachrichtigungen innerhalb der Web -Benutzeroberfläche aus. \nAbhängig vom Betriebssystem müssen Desktop -Benachrichtigungen möglicherweise Benachrichtigungsberechtigungen in den Systemeinstellungen ermöglichen.",
     "DescExperimentalDashboard": "Verwenden Sie die Dashboard -Seite anstelle einer zusammenfassenden Seite.",
     "DescKeepLoginSessionInformation": "Lassen Sie die Webui-App beim nächsten Mal die aktuellen Anmeldesitzungsinformationen beibehalten. <br /> Wenn die Option deaktiviert ist, werden die Anmeldeinformationen bei jeder Abmeldung gelöscht.",
     "DescLanguage": "Setzen Sie die Schnittstelle. Andere Sprachen als Englisch und Koreanisch werden per maschineller Übersetzung bereitgestellt.",

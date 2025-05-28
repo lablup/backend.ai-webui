@@ -477,6 +477,10 @@
       "Used": "kullanılmış"
     }
   },
+  "desktopNotification": {
+    "NotSupported": "Bu tarayıcı bildirimleri desteklemez.",
+    "PermissionDenied": "Bildirim erişimini reddettiniz. \nUyarıları kullanmak için lütfen tarayıcı ayarlarınıza izin verin."
+  },
   "dialog": {
     "ErrorOccurred": "Hata oluştu",
     "PleaseTypeToConfirm": "Onaylamak için lütfen {{confirmText}} yazın.",
@@ -1814,7 +1818,8 @@
     "DescAutoLogout": "Uygulamalar için oturum kaynaklı sayfalar (örneğin jupyter notebook, web terminal, vb.)",
     "DescAutomaticUpdateCheck": "Yeni bir webui sürümü yayınlandığında bildir. <br /> İnternetin kararsız veya çevrimdışı olduğu durumlarda bu seçenek otomatik olarak kapatılacaktır. Otomatik güncelleme kontrolünü yeniden başlatmak için bu anahtarı değiştirebilirsiniz.",
     "DescBetaFeatures": "Web kullanıcı arayüzü için beta özelliklerini kullanın. <br /> Beta özellikleri kararsız olabilir. Bazı beta özellikler resmi özellik olarak kabul edilmeyebilir.",
-    "DescDesktopNotification": "Masaüstü bildirimini açın veya kapatın. <br /> Açıksa, Backend.AI, OS yerleşik bildirim sistemini de kullanır. Bu seçeneği kapatmak, web kullanıcı arayüzündeki bildirimleri etkilemez.",
+    "DescClassicSessionLauncher": "NEO oturum başlatıcısı yerine Classic oturum başlatıcıyı kullanın. \nClassic oturum başlatıcı en son özelliklere sahip olmayabilir.",
+    "DescDesktopNotification": "Masaüstü bildirimini etkinleştirir. \n<br /> Açılırsa, backend.ai OS yerleşik bildirim sistemi de kullanır. \nBu seçeneği kapatmak Web kullanıcı arayüzündeki bildirimleri etkilemez. \nİşletim sistemine bağlı olarak, masaüstü bildirimleri sistem ayarlarında bildirim izinlerinin etkinleştirilmesini gerektirebilir.",
     "DescExperimentalDashboard": "Özet sayfası yerine gösterge paneli sayfasını kullanın.",
     "DescKeepLoginSessionInformation": "Webui uygulamasının bir dahaki sefere mevcut oturum açma bilgilerini tutmasına izin verin. <br /> Seçenek kapatılırsa, oturum açma bilgileri her oturum kapatıldığında temizlenir.",
     "DescLanguage": "Arayüz dilini ayarlayın. İngilizce ve Korece dışındaki diller makine çevirisi ile sağlanacaktır.",

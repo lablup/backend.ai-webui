@@ -476,6 +476,10 @@
       "Used": "digunakan"
     }
   },
+  "desktopNotification": {
+    "NotSupported": "Browser ini tidak mendukung pemberitahuan.",
+    "PermissionDenied": "Anda telah menolak akses pemberitahuan. \nUntuk menggunakan lansiran, harap diizinkan di pengaturan browser Anda."
+  },
   "dialog": {
     "ErrorOccurred": "Terjadi Galat",
     "PleaseTypeToConfirm": "Harap ketik {{confirmText}} untuk mengonfirmasi.",
@@ -1814,7 +1818,8 @@
     "DescAutoLogout": "Keluar secara otomatis jika semua halaman yang masuk ditutup kecuali halaman yang berasal dari sesi untuk aplikasi (mis. Jupyter notebook, terminal web, dll.)",
     "DescAutomaticUpdateCheck": "Beri tahu saat versi UI web baru dirilis. <br /> Di mana Internet tidak stabil atau offline, opsi ini akan dimatikan secara otomatis. Anda dapat mengaktifkan opsi ini untuk memulai lagi pemeriksaan pembaruan otomatis.",
     "DescBetaFeatures": "Gunakan fitur beta untuk UI Web. <br />Fitur beta mungkin tidak stabil. Beberapa fitur beta mungkin tidak diadopsi sebagai fitur resmi.",
-    "DescDesktopNotification": "Mengaktifkan atau menonaktifkan notifikasi desktop. <br />Jika diaktifkan, Backend.AI juga menggunakan sistem notifikasi bawaan OS. Menonaktifkan opsi ini tidak memengaruhi notifikasi dalam UI web.",
+    "DescClassicSessionLauncher": "Gunakan peluncur sesi Classic alih-alih peluncur sesi NEO. \nPeluncur sesi Classic mungkin tidak memiliki fitur terbaru.",
+    "DescDesktopNotification": "Memungkinkan pemberitahuan desktop. \n<br /> Jika dihidupkan, backend.ai menggunakan sistem pemberitahuan bawaan OS juga. \nMematikan opsi ini tidak memengaruhi pemberitahuan dalam Web UI. \nBergantung pada sistem operasi, pemberitahuan desktop mungkin memerlukan izin pemberitahuan yang memungkinkan dalam pengaturan sistem.",
     "DescExperimentalDashboard": "Gunakan halaman dasbor alih -alih halaman ringkasan.",
     "DescKeepLoginSessionInformation": "Biarkan aplikasi UI web menyimpan informasi sesi login saat ini di lain waktu. <br />Jika opsi dimatikan, informasi login akan dihapus setiap keluar.",
     "DescLanguage": "Atur bahasa antarmuka. Bahasa selain bahasa Inggris dan Korea akan disediakan melalui terjemahan mesin.",

@@ -9,7 +9,7 @@ import {
 } from '../hooks/useBAISetting';
 import { SettingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Button, Typography } from 'antd';
+import { App, Button, Typography } from 'antd';
 import Card from 'antd/es/card/Card';
 import _ from 'lodash';
 import { useState } from 'react';
@@ -23,6 +23,7 @@ const tabParam = withDefault(StringParam, 'general');
 
 const UserPreferencesPage = () => {
   const { t } = useTranslation();
+  const { message } = App.useApp();
   const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
 
   const [desktopNotification, setDesktopNotification] = useBAISettingUserState(
@@ -100,6 +101,26 @@ const UserPreferencesPage = () => {
           setValue: setDesktopNotification,
           onChange: (e) => {
             setDesktopNotification(e.target.checked);
+
+            // Request permission for desktop notifications
+            if (!e.target.checked || Notification.permission === 'granted')
+              return;
+            if (!('Notification' in window)) {
+              message.error(t('desktopNotification.NotSupported'));
+              setDesktopNotification(false);
+              return;
+            }
+            if (Notification.permission === 'denied') {
+              message.error(t('desktopNotification.PermissionDenied'));
+              setDesktopNotification(false);
+              return;
+            }
+            Notification.requestPermission().then((permission) => {
+              if (permission === 'denied') {
+                message.error(t('desktopNotification.PermissionDenied'));
+                setDesktopNotification(false);
+              }
+            });
           },
         },
         {

@@ -477,6 +477,10 @@
       "Used": "đã sử dụng"
     }
   },
+  "desktopNotification": {
+    "NotSupported": "Trình duyệt này không hỗ trợ thông báo.",
+    "PermissionDenied": "Bạn đã từ chối truy cập thông báo. \nĐể sử dụng cảnh báo, vui lòng cho phép nó trong cài đặt trình duyệt của bạn."
+  },
   "dialog": {
     "ErrorOccurred": "Xảy ra lỗi",
     "PleaseTypeToConfirm": "Vui lòng nhập {{confirmText}} để xác nhận.",
@@ -1815,7 +1819,8 @@
     "DescAutoLogout": "Tự động đăng xuất nếu tất cả các trang đã đăng nhập đều bị đóng ngoại trừ các trang gốc phiên cho ứng dụng (ví dụ: sổ ghi chép jupyter, thiết bị đầu cuối web, v.v.)",
     "DescAutomaticUpdateCheck": "Thông báo khi phiên bản webui mới được phát hành. <br /> Trong trường hợp Internet không ổn định hoặc ngoại tuyến, tùy chọn này sẽ tự động bị tắt. Bạn có thể bật công tắc này để bắt đầu lại quá trình kiểm tra cập nhật tự động.",
     "DescBetaFeatures": "Sử dụng các tính năng beta cho giao diện người dùng Web. <br /> Các tính năng beta có thể không ổn định. Một số tính năng beta có thể không được chấp nhận làm tính năng chính thức.",
-    "DescDesktopNotification": "Bật hoặc tắt thông báo trên màn hình. <br /> Nếu được bật, Backend.AI cũng sử dụng hệ thống thông báo tích hợp sẵn của OS. Tắt tùy chọn này không ảnh hưởng đến các thông báo trong giao diện người dùng web.",
+    "DescClassicSessionLauncher": "Sử dụng trình khởi chạy phiên Classic thay vì trình khởi chạy phiên NEO. \nTrình khởi chạy phiên Classic có thể không có các tính năng mới nhất.",
+    "DescDesktopNotification": "Cho phép thông báo máy tính để bàn. \n<br /> Nếu được bật, Backend.ai cũng sử dụng hệ thống thông báo tích hợp OS. \nTắt tùy chọn này không ảnh hưởng đến thông báo trong UI web. \nTùy thuộc vào hệ điều hành, thông báo máy tính để bàn có thể yêu cầu cho phép các quyền thông báo trong cài đặt hệ thống.",
     "DescExperimentalDashboard": "Sử dụng trang bảng điều khiển thay vì trang tóm tắt.",
     "DescKeepLoginSessionInformation": "Hãy để ứng dụng webui giữ thông tin phiên đăng nhập hiện tại vào lần sau. <br /> Nếu tùy chọn bị tắt, thông tin đăng nhập sẽ bị xóa mỗi lần đăng xuất.",
     "DescLanguage": "Đặt ngôn ngữ giao diện. Các ngôn ngữ khác ngoài tiếng Anh và tiếng Hàn sẽ được cung cấp thông qua dịch máy.",

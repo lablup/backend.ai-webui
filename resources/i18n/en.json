@@ -479,6 +479,10 @@
       "Used": "used"
     }
   },
+  "desktopNotification": {
+    "NotSupported": "This browser does not support notifications.",
+    "PermissionDenied": "You've denied notification access. To use alerts, please allow it in your browser settings."
+  },
   "dialog": {
     "ErrorOccurred": "Error Occurred",
     "PleaseTypeToConfirm": "Please type {{ confirmText }} to confirm.",
@@ -1823,7 +1827,8 @@
     "DescAutoLogout": "Log out automatically if all logined pages are closed except session originated pages for apps(e.g. jupyter notebook, web terminal, etc.)",
     "DescAutomaticUpdateCheck": "Notify when a new webui version is released.<br />In where the Internet is unstable or offline, this option will be automatically turned off. You can toggle this switch to start the automatic update check again.",
     "DescBetaFeatures": "Use beta features for Web UI.<br />Beta features may be unstable. Some beta features may not be adopted as official feature.",
-    "DescDesktopNotification": "Enables desktop notification. <br />If turned on, Backend.AI uses OS built-in notification system too. Turning off this option does not affect notifications within web UI.",
+    "DescClassicSessionLauncher": "Use the Classic session launcher instead of the NEO session launcher. Classic session launcher may not have the latest features.",
+    "DescDesktopNotification": "Enables desktop notification. <br />If turned on, Backend.AI uses OS built-in notification system too. Turning off this option does not affect notifications within web UI. Depending on the operating system, desktop notifications may require enabling notification permissions in system settings.",
     "DescExperimentalDashboard": "Use Dashboard page instead of Summary page.",
     "DescKeepLoginSessionInformation": "Let webui app keep current login session information next time.<br />If the option is turned off, login information will be cleared each logout.",
     "DescLanguage": "Set interface language. Languages other than English and Korean will be provided via machine translation.",

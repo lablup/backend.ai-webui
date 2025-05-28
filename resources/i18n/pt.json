@@ -477,6 +477,10 @@
       "Used": "utilizado"
     }
   },
+  "desktopNotification": {
+    "NotSupported": "Este navegador não suporta notificações.",
+    "PermissionDenied": "Você negou acesso à notificação. \nPara usar alertas, deixe -o nas configurações do navegador."
+  },
   "dialog": {
     "ErrorOccurred": "Ocorreu um erro",
     "PleaseTypeToConfirm": "Digite {{confirmText}} para confirmar.",
@@ -1815,7 +1819,8 @@
     "DescAutoLogout": "Saia automaticamente se todas as páginas logadas forem fechadas, exceto as páginas originadas da sessão para aplicativos (por exemplo, notebook jupyter, terminal da web, etc.)",
     "DescAutomaticUpdateCheck": "Notifique quando uma nova versão do webui for lançada. <br /> Onde a Internet estiver instável ou offline, esta opção será automaticamente desligada. Você pode alternar essa opção para iniciar a verificação automática de atualização novamente.",
     "DescBetaFeatures": "Use recursos beta para Web UI. Os recursos beta <br /> podem ser instáveis. Alguns recursos beta podem não ser adotados como recurso oficial.",
-    "DescDesktopNotification": "Ative ou desative a notificação na área de trabalho. <br /> Se ativado, o Backend.AI também usa o sistema de notificação integrado do SO. Desativar esta opção não afeta as notificações na IU da web.",
+    "DescClassicSessionLauncher": "Use o iniciador de sessão Classic em vez do iniciador de sessão NEO. \nO iniciador de sessão Classic pode não ter os recursos mais recentes.",
+    "DescDesktopNotification": "Ativa a notificação da área de trabalho. \n<br /> Se ativado, o back-end.ai também usa o sistema de notificação interno do sistema operacional. \nDesligar essa opção não afeta as notificações na interface da usuário da web. \nDependendo do sistema operacional, as notificações de desktop podem exigir permissões de notificação de ativação nas configurações do sistema.",
     "DescExperimentalDashboard": "Use a página do painel em vez da página de resumo.",
     "DescKeepLoginSessionInformation": "Deixe o aplicativo webui manter as informações atuais da sessão de login na próxima vez. <br /> Se a opção for desligada, as informações de login serão apagadas a cada logout.",
     "DescLanguage": "Definir linguagem de interface. Outros idiomas que não o inglês e o coreano serão fornecidos via tradução da máquina.",

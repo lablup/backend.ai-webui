@@ -477,6 +477,10 @@
       "Used": "utilisé"
     }
   },
+  "desktopNotification": {
+    "NotSupported": "Ce navigateur ne prend pas en charge les notifications.",
+    "PermissionDenied": "Vous avez nié l'accès à la notification. \nPour utiliser des alertes, veuillez le permettre dans les paramètres de votre navigateur."
+  },
   "dialog": {
     "ErrorOccurred": "Erreur est survenue",
     "PleaseTypeToConfirm": "Veuillez taper {{confirmText}} pour confirmer.",
@@ -1815,7 +1819,8 @@
     "DescAutoLogout": "Déconnectez-vous automatiquement si toutes les pages connectées sont fermées, à l'exception des pages d'origine de session pour les applications (par exemple, bloc-notes jupyter, terminal Web, etc.)",
     "DescAutomaticUpdateCheck": "Avertir lorsqu'une nouvelle version de webui est publiée. <br /> Dans les cas où Internet est instable ou hors ligne, cette option sera automatiquement désactivée. Vous pouvez basculer ce commutateur pour relancer la vérification automatique des mises à jour.",
     "DescBetaFeatures": "Utilisez les fonctionnalités bêta pour l'interface utilisateur Web. <br /> Les fonctionnalités bêta peuvent être instables. Certaines fonctionnalités bêta peuvent ne pas être adoptées comme fonctionnalité officielle.",
-    "DescDesktopNotification": "Activez ou désactivez la notification sur le bureau. <br /> S'il est activé, Backend.AI utilise également le système de notification intégré au système d'exploitation. La désactivation de cette option n'affecte pas les notifications dans l'interface utilisateur Web.",
+    "DescClassicSessionLauncher": "Utilisez le lanceur de session Classic au lieu du lanceur de session NEO. \nLe lanceur de session Classic peut ne pas disposer des dernières fonctionnalités.",
+    "DescDesktopNotification": "Active la notification de bureau. \n<br /> Si vous allume, backend.ai utilise également le système de notification intégré du système d'exploitation. \nLa désactivation de cette option n'affecte pas les notifications dans l'interface utilisateur Web. \nSelon le système d'exploitation, les notifications de bureau peuvent nécessiter l'activation des autorisations de notification dans les paramètres du système.",
     "DescExperimentalDashboard": "Utilisez la page de tableau de bord au lieu de la page Résumé.",
     "DescKeepLoginSessionInformation": "Laissez l'application webui conserver les informations de session de connexion actuelles la prochaine fois. <br /> Si l'option est désactivée, les informations de connexion seront effacées à chaque déconnexion.",
     "DescLanguage": "Définir la langue d'interface. Des langues autres que l'anglais et le coréen seront fournies par traduction automatique.",
