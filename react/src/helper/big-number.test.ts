@@ -38,8 +38,8 @@ describe('parseUnit', () => {
   });
 
   test('parses a number without a unit', () => {
-    expect(BigNumber.parseUnit('123')).toEqualBigNumber(['123', 'b']);
-    expect(BigNumber.parseUnit('45.67')).toEqualBigNumber(['45.67', 'b']);
+    expect(BigNumber.parseUnit('123')).toEqualBigNumber(['123', 'B']);
+    expect(BigNumber.parseUnit('45.67')).toEqualBigNumber(['45.67', 'B']);
   });
 
   test('handles invalid input gracefully', () => {
@@ -48,7 +48,7 @@ describe('parseUnit', () => {
   });
 
   test('handles edge cases', () => {
-    expect(BigNumber.parseUnit('0')).toEqualBigNumber(['0', 'b']);
+    expect(BigNumber.parseUnit('0')).toEqualBigNumber(['0', 'B']);
     expect(BigNumber.parseUnit('0px')).toEqualBigNumber(['0', 'px']);
     expect(BigNumber.parseUnit('.5em')).toEqualBigNumber(['0.5', 'em']);
   });
@@ -56,11 +56,11 @@ describe('parseUnit', () => {
   test('handle a big large number', () => {
     expect(BigNumber.parseUnit(9007199254740991)).toEqualBigNumber([
       '9007199254740991',
-      'b',
+      'B',
     ]);
     expect(BigNumber.parseUnit('9007199254740991B')).toEqualBigNumber([
       '9007199254740991',
-      'b',
+      'B',
     ]);
     expect(BigNumber.parseUnit('8P')).toEqualBigNumber(['8', 'p']);
   });
@@ -186,7 +186,7 @@ describe('convertBinarySizeUnit', () => {
   });
 
   it('should handle zero input correctly', () => {
-    const result = BigNumber.convertBinarySizeUnit('0g', 'b');
+    const result = BigNumber.convertBinarySizeUnit('0g', 'B');
     expect(result?.number.toString()).toBe('0');
     expect(result?.unit).toBe('B');
   });

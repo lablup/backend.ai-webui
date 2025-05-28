@@ -8,7 +8,6 @@ type SizeUnit =
   | 'T'
   | 'P'
   | 'E'
-  | 'b'
   | 'k'
   | 'm'
   | 'g'
@@ -35,7 +34,7 @@ export namespace BigNumber {
 
   export function parseUnit(
     other: BigSource,
-    unit: SizeUnit = 'b',
+    unit: SizeUnit = 'B',
   ): [Big, SizeUnit] {
     if (typeof other === 'number') {
       return [new Big(other), unit];

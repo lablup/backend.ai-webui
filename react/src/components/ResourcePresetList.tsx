@@ -104,7 +104,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
         }
         return (
           <NumberWithUnit
-            numberUnit={text + 'b'}
+            numberUnit={text + ''}
             targetUnit="g"
             unitType="binary"
           />

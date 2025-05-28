@@ -284,7 +284,7 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
         <Col span={24}>
           <Flex justify="end">
             <Typography.Text>
-              {`I/O Read: ${convertDecimalSizeUnit(sortedLiveStat?.io_read?.current, 'm')?.numberUnit ?? '-'}B / Write: ${convertDecimalSizeUnit(sortedLiveStat?.io_write?.current, 'm')?.numberUnit ?? '-'}B`}
+              {`I/O Read: ${convertDecimalSizeUnit(sortedLiveStat?.io_read?.current, 'm')?.formattedSizeWithSuffix ?? '-'} / Write: ${convertDecimalSizeUnit(sortedLiveStat?.io_write?.current, 'm')?.formattedSizeWithSuffix ?? '-'}`}
             </Typography.Text>
           </Flex>
         </Col>

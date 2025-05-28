@@ -245,7 +245,8 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
       key: 'max_size',
       label: t('data.folders.MaxSize'),
       children: vfolderNode.max_size
-        ? `${convertDecimalSizeUnit(vfolderNode.max_size, 'g', 2)?.numberUnit}B`
+        ? convertDecimalSizeUnit(vfolderNode.max_size, 'g', 2)
+            ?.formattedSizeWithSuffix
         : '∞',
     },
     {

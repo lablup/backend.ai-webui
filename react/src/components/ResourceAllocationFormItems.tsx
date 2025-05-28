@@ -370,10 +370,10 @@ const ResourceAllocationFormItems: React.FC<
       );
       const slots = _.pick(preset?.resource_slots, _.keys(resourceSlotsInRG));
       const mem = convertBinarySizeUnit(
-        (slots?.mem || 0) + 'b',
+        (slots?.mem || 0) + '',
         'g',
         2,
-      )?.numberUnit;
+      )?.formattedSize;
       const acceleratorObj = _.omit(slots, ['cpu', 'mem', 'shmem']);
 
       // Select the first matched AI accelerator type and value
@@ -401,10 +401,10 @@ const ResourceAllocationFormItems: React.FC<
           // transform to GB based on preset values
           mem,
           shmem: convertBinarySizeUnit(
-            (preset?.shared_memory || 0) + 'b',
+            (preset?.shared_memory || 0) + '',
             'g',
             2,
-          )?.numberUnit,
+          )?.formattedSize,
           cpu: parseInt(slots?.cpu || '0') || 0,
         },
       });
@@ -790,7 +790,7 @@ const ResourceAllocationFormItems: React.FC<
                                       resourceLimits.mem &&
                                       compareNumberWithUnits(
                                         value,
-                                        remaining.mem + 'b',
+                                        remaining.mem + '',
                                       ) > 0
                                     ) {
                                       return Promise.reject(
@@ -814,7 +814,7 @@ const ResourceAllocationFormItems: React.FC<
                                   ? {
                                       //@ts-ignore
                                       [convertBinarySizeUnit(
-                                        remaining.mem + 'b',
+                                        remaining.mem + '',
                                         'g',
                                         3,
                                       )?.numberFixed]: {
@@ -933,7 +933,7 @@ const ResourceAllocationFormItems: React.FC<
                                   }}
                                 ></div>
                                 Application MEM{' '}
-                                {appMemUnitResult?.numberUnit.toLowerCase()}
+                                {appMemUnitResult?.formattedSize.toLowerCase()}
                               </Flex>
                               <Flex gap={'xxs'}>
                                 <div
@@ -946,7 +946,7 @@ const ResourceAllocationFormItems: React.FC<
                                 ></div>
 
                                 {getFieldValue('enabledAutomaticShmem') ? (
-                                  `SHMEM ${shmemUnitResult?.numberUnit.toLowerCase()}`
+                                  `SHMEM ${shmemUnitResult?.formattedSize.toLowerCase()}`
                                 ) : (
                                   <Form.Item
                                     noStyle
@@ -973,7 +973,7 @@ const ResourceAllocationFormItems: React.FC<
                                           value: string,
                                         ) => {
                                           const applicationMem =
-                                            appMemUnitResult?.numberUnit;
+                                            appMemUnitResult?.formattedSize;
                                           const shmem = value;
 
                                           if (
