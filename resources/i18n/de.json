@@ -1162,7 +1162,7 @@
     "ResourcePresets": "Ressourcenvoreinstellungen",
     "Resources": "Ressourcen",
     "SHMEMShouldBeSmallerThanMemory": "Gemeinsamer Speicher muss kleiner sein als der Speicher",
-    "SharedMemory": "Gemeinsamer Speicher (GB)",
+    "SharedMemory": "Gemeinsamer Speicher",
     "Updated": "Ressourcenvoreinstellung aktualisiert"
   },
   "session": {

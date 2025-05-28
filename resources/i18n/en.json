@@ -1171,7 +1171,7 @@
     "ResourcePresets": "Resource Presets",
     "Resources": "Resources",
     "SHMEMShouldBeSmallerThanMemory": "Shared memory must be smaller than memory",
-    "SharedMemory": "Shared memory (GB)",
+    "SharedMemory": "Shared memory",
     "Updated": "Resource preset updated"
   },
   "session": {

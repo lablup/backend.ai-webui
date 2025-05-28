@@ -1165,7 +1165,7 @@
     "ResourcePresets": "Cài đặt trước tài nguyên",
     "Resources": "Tài nguyên",
     "SHMEMShouldBeSmallerThanMemory": "Bộ nhớ dùng chung phải nhỏ hơn bộ nhớ",
-    "SharedMemory": "Bộ nhớ dùng chung (GB)",
+    "SharedMemory": "Bộ nhớ chia sẻ",
     "Updated": "Đã cập nhật cài đặt trước tài nguyên"
   },
   "session": {

@@ -1165,7 +1165,7 @@
     "ResourcePresets": "资源预设",
     "Resources": "资源",
     "SHMEMShouldBeSmallerThanMemory": "共享内存必须小于内存",
-    "SharedMemory": "共享内存 (GB)",
+    "SharedMemory": "共享内存",
     "Updated": "资源预设已更新"
   },
   "session": {

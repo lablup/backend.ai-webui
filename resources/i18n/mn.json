@@ -1162,7 +1162,7 @@
     "ResourcePresets": "Нөөцийн урьдчилсан тохируулга",
     "Resources": "Нөөц",
     "SHMEMShouldBeSmallerThanMemory": "Хуваалцсан санах ой санах ойноос бага байх ёстой",
-    "SharedMemory": "Хуваалцсан санах ой (GB)",
+    "SharedMemory": "Хуваалцсан санах ой",
     "Updated": "Нөөцийн урьдчилан тохируулалтыг шинэчилсэн"
   },
   "session": {

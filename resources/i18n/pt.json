@@ -1165,7 +1165,7 @@
     "ResourcePresets": "Predefinições de recursos",
     "Resources": "Recursos",
     "SHMEMShouldBeSmallerThanMemory": "A memória partilhada deve ser mais pequena do que a memória",
-    "SharedMemory": "Memória compartilhada (GB)",
+    "SharedMemory": "Memória compartilhada",
     "Updated": "Predefinição de recurso atualizada"
   },
   "session": {

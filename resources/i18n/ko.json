@@ -1168,7 +1168,7 @@
     "ResourcePresets": "자원 프리셋",
     "Resources": "자원",
     "SHMEMShouldBeSmallerThanMemory": "공유메모리는 메모리보다 작아야 합니다",
-    "SharedMemory": "공유메모리 (GB)",
+    "SharedMemory": "공유메모리",
     "Updated": "자원 프리셋이 수정되었습니다"
   },
   "session": {

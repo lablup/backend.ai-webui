@@ -1165,7 +1165,7 @@
     "ResourcePresets": "Préréglages de ressources",
     "Resources": "Ressources",
     "SHMEMShouldBeSmallerThanMemory": "La mémoire partagée doit être plus petite que la mémoire",
-    "SharedMemory": "Mémoire partagée (Go)",
+    "SharedMemory": "Mémoire partagée",
     "Updated": "Préréglage de ressource mis à jour"
   },
   "session": {

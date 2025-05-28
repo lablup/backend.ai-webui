@@ -7,6 +7,7 @@ import {
 } from '../hooks/backendai';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
 import Flex from './Flex';
+import NumberWithUnit from './NumberWithUnit';
 import { Tooltip, Typography, theme } from 'antd';
 import _ from 'lodash';
 import { MicrochipIcon } from 'lucide-react';
@@ -60,18 +61,35 @@ const ResourceNumber: React.FC<ResourceNumberProps> = ({
       ) : (
         type
       )}
+      {mergedResourceSlots?.[type]?.number_format.binary ? (
+        <NumberWithUnit
+          numberUnit={amount}
+          targetUnit="g"
+          unitType="binary"
+          postfix={
+            _.isUndefined(max)
+              ? ''
+              : max === 'Infinity'
+                ? '~∞'
+                : `~${formatAmount(max)}`
+          }
+        />
+      ) : (
+        <>
+          <Typography.Text>
+            {formatAmount(amount)}
+            {_.isUndefined(max)
+              ? null
+              : max === 'Infinity'
+                ? '~∞'
+                : `~${formatAmount(max)}`}
+          </Typography.Text>
+          <Typography.Text type="secondary">
+            {mergedResourceSlots?.[type]?.display_unit || ''}
+          </Typography.Text>
+        </>
+      )}
 
-      <Typography.Text>
-        {formatAmount(amount)}
-        {_.isUndefined(max)
-          ? null
-          : max === 'Infinity'
-            ? '~∞'
-            : `~${formatAmount(max)}`}
-      </Typography.Text>
-      <Typography.Text type="secondary">
-        {mergedResourceSlots?.[type]?.display_unit || ''}
-      </Typography.Text>
       {type === 'mem' && opts?.shmem && opts?.shmem > 0 ? (
         <Typography.Text
           type="secondary"

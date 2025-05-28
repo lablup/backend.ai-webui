@@ -1161,7 +1161,7 @@
     "ResourcePresets": "Προεπιλογές πόρων",
     "Resources": "Πόροι",
     "SHMEMShouldBeSmallerThanMemory": "Η κοινόχρηστη μνήμη πρέπει να είναι μικρότερη από τη μνήμη",
-    "SharedMemory": "Κοινή μνήμη (GB)",
+    "SharedMemory": "Κοινόχρηστη μνήμη",
     "Updated": "Η προεπιλογή πόρων ενημερώθηκε"
   },
   "session": {

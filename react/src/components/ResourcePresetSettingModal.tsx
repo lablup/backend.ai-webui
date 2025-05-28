@@ -238,13 +238,16 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
                     JSON.parse(resourcePreset?.resource_slots || '{}'),
                     (value, key) =>
                       _.includes(key, 'mem')
-                        ? convertBinarySizeUnit(value + 'b', 'g')?.numberUnit
+                        ? convertBinarySizeUnit(
+                            value + 'b',
+                            value === '0' ? 'g' : 'auto',
+                          )?.numberUnit
                         : value,
                   ) || {},
                 shared_memory: resourcePreset?.shared_memory
                   ? convertBinarySizeUnit(
                       resourcePreset?.shared_memory + 'b',
-                      'g',
+                      resourcePreset?.shared_memory === '0' ? 'g' : 'auto',
                     )?.numberUnit
                   : null,
               }

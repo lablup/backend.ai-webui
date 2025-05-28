@@ -1164,7 +1164,7 @@
     "ResourcePresets": "Pratetap Sumber",
     "Resources": "Sumber",
     "SHMEMShouldBeSmallerThanMemory": "Memori yang dikongsi mestilah lebih kecil daripada memori",
-    "SharedMemory": "Memori bersama (GB)",
+    "SharedMemory": "Memori bersama",
     "Updated": "Pratetap sumber dikemas kini"
   },
   "session": {

@@ -1162,7 +1162,7 @@
     "ResourcePresets": "Preimpostazioni delle risorse",
     "Resources": "risorse",
     "SHMEMShouldBeSmallerThanMemory": "La memoria condivisa deve essere più piccola della memoria",
-    "SharedMemory": "Memoria condivisa (GB)",
+    "SharedMemory": "Memoria condivisa",
     "Updated": "Preimpostazione delle risorse aggiornata"
   },
   "session": {

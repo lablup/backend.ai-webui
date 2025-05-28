@@ -1164,7 +1164,7 @@
     "ResourcePresets": "リソースプリセット",
     "Resources": "リソース",
     "SHMEMShouldBeSmallerThanMemory": "共有メモリはメモリより小さくなければならない",
-    "SharedMemory": "共有メモリ（GB）",
+    "SharedMemory": "共有メモリ",
     "Updated": "リソースプリセットが更新されました"
   },
   "session": {
