@@ -35,6 +35,20 @@ interface fileData {
   complete: boolean;
 }
 
+interface ResourceLimit {
+  key: string;
+  min: string;
+  max: string;
+}
+interface SystemRoleImage {
+  registry: string;
+  name: string;
+  tag: string;
+  installed: boolean;
+  resource_limits?: ResourceLimit[];
+  [key: string]: any;
+}
+
 /**
  Backend AI Folder Explorer
 
@@ -1575,9 +1589,10 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
   async _launchSystemRoleSSHSession() {
     const imageResource: Record<string, unknown> = {};
     const configSSHImage = globalThis.backendaiclient._config.systemSSHImage;
-    const images = this.systemRoleSupportedImages.filter(
-      (image: any) => image['installed'],
-    );
+    const images: Array<SystemRoleImage> =
+      this.systemRoleSupportedImages.filter(
+        (image: SystemRoleImage) => image['installed'],
+      );
     // TODO: use lablup/openssh-server image
     // select one image to launch system role supported session
     const preferredImage = images[0];
@@ -1592,8 +1607,17 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
 
     // add current folder
     imageResource['mounts'] = [this.vfolderName];
-    imageResource['cpu'] = 1;
-    imageResource['mem'] = '256m';
+
+    const cpuLimit = preferredImage?.resource_limits?.find(
+      (limit) => limit.key === 'cpu',
+    )?.min;
+    imageResource['cpu'] = cpuLimit ? parseInt(cpuLimit, 10) : 1;
+
+    const memLimit = preferredImage?.resource_limits?.find(
+      (limit) => limit.key === 'mem',
+    )?.min;
+    imageResource['mem'] = memLimit ? memLimit : '256m';
+
     imageResource['type'] = 'system';
     imageResource['domain'] = globalThis.backendaiclient._config.domainName;
     imageResource['scaling_group'] =
