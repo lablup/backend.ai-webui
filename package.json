@@ -13,7 +13,6 @@
     "format-fix:all": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}' 'react/src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
     "format-fix:i18n": "prettier --write 'resources/i18n/*.json'",
     "test": "jest",
-    "test:react": "pnpm test --prefix ./react test",
     "wsproxy": "node ./src/wsproxy/local_proxy.js",
     "build": "rm -rf build/rollup && mkdir -p build/rollup/src/components && pnpm run copyindex && pnpm run copywc && pnpm run copywa && pnpm run copyresource && pnpm run copyconfig && rollup -c rollup.config.ts --configPlugin typescript && pnpm run --prefix ./react build:copy",
     "build:react-only": "pnpm run --prefix ./react build",
