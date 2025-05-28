@@ -15,7 +15,7 @@ import { customElement, property, query } from 'lit/decorators.js';
  `backend-ai-splash` shows simple summary about current app / web application.
 
  Example:
-
+ 
  ```
  <backend-ai-splash></backend-ai-splash>
  ...
@@ -136,7 +136,7 @@ export default class BackendAISplash extends LitElement {
   render() {
     // language=HTML
     return html`
-      <backend-ai-dialog id="splash-panel" fixed backdrop blockscrolling persistent narrowLayout hideActions>
+    <backend-ai-dialog id="splash-panel" fixed backdrop blockscrolling persistent narrowLayout hideActions>
         <div class="splash-header" slot="title"
           style="background-image:url(${
             this.isDarkMode
