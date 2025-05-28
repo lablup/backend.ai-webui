@@ -1,22 +1,41 @@
 import { ChatPageQuery } from '../__generated__/ChatPageQuery.graphql';
 import BAICard from '../components/BAICard';
-import ChatCacheProvider, {
-  chatLocalStorageCache,
-  useConversations,
-} from '../components/Chat/ChatCacheProvider';
-import { ChatConversation } from '../components/Chat/ChatConversation';
+import ChatCard from '../components/Chat/ChatCard';
+import {
+  type ChatHistoryData,
+  createChats,
+  getChatsById,
+  useHistory,
+} from '../components/Chat/ChatHistory';
 import type { ChatProviderData } from '../components/Chat/ChatModel';
+import Flex from '../components/Flex';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { App, Card, Skeleton } from 'antd';
+import { Button, Drawer, List } from 'antd';
+import { createStyles } from 'antd-style';
 import graphql from 'babel-plugin-relay/macro';
-import { Suspense, useCallback, useEffect } from 'react';
+import dayjs from 'dayjs';
+import { t } from 'i18next';
+import _ from 'lodash';
+import { HistoryIcon, PlusIcon, TrashIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useLazyLoadQuery } from 'react-relay';
+import { useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { StringParam, useQueryParams } from 'use-query-params';
 
-type TabClickEvent =
-  | string
-  | React.MouseEvent<Element, MouseEvent>
-  | React.KeyboardEvent<Element>;
+const useStyles = createStyles(({ css }) => ({
+  chatViewHorizontal: css`
+    overflow: auto;
+    height: calc(100vh - 240px);
+  `,
+  chatViewVertical: css`
+    overflow: hidden;
+  `,
+  chatCard: css`
+    flex: 1;
+    overflow: 'hidden';
+  `,
+}));
 
 function useDefaultEndpointId() {
   const baiClient = useSuspendedBackendaiClient();
@@ -40,7 +59,7 @@ function useDefaultEndpointId() {
   return endpoint_list?.items[0]?.endpoint_id || undefined;
 }
 
-function useChatProvider(defaultEndpointId?: string): ChatProviderData {
+function useChatProviderData(defaultEndpointId?: string): ChatProviderData {
   const [{ endpointId, modelId, agentId, apiKey }] = useQueryParams({
     endpointId: StringParam,
     agentId: StringParam,
@@ -58,105 +77,225 @@ function useChatProvider(defaultEndpointId?: string): ChatProviderData {
   };
 }
 
-const PureChatPage: React.FC = () => {
-  const { message: appMessage } = App.useApp();
-  const defaultEndpointId = useDefaultEndpointId();
-  const provider = useChatProvider(defaultEndpointId);
+interface ChatHistoryDrawerProps {
+  history: ChatHistoryData[];
+  open?: boolean;
+  onClickClose: () => void;
+  onClickRemove: (id: string) => void;
+  onClickHistory: (id: string) => void;
+}
+
+const useChatNavigate = () => {
+  const navigate = useNavigate();
+
+  return ({ id, provider }: { id?: string; provider: ChatProviderData }) => {
+    const chatId = id ? id : createChats({ provider }).id;
+    navigate(`/chat/${chatId}`);
+  };
+};
+
+const ChatHistoryDrawer = ({
+  history,
+  open,
+  onClickClose,
+  onClickRemove,
+  onClickHistory,
+}: ChatHistoryDrawerProps) => {
+  return (
+    <Drawer
+      getContainer={false}
+      open={open}
+      onClose={onClickClose}
+      mask={false}
+      title="History"
+    >
+      <List
+        dataSource={history.map((item) => ({
+          title: item.label,
+          id: item.id,
+        }))}
+        renderItem={(item) => (
+          <List.Item
+            actions={[
+              <Button
+                key="delete"
+                type="text"
+                icon={
+                  <TrashIcon
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onClickRemove(item.id);
+                    }}
+                  />
+                }
+              />,
+            ]}
+            style={{ cursor: 'pointer' }}
+            onClick={() => onClickHistory(item.id)}
+          >
+            <List.Item.Meta
+              title={item.title}
+              description={dayjs().format('YYYY-MM-DD HH:mm:ss')}
+            />
+          </List.Item>
+        )}
+      />
+    </Drawer>
+  );
+};
+
+const PureChatPage = ({
+  id,
+  provider,
+}: {
+  id: string;
+  provider: ChatProviderData;
+}) => {
+  const { styles } = useStyles();
+  const [openHistory, setOpenHistory] = useState(false);
   const {
-    conversations,
-    activeConversation,
-    setActiveConversation,
-    addConversation,
-    removeConversation,
-    reset,
-    isEmptyCache,
-  } = useConversations();
-
-  const tabList = conversations.map((conversation, index) => {
-    return {
-      key: conversation.id,
-      label: conversation.label,
-    };
-  });
-
-  const handleTabEdit = useCallback(
-    (e: TabClickEvent, action: 'add' | 'remove') => {
-      if (action === 'add') {
-        if (conversations.length < 10) {
-          addConversation(provider);
-        } else {
-          appMessage.error(`You can't add more than 10 conversations`, 5);
-        }
-      } else if (action === 'remove') {
-        if (conversations.length > 1) {
-          removeConversation(e as string);
-        }
-      }
-    },
-    [addConversation, removeConversation, provider, conversations, appMessage],
-  );
-
-  const handleTabChange = useCallback(
-    (key: string) => {
-      setActiveConversation(key);
-    },
-    [setActiveConversation],
-  );
-
-  useEffect(() => {
-    // Check conversations cache once the component mounts first
-    if (!isEmptyCache()) {
-      reset();
-    } else {
-      addConversation(provider);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    chats,
+    history,
+    addChat,
+    removeChat,
+    updateChat,
+    saveMessage,
+    clearMessage,
+    removeHistory,
+    updateHistory,
+  } = useHistory(id);
+  const navigate = useChatNavigate();
 
   return (
     <BAICard
+      title={t('webui.menu.Chat')}
       styles={{
-        header: {
-          padding: 0,
-        },
-        body: { overflow: 'hidden' },
+        body: { overflow: 'hidden', paddingTop: 0 },
       }}
-      tabList={tabList}
-      tabProps={{
-        size: 'large',
-        type: 'editable-card',
-        onEdit: handleTabEdit,
-      }}
-      activeTabKey={activeConversation}
-      onTabChange={handleTabChange}
-    >
-      <Suspense
-        fallback={
-          <Card
-            style={{
-              overflow: 'auto',
-              height: 'calc(100vh - 240px)',
+      extra={
+        <>
+          <Button
+            type="text"
+            icon={<PlusIcon />}
+            onClick={() => {
+              setOpenHistory(false);
+              navigate({ provider });
             }}
-            variant="outlined"
+          />
+          <Button
+            type="text"
+            icon={<HistoryIcon />}
+            onClick={() => {
+              setOpenHistory(!openHistory);
+            }}
+          />
+        </>
+      }
+    >
+      {id && (
+        <Flex
+          className={styles.chatViewVertical}
+          direction="column"
+          align="stretch"
+          gap={'xs'}
+        >
+          <Flex
+            className={styles.chatViewHorizontal}
+            gap={'xs'}
+            direction="row"
+            align="stretch"
           >
-            <Skeleton active />
-          </Card>
-        }
-      >
-        {activeConversation && (
-          <ChatConversation conversationId={activeConversation} />
-        )}
-      </Suspense>
+            {_.map(chats, (chat, index) => (
+              <ChatCard
+                key={chat.id}
+                className={styles.chatCard}
+                chat={chat}
+                onUpdateChat={(newChatProperties) => {
+                  updateChat(chat.id, newChatProperties);
+                }}
+                fetchOnClient
+                onRemoveChat={() => {
+                  removeChat(chat.id);
+                }}
+                onAddChat={(chat) => {
+                  addChat(chat);
+                }}
+                onSaveMessage={(message) => {
+                  saveMessage(chat.id, message);
+
+                  // Save first user message as the first chat
+                  if (
+                    chat.messages.length === 0 &&
+                    message.role === 'user' &&
+                    index === 0
+                  ) {
+                    const chats = getChatsById(id);
+                    if (chats) {
+                      updateHistory({
+                        ...chats,
+                        label: message.content,
+                      });
+                    }
+                  }
+                }}
+                onClearMessage={(chat) => {
+                  clearMessage(chat.id);
+                }}
+                closable={isClosable(chats?.length)}
+                clonable={isClonable(chats?.length)}
+              />
+            ))}
+          </Flex>
+          <ChatHistoryDrawer
+            open={openHistory}
+            history={history}
+            onClickClose={() => {
+              setOpenHistory(false);
+            }}
+            onClickRemove={(historyId) => {
+              removeHistory(historyId);
+
+              const chat = history.filter(({ id }) => id !== historyId)[0];
+              navigate({ id: chat?.id, provider });
+
+              // Close history drawer if no more history items left
+              if (history.length < 2) {
+                setOpenHistory(false);
+              }
+            }}
+            onClickHistory={(historyId) => {
+              navigate({ id: historyId, provider });
+              setOpenHistory(false);
+            }}
+          />
+        </Flex>
+      )}
     </BAICard>
   );
 };
 
+function isClosable(chatLength: number) {
+  return chatLength > 1;
+}
+
+function isClonable(chatLength: number) {
+  return chatLength <= 10;
+}
+
 const ChatPage: React.FC = () => {
-  return (
-    <ChatCacheProvider provider={chatLocalStorageCache}>
-      <PureChatPage />
-    </ChatCacheProvider>
-  );
+  const defaultEndpointId = useDefaultEndpointId();
+  const provider = useChatProviderData(defaultEndpointId);
+  const { id } = useParams();
+  const navigate = useChatNavigate();
+
+  useEffect(() => {
+    // Redirect as if id is not provided or does not exist
+    if (!id || !getChatsById(id)) {
+      navigate({ provider });
+    }
+  }, [navigate, provider, id]);
+
+  return <>{id && <PureChatPage id={id} provider={provider} />}</>;
 };
 
 export default ChatPage;
