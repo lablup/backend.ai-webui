@@ -1,8 +1,4 @@
-import {
-  convertBinarySizeUnit,
-  convertDecimalSizeUnit,
-  SizeUnit,
-} from '../helper';
+import { convertToBinaryUnit, convertToDecimalUnit, SizeUnit } from '../helper';
 import {
   UserStatsData,
   UserStatsDataKey,
@@ -87,16 +83,10 @@ const getColumnConfig = ({
       return value;
     }
     if (unitType === 'byte') {
-      return (
-        convertBinarySizeUnit(value.toString() + 'B', targetUnit as SizeUnit)
-          ?.number ?? 0
-      );
+      return convertToBinaryUnit(value, targetUnit as SizeUnit)?.number ?? 0;
     }
     if (unitType === 'decimal') {
-      return (
-        convertDecimalSizeUnit(value.toString() + 'B', targetUnit as SizeUnit)
-          ?.number ?? 0
-      );
+      return convertToDecimalUnit(value, targetUnit as SizeUnit)?.number ?? 0;
     }
     return value;
   };
@@ -186,7 +176,7 @@ const AllocationHistoryStatistics: React.FC<
             data,
             key: 'mem_allocated',
             period,
-            targetUnit: 'G',
+            targetUnit: 'g',
             displayUnit: 'GiB',
             unitType: 'byte',
             isDarkMode,
@@ -216,7 +206,7 @@ const AllocationHistoryStatistics: React.FC<
                 data,
                 key: 'io_read_bytes',
                 period,
-                targetUnit: 'M',
+                targetUnit: 'm',
                 displayUnit: 'MiB',
                 unitType: 'decimal',
                 isDarkMode,
@@ -230,7 +220,7 @@ const AllocationHistoryStatistics: React.FC<
                 data,
                 key: 'io_write_bytes',
                 period,
-                targetUnit: 'M',
+                targetUnit: 'm',
                 displayUnit: 'MiB',
                 unitType: 'decimal',
                 isDarkMode,

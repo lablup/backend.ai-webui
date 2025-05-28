@@ -1,4 +1,4 @@
-import { addQuotaScopeTypePrefix, convertDecimalSizeUnit } from '../helper';
+import { addQuotaScopeTypePrefix, convertToDecimalUnit } from '../helper';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import BAICard, { BAICardProps } from './BAICard';
@@ -183,12 +183,12 @@ const QuotaPerStorageVolumePanelCard: React.FC<
               used={
                 projectUsageBytes === 0
                   ? ''
-                  : `${convertDecimalSizeUnit(_.toString(projectUsageBytes), 'G')?.numberUnit}B`
+                  : `${convertToDecimalUnit(_.toString(projectUsageBytes), 'g')?.displayValue}`
               }
               total={
                 projectHardLimitBytes === 0
                   ? ''
-                  : `${convertDecimalSizeUnit(_.toString(projectHardLimitBytes), 'G')?.numberUnit}B`
+                  : `${convertToDecimalUnit(_.toString(projectHardLimitBytes), 'g')?.displayValue}`
               }
             />
           </Col>
@@ -211,12 +211,14 @@ const QuotaPerStorageVolumePanelCard: React.FC<
               used={
                 userUsageBytes === 0
                   ? ''
-                  : `${convertDecimalSizeUnit(_.toString(userUsageBytes), 'G')?.numberUnit}B`
+                  : convertToDecimalUnit(_.toString(userUsageBytes), 'g')
+                      ?.displayValue
               }
               total={
                 userHardLimitBytes === 0
                   ? ''
-                  : `${convertDecimalSizeUnit(_.toString(userHardLimitBytes), 'G')?.numberUnit}B`
+                  : convertToDecimalUnit(_.toString(userHardLimitBytes), 'g')
+                      ?.displayValue
               }
             />
           </Col>

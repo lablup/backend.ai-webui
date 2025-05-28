@@ -1,4 +1,4 @@
-import { convertBinarySizeUnit, parseUnit, SizeUnit } from '../helper';
+import { convertToBinaryUnit, parseValueWithUnit, SizeUnit } from '../helper';
 import useControllableState from '../hooks/useControllableState';
 import { usePrevious } from 'ahooks';
 import { InputNumber, InputNumberProps, Select, Typography } from 'antd';
@@ -36,19 +36,22 @@ const DynamicUnitInputNumber: React.FC<DynamicUnitInputNumberProps> = ({
       defaultValue: '0g',
     },
   );
+  console.log(value);
   const [numValue, _unitFromValue] =
-    value === null || value === undefined ? [null, null] : parseUnit(value);
+    value === null || value === undefined
+      ? [null, null]
+      : parseValueWithUnit(value);
   const previousUnit = usePrevious(_unitFromValue);
   const unit = _unitFromValue || previousUnit || units[0];
 
-  const [minNumValue, minUnit] = parseUnit(min);
-  const [maxNumValue, maxUnit] = parseUnit(max);
+  const [minNumValue, minUnit] = parseValueWithUnit(min);
+  const [maxNumValue, maxUnit] = parseValueWithUnit(max);
 
-  const minNumValueForCurrentUnit = convertBinarySizeUnit(
+  const minNumValueForCurrentUnit = convertToBinaryUnit(
     min,
     unit as SizeUnit,
   )?.number;
-  const maxNumValueForCurrentUnit = convertBinarySizeUnit(
+  const maxNumValueForCurrentUnit = convertToBinaryUnit(
     max,
     unit as SizeUnit,
   )?.number;
@@ -120,13 +123,13 @@ const DynamicUnitInputNumber: React.FC<DynamicUnitInputNumberProps> = ({
       max={
         maxUnit === unit
           ? maxNumValue
-          : convertBinarySizeUnit(max, unit as SizeUnit)?.number
+          : convertToBinaryUnit(max, unit as SizeUnit)?.number
       }
       min={
         minUnit === unit
           ? minNumValue
           : // @ts-ignore
-            convertBinarySizeUnit(min, unit).number
+            convertToBinaryUnit(min, unit).number
       }
       addonAfter={
         <Select

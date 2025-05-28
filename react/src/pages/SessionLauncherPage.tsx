@@ -34,7 +34,7 @@ import {
   compareNumberWithUnits,
   formatDuration,
   generateRandomString,
-  convertBinarySizeUnit,
+  convertToBinaryUnit,
   filterEmptyItem,
 } from '../helper';
 import {
@@ -1624,15 +1624,14 @@ export const ResourceNumbersOfSession: React.FC<FormOrResourceRequired> = ({
               type={type}
               value={
                 type === 'mem'
-                  ? (convertBinarySizeUnit(value.toString(), 'b')?.number ||
-                      0) *
+                  ? (convertToBinaryUnit(value.toString(), '')?.number || 0) *
                       containerCount +
                     ''
                   : _.toNumber(value) * containerCount + ''
               }
               opts={{
                 shmem: resource.shmem
-                  ? (convertBinarySizeUnit(resource.shmem, 'b')?.number || 0) *
+                  ? (convertToBinaryUnit(resource.shmem, '')?.number || 0) *
                     containerCount
                   : undefined,
               }}

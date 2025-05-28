@@ -1,4 +1,4 @@
-import { convertBinarySizeUnit } from '../helper';
+import { convertToBinaryUnit } from '../helper';
 import {
   BaseResourceSlotName,
   KnownAcceleratorResourceSlotName,
@@ -47,7 +47,7 @@ const ResourceNumber: React.FC<ResourceNumberProps> = ({
   const formatAmount = (amount: string) => {
     return mergedResourceSlots?.[type]?.number_format.binary
       ? Number(
-          convertBinarySizeUnit(amount, 'g', 2, true)?.numberFixed,
+          convertToBinaryUnit(amount, 'g', 2, true)?.numberFixed,
         ).toString()
       : (mergedResourceSlots?.[type]?.number_format.round_length || 0) > 0
         ? parseFloat(amount).toFixed(2)
@@ -95,8 +95,7 @@ const ResourceNumber: React.FC<ResourceNumberProps> = ({
           type="secondary"
           style={{ fontSize: token.fontSizeSM }}
         >
-          (SHM:{' '}
-          {convertBinarySizeUnit(opts.shmem + 'b', 'g', 2, true)?.numberFixed}
+          (SHM: {convertToBinaryUnit(opts.shmem, 'g', 2, true)?.numberFixed}
           GiB)
         </Typography.Text>
       ) : null}
