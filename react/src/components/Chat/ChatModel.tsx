@@ -1,5 +1,5 @@
-import { APICallError } from 'ai';
 import type { AIAgent } from '../../hooks/useAIAgent';
+import { APICallError } from 'ai';
 import type { UIMessage } from 'ai';
 
 export interface ChatProviderData {
@@ -24,7 +24,6 @@ export type ChatMessage = UIMessage;
 
 export interface ChatData {
   id: string;
-  conversationId: string;
   sync: boolean;
   usingParameters: boolean;
   parameters: ChatParameters;
@@ -33,30 +32,13 @@ export interface ChatData {
   messages: ChatMessage[];
 }
 
-export interface ChatConversationData {
-  id: string;
-  chats: string[];
-  provider: ChatProviderData;
-  label: string;
-  updatedAt: string;
-}
-
-export interface ChatLifecycleEventType {
-  onRequestClose?: (chat: ChatData) => void;
-  onCreateNewChat?: (chat: ChatData) => void;
-  onChangeEndpoint?: (endpointId: string) => void;
-  onChangeModel?: (modelId: string) => void;
-  onChangeAgent?: (agentId: string) => void;
-  onChangeSync?: (sync: boolean) => void;
-}
-
 export interface ChatModel {
   id: string;
   name?: string;
   group?: string;
   created?: string;
   description?: string;
-};
+}
 
 export function getAIErrorMessage(error: unknown): string {
   try {
@@ -78,7 +60,7 @@ export function getAIErrorMessage(error: unknown): string {
   return 'Unknown error:' + error;
 }
 
-export const defaultChatParameters = {
+export const DEFAULT_CHAT_PARAMETERS = {
   maxTokens: 4096,
   temperature: 0.7,
   topP: 1,

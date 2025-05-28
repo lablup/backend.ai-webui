@@ -65,9 +65,9 @@ interface ChatHeaderProps {
   sync: boolean;
   onChangeSync: (sync: boolean) => void;
   fetchKey: string;
-  onClickClearChatMessages?: () => void;
-  onClickClose?: () => void;
-  onClickCreate?: () => void;
+  onClearMessage?: () => void;
+  onRemoveChat?: () => void;
+  onAddChat?: () => void;
   parameters: ChatParameters;
   usingParameters: boolean;
   onChangeParameter: (
@@ -89,13 +89,13 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   onChangeAgent,
   sync,
   onChangeSync,
-  onClickClose,
-  onClickCreate,
+  onRemoveChat,
+  onAddChat,
   fetchKey,
   parameters,
   usingParameters,
   onChangeParameter,
-  onClickClearChatMessages,
+  onClearMessage,
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -139,7 +139,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
       label: t('chatui.DeleteChatHistory'),
       icon: <EraserIcon />,
       onClick: () => {
-        onClickClearChatMessages?.();
+        onClearMessage?.();
       },
     },
     closable && {
@@ -151,7 +151,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
       label: t('chatui.DeleteChattingSession'),
       icon: <CloseOutlined />,
       onClick: () => {
-        onClickClose?.();
+        onRemoveChat?.();
       },
     },
   ]);
@@ -256,7 +256,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
           />
         </Popover>
         {clonable && (
-          <Button onClick={() => onClickCreate?.()} icon={<PlusOutlined />} />
+          <Button onClick={() => onAddChat?.()} icon={<PlusOutlined />} />
         )}
         <Dropdown menu={{ items }} trigger={['click']}>
           <Button

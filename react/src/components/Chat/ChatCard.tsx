@@ -5,7 +5,6 @@ import PureChatHeader from './ChatHeader';
 import PureChatInput from './ChatInput';
 import ChatMessages from './ChatMessages';
 import {
-  ChatLifecycleEventType,
   getAIErrorMessage,
   ChatProviderData,
   ChatData,
@@ -38,11 +37,17 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
-interface ChatCardProps extends CardProps, ChatLifecycleEventType {
+interface ChatCardProps extends CardProps {
   chat: ChatData;
   onUpdateChat?: (partialChat: DeepPartial<ChatData>) => void;
+  onRemoveChat?: (chat: ChatData) => void;
+  onAddChat?: (chat: ChatData) => void;
+  onChangeEndpoint?: (endpointId: string) => void;
+  onChangeModel?: (modelId: string) => void;
+  onChangeAgent?: (agentId: string) => void;
+  onChangeSync?: (sync: boolean) => void;
   onSaveMessage?: (message: ChatMessage) => void;
-  onClickClearChatMessages?: (chat: ChatData) => void;
+  onClearMessage?: (chat: ChatData) => void;
   closable?: boolean;
   clonable?: boolean;
   fetchOnClient?: boolean;
@@ -171,7 +176,9 @@ const ChatInput = React.memo(PureChatInput);
 
 function createBaseURL(basePath?: string, endpointUrl?: string | null) {
   try {
-    return endpointUrl ? new URL(basePath ?? '', endpointUrl).toString() : undefined;
+    return endpointUrl
+      ? new URL(basePath ?? '', endpointUrl).toString()
+      : undefined;
   } catch {
     console.error('Invalid base URL:', basePath, 'endpointUrl', endpointUrl);
   }
@@ -183,10 +190,10 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   closable,
   clonable,
   fetchOnClient,
-  onRequestClose,
-  onCreateNewChat,
+  onRemoveChat,
+  onAddChat,
   onSaveMessage,
-  onClickClearChatMessages,
+  onClearMessage,
 }) => {
   const { t } = useTranslation();
   const { message: appMessage } = App.useApp();
@@ -350,14 +357,14 @@ const PureChatCard: React.FC<ChatCardProps> = ({
           fetchKey={fetchKey}
           closable={closable}
           clonable={clonable}
-          onClickCreate={() => {
-            onCreateNewChat?.(chat);
+          onAddChat={() => {
+            onAddChat?.(chat);
           }}
-          onClickClose={() => {
-            onRequestClose?.(chat);
+          onRemoveChat={() => {
+            onRemoveChat?.(chat);
           }}
-          onClickClearChatMessages={() => {
-            onClickClearChatMessages?.(chat);
+          onClearMessage={() => {
+            onClearMessage?.(chat);
             setMessages([]);
           }}
           parameters={chat.parameters}
