@@ -170,9 +170,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       group: 'service',
     },
     supportServing && {
-      label: (
-        <WebUILink to="/serving">{t('modelserving.menu.MyServices')}</WebUILink>
-      ),
+      label: <WebUILink to="/serving">{t('webui.menu.Endpoints')}</WebUILink>,
       icon: <EndpointsIcon style={{ color: token.colorPrimary }} />,
       key: 'serving',
       group: 'service',
