@@ -1,4 +1,8 @@
-import { useVFolderInvitations } from '../hooks/backendai';
+import {
+  InvitationItem,
+  useSetVFolderInvitations,
+  useVFolderInvitationsValue,
+} from '../hooks/useVFolderInvitations';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import VFolderPermissionCell from './VFolderPermissionCell';
@@ -6,19 +10,6 @@ import { FolderOutlined } from '@ant-design/icons';
 import { List, Button, Typography, theme, Descriptions, App } from 'antd';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-
-interface InvitationItem {
-  id: string;
-  vfolder_id: string;
-  vfolder_name: string;
-  invitee_user_email: string;
-  inviter_user_email: string;
-  mount_permission: string;
-  created_at: string;
-  modified_at: string | null;
-  status: string;
-  perm: string;
-}
 
 interface FolderInvitationResponseModalProps extends BAIModalProps {
   onRequestClose?: (success: boolean) => void;
@@ -31,14 +22,16 @@ const FolderInvitationResponseModal: React.FC<
   const { token } = theme.useToken();
   const { message } = App.useApp();
   const { t } = useTranslation();
-  const [
-    { invitations },
-    { acceptInvitation, rejectInvitation: declineInvitation },
-  ] = useVFolderInvitations(fetchKey);
+  const { invitations } = useVFolderInvitationsValue();
+  const { acceptInvitation, rejectInvitation } = useSetVFolderInvitations();
+
+  // Memoize invitations to prevent unnecessary re-renders
+  const memoizedInvitations = React.useMemo(() => invitations, [invitations]);
 
   const renderInvitationItem = useCallback(
     (item: InvitationItem) => (
       <List.Item
+        key={item.id}
         actions={[
           <Button
             type="primary"
@@ -65,7 +58,7 @@ const FolderInvitationResponseModal: React.FC<
           <Button
             danger
             onClick={() =>
-              declineInvitation(item.id, {
+              rejectInvitation(item.id, {
                 onSuccess: () => {
                   onRequestClose?.(true);
                   message.success(
@@ -117,8 +110,14 @@ const FolderInvitationResponseModal: React.FC<
         />
       </List.Item>
     ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [acceptInvitation, declineInvitation, onRequestClose],
+    [
+      acceptInvitation,
+      rejectInvitation,
+      onRequestClose,
+      message,
+      t,
+      token.paddingSM,
+    ],
   );
 
   return (
@@ -129,12 +128,8 @@ const FolderInvitationResponseModal: React.FC<
       {...baiModalProps}
     >
       <List
-        dataSource={invitations}
-        renderItem={(item) =>
-          renderInvitationItem({
-            ...item,
-          })
-        }
+        dataSource={memoizedInvitations}
+        renderItem={renderInvitationItem}
       />
     </BAIModal>
   );
