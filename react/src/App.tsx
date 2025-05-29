@@ -84,10 +84,6 @@ const ChatPage = React.lazy(() => import('./pages/ChatPage'));
 const AIAgentPage = React.lazy(() => import('./pages/AIAgentPage'));
 const AIAgentIFramePage = React.lazy(() => import('./pages/AIAgentIFramePage'));
 
-/**
- * Pages for Model Player
- */
-const ModelStorePage = React.lazy(() => import('./pages/ModelStorePage'));
 interface CustomHandle {
   title?: string;
   labelKey?: string;
@@ -296,13 +292,13 @@ const routerPALI = createBrowserRouter([
       {
         path: '/model-store',
         handle: { labelKey: 'webui.menu.ModelStore' },
-        Component: ModelStorePage,
+        Component: ModelStoreListPage,
       },
       // default page: modelstore
       {
         path: '',
         handle: { labelKey: 'webui.menu.ModelStore' },
-        Component: ModelStorePage,
+        Component: ModelStoreListPage,
       },
       {
         path: '/ai-agent/external',
@@ -352,11 +348,17 @@ const router = createBrowserRouter([
       },
       {
         path: '/start',
-        element: (
-          <BAIErrorBoundary>
-            <StartPage />
-          </BAIErrorBoundary>
-        ),
+        Component: () => {
+          const [experimentalPALI] =
+            useBAISettingUserState('experimental_PALI') ?? false;
+          return experimentalPALI ? (
+            <WebUINavigate to={'/model-store'} />
+          ) : (
+            <BAIErrorBoundary>
+              <StartPage />
+            </BAIErrorBoundary>
+          );
+        },
         handle: { labelKey: 'webui.menu.Start' },
       },
       {

@@ -6,6 +6,7 @@ import ModelCardModal from '../components/ModelCardModal';
 import TextHighlighter from '../components/TextHighlighter';
 import UnmountModalAfterClose from '../components/UnmountModalAfterClose';
 import { useUpdatableState } from '../hooks';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useModelConfig } from '../hooks/useModelConfig';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import {
@@ -46,13 +47,6 @@ const ModelStoreListPage: React.FC = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
   const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
-  // const [paginationState] = useState<{
-  //   current: number;
-  //   pageSize: number;
-  // }>({
-  //   current: 1,
-  //   pageSize: 100,
-  // });
   const { styles } = useStyles();
   const { sorting } = useModelConfig();
 
@@ -105,6 +99,8 @@ const ModelStoreListPage: React.FC = () => {
     },
   );
 
+  const [isPaliEnabled] = useBAISettingUserState('experimental_PALI') ?? false;
+
   const fieldsValues = useMemo(() => {
     const result: {
       task: string[];
@@ -132,7 +128,7 @@ const ModelStoreListPage: React.FC = () => {
   }, [model_cards?.edges]);
   return (
     <Flex direction="column" align="stretch" justify="center" gap="lg">
-      <ImportFromHuggingFacePanel />
+      {isPaliEnabled && <ImportFromHuggingFacePanel />}
       <Flex
         direction="column"
         align="stretch"
