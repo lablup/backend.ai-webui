@@ -110,15 +110,7 @@ const routerPALI = createBrowserRouter([
     path: '/',
     errorElement: <ErrorView />,
     element: (
-      <QueryParamProvider
-        adapter={ReactRouter6Adapter}
-        options={
-          {
-            // searchStringToObject: queryString.parse,
-            // objectToSearchString: queryString.stringify,
-          }
-        }
-      >
+      <QueryParamProvider adapter={ReactRouter6Adapter}>
         <MainLayout />
         <RoutingEventHandler />
         <Suspense fallback={null}>
@@ -155,7 +147,7 @@ const routerPALI = createBrowserRouter([
       {
         path: '/serving',
 
-        handle: { labelKey: 'webui.menu.Serving' },
+        handle: { labelKey: 'webui.menu.Endpoints' },
         children: [
           {
             path: '',
@@ -166,7 +158,7 @@ const routerPALI = createBrowserRouter([
                 <BAIErrorBoundary>
                   <Suspense
                     fallback={
-                      <BAICard title={t('webui.menu.Serving')} loading />
+                      <BAICard title={t('webui.menu.Endpoints')} loading />
                     }
                   >
                     <ServingPage />
@@ -189,8 +181,8 @@ const routerPALI = createBrowserRouter([
         ],
       },
       {
-        path: '/service',
-        handle: { labelKey: 'webui.menu.Serving' },
+        path: '/serving',
+        handle: { labelKey: 'webui.menu.Endpoints' },
         children: [
           {
             path: '',
@@ -339,15 +331,7 @@ const router = createBrowserRouter([
     path: '/',
     errorElement: <ErrorView />,
     element: (
-      <QueryParamProvider
-        adapter={ReactRouter6Adapter}
-        options={
-          {
-            // searchStringToObject: queryString.parse,
-            // objectToSearchString: queryString.stringify,
-          }
-        }
-      >
+      <QueryParamProvider adapter={ReactRouter6Adapter}>
         <MainLayout />
         <RoutingEventHandler />
         <Suspense fallback={null}>

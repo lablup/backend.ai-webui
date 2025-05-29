@@ -1,21 +1,21 @@
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import { ChatProviderType, ConversationType, Model } from './Chat/ChatModel';
 import { Conversation } from './Chat/Conversation';
-import { ChatContentEndpointDetailQuery } from './__generated__/ChatContentEndpointDetailQuery.graphql';
+import { EndpointChatEndpointDetailQuery } from './__generated__/EndpointChatEndpointDetailQuery.graphql';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useId } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay/hooks';
 
-interface ChatContentProps {
+interface EndpointChatProps {
   endpointId: string;
   endpointUrl: string;
   endpointName: string;
   basePath: string;
 }
 
-const ChatContent: React.FC<ChatContentProps> = ({
+const EndpointChat: React.FC<EndpointChatProps> = ({
   endpointId,
   endpointUrl,
   endpointName,
@@ -24,9 +24,9 @@ const ChatContent: React.FC<ChatContentProps> = ({
   const { t } = useTranslation();
 
   const { endpoint_token_list } =
-    useLazyLoadQuery<ChatContentEndpointDetailQuery>(
+    useLazyLoadQuery<EndpointChatEndpointDetailQuery>(
       graphql`
-        query ChatContentEndpointDetailQuery(
+        query EndpointChatEndpointDetailQuery(
           $endpointId: UUID!
           $tokenListOffset: Int!
           $tokenListLimit: Int!
@@ -99,4 +99,4 @@ const ChatContent: React.FC<ChatContentProps> = ({
   return <Conversation conversation={conversation} provider={provider} />;
 };
 
-export default ChatContent;
+export default EndpointChat;
