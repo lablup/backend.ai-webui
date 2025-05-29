@@ -1,4 +1,4 @@
-import ChatContent from './ChatContent';
+import EndpointChat from './EndpointChat';
 import { ModelCardChatQuery } from './__generated__/ModelCardChatQuery.graphql';
 import { Alert, Card, theme } from 'antd/lib';
 import graphql from 'babel-plugin-relay/macro';
@@ -101,7 +101,7 @@ const ModelCardChat: React.FC<ModelCardChatProps> = ({
       }
     >
       {healthyEndpoint.length > 0 ? (
-        <ChatContent
+        <EndpointChat
           endpointId={healthyEndpoint[0]?.endpoint_id as string}
           endpointUrl={healthyEndpoint[0]?.url as string}
           endpointName={healthyEndpoint[0]?.name as string}

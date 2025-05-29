@@ -235,15 +235,7 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
                         <StyleProvider container={shadowRoot} cache={cache}>
                           <Suspense fallback="">
                             <BrowserRouter>
-                              <QueryParamProvider
-                                adapter={ReactRouter6Adapter}
-                                options={
-                                  {
-                                    // searchStringToObject: queryString.parse,
-                                    // objectToSearchString: queryString.stringify,
-                                  }
-                                }
-                              >
+                              <QueryParamProvider adapter={ReactRouter6Adapter}>
                                 <RoutingEventHandler />
                                 {children}
                               </QueryParamProvider>
