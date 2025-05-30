@@ -1180,6 +1180,7 @@
     "Agents": "Agents",
     "AllowedClientIps": "Allowed client IPs",
     "AlreadyTerminatingSession": "Already terminating the session.",
+    "AnotherUserSession": "This session was created by another user",
     "Architecture": "Architecture",
     "Arguments": "Arguments",
     "AverageUsage": "Average",

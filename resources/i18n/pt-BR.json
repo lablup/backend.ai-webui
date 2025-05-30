@@ -1174,6 +1174,7 @@
     "Agents": "Agentes",
     "AllowedClientIps": "IPs de clientes permitidos",
     "AlreadyTerminatingSession": "Já está a terminar a sessão.",
+    "AnotherUserSession": "Esta sessão foi criada por outro usuário",
     "Architecture": "Arquitetura",
     "Arguments": "Argumentos",
     "AverageUsage": "Avg",

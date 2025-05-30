@@ -102,7 +102,7 @@ const SessionStatusDetailModal: React.FC<SessionStatusDetailModalProps> = ({
                 style: { fontWeight: 'normal' },
               },
               {
-                label: session.status_info ?? '',
+                label: _.split(session.status_info, ' ')[0] ?? '',
                 color: session.status_info
                   ? _.get(statusInfoTagColor, session.status_info)
                   : undefined,

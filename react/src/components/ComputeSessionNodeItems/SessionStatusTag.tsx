@@ -114,7 +114,7 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
               : undefined
           }
         >
-          {session.status_info}
+          {_.split(session.status_info, ' ')[0]}
         </Tag>
       </Flex>
     )

@@ -1,3 +1,4 @@
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useVFolderInvitations } from '../hooks/backendai';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
@@ -11,8 +12,10 @@ interface InvitationItem {
   id: string;
   vfolder_id: string;
   vfolder_name: string;
-  invitee_user_email: string;
-  inviter_user_email: string;
+  invitee_user_email?: string;
+  inviter_user_email?: string;
+  invitee?: string;
+  inviter?: string;
   mount_permission: string;
   created_at: string;
   modified_at: string | null;
@@ -31,6 +34,8 @@ const FolderInvitationResponseModal: React.FC<
   const { token } = theme.useToken();
   const { message } = App.useApp();
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+  const hasInviterEmail = baiClient.isManagerVersionCompatibleWith('25.6.0');
   const [
     { invitations },
     { acceptInvitation, rejectInvitation: declineInvitation },
@@ -104,7 +109,9 @@ const FolderInvitationResponseModal: React.FC<
                 {
                   key: 'from',
                   label: t('data.From'),
-                  children: item.inviter_user_email,
+                  children: hasInviterEmail
+                    ? item.inviter_user_email
+                    : item.inviter,
                 },
                 {
                   key: 'permission',
