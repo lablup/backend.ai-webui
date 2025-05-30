@@ -143,8 +143,8 @@ export function useHistory(id: string) {
       // find origin chat position to insert next to the origin chat
       const index = chats.findIndex((chat) => chat.id === id);
       if (index !== -1) {
-        currentChat.current.chats.splice(index + 1, 0, chat);
-        insert(index + 1, chat);
+        currentChat.current.chats.splice(index + 1, 1, chat);
+        replace(index + 1, chat);
       } else {
         currentChat.current.chats.push(chat);
         push(chat);
@@ -152,7 +152,7 @@ export function useHistory(id: string) {
 
       chatHistoryCache.set(currentChat.current.id, currentChat.current);
     },
-    [chats, push, insert],
+    [chats, push, replace],
   );
 
   const removeChat = useCallback(
