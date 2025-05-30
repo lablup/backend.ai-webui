@@ -1,3 +1,7 @@
+import {
+  SharedFolderPermissionInfoModalFragment$data,
+  SharedFolderPermissionInfoModalFragment$key,
+} from '../__generated__/SharedFolderPermissionInfoModalFragment.graphql';
 import { filterNonNullItems } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
@@ -8,10 +12,6 @@ import BAIModal, { BAIModalProps } from './BAIModal';
 import BAITable from './BAITable';
 import Flex from './Flex';
 import VFolderPermissionCell from './VFolderPermissionCell';
-import {
-  SharedFolderPermissionInfoModalFragment$data,
-  SharedFolderPermissionInfoModalFragment$key,
-} from './__generated__/SharedFolderPermissionInfoModalFragment.graphql';
 import { UserOutlined } from '@ant-design/icons';
 import {
   Alert,

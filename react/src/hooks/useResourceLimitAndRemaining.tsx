@@ -1,9 +1,9 @@
 import { useSuspendedBackendaiClient } from '.';
+import { useResourceLimitAndRemainingFragment$key } from '../__generated__/useResourceLimitAndRemainingFragment.graphql';
 import { Image } from '../components/ImageEnvironmentSelectFormItems';
 import { AUTOMATIC_DEFAULT_SHMEM } from '../components/ResourceAllocationFormItems';
 import { addNumberWithUnits, convertBinarySizeUnit } from '../helper';
 import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
-import { useResourceLimitAndRemainingFragment$key } from './__generated__/useResourceLimitAndRemainingFragment.graphql';
 import { useSuspenseTanQuery } from './reactQueryAlias';
 import { useResourceGroupsForCurrentProject } from './useCurrentProject';
 import graphql from 'babel-plugin-relay/macro';

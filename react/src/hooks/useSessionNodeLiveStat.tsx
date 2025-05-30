@@ -1,4 +1,4 @@
-import { useSessionNodeLiveStatSessionFragment$key } from './__generated__/useSessionNodeLiveStatSessionFragment.graphql';
+import { useSessionNodeLiveStatSessionFragment$key } from '../__generated__/useSessionNodeLiveStatSessionFragment.graphql';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { useMemo } from 'react';

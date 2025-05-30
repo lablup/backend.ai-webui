@@ -1,3 +1,12 @@
+import {
+  CreateKeyPairResourcePolicyInput,
+  KeypairResourcePolicySettingModalCreateMutation,
+} from '../__generated__/KeypairResourcePolicySettingModalCreateMutation.graphql';
+import { KeypairResourcePolicySettingModalFragment$key } from '../__generated__/KeypairResourcePolicySettingModalFragment.graphql';
+import {
+  KeypairResourcePolicySettingModalModifyMutation,
+  ModifyKeyPairResourcePolicyInput,
+} from '../__generated__/KeypairResourcePolicySettingModalModifyMutation.graphql';
 import { convertBinarySizeUnit } from '../helper';
 import { MAX_CPU_QUOTA, SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useSuspendedBackendaiClient } from '../hooks';
@@ -7,15 +16,6 @@ import BAIModal, { BAIModalProps } from './BAIModal';
 import DynamicUnitInputNumber from './DynamicUnitInputNumber';
 import Flex from './Flex';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
-import {
-  CreateKeyPairResourcePolicyInput,
-  KeypairResourcePolicySettingModalCreateMutation,
-} from './__generated__/KeypairResourcePolicySettingModalCreateMutation.graphql';
-import { KeypairResourcePolicySettingModalFragment$key } from './__generated__/KeypairResourcePolicySettingModalFragment.graphql';
-import {
-  KeypairResourcePolicySettingModalModifyMutation,
-  ModifyKeyPairResourcePolicyInput,
-} from './__generated__/KeypairResourcePolicySettingModalModifyMutation.graphql';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 // import { KeypairResourcePolicySettingModalQuery } from './__generated__/KeypairResourcePolicySettingModalQuery.graphql';
 import {

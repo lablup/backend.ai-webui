@@ -1,7 +1,7 @@
+import { KeypairInfoModalFragment$key } from '../__generated__/KeypairInfoModalFragment.graphql';
+import { KeypairInfoModalQuery } from '../__generated__/KeypairInfoModalQuery.graphql';
 import BAIModal from './BAIModal';
 import Flex from './Flex';
-import { KeypairInfoModalFragment$key } from './__generated__/KeypairInfoModalFragment.graphql';
-import { KeypairInfoModalQuery } from './__generated__/KeypairInfoModalQuery.graphql';
 import { Descriptions, ModalProps, Tag, Typography, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';

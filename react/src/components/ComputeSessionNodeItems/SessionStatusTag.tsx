@@ -1,9 +1,9 @@
-import Flex from '../Flex';
-import { statusInfoTagColor } from './SessionStatusDetailModal';
 import {
   SessionStatusTagFragment$data,
   SessionStatusTagFragment$key,
-} from './__generated__/SessionStatusTagFragment.graphql';
+} from '../../__generated__/SessionStatusTagFragment.graphql';
+import Flex from '../Flex';
+import { statusInfoTagColor } from './SessionStatusDetailModal';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Tag, Tooltip, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';

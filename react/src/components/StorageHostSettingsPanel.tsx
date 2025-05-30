@@ -1,3 +1,5 @@
+import { StorageHostSettingsPanelQuery } from '../__generated__/StorageHostSettingsPanelQuery.graphql';
+import { StorageHostSettingsPanel_storageVolumeFrgmt$key } from '../__generated__/StorageHostSettingsPanel_storageVolumeFrgmt.graphql';
 import { QuotaScopeType, addQuotaScopeTypePrefix } from '../helper/index';
 import { useCurrentDomainValue, useUpdatableState } from '../hooks';
 import DomainSelector from './DomainSelector';
@@ -6,8 +8,6 @@ import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
 import QuotaScopeCard from './QuotaScopeCard';
 import QuotaSettingModal from './QuotaSettingModal';
 import UserSelector from './UserSelector';
-import { StorageHostSettingsPanelQuery } from './__generated__/StorageHostSettingsPanelQuery.graphql';
-import { StorageHostSettingsPanel_storageVolumeFrgmt$key } from './__generated__/StorageHostSettingsPanel_storageVolumeFrgmt.graphql';
 import { useToggle } from 'ahooks';
 import { Card, Form, Spin } from 'antd';
 import graphql from 'babel-plugin-relay/macro';

@@ -1,7 +1,7 @@
 import type {
   EndpointTokenSelectQuery,
   EndpointTokenSelectQuery$data,
-} from './__generated__/EndpointTokenSelectQuery.graphql';
+} from '../../__generated__/EndpointTokenSelectQuery.graphql';
 import { useControllableValue } from 'ahooks';
 import { Input, Select } from 'antd';
 import type { SelectProps } from 'antd';

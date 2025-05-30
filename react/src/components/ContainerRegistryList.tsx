@@ -1,3 +1,9 @@
+import { ContainerRegistryListDeleteMutation } from '../__generated__/ContainerRegistryListDeleteMutation.graphql';
+import { ContainerRegistryListDomainMutation } from '../__generated__/ContainerRegistryListDomainMutation.graphql';
+import {
+  ContainerRegistryListQuery,
+  ContainerRegistryListQuery$data,
+} from '../__generated__/ContainerRegistryListQuery.graphql';
 import { filterNonNullItems, transformSorterToOrderString } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
@@ -9,12 +15,6 @@ import BAIPropertyFilter from './BAIPropertyFilter';
 import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
 import Flex from './Flex';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
-import { ContainerRegistryListDeleteMutation } from './__generated__/ContainerRegistryListDeleteMutation.graphql';
-import { ContainerRegistryListDomainMutation } from './__generated__/ContainerRegistryListDomainMutation.graphql';
-import {
-  ContainerRegistryListQuery,
-  ContainerRegistryListQuery$data,
-} from './__generated__/ContainerRegistryListQuery.graphql';
 import {
   DeleteOutlined,
   ExclamationCircleOutlined,

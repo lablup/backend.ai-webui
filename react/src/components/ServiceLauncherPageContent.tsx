@@ -1,3 +1,7 @@
+import { ServiceLauncherPageContentFragment$key } from '../__generated__/ServiceLauncherPageContentFragment.graphql';
+import { ServiceLauncherPageContentModifyMutation } from '../__generated__/ServiceLauncherPageContentModifyMutation.graphql';
+import { ServiceLauncherPageContent_UserInfoQuery } from '../__generated__/ServiceLauncherPageContent_UserInfoQuery.graphql';
+import { ServiceLauncherPageContent_UserResourcePolicyQuery } from '../__generated__/ServiceLauncherPageContent_UserResourcePolicyQuery.graphql';
 import {
   baiSignedRequestWithPromise,
   compareNumberWithUnits,
@@ -28,10 +32,6 @@ import ResourceNumber from './ResourceNumber';
 import VFolderLazyView from './VFolderLazyView';
 import VFolderSelect from './VFolderSelect';
 import VFolderTableFormItem from './VFolderTableFormItem';
-import { ServiceLauncherPageContentFragment$key } from './__generated__/ServiceLauncherPageContentFragment.graphql';
-import { ServiceLauncherPageContentModifyMutation } from './__generated__/ServiceLauncherPageContentModifyMutation.graphql';
-import { ServiceLauncherPageContent_UserInfoQuery } from './__generated__/ServiceLauncherPageContent_UserInfoQuery.graphql';
-import { ServiceLauncherPageContent_UserResourcePolicyQuery } from './__generated__/ServiceLauncherPageContent_UserResourcePolicyQuery.graphql';
 import { MinusOutlined } from '@ant-design/icons';
 import {
   App,

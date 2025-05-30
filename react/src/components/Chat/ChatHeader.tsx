@@ -1,3 +1,4 @@
+import { ChatHeader_Endpoint$key } from '../../__generated__/ChatHeader_Endpoint.graphql';
 import { filterEmptyItem } from '../../helper';
 import { useWebUINavigate } from '../../hooks';
 import { AIAgent } from '../../hooks/useAIAgent';
@@ -8,7 +9,6 @@ import { BAIModel, ChatParameters } from './ChatModel';
 import { ChatParametersSliders } from './ChatParametersSliders';
 import EndpointSelect, { EndpointSelectProps } from './EndpointSelect';
 import ModelSelect from './ModelSelect';
-import { ChatHeader_Endpoint$key } from './__generated__/ChatHeader_Endpoint.graphql';
 import {
   CloseOutlined,
   ControlOutlined,

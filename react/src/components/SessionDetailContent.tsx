@@ -1,3 +1,5 @@
+import { SessionDetailContentLegacyQuery } from '../__generated__/SessionDetailContentLegacyQuery.graphql';
+import { SessionDetailContentQuery } from '../__generated__/SessionDetailContentQuery.graphql';
 import SessionKernelTags from '../components/ImageTags';
 import { toGlobalId } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
@@ -19,8 +21,6 @@ import FolderLink from './FolderLink';
 import IdleCheckDescriptionModal from './IdleCheckDescriptionModal';
 import ImageMetaIcon from './ImageMetaIcon';
 import SessionUsageMonitor from './SessionUsageMonitor';
-import { SessionDetailContentLegacyQuery } from './__generated__/SessionDetailContentLegacyQuery.graphql';
-import { SessionDetailContentQuery } from './__generated__/SessionDetailContentQuery.graphql';
 import { InfoCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import {
   Alert,
@@ -261,6 +261,7 @@ const SessionDetailContent: React.FC<{
             <Flex gap="xs" wrap="wrap">
               {session.vfolder_nodes
                 ? session.vfolder_nodes.edges.map((vfolder, idx) => {
+                    console.log(vfolder?.node);
                     return (
                       vfolder?.node && (
                         <FolderLink

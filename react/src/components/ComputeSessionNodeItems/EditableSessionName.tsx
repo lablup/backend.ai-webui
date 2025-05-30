@@ -1,11 +1,11 @@
+import { EditableSessionNameDuplicatedCheckQuery } from '../../__generated__/EditableSessionNameDuplicatedCheckQuery.graphql';
+import { EditableSessionNameFragment$key } from '../../__generated__/EditableSessionNameFragment.graphql';
+import { EditableSessionNameRefetchQuery } from '../../__generated__/EditableSessionNameRefetchQuery.graphql';
 import { useBaiSignedRequestWithPromise } from '../../helper';
 import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useTanMutation } from '../../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { getSessionNameRules } from '../SessionNameFormItem';
-import { EditableSessionNameDuplicatedCheckQuery } from './__generated__/EditableSessionNameDuplicatedCheckQuery.graphql';
-import { EditableSessionNameFragment$key } from './__generated__/EditableSessionNameFragment.graphql';
-import { EditableSessionNameRefetchQuery } from './__generated__/EditableSessionNameRefetchQuery.graphql';
 import { theme, Form, Input, App } from 'antd';
 import Text, { TextProps } from 'antd/es/typography/Text';
 import Title, { TitleProps } from 'antd/es/typography/Title';

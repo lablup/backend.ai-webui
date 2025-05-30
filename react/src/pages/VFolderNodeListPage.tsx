@@ -1,3 +1,8 @@
+import {
+  VFolderNodeListPageQuery,
+  VFolderNodeListPageQuery$data,
+  VFolderNodeListPageQuery$variables,
+} from '../__generated__/VFolderNodeListPageQuery.graphql';
 import ActionItemContent from '../components/ActionItemContent';
 import BAICard from '../components/BAICard';
 import BAIFetchKeyButton from '../components/BAIFetchKeyButton';
@@ -27,11 +32,6 @@ import { useVFolderInvitations } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
-import {
-  VFolderNodeListPageQuery,
-  VFolderNodeListPageQuery$data,
-  VFolderNodeListPageQuery$variables,
-} from './__generated__/VFolderNodeListPageQuery.graphql';
 import { useToggle } from 'ahooks';
 import {
   Badge,

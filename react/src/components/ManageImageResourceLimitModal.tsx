@@ -1,11 +1,11 @@
-import { useSuspendedBackendaiClient } from '../hooks';
-import BAIModal, { BAIModalProps } from './BAIModal';
-import ImageResourceFormItem from './ImageResourceFormItem';
 import {
   ManageImageResourceLimitModalMutation,
   ResourceLimitInput,
-} from './__generated__/ManageImageResourceLimitModalMutation.graphql';
-import { ManageImageResourceLimitModal_image$key } from './__generated__/ManageImageResourceLimitModal_image.graphql';
+} from '../__generated__/ManageImageResourceLimitModalMutation.graphql';
+import { ManageImageResourceLimitModal_image$key } from '../__generated__/ManageImageResourceLimitModal_image.graphql';
+import { useSuspendedBackendaiClient } from '../hooks';
+import BAIModal, { BAIModalProps } from './BAIModal';
+import ImageResourceFormItem from './ImageResourceFormItem';
 import { App, Form, FormInstance, message } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';

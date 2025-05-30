@@ -1,9 +1,9 @@
+import { UserSessionsMetricsQuery } from '../__generated__/UserSessionsMetricsQuery.graphql';
 import { useUpdatableState } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import Flex from './Flex';
 import SessionMetricGraph from './SessionMetricGraph';
-import { UserSessionsMetricsQuery } from './__generated__/UserSessionsMetricsQuery.graphql';
 import { Alert, DatePicker, Empty, Skeleton, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';

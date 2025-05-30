@@ -1,4 +1,4 @@
-import { VFolderNameTitleNodeFragment$key } from './__generated__/VFolderNameTitleNodeFragment.graphql';
+import { VFolderNameTitleNodeFragment$key } from '../__generated__/VFolderNameTitleNodeFragment.graphql';
 import { theme, Tooltip, Typography } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import { useFragment } from 'react-relay';

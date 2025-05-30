@@ -1,3 +1,9 @@
+import { AgentDetailModalFragment$key } from '../__generated__/AgentDetailModalFragment.graphql';
+import {
+  AgentListQuery,
+  AgentListQuery$data,
+} from '../__generated__/AgentListQuery.graphql';
+import { AgentSettingModalFragment$key } from '../__generated__/AgentSettingModalFragment.graphql';
 import {
   bytesToGB,
   convertBinarySizeUnit,
@@ -20,12 +26,6 @@ import DoubleTag from './DoubleTag';
 import Flex from './Flex';
 import { ResourceTypeIcon } from './ResourceNumber';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
-import { AgentDetailModalFragment$key } from './__generated__/AgentDetailModalFragment.graphql';
-import {
-  AgentListQuery,
-  AgentListQuery$data,
-} from './__generated__/AgentListQuery.graphql';
-import { AgentSettingModalFragment$key } from './__generated__/AgentSettingModalFragment.graphql';
 import {
   CheckCircleOutlined,
   InfoCircleOutlined,

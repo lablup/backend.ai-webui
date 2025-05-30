@@ -1,3 +1,13 @@
+import {
+  CreateResourcePresetInput,
+  ResourcePresetSettingModalCreateMutation,
+} from '../__generated__/ResourcePresetSettingModalCreateMutation.graphql';
+import { ResourcePresetSettingModalFragment$key } from '../__generated__/ResourcePresetSettingModalFragment.graphql';
+import {
+  ModifyResourcePresetInput,
+  ResourcePresetSettingModalModifyByIdMutation,
+} from '../__generated__/ResourcePresetSettingModalModifyByIdMutation.graphql';
+import { ResourcePresetSettingModalModifyByNameMutation } from '../__generated__/ResourcePresetSettingModalModifyByNameMutation.graphql';
 import { convertBinarySizeUnit } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
@@ -5,16 +15,6 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import DynamicUnitInputNumber from './DynamicUnitInputNumber';
 import ResourceGroupSelect from './ResourceGroupSelect';
-import {
-  CreateResourcePresetInput,
-  ResourcePresetSettingModalCreateMutation,
-} from './__generated__/ResourcePresetSettingModalCreateMutation.graphql';
-import { ResourcePresetSettingModalFragment$key } from './__generated__/ResourcePresetSettingModalFragment.graphql';
-import {
-  ModifyResourcePresetInput,
-  ResourcePresetSettingModalModifyByIdMutation,
-} from './__generated__/ResourcePresetSettingModalModifyByIdMutation.graphql';
-import { ResourcePresetSettingModalModifyByNameMutation } from './__generated__/ResourcePresetSettingModalModifyByNameMutation.graphql';
 import { App, Col, Form, FormInstance, Input, InputNumber, Row } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';

@@ -1,3 +1,4 @@
+import { ContainerLogModalFragment$key } from '../../__generated__/ContainerLogModalFragment.graphql';
 import { downloadBlob } from '../../helper/csv-util';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
@@ -6,7 +7,6 @@ import { useMemoWithPrevious } from '../../hooks/useMemoWithPrevious';
 import BAIModal, { BAIModalProps } from '../BAIModal';
 import BAISelect from '../BAISelect';
 import Flex from '../Flex';
-import { ContainerLogModalFragment$key } from './__generated__/ContainerLogModalFragment.graphql';
 import { ReloadOutlined } from '@ant-design/icons';
 import { LazyLog, ScrollFollow } from '@melloware/react-logviewer';
 import { Button, Divider, Grid, theme, Tooltip, Typography } from 'antd';

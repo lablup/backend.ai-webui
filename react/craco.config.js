@@ -18,12 +18,11 @@ module.exports = {
       '../manifest/**/*',
       '../dist/**/*',
       '../resources/**/*',
+      './node_modules/backend.ai-ui/dist/*', /// watch backend.ai-ui for development
     ],
   },
   babel: {
-    plugins: [
-      '@babel/plugin-syntax-import-attributes',
-    ],
+    plugins: ['@babel/plugin-syntax-import-attributes'],
   },
   webpack: {
     // When you change the this value, you might need to clear cache restart the dev server.
@@ -88,11 +87,17 @@ module.exports = {
         ...webpackConfig,
         resolve: {
           ...webpackConfig.resolve,
+          alias: {
+            ...webpackConfig.resolve.alias,
+            // Resolve `__generated__` to the correct path
+            // This is necessary for relay to find the generated files.
+            './__generated__': path.resolve(__dirname, 'src/__generated__'),
+          },
           fallback: {
             ...webpackConfig.resolve.fallback,
             buffer: require.resolve('buffer'),
             stream: require.resolve('stream-browserify'),
-            child_process: false
+            child_process: false,
           },
         },
         ignoreWarnings: [
@@ -103,7 +108,7 @@ module.exports = {
           {
             module: /@antv\//,
             message: /Failed to parse source map/,
-          }
+          },
         ],
       };
     },
