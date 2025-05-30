@@ -87,7 +87,6 @@ export function useHistory(id: string) {
     list: chats,
     remove,
     push,
-    insert,
     replace,
     resetList,
   } = useDynamicList<ChatData>();
