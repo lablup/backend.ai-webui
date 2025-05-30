@@ -258,7 +258,7 @@ const ComputeSessionListPage = () => {
         </Col>
       </Row>
       <BAICard
-        bordered={false}
+        variant="borderless"
         title={t('webui.menu.Sessions')}
         extra={
           <Flex gap={'xs'}>

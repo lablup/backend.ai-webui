@@ -1173,7 +1173,7 @@
     "Agents": "エージェント",
     "AllowedClientIps": "許可されたクライアントIP",
     "AlreadyTerminatingSession": "すでに終了しているセッションです",
-    "AnotherUserSession": "このセッションは、別のユーザーによって作成されました",
+    "AnotherUserSession": "このセッションは、別のユーザーによって作成されました.",
     "Architecture": "アーキテクチャ",
     "Arguments": "引数",
     "AverageUsage": "平均",
