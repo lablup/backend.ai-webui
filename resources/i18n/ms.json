@@ -1173,6 +1173,7 @@
     "Agents": "ejen",
     "AllowedClientIps": "IP pelanggan yang dibenarkan",
     "AlreadyTerminatingSession": "Sudah menamatkan sesi.",
+    "AnotherUserSession": "Sesi ini dibuat oleh pengguna lain",
     "Architecture": "Seni bina",
     "Arguments": "Hujah",
     "AverageUsage": "Avg",

@@ -1163,6 +1163,7 @@
     "Agents": "ตัวแทน",
     "AllowedClientIps": "IP ไคลเอนต์ที่อนุญาต",
     "AlreadyTerminatingSession": "กำลังยุติเซสชันอยู่แล้ว",
+    "AnotherUserSession": "เซสชันนี้ถูกสร้างขึ้นโดยผู้ใช้รายอื่น",
     "Architecture": "สถาปัตยกรรม",
     "Arguments": "อาร์กิวเมนต์",
     "AverageUsage": "AVG",

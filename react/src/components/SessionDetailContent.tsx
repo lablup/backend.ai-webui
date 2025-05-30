@@ -1,7 +1,7 @@
 import SessionKernelTags from '../components/ImageTags';
 import { toGlobalId } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useCurrentUserRole } from '../hooks/backendai';
+import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
 import ConnectedKernelList from './ComputeSessionNodeItems/ConnectedKernelList';
@@ -49,6 +49,7 @@ const SessionDetailContent: React.FC<{
   const { token } = theme.useToken();
   const { md } = Grid.useBreakpoint();
   const currentProject = useCurrentProjectValue();
+  const [currentUser] = useCurrentUserInfo();
   const userRole = useCurrentUserRole();
   const baiClient = useSuspendedBackendaiClient();
   const [openIdleCheckDescriptionModal, setOpenIdleCheckDescriptionModal] =
@@ -169,6 +170,13 @@ const SessionDetailContent: React.FC<{
       {session_for_project_id?.group_id !== currentProject.id && (
         <Alert message={t('session.NotInProject')} type="warning" showIcon />
       )}
+      {currentUser.email !== legacy_session?.user_email && (
+        <Alert
+          message={t('session.AnotherUserSession')}
+          type="warning"
+          showIcon
+        />
+      )}
       {imminentExpirationTime && imminentExpirationTime < 3600 && (
         <Alert
           message={t('session.IdleCheckExpirationWarning')}
@@ -267,6 +275,9 @@ const SessionDetailContent: React.FC<{
                           key={`mounted-vfolder-${idx}`}
                           showIcon
                           vfolderNodeFragment={vfolder.node}
+                          disabled={
+                            currentUser.email !== legacy_session?.user_email
+                          }
                         />
                       )
                     );
@@ -285,6 +296,9 @@ const SessionDetailContent: React.FC<{
                             folderId={id ?? ''}
                             folderName={name ?? ''}
                             showIcon
+                            disabled={
+                              currentUser.email !== legacy_session?.user_email
+                            }
                           />
                         );
                       },

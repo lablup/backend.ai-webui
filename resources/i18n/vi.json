@@ -1174,6 +1174,7 @@
     "Agents": "Đại lý",
     "AllowedClientIps": "IP khách hàng được phép",
     "AlreadyTerminatingSession": "Đã kết thúc phiên.",
+    "AnotherUserSession": "Phiên này được tạo bởi người dùng khác",
     "Architecture": "Ngành kiến ​​​​trúc",
     "Arguments": "Tranh luận",
     "AverageUsage": "AVG",

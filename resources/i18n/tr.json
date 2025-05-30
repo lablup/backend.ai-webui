@@ -1174,6 +1174,7 @@
     "Agents": "Temsilciler",
     "AllowedClientIps": "İzin verilen istemci IP'leri",
     "AlreadyTerminatingSession": "Oturum zaten sonlandırılıyor.",
+    "AnotherUserSession": "Bu oturum başka bir kullanıcı tarafından oluşturuldu",
     "Architecture": "Mimarlık",
     "Arguments": "Argümanlar",
     "AverageUsage": "AVG",

@@ -1171,6 +1171,7 @@
     "Agents": "Агентууд",
     "AllowedClientIps": "Зөвшөөрөгдсөн үйлчлүүлэгчийн IP",
     "AlreadyTerminatingSession": "Сессийг аль хэдийн дуусгаж байна.",
+    "AnotherUserSession": "Энэ хуралдааныг өөр хэрэглэгч үүсгэсэн",
     "Architecture": "Архитектур",
     "Arguments": "Маргаанууд",
     "AverageUsage": "Avg",

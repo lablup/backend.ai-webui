@@ -1177,6 +1177,7 @@
     "Agents": "실행노드",
     "AllowedClientIps": "허용된 클라이언트 IP",
     "AlreadyTerminatingSession": "이미 종료중인 세션입니다",
+    "AnotherUserSession": "이 세션은 다른 사용자에 의해 생성되었습니다.",
     "Architecture": "아키텍처",
     "Arguments": "프로그램 인수",
     "AverageUsage": "평균 사용량",
