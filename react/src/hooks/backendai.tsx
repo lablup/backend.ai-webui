@@ -134,7 +134,7 @@ interface UserInfo {
   uuid: string;
 }
 
-type mutationOptions<T> = {
+export type mutationOptions<T> = {
   onSuccess?: (value: T) => void;
   onError?: (error: any) => void;
 };
