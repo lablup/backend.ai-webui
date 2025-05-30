@@ -123,8 +123,12 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
                   graphql`
                     query EditableSessionNameRefetchQuery(
                       $sessionId: GlobalIDField!
+                      $project_id: UUID!
                     ) {
-                      compute_session_node(id: $sessionId) {
+                      compute_session_node(
+                        id: $sessionId
+                        project_id: $project_id
+                      ) {
                         id
                         name
                       }
@@ -132,6 +136,7 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
                   `,
                   {
                     sessionId: session.id,
+                    project_id: currentProject.id,
                   },
                 )
                   .toPromise()
