@@ -149,7 +149,6 @@ export type SizeUnit =
   | 'T'
   | 'P'
   | 'E'
-  | 'b'
   | 'k'
   | 'm'
   | 'g'
@@ -165,48 +164,6 @@ export type BinarySizeUnit =
   | 'TiB'
   | 'PiB'
   | 'EiB';
-
-export type DecimalSizeUnit = 'Bytes' | 'KB' | 'MB' | 'GB' | 'TB' | 'PB' | 'EB';
-
-export function sizeUnitToDecimalSizeUnit(unit: SizeUnit): DecimalSizeUnit {
-  const unitMap: Record<SizeUnit, DecimalSizeUnit> = {
-    B: 'Bytes',
-    K: 'KB',
-    M: 'MB',
-    G: 'GB',
-    T: 'TB',
-    P: 'PB',
-    E: 'EB',
-    b: 'Bytes',
-    k: 'KB',
-    m: 'MB',
-    g: 'GB',
-    t: 'TB',
-    p: 'PB',
-    e: 'EB',
-  };
-  return unitMap[unit] || unit;
-}
-
-export function sizeUnitToBinarySizeUnit(unit: SizeUnit): BinarySizeUnit {
-  const unitMap: Record<SizeUnit, BinarySizeUnit> = {
-    B: 'Bytes',
-    K: 'KiB',
-    M: 'MiB',
-    G: 'GiB',
-    T: 'TiB',
-    P: 'PiB',
-    E: 'EiB',
-    b: 'Bytes',
-    k: 'KiB',
-    m: 'MiB',
-    g: 'GiB',
-    t: 'TiB',
-    p: 'PiB',
-    e: 'EiB',
-  };
-  return unitMap[unit] || unit;
-}
 
 function convertSizeUnit(
   sizeWithUnit: string | undefined,
@@ -249,11 +206,17 @@ function convertSizeUnit(
     ? finalBytes.toFixed(fixed)
     : toFixedFloorWithoutTrailingZeros(finalBytes, fixed);
 
+  const suffix = base === 1024 && sizeIndex > 0 ? 'iB' : 'B';
+
+  const unit = sizes[targetIndex] as SizeUnit;
+  const unitWithSuffix = unit + suffix;
   return {
     number: finalBytes,
     numberFixed,
-    unit: sizes[targetIndex] as SizeUnit,
-    numberUnit: `${numberFixed}${sizes[targetIndex]}`,
+    unit,
+    unitWithSuffix,
+    formattedSize: `${numberFixed} ${unit}`,
+    formattedSizeWithSuffix: `${numberFixed} ${unitWithSuffix}`,
   };
 }
 
@@ -315,7 +278,7 @@ export function addNumberWithUnits(
       (convertBinarySizeUnit(size2, 'b')?.number || 0) +
       'b',
     targetUnit,
-  )?.numberUnit;
+  )?.formattedSize;
 }
 
 export function subNumberWithUnits(
@@ -328,7 +291,7 @@ export function subNumberWithUnits(
       (convertBinarySizeUnit(size2, 'b')?.number || 0) +
       'b',
     targetUnit,
-  )?.numberUnit;
+  )?.formattedSize;
 }
 
 export type QuotaScopeType = 'project' | 'user';

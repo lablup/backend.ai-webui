@@ -2,8 +2,6 @@ import {
   convertBinarySizeUnit,
   convertDecimalSizeUnit,
   SizeUnit,
-  sizeUnitToBinarySizeUnit,
-  sizeUnitToDecimalSizeUnit,
 } from '../helper';
 import Flex from './Flex';
 import { Typography } from 'antd';
@@ -36,15 +34,11 @@ const NumberWithUnit = ({
         {postfix && postfix}
       </Typography.Text>
       <Typography.Text type="secondary">
-        {unitType === 'binary'
-          ? sizeUnitToBinarySizeUnit(convertedByTargetUnit?.unit as SizeUnit)
-          : sizeUnitToDecimalSizeUnit(convertedByTargetUnit?.unit as SizeUnit)}
+        {convertedByTargetUnit?.unitWithSuffix}
         {Number(convertedByTargetUnit?.numberFixed).toString() === '0' &&
           Number(convertedByAuto?.numberFixed).toString() !== '0' &&
           `(${Number(convertedByAuto?.numberFixed).toString()} ${
-            unitType === 'binary'
-              ? sizeUnitToBinarySizeUnit(convertedByAuto?.unit as SizeUnit)
-              : sizeUnitToDecimalSizeUnit(convertedByAuto?.unit as SizeUnit)
+            convertedByAuto?.unitWithSuffix
           })`}
       </Typography.Text>
     </Flex>

@@ -133,7 +133,7 @@ const KeypairResourcePolicySettingModal: React.FC<
     );
     if (parsedTotalResourceSlots?.mem) {
       let autoUniResult = convertBinarySizeUnit(
-        parsedTotalResourceSlots?.mem + 'b',
+        parsedTotalResourceSlots?.mem + '',
         'auto',
         2,
         true,
@@ -141,13 +141,13 @@ const KeypairResourcePolicySettingModal: React.FC<
 
       if (autoUniResult?.unit === 'B' || autoUniResult?.unit === 'K') {
         autoUniResult = convertBinarySizeUnit(
-          parsedTotalResourceSlots?.mem + 'b',
+          parsedTotalResourceSlots?.mem + '',
           'M',
           3,
           true,
         );
       }
-      parsedTotalResourceSlots.mem = autoUniResult?.numberUnit || '0G';
+      parsedTotalResourceSlots.mem = autoUniResult?.formattedSize || '0G';
     }
 
     return {
@@ -180,7 +180,7 @@ const KeypairResourcePolicySettingModal: React.FC<
           ),
           (value, key) => {
             if (_.includes(key, 'mem')) {
-              return convertBinarySizeUnit(value, 'b', 0)?.numberFixed;
+              return convertBinarySizeUnit(value, 'B', 0)?.numberFixed;
             }
             return value;
           },

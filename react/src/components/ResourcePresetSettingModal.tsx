@@ -106,7 +106,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
           values?.resource_slots,
           (value, key) => {
             if (value && _.includes(key, 'mem')) {
-              return convertBinarySizeUnit(value, 'b', 0)?.numberFixed;
+              return convertBinarySizeUnit(value, 'B', 0)?.numberFixed;
             }
             return value;
           },
@@ -117,7 +117,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
         const props: CreateResourcePresetInput | ModifyResourcePresetInput = {
           resource_slots: JSON.stringify(resourceSlots || {}),
           shared_memory: values?.shared_memory
-            ? convertBinarySizeUnit(values?.shared_memory, 'b', 0)?.numberFixed
+            ? convertBinarySizeUnit(values?.shared_memory, 'B', 0)?.numberFixed
             : null,
         };
         if (baiClient?.supports('resource-presets-per-resource-group')) {
@@ -239,16 +239,16 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
                     (value, key) =>
                       _.includes(key, 'mem')
                         ? convertBinarySizeUnit(
-                            value + 'b',
+                            value + '',
                             value === '0' ? 'g' : 'auto',
-                          )?.numberUnit
+                          )?.formattedSize
                         : value,
                   ) || {},
                 shared_memory: resourcePreset?.shared_memory
                   ? convertBinarySizeUnit(
-                      resourcePreset?.shared_memory + 'b',
+                      resourcePreset?.shared_memory + '',
                       resourcePreset?.shared_memory === '0' ? 'g' : 'auto',
-                    )?.numberUnit
+                    )?.formattedSize
                   : null,
               }
             : {
@@ -377,9 +377,9 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
                         getFieldValue('resource_slots')?.mem &&
                         (convertBinarySizeUnit(
                           getFieldValue('resource_slots')?.mem,
-                          'b',
+                          'B',
                         )?.number ?? 0) <
-                          (convertBinarySizeUnit(value, 'b')?.number ?? 0)
+                          (convertBinarySizeUnit(value, 'B')?.number ?? 0)
                       ) {
                         return Promise.reject(
                           t('resourcePreset.MemoryShouldBeLargerThanSHMEM'),

@@ -113,8 +113,8 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                   }
                   valueLabel={`${
                     convertBinarySizeUnit(_.toString(agent?.mem_cur_bytes), 'g')
-                      ?.numberUnit
-                  }iB / ${convertBinarySizeUnit(parsedAvailableSlots?.mem, 'g')?.numberUnit}iB`}
+                      ?.formattedSizeWithSuffix
+                  } / ${convertBinarySizeUnit(parsedAvailableSlots?.mem, 'g')?.formattedSizeWithSuffix}`}
                 />
               </Flex>
             ) : null}
@@ -131,7 +131,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                         parsedLiveStat?.node?.net_tx?.current,
                         'm',
                         2,
-                      )?.numberUnit
+                      )?.formattedSize
                     }
                     B
                   </Typography.Text>
@@ -144,7 +144,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                         parsedLiveStat?.node?.net_rx?.current,
                         'm',
                         2,
-                      )?.numberUnit
+                      )?.formattedSize
                     }
                     B
                   </Typography.Text>

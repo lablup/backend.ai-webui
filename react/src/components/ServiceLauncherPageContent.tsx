@@ -660,18 +660,18 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         resource: {
           cpu: parseInt(JSON.parse(endpoint?.resource_slots || '{}')?.cpu),
           mem: convertBinarySizeUnit(
-            JSON.parse(endpoint?.resource_slots || '{}')?.mem + 'b',
+            JSON.parse(endpoint?.resource_slots || '{}')?.mem + '',
             'g',
             3,
             true,
-          )?.numberUnit,
+          )?.formattedSize,
           shmem: convertBinarySizeUnit(
             JSON.parse(endpoint?.resource_opts || '{}')?.shmem ||
               AUTOMATIC_DEFAULT_SHMEM,
             'g',
             3,
             true,
-          )?.numberUnit,
+          )?.formattedSize,
           ...getAIAcceleratorWithStringifiedKey(
             _.omit(JSON.parse(endpoint?.resource_slots || '{}'), [
               'cpu',

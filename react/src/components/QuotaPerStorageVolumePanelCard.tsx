@@ -183,12 +183,12 @@ const QuotaPerStorageVolumePanelCard: React.FC<
               used={
                 projectUsageBytes === 0
                   ? ''
-                  : `${convertDecimalSizeUnit(_.toString(projectUsageBytes), 'G')?.numberUnit}B`
+                  : `${convertDecimalSizeUnit(_.toString(projectUsageBytes), 'G')?.formattedSizeWithSuffix}`
               }
               total={
                 projectHardLimitBytes === 0
                   ? ''
-                  : `${convertDecimalSizeUnit(_.toString(projectHardLimitBytes), 'G')?.numberUnit}B`
+                  : `${convertDecimalSizeUnit(_.toString(projectHardLimitBytes), 'G')?.formattedSizeWithSuffix}`
               }
             />
           </Col>
@@ -211,12 +211,12 @@ const QuotaPerStorageVolumePanelCard: React.FC<
               used={
                 userUsageBytes === 0
                   ? ''
-                  : `${convertDecimalSizeUnit(_.toString(userUsageBytes), 'G')?.numberUnit}B`
+                  : `${convertDecimalSizeUnit(_.toString(userUsageBytes), 'G')?.formattedSize}B`
               }
               total={
                 userHardLimitBytes === 0
                   ? ''
-                  : `${convertDecimalSizeUnit(_.toString(userHardLimitBytes), 'G')?.numberUnit}B`
+                  : `${convertDecimalSizeUnit(_.toString(userHardLimitBytes), 'G')?.formattedSize}B`
               }
             />
           </Col>

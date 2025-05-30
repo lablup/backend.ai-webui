@@ -96,7 +96,7 @@ const ResourceNumber: React.FC<ResourceNumberProps> = ({
           style={{ fontSize: token.fontSizeSM }}
         >
           (SHM:{' '}
-          {convertBinarySizeUnit(opts.shmem + 'b', 'g', 2, true)?.numberFixed}
+          {convertBinarySizeUnit(opts.shmem + '', 'g', 2, true)?.numberFixed}
           GiB)
         </Typography.Text>
       ) : null}
