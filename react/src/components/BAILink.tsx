@@ -17,6 +17,7 @@ const useStyles = createStyles(({ css, token }) => ({
   disabled: css`
     color: ${token.colorTextDisabled};
     cursor: not-allowed;
+    pointer-events: none;
   `,
 }));
 
