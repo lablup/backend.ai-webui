@@ -38,6 +38,7 @@ import Title from 'antd/es/typography/Title';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { Suspense, useState } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
@@ -52,6 +53,7 @@ const SessionDetailContent: React.FC<{
   const [currentUser] = useCurrentUserInfo();
   const userRole = useCurrentUserRole();
   const baiClient = useSuspendedBackendaiClient();
+
   const [openIdleCheckDescriptionModal, setOpenIdleCheckDescriptionModal] =
     useState<boolean>(false);
   const [openStatusDetailModal, setOpenStatusDetailModal] =
@@ -78,7 +80,7 @@ const SessionDetailContent: React.FC<{
         fetchPolicy: 'network-only',
       },
     );
-  const { session, legacy_session } =
+  const { session, legacy_session, vfolder_invited_list } =
     useLazyLoadQuery<SessionDetailContentQuery>(
       //  In compute_session_node, there are missing fields. We need to use `compute_session` to get the missing fields.
       graphql`
@@ -138,6 +140,11 @@ const SessionDetailContent: React.FC<{
             ...SessionActionButtonsLegacyFragment
             ...AppLauncherModalLegacyFragment
           }
+          vfolder_invited_list(limit: 100, offset: 0) {
+            items {
+              id
+            }
+          }
         }
       `,
       {
@@ -164,6 +171,22 @@ const SessionDetailContent: React.FC<{
       .map((check) => check.remaining)
       .filter(Boolean),
   );
+
+  const invitedFolderIds = useMemo(
+    () => _.map(vfolder_invited_list?.items, 'id'),
+    [vfolder_invited_list],
+  );
+
+  /**
+   * Checks if a folder ID or array of folder IDs contains any invited folders
+   * @param vfolderId - Either a single folder ID or an array of folder IDs to check
+   * @returns True if any of the provided folder IDs are in the invited folders list
+   */
+  function isFolderInvited(vfolderId: string | Array<string>) {
+    return _.isArray(vfolderId)
+      ? _.some(vfolderId, (id) => _.includes(invitedFolderIds, id))
+      : _.includes(invitedFolderIds, vfolderId);
+  }
 
   return session ? (
     <Flex direction="column" gap={'lg'} align="stretch">
@@ -275,8 +298,15 @@ const SessionDetailContent: React.FC<{
                           key={`mounted-vfolder-${idx}`}
                           showIcon
                           vfolderNodeFragment={vfolder.node}
-                          disabled={
-                            currentUser.email !== legacy_session?.user_email
+                          type={
+                            currentUser.email !== legacy_session?.user_email &&
+                            !isFolderInvited(
+                              (session.vfolder_mounts || []).filter(
+                                (id) => typeof id === 'string',
+                              ),
+                            )
+                              ? 'disabled'
+                              : 'hover'
                           }
                         />
                       )
@@ -296,8 +326,12 @@ const SessionDetailContent: React.FC<{
                             folderId={id ?? ''}
                             folderName={name ?? ''}
                             showIcon
-                            disabled={
-                              currentUser.email !== legacy_session?.user_email
+                            type={
+                              currentUser.email !==
+                                legacy_session?.user_email &&
+                              !isFolderInvited(id as string)
+                                ? 'disabled'
+                                : 'hover'
                             }
                           />
                         );
