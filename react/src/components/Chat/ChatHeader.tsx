@@ -4,7 +4,7 @@ import { AIAgent } from '../../hooks/useAIAgent';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import Flex from '../Flex';
 import AIAgentSelect from './AIAgentSelect';
-import { BAIModel, ChatParameters } from './ChatModel';
+import type { ChatModel, ChatParameters } from './ChatModel';
 import { ChatParametersSliders } from './ChatParametersSliders';
 import EndpointSelect, { EndpointSelectProps } from './EndpointSelect';
 import ModelSelect from './ModelSelect';
@@ -53,7 +53,8 @@ const SyncSwitch: React.FC<SyncSwitchProps> = ({ sync, onClick }) => {
 interface ChatHeaderProps {
   showCompareMenuItem?: boolean;
   closable?: boolean;
-  models: BAIModel[];
+  clonable?: boolean;
+  models: ChatModel[];
   modelId: string;
   onChangeModel: (modelId: string) => void;
   endpointFrgmt?: ChatHeader_Endpoint$key | null;
@@ -64,9 +65,9 @@ interface ChatHeaderProps {
   sync: boolean;
   onChangeSync: (sync: boolean) => void;
   fetchKey: string;
-  onClickDeleteChatHistory?: () => void;
-  onClickClose?: () => void;
-  onClickCreate?: () => void;
+  onClearMessage?: () => void;
+  onRemoveChat?: () => void;
+  onAddChat?: () => void;
   parameters: ChatParameters;
   usingParameters: boolean;
   onChangeParameter: (
@@ -78,6 +79,7 @@ interface ChatHeaderProps {
 const ChatHeader: React.FC<ChatHeaderProps> = ({
   showCompareMenuItem,
   closable,
+  clonable,
   models,
   modelId,
   onChangeModel,
@@ -87,13 +89,13 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   onChangeAgent,
   sync,
   onChangeSync,
-  onClickClose,
-  onClickCreate,
+  onRemoveChat,
+  onAddChat,
   fetchKey,
-  onClickDeleteChatHistory,
   parameters,
   usingParameters,
   onChangeParameter,
+  onClearMessage,
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -137,7 +139,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
       label: t('chatui.DeleteChatHistory'),
       icon: <EraserIcon />,
       onClick: () => {
-        onClickDeleteChatHistory?.();
+        onClearMessage?.();
       },
     },
     closable && {
@@ -149,7 +151,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
       label: t('chatui.DeleteChattingSession'),
       icon: <CloseOutlined />,
       onClick: () => {
-        onClickClose?.();
+        onRemoveChat?.();
       },
     },
   ]);
@@ -253,7 +255,9 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             }
           />
         </Popover>
-        <Button onClick={() => onClickCreate?.()} icon={<PlusOutlined />} />
+        {clonable && (
+          <Button onClick={() => onAddChat?.()} icon={<PlusOutlined />} />
+        )}
         <Dropdown menu={{ items }} trigger={['click']}>
           <Button
             type="link"
