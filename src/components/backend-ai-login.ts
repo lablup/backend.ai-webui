@@ -134,6 +134,8 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: String }) _helpDescriptionTitle = '';
   @property({ type: Boolean }) otpRequired = false;
   @property({ type: String }) otp;
+  @property({ type: Boolean }) needsOtpRegistration = false;
+  @property({ type: String }) totp_registration_token = '';
   @property({ type: Boolean }) needToResetPassword = false;
   @property({ type: Boolean }) directoryBasedUsage = false;
   @property({ type: Number }) maxCountForPreopenPorts = 10;
@@ -1541,7 +1543,7 @@ export default class BackendAILogin extends BackendAIPage {
           this.client
             ?.login(this.otp)
             .then(async (response) => {
-              if (response === false) {
+              if (response.fail_reason === 'User credential mismatch.') {
                 this.open();
                 if (this.user_id !== '' && this.password !== '') {
                   this.notification.text = PainKiller.relieve(
@@ -1550,9 +1552,22 @@ export default class BackendAILogin extends BackendAIPage {
                   this.notification.show();
                 }
                 return Promise.resolve(false);
+                // TODO: check if force2FA is enabled and User is not registered
+                // If so, show the dialog to register OTP(React component)
+              } else if (
+                response.fail_reason ===
+                'You must register Two-Factor Authentication.'
+              ) {
+                this.totp_registration_token =
+                  response.data.two_factor_registration_token;
+                this.needsOtpRegistration = true;
               } else if (response.fail_reason) {
                 this.open();
-                if (response.fail_reason == 'OTP not provided') {
+                if (
+                  response.fail_reason ==
+                    'You must authenticate using Two-Factor Authentication.' ||
+                  'OTP not provided'
+                ) {
                   this.otpRequired = true;
                   await this.otpInput.updateComplete;
                   this.otpInput.focus();
@@ -2393,6 +2408,23 @@ export default class BackendAILogin extends BackendAIPage {
               this.notification.show();
             }}"
           ></backend-ai-react-reset-password-required-modal>
+          <backend-ai-react-totp-registration-modal-before-login
+            value="${JSON.stringify({
+              open: this.needsOtpRegistration,
+              totp_registration_token: this.totp_registration_token,
+              api_endpoint: this.api_endpoint,
+            })}"
+            @cancel="${(e) => (this.needsOtpRegistration = false)}"
+            @ok="${async (e) => {
+              this.needsOtpRegistration = false;
+              this.otpRequired = true;
+              await this.otpInput.updateComplete;
+              this.otpInput.focus();
+
+              this._disableUserInput();
+              this.waitingAnimation.style.display = 'none';
+            }}"
+          ></backend-ai-react-totp-registration-modal-before-login>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog

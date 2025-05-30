@@ -1,7 +1,7 @@
 import { convertDecimalSizeUnit, filterEmptyItem, toLocalId } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useVirtualFolderNodePathFragment$key } from '../hooks/__generated__/useVirtualFolderNodePathFragment.graphql';
-import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
+import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { usePainKiller } from '../hooks/usePainKiller';
@@ -44,7 +44,6 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
 
   const relayEnv = useRelayEnvironment();
   const currentProject = useCurrentProjectValue();
-  const userRole = useCurrentUserRole();
   const painKiller = usePainKiller();
   const baiClient = useSuspendedBackendaiClient();
   const [currentUser] = useCurrentUserInfo();
@@ -95,13 +94,6 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
   }
 
   const vfolderId = toLocalId(vfolderNode?.id);
-  // const quotaScopeId = _.split(vfolderNode?.quota_scope_id, ':')?.[1];
-  // const [vfolderIdPrefix1, vfolderIdPrefix2, ...vfolderIdRest] = [
-  //   vfolderId.slice(0, 2),
-  //   vfolderId.slice(2, 4),
-  //   vfolderId.slice(4),
-  // ];
-  // const vfolderPath = `${quotaScopeId}/${vfolderIdPrefix1}/${vfolderIdPrefix2}/${vfolderIdRest}`;
 
   const items: DescriptionsProps['items'] = filterEmptyItem([
     {
@@ -158,7 +150,8 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
           </Flex>
         ),
     },
-    vfolderNode?.user === currentUser.uuid && {
+    (vfolderNode?.user === currentUser.uuid ||
+      (baiClient.is_admin && vfolderNode?.group === currentProject?.id)) && {
       key: 'permission',
       label: t('data.folders.MountPermission'),
       children: (
@@ -214,7 +207,7 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
       label: t('data.folders.Owner'),
       children:
         vfolderNode?.user === currentUser?.uuid ||
-        (vfolderNode?.group === currentProject?.id && userRole === 'admin') ? (
+        (baiClient.is_admin && vfolderNode?.group === currentProject?.id) ? (
           <Flex justify="start">
             <CheckCircleOutlined />
           </Flex>

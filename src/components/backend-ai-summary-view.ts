@@ -17,7 +17,6 @@ import { default as PainKiller } from './backend-ai-painkiller';
 import './backend-ai-release-check';
 import './backend-ai-resource-monitor';
 import './backend-ai-resource-panel';
-import './backend-ai-session-launcher';
 import './lablup-activity-panel';
 import '@material/mwc-button';
 import '@material/mwc-icon';
@@ -434,7 +433,10 @@ export default class BackendAISummary extends BackendAIPage {
         : invitation.vfolder_name;
       const vfolderInfo = await globalThis.backendaiclient.vfolder.info(folder);
       const tabName = BackendAISummary.getVFolderTabByVFolderInfo(vfolderInfo);
-      this.notification.url = `/data?tab=${tabName}&folder=${invitation.vfolder_id.replace('-', '')}`;
+      const searchParam = new URLSearchParams();
+      searchParam.set('tab', tabName);
+      searchParam.set('folder', invitation.vfolder_id.replace('-', ''));
+      this.notification.url = `/data?${searchParam.toString()}`;
       this.notification.text =
         _text('summary.AcceptSharedVFolder') + `${invitation.vfolder_name}`;
       this.notification.show(true);

@@ -4,8 +4,9 @@ import { App } from 'antd';
 import { ArgsProps } from 'antd/lib/notification';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 import _ from 'lodash';
-import { Key, useCallback, useEffect, useRef } from 'react';
-import { To } from 'react-router-dom';
+import { Key, ReactNode, useCallback, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { To, createPath } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
 const _activeNotificationKeys: Key[] = [];
@@ -16,7 +17,7 @@ export interface NotificationState
   created?: string;
   toTextKey?: string;
   toText?: string;
-  to?: string | To;
+  to?: To;
   open?: boolean;
   icon?: 'folder';
   backgroundTask?: {
@@ -50,6 +51,11 @@ export interface NotificationState
     promise?: Promise<unknown> | null;
   };
   extraDescription?: string;
+}
+
+interface NotificationOptions {
+  skipOverrideByStatus?: boolean;
+  useDesktopNotification?: boolean;
 }
 
 export type NotificationStateForOnChange = Partial<
@@ -104,10 +110,9 @@ export const useBAINotificationEffect = () => {
               updatedNotification,
               data,
             );
-            upsertNotification(
-              _.merge({}, updatedNotification, overrideData),
-              true,
-            );
+            upsertNotification(_.merge({}, updatedNotification, overrideData), {
+              skipOverrideByStatus: true,
+            });
           })
           .catch((e) => {
             const updatedNotification = _.merge({}, notification, {
@@ -120,10 +125,9 @@ export const useBAINotificationEffect = () => {
               updatedNotification,
               e,
             );
-            upsertNotification(
-              _.merge({}, updatedNotification, overrideData),
-              true,
-            );
+            upsertNotification(_.merge({}, updatedNotification, overrideData), {
+              skipOverrideByStatus: true,
+            });
           })
           .finally(() => {
             listeningPromiseKeysRef.current = _.without(
@@ -268,6 +272,7 @@ export const useSetBAINotification = () => {
   const setNotifications = useSetAtom(notificationListState);
 
   const app = App.useApp();
+  const { t } = useTranslation();
 
   const webuiNavigate = useWebUINavigate();
 
@@ -288,11 +293,17 @@ export const useSetBAINotification = () => {
     [app.notification],
   );
 
+  /**
+   * Function to upsert a notification.
+   * @param params - The parameters for the notification.
+   * @param options - Options for the notification.
+   */
   const upsertNotification = useCallback(
     (
       params: Partial<Omit<NotificationState, 'created'>>,
-      skipOverrideByStatus?: boolean,
+      options: NotificationOptions = {},
     ) => {
+      const { skipOverrideByStatus, useDesktopNotification = true } = options;
       let currentKey: React.Key | undefined;
       setNotifications((prevNotifications: NotificationState[]) => {
         let nextNotifications: NotificationState[];
@@ -350,6 +361,9 @@ export const useSetBAINotification = () => {
           ) {
             _activeNotificationKeys.push(newNotification.key);
           }
+          if (useDesktopNotification) {
+            upsertDesktopNotification(newNotification);
+          }
           app.notification.open({
             ...newNotification,
             icon: undefined, // override icon to remove default icon from notification, icon displayed in BAINotificationItem
@@ -400,6 +414,32 @@ export const useSetBAINotification = () => {
     [app.notification, setNotifications, destroyNotification],
   );
 
+  const upsertDesktopNotification = useCallback(
+    (params: Partial<Omit<NotificationState, 'created'>>) => {
+      const title =
+        extractTextFromReactNode(params.message) ||
+        `[Backend.AI] ${t('sidePanel.Notification')}`;
+      const options: Partial<Notification> = {
+        body: extractTextFromReactNode(params.description),
+        icon: '/manifest/backend-ai.iconset/icon_32x32@2x.png',
+        tag: _.toString(params.key),
+      };
+
+      const notification = new Notification(title, options);
+      notification.onclick = () => {
+        notification.onclick = () => {
+          if (params.to) {
+            window.focus();
+            const href =
+              typeof params.to === 'string' ? params.to : createPath(params.to);
+            window.location.href = href;
+          }
+        };
+      };
+    },
+    [t],
+  );
+
   return {
     upsertNotification,
     clearAllNotifications,
@@ -441,4 +481,18 @@ function generateOverrideByStatus(
     }
   }
   return {};
+}
+
+/**
+ *
+ * @param message
+ * @returns string | undefined
+ * @description Extracts text from the message used in the antd's notification. If the message's type is ReactNode, it will return undefined.
+ */
+function extractTextFromReactNode(message: ReactNode): string | undefined {
+  if (typeof message === 'string' || typeof message === 'number') {
+    return _.toString(message);
+  }
+
+  return undefined;
 }

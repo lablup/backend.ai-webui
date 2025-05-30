@@ -15,7 +15,6 @@ interface UserSettings {
   endpoints?: Array<string>;
   auto_logout?: boolean;
   selected_language?: string;
-  classic_session_launcher?: boolean;
   recentSessionHistory?: Array<SessionHistory>;
   pinnedSessionHistory?: Array<SessionHistory>;
   experimental_neo_session_list?: boolean;

@@ -119,9 +119,14 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
       label: t('chatui.CompareWithOtherModels'),
       icon: <ScaleIcon />,
       onClick: () => {
-        webuiNavigate(
-          `/serving?tab=chatting&endpointId=${endpoint?.endpoint_id}&modelId=${modelId}`,
-        );
+        webuiNavigate({
+          pathname: '/serving',
+          search: new URLSearchParams({
+            tab: 'chatting',
+            endpointId: endpoint?.endpoint_id ?? '',
+            modelId: modelId,
+          }).toString(),
+        });
       },
     },
     showCompareMenuItem && {

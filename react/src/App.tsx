@@ -361,19 +361,11 @@ const router = createBrowserRouter([
         path: '/import',
         handle: { labelKey: 'webui.menu.Import&Run' },
         Component: () => {
-          const [classicSessionLauncher] = useBAISettingUserState(
-            'classic_session_launcher',
-          );
           return (
             <BAIErrorBoundary>
-              {classicSessionLauncher ? null : <ImportAndRunPage />}
+              <ImportAndRunPage />
               {/* @ts-ignore */}
-              <backend-ai-import-view
-                active
-                class="page"
-                name="import"
-                sessionLauncherType={classicSessionLauncher ? 'classic' : 'neo'}
-              />
+              <backend-ai-import-view active class="page" name="import" />
             </BAIErrorBoundary>
           );
         },

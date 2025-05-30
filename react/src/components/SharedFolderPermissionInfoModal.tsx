@@ -50,6 +50,7 @@ const SharedFolderPermissionInfoModal: React.FC<
       fragment SharedFolderPermissionInfoModalFragment on VirtualFolderNode {
         id
         name
+        row_id
         creator
         ownership_type
         user_email
@@ -62,8 +63,8 @@ const SharedFolderPermissionInfoModal: React.FC<
   );
 
   const leaveFolder = useTanMutation({
-    mutationFn: ({ folderName }: { folderName: string }) => {
-      return baiClient.vfolder.leave_invited(folderName);
+    mutationFn: ({ folderId }: { folderId: string }) => {
+      return baiClient.vfolder.leave_invited(folderId);
     },
   });
 
@@ -143,7 +144,7 @@ const SharedFolderPermissionInfoModal: React.FC<
                         onConfirm={() => {
                           leaveFolder.mutate(
                             {
-                              folderName: data?.name,
+                              folderId: data?.row_id,
                             },
                             {
                               onSuccess: () => {

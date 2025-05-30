@@ -18,8 +18,8 @@ import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
 
-type TOTPActivateFormInput = {
-  OTP: number;
+export type TOTPActivateFormData = {
+  otp: number;
 };
 
 interface Props extends BAIModalProps {
@@ -33,8 +33,7 @@ const TOTPActivateModal: React.FC<Props> = ({
   ...baiModalProps
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
-  const formRef = useRef<FormInstance<TOTPActivateFormInput>>(null);
+  const formRef = useRef<FormInstance<TOTPActivateFormData>>(null);
 
   const user = useFragment(
     graphql`
@@ -64,8 +63,8 @@ const TOTPActivateModal: React.FC<Props> = ({
   });
 
   const mutationToActivateTotp = useTanMutation({
-    mutationFn: (values: TOTPActivateFormInput) => {
-      return baiClient.activate_totp(values.OTP);
+    mutationFn: (values: TOTPActivateFormData) => {
+      return baiClient.activate_totp(values.otp);
     },
   });
 
@@ -81,9 +80,6 @@ const TOTPActivateModal: React.FC<Props> = ({
           onError: () => {
             message.error(t('totp.InvalidTotpCode'));
           },
-        });
-        new Promise((resolve, reject) => {}).then(() => {
-          onRequestClose(true);
         });
       })
       .catch(() => {});
@@ -109,58 +105,70 @@ const TOTPActivateModal: React.FC<Props> = ({
           {t('totp.TotpSetupNotAvailable')}
         </Flex>
       ) : (
-        <>
-          {t('totp.ScanQRToEnable')}
-          <Flex
-            justify="center"
-            style={{ margin: token.marginSM, gap: token.margin }}
-          >
-            <QRCode value={initializedTotp.data.totp_uri} />
-          </Flex>
-          {t('totp.TypeInAuthKey')}
-          <Flex
-            justify="center"
-            style={{ margin: token.marginSM, gap: token.margin }}
-          >
-            <Typography.Text copyable code>
-              {initializedTotp.data.totp_key}
-            </Typography.Text>
-          </Flex>
-          {t('totp.EnterConfirmationCode')}
-          <Form
-            ref={formRef}
-            preserve={false}
-            validateTrigger={['onChange', 'onBlur']}
-          >
-            <Flex
-              justify="center"
-              style={{ margin: token.marginSM, gap: token.margin }}
-            >
-              <Form.Item
-                name="OTP"
-                rules={[
-                  {
-                    required: true,
-                    message: t('totp.RequireOTP'),
-                  },
-                  {
-                    pattern: /^[0-9]+$/,
-                    message: t('credential.validation.NumbersOnly'),
-                  },
-                ]}
-              >
-                <Input
-                  maxLength={6}
-                  allowClear
-                  placeholder="000000"
-                  style={{ maxWidth: 150 }}
-                />
-              </Form.Item>
-            </Flex>
-          </Form>
-        </>
+        <TOTPActivateForm
+          ref={formRef}
+          totp_uri={initializedTotp.data.totp_uri}
+          totp_key={initializedTotp.data.totp_key}
+        />
       )}
     </BAIModal>
+  );
+};
+
+interface TOTPActiveFormProps {
+  totp_uri: string;
+  totp_key: string;
+  ref: React.Ref<FormInstance<TOTPActivateFormData>>;
+}
+export const TOTPActivateForm: React.FC<TOTPActiveFormProps> = ({
+  totp_uri,
+  totp_key,
+  ref,
+}) => {
+  const { token } = theme.useToken();
+  const { t } = useTranslation();
+  return (
+    <>
+      {t('totp.ScanQRToEnable')}
+      <Flex
+        justify="center"
+        style={{ margin: token.marginSM, gap: token.margin }}
+      >
+        <QRCode value={totp_uri} />
+      </Flex>
+      {t('totp.TypeInAuthKey')}
+      <Flex
+        justify="center"
+        style={{ margin: token.marginSM, gap: token.margin }}
+      >
+        <Typography.Text copyable code>
+          {totp_key}
+        </Typography.Text>
+      </Flex>
+      {t('totp.EnterConfirmationCode')}
+      <Form ref={ref} preserve={false} validateTrigger={['onChange', 'onBlur']}>
+        <Flex
+          justify="center"
+          style={{ margin: token.marginSM, gap: token.margin }}
+        >
+          <Form.Item
+            name="otp"
+            rules={[
+              {
+                required: true,
+                message: t('totp.RequireOTP'),
+              },
+              {
+                pattern: /^[0-9]+$/,
+                message: t('credential.validation.NumbersOnly'),
+              },
+            ]}
+          >
+            <Input.OTP size="large" />
+          </Form.Item>
+        </Flex>
+      </Form>
+    </>
   );
 };
 

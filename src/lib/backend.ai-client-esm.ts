@@ -279,6 +279,9 @@ class Client {
     } else {
       this._loginSessionId = '';
     }
+    this.email = '';
+    this.full_name = '';
+    this.user_uuid = '';
     //if (this._config.connectionMode === 'API') {
     //this.getManagerVersion();
     //}
@@ -687,7 +690,6 @@ class Client {
       this._features['sudo-session-enabled'] = true;
     }
     if (this.isManagerVersionCompatibleWith('23.09.2')) {
-      this._features['container-registry-gql'] = true;
       this._features['max-quota-scope-size-in-user-and-project-resource-policy'] = true;
       this._features['deprecated-max-vfolder-size-in-user-and-project-resource-policy'] = true;
       this._features['max-quota-scope-size'] = true;
@@ -886,7 +888,7 @@ class Client {
         // Authentication failed.
         localStorage.removeItem('backendaiwebui.sessionid');
         if (result.data && result.data.details) {
-          return Promise.resolve({ fail_reason: result.data.details });
+          return Promise.resolve({ fail_reason: result.data.details, data: result.data });
         } else {
           return Promise.resolve(false);
         }
@@ -1028,8 +1030,24 @@ class Client {
     return this._wrapWithPromise(rqst);
   }
 
+  async initialize_totp_anon({
+    registration_token,
+  }): Promise<any> {
+    let rqst = this.newSignedRequest('POST', '/totp/anon', {
+      registration_token
+    }, null);
+    return this._wrapWithPromise(rqst);
+  }
+
   async activate_totp(otp): Promise<any> {
     let rqst = this.newSignedRequest('POST', '/totp/verify', { otp }, null);
+    return this._wrapWithPromise(rqst);
+  }
+  async activate_totp_anon({
+    otp,
+    registration_token,
+  }): Promise<any> {
+    let rqst = this.newSignedRequest('POST', '/totp/anon/verify', { otp, registration_token }, null);
     return this._wrapWithPromise(rqst);
   }
 
@@ -1349,7 +1367,7 @@ class Client {
   async get_info(sessionId, ownerKey = null): Promise<any> {
     let queryString = `${this.kernelPrefix}/${sessionId}`;
     if (ownerKey != null) {
-      queryString = `${queryString}?owner_access_key=${ownerKey}`;
+      queryString = `${queryString}?${new URLSearchParams({ owner_access_key: ownerKey}).toString()}`;
     }
     let rqst = this.newSignedRequest('GET', queryString, null, null);
     return this._wrapWithPromise(rqst);
@@ -1374,16 +1392,17 @@ class Client {
    * @param {number} timeout - timeout to wait log query. Set to 0 to use default value.
    */
   async get_logs(sessionId, ownerKey = null, kernelId = null, timeout = 0): Promise<any> {
-    let queryParams: Array<string> = [];
+    const queryParams = new URLSearchParams()
+    // let queryParams: Array<string> = [];
     if (ownerKey != null) {
-      queryParams.push(`owner_access_key=${ownerKey}`);
+      queryParams.append('owner_access_key', ownerKey);
     }
     if (this.supports('per-kernel-logs') && kernelId !== null) {
-      queryParams.push(`kernel_id=${kernelId}`);
+      queryParams.append('kernel_id', kernelId);
     }
     let queryString = `${this.kernelPrefix}/${sessionId}/logs`;
-    if (queryParams.length > 0) {
-      queryString += `?${queryParams.join('&')}`;
+    if (queryParams.size > 0) {
+      queryString += `?${queryParams.toString()}`;
     }
     let rqst = this.newSignedRequest('GET', queryString, null, null);
     return this._wrapWithPromise(rqst, false, null, timeout);
@@ -1395,7 +1414,7 @@ class Client {
    * @param {string} sessionId - the sessionId given when created
    */
   getTaskLogs(sessionId): Promise<any> {
-    const queryString = `${this.kernelPrefix}/_/logs?session_name=${sessionId}`;
+    const queryString = `${this.kernelPrefix}/_/logs?${new URLSearchParams({session_name: sessionId}).toString()}`;
     let rqst = this.newSignedRequest('GET', queryString, null, null);
     return this._wrapWithPromise(rqst);
   }
@@ -1414,11 +1433,9 @@ class Client {
   ): Promise<any> {
     let queryString = `${this.kernelPrefix}/${sessionId}`;
     if (ownerKey !== null) {
-      queryString = `${queryString}?owner_access_key=${ownerKey}${
-        forced ? '&forced=true' : ''
-      }`;
+      queryString = `${queryString}?${new URLSearchParams({owner_access_key: ownerKey, ...(forced ? {forced: 'true'} : {})}).toString()}`;
     } else {
-      queryString = `${queryString}${forced ? '?forced=true' : ''}`;
+      queryString = `${queryString}?${new URLSearchParams({ ...(forced ? {forced: 'true'} : {})}).toString()}`;
     }
     let rqst = this.newSignedRequest('DELETE', queryString, null, null);
     return this._wrapWithPromise(rqst, false, null, 15000, 2); // 15 sec., two trial when error occurred.
@@ -1433,7 +1450,7 @@ class Client {
   async restart(sessionId, ownerKey = null): Promise<any> {
     let queryString = `${this.kernelPrefix}/${sessionId}`;
     if (ownerKey != null) {
-      queryString = `${queryString}?owner_access_key=${ownerKey}`;
+      queryString = `${queryString}?${new URLSearchParams({owner_access_key: ownerKey}).toString()}`;
     }
     let rqst = this.newSignedRequest('PATCH', queryString, null, null);
     return this._wrapWithPromise(rqst);
@@ -2433,7 +2450,7 @@ class VFolder {
       }
       tusUrl = tusUrl + `${this.urlPrefix}/_/tus/upload/${token}`;
     } else {
-      tusUrl = `${res.url}?token=${token}`;
+      tusUrl = `${res.url}?${new URLSearchParams({token}).toString()}`;
     }
     return Promise.resolve(tusUrl);
   }
@@ -2554,7 +2571,11 @@ class VFolder {
       return this.client._wrapWithPromise(rqst, true);
     } else {
       const res = await this.request_download_token(file, name);
-      const downloadUrl = `${res.url}?token=${res.token}&archive=${archive}&no_cache=${noCache}`;
+      const downloadUrl = `${res.url}?${new URLSearchParams({
+        token: res.token,
+        archive: archive ? 'true' : 'false',
+        no_cache: noCache ? 'true' : 'false',
+      })}`;
       return fetch(downloadUrl);
     }
   }
@@ -2717,7 +2738,7 @@ class VFolder {
   async list_invitees(vfolder_id = null): Promise<any> {
     let queryString = '/folders/_/shared';
     if (vfolder_id !== null)
-      queryString = `${queryString}?vfolder_id=${vfolder_id}`;
+      queryString = `${queryString}?${new URLSearchParams({vfolder_id: vfolder_id}).toString()}`;
     let rqst = this.client.newSignedRequest('GET', queryString, null);
     return this.client._wrapWithPromise(rqst);
   }
@@ -4852,7 +4873,7 @@ class ScalingGroup {
   }
 
   async list(group = 'default'): Promise<any> {
-    const queryString = `/scaling-groups?group=${group}`;
+    const queryString = `/scaling-groups?${new URLSearchParams({group: group}).toString()}`;
     const rqst = this.client.newSignedRequest('GET', queryString, null, null);
     //const result = await this.client._wrapWithPromise(rqst);
     //console.log("test");
@@ -4872,7 +4893,7 @@ class ScalingGroup {
     if (!this.client.isManagerVersionCompatibleWith('21.09.0')) {
       return Promise.resolve({ wsproxy_version: 'v1' }); // for manager<=21.03 compatibility.
     }
-    const url = `/scaling-groups/${scalingGroup}/wsproxy-version?group=${groupId}`;
+    const url = `/scaling-groups/${scalingGroup}/wsproxy-version?${new URLSearchParams({group: groupId}).toString()}`;
     const rqst = this.client.newSignedRequest('GET', url, null, null);
     return this.client._wrapWithPromise(rqst);
   }
@@ -5702,7 +5723,7 @@ class PipelineTaskInstance {
    */
   async list(pipelineJobId: string = ''): Promise<any> {
     let queryString = `${this.urlPrefix}`;
-    queryString += pipelineJobId ? `/?pipeline_job=${pipelineJobId}` : `/`;
+    queryString += pipelineJobId ? `/?${new URLSearchParams({pipeline_job: pipelineJobId}).toString()}` : `/`;
     let rqst = this.client.newSignedRequest(
       'GET',
       queryString,
@@ -5816,7 +5837,10 @@ class EduApp {
    * Get credential of user.
    */
   async get_user_credential(stoken: string) {
-    const rqst = this.client.newSignedRequest('GET', `/eduapp/credential?sToken=${stoken}`);
+    const searchParams = new URLSearchParams({
+      sToken: stoken
+    });
+    const rqst = this.client.newSignedRequest('GET', `/eduapp/credential?${searchParams.toString()}`);
     return this.client._wrapWithPromise(rqst);
   }
 }

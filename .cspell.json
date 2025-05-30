@@ -42,7 +42,8 @@
     "Warboy",
     "webcomponent",
     "webui",
-    "wsproxy"
+    "wsproxy",
+    "upsert"
   ],
   "flagWords": [
     "데이터레이크",

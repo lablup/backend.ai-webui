@@ -34,7 +34,7 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
 
   async function getLogs(sessionId: string) {
     return baiClient
-      .get_logs(sessionId, baiClient._config.accessKey, 0)
+      .get_logs(sessionId, baiClient._config.accessKey)
       .then((req: any) => {
         const ansi_up = new AnsiUp();
         const logs = ansi_up.ansi_to_html(req.result.logs);

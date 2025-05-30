@@ -13,8 +13,6 @@ import { BackendAIPage } from './backend-ai-page';
 import { default as PainKiller } from './backend-ai-painkiller';
 import BackendAiResourceMonitor from './backend-ai-resource-monitor';
 import './backend-ai-resource-monitor';
-import BackendAiSessionLauncher from './backend-ai-session-launcher';
-import './backend-ai-session-launcher';
 import './lablup-activity-panel';
 import LablupLoadingSpinner from './lablup-loading-spinner';
 
@@ -38,7 +36,6 @@ import { customElement, property, query } from 'lit/decorators.js';
  */
 // type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
 // type BackendAIResourceMonitor = HTMLElementTagNameMap['backend-ai-resource-monitor'];
-// type BackendAISessionLauncher = HTMLElementTagNameMap['backend-ai-session-launcher'];
 
 /**
  `<backend-ai-import-view>` is a import feature of backend.ai web UI.
@@ -70,10 +67,8 @@ export default class BackendAIImport extends BackendAIPage {
   @property({ type: String }) _helpDescription = '';
   @property({ type: String }) _helpDescriptionTitle = '';
   @property({ type: String }) _helpDescriptionIcon = '';
-  @property({ type: String }) sessionLauncherType = 'neo';
   @query('#loading-spinner') spinner!: LablupLoadingSpinner;
   @query('#resource-monitor') resourceMonitor!: BackendAiResourceMonitor;
-  @query('#session-launcher') sessionLauncher!: BackendAiSessionLauncher;
   @query('#notebook-url') notebookUrlInput!: TextField;
   @query('#notebook-badge-code') notebookBadgeCodeInput!: TextArea;
   @query('#notebook-badge-code-markdown')
@@ -90,10 +85,6 @@ export default class BackendAIImport extends BackendAIPage {
         div.description {
           font-size: 14px;
           color: var(--token-colorTextSecondary, --general-sidebar-color);
-        }
-
-        #session-launcher {
-          --component-width: 235px;
         }
 
         mwc-textfield,
@@ -228,74 +219,12 @@ export default class BackendAIImport extends BackendAIPage {
       this.authenticated = true;
       this.requestUpdate();
     }
-    // Given URL via URL path parameter.
-    const currentUrl = window.location.href;
-    const url = new URL(currentUrl);
-    this.queryString = url.search;
-    const queryString = this.queryString.substring(
-      this.queryString.indexOf('?') + 1,
-    );
-    this.importNotebookMessage = this.queryString;
-    this.environment = this.guessEnvironment(this.queryString);
-    if (queryString !== '') {
-      let downloadURL = 'https://raw.githubusercontent.com/' + this.queryString;
-      downloadURL = downloadURL.replace('/blob/', '/');
-      this.fetchNotebookURLResource(downloadURL);
-    }
-  }
-
-  getNotebookFromURL() {
-    const url = this.notebookUrlInput.value;
-    if (url !== '') {
-      this.queryString = this.regularizeGithubURL(url);
-      this.fetchNotebookURLResource(this.queryString);
-    }
   }
 
   regularizeGithubURL(url) {
     url = url.replace('/blob/', '/');
     url = url.replace('github.com', 'raw.githubusercontent.com');
     return url;
-  }
-
-  fetchNotebookURLResource(downloadURL): void {
-    this.notebookUrlInput.value = downloadURL;
-    if (
-      typeof globalThis.backendaiclient === 'undefined' ||
-      globalThis.backendaiclient === null ||
-      globalThis.backendaiclient.ready === false
-    ) {
-      document.addEventListener(
-        'backend-ai-connected',
-        () => {
-          this._fetchNotebookURLResource(downloadURL);
-        },
-        true,
-      );
-    } else {
-      // already connected
-      this._fetchNotebookURLResource(downloadURL);
-    }
-  }
-
-  _fetchNotebookURLResource(downloadURL) {
-    fetch(downloadURL)
-      .then(() => {
-        this.notification.text = _text('import.ReadyToImport');
-        this.importNotebookMessage = this.notification.text;
-        this.notification.show();
-        this.sessionLauncher.selectDefaultLanguage(true, this.environment);
-        this.sessionLauncher.importScript = '#!/bin/sh\ncurl -O ' + downloadURL;
-        this.sessionLauncher.importFilename = downloadURL.split('/').pop();
-        this.sessionLauncher._launchSessionDialog();
-      })
-      .catch(() => {
-        this.notification.text = _text(
-          'import.NoSuitableResourceFoundOnGivenURL',
-        );
-        this.importNotebookMessage = this.notification.text;
-        this.notification.show();
-      });
   }
 
   getGitHubRepoFromURL() {
@@ -333,40 +262,36 @@ export default class BackendAIImport extends BackendAIPage {
       const repoUrl = `https://api.github.com/repos` + new URL(url).pathname;
       const getRepoUrl = async () => {
         // TODO need refactor
-        try {
-          const response = await fetch(repoUrl);
-          if (response.status === 200) {
-            const responseJson = await response.json();
-            return responseJson.default_branch;
-          } else if (response.status === 404) {
-            throw 'WrongURLType';
-          } else if (response.status === 403 || response.status === 429) {
-            // forbidden & Too Many Requests
-            const limitCnt = response.headers.get('x-ratelimit-limit');
-            const limitUsedCnt = response.headers.get('x-ratelimit-used');
-            const limitRemainingCnt = response.headers.get(
-              'x-ratelimit-remaining',
+        const response = await fetch(repoUrl);
+        if (response.status === 200) {
+          const responseJson = await response.json();
+          return responseJson.default_branch;
+        } else if (response.status === 404) {
+          throw new Error('WrongURLType');
+        } else if (response.status === 403 || response.status === 429) {
+          // forbidden & Too Many Requests
+          const limitCnt = response.headers.get('x-ratelimit-limit');
+          const limitUsedCnt = response.headers.get('x-ratelimit-used');
+          const limitRemainingCnt = response.headers.get(
+            'x-ratelimit-remaining',
+          );
+          console.log(
+            `used count: ${limitUsedCnt}, remaining count: ${limitRemainingCnt}/total count: ${limitCnt}\nerror body: ${response.text}`,
+          );
+          if (limitRemainingCnt === '0') {
+            throw new Error(
+              'GithubAPILimitError|' + limitUsedCnt + '|' + limitRemainingCnt,
             );
-            console.log(
-              `used count: ${limitUsedCnt}, remaining count: ${limitRemainingCnt}/total count: ${limitCnt}\nerror body: ${response.text}`,
-            );
-            if (limitRemainingCnt === '0') {
-              throw (
-                'GithubAPILimitError|' + limitUsedCnt + '|' + limitRemainingCnt
-              );
-            } else {
-              throw 'GithubAPIEtcError';
-            }
-          } else if (response.status === 500) {
-            throw 'GithubInternalError';
           } else {
-            console.log(
-              `error statusCode: ${response.status}, body: ${response.text}`,
-            );
-            throw 'GithubAPIEtcError';
+            throw new Error('GithubAPIEtcError');
           }
-        } catch (error) {
-          throw error;
+        } else if (response.status === 500) {
+          throw new Error('GithubInternalError');
+        } else {
+          console.log(
+            `error statusCode: ${response.status}, body: ${response.text}`,
+          );
+          throw new Error('GithubAPIEtcError');
         }
       };
       return getRepoUrl()
@@ -693,54 +618,6 @@ export default class BackendAIImport extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/custom.css" />
-      ${this.sessionLauncherType !== 'neo'
-        ? html`
-            <div class="horizontal wrap layout" style="margin-bottom:24px;">
-              <lablup-activity-panel
-                title="${_t('import.ImportNotebook')}"
-                elevation="1"
-                horizontalsize="2x"
-              >
-                <div slot="message">
-                  <div class="horizontal wrap layout center">
-                    <mwc-textfield
-                      id="notebook-url"
-                      label="${_t('import.NotebookURL')}"
-                      autoValidate
-                      validationMessage="${_text('import.WrongURLType')}"
-                      pattern="^(https?)://([\\w./-]{1,}).ipynb$"
-                      maxLength="2048"
-                      placeholder="${_t('maxLength.2048chars')}"
-                      @change="${(e) =>
-                        this.urlTextfieldChanged(
-                          e,
-                          'import-notebook-button',
-                          'importNotebookMessage',
-                        )}"
-                    ></mwc-textfield>
-                    <mwc-button
-                      id="import-notebook-button"
-                      disabled
-                      icon="cloud_download"
-                      @click="${() => this.getNotebookFromURL()}"
-                    >
-                      <span>${_t('import.GetAndRunNotebook')}</span>
-                    </mwc-button>
-                  </div>
-                  ${this.importNotebookMessage}
-                </div>
-              </lablup-activity-panel>
-            </div>
-          `
-        : html``}
-      <backend-ai-session-launcher
-        mode="import"
-        location="import"
-        hideLaunchButton
-        id="session-launcher"
-        ?active="${this.active === true}"
-        .newSessionDialogTitle="${_t('session.launcher.StartImportedNotebook')}"
-      ></backend-ai-session-launcher>
       <div class="horizontal wrap layout" style="gap:24px">
         <lablup-activity-panel
           title="${_t('summary.ResourceStatistics')}"

@@ -63,7 +63,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
       baiModalProps.open
         ? baiRequestWithPromise({
             method: 'GET',
-            url: `/folders/_/shared${vfolderId ? `?vfolder_id=${vfolderId}` : ''}`,
+            url: `/folders/_/shared${vfolderId ? `?${new URLSearchParams({ vfolder_id: vfolderId }).toString()}` : ''}`,
           }).then((res: { shared: Array<Invitee> }) =>
             _.sortBy(res.shared, 'shared_to.email'),
           )
@@ -104,11 +104,11 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
     inviteFormRef.current
       ?.validateFields()
       .then((values) => {
-        const { emails, permission } = values;
+        const { email, permission } = values;
         inviteUser.mutate(
           {
             perm: permission,
-            emails: emails.split(',').map((email: string) => email.trim()),
+            emails: [email.trim()],
             id: vfolderId ?? '',
           },
           {
@@ -117,7 +117,15 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
               inviteFormRef.current?.resetFields();
               refetch();
             },
-            onError: (err) => {
+            onError: (err: any) => {
+              if (err?.statusCode === 409) {
+                message.error(
+                  t('data.invitation.UserIsAlreadyInvited', {
+                    email: email.trim(),
+                  }),
+                );
+                return;
+              }
               message.error(
                 painKiller.relieve(err?.message) ||
                   t('data.invitation.FolderSharingNotAvailableToUser'),
@@ -172,7 +180,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
               <Flex align="start" justify="between" style={{ width: '100%' }}>
                 {/* TODO: support multi invitations */}
                 <Form.Item
-                  name="emails"
+                  name="email"
                   label={t('general.E-Mail')}
                   rules={[
                     {

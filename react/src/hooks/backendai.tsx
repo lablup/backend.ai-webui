@@ -305,3 +305,81 @@ export const useAllowedHostNames = () => {
   });
   return allowedHosts?.allowed;
 };
+
+export interface InvitationItem {
+  id: string;
+  vfolder_id: string;
+  vfolder_name: string;
+  invitee_user_email: string;
+  inviter_user_email: string;
+  mount_permission: string;
+  created_at: string;
+  modified_at: string | null;
+  status: string;
+  perm: string;
+}
+
+export const useVFolderInvitations = (fetchKey?: string) => {
+  const baiClient = useSuspendedBackendaiClient();
+
+  const { data: vfolderInvitations, isFetching } = useSuspenseTanQuery<{
+    invitations: Array<InvitationItem>;
+  }>({
+    queryKey: ['vfolderInvitations', fetchKey],
+    queryFn: () => {
+      return baiClient.vfolder.invitations();
+    },
+    staleTime: 0,
+  });
+
+  const mutationToAcceptInvitation = useTanMutation({
+    mutationFn: (values: { inv_id: string }) => {
+      return baiClient.vfolder.accept_invitation(values.inv_id);
+    },
+  });
+
+  const mutationToRejectInvitation = useTanMutation({
+    mutationFn: (values: { inv_id: string }) => {
+      return baiClient.vfolder.delete_invitation(values.inv_id);
+    },
+  });
+
+  return [
+    {
+      isFetching,
+      invitations: vfolderInvitations?.invitations ?? [],
+      count: vfolderInvitations?.invitations?.length ?? 0,
+      isPendingMutation:
+        mutationToAcceptInvitation.isPending ||
+        mutationToRejectInvitation.isPending,
+    },
+    {
+      acceptInvitation: (inv_id: string, options?: mutationOptions<string>) => {
+        mutationToAcceptInvitation.mutate(
+          { inv_id },
+          {
+            onSuccess: () => {
+              options?.onSuccess && options.onSuccess(inv_id);
+            },
+            onError: (error: any) => {
+              options?.onError && options.onError(error);
+            },
+          },
+        );
+      },
+      rejectInvitation: (inv_id: string, options?: mutationOptions<string>) => {
+        mutationToRejectInvitation.mutate(
+          { inv_id },
+          {
+            onSuccess: () => {
+              options?.onSuccess && options.onSuccess(inv_id);
+            },
+            onError: (error: any) => {
+              options?.onError && options.onError(error);
+            },
+          },
+        );
+      },
+    },
+  ] as const;
+};

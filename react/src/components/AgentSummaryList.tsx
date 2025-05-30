@@ -440,7 +440,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
         pagination={{
           pageSize: tablePaginationOption.pageSize,
           showSizeChanger: true,
-          total: agent_summary_list?.total_count,
+          total: filteredAgentSummaryList?.length || 0,
           current: tablePaginationOption.current,
           showTotal(total, range) {
             return `${range[0]}-${range[1]} of ${total} items`;

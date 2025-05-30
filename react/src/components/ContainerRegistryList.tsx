@@ -175,19 +175,11 @@ const ContainerRegistryList: React.FC<{
 
   const [inFlightHostName, setInFlightHostName] = useState<string>();
 
-  // const deferredInFlightDomainName = useDeferredValue(inFlightDomainName);
-
   const rescanImage = async (
     registry_name: string,
     project: string | undefined | null,
   ) => {
-    // const indicator: any =
-    //   // @ts-ignore
-    //   await globalThis.lablupIndicator.start('indeterminate');
-
-    // indicator.set(10, t('registry.UpdatingRegistryInfo'));
     const notiKey = upsertNotification({
-      // key: notiKey,
       message: `${t('maintenance.RescanImages')}: ${registry_name}${project ? `/${project}` : ''}`,
       description: t('registry.UpdatingRegistryInfo'),
       open: true,
@@ -237,34 +229,6 @@ const ContainerRegistryList: React.FC<{
               },
             },
           });
-          // indicator.set(0, t('registry.RescanImages'));
-          // const sse: EventSource = baiClient.maintenance.attach_background_task(
-          //   rescan_images.task_id,
-          // );
-          // sse.addEventListener('bgtask_updated', (e) => {
-          //   const data = JSON.parse(e['data']);
-          //   const ratio = data.current_progress / data.total_progress;
-          //   indicator.set(100 * ratio, t('registry.RescanImages'));
-          // });
-          // sse.addEventListener('bgtask_done', () => {
-          //   const event = new CustomEvent('image-rescanned');
-          //   document.dispatchEvent(event);
-          //   indicator.set(100, t('registry.RegistryUpdateFinished'));
-          //   sse.close();
-          // });
-          // sse.addEventListener('bgtask_failed', (e) => {
-          //   console.log('bgtask_failed', e['data']);
-          //   sse.close();
-          //   handleReScanError(
-          //     new Error('Background Image scanning task has failed'),
-          //   );
-          // });
-          // sse.addEventListener('bgtask_cancelled', () => {
-          //   sse.close();
-          //   handleReScanError(
-          //     new Error('Background Image scanning task has been cancelled'),
-          //   );
-          // });
         } else {
           upsertNotification({
             key: notiKey,
@@ -273,33 +237,17 @@ const ContainerRegistryList: React.FC<{
             },
             duration: 1,
           });
-          // indicator.set(50, t('registry.RegistryUpdateFailed'));
-          // indicator.end(1000);
-          // TODO: handle notification in react side
-          // @ts-ignore
-          // globalThis.lablupNotification.text = painKiller.relieve(
-          //   rescan_images.msg,
-          // );
-          // @ts-ignore
-          // globalThis.lablupNotification.detail = rescan_images.msg;
-          // @ts-ignore
-          // globalThis.lablupNotification.show();
         }
       })
       .catch(handleReScanError);
   };
 
   const columns: ColumnsType<ContainerRegistry> = [
-    // {
-    //   title: '#',
-    //   dataIndex: 'id',
-    // },
     {
       key: 'registry_name',
       title: t('registry.RegistryName'),
       dataIndex: 'registry_name',
       sorter: true,
-      // fixed: 'left',
     },
     {
       key: 'url',
@@ -396,9 +344,6 @@ const ContainerRegistryList: React.FC<{
               });
             }}
           />
-          // <Button type="primary">
-          //   {record?.ssl_verify ? 'Yes' : 'No'}
-          // </Button>
         );
       },
     },
@@ -478,11 +423,6 @@ const ContainerRegistryList: React.FC<{
       >
         <BAIPropertyFilter
           filterProperties={[
-            // {
-            //   key: 'row_id',
-            //   propertyLabel: 'ID',
-            //   type: 'string',
-            // },
             {
               key: 'registry_name',
               propertyLabel: t('registry.RegistryName'),

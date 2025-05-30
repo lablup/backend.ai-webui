@@ -12,7 +12,7 @@ import { useSuspendedBackendaiClient } from './hooks';
 import { useCurrentResourceGroupValue } from './hooks/useCurrentProject';
 import { ThemeModeProvider } from './hooks/useThemeMode';
 import '@ant-design/v5-patch-for-react-19';
-import { Tag, theme } from 'antd';
+import { ConfigProvider, Tag, theme } from 'antd';
 import dayjs from 'dayjs';
 import { Provider as JotaiProvider } from 'jotai';
 import _ from 'lodash';
@@ -56,6 +56,21 @@ const BatchSessionScheduledTimeSetting = React.lazy(
   () => import('./components/BatchSessionScheduledTimeSetting'),
 );
 
+const TOTPActivateModalWithToken = React.lazy(
+  () => import('./components/TOTPActivateModalWithToken'),
+);
+
+customElements.define(
+  'backend-ai-react-totp-registration-modal-before-login',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <TOTPActivateModalWithToken />
+      </DefaultProviders>
+    );
+  }),
+);
+
 customElements.define(
   'backend-ai-react-reset-password-required-modal',
   reactToWebComponent((props) => (
@@ -70,7 +85,12 @@ customElements.define(
   reactToWebComponent((props) => {
     return (
       <DefaultProviders {...props}>
-        <CopyableCodeText text={props.value || ''} />
+        {/* FIXME: When rendered inside a Shadow DOM, Tooltip may affect layout flow.
+                   Force portal to shadowRoot to prevent layout shift.*/}
+        {/* @ts-ignore */}
+        <ConfigProvider getPopupContainer={() => props.shadowRoot}>
+          <CopyableCodeText text={props.value || ''} />
+        </ConfigProvider>
       </DefaultProviders>
     );
   }),
