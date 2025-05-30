@@ -14,7 +14,7 @@
     "format-fix:i18n": "prettier --write 'resources/i18n/*.json'",
     "test": "jest",
     "wsproxy": "node ./src/wsproxy/local_proxy.js",
-    "build": "rm -rf build/rollup && mkdir -p build/rollup/src/components && pnpm run copyindex && pnpm run copywc && pnpm run copywa && pnpm run copyresource && pnpm run copyconfig && rollup -c rollup.config.ts --configPlugin typescript && pnpm run --prefix ./react build:copy",
+    "build": "rm -rf build/rollup && mkdir -p build/rollup/src/components && pnpm run copyindex && pnpm run copywc && pnpm run copywa && pnpm run copyresource && pnpm run copyconfig && rollup -c rollup.config.ts --configPlugin typescript && pnpm run -r build",
     "build:react-only": "pnpm run --prefix ./react build",
     "build:plugin": "rm -rf build/rollup/dist/plugins && mkdir -p build/rollup/dist/plugins && rollup -c rollup.plugins.config.ts --configPlugin typescript",
     "server:p": "serve build/rollup",
