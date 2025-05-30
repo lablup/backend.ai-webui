@@ -9,7 +9,8 @@
     "plugin:wc/recommended",
     "plugin:lit-a11y/recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:wc/best-practice"
+    "plugin:wc/best-practice",
+    "plugin:storybook/recommended"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -20,8 +21,8 @@
     },
     "project": "tsconfig.json",
     "extraFileExtensions": [
-        ".json"
-      ]
+      ".json"
+    ]
   },
   "plugins": [
     "@typescript-eslint",
@@ -39,7 +40,7 @@
     "no-constant-condition": "off",
     "no-inner-declarations": "off",
     "no-irregular-whitespace": "off",
-    "max-len":"off",
+    "max-len": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "require-jsdoc": "off",
     "camelcase": "off",
@@ -62,7 +63,9 @@
   },
   "overrides": [
     {
-      "files": ["*.json"],
+      "files": [
+        "*.json"
+      ],
       "parser": "jsonc-eslint-parser",
       "extends": [
         "plugin:json-schema-validator/recommended"
