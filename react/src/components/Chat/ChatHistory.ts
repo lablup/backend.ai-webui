@@ -262,6 +262,7 @@ export function useHistory(id: string) {
   }, [id, resetList, resetHistory]);
 
   return {
+    chat: currentChat.current,
     chats,
     addChat,
     removeChat,
@@ -279,7 +280,7 @@ export function getChatsById(id: string) {
   return chatHistoryCache.get(id);
 }
 
-function createChat({ provider }: { provider: ChatProviderData }) {
+export function createChat({ provider }: { provider: ChatProviderData }) {
   return {
     id: generateChatId('/chat'),
     sync: true,
@@ -295,7 +296,7 @@ export function createChats({ provider }: { provider: ChatProviderData }) {
   const id = generateUUID();
   const newChats: ChatHistoryData = {
     id,
-    label: `Chat - ${id.slice(0, 8)}`,
+    label: 'Chat',
     chats: [createChat({ provider })],
     updatedAt: dateTime.toISOString(),
   };
