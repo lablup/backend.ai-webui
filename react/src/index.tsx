@@ -56,6 +56,21 @@ const BatchSessionScheduledTimeSetting = React.lazy(
   () => import('./components/BatchSessionScheduledTimeSetting'),
 );
 
+const TOTPActivateModalWithToken = React.lazy(
+  () => import('./components/TOTPActivateModalWithToken'),
+);
+
+customElements.define(
+  'backend-ai-react-totp-registration-modal-before-login',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <TOTPActivateModalWithToken />
+      </DefaultProviders>
+    );
+  }),
+);
+
 customElements.define(
   'backend-ai-react-reset-password-required-modal',
   reactToWebComponent((props) => (

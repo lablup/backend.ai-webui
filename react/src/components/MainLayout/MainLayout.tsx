@@ -232,6 +232,8 @@ function MainLayout() {
                 </Flex>
               </Suspense>
               <Suspense>
+                {/* ForceTOTPChecker is a component for previous version of manager which don't support TOTP registration before login.  */}
+                {/* https://github.com/lablup/backend.ai/pull/4354 */}
                 <ForceTOTPChecker />
               </Suspense>
               <Suspense>

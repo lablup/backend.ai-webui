@@ -888,7 +888,7 @@ class Client {
         // Authentication failed.
         localStorage.removeItem('backendaiwebui.sessionid');
         if (result.data && result.data.details) {
-          return Promise.resolve({ fail_reason: result.data.details });
+          return Promise.resolve({ fail_reason: result.data.details, data: result.data });
         } else {
           return Promise.resolve(false);
         }
@@ -1030,8 +1030,24 @@ class Client {
     return this._wrapWithPromise(rqst);
   }
 
+  async initialize_totp_anon({
+    registration_token,
+  }): Promise<any> {
+    let rqst = this.newSignedRequest('POST', '/totp/anon', {
+      registration_token
+    }, null);
+    return this._wrapWithPromise(rqst);
+  }
+
   async activate_totp(otp): Promise<any> {
     let rqst = this.newSignedRequest('POST', '/totp/verify', { otp }, null);
+    return this._wrapWithPromise(rqst);
+  }
+  async activate_totp_anon({
+    otp,
+    registration_token,
+  }): Promise<any> {
+    let rqst = this.newSignedRequest('POST', '/totp/anon/verify', { otp, registration_token }, null);
     return this._wrapWithPromise(rqst);
   }
 
