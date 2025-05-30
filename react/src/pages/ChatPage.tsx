@@ -10,13 +10,12 @@ import type { ChatProviderData } from '../components/Chat/ChatModel';
 import Flex from '../components/Flex';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { ChatPageQuery } from './__generated__/ChatPageQuery.graphql';
-import { Button, Drawer, List } from 'antd';
+import { Button, Drawer, List, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
-import { t } from 'i18next';
 import _ from 'lodash';
-import { HistoryIcon, PlusIcon, TrashIcon } from 'lucide-react';
+import { EditIcon, HistoryIcon, PlusIcon, TrashIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useLazyLoadQuery } from 'react-relay';
 import { useParams } from 'react-router-dom';
@@ -34,6 +33,12 @@ const useStyles = createStyles(({ css }) => ({
   chatCard: css`
     flex: 1;
     overflow: 'hidden';
+  `,
+  fixEditableVerticalAlign: css`
+    & {
+      margin-top: 0px !important;
+      inset-inline-start: 0px !important;
+    }
   `,
 }));
 
@@ -154,6 +159,7 @@ const PureChatPage = ({
   const { styles } = useStyles();
   const [openHistory, setOpenHistory] = useState(false);
   const {
+    chat,
     chats,
     history,
     addChat,
@@ -168,7 +174,22 @@ const PureChatPage = ({
 
   return (
     <BAICard
-      title={t('webui.menu.Chat')}
+      title={
+        <Typography.Text
+          className={styles.fixEditableVerticalAlign}
+          editable={{
+            icon: <EditIcon style={{ color: 'black' }} />,
+            onChange: (value) => {
+              if (!_.isEmpty(value)) {
+                updateHistory({ ...chat, label: value });
+              }
+            },
+            text: chat.label,
+          }}
+        >
+          {chat.label}
+        </Typography.Text>
+      }
       styles={{
         body: { overflow: 'hidden', paddingTop: 0 },
       }}
