@@ -18,7 +18,6 @@ const VFolderNodeIdenticon: React.FC<VFolderNodeIdenticonProps> = ({
     graphql`
       fragment VFolderNodeIdenticonFragment on VirtualFolderNode {
         id
-        name
       }
     `,
     vfolderNodeIdenticonFrgmt,
@@ -28,7 +27,7 @@ const VFolderNodeIdenticon: React.FC<VFolderNodeIdenticonProps> = ({
     <img
       {...style}
       src={createAvatar(shapes, {
-        seed: vfolder?.id + vfolder?.name,
+        seed: vfolder?.id,
         shape3: [],
       })?.toDataUri()}
       alt="VFolder Identicon"
