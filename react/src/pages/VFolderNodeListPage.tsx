@@ -123,7 +123,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   });
 
   const [queryParams, setQuery] = useDeferredQueryParams({
-    order: withDefault(StringParam, undefined),
+    order: withDefault(StringParam, '-created_at'),
     filter: withDefault(StringParam, undefined),
     statusCategory: withDefault(StringParam, 'active'),
     mode: withDefault(StringParam, 'all'),
@@ -171,7 +171,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
         queryParams.filter,
         usageModeFilter,
       ]),
-      order: queryParams.order || '-created_at',
+      order: queryParams.order,
       permission: 'read_attribute',
     }),
     [

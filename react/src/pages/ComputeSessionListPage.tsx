@@ -64,7 +64,7 @@ const ComputeSessionListPage = () => {
   });
 
   const [queryParams, setQuery] = useDeferredQueryParams({
-    order: withDefault(StringParam, undefined),
+    order: withDefault(StringParam, '-created_at'),
     filter: withDefault(StringParam, undefined),
     type: withDefault(StringParam, 'all'),
     statusCategory: withDefault(StringParam, 'running'),
@@ -106,7 +106,7 @@ const ComputeSessionListPage = () => {
       offset: baiPaginationOption.offset,
       first: baiPaginationOption.first,
       filter: mergeFilterValues([statusFilter, queryParams.filter, typeFilter]),
-      order: queryParams.order || '-created_at',
+      order: queryParams.order,
     }),
     [
       currentProject.id,
@@ -382,7 +382,7 @@ const ComputeSessionListPage = () => {
                     type: 'string',
                   },
                 ]}
-                value={queryParams.filter || undefined}
+                value={queryParams.filter}
                 onChange={(value) => {
                   setQuery({ filter: value }, 'replaceIn');
                   setTablePaginationOption({ current: 1 });

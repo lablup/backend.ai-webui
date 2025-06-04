@@ -47,11 +47,20 @@ export function useDeferredQueryParams<QPCMap extends QueryParamConfigMap>(
   const isBeforeInitializingRef = useRef(true);
   const selectiveQueryAtom = useMemo(
     () => {
+      const defaultValues = _.mapValues(
+        paramConfigMap,
+        (config) => config.default,
+      );
       return atomWithDefault((get) => {
         const globalParams = get(queryParamsAtom);
         const selectedParams = _.pick(
           // Use query parameters from URL on initial render
-          isBeforeInitializingRef.current ? query : globalParams,
+          isBeforeInitializingRef.current
+            ? query
+            : {
+                ...defaultValues,
+                ...globalParams,
+              },
           Object.keys(paramConfigMap),
         );
         isBeforeInitializingRef.current = false;
