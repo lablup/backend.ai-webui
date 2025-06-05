@@ -1,10 +1,12 @@
 import Flex from '../components/Flex';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { Button, Typography } from 'antd';
 import { Trans, useTranslation } from 'react-i18next';
 
 const Page404 = () => {
   const { t } = useTranslation();
+  const [isPaliEnabled] = useBAISettingUserState('experimental_PALI') ?? false;
   const webuiNavigate = useWebUINavigate();
   useSuspendedBackendaiClient(); //monkey patch for flickering
   return (
@@ -40,7 +42,9 @@ const Page404 = () => {
             type="primary"
             onClick={() => webuiNavigate('/start')}
           >
-            {t('button.GoBackToSummaryPage')}
+            {isPaliEnabled
+              ? t('button.GoBackToModelStorePage')
+              : t('button.GoBackToSummaryPage')}
           </Button>
         </Flex>
       </Flex>
