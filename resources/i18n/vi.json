@@ -580,7 +580,9 @@
     "SuccessfullyModified": "Đã sửa đổi thành công",
     "Tags": "Thẻ",
     "TakesTime": ". Cần có thời gian vì vậy hãy uống một tách cà phê!",
-    "Version": "Phiên bản"
+    "Version": "Phiên bản",
+    "resourceMaxLimit": "Không thể được đặt cao hơn mức tối đa được chỉ định trên nhãn hình ảnh. \n({{max}})",
+    "resourceMinLimit": "Không thể được đặt thấp hơn mức tối thiểu được chỉ định trên nhãn hình ảnh. \n({{min}})"
   },
   "error": {
     "APIEndpointIsEmpty": "Điểm cuối API trống. Vui lòng chỉ định điểm cuối API Backend.AI để đăng ký.",

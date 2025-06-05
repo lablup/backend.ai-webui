@@ -579,7 +579,9 @@
     "SuccessfullyModified": "正常に変更されました",
     "Tags": "タグ",
     "TakesTime": "。時間がかかりますので、コーヒーをどうぞ！",
-    "Version": "バージョン"
+    "Version": "バージョン",
+    "resourceMaxLimit": "画像ラベルで指定された最大値よりも高く設定することはできません。 \n（{{max}}）",
+    "resourceMinLimit": "画像ラベルで指定された最小値よりも低く設定することはできません。 \n（{{min}}）"
   },
   "error": {
     "APIEndpointIsEmpty": "APIエンドポイントが空です。サインアップするには、Backend.AIAPIエンドポイントを指定してください。",

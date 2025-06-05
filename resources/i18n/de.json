@@ -580,7 +580,9 @@
     "SuccessfullyModified": "Erfolgreich geändert",
     "Tags": "Schlagworte",
     "TakesTime": ". Es braucht Zeit, also trinken Sie eine Tasse Kaffee!",
-    "Version": "Ausführung"
+    "Version": "Ausführung",
+    "resourceMaxLimit": "Kann nicht höher als die auf der Bildbezeichnung angegebenen maximalen festgelegt werden. \n({{max}})",
+    "resourceMinLimit": "Kann nicht niedriger als der auf der Bildbezeichnung angegebene Minimum festgelegt werden. \n({{min}})"
   },
   "error": {
     "APIEndpointIsEmpty": "API-Endpunkt ist leer. Bitte geben Sie den Backend.AI API-Endpunkt für die Anmeldung an.",
