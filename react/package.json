@@ -3,6 +3,7 @@
   "version": "25.9.0-alpha.0",
   "private": true,
   "dependencies": {
+    "backend.ai-ui": "workspace:*",
     "@ai-sdk/openai": "^1.3.22",
     "@ai-sdk/react": "^1.2.12",
     "@ant-design/charts": "^2.2.7",
@@ -72,8 +73,8 @@
   },
   "scripts": {
     "start": "craco start",
-    "build": "pnpm run relay && craco build",
-    "build:copy": "pnpm run build && cp -r ./build/* ../build/rollup/",
+    "build": "pnpm run build:only && cp -r ./build/* ../build/rollup/",
+    "build:only": "pnpm run relay && craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
     "relay": "relay-compiler",
