@@ -1,20 +1,5 @@
+import { generateDisplayValues, InputSizeUnit, SizeUnit } from '.';
 import { Big, type BigSource } from 'big.js';
-
-type SizeUnit =
-  | 'B'
-  | 'K'
-  | 'M'
-  | 'G'
-  | 'T'
-  | 'P'
-  | 'E'
-  | 'b'
-  | 'k'
-  | 'm'
-  | 'g'
-  | 't'
-  | 'p'
-  | 'e';
 
 export namespace BigNumber {
   export function isInvalidNumber(value: unknown): boolean {
@@ -33,50 +18,48 @@ export namespace BigNumber {
     return true; // If not a number or Big instance, consider it invalid
   }
 
-  export function parseUnit(
-    other: BigSource,
-    unit: SizeUnit = 'b',
-  ): [Big, SizeUnit] {
+  export function parseUnit(other: BigSource): [Big, SizeUnit] {
     if (typeof other === 'number') {
-      return [new Big(other), unit];
+      return [new Big(other), ''];
     }
 
     if (typeof other === 'string') {
-      const match = other?.match(/^(\d*\.?\d+)([a-zA-Z%]*)$/);
+      const match = other?.match(/^(\d*\.?\d+)\s*([a-zA-Z%]*)$/);
       if (!match) {
-        return [new Big(other), unit];
+        return [new Big(other), ''];
       }
 
       return [
         new Big(match[1]),
-        !match[2] || match[2].length === 0
-          ? 'b'
-          : (match[2].toLowerCase() as SizeUnit),
+        !match[2] || match[2].length === 0 ? '' : (match[2] as SizeUnit),
       ];
     }
 
-    return [new Big(other), unit];
+    return [new Big(other), ''];
   }
 
-  export function convertSizeUnit(
-    sizeWithUnit?: BigSource,
-    targetSizeUnit?: SizeUnit | 'auto',
-    fixed = 2,
-    round = false,
-    base: 1024 | 1000 = 1024,
+  export function convertUnitValue(
+    inputValue?: BigSource,
+    targetUnit?: SizeUnit | 'auto',
+    options?: {
+      fixed?: number;
+      round?: boolean;
+      base?: 1024 | 1000;
+    },
   ) {
-    if (sizeWithUnit === undefined) {
+    const { fixed = 2, round = false, base = 1024 } = options || {};
+    if (inputValue === undefined) {
       return undefined;
     }
 
-    const sizes = ['B', 'K', 'M', 'G', 'T', 'P', 'E'];
-    const [sizeValue, sizeUnit] = parseUnit(sizeWithUnit);
+    const sizes = ['', 'k', 'm', 'g', 't', 'p', 'e'];
+    const [sizeValue, sizeUnit] = parseUnit(inputValue);
 
     if (isInvalidNumber(sizeValue)) {
       throw new Error(`Invalid size value: ${sizeValue}`);
     }
 
-    const sizeIndex = sizes.indexOf(sizeUnit.toUpperCase() as SizeUnit);
+    const sizeIndex = sizes.indexOf(sizeUnit.toLowerCase());
 
     if (sizeIndex === -1) {
       throw new Error(`Invalid size unit: ${sizeUnit}`);
@@ -85,13 +68,11 @@ export namespace BigNumber {
     const bytes = (sizeValue as Big).times(base ** sizeIndex);
     let targetIndex = 0;
 
-    if (targetSizeUnit === 'auto') {
+    if (targetUnit === 'auto') {
       targetIndex = logBigNumber(bytes, base);
       targetIndex = Math.min(Math.max(targetIndex, 0), sizes.length - 1);
     } else {
-      targetIndex = targetSizeUnit
-        ? sizes.indexOf(targetSizeUnit.toUpperCase() as SizeUnit)
-        : sizeIndex;
+      targetIndex = targetUnit ? sizes.indexOf(targetUnit.toLowerCase()) : 0;
     }
 
     const finalBytes = bytes.div(base ** targetIndex);
@@ -99,41 +80,51 @@ export namespace BigNumber {
       ? finalBytes.toFixed(fixed)
       : toFixedFloorWithoutTrailingZeros(finalBytes, fixed);
 
+    const unit = sizes[targetIndex] as InputSizeUnit;
+
     return {
       number: finalBytes,
       numberFixed,
-      unit: sizes[targetIndex],
-      numberUnit: `${numberFixed}${sizes[targetIndex]}`,
+      unit,
+      value: `${numberFixed}${unit}`,
     };
   }
 
-  export function convertBinarySizeUnit(
-    sizeWithUnit?: BigSource,
-    targetSizeUnit?: SizeUnit | 'auto',
+  export function convertToBinaryUnit(
+    inputValue?: BigSource,
+    targetUnit?: SizeUnit | 'auto',
     fixed = 2,
     round = false,
   ) {
-    return BigNumber.convertSizeUnit(
-      sizeWithUnit,
-      targetSizeUnit,
-      fixed,
-      round,
-      1024,
+    return generateDisplayValues(
+      BigNumber.convertUnitValue(inputValue, targetUnit, {
+        fixed,
+        round,
+        base: 1024,
+      }),
+      {
+        baseDisplayUnit: 'BiB',
+        displayUnitSuffix: 'iB',
+      },
     );
   }
 
-  export function convertDecimalSizeUnit(
-    sizeWithUnit?: BigSource,
-    targetSizeUnit?: SizeUnit | 'auto',
+  export function convertToDecimalUnit(
+    inputValue?: BigSource,
+    targetUnit?: SizeUnit | 'auto',
     fixed = 2,
     round = false,
   ) {
-    return BigNumber.convertSizeUnit(
-      sizeWithUnit,
-      targetSizeUnit,
-      fixed,
-      round,
-      1000,
+    return generateDisplayValues(
+      BigNumber.convertUnitValue(inputValue, targetUnit, {
+        fixed,
+        round,
+        base: 1000,
+      }),
+      {
+        baseDisplayUnit: 'B',
+        displayUnitSuffix: 'B',
+      },
     );
   }
 
@@ -164,8 +155,8 @@ export namespace BigNumber {
       return 0;
     }
 
-    const value1 = BigNumber.convertBinarySizeUnit(size1, 'g');
-    const value2 = BigNumber.convertBinarySizeUnit(size2, 'g');
+    const value1 = BigNumber.convertToBinaryUnit(size1, 'g');
+    const value2 = BigNumber.convertToBinaryUnit(size2, 'g');
 
     return compareBigNumber(value1?.number, value2?.number);
   }
@@ -176,17 +167,15 @@ export namespace BigNumber {
     targetSizeUnit: SizeUnit = 'm',
   ) {
     const number1 = new Big(
-      BigNumber.convertBinarySizeUnit(size1, 'b')?.number || 0,
+      BigNumber.convertToBinaryUnit(size1, '')?.number || 0,
     );
     const number2 = new Big(
-      BigNumber.convertBinarySizeUnit(size2, 'b')?.number || 0,
+      BigNumber.convertToBinaryUnit(size2, '')?.number || 0,
     );
-    return BigNumber.convertSizeUnit(
-      number1.add(number2),
-      targetSizeUnit,
-      2,
-      false,
-    )?.numberUnit;
+    return BigNumber.convertUnitValue(number1.add(number2), targetSizeUnit, {
+      fixed: 2,
+      round: false,
+    })?.value;
   }
 
   export function subNumberWithUnits(
@@ -195,17 +184,15 @@ export namespace BigNumber {
     targetSizeUnit: SizeUnit = 'm',
   ) {
     const number1 = new Big(
-      BigNumber.convertBinarySizeUnit(size1, 'b')?.number || 0,
+      BigNumber.convertToBinaryUnit(size1, '')?.number || 0,
     );
     const number2 = new Big(
-      BigNumber.convertBinarySizeUnit(size2, 'b')?.number || 0,
+      BigNumber.convertToBinaryUnit(size2, '')?.number || 0,
     );
-    return BigNumber.convertSizeUnit(
-      number1.minus(number2),
-      targetSizeUnit,
-      2,
-      false,
-    )?.numberUnit;
+    return BigNumber.convertUnitValue(number1.minus(number2), targetSizeUnit, {
+      fixed: 2,
+      round: false,
+    })?.value;
   }
 
   export function isOutsideRangeWithUnits(

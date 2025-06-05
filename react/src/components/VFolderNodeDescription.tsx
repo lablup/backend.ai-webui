@@ -1,4 +1,4 @@
-import { convertDecimalSizeUnit, filterEmptyItem, toLocalId } from '../helper';
+import { convertToDecimalUnit, filterEmptyItem, toLocalId } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useVirtualFolderNodePathFragment$key } from '../hooks/__generated__/useVirtualFolderNodePathFragment.graphql';
 import { useCurrentUserInfo } from '../hooks/backendai';
@@ -238,7 +238,7 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
       key: 'max_size',
       label: t('data.folders.MaxSize'),
       children: vfolderNode.max_size
-        ? `${convertDecimalSizeUnit(vfolderNode.max_size, 'g', 2)?.numberUnit}B`
+        ? convertToDecimalUnit(vfolderNode.max_size, 'g', 2)?.displayValue
         : '∞',
     },
     {

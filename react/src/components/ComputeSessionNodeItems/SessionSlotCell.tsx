@@ -1,4 +1,4 @@
-import { convertBinarySizeUnit } from '../../helper';
+import { convertToBinaryUnit } from '../../helper';
 import {
   ResourceSlotName,
   useResourceSlotsDetails,
@@ -91,7 +91,7 @@ const SessionSlotCell: React.FC<OccupiedSlotViewProps> = ({
           ),
           placement: 'left',
         }}
-        text={convertBinarySizeUnit(mem, 'G', 3)?.numberFixed + ' GiB'}
+        text={convertToBinaryUnit(mem, 'g', 3)?.displayValue}
       />
     );
   } else if (type === 'accelerator') {

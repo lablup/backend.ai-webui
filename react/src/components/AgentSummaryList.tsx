@@ -1,5 +1,5 @@
 import {
-  convertBinarySizeUnit,
+  convertToBinaryUnit,
   filterNonNullItems,
   toFixedFloorWithoutTrailingZeros,
   transformSorterToOrderString,
@@ -222,17 +222,11 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
                       <Flex gap="xxs">
                         <ResourceTypeIcon type={'mem'} />
                         <Typography.Text>
-                          {convertBinarySizeUnit(
-                            parsedOccupiedSlots.mem,
-                            'g',
-                            0,
-                          )?.numberFixed ?? 0}
+                          {convertToBinaryUnit(parsedOccupiedSlots.mem, 'g', 0)
+                            ?.numberFixed ?? 0}
                           /
-                          {convertBinarySizeUnit(
-                            parsedAvailableSlots.mem,
-                            'g',
-                            0,
-                          )?.numberFixed ?? 0}
+                          {convertToBinaryUnit(parsedAvailableSlots.mem, 'g', 0)
+                            ?.numberFixed ?? 0}
                         </Typography.Text>
                         <Typography.Text
                           type="secondary"
