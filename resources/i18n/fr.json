@@ -550,6 +550,7 @@
     "Digest": "Digérer",
     "Disabled": "désactivée",
     "FullImagePath": "Chemin d'accès complet à l'image",
+    "ImageReinstallationRequired": "Réinstallation d'image requise",
     "Images": "Images",
     "Install": "Installer",
     "Installed": "installée",
@@ -584,7 +585,9 @@
     "SuccessfullyModified": "Modifié avec succès",
     "Tags": "Balises",
     "TakesTime": ". Cela prend du temps alors prenez une tasse de café!",
-    "Version": "Version"
+    "Version": "Version",
+    "resourceMaxLimit": "Ne peut pas être réglé plus haut que le maximum spécifié sur l'étiquette d'image. \n({{max}})",
+    "resourceMinLimit": "Ne peut pas être défini inférieur au minimum spécifié sur l'étiquette d'image. \n({{min}})"
   },
   "error": {
     "APIEndpointIsEmpty": "Le point de terminaison de l'API est vide. Veuillez spécifier le point de terminaison de l'API Backend.AI pour vous inscrire.",

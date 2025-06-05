@@ -552,6 +552,7 @@
     "Digest": "Digest",
     "Disabled": "disabled",
     "FullImagePath": "Full image path",
+    "ImageReinstallationRequired": "Image reinstallation required",
     "Images": "Images",
     "Install": "Install",
     "Installed": "installed",
@@ -586,7 +587,9 @@
     "SuccessfullyModified": "Successfully modified",
     "Tags": "Tags",
     "TakesTime": ". It takes time so have a cup of coffee!",
-    "Version": "Version"
+    "Version": "Version",
+    "resourceMaxLimit": "Cannot be set higher than the maximum specified on the image label. ({{max}})",
+    "resourceMinLimit": "Cannot be set lower than the minimum specified on the image label. ({{min}})"
   },
   "error": {
     "APIEndpointIsEmpty": "API Endpoint is empty. Please specify Backend.AI API endpoint to signup.",
@@ -609,8 +612,6 @@
     "NetworkConnectionFailed": "Network connection failed. Check network status.",
     "NotFoundBasePath": "Not Found. Please check your Base Path.",
     "OnlyIntegersAreAllowed": "Only integers are allowed.",
-    "OnlyPositiveIntegerAllowed": "",
-    "OnlyPositiveIntegersAllowed": "",
     "OnlyPositiveIntegersAreAllowed": "Only positive integers are allowed.",
     "ReachedResourceLimit": "Reached your resource limit. Check resources and sessions.",
     "ReachedResourceLimitPleaseContact": "Reached your resource limit. Please contact the administrator.",

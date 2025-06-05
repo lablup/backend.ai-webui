@@ -550,6 +550,7 @@
     "Digest": "strawić",
     "Disabled": "niepełnosprawny",
     "FullImagePath": "Pełna ścieżka obrazu",
+    "ImageReinstallationRequired": "Wymagana ponowna instalacja obrazu",
     "Images": "Obrazy",
     "Install": "zainstalować",
     "Installed": "zainstalowany",
@@ -584,7 +585,9 @@
     "SuccessfullyModified": "Pomyślnie zmodyfikowano",
     "Tags": "Tagi",
     "TakesTime": ". Potrzeba czasu, więc napij się kawy!",
-    "Version": "Wersja"
+    "Version": "Wersja",
+    "resourceMaxLimit": "Nie można ustawić wyżej niż maksimum określone na etykiecie obrazu. \n({{max}})",
+    "resourceMinLimit": "Nie można ustawić niżej niż minimum określone na etykiecie obrazu. \n({{min}})"
   },
   "error": {
     "APIEndpointIsEmpty": "Punkt końcowy interfejsu API jest pusty. Aby się zarejestrować, określ punkt końcowy interfejsu API Backend.AI.",
