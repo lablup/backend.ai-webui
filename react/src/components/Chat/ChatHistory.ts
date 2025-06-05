@@ -89,7 +89,7 @@ export function useHistory(id: string) {
   const resetList = useCallback(() => {
     setChats([...currentChat.current.chats]);
     chatHistoryCache.set(currentChat.current.id, currentChat.current);
-  }, [id]);
+  }, [setChats]);
 
   const resetHistory = useCallback(() => {
     setHistory([...chatHistoryCache.getAll().sort(sortHistoryByUpdatedAt)]);
@@ -148,7 +148,7 @@ export function useHistory(id: string) {
 
       resetList();
     },
-    [chats],
+    [chats, resetList],
   );
 
   const removeChat = useCallback(
