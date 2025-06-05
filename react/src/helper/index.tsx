@@ -4,6 +4,7 @@ import { EnvironmentImage } from '../components/ImageList';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { AttachmentsProps } from '@ant-design/x';
 import { SorterResult } from 'antd/es/table/interface';
+import Big from 'big.js';
 import dayjs from 'dayjs';
 import { Duration } from 'dayjs/plugin/duration';
 import { TFunction } from 'i18next';
@@ -179,6 +180,37 @@ function convertUnitValue(
   };
 }
 
+export const generateDisplayValues = <T extends number | Big>(
+  convertedValue:
+    | {
+        number: T;
+        numberFixed: string;
+        unit: InputSizeUnit;
+        value: string;
+      }
+    | undefined,
+  {
+    baseDisplayUnit,
+    displayUnitSuffix,
+  }: {
+    baseDisplayUnit: string;
+    displayUnitSuffix: string;
+  },
+) => {
+  if (convertedValue === undefined) {
+    return undefined;
+  }
+  const displayUnit = convertedValue.unit
+    ? `${convertedValue.unit.toUpperCase()}${displayUnitSuffix}`
+    : baseDisplayUnit;
+  const displayValue = `${convertedValue.numberFixed} ${displayUnit}`;
+  return {
+    ...convertedValue,
+    displayValue,
+    displayUnit,
+  };
+};
+
 /**
  * Converts a binary size value from one unit to another.
  *
@@ -200,23 +232,17 @@ export function convertToBinaryUnit(
   round: boolean = false,
 ) {
   inputValue = _.isNumber(inputValue) ? _.toString(inputValue) : inputValue;
-  const convertedValue = convertUnitValue(inputValue, targetUnit, {
-    fixed,
-    round,
-    base: 1024,
-  });
-  if (convertedValue === undefined) {
-    return undefined;
-  }
-  const displayUnit = convertedValue.unit
-    ? `${convertedValue.unit.toUpperCase()}iB`
-    : 'BiB';
-  const displayValue = `${convertedValue.numberFixed} ${displayUnit}`;
-  return {
-    ...convertedValue,
-    displayValue,
-    displayUnit,
-  };
+  return generateDisplayValues(
+    convertUnitValue(inputValue, targetUnit, {
+      fixed,
+      round,
+      base: 1024,
+    }),
+    {
+      baseDisplayUnit: 'BiB',
+      displayUnitSuffix: 'iB',
+    },
+  );
 }
 
 /**
@@ -240,23 +266,17 @@ export function convertToDecimalUnit(
   round: boolean = false,
 ) {
   inputValue = _.isNumber(inputValue) ? _.toString(inputValue) : inputValue;
-  const convertedValue = convertUnitValue(inputValue, targetUnit, {
-    fixed,
-    round,
-    base: 1000,
-  });
-  if (convertedValue === undefined) {
-    return undefined;
-  }
-  const displayUnit = convertedValue.unit
-    ? `${convertedValue.unit.toUpperCase()}B`
-    : 'B';
-  const displayValue = `${convertedValue.numberFixed} ${displayUnit}`;
-  return {
-    ...convertedValue,
-    displayValue,
-    displayUnit,
-  };
+  return generateDisplayValues(
+    convertUnitValue(inputValue, targetUnit, {
+      fixed,
+      round,
+      base: 1000,
+    }),
+    {
+      baseDisplayUnit: 'B',
+      displayUnitSuffix: 'B',
+    },
+  );
 }
 
 export function toFixedFloorWithoutTrailingZeros(
