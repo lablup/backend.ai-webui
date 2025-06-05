@@ -446,6 +446,9 @@ importers:
       react-dom:
         specifier: ^19.0.0
         version: 19.0.0(react@19.0.0)
+      react-i18next:
+        specifier: ^15.4.1
+        version: 15.4.1(i18next@24.2.3(typescript@5.7.2))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
     devDependencies:
       '@storybook/addon-docs':
         specifier: ^9.0.0
