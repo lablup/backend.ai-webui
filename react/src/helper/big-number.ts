@@ -1,4 +1,4 @@
-import { InputSizeUnit, SizeUnit } from '.';
+import { generateDisplayValues, InputSizeUnit, SizeUnit } from '.';
 import { Big, type BigSource } from 'big.js';
 
 export namespace BigNumber {
@@ -96,25 +96,17 @@ export namespace BigNumber {
     fixed = 2,
     round = false,
   ) {
-    const convertedValue = BigNumber.convertUnitValue(inputValue, targetUnit, {
-      fixed,
-      round,
-      base: 1024,
-    });
-
-    if (convertedValue === undefined) {
-      return undefined;
-    }
-
-    const displayUnit = convertedValue.unit
-      ? `${convertedValue.unit.toUpperCase()}iB`
-      : 'BiB';
-    const displayValue = `${convertedValue.numberFixed} ${displayUnit}`;
-    return {
-      ...convertedValue,
-      displayValue,
-      displayUnit,
-    };
+    return generateDisplayValues(
+      BigNumber.convertUnitValue(inputValue, targetUnit, {
+        fixed,
+        round,
+        base: 1024,
+      }),
+      {
+        baseDisplayUnit: 'BiB',
+        displayUnitSuffix: 'iB',
+      },
+    );
   }
 
   export function convertToDecimalUnit(
@@ -123,23 +115,17 @@ export namespace BigNumber {
     fixed = 2,
     round = false,
   ) {
-    const convertedValue = BigNumber.convertUnitValue(inputValue, targetUnit, {
-      fixed,
-      round,
-      base: 1000,
-    });
-    if (convertedValue === undefined) {
-      return undefined;
-    }
-    const displayUnit = convertedValue.unit
-      ? `${convertedValue.unit.toUpperCase()}B`
-      : 'B';
-    const displayValue = `${convertedValue.numberFixed} ${displayUnit}`;
-    return {
-      ...convertedValue,
-      displayValue,
-      displayUnit,
-    };
+    return generateDisplayValues(
+      BigNumber.convertUnitValue(inputValue, targetUnit, {
+        fixed,
+        round,
+        base: 1000,
+      }),
+      {
+        baseDisplayUnit: 'B',
+        displayUnitSuffix: 'B',
+      },
+    );
   }
 
   export function toFixedFloorWithoutTrailingZeros(

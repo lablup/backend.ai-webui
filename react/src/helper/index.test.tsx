@@ -72,17 +72,6 @@ describe('convertBinarySizeUnit', () => {
     );
   });
 
-  // it('should use input unit as target unit when targetSizeUnit is not provided', () => {
-  //   const sizeWithUnit = '1K';
-  //   const result = convertBinarySizeUnit(sizeWithUnit);
-  //   expect(result).toMatchObject({
-  //     number: 1,
-  //     numberFixed: '1',
-  //     unit: 'K',
-  //     displayValue: '1 K',
-  //   });
-  // });
-
   it('should return undefined for undefined input', () => {
     const sizeWithUnit = undefined;
     const result = convertToBinaryUnit(sizeWithUnit, '');
@@ -646,20 +635,6 @@ describe('convertDecimalSizeUnit', () => {
       'Invalid size format',
     );
   });
-
-  // it('should use input unit as target unit when targetSizeUnit is not provided', () => {
-  //   const sizeWithUnit = '1K';
-  //   const result = convertDecimalSizeUnit(sizeWithUnit);
-  //   expect(result).toEqual({
-  //     number: 1,
-  //     numberFixed: '1',
-  //     unit: 'K',
-  //     unitWithSuffix: 'KB',
-  //     value: '1k',
-  //     displayValue: '1 K',
-  //     displayValueWithSuffix: '1 KB',
-  //   });
-  // });
 
   it('should return undefined for undefined input', () => {
     const sizeWithUnit = undefined;
