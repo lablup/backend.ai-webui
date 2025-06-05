@@ -4,7 +4,6 @@ import {
   type ChatProviderData,
   type ChatMessage,
 } from './ChatModel';
-import { useDynamicList } from 'ahooks';
 import _ from 'lodash';
 import { customAlphabet } from 'nanoid/non-secure';
 import { useEffect, useCallback, useRef, useState } from 'react';
@@ -83,15 +82,14 @@ const chatHistoryCache = createLocalStorageCache<ChatHistoryData>(
 );
 
 export function useHistory(id: string) {
-  const {
-    list: chats,
-    remove,
-    push,
-    replace,
-    resetList,
-  } = useDynamicList<ChatData>();
+  const [chats, setChats] = useState<ChatData[]>([]);
   const [history, setHistory] = useState<ChatHistoryData[]>([]);
   const currentChat = useRef(chatHistoryCache.get(id) as ChatHistoryData);
+
+  const resetList = useCallback(() => {
+    setChats([...currentChat.current.chats]);
+    chatHistoryCache.set(currentChat.current.id, currentChat.current);
+  }, [id]);
 
   const resetHistory = useCallback(() => {
     setHistory([...chatHistoryCache.getAll().sort(sortHistoryByUpdatedAt)]);
@@ -141,17 +139,16 @@ export function useHistory(id: string) {
 
       // find origin chat position to insert next to the origin chat
       const index = chats.findIndex((chat) => chat.id === id);
-      if (index !== -1) {
-        currentChat.current.chats.splice(index + 1, 1, chat);
-        replace(index + 1, chat);
+
+      if (index + 1 < chats.length) {
+        currentChat.current.chats.splice(index + 1, 0, chat);
       } else {
         currentChat.current.chats.push(chat);
-        push(chat);
       }
 
-      chatHistoryCache.set(currentChat.current.id, currentChat.current);
+      resetList();
     },
-    [chats, push, replace],
+    [chats],
   );
 
   const removeChat = useCallback(
@@ -161,14 +158,13 @@ export function useHistory(id: string) {
         return;
       }
 
-      remove(index);
-
       currentChat.current.chats = currentChat.current.chats.filter(
         (chat) => chat.id !== id,
       );
-      chatHistoryCache.set(currentChat.current.id, currentChat.current);
+
+      resetList();
     },
-    [chats, remove],
+    [chats, resetList],
   );
 
   const updateChat = useCallback(
@@ -185,13 +181,10 @@ export function useHistory(id: string) {
         return;
       }
 
-      const updatedChat = _.merge({}, chat, data);
-      replace(index, _.merge({}, updatedChat, data));
-
-      currentChat.current.chats[index] = updatedChat;
-      chatHistoryCache.set(currentChat.current.id, currentChat.current);
+      currentChat.current.chats[index] = _.merge({}, chat, data);
+      resetList();
     },
-    [chats, replace],
+    [chats, resetList],
   );
 
   const saveMessage = useCallback(
@@ -241,12 +234,10 @@ export function useHistory(id: string) {
         messages: [],
       };
 
-      replace(index, updatedChat);
-
       currentChat.current.chats[index] = updatedChat;
-      chatHistoryCache.set(currentChat.current.id, currentChat.current);
+      resetList();
     },
-    [chats, replace],
+    [chats, resetList],
   );
 
   useEffect(() => {
@@ -256,7 +247,7 @@ export function useHistory(id: string) {
     }
 
     currentChat.current = chats;
-    resetList(currentChat.current.chats);
+    resetList();
     resetHistory();
   }, [id, resetList, resetHistory]);
 
