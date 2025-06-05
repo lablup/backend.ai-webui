@@ -1,3 +1,7 @@
+import {
+  ImageListQuery,
+  ImageListQuery$data,
+} from '../__generated__/ImageListQuery.graphql';
 import Flex from '../components/Flex';
 import {
   filterEmptyItem,
@@ -21,10 +25,6 @@ import ManageImageResourceLimitModal from './ManageImageResourceLimitModal';
 import ResourceNumber from './ResourceNumber';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import TextHighlighter from './TextHighlighter';
-import {
-  ImageListQuery,
-  ImageListQuery$data,
-} from './__generated__/ImageListQuery.graphql';
 import {
   AppstoreOutlined,
   ReloadOutlined,

@@ -1,5 +1,5 @@
+import { PasswordChangeRequestAlertQuery } from '../__generated__/PasswordChangeRequestAlertQuery.graphql';
 import BAIAlert, { BAIAlertProps } from './BAIAlert';
-import { PasswordChangeRequestAlertQuery } from './__generated__/PasswordChangeRequestAlertQuery.graphql';
 import graphql from 'babel-plugin-relay/macro';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

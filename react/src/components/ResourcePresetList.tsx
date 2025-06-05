@@ -1,15 +1,15 @@
+import { ResourcePresetListDeleteMutation } from '../__generated__/ResourcePresetListDeleteMutation.graphql';
+import {
+  ResourcePresetListQuery,
+  ResourcePresetListQuery$data,
+} from '../__generated__/ResourcePresetListQuery.graphql';
+import { ResourcePresetSettingModalFragment$key } from '../__generated__/ResourcePresetSettingModalFragment.graphql';
 import { filterNonNullItems, localeCompare, filterEmptyItem } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import Flex from './Flex';
 import NumberWithUnit from './NumberWithUnit';
 import ResourceNumber from './ResourceNumber';
 import ResourcePresetSettingModal from './ResourcePresetSettingModal';
-import { ResourcePresetListDeleteMutation } from './__generated__/ResourcePresetListDeleteMutation.graphql';
-import {
-  ResourcePresetListQuery,
-  ResourcePresetListQuery$data,
-} from './__generated__/ResourcePresetListQuery.graphql';
-import { ResourcePresetSettingModalFragment$key } from './__generated__/ResourcePresetSettingModalFragment.graphql';
 import {
   ReloadOutlined,
   PlusOutlined,

@@ -1,4 +1,4 @@
-import { useVirtualFolderNodePathFragment$key } from '../../hooks/__generated__/useVirtualFolderNodePathFragment.graphql';
+import { useVirtualFolderNodePathFragment$key } from '../../__generated__/useVirtualFolderNodePathFragment.graphql';
 import { useVirtualFolderPath } from '../../hooks/useVirtualFolderNodePath';
 import BAIText from '../BAIText';
 import Flex from '../Flex';

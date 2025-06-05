@@ -1,3 +1,7 @@
+import {
+  ImageEnvironmentSelectFormItemsQuery,
+  ImageEnvironmentSelectFormItemsQuery$data,
+} from '../__generated__/ImageEnvironmentSelectFormItemsQuery.graphql';
 import { getImageFullName, localeCompare } from '../helper';
 import { preserveDotStartCase } from '../helper';
 import {
@@ -12,10 +16,6 @@ import cssRaw from './ImageEnvironmentSelectFormItems.css?raw';
 import ImageMetaIcon from './ImageMetaIcon';
 import { ImageTags } from './ImageTags';
 import TextHighlighter from './TextHighlighter';
-import {
-  ImageEnvironmentSelectFormItemsQuery,
-  ImageEnvironmentSelectFormItemsQuery$data,
-} from './__generated__/ImageEnvironmentSelectFormItemsQuery.graphql';
 import {
   Divider,
   Form,

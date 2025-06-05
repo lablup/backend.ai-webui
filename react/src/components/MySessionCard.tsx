@@ -1,8 +1,8 @@
+import { MySessionCardQueryFragment$key } from '../__generated__/MySessionCardQueryFragment.graphql';
 import BAICard, { BAICardProps } from './BAICard';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import BAIPanelItem from './BAIPanelItem';
 import Flex from './Flex';
-import { MySessionCardQueryFragment$key } from './__generated__/MySessionCardQueryFragment.graphql';
 import { Col, Divider, Row, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import { useTransition } from 'react';

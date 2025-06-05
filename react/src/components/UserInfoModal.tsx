@@ -1,7 +1,7 @@
+import { UserInfoModalQuery } from '../__generated__/UserInfoModalQuery.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTOTPSupported } from '../hooks/backendai';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import { UserInfoModalQuery } from './__generated__/UserInfoModalQuery.graphql';
 import { Descriptions, DescriptionsProps, Tag, Spin } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';

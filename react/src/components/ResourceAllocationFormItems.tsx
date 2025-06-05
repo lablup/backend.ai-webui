@@ -1,3 +1,4 @@
+import { ResourceAllocationFormItemsQuery } from '../__generated__/ResourceAllocationFormItemsQuery.graphql';
 import {
   addNumberWithUnits,
   compareNumberWithUnits,
@@ -26,7 +27,6 @@ import InputNumberWithSlider from './InputNumberWithSlider';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import ResourceGroupSelect from './ResourceGroupSelect';
 import ResourcePresetSelect from './ResourcePresetSelect';
-import { ResourceAllocationFormItemsQuery } from './__generated__/ResourceAllocationFormItemsQuery.graphql';
 import { CaretDownOutlined, ReloadOutlined } from '@ant-design/icons';
 import {
   Button,

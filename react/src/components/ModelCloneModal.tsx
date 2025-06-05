@@ -1,3 +1,4 @@
+import { ModelCloneModalVFolderFragment$key } from '../__generated__/ModelCloneModalVFolderFragment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
@@ -5,7 +6,6 @@ import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import StorageSelect from './StorageSelect';
-import { ModelCloneModalVFolderFragment$key } from './__generated__/ModelCloneModalVFolderFragment.graphql';
 import {
   Alert,
   Form,

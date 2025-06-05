@@ -1,4 +1,4 @@
-import { EndpointStatusTagFragment$key } from './__generated__/EndpointStatusTagFragment.graphql';
+import { EndpointStatusTagFragment$key } from '../__generated__/EndpointStatusTagFragment.graphql';
 import { Tag } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import React from 'react';

@@ -1,13 +1,13 @@
+import {
+  ResourcePresetSelectQuery,
+  ResourcePresetSelectQuery$data,
+} from '../__generated__/ResourcePresetSelectQuery.graphql';
 import { localeCompare } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
 import useControllableState from '../hooks/useControllableState';
 import Flex from './Flex';
 import ResourceNumber from './ResourceNumber';
-import {
-  ResourcePresetSelectQuery,
-  ResourcePresetSelectQuery$data,
-} from './__generated__/ResourcePresetSelectQuery.graphql';
 import { EditOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { useThrottleFn } from 'ahooks';
 import { Select, Tooltip, theme } from 'antd';

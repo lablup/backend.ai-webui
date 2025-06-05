@@ -1,5 +1,5 @@
+import { StorageHostResourcePanelFragment$key } from '../__generated__/StorageHostResourcePanelFragment.graphql';
 import { humanReadableDecimalSize, usageIndicatorColor } from '../helper/index';
-import { StorageHostResourcePanelFragment$key } from './__generated__/StorageHostResourcePanelFragment.graphql';
 import { Progress, Descriptions, Typography, Tag } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';

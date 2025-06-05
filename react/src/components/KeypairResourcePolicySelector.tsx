@@ -1,6 +1,6 @@
+import { KeypairResourcePolicySelectorQuery } from '../__generated__/KeypairResourcePolicySelectorQuery.graphql';
 import { localeCompare } from '../helper';
 import useControllableState from '../hooks/useControllableState';
-import { KeypairResourcePolicySelectorQuery } from './__generated__/KeypairResourcePolicySelectorQuery.graphql';
 import { Select, SelectProps } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';

@@ -1,13 +1,13 @@
+import {
+  SessionNodesFragment$data,
+  SessionNodesFragment$key,
+} from '../__generated__/SessionNodesFragment.graphql';
 import { filterEmptyItem, filterNonNullItems } from '../helper';
 import BAILink from './BAILink';
 import BAITable, { BAITableProps } from './BAITable';
 import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionSlotCell from './ComputeSessionNodeItems/SessionSlotCell';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
-import {
-  SessionNodesFragment$data,
-  SessionNodesFragment$key,
-} from './__generated__/SessionNodesFragment.graphql';
 import { ColumnType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';

@@ -1,3 +1,4 @@
+import { ServingPageQuery } from '../__generated__/ServingPageQuery.graphql';
 import BAICard from '../components/BAICard';
 import BAIFetchKeyButton from '../components/BAIFetchKeyButton';
 import BAIPropertyFilter, {
@@ -12,7 +13,6 @@ import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
-import { ServingPageQuery } from './__generated__/ServingPageQuery.graphql';
 import { Button, Skeleton, theme, Typography } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';

@@ -1,10 +1,10 @@
+import { SessionInfoCellFragment$key } from '../../__generated__/SessionInfoCellFragment.graphql';
 import {
   // useBackendaiImageMetaData,
   useSuspendedBackendaiClient,
 } from '../../hooks';
 import { useTanMutation } from '../../hooks/reactQueryAlias';
 import Flex from '../Flex';
-import { SessionInfoCellFragment$key } from './__generated__/SessionInfoCellFragment.graphql';
 import { EditOutlined } from '@ant-design/icons';
 import { Button, Form, FormInstance, Input, Typography, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';

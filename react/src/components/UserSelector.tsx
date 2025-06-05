@@ -1,4 +1,4 @@
-import { UserSelectorQuery } from './__generated__/UserSelectorQuery.graphql';
+import { UserSelectorQuery } from '../__generated__/UserSelectorQuery.graphql';
 import { Select, SelectProps } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';

@@ -1,3 +1,4 @@
+import { LegacyFolderExplorerQuery } from '../__generated__/LegacyFolderExplorerQuery.graphql';
 import { toGlobalId } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
@@ -5,7 +6,6 @@ import Flex from './Flex';
 import FolderExplorerActions from './FolderExplorerActions';
 import FolderExplorerHeader from './FolderExplorerHeader';
 import VFolderNodeDescription from './VFolderNodeDescription';
-import { LegacyFolderExplorerQuery } from './__generated__/LegacyFolderExplorerQuery.graphql';
 import { Alert, Grid, Splitter, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import graphql from 'babel-plugin-relay/macro';

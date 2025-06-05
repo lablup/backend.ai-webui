@@ -18,10 +18,11 @@
     "build:react-only": "pnpm run --prefix ./react build",
     "build:plugin": "rm -rf build/rollup/dist/plugins && mkdir -p build/rollup/dist/plugins && rollup -c rollup.plugins.config.ts --configPlugin typescript",
     "server:p": "serve build/rollup",
-    "server:d": "cd react && pnpm start",
+    "server:d": "concurrently -c \"auto\" --names \"backend.ai-ui,webui\" \"pnpm --prefix ./packages/backend.ai-ui run dev\" \"pnpm --prefix ./react run start\"",
     "server:d-ie11": "web-dev-server --node-resolve --open --watch --port 3081 --hostname 127.0.0.1 --esbuild-target auto --app-index demo/index.html --file-extensions .ts",
     "build:d": "concurrently -c \"auto\" --names \"webcomponent,react-relay,webdev\" \"./node_modules/typescript/bin/tsc --watch\" \"cd react && pnpm run relay:watch\" \"web-dev-server --node-resolve --port 3081 --hostname 127.0.0.1 --esbuild-target auto --app-index index.html --file-extensions .ts\"",
     "electron:d": "electron . --dev",
+    "relay": "relay-compiler",
     "copywc": "mkdir -p build/rollup/src/lib && cp -r node_modules/@webcomponents/webcomponentsjs/bundles build/rollup/src/lib && cp -r node_modules/@webcomponents/webcomponentsjs/bundles src/lib && cp node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js build/rollup/src/lib && cp -r node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js src/lib",
     "copywa": "mkdir -p build/rollup/src/lib/web-animations-js && mkdir -p src/lib/web-animations-js && cp node_modules/web-animations-js/web-animations-next-lite.min.js src/lib/web-animations-js && cp src/lib/web-animations-js/web-animations-next-lite.min.js build/rollup/src/lib/web-animations-js",
     "copyresource": "cp -Rp resources build/rollup && cp -Rp manifest build/rollup",
@@ -160,6 +161,7 @@
     "pwa-helpers": "^0.9.1",
     "redux": "^5.0.1",
     "redux-thunk": "^3.1.0",
+    "relay-compiler": "^18.1.0",
     "rollup": "^4.20.0",
     "rollup-plugin-workbox": "^8.1.0",
     "serve": "^14.2.3",
@@ -217,8 +219,5 @@
       "node"
     ],
     "rootDir": "src"
-  },
-  "relay": {
-    "rootDirectory": "react"
   }
 }

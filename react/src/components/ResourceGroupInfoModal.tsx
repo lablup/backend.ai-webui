@@ -1,7 +1,7 @@
+import { ResourceGroupInfoModalFragment$key } from '../__generated__/ResourceGroupInfoModalFragment.graphql';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import { ScalingGroupOpts } from './ResourceGroupList';
-import { ResourceGroupInfoModalFragment$key } from './__generated__/ResourceGroupInfoModalFragment.graphql';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { Descriptions, Tag, Typography, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';

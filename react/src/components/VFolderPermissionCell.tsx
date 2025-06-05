@@ -1,5 +1,5 @@
+import { VFolderPermissionCellFragment$key } from '../__generated__/VFolderPermissionCellFragment.graphql';
 import Flex from './Flex';
-import { VFolderPermissionCellFragment$key } from './__generated__/VFolderPermissionCellFragment.graphql';
 import { Typography } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';

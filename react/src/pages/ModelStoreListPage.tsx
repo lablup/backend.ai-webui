@@ -1,10 +1,10 @@
+import { ModelCardModalFragment$key } from '../__generated__/ModelCardModalFragment.graphql';
+import { ModelStoreListPageQuery } from '../__generated__/ModelStoreListPageQuery.graphql';
 import Flex from '../components/Flex';
 import ModelCardModal from '../components/ModelCardModal';
 import TextHighlighter from '../components/TextHighlighter';
 import UnmountModalAfterClose from '../components/UnmountModalAfterClose';
-import { ModelCardModalFragment$key } from '../components/__generated__/ModelCardModalFragment.graphql';
 import { useUpdatableState } from '../hooks';
-import { ModelStoreListPageQuery } from './__generated__/ModelStoreListPageQuery.graphql';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import {
   Alert,
@@ -120,12 +120,7 @@ const ModelStoreListPage: React.FC = () => {
     return result;
   }, [model_cards?.edges]);
   return (
-    <Flex
-      direction="column"
-      align="stretch"
-      justify="center"
-      gap="lg"
-    >
+    <Flex direction="column" align="stretch" justify="center" gap="lg">
       <Flex
         direction="column"
         align="stretch"

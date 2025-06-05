@@ -1,3 +1,5 @@
+import { EditableVFolderNameFragment$key } from '../__generated__/EditableVFolderNameFragment.graphql';
+import { EditableVFolderNameRefetchQuery } from '../__generated__/EditableVFolderNameRefetchQuery.graphql';
 import { toLocalId } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
@@ -7,8 +9,6 @@ import { usePainKiller } from '../hooks/usePainKiller';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import BAILink from './BAILink';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
-import { EditableVFolderNameFragment$key } from './__generated__/EditableVFolderNameFragment.graphql';
-import { EditableVFolderNameRefetchQuery } from './__generated__/EditableVFolderNameRefetchQuery.graphql';
 import { theme, Form, Input, App } from 'antd';
 import Text, { TextProps } from 'antd/es/typography/Text';
 import Title, { TitleProps } from 'antd/es/typography/Title';

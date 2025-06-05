@@ -1,9 +1,9 @@
+import { ModelCardModalFragment$key } from '../__generated__/ModelCardModalFragment.graphql';
 import { useBackendAIImageMetaData } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import ModelCloneModal from './ModelCloneModal';
 import ResourceNumber from './ResourceNumber';
-import { ModelCardModalFragment$key } from './__generated__/ModelCardModalFragment.graphql';
 import { BankOutlined, CopyOutlined, FileOutlined } from '@ant-design/icons';
 import {
   Alert,

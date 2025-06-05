@@ -1,3 +1,4 @@
+import { VFolderTableProjectQuery } from '../__generated__/VFolderTableProjectQuery.graphql';
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useKeyPairLazyLoadQuery } from '../hooks/hooksUsingRelay';
@@ -13,7 +14,6 @@ import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import TextHighlighter from './TextHighlighter';
 import VFolderPermissionTag from './VFolderPermissionTag';
 import { VFolder } from './VFolderSelect';
-import { VFolderTableProjectQuery } from './__generated__/VFolderTableProjectQuery.graphql';
 import {
   QuestionCircleOutlined,
   ReloadOutlined,

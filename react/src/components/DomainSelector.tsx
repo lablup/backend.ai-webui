@@ -1,4 +1,4 @@
-import { DomainSelectorQuery } from './__generated__/DomainSelectorQuery.graphql';
+import { DomainSelectorQuery } from '../__generated__/DomainSelectorQuery.graphql';
 import { Select, SelectProps } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';

@@ -1,3 +1,5 @@
+import { StorageStatusPanelKeypairQuery } from '../__generated__/StorageStatusPanelKeypairQuery.graphql';
+import { StorageStatusPanelQuery } from '../__generated__/StorageStatusPanelQuery.graphql';
 import { addQuotaScopeTypePrefix, usageIndicatorColor } from '../helper';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
@@ -7,8 +9,6 @@ import Flex from './Flex';
 import FlexActivityIndicator from './FlexActivityIndicator';
 import StorageSelect, { VolumeInfo } from './StorageSelect';
 import UsageProgress from './UsageProgress';
-import { StorageStatusPanelKeypairQuery } from './__generated__/StorageStatusPanelKeypairQuery.graphql';
-import { StorageStatusPanelQuery } from './__generated__/StorageStatusPanelQuery.graphql';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import {
   Progress,

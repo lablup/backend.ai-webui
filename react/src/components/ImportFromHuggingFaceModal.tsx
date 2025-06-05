@@ -1,3 +1,4 @@
+import { ImportFromHuggingFaceModalQuery } from '../__generated__/ImportFromHuggingFaceModalQuery.graphql';
 import { baiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
@@ -5,7 +6,6 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
-import { ImportFromHuggingFaceModalQuery } from './__generated__/ImportFromHuggingFaceModalQuery.graphql';
 import {
   CloudUploadOutlined,
   FilterOutlined,

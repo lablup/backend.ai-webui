@@ -1,6 +1,6 @@
+import { UsageProgressFragment_usageFrgmt$key } from '../__generated__/UsageProgressFragment_usageFrgmt.graphql';
 import { bytesToGB, usageIndicatorColor } from '../helper';
 import Flex from './Flex';
-import { UsageProgressFragment_usageFrgmt$key } from './__generated__/UsageProgressFragment_usageFrgmt.graphql';
 import { Progress, Typography, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import React from 'react';

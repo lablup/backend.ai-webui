@@ -1,6 +1,6 @@
+import { FolderExplorerHeaderFragment$key } from '../__generated__/FolderExplorerHeaderFragment.graphql';
 import Flex from './Flex';
 import VFolderNameTitle from './VFolderNameTitle';
-import { FolderExplorerHeaderFragment$key } from './__generated__/FolderExplorerHeaderFragment.graphql';
 import { Button, Tooltip, Image, Skeleton, Grid, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import React, { LegacyRef, Suspense } from 'react';

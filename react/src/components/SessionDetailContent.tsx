@@ -1,3 +1,5 @@
+import { SessionDetailContentLegacyQuery } from '../__generated__/SessionDetailContentLegacyQuery.graphql';
+import { SessionDetailContentQuery } from '../__generated__/SessionDetailContentQuery.graphql';
 import SessionKernelTags from '../components/ImageTags';
 import { toGlobalId } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
@@ -13,14 +15,11 @@ import SessionIdleChecks, {
 import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionStatusDetailModal from './ComputeSessionNodeItems/SessionStatusDetailModal';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
-import SessionTypeTag from './ComputeSessionNodeItems/SessionTypeTag';
 import Flex from './Flex';
 import FolderLink from './FolderLink';
 import IdleCheckDescriptionModal from './IdleCheckDescriptionModal';
 import ImageMetaIcon from './ImageMetaIcon';
 import SessionUsageMonitor from './SessionUsageMonitor';
-import { SessionDetailContentLegacyQuery } from './__generated__/SessionDetailContentLegacyQuery.graphql';
-import { SessionDetailContentQuery } from './__generated__/SessionDetailContentQuery.graphql';
 import { InfoCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import {
   Alert,
@@ -36,6 +35,7 @@ import {
 } from 'antd';
 import Title from 'antd/es/typography/Title';
 import graphql from 'babel-plugin-relay/macro';
+import { BAISessionTypeTag } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Suspense, useState } from 'react';
 import { useMemo } from 'react';
@@ -116,7 +116,7 @@ const SessionDetailContent: React.FC<{
 
             ...SessionStatusTagFragment
             ...SessionActionButtonsFragment
-            ...SessionTypeTagFragment
+            ...BAISessionTypeTagFragment
             ...EditableSessionNameFragment
             ...SessionReservationFragment
             # fix: This fragment is not used in this component, but it is required by the SessionActionButtonsFragment.
@@ -273,7 +273,7 @@ const SessionDetailContent: React.FC<{
             </Flex>
           </Descriptions.Item>
           <Descriptions.Item label={t('session.SessionType')}>
-            <SessionTypeTag sessionFrgmt={session} />
+            <BAISessionTypeTag sessionFrgmt={session} />
           </Descriptions.Item>
           <Descriptions.Item label={t('session.launcher.Environments')}>
             {imageFullName ? (
@@ -292,6 +292,7 @@ const SessionDetailContent: React.FC<{
             <Flex gap="xs" wrap="wrap">
               {session.vfolder_nodes
                 ? session.vfolder_nodes.edges.map((vfolder, idx) => {
+                    console.log(vfolder?.node);
                     return (
                       vfolder?.node && (
                         <FolderLink

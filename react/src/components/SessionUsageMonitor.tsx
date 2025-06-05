@@ -1,3 +1,4 @@
+import { SessionUsageMonitorFragment$key } from '../__generated__/SessionUsageMonitorFragment.graphql';
 import {
   convertBinarySizeUnit,
   convertDecimalSizeUnit,
@@ -7,7 +8,6 @@ import {
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import Flex from './Flex';
-import { SessionUsageMonitorFragment$key } from './__generated__/SessionUsageMonitorFragment.graphql';
 import { ProgressProps, Tooltip, Typography, theme, Row, Col } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';

@@ -1,9 +1,9 @@
-import BAIModal, { BAIModalProps } from './BAIModal';
 import {
   AgentSettingModalFragment$data,
   AgentSettingModalFragment$key,
-} from './__generated__/AgentSettingModalFragment.graphql';
-import { AgentSettingModalMutation } from './__generated__/AgentSettingModalMutation.graphql';
+} from '../__generated__/AgentSettingModalFragment.graphql';
+import { AgentSettingModalMutation } from '../__generated__/AgentSettingModalMutation.graphql';
+import BAIModal, { BAIModalProps } from './BAIModal';
 import { App, Form, FormInstance, Switch } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import React, { useRef } from 'react';

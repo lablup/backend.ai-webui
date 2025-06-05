@@ -1,8 +1,8 @@
+import { ContainerCommitModalFragment$key } from '../../__generated__/ContainerCommitModalFragment.graphql';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useSetBAINotification } from '../../hooks/useBAINotification';
 import BAIModal, { BAIModalProps } from '../BAIModal';
 import Flex from '../Flex';
-import { ContainerCommitModalFragment$key } from './__generated__/ContainerCommitModalFragment.graphql';
 import {
   Descriptions,
   Divider,

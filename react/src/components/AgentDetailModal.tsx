@@ -1,3 +1,4 @@
+import { AgentDetailModalFragment$key } from '../__generated__/AgentDetailModalFragment.graphql';
 import {
   convertBinarySizeUnit,
   convertDecimalSizeUnit,
@@ -7,7 +8,6 @@ import { useResourceSlotsDetails } from '../hooks/backendai';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import Flex from './Flex';
-import { AgentDetailModalFragment$key } from './__generated__/AgentDetailModalFragment.graphql';
 import { Col, Row, theme, Typography } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';

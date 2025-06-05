@@ -1,8 +1,8 @@
+import { ProjectSelectorQuery } from '../__generated__/ProjectSelectorQuery.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import useControllableState from '../hooks/useControllableState';
 import BAISelect, { BAISelectProps } from './BAISelect';
-import { ProjectSelectorQuery } from './__generated__/ProjectSelectorQuery.graphql';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React from 'react';

@@ -1,3 +1,5 @@
+import { AppLauncherModalFragment$key } from '../../__generated__/AppLauncherModalFragment.graphql';
+import { AppLauncherModalLegacyFragment$key } from '../../__generated__/AppLauncherModalLegacyFragment.graphql';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import {
   ServicePort,
@@ -6,8 +8,6 @@ import {
 } from '../../hooks/useSuspendedFilteredAppTemplate';
 import BAIModal from '../BAIModal';
 import Flex from '../Flex';
-import { AppLauncherModalFragment$key } from './__generated__/AppLauncherModalFragment.graphql';
-import { AppLauncherModalLegacyFragment$key } from './__generated__/AppLauncherModalLegacyFragment.graphql';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import {
   Button,

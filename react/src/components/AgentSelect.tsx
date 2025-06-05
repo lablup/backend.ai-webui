@@ -1,9 +1,9 @@
+import { AgentSelectQuery } from '../__generated__/AgentSelectQuery.graphql';
 import { filterEmptyItem } from '../helper';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { mergeFilterValues } from './BAIPropertyFilter';
 import Flex from './Flex';
 import ResourceNumber from './ResourceNumber';
-import { AgentSelectQuery } from './__generated__/AgentSelectQuery.graphql';
 import { useControllableValue } from 'ahooks';
 import { Select, SelectProps } from 'antd';
 import graphql from 'babel-plugin-relay/macro';

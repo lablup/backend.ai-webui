@@ -1,5 +1,5 @@
+import { VFolderPermissionTag_VFolder$key } from '../__generated__/VFolderPermissionTag_VFolder.graphql';
 import DoubleTag, { DoubleTagObjectValue } from './DoubleTag';
-import { VFolderPermissionTag_VFolder$key } from './__generated__/VFolderPermissionTag_VFolder.graphql';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React from 'react';

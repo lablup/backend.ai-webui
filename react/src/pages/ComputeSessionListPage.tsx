@@ -1,3 +1,8 @@
+import {
+  ComputeSessionListPageQuery,
+  ComputeSessionListPageQuery$data,
+  ComputeSessionListPageQuery$variables,
+} from '../__generated__/ComputeSessionListPageQuery.graphql';
 import ActionItemContent from '../components/ActionItemContent';
 import AvailableResourcesCard from '../components/AvailableResourcesCard';
 import BAICard from '../components/BAICard';
@@ -17,11 +22,6 @@ import { useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
-import {
-  ComputeSessionListPageQuery,
-  ComputeSessionListPageQuery$data,
-  ComputeSessionListPageQuery$variables,
-} from './__generated__/ComputeSessionListPageQuery.graphql';
 import {
   Badge,
   Button,

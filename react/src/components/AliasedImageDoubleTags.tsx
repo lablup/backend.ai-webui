@@ -1,8 +1,8 @@
+import { AliasedImageDoubleTagsFragment$key } from '../__generated__/AliasedImageDoubleTagsFragment.graphql';
 import { preserveDotStartCase } from '../helper';
 import { useBackendAIImageMetaData } from '../hooks';
 import DoubleTag, { DoubleTagObjectValue } from './DoubleTag';
 import Flex from './Flex';
-import { AliasedImageDoubleTagsFragment$key } from './__generated__/AliasedImageDoubleTagsFragment.graphql';
 import { Tag } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';

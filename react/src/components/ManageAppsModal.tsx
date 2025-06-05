@@ -1,8 +1,8 @@
+import { ManageAppsModalMutation } from '../__generated__/ManageAppsModalMutation.graphql';
+import { ManageAppsModal_image$key } from '../__generated__/ManageAppsModal_image.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
-import { ManageAppsModalMutation } from './__generated__/ManageAppsModalMutation.graphql';
-import { ManageAppsModal_image$key } from './__generated__/ManageAppsModal_image.graphql';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import {
   Input,
