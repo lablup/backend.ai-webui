@@ -62,6 +62,12 @@ const backendType = {
   },
 };
 
+type StorageVolume = NonNullable<
+  NonNullable<
+    StorageProxyListQuery['response']['storage_volume_list']
+  >['items'][number]
+>;
+
 const StorageProxyList = () => {
   const { token } = theme.useToken();
   const { t } = useTranslation();
@@ -108,7 +114,7 @@ const StorageProxyList = () => {
     },
   );
 
-  const columns: TableColumnsType<any> = [
+  const columns: TableColumnsType<StorageVolume> = [
     {
       title: <>ID / {t('agent.Endpoint')}</>,
       key: 'id',
@@ -211,7 +217,9 @@ const StorageProxyList = () => {
       render: (value, record) => {
         let perfMetricDisabled;
         try {
-          const performanceMetric = JSON.parse(record.performance_metric);
+          const performanceMetric = JSON.parse(
+            record.performance_metric || '{}',
+          );
           perfMetricDisabled = _.isEmpty(performanceMetric);
         } catch (e) {
           perfMetricDisabled = true;

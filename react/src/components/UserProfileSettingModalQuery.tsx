@@ -8,6 +8,9 @@ export const UserProfileQuery = graphql`
     user(email: $email) {
       id
       totp_activated @skipOnClient(if: $isNotSupportTotp)
+
+      # This is edge case for TOTP activation modal
+      # eslint-disable-next-line relay/must-colocate-fragment-spreads
       ...TOTPActivateModalFragment
     }
   }
