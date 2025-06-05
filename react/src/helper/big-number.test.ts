@@ -51,7 +51,6 @@ describe('parseUnit', () => {
     expect(BigNumber.parseUnit('0')).toEqualBigNumber(['0', '']);
     expect(BigNumber.parseUnit('0g')).toEqualBigNumber(['0', 'g']);
     expect(BigNumber.parseUnit('.5g')).toEqualBigNumber(['0.5', 'g']);
-    expect(BigNumber.parseUnit('.5g')).toEqualBigNumber(['0.5', 'g']);
   });
 
   test('handle a big large number', () => {
