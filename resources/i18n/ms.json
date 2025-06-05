@@ -579,7 +579,9 @@
     "SuccessfullyModified": "Berjaya diubah suai",
     "Tags": "Tag",
     "TakesTime": ". Ia memerlukan masa jadi minum secawan kopi!",
-    "Version": "Versi"
+    "Version": "Versi",
+    "resourceMaxLimit": "Tidak boleh ditetapkan lebih tinggi daripada maksimum yang ditentukan pada label imej. \n({{max}})",
+    "resourceMinLimit": "Tidak boleh ditetapkan lebih rendah daripada minimum yang ditentukan pada label imej. \n({{min}})"
   },
   "error": {
     "APIEndpointIsEmpty": "Titik Akhir API kosong. Sila nyatakan titik akhir API Backend.AI untuk mendaftar.",

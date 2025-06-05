@@ -579,7 +579,9 @@
     "SuccessfullyModified": "Muutettu onnistuneesti",
     "Tags": "Tunnisteet",
     "TakesTime": ". Se vie aikaa, joten ota kuppi kahvia!",
-    "Version": "Versio"
+    "Version": "Versio",
+    "resourceMaxLimit": "Ei voida asettaa korkeampaa kuin kuvan etiketissä määritelty maksimiarvo. \n({{max}})",
+    "resourceMinLimit": "Ei voida asettaa pienemmäksi kuin kuvamerkinnässä määritetty minimi. \n({{min}})"
   },
   "error": {
     "APIEndpointIsEmpty": "API-päätepiste on tyhjä. Määritä Backend.AI API-päätepiste rekisteröitymistä varten.",
