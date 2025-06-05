@@ -1,14 +1,12 @@
-import BAILink from './BAILink';
+import BAILink, { BAILinkProps } from './BAILink';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { FolderLink_vfolderNode$key } from './__generated__/FolderLink_vfolderNode.graphql';
 import { FolderOutlined } from '@ant-design/icons';
-import { theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import { useFragment } from 'react-relay';
 
-interface FolderLinkBase {
+interface FolderLinkBase extends BAILinkProps {
   showIcon?: boolean;
-  disabled?: boolean;
 }
 
 interface FolderLinkWithFragment extends FolderLinkBase {
@@ -30,11 +28,9 @@ const FolderLink = ({
   folderId,
   folderName,
   showIcon,
-  disabled,
+  ...baiLinkProps
 }: FolderLinkProps) => {
   const { generateFolderPath } = useFolderExplorerOpener();
-  const { token } = theme.useToken();
-
   const vfolderNode = useFragment(
     graphql`
       fragment FolderLink_vfolderNode on VirtualFolderNode {
@@ -47,18 +43,9 @@ const FolderLink = ({
 
   return (
     <BAILink
-      to={
-        disabled
-          ? undefined
-          : generateFolderPath(folderId ?? vfolderNode?.row_id ?? '')
-      }
-      style={{
-        wordBreak: 'break-all',
-        ...(disabled && {
-          color: token.colorTextDisabled,
-          cursor: 'not-allowed',
-        }),
-      }}
+      to={generateFolderPath(folderId ?? vfolderNode?.row_id ?? '')}
+      style={{ wordBreak: 'break-all' }}
+      {...baiLinkProps}
     >
       {showIcon && (
         <>

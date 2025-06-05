@@ -1174,7 +1174,7 @@
     "Agents": "代理商",
     "AllowedClientIps": "允许的客户端 IP",
     "AlreadyTerminatingSession": "已经终止会话。",
-    "AnotherUserSession": "此会话是由另一个用户创建的",
+    "AnotherUserSession": "此会话是由另一个用户创建的。",
     "Architecture": "建筑学",
     "Arguments": "参数",
     "AverageUsage": "avg",
