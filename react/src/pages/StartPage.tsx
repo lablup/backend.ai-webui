@@ -1,7 +1,6 @@
 import ActionItemContent from '../components/ActionItemContent';
 import AnnouncementAlert from '../components/AnnouncementAlert';
 import BAIAlert from '../components/BAIAlert';
-import Flex from '../components/Flex';
 import FolderCreateModal from '../components/FolderCreateModal';
 import { MenuKeys } from '../components/MainLayout/WebUISider';
 import ThemeSecondaryProvider from '../components/ThemeSecondaryProvider';
@@ -10,6 +9,7 @@ import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { SessionLauncherFormValue } from './SessionLauncherPage';
 import { AppstoreAddOutlined, FolderAddOutlined } from '@ant-design/icons';
 import { Card, Col, Row } from 'antd';
+import { Flex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
