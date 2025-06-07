@@ -167,6 +167,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
       onCancel={onRequestClose}
       style={{ minWidth: 550 }}
       destroyOnClose
+      keyboard
       footer={null}
     >
       <Flex direction="column" gap="xl">

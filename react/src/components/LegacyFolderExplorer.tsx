@@ -132,6 +132,7 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
   return (
     <BAIModal
       className={styles.baiModalHeader}
+      keyboard
       centered
       width={'90%'}
       destroyOnClose
