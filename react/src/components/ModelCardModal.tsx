@@ -5,9 +5,9 @@ import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import ModelCardChat from './ModelCardChat';
 import ModelCloneModal from './ModelCloneModal';
-import ModelTryContentButton from './ModelTryContentButton';
+// import ModelTryContentButton from './ModelTryContentButton';
 import ResourceNumber from './ResourceNumber';
-import { BankOutlined, FileOutlined } from '@ant-design/icons';
+import { BankOutlined, FileOutlined, CopyOutlined } from '@ant-design/icons';
 import {
   Alert,
   Button,
@@ -45,7 +45,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
 
   const [metadata] = useBackendAIImageMetaData();
   const screen = Grid.useBreakpoint();
-  const { modelConfig, talkativot } = useModelConfig();
+  const { modelConfig } = useModelConfig();
   const model_card = useFragment(
     graphql`
       fragment ModelCardModalFragment on ModelCard {
@@ -117,12 +117,25 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
             : '90%'
       }
       footer={[
-        <ModelTryContentButton
+        // FIXME: temporally disable ModelTryContentButton
+        /* <ModelTryContentButton
           modelStorageHost={model_card?.vfolder?.host as string}
           modelConfigItem={modelConfigItem || null}
           modelName={model_card?.name as string}
           key="try"
-        />,
+        />, */
+        <Button
+          key="clone"
+          type="primary"
+          ghost
+          icon={<CopyOutlined />}
+          disabled={!model_card?.vfolder?.cloneable}
+          onClick={() => {
+            setVisibleCloneModal(true);
+          }}
+        >
+          {t('modelStore.CloneToFolder')}
+        </Button>,
         <Button
           onClick={() => {
             onRequestClose();
@@ -148,28 +161,14 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
             gap={'sm'}
             style={{ flex: 2, width: '100%' }}
           >
-            {model_card?.name === 'Talkativot UI' ? (
-              <iframe
-                src={talkativot?.src}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  border: 'none',
-                }}
-                title={talkativot?.title}
-              />
-            ) : (
-              <ModelCardChat
-                basePath={
-                  model_card?.name?.includes('stable-diffusion-3-medium')
-                    ? 'generate-image'
-                    : 'v1'
-                }
-                modelName={
-                  modelConfigItem?.serviceName || model_card?.name || ''
-                }
-              />
-            )}
+            <ModelCardChat
+              basePath={
+                model_card?.name?.includes('stable-diffusion-3-medium')
+                  ? 'generate-image'
+                  : 'v1'
+              }
+              modelName={modelConfigItem?.serviceName || model_card?.name || ''}
+            />
           </Flex>
           <Divider type="vertical" style={{ height: '100%' }} />
           <Flex

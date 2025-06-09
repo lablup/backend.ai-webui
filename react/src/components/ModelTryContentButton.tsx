@@ -1,14 +1,16 @@
 import {
   baiSignedRequestWithPromise,
   compareNumberWithUnits,
+  generateRandomString,
   useBaiSignedRequestWithPromise,
 } from '../helper';
-import { generateRandomString } from '../helper';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import {
+  useCurrentProjectValue,
+  useCurrentResourceGroupValue,
+} from '../hooks/useCurrentProject';
 import { ModelConfigMeta } from '../hooks/useModelConfig';
 import {
   ServiceCreateType,
@@ -240,8 +242,6 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
       mutationToClone.mutate(
         {
           input: {
-            // FIXME: hardcoded
-            cloneable: true,
             permission: 'wd', // write-delete permission
             target_host: modelStorageHost, // lowestUsageHost, // clone to accessible and lowest usage storage host
             target_name: `${modelConfigItem?.serviceName || modelName}`, // TODO: add suffix to avoid name conflict
@@ -273,94 +273,109 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
                 taskId: data.bgtask_id,
                 onChange: {
                   pending: t('data.folders.DownloadingModel'),
-                  resolved: t('data.folders.SuccessfullyModelDownloaded'),
-                  rejected: t('data.folders.FolderCloneFailed'),
-                },
-                onResolve: () => {
-                  mutationToCreateService.mutate(
-                    getServiceInputByModelNameAndVFolderId(
-                      modelConfigItem?.serviceName ?? '',
-                      `${modelName}-1`,
-                    ),
-                    {
-                      onSuccess: (result: any) => {
-                        upsertNotification({
-                          key: result?.endpoint_id,
-                          open: true,
-                          message: t('modelService.StartingModelService'),
-                          duration: 0,
-                          backgroundTask: {
-                            promise: new Promise<void>((resolve, reject) => {
-                              let progress = 0;
-                              const interval = setInterval(async () => {
-                                try {
-                                  progress += _.random(2, 5);
-                                  upsertNotification({
-                                    key: result?.endpoint_id,
-                                    backgroundTask: {
-                                      status: 'pending',
-                                      percent: progress > 100 ? 100 : progress,
-                                    },
-                                  });
-                                  const routingStatus =
-                                    await baiRequestWithPromise({
-                                      method: 'GET',
-                                      url: `/services/${result?.endpoint_id}`,
+                  resolved: (_data: any, _notification: any) => {
+                    mutationToCreateService.mutate(
+                      getServiceInputByModelNameAndVFolderId(
+                        modelConfigItem?.serviceName ?? '',
+                        `${modelName}-1`,
+                      ),
+                      {
+                        onSuccess: (result: any) => {
+                          upsertNotification({
+                            key: result?.endpoint_id,
+                            open: true,
+                            message: t('modelService.StartingModelService'),
+                            duration: 0,
+                            backgroundTask: {
+                              promise: new Promise<void>((resolve, reject) => {
+                                let progress = 0;
+                                const interval = setInterval(async () => {
+                                  try {
+                                    progress += _.random(2, 5);
+                                    upsertNotification({
+                                      key: result?.endpoint_id,
+                                      backgroundTask: {
+                                        status: 'pending',
+                                        percent:
+                                          progress > 100 ? 100 : progress,
+                                      },
                                     });
-                                  if (routingStatus.active_routes.length > 0) {
+                                    const routingStatus =
+                                      await baiRequestWithPromise({
+                                        method: 'GET',
+                                        url: `/services/${result?.endpoint_id}`,
+                                      });
+                                    if (
+                                      routingStatus.active_routes.length > 0
+                                    ) {
+                                      clearInterval(interval);
+                                      return resolve();
+                                    }
+                                    if (progress >= 100) {
+                                      throw new Error(
+                                        t(
+                                          'modelService.ModelServiceFailedToStart',
+                                        ),
+                                      );
+                                    }
+                                  } catch (error) {
                                     clearInterval(interval);
-                                    return resolve();
+                                    return reject();
                                   }
-                                  if (progress >= 100) {
-                                    throw new Error(
-                                      t(
-                                        'modelService.ModelServiceFailedToStart',
-                                      ),
-                                    );
-                                  }
-                                } catch (error) {
-                                  clearInterval(interval);
-                                  return reject();
-                                }
-                              }, 5000);
-                            }),
-                            status: 'pending',
-                            percent: 0,
-                            onResolve: () => {
-                              upsertNotification({
-                                open: true,
-                                duration: 0,
-                                key: result?.endpoint_id,
-                                backgroundTask: {
-                                  status: 'resolved',
-                                  percent: 100,
-                                },
-                                message: '',
-                                to: `/chat?endpointId=${result?.endpoint_id}&modelId=vllm-model`, // PATH to playground page
-                                toText: t('modelService.PlayYourModelNow'),
-                              });
+                                }, 5000);
+                              }),
+                              status: 'pending',
+                              percent: 0,
+                              onChange: {
+                                pending: t('modelService.StartingModelService'),
+                                resolved: (_data, _notification) => ({
+                                  open: true,
+                                  duration: 0,
+                                  key: result?.endpoint_id,
+                                  backgroundTask: {
+                                    status: 'resolved',
+                                    percent: 100,
+                                  },
+                                  message: '',
+                                  to: `/chat?endpointId=${result?.endpoint_id}&modelId=vllm-model`, // PATH to playground page
+                                  toText: t('modelService.PlayYourModelNow'),
+                                }),
+                                rejected: (_data, _notification) => ({
+                                  key: result?.endpoint_id,
+                                  duration: 0,
+                                  backgroundTask: {
+                                    status: 'rejected',
+                                    percent: 99,
+                                  },
+                                  message: '',
+                                  to: `/serving/${result?.endpoint_id}`,
+                                  toText: t(
+                                    'modelService.GoToServiceDetailPage',
+                                  ),
+                                }),
+                              },
                             },
-                            onFailed: () => {
-                              upsertNotification({
-                                key: result?.endpoint_id,
-                                duration: 0,
-                                backgroundTask: {
-                                  status: 'rejected',
-                                  percent: 99,
-                                },
-                                message: '',
-                                to: `/serving/${result?.endpoint_id}`,
-                                toText: t('modelService.GoToServiceDetailPage'),
-                              });
-                            },
-                          },
-                        });
+                          });
+                        },
+                        onError: () => {
+                          // TODO: show a notification to go to service detail page
+                        },
                       },
-                      onError: () => {
-                        // TODO: show a notification to go to service detail page
+                    );
+                    return {
+                      duration: 0,
+                      open: true,
+                      key: data?.bgtask_id,
+                      backgroundTask: {
+                        status: 'resolved',
+                        percent: 100,
                       },
-                    },
-                  );
+                      message: '',
+                      to: `/chat?endpointId=${data?.bgtask_id}&modelId=vllm-model`,
+                      toText: t('modelService.PlayYourModelNow'),
+                    };
+                  },
+                  rejected: t('data.folders.FolderCloneFailed'),
                 },
               },
             });
