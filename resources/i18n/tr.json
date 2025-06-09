@@ -928,6 +928,7 @@
     "RoutesInfo": "Güzergah Bilgileri",
     "RoutingInfo": "Yönlendirme Bilgisi",
     "RoutingsCount": "Güzergah Sayısı",
+    "RunThisModel": "Bu modeli çalıştır",
     "RuntimeVariant": "Çıkarım Çalışma Zamanı Varyantı",
     "SeeContainerLogs": "Konteyner Günlüklerini görün",
     "ServiceCreated": "Model hizmeti {{ name }} başarıyla oluşturuldu.",

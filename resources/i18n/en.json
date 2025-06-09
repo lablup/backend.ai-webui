@@ -934,6 +934,7 @@
     "RoutesInfo": "Routes Info",
     "RoutingInfo": "Routing Info",
     "RoutingsCount": "Routings Count",
+    "RunThisModel": "Run this model",
     "RuntimeVariant": "Inference Runtime Variant",
     "SeeContainerLogs": "See Container Logs",
     "ServiceCreated": "Model service {{ name }} has been created successfully.",

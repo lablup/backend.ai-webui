@@ -928,6 +928,7 @@
     "RoutesInfo": "Infos zu den Routen",
     "RoutingInfo": "Routing-Informationen",
     "RoutingsCount": "Routings zählen",
+    "RunThisModel": "Führen Sie dieses Modell aus",
     "RuntimeVariant": "Inferenz Laufzeitvariante",
     "SeeContainerLogs": "Siehe Containerprotokolle",
     "ServiceCreated": "Der Modelldienst {{ name }} wurde erfolgreich erstellt.",

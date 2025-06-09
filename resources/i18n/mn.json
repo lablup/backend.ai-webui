@@ -926,6 +926,7 @@
     "RoutesInfo": "Маршрутын мэдээлэл",
     "RoutingInfo": "Чиглүүлэлтийн мэдээлэл",
     "RoutingsCount": "Чиглүүлэлтийн тоо",
+    "RunThisModel": "Энэ загварыг ажиллуул",
     "RuntimeVariant": "Дүгнэлт Runtime Variant",
     "SeeContainerLogs": "Контейнерийн бүртгэлийг үзнэ үү",
     "ServiceCreated": "Загвар үйлчилгээ {{ name }} амжилттай үүсгэгдсэн.",

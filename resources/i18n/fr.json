@@ -928,6 +928,7 @@
     "RoutesInfo": "Informations sur les itinéraires",
     "RoutingInfo": "Informations sur le routage",
     "RoutingsCount": "Nombre d'itinéraires",
+    "RunThisModel": "Exécuter ce modèle",
     "RuntimeVariant": "Variante d'exécution de l'inférence",
     "SeeContainerLogs": "Voir les journaux de conteneur",
     "ServiceCreated": "Le service modèle {{ name }} a été créé avec succès.",

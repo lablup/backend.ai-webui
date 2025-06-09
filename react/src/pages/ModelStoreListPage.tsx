@@ -1,12 +1,10 @@
 import { ModelCardModalFragment$key } from '../__generated__/ModelCardModalFragment.graphql';
 import { ModelStoreListPageQuery } from '../__generated__/ModelStoreListPageQuery.graphql';
 import Flex from '../components/Flex';
-import ImportFromHuggingFacePanel from '../components/ImportFromHuggingFacePanel';
 import ModelCardModal from '../components/ModelCardModal';
 import TextHighlighter from '../components/TextHighlighter';
 import UnmountModalAfterClose from '../components/UnmountModalAfterClose';
 import { useUpdatableState } from '../hooks';
-import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useModelConfig } from '../hooks/useModelConfig';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import {
@@ -99,8 +97,6 @@ const ModelStoreListPage: React.FC = () => {
     },
   );
 
-  const [isPaliEnabled] = useBAISettingUserState('experimental_PALI') ?? false;
-
   const fieldsValues = useMemo(() => {
     const result: {
       task: string[];
@@ -128,7 +124,6 @@ const ModelStoreListPage: React.FC = () => {
   }, [model_cards?.edges]);
   return (
     <Flex direction="column" align="stretch" justify="center" gap="lg">
-      {isPaliEnabled && <ImportFromHuggingFacePanel />}
       <Flex
         direction="column"
         align="stretch"

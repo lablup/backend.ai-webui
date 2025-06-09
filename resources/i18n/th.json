@@ -917,6 +917,7 @@
     "RoutesInfo": "ข้อมูลเส้นทาง",
     "RoutingInfo": "ข้อมูลการกำหนดเส้นทาง",
     "RoutingsCount": "จำนวนการกำหนดเส้นทาง",
+    "RunThisModel": "เรียกใช้รุ่นนี้",
     "RuntimeVariant": "ตัวแปรรันไทม์การอนุมาน",
     "SeeContainerLogs": "ดูบันทึกคอนเทนเนอร์",
     "ServiceCreated": "สร้างบริการโมเดล {{ name }} สำเร็จแล้ว",

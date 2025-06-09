@@ -926,6 +926,7 @@
     "RoutesInfo": "Info Rute",
     "RoutingInfo": "Info Perutean",
     "RoutingsCount": "Jumlah Rute",
+    "RunThisModel": "Jalankan model ini",
     "RuntimeVariant": "Varian Runtime Inferensi",
     "SeeContainerLogs": "Lihat Log Kontainer",
     "ServiceCreated": "Layanan model {{ name }} telah berhasil dibuat.",

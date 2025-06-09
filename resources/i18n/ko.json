@@ -931,6 +931,7 @@
     "RoutesInfo": "라우트 정보",
     "RoutingInfo": "라우팅 정보",
     "RoutingsCount": "라우팅 수",
+    "RunThisModel": "이 모델로 서비스 만들기",
     "RuntimeVariant": "인퍼런스 런타임 종류",
     "SeeContainerLogs": "컨테이너 로그 보기",
     "ServiceCreated": "모델 서비스 {{ name }}이(가) 생성되었습니다.",

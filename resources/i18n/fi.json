@@ -927,6 +927,7 @@
     "RoutesInfo": "Reittien tiedot",
     "RoutingInfo": "Reititystiedot",
     "RoutingsCount": "Reittien määrä",
+    "RunThisModel": "Suorita tämä malli",
     "RuntimeVariant": "Päättelyn suoritusaikamuunnos",
     "SeeContainerLogs": "Katso Säilön lokit",
     "ServiceCreated": "Mallipalvelun {{ name }} luominen onnistui.",

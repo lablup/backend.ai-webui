@@ -928,6 +928,7 @@
     "RoutesInfo": "Информация о маршрутах",
     "RoutingInfo": "Маршрутная информация",
     "RoutingsCount": "Количество маршрутов",
+    "RunThisModel": "Запустите эту модель",
     "RuntimeVariant": "Вариант времени выполнения вывода",
     "SeeContainerLogs": "См. журналы контейнеров",
     "ServiceCreated": "Сервис модели {{ name }} успешно создан.",

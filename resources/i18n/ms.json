@@ -927,6 +927,7 @@
     "RoutesInfo": "Maklumat Laluan",
     "RoutingInfo": "Maklumat Laluan",
     "RoutingsCount": "Kiraan Laluan",
+    "RunThisModel": "Jalankan model ini",
     "RuntimeVariant": "Varian Masa Jalan Inferens",
     "SeeContainerLogs": "Lihat Log Bekas",
     "ServiceCreated": "Perkhidmatan model {{ name }} telah berjaya dibuat.",

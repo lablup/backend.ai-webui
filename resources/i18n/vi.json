@@ -928,6 +928,7 @@
     "RoutesInfo": "Thông tin tuyến đường",
     "RoutingInfo": "Thông tin định tuyến",
     "RoutingsCount": "Số lượng định tuyến",
+    "RunThisModel": "Chạy mô hình này",
     "RuntimeVariant": "Biến thể thời gian chạy suy luận",
     "SeeContainerLogs": "Xem nhật ký vùng chứa",
     "ServiceCreated": "Dịch vụ mẫu {{ name }} đã được tạo thành công.",

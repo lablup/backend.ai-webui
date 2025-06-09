@@ -928,6 +928,7 @@
     "RoutesInfo": "Informacje o trasach",
     "RoutingInfo": "Informacje o routingu",
     "RoutingsCount": "Liczba tras",
+    "RunThisModel": "Uruchom ten model",
     "RuntimeVariant": "Inference Runtime Variant",
     "SeeContainerLogs": "Zobacz dzienniki kontenerów",
     "ServiceCreated": "Usługa modelowa {{ name }} została pomyślnie utworzona.",

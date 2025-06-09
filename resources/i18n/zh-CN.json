@@ -928,6 +928,7 @@
     "RoutesInfo": "路线信息",
     "RoutingInfo": "路由信息",
     "RoutingsCount": "路由计数",
+    "RunThisModel": "运行此模型",
     "RuntimeVariant": "推理运行时变量",
     "SeeContainerLogs": "查看容器日志",
     "ServiceCreated": "模型服务 {{ name }} 已成功创建。",

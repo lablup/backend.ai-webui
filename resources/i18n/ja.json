@@ -927,6 +927,7 @@
     "RoutesInfo": "ルート情報",
     "RoutingInfo": "ルーティング情報",
     "RoutingsCount": "ルーティング数",
+    "RunThisModel": "このモデルを実行します",
     "RuntimeVariant": "推論ランタイム・バリアント",
     "SeeContainerLogs": "コンテナログを参照",
     "ServiceCreated": "モデル サービス {{ name }} が正常に作成されました。",
