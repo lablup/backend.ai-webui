@@ -565,6 +565,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
               className="image-environment-select-form-item"
               name={['environments', 'version']}
               rules={[{ required: _.isEmpty(environments?.manual) }]}
+              data-testid="version-form-item"
             >
               <Select
                 ref={versionSelectRef}

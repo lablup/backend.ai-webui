@@ -1,3 +1,4 @@
+import { SessionLauncherPage } from './utils/classes/SessionLauncherPage';
 import {
   deleteSession,
   loginAsAdmin,
@@ -9,100 +10,6 @@ import { test, expect, Page } from '@playwright/test';
 
 const getStartSessionButton = (page: Page) => {
   return page.getByTestId('start-session-button');
-};
-
-const createInteractiveSessionOnSessionStartPage = async (
-  page: Page,
-  sessionName: string,
-) => {
-  const batchRadioButton = page
-    .locator('label')
-    .filter({ hasText: 'Interactive' })
-    .locator('input[type="radio"]');
-  await batchRadioButton.check();
-  const sessionNameInput = page.locator('#sessionName');
-  await sessionNameInput.fill(sessionName);
-  await page.getByRole('button', { name: 'Next' }).click();
-  await page.waitForLoadState('networkidle');
-
-  // select default resource group
-  const resourceGroup = page
-    .locator('.ant-form-item-row:has-text("Resource Group")')
-    .locator(
-      '.ant-form-item-control-input-content > .ant-select > .ant-select-selector',
-    )
-    .locator('input');
-  await expect(resourceGroup).toBeVisible();
-  await resourceGroup.fill('default');
-  await page.locator('.ant-select-dropdown:has-text("default")').click();
-  // select Minimum Requirements
-  const ResourcePreset = page
-    .locator('.ant-form-item-row:has-text("Resource Presets")')
-    .locator(
-      '.ant-form-item-control-input-content > .ant-select > .ant-select-selector',
-    )
-    .locator('input');
-  await expect(ResourcePreset).toBeVisible();
-  await ResourcePreset.fill('minimum');
-  await page.locator('.ant-select-dropdown:has-text("minimum")').click();
-  // launch
-  await page.getByRole('button', { name: 'Skip to review' }).click();
-
-  await page.locator('button').filter({ hasText: 'Launch' }).click();
-  await expect(page.locator('.ant-modal-confirm-title')).toHaveText(
-    'No storage folder is mounted',
-  );
-  await page.getByRole('button', { name: 'Start' }).click();
-};
-
-const createBatchSessionOnSessionStartPage = async (
-  page: Page,
-  sessionName: string,
-) => {
-  const batchRadioButton = page
-    .locator('label')
-    .filter({ hasText: 'Batch' })
-    .locator('input[type="radio"]');
-  await batchRadioButton.check();
-  const sessionNameInput = page.locator('#sessionName');
-  await sessionNameInput.fill(sessionName);
-  const BatchModeConfigurationCard = page.locator(
-    'div.ant-card:has-text("Batch Mode Configuration")',
-  );
-  expect(BatchModeConfigurationCard).toBeVisible();
-  await BatchModeConfigurationCard.getByLabel('Startup Command').fill(
-    'sleep 60',
-  );
-  await page.getByRole('button', { name: 'Next' }).click();
-  await page.waitForLoadState('networkidle');
-
-  // select default resource group
-  const resourceGroup = page
-    .locator('.ant-form-item-row:has-text("Resource Group")')
-    .locator(
-      '.ant-form-item-control-input-content > .ant-select > .ant-select-selector',
-    )
-    .locator('input');
-  await expect(resourceGroup).toBeVisible();
-  await resourceGroup.fill('default');
-  await page.locator('.ant-select-dropdown:has-text("default")').click();
-  // select Minimum Requirements
-  const ResourcePreset = page
-    .locator('.ant-form-item-row:has-text("Resource Presets")')
-    .locator(
-      '.ant-form-item-control-input-content > .ant-select > .ant-select-selector',
-    )
-    .locator('input');
-  await expect(ResourcePreset).toBeVisible();
-  await ResourcePreset.fill('minimum');
-  await page.locator('.ant-select-dropdown:has-text("minimum")').click();
-  // launch
-  await page.getByRole('button', { name: 'Skip to review' }).click();
-  await page.locator('button').filter({ hasText: 'Launch' }).click();
-  await expect(page.locator('.ant-modal-confirm-title')).toHaveText(
-    'No storage folder is mounted',
-  );
-  await page.getByRole('button', { name: 'Start' }).click();
 };
 
 test.describe('Session Creation', () => {
@@ -131,16 +38,19 @@ test.describe('Session Creation', () => {
     await creationButton.click();
     await expect(page).toHaveURL(/\/session\/start/);
     await page.waitForLoadState('networkidle');
-    // interactive radio button is selected by default
-    const interactiveRadioButton = page
-      .locator('label')
-      .filter({ hasText: 'Interactive' })
-      .locator('input[type="radio"]');
-    await expect(interactiveRadioButton).toBeChecked();
-    // create session
-    await createInteractiveSessionOnSessionStartPage(page, sessionName);
+    const sessionLauncher = new SessionLauncherPage(page);
+    await sessionLauncher.setCurrentStep('Session Type');
+    await expect(
+      sessionLauncher.getSessionTypeRadioButton('interactive'),
+    ).toBeChecked();
+    await sessionLauncher.createSession({
+      sessionType: 'interactive',
+      sessionName: sessionName,
+      resourceGroup: 'default',
+      resourcePreset: 'minimum',
+    });
     // close app dialog
-    await page.getByRole('button', { name: 'close' }).click();
+    // await page.getByRole('button', { name: 'close' }).click();
     // Verify that a cell exists to display the session name
     const session = page
       .locator('vaadin-grid-cell-content')
@@ -163,13 +73,18 @@ test.describe('Session Creation', () => {
     await expect(page).toHaveURL(/\/session\/start/);
     await page.waitForLoadState('networkidle');
     // batch radio button is selected by default
-    const batchRadioButton = page
-      .locator('label')
-      .filter({ hasText: 'Batch' })
-      .locator('input[type="radio"]');
-    await expect(batchRadioButton).toBeChecked();
-    // create session
-    await createBatchSessionOnSessionStartPage(page, sessionName);
+    const sessionLauncher = new SessionLauncherPage(page);
+    await sessionLauncher.setCurrentStep('Session Type');
+    await expect(
+      sessionLauncher.getSessionTypeRadioButton('batch'),
+    ).toBeChecked();
+    await sessionLauncher.createSession({
+      sessionType: 'batch',
+      sessionName: sessionName,
+      startupCommand: 'sleep 60',
+      resourceGroup: 'default',
+      resourcePreset: 'minimum',
+    });
     // Verify that a cell exists to display the session name
     const session = page
       .locator('vaadin-grid-cell-content')
@@ -190,9 +105,15 @@ test.describe('Session Creation', () => {
     await startButton.click();
     await expect(page).toHaveURL(/\/session\/start/);
     await page.waitForLoadState('networkidle');
-    await createInteractiveSessionOnSessionStartPage(page, sessionName);
+    const sessionLauncher = new SessionLauncherPage(page);
+    await sessionLauncher.createSession({
+      sessionType: 'interactive',
+      sessionName: sessionName,
+      resourceGroup: 'default',
+      resourcePreset: 'minimum',
+    });
     // close app dialog
-    await page.getByRole('button', { name: 'close' }).click();
+    // await page.getByRole('button', { name: 'close' }).click();
     // Verify that a cell exists to display the session name
     const session = page
       .locator('vaadin-grid-cell-content')
@@ -214,7 +135,15 @@ test.describe('Session Creation', () => {
     await expect(page).toHaveURL(/\/session\/start/);
     await page.waitForLoadState('networkidle');
 
-    await createBatchSessionOnSessionStartPage(page, sessionName);
+    const sessionLauncher = new SessionLauncherPage(page);
+    await sessionLauncher.setCurrentStep('Session Type');
+    await sessionLauncher.createSession({
+      sessionType: 'batch',
+      sessionName: sessionName,
+      startupCommand: 'sleep 60',
+      resourceGroup: 'default',
+      resourcePreset: 'minimum',
+    });
     // Verify that a cell exists to display the session name
     const session = page
       .locator('vaadin-grid-cell-content')
