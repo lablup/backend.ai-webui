@@ -31,6 +31,15 @@ module.exports = {
       // },
     },
   },
+  jest: {
+    configure: {
+      moduleNameMapper: {
+        // Resolve `__generated__` to the correct path
+        // This is necessary for relay to find the generated files.
+        '^\\./__generated__/(.*)$': '<rootDir>/src/__generated__/$1',
+      },
+    },
+  },
   babel: {
     plugins: ['@babel/plugin-syntax-import-attributes'],
   },
