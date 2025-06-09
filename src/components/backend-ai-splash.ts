@@ -15,7 +15,7 @@ import { customElement, property, query } from 'lit/decorators.js';
  `backend-ai-splash` shows simple summary about current app / web application.
 
  Example:
- 
+
  ```
  <backend-ai-splash></backend-ai-splash>
  ...
