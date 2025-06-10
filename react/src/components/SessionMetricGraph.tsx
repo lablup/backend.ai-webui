@@ -3,7 +3,7 @@ import {
   SessionMetricGraphQuery$data,
 } from '../__generated__/SessionMetricGraphQuery.graphql';
 import {
-  convertBinarySizeUnit,
+  convertToBinaryUnit,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
@@ -282,7 +282,7 @@ const convertMetricUnit = (
     number = Number((Number(value) / 1000).toFixed(1));
     numberUnit = 's';
   } else {
-    number = Number(convertBinarySizeUnit(value ?? '0', 'g')?.numberFixed);
+    number = Number(convertToBinaryUnit(value ?? '0', 'g')?.numberFixed);
     numberUnit = 'GiB';
   }
 

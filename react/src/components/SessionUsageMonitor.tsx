@@ -1,7 +1,7 @@
 import { SessionUsageMonitorFragment$key } from '../__generated__/SessionUsageMonitorFragment.graphql';
 import {
-  convertBinarySizeUnit,
-  convertDecimalSizeUnit,
+  convertToBinaryUnit,
+  convertToDecimalUnit,
   filterEmptyItem,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
@@ -173,11 +173,11 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
           displayTarget === 'current'
             ? sortedLiveStat?.mem?.pct || '0'
             : _.toString(
-                ((convertBinarySizeUnit(
+                ((convertToBinaryUnit(
                   sortedLiveStat?.mem?.[displayTargetName],
                   'g',
                 )?.number ?? 0) /
-                  (convertBinarySizeUnit(sortedLiveStat?.mem?.capacity, 'g')
+                  (convertToBinaryUnit(sortedLiveStat?.mem?.capacity, 'g')
                     ?.number || 1)) *
                   100,
               )
@@ -228,9 +228,9 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
                 : _.includes(key, 'util')
                   ? value?.[displayTargetName]
                   : _.toString(
-                      ((convertBinarySizeUnit(value?.[displayTargetName], 'g')
+                      ((convertToBinaryUnit(value?.[displayTargetName], 'g')
                         ?.number ?? 0) /
-                        (convertBinarySizeUnit(value?.capacity, 'g')?.number ||
+                        (convertToBinaryUnit(value?.capacity, 'g')?.number ||
                           1)) *
                         100,
                     )
@@ -283,7 +283,7 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
         <Col span={24}>
           <Flex justify="end">
             <Typography.Text>
-              {`I/O Read: ${convertDecimalSizeUnit(sortedLiveStat?.io_read?.current, 'm')?.numberUnit ?? '-'}B / Write: ${convertDecimalSizeUnit(sortedLiveStat?.io_write?.current, 'm')?.numberUnit ?? '-'}B`}
+              {`I/O Read: ${convertToDecimalUnit(sortedLiveStat?.io_read?.current, 'm')?.displayValue ?? '-'} / Write: ${convertToDecimalUnit(sortedLiveStat?.io_write?.current, 'm')?.displayValue ?? '-'}`}
             </Typography.Text>
           </Flex>
         </Col>
@@ -297,8 +297,8 @@ export const displayMemoryUsage = (
   capacity: string | undefined,
   decimalSize: number = 2,
 ) => {
-  return `${convertBinarySizeUnit(current, 'g', decimalSize)?.numberFixed ?? '-'} GiB / ${
-    convertBinarySizeUnit(capacity, 'g', decimalSize)?.numberFixed ?? '-'
+  return `${convertToBinaryUnit(current, 'g', decimalSize)?.numberFixed ?? '-'} GiB / ${
+    convertToBinaryUnit(capacity, 'g', decimalSize)?.numberFixed ?? '-'
   } GiB`;
 };
 

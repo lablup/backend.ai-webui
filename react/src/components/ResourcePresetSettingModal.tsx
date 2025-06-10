@@ -8,7 +8,7 @@ import {
   ResourcePresetSettingModalModifyByIdMutation,
 } from '../__generated__/ResourcePresetSettingModalModifyByIdMutation.graphql';
 import { ResourcePresetSettingModalModifyByNameMutation } from '../__generated__/ResourcePresetSettingModalModifyByNameMutation.graphql';
-import { convertBinarySizeUnit } from '../helper';
+import { convertToBinaryUnit } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -105,7 +105,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
           values?.resource_slots,
           (value, key) => {
             if (value && _.includes(key, 'mem')) {
-              return convertBinarySizeUnit(value, 'b', 0)?.numberFixed;
+              return convertToBinaryUnit(value, '', 0)?.numberFixed;
             }
             return value;
           },
@@ -116,7 +116,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
         const props: CreateResourcePresetInput | ModifyResourcePresetInput = {
           resource_slots: JSON.stringify(resourceSlots || {}),
           shared_memory: values?.shared_memory
-            ? convertBinarySizeUnit(values?.shared_memory, 'b', 0)?.numberFixed
+            ? convertToBinaryUnit(values?.shared_memory, '', 0)?.numberFixed
             : null,
         };
         if (baiClient?.supports('resource-presets-per-resource-group')) {
@@ -237,17 +237,17 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
                     JSON.parse(resourcePreset?.resource_slots || '{}'),
                     (value, key) =>
                       _.includes(key, 'mem')
-                        ? convertBinarySizeUnit(
-                            value + 'b',
+                        ? convertToBinaryUnit(
+                            value,
                             value === '0' ? 'g' : 'auto',
-                          )?.numberUnit
+                          )?.displayValue
                         : value,
                   ) || {},
                 shared_memory: resourcePreset?.shared_memory
-                  ? convertBinarySizeUnit(
-                      resourcePreset?.shared_memory + 'b',
+                  ? convertToBinaryUnit(
+                      resourcePreset?.shared_memory,
                       resourcePreset?.shared_memory === '0' ? 'g' : 'auto',
-                    )?.numberUnit
+                    )?.displayValue
                   : null,
               }
             : {
@@ -327,9 +327,9 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
                                 value &&
                                 _.includes(resourceSlotKey, 'mem') &&
                                 // @ts-ignore
-                                convertBinarySizeUnit(value, 'p').number >
+                                convertToBinaryUnit(value, 'p').number >
                                   // @ts-ignore
-                                  convertBinarySizeUnit('300p', 'p').number
+                                  convertToBinaryUnit('300p', 'p').number
                               ) {
                                 return Promise.reject(
                                   new Error(
@@ -374,11 +374,11 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
                       if (
                         value &&
                         getFieldValue('resource_slots')?.mem &&
-                        (convertBinarySizeUnit(
+                        (convertToBinaryUnit(
                           getFieldValue('resource_slots')?.mem,
-                          'b',
+                          '',
                         )?.number ?? 0) <
-                          (convertBinarySizeUnit(value, 'b')?.number ?? 0)
+                          (convertToBinaryUnit(value, '')?.number ?? 0)
                       ) {
                         return Promise.reject(
                           t('resourcePreset.MemoryShouldBeLargerThanSHMEM'),

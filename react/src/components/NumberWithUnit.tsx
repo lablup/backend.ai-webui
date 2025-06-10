@@ -1,10 +1,4 @@
-import {
-  convertBinarySizeUnit,
-  convertDecimalSizeUnit,
-  SizeUnit,
-  sizeUnitToBinarySizeUnit,
-  sizeUnitToDecimalSizeUnit,
-} from '../helper';
+import { convertToBinaryUnit, convertToDecimalUnit, SizeUnit } from '../helper';
 import Flex from './Flex';
 import { Typography } from 'antd';
 
@@ -23,12 +17,12 @@ const NumberWithUnit = ({
 }: NumberWithUnitProps) => {
   const convertedByTargetUnit =
     unitType === 'binary'
-      ? convertBinarySizeUnit(numberUnit, targetUnit, 2, true)
-      : convertDecimalSizeUnit(numberUnit, targetUnit, 2, true);
+      ? convertToBinaryUnit(numberUnit, targetUnit, 2, true)
+      : convertToDecimalUnit(numberUnit, targetUnit, 2, true);
   const convertedByAuto =
     unitType === 'binary'
-      ? convertBinarySizeUnit(numberUnit, 'auto', 2, true)
-      : convertDecimalSizeUnit(numberUnit, 'auto', 2, true);
+      ? convertToBinaryUnit(numberUnit, 'auto', 2, true)
+      : convertToDecimalUnit(numberUnit, 'auto', 2, true);
   return (
     <Flex gap="xxs">
       <Typography.Text>
@@ -36,15 +30,11 @@ const NumberWithUnit = ({
         {postfix && postfix}
       </Typography.Text>
       <Typography.Text type="secondary">
-        {unitType === 'binary'
-          ? sizeUnitToBinarySizeUnit(convertedByTargetUnit?.unit as SizeUnit)
-          : sizeUnitToDecimalSizeUnit(convertedByTargetUnit?.unit as SizeUnit)}
+        {convertedByTargetUnit?.displayUnit}
         {Number(convertedByTargetUnit?.numberFixed).toString() === '0' &&
           Number(convertedByAuto?.numberFixed).toString() !== '0' &&
           `(${Number(convertedByAuto?.numberFixed).toString()} ${
-            unitType === 'binary'
-              ? sizeUnitToBinarySizeUnit(convertedByAuto?.unit as SizeUnit)
-              : sizeUnitToDecimalSizeUnit(convertedByAuto?.unit as SizeUnit)
+            convertedByAuto?.displayUnit
           })`}
       </Typography.Text>
     </Flex>

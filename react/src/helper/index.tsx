@@ -4,6 +4,7 @@ import { EnvironmentImage } from '../components/ImageList';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { AttachmentsProps } from '@ant-design/x';
 import { SorterResult } from 'antd/es/table/interface';
+import Big from 'big.js';
 import dayjs from 'dayjs';
 import { Duration } from 'dayjs/plugin/duration';
 import { TFunction } from 'i18next';
@@ -71,51 +72,6 @@ export const humanReadableDecimalSize = (bytes = 0, decimalPoint = 2) => {
   );
 };
 
-export const humanReadableBinarySize = (
-  bytes = 0,
-  decimalPoint = 2,
-  compact = false,
-) => {
-  if (!bytes) return 0;
-  if (typeof bytes === 'string') bytes = parseInt(bytes);
-  const k = Math.pow(2, 10);
-  let i;
-  let unitList;
-  decimalPoint = decimalPoint < 0 || compact ? 0 : decimalPoint;
-  i = Math.floor(Math.log(Math.round(bytes)) / Math.log(k));
-  i = i < 0 ? 0 : i; // avoid negative value
-  if (compact) {
-    unitList = ['', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei'];
-  } else {
-    unitList = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB'];
-  }
-  return (
-    parseFloat((bytes / Math.pow(k, i)).toFixed(decimalPoint)) +
-    ' ' +
-    unitList[i]
-  );
-};
-
-export function bytesToBinarySize(
-  bytes: number,
-  targetUnit?: 'Bytes' | 'KiB' | 'MiB' | 'GiB' | 'TiB' | 'PiB' | 'EiB',
-): {
-  number: number;
-  unit: string;
-} {
-  const sizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB'];
-  if (bytes === 0)
-    return {
-      number: 0,
-      unit: 'Bytes',
-    };
-  const i = Math.floor(Math.log(bytes) / Math.log(1024));
-  return {
-    number: parseFloat((bytes / Math.pow(1024, i)).toFixed(2)),
-    unit: sizes[i],
-  };
-}
-
 /**
  * Change date of any type to human readable date time.
  *
@@ -141,94 +97,62 @@ export const bytesToGB = (
   return (bytes / 10 ** 9).toFixed(decimalPoint);
 };
 
-export type SizeUnit =
-  | 'B'
-  | 'K'
-  | 'M'
-  | 'G'
-  | 'T'
-  | 'P'
-  | 'E'
-  | 'b'
-  | 'k'
-  | 'm'
-  | 'g'
-  | 't'
-  | 'p'
-  | 'e';
+export type InputSizeUnit = '' | 'k' | 'm' | 'g' | 't' | 'p' | 'e';
+export type SizeUnit = InputSizeUnit;
 
-export type BinarySizeUnit =
-  | 'Bytes'
-  | 'KiB'
-  | 'MiB'
-  | 'GiB'
-  | 'TiB'
-  | 'PiB'
-  | 'EiB';
-
-export type DecimalSizeUnit = 'Bytes' | 'KB' | 'MB' | 'GB' | 'TB' | 'PB' | 'EB';
-
-export function sizeUnitToDecimalSizeUnit(unit: SizeUnit): DecimalSizeUnit {
-  const unitMap: Record<SizeUnit, DecimalSizeUnit> = {
-    B: 'Bytes',
-    K: 'KB',
-    M: 'MB',
-    G: 'GB',
-    T: 'TB',
-    P: 'PB',
-    E: 'EB',
-    b: 'Bytes',
-    k: 'KB',
-    m: 'MB',
-    g: 'GB',
-    t: 'TB',
-    p: 'PB',
-    e: 'EB',
-  };
-  return unitMap[unit] || unit;
-}
-
-export function sizeUnitToBinarySizeUnit(unit: SizeUnit): BinarySizeUnit {
-  const unitMap: Record<SizeUnit, BinarySizeUnit> = {
-    B: 'Bytes',
-    K: 'KiB',
-    M: 'MiB',
-    G: 'GiB',
-    T: 'TiB',
-    P: 'PiB',
-    E: 'EiB',
-    b: 'Bytes',
-    k: 'KiB',
-    m: 'MiB',
-    g: 'GiB',
-    t: 'TiB',
-    p: 'PiB',
-    e: 'EiB',
-  };
-  return unitMap[unit] || unit;
-}
-
-function convertSizeUnit(
-  sizeWithUnit: string | undefined,
-  targetSizeUnit?: SizeUnit | 'auto',
-  fixed: number = 2,
-  round: boolean = false,
-  base: 1024 | 1000 = 1024,
+/**
+ * Converts a value with a unit to a different unit or automatically selects the most appropriate unit.
+ *
+ * @param inputValue - The input string value with or without a unit (e.g., '1024m', '2g', '500').
+ * @param targetUnit - The target unit to convert to ('', 'k', 'm', 'g', 't', 'p', 'e') or 'auto' for automatic unit selection.
+ * @param options - Additional conversion options.
+ * @param options.fixed - Number of decimal places to keep in the result. Defaults to 2.
+ * @param options.round - Whether to round the result (true) or floor it (false). Defaults to false.
+ * @param options.base - The base for conversion: 1024 (binary) or 1000 (decimal). Defaults to 1024.
+ *
+ * @returns An object containing the conversion result:
+ * - `number`: The converted value as a number
+ * - `numberFixed`: The converted value as a string with fixed decimal places
+ * - `unit`: The target unit used for conversion
+ * - `value`: A formatted string combining the number and unit
+ *
+ * @throws Error if the input format is invalid or the unit is not recognized
+ *
+ * @example
+ * // Convert 1.5g to mega
+ * convertUnitValue('1.5g', 'm')
+ * // => { number: 1536, numberFixed: "1536", unit: "m", value: "1536m" }
+ *
+ * @example
+ * // Auto unit selection with custom precision
+ * convertUnitValue('1048576', 'auto', { fixed: 1 })
+ * // => { number: 1, numberFixed: "1", unit: "m", value: "1m" }
+ */
+function convertUnitValue(
+  inputValue: string | undefined,
+  targetUnit: InputSizeUnit | 'auto',
+  options?: {
+    fixed?: number;
+    round?: boolean;
+    base?: 1024 | 1000;
+  },
 ) {
-  if (sizeWithUnit === undefined) {
+  const { fixed = 2, round = false, base = 1024 } = options || {};
+  if (inputValue === undefined) {
     return undefined;
   }
-  const sizes = ['B', 'K', 'M', 'G', 'T', 'P', 'E'];
-  const [sizeValue, sizeUnit] = parseUnit(sizeWithUnit);
-  const sizeIndex = sizes.indexOf(sizeUnit.toUpperCase());
+  // display units
+  const sizes = ['', 'k', 'm', 'g', 't', 'p', 'e'];
+  const [sizeValue, sizeUnit] = parseValueWithUnit(inputValue);
+  const sizeIndex = sizeUnit ? sizes.indexOf(sizeUnit.toLowerCase()) : 0;
   if (sizeIndex === -1 || isNaN(sizeValue)) {
-    throw new Error('Invalid size format,' + sizeWithUnit);
+    throw new Error('Invalid size format,' + inputValue);
   }
 
   const bytes = sizeValue * Math.pow(base, sizeIndex);
   let targetIndex: number;
 
-  if (targetSizeUnit === 'auto') {
+  if (targetUnit === 'auto') {
     // Auto unit selection logic
     targetIndex = Math.floor(Math.log(bytes) / Math.log(base));
     targetIndex = Math.min(Math.max(targetIndex, 0), sizes.length - 1);
@@ -238,10 +162,7 @@ function convertSizeUnit(
       targetIndex--;
     }
   } else {
-    // Existing logic: explicit unit usage
-    targetIndex = targetSizeUnit
-      ? sizes.indexOf(targetSizeUnit.toUpperCase())
-      : sizeIndex;
+    targetIndex = targetUnit ? sizes.indexOf(targetUnit.toLowerCase()) : 0;
   }
 
   const finalBytes = bytes / Math.pow(base, targetIndex);
@@ -249,30 +170,113 @@ function convertSizeUnit(
     ? finalBytes.toFixed(fixed)
     : toFixedFloorWithoutTrailingZeros(finalBytes, fixed);
 
+  const unit = sizes[targetIndex] as InputSizeUnit;
+
   return {
     number: finalBytes,
     numberFixed,
-    unit: sizes[targetIndex] as SizeUnit,
-    numberUnit: `${numberFixed}${sizes[targetIndex]}`,
+    unit,
+    value: `${numberFixed}${unit}`,
   };
 }
 
-export function convertBinarySizeUnit(
-  sizeWithUnit: string | undefined,
-  targetSizeUnit?: SizeUnit | 'auto',
+export const generateDisplayValues = <T extends number | Big>(
+  convertedValue:
+    | {
+        number: T;
+        numberFixed: string;
+        unit: InputSizeUnit;
+        value: string;
+      }
+    | undefined,
+  {
+    baseDisplayUnit,
+    displayUnitSuffix,
+  }: {
+    baseDisplayUnit: string;
+    displayUnitSuffix: string;
+  },
+) => {
+  if (convertedValue === undefined) {
+    return undefined;
+  }
+  const displayUnit = convertedValue.unit
+    ? `${convertedValue.unit.toUpperCase()}${displayUnitSuffix}`
+    : baseDisplayUnit;
+  const displayValue = `${convertedValue.numberFixed} ${displayUnit}`;
+  return {
+    ...convertedValue,
+    displayValue,
+    displayUnit,
+  };
+};
+
+/**
+ * Converts a binary size value from one unit to another.
+ *
+ * @param inputValue - The value to convert, can be a string, number, or undefined
+ * @param targetUnit - The unit to convert to, or 'auto' for automatic unit selection
+ * @param fixed - The number of decimal places to fix the result to (default: 2)
+ * @param round - Whether to round the result (default: false)
+ * @returns An object containing the converted value information or undefined if conversion fails:
+ *          - number: The converted number value
+ *          - numberFixed: The formatted number with fixed decimal places
+ *          - unit: The resulting unit (lowercase)
+ *          - displayValue: Formatted string with value and unit (e.g., "10.24 KiB")
+ *          - displayUnit: The formatted unit string (e.g., "KiB")
+ */
+export function convertToBinaryUnit(
+  inputValue: string | number | undefined,
+  targetUnit: InputSizeUnit | 'auto',
   fixed: number = 2,
   round: boolean = false,
 ) {
-  return convertSizeUnit(sizeWithUnit, targetSizeUnit, fixed, round, 1024);
+  inputValue = _.isNumber(inputValue) ? _.toString(inputValue) : inputValue;
+  return generateDisplayValues(
+    convertUnitValue(inputValue, targetUnit, {
+      fixed,
+      round,
+      base: 1024,
+    }),
+    {
+      baseDisplayUnit: 'BiB',
+      displayUnitSuffix: 'iB',
+    },
+  );
 }
 
-export function convertDecimalSizeUnit(
-  sizeWithUnit: string | undefined,
-  targetSizeUnit?: SizeUnit | 'auto',
+/**
+ * Converts a size value to a different unit in the decimal-based system.
+ *
+ * @param inputValue - The input size value to convert, can be a string, number or undefined
+ * @param targetUnit - The desired unit to convert to, or 'auto' to determine the best unit automatically
+ * @param fixed - The number of decimal places to round to, defaults to 2
+ * @param round - Whether to round the value (true) or truncate (false), defaults to false
+ * @returns An object containing the converted value information, including:
+ *          - numberFixed: The converted number with fixed decimal places
+ *          - displayValue: The formatted string with value and unit (e.g., "5.25 KB")
+ *          - displayUnit: The display unit (e.g., "KB")
+ *          - additional properties from convertUnitValue
+ *          Returns undefined if the conversion failed
+ */
+export function convertToDecimalUnit(
+  inputValue: string | number | undefined,
+  targetUnit: InputSizeUnit | 'auto',
   fixed: number = 2,
   round: boolean = false,
 ) {
-  return convertSizeUnit(sizeWithUnit, targetSizeUnit, fixed, round, 1000);
+  inputValue = _.isNumber(inputValue) ? _.toString(inputValue) : inputValue;
+  return generateDisplayValues(
+    convertUnitValue(inputValue, targetUnit, {
+      fixed,
+      round,
+      base: 1000,
+    }),
+    {
+      baseDisplayUnit: 'B',
+      displayUnitSuffix: 'B',
+    },
+  );
 }
 
 export function toFixedFloorWithoutTrailingZeros(
@@ -289,9 +293,12 @@ export function toFixedWithTypeValidation(num: number | string, fixed: number) {
     : parseFloat(num).toFixed(fixed);
 }
 
-export function compareNumberWithUnits(size1: string, size2: string) {
-  const [number1, unit1] = parseUnit(size1);
-  const [number2, unit2] = parseUnit(size2);
+export function compareNumberWithUnits(
+  size1: string | number,
+  size2: string | number,
+) {
+  const [number1, unit1] = parseValueWithUnit(_.toString(size1));
+  const [number2, unit2] = parseValueWithUnit(_.toString(size2));
 
   if (unit1 === unit2) {
     return number1 - number2;
@@ -300,35 +307,33 @@ export function compareNumberWithUnits(size1: string, size2: string) {
     return 0;
   }
 
-  const value1 = convertBinarySizeUnit(size1, 'g')?.number ?? 0;
-  const value2 = convertBinarySizeUnit(size2, 'g')?.number ?? 0;
+  const value1 = convertToBinaryUnit(size1, 'g')?.number ?? 0;
+  const value2 = convertToBinaryUnit(size2, 'g')?.number ?? 0;
   return value1 - value2;
 }
 
 export function addNumberWithUnits(
   size1: string,
   size2: string,
-  targetUnit: SizeUnit = 'm',
+  targetUnit: InputSizeUnit = 'm',
 ) {
-  return convertBinarySizeUnit(
-    (convertBinarySizeUnit(size1, 'b')?.number || 0) +
-      (convertBinarySizeUnit(size2, 'b')?.number || 0) +
-      'b',
+  return convertToBinaryUnit(
+    (convertToBinaryUnit(size1, '')?.number || 0) +
+      (convertToBinaryUnit(size2, '')?.number || 0),
     targetUnit,
-  )?.numberUnit;
+  )?.value;
 }
 
 export function subNumberWithUnits(
   size1: string,
   size2: string,
-  targetUnit: SizeUnit = 'm',
+  targetUnit: InputSizeUnit = 'm',
 ) {
-  return convertBinarySizeUnit(
-    (convertBinarySizeUnit(size1, 'b')?.number || 0) -
-      (convertBinarySizeUnit(size2, 'b')?.number || 0) +
-      'b',
+  return convertToBinaryUnit(
+    (convertToBinaryUnit(size1, '')?.number || 0) -
+      (convertToBinaryUnit(size2, '')?.number || 0),
     targetUnit,
-  )?.numberUnit;
+  )?.value;
 }
 
 export type QuotaScopeType = 'project' | 'user';
@@ -375,15 +380,15 @@ export function filterNonNullItems<T extends { [key: string]: any }>(
   return arr.filter((item): item is T => item !== null) as T[];
 }
 
-export function parseUnit(str: string): [number, string] {
-  const match = str?.match(/^(\d*\.?\d+)([a-zA-Z%]*)$/);
+export function parseValueWithUnit(str: string): [number, string | undefined] {
+  const match = str?.match(/^(\d*\.?\d+)\s*([a-zA-Z%]*)$/);
   if (!match) {
     // If the input doesn't match the pattern, assume it's in bytes
-    return [parseFloat(str), 'b'];
+    return [parseFloat(str), undefined];
   }
   const num = parseFloat(match[1]);
   const unit = match[2];
-  return [num, unit.toLowerCase() || 'b'];
+  return [num, unit];
 }
 
 export const isOutsideRange = (

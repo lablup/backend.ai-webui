@@ -2,7 +2,7 @@ import { useSuspendedBackendaiClient } from '.';
 import { useResourceLimitAndRemainingFragment$key } from '../__generated__/useResourceLimitAndRemainingFragment.graphql';
 import { Image } from '../components/ImageEnvironmentSelectFormItems';
 import { AUTOMATIC_DEFAULT_SHMEM } from '../components/ResourceAllocationFormItems';
-import { addNumberWithUnits, convertBinarySizeUnit } from '../helper';
+import { addNumberWithUnits, convertToBinaryUnit } from '../helper';
 import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
 import { useSuspenseTanQuery } from './reactQueryAlias';
 import { useResourceGroupsForCurrentProject } from './useCurrentProject';
@@ -197,15 +197,14 @@ export const useResourceLimitAndRemaining = ({
       !_.isEmpty(
         checkPresetInfo?.scaling_groups[currentResourceGroup]?.remaining?.mem,
       )
-        ? convertBinarySizeUnit(
+        ? convertToBinaryUnit(
             _.toNumber(
               checkPresetInfo?.scaling_groups[currentResourceGroup]?.using.mem,
             ) +
               _.toNumber(
                 checkPresetInfo?.scaling_groups[currentResourceGroup]?.remaining
                   .mem,
-              ) +
-              'b',
+              ),
             'g',
             2,
           )?.numberFixed + 'g'
@@ -282,10 +281,10 @@ export const useResourceLimitAndRemaining = ({
               //handled by 'b' unit
               addNumberWithUnits(
                 _.max([
-                  convertBinarySizeUnit(currentImageMinM, 'b')?.number,
-                  convertBinarySizeUnit(AUTOMATIC_DEFAULT_SHMEM, 'b')?.number,
+                  convertToBinaryUnit(currentImageMinM, '')?.number,
+                  convertToBinaryUnit(AUTOMATIC_DEFAULT_SHMEM, '')?.number,
                   0,
-                ]) + 'b',
+                ]) + '',
                 AUTOMATIC_DEFAULT_SHMEM,
               ),
             max:
@@ -295,17 +294,17 @@ export const useResourceLimitAndRemaining = ({
                   ? undefined
                   : baiClient._config.maxMemoryPerContainer,
                 limitParser(checkPresetInfo?.keypair_limits.mem) &&
-                  convertBinarySizeUnit(
+                  convertToBinaryUnit(
                     limitParser(checkPresetInfo?.keypair_limits.mem) + '',
                     'g',
                   )?.number,
                 limitParser(checkPresetInfo?.group_limits.mem) &&
-                  convertBinarySizeUnit(
+                  convertToBinaryUnit(
                     limitParser(checkPresetInfo?.group_limits.mem) + '',
                     'g',
                   )?.number,
                 limitParser(currentResourceGroupSlotLimits.mem) &&
-                  convertBinarySizeUnit(
+                  convertToBinaryUnit(
                     limitParser(currentResourceGroupSlotLimits.mem) + '',
                     'g',
                   )?.number,

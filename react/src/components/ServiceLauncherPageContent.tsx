@@ -5,7 +5,7 @@ import { ServiceLauncherPageContent_UserResourcePolicyQuery } from '../__generat
 import {
   baiSignedRequestWithPromise,
   compareNumberWithUnits,
-  convertBinarySizeUnit,
+  convertToBinaryUnit,
   useBaiSignedRequestWithPromise,
 } from '../helper';
 import {
@@ -663,19 +663,19 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         // FIXME: memory doesn't applied to resource allocation
         resource: {
           cpu: parseInt(JSON.parse(endpoint?.resource_slots || '{}')?.cpu),
-          mem: convertBinarySizeUnit(
-            JSON.parse(endpoint?.resource_slots || '{}')?.mem + 'b',
+          mem: convertToBinaryUnit(
+            JSON.parse(endpoint?.resource_slots || '{}')?.mem,
             'g',
             3,
             true,
-          )?.numberUnit,
-          shmem: convertBinarySizeUnit(
+          )?.value,
+          shmem: convertToBinaryUnit(
             JSON.parse(endpoint?.resource_opts || '{}')?.shmem ||
               AUTOMATIC_DEFAULT_SHMEM,
             'g',
             3,
             true,
-          )?.numberUnit,
+          )?.value,
           ...getAIAcceleratorWithStringifiedKey(
             _.omit(JSON.parse(endpoint?.resource_slots || '{}'), [
               'cpu',

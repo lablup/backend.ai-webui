@@ -2,7 +2,7 @@ import { ResourceAllocationFormItemsQuery } from '../__generated__/ResourceAlloc
 import {
   addNumberWithUnits,
   compareNumberWithUnits,
-  convertBinarySizeUnit,
+  convertToBinaryUnit,
 } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useResourceSlotsDetails } from '../hooks/backendai';
@@ -257,10 +257,10 @@ const ResourceAllocationFormItems: React.FC<
         {
           cpu: resourceLimits.cpu?.min,
           mem:
-            convertBinarySizeUnit(
-              (convertBinarySizeUnit(resourceLimits.shmem?.min, 'm')?.number ||
+            convertToBinaryUnit(
+              (convertToBinaryUnit(resourceLimits.shmem?.min, 'm')?.number ||
                 0) +
-                (convertBinarySizeUnit(resourceLimits.mem?.min, 'm')?.number ||
+                (convertToBinaryUnit(resourceLimits.mem?.min, 'm')?.number ||
                   0) +
                 'm',
               'g',
@@ -368,11 +368,7 @@ const ResourceAllocationFormItems: React.FC<
         (preset) => preset.name === name,
       );
       const slots = _.pick(preset?.resource_slots, _.keys(resourceSlotsInRG));
-      const mem = convertBinarySizeUnit(
-        (slots?.mem || 0) + 'b',
-        'g',
-        2,
-      )?.numberUnit;
+      const mem = convertToBinaryUnit(slots?.mem || 0, 'g', 2)?.value;
       const acceleratorObj = _.omit(slots, ['cpu', 'mem', 'shmem']);
 
       // Select the first matched AI accelerator type and value
@@ -399,11 +395,8 @@ const ResourceAllocationFormItems: React.FC<
           ...acceleratorSetting,
           // transform to GB based on preset values
           mem,
-          shmem: convertBinarySizeUnit(
-            (preset?.shared_memory || 0) + 'b',
-            'g',
-            2,
-          )?.numberUnit,
+          shmem: convertToBinaryUnit(preset?.shared_memory || 0, 'g', 2)
+            ?.displayValue,
           cpu: parseInt(slots?.cpu || '0') || 0,
         },
       });
@@ -789,7 +782,7 @@ const ResourceAllocationFormItems: React.FC<
                                       resourceLimits.mem &&
                                       compareNumberWithUnits(
                                         value,
-                                        remaining.mem + 'b',
+                                        remaining.mem,
                                       ) > 0
                                     ) {
                                       return Promise.reject(
@@ -812,8 +805,8 @@ const ResourceAllocationFormItems: React.FC<
                                 ...(remaining.mem
                                   ? {
                                       //@ts-ignore
-                                      [convertBinarySizeUnit(
-                                        remaining.mem + 'b',
+                                      [convertToBinaryUnit(
+                                        remaining.mem,
                                         'g',
                                         3,
                                       )?.numberFixed]: {
@@ -852,23 +845,23 @@ const ResourceAllocationFormItems: React.FC<
                         const mem = getFieldValue(['resource', 'mem']) || '0g';
                         const shmem =
                           getFieldValue(['resource', 'shmem']) || '0g';
-                        const memUnitResult = convertBinarySizeUnit(
+                        const memUnitResult = convertToBinaryUnit(
                           mem,
                           'auto',
                           2,
                         );
-                        const shmemUnitResult = convertBinarySizeUnit(
+                        const shmemUnitResult = convertToBinaryUnit(
                           shmem,
                           'auto',
                           2,
                         );
-                        const appMemUnitResult = convertBinarySizeUnit(
+                        const appMemUnitResult = convertToBinaryUnit(
                           _.max([
                             0,
-                            (convertBinarySizeUnit(mem, 'm')?.number || 0) -
-                              (convertBinarySizeUnit(shmem, 'm')?.number || 0),
+                            (convertToBinaryUnit(mem, 'm')?.number || 0) -
+                              (convertToBinaryUnit(shmem, 'm')?.number || 0),
                           ]) + 'm',
-                          memUnitResult?.unit,
+                          memUnitResult?.unit || '',
                         );
 
                         return (
@@ -931,8 +924,7 @@ const ResourceAllocationFormItems: React.FC<
                                       token.colorSuccessBorderHover,
                                   }}
                                 ></div>
-                                Application MEM{' '}
-                                {appMemUnitResult?.numberUnit.toLowerCase()}
+                                Application MEM {appMemUnitResult?.value}
                               </Flex>
                               <Flex gap={'xxs'}>
                                 <div
@@ -945,7 +937,7 @@ const ResourceAllocationFormItems: React.FC<
                                 ></div>
 
                                 {getFieldValue('enabledAutomaticShmem') ? (
-                                  `SHMEM ${shmemUnitResult?.numberUnit.toLowerCase()}`
+                                  `SHMEM ${shmemUnitResult?.value}`
                                 ) : (
                                   <Form.Item
                                     noStyle
@@ -972,7 +964,7 @@ const ResourceAllocationFormItems: React.FC<
                                           value: string,
                                         ) => {
                                           const applicationMem =
-                                            appMemUnitResult?.numberUnit;
+                                            appMemUnitResult?.displayValue;
                                           const shmem = value;
 
                                           if (
@@ -983,11 +975,11 @@ const ResourceAllocationFormItems: React.FC<
                                           }
 
                                           if (
-                                            (convertBinarySizeUnit(
+                                            (convertToBinaryUnit(
                                               applicationMem,
-                                              'M',
+                                              'm',
                                             )?.number || 0) <
-                                            (convertBinarySizeUnit(shmem, 'M')
+                                            (convertToBinaryUnit(shmem, 'm')
                                               ?.number || 0) *
                                               2
                                           ) {

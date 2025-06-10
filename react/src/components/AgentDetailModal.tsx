@@ -1,7 +1,7 @@
 import { AgentDetailModalFragment$key } from '../__generated__/AgentDetailModalFragment.graphql';
 import {
-  convertBinarySizeUnit,
-  convertDecimalSizeUnit,
+  convertToBinaryUnit,
+  convertToDecimalUnit,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
@@ -99,21 +99,19 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                 <BAIProgressWithLabel
                   percent={
                     (_.toNumber(
-                      convertBinarySizeUnit(
-                        _.toString(agent?.mem_cur_bytes),
-                        'g',
-                      )?.number,
+                      convertToBinaryUnit(_.toString(agent?.mem_cur_bytes), 'g')
+                        ?.number,
                     ) /
                       _.toNumber(
-                        convertBinarySizeUnit(parsedAvailableSlots?.mem, 'g')
+                        convertToBinaryUnit(parsedAvailableSlots?.mem, 'g')
                           ?.number,
                       )) *
                       100 || 0
                   }
                   valueLabel={`${
-                    convertBinarySizeUnit(_.toString(agent?.mem_cur_bytes), 'g')
-                      ?.numberUnit
-                  }iB / ${convertBinarySizeUnit(parsedAvailableSlots?.mem, 'g')?.numberUnit}iB`}
+                    convertToBinaryUnit(_.toString(agent?.mem_cur_bytes), 'g')
+                      ?.displayValue
+                  } / ${convertToBinaryUnit(parsedAvailableSlots?.mem, 'g')?.displayValue}`}
                 />
               </Flex>
             ) : null}
@@ -126,11 +124,11 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                   <Typography.Text>TX:</Typography.Text>
                   <Typography.Text>
                     {
-                      convertDecimalSizeUnit(
+                      convertToDecimalUnit(
                         parsedLiveStat?.node?.net_tx?.current,
                         'm',
                         2,
-                      )?.numberUnit
+                      )?.displayValue
                     }
                     B
                   </Typography.Text>
@@ -139,11 +137,11 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                   <Typography.Text>RX:</Typography.Text>
                   <Typography.Text>
                     {
-                      convertDecimalSizeUnit(
+                      convertToDecimalUnit(
                         parsedLiveStat?.node?.net_rx?.current,
                         'm',
                         2,
-                      )?.numberUnit
+                      )?.displayValue
                     }
                     B
                   </Typography.Text>

@@ -6,7 +6,7 @@ import {
 import { AgentSettingModalFragment$key } from '../__generated__/AgentSettingModalFragment.graphql';
 import {
   bytesToGB,
-  convertBinarySizeUnit,
+  convertToBinaryUnit,
   filterNonNullItems,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
@@ -315,17 +315,11 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                       <Flex gap="xxs">
                         <ResourceTypeIcon type={'mem'} />
                         <Typography.Text>
-                          {convertBinarySizeUnit(
-                            parsedOccupiedSlots.mem,
-                            'g',
-                            0,
-                          )?.numberFixed ?? 0}
+                          {convertToBinaryUnit(parsedOccupiedSlots.mem, 'g', 0)
+                            ?.numberFixed ?? 0}
                           /
-                          {convertBinarySizeUnit(
-                            parsedAvailableSlots.mem,
-                            'g',
-                            0,
-                          )?.numberFixed ?? 0}
+                          {convertToBinaryUnit(parsedAvailableSlots.mem, 'g', 0)
+                            ?.numberFixed ?? 0}
                         </Typography.Text>
                         <Typography.Text
                           type="secondary"
@@ -482,12 +476,12 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                   percent={liveStat.mem_util.ratio * 100}
                   width={120}
                   valueLabel={
-                    convertBinarySizeUnit(
+                    convertToBinaryUnit(
                       _.toString(liveStat.mem_util.current),
                       'g',
                     )?.numberFixed +
                     '/' +
-                    convertBinarySizeUnit(
+                    convertToBinaryUnit(
                       _.toString(liveStat.mem_util.capacity),
                       'g',
                     )?.numberFixed +
@@ -555,7 +549,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                             100 || 0
                         }
                         valueLabel={
-                          convertBinarySizeUnit(
+                          convertToBinaryUnit(
                             _.toString(
                               liveStat[statKey as keyof typeof liveStat]
                                 .current,
@@ -563,7 +557,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                             'g',
                           )?.numberFixed +
                           '/' +
-                          convertBinarySizeUnit(
+                          convertToBinaryUnit(
                             _.toString(
                               liveStat[statKey as keyof typeof liveStat]
                                 .capacity,
