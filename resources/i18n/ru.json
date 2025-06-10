@@ -817,6 +817,7 @@
     "Password": "Пароль",
     "PasswordChanged": "Пароль успешно изменен",
     "PleaseInputLoginInfo": "Пожалуйста, введите ID и пароль для входа.",
+    "PleaseInputOTPCode": "Пожалуйста, введите свой код 2FA для входа в систему.",
     "PleaseWait": "Подождите, пока вы войдете.",
     "SecretKey": "Секретный ключ",
     "SendChangePasswordEmail": "Отправить электронное письмо для смены пароля",

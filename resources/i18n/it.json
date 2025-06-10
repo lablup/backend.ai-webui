@@ -816,6 +816,7 @@
     "Password": "Parola d'ordine",
     "PasswordChanged": "La password è stata modificata con successo",
     "PleaseInputLoginInfo": "Si prega di inserire ID e password per il login.",
+    "PleaseInputOTPCode": "Inserisci il codice 2FA per l'accesso.",
     "PleaseWait": "Attendi per accedere.",
     "SecretKey": "Chiave segreta",
     "SendChangePasswordEmail": "Invia email di modifica password",

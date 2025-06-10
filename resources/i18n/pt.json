@@ -817,6 +817,7 @@
     "Password": "Senha",
     "PasswordChanged": "A senha foi alterada com sucesso",
     "PleaseInputLoginInfo": "Por favor, insira ID e senha para login.",
+    "PleaseInputOTPCode": "Por favor, digite seu código 2FA para login.",
     "PleaseWait": "Por favor, espere para fazer o login.",
     "SecretKey": "Chave secreta",
     "SendChangePasswordEmail": "Enviar e-mail para alterar a senha",

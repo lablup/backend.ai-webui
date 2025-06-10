@@ -815,6 +815,7 @@
     "Password": "Нууц үг",
     "PasswordChanged": "Нууц үг амжилттай өөрчлөгдсөн",
     "PleaseInputLoginInfo": "Нэвтрэхийн тулд ID болон нууц үгээ оруулна уу.",
+    "PleaseInputOTPCode": "Нэвтрэхийн тулд 2FA кодоо оруулна уу.",
     "PleaseWait": "Нэвтрэхийг хүлээнэ үү.",
     "SecretKey": "Нууц түлхүүр",
     "SendChangePasswordEmail": "Өөрчлөлтийн нууц үгийг имэйлээр илгээх",

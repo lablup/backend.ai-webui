@@ -806,6 +806,7 @@
     "Password": "รหัสผ่าน",
     "PasswordChanged": "เปลี่ยนรหัสผ่านสำเร็จแล้ว",
     "PleaseInputLoginInfo": "กรุณาป้อนรหัสประจำตัวและรหัสผ่านเพื่อเข้าสู่ระบบ",
+    "PleaseInputOTPCode": "โปรดป้อนรหัส 2FA ของคุณสำหรับการเข้าสู่ระบบ",
     "PleaseWait": "กรุณารอเพื่อเข้าสู่ระบบ",
     "SecretKey": "คีย์ลับ",
     "SendChangePasswordEmail": "ส่งอีเมลเปลี่ยนรหัสผ่าน",

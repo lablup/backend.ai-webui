@@ -1542,49 +1542,66 @@ export default class BackendAILogin extends BackendAIPage {
 
           this.client
             ?.login(this.otp)
-            .then(async (response) => {
-              if (response.fail_reason === 'User credential mismatch.') {
-                this.open();
-                if (this.user_id !== '' && this.password !== '') {
-                  this.notification.text = PainKiller.relieve(
-                    'Login information mismatch. Please check your login information.',
+            .then(async ({ fail_reason, data }) => {
+              // TODO: Should be modified to identify errors by status code or etc.
+              // Currently, it is identified by fail_reason and title
+              if (fail_reason) {
+                if (fail_reason.includes('User credential mismatch.')) {
+                  this.open();
+                  this.notification.text = _text(
+                    'error.LoginInformationMismatch',
                   );
                   this.notification.show();
+                  return Promise.resolve(false);
                 }
-                return Promise.resolve(false);
-                // TODO: check if force2FA is enabled and User is not registered
-                // If so, show the dialog to register OTP(React component)
-              } else if (
-                response.fail_reason ===
-                'You must register Two-Factor Authentication.'
-              ) {
-                this.totp_registration_token =
-                  response.data.two_factor_registration_token;
-                this.needsOtpRegistration = true;
-              } else if (response.fail_reason) {
-                this.open();
+
                 if (
-                  response.fail_reason ==
-                    'You must authenticate using Two-Factor Authentication.' ||
-                  'OTP not provided'
+                  fail_reason.includes(
+                    'You must register Two-Factor Authentication.',
+                  )
                 ) {
+                  this.totp_registration_token =
+                    data.two_factor_registration_token;
+                  this.needsOtpRegistration = true;
+                  return Promise.resolve(false);
+                } else if (
+                  fail_reason.includes(
+                    'You must authenticate using Two-Factor Authentication.',
+                  ) ||
+                  fail_reason.includes('OTP not provided')
+                ) {
+                  if (this.otpRequired === true) {
+                    this.notification.text = _text('login.PleaseInputOTPCode');
+                    this.notification.show();
+                  }
                   this.otpRequired = true;
                   await this.otpInput.updateComplete;
                   this.otpInput.focus();
-
                   this._disableUserInput();
                   this.waitingAnimation.style.display = 'none';
+                  return Promise.resolve(false);
                 } else if (
-                  response.fail_reason.indexOf('Password expired on ') === 0
+                  fail_reason.includes('Invalid TOTP code provided') ||
+                  fail_reason.includes('Failed to validate OTP')
                 ) {
-                  this.needToResetPassword = true;
-                } else if (this.user_id !== '' && this.password !== '') {
-                  this.notification.text = PainKiller.relieve(
-                    response.fail_reason,
-                  );
+                  this.otpRequired = true;
+                  this.otpInput.value = '';
+                  await this.otpInput.updateComplete;
+                  this.otpInput.focus();
+                  this._disableUserInput();
+                  this.waitingAnimation.style.display = 'none';
+
+                  this.notification.text = _text('totp.InvalidTotpCode');
                   this.notification.show();
+                  return Promise.resolve(false);
+                } else if (fail_reason.indexOf('Password expired on ') === 0) {
+                  this.needToResetPassword = true;
+                  return Promise.resolve(false);
+                } else {
+                  this.notification.text = _text('error.UnknownError');
+                  this.notification.show();
+                  return Promise.resolve(false);
                 }
-                return Promise.resolve(false);
               } else {
                 this.is_connected = true;
                 return this._connectGQL();
@@ -1609,8 +1626,8 @@ export default class BackendAILogin extends BackendAIPage {
                     this.notification.text = PainKiller.relieve(err.title);
                     this.notification.detail = err.message;
                   } else {
-                    this.notification.text = PainKiller.relieve(
-                      'Login failed. Check login information.',
+                    this.notification.text = _text(
+                      'error.LoginInformationMismatch',
                     );
                   }
                 }
@@ -2190,7 +2207,6 @@ export default class BackendAILogin extends BackendAIPage {
                     disabled
                   ></mwc-icon-button>
                   <mwc-textfield
-                    type="number"
                     id="otp"
                     label="${_t('totp.OTP')}"
                     value="${this.otp}"

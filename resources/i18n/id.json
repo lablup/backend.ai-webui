@@ -816,6 +816,7 @@
     "Password": "Kata sandi",
     "PasswordChanged": "Kata sandi berhasil diubah",
     "PleaseInputLoginInfo": "Silakan masukkan ID dan password untuk login.",
+    "PleaseInputOTPCode": "Harap masukkan kode 2FA Anda untuk login.",
     "PleaseWait": "Harap tunggu untuk login.",
     "SecretKey": "Kunci rahasia",
     "SendChangePasswordEmail": "Kirim email ubah kata sandi",

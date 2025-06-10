@@ -817,6 +817,7 @@
     "Password": "Parola",
     "PasswordChanged": "Şifre başarıyla değiştirildi",
     "PleaseInputLoginInfo": "Lütfen giriş için ID ve şifreyi giriniz.",
+    "PleaseInputOTPCode": "Lütfen giriş için 2FA kodunuzu girin.",
     "PleaseWait": "Giriş yapmak için lütfen bekleyiniz.",
     "SecretKey": "Gizli anahtar",
     "SendChangePasswordEmail": "Şifre değiştirme e-postası gönder",

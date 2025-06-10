@@ -816,6 +816,7 @@
     "Password": "パスワード",
     "PasswordChanged": "パスワードが正常に変更されました",
     "PleaseInputLoginInfo": "ログイン用のIDとパスワードを入力してください。",
+    "PleaseInputOTPCode": "ログインのために2FAコードを入力してください。",
     "PleaseWait": "ログインするまでお待ちください。",
     "SecretKey": "シークレットキー",
     "SendChangePasswordEmail": "パスワード変更メールを送信する",

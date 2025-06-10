@@ -888,7 +888,7 @@ class Client {
         // Authentication failed.
         localStorage.removeItem('backendaiwebui.sessionid');
         if (result.data && result.data.details) {
-          return Promise.resolve({ fail_reason: result.data.details, data: result.data });
+          return Promise.resolve({fail_reason: result.data.details, data: result.data });
         } else {
           return Promise.resolve(false);
         }

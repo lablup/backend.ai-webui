@@ -817,6 +817,7 @@
     "Password": "密碼",
     "PasswordChanged": "密碼修改成功",
     "PleaseInputLoginInfo": "請輸入用戶名和密碼進行登錄。",
+    "PleaseInputOTPCode": "請輸入您的2FA代碼以進行登錄。",
     "PleaseWait": "請等待登錄。",
     "SecretKey": "密鑰",
     "SendChangePasswordEmail": "發送修改密碼郵件",

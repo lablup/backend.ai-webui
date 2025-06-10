@@ -823,6 +823,7 @@
     "Password": "Password",
     "PasswordChanged": "Password is successfully changed",
     "PleaseInputLoginInfo": "Please input ID and password for login.",
+    "PleaseInputOTPCode": "Please enter your 2FA code for login.",
     "PleaseWait": "Please wait to login.",
     "SecretKey": "Secret Key",
     "SendChangePasswordEmail": "Send change password email",

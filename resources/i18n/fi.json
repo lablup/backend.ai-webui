@@ -816,6 +816,7 @@
     "Password": "Salasana",
     "PasswordChanged": "Salasana on onnistuneesti vaihdettu",
     "PleaseInputLoginInfo": "Syötä tunnus ja salasana kirjautumista varten.",
+    "PleaseInputOTPCode": "Anna 2FA -koodisi kirjautumista varten.",
     "PleaseWait": "Odota kirjautumista.",
     "SecretKey": "Salainen avain",
     "SendChangePasswordEmail": "Lähetä sähköpostiviesti salasanan vaihtamisesta",
