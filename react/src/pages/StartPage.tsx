@@ -6,12 +6,14 @@ import { MenuKeys } from '../components/MainLayout/WebUISider';
 import ThemeSecondaryProvider from '../components/ThemeSecondaryProvider';
 import { filterEmptyItem } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useSetBAINotification } from '../hooks/useBAINotification';
+import { useVFolderInvitationsValue } from '../hooks/useVFolderInvitations';
 import { SessionLauncherFormValue } from './SessionLauncherPage';
 import { AppstoreAddOutlined, FolderAddOutlined } from '@ant-design/icons';
 import { Card, Col, Row } from 'antd';
 import { Flex } from 'backend.ai-ui';
 import _ from 'lodash';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const StartPage: React.FC = () => {
@@ -20,9 +22,30 @@ const StartPage: React.FC = () => {
   const baiClient = useSuspendedBackendaiClient();
   const blockList = baiClient?._config?.blockList ?? [];
   const inactiveList = baiClient?._config?.inactiveList ?? [];
+  const enableModelFolders = baiClient?._config?.enableModelFolders ?? false;
 
   const webuiNavigate = useWebUINavigate();
   const [isOpenCreateModal, setIsOpenCreateModal] = useState<boolean>(false);
+
+  const { upsertNotification } = useSetBAINotification();
+  const { count } = useVFolderInvitationsValue();
+
+  useEffect(() => {
+    if (count <= 0) return;
+    upsertNotification({
+      key: 'invitedFolders',
+      message: t('data.InvitedFoldersTooltip', {
+        count: count,
+      }),
+      to: {
+        search: new URLSearchParams({
+          invitation: 'true',
+        }).toString(),
+      },
+      open: true,
+      duration: 0,
+    });
+  }, [count, t, upsertNotification]);
 
   const items = filterEmptyItem<{
     id: string;
@@ -96,7 +119,7 @@ const StartPage: React.FC = () => {
         ),
       },
     },
-    baiClient._config.enableModelFolders && {
+    enableModelFolders && {
       id: 'modelService',
       rowSpan: 3,
       requiredMenuKey: 'serving',
