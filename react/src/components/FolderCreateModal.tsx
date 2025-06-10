@@ -16,6 +16,7 @@ import {
   Input,
   Radio,
   Skeleton,
+  InputRef,
   Switch,
   theme,
 } from 'antd';
@@ -95,6 +96,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
   const userRole = useCurrentUserRole();
   const currentDomain = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
+  const firstInputRef = useRef<InputRef>(null);
 
   const { upsertNotification } = useSetBAINotification();
 
@@ -173,6 +175,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
   return (
     <BAIModal
       loading={isFetchingAllowedTypes}
+      keyboard
       className={styles.modal}
       title={t('data.CreateANewStorageFolder')}
       footer={
@@ -234,7 +237,11 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
             },
           ]}
         >
-          <Input placeholder={t('maxLength.64chars')} />
+          <Input
+            ref={firstInputRef}
+            autoFocus
+            placeholder={t('maxLength.64chars')}
+          />
         </Form.Item>
         <Divider />
 
@@ -266,11 +273,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         </Form.Item>
         <Divider />
 
-        <Form.Item
-          label={t('data.Type')}
-          name={'type'}
-          style={{ flex: 1, marginBottom: 0 }}
-        >
+        <Form.Item label={t('data.Type')} name={'type'} style={{ flex: 1 }}>
           <Radio.Group>
             {/* Both checks are required:
              * - role check (admin/superadmin): Controls permission to create project folders
