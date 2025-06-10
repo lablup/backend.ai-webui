@@ -34,13 +34,12 @@ import {
   Typography,
 } from 'antd';
 import Title from 'antd/es/typography/Title';
-import graphql from 'babel-plugin-relay/macro';
+// import { graphql } from 'react-relay';
 import { BAISessionTypeTag } from 'backend.ai-ui';
 import _ from 'lodash';
-import { Suspense, useState } from 'react';
-import { useMemo } from 'react';
+import { Suspense, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const SessionDetailContent: React.FC<{
   id: string;

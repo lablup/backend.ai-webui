@@ -6,11 +6,10 @@ import Flex from './Flex';
 import ResourceNumber from './ResourceNumber';
 import { useControllableValue } from 'ahooks';
 import { Select, SelectProps } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 interface Props extends SelectProps {
   autoSelectDefault?: boolean;

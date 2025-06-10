@@ -8,10 +8,9 @@ import FolderExplorerHeader from './FolderExplorerHeader';
 import VFolderNodeDescription from './VFolderNodeDescription';
 import { Alert, Grid, Splitter, theme } from 'antd';
 import { createStyles } from 'antd-style';
-import graphql from 'babel-plugin-relay/macro';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const useStyles = createStyles(({ token, css }) => ({
   baiModalHeader: css`

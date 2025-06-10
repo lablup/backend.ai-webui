@@ -32,7 +32,15 @@ module.exports = {
     },
   },
   babel: {
-    plugins: ['@babel/plugin-syntax-import-attributes'],
+    plugins: [
+      '@babel/plugin-syntax-import-attributes',
+      [
+        'relay',
+        {
+          artifactDirectory: './src/__generated__',
+        },
+      ],
+    ],
   },
   webpack: {
     // When you change the this value, you might need to clear cache restart the dev server.
@@ -99,9 +107,6 @@ module.exports = {
           ...webpackConfig.resolve,
           alias: {
             ...webpackConfig.resolve.alias,
-            // Resolve `__generated__` to the correct path
-            // This is necessary for relay to find the generated files.
-            './__generated__': path.resolve(__dirname, 'src/__generated__'),
           },
           fallback: {
             ...webpackConfig.resolve.fallback,

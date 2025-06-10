@@ -16,10 +16,9 @@ import {
   TooltipProps,
   Typography,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React from 'react';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface OccupiedSlotViewProps {
   sessionFrgmt: SessionSlotCellFragment$key;

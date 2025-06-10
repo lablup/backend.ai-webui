@@ -9,11 +9,10 @@ import BAIModal, { BAIModalProps } from './BAIModal';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import Flex from './Flex';
 import { Col, Row, theme, Typography } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 type LiveStat = {
   capacity: string;

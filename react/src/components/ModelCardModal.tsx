@@ -18,14 +18,13 @@ import {
   Typography,
   theme,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { Cog, FolderX } from 'lucide-react';
 import Markdown from 'markdown-to-jsx';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface ModelCardModalProps extends BAIModalProps {
   modelCardModalFrgmt?: ModelCardModalFragment$key | null;

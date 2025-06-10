@@ -12,11 +12,10 @@ import { EditOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { useThrottleFn } from 'ahooks';
 import { Select, Tooltip, theme } from 'antd';
 import { SelectProps } from 'antd/lib';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 type Y = ArrayElement<NonNullable<SelectProps['options']>>;
 interface PresetOptionType extends Y {

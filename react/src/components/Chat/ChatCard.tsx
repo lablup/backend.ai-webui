@@ -19,7 +19,6 @@ import { useChat } from '@ai-sdk/react';
 import { extractReasoningMiddleware, streamText, wrapLanguageModel } from 'ai';
 import { Alert, App, Card, CardProps } from 'antd';
 import { createStyles } from 'antd-style';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, {
   useEffect,
@@ -29,7 +28,7 @@ import React, {
   useTransition,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 interface ChatCardProps extends CardProps, ChatLifecycleEventType {
   chat: ChatType;

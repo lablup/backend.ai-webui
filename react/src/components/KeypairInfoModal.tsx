@@ -3,10 +3,9 @@ import { KeypairInfoModalQuery } from '../__generated__/KeypairInfoModalQuery.gr
 import BAIModal from './BAIModal';
 import Flex from './Flex';
 import { Descriptions, ModalProps, Tag, Typography, theme } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
-import { useFragment, useLazyLoadQuery } from 'react-relay';
+import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
 interface KeypairInfoModalProps extends ModalProps {
   keypairInfoModalFrgmt: KeypairInfoModalFragment$key | null;

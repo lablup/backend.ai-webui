@@ -6,10 +6,9 @@ import {
 } from '../components/Chat/ChatModel';
 import { Conversation } from '../components/Chat/Conversation';
 import { useSuspendedBackendaiClient } from '../hooks';
-import graphql from 'babel-plugin-relay/macro';
 import { t } from 'i18next';
 import React, { useId } from 'react';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 import { StringParam, useQueryParams } from 'use-query-params';
 
 const ChatPageStyle = {

@@ -9,10 +9,9 @@ import DoubleTag from '../DoubleTag';
 import Flex from '../Flex';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Tooltip, Typography, theme } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 type BaseExtra = null;
 type UtilizationExtra = {

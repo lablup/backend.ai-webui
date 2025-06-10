@@ -10,10 +10,9 @@ import { useResourceSlotsDetails } from '../hooks/backendai';
 import BAICard from './BAICard';
 import { Empty, theme } from 'antd';
 import { createStyles } from 'antd-style';
-import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 import {
   LineChart,
   Line,

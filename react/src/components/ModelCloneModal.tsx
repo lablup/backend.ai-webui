@@ -16,10 +16,9 @@ import {
   Switch,
   message,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface ModelCloneModalProps extends BAIModalProps {
   vfolderNode: ModelCloneModalVFolderFragment$key | null;

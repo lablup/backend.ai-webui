@@ -3,8 +3,7 @@ import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useTOTPSupported } from '../hooks/backendai';
 import TOTPActivateModal from './TOTPActivateModal';
 import { useToggle } from 'ahooks';
-import graphql from 'babel-plugin-relay/macro';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const ForceTOTPChecker = () => {
   const [, { toggle: toggleTOTPActivateModal }] = useToggle(false);

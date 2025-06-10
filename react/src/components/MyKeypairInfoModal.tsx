@@ -9,10 +9,9 @@ import { useTanQuery } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import { Button, Table, Typography, Tag } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 interface MyKeypairInfoModalProps extends BAIModalProps {
   onRequestClose: () => void;

@@ -4,10 +4,9 @@ import BAIFetchKeyButton from './BAIFetchKeyButton';
 import BAIPanelItem from './BAIPanelItem';
 import Flex from './Flex';
 import { Col, Divider, Row, theme } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRefetchableFragment } from 'react-relay';
+import { graphql, useRefetchableFragment } from 'react-relay';
 
 interface MySessionCardProps extends BAICardProps {
   queryRef: MySessionCardQueryFragment$key;

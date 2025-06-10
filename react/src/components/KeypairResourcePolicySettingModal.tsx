@@ -32,11 +32,11 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  graphql,
   useFragment, // useLazyLoadQuery,
   useMutation,
 } from 'react-relay';

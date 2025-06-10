@@ -2,10 +2,9 @@ import { KeypairResourcePolicySelectorQuery } from '../__generated__/KeypairReso
 import { localeCompare } from '../helper';
 import useControllableState from '../hooks/useControllableState';
 import { Select, SelectProps } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 interface KeypairResourcePolicySelectorProps extends SelectProps {}
 

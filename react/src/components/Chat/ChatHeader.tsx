@@ -24,12 +24,11 @@ import {
   Switch,
   Popover,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import { isEmpty } from 'lodash';
 import { Scale as ScaleIcon, Eraser as EraserIcon } from 'lucide-react';
 import React, { startTransition, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface SyncSwitchProps {
   sync: boolean;

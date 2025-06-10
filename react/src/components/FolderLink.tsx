@@ -2,8 +2,7 @@ import { FolderLink_vfolderNode$key } from '../__generated__/FolderLink_vfolderN
 import BAILink, { BAILinkProps } from './BAILink';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { FolderOutlined } from '@ant-design/icons';
-import graphql from 'babel-plugin-relay/macro';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface FolderLinkBase extends BAILinkProps {
   showIcon?: boolean;

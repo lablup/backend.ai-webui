@@ -7,11 +7,10 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import ImageResourceFormItem from './ImageResourceFormItem';
 import { App, Form, FormInstance, message } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useRef } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useFragment, useMutation } from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 interface ManageImageResourceLimitModalProps extends BAIModalProps {
   imageFrgmt: ManageImageResourceLimitModal_image$key | null;

@@ -5,10 +5,9 @@ import {
 import { AgentSettingModalMutation } from '../__generated__/AgentSettingModalMutation.graphql';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { App, Form, FormInstance, Switch } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment, useMutation } from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 interface AgentSettingModalProps extends BAIModalProps {
   agentSettingModalFrgmt?: AgentSettingModalFragment$key | null;

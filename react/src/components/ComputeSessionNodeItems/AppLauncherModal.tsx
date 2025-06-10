@@ -23,11 +23,10 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { useRef, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface AppLauncherModalProps extends ModalProps {
   onRequestClose: () => void;

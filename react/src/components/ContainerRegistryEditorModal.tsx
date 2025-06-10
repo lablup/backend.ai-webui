@@ -12,11 +12,15 @@ import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import HiddenFormItem from './HiddenFormItem';
 import { Form, Input, Select, Checkbox, FormInstance, App, theme } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment, useMutation, UseMutationConfig } from 'react-relay';
+import {
+  graphql,
+  useFragment,
+  useMutation,
+  UseMutationConfig,
+} from 'react-relay';
 
 type RegistryFormInput = {
   row_id?: string;

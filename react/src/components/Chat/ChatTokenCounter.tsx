@@ -2,8 +2,7 @@ import { useTokenCount } from '../../hooks/useTokenizer';
 import Flex from '../Flex';
 import { RocketOutlined } from '@ant-design/icons';
 import { Message } from 'ai';
-import { Typography } from 'antd';
-import { Tag, theme } from 'antd';
+import { Typography, Tag, theme } from 'antd';
 import { map, last } from 'lodash';
 import React, { useMemo } from 'react';
 

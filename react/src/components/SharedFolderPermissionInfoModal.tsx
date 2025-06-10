@@ -23,10 +23,9 @@ import {
   Typography,
   theme,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import { LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface SharedFolderPermissionInfoModalProps extends BAIModalProps {
   vfolderFrgmt: SharedFolderPermissionInfoModalFragment$key | null;

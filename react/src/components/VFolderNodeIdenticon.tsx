@@ -1,9 +1,8 @@
 import { VFolderNodeIdenticonFragment$key } from '../__generated__/VFolderNodeIdenticonFragment.graphql';
 import { shapes } from '@dicebear/collection';
 import { createAvatar } from '@dicebear/core';
-import graphql from 'babel-plugin-relay/macro';
 import React from 'react';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface VFolderNodeIdenticonProps {
   vfolderNodeIdenticonFrgmt: VFolderNodeIdenticonFragment$key;

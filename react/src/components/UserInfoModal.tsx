@@ -3,11 +3,10 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useTOTPSupported } from '../hooks/backendai';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { Descriptions, DescriptionsProps, Tag, Spin } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 interface Props extends BAIModalProps {
   userEmail: string;

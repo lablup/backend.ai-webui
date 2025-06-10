@@ -9,10 +9,9 @@ import DoubleTag from './DoubleTag';
 import Flex from './Flex';
 import ImageMetaIcon from './ImageMetaIcon';
 import { Divider, Tag, Typography, theme } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React from 'react';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface ImageNodeSimpleTagProps {
   imageFrgmt: ImageNodeSimpleTagFragment$key | null;

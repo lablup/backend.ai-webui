@@ -16,11 +16,10 @@ import BAIModal, { BAIModalProps } from './BAIModal';
 import DynamicUnitInputNumber from './DynamicUnitInputNumber';
 import ResourceGroupSelect from './ResourceGroupSelect';
 import { App, Col, Form, FormInstance, Input, InputNumber, Row } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { Fragment, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment, useMutation } from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 interface ResourcePresetSettingModalProps extends BAIModalProps {
   resourcePresetFrgmt?: ResourcePresetSettingModalFragment$key | null;

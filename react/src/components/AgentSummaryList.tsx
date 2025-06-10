@@ -30,11 +30,10 @@ import { useToggle } from 'ahooks';
 import { Button, Table, TableProps, theme, Tooltip, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FetchPolicy, useLazyLoadQuery } from 'react-relay';
+import { graphql, FetchPolicy, useLazyLoadQuery } from 'react-relay';
 
 type AgentSummary = NonNullable<
   AgentSummaryListQuery$data['agent_summary_list']

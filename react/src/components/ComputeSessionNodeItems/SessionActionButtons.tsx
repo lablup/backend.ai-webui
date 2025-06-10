@@ -19,11 +19,10 @@ import ContainerCommitModal from './ContainerCommitModal';
 import ContainerLogModal from './ContainerLogModal';
 import TerminateSessionModal from './TerminateSessionModal';
 import { Tooltip, Button, theme } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface SessionActionButtonsProps {
   sessionFrgmt: SessionActionButtonsFragment$key | null;

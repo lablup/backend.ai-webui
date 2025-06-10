@@ -7,11 +7,10 @@ import { useTanMutation } from '../../hooks/reactQueryAlias';
 import Flex from '../Flex';
 import { EditOutlined } from '@ant-design/icons';
 import { Button, Form, FormInstance, Input, Typography, theme } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 const isRunningStatus = (status: string = '') => {
   return [

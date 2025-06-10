@@ -22,11 +22,10 @@ import {
   InputNumber,
   FormInstance,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment, useMutation } from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 interface Props extends BAIModalProps {
   existingPolicyNames?: string[];

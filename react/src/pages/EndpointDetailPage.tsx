@@ -58,7 +58,6 @@ import {
   theme,
 } from 'antd';
 import { DescriptionsItemType } from 'antd/es/descriptions';
-import graphql from 'babel-plugin-relay/macro';
 import { default as dayjs } from 'dayjs';
 import _ from 'lodash';
 import {
@@ -68,7 +67,7 @@ import {
 } from 'lucide-react';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery, useMutation } from 'react-relay';
+import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 import { useParams } from 'react-router-dom';
 
 interface RoutingInfo {

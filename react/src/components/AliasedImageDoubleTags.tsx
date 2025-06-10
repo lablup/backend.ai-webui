@@ -4,10 +4,9 @@ import { useBackendAIImageMetaData } from '../hooks';
 import DoubleTag, { DoubleTagObjectValue } from './DoubleTag';
 import Flex from './Flex';
 import { Tag } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React from 'react';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface AliasedImageDoubleTagsProps extends DoubleTagObjectValue {
   imageFrgmt?: AliasedImageDoubleTagsFragment$key | null;

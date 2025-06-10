@@ -6,10 +6,9 @@ import { addNumberWithUnits, convertBinarySizeUnit } from '../helper';
 import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
 import { useSuspenseTanQuery } from './reactQueryAlias';
 import { useResourceGroupsForCurrentProject } from './useCurrentProject';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { useMemo } from 'react';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 const maxPerContainerRegex = /^max([A-Za-z0-9]+)PerContainer$/;
 

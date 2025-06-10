@@ -14,11 +14,15 @@ import BAIModal from '../BAIModal';
 import Flex from '../Flex';
 import { Card, Checkbox, ModalProps, Typography } from 'antd';
 import { createStyles } from 'antd-style';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { fetchQuery, useFragment, useRelayEnvironment } from 'react-relay';
+import {
+  graphql,
+  fetchQuery,
+  useFragment,
+  useRelayEnvironment,
+} from 'react-relay';
 
 interface TerminateSessionModalProps
   extends Omit<ModalProps, 'onOk' | 'onCancel'> {

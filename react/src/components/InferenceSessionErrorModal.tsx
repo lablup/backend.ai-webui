@@ -2,10 +2,9 @@ import { InferenceSessionErrorModalFragment$key } from '../__generated__/Inferen
 import BAIModal, { BAIModalProps } from './BAIModal';
 import CopyableCodeText from './CopyableCodeText';
 import { Descriptions, DescriptionsProps, Button } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface Props extends Omit<BAIModalProps, 'onOk' | 'onClose'> {
   inferenceSessionErrorFrgmt: InferenceSessionErrorModalFragment$key | null;

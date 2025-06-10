@@ -12,10 +12,9 @@ import {
   Empty,
   theme,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment, useMutation } from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 interface Props extends CardProps {
   quotaScopeFrgmt: QuotaScopeCardFragment$key | null;

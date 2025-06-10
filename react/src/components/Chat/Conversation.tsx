@@ -9,8 +9,7 @@ import {
 import { useDynamicList } from 'ahooks';
 import { Card, Skeleton } from 'antd';
 import { createStyles } from 'antd-style';
-import _ from 'lodash';
-import { map } from 'lodash';
+import _, { map } from 'lodash';
 import { Suspense, useId } from 'react';
 
 const useStyles = createStyles(({ token, css }) => ({

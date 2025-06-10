@@ -35,11 +35,10 @@ import {
 import { useToggle } from 'ahooks';
 import { App, Button, Input, Tag, theme, Typography } from 'antd';
 import { ColumnType } from 'antd/es/table';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { Key, useMemo, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export type EnvironmentImage = NonNullable<
   NonNullable<ImageListQuery$data['images']>[number]

@@ -18,12 +18,11 @@ import {
   Typography,
 } from 'antd';
 import { createStyles } from 'antd-style';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { FolderX } from 'lucide-react';
 import React, { useMemo, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const useStyles = createStyles(({ css, token }) => {
   return {

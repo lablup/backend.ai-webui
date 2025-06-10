@@ -13,10 +13,9 @@ import {
   Spin,
   FormInstance,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 export type TOTPActivateFormData = {
   otp: number;

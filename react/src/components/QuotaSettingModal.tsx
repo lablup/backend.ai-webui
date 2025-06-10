@@ -3,10 +3,9 @@ import { QuotaSettingModalSetMutation } from '../__generated__/QuotaSettingModal
 import { GBToBytes, bytesToGB } from '../helper';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { Form, FormInstance, Input, message } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment, useMutation } from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 interface Props extends BAIModalProps {
   quotaScopeFrgmt?: QuotaSettingModalFragment$key | null;

@@ -32,7 +32,6 @@ import {
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { PlusIcon } from 'lucide-react';
@@ -44,7 +43,7 @@ import React, {
   useTransition,
 } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export interface VFolderFile {
   name: string;

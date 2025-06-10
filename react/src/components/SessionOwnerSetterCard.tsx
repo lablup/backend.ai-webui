@@ -19,12 +19,11 @@ import {
   theme,
 } from 'antd';
 import { CardProps } from 'antd/lib';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { CheckIcon } from 'lucide-react';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { fetchQuery, useRelayEnvironment } from 'react-relay';
+import { graphql, fetchQuery, useRelayEnvironment } from 'react-relay';
 
 export interface SessionOwnerSetterFormValues {
   owner?:

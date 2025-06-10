@@ -2,10 +2,9 @@ import { UsageProgressFragment_usageFrgmt$key } from '../__generated__/UsageProg
 import { bytesToGB, usageIndicatorColor } from '../helper';
 import Flex from './Flex';
 import { Progress, Typography, theme } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 const UsageProgress: React.FC<{
   usageProgressFrgmt: UsageProgressFragment_usageFrgmt$key | null;

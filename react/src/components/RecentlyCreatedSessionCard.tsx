@@ -5,10 +5,9 @@ import BAIFetchKeyButton from './BAIFetchKeyButton';
 import Flex from './Flex';
 import SessionDetailDrawer from './SessionDetailDrawer';
 import SessionNodes from './SessionNodes';
-import graphql from 'babel-plugin-relay/macro';
 import { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRefetchableFragment } from 'react-relay';
+import { graphql, useRefetchableFragment } from 'react-relay';
 import { useQueryParam, StringParam } from 'use-query-params';
 
 interface RecentlyCreatedSessionCardProps extends BAICardProps {

@@ -9,10 +9,9 @@ import { useResourceSlotsDetails } from '../hooks/backendai';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import Flex from './Flex';
 import { ProgressProps, Tooltip, Typography, theme, Row, Col } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { useMemo } from 'react';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface SessionUsageMonitorProps extends ProgressProps {
   sessionFrgmt: SessionUsageMonitorFragment$key | null;

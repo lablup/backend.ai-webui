@@ -7,10 +7,9 @@ import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useInterval } from '../hooks/useIntervalValue';
 import { Col, Grid, Row } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { useTransition } from 'react';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const DashboardPage: React.FC = () => {
   const { lg } = Grid.useBreakpoint();

@@ -9,11 +9,10 @@ import BAISelect from '../BAISelect';
 import TotalFooter from '../TotalFooter';
 import { useControllableValue } from 'ahooks';
 import { GetRef, SelectProps, Skeleton } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useDeferredValue, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export type Endpoint = NonNullable<
   NonNullableItem<EndpointSelectQuery$data['endpoint_list']>

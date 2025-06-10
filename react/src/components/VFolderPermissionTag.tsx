@@ -1,9 +1,8 @@
 import { VFolderPermissionTag_VFolder$key } from '../__generated__/VFolderPermissionTag_VFolder.graphql';
 import DoubleTag, { DoubleTagObjectValue } from './DoubleTag';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React from 'react';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 const hasPermission = (permission: string | undefined, perm: string) => {
   if (permission?.includes(perm)) {

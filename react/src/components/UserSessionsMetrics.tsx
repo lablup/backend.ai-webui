@@ -5,12 +5,11 @@ import BAIFetchKeyButton from './BAIFetchKeyButton';
 import Flex from './Flex';
 import SessionMetricGraph from './SessionMetricGraph';
 import { Alert, DatePicker, Empty, Skeleton, theme } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 interface PrometheusMetricProps {}

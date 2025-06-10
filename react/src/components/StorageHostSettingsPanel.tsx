@@ -10,10 +10,9 @@ import QuotaSettingModal from './QuotaSettingModal';
 import UserSelector from './UserSelector';
 import { useToggle } from 'ahooks';
 import { Card, Form, Spin } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment, useLazyLoadQuery } from 'react-relay';
+import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
 interface StorageHostSettingsPanelProps {
   extraFetchKey?: string;

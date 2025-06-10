@@ -10,11 +10,10 @@ import FlexActivityIndicator from './FlexActivityIndicator';
 import StorageSelect from './StorageSelect';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Col, Empty, Row, theme, Tooltip, Typography } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export type VolumeInfo = {
   id: string;

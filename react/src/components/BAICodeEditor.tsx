@@ -1,7 +1,9 @@
 import useControllableState from '../hooks/useControllableState';
 import { loadLanguage, LanguageName } from '@uiw/codemirror-extensions-langs';
-import CodeMirror, { ReactCodeMirrorProps } from '@uiw/react-codemirror';
-import { EditorView } from '@uiw/react-codemirror';
+import CodeMirror, {
+  ReactCodeMirrorProps,
+  EditorView,
+} from '@uiw/react-codemirror';
 
 interface BAICodeEditorProps extends Omit<ReactCodeMirrorProps, 'language'> {
   value?: string;

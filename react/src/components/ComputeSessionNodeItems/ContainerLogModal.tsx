@@ -10,12 +10,11 @@ import Flex from '../Flex';
 import { ReloadOutlined } from '@ant-design/icons';
 import { LazyLog, ScrollFollow } from '@melloware/react-logviewer';
 import { Button, Divider, Grid, theme, Tooltip, Typography } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { DownloadIcon } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface ContainerLogModalProps extends BAIModalProps {
   sessionFrgmt: ContainerLogModalFragment$key | null;

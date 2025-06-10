@@ -46,11 +46,15 @@ import {
   Tooltip,
   Tag,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment, useLazyLoadQuery, useMutation } from 'react-relay';
+import {
+  graphql,
+  useFragment,
+  useLazyLoadQuery,
+  useMutation,
+} from 'react-relay';
 import { StringParam, useQueryParams } from 'use-query-params';
 
 const ServiceValidationView = React.lazy(

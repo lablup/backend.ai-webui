@@ -5,12 +5,11 @@ import type {
 import { useControllableValue } from 'ahooks';
 import { Input, Select } from 'antd';
 import type { SelectProps } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import { castArray, sortBy } from 'lodash';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 function sortEndpointTokenList(
   endpointTokenListData: EndpointTokenSelectQuery$data['endpoint_token_list'],

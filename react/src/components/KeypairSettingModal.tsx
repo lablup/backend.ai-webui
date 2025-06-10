@@ -5,10 +5,9 @@ import BAIModal from './BAIModal';
 import KeypairResourcePolicySelector from './KeypairResourcePolicySelector';
 import { App, Col, Form, Input, InputNumber, ModalProps, Row } from 'antd';
 import { FormInstance } from 'antd/lib';
-import graphql from 'babel-plugin-relay/macro';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment, useMutation } from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 type KeypairSettingModalFormInput = {
   user_id?: string;

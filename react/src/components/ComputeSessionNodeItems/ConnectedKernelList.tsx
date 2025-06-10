@@ -13,12 +13,11 @@ import UnmountModalAfterClose from '../UnmountModalAfterClose';
 import ContainerLogModal from './ContainerLogModal';
 import { Button, Tag, theme, Tooltip, Typography } from 'antd';
 import { ColumnType } from 'antd/lib/table';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { ScrollTextIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 type Kernel = NonNullable<
   NonNullable<

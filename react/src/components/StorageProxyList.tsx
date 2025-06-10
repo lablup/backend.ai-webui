@@ -16,12 +16,11 @@ import DoubleTag from './DoubleTag';
 import Flex from './Flex';
 import { InfoCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import { Button, TableColumnsType, Tag, theme, Typography } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { Server } from 'lucide-react';
 import { useDeferredValue, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const backendType = {
   xfs: {

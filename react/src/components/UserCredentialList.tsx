@@ -21,13 +21,12 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { App, Button, Popconfirm, Tag, Tooltip, Typography, theme } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
 import { useEffect, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery, useMutation } from 'react-relay';
+import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 import { StringParam, useQueryParam } from 'use-query-params';
 
 type Keypair = NonNullable<

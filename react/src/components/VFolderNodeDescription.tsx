@@ -22,11 +22,15 @@ import {
   Typography,
   type DescriptionsProps,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { fetchQuery, useFragment, useRelayEnvironment } from 'react-relay';
+import {
+  graphql,
+  fetchQuery,
+  useFragment,
+  useRelayEnvironment,
+} from 'react-relay';
 
 interface VFolderNodeDescriptionProps extends DescriptionsProps {
   vfolderNodeFrgmt?: VFolderNodeDescriptionFragment$key | null;

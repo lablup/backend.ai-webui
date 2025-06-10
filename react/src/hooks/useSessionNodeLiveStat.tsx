@@ -1,8 +1,7 @@
 import { useSessionNodeLiveStatSessionFragment$key } from '../__generated__/useSessionNodeLiveStatSessionFragment.graphql';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { useMemo } from 'react';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface ResourceStatItem {
   current: string;
