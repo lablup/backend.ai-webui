@@ -41,7 +41,6 @@
     "graphql": "^16.10.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-i18next": "^15.4.1",
     "react-relay": "^18.2.0",
     "relay-runtime": "^18.2.0"
   },
@@ -70,5 +69,9 @@
     "vite-plugin-dts": "^4.5.4",
     "vite-plugin-relay-lite": "^0.11.0"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "i18next": "^24.2.3",
+    "react-i18next": "^15.4.1"
+  }
 }
