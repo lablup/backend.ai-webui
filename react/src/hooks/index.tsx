@@ -534,7 +534,6 @@ type BackendAIConfig = {
   systemSSHImage: string;
   fasttrackEndpoint: string;
   hideAgents: boolean;
-  enable2FA: boolean;
   force2FA: boolean;
   directoryBasedUsage: boolean;
   maxCountForPreopenPorts: number;

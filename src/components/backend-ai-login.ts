@@ -121,7 +121,6 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Number }) maxFileUploadSize = -1;
   @property({ type: Boolean }) maskUserInfo = false;
   @property({ type: Boolean }) hideAgents = true;
-  @property({ type: Boolean }) enable2FA = false;
   @property({ type: Boolean }) force2FA = false;
   @property({ type: Boolean }) allowNonAuthTCP = false;
   @property({ type: Array }) singleSignOnVendors: string[] = [];
@@ -759,13 +758,6 @@ export default class BackendAILogin extends BackendAIPage {
       valueType: 'boolean',
       defaultValue: true,
       value: generalConfig?.hideAgents,
-    } as ConfigValueObject) as boolean;
-
-    // Enable enable 2FA flag
-    this.enable2FA = this._getConfigValueByExists(generalConfig, {
-      valueType: 'boolean',
-      defaultValue: false,
-      value: generalConfig?.enable2FA,
     } as ConfigValueObject) as boolean;
 
     // Enable force 2FA flag
@@ -1917,7 +1909,6 @@ export default class BackendAILogin extends BackendAIPage {
         globalThis.backendaiclient._config.fasttrackEndpoint =
           this.fasttrackEndpoint;
         globalThis.backendaiclient._config.hideAgents = this.hideAgents;
-        globalThis.backendaiclient._config.enable2FA = this.enable2FA;
         globalThis.backendaiclient._config.force2FA = this.force2FA;
         globalThis.backendaiclient._config.directoryBasedUsage =
           this.directoryBasedUsage;

@@ -661,7 +661,12 @@ class Client {
       this._features['image-commit'] = true;
       this._features['fine-grained-storage-permissions'] = true;
       this._features['2FA'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('22.09')){
       this._features['force2FA'] = true;
+      if(this.isManagerVersionCompatibleWith('25.09.0')) {
+        this._features['force2FA'] = false; // force2FA is deprecated in 25.09.0
+      }
     }
     if (this.isManagerVersionCompatibleWith('22.09.19')) {
       this._features['idle-checks'] = true;
@@ -815,9 +820,6 @@ class Client {
    * Return if manager supports OTP / 2FA.
    */
   async isManagerSupportingTOTP() {
-    if (!this._config.enable2FA) {
-      return false;
-    }
     let rqst = this.newSignedRequest('GET', `/totp`, null, null);
     try {
       await this._wrapWithPromise(rqst);
