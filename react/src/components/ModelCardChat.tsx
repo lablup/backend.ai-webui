@@ -1,11 +1,11 @@
 import EndpointChat from './EndpointChat';
 import { ModelCardChatQuery } from './__generated__/ModelCardChatQuery.graphql';
 import { Alert, Card, theme } from 'antd/lib';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React from 'react';
+import { graphql, useLazyLoadQuery } from 'react-relay';
+
 // import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
 
 interface ModelCardChatProps {
   modelName?: string;

@@ -2,10 +2,10 @@ import { useTanQuery } from '../hooks/reactQueryAlias';
 import { ChatProviderType, ConversationType, Model } from './Chat/ChatModel';
 import { Conversation } from './Chat/Conversation';
 import { EndpointChatEndpointDetailQuery } from './__generated__/EndpointChatEndpointDetailQuery.graphql';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useId } from 'react';
 import { useTranslation } from 'react-i18next';
+import { graphql } from 'react-relay';
 import { useLazyLoadQuery } from 'react-relay/hooks';
 
 interface EndpointChatProps {
