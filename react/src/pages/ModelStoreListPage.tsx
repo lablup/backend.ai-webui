@@ -2,6 +2,7 @@ import { ModelCardModalFragment$key } from '../__generated__/ModelCardModalFragm
 import { ModelStoreListPageQuery } from '../__generated__/ModelStoreListPageQuery.graphql';
 import Flex from '../components/Flex';
 import ModelCardModal from '../components/ModelCardModal';
+import ModelCardThumbnail from '../components/ModelCardThumbnail';
 import TextHighlighter from '../components/TextHighlighter';
 import UnmountModalAfterClose from '../components/UnmountModalAfterClose';
 import { useUpdatableState } from '../hooks';
@@ -17,7 +18,6 @@ import {
   Tag,
   theme,
   Typography,
-  Image,
 } from 'antd';
 import { createStyles } from 'antd-style';
 import _ from 'lodash';
@@ -136,8 +136,8 @@ const ModelStoreListPage: React.FC = () => {
             prefix={<SearchOutlined />}
             placeholder={t('modelStore.SearchModels')}
             allowClear
-            onChange={(e) => {
-              setSearch(e.target.value);
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setSearch(e.currentTarget.value);
             }}
             autoComplete="off"
           />
@@ -156,14 +156,14 @@ const ModelStoreListPage: React.FC = () => {
           <Select
             style={{ minWidth: 150 }}
             placeholder={t('modelStore.Category')}
-            options={_.map(fieldsValues.category, (t) => ({
+            options={_.map(fieldsValues.category, (t: string) => ({
               label: t,
               value: t,
             }))}
             mode={'multiple'}
             popupMatchSelectWidth={false}
             value={selectedCategories}
-            onChange={(value) => {
+            onChange={(value: string[]) => {
               setSelectedCategories(value as string[]);
             }}
             allowClear
@@ -171,14 +171,14 @@ const ModelStoreListPage: React.FC = () => {
           <Select
             style={{ minWidth: 150 }}
             placeholder={t('modelStore.Task')}
-            options={_.map(fieldsValues.task, (t) => ({
+            options={_.map(fieldsValues.task, (t: string) => ({
               label: t,
               value: t,
             }))}
             mode={'multiple'}
             popupMatchSelectWidth={false}
             value={selectedTasks}
-            onChange={(value) => {
+            onChange={(value: string[]) => {
               setSelectedTasks(value as string[]);
             }}
             allowClear
@@ -186,14 +186,14 @@ const ModelStoreListPage: React.FC = () => {
           <Select
             style={{ minWidth: 150 }}
             placeholder={t('modelStore.Label')}
-            options={_.map(fieldsValues.label, (t) => ({
+            options={_.map(fieldsValues.label, (t: string) => ({
               label: t,
               value: t,
             }))}
             mode={'multiple'}
             popupMatchSelectWidth={false}
             value={selectedLabels}
-            onChange={(value) => {
+            onChange={(value: string[]) => {
               setSelectedLabels(value as string[]);
             }}
             allowClear
@@ -278,12 +278,10 @@ const ModelStoreListPage: React.FC = () => {
             >
               <Flex direction="column" align="stretch" gap="xs">
                 <Flex direction="row" align="start" gap="xs">
-                  <Image
-                    width={150}
-                    preview={false}
+                  <ModelCardThumbnail
                     src={`/resources/images/model-player/${_.replace(item?.name as string, ' ', '-')}.jpeg`}
-                    fallback="/resources/images/model-player/default.jpeg"
-                    loading={'lazy'}
+                    fallbackSrc="/resources/images/model-player/default.jpeg"
+                    width={150}
                   />
                   <Typography.Paragraph
                     ellipsis={{ rows: 3, expandable: false }}
@@ -310,7 +308,7 @@ const ModelStoreListPage: React.FC = () => {
                     </Tag>
                   )}
                   {item?.label &&
-                    _.map(item?.label, (label) => (
+                    _.map(item?.label, (label: string) => (
                       <Tag key={label} bordered={false} color="blue">
                         <TextHighlighter keyword={search}>
                           {label}
