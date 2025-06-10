@@ -17,7 +17,6 @@ import DynamicUnitInputNumber from './DynamicUnitInputNumber';
 import Flex from './Flex';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-// import { KeypairResourcePolicySettingModalQuery } from './__generated__/KeypairResourcePolicySettingModalQuery.graphql';
 import {
   App,
   Card,
