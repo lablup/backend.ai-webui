@@ -1,4 +1,9 @@
-import { loginAsAdmin } from './utils/test-util';
+import {
+  login,
+  loginAsAdmin,
+  userInfo,
+  webServerEndpoint,
+} from './utils/test-util';
 import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
@@ -23,5 +28,42 @@ test.describe('Login using the admin account', () => {
     await expect(
       page.getByTestId('webui-breadcrumb').getByText('Start'),
     ).toBeVisible();
+  });
+});
+
+test.describe('Login failure cases', () => {
+  test('should display error message for non-existent email', async ({
+    page,
+  }) => {
+    await page
+      .getByLabel('Email or Username')
+      // Use random email to avoid block due to too many requests
+      .fill(`nonexistent-${new Date().getTime()}@example.com`);
+    await page.getByRole('textbox', { name: 'Password' }).fill('somepassword');
+    await page
+      .getByRole('textbox', { name: 'Endpoint' })
+      .fill(webServerEndpoint);
+    await page.getByLabel('Login', { exact: true }).click();
+
+    await expect(
+      page.locator('.ant-notification-notice-message'),
+    ).toContainText('Login information mismatch. Check your information');
+  });
+
+  test('should display error message for incorrect password', async ({
+    page,
+  }) => {
+    await page.getByLabel('Email or Username').fill(userInfo.admin.email);
+    await page
+      .getByRole('textbox', { name: 'Password' })
+      .fill(userInfo.admin.password + 'wrong');
+    await page
+      .getByRole('textbox', { name: 'Endpoint' })
+      .fill(webServerEndpoint);
+    await page.getByLabel('Login', { exact: true }).click();
+
+    await expect(
+      page.locator('.ant-notification-notice-message'),
+    ).toContainText('Login information mismatch. Check your information');
   });
 });
