@@ -1,5 +1,6 @@
 import react from '@vitejs/plugin-react';
-import { dirname, resolve } from 'node:path';
+import glob from 'fast-glob';
+import { dirname, resolve, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
@@ -9,6 +10,16 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig(({ mode }) => {
   const isDevMode = mode === 'development';
+  const localeFiles = glob.sync('src/locale/*.ts', { cwd: __dirname });
+  const entries = {
+    'backend.ai-ui': resolve(__dirname, 'src/index.ts'),
+  };
+  // Add locale entries
+  localeFiles.forEach((file) => {
+    const name = basename(file, '.ts');
+    entries[`locale/${name}`] = resolve(__dirname, file);
+  });
+
   return {
     resolve: {
       alias: {
@@ -19,9 +30,7 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       lib: {
-        entry: resolve(__dirname, 'src/index.ts'),
-        name: 'backend.ai-ui',
-        fileName: 'backend.ai-ui',
+        entry: entries,
         formats: ['es'],
       },
       rollupOptions: {
@@ -31,16 +40,8 @@ export default defineConfig(({ mode }) => {
           'i18next',
           'react-i18next',
           'relay-runtime',
+          'antd',
         ],
-        output: {
-          globals: {
-            react: 'React',
-            'react-dom': 'ReactDOM',
-            i18next: 'i18next',
-            'react-i18next': 'ReactI18Next',
-            'relay-runtime': 'RelayRuntime',
-          },
-        },
       },
       sourcemap: true,
       outDir: 'dist',
@@ -54,7 +55,7 @@ export default defineConfig(({ mode }) => {
       }),
       dts({
         include: ['src/**/*'],
-        exclude: ['src/*/*/*.stories.ts'],
+        exclude: ['src/*/*/*.stories.ts', 'src/locale/*.json'],
         rollupTypes: false,
         insertTypesEntry: true,
         compilerOptions: {
