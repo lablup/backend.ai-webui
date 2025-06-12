@@ -9,9 +9,10 @@ import indexCss from '../index.css?raw';
 import { StyleProvider, createCache } from '@ant-design/cssinjs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useUpdateEffect } from 'ahooks';
-import { App, AppProps, ConfigProvider, theme, Typography } from 'antd';
-import en_US from 'antd/locale/en_US';
-import ko_KR from 'antd/locale/ko_KR';
+import { App, AppProps, theme, Typography } from 'antd';
+import { BAIConfigProvider } from 'backend.ai-ui';
+import en_US from 'backend.ai-ui/dist/locale/en_US';
+import ko_KR from 'backend.ai-ui/dist/locale/ko_KR';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import duration from 'dayjs/plugin/duration';
@@ -215,13 +216,13 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
               <ShadowRootContext.Provider value={shadowRoot}>
                 <ThemeModeProvider>
                   <WebComponentContext.Provider value={componentValues}>
-                    <ConfigProvider
+                    <BAIConfigProvider
+                      //TODO: apply other supported locales
+                      locale={'ko' === lang ? ko_KR : en_US}
                       // @ts-ignore
                       getPopupContainer={(triggerNode) => {
                         return triggerNode?.parentNode || shadowRoot;
                       }}
-                      //TODO: apply other supported locales
-                      locale={'ko' === lang ? ko_KR : en_US}
                       theme={{
                         ...(isDarkMode
                           ? { ...themeConfig?.dark }
@@ -251,7 +252,7 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
                           </Suspense>
                         </StyleProvider>
                       </App>
-                    </ConfigProvider>
+                    </BAIConfigProvider>
                   </WebComponentContext.Provider>
                 </ThemeModeProvider>
               </ShadowRootContext.Provider>
@@ -312,11 +313,7 @@ export const DefaultProvidersForReactRoot: React.FC<
       {RelayEnvironment && (
         <RelayEnvironmentProvider environment={RelayEnvironment}>
           <QueryClientProvider client={queryClient}>
-            <ConfigProvider
-              // @ts-ignore
-              // getPopupContainer={(triggerNode) => {
-              //   return triggerNode?.parentNode || shadowRoot;
-              // }}
+            <BAIConfigProvider
               //TODO: apply other supported locales
               locale={'ko' === lang ? ko_KR : en_US}
               theme={{
@@ -340,7 +337,7 @@ export const DefaultProvidersForReactRoot: React.FC<
                 </Suspense>
                 {/* </StyleProvider> */}
               </App>
-            </ConfigProvider>
+            </BAIConfigProvider>
           </QueryClientProvider>
         </RelayEnvironmentProvider>
       )}
