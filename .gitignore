@@ -87,6 +87,10 @@ app
 config.ini
 config.toml
 configs/*.toml
+
+# model card config
+resources/model_card_config.json
+
 # webpack
 dist
 
