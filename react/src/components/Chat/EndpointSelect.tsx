@@ -5,11 +5,14 @@ import {
 import { EndpointSelectValueQuery } from '../../__generated__/EndpointSelectValueQuery.graphql';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
+import BAILink from '../BAILink';
 import BAISelect from '../BAISelect';
 import TotalFooter from '../TotalFooter';
 import { useControllableValue } from 'ahooks';
-import { GetRef, SelectProps, Skeleton } from 'antd';
+import { GetRef, SelectProps, Skeleton, Tooltip } from 'antd';
+import { Flex } from 'backend.ai-ui';
 import _ from 'lodash';
+import { InfoIcon } from 'lucide-react';
 import React, { useDeferredValue, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -149,10 +152,12 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
           label: selectedEndpoint?.name || undefined,
           value: selectedEndpoint?.endpoint_id || undefined,
         }
-      : {
-          label: controllableValue,
-          value: controllableValue,
-        },
+      : controllableValue
+        ? {
+            label: controllableValue,
+            value: controllableValue,
+          }
+        : controllableValue,
   );
 
   const isValueMatched = searchStr === deferredSearchStr;
@@ -174,6 +179,20 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
       searchValue={searchStr}
       onSearch={(v) => {
         setSearchStr(v);
+      }}
+      labelRender={({ label }: { label: React.ReactNode }) => {
+        return label ? (
+          <Flex gap="xxs">
+            {label}
+            <Tooltip title={t('general.NavigateToDetailPage')}>
+              <BAILink to={`/serving/${selectedEndpoint?.endpoint_id}`}>
+                <InfoIcon />
+              </BAILink>
+            </Tooltip>
+          </Flex>
+        ) : (
+          label
+        );
       }}
       // TODO: Need to make it work properly when autoClearSearchValue is not specified
       autoClearSearchValue

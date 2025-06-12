@@ -659,6 +659,7 @@
     "Manual": "Thủ công",
     "MaxValueNotification": "{{name}} phải tối đa {{max}}",
     "NSelected": "{{Count}} Đã chọn",
+    "NavigateToDetailPage": "Chuyển đến trang chi tiết",
     "NewPassword": "mật khẩu mới",
     "None": "Không có",
     "Password": "Mật khẩu",

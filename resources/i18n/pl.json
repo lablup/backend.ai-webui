@@ -659,6 +659,7 @@
     "Manual": "Podręcznik",
     "MaxValueNotification": "{{name}} musi być maksymalna {{max}}.",
     "NSelected": "{{count}} wybrany",
+    "NavigateToDetailPage": "Przejdź do strony szczegółów",
     "NewPassword": "nowe hasło",
     "None": "Brak",
     "Password": "Hasło",

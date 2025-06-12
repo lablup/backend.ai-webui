@@ -659,6 +659,7 @@
     "Manual": "手册",
     "MaxValueNotification": "{{name}} 必须是最大值 {{max}}",
     "NSelected": "{{count}}已选择",
+    "NavigateToDetailPage": "转至详细信息页面",
     "NewPassword": "新密码",
     "None": "无",
     "Password": "密码",

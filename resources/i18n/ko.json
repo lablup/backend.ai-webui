@@ -662,6 +662,7 @@
     "Manual": "수동",
     "MaxValueNotification": "{{ name }} 최대 값은 {{ max }}입니다",
     "NSelected": "{{count}}개 선택됨",
+    "NavigateToDetailPage": "상세 페이지로 이동",
     "NewPassword": "새 비밀번호",
     "None": "없음",
     "Password": "비밀번호",

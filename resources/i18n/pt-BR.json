@@ -659,6 +659,7 @@
     "Manual": "Manual",
     "MaxValueNotification": "{{nome}} deve ser o máximo {{max}}",
     "NSelected": "{{contagem}} selecionado",
+    "NavigateToDetailPage": "Ir para a página de pormenores",
     "NewPassword": "Nova Senha",
     "None": "Nenhum",
     "Password": "Senha",

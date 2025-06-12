@@ -658,6 +658,7 @@
     "Manual": "マニュアル",
     "MaxValueNotification": "{{ name }}最大値は{{ max }}です",
     "NSelected": "{count}}を選択",
+    "NavigateToDetailPage": "詳細ページへ",
     "NewPassword": "新しいパスワード",
     "None": "なし",
     "Password": "パスワード",

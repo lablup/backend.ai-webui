@@ -659,6 +659,7 @@
     "Manual": "Руководство",
     "MaxValueNotification": "{{name}} должен быть максимальным {{max}}",
     "NSelected": "{{count}} выбран",
+    "NavigateToDetailPage": "Перейдите на страницу с подробной информацией",
     "NewPassword": "Новый пароль",
     "None": "Нет",
     "Password": "Пароль",

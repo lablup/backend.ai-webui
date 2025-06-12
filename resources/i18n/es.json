@@ -659,6 +659,7 @@
     "Manual": "Manual",
     "MaxValueNotification": "{{name}} debe ser máximo {{max}}",
     "NSelected": "{{cuenta}} seleccionado",
+    "NavigateToDetailPage": "Ir a la página de detalles",
     "NewPassword": "Nueva contraseña",
     "None": "Ninguno",
     "Password": "Contraseña",

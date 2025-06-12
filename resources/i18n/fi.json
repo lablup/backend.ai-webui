@@ -658,6 +658,7 @@
     "Manual": "Manuaalinen",
     "MaxValueNotification": "{{name}} on oltava maksimi {{max}}",
     "NSelected": "{{count}} valittu",
+    "NavigateToDetailPage": "Siirry yksityiskohtien sivulle",
     "NewPassword": "Uusi salasana",
     "None": "Ei ole",
     "Password": "Salasana",

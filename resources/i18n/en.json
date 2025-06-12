@@ -665,6 +665,7 @@
     "Manual": "Manual",
     "MaxValueNotification": "{{name}} must be maximum {{max}}",
     "NSelected": "{{count}} selected",
+    "NavigateToDetailPage": "Go to the details page",
     "NewPassword": "New Password",
     "None": "None",
     "Password": "Password",

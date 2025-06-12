@@ -648,6 +648,7 @@
     "Manual": "คู่มือ",
     "MaxValueNotification": "{{name}} ต้องมีค่าสูงสุด {{max}}",
     "NSelected": "{{count}} เลือก",
+    "NavigateToDetailPage": "ไปที่หน้าโดยละเอียด",
     "NewPassword": "รหัสผ่านใหม่",
     "None": "ไม่มี",
     "Password": "รหัสผ่าน",

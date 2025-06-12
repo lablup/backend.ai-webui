@@ -655,6 +655,7 @@
     "Manual": "Χειροκίνητο",
     "MaxValueNotification": "{{name}} πρέπει να είναι το μέγιστο {{max}}",
     "NSelected": "{{count}} selected",
+    "NavigateToDetailPage": "Μεταβείτε στη σελίδα λεπτομερειών",
     "NewPassword": "νέος κωδικός πρόσβασης",
     "None": "Κανένα",
     "Password": "Κωδικός πρόσβασης",
