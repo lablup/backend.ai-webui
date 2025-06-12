@@ -113,14 +113,14 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
     sessionFrgmt,
   );
 
-  const firstKernelNode = _.get(sessionNode, 'kernel_nodes.edges[0].node');
+  const firstKernelNode = sessionNode?.kernel_nodes?.edges?.[0]?.node;
   const occupiedSlots = useMemo(
     () => JSON.parse(firstKernelNode?.occupied_slots ?? '{}'),
     [firstKernelNode?.occupied_slots],
   );
   const resourceSlotNames = _.keysIn(occupiedSlots);
   const liveStat = JSON.parse(
-    _.get(sessionNode, 'kernel_nodes.edges[0].node.live_stat') ?? '{}',
+    sessionNode?.kernel_nodes?.edges?.[0]?.node?.live_stat ?? '{}',
   );
 
   // to display util first, mem second

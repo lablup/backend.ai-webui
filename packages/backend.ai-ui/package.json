@@ -39,6 +39,7 @@
   "peerDependencies": {
     "antd": "^5.24.5",
     "graphql": "^16.10.0",
+    "lodash": "^4.17.21",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-i18next": "^15.4.1",
@@ -63,7 +64,6 @@
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-storybook": "^9.0.0",
     "graphql": "^16.10.0",
-    "lodash": "^4.17.21",
     "storybook": "^9.0.0",
     "typescript": "^5.7.2",
     "vite": "^6.3.5",

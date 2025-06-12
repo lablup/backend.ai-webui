@@ -443,6 +443,9 @@ importers:
       antd:
         specifier: ^5.24.5
         version: 5.24.9(date-fns@3.6.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
       react:
         specifier: ^19.0.0
         version: 19.0.0
@@ -510,9 +513,6 @@ importers:
       graphql:
         specifier: ^16.10.0
         version: 16.10.0
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
       storybook:
         specifier: ^9.0.0
         version: 9.0.0(@testing-library/dom@10.4.0)(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4)
@@ -844,6 +844,9 @@ importers:
       eslint-plugin-react:
         specifier: ^7.37.4
         version: 7.37.4(eslint@8.57.1)
+      eslint-plugin-relay:
+        specifier: ^2.0.0
+        version: 2.0.0
       eslint-plugin-storybook:
         specifier: ^0.11.1
         version: 0.11.1(eslint@8.57.1)(typescript@5.7.2)
@@ -7868,6 +7871,9 @@ packages:
     engines: {node: '>=4'}
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9.7
+
+  eslint-plugin-relay@2.0.0:
+    resolution: {integrity: sha512-H52u+YM72VhBwhKrGSSdsjbeAWbLIgmph3z4Hgfyqm8Jt5pP5g9PbFmBp8kk10D4vZldrbNwa0esHxDRoczprg==}
 
   eslint-plugin-storybook@0.11.1:
     resolution: {integrity: sha512-yGKpAYkBm/Q2hZg476vRUAvd9lAccjjSvzU5nYy3BSQbKTPy7uopx7JEpwk2vSuw4weTMZzWF64z9/gp/K5RCg==}
@@ -25446,6 +25452,10 @@ snapshots:
       semver: 6.3.1
       string.prototype.matchall: 4.0.12
       string.prototype.repeat: 1.0.0
+
+  eslint-plugin-relay@2.0.0:
+    dependencies:
+      graphql: 16.10.0
 
   eslint-plugin-storybook@0.11.1(eslint@8.57.1)(typescript@5.7.2):
     dependencies:
