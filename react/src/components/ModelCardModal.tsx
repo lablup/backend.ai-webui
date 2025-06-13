@@ -1,6 +1,6 @@
 import { ModelCardModalFragment$key } from '../__generated__/ModelCardModalFragment.graphql';
 import { useBackendAIImageMetaData } from '../hooks';
-import { useModelConfig } from '../hooks/useModelConfig';
+import { useModelCardMetadata } from '../hooks/useModelCardMetadata';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import ModelCardChat from './ModelCardChat';
@@ -45,7 +45,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
 
   const [metadata] = useBackendAIImageMetaData();
   const screen = Grid.useBreakpoint();
-  const { modelConfig } = useModelConfig();
+  const { models } = useModelCardMetadata();
   const model_card = useFragment(
     graphql`
       fragment ModelCardModalFragment on ModelCard {
@@ -84,10 +84,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
     `,
     modelCardModalFrgmt,
   );
-
-  const modelConfigItem = modelConfig.find(
-    (item) => model_card?.name === item.name,
-  );
+  const model = models.find((item) => model_card?.name === item.name);
 
   return (
     <BAIModal
@@ -117,14 +114,15 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
             : '90%'
       }
       footer={[
+        ,
         // FIXME: temporally disable ModelTryContentButton
-        /* <ModelTryContentButton
+        /*
+        <ModelTryContentButton
           modelStorageHost={model_card?.vfolder?.host as string}
-          modelConfigItem={modelConfigItem || null}
+          modelCardMetadata={model || null}
           modelName={model_card?.name as string}
           key="try"
-        />, */
-        <Button
+        /> */ <Button
           key="clone"
           type="primary"
           ghost
@@ -154,22 +152,24 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
           gap={'sm'}
           style={{ width: '100%' }}
         >
-          <Flex
-            direction="row"
-            wrap="wrap"
-            align="center"
-            gap={'sm'}
-            style={{ flex: 2, width: '100%' }}
-          >
-            <ModelCardChat
-              basePath={
-                model_card?.name?.includes('stable-diffusion-3-medium')
-                  ? 'generate-image'
-                  : 'v1'
-              }
-              modelName={modelConfigItem?.serviceName || model_card?.name || ''}
-            />
-          </Flex>
+          {models.some((item) => item.name === model_card?.name) && (
+            <Flex
+              direction="row"
+              wrap="wrap"
+              align="center"
+              gap={'sm'}
+              style={{ flex: 2, width: '100%' }}
+            >
+              <ModelCardChat
+                basePath={
+                  model_card?.name?.includes('stable-diffusion-3-medium')
+                    ? 'generate-image'
+                    : 'v1'
+                }
+                modelName={model?.serviceName || model_card?.name || ''}
+              />
+            </Flex>
+          )}
           <Divider type="vertical" style={{ height: '100%' }} />
           <Flex
             direction="column"
@@ -195,54 +195,45 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
               <>
                 <Flex
                   direction="row"
-                  align="start"
-                  style={{ marginBottom: token.marginSM }}
+                  align="center"
                   gap={'xs'}
-                  wrap="wrap"
+                  style={{ width: '100%' }}
                 >
-                  <Flex
-                    justify="start"
-                    align="start"
-                    gap={'xs'}
-                    style={{ flex: 1 }}
-                    wrap="wrap"
-                  >
-                    {model_card?.category && (
-                      <Tag bordered={false} style={{ marginRight: 0 }}>
-                        {model_card?.category}
-                      </Tag>
-                    )}
-                    {model_card?.task && (
+                  {model_card?.category && (
+                    <Tag bordered={false} style={{ marginRight: 0 }}>
+                      {model_card?.category}
+                    </Tag>
+                  )}
+                  {model_card?.task && (
+                    <Tag
+                      bordered={false}
+                      color="success"
+                      style={{ marginRight: 0 }}
+                    >
+                      {model_card?.task}
+                    </Tag>
+                  )}
+                  {model_card?.label &&
+                    _.map(model_card?.label, (label) => (
                       <Tag
+                        key={label}
                         bordered={false}
-                        color="success"
+                        color="blue"
                         style={{ marginRight: 0 }}
                       >
-                        {model_card?.task}
+                        {label}
                       </Tag>
-                    )}
-                    {model_card?.label &&
-                      _.map(model_card?.label, (label) => (
-                        <Tag
-                          key={label}
-                          bordered={false}
-                          color="blue"
-                          style={{ marginRight: 0 }}
-                        >
-                          {label}
-                        </Tag>
-                      ))}
-                    {model_card?.license && (
-                      <Tag
-                        icon={<BankOutlined />}
-                        bordered={false}
-                        color="geekblue"
-                        style={{ marginRight: 0 }}
-                      >
-                        {model_card?.license}
-                      </Tag>
-                    )}
-                  </Flex>
+                    ))}
+                  {model_card?.license && (
+                    <Tag
+                      icon={<BankOutlined />}
+                      bordered={false}
+                      color="geekblue"
+                      style={{ marginRight: 0 }}
+                    >
+                      {model_card?.license}
+                    </Tag>
+                  )}
                 </Flex>
                 <Flex
                   direction="column"

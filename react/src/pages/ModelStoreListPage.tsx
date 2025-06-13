@@ -3,21 +3,20 @@ import { ModelStoreListPageQuery } from '../__generated__/ModelStoreListPageQuer
 import Flex from '../components/Flex';
 import ModelCardModal from '../components/ModelCardModal';
 import TextHighlighter from '../components/TextHighlighter';
-import UnmountModalAfterClose from '../components/UnmountModalAfterClose';
 import { useUpdatableState } from '../hooks';
-import { useModelConfig } from '../hooks/useModelConfig';
+import { useModelCardMetadata } from '../hooks/useModelCardMetadata';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import {
   Alert,
   Button,
   Card,
+  Image,
   Input,
   List,
   Select,
   Tag,
   theme,
   Typography,
-  Image,
 } from 'antd';
 import { createStyles } from 'antd-style';
 import _ from 'lodash';
@@ -36,6 +35,12 @@ const useStyles = createStyles(({ css, token }) => {
   };
 });
 
+type ModelCard = NonNullable<
+  NonNullable<
+    ModelStoreListPageQuery['response']['model_cards']
+  >['edges'][number]
+>['node'];
+
 const ModelStoreListPage: React.FC = () => {
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const { t } = useTranslation();
@@ -46,7 +51,7 @@ const ModelStoreListPage: React.FC = () => {
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
   const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
   const { styles } = useStyles();
-  const { sorting } = useModelConfig();
+  const { models, sorting } = useModelCardMetadata();
 
   const [currentModelInfo, setCurrentModelInfo] =
     useState<ModelCardModalFragment$key | null>();
@@ -136,8 +141,8 @@ const ModelStoreListPage: React.FC = () => {
             prefix={<SearchOutlined />}
             placeholder={t('modelStore.SearchModels')}
             allowClear
-            onChange={(e) => {
-              setSearch(e.target.value);
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setSearch(e.currentTarget.value);
             }}
             autoComplete="off"
           />
@@ -156,14 +161,14 @@ const ModelStoreListPage: React.FC = () => {
           <Select
             style={{ minWidth: 150 }}
             placeholder={t('modelStore.Category')}
-            options={_.map(fieldsValues.category, (t) => ({
+            options={_.map(fieldsValues.category, (t: string) => ({
               label: t,
               value: t,
             }))}
             mode={'multiple'}
             popupMatchSelectWidth={false}
             value={selectedCategories}
-            onChange={(value) => {
+            onChange={(value: string[]) => {
               setSelectedCategories(value as string[]);
             }}
             allowClear
@@ -171,14 +176,14 @@ const ModelStoreListPage: React.FC = () => {
           <Select
             style={{ minWidth: 150 }}
             placeholder={t('modelStore.Task')}
-            options={_.map(fieldsValues.task, (t) => ({
+            options={_.map(fieldsValues.task, (t: string) => ({
               label: t,
               value: t,
             }))}
             mode={'multiple'}
             popupMatchSelectWidth={false}
             value={selectedTasks}
-            onChange={(value) => {
+            onChange={(value: string[]) => {
               setSelectedTasks(value as string[]);
             }}
             allowClear
@@ -186,14 +191,14 @@ const ModelStoreListPage: React.FC = () => {
           <Select
             style={{ minWidth: 150 }}
             placeholder={t('modelStore.Label')}
-            options={_.map(fieldsValues.label, (t) => ({
+            options={_.map(fieldsValues.label, (t: string) => ({
               label: t,
               value: t,
             }))}
             mode={'multiple'}
             popupMatchSelectWidth={false}
             value={selectedLabels}
-            onChange={(value) => {
+            onChange={(value: string[]) => {
               setSelectedLabels(value as string[]);
             }}
             allowClear
@@ -203,47 +208,49 @@ const ModelStoreListPage: React.FC = () => {
       <List
         className={styles.cardList}
         grid={{ gutter: 16, column: 2 }}
-        dataSource={model_cards?.edges
-          ?.map((edge) => edge?.node)
-          .filter((info) => {
-            let passSearchFilter = true;
-            if (search) {
-              const searchLower = search.toLowerCase();
-              passSearchFilter =
-                info?.description?.toLowerCase().includes(searchLower) ||
-                info?.title?.toLowerCase().includes(searchLower) ||
-                info?.task?.toLowerCase().includes(searchLower) ||
-                info?.category?.toLowerCase().includes(searchLower) ||
-                info?.label?.some((label) =>
-                  label?.toLowerCase().includes(searchLower),
-                ) ||
-                false;
-            }
-            return (
-              (_.isEmpty(selectedCategories) ||
-                _.includes(selectedCategories, info?.category)) &&
-              (_.isEmpty(selectedLabels) ||
-                _.intersection(selectedLabels, info?.label).length > 0) &&
-              (_.isEmpty(selectedTasks) ||
-                _.includes(selectedTasks, info?.task)) &&
-              passSearchFilter
-            );
-          })
-          .sort((a, b) => {
-            const aIndex = sorting.indexOf(a?.name || '');
-            const bIndex = sorting.indexOf(b?.name || '');
+        dataSource={
+          model_cards?.edges
+            ?.map((edge) => edge?.node)
+            .filter((info) => {
+              let passSearchFilter = true;
+              if (search) {
+                const searchLower = search.toLowerCase();
+                passSearchFilter =
+                  info?.description?.toLowerCase().includes(searchLower) ||
+                  info?.title?.toLowerCase().includes(searchLower) ||
+                  info?.task?.toLowerCase().includes(searchLower) ||
+                  info?.category?.toLowerCase().includes(searchLower) ||
+                  info?.label?.some((label) =>
+                    label?.toLowerCase().includes(searchLower),
+                  ) ||
+                  false;
+              }
+              return (
+                (_.isEmpty(selectedCategories) ||
+                  _.includes(selectedCategories, info?.category)) &&
+                (_.isEmpty(selectedLabels) ||
+                  _.intersection(selectedLabels, info?.label).length > 0) &&
+                (_.isEmpty(selectedTasks) ||
+                  _.includes(selectedTasks, info?.task)) &&
+                passSearchFilter
+              );
+            })
+            .sort((a, b) => {
+              const aIndex = sorting.indexOf(a?.name || '');
+              const bIndex = sorting.indexOf(b?.name || '');
 
-            if (aIndex !== -1 && bIndex !== -1) {
-              return aIndex - bIndex;
-            } else if (aIndex !== -1) {
-              return -1;
-            } else if (bIndex !== -1) {
-              return 1;
-            } else {
-              return 0;
-            }
-          })}
-        renderItem={(item) => (
+              if (aIndex !== -1 && bIndex !== -1) {
+                return aIndex - bIndex;
+              } else if (aIndex !== -1) {
+                return -1;
+              } else if (bIndex !== -1) {
+                return 1;
+              } else {
+                return 0;
+              }
+            }) as Array<ModelCard>
+        }
+        renderItem={(item: ModelCard) => (
           <List.Item
             onClick={() => {
               setCurrentModelInfo(item);
@@ -280,10 +287,18 @@ const ModelStoreListPage: React.FC = () => {
                 <Flex direction="row" align="start" gap="xs">
                   <Image
                     width={150}
-                    preview={false}
-                    src={`/resources/images/model-player/${_.replace(item?.name as string, ' ', '-')}.jpeg`}
-                    fallback="/resources/images/model-player/default.jpeg"
-                    loading={'lazy'}
+                    src={(() => {
+                      const found = _.find(
+                        models,
+                        (model) => model?.name === item?.name,
+                      );
+                      return found &&
+                        typeof found === 'object' &&
+                        'thumbnail' in found &&
+                        (found as any).thumbnail
+                        ? (found as any).thumbnail
+                        : '/resources/images/model-player/default.jpeg';
+                    })()}
                   />
                   <Typography.Paragraph
                     ellipsis={{ rows: 3, expandable: false }}
@@ -310,7 +325,7 @@ const ModelStoreListPage: React.FC = () => {
                     </Tag>
                   )}
                   {item?.label &&
-                    _.map(item?.label, (label) => (
+                    _.map(item?.label, (label: string) => (
                       <Tag key={label} bordered={false} color="blue">
                         <TextHighlighter keyword={search}>
                           {label}
@@ -338,15 +353,13 @@ const ModelStoreListPage: React.FC = () => {
           </List.Item>
         )}
       />
-      <UnmountModalAfterClose>
-        <ModelCardModal
-          modelCardModalFrgmt={currentModelInfo}
-          open={!!currentModelInfo}
-          onRequestClose={() => {
-            setCurrentModelInfo(null);
-          }}
-        />
-      </UnmountModalAfterClose>
+      <ModelCardModal
+        modelCardModalFrgmt={currentModelInfo}
+        open={!!currentModelInfo}
+        onRequestClose={() => {
+          setCurrentModelInfo(null);
+        }}
+      />
     </Flex>
   );
 };
