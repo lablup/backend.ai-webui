@@ -71,7 +71,7 @@ const EndpointChat: React.FC<EndpointChatProps> = ({
   }>({
     queryKey: ['models', endpointUrl],
     queryFn: () => {
-      return fetch(new URL(basePath + '/models', endpointUrl).toString(), {
+      return fetch(new URL(`/${basePath}/models`, endpointUrl).toString(), {
         headers: {
           Authorization: `BackendAI ${newestValidToken}`,
         },
