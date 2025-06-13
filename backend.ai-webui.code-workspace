@@ -1,0 +1,20 @@
+{
+  "folders": [
+    {
+      "path": ".",
+      "name": "backend.ai-webui",
+    },
+    {
+      "path": "packages/backend.ai-ui",
+      "name": "backend.ai-ui",
+    },
+  ],
+  "settings": {
+    "i18n-ally.enabledFrameworks": ["react", "custom"],
+    "i18n-ally.keystyle": "nested",
+    "i18n-ally.dirStructure": "auto",
+    "files.exclude": {
+      "packages/backend.ai-ui": true,
+    },
+  },
+}
