@@ -2,16 +2,15 @@ import { ModelCardModalFragment$key } from '../__generated__/ModelCardModalFragm
 import { ModelStoreListPageQuery } from '../__generated__/ModelStoreListPageQuery.graphql';
 import Flex from '../components/Flex';
 import ModelCardModal from '../components/ModelCardModal';
-import ModelCardThumbnail from '../components/ModelCardThumbnail';
 import TextHighlighter from '../components/TextHighlighter';
-import UnmountModalAfterClose from '../components/UnmountModalAfterClose';
 import { useUpdatableState } from '../hooks';
-import { useModelConfig } from '../hooks/useModelConfig';
+import { useModelCardMetadata } from '../hooks/useModelCardMetadata';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import {
   Alert,
   Button,
   Card,
+  Image,
   Input,
   List,
   Select,
@@ -35,6 +34,12 @@ const useStyles = createStyles(({ css, token }) => {
     `,
   };
 });
+
+type ModelCard = NonNullable<
+  NonNullable<
+    ModelStoreListPageQuery['response']['model_cards']
+  >['edges'][number]
+>['node'];
 
 const ModelStoreListPage: React.FC = () => {
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
@@ -203,47 +208,49 @@ const ModelStoreListPage: React.FC = () => {
       <List
         className={styles.cardList}
         grid={{ gutter: 16, column: 2 }}
-        dataSource={model_cards?.edges
-          ?.map((edge) => edge?.node)
-          .filter((info) => {
-            let passSearchFilter = true;
-            if (search) {
-              const searchLower = search.toLowerCase();
-              passSearchFilter =
-                info?.description?.toLowerCase().includes(searchLower) ||
-                info?.title?.toLowerCase().includes(searchLower) ||
-                info?.task?.toLowerCase().includes(searchLower) ||
-                info?.category?.toLowerCase().includes(searchLower) ||
-                info?.label?.some((label) =>
-                  label?.toLowerCase().includes(searchLower),
-                ) ||
-                false;
-            }
-            return (
-              (_.isEmpty(selectedCategories) ||
-                _.includes(selectedCategories, info?.category)) &&
-              (_.isEmpty(selectedLabels) ||
-                _.intersection(selectedLabels, info?.label).length > 0) &&
-              (_.isEmpty(selectedTasks) ||
-                _.includes(selectedTasks, info?.task)) &&
-              passSearchFilter
-            );
-          })
-          .sort((a, b) => {
-            const aIndex = sorting.indexOf(a?.name || '');
-            const bIndex = sorting.indexOf(b?.name || '');
+        dataSource={
+          model_cards?.edges
+            ?.map((edge) => edge?.node)
+            .filter((info) => {
+              let passSearchFilter = true;
+              if (search) {
+                const searchLower = search.toLowerCase();
+                passSearchFilter =
+                  info?.description?.toLowerCase().includes(searchLower) ||
+                  info?.title?.toLowerCase().includes(searchLower) ||
+                  info?.task?.toLowerCase().includes(searchLower) ||
+                  info?.category?.toLowerCase().includes(searchLower) ||
+                  info?.label?.some((label) =>
+                    label?.toLowerCase().includes(searchLower),
+                  ) ||
+                  false;
+              }
+              return (
+                (_.isEmpty(selectedCategories) ||
+                  _.includes(selectedCategories, info?.category)) &&
+                (_.isEmpty(selectedLabels) ||
+                  _.intersection(selectedLabels, info?.label).length > 0) &&
+                (_.isEmpty(selectedTasks) ||
+                  _.includes(selectedTasks, info?.task)) &&
+                passSearchFilter
+              );
+            })
+            .sort((a, b) => {
+              const aIndex = sorting.indexOf(a?.name || '');
+              const bIndex = sorting.indexOf(b?.name || '');
 
-            if (aIndex !== -1 && bIndex !== -1) {
-              return aIndex - bIndex;
-            } else if (aIndex !== -1) {
-              return -1;
-            } else if (bIndex !== -1) {
-              return 1;
-            } else {
-              return 0;
-            }
-          })}
-        renderItem={(item) => (
+              if (aIndex !== -1 && bIndex !== -1) {
+                return aIndex - bIndex;
+              } else if (aIndex !== -1) {
+                return -1;
+              } else if (bIndex !== -1) {
+                return 1;
+              } else {
+                return 0;
+              }
+            }) as Array<ModelCard>
+        }
+        renderItem={(item: ModelCard) => (
           <List.Item
             onClick={() => {
               setCurrentModelInfo(item);
@@ -281,10 +288,9 @@ const ModelStoreListPage: React.FC = () => {
                   <Image
                     width={150}
                     src={(() => {
-                      // @ts-ignore
                       const found = _.find(
                         models,
-                        (model) => (model as any)?.name === item.name,
+                        (model) => model?.name === item?.name,
                       );
                       return found &&
                         typeof found === 'object' &&
@@ -347,15 +353,13 @@ const ModelStoreListPage: React.FC = () => {
           </List.Item>
         )}
       />
-      <UnmountModalAfterClose>
-        <ModelCardModal
-          modelCardModalFrgmt={currentModelInfo}
-          open={!!currentModelInfo}
-          onRequestClose={() => {
-            setCurrentModelInfo(null);
-          }}
-        />
-      </UnmountModalAfterClose>
+      <ModelCardModal
+        modelCardModalFrgmt={currentModelInfo}
+        open={!!currentModelInfo}
+        onRequestClose={() => {
+          setCurrentModelInfo(null);
+        }}
+      />
     </Flex>
   );
 };
