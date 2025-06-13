@@ -507,7 +507,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                   resource_opts: JSON.stringify({
                     shmem: values.resource.shmem,
                   }),
-                  // FIXME: temporally convert cluster mode string according to server-side type
+                  // FIXME: temporarily convert cluster mode string according to server-side type
                   cluster_mode:
                     'single-node' === values.cluster_mode
                       ? 'SINGLE_NODE'
