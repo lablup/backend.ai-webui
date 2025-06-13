@@ -1,0 +1,15 @@
+{
+  "folders": [
+    {
+      "path": ".",
+    },
+    {
+      "path": "packages/backend.ai-ui",
+    },
+  ],
+  "settings": {
+    "i18n-ally.enabledFrameworks": ["react", "custom"],
+    "relay.rootDirectory": ".",
+    "i18n-ally.keystyle": "nested",
+  },
+}
