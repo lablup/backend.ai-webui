@@ -11,7 +11,7 @@ import {
   useCurrentProjectValue,
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
-import { ModelConfigMeta } from '../hooks/useModelConfig';
+import { ModelCard } from '../hooks/useModelCardMetadata';
 import {
   ServiceCreateType,
   ServiceLauncherFormValue,
@@ -24,17 +24,16 @@ import { useTranslation } from 'react-i18next';
 
 interface ModelTryContentButtonProps {
   modelStorageHost?: string;
-  modelConfigItem?: ModelConfigMeta | null;
+  modelCardMetadata?: ModelCard | null;
   modelName?: string;
   title?: string;
 }
 
 const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
   modelName,
-  modelConfigItem,
+  modelCardMetadata,
   modelStorageHost,
   title,
-  ...props
 }) => {
   const { t } = useTranslation();
   // const { token } = theme.useToken();
@@ -199,17 +198,17 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
     return {
       serviceName: `${modelName}-${generateRandomString(4)}`,
       replicas: 1,
-      environments: modelConfigItem?.environments || {
+      environments: modelCardMetadata?.environments || {
         environment: '',
         version: '',
         image: null,
       },
-      runtimeVariant: modelConfigItem?.runtimeVariant || 'custom',
+      runtimeVariant: modelCardMetadata?.runtimeVariant || 'custom',
       cluster_size: 1,
       cluster_mode: 'single-node',
       openToPublic: true,
       resourceGroup: currentResourceGroupByProject as string,
-      resource: modelConfigItem?.resource || {
+      resource: modelCardMetadata?.resource || {
         cpu: 4,
         mem: '32g',
         accelerator: 10,
@@ -220,7 +219,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
       modelMountDestination: '/models',
       modelDefinitionPath: '',
       vfoldersAliasMap: {},
-      envvars: modelConfigItem?.envvars || [],
+      envvars: modelCardMetadata?.envvars || [],
       enabledAutomaticShmem: false,
     };
   };
@@ -244,10 +243,10 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
           input: {
             permission: 'wd', // write-delete permission
             target_host: modelStorageHost, // lowestUsageHost, // clone to accessible and lowest usage storage host
-            target_name: `${modelConfigItem?.serviceName || modelName}`, // TODO: add suffix to avoid name conflict
+            target_name: `${modelCardMetadata?.serviceName || modelName}`, // TODO: add suffix to avoid name conflict
             usage_mode: 'model',
           },
-          name: `${modelName === 'Talkativot UI' ? 'talkativot-standalone' : modelConfigItem?.serviceName}`,
+          name: `${modelName === 'Talkativot UI' ? 'talkativot-standalone' : modelCardMetadata?.serviceName}`,
         },
         {
           onSuccess: (data) => {
@@ -276,7 +275,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
                   resolved: (_data: any, _notification: any) => {
                     mutationToCreateService.mutate(
                       getServiceInputByModelNameAndVFolderId(
-                        modelConfigItem?.serviceName ?? '',
+                        modelCardMetadata?.serviceName ?? '',
                         `${modelName}-1`,
                       ),
                       {
@@ -388,7 +387,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
     } else {
       mutationToCreateService.mutate(
         getServiceInputByModelNameAndVFolderId(
-          modelConfigItem?.serviceName ?? '',
+          modelCardMetadata?.serviceName ?? '',
           filteredModelStoreList[0].id,
         ),
         {
@@ -477,7 +476,9 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
     <Button
       type="primary"
       onClick={() => {
-        cloneOrCreateModelService(modelConfigItem?.runtimeVariant || 'custom');
+        cloneOrCreateModelService(
+          modelCardMetadata?.runtimeVariant || 'custom',
+        );
       }}
       style={{
         width: 'auto',

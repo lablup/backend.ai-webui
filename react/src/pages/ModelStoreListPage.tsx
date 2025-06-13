@@ -46,7 +46,7 @@ const ModelStoreListPage: React.FC = () => {
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
   const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
   const { styles } = useStyles();
-  const { sorting } = useModelConfig();
+  const { models, sorting } = useModelCardMetadata();
 
   const [currentModelInfo, setCurrentModelInfo] =
     useState<ModelCardModalFragment$key | null>();
@@ -278,10 +278,21 @@ const ModelStoreListPage: React.FC = () => {
             >
               <Flex direction="column" align="stretch" gap="xs">
                 <Flex direction="row" align="start" gap="xs">
-                  <ModelCardThumbnail
-                    src={`/resources/images/model-player/${_.replace(item?.name as string, ' ', '-')}.jpeg`}
-                    fallbackSrc="/resources/images/model-player/default.jpeg"
+                  <Image
                     width={150}
+                    src={(() => {
+                      // @ts-ignore
+                      const found = _.find(
+                        models,
+                        (model) => (model as any)?.name === item.name,
+                      );
+                      return found &&
+                        typeof found === 'object' &&
+                        'thumbnail' in found &&
+                        (found as any).thumbnail
+                        ? (found as any).thumbnail
+                        : '/resources/images/model-player/default.jpeg';
+                    })()}
                   />
                   <Typography.Paragraph
                     ellipsis={{ rows: 3, expandable: false }}
