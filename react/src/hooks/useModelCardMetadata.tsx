@@ -15,10 +15,10 @@ export interface ModelCardMetadata {
 const TIMEOUT_24_HOURS = 24 * 60 * 60 * 1000;
 
 export const useModelCardMetadata = () => {
-  const [key, checkUpdate] = useUpdatableState('first');
+  const [updateKey, checkUpdateKey] = useUpdatableState('first');
 
   const { data: modelCardConfig, isLoading } = useTanQuery<ModelCardMetadata>({
-    queryKey: ['useModelCardConfig', key],
+    queryKey: ['use-model-card-metadata', updateKey],
     queryFn: () => {
       return fetch('resources/model_card_metadata.json').then((response) => {
         return response.json();
@@ -31,6 +31,6 @@ export const useModelCardMetadata = () => {
     models: modelCardConfig?.models ?? [],
     sorting: modelCardConfig?.sorting ?? [],
     isLoading,
-    refresh: useCallback(() => checkUpdate(), [checkUpdate]),
+    refresh: useCallback(() => checkUpdateKey(), [checkUpdateKey]),
   };
 };
