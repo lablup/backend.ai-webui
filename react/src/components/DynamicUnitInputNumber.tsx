@@ -36,7 +36,6 @@ const DynamicUnitInputNumber: React.FC<DynamicUnitInputNumberProps> = ({
       defaultValue: '0g',
     },
   );
-  console.log(value);
   const [numValue, _unitFromValue] =
     value === null || value === undefined
       ? [null, null]
