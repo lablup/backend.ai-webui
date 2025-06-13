@@ -835,7 +835,16 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               dataIndex: 'token',
               fixed: 'left',
               render: (text, row) => (
-                <Typography.Text ellipsis copyable style={{ width: 150 }}>
+                <Typography.Text
+                  ellipsis
+                  copyable
+                  style={{
+                    width: 150,
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
                   {row.token}
                 </Typography.Text>
               ),
