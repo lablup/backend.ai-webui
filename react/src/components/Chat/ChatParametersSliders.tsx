@@ -11,7 +11,7 @@ import {
   Typography,
 } from 'antd';
 import { t } from 'i18next';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 
 type ChatParameterChangeEventHandler = (event: {
   id: string;
@@ -120,16 +120,17 @@ const chatParameters: Record<string, ChatParameterSliderData> = {
 
 export const ChatParametersSliders = ({
   parameters,
+  usingParameters,
   onChangeParameter,
 }: {
   parameters: ChatParameters;
+  usingParameters: boolean;
   onChangeParameter: (
     usingParameters: boolean,
     parameters: ChatParameters,
   ) => void;
 }) => {
   const { token } = theme.useToken();
-  const [enabled, setEnabled] = useState(false);
   const currentParameters = useRef<ChatParameters>(
     Object.keys(parameters).length > 0 ? parameters : DEFAULT_CHAT_PARAMETERS,
   );
@@ -158,7 +159,7 @@ export const ChatParametersSliders = ({
             ...currentParameters.current,
             ...values,
           };
-          onChangeParameter(enabled, {
+          onChangeParameter(usingParameters, {
             ...currentParameters.current,
           });
         }}
@@ -170,10 +171,9 @@ export const ChatParametersSliders = ({
             {t('chatui.chat.parameter.Title')}
           </Typography.Text>
           <Switch
-            checked={enabled}
+            checked={usingParameters}
             onChange={() => {
-              setEnabled(!enabled);
-              onChangeParameter(!enabled, {
+              onChangeParameter(!usingParameters, {
                 ...currentParameters.current,
               });
             }}
@@ -186,7 +186,7 @@ export const ChatParametersSliders = ({
         />
         {Object.entries(chatParameters).map(([id, params]) => (
           <ChatParameterSliderFormItem
-            disabled={!enabled}
+            disabled={!usingParameters}
             key={id}
             id={id}
             {...params}

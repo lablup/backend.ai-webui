@@ -13,19 +13,16 @@ import {
   CloseOutlined,
   ControlOutlined,
   MoreOutlined,
-  PlusOutlined,
 } from '@ant-design/icons';
-import {
-  Dropdown,
-  Button,
-  theme,
-  MenuProps,
-  Typography,
-  Switch,
-  Popover,
-} from 'antd';
+import { Dropdown, Button, theme, MenuProps, Popover, Tooltip } from 'antd';
 import { isEmpty } from 'lodash';
-import { Scale as ScaleIcon, Eraser as EraserIcon } from 'lucide-react';
+import {
+  ScaleIcon,
+  EraserIcon,
+  ToggleRightIcon,
+  ToggleLeftIcon,
+  ArrowRightLeftIcon,
+} from 'lucide-react';
 import React, { startTransition, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -37,14 +34,20 @@ interface SyncSwitchProps {
 
 const SyncSwitch: React.FC<SyncSwitchProps> = ({ sync, onClick }) => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   return (
     <>
-      {sync && (
-        <Typography.Text type="secondary">
-          {t('chatui.SyncInput')}
-        </Typography.Text>
-      )}
-      <Switch checked={sync} onClick={onClick} />
+      <Tooltip title={t('chatui.SyncInput')}>
+        <Button
+          type="text"
+          icon={sync ? <ToggleRightIcon /> : <ToggleLeftIcon />}
+          onClick={() => onClick(!sync)}
+          style={{
+            marginLeft: 8,
+            color: sync ? token.colorPrimary : undefined,
+          }}
+        />
+      </Tooltip>
     </>
   );
 };
@@ -216,7 +219,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
           />
         )}
       </Flex>
-      <Flex gap={'xs'}>
+      <Flex style={{ marginRight: token.marginSM * -1, zIndex: 1 }}>
         {closable && (
           <SyncSwitch
             sync={sync}
@@ -231,6 +234,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
           content={
             <ChatParametersSliders
               parameters={parameters}
+              usingParameters={usingParameters}
               onChangeParameter={(usingParameters, parameters) => {
                 startTransition(() => {
                   onChangeParameter(usingParameters, parameters);
@@ -244,25 +248,34 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             padding: token.paddingXS,
           }}
         >
-          <Button
-            icon={
-              <ControlOutlined
-                style={{
-                  color: usingParameters ? token.colorPrimary : undefined,
-                }}
-              />
-            }
-          />
+          <Tooltip title={t('chatui.chat.parameter.Title')}>
+            <Button
+              type="text"
+              icon={
+                <ControlOutlined
+                  style={{
+                    color: usingParameters ? token.colorPrimary : undefined,
+                  }}
+                />
+              }
+            />
+          </Tooltip>
         </Popover>
         {cloneable && (
-          <Button onClick={() => onAddChat?.()} icon={<PlusOutlined />} />
+          <Tooltip title={t('chatui.CreateCompareChat')}>
+            <Button
+              type="text"
+              onClick={() => onAddChat?.()}
+              icon={<ArrowRightLeftIcon />}
+            />
+          </Tooltip>
         )}
         <Dropdown menu={{ items }} trigger={['click']}>
           <Button
-            type="link"
+            type="text"
             onClick={(e) => e.preventDefault()}
             icon={<MoreOutlined />}
-            style={{ color: token.colorTextSecondary, width: token.sizeMS }}
+            style={{ color: token.colorTextSecondary }}
           />
         </Dropdown>
       </Flex>

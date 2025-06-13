@@ -10,13 +10,13 @@ import {
 import { type ChatProviderData } from '../components/Chat/ChatModel';
 import Flex from '../components/Flex';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-import { Button, Drawer, List, Tooltip, Typography } from 'antd';
+import { Badge, Button, Card, Drawer, List, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
 import _ from 'lodash';
 import { HistoryIcon, PlusIcon, TrashIcon } from 'lucide-react';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useParams } from 'react-router-dom';
 import { StringParam, useQueryParams } from 'use-query-params';
@@ -82,6 +82,7 @@ function useChatProviderData(defaultEndpointId?: string): ChatProviderData {
 }
 
 interface ChatHistoryDrawerProps {
+  selectedHistoryId?: string;
   history: ChatHistoryData[];
   open?: boolean;
   onClickClose: () => void;
@@ -90,6 +91,7 @@ interface ChatHistoryDrawerProps {
 }
 
 const ChatHistoryDrawer = ({
+  selectedHistoryId,
   history,
   open,
   onClickClose,
@@ -104,8 +106,8 @@ const ChatHistoryDrawer = ({
       mask={false}
       maskClosable={true}
       title={t('chatui.History')}
-     styles={{
-        body: { paddingRight: 0 },
+      styles={{
+        body: { paddingBlock: 0 },
       }}
     >
       <List
@@ -131,10 +133,17 @@ const ChatHistoryDrawer = ({
               />,
             ]}
             style={{ cursor: 'pointer' }}
+            styles={{
+              actions: {
+                padding: 0,
+              },
+            }}
             onClick={() => onClickHistory(item.id)}
           >
             <List.Item.Meta
-              title={item.title}
+              title={
+                <Badge dot={selectedHistoryId === item.id}>{item.title}</Badge>
+              }
               description={dayjs(item.updatedAt).format('YYYY-MM-DD HH:mm:ss')}
             />
           </List.Item>
@@ -187,6 +196,9 @@ const PureChatPage = ({ id }: { id: string }) => {
         styles={{
           body: { overflow: 'hidden', paddingTop: 0 },
         }}
+        style={{
+          overflow: 'hidden',
+        }}
         extra={
           <>
             <Tooltip title={t('chatui.NewChat')}>
@@ -224,55 +236,58 @@ const PureChatPage = ({ id }: { id: string }) => {
               direction="row"
               align="stretch"
             >
-              {_.map(chat.chats, (chatData, index) => (
-                <ChatCard
-                  key={chatData.id}
-                  className={styles.chatCard}
-                  chat={chatData}
-                  onUpdateChat={(newChatProperties) => {
-                    updateChatData(chatData.id, newChatProperties);
-                  }}
-                  fetchOnClient
-                  onRemoveChat={() => {
-                    removeChatData(chatData.id);
-                  }}
-                  onAddChat={() => {
-                    addChatData(chatData);
-                  }}
-                  onSaveMessage={(message) => {
-                    saveChatMessage(chatData.id, message);
-                  }}
-                  onClearMessage={(chat) => {
-                    clearChatMessage(chat.id);
-                  }}
-                  closable={isClosable(chat.chats.length)}
-                  cloneable={isClonable(chat.chats.length)}
-                />
-              ))}
+              <Suspense fallback={<Card className={styles.chatCard} loading />}>
+                {_.map(chat.chats, (chatData, index) => (
+                  <ChatCard
+                    key={chatData.id}
+                    className={styles.chatCard}
+                    chat={chatData}
+                    onUpdateChat={(newChatProperties) => {
+                      updateChatData(chatData.id, newChatProperties);
+                    }}
+                    fetchOnClient
+                    onRemoveChat={() => {
+                      removeChatData(chatData.id);
+                    }}
+                    onAddChat={() => {
+                      addChatData(chatData);
+                    }}
+                    onSaveMessage={(message) => {
+                      saveChatMessage(chatData.id, message);
+                    }}
+                    onClearMessage={(chat) => {
+                      clearChatMessage(chat.id);
+                    }}
+                    closable={isClosable(chat.chats.length)}
+                    cloneable={isClonable(chat.chats.length)}
+                  />
+                ))}
+              </Suspense>
             </Flex>
-            <ChatHistoryDrawer
-              open={openHistory}
-              history={history}
-              onClickClose={() => {
-                setOpenHistory(false);
-              }}
-              onClickRemove={(historyId) => {
-                const remainHistories = removeHistory(historyId);
-
-                if (remainHistories === 0) {
-                  setOpenHistory(false);
-                  navigate('/chat', { replace: true });
-                } else if (historyId === chat.id) {
-                  const chat = history.filter(({ id }) => id !== historyId)[0];
-                  navigate(`/chat/${chat?.id}`, { replace: true });
-                }
-              }}
-              onClickHistory={(historyId) => {
-                navigate(`/chat/${historyId}`, { replace: true });
-              }}
-            />
           </Flex>
         )}
+        <ChatHistoryDrawer
+          selectedHistoryId={chat.id}
+          open={openHistory}
+          history={history}
+          onClickClose={() => {
+            setOpenHistory(false);
+          }}
+          onClickRemove={(historyId) => {
+            const remainHistories = removeHistory(historyId);
+
+            if (remainHistories === 0) {
+              setOpenHistory(false);
+              navigate('/chat', { replace: true });
+            } else if (historyId === chat.id) {
+              const chat = history.filter(({ id }) => id !== historyId)[0];
+              navigate(`/chat/${chat?.id}`, { replace: true });
+            }
+          }}
+          onClickHistory={(historyId) => {
+            navigate(`/chat/${historyId}`, { replace: true });
+          }}
+        />
       </BAICard>
     )
   );

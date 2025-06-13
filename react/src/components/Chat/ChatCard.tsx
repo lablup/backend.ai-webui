@@ -75,7 +75,11 @@ const useStyles = createStyles(({ token, css }) => ({
     padding-right: ${token.paddingContentHorizontal};
   `,
   header: css`
-    zindex: 1;
+    z-index: 1;
+
+    & .ant-card-head-title {
+      overflow: visible;
+    }
   `,
   alert: css`
     margin: ${token.marginSM};
