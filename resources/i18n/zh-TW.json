@@ -105,6 +105,7 @@
     "DeleteChattingSession": "删除聊天",
     "DeleteChattingSessionDescription": "您即將刪除該主題。\n一旦刪除，就無法恢復。\n請謹慎行事。",
     "DropFileHere": "將文件拖放到此處",
+    "History": "历史",
     "NewChat": "新聊天",
     "SelectEndpoint": "選擇端點",
     "SelectModel": "選擇型號",

@@ -105,6 +105,7 @@
     "DeleteChattingSession": "Chat löschen",
     "DeleteChattingSessionDescription": "Sie sind dabei, dieses Thema zu löschen. \nEinmal gelöscht, kann es nicht wiederhergestellt werden. \nBitte gehen Sie vorsichtig vor.",
     "DropFileHere": "Datei hier ablegen",
+    "History": "Geschichte",
     "NewChat": "Neuer Chat",
     "SelectEndpoint": "Wählen Sie Endpunkt aus",
     "SelectModel": "Wählen Sie Modell aus",

@@ -105,6 +105,7 @@
     "DeleteChattingSession": "Удалить чат",
     "DeleteChattingSessionDescription": "Вы собираетесь удалить эту тему. \nПосле удаления его невозможно восстановить. \nПожалуйста, действуйте осторожно.",
     "DropFileHere": "Перетащите файл сюда",
+    "History": "История",
     "NewChat": "Новый чат",
     "SelectEndpoint": "Выберите конечную точку",
     "SelectModel": "Выберите модель",

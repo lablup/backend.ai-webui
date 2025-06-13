@@ -5,6 +5,7 @@ import {
   RoutingEventHandler,
 } from './components/DefaultProviders';
 import Flex from './components/Flex';
+import FlexActivityIndicator from './components/FlexActivityIndicator';
 import LocationStateBreadCrumb from './components/LocationStateBreadCrumb';
 import MainLayout from './components/MainLayout/MainLayout';
 import WebUINavigate from './components/WebUINavigate';
@@ -142,15 +143,12 @@ const router = createBrowserRouter([
         element: <WebUINavigate to="/start" replace />,
       },
       {
-        path: '/chat',
+        path: '/chat/:id?',
         handle: { labelKey: 'webui.menu.Chat' },
         Component: () => {
-          const { t } = useTranslation();
           useSuspendedBackendaiClient();
           return (
-            <Suspense
-              fallback={<BAICard title={t('webui.menu.Chat')} loading />}
-            >
+            <Suspense fallback={<FlexActivityIndicator spinSize="large" />}>
               <ChatPage />
             </Suspense>
           );

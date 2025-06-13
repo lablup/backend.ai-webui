@@ -105,6 +105,8 @@
     "DeleteChattingSession": "Poista keskustelu",
     "DeleteChattingSessionDescription": "Olet poistamassa tätä aihetta. \nKun se on poistettu, sitä ei voi palauttaa. \nOle hyvä ja jatka varoen.",
     "DropFileHere": "Pudota tiedosto tähän",
+    "History": "Historia",
+    "NewChat": "Uusi keskustelu",
     "SelectEndpoint": "Valitse Päätepiste",
     "SelectModel": "Valitse Malli",
     "SelectToken": "Valitse Token",

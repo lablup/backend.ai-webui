@@ -105,6 +105,7 @@
     "DeleteChattingSession": "ลบแชท",
     "DeleteChattingSessionDescription": "คุณกำลังจะลบหัวข้อนี้ เมื่อลบแล้วจะไม่สามารถกู้คืนได้ กรุณาดำเนินการด้วยความระมัดระวัง",
     "DropFileHere": "วางไฟล์ที่นี่",
+    "History": "ประวัติศาสตร์",
     "NewChat": "แชทใหม่",
     "SelectEndpoint": "เลือกจุดสิ้นสุด",
     "SelectModel": "เลือกโมเดล",

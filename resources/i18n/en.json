@@ -107,6 +107,7 @@
     "DeleteChattingSession": "Delete Chat",
     "DeleteChattingSessionDescription": "You are about to delete this topic. Once deleted, it cannot be recovered. Please proceed with caution.",
     "DropFileHere": "Drop file here",
+    "History": "History",
     "NewChat": "New Chat",
     "SelectEndpoint": "Select Endpoint",
     "SelectModel": "Select Model",

@@ -104,6 +104,7 @@
     "DeleteChattingSession": "チャット削除",
     "DeleteChattingSessionDescription": "このトピックを削除しようとしています。\n一度削除すると復元することはできません。\n慎重に進めてください。",
     "DropFileHere": "ここにファイルをドロップします",
+    "History": "歴史",
     "NewChat": "新しいチャット",
     "SelectEndpoint": "エンドポイントの選択",
     "SelectModel": "モデルの選択",

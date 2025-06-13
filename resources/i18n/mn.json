@@ -104,6 +104,7 @@
     "DeleteChattingSession": "Унцыг устгана уу",
     "DeleteChattingSessionDescription": "Та энэ сэдвийг устгах гэж байна. \nУстгасны дараа сэргээх боломжгүй. \nБолгоомжтой үргэлжлүүлнэ үү.",
     "DropFileHere": "Файлыг энд буулгана уу",
+    "History": "Түүх",
     "NewChat": "Шинэ чат",
     "SelectEndpoint": "Төгсгөлийн цэгийг сонгоно уу",
     "SelectModel": "Загвар сонгоно уу",

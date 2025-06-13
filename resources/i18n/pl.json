@@ -105,6 +105,7 @@
     "DeleteChattingSession": "Usuń czat",
     "DeleteChattingSessionDescription": "Zamierzasz usunąć ten temat. \nRaz usuniętego nie można odzyskać. \nProszę postępować ostrożnie.",
     "DropFileHere": "Upuść plik tutaj",
+    "History": "Historia",
     "NewChat": "Nowy czat",
     "SelectEndpoint": "Wybierz Punkt końcowy",
     "SelectModel": "Wybierz Model",

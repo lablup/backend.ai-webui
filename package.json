@@ -93,6 +93,7 @@
     "markty-toml": "0.1.1",
     "mime-db": "^1.53.0",
     "mime-types": "^2.1.35",
+    "nanoid": "^5.1.5",
     "octokit": "^3.2.1",
     "patch-package": "^8.0.0",
     "tus-js-client": "^4.1.0",

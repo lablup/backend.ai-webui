@@ -1,6 +1,6 @@
 import InputNumberWithSlider from '../InputNumberWithSlider';
 import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
-import type { ChatParameters } from './ChatModel';
+import { DEFAULT_CHAT_PARAMETERS, type ChatParameters } from './ChatModel';
 import {
   ConfigProvider,
   Divider,
@@ -118,15 +118,6 @@ const chatParameters: Record<string, ChatParameterSliderData> = {
   },
 };
 
-const defaultChatParameters = {
-  maxTokens: 4096,
-  temperature: 0.7,
-  topP: 1,
-  topK: 1,
-  frequencyPenalty: 1,
-  presencePenalty: 1,
-};
-
 export const ChatParametersSliders = ({
   parameters,
   onChangeParameter,
@@ -140,7 +131,7 @@ export const ChatParametersSliders = ({
   const { token } = theme.useToken();
   const [enabled, setEnabled] = useState(false);
   const currentParameters = useRef<ChatParameters>(
-    Object.keys(parameters).length > 0 ? parameters : defaultChatParameters,
+    Object.keys(parameters).length > 0 ? parameters : DEFAULT_CHAT_PARAMETERS,
   );
 
   return (
@@ -160,7 +151,7 @@ export const ChatParametersSliders = ({
         initialValues={
           Object.keys(parameters).length > 0
             ? parameters
-            : defaultChatParameters
+            : DEFAULT_CHAT_PARAMETERS
         }
         onValuesChange={(values) => {
           currentParameters.current = {

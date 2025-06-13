@@ -1,15 +1,15 @@
-import { AIAgent } from '../../hooks/useAIAgent';
+import type { AIAgent } from '../../hooks/useAIAgent';
 import { APICallError } from 'ai';
+import type { UIMessage } from 'ai';
 
-export type ChatProviderType = {
+export interface ChatProviderData {
+  basePath?: string;
   baseURL?: string;
-  basePath: string;
-  agentId?: string;
   endpointId?: string;
+  agentId?: string;
   modelId?: string;
   apiKey?: string;
-  credentials?: RequestCredentials;
-};
+}
 
 export interface ChatParameters {
   maxTokens: number;
@@ -20,62 +20,25 @@ export interface ChatParameters {
   presencePenalty: number;
 }
 
-export type ChatType = {
+export type ChatMessage = UIMessage;
+
+export interface ChatData {
   id: string;
-  conversationId: string;
-  label: string;
   sync: boolean;
-  provider: ChatProviderType;
   usingParameters: boolean;
   parameters: ChatParameters;
+  provider: ChatProviderData;
   agent?: AIAgent;
-};
-
-export type ConversationType = {
-  id: string;
-  label: string;
-  chats: ChatType[];
-};
-
-export interface ChatLifecycleEventType {
-  onRequestClose?: (chat: ChatType) => void;
-  onCreateNewChat?: () => void;
+  messages: ChatMessage[];
 }
 
-interface ModelPermission {
+export interface ChatModel {
   id: string;
-  object: string;
-  created: number;
-  allow_create_engine: boolean;
-  allow_sampling: boolean;
-  allow_logprobs: boolean;
-  allow_search_indices: boolean;
-  allow_view: boolean;
-  allow_fine_tuning: boolean;
-  organization: string;
-  group: string | null;
-  is_blocking: boolean;
-}
-
-export interface Model {
-  id: string;
-  object: string;
-  created: number;
-  owned_by: string;
-  root: string;
-  parent: string | null;
-  max_model_len: number;
-  permission: ModelPermission[];
-}
-
-export type BAIModel = {
-  id: string;
-  label?: string;
   name?: string;
   group?: string;
   created?: string;
   description?: string;
-};
+}
 
 export function getAIErrorMessage(error: unknown): string {
   try {
@@ -95,4 +58,18 @@ export function getAIErrorMessage(error: unknown): string {
   } catch {}
 
   return 'Unknown error:' + error;
+}
+
+export const DEFAULT_CHAT_PARAMETERS = {
+  maxTokens: 4096,
+  temperature: 0.7,
+  topP: 1,
+  topK: 1,
+  frequencyPenalty: 1,
+  presencePenalty: 1,
+};
+
+export function getLatestUserMessage(messages: Array<ChatMessage>) {
+  const userMessages = messages.filter((message) => message.role === 'user');
+  return userMessages.at(-1);
 }
