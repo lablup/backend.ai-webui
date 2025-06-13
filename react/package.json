@@ -16,6 +16,7 @@
     "@dicebear/core": "^9.2.2",
     "@iconify-json/fluent-emoji-flat": "^1.2.3",
     "@melloware/react-logviewer": "^5.3.2",
+    "@microsoft/fetch-event-source": "^2.0.1",
     "@react-hook/resize-observer": "^2.0.2",
     "@storybook/test": "^8.6.10",
     "@tanstack/react-query": "^5.69.0",
