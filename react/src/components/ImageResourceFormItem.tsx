@@ -1,9 +1,11 @@
+import { compareNumberWithUnits, filterEmptyItem } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import Flex from './Flex';
 import NonLinearSlider from './NonLinearSlider';
 import { Divider, Form, Input, theme } from 'antd';
 import _ from 'lodash';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 export interface imageResourceProps {
   key: string;
@@ -20,6 +22,7 @@ const ImageResourceFormItem: React.FC<ImageResourceFormItemProps> = ({
   max,
 }) => {
   const { token } = theme.useToken();
+  const { t } = useTranslation();
 
   const { mergedResourceSlots } = useResourceSlotsDetails();
 
@@ -116,7 +119,41 @@ const ImageResourceFormItem: React.FC<ImageResourceFormItemProps> = ({
           tabIndex={-1}
         />
         <Divider type="vertical" style={{ height: 40 }} />
-        <Form.Item name={name} noStyle initialValue={min}>
+        <Form.Item
+          name={name}
+          noStyle
+          initialValue={min}
+          rules={filterEmptyItem([
+            min && {
+              validator: (_, value) => {
+                if (compareNumberWithUnits(value, min) < 0) {
+                  return Promise.reject(
+                    new Error(
+                      t('environment.resourceMinLimit', {
+                        min: min,
+                      }),
+                    ),
+                  );
+                }
+                return Promise.resolve();
+              },
+            },
+            max && {
+              validator: (_, value) => {
+                if (compareNumberWithUnits(value, max) > 0) {
+                  return Promise.reject(
+                    new Error(
+                      t('environment.resourceMaxLimit', {
+                        max: max,
+                      }),
+                    ),
+                  );
+                }
+                return Promise.resolve();
+              },
+            },
+          ])}
+        >
           <NonLinearSlider
             style={{ flex: 5 }}
             steps={getResourceInfo(name)?.steps}

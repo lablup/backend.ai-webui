@@ -553,6 +553,7 @@
     "Digest": "Digest",
     "Disabled": "사용 안함",
     "FullImagePath": "전체 이미지 경로",
+    "ImageReinstallationRequired": "이미지 재설치가 필요합니다",
     "Images": "이미지",
     "Install": "설치",
     "Installed": "설치 완료",
@@ -587,7 +588,9 @@
     "SuccessfullyModified": "수정되었습니다.",
     "Tags": "태그",
     "TakesTime": ". 시간이 다소 소요될 예정입니다. 커피 한 잔의 여유를 즐기시며 잠시 기다려 주세요.",
-    "Version": "버전"
+    "Version": "버전",
+    "resourceMaxLimit": "이미지 레이블에 지정된 최대 값보다 크게 설정할 수 없습니다. \n({{max}})",
+    "resourceMinLimit": "이미지 레이블에 지정된 최소값보다 작게 설정할 수 없습니다. \n({{min}})"
   },
   "error": {
     "APIEndpointIsEmpty": "API 엔드포인트가 비어있습니다. 회원 가입하시려면 Backend.AI API 엔드포인트를 입력해 주세요.",

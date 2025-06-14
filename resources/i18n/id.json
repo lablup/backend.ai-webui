@@ -550,6 +550,7 @@
     "Digest": "Intisari",
     "Disabled": "di-nonaktifkan",
     "FullImagePath": "Jalur gambar penuh",
+    "ImageReinstallationRequired": "Diperlukan pemasangan ulang gambar",
     "Images": "Image",
     "Install": "Instal",
     "Installed": "Terinstal",
@@ -584,7 +585,9 @@
     "SuccessfullyModified": "Berhasil dimodifikasi",
     "Tags": "Tag",
     "TakesTime": ". Butuh waktu jadi minumlah secangkir kopi!",
-    "Version": "Versi"
+    "Version": "Versi",
+    "resourceMaxLimit": "Tidak dapat diatur lebih tinggi dari maksimum yang ditentukan pada label gambar. \n({{max}})",
+    "resourceMinLimit": "Tidak dapat diatur lebih rendah dari minimum yang ditentukan pada label gambar. \n({{min}})"
   },
   "error": {
     "APIEndpointIsEmpty": "Titik Akhir API kosong. Harap tentukan titik akhir API Backend.AI untuk mendaftar.",

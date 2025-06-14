@@ -551,6 +551,7 @@
     "Digest": "sindirmek",
     "Disabled": "engelli",
     "FullImagePath": "Tam görüntü yolu",
+    "ImageReinstallationRequired": "Resim Yeniden Yükleme Gerekli",
     "Images": "Görüntüler",
     "Install": "Yüklemek",
     "Installed": "Kurulmuş",
@@ -585,7 +586,9 @@
     "SuccessfullyModified": "Başarıyla değiştirildi",
     "Tags": "Etiketler",
     "TakesTime": ". Zaman alır, bu yüzden bir fincan kahve iç!",
-    "Version": "Sürüm"
+    "Version": "Sürüm",
+    "resourceMaxLimit": "Görüntü etiketinde belirtilen maksimumdan daha yüksek ayarlanamaz. \n({{max}})",
+    "resourceMinLimit": "Görüntü etiketinde belirtilen minimumdan daha düşük ayarlanamaz. \n({{min}})"
   },
   "error": {
     "APIEndpointIsEmpty": "API Uç Noktası boş. Lütfen kaydolmak için Backend.AI API uç noktasını belirtin.",

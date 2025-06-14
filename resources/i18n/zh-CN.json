@@ -551,6 +551,7 @@
     "Digest": "消化",
     "Disabled": "残疾",
     "FullImagePath": "完整图像路径",
+    "ImageReinstallationRequired": "需要恢复图像",
     "Images": "图片",
     "Install": "安装",
     "Installed": "已安装",
@@ -585,7 +586,9 @@
     "SuccessfullyModified": "修改成功",
     "Tags": "标签",
     "TakesTime": ".这需要时间，所以喝杯咖啡吧！",
-    "Version": "版本"
+    "Version": "版本",
+    "resourceMaxLimit": "设置不高于图像标签上指定的最大值。 \n({{max}})",
+    "resourceMinLimit": "无法将其设置低于图像标签上指定的最小值。 \n（{{min}}）"
   },
   "error": {
     "APIEndpointIsEmpty": "API 端点为空。请指定 Backend.AI API 端点进行注册。",

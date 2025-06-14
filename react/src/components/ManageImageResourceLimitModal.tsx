@@ -66,7 +66,11 @@ const ManageImageResourceLimitModal: React.FC<
       }
     `);
 
-  const handleOnclick = async () => {
+  const handleOnClick = async () => {
+    const isValid = await formRef.current?.validateFields().catch(() => false);
+    if (!isValid) {
+      return;
+    }
     const fieldsValue = await formRef.current?.getFieldsValue();
     const resource_limits: ResourceLimitInput[] = Object.entries(
       fieldsValue,
@@ -111,7 +115,7 @@ const ManageImageResourceLimitModal: React.FC<
 
     if (image?.installed) {
       app.modal.confirm({
-        title: 'Image reinstallation required',
+        title: t('environment.ImageReinstallationRequired'),
         content: (
           <>
             <Trans
@@ -133,7 +137,7 @@ const ManageImageResourceLimitModal: React.FC<
       destroyOnClose
       open={open}
       maskClosable={false}
-      onOk={handleOnclick}
+      onOk={handleOnClick}
       onCancel={() => onRequestClose(false)}
       confirmLoading={isInFlightModifyImageInput}
       centered

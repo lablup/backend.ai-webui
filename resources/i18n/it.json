@@ -550,6 +550,7 @@
     "Digest": "digerire",
     "Disabled": "Disabilitato",
     "FullImagePath": "Percorso completo dell'immagine",
+    "ImageReinstallationRequired": "Richiesta di reinstallazione dell'immagine",
     "Images": "immagini",
     "Install": "Installare",
     "Installed": "installato",
@@ -584,7 +585,9 @@
     "SuccessfullyModified": "Modificato con successo",
     "Tags": "Tag",
     "TakesTime": ". Ci vuole tempo, quindi prendi una tazza di caffè!",
-    "Version": "Versione"
+    "Version": "Versione",
+    "resourceMaxLimit": "Non può essere impostato più in alto del massimo specificato sull'etichetta dell'immagine. \n({{max}})",
+    "resourceMinLimit": "Non può essere impostato inferiore al minimo specificato sull'etichetta dell'immagine. \n({{min}})"
   },
   "error": {
     "APIEndpointIsEmpty": "L'endpoint API è vuoto. Specifica l'endpoint dell'API Backend.AI per la registrazione.",
