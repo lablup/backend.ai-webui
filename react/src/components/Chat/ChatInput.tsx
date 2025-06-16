@@ -25,13 +25,7 @@ const chatSubmitKeyInfoState = atom<{ id: string; key: string } | undefined>(
   undefined,
 );
 
-interface ChatRequest {
-  headers?: Record<string, string> | Headers;
-  credentials?: RequestCredentials;
-  fetchOnClient?: boolean;
-}
-
-interface ChatInputProps extends ChatRequest, ChatAttachmentsProps {
+interface ChatInputProps extends ChatAttachmentsProps {
   sync: boolean;
   input: string;
   setInput: (input: string) => void;

@@ -9,13 +9,7 @@ const ChatMessageList = memo(VirtualChatMessageList);
 
 const ChatTokenCounter = memo(PureChatTokenCounter);
 
-interface ChatRequest {
-  headers?: Record<string, string> | Headers;
-  credentials?: RequestCredentials;
-  fetchOnClient?: boolean;
-}
-
-interface ChatMessageProps extends ChatRequest {
+interface ChatMessageProps {
   messages: Message[];
   input: string;
   isStreaming: boolean;
