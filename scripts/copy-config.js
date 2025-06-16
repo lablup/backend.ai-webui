@@ -14,7 +14,7 @@ const CONFIG_OUTPUT_PATH = path.join(
 const BAI_CONFIGS_GENERAL = ["apiEndpoint", "apiEndpointText"];
 const IS_VERCEL = process.env.VERCEL === "1" || process.env.VERCEL === "true";
 
-function generateConfig() {
+function generateConfigToml() {
   try {
     // Read the sample config file
     if (!fs.existsSync(CONFIG_SAMPLE_PATH)) {
@@ -81,7 +81,7 @@ function generateConfig() {
 
 if (IS_VERCEL) {
   console.log("🔄 Generating config.toml for Vercel deployment...");
-  generateConfig();
+  generateConfigToml();
 } else {
   console.log("🔄 Copying config.toml to build/rollup...");
   fs.copyFileSync(CONFIG_CONFIG_PATH, CONFIG_OUTPUT_PATH);
