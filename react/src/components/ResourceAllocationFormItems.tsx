@@ -964,7 +964,7 @@ const ResourceAllocationFormItems: React.FC<
                                           value: string,
                                         ) => {
                                           const applicationMem =
-                                            appMemUnitResult?.displayValue;
+                                            appMemUnitResult?.value;
                                           const shmem = value;
 
                                           if (
