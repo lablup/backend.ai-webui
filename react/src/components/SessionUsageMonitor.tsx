@@ -5,7 +5,8 @@ import {
   filterEmptyItem,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
-import { useResourceSlotsDetails } from '../hooks/backendai';
+import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
+import { useSessionLiveStat } from '../hooks/useSessionNodeLiveStat';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import Flex from './Flex';
 import { ProgressProps, Tooltip, Typography, theme, Row, Col } from 'antd';
@@ -14,7 +15,7 @@ import { useMemo } from 'react';
 import { graphql, useFragment } from 'react-relay';
 
 interface SessionUsageMonitorProps extends ProgressProps {
-  sessionFrgmt: SessionUsageMonitorFragment$key | null;
+  sessionFrgmt: SessionUsageMonitorFragment$key;
   size?: 'small' | 'default';
   displayTarget?: 'max' | 'avg' | 'current';
 }
@@ -100,28 +101,19 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
   const sessionNode = useFragment(
     graphql`
       fragment SessionUsageMonitorFragment on ComputeSessionNode {
-        kernel_nodes {
-          edges {
-            node {
-              live_stat
-              occupied_slots
-            }
-          }
-        }
+        occupied_slots
+        ...useSessionNodeLiveStatSessionFragment
       }
     `,
     sessionFrgmt,
   );
 
-  const firstKernelNode = sessionNode?.kernel_nodes?.edges?.[0]?.node;
-  const occupiedSlots = useMemo(
-    () => JSON.parse(firstKernelNode?.occupied_slots ?? '{}'),
-    [firstKernelNode?.occupied_slots],
-  );
+  const { liveStat } = useSessionLiveStat(sessionNode);
+
+  const occupiedSlots: {
+    [key in ResourceSlotName]?: string;
+  } = JSON.parse(sessionNode.occupied_slots || '{}');
   const resourceSlotNames = _.keysIn(occupiedSlots);
-  const liveStat = JSON.parse(
-    sessionNode?.kernel_nodes?.edges?.[0]?.node?.live_stat ?? '{}',
-  );
 
   // to display util first, mem second
   const sortedLiveStat = useMemo(
@@ -152,18 +144,25 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
       ? 'current'
       : (`stats.${displayTarget}` as const);
   const utilItems = filterEmptyItem([
-    sortedLiveStat?.cpu_util && (
-      <SessionUtilItem
-        key={'cpu'}
-        size={size}
-        title={mergedResourceSlots?.['cpu']?.human_readable_name}
-        percent={
-          displayTarget === 'current'
-            ? (sortedLiveStat?.cpu_util?.pct ?? '0')
-            : (sortedLiveStat?.cpu_util?.[displayTargetName] ?? '0')
-        }
-      />
-    ),
+    sortedLiveStat?.cpu_util &&
+      (() => {
+        const displayPercent =
+          (liveStat.cpu_util?.pct ? parseFloat(liveStat.cpu_util?.pct) : 0) /
+          parseFloat(occupiedSlots.cpu ?? '1');
+
+        return (
+          <SessionUtilItem
+            key={'cpu'}
+            size={size}
+            title={mergedResourceSlots?.['cpu']?.human_readable_name}
+            percent={
+              displayTarget === 'current'
+                ? displayPercent
+                : (sortedLiveStat?.cpu_util?.[displayTargetName] ?? '0')
+            }
+          />
+        );
+      })(),
     sortedLiveStat?.mem && sortedLiveStat?.mem?.[displayTargetName] && (
       <SessionUtilItem
         key={'mem'}
