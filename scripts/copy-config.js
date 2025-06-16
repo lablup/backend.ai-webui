@@ -3,7 +3,6 @@
 const fs = require("fs");
 const path = require("path");
 const TOML = require("@iarna/toml");
-const { execSync } = require("child_process");
 
 const CONFIG_SAMPLE_PATH = path.join(__dirname, "..", "config.toml.sample");
 const CONFIG_CONFIG_PATH = path.join(__dirname, "..", "config.toml");
@@ -85,7 +84,5 @@ if (IS_VERCEL) {
   generateConfig();
 } else {
   console.log("🔄 Copying config.toml to build/rollup...");
-  execSync(`cp ${CONFIG_CONFIG_PATH} ${CONFIG_OUTPUT_PATH}`, {
-    encoding: "utf8",
-  });
+  fs.copyFileSync(CONFIG_CONFIG_PATH, CONFIG_OUTPUT_PATH);
 }
