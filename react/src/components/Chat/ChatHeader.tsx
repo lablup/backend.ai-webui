@@ -219,7 +219,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
           />
         )}
       </Flex>
-      <Flex style={{ marginRight: token.marginSM * -1, zIndex: 1 }}>
+      <Flex style={{ zIndex: 1 }}>
         {closable && (
           <SyncSwitch
             sync={sync}

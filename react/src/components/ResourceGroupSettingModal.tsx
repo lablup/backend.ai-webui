@@ -272,7 +272,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
       }}
       {...modalProps}
     >
-      <Suspense fallback={<Skeleton />}>
+      <Suspense fallback={<Skeleton active />}>
         <Form
           ref={formRef}
           initialValues={INITIAL_FORM_VALUES}

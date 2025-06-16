@@ -33,14 +33,22 @@ const CopyButton: React.FC<CopyButtonProps> = ({
       title={isCopied ? 'Copied!' : 'Copy'}
       open={isCopied ? true : undefined}
     >
-      <CopyToClipboard text={copyable?.text || ''} onCopy={handleCopy}>
-        <Button
-          icon={
-            isCopied ? <CheckIcon /> : defaultIcon ? defaultIcon : <CopyIcon />
-          }
-          {...props}
-        />
-      </CopyToClipboard>
+      <div>
+        <CopyToClipboard text={copyable?.text || ''} onCopy={handleCopy}>
+          <Button
+            icon={
+              isCopied ? (
+                <CheckIcon />
+              ) : defaultIcon ? (
+                defaultIcon
+              ) : (
+                <CopyIcon />
+              )
+            }
+            {...props}
+          />
+        </CopyToClipboard>
+      </div>
     </Tooltip>
   );
 };

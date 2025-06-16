@@ -1,8 +1,9 @@
 import { useTokenCount } from '../../hooks/useTokenizer';
 import Flex from '../Flex';
-import { RocketOutlined } from '@ant-design/icons';
+import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import { Message } from 'ai';
-import { Typography, Tag, theme } from 'antd';
+import { Typography, Tag, Divider } from 'antd';
+import { t } from 'i18next';
 import { map, last } from 'lodash';
 import React, { useMemo } from 'react';
 
@@ -10,14 +11,15 @@ interface ChatTokenCounterProps {
   input: string;
   messages: Message[];
   startTime: number | null;
+  style?: React.CSSProperties;
 }
 
 const ChatTokenCounter: React.FC<ChatTokenCounterProps> = ({
   input,
   messages,
   startTime,
+  style,
 }) => {
-  const { token } = theme.useToken();
   const inputTokenCount = useTokenCount(input);
   const allChatMessageString = useMemo(() => {
     return map(messages, (message) => message?.content).join('');
@@ -41,19 +43,18 @@ const ChatTokenCounter: React.FC<ChatTokenCounterProps> = ({
   }, [lastAssistantTokenCount, startTime]);
 
   return (
-    <Flex justify="end" align="end" style={{ margin: token.marginSM }}>
-      <Tag>
-        <Flex gap={'xs'}>
-          <RocketOutlined />
-          <Flex gap={'xxs'}>
-            <Typography.Text>{tokenPerSecond.toFixed(2)}</Typography.Text>
-            <Typography.Text type="secondary">tok/s</Typography.Text>
-          </Flex>
-          <Flex gap={'xxs'}>
-            <Typography.Text>{totalTokenCount}</Typography.Text>
-            <Typography.Text type="secondary">total tokens</Typography.Text>
-          </Flex>
-        </Flex>
+    <Flex justify="end" align="end">
+      <Tag style={{ margin: 0 }}>
+        <span>
+          <Typography.Text>{tokenPerSecond.toFixed(1)}</Typography.Text>{' '}
+          <Typography.Text type="secondary">TPS</Typography.Text>
+        </span>{' '}
+        <Divider type="vertical" />
+        <span>
+          <Typography.Text>{totalTokenCount}</Typography.Text>{' '}
+          <Typography.Text type="secondary"> tokens</Typography.Text>
+        </span>
+        <QuestionIconWithTooltip title={t('chatui.TokenCounterTooltip')} />
       </Tag>
     </Flex>
   );

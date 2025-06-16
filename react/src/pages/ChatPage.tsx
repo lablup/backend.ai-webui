@@ -24,7 +24,7 @@ import { StringParam, useQueryParams } from 'use-query-params';
 const useStyles = createStyles(({ css }) => ({
   chatViewHorizontal: css`
     overflow: auto;
-    height: calc(100vh - 240px);
+    height: calc(100vh - 224px);
   `,
   chatViewVertical: css`
     overflow: hidden;

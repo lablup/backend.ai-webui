@@ -54,7 +54,7 @@ const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
         </Tooltip>
       }
     >
-      <Suspense fallback={<Skeleton />}>
+      <Suspense fallback={<Skeleton active />}>
         {sessionId && (
           <SessionDetailContent id={sessionId} fetchKey={fetchKey} />
         )}

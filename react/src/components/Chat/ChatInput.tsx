@@ -10,7 +10,14 @@ import { ChatRequestOptions } from 'ai';
 import { theme } from 'antd';
 import { atom, useAtom } from 'jotai';
 import { isEmpty, isEqual, isUndefined } from 'lodash';
-import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
+import React, {
+  CSSProperties,
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from 'react';
 
 const synchronizedMessageState = atom<string>('');
 const synchronizedAttachmentState = atom<AttachmentsProps['items']>();
@@ -49,9 +56,10 @@ const ChatInput: React.FC<ChatInputProps> = ({
 }) => {
   const { token } = theme.useToken();
 
-  const ChatInputStyle = {
+  const ChatInputStyle: CSSProperties = {
     borderTop: `1px solid ${token.colorBorderSecondary}`,
-    padding: token.paddingContentVertical,
+    paddingBlock: token.paddingContentVertical,
+    paddingInline: token.paddingContentHorizontal,
   };
 
   const [isOpenAttachments, setIsOpenAttachments] = useState(false);

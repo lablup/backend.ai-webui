@@ -423,7 +423,7 @@ const SessionDetailContent: React.FC<{
           </Descriptions.Item>
         </Descriptions>
       </Flex>
-      <Suspense fallback={<Skeleton />}>
+      <Suspense fallback={<Skeleton active />}>
         <Flex direction="column" gap={'sm'} align="stretch">
           <Typography.Title level={4} style={{ margin: 0 }}>
             {t('kernel.Kernels')}

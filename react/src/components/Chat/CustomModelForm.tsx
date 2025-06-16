@@ -45,11 +45,11 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
     <Flex
       direction="row"
       style={{
-        padding: themeToken.paddingSM,
-        paddingRight: themeToken.paddingContentHorizontalLG,
-        paddingLeft: themeToken.paddingContentHorizontalLG,
+        padding: themeToken.paddingContentVerticalLG,
+        paddingInline: themeToken.paddingContentHorizontal,
         backgroundColor: themeToken.colorBgContainer,
         overflow: 'hidden',
+        borderBottom: `1px solid ${themeToken.colorBorderSecondary}`,
       }}
       ref={containerRef}
     >

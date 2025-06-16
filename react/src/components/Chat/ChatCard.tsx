@@ -22,8 +22,9 @@ import {
   UIMessage,
   wrapLanguageModel,
 } from 'ai';
-import { Alert, App, Card, CardProps } from 'antd';
+import { Alert, App, Card, CardProps, theme } from 'antd';
 import { createStyles } from 'antd-style';
+import classNames from 'classnames';
 import _ from 'lodash';
 import React, {
   memo,
@@ -36,7 +37,7 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-interface ChatCardProps extends CardProps {
+interface ChatCardProps extends Omit<CardProps, 'classNames' | 'variant'> {
   chat: ChatData;
   onUpdateChat?: (partialChat: DeepPartial<ChatData>) => void;
   onRemoveChat?: (chat: ChatData) => void;
@@ -60,29 +61,9 @@ const useStyles = createStyles(({ token, css }) => ({
     display: flex;
     flex-direction: column;
   `,
-  body: css`
-    background-color: ${token.colorFillQuaternary};
-    border-radius: 0;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 0;
-    height: 50%;
-    position: relative;
-  `,
-  actions: css`
-    padding-left: ${token.paddingContentHorizontal};
-    padding-right: ${token.paddingContentHorizontal};
-  `,
-  header: css`
-    z-index: 1;
-
-    & .ant-card-head-title {
-      overflow: visible;
-    }
-  `,
   alert: css`
-    margin: ${token.marginSM};
+    margin-block: ${token.paddingContentVertical}px;
+    margin-inline: ${token.paddingContentHorizontal}px;
   `,
 }));
 
@@ -198,6 +179,9 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   onAddChat,
   onSaveMessage,
   onClearMessage,
+  styles,
+  className,
+  ...otherCardProps
 }) => {
   const { t } = useTranslation();
   const { message: appMessage } = App.useApp();
@@ -222,8 +206,11 @@ const PureChatCard: React.FC<ChatCardProps> = ({
     ? endpointResult.endpoint.value
     : null;
   const {
-    styles: { chatCard: chatCardStyle, alert: alertStyle, ...chatCardStyles },
+    styles: { chatCard: chatCardStyle, alert: alertStyle },
   } = useStyles();
+
+  const { token } = theme.useToken();
+
   const [isPendingUpdate, startUpdateTransition] = useTransition();
 
   const dropContainerRef = useRef<HTMLDivElement>(null);
@@ -315,9 +302,34 @@ const PureChatCard: React.FC<ChatCardProps> = ({
 
   return (
     <Card
+      {...otherCardProps}
       variant="outlined"
-      className={chatCardStyle}
-      classNames={chatCardStyles}
+      className={classNames(chatCardStyle, className)}
+      styles={{
+        ...styles,
+        body: {
+          backgroundColor: token.colorFillQuaternary,
+          borderRadius: 0,
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          padding: 0,
+          height: '50%',
+          position: 'relative',
+          ...styles?.body,
+        },
+        actions: {
+          paddingLeft: token.paddingContentHorizontal,
+          paddingRight: token.paddingContentHorizontal,
+          ...styles?.actions,
+        },
+        header: {
+          zIndex: 1,
+          paddingInline: token.paddingContentHorizontal,
+          paddingRight: token.paddingXS,
+          ...styles?.header,
+        },
+      }}
       title={
         <ChatHeader
           // model

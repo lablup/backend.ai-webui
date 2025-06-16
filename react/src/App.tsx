@@ -479,11 +479,12 @@ const router = createBrowserRouter([
       },
       {
         path: '/error',
+        handle: { hideBreadcrumb: true },
         Component: Page404,
       },
       {
         path: '/unauthorized',
-        handle: { labelKey: 'webui.UnauthorizedAccess' },
+        handle: { hideBreadcrumb: true },
         Component: Page401,
       },
       // Leave empty tag for plugin pages.

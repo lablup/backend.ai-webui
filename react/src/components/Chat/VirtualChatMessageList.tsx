@@ -35,17 +35,15 @@ const VirtualChatMessageList: React.FC<VirtualizedListProps> = ({
       const RenderChatMessage = ChatMessageRenders[message.role];
 
       return (
-        <>
-          <RenderChatMessage
-            key={message.id}
-            message={message}
-            isStreaming={isStreaming ?? false}
-            placement={{
-              top: index === 0,
-              bottom: index === messages.length - 1,
-            }}
-          />
-        </>
+        <RenderChatMessage
+          key={message.id}
+          message={message}
+          isStreaming={isStreaming ?? false}
+          placement={{
+            top: index === 0,
+            bottom: index === messages.length - 1,
+          }}
+        />
       );
     },
     [isStreaming, messages.length],
@@ -77,6 +75,7 @@ const VirtualChatMessageList: React.FC<VirtualizedListProps> = ({
           opacity: atBottom ? 0 : 1,
           transition: 'opacity 0.2s',
           transitionDelay: atBottom ? '0s' : '0.2s',
+          zIndex: 1,
         }}
       >
         <ScrollBottomHandlerButton
