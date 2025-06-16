@@ -291,7 +291,6 @@ const SessionDetailContent: React.FC<{
             <Flex gap="xs" wrap="wrap">
               {session.vfolder_nodes
                 ? session.vfolder_nodes.edges.map((vfolder, idx) => {
-                    console.log(vfolder?.node);
                     return (
                       vfolder?.node && (
                         <FolderLink
