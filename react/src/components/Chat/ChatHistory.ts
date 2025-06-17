@@ -168,13 +168,15 @@ export function useHistory(id: string, provider: ChatProviderData) {
 
       chat.chats[index] = _.merge({}, chat.chats[index], data);
 
-      if (!getChatById(chat.id)) {
+      const currentChat = getChatById(chat.id);
+      if (currentChat) {
+        // If the chat is already in the cache, update it
+        currentChat.chats[index] = chat.chats[index];
+        updateHistory(currentChat);
+      } else {
         updateHistory({ ...chat });
         webuiNavigate(`/chat/${chat.id}`, { replace: true });
-        return;
       }
-
-      updateHistory({ ...chat });
     },
     [chat, updateHistory, webuiNavigate],
   );
@@ -218,13 +220,15 @@ export function useHistory(id: string, provider: ChatProviderData) {
         chat.label = chat.chats[0].messages[0].content ?? chat.label;
       }
 
-      if (!getChatById(chat.id)) {
+      const currentChat = getChatById(chat.id);
+      if (currentChat) {
+        // If the chat is already in the cache, update it
+        currentChat.chats[index] = chat.chats[index];
+        updateHistory(currentChat);
+      } else {
         updateHistory({ ...chat });
         webuiNavigate(`/chat/${chat.id}`, { replace: true });
-        return;
       }
-
-      updateHistory({ ...chat });
     },
     [chat, updateHistory, webuiNavigate],
   );

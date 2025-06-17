@@ -186,6 +186,7 @@ const PureChatPage = ({ id }: { id: string }) => {
                       }
                     },
                     text: chat.label,
+                    triggerType: ['icon', 'text'],
                   }
                 : undefined
             }
@@ -255,8 +256,8 @@ const PureChatPage = ({ id }: { id: string }) => {
                     onSaveMessage={(message) => {
                       saveChatMessage(chatData.id, message);
                     }}
-                    onClearMessage={(chat) => {
-                      clearChatMessage(chat.id);
+                    onClearMessage={(chatData) => {
+                      clearChatMessage(chatData.id);
                     }}
                     closable={isClosable(chat.chats.length)}
                     cloneable={isClonable(chat.chats.length)}
