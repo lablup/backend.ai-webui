@@ -96,17 +96,18 @@ import {
   withDefault,
 } from 'use-query-params';
 
-interface SessionResources {
+export interface SessionResources {
   group_name?: string;
   domain?: string;
   type?: 'interactive' | 'batch' | 'inference' | 'system';
   cluster_mode: 'single-node' | 'multi-node';
   cluster_size: number;
-  maxWaitSeconds: number;
+  maxWaitSeconds?: number;
   starts_at?: string;
   startupCommand?: string;
   bootstrap_script?: string;
   owner_access_key?: string;
+  enqueueOnly?: boolean;
   config?: {
     resources?: {
       cpu: number;
