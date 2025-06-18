@@ -1,3 +1,4 @@
+import { useSuspendedBackendaiClient } from '../hooks';
 import {
   InvitationItem,
   useSetVFolderInvitations,
@@ -24,6 +25,8 @@ const FolderInvitationResponseModal: React.FC<
   const { t } = useTranslation();
   const { invitations } = useVFolderInvitationsValue();
   const { acceptInvitation, rejectInvitation } = useSetVFolderInvitations();
+  const baiClient = useSuspendedBackendaiClient();
+  const hasInviterEmail = baiClient.isManagerVersionCompatibleWith('25.6.0');
 
   // Memoize invitations to prevent unnecessary re-renders
   const memoizedInvitations = React.useMemo(() => invitations, [invitations]);
@@ -97,7 +100,9 @@ const FolderInvitationResponseModal: React.FC<
                 {
                   key: 'from',
                   label: t('data.From'),
-                  children: item.inviter_user_email,
+                  children: hasInviterEmail
+                    ? item.inviter_user_email
+                    : item.inviter,
                 },
                 {
                   key: 'permission',
@@ -117,6 +122,7 @@ const FolderInvitationResponseModal: React.FC<
       message,
       t,
       token.paddingSM,
+      hasInviterEmail,
     ],
   );
 

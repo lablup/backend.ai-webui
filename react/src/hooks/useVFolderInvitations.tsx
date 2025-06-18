@@ -9,8 +9,10 @@ export interface InvitationItem {
   id: string;
   vfolder_id: string;
   vfolder_name: string;
-  invitee_user_email: string;
-  inviter_user_email: string;
+  invitee_user_email?: string;
+  inviter_user_email?: string;
+  invitee?: string;
+  inviter?: string;
   mount_permission: string;
   created_at: string;
   modified_at: string | null;
