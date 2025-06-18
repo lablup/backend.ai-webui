@@ -86,7 +86,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
         resource_presets,
         (preset) =>
           preset?.scaling_group_name === resourceGroup ||
-          preset?.scaling_group_name === null,
+          _.isEmpty(preset?.scaling_group_name),
       )
     : resource_presets;
 
