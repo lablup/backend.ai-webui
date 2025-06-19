@@ -24,4 +24,7 @@ merged_schema.graphql
 
 storybook-static
 
-.vscode
+.vscode/*
+!.vscode/settings.json.sample
+
+dist

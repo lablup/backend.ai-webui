@@ -147,3 +147,46 @@ Components that are not related to Relay can be tested using Storybook.
    ```console
    $ pnpm run storybook
    ```
+
+## Localization
+
+We provide locale options for `backend.ai-ui`. Locale files are located in `src/locale`, and you can use them with `BAIConfigProvider` as follows:
+
+```tsx
+import { BAIConfigProvider } from 'backend.ai-ui';
+// select your language
+import en_US from 'backend.ai-ui/dist/locale/en_US';
+
+const App = ({ children }) => {
+  // please use BAIConfigProvider at the top-level root
+  return <BAIConfigProvider locale={en_US}>{children}</BAIConfigProvider>;
+};
+```
+
+### Adding i18n strings
+
+In `backend.ai-ui`, keys are separated and used at the component level. If you want to add a key that will be used in multiple places, please add it to `common`.
+
+```json
+// en.json or {country_code}.json
+{
+  "MyComponent": {
+    "translatedText": "translatedText"
+  }
+}
+```
+
+### VSCode Extension for i18n
+
+To improve the development environment, we are using [i18n-ally](https://marketplace.visualstudio.com/items?itemName=Lokalise.i18n-ally). Below are the configurations related to this extension.
+
+```json
+// backend.ai-ui/.vscode/settings.json
+{
+  "i18n-ally.localesPaths": ["src/locale"],
+  "i18n-ally.enabledFrameworks": ["react"],
+  "i18n-ally.keystyle": "nested"
+}
+```
+
+If you want to develop alongside the webui project, please use the `backend.ai-webui.code-workspace` file to take advantage of VSCode’s [Multi-root Workspaces](https://code.visualstudio.com/docs/editing/workspaces/multi-root-workspaces) feature.
