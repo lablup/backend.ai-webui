@@ -240,14 +240,14 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
                         ? convertToBinaryUnit(
                             value,
                             value === '0' ? 'g' : 'auto',
-                          )?.displayValue
+                          )?.value
                         : value,
                   ) || {},
                 shared_memory: resourcePreset?.shared_memory
                   ? convertToBinaryUnit(
                       resourcePreset?.shared_memory,
                       resourcePreset?.shared_memory === '0' ? 'g' : 'auto',
-                    )?.displayValue
+                    )?.value
                   : null,
               }
             : {
@@ -367,7 +367,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
               <Form.Item
                 label={t('resourcePreset.SharedMemory')}
                 name="shared_memory"
-                dependencies={['resource_slots', 'mem']}
+                dependencies={[['resource_slots', 'mem']]}
                 rules={[
                   ({ getFieldValue }) => ({
                     validator(__, value) {

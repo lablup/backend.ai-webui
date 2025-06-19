@@ -389,18 +389,26 @@ const ResourceAllocationFormItems: React.FC<
           accelerator: Number(acceleratorObj[firstMatchedAcceleratorType] || 0),
         };
       }
+
+      // Check if preset has a specific shmem setting
+      const hasPresetShmem =
+        preset?.shared_memory && Number(preset.shared_memory) > 0;
+
       form.setFieldsValue({
         resource: {
           // ...slots,
           ...acceleratorSetting,
           // transform to GB based on preset values
           mem,
-          shmem: convertToBinaryUnit(preset?.shared_memory || 0, 'g', 2)
-            ?.displayValue,
+          shmem: convertToBinaryUnit(preset?.shared_memory || 0, 'g', 2)?.value,
           cpu: parseInt(slots?.cpu || '0') || 0,
         },
       });
-      runShmemAutomationRule(mem || '0g');
+
+      // Only run automatic shmem rule if preset doesn't have a specific shmem setting
+      if (!hasPresetShmem) {
+        runShmemAutomationRule(mem || '0g');
+      }
 
       form
         .validateFields(['resource'], {
@@ -535,7 +543,17 @@ const ResourceAllocationFormItems: React.FC<
                   // updating resource fields based on preset is handled in useEffect because it has another dependency(image).
                   break;
                 default:
-                  form.setFieldValue('enabledAutomaticShmem', true);
+                  // Check if the selected preset has a specific shmem setting
+                  const selectedPreset = _.find(
+                    checkPresetInfo?.presets,
+                    (preset) => preset.name === value,
+                  );
+                  const hasPresetShmem =
+                    selectedPreset?.shared_memory &&
+                    Number(selectedPreset.shared_memory) > 0;
+
+                  // If preset has specific shmem, disable automatic shmem; otherwise enable it
+                  form.setFieldValue('enabledAutomaticShmem', !hasPresetShmem);
                   updateResourceFieldsBasedOnPreset(value);
                   break;
               }
@@ -816,17 +834,15 @@ const ResourceAllocationFormItems: React.FC<
                                   : {}),
                               }}
                               onChange={(M_plus_S) => {
-                                if (
-                                  !M_plus_S ||
-                                  !form.getFieldValue('enabledAutomaticShmem')
-                                )
-                                  return;
-                                runShmemAutomationRule(M_plus_S);
-
                                 form.setFieldValue(
                                   'allocationPreset',
                                   'custom',
                                 );
+                                if (
+                                  form.getFieldValue('enabledAutomaticShmem')
+                                ) {
+                                  runShmemAutomationRule(M_plus_S);
+                                }
                               }}
                             />
                           </Form.Item>
@@ -1033,6 +1049,12 @@ const ResourceAllocationFormItems: React.FC<
                                       style={{
                                         width: 200,
                                       }}
+                                      onChange={() => {
+                                        form.setFieldValue(
+                                          'allocationPreset',
+                                          'custom',
+                                        );
+                                      }}
                                     />
                                   </Form.Item>
                                 )}
@@ -1056,6 +1078,10 @@ const ResourceAllocationFormItems: React.FC<
                                             ]) || '0g',
                                           );
                                         }
+                                        form.setFieldValue(
+                                          'allocationPreset',
+                                          'custom',
+                                        );
                                       }}
                                     />
                                   </Form.Item>
