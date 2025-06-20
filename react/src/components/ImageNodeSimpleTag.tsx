@@ -69,8 +69,9 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
       <Divider type="vertical" />
       <Typography.Text>{image.architecture}</Typography.Text>
       <Divider type="vertical" />
-      {_.map(image.tags, (tag) => {
-        const isCustomized = tag?.key && _.includes(tag.key, 'customized_');
+      {_.map(image.tags, (tag, index) => {
+        if (!tag) return null;
+        const isCustomized = tag.key && _.includes(tag.key, 'customized_');
         const tagValue =
           (isCustomized
             ? _.find(image?.labels, {
@@ -81,7 +82,7 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
         return tag?.key &&
           _.isEqual(aliasedTag, preserveDotStartCase(tag.key + tagValue)) ? (
           <DoubleTag
-            key={tag.key}
+            key={`${tag.key}-${index}`}
             values={[
               {
                 label: tagAlias(tag.key),
@@ -94,7 +95,12 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
             ]}
           />
         ) : (
-          <Tag color={isCustomized ? 'cyan' : 'blue'}>{aliasedTag}</Tag>
+          <Tag
+            key={`${tag.key}-${index}`}
+            color={isCustomized ? 'cyan' : 'blue'}
+          >
+            {aliasedTag}
+          </Tag>
         );
       })}
       {copyable && (
