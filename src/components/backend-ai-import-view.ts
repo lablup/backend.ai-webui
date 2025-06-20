@@ -394,6 +394,7 @@ export default class BackendAIImport extends BackendAIPage {
       cluster_mode: 'single-node',
       cluster_size: 1,
       maxWaitSeconds: 0,
+      architecture: architecture || 'x86_64',
     };
     resources.group_name = globalThis.backendaiclient.current_group;
     resources.domain = globalThis.backendaiclient._config.domainName;
@@ -425,7 +426,6 @@ export default class BackendAIImport extends BackendAIPage {
           null,
           resources,
           60000,
-          architecture || 'x86_64',
         );
       })
       .then(async (response) => {

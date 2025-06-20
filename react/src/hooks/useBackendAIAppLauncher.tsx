@@ -17,7 +17,7 @@ export const useBackendAIAppLauncher = () => {
       'service-ports'?: string;
       runtime?: string;
       filename?: string;
-      arguments?: string;
+      arguments?: object;
     }) => {},
   };
 };
