@@ -3,13 +3,14 @@ import { ModelStoreListPageQuery } from '../__generated__/ModelStoreListPageQuer
 import Flex from '../components/Flex';
 import ModelCardModal from '../components/ModelCardModal';
 import TextHighlighter from '../components/TextHighlighter';
-import UnmountModalAfterClose from '../components/UnmountModalAfterClose';
 import { useUpdatableState } from '../hooks';
+import { useModelCardMetadata } from '../hooks/useModelCardMetadata';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import {
   Alert,
   Button,
   Card,
+  Image,
   Input,
   List,
   Select,
@@ -34,6 +35,12 @@ const useStyles = createStyles(({ css, token }) => {
   };
 });
 
+type ModelCard = NonNullable<
+  NonNullable<
+    ModelStoreListPageQuery['response']['model_cards']
+  >['edges'][number]
+>['node'];
+
 const ModelStoreListPage: React.FC = () => {
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const { t } = useTranslation();
@@ -43,8 +50,8 @@ const ModelStoreListPage: React.FC = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
   const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
-
   const { styles } = useStyles();
+  const { models, sorting } = useModelCardMetadata();
 
   const [currentModelInfo, setCurrentModelInfo] =
     useState<ModelCardModalFragment$key | null>();
@@ -91,8 +98,6 @@ const ModelStoreListPage: React.FC = () => {
     },
   );
 
-  // const filterInfo = _.map
-
   const fieldsValues = useMemo(() => {
     const result: {
       task: string[];
@@ -133,7 +138,7 @@ const ModelStoreListPage: React.FC = () => {
             placeholder={t('modelStore.SearchModels')}
             allowClear
             onChange={(e) => {
-              setSearch(e.target.value);
+              setSearch(e.currentTarget.value);
             }}
             autoComplete="off"
           />
@@ -152,7 +157,7 @@ const ModelStoreListPage: React.FC = () => {
           <Select
             style={{ minWidth: 150 }}
             placeholder={t('modelStore.Category')}
-            options={_.map(fieldsValues.category, (t) => ({
+            options={_.map(fieldsValues.category, (t: string) => ({
               label: t,
               value: t,
             }))}
@@ -160,14 +165,14 @@ const ModelStoreListPage: React.FC = () => {
             popupMatchSelectWidth={false}
             value={selectedCategories}
             onChange={(value) => {
-              setSelectedCategories(value as string[]);
+              setSelectedCategories(value);
             }}
             allowClear
           />
           <Select
             style={{ minWidth: 150 }}
             placeholder={t('modelStore.Task')}
-            options={_.map(fieldsValues.task, (t) => ({
+            options={_.map(fieldsValues.task, (t: string) => ({
               label: t,
               value: t,
             }))}
@@ -175,14 +180,14 @@ const ModelStoreListPage: React.FC = () => {
             popupMatchSelectWidth={false}
             value={selectedTasks}
             onChange={(value) => {
-              setSelectedTasks(value as string[]);
+              setSelectedTasks(value);
             }}
             allowClear
           />
           <Select
             style={{ minWidth: 150 }}
             placeholder={t('modelStore.Label')}
-            options={_.map(fieldsValues.label, (t) => ({
+            options={_.map(fieldsValues.label, (t: string) => ({
               label: t,
               value: t,
             }))}
@@ -190,7 +195,7 @@ const ModelStoreListPage: React.FC = () => {
             popupMatchSelectWidth={false}
             value={selectedLabels}
             onChange={(value) => {
-              setSelectedLabels(value as string[]);
+              setSelectedLabels(value);
             }}
             allowClear
           />
@@ -198,35 +203,50 @@ const ModelStoreListPage: React.FC = () => {
       </Flex>
       <List
         className={styles.cardList}
-        grid={{ gutter: 16, xs: 1, sm: 2, md: 2, lg: 3, xl: 4, xxl: 5 }}
-        dataSource={model_cards?.edges
-          ?.map((edge) => edge?.node)
-          .filter((info) => {
-            let passSearchFilter = true;
-            if (search) {
-              const searchLower = search.toLowerCase();
-              passSearchFilter =
-                info?.description?.toLowerCase().includes(searchLower) ||
-                info?.title?.toLowerCase().includes(searchLower) ||
-                info?.task?.toLowerCase().includes(searchLower) ||
-                info?.category?.toLowerCase().includes(searchLower) ||
-                info?.label?.some((label) =>
-                  label?.toLowerCase().includes(searchLower),
-                ) ||
-                false;
-            }
+        grid={{ gutter: 16, column: 2 }}
+        dataSource={
+          model_cards?.edges
+            ?.map((edge) => edge?.node)
+            .filter((info) => {
+              let passSearchFilter = true;
+              if (search) {
+                const searchLower = search.toLowerCase();
+                passSearchFilter =
+                  info?.description?.toLowerCase().includes(searchLower) ||
+                  info?.title?.toLowerCase().includes(searchLower) ||
+                  info?.task?.toLowerCase().includes(searchLower) ||
+                  info?.category?.toLowerCase().includes(searchLower) ||
+                  info?.label?.some((label) =>
+                    label?.toLowerCase().includes(searchLower),
+                  ) ||
+                  false;
+              }
+              return (
+                (_.isEmpty(selectedCategories) ||
+                  _.includes(selectedCategories, info?.category)) &&
+                (_.isEmpty(selectedLabels) ||
+                  _.intersection(selectedLabels, info?.label).length > 0) &&
+                (_.isEmpty(selectedTasks) ||
+                  _.includes(selectedTasks, info?.task)) &&
+                passSearchFilter
+              );
+            })
+            .sort((a, b) => {
+              const aIndex = sorting.indexOf(a?.name || '');
+              const bIndex = sorting.indexOf(b?.name || '');
 
-            return (
-              (_.isEmpty(selectedCategories) ||
-                _.includes(selectedCategories, info?.category)) &&
-              (_.isEmpty(selectedLabels) ||
-                _.intersection(selectedLabels, info?.label).length > 0) &&
-              (_.isEmpty(selectedTasks) ||
-                _.includes(selectedTasks, info?.task)) &&
-              passSearchFilter
-            );
-          })}
-        renderItem={(item) => (
+              if (aIndex !== -1 && bIndex !== -1) {
+                return aIndex - bIndex;
+              } else if (aIndex !== -1) {
+                return -1;
+              } else if (bIndex !== -1) {
+                return 1;
+              } else {
+                return 0;
+              }
+            }) as Array<ModelCard>
+        }
+        renderItem={(item: ModelCard) => (
           <List.Item
             onClick={() => {
               setCurrentModelInfo(item);
@@ -258,69 +278,85 @@ const ModelStoreListPage: React.FC = () => {
               style={{
                 height: '100%',
               }}
-              size="small"
             >
-              <Flex direction="row" wrap="wrap" gap={'xs'}>
-                {item?.description && (
+              <Flex direction="column" align="stretch" gap="xs">
+                <Flex direction="row" align="start" gap="xs">
+                  <Image
+                    preview={false}
+                    width={150}
+                    src={(() => {
+                      const found = _.find(
+                        models,
+                        (model) => model?.name === item?.name,
+                      );
+                      return found &&
+                        typeof found === 'object' &&
+                        'thumbnail' in found &&
+                        (found as any).thumbnail
+                        ? (found as any).thumbnail
+                        : '/resources/images/model-player/default.jpeg';
+                    })()}
+                  />
                   <Typography.Paragraph
                     ellipsis={{ rows: 3, expandable: false }}
+                    style={{ flex: 1 }}
                   >
                     <TextHighlighter keyword={search}>
                       {item?.description}
                     </TextHighlighter>
                   </Typography.Paragraph>
-                )}
-                {item?.category && (
-                  <Tag bordered={false}>
-                    <TextHighlighter keyword={search}>
-                      {item?.category}
-                    </TextHighlighter>
-                  </Tag>
-                )}
-                {item?.task && (
-                  <Tag bordered={false} color="success">
-                    <TextHighlighter keyword={search}>
-                      {item?.task}
-                    </TextHighlighter>
-                  </Tag>
-                )}
-                {item?.label &&
-                  _.map(item?.label, (label) => (
-                    <Tag key={label} bordered={false} color="blue">
+                </Flex>
+                <Flex direction="row" wrap="wrap" gap={'xs'}>
+                  {item?.category && (
+                    <Tag bordered={false}>
                       <TextHighlighter keyword={search}>
-                        {label}
+                        {item?.category}
                       </TextHighlighter>
                     </Tag>
-                  ))}
-                {item?.error_msg && (
-                  <Alert
-                    style={{ width: '100%' }}
-                    message={
-                      <Typography.Paragraph
-                        ellipsis={{ rows: 6 }}
-                        style={{ marginBottom: 0 }}
-                      >
-                        {item.error_msg}
-                      </Typography.Paragraph>
-                    }
-                    type="error"
-                    showIcon
-                  />
-                )}
+                  )}
+                  {item?.task && (
+                    <Tag bordered={false} color="success">
+                      <TextHighlighter keyword={search}>
+                        {item?.task}
+                      </TextHighlighter>
+                    </Tag>
+                  )}
+                  {item?.label &&
+                    _.map(item?.label, (label: string) => (
+                      <Tag key={label} bordered={false} color="blue">
+                        <TextHighlighter keyword={search}>
+                          {label}
+                        </TextHighlighter>
+                      </Tag>
+                    ))}
+                  {item?.error_msg && (
+                    <Alert
+                      style={{ width: '100%' }}
+                      message={
+                        <Typography.Paragraph
+                          ellipsis={{ rows: 6 }}
+                          style={{ marginBottom: 0 }}
+                        >
+                          {item.error_msg}
+                        </Typography.Paragraph>
+                      }
+                      type="error"
+                      showIcon
+                    />
+                  )}
+                </Flex>
               </Flex>
             </Card>
           </List.Item>
         )}
       />
-      <UnmountModalAfterClose>
-        <ModelCardModal
-          modelCardModalFrgmt={currentModelInfo}
-          open={!!currentModelInfo}
-          onRequestClose={() => {
-            setCurrentModelInfo(null);
-          }}
-        />
-      </UnmountModalAfterClose>
+      <ModelCardModal
+        modelCardModalFrgmt={currentModelInfo}
+        open={!!currentModelInfo}
+        onRequestClose={() => {
+          setCurrentModelInfo(null);
+        }}
+      />
     </Flex>
   );
 };
