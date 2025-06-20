@@ -50,7 +50,7 @@ export default defineConfig(({ mode }) => {
       react(),
       relay({
         module: 'esmodule',
-        codegen: false,
+        codegen: !isDevMode,
       }),
       dts({
         include: ['src/**/*'],
