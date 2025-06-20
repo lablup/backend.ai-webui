@@ -14,15 +14,15 @@ This is a React component project for WebUI.
    module.exports = {
      root: '.',
      sources: {
-       'packages/backendai-ui': 'backendai-ui',
+       'packages/backend.ai-ui': 'backend.ai-ui',
        'your-project-path': 'your-project',
      },
      excludes: ['**/node_modules/**', '**/__mocks__/**', '**/__generated__/**'],
      projects: {
-       'backendai-ui': {
+       'backend.ai-ui': {
          language: 'typescript',
          schema: 'schema-path',
-         output: 'packages/backendai-ui/src/__generated__',
+         output: 'packages/backend.ai-ui/src/__generated__',
          eagerEsModules: true,
          ...options,
        },
@@ -30,14 +30,14 @@ This is a React component project for WebUI.
          language: 'your language',
          schema: 'schema-path',
          output: 'your-project-path/output-path',
-         base: 'backendai-ui', // to use backendai-ui's fragment
+         base: 'backend.ai-ui', // to use backend.ai-ui's fragment
          ...options,
        },
      },
    };
    ```
 
-2. Run the relay-compiler and make sure that the `backendai-ui` project compiles successfully.
+2. Run the relay-compiler and make sure that the `backend.ai-ui` project compiles successfully.
 
    ```console
    $ relay-compiler
