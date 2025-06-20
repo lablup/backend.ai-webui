@@ -296,16 +296,20 @@ const convertMetricUnit = (
     number = Number((Number(value) / 1000).toFixed(1));
     numberUnit = 's';
   } else {
-    number = Number(
-      _.includes(metricName.toLowerCase(), 'io')
+    const decimalUnitMetrics = ['io', 'net'];
+    const isDecimalUnitMetric = _.some(decimalUnitMetrics, (unit) =>
+      _.includes(_.toLower(metricName), unit),
+    );
+    number = _.toNumber(
+      isDecimalUnitMetric
         ? convertToDecimalUnit(value ?? '0', 'g')?.numberFixed
         : convertToBinaryUnit(value ?? '0', 'g')?.numberFixed,
     );
-    numberUnit = _.includes(metricName.toLowerCase(), 'io') ? 'GB' : 'GiB';
+    numberUnit = isDecimalUnitMetric ? 'GB' : 'GiB';
   }
 
-  if (_.includes(metricName.toLowerCase(), 'net')) {
-    numberUnit = 'GiB/s';
+  if (_.includes(_.toLower(metricName), 'net')) {
+    numberUnit = 'GB/s';
   }
   number = value ? number : undefined;
 
