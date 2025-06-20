@@ -1,4 +1,6 @@
+import { FileBrowserButtonImageNodeFragment$key } from '../__generated__/FileBrowserButtonImageNodeFragment.graphql';
 import { FolderExplorerHeaderFragment$key } from '../__generated__/FolderExplorerHeaderFragment.graphql';
+import FileBrowserButton from './FileBrowserButton';
 import Flex from './Flex';
 import VFolderNameTitle from './VFolderNameTitle';
 import { Button, Tooltip, Image, Skeleton, Grid, theme } from 'antd';
@@ -8,11 +10,13 @@ import { graphql, useFragment } from 'react-relay';
 
 interface FolderExplorerHeaderProps {
   vfolderNodeFrgmt?: FolderExplorerHeaderFragment$key | null;
+  imageNodesFrgmt?: FileBrowserButtonImageNodeFragment$key | null;
   folderExplorerRef: LegacyRef<HTMLDivElement>;
 }
 
 const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
   vfolderNodeFrgmt,
+  imageNodesFrgmt,
   folderExplorerRef,
 }) => {
   const { t } = useTranslation();
@@ -26,6 +30,7 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
         user
         permission
         unmanaged_path @since(version: "25.04.0")
+        name
         ...VFolderNameTitleNodeFragment
       }
     `,
@@ -48,24 +53,11 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
       >
         {!vfolderNode?.unmanaged_path ? (
           <>
-            <Tooltip title={!lg && t('data.explorer.ExecuteFileBrowser')}>
-              <Button
-                icon={
-                  <Image
-                    width="18px"
-                    src="/resources/icons/filebrowser.svg"
-                    alt="File Browser"
-                    preview={false}
-                  />
-                }
-                onClick={() =>
-                  // @ts-ignore
-                  folderExplorerRef.current?._executeFileBrowser()
-                }
-              >
-                {lg && t('data.explorer.ExecuteFileBrowser')}
-              </Button>
-            </Tooltip>
+            <FileBrowserButton
+              vfolderName={vfolderNode?.name || ''}
+              folderExplorerRef={folderExplorerRef}
+              imageNodesFrgmt={imageNodesFrgmt}
+            />
             <Tooltip title={!lg && t('data.explorer.RunSSH/SFTPserver')}>
               <Button
                 icon={

@@ -1540,7 +1540,6 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
           null,
           resources,
           30000,
-          undefined,
         );
       })
       .then(async (res) => {
@@ -1650,7 +1649,6 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
             `sftp-${this.vfolderID}`,
             resources,
             30000,
-            undefined,
           );
         if (sessionResponse.status === 'CANCELLED') {
           // Max # of upload sessions exceeded for this used

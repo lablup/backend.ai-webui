@@ -220,7 +220,7 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
 
   const { pendingCount, trackPromise } = usePromiseTracker();
 
-  const terminiateSession = (session: SessionForTerminateModal) => {
+  const terminateSession = (session: SessionForTerminateModal) => {
     return terminateApp(
       session,
       baiClient._config.accessKey,
@@ -262,7 +262,7 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
         const promises = _.map(
           filterEmptyItem(_.castArray(sessions)),
           (session) => {
-            return terminiateSession(session)
+            return terminateSession(session)
               .catch((err) => {
                 upsertNotification({
                   message: painKiller.relieve(err?.title),

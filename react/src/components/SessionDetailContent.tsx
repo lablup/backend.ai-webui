@@ -282,6 +282,12 @@ const SessionDetailContent: React.FC<{
                   style={{ marginRight: token.marginXS }}
                 />
                 <SessionKernelTags image={imageFullName} />
+                <Typography.Text
+                  style={{ color: token.colorPrimary }}
+                  copyable={{
+                    text: imageFullName,
+                  }}
+                />
               </Flex>
             ) : (
               '-'

@@ -1097,9 +1097,9 @@ class Client {
       cluster_mode: 'single-node',
       cluster_size: 1,
       maxWaitSeconds: 0,
+      architecture: 'x86_64',
     },
     timeout?: number,
-    architecture: string = 'x86_64',
   ) {
     if (
       typeof sessionId === 'undefined' ||
@@ -1111,7 +1111,6 @@ class Client {
     const params = {
       lang: kernelType,
       clientSessionToken: sessionId,
-      architecture: architecture,
       ...resources
     };
     let rqst;
@@ -1384,7 +1383,13 @@ class Client {
   createKernel(
     kernelType,
     sessionId: string = '',
-    resources = {},
+    resources: SessionResources = {
+      type: 'interactive',
+      cluster_mode: 'single-node',
+      cluster_size: 1,
+      maxWaitSeconds: 0,
+      architecture: 'x86_64',
+    },
     timeout = 0,
   ): Promise<any> {
     return this.createIfNotExists(
@@ -1392,7 +1397,6 @@ class Client {
       sessionId,
       resources,
       timeout,
-      'x86_64',
     );
   }
 
@@ -3514,6 +3518,7 @@ class ContainerImage {
         enqueueOnly: true,
         type: 'batch',
         startupCommand: 'echo "Image is installed"',
+        architecture
       };
     }
     return this.client
@@ -3521,8 +3526,7 @@ class ContainerImage {
         registry + name,
         sessionId,
         resource,
-        10000,
-        architecture,
+        10000
       )
       .catch((err) => {
         throw err;

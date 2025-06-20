@@ -1,6 +1,7 @@
 import { LegacyFolderExplorerQuery } from '../__generated__/LegacyFolderExplorerQuery.graphql';
-import { toGlobalId } from '../helper';
+import { filterEmptyItem, toGlobalId } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import FolderExplorerActions from './FolderExplorerActions';
@@ -8,6 +9,7 @@ import FolderExplorerHeader from './FolderExplorerHeader';
 import VFolderNodeDescription from './VFolderNodeDescription';
 import { Alert, Grid, Splitter, theme } from 'antd';
 import { createStyles } from 'antd-style';
+import _ from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -48,8 +50,9 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
   // but the Lit Element is not rendered and the values inside are not available but ref is available.
   const folderExplorerRef = useRef<FolderExplorerElement>(null);
 
-  // ensure the client is connected
-  useSuspendedBackendaiClient();
+  const currentProject = useCurrentProjectValue();
+  const baiClient = useSuspendedBackendaiClient();
+
   useEffect(() => {
     const handleConnected = (e: any) => {
       setIsWritable(e.detail || false);
@@ -73,26 +76,47 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
     };
   }, []);
 
-  const { vfolder_node } = useLazyLoadQuery<LegacyFolderExplorerQuery>(
-    graphql`
-      query LegacyFolderExplorerQuery($vfolderUUID: String!) {
-        vfolder_node(id: $vfolderUUID) @since(version: "24.03.4") {
-          id
-          user
-          permission
-          unmanaged_path @since(version: "25.04.0")
-          ...FolderExplorerHeaderFragment
-          ...VFolderNodeDescriptionFragment
-          ...VFolderNameTitleNodeFragment
+  const { vfolder_node, image_nodes } =
+    useLazyLoadQuery<LegacyFolderExplorerQuery>(
+      graphql`
+        query LegacyFolderExplorerQuery(
+          $vfolderUUID: String!
+          $scope_id: ScopeField!
+          $filebrowserFilter: String
+        ) {
+          vfolder_node(id: $vfolderUUID) @since(version: "24.03.4") {
+            id
+            user
+            permission
+            unmanaged_path @since(version: "25.04.0")
+            ...FolderExplorerHeaderFragment
+            ...VFolderNodeDescriptionFragment
+            ...VFolderNameTitleNodeFragment
+          }
+          image_nodes(scope_id: $scope_id, filter: $filebrowserFilter) {
+            edges {
+              node {
+                id @required(action: THROW)
+                ...FileBrowserButtonImageNodeFragment
+              }
+            }
+          }
         }
-      }
-    `,
-    {
-      vfolderUUID: toGlobalId('VirtualFolderNode', vfolderID),
-    },
-    {
-      fetchPolicy: modalProps.open ? 'network-only' : 'store-only',
-    },
+      `,
+      {
+        vfolderUUID: toGlobalId('VirtualFolderNode', vfolderID),
+        scope_id: `project:${currentProject?.id}`,
+        filebrowserFilter: baiClient.isManagerVersionCompatibleWith('24.12.0')
+          ? `namespace ilike "%filebrowser%"`
+          : `name ilike "%filebrowser%"`,
+      },
+      {
+        fetchPolicy: modalProps.open ? 'network-only' : 'store-only',
+      },
+    );
+
+  const imageNodes = filterEmptyItem(
+    _.map(image_nodes?.edges, (edge) => edge?.node),
   );
 
   const legacyFolderExplorerPane = (
@@ -139,6 +163,7 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
         <FolderExplorerHeader
           vfolderNodeFrgmt={vfolder_node}
           folderExplorerRef={folderExplorerRef}
+          imageNodesFrgmt={imageNodes}
         />
       }
       onCancel={() => {

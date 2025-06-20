@@ -108,6 +108,7 @@ export interface SessionResources {
   bootstrap_script?: string;
   owner_access_key?: string;
   enqueueOnly?: boolean;
+  architecture?: string;
   config?: {
     resources?: {
       cpu: number;
@@ -134,7 +135,6 @@ export interface SessionResources {
 interface CreateSessionInfo {
   kernelName: string;
   sessionName: string;
-  architecture: string;
   batchTimeout?: string;
   resources: SessionResources;
 }
@@ -446,7 +446,6 @@ const SessionLauncherPage = () => {
           // Basic session information
           sessionName: sessionName,
           kernelName,
-          architecture,
           resources: {
             // Project and domain settings
             group_name: values.owner?.enabled
@@ -461,6 +460,7 @@ const SessionLauncherPage = () => {
             cluster_mode: values.cluster_mode,
             cluster_size: values.cluster_size,
             maxWaitSeconds: 15,
+            architecture: architecture,
 
             // Owner settings (optional)
             // FYI, `config.scaling_group` also changes based on owner settings
@@ -566,12 +566,11 @@ const SessionLauncherPage = () => {
                 formattedSessionName,
                 sessionInfo.resources,
                 undefined,
-                sessionInfo.architecture,
               )
               .then((res: { created: boolean; status: string }) => {
-                // // When session is already created with the same name, the status code
-                // // is 200, but the response body has 'created' field as false. For better
-                // // user experience, we show the notification message.
+                // When session is already created with the same name, the status code
+                // is 200, but the response body has 'created' field as false. For better
+                // user experience, we show the notification message.
                 if (!res?.created) {
                   // message.warning(t('session.launcher.SessionAlreadyExists'));
                   throw new Error(t('session.launcher.SessionAlreadyExists'));
@@ -1685,7 +1684,7 @@ export const ResourceNumbersOfSession: React.FC<FormOrResourceRequired> = ({
   );
 };
 
-const generateSessionId = () => {
+export const generateSessionId = () => {
   let text = '';
   const possible =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
