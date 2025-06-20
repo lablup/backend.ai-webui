@@ -96,7 +96,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         ownership_type
         user
         group
-        permissions
+        permissions @since(version: "24.09.0")
         ...VFolderPermissionCellFragment
         ...EditableVFolderNameFragment
         ...VFolderNodeIdenticonFragment
