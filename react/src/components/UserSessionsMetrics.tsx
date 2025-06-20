@@ -1,16 +1,15 @@
+import { UserSessionsMetricsQuery } from '../__generated__/UserSessionsMetricsQuery.graphql';
 import { useUpdatableState } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import Flex from './Flex';
 import SessionMetricGraph from './SessionMetricGraph';
-import { UserSessionsMetricsQuery } from './__generated__/UserSessionsMetricsQuery.graphql';
-import { Alert, DatePicker, Empty, Skeleton, theme } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
+import { Alert, Col, DatePicker, Empty, Row, Skeleton, theme } from 'antd';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 interface PrometheusMetricProps {}
@@ -48,21 +47,47 @@ const UserSessionsMetrics: React.FC<PrometheusMetricProps> = () => {
         fetchPolicy: 'store-and-network',
       },
     );
-  const sortedMetricMetadata = [
-    ..._.filter(
-      container_utilization_metric_metadata?.metric_names,
-      (metric) => metric && _.startsWith(metric, 'cpu'),
-    ),
-    ..._.filter(
-      container_utilization_metric_metadata?.metric_names,
-      (metric) => metric && _.startsWith(metric, 'mem'),
-    ),
-    ..._.filter(
-      container_utilization_metric_metadata?.metric_names,
-      (metric) =>
-        metric && !_.startsWith(metric, 'cpu') && !_.startsWith(metric, 'mem'),
-    ),
-  ];
+
+  const sortedMetricMetadata = (() => {
+    const metrics = container_utilization_metric_metadata?.metric_names || [];
+
+    const { cpuUtil, memory, acceleratorGroups, rest } = _.reduce(
+      metrics,
+      (acc, metric) => {
+        if (!metric || metric === 'cpu_used') return acc;
+
+        if (metric === 'cpu_util') {
+          acc.cpuUtil.push(metric);
+        } else if (metric === 'mem') {
+          acc.memory.push(metric);
+        } else if (
+          (metric.endsWith('_util') || metric.endsWith('_mem')) &&
+          !_.startsWith(metric, 'cpu') &&
+          !_.startsWith(metric, 'mem')
+        ) {
+          const prefix = metric.split('_').slice(0, -1).join('_');
+          if (!acc.acceleratorGroups[prefix]) {
+            acc.acceleratorGroups[prefix] = [];
+          }
+          acc.acceleratorGroups[prefix].push(metric);
+        } else {
+          acc.rest.push(metric);
+        }
+        return acc;
+      },
+      {
+        cpuUtil: [] as string[],
+        memory: [] as string[],
+        acceleratorGroups: {} as Record<string, string[]>,
+        rest: [] as string[],
+      },
+    );
+    const sortedAccelMetrics = _.flatMap(_.values(acceleratorGroups), (group) =>
+      _.sortBy(group, (metric) => (metric.endsWith('_util') ? 0 : 1)),
+    );
+
+    return [...cpuUtil, ...memory, ...sortedAccelMetrics, ...rest];
+  })();
 
   return (
     <Flex
@@ -140,26 +165,30 @@ const UserSessionsMetrics: React.FC<PrometheusMetricProps> = () => {
         />
       )}
       <Suspense fallback={<Skeleton active />}>
-        {_.isEmpty(container_utilization_metric_metadata?.metric_names) ? (
+        {_.isEmpty(sortedMetricMetadata) ? (
           <Empty
             image={Empty.PRESENTED_IMAGE_SIMPLE}
             description={t('statistics.prometheus.NoMetricsToDisplay')}
           />
         ) : (
-          _.map(_.omit(sortedMetricMetadata), (metric: string) => {
-            return metric ? (
-              <SessionMetricGraph
-                queryProps={{
-                  startDate: dayjs(startDate).unix().toString(),
-                  endDate: dayjs(endDate).unix().toString(),
-                  metricName: metric,
-                  userId: userInfo[0]?.uuid ?? '',
-                  dayDiff: dayDiff,
-                }}
-                fetchKey={usageFetchKey}
-              />
-            ) : null;
-          })
+          <Row gutter={[16, 16]}>
+            {_.map(sortedMetricMetadata, (metric: string) => {
+              return (
+                <Col key={metric} xs={24} md={24} xl={12} xxl={12}>
+                  <SessionMetricGraph
+                    queryProps={{
+                      startDate: dayjs(startDate).unix().toString(),
+                      endDate: dayjs(endDate).unix().toString(),
+                      metricName: metric,
+                      userId: userInfo[0]?.uuid ?? '',
+                      dayDiff: dayDiff,
+                    }}
+                    fetchKey={usageFetchKey}
+                  />
+                </Col>
+              );
+            })}
+          </Row>
         )}
       </Suspense>
     </Flex>

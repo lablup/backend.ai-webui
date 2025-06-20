@@ -8,6 +8,7 @@ import {
   IronFlexAlignment,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
+import { SessionResources } from '../types/backend-ai-console';
 import BackendAIDialog from './backend-ai-dialog';
 import { BackendAiStyles } from './backend-ai-general-styles';
 import { BackendAIPage } from './backend-ai-page';
@@ -1497,7 +1498,11 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
    */
   async _launchFileBrowserSession() {
     let appOptions;
-    const imageResource: Record<string, unknown> = {};
+    const resources: SessionResources = {
+      cluster_mode: 'single-node',
+      cluster_size: 1,
+      maxWaitSeconds: 0,
+    };
     // monkeypatch for filebrowser applied environment
     // const environment = 'cr.backend.ai/testing/filebrowser:21.01-ubuntu20.04';
     const images = this.filebrowserSupportedImages.filter(
@@ -1515,12 +1520,15 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
       ':' +
       preferredImage['tag'];
 
-    // add current folder
-    imageResource['mounts'] = [this.vfolderName];
-    imageResource['cpu'] = 1;
-    imageResource['mem'] = this.minimumResource.mem + 'g';
-    imageResource['domain'] = globalThis.backendaiclient._config.domainName;
-    imageResource['group_name'] = globalThis.backendaiclient.current_group;
+    resources.config = {};
+    resources.config.mounts = [this.vfolderName];
+    resources.config.resources = {
+      cpu: 1,
+      mem: this.minimumResource.mem + 'g',
+    };
+    resources.group_name = globalThis.backendaiclient.current_group;
+    resources.domain = globalThis.backendaiclient._config.domainName;
+
     const indicator = await this.indicator.start('indeterminate');
 
     return globalThis.backendaiclient
@@ -1530,7 +1538,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
         return globalThis.backendaiclient.createIfNotExists(
           environment,
           null,
-          imageResource,
+          resources,
           30000,
           undefined,
         );
@@ -1587,7 +1595,6 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
    * Launch system role sftp-uploader image and open the dialog that includes the ssh link.
    */
   async _launchSystemRoleSSHSession() {
-    const imageResource: Record<string, unknown> = {};
     const configSSHImage = globalThis.backendaiclient._config.systemSSHImage;
     const images: Array<SystemRoleImage> =
       this.systemRoleSupportedImages.filter(
@@ -1605,24 +1612,33 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
           ':' +
           preferredImage['tag'];
 
-    // add current folder
-    imageResource['mounts'] = [this.vfolderName];
+    const resources: SessionResources = {
+      cluster_mode: 'single-node',
+      cluster_size: 1,
+      maxWaitSeconds: 0,
+    };
+    resources.group_name = globalThis.backendaiclient.current_group;
+    resources.domain = globalThis.backendaiclient._config.domainName;
+    resources.type = 'system';
+    resources.config = {};
+    resources.config.mounts = [this.vfolderName];
+    resources.config.scaling_group =
+      this.volumeInfo[this.vhost]?.sftp_scaling_groups[0] || '';
+    resources.config.resources = {
+      cpu: 1,
+      mem: this.minimumResource.mem + 'g',
+    };
 
     const cpuLimit = preferredImage?.resource_limits?.find(
       (limit) => limit.key === 'cpu',
     )?.min;
-    imageResource['cpu'] = cpuLimit ? parseInt(cpuLimit, 10) : 1;
+    resources.config.resources.cpu = cpuLimit ? parseInt(cpuLimit) : 1;
 
     const memLimit = preferredImage?.resource_limits?.find(
       (limit) => limit.key === 'mem',
     )?.min;
-    imageResource['mem'] = memLimit ? memLimit : '256m';
+    resources.config.resources.mem = memLimit ? memLimit : '256m';
 
-    imageResource['type'] = 'system';
-    imageResource['domain'] = globalThis.backendaiclient._config.domainName;
-    imageResource['scaling_group'] =
-      this.volumeInfo[this.vhost]?.sftp_scaling_groups[0];
-    imageResource['group_name'] = globalThis.backendaiclient.current_group;
     const indicator = await this.indicator.start('indeterminate');
     return (async () => {
       try {
@@ -1632,7 +1648,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
           await globalThis.backendaiclient.createIfNotExists(
             environment,
             `sftp-${this.vfolderID}`,
-            imageResource,
+            resources,
             30000,
             undefined,
           );

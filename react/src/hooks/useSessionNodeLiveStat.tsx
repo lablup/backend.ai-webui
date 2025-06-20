@@ -1,8 +1,7 @@
-import { useSessionNodeLiveStatSessionFragment$key } from './__generated__/useSessionNodeLiveStatSessionFragment.graphql';
-import graphql from 'babel-plugin-relay/macro';
+import { useSessionNodeLiveStatSessionFragment$key } from '../__generated__/useSessionNodeLiveStatSessionFragment.graphql';
 import _ from 'lodash';
 import { useMemo } from 'react';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface ResourceStatItem {
   current: string;
@@ -40,6 +39,7 @@ export const useSessionLiveStat = (
           edges {
             node {
               live_stat
+              cluster_role
             }
           }
         }
@@ -48,10 +48,12 @@ export const useSessionLiveStat = (
     kernelFrgmt,
   );
 
-  const firstKernelNode = session?.kernel_nodes?.edges[0]?.node;
+  const mainKernelNode = _.find(session?.kernel_nodes?.edges, (edge) => {
+    return edge?.node?.cluster_role === 'main';
+  })?.node;
   const liveStat: SessionLiveStats = useMemo(() => {
-    return JSON.parse(firstKernelNode?.live_stat ?? '{}');
-  }, [firstKernelNode?.live_stat]);
+    return JSON.parse(mainKernelNode?.live_stat ?? '{}');
+  }, [mainKernelNode?.live_stat]);
 
   const sortedLiveStatArray = useMemo(
     () =>

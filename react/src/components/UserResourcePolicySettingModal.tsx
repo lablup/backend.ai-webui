@@ -1,18 +1,18 @@
+import {
+  CreateUserResourcePolicyInput,
+  UserResourcePolicySettingModalCreateMutation,
+} from '../__generated__/UserResourcePolicySettingModalCreateMutation.graphql';
+import { UserResourcePolicySettingModalFragment$key } from '../__generated__/UserResourcePolicySettingModalFragment.graphql';
+import {
+  ModifyUserResourcePolicyInput,
+  UserResourcePolicySettingModalModifyMutation,
+} from '../__generated__/UserResourcePolicySettingModalModifyMutation.graphql';
 import { GBToBytes, bytesToGB } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useSuspendedBackendaiClient } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
-import {
-  CreateUserResourcePolicyInput,
-  UserResourcePolicySettingModalCreateMutation,
-} from './__generated__/UserResourcePolicySettingModalCreateMutation.graphql';
-import { UserResourcePolicySettingModalFragment$key } from './__generated__/UserResourcePolicySettingModalFragment.graphql';
-import {
-  ModifyUserResourcePolicyInput,
-  UserResourcePolicySettingModalModifyMutation,
-} from './__generated__/UserResourcePolicySettingModalModifyMutation.graphql';
 import {
   Form,
   Input,
@@ -22,11 +22,10 @@ import {
   theme,
   FormInstance,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment, useMutation } from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 interface Props extends BAIModalProps {
   existingPolicyNames?: string[];

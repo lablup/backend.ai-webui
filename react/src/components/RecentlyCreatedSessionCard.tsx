@@ -1,14 +1,13 @@
+import { RecentlyCreatedSessionCardFragment$key } from '../__generated__/RecentlyCreatedSessionCardFragment.graphql';
 import { filterNonNullItems, toLocalId } from '../helper';
 import BAICard, { BAICardProps } from './BAICard';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import Flex from './Flex';
 import SessionDetailDrawer from './SessionDetailDrawer';
 import SessionNodes from './SessionNodes';
-import { RecentlyCreatedSessionCardFragment$key } from './__generated__/RecentlyCreatedSessionCardFragment.graphql';
-import graphql from 'babel-plugin-relay/macro';
 import { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRefetchableFragment } from 'react-relay';
+import { graphql, useRefetchableFragment } from 'react-relay';
 import { useQueryParam, StringParam } from 'use-query-params';
 
 interface RecentlyCreatedSessionCardProps extends BAICardProps {

@@ -1,4 +1,6 @@
-import { addQuotaScopeTypePrefix, convertDecimalSizeUnit } from '../helper';
+import { QuotaPerStorageVolumePanelCardQuery } from '../__generated__/QuotaPerStorageVolumePanelCardQuery.graphql';
+import { QuotaPerStorageVolumePanelCardUserQuery } from '../__generated__/QuotaPerStorageVolumePanelCardUserQuery.graphql';
+import { addQuotaScopeTypePrefix, convertToDecimalUnit } from '../helper';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import BAICard, { BAICardProps } from './BAICard';
@@ -6,15 +8,12 @@ import BAIProgress from './BAIProgress';
 import Flex from './Flex';
 import FlexActivityIndicator from './FlexActivityIndicator';
 import StorageSelect from './StorageSelect';
-import { QuotaPerStorageVolumePanelCardQuery } from './__generated__/QuotaPerStorageVolumePanelCardQuery.graphql';
-import { QuotaPerStorageVolumePanelCardUserQuery } from './__generated__/QuotaPerStorageVolumePanelCardUserQuery.graphql';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Col, Empty, Row, theme, Tooltip, Typography } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export type VolumeInfo = {
   id: string;
@@ -183,12 +182,12 @@ const QuotaPerStorageVolumePanelCard: React.FC<
               used={
                 projectUsageBytes === 0
                   ? ''
-                  : `${convertDecimalSizeUnit(_.toString(projectUsageBytes), 'G')?.numberUnit}B`
+                  : `${convertToDecimalUnit(_.toString(projectUsageBytes), 'g')?.displayValue}`
               }
               total={
                 projectHardLimitBytes === 0
                   ? ''
-                  : `${convertDecimalSizeUnit(_.toString(projectHardLimitBytes), 'G')?.numberUnit}B`
+                  : `${convertToDecimalUnit(_.toString(projectHardLimitBytes), 'g')?.displayValue}`
               }
             />
           </Col>
@@ -211,12 +210,14 @@ const QuotaPerStorageVolumePanelCard: React.FC<
               used={
                 userUsageBytes === 0
                   ? ''
-                  : `${convertDecimalSizeUnit(_.toString(userUsageBytes), 'G')?.numberUnit}B`
+                  : convertToDecimalUnit(_.toString(userUsageBytes), 'g')
+                      ?.displayValue
               }
               total={
                 userHardLimitBytes === 0
                   ? ''
-                  : `${convertDecimalSizeUnit(_.toString(userHardLimitBytes), 'G')?.numberUnit}B`
+                  : convertToDecimalUnit(_.toString(userHardLimitBytes), 'g')
+                      ?.displayValue
               }
             />
           </Col>

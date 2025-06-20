@@ -1,6 +1,6 @@
 import {
   compareNumberWithUnits,
-  convertBinarySizeUnit,
+  convertToBinaryUnit,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useUpdatableState } from '../hooks';
@@ -41,10 +41,10 @@ const DynamicUnitInputNumberWithSlider: React.FC<
     },
   );
   const { token } = theme.useToken();
-  const minGiB = useMemo(() => convertBinarySizeUnit(min, 'g', 2), [min]);
-  const maxGiB = useMemo(() => convertBinarySizeUnit(max, 'g', 2), [max]);
+  const minGiB = useMemo(() => convertToBinaryUnit(min, 'g', 2), [min]);
+  const maxGiB = useMemo(() => convertToBinaryUnit(max, 'g', 2), [max]);
   const valueGiB = useMemo(
-    () => convertBinarySizeUnit(value || '0g', 'g', 2),
+    () => convertToBinaryUnit(value || '0g', 'g', 2),
     [value],
   );
 

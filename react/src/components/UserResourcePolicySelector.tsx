@@ -1,10 +1,9 @@
+import { UserResourcePolicySelectorQuery } from '../__generated__/UserResourcePolicySelectorQuery.graphql';
 import { localeCompare } from '../helper';
-import { UserResourcePolicySelectorQuery } from './__generated__/UserResourcePolicySelectorQuery.graphql';
 import { Select, SelectProps } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 interface Props extends SelectProps {
   defaultValue?: string;

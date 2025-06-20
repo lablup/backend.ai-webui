@@ -1,3 +1,8 @@
+import {
+  VFolderNodeListPageQuery,
+  VFolderNodeListPageQuery$data,
+  VFolderNodeListPageQuery$variables,
+} from '../__generated__/VFolderNodeListPageQuery.graphql';
 import ActionItemContent from '../components/ActionItemContent';
 import BAICard from '../components/BAICard';
 import BAIFetchKeyButton from '../components/BAIFetchKeyButton';
@@ -12,7 +17,6 @@ import BAITabs from '../components/BAITabs';
 import DeleteVFolderModal from '../components/DeleteVFolderModal';
 import Flex from '../components/Flex';
 import FolderCreateModal from '../components/FolderCreateModal';
-import FolderInvitationResponseModal from '../components/FolderInvitationResponseModal';
 import QuotaPerStorageVolumePanelCard from '../components/QuotaPerStorageVolumePanelCard';
 import RestoreVFolderModal from '../components/RestoreVFolderModal';
 import StorageStatusPanelCard from '../components/StorageStatusPanelCard';
@@ -22,16 +26,15 @@ import {
   filterNonNullItems,
   handleRowSelectionChange,
 } from '../helper';
-import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
-import { useVFolderInvitations } from '../hooks/backendai';
+import {
+  useSuspendedBackendaiClient,
+  useUpdatableState,
+  useWebUINavigate,
+} from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
-import {
-  VFolderNodeListPageQuery,
-  VFolderNodeListPageQuery$data,
-  VFolderNodeListPageQuery$variables,
-} from './__generated__/VFolderNodeListPageQuery.graphql';
+import { useVFolderInvitationsValue } from '../hooks/useVFolderInvitations';
 import { useToggle } from 'ahooks';
 import {
   Badge,
@@ -43,7 +46,6 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, {
   Suspense,
@@ -54,7 +56,7 @@ import React, {
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 import { StringParam, withDefault } from 'use-query-params';
 
 export const isDeletedCategory = (status?: string | null) => {
@@ -96,6 +98,8 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const { lg } = Grid.useBreakpoint();
   const currentProject = useCurrentProjectValue();
   const baiClient = useSuspendedBackendaiClient();
+  const webuiNavigate = useWebUINavigate();
+  const { count } = useVFolderInvitationsValue();
 
   const [selectedFolderList, setSelectedFolderList] = useState<
     Array<VFolderNodesType>
@@ -110,8 +114,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const [isOpenCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
   const [isOpenDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
   const [isOpenRestoreModal, { toggle: toggleRestoreModal }] = useToggle(false);
-  const [isInvitationResponseModalOpen, setIsInvitationResponseModalOpen] =
-    useState(false);
 
   const {
     baiPaginationOption,
@@ -187,8 +189,11 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  const [{ count, isFetching, isPendingMutation }] =
-    useVFolderInvitations(deferredFetchKey);
+  useEffect(() => {
+    updateFetchKey();
+    // Update fetchKey when count changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [count]);
 
   const { vfolder_nodes, ...folderCounts } =
     useLazyLoadQuery<VFolderNodeListPageQuery>(
@@ -306,7 +311,11 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 style={{ height: lg ? 200 : undefined }}
                 fetchKey={deferredFetchKey}
                 onRequestBadgeClick={() => {
-                  setIsInvitationResponseModalOpen(true);
+                  webuiNavigate({
+                    search: new URLSearchParams({
+                      invitation: 'true',
+                    }).toString(),
+                  });
                 }}
               />
             </Suspense>
@@ -645,25 +654,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           toggleRestoreModal();
         }}
       />
-      <Suspense>
-        <FolderInvitationResponseModal
-          open={isInvitationResponseModalOpen}
-          loading={
-            isFetching || isPendingMutation || deferredFetchKey !== fetchKey
-          }
-          fetchKey={deferredFetchKey}
-          onRequestClose={(success) => {
-            if (success) {
-              if (count === 1) {
-                setIsInvitationResponseModalOpen(false);
-              }
-              updateFetchKey();
-            } else {
-              setIsInvitationResponseModalOpen(false);
-            }
-          }}
-        />
-      </Suspense>
     </Flex>
   );
 };

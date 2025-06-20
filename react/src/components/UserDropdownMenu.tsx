@@ -1,3 +1,4 @@
+import { UserProfileSettingModalQuery } from '../__generated__/UserProfileSettingModalQuery.graphql';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import {
   useCurrentUserInfo,
@@ -7,7 +8,6 @@ import {
 import AboutBackendAIModal from './AboutBackendAIModal';
 import DesktopAppDownloadModal from './DesktopAppDownloadModal';
 import { UserProfileQuery } from './UserProfileSettingModalQuery';
-import { UserProfileSettingModalQuery } from './__generated__/UserProfileSettingModalQuery.graphql';
 import {
   UserOutlined,
   MailOutlined,

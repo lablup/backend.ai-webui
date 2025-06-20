@@ -1,15 +1,15 @@
+import { ResourcePresetListDeleteMutation } from '../__generated__/ResourcePresetListDeleteMutation.graphql';
+import {
+  ResourcePresetListQuery,
+  ResourcePresetListQuery$data,
+} from '../__generated__/ResourcePresetListQuery.graphql';
+import { ResourcePresetSettingModalFragment$key } from '../__generated__/ResourcePresetSettingModalFragment.graphql';
 import { filterNonNullItems, localeCompare, filterEmptyItem } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import Flex from './Flex';
 import NumberWithUnit from './NumberWithUnit';
 import ResourceNumber from './ResourceNumber';
 import ResourcePresetSettingModal from './ResourcePresetSettingModal';
-import { ResourcePresetListDeleteMutation } from './__generated__/ResourcePresetListDeleteMutation.graphql';
-import {
-  ResourcePresetListQuery,
-  ResourcePresetListQuery$data,
-} from './__generated__/ResourcePresetListQuery.graphql';
-import { ResourcePresetSettingModalFragment$key } from './__generated__/ResourcePresetSettingModalFragment.graphql';
 import {
   ReloadOutlined,
   PlusOutlined,
@@ -18,11 +18,10 @@ import {
 } from '@ant-design/icons';
 import { Tooltip, Button, theme, Table, App, Typography } from 'antd';
 import { ColumnType } from 'antd/es/table';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery, useMutation } from 'react-relay';
+import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 type ResourcePreset = NonNullable<
   ResourcePresetListQuery$data['resource_presets']
@@ -103,11 +102,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
           return '-';
         }
         return (
-          <NumberWithUnit
-            numberUnit={text + 'b'}
-            targetUnit="g"
-            unitType="binary"
-          />
+          <NumberWithUnit numberUnit={text} targetUnit="g" unitType="binary" />
         );
       },
     },

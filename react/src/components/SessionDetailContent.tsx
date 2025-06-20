@@ -1,3 +1,5 @@
+import { SessionDetailContentLegacyQuery } from '../__generated__/SessionDetailContentLegacyQuery.graphql';
+import { SessionDetailContentQuery } from '../__generated__/SessionDetailContentQuery.graphql';
 import SessionKernelTags from '../components/ImageTags';
 import { toGlobalId } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
@@ -13,14 +15,11 @@ import SessionIdleChecks, {
 import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionStatusDetailModal from './ComputeSessionNodeItems/SessionStatusDetailModal';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
-import SessionTypeTag from './ComputeSessionNodeItems/SessionTypeTag';
 import Flex from './Flex';
 import FolderLink from './FolderLink';
 import IdleCheckDescriptionModal from './IdleCheckDescriptionModal';
 import ImageMetaIcon from './ImageMetaIcon';
 import SessionUsageMonitor from './SessionUsageMonitor';
-import { SessionDetailContentLegacyQuery } from './__generated__/SessionDetailContentLegacyQuery.graphql';
-import { SessionDetailContentQuery } from './__generated__/SessionDetailContentQuery.graphql';
 import { InfoCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import {
   Alert,
@@ -35,11 +34,12 @@ import {
   Typography,
 } from 'antd';
 import Title from 'antd/es/typography/Title';
-import graphql from 'babel-plugin-relay/macro';
+// import { graphql } from 'react-relay';
+import { BAISessionTypeTag } from 'backend.ai-ui';
 import _ from 'lodash';
-import { Suspense, useState } from 'react';
+import { Suspense, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const SessionDetailContent: React.FC<{
   id: string;
@@ -52,6 +52,7 @@ const SessionDetailContent: React.FC<{
   const [currentUser] = useCurrentUserInfo();
   const userRole = useCurrentUserRole();
   const baiClient = useSuspendedBackendaiClient();
+
   const [openIdleCheckDescriptionModal, setOpenIdleCheckDescriptionModal] =
     useState<boolean>(false);
   const [openStatusDetailModal, setOpenStatusDetailModal] =
@@ -78,7 +79,7 @@ const SessionDetailContent: React.FC<{
         fetchPolicy: 'network-only',
       },
     );
-  const { session, legacy_session } =
+  const { session, legacy_session, vfolder_invited_list } =
     useLazyLoadQuery<SessionDetailContentQuery>(
       //  In compute_session_node, there are missing fields. We need to use `compute_session` to get the missing fields.
       graphql`
@@ -114,7 +115,7 @@ const SessionDetailContent: React.FC<{
 
             ...SessionStatusTagFragment
             ...SessionActionButtonsFragment
-            ...SessionTypeTagFragment
+            ...BAISessionTypeTagFragment
             ...EditableSessionNameFragment
             ...SessionReservationFragment
             # fix: This fragment is not used in this component, but it is required by the SessionActionButtonsFragment.
@@ -137,6 +138,11 @@ const SessionDetailContent: React.FC<{
             # It might be a bug in relay
             ...SessionActionButtonsLegacyFragment
             ...AppLauncherModalLegacyFragment
+          }
+          vfolder_invited_list(limit: 100, offset: 0) {
+            items {
+              id
+            }
           }
         }
       `,
@@ -164,6 +170,22 @@ const SessionDetailContent: React.FC<{
       .map((check) => check.remaining)
       .filter(Boolean),
   );
+
+  const invitedFolderIds = useMemo(
+    () => _.map(vfolder_invited_list?.items, 'id'),
+    [vfolder_invited_list],
+  );
+
+  /**
+   * Checks if a folder ID or array of folder IDs contains any invited folders
+   * @param vfolderId - Either a single folder ID or an array of folder IDs to check
+   * @returns True if any of the provided folder IDs are in the invited folders list
+   */
+  function isFolderInvited(vfolderId: string | Array<string>) {
+    return _.isArray(vfolderId)
+      ? _.some(vfolderId, (id) => _.includes(invitedFolderIds, id))
+      : _.includes(invitedFolderIds, vfolderId);
+  }
 
   return session ? (
     <Flex direction="column" gap={'lg'} align="stretch">
@@ -250,7 +272,7 @@ const SessionDetailContent: React.FC<{
             </Flex>
           </Descriptions.Item>
           <Descriptions.Item label={t('session.SessionType')}>
-            <SessionTypeTag sessionFrgmt={session} />
+            <BAISessionTypeTag sessionFrgmt={session} />
           </Descriptions.Item>
           <Descriptions.Item label={t('session.launcher.Environments')}>
             {imageFullName ? (
@@ -275,8 +297,15 @@ const SessionDetailContent: React.FC<{
                           key={`mounted-vfolder-${idx}`}
                           showIcon
                           vfolderNodeFragment={vfolder.node}
-                          disabled={
-                            currentUser.email !== legacy_session?.user_email
+                          type={
+                            currentUser.email !== legacy_session?.user_email &&
+                            !isFolderInvited(
+                              (session.vfolder_mounts || []).filter(
+                                (id) => typeof id === 'string',
+                              ),
+                            )
+                              ? 'disabled'
+                              : 'hover'
                           }
                         />
                       )
@@ -296,8 +325,12 @@ const SessionDetailContent: React.FC<{
                             folderId={id ?? ''}
                             folderName={name ?? ''}
                             showIcon
-                            disabled={
-                              currentUser.email !== legacy_session?.user_email
+                            type={
+                              currentUser.email !==
+                                legacy_session?.user_email &&
+                              !isFolderInvited(id as string)
+                                ? 'disabled'
+                                : 'hover'
                             }
                           />
                         );
@@ -389,7 +422,7 @@ const SessionDetailContent: React.FC<{
           </Descriptions.Item>
         </Descriptions>
       </Flex>
-      <Suspense fallback={<Skeleton />}>
+      <Suspense fallback={<Skeleton active />}>
         <Flex direction="column" gap={'sm'} align="stretch">
           <Typography.Title level={4} style={{ margin: 0 }}>
             {t('kernel.Kernels')}

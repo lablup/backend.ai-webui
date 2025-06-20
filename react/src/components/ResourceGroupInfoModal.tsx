@@ -1,14 +1,13 @@
+import { ResourceGroupInfoModalFragment$key } from '../__generated__/ResourceGroupInfoModalFragment.graphql';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import { ScalingGroupOpts } from './ResourceGroupList';
-import { ResourceGroupInfoModalFragment$key } from './__generated__/ResourceGroupInfoModalFragment.graphql';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { Descriptions, Tag, Typography, theme } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface ResourceGroupInfoModalProps extends BAIModalProps {
   resourceGroupFrgmt?: ResourceGroupInfoModalFragment$key | null;

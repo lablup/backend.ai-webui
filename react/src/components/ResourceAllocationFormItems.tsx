@@ -1,7 +1,8 @@
+import { ResourceAllocationFormItemsQuery } from '../__generated__/ResourceAllocationFormItemsQuery.graphql';
 import {
   addNumberWithUnits,
   compareNumberWithUnits,
-  convertBinarySizeUnit,
+  convertToBinaryUnit,
 } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useResourceSlotsDetails } from '../hooks/backendai';
@@ -26,7 +27,6 @@ import InputNumberWithSlider from './InputNumberWithSlider';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import ResourceGroupSelect from './ResourceGroupSelect';
 import ResourcePresetSelect from './ResourcePresetSelect';
-import { ResourceAllocationFormItemsQuery } from './__generated__/ResourceAllocationFormItemsQuery.graphql';
 import { CaretDownOutlined, ReloadOutlined } from '@ant-design/icons';
 import {
   Button,
@@ -41,11 +41,10 @@ import {
   Switch,
   theme,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { Suspense, useEffect, useMemo, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export const AUTOMATIC_DEFAULT_SHMEM = '64m';
 export const RESOURCE_ALLOCATION_INITIAL_FORM_VALUES: DeepPartial<ResourceAllocationFormValue> =
@@ -258,10 +257,10 @@ const ResourceAllocationFormItems: React.FC<
         {
           cpu: resourceLimits.cpu?.min,
           mem:
-            convertBinarySizeUnit(
-              (convertBinarySizeUnit(resourceLimits.shmem?.min, 'm')?.number ||
+            convertToBinaryUnit(
+              (convertToBinaryUnit(resourceLimits.shmem?.min, 'm')?.number ||
                 0) +
-                (convertBinarySizeUnit(resourceLimits.mem?.min, 'm')?.number ||
+                (convertToBinaryUnit(resourceLimits.mem?.min, 'm')?.number ||
                   0) +
                 'm',
               'g',
@@ -369,11 +368,7 @@ const ResourceAllocationFormItems: React.FC<
         (preset) => preset.name === name,
       );
       const slots = _.pick(preset?.resource_slots, _.keys(resourceSlotsInRG));
-      const mem = convertBinarySizeUnit(
-        (slots?.mem || 0) + 'b',
-        'g',
-        2,
-      )?.numberUnit;
+      const mem = convertToBinaryUnit(slots?.mem || 0, 'g', 2)?.value;
       const acceleratorObj = _.omit(slots, ['cpu', 'mem', 'shmem']);
 
       // Select the first matched AI accelerator type and value
@@ -394,21 +389,26 @@ const ResourceAllocationFormItems: React.FC<
           accelerator: Number(acceleratorObj[firstMatchedAcceleratorType] || 0),
         };
       }
+
+      // Check if preset has a specific shmem setting
+      const hasPresetShmem =
+        preset?.shared_memory && Number(preset.shared_memory) > 0;
+
       form.setFieldsValue({
         resource: {
           // ...slots,
           ...acceleratorSetting,
           // transform to GB based on preset values
           mem,
-          shmem: convertBinarySizeUnit(
-            (preset?.shared_memory || 0) + 'b',
-            'g',
-            2,
-          )?.numberUnit,
+          shmem: convertToBinaryUnit(preset?.shared_memory || 0, 'g', 2)?.value,
           cpu: parseInt(slots?.cpu || '0') || 0,
         },
       });
-      runShmemAutomationRule(mem || '0g');
+
+      // Only run automatic shmem rule if preset doesn't have a specific shmem setting
+      if (!hasPresetShmem) {
+        runShmemAutomationRule(mem || '0g');
+      }
 
       form
         .validateFields(['resource'], {
@@ -543,7 +543,17 @@ const ResourceAllocationFormItems: React.FC<
                   // updating resource fields based on preset is handled in useEffect because it has another dependency(image).
                   break;
                 default:
-                  form.setFieldValue('enabledAutomaticShmem', true);
+                  // Check if the selected preset has a specific shmem setting
+                  const selectedPreset = _.find(
+                    checkPresetInfo?.presets,
+                    (preset) => preset.name === value,
+                  );
+                  const hasPresetShmem =
+                    selectedPreset?.shared_memory &&
+                    Number(selectedPreset.shared_memory) > 0;
+
+                  // If preset has specific shmem, disable automatic shmem; otherwise enable it
+                  form.setFieldValue('enabledAutomaticShmem', !hasPresetShmem);
                   updateResourceFieldsBasedOnPreset(value);
                   break;
               }
@@ -790,7 +800,7 @@ const ResourceAllocationFormItems: React.FC<
                                       resourceLimits.mem &&
                                       compareNumberWithUnits(
                                         value,
-                                        remaining.mem + 'b',
+                                        remaining.mem,
                                       ) > 0
                                     ) {
                                       return Promise.reject(
@@ -813,8 +823,8 @@ const ResourceAllocationFormItems: React.FC<
                                 ...(remaining.mem
                                   ? {
                                       //@ts-ignore
-                                      [convertBinarySizeUnit(
-                                        remaining.mem + 'b',
+                                      [convertToBinaryUnit(
+                                        remaining.mem,
                                         'g',
                                         3,
                                       )?.numberFixed]: {
@@ -824,17 +834,15 @@ const ResourceAllocationFormItems: React.FC<
                                   : {}),
                               }}
                               onChange={(M_plus_S) => {
-                                if (
-                                  !M_plus_S ||
-                                  !form.getFieldValue('enabledAutomaticShmem')
-                                )
-                                  return;
-                                runShmemAutomationRule(M_plus_S);
-
                                 form.setFieldValue(
                                   'allocationPreset',
                                   'custom',
                                 );
+                                if (
+                                  form.getFieldValue('enabledAutomaticShmem')
+                                ) {
+                                  runShmemAutomationRule(M_plus_S);
+                                }
                               }}
                             />
                           </Form.Item>
@@ -853,23 +861,23 @@ const ResourceAllocationFormItems: React.FC<
                         const mem = getFieldValue(['resource', 'mem']) || '0g';
                         const shmem =
                           getFieldValue(['resource', 'shmem']) || '0g';
-                        const memUnitResult = convertBinarySizeUnit(
+                        const memUnitResult = convertToBinaryUnit(
                           mem,
                           'auto',
                           2,
                         );
-                        const shmemUnitResult = convertBinarySizeUnit(
+                        const shmemUnitResult = convertToBinaryUnit(
                           shmem,
                           'auto',
                           2,
                         );
-                        const appMemUnitResult = convertBinarySizeUnit(
+                        const appMemUnitResult = convertToBinaryUnit(
                           _.max([
                             0,
-                            (convertBinarySizeUnit(mem, 'm')?.number || 0) -
-                              (convertBinarySizeUnit(shmem, 'm')?.number || 0),
+                            (convertToBinaryUnit(mem, 'm')?.number || 0) -
+                              (convertToBinaryUnit(shmem, 'm')?.number || 0),
                           ]) + 'm',
-                          memUnitResult?.unit,
+                          memUnitResult?.unit || '',
                         );
 
                         return (
@@ -932,8 +940,7 @@ const ResourceAllocationFormItems: React.FC<
                                       token.colorSuccessBorderHover,
                                   }}
                                 ></div>
-                                Application MEM{' '}
-                                {appMemUnitResult?.numberUnit.toLowerCase()}
+                                Application MEM {appMemUnitResult?.value}
                               </Flex>
                               <Flex gap={'xxs'}>
                                 <div
@@ -946,7 +953,7 @@ const ResourceAllocationFormItems: React.FC<
                                 ></div>
 
                                 {getFieldValue('enabledAutomaticShmem') ? (
-                                  `SHMEM ${shmemUnitResult?.numberUnit.toLowerCase()}`
+                                  `SHMEM ${shmemUnitResult?.value}`
                                 ) : (
                                   <Form.Item
                                     noStyle
@@ -973,7 +980,7 @@ const ResourceAllocationFormItems: React.FC<
                                           value: string,
                                         ) => {
                                           const applicationMem =
-                                            appMemUnitResult?.numberUnit;
+                                            appMemUnitResult?.value;
                                           const shmem = value;
 
                                           if (
@@ -984,11 +991,11 @@ const ResourceAllocationFormItems: React.FC<
                                           }
 
                                           if (
-                                            (convertBinarySizeUnit(
+                                            (convertToBinaryUnit(
                                               applicationMem,
-                                              'M',
+                                              'm',
                                             )?.number || 0) <
-                                            (convertBinarySizeUnit(shmem, 'M')
+                                            (convertToBinaryUnit(shmem, 'm')
                                               ?.number || 0) *
                                               2
                                           ) {
@@ -1042,6 +1049,12 @@ const ResourceAllocationFormItems: React.FC<
                                       style={{
                                         width: 200,
                                       }}
+                                      onChange={() => {
+                                        form.setFieldValue(
+                                          'allocationPreset',
+                                          'custom',
+                                        );
+                                      }}
                                     />
                                   </Form.Item>
                                 )}
@@ -1065,6 +1078,10 @@ const ResourceAllocationFormItems: React.FC<
                                             ]) || '0g',
                                           );
                                         }
+                                        form.setFieldValue(
+                                          'allocationPreset',
+                                          'custom',
+                                        );
                                       }}
                                     />
                                   </Form.Item>

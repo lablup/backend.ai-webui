@@ -1,5 +1,9 @@
 import {
-  convertBinarySizeUnit,
+  AgentSummaryListQuery,
+  AgentSummaryListQuery$data,
+} from '../__generated__/AgentSummaryListQuery.graphql';
+import {
+  convertToBinaryUnit,
   filterNonNullItems,
   toFixedFloorWithoutTrailingZeros,
   transformSorterToOrderString,
@@ -16,10 +20,6 @@ import Flex from './Flex';
 import { ResourceTypeIcon } from './ResourceNumber';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import {
-  AgentSummaryListQuery,
-  AgentSummaryListQuery$data,
-} from './__generated__/AgentSummaryListQuery.graphql';
-import {
   CheckCircleOutlined,
   LoadingOutlined,
   MinusCircleOutlined,
@@ -30,11 +30,10 @@ import { useToggle } from 'ahooks';
 import { Button, Table, TableProps, theme, Tooltip, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FetchPolicy, useLazyLoadQuery } from 'react-relay';
+import { graphql, FetchPolicy, useLazyLoadQuery } from 'react-relay';
 
 type AgentSummary = NonNullable<
   AgentSummaryListQuery$data['agent_summary_list']
@@ -222,17 +221,11 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
                       <Flex gap="xxs">
                         <ResourceTypeIcon type={'mem'} />
                         <Typography.Text>
-                          {convertBinarySizeUnit(
-                            parsedOccupiedSlots.mem,
-                            'g',
-                            0,
-                          )?.numberFixed ?? 0}
+                          {convertToBinaryUnit(parsedOccupiedSlots.mem, 'g', 0)
+                            ?.numberFixed ?? 0}
                           /
-                          {convertBinarySizeUnit(
-                            parsedAvailableSlots.mem,
-                            'g',
-                            0,
-                          )?.numberFixed ?? 0}
+                          {convertToBinaryUnit(parsedAvailableSlots.mem, 'g', 0)
+                            ?.numberFixed ?? 0}
                         </Typography.Text>
                         <Typography.Text
                           type="secondary"

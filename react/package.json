@@ -27,6 +27,7 @@
     "ansi_up": "^6.0.2",
     "antd": "^5.24.9",
     "antd-style": "^3.7.1",
+    "backend.ai-ui": "workspace:*",
     "big.js": "^7.0.1",
     "classnames": "^2.5.1",
     "dayjs": "^1.11.13",
@@ -71,9 +72,9 @@
     "web-vitals": "^3.5.2"
   },
   "scripts": {
-    "start": "craco start",
-    "build": "pnpm run relay && craco build",
-    "build:copy": "pnpm run build && cp -r ./build/* ../build/rollup/",
+    "start": "wait-on node_modules/backend.ai-ui/dist && craco start",
+    "build": "pnpm run build:only && cp -r ./build/* ../build/rollup/",
+    "build:only": "pnpm run relay && craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
     "relay": "relay-compiler",
@@ -89,11 +90,19 @@
       "react-app",
       "react-app/jest",
       "plugin:storybook/recommended",
-      "plugin:react/recommended"
+      "plugin:react/recommended",
+      "plugin:relay/recommended"
+    ],
+    "plugins": [
+      "relay"
     ],
     "rules": {
       "react/react-in-jsx-scope": "off",
-      "react/prop-types": "off"
+      "react/prop-types": "off",
+      "import/no-duplicates": "error",
+      "relay/graphql-syntax": "off",
+      "relay/unused-fields": "off",
+      "relay/must-colocate-fragment-spreads": "off"
     }
   },
   "browserslist": {
@@ -144,7 +153,9 @@
     "babel-preset-react-app": "^10.1.0",
     "eslint": "^8.57.1",
     "eslint-config-react-app": "^7.0.1",
+    "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-relay": "^2.0.0",
     "eslint-plugin-storybook": "^0.11.1",
     "html-webpack-plugin": "5.6.3",
     "nodemon": "^3.1.7",
@@ -154,6 +165,7 @@
     "relay-test-utils": "^18.1.0",
     "storybook": "^8.4.5",
     "stream-browserify": "^3.0.0",
+    "wait-on": "^8.0.3",
     "webpack": "^5.96.1"
   },
   "proxy": "http://localhost:3081"

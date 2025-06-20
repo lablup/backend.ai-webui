@@ -1,24 +1,45 @@
+import { ChatPageQuery } from '../__generated__/ChatPageQuery.graphql';
 import BAICard from '../components/BAICard';
+import ChatCard from '../components/Chat/ChatCard';
 import {
-  ChatProviderType,
-  ConversationType,
-} from '../components/Chat/ChatModel';
-import { Conversation } from '../components/Chat/Conversation';
-import { useSuspendedBackendaiClient } from '../hooks';
-import { ChatPageQuery } from './__generated__/ChatPageQuery.graphql';
-import graphql from 'babel-plugin-relay/macro';
+  type ChatHistoryData,
+  generateChatId,
+  getChatById,
+  useHistory,
+} from '../components/Chat/ChatHistory';
+import { type ChatProviderData } from '../components/Chat/ChatModel';
+import Flex from '../components/Flex';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { Badge, Button, Card, Drawer, List, Tooltip, Typography } from 'antd';
+import { createStyles } from 'antd-style';
+import dayjs from 'dayjs';
 import { t } from 'i18next';
-import React, { useId } from 'react';
-import { useLazyLoadQuery } from 'react-relay';
+import _ from 'lodash';
+import { HistoryIcon, PlusIcon, TrashIcon } from 'lucide-react';
+import { Suspense, useState } from 'react';
+import { graphql, useLazyLoadQuery } from 'react-relay';
+import { useParams } from 'react-router-dom';
 import { StringParam, useQueryParams } from 'use-query-params';
 
-const ChatPageStyle = {
-  body: {
-    overflow: 'hidden',
-  },
-};
-
-type ChatPageProps = {};
+const useStyles = createStyles(({ css }) => ({
+  chatViewHorizontal: css`
+    overflow: auto;
+    height: calc(100vh - 224px);
+  `,
+  chatViewVertical: css`
+    overflow: hidden;
+  `,
+  chatCard: css`
+    flex: 1;
+    overflow: 'hidden';
+  `,
+  fixEditableVerticalAlign: css`
+    & {
+      margin-top: 0px !important;
+      inset-inline-start: 0px !important;
+    }
+  `,
+}));
 
 function useDefaultEndpointId() {
   const baiClient = useSuspendedBackendaiClient();
@@ -42,32 +63,258 @@ function useDefaultEndpointId() {
   return endpoint_list?.items[0]?.endpoint_id || undefined;
 }
 
-const ChatPage: React.FC<ChatPageProps> = () => {
-  const [{ endpointId, modelId, agentId }] = useQueryParams({
+function useChatProviderData(defaultEndpointId?: string): ChatProviderData {
+  const [{ endpointId, modelId, agentId, apiKey }] = useQueryParams({
     endpointId: StringParam,
     agentId: StringParam,
     modelId: StringParam,
+    apiKey: StringParam,
   });
 
-  const defaultEndpointId = useDefaultEndpointId();
-
-  const conversation: ConversationType = {
-    id: useId(),
-    label: t('webui.menu.Chat'),
-    chats: [],
-  };
-
-  const provider: ChatProviderType = {
-    basePath: 'v1',
-    agentId: agentId ?? undefined,
+  return {
+    basePath: 'v1', // Use OpenAPI 'v1' for OpenAI compatibility basePath,
+    baseURL: '',
     endpointId: endpointId ?? defaultEndpointId ?? undefined,
+    agentId: agentId ?? undefined,
     modelId: modelId ?? undefined,
+    apiKey: apiKey ?? undefined,
   };
+}
+
+interface ChatHistoryDrawerProps {
+  selectedHistoryId?: string;
+  history: ChatHistoryData[];
+  open?: boolean;
+  onClickClose: () => void;
+  onClickRemove: (id: string) => void;
+  onClickHistory: (id: string) => void;
+}
+
+const ChatHistoryDrawer = ({
+  selectedHistoryId,
+  history,
+  open,
+  onClickClose,
+  onClickRemove,
+  onClickHistory,
+}: ChatHistoryDrawerProps) => {
+  return (
+    <Drawer
+      getContainer={false}
+      open={open}
+      onClose={onClickClose}
+      mask={false}
+      maskClosable={true}
+      title={t('chatui.History')}
+      styles={{
+        body: { paddingBlock: 0 },
+      }}
+    >
+      <List
+        dataSource={history.map((item) => ({
+          title: item.label,
+          id: item.id,
+          updatedAt: item.updatedAt,
+        }))}
+        renderItem={(item) => (
+          <List.Item
+            actions={[
+              <Button
+                key="delete"
+                type="text"
+                icon={
+                  <TrashIcon
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onClickRemove(item.id);
+                    }}
+                  />
+                }
+              />,
+            ]}
+            style={{ cursor: 'pointer' }}
+            styles={{
+              actions: {
+                padding: 0,
+              },
+            }}
+            onClick={() => onClickHistory(item.id)}
+          >
+            <List.Item.Meta
+              title={
+                <Badge dot={selectedHistoryId === item.id}>{item.title}</Badge>
+              }
+              description={dayjs(item.updatedAt).format('YYYY-MM-DD HH:mm:ss')}
+            />
+          </List.Item>
+        )}
+      />
+    </Drawer>
+  );
+};
+
+const PureChatPage = ({ id }: { id: string }) => {
+  const defaultEndpointId = useDefaultEndpointId();
+  const provider = useChatProviderData(defaultEndpointId);
+  const { styles } = useStyles();
+  const [openHistory, setOpenHistory] = useState(false);
+  const {
+    chat,
+    history,
+    addChatData,
+    removeChatData,
+    updateChatData,
+    saveChatMessage,
+    clearChatMessage,
+    removeHistory,
+    updateHistory,
+  } = useHistory(id, provider);
+  const navigate = useWebUINavigate();
 
   return (
-    <BAICard title={t('webui.menu.Chat')} styles={ChatPageStyle}>
-      <Conversation conversation={conversation} provider={provider} />
-    </BAICard>
+    chat && (
+      <BAICard
+        title={
+          <Typography.Text
+            className={styles.fixEditableVerticalAlign}
+            editable={
+              getChatById(chat.id)
+                ? {
+                    onChange: (value) => {
+                      if (!_.isEmpty(value)) {
+                        updateHistory({ ...chat, label: value });
+                      }
+                    },
+                    text: chat.label,
+                    triggerType: ['icon', 'text'],
+                  }
+                : undefined
+            }
+          >
+            {chat.label}
+          </Typography.Text>
+        }
+        styles={{
+          body: { overflow: 'hidden', paddingTop: 0 },
+        }}
+        style={{
+          overflow: 'hidden',
+        }}
+        extra={
+          <>
+            <Tooltip title={t('chatui.NewChat')}>
+              <Button
+                type="text"
+                icon={<PlusIcon />}
+                onClick={() => {
+                  setOpenHistory(false);
+                  navigate('/chat', { replace: true });
+                }}
+              />
+            </Tooltip>
+            <Tooltip title={t('chatui.History')}>
+              <Button
+                type="text"
+                icon={<HistoryIcon />}
+                onClick={() => {
+                  setOpenHistory(!openHistory);
+                }}
+              />
+            </Tooltip>
+          </>
+        }
+      >
+        {id && (
+          <Flex
+            className={styles.chatViewVertical}
+            direction="column"
+            align="stretch"
+            gap={'xs'}
+          >
+            <Flex
+              className={styles.chatViewHorizontal}
+              gap={'xs'}
+              direction="row"
+              align="stretch"
+            >
+              <Suspense fallback={<Card className={styles.chatCard} loading />}>
+                {_.map(chat.chats, (chatData, index) => (
+                  <ChatCard
+                    key={chatData.id}
+                    className={styles.chatCard}
+                    chat={chatData}
+                    onUpdateChat={(newChatProperties) => {
+                      updateChatData(chatData.id, newChatProperties);
+                    }}
+                    fetchOnClient
+                    onRemoveChat={() => {
+                      removeChatData(chatData.id);
+                    }}
+                    onAddChat={() => {
+                      addChatData(chatData);
+                    }}
+                    onSaveMessage={(message) => {
+                      saveChatMessage(chatData.id, message);
+                    }}
+                    onClearMessage={(chatData) => {
+                      clearChatMessage(chatData.id);
+                    }}
+                    closable={isClosable(chat.chats.length)}
+                    cloneable={isClonable(chat.chats.length)}
+                  />
+                ))}
+              </Suspense>
+            </Flex>
+          </Flex>
+        )}
+        <ChatHistoryDrawer
+          selectedHistoryId={chat.id}
+          open={openHistory}
+          history={history}
+          onClickClose={() => {
+            setOpenHistory(false);
+          }}
+          onClickRemove={(historyId) => {
+            const remainHistories = removeHistory(historyId);
+
+            if (remainHistories === 0) {
+              setOpenHistory(false);
+              navigate('/chat', { replace: true });
+            } else if (historyId === chat.id) {
+              const chat = history.filter(({ id }) => id !== historyId)[0];
+              navigate(`/chat/${chat?.id}`, { replace: true });
+            }
+          }}
+          onClickHistory={(historyId) => {
+            navigate(`/chat/${historyId}`, { replace: true });
+          }}
+        />
+      </BAICard>
+    )
+  );
+};
+
+function isClosable(chatLength: number) {
+  return chatLength > 1;
+}
+
+function isClonable(chatLength: number) {
+  return chatLength <= 10;
+}
+
+const ChatPage: React.FC = () => {
+  const { id } = useParams();
+
+  const webuiNavigate = useWebUINavigate();
+
+  if (id && !getChatById(id)) {
+    webuiNavigate(`/chat`, { replace: true });
+  }
+
+  return (
+    <>
+      <PureChatPage id={id || generateChatId()} />
+    </>
   );
 };
 

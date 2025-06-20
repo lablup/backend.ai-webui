@@ -97,6 +97,7 @@ const ChatSender: React.FC<ChatSenderProps> = ({
       ref={senderRef}
       {...senderProps}
       loading={loading}
+      placeholder={t('chatui.SenderPlaceholder')}
       onChange={onInputChange}
       onSubmit={onInputSubmit}
       onCancel={onInputCancel}

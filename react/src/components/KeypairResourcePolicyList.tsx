@@ -1,3 +1,9 @@
+import { KeypairResourcePolicyListMutation } from '../__generated__/KeypairResourcePolicyListMutation.graphql';
+import {
+  KeypairResourcePolicyListQuery,
+  KeypairResourcePolicyListQuery$data,
+} from '../__generated__/KeypairResourcePolicyListQuery.graphql';
+import { KeypairResourcePolicySettingModalFragment$key } from '../__generated__/KeypairResourcePolicySettingModalFragment.graphql';
 import {
   localeCompare,
   numberSorterWithInfinityValue,
@@ -11,12 +17,6 @@ import Flex from './Flex';
 import KeypairResourcePolicySettingModal from './KeypairResourcePolicySettingModal';
 import ResourceNumber from './ResourceNumber';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
-import { KeypairResourcePolicyListMutation } from './__generated__/KeypairResourcePolicyListMutation.graphql';
-import {
-  KeypairResourcePolicyListQuery,
-  KeypairResourcePolicyListQuery$data,
-} from './__generated__/KeypairResourcePolicyListQuery.graphql';
-import { KeypairResourcePolicySettingModalFragment$key } from './__generated__/KeypairResourcePolicySettingModalFragment.graphql';
 import {
   DeleteOutlined,
   DownOutlined,
@@ -37,11 +37,10 @@ import {
 } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery, useMutation } from 'react-relay';
+import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 type KeypairResourcePolicies = NonNullable<
   KeypairResourcePolicyListQuery$data['keypair_resource_policies']

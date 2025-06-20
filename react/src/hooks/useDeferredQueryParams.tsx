@@ -1,8 +1,7 @@
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 import { atomWithDefault } from 'jotai/utils';
 import _ from 'lodash';
-import { useRef } from 'react';
-import { useCallback, useMemo } from 'react';
+import { useRef, useCallback, useMemo } from 'react';
 import {
   useQueryParams,
   QueryParamConfigMap,

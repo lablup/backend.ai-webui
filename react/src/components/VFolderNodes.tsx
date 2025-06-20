@@ -1,3 +1,7 @@
+import {
+  VFolderNodesFragment$data,
+  VFolderNodesFragment$key,
+} from '../__generated__/VFolderNodesFragment.graphql';
 import { filterNonNullItems, toLocalId } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
@@ -21,10 +25,6 @@ import InviteFolderSettingModal from './InviteFolderSettingModal';
 import SharedFolderPermissionInfoModal from './SharedFolderPermissionInfoModal';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import VFolderPermissionCell from './VFolderPermissionCell';
-import {
-  VFolderNodesFragment$data,
-  VFolderNodesFragment$key,
-} from './__generated__/VFolderNodesFragment.graphql';
 import { CheckCircleOutlined, UserOutlined } from '@ant-design/icons';
 import {
   Alert,
@@ -35,11 +35,10 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 export const statusTagColor = {
   // mountable

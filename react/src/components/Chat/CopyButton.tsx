@@ -1,9 +1,7 @@
 import { Button, ButtonProps, Tooltip } from 'antd';
 import { CopyConfig } from 'antd/es/typography/Base';
 import { CheckIcon, CopyIcon } from 'lucide-react';
-import React from 'react';
-import { useEffect } from 'react';
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 interface CopyButtonProps extends ButtonProps {
@@ -35,14 +33,22 @@ const CopyButton: React.FC<CopyButtonProps> = ({
       title={isCopied ? 'Copied!' : 'Copy'}
       open={isCopied ? true : undefined}
     >
-      <CopyToClipboard text={copyable?.text || ''} onCopy={handleCopy}>
-        <Button
-          icon={
-            isCopied ? <CheckIcon /> : defaultIcon ? defaultIcon : <CopyIcon />
-          }
-          {...props}
-        />
-      </CopyToClipboard>
+      <div>
+        <CopyToClipboard text={copyable?.text || ''} onCopy={handleCopy}>
+          <Button
+            icon={
+              isCopied ? (
+                <CheckIcon />
+              ) : defaultIcon ? (
+                defaultIcon
+              ) : (
+                <CopyIcon />
+              )
+            }
+            {...props}
+          />
+        </CopyToClipboard>
+      </div>
     </Tooltip>
   );
 };

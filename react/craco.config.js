@@ -12,17 +12,34 @@ const {
 
 module.exports = {
   devServer: {
-    watchFiles: [
-      '../index.html',
-      '../config.toml',
-      '../manifest/**/*',
-      '../dist/**/*',
-      '../resources/**/*',
-    ],
+    watchFiles: {
+      paths: [
+        '../index.html',
+        '../config.toml',
+        '../manifest/**/*',
+        '../dist/**/*',
+        '../resources/**/*',
+      ],
+      // options: {
+      //   ignored: (file) => {
+      //     // console.log(file);
+      //     if (file.includes('__generated__')) {
+      //       return true;
+      //     }
+      //     return false;
+      //   },
+      // },
+    },
   },
   babel: {
     plugins: [
       '@babel/plugin-syntax-import-attributes',
+      [
+        'relay',
+        {
+          artifactDirectory: './src/__generated__',
+        },
+      ],
     ],
   },
   webpack: {
@@ -88,11 +105,14 @@ module.exports = {
         ...webpackConfig,
         resolve: {
           ...webpackConfig.resolve,
+          alias: {
+            ...webpackConfig.resolve.alias,
+          },
           fallback: {
             ...webpackConfig.resolve.fallback,
             buffer: require.resolve('buffer'),
             stream: require.resolve('stream-browserify'),
-            child_process: false
+            child_process: false,
           },
         },
         ignoreWarnings: [
@@ -103,7 +123,7 @@ module.exports = {
           {
             module: /@antv\//,
             message: /Failed to parse source map/,
-          }
+          },
         ],
       };
     },

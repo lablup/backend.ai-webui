@@ -1,15 +1,14 @@
-import Flex from '../Flex';
-import { statusInfoTagColor } from './SessionStatusDetailModal';
 import {
   SessionStatusTagFragment$data,
   SessionStatusTagFragment$key,
-} from './__generated__/SessionStatusTagFragment.graphql';
+} from '../../__generated__/SessionStatusTagFragment.graphql';
+import Flex from '../Flex';
+import { statusInfoTagColor } from './SessionStatusDetailModal';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Tag, Tooltip, theme } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React from 'react';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface SessionStatusTagProps {
   sessionFrgmt?: SessionStatusTagFragment$key | null;

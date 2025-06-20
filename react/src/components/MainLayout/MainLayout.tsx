@@ -17,8 +17,9 @@ import WebUISider from './WebUISider';
 import { App, Layout, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import { atom, useSetAtom } from 'jotai';
+import _ from 'lodash';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { useNavigate, Outlet } from 'react-router-dom';
+import { useNavigate, Outlet, useMatches } from 'react-router-dom';
 
 export const HEADER_Z_INDEX_IN_MAIN_LAYOUT = 5;
 export type PluginPage = {
@@ -60,6 +61,9 @@ function MainLayout() {
   const [sideCollapsed, setSideCollapsed] =
     useState<boolean>(!!compactSidebarActive);
 
+  const matches = useMatches();
+  // @ts-ignore
+  const isHiddenBreadcrumb = _.last(matches)?.handle?.hideBreadcrumb ?? false;
   const { styles } = useStyle();
 
   useEffect(() => {
@@ -237,13 +241,21 @@ function MainLayout() {
                 <ForceTOTPChecker />
               </Suspense>
               <Suspense>
-                <WebUIBreadcrumb
-                  style={{
-                    marginBottom: token.marginMD,
-                    marginLeft: token.paddingContentHorizontalLG * -1,
-                    marginRight: token.paddingContentHorizontalLG * -1,
-                  }}
-                />
+                {isHiddenBreadcrumb ? (
+                  <div
+                    style={{
+                      marginBottom: token.marginMD,
+                    }}
+                  />
+                ) : (
+                  <WebUIBreadcrumb
+                    style={{
+                      marginBottom: token.marginMD,
+                      marginLeft: token.paddingContentHorizontalLG * -1,
+                      marginRight: token.paddingContentHorizontalLG * -1,
+                    }}
+                  />
+                )}
                 <Outlet />
               </Suspense>
               {/* To match paddig to 16 (2+14) */}

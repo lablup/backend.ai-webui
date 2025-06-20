@@ -1,3 +1,8 @@
+import {
+  ComputeSessionListPageQuery,
+  ComputeSessionListPageQuery$data,
+  ComputeSessionListPageQuery$variables,
+} from '../__generated__/ComputeSessionListPageQuery.graphql';
 import ActionItemContent from '../components/ActionItemContent';
 import AvailableResourcesCard from '../components/AvailableResourcesCard';
 import BAICard from '../components/BAICard';
@@ -18,11 +23,6 @@ import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginati
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
 import {
-  ComputeSessionListPageQuery,
-  ComputeSessionListPageQuery$data,
-  ComputeSessionListPageQuery$variables,
-} from './__generated__/ComputeSessionListPageQuery.graphql';
-import {
   Badge,
   Button,
   Col,
@@ -32,12 +32,11 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { PowerOffIcon } from 'lucide-react';
 import { Suspense, useDeferredValue, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 type TypeFilterType = 'all' | 'interactive' | 'batch' | 'inference' | 'system';
@@ -258,7 +257,7 @@ const ComputeSessionListPage = () => {
         </Col>
       </Row>
       <BAICard
-        bordered={false}
+        variant="borderless"
         title={t('webui.menu.Sessions')}
         extra={
           <Flex gap={'xs'}>

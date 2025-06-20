@@ -1,3 +1,4 @@
+import { VFolderTableProjectQuery } from '../__generated__/VFolderTableProjectQuery.graphql';
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useKeyPairLazyLoadQuery } from '../hooks/hooksUsingRelay';
@@ -13,7 +14,6 @@ import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import TextHighlighter from './TextHighlighter';
 import VFolderPermissionTag from './VFolderPermissionTag';
 import { VFolder } from './VFolderSelect';
-import { VFolderTableProjectQuery } from './__generated__/VFolderTableProjectQuery.graphql';
 import {
   QuestionCircleOutlined,
   ReloadOutlined,
@@ -32,7 +32,6 @@ import {
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { PlusIcon } from 'lucide-react';
@@ -44,7 +43,7 @@ import React, {
   useTransition,
 } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export interface VFolderFile {
   name: string;

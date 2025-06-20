@@ -1,5 +1,7 @@
-import { useCurrentDomainValue } from '../../hooks';
-import { useSuspendedBackendaiClient } from '../../hooks';
+import {
+  useCurrentDomainValue,
+  useSuspendedBackendaiClient,
+} from '../../hooks';
 import {
   useCurrentProjectValue,
   useSetCurrentProject,

@@ -1,4 +1,13 @@
-import { convertBinarySizeUnit } from '../helper';
+import {
+  CreateKeyPairResourcePolicyInput,
+  KeypairResourcePolicySettingModalCreateMutation,
+} from '../__generated__/KeypairResourcePolicySettingModalCreateMutation.graphql';
+import { KeypairResourcePolicySettingModalFragment$key } from '../__generated__/KeypairResourcePolicySettingModalFragment.graphql';
+import {
+  KeypairResourcePolicySettingModalModifyMutation,
+  ModifyKeyPairResourcePolicyInput,
+} from '../__generated__/KeypairResourcePolicySettingModalModifyMutation.graphql';
+import { convertToBinaryUnit } from '../helper';
 import { MAX_CPU_QUOTA, SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
@@ -7,17 +16,7 @@ import BAIModal, { BAIModalProps } from './BAIModal';
 import DynamicUnitInputNumber from './DynamicUnitInputNumber';
 import Flex from './Flex';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
-import {
-  CreateKeyPairResourcePolicyInput,
-  KeypairResourcePolicySettingModalCreateMutation,
-} from './__generated__/KeypairResourcePolicySettingModalCreateMutation.graphql';
-import { KeypairResourcePolicySettingModalFragment$key } from './__generated__/KeypairResourcePolicySettingModalFragment.graphql';
-import {
-  KeypairResourcePolicySettingModalModifyMutation,
-  ModifyKeyPairResourcePolicyInput,
-} from './__generated__/KeypairResourcePolicySettingModalModifyMutation.graphql';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-// import { KeypairResourcePolicySettingModalQuery } from './__generated__/KeypairResourcePolicySettingModalQuery.graphql';
 import {
   App,
   Card,
@@ -32,11 +31,11 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  graphql,
   useFragment, // useLazyLoadQuery,
   useMutation,
 } from 'react-relay';
@@ -132,22 +131,22 @@ const KeypairResourcePolicySettingModal: React.FC<
       keypairResourcePolicy?.total_resource_slots ?? '{}',
     );
     if (parsedTotalResourceSlots?.mem) {
-      let autoUniResult = convertBinarySizeUnit(
-        parsedTotalResourceSlots?.mem + 'b',
+      let autoUniResult = convertToBinaryUnit(
+        parsedTotalResourceSlots?.mem,
         'auto',
         2,
         true,
       );
 
-      if (autoUniResult?.unit === 'B' || autoUniResult?.unit === 'K') {
-        autoUniResult = convertBinarySizeUnit(
-          parsedTotalResourceSlots?.mem + 'b',
-          'M',
+      if (autoUniResult?.unit === '' || autoUniResult?.unit === 'k') {
+        autoUniResult = convertToBinaryUnit(
+          parsedTotalResourceSlots?.mem,
+          'm',
           3,
           true,
         );
       }
-      parsedTotalResourceSlots.mem = autoUniResult?.numberUnit || '0G';
+      parsedTotalResourceSlots.mem = autoUniResult?.value || '0g';
     }
 
     return {
@@ -180,7 +179,7 @@ const KeypairResourcePolicySettingModal: React.FC<
           ),
           (value, key) => {
             if (_.includes(key, 'mem')) {
-              return convertBinarySizeUnit(value, 'b', 0)?.numberFixed;
+              return convertToBinaryUnit(value, '', 0)?.numberFixed;
             }
             return value;
           },
@@ -423,9 +422,9 @@ const KeypairResourcePolicySettingModal: React.FC<
                                 _.includes(resourceSlotKey, 'mem') &&
                                 value &&
                                 // @ts-ignore
-                                convertBinarySizeUnit(value, 'p').number >
+                                convertToBinaryUnit(value, 'p').number >
                                   // @ts-ignore
-                                  convertBinarySizeUnit('300p', 'p').number
+                                  convertToBinaryUnit('300p', 'p').number
                               ) {
                                 return Promise.reject(
                                   new Error(

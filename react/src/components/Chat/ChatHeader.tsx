@@ -1,35 +1,31 @@
+import { ChatHeader_Endpoint$key } from '../../__generated__/ChatHeader_Endpoint.graphql';
 import { filterEmptyItem } from '../../helper';
 import { useWebUINavigate } from '../../hooks';
 import { AIAgent } from '../../hooks/useAIAgent';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import Flex from '../Flex';
 import AIAgentSelect from './AIAgentSelect';
-import { BAIModel, ChatParameters } from './ChatModel';
+import type { ChatModel, ChatParameters } from './ChatModel';
 import { ChatParametersSliders } from './ChatParametersSliders';
 import EndpointSelect, { EndpointSelectProps } from './EndpointSelect';
 import ModelSelect from './ModelSelect';
-import { ChatHeader_Endpoint$key } from './__generated__/ChatHeader_Endpoint.graphql';
 import {
   CloseOutlined,
   ControlOutlined,
   MoreOutlined,
-  PlusOutlined,
 } from '@ant-design/icons';
-import {
-  Dropdown,
-  Button,
-  theme,
-  MenuProps,
-  Typography,
-  Switch,
-  Popover,
-} from 'antd';
-import graphql from 'babel-plugin-relay/macro';
+import { Dropdown, Button, theme, MenuProps, Popover, Tooltip } from 'antd';
 import { isEmpty } from 'lodash';
-import { Scale as ScaleIcon, Eraser as EraserIcon } from 'lucide-react';
+import {
+  ScaleIcon,
+  EraserIcon,
+  ToggleRightIcon,
+  ToggleLeftIcon,
+  ArrowRightLeftIcon,
+} from 'lucide-react';
 import React, { startTransition, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface SyncSwitchProps {
   sync: boolean;
@@ -38,14 +34,20 @@ interface SyncSwitchProps {
 
 const SyncSwitch: React.FC<SyncSwitchProps> = ({ sync, onClick }) => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   return (
     <>
-      {sync && (
-        <Typography.Text type="secondary">
-          {t('chatui.SyncInput')}
-        </Typography.Text>
-      )}
-      <Switch checked={sync} onClick={onClick} />
+      <Tooltip title={t('chatui.SyncInput')}>
+        <Button
+          type="text"
+          icon={sync ? <ToggleRightIcon /> : <ToggleLeftIcon />}
+          onClick={() => onClick(!sync)}
+          style={{
+            marginLeft: 8,
+            color: sync ? token.colorPrimary : undefined,
+          }}
+        />
+      </Tooltip>
     </>
   );
 };
@@ -53,7 +55,8 @@ const SyncSwitch: React.FC<SyncSwitchProps> = ({ sync, onClick }) => {
 interface ChatHeaderProps {
   showCompareMenuItem?: boolean;
   closable?: boolean;
-  models: BAIModel[];
+  cloneable?: boolean;
+  models: ChatModel[];
   modelId: string;
   onChangeModel: (modelId: string) => void;
   endpointFrgmt?: ChatHeader_Endpoint$key | null;
@@ -64,9 +67,9 @@ interface ChatHeaderProps {
   sync: boolean;
   onChangeSync: (sync: boolean) => void;
   fetchKey: string;
-  onClickDeleteChatHistory?: () => void;
-  onClickClose?: () => void;
-  onClickCreate?: () => void;
+  onClearMessage?: () => void;
+  onRemoveChat?: () => void;
+  onAddChat?: () => void;
   parameters: ChatParameters;
   usingParameters: boolean;
   onChangeParameter: (
@@ -78,6 +81,7 @@ interface ChatHeaderProps {
 const ChatHeader: React.FC<ChatHeaderProps> = ({
   showCompareMenuItem,
   closable,
+  cloneable,
   models,
   modelId,
   onChangeModel,
@@ -87,13 +91,13 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   onChangeAgent,
   sync,
   onChangeSync,
-  onClickClose,
-  onClickCreate,
+  onRemoveChat,
+  onAddChat,
   fetchKey,
-  onClickDeleteChatHistory,
   parameters,
   usingParameters,
   onChangeParameter,
+  onClearMessage,
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -137,7 +141,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
       label: t('chatui.DeleteChatHistory'),
       icon: <EraserIcon />,
       onClick: () => {
-        onClickDeleteChatHistory?.();
+        onClearMessage?.();
       },
     },
     closable && {
@@ -149,7 +153,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
       label: t('chatui.DeleteChattingSession'),
       icon: <CloseOutlined />,
       onClick: () => {
-        onClickClose?.();
+        onRemoveChat?.();
       },
     },
   ]);
@@ -215,7 +219,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
           />
         )}
       </Flex>
-      <Flex gap={'xs'}>
+      <Flex style={{ zIndex: 1 }}>
         {closable && (
           <SyncSwitch
             sync={sync}
@@ -230,6 +234,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
           content={
             <ChatParametersSliders
               parameters={parameters}
+              usingParameters={usingParameters}
               onChangeParameter={(usingParameters, parameters) => {
                 startTransition(() => {
                   onChangeParameter(usingParameters, parameters);
@@ -243,23 +248,34 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             padding: token.paddingXS,
           }}
         >
-          <Button
-            icon={
-              <ControlOutlined
-                style={{
-                  color: usingParameters ? token.colorPrimary : undefined,
-                }}
-              />
-            }
-          />
+          <Tooltip title={t('chatui.chat.parameter.Title')}>
+            <Button
+              type="text"
+              icon={
+                <ControlOutlined
+                  style={{
+                    color: usingParameters ? token.colorPrimary : undefined,
+                  }}
+                />
+              }
+            />
+          </Tooltip>
         </Popover>
-        <Button onClick={() => onClickCreate?.()} icon={<PlusOutlined />} />
+        {cloneable && (
+          <Tooltip title={t('chatui.CreateCompareChat')}>
+            <Button
+              type="text"
+              onClick={() => onAddChat?.()}
+              icon={<ArrowRightLeftIcon />}
+            />
+          </Tooltip>
+        )}
         <Dropdown menu={{ items }} trigger={['click']}>
           <Button
-            type="link"
+            type="text"
             onClick={(e) => e.preventDefault()}
             icon={<MoreOutlined />}
-            style={{ color: token.colorTextSecondary, width: token.sizeMS }}
+            style={{ color: token.colorTextSecondary }}
           />
         </Dropdown>
       </Flex>

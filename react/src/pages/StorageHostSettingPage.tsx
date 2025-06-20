@@ -1,13 +1,12 @@
+import { StorageHostSettingPageQuery } from '../__generated__/StorageHostSettingPageQuery.graphql';
 import Flex from '../components/Flex';
 import StorageHostResourcePanel from '../components/StorageHostResourcePanel';
 import StorageHostSettingsPanel from '../components/StorageHostSettingsPanel';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-import { StorageHostSettingPageQuery } from './__generated__/StorageHostSettingPageQuery.graphql';
 import { Breadcrumb, Card, Empty, Typography } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useParams } from 'react-router-dom';
 
 interface StorageHostSettingPageProps {

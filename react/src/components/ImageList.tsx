@@ -1,3 +1,7 @@
+import {
+  ImageListQuery,
+  ImageListQuery$data,
+} from '../__generated__/ImageListQuery.graphql';
 import Flex from '../components/Flex';
 import {
   filterEmptyItem,
@@ -22,10 +26,6 @@ import ResourceNumber from './ResourceNumber';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import TextHighlighter from './TextHighlighter';
 import {
-  ImageListQuery,
-  ImageListQuery$data,
-} from './__generated__/ImageListQuery.graphql';
-import {
   AppstoreOutlined,
   ReloadOutlined,
   SearchOutlined,
@@ -35,11 +35,10 @@ import {
 import { useToggle } from 'ahooks';
 import { App, Button, Input, Tag, theme, Typography } from 'antd';
 import { ColumnType } from 'antd/es/table';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { Key, useMemo, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export type EnvironmentImage = NonNullable<
   NonNullable<ImageListQuery$data['images']>[number]

@@ -1,10 +1,9 @@
+import { StorageHostResourcePanelFragment$key } from '../__generated__/StorageHostResourcePanelFragment.graphql';
 import { humanReadableDecimalSize, usageIndicatorColor } from '../helper/index';
-import { StorageHostResourcePanelFragment$key } from './__generated__/StorageHostResourcePanelFragment.graphql';
 import { Progress, Descriptions, Typography, Tag } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 const StorageHostResourcePanel: React.FC<{
   storageVolumeFrgmt: StorageHostResourcePanelFragment$key | null;

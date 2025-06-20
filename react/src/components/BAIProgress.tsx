@@ -40,7 +40,7 @@ const BAIProgress: React.FC<BAIProgressProps> = ({
       <Flex
         style={{
           padding: 1,
-          backgroundColor: token.colorFillSecondary,
+          backgroundColor: token.colorFill,
           height: _.isNumber(baiProgressProps.size)
             ? baiProgressProps.size
             : token.size,

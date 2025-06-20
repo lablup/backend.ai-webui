@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2025 Lablup Inc. All rights reserved.
  */
+import { UserProfileSettingModalQuery } from '../__generated__/UserProfileSettingModalQuery.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -9,8 +10,6 @@ import BAIModal from './BAIModal';
 import { passwordPattern } from './ResetPasswordRequired';
 import TOTPActivateModal from './TOTPActivateModal';
 import { UserProfileQuery } from './UserProfileSettingModalQuery';
-// @ts-ignore
-import { UserProfileSettingModalQuery } from './__generated__/UserProfileSettingModalQuery.graphql';
 import { ExclamationCircleFilled, LoadingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {

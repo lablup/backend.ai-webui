@@ -1,3 +1,5 @@
+import { UserNodeListModifyMutation } from '../__generated__/UserNodeListModifyMutation.graphql';
+import { UserNodeListQuery } from '../__generated__/UserNodeListQuery.graphql';
 import BAIPropertyFilter from '../components/BAIPropertyFilter';
 import Flex from '../components/Flex';
 import {
@@ -10,8 +12,6 @@ import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOption
 import BAIRadioGroup from './BAIRadioGroup';
 import UserInfoModal from './UserInfoModal';
 import UserSettingModal from './UserSettingModal';
-import { UserNodeListModifyMutation } from './__generated__/UserNodeListModifyMutation.graphql';
-import { UserNodeListQuery } from './__generated__/UserNodeListQuery.graphql';
 import {
   ReloadOutlined,
   LoadingOutlined,
@@ -19,13 +19,12 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { Tooltip, Button, Table, theme, Popconfirm, App } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery, useMutation } from 'react-relay';
+import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 interface UserNodeListProps {}
 

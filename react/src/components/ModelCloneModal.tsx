@@ -1,3 +1,4 @@
+import { ModelCloneModalVFolderFragment$key } from '../__generated__/ModelCloneModalVFolderFragment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
@@ -5,7 +6,6 @@ import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import StorageSelect from './StorageSelect';
-import { ModelCloneModalVFolderFragment$key } from './__generated__/ModelCloneModalVFolderFragment.graphql';
 import {
   Alert,
   Form,
@@ -16,10 +16,9 @@ import {
   Switch,
   message,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface ModelCloneModalProps extends BAIModalProps {
   vfolderNode: ModelCloneModalVFolderFragment$key | null;

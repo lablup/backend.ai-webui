@@ -1,4 +1,13 @@
 import {
+  UserInput,
+  UserSettingModalCreateMutation,
+} from '../__generated__/UserSettingModalCreateMutation.graphql';
+import {
+  ModifyUserInput,
+  UserSettingModalModifyMutation,
+} from '../__generated__/UserSettingModalModifyMutation.graphql';
+import { UserSettingModalQuery } from '../__generated__/UserSettingModalQuery.graphql';
+import {
   useCurrentDomainValue,
   useSuspendedBackendaiClient,
   useUpdatableState,
@@ -8,15 +17,6 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import TOTPActivateModal from './TOTPActivateModal';
 import UserResourcePolicySelector from './UserResourcePolicySelector';
-import {
-  UserInput,
-  UserSettingModalCreateMutation,
-} from './__generated__/UserSettingModalCreateMutation.graphql';
-import {
-  ModifyUserInput,
-  UserSettingModalModifyMutation,
-} from './__generated__/UserSettingModalModifyMutation.graphql';
-import { UserSettingModalQuery } from './__generated__/UserSettingModalQuery.graphql';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
@@ -30,12 +30,10 @@ import {
   App,
   theme,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMutation } from 'react-relay';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useMutation, useLazyLoadQuery } from 'react-relay';
 
 type UserStatus = {
   [key: string]: string;

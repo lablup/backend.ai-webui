@@ -1,3 +1,5 @@
+import { StorageStatusPanelKeypairQuery } from '../__generated__/StorageStatusPanelKeypairQuery.graphql';
+import { StorageStatusPanelQuery } from '../__generated__/StorageStatusPanelQuery.graphql';
 import { addQuotaScopeTypePrefix, usageIndicatorColor } from '../helper';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
@@ -7,8 +9,6 @@ import Flex from './Flex';
 import FlexActivityIndicator from './FlexActivityIndicator';
 import StorageSelect, { VolumeInfo } from './StorageSelect';
 import UsageProgress from './UsageProgress';
-import { StorageStatusPanelKeypairQuery } from './__generated__/StorageStatusPanelKeypairQuery.graphql';
-import { StorageStatusPanelQuery } from './__generated__/StorageStatusPanelQuery.graphql';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import {
   Progress,
@@ -23,11 +23,10 @@ import {
   Tooltip,
   Button,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const StorageStatusPanel: React.FC<{
   fetchKey: string;

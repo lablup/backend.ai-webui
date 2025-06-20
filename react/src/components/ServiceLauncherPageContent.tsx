@@ -1,7 +1,11 @@
+import { ServiceLauncherPageContentFragment$key } from '../__generated__/ServiceLauncherPageContentFragment.graphql';
+import { ServiceLauncherPageContentModifyMutation } from '../__generated__/ServiceLauncherPageContentModifyMutation.graphql';
+import { ServiceLauncherPageContent_UserInfoQuery } from '../__generated__/ServiceLauncherPageContent_UserInfoQuery.graphql';
+import { ServiceLauncherPageContent_UserResourcePolicyQuery } from '../__generated__/ServiceLauncherPageContent_UserResourcePolicyQuery.graphql';
 import {
   baiSignedRequestWithPromise,
   compareNumberWithUnits,
-  convertBinarySizeUnit,
+  convertToBinaryUnit,
   useBaiSignedRequestWithPromise,
 } from '../helper';
 import {
@@ -28,10 +32,6 @@ import ResourceNumber from './ResourceNumber';
 import VFolderLazyView from './VFolderLazyView';
 import VFolderSelect from './VFolderSelect';
 import VFolderTableFormItem from './VFolderTableFormItem';
-import { ServiceLauncherPageContentFragment$key } from './__generated__/ServiceLauncherPageContentFragment.graphql';
-import { ServiceLauncherPageContentModifyMutation } from './__generated__/ServiceLauncherPageContentModifyMutation.graphql';
-import { ServiceLauncherPageContent_UserInfoQuery } from './__generated__/ServiceLauncherPageContent_UserInfoQuery.graphql';
-import { ServiceLauncherPageContent_UserResourcePolicyQuery } from './__generated__/ServiceLauncherPageContent_UserResourcePolicyQuery.graphql';
 import { MinusOutlined } from '@ant-design/icons';
 import {
   App,
@@ -46,11 +46,15 @@ import {
   Tooltip,
   Tag,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment, useLazyLoadQuery, useMutation } from 'react-relay';
+import {
+  graphql,
+  useFragment,
+  useLazyLoadQuery,
+  useMutation,
+} from 'react-relay';
 import { StringParam, useQueryParams } from 'use-query-params';
 
 const ServiceValidationView = React.lazy(
@@ -503,7 +507,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                   resource_opts: JSON.stringify({
                     shmem: values.resource.shmem,
                   }),
-                  // FIXME: temporally convert cluster mode string according to server-side type
+                  // FIXME: temporarily convert cluster mode string according to server-side type
                   cluster_mode:
                     'single-node' === values.cluster_mode
                       ? 'SINGLE_NODE'
@@ -659,19 +663,19 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         // FIXME: memory doesn't applied to resource allocation
         resource: {
           cpu: parseInt(JSON.parse(endpoint?.resource_slots || '{}')?.cpu),
-          mem: convertBinarySizeUnit(
-            JSON.parse(endpoint?.resource_slots || '{}')?.mem + 'b',
+          mem: convertToBinaryUnit(
+            JSON.parse(endpoint?.resource_slots || '{}')?.mem,
             'g',
             3,
             true,
-          )?.numberUnit,
-          shmem: convertBinarySizeUnit(
+          )?.value,
+          shmem: convertToBinaryUnit(
             JSON.parse(endpoint?.resource_opts || '{}')?.shmem ||
               AUTOMATIC_DEFAULT_SHMEM,
             'g',
             3,
             true,
-          )?.numberUnit,
+          )?.value,
           ...getAIAcceleratorWithStringifiedKey(
             _.omit(JSON.parse(endpoint?.resource_slots || '{}'), [
               'cpu',

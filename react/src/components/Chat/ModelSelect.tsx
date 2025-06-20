@@ -1,11 +1,10 @@
-import { BAIModel } from './ChatModel';
-import { Select, SelectProps } from 'antd';
+import type { ChatModel } from './ChatModel';
+import { Select, type SelectProps } from 'antd';
 import _ from 'lodash';
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface ModelSelectProps extends SelectProps {
-  models?: Array<BAIModel>;
+  models?: Array<ChatModel>;
 }
 
 const ModelSelect: React.FC<ModelSelectProps> = ({
@@ -24,9 +23,9 @@ const ModelSelect: React.FC<ModelSelectProps> = ({
       options={_.chain(models)
         .groupBy('group')
         .mapValues((ms) =>
-          _.map(ms, (m) => ({
-            label: m.label,
-            value: m.name,
+          _.map(ms, ({ name }) => ({
+            label: name,
+            value: name,
           })),
         )
         .map((v, k) => ({

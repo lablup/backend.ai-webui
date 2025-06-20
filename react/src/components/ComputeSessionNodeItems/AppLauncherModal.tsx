@@ -1,3 +1,5 @@
+import { AppLauncherModalFragment$key } from '../../__generated__/AppLauncherModalFragment.graphql';
+import { AppLauncherModalLegacyFragment$key } from '../../__generated__/AppLauncherModalLegacyFragment.graphql';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import {
   ServicePort,
@@ -6,8 +8,6 @@ import {
 } from '../../hooks/useSuspendedFilteredAppTemplate';
 import BAIModal from '../BAIModal';
 import Flex from '../Flex';
-import { AppLauncherModalFragment$key } from './__generated__/AppLauncherModalFragment.graphql';
-import { AppLauncherModalLegacyFragment$key } from './__generated__/AppLauncherModalLegacyFragment.graphql';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import {
   Button,
@@ -23,11 +23,10 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { useRef, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface AppLauncherModalProps extends ModalProps {
   onRequestClose: () => void;

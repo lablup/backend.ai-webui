@@ -1,3 +1,9 @@
+import { UserResourcePolicyListMutation } from '../__generated__/UserResourcePolicyListMutation.graphql';
+import {
+  UserResourcePolicyListQuery,
+  UserResourcePolicyListQuery$data,
+} from '../__generated__/UserResourcePolicyListQuery.graphql';
+import { UserResourcePolicySettingModalFragment$key } from '../__generated__/UserResourcePolicySettingModalFragment.graphql';
 import {
   bytesToGB,
   filterEmptyItem,
@@ -11,12 +17,6 @@ import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting'
 import Flex from './Flex';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import UserResourcePolicySettingModal from './UserResourcePolicySettingModal';
-import { UserResourcePolicyListMutation } from './__generated__/UserResourcePolicyListMutation.graphql';
-import {
-  UserResourcePolicyListQuery,
-  UserResourcePolicyListQuery$data,
-} from './__generated__/UserResourcePolicyListQuery.graphql';
-import { UserResourcePolicySettingModalFragment$key } from './__generated__/UserResourcePolicySettingModalFragment.graphql';
 import {
   DeleteOutlined,
   DownOutlined,
@@ -27,12 +27,11 @@ import {
 import { useToggle } from 'ahooks';
 import { App, Button, Dropdown, Popconfirm, Space, Table, theme } from 'antd';
 import { ColumnType } from 'antd/es/table';
-import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery, useMutation } from 'react-relay';
+import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 type UserResourcePolicies = NonNullable<
   UserResourcePolicyListQuery$data['user_resource_policies']

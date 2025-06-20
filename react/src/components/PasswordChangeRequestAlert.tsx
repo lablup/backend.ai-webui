@@ -1,9 +1,8 @@
+import { PasswordChangeRequestAlertQuery } from '../__generated__/PasswordChangeRequestAlertQuery.graphql';
 import BAIAlert, { BAIAlertProps } from './BAIAlert';
-import { PasswordChangeRequestAlertQuery } from './__generated__/PasswordChangeRequestAlertQuery.graphql';
-import graphql from 'babel-plugin-relay/macro';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 interface Props extends BAIAlertProps {}
 const PasswordChangeRequestAlert: React.FC<Props> = ({ ...alertProps }) => {

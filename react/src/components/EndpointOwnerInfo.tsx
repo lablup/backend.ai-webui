@@ -1,11 +1,10 @@
+import { EndpointOwnerInfoFragment$key } from '../__generated__/EndpointOwnerInfoFragment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { EndpointOwnerInfoFragment$key } from './__generated__/EndpointOwnerInfoFragment.graphql';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, Tooltip, theme } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface EndpointOwnerInfoProps {
   endpointFrgmt: EndpointOwnerInfoFragment$key | null | undefined;

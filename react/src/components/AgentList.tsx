@@ -1,6 +1,12 @@
+import { AgentDetailModalFragment$key } from '../__generated__/AgentDetailModalFragment.graphql';
+import {
+  AgentListQuery,
+  AgentListQuery$data,
+} from '../__generated__/AgentListQuery.graphql';
+import { AgentSettingModalFragment$key } from '../__generated__/AgentSettingModalFragment.graphql';
 import {
   bytesToGB,
-  convertBinarySizeUnit,
+  convertToBinaryUnit,
   filterNonNullItems,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
@@ -20,12 +26,6 @@ import DoubleTag from './DoubleTag';
 import Flex from './Flex';
 import { ResourceTypeIcon } from './ResourceNumber';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
-import { AgentDetailModalFragment$key } from './__generated__/AgentDetailModalFragment.graphql';
-import {
-  AgentListQuery,
-  AgentListQuery$data,
-} from './__generated__/AgentListQuery.graphql';
-import { AgentSettingModalFragment$key } from './__generated__/AgentSettingModalFragment.graphql';
 import {
   CheckCircleOutlined,
   InfoCircleOutlined,
@@ -37,12 +37,11 @@ import { useToggle } from 'ahooks';
 import { Button, TableProps, Tag, theme, Tooltip, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
-import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 type Agent = NonNullable<AgentListQuery$data['agent_list']>['items'][number];
 
@@ -316,17 +315,11 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                       <Flex gap="xxs">
                         <ResourceTypeIcon type={'mem'} />
                         <Typography.Text>
-                          {convertBinarySizeUnit(
-                            parsedOccupiedSlots.mem,
-                            'g',
-                            0,
-                          )?.numberFixed ?? 0}
+                          {convertToBinaryUnit(parsedOccupiedSlots.mem, 'g', 0)
+                            ?.numberFixed ?? 0}
                           /
-                          {convertBinarySizeUnit(
-                            parsedAvailableSlots.mem,
-                            'g',
-                            0,
-                          )?.numberFixed ?? 0}
+                          {convertToBinaryUnit(parsedAvailableSlots.mem, 'g', 0)
+                            ?.numberFixed ?? 0}
                         </Typography.Text>
                         <Typography.Text
                           type="secondary"
@@ -483,12 +476,12 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                   percent={liveStat.mem_util.ratio * 100}
                   width={120}
                   valueLabel={
-                    convertBinarySizeUnit(
+                    convertToBinaryUnit(
                       _.toString(liveStat.mem_util.current),
                       'g',
                     )?.numberFixed +
                     '/' +
-                    convertBinarySizeUnit(
+                    convertToBinaryUnit(
                       _.toString(liveStat.mem_util.capacity),
                       'g',
                     )?.numberFixed +
@@ -556,7 +549,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                             100 || 0
                         }
                         valueLabel={
-                          convertBinarySizeUnit(
+                          convertToBinaryUnit(
                             _.toString(
                               liveStat[statKey as keyof typeof liveStat]
                                 .current,
@@ -564,7 +557,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                             'g',
                           )?.numberFixed +
                           '/' +
-                          convertBinarySizeUnit(
+                          convertToBinaryUnit(
                             _.toString(
                               liveStat[statKey as keyof typeof liveStat]
                                 .capacity,

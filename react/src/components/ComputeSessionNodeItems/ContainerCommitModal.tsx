@@ -1,8 +1,8 @@
+import { ContainerCommitModalFragment$key } from '../../__generated__/ContainerCommitModalFragment.graphql';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useSetBAINotification } from '../../hooks/useBAINotification';
 import BAIModal, { BAIModalProps } from '../BAIModal';
 import Flex from '../Flex';
-import { ContainerCommitModalFragment$key } from './__generated__/ContainerCommitModalFragment.graphql';
 import {
   Descriptions,
   Divider,
@@ -11,10 +11,9 @@ import {
   Input,
   Typography,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface ContainerCommitModalProps extends BAIModalProps {
   sessionFrgmt: ContainerCommitModalFragment$key | null;

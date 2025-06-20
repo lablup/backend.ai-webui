@@ -1,8 +1,8 @@
+import { ManageAppsModalMutation } from '../__generated__/ManageAppsModalMutation.graphql';
+import { ManageAppsModal_image$key } from '../__generated__/ManageAppsModal_image.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
-import { ManageAppsModalMutation } from './__generated__/ManageAppsModalMutation.graphql';
-import { ManageAppsModal_image$key } from './__generated__/ManageAppsModal_image.graphql';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import {
   Input,
@@ -14,11 +14,10 @@ import {
   FormInstance,
   theme,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useFragment, useMutation } from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 interface ManageAppsModalProps extends BAIModalProps {
   open: boolean;

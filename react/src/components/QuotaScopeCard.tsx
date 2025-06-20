@@ -1,7 +1,7 @@
+import { QuotaScopeCardFragment$key } from '../__generated__/QuotaScopeCardFragment.graphql';
+import { QuotaScopeCardUnsetMutation } from '../__generated__/QuotaScopeCardUnsetMutation.graphql';
 import { bytesToGB } from '../helper/index';
 import Flex from './Flex';
-import { QuotaScopeCardFragment$key } from './__generated__/QuotaScopeCardFragment.graphql';
-import { QuotaScopeCardUnsetMutation } from './__generated__/QuotaScopeCardUnsetMutation.graphql';
 import { EditFilled, PlusOutlined, CloseOutlined } from '@ant-design/icons';
 import {
   CardProps,
@@ -12,10 +12,9 @@ import {
   Empty,
   theme,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment, useMutation } from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 interface Props extends CardProps {
   quotaScopeFrgmt: QuotaScopeCardFragment$key | null;

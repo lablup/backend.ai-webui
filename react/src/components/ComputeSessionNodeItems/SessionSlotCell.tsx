@@ -1,4 +1,5 @@
-import { convertBinarySizeUnit } from '../../helper';
+import { SessionSlotCellFragment$key } from '../../__generated__/SessionSlotCellFragment.graphql';
+import { convertToBinaryUnit } from '../../helper';
 import {
   ResourceSlotName,
   useResourceSlotsDetails,
@@ -6,7 +7,6 @@ import {
 import { useSessionLiveStat } from '../../hooks/useSessionNodeLiveStat';
 import Flex from '../Flex';
 import { displayMemoryUsage } from '../SessionUsageMonitor';
-import { SessionSlotCellFragment$key } from './__generated__/SessionSlotCellFragment.graphql';
 import {
   Badge,
   BadgeProps,
@@ -16,10 +16,9 @@ import {
   TooltipProps,
   Typography,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React from 'react';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface OccupiedSlotViewProps {
   sessionFrgmt: SessionSlotCellFragment$key;
@@ -91,7 +90,7 @@ const SessionSlotCell: React.FC<OccupiedSlotViewProps> = ({
           ),
           placement: 'left',
         }}
-        text={convertBinarySizeUnit(mem, 'G', 3)?.numberFixed + ' GiB'}
+        text={convertToBinaryUnit(mem, 'g', 3)?.displayValue}
       />
     );
   } else if (type === 'accelerator') {

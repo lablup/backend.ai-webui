@@ -2,17 +2,16 @@
  @license
  Copyright (c) 2015-2025 Lablup Inc. All rights reserved.
  */
+import { MyKeypairInfoModalQuery } from '../__generated__/MyKeypairInfoModalQuery.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
-import { MyKeypairInfoModalQuery } from './__generated__/MyKeypairInfoModalQuery.graphql';
 import { Button, Table, Typography, Tag } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 interface MyKeypairInfoModalProps extends BAIModalProps {
   onRequestClose: () => void;

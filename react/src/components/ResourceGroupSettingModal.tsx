@@ -1,3 +1,7 @@
+import { ResourceGroupSettingModalAssociateDomainMutation } from '../__generated__/ResourceGroupSettingModalAssociateDomainMutation.graphql';
+import { ResourceGroupSettingModalCreateMutation } from '../__generated__/ResourceGroupSettingModalCreateMutation.graphql';
+import { ResourceGroupSettingModalFragment$key } from '../__generated__/ResourceGroupSettingModalFragment.graphql';
+import { ResourceGroupSettingModalUpdateMutation } from '../__generated__/ResourceGroupSettingModalUpdateMutation.graphql';
 import { filterEmptyValues, newLineToBrElement } from '../helper';
 import { useCurrentDomainValue } from '../hooks';
 import BAICard from './BAICard';
@@ -5,10 +9,6 @@ import BAIModal from './BAIModal';
 import DomainSelector from './DomainSelector';
 import Flex from './Flex';
 import { ScalingGroupOpts } from './ResourceGroupList';
-import { ResourceGroupSettingModalAssociateDomainMutation } from './__generated__/ResourceGroupSettingModalAssociateDomainMutation.graphql';
-import { ResourceGroupSettingModalCreateMutation } from './__generated__/ResourceGroupSettingModalCreateMutation.graphql';
-import { ResourceGroupSettingModalFragment$key } from './__generated__/ResourceGroupSettingModalFragment.graphql';
-import { ResourceGroupSettingModalUpdateMutation } from './__generated__/ResourceGroupSettingModalUpdateMutation.graphql';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import {
   App,
@@ -25,11 +25,10 @@ import {
   Tooltip,
   theme,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { Suspense, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment, useMutation } from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 type FormInputType = {
   name: string;
@@ -273,7 +272,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
       }}
       {...modalProps}
     >
-      <Suspense fallback={<Skeleton />}>
+      <Suspense fallback={<Skeleton active />}>
         <Form
           ref={formRef}
           initialValues={INITIAL_FORM_VALUES}

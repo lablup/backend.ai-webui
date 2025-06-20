@@ -1,17 +1,16 @@
+import { StorageStatusPanelCardQuery } from '../__generated__/StorageStatusPanelCardQuery.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useVFolderInvitations } from '../hooks/backendai';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import BAICard, { BAICardProps } from './BAICard';
 import BAIPanelItem from './BAIPanelItem';
-import { StorageStatusPanelCardQuery } from './__generated__/StorageStatusPanelCardQuery.graphql';
 import { Badge, Col, Row, theme, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const useStyles = createStyles(({ css, token }) => ({
   invitationTooltip: css`

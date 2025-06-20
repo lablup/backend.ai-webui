@@ -1,8 +1,7 @@
-import { EndpointStatusTagFragment$key } from './__generated__/EndpointStatusTagFragment.graphql';
+import { EndpointStatusTagFragment$key } from '../__generated__/EndpointStatusTagFragment.graphql';
 import { Tag } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import React from 'react';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface EndpointStatusTagProps {
   endpointFrgmt: EndpointStatusTagFragment$key | null | undefined;

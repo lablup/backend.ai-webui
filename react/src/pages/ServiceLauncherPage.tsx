@@ -1,7 +1,6 @@
+import { ServiceLauncherPageQuery } from '../__generated__/ServiceLauncherPageQuery.graphql';
 import ServiceLauncherPageContent from '../components/ServiceLauncherPageContent';
-import { ServiceLauncherPageQuery } from './__generated__/ServiceLauncherPageQuery.graphql';
-import graphql from 'babel-plugin-relay/macro';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useParams } from 'react-router-dom';
 
 const ServiceLauncherPage: React.FC = () => {

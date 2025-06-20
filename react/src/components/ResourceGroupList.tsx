@@ -1,3 +1,9 @@
+import { ResourceGroupListDeleteMutation } from '../__generated__/ResourceGroupListDeleteMutation.graphql';
+import {
+  ResourceGroupListQuery,
+  ResourceGroupListQuery$data,
+} from '../__generated__/ResourceGroupListQuery.graphql';
+import { ResourceGroupListUpdateMutation } from '../__generated__/ResourceGroupListUpdateMutation.graphql';
 import { filterEmptyItem, filterNonNullItems } from '../helper';
 import { useUpdatableState } from '../hooks';
 import BAIConfirmModalWithInput from './BAIConfirmModalWithInput';
@@ -7,12 +13,6 @@ import BAITable from './BAITable';
 import Flex from './Flex';
 import ResourceGroupInfoModal from './ResourceGroupInfoModal';
 import ResourceGroupSettingModal from './ResourceGroupSettingModal';
-import { ResourceGroupListDeleteMutation } from './__generated__/ResourceGroupListDeleteMutation.graphql';
-import {
-  ResourceGroupListQuery,
-  ResourceGroupListQuery$data,
-} from './__generated__/ResourceGroupListQuery.graphql';
-import { ResourceGroupListUpdateMutation } from './__generated__/ResourceGroupListUpdateMutation.graphql';
 import {
   CheckOutlined,
   CloseOutlined,
@@ -32,12 +32,11 @@ import {
   theme,
 } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { BanIcon, UndoIcon } from 'lucide-react';
 import { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery, useMutation } from 'react-relay';
+import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 import { PayloadError } from 'relay-runtime';
 
 export interface ScalingGroupOpts {

@@ -9,6 +9,7 @@ Licensed under MIT
 import CryptoES from 'crypto-es';
 //var CryptoES = require("crypto-js"); /* Exclude for ES6 */
 import { comparePEP440Versions, isCompatibleMultipleConditions} from './pep440';
+import { SessionResources } from '../types/backend-ai-console';
 type requestInfo = {
   method: string;
   headers: Headers;
@@ -661,7 +662,12 @@ class Client {
       this._features['image-commit'] = true;
       this._features['fine-grained-storage-permissions'] = true;
       this._features['2FA'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('22.09')){
       this._features['force2FA'] = true;
+      if(this.isManagerVersionCompatibleWith('25.09.0')) {
+        this._features['force2FA'] = false; // force2FA is deprecated in 25.09.0
+      }
     }
     if (this.isManagerVersionCompatibleWith('22.09.19')) {
       this._features['idle-checks'] = true;
@@ -815,9 +821,6 @@ class Client {
    * Return if manager supports OTP / 2FA.
    */
   async isManagerSupportingTOTP() {
-    if (!this._config.enable2FA) {
-      return false;
-    }
     let rqst = this.newSignedRequest('GET', `/totp`, null, null);
     try {
       await this._wrapWithPromise(rqst);
@@ -888,7 +891,7 @@ class Client {
         // Authentication failed.
         localStorage.removeItem('backendaiwebui.sessionid');
         if (result.data && result.data.details) {
-          return Promise.resolve({ fail_reason: result.data.details, data: result.data });
+          return Promise.resolve({fail_reason: result.data.details, data: result.data });
         } else {
           return Promise.resolve(false);
         }
@@ -1088,10 +1091,14 @@ class Client {
   async createIfNotExists(
     kernelType: string,
     sessionId: string,
-    resources = {},
+    resources: SessionResources = {
+      type: 'interactive',
+      cluster_mode: 'single-node',
+      cluster_size: 1,
+      maxWaitSeconds: 0,
+    },
     timeout?: number,
     architecture: string = 'x86_64',
-    batchTimeout?: string,
   ) {
     if (
       typeof sessionId === 'undefined' ||
@@ -1100,133 +1107,12 @@ class Client {
     ) {
       sessionId = this.generateSessionId();
     }
-    let params = {
+    const params = {
       lang: kernelType,
       clientSessionToken: sessionId,
       architecture: architecture,
+      ...resources
     };
-    if (batchTimeout) {
-      params['batch_timeout'] = batchTimeout;
-    }
-    if (resources && Object.keys(resources).length !== 0) {
-      let config = {};
-      if (resources['cpu']) {
-        config['cpu'] = resources['cpu'];
-      }
-      if (resources['mem']) {
-        config['mem'] = resources['mem'];
-      }
-      if (resources['gpu']) {
-        // Legacy support (till 19.09)
-        config['cuda.device'] = parseInt(resources['gpu']);
-      }
-      if (resources['cuda.device']) {
-        // Generalized device information from 20.03
-        config['cuda.device'] = parseInt(resources['cuda.device']);
-      }
-      if (resources['vgpu']) {
-        // Legacy support (till 19.09)
-        config['cuda.shares'] = parseFloat(resources['vgpu']).toFixed(2); // under 19.03
-      } else if (resources['fgpu']) {
-        config['cuda.shares'] = parseFloat(resources['fgpu']).toFixed(2); // 19.09 and above
-      }
-      if (resources['cuda.shares']) {
-        // Generalized device information from 20.03
-        config['cuda.shares'] = parseFloat(resources['cuda.shares']).toFixed(2);
-      }
-      if (resources['rocm.device']) {
-        config['rocm.device'] = parseInt(resources['rocm.device']);
-      }
-      if (resources['tpu.device']) {
-        config['tpu.device'] = parseInt(resources['tpu.device']);
-      }
-      if (resources['ipu.device']) {
-        config['ipu.device'] = parseInt(resources['ipu.device']);
-      }
-      if (resources['atom.device']) {
-        config['atom.device'] = parseInt(resources['atom.device']);
-      }
-      if (resources['atom-plus.device']) {
-        config['atom-plus.device'] = parseInt(resources['atom-plus.device']);
-      }
-      if (resources['gaudi2.device']) {
-        config['gaudi2.device'] = parseInt(resources['gaudi2.device']);
-      }
-      if (resources['warboy.device']) {
-        config['warboy.device'] = parseInt(resources['warboy.device']);
-      }
-      if (resources['rngd.device']) {
-        config['rngd.device'] = parseInt(resources['rngd.device']);
-      }
-      if (resources['hyperaccel-lpu.device']) {
-        config['hyperaccel-lpu.device'] = parseInt(resources['hyperaccel-lpu.device']);
-      }
-      if (resources['cluster_size']) {
-        params['cluster_size'] = resources['cluster_size'];
-      }
-      if (resources['cluster_mode']) {
-        params['cluster_mode'] = resources['cluster_mode'];
-      }
-      if (resources['group_name']) {
-        params['group_name'] = resources['group_name'];
-      }
-      if (resources['domain']) {
-        params['domain'] = resources['domain'];
-      }
-      if (resources['type']) {
-        params['type'] = resources['type'];
-      }
-      if (resources['startsAt']) {
-        params['starts_at'] = resources['startsAt'];
-      }
-      if (resources['enqueueOnly']) {
-        params['enqueueOnly'] = resources['enqueueOnly'];
-      }
-      if (resources['maxWaitSeconds']) {
-        params['maxWaitSeconds'] = resources['maxWaitSeconds'];
-      }
-      if (resources['reuseIfExists']) {
-        params['reuseIfExists'] = resources['reuseIfExists'];
-      }
-      if (resources['startupCommand']) {
-        params['startupCommand'] = resources['startupCommand'];
-      }
-      if (resources['bootstrapScript']) {
-        params['bootstrapScript'] = resources['bootstrapScript'];
-      }
-      if (resources['bootstrap_script']) {
-        params['bootstrap_script'] = resources['bootstrap_script'];
-      }
-      if (resources['owner_access_key']) {
-        params['owner_access_key'] = resources['owner_access_key'];
-      }
-      if (resources['batch_timeout']) {
-        params['batch_timeout'] = resources['batch_timeout'];
-      }
-      params['config'] = { resources: config };
-      if (resources['mounts']) {
-        params['config'].mounts = resources['mounts'];
-      }
-      if (resources['mount_map']) {
-        params['config'].mount_map = resources['mount_map'];
-      }
-      if (resources['scaling_group']) {
-        params['config'].scaling_group = resources['scaling_group'];
-      }
-      if (resources['shmem']) {
-        params['config'].resource_opts = {};
-        params['config'].resource_opts.shmem = resources['shmem'];
-      }
-      if (resources['env']) {
-        params['config'].environ = resources['env'];
-      }
-      if (resources['preopen_ports']) {
-        params['config'].preopen_ports = resources['preopen_ports'];
-      }
-      if (resources['agent_list']) {
-        params['config'].agent_list = resources['agent_list'];
-      }
-    }
     let rqst;
     if (this._apiVersionMajor < 5) {
       // For V3/V4 API compatibility

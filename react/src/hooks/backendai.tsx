@@ -134,7 +134,7 @@ interface UserInfo {
   uuid: string;
 }
 
-type mutationOptions<T> = {
+export type mutationOptions<T> = {
   onSuccess?: (value: T) => void;
   onError?: (error: any) => void;
 };
@@ -359,10 +359,10 @@ export const useVFolderInvitations = (fetchKey?: string) => {
           { inv_id },
           {
             onSuccess: () => {
-              options?.onSuccess && options.onSuccess(inv_id);
+              options?.onSuccess?.(inv_id);
             },
             onError: (error: any) => {
-              options?.onError && options.onError(error);
+              options?.onError?.(error);
             },
           },
         );
@@ -372,10 +372,10 @@ export const useVFolderInvitations = (fetchKey?: string) => {
           { inv_id },
           {
             onSuccess: () => {
-              options?.onSuccess && options.onSuccess(inv_id);
+              options?.onSuccess?.(inv_id);
             },
             onError: (error: any) => {
-              options?.onError && options.onError(error);
+              options?.onError?.(error);
             },
           },
         );

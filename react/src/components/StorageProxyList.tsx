@@ -1,3 +1,4 @@
+import { StorageProxyListQuery } from '../__generated__/StorageProxyListQuery.graphql';
 import {
   filterNonNullItems,
   humanReadableDecimalSize,
@@ -13,15 +14,13 @@ import BAIProgressWithLabel from './BAIProgressWithLabel';
 import BAITable from './BAITable';
 import DoubleTag from './DoubleTag';
 import Flex from './Flex';
-import { StorageProxyListQuery } from './__generated__/StorageProxyListQuery.graphql';
 import { InfoCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import { Button, TableColumnsType, Tag, theme, Typography } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { Server } from 'lucide-react';
 import { useDeferredValue, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const backendType = {
   xfs: {
@@ -61,6 +60,12 @@ const backendType = {
     icon: <Server />,
   },
 };
+
+type StorageVolume = NonNullable<
+  NonNullable<
+    StorageProxyListQuery['response']['storage_volume_list']
+  >['items'][number]
+>;
 
 const StorageProxyList = () => {
   const { token } = theme.useToken();
@@ -108,7 +113,7 @@ const StorageProxyList = () => {
     },
   );
 
-  const columns: TableColumnsType<any> = [
+  const columns: TableColumnsType<StorageVolume> = [
     {
       title: <>ID / {t('agent.Endpoint')}</>,
       key: 'id',
@@ -211,7 +216,9 @@ const StorageProxyList = () => {
       render: (value, record) => {
         let perfMetricDisabled;
         try {
-          const performanceMetric = JSON.parse(record.performance_metric);
+          const performanceMetric = JSON.parse(
+            record.performance_metric || '{}',
+          );
           perfMetricDisabled = _.isEmpty(performanceMetric);
         } catch (e) {
           perfMetricDisabled = true;

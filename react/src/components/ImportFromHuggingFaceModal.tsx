@@ -1,11 +1,10 @@
+import { ImportFromHuggingFaceModalQuery } from '../__generated__/ImportFromHuggingFaceModalQuery.graphql';
 import { baiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
-import { useTanMutation } from '../hooks/reactQueryAlias';
+import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
-import { ImportFromHuggingFaceModalQuery } from './__generated__/ImportFromHuggingFaceModalQuery.graphql';
 import {
   CloudUploadOutlined,
   FilterOutlined,
@@ -28,7 +27,6 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { CheckIcon } from 'lucide-react';
 import Markdown from 'markdown-to-jsx';
@@ -40,7 +38,7 @@ import React, {
   useTransition,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 type Service = {
   url: string;

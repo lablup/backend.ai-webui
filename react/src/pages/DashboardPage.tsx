@@ -1,3 +1,4 @@
+import { DashboardPageQuery } from '../__generated__/DashboardPageQuery.graphql';
 import AvailableResourcesCard from '../components/AvailableResourcesCard';
 import MySessionCard from '../components/MySessionCard';
 import RecentlyCreatedSessionCard from '../components/RecentlyCreatedSessionCard';
@@ -5,12 +6,10 @@ import { filterEmptyItem } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useInterval } from '../hooks/useIntervalValue';
-import { DashboardPageQuery } from './__generated__/DashboardPageQuery.graphql';
 import { Col, Grid, Row } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { useTransition } from 'react';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const DashboardPage: React.FC = () => {
   const { lg } = Grid.useBreakpoint();

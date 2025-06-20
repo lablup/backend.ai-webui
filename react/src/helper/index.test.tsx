@@ -3,136 +3,128 @@ import {
   compareNumberWithUnits,
   filterEmptyItem,
   getImageFullName,
-  convertBinarySizeUnit,
+  convertToBinaryUnit,
   isOutsideRange,
   isOutsideRangeWithUnits,
   localeCompare,
   numberSorterWithInfinityValue,
-  parseUnit,
+  parseValueWithUnit,
   toFixedFloorWithoutTrailingZeros,
   transformSorterToOrderString,
-  convertDecimalSizeUnit,
+  convertToDecimalUnit,
 } from './index';
 
 describe('convertBinarySizeUnit', () => {
   it('should convert size using binary (1024) base with default fixed value', () => {
-    const sizeWithUnit = '1K';
-    const targetSizeUnit = 'B';
-    const result = convertBinarySizeUnit(sizeWithUnit, targetSizeUnit);
-    expect(result).toEqual({
+    const sizeWithUnit = '1k';
+    const result = convertToBinaryUnit(sizeWithUnit, '');
+    expect(result).toMatchObject({
       number: 1024,
       numberFixed: '1024',
-      unit: 'B',
-      numberUnit: '1024B',
+      unit: '',
+      value: '1024',
+      displayValue: '1024 BiB',
     });
   });
 
   it('should convert binary size with fixed value of 0', () => {
     const sizeWithUnit = '1K';
-    const targetSizeUnit = 'B';
     const fixed = 0;
-    const result = convertBinarySizeUnit(sizeWithUnit, targetSizeUnit, fixed);
-    expect(result).toEqual({
+    const result = convertToBinaryUnit(sizeWithUnit, '', fixed);
+    expect(result).toMatchObject({
       number: 1024,
       numberFixed: '1024',
-      unit: 'B',
-      numberUnit: '1024B',
+      unit: '',
+      displayValue: '1024 BiB',
+      value: '1024',
     });
   });
 
   it('should handle lowercase unit input and convert to uppercase in result', () => {
     const sizeWithUnit = '1m';
     const targetSizeUnit = 'k';
-    const result = convertBinarySizeUnit(sizeWithUnit, targetSizeUnit);
-    expect(result).toEqual({
+    const result = convertToBinaryUnit(sizeWithUnit, targetSizeUnit);
+    expect(result).toMatchObject({
       number: 1024,
       numberFixed: '1024',
-      unit: 'K',
-      numberUnit: '1024K',
+      unit: 'k',
+      displayValue: '1024 KiB',
+      value: '1024k',
     });
   });
 
   it('should convert from peta to tera bytes correctly', () => {
     const sizeWithUnit = '1P';
-    const targetSizeUnit = 'T';
-    const result = convertBinarySizeUnit(sizeWithUnit, targetSizeUnit);
-    expect(result).toEqual({
+    const targetSizeUnit = 't';
+    const result = convertToBinaryUnit(sizeWithUnit, targetSizeUnit);
+    expect(result).toMatchObject({
       number: 1024,
       numberFixed: '1024',
-      unit: 'T',
-      numberUnit: '1024T',
+      unit: 't',
+      displayValue: '1024 TiB',
     });
   });
 
   it('should throw an error for invalid size format', () => {
     const sizeWithUnit = 'invalid';
-    expect(() => convertBinarySizeUnit(sizeWithUnit)).toThrow(
+    expect(() => convertToBinaryUnit(sizeWithUnit, '')).toThrow(
       'Invalid size format',
     );
   });
 
-  it('should use input unit as target unit when targetSizeUnit is not provided', () => {
-    const sizeWithUnit = '1K';
-    const result = convertBinarySizeUnit(sizeWithUnit);
-    expect(result).toEqual({
-      number: 1,
-      numberFixed: '1',
-      unit: 'K',
-      numberUnit: '1K',
-    });
-  });
-
   it('should return undefined for undefined input', () => {
     const sizeWithUnit = undefined;
-    const result = convertBinarySizeUnit(sizeWithUnit);
+    const result = convertToBinaryUnit(sizeWithUnit, '');
     expect(result).toBeUndefined();
   });
 
   it('should handle zero input correctly', () => {
-    const result = convertBinarySizeUnit('0g', 'b');
+    const result = convertToBinaryUnit('0g', '');
     expect(result?.number).toBe(0);
-    expect(result?.unit).toBe('B');
+    expect(result?.unit).toBe('');
   });
-
   describe('auto unit selection', () => {
     it('should automatically select appropriate binary units', () => {
-      expect(convertBinarySizeUnit('1024B', 'auto')).toEqual({
+      expect(convertToBinaryUnit('1024', 'auto')).toMatchObject({
         number: 1,
         numberFixed: '1',
-        unit: 'K',
-        numberUnit: '1K',
+        unit: 'k',
+        value: '1k',
+        displayValue: '1 KiB',
       });
 
-      expect(convertBinarySizeUnit('1048576B', 'auto')).toEqual({
+      expect(convertToBinaryUnit('1048576', 'auto')).toMatchObject({
         number: 1,
         numberFixed: '1',
-        unit: 'M',
-        numberUnit: '1M',
+        unit: 'm',
+        value: '1m',
+        displayValue: '1 MiB',
       });
 
-      expect(convertBinarySizeUnit('1073741824B', 'auto')).toEqual({
+      expect(convertToBinaryUnit('1073741824', 'auto')).toMatchObject({
         number: 1,
         numberFixed: '1',
-        unit: 'G',
-        numberUnit: '1G',
+        unit: 'g',
+        value: '1g',
+        displayValue: '1 GiB',
       });
     });
 
     it('should handle small values correctly', () => {
-      expect(convertBinarySizeUnit('900B', 'auto')).toEqual({
+      expect(convertToBinaryUnit('900', 'auto')).toMatchObject({
         number: 900,
         numberFixed: '900',
-        unit: 'B',
-        numberUnit: '900B',
+        unit: '',
+        displayValue: '900 BiB',
       });
     });
 
     it('should handle fractional values correctly', () => {
-      expect(convertBinarySizeUnit('1536B', 'auto')).toEqual({
+      expect(convertToBinaryUnit('1536', 'auto')).toMatchObject({
         number: 1.5,
         numberFixed: '1.5',
-        unit: 'K',
-        numberUnit: '1.5K',
+        unit: 'k',
+        displayValue: '1.5 KiB',
       });
     });
   });
@@ -140,25 +132,25 @@ describe('convertBinarySizeUnit', () => {
 
 describe('parseUnit', () => {
   test('parses a number with a unit', () => {
-    expect(parseUnit('123px')).toEqual([123, 'px']);
-    expect(parseUnit('45.67em')).toEqual([45.67, 'em']);
-    expect(parseUnit('100%')).toEqual([100, '%']);
+    expect(parseValueWithUnit('123k')).toEqual([123, 'k']);
+    expect(parseValueWithUnit('45.67 g')).toEqual([45.67, 'g']);
   });
 
   test('parses a number without a unit', () => {
-    expect(parseUnit('123')).toEqual([123, 'b']);
-    expect(parseUnit('45.67')).toEqual([45.67, 'b']);
+    expect(parseValueWithUnit('123')).toEqual([123, '']);
+    expect(parseValueWithUnit('45.67')).toEqual([45.67, '']);
   });
 
   test('handles invalid input gracefully', () => {
-    expect(parseUnit('abc')).toEqual([NaN, 'b']);
-    expect(parseUnit('')).toEqual([NaN, 'b']);
+    expect(parseValueWithUnit('abc')).toEqual([NaN, undefined]);
+    expect(parseValueWithUnit('')).toEqual([NaN, undefined]);
   });
 
   test('handles edge cases', () => {
-    expect(parseUnit('0')).toEqual([0, 'b']);
-    expect(parseUnit('0px')).toEqual([0, 'px']);
-    expect(parseUnit('.5em')).toEqual([0.5, 'em']);
+    expect(parseValueWithUnit('0')).toEqual([0, '']);
+    expect(parseValueWithUnit('0')).toEqual([0, '']);
+    expect(parseValueWithUnit('.5g')).toEqual([0.5, 'g']);
+    expect(parseValueWithUnit('.5 g')).toEqual([0.5, 'g']);
   });
 });
 
@@ -194,22 +186,29 @@ describe('compareNumberWithUnits', () => {
 
 describe('addNumberWithUnits', () => {
   it('should add two sizes with the same unit', () => {
-    expect(addNumberWithUnits('1K', '2K', 'K')).toBe('3K');
-    expect(addNumberWithUnits('1M', '2M', 'M')).toBe('3M');
-    expect(addNumberWithUnits('1G', '2G', 'G')).toBe('3G');
-    expect(addNumberWithUnits('1T', '2T', 'T')).toBe('3T');
+    expect(addNumberWithUnits('1k', '2k', 'k')).toBe('3k');
+    expect(addNumberWithUnits('1m', '2m', 'm')).toBe('3m');
+    expect(addNumberWithUnits('1g', '2g', 'g')).toBe('3g');
+    expect(addNumberWithUnits('1t', '2t', 't')).toBe('3t');
   });
 
   it('should add two sizes with the same unit (targetUnit is `m` default Unit)', () => {
-    expect(addNumberWithUnits('1G', '2G')).toBe('3072M');
-    expect(addNumberWithUnits('1T', '2T')).toBe('3145728M');
+    expect(addNumberWithUnits('1g', '2g')).toBe('3072m');
+    expect(addNumberWithUnits('1t', '2t')).toBe('3145728m');
   });
 
   it('should add two sizes with different units', () => {
-    expect(addNumberWithUnits('1K', '1M', 'K')).toBe('1025K');
-    expect(addNumberWithUnits('1M', '1G', 'M')).toBe('1025M');
-    expect(addNumberWithUnits('1G', '1T', 'G')).toBe('1025G');
-    expect(addNumberWithUnits('1T', '1P', 'T')).toBe('1025T');
+    expect(addNumberWithUnits('1k', '1m', 'k')).toBe('1025k');
+    expect(addNumberWithUnits('1m', '1g', 'm')).toBe('1025m');
+    expect(addNumberWithUnits('1g', '1t', 'g')).toBe('1025g');
+    expect(addNumberWithUnits('1t', '1p', 't')).toBe('1025t');
+  });
+
+  it('should produce the same result even when there is a space between the number and unit', () => {
+    expect(addNumberWithUnits('1 k', '1m', 'k')).toBe('1025k');
+    expect(addNumberWithUnits('1m', '1 g', 'm')).toBe('1025m');
+    expect(addNumberWithUnits('1 g', '1 t', 'g')).toBe('1025g');
+    expect(addNumberWithUnits('1 t', '1p', 't')).toBe('1025t');
   });
 });
 
@@ -243,35 +242,35 @@ describe('isOutsideRange', () => {
 
 describe('isOutsideRangeWithUnits', () => {
   it('should return true if the value is less than the minimum', () => {
-    expect(isOutsideRangeWithUnits('1G', '2G', '3G')).toBe(true);
-    expect(isOutsideRangeWithUnits('1000M', '2G', '3G')).toBe(true);
-    expect(isOutsideRangeWithUnits('2.5B', '2M', '3M')).toBe(true);
+    expect(isOutsideRangeWithUnits('1g', '2g', '3g')).toBe(true);
+    expect(isOutsideRangeWithUnits('1000m', '2g', '3g')).toBe(true);
+    expect(isOutsideRangeWithUnits('2.5', '2m', '3m')).toBe(true);
   });
 
   it('should return true if the value is greater than the maximum', () => {
-    expect(isOutsideRangeWithUnits('4G', '2G', '3G')).toBe(true);
-    expect(isOutsideRangeWithUnits('4000M', '2G', '3G')).toBe(true);
-    expect(isOutsideRangeWithUnits('4B', '2M', '3M')).toBe(true);
+    expect(isOutsideRangeWithUnits('4g', '2g', '3g')).toBe(true);
+    expect(isOutsideRangeWithUnits('4000m', '2g', '3g')).toBe(true);
+    expect(isOutsideRangeWithUnits('4', '2m', '3m')).toBe(true);
   });
 
   it('should return false if the value is within the range', () => {
-    expect(isOutsideRangeWithUnits('2.5G', '2G', '3G')).toBe(false);
-    expect(isOutsideRangeWithUnits('2050M', '2G', '3G')).toBe(false);
-    expect(isOutsideRangeWithUnits('2100000B', '2M', '3M')).toBe(false);
+    expect(isOutsideRangeWithUnits('2.5g', '2g', '3g')).toBe(false);
+    expect(isOutsideRangeWithUnits('2050m', '2g', '3g')).toBe(false);
+    expect(isOutsideRangeWithUnits('2100000', '2m', '3m')).toBe(false);
   });
 
   it('should return false if the value is within the range (==min)', () => {
-    expect(isOutsideRangeWithUnits('2G', '2G', '3G')).toBe(false);
-    expect(isOutsideRangeWithUnits('2048M', '2G', '3G')).toBe(false);
-    expect(isOutsideRangeWithUnits('2097152B', '2M', '3M')).toBe(false);
-    expect(isOutsideRangeWithUnits('2097151B', '2M', '3M')).toBe(true);
+    expect(isOutsideRangeWithUnits('2g', '2g', '3g')).toBe(false);
+    expect(isOutsideRangeWithUnits('2048m', '2g', '3g')).toBe(false);
+    expect(isOutsideRangeWithUnits('2097152', '2m', '3m')).toBe(false);
+    expect(isOutsideRangeWithUnits('2097151', '2m', '3m')).toBe(true);
   });
 
   it('should return false if the value is within the range (==max)', () => {
-    expect(isOutsideRangeWithUnits('3G', '2G', '3G')).toBe(false);
-    expect(isOutsideRangeWithUnits('3072K', '2M', '3M')).toBe(false);
-    expect(isOutsideRangeWithUnits('3145728B', '2M', '3M')).toBe(false);
-    expect(isOutsideRangeWithUnits('3145729B', '2M', '3M')).toBe(true);
+    expect(isOutsideRangeWithUnits('3g', '2g', '3g')).toBe(false);
+    expect(isOutsideRangeWithUnits('3072k', '2m', '3m')).toBe(false);
+    expect(isOutsideRangeWithUnits('3145728', '2m', '3m')).toBe(false);
+    expect(isOutsideRangeWithUnits('3145729', '2m', '3m')).toBe(true);
   });
 
   it('should treat "undefined" as no upper or lower limit', () => {
@@ -576,130 +575,135 @@ describe('getImageFullName', () => {
 
 describe('convertDecimalSizeUnit', () => {
   it('should convert size using decimal (1000) base with default fixed value', () => {
-    const sizeWithUnit = '1K';
-    const targetSizeUnit = 'B';
-    const result = convertDecimalSizeUnit(sizeWithUnit, targetSizeUnit);
+    const sizeWithUnit = '1k';
+    const result = convertToDecimalUnit(sizeWithUnit, '');
     expect(result).toEqual({
       number: 1000,
       numberFixed: '1000',
-      unit: 'B',
-      numberUnit: '1000B',
+      unit: '',
+      displayUnit: 'B',
+      value: '1000',
+      displayValue: '1000 B',
     });
   });
 
   it('should convert decimal size with fixed value of 0', () => {
-    const sizeWithUnit = '1K';
-    const targetSizeUnit = 'B';
+    const sizeWithUnit = '1k';
     const fixed = 0;
-    const result = convertDecimalSizeUnit(sizeWithUnit, targetSizeUnit, fixed);
+    const result = convertToDecimalUnit(sizeWithUnit, '', fixed);
     expect(result).toEqual({
       number: 1000,
       numberFixed: '1000',
-      unit: 'B',
-      numberUnit: '1000B',
+      unit: '',
+      displayUnit: 'B',
+      value: '1000',
+      displayValue: '1000 B',
     });
   });
 
   it('should handle lowercase unit input and convert to uppercase in result', () => {
     const sizeWithUnit = '1m';
     const targetSizeUnit = 'k';
-    const result = convertDecimalSizeUnit(sizeWithUnit, targetSizeUnit);
+    const result = convertToDecimalUnit(sizeWithUnit, targetSizeUnit);
     expect(result).toEqual({
       number: 1000,
       numberFixed: '1000',
-      unit: 'K',
-      numberUnit: '1000K',
+      unit: 'k',
+      displayUnit: 'KB',
+      value: '1000k',
+      displayValue: '1000 KB',
     });
   });
 
   it('should convert from peta to tera bytes correctly', () => {
     const sizeWithUnit = '1P';
-    const targetSizeUnit = 'T';
-    const result = convertDecimalSizeUnit(sizeWithUnit, targetSizeUnit);
+    const targetSizeUnit = 't';
+    const result = convertToDecimalUnit(sizeWithUnit, targetSizeUnit);
     expect(result).toEqual({
       number: 1000,
       numberFixed: '1000',
-      unit: 'T',
-      numberUnit: '1000T',
+      unit: 't',
+      displayUnit: 'TB',
+      value: '1000t',
+      displayValue: '1000 TB',
     });
   });
 
   it('should throw an error for invalid size format', () => {
     const sizeWithUnit = 'invalid';
-    expect(() => convertDecimalSizeUnit(sizeWithUnit)).toThrow(
+    expect(() => convertToDecimalUnit(sizeWithUnit, '')).toThrow(
       'Invalid size format',
     );
   });
 
-  it('should use input unit as target unit when targetSizeUnit is not provided', () => {
-    const sizeWithUnit = '1K';
-    const result = convertDecimalSizeUnit(sizeWithUnit);
-    expect(result).toEqual({
-      number: 1,
-      numberFixed: '1',
-      unit: 'K',
-      numberUnit: '1K',
-    });
-  });
-
   it('should return undefined for undefined input', () => {
     const sizeWithUnit = undefined;
-    const result = convertDecimalSizeUnit(sizeWithUnit);
+    const result = convertToDecimalUnit(sizeWithUnit, '');
     expect(result).toBeUndefined();
   });
 
   it('should handle zero input correctly', () => {
-    const result = convertDecimalSizeUnit('0G', 'B');
+    const result = convertToDecimalUnit('0g', '');
     expect(result?.number).toBe(0);
-    expect(result?.unit).toBe('B');
+    expect(result?.unit).toBe('');
   });
 
   it('should handle fractional numbers correctly', () => {
-    const result = convertDecimalSizeUnit('0.5G', 'M');
+    const result = convertToDecimalUnit('0.5g', 'm');
     expect(result?.number).toBe(500);
-    expect(result?.unit).toBe('M');
+    expect(result?.unit).toBe('m');
+  });
+});
+
+describe('auto unit selection', () => {
+  it('should automatically select appropriate decimal units', () => {
+    expect(convertToDecimalUnit('1000', 'auto')).toEqual({
+      number: 1,
+      numberFixed: '1',
+      unit: 'k',
+      displayUnit: 'KB',
+      value: '1k',
+      displayValue: '1 KB',
+    });
+
+    expect(convertToDecimalUnit('1000000', 'auto')).toEqual({
+      number: 1,
+      numberFixed: '1',
+      unit: 'm',
+      displayUnit: 'MB',
+      value: '1m',
+      displayValue: '1 MB',
+    });
+
+    expect(convertToDecimalUnit('1000000000', 'auto')).toEqual({
+      number: 1,
+      numberFixed: '1',
+      unit: 'g',
+      displayUnit: 'GB',
+      value: '1g',
+      displayValue: '1 GB',
+    });
   });
 
-  describe('auto unit selection', () => {
-    it('should automatically select appropriate decimal units', () => {
-      expect(convertDecimalSizeUnit('1000B', 'auto')).toEqual({
-        number: 1,
-        numberFixed: '1',
-        unit: 'K',
-        numberUnit: '1K',
-      });
-
-      expect(convertDecimalSizeUnit('1000000B', 'auto')).toEqual({
-        number: 1,
-        numberFixed: '1',
-        unit: 'M',
-        numberUnit: '1M',
-      });
-
-      expect(convertDecimalSizeUnit('1000000000B', 'auto')).toEqual({
-        number: 1,
-        numberFixed: '1',
-        unit: 'G',
-        numberUnit: '1G',
-      });
+  it('should handle small values correctly', () => {
+    expect(convertToDecimalUnit('900', 'auto')).toEqual({
+      number: 900,
+      numberFixed: '900',
+      unit: '',
+      displayUnit: 'B',
+      value: '900',
+      displayValue: '900 B',
     });
+  });
 
-    it('should handle small values correctly', () => {
-      expect(convertDecimalSizeUnit('900B', 'auto')).toEqual({
-        number: 900,
-        numberFixed: '900',
-        unit: 'B',
-        numberUnit: '900B',
-      });
-    });
-
-    it('should handle fractional values correctly', () => {
-      expect(convertDecimalSizeUnit('1500B', 'auto')).toEqual({
-        number: 1.5,
-        numberFixed: '1.5',
-        unit: 'K',
-        numberUnit: '1.5K',
-      });
+  it('should handle fractional values correctly', () => {
+    expect(convertToDecimalUnit('1500', 'auto')).toEqual({
+      number: 1.5,
+      numberFixed: '1.5',
+      unit: 'k',
+      displayUnit: 'KB',
+      value: '1.5k',
+      displayValue: '1.5 KB',
     });
   });
 });

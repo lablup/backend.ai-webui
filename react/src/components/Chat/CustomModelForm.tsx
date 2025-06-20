@@ -1,34 +1,30 @@
 import Flex from '../Flex';
 import EndpointTokenSelect from './EndpointTokenSelect';
 import { ReloadOutlined } from '@ant-design/icons';
+import useResizeObserver from '@react-hook/resize-observer';
 import { Alert, Button, Form, Input, theme } from 'antd';
 import type { FormInstance } from 'antd';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export type CustomModelFormValues = {
   baseURL?: string;
+  basePath?: string;
   token?: string;
 };
 
 type CustomModelFormProps = {
-  baseURL?: string;
+  endpointUrl?: string;
+  basePath?: string;
   token?: string;
   endpointId?: string | null;
   loading: boolean;
   onSubmit?: (formData: CustomModelFormValues) => void;
 };
 
-function parseBaseURL(baseURL?: string) {
-  const { origin, pathname } = new URL(baseURL || '');
-  return {
-    origin: `${origin}/`,
-    pathname: pathname.replace(/^\//, ''),
-  };
-}
-
 const CustomModelForm: React.FC<CustomModelFormProps> = ({
-  baseURL,
+  endpointUrl,
+  basePath,
   token,
   endpointId,
   loading,
@@ -37,18 +33,25 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
   const { t } = useTranslation();
   const { token: themeToken } = theme.useToken();
   const formRef = useRef<FormInstance>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const { origin, pathname: basePath } = parseBaseURL(baseURL);
+  const [shrinkControlSize, setShrinkControlSize] = useState<boolean>(true);
+
+  useResizeObserver(containerRef.current, ({ contentRect }) => {
+    setShrinkControlSize(contentRect.width < 480);
+  });
 
   return (
     <Flex
       direction="row"
       style={{
-        padding: themeToken.paddingSM,
-        paddingRight: themeToken.paddingContentHorizontalLG,
-        paddingLeft: themeToken.paddingContentHorizontalLG,
+        padding: themeToken.paddingContentVerticalLG,
+        paddingInline: themeToken.paddingContentHorizontal,
         backgroundColor: themeToken.colorBgContainer,
+        overflow: 'hidden',
+        borderBottom: `1px solid ${themeToken.colorBorderSecondary}`,
       }}
+      ref={containerRef}
     >
       <Form
         ref={formRef}
@@ -56,7 +59,7 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
         size="small"
         requiredMark="optional"
         style={{ flex: 1 }}
-        key={baseURL}
+        key={endpointUrl}
         initialValues={{
           basePath: basePath,
           token: token,
@@ -72,22 +75,25 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
         <Form.Item label={t('modelService.BasePath')} name="basePath">
           <Input
             placeholder="v1"
-            addonBefore={origin}
+            addonBefore={shrinkControlSize ? undefined : endpointUrl}
             defaultValue={basePath}
           />
         </Form.Item>
         <Form.Item label={t('modelService.Token')} name="token">
-          <EndpointTokenSelect loading={loading} endpointId={endpointId} />
+          <EndpointTokenSelect
+            loading={loading}
+            endpointId={endpointId}
+            style={{
+              width: shrinkControlSize ? '100%' : '200px',
+            }}
+          />
         </Form.Item>
         <Button
           icon={<ReloadOutlined />}
           loading={loading}
           onClick={() => {
             onSubmit?.({
-              baseURL: new URL(
-                formRef.current?.getFieldValue('basePath') ?? '',
-                origin,
-              ).toString(),
+              basePath: formRef.current?.getFieldValue('basePath') ?? '',
               token: formRef.current?.getFieldValue('token'),
             });
           }}

@@ -8,6 +8,7 @@ import {
   IronFlexAlignment,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
+import { SessionResources } from '../types/backend-ai-console';
 import { BackendAiStyles } from './backend-ai-general-styles';
 import { BackendAIPage } from './backend-ai-page';
 import { default as PainKiller } from './backend-ai-painkiller';
@@ -388,19 +389,27 @@ export default class BackendAIImport extends BackendAIPage {
     const defaultImage =
       globalThis.backendaiclient._config.default_import_environment;
     const [kernelName, architecture] = defaultImage.split('@');
-    // Create folder to
-    const imageResource: Record<string, unknown> = {};
-    imageResource['cpu'] = 1;
-    imageResource['mem'] = '0.5g';
-    imageResource['domain'] = globalThis.backendaiclient._config.domainName;
-    imageResource['group_name'] = globalThis.backendaiclient.current_group;
+
+    const resources: SessionResources = {
+      cluster_mode: 'single-node',
+      cluster_size: 1,
+      maxWaitSeconds: 0,
+    };
+    resources.group_name = globalThis.backendaiclient.current_group;
+    resources.domain = globalThis.backendaiclient._config.domainName;
+    resources.config = {};
+    resources.config.resources = {
+      cpu: 1,
+      mem: '0.5g',
+    };
+
     const indicator = await this.indicator.start('indeterminate');
     indicator.set(10, _text('import.Preparing'));
     folderName = await this._checkFolderNameAlreadyExists(folderName, url);
     await this._addFolderWithName(folderName, url);
     indicator.set(20, _text('import.FolderCreated'));
-    imageResource['mounts'] = [folderName];
-    imageResource['bootstrap_script'] =
+    resources.config.mounts = [folderName];
+    resources.bootstrap_script =
       '#!/bin/sh\ncurl -o repo.zip ' +
       url +
       '\ncd /home/work/' +
@@ -414,7 +423,7 @@ export default class BackendAIImport extends BackendAIPage {
         return globalThis.backendaiclient.createIfNotExists(
           kernelName,
           null,
-          imageResource,
+          resources,
           60000,
           architecture || 'x86_64',
         );

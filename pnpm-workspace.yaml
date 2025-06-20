@@ -1,5 +1,6 @@
 packages:
   - react
+  - packages/backend.ai-ui
 onlyBuiltDependencies:
   - bufferutil
   - core-js

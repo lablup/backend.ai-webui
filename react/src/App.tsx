@@ -5,6 +5,7 @@ import {
   RoutingEventHandler,
 } from './components/DefaultProviders';
 import Flex from './components/Flex';
+import FlexActivityIndicator from './components/FlexActivityIndicator';
 import LocationStateBreadCrumb from './components/LocationStateBreadCrumb';
 import MainLayout from './components/MainLayout/MainLayout';
 import WebUINavigate from './components/WebUINavigate';
@@ -18,8 +19,7 @@ import Page404 from './pages/Page404';
 import ServingPage from './pages/ServingPage';
 import VFolderNodeListPage from './pages/VFolderNodeListPage';
 import { Skeleton, theme } from 'antd';
-import React, { Suspense } from 'react';
-import { FC } from 'react';
+import React, { Suspense, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   IndexRouteObject,
@@ -51,6 +51,9 @@ const ResourcePolicyPage = React.lazy(
 const ResourcesPage = React.lazy(() => import('./pages/ResourcesPage'));
 const FolderExplorerOpener = React.lazy(
   () => import('./components/FolderExplorerOpener'),
+);
+const FolderInvitationResponseModalOpener = React.lazy(
+  () => import('./components/FolderInvitationResponseModalOpener'),
 );
 const ServiceLauncherCreatePage = React.lazy(
   () => import('./components/ServiceLauncherPageContent'),
@@ -115,6 +118,7 @@ const router = createBrowserRouter([
         <RoutingEventHandler />
         <Suspense fallback={null}>
           <FolderExplorerOpener />
+          <FolderInvitationResponseModalOpener />
         </Suspense>
       </QueryParamProvider>
     ),
@@ -139,15 +143,12 @@ const router = createBrowserRouter([
         element: <WebUINavigate to="/start" replace />,
       },
       {
-        path: '/chat',
+        path: '/chat/:id?',
         handle: { labelKey: 'webui.menu.Chat' },
         Component: () => {
-          const { t } = useTranslation();
           useSuspendedBackendaiClient();
           return (
-            <Suspense
-              fallback={<BAICard title={t('webui.menu.Chat')} loading />}
-            >
+            <Suspense fallback={<FlexActivityIndicator spinSize="large" />}>
               <ChatPage />
             </Suspense>
           );
@@ -478,11 +479,12 @@ const router = createBrowserRouter([
       },
       {
         path: '/error',
+        handle: { hideBreadcrumb: true },
         Component: Page404,
       },
       {
         path: '/unauthorized',
-        handle: { labelKey: 'webui.UnauthorizedAccess' },
+        handle: { hideBreadcrumb: true },
         Component: Page401,
       },
       // Leave empty tag for plugin pages.

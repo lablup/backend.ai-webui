@@ -1,3 +1,9 @@
+import { ProjectResourcePolicyListMutation } from '../__generated__/ProjectResourcePolicyListMutation.graphql';
+import {
+  ProjectResourcePolicyListQuery,
+  ProjectResourcePolicyListQuery$data,
+} from '../__generated__/ProjectResourcePolicyListQuery.graphql';
+import { ProjectResourcePolicySettingModalFragment$key } from '../__generated__/ProjectResourcePolicySettingModalFragment.graphql';
 import {
   bytesToGB,
   filterEmptyItem,
@@ -11,12 +17,6 @@ import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting'
 import Flex from './Flex';
 import ProjectResourcePolicySettingModal from './ProjectResourcePolicySettingModal';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
-import { ProjectResourcePolicyListMutation } from './__generated__/ProjectResourcePolicyListMutation.graphql';
-import {
-  ProjectResourcePolicyListQuery,
-  ProjectResourcePolicyListQuery$data,
-} from './__generated__/ProjectResourcePolicyListQuery.graphql';
-import { ProjectResourcePolicySettingModalFragment$key } from './__generated__/ProjectResourcePolicySettingModalFragment.graphql';
 import {
   DeleteOutlined,
   DownOutlined,
@@ -35,12 +35,11 @@ import {
   theme,
 } from 'antd';
 import { ColumnType } from 'antd/es/table';
-import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery, useMutation } from 'react-relay';
+import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 type ProjectResourcePolicies = NonNullable<
   ProjectResourcePolicyListQuery$data['project_resource_policies']

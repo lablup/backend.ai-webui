@@ -1,4 +1,4 @@
-import { convertBinarySizeUnit } from '../helper';
+import { convertToBinaryUnit } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
@@ -6,8 +6,7 @@ import BAICard, { BAICardProps } from './BAICard';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import Flex from './Flex';
 import ResourceGroupSelectForCurrentProject from './ResourceGroupSelectForCurrentProject';
-import { Row, Col, Divider } from 'antd';
-import { theme, Tooltip, Typography } from 'antd';
+import { Row, Col, Divider, theme, Tooltip, Typography } from 'antd';
 import _ from 'lodash';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -99,7 +98,7 @@ const AvailableResourcesCard: React.FC<AvailableResourcesCardProps> = ({
         )}
 
         {!_.isNaN(
-          convertBinarySizeUnit(checkPresetInfo?.keypair_using.mem, 'G')
+          convertToBinaryUnit(checkPresetInfo?.keypair_using.mem, 'g')
             ?.numberFixed,
         ) &&
           resourceSlotsDetails?.resourceSlotsInRG?.['mem'] && (
@@ -124,15 +123,13 @@ const AvailableResourcesCard: React.FC<AvailableResourcesCardProps> = ({
               <Col style={{ justifyItems: 'center', overflow: 'break-word' }}>
                 <ResourceWithSteppedProgress
                   current={_.toNumber(
-                    convertBinarySizeUnit(
-                      checkPresetInfo?.keypair_using.mem,
-                      'G',
-                    )?.numberFixed,
+                    convertToBinaryUnit(checkPresetInfo?.keypair_using.mem, 'g')
+                      ?.numberFixed,
                   )}
                   total={_.toNumber(
-                    convertBinarySizeUnit(
+                    convertToBinaryUnit(
                       checkPresetInfo?.keypair_limits.mem,
-                      'G',
+                      'g',
                     )?.numberFixed,
                   )}
                   title={

@@ -1,19 +1,19 @@
 import {
-  convertBinarySizeUnit,
+  SessionMetricGraphQuery,
+  SessionMetricGraphQuery$data,
+} from '../__generated__/SessionMetricGraphQuery.graphql';
+import {
+  convertToBinaryUnit,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import BAICard from './BAICard';
-import {
-  SessionMetricGraphQuery,
-  SessionMetricGraphQuery$data,
-} from './__generated__/SessionMetricGraphQuery.graphql';
 import { Empty, theme } from 'antd';
 import { createStyles } from 'antd-style';
-import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import { useLazyLoadQuery } from 'react-relay';
+import { useMemo } from 'react';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 import {
   LineChart,
   Line,
@@ -144,17 +144,29 @@ const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
     dayDiff < 7 ? '5m' : dayDiff < 30 ? '1h' : '1d',
   );
 
+  const resourceSlotKey = useMemo(() => {
+    const [key] = _.split(metricName, '_');
+    return (
+      _.find(_.keys(mergedResourceSlots), (slotKey) =>
+        _.startsWith(slotKey, key),
+      ) ?? ''
+    );
+  }, [mergedResourceSlots, metricName]);
+  const deviceDescription = mergedResourceSlots[resourceSlotKey]?.description;
+
   const getMetricTitle = () => {
-    const [key, ...rest] = _.split(metricName, '_');
+    const [, ...rest] = _.split(metricName, '_');
     const restLabel = _.startCase(rest.join(' '));
 
-    if (_.has(mergedResourceSlots, key)) {
-      return `${mergedResourceSlots[key]?.human_readable_name} ${restLabel}`;
+    // TODO: Modify to use display name when display name is added to device metadata.
+    // Currently, cuda and rocm have the same human_readable_name in device_metadata.
+    if (deviceDescription) {
+      return `${deviceDescription} ${restLabel}`;
+    } else if (_.includes(metricName, 'io')) {
+      return `${_.startCase(metricName.replaceAll('io', 'IO').replaceAll('_', ' '))}`;
+    } else {
+      return `${_.startCase(metricName.replaceAll('_', ' '))}`;
     }
-    if (_.includes(metricName, 'io')) {
-      return `${_.upperCase(key)} ${restLabel}`;
-    }
-    return `${_.startCase(metricName.replaceAll('_', ' '))}`;
   };
 
   return (
@@ -283,7 +295,7 @@ const convertMetricUnit = (
     number = Number((Number(value) / 1000).toFixed(1));
     numberUnit = 's';
   } else {
-    number = Number(convertBinarySizeUnit(value ?? '0', 'g')?.numberFixed);
+    number = Number(convertToBinaryUnit(value ?? '0', 'g')?.numberFixed);
     numberUnit = 'GiB';
   }
 

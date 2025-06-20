@@ -1,18 +1,17 @@
+import { SessionStatusDetailModalFragment$key } from '../../__generated__/SessionStatusDetailModalFragment.graphql';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import BAIModal from '../BAIModal';
 import DoubleTag from '../DoubleTag';
 import Flex from '../Flex';
 import { statusTagColor } from './SessionStatusTag';
-import { SessionStatusDetailModalFragment$key } from './__generated__/SessionStatusDetailModalFragment.graphql';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { Descriptions, ModalProps, Tag, Typography, theme } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 export const statusInfoTagColor = {
   'idle-timeout': 'green',

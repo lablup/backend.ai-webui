@@ -1,5 +1,12 @@
-import { getImageFullName, localeCompare } from '../helper';
-import { preserveDotStartCase } from '../helper';
+import {
+  ImageEnvironmentSelectFormItemsQuery,
+  ImageEnvironmentSelectFormItemsQuery$data,
+} from '../__generated__/ImageEnvironmentSelectFormItemsQuery.graphql';
+import {
+  getImageFullName,
+  localeCompare,
+  preserveDotStartCase,
+} from '../helper';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
@@ -13,10 +20,6 @@ import ImageMetaIcon from './ImageMetaIcon';
 import { ImageTags } from './ImageTags';
 import TextHighlighter from './TextHighlighter';
 import {
-  ImageEnvironmentSelectFormItemsQuery,
-  ImageEnvironmentSelectFormItemsQuery$data,
-} from './__generated__/ImageEnvironmentSelectFormItemsQuery.graphql';
-import {
   Divider,
   Form,
   Input,
@@ -26,11 +29,10 @@ import {
   theme,
   Typography,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export type Image = NonNullable<
   NonNullable<ImageEnvironmentSelectFormItemsQuery$data>['images']

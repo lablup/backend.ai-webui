@@ -1,3 +1,9 @@
+import { ContainerRegistryListDeleteMutation } from '../__generated__/ContainerRegistryListDeleteMutation.graphql';
+import { ContainerRegistryListDomainMutation } from '../__generated__/ContainerRegistryListDomainMutation.graphql';
+import {
+  ContainerRegistryListQuery,
+  ContainerRegistryListQuery$data,
+} from '../__generated__/ContainerRegistryListQuery.graphql';
 import { filterNonNullItems, transformSorterToOrderString } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
@@ -9,12 +15,6 @@ import BAIPropertyFilter from './BAIPropertyFilter';
 import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
 import Flex from './Flex';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
-import { ContainerRegistryListDeleteMutation } from './__generated__/ContainerRegistryListDeleteMutation.graphql';
-import { ContainerRegistryListDomainMutation } from './__generated__/ContainerRegistryListDomainMutation.graphql';
-import {
-  ContainerRegistryListQuery,
-  ContainerRegistryListQuery$data,
-} from './__generated__/ContainerRegistryListQuery.graphql';
 import {
   DeleteOutlined,
   ExclamationCircleOutlined,
@@ -39,11 +39,10 @@ import {
 } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery, useMutation } from 'react-relay';
+import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 export type ContainerRegistry = NonNullable<
   NonNullable<

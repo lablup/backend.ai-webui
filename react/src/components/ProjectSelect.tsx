@@ -1,13 +1,12 @@
+import { ProjectSelectorQuery } from '../__generated__/ProjectSelectorQuery.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import useControllableState from '../hooks/useControllableState';
 import BAISelect, { BAISelectProps } from './BAISelect';
-import { ProjectSelectorQuery } from './__generated__/ProjectSelectorQuery.graphql';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 type ProjectInfo = {
   label: React.ReactNode;

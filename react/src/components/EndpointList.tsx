@@ -1,4 +1,8 @@
 import {
+  EndpointListFragment$data,
+  EndpointListFragment$key,
+} from '../__generated__/EndpointListFragment.graphql';
+import {
   baiSignedRequestWithPromise,
   filterEmptyItem,
   filterNonNullItems,
@@ -10,10 +14,6 @@ import BAITable, { BAITableProps } from './BAITable';
 import EndpointOwnerInfo from './EndpointOwnerInfo';
 import EndpointStatusTag from './EndpointStatusTag';
 import Flex from './Flex';
-import {
-  EndpointListFragment$data,
-  EndpointListFragment$key,
-} from './__generated__/EndpointListFragment.graphql';
 import {
   CheckOutlined,
   CloseOutlined,
@@ -29,13 +29,12 @@ import {
   Tooltip,
 } from 'antd';
 import { ColumnType } from 'antd/lib/table';
-import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { InfoIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 import { Link } from 'react-router-dom';
 
 type Endpoint = EndpointListFragment$data[number];

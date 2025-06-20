@@ -1,22 +1,26 @@
+import { ContainerRegistryEditorModalCreateMutation } from '../__generated__/ContainerRegistryEditorModalCreateMutation.graphql';
+import { ContainerRegistryEditorModalCreateWithoutExtraMutation } from '../__generated__/ContainerRegistryEditorModalCreateWithoutExtraMutation.graphql';
+import { ContainerRegistryEditorModalFragment$key } from '../__generated__/ContainerRegistryEditorModalFragment.graphql';
+import { ContainerRegistryEditorModalModifyMutation } from '../__generated__/ContainerRegistryEditorModalModifyMutation.graphql';
+import { ContainerRegistryEditorModalModifyWithoutExtraMutation } from '../__generated__/ContainerRegistryEditorModalModifyWithoutExtraMutation.graphql';
+import { ContainerRegistryEditorModalModifyWithoutPasswordAndExtraMutation } from '../__generated__/ContainerRegistryEditorModalModifyWithoutPasswordAndExtraMutation.graphql';
+import { ContainerRegistryEditorModalModifyWithoutPasswordMutation } from '../__generated__/ContainerRegistryEditorModalModifyWithoutPasswordMutation.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useThemeMode } from '../hooks/useThemeMode';
 import BAICodeEditor from './BAICodeEditor';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import HiddenFormItem from './HiddenFormItem';
-import { ContainerRegistryEditorModalCreateMutation } from './__generated__/ContainerRegistryEditorModalCreateMutation.graphql';
-import { ContainerRegistryEditorModalCreateWithoutExtraMutation } from './__generated__/ContainerRegistryEditorModalCreateWithoutExtraMutation.graphql';
-import { ContainerRegistryEditorModalFragment$key } from './__generated__/ContainerRegistryEditorModalFragment.graphql';
-import { ContainerRegistryEditorModalModifyMutation } from './__generated__/ContainerRegistryEditorModalModifyMutation.graphql';
-import { ContainerRegistryEditorModalModifyWithoutExtraMutation } from './__generated__/ContainerRegistryEditorModalModifyWithoutExtraMutation.graphql';
-import { ContainerRegistryEditorModalModifyWithoutPasswordAndExtraMutation } from './__generated__/ContainerRegistryEditorModalModifyWithoutPasswordAndExtraMutation.graphql';
-import { ContainerRegistryEditorModalModifyWithoutPasswordMutation } from './__generated__/ContainerRegistryEditorModalModifyWithoutPasswordMutation.graphql';
 import { Form, Input, Select, Checkbox, FormInstance, App, theme } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment, useMutation, UseMutationConfig } from 'react-relay';
+import {
+  graphql,
+  useFragment,
+  useMutation,
+  UseMutationConfig,
+} from 'react-relay';
 
 type RegistryFormInput = {
   row_id?: string;

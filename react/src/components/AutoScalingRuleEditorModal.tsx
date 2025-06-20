@@ -1,14 +1,14 @@
-import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
-import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
 import {
   AutoScalingMetricComparator,
   AutoScalingMetricSource,
   AutoScalingRuleEditorModalCreateMutation,
   EndpointAutoScalingRuleInput,
-} from './__generated__/AutoScalingRuleEditorModalCreateMutation.graphql';
-import { AutoScalingRuleEditorModalFragment$key } from './__generated__/AutoScalingRuleEditorModalFragment.graphql';
-import { AutoScalingRuleEditorModalModifyMutation } from './__generated__/AutoScalingRuleEditorModalModifyMutation.graphql';
+} from '../__generated__/AutoScalingRuleEditorModalCreateMutation.graphql';
+import { AutoScalingRuleEditorModalFragment$key } from '../__generated__/AutoScalingRuleEditorModalFragment.graphql';
+import { AutoScalingRuleEditorModalModifyMutation } from '../__generated__/AutoScalingRuleEditorModalModifyMutation.graphql';
+import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
+import BAIModal, { BAIModalProps } from './BAIModal';
+import Flex from './Flex';
 import {
   App,
   AutoComplete,
@@ -21,11 +21,10 @@ import {
   Space,
   Typography,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment, useMutation } from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 interface AutoScalingRuleEditorModalProps
   extends Omit<BAIModalProps, 'onOk' | 'onClose'> {

@@ -1,22 +1,21 @@
+import {
+  ResourcePresetSelectQuery,
+  ResourcePresetSelectQuery$data,
+} from '../__generated__/ResourcePresetSelectQuery.graphql';
 import { localeCompare } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
 import useControllableState from '../hooks/useControllableState';
 import Flex from './Flex';
 import ResourceNumber from './ResourceNumber';
-import {
-  ResourcePresetSelectQuery,
-  ResourcePresetSelectQuery$data,
-} from './__generated__/ResourcePresetSelectQuery.graphql';
 import { EditOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { useThrottleFn } from 'ahooks';
 import { Select, Tooltip, theme } from 'antd';
 import { SelectProps } from 'antd/lib';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 type Y = ArrayElement<NonNullable<SelectProps['options']>>;
 interface PresetOptionType extends Y {
@@ -87,7 +86,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
         resource_presets,
         (preset) =>
           preset?.scaling_group_name === resourceGroup ||
-          preset?.scaling_group_name === null,
+          _.isEmpty(preset?.scaling_group_name),
       )
     : resource_presets;
 
@@ -168,6 +167,11 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
                             type={key}
                             value={slot}
                             hideTooltip
+                            opts={
+                              key === 'mem' && preset?.shared_memory
+                                ? { shmem: preset?.shared_memory }
+                                : {}
+                            }
                           />
                         );
                       },

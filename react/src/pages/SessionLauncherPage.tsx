@@ -34,7 +34,7 @@ import {
   compareNumberWithUnits,
   formatDuration,
   generateRandomString,
-  convertBinarySizeUnit,
+  convertToBinaryUnit,
   filterEmptyItem,
 } from '../helper';
 import {
@@ -96,29 +96,39 @@ import {
   withDefault,
 } from 'use-query-params';
 
-interface SessionConfig {
-  group_name: string;
-  domain: string;
-  scaling_group: string;
-  type: string;
-  cluster_mode: string;
+export interface SessionResources {
+  group_name?: string;
+  domain?: string;
+  type?: 'interactive' | 'batch' | 'inference' | 'system';
+  cluster_mode: 'single-node' | 'multi-node';
   cluster_size: number;
-  maxWaitSeconds: number;
-  cpu: number;
-  mem: string;
-  shmem: string;
-  mounts: string[];
-  mount_map: {
-    [key: string]: string;
-  };
-  env: {
-    [key: string]: string;
-  };
-  preopen_ports: number[];
-  startsAt?: string;
+  maxWaitSeconds?: number;
+  starts_at?: string;
   startupCommand?: string;
   bootstrap_script?: string;
-  agent_list?: string[];
+  owner_access_key?: string;
+  enqueueOnly?: boolean;
+  config?: {
+    resources?: {
+      cpu: number;
+      mem: string;
+      [key: string]: number | string;
+    };
+    resource_opts?: {
+      shmem?: string;
+      allow_fractional_resource_fragmentation?: boolean;
+    };
+    mounts?: string[];
+    mount_map?: {
+      [key: string]: string;
+    };
+    environ?: {
+      [key: string]: string;
+    };
+    scaling_group?: string;
+    preopen_ports?: number[];
+    agent_list?: string[];
+  };
 }
 
 interface CreateSessionInfo {
@@ -126,7 +136,7 @@ interface CreateSessionInfo {
   sessionName: string;
   architecture: string;
   batchTimeout?: string;
-  config: SessionConfig;
+  resources: SessionResources;
 }
 
 interface SessionLauncherValue {
@@ -433,91 +443,114 @@ const SessionLauncherPage = () => {
           : values.sessionName;
 
         const sessionInfo: CreateSessionInfo = {
+          // Basic session information
+          sessionName: sessionName,
           kernelName,
           architecture,
-          sessionName: sessionName,
-          ...(supportBatchTimeout &&
-          values?.batch?.timeoutEnabled &&
-          !_.isUndefined(values?.batch?.timeout)
-            ? {
-                batchTimeout:
-                  _.toString(values.batch.timeout) + values?.batch?.timeoutUnit,
-              }
-            : undefined),
-          config: {
-            ...(baiClient.supports('agent-select') &&
-            !baiClient?._config?.hideAgents &&
-            values.agent !== 'auto'
-              ? {
-                  agent_list: [values.agent].filter(
-                    (agent): agent is string => !!agent,
-                  ),
-                } // Filter out undefined values
-              : undefined),
+          resources: {
+            // Project and domain settings
+            group_name: values.owner?.enabled
+              ? values.owner.project
+              : currentProject.name,
+            domain: values.owner?.enabled
+              ? values.owner.domainName
+              : baiClient._config.domainName,
+
+            // Session configuration
             type: values.sessionType,
-            ...(_.isEmpty(values.bootstrap_script)
-              ? {}
-              : {
-                  bootstrap_script: values.bootstrap_script,
-                }),
+            cluster_mode: values.cluster_mode,
+            cluster_size: values.cluster_size,
+            maxWaitSeconds: 15,
+
+            // Owner settings (optional)
+            // FYI, `config.scaling_group` also changes based on owner settings
+            ...(values.owner?.enabled
+              ? {
+                  owner_access_key: values.owner.accesskey,
+                }
+              : {}),
+
+            // Batch mode settings (optional)
             ...(values.sessionType === 'batch'
               ? {
-                  startsAt: values.batch.enabled
+                  starts_at: values.batch.enabled
                     ? values.batch.scheduleDate
                     : undefined,
                   startupCommand: values.batch.command,
                 }
               : {}),
 
-            // TODO: support change owner
-            ...(values.owner?.enabled
-              ? {
-                  group_name: values.owner.project,
-                  domain: values.owner.domainName,
-                  scaling_group: values.owner.project,
-                  owner_access_key: values.owner.accesskey,
-                }
-              : {
-                  group_name: currentProject.name,
-                  domain: baiClient._config.domainName,
-                  scaling_group: values.resourceGroup,
-                }),
-            cluster_mode: values.cluster_mode,
-            cluster_size: values.cluster_size,
-            maxWaitSeconds: 15,
-            cpu: values.resource.cpu,
-            mem: values.resource.mem,
-            shmem:
-              compareNumberWithUnits(values.resource.mem, '4g') > 0 &&
-              compareNumberWithUnits(values.resource.shmem, '1g') < 0
-                ? '1g'
-                : values.resource.shmem,
-            ...(values.resource.accelerator > 0
-              ? {
-                  [values.resource.acceleratorType]:
-                    values.resource.accelerator,
-                }
-              : undefined),
-            mounts: values.mounts,
-            mount_map: values.vfoldersAliasMap,
+            // Bootstrap script (optional)
+            ...(values.bootstrap_script
+              ? { bootstrap_script: values.bootstrap_script }
+              : {}),
 
-            env: {
-              ..._.fromPairs(values.envvars.map((v) => [v.variable, v.value])),
-              // set hpcOptimization options: "OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS"
-              ...(values.hpcOptimization.autoEnabled
-                ? {}
-                : _.omit(values.hpcOptimization, 'autoEnabled')),
-            },
-            preopen_ports: transformPortValuesToNumbers(values.ports),
-            ...(baiClient.supports('agent-select') &&
-            !baiClient?._config?.hideAgents &&
-            values.agent !== 'auto'
+            // Batch timeout configuration (optional)
+            ...(supportBatchTimeout &&
+            values?.batch?.timeoutEnabled &&
+            !_.isUndefined(values?.batch?.timeout)
               ? {
-                  agent_list: [values.agent].filter(
-                    (agent): agent is string => !!agent,
-                  ),
-                } // Filter out undefined values
+                  batchTimeout:
+                    _.toString(values.batch.timeout) +
+                    values?.batch?.timeoutUnit,
+                }
               : undefined),
+
+            config: {
+              // Resource allocation
+              resources: {
+                cpu: values.resource.cpu,
+                mem: values.resource.mem,
+                // Add accelerator only if specified
+                ...(values.resource.accelerator > 0
+                  ? {
+                      [values.resource.acceleratorType]:
+                        values.resource.accelerator,
+                    }
+                  : undefined),
+              },
+              scaling_group: values.owner?.enabled
+                ? values.owner.project
+                : values.resourceGroup,
+              resource_opts: {
+                shmem:
+                  compareNumberWithUnits(values.resource.mem, '4g') > 0 &&
+                  compareNumberWithUnits(values.resource.shmem, '1g') < 0
+                    ? '1g'
+                    : values.resource.shmem,
+                // allow_fractional_resource_fragmentation can be added here if needed
+              },
+
+              // Storage configuration
+              mounts: values.mounts,
+              mount_map: values.vfoldersAliasMap,
+
+              // Environment variables
+              environ: {
+                ..._.fromPairs(
+                  values.envvars.map((v) => [v.variable, v.value]),
+                ),
+                // set hpcOptimization options: "OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS"
+                ...(values.hpcOptimization.autoEnabled
+                  ? {}
+                  : _.omit(values.hpcOptimization, 'autoEnabled')),
+              },
+
+              // Networking
+              preopen_ports: transformPortValuesToNumbers(values.ports),
+
+              // Agent selection (optional)
+              ...(baiClient.supports('agent-select') &&
+              !baiClient?._config?.hideAgents &&
+              values.agent !== 'auto'
+                ? {
+                    // Filter out undefined values
+                    agent_list: [values.agent].filter(
+                      (agent): agent is string => !!agent,
+                    ),
+                  }
+                : undefined),
+            },
           },
         };
         const sessionPromises = _.map(
@@ -531,10 +564,9 @@ const SessionLauncherPage = () => {
               .createIfNotExists(
                 sessionInfo.kernelName,
                 formattedSessionName,
-                sessionInfo.config,
+                sessionInfo.resources,
                 undefined,
                 sessionInfo.architecture,
-                sessionInfo.batchTimeout,
               )
               .then((res: { created: boolean; status: string }) => {
                 // // When session is already created with the same name, the status code
@@ -1624,15 +1656,14 @@ export const ResourceNumbersOfSession: React.FC<FormOrResourceRequired> = ({
               type={type}
               value={
                 type === 'mem'
-                  ? (convertBinarySizeUnit(value.toString(), 'b')?.number ||
-                      0) *
+                  ? (convertToBinaryUnit(value.toString(), '')?.number || 0) *
                       containerCount +
                     ''
                   : _.toNumber(value) * containerCount + ''
               }
               opts={{
                 shmem: resource.shmem
-                  ? (convertBinarySizeUnit(resource.shmem, 'b')?.number || 0) *
+                  ? (convertToBinaryUnit(resource.shmem, '')?.number || 0) *
                     containerCount
                   : undefined,
               }}

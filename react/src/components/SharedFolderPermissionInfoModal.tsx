@@ -1,3 +1,7 @@
+import {
+  SharedFolderPermissionInfoModalFragment$data,
+  SharedFolderPermissionInfoModalFragment$key,
+} from '../__generated__/SharedFolderPermissionInfoModalFragment.graphql';
 import { filterNonNullItems } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
@@ -8,10 +12,6 @@ import BAIModal, { BAIModalProps } from './BAIModal';
 import BAITable from './BAITable';
 import Flex from './Flex';
 import VFolderPermissionCell from './VFolderPermissionCell';
-import {
-  SharedFolderPermissionInfoModalFragment$data,
-  SharedFolderPermissionInfoModalFragment$key,
-} from './__generated__/SharedFolderPermissionInfoModalFragment.graphql';
 import { UserOutlined } from '@ant-design/icons';
 import {
   Alert,
@@ -23,10 +23,9 @@ import {
   Typography,
   theme,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import { LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface SharedFolderPermissionInfoModalProps extends BAIModalProps {
   vfolderFrgmt: SharedFolderPermissionInfoModalFragment$key | null;

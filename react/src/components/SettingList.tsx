@@ -1,7 +1,6 @@
 import BAIModal from './BAIModal';
 import Flex from './Flex';
-import SettingItem from './SettingItem';
-import { SettingItemProps } from './SettingItem';
+import SettingItem, { SettingItemProps } from './SettingItem';
 import { RedoOutlined, SearchOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {

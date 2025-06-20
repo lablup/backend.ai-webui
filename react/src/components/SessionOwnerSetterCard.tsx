@@ -1,3 +1,4 @@
+import { SessionOwnerSetterCardQuery } from '../__generated__/SessionOwnerSetterCardQuery.graphql';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import BAICard, { BAICardProps } from './BAICard';
@@ -5,7 +6,6 @@ import BAISelect from './BAISelect';
 import Flex from './Flex';
 import HiddenFormItem from './HiddenFormItem';
 import ResourceGroupSelect from './ResourceGroupSelect';
-import { SessionOwnerSetterCardQuery } from './__generated__/SessionOwnerSetterCardQuery.graphql';
 import {
   Button,
   Card,
@@ -19,12 +19,11 @@ import {
   theme,
 } from 'antd';
 import { CardProps } from 'antd/lib';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import { CheckIcon } from 'lucide-react';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { fetchQuery, useRelayEnvironment } from 'react-relay';
+import { graphql, fetchQuery, useRelayEnvironment } from 'react-relay';
 
 export interface SessionOwnerSetterFormValues {
   owner?:

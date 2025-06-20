@@ -1,6 +1,6 @@
 import InputNumberWithSlider from '../InputNumberWithSlider';
 import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
-import type { ChatParameters } from './ChatModel';
+import { DEFAULT_CHAT_PARAMETERS, type ChatParameters } from './ChatModel';
 import {
   ConfigProvider,
   Divider,
@@ -11,7 +11,7 @@ import {
   Typography,
 } from 'antd';
 import { t } from 'i18next';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 
 type ChatParameterChangeEventHandler = (event: {
   id: string;
@@ -118,29 +118,21 @@ const chatParameters: Record<string, ChatParameterSliderData> = {
   },
 };
 
-const defaultChatParameters = {
-  maxTokens: 4096,
-  temperature: 0.7,
-  topP: 1,
-  topK: 1,
-  frequencyPenalty: 1,
-  presencePenalty: 1,
-};
-
 export const ChatParametersSliders = ({
   parameters,
+  usingParameters,
   onChangeParameter,
 }: {
   parameters: ChatParameters;
+  usingParameters: boolean;
   onChangeParameter: (
     usingParameters: boolean,
     parameters: ChatParameters,
   ) => void;
 }) => {
   const { token } = theme.useToken();
-  const [enabled, setEnabled] = useState(false);
   const currentParameters = useRef<ChatParameters>(
-    Object.keys(parameters).length > 0 ? parameters : defaultChatParameters,
+    Object.keys(parameters).length > 0 ? parameters : DEFAULT_CHAT_PARAMETERS,
   );
 
   return (
@@ -160,14 +152,14 @@ export const ChatParametersSliders = ({
         initialValues={
           Object.keys(parameters).length > 0
             ? parameters
-            : defaultChatParameters
+            : DEFAULT_CHAT_PARAMETERS
         }
         onValuesChange={(values) => {
           currentParameters.current = {
             ...currentParameters.current,
             ...values,
           };
-          onChangeParameter(enabled, {
+          onChangeParameter(usingParameters, {
             ...currentParameters.current,
           });
         }}
@@ -179,10 +171,9 @@ export const ChatParametersSliders = ({
             {t('chatui.chat.parameter.Title')}
           </Typography.Text>
           <Switch
-            checked={enabled}
+            checked={usingParameters}
             onChange={() => {
-              setEnabled(!enabled);
-              onChangeParameter(!enabled, {
+              onChangeParameter(!usingParameters, {
                 ...currentParameters.current,
               });
             }}
@@ -195,7 +186,7 @@ export const ChatParametersSliders = ({
         />
         {Object.entries(chatParameters).map(([id, params]) => (
           <ChatParameterSliderFormItem
-            disabled={!enabled}
+            disabled={!usingParameters}
             key={id}
             id={id}
             {...params}

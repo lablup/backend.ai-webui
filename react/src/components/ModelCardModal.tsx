@@ -1,9 +1,9 @@
+import { ModelCardModalFragment$key } from '../__generated__/ModelCardModalFragment.graphql';
 import { useBackendAIImageMetaData } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import ModelCloneModal from './ModelCloneModal';
 import ResourceNumber from './ResourceNumber';
-import { ModelCardModalFragment$key } from './__generated__/ModelCardModalFragment.graphql';
 import { BankOutlined, CopyOutlined, FileOutlined } from '@ant-design/icons';
 import {
   Alert,
@@ -18,14 +18,13 @@ import {
   Typography,
   theme,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { Cog, FolderX } from 'lucide-react';
 import Markdown from 'markdown-to-jsx';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface ModelCardModalProps extends BAIModalProps {
   modelCardModalFrgmt?: ModelCardModalFragment$key | null;

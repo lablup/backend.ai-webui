@@ -1,6 +1,8 @@
-import { convertDecimalSizeUnit, filterEmptyItem, toLocalId } from '../helper';
+import { VFolderNodeDescriptionFragment$key } from '../__generated__/VFolderNodeDescriptionFragment.graphql';
+import { VFolderNodeDescriptionPermissionRefreshQuery } from '../__generated__/VFolderNodeDescriptionPermissionRefreshQuery.graphql';
+import { useVirtualFolderNodePathFragment$key } from '../__generated__/useVirtualFolderNodePathFragment.graphql';
+import { convertToDecimalUnit, filterEmptyItem, toLocalId } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useVirtualFolderNodePathFragment$key } from '../hooks/__generated__/useVirtualFolderNodePathFragment.graphql';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -12,8 +14,6 @@ import BAITag from './BAITag';
 import Flex from './Flex';
 import { statusTagColor } from './VFolderNodes';
 import VirtualFolderPath from './VirtualFolderNodeItems/VirtualFolderPath';
-import { VFolderNodeDescriptionFragment$key } from './__generated__/VFolderNodeDescriptionFragment.graphql';
-import { VFolderNodeDescriptionPermissionRefreshQuery } from './__generated__/VFolderNodeDescriptionPermissionRefreshQuery.graphql';
 import { CheckCircleOutlined, UserOutlined } from '@ant-design/icons';
 import {
   App,
@@ -22,11 +22,15 @@ import {
   Typography,
   type DescriptionsProps,
 } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { fetchQuery, useFragment, useRelayEnvironment } from 'react-relay';
+import {
+  graphql,
+  fetchQuery,
+  useFragment,
+  useRelayEnvironment,
+} from 'react-relay';
 
 interface VFolderNodeDescriptionProps extends DescriptionsProps {
   vfolderNodeFrgmt?: VFolderNodeDescriptionFragment$key | null;
@@ -238,7 +242,7 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
       key: 'max_size',
       label: t('data.folders.MaxSize'),
       children: vfolderNode.max_size
-        ? `${convertDecimalSizeUnit(vfolderNode.max_size, 'g', 2)?.numberUnit}B`
+        ? convertToDecimalUnit(vfolderNode.max_size, 'g', 2)?.displayValue
         : '∞',
     },
     {
