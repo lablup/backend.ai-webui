@@ -7,7 +7,7 @@ import VFolderTable, {
 } from './VFolderTable';
 import { Form, FormItemProps, Input } from 'antd';
 import _ from 'lodash';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface VFolderTableFormItemProps extends Omit<FormItemProps, 'name'> {
@@ -30,14 +30,6 @@ const VFolderTableFormItem: React.FC<VFolderTableFormItemProps> = ({
 }) => {
   const form = Form.useFormInstance();
   const { t } = useTranslation();
-
-  useEffect(() => {
-    form.setFieldsValue({
-      mounts: [],
-      vfoldersAliasMap: {},
-      autoMountedFolderNames: [],
-    });
-  }, [tableProps?.ownerEmail, form]);
 
   return (
     <>
@@ -91,6 +83,7 @@ const VFolderTableFormItem: React.FC<VFolderTableFormItemProps> = ({
         trigger="onChangeSelectedRowKeys"
       >
         <VFolderTable
+          key={tableProps?.ownerEmail}
           rowKey={rowKey}
           showAliasInput
           aliasMap={form.getFieldValue('vfoldersAliasMap')}

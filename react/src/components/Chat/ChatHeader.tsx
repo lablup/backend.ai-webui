@@ -243,7 +243,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             />
           }
           trigger="click"
-          placement="bottom"
+          placement="bottomLeft"
           style={{
             padding: token.paddingXS,
           }}

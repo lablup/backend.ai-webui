@@ -14,6 +14,9 @@ import React, { useRef, Fragment } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
+const DEFAULT_MIN_MEMORY = '1g'; // Default minimum memory value for resource limits
+const DEFAULT_MIN_CPU = 1; // Default minimum CPU value for resource limits
+const DEFAULT_MIN_OTHER = 0; // Default minimum value for other resource limits (e.g., Accelerators like GPUs)
 interface ManageImageResourceLimitModalProps extends BAIModalProps {
   imageFrgmt: ManageImageResourceLimitModal_image$key | null;
   open: boolean;
@@ -131,24 +134,6 @@ const ManageImageResourceLimitModal: React.FC<
     }
   };
 
-  const getMin = (resourceLimitMin: string | null, key: string) => {
-    if (key === 'mem') {
-      if (
-        _.isNil(resourceLimitMin) ||
-        compareNumberWithUnits(resourceLimitMin ?? '1g', '1g') < 0
-      ) {
-        return '1g';
-      }
-      return resourceLimitMin;
-    }
-    if (key === 'cpu') {
-      const min = _.toNumber(resourceLimitMin);
-      return _.isNil(resourceLimitMin) || min < 1 ? 1 : min;
-    }
-    const min = _.toNumber(resourceLimitMin);
-    return _.isNil(resourceLimitMin) || min < 0 ? 0 : min;
-  };
-
   return (
     <BAIModal
       destroyOnClose
@@ -175,7 +160,6 @@ const ManageImageResourceLimitModal: React.FC<
               <Fragment key={index}>
                 {_.map(resourceLimitChunk, (resourceLimit) => {
                   const key = _.get(resourceLimit, 'key', '');
-                  const resourceLimitMin = _.get(resourceLimit, 'min', null);
 
                   if (!key) {
                     return null;
@@ -203,13 +187,13 @@ const ManageImageResourceLimitModal: React.FC<
                                 value &&
                                 compareNumberWithUnits(
                                   value,
-                                  getMin(resourceLimitMin, key),
+                                  DEFAULT_MIN_MEMORY,
                                 ) < 0
                               ) {
                                 return Promise.reject(
                                   new Error(
                                     t('environment.ErrorMinimumValue', {
-                                      value: getMin(resourceLimitMin, key),
+                                      value: DEFAULT_MIN_MEMORY,
                                       key: mergedResourceSlots?.[key]
                                         ?.description,
                                     }),
@@ -223,12 +207,16 @@ const ManageImageResourceLimitModal: React.FC<
                       >
                         {key === 'mem' ? (
                           <DynamicUnitInputNumber
-                            min={_.toString(getMin(resourceLimitMin, key))}
+                            min={DEFAULT_MIN_MEMORY}
                             style={{ width: '100%' }}
                           />
                         ) : (
                           <InputNumber
-                            min={getMin(resourceLimitMin, key)}
+                            min={
+                              key === 'cpu'
+                                ? DEFAULT_MIN_CPU
+                                : DEFAULT_MIN_OTHER
+                            }
                             step={_.includes(key, '.shares') ? 0.1 : 1}
                             style={{ width: '100%' }}
                             addonAfter={

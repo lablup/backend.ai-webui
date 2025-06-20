@@ -4,6 +4,7 @@ import {
 } from '../__generated__/SessionMetricGraphQuery.graphql';
 import {
   convertToBinaryUnit,
+  convertToDecimalUnit,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
@@ -162,7 +163,7 @@ const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
     // Currently, cuda and rocm have the same human_readable_name in device_metadata.
     if (deviceDescription) {
       return `${deviceDescription} ${restLabel}`;
-    } else if (_.includes(metricName, 'io')) {
+    } else if (_.includes(metricName.toLowerCase(), 'io')) {
       return `${_.startCase(metricName.replaceAll('io', 'IO').replaceAll('_', ' '))}`;
     } else {
       return `${_.startCase(metricName.replaceAll('_', ' '))}`;
@@ -251,7 +252,7 @@ const getMetricData = (
 
   const timeUnits = { s: 1, m: 60, h: 3600, d: 86400 };
   const stepUnit = step.slice(-1) as keyof typeof timeUnits;
-  const stepValue = parseInt(step.slice(0, -1));
+  const stepValue = parseInt(step.slice(0, -1), 10);
   const stepSeconds = stepValue * timeUnits[stepUnit];
 
   const filledData = [];
@@ -288,19 +289,27 @@ const convertMetricUnit = (
       numberUnit,
     };
 
-  if (metricName.includes('util')) {
+  if (_.includes(metricName.toLowerCase(), 'util')) {
     number = Number(toFixedFloorWithoutTrailingZeros(value ?? 0, 1));
     numberUnit = '%';
-  } else if (metricName.includes('used')) {
+  } else if (_.includes(metricName.toLowerCase(), 'used')) {
     number = Number((Number(value) / 1000).toFixed(1));
     numberUnit = 's';
   } else {
-    number = Number(convertToBinaryUnit(value ?? '0', 'g')?.numberFixed);
-    numberUnit = 'GiB';
+    const decimalUnitMetrics = ['io', 'net'];
+    const isDecimalUnitMetric = _.some(decimalUnitMetrics, (unit) =>
+      _.includes(_.toLower(metricName), unit),
+    );
+    number = _.toNumber(
+      isDecimalUnitMetric
+        ? convertToDecimalUnit(value ?? '0', 'g')?.numberFixed
+        : convertToBinaryUnit(value ?? '0', 'g')?.numberFixed,
+    );
+    numberUnit = isDecimalUnitMetric ? 'GB' : 'GiB';
   }
 
-  if (metricName.includes('net')) {
-    numberUnit = 'GiB/s';
+  if (_.includes(_.toLower(metricName), 'net')) {
+    numberUnit = 'GB/s';
   }
   number = value ? number : undefined;
 
