@@ -305,7 +305,7 @@ const convertMetricUnit = (
   }
 
   if (_.includes(metricName.toLowerCase(), 'net')) {
-    numberUnit = 'GiB/s';
+    numberUnit = 'GB/s';
   }
   number = value ? number : undefined;
 
