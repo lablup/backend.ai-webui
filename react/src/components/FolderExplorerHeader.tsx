@@ -1,10 +1,41 @@
 import { FolderExplorerHeaderFragment$key } from '../__generated__/FolderExplorerHeaderFragment.graphql';
+import { FolderExplorerHeaderImageNodesQuery } from '../__generated__/FolderExplorerHeaderImageNodesQuery.graphql';
+import { useSuspendedBackendaiClient } from '../hooks';
+import { SessionResources } from '../pages/SessionLauncherPage';
 import Flex from './Flex';
 import VFolderNameTitle from './VFolderNameTitle';
 import { Button, Tooltip, Image, Skeleton, Grid, theme } from 'antd';
 import React, { LegacyRef, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment } from 'react-relay';
+import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+
+function useExecuteFileBrowser() {
+  const baiClient = useSuspendedBackendaiClient();
+  const { image_nodes } = useLazyLoadQuery<FolderExplorerHeaderImageNodesQuery>(
+    graphql`
+      query FolderExplorerHeaderImageNodesQuery(
+        $scope_id: ScopeField!
+        $filter: String
+      ) {
+        image_nodes(scope_id: $scope_id, filter: $filter) {
+          edges {
+            node {
+              id
+              name @deprecatedSince(version: "24.12.0")
+              namespace @since(version: "24.12.0")
+            }
+          }
+        }
+      }
+    `,
+    {
+      scope_id: '',
+      filter: baiClient.isManagerVersionCompatibleWith('24.12.0')
+        ? `namespace ilike "%filebrowser%"`
+        : `name ilike "%filebrowser%"`,
+    },
+  );
+}
 
 interface FolderExplorerHeaderProps {
   vfolderNodeFrgmt?: FolderExplorerHeaderFragment$key | null;
