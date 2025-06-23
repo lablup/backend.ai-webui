@@ -68,11 +68,10 @@ const useStyles = createStyles(({ token, css }) => ({
 }));
 
 function createModelsURL(baseURL: string) {
-  const { origin, port, pathname: path } = new URL(baseURL.trim());
-  const host = port.length > 0 ? `${origin}:${port}` : origin;
+  const { origin, pathname: path } = new URL(baseURL.trim());
   const normalizedPath = path === '/' ? '/models' : `${path}/models`;
 
-  return new URL(normalizedPath, host).toString();
+  return new URL(normalizedPath, origin).toString();
 }
 
 function useModels(

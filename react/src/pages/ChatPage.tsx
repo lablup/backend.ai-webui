@@ -311,11 +311,7 @@ const ChatPage: React.FC = () => {
     webuiNavigate(`/chat`, { replace: true });
   }
 
-  return (
-    <>
-      <PureChatPage id={id || generateChatId()} />
-    </>
-  );
+  return <PureChatPage id={id || generateChatId()} />;
 };
 
 export default ChatPage;
