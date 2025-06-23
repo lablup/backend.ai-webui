@@ -1,18 +1,17 @@
+import { KeypairResourcePolicyInfoModalFragment$key } from '../__generated__/KeypairResourcePolicyInfoModalFragment.graphql';
 import { filterEmptyItem } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import AllowedVfolderHostsWithPermission from './AllowedVfolderHostsWithPermission';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import ResourceNumber from './ResourceNumber';
-import { KeypairResourcePolicyInfoModalFragment$key } from './__generated__/KeypairResourcePolicyInfoModalFragment.graphql';
 import { Descriptions, theme, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { DescriptionsItemType } from 'antd/es/descriptions';
-import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useFragment } from 'react-relay';
+import { useFragment, graphql } from 'react-relay';
 
 const useStyles = createStyles(({ css }) => ({
   description: css`
