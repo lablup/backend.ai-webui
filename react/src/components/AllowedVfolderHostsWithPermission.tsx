@@ -9,7 +9,7 @@ import { Badge, theme } from 'antd';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+import { useFragment, useLazyLoadQuery, graphql } from 'react-relay';
 
 interface AllowedVfolderHostsWithPermissionProps {
   allowedVfolderHostsWithPermissionFrgmt: AllowedVfolderHostsWithPermissionFragment$key;

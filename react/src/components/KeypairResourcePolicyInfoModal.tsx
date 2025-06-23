@@ -11,7 +11,7 @@ import { DescriptionsItemType } from 'antd/es/descriptions';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useFragment, graphql } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 const useStyles = createStyles(({ css }) => ({
   description: css`
