@@ -1,3 +1,4 @@
+import { KeypairResourcePolicyInfoModalFragment$key } from '../__generated__/KeypairResourcePolicyInfoModalFragment.graphql';
 import { KeypairResourcePolicyListMutation } from '../__generated__/KeypairResourcePolicyListMutation.graphql';
 import {
   KeypairResourcePolicyListQuery,
@@ -13,28 +14,22 @@ import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
+import AllowedVfolderHostsWithPermission from './AllowedVfolderHostsWithPermission';
 import Flex from './Flex';
+import KeypairResourcePolicyInfoModal from './KeypairResourcePolicyInfoModal';
 import KeypairResourcePolicySettingModal from './KeypairResourcePolicySettingModal';
 import ResourceNumber from './ResourceNumber';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import {
   DeleteOutlined,
   DownOutlined,
+  InfoCircleOutlined,
   PlusOutlined,
   ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import {
-  App,
-  Button,
-  Dropdown,
-  Space,
-  Table,
-  Tag,
-  theme,
-  Typography,
-} from 'antd';
+import { App, Button, Dropdown, Space, Table, theme, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
 import _ from 'lodash';
@@ -65,6 +60,10 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
     useState<string>();
   const [editingKeypairResourcePolicy, setEditingKeypairResourcePolicy] =
     useState<KeypairResourcePolicySettingModalFragment$key | null>();
+  const [currentResourcePolicy, setCurrentResourcePolicy] =
+    useState<KeypairResourcePolicyInfoModalFragment$key | null>(null);
+  const [isPendingInfoModalOpen, startInfoModalOpenTransition] =
+    useTransition();
 
   const baiClient = useSuspendedBackendaiClient();
 
@@ -83,6 +82,8 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
             max_pending_session_count @since(version: "24.03.4")
             max_concurrent_sftp_sessions @since(version: "24.03.4")
             ...KeypairResourcePolicySettingModalFragment
+            ...KeypairResourcePolicyInfoModalFragment
+            ...AllowedVfolderHostsWithPermissionFragment
           }
         }
       `,
@@ -115,7 +116,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
       sorter: (a, b) => localeCompare(a?.name, b?.name),
     },
     {
-      title: t('resourcePolicy.Resources'),
+      title: t('resourcePolicy.ResourcePolicy'),
       dataIndex: 'total_resource_slots',
       key: 'total_resource_slots',
       render: (text, row) => (
@@ -185,16 +186,15 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
       dataIndex: 'allowed_vfolder_hosts',
       key: 'allowed_vfolder_hosts',
       render: (text, row) => {
-        const allowedVFolderHosts = baiClient?.supports(
-          'fine-grained-storage-permissions',
-        )
-          ? _.keys(JSON.parse(row?.allowed_vfolder_hosts || '{}'))
-          : JSON.parse(row?.allowed_vfolder_hosts || '{}');
         return (
           <>
-            {_.map(allowedVFolderHosts, (host) => (
-              <Tag key={host}>{host}</Tag>
-            ))}
+            {text && row ? (
+              <AllowedVfolderHostsWithPermission
+                allowedVfolderHostsWithPermissionFrgmt={row}
+              />
+            ) : (
+              '-'
+            )}
           </>
         );
       },
@@ -229,6 +229,16 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
       fixed: 'right',
       render: (text, row) => (
         <Flex direction="row" align="stretch">
+          <Button
+            type="text"
+            size="large"
+            icon={<InfoCircleOutlined style={{ color: token.colorSuccess }} />}
+            onClick={() => {
+              startInfoModalOpenTransition(() => {
+                setCurrentResourcePolicy(row || null);
+              });
+            }}
+          />
           <Button
             type="text"
             size="large"
@@ -491,6 +501,14 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
           }}
         />
       </Suspense>
+      <KeypairResourcePolicyInfoModal
+        open={!!currentResourcePolicy || isPendingInfoModalOpen}
+        onRequestClose={() => {
+          setCurrentResourcePolicy(null);
+        }}
+        loading={isPendingInfoModalOpen}
+        resourcePolicyFrgmt={currentResourcePolicy || null}
+      />
     </Flex>
   );
 };

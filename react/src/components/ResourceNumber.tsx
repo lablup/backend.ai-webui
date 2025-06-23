@@ -84,7 +84,7 @@ const ResourceNumber: React.FC<ResourceNumberProps> = ({
                 ? '~∞'
                 : `~${formatAmount(max)}`}
           </Typography.Text>
-          <Typography.Text type="secondary">
+          <Typography.Text type="secondary" style={{ whiteSpace: 'nowrap' }}>
             {mergedResourceSlots?.[type]?.display_unit || ''}
           </Typography.Text>
         </>
