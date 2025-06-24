@@ -81,6 +81,7 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
         cloneable
         status
         permissions @since(version: "24.09.0")
+        unmanaged_path @since(version: "25.04.0")
         ...VFolderPermissionCellFragment
         ...useVirtualFolderNodePathFragment
       }
@@ -100,7 +101,7 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
   const vfolderId = toLocalId(vfolderNode?.id);
 
   const items: DescriptionsProps['items'] = filterEmptyItem([
-    {
+    !vfolderNode?.unmanaged_path && {
       key: 'path',
       label: (
         <Typography.Text
