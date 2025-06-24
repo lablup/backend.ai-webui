@@ -1,7 +1,7 @@
 import { transformSorterToOrderString } from '../helper';
 import { useThemeMode } from '../hooks/useThemeMode';
 import Flex from './Flex';
-import { useDebounce } from 'ahooks';
+import { useControllableValue, useDebounce } from 'ahooks';
 import { ConfigProvider, GetProps, Pagination, Table, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import { AnyObject } from 'antd/es/_util/type';
@@ -151,6 +151,19 @@ const BAITable = <RecordType extends object = any>({
   const [resizedColumnWidths, setResizedColumnWidths] = useState<
     Record<string, number>
   >(generateResizedColumnWidths(columns));
+  const [currentPage, setCurrentPage] = useControllableValue(tableProps, {
+    valuePropName: 'current',
+    defaultValue: 1,
+    trigger: 'no-trigger',
+  });
+  const [currentPageSize, setCurrentPageSize] = useControllableValue(
+    tableProps,
+    {
+      valuePropName: 'pageSize',
+      defaultValue: 10,
+      trigger: 'no-trigger',
+    },
+  );
 
   const mergedColumns = useMemo(() => {
     let processedColumns = columns;
@@ -254,7 +267,13 @@ const BAITable = <RecordType extends object = any>({
               }
             }
           }}
-          pagination={false}
+          pagination={{
+            style: {
+              display: 'none', // Hide default pagination as we're using custom Pagination component below
+            },
+            current: currentPage,
+            pageSize: currentPageSize,
+          }}
         />
         {tableProps.pagination !== false && (
           <Flex justify="end" gap={'xs'}>
@@ -262,6 +281,21 @@ const BAITable = <RecordType extends object = any>({
               size={tableProps.size === 'small' ? 'small' : 'default'}
               align="end"
               {...tableProps.pagination}
+              // override props for controlled values
+              total={
+                tableProps.pagination?.total ||
+                tableProps.dataSource?.length ||
+                0
+              }
+              onChange={(page, pageSize) => {
+                setCurrentPage(page);
+                setCurrentPageSize(pageSize);
+                if (tableProps.pagination) {
+                  tableProps.pagination.onChange?.(page, pageSize);
+                }
+              }}
+              current={currentPage}
+              pageSize={currentPageSize}
             ></Pagination>
             {tableProps.pagination && tableProps.pagination.extraContent}
           </Flex>

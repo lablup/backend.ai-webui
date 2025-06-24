@@ -489,6 +489,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         align="stretch"
         style={{
           flex: 1,
+          paddingBottom: token.paddingSM,
           ...style,
         }}
       >
@@ -549,7 +550,18 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
               return `${range[0]}-${range[1]} of ${total} items`;
             },
             pageSizeOptions: ['10', '20', '50'],
-            style: { marginRight: token.marginXS },
+            extraContent: (
+              <Button
+                type="text"
+                style={{
+                  marginRight: token.marginXS,
+                }}
+                icon={<SettingOutlined />}
+                onClick={() => {
+                  toggleColumnSettingModal();
+                }}
+              />
+            ),
           }}
           dataSource={filterNonNullItems(filteredImageData)}
           columns={_.filter(
@@ -580,7 +592,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           })}
           showSorterTooltip={false}
         />
-        <Flex
+        {/* <Flex
           justify="end"
           style={{
             padding: token.paddingXXS,
@@ -593,7 +605,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
               toggleColumnSettingModal();
             }}
           />
-        </Flex>
+        </Flex> */}
       </Flex>
       <ManageImageResourceLimitModal
         open={!!managingResourceLimit}
