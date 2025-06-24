@@ -11,7 +11,7 @@ export interface AIAgentMeta {
 }
 
 export interface AIAgentConfig {
-  system_prompt: string;
+  system_prompt?: string;
   [key: string]: any; // for additionalProperties: true
 }
 
@@ -26,6 +26,7 @@ export interface AIAgentParams {
 }
 
 export interface AIAgent {
+  type: string;
   id: string;
   endpoint: string;
   endpoint_id: string;
