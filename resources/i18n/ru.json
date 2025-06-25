@@ -1012,6 +1012,9 @@
     "SuccessfullyUpdated": "Успешно обновлено",
     "Visit": "Посещение"
   },
+  "pagination": {
+    "Total": "{{start}} - {{end}} of {{total}} элементы"
+  },
   "propertyFilter": {
     "PlaceHolder": "Поиск",
     "ResetFilter": "Сбросить фильтры"

@@ -1012,6 +1012,9 @@
     "SuccessfullyUpdated": "Başarıyla güncellendi",
     "Visit": "Ziyaret etmek"
   },
+  "pagination": {
+    "Total": "{{start}} - {{total}} öğelerinin {{end}}"
+  },
   "propertyFilter": {
     "PlaceHolder": "Arama",
     "ResetFilter": "Filtreleri sıfırla"

@@ -704,7 +704,6 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
         return (
           <Flex>
             <Button
-              size="large"
               style={{
                 color: token.colorSuccess,
               }}
@@ -713,7 +712,6 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
               onClick={() => setCurrentAgentInfo(record)}
             />
             <Button
-              size="large"
               style={{
                 color: token.colorInfo,
               }}
@@ -811,7 +809,6 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
         </Flex>
       </Flex>
       <BAITable
-        bordered
         size="small"
         neoStyle
         scroll={{ x: 'max-content' }}
@@ -826,13 +823,8 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
         }
         pagination={{
           pageSize: tablePaginationOption.pageSize,
-          showSizeChanger: true,
           total: agent_list?.total_count,
           current: tablePaginationOption.current,
-          showTotal(total, range) {
-            return `${range[0]}-${range[1]} of ${total} items`;
-          },
-          pageSizeOptions: ['10', '20', '50'],
           extraContent: (
             <Button
               type="text"

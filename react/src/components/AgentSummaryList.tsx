@@ -6,7 +6,6 @@ import {
   convertToBinaryUnit,
   filterNonNullItems,
   toFixedFloorWithoutTrailingZeros,
-  transformSorterToOrderString,
 } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
@@ -16,18 +15,18 @@ import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting'
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import BAIPropertyFilter from './BAIPropertyFilter';
 import BAIRadioGroup from './BAIRadioGroup';
+import BAITable from './BAITable';
 import Flex from './Flex';
 import { ResourceTypeIcon } from './ResourceNumber';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import {
   CheckCircleOutlined,
-  LoadingOutlined,
   MinusCircleOutlined,
   ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Button, Table, TableProps, theme, Tooltip, Typography } from 'antd';
+import { Button, TableProps, theme, Tooltip, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
 import _ from 'lodash';
@@ -338,14 +337,8 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
     useHiddenColumnKeysSetting('AgentSummaryList');
 
   return (
-    <Flex direction="column" align="stretch" style={containerStyle}>
-      <Flex
-        justify="between"
-        align="start"
-        gap="xs"
-        style={{ padding: token.paddingXS }}
-        wrap="wrap"
-      >
+    <Flex direction="column" align="stretch" style={containerStyle} gap="sm">
+      <Flex justify="between" align="start" gap="xs" wrap="wrap">
         <Flex
           direction="row"
           gap={'sm'}
@@ -418,7 +411,9 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
           </Tooltip>
         </Flex>
       </Flex>
-      <Table
+      <BAITable
+        neoStyle
+        size="small"
         bordered
         scroll={{ x: 'max-content' }}
         rowKey={'id'}
@@ -432,47 +427,36 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
         }
         pagination={{
           pageSize: tablePaginationOption.pageSize,
-          showSizeChanger: true,
           total: filteredAgentSummaryList?.length || 0,
           current: tablePaginationOption.current,
-          showTotal(total, range) {
-            return `${range[0]}-${range[1]} of ${total} items`;
+          onChange(page, pageSize) {
+            startPageChangeTransition(() => {
+              if (_.isNumber(page) && _.isNumber(pageSize)) {
+                setTablePaginationOption({
+                  current: page,
+                  pageSize,
+                });
+              }
+            });
           },
-          pageSizeOptions: ['10', '20', '50'],
-          style: { marginRight: token.marginXS },
+          extraContent: (
+            <Button
+              type="text"
+              icon={<SettingOutlined />}
+              onClick={() => {
+                toggleColumnSettingModal();
+              }}
+            />
+          ),
         }}
-        onChange={({ pageSize, current }, filters, sorter) => {
+        onChangeOrder={(order) => {
           startPageChangeTransition(() => {
-            if (_.isNumber(current) && _.isNumber(pageSize)) {
-              setTablePaginationOption({
-                current,
-                pageSize,
-              });
-            }
-            setOrder(transformSorterToOrderString(sorter));
+            setOrder(order);
           });
         }}
-        loading={{
-          spinning:
-            isPendingPageChange || isPendingStatusFetch || isPendingFilter,
-          indicator: <LoadingOutlined />,
-        }}
+        loading={isPendingPageChange || isPendingStatusFetch || isPendingFilter}
         {...tableProps}
       />
-      <Flex
-        justify="end"
-        style={{
-          padding: token.paddingXXS,
-        }}
-      >
-        <Button
-          type="text"
-          icon={<SettingOutlined />}
-          onClick={() => {
-            toggleColumnSettingModal();
-          }}
-        />
-      </Flex>
       <TableColumnsSettingModal
         open={visibleColumnSettingModal}
         onRequestClose={(values) => {
