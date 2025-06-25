@@ -4,8 +4,9 @@ import {
   ResourcePresetListQuery$data,
 } from '../__generated__/ResourcePresetListQuery.graphql';
 import { ResourcePresetSettingModalFragment$key } from '../__generated__/ResourcePresetSettingModalFragment.graphql';
-import { filterNonNullItems, localeCompare, filterEmptyItem } from '../helper';
+import { filterNonNullItems, localeCompare } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import BAITable from './BAITable';
 import Flex from './Flex';
 import NumberWithUnit from './NumberWithUnit';
 import ResourceNumber from './ResourceNumber';
@@ -16,16 +17,22 @@ import {
   SettingOutlined,
   DeleteOutlined,
 } from '@ant-design/icons';
-import { Tooltip, Button, theme, Table, App, Typography } from 'antd';
-import { ColumnType } from 'antd/es/table';
+import {
+  Tooltip,
+  Button,
+  theme,
+  App,
+  Typography,
+  TableColumnsType,
+} from 'antd';
 import _ from 'lodash';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 type ResourcePreset = NonNullable<
-  ResourcePresetListQuery$data['resource_presets']
->[number];
+  NonNullable<ResourcePresetListQuery$data['resource_presets']>[number]
+>;
 
 interface ResourcePresetListProps {}
 
@@ -75,7 +82,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
       }
     `);
 
-  const columns = filterEmptyItem<ColumnType<ResourcePreset>>([
+  const columns: TableColumnsType<ResourcePreset> = filterNonNullItems([
     {
       title: t('resourcePreset.Name'),
       dataIndex: 'name',
@@ -106,13 +113,15 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
         );
       },
     },
-    baiClient?.supports('resource-presets-per-resource-group') && {
-      title: t('general.ResourceGroup'),
-      dataIndex: 'scaling_group_name',
-      sorter: (a, b) =>
-        localeCompare(a?.scaling_group_name, b?.scaling_group_name),
-      render: (text) => text ?? '-',
-    },
+    baiClient?.supports('resource-presets-per-resource-group')
+      ? {
+          title: t('general.ResourceGroup'),
+          dataIndex: 'scaling_group_name',
+          sorter: (a, b) =>
+            localeCompare(a?.scaling_group_name, b?.scaling_group_name),
+          render: (text) => text ?? '-',
+        }
+      : null,
     {
       title: t('general.Control'),
       key: 'control',
@@ -208,18 +217,8 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
   ]);
 
   return (
-    <Flex direction="column" align="stretch">
-      <Flex
-        direction="row"
-        gap={'xs'}
-        justify="end"
-        wrap="wrap"
-        style={{
-          padding: token.paddingContentVertical,
-          paddingLeft: token.paddingContentHorizontalSM,
-          paddingRight: token.paddingContentHorizontalSM,
-        }}
-      >
+    <Flex direction="column" align="stretch" gap="sm">
+      <Flex direction="row" gap={'xs'} justify="end" wrap="wrap">
         <Flex direction="row" gap={'xs'} wrap="wrap" style={{ flexShrink: 1 }}>
           <Tooltip title={t('button.Refresh')}>
             <Button
@@ -243,11 +242,18 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
           </Button>
         </Flex>
       </Flex>
-      <Table
+      <BAITable
+        neoStyle
+        size="small"
         rowKey={'name'}
         dataSource={filterNonNullItems(resource_presets)}
         scroll={{ x: 'max-content' }}
-        pagination={false}
+        pagination={{
+          showTotal(total, range) {
+            return `${range[0]}-${range[1]} of ${total} items`;
+          },
+          pageSizeOptions: ['10', '20', '50'],
+        }}
         showSorterTooltip={false}
         columns={columns}
       />

@@ -420,9 +420,9 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
   );
 
   return (
-    <Flex direction="column" align="stretch" gap={'xs'}>
-      <Flex direction="column" align="stretch">
-        <Flex justify="end" style={{ padding: token.paddingSM }} gap="xs">
+    <Flex direction="column" align="stretch">
+      <Flex direction="column" align="stretch" gap="sm">
+        <Flex justify="end" gap="xs">
           <Input
             allowClear
             prefix={<SearchOutlined />}
@@ -445,6 +445,8 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
           </Button>
         </Flex>
         <BAITable
+          neoStyle
+          size="small"
           resizable
           loading={isPendingSearchTransition}
           columns={
@@ -457,22 +459,23 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
           dataSource={filterNonNullItems(filteredImageData)}
           rowKey="id"
           scroll={{ x: 'max-content' }}
-          pagination={false}
-        />
-        <Flex
-          justify="end"
-          style={{
-            padding: token.paddingXXS,
+          pagination={{
+            pageSizeOptions: ['10', '20', '50'],
+
+            showTotal(total, range) {
+              return `${range[0]}-${range[1]} of ${total} items`;
+            },
+            extraContent: (
+              <Button
+                type="text"
+                icon={<SettingOutlined />}
+                onClick={() => {
+                  toggleColumnSettingModal();
+                }}
+              />
+            ),
           }}
-        >
-          <Button
-            type="text"
-            icon={<SettingOutlined />}
-            onClick={() => {
-              toggleColumnSettingModal();
-            }}
-          />
-        </Flex>
+        />
       </Flex>
       <TableColumnsSettingModal
         open={visibleColumnSettingModal}

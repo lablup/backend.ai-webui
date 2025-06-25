@@ -93,7 +93,12 @@ const RecentlyCreatedSessionCard: React.FC<RecentlyCreatedSessionCardProps> = ({
           onClickSessionName={(session) => {
             setSessionDetailId(toLocalId(session.id));
           }}
-          pagination={false}
+          pagination={{
+            showTotal(total, range) {
+              return `${range[0]}-${range[1]} of ${total} items`;
+            },
+            pageSizeOptions: ['10', '20', '50'],
+          }}
           disableSorter
         />
         <SessionDetailDrawer

@@ -811,7 +811,6 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
         </Flex>
       </Flex>
       <BAITable
-        bordered
         size="small"
         neoStyle
         scroll={{ x: 'max-content' }}
