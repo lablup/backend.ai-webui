@@ -15,6 +15,7 @@ import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import AllowedVfolderHostsWithPermission from './AllowedVfolderHostsWithPermission';
+import BAITable from './BAITable';
 import Flex from './Flex';
 import KeypairResourcePolicyInfoModal from './KeypairResourcePolicyInfoModal';
 import KeypairResourcePolicySettingModal from './KeypairResourcePolicySettingModal';
@@ -29,7 +30,7 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App, Button, Dropdown, Space, Table, theme, Typography } from 'antd';
+import { App, Button, Dropdown, Space, theme, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
 import _ from 'lodash';
@@ -231,7 +232,6 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         <Flex direction="row" align="stretch">
           <Button
             type="text"
-            size="large"
             icon={<InfoCircleOutlined style={{ color: token.colorSuccess }} />}
             onClick={() => {
               startInfoModalOpenTransition(() => {
@@ -241,7 +241,6 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
           />
           <Button
             type="text"
-            size="large"
             icon={<SettingOutlined />}
             style={{
               color: token.colorInfo,
@@ -252,7 +251,6 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
           />
           <Button
             type="text"
-            size="large"
             icon={
               <DeleteOutlined
                 style={{
@@ -377,18 +375,8 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
   };
 
   return (
-    <Flex direction="column" align="stretch" {...props}>
-      <Flex
-        direction="row"
-        justify="between"
-        wrap="wrap"
-        gap={'xs'}
-        style={{
-          padding: token.paddingContentVertical,
-          paddingLeft: token.paddingContentHorizontalSM,
-          paddingRight: token.paddingContentHorizontalSM,
-        }}
-      >
+    <Flex direction="column" align="stretch" gap="sm" {...props}>
+      <Flex direction="row" justify="between" wrap="wrap" gap={'xs'}>
         <Flex direction="column" align="start">
           <Dropdown
             menu={{
@@ -438,7 +426,9 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
           </Flex>
         </Flex>
       </Flex>
-      <Table
+      <BAITable
+        neoStyle
+        size="small"
         columns={
           _.filter(
             columns,
@@ -450,23 +440,28 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         }
         rowKey="name"
         scroll={{ x: 'max-content' }}
-        pagination={false}
+        pagination={{
+          showSizeChanger: true,
+          pageSizeOptions: ['10', '20', '50'],
+          showTotal(total, range) {
+            return t('pagination.Total', {
+              start: range[0],
+              end: range[1],
+              total,
+            });
+          },
+          extraContent: (
+            <Button
+              type="text"
+              icon={<SettingOutlined />}
+              onClick={() => {
+                toggleColumnSettingModal();
+              }}
+            />
+          ),
+        }}
         showSorterTooltip={false}
       />
-      <Flex
-        justify="end"
-        style={{
-          padding: token.paddingXXS,
-        }}
-      >
-        <Button
-          type="text"
-          icon={<SettingOutlined />}
-          onClick={() => {
-            toggleColumnSettingModal();
-          }}
-        />
-      </Flex>
       <TableColumnsSettingModal
         open={visibleColumnSettingModal}
         onRequestClose={(values) => {

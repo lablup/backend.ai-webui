@@ -811,7 +811,6 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
         </Flex>
       </Flex>
       <BAITable
-        bordered
         size="small"
         neoStyle
         scroll={{ x: 'max-content' }}
@@ -830,7 +829,11 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
           total: agent_list?.total_count,
           current: tablePaginationOption.current,
           showTotal(total, range) {
-            return `${range[0]}-${range[1]} of ${total} items`;
+            return t('pagination.Total', {
+              start: range[0],
+              end: range[1],
+              total,
+            });
           },
           pageSizeOptions: ['10', '20', '50'],
           extraContent: (

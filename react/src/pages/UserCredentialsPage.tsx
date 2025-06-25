@@ -3,6 +3,7 @@ import Flex from '../components/Flex';
 import FlexActivityIndicator from '../components/FlexActivityIndicator';
 import UserCredentialList from '../components/UserCredentialList';
 import UserNodeList from '../components/UserNodeList';
+import { theme } from 'antd';
 import { createStyles } from 'antd-style';
 import { CardTabListType } from 'antd/es/card';
 import { Suspense } from 'react';
@@ -22,6 +23,7 @@ const tabParam = withDefault(StringParam, 'users');
 const UserCredentialsPage: React.FC = () => {
   const { t } = useTranslation();
   const { styles } = useStyles();
+  const { token } = theme.useToken();
   const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
   const tabItems: CardTabListType[] = [
     {
@@ -41,6 +43,11 @@ const UserCredentialsPage: React.FC = () => {
       activeTabKey={curTabKey}
       onTabChange={setCurTabKey}
       tabList={tabItems}
+      styles={{
+        body: {
+          padding: `${token.paddingSM}px ${token.paddingLG}px ${token.paddingLG}px ${token.paddingLG}px`,
+        },
+      }}
     >
       <Suspense
         fallback={

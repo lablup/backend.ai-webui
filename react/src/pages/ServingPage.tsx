@@ -13,7 +13,7 @@ import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
-import { Button, Skeleton, theme, Typography } from 'antd';
+import { Button, Skeleton, theme } from 'antd';
 import _ from 'lodash';
 import React, { Suspense, useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -193,13 +193,17 @@ const ServingPage: React.FC = () => {
               endpointsFrgmt={endpoint_list?.items}
               pagination={{
                 pageSize: tablePaginationOption.pageSize,
+                pageSizeOptions: ['10', '20', '50'],
                 current: tablePaginationOption.current,
                 total: endpoint_list?.total_count,
-                showTotal: (total) => (
-                  <Typography.Text type="secondary">
-                    {t('general.TotalItems', { total: total })}
-                  </Typography.Text>
-                ),
+                showSizeChanger: true,
+                showTotal(total, range) {
+                  return t('pagination.Total', {
+                    start: range[0],
+                    end: range[1],
+                    total,
+                  });
+                },
                 onChange(current, pageSize) {
                   if (_.isNumber(current) && _.isNumber(pageSize)) {
                     setTablePaginationOption({ current, pageSize });
