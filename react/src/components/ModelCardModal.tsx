@@ -5,8 +5,7 @@ import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import ModelCardChat from './ModelCardChat';
 import ModelCloneModal from './ModelCloneModal';
-// FIXME: temporally disable ModelTryContentButton
-// import ModelTryContentButton from './ModelTryContentButton';
+import ModelTryContentButton from './ModelTryContentButton';
 import ResourceNumber from './ResourceNumber';
 import { BankOutlined, FileOutlined, CopyOutlined } from '@ant-design/icons';
 import {
@@ -74,6 +73,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
         }
         vfolder_node @since(version: "24.09.*") {
           ...ModelCloneModalVFolderFragment
+          ...ModelTryContentButtonVFolderFragment
         }
         error_msg @since(version: "24.03.7")
       }
@@ -113,14 +113,13 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
             : '90%'
       }
       footer={[
-        // FIXME: temporally disable ModelTryContentButton
-        /*
         <ModelTryContentButton
+          vfolderNode={model_card?.vfolder_node || null}
           modelStorageHost={model_card?.vfolder?.host as string}
           modelCardMetadata={model || null}
           modelName={model_card?.name as string}
           key="try"
-        /> */
+        />,
         <Button
           key="clone"
           type="primary"
