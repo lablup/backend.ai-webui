@@ -23,3 +23,5 @@ merged_schema.graphql
 *storybook.log
 
 storybook-static
+
+.vscode
