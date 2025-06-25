@@ -8,8 +8,8 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
-import BAICard from './BAICard';
-import { Empty, theme } from 'antd';
+import Flex from './Flex';
+import { Empty, Typography, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -171,20 +171,26 @@ const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
   };
 
   return (
-    <BAICard
-      title={getMetricTitle()}
-      type="inner"
-      styles={{
-        body: {
-          padding: `${token.marginMD}px ${token.marginMD}px ${token.marginXS}px ${token.marginMD}px`,
-        },
+    <Flex
+      direction="column"
+      align="stretch"
+      gap="sm"
+      style={{
+        height: '100%',
+        overflow: 'hidden',
+        paddingRight: token.marginXL,
       }}
     >
+      <Flex align="center" style={{ height: 55, marginLeft: 52 }}>
+        <Typography.Text style={{ fontSize: token.fontSizeHeading5 }} strong>
+          {getMetricTitle()}
+        </Typography.Text>
+      </Flex>
       {_.isEmpty(capacity_metric?.metrics) &&
       _.isEmpty(current_metric?.metrics) ? (
         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
       ) : (
-        <ResponsiveContainer width="100%" height={350}>
+        <ResponsiveContainer>
           <LineChart data={metricData} className={styles.recharts}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="timestamp" minTickGap={token.marginMD} />
@@ -224,7 +230,7 @@ const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
           </LineChart>
         </ResponsiveContainer>
       )}
-    </BAICard>
+    </Flex>
   );
 };
 
