@@ -1,12 +1,8 @@
 import { convertToBinaryUnit } from '../helper';
-import {
-  BaseResourceSlotName,
-  KnownAcceleratorResourceSlotName,
-  ResourceSlotName,
-  useResourceSlotsDetails,
-} from '../hooks/backendai';
+import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
 import Flex from './Flex';
+import ImageWithFallback from './ImageWithFallback';
 import NumberWithUnit from './NumberWithUnit';
 import { Tooltip, Typography, theme } from 'antd';
 import _ from 'lodash';
@@ -25,11 +21,6 @@ interface ResourceNumberProps {
   max?: string;
 }
 
-type ResourceTypeInfo<V> = {
-  [key in KnownAcceleratorResourceSlotName]: V;
-} & {
-  [key in BaseResourceSlotName]: V;
-};
 const ResourceNumber: React.FC<ResourceNumberProps> = ({
   type,
   value: amount,
@@ -138,44 +129,50 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
   showTooltip = true,
   ...props
 }) => {
-  const resourceTypeIconSrcMap: ResourceTypeInfo<ReactElement | string> = {
-    cpu: <MWCIconWrap size={size}>developer_board</MWCIconWrap>,
-    mem: <MWCIconWrap size={size}>memory</MWCIconWrap>,
-    'cuda.device': '/resources/icons/file_type_cuda.svg',
-    'cuda.shares': '/resources/icons/file_type_cuda.svg',
-    'rocm.device': '/resources/icons/rocm.svg',
-    'tpu.device': '/resources/icons/tpu.svg',
-    'ipu.device': '/resources/icons/ipu.svg',
-    'atom.device': '/resources/icons/rebel.svg',
-    'atom-plus.device': '/resources/icons/rebel.svg',
-    'gaudi2.device': '/resources/icons/gaudi.svg',
-    'warboy.device': '/resources/icons/furiosa.svg',
-    'rngd.device': '/resources/icons/furiosa.svg',
-    'hyperaccel-lpu.device': '/resources/icons/npu_generic.svg',
-  };
-
-  const targetIcon = resourceTypeIconSrcMap[
-    type as KnownAcceleratorResourceSlotName
-  ] ?? <MicrochipIcon />;
-
   const { mergedResourceSlots } = useResourceSlotsDetails();
 
-  const content =
-    typeof targetIcon === 'string' ? (
-      <img
-        {...props}
-        style={{
-          height: size,
-          alignSelf: 'center',
-          ...(props.style || {}),
-        }}
-        // @ts-ignore
-        src={resourceTypeIconSrcMap[type] || ''}
-        alt={type}
-      />
-    ) : (
-      <Flex style={{ width: 16, height: 16 }}>{targetIcon || type}</Flex>
+  const getIconContent = (): ReactElement => {
+    if (type === 'cpu') {
+      return (
+        <Flex style={{ width: 16, height: 16 }}>
+          <MWCIconWrap size={size}>developer_board</MWCIconWrap>
+        </Flex>
+      );
+    }
+
+    if (type === 'mem') {
+      return (
+        <Flex style={{ width: 16, height: 16 }}>
+          <MWCIconWrap size={size}>memory</MWCIconWrap>
+        </Flex>
+      );
+    }
+
+    const displayIcon = mergedResourceSlots[type]?.display_icon;
+    if (displayIcon) {
+      return (
+        <ImageWithFallback
+          {...props}
+          style={{
+            height: size,
+            alignSelf: 'center',
+            ...(props.style || {}),
+          }}
+          src={`/resources/icons/${displayIcon}.svg`}
+          alt={type}
+          fallbackIcon={<MicrochipIcon />}
+        />
+      );
+    }
+
+    return (
+      <Flex style={{ width: 16, height: 16 }}>
+        <MicrochipIcon />
+      </Flex>
     );
+  };
+
+  const content = getIconContent();
 
   return showTooltip ? (
     <Tooltip title={mergedResourceSlots[type]?.description || type}>
