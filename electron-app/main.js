@@ -543,8 +543,29 @@ app.on('ready', () => {
     const fullPath = npjoin(es6Path, filePath);
     try {
       const data = await fs.readFile(fullPath);
+      
+      // Determine MIME type based on file extension
+      let contentType = 'application/octet-stream';
+      if (filePath.endsWith('.js')) {
+        contentType = 'text/javascript';
+      } else if (filePath.endsWith('.css')) {
+        contentType = 'text/css';
+      } else if (filePath.endsWith('.woff2')) {
+        contentType = 'font/woff2';
+      } else if (filePath.endsWith('.woff')) {
+        contentType = 'font/woff';
+      } else if (filePath.endsWith('.ttf')) {
+        contentType = 'font/ttf';
+      } else if (filePath.endsWith('.png')) {
+        contentType = 'image/png';
+      } else if (filePath.endsWith('.jpg') || filePath.endsWith('.jpeg')) {
+        contentType = 'image/jpeg';
+      } else if (filePath.endsWith('.svg')) {
+        contentType = 'image/svg+xml';
+      }
+      
       return new Response(data, {
-        headers: { 'content-type': 'text/javascript' },
+        headers: { 'content-type': contentType },
       });
     } catch (err) {
       console.error('Error reading file:', err);
