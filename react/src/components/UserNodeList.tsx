@@ -2,23 +2,19 @@ import { UserNodeListModifyMutation } from '../__generated__/UserNodeListModifyM
 import { UserNodeListQuery } from '../__generated__/UserNodeListQuery.graphql';
 import BAIPropertyFilter from '../components/BAIPropertyFilter';
 import Flex from '../components/Flex';
-import {
-  filterEmptyItem,
-  filterNonNullItems,
-  transformSorterToOrderString,
-} from '../helper';
+import { filterEmptyItem, filterNonNullItems } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import BAIRadioGroup from './BAIRadioGroup';
+import BAITable from './BAITable';
 import UserInfoModal from './UserInfoModal';
 import UserSettingModal from './UserSettingModal';
 import {
   ReloadOutlined,
-  LoadingOutlined,
   InfoCircleOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import { Tooltip, Button, Table, theme, Popconfirm, App } from 'antd';
+import { Tooltip, Button, theme, Popconfirm, App } from 'antd';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
@@ -125,14 +121,8 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
     `);
 
   return (
-    <Flex direction="column" align="stretch">
-      <Flex
-        justify="between"
-        align="start"
-        gap="xs"
-        style={{ padding: token.paddingSM }}
-        wrap="wrap"
-      >
+    <Flex direction="column" align="stretch" gap="sm">
+      <Flex justify="between" align="start" gap="xs" wrap="wrap">
         <Flex direction="row" gap={'sm'} align="start" wrap="wrap">
           <BAIRadioGroup
             value={activeFilter}
@@ -233,10 +223,14 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
           </Button>
         </Flex>
       </Flex>
-      <Table
+      <BAITable
+        neoStyle
+        size="small"
         scroll={{ x: 'max-content' }}
         rowKey={'id'}
-        dataSource={_.map(filterNonNullItems(user_nodes?.edges), (e) => e.node)}
+        dataSource={filterNonNullItems(
+          _.map(filterNonNullItems(user_nodes?.edges), (e) => e.node),
+        )}
         columns={filterEmptyItem([
           {
             key: 'email',
@@ -378,25 +372,23 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
           showTotal(total, range) {
             return `${range[0]}-${range[1]} of ${total} users`;
           },
-          pageSizeOptions: ['10', '20', '50'],
-          style: { marginRight: token.marginXS },
+          onChange(page, pageSize) {
+            startPageChangeTransition(() => {
+              if (_.isNumber(page) && _.isNumber(pageSize)) {
+                setTablePaginationOption({
+                  current: page,
+                  pageSize,
+                });
+              }
+            });
+          },
         }}
-        onChange={({ pageSize, current }, filters, sorter) => {
+        onChangeOrder={(order) => {
           startPageChangeTransition(() => {
-            if (_.isNumber(current) && _.isNumber(pageSize)) {
-              setTablePaginationOption({
-                current,
-                pageSize,
-              });
-            }
-            setOrder(transformSorterToOrderString(sorter));
+            setOrder(order);
           });
         }}
-        loading={{
-          spinning:
-            isPendingPageChange || isPendingStatusFetch || isPendingFilter,
-          indicator: <LoadingOutlined />,
-        }}
+        loading={isPendingPageChange || isPendingStatusFetch || isPendingFilter}
       />
       <UserInfoModal
         userEmail={emailForInfoModal || ''}

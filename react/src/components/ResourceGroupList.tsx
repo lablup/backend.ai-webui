@@ -324,6 +324,12 @@ const ResourceGroupList: React.FC = () => {
         columns={columns}
         dataSource={filterNonNullItems(scaling_groups)}
         loading={isActiveTypePending}
+        pagination={{
+          pageSizeOptions: ['10', '20', '50'],
+          showTotal(total, range) {
+            return `${range[0]}-${range[1]} of ${total} items`;
+          },
+        }}
       />
 
       <BAIConfirmModalWithInput

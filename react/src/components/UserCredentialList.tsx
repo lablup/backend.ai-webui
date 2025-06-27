@@ -146,14 +146,8 @@ const UserCredentialList: React.FC = () => {
     `);
 
   return (
-    <Flex direction="column" align="stretch">
-      <Flex
-        justify="between"
-        align="start"
-        gap="xs"
-        style={{ padding: token.paddingSM }}
-        wrap="wrap"
-      >
+    <Flex direction="column" align="stretch" gap="sm">
+      <Flex justify="between" align="start" gap="xs" wrap="wrap">
         <Flex gap={'sm'} align="start">
           <BAIRadioGroup
             value={activeType}
@@ -246,6 +240,8 @@ const UserCredentialList: React.FC = () => {
         </Flex>
       </Flex>
       <BAITable<Keypair>
+        neoStyle
+        size="small"
         // resizable
         rowKey={'id'}
         scroll={{ x: 'max-content' }}
