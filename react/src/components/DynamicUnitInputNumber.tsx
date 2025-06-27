@@ -85,6 +85,7 @@ const DynamicUnitInputNumber: React.FC<DynamicUnitInputNumberProps> = ({
         ref.current = node;
         return _.isFunction(inputNumberProps.ref) && inputNumberProps.ref(node);
       }}
+      stringMode
       onBlur={() => {
         if (_.isNumber(roundStep) && roundStep > 0) {
           const nextRoundedNumValue =
