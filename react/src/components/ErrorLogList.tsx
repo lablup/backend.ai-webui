@@ -86,12 +86,13 @@ const ErrorLogList: React.FC<{
       key: 'errorTitle',
       render: (value) => (
         <div style={{ minWidth: 50 }}>
-          {!value ? (
+          {!value || (_.isObject(value) && _.isEmpty(value)) ? (
             '-'
           ) : (
             <TextHighlighter keyword={logSearch}>
-              {_.toString(value)}
-              {/* set toString because sometime value type is object */}
+              {_.isObject(value) && !_.isNull(value)
+                ? JSON.stringify(value)
+                : _.toString(value)}
             </TextHighlighter>
           )}
         </div>
