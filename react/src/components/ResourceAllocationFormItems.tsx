@@ -728,7 +728,7 @@ const ResourceAllocationFormItems: React.FC<
                                     _.isString(value) &&
                                     resourceLimits.mem?.max &&
                                     compareNumberWithUnits(
-                                      value,
+                                      value || '0g',
                                       resourceLimits.mem?.max,
                                     ) > 0
                                   ) {
@@ -764,7 +764,7 @@ const ResourceAllocationFormItems: React.FC<
                                     !_.isEmpty(value) &&
                                     resourceLimits.mem?.min &&
                                     compareNumberWithUnits(
-                                      value,
+                                      value || '0g',
                                       resourceLimits.mem?.min || '0g',
                                     ) < 0
                                   ) {
@@ -800,7 +800,7 @@ const ResourceAllocationFormItems: React.FC<
                                       !_.isElement(value) &&
                                       resourceLimits.mem &&
                                       compareNumberWithUnits(
-                                        value,
+                                        value || '0g',
                                         remaining.mem,
                                       ) > 0
                                     ) {
@@ -842,7 +842,7 @@ const ResourceAllocationFormItems: React.FC<
                                 if (
                                   form.getFieldValue('enabledAutomaticShmem')
                                 ) {
-                                  runShmemAutomationRule(M_plus_S);
+                                  runShmemAutomationRule(M_plus_S || '0g');
                                 }
                               }}
                             />
@@ -1006,7 +1006,6 @@ const ResourceAllocationFormItems: React.FC<
                                         }
                                       },
                                     },
-
                                     {
                                       validator: async (
                                         rule,
