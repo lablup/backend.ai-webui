@@ -1,24 +1,34 @@
 import ContainerRegistryList from '../components/ContainerRegistryList';
 import FlexActivityIndicator from '../components/FlexActivityIndicator';
 import ImageList from '../components/ImageList';
+import ImageListBefore202506 from '../components/ImageListBefore202506';
 import ResourcePresetList from '../components/ResourcePresetList';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { theme } from 'antd';
 import Card from 'antd/es/card/Card';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StringParam, useQueryParam, withDefault } from 'use-query-params';
-
-const tabParam = withDefault(StringParam, 'image');
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const EnvironmentPage = () => {
   const { t } = useTranslation();
-  const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
+  const [searchParams] = useSearchParams();
+  const currentTab = searchParams.get('tab') || 'image';
+  const navigate = useNavigate();
   const baiClient = useSuspendedBackendaiClient();
+  const isSupportImageNode =
+    baiClient.isManagerVersionCompatibleWith('25.11.0');
+  const { token } = theme.useToken();
 
   return (
     <Card
-      activeTabKey={curTabKey}
-      onTabChange={setCurTabKey}
+      activeTabKey={currentTab}
+      onTabChange={(key) =>
+        navigate({
+          pathname: '/environment',
+          search: new URLSearchParams({ tab: key }).toString(),
+        })
+      }
       tabList={[
         {
           key: 'image',
@@ -39,9 +49,7 @@ const EnvironmentPage = () => {
       ]}
       styles={{
         body: {
-          padding: 0,
-          paddingTop: 1,
-          overflow: 'hidden',
+          padding: `${token.paddingSM}px ${token.paddingLG}px ${token.paddingLG}px ${token.paddingLG}px`,
         },
       }}
     >
@@ -53,9 +61,10 @@ const EnvironmentPage = () => {
           />
         }
       >
-        {curTabKey === 'image' && <ImageList />}
-        {curTabKey === 'preset' && <ResourcePresetList />}
-        {curTabKey === 'registry' && <ContainerRegistryList />}
+        {currentTab === 'image' &&
+          (isSupportImageNode ? <ImageList /> : <ImageListBefore202506 />)}
+        {currentTab === 'preset' && <ResourcePresetList />}
+        {currentTab === 'registry' && <ContainerRegistryList />}
       </Suspense>
     </Card>
   );
