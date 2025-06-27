@@ -1520,6 +1520,7 @@ const SessionLauncherPage = () => {
                           disabled={hasError}
                           onClick={startSession}
                           loading={isStartingSession}
+                          data-testid="session-launch-button"
                         >
                           {t('session.launcher.Launch')}
                         </Button>
@@ -1554,7 +1555,7 @@ const SessionLauncherPage = () => {
         </Flex>
         {screens.lg && (
           <Flex
-            data-test-id="neo-session-launcher-tour-step"
+            data-testid="neo-session-launcher-tour-step"
             style={{ position: 'sticky', top: 80 }}
           >
             <Steps
