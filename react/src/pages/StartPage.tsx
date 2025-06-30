@@ -1,20 +1,25 @@
 import ActionItemContent from '../components/ActionItemContent';
 import AnnouncementAlert from '../components/AnnouncementAlert';
 import BAIAlert from '../components/BAIAlert';
+import BAIBoard, { BAIBoardItem } from '../components/BAIBoard';
 import FolderCreateModal from '../components/FolderCreateModal';
 import { MenuKeys } from '../components/MainLayout/WebUISider';
 import ThemeSecondaryProvider from '../components/ThemeSecondaryProvider';
 import { filterEmptyItem } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useVFolderInvitationsValue } from '../hooks/useVFolderInvitations';
 import { SessionLauncherFormValue } from './SessionLauncherPage';
 import { AppstoreAddOutlined, FolderAddOutlined } from '@ant-design/icons';
-import { Card, Col, Row } from 'antd';
 import { Flex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+interface StartPageBoardItem extends BAIBoardItem {
+  requiredMenuKey: MenuKeys;
+}
 
 const StartPage: React.FC = () => {
   const { t } = useTranslation();
@@ -47,16 +52,7 @@ const StartPage: React.FC = () => {
     });
   }, [count, t, upsertNotification]);
 
-  const items = filterEmptyItem<{
-    id: string;
-    requiredMenuKey: MenuKeys;
-    rowSpan: number;
-    columnSpan: number;
-    columnOffset: Record<number, number>;
-    data: {
-      content: React.ReactNode;
-    };
-  }>([
+  const defaultBoardItem = filterEmptyItem<StartPageBoardItem>([
     {
       id: 'createFolder',
       requiredMenuKey: 'data',
@@ -139,84 +135,49 @@ const StartPage: React.FC = () => {
         ),
       },
     },
-    // {
-    //   id: 'startFromURL',
-    //   rowSpan: 3,
-    //   columnSpan: 1,
-    //   columnOffset: { 6: 1, 4: 1 },
-    //   data: {
-    //     content: (
-    //       <ThemeSecondaryProvider>
-    //         <ActionItemContent
-    //           title={t('start.StartFromURL')}
-    //           description={t('start.StartFromURLDesc')}
-    //           buttonText={t('start.button.StartNow')}
-    //           icon={<LinkOutlined />}
-    //           onClick={() => webuiNavigate('/import')}
-    //         />
-    //       </ThemeSecondaryProvider>
-    //     ),
-    //   },
-    // },
-    // {
-    //   id: 'startFromExample',
-    //   rowSpan: 3,
-    //   columnSpan: 1,
-    //   columnOffset: { 6:2, 4: 2 },
-    //   data: {
-    //     content: (
-    //       <ThemeSecondaryProvider>
-    //         <ActionItemContent
-    //           title={t('start.StartFromExample')}
-    //           description={t('start.StartFromExampleDesc')}
-    //           buttonText={t('start.button.StartNow')}
-    //           icon={<PlaySquareOutlined />}
-    //           onClick={() => webuiNavigate('/import')}
-    //         />
-    //       </ThemeSecondaryProvider>
-    //     ),
-    //   },
-    // },
   ]).filter(
     (item) =>
-      !_.includes(blockList, item.requiredMenuKey) &&
-      !_.includes(inactiveList, item.requiredMenuKey),
+      !_.includes([...blockList, ...inactiveList], item.requiredMenuKey),
   );
+
+  const [localStorageBoardItems, setLocalStorageBoardItems] =
+    useBAISettingUserState('start_page_board_items');
+
+  const initialBoardItems = localStorageBoardItems
+    ? filterEmptyItem<StartPageBoardItem>(
+        _.map(localStorageBoardItems, (item) => {
+          const initialItem = _.find(
+            defaultBoardItem,
+            (defaultItem) => defaultItem.id === item.id,
+          );
+          return initialItem ? { ...item, data: initialItem.data } : null;
+        }),
+      )
+    : defaultBoardItem;
+
+  const [boardItems, setBoardItems] =
+    useState<_.Omit<StartPageBoardItem, 'requiredMenuKey'>[]>(
+      initialBoardItems,
+    );
 
   return (
     <Flex direction="column" gap={'md'} align="stretch">
-      {/* <BAIBoard
-        items={items}
+      <AnnouncementAlert showIcon closable />
+      <BAIBoard
+        movable
+        items={boardItems}
         onItemsChange={(event) => {
           // use spread operator to ignore readonly type error
           const changedItems = [...event.detail.items];
-          setItems(changedItems);
-          setItemSettings(_.map(changedItems, (item) => _.omit(item, 'data')));
+          setBoardItems(changedItems);
+          setLocalStorageBoardItems(
+            _.map(changedItems, (item) => _.omit(item, 'data')),
+          );
         }}
-      /> */}
-      <AnnouncementAlert showIcon closable />
-      {_.isEmpty(items) && (
+      />
+      {_.isEmpty(boardItems) && (
         <BAIAlert type="info" description={t('start.NoStartItems')} showIcon />
       )}
-      <Row gutter={[16, 16]}>
-        {_.map(items, (item, idx) => {
-          return (
-            <Col key={item.id} xs={24} md={12} xl={6} xxl={4}>
-              <Card
-                style={{ height: 340 }}
-                styles={{
-                  body: {
-                    height: '100%',
-                    padding: 0,
-                  },
-                }}
-              >
-                {item.data.content}
-              </Card>
-            </Col>
-          );
-        })}
-      </Row>
       <FolderCreateModal
         open={isOpenCreateModal}
         onRequestClose={(response) => {
