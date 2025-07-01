@@ -80,6 +80,7 @@ const SessionDetailAndContainerLogOpenerLegacy = React.lazy(
 );
 
 const ChatPage = React.lazy(() => import('./pages/ChatPage'));
+const ChatSettingsPage = React.lazy(() => import('./pages/ChatSettingsPage'));
 
 const AIAgentPage = React.lazy(() => import('./pages/AIAgentPage'));
 
@@ -146,10 +147,15 @@ const router = createBrowserRouter([
         path: '/chat/:id?',
         handle: { labelKey: 'webui.menu.Chat' },
         Component: () => {
+          const location = useLocation();
           useSuspendedBackendaiClient();
           return (
             <Suspense fallback={<FlexActivityIndicator spinSize="large" />}>
-              <ChatPage />
+              {location.pathname === '/chat/settings' ? (
+                <ChatSettingsPage />
+              ) : (
+                <ChatPage />
+              )}
             </Suspense>
           );
         },

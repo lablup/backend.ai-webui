@@ -9,6 +9,8 @@ export interface ChatProviderData {
   agentId?: string;
   modelId?: string;
   apiKey?: string;
+  customProviderId?: string;
+  providerType?: 'endpoint' | 'custom';
 }
 
 export interface ChatParameters {

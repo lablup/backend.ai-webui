@@ -15,7 +15,7 @@ import { createStyles } from 'antd-style';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
 import _ from 'lodash';
-import { HistoryIcon, PlusIcon, TrashIcon } from 'lucide-react';
+import { HistoryIcon, PlusIcon, TrashIcon, SettingsIcon } from 'lucide-react';
 import { Suspense, useState } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useParams } from 'react-router-dom';
@@ -78,6 +78,7 @@ function useChatProviderData(defaultEndpointId?: string): ChatProviderData {
     agentId: agentId ?? undefined,
     modelId: modelId ?? undefined,
     apiKey: apiKey ?? undefined,
+    providerType: 'endpoint',
   };
 }
 
@@ -221,6 +222,16 @@ const PureChatPage = ({ id }: { id: string }) => {
                 }}
               />
             </Tooltip>
+            {/* @TODO: use i18n */}
+            <Tooltip title="Settings">
+              <Button
+                type="text"
+                icon={<SettingsIcon />}
+                onClick={() => {
+                  navigate('/chat/settings');
+                }}
+              />
+            </Tooltip>
           </>
         }
       >
@@ -238,7 +249,7 @@ const PureChatPage = ({ id }: { id: string }) => {
               align="stretch"
             >
               <Suspense fallback={<Card className={styles.chatCard} loading />}>
-                {_.map(chat.chats, (chatData, index) => (
+                {_.map(chat.chats, (chatData) => (
                   <ChatCard
                     key={chatData.id}
                     className={styles.chatCard}

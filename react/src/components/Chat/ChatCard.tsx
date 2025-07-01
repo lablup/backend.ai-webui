@@ -158,13 +158,27 @@ const ChatHeader = PureChatHeader;
 
 const ChatInput = React.memo(PureChatInput);
 
-function createBaseURL(basePath?: string, endpointUrl?: string | null) {
+function createBaseURL(
+  basePath?: string,
+  endpointUrl?: string | null,
+  provider?: ChatProviderData,
+) {
   try {
+    if (provider?.providerType === 'custom' && provider.baseURL) {
+      return new URL(basePath ?? 'v1', provider.baseURL).toString();
+    }
     return endpointUrl
       ? new URL(basePath ?? '', endpointUrl).toString()
       : undefined;
   } catch {
-    console.error('Invalid base URL:', basePath, 'endpointUrl', endpointUrl);
+    console.error(
+      'Invalid base URL:',
+      basePath,
+      'endpointUrl',
+      endpointUrl,
+      'customProvider',
+      provider,
+    );
   }
 }
 
@@ -216,7 +230,11 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [startTime, setStartTime] = useState<number | null>(null);
 
-  const baseURL = createBaseURL(chat.provider.basePath, endpoint?.url);
+  const baseURL = createBaseURL(
+    chat.provider.basePath,
+    endpoint?.url,
+    chat.provider,
+  );
   const { models, modelId, modelsError } = useModels(
     chat.provider,
     fetchKey,
@@ -394,12 +412,23 @@ const PureChatCard: React.FC<ChatCardProps> = ({
       }
       ref={dropContainerRef}
     >
-      {baseURL && endpoint && _.isEmpty(models) && (
+      {((baseURL && endpoint && _.isEmpty(models)) ||
+        (chat.provider.providerType === 'custom' &&
+          baseURL &&
+          _.isEmpty(models))) && (
         <CustomModelForm
-          endpointUrl={endpoint?.url ?? ''}
+          endpointUrl={
+            chat.provider.providerType === 'custom'
+              ? (chat.provider.baseURL ?? '')
+              : (endpoint?.url ?? '')
+          }
           basePath={chat.provider.basePath}
           token={chat.provider.apiKey}
-          endpointId={endpoint?.endpoint_id}
+          endpointId={
+            chat.provider.providerType === 'custom'
+              ? null
+              : endpoint?.endpoint_id
+          }
           loading={isPendingUpdate}
           onSubmit={(data) => {
             startUpdateTransition(() => {

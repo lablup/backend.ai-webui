@@ -144,3 +144,6 @@ yarn.lock
 /playwright/.cache/
 
 /e2e/screenshots/*
+
+# Claude Code
+.claude

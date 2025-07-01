@@ -292,7 +292,10 @@ export function createChatData({ provider }: { provider: ChatProviderData }) {
     sync: true,
     usingParameters: false,
     parameters: DEFAULT_CHAT_PARAMETERS,
-    provider: provider,
+    provider: {
+      ...provider,
+      providerType: provider.providerType || 'endpoint',
+    },
     messages: [],
   };
 }
