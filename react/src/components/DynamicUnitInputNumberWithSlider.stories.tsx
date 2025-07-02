@@ -68,7 +68,7 @@ export const AllowOlnyGiB: Story = {
   args: {
     min: '0.5g',
     max: '45g',
-    units: ['m', 'g'],
+    units: ['g'],
   },
 };
 
