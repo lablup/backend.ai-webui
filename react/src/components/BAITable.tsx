@@ -151,13 +151,16 @@ const BAITable = <RecordType extends object = any>({
   const [resizedColumnWidths, setResizedColumnWidths] = useState<
     Record<string, number>
   >(generateResizedColumnWidths(columns));
-  const [currentPage, setCurrentPage] = useControllableValue(tableProps, {
-    valuePropName: 'current',
-    defaultValue: 1,
-    trigger: 'no-trigger',
-  });
+  const [currentPage, setCurrentPage] = useControllableValue(
+    tableProps.pagination ? tableProps.pagination : {},
+    {
+      valuePropName: 'current',
+      defaultValue: 1,
+      trigger: 'no-trigger',
+    },
+  );
   const [currentPageSize, setCurrentPageSize] = useControllableValue(
-    tableProps,
+    tableProps.pagination ? tableProps.pagination : {},
     {
       valuePropName: 'pageSize',
       defaultValue: 10,
