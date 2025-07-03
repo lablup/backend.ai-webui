@@ -263,8 +263,8 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
                         <Select
                           style={{ minWidth: 130 }}
                           options={[
-                            { label: t('data.folders.View'), value: 'ro' },
-                            { label: t('data.folders.Edit'), value: 'rw' },
+                            { label: t('data.ReadOnly'), value: 'ro' },
+                            { label: t('data.ReadWrite'), value: 'rw' },
                           ]}
                           defaultValue={perm}
                           onChange={(nextPerm) => {
