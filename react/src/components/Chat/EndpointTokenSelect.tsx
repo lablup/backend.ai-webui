@@ -21,7 +21,8 @@ function sortEndpointTokenList(
     (item) => ({
       label: item?.token,
       value: item?.token,
-      disabled: !dayjs(item?.valid_until).tz().isAfter(now),
+      // FIXME: temporally parse UTC and change to timezone (timezone need to be added in server side)
+      disabled: !dayjs.utc(item?.valid_until).tz().isAfter(now),
     }),
   );
 }
