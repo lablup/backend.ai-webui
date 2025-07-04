@@ -1,6 +1,7 @@
 import { useWebUINavigate } from '.';
 import BAINotificationItem from '../components/BAINotificationItem';
 import { SSEEventHandlerTypes, listenToBackgroundTask } from '../helper';
+import { useBAISettingUserState } from './useBAISetting';
 import { App } from 'antd';
 import { ArgsProps } from 'antd/lib/notification';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
@@ -52,11 +53,11 @@ export interface NotificationState
     promise?: Promise<unknown> | null;
   };
   extraDescription?: string;
+  skipDesktopNotification?: boolean;
 }
 
 interface NotificationOptions {
   skipOverrideByStatus?: boolean;
-  useDesktopNotification?: boolean;
 }
 
 export type NotificationStateForOnChange = Partial<
@@ -164,6 +165,7 @@ export const useBAINotificationEffect = () => {
                   status: 'pending',
                   percent: ratio * 100,
                 },
+                skipDesktopNotification: true,
               });
             },
             100,
@@ -189,6 +191,7 @@ export const useBAINotificationEffect = () => {
                 percent: 100,
               },
               duration: CLOSING_DURATION,
+              skipDesktopNotification: notification.skipDesktopNotification,
             });
           },
           onTaskFailed: (data) => {
@@ -209,6 +212,7 @@ export const useBAINotificationEffect = () => {
                   ?.renderDataMessage?.(data?.message)
                   ?.toString() || data?.message,
               duration: CLOSING_DURATION,
+              skipDesktopNotification: notification.skipDesktopNotification,
             });
           },
           onFailed: (data) => {
@@ -223,6 +227,7 @@ export const useBAINotificationEffect = () => {
                   ?.renderDataMessage?.(data?.message)
                   ?.toString() || data?.message,
               duration: CLOSING_DURATION,
+              skipDesktopNotification: notification.skipDesktopNotification,
             });
           },
           onTaskCancelled: (data) => {
@@ -239,6 +244,7 @@ export const useBAINotificationEffect = () => {
                 percent: ratio * 100,
               },
               duration: CLOSING_DURATION,
+              skipDesktopNotification: notification.skipDesktopNotification,
             });
           },
         };
@@ -261,6 +267,7 @@ export const useBAINotificationEffect = () => {
 export const useSetBAINotification = () => {
   // Don't use _notifications carefully when you need to mutate it.
   const setNotifications = useSetAtom(notificationListState);
+  const [desktopNotification] = useBAISettingUserState('desktop_notification');
 
   const app = App.useApp();
   const { t } = useTranslation();
@@ -294,7 +301,8 @@ export const useSetBAINotification = () => {
       params: Partial<Omit<NotificationState, 'created'>>,
       options: NotificationOptions = {},
     ) => {
-      const { skipOverrideByStatus, useDesktopNotification = true } = options;
+      const { skipDesktopNotification = false } = params;
+      const { skipOverrideByStatus } = options;
       let currentKey: React.Key | undefined;
       setNotifications((prevNotifications: NotificationState[]) => {
         let nextNotifications: NotificationState[];
@@ -352,7 +360,7 @@ export const useSetBAINotification = () => {
           ) {
             _activeNotificationKeys.push(newNotification.key);
           }
-          if (useDesktopNotification) {
+          if (!skipDesktopNotification && desktopNotification) {
             upsertDesktopNotification(newNotification);
           }
           app.notification.open({
@@ -412,7 +420,6 @@ export const useSetBAINotification = () => {
         `[Backend.AI] ${t('sidePanel.Notification')}`;
       const options: Partial<Notification> = {
         body: extractTextFromReactNode(params.description),
-        icon: '/manifest/backend-ai.iconset/icon_32x32@2x.png',
         tag: _.toString(params.key),
       };
 
