@@ -330,6 +330,7 @@
       "RemoveFileExtension": "取り除く ",
       "RenameAFile": "ファイルの名前を変更",
       "RenameAFolder": "フォルダー名の変更",
+      "RetryingOperation": "セッションを確立するために再試行...",
       "RunSSH/SFTPserver": "SFTPサーバーの使用",
       "SFTPSessionNotAvailable": "現在、SFTPセッションの使用ができません。",
       "ShareFolder": "共有フォルダ",

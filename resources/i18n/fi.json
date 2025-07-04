@@ -331,6 +331,7 @@
       "RemoveFileExtension": "Poista ",
       "RenameAFile": "Nimeä tiedosto uudelleen",
       "RenameAFolder": "Nimeä kansio uudelleen",
+      "RetryingOperation": "Uudelleenjärjestelmä istunnon perustamiseksi ...",
       "RunSSH/SFTPserver": "Käynnistä SFTP-palvelin",
       "SFTPSessionNotAvailable": "SFTP-istunto ei ole nyt käytettävissä",
       "ShareFolder": "Jaa kansio",

@@ -364,7 +364,14 @@ const ImageEnvironmentSelectFormItems: React.FC<
             {t('session.launcher.Version')}
           </Typography.Text>
         }
-        rules={[{ required: _.isEmpty(environments?.manual) }]}
+        rules={[
+          {
+            required: _.isEmpty(environments?.manual),
+            message: t('general.ValueRequired', {
+              name: t('session.launcher.Environments'),
+            }),
+          },
+        ]}
         style={{ marginBottom: 10 }}
       >
         <Select
@@ -564,7 +571,14 @@ const ImageEnvironmentSelectFormItems: React.FC<
             <Form.Item
               className="image-environment-select-form-item"
               name={['environments', 'version']}
-              rules={[{ required: _.isEmpty(environments?.manual) }]}
+              rules={[
+                {
+                  required: _.isEmpty(environments?.manual),
+                  message: t('general.ValueRequired', {
+                    name: t('session.launcher.Version'),
+                  }),
+                },
+              ]}
             >
               <Select
                 ref={versionSelectRef}

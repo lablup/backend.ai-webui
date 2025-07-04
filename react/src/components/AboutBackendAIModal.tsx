@@ -28,8 +28,10 @@ const AboutBackendAIModal = ({
 
   return (
     <BAIModal
+      className="about-backendai-modal"
       title={
         <img
+          className="about-logo-img"
           alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
           src={
             isDarkMode && themeConfig?.logo?.srcDark
@@ -37,6 +39,11 @@ const AboutBackendAIModal = ({
               : themeConfig?.logo?.srcDark ||
                 '/manifest/backend.ai-white-text.svg'
           }
+          style={{
+            width: themeConfig?.logo?.aboutModalSize?.width || 159,
+            height: themeConfig?.logo?.aboutModalSize?.height || 24,
+            cursor: 'pointer',
+          }}
         />
       }
       onCancel={onRequestClose}

@@ -331,6 +331,7 @@
       "RemoveFileExtension": "Удалять ",
       "RenameAFile": "Переименуйте файл",
       "RenameAFolder": "Переименовать папку",
+      "RetryingOperation": "Потаните в попытку создать сессию ...",
       "RunSSH/SFTPserver": "Запустить SFTP-сервер",
       "SFTPSessionNotAvailable": "SFTP Session сейчас недоступен",
       "ShareFolder": "Поделиться папкой",

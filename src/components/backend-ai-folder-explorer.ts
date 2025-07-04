@@ -50,6 +50,9 @@ interface SystemRoleImage {
   [key: string]: any;
 }
 
+const RETRY_COUNT = 3;
+const RETRY_DELAY = 1000;
+
 /**
  Backend AI Folder Explorer
 
@@ -266,7 +269,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
     const buttons = this.shadowRoot?.querySelectorAll<Button>(
       '.multiple-action-buttons',
     ) as NodeListOf<Button>;
-    if (this.fileListGrid.selectedItems.length > 0) {
+    if (this.fileListGrid?.selectedItems?.length > 0) {
       [].forEach.call(buttons, (e: HTMLElement) => {
         e.style.display = 'block';
       });
@@ -576,7 +579,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
       e.preventDefault();
       dndZonePlaceholderEl.style.display = 'none';
       if (this.isWritable) {
-        for (let i = 0; i < e.dataTransfer.files.length; i++) {
+        for (let i = 0; i < (e.dataTransfer?.files?.length || 0); i++) {
           if (e.dataTransfer.items[i].webkitGetAsEntry().isFile) {
             const file = e.dataTransfer.files[i];
             /* Drag & Drop file upload size limits to configuration */
@@ -626,7 +629,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
             // this._executeFileBrowser();
             // show snackbar to filebrowser only once
             if (!isNotificationDisplayed) {
-              if (this.filebrowserSupportedImages.length > 0) {
+              if (this.filebrowserSupportedImages?.length > 0) {
                 this.notification.text = _text(
                   'data.explorer.ClickFilebrowserButton',
                 );
@@ -642,7 +645,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
           }
         }
 
-        for (let i = 0; i < this.uploadFiles.length; i++) {
+        for (let i = 0; i < (this.uploadFiles?.length || 0); i++) {
           this.fileUpload(this.uploadFiles[i]);
         }
       } else {
@@ -812,7 +815,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
         ftype = filesInfo.items[cnt].type;
       } else {
         // In case the order is mixed
-        for (let i = 0; i < filesInfo.items.length; i++) {
+        for (let i = 0; i < (filesInfo.items?.length || 0); i++) {
           if (info.filename === filesInfo.items[i].name) {
             ftype = filesInfo.items[i].type;
             break;
@@ -824,8 +827,8 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
     this.vfolderFiles = details;
 
     if (
-      this.filebrowserSupportedImages.length === 0 ||
-      this.systemRoleSupportedImages.length === 0
+      this.filebrowserSupportedImages?.length === 0 ||
+      this.systemRoleSupportedImages?.length === 0
     ) {
       await this._checkImageSupported();
     }
@@ -1035,7 +1038,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
 
   _deleteFileWithCheck(e) {
     const files = this.deleteFileDialog.files;
-    if (files.length > 0) {
+    if (files?.length > 0) {
       const filenames: string[] = [];
       files.forEach((file) => {
         const filename = this.breadcrumb.concat(file.name).join('/');
@@ -1048,7 +1051,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
       );
       job.then((res) => {
         this.notification.text =
-          files.length == 1
+          (files?.length || 0) == 1
             ? _text('data.folders.FileDeleted')
             : _text('data.folders.MultipleFilesDeleted');
         this.notification.show();
@@ -1194,18 +1197,18 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
    * @param {Event} e - add file to the input element
    * */
   _uploadInputChange(e) {
-    const length = e.target.files.length;
-    const isFolderUpload = e.target.id === 'folderInput';
+    const length = e.target?.files?.length || 0;
+    const isFolderUpload = e.target?.id === 'folderInput';
     const inputElement = isFolderUpload
       ? (this.shadowRoot?.querySelector('#folderInput') as HTMLInputElement)
       : (this.shadowRoot?.querySelector('#fileInput') as HTMLInputElement);
     let isEmptyFileIncluded = false;
     let reUploadFolderConfirmed = false;
 
-    if (e.target.files.length > 0 && isFolderUpload) {
+    if ((e.target?.files?.length || 0) > 0 && isFolderUpload) {
       const file = e.target.files[0];
       const folder = this.getFolderName(file);
-      const reUploadFolder = this.vfolderFiles.find((elem: any) => {
+      const reUploadFolder = this.vfolderFiles?.find((elem: any) => {
         return elem.name === folder;
       });
       if (reUploadFolder) {
@@ -1242,7 +1245,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
         isEmptyFileIncluded = true;
         continue;
       } else {
-        const reUploadFile = this.vfolderFiles.find(
+        const reUploadFile = this.vfolderFiles?.find(
           (elem: any) => elem.name === file.name,
         );
         if (reUploadFile && !reUploadFolderConfirmed) {
@@ -1274,7 +1277,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
         }
       }
     }
-    for (let i = 0; i < this.uploadFiles.length; i++) {
+    for (let i = 0; i < (this.uploadFiles?.length || 0); i++) {
       this.fileUpload(this.uploadFiles[i]);
     }
     if (isEmptyFileIncluded || isFolderUpload) {
@@ -1293,7 +1296,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
    * */
   fileUpload(fileObj) {
     this._uploadFlag = true;
-    this.uploadFilesExist = this.uploadFiles.length > 0;
+    this.uploadFilesExist = (this.uploadFiles?.length || 0) > 0;
     const path = this.breadcrumb
       .concat(fileObj.webkitRelativePath || fileObj.name)
       .join('/');
@@ -1372,7 +1375,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
           this.uploadFiles = this.uploadFiles.slice();
           setTimeout(() => {
             this.uploadFiles.splice(this.uploadFiles.indexOf(fileObj), 1);
-            this.uploadFilesExist = this.uploadFiles.length > 0 ? true : false;
+            this.uploadFilesExist = (this.uploadFiles?.length || 0) > 0;
             this.uploadFiles = this.uploadFiles.slice();
             this.fileUploadCount = this.fileUploadCount - 1;
             this.runFileUploadQueue();
@@ -1398,7 +1401,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
       i < this.concurrentFileUploadLimit;
       i++
     ) {
-      if (this.fileUploadQueue.length > 0) {
+      if ((this.fileUploadQueue?.length || 0) > 0) {
         queuedSession = this.fileUploadQueue.shift();
         this.fileUploadCount = this.fileUploadCount + 1;
         queuedSession.start();
@@ -1430,12 +1433,15 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
     return false;
   }
 
-  /* Execute Filebrowser by launching session with mimimum resources
+  /* Execute Filebrowser by launching session with minimum resources
    *
    */
   _executeFileBrowser() {
     if (this._isResourceEnough()) {
-      if (this.filebrowserSupportedImages.length > 0) {
+      if (
+        Array.isArray(this.filebrowserSupportedImages) &&
+        (this.filebrowserSupportedImages?.length || 0) > 0
+      ) {
         const isNotificationVisible = localStorage.getItem(
           'backendaiwebui.filebrowserNotification',
         );
@@ -1464,17 +1470,17 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
    * toggle filebrowser button in Vfolder explorer dialog
    */
   _toggleFilebrowserButton() {
-    const isfilebrowserSupported =
-      this.filebrowserSupportedImages.length > 0 && this._isResourceEnough()
-        ? true
-        : false;
+    const isFilebrowserSupported =
+      Array.isArray(this.filebrowserSupportedImages) &&
+      (this.filebrowserSupportedImages?.length || 0) > 0 &&
+      this._isResourceEnough();
     const filebrowserIcon = this.shadowRoot?.querySelector('#filebrowser-img');
     const filebrowserBtn = this.shadowRoot?.querySelector(
       '#filebrowser-btn',
     ) as Button;
     if (filebrowserIcon && filebrowserBtn) {
-      filebrowserBtn.disabled = !isfilebrowserSupported;
-      const filterClass = isfilebrowserSupported ? '' : 'apply-grayscale';
+      filebrowserBtn.disabled = !isFilebrowserSupported;
+      const filterClass = isFilebrowserSupported ? '' : 'apply-grayscale';
       filebrowserIcon.setAttribute('class', filterClass);
     }
   }
@@ -1505,11 +1511,20 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
     };
     // monkeypatch for filebrowser applied environment
     // const environment = 'cr.backend.ai/testing/filebrowser:21.01-ubuntu20.04';
-    const images = this.filebrowserSupportedImages.filter(
-      (image: any) =>
-        image['name'].toLowerCase().includes('filebrowser') &&
-        image['installed'],
-    );
+    const images =
+      this.filebrowserSupportedImages?.filter(
+        (image: any) =>
+          image['name'].toLowerCase().includes('filebrowser') &&
+          image['installed'],
+      ) || [];
+
+    if ((images?.length || 0) === 0) {
+      this.notification.text = _text(
+        'data.explorer.NoImagesSupportingFileBrowser',
+      );
+      this.notification.show();
+      return;
+    }
 
     // select one image to launch filebrowser supported session
     const preferredImage = images[0];
@@ -1531,20 +1546,25 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
 
     const indicator = await this.indicator.start('indeterminate');
 
-    return globalThis.backendaiclient
-      .get_resource_slots()
-      .then((response) => {
+    const retryOptions = { retries: RETRY_COUNT, delay: RETRY_DELAY };
+
+    return this._retryWithIndicator(
+      async () => {
+        await globalThis.backendaiclient.get_resource_slots();
         indicator.set(20, _text('data.explorer.ExecutingFileBrowser'));
         return globalThis.backendaiclient.createIfNotExists(
           environment,
-          null,
+          `filebrowser-${this.vfolderID}`,
           resources,
-          30000,
+          10000,
           undefined,
         );
-      })
+      },
+      retryOptions,
+      indicator,
+    )
       .then(async (res) => {
-        const service_info = res.servicePorts;
+        const service_info = res.service_ports;
         appOptions = {
           'session-uuid': res.sessionId,
           'session-name': res.sessionName,
@@ -1554,7 +1574,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
         };
         // only launch filebrowser app when it has valid service ports
         if (
-          service_info.length > 0 &&
+          (service_info?.length || 0) > 0 &&
           service_info.filter((el) => el.name === 'filebrowser').length > 0
         ) {
           globalThis.appLauncher.showLauncher(appOptions);
@@ -1569,6 +1589,34 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
       });
   }
 
+  async _retryWithIndicator<T>(
+    fn: () => Promise<T>,
+    options: { retries: number; delay: number },
+    indicator: {
+      set: (progress: number, message: string) => void;
+      end: (timeout: number) => void;
+    },
+  ): Promise<T> {
+    const { retries, delay } = options;
+    let attempt = 0;
+    while (attempt < retries) {
+      try {
+        return await fn();
+      } catch (err) {
+        attempt++;
+        if (attempt >= retries) {
+          throw err;
+        }
+        indicator.set(
+          10 + attempt * 30,
+          _text('data.explorer.RetryingOperation'),
+        );
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
+    }
+    throw new Error('Failed to complete operation after all retries.');
+  }
+
   async _getVolumeInformation() {
     const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
     this.volumeInfo = vhostInfo.volume_info || {};
@@ -1576,7 +1624,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
 
   _executeSSHProxyAgent() {
     if (this.volumeInfo[this.vhost]?.sftp_scaling_groups?.length > 0) {
-      if (this.systemRoleSupportedImages.length > 0) {
+      if ((this.systemRoleSupportedImages?.length || 0) > 0) {
         this._launchSystemRoleSSHSession();
         this._toggleSSHSessionButton();
       } else {
@@ -1596,104 +1644,120 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
    */
   async _launchSystemRoleSSHSession() {
     const configSSHImage = globalThis.backendaiclient._config.systemSSHImage;
-    const images: Array<SystemRoleImage> =
-      this.systemRoleSupportedImages.filter(
-        (image: SystemRoleImage) => image['installed'],
-      );
-    // TODO: use lablup/openssh-server image
-    // select one image to launch system role supported session
-    const preferredImage = images[0];
-    const environment =
-      configSSHImage !== ''
-        ? configSSHImage
-        : preferredImage['registry'] +
-          '/' +
-          preferredImage['name'] +
-          ':' +
-          preferredImage['tag'];
+    const images: Array<SystemRoleImage> = (
+      this.systemRoleSupportedImages || []
+    ).filter((image: SystemRoleImage) => image['installed']);
 
-    const resources: SessionResources = {
-      cluster_mode: 'single-node',
-      cluster_size: 1,
-      maxWaitSeconds: 0,
-    };
-    resources.group_name = globalThis.backendaiclient.current_group;
-    resources.domain = globalThis.backendaiclient._config.domainName;
-    resources.type = 'system';
-    resources.config = {};
-    resources.config.mounts = [this.vfolderName];
-    resources.config.scaling_group =
-      this.volumeInfo[this.vhost]?.sftp_scaling_groups[0] || '';
-    resources.config.resources = {
-      cpu: 1,
-      mem: this.minimumResource.mem + 'g',
-    };
+    if (images?.length > 0) {
+      // TODO: use lablup/openssh-server image
+      // select one image to launch system role supported session
+      const preferredImage = images[0];
+      const environment =
+        configSSHImage !== ''
+          ? configSSHImage
+          : preferredImage['registry'] +
+            '/' +
+            preferredImage['name'] +
+            ':' +
+            preferredImage['tag'];
 
-    const cpuLimit = preferredImage?.resource_limits?.find(
-      (limit) => limit.key === 'cpu',
-    )?.min;
-    resources.config.resources.cpu = cpuLimit ? parseInt(cpuLimit) : 1;
+      const resources: SessionResources = {
+        cluster_mode: 'single-node',
+        cluster_size: 1,
+        maxWaitSeconds: 0,
+      };
+      resources.group_name = globalThis.backendaiclient.current_group;
+      resources.domain = globalThis.backendaiclient._config.domainName;
+      resources.type = 'system';
+      resources.config = {};
+      resources.config.mounts = [this.vfolderName];
+      resources.config.scaling_group =
+        this.volumeInfo[this.vhost]?.sftp_scaling_groups[0] || '';
+      resources.config.resources = {
+        cpu: 1,
+        mem: this.minimumResource.mem + 'g',
+      };
 
-    const memLimit = preferredImage?.resource_limits?.find(
-      (limit) => limit.key === 'mem',
-    )?.min;
-    resources.config.resources.mem = memLimit ? memLimit : '256m';
+      const cpuLimit = preferredImage?.resource_limits?.find(
+        (limit) => limit.key === 'cpu',
+      )?.min;
+      resources.config.resources.cpu = cpuLimit ? parseInt(cpuLimit) : 1;
 
-    const indicator = await this.indicator.start('indeterminate');
-    return (async () => {
-      try {
-        await globalThis.backendaiclient.get_resource_slots();
-        indicator.set(50, _text('data.explorer.StartingSSH/SFTPSession'));
-        const sessionResponse =
-          await globalThis.backendaiclient.createIfNotExists(
+      // TODO: memory should be set to resource_limits mem + shmem.
+      // It will be applied from 25.11.0 when it is migrated to react because the unit must also be considered and implemented.
+      // const memLimit = preferredImage?.resource_limits?.find(
+      //   (limit) => limit.key === 'mem',
+      // )?.min;
+      // resources.config.resources.mem = memLimit ? memLimit : '256m';
+
+      const indicator = await this.indicator.start('indeterminate');
+
+      const retryOptions = { retries: RETRY_COUNT, delay: RETRY_DELAY };
+
+      return this._retryWithIndicator(
+        async () => {
+          await globalThis.backendaiclient.get_resource_slots();
+          indicator.set(20, _text('data.explorer.StartingSSH/SFTPSession'));
+          return globalThis.backendaiclient.createIfNotExists(
             environment,
             `sftp-${this.vfolderID}`,
             resources,
-            30000,
+            10000,
             undefined,
           );
-        if (sessionResponse.status === 'CANCELLED') {
-          // Max # of upload sessions exceeded for this used
-          this.notification.text = PainKiller.relieve(
-            _text('data.explorer.NumberOfSFTPSessionsExceededTitle'),
-          );
-          this.notification.detail = _text(
-            'data.explorer.NumberOfSFTPSessionsExceededBody',
-          );
-          this.notification.show(true, {
-            title: _text('data.explorer.NumberOfSFTPSessionsExceededTitle'),
-            message: _text('data.explorer.NumberOfSFTPSessionsExceededBody'),
+        },
+        retryOptions,
+        indicator,
+      )
+        .then(async (sessionResponse) => {
+          if (sessionResponse.status === 'CANCELLED') {
+            this.notification.text = PainKiller.relieve(
+              _text('data.explorer.NumberOfSFTPSessionsExceededTitle'),
+            );
+            this.notification.detail = _text(
+              'data.explorer.NumberOfSFTPSessionsExceededBody',
+            );
+            this.notification.show(true, {
+              title: _text('data.explorer.NumberOfSFTPSessionsExceededTitle'),
+              message: _text('data.explorer.NumberOfSFTPSessionsExceededBody'),
+            });
+            indicator.end(100);
+            return;
+          }
+          const directAccessInfo =
+            await globalThis.backendaiclient.get_direct_access_info(
+              sessionResponse.sessionId,
+            );
+          const host = directAccessInfo.public_host.replace(/^https?:\/\//, '');
+          const port = directAccessInfo.sshd_ports;
+          const event = new CustomEvent('read-ssh-key-and-launch-ssh-dialog', {
+            detail: {
+              sessionUuid: sessionResponse.sessionId,
+              host: host,
+              port: port,
+              mounted: this.vfolderName,
+            },
           });
+          document.dispatchEvent(event);
           indicator.end(100);
-          return;
-        }
-        const directAccessInfo =
-          await globalThis.backendaiclient.get_direct_access_info(
-            sessionResponse.sessionId,
-          );
-        const host = directAccessInfo.public_host.replace(/^https?:\/\//, '');
-        const port = directAccessInfo.sshd_ports;
-        const event = new CustomEvent('read-ssh-key-and-launch-ssh-dialog', {
-          detail: {
-            sessionUuid: sessionResponse.sessionId,
-            host: host,
-            port: port,
-            mounted: this.vfolderName,
-          },
+        })
+        .catch((err) => {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+          indicator.end(100);
         });
-        document.dispatchEvent(event);
-        indicator.end(100);
-      } catch (err) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-        indicator.end(100);
-      }
-    })();
+    } else {
+      this.notification.text = _text(
+        'data.explorer.NoImagesSupportingSystemSession',
+      );
+      this.notification.show(true);
+    }
   }
 
   _toggleSSHSessionButton() {
-    const isSystemRoleSupported = this.systemRoleSupportedImages.length > 0;
+    const isSystemRoleSupported =
+      (this.systemRoleSupportedImages?.length || 0) > 0;
     const sshImageIcon = this.shadowRoot?.querySelector('#ssh-img');
     const sshImageBtn = this.shadowRoot?.querySelector('#ssh-btn') as Button;
     if (sshImageIcon && sshImageBtn) {

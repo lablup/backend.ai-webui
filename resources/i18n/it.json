@@ -330,6 +330,7 @@
       "RemoveFileExtension": "Rimuovere ",
       "RenameAFile": "Rinomina il file",
       "RenameAFolder": "Rinomina cartella",
+      "RetryingOperation": "Riprovare per stabilire la sessione ...",
       "RunSSH/SFTPserver": "Eseguire il server SFTP",
       "SFTPSessionNotAvailable": "SFTP Session non è disponibile ora",
       "ShareFolder": "Condividi cartella",

@@ -330,6 +330,7 @@
       "RemoveFileExtension": "Menghapus ",
       "RenameAFile": "Ganti Nama File",
       "RenameAFolder": "Mengganti nama folder",
+      "RetryingOperation": "Mencoba lagi untuk menetapkan sesi ...",
       "RunSSH/SFTPserver": "Jalankan server SFTP",
       "SFTPSessionNotAvailable": "Sesi SFTP tidak tersedia sekarang",
       "ShareFolder": "Bagikan Folder",

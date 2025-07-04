@@ -330,6 +330,7 @@
       "RemoveFileExtension": "Alih keluar ",
       "RenameAFile": "Namakan semula Fail",
       "RenameAFolder": "Namakan semula Folder",
+      "RetryingOperation": "Mencuba semula untuk menubuhkan sesi ...",
       "RunSSH/SFTPserver": "Jalankan pelayan SFTP",
       "SFTPSessionNotAvailable": "Sesi SFTP tidak tersedia sekarang",
       "ShareFolder": "Kongsi Folder",

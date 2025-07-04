@@ -3,6 +3,7 @@ import { Image } from '../components/ImageEnvironmentSelectFormItems';
 import { EnvironmentImage } from '../components/ImageList';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { AttachmentsProps } from '@ant-design/x';
+import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { SorterResult } from 'antd/es/table/interface';
 import Big from 'big.js';
 import dayjs from 'dayjs';
@@ -609,4 +610,89 @@ export function getOS() {
   if (_.includes(userAgent, 'macintosh')) return 'MacOS';
   if (_.includes(userAgent, 'linux')) return 'Linux';
   return 'Linux';
+}
+
+type SSEHandlerKeys =
+  | 'onUpdated'
+  | 'onDone'
+  | 'onFailed'
+  | 'onTaskFailed'
+  | 'onTaskCancelled';
+
+export type SSEEventHandlerTypes<
+  BaseType = unknown,
+  Overrides extends Partial<Record<SSEHandlerKeys, any>> = {},
+> = {
+  [K in SSEHandlerKeys]: (
+    data: K extends keyof Overrides ? Overrides[K] : BaseType,
+    controller?: AbortController,
+  ) => void;
+};
+/**
+ * Listens to background task events using Server-Sent Events (SSE).
+ * @param taskID
+ * @param handlers
+ * @returns
+ */
+export function listenToBackgroundTask<
+  BaseType = unknown,
+  Overrides extends Partial<Record<SSEHandlerKeys, any>> = {},
+>(
+  taskID: string,
+  handlers: Partial<SSEEventHandlerTypes<BaseType, Overrides>>,
+): () => void {
+  const controller = new AbortController();
+  const signal = controller.signal;
+
+  const searchParams = new URLSearchParams({ task_id: taskID });
+  const reqUrl = `/events/background-task?${searchParams.toString()}`;
+
+  // @ts-ignore
+  const req = globalThis.backendaiclient?.newSignedRequest('GET', reqUrl, null);
+
+  if (!req) {
+    throw new Error('Failed to create request for background task events');
+  }
+
+  fetchEventSource(req.uri, {
+    signal,
+    credentials: 'include',
+    openWhenHidden: true,
+    headers: {
+      'x-backendai-sessionid':
+        localStorage.getItem('backendaiwebui.sessionid') || '',
+    },
+    onmessage: (event) => {
+      const data = JSON.parse(event.data);
+
+      switch (event.event) {
+        case 'bgtask_updated':
+          handlers.onUpdated?.(data, controller);
+          break;
+        case 'bgtask_done':
+          handlers.onDone?.(data, controller);
+          controller.abort();
+          break;
+        case 'bgtask_failed':
+          handlers.onTaskFailed?.(data, controller);
+          controller.abort();
+          break;
+        case 'task_failed':
+          handlers.onFailed?.(data, controller);
+          controller.abort();
+          break;
+        case 'bgtask_cancelled':
+          handlers.onTaskCancelled?.(data, controller);
+          controller.abort();
+          break;
+      }
+    },
+    onerror: (error) => {
+      console.error('SSE error:', error);
+      controller.abort();
+      throw error;
+    },
+  });
+
+  return controller.abort.bind(controller);
 }

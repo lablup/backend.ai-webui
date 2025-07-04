@@ -1,5 +1,6 @@
-import { useSuspendedBackendaiClient, useWebUINavigate } from '.';
+import { useWebUINavigate } from '.';
 import BAINotificationItem from '../components/BAINotificationItem';
+import { SSEEventHandlerTypes, listenToBackgroundTask } from '../helper';
 import { App } from 'antd';
 import { ArgsProps } from 'antd/lib/notification';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
@@ -76,6 +77,12 @@ export const useBAINotificationState = () => {
   return [_notifications, useSetBAINotification()] as const;
 };
 
+type BackgroundTaskEvent = {
+  task_id: string;
+  message: string;
+  current_progress: number;
+  total_progress: number;
+};
 /**
  * Custom hook that listens to background tasks and updates notifications accordingly.
  */
@@ -85,8 +92,6 @@ export const useBAINotificationEffect = () => {
   const listeningTaskIdsRef = useRef<(string | undefined)[]>([]);
   // const closedNotificationKeysRef = useRef<(React.Key | undefined)[]>([]);
   const listeningPromiseKeysRef = useRef<NotificationState['key'][]>([]);
-
-  const baiClient = useSuspendedBackendaiClient();
   const { upsertNotification } = useSetBAINotification();
   // listen to background task if a notification has a background task
   // and not already listening
@@ -137,7 +142,6 @@ export const useBAINotificationEffect = () => {
           });
       }
     });
-
     _.each(_notifications, (notification) => {
       if (
         notification.backgroundTask?.taskId &&
@@ -149,113 +153,100 @@ export const useBAINotificationEffect = () => {
       ) {
         // sse and update progress
         listeningTaskIdsRef.current.push(notification.backgroundTask?.taskId);
-        const sse: EventSource = baiClient.maintenance.attach_background_task(
-          notification.backgroundTask?.taskId,
-        );
-        sse.onerror = () => {
-          sse.close();
-        };
-        sse.addEventListener(
-          'bgtask_updated',
-          _.throttle(
-            (e) => {
-              const data = JSON.parse(e['data']);
+        const SSEEventHandler: SSEEventHandlerTypes<BackgroundTaskEvent> = {
+          onUpdated: _.throttle(
+            (data) => {
               const ratio = data.current_progress / data.total_progress;
               upsertNotification({
-                // ...notification,
                 key: notification.key,
                 message: notification.message,
                 backgroundTask: {
-                  // ...notification.backgroundTask,
                   status: 'pending',
                   percent: ratio * 100,
                 },
               });
             },
             100,
-            // Set 'trailing' to false to ensure that the 'bgtask_done' will be handled at last.
-            { leading: true, trailing: false },
+            {
+              leading: true,
+              trailing: false,
+            },
           ),
-        );
-        sse.addEventListener('bgtask_done', () => {
-          listeningTaskIdsRef.current = _.without(
-            listeningTaskIdsRef.current,
-            notification.backgroundTask?.taskId,
-          );
-          sse.close();
-          if (_.startsWith(_.toString(notification.key), 'image-rescan:')) {
-            const event = new CustomEvent('image-rescanned');
-            document.dispatchEvent(event);
-          }
-          upsertNotification({
-            key: notification.key,
-            message: notification.message,
-            backgroundTask: {
-              status: 'resolved',
-              percent: 100,
-            },
-            duration: CLOSING_DURATION,
-          });
-        });
-        const failHandler = (e: any) => {
-          listeningTaskIdsRef.current = _.without(
-            listeningTaskIdsRef.current,
-            notification.backgroundTask?.taskId,
-          );
-          sse.close();
-          const data = JSON.parse(e['data']);
-          const ratio = data.current_progress / data.total_progress;
-          upsertNotification({
-            key: notification.key,
-            message: notification.message,
-            backgroundTask: {
-              status: 'rejected',
-              percent: ratio * 100,
-            },
-            extraDescription:
-              notification?.backgroundTask?.renderDataMessage?.(
-                data?.message,
-              ) || data?.message,
-            duration: CLOSING_DURATION,
-          });
+          onDone: () => {
+            listeningTaskIdsRef.current = _.without(
+              listeningTaskIdsRef.current,
+              notification.backgroundTask?.taskId,
+            );
+            if (_.startsWith(_.toString(notification.key), 'image-rescan:')) {
+              const event = new CustomEvent('image-rescanned');
+              document.dispatchEvent(event);
+            }
+            upsertNotification({
+              key: notification.key,
+              message: notification.message,
+              backgroundTask: {
+                status: 'resolved',
+                percent: 100,
+              },
+              duration: CLOSING_DURATION,
+            });
+          },
+          onTaskFailed: (data) => {
+            listeningTaskIdsRef.current = _.without(
+              listeningTaskIdsRef.current,
+              notification.backgroundTask?.taskId,
+            );
+            const ratio = data.current_progress / data.total_progress;
+            upsertNotification({
+              key: notification.key,
+              message: notification.message,
+              backgroundTask: {
+                status: 'rejected',
+                percent: ratio * 100,
+              },
+              extraDescription:
+                notification?.backgroundTask
+                  ?.renderDataMessage?.(data?.message)
+                  ?.toString() || data?.message,
+              duration: CLOSING_DURATION,
+            });
+          },
+          onFailed: (data) => {
+            upsertNotification({
+              key: notification.key,
+              message: notification.message,
+              backgroundTask: {
+                status: 'rejected',
+              },
+              extraDescription:
+                notification?.backgroundTask
+                  ?.renderDataMessage?.(data?.message)
+                  ?.toString() || data?.message,
+              duration: CLOSING_DURATION,
+            });
+          },
+          onTaskCancelled: (data) => {
+            listeningTaskIdsRef.current = _.without(
+              listeningTaskIdsRef.current,
+              notification.backgroundTask?.taskId,
+            );
+            const ratio = data.current_progress / data.total_progress;
+            upsertNotification({
+              key: notification.key,
+              message: notification.message,
+              backgroundTask: {
+                status: 'rejected',
+                percent: ratio * 100,
+              },
+              duration: CLOSING_DURATION,
+            });
+          },
         };
-        sse.addEventListener('bgtask_failed', failHandler);
-        sse.addEventListener('task_failed', (e) => {
-          const data = JSON.parse(e['data']);
-          upsertNotification({
-            key: notification.key,
-            message: notification.message,
-            backgroundTask: {
-              status: 'rejected',
-            },
-            extraDescription:
-              notification?.backgroundTask?.renderDataMessage?.(
-                data?.message,
-              ) || data?.message,
-            duration: CLOSING_DURATION,
-          });
-          sse.close();
-        });
 
-        sse.addEventListener('bgtask_cancelled', (e) => {
-          listeningTaskIdsRef.current = _.without(
-            listeningTaskIdsRef.current,
-            notification.backgroundTask?.taskId,
-          );
-          sse.close();
-          const data = JSON.parse(e['data']);
-          const ratio = data.current_progress / data.total_progress;
-          upsertNotification({
-            key: notification.key,
-            message: notification.message,
-            backgroundTask: {
-              // ...notification.backgroundTask,
-              status: 'rejected',
-              percent: ratio * 100,
-            },
-            duration: CLOSING_DURATION,
-          });
-        });
+        listenToBackgroundTask(
+          notification.backgroundTask?.taskId,
+          SSEEventHandler,
+        );
       }
     });
 

@@ -331,6 +331,7 @@
       "RemoveFileExtension": "ลบ ",
       "RenameAFile": "เปลี่ยนชื่อไฟล์",
       "RenameAFolder": "เปลี่ยนชื่อโฟลเดอร์",
+      "RetryingOperation": "ลองใหม่เพื่อสร้างเซสชัน ...",
       "RunSSH/SFTPserver": "เรียกใช้เซิร์ฟเวอร์ SFTP",
       "SFTPSessionNotAvailable": "เซสชัน SFTP ไม่พร้อมใช้งานในขณะนี้",
       "ShareFolder": "แชร์โฟลเดอร์",

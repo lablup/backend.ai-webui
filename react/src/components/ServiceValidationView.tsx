@@ -1,4 +1,9 @@
-import { baiSignedRequestWithPromise, compareNumberWithUnits } from '../helper';
+import {
+  SSEEventHandlerTypes,
+  baiSignedRequestWithPromise,
+  compareNumberWithUnits,
+  listenToBackgroundTask,
+} from '../helper';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import Flex from './Flex';
@@ -19,6 +24,12 @@ import { useTranslation } from 'react-i18next';
 interface ServiceValidationModalProps {
   serviceData: any;
 }
+type BackgroundTaskEvent = {
+  task_id: string;
+  message: { event: string; session_id: string };
+  current_progress: number;
+  total_progress: number;
+};
 
 const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
   serviceData,
@@ -126,58 +137,53 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
 
     const validationDateTime = dayjs().format('LLL');
 
-    let sse: EventSource | undefined = undefined;
-
     mutationsToValidateService
       .mutateAsync(serviceData)
-      .then((data: any) => {
+      .then((response: any) => {
         setValidationTime(validationDateTime);
-        // setContainerLogSummary('loading...');
-        const response = data;
-        sse = baiClient.maintenance.attach_background_task(response['task_id']);
 
-        // TODO:
         const timeoutId = setTimeout(() => {
-          sse?.close();
-          // something went wrong during validation
           setValidationStatus('error');
           message.error(t('modelService.CannotValidateNow'));
         }, 10000);
 
-        sse?.addEventListener('bgtask_updated', async (e) => {
-          const data = JSON.parse(e['data']);
-          const msg = JSON.parse(data.message);
-          if (['session_started', 'session_terminated'].includes(msg.event)) {
-            const logs = await getLogs(msg.session_id);
-            setContainerLogSummary(logs);
-            clearTimeout(timeoutId);
-            // temporally close sse manually when session is terminated
-            if (msg.event === 'session_terminated') {
-              sse?.close();
-              return;
+        const SSEEventHandlers: SSEEventHandlerTypes<BackgroundTaskEvent> = {
+          onUpdated: async (data, controller) => {
+            const msg = data.message;
+            if (validationStatus === 'error') {
+              clearTimeout(timeoutId);
+              controller?.abort();
+            } else if (
+              ['session_started', 'session_terminated'].includes(msg.event)
+            ) {
+              const logs = await getLogs(msg.session_id);
+              setContainerLogSummary(logs);
+              clearTimeout(timeoutId);
+              controller?.abort();
             }
-          }
-          setValidationStatus('processing');
-        });
-        sse?.addEventListener('bgtask_done', async (e) => {
-          setValidationStatus('finished');
-          clearTimeout(timeoutId);
-          sse?.close();
-        });
-        sse?.addEventListener('bgtask_failed', async (e) => {
-          const data = JSON.parse(e['data']);
-          const msg = JSON.parse(data.message);
-          const logs = await getLogs(msg.session_id);
-          setContainerLogSummary(logs);
-          setValidationStatus('error');
-          sse?.close();
-          throw new Error(e['data']);
-        });
-        sse?.addEventListener('bgtask_cancelled', async (e) => {
-          setValidationStatus('error');
-          sse?.close();
-          throw new Error(e['data']);
-        });
+            setValidationStatus('processing');
+          },
+          onDone: (data) => {
+            setValidationStatus('finished');
+            clearTimeout(timeoutId);
+          },
+          onFailed: async (data) => {
+            const logs = await getLogs(data.message.session_id);
+            setContainerLogSummary(logs);
+            setValidationStatus('error');
+            throw new Error(data.message.event);
+          },
+          onTaskCancelled: (data) => {
+            setValidationStatus('error');
+            throw new Error(data.message.event);
+          },
+          onTaskFailed: (data) => {
+            setValidationStatus('error');
+            throw new Error(data.message.event);
+          },
+        };
+
+        listenToBackgroundTask(response['task_id'], SSEEventHandlers);
       })
       .catch((error) => {
         message.error(
@@ -190,11 +196,6 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
         isRunningRef.current = false;
       });
     isRunningRef.current = true;
-
-    return () => {
-      sse?.close();
-    };
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

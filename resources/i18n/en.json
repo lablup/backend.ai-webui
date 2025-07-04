@@ -333,6 +333,7 @@
       "RemoveFileExtension": "Remove ",
       "RenameAFile": "Rename File",
       "RenameAFolder": "Rename Folder",
+      "RetryingOperation": "Retrying to establish session...",
       "RunSSH/SFTPserver": "Run SFTP server",
       "SFTPSessionNotAvailable": "SFTP Session is not available now",
       "ShareFolder": "Share Folder",

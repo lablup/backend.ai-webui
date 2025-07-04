@@ -8,11 +8,13 @@ import { useTranslation } from 'react-i18next';
 
 const { Text } = Typography;
 
-interface BAIConfirmModalWithInputProps extends Omit<BAIModalProps, 'icon'> {
+interface BAIConfirmModalWithInputProps
+  extends Omit<BAIModalProps, 'icon' | 'okButtonProps'> {
   confirmText: string;
   content: React.ReactNode;
   title: React.ReactNode;
   icon?: React.ReactNode;
+  okButtonProps?: Omit<BAIModalProps['okButtonProps'], 'disabled' | 'danger'>;
 }
 
 const BAIConfirmModalWithInput: React.FC<BAIConfirmModalWithInputProps> = ({
@@ -51,8 +53,12 @@ const BAIConfirmModalWithInput: React.FC<BAIConfirmModalWithInputProps> = ({
         form.resetFields();
         _.isFunction(onCancel) && onCancel(e);
       }}
-      okButtonProps={{ disabled: confirmText !== typedText, danger: true }}
       {...props}
+      okButtonProps={{
+        ...props.okButtonProps,
+        disabled: confirmText !== typedText,
+        danger: true,
+      }}
     >
       <Flex direction="column" justify="start" align="start">
         {content}
