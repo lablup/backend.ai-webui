@@ -59,17 +59,22 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
   return (
     <Flex
       ref={containerRef}
-      align="center"
-      justify="between"
       direction="column"
       style={{
         height: '100%',
         textAlign: 'center',
-        overflowY: 'auto',
+        overflow: 'hidden',
         padding: token.marginMD,
       }}
     >
-      <Flex direction="column" gap={type === 'default' ? 'sm' : 'xxs'}>
+      <Flex
+        direction="column"
+        align="center"
+        gap={type === 'default' ? 'sm' : 'xxs'}
+        style={{
+          flexShrink: 0,
+        }}
+      >
         <Flex
           align="center"
           justify="center"
@@ -84,7 +89,15 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
         >
           {icon}
         </Flex>
-        <Flex style={{ minHeight: 60 }}>
+        <Flex
+          align="center"
+          justify="center"
+          style={{
+            minHeight: 48,
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
           {typeof title === 'string' ? (
             <Typography.Text
               strong
@@ -95,6 +108,7 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
                   : itemRole === 'user'
                     ? token.colorPrimary
                     : token.colorInfo,
+                textAlign: 'center',
               }}
             >
               {title}
@@ -103,28 +117,42 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
             title
           )}
         </Flex>
+      </Flex>
+
+      <Flex
+        direction="column"
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+          padding: `${token.marginXS}px 0`,
+          minHeight: 0,
+        }}
+      >
         <Typography.Text
           type="secondary"
-          style={{ fontSize: token.fontSizeSM }}
+          style={{
+            fontSize: token.fontSizeSM,
+            lineHeight: 1.5,
+          }}
         >
           {description}
         </Typography.Text>
       </Flex>
+
       <Flex
         direction="column"
         style={{
           width: '100%',
-          position: 'sticky',
-          bottom: 0,
-          backgroundColor:
-            type === 'default' ? token.colorBgContainer : undefined,
-          marginTop: type === 'default' ? token.marginSM : undefined,
-          paddingBottom: type === 'default' ? token.marginMD : undefined,
+          flexShrink: 0,
+          marginTop: token.marginSM,
         }}
       >
         {description && (
           <Divider
-            style={{ margin: token.marginSM, marginTop: 0, borderWidth: 2 }}
+            style={{
+              margin: `${token.marginSM}px 0`,
+              borderWidth: 1,
+            }}
           />
         )}
         {to ? <WebUILink to={to}>{actionButton}</WebUILink> : actionButton}
