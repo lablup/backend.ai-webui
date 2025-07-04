@@ -1,25 +1,27 @@
 import { FileBrowserButtonImageNodeFragment$key } from '../__generated__/FileBrowserButtonImageNodeFragment.graphql';
 import { FolderExplorerHeaderFragment$key } from '../__generated__/FolderExplorerHeaderFragment.graphql';
+import { SFTPButtonImageNodeFragment$key } from '../__generated__/SFTPButtonImageNodeFragment.graphql';
 import FileBrowserButton from './FileBrowserButton';
 import Flex from './Flex';
+import SFTPButton from './SFTPButton';
 import VFolderNameTitle from './VFolderNameTitle';
-import { Button, Tooltip, Image, Skeleton, Grid, theme } from 'antd';
+import { Skeleton, Grid, theme } from 'antd';
 import React, { LegacyRef, Suspense } from 'react';
-import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 interface FolderExplorerHeaderProps {
   vfolderNodeFrgmt?: FolderExplorerHeaderFragment$key | null;
-  imageNodesFrgmt?: FileBrowserButtonImageNodeFragment$key | null;
+  fileBrowserImageNodesFrgmt?: FileBrowserButtonImageNodeFragment$key | null;
+  sftpImageNodesFrgmt?: SFTPButtonImageNodeFragment$key | null;
   folderExplorerRef: LegacyRef<HTMLDivElement>;
 }
 
 const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
   vfolderNodeFrgmt,
-  imageNodesFrgmt,
+  fileBrowserImageNodesFrgmt,
+  sftpImageNodesFrgmt,
   folderExplorerRef,
 }) => {
-  const { t } = useTranslation();
   const { token } = theme.useToken();
   const { lg } = Grid.useBreakpoint();
 
@@ -29,6 +31,7 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
         id
         user
         permission
+        name
         unmanaged_path @since(version: "25.04.0")
         name
         ...VFolderNameTitleNodeFragment
@@ -56,26 +59,13 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
             <FileBrowserButton
               vfolderName={vfolderNode?.name || ''}
               folderExplorerRef={folderExplorerRef}
-              imageNodesFrgmt={imageNodesFrgmt}
+              imageNodeFrgmt={fileBrowserImageNodesFrgmt}
             />
-            <Tooltip title={!lg && t('data.explorer.RunSSH/SFTPserver')}>
-              <Button
-                icon={
-                  <Image
-                    width="18px"
-                    src="/resources/icons/sftp.png"
-                    alt="SSH / SFTP"
-                    preview={false}
-                  />
-                }
-                onClick={() => {
-                  // @ts-ignore
-                  folderExplorerRef.current?._executeSSHProxyAgent();
-                }}
-              >
-                {lg && t('data.explorer.RunSSH/SFTPserver')}
-              </Button>
-            </Tooltip>
+            <SFTPButton
+              vfolderName={vfolderNode?.name || ''}
+              folderExplorerRef={folderExplorerRef}
+              imageNodeFrgmt={sftpImageNodesFrgmt}
+            />
           </>
         ) : null}
       </Flex>

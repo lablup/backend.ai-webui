@@ -1,8 +1,5 @@
-import {
-  FileBrowserButtonImageNodeFragment$key,
-  FileBrowserButtonImageNodeFragment$data,
-} from '../__generated__/FileBrowserButtonImageNodeFragment.graphql';
-import { addNumberWithUnits } from '../helper';
+import { FileBrowserButtonImageNodeFragment$key } from '../__generated__/FileBrowserButtonImageNodeFragment.graphql';
+import { createSessionConfig } from '../helper';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -16,68 +13,16 @@ import React, { LegacyRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
-type ResourceLimits = NonNullable<
-  NonNullable<FileBrowserButtonImageNodeFragment$data>[number]['resource_limits']
->;
-
-const RESOURCE_DEFAULTS = {
-  CPU: 1,
-  MEMORY: '256m',
-  SHMEM: '64m',
-  FALLBACK_MEMORY: '320m',
-} as const;
-
-const calculateResources = (
-  resourceLimits: ResourceLimits | null,
-  labels: any,
-) => {
-  const limits = resourceLimits || [];
-  const cpu =
-    limits.find((r) => r?.key === 'cpu')?.min || RESOURCE_DEFAULTS.CPU;
-  const shmem =
-    labels?.['ai.backend.resource.preferred.shmem'] || RESOURCE_DEFAULTS.SHMEM;
-  const baseMem =
-    limits.find((r) => r?.key === 'mem')?.min || RESOURCE_DEFAULTS.MEMORY;
-
-  return {
-    cpu: cpu as number,
-    mem:
-      addNumberWithUnits(baseMem, shmem, 'm') ||
-      RESOURCE_DEFAULTS.FALLBACK_MEMORY,
-  };
-};
-
-const createSessionConfig = (
-  vfolderName: string,
-  domain: string,
-  projectName: string,
-  resourceLimits: ResourceLimits | null,
-  architecture?: string,
-): SessionResources => ({
-  cluster_mode: 'single-node',
-  cluster_size: 1,
-  domain,
-  group_name: projectName,
-  ...(architecture && { architecture }),
-  config: {
-    mounts: [vfolderName],
-    resources: {
-      ..._.mapValues(_.keyBy(resourceLimits || [], 'key'), 'min'),
-      ...calculateResources(resourceLimits, {}),
-    },
-  },
-});
-
 interface FileBrowserButtonProps {
   vfolderName: string;
   folderExplorerRef: LegacyRef<HTMLDivElement>;
-  imageNodesFrgmt?: FileBrowserButtonImageNodeFragment$key | null;
+  imageNodeFrgmt?: FileBrowserButtonImageNodeFragment$key | null;
 }
 
 const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
   vfolderName,
   folderExplorerRef,
-  imageNodesFrgmt,
+  imageNodeFrgmt,
 }) => {
   const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
@@ -87,15 +32,12 @@ const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
   const { upsertNotification } = useSetBAINotification();
   const { lg } = Grid.useBreakpoint();
 
-  const imageNodes = useFragment(
+  const imageNode = useFragment(
     graphql`
-      fragment FileBrowserButtonImageNodeFragment on ImageNode
-      @relay(plural: true) {
+      fragment FileBrowserButtonImageNodeFragment on ImageNode {
         id
         name @deprecatedSince(version: "24.12.0")
         namespace @since(version: "24.12.0")
-        # installed @since(version: "25.11.0")
-        installed @since(version: "24.11.0")
         registry
         tag
         architecture
@@ -109,40 +51,27 @@ const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
         }
       }
     `,
-    imageNodesFrgmt,
-  );
-
-  const installedFilebrowserImage = _.find(imageNodes, (node) =>
-    _.get(node, 'installed', false),
+    imageNodeFrgmt,
   );
 
   const filebrowserConfig = useMemo(() => {
-    const resourceLimits = _.get(
-      installedFilebrowserImage,
-      'resource_limits',
-      [],
-    );
-    const { cpu, mem } = calculateResources(
-      _.toArray(resourceLimits ?? []),
-      _.get(installedFilebrowserImage, 'labels', {}),
-    );
+    const resourceLimits = _.get(imageNode, 'resource_limits', []);
     const [defaultFileBrowserImage, architecture] = _.split(
       baiClient._config?.defaultFileBrowserImage,
       '@',
     );
     const filebrowserImage = defaultFileBrowserImage
       ? defaultFileBrowserImage
-      : `${_.get(installedFilebrowserImage, 'registry')}/${_.get(installedFilebrowserImage, 'namespace') ?? _.get(installedFilebrowserImage, 'name')}:${_.get(installedFilebrowserImage, 'tag')}`;
+      : `${_.get(imageNode, 'registry')}/${_.get(imageNode, 'namespace') ?? _.get(imageNode, 'name')}:${_.get(imageNode, 'tag')}`;
 
     return {
-      installedFilebrowserImage,
+      imageNode,
       resourceLimits,
-      cpu,
-      mem,
       filebrowserImage,
-      architecture,
+      architecture:
+        architecture || _.get(imageNode, 'architecture', 'x86_64') || 'x86_64',
     };
-  }, [installedFilebrowserImage, baiClient._config?.defaultFileBrowserImage]);
+  }, [imageNode, baiClient._config?.defaultFileBrowserImage]);
 
   const sessionName = useMemo(() => generateSessionId(), []);
 
@@ -154,8 +83,15 @@ const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
         currentProject?.name,
         _.toArray(filebrowserConfig.resourceLimits ?? []),
         filebrowserConfig.architecture,
+        _.get(imageNode, 'labels', {}),
       ),
-    [vfolderName, currentDomain, currentProject?.name, filebrowserConfig],
+    [
+      vfolderName,
+      currentDomain,
+      currentProject?.name,
+      filebrowserConfig.resourceLimits,
+      filebrowserConfig.architecture,
+    ],
   );
 
   const executeFileBrowser = async () => {
@@ -169,7 +105,7 @@ const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
         filebrowserConfig.filebrowserImage,
         sessionName,
         resources,
-        30000,
+        10000,
       )
       .then((res: { created: boolean; status: string }) => {
         // When session is already created with the same name, the status code
@@ -269,8 +205,7 @@ const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
           />
         }
         onClick={() => {
-          // baiClient.isManagerVersionCompatibleWith('25.11.0')
-          baiClient.isManagerVersionCompatibleWith('24.11.0')
+          baiClient.isManagerVersionCompatibleWith('25.11.0')
             ? executeFileBrowser()
             : // @ts-ignore
               folderExplorerRef.current?._executeFileBrowser();

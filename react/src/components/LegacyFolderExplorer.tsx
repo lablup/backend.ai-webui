@@ -76,13 +76,16 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
     };
   }, []);
 
-  const { vfolder_node, image_nodes } =
+  // TODO: check default file browser and ssh image from config and filter the image nodes.
+  // Else use the installed image nodes with the label "ai.backend.service-ports == filebrowser", "ai.backend.role == SYSTEM".
+  const { vfolder_node, fileBrowserImageNodes, sftpImageNodes } =
     useLazyLoadQuery<LegacyFolderExplorerQuery>(
       graphql`
         query LegacyFolderExplorerQuery(
           $vfolderUUID: String!
           $scope_id: ScopeField!
-          $filebrowserFilter: String
+          $fileBrowserFilter: String
+          $sftpFilter: String
         ) {
           vfolder_node(id: $vfolderUUID) @since(version: "24.03.4") {
             id
@@ -93,11 +96,35 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
             ...VFolderNodeDescriptionFragment
             ...VFolderNameTitleNodeFragment
           }
-          image_nodes(scope_id: $scope_id, filter: $filebrowserFilter) {
+          fileBrowserImageNodes: image_nodes(
+            scope_id: $scope_id
+            filter: $fileBrowserFilter
+          ) {
             edges {
               node {
                 id @required(action: THROW)
+                labels {
+                  key
+                  value
+                }
+                installed @since(version: "25.11.0")
                 ...FileBrowserButtonImageNodeFragment
+              }
+            }
+          }
+          sftpImageNodes: image_nodes(
+            scope_id: $scope_id
+            filter: $sftpFilter
+          ) {
+            edges {
+              node {
+                id @required(action: THROW)
+                labels {
+                  key
+                  value
+                }
+                installed @since(version: "25.11.0")
+                ...SFTPButtonImageNodeFragment
               }
             }
           }
@@ -106,17 +133,34 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
       {
         vfolderUUID: toGlobalId('VirtualFolderNode', vfolderID),
         scope_id: `project:${currentProject?.id}`,
-        filebrowserFilter: baiClient.isManagerVersionCompatibleWith('24.12.0')
-          ? `namespace ilike "%filebrowser%"`
-          : `name ilike "%filebrowser%"`,
+        // TODO: find the image nodes with the label "ai.backend.service-ports == filebrowser"
+        // fileBrowserFilter:
+        // TODO: find the image nodes with the label "ai.backend.role == "SYSTEM"
+        // sftpFilter:
       },
       {
         fetchPolicy: modalProps.open ? 'network-only' : 'store-only',
       },
     );
 
-  const imageNodes = filterEmptyItem(
-    _.map(image_nodes?.edges, (edge) => edge?.node),
+  const installedFileBrowserImageNodes = filterEmptyItem(
+    _.map(
+      _.filter(fileBrowserImageNodes?.edges, (node) =>
+        // For backward compatibility, set default installed value to true.
+        _.get(node, 'installed', true),
+      ),
+      (node) => _.get(node, 'node', null),
+    ),
+  );
+
+  const installedSFTPImageNodes = filterEmptyItem(
+    _.map(
+      _.filter(sftpImageNodes?.edges, (node) =>
+        // For backward compatibility, set default installed value to true.
+        _.get(node, 'installed', true),
+      ),
+      (node) => _.get(node, 'node', null),
+    ),
   );
 
   const legacyFolderExplorerPane = (
@@ -161,9 +205,13 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
       footer={null}
       title={
         <FolderExplorerHeader
-          vfolderNodeFrgmt={vfolder_node}
           folderExplorerRef={folderExplorerRef}
-          imageNodesFrgmt={imageNodes}
+          // Use the first image node as the default file browser image node.
+          fileBrowserImageNodesFrgmt={
+            installedFileBrowserImageNodes?.[0] || null
+          }
+          sftpImageNodesFrgmt={installedSFTPImageNodes?.[0] || null}
+          vfolderNodeFrgmt={vfolder_node}
         />
       }
       onCancel={() => {

@@ -1,7 +1,10 @@
+import { FileBrowserButtonImageNodeFragment$data } from '../__generated__/FileBrowserButtonImageNodeFragment.graphql';
+import { SFTPButtonImageNodeFragment$data } from '../__generated__/SFTPButtonImageNodeFragment.graphql';
 import { CommittedImage } from '../components/CustomizedImageList';
 import { Image } from '../components/ImageEnvironmentSelectFormItems';
 import { EnvironmentImage } from '../components/ImageList';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { SessionResources } from '../pages/SessionLauncherPage';
 import { AttachmentsProps } from '@ant-design/x';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { SorterResult } from 'antd/es/table/interface';
@@ -696,3 +699,73 @@ export function listenToBackgroundTask<
 
   return controller.abort.bind(controller);
 }
+type ResourceLimits =
+  | NonNullable<
+      NonNullable<FileBrowserButtonImageNodeFragment$data>['resource_limits']
+    >
+  | NonNullable<
+      NonNullable<SFTPButtonImageNodeFragment$data>['resource_limits']
+    >;
+
+const RESOURCE_DEFAULTS = {
+  CPU: 1,
+  MEMORY: '256m',
+  SHMEM: '64m',
+  FALLBACK_MEMORY: '320m',
+} as const;
+
+export const calculateResources = (
+  resourceLimits: ResourceLimits | null,
+  labels: any,
+) => {
+  const limits = resourceLimits || [];
+  const cpu =
+    limits.find((r) => r?.key === 'cpu')?.min || RESOURCE_DEFAULTS.CPU;
+  const shmem =
+    labels?.['ai.backend.resource.preferred.shmem'] || RESOURCE_DEFAULTS.SHMEM;
+  const baseMem =
+    limits.find((r) => r?.key === 'mem')?.min || RESOURCE_DEFAULTS.MEMORY;
+
+  return {
+    cpu: cpu as number,
+    mem:
+      addNumberWithUnits(baseMem, shmem, 'm') ||
+      RESOURCE_DEFAULTS.FALLBACK_MEMORY,
+    shmem: shmem as string,
+  };
+};
+
+export const createSessionConfig = (
+  mountedVfolders: Array<string> | string,
+  domain: string,
+  projectName: string,
+  resourceLimits: ResourceLimits | null,
+  architecture?: string,
+  labels?: any,
+  rest?: Partial<SessionResources>,
+): SessionResources => {
+  const { cpu, mem, shmem } = calculateResources(resourceLimits, labels);
+  return {
+    cluster_mode: 'single-node',
+    cluster_size: 1,
+    domain,
+    group_name: projectName,
+    ...(architecture && { architecture }),
+    ...rest,
+    config: {
+      ...rest?.config,
+      mounts:
+        typeof mountedVfolders === 'string'
+          ? [mountedVfolders]
+          : mountedVfolders,
+      resources: {
+        ..._.mapValues(_.keyBy(resourceLimits || [], 'key'), 'min'),
+        cpu,
+        mem,
+      },
+      resource_opts: {
+        shmem,
+      },
+    },
+  };
+};
