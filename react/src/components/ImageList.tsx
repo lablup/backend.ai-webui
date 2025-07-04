@@ -489,11 +489,11 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         align="stretch"
         style={{
           flex: 1,
-          paddingBottom: token.paddingSM,
           ...style,
         }}
+        gap="sm"
       >
-        <Flex justify="end" style={{ padding: token.paddingSM }} gap={'xs'}>
+        <Flex justify="end" gap={'xs'}>
           {selectedRows.length > 0 ? (
             <Typography.Text>
               {t('general.NSelected', {
@@ -542,20 +542,24 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           </Button>
         </Flex>
         <BAITable
+          neoStyle
+          size="small"
           resizable
           rowKey="id"
           scroll={{ x: 'max-content' }}
           pagination={{
+            showSizeChanger: true,
             showTotal(total, range) {
-              return `${range[0]}-${range[1]} of ${total} items`;
+              return t('pagination.Total', {
+                start: range[0],
+                end: range[1],
+                total,
+              });
             },
             pageSizeOptions: ['10', '20', '50'],
             extraContent: (
               <Button
                 type="text"
-                style={{
-                  marginRight: token.marginXS,
-                }}
                 icon={<SettingOutlined />}
                 onClick={() => {
                   toggleColumnSettingModal();
@@ -592,20 +596,6 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           })}
           showSorterTooltip={false}
         />
-        {/* <Flex
-          justify="end"
-          style={{
-            padding: token.paddingXXS,
-          }}
-        >
-          <Button
-            type="text"
-            icon={<SettingOutlined />}
-            onClick={() => {
-              toggleColumnSettingModal();
-            }}
-          />
-        </Flex> */}
       </Flex>
       <ManageImageResourceLimitModal
         open={!!managingResourceLimit}

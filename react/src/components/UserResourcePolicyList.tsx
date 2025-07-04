@@ -14,6 +14,7 @@ import {
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
+import BAITable from './BAITable';
 import Flex from './Flex';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import UserResourcePolicySettingModal from './UserResourcePolicySettingModal';
@@ -25,7 +26,7 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App, Button, Dropdown, Popconfirm, Space, Table, theme } from 'antd';
+import { App, Button, Dropdown, Popconfirm, Space, theme } from 'antd';
 import { ColumnType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -34,8 +35,10 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 type UserResourcePolicies = NonNullable<
-  UserResourcePolicyListQuery$data['user_resource_policies']
->[number];
+  NonNullable<
+    UserResourcePolicyListQuery$data['user_resource_policies']
+  >[number]
+>;
 
 interface UserResourcePolicyListProps {}
 
@@ -281,18 +284,8 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
   };
 
   return (
-    <Flex direction="column" align="stretch">
-      <Flex
-        direction="row"
-        justify="between"
-        wrap="wrap"
-        gap={'xs'}
-        style={{
-          padding: token.paddingContentVertical,
-          paddingLeft: token.paddingContentHorizontalSM,
-          paddingRight: token.paddingContentHorizontalSM,
-        }}
-      >
+    <Flex direction="column" align="stretch" gap="sm">
+      <Flex direction="row" justify="between" wrap="wrap" gap={'xs'}>
         <Flex direction="column" align="start">
           <Dropdown
             menu={{
@@ -342,7 +335,9 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
           </Flex>
         </Flex>
       </Flex>
-      <Table
+      <BAITable
+        neoStyle
+        size="small"
         rowKey="id"
         showSorterTooltip={false}
         columns={_.filter(
@@ -351,22 +346,28 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
         )}
         dataSource={filterNonNullItems(user_resource_policies)}
         scroll={{ x: 'max-content' }}
-        pagination={false}
-      />
-      <Flex
-        justify="end"
-        style={{
-          padding: token.paddingXXS,
+        pagination={{
+          showSizeChanger: true,
+          showTotal(total, range) {
+            return t('pagination.Total', {
+              start: range[0],
+              end: range[1],
+              total,
+            });
+          },
+          pageSizeOptions: ['10', '20', '50'],
+
+          extraContent: (
+            <Button
+              type="text"
+              icon={<SettingOutlined />}
+              onClick={() => {
+                toggleColumnSettingModal();
+              }}
+            />
+          ),
         }}
-      >
-        <Button
-          type="text"
-          icon={<SettingOutlined />}
-          onClick={() => {
-            toggleColumnSettingModal();
-          }}
-        />
-      </Flex>
+      />
       <TableColumnsSettingModal
         open={visibleColumnSettingModal}
         onRequestClose={(values) => {

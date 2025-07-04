@@ -308,14 +308,17 @@ const StorageProxyList = () => {
           deferredFetchKey !== fetchKey
         }
         pagination={{
+          showSizeChanger: true,
           pageSize: tablePaginationOption.pageSize,
           current: tablePaginationOption.current,
           total: storage_volume_list?.total_count ?? 0,
-          showTotal: (total) => (
-            <Typography.Text type="secondary">
-              {t('general.TotalItems', { total: total })}
-            </Typography.Text>
-          ),
+          showTotal(total, range) {
+            return t('pagination.Total', {
+              start: range[0],
+              end: range[1],
+              total,
+            });
+          },
           onChange(current, pageSize) {
             if (_.isNumber(current) && _.isNumber(pageSize)) {
               setTablePaginationOption({

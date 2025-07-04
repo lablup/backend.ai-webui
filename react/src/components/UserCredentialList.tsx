@@ -146,14 +146,8 @@ const UserCredentialList: React.FC = () => {
     `);
 
   return (
-    <Flex direction="column" align="stretch">
-      <Flex
-        justify="between"
-        align="start"
-        gap="xs"
-        style={{ padding: token.paddingSM }}
-        wrap="wrap"
-      >
+    <Flex direction="column" align="stretch" gap="sm">
+      <Flex justify="between" align="start" gap="xs" wrap="wrap">
         <Flex gap={'sm'} align="start">
           <BAIRadioGroup
             value={activeType}
@@ -246,6 +240,8 @@ const UserCredentialList: React.FC = () => {
         </Flex>
       </Flex>
       <BAITable<Keypair>
+        neoStyle
+        size="small"
         // resizable
         rowKey={'id'}
         scroll={{ x: 'max-content' }}
@@ -544,8 +540,12 @@ const UserCredentialList: React.FC = () => {
           showSizeChanger: true,
           total: keypair_list?.total_count || 0,
           current: tablePaginationOption.current,
-          showTotal: (total, range) => {
-            return `${range[0]}-${range[1]} of ${total} items`;
+          showTotal(total, range) {
+            return t('pagination.Total', {
+              start: range[0],
+              end: range[1],
+              total,
+            });
           },
           // TODO: need to set more options to export CSV in current page's data
           pageSizeOptions: ['10', '20', '50'],
