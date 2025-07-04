@@ -17,6 +17,10 @@ type LogoConfig = {
     width?: number;
     height?: number;
   };
+  aboutModalSize?: {
+    width?: number;
+    height?: number;
+  };
 };
 type SiderConfig = {
   theme?: 'light' | 'dark';
