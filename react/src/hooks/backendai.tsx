@@ -383,3 +383,39 @@ export const useVFolderInvitations = (fetchKey?: string) => {
     },
   ] as const;
 };
+
+export const useSFTPDirectAccessInfo = (sessionId: string) => {
+  const baiClient = useSuspendedBackendaiClient();
+  const { data: directAccessInfo, isLoading } = useTanQuery<{
+    public_host: string;
+    sshd_ports: number | string;
+    [key: string]: any;
+  }>({
+    queryKey: ['directAccessInfo', sessionId],
+    queryFn: () => {
+      return baiClient.get_direct_access_info(sessionId);
+    },
+  });
+
+  const host = directAccessInfo?.public_host?.replace(/^https?:\/\//, '') ?? '';
+  const port = directAccessInfo?.sshd_ports;
+
+  return { directAccessInfo, isLoading, host, port };
+};
+
+export const useDownloadIDContainer = (sessionId: string) => {
+  const baiClient = useSuspendedBackendaiClient();
+  const file = '/home/work/id_container';
+
+  const downloadBlob = async () => {
+    const blob = await baiClient.download_single(sessionId, file);
+    if (_.isNil(blob)) {
+      throw new Error('Failed to download blob');
+    }
+    const rawText = await blob.text();
+    const trimmedBlob = rawText.slice(rawText.indexOf('-----'));
+    return new Blob([trimmedBlob], { type: blob.type });
+  };
+
+  return downloadBlob;
+};

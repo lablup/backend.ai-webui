@@ -1,6 +1,7 @@
 import { LegacyFolderExplorerQuery } from '../__generated__/LegacyFolderExplorerQuery.graphql';
-import { toGlobalId } from '../helper';
+import { filterEmptyItem, toGlobalId } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import FolderExplorerActions from './FolderExplorerActions';
@@ -8,6 +9,7 @@ import FolderExplorerHeader from './FolderExplorerHeader';
 import VFolderNodeDescription from './VFolderNodeDescription';
 import { Alert, Grid, Splitter, theme } from 'antd';
 import { createStyles } from 'antd-style';
+import _ from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -48,8 +50,9 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
   // but the Lit Element is not rendered and the values inside are not available but ref is available.
   const folderExplorerRef = useRef<FolderExplorerElement>(null);
 
-  // ensure the client is connected
-  useSuspendedBackendaiClient();
+  const currentProject = useCurrentProjectValue();
+  const baiClient = useSuspendedBackendaiClient();
+
   useEffect(() => {
     const handleConnected = (e: any) => {
       setIsWritable(e.detail || false);
@@ -73,26 +76,91 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
     };
   }, []);
 
-  const { vfolder_node } = useLazyLoadQuery<LegacyFolderExplorerQuery>(
-    graphql`
-      query LegacyFolderExplorerQuery($vfolderUUID: String!) {
-        vfolder_node(id: $vfolderUUID) @since(version: "24.03.4") {
-          id
-          user
-          permission
-          unmanaged_path @since(version: "25.04.0")
-          ...FolderExplorerHeaderFragment
-          ...VFolderNodeDescriptionFragment
-          ...VFolderNameTitleNodeFragment
+  // TODO: check default file browser and ssh image from config and filter the image nodes.
+  // Else use the installed image nodes with the label "ai.backend.service-ports == filebrowser", "ai.backend.role == SYSTEM".
+  const { vfolder_node, fileBrowserImageNodes, sftpImageNodes } =
+    useLazyLoadQuery<LegacyFolderExplorerQuery>(
+      graphql`
+        query LegacyFolderExplorerQuery(
+          $vfolderUUID: String!
+          $scope_id: ScopeField!
+          $fileBrowserFilter: String
+          $sftpFilter: String
+        ) {
+          vfolder_node(id: $vfolderUUID) @since(version: "24.03.4") {
+            id
+            user
+            permission
+            unmanaged_path @since(version: "25.04.0")
+            ...FolderExplorerHeaderFragment
+            ...VFolderNodeDescriptionFragment
+            ...VFolderNameTitleNodeFragment
+          }
+          fileBrowserImageNodes: image_nodes(
+            scope_id: $scope_id
+            filter: $fileBrowserFilter
+          ) {
+            edges {
+              node {
+                id @required(action: THROW)
+                labels {
+                  key
+                  value
+                }
+                installed @since(version: "25.11.0")
+                ...FileBrowserButtonImageNodeFragment
+              }
+            }
+          }
+          sftpImageNodes: image_nodes(
+            scope_id: $scope_id
+            filter: $sftpFilter
+          ) {
+            edges {
+              node {
+                id @required(action: THROW)
+                labels {
+                  key
+                  value
+                }
+                installed @since(version: "25.11.0")
+                ...SFTPButtonImageNodeFragment
+              }
+            }
+          }
         }
-      }
-    `,
-    {
-      vfolderUUID: toGlobalId('VirtualFolderNode', vfolderID),
-    },
-    {
-      fetchPolicy: modalProps.open ? 'network-only' : 'store-only',
-    },
+      `,
+      {
+        vfolderUUID: toGlobalId('VirtualFolderNode', vfolderID),
+        scope_id: `project:${currentProject?.id}`,
+        // TODO: find the image nodes with the label "ai.backend.service-ports == filebrowser"
+        // fileBrowserFilter:
+        // TODO: find the image nodes with the label "ai.backend.role == "SYSTEM"
+        // sftpFilter:
+      },
+      {
+        fetchPolicy: modalProps.open ? 'network-only' : 'store-only',
+      },
+    );
+
+  const installedFileBrowserImageNodes = filterEmptyItem(
+    _.map(
+      _.filter(fileBrowserImageNodes?.edges, (node) =>
+        // For backward compatibility, set default installed value to true.
+        _.get(node, 'installed', true),
+      ),
+      (node) => _.get(node, 'node', null),
+    ),
+  );
+
+  const installedSFTPImageNodes = filterEmptyItem(
+    _.map(
+      _.filter(sftpImageNodes?.edges, (node) =>
+        // For backward compatibility, set default installed value to true.
+        _.get(node, 'installed', true),
+      ),
+      (node) => _.get(node, 'node', null),
+    ),
   );
 
   const legacyFolderExplorerPane = (
@@ -137,8 +205,13 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
       footer={null}
       title={
         <FolderExplorerHeader
-          vfolderNodeFrgmt={vfolder_node}
           folderExplorerRef={folderExplorerRef}
+          // Use the first image node as the default file browser image node.
+          fileBrowserImageNodesFrgmt={
+            installedFileBrowserImageNodes?.[0] || null
+          }
+          sftpImageNodesFrgmt={installedSFTPImageNodes?.[0] || null}
+          vfolderNodeFrgmt={vfolder_node}
         />
       }
       onCancel={() => {

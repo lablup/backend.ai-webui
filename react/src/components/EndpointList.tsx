@@ -242,6 +242,7 @@ const EndpointList: React.FC<EndpointListProps> = ({
       title: t('modelService.Status'),
       key: 'status',
       render: (text, row) => <EndpointStatusTag endpointFrgmt={row} />,
+      sort: true,
     },
     baiClient.is_admin && {
       title: t('modelService.Owner'),

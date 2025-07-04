@@ -546,5 +546,6 @@ type BackendAIConfig = {
   showNonInstalledImages: boolean;
   enableInteractiveLoginAccountSwitch: boolean;
   debug: boolean;
+  defaultFileBrowserImage: string;
   [key: string]: any;
 };
