@@ -1,20 +1,23 @@
 import { UserSessionsMetricsQuery } from '../__generated__/UserSessionsMetricsQuery.graphql';
+import { filterEmptyItem } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
+import BAIBoard, { BAIBoardItem } from './BAIBoard';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import Flex from './Flex';
 import SessionMetricGraph from './SessionMetricGraph';
-import { Alert, Col, DatePicker, Empty, Row, Skeleton, theme } from 'antd';
+import { Alert, DatePicker, Empty, Skeleton, theme } from 'antd';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import { Suspense, useTransition } from 'react';
+import { Suspense, useEffect, useMemo, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
-interface PrometheusMetricProps {}
+interface UserSessionsMetricsProps {}
 
-const UserSessionsMetrics: React.FC<PrometheusMetricProps> = () => {
+const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { RangePicker } = DatePicker;
@@ -48,7 +51,7 @@ const UserSessionsMetrics: React.FC<PrometheusMetricProps> = () => {
       },
     );
 
-  const sortedMetricMetadata = (() => {
+  const sortedMetricMetadata = useMemo(() => {
     const metrics = container_utilization_metric_metadata?.metric_names || [];
 
     const { cpuUtil, memory, acceleratorGroups, rest } = _.reduce(
@@ -87,7 +90,84 @@ const UserSessionsMetrics: React.FC<PrometheusMetricProps> = () => {
     );
 
     return [...cpuUtil, ...memory, ...sortedAccelMetrics, ...rest];
-  })();
+  }, [container_utilization_metric_metadata?.metric_names]);
+
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const [localStorageBoardItems, setLocalStorageBoardItems] =
+    useBAISettingUserState('session_metrics_board_items');
+
+  const initialBoardItems = useMemo(() => {
+    const defaultBoardItem: Array<BAIBoardItem> = _.map(
+      sortedMetricMetadata,
+      (metric) => ({
+        id: metric,
+        rowSpan: 3,
+        columnSpan: windowWidth > 2160 ? 3 : 2,
+        data: {
+          content: (
+            <Suspense
+              fallback={
+                <Skeleton
+                  active
+                  style={{ padding: `0px ${token.marginMD}px` }}
+                />
+              }
+            >
+              <SessionMetricGraph
+                queryProps={{
+                  startDate: dayjs(startDate).unix().toString(),
+                  endDate: dayjs(endDate).unix().toString(),
+                  metricName: metric,
+                  userId: userInfo[0]?.uuid ?? '',
+                  dayDiff: dayDiff,
+                }}
+                fetchKey={usageFetchKey}
+              />
+            </Suspense>
+          ),
+        },
+      }),
+    );
+
+    if (localStorageBoardItems) {
+      const boardItemsWithContent = _.map(localStorageBoardItems, (item) => {
+        const initialItem = _.find(
+          defaultBoardItem,
+          (defaultItem) => defaultItem.id === item.id,
+        );
+        return initialItem ? { ...item, data: initialItem.data } : null;
+      });
+
+      return filterEmptyItem(boardItemsWithContent);
+    }
+
+    return defaultBoardItem;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    sortedMetricMetadata,
+    startDate,
+    endDate,
+    usageFetchKey,
+    dayDiff,
+    windowWidth,
+  ]);
+
+  const [boardItems, setBoardItems] =
+    useState<Array<BAIBoardItem>>(initialBoardItems);
+
+  useEffect(() => {
+    setBoardItems(initialBoardItems);
+  }, [initialBoardItems]);
 
   return (
     <Flex
@@ -102,8 +182,10 @@ const UserSessionsMetrics: React.FC<PrometheusMetricProps> = () => {
           showTime={{ format: 'HH:mm' }}
           maxDate={dayjs()}
           onChange={(_, [startDate, endDate]) => {
-            setStartDate(startDate);
-            setEndDate(endDate);
+            startUsageTransition(() => {
+              setStartDate(startDate);
+              setEndDate(endDate);
+            });
           }}
           defaultValue={[dayjs(startDate), dayjs(endDate)]}
           presets={[
@@ -164,33 +246,26 @@ const UserSessionsMetrics: React.FC<PrometheusMetricProps> = () => {
           message={t('statistics.prometheus.DataMissingInLowUsageDesc')}
         />
       )}
-      <Suspense fallback={<Skeleton active />}>
-        {_.isEmpty(sortedMetricMetadata) ? (
-          <Empty
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
-            description={t('statistics.prometheus.NoMetricsToDisplay')}
-          />
-        ) : (
-          <Row gutter={[16, 16]}>
-            {_.map(sortedMetricMetadata, (metric: string) => {
-              return (
-                <Col key={metric} xs={24} md={24} xl={12} xxl={12}>
-                  <SessionMetricGraph
-                    queryProps={{
-                      startDate: dayjs(startDate).unix().toString(),
-                      endDate: dayjs(endDate).unix().toString(),
-                      metricName: metric,
-                      userId: userInfo[0]?.uuid ?? '',
-                      dayDiff: dayDiff,
-                    }}
-                    fetchKey={usageFetchKey}
-                  />
-                </Col>
-              );
-            })}
-          </Row>
-        )}
-      </Suspense>
+      {_.isEmpty(sortedMetricMetadata) ? (
+        <Empty
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          description={t('statistics.prometheus.NoMetricsToDisplay')}
+        />
+      ) : (
+        <BAIBoard
+          movable
+          resizable
+          bordered
+          items={boardItems}
+          onItemsChange={(event) => {
+            const changedItems = [...event.detail.items];
+            setBoardItems(changedItems);
+            setLocalStorageBoardItems(
+              _.map(changedItems, (item) => _.omit(item, 'data')),
+            );
+          }}
+        />
+      )}
     </Flex>
   );
 };
