@@ -571,6 +571,7 @@ const ResourceAllocationFormItems: React.FC<
             ? 'block'
             : 'none',
         }}
+        data-testid="resource-preset-card"
       >
         <Form.Item
           shouldUpdate={(prev, cur) =>
