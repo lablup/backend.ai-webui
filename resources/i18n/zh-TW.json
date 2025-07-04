@@ -331,6 +331,7 @@
       "RemoveFileExtension": "刪除文件擴展名",
       "RenameAFile": "重新命名文件",
       "RenameAFolder": "重新命名資料夾",
+      "RetryingOperation": "重試建立會話...",
       "RunSSH/SFTPserver": "运行 SFTP 服务器",
       "SFTPSessionNotAvailable": "SFTP 会话现在不可用",
       "ShareFolder": "共享文件夾",

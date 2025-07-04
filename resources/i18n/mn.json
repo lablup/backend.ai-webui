@@ -330,6 +330,7 @@
       "RemoveFileExtension": "Устгах ",
       "RenameAFile": "Файлын нэрийг өөрчлөх",
       "RenameAFolder": "Хавтасны нэрийг өөрчлөх",
+      "RetryingOperation": "Сешнийг тогтоохын тулд дахин оролдож үзэх ...",
       "RunSSH/SFTPserver": "SFTP серверийг ажиллуул",
       "SFTPSessionNotAvailable": "SFTP сессийг одоо ашиглах боломжгүй",
       "ShareFolder": "Фолдерыг хуваалцах",

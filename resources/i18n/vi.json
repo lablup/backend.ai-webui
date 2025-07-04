@@ -331,6 +331,7 @@
       "RemoveFileExtension": "Di dời ",
       "RenameAFile": "Đổi tên tập tin",
       "RenameAFolder": "Đổi tên thư mục",
+      "RetryingOperation": "Thử lại để thiết lập phiên ...",
       "RunSSH/SFTPserver": "Chạy máy chủ SFTP",
       "SFTPSessionNotAvailable": "Phiên SFTP hiện không khả dụng",
       "ShareFolder": "Chia sẻ thư mục",

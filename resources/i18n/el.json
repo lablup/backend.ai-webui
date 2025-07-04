@@ -328,6 +328,7 @@
       "RemoveFileExtension": "Αφαιρώ ",
       "RenameAFile": "Μετονόμασε το αρχείο",
       "RenameAFolder": "Μετονομασία φακέλου",
+      "RetryingOperation": "Επανένταξη για την καθιέρωση της συνεδρίας ...",
       "RunSSH/SFTPserver": "Εκτέλεση διακομιστή SFTP",
       "SFTPSessionNotAvailable": "Το SFTP Session δεν είναι διαθέσιμο τώρα",
       "ShareFolder": "Κοινόχρηστο φάκελο",

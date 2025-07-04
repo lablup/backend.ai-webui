@@ -333,6 +333,7 @@
       "RemoveFileExtension": " 제거",
       "RenameAFile": "파일 이름 변경",
       "RenameAFolder": "폴더 이름 변경",
+      "RetryingOperation": "세션 생성 재시도 중...",
       "RunSSH/SFTPserver": "SFTP 서버 사용",
       "SFTPSessionNotAvailable": "현재 SFTP 세션 사용이 불가능합니다.",
       "ShareFolder": "폴더 공유",
