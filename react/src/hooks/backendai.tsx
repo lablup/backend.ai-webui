@@ -80,26 +80,19 @@ type ResourceSlotDetail = {
 export const useResourceSlotsDetails = (resourceGroupName?: string) => {
   const [key, checkUpdate] = useUpdatableState('first');
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
-  const baiClient = useSuspendedBackendaiClient();
   const { data: resourceSlotsInRG } = useTanQuery<{
     [key: string]: ResourceSlotDetail | undefined;
   }>({
     queryKey: ['useResourceSlots', resourceGroupName, key],
     queryFn: () => {
-      if (!baiClient.isManagerVersionCompatibleWith('23.09.0')) {
-        return {};
-      } else {
-        // `/resource-slots/details` is available since 23.09
-        // https://github.com/lablup/backend.ai/issues/1589
-        const search = new URLSearchParams();
-        resourceGroupName && search.set('sgroup', resourceGroupName);
-        const searchParamString = search.toString();
-        return baiRequestWithPromise({
-          method: 'GET',
-          // if `sgroup` is not provided, it will return all resource slots of all resource groups
-          url: `/config/resource-slots/details${searchParamString ? '?' + search.toString() : ''}`,
-        });
-      }
+      const search = new URLSearchParams();
+      resourceGroupName && search.set('sgroup', resourceGroupName);
+      const searchParamString = search.toString();
+      return baiRequestWithPromise({
+        method: 'GET',
+        // if `sgroup` is not provided, it will return all resource slots of all resource groups
+        url: `/config/resource-slots/details${searchParamString ? '?' + search.toString() : ''}`,
+      });
     },
     staleTime: 3000,
   });
@@ -169,13 +162,11 @@ export const useCurrentUserInfo = () => {
 
   useEffect(() => {
     const handler = (e: any) => {
-      if (baiClient.supports('change-user-name')) {
-        const input = e.detail;
-        _setUserInfo((v) => ({
-          ...v,
-          full_name: input,
-        }));
-      }
+      const input = e.detail;
+      _setUserInfo((v) => ({
+        ...v,
+        full_name: input,
+      }));
     };
     document.addEventListener('current-user-info-changed', handler);
     return () => {
@@ -288,9 +279,8 @@ export const useTOTPSupported = () => {
     },
     staleTime: 1000,
   });
-  const isTOTPSupported = baiClient.supports('2FA') && isManagerSupportingTOTP;
 
-  return { isTOTPSupported, isLoading };
+  return { isTOTPSupported: isManagerSupportingTOTP, isLoading };
 };
 
 export const useAllowedHostNames = () => {

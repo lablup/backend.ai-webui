@@ -118,7 +118,6 @@ const StorageStatusPanel: React.FC<{
   const {
     user_resource_policy,
     project_resource_policy,
-    keypair_resource_policy,
     project_quota_scope,
     user_quota_scope,
   } = useLazyLoadQuery<StorageStatusPanelQuery>(
@@ -177,15 +176,7 @@ const StorageStatusPanel: React.FC<{
   // Support version:
   // keypair resource policy < 23.09.4
   // user resource policy, project resource policy >= 23.09.6
-  let maxVfolderCount;
-  if (
-    // manager version >= 23.09.6
-    baiClient?.supports('max-vfolder-count-in-user-and-project-resource-policy')
-  ) {
-    maxVfolderCount = user_resource_policy?.max_vfolder_count || 0;
-  } else {
-    maxVfolderCount = keypair_resource_policy?.max_vfolder_count || 0;
-  }
+  const maxVfolderCount = user_resource_policy?.max_vfolder_count || 0;
 
   const numberOfFolderPercent =
     maxVfolderCount || maxVfolderCount === 0

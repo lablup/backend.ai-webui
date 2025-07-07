@@ -48,8 +48,7 @@ const ContainerRegistryEditorModal: React.FC<
   const { message, modal } = App.useApp();
 
   const baiClient = useSuspendedBackendaiClient();
-  const isSupportExtraField =
-    baiClient.isManagerVersionCompatibleWith('24.09.3');
+  const isSupportExtraField = baiClient.supports('extra-field');
 
   const formRef = useRef<FormInstance<RegistryFormInput>>(null);
 
@@ -451,8 +450,7 @@ const ContainerRegistryEditorModal: React.FC<
 
 function useCreateContainerMutation() {
   const baiClient = useSuspendedBackendaiClient();
-  const isSupportExtraField =
-    baiClient.isManagerVersionCompatibleWith('24.09.3');
+  const isSupportExtraField = baiClient.supports('extra-field');
   const [commitCreateRegistry, isInflightCreateRegistry] =
     useMutation<ContainerRegistryEditorModalCreateMutation>(graphql`
       mutation ContainerRegistryEditorModalCreateMutation(
@@ -529,8 +527,7 @@ function useCreateContainerMutation() {
 
 function useModifyContainerMutation() {
   const baiClient = useSuspendedBackendaiClient();
-  const isSupportExtraField =
-    baiClient.isManagerVersionCompatibleWith('24.09.3');
+  const isSupportExtraField = baiClient.supports('extra-field');
 
   const [commitModifyRegistry, isInflightModifyRegistry] =
     useMutation<ContainerRegistryEditorModalModifyMutation>(graphql`

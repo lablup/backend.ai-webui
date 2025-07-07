@@ -50,8 +50,8 @@ class ClientConfig {
     connectionMode: string = 'API',
   ) {
     // default configs.
-    this._apiVersionMajor = '4';
-    this._apiVersion = 'v4.20190615'; // For compatibility with 19.03 / 1.4. WILL BE DEPRECATED AND UPGRADED TO v6 FROM 23.03.
+    this._apiVersionMajor = '8';
+    this._apiVersion = 'v8.20240915'; // For compatibility with 24.09.
     this._hashType = 'sha256';
     if (endpoint === undefined || endpoint === null) {
       endpoint = 'https://api.backend.ai';
@@ -629,128 +629,11 @@ class Client {
   }
 
   _updateSupportList() {
-    if (this.isAPIVersionCompatibleWith('v4.20190601')) {
-      this._features['scaling-group'] = true;
-      this._features['group'] = true;
-      this._features['group-folder'] = true;
-      this._features['system-images'] = true;
-      this._features['detailed-session-states'] = true;
-      this._features['change-user-name'] = true;
-    }
-    if (this.isAPIVersionCompatibleWith('v6.20200815')) {
-      this._features['multi-container'] = true;
-      this._features['multi-node'] = true;
-      this._features['storage-proxy'] = true;
-      this._features['hardware-metadata'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('20.09.16')) {
-      this._features['avoid-hol-blocking'] = true;
-      this._features['session-detail-status'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('21.09')) {
-      this._features['schedulable'] = true;
-      this._features['wsproxy-addr'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('22.03')) {
-      this._features['scheduler-opts'] = true;
-      this._features['session-lifetime'] = true;
-    }
-    if (this.isAPIVersionCompatibleWith('v6.20220615')) {
-      this._features['secure-payload'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('22.09')) {
-      this._features['image-commit'] = true;
-      this._features['fine-grained-storage-permissions'] = true;
-      this._features['2FA'] = true;
-    }
     if (this.isManagerVersionCompatibleWith('22.09')){
       this._features['force2FA'] = true;
       if(this.isManagerVersionCompatibleWith('25.09.0')) {
         this._features['force2FA'] = false; // force2FA is deprecated in 25.09.0
       }
-    }
-    if (this.isManagerVersionCompatibleWith('22.09.19')) {
-      this._features['idle-checks'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('22.09.22')) {
-      this._features['is-public'] = true;
-    }
-    if (this.isAPIVersionCompatibleWith('v6.20230315')) {
-      this._features['inference-workload'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('23.03')) {
-      this._features['inference-workload'] = true;
-      this._features['local-vscode-remote-connection'] = true;
-      this._features['display-allocated-shmem'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('23.03.3')) {
-      this._features['sftp-scaling-group'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('23.03.7')) {
-      this._features['quota-scope'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('23.03.11')) {
-      this._features['model-serving'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('23.09.0')) {
-      this._features['sudo-session-enabled'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('23.09.2')) {
-      this._features['max-quota-scope-size-in-user-and-project-resource-policy'] = true;
-      this._features['deprecated-max-vfolder-size-in-user-and-project-resource-policy'] = true;
-      this._features['max-quota-scope-size'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('23.09.4')) {
-      this._features['deprecated-max-vfolder-count-in-keypair-resource-policy'] = true;
-      this._features['deprecated-max-vfolder-size-in-keypair-resource-policy'] = true;
-      this._features['use-win-instead-of-win32'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('23.09.6')) {
-      this._features['max-vfolder-count-in-user-and-project-resource-policy'] = true;
-      this._features['deprecated-max-quota-scope-in-keypair-resource-policy'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('23.09.7')) {
-      this._features['main-access-key'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('23.09.8')) {
-      this._features['model-serving-endpoint-user-info'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('23.09.9')) {
-      this._features['modify-endpoint'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('23.09.10')) {
-      this._features['max-session-count-per-model-session'] = true;
-      // In versions 23.09.10 and earlier, it is not suitable to create and modify user resource policies.
-      this._features['configure-user-resource-policy'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('24.03.0')) {
-      this._features['vfolder-trash-bin'] = true;
-      this._features['model-store'] = true;
-      this._features['per-user-image'] = true;
-      this._features['user-committed-image'] = true;
-      this._features['model-service-validation'] = true;
-      this._features['max-customized-image-count'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('24.03.4')) {
-      this._features['endpoint-extra-mounts'] = true;
-      // Incorrect version annotation in the schema.
-      // ref: https://github.com/lablup/backend.ai/issues/3413
-      // ---------------------- START ----------------------
-      this._features['max-pending-session-count'] = true;
-      this._features['max-concurrent-sftp-sessions'] = true;
-      // ---------------------- END ------------------------
-      this._features['max-pending-session-resource-slots'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('24.03.5')) {
-      this._features['modify-endpoint-environ'] = true;
-      this._features['endpoint-runtime-variant'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('24.03.7')) {
-      this._features['per-kernel-logs'] = true;
-    }
-    // ignore next alpha version
-    if(this.isManagerVersionCompatibleWith(['24.03.10'])) {
-      this._features['endpoint-lifecycle-stage-filter'] = true;
     }
     if (this.isManagerVersionCompatibleWith('24.09')) {
       this._features['extend-login-session'] = true;
@@ -760,6 +643,9 @@ class Client {
     if (this.isManagerVersionCompatibleWith('24.09.1')) {
       this._features['agent-select'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('24.09.3')) {
+      this._features['extra-field'] = true;
+    }
     if (this.isManagerVersionCompatibleWith('24.12.0')) {
       this._features['extended-image-info'] = true;
       this._features['batch-timeout'] = true;
@@ -767,6 +653,7 @@ class Client {
       this._features['creating-session-status'] = true;
       this._features['max_network_count'] = true;
       this._features['replicas'] = true;
+      this._features['base-image-name'] = true;
     }
     if (this.isManagerVersionCompatibleWith(['25.1.0', '24.09.6', '24.03.12'])) {
       this._features['vfolder-id-based'] = true;
@@ -782,9 +669,11 @@ class Client {
     }
     if (this.isManagerVersionCompatibleWith('25.6.0')) {
       this._features['user-metrics'] = true;
+      this._features['invitation-inviter-email'] = true;
     }
     if (this.isManagerVersionCompatibleWith('25.1.0')) {
       this._features['image_rescan_by_project'] = true
+      this._features['auto-scaling-rule'] = true;
     }
   }
 
@@ -1070,12 +959,7 @@ class Client {
    * Return the resource slots.
    */
   async get_resource_slots(): Promise<any> {
-    let rqst;
-    if (this.isAPIVersionCompatibleWith('v4.20190601')) {
-      rqst = this.newSignedRequest('GET', '/config/resource-slots', null, '');
-    } else {
-      rqst = this.newSignedRequest('GET', '/etcd/resource-slots', null, '');
-    }
+    const rqst = this.newSignedRequest('GET', '/config/resource-slots', null, '');
     return this._wrapWithPromise(rqst);
   }
 
@@ -1284,7 +1168,7 @@ class Client {
     if (ownerKey != null) {
       queryParams.append('owner_access_key', ownerKey);
     }
-    if (this.supports('per-kernel-logs') && kernelId !== null) {
+    if (kernelId !== null) {
       queryParams.append('kernel_id', kernelId);
     }
     let queryString = `${this.kernelPrefix}/${sessionId}/logs`;
@@ -1472,7 +1356,7 @@ class Client {
     };
     const q = new URLSearchParams(params).toString();
     let rqst = this.newSignedRequest(
-      this.isManagerVersionCompatibleWith('23.09') ? 'POST' : 'GET',
+      'POST',
       `${this.kernelPrefix}/${sessionId}/download?${q}`,
       null,
       null,
@@ -1486,7 +1370,7 @@ class Client {
     };
     const q = new URLSearchParams(params).toString();
     let rqst = this.newSignedRequest(
-      this.isManagerVersionCompatibleWith('23.09') ? 'POST' : 'GET',
+      'POST',
       `${this.kernelPrefix}/${sessionId}/download_single?${q}`,
       null,
       null,
@@ -1649,7 +1533,7 @@ class Client {
       hdrs.set('Content-Type', content_type);
     }
     // Add secure tag if payload is encoded.
-    if (secure && this.supports('secure-payload')) {
+    if (secure) {
       if (typeof requestBody == 'string') {
         hdrs.set('X-BackendAI-Encoded', 'true');
         requestBody = this.getEncodedPayload(requestBody);
@@ -2080,24 +1964,20 @@ class VFolder {
         host: host,
       };
     }
-    if (this.client.supports('group-folder') && group !== '') {
+    if (group !== '') {
       body = {
         name: name,
         host: host,
         group: group,
       };
     }
-    if (this.client.isAPIVersionCompatibleWith('v4.20191215')) {
-      if (usageMode) {
-        body['usage_mode'] = usageMode;
-      }
-      if (permission) {
-        body['permission'] = permission;
-      }
+    if (usageMode) {
+      body['usage_mode'] = usageMode;
     }
-    if (this.client.supports('storage-proxy')) {
-      body['cloneable'] = cloneable;
+    if (permission) {
+      body['permission'] = permission;
     }
+    body['cloneable'] = cloneable;
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}`, body);
     return this.client._wrapWithPromise(rqst);
   }
@@ -2166,7 +2046,7 @@ class VFolder {
   async list_hosts(groupId = null): Promise<any> {
     let reqUrl = `${this.urlPrefix}/_/hosts`;
     let params = {};
-    if (this.client.isManagerVersionCompatibleWith('22.03.0') && groupId) {
+    if (groupId) {
       params['group_id'] = groupId;
     }
     const q = new URLSearchParams(params).toString();
@@ -2393,13 +2273,8 @@ class VFolder {
     if (name == null) {
       name = this.name;
     }
-    let body;
-    if (this.client.isAPIVersionCompatibleWith('v6.20200815')) {
-      body = { target_path, new_name, is_dir };
-    } else {
-      body = { target_path, new_name };
-    }
-    let rqst = this.client.newSignedRequest(
+    const body = { target_path, new_name, is_dir };
+    const rqst = this.client.newSignedRequest(
       'POST',
       `${this.urlPrefix}/${name}/rename_file`,
       body,
@@ -2867,12 +2742,6 @@ class AgentSummary {
     timeout: number = 0,
   ): Promise<any> {
     let f = fields.join(' ');
-    if (
-      !this.client.supports('schedulable') &&
-      fields.includes('schedulable')
-    ) {
-      f.replace('schedulable', '');
-    }
     if (!['ALIVE', 'TERMINATED'].includes(status)) {
       return Promise.resolve(false);
     }
@@ -2950,10 +2819,8 @@ class StorageProxy {
   }
 
   async getAllPermissions(): Promise<any> {
-    if (this.client.supports('fine-grained-storage-permissions')) {
       const rqst = this.client.newSignedRequest('GET', `/acl`, null);
       return this.client._wrapWithPromise(rqst);
-    }
   }
 
   /**
@@ -3269,11 +3136,9 @@ class ResourcePolicy {
       'max_vfolder_count',
       'allowed_vfolder_hosts',
       'idle_timeout',
+      'max_session_lifetime',
     ],
   ): Promise<any> {
-    if (this.client.supports('session-lifetime')) {
-      fields.push('max_session_lifetime');
-    }
     let q, v;
     if (name === null) {
       q =
@@ -3315,10 +3180,8 @@ class ResourcePolicy {
       'max_vfolder_count',
       'allowed_vfolder_hosts',
       'idle_timeout',
+      'max_session_lifetime',
     ];
-    if (this.client.supports('session-lifetime')) {
-      fields.push('max_session_lifetime');
-    }
     if (this.client.is_admin === true && name !== null) {
       let q =
         `mutation($name: String!, $input: CreateKeyPairResourcePolicyInput!) {` +
@@ -3426,20 +3289,15 @@ class ContainerImage {
     system_images = false,
   ): Promise<any> {
     let q, v;
-    if (this.client.supports('system-images')) {
-      if (installed_only) {
-        q =
-          `query($installed:Boolean) {` +
-          `  images(is_installed:$installed) { ${fields.join(' ')} }` +
-          '}';
-        v = { installed: installed_only, is_operation: system_images };
-      } else {
-        q = `query {` + `  images { ${fields.join(' ')} }` + '}';
-        v = { is_operation: system_images };
-      }
+    if (installed_only) {
+      q =
+        `query($installed:Boolean) {` +
+        `  images(is_installed:$installed) { ${fields.join(' ')} }` +
+        '}';
+      v = { installed: installed_only, is_operation: system_images };
     } else {
       q = `query {` + `  images { ${fields.join(' ')} }` + '}';
-      v = {};
+      v = { is_operation: system_images };
     }
     return this.client.query(q, v);
   }
@@ -3693,10 +3551,6 @@ class ComputeSession {
     timeout: number = 0,
   ): Promise<any> {
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields);
-    if (!this.client.supports('avoid-hol-blocking')) {
-      status.replace('SCHEDULED,', '');
-      status.replace('SCHEDULED', '');
-    }
     let q, v;
     const sessions: any = [];
 
@@ -4233,7 +4087,6 @@ class Group {
     type = ["GENERAL"],
   ): Promise<any> {
     let q, v;
-    if (this.client.supports('model-store')) {
       q =
         `query($is_active:Boolean, $type:[String!]) {` +
         `  groups(is_active:$is_active, type:$type) { ${fields.join(' ')} }` +
@@ -4252,27 +4105,6 @@ class Group {
           type: type,
         };
       }
-    } else {
-      // remove 'type' from fields
-      fields = fields.filter((item) => item !== 'type');
-      q =
-        `query($is_active:Boolean) {` +
-        `  groups(is_active:$is_active) { ${fields.join(' ')} }` +
-        '}';
-      v = { is_active: is_active };
-      if (domain_name) {
-        q =
-          `query($domain_name: String, $is_active:Boolean) {` +
-          `  groups(domain_name: $domain_name, is_active:$is_active) { ${fields.join(
-            ' ',
-          )} }` +
-          '}';
-        v = {
-          is_active: is_active,
-          domain_name: domain_name,
-        };
-      }
-    }
     return this.client.query(q, v);
   }
 }
@@ -4540,9 +4372,6 @@ class User {
       // we iterate pages to gather all users for client-side compability.
       const limit = 100;
       const users = [] as any;
-      if (!this.client.supports('main-access-key')) {
-        fields = fields.filter(field => field !== 'main_access_key');
-      }
       q = this.client.is_admin
         ? `
         query($offset:Int!, $limit:Int!, $is_active:Boolean) {
@@ -4610,9 +4439,6 @@ class User {
       'groups {id name}',
     ],
   ) {
-    if (!this.client.supports('2FA') && '2FA' in fields) {
-      fields.splice(fields.indexOf('2FA'), 1);
-    }
     let q, v;
     if (this.client.is_admin === true) {
       q =
@@ -4744,13 +4570,9 @@ class ScalingGroup {
         'driver_opts',
         'scheduler',
         'scheduler_opts',
+        'wsproxy_addr',
+        'is_public',
       ];
-      if (this.client.isManagerVersionCompatibleWith('21.09.0')) {
-        fields.push('wsproxy_addr');
-      }
-      if (this.client.isManagerVersionCompatibleWith('22.09.22')) {
-        fields.push('is_public');
-      }
       const q = `query {` + `  scaling_groups { ${fields.join(' ')} }` + `}`;
       const v = {};
       return this.client.query(q, v);
@@ -4777,9 +4599,6 @@ class ScalingGroup {
    * @param {string} groupId - Project (group) ID
    */
   async getWsproxyVersion(scalingGroup, groupId): Promise<any> {
-    if (!this.client.isManagerVersionCompatibleWith('21.09.0')) {
-      return Promise.resolve({ wsproxy_version: 'v1' }); // for manager<=21.03 compatibility.
-    }
     const url = `/scaling-groups/${scalingGroup}/wsproxy-version?${new URLSearchParams({group: groupId}).toString()}`;
     const rqst = this.client.newSignedRequest('GET', url, null, null);
     return this.client._wrapWithPromise(rqst);
@@ -4852,15 +4671,6 @@ class ScalingGroup {
    * }
    */
   async update(name, input): Promise<any> {
-    if (!this.client.isManagerVersionCompatibleWith('21.09.0')) {
-      delete input.wsproxy_addr;
-      if (Object.keys(input).length < 1) {
-        return Promise.resolve({ modify_scaling_group: { ok: true } });
-      }
-    }
-    if (!this.client.isManagerVersionCompatibleWith('22.09.22')) {
-      delete input.is_public;
-    }
     let q =
       `mutation($name: String!, $input: ModifyScalingGroupInput!) {` +
       `  modify_scaling_group(name: $name, props: $input) {` +

@@ -628,11 +628,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
       }
     });
-    if (
-      globalThis.backendaiclient.supports('local-vscode-remote-connection') &&
-      this.allowTCPApps &&
-      !filteredAppServices.includes('vscode-desktop')
-    ) {
+    if (this.allowTCPApps && !filteredAppServices.includes('vscode-desktop')) {
       const insertAfterIndex = this.appSupportList.findIndex(
         (item) => item.name === 'vscode',
       );

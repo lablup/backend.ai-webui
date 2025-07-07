@@ -99,23 +99,6 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
     staleTime: 5000,
   });
 
-  // let queryParams: Array<string> = [];
-  // if (session?.access_key != null) {
-  //   queryParams.push(`owner_access_key=${session.access_key}`);
-  // }
-  // if (baiClient.supports('per-kernel-logs') && selectedKernelId !== null) {
-  //   queryParams.push(`kernel_id=${selectedKernelId}`);
-  // }
-  // let queryString = `/session/${session?.row_id}/logs`;
-  // if (queryParams.length > 0) {
-  //   queryString += `?${queryParams.join('&')}`;
-  // }
-  // // const url = `${baiClient._endpoint}${queryString}`
-
-  // const signed = baiClient.newSignedRequest('GET', queryString, null);
-  // console.log(signed)
-  // console.log(signed.uri);
-
   const [lastLineNumbers, { resetPrevious: resetPreviousLineNumber }] =
     useMemoWithPrevious(() => logs?.split('\n').length || 0, [logs]);
 

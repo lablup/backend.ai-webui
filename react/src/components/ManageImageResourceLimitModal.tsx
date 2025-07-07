@@ -4,7 +4,6 @@ import {
 } from '../__generated__/ManageImageResourceLimitModalMutation.graphql';
 import { ManageImageResourceLimitModal_image$key } from '../__generated__/ManageImageResourceLimitModal_image.graphql';
 import { compareNumberWithUnits } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import DynamicUnitInputNumber from './DynamicUnitInputNumber';
@@ -26,7 +25,6 @@ interface ManageImageResourceLimitModalProps extends BAIModalProps {
 const ManageImageResourceLimitModal: React.FC<
   ManageImageResourceLimitModalProps
 > = ({ imageFrgmt, open, onRequestClose, ...BAIModalProps }) => {
-  const baiClient = useSuspendedBackendaiClient();
   // Differentiate default max value based on manager version.
   // The difference between validating a variable type as undefined or none for an unsupplied field value.
   // [Associated PR links] : https://github.com/lablup/backend.ai/pull/1941
@@ -84,10 +82,8 @@ const ManageImageResourceLimitModal: React.FC<
         key,
         min: _.toString(value) ?? '0',
         max:
-          (image?.resource_limits?.find((item) => item?.key === key)?.max ??
-          baiClient.isManagerVersionCompatibleWith('24.03.4.*'))
-            ? undefined
-            : null,
+          image?.resource_limits?.find((item) => item?.key === key)?.max ??
+          undefined,
       }))
       .filter((item) => !_.isEmpty(item?.min));
 
