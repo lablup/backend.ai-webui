@@ -209,17 +209,7 @@
     "UserStatus": "Status Pengguna",
     "Users": "Pengguna",
     "WarningLessRateLimit": "Jika nilai Rate Limit kecil, operasi API seperti login dapat diblokir.",
-    "YouAreAboutToDeleteCredential": "Anda akan menghapus kredensial pengguna ini:",
-    "validation": {
-      "InvalidEmailAddress": "Alamat email salah.",
-      "LetterNumber-_dot": "Huruf, angka, dan -_. diizinkan",
-      "NameAlreadyExists": "Nama Kebijakan Sudah Ada!",
-      "NumbersOnly": "Hanya angka yang diizinkan",
-      "PleaseSelectOption": "Mohon pilih satu pilihan",
-      "PleaseSelectOptions": "Mohon pilih satu pilihan",
-      "PolicyName": "Nama kebijakan wajib diisi.",
-      "ValidationFailed": "Validasi gagal"
-    }
+    "YouAreAboutToDeleteCredential": "Anda akan menghapus kredensial pengguna ini:"
   },
   "data": {
     "Active": "Aktif",
@@ -377,7 +367,7 @@
       "FolderUsage": "Penggunaan folder",
       "FolderUsing": "Menggunakan",
       "InviteUsers": "Undang Pengguna",
-      "KickOut": "",
+      "KickOut": "Berhenti berbagi",
       "KickOutConfirm": "Berhenti berbagi dengan {{email}}?",
       "Leave": "Tinggalkan",
       "LeaveAFolder": "Tinggalkan folder",
@@ -678,7 +668,17 @@
     "StorageProxies": "Penyimpanan",
     "TotalItems": "Total item {{total}}",
     "Username": "Nama pengguna",
-    "ValueRequired": "Silakan masukkan {{ nama }}"
+    "ValueRequired": "Silakan masukkan {{ nama }}",
+    "validation": {
+      "InvalidEmailAddress": "Alamat email yang tidak valid.",
+      "LetterNumber-_dot": "Memungkinkan huruf, angka, dan -_.",
+      "NameAlreadyExists": "Nama kebijakan sudah ada!",
+      "NumbersOnly": "Memungkinkan angka saja",
+      "PleaseSelectOption": "Pilih satu opsi",
+      "PleaseSelectOptions": "Pilih setidaknya satu opsi atau lebih.",
+      "PolicyName": "Nama kebijakan diperlukan.",
+      "ValidationFailed": "Validasi gagal"
+    }
   },
   "import": {
     "CleanUpImportTask": "Membersihkan tugas impor...",

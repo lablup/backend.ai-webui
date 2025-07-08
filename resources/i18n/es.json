@@ -210,17 +210,7 @@
     "UserStatus": "Estado del usuario",
     "Users": "Usuarios",
     "WarningLessRateLimit": "Si el valor de Rate Limit es pequeño, es posible que se bloqueen operaciones de la API como el inicio de sesión.",
-    "YouAreAboutToDeleteCredential": "Estás a punto de eliminar la credencial de este usuario:",
-    "validation": {
-      "InvalidEmailAddress": "Dirección de correo electrónico no válida.",
-      "LetterNumber-_dot": "Permite letras, números y -_.",
-      "NameAlreadyExists": "El nombre de la póliza ya existe.",
-      "NumbersOnly": "Sólo admite números",
-      "PleaseSelectOption": "Seleccione una opción",
-      "PleaseSelectOptions": "Por favor, seleccione al menos una opción o más.",
-      "PolicyName": "Nombre de la póliza Obligatorio.",
-      "ValidationFailed": "Validación fallida"
-    }
+    "YouAreAboutToDeleteCredential": "Estás a punto de eliminar la credencial de este usuario:"
   },
   "data": {
     "Active": "Activo",
@@ -378,7 +368,7 @@
       "FolderUsage": "Uso de la carpeta",
       "FolderUsing": "Utilizando",
       "InviteUsers": "Invitar al usuario",
-      "KickOut": "",
+      "KickOut": "Dejar de compartir",
       "KickOutConfirm": "¿Dejar de compartir con {{email}}?",
       "Leave": "Deja",
       "LeaveAFolder": "Dejar una carpeta",
@@ -679,7 +669,17 @@
     "StorageProxies": "Almacenes",
     "TotalItems": "Total {{total}} artículos",
     "Username": "Nombre de usuario",
-    "ValueRequired": "Por favor, introduzca {{ nombre }}"
+    "ValueRequired": "Por favor, introduzca {{ nombre }}",
+    "validation": {
+      "InvalidEmailAddress": "Dirección de correo electrónico no válida.",
+      "LetterNumber-_dot": "Permite letras, números y -_.",
+      "NameAlreadyExists": "¡El nombre de la política ya existe!",
+      "NumbersOnly": "Permite solo números",
+      "PleaseSelectOption": "Seleccione una opción",
+      "PleaseSelectOptions": "Seleccione al menos una opción o más.",
+      "PolicyName": "Nombre de la política requerido.",
+      "ValidationFailed": "La validación falló"
+    }
   },
   "import": {
     "CleanUpImportTask": "Tarea de importación de limpieza...",

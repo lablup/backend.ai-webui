@@ -210,17 +210,7 @@
     "UserStatus": "Käyttäjän tila",
     "Users": "Käyttäjät",
     "WarningLessRateLimit": "Jos Rate Limit -arvo on pieni, API-toiminnot, kuten kirjautuminen, voivat estyä.",
-    "YouAreAboutToDeleteCredential": "Olet poistamassa tämän käyttäjän kirjautumistiedot:",
-    "validation": {
-      "InvalidEmailAddress": "Virheellinen sähköpostiosoite.",
-      "LetterNumber-_dot": "Sallii kirjaimet, numerot ja -_.",
-      "NameAlreadyExists": "Käytännön nimi on jo olemassa!",
-      "NumbersOnly": "Sallii vain numerot",
-      "PleaseSelectOption": "Valitse yksi vaihtoehto",
-      "PleaseSelectOptions": "Valitse vähintään yksi tai useampi vaihtoehto.",
-      "PolicyName": "Vakuutuksen nimi Pakollinen.",
-      "ValidationFailed": "Validointi epäonnistui"
-    }
+    "YouAreAboutToDeleteCredential": "Olet poistamassa tämän käyttäjän kirjautumistiedot:"
   },
   "data": {
     "Active": "Aktiivinen",
@@ -378,7 +368,7 @@
       "FolderUsage": "Kansion käyttö",
       "FolderUsing": "Käyttämällä",
       "InviteUsers": "Kutsua käyttäjää",
-      "KickOut": "",
+      "KickOut": "Lopeta jakaminen",
       "KickOutConfirm": "Lopeta jakaminen {{email}} kanssa?",
       "Leave": "Jätä",
       "LeaveAFolder": "Jätä kansio",
@@ -679,7 +669,17 @@
     "StorageProxies": "Varastot",
     "TotalItems": "Yhteensä {{total}} kohteita",
     "Username": "Käyttäjätunnus",
-    "ValueRequired": "Kirjoita {{ nimi }}"
+    "ValueRequired": "Kirjoita {{ nimi }}",
+    "validation": {
+      "InvalidEmailAddress": "Virheellinen sähköpostiosoite.",
+      "LetterNumber-_dot": "Sallii kirjaimet, numerot ja -_.",
+      "NameAlreadyExists": "Politiikan nimi on jo olemassa!",
+      "NumbersOnly": "Sallii vain numerot",
+      "PleaseSelectOption": "Valitse yksi vaihtoehto",
+      "PleaseSelectOptions": "Valitse vähintään yksi vaihtoehto tai enemmän.",
+      "PolicyName": "Poliittisen nimi vaaditaan.",
+      "ValidationFailed": "Validointi epäonnistui"
+    }
   },
   "import": {
     "CleanUpImportTask": "Tuontitehtävän siivous...",

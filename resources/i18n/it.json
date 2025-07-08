@@ -209,17 +209,7 @@
     "UserStatus": "Stato dell'utente",
     "Users": "Utenti",
     "WarningLessRateLimit": "Se il valore di Rate Limit è piccolo, le operazioni API come il login possono essere bloccate.",
-    "YouAreAboutToDeleteCredential": "Stai per eliminare le credenziali di questo utente:",
-    "validation": {
-      "InvalidEmailAddress": "Indirizzo email non valido.",
-      "LetterNumber-_dot": "Consente lettere, numeri e -_.",
-      "NameAlreadyExists": "Il nome della polizza esiste già!",
-      "NumbersOnly": "Consente solo numeri",
-      "PleaseSelectOption": "Si prega di selezionare un'opzione",
-      "PleaseSelectOptions": "Selezionare almeno un'opzione o più.",
-      "PolicyName": "Nome criterio Obbligatorio.",
-      "ValidationFailed": "Validazione fallita"
-    }
+    "YouAreAboutToDeleteCredential": "Stai per eliminare le credenziali di questo utente:"
   },
   "data": {
     "Active": "Attivo",
@@ -377,7 +367,7 @@
       "FolderUsage": "Utilizzo della cartella",
       "FolderUsing": "Utilizzo",
       "InviteUsers": "Invita l'utente",
-      "KickOut": "",
+      "KickOut": "Smettila di condividere",
       "KickOutConfirm": "Smettere di condividere con {{email}}?",
       "Leave": "Partire",
       "LeaveAFolder": "Lascia una cartella",
@@ -678,7 +668,17 @@
     "StorageProxies": "Depositi",
     "TotalItems": "Totale articoli {{totale}}",
     "Username": "Nome utente",
-    "ValueRequired": "Inserisci {{ nome }}"
+    "ValueRequired": "Inserisci {{ nome }}",
+    "validation": {
+      "InvalidEmailAddress": "Indirizzo e -mail non valido.",
+      "LetterNumber-_dot": "Consente lettere, numeri e -_.",
+      "NameAlreadyExists": "Il nome della politica esiste già!",
+      "NumbersOnly": "Consente solo i numeri",
+      "PleaseSelectOption": "Seleziona un'opzione",
+      "PleaseSelectOptions": "Seleziona almeno un'opzione o più.",
+      "PolicyName": "Nome politico richiesto.",
+      "ValidationFailed": "Convalida non riuscita"
+    }
   },
   "import": {
     "CleanUpImportTask": "Attività di importazione di pulizia...",

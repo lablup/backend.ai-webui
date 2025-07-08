@@ -209,17 +209,7 @@
     "UserStatus": "Хэрэглэгчийн статус",
     "Users": "Хэрэглэгчид",
     "WarningLessRateLimit": "Хэрэв ханшийн хязгаарын утга бага байвал нэвтрэх гэх мэт API үйлдлүүдийг хааж болно.",
-    "YouAreAboutToDeleteCredential": "Та энэ хэрэглэгчийн итгэмжлэлийг устгах гэж байна:",
-    "validation": {
-      "InvalidEmailAddress": "Хүчингүй мэйл хаяг.",
-      "LetterNumber-_dot": "Үсэг, тоо ба -_-г зөвшөөрдөг.",
-      "NameAlreadyExists": "Бодлогын нэр аль хэдийн байна!",
-      "NumbersOnly": "Зөвхөн дугаарыг зөвшөөрдөг",
-      "PleaseSelectOption": "Нэг сонголтыг сонгоно уу",
-      "PleaseSelectOptions": "сонголтуудыг сонгоно уу",
-      "PolicyName": "Бодлогын нэр шаардлагатай.",
-      "ValidationFailed": "Баталгаажуулалт амжилтгүй боллоо"
-    }
+    "YouAreAboutToDeleteCredential": "Та энэ хэрэглэгчийн итгэмжлэлийг устгах гэж байна:"
   },
   "data": {
     "Active": "Идэвхтэй",
@@ -377,7 +367,7 @@
       "FolderUsage": "Хавтас ашиглалт",
       "FolderUsing": "Ашиглаж байна",
       "InviteUsers": "Урих хэрэглэгч",
-      "KickOut": "",
+      "KickOut": "Хуваалцах гэж",
       "KickOutConfirm": "{{Имэйл}} -тай хуваалцахаа болих уу?",
       "Leave": "Орхи",
       "LeaveAFolder": "Фолдер үлдээнэ үү",
@@ -677,7 +667,17 @@
     "StorageProxies": "Хадгалах сан",
     "TotalItems": "Нийт {{total}} зүйл",
     "Username": "Хэрэглэгчийн нэр",
-    "ValueRequired": "{{Нэр}}}}"
+    "ValueRequired": "{{Нэр}}}}",
+    "validation": {
+      "InvalidEmailAddress": "И-мэйл хаяг буруу байна.",
+      "LetterNumber-_dot": "Үсэг, тоо, -_-ийг зөвшөөрдөг.",
+      "NameAlreadyExists": "Бодлогын нэр аль хэдийн байна!",
+      "NumbersOnly": "Дугаарыг л зөвшөөрдөг",
+      "PleaseSelectOption": "Нэг сонголтыг сонгоно уу",
+      "PleaseSelectOptions": "Дор хаяж нэг сонголтыг сонгоно уу.",
+      "PolicyName": "Бодлогын нэр шаардлагатай.",
+      "ValidationFailed": "Баталгаажуулалт амжилтгүй боллоо"
+    }
   },
   "import": {
     "CleanUpImportTask": "Импортын ажлыг цэвэрлэх ...",

@@ -212,17 +212,7 @@
     "UserStatus": "User Status",
     "Users": "Users",
     "WarningLessRateLimit": "If the Rate Limit value is small, API operations such as login may be blocked.",
-    "YouAreAboutToDeleteCredential": "You are about to delete this user's credential:",
-    "validation": {
-      "InvalidEmailAddress": "Invalid Email Address.",
-      "LetterNumber-_dot": "Allows letters, numbers and -_.",
-      "NameAlreadyExists": "Policy Name Already Exists!",
-      "NumbersOnly": "Allows numbers only",
-      "PleaseSelectOption": "Please select one option",
-      "PleaseSelectOptions": "Please select at least one option or more.",
-      "PolicyName": "Policy name Required.",
-      "ValidationFailed": "Validation failed"
-    }
+    "YouAreAboutToDeleteCredential": "You are about to delete this user's credential:"
   },
   "data": {
     "Active": "Active",
@@ -683,7 +673,17 @@
     "StorageProxies": "Storages",
     "TotalItems": "Total {{total}} items",
     "Username": "Username",
-    "ValueRequired": "Please enter {{ name }}"
+    "ValueRequired": "Please enter {{ name }}",
+    "validation": {
+      "InvalidEmailAddress": "Invalid Email Address.",
+      "LetterNumber-_dot": "Allows letters, numbers and -_.",
+      "NameAlreadyExists": "Policy Name Already Exists!",
+      "NumbersOnly": "Allows numbers only",
+      "PleaseSelectOption": "Please select one option",
+      "PleaseSelectOptions": "Please select at least one option or more.",
+      "PolicyName": "Policy name Required.",
+      "ValidationFailed": "Validation failed"
+    }
   },
   "import": {
     "CleanUpImportTask": "Cleanup import task...",

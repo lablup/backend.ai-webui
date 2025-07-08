@@ -212,17 +212,7 @@
     "UserStatus": "사용자 상태",
     "Users": "사용자",
     "WarningLessRateLimit": "Rate Limit 값이 작으면 로그인 등 API 작업이 차단될 수 있습니다.",
-    "YouAreAboutToDeleteCredential": "다음 사용자의 자격증명을 삭제하려고 합니다:",
-    "validation": {
-      "InvalidEmailAddress": "잘못된 이메일 주소 형식입니다.",
-      "LetterNumber-_dot": "문자, 숫자 및 -_. 만 허용됩니다.",
-      "NameAlreadyExists": "그 이름은 이미 사용 중입니다.",
-      "NumbersOnly": "숫자만 입력 가능합니다.",
-      "PleaseSelectOption": "옵션 선택은 필수입니다.",
-      "PleaseSelectOptions": "하나 이상의 옵션을 선택해 주세요.",
-      "PolicyName": "정책 이름이 필요합니다.",
-      "ValidationFailed": "인증에 실패했습니다."
-    }
+    "YouAreAboutToDeleteCredential": "다음 사용자의 자격증명을 삭제하려고 합니다:"
   },
   "data": {
     "Active": "활성",
@@ -682,7 +672,17 @@
     "StorageProxies": "스토리지",
     "TotalItems": "총 {{ total }}개",
     "Username": "사용자 이름",
-    "ValueRequired": "{{ name }} 값을 입력해 주세요"
+    "ValueRequired": "{{ name }} 값을 입력해 주세요",
+    "validation": {
+      "InvalidEmailAddress": "잘못된 이메일 주소 형식입니다.",
+      "LetterNumber-_dot": "문자, 숫자 및 -_. 만 허용됩니다.",
+      "NameAlreadyExists": "그 이름은 이미 사용 중입니다.",
+      "NumbersOnly": "숫자만 입력 가능합니다.",
+      "PleaseSelectOption": "옵션 선택은 필수입니다.",
+      "PleaseSelectOptions": "하나 이상의 옵션을 선택해 주세요.",
+      "PolicyName": "정책 이름이 필요합니다.",
+      "ValidationFailed": "인증에 실패했습니다."
+    }
   },
   "import": {
     "CleanUpImportTask": "가져오기를 완료하는 중...",

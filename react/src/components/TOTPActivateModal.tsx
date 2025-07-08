@@ -159,7 +159,7 @@ export const TOTPActivateForm: React.FC<TOTPActiveFormProps> = ({
               },
               {
                 pattern: /^[0-9]+$/,
-                message: t('credential.validation.NumbersOnly'),
+                message: t('general.validation.NumbersOnly'),
               },
             ]}
           >

@@ -210,17 +210,7 @@
     "UserStatus": "Kullanıcı Durumu",
     "Users": "Kullanıcılar",
     "WarningLessRateLimit": "Hız Sınırı değeri küçükse, oturum açma gibi API işlemleri engellenebilir.",
-    "YouAreAboutToDeleteCredential": "Bu kullanıcının kimlik bilgilerini silmek üzeresiniz:",
-    "validation": {
-      "InvalidEmailAddress": "Geçersiz e-posta adresi.",
-      "LetterNumber-_dot": "Harflere, sayılara ve -_'ye izin verir.",
-      "NameAlreadyExists": "Politika Adı Zaten Var!",
-      "NumbersOnly": "Yalnızca sayılara izin verir",
-      "PleaseSelectOption": "Lütfen bir seçeneği seçin",
-      "PleaseSelectOptions": "Lütfen en az bir veya daha fazla seçenek işaretleyiniz.",
-      "PolicyName": "İlke adı Gerekli.",
-      "ValidationFailed": "Doğrulama başarısız"
-    }
+    "YouAreAboutToDeleteCredential": "Bu kullanıcının kimlik bilgilerini silmek üzeresiniz:"
   },
   "data": {
     "Active": "Aktif",
@@ -378,7 +368,7 @@
       "FolderUsage": "Klasör kullanımı",
       "FolderUsing": "Kullanma",
       "InviteUsers": "Kullanıcıyı davet et",
-      "KickOut": "",
+      "KickOut": "Paylaşmayı Durdur",
       "KickOutConfirm": "{{email}} ile paylaşmayı keser misiniz?",
       "Leave": "Ayrılmak",
       "LeaveAFolder": "klasör bırak",
@@ -679,7 +669,17 @@
     "StorageProxies": "Depolar",
     "TotalItems": "Toplam {{toplam}} öğe",
     "Username": "Kullanıcı adı",
-    "ValueRequired": "Lütfen {{isim }} girin"
+    "ValueRequired": "Lütfen {{isim }} girin",
+    "validation": {
+      "InvalidEmailAddress": "Geçersiz e -posta adresi.",
+      "LetterNumber-_dot": "Harfler, sayılar ve -_ sağlar.",
+      "NameAlreadyExists": "Politika adı zaten var!",
+      "NumbersOnly": "Yalnızca numaralara izin verir",
+      "PleaseSelectOption": "Lütfen bir seçenek seçin",
+      "PleaseSelectOptions": "Lütfen en az bir veya daha fazla seçenek seçin.",
+      "PolicyName": "Politika adı gerekli.",
+      "ValidationFailed": "Doğrulama başarısız oldu"
+    }
   },
   "import": {
     "CleanUpImportTask": "İçe aktarma görevini temizle...",

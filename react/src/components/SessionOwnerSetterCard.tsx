@@ -129,7 +129,7 @@ const SessionOwnerSetterCard: React.FC<CardProps> = (props) => {
                     },
                     {
                       type: 'email',
-                      message: t('credential.validation.InvalidEmailAddress'),
+                      message: t('general.validation.InvalidEmailAddress'),
                     },
                   ]}
                   style={{ flex: 1 }}

@@ -209,17 +209,7 @@
     "UserStatus": "Status Pengguna",
     "Users": "Pengguna",
     "WarningLessRateLimit": "Jika nilai Had Kadar adalah kecil, operasi API seperti log masuk mungkin disekat.",
-    "YouAreAboutToDeleteCredential": "Anda akan memadamkan kelayakan pengguna ini:",
-    "validation": {
-      "InvalidEmailAddress": "Alamat email tidak sah.",
-      "LetterNumber-_dot": "Membolehkan huruf, nombor dan -_.",
-      "NameAlreadyExists": "Nama Polisi Sudah Ada!",
-      "NumbersOnly": "Membolehkan nombor sahaja",
-      "PleaseSelectOption": "Sila pilih satu pilihan",
-      "PleaseSelectOptions": "Sila pilih sekurang-kurangnya satu pilihan atau lebih.",
-      "PolicyName": "Nama polisi Diperlukan.",
-      "ValidationFailed": "Pengesahan gagal"
-    }
+    "YouAreAboutToDeleteCredential": "Anda akan memadamkan kelayakan pengguna ini:"
   },
   "data": {
     "Active": "Aktif",
@@ -377,7 +367,7 @@
       "FolderUsage": "Penggunaan folder",
       "FolderUsing": "menggunakan",
       "InviteUsers": "Jemput pengguna",
-      "KickOut": "",
+      "KickOut": "Berhenti berkongsi",
       "KickOutConfirm": "Berhenti berkongsi dengan {{email}}?",
       "Leave": "Tinggalkan",
       "LeaveAFolder": "Tinggalkan folder",
@@ -678,7 +668,17 @@
     "StorageProxies": "Stor",
     "TotalItems": "Jumlah {{total}} item",
     "Username": "Nama pengguna",
-    "ValueRequired": "Sila masukkan {{name}}"
+    "ValueRequired": "Sila masukkan {{name}}",
+    "validation": {
+      "InvalidEmailAddress": "Alamat e -mel tidak sah.",
+      "LetterNumber-_dot": "Membolehkan huruf, nombor dan -_.",
+      "NameAlreadyExists": "Nama dasar sudah ada!",
+      "NumbersOnly": "Membolehkan nombor sahaja",
+      "PleaseSelectOption": "Sila pilih satu pilihan",
+      "PleaseSelectOptions": "Sila pilih sekurang -kurangnya satu pilihan atau lebih.",
+      "PolicyName": "Nama dasar diperlukan.",
+      "ValidationFailed": "Pengesahan gagal"
+    }
   },
   "import": {
     "CleanUpImportTask": "Tugas import pembersihan ...",

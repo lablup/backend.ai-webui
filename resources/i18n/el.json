@@ -210,17 +210,7 @@
     "UserStatus": "Κατάσταση χρήστη",
     "Users": "Χρήστες",
     "WarningLessRateLimit": "Εάν η τιμή Όριο ρυθμού είναι μικρή, ενδέχεται να μπλοκαριστούν λειτουργίες API, όπως η σύνδεση.",
-    "YouAreAboutToDeleteCredential": "Πρόκειται να διαγράψετε τα διαπιστευτήρια αυτού του χρήστη:",
-    "validation": {
-      "InvalidEmailAddress": "Μη έγκυρη διεύθυνση e-mail.",
-      "LetterNumber-_dot": "Επιτρέπει γράμματα, αριθμούς και -_.",
-      "NameAlreadyExists": "Το όνομα πολιτικής υπάρχει ήδη!",
-      "NumbersOnly": "Επιτρέπει μόνο αριθμούς",
-      "PleaseSelectOption": "Επιλέξτε μία από τις επιλογές",
-      "PleaseSelectOptions": "Παρακαλούμε επιλέξτε τουλάχιστον μία ή περισσότερες επιλογές.",
-      "PolicyName": "Απαιτείται όνομα πολιτικής.",
-      "ValidationFailed": "Η επικύρωση απέτυχε"
-    }
+    "YouAreAboutToDeleteCredential": "Πρόκειται να διαγράψετε τα διαπιστευτήρια αυτού του χρήστη:"
   },
   "data": {
     "Active": "Ενεργός",
@@ -375,7 +365,7 @@
       "FolderUsage": "Χρήση φακέλου",
       "FolderUsing": "Χρήση του",
       "InviteUsers": "Προσκαλέστε χρήστης",
-      "KickOut": "",
+      "KickOut": "Διακοπή",
       "KickOutConfirm": "Σταματήστε να μοιράζεστε με {{email}};",
       "Leave": "Αδεια",
       "LeaveAFolder": "Αφήστε έναν φάκελο",
@@ -675,7 +665,17 @@
     "StorageProxies": "Αποθήκες",
     "TotalItems": "Σύνολο {{total}} στοιχείων",
     "Username": "Όνομα χρήστη",
-    "ValueRequired": "Παρακαλώ εισάγετε {{ όνομα }}"
+    "ValueRequired": "Παρακαλώ εισάγετε {{ όνομα }}",
+    "validation": {
+      "InvalidEmailAddress": "Μη έγκυρη διεύθυνση email.",
+      "LetterNumber-_dot": "Επιτρέπει γράμματα, αριθμούς και -_.",
+      "NameAlreadyExists": "Το όνομα πολιτικής υπάρχει ήδη!",
+      "NumbersOnly": "Επιτρέπει μόνο τους αριθμούς",
+      "PleaseSelectOption": "Επιλέξτε μία επιλογή",
+      "PleaseSelectOptions": "Επιλέξτε τουλάχιστον μία ή περισσότερες επιλογές.",
+      "PolicyName": "Απαιτείται όνομα πολιτικής.",
+      "ValidationFailed": "Η επικύρωση απέτυχε"
+    }
   },
   "import": {
     "CleanUpImportTask": "Εργασία εισαγωγής καθαρισμού ...",

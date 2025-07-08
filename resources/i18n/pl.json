@@ -210,17 +210,7 @@
     "UserStatus": "Status użytkownika",
     "Users": "Użytkownicy",
     "WarningLessRateLimit": "Jeśli wartość Rate Limit jest niska, operacje API, takie jak logowanie, mogą zostać zablokowane.",
-    "YouAreAboutToDeleteCredential": "Zamierzasz usunąć dane uwierzytelniające tego użytkownika:",
-    "validation": {
-      "InvalidEmailAddress": "Niepoprawny adres email.",
-      "LetterNumber-_dot": "Dopuszcza litery, cyfry i -_.",
-      "NameAlreadyExists": "Nazwa zasady już istnieje!",
-      "NumbersOnly": "Zezwala tylko na liczby",
-      "PleaseSelectOption": "Proszę wybrać jedną opcję",
-      "PleaseSelectOptions": "Wybierz co najmniej jedną opcję lub więcej.",
-      "PolicyName": "Nazwa zasady Wymagane.",
-      "ValidationFailed": "Weryfikacja nie powiodła się"
-    }
+    "YouAreAboutToDeleteCredential": "Zamierzasz usunąć dane uwierzytelniające tego użytkownika:"
   },
   "data": {
     "Active": "Aktywny",
@@ -378,7 +368,7 @@
       "FolderUsage": "Użycie folderu",
       "FolderUsing": "Korzystanie z",
       "InviteUsers": "Zaproś użytkownika",
-      "KickOut": "",
+      "KickOut": "Przestań dzielić się",
       "KickOutConfirm": "Przestać udostępniać {{email}}?",
       "Leave": "Wychodzić",
       "LeaveAFolder": "Zostaw folder",
@@ -679,7 +669,17 @@
     "StorageProxies": "Magazyny",
     "TotalItems": "Łącznie {{total}} pozycji",
     "Username": "Nazwa Użytkownika",
-    "ValueRequired": "Wprowadź {{ imię }}"
+    "ValueRequired": "Wprowadź {{ imię }}",
+    "validation": {
+      "InvalidEmailAddress": "Nieprawidłowy adres e -mail.",
+      "LetterNumber-_dot": "Umożliwia litery, cyfry i -_.",
+      "NameAlreadyExists": "Nazwa polityki już istnieje!",
+      "NumbersOnly": "Pozwala tylko na liczby",
+      "PleaseSelectOption": "Wybierz jedną opcję",
+      "PleaseSelectOptions": "Wybierz co najmniej jedną opcję lub więcej.",
+      "PolicyName": "Wymagana nazwa polisy.",
+      "ValidationFailed": "Walidacja nie powiodła się"
+    }
   },
   "import": {
     "CleanUpImportTask": "Oczyść zadanie importowania...",

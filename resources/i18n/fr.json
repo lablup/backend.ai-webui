@@ -210,17 +210,7 @@
     "UserStatus": "Statut de l'utilisateur",
     "Users": "Utilisateurs",
     "WarningLessRateLimit": "Si la valeur de la limite de débit est faible, les opérations API telles que la connexion peuvent être bloquées.",
-    "YouAreAboutToDeleteCredential": "Vous êtes sur le point de supprimer les identifiants de cet utilisateur :",
-    "validation": {
-      "InvalidEmailAddress": "Adresse e-mail invalide.",
-      "LetterNumber-_dot": "Autorise les lettres, les chiffres et -_.",
-      "NameAlreadyExists": "Le nom de la stratégie existe déjà !",
-      "NumbersOnly": "Autorise uniquement les chiffres",
-      "PleaseSelectOption": "Veuillez sélectionner une option",
-      "PleaseSelectOptions": "Veuillez sélectionner optios.",
-      "PolicyName": "Nom de la stratégie Obligatoire.",
-      "ValidationFailed": "Validation échouée"
-    }
+    "YouAreAboutToDeleteCredential": "Vous êtes sur le point de supprimer les identifiants de cet utilisateur :"
   },
   "data": {
     "Active": "Actif",
@@ -378,7 +368,7 @@
       "FolderUsage": "Utilisation des dossiers",
       "FolderUsing": "Utilisation",
       "InviteUsers": "Inviter l'utilisateur",
-      "KickOut": "",
+      "KickOut": "Arrêter de partager",
       "KickOutConfirm": "Ne plus partager avec {{email}} ?",
       "Leave": "Quitter",
       "LeaveAFolder": "Laisser un dossier",
@@ -679,7 +669,17 @@
     "StorageProxies": "Stockages",
     "TotalItems": "Total des éléments {{total}}",
     "Username": "Nom d'utilisateur",
-    "ValueRequired": "Veuillez saisir {{ nom }}"
+    "ValueRequired": "Veuillez saisir {{ nom }}",
+    "validation": {
+      "InvalidEmailAddress": "Adresse e-mail non valide.",
+      "LetterNumber-_dot": "Permet des lettres, des chiffres et -_.",
+      "NameAlreadyExists": "Le nom de politique existe déjà!",
+      "NumbersOnly": "Permet les nombres uniquement",
+      "PleaseSelectOption": "Veuillez sélectionner une option",
+      "PleaseSelectOptions": "Veuillez sélectionner au moins une option ou plus.",
+      "PolicyName": "Nom de la politique requis.",
+      "ValidationFailed": "La validation a échoué"
+    }
   },
   "import": {
     "CleanUpImportTask": "Nettoyage de la tâche d'importation...",

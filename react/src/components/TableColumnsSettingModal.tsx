@@ -126,6 +126,12 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
                   height: 220,
                   overflowY: 'auto',
                 }}
+                rules={[
+                  {
+                    required: true,
+                    message: t('general.validation.PleaseSelectOptions'),
+                  },
+                ]}
               >
                 <Checkbox.Group
                   options={filteredColumns}

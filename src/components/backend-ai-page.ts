@@ -139,7 +139,7 @@ export class BackendAIPage extends LitElement {
         // Support standard attribute
         validationMessage = obj.getAttribute('validationMessage');
       } else {
-        validationMessage = _text('credential.validation.ValidationFailed');
+        validationMessage = _text('general.validation.ValidationFailed');
       }
       obj.validityTransform = (value, nativeValidity) => {
         if (!nativeValidity.valid) {

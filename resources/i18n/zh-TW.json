@@ -210,17 +210,7 @@
     "UserStatus": "用户状态",
     "Users": "用戶",
     "WarningLessRateLimit": "如果速率限制值较小，可能会阻止登录等 API 操作。",
-    "YouAreAboutToDeleteCredential": "您將要刪除該使用者的憑證：",
-    "validation": {
-      "InvalidEmailAddress": "無效的郵件地址。",
-      "LetterNumber-_dot": "允許字母、數字和 -_。",
-      "NameAlreadyExists": "策略名稱已存在！",
-      "NumbersOnly": "只允許數字",
-      "PleaseSelectOption": "請選擇一個選項",
-      "PleaseSelectOptions": "请至少选择一个或多个选项。",
-      "PolicyName": "策略名稱 必填。",
-      "ValidationFailed": "驗證失敗"
-    }
+    "YouAreAboutToDeleteCredential": "您將要刪除該使用者的憑證："
   },
   "data": {
     "Active": "積極的",
@@ -378,7 +368,7 @@
       "FolderUsage": "文件夹的使用",
       "FolderUsing": "使用",
       "InviteUsers": "邀請用戶",
-      "KickOut": "",
+      "KickOut": "停止共享",
       "KickOutConfirm": "停止与 {{email}} 共享？",
       "Leave": "離開",
       "LeaveAFolder": "留下文件夾",
@@ -679,7 +669,17 @@
     "StorageProxies": "存儲",
     "TotalItems": "{{总计}}项目总数",
     "Username": "用戶名",
-    "ValueRequired": "请输入 {{ 姓名 }}"
+    "ValueRequired": "请输入 {{ 姓名 }}",
+    "validation": {
+      "InvalidEmailAddress": "無效的電子郵件地址。",
+      "LetterNumber-_dot": "允許字母，數字和-_。",
+      "NameAlreadyExists": "策略名稱已經存在！",
+      "NumbersOnly": "僅允許數字",
+      "PleaseSelectOption": "請選擇一個選項",
+      "PleaseSelectOptions": "請選擇至少一個或更多選項。",
+      "PolicyName": "需要策略名稱。",
+      "ValidationFailed": "驗證失敗"
+    }
   },
   "import": {
     "CleanUpImportTask": "清理導入任務...",

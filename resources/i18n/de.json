@@ -210,17 +210,7 @@
     "UserStatus": "Benutzer-Status",
     "Users": "Benutzer",
     "WarningLessRateLimit": "Wenn der Wert für das Ratenlimit klein ist, können API-Vorgänge wie die Anmeldung blockiert werden.",
-    "YouAreAboutToDeleteCredential": "Sie sind dabei, die Anmeldeinformationen dieses Benutzers zu löschen:",
-    "validation": {
-      "InvalidEmailAddress": "Ungültige E-Mail-Adresse.",
-      "LetterNumber-_dot": "Erlaubt Buchstaben, Zahlen und -_.",
-      "NameAlreadyExists": "Richtlinienname ist bereits vorhanden!",
-      "NumbersOnly": "Erlaubt nur Zahlen",
-      "PleaseSelectOption": "Bitte wählen Sie eine Option",
-      "PleaseSelectOptions": "Bitte wählen Sie mindestens eine oder mehrere Optionen aus.",
-      "PolicyName": "Richtlinienname Erforderlich.",
-      "ValidationFailed": "Überprüfung fehlgeschlagen"
-    }
+    "YouAreAboutToDeleteCredential": "Sie sind dabei, die Anmeldeinformationen dieses Benutzers zu löschen:"
   },
   "data": {
     "Active": "Aktiv",
@@ -378,7 +368,7 @@
       "FolderUsage": "Verwendung von Ordnern",
       "FolderUsing": "Verwendung von",
       "InviteUsers": "Benutzer einladen",
-      "KickOut": "",
+      "KickOut": "Hör auf zu teilen",
       "KickOutConfirm": "Nicht mehr mit {{email}} teilen?",
       "Leave": "Verlassen",
       "LeaveAFolder": "Hinterlasse einen Ordner",
@@ -679,7 +669,17 @@
     "StorageProxies": "Speicher",
     "TotalItems": "Insgesamt {{Gesamt}} Artikel",
     "Username": "Nutzername",
-    "ValueRequired": "Bitte geben Sie {{ Name }}"
+    "ValueRequired": "Bitte geben Sie {{ Name }}",
+    "validation": {
+      "InvalidEmailAddress": "Ungültige E -Mail -Adresse.",
+      "LetterNumber-_dot": "Ermöglicht Buchstaben, Zahlen und -_.",
+      "NameAlreadyExists": "Der politische Name gibt es bereits!",
+      "NumbersOnly": "Erlaubt nur Zahlen",
+      "PleaseSelectOption": "Bitte wählen Sie eine Option aus",
+      "PleaseSelectOptions": "Bitte wählen Sie mindestens eine Option oder mehr.",
+      "PolicyName": "Richtlinienname erforderlich.",
+      "ValidationFailed": "Validierung fehlgeschlagen"
+    }
   },
   "import": {
     "CleanUpImportTask": "Importaufgabe bereinigen...",

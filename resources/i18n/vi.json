@@ -210,17 +210,7 @@
     "UserStatus": "Tâm trạng người dùng",
     "Users": "Người dùng",
     "WarningLessRateLimit": "Nếu giá trị Giới hạn tốc độ nhỏ, các hoạt động API như đăng nhập có thể bị chặn.",
-    "YouAreAboutToDeleteCredential": "Bạn sắp xóa thông tin xác thực của người dùng này:",
-    "validation": {
-      "InvalidEmailAddress": "Địa chỉ email không hợp lệ.",
-      "LetterNumber-_dot": "Cho phép các chữ cái, số và -_.",
-      "NameAlreadyExists": "Tên chính sách đã tồn tại!",
-      "NumbersOnly": "Chỉ cho phép số",
-      "PleaseSelectOption": "Làm ơn chọn một giải pháp",
-      "PleaseSelectOptions": "Vui lòng chọn ít nhất một tùy chọn hoặc nhiều hơn.",
-      "PolicyName": "Tên chính sách Bắt buộc.",
-      "ValidationFailed": "Xác thực không thành công"
-    }
+    "YouAreAboutToDeleteCredential": "Bạn sắp xóa thông tin xác thực của người dùng này:"
   },
   "data": {
     "Active": "Tích cực",
@@ -378,7 +368,7 @@
       "FolderUsage": "Sử dụng thư mục",
       "FolderUsing": "sử dụng",
       "InviteUsers": "Mời người dùng",
-      "KickOut": "",
+      "KickOut": "Ngừng chia sẻ",
       "KickOutConfirm": "Dừng chia sẻ với {{email}}?",
       "Leave": "Rời khỏi",
       "LeaveAFolder": "Để lại một thư mục",
@@ -679,7 +669,17 @@
     "StorageProxies": "Kho lưu trữ",
     "TotalItems": "Tổng số {{total}} mặt hàng",
     "Username": "tên tài khoản",
-    "ValueRequired": "Vui lòng nhập {{name}}"
+    "ValueRequired": "Vui lòng nhập {{name}}",
+    "validation": {
+      "InvalidEmailAddress": "Địa chỉ email không hợp lệ.",
+      "LetterNumber-_dot": "Cho phép các chữ cái, số và -_.",
+      "NameAlreadyExists": "Tên chính sách đã tồn tại!",
+      "NumbersOnly": "Chỉ cho phép số",
+      "PleaseSelectOption": "Vui lòng chọn một tùy chọn",
+      "PleaseSelectOptions": "Vui lòng chọn ít nhất một tùy chọn trở lên.",
+      "PolicyName": "Tên chính sách cần thiết.",
+      "ValidationFailed": "Xác nhận không thành công"
+    }
   },
   "import": {
     "CleanUpImportTask": "Tác vụ nhập dọn dẹp ...",

@@ -210,17 +210,7 @@
     "UserStatus": "Статус пользователя",
     "Users": "Пользователи",
     "WarningLessRateLimit": "Если значение Rate Limit мало, то такие операции API, как вход в систему, могут быть заблокированы.",
-    "YouAreAboutToDeleteCredential": "Вы собираетесь удалить учетные данные этого пользователя:",
-    "validation": {
-      "InvalidEmailAddress": "Неверный адрес электронной почты.",
-      "LetterNumber-_dot": "Допускает буквы, цифры и -_.",
-      "NameAlreadyExists": "Название политики уже существует!",
-      "NumbersOnly": "Допускает только числа",
-      "PleaseSelectOption": "Пожалуйста, выберите один вариант",
-      "PleaseSelectOptions": "Пожалуйста, выберите варианты",
-      "PolicyName": "Название политики Обязательно.",
-      "ValidationFailed": "Проверка не удалась"
-    }
+    "YouAreAboutToDeleteCredential": "Вы собираетесь удалить учетные данные этого пользователя:"
   },
   "data": {
     "Active": "Активный",
@@ -378,7 +368,7 @@
       "FolderUsage": "Использование папок",
       "FolderUsing": "Использование сайта",
       "InviteUsers": "Пригласить пользователя",
-      "KickOut": "",
+      "KickOut": "Перестань делиться",
       "KickOutConfirm": "Перестать делиться с {{email}}?",
       "Leave": "Покинуть",
       "LeaveAFolder": "Обновить настройки папки",
@@ -679,7 +669,17 @@
     "StorageProxies": "Хранилища данных",
     "TotalItems": "Всего {{total}} предметов",
     "Username": "Имя пользователя",
-    "ValueRequired": "Пожалуйста, введите {{ имя }}"
+    "ValueRequired": "Пожалуйста, введите {{ имя }}",
+    "validation": {
+      "InvalidEmailAddress": "Неверный адрес электронной почты.",
+      "LetterNumber-_dot": "Позволяет письма, цифры и -_.",
+      "NameAlreadyExists": "Название политики уже существует!",
+      "NumbersOnly": "Позволяет только числа",
+      "PleaseSelectOption": "Пожалуйста, выберите один вариант",
+      "PleaseSelectOptions": "Пожалуйста, выберите хотя бы один вариант или несколько.",
+      "PolicyName": "Требуется имя политики.",
+      "ValidationFailed": "Проверка не удалась"
+    }
   },
   "import": {
     "CleanUpImportTask": "Очистить задачу импорта ...",

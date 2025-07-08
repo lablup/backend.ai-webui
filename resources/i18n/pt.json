@@ -210,17 +210,7 @@
     "UserStatus": "Estado do utilizador",
     "Users": "Comercial",
     "WarningLessRateLimit": "Se o valor do Limite de taxa for pequeno, as operações da API, como o início de sessão, podem ser bloqueadas.",
-    "YouAreAboutToDeleteCredential": "Você está prestes a excluir a credencial deste usuário:",
-    "validation": {
-      "InvalidEmailAddress": "Endereço de email invalido.",
-      "LetterNumber-_dot": "Permite letras, números e -_.",
-      "NameAlreadyExists": "O nome da política já existe!",
-      "NumbersOnly": "Permite apenas números",
-      "PleaseSelectOption": "Por favor selecione uma opção",
-      "PleaseSelectOptions": "Seleccione pelo menos uma opção ou mais.",
-      "PolicyName": "Nome da política Obrigatório.",
-      "ValidationFailed": "Falha na validação"
-    }
+    "YouAreAboutToDeleteCredential": "Você está prestes a excluir a credencial deste usuário:"
   },
   "data": {
     "Active": "Ativo",
@@ -378,7 +368,7 @@
       "FolderUsage": "Utilização da pasta",
       "FolderUsing": "Utilizar",
       "InviteUsers": "Convite o usuário",
-      "KickOut": "",
+      "KickOut": "Pare de compartilhar",
       "KickOutConfirm": "Deixar de partilhar com {{email}}?",
       "Leave": "Sair",
       "LeaveAFolder": "Deixe uma pasta",
@@ -679,7 +669,17 @@
     "StorageProxies": "Armazéns",
     "TotalItems": "Total de itens {{total}}",
     "Username": "Nome do usuário",
-    "ValueRequired": "Introduzir {{ nome }}"
+    "ValueRequired": "Introduzir {{ nome }}",
+    "validation": {
+      "InvalidEmailAddress": "Endereço de e -mail inválido.",
+      "LetterNumber-_dot": "Permite letras, números e -_.",
+      "NameAlreadyExists": "O nome da política já existe!",
+      "NumbersOnly": "Permite apenas números",
+      "PleaseSelectOption": "Selecione uma opção",
+      "PleaseSelectOptions": "Selecione pelo menos uma opção ou mais.",
+      "PolicyName": "Nome da política necessário.",
+      "ValidationFailed": "A validação falhou"
+    }
   },
   "import": {
     "CleanUpImportTask": "Limpar tarefa de importação ...",

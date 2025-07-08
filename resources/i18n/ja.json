@@ -209,17 +209,7 @@
     "UserStatus": "ユーザーステータス",
     "Users": "ユーザー",
     "WarningLessRateLimit": "Rate Limit値が小さいと、ログインなどのAPI操作がブロックされることがあります。",
-    "YouAreAboutToDeleteCredential": "このユーザーの資格情報を削除しようとしています:",
-    "validation": {
-      "InvalidEmailAddress": "無効な電子メールアドレス。",
-      "LetterNumber-_dot": "文字、数字、および-_を許可します。",
-      "NameAlreadyExists": "ポリシー名はすでに存在します！",
-      "NumbersOnly": "数字のみを許可",
-      "PleaseSelectOption": "オプションを1つ選択してください",
-      "PleaseSelectOptions": "一つ以上のオプションを選択してください。",
-      "PolicyName": "ポリシー名が必要です。",
-      "ValidationFailed": "検証に失敗しました"
-    }
+    "YouAreAboutToDeleteCredential": "このユーザーの資格情報を削除しようとしています:"
   },
   "data": {
     "Active": "アクティブ",
@@ -377,7 +367,7 @@
       "FolderUsage": "フォルダ使用量",
       "FolderUsing": "使用量",
       "InviteUsers": "ユーザーを招待します",
-      "KickOut": "",
+      "KickOut": "共有を停止します",
       "KickOutConfirm": "{email}}との共有を停止しますか？",
       "Leave": "去る",
       "LeaveAFolder": "フォルダを離れる",
@@ -678,7 +668,17 @@
     "StorageProxies": "ストレージ",
     "TotalItems": "合計{{total}}項目",
     "Username": "ユーザー名",
-    "ValueRequired": "名前}}を入力してください。"
+    "ValueRequired": "名前}}を入力してください。",
+    "validation": {
+      "InvalidEmailAddress": "無効なメールアドレス。",
+      "LetterNumber-_dot": "文字、数字、-_を許可します。",
+      "NameAlreadyExists": "ポリシー名はすでに存在します！",
+      "NumbersOnly": "数字のみを許可します",
+      "PleaseSelectOption": "1つのオプションを選択してください",
+      "PleaseSelectOptions": "少なくとも1つ以上のオプションを選択してください。",
+      "PolicyName": "ポリシー名が必要です。",
+      "ValidationFailed": "検証に失敗しました"
+    }
   },
   "import": {
     "CleanUpImportTask": "インポートタスクのクリーンアップ...",
