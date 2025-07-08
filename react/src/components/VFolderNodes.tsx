@@ -39,6 +39,7 @@ import _ from 'lodash';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
+import { StringParam, useQueryParam } from 'use-query-params';
 
 export const statusTagColor = {
   // mountable
@@ -71,6 +72,8 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
   const { token } = theme.useToken();
   const { message } = App.useApp();
 
+  const [usageMode] = useQueryParam('mode', StringParam);
+  const isPipelineFolder = usageMode === 'data';
   const currentProject = useCurrentProjectValue();
   const baiClient = useSuspendedBackendaiClient();
   const painKiller = usePainKiller();
@@ -230,22 +233,34 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                   )}
                   {/* Restore */}
                   {isDeletedCategory(vfolder?.status) && (
-                    <Tooltip title={t('data.folders.Restore')} placement="left">
+                    <Tooltip
+                      title={
+                        isPipelineFolder
+                          ? t('data.folders.CannotRestorePipelineFolder')
+                          : t('data.folders.Restore')
+                      }
+                      placement="left"
+                    >
                       <Button
                         size="small"
                         type="text"
                         icon={<RestoreIcon />}
                         style={{
                           color:
-                            vfolder?.status !== 'delete-pending'
+                            vfolder?.status !== 'delete-pending' ||
+                            isPipelineFolder
                               ? token.colorTextDisabled
                               : token.colorInfo,
                           background:
-                            vfolder?.status !== 'delete-pending'
+                            vfolder?.status !== 'delete-pending' ||
+                            isPipelineFolder
                               ? token.colorBgContainerDisabled
                               : token.colorInfoBg,
                         }}
-                        disabled={vfolder?.status !== 'delete-pending'}
+                        disabled={
+                          vfolder?.status !== 'delete-pending' ||
+                          isPipelineFolder
+                        }
                         onClick={() => {
                           restoreMutation.mutate(vfolder?.id, {
                             onSuccess: (result, variables) => {
@@ -291,13 +306,15 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                       }}
                       okText={t('button.Move')}
                       okButtonProps={{ danger: true }}
-                      disabled={!hasDeletePermission}
+                      disabled={!hasDeletePermission || isPipelineFolder}
                     >
                       <Tooltip
                         title={
-                          hasDeletePermission
-                            ? t('data.folders.MoveToTrash')
-                            : t('data.folders.NoDeletePermission')
+                          isPipelineFolder
+                            ? t('data.folders.CannotDeletePipelineFolder')
+                            : hasDeletePermission
+                              ? t('data.folders.MoveToTrash')
+                              : t('data.folders.NoDeletePermission')
                         }
                         placement="right"
                       >
@@ -305,20 +322,22 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                           size="small"
                           type="text"
                           icon={<TrashBinIcon />}
-                          disabled={!hasDeletePermission}
+                          disabled={!hasDeletePermission || isPipelineFolder}
                           style={{
-                            color: !_.includes(
-                              vfolder?.permissions,
-                              'delete_vfolder',
-                            )
-                              ? token.colorTextDisabled
-                              : token.colorError,
-                            background: !_.includes(
-                              vfolder?.permissions,
-                              'delete_vfolder',
-                            )
-                              ? token.colorBgContainerDisabled
-                              : token.colorErrorBg,
+                            color:
+                              !_.includes(
+                                vfolder?.permissions,
+                                'delete_vfolder',
+                              ) || isPipelineFolder
+                                ? token.colorTextDisabled
+                                : token.colorError,
+                            background:
+                              !_.includes(
+                                vfolder?.permissions,
+                                'delete_vfolder',
+                              ) || isPipelineFolder
+                                ? token.colorBgContainerDisabled
+                                : token.colorErrorBg,
                           }}
                         />
                       </Tooltip>

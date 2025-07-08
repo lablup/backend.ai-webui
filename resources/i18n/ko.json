@@ -340,6 +340,8 @@
     },
     "folders": {
       "CannotDeleteFolder": "폴더가 하나 이상의 세션에 마운트 되어있어 삭제할 수 없습니다. 세션 종료 후 삭제가 가능합니다.",
+      "CannotDeletePipelineFolder": "파이프라인 폴더는 삭제할 수 없습니다.",
+      "CannotRestorePipelineFolder": "파이프라인 폴더는 복원할 수 없습니다.",
       "CloneAFolder": "폴더 복사",
       "CloneFolder": "폴더 클론",
       "Cloneable": "복사 가능 여부",
