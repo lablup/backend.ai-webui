@@ -16,5 +16,6 @@
     "files.exclude": {
       "packages/backend.ai-ui": true,
     },
+    "window.title": "${activeFolderShort} (Workspace)",
   },
 }
