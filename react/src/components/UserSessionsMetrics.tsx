@@ -134,6 +134,7 @@ const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
               }
             >
               <SessionMetricGraph
+                key={metric}
                 queryProps={{
                   startDate: dayjs(startDate).unix().toString(),
                   endDate: dayjs(endDate).unix().toString(),
@@ -269,7 +270,53 @@ const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
           bordered
           items={boardItems}
           onItemsChange={(event) => {
-            const changedItems = [...event.detail.items];
+            // FIXME: This is a workaround for the issue where the board items are not updated correctly when resizing.
+            // ----- It should be fixed in the BAIBoard component. -----
+            let changedItems = [...event.detail.items];
+            if (event.detail.resizedItem) {
+              const resizedItemId = event.detail.resizedItem.id;
+              changedItems = changedItems.map((item) => {
+                if (item.id === resizedItemId) {
+                  const originalItem = initialBoardItems.find(
+                    (orig) => orig.id === item.id,
+                  );
+                  if (originalItem) {
+                    return {
+                      ...item,
+                      data: {
+                        ...originalItem.data,
+                        content: (
+                          <Suspense
+                            fallback={
+                              <Skeleton
+                                active
+                                style={{ padding: `0px ${token.marginMD}px` }}
+                              />
+                            }
+                          >
+                            <SessionMetricGraph
+                              key={`${item.id}-${Date.now()}`}
+                              queryProps={{
+                                startDate: dayjs(startDate).unix().toString(),
+                                endDate: dayjs(endDate).unix().toString(),
+                                metricName: item.id,
+                                userId: userInfo[0]?.uuid ?? '',
+                                dayDiff: dayDiff,
+                              }}
+                              fetchKey={usageFetchKey}
+                              tooltip={tooltip[item.id] || undefined}
+                            />
+                          </Suspense>
+                        ),
+                      },
+                    };
+                  }
+                }
+                return item;
+              });
+            }
+            // ---------------------------------------------------------
+
             setBoardItems(changedItems);
             setLocalStorageBoardItems(
               _.map(changedItems, (item) => _.omit(item, 'data')),
