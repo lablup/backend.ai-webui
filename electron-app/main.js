@@ -543,8 +543,10 @@ app.on('ready', () => {
     const fullPath = npjoin(es6Path, filePath);
     try {
       const data = await fs.readFile(fullPath);
+      const mimeType = mime.lookup(filePath) || 'application/octet-stream';
+
       return new Response(data, {
-        headers: { 'content-type': 'text/javascript' },
+        headers: { 'content-type': mimeType },
       });
     } catch (err) {
       console.error('Error reading file:', err);
