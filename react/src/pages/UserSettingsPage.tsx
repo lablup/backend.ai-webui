@@ -59,9 +59,9 @@ const UserPreferencesPage = () => {
     { label: t('language.English'), value: 'en' },
     { label: t('language.Korean'), value: 'ko' },
     { label: t('language.Brazilian'), value: 'pt-BR' },
-    { label: t('language.Chinese'), value: 'zh-CN' },
+    { label: t('language.SimplifiedChinese'), value: 'zh-CN' },
     {
-      label: t('language.Chinese (Simplified)'),
+      label: t('language.TraditionalChinese'),
       value: 'zh-TW',
     },
     { label: t('language.French'), value: 'fr' },
