@@ -154,6 +154,7 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
         <ImageWithFallback
           {...props}
           style={{
+            width: size,
             height: size,
             alignSelf: 'center',
             ...(props.style || {}),
