@@ -19,9 +19,14 @@ const useStyles = createStyles(({ css, token }) => {
         // FIXME: global token doesn't exist, so opacity fits color
         opacity: 0.3;
       }
-
       .bai_board_handle button span {
         color: ${token.colorTextTertiary} !important;
+      }
+      .bai_board_container-override
+        > div:first-child
+        > div:nth-child(2)
+        > div:first-child {
+        padding: 0 !important;
       }
     `,
     disableResize: css`
@@ -39,16 +44,21 @@ const useStyles = createStyles(({ css, token }) => {
     `,
     boardItems: css`
       & > div:first-child {
-        border: none !important ;
-        border-radius: var(--token-borderRadius) !important ;
-        background-color: var(--token-colorBgContainer) !important ;
+        border-radius: var(--token-borderRadius) !important;
+        background-color: var(--token-colorBgContainer) !important;
+        border: 1px solid ${token.colorBorderSecondary} !important;
       }
 
       & > div:first-child > div:first-child > div:first-child {
         margin-bottom: var(--token-margin);
-        background-color: var(--token-colorBgContainer) !important ;
+        background-color: var(--token-colorBgContainer) !important;
         position: absolute;
         z-index: 1;
+      }
+    `,
+    disableBorder: css`
+      & > div:first-child {
+        border: none !important;
       }
     `,
   };
@@ -64,12 +74,14 @@ export interface BAIBoardProps<T extends BAIBoardDataType = BAIBoardDataType> {
   onItemsChange: (event: CustomEvent<BoardProps.ItemsChangeDetail<T>>) => void;
   resizable?: boolean;
   movable?: boolean;
+  bordered?: boolean;
 }
 
 const BAIBoard = <T extends BAIBoardDataType>({
   items,
   resizable = false,
   movable = false,
+  bordered = false,
   ...BoardProps
 }: BAIBoardProps<T>) => {
   const { styles } = useStyles();
@@ -84,7 +96,10 @@ const BAIBoard = <T extends BAIBoardDataType>({
       renderItem={(item: BoardProps.Item<T>) => {
         return (
           <BoardItem
-            className={styles.boardItems}
+            className={classNames(
+              styles.boardItems,
+              !bordered && styles.disableBorder,
+            )}
             key={item.id}
             i18nStrings={{
               dragHandleAriaLabel: '',
