@@ -16,6 +16,5 @@
     "files.exclude": {
       "packages/backend.ai-ui": true,
     },
-    "window.title": "${folderName} (Workspace)",
   },
 }
