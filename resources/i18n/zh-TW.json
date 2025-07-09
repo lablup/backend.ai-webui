@@ -1681,6 +1681,11 @@
     "SessionsDesc": "创建的计算会话数。",
     "UsageHistory": "使用历史",
     "UsageHistoryNote": "此處顯示的用法歷史記錄基於終止的計算會議。",
+    "description": {
+      "CPUUtilization": "表示會話在選定期間使用的CPU時間數量。 \n\n單個CPU核心對應於最大100％。\n\n如果分配了多個核心，則總使用情況可能超過100％，因為它是通過總結每個核心的最大使用（100％）來計算的。",
+      "NetworkRx": "指示網絡傳輸速率。\n\n>表示容器接收網絡數據的速率。",
+      "NetworkTx": "指示網絡傳輸速率。\n\n 表示容器發送網絡數據的速率。"
+    },
     "prometheus": {
       "DataMissingInLowUsageDesc": "如果用法較低，則可能無法提供某些日期的數據。請在較短的日期範圍內重試。",
       "NoMetricsToDisplay": "沒有可用的指標來跟踪"

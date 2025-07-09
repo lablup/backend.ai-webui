@@ -1679,6 +1679,11 @@
     "SessionsDesc": "Il numero di sessioni di calcolo create.",
     "UsageHistory": "Storia dell'uso",
     "UsageHistoryNote": "La cronologia dell'utilizzo qui mostrata si basa su sessioni di calcolo terminate.",
+    "description": {
+      "CPUUtilization": "Rappresenta la quantità di tempo della CPU utilizzata dalla sessione durante il periodo selezionato. \n\nUn singolo core CPU corrisponde a un massimo del 100%.\n\nSe vengono assegnati più core, l'utilizzo totale può superare il 100%, poiché viene calcolato riassumendo l'utilizzo massimo (100%) di ciascun nucleo.",
+      "NetworkRx": "Indica la velocità di trasferimento di rete.\n\nRappresenta la velocità con cui il contenitore riceve dati di rete.",
+      "NetworkTx": "Indica la velocità di trasferimento di rete. \n\nRappresenta la velocità con cui il contenitore sta inviando dati di rete."
+    },
     "prometheus": {
       "DataMissingInLowUsageDesc": "Se l'utilizzo è basso, i dati per alcune date potrebbero non essere disponibili. \nRiprova con un intervallo di date più breve.",
       "NoMetricsToDisplay": "Nessuna metrica disponibile per il monitoraggio"

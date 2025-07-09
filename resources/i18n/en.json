@@ -1687,6 +1687,11 @@
     "SessionsDesc": "The number of compute sessions created.",
     "UsageHistory": "Usage History",
     "UsageHistoryNote": "The usage history shown here are based on terminated compute sessions.",
+    "description": {
+      "CPUUtilization": "Represents the amount of CPU time used by the session during the selected period. \n\nA single CPU core corresponds to a maximum of 100%.\nIf multiple cores are allocated, the total usage can exceed 100%, as it is calculated by summing up the maximum usage (100%) of each core.",
+      "NetworkRx": "Indicates the network transfer rate.  \n\nRepresents the rate at which the container is receiving network data.",
+      "NetworkTx": "Indicates the network transfer rate. \n\n Represents the rate at which the container is sending network data."
+    },
     "prometheus": {
       "DataMissingInLowUsageDesc": "If usage is low, data for some dates may not be available. Please try again with a shorter date range.",
       "NoMetricsToDisplay": "No metrics avaliable for tracking"

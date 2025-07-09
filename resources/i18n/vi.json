@@ -1682,6 +1682,11 @@
     "SessionsDesc": "Số lượng phiên điện toán được tạo.",
     "UsageHistory": "Lịch sử sử dụng",
     "UsageHistoryNote": "Lịch sử sử dụng được hiển thị ở đây dựa trên các phiên tính toán chấm dứt.",
+    "description": {
+      "CPUUtilization": "Đại diện cho lượng thời gian CPU được sử dụng bởi phiên trong khoảng thời gian đã chọn. \n\nMột lõi CPU duy nhất tương ứng với tối đa 100%.\n\nNếu nhiều lõi được phân bổ, tổng lượng sử dụng có thể vượt quá 100%, vì nó được tính bằng cách tổng hợp mức sử dụng tối đa (100%) của mỗi lõi.",
+      "NetworkRx": "Cho biết tốc độ truyền mạng. \n\nĐại diện cho tốc độ mà container đang nhận dữ liệu mạng.",
+      "NetworkTx": "Cho biết tốc độ truyền mạng. \n\nĐại diện cho tốc độ mà container đang gửi dữ liệu mạng."
+    },
     "prometheus": {
       "DataMissingInLowUsageDesc": "Nếu việc sử dụng thấp, dữ liệu cho một số ngày có thể không có sẵn. \nVui lòng thử lại với phạm vi ngày ngắn hơn.",
       "NoMetricsToDisplay": "Không có số liệu có giá trị để theo dõi"

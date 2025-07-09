@@ -1682,6 +1682,11 @@
     "SessionsDesc": "Liczba utworzonych sesji obliczeniowych.",
     "UsageHistory": "Historia użytkowania",
     "UsageHistoryNote": "Pokazana tutaj historia użytkowania oparta jest na zakończonych sesjach obliczeniowych.",
+    "description": {
+      "CPUUtilization": "Reprezentuje ilość czasu procesora używanego przez sesję w wybranym okresie. \n\nPojedynczy rdzeń procesora odpowiada maksymalnie 100%.\n\nJeśli przydzielono wiele rdzeni, całkowite zużycie może przekraczać 100%, ponieważ jest obliczane przez podsumowanie maksymalnego użycia (100%) każdego rdzenia.",
+      "NetworkRx": "Wskazuje szybkość transferu sieci.\n\nReprezentuje szybkość, z jaką kontener odbiera dane sieciowe.",
+      "NetworkTx": "Wskazuje szybkość transferu sieci. \n\n\nReprezentuje szybkość, z jaką kontener wysyła dane sieciowe."
+    },
     "prometheus": {
       "DataMissingInLowUsageDesc": "Jeśli użycie jest niskie, dane dla niektórych dat mogą nie być dostępne. \nSpróbuj ponownie z krótszym zakresem dat.",
       "NoMetricsToDisplay": "Brak metryk do śledzenia"

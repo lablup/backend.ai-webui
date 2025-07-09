@@ -1681,6 +1681,11 @@
     "SessionsDesc": "Luotujen laskenta-istuntojen määrä.",
     "UsageHistory": "Käyttöhistoria",
     "UsageHistoryNote": "Tässä esitetty käyttöhistoria perustuu lopetettuihin laskentaistuntoihin.",
+    "description": {
+      "CPUUtilization": "Edustaa istunnon käyttämän prosessorin määrää valitun ajanjakson aikana. \n\nYksi CPU -ydin vastaa enintään 100%.\n\nJos useita ytimiä allokoidaan, kokonaiskäyttö voi ylittää 100%, koska se lasketaan summaamalla enimmäiskäyttö (100%) jokaisesta ytimestä.",
+      "NetworkRx": "Osoittaa verkonsiirtonopeuden.\n\nEdustaa nopeutta, jolla säilö vastaanottaa verkkotietoja.",
+      "NetworkTx": "Osoittaa verkonsiirtonopeuden. \n\nEdustaa nopeutta, jolla säilö lähettää verkkotietoja."
+    },
     "prometheus": {
       "DataMissingInLowUsageDesc": "Jos käyttö on alhainen, joihinkin päivämääriin tietoja ei välttämättä ole käytettävissä. \nYritä uudelleen lyhyemmällä ajanjaksolla.",
       "NoMetricsToDisplay": "Ei mittareita, joita on saatavana seurantaan"

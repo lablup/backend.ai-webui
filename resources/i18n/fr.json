@@ -1682,6 +1682,11 @@
     "SessionsDesc": "Le nombre de sessions de calcul créées.",
     "UsageHistory": "Usage Historique",
     "UsageHistoryNote": "L'historique d'utilisation montré ici est basé sur des séances de calcul terminées.",
+    "description": {
+      "CPUUtilization": "Représente la quantité de temps de CPU utilisé par la session pendant la période sélectionnée. \n\nUn seul noyau CPU correspond à un maximum de 100%.\n\nSi plusieurs noyaux sont alloués, l'utilisation totale peut dépasser 100%, car elle est calculée en résumant l'utilisation maximale (100%) de chaque noyau.",
+      "NetworkRx": "Indique le taux de transfert de réseau.\n\nReprésente la vitesse à laquelle le conteneur reçoit des données réseau.",
+      "NetworkTx": "Indique le taux de transfert de réseau. \n\nReprésente la vitesse à laquelle le conteneur envoie des données de réseau."
+    },
     "prometheus": {
       "DataMissingInLowUsageDesc": "Si l'utilisation est faible, les données pour certaines dates peuvent ne pas être disponibles. \nVeuillez réessayer avec une plage de dates plus courte.",
       "NoMetricsToDisplay": "Aucune métrique avaliable pour le suivi"

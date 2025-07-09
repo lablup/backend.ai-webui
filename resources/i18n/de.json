@@ -1680,6 +1680,11 @@
     "SessionsDesc": "Die Anzahl der erstellten Rechensitzungen.",
     "UsageHistory": "Geschichte der Verwendung",
     "UsageHistoryNote": "Die hier gezeigte Nutzungsgeschichte basiert auf beendeten Berechnungssitzungen.",
+    "description": {
+      "CPUUtilization": "Repräsentiert die Menge an CPU -Zeit, die von der Sitzung während des ausgewählten Zeitraums verwendet wird. \n\nEin einzelner CPU -Kern entspricht maximal 100%.\n\nWenn mehrere Kerne zugewiesen werden, kann die Gesamtnutzung 100%überschreiten, da sie berechnet wird, indem die maximale Verwendung (100%) jedes Kerns summiert wird.",
+      "NetworkRx": "Zeigt die Netzwerkübertragungsrate an. \n\nRepräsentiert die Rate, mit der der Container Netzwerkdaten empfängt.",
+      "NetworkTx": "Zeigt die Netzwerkübertragungsrate an. \n\nRepräsentiert die Rate, mit der der Container Netzwerkdaten sendet."
+    },
     "prometheus": {
       "DataMissingInLowUsageDesc": "Wenn die Verwendung niedrig ist, sind Daten für einige Daten möglicherweise nicht verfügbar. \nBitte versuchen Sie es erneut mit einem kürzeren Datumsbereich.",
       "NoMetricsToDisplay": "Keine Metriken für die Verfolgung"

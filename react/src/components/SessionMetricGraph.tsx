@@ -9,6 +9,7 @@ import {
 } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import Flex from './Flex';
+import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import { Empty, Typography, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import dayjs from 'dayjs';
@@ -21,10 +22,10 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
   Legend,
   ResponsiveContainer,
   ReferenceLine,
+  Tooltip as ChartTooltip,
 } from 'recharts';
 
 const useStyle = createStyles(({ css, token }) => ({
@@ -62,11 +63,13 @@ interface PrometheusMetricGraphProps {
     dayDiff: number;
   };
   fetchKey: string;
+  tooltip?: string | React.ReactNode;
 }
 
 const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
   queryProps: { startDate, endDate, metricName, userId, dayDiff },
   fetchKey,
+  tooltip,
 }) => {
   const { token } = theme.useToken();
   const { styles } = useStyle();
@@ -137,12 +140,20 @@ const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
       },
     );
 
+  const convertMetricFunction: Record<
+    string,
+    (value: string) => number | string
+  > = {
+    cpu_util: (value: string) => _.toNumber(value) / 10,
+  };
+
   const metricData = getMetricData(
     capacity_metric?.metrics ?? [],
     current_metric?.metrics ?? [],
     startDate,
     endDate,
     dayDiff < 7 ? '5m' : dayDiff < 30 ? '1h' : '1d',
+    convertMetricFunction[metricName] ?? undefined,
   );
 
   const resourceSlotKey = useMemo(() => {
@@ -180,10 +191,11 @@ const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
         overflow: 'hidden',
       }}
     >
-      <Flex align="center" style={{ height: 56, marginLeft: 52 }}>
+      <Flex align="center" style={{ height: 56, marginLeft: 52 }} gap="xs">
         <Typography.Text style={{ fontSize: token.fontSizeHeading5 }} strong>
           {getMetricTitle()}
         </Typography.Text>
+        {tooltip ? <QuestionIconWithTooltip title={tooltip} /> : null}
       </Flex>
       {_.isEmpty(capacity_metric?.metrics) &&
       _.isEmpty(current_metric?.metrics) ? (
@@ -197,7 +209,7 @@ const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="timestamp" minTickGap={token.marginMD} />
             <YAxis domain={[0, 'dataMax']} />
-            <Tooltip
+            <ChartTooltip
               formatter={(value) => {
                 return `${value}${convertMetricUnit(undefined, metricName).numberUnit}`;
               }}
@@ -244,6 +256,7 @@ const getMetricData = (
   start: string,
   end: string,
   step: string,
+  convertValueFunction?: (value: string) => number | string,
 ) => {
   // orders by capacity, current
   const transformedData = _.zip(
@@ -253,8 +266,12 @@ const getMetricData = (
   ).map(([capacity, current]) => {
     return {
       timestamp: current?.timestamp,
-      capacity: capacity?.value,
-      used: current?.value,
+      capacity: convertValueFunction
+        ? convertValueFunction(capacity?.value)
+        : capacity?.value,
+      used: convertValueFunction
+        ? convertValueFunction(current?.value)
+        : current?.value,
     };
   });
 

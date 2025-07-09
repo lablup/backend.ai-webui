@@ -1682,6 +1682,11 @@
     "SessionsDesc": "创建的计算会话数。",
     "UsageHistory": "使用历史",
     "UsageHistoryNote": "此处显示的用法历史记录基于终止的计算会议。",
+    "description": {
+      "CPUUtilization": "表示会话在选定期间使用的CPU时间量。 \n\n单个CPU核心对应于最大100％。\n\n如果分配了多个核心，则总使用情况可能超过100％，因为它是通过总结每个核心的最大使用（100％）来计算的。",
+      "NetworkRx": "指示网络传输速率。\n\n表示容器接收网络数据的速率。",
+      "NetworkTx": "指示网络传输速率。\n\n表示容器发送网络数据的速率。"
+    },
     "prometheus": {
       "DataMissingInLowUsageDesc": "如果用法较低，则可能无法提供某些日期的数据。\n请在较短的日期范围内重试。",
       "NoMetricsToDisplay": "没有可用的指标来跟踪"

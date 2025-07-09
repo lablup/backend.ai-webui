@@ -1681,6 +1681,11 @@
     "SessionsDesc": "Jumlah sesi komputasi yang dibuat.",
     "UsageHistory": "Riwayat Penggunaan",
     "UsageHistoryNote": "Riwayat penggunaan yang ditampilkan di sini didasarkan pada sesi komputasi yang diakhiri.",
+    "description": {
+      "CPUUtilization": "Mewakili jumlah waktu CPU yang digunakan oleh sesi selama periode yang dipilih. \n\nInti CPU tunggal sesuai dengan maksimum 100%.\n\nJika beberapa core dialokasikan, total penggunaan dapat melebihi 100%, karena dihitung dengan meringkas penggunaan maksimum (100%) dari setiap inti.",
+      "NetworkRx": "Menunjukkan laju transfer jaringan.\n\nMewakili tingkat di mana wadah menerima data jaringan.",
+      "NetworkTx": "Menunjukkan laju transfer jaringan. \n\nMewakili tingkat di mana wadah mengirim data jaringan."
+    },
     "prometheus": {
       "DataMissingInLowUsageDesc": "Jika penggunaan rendah, data untuk beberapa tanggal mungkin tidak tersedia. \nSilakan coba lagi dengan kisaran tanggal yang lebih pendek.",
       "NoMetricsToDisplay": "Tidak ada metrik yang tersedia untuk pelacakan"

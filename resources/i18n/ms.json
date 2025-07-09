@@ -1680,6 +1680,11 @@
     "SessionsDesc": "Bilangan sesi pengiraan yang dibuat.",
     "UsageHistory": "Sejarah Penggunaan",
     "UsageHistoryNote": "Sejarah penggunaan yang ditunjukkan di sini adalah berdasarkan sesi pengiraan yang ditamatkan.",
+    "description": {
+      "CPUUtilization": "Mewakili jumlah masa CPU yang digunakan oleh sesi semasa tempoh yang dipilih. \n\nSatu teras CPU tunggal sepadan dengan maksimum 100%.\n\nJika pelbagai teras diperuntukkan, jumlah penggunaan boleh melebihi 100%, kerana ia dikira dengan menjumlahkan penggunaan maksimum (100%) bagi setiap teras.",
+      "NetworkRx": "Menunjukkan kadar pemindahan rangkaian. \n\nMewakili kadar di mana bekas menerima data rangkaian.",
+      "NetworkTx": "Menunjukkan kadar pemindahan rangkaian. \n\nMewakili kadar di mana bekas menghantar data rangkaian."
+    },
     "prometheus": {
       "DataMissingInLowUsageDesc": "Jika penggunaan adalah rendah, data untuk beberapa tarikh mungkin tidak tersedia. \nSila cuba lagi dengan julat tarikh yang lebih pendek.",
       "NoMetricsToDisplay": "Tiada metrik yang boleh didapati untuk menjejaki"

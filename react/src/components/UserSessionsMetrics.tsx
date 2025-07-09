@@ -1,5 +1,5 @@
 import { UserSessionsMetricsQuery } from '../__generated__/UserSessionsMetricsQuery.graphql';
-import { filterEmptyItem } from '../helper';
+import { filterEmptyItem, newLineToBrElement } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -57,7 +57,8 @@ const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
     const { cpuUtil, memory, acceleratorGroups, rest } = _.reduce(
       metrics,
       (acc, metric) => {
-        if (!metric || metric === 'cpu_used') return acc;
+        if (!metric || metric === 'cpu_used' || metric === 'io_scratch_size')
+          return acc;
 
         if (metric === 'cpu_util') {
           acc.cpuUtil.push(metric);
@@ -88,8 +89,11 @@ const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
     const sortedAccelMetrics = _.flatMap(_.values(acceleratorGroups), (group) =>
       _.sortBy(group, (metric) => (metric.endsWith('_util') ? 0 : 1)),
     );
+    const sortedRest = _.sortBy(rest, (metric) =>
+      metric.startsWith('net') ? 0 : 1,
+    );
 
-    return [...cpuUtil, ...memory, ...sortedAccelMetrics, ...rest];
+    return [...cpuUtil, ...memory, ...sortedAccelMetrics, ...sortedRest];
   }, [container_utilization_metric_metadata?.metric_names]);
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -105,6 +109,12 @@ const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
 
   const [localStorageBoardItems, setLocalStorageBoardItems] =
     useBAISettingUserState('session_metrics_board_items');
+
+  const tooltip: Record<string, React.ReactNode> = {
+    cpu_util: newLineToBrElement(t('statistics.description.CPUUtilization')),
+    net_rx: newLineToBrElement(t('statistics.description.NetworkRx')),
+    net_tx: newLineToBrElement(t('statistics.description.NetworkTx')),
+  };
 
   const initialBoardItems = useMemo(() => {
     const defaultBoardItem: Array<BAIBoardItem> = _.map(
@@ -132,6 +142,7 @@ const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
                   dayDiff: dayDiff,
                 }}
                 fetchKey={usageFetchKey}
+                tooltip={tooltip[metric] || undefined}
               />
             </Suspense>
           ),
