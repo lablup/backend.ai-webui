@@ -79,9 +79,9 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
         }
       `,
       {
-        // FIXME: need to add filter for model name included model folder
-        // filter: ,
         projectId: currentProject.id,
+        filter: `usage_mode == "model" & status != "DELETE_PENDING" & status != "DELETE_ONGOING" & status != "DELETE_ERROR" & status != "DELETE_COMPLETE"${modelName ? ` & name ilike "%${modelName}%"` : ''}`,
+        permission: 'read_attribute',
       },
       {
         fetchPolicy: 'network-only',
@@ -101,6 +101,12 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
       `,
       vfolderNode,
     );
+
+  console.log('ModelTryContentButton Debug:', {
+    currentProject: currentProject,
+    modelName: modelName,
+    vfolder_nodes: vfolder_nodes,
+  });
 
   /* FIXME: need to check if the modelStorageHost is accessible & cloneable
   const { data: accessibleStorageHostList } = useSuspenseTanQuery({
@@ -269,7 +275,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
         modelId = 'custom';
         break;
     }
-    if (!vfolder_nodes) {
+    if (!vfolder_nodes || vfolder_nodes.edges.length === 0) {
       mutationToClone.mutate(
         {
           input: {
@@ -304,11 +310,11 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
                 taskId: data.bgtask_id,
                 onChange: {
                   pending: t('data.folders.DownloadingModel'),
-                  resolved: (_data: any, _notification: any) => {
+                  resolved: (cloneData: any, _notification: any) => {
                     mutationToCreateService.mutate(
                       getServiceInputByModelNameAndVFolderId(
                         modelCardMetadata?.serviceName ?? '',
-                        `${modelName}-1`,
+                        cloneData?.id || data?.id,
                       ),
                       {
                         onSuccess: (result: any) => {
@@ -417,10 +423,11 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
         },
       );
     } else {
+      const availableVFolder = vfolder_nodes.edges[0]?.node;
       mutationToCreateService.mutate(
         getServiceInputByModelNameAndVFolderId(
           modelCardMetadata?.serviceName ?? '',
-          '',
+          availableVFolder?.id || '',
         ),
         {
           onSuccess: (result: any) => {
