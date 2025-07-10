@@ -7,4 +7,5 @@ export type { BAIResourceWithSteppedProgressProps } from './BAIResourceWithStepp
 export * from './Table';
 export * from './fragments';
 export * from './provider';
+export * from './baiClient';
 export * from './unsafe';
