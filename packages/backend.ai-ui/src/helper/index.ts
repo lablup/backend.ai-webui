@@ -308,6 +308,12 @@ export function divideNumberWithUnits(size1: string, size2: string) {
   return convertToBinaryUnit(num1 / num2, '')?.value;
 }
 
+export const localeCompare = (a?: string | null, b?: string | null) => {
+  if (a === null || a === undefined) return -1;
+  if (b === null || b === undefined) return 1;
+  return a.localeCompare(b);
+};
+
 export const toGlobalId = (type: string, id: string): string => {
   return btoa(`${type}:${id}`);
 };
