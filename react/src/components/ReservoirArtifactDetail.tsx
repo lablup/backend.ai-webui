@@ -1,13 +1,20 @@
 import type { ReservoirArtifact } from '../types/reservoir';
 import {
+  getStatusColor,
+  getStatusIcon,
+  getTypeColor,
+  getTypeIcon,
+} from '../utils/reservoir';
+import BAIText from './BAIText';
+import {
   Card,
   Button,
   Typography,
   Descriptions,
   Tag,
   Space,
-  Flex,
-  List,
+  Table,
+  TableColumnsType,
   Modal,
   Select,
   Progress,
@@ -15,21 +22,12 @@ import {
   Divider,
   theme,
 } from 'antd';
+import { Flex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import {
-  ArrowLeft,
-  Download,
-  CheckCircle,
-  Loader,
-  AlertCircle,
-  CloudDownload,
-  Package,
-  Container,
-  Brain,
-  Info,
-} from 'lucide-react';
+import { ArrowLeft, Download, Info, CheckCircle } from 'lucide-react';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 dayjs.extend(relativeTime);
 
@@ -37,81 +35,20 @@ const { Title, Text, Paragraph } = Typography;
 
 interface ReservoirArtifactDetailProps {
   artifact: ReservoirArtifact;
-  onBack: () => void;
   onPull: (artifactId: string, version?: string) => void;
 }
 
 const ReservoirArtifactDetail: React.FC<ReservoirArtifactDetailProps> = ({
   artifact,
-  onBack,
   onPull,
 }) => {
   const { token } = theme.useToken();
+  const navigate = useNavigate();
   const [isPullModalVisible, setIsPullModalVisible] = useState(false);
   const [selectedVersion, setSelectedVersion] = useState<string>(
     artifact.versions[0],
   );
   const [isPulling, setIsPulling] = useState(false);
-
-  const getStatusIcon = (status: ReservoirArtifact['status']) => {
-    switch (status) {
-      case 'verified':
-        return <CheckCircle size={16} color={token.colorSuccess} />;
-      case 'pulling':
-        return <Loader size={16} color={token.colorInfo} />;
-      case 'verifying':
-        return <Loader size={16} color={token.colorWarning} />;
-      case 'available':
-        return <CloudDownload size={16} color={token.colorPrimary} />;
-      case 'error':
-        return <AlertCircle size={16} color={token.colorError} />;
-      default:
-        return null;
-    }
-  };
-
-  const getStatusColor = (status: ReservoirArtifact['status']) => {
-    switch (status) {
-      case 'verified':
-        return 'success';
-      case 'pulling':
-        return 'processing';
-      case 'verifying':
-        return 'warning';
-      case 'available':
-        return 'default';
-      case 'error':
-        return 'error';
-      default:
-        return 'default';
-    }
-  };
-
-  const getTypeIcon = (type: ReservoirArtifact['type']) => {
-    switch (type) {
-      case 'model':
-        return <Brain size={18} color={token.colorPrimary} />;
-      case 'package':
-        return <Package size={18} color={token.colorInfo} />;
-      case 'image':
-        return <Container size={18} color={token.colorWarning} />;
-      default:
-        return null;
-    }
-  };
-
-  const getTypeColor = (type: ReservoirArtifact['type']) => {
-    switch (type) {
-      case 'model':
-        return 'blue';
-      case 'package':
-        return 'green';
-      case 'image':
-        return 'orange';
-      default:
-        return 'default';
-    }
-  };
 
   const handlePull = () => {
     setIsPulling(true);
@@ -151,28 +88,27 @@ const ReservoirArtifactDetail: React.FC<ReservoirArtifactDetailProps> = ({
 
   return (
     <div>
-      <Flex
-        align="center"
-        gap="middle"
-        style={{ marginBottom: token.marginLG }}
-      >
+      <Flex align="center" style={{ marginBottom: token.marginLG }}>
         <Button
           type="text"
           icon={<ArrowLeft size={18} />}
-          onClick={onBack}
+          onClick={() => navigate('/reservoir')}
         ></Button>
-        <Divider type="vertical" />
-        <Flex align="center" gap="small">
-          {getTypeIcon(artifact.type)}
+        <Divider
+          type="vertical"
+          style={{ marginLeft: 0, marginRight: token.marginMD }}
+        />
+        <Flex align="center" gap="xs">
           <Title level={3} style={{ margin: 0 }}>
             {artifact.name}
           </Title>
-          <Tag color={getTypeColor(artifact.type)}>
-            {artifact.type.toUpperCase()}
+          <Tag color={getTypeColor(artifact.type)} style={{ margin: 0 }}>
+            {getTypeIcon(artifact.type, 18)} {artifact.type.toUpperCase()}
           </Tag>
           <Tag
             color={getStatusColor(artifact.status)}
             icon={getStatusIcon(artifact.status)}
+            style={{ margin: 0 }}
           >
             {artifact.status.toUpperCase()}
           </Tag>
@@ -192,7 +128,7 @@ const ReservoirArtifactDetail: React.FC<ReservoirArtifactDetailProps> = ({
               disabled={isPulling}
               loading={isPulling}
             >
-              Pull Artifact
+              {`Pull latest(v${artifact.versions[0]}) version`}
             </Button>
           ) : null
         }
@@ -205,6 +141,7 @@ const ReservoirArtifactDetail: React.FC<ReservoirArtifactDetailProps> = ({
               color={getTypeColor(artifact.type)}
               icon={getTypeIcon(artifact.type)}
             >
+              {' '}
               {artifact.type.toUpperCase()}
             </Tag>
           </Descriptions.Item>
@@ -217,13 +154,23 @@ const ReservoirArtifactDetail: React.FC<ReservoirArtifactDetailProps> = ({
             </Tag>
           </Descriptions.Item>
           <Descriptions.Item label="Size">
-            <Text code>{artifact.size}</Text>
+            <BAIText monospace>{artifact.size}</BAIText>
           </Descriptions.Item>
           <Descriptions.Item label="Source">
-            {artifact.source || 'N/A'}
+            {artifact.sourceUrl ? (
+              <Typography.Link
+                href={artifact.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {artifact.source || 'N/A'}
+              </Typography.Link>
+            ) : (
+              artifact.source || 'N/A'
+            )}
           </Descriptions.Item>
           <Descriptions.Item label="Last Updated">
-            {dayjs(artifact.updated_at).fromNow()}
+            {dayjs(artifact.updated_at).format('lll')}
           </Descriptions.Item>
           <Descriptions.Item label="Description" span={2}>
             <Paragraph>
@@ -243,44 +190,111 @@ const ReservoirArtifactDetail: React.FC<ReservoirArtifactDetailProps> = ({
           </Text>
         }
       >
-        <List
-          dataSource={artifact.versions}
-          renderItem={(version, index) => (
-            <List.Item
-              actions={[
-                artifact.status === 'available' ? (
-                  <Button
-                    key="pull"
-                    type="link"
-                    icon={<Download size={14} />}
-                    onClick={() => {
-                      setSelectedVersion(version);
-                      setIsPullModalVisible(true);
-                    }}
-                    disabled={isPulling}
-                  >
-                    Pull
-                  </Button>
-                ) : null,
-              ]}
-            >
-              <List.Item.Meta
-                avatar={
-                  <Tag color={index === 0 ? 'blue' : 'default'}>
-                    {index === 0 ? 'LATEST' : `v${version}`}
-                  </Tag>
-                }
-                title={<Text strong>{version}</Text>}
-                description={
-                  artifact.checksums?.[version] && (
-                    <Text type="secondary" style={{ fontSize: '12px' }}>
-                      SHA256: {artifact.checksums[version]}
-                    </Text>
-                  )
-                }
-              />
-            </List.Item>
-          )}
+        <Table
+          dataSource={(
+            artifact.versionDetails ||
+            artifact.versions.map((version) => ({
+              version,
+              size: artifact.size,
+              updated_at: artifact.updated_at,
+              checksum: artifact.checksums?.[version],
+              isInstalled: false, // default to false for legacy data
+              isPulling: false, // default to false for legacy data
+            }))
+          ).map((versionData, index) => ({
+            ...versionData,
+            key: versionData.version,
+            isLatest: index === 0,
+          }))}
+          columns={
+            [
+              {
+                title: 'Version',
+                dataIndex: 'version',
+                key: 'version',
+                render: (version: string, record: any) => (
+                  <div>
+                    <Flex align="center" gap="xs">
+                      <BAIText strong>{version}</BAIText>
+                      {record.isLatest && <Tag color="blue">LATEST</Tag>}
+                      {record.isInstalled && (
+                        <Tag color="green" icon={<CheckCircle size={12} />}>
+                          INSTALLED
+                        </Tag>
+                      )}
+                    </Flex>
+                    {record.checksum && (
+                      <Typography.Text
+                        type="secondary"
+                        style={{
+                          fontSize: '12px',
+                          display: 'block',
+                          marginTop: '4px',
+                        }}
+                      >
+                        {/* SHA256: {record.checksum} */}
+                      </Typography.Text>
+                    )}
+                  </div>
+                ),
+                width: '40%',
+              },
+              {
+                title: 'Action',
+                key: 'action',
+                render: (_, record: any) => {
+                  const getButtonText = () => {
+                    if (record.isPulling) return 'Pulling';
+                    if (record.isInstalled) return 'Reinstall';
+                    return 'Pull';
+                  };
+
+                  const getButtonType = () => {
+                    if (record.isPulling) return 'default';
+                    if (record.isInstalled) return 'default';
+                    return 'primary';
+                  };
+
+                  return (
+                    <Button
+                      icon={<Download size={16} />}
+                      onClick={() => {
+                        setSelectedVersion(record.version);
+                        setIsPullModalVisible(true);
+                      }}
+                      size="small"
+                      disabled={record.isPulling || record.isInstalled}
+                      type={getButtonType()}
+                      loading={record.isPulling}
+                    >
+                      {getButtonText()}
+                    </Button>
+                  );
+                },
+                width: '15%',
+              },
+              {
+                title: 'Size',
+                dataIndex: 'size',
+                key: 'size',
+                render: (size: string) => <BAIText monospace>{size}</BAIText>,
+                width: '20%',
+              },
+              {
+                title: 'Updated',
+                dataIndex: 'updated_at',
+                key: 'updated_at',
+                render: (updated_at: string) => (
+                  <Typography.Text type="secondary">
+                    {dayjs(updated_at).format('lll')}
+                  </Typography.Text>
+                ),
+                width: '25%',
+              },
+            ] as TableColumnsType<any>
+          }
+          pagination={false}
+          size="small"
         />
       </Card>
 

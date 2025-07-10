@@ -463,21 +463,37 @@ const router = createBrowserRouter([
       {
         path: '/reservoir',
         handle: { labelKey: 'Reservoir' },
-        Component: () => {
-          return (
-            <BAIErrorBoundary>
-              <Suspense
-                fallback={
-                  <Flex direction="column" style={{ maxWidth: 700 }}>
-                    <Skeleton active />
-                  </Flex>
-                }
-              >
-                <ReservoirPage />
-              </Suspense>
-            </BAIErrorBoundary>
-          );
-        },
+        children: [
+          {
+            path: '',
+            Component: () => {
+              return (
+                <BAIErrorBoundary>
+                  <Suspense
+                    fallback={
+                      <Flex direction="column" style={{ maxWidth: 700 }}>
+                        <Skeleton active />
+                      </Flex>
+                    }
+                  >
+                    <ReservoirPage />
+                  </Suspense>
+                </BAIErrorBoundary>
+              );
+            },
+          },
+          {
+            path: '/reservoir/:artifactId',
+            element: (
+              <BAIErrorBoundary>
+                <Suspense fallback={<Skeleton active />}>
+                  <ReservoirPage />
+                </Suspense>
+              </BAIErrorBoundary>
+            ),
+            handle: { labelKey: 'Artifact Details' },
+          },
+        ],
       },
       {
         path: '/settings',
