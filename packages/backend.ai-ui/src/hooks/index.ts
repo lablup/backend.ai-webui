@@ -32,3 +32,5 @@ export function useMemoizedJSONParse<T = any>(
     }
   }, [jsonString, fallbackValue]);
 }
+
+export { useMergedAllowedStorageHostPermission } from './useMergedAllowedStorageHostPermission';

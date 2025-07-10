@@ -20,4 +20,5 @@ export { default as BAIUnmountAfterClose } from './BAIUnmountAfterClose';
 export * from './Table';
 export * from './fragments';
 export * from './provider';
+export * from './baiClient';
 export * from './unsafe';
