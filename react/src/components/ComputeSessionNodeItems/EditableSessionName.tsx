@@ -5,10 +5,10 @@ import { useBaiSignedRequestWithPromise } from '../../helper';
 import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useTanMutation } from '../../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
-import { getSessionNameRules } from '../SessionNameFormItem';
 import { theme, Form, Input, App } from 'antd';
 import Text, { TextProps } from 'antd/es/typography/Text';
 import Title, { TitleProps } from 'antd/es/typography/Title';
+import _ from 'lodash';
 import { CornerDownLeftIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -167,7 +167,39 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
             name="sessionName"
             validateDebounce={1000}
             rules={[
-              ...getSessionNameRules(t),
+              {
+                min: 4,
+                message: t('session.validation.SessionNameTooShort'),
+              },
+              {
+                max: 64,
+                message: t('session.validation.SessionNameTooLong64'),
+              },
+              {
+                validator(f, value) {
+                  if (_.isEmpty(value)) {
+                    return Promise.resolve();
+                  }
+                  if (!/^\w/.test(value)) {
+                    return Promise.reject(
+                      t('session.validation.SessionNameShouldStartWith'),
+                    );
+                  }
+
+                  if (!/\w$/.test(value)) {
+                    return Promise.reject(
+                      t('session.validation.SessionNameShouldEndWith'),
+                    );
+                  }
+
+                  if (!/^[\w.-]*$/.test(value)) {
+                    return Promise.reject(
+                      t('session.validation.SessionNameInvalidCharacter'),
+                    );
+                  }
+                  return Promise.resolve();
+                },
+              },
               {
                 validator: async (rule, value) => {
                   if (value === session.name) {

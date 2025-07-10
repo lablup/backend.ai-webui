@@ -1,3 +1,4 @@
+import { ServiceLauncherPageContentDuplicatedQuery } from '../__generated__/ServiceLauncherPageContentDuplicatedQuery.graphql';
 import { ServiceLauncherPageContentFragment$key } from '../__generated__/ServiceLauncherPageContentFragment.graphql';
 import { ServiceLauncherPageContentModifyMutation } from '../__generated__/ServiceLauncherPageContentModifyMutation.graphql';
 import { ServiceLauncherPageContent_UserInfoQuery } from '../__generated__/ServiceLauncherPageContent_UserInfoQuery.graphql';
@@ -15,7 +16,10 @@ import {
 } from '../hooks';
 import { KnownAcceleratorResourceSlotName } from '../hooks/backendai';
 import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
-import { useCurrentResourceGroupState } from '../hooks/useCurrentProject';
+import {
+  useCurrentResourceGroupState,
+  useCurrentProjectValue,
+} from '../hooks/useCurrentProject';
 import BAIModal, { DEFAULT_BAI_MODAL_Z_INDEX } from './BAIModal';
 import EnvVarFormList, { EnvVarFormListValue } from './EnvVarFormList';
 import Flex from './Flex';
@@ -54,6 +58,8 @@ import {
   useFragment,
   useLazyLoadQuery,
   useMutation,
+  fetchQuery,
+  useRelayEnvironment,
 } from 'react-relay';
 import { StringParam, useQueryParams } from 'use-query-params';
 
@@ -136,6 +142,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   const { message } = App.useApp();
 
   const { t } = useTranslation();
+
+  const currentProject = useCurrentProjectValue();
 
   const [{ model }] = useQueryParams({
     model: StringParam,
@@ -637,6 +645,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
 
   const [validateServiceData, setValidateServiceData] = useState<any>();
 
+  const relayEvn = useRelayEnvironment();
   const getAIAcceleratorWithStringifiedKey = (resourceSlot: any) => {
     if (Object.keys(resourceSlot).length <= 0) {
       return undefined;
@@ -751,6 +760,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                       <Form.Item
                         label={t('modelService.ServiceName')}
                         name="serviceName"
+                        validateDebounce={500}
                         rules={[
                           {
                             min: 4,
@@ -763,14 +773,76 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                             type: 'string',
                           },
                           {
-                            pattern: /^(?:[^-]|[^-].*[^-])$/,
-                            message: t(
-                              'modelService.ServiceNameCannotStartWithHyphen',
-                            ),
+                            validator(f, value) {
+                              if (_.isEmpty(value)) {
+                                return Promise.resolve();
+                              }
+                              if (!/^\w/.test(value)) {
+                                return Promise.reject(
+                                  t('modelService.ServiceNameShouldStartWith'),
+                                );
+                              }
+
+                              if (!/\w$/.test(value)) {
+                                return Promise.reject(
+                                  t('modelService.ServiceNameShouldEndWith'),
+                                );
+                              }
+
+                              if (!/^[\w-]+$/.test(value)) {
+                                return Promise.reject(
+                                  t('modelService.ServiceNameInvalidCharacter'),
+                                );
+                              }
+
+                              return Promise.resolve();
+                            },
                           },
                           {
-                            pattern: /^[\w-]+$/,
-                            message: t('modelService.ServiceNameRule'),
+                            validator: async (_, value) => {
+                              if (!value) return Promise.resolve();
+                              const hasSameName =
+                                await fetchQuery<ServiceLauncherPageContentDuplicatedQuery>(
+                                  relayEvn,
+                                  graphql`
+                                    query ServiceLauncherPageContentDuplicatedQuery(
+                                      $projectID: UUID!
+                                      $filter: String
+                                      $offset: Int!
+                                      $limit: Int!
+                                    ) {
+                                      endpoint_list(
+                                        project: $projectID
+                                        filter: $filter
+                                        offset: $offset
+                                        limit: $limit
+                                      ) {
+                                        total_count
+                                      }
+                                    }
+                                  `,
+                                  {
+                                    projectID: currentProject.id,
+                                    filter: `name == "${value}"`,
+                                    offset: 0,
+                                    limit: 1,
+                                  },
+                                )
+                                  .toPromise()
+                                  .then(
+                                    (data) =>
+                                      (data?.endpoint_list?.total_count ?? 0) >
+                                      0,
+                                  )
+                                  .catch(() => {
+                                    return false;
+                                  });
+                              return hasSameName
+                                ? Promise.reject(
+                                    t('modelService.ServiceAlreadyExists'),
+                                  )
+                                : Promise.resolve();
+                            },
                           },
                           {
                             required: true,
