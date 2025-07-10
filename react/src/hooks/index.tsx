@@ -142,6 +142,11 @@ export type BackendAIClient = {
     list_all_hosts: () => Promise<any>;
     list_files: (path: string, id: string) => Promise<any>;
     list_allowed_types: () => Promise<string[]>;
+    delete_files: (
+      files: Array<string>,
+      recursive: boolean,
+      name: string,
+    ) => Promise<any>;
     clone: (input: any, name: string) => Promise<any>;
     delete_by_id: (id: string) => Promise<any>;
     restore_from_trash_bin: (id: string) => Promise<any>;
@@ -158,6 +163,18 @@ export type BackendAIClient = {
       vfolder: string;
     }): Promise<any>;
     leave_invited(name: string | null): Promise<any>;
+    info: (name: string) => Promise<any>;
+    mkdir: (
+      path: string,
+      name: string | null,
+      parents: string | null,
+      exist_ok: string | null,
+    ) => Promise<any>;
+    request_download_token: (
+      file: string,
+      name: string,
+      archive?: boolean,
+    ) => Promise<any>;
   };
   supports: (feature: string) => boolean;
   [key: string]: any;
@@ -198,6 +215,9 @@ export type BackendAIClient = {
   };
   get_resource_slots: () => Promise<any>;
   current_group_id: () => string;
+  current_group: string;
+  user_uuid: string;
+  email: string;
 };
 
 export const BackendaiClientPromise: Promise<BackendAIClient> = new Promise(

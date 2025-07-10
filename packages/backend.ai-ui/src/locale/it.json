@@ -1,5 +1,27 @@
 {
   "BAITestButton": {
     "test": "test"
+  },
+  "general": {
+    "NSelected": "{{Count}} selezionato",
+    "button": {
+      "Delete": "Eliminare",
+      "Create": "Creare"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "I file e le cartelle selezionati sono stati eliminati correttamente.",
+    "DeleteSelectedItemsDialog": "Elimina la conferma",
+    "DeleteSelectedItemDesc": "I file e le cartelle cancellati non possono essere ripristinati. \nVuoi procedere?",
+    "FolderCreatedSuccessfully": "Cartella creata correttamente.",
+    "CreateANewFolder": "Crea una nuova cartella",
+    "FolderName": "Nome della cartella",
+    "PleaseEnterAFolderName": "Immettere il nome della cartella.",
+    "MaxFolderNameLength": "Il nome della cartella deve essere di 255 caratteri o meno.",
+    "Name": "Nome",
+    "Size": "Misurare",
+    "CreatedAt": "Creato a",
+    "ModifiedAt": "Modificato a",
+    "Controls": "Controlli"
   }
 }

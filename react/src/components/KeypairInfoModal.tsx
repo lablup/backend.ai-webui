@@ -51,7 +51,10 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
     },
     {
       fetchPolicy:
-        modalProps.open && keypair?.user_id ? 'network-only' : 'store-only',
+        modalProps.open && keypair?.user_id
+          ? 'store-and-network'
+          : 'store-only',
+      fetchKey: keypair?.user_id ?? '',
     },
   );
 

@@ -1,5 +1,27 @@
 {
   "BAITestButton": {
     "test": "тест"
+  },
+  "general": {
+    "NSelected": "{{count}} выбрал",
+    "button": {
+      "Delete": "Удалить",
+      "Create": "Создавать"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "Выбранные файлы и папки были успешно удалены.",
+    "DeleteSelectedItemsDialog": "Удалить подтверждение",
+    "DeleteSelectedItemDesc": "Удаленные файлы и папки не могут быть восстановлены. \nВы хотите продолжить?",
+    "FolderCreatedSuccessfully": "Папка создана успешно.",
+    "CreateANewFolder": "Создать новую папку",
+    "FolderName": "Имя папки",
+    "PleaseEnterAFolderName": "Пожалуйста, введите имя папки.",
+    "MaxFolderNameLength": "Имя папки должно быть 255 символов или меньше.",
+    "Name": "Имя",
+    "Size": "Размер",
+    "CreatedAt": "Создан в",
+    "ModifiedAt": "Модифицирован в",
+    "Controls": "Управление"
   }
 }

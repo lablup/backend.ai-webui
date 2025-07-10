@@ -8,6 +8,7 @@ import FolderExplorerHeader from './FolderExplorerHeader';
 import VFolderNodeDescription from './VFolderNodeDescription';
 import { Alert, Grid, Splitter, theme } from 'antd';
 import { createStyles } from 'antd-style';
+import { BAIFileExplorer } from 'backend.ai-ui';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -84,6 +85,9 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
           ...FolderExplorerHeaderFragment
           ...VFolderNodeDescriptionFragment
           ...VFolderNameTitleNodeFragment
+          # ControlItemsFragment is used in FileExplorer
+          ...BAIFileExplorerFragment
+          ...ControlItemsFragment
         }
       }
     `,
@@ -104,6 +108,10 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
         />
       ) : (
         <>
+          <BAIFileExplorer
+            fileExplorerFrgmt={vfolder_node}
+            targetFolder={vfolderID}
+          />
           <FolderExplorerActions
             isSelected={isSelected}
             isWritable={isWritable}

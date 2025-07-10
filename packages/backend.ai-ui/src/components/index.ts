@@ -10,3 +10,4 @@ export type { BAITableProps } from './BAITable';
 export * from './fragments';
 export * from './tests';
 export * from './provider';
+export * from './baiClient';

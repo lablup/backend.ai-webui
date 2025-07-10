@@ -1,5 +1,27 @@
 {
   "BAITestButton": {
     "test": "teste"
+  },
+  "general": {
+    "NSelected": "{{count}} selecionado",
+    "button": {
+      "Delete": "Excluir",
+      "Create": "Criar"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "Arquivos e pastas selecionados foram excluídos com sucesso.",
+    "DeleteSelectedItemsDialog": "Excluir confirmação",
+    "DeleteSelectedItemDesc": "Arquivos e pastas excluídas não podem ser restauradas. \nVocê quer prosseguir?",
+    "FolderCreatedSuccessfully": "Pasta criada com sucesso.",
+    "CreateANewFolder": "Crie uma nova pasta",
+    "FolderName": "Nome da pasta",
+    "PleaseEnterAFolderName": "Por favor, insira o nome da pasta.",
+    "MaxFolderNameLength": "O nome da pasta deve ter 255 caracteres ou menos.",
+    "Name": "Nome",
+    "Size": "Tamanho",
+    "CreatedAt": "Criado em",
+    "ModifiedAt": "Modificado em",
+    "Controls": "Controles"
   }
 }

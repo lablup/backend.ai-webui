@@ -1,5 +1,27 @@
 {
   "BAITestButton": {
     "test": "турших"
+  },
+  "general": {
+    "NSelected": "{{тоолох}} сонгогдсон",
+    "button": {
+      "Delete": "Эдгээх",
+      "Create": "Шуүгиан дэгдээх"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "Сонгосон файлууд болон хавтасыг амжилттай устгасан байна.",
+    "DeleteSelectedItemsDialog": "Баталгаажуулалтыг устгах",
+    "DeleteSelectedItemDesc": "Устгасан файлууд, хавтасыг сэргээх боломжгүй байна. \nТа үргэлжлүүлэхийг хүсч байна уу?",
+    "FolderCreatedSuccessfully": "Амжилтанд амжилттай бүтээгдсэн.",
+    "CreateANewFolder": "Шинэ хавтас үүсгэх",
+    "FolderName": "Хөдөлгөөний нэр",
+    "PleaseEnterAFolderName": "Фолдерын нэрийг оруулна уу.",
+    "MaxFolderNameLength": "Фолдерын нэр 255 тэмдэгт буюу түүнээс бага тэмдэгт байх ёстой.",
+    "Name": "Нэр",
+    "Size": "Хэмжээ",
+    "CreatedAt": "Бүтэмж дээр бүтсэн",
+    "ModifiedAt": "Өөрчлөгдсөн",
+    "Controls": "Удирдлага"
   }
 }

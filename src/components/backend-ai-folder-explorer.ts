@@ -802,6 +802,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
 
   async _fetchVFolderFiles() {
     this.fileListGrid.selectedItems = [];
+    console.log('####', this.breadcrumb.join('/'));
     const filesInfo = await globalThis.backendaiclient.vfolder.list_files(
       this.breadcrumb.join('/'),
       this.vfolder,
@@ -977,6 +978,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
         this.notification.show();
         return;
       }
+      console.log('##', this.vfolder);
 
       const job = globalThis.backendaiclient.vfolder.rename_file(
         path,

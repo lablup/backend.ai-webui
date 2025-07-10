@@ -1,5 +1,27 @@
 {
   "BAITestButton": {
     "test": "δοκιμή"
+  },
+  "general": {
+    "NSelected": "{{count}} Επιλεγμένη",
+    "button": {
+      "Delete": "Διαγράφω",
+      "Create": "Δημιουργώ"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "Επιλεγμένα αρχεία και φακέλους έχουν διαγραφεί με επιτυχία.",
+    "DeleteSelectedItemsDialog": "Διαγραφή επιβεβαίωσης",
+    "DeleteSelectedItemDesc": "Τα διαγραμμένα αρχεία και οι φάκελοι δεν μπορούν να αποκατασταθούν. \nΘέλετε να προχωρήσετε;",
+    "FolderCreatedSuccessfully": "Ο φάκελος δημιούργησε με επιτυχία.",
+    "CreateANewFolder": "Δημιουργήστε ένα νέο φάκελο",
+    "FolderName": "Όνομα φακέλου",
+    "PleaseEnterAFolderName": "Εισαγάγετε το όνομα του φακέλου.",
+    "MaxFolderNameLength": "Το όνομα του φακέλου πρέπει να είναι 255 χαρακτήρες ή λιγότερο.",
+    "Name": "Ονομα",
+    "Size": "Μέγεθος",
+    "CreatedAt": "Δημιουργήθηκε στο",
+    "ModifiedAt": "Τροποποιημένος",
+    "Controls": "Χειριστήρια"
   }
 }
