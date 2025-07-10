@@ -11,6 +11,35 @@
     "SelectColumnToDisplay": "Görüntülemek için sütunları seçin",
     "SearchTableColumn": "Arama Tablosu sütunları"
   },
+  "general": {
+    "NSelected": "{{count}} seçildi",
+    "button": {
+      "Delete": "Silmek",
+      "Create": "Yaratmak",
+      "Upload": "Yüklemek"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "Seçilen dosyalar ve klasörler başarıyla silindi.",
+    "DeleteSelectedItemsDialog": "Onay Sil",
+    "DeleteSelectedItemDesc": "Silinen dosyalar ve klasörler geri yüklenemez. \nDevam etmek ister misin?",
+    "FolderCreatedSuccessfully": "Klasör başarıyla oluşturuldu.",
+    "CreateANewFolder": "Yeni bir klasör oluşturun",
+    "FolderName": "Klasör adı",
+    "PleaseEnterAFolderName": "Lütfen klasör adını girin.",
+    "MaxFolderNameLength": "Klasör adı 255 karakter veya daha az olmalıdır.",
+    "Name": "İsim",
+    "Size": "Boyut",
+    "CreatedAt": "Yaratılmış",
+    "ModifiedAt": "Değiştirildi",
+    "Controls": "Kontroller",
+    "UploadFiles": "Dosyaları Yükle",
+    "UploadFolder": "Klasörü Yükle",
+    "DownloadStarted": "Dosya \"{{fileName}}\" indirme başlatıldı.",
+    "error": {
+      "FileUploadSizeLimit": "Dosya boyutu yükleme boyutu sınırını aşar."
+    }
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Arama",
     "ResetFilter": "Filtreleri sıfırla"

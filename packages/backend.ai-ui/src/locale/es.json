@@ -11,6 +11,35 @@
     "SelectColumnToDisplay": "Seleccionar columnas para mostrar",
     "SearchTableColumn": "Columnas de la tabla de búsqueda"
   },
+  "general": {
+    "NSelected": "{{count}} seleccionado",
+    "button": {
+      "Delete": "Borrar",
+      "Create": "Crear",
+      "Upload": "Subir"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "Los archivos y carpetas seleccionados se han eliminado correctamente.",
+    "DeleteSelectedItemsDialog": "Eliminar confirmación",
+    "DeleteSelectedItemDesc": "Los archivos y carpetas eliminados no se pueden restaurar. \n¿Quieres continuar?",
+    "FolderCreatedSuccessfully": "Carpeta creada con éxito.",
+    "CreateANewFolder": "Crea una nueva carpeta",
+    "FolderName": "Nombre de carpeta",
+    "PleaseEnterAFolderName": "Ingrese el nombre de la carpeta.",
+    "MaxFolderNameLength": "El nombre de la carpeta debe ser de 255 caracteres o menos.",
+    "Name": "Nombre",
+    "Size": "Tamaño",
+    "CreatedAt": "Creado a",
+    "ModifiedAt": "Modificado en",
+    "Controls": "Control",
+    "UploadFiles": "Cargar archivos",
+    "UploadFolder": "Carpeta de carga",
+    "DownloadStarted": "El archivo \"{{fileName}}\" ha comenzado.",
+    "error": {
+      "FileUploadSizeLimit": "El tamaño del archivo excede el límite de tamaño de carga."
+    }
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Buscar en",
     "ResetFilter": "Restablecer filtros"
