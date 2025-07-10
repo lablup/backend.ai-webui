@@ -294,3 +294,53 @@ export function divideNumberWithUnits(size1: string, size2: string) {
   if (num2 === 0) return undefined; // Avoid division by zero
   return convertToBinaryUnit(num1 / num2, '')?.value;
 }
+
+export const localeCompare = (a?: string | null, b?: string | null) => {
+  if (a === null || a === undefined) return -1;
+  if (b === null || b === undefined) return 1;
+  return a.localeCompare(b);
+};
+
+/**
+ * Filters out empty items from an array.
+ *
+ * @template T - The type of items in the array.
+ * @param arr - The array to filter.
+ * @returns An array containing only non-empty items.
+ */
+export const filterEmptyItem = <T>(
+  arr: Array<T | undefined | null | '' | false | any[] | object>,
+): Array<T> => _.filter(arr, (item) => !_.isEmpty(item)) as Array<T>;
+export const generateRandomString = (n = 3) => {
+  let randNum = Math.floor(Math.random() * 52 * 52 * 52);
+  const parseNum = (num: number) => {
+    if (num < 26) return String.fromCharCode(65 + num);
+    else return String.fromCharCode(97 + num - 26);
+  };
+  let randStr = '';
+  for (let i = 0; i < n; i++) {
+    randStr += parseNum(randNum % 52);
+    randNum = Math.floor(randNum / 52);
+  }
+  return randStr;
+};
+
+export const maskString = (
+  value = '',
+  maskChar = '*',
+  startFrom = 0,
+  maskLength = 0,
+) => {
+  // clamp mask length
+  maskLength =
+    startFrom + maskLength > value.length ? value.length : maskLength;
+  return (
+    value.substring(0, startFrom) +
+    maskChar.repeat(maskLength) +
+    value.substring(startFrom + maskLength, value.length)
+  );
+};
+
+export const toGlobalId = (type: string, id: string): string => {
+  return btoa(`${type}:${id}`);
+};

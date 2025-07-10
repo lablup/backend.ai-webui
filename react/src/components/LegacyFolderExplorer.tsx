@@ -3,12 +3,13 @@ import { toGlobalId } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
-import FolderExplorerActions from './FolderExplorerActions';
+// import FolderExplorerActions from './FolderExplorerActions';
 import FolderExplorerHeader from './FolderExplorerHeader';
 import VFolderNodeDescription from './VFolderNodeDescription';
 import { Alert, Grid, Splitter, theme } from 'antd';
 import { createStyles } from 'antd-style';
-import { useEffect, useRef, useState } from 'react';
+import { BAIFileExplorer } from 'backend.ai-ui';
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -42,8 +43,8 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
   const { xl } = Grid.useBreakpoint();
 
   const { t } = useTranslation();
-  const [isWritable, setIsWritable] = useState<boolean>(false);
-  const [isSelected, setIsSelected] = useState<boolean>(false);
+  // const [isWritable, setIsWritable] = useState<boolean>(false);
+  // const [isSelected, setIsSelected] = useState<boolean>(false);
   // TODO: Events are sent and received as normal,
   // but the Lit Element is not rendered and the values inside are not available but ref is available.
   const folderExplorerRef = useRef<FolderExplorerElement>(null);
@@ -52,11 +53,11 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
   useSuspendedBackendaiClient();
   useEffect(() => {
     const handleConnected = (e: any) => {
-      setIsWritable(e.detail || false);
+      // setIsWritable(e.detail || false);
     };
 
     const handleColumnSelected = (e: any) => {
-      setIsSelected(e.detail || false);
+      // setIsSelected(e.detail || false);
     };
 
     document.addEventListener('folderExplorer:connected', handleConnected);
@@ -84,6 +85,9 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
           ...FolderExplorerHeaderFragment
           ...VFolderNodeDescriptionFragment
           ...VFolderNameTitleNodeFragment
+          # ControlItemsFragment is used in FileExplorer
+          ...BAIFileExplorerFragment
+          ...ControlItemsFragment
         }
       }
     `,
@@ -104,18 +108,22 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
         />
       ) : (
         <>
-          <FolderExplorerActions
+          <BAIFileExplorer
+            vfolderNodeFrgmt={vfolder_node}
+            targetVFolderId={vfolderID}
+          />
+          {/* <FolderExplorerActions
             isSelected={isSelected}
             isWritable={isWritable}
             folderExplorerRef={folderExplorerRef}
             size={xl ? 'default' : 'small'}
-          />
+          /> */}
           {/* @ts-ignore */}
-          <backend-ai-folder-explorer
+          {/* <backend-ai-folder-explorer
             ref={folderExplorerRef}
             active
             vfolderID={vfolderID}
-          />
+          /> */}
         </>
       )}
     </Flex>

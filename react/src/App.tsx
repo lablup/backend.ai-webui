@@ -116,7 +116,7 @@ const router = createBrowserRouter([
       >
         <MainLayout />
         <RoutingEventHandler />
-        <Suspense fallback={null}>
+        <Suspense>
           <FolderExplorerOpener />
           <FolderInvitationResponseModalOpener />
         </Suspense>

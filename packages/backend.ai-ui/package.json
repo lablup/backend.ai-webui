@@ -57,23 +57,26 @@
     }
   },
   "peerDependencies": {
-    "@ant-design/icons": "^5.6.1",
+    "@ant-design/icons": "^6.0.0",
+    "@tanstack/react-query": "^5.69.0",
     "ahooks": "^3.8.4",
     "antd": "^5.24.5",
-    "big.js": "^7.0.1",
-    "dayjs": "^1.11.13",
     "antd-style": "^3.7.1",
+    "big.js": "^7.0.1",
     "classnames": "^2.5.1",
+    "dayjs": "^1.11.13",
     "graphql": "^16.10.0",
     "i18next": "^24.2.3",
+    "jotai": "^2.12.2",
     "lodash": "^4.17.21",
     "lucide-react": "^0.484.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-i18next": "^15.4.1",
     "react-relay": "^20.1.0",
+    "react-resizable": "^3.0.5",
     "relay-runtime": "^20.1.0",
-    "react-resizable": "^3.0.5"
+    "tus-js-client": "^4.1.0"
   },
   "devDependencies": {
     "@jest/expect": "30.0.0-beta.3",
