@@ -119,6 +119,24 @@
       "last 1 safari version"
     ]
   },
+  "pnpm": {
+    "overrides": {
+      "react": "^19.0.0",
+      "react-dom": "^19.0.0",
+      "@types/react": "^19.0.0",
+      "@types/react-dom": "^19.0.0"
+    },
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "react",
+        "react-dom"
+      ],
+      "allowedVersions": {
+        "react": "19",
+        "react-dom": "19"
+      }
+    }
+  },
   "devDependencies": {
     "@babel/core": "^7.27.3",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
