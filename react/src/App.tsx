@@ -81,6 +81,7 @@ const SessionDetailAndContainerLogOpenerLegacy = React.lazy(
 const ChatPage = React.lazy(() => import('./pages/ChatPage'));
 
 const AIAgentPage = React.lazy(() => import('./pages/AIAgentPage'));
+const ReservoirPage = React.lazy(() => import('./pages/ReservoirPage'));
 
 interface CustomHandle {
   title?: string;
@@ -435,6 +436,25 @@ const router = createBrowserRouter([
         path: '/resource-policy',
         handle: { labelKey: 'webui.menu.ResourcePolicy' },
         Component: ResourcePolicyPage,
+      },
+      {
+        path: '/reservoir',
+        handle: { labelKey: 'Reservoir' },
+        Component: () => {
+          return (
+            <BAIErrorBoundary>
+              <Suspense
+                fallback={
+                  <Flex direction="column" style={{ maxWidth: 700 }}>
+                    <Skeleton active />
+                  </Flex>
+                }
+              >
+                <ReservoirPage />
+              </Suspense>
+            </BAIErrorBoundary>
+          );
+        },
       },
       {
         path: '/settings',
