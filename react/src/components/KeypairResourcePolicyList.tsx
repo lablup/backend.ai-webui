@@ -12,7 +12,7 @@ import {
 } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
-import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useUpdatableState } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import AllowedVfolderHostsWithPermission from './AllowedVfolderHostsWithPermission';
 import Flex from './Flex';
@@ -64,8 +64,6 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
     useState<KeypairResourcePolicyInfoModalFragment$key | null>(null);
   const [isPendingInfoModalOpen, startInfoModalOpenTransition] =
     useTransition();
-
-  const baiClient = useSuspendedBackendaiClient();
 
   const { keypair_resource_policies } =
     useLazyLoadQuery<KeypairResourcePolicyListQuery>(
@@ -199,7 +197,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         );
       },
     },
-    baiClient?.supports('max-pending-session-count') && {
+    {
       title: t('resourcePolicy.MaxPendingSessionCount'),
       dataIndex: 'max_pending_session_count',
       key: 'max_pending_session_count',
@@ -211,7 +209,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         ),
       render: (text) => (text ? text : '∞'),
     },
-    baiClient?.supports('max-concurrent-sftp-sessions') && {
+    {
       title: t('resourcePolicy.MaxConcurrentSFTPSessions'),
       dataIndex: 'max_concurrent_sftp_sessions',
       key: 'max_concurrent_sftp_sessions',

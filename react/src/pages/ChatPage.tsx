@@ -9,7 +9,7 @@ import {
 } from '../components/Chat/ChatHistory';
 import { type ChatProviderData } from '../components/Chat/ChatModel';
 import Flex from '../components/Flex';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useWebUINavigate } from '../hooks';
 import { Badge, Button, Card, Drawer, List, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import dayjs from 'dayjs';
@@ -42,7 +42,6 @@ const useStyles = createStyles(({ css }) => ({
 }));
 
 function useDefaultEndpointId() {
-  const baiClient = useSuspendedBackendaiClient();
   const { endpoint_list } = useLazyLoadQuery<ChatPageQuery>(
     graphql`
       query ChatPageQuery($filter: String) {
@@ -54,9 +53,7 @@ function useDefaultEndpointId() {
       }
     `,
     {
-      filter: baiClient.supports('endpoint-lifecycle-stage-filter')
-        ? 'lifecycle_stage == "created"'
-        : undefined,
+      filter: 'lifecycle_stage == "created"',
     },
   );
 

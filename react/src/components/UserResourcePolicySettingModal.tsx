@@ -9,7 +9,6 @@ import {
 } from '../__generated__/UserResourcePolicySettingModalModifyMutation.graphql';
 import { GBToBytes, bytesToGB } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
-import { useSuspendedBackendaiClient } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
@@ -44,18 +43,6 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
   const { message } = App.useApp();
 
   const formRef = useRef<FormInstance>(null);
-
-  const baiClient = useSuspendedBackendaiClient();
-  const supportMaxVfolderCount = baiClient?.supports(
-    'max-vfolder-count-in-user-and-project-resource-policy',
-  );
-  const supportMaxQuotaScopeSize = baiClient?.supports('max-quota-scope-size');
-  const supportMaxSessionCountPerModelSession = baiClient?.supports(
-    'max-session-count-per-model-session',
-  );
-  const supportMaxCustomizedImageCount = baiClient?.supports(
-    'max-customized-image-count',
-  );
 
   const userResourcePolicy = useFragment(
     graphql`
@@ -146,18 +133,6 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
             values?.max_session_count_per_model_session,
           max_customized_image_count: values?.max_customized_image_count,
         };
-        if (!supportMaxVfolderCount) {
-          delete props.max_vfolder_count;
-        }
-        if (!supportMaxQuotaScopeSize) {
-          delete props.max_quota_scope_size;
-        }
-        if (!supportMaxSessionCountPerModelSession) {
-          delete props.max_session_count_per_model_session;
-        }
-        if (!supportMaxCustomizedImageCount) {
-          delete props.max_customized_image_count;
-        }
         if (userResourcePolicy === null) {
           commitCreateUserResourcePolicy({
             variables: {
@@ -281,67 +256,59 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
           gap={'md'}
           style={{ marginBottom: token.marginMD }}
         >
-          {supportMaxVfolderCount ? (
-            <FormItemWithUnlimited
-              name={'max_vfolder_count'}
-              unlimitedValue={0}
-              label={t('resourcePolicy.MaxFolderCount')}
-              style={{ width: '100%', margin: 0 }}
-            >
-              <InputNumber
-                min={0}
-                max={SIGNED_32BIT_MAX_INT}
-                style={{ width: '100%' }}
-              />
-            </FormItemWithUnlimited>
-          ) : null}
-          {supportMaxQuotaScopeSize ? (
-            <FormItemWithUnlimited
-              name={'max_quota_scope_size'}
-              unlimitedValue={-1}
-              label={t('storageHost.MaxFolderSize')}
-              style={{ width: '100%', margin: 0 }}
-            >
-              <InputNumber
-                min={0}
-                // Maximum safe integer divided by 10^9 to prevent overflow when converting GB to bytes
-                max={Math.floor(Number.MAX_SAFE_INTEGER / Math.pow(10, 9))}
-                addonAfter="GB"
-                style={{ width: '100%' }}
-              />
-            </FormItemWithUnlimited>
-          ) : null}
+          <FormItemWithUnlimited
+            name={'max_vfolder_count'}
+            unlimitedValue={0}
+            label={t('resourcePolicy.MaxFolderCount')}
+            style={{ width: '100%', margin: 0 }}
+          >
+            <InputNumber
+              min={0}
+              max={SIGNED_32BIT_MAX_INT}
+              style={{ width: '100%' }}
+            />
+          </FormItemWithUnlimited>
+          <FormItemWithUnlimited
+            name={'max_quota_scope_size'}
+            unlimitedValue={-1}
+            label={t('storageHost.MaxFolderSize')}
+            style={{ width: '100%', margin: 0 }}
+          >
+            <InputNumber
+              min={0}
+              // Maximum safe integer divided by 10^9 to prevent overflow when converting GB to bytes
+              max={Math.floor(Number.MAX_SAFE_INTEGER / Math.pow(10, 9))}
+              addonAfter="GB"
+              style={{ width: '100%' }}
+            />
+          </FormItemWithUnlimited>
         </Flex>
-        {supportMaxSessionCountPerModelSession ? (
-          <Form.Item
-            name={'max_session_count_per_model_session'}
-            label={t('resourcePolicy.MaxSessionCountPerModelSession')}
-            rules={[
-              { required: true, message: t('data.explorer.ValueRequired') },
-            ]}
-          >
-            <InputNumber
-              min={0}
-              max={SIGNED_32BIT_MAX_INT}
-              style={{ width: '100%' }}
-            />
-          </Form.Item>
-        ) : null}
-        {supportMaxCustomizedImageCount ? (
-          <Form.Item
-            name={'max_customized_image_count'}
-            label={t('resourcePolicy.MaxCustomizedImageCount')}
-            rules={[
-              { required: true, message: t('data.explorer.ValueRequired') },
-            ]}
-          >
-            <InputNumber
-              min={0}
-              max={SIGNED_32BIT_MAX_INT}
-              style={{ width: '100%' }}
-            />
-          </Form.Item>
-        ) : null}
+        <Form.Item
+          name={'max_session_count_per_model_session'}
+          label={t('resourcePolicy.MaxSessionCountPerModelSession')}
+          rules={[
+            { required: true, message: t('data.explorer.ValueRequired') },
+          ]}
+        >
+          <InputNumber
+            min={0}
+            max={SIGNED_32BIT_MAX_INT}
+            style={{ width: '100%' }}
+          />
+        </Form.Item>
+        <Form.Item
+          name={'max_customized_image_count'}
+          label={t('resourcePolicy.MaxCustomizedImageCount')}
+          rules={[
+            { required: true, message: t('data.explorer.ValueRequired') },
+          ]}
+        >
+          <InputNumber
+            min={0}
+            max={SIGNED_32BIT_MAX_INT}
+            style={{ width: '100%' }}
+          />
+        </Form.Item>
       </Form>
     </BAIModal>
   );

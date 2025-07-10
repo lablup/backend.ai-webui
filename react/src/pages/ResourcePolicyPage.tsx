@@ -3,7 +3,7 @@ import KeypairResourcePolicyList from '../components/KeypairResourcePolicyList';
 import ProjectResourcePolicyList from '../components/ProjectResourcePolicyList';
 import UserResourcePolicyList from '../components/UserResourcePolicyList';
 import { filterEmptyItem } from '../helper';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useWebUINavigate } from '../hooks';
 import { Card } from 'antd';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,10 +16,6 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
   const { t } = useTranslation();
   const [curTabKey] = useQueryParam('tab', tabParam);
   const webUINavigate = useWebUINavigate();
-  const baiClient = useSuspendedBackendaiClient();
-  const supportConfigureUserResourcePolicy = baiClient?.supports(
-    'configure-user-resource-policy',
-  );
 
   return (
     <Card
@@ -44,7 +40,7 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
           key: 'keypair',
           label: t('resourcePolicy.Keypair'),
         },
-        supportConfigureUserResourcePolicy && {
+        {
           key: 'user',
           label: t('resourcePolicy.User'),
         },

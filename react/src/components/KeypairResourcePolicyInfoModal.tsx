@@ -1,6 +1,5 @@
 import { KeypairResourcePolicyInfoModalFragment$key } from '../__generated__/KeypairResourcePolicyInfoModalFragment.graphql';
 import { filterEmptyItem } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
 import AllowedVfolderHostsWithPermission from './AllowedVfolderHostsWithPermission';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
@@ -39,7 +38,6 @@ const KeypairResourcePolicyInfoModal: React.FC<InfoModalProps> = ({
   const { styles } = useStyles();
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const baiClient = useSuspendedBackendaiClient();
 
   const resourcePolicy = useFragment(
     graphql`
@@ -134,7 +132,7 @@ const KeypairResourcePolicyInfoModal: React.FC<InfoModalProps> = ({
       label: t('session.MaxSessionLifetime'),
       children: resourcePolicy?.max_session_lifetime || '∞',
     },
-    baiClient?.supports('max-pending-session-count') && {
+    {
       label: t('resourcePolicy.MaxPendingSessionCount'),
       children:
         _.isNull(resourcePolicy?.max_pending_session_count) ||
@@ -142,11 +140,11 @@ const KeypairResourcePolicyInfoModal: React.FC<InfoModalProps> = ({
           ? '∞'
           : resourcePolicy?.max_pending_session_count,
     },
-    baiClient?.supports('max-concurrent-sftp-sessions') && {
+    {
       label: t('resourcePolicy.MaxConcurrentSFTPSessions'),
       children: resourcePolicy?.max_concurrent_sftp_sessions || '∞',
     },
-    baiClient?.supports('max-pending-session-resource-slots') && {
+    {
       label: t('resourcePolicy.MaxPendingSessionResourceSlots'),
       children: resourcePolicy?.max_pending_session_resource_slots ? (
         !_.isEmpty(

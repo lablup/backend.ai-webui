@@ -71,9 +71,6 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
   const currentUserRole = useCurrentUserRole();
   const currentDomainName = useCurrentDomainValue();
   const baiClient = useSuspendedBackendaiClient();
-  const sudoSessionEnabledSupported = baiClient?.supports(
-    'sudo-session-enabled',
-  );
   const { isTOTPSupported, isLoading: isLoadingManagerSupportingTOTP } =
     useTOTPSupported();
   const [isOpenTOTPActivateModal, { toggle: toggleTOTPActivateModal }] =
@@ -113,7 +110,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
     `,
     {
       email: userEmail ?? '',
-      isNotSupportSudoSessionEnabled: !sudoSessionEnabledSupported,
+      isNotSupportSudoSessionEnabled: false,
       isNotSupportTotp: !isTOTPSupported,
     },
     {
@@ -229,7 +226,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             variables: {
               email: values?.email || '',
               props: props,
-              isNotSupportSudoSessionEnabled: !sudoSessionEnabledSupported,
+              isNotSupportSudoSessionEnabled: false,
               isNotSupportTotp: !isTOTPSupported,
             },
             onCompleted: (res, errors) => {
@@ -275,7 +272,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             variables: {
               email: values?.email || '',
               props: props,
-              isNotSupportSudoSessionEnabled: !sudoSessionEnabledSupported,
+              isNotSupportSudoSessionEnabled: false,
               isNotSupportTotp: !isTOTPSupported,
             },
             onCompleted: (res, errors) => {
@@ -448,15 +445,13 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
         >
           <Switch />
         </Form.Item>
-        {!!sudoSessionEnabledSupported && (
-          <Form.Item
-            name="sudo_session_enabled"
-            label={t('credential.EnableSudoSession')}
-            valuePropName="checked"
-          >
-            <Switch />
-          </Form.Item>
-        )}
+        <Form.Item
+          name="sudo_session_enabled"
+          label={t('credential.EnableSudoSession')}
+          valuePropName="checked"
+        >
+          <Switch />
+        </Form.Item>
         {!!isTOTPSupported && (
           <Form.Item
             name="totp_activated"

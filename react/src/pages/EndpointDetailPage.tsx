@@ -128,9 +128,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   const webuiNavigate = useWebUINavigate();
   const { open } = useFolderExplorerOpener();
   const [selectedSessionId, setSelectedSessionId] = useState<string>();
-  const isSupportAutoScalingRule =
-    baiClient.isManagerVersionCompatibleWith('25.1.0');
-
+  const isSupportAutoScalingRule = baiClient.supports('auto-scaling-rule');
   const [errorDataForJSONModal, setErrorDataForJSONModal] = useState<string>();
   const { endpoint, endpoint_token_list, endpoint_auto_scaling_rules } =
     useLazyLoadQuery<EndpointDetailPageQuery>(
@@ -434,23 +432,19 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         <Suspense fallback={<Spin indicator={<LoadingOutlined spin />} />}>
           <Flex direction="column" align="start">
             <VFolderLazyView uuid={endpoint?.model} clickable={true} />
-            {baiClient.supports('endpoint-extra-mounts') &&
-              endpoint?.model_mount_destination && (
-                <Flex direction="row" align="center" gap={'xxs'}>
-                  <ArrowRightOutlined type="secondary" />
-                  <Typography.Text type="secondary">
-                    {endpoint?.model_mount_destination}
-                  </Typography.Text>
-                </Flex>
-              )}
+            {endpoint?.model_mount_destination && (
+              <Flex direction="row" align="center" gap={'xxs'}>
+                <ArrowRightOutlined type="secondary" />
+                <Typography.Text type="secondary">
+                  {endpoint?.model_mount_destination}
+                </Typography.Text>
+              </Flex>
+            )}
           </Flex>
         </Suspense>
       ) : null,
     },
-  ];
-
-  if (baiClient.supports('endpoint-extra-mounts')) {
-    items.push({
+    {
       label: t('modelService.AdditionalMounts'),
       children: (
         <Flex direction="column" align="start">
@@ -469,32 +463,30 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           })}
         </Flex>
       ),
-    });
-  }
-
-  items.push({
-    label: t('session.launcher.EnvironmentVariable'),
-    children: (
-      <Typography.Text style={{ fontFamily: 'monospace' }}>
-        {_.isEmpty(JSON.parse(endpoint?.environ || '{}'))
-          ? '-'
-          : endpoint?.environ}
-      </Typography.Text>
-    ),
-    span: {
-      sm: 1,
     },
-  });
-
-  items.push({
-    label: t('modelService.Image'),
-    children: endpoint?.image_object ? (
-      <ImageNodeSimpleTag imageFrgmt={endpoint.image_object} />
-    ) : null,
-    span: {
-      xl: 3,
+    {
+      label: t('session.launcher.EnvironmentVariable'),
+      children: (
+        <Typography.Text style={{ fontFamily: 'monospace' }}>
+          {_.isEmpty(JSON.parse(endpoint?.environ || '{}'))
+            ? '-'
+            : endpoint?.environ}
+        </Typography.Text>
+      ),
+      span: {
+        sm: 1,
+      },
     },
-  });
+    {
+      label: t('modelService.Image'),
+      children: endpoint?.image_object ? (
+        <ImageNodeSimpleTag imageFrgmt={endpoint.image_object} />
+      ) : null,
+      span: {
+        xl: 3,
+      },
+    },
+  ];
 
   // TODO: show current Autoscaling Rule in human-friendly way
   // items.push({

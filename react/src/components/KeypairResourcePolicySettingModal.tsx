@@ -61,10 +61,6 @@ const KeypairResourcePolicySettingModal: React.FC<
   const [resourceSlots] = useResourceSlots();
   const { mergedResourceSlots } = useResourceSlotsDetails();
   const baiClient = useSuspendedBackendaiClient();
-  const isDeprecatedMaxVfolderCountInKeypairResourcePolicy =
-    baiClient?.supports(
-      'deprecated-max-vfolder-count-in-keypair-resource-policy',
-    );
 
   const keypairResourcePolicy = useFragment(
     graphql`
@@ -220,15 +216,6 @@ const KeypairResourcePolicySettingModal: React.FC<
           total_resource_slots: JSON.stringify(total_resource_slots),
           allowed_vfolder_hosts: JSON.stringify(allowed_vfolder_hosts),
         };
-        if (!isDeprecatedMaxVfolderCountInKeypairResourcePolicy) {
-          props.max_vfolder_count = values?.max_vfolder_count;
-        }
-        if (!baiClient.supports('max-pending-session-count')) {
-          delete props?.max_pending_session_count;
-        }
-        if (!baiClient.supports('max-concurrent-sftp-sessions')) {
-          delete props?.max_concurrent_sftp_sessions;
-        }
 
         if (keypairResourcePolicy === null) {
           commitCreateKeypairResourcePolicy({
@@ -553,26 +540,24 @@ const KeypairResourcePolicySettingModal: React.FC<
                   />
                 </FormItemWithUnlimited>
               </Col>
-              {baiClient.supports('max-concurrent-sftp-sessions') ? (
-                <Col
-                  xs={{ span: 12 }}
-                  md={{ span: 8 }}
-                  style={{ alignSelf: 'end' }}
+              <Col
+                xs={{ span: 12 }}
+                md={{ span: 8 }}
+                style={{ alignSelf: 'end' }}
+              >
+                <FormItemWithUnlimited
+                  name={'max_concurrent_sftp_sessions'}
+                  unlimitedValue={0}
+                  label={t('resourcePolicy.MaxConcurrentSFTPSessions')}
+                  style={{ margin: 0, width: '100%' }}
                 >
-                  <FormItemWithUnlimited
-                    name={'max_concurrent_sftp_sessions'}
-                    unlimitedValue={0}
-                    label={t('resourcePolicy.MaxConcurrentSFTPSessions')}
-                    style={{ margin: 0, width: '100%' }}
-                  >
-                    <InputNumber
-                      min={0}
-                      max={SIGNED_32BIT_MAX_INT}
-                      style={{ width: '100%' }}
-                    />
-                  </FormItemWithUnlimited>
-                </Col>
-              ) : null}
+                  <InputNumber
+                    min={0}
+                    max={SIGNED_32BIT_MAX_INT}
+                    style={{ width: '100%' }}
+                  />
+                </FormItemWithUnlimited>
+              </Col>
             </Row>
           </Card>
         </Form.Item>
@@ -584,11 +569,6 @@ const KeypairResourcePolicySettingModal: React.FC<
             >
               <AllowedHostNamesSelect mode="multiple" />
             </Form.Item>
-            {isDeprecatedMaxVfolderCountInKeypairResourcePolicy ? undefined : (
-              <Form.Item label={t('credential.Max#')} name="max_vfolder_count">
-                <InputNumber min={0} max={50} />
-              </Form.Item>
-            )}
           </Card>
         </Form.Item>
       </Form>

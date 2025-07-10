@@ -26,7 +26,7 @@ const FolderInvitationResponseModal: React.FC<
   const { invitations } = useVFolderInvitationsValue();
   const { acceptInvitation, rejectInvitation } = useSetVFolderInvitations();
   const baiClient = useSuspendedBackendaiClient();
-  const hasInviterEmail = baiClient.isManagerVersionCompatibleWith('25.6.0');
+  const hasInviterEmail = baiClient.supports('invitation-inviter-email');
 
   // Memoize invitations to prevent unnecessary re-renders
   const memoizedInvitations = React.useMemo(() => invitations, [invitations]);

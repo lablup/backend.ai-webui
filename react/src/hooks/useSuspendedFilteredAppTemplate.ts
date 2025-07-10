@@ -102,7 +102,7 @@ export const useSuspendedFilteredAppTemplate = (
     });
   }
 
-  if (baiClient.supports('local-vscode-remote-connection') && allowTCPApps) {
+  if (allowTCPApps) {
     baseAppTemplate.push({
       name: 'vscode-desktop',
       title: 'Visual Studio Code (Desktop)',
