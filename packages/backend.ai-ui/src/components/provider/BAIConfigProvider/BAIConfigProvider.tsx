@@ -1,4 +1,4 @@
-import { BAILocale, i18n } from '../locale';
+import { BAILocale, i18n } from '../../../locale';
 import { ConfigProvider, ConfigProviderProps } from 'antd';
 import { useEffect } from 'react';
 import { I18nextProvider } from 'react-i18next';
