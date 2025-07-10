@@ -1,0 +1,57 @@
+import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
+import { VFolderFile } from '../../provider/BAIClientProvider/types';
+import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
+
+const directoryTree: Record<string, Array<VFolderFile>> = {};
+
+export const useSearchVFolderFiles = (vfolder: string) => {
+  const baiClient = useConnectedBAIClient();
+  const [currentPath, setCurrentPath] = useState<string>('.');
+
+  const navigateDown = (folderName: string) => {
+    const newPath =
+      currentPath === '.' ? folderName : `${currentPath}/${folderName}`;
+    setCurrentPath(newPath);
+  };
+
+  const navigateUp = () => {
+    const pathParts = currentPath.split('/');
+    if (pathParts.length > 1) {
+      pathParts.pop();
+      setCurrentPath(pathParts.join('/') || '.');
+    }
+  };
+
+  const navigateToPath = (path: string) => {
+    setCurrentPath(path);
+  };
+
+  const {
+    data: files,
+    refetch,
+    isFetching,
+  } = useQuery({
+    queryKey: ['searchVFolderFiles', vfolder, currentPath],
+    queryFn: () =>
+      baiClient.vfolder.list_files(currentPath, vfolder).then((res) => {
+        directoryTree[currentPath] = res.items;
+        return res;
+      }),
+    enabled: !!vfolder,
+    // not using cache, always refetch
+    staleTime: 5 * 60 * 1000,
+    gcTime: 0,
+  });
+
+  return {
+    files,
+    directoryTree,
+    currentPath,
+    navigateDown,
+    navigateUp,
+    navigateToPath,
+    refetch,
+    isFetching,
+  };
+};

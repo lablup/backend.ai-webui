@@ -18,6 +18,27 @@
   "comp:BAITestButton": {
     "Test": "Test"
   },
+  "comp:FileExplorer": {
+    "Controls": "Controls",
+    "CreateANewFolder": "Create a new folder",
+    "CreatedAt": "Created At",
+    "DeleteSelectedItemDesc": "Deleted files and folders cannot be restored. Do you want to proceed?",
+    "DeleteSelectedItemsDialog": "Delete Confirmation",
+    "DownloadStarted": "File \"{{fileName}}\" download has started.",
+    "FolderCreatedSuccessfully": "Folder created successfully.",
+    "FolderName": "Folder Name",
+    "MaxFolderNameLength": "Folder name must be 255 characters or less.",
+    "ModifiedAt": "Modified At",
+    "Name": "Name",
+    "PleaseEnterAFolderName": "Please enter the folder name.",
+    "SelectedItemsDeletedSuccessfully": "Selected files and folders have been deleted successfully.",
+    "Size": "Size",
+    "UploadFiles": "Upload Files",
+    "UploadFolder": "Upload Folder",
+    "error": {
+      "FileUploadSizeLimit": "File size exceeds upload size limit."
+    }
+  },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} of {{total}} items"
   },
@@ -28,8 +49,12 @@
     "UnknownError": "An unknown error occurred. Please try again."
   },
   "general": {
+    "NSelected": "{{count}} selected",
     "button": {
-      "CopyAll": "Copy All"
+      "CopyAll": "Copy All",
+      "Create": "Create",
+      "Delete": "Delete",
+      "Upload": "Upload"
     }
   }
 }
