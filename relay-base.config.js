@@ -30,5 +30,6 @@ module.exports = {
     DateTime: "string",
     UUID: "string",
     JSONString: "string",
+    ScopeField: "string",
   },
 };

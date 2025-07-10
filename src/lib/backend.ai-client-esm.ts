@@ -786,6 +786,9 @@ class Client {
     if (this.isManagerVersionCompatibleWith('25.1.0')) {
       this._features['image_rescan_by_project'] = true
     }
+    if (this.isManagerVersionCompatibleWith("25.11.0")) {
+      this._features["image_node"] = true;
+    }
   }
 
   /**
