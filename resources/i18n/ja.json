@@ -337,6 +337,8 @@
     },
     "folders": {
       "CannotDeleteFolder": "1つ以上のセッションでマウントされたフォルダを削除できません。最初にセッションを終了してください。",
+      "CannotDeletePipelineFolder": "パイプラインフォルダーを削除することはできません。",
+      "CannotRestorePipelineFolder": "パイプラインフォルダーを復元することはできません。",
       "CloneAFolder": "フォルダのクローンを作成する",
       "CloneFolder": "フォルダクローン",
       "Cloneable": "クローン可能",
