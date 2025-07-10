@@ -1,11 +1,15 @@
 import type { ReservoirArtifact } from '../types/reservoir';
+import {
+  getStatusColor,
+  getStatusIcon,
+  getTypeColor,
+  getTypeIcon,
+} from '../utils/reservoir';
 import BAIText from './BAIText';
-import { CloseOutlined, SyncOutlined } from '@ant-design/icons';
 import {
   Table,
   Button,
   Tag,
-  Space,
   Typography,
   Tooltip,
   TableColumnsType,
@@ -14,14 +18,14 @@ import {
 import { Flex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { Download, Package, Container, Brain, TrashIcon } from 'lucide-react';
+import { Download } from 'lucide-react';
 import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 dayjs.extend(relativeTime);
 
 interface ReservoirArtifactListProps {
   artifacts: ReservoirArtifact[];
-  onArtifactSelect: (artifact: ReservoirArtifact) => void;
   onPull: (artifactId: string, version?: string) => void;
   type: 'all' | 'installed' | 'available';
   order?: string;
@@ -45,7 +49,6 @@ interface ReservoirArtifactListProps {
 
 const ReservoirArtifactList: React.FC<ReservoirArtifactListProps> = ({
   artifacts,
-  onArtifactSelect,
   onPull,
   type,
   order,
@@ -55,66 +58,7 @@ const ReservoirArtifactList: React.FC<ReservoirArtifactListProps> = ({
   onChangeOrder,
 }) => {
   const { token } = theme.useToken();
-
-  // const getStatusIcon = (status: ReservoirArtifact['status']) => {
-  //   switch (status) {
-  //     case 'verified':
-  //       return <CheckCircle size={14} color={token.colorSuccess} />;
-  //     case 'pulling':
-  //       return <Loader size={14} color={token.colorInfo} />;
-  //     case 'verifying':
-  //       return <Loader size={14} color={token.colorWarning} />;
-  //     case 'available':
-  //       return <CloudDownload size={14} color={token.colorPrimary} />;
-  //     case 'error':
-  //       return <AlertCircle size={14} color={token.colorError} />;
-  //     default:
-  //       return null;
-  //   }
-  // };
-
-  const getStatusColor = (status: ReservoirArtifact['status']) => {
-    switch (status) {
-      case 'verified':
-        return 'success';
-      case 'pulling':
-        return 'processing';
-      case 'verifying':
-        return 'warning';
-      case 'available':
-        return 'default';
-      case 'error':
-        return 'error';
-      default:
-        return 'default';
-    }
-  };
-
-  const getTypeIcon = (type: ReservoirArtifact['type']) => {
-    switch (type) {
-      case 'model':
-        return <Brain size={16} color={getTypeColor(type)} />;
-      case 'package':
-        return <Package size={16} color={getTypeColor(type)} />;
-      case 'image':
-        return <Container size={16} color={getTypeColor(type)} />;
-      default:
-        return null;
-    }
-  };
-
-  const getTypeColor = (type: ReservoirArtifact['type']) => {
-    switch (type) {
-      case 'model':
-        return 'blue';
-      case 'package':
-        return 'green';
-      case 'image':
-        return 'orange';
-      default:
-        return 'default';
-    }
-  };
+  const navigate = useNavigate();
 
   const columns: TableColumnsType<ReservoirArtifact> = [
     {
@@ -125,18 +69,15 @@ const ReservoirArtifactList: React.FC<ReservoirArtifactListProps> = ({
         <Flex align="center" gap="sm">
           <div>
             <Flex gap={'xs'}>
-              <Button
-                type="link"
-                onClick={() => onArtifactSelect(record)}
+              <Link
+                to={'/reservoir/' + record.id}
                 style={{
-                  padding: 0,
-                  height: 'auto',
                   fontWeight: 'bold',
                   fontSize: token.fontSize,
                 }}
               >
                 {name}
-              </Button>
+              </Link>
 
               <Tag
                 color={getTypeColor(record.type)}
@@ -147,7 +88,7 @@ const ReservoirArtifactList: React.FC<ReservoirArtifactListProps> = ({
                   }
                 }
               >
-                {getTypeIcon(record.type)} {record.type.toUpperCase()}
+                {getTypeIcon(record.type, 14)} {record.type.toUpperCase()}
               </Tag>
             </Flex>
             {record.description && (
@@ -204,12 +145,16 @@ const ReservoirArtifactList: React.FC<ReservoirArtifactListProps> = ({
         // <Tag color={getStatusColor(status)} icon={getStatusIcon(status)}>
         <Flex>
           <Tag
-            icon={
-              ['pulling', 'verifying'].includes(status) ? (
-                <SyncOutlined spin />
-              ) : null
-            }
+            icon={getStatusIcon(status)}
             color={getStatusColor(status)}
+            style={
+              status === 'available'
+                ? {
+                    borderStyle: 'dashed',
+                    backgroundColor: token.colorBgContainer,
+                  }
+                : undefined
+            }
           >
             {status.toUpperCase()}
           </Tag>
@@ -293,6 +238,17 @@ const ReservoirArtifactList: React.FC<ReservoirArtifactListProps> = ({
       onChange={handleTableChange}
       size="middle"
       scroll={{ x: 'max-content' }}
+      onRow={(record) => ({
+        onClick: (event) => {
+          // Don't trigger row click if clicking on a button or link
+          const target = event.target as HTMLElement;
+          const isClickableElement = target.closest('button, a, .ant-btn');
+          if (!isClickableElement) {
+            navigate('/reservoir/' + record.id);
+          }
+        },
+        style: { cursor: 'pointer' },
+      })}
       // expandable={{
       //   expandedRowRender: (record) => (
       //     <div style={{ padding: '16px 0' }}>
