@@ -24,15 +24,15 @@ module.exports = {
         '../resources/**/*',
       ],
     };
-    
+
     // Override deprecated middleware options with setupMiddlewares
     const originalOnBefore = devServerConfig.onBeforeSetupMiddleware;
     const originalOnAfter = devServerConfig.onAfterSetupMiddleware;
-    
+
     if (originalOnBefore || originalOnAfter) {
       delete devServerConfig.onBeforeSetupMiddleware;
       delete devServerConfig.onAfterSetupMiddleware;
-      
+
       devServerConfig.setupMiddlewares = (middlewares, devServer) => {
         if (originalOnBefore) {
           originalOnBefore(devServer);
@@ -43,7 +43,7 @@ module.exports = {
         return middlewares;
       };
     }
-    
+
     return devServerConfig;
   },
   babel: {

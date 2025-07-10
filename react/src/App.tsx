@@ -471,9 +471,9 @@ const router = createBrowserRouter([
                 <BAIErrorBoundary>
                   <Suspense
                     fallback={
-                      <Flex direction="column" style={{ maxWidth: 700 }}>
+                      <BAIFlex direction="column" style={{ maxWidth: 700 }}>
                         <Skeleton active />
-                      </Flex>
+                      </BAIFlex>
                     }
                   >
                     <ReservoirPage />

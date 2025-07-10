@@ -7,7 +7,6 @@ import {
 } from '../utils/reservoir';
 import BAIText from './BAIText';
 import {
-  Table,
   Button,
   Tag,
   Typography,
@@ -15,7 +14,7 @@ import {
   TableColumnsType,
   theme,
 } from 'antd';
-import { Flex } from 'backend.ai-ui';
+import { BAIFlex, BAITable } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Download } from 'lucide-react';
@@ -66,9 +65,9 @@ const ReservoirArtifactList: React.FC<ReservoirArtifactListProps> = ({
       dataIndex: 'name',
       key: 'name',
       render: (name: string, record: ReservoirArtifact) => (
-        <Flex align="center" gap="sm">
+        <BAIFlex align="center" gap="sm">
           <div>
-            <Flex gap={'xs'}>
+            <BAIFlex gap={'xs'}>
               <Link
                 to={'/reservoir/' + record.id}
                 style={{
@@ -90,7 +89,7 @@ const ReservoirArtifactList: React.FC<ReservoirArtifactListProps> = ({
               >
                 {getTypeIcon(record.type, 14)} {record.type.toUpperCase()}
               </Tag>
-            </Flex>
+            </BAIFlex>
             {record.description && (
               <Typography.Text
                 type="secondary"
@@ -100,7 +99,7 @@ const ReservoirArtifactList: React.FC<ReservoirArtifactListProps> = ({
               </Typography.Text>
             )}
           </div>
-        </Flex>
+        </BAIFlex>
       ),
       sorter: onChangeOrder ? true : false,
       // sortOrder:
@@ -143,7 +142,7 @@ const ReservoirArtifactList: React.FC<ReservoirArtifactListProps> = ({
       key: 'status',
       render: (status: ReservoirArtifact['status'], record) => (
         // <Tag color={getStatusColor(status)} icon={getStatusIcon(status)}>
-        <Flex>
+        <BAIFlex>
           <Tag
             icon={getStatusIcon(status)}
             color={getStatusColor(status)}
@@ -169,7 +168,7 @@ const ReservoirArtifactList: React.FC<ReservoirArtifactListProps> = ({
               />
             </Tooltip>
           )}
-        </Flex>
+        </BAIFlex>
       ),
       // width: '12%',
     },
@@ -215,28 +214,28 @@ const ReservoirArtifactList: React.FC<ReservoirArtifactListProps> = ({
     },
   ];
 
-  const handleTableChange = (
-    paginationInfo: any,
-    filters: any,
-    sorter: any,
-  ) => {
-    if (onChangeOrder && sorter.field) {
-      const order =
-        sorter.order === 'ascend' ? sorter.field : `-${sorter.field}`;
-      onChangeOrder(order);
-    }
-  };
+  // const handleTableChange = (
+  //   paginationInfo: any,
+  //   filters: any,
+  //   sorter: any,
+  // ) => {
+  //   if (onChangeOrder && sorter.field) {
+  //     const order =
+  //       sorter.order === 'ascend' ? sorter.field : `-${sorter.field}`;
+  //     onChangeOrder(order);
+  //   }
+  // };
 
   return (
-    <Table
+    <BAITable
+      resizable
       columns={columns}
       dataSource={artifacts}
       rowKey="id"
       loading={loading}
       pagination={pagination}
       rowSelection={rowSelection}
-      onChange={handleTableChange}
-      size="middle"
+      size="small"
       scroll={{ x: 'max-content' }}
       onRow={(record) => ({
         onClick: (event) => {
