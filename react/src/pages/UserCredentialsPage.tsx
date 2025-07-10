@@ -3,11 +3,12 @@ import Flex from '../components/Flex';
 import FlexActivityIndicator from '../components/FlexActivityIndicator';
 import UserCredentialList from '../components/UserCredentialList';
 import UserNodeList from '../components/UserNodeList';
+import { theme } from 'antd';
 import { createStyles } from 'antd-style';
 import { CardTabListType } from 'antd/es/card';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StringParam, useQueryParam, withDefault } from 'use-query-params';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const useStyles = createStyles(({ css }) => ({
   card: css`
@@ -17,12 +18,13 @@ const useStyles = createStyles(({ css }) => ({
   `,
 }));
 
-const tabParam = withDefault(StringParam, 'users');
-
 const UserCredentialsPage: React.FC = () => {
   const { t } = useTranslation();
   const { styles } = useStyles();
-  const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
+  const { token } = theme.useToken();
+  const [searchParams] = useSearchParams();
+  const currentTab = searchParams.get('tab') || 'users';
+  const navigate = useNavigate();
   const tabItems: CardTabListType[] = [
     {
       key: 'users',
@@ -38,9 +40,19 @@ const UserCredentialsPage: React.FC = () => {
     <BAICard
       showDivider
       className={styles.card}
-      activeTabKey={curTabKey}
-      onTabChange={setCurTabKey}
+      activeTabKey={currentTab}
+      onTabChange={(key) =>
+        navigate({
+          pathname: '/credential',
+          search: `?tab=${key}`,
+        })
+      }
       tabList={tabItems}
+      styles={{
+        body: {
+          padding: `${token.paddingSM}px ${token.paddingLG}px ${token.paddingLG}px ${token.paddingLG}px`,
+        },
+      }}
     >
       <Suspense
         fallback={
@@ -50,12 +62,12 @@ const UserCredentialsPage: React.FC = () => {
           />
         }
       >
-        {curTabKey === 'users' && (
+        {currentTab === 'users' && (
           <Flex direction="column" align="stretch">
             <UserNodeList />
           </Flex>
         )}
-        {curTabKey === 'credentials' && (
+        {currentTab === 'credentials' && (
           <Flex direction="column" align="stretch">
             <UserCredentialList />
           </Flex>

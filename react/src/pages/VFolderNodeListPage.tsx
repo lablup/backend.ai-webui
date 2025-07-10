@@ -596,11 +596,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               pageSize: tablePaginationOption.pageSize,
               current: tablePaginationOption.current,
               total: vfolder_nodes?.count ?? 0,
-              showTotal: (total) => (
-                <Typography.Text type="secondary">
-                  {t('general.TotalItems', { total: total })}
-                </Typography.Text>
-              ),
               onChange(current, pageSize) {
                 if (_.isNumber(current) && _.isNumber(pageSize)) {
                   setTablePaginationOption({ current, pageSize });

@@ -7,7 +7,7 @@ import {
 } from '../__generated__/UserCredentialListQuery.graphql';
 import { filterEmptyItem, filterNonNullItems } from '../helper';
 import { useUpdatableState } from '../hooks';
-import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import BAIPropertyFilter from './BAIPropertyFilter';
 import BAIRadioGroup from './BAIRadioGroup';
 import BAITable from './BAITable';
@@ -69,7 +69,7 @@ const UserCredentialList: React.FC = () => {
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionState({
+  } = useBAIPaginationOptionStateOnSearchParam({
     current: 1,
     pageSize: 20,
   });
@@ -146,14 +146,8 @@ const UserCredentialList: React.FC = () => {
     `);
 
   return (
-    <Flex direction="column" align="stretch">
-      <Flex
-        justify="between"
-        align="start"
-        gap="xs"
-        style={{ padding: token.paddingSM }}
-        wrap="wrap"
-      >
+    <Flex direction="column" align="stretch" gap="sm">
+      <Flex justify="between" align="start" gap="xs" wrap="wrap">
         <Flex gap={'sm'} align="start">
           <BAIRadioGroup
             value={activeType}
@@ -246,6 +240,8 @@ const UserCredentialList: React.FC = () => {
         </Flex>
       </Flex>
       <BAITable<Keypair>
+        neoStyle
+        size="small"
         // resizable
         rowKey={'id'}
         scroll={{ x: 'max-content' }}
@@ -541,15 +537,9 @@ const UserCredentialList: React.FC = () => {
         showSorterTooltip={false}
         pagination={{
           pageSize: tablePaginationOption.pageSize,
-          showSizeChanger: true,
           total: keypair_list?.total_count || 0,
           current: tablePaginationOption.current,
-          showTotal: (total, range) => {
-            return `${range[0]}-${range[1]} of ${total} items`;
-          },
           // TODO: need to set more options to export CSV in current page's data
-          pageSizeOptions: ['10', '20', '50'],
-          style: { marginRight: token.marginXS },
           onChange(current, pageSize) {
             startPageChangeTransition(() => {
               if (_.isNumber(current) && _.isNumber(pageSize)) {

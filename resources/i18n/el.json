@@ -1008,6 +1008,9 @@
     "SuccessfullyUpdated": "Ενημερώθηκε με επιτυχία",
     "Visit": "Επίσκεψη"
   },
+  "pagination": {
+    "Total": "{{start}} - {{end}} των στοιχείων {{Total}}"
+  },
   "propertyFilter": {
     "PlaceHolder": "Αναζήτηση",
     "ResetFilter": "Επαναφορά φίλτρων"

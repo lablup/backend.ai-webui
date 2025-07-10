@@ -168,7 +168,6 @@ const ResourceGroupList: React.FC = () => {
           <Flex>
             <Button
               type="text"
-              size="large"
               icon={<InfoCircleOutlined />}
               style={{ color: token.colorSuccess }}
               onClick={() => {
@@ -178,7 +177,6 @@ const ResourceGroupList: React.FC = () => {
             />
             <Button
               type="text"
-              size="large"
               icon={<SettingOutlined />}
               style={{
                 color: token.colorInfo,
@@ -254,7 +252,6 @@ const ResourceGroupList: React.FC = () => {
             <Tooltip title={t('button.Delete')}>
               <Button
                 type="text"
-                size="large"
                 icon={
                   <DeleteOutlined
                     style={{

@@ -226,7 +226,6 @@ const StorageProxyList = () => {
         return (
           <>
             <Button
-              size="large"
               disabled={perfMetricDisabled}
               style={{
                 color: perfMetricDisabled
@@ -248,7 +247,6 @@ const StorageProxyList = () => {
             />
             <BAILink to={`/storage-settings/${record.id}`}>
               <Button
-                size="large"
                 style={{
                   color: token.colorInfo,
                 }}
@@ -311,11 +309,6 @@ const StorageProxyList = () => {
           pageSize: tablePaginationOption.pageSize,
           current: tablePaginationOption.current,
           total: storage_volume_list?.total_count ?? 0,
-          showTotal: (total) => (
-            <Typography.Text type="secondary">
-              {t('general.TotalItems', { total: total })}
-            </Typography.Text>
-          ),
           onChange(current, pageSize) {
             if (_.isNumber(current) && _.isNumber(pageSize)) {
               setTablePaginationOption({
