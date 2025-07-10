@@ -32,6 +32,7 @@ import {
 } from 'lucide-react';
 import React, { useState, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { StringParam, withDefault } from 'use-query-params';
 
 type TabKey = 'artifacts' | 'audit';
@@ -39,9 +40,7 @@ type TabKey = 'artifacts' | 'audit';
 const ReservoirPage: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-
-  const [selectedArtifact, setSelectedArtifact] =
-    useState<ReservoirArtifact | null>(null);
+  const { artifactId } = useParams<{ artifactId: string }>();
   const [selectedArtifactList, setSelectedArtifactList] = useState<
     Array<ReservoirArtifact>
   >([]);
@@ -86,10 +85,35 @@ const ReservoirPage: React.FC = () => {
         size: '145MB',
         updated_at: '2025-07-08T13:20:00Z',
         status: 'verified',
-        versions: ['4.28.0', '4.29.1', '4.30.0'],
+        versions: ['4.30.0', '4.29.1', '4.28.0'],
+        versionDetails: [
+          {
+            version: '4.30.0',
+            size: '145MB',
+            updated_at: '2025-07-08T13:20:00Z',
+            checksum: 'sha256:a1b2c3d4e5f6',
+            isInstalled: true,
+          },
+          {
+            version: '4.29.1',
+            size: '142MB',
+            updated_at: '2025-07-05T10:15:00Z',
+            checksum: 'sha256:b2c3d4e5f6a1',
+            isInstalled: false,
+            isPulling: false,
+          },
+          {
+            version: '4.28.0',
+            size: '140MB',
+            updated_at: '2025-07-02T09:30:00Z',
+            checksum: 'sha256:c3d4e5f6a1b2',
+            isInstalled: true,
+          },
+        ],
         description:
           'State-of-the-art Machine Learning for PyTorch, TensorFlow, and JAX.',
         source: 'PyPI',
+        sourceUrl: 'https://pypi.org/project/transformers/',
       },
       {
         id: '2',
@@ -98,9 +122,25 @@ const ReservoirPage: React.FC = () => {
         size: '13.5GB',
         updated_at: '2025-07-07T09:15:00Z',
         status: 'verified',
-        versions: ['1.0.0', '1.1.0'],
+        versions: ['1.1.0', '1.0.0'],
+        versionDetails: [
+          {
+            version: '1.1.0',
+            size: '13.5GB',
+            updated_at: '2025-07-07T09:15:00Z',
+            checksum: 'sha256:d4e5f6a1b2c3',
+            isInstalled: true,
+          },
+          {
+            version: '1.0.0',
+            size: '13.2GB',
+            updated_at: '2025-07-01T14:30:00Z',
+            checksum: 'sha256:e5f6a1b2c3d4',
+          },
+        ],
         description: "Meta's Llama 2 Chat model with 7 billion parameters.",
         source: 'HuggingFace',
+        sourceUrl: 'https://huggingface.co/meta-llama/Llama-2-7b-chat-hf',
       },
       {
         id: '3',
@@ -109,9 +149,25 @@ const ReservoirPage: React.FC = () => {
         size: '2.3GB',
         updated_at: '2025-07-06T16:45:00Z',
         status: 'pulling',
-        versions: ['1.13.1', '2.0.0'],
+        versions: ['2.0.0', '1.13.1'],
+        versionDetails: [
+          {
+            version: '2.0.0',
+            size: '2.3GB',
+            updated_at: '2025-07-06T16:45:00Z',
+            checksum: 'sha256:f6a1b2c3d4e5',
+            isPulling: true,
+          },
+          {
+            version: '1.13.1',
+            size: '2.1GB',
+            updated_at: '2025-06-28T12:00:00Z',
+            checksum: 'sha256:a1b2c3d4e5f6',
+          },
+        ],
         description: 'PyTorch training environment with CUDA support.',
         source: 'Docker Hub',
+        sourceUrl: 'https://hub.docker.com/r/pytorch/pytorch',
       },
       {
         id: '4',
@@ -120,10 +176,31 @@ const ReservoirPage: React.FC = () => {
         size: '28MB',
         updated_at: '2025-07-05T11:30:00Z',
         status: 'verified',
-        versions: ['1.24.0', '1.25.0', '1.26.0'],
+        versions: ['1.26.0', '1.25.0', '1.24.0'],
+        versionDetails: [
+          {
+            version: '1.26.0',
+            size: '28MB',
+            updated_at: '2025-07-05T11:30:00Z',
+            checksum: 'sha256:b2c3d4e5f6a1',
+          },
+          {
+            version: '1.25.0',
+            size: '27MB',
+            updated_at: '2025-06-20T08:45:00Z',
+            checksum: 'sha256:c3d4e5f6a1b2',
+          },
+          {
+            version: '1.24.0',
+            size: '26MB',
+            updated_at: '2025-06-10T15:20:00Z',
+            checksum: 'sha256:d4e5f6a1b2c3',
+          },
+        ],
         description:
           'Fundamental package for scientific computing with Python.',
         source: 'PyPI',
+        sourceUrl: 'https://pypi.org/project/numpy/',
       },
       {
         id: '5',
@@ -132,9 +209,24 @@ const ReservoirPage: React.FC = () => {
         size: '1.8GB',
         updated_at: '2025-07-04T14:20:00Z',
         status: 'verifying',
-        versions: ['2.13.0', '2.14.0'],
+        versions: ['2.14.0', '2.13.0'],
+        versionDetails: [
+          {
+            version: '2.14.0',
+            size: '1.8GB',
+            updated_at: '2025-07-04T14:20:00Z',
+            checksum: 'sha256:e5f6a1b2c3d4',
+          },
+          {
+            version: '2.13.0',
+            size: '1.7GB',
+            updated_at: '2025-06-25T11:10:00Z',
+            checksum: 'sha256:f6a1b2c3d4e5',
+          },
+        ],
         description: 'TensorFlow Serving for model deployment.',
         source: 'Docker Hub',
+        sourceUrl: 'https://hub.docker.com/r/tensorflow/serving',
       },
       {
         id: '6',
@@ -143,9 +235,30 @@ const ReservoirPage: React.FC = () => {
         size: '52MB',
         updated_at: '2025-07-08T08:00:00Z',
         status: 'available',
-        versions: ['1.3.0', '1.4.0', '1.5.0'],
+        versions: ['1.5.0', '1.4.0', '1.3.0'],
+        versionDetails: [
+          {
+            version: '1.5.0',
+            size: '52MB',
+            updated_at: '2025-07-08T08:00:00Z',
+            checksum: 'sha256:a1b2c3d4e5f6',
+          },
+          {
+            version: '1.4.0',
+            size: '50MB',
+            updated_at: '2025-06-30T16:30:00Z',
+            checksum: 'sha256:b2c3d4e5f6a1',
+          },
+          {
+            version: '1.3.0',
+            size: '48MB',
+            updated_at: '2025-06-15T13:45:00Z',
+            checksum: 'sha256:c3d4e5f6a1b2',
+          },
+        ],
         description: 'Machine learning library for Python.',
         source: 'PyPI',
+        sourceUrl: 'https://pypi.org/project/scikit-learn/',
       },
       {
         id: '7',
@@ -155,9 +268,18 @@ const ReservoirPage: React.FC = () => {
         updated_at: '2025-07-07T12:00:00Z',
         status: 'available',
         versions: ['1.0.0'],
+        versionDetails: [
+          {
+            version: '1.0.0',
+            size: '440MB',
+            updated_at: '2025-07-07T12:00:00Z',
+            checksum: 'sha256:d4e5f6a1b2c3',
+          },
+        ],
         description:
           'BERT base model (uncased) for natural language processing.',
         source: 'HuggingFace',
+        sourceUrl: 'https://huggingface.co/bert-base-uncased',
       },
       {
         id: '8',
@@ -166,9 +288,24 @@ const ReservoirPage: React.FC = () => {
         size: '1.2GB',
         updated_at: '2025-07-06T10:00:00Z',
         status: 'available',
-        versions: ['20.04', '22.04'],
+        versions: ['22.04', '20.04'],
+        versionDetails: [
+          {
+            version: '22.04',
+            size: '1.2GB',
+            updated_at: '2025-07-06T10:00:00Z',
+            checksum: 'sha256:e5f6a1b2c3d4',
+          },
+          {
+            version: '20.04',
+            size: '1.1GB',
+            updated_at: '2025-06-20T14:15:00Z',
+            checksum: 'sha256:f6a1b2c3d4e5',
+          },
+        ],
         description: 'Ubuntu with machine learning tools pre-installed.',
         source: 'Docker Hub',
+        sourceUrl: 'https://hub.docker.com/_/ubuntu',
       },
     ],
     [],
@@ -239,13 +376,11 @@ const ReservoirPage: React.FC = () => {
     };
   }, [mockArtifacts]);
 
-  const handleArtifactSelect = (artifact: ReservoirArtifact) => {
-    setSelectedArtifact(artifact);
-  };
-
-  const handleBackToList = () => {
-    setSelectedArtifact(null);
-  };
+  // Find selected artifact based on URL parameter
+  const selectedArtifact = useMemo(() => {
+    if (!artifactId) return null;
+    return mockArtifacts.find((artifact) => artifact.id === artifactId) || null;
+  }, [artifactId, mockArtifacts]);
 
   const handlePullArtifact = (artifactId: string, version?: string) => {
     // Mock implementation - in real app, this would trigger an API call
@@ -264,7 +399,6 @@ const ReservoirPage: React.FC = () => {
       <Flex direction="column" align="stretch" gap={'md'}>
         <ReservoirArtifactDetail
           artifact={selectedArtifact}
-          onBack={handleBackToList}
           onPull={handlePullArtifact}
         />
       </Flex>
@@ -512,7 +646,6 @@ const ReservoirPage: React.FC = () => {
             </Flex>
             <ReservoirArtifactList
               artifacts={filteredArtifacts}
-              onArtifactSelect={handleArtifactSelect}
               onPull={handlePullArtifact}
               type={
                 queryParams.statusCategory as 'all' | 'installed' | 'available'
