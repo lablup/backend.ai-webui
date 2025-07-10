@@ -10,7 +10,7 @@ import { StyleProvider, createCache } from '@ant-design/cssinjs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useUpdateEffect } from 'ahooks';
 import { App, AppProps, theme, Typography } from 'antd';
-import { BAIConfigProvider } from 'backend.ai-ui';
+import { BAIClientProvider, BAIConfigProvider } from 'backend.ai-ui';
 import en_US from 'backend.ai-ui/dist/locale/en_US';
 import ko_KR from 'backend.ai-ui/dist/locale/ko_KR';
 import dayjs from 'dayjs';
@@ -27,6 +27,7 @@ import Backend from 'i18next-http-backend';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { GlobeIcon } from 'lucide-react';
 import React, {
+  ReactNode,
   Suspense,
   useEffect,
   useLayoutEffect,
@@ -174,6 +175,15 @@ const commonAppProps: AppProps = {
   },
 };
 
+const BAIClientWrapper: React.FC<{ children: ReactNode }> = ({ children }) => {
+  return (
+    // @ts-ignore
+    <BAIClientProvider client={globalThis.backendaiclient}>
+      {children}
+    </BAIClientProvider>
+  );
+};
+
 const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
   children,
   value,
@@ -232,26 +242,28 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
                           : theme.defaultAlgorithm,
                       }}
                     >
-                      <App {...commonAppProps}>
-                        <StyleProvider container={shadowRoot} cache={cache}>
-                          <Suspense fallback="">
-                            <BrowserRouter>
-                              <QueryParamProvider
-                                adapter={ReactRouter6Adapter}
-                                options={
-                                  {
-                                    // searchStringToObject: queryString.parse,
-                                    // objectToSearchString: queryString.stringify,
+                      <BAIClientWrapper>
+                        <App {...commonAppProps}>
+                          <StyleProvider container={shadowRoot} cache={cache}>
+                            <Suspense fallback="">
+                              <BrowserRouter>
+                                <QueryParamProvider
+                                  adapter={ReactRouter6Adapter}
+                                  options={
+                                    {
+                                      // searchStringToObject: queryString.parse,
+                                      // objectToSearchString: queryString.stringify,
+                                    }
                                   }
-                                }
-                              >
-                                <RoutingEventHandler />
-                                {children}
-                              </QueryParamProvider>
-                            </BrowserRouter>
-                          </Suspense>
-                        </StyleProvider>
-                      </App>
+                                >
+                                  <RoutingEventHandler />
+                                  {children}
+                                </QueryParamProvider>
+                              </BrowserRouter>
+                            </Suspense>
+                          </StyleProvider>
+                        </App>
+                      </BAIClientWrapper>
                     </BAIConfigProvider>
                   </WebComponentContext.Provider>
                 </ThemeModeProvider>
@@ -327,16 +339,18 @@ export const DefaultProvidersForReactRoot: React.FC<
               // @ts-ignore
               csp={{ nonce: globalThis.baiNonce }}
             >
-              <App {...commonAppProps}>
-                {/* <StyleProvider container={shadowRoot} cache={cache}> */}
-                <Suspense>
-                  {/* <BrowserRouter> */}
-                  {/* <RoutingEventHandler /> */}
-                  {children}
-                  {/* </BrowserRouter> */}
-                </Suspense>
-                {/* </StyleProvider> */}
-              </App>
+              <BAIClientWrapper>
+                <App {...commonAppProps}>
+                  {/* <StyleProvider container={shadowRoot} cache={cache}> */}
+                  <Suspense>
+                    {/* <BrowserRouter> */}
+                    {/* <RoutingEventHandler /> */}
+                    {children}
+                    {/* </BrowserRouter> */}
+                  </Suspense>
+                  {/* </StyleProvider> */}
+                </App>
+              </BAIClientWrapper>
             </BAIConfigProvider>
           </QueryClientProvider>
         </RelayEnvironmentProvider>
