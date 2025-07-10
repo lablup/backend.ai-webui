@@ -1,5 +1,5 @@
 import { BAILocale } from '.';
-import ru_RU from 'antd/locale/ru_RU';
+import ru_RU from 'antd/es/locale/ru_RU';
 
 const localeValue: BAILocale = {
   lang: 'ru',

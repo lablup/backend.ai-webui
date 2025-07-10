@@ -17,6 +17,7 @@ export default defineConfig(({ mode }) => {
   // Add locale entries
   localeFiles.forEach((file) => {
     const name = basename(file, '.ts');
+    if (name === 'index') return;
     entries[`locale/${name}`] = resolve(__dirname, file);
   });
 

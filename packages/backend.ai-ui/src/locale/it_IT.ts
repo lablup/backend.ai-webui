@@ -1,5 +1,5 @@
 import { BAILocale } from '.';
-import it_IT from 'antd/locale/it_IT';
+import it_IT from 'antd/es/locale/it_IT';
 
 const localeValue: BAILocale = {
   lang: 'it',

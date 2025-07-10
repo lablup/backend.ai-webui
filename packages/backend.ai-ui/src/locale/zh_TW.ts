@@ -1,5 +1,5 @@
 import { BAILocale } from '.';
-import zh_TW from 'antd/locale/zh_TW';
+import zh_TW from 'antd/es/locale/zh_TW';
 
 const localeValue: BAILocale = {
   lang: 'zh-TW',

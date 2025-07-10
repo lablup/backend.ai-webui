@@ -1,5 +1,5 @@
 import { BAILocale } from '.';
-import ko_KR from 'antd/locale/ko_KR';
+import ko_KR from 'antd/es/locale/ko_KR';
 
 const localeValue: BAILocale = {
   lang: 'ko',

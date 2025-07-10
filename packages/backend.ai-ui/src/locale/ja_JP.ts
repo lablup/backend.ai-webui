@@ -1,5 +1,5 @@
 import { BAILocale } from '.';
-import ja_JP from 'antd/locale/ja_JP';
+import ja_JP from 'antd/es/locale/ja_JP';
 
 const localeValue: BAILocale = {
   lang: 'ja',
