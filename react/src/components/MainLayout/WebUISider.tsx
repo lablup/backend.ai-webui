@@ -95,6 +95,7 @@ export type MenuKeys =
   | 'credential'
   | 'environment'
   | 'resource-policy'
+  | 'reservoir'
   // superAdminMenu keys
   | 'agent'
   | 'settings'
@@ -274,6 +275,11 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       ),
       icon: <SolutionOutlined style={{ color: token.colorInfo }} />,
       key: 'resource-policy',
+    },
+    {
+      label: <WebUILink to="/reservoir">Reservoir</WebUILink>,
+      icon: <HddOutlined style={{ color: token.colorInfo }} />,
+      key: 'reservoir',
     },
   ];
 
