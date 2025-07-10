@@ -55,25 +55,6 @@ export const useBaiSignedRequestWithPromise = () => {
 };
 
 /**
- * Convert file size with binary unit to human readable unit and value
- *
- * @param {number} bytes
- * @param {number} decimalPoint decimal point set to 2 as a default
- * @return {string} converted file size to human readable value
- */
-export const humanReadableDecimalSize = (bytes = 0, decimalPoint = 2) => {
-  if (bytes === 0) return '0 Bytes';
-  const k = Math.pow(10, 3);
-  decimalPoint = decimalPoint < 0 ? 0 : decimalPoint;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
-  let i = Math.floor(Math.log(Math.round(bytes)) / Math.log(k));
-  i = i < 0 ? 0 : i; // avoid negative value
-  return (
-    parseFloat((bytes / Math.pow(k, i)).toFixed(decimalPoint)) + ' ' + sizes[i]
-  );
-};
-
-/**
  * Change date of any type to human readable date time.
  *
  * @param {Date} d   - string or DateTime object to convert
@@ -129,7 +110,7 @@ export type SizeUnit = InputSizeUnit;
  * convertUnitValue('1048576', 'auto', { fixed: 1 })
  * // => { number: 1, numberFixed: "1", unit: "m", value: "1m" }
  */
-function convertUnitValue(
+export function convertUnitValue(
   inputValue: string | undefined,
   targetUnit: InputSizeUnit | 'auto',
   options?: {
