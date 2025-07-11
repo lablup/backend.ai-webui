@@ -5,9 +5,9 @@ import {
   getTypeColor,
   getTypeIcon,
 } from '../utils/reservoir';
+import BAITable from './BAITable';
 import BAIText from './BAIText';
 import {
-  Table,
   Button,
   Tag,
   Typography,
@@ -215,28 +215,29 @@ const ReservoirArtifactList: React.FC<ReservoirArtifactListProps> = ({
     },
   ];
 
-  const handleTableChange = (
-    paginationInfo: any,
-    filters: any,
-    sorter: any,
-  ) => {
-    if (onChangeOrder && sorter.field) {
-      const order =
-        sorter.order === 'ascend' ? sorter.field : `-${sorter.field}`;
-      onChangeOrder(order);
-    }
-  };
+  // const handleTableChange = (
+  //   paginationInfo: any,
+  //   filters: any,
+  //   sorter: any,
+  // ) => {
+  //   if (onChangeOrder && sorter.field) {
+  //     const order =
+  //       sorter.order === 'ascend' ? sorter.field : `-${sorter.field}`;
+  //     onChangeOrder(order);
+  //   }
+  // };
 
   return (
-    <Table
+    <BAITable
+      neoStyle
+      resizable
       columns={columns}
       dataSource={artifacts}
       rowKey="id"
       loading={loading}
       pagination={pagination}
       rowSelection={rowSelection}
-      onChange={handleTableChange}
-      size="middle"
+      size="small"
       scroll={{ x: 'max-content' }}
       onRow={(record) => ({
         onClick: (event) => {

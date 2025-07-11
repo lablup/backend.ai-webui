@@ -25,3 +25,14 @@ export interface ReservoirArtifact {
     [version: string]: string;
   };
 }
+
+export interface ReservoirAuditLog {
+  id: string;
+  artifactName: string;
+  artifactVersion?: string;
+  operation: 'pull' | 'install' | 'uninstall' | 'update' | 'verify' | 'delete';
+  modifier: string;
+  timestamp: string;
+  status: 'success' | 'failed' | 'in_progress';
+  details?: string;
+}
