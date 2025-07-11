@@ -1985,6 +1985,8 @@
       "Summary": "Özet",
       "Tasks": "Görevler",
       "TermsOfService": "Kullanım Şartları",
+      "TotalResourcesIn": "Toplam Kaynaklar",
+      "TotalResourcesInResourceGroupDescription": "Bu panel, kullanılan ve kalan toplam kaynakları gösterir. \nDeğerler, seçilen kaynak grubunu kullanan tüm ajanların kullanımını ve kalan miktarlarını ekleyerek hesaplanır.",
       "TotpActivated": "2FA Etkin",
       "Update": "Güncelleme",
       "Usage": "Kullanım",

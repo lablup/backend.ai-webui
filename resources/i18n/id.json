@@ -1984,6 +1984,8 @@
       "Summary": "Ringkasan",
       "Tasks": "Tugas",
       "TermsOfService": "Persyaratan Layanan",
+      "TotalResourcesIn": "Total sumber daya di",
+      "TotalResourcesInResourceGroupDescription": "Panel ini menunjukkan total sumber daya yang digunakan dan sisa. \nNilai dihitung dengan menambahkan penggunaan dan jumlah yang tersisa dari semua agen menggunakan grup sumber daya yang dipilih.",
       "TotpActivated": "2FA Diaktifkan",
       "Update": "Perbarui",
       "Usage": "Penggunaan",

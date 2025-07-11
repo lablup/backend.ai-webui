@@ -1982,6 +1982,8 @@
       "Summary": "Sommario",
       "Tasks": "Compiti",
       "TermsOfService": "Termini di servizio",
+      "TotalResourcesIn": "Risorse totali in",
+      "TotalResourcesInResourceGroupDescription": "Questo pannello mostra le risorse totali utilizzate e rimanenti. \nI valori vengono calcolati aggiungendo l'utilizzo e le quantità rimanenti di tutti gli agenti utilizzando il gruppo di risorse selezionato.",
       "TotpActivated": "2FA abilitato",
       "Update": "Aggiornare",
       "Usage": "Utilizzo",

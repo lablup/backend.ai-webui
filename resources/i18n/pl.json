@@ -1985,6 +1985,8 @@
       "Summary": "streszczenie",
       "Tasks": "Zadania",
       "TermsOfService": "Warunki usługi",
+      "TotalResourcesIn": "Całkowite zasoby w",
+      "TotalResourcesInResourceGroupDescription": "Ten panel pokazuje całkowite wykorzystane i pozostałe zasoby. \nWartości są obliczane przez dodanie użycia i pozostałych ilości wszystkich agentów za pomocą wybranej grupy zasobów.",
       "TotpActivated": "Włączone 2FA",
       "Update": "Aktualizacja",
       "Usage": "Stosowanie",
