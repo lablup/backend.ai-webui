@@ -6,7 +6,6 @@ import {
   convertToBinaryUnit,
   filterNonNullItems,
   toFixedFloorWithoutTrailingZeros,
-  transformSorterToOrderString,
 } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
@@ -30,6 +29,7 @@ import { useToggle } from 'ahooks';
 import { Button, Table, TableProps, theme, Tooltip, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
+import { transformSorterToOrderString } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';

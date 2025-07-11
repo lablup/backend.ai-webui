@@ -11,11 +11,11 @@ import CephIcon from './BAIIcons/CephIcon';
 import PureStorageIcon from './BAIIcons/PureStorageIcon';
 import BAILink from './BAILink';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
-import BAITable from './BAITable';
 import DoubleTag from './DoubleTag';
 import Flex from './Flex';
 import { InfoCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import { Button, TableColumnsType, Tag, theme, Typography } from 'antd';
+import { BAITable } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Server } from 'lucide-react';
 import { useDeferredValue, useEffect, useMemo } from 'react';
@@ -297,7 +297,6 @@ const StorageProxyList = () => {
       </Flex>
       <BAITable
         resizable
-        neoStyle
         size="small"
         scroll={{ x: 'max-content' }}
         rowKey={'id'}
