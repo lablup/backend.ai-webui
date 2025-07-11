@@ -12,7 +12,6 @@ import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting'
 import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal from './BAIModal';
 import BAIPropertyFilter from './BAIPropertyFilter';
-import BAITable from './BAITable';
 import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
 import Flex from './Flex';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
@@ -38,6 +37,7 @@ import {
 } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
+import { BAITable } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -453,8 +453,6 @@ const ContainerRegistryList: React.FC<{
         </Flex>
       </Flex>
       <BAITable
-        neoStyle
-        size="small"
         rowKey={(record) => record.id}
         scroll={{ x: 'max-content' }}
         showSorterTooltip={false}

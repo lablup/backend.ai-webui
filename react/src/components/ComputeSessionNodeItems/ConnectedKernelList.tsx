@@ -5,14 +5,14 @@ import {
 } from '../../__generated__/ConnectedKernelListQuery.graphql';
 import { filterEmptyItem, filterNonNullItems, toGlobalId } from '../../helper';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
-// import BAIPropertyFilter from '../BAIPropertyFilter';
-import BAITable from '../BAITable';
 import DoubleTag from '../DoubleTag';
 import Flex from '../Flex';
 import UnmountModalAfterClose from '../UnmountModalAfterClose';
 import ContainerLogModal from './ContainerLogModal';
 import { Button, Tag, theme, Tooltip, Typography } from 'antd';
 import { ColumnType } from 'antd/lib/table';
+// import BAIPropertyFilter from '../BAIPropertyFilter';
+import { BAITable } from 'backend.ai-ui';
 import _ from 'lodash';
 import { ScrollTextIcon } from 'lucide-react';
 import { useState } from 'react';
