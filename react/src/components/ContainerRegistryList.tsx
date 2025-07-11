@@ -4,7 +4,7 @@ import {
   ContainerRegistryListQuery,
   ContainerRegistryListQuery$data,
 } from '../__generated__/ContainerRegistryListQuery.graphql';
-import { filterNonNullItems, transformSorterToOrderString } from '../helper';
+import { filterNonNullItems } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
@@ -39,6 +39,7 @@ import {
 } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
+import { transformSorterToOrderString } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';

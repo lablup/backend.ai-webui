@@ -10,7 +10,6 @@ import {
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import BAITable, { BAITableProps } from './BAITable';
 import EndpointOwnerInfo from './EndpointOwnerInfo';
 import EndpointStatusTag from './EndpointStatusTag';
 import Flex from './Flex';
@@ -29,6 +28,7 @@ import {
   Tooltip,
 } from 'antd';
 import { ColumnType } from 'antd/lib/table';
+import { BAITable, BAITableProps } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { InfoIcon } from 'lucide-react';
@@ -313,7 +313,6 @@ const EndpointList: React.FC<EndpointListProps> = ({
 
   return (
     <BAITable
-      neoStyle
       size="small"
       loading={loading}
       scroll={{ x: 'max-content' }}

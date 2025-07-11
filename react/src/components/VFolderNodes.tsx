@@ -16,7 +16,6 @@ import ShareAltIcon from './BAIIcons/ShareAltIcon';
 import TrashBinIcon from './BAIIcons/TrashBinIcon';
 import UserUnionIcon from './BAIIcons/UserUnionIcon';
 import BAILink from './BAILink';
-import BAITable, { BAITableProps } from './BAITable';
 import BAITag from './BAITag';
 import EditableVFolderName from './EditableVFolderName';
 import Flex from './Flex';
@@ -35,6 +34,7 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
+import { BAITable, BAITableProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -130,7 +130,6 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
     <>
       <BAITable
         resizable
-        neoStyle
         showSorterTooltip={false}
         rowKey={(record) => record.id}
         size="small"
