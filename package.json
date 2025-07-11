@@ -38,6 +38,10 @@
   "dependencies": {
     "@iarna/toml": "^2.2.5",
     "@lit/reactive-element": "^2.0.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-relay": "^18.2.0",
+    "relay-runtime": "^18.2.0",
     "@material/mwc-button": "^0.27.0",
     "@material/mwc-checkbox": "^0.27.0",
     "@material/mwc-circular-progress": "^0.27.0",
