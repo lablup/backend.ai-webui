@@ -1,0 +1,95 @@
+name: Vercel Preview Deployment
+
+on:
+  pull_request:
+    types: [labeled, unlabeled, synchronize, closed]
+
+jobs:
+  deploy-or-remove:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Handle PR Events
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          BRANCH_NAME=${{ github.event.pull_request.head.ref }}
+          
+          # Check for 'preview' label using contains
+          HAS_PREVIEW_LABEL=false
+          if echo '${{ toJson(github.event.pull_request.labels) }}' | jq -r '.[].name' | grep -q "^preview$"; then
+            HAS_PREVIEW_LABEL=true
+          fi
+
+          if [ "${{ github.event.action }}" == "closed" ]; then
+            echo "PR closed. Attempting to remove deployment..."
+            # List deployments and remove those matching the branch
+            DEPLOYMENTS=$(vercel ls --token=$VERCEL_TOKEN --meta gitBranch=$BRANCH_NAME --json | jq -r '.[].url' 2>/dev/null || echo "")
+            if [ -n "$DEPLOYMENTS" ]; then
+              echo "$DEPLOYMENTS" | while read -r deployment; do
+                if [ -n "$deployment" ]; then
+                  echo "Removing deployment: $deployment"
+                  vercel remove $deployment --yes --token=$VERCEL_TOKEN || echo "Failed to remove $deployment"
+                fi
+              done
+            else
+              echo "No deployments found for branch: $BRANCH_NAME"
+            fi
+          elif [ "$HAS_PREVIEW_LABEL" == "true" ]; then
+            echo "Preview label found. Deploying preview..."
+            
+            # Pull Vercel configuration
+            vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
+            
+            # Build the project
+            echo "Building project..."
+            vercel build --token=$VERCEL_TOKEN
+            
+            # Deploy the built project
+            echo "Deploying to Vercel..."
+            DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=$VERCEL_TOKEN)
+            
+            if [ $? -eq 0 ] && [ -n "$DEPLOYMENT_URL" ]; then
+              echo "✅ Deployment successful!"
+              echo "🔗 Preview URL: $DEPLOYMENT_URL"
+              
+              # Add deployment URL as a comment to PR
+              echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> $GITHUB_ENV
+            else
+              echo "❌ Deployment failed"
+              exit 1
+            fi
+          else
+            echo "No 'preview' label. Skipping deployment."
+          fi
+
+      - name: Comment PR with deployment URL
+        if: env.DEPLOYMENT_URL
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🚀 **Preview deployment ready!**\n\n📎 **Preview URL:** ${process.env.DEPLOYMENT_URL}\n\n*This preview will be automatically updated when you push new commits to this PR.*`
+            })
