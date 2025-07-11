@@ -3,9 +3,13 @@ import MyResourceCard from '../components/MyResourceCard';
 import MyResourceWithinResourceGroupCard from '../components/MyResourceWithinResourceGroupCard';
 import MySessionCard from '../components/MySessionCard';
 import RecentlyCreatedSessionCard from '../components/RecentlyCreatedSessionCard';
+import TotalResourceWithinResourceGroupCard from '../components/TotalResourceWithinResourceGroupCard';
 import { filterEmptyItem } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import {
+  useCurrentProjectValue,
+  useCurrentResourceGroupValue,
+} from '../hooks/useCurrentProject';
 import { useInterval } from '../hooks/useIntervalValue';
 import { Col, Grid, Row } from 'antd';
 import _ from 'lodash';
@@ -15,21 +19,30 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 const DashboardPage: React.FC = () => {
   const { lg } = Grid.useBreakpoint();
 
-  // to avoid flickering
-  useSuspendedBackendaiClient();
+  const baiClient = useSuspendedBackendaiClient();
 
   const currentProject = useCurrentProjectValue();
+  const currentResourceGroup = useCurrentResourceGroupValue();
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const queryRef = useLazyLoadQuery<DashboardPageQuery>(
     graphql`
-      query DashboardPageQuery($projectId: UUID!) {
+      query DashboardPageQuery(
+        $projectId: UUID!
+        $resourceGroup: String # TODO: Skip to query if hideAgents is true
+        # $hideAgents: Boolean!
+      ) {
         ...MySessionCardQueryFragment @arguments(projectId: $projectId)
         ...RecentlyCreatedSessionCardFragment @arguments(projectId: $projectId)
+        ...TotalResourceWithinResourceGroupCardFragment
+          @arguments(resourceGroup: $resourceGroup)
+        # @skip(if: $hideAgents)
       }
     `,
     {
       projectId: currentProject.id,
+      resourceGroup: currentResourceGroup || 'default',
+      // hideAgents: !baiClient?._config?.hideAgents,
     },
     {
       fetchPolicy: fetchKey === 'first' ? 'store-and-network' : 'network-only',
@@ -83,6 +96,21 @@ const DashboardPage: React.FC = () => {
         content: (
           <MyResourceWithinResourceGroupCard
             fetchKey={fetchKey}
+            isRefetching={isPendingRefetch}
+            style={{ minHeight: lg ? 200 : undefined }}
+          />
+        ),
+      },
+    },
+    !baiClient?._config?.hideAgents && {
+      id: 'totalResourceWithinResourceGroup',
+      rowSpan: 3,
+      columnSpan: 1,
+      columnOffset: { 6: 0, 4: 0 },
+      data: {
+        content: (
+          <TotalResourceWithinResourceGroupCard
+            queryRef={queryRef}
             isRefetching={isPendingRefetch}
             style={{ minHeight: lg ? 200 : undefined }}
           />

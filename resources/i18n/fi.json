@@ -1985,6 +1985,8 @@
       "Summary": "Yhteenveto",
       "Tasks": "Tehtävät",
       "TermsOfService": "Käyttöehdot",
+      "TotalResourcesIn": "Resurssien kokonaismäärä",
+      "TotalResourcesInResourceGroupDescription": "Tämä paneeli näyttää käytetyt ja jäljellä olevat resurssit. \nArvot lasketaan lisäämällä kaikkien aineiden käyttö ja jäljellä olevat määrät valitun resurssiryhmän avulla.",
       "TotpActivated": "2FA käytössä",
       "Update": "Päivitys",
       "Usage": "Käyttö",

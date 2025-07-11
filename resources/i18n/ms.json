@@ -1982,6 +1982,8 @@
       "Summary": "Ringkasan",
       "Tasks": "Tugasan",
       "TermsOfService": "Syarat Perkhidmatan",
+      "TotalResourcesIn": "Jumlah sumber dalam",
+      "TotalResourcesInResourceGroupDescription": "Panel ini menunjukkan jumlah sumber yang digunakan dan baki. \nNilai dikira dengan menambah penggunaan dan baki jumlah semua ejen menggunakan kumpulan sumber yang dipilih.",
       "TotpActivated": "2FA Didayakan",
       "Update": "Kemas kini",
       "Usage": "Penggunaan",

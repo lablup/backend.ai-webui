@@ -1990,6 +1990,8 @@
       "Summary": "요약",
       "Tasks": "작업",
       "TermsOfService": "약관",
+      "TotalResourcesIn": "자원 그룹 내 총자원",
+      "TotalResourcesInResourceGroupDescription": "이 패널은 총 사용량과 남은 자원량을 보여줍니다. 선택한 자원 그룹을 사용하는 모든 노드의 사용량과 남은 자원을 합산하여 계산합니다.",
       "TotpActivated": "이중 인증 사용",
       "Update": "변경",
       "Usage": "사용량",

@@ -1985,6 +1985,8 @@
       "Summary": "Tóm lược",
       "Tasks": "Nhiệm vụ",
       "TermsOfService": "Điều khoản dịch vụ",
+      "TotalResourcesIn": "Tổng tài nguyên trong",
+      "TotalResourcesInResourceGroupDescription": "Bảng điều khiển này cho thấy tổng tài nguyên được sử dụng và còn lại. \nCác giá trị được tính bằng cách thêm sử dụng và số lượng còn lại của tất cả các tác nhân bằng nhóm tài nguyên đã chọn.",
       "TotpActivated": "Đã bật 2FA",
       "Update": "Cập nhật",
       "Usage": "Cách sử dụng",

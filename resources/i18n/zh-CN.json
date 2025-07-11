@@ -1985,6 +1985,8 @@
       "Summary": "概括",
       "Tasks": "任务",
       "TermsOfService": "服务条款",
+      "TotalResourcesIn": "总资源中",
+      "TotalResourcesInResourceGroupDescription": "该面板显示了使用的总和剩余资源。\n这些值是通过使用所选资源组添加所有代理的使用量和剩余数量来计算的。",
       "TotpActivated": "已启用 2FA",
       "Update": "更新",
       "Usage": "用法",

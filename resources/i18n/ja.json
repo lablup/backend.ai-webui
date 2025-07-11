@@ -1984,6 +1984,8 @@
       "Summary": "要約",
       "Tasks": "作業",
       "TermsOfService": "利用規約",
+      "TotalResourcesIn": "総リソース",
+      "TotalResourcesInResourceGroupDescription": "このパネルは、使用されている合計と残りのリソースを示しています。\n値は、選択したリソースグループを使用して、すべてのエージェントの使用量と残りの量を追加することによって計算されます。",
       "TotpActivated": "二要素認証の使用",
       "Update": "更新",
       "Usage": "使用法",
