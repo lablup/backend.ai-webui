@@ -1,0 +1,97 @@
+import Flex from './Flex';
+import { CloseCircleTwoTone, WarningTwoTone } from '@ant-design/icons';
+import { Button, Card, CardProps, theme } from 'antd';
+import _ from 'lodash';
+import React, { cloneElement, isValidElement, ReactNode } from 'react';
+
+export interface BAICardProps extends Omit<CardProps, 'extra'> {
+  status?: 'success' | 'error' | 'warning' | 'default';
+  extra?: ReactNode;
+  extraButtonTitle?: string | ReactNode;
+  showDivider?: boolean;
+  onClickExtraButton?: () => void;
+  ref?: React.LegacyRef<HTMLDivElement> | undefined;
+}
+
+const BAICard: React.FC<BAICardProps> = ({
+  status = 'default',
+  extraButtonTitle,
+  onClickExtraButton,
+  extra,
+  style,
+  styles,
+  showDivider,
+  ...cardProps
+}) => {
+  const { token } = theme.useToken();
+
+  const extraWithoutFontWeight = isValidElement(extra)
+    ? cloneElement(extra as React.ReactElement<any>, {
+        style: { fontWeight: 'normal' },
+      })
+    : extra;
+
+  const _extra =
+    extraWithoutFontWeight ||
+    (extraButtonTitle && (
+      <Button
+        type="link"
+        icon={
+          status === 'error' ? (
+            <CloseCircleTwoTone twoToneColor={token.colorError} />
+          ) : status === 'warning' ? (
+            <WarningTwoTone twoToneColor={token.colorWarning} />
+          ) : undefined
+        }
+        onClick={onClickExtraButton}
+      >
+        {extraButtonTitle}
+      </Button>
+    )) ||
+    undefined;
+  return (
+    <Card
+      style={_.extend(style, {
+        borderColor:
+          status === 'error'
+            ? token.colorError
+            : status === 'warning'
+              ? token.colorWarning
+              : status === 'success'
+                ? token.colorSuccess
+                : style?.borderColor, // default
+      })}
+      styles={_.merge(
+        showDivider
+          ? {}
+          : {
+              header: {
+                borderBottom: 'none',
+              },
+              body: {
+                paddingTop: cardProps.tabList ? token.margin : token.marginXS,
+              },
+            },
+        styles,
+      )}
+      {...cardProps}
+      title={
+        <Flex
+          justify="between"
+          align="center"
+          wrap="wrap"
+          style={{
+            paddingTop: token.paddingSM,
+            paddingBottom: token.paddingSM,
+          }}
+          gap="sm"
+        >
+          {cardProps.title}
+          {_extra}
+        </Flex>
+      }
+    />
+  );
+};
+
+export default BAICard;
