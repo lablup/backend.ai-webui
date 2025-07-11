@@ -1,5 +1,6 @@
 import { DashboardPageQuery } from '../__generated__/DashboardPageQuery.graphql';
 import MyResourceCard from '../components/MyResourceCard';
+import MyResourceWithinResourceGroupCard from '../components/MyResourceWithinResourceGroupCard';
 import MySessionCard from '../components/MySessionCard';
 import RecentlyCreatedSessionCard from '../components/RecentlyCreatedSessionCard';
 import { filterEmptyItem } from '../helper';
@@ -74,6 +75,21 @@ const DashboardPage: React.FC = () => {
       },
     },
     {
+      id: 'myResourceWithinResourceGroup',
+      rowSpan: 3,
+      columnSpan: 1,
+      columnOffset: { 6: 1, 4: 1 },
+      data: {
+        content: (
+          <MyResourceWithinResourceGroupCard
+            fetchKey={fetchKey}
+            isRefetching={isPendingRefetch}
+            style={{ minHeight: lg ? 200 : undefined }}
+          />
+        ),
+      },
+    },
+    {
       id: 'recentlyCreatedSession',
       rowSpan: 3,
       columnSpan: 2,
@@ -94,7 +110,7 @@ const DashboardPage: React.FC = () => {
       <Row gutter={[16, 16]}>
         {_.map(items, (item) => {
           return (
-            <Col xs={24} lg={item.columnSpan === 2 ? 24 : 12}>
+            <Col xs={24} lg={item.columnSpan === 2 ? 24 : 12} key={item.id}>
               {item.data.content}
             </Col>
           );
