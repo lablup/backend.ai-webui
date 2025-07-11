@@ -15,7 +15,6 @@ import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useUpdatableState } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import AllowedVfolderHostsWithPermission from './AllowedVfolderHostsWithPermission';
-import BAITable from './BAITable';
 import Flex from './Flex';
 import KeypairResourcePolicyInfoModal from './KeypairResourcePolicyInfoModal';
 import KeypairResourcePolicySettingModal from './KeypairResourcePolicySettingModal';
@@ -32,6 +31,7 @@ import { useToggle } from 'ahooks';
 import { App, Button, Dropdown, theme, Tooltip, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
+import { BAITable } from 'backend.ai-ui';
 import _ from 'lodash';
 import { EllipsisIcon } from 'lucide-react';
 import React, { Suspense, useState, useTransition } from 'react';
@@ -417,8 +417,6 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         </Flex>
       </Flex>
       <BAITable
-        neoStyle
-        size="small"
         columns={
           _.filter(
             columns,

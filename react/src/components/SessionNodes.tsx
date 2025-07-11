@@ -4,11 +4,11 @@ import {
 } from '../__generated__/SessionNodesFragment.graphql';
 import { filterEmptyItem, filterNonNullItems } from '../helper';
 import BAILink from './BAILink';
-import BAITable, { BAITableProps } from './BAITable';
 import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionSlotCell from './ComputeSessionNodeItems/SessionSlotCell';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
 import { ColumnType } from 'antd/es/table';
+import { BAITable, BAITableProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -134,7 +134,6 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
     <>
       <BAITable
         resizable
-        neoStyle
         rowKey={'id'}
         size="small"
         dataSource={filteredSessions}

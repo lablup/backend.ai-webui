@@ -20,8 +20,8 @@ const useStyles = createStyles(({ css }) => ({
 
 const UserCredentialsPage: React.FC = () => {
   const { t } = useTranslation();
-  const { styles } = useStyles();
   const { token } = theme.useToken();
+  const { styles } = useStyles();
   const [searchParams] = useSearchParams();
   const currentTab = searchParams.get('tab') || 'users';
   const navigate = useNavigate();
@@ -48,11 +48,7 @@ const UserCredentialsPage: React.FC = () => {
         })
       }
       tabList={tabItems}
-      styles={{
-        body: {
-          padding: `${token.paddingSM}px ${token.paddingLG}px ${token.paddingLG}px ${token.paddingLG}px`,
-        },
-      }}
+      styles={{ body: { padding: token.paddingSM } }}
     >
       <Suspense
         fallback={
