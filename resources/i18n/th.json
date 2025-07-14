@@ -338,6 +338,8 @@
     },
     "folders": {
       "CannotDeleteFolder": "ไม่สามารถลบโฟลเดอร์ที่ถูกเมาท์ในหนึ่งหรือหลายเซสชัน กรุณายุติเซสชันก่อน",
+      "CannotDeletePipelineFolder": "คุณไม่สามารถลบโฟลเดอร์ไปป์ไลน์ได้",
+      "CannotRestorePipelineFolder": "คุณไม่สามารถกู้คืนโฟลเดอร์ไปป์ไลน์ได้",
       "CloneAFolder": "โคลนโฟลเดอร์",
       "CloneFolder": "โคลนโฟลเดอร์",
       "Cloneable": "สามารถโคลนได้",

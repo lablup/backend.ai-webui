@@ -340,6 +340,8 @@
     },
     "folders": {
       "CannotDeleteFolder": "Cannot delete folder mounted in one or more sessions. Please terminate the session first.",
+      "CannotDeletePipelineFolder": "You can't delete pipeline folders.",
+      "CannotRestorePipelineFolder": "You can't restore pipeline folders.",
       "CloneAFolder": "Clone folder",
       "CloneFolder": "Clone folder",
       "Cloneable": "Cloneable",

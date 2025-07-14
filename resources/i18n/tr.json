@@ -338,6 +338,8 @@
     },
     "folders": {
       "CannotDeleteFolder": "Bir veya daha fazla oturuma bağlı klasör silinemez. Lütfen önce oturumu sonlandırın.",
+      "CannotDeletePipelineFolder": "Boru hattı klasörlerini silemezsiniz.",
+      "CannotRestorePipelineFolder": "Boru hattı klasörlerini geri yükleyemezsiniz.",
       "CloneAFolder": "Klasörü klonla",
       "CloneFolder": "Klasör klonlama",
       "Cloneable": "klonlanabilir",

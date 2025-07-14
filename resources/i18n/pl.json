@@ -338,6 +338,8 @@
     },
     "folders": {
       "CannotDeleteFolder": "Nie można usunąć folderu zamontowanego w co najmniej jednej sesji. Najpierw zakończ sesję.",
+      "CannotDeletePipelineFolder": "Nie możesz usunąć folderów rurociągów.",
+      "CannotRestorePipelineFolder": "Nie możesz przywrócić folderów rurociągów.",
       "CloneAFolder": "Sklonuj folder",
       "CloneFolder": "Klonowanie folderu",
       "Cloneable": "Możliwość klonowania",

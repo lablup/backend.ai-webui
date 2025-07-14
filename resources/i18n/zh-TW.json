@@ -338,6 +338,8 @@
     },
     "folders": {
       "CannotDeleteFolder": "無法刪除安裝在一個或多個會話中的文件夾。請先終止會話。",
+      "CannotDeletePipelineFolder": "您無法刪除管道文件夾。",
+      "CannotRestorePipelineFolder": "您無法還原管道文件夾。",
       "CloneAFolder": "克隆文件夾",
       "CloneFolder": "克隆文件夹",
       "Cloneable": "可克隆",

@@ -338,6 +338,8 @@
     },
     "folders": {
       "CannotDeleteFolder": "Der in einer oder mehreren Sitzungen bereitgestellte Ordner kann nicht gelöscht werden. Bitte beenden Sie zuerst die Sitzung.",
+      "CannotDeletePipelineFolder": "Sie können Pipeline -Ordner nicht löschen.",
+      "CannotRestorePipelineFolder": "Sie können Pipeline -Ordner nicht wiederherstellen.",
       "CloneAFolder": "Einen Ordner klonen",
       "CloneFolder": "Ordner klonen",
       "Cloneable": "klonbar",

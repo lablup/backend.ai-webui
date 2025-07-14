@@ -338,6 +338,8 @@
     },
     "folders": {
       "CannotDeleteFolder": "Impossible de supprimer le dossier monté dans une ou plusieurs sessions. Veuillez d'abord terminer la session.",
+      "CannotDeletePipelineFolder": "Vous ne pouvez pas supprimer les dossiers du pipeline.",
+      "CannotRestorePipelineFolder": "Vous ne pouvez pas restaurer les dossiers du pipeline.",
       "CloneAFolder": "Cloner un dossier",
       "CloneFolder": "Cloner un dossier",
       "Cloneable": "Clonable",

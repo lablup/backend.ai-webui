@@ -338,6 +338,8 @@
     },
     "folders": {
       "CannotDeleteFolder": "Yhdessä tai useammassa istunnossa asennettua kansiota ei voi poistaa. Lopeta istunto ensin.",
+      "CannotDeletePipelineFolder": "Et voi poistaa putkilinjan kansioita.",
+      "CannotRestorePipelineFolder": "Putkilinjan kansiot eivät voi palauttaa.",
       "CloneAFolder": "Kloonaa kansio",
       "CloneFolder": "Kloonattu kansio",
       "Cloneable": "Kloonattavissa",

@@ -338,6 +338,8 @@
     },
     "folders": {
       "CannotDeleteFolder": "Không thể xóa thư mục được gắn trong một hoặc nhiều phiên. Vui lòng kết thúc phiên trước.",
+      "CannotDeletePipelineFolder": "Bạn không thể xóa các thư mục đường ống.",
+      "CannotRestorePipelineFolder": "Bạn không thể khôi phục các thư mục đường ống.",
       "CloneAFolder": "Sao chép một thư mục",
       "CloneFolder": "Sao chép thư mục",
       "Cloneable": "Có thể nhân bản",

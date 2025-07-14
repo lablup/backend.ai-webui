@@ -337,6 +337,8 @@
     },
     "folders": {
       "CannotDeleteFolder": "Нэг буюу хэд хэдэн хэсэгт суулгасан фолдерыг устгах боломжгүй. Эхлээд хуралдааныг зогсооно уу.",
+      "CannotDeletePipelineFolder": "Та дамжуулах хоолойн хавтасыг устгах боломжгүй.",
+      "CannotRestorePipelineFolder": "Та дамжуулах хоолойн хавтасыг сэргээх боломжгүй.",
       "CloneAFolder": "Фолдерыг хуул",
       "CloneFolder": "Фолдерыг хувилах",
       "Cloneable": "Cloneable",
