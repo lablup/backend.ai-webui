@@ -171,6 +171,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     'interactive-login',
     'chat',
     'ai-agent',
+    'deployment',
     'model-store',
     'scheduler',
   ]; // temporally block pipeline from available pages 'pipeline', 'pipeline-job'
