@@ -82,6 +82,20 @@ const ChatPage = React.lazy(() => import('./pages/ChatPage'));
 
 const AIAgentPage = React.lazy(() => import('./pages/AIAgentPage'));
 
+// Deployment pages
+const DeploymentListPage = React.lazy(
+  () => import('./pages/Deployments/DeploymentListPage'),
+);
+const DeploymentDetailPage = React.lazy(
+  () => import('./pages/Deployments/DeploymentDetailPage'),
+);
+const RevisionCreatePage = React.lazy(
+  () => import('./pages/Deployments/RevisionCreatePage'),
+);
+const RevisionDetailPage = React.lazy(
+  () => import('./pages/Deployments/RevisionDetailPage'),
+);
+
 interface CustomHandle {
   title?: string;
   labelKey?: string;
@@ -295,6 +309,69 @@ const router = createBrowserRouter([
               </BAIErrorBoundary>
             ),
             handle: { labelKey: 'modelService.RoutingInfo' },
+          },
+        ],
+      },
+      {
+        path: '/deployment',
+        handle: { labelKey: 'webui.menu.Deployment' },
+        children: [
+          {
+            path: '',
+            Component: () => {
+              const { t } = useTranslation();
+              useSuspendedBackendaiClient();
+              return (
+                <BAIErrorBoundary>
+                  <Suspense
+                    fallback={
+                      <BAICard title={t('webui.menu.Deployment')} loading />
+                    }
+                  >
+                    <DeploymentListPage />
+                  </Suspense>
+                </BAIErrorBoundary>
+              );
+            },
+          },
+          {
+            path: '/deployment/:deploymentId',
+            handle: { labelKey: 'deployment.DeploymentDetail' },
+            element: (
+              <BAIErrorBoundary>
+                <Suspense fallback={<Skeleton active />}>
+                  <DeploymentDetailPage />
+                </Suspense>
+              </BAIErrorBoundary>
+            ),
+          },
+          {
+            path: '/deployment/:deploymentId/revision/create',
+            handle: { labelKey: 'revision.CreateRevision' },
+            element: (
+              <BAIErrorBoundary>
+                <Suspense
+                  fallback={
+                    <BAIFlex direction="column" style={{ maxWidth: 700 }}>
+                      <Skeleton active />
+                    </BAIFlex>
+                  }
+                >
+                  <RevisionCreatePage />
+                </Suspense>
+              </BAIErrorBoundary>
+            ),
+          },
+          {
+            path: '/deployment/:deploymentId/revision/:revisionId',
+            handle: { labelKey: 'revision.RevisionDetail' },
+            element: (
+              <BAIErrorBoundary>
+                <Suspense fallback={<Skeleton active />}>
+                  <RevisionDetailPage />
+                </Suspense>
+              </BAIErrorBoundary>
+            ),
           },
         ],
       },
