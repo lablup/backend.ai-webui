@@ -32,6 +32,7 @@
     "src/components/*",
     "src/plugins/*",
     "src/reducers/*",
-    "src/*"
+    "src/*",
+    "e2e/**/*.ts"
   ]
 }
