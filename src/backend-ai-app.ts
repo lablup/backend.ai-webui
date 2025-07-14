@@ -17,6 +17,7 @@ export const navigate =
         '/job',
         '/session',
         '/serving',
+        '/deployment',
         '/agent-summary',
         '/experiment',
         '/data',
@@ -102,6 +103,9 @@ const loadPage =
         break; */
       case 'serving':
         import('./components/backend-ai-serving-view.js');
+        break;
+      case 'deployment':
+        // Deployment pages are handled by React router
         break;
       case 'agent':
         break;
