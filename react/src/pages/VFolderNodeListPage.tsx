@@ -4,7 +4,6 @@ import {
   VFolderNodeListPageQuery$variables,
 } from '../__generated__/VFolderNodeListPageQuery.graphql';
 import ActionItemContent from '../components/ActionItemContent';
-import BAICard from '../components/BAICard';
 import BAIFetchKeyButton from '../components/BAIFetchKeyButton';
 import NewFolderIcon from '../components/BAIIcons/NewFolderIcon';
 import RestoreIcon from '../components/BAIIcons/RestoreIcon';
@@ -46,6 +45,7 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
+import { BAICard } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, {
   Suspense,

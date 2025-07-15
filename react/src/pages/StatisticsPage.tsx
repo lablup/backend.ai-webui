@@ -1,9 +1,9 @@
 import AllocationHistory from '../components/AllocationHistory';
-import BAICard from '../components/BAICard';
 import UserSessionsMetrics from '../components/UserSessionsMetrics';
 import { filterEmptyItem } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { Skeleton, theme } from 'antd';
+import { BAICard } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';

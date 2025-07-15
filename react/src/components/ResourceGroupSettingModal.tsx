@@ -4,7 +4,6 @@ import { ResourceGroupSettingModalFragment$key } from '../__generated__/Resource
 import { ResourceGroupSettingModalUpdateMutation } from '../__generated__/ResourceGroupSettingModalUpdateMutation.graphql';
 import { filterEmptyValues, newLineToBrElement } from '../helper';
 import { useCurrentDomainValue } from '../hooks';
-import BAICard from './BAICard';
 import BAIModal from './BAIModal';
 import DomainSelector from './DomainSelector';
 import Flex from './Flex';
@@ -25,6 +24,7 @@ import {
   Tooltip,
   theme,
 } from 'antd';
+import { BAICard } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Suspense, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -5,7 +5,6 @@ import {
 } from '../__generated__/ComputeSessionListPageQuery.graphql';
 import ActionItemContent from '../components/ActionItemContent';
 import AvailableResourcesCard from '../components/AvailableResourcesCard';
-import BAICard from '../components/BAICard';
 import BAIFetchKeyButton from '../components/BAIFetchKeyButton';
 import SessionsIcon from '../components/BAIIcons/SessionsIcon';
 import BAILink from '../components/BAILink';
@@ -32,6 +31,7 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
+import { BAICard } from 'backend.ai-ui';
 import _ from 'lodash';
 import { PowerOffIcon } from 'lucide-react';
 import { Suspense, useDeferredValue, useMemo, useRef, useState } from 'react';
