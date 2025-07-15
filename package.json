@@ -192,15 +192,15 @@
       "prettier --write"
     ],
     "react/src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
-      "eslint --fix --max-warnings=0",
+      "eslint --max-warnings=0 --cache",
       "prettier --write"
     ],
     "packages/backend.ai-ui/src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
-      "eslint --fix --max-warnings=0",
+      "eslint --max-warnings=0 --cache",
       "prettier --write"
     ],
     "e2e/**/*.{js,ts}": [
-      "eslint --fix --max-warnings=0",
+      "eslint --max-warnings=0 --cache",
       "prettier --write"
     ],
     "resources/i18n/*.json": [
