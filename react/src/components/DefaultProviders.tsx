@@ -1,6 +1,7 @@
 import { RelayEnvironment } from '../RelayEnvironment';
 // @ts-ignore
 import rawFixAntCss from '../fix_antd.css?raw';
+import { buiLanguages } from '../helper/bui-language';
 import { useCustomThemeConfig } from '../helper/customThemeConfig';
 import { ReactWebComponentProps } from '../helper/react-to-webcomponent';
 import { ThemeModeProvider, useThemeMode } from '../hooks/useThemeMode';
@@ -11,8 +12,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useUpdateEffect } from 'ahooks';
 import { App, AppProps, theme, Typography } from 'antd';
 import { BAIConfigProvider } from 'backend.ai-ui';
-import en_US from 'backend.ai-ui/dist/locale/en_US';
-import ko_KR from 'backend.ai-ui/dist/locale/ko_KR';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import duration from 'dayjs/plugin/duration';
@@ -217,8 +216,10 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
                 <ThemeModeProvider>
                   <WebComponentContext.Provider value={componentValues}>
                     <BAIConfigProvider
-                      //TODO: apply other supported locales
-                      locale={'ko' === lang ? ko_KR : en_US}
+                      locale={
+                        buiLanguages[lang as keyof typeof buiLanguages] ??
+                        buiLanguages['en']
+                      }
                       // @ts-ignore
                       getPopupContainer={(triggerNode) => {
                         return triggerNode?.parentNode || shadowRoot;
@@ -314,8 +315,10 @@ export const DefaultProvidersForReactRoot: React.FC<
         <RelayEnvironmentProvider environment={RelayEnvironment}>
           <QueryClientProvider client={queryClient}>
             <BAIConfigProvider
-              //TODO: apply other supported locales
-              locale={'ko' === lang ? ko_KR : en_US}
+              locale={
+                buiLanguages[lang as keyof typeof buiLanguages] ??
+                buiLanguages['en']
+              }
               theme={{
                 ...(isDarkMode
                   ? { ...themeConfig?.dark }

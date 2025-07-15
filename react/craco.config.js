@@ -124,6 +124,10 @@ module.exports = {
             module: /@antv\//,
             message: /Failed to parse source map/,
           },
+          {
+            module: /@microsoft\/fetch-event-source/,
+            message: /Failed to parse source map/,
+          },
         ],
       };
     },

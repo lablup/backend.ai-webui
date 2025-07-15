@@ -151,10 +151,15 @@ const UserPreferencesPage = () => {
                         </Typography.Text>
                       </>
                     ),
+                    filterValue: item.label,
                   }
-                : item,
+                : {
+                    ...item,
+                    filterValue: item.label,
+                  },
             ),
             showSearch: true,
+            optionFilterProp: 'filterValue',
           },
           defaultValue: defaultLanguage,
           value: selectedLanguage || defaultLanguage,
