@@ -19,6 +19,7 @@ interface UserSettings {
   pinnedSessionHistory?: Array<SessionHistory>;
   experimental_neo_session_list?: boolean;
   start_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
+  start_page_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   experimental_ai_agents?: boolean;
   experimental_dashboard?: boolean;
   session_metrics_board_items?: Array<Omit<BAIBoardItem, 'data'>>;

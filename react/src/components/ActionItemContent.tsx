@@ -63,13 +63,20 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
       justify="between"
       direction="column"
       style={{
-        height: '100%',
+        height: 328,
         textAlign: 'center',
         overflowY: 'auto',
-        padding: token.marginMD,
       }}
     >
-      <Flex direction="column" gap={type === 'default' ? 'sm' : 'xxs'}>
+      <Flex
+        direction="column"
+        gap={type === 'default' ? 'sm' : 'xxs'}
+        style={{
+          overflow: 'hidden',
+          padding: token.marginMD,
+          paddingBottom: 0,
+        }}
+      >
         <Flex
           align="center"
           justify="center"
@@ -112,19 +119,20 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
       </Flex>
       <Flex
         direction="column"
+        align="stretch"
         style={{
           width: '100%',
           position: 'sticky',
           bottom: 0,
           backgroundColor:
             type === 'default' ? token.colorBgContainer : undefined,
-          marginTop: type === 'default' ? token.marginSM : undefined,
-          paddingBottom: type === 'default' ? token.marginMD : undefined,
+          padding: type === 'default' ? token.paddingMD : undefined,
+          paddingTop: 0,
         }}
       >
         {description && (
           <Divider
-            style={{ margin: token.marginSM, marginTop: 0, borderWidth: 2 }}
+            style={{ margin: 0, marginBottom: token.marginMD, borderWidth: 1 }}
           />
         )}
         {to ? <WebUILink to={to}>{actionButton}</WebUILink> : actionButton}
