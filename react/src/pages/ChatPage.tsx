@@ -63,7 +63,9 @@ function useDefaultEndpointId() {
   return endpoint_list?.items[0]?.endpoint_id || undefined;
 }
 
-function useChatProviderData(defaultEndpointId?: string): ChatProviderData {
+export function useChatProviderData(
+  defaultEndpointId?: string,
+): ChatProviderData {
   const [{ endpointId, modelId, agentId, apiKey }] = useQueryParams({
     endpointId: StringParam,
     agentId: StringParam,
