@@ -14,36 +14,31 @@ import {
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
+import BAITable from './BAITable';
 import Flex from './Flex';
 import ProjectResourcePolicySettingModal from './ProjectResourcePolicySettingModal';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import {
   DeleteOutlined,
-  DownOutlined,
   PlusOutlined,
   ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import {
-  Button,
-  Dropdown,
-  message,
-  Popconfirm,
-  Space,
-  Table,
-  theme,
-} from 'antd';
+import { Button, Dropdown, message, Popconfirm, theme, Tooltip } from 'antd';
 import { ColumnType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import _ from 'lodash';
+import { EllipsisIcon } from 'lucide-react';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 type ProjectResourcePolicies = NonNullable<
-  ProjectResourcePolicyListQuery$data['project_resource_policies']
->[number];
+  NonNullable<
+    ProjectResourcePolicyListQuery$data['project_resource_policies']
+  >[number]
+>;
 
 interface ProjectResourcePolicyListProps {}
 
@@ -282,19 +277,9 @@ const ProjectResourcePolicyList: React.FC<
   };
 
   return (
-    <Flex direction="column" align="stretch">
-      <Flex
-        direction="row"
-        justify="between"
-        wrap="wrap"
-        gap={'xs'}
-        style={{
-          padding: token.paddingContentVertical,
-          paddingLeft: token.paddingContentHorizontalSM,
-          paddingRight: token.paddingContentHorizontalSM,
-        }}
-      >
-        <Flex direction="column" align="start">
+    <Flex direction="column" align="stretch" gap="sm">
+      <Flex direction="row" justify="end" wrap="wrap" gap={'xs'}>
+        <Flex direction="row" gap={'xs'} wrap="wrap" style={{ flexShrink: 1 }}>
           <Dropdown
             menu={{
               items: [
@@ -307,30 +292,22 @@ const ProjectResourcePolicyList: React.FC<
                 },
               ],
             }}
+            trigger={['click']}
           >
-            <Button
-              type="link"
-              style={{ padding: 0 }}
-              onClick={(e) => e.preventDefault()}
-            >
-              <Space style={{ color: token.colorLinkHover }}>
-                {t('resourcePolicy.Tools')}
-                <DownOutlined />
-              </Space>
-            </Button>
+            <Button icon={<EllipsisIcon />} />
           </Dropdown>
-        </Flex>
-        <Flex direction="row" gap={'xs'} wrap="wrap" style={{ flexShrink: 1 }}>
           <Flex gap={'xs'}>
-            <Button
-              icon={<ReloadOutlined />}
-              loading={isRefetchPending}
-              onClick={() => {
-                startRefetchTransition(() =>
-                  updateProjectResourcePolicyFetchKey(),
-                );
-              }}
-            />
+            <Tooltip title={t('button.Refresh')}>
+              <Button
+                icon={<ReloadOutlined />}
+                loading={isRefetchPending}
+                onClick={() => {
+                  startRefetchTransition(() =>
+                    updateProjectResourcePolicyFetchKey(),
+                  );
+                }}
+              />
+            </Tooltip>
             <Button
               type="primary"
               icon={<PlusOutlined />}
@@ -343,7 +320,9 @@ const ProjectResourcePolicyList: React.FC<
           </Flex>
         </Flex>
       </Flex>
-      <Table
+      <BAITable
+        neoStyle
+        size="small"
         rowKey="id"
         showSorterTooltip={false}
         columns={_.filter(
@@ -352,22 +331,18 @@ const ProjectResourcePolicyList: React.FC<
         )}
         dataSource={filterNonNullItems(project_resource_policies)}
         scroll={{ x: 'max-content' }}
-        pagination={false}
-      />
-      <Flex
-        justify="end"
-        style={{
-          padding: token.paddingXXS,
+        pagination={{
+          extraContent: (
+            <Button
+              type="text"
+              icon={<SettingOutlined />}
+              onClick={() => {
+                toggleColumnSettingModal();
+              }}
+            />
+          ),
         }}
-      >
-        <Button
-          type="text"
-          icon={<SettingOutlined />}
-          onClick={() => {
-            toggleColumnSettingModal();
-          }}
-        />
-      </Flex>
+      />
       <TableColumnsSettingModal
         open={visibleColumnSettingModal}
         onRequestClose={(values) => {

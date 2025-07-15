@@ -1012,6 +1012,9 @@
     "SuccessfullyUpdated": "Амжилттай шинэчлэгдсэн",
     "Visit": "Айлчлах"
   },
+  "pagination": {
+    "Total": "{{start}} - {{{End}} {{нийт}}}} зүйл"
+  },
   "propertyFilter": {
     "PlaceHolder": "Хайх",
     "ResetFilter": "Шүүлтүүрийг дахин тохируулах"

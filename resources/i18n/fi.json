@@ -1013,6 +1013,9 @@
     "SuccessfullyUpdated": "Päivitetty onnistuneesti",
     "Visit": "Käy osoitteessa"
   },
+  "pagination": {
+    "Total": "{{start}}–{{end}} yhteensä {{total}} kohteesta"
+  },
   "propertyFilter": {
     "PlaceHolder": "Etsi",
     "ResetFilter": "Nollaa suodattimet"

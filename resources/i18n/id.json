@@ -1012,6 +1012,9 @@
     "SuccessfullyUpdated": "Berhasil Diperbarui",
     "Visit": "Kunjungi"
   },
+  "pagination": {
+    "Total": "{{start}} - {{end}} dari {{total}} item"
+  },
   "propertyFilter": {
     "PlaceHolder": "Pencarian",
     "ResetFilter": "Setel ulang filter"

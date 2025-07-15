@@ -1,9 +1,10 @@
+import BAICard from '../components/BAICard';
 import ContainerRegistryList from '../components/ContainerRegistryList';
 import FlexActivityIndicator from '../components/FlexActivityIndicator';
 import ImageList from '../components/ImageList';
 import ResourcePresetList from '../components/ResourcePresetList';
 import { useSuspendedBackendaiClient } from '../hooks';
-import Card from 'antd/es/card/Card';
+import { theme } from 'antd';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
@@ -14,9 +15,10 @@ const EnvironmentPage = () => {
   const { t } = useTranslation();
   const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
   const baiClient = useSuspendedBackendaiClient();
+  const { token } = theme.useToken();
 
   return (
-    <Card
+    <BAICard
       activeTabKey={curTabKey}
       onTabChange={setCurTabKey}
       tabList={[
@@ -39,9 +41,7 @@ const EnvironmentPage = () => {
       ]}
       styles={{
         body: {
-          padding: 0,
-          paddingTop: 1,
-          overflow: 'hidden',
+          padding: `${token.paddingSM}px ${token.paddingLG}px ${token.paddingLG}px ${token.paddingLG}px`,
         },
       }}
     >
@@ -57,7 +57,7 @@ const EnvironmentPage = () => {
         {curTabKey === 'preset' && <ResourcePresetList />}
         {curTabKey === 'registry' && <ContainerRegistryList />}
       </Suspense>
-    </Card>
+    </BAICard>
   );
 };
 

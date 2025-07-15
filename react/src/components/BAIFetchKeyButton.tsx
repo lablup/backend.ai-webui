@@ -82,12 +82,11 @@ const BAIFetchKeyButton: React.FC<BAIAutoRefetchButtonProps> = ({
     loading ? null : autoUpdateDelay,
   );
 
+  const tooltipTitle = showLastLoadTime ? loadTimeMessage : undefined;
   return hidden ? null : (
-    <Tooltip
-      title={showLastLoadTime ? loadTimeMessage : undefined}
-      placement="topLeft"
-    >
+    <Tooltip title={tooltipTitle} placement="topLeft">
       <Button
+        title={tooltipTitle ? undefined : t('general.Refresh')}
         loading={displayLoading}
         size={size}
         icon={<ReloadOutlined />}

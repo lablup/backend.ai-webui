@@ -1,6 +1,7 @@
 import { transformSorterToOrderString } from '../helper';
 import { useThemeMode } from '../hooks/useThemeMode';
 import Flex from './Flex';
+import PaginationInfoText from './PaginationInfoText';
 import { useControllableValue, useDebounce } from 'ahooks';
 import { ConfigProvider, GetProps, Pagination, Table, theme } from 'antd';
 import { createStyles } from 'antd-style';
@@ -283,6 +284,15 @@ const BAITable = <RecordType extends object = any>({
             <Pagination
               size={tableProps.size === 'small' ? 'small' : 'default'}
               align="end"
+              pageSizeOptions={['10', '20', '50']}
+              showSizeChanger={true}
+              showTotal={(total, range) => (
+                <PaginationInfoText
+                  start={range[0]}
+                  end={range[1]}
+                  total={total}
+                />
+              )}
               {...tableProps.pagination}
               // override props for controlled values
               total={

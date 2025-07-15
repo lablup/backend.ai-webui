@@ -292,6 +292,7 @@ export const useBackendAIImageMetaData = () => {
       );
     },
     retry: false,
+    staleTime: 1000 * 60 * 60 * 24, // 24 hours
   });
 
   const getImageMeta = (imageName: string) => {

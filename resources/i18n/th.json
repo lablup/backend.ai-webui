@@ -1003,6 +1003,9 @@
     "SuccessfullyUpdated": "อัปเดตสำเร็จแล้ว",
     "Visit": "เยี่ยมชม"
   },
+  "pagination": {
+    "Total": "{{start}} - {{end}} ของ {{total}} รายการ"
+  },
   "propertyFilter": {
     "PlaceHolder": "ค้นหา",
     "ResetFilter": "รีเซ็ตตัวกรอง"

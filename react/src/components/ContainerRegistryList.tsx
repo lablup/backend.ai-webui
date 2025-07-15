@@ -4,7 +4,7 @@ import {
   ContainerRegistryListQuery,
   ContainerRegistryListQuery$data,
 } from '../__generated__/ContainerRegistryListQuery.graphql';
-import { filterNonNullItems, transformSorterToOrderString } from '../helper';
+import { filterNonNullItems } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
@@ -12,13 +12,13 @@ import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting'
 import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal from './BAIModal';
 import BAIPropertyFilter from './BAIPropertyFilter';
+import BAITable from './BAITable';
 import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
 import Flex from './Flex';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import {
   DeleteOutlined,
   ExclamationCircleOutlined,
-  LoadingOutlined,
   PlusOutlined,
   ReloadOutlined,
   SettingOutlined,
@@ -30,7 +30,6 @@ import {
   Form,
   Input,
   Switch,
-  Table,
   Tag,
   Tooltip,
   Typography,
@@ -354,7 +353,6 @@ const ContainerRegistryList: React.FC<{
           <Flex>
             <Tooltip title={t('button.Edit')}>
               <Button
-                size="large"
                 style={{
                   color: token.colorInfo,
                 }}
@@ -367,7 +365,6 @@ const ContainerRegistryList: React.FC<{
             </Tooltip>
             <Tooltip title={t('button.Delete')}>
               <Button
-                size="large"
                 danger
                 type="text"
                 icon={<DeleteOutlined />}
@@ -378,7 +375,6 @@ const ContainerRegistryList: React.FC<{
             </Tooltip>
             <Tooltip title={t('maintenance.RescanImages')}>
               <Button
-                size="large"
                 type="text"
                 icon={
                   <SyncOutlined
@@ -404,6 +400,7 @@ const ContainerRegistryList: React.FC<{
     <Flex
       direction="column"
       align="stretch"
+      gap="sm"
       style={{
         flex: 1,
         ...style,
@@ -412,13 +409,10 @@ const ContainerRegistryList: React.FC<{
     >
       <Flex
         direction="row"
-        justify="end"
+        justify="between"
         gap={'sm'}
-        style={{
-          padding: token.paddingContentVertical,
-          paddingLeft: token.paddingContentHorizontalSM,
-          paddingRight: token.paddingContentHorizontalSM,
-        }}
+        align="start"
+        wrap="wrap"
       >
         <BAIPropertyFilter
           filterProperties={[
@@ -435,57 +429,65 @@ const ContainerRegistryList: React.FC<{
             });
           }}
         />
-        <Tooltip title={t('button.Refresh')}>
+        <Flex gap="xs">
+          <Tooltip title={t('button.Refresh')}>
+            <Button
+              loading={isPendingReload}
+              icon={<ReloadOutlined />}
+              onClick={() => {
+                startReloadTransition(() => {
+                  updateFetchKey();
+                });
+              }}
+            />
+          </Tooltip>
           <Button
-            loading={isPendingReload}
-            icon={<ReloadOutlined />}
+            type="primary"
+            icon={<PlusOutlined />}
             onClick={() => {
-              startReloadTransition(() => {
-                updateFetchKey();
-              });
+              setIsNewModalOpen(true);
             }}
-          />
-        </Tooltip>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => {
-            setIsNewModalOpen(true);
-          }}
-        >
-          {t('registry.AddRegistry')}
-        </Button>
+          >
+            {t('registry.AddRegistry')}
+          </Button>
+        </Flex>
       </Flex>
-      <Table
+      <BAITable
+        neoStyle
+        size="small"
         rowKey={(record) => record.id}
         scroll={{ x: 'max-content' }}
         showSorterTooltip={false}
         pagination={{
           pageSize: tablePaginationOption.pageSize,
-          showSizeChanger: true,
           total: container_registry_nodes?.count ?? 0,
           current: tablePaginationOption.current,
-          showTotal(total, range) {
-            return `${range[0]}-${range[1]} of ${total} items`;
+          onChange(current, pageSize) {
+            startPageChangeTransition(() => {
+              if (_.isNumber(current) && _.isNumber(pageSize)) {
+                setTablePaginationOption({
+                  current,
+                  pageSize,
+                });
+              }
+            });
           },
-          pageSizeOptions: ['10', '20', '50'],
-          style: { marginRight: token.marginXS },
+          extraContent: (
+            <Button
+              type="text"
+              icon={<SettingOutlined />}
+              onClick={() => {
+                toggleColumnSettingModal();
+              }}
+            />
+          ),
         }}
-        onChange={({ pageSize, current }, filters, sorter) => {
+        onChangeOrder={(order) => {
           startPageChangeTransition(() => {
-            if (_.isNumber(current) && _.isNumber(pageSize)) {
-              setTablePaginationOption({
-                current,
-                pageSize,
-              });
-            }
-            setOrder(transformSorterToOrderString(sorter));
+            setOrder(order);
           });
         }}
-        loading={{
-          spinning: isPendingPageChange || isPendingFilter,
-          indicator: <LoadingOutlined />,
-        }}
+        loading={isPendingPageChange || isPendingFilter}
         dataSource={filterNonNullItems(containerRegistries)}
         columns={
           _.filter(
@@ -618,20 +620,6 @@ const ContainerRegistryList: React.FC<{
           </Form>
         </Flex>
       </BAIModal>
-      <Flex
-        justify="end"
-        style={{
-          padding: token.paddingXXS,
-        }}
-      >
-        <Button
-          type="text"
-          icon={<SettingOutlined />}
-          onClick={() => {
-            toggleColumnSettingModal();
-          }}
-        />
-      </Flex>
       <TableColumnsSettingModal
         open={visibleColumnSettingModal}
         onRequestClose={(values) => {

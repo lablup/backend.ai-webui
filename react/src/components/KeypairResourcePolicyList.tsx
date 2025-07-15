@@ -15,6 +15,7 @@ import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import AllowedVfolderHostsWithPermission from './AllowedVfolderHostsWithPermission';
+import BAITable from './BAITable';
 import Flex from './Flex';
 import KeypairResourcePolicyInfoModal from './KeypairResourcePolicyInfoModal';
 import KeypairResourcePolicySettingModal from './KeypairResourcePolicySettingModal';
@@ -22,17 +23,17 @@ import ResourceNumber from './ResourceNumber';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import {
   DeleteOutlined,
-  DownOutlined,
   InfoCircleOutlined,
   PlusOutlined,
   ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App, Button, Dropdown, Space, Table, theme, Typography } from 'antd';
+import { App, Button, Dropdown, theme, Tooltip, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
 import _ from 'lodash';
+import { EllipsisIcon } from 'lucide-react';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -231,7 +232,6 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         <Flex direction="row" align="stretch">
           <Button
             type="text"
-            size="large"
             icon={<InfoCircleOutlined style={{ color: token.colorSuccess }} />}
             onClick={() => {
               startInfoModalOpenTransition(() => {
@@ -241,7 +241,6 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
           />
           <Button
             type="text"
-            size="large"
             icon={<SettingOutlined />}
             style={{
               color: token.colorInfo,
@@ -252,7 +251,6 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
           />
           <Button
             type="text"
-            size="large"
             icon={
               <DeleteOutlined
                 style={{
@@ -377,55 +375,37 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
   };
 
   return (
-    <Flex direction="column" align="stretch" {...props}>
-      <Flex
-        direction="row"
-        justify="between"
-        wrap="wrap"
-        gap={'xs'}
-        style={{
-          padding: token.paddingContentVertical,
-          paddingLeft: token.paddingContentHorizontalSM,
-          paddingRight: token.paddingContentHorizontalSM,
-        }}
-      >
-        <Flex direction="column" align="start">
-          <Dropdown
-            menu={{
-              items: [
-                {
-                  key: 'exportCSV',
-                  label: t('resourcePolicy.ExportCSV'),
-                  onClick: () => {
-                    handleExportCSV();
-                  },
+    <Flex direction="column" align="stretch" gap="sm" {...props}>
+      <Flex direction="row" justify="end" wrap="wrap" gap={'xs'}>
+        <Dropdown
+          menu={{
+            items: [
+              {
+                key: 'exportCSV',
+                label: t('resourcePolicy.ExportCSV'),
+                onClick: () => {
+                  handleExportCSV();
                 },
-              ],
-            }}
-          >
-            <Button
-              type="link"
-              style={{ padding: 0 }}
-              onClick={(e) => e.preventDefault()}
-            >
-              <Space style={{ color: token.colorLinkHover }}>
-                {t('resourcePolicy.Tools')}
-                <DownOutlined />
-              </Space>
-            </Button>
-          </Dropdown>
-        </Flex>
+              },
+            ],
+          }}
+          trigger={['click']}
+        >
+          <Button icon={<EllipsisIcon />} />
+        </Dropdown>
         <Flex direction="row" gap={'xs'} wrap="wrap" style={{ flexShrink: 1 }}>
           <Flex gap={'xs'}>
-            <Button
-              icon={<ReloadOutlined />}
-              loading={isRefetchPending}
-              onClick={() => {
-                startRefetchTransition(() =>
-                  updateKeypairResourcePolicyFetchKey(),
-                );
-              }}
-            />
+            <Tooltip title={t('button.Refresh')}>
+              <Button
+                icon={<ReloadOutlined />}
+                loading={isRefetchPending}
+                onClick={() => {
+                  startRefetchTransition(() =>
+                    updateKeypairResourcePolicyFetchKey(),
+                  );
+                }}
+              />
+            </Tooltip>
             <Button
               type="primary"
               icon={<PlusOutlined />}
@@ -438,7 +418,9 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
           </Flex>
         </Flex>
       </Flex>
-      <Table
+      <BAITable
+        neoStyle
+        size="small"
         columns={
           _.filter(
             columns,
@@ -450,23 +432,19 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         }
         rowKey="name"
         scroll={{ x: 'max-content' }}
-        pagination={false}
+        pagination={{
+          extraContent: (
+            <Button
+              type="text"
+              icon={<SettingOutlined />}
+              onClick={() => {
+                toggleColumnSettingModal();
+              }}
+            />
+          ),
+        }}
         showSorterTooltip={false}
       />
-      <Flex
-        justify="end"
-        style={{
-          padding: token.paddingXXS,
-        }}
-      >
-        <Button
-          type="text"
-          icon={<SettingOutlined />}
-          onClick={() => {
-            toggleColumnSettingModal();
-          }}
-        />
-      </Flex>
       <TableColumnsSettingModal
         open={visibleColumnSettingModal}
         onRequestClose={(values) => {

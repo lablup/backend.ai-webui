@@ -1014,6 +1014,9 @@
     "SuccessfullyUpdated": "成功更新",
     "Visit": "訪問"
   },
+  "pagination": {
+    "Total": "{{start}}  -  {{end}} {{total}}項目"
+  },
   "propertyFilter": {
     "PlaceHolder": "搜索",
     "ResetFilter": "重置過濾器"

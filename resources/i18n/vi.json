@@ -1014,6 +1014,9 @@
     "SuccessfullyUpdated": "Cập nhật thành công",
     "Visit": "Chuyến thăm"
   },
+  "pagination": {
+    "Total": "{{start}} - {{end}} của {{Total}}"
+  },
   "propertyFilter": {
     "PlaceHolder": "Tìm kiếm",
     "ResetFilter": "Đặt lại bộ lọc"

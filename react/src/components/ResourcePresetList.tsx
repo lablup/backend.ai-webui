@@ -4,8 +4,9 @@ import {
   ResourcePresetListQuery$data,
 } from '../__generated__/ResourcePresetListQuery.graphql';
 import { ResourcePresetSettingModalFragment$key } from '../__generated__/ResourcePresetSettingModalFragment.graphql';
-import { filterNonNullItems, localeCompare, filterEmptyItem } from '../helper';
+import { filterEmptyItem, filterNonNullItems, localeCompare } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import BAITable from './BAITable';
 import Flex from './Flex';
 import NumberWithUnit from './NumberWithUnit';
 import ResourceNumber from './ResourceNumber';
@@ -16,16 +17,22 @@ import {
   SettingOutlined,
   DeleteOutlined,
 } from '@ant-design/icons';
-import { Tooltip, Button, theme, Table, App, Typography } from 'antd';
-import { ColumnType } from 'antd/es/table';
+import {
+  Tooltip,
+  Button,
+  theme,
+  App,
+  Typography,
+  TableColumnsType,
+} from 'antd';
 import _ from 'lodash';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 type ResourcePreset = NonNullable<
-  ResourcePresetListQuery$data['resource_presets']
->[number];
+  NonNullable<ResourcePresetListQuery$data['resource_presets']>[number]
+>;
 
 interface ResourcePresetListProps {}
 
@@ -75,7 +82,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
       }
     `);
 
-  const columns = filterEmptyItem<ColumnType<ResourcePreset>>([
+  const columns: TableColumnsType<ResourcePreset> = filterEmptyItem([
     {
       title: t('resourcePreset.Name'),
       dataIndex: 'name',
@@ -122,7 +129,6 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
           <Tooltip title={t('button.Edit')}>
             <Button
               type="text"
-              size="large"
               icon={<SettingOutlined />}
               style={{
                 color: token.colorInfo,
@@ -137,7 +143,6 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
           <Tooltip title={t('button.Delete')}>
             <Button
               type="text"
-              size="large"
               icon={
                 <DeleteOutlined
                   style={{
@@ -208,18 +213,8 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
   ]);
 
   return (
-    <Flex direction="column" align="stretch">
-      <Flex
-        direction="row"
-        gap={'xs'}
-        justify="end"
-        wrap="wrap"
-        style={{
-          padding: token.paddingContentVertical,
-          paddingLeft: token.paddingContentHorizontalSM,
-          paddingRight: token.paddingContentHorizontalSM,
-        }}
-      >
+    <Flex direction="column" align="stretch" gap="sm">
+      <Flex direction="row" gap={'xs'} justify="end" wrap="wrap">
         <Flex direction="row" gap={'xs'} wrap="wrap" style={{ flexShrink: 1 }}>
           <Tooltip title={t('button.Refresh')}>
             <Button
@@ -243,11 +238,12 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
           </Button>
         </Flex>
       </Flex>
-      <Table
+      <BAITable
+        neoStyle
+        size="small"
         rowKey={'name'}
         dataSource={filterNonNullItems(resource_presets)}
         scroll={{ x: 'max-content' }}
-        pagination={false}
         showSorterTooltip={false}
         columns={columns}
       />

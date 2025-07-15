@@ -1,10 +1,11 @@
+import BAICard from '../components/BAICard';
 import FlexActivityIndicator from '../components/FlexActivityIndicator';
 import KeypairResourcePolicyList from '../components/KeypairResourcePolicyList';
 import ProjectResourcePolicyList from '../components/ProjectResourcePolicyList';
 import UserResourcePolicyList from '../components/UserResourcePolicyList';
 import { filterEmptyItem } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-import { Card } from 'antd';
+import { theme } from 'antd';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { withDefault, StringParam, useQueryParam } from 'use-query-params';
@@ -17,12 +18,13 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
   const [curTabKey] = useQueryParam('tab', tabParam);
   const webUINavigate = useWebUINavigate();
   const baiClient = useSuspendedBackendaiClient();
+  const { token } = theme.useToken();
   const supportConfigureUserResourcePolicy = baiClient?.supports(
     'configure-user-resource-policy',
   );
 
   return (
-    <Card
+    <BAICard
       activeTabKey={curTabKey}
       onTabChange={(key) => {
         webUINavigate(
@@ -55,9 +57,7 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
       ])}
       styles={{
         body: {
-          padding: 0,
-          paddingTop: 1,
-          overflow: 'hidden',
+          padding: `${token.paddingSM}px ${token.paddingLG}px ${token.paddingLG}px ${token.paddingLG}px`,
         },
       }}
     >
@@ -66,7 +66,7 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
         {curTabKey === 'user' && <UserResourcePolicyList />}
         {curTabKey === 'project' && <ProjectResourcePolicyList />}
       </Suspense>
-    </Card>
+    </BAICard>
   );
 };
 

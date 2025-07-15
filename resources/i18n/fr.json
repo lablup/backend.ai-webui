@@ -1014,6 +1014,9 @@
     "SuccessfullyUpdated": "Mise à jour réussie",
     "Visit": "Visite"
   },
+  "pagination": {
+    "Total": "{{start}} - {{end}} des éléments {{total}}"
+  },
   "propertyFilter": {
     "PlaceHolder": "Recherche",
     "ResetFilter": "Réinitialiser les filtres"

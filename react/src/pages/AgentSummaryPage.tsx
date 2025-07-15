@@ -1,5 +1,6 @@
 import AgentSummaryList from '../components/AgentSummaryList';
-import { Card, Skeleton, theme } from 'antd';
+import BAICard from '../components/BAICard';
+import { Skeleton, theme } from 'antd';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
@@ -19,7 +20,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = (props) => {
   const { token } = theme.useToken();
 
   return (
-    <Card
+    <BAICard
       activeTabKey={curTabKey}
       onTabChange={(key) => setCurTabKey(key as TabKey)}
       tabList={[
@@ -30,9 +31,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = (props) => {
       ]}
       styles={{
         body: {
-          padding: 0,
-          paddingTop: 1,
-          overflow: 'hidden',
+          padding: `${token.paddingSM}px ${token.paddingLG}px ${token.paddingLG}px ${token.paddingLG}px`,
         },
       }}
     >
@@ -46,12 +45,10 @@ const ResourcesPage: React.FC<ResourcesPageProps> = (props) => {
             />
           }
         >
-          <AgentSummaryList
-            containerStyle={{ marginLeft: -1, marginRight: -1 }}
-          />
+          <AgentSummaryList />
         </Suspense>
       ) : null}
-    </Card>
+    </BAICard>
   );
 };
 

@@ -1018,6 +1018,9 @@
     "SuccessfullyUpdated": "Successfully Updated",
     "Visit": "Visit"
   },
+  "pagination": {
+    "Total": "{{start}} - {{end}} of {{total}} items"
+  },
   "propertyFilter": {
     "PlaceHolder": "Search",
     "ResetFilter": "Reset filters"

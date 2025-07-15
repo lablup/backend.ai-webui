@@ -1017,6 +1017,9 @@
     "SuccessfullyUpdated": "수정되었습니다.",
     "Visit": "방문"
   },
+  "pagination": {
+    "Total": "전체 {{total}}개 중 {{start}} - {{end}}"
+  },
   "propertyFilter": {
     "PlaceHolder": "검색",
     "ResetFilter": "필터 초기화"

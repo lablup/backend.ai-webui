@@ -1013,6 +1013,9 @@
     "SuccessfullyUpdated": "正常に更新されました",
     "Visit": "訪問"
   },
+  "pagination": {
+    "Total": "{{start}}  -  {{end}} of {{attol}}アイテム"
+  },
   "propertyFilter": {
     "PlaceHolder": "検索",
     "ResetFilter": "フィルターをリセットする"

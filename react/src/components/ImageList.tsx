@@ -33,7 +33,7 @@ import {
   VerticalAlignBottomOutlined,
 } from '@ant-design/icons';
 import { useToggle, useDebounceFn } from 'ahooks';
-import { App, Button, Input, Tag, theme, Typography } from 'antd';
+import { App, Button, Input, Tag, theme, Tooltip, Typography } from 'antd';
 import { ColumnType } from 'antd/es/table';
 import _ from 'lodash';
 import { Key, useMemo, useState, useTransition } from 'react';
@@ -109,10 +109,11 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
     `,
     {},
     {
-      fetchPolicy:
-        environmentFetchKey === 'initial-fetch'
-          ? 'store-and-network'
-          : 'network-only',
+      // fetchPolicy:
+      //   environmentFetchKey === 'initial-fetch'
+      //     ? 'store-and-network'
+      //     : 'network-only',
+      fetchPolicy: 'store-and-network',
       fetchKey: environmentFetchKey,
     },
   );
@@ -489,18 +490,11 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         align="stretch"
         style={{
           flex: 1,
-          paddingBottom: token.paddingSM,
           ...style,
         }}
+        gap="sm"
       >
-        <Flex justify="end" style={{ padding: token.paddingSM }} gap={'xs'}>
-          {selectedRows.length > 0 ? (
-            <Typography.Text>
-              {t('general.NSelected', {
-                count: selectedRows.length,
-              })}
-            </Typography.Text>
-          ) : null}
+        <Flex justify="between">
           <Input
             allowClear
             prefix={<SearchOutlined />}
@@ -512,50 +506,54 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
               width: 200,
             }}
           />
-          <Button
-            icon={<ReloadOutlined />}
-            loading={isPendingRefreshTransition}
-            onClick={() => {
-              setSelectedRows([]);
-              startRefreshTransition(() => updateEnvironmentFetchKey());
-            }}
-          >
-            {t('button.Refresh')}
-          </Button>
+          <Flex gap={'xs'}>
+            {selectedRows.length > 0 ? (
+              <Typography.Text>
+                {t('general.NSelected', {
+                  count: selectedRows.length,
+                })}
+              </Typography.Text>
+            ) : null}
+            <Tooltip title={t('button.Refresh')}>
+              <Button
+                icon={<ReloadOutlined />}
+                loading={isPendingRefreshTransition}
+                onClick={() => {
+                  setSelectedRows([]);
+                  startRefreshTransition(() => updateEnvironmentFetchKey());
+                }}
+              />
+            </Tooltip>
 
-          <Button
-            icon={<VerticalAlignBottomOutlined />}
-            style={{ backgroundColor: token.colorPrimary, color: 'white' }}
-            onClick={() => {
-              if (selectedRows.length === 0) {
-                message.error(t('environment.NoImagesAreSelected'));
-                return;
-              }
-              if (selectedRows.some((image) => !image.installed)) {
-                setIsOpenInstallModal(true);
-                return;
-              }
-              message.error(t('environment.AlreadyInstalledImage'));
-            }}
-          >
-            {t('environment.Install')}
-          </Button>
+            <Button
+              icon={<VerticalAlignBottomOutlined />}
+              style={{ backgroundColor: token.colorPrimary, color: 'white' }}
+              onClick={() => {
+                if (selectedRows.length === 0) {
+                  message.error(t('environment.NoImagesAreSelected'));
+                  return;
+                }
+                if (selectedRows.some((image) => !image.installed)) {
+                  setIsOpenInstallModal(true);
+                  return;
+                }
+                message.error(t('environment.AlreadyInstalledImage'));
+              }}
+            >
+              {t('environment.Install')}
+            </Button>
+          </Flex>
         </Flex>
         <BAITable
+          neoStyle
+          size="small"
           resizable
           rowKey="id"
           scroll={{ x: 'max-content' }}
           pagination={{
-            showTotal(total, range) {
-              return `${range[0]}-${range[1]} of ${total} items`;
-            },
-            pageSizeOptions: ['10', '20', '50'],
             extraContent: (
               <Button
                 type="text"
-                style={{
-                  marginRight: token.marginXS,
-                }}
                 icon={<SettingOutlined />}
                 onClick={() => {
                   toggleColumnSettingModal();
@@ -592,20 +590,6 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           })}
           showSorterTooltip={false}
         />
-        {/* <Flex
-          justify="end"
-          style={{
-            padding: token.paddingXXS,
-          }}
-        >
-          <Button
-            type="text"
-            icon={<SettingOutlined />}
-            onClick={() => {
-              toggleColumnSettingModal();
-            }}
-          />
-        </Flex> */}
       </Flex>
       <ManageImageResourceLimitModal
         open={!!managingResourceLimit}
