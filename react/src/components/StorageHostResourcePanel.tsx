@@ -1,5 +1,5 @@
 import { StorageHostResourcePanelFragment$key } from '../__generated__/StorageHostResourcePanelFragment.graphql';
-import { humanReadableDecimalSize, usageIndicatorColor } from '../helper/index';
+import { convertToDecimalUnit, usageIndicatorColor } from '../helper/index';
 import { Progress, Descriptions, Typography, Tag } from 'antd';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -52,12 +52,15 @@ const StorageHostResourcePanel: React.FC<{
         <Typography.Text type="secondary">
           {t('storageHost.Used')}:{' '}
         </Typography.Text>
-        {humanReadableDecimalSize(storageUsage?.used_bytes)}
+        {convertToDecimalUnit(storageUsage?.used_bytes, 'auto')?.displayValue}
         <Typography.Text type="secondary">{' / '}</Typography.Text>
         <Typography.Text type="secondary">
           {t('storageHost.Total')}:{' '}
         </Typography.Text>
-        {humanReadableDecimalSize(storageUsage?.capacity_bytes)}
+        {
+          convertToDecimalUnit(storageUsage?.capacity_bytes, 'auto')
+            ?.displayValue
+        }
       </Descriptions.Item>
       <Descriptions.Item label={t('agent.Endpoint')}>
         {resource?.path}

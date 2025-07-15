@@ -1,7 +1,8 @@
 import { StorageProxyListQuery } from '../__generated__/StorageProxyListQuery.graphql';
 import {
+  convertToDecimalUnit,
+  convertUnitValue,
   filterNonNullItems,
-  humanReadableDecimalSize,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useUpdatableState } from '../hooks';
@@ -169,7 +170,10 @@ const StorageProxyList = () => {
           toFixedFloorWithoutTrailingZeros(ratio * 100, 2),
         );
         const color = percent > 80 ? token.colorError : token.colorSuccess;
-
+        const baseUnit =
+          convertUnitValue(_.toString(usage?.capacity_bytes), 'auto', {
+            base: 1000,
+          })?.unit || 'g';
         return (
           <>
             <BAIProgressWithLabel
@@ -180,11 +184,12 @@ const StorageProxyList = () => {
             />
             <Typography.Text style={{ fontSize: token.fontSizeSM }}>
               {usage.used_bytes
-                ? humanReadableDecimalSize(usage.used_bytes)
+                ? convertToDecimalUnit(usage.used_bytes, baseUnit)?.numberFixed
                 : '-'}
               &nbsp;/&nbsp;
               {usage.capacity_bytes
-                ? humanReadableDecimalSize(usage.capacity_bytes)
+                ? convertToDecimalUnit(usage.capacity_bytes, baseUnit)
+                    ?.displayValue
                 : '-'}
             </Typography.Text>
           </>

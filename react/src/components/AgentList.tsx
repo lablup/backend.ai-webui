@@ -5,8 +5,9 @@ import {
 } from '../__generated__/AgentListQuery.graphql';
 import { AgentSettingModalFragment$key } from '../__generated__/AgentSettingModalFragment.graphql';
 import {
-  bytesToGB,
   convertToBinaryUnit,
+  convertToDecimalUnit,
+  convertUnitValue,
   filterNonNullItems,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
@@ -273,7 +274,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                             parsedOccupiedSlots.cpu || 0,
                             0,
                           )}
-                          /
+                          &nbsp;/&nbsp;
                           {toFixedFloorWithoutTrailingZeros(
                             parsedAvailableSlots.cpu || 0,
                             0,
@@ -317,7 +318,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                         <Typography.Text>
                           {convertToBinaryUnit(parsedOccupiedSlots.mem, 'g', 0)
                             ?.numberFixed ?? 0}
-                          /
+                          &nbsp;/&nbsp;
                           {convertToBinaryUnit(parsedAvailableSlots.mem, 'g', 0)
                             ?.numberFixed ?? 0}
                         </Typography.Text>
@@ -362,7 +363,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                             parsedOccupiedSlots[key] || 0,
                             2,
                           )}
-                          /
+                          &nbsp;/&nbsp;
                           {toFixedFloorWithoutTrailingZeros(
                             parsedAvailableSlots[key],
                             2,
@@ -451,6 +452,9 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
               };
             }
           });
+          const baseUnit =
+            convertUnitValue(_.toString(liveStat.mem_util.capacity), 'auto')
+              ?.unit || 'g';
           return (
             <Flex direction="column" gap="xxs">
               <Flex justify="between" style={{ minWidth: 200 }}>
@@ -478,14 +482,13 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                   valueLabel={
                     convertToBinaryUnit(
                       _.toString(liveStat.mem_util.current),
-                      'g',
+                      baseUnit,
                     )?.numberFixed +
-                    '/' +
+                    ' / ' +
                     convertToBinaryUnit(
                       _.toString(liveStat.mem_util.capacity),
-                      'g',
-                    )?.numberFixed +
-                    ' GiB'
+                      baseUnit,
+                    )?.displayValue
                   }
                 />
               </Flex>
@@ -529,6 +532,13 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                 }
                 if (_.includes(statKey, '_mem')) {
                   const deviceName = _.split(statKey, '_')[0] + '.device';
+                  const baseUnit =
+                    convertUnitValue(
+                      _.toString(
+                        liveStat[statKey as keyof typeof liveStat].capacity,
+                      ),
+                      'auto',
+                    )?.unit || 'g';
                   return (
                     <Flex
                       key={statKey}
@@ -554,17 +564,16 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                               liveStat[statKey as keyof typeof liveStat]
                                 .current,
                             ),
-                            'g',
+                            baseUnit,
                           )?.numberFixed +
-                          '/' +
+                          ' / ' +
                           convertToBinaryUnit(
                             _.toString(
                               liveStat[statKey as keyof typeof liveStat]
                                 .capacity,
                             ),
-                            'g',
-                          )?.numberFixed +
-                          ' GiB'
+                            baseUnit,
+                          )?.displayValue
                         }
                       />
                     </Flex>
@@ -587,6 +596,10 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
         const pctValue = _.toFinite(parsedDisk.pct) || 0;
         const pct = _.toFinite(toFixedFloorWithoutTrailingZeros(pctValue, 2));
         const color = pct > 80 ? token.colorError : token.colorSuccess;
+        const baseUnit =
+          convertUnitValue(parsedDisk?.capacity, 'auto', {
+            base: 1000,
+          })?.unit || 'g';
         return (
           <Flex direction="column">
             <BAIProgressWithLabel
@@ -596,8 +609,12 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
               width={120}
             />
             <Typography.Text style={{ fontSize: token.fontSizeSM }}>
-              {bytesToGB(parsedDisk?.current)}GB /{' '}
-              {bytesToGB(parsedDisk?.capacity)}GB
+              {convertToDecimalUnit(parsedDisk?.current, baseUnit)?.numberFixed}
+              &nbsp;/&nbsp;
+              {
+                convertToDecimalUnit(parsedDisk?.capacity, baseUnit)
+                  ?.displayValue
+              }
             </Typography.Text>
           </Flex>
         );
