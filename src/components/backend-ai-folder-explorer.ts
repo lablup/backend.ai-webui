@@ -1564,7 +1564,13 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
       indicator,
     )
       .then(async (res) => {
-        const service_info = res.service_ports;
+        // Starting from version 23.09.0, the API return `servicePorts` instead of `service_ports`.
+        // (See: https://github.com/lablup/backend.ai/pull/1278)
+        // To ensure compatibility, check for both `service_ports` and `servicePorts`.
+        // This issue has been resolved since version 24.09.13.
+        // (See: https://github.com/lablup/backend.ai/pull/5047)
+        const service_info = res.servicePorts ?? res.service_ports;
+
         appOptions = {
           'session-uuid': res.sessionId,
           'session-name': res.sessionName,
