@@ -46,8 +46,12 @@ const FolderInvitationResponseModal: React.FC<
                     t('data.invitation.SuccessfullyAcceptedInvitation'),
                   );
                 },
-                onError: (e) => {
+                onError: (e: any) => {
                   onRequestClose?.(false);
+                  if (e?.statusCode === 409) {
+                    message.error(t('data.FolderAlreadyExists'));
+                    return;
+                  }
                   message.error(
                     e.message || t('data.invitation.FailedToAcceptInvitation'),
                   );
