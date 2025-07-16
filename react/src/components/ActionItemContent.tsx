@@ -15,6 +15,7 @@ interface StartItemContentProps {
   themeColor?: string;
   itemRole?: 'user' | 'admin';
   type?: 'simple' | 'default';
+  style?: React.CSSProperties;
 }
 
 const ActionItemContent: React.FC<StartItemContentProps> = ({
@@ -27,6 +28,7 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
   themeColor,
   type = 'default',
   itemRole = 'user',
+  style,
 }) => {
   const { token } = theme.useToken();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -66,6 +68,7 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
         height: 328,
         textAlign: 'center',
         overflowY: 'auto',
+        ...style,
       }}
     >
       <Flex
