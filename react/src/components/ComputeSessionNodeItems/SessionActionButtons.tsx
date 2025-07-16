@@ -162,7 +162,6 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = (props) => {
         <Tooltip title={t('session.RequestContainerCommit')}>
           <Button
             disabled={
-              !baiClient.supports('image-commit') ||
               !baiClient._config.enableContainerCommit ||
               session.type === 'system' ||
               !isActive(session) ||

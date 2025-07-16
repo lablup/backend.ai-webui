@@ -82,7 +82,6 @@ const StorageStatusPanel: React.FC<{
 
   // TODO: Add resolver to enable subquery and modify to call useLazyLoadQuery only once.
   const {
-    keypair,
     user,
     // currentProjectDetail
   } = useLazyLoadQuery<StorageStatusPanelKeypairQuery>(
@@ -118,7 +117,6 @@ const StorageStatusPanel: React.FC<{
   const {
     user_resource_policy,
     project_resource_policy,
-    keypair_resource_policy,
     project_quota_scope,
     user_quota_scope,
   } = useLazyLoadQuery<StorageStatusPanelQuery>(
@@ -126,7 +124,6 @@ const StorageStatusPanel: React.FC<{
       query StorageStatusPanelQuery(
         $user_RP_name: String
         $project_RP_name: String!
-        $keypair_resource_policy_name: String
         $project_quota_scope_id: String!
         $user_quota_scope_id: String!
         $storage_host_name: String!
@@ -137,11 +134,6 @@ const StorageStatusPanel: React.FC<{
         }
         project_resource_policy(name: $project_RP_name)
           @since(version: "23.09.1") {
-          max_vfolder_count
-        }
-        keypair_resource_policy(name: $keypair_resource_policy_name)
-          # use max_vfolder_count in keypair_resource_policy before adding max_vfolder_count in user_resource_policy
-          @deprecatedSince(version: "23.09.4") {
           max_vfolder_count
         }
         project_quota_scope: quota_scope(
@@ -161,7 +153,6 @@ const StorageStatusPanel: React.FC<{
     {
       user_RP_name: user?.resource_policy,
       project_RP_name: currentProject?.name ?? '',
-      keypair_resource_policy_name: keypair?.resource_policy,
       project_quota_scope_id: addQuotaScopeTypePrefix(
         'project',
         currentProject?.id,
@@ -175,17 +166,8 @@ const StorageStatusPanel: React.FC<{
     },
   );
   // Support version:
-  // keypair resource policy < 23.09.4
   // user resource policy, project resource policy >= 23.09.6
-  let maxVfolderCount;
-  if (
-    // manager version >= 23.09.6
-    baiClient?.supports('max-vfolder-count-in-user-and-project-resource-policy')
-  ) {
-    maxVfolderCount = user_resource_policy?.max_vfolder_count || 0;
-  } else {
-    maxVfolderCount = keypair_resource_policy?.max_vfolder_count || 0;
-  }
+  const maxVfolderCount = user_resource_policy?.max_vfolder_count || 0;
 
   const numberOfFolderPercent =
     maxVfolderCount || maxVfolderCount === 0

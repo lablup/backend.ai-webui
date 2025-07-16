@@ -1,6 +1,5 @@
 import { ManageAppsModalMutation } from '../__generated__/ManageAppsModalMutation.graphql';
 import { ManageAppsModal_image$key } from '../__generated__/ManageAppsModal_image.graphql';
-import { useSuspendedBackendaiClient } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
@@ -34,7 +33,6 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
   ...baiModalProps
 }) => {
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
   const formRef = React.useRef<FormInstance>(null);
   const app = App.useApp();
 
@@ -130,11 +128,7 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
               architecture: image?.architecture,
               props: {
                 labels: labels,
-                resource_limits: baiClient.isManagerVersionCompatibleWith(
-                  '24.03.4.*',
-                )
-                  ? undefined
-                  : null,
+                resource_limits: undefined,
               },
             },
             onCompleted: (res, errors) => {

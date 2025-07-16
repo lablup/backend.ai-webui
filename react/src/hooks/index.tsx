@@ -457,13 +457,12 @@ export const useBackendAIImageMetaData = () => {
 export const useAppDownloadMap = () => {
   const baiClient = useSuspendedBackendaiClient();
   const appDownloadUrl = baiClient?._config?.appDownloadUrl || '';
-  const supportsWin = baiClient?.supports('use-win-instead-of-win32') || false;
 
   const appDownloadMap = {
     Linux: { os: 'linux', architecture: ['arm64', 'x64'], extension: 'zip' },
     MacOS: { os: 'macos', architecture: ['arm64', 'x64'], extension: 'dmg' },
     Windows: {
-      os: supportsWin ? 'win' : 'win32',
+      os: 'win',
       architecture: ['arm64', 'x64'],
       extension: 'zip',
     },

@@ -40,8 +40,6 @@ const MyKeypairInfoModal: React.FC<MyKeypairInfoModalProps> = ({
     staleTime: 0,
   });
 
-  const supportMainAccessKey = baiClient?.supports('main-access-key');
-
   const { user } = useLazyLoadQuery<MyKeypairInfoModalQuery>(
     graphql`
       query MyKeypairInfoModalQuery($email: String) {
@@ -90,7 +88,7 @@ const MyKeypairInfoModal: React.FC<MyKeypairInfoModalProps> = ({
                 <Typography.Text ellipsis copyable>
                   {value}
                 </Typography.Text>
-                {supportMainAccessKey && value === user?.main_access_key && (
+                {value === user?.main_access_key && (
                   <Tag color={'red'}>{t('credential.MainAccessKey')}</Tag>
                 )}
               </Flex>

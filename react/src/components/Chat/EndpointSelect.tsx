@@ -3,7 +3,6 @@ import {
   EndpointSelectQuery$data,
 } from '../../__generated__/EndpointSelectQuery.graphql';
 import { EndpointSelectValueQuery } from '../../__generated__/EndpointSelectValueQuery.graphql';
-import { useSuspendedBackendaiClient } from '../../hooks';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import BAILink from '../BAILink';
 import BAISelect from '../BAISelect';
@@ -36,7 +35,6 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
   ...selectPropsWithoutLoading
 }) => {
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
   const [controllableValue, setControllableValue] = useControllableValue<
     string | undefined
   >(selectPropsWithoutLoading);
@@ -114,17 +112,13 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
       limit: 10,
     },
     {
-      filter: baiClient.supports('endpoint-lifecycle-stage-filter')
-        ? [
-            lifecycleStageFilterStr,
-            deferredSearchStr
-              ? `name ilike "%${deferredSearchStr}%"`
-              : undefined,
-          ]
-            .filter(Boolean)
-            .map((v) => `(${v})`)
-            .join(' & ')
-        : undefined,
+      filter: [
+        lifecycleStageFilterStr,
+        deferredSearchStr ? `name ilike "%${deferredSearchStr}%"` : undefined,
+      ]
+        .filter(Boolean)
+        .map((v) => `(${v})`)
+        .join(' & '),
     },
     // TODO: skip fetch when the option popover is closed
     {

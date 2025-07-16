@@ -2,7 +2,7 @@ import { StorageHostSettingPageQuery } from '../__generated__/StorageHostSetting
 import Flex from '../components/Flex';
 import StorageHostResourcePanel from '../components/StorageHostResourcePanel';
 import StorageHostSettingsPanel from '../components/StorageHostSettingsPanel';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useWebUINavigate } from '../hooks';
 import { Breadcrumb, Card, Empty, Typography } from 'antd';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,7 +16,6 @@ const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = () => {
   const { hostname: storageHostId } = useParams<{
     hostname: string;
   }>();
-  const baiClient = useSuspendedBackendaiClient();
   const webuiNavigate = useWebUINavigate();
   const { t } = useTranslation();
   const { storage_volume } = useLazyLoadQuery<StorageHostSettingPageQuery>(
@@ -59,23 +58,19 @@ const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = () => {
         {storageHostId || ''}
       </Typography.Title>
       <StorageHostResourcePanel storageVolumeFrgmt={storage_volume || null} />
-      {baiClient.supports('quota-scope') && (
-        <>
-          {isQuotaSupportedStorage ? (
-            <Suspense fallback={<div>loading...</div>}>
-              <StorageHostSettingsPanel
-                storageVolumeFrgmt={storage_volume || null}
-              />
-            </Suspense>
-          ) : (
-            <Card title={t('storageHost.QuotaSettings')}>
-              <Empty
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description={t('storageHost.QuotaDoesNotSupported')}
-              />
-            </Card>
-          )}
-        </>
+      {isQuotaSupportedStorage ? (
+        <Suspense fallback={<div>loading...</div>}>
+          <StorageHostSettingsPanel
+            storageVolumeFrgmt={storage_volume || null}
+          />
+        </Suspense>
+      ) : (
+        <Card title={t('storageHost.QuotaSettings')}>
+          <Empty
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+            description={t('storageHost.QuotaDoesNotSupported')}
+          />
+        </Card>
       )}
     </Flex>
   );

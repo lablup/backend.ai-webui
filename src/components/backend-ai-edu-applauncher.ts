@@ -250,43 +250,23 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
       'service_ports',
       'mounts',
     ];
-    let statuses: string;
-    if (globalThis.backendaiclient.supports('avoid-hol-blocking')) {
-      statuses = [
-        'RUNNING',
-        'RESTARTING',
-        'TERMINATING',
-        'PENDING',
-        'SCHEDULED',
-        globalThis.backendaiclient.supports('prepared-session-status')
-          ? 'PREPARED'
-          : undefined,
-        globalThis.backendaiclient.supports('creating-session-status')
-          ? 'CREATING'
-          : undefined,
-        'PREPARING',
-        'PULLING',
-      ]
-        .filter((v) => !!v)
-        .join(',');
-    } else {
-      statuses = [
-        'RUNNING',
-        'RESTARTING',
-        'TERMINATING',
-        'PENDING',
-        globalThis.backendaiclient.supports('prepared-session-status')
-          ? 'PREPARED'
-          : undefined,
-        globalThis.backendaiclient.supports('creating-session-status')
-          ? 'CREATING'
-          : undefined,
-        'PREPARING',
-        'PULLING',
-      ]
-        .filter((v) => !!v)
-        .join(',');
-    }
+    const statuses = [
+      'RUNNING',
+      'RESTARTING',
+      'TERMINATING',
+      'PENDING',
+      'SCHEDULED',
+      globalThis.backendaiclient.supports('prepared-session-status')
+        ? 'PREPARED'
+        : undefined,
+      globalThis.backendaiclient.supports('creating-session-status')
+        ? 'CREATING'
+        : undefined,
+      'PREPARING',
+      'PULLING',
+    ]
+      .filter((v) => !!v)
+      .join(',');
 
     const accessKey = globalThis.backendaiclient._config.accessKey;
     // NOTE: There is no way to change the default group.

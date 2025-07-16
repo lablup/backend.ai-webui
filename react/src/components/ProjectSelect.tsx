@@ -36,61 +36,46 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
 
   const [value, setValue] = useControllableState(selectProps);
   const userRole = useCurrentUserRole();
-  const { projectsSince2403, projectsBefore2403, user } =
-    useLazyLoadQuery<ProjectSelectorQuery>(
-      graphql`
-        query ProjectSelectorQuery(
-          $domain_name: String
-          $email: String
-          $type: [String]
-        ) {
-          projectsSince2403: groups(
-            domain_name: $domain_name
-            is_active: true
-            type: $type
-          ) @since(version: "24.03.0") {
+  const { groups, user } = useLazyLoadQuery<ProjectSelectorQuery>(
+    graphql`
+      query ProjectSelectorQuery(
+        $domain_name: String
+        $email: String
+        $type: [String]
+      ) {
+        groups(domain_name: $domain_name, is_active: true, type: $type) {
+          id
+          is_active
+          name
+          resource_policy
+          type
+        }
+        user(email: $email) {
+          groups {
             id
-            is_active
             name
-            resource_policy
-            type
-          }
-          projectsBefore2403: groups(
-            domain_name: $domain_name
-            is_active: true
-          ) @deprecatedSince(version: "24.03.0") {
-            id
-            is_active
-            name
-            resource_policy
-          }
-          user(email: $email) {
-            groups {
-              id
-              name
-            }
           }
         }
-      `,
-      {
-        domain_name: domain,
-        email: currentUser.email,
-        type:
-          (userRole === 'admin' || userRole === 'superadmin') &&
-          _.includes(blockList, 'model-store')
-            ? ['GENERAL']
-            : ['GENERAL', 'MODEL_STORE'],
-      },
-      {
-        fetchPolicy: 'store-and-network',
-      },
-    );
-  const projects = projectsSince2403 || projectsBefore2403;
+      }
+    `,
+    {
+      domain_name: domain,
+      email: currentUser.email,
+      type:
+        (userRole === 'admin' || userRole === 'superadmin') &&
+        _.includes(blockList, 'model-store')
+          ? ['GENERAL']
+          : ['GENERAL', 'MODEL_STORE'],
+    },
+    {
+      fetchPolicy: 'store-and-network',
+    },
+  );
 
   // temporary filtering groups by accessible groups according to user query
   const accessibleProjects = disableDefaultFilter
-    ? projects
-    : projects?.filter((project) =>
+    ? groups
+    : groups?.filter((project) =>
         user?.groups?.map((group) => group?.id).includes(project?.id),
       );
 

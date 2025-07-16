@@ -144,8 +144,6 @@ export default class BackendAISessionList extends BackendAIPage {
   @property({ type: Boolean }) is_superadmin = false;
   @property({ type: String }) _connectionMode = 'API';
   @property({ type: Object }) notification = Object();
-  @property({ type: Boolean }) enableScalingGroup = false;
-  @property({ type: Boolean }) isDisplayingAllocatedShmemEnabled = false;
   @property({ type: String }) listCondition: StatusCondition = 'loading';
   @property({ type: Object }) refreshTimer = Object();
   @property({ type: Object }) kernel_labels = Object();
@@ -244,7 +242,6 @@ export default class BackendAISessionList extends BackendAIPage {
   @query('#work-dialog') workDialog!: BackendAIDialog;
   @query('#help-description') helpDescriptionDialog!: BackendAIDialog;
   private _isContainerCommitEnabled = false;
-  private _isPerKernelLogSupported = false;
 
   @query('#commit-session-dialog') commitSessionDialog;
   @query('#commit-current-session-path-input') commitSessionInput;
@@ -670,20 +667,12 @@ export default class BackendAISessionList extends BackendAIPage {
           this.is_superadmin = globalThis.backendaiclient.is_superadmin;
           this._connectionMode =
             globalThis.backendaiclient._config._connectionMode;
-          this.enableScalingGroup =
-            globalThis.backendaiclient.supports('scaling-group');
-          this.isDisplayingAllocatedShmemEnabled =
-            globalThis.backendaiclient.supports('display-allocated-shmem');
           this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
           this.isUserInfoMaskEnabled =
             globalThis.backendaiclient._config.maskUserInfo;
           // check whether image commit supported via both configuration variable and version(22.09)
           this._isContainerCommitEnabled =
-            globalThis.backendaiclient._config.enableContainerCommit &&
-            globalThis.backendaiclient.supports('image-commit');
-          // check whether fetching per kernel log is available or not
-          this._isPerKernelLogSupported =
-            globalThis.backendaiclient.supports('per-kernel-logs');
+            globalThis.backendaiclient._config.enableContainerCommit;
           this._refreshJobData();
         },
         true,
@@ -707,20 +696,12 @@ export default class BackendAISessionList extends BackendAIPage {
       this.is_admin = globalThis.backendaiclient.is_admin;
       this.is_superadmin = globalThis.backendaiclient.is_superadmin;
       this._connectionMode = globalThis.backendaiclient._config._connectionMode;
-      this.enableScalingGroup =
-        globalThis.backendaiclient.supports('scaling-group');
-      this.isDisplayingAllocatedShmemEnabled =
-        globalThis.backendaiclient.supports('display-allocated-shmem');
       this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       this.isUserInfoMaskEnabled =
         globalThis.backendaiclient._config.maskUserInfo;
       // check whether image commit supported via both configuration variable and version(22.09)
       this._isContainerCommitEnabled =
-        globalThis.backendaiclient._config.enableContainerCommit &&
-        globalThis.backendaiclient.supports('image-commit');
-      // check whether fetching per kernel log is available or not
-      this._isPerKernelLogSupported =
-        globalThis.backendaiclient.supports('per-kernel-logs');
+        globalThis.backendaiclient._config.enableContainerCommit;
       this._refreshJobData();
     }
   }
@@ -803,9 +784,7 @@ export default class BackendAISessionList extends BackendAIPage {
     ) {
       status = status.filter((e) => e !== 'SCHEDULED');
     }
-    if (globalThis.backendaiclient.supports('detailed-session-states')) {
-      status = status.join(',');
-    }
+    status = status.join(',');
 
     const fields = [
       'id',
@@ -826,28 +805,14 @@ export default class BackendAISessionList extends BackendAIPage {
       'starts_at',
       'type',
       'agents',
+      'status_data',
+      'idle-checks',
+      'scaling_group',
+      'main_kernel_role',
+      'cluster_size',
+      'cluster_mode',
+      'inference_metrics',
     ];
-    if (globalThis.backendaiclient.supports('multi-container')) {
-      fields.push('cluster_size');
-    }
-    if (globalThis.backendaiclient.supports('multi-node')) {
-      fields.push('cluster_mode');
-    }
-    if (globalThis.backendaiclient.supports('session-detail-status')) {
-      fields.push('status_data');
-    }
-    if (globalThis.backendaiclient.supports('idle-checks')) {
-      fields.push('idle_checks');
-    }
-    if (globalThis.backendaiclient.supports('inference-workload')) {
-      fields.push('inference_metrics');
-    }
-    if (globalThis.backendaiclient.supports('sftp-scaling-group')) {
-      fields.push('main_kernel_role');
-    }
-    if (this.enableScalingGroup) {
-      fields.push('scaling_group');
-    }
     if (this._connectionMode === 'SESSION') {
       fields.push('user_email');
     }
@@ -860,14 +825,10 @@ export default class BackendAISessionList extends BackendAIPage {
       'occupied_slots',
       'live_stat',
       'last_stat',
+      'kernel_id role local_rank image_object { labels { key value } }',
     ];
     if (globalThis.backendaiclient.is_superadmin) {
       containerFields.push('agent');
-    }
-    if (globalThis.backendaiclient.supports('per-user-image')) {
-      containerFields.push(
-        'kernel_id role local_rank image_object { labels { key value } }',
-      );
     }
 
     if (this._isContainerCommitEnabled && status.includes('RUNNING')) {
@@ -955,45 +916,44 @@ export default class BackendAISessionList extends BackendAIPage {
             sessions[objectKey].starts_at_hr = sessions[objectKey].starts_at
               ? this._humanReadableTime(sessions[objectKey].starts_at)
               : '';
-            if (globalThis.backendaiclient.supports('idle-checks')) {
-              const idleChecks = JSON.parse(session.idle_checks || '{}');
-              if (idleChecks) {
-                sessions[objectKey].idle_checks = idleChecks;
-              }
-              if (
-                idleChecks &&
-                idleChecks.network_timeout &&
-                idleChecks.network_timeout.remaining
-              ) {
-                sessions[objectKey].idle_checks.network_timeout.remaining =
-                  BackendAISessionList.secondsToDHMS(
-                    idleChecks.network_timeout.remaining,
-                  );
-                this.activeIdleCheckList?.add('network_timeout');
-              }
-              if (
-                idleChecks &&
-                idleChecks.session_lifetime &&
-                idleChecks.session_lifetime.remaining
-              ) {
-                sessions[objectKey].idle_checks.session_lifetime.remaining =
-                  BackendAISessionList.secondsToDHMS(
-                    idleChecks.session_lifetime.remaining,
-                  );
-                this.activeIdleCheckList?.add('session_lifetime');
-              }
-              if (
-                idleChecks &&
-                idleChecks.utilization &&
-                idleChecks.utilization.remaining
-              ) {
-                sessions[objectKey].idle_checks.utilization.remaining =
-                  BackendAISessionList.secondsToDHMS(
-                    idleChecks.utilization.remaining,
-                  );
-                this.activeIdleCheckList?.add('utilization');
-              }
+            const idleChecks = JSON.parse(session.idle_checks || '{}');
+            if (idleChecks) {
+              sessions[objectKey].idle_checks = idleChecks;
             }
+            if (
+              idleChecks &&
+              idleChecks.network_timeout &&
+              idleChecks.network_timeout.remaining
+            ) {
+              sessions[objectKey].idle_checks.network_timeout.remaining =
+                BackendAISessionList.secondsToDHMS(
+                  idleChecks.network_timeout.remaining,
+                );
+              this.activeIdleCheckList?.add('network_timeout');
+            }
+            if (
+              idleChecks &&
+              idleChecks.session_lifetime &&
+              idleChecks.session_lifetime.remaining
+            ) {
+              sessions[objectKey].idle_checks.session_lifetime.remaining =
+                BackendAISessionList.secondsToDHMS(
+                  idleChecks.session_lifetime.remaining,
+                );
+              this.activeIdleCheckList?.add('session_lifetime');
+            }
+            if (
+              idleChecks &&
+              idleChecks.utilization &&
+              idleChecks.utilization.remaining
+            ) {
+              sessions[objectKey].idle_checks.utilization.remaining =
+                BackendAISessionList.secondsToDHMS(
+                  idleChecks.utilization.remaining,
+                );
+              this.activeIdleCheckList?.add('utilization');
+            }
+
             if (
               sessions[objectKey].containers &&
               sessions[objectKey].containers.length > 0
@@ -1641,15 +1601,13 @@ export default class BackendAISessionList extends BackendAIPage {
       })
       .sort((a, b) => a.role.localeCompare(b.role));
     // only allow main1 kernel if per-kernel log is not supported
-    this.selectedKernels = this._isPerKernelLogSupported
-      ? selectedKernel
-      : selectedKernel.filter((kernel) => kernel.role.includes('main'));
+    this.selectedKernels = selectedKernel;
   }
 
   _updateLogsByKernelId() {
-    this.selectedKernelId = this._isPerKernelLogSupported
-      ? (this.shadowRoot?.querySelector('#kernel-id-select') as Select)?.value
-      : null;
+    this.selectedKernelId = (
+      this.shadowRoot?.querySelector('#kernel-id-select') as Select
+    )?.value;
   }
 
   /**
@@ -3535,17 +3493,13 @@ export default class BackendAISessionList extends BackendAIPage {
               <mwc-icon class="fg green indicator">memory</mwc-icon>
               <span>${rowData.item.mem_slot}</span>
               <span class="indicator">GiB</span>
-              ${this.isDisplayingAllocatedShmemEnabled
-                ? html`
-                    <span class="indicator">
-                      ${`(SHM: ` +
-                      this._aggregateSharedMemory(
-                        JSON.parse(rowData.item.resource_opts),
-                      ) +
-                      `GiB)`}
-                    </span>
-                  `
-                : html``}
+              <span class="indicator">
+                ${`(SHM: ` +
+                this._aggregateSharedMemory(
+                  JSON.parse(rowData.item.resource_opts),
+                ) +
+                `GiB)`}
+              </span>
             </div>
             <div class="layout horizontal center configuration">
               ${rowData.item.cuda_gpu_slot
@@ -4968,8 +4922,7 @@ export default class BackendAISessionList extends BackendAIPage {
                     path="created_at"
                     .renderer="${this._boundReservationRenderer}"
                   ></vaadin-grid-sort-column>
-                  ${globalThis.backendaiclient.supports('idle-checks') &&
-                  this.activeIdleCheckList.size > 0
+                  ${this.activeIdleCheckList.size > 0
                     ? html`
                         <vaadin-grid-column
                           resizable
@@ -5052,7 +5005,6 @@ export default class BackendAISessionList extends BackendAIPage {
           <mwc-select
             id="kernel-id-select"
             label="Kernel Role"
-            style="display: ${this._isPerKernelLogSupported ? 'block' : 'none'}"
             @selected=${() => {
               this._updateLogsByKernelId();
               this._showLogs();

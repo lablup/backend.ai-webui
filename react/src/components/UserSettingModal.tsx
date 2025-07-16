@@ -71,9 +71,6 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
   const currentUserRole = useCurrentUserRole();
   const currentDomainName = useCurrentDomainValue();
   const baiClient = useSuspendedBackendaiClient();
-  const sudoSessionEnabledSupported = baiClient?.supports(
-    'sudo-session-enabled',
-  );
   const { isTOTPSupported, isLoading: isLoadingManagerSupportingTOTP } =
     useTOTPSupported();
   const [isOpenTOTPActivateModal, { toggle: toggleTOTPActivateModal }] =
@@ -82,11 +79,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
 
   const { user } = useLazyLoadQuery<UserSettingModalQuery>(
     graphql`
-      query UserSettingModalQuery(
-        $email: String
-        $isNotSupportSudoSessionEnabled: Boolean!
-        $isNotSupportTotp: Boolean!
-      ) {
+      query UserSettingModalQuery($email: String, $isNotSupportTotp: Boolean!) {
         user(email: $email) {
           email
           username
@@ -101,11 +94,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             name
           }
           resource_policy
-          # TODO: reflect https://github.com/lablup/backend.ai-webui/pull/1999
-          # support from 23.09.0b1
-          # https://github.com/lablup/backend.ai/pull/1530
           sudo_session_enabled
-            @skipOnClient(if: $isNotSupportSudoSessionEnabled)
           totp_activated @skipOnClient(if: $isNotSupportTotp)
           ...TOTPActivateModalFragment
         }
@@ -113,7 +102,6 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
     `,
     {
       email: userEmail ?? '',
-      isNotSupportSudoSessionEnabled: !sudoSessionEnabledSupported,
       isNotSupportTotp: !isTOTPSupported,
     },
     {
@@ -129,7 +117,6 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
       mutation UserSettingModalModifyMutation(
         $email: String!
         $props: ModifyUserInput!
-        $isNotSupportSudoSessionEnabled: Boolean!
         $isNotSupportTotp: Boolean!
       ) {
         modify_user(email: $email, props: $props) {
@@ -150,11 +137,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               name
             }
             resource_policy
-            # TODO: reflect https://github.com/lablup/backend.ai-webui/pull/1999
-            # support from 23.09.0b1
-            # https://github.com/lablup/backend.ai/pull/1530
             sudo_session_enabled
-              @skipOnClient(if: $isNotSupportSudoSessionEnabled)
             totp_activated @skipOnClient(if: $isNotSupportTotp)
             ...TOTPActivateModalFragment
           }
@@ -167,7 +150,6 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
       mutation UserSettingModalCreateMutation(
         $email: String!
         $props: UserInput!
-        $isNotSupportSudoSessionEnabled: Boolean!
         $isNotSupportTotp: Boolean!
       ) {
         create_user(email: $email, props: $props) {
@@ -189,7 +171,6 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             }
             resource_policy
             sudo_session_enabled
-              @skipOnClient(if: $isNotSupportSudoSessionEnabled)
             totp_activated @skipOnClient(if: $isNotSupportTotp)
             ...TOTPActivateModalFragment
           }
@@ -229,7 +210,6 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             variables: {
               email: values?.email || '',
               props: props,
-              isNotSupportSudoSessionEnabled: !sudoSessionEnabledSupported,
               isNotSupportTotp: !isTOTPSupported,
             },
             onCompleted: (res, errors) => {
@@ -275,7 +255,6 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             variables: {
               email: values?.email || '',
               props: props,
-              isNotSupportSudoSessionEnabled: !sudoSessionEnabledSupported,
               isNotSupportTotp: !isTOTPSupported,
             },
             onCompleted: (res, errors) => {
@@ -448,15 +427,13 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
         >
           <Switch />
         </Form.Item>
-        {!!sudoSessionEnabledSupported && (
-          <Form.Item
-            name="sudo_session_enabled"
-            label={t('credential.EnableSudoSession')}
-            valuePropName="checked"
-          >
-            <Switch />
-          </Form.Item>
-        )}
+        <Form.Item
+          name="sudo_session_enabled"
+          label={t('credential.EnableSudoSession')}
+          valuePropName="checked"
+        >
+          <Switch />
+        </Form.Item>
         {!!isTOTPSupported && (
           <Form.Item
             name="totp_activated"

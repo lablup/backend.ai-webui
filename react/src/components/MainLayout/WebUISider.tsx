@@ -124,9 +124,6 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const fasttrackEndpoint = baiClient?._config?.fasttrackEndpoint ?? null;
   const blockList = baiClient?._config?.blockList ?? null;
   const inactiveList = baiClient?._config?.inactiveList ?? null;
-  const supportServing = baiClient?.supports('model-serving') ?? false;
-  const supportUserCommittedImage =
-    baiClient?.supports('user-committed-image') ?? false;
 
   const [isOpenSignoutModal, { toggle: toggleSignoutModal }] = useToggle(false);
   const [isOpenTOSModal, { toggle: toggleTOSModal }] = useToggle(false);
@@ -178,7 +175,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       key: 'job',
       group: 'workload',
     },
-    supportServing && {
+    {
       label: <WebUILink to="/serving">{t('webui.menu.Serving')}</WebUILink>,
       icon: <EndpointsIcon style={{ color: token.colorPrimary }} />,
       key: 'serving',
@@ -214,7 +211,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       key: 'data',
       group: 'storage',
     },
-    supportUserCommittedImage && {
+    {
       label: (
         <WebUILink to="/my-environment">
           {t('webui.menu.MyEnvironments')}

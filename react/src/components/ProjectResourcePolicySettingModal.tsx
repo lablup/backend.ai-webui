@@ -45,10 +45,6 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
   const formRef = useRef<FormInstance>(null);
 
   const baiClient = useSuspendedBackendaiClient();
-  const supportMaxVfolderCount = baiClient?.supports(
-    'max-vfolder-count-in-user-and-project-resource-policy',
-  );
-  const supportMaxQuotaScopeSize = baiClient?.supports('max-quota-scope-size');
   const supportMaxNetworkCount = baiClient?.supports('max_network_count');
 
   const projectResourcePolicy = useFragment(
@@ -139,12 +135,6 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
               : GBToBytes(values?.max_quota_scope_size),
           max_network_count: values?.max_network_count || -1,
         };
-        if (!supportMaxVfolderCount) {
-          delete props.max_vfolder_count;
-        }
-        if (!supportMaxQuotaScopeSize) {
-          delete props.max_quota_scope_size;
-        }
         if (!supportMaxNetworkCount) {
           delete props.max_network_count;
         }
@@ -271,36 +261,32 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
           gap={'md'}
           style={{ marginBottom: token.marginMD }}
         >
-          {supportMaxVfolderCount ? (
-            <FormItemWithUnlimited
-              name={'max_vfolder_count'}
-              unlimitedValue={0}
-              label={t('resourcePolicy.MaxFolderCount')}
-              style={{ width: '100%', margin: 0 }}
-            >
-              <InputNumber
-                min={0}
-                max={SIGNED_32BIT_MAX_INT}
-                style={{ width: '100%' }}
-              />
-            </FormItemWithUnlimited>
-          ) : null}
-          {supportMaxQuotaScopeSize ? (
-            <FormItemWithUnlimited
-              name={'max_quota_scope_size'}
-              unlimitedValue={-1}
-              label={t('storageHost.MaxFolderSize')}
-              style={{ width: '100%', margin: 0 }}
-            >
-              <InputNumber
-                min={0}
-                // Maximum safe integer divided by 10^9 to prevent overflow when converting GB to bytes
-                max={Math.floor(Number.MAX_SAFE_INTEGER / Math.pow(10, 9))}
-                addonAfter="GB"
-                style={{ width: '100%' }}
-              />
-            </FormItemWithUnlimited>
-          ) : null}
+          <FormItemWithUnlimited
+            name={'max_vfolder_count'}
+            unlimitedValue={0}
+            label={t('resourcePolicy.MaxFolderCount')}
+            style={{ width: '100%', margin: 0 }}
+          >
+            <InputNumber
+              min={0}
+              max={SIGNED_32BIT_MAX_INT}
+              style={{ width: '100%' }}
+            />
+          </FormItemWithUnlimited>
+          <FormItemWithUnlimited
+            name={'max_quota_scope_size'}
+            unlimitedValue={-1}
+            label={t('storageHost.MaxFolderSize')}
+            style={{ width: '100%', margin: 0 }}
+          >
+            <InputNumber
+              min={0}
+              // Maximum safe integer divided by 10^9 to prevent overflow when converting GB to bytes
+              max={Math.floor(Number.MAX_SAFE_INTEGER / Math.pow(10, 9))}
+              addonAfter="GB"
+              style={{ width: '100%' }}
+            />
+          </FormItemWithUnlimited>
           {supportMaxNetworkCount ? (
             <FormItemWithUnlimited
               name={'max_network_count'}

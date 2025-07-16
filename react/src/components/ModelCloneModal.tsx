@@ -256,22 +256,6 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
               hidden
             >
               <Input />
-              {/* <Select
-              options={[
-                {
-                  label: 'General',
-                  value: 'general',
-                },
-                ...(baiClient.supports('inference-workload')
-                  ? [
-                      {
-                        label: 'Model',
-                        value: 'model',
-                      },
-                    ]
-                  : []),
-              ]}
-            /> */}
             </Form.Item>
           )}
           <Form.Item

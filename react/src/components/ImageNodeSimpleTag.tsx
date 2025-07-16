@@ -52,8 +52,7 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
 
   const fullName = `${image.registry}/${image.namespace}:${image.tag}@${image.architecture}`;
   const legacyFullImageString = `${image.registry}/${image.name}:${image.tag}@${image.architecture}`;
-  const isSupportBaseImageName =
-    baiClient.isManagerVersionCompatibleWith('24.12.0');
+  const isSupportBaseImageName = baiClient.supports('base-image-name');
 
   return isSupportBaseImageName ? (
     <>

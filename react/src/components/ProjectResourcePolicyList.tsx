@@ -59,10 +59,6 @@ const ProjectResourcePolicyList: React.FC<
     useState<ProjectResourcePolicySettingModalFragment$key | null>();
 
   const baiClient = useSuspendedBackendaiClient();
-  const supportMaxVfolderCount = baiClient?.supports(
-    'max-vfolder-count-in-user-and-project-resource-policy',
-  );
-  const supportMaxQuotaScopeSize = baiClient?.supports('max-quota-scope-size');
   const supportMaxNetworkCount = baiClient?.supports('max_network_count');
 
   const { project_resource_policies } =
@@ -111,35 +107,31 @@ const ProjectResourcePolicyList: React.FC<
       fixed: 'left',
       sorter: (a, b) => localeCompare(a?.name, b?.name),
     },
-    supportMaxVfolderCount
-      ? {
-          title: t('resourcePolicy.MaxVFolderCount'),
-          dataIndex: 'max_vfolder_count',
-          key: 'max_vfolder_count',
-          render: (text: ProjectResourcePolicies) =>
-            _.toNumber(text) === 0 ? '∞' : text,
-          sorter: (a, b) =>
-            numberSorterWithInfinityValue(
-              a?.max_vfolder_count,
-              b?.max_vfolder_count,
-              0,
-            ),
-        }
-      : {},
-    supportMaxQuotaScopeSize
-      ? {
-          title: t('resourcePolicy.MaxQuotaScopeSize'),
-          dataIndex: 'max_quota_scope_size',
-          key: 'max_quota_scope_size',
-          render: (text) => (text === -1 ? '∞' : bytesToGB(text)),
-          sorter: (a, b) =>
-            numberSorterWithInfinityValue(
-              a?.max_quota_scope_size,
-              b?.max_quota_scope_size,
-              -1,
-            ),
-        }
-      : {},
+    {
+      title: t('resourcePolicy.MaxVFolderCount'),
+      dataIndex: 'max_vfolder_count',
+      key: 'max_vfolder_count',
+      render: (text: ProjectResourcePolicies) =>
+        _.toNumber(text) === 0 ? '∞' : text,
+      sorter: (a, b) =>
+        numberSorterWithInfinityValue(
+          a?.max_vfolder_count,
+          b?.max_vfolder_count,
+          0,
+        ),
+    },
+    {
+      title: t('resourcePolicy.MaxQuotaScopeSize'),
+      dataIndex: 'max_quota_scope_size',
+      key: 'max_quota_scope_size',
+      render: (text) => (text === -1 ? '∞' : bytesToGB(text)),
+      sorter: (a, b) =>
+        numberSorterWithInfinityValue(
+          a?.max_quota_scope_size,
+          b?.max_quota_scope_size,
+          -1,
+        ),
+    },
     supportMaxNetworkCount
       ? {
           title: t('resourcePolicy.MaxNetworkCount'),

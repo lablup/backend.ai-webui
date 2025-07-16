@@ -1503,149 +1503,146 @@ const ResourceAllocationFormItems: React.FC<
           </Flex>
         </Form.Item>
       )}
-      {baiClient.supports('multi-container') && (
-        // {false && (
-        <Form.Item
-          label={t('session.launcher.ClusterMode')}
-          tooltip={
-            <Flex direction="column" align="start">
-              {t('session.launcher.SingleNode')}
-              <Trans i18nKey={'session.launcher.DescSingleNode'} />
-              <Divider style={{ backgroundColor: token.colorBorder }} />
-              {t('session.launcher.MultiNode')}
-              <Trans i18nKey={'session.launcher.DescMultiNode'} />
-            </Flex>
-          }
-          required
-          dependencies={['agent']}
-        >
-          {({ getFieldValue }) => {
-            return (
-              <Card
-                style={{
-                  marginBottom: token.margin,
-                }}
-              >
-                <Row gutter={token.marginMD}>
-                  <Col xs={24}>
-                    {/* <Col xs={24} lg={12}> */}
-                    <Form.Item name={'cluster_mode'} required>
-                      <Radio.Group
-                        onChange={(e) => {
-                          form.validateFields().catch(() => {});
-                        }}
-                        disabled={getFieldValue('agent') !== 'auto'}
-                      >
-                        <Radio.Button value="single-node">
-                          {t('session.launcher.SingleNode')}
-                        </Radio.Button>
-                        <Radio.Button value="multi-node">
-                          {t('session.launcher.MultiNode')}
-                        </Radio.Button>
-                      </Radio.Group>
-                    </Form.Item>
-                  </Col>
-                  <Col xs={24}>
-                    <Form.Item
-                      noStyle
-                      shouldUpdate={(prev, next) =>
-                        prev.cluster_mode !== next.cluster_mode
-                      }
+      <Form.Item
+        label={t('session.launcher.ClusterMode')}
+        tooltip={
+          <Flex direction="column" align="start">
+            {t('session.launcher.SingleNode')}
+            <Trans i18nKey={'session.launcher.DescSingleNode'} />
+            <Divider style={{ backgroundColor: token.colorBorder }} />
+            {t('session.launcher.MultiNode')}
+            <Trans i18nKey={'session.launcher.DescMultiNode'} />
+          </Flex>
+        }
+        required
+        dependencies={['agent']}
+      >
+        {({ getFieldValue }) => {
+          return (
+            <Card
+              style={{
+                marginBottom: token.margin,
+              }}
+            >
+              <Row gutter={token.marginMD}>
+                <Col xs={24}>
+                  {/* <Col xs={24} lg={12}> */}
+                  <Form.Item name={'cluster_mode'} required>
+                    <Radio.Group
+                      onChange={(e) => {
+                        form.validateFields().catch(() => {});
+                      }}
+                      disabled={getFieldValue('agent') !== 'auto'}
                     >
-                      {() => {
-                        const derivedClusterSizeMaxLimit = _.min([
-                          resourceLimits.cpu?.max,
-                          keypairResourcePolicy.max_containers_per_session,
-                        ]);
-                        const clusterUnit =
-                          form.getFieldValue('cluster_mode') === 'single-node'
-                            ? t('session.launcher.Container')
-                            : t('session.launcher.Node');
-                        return (
-                          <Form.Item
-                            name={'cluster_size'}
-                            label={t('session.launcher.ClusterSize')}
-                            required
-                            rules={[
-                              {
-                                warningOnly: true,
-                                validator: async (rule, value: number) => {
-                                  if (showRemainingWarning) {
-                                    const minCPU = _.min([
-                                      remaining.cpu,
-                                      keypairResourcePolicy.max_containers_per_session,
-                                    ]);
-                                    if (_.isNumber(minCPU) && value > minCPU) {
-                                      return Promise.reject(
-                                        t(
-                                          'session.launcher.EnqueueComputeSessionWarning',
-                                        ),
-                                      );
-                                    }
+                      <Radio.Button value="single-node">
+                        {t('session.launcher.SingleNode')}
+                      </Radio.Button>
+                      <Radio.Button value="multi-node">
+                        {t('session.launcher.MultiNode')}
+                      </Radio.Button>
+                    </Radio.Group>
+                  </Form.Item>
+                </Col>
+                <Col xs={24}>
+                  <Form.Item
+                    noStyle
+                    shouldUpdate={(prev, next) =>
+                      prev.cluster_mode !== next.cluster_mode
+                    }
+                  >
+                    {() => {
+                      const derivedClusterSizeMaxLimit = _.min([
+                        resourceLimits.cpu?.max,
+                        keypairResourcePolicy.max_containers_per_session,
+                      ]);
+                      const clusterUnit =
+                        form.getFieldValue('cluster_mode') === 'single-node'
+                          ? t('session.launcher.Container')
+                          : t('session.launcher.Node');
+                      return (
+                        <Form.Item
+                          name={'cluster_size'}
+                          label={t('session.launcher.ClusterSize')}
+                          required
+                          rules={[
+                            {
+                              warningOnly: true,
+                              validator: async (rule, value: number) => {
+                                if (showRemainingWarning) {
+                                  const minCPU = _.min([
+                                    remaining.cpu,
+                                    keypairResourcePolicy.max_containers_per_session,
+                                  ]);
+                                  if (_.isNumber(minCPU) && value > minCPU) {
+                                    return Promise.reject(
+                                      t(
+                                        'session.launcher.EnqueueComputeSessionWarning',
+                                      ),
+                                    );
                                   }
-                                  return Promise.resolve();
+                                }
+                                return Promise.resolve();
+                              },
+                            },
+                          ]}
+                        >
+                          <InputNumberWithSlider
+                            inputContainerMinWidth={190}
+                            min={1}
+                            step={1}
+                            // TODO: max cluster size
+                            max={
+                              _.isNumber(derivedClusterSizeMaxLimit)
+                                ? derivedClusterSizeMaxLimit
+                                : undefined
+                            }
+                            disabled={
+                              derivedClusterSizeMaxLimit === 1 ||
+                              getFieldValue('agent') !== 'auto'
+                            }
+                            sliderProps={{
+                              marks: {
+                                1: '1',
+                                // remaining mark code should be located before max mark code to prevent overlapping when it is same value
+                                ...(remaining.cpu
+                                  ? {
+                                      [remaining.cpu]: {
+                                        label: <RemainingMark />,
+                                      },
+                                    }
+                                  : {}),
+                                ...(_.isNumber(derivedClusterSizeMaxLimit)
+                                  ? {
+                                      [derivedClusterSizeMaxLimit]:
+                                        derivedClusterSizeMaxLimit,
+                                    }
+                                  : {}),
+                              },
+                              tooltip: {
+                                formatter: (value = 0) => {
+                                  return `${value} ${clusterUnit}`;
                                 },
                               },
-                            ]}
-                          >
-                            <InputNumberWithSlider
-                              inputContainerMinWidth={190}
-                              min={1}
-                              step={1}
-                              // TODO: max cluster size
-                              max={
-                                _.isNumber(derivedClusterSizeMaxLimit)
-                                  ? derivedClusterSizeMaxLimit
-                                  : undefined
+                            }}
+                            inputNumberProps={{
+                              addonAfter: clusterUnit,
+                            }}
+                            onChange={(value) => {
+                              if (value > 1) {
+                                form.setFieldValue('num_of_sessions', 1);
                               }
-                              disabled={
-                                derivedClusterSizeMaxLimit === 1 ||
-                                getFieldValue('agent') !== 'auto'
-                              }
-                              sliderProps={{
-                                marks: {
-                                  1: '1',
-                                  // remaining mark code should be located before max mark code to prevent overlapping when it is same value
-                                  ...(remaining.cpu
-                                    ? {
-                                        [remaining.cpu]: {
-                                          label: <RemainingMark />,
-                                        },
-                                      }
-                                    : {}),
-                                  ...(_.isNumber(derivedClusterSizeMaxLimit)
-                                    ? {
-                                        [derivedClusterSizeMaxLimit]:
-                                          derivedClusterSizeMaxLimit,
-                                      }
-                                    : {}),
-                                },
-                                tooltip: {
-                                  formatter: (value = 0) => {
-                                    return `${value} ${clusterUnit}`;
-                                  },
-                                },
-                              }}
-                              inputNumberProps={{
-                                addonAfter: clusterUnit,
-                              }}
-                              onChange={(value) => {
-                                if (value > 1) {
-                                  form.setFieldValue('num_of_sessions', 1);
-                                }
-                              }}
-                            />
-                          </Form.Item>
-                        );
-                      }}
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </Card>
-            );
-          }}
-        </Form.Item>
-      )}
+                            }}
+                          />
+                        </Form.Item>
+                      );
+                    }}
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Card>
+          );
+        }}
+      </Form.Item>
     </>
   );
 };

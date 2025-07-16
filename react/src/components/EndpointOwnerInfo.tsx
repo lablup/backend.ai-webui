@@ -1,5 +1,4 @@
 import { EndpointOwnerInfoFragment$key } from '../__generated__/EndpointOwnerInfoFragment.graphql';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, Tooltip, theme } from 'antd';
 import React from 'react';
@@ -14,7 +13,6 @@ const EndpointOwnerInfo: React.FC<EndpointOwnerInfoProps> = ({
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const baiClient = useSuspendedBackendaiClient();
 
   const endpoint = useFragment(
     graphql`
@@ -27,8 +25,6 @@ const EndpointOwnerInfo: React.FC<EndpointOwnerInfoProps> = ({
     endpointFrgmt,
   );
 
-  if (!baiClient.supports('model-serving-endpoint-user-info'))
-    return baiClient.email || '';
   if (endpoint?.created_user_email === endpoint?.session_owner_email)
     return endpoint?.session_owner_email || '';
   else

@@ -109,8 +109,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({ type: Boolean }) auto_logout = false;
   @property({ type: Boolean }) isUserInfoMaskEnabled;
   @property({ type: Boolean }) isHideAgents = true;
-  @property({ type: Boolean }) supportServing = false;
-  @property({ type: Boolean }) supportUserCommittedImage = false;
   @property({ type: String }) lang = 'default';
   @property({ type: Array }) supportLanguageCodes = [
     'en',
@@ -361,10 +359,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
 
     // apply update name when user info changed via users page
     document.addEventListener('current-user-info-changed', (e: any) => {
-      if (globalThis.backendaiclient.supports('change-user-name')) {
-        const input = e.detail;
-        this.full_name = input;
-      }
+      const input = e.detail;
+      this.full_name = input;
     });
     document.addEventListener('move-to-from-react', (e) => {
       const params = (e as CustomEvent).detail.params;
@@ -623,23 +619,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this._page = 'unauthorized';
       this._moveTo('/unauthorized');
     }
-
-    this.supportServing = globalThis.backendaiclient.supports('model-serving');
-    this.supportUserCommittedImage = globalThis.backendaiclient.supports(
-      'user-committed-image',
-    );
     this.optionalPages = [
       {
         page: 'agent-summary',
         available: !this.isHideAgents,
-      },
-      {
-        page: 'serving',
-        available: this.supportServing,
-      },
-      {
-        page: 'my-environment',
-        available: this.supportUserCommittedImage,
       },
     ];
 

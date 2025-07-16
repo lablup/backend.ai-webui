@@ -209,19 +209,10 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   }>({
     queryKey: ['baiClient.modelService.runtime.list'],
     queryFn: () => {
-      return baiClient.isManagerVersionCompatibleWith('24.03.5')
-        ? baiRequestWithPromise({
-            method: 'GET',
-            url: `/services/_/runtimes`,
-          })
-        : Promise.resolve({
-            runtimes: [
-              {
-                name: 'custom',
-                human_readable_name: 'Custom (Default)',
-              },
-            ],
-          });
+      return baiRequestWithPromise({
+        method: 'GET',
+        url: `/services/_/runtimes`,
+      });
     },
     staleTime: 1000,
   });
@@ -317,24 +308,21 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         config: {
           model: values.vFolderID,
           model_version: 1, // FIXME: hardcoded. change it with option later
-          ...(baiClient.supports('endpoint-extra-mounts') && {
-            extra_mounts: _.reduce(
-              values.mounts,
-              (acc, key: string) => {
-                acc[key] = {
-                  ...(values.vfoldersAliasMap[key] && {
-                    mount_destination: values.vfoldersAliasMap[key],
-                  }),
-                  type: 'bind', // FIXME: hardcoded. change it with option later
-                };
-                return acc;
-              },
-              {} as Record<string, MountOptionType>,
-            ),
-            model_definition_path: values.modelDefinitionPath,
-          }),
+          extra_mounts: _.reduce(
+            values.mounts,
+            (acc, key: string) => {
+              acc[key] = {
+                ...(values.vfoldersAliasMap[key] && {
+                  mount_destination: values.vfoldersAliasMap[key],
+                }),
+                type: 'bind', // FIXME: hardcoded. change it with option later
+              };
+              return acc;
+            },
+            {} as Record<string, MountOptionType>,
+          ),
+          model_definition_path: values.modelDefinitionPath,
           model_mount_destination:
-            baiClient.supports('endpoint-extra-mounts') &&
             values.modelMountDestination !== ''
               ? values.modelMountDestination
               : '/models',
@@ -539,15 +527,13 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                   runtime_variant: values.runtimeVariant,
                 },
               };
-            if (baiClient.supports('modify-endpoint-environ')) {
-              const newEnvirons: { [key: string]: string } = {};
-              if (values.envvars) {
-                values.envvars.forEach(
-                  (v) => (newEnvirons[v.variable] = v.value),
-                );
-              }
-              mutationVariables.props.environ = JSON.stringify(newEnvirons);
+            const newEnvirons: { [key: string]: string } = {};
+            if (values.envvars) {
+              values.envvars.forEach(
+                (v) => (newEnvirons[v.variable] = v.value),
+              );
             }
+            mutationVariables.props.environ = JSON.stringify(newEnvirons);
             commitModifyEndpoint({
               variables: mutationVariables,
               onCompleted: (res, errors) => {
@@ -820,102 +806,91 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                           </Form.Item>
                         )
                       )}
-                      {baiClient.supports('endpoint-runtime-variant') ? (
-                        <Form.Item
-                          name={'runtimeVariant'}
-                          required
-                          label={t('modelService.RuntimeVariant')}
-                        >
-                          <Select
-                            defaultActiveFirstOption
-                            showSearch
-                            options={_.map(
-                              availableRuntimes?.runtimes,
-                              (runtime) => {
-                                return {
-                                  value: runtime.name,
-                                  label: runtime.human_readable_name,
-                                };
-                              },
-                            )}
-                          />
-                        </Form.Item>
-                      ) : null}
+                      <Form.Item
+                        name={'runtimeVariant'}
+                        required
+                        label={t('modelService.RuntimeVariant')}
+                      >
+                        <Select
+                          defaultActiveFirstOption
+                          showSearch
+                          options={_.map(
+                            availableRuntimes?.runtimes,
+                            (runtime) => {
+                              return {
+                                value: runtime.name,
+                                label: runtime.human_readable_name,
+                              };
+                            },
+                          )}
+                        />
+                      </Form.Item>
                       <Form.Item dependencies={['runtimeVariant']} noStyle>
                         {({ getFieldValue }) =>
-                          getFieldValue('runtimeVariant') === 'custom' &&
-                          baiClient.supports('endpoint-extra-mounts') ? (
-                            <>
-                              <Flex
-                                direction="row"
-                                gap={'xxs'}
-                                align="stretch"
-                                justify="between"
+                          getFieldValue('runtimeVariant') === 'custom' && (
+                            <Flex
+                              direction="row"
+                              gap={'xxs'}
+                              align="stretch"
+                              justify="between"
+                            >
+                              <Form.Item
+                                name={'modelMountDestination'}
+                                label={t('modelService.ModelMountDestination')}
+                                style={{ width: '50%' }}
+                                labelCol={{ style: { flex: 1 } }}
                               >
-                                <Form.Item
-                                  name={'modelMountDestination'}
-                                  label={t(
-                                    'modelService.ModelMountDestination',
-                                  )}
-                                  style={{ width: '50%' }}
-                                  labelCol={{ style: { flex: 1 } }}
-                                >
-                                  <Input
-                                    allowClear
-                                    placeholder={'/models'}
-                                    disabled={!!endpoint}
-                                  />
-                                </Form.Item>
-                                <MinusOutlined
-                                  style={{
-                                    fontSize: token.fontSizeXL,
-                                    color: token.colorTextDisabled,
-                                  }}
-                                  rotate={290}
+                                <Input
+                                  allowClear
+                                  placeholder={'/models'}
+                                  disabled={!!endpoint}
                                 />
-                                <Form.Item
-                                  name={'modelDefinitionPath'}
-                                  label={t('modelService.ModelDefinitionPath')}
-                                  style={{ width: '50%' }}
-                                  labelCol={{ style: { flex: 1 } }}
-                                >
-                                  <Input
-                                    allowClear
-                                    placeholder={
-                                      endpoint?.model_definition_path
-                                        ? endpoint?.model_definition_path
-                                        : 'model-definition.yaml'
-                                    }
-                                  />
-                                </Form.Item>
-                              </Flex>
-                            </>
-                          ) : null
+                              </Form.Item>
+                              <MinusOutlined
+                                style={{
+                                  fontSize: token.fontSizeXL,
+                                  color: token.colorTextDisabled,
+                                }}
+                                rotate={290}
+                              />
+                              <Form.Item
+                                name={'modelDefinitionPath'}
+                                label={t('modelService.ModelDefinitionPath')}
+                                style={{ width: '50%' }}
+                                labelCol={{ style: { flex: 1 } }}
+                              >
+                                <Input
+                                  allowClear
+                                  placeholder={
+                                    endpoint?.model_definition_path
+                                      ? endpoint?.model_definition_path
+                                      : 'model-definition.yaml'
+                                  }
+                                />
+                              </Form.Item>
+                            </Flex>
+                          )
                         }
                       </Form.Item>
-                      {baiClient.supports('endpoint-extra-mounts') ? (
-                        <>
-                          <Form.Item noStyle dependencies={['vFolderID']}>
-                            {({ getFieldValue }) => {
-                              return (
-                                <VFolderTableFormItem
-                                  rowKey={'id'}
-                                  label={t('modelService.AdditionalMounts')}
-                                  filter={(vf) =>
-                                    vf.name !== getFieldValue('vFolderID') &&
-                                    vf.status === 'ready' &&
-                                    vf.usage_mode !== 'model' &&
-                                    !vf.name?.startsWith('.')
-                                  }
-                                  tableProps={{
-                                    size: 'small',
-                                  }}
-                                />
-                              );
-                            }}
-                          </Form.Item>
-                        </>
-                      ) : null}
+                      <Form.Item noStyle dependencies={['vFolderID']}>
+                        {({ getFieldValue }) => {
+                          return (
+                            <VFolderTableFormItem
+                              rowKey={'id'}
+                              label={t('modelService.AdditionalMounts')}
+                              filter={(vf) =>
+                                vf.name !== getFieldValue('vFolderID') &&
+                                vf.status === 'ready' &&
+                                vf.usage_mode !== 'model' &&
+                                !vf.name?.startsWith('.')
+                              }
+                              tableProps={{
+                                size: 'small',
+                              }}
+                            />
+                          );
+                        }}
+                      </Form.Item>
                     </>
                   )}
                 </Card>
@@ -1037,26 +1012,24 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                 </Card>
                 <Flex direction="row" justify="between" align="end" gap={'xs'}>
                   <Flex>
-                    {baiClient.supports('model-service-validation') ? (
-                      <Button
-                        onClick={() => {
-                          form
-                            .validateFields()
-                            .then((values) => {
-                              setValidateServiceData(values);
-                              setIsOpenServiceValidationModal(true);
-                            })
-                            .catch((err) => {
-                              console.log(err.message);
-                              message.error(
-                                t('modelService.FormValidationFailed'),
-                              );
-                            });
-                        }}
-                      >
-                        {t('modelService.Validate')}
-                      </Button>
-                    ) : null}
+                    <Button
+                      onClick={() => {
+                        form
+                          .validateFields()
+                          .then((values) => {
+                            setValidateServiceData(values);
+                            setIsOpenServiceValidationModal(true);
+                          })
+                          .catch((err) => {
+                            console.log(err.message);
+                            message.error(
+                              t('modelService.FormValidationFailed'),
+                            );
+                          });
+                      }}
+                    >
+                      {t('modelService.Validate')}
+                    </Button>
                   </Flex>
                   <Flex gap={'sm'}>
                     <Button type="primary" onClick={handleOk}>
@@ -1069,25 +1042,23 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           </Flex>
         </Flex>
       </Flex>
-      {baiClient.supports('model-service-validation') ? (
-        <BAIModal
-          zIndex={DEFAULT_BAI_MODAL_Z_INDEX + 1}
-          width={1000}
-          title={t('modelService.ValidationInfo')}
-          open={isOpenServiceValidationModal}
-          destroyOnClose
-          onCancel={() => {
-            setIsOpenServiceValidationModal(!isOpenServiceValidationModal);
-          }}
-          okButtonProps={{
-            style: { display: 'none' },
-          }}
-          cancelText={t('button.Close')}
-          maskClosable={false}
-        >
-          <ServiceValidationView serviceData={validateServiceData} />
-        </BAIModal>
-      ) : null}
+      <BAIModal
+        zIndex={DEFAULT_BAI_MODAL_Z_INDEX + 1}
+        width={1000}
+        title={t('modelService.ValidationInfo')}
+        open={isOpenServiceValidationModal}
+        destroyOnClose
+        onCancel={() => {
+          setIsOpenServiceValidationModal(!isOpenServiceValidationModal);
+        }}
+        okButtonProps={{
+          style: { display: 'none' },
+        }}
+        cancelText={t('button.Close')}
+        maskClosable={false}
+      >
+        <ServiceValidationView serviceData={validateServiceData} />
+      </BAIModal>
     </>
   );
 };

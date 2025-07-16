@@ -1,5 +1,4 @@
 import { UserInfoModalQuery } from '../__generated__/UserInfoModalQuery.graphql';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { useTOTPSupported } from '../hooks/backendai';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { Descriptions, DescriptionsProps, Tag, Spin } from 'antd';
@@ -19,10 +18,6 @@ const UserInfoModal: React.FC<Props> = ({
   ...baiModalProps
 }) => {
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
-  const sudoSessionEnabledSupported = baiClient?.supports(
-    'sudo-session-enabled',
-  );
 
   const { isTOTPSupported, isLoading: isLoadingManagerSupportingTOTP } =
     useTOTPSupported();
@@ -60,7 +55,7 @@ const UserInfoModal: React.FC<Props> = ({
     `,
     {
       email: userEmail,
-      isNotSupportSudoSessionEnabled: !sudoSessionEnabledSupported,
+      isNotSupportSudoSessionEnabled: false,
       isTOTPSupported: isTOTPSupported ?? false,
     },
   );
@@ -109,11 +104,9 @@ const UserInfoModal: React.FC<Props> = ({
         <Descriptions.Item label={t('credential.DescRequirePasswordChange')}>
           {user?.need_password_change ? t('button.Yes') : t('button.No')}
         </Descriptions.Item>
-        {sudoSessionEnabledSupported && (
-          <Descriptions.Item label={t('credential.EnableSudoSession')}>
-            {user?.sudo_session_enabled ? t('button.Yes') : t('button.No')}
-          </Descriptions.Item>
-        )}
+        <Descriptions.Item label={t('credential.EnableSudoSession')}>
+          {user?.sudo_session_enabled ? t('button.Yes') : t('button.No')}
+        </Descriptions.Item>
         {isTOTPSupported && (
           <Descriptions.Item label={t('webui.menu.TotpActivated')}>
             <Spin spinning={isLoadingManagerSupportingTOTP}>

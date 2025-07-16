@@ -12,7 +12,7 @@ import {
   numberSorterWithInfinityValue,
 } from '../helper';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
-import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useUpdatableState } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import BAITable from './BAITable';
 import Flex from './Flex';
@@ -57,18 +57,6 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
     useState<string>();
   const [editingUserResourcePolicy, setEditingUserResourcePolicy] =
     useState<UserResourcePolicySettingModalFragment$key | null>();
-
-  const baiClient = useSuspendedBackendaiClient();
-  const supportMaxVfolderCount = baiClient?.supports(
-    'max-vfolder-count-in-user-and-project-resource-policy',
-  );
-  const supportMaxQuotaScopeSize = baiClient?.supports('max-quota-scope-size');
-  const supportMaxSessionCountPerModelSession = baiClient?.supports(
-    'max-session-count-per-model-session',
-  );
-  const supportMaxCustomizedImageCount = baiClient?.supports(
-    'max-customized-image-count',
-  );
 
   const { user_resource_policies } =
     useLazyLoadQuery<UserResourcePolicyListQuery>(
@@ -116,7 +104,7 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
       fixed: 'left',
       sorter: (a, b) => localeCompare(a?.name, b?.name),
     },
-    supportMaxVfolderCount && {
+    {
       title: t('resourcePolicy.MaxVFolderCount'),
       dataIndex: 'max_vfolder_count',
       key: 'max_vfolder_count',
@@ -128,7 +116,7 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
           0,
         ),
     },
-    supportMaxSessionCountPerModelSession && {
+    {
       title: t('resourcePolicy.MaxSessionCountPerModelSession'),
       dataIndex: 'max_session_count_per_model_session',
       key: 'max_session_count_per_model_session',
@@ -136,7 +124,7 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
         (a?.max_session_count_per_model_session ?? 0) -
         (b?.max_session_count_per_model_session ?? 0),
     },
-    supportMaxQuotaScopeSize && {
+    {
       title: t('resourcePolicy.MaxQuotaScopeSize'),
       dataIndex: 'max_quota_scope_size',
       key: 'max_quota_scope_size',
@@ -148,7 +136,7 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
           -1,
         ),
     },
-    supportMaxCustomizedImageCount && {
+    {
       title: t('resourcePolicy.MaxCustomizedImageCount'),
       key: 'max_customized_image_count',
       dataIndex: 'max_customized_image_count',
