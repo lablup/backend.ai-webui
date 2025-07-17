@@ -43,6 +43,9 @@ type TypeFilterType = 'all' | 'interactive' | 'batch' | 'inference' | 'system';
 type SessionNode = NonNullableNodeOnEdges<
   ComputeSessionListPageQuery$data['compute_session_nodes']
 >;
+
+const CARD_MIN_HEIGHT = 200;
+
 const ComputeSessionListPage = () => {
   const currentProject = useCurrentProjectValue();
 
@@ -207,16 +210,17 @@ const ComputeSessionListPage = () => {
 
   return (
     <Flex direction="column" align="stretch" gap={'md'}>
-      <Row gutter={[16, 16]}>
-        <Col xs={24} lg={8} xl={4}>
+      <Row
+        gutter={[16, 16]}
+        align={'stretch'}
+        style={{ minHeight: lg ? CARD_MIN_HEIGHT : undefined }}
+      >
+        <Col xs={24} lg={8} xl={4} style={{ display: 'flex' }}>
           <BAICard
-            styles={{
-              body: {
-                padding: 0,
-              },
+            style={{
+              width: '100%',
+              minHeight: lg ? CARD_MIN_HEIGHT : undefined,
             }}
-            style={{ height: lg ? 200 : undefined }}
-            // size={lg ? undefined : 'small'}
           >
             <ActionItemContent
               title={
@@ -233,14 +237,20 @@ const ComputeSessionListPage = () => {
               icon={<SessionsIcon />}
               type="simple"
               to={'/session/start'}
+              style={{
+                height: '100%',
+              }}
             />
           </BAICard>
         </Col>
-        <Col xs={24} lg={16} xl={20}>
+        <Col xs={24} lg={16} xl={20} style={{ display: 'flex' }}>
           <Suspense
             fallback={
               <BAICard
-                style={{ height: 200 }}
+                style={{
+                  width: '100%',
+                  minHeight: lg ? CARD_MIN_HEIGHT : undefined,
+                }}
                 title={t('Allocated Resources')}
                 loading
               />
@@ -248,7 +258,8 @@ const ComputeSessionListPage = () => {
           >
             <AvailableResourcesCard
               style={{
-                height: lg ? 200 : undefined,
+                width: '100%',
+                minHeight: lg ? CARD_MIN_HEIGHT : undefined,
               }}
               isRefetching={deferredFetchKey !== fetchKey}
               fetchKey={deferredFetchKey}

@@ -90,6 +90,8 @@ const FILTER_BY_STATUS_CATEGORY = {
   deleted: 'status in ["DELETE_PENDING", "DELETE_ONGOING", "DELETE_ERROR"]',
 };
 
+const CARD_MIN_HEIGHT = 200;
+
 const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   ...props
 }) => {
@@ -270,10 +272,15 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
       <Row
         gutter={[16, 16]}
         align={'stretch'}
-        style={{ minHeight: lg ? 200 : undefined }}
+        style={{ minHeight: lg ? CARD_MIN_HEIGHT : undefined }}
       >
         <Col xs={24} lg={8} xxl={4} style={{ display: 'flex' }}>
-          <BAICard style={{ width: '100%', minHeight: lg ? 200 : undefined }}>
+          <BAICard
+            style={{
+              width: '100%',
+              minHeight: lg ? CARD_MIN_HEIGHT : undefined,
+            }}
+          >
             <ActionItemContent
               title={
                 <Typography.Text
@@ -299,14 +306,20 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           <Suspense
             fallback={
               <BAICard
-                style={{ width: '100%', minHeight: lg ? 200 : undefined }}
+                style={{
+                  width: '100%',
+                  minHeight: lg ? CARD_MIN_HEIGHT : undefined,
+                }}
                 title={t('data.StorageStatus')}
                 loading
               />
             }
           >
             <StorageStatusPanelCard
-              style={{ width: '100%', minHeight: lg ? 200 : undefined }}
+              style={{
+                width: '100%',
+                minHeight: lg ? CARD_MIN_HEIGHT : undefined,
+              }}
               fetchKey={deferredFetchKey}
               onRequestBadgeClick={() => {
                 webuiNavigate({
@@ -322,14 +335,20 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           <Suspense
             fallback={
               <BAICard
-                style={{ width: '100%', minHeight: lg ? 200 : undefined }}
+                style={{
+                  width: '100%',
+                  minHeight: lg ? CARD_MIN_HEIGHT : undefined,
+                }}
                 title={t('data.QuotaPerStorageVolume')}
                 loading
               />
             }
           >
             <QuotaPerStorageVolumePanelCard
-              style={{ width: '100%', minHeight: lg ? 200 : undefined }}
+              style={{
+                width: '100%',
+                minHeight: lg ? CARD_MIN_HEIGHT : undefined,
+              }}
             />
           </Suspense>
         </Col>
