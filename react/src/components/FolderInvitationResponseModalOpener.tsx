@@ -1,4 +1,5 @@
 import { useVFolderInvitationsValue } from '../hooks/useVFolderInvitations';
+import UnmountModalAfterClose from './UnmountModalAfterClose';
 import React from 'react';
 import { useQueryParam, StringParam } from 'use-query-params';
 
@@ -14,14 +15,16 @@ const FolderInvitationResponseModalOpener = () => {
   const { count } = useVFolderInvitationsValue();
 
   return (
-    <FolderInvitationResponseModal
-      open={isInvitationOpen === 'true'}
-      onRequestClose={(success) => {
-        if (!success || count === 1) {
-          setIsInvitationOpen(null, 'replaceIn');
-        }
-      }}
-    />
+    <UnmountModalAfterClose>
+      <FolderInvitationResponseModal
+        open={isInvitationOpen === 'true'}
+        onRequestClose={(success) => {
+          if (!success || count === 1) {
+            setIsInvitationOpen(null, 'replaceIn');
+          }
+        }}
+      />
+    </UnmountModalAfterClose>
   );
 };
 
