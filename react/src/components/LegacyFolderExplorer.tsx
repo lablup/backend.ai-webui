@@ -8,6 +8,7 @@ import FolderExplorerHeader from './FolderExplorerHeader';
 import VFolderNodeDescription from './VFolderNodeDescription';
 import { Alert, Grid, Splitter, theme } from 'antd';
 import { createStyles } from 'antd-style';
+import { FileExplorer } from 'backend.ai-ui';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -111,11 +112,12 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
             size={xl ? 'default' : 'small'}
           />
           {/* @ts-ignore */}
-          <backend-ai-folder-explorer
+          {/* <backend-ai-folder-explorer
             ref={folderExplorerRef}
             active
             vfolderID={vfolderID}
-          />
+          /> */}
+          <FileExplorer onRequestClose={() => {}} />
         </>
       )}
     </Flex>
