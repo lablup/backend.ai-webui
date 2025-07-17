@@ -548,6 +548,7 @@
     "Digest": "Дайджест",
     "Disabled": "отключен",
     "ErrorMinimumValue": "{{key}} должен быть как минимум {{value}}",
+    "FailedToDeleteCustomizedImage": "Не удалось удалить индивидуальное изображение.",
     "FullImagePath": "Полный путь к изображению",
     "ImageReinstallationRequired": "Требуется переустановка изображения",
     "Images": "Изображений",

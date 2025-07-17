@@ -539,6 +539,7 @@
     "Digest": "ไดเจสต์",
     "Disabled": "ปิดใช้งาน",
     "ErrorMinimumValue": "{{key}} ต้องมีอย่างน้อย {{value}}",
+    "FailedToDeleteCustomizedImage": "ไม่สามารถลบภาพที่กำหนดเองได้",
     "FullImagePath": "เส้นทางภาพเต็ม",
     "ImageReinstallationRequired": "จำเป็นต้องติดตั้งรูปภาพใหม่",
     "Images": "อิมเมจ",
