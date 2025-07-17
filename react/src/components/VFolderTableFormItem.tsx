@@ -20,11 +20,12 @@ export interface VFolderTableFormValues {
   mounts: string[];
   vfoldersAliasMap: AliasMap;
   autoMountedFolderNames?: string[];
+  selectedFolders?: VFolder[];
 }
 
 const VFolderTableFormItem: React.FC<VFolderTableFormItemProps> = ({
   filter,
-  rowKey = 'name',
+  rowKey = 'id',
   tableProps,
   ...formItemProps
 }) => {
@@ -34,7 +35,6 @@ const VFolderTableFormItem: React.FC<VFolderTableFormItemProps> = ({
   return (
     <>
       <Form.Item
-        // noStyle
         hidden
         name="vfoldersAliasMap"
         rules={[
@@ -73,9 +73,9 @@ const VFolderTableFormItem: React.FC<VFolderTableFormItemProps> = ({
         ]}
       >
         <Input />
-        {/* <Flex>{form.getFieldValue('vfoldersAliasMap')}</Flex> */}
       </Form.Item>
       <Form.Item hidden name="autoMountedFolderNames" />
+      <Form.Item hidden name="selectedFolders" />
       <Form.Item
         name={'mounts'}
         {...formItemProps}
@@ -90,6 +90,10 @@ const VFolderTableFormItem: React.FC<VFolderTableFormItemProps> = ({
           onChangeAliasMap={(aliasMap) => {
             form.setFieldValue('vfoldersAliasMap', aliasMap);
             form.validateFields(['vfoldersAliasMap']);
+          }}
+          onChangeSelectedRowKeys={(selectedKeys, selectedVFolders) => {
+            // Set selectedFolders using the VFolder objects
+            form.setFieldValue('selectedFolders', selectedVFolders);
           }}
           // TODO: implement pagination
           pagination={false}
