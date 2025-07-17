@@ -151,3 +151,5 @@ yarn.lock
 
 *.code-workspace
 !backend.ai-webui.code-workspace
+
+/data/merged_schema.graphql
