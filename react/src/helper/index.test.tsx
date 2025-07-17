@@ -10,9 +10,9 @@ import {
   numberSorterWithInfinityValue,
   parseValueWithUnit,
   toFixedFloorWithoutTrailingZeros,
-  transformSorterToOrderString,
   convertToDecimalUnit,
 } from './index';
+import { transformSorterToOrderString } from 'backend.ai-ui';
 
 describe('convertBinarySizeUnit', () => {
   it('should convert size using binary (1024) base with default fixed value', () => {

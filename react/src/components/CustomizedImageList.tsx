@@ -18,7 +18,6 @@ import {
 } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import AliasedImageDoubleTags from './AliasedImageDoubleTags';
-import BAITable from './BAITable';
 import { ImageTags } from './ImageTags';
 import TextHighlighter from './TextHighlighter';
 import {
@@ -31,6 +30,7 @@ import { useToggle } from 'ahooks';
 import { App, Button, Input, Popconfirm, theme, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
+import { BAITable } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, {
   PropsWithChildren,
@@ -443,8 +443,6 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
           />
         </Flex>
         <BAITable
-          neoStyle
-          size="small"
           resizable
           loading={isPendingSearchTransition}
           columns={
