@@ -26,12 +26,24 @@ interface MyResourceCardProps extends BAICardProps {
 }
 
 const getResourceValue = (
-  type: 'usage' | 'capacity',
+  type: 'usage' | 'remaining',
   resource: string,
   checkPresetInfo: ResourceAllocation | null,
   remainingWithoutResourceGroup: RemainingSlots,
   resourceLimitsWithoutResourceGroup: MergedResourceLimits,
 ): ResourceValues => {
+  const getCurrentValue = () => {
+    if (type === 'usage') {
+      const value = _.get(checkPresetInfo?.keypair_using, resource);
+      return processResourceValue(value, resource, 'auto');
+    }
+
+    const remaining = _.get(remainingWithoutResourceGroup, resource);
+    if (remaining === Number.MAX_SAFE_INTEGER) return Number.MAX_SAFE_INTEGER;
+
+    return processResourceValue(remaining, resource, 'auto');
+  };
+
   const getTotalValue = () => {
     const maxValue = _.get(
       resourceLimitsWithoutResourceGroup,
@@ -54,18 +66,6 @@ const getResourceValue = (
   };
 
   const unit = getUnitForResource();
-
-  const getCurrentValue = () => {
-    if (type === 'usage') {
-      const value = _.get(checkPresetInfo?.keypair_using, resource);
-      return processResourceValue(value, resource, unit);
-    }
-
-    const capacity = _.get(remainingWithoutResourceGroup, resource);
-    if (capacity === Number.MAX_SAFE_INTEGER) return Number.MAX_SAFE_INTEGER;
-
-    return processResourceValue(capacity, resource, unit);
-  };
 
   return {
     current: getCurrentValue(),
@@ -97,7 +97,7 @@ const MyResourceCard: React.FC<MyResourceCardProps> = ({
   });
 
   const resourceSlotsDetails = useResourceSlotsDetails();
-  const [type, setType] = useState<'usage' | 'capacity'>('usage');
+  const [type, setType] = useState<'usage' | 'remaining'>('usage');
 
   const acceleratorSlotsDetails = useMemo(() => {
     return _.chain(resourceSlotsDetails?.resourceSlotsInRG)
