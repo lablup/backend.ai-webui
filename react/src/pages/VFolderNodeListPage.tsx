@@ -304,22 +304,22 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           </BAICard>
         </Col>
         <Col xs={24} lg={16} xxl={8} style={{ display: 'flex' }}>
-          <Suspense
-            fallback={
-              <BAICard
-                style={{
-                  width: '100%',
-                  minHeight: lg ? CARD_MIN_HEIGHT : undefined,
-                }}
-                title={t('data.StorageStatus')}
-                loading
-              />
-            }
+          <BAIErrorBoundary
+            onError={(error) => {
+              console.warn('StorageStatusPanelCard error:', error);
+            }}
           >
-            <BAIErrorBoundary
-              onError={(error) => {
-                console.warn('StorageStatusPanelCard error:', error);
-              }}
+            <Suspense
+              fallback={
+                <BAICard
+                  style={{
+                    width: '100%',
+                    minHeight: lg ? CARD_MIN_HEIGHT : undefined,
+                  }}
+                  title={t('data.StorageStatus')}
+                  loading
+                />
+              }
             >
               <StorageStatusPanelCard
                 style={{
@@ -335,26 +335,26 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                   });
                 }}
               />
-            </BAIErrorBoundary>
-          </Suspense>
+            </Suspense>
+          </BAIErrorBoundary>
         </Col>
         <Col xs={24} xxl={12} style={{ display: 'flex' }}>
-          <Suspense
-            fallback={
-              <BAICard
-                style={{
-                  width: '100%',
-                  minHeight: lg ? CARD_MIN_HEIGHT : undefined,
-                }}
-                title={t('data.QuotaPerStorageVolume')}
-                loading
-              />
-            }
+          <BAIErrorBoundary
+            onError={(error) => {
+              console.warn('QuotaPerStorageVolumePanelCard error:', error);
+            }}
           >
-            <BAIErrorBoundary
-              onError={(error) => {
-                console.warn('QuotaPerStorageVolumePanelCard error:', error);
-              }}
+            <Suspense
+              fallback={
+                <BAICard
+                  style={{
+                    width: '100%',
+                    minHeight: lg ? CARD_MIN_HEIGHT : undefined,
+                  }}
+                  title={t('data.QuotaPerStorageVolume')}
+                  loading
+                />
+              }
             >
               <QuotaPerStorageVolumePanelCard
                 style={{
@@ -362,8 +362,8 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                   minHeight: lg ? CARD_MIN_HEIGHT : undefined,
                 }}
               />
-            </BAIErrorBoundary>
-          </Suspense>
+            </Suspense>
+          </BAIErrorBoundary>
         </Col>
       </Row>
       <BAICard
