@@ -1,5 +1,6 @@
-import { ManageAppsModalMutation } from '../__generated__/ManageAppsModalMutation.graphql';
-import { ManageAppsModal_image$key } from '../__generated__/ManageAppsModal_image.graphql';
+import { ManageAppsModalBefore251100Mutation } from '../__generated__/ManageAppsModalBefore251100Mutation.graphql';
+import { ManageAppsModalBefore251100_image$key } from '../__generated__/ManageAppsModalBefore251100_image.graphql';
+import { useSuspendedBackendaiClient } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
@@ -18,21 +19,22 @@ import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
-interface ManageAppsModalProps extends BAIModalProps {
+interface ManageAppsModalBefore25110Props extends BAIModalProps {
   open: boolean;
-  imageFrgmt: ManageAppsModal_image$key | null;
+  imageFrgmt: ManageAppsModalBefore251100_image$key | null;
   onRequestClose: (success: boolean) => void;
 }
 
 type ServicePort = { app: string; protocol: string; port: number };
 
-const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
+const ManageAppsModalBefore25110: React.FC<ManageAppsModalBefore25110Props> = ({
   open,
   imageFrgmt,
   onRequestClose,
   ...baiModalProps
 }) => {
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
   const formRef = React.useRef<FormInstance>(null);
   const app = App.useApp();
 
@@ -40,7 +42,7 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
 
   const image = useFragment(
     graphql`
-      fragment ManageAppsModal_image on ImageNode {
+      fragment ManageAppsModalBefore251100_image on Image {
         labels {
           key
           value
@@ -57,8 +59,8 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
   );
 
   const [commitModifyImageInput, isInFlightModifyImageInput] =
-    useMutation<ManageAppsModalMutation>(graphql`
-      mutation ManageAppsModalMutation(
+    useMutation<ManageAppsModalBefore251100Mutation>(graphql`
+      mutation ManageAppsModalBefore251100Mutation(
         $target: String!
         $architecture: String
         $props: ModifyImageInput!
@@ -128,7 +130,11 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
               architecture: image?.architecture,
               props: {
                 labels: labels,
-                resource_limits: undefined,
+                resource_limits: baiClient.isManagerVersionCompatibleWith(
+                  '24.03.4.*',
+                )
+                  ? undefined
+                  : null,
               },
             },
             onCompleted: (res, errors) => {
@@ -329,4 +335,4 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
   );
 };
 
-export default ManageAppsModal;
+export default ManageAppsModalBefore25110;

@@ -797,6 +797,9 @@ class Client {
       this._features['image_rescan_by_project'] = true
       this._features['auto-scaling-rule'] = true;
     }
+    if (this.isManagerVersionCompatibleWith("25.11.0")) {
+      this._features["image_node"] = true;
+    }
   }
 
   /**

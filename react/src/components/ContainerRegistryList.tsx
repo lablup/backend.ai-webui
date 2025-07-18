@@ -407,13 +407,7 @@ const ContainerRegistryList: React.FC<{
         // height: 'calc(100vh - 183px)',
       }}
     >
-      <Flex
-        direction="row"
-        justify="between"
-        gap={'sm'}
-        align="start"
-        wrap="wrap"
-      >
+      <Flex direction="row" justify="end" gap={'sm'}>
         <BAIPropertyFilter
           filterProperties={[
             {

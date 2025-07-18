@@ -48,7 +48,6 @@ const CARD_MIN_HEIGHT = 200;
 
 const ComputeSessionListPage = () => {
   const currentProject = useCurrentProjectValue();
-
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [selectedSessionList, setSelectedSessionList] = useState<

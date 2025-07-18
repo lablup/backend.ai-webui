@@ -1,6 +1,7 @@
 import { CommittedImage } from '../components/CustomizedImageList';
 import { Image } from '../components/ImageEnvironmentSelectFormItems';
-import { EnvironmentImage } from '../components/ImageList';
+import { ImageNode } from '../components/ImageList';
+import { EnvironmentImageBefore251100 } from '../components/ImageListBefore251100';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { AttachmentsProps } from '@ant-design/x';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
@@ -396,7 +397,7 @@ export const isOutsideRangeWithUnits = (
 };
 
 export const getImageFullName = (
-  image: Image | CommittedImage | EnvironmentImage,
+  image: Image | CommittedImage | EnvironmentImageBefore251100 | ImageNode,
 ) => {
   return image
     ? `${image.registry}/${image.namespace ?? image.name}:${image.tag}@${image.architecture}`
