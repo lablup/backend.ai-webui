@@ -19,6 +19,15 @@ export type VolumeInfo = {
   };
   sftp_scaling_groups: string[];
 };
+
+interface VHostInfo {
+  default: string;
+  allowed: Array<string>;
+  volume_info?: {
+    [key: string]: VolumeInfo;
+  };
+}
+
 interface Props extends Omit<BAISelectProps, 'value' | 'onChange'> {
   autoSelectType?: 'usage' | 'default';
   showUsageStatus?: boolean;
@@ -42,32 +51,23 @@ const StorageSelect: React.FC<Props> = ({
 
   // Use useTanQuery for non-critical data fetching.
   // It allows the component to handle errors gracefully without crashing the entire page.
-  const { data: vhostInfo, isLoading: isLoadingVhostInfo } = useTanQuery<{
-    default: string;
-    allowed: Array<string>;
-    volume_info?: {
-      [key: string]: {
-        backend: string;
-        capabilities: string[];
-        usage: {
-          percentage: number;
-        };
-        sftp_scaling_groups: any[];
-      };
-    };
-  } | null>({
-    queryKey: ['vhostInfo'],
-    queryFn: async () => {
-      try {
-        return await baiClient.vfolder.list_hosts();
-      } catch (error) {
-        console.warn('Failed to fetch vhost info in StorageSelect:', error);
-        return null; // Return null on error to prevent crash
-      }
-    },
-    retry: false,
-    refetchOnWindowFocus: false,
-  });
+  const { data: vhostInfo, isLoading: isLoadingVhostInfo } =
+    useTanQuery<VHostInfo | null>({
+      queryKey: ['vhostInfo'],
+      queryFn: async () => {
+        try {
+          return await baiClient.vfolder.list_hosts();
+        } catch (error) {
+          console.warn(
+            'Failed to fetch vhost info in StorageSelect. Storage selection may be unavailable:',
+            error,
+          );
+          return null; // Return null on error to prevent crash
+        }
+      },
+      retry: false,
+      refetchOnWindowFocus: false,
+    });
 
   const [controllableState, setControllableState] = useControllableState({
     value,
