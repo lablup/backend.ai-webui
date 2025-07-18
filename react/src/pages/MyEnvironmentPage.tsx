@@ -1,7 +1,7 @@
-import BAICard from '../components/BAICard';
 import CustomizedImageList from '../components/CustomizedImageList';
 import FlexActivityIndicator from '../components/FlexActivityIndicator';
 import { theme } from 'antd';
+import { BAICard } from 'backend.ai-ui';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';

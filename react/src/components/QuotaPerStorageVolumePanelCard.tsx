@@ -3,13 +3,13 @@ import { QuotaPerStorageVolumePanelCardUserQuery } from '../__generated__/QuotaP
 import { addQuotaScopeTypePrefix, convertToDecimalUnit } from '../helper';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import BAICard, { BAICardProps } from './BAICard';
 import BAIProgress from './BAIProgress';
 import Flex from './Flex';
 import FlexActivityIndicator from './FlexActivityIndicator';
 import StorageSelect from './StorageSelect';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Col, Empty, Row, theme, Tooltip, Typography } from 'antd';
+import { BAICard, BAICardProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';

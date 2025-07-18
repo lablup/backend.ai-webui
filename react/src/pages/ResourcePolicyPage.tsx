@@ -1,4 +1,3 @@
-import BAICard from '../components/BAICard';
 import FlexActivityIndicator from '../components/FlexActivityIndicator';
 import KeypairResourcePolicyList from '../components/KeypairResourcePolicyList';
 import ProjectResourcePolicyList from '../components/ProjectResourcePolicyList';
@@ -6,6 +5,7 @@ import UserResourcePolicyList from '../components/UserResourcePolicyList';
 import { filterEmptyItem } from '../helper';
 import { useWebUINavigate } from '../hooks';
 import { theme } from 'antd';
+import { BAICard } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { withDefault, StringParam, useQueryParam } from 'use-query-params';
