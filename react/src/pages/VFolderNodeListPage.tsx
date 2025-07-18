@@ -4,6 +4,7 @@ import {
   VFolderNodeListPageQuery$variables,
 } from '../__generated__/VFolderNodeListPageQuery.graphql';
 import ActionItemContent from '../components/ActionItemContent';
+import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import BAIFetchKeyButton from '../components/BAIFetchKeyButton';
 import BAIPropertyFilter, {
   mergeFilterValues,
@@ -317,20 +318,26 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               />
             }
           >
-            <StorageStatusPanelCard
-              style={{
-                width: '100%',
-                minHeight: lg ? CARD_MIN_HEIGHT : undefined,
+            <BAIErrorBoundary
+              onError={(error) => {
+                console.warn('StorageStatusPanelCard error:', error);
               }}
-              fetchKey={deferredFetchKey}
-              onRequestBadgeClick={() => {
-                webuiNavigate({
-                  search: new URLSearchParams({
-                    invitation: 'true',
-                  }).toString(),
-                });
-              }}
-            />
+            >
+              <StorageStatusPanelCard
+                style={{
+                  width: '100%',
+                  minHeight: lg ? CARD_MIN_HEIGHT : undefined,
+                }}
+                fetchKey={deferredFetchKey}
+                onRequestBadgeClick={() => {
+                  webuiNavigate({
+                    search: new URLSearchParams({
+                      invitation: 'true',
+                    }).toString(),
+                  });
+                }}
+              />
+            </BAIErrorBoundary>
           </Suspense>
         </Col>
         <Col xs={24} md={24} xl={12} style={{ display: 'flex' }}>
@@ -346,12 +353,18 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               />
             }
           >
-            <QuotaPerStorageVolumePanelCard
-              style={{
-                width: '100%',
-                minHeight: lg ? CARD_MIN_HEIGHT : undefined,
+            <BAIErrorBoundary
+              onError={(error) => {
+                console.warn('QuotaPerStorageVolumePanelCard error:', error);
               }}
-            />
+            >
+              <QuotaPerStorageVolumePanelCard
+                style={{
+                  width: '100%',
+                  minHeight: lg ? CARD_MIN_HEIGHT : undefined,
+                }}
+              />
+            </BAIErrorBoundary>
           </Suspense>
         </Col>
       </Row>
