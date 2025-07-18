@@ -23,6 +23,7 @@ interface UserSettings {
   experimental_ai_agents?: boolean;
   experimental_dashboard?: boolean;
   session_metrics_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
+  dashboard_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   [key: `hiddenColumnKeys.${string}`]: Array<string>;
 }
 
