@@ -88,11 +88,27 @@ const resourceGroupsForCurrentProjectAtom = atom(async (get) => {
         };
       };
     },
-  ]);
+  ]).catch((error) => {
+    console.error(error);
+    return [
+      { scaling_groups: [] },
+      {
+        allowed: [],
+        default: '',
+        volume_info: {},
+      },
+    ];
+  });
 
   const allSftpScalingGroups = _.uniq(
     _.flatten(
-      _.map(vhostInfo.volume_info, (volume) => volume.sftp_scaling_groups),
+      _.map(
+        vhostInfo.volume_info as Record<
+          string,
+          { sftp_scaling_groups?: string[] }
+        >,
+        (volume) => volume?.sftp_scaling_groups,
+      ),
     ),
   );
 

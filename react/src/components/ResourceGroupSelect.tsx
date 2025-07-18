@@ -1,6 +1,6 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useUpdatableState } from '../hooks';
-import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
+import { useTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState from '../hooks/useControllableState';
 import TextHighlighter from './TextHighlighter';
 import { Select, SelectProps } from 'antd';
@@ -45,56 +45,63 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
     [startChangeTransition, setControllableValueDoNotUseWithoutTransition],
   );
 
-  const { data: resourceGroupSelectQueryResult } = useSuspenseTanQuery<
-    [
-      {
-        scaling_groups: {
-          name: string;
-        }[];
-      },
-      {
-        allowed: string[];
-        default: string;
-        volume_info: {
-          [key: string]: {
-            backend: string;
-            capabilities: string[];
-            usage: {
-              percentage: number;
+  const { data: resourceGroupSelectQueryResult, isLoading } = useTanQuery<
+    | [
+        {
+          scaling_groups: {
+            name: string;
+          }[];
+        },
+        {
+          allowed: string[];
+          default: string;
+          volume_info: {
+            [key: string]: {
+              backend: string;
+              capabilities: string[];
+              usage: {
+                percentage: number;
+              };
+              sftp_scaling_groups?: string[];
             };
-            sftp_scaling_groups?: string[];
           };
-        };
-      },
-    ]
+        },
+      ]
+    | null
   >({
-    queryKey: ['ResourceGroupSelectQuery', projectName],
-    queryFn: () => {
-      const search = new URLSearchParams();
-      search.set('group', projectName);
-      return Promise.all([
-        baiRequestWithPromise({
-          method: 'GET',
-          url: `/scaling-groups?${search.toString()}`,
-        }),
-        baiRequestWithPromise({
-          method: 'GET',
-          url: `/folders/_/hosts`,
-        }),
-      ]);
+    queryKey: ['ResourceGroupSelectQuery', projectName, fetchKey],
+    queryFn: async () => {
+      try {
+        const search = new URLSearchParams();
+        search.set('group', projectName);
+        return await Promise.all([
+          baiRequestWithPromise({
+            method: 'GET',
+            url: `/scaling-groups?${search.toString()}`,
+          }),
+          baiRequestWithPromise({
+            method: 'GET',
+            url: `/folders/_/hosts`,
+          }),
+        ]);
+      } catch (error) {
+        console.error('Failed to fetch resource group data:', error);
+        return null; // Return null on error to prevent crash
+      }
     },
-    staleTime: 0,
-    fetchKey: fetchKey,
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    retry: false, // Disable retry
+    refetchOnWindowFocus: false, // Disable refetch on window focus
   });
 
   const sftpResourceGroups = _.flatMap(
-    resourceGroupSelectQueryResult?.[1].volume_info,
+    resourceGroupSelectQueryResult?.[1]?.volume_info || {},
     (item) => item?.sftp_scaling_groups ?? [],
   );
 
   const resourceGroups = _.filter(
-    resourceGroupSelectQueryResult?.[0].scaling_groups,
-    (item) => {
+    resourceGroupSelectQueryResult?.[0]?.scaling_groups || [],
+    (item: { name: string }) => {
       if (_.includes(sftpResourceGroups, item.name)) {
         return false;
       }
@@ -109,7 +116,10 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
   useEffect(() => {
     if (
       controllableValue &&
-      !_.some(resourceGroups, (item) => item.name === controllableValue)
+      !_.some(
+        resourceGroups,
+        (item: { name: string }) => item.name === controllableValue,
+      )
     ) {
       setControllableValueWithTransition(undefined);
     }
@@ -156,7 +166,7 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
       defaultActiveFirstOption
       {...searchProps}
       defaultValue={autoSelectDefault ? autoSelectedOption : undefined}
-      loading={loading || isPendingChangeTransition}
+      loading={loading || isPendingChangeTransition || isLoading}
       disabled={isPendingChangeTransition}
       options={_.map(resourceGroups, (resourceGroup) => {
         return { value: resourceGroup.name, label: resourceGroup.name };
