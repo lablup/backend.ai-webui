@@ -84,9 +84,13 @@ const SessionLauncherPreview: React.FC<{
             <>
               <Descriptions.Item
                 label={t('session.launcher.StartUpCommand')}
-                labelStyle={{ whiteSpace: 'nowrap' }}
-                contentStyle={{
-                  overflow: 'auto',
+                styles={{
+                  label: {
+                    whiteSpace: 'nowrap',
+                  },
+                  content: {
+                    overflow: 'auto',
+                  },
                 }}
               >
                 {form.getFieldValue(['batch', 'command']) ? (
@@ -563,10 +567,12 @@ const SessionLauncherPreview: React.FC<{
                   },
                 },
               ]}
-              dataSource={_.map(form.getFieldValue('mounts'), (v) => {
+              dataSource={_.map(form.getFieldValue('selectedFolders'), (v) => {
                 return {
-                  name: v,
-                  alias: form.getFieldValue('vfoldersAliasMap')?.[v],
+                  name: v.name,
+                  alias:
+                    form.getFieldValue('vfoldersAliasMap')?.[v.id] ||
+                    form.getFieldValue('vfoldersAliasMap')?.[v.name],
                 };
               })}
             ></Table>

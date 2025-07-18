@@ -69,7 +69,10 @@ type DataIndex = keyof VFolder;
 export interface VFolderTableProps extends Omit<TableProps<VFolder>, 'rowKey'> {
   showAliasInput?: boolean;
   selectedRowKeys?: VFolderKey[];
-  onChangeSelectedRowKeys?: (selectedKeys: VFolderKey[]) => void;
+  onChangeSelectedRowKeys?: (
+    selectedKeys: VFolderKey[],
+    selectedVFolders: VFolder[],
+  ) => void;
   aliasBasePath?: string;
   aliasMap?: AliasMap;
   onChangeAliasMap?: (aliasMap: AliasMap) => void;
@@ -90,7 +93,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   aliasBasePath = DEFAULT_ALIAS_BASE_PATH,
   aliasMap: controlledAliasMap,
   onChangeAliasMap,
-  rowKey = 'name',
+  rowKey = 'id',
   onChangeAutoMountedFolders,
   showAutoMountedFoldersSection,
   ownerEmail,
@@ -111,7 +114,12 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   >(
     {
       value: controlledSelectedRowKeys,
-      onChange: onChangeSelectedRowKeys,
+      onChange: (selectedKeys: VFolderKey[]) => {
+        const selectedVFolders = _.filter(displayingFolders, (folder) =>
+          _.includes(selectedKeys, getRowKey(folder)),
+        );
+        onChangeSelectedRowKeys?.(selectedKeys, selectedVFolders);
+      },
     },
     {
       defaultValue: [],
@@ -256,7 +264,10 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   }, [autoMountedFolderNamesByPermission]);
 
   useEffect(() => {
-    setSelectedRowKeys([]);
+    // Only reset selectedRowKeys when currentProject changes if there are no controlled selectedRowKeys
+    if (!controlledSelectedRowKeys || controlledSelectedRowKeys.length === 0) {
+      setSelectedRowKeys([]);
+    }
     // Reset selectedRowKeys when currentProject changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentProject.id]);

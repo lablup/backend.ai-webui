@@ -96,6 +96,11 @@ import {
   withDefault,
 } from 'use-query-params';
 
+type SessionLauncherFormData = Omit<
+  Required<OptionalFieldsOnly<SessionLauncherFormValue>>,
+  'autoMountedFolderNames' | 'selectedFolders'
+>;
+
 export interface SessionResources {
   group_name?: string;
   domain?: string;
@@ -273,18 +278,20 @@ const SessionLauncherPage = () => {
       const currentValue = form.getFieldsValue();
       setQuery(
         {
-          // formValues: form.getFieldsValue(),
-          formValues: _.extend(
-            _.omit(
-              form.getFieldsValue(),
-              ['environments.image'],
-              ['environments.customizedTag'],
-              ['autoMountedFolderNames'],
-              ['owner'],
-              ['envvars'],
-            ),
+          formValues: _.assign(
+            _.omit(form.getFieldsValue(), [
+              'environments.image',
+              'environments.customizedTag',
+              'autoMountedFolderNames',
+              'owner',
+              'envvars',
+              'selectedFolders',
+            ]),
             {
               envvars: sanitizeSensitiveEnv(currentValue.envvars),
+              selectedFolders: _.map(currentValue.selectedFolders, (folder) =>
+                _.pick(folder, ['id', 'name']),
+              ),
             },
           ),
         },
@@ -1411,6 +1418,8 @@ const SessionLauncherPage = () => {
 
                       return (
                         <VFolderTableFormItem
+                          // TODO: version control after BA-1915 is implemented
+                          rowKey="id"
                           filter={(vfolder) => {
                             return (
                               vfolder.status === 'ready' &&
@@ -1426,7 +1435,6 @@ const SessionLauncherPage = () => {
                       );
                     }}
                   </Form.Item>
-                  {/* <VFolderTable /> */}
                 </Card>
 
                 {/* Step Start*/}
@@ -1601,10 +1609,7 @@ const SessionLauncherPage = () => {
                   scheduleDate: undefined,
                 },
                 agent: 'auto', // Add the missing 'agent' property
-              } as Omit<
-                Required<OptionalFieldsOnly<SessionLauncherFormValue>>,
-                'autoMountedFolderNames'
-              >,
+              } as SessionLauncherFormData,
               formValue,
             );
 
@@ -1612,7 +1617,7 @@ const SessionLauncherPage = () => {
               fieldsValue.sessionName =
                 fieldsValue.sessionName + '-' + generateRandomString(4);
             }
-            form.setFieldsValue(fieldsValue);
+            form.setFieldsValue(fieldsValue as SessionLauncherFormData);
             setCurrentStep(steps.length - 1);
             form.validateFields().catch(() => {});
           }
