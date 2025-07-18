@@ -1,8 +1,21 @@
 {
   "name": "backend.ai-ui",
-  "version": "1.0.0",
-  "private": true,
-  "description": "Shared UI components for Backend.AI",
+  "version": "0.0.1",
+  "description": "React components for Backend.AI",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lablup/backend.ai-webui/tree/main/packages/backend.ai-ui"
+  },
+  "bugs": {
+    "url": "https://github.com/lablup/backend.ai-webui/issues"
+  },
+  "author": "Lablup Inc. <contact@lablup.com>",
+  "license": "LGPL-3.0-or-later",
+  "keywords": [
+    "backend.ai",
+    "component",
+    "react"
+  ],
   "main": "./dist/backend.ai-ui.js",
   "module": "./dist/backend.ai-ui.js",
   "types": "./dist/index.d.ts",
@@ -49,8 +62,8 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-i18next": "^15.4.1",
-    "react-relay": "^18.2.0",
-    "relay-runtime": "^18.2.0"
+    "react-relay": "^19.0.0",
+    "relay-runtime": "^19.0.0"
   },
   "devDependencies": {
     "@storybook/addon-docs": "^9.0.0",
@@ -62,7 +75,7 @@
     "@types/lodash": "^4.17.13",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "@types/react-relay": "^18.2.0",
+    "@types/react-relay": "^18.2.1",
     "@vitejs/plugin-react": "^4.5.0",
     "eslint": "^8.57.1",
     "eslint-config-react-app": "^7.0.1",
