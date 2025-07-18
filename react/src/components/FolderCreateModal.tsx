@@ -4,6 +4,7 @@ import { useCurrentUserRole } from '../hooks/backendai';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import BAIErrorBoundary from './BAIErrorBoundary';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import ProjectSelect from './ProjectSelect';
@@ -303,14 +304,23 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
 
         <Form.Item label={t('data.folders.Location')} name={'host'}>
           <Suspense fallback={<Skeleton.Input active />}>
-            <StorageSelect
-              onChange={(value) => {
-                formRef.current?.setFieldValue('host', value);
+            <BAIErrorBoundary
+              onError={(error) => {
+                console.warn(
+                  'StorageSelect error in FolderCreateModal:',
+                  error,
+                );
               }}
-              showUsageStatus
-              autoSelectType="usage"
-              showSearch
-            />
+            >
+              <StorageSelect
+                onChange={(value) => {
+                  formRef.current?.setFieldValue('host', value);
+                }}
+                showUsageStatus
+                autoSelectType="usage"
+                showSearch
+              />
+            </BAIErrorBoundary>
           </Suspense>
         </Form.Item>
         <Divider />
