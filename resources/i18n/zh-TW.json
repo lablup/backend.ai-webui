@@ -549,6 +549,7 @@
     "Digest": "消化",
     "Disabled": "殘疾",
     "ErrorMinimumValue": "{{key}}必須至少為{{value}}",
+    "FailedToDeleteCustomizedImage": "無法刪除自定義圖像。",
     "FullImagePath": "完整影像路徑",
     "ImageReinstallationRequired": "需要恢復圖像",
     "Images": "圖片",

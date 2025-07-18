@@ -548,6 +548,7 @@
     "Digest": "strawić",
     "Disabled": "niepełnosprawny",
     "ErrorMinimumValue": "{{key}} musi być co najmniej {{value}}",
+    "FailedToDeleteCustomizedImage": "Nie udało się usunąć dostosowanego obrazu.",
     "FullImagePath": "Pełna ścieżka obrazu",
     "ImageReinstallationRequired": "Wymagana ponowna instalacja obrazu",
     "Images": "Obrazy",

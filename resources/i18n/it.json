@@ -547,6 +547,7 @@
     "Digest": "digerire",
     "Disabled": "Disabilitato",
     "ErrorMinimumValue": "{{ key }} deve essere almeno {{ value }}",
+    "FailedToDeleteCustomizedImage": "Impossibile eliminare l'immagine personalizzata.",
     "FullImagePath": "Percorso completo dell'immagine",
     "ImageReinstallationRequired": "Richiesta di reinstallazione dell'immagine",
     "Images": "immagini",

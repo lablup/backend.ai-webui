@@ -1,8 +1,9 @@
-import { CustomizedImageListForgetAndUntagMutation } from '../__generated__/CustomizedImageListForgetAndUntagMutation.graphql';
+import { CustomizedImageListForgetMutation } from '../__generated__/CustomizedImageListForgetMutation.graphql';
 import {
   CustomizedImageListQuery,
   CustomizedImageListQuery$data,
 } from '../__generated__/CustomizedImageListQuery.graphql';
+import { CustomizedImageListUntagMutation } from '../__generated__/CustomizedImageListUntagMutation.graphql';
 import Flex from '../components/Flex';
 import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
 import {
@@ -101,19 +102,40 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
     },
   );
 
-  const [commitForgetAndUntag, isInflightForgetAndUntag] =
-    useMutation<CustomizedImageListForgetAndUntagMutation>(graphql`
-      mutation CustomizedImageListForgetAndUntagMutation($id: String!) {
-        untag_image_from_registry(image_id: $id) {
-          ok
-          msg
-        }
+  const [commitForget, isInFlightForget] =
+    useMutation<CustomizedImageListForgetMutation>(graphql`
+      mutation CustomizedImageListForgetMutation($id: String!) {
         forget_image_by_id(image_id: $id) {
           ok
           msg
         }
       }
     `);
+
+  const [commitUntag, isInFlightUntag] =
+    useMutation<CustomizedImageListUntagMutation>(graphql`
+      mutation CustomizedImageListUntagMutation($id: String!) {
+        untag_image_from_registry(image_id: $id) {
+          ok
+          msg
+        }
+      }
+    `);
+
+  // TODO: when BA-1905 resolved.
+  // const [commitPurgeImage, isInFlightPurgeImage] =
+  //   useMutation<CustomizedImageListPurgeMutation>(graphql`
+  //     mutation CustomizedImageListPurgeMutation($id: String!) {
+  //       purge_image_by_id(
+  //         image_id: $id
+  //         options: { remove_from_registry: true }
+  //       ) {
+  //         image {
+  //           id
+  //         }
+  //       }
+  //     }
+  //   `);
 
   // Sort images by humanized_name to prevent the image list from jumping around when the images are updated
   // TODO: after `images` query  supports sort order, we should remove this line
@@ -350,47 +372,66 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
             onConfirm={() => {
               if (row?.id) {
                 setInFlightImageId(row.id + customizedImageListFetchKey);
-                commitForgetAndUntag({
-                  variables: {
-                    id: row.id,
-                  },
-                  onCompleted(res, errors) {
+                // TODO: when BA-1905 resolved. use commitPurgeImage
+                commitUntag({
+                  variables: { id: row.id },
+                  onCompleted: (res, errors) => {
                     if (
-                      !_.isNil(res?.forget_image_by_id) &&
-                      !res?.forget_image_by_id?.ok
+                      !_.isNil(res.untag_image_from_registry) &&
+                      !res.untag_image_from_registry.ok
                     ) {
-                      message.error(res?.forget_image_by_id?.msg);
+                      message.error(res.untag_image_from_registry.msg);
                       return;
                     }
-
-                    if (
-                      !_.isNil(res?.untag_image_from_registry) &&
-                      !res?.untag_image_from_registry?.ok
-                    ) {
-                      message.error(res?.untag_image_from_registry?.msg);
-                      return;
-                    }
-
                     if (errors && errors?.length > 0) {
                       const errorMsgList = _.map(
                         errors,
                         (error) => error.message,
                       );
-                      for (const error of errorMsgList) {
-                        message.error(error);
+                      for (const errorMsg of errorMsgList) {
+                        message.error(errorMsg);
                       }
                       return;
                     }
-
-                    startRefetchTransition(() => {
-                      updateCustomizedImageListFetchKey();
+                    commitForget({
+                      variables: { id: row.id },
+                      onCompleted: (res, errors) => {
+                        setInFlightImageId(undefined);
+                        if (
+                          !_.isNil(res.forget_image_by_id) &&
+                          !res.forget_image_by_id.ok
+                        ) {
+                          message.error(res.forget_image_by_id.msg);
+                          return;
+                        }
+                        if (errors && errors?.length > 0) {
+                          const errorMsgList = _.map(
+                            errors,
+                            (error) => error.message,
+                          );
+                          for (const errorMsg of errorMsgList) {
+                            message.error(errorMsg);
+                          }
+                          return;
+                        }
+                        startRefetchTransition(() => {
+                          updateCustomizedImageListFetchKey();
+                        });
+                        message.success(
+                          t('environment.CustomizedImageSuccessfullyDeleted'),
+                        );
+                      },
+                      onError: () => {
+                        message.error(
+                          t('environment.FailedToDeleteCustomizedImage'),
+                        );
+                      },
                     });
-                    message.success(
-                      t('environment.CustomizedImageSuccessfullyDeleted'),
-                    );
                   },
-                  onError(err) {
-                    message.error(err?.message);
+                  onError: () => {
+                    message.error(
+                      t('environment.FailedToDeleteCustomizedImage'),
+                    );
                   },
                 });
               }
@@ -401,11 +442,11 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
               icon={<DeleteOutlined />}
               danger
               loading={
-                isInflightForgetAndUntag &&
+                (isInFlightForget || isInFlightUntag) &&
                 inFlightImageId === row?.id + customizedImageListFetchKey
               }
               disabled={
-                isInflightForgetAndUntag &&
+                (isInFlightForget || isInFlightUntag) &&
                 inFlightImageId !== row?.id + customizedImageListFetchKey
               }
             />

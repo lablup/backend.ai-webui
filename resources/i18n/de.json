@@ -548,6 +548,7 @@
     "Digest": "Verdauen",
     "Disabled": "deaktiviert",
     "ErrorMinimumValue": "{{key}} muss mindestens {{value}} sein",
+    "FailedToDeleteCustomizedImage": "Das kundenspezifische Bild nicht löschen.",
     "FullImagePath": "Vollständiger Bildpfad",
     "ImageReinstallationRequired": "Bild neu installation erforderlich",
     "Images": "Bilder",

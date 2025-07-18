@@ -547,6 +547,7 @@
     "Digest": "ダイジェスト",
     "Disabled": "無効",
     "ErrorMinimumValue": "{{key}}は、少なくとも{{value}}でなければなりません",
+    "FailedToDeleteCustomizedImage": "カスタマイズされた画像を削除できませんでした。",
     "FullImagePath": "完全な画像パス",
     "ImageReinstallationRequired": "画像の再インストールが必要です",
     "Images": "画像",
