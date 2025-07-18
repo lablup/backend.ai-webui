@@ -66,38 +66,15 @@ export const useCurrentResourceGroupState = () => {
 const resourceGroupsForCurrentProjectAtom = atom(async (get) => {
   // NOTE: cannot use hook inside atom
   const currentProject = get(currentProjectAtom);
-
-  // First, fetch scaling groups (required)
-  const resourceGroups = await // @ts-ignore
-  (globalThis.backendaiclient.scalingGroup.list(
-    currentProject.name,
-  ) as Promise<{
-    scaling_groups: {
-      name: string;
-    }[];
-  }>);
-
-  // Vhost info is handled with default values even if errors occur
-  let vhostInfo: {
-    allowed: string[];
-    default: string;
-    volume_info: {
-      [key: string]: {
-        backend: string;
-        capabilities: string[];
-        usage: {
-          percentage: number;
-        };
-        sftp_scaling_groups?: string[];
-      };
-    };
-  };
-
-  try {
-    vhostInfo = await // @ts-ignore
-    (globalThis.backendaiclient.vfolder.list_hosts(
-      currentProject.id,
-    ) as Promise<{
+  const [resourceGroups, vhostInfo] = await Promise.all([
+    // @ts-ignore
+    globalThis.backendaiclient.scalingGroup.list(currentProject.name) as {
+      scaling_groups: {
+        name: string;
+      }[];
+    },
+    // @ts-ignore
+    globalThis.backendaiclient.vfolder.list_hosts(currentProject.id) as {
       allowed: string[];
       default: string;
       volume_info: {
@@ -110,20 +87,28 @@ const resourceGroupsForCurrentProjectAtom = atom(async (get) => {
           sftp_scaling_groups?: string[];
         };
       };
-    }>);
-  } catch (error) {
-    console.warn('Failed to fetch vhost info, using fallback:', error);
-    // Use default values when vhost info acquisition fails
-    vhostInfo = {
-      allowed: [],
-      default: '',
-      volume_info: {},
-    };
-  }
+    },
+  ]).catch((error) => {
+    console.error(error);
+    return [
+      { scaling_groups: [] },
+      {
+        allowed: [],
+        default: '',
+        volume_info: {},
+      },
+    ];
+  });
 
   const allSftpScalingGroups = _.uniq(
     _.flatten(
-      _.map(vhostInfo.volume_info, (volume) => volume.sftp_scaling_groups),
+      _.map(
+        vhostInfo.volume_info as Record<
+          string,
+          { sftp_scaling_groups?: string[] }
+        >,
+        (volume) => volume?.sftp_scaling_groups,
+      ),
     ),
   );
 

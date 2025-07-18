@@ -61,7 +61,7 @@ const StorageSelect: React.FC<Props> = ({
       try {
         return await baiClient.vfolder.list_hosts();
       } catch (error) {
-        console.warn('Failed to fetch vhost info in StorageSelect:', error);
+        console.warn('Failed to fetch vhost info in StorageSelect. Storage selection may be unavailable:', error);
         return null; // Return null on error to prevent crash
       }
     },

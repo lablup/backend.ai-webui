@@ -303,15 +303,12 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         <Divider />
 
         <Form.Item label={t('data.folders.Location')} name={'host'}>
-          <Suspense fallback={<Skeleton.Input active />}>
-            <BAIErrorBoundary
-              onError={(error) => {
-                console.warn(
-                  'StorageSelect error in FolderCreateModal:',
-                  error,
-                );
-              }}
-            >
+          <BAIErrorBoundary
+            onError={(error) => {
+              console.warn('StorageSelect error in FolderCreateModal:', error);
+            }}
+          >
+            <Suspense fallback={<Skeleton.Input active />}>
               <StorageSelect
                 onChange={(value) => {
                   formRef.current?.setFieldValue('host', value);
@@ -320,8 +317,8 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                 autoSelectType="usage"
                 showSearch
               />
-            </BAIErrorBoundary>
-          </Suspense>
+            </Suspense>
+          </BAIErrorBoundary>
         </Form.Item>
         <Divider />
 
