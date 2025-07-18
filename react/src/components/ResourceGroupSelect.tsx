@@ -1,11 +1,11 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useUpdatableState } from '../hooks';
-import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
+import { useSuspenseTanQuery, useTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState from '../hooks/useControllableState';
 import TextHighlighter from './TextHighlighter';
 import { Select, SelectProps } from 'antd';
 import _ from 'lodash';
-import React, { useEffect, useState, useTransition } from 'react';
+import React, { useEffect, useState, useTransition, useMemo } from 'react';
 
 interface ResourceGroupSelectProps extends SelectProps {
   projectName: string;
@@ -45,56 +45,73 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
     [startChangeTransition, setControllableValueDoNotUseWithoutTransition],
   );
 
-  const { data: resourceGroupSelectQueryResult } = useSuspenseTanQuery<
-    [
-      {
-        scaling_groups: {
-          name: string;
-        }[];
-      },
-      {
-        allowed: string[];
-        default: string;
-        volume_info: {
-          [key: string]: {
-            backend: string;
-            capabilities: string[];
-            usage: {
-              percentage: number;
-            };
-            sftp_scaling_groups?: string[];
-          };
-        };
-      },
-    ]
-  >({
-    queryKey: ['ResourceGroupSelectQuery', projectName],
+  const { data: scalingGroupsData } = useSuspenseTanQuery<{
+    scaling_groups: {
+      name: string;
+    }[];
+  }>({
+    queryKey: ['ScalingGroupsQuery', projectName],
     queryFn: () => {
       const search = new URLSearchParams();
       search.set('group', projectName);
-      return Promise.all([
-        baiRequestWithPromise({
-          method: 'GET',
-          url: `/scaling-groups?${search.toString()}`,
-        }),
-        baiRequestWithPromise({
-          method: 'GET',
-          url: `/folders/_/hosts`,
-        }),
-      ]);
+      return baiRequestWithPromise({
+        method: 'GET',
+        url: `/scaling-groups?${search.toString()}`,
+      });
     },
     staleTime: 0,
     fetchKey: fetchKey,
   });
 
-  const sftpResourceGroups = _.flatMap(
-    resourceGroupSelectQueryResult?.[1].volume_info,
-    (item) => item?.sftp_scaling_groups ?? [],
-  );
+  const {
+    data: hostsData,
+    isLoading: isHostsLoading,
+    isError: isHostsError,
+  } = useTanQuery<{
+    allowed: string[];
+    default: string;
+    volume_info: {
+      [key: string]: {
+        backend: string;
+        capabilities: string[];
+        usage: {
+          percentage: number;
+        };
+        sftp_scaling_groups?: string[];
+      };
+    };
+  } | null>({
+    queryKey: ['HostsQuery', fetchKey],
+    queryFn: async () => {
+      try {
+        return await baiRequestWithPromise({
+          method: 'GET',
+          url: `/folders/_/hosts`,
+        });
+      } catch (error) {
+        console.warn('Failed to fetch hosts data:', error);
+        return null; // Return null on error
+      }
+    },
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    retry: false, // Disable retry
+    refetchOnWindowFocus: false, // Disable refetch on window focus
+  });
+
+  // SFTP resource groups filtering - use empty array when hosts data is loading, error, or unavailable
+  const sftpResourceGroups = useMemo(() => {
+    if (isHostsLoading || isHostsError || !hostsData) {
+      return []; // Skip SFTP filtering when loading or error occurs
+    }
+    return _.flatMap(
+      hostsData.volume_info,
+      (item) => item?.sftp_scaling_groups ?? [],
+    );
+  }, [hostsData, isHostsLoading, isHostsError]);
 
   const resourceGroups = _.filter(
-    resourceGroupSelectQueryResult?.[0].scaling_groups,
-    (item) => {
+    scalingGroupsData?.scaling_groups,
+    (item: { name: string }) => {
       if (_.includes(sftpResourceGroups, item.name)) {
         return false;
       }
@@ -109,7 +126,10 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
   useEffect(() => {
     if (
       controllableValue &&
-      !_.some(resourceGroups, (item) => item.name === controllableValue)
+      !_.some(
+        resourceGroups,
+        (item: { name: string }) => item.name === controllableValue,
+      )
     ) {
       setControllableValueWithTransition(undefined);
     }
@@ -156,7 +176,7 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
       defaultActiveFirstOption
       {...searchProps}
       defaultValue={autoSelectDefault ? autoSelectedOption : undefined}
-      loading={loading || isPendingChangeTransition}
+      loading={loading || isPendingChangeTransition || isHostsLoading}
       disabled={isPendingChangeTransition}
       options={_.map(resourceGroups, (resourceGroup) => {
         return { value: resourceGroup.name, label: resourceGroup.name };

@@ -219,7 +219,7 @@ function MainLayout() {
                 </div>
               </Suspense>
               {/* Non sticky Alert components */}
-              <Suspense>
+              <Suspense fallback={<div style={{ minHeight: '0px' }} />}>
                 <Flex
                   direction="column"
                   gap={'sm'}
