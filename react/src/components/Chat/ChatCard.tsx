@@ -107,32 +107,36 @@ function useModels(
 
       const url = createModelsURL(baseURL);
       const authToken = provider.apiKey;
-      const result = await fetch(url, {
-        headers: {
-          Authorization: authToken ? `Bearer ${authToken}` : '',
-        },
-      })
-        .then((res) => res.json())
-        .catch((e) => {
-          return {
-            ok: false,
-            status: -1,
-          } as const;
+      try {
+        const response = await fetch(url, {
+          headers: {
+            Authorization: authToken ? `Bearer ${authToken}` : '',
+          },
         });
 
-      if (result.ok === false) {
-        return { data: [], error: result?.status };
+        if (!response.ok) {
+          return { data: [], error: response.status };
+        }
+
+        const result = await response.json();
+        if (!_.isArray(result?.data)) {
+          throw new Error('Invalid response format');
+        }
+        return result;
+      } catch (error) {
+        return { data: [], error: -1 };
       }
-      return result;
     },
-    select: (res) => ({
-      data: res
-        ? res.data.map((model) => ({
-            id: model.id,
-            name: model.id,
-          }))
-        : [],
-    }),
+    select: (res) => {
+      return {
+        data: res.data
+          ? res.data.map((model) => ({
+              id: model.id,
+              name: model.id,
+            }))
+          : [],
+      };
+    },
   });
 
   const modelId = useMemo(
