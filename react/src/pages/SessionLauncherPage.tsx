@@ -186,9 +186,12 @@ export type SessionLauncherStepKey =
   | 'storage'
   | 'network'
   | 'review';
+
 interface StepPropsWithKey extends StepProps {
   key: SessionLauncherStepKey;
 }
+
+export const SESSION_LAUNCHER_NOTI_PREFIX = 'session-launcher:';
 
 const SessionLauncherPage = () => {
   const app = App.useApp();
@@ -598,7 +601,7 @@ const SessionLauncherPage = () => {
         const backupTo = window.location.pathname + window.location.search;
         webuiNavigate(redirectTo || '/job');
         upsertNotification({
-          key: 'session-launcher:' + sessionName,
+          key: SESSION_LAUNCHER_NOTI_PREFIX + sessionName,
           backgroundTask: {
             promise: Promise.all(sessionPromises),
             status: 'pending',
