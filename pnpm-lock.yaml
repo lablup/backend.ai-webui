@@ -460,10 +460,10 @@ importers:
         version: 4.17.21
       react:
         specifier: ^19.0.0
-        version: 18.3.1
+        version: 19.0.0
       react-dom:
         specifier: ^19.0.0
-        version: 18.3.1(react@18.3.1)
+        version: 19.0.0(react@19.0.0)
       react-i18next:
         specifier: ^15.4.1
         version: 15.4.1(i18next@24.2.3(typescript@5.8.2))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -485,13 +485,13 @@ importers:
         version: 8.4.5(storybook@9.0.0(@testing-library/dom@10.4.0)(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4))
       '@storybook/addon-links':
         specifier: ^8.4.5
-        version: 8.4.5(react@18.3.1)(storybook@9.0.0(@testing-library/dom@10.4.0)(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4))
+        version: 8.4.5(react@19.0.0)(storybook@9.0.0(@testing-library/dom@10.4.0)(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4))
       '@storybook/addon-onboarding':
         specifier: ^9.0.0
         version: 9.0.0(storybook@9.0.0(@testing-library/dom@10.4.0)(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4))
       '@storybook/react-vite':
         specifier: ^9.0.0
-        version: 9.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.41.1)(storybook@9.0.0(@testing-library/dom@10.4.0)(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4))(typescript@5.8.2)(vite@6.3.5(@types/node@22.4.1)(jiti@1.21.6)(terser@5.31.4)(yaml@2.5.0))
+        version: 9.0.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(rollup@4.41.1)(storybook@9.0.0(@testing-library/dom@10.4.0)(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4))(typescript@5.8.2)(vite@6.3.5(@types/node@22.4.1)(jiti@1.21.6)(terser@5.31.4)(yaml@2.5.0))
       '@types/big.js':
         specifier: ^6.2.2
         version: 6.2.2
@@ -512,7 +512,7 @@ importers:
         version: 4.5.0(vite@6.3.5(@types/node@22.4.1)(jiti@1.21.6)(terser@5.31.4)(yaml@2.5.0))
       ahooks:
         specifier: ^3.8.4
-        version: 3.8.4(react@18.3.1)
+        version: 3.8.4(react@19.0.0)
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
@@ -539,7 +539,7 @@ importers:
         version: 16.10.0
       lucide-react:
         specifier: ^0.484.0
-        version: 0.484.0(react@18.3.1)
+        version: 0.484.0(react@19.0.0)
       storybook:
         specifier: ^9.0.0
         version: 9.0.0(@testing-library/dom@10.4.0)(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4)
@@ -18649,7 +18649,7 @@ snapshots:
 
   '@material/base@14.0.0-canary.53b3cad2f.0':
     dependencies:
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@material/button@14.0.0-canary.53b3cad2f.0':
     dependencies:
@@ -18675,7 +18675,7 @@ snapshots:
       '@material/progress-indicator': 14.0.0-canary.53b3cad2f.0
       '@material/rtl': 14.0.0-canary.53b3cad2f.0
       '@material/theme': 14.0.0-canary.53b3cad2f.0
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@material/density@14.0.0-canary.53b3cad2f.0':
     dependencies:
@@ -18697,12 +18697,12 @@ snapshots:
       '@material/tokens': 14.0.0-canary.53b3cad2f.0
       '@material/touch-target': 14.0.0-canary.53b3cad2f.0
       '@material/typography': 14.0.0-canary.53b3cad2f.0
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@material/dom@14.0.0-canary.53b3cad2f.0':
     dependencies:
       '@material/feature-targeting': 14.0.0-canary.53b3cad2f.0
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@material/drawer@14.0.0-canary.53b3cad2f.0':
     dependencies:
@@ -18717,7 +18717,7 @@ snapshots:
       '@material/shape': 14.0.0-canary.53b3cad2f.0
       '@material/theme': 14.0.0-canary.53b3cad2f.0
       '@material/typography': 14.0.0-canary.53b3cad2f.0
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@material/elevation@14.0.0-canary.53b3cad2f.0':
     dependencies:
@@ -18741,7 +18741,7 @@ snapshots:
       '@material/rtl': 14.0.0-canary.53b3cad2f.0
       '@material/theme': 14.0.0-canary.53b3cad2f.0
       '@material/typography': 14.0.0-canary.53b3cad2f.0
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@material/focus-ring@14.0.0-canary.53b3cad2f.0':
     dependencies:
@@ -18757,7 +18757,7 @@ snapshots:
       '@material/rtl': 14.0.0-canary.53b3cad2f.0
       '@material/theme': 14.0.0-canary.53b3cad2f.0
       '@material/typography': 14.0.0-canary.53b3cad2f.0
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@material/icon-button@14.0.0-canary.53b3cad2f.0':
     dependencies:
@@ -18779,7 +18779,7 @@ snapshots:
       '@material/base': 14.0.0-canary.53b3cad2f.0
       '@material/feature-targeting': 14.0.0-canary.53b3cad2f.0
       '@material/theme': 14.0.0-canary.53b3cad2f.0
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@material/linear-progress@14.0.0-canary.53b3cad2f.0':
     dependencies:
@@ -18790,7 +18790,7 @@ snapshots:
       '@material/progress-indicator': 14.0.0-canary.53b3cad2f.0
       '@material/rtl': 14.0.0-canary.53b3cad2f.0
       '@material/theme': 14.0.0-canary.53b3cad2f.0
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@material/list@14.0.0-canary.53b3cad2f.0':
     dependencies:
@@ -18803,7 +18803,7 @@ snapshots:
       '@material/shape': 14.0.0-canary.53b3cad2f.0
       '@material/theme': 14.0.0-canary.53b3cad2f.0
       '@material/typography': 14.0.0-canary.53b3cad2f.0
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@material/menu-surface@14.0.0-canary.53b3cad2f.0':
     dependencies:
@@ -18814,7 +18814,7 @@ snapshots:
       '@material/rtl': 14.0.0-canary.53b3cad2f.0
       '@material/shape': 14.0.0-canary.53b3cad2f.0
       '@material/theme': 14.0.0-canary.53b3cad2f.0
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@material/menu@14.0.0-canary.53b3cad2f.0':
     dependencies:
@@ -18827,14 +18827,14 @@ snapshots:
       '@material/ripple': 14.0.0-canary.53b3cad2f.0
       '@material/rtl': 14.0.0-canary.53b3cad2f.0
       '@material/theme': 14.0.0-canary.53b3cad2f.0
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@material/mwc-base@0.27.0':
     dependencies:
       '@material/base': 14.0.0-canary.53b3cad2f.0
       '@material/dom': 14.0.0-canary.53b3cad2f.0
       lit: 2.8.0
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@material/mwc-button@0.27.0':
     dependencies:
@@ -18882,7 +18882,7 @@ snapshots:
     dependencies:
       '@material/floating-label': 14.0.0-canary.53b3cad2f.0
       lit: 2.8.0
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@material/mwc-formfield@0.27.0':
     dependencies:
@@ -18952,7 +18952,7 @@ snapshots:
       '@material/mwc-base': 0.27.0
       '@material/notched-outline': 14.0.0-canary.53b3cad2f.0
       lit: 2.8.0
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@material/mwc-radio@0.27.0':
     dependencies:
@@ -19026,7 +19026,7 @@ snapshots:
       '@material/mwc-base': 0.27.0
       '@material/tab-indicator': 14.0.0-canary.53b3cad2f.0
       lit: 2.8.0
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@material/mwc-tab-scroller@0.27.0':
     dependencies:
@@ -19034,7 +19034,7 @@ snapshots:
       '@material/mwc-base': 0.27.0
       '@material/tab-scroller': 14.0.0-canary.53b3cad2f.0
       lit: 2.8.0
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@material/mwc-tab@0.27.0':
     dependencies:
@@ -19076,7 +19076,7 @@ snapshots:
       '@material/mwc-base': 0.27.0
       '@material/top-app-bar': 14.0.0-canary.53b3cad2f.0
       lit: 2.8.0
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@material/notched-outline@14.0.0-canary.53b3cad2f.0':
     dependencies:
@@ -19103,7 +19103,7 @@ snapshots:
       '@material/ripple': 14.0.0-canary.53b3cad2f.0
       '@material/theme': 14.0.0-canary.53b3cad2f.0
       '@material/touch-target': 14.0.0-canary.53b3cad2f.0
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@material/ripple@14.0.0-canary.53b3cad2f.0':
     dependencies:
@@ -19113,7 +19113,7 @@ snapshots:
       '@material/feature-targeting': 14.0.0-canary.53b3cad2f.0
       '@material/rtl': 14.0.0-canary.53b3cad2f.0
       '@material/theme': 14.0.0-canary.53b3cad2f.0
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@material/rtl@14.0.0-canary.53b3cad2f.0':
     dependencies:
@@ -19140,14 +19140,14 @@ snapshots:
       '@material/theme': 14.0.0-canary.53b3cad2f.0
       '@material/tokens': 14.0.0-canary.53b3cad2f.0
       '@material/typography': 14.0.0-canary.53b3cad2f.0
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@material/shape@14.0.0-canary.53b3cad2f.0':
     dependencies:
       '@material/feature-targeting': 14.0.0-canary.53b3cad2f.0
       '@material/rtl': 14.0.0-canary.53b3cad2f.0
       '@material/theme': 14.0.0-canary.53b3cad2f.0
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@material/slider@14.0.0-canary.53b3cad2f.0':
     dependencies:
@@ -19160,7 +19160,7 @@ snapshots:
       '@material/rtl': 14.0.0-canary.53b3cad2f.0
       '@material/theme': 14.0.0-canary.53b3cad2f.0
       '@material/typography': 14.0.0-canary.53b3cad2f.0
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@material/snackbar@14.0.0-canary.53b3cad2f.0':
     dependencies:
@@ -19176,7 +19176,7 @@ snapshots:
       '@material/shape': 14.0.0-canary.53b3cad2f.0
       '@material/theme': 14.0.0-canary.53b3cad2f.0
       '@material/typography': 14.0.0-canary.53b3cad2f.0
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@material/switch@14.0.0-canary.53b3cad2f.0':
     dependencies:
@@ -19192,7 +19192,7 @@ snapshots:
       '@material/shape': 14.0.0-canary.53b3cad2f.0
       '@material/theme': 14.0.0-canary.53b3cad2f.0
       '@material/tokens': 14.0.0-canary.53b3cad2f.0
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@material/tab-bar@14.0.0-canary.53b3cad2f.0':
     dependencies:
@@ -19206,7 +19206,7 @@ snapshots:
       '@material/tab-scroller': 14.0.0-canary.53b3cad2f.0
       '@material/theme': 14.0.0-canary.53b3cad2f.0
       '@material/typography': 14.0.0-canary.53b3cad2f.0
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@material/tab-indicator@14.0.0-canary.53b3cad2f.0':
     dependencies:
@@ -19236,7 +19236,7 @@ snapshots:
       '@material/tab-indicator': 14.0.0-canary.53b3cad2f.0
       '@material/theme': 14.0.0-canary.53b3cad2f.0
       '@material/typography': 14.0.0-canary.53b3cad2f.0
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@material/textfield@14.0.0-canary.53b3cad2f.0':
     dependencies:
@@ -19254,12 +19254,12 @@ snapshots:
       '@material/theme': 14.0.0-canary.53b3cad2f.0
       '@material/tokens': 14.0.0-canary.53b3cad2f.0
       '@material/typography': 14.0.0-canary.53b3cad2f.0
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@material/theme@14.0.0-canary.53b3cad2f.0':
     dependencies:
       '@material/feature-targeting': 14.0.0-canary.53b3cad2f.0
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@material/tokens@14.0.0-canary.53b3cad2f.0':
     dependencies:
@@ -19275,7 +19275,7 @@ snapshots:
       '@material/shape': 14.0.0-canary.53b3cad2f.0
       '@material/theme': 14.0.0-canary.53b3cad2f.0
       '@material/typography': 14.0.0-canary.53b3cad2f.0
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@material/touch-target@14.0.0-canary.53b3cad2f.0':
     dependencies:
@@ -20219,20 +20219,20 @@ snapshots:
       storybook: 9.0.0(@testing-library/dom@10.4.0)(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4)
       ts-dedent: 2.2.0
 
-  '@storybook/addon-links@8.4.5(react@18.3.1)(storybook@9.0.0(@testing-library/dom@10.4.0)(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4))':
-    dependencies:
-      '@storybook/csf': 0.1.11
-      '@storybook/global': 5.0.0
-      storybook: 9.0.0(@testing-library/dom@10.4.0)(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4)
-      ts-dedent: 2.2.0
-    optionalDependencies:
-      react: 18.3.1
-
   '@storybook/addon-links@8.4.5(react@19.0.0)(storybook@8.4.5(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4))':
     dependencies:
       '@storybook/csf': 0.1.11
       '@storybook/global': 5.0.0
       storybook: 8.4.5(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4)
+      ts-dedent: 2.2.0
+    optionalDependencies:
+      react: 19.0.0
+
+  '@storybook/addon-links@8.4.5(react@19.0.0)(storybook@9.0.0(@testing-library/dom@10.4.0)(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4))':
+    dependencies:
+      '@storybook/csf': 0.1.11
+      '@storybook/global': 5.0.0
+      storybook: 9.0.0(@testing-library/dom@10.4.0)(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4)
       ts-dedent: 2.2.0
     optionalDependencies:
       react: 19.0.0
@@ -20531,29 +20531,23 @@ snapshots:
       react-dom: 19.0.0(react@19.0.0)
       storybook: 8.4.5(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4)
 
-  '@storybook/react-dom-shim@9.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@9.0.0(@testing-library/dom@10.4.0)(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4))':
-    dependencies:
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-      storybook: 9.0.0(@testing-library/dom@10.4.0)(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4)
-
   '@storybook/react-dom-shim@9.0.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@9.0.0(@testing-library/dom@10.4.0)(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4))':
     dependencies:
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
       storybook: 9.0.0(@testing-library/dom@10.4.0)(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4)
 
-  '@storybook/react-vite@9.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.41.1)(storybook@9.0.0(@testing-library/dom@10.4.0)(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4))(typescript@5.8.2)(vite@6.3.5(@types/node@22.4.1)(jiti@1.21.6)(terser@5.31.4)(yaml@2.5.0))':
+  '@storybook/react-vite@9.0.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(rollup@4.41.1)(storybook@9.0.0(@testing-library/dom@10.4.0)(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4))(typescript@5.8.2)(vite@6.3.5(@types/node@22.4.1)(jiti@1.21.6)(terser@5.31.4)(yaml@2.5.0))':
     dependencies:
       '@joshwooding/vite-plugin-react-docgen-typescript': 0.6.0(typescript@5.8.2)(vite@6.3.5(@types/node@22.4.1)(jiti@1.21.6)(terser@5.31.4)(yaml@2.5.0))
       '@rollup/pluginutils': 5.1.4(rollup@4.41.1)
       '@storybook/builder-vite': 9.0.0(storybook@9.0.0(@testing-library/dom@10.4.0)(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4))(vite@6.3.5(@types/node@22.4.1)(jiti@1.21.6)(terser@5.31.4)(yaml@2.5.0))
-      '@storybook/react': 9.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@9.0.0(@testing-library/dom@10.4.0)(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4))(typescript@5.8.2)
+      '@storybook/react': 9.0.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@9.0.0(@testing-library/dom@10.4.0)(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4))(typescript@5.8.2)
       find-up: 5.0.0
       magic-string: 0.30.17
-      react: 18.3.1
+      react: 19.0.0
       react-docgen: 8.0.0
-      react-dom: 18.3.1(react@18.3.1)
+      react-dom: 19.0.0(react@19.0.0)
       resolve: 1.22.10
       storybook: 9.0.0(@testing-library/dom@10.4.0)(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4)
       tsconfig-paths: 4.2.0
@@ -20598,12 +20592,12 @@ snapshots:
       '@storybook/test': 8.6.10(storybook@8.4.5(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4))
       typescript: 5.7.2
 
-  '@storybook/react@9.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@9.0.0(@testing-library/dom@10.4.0)(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4))(typescript@5.8.2)':
+  '@storybook/react@9.0.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@9.0.0(@testing-library/dom@10.4.0)(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4))(typescript@5.8.2)':
     dependencies:
       '@storybook/global': 5.0.0
-      '@storybook/react-dom-shim': 9.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@9.0.0(@testing-library/dom@10.4.0)(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4))
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      '@storybook/react-dom-shim': 9.0.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@9.0.0(@testing-library/dom@10.4.0)(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4))
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
       storybook: 9.0.0(@testing-library/dom@10.4.0)(bufferutil@4.0.8)(prettier@3.5.3)(utf-8-validate@6.0.4)
     optionalDependencies:
       typescript: 5.8.2
@@ -22449,19 +22443,6 @@ snapshots:
     dependencies:
       clean-stack: 2.2.0
       indent-string: 4.0.0
-
-  ahooks@3.8.4(react@18.3.1):
-    dependencies:
-      '@babel/runtime': 7.27.0
-      dayjs: 1.11.13
-      intersection-observer: 0.12.2
-      js-cookie: 3.0.5
-      lodash: 4.17.21
-      react: 18.3.1
-      react-fast-compare: 3.2.2
-      resize-observer-polyfill: 1.5.1
-      screenfull: 5.2.0
-      tslib: 2.8.1
 
   ahooks@3.8.4(react@19.0.0):
     dependencies:
@@ -28671,10 +28652,6 @@ snapshots:
     dependencies:
       es5-ext: 0.10.64
 
-  lucide-react@0.484.0(react@18.3.1):
-    dependencies:
-      react: 18.3.1
-
   lucide-react@0.484.0(react@19.0.0):
     dependencies:
       react: 19.0.0
@@ -31834,7 +31811,7 @@ snapshots:
 
   rxjs@7.8.1:
     dependencies:
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   rxjs@7.8.2:
     dependencies:
@@ -32667,7 +32644,7 @@ snapshots:
   synckit@0.9.1:
     dependencies:
       '@pkgr/core': 0.1.1
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   syntax-error@1.4.0:
     dependencies:

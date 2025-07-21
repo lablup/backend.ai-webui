@@ -4,6 +4,10 @@ import rawFixAntCss from '../fix_antd.css?raw';
 import { buiLanguages } from '../helper/bui-language';
 import { useCustomThemeConfig } from '../helper/customThemeConfig';
 import { ReactWebComponentProps } from '../helper/react-to-webcomponent';
+import {
+  BackendaiClientPromise,
+  createAnonymousBackendaiClient,
+} from '../hooks';
 import { ThemeModeProvider, useThemeMode } from '../hooks/useThemeMode';
 // @ts-ignore
 import indexCss from '../index.css?raw';
@@ -11,7 +15,7 @@ import { StyleProvider, createCache } from '@ant-design/cssinjs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useUpdateEffect } from 'ahooks';
 import { App, AppProps, theme, Typography } from 'antd';
-import { BAIClientProvider, BAIConfigProvider } from 'backend.ai-ui';
+import { BAIConfigProvider } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import duration from 'dayjs/plugin/duration';
@@ -26,7 +30,6 @@ import Backend from 'i18next-http-backend';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { GlobeIcon } from 'lucide-react';
 import React, {
-  ReactNode,
   Suspense,
   useEffect,
   useLayoutEffect,
@@ -174,15 +177,6 @@ const commonAppProps: AppProps = {
   },
 };
 
-const BAIClientWrapper: React.FC<{ children: ReactNode }> = ({ children }) => {
-  return (
-    // @ts-ignore
-    <BAIClientProvider client={globalThis.backendaiclient}>
-      {children}
-    </BAIClientProvider>
-  );
-};
-
 const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
   children,
   value,
@@ -242,29 +236,29 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
                           ? theme.darkAlgorithm
                           : theme.defaultAlgorithm,
                       }}
+                      clientPromise={BackendaiClientPromise}
+                      anonymousClientFactory={createAnonymousBackendaiClient}
                     >
-                      <BAIClientWrapper>
-                        <App {...commonAppProps}>
-                          <StyleProvider container={shadowRoot} cache={cache}>
-                            <Suspense fallback="">
-                              <BrowserRouter>
-                                <QueryParamProvider
-                                  adapter={ReactRouter6Adapter}
-                                  options={
-                                    {
-                                      // searchStringToObject: queryString.parse,
-                                      // objectToSearchString: queryString.stringify,
-                                    }
+                      <App {...commonAppProps}>
+                        <StyleProvider container={shadowRoot} cache={cache}>
+                          <Suspense fallback="">
+                            <BrowserRouter>
+                              <QueryParamProvider
+                                adapter={ReactRouter6Adapter}
+                                options={
+                                  {
+                                    // searchStringToObject: queryString.parse,
+                                    // objectToSearchString: queryString.stringify,
                                   }
-                                >
-                                  <RoutingEventHandler />
-                                  {children}
-                                </QueryParamProvider>
-                              </BrowserRouter>
-                            </Suspense>
-                          </StyleProvider>
-                        </App>
-                      </BAIClientWrapper>
+                                }
+                              >
+                                <RoutingEventHandler />
+                                {children}
+                              </QueryParamProvider>
+                            </BrowserRouter>
+                          </Suspense>
+                        </StyleProvider>
+                      </App>
                     </BAIConfigProvider>
                   </WebComponentContext.Provider>
                 </ThemeModeProvider>
@@ -341,19 +335,19 @@ export const DefaultProvidersForReactRoot: React.FC<
               }}
               // @ts-ignore
               csp={{ nonce: globalThis.baiNonce }}
+              clientPromise={BackendaiClientPromise}
+              anonymousClientFactory={createAnonymousBackendaiClient}
             >
-              <BAIClientWrapper>
-                <App {...commonAppProps}>
-                  {/* <StyleProvider container={shadowRoot} cache={cache}> */}
-                  <Suspense>
-                    {/* <BrowserRouter> */}
-                    {/* <RoutingEventHandler /> */}
-                    {children}
-                    {/* </BrowserRouter> */}
-                  </Suspense>
-                  {/* </StyleProvider> */}
-                </App>
-              </BAIClientWrapper>
+              <App {...commonAppProps}>
+                {/* <StyleProvider container={shadowRoot} cache={cache}> */}
+                <Suspense>
+                  {/* <BrowserRouter> */}
+                  {/* <RoutingEventHandler /> */}
+                  {children}
+                  {/* </BrowserRouter> */}
+                </Suspense>
+                {/* </StyleProvider> */}
+              </App>
             </BAIConfigProvider>
           </QueryClientProvider>
         </RelayEnvironmentProvider>

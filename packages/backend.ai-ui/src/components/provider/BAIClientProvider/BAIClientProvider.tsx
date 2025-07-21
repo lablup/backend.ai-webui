@@ -1,19 +1,23 @@
-import BAIClientContext from './context';
+import { BAIClientContext, BAIAnonymousClientContext } from './context';
 import type { BAIClient } from './types';
 import { ReactNode } from 'react';
 
 export interface BAIClientProviderProps {
-  client: BAIClient;
+  clientPromise: Promise<BAIClient>;
+  anonymousClientFactory: (api_endpoint: string) => BAIClient;
   children: ReactNode;
 }
 
 const BAIClientProvider: React.FC<BAIClientProviderProps> = ({
-  client,
+  clientPromise,
+  anonymousClientFactory,
   children,
 }) => {
   return (
-    <BAIClientContext.Provider value={client}>
-      {children}
+    <BAIClientContext.Provider value={clientPromise}>
+      <BAIAnonymousClientContext.Provider value={anonymousClientFactory}>
+        {children}
+      </BAIAnonymousClientContext.Provider>
     </BAIClientContext.Provider>
   );
 };
