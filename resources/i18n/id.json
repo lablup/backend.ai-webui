@@ -547,6 +547,7 @@
     "Digest": "Intisari",
     "Disabled": "di-nonaktifkan",
     "ErrorMinimumValue": "{{key}} harus setidaknya {{value}}",
+    "FailedToDeleteCustomizedImage": "Gagal menghapus gambar yang disesuaikan.",
     "FullImagePath": "Jalur gambar penuh",
     "ImageReinstallationRequired": "Diperlukan pemasangan ulang gambar",
     "Images": "Image",

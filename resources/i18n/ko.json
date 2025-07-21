@@ -550,6 +550,7 @@
     "Digest": "Digest",
     "Disabled": "사용 안함",
     "ErrorMinimumValue": "{{key}}는 {{value}} 이상이어야합니다.",
+    "FailedToDeleteCustomizedImage": "사용자 정의된 이미지를 삭제하는 데 실패했습니다.",
     "FullImagePath": "전체 이미지 경로",
     "ImageReinstallationRequired": "이미지 재설치가 필요합니다",
     "Images": "이미지",

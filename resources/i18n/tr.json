@@ -548,6 +548,7 @@
     "Digest": "sindirmek",
     "Disabled": "engelli",
     "ErrorMinimumValue": "{{key}} en azından {{value}} olmalıdır.",
+    "FailedToDeleteCustomizedImage": "Özelleştirilmiş görüntüyü silemedi.",
     "FullImagePath": "Tam görüntü yolu",
     "ImageReinstallationRequired": "Resim Yeniden Yükleme Gerekli",
     "Images": "Görüntüler",

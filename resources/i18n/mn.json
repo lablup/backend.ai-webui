@@ -546,6 +546,7 @@
     "Digest": "Хоол боловсруулах",
     "Disabled": "Идэвхгүй",
     "ErrorMinimumValue": "{{ key }} нь дор хаяж {{ value }} байх ёстой",
+    "FailedToDeleteCustomizedImage": "Өөрчлөгдсөн зургийг устгах ажиллагаа амжилтгүй боллоо.",
     "FullImagePath": "Зургийн бүрэн зам",
     "ImageReinstallationRequired": "Зургийг дахин суулгах шаардлагатай",
     "Images": "Image",

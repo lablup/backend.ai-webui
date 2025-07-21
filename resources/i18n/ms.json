@@ -547,6 +547,7 @@
     "Digest": "Pencernaan",
     "Disabled": "kurang upaya",
     "ErrorMinimumValue": "{{key}} mestilah sekurang -kurangnya {{value}}",
+    "FailedToDeleteCustomizedImage": "Gagal memadam imej tersuai.",
     "FullImagePath": "Laluan imej penuh",
     "ImageReinstallationRequired": "Pemasaran imej diperlukan",
     "Images": "Gambar",

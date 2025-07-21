@@ -550,6 +550,7 @@
     "Digest": "Digest",
     "Disabled": "disabled",
     "ErrorMinimumValue": "{{ key }} must be at least {{ value }}",
+    "FailedToDeleteCustomizedImage": "Failed to delete customized image.",
     "FullImagePath": "Full image path",
     "ImageReinstallationRequired": "Image reinstallation required",
     "Images": "Images",

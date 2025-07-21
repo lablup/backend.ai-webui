@@ -548,6 +548,7 @@
     "Digest": "Digest",
     "Disabled": "disabled",
     "ErrorMinimumValue": "{{key}} on oltava vähintään {{value}}",
+    "FailedToDeleteCustomizedImage": "Mukautetun kuvan poistaminen epäonnistui.",
     "FullImagePath": "Koko kuvan polku",
     "ImageReinstallationRequired": "Kuvan uudelleenasentaminen vaaditaan",
     "Images": "Kuvat",

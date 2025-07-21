@@ -548,6 +548,7 @@
     "Digest": "Tiêu",
     "Disabled": "tàn tật",
     "ErrorMinimumValue": "{{key}} phải ít nhất {{value}}",
+    "FailedToDeleteCustomizedImage": "Không thể xóa hình ảnh tùy chỉnh.",
     "FullImagePath": "Đường dẫn hình ảnh đầy đủ",
     "ImageReinstallationRequired": "Cài đặt lại hình ảnh cần thiết",
     "Images": "Hình ảnh",
