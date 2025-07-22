@@ -6,7 +6,7 @@ import ImageWithFallback from './ImageWithFallback';
 import NumberWithUnit from './NumberWithUnit';
 import { Tooltip, Typography, theme } from 'antd';
 import _ from 'lodash';
-import { MicrochipIcon } from 'lucide-react';
+import { CpuIcon, MemoryStickIcon, MicrochipIcon } from 'lucide-react';
 import React, { ReactElement } from 'react';
 
 export type ResourceOpts = {
@@ -95,24 +95,6 @@ const ResourceNumber: React.FC<ResourceNumberProps> = ({
   );
 };
 
-const MWCIconWrap: React.FC<{ size?: number; children: string }> = ({
-  size = 16,
-  children,
-}) => {
-  return (
-    // @ts-ignore
-    <mwc-icon
-      style={{
-        '--mdc-icon-size': `${size + 2}px`,
-        width: size,
-        height: size,
-      }}
-    >
-      {children}
-      {/* @ts-ignore */}
-    </mwc-icon>
-  );
-};
 interface AccTypeIconProps
   extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'src'> {
   type: ResourceSlotName | string;
@@ -135,7 +117,7 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
     if (type === 'cpu') {
       return (
         <Flex style={{ width: 16, height: 16 }}>
-          <MWCIconWrap size={size}>developer_board</MWCIconWrap>
+          <CpuIcon />
         </Flex>
       );
     }
@@ -143,7 +125,7 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
     if (type === 'mem') {
       return (
         <Flex style={{ width: 16, height: 16 }}>
-          <MWCIconWrap size={size}>memory</MWCIconWrap>
+          <MemoryStickIcon />
         </Flex>
       );
     }
