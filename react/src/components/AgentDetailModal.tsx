@@ -58,7 +58,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
       centered
       title={`${t('agent.DetailedInformation')}: ${agent?.id}`}
       onCancel={onRequestClose}
-      destroyOnClose
+      destroyOnHidden
       footer={null}
     >
       <Flex direction="column" align="stretch" gap={'md'}>

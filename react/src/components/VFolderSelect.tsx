@@ -143,7 +143,7 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
           )
         }
         onChange={setValue}
-        onDropdownVisibleChange={(open) => {
+        onOpenChange={(open) => {
           if (open) {
             startTransition(() => {
               checkUpdate();

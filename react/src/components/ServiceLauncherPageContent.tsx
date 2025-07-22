@@ -1023,7 +1023,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         width={1000}
         title={t('modelService.ValidationInfo')}
         open={isOpenServiceValidationModal}
-        destroyOnClose
+        destroyOnHidden
         onCancel={() => {
           setIsOpenServiceValidationModal(!isOpenServiceValidationModal);
         }}

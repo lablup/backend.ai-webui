@@ -42,7 +42,7 @@ const SSHKeypairManualFormModal: React.FC<SSHKeypairManualFormModalProps> = ({
           })
           .catch(() => {});
       }}
-      destroyOnClose={true}
+      destroyOnHidden
       {...baiModalProps}
     >
       <Form

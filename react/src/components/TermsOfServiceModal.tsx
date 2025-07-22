@@ -44,7 +44,7 @@ const TermsOfServiceModal = ({
     <BAIModal
       title={t('webui.menu.TermsOfService')}
       onCancel={onRequestClose}
-      destroyOnClose
+      destroyOnHidden
       footer={null}
       width={'80%'}
       {...props}
