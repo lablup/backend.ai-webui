@@ -763,7 +763,7 @@
   "interactiveLogin": {
     "ConfirmLoginMessage": "Apakah Anda ingin masuk dengan akun {{nama pengguna}} ({{email}})?",
     "InteractiveLoginWithBackendAI": "Login dengan akun Backend.AI Anda",
-    "ServiceName": "Nama layanan",
+    "ServiceName": "Nama Layanan",
     "UseAnotherAccount": "Masuk dengan akun yang berbeda"
   },
   "kernel": {
@@ -943,15 +943,18 @@
     "RunThisModel": "Jalankan model ini",
     "RuntimeVariant": "Varian Runtime Inferensi",
     "SeeContainerLogs": "Lihat Log Kontainer",
+    "ServiceAlreadyExists": "Nama layanan sudah ada",
     "ServiceCreated": "Layanan model {{ name }} telah berhasil dibuat.",
     "ServiceDelegatedFrom": "Layanan model dibuat oleh {{ createdUser }} namun kepemilikan sesi akan didelegasikan ke {{ sessionOwner }}",
     "ServiceEndpoint": "Titik Akhir Layanan",
     "ServiceInfo": "Info Layanan",
     "ServiceName": "Nama Layanan",
     "ServiceNameCannotStartWithHyphen": "Tanda hubung (-) tidak dapat digunakan pada kedua ujungnya.",
+    "ServiceNameInvalidCharacter": "Di tengah nama layanan, hanya alfabet, nomor, '_', '.', '-' hanya dapat dimasukkan.",
     "ServiceNameMaxLength": "Silakan masukkan 24 karakter atau kurang.",
     "ServiceNameMinLength": "Silakan masukkan setidaknya 4 karakter.",
-    "ServiceNameRule": "Hanya diperbolehkan alfanumerik, garis bawah(_), dan tanda hubung(-) dan harus diakhiri dengan karakter alfanumerik.",
+    "ServiceNameShouldEndWith": "Nama sesi harus diakhiri dengan alfabet, karakter besar dan kecil, angka, dan '_'.",
+    "ServiceNameShouldStartWith": "Nama sesi harus dimulai dengan karakter alfabet dan kecil, angka atau '_'.",
     "ServiceTerminated": "Permintaan penutupan dikirim untuk layanan model '{{ nama }}'.",
     "ServiceUpdated": "Layanan model {{ name }} telah berhasil diperbarui.",
     "Services": "Layanan",

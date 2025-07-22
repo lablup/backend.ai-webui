@@ -16,6 +16,7 @@ import {
 import { KnownAcceleratorResourceSlotName } from '../hooks/backendai';
 import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentResourceGroupState } from '../hooks/useCurrentProject';
+import { useValidateServiceName } from '../hooks/useValidateServiceName';
 import BAIModal, { DEFAULT_BAI_MODAL_Z_INDEX } from './BAIModal';
 import EnvVarFormList, { EnvVarFormListValue } from './EnvVarFormList';
 import Flex from './Flex';
@@ -134,7 +135,6 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
 }) => {
   const { token } = theme.useToken();
   const { message } = App.useApp();
-
   const { t } = useTranslation();
 
   const [{ model }] = useQueryParams({
@@ -145,7 +145,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   const baiClient = useSuspendedBackendaiClient();
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const currentDomain = useCurrentDomainValue();
-
+  const validationRules = useValidateServiceName();
   const [isOpenServiceValidationModal, setIsOpenServiceValidationModal] =
     useState(false);
 
@@ -622,7 +622,6 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   };
 
   const [validateServiceData, setValidateServiceData] = useState<any>();
-
   const getAIAcceleratorWithStringifiedKey = (resourceSlot: any) => {
     if (Object.keys(resourceSlot).length <= 0) {
       return undefined;
@@ -737,31 +736,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                       <Form.Item
                         label={t('modelService.ServiceName')}
                         name="serviceName"
-                        rules={[
-                          {
-                            min: 4,
-                            message: t('modelService.ServiceNameMinLength'),
-                            type: 'string',
-                          },
-                          {
-                            max: 24,
-                            message: t('modelService.ServiceNameMaxLength'),
-                            type: 'string',
-                          },
-                          {
-                            pattern: /^(?:[^-]|[^-].*[^-])$/,
-                            message: t(
-                              'modelService.ServiceNameCannotStartWithHyphen',
-                            ),
-                          },
-                          {
-                            pattern: /^[\w-]+$/,
-                            message: t('modelService.ServiceNameRule'),
-                          },
-                          {
-                            required: true,
-                          },
-                        ]}
+                        validateDebounce={500}
+                        rules={validationRules}
                       >
                         <Input disabled={!!endpoint} />
                       </Form.Item>

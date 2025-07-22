@@ -1,11 +1,10 @@
-import { EditableSessionNameDuplicatedCheckQuery } from '../../__generated__/EditableSessionNameDuplicatedCheckQuery.graphql';
 import { EditableSessionNameFragment$key } from '../../__generated__/EditableSessionNameFragment.graphql';
 import { EditableSessionNameRefetchQuery } from '../../__generated__/EditableSessionNameRefetchQuery.graphql';
 import { useBaiSignedRequestWithPromise } from '../../helper';
 import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useTanMutation } from '../../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
-import { getSessionNameRules } from '../SessionNameFormItem';
+import { useValidateSessionName } from '../../hooks/useValidateSessionName';
 import { theme, Form, Input, App } from 'antd';
 import Text, { TextProps } from 'antd/es/typography/Text';
 import Title, { TitleProps } from 'antd/es/typography/Title';
@@ -35,7 +34,6 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
 }) => {
   const relayEvn = useRelayEnvironment();
   const currentProject = useCurrentProjectValue();
-
   const session = useFragment(
     graphql`
       fragment EditableSessionNameFragment on ComputeSessionNode {
@@ -49,7 +47,9 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
     `,
     sessionFrgmt,
   );
+
   const [optimisticName, setOptimisticName] = useState(session.name);
+  const validationRules = useValidateSessionName(optimisticName);
   const [userInfo] = useCurrentUserInfo();
 
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
@@ -152,7 +152,10 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
                 );
               },
               onError: (err) => {
-                message.error(t('session.FailToRenameSession'));
+                // if the session name is not changed, do not show error
+                if (session.name !== values.sessionName) {
+                  message.error(t('session.FailToRenameSession'));
+                }
               },
             });
           }}
@@ -165,55 +168,12 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
         >
           <Form.Item
             name="sessionName"
-            validateDebounce={1000}
-            rules={[
-              ...getSessionNameRules(t),
-              {
-                validator: async (rule, value) => {
-                  if (value === session.name) {
-                    return Promise.resolve();
-                  }
-                  const hasSameName =
-                    await fetchQuery<EditableSessionNameDuplicatedCheckQuery>(
-                      relayEvn,
-                      graphql`
-                        query EditableSessionNameDuplicatedCheckQuery(
-                          $projectId: UUID!
-                          $filter: String
-                        ) {
-                          compute_session_nodes(
-                            project_id: $projectId
-                            filter: $filter
-                          ) {
-                            count
-                          }
-                        }
-                      `,
-                      {
-                        projectId: currentProject.id,
-                        filter: `status != "TERMINATED" & status != "CANCELLED" & name == "${value}"`,
-                      },
-                    )
-                      .toPromise()
-                      .then((data) => {
-                        return data?.compute_session_nodes?.count !== 0;
-                      })
-                      .catch(() => {
-                        // ignore duplicated check error
-                        return false;
-                      });
-                  return hasSameName
-                    ? Promise.reject(t('session.launcher.SessionAlreadyExists'))
-                    : Promise.resolve();
-                },
-              },
-            ]}
-            style={{
-              margin: 0,
-            }}
+            rules={validationRules}
+            validateDebounce={200}
           >
             <Input
               size="large"
+              value={optimisticName || ''}
               suffix={
                 <CornerDownLeftIcon
                   style={{

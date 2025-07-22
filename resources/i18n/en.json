@@ -768,7 +768,7 @@
   "interactiveLogin": {
     "ConfirmLoginMessage": "Would you like to sign in with {{username}} ({{email}}) account?",
     "InteractiveLoginWithBackendAI": "Login with your Backend.AI account",
-    "ServiceName": "Service name",
+    "ServiceName": "Service Name",
     "UseAnotherAccount": "Sign in with a different account"
   },
   "kernel": {
@@ -950,15 +950,18 @@
     "RunThisModel": "Run this model",
     "RuntimeVariant": "Inference Runtime Variant",
     "SeeContainerLogs": "See Container Logs",
+    "ServiceAlreadyExists": "Service name already exists",
     "ServiceCreated": "Model service {{ name }} has been created successfully.",
     "ServiceDelegatedFrom": "Model service is created by {{ createdUser }} but the session ownership will be delegated to {{ sessionOwner }}",
     "ServiceEndpoint": "Service Endpoint",
     "ServiceInfo": "Service Info",
     "ServiceName": "Service Name",
     "ServiceNameCannotStartWithHyphen": "Hyphens (-) cannot be used at either end.",
+    "ServiceNameInvalidCharacter": "In the middle of the service name, only the alphabet, the number, the '_', '.', '-' can only be included.",
     "ServiceNameMaxLength": "Please enter 24 characters or less.",
     "ServiceNameMinLength": "Please enter at least 4 characters.",
-    "ServiceNameRule": "Only allow alphanumeric, underscore(_), and hyphen(-) and it must end with an alphanumeric character.",
+    "ServiceNameShouldEndWith": "It must end with alphabet, large and small characters, numbers, and '_'.",
+    "ServiceNameShouldStartWith": "It must start with alphabetic and small characters, numbers or '_'.",
     "ServiceTerminated": "A shutdown request was sent for model service '{{ name }}'.",
     "ServiceUpdated": "Model service {{ name }} has been updated successfully.",
     "Services": "Services",

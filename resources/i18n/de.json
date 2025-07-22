@@ -764,7 +764,7 @@
   "interactiveLogin": {
     "ConfirmLoginMessage": "Möchten Sie sich mit {{Benutzername}} anmelden ({{E-Mail}}) Konto anmelden?",
     "InteractiveLoginWithBackendAI": "Melden Sie sich mit Ihrem Backend.AI-Konto an",
-    "ServiceName": "Name des Dienstes",
+    "ServiceName": "Dienst Name",
     "UseAnotherAccount": "Mit einem anderen Konto anmelden"
   },
   "kernel": {
@@ -945,15 +945,18 @@
     "RunThisModel": "Führen Sie dieses Modell aus",
     "RuntimeVariant": "Inferenz Laufzeitvariante",
     "SeeContainerLogs": "Siehe Containerprotokolle",
+    "ServiceAlreadyExists": "Servicename existiert bereits",
     "ServiceCreated": "Der Modelldienst {{ name }} wurde erfolgreich erstellt.",
     "ServiceDelegatedFrom": "Der Modelldienst wird von {{ createdUser }} erstellt, aber das Eigentum an der Sitzung wird an {{ sessionOwner }} delegiert.",
     "ServiceEndpoint": "Dienst-Endpunkt",
     "ServiceInfo": "Service-Informationen",
     "ServiceName": "Dienst Name",
     "ServiceNameCannotStartWithHyphen": "Bindestriche (-) dürfen an beiden Enden nicht verwendet werden.",
+    "ServiceNameInvalidCharacter": "In der Mitte des Dienstnamens kann nur das Alphabet, die Nummer, die '_', '.'-'-' nur eingeschlossen werden.",
     "ServiceNameMaxLength": "Bitte geben Sie maximal 24 Zeichen ein.",
     "ServiceNameMinLength": "Bitte geben Sie mindestens 4 Zeichen ein.",
-    "ServiceNameRule": "Erlauben Sie nur alphanumerische Zeichen, Unterstriche (_) und Bindestriche (-) und müssen mit einem alphanumerischen Zeichen enden.",
+    "ServiceNameShouldEndWith": "Der Sitzungsname muss mit Alphabet, großen und kleinen Zeichen, Zahlen und '_' enden.",
+    "ServiceNameShouldStartWith": "Der Sitzungsname sollte mit alphabetischen und kleinen Zeichen, Zahlen oder '_' beginnen.",
     "ServiceTerminated": "Für den Modelldienst „{{ name }}“ wurde eine Anforderung zum Herunterfahren gesendet.",
     "ServiceUpdated": "Der Modelldienst {{ name }} wurde erfolgreich aktualisiert.",
     "Services": "Dienstleistungen",
