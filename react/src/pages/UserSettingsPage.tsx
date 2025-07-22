@@ -11,6 +11,7 @@ import { SettingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { App, Button, Typography } from 'antd';
 import Card from 'antd/es/card/Card';
+import { BAITestButton } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -323,6 +324,7 @@ const UserPreferencesPage = () => {
 
   return (
     <>
+      <BAITestButton />
       <Card
         activeTabKey={curTabKey}
         onTabChange={(key) => setCurTabKey(key as TabKey)}
