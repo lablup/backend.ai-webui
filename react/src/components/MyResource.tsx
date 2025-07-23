@@ -1,5 +1,4 @@
 import {
-  getBaseUnit,
   processResourceValue,
   UNLIMITED_VALUES,
 } from '../helper/resourceCardUtils';
@@ -11,16 +10,16 @@ import {
   ResourceAllocation,
   useResourceLimitAndRemaining,
 } from '../hooks/useResourceLimitAndRemaining';
-import BaseResourceCard, {
+import BaseResourceItem, {
   AcceleratorSlotDetail,
   ResourceValues,
-} from './BaseResourceCard';
+} from './BaseResourceItem';
 import { BAICardProps, convertToBinaryUnit } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface MyResourceCardProps extends BAICardProps {
+interface MyResourceProps extends BAICardProps {
   fetchKey?: string;
   isRefetching?: boolean;
 }
@@ -66,13 +65,12 @@ const getResourceValue = (
     total: totalValue,
     displayUnit:
       resource === 'mem' && displayValue
-        ? convertToBinaryUnit(displayValue, getBaseUnit(displayValue))
-            ?.displayUnit
+        ? convertToBinaryUnit(displayValue, 'auto')?.displayUnit
         : undefined,
   };
 };
 
-const MyResourceCard: React.FC<MyResourceCardProps> = ({
+const MyResource: React.FC<MyResourceProps> = ({
   fetchKey,
   isRefetching,
   ...props
@@ -106,7 +104,7 @@ const MyResourceCard: React.FC<MyResourceCardProps> = ({
         values: getResourceValue(
           type,
           key,
-          checkPresetInfo,
+          checkPresetInfo ?? null,
           remainingWithoutResourceGroup,
           resourceLimitsWithoutResourceGroup,
         ),
@@ -126,7 +124,7 @@ const MyResourceCard: React.FC<MyResourceCardProps> = ({
       getResourceValue(
         type,
         resource,
-        checkPresetInfo,
+        checkPresetInfo ?? null,
         remainingWithoutResourceGroup,
         resourceLimitsWithoutResourceGroup,
       ),
@@ -139,10 +137,10 @@ const MyResourceCard: React.FC<MyResourceCardProps> = ({
   );
 
   return (
-    <BaseResourceCard
+    <BaseResourceItem
       {...props}
       title={t('webui.menu.MyResources')}
-      tooltipKey="webui.menu.MyResourcesDescription"
+      tooltip="webui.menu.MyResourcesDescription"
       isRefetching={isRefetching || internalIsRefetching}
       displayType={type}
       onDisplayTypeChange={setType}
@@ -159,4 +157,4 @@ const MyResourceCard: React.FC<MyResourceCardProps> = ({
   );
 };
 
-export default MyResourceCard;
+export default MyResource;

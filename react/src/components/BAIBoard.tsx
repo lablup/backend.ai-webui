@@ -107,6 +107,7 @@ const BAIBoard = <T extends BAIBoardDataType>({
               resizeHandleAriaLabel: '',
               resizeHandleAriaDescription: '',
             }}
+            {...item}
           >
             <Suspense fallback={<Skeleton active />}>
               {item.data.content}

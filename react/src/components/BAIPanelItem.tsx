@@ -36,7 +36,12 @@ const BAIPanelItem: React.FC<BAIPanelItemProps> = ({
     <Flex
       {...props}
       direction="column"
-      style={{ maxWidth: 88, textAlign: 'center', height: '100%' }}
+      style={{
+        maxWidth: 88,
+        textAlign: 'center',
+        height: '100%',
+        alignContent: 'center',
+      }}
       justify="between"
       wrap="wrap"
     >

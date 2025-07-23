@@ -1,16 +1,16 @@
 import {
-  TotalResourceWithinResourceGroupCardFragment$key,
-  TotalResourceWithinResourceGroupCardFragment$data,
-} from '../__generated__/TotalResourceWithinResourceGroupCardFragment.graphql';
+  TotalResourceWithinResourceGroupFragment$key,
+  TotalResourceWithinResourceGroupFragment$data,
+} from '../__generated__/TotalResourceWithinResourceGroupFragment.graphql';
 import {
   processResourceValue,
   UNLIMITED_VALUES,
 } from '../helper/resourceCardUtils';
 import { useResourceSlotsDetails } from '../hooks/backendai';
-import BaseResourceCard, {
+import BaseResourceItem, {
   AcceleratorSlotDetail,
   ResourceValues,
-} from './BaseResourceCard';
+} from './BaseResourceItem';
 import ResourceGroupSelectForCurrentProject from './ResourceGroupSelectForCurrentProject';
 import { Typography } from 'antd';
 import {
@@ -31,17 +31,17 @@ import {
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
 
-interface TotalResourceWithinResourceGroupCardProps extends BAICardProps {
-  queryRef: TotalResourceWithinResourceGroupCardFragment$key;
+interface TotalResourceWithinResourceGroupProps extends BAICardProps {
+  queryRef: TotalResourceWithinResourceGroupFragment$key;
   isRefetching?: boolean;
 }
 
 type AgentSummary = NonNullable<
-  TotalResourceWithinResourceGroupCardFragment$data['agent_summary_list']
+  TotalResourceWithinResourceGroupFragment$data['agent_summary_list']
 >['items'][number];
 
-const TotalResourceWithinResourceGroupCard: React.FC<
-  TotalResourceWithinResourceGroupCardProps
+const TotalResourceWithinResourceGroup: React.FC<
+  TotalResourceWithinResourceGroupProps
 > = ({ queryRef, isRefetching, ...props }) => {
   const { t } = useTranslation();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
@@ -50,10 +50,10 @@ const TotalResourceWithinResourceGroupCard: React.FC<
 
   const [data, refetch] = useRefetchableFragment(
     graphql`
-      fragment TotalResourceWithinResourceGroupCardFragment on Queries
+      fragment TotalResourceWithinResourceGroupFragment on Queries
       @argumentDefinitions(resourceGroup: { type: "String" })
       @refetchable(
-        queryName: "TotalResourceWithinResourceGroupCardFragmentRefetchQuery"
+        queryName: "TotalResourceWithinResourceGroupFragmentRefetchQuery"
       ) {
         agent_summary_list(
           limit: 1000
@@ -213,10 +213,10 @@ const TotalResourceWithinResourceGroupCard: React.FC<
   };
 
   return (
-    <BaseResourceCard
+    <BaseResourceItem
       {...props}
       title={title}
-      tooltipKey="webui.menu.TotalResourcesInResourceGroupDescription"
+      tooltip="webui.menu.TotalResourcesInResourceGroupDescription"
       isRefetching={isRefetching || isPendingRefetch}
       displayType={type}
       onDisplayTypeChange={setType}
@@ -233,4 +233,4 @@ const TotalResourceWithinResourceGroupCard: React.FC<
   );
 };
 
-export default TotalResourceWithinResourceGroupCard;
+export default TotalResourceWithinResourceGroup;

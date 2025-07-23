@@ -1,15 +1,14 @@
 import { convertToBinaryUnit } from '../helper';
-import { getBaseUnit } from '../helper/resourceCardUtils';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
   ResourceAllocation,
   useResourceLimitAndRemaining,
 } from '../hooks/useResourceLimitAndRemaining';
-import BaseResourceCard, {
+import BaseResourceItem, {
   AcceleratorSlotDetail,
   ResourceValues,
-} from './BaseResourceCard';
+} from './BaseResourceItem';
 import ResourceGroupSelectForCurrentProject from './ResourceGroupSelectForCurrentProject';
 import { Typography } from 'antd';
 import { Flex, BAICardProps } from 'backend.ai-ui';
@@ -17,7 +16,7 @@ import _ from 'lodash';
 import { useCallback, useDeferredValue, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface MyResourceWithinResourceGroupCardProps extends BAICardProps {
+interface MyResourceWithinResourceGroupProps extends BAICardProps {
   fetchKey?: string;
   isRefetching?: boolean;
 }
@@ -36,7 +35,7 @@ const getResourceValue = (
       );
 
       if (resource === 'mem') {
-        const converted = convertToBinaryUnit(value, getBaseUnit(value));
+        const converted = convertToBinaryUnit(value, 'auto');
         return _.toNumber(converted?.numberFixed);
       }
 
@@ -50,7 +49,7 @@ const getResourceValue = (
     if (remaining === Number.MAX_SAFE_INTEGER) return Number.MAX_SAFE_INTEGER;
 
     if (resource === 'mem') {
-      const converted = convertToBinaryUnit(remaining, getBaseUnit(remaining));
+      const converted = convertToBinaryUnit(remaining, 'auto');
       return _.toNumber(converted?.numberFixed);
     }
 
@@ -62,8 +61,8 @@ const getResourceValue = (
   };
 };
 
-const MyResourceWithinResourceGroupCard: React.FC<
-  MyResourceWithinResourceGroupCardProps
+const MyResourceWithinResourceGroup: React.FC<
+  MyResourceWithinResourceGroupProps
 > = ({ fetchKey, isRefetching, ...props }) => {
   const { t } = useTranslation();
 
@@ -94,7 +93,7 @@ const MyResourceWithinResourceGroupCard: React.FC<
         values: getResourceValue(
           displayType,
           key,
-          checkPresetInfo,
+          checkPresetInfo ?? null,
           deferredSelectedResourceGroup || 'default',
         ),
       }))
@@ -112,7 +111,7 @@ const MyResourceWithinResourceGroupCard: React.FC<
       getResourceValue(
         displayType,
         resource,
-        checkPresetInfo,
+        checkPresetInfo ?? null,
         deferredSelectedResourceGroup || 'default',
       ),
     [displayType, checkPresetInfo, deferredSelectedResourceGroup],
@@ -135,10 +134,10 @@ const MyResourceWithinResourceGroupCard: React.FC<
   );
 
   return (
-    <BaseResourceCard
+    <BaseResourceItem
       {...props}
       title={title}
-      tooltipKey="webui.menu.MyResourcesInResourceGroupDescription"
+      tooltip="webui.menu.MyResourcesInResourceGroupDescription"
       isRefetching={isRefetching || internalIsRefetching}
       displayType={displayType}
       onDisplayTypeChange={setDisplayType}
@@ -153,4 +152,4 @@ const MyResourceWithinResourceGroupCard: React.FC<
   );
 };
 
-export default MyResourceWithinResourceGroupCard;
+export default MyResourceWithinResourceGroup;
