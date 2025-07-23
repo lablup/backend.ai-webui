@@ -42,10 +42,12 @@
     }
   },
   "peerDependencies": {
+    "@ant-design/icons": "^5.6.1",
     "antd": "^5.24.5",
+    "big.js": "^7.0.1",
     "graphql": "^16.10.0",
-    "lodash": "^4.17.21",
     "i18next": "^24.2.3",
+    "lodash": "^4.17.21",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-i18next": "^15.4.1",
@@ -63,6 +65,7 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@types/react-relay": "^18.2.0",
+    "@types/big.js": "^6.2.2",
     "@vitejs/plugin-react": "^4.5.0",
     "eslint": "^8.57.1",
     "eslint-config-react-app": "^7.0.1",

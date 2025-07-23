@@ -1,5 +1,5 @@
 import { DashboardPageQuery } from '../__generated__/DashboardPageQuery.graphql';
-import AvailableResourcesCard from '../components/AvailableResourcesCard';
+import MyResourceCard from '../components/MyResourceCard';
 import MySessionCard from '../components/MySessionCard';
 import RecentlyCreatedSessionCard from '../components/RecentlyCreatedSessionCard';
 import { filterEmptyItem } from '../helper';
@@ -59,19 +59,16 @@ const DashboardPage: React.FC = () => {
       },
     },
     {
-      id: 'allocatedResources',
+      id: 'myResource',
       rowSpan: 3,
       columnSpan: 1,
       columnOffset: { 6: 1, 4: 1 },
       data: {
         content: (
-          <AvailableResourcesCard
-            style={{
-              width: '100%',
-              minHeight: lg ? 200 : undefined,
-            }}
-            isRefetching={isPendingRefetch}
+          <MyResourceCard
             fetchKey={fetchKey}
+            isRefetching={isPendingRefetch}
+            style={{ minHeight: lg ? 200 : undefined }}
           />
         ),
       },
@@ -90,24 +87,6 @@ const DashboardPage: React.FC = () => {
         ),
       },
     },
-    // {
-    //   id: 'mostResourceAllocatedSession',
-    //   rowSpan: 3,
-    //   columnSpan: 2,
-    //   columnOffset: { 6: 0, 4: 0 },
-    //   data: {
-    //     content: <></>,
-    //   },
-    // },
-    // {
-    //   id: 'pipelineStatus',
-    //   rowSpan: 3,
-    //   columnSpan: 2,
-    //   columnOffset: { 6: 0, 4: 0 },
-    //   data: {
-    //     content: <></>,
-    //   },
-    // },
   ]);
 
   return (
@@ -115,7 +94,7 @@ const DashboardPage: React.FC = () => {
       <Row gutter={[16, 16]}>
         {_.map(items, (item) => {
           return (
-            <Col xs={24} lg={item.columnSpan === 2 ? 24 : 12}>
+            <Col key={item.id} xs={24} lg={item.columnSpan === 2 ? 24 : 12}>
               {item.data.content}
             </Col>
           );
