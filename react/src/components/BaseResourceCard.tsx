@@ -39,8 +39,8 @@ export interface BaseResourceCardProps extends BAICardProps {
   title: ReactNode;
   tooltipKey?: string;
   isRefetching?: boolean;
-  displayType: 'usage' | 'capacity';
-  onDisplayTypeChange: (type: 'usage' | 'capacity') => void;
+  displayType: 'usage' | 'remaining';
+  onDisplayTypeChange: (type: 'usage' | 'remaining') => void;
   onRefetch: () => void;
   getResourceValue: (resource: string) => ResourceValues;
   acceleratorSlotsDetails: AcceleratorSlotDetail[];
@@ -158,12 +158,12 @@ const BaseResourceCard: React.FC<BaseResourceCardProps> = ({
                 value: 'usage',
               },
               {
-                label: t('webui.menu.Capacity'),
-                value: 'capacity',
+                label: t('webui.menu.Remaining'),
+                value: 'remaining',
               },
             ]}
             value={displayType}
-            onChange={(v) => onDisplayTypeChange(v as 'usage' | 'capacity')}
+            onChange={(v) => onDisplayTypeChange(v as 'usage' | 'remaining')}
           />
           <BAIFetchKeyButton
             loading={isRefetching}

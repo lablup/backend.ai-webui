@@ -26,7 +26,7 @@ interface MyResourceCardProps extends BAICardProps {
 }
 
 const getResourceValue = (
-  type: 'usage' | 'capacity',
+  type: 'usage' | 'remaining',
   resource: string,
   checkPresetInfo: ResourceAllocation | null,
   remainingWithoutResourceGroup: RemainingSlots,
@@ -57,12 +57,12 @@ const getResourceValue = (
     );
     return processResourceValue(capacity, resource);
   };
-  const currentValue = getCurrentValue() || 0;
+  const currentValue = getCurrentValue();
 
   const displayValue = type === 'usage' ? currentValue : totalValue;
 
   return {
-    current: currentValue,
+    current: currentValue || 0,
     total: totalValue,
     displayUnit:
       resource === 'mem' && displayValue
@@ -95,7 +95,7 @@ const MyResourceCard: React.FC<MyResourceCardProps> = ({
   });
 
   const resourceSlotsDetails = useResourceSlotsDetails();
-  const [type, setType] = useState<'usage' | 'capacity'>('usage');
+  const [type, setType] = useState<'usage' | 'remaining'>('usage');
 
   const acceleratorSlotsDetails = useMemo(() => {
     return _.chain(resourceSlotsDetails?.resourceSlotsInRG)

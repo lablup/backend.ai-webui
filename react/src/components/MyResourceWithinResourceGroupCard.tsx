@@ -23,7 +23,7 @@ interface MyResourceWithinResourceGroupCardProps extends BAICardProps {
 }
 
 const getResourceValue = (
-  type: 'usage' | 'capacity',
+  type: 'usage' | 'remaining',
   resource: string,
   checkPresetInfo: ResourceAllocation | null,
   resourceGroup: string,
@@ -81,7 +81,9 @@ const MyResourceWithinResourceGroupCard: React.FC<
   const resourceSlotsDetails = useResourceSlotsDetails(
     deferredSelectedResourceGroup || 'default',
   );
-  const [displayType, setDisplayType] = useState<'usage' | 'capacity'>('usage');
+  const [displayType, setDisplayType] = useState<'usage' | 'remaining'>(
+    'usage',
+  );
 
   const acceleratorSlotsDetails = useMemo(() => {
     return _.chain(resourceSlotsDetails?.resourceSlotsInRG)
