@@ -4,9 +4,8 @@ import { Image } from '../components/ImageEnvironmentSelectFormItems';
 import { AUTOMATIC_DEFAULT_SHMEM } from '../components/ResourceAllocationFormItems';
 import { addNumberWithUnits, convertToBinaryUnit } from '../helper';
 import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
-import { useTanQuery } from './reactQueryAlias';
+import { useSuspenseTanQuery } from './reactQueryAlias';
 import { useResourceGroupsForCurrentProject } from './useCurrentProject';
-import { keepPreviousData } from '@tanstack/react-query';
 import _ from 'lodash';
 import { useMemo } from 'react';
 import { graphql, useFragment } from 'react-relay';
@@ -139,7 +138,7 @@ export const useResourceLimitAndRemaining = ({
     data: checkPresetInfo,
     refetch,
     isRefetching,
-  } = useTanQuery<ResourceAllocation | null>({
+  } = useSuspenseTanQuery<ResourceAllocation | null>({
     queryKey: [
       'check-presets',
       currentProjectName,
@@ -161,8 +160,6 @@ export const useResourceLimitAndRemaining = ({
       return baiClient.resourcePreset.check(params).catch(() => null);
     },
     staleTime: 1000,
-    // This allows the previous data to be used while the new data is being fetched
-    placeholderData: keepPreviousData,
   });
 
   const currentImageMinM =
