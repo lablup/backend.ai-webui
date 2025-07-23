@@ -26,6 +26,7 @@
     "OPENBLAS",
     "Popconfirm",
     "preopen",
+    "Refetchable",
     "rescan",
     "Rescanning",
     "RNGD",
@@ -36,14 +37,14 @@
     "Tensorboard",
     "textbox",
     "Totp",
+    "upsert",
     "vaadin",
     "vfolder",
     "vfolders",
     "Warboy",
     "webcomponent",
     "webui",
-    "wsproxy",
-    "upsert"
+    "wsproxy"
   ],
   "flagWords": [
     "데이터레이크",

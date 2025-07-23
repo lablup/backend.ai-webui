@@ -806,7 +806,7 @@ export default class BackendAISessionList extends BackendAIPage {
       'type',
       'agents',
       'status_data',
-      'idle-checks',
+      'idle_checks',
       'scaling_group',
       'main_kernel_role',
       'cluster_size',

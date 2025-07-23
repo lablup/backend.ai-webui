@@ -1,37 +1,57 @@
 import { DashboardPageQuery } from '../__generated__/DashboardPageQuery.graphql';
-import AvailableResourcesCard from '../components/AvailableResourcesCard';
-import MySessionCard from '../components/MySessionCard';
-import RecentlyCreatedSessionCard from '../components/RecentlyCreatedSessionCard';
+import BAIBoard, { BAIBoardItem } from '../components/BAIBoard';
+import MyResource from '../components/MyResource';
+import MyResourceWithinResourceGroup from '../components/MyResourceWithinResourceGroup';
+import MySession from '../components/MySession';
+import RecentlyCreatedSession from '../components/RecentlyCreatedSession';
+import TotalResourceWithinResourceGroup from '../components/TotalResourceWithinResourceGroup';
 import { filterEmptyItem } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
+import {
+  useCurrentProjectValue,
+  useCurrentResourceGroupValue,
+} from '../hooks/useCurrentProject';
 import { useInterval } from '../hooks/useIntervalValue';
-import { Col, Grid, Row } from 'antd';
+import { Skeleton, theme } from 'antd';
 import _ from 'lodash';
-import { useTransition } from 'react';
+import { Suspense, useTransition } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const DashboardPage: React.FC = () => {
-  const { lg } = Grid.useBreakpoint();
-
-  // to avoid flickering
-  useSuspendedBackendaiClient();
+  const baiClient = useSuspendedBackendaiClient();
+  const { token } = theme.useToken();
 
   const currentProject = useCurrentProjectValue();
+  const currentResourceGroup = useCurrentResourceGroupValue();
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [isPendingRefetch, startRefetchTransition] = useTransition();
+
+  const [localStorageBoardItems, setLocalStorageBoardItems] =
+    useBAISettingUserState('dashboard_board_items');
+
   const queryRef = useLazyLoadQuery<DashboardPageQuery>(
     graphql`
-      query DashboardPageQuery($projectId: UUID!) {
-        ...MySessionCardQueryFragment @arguments(projectId: $projectId)
-        ...RecentlyCreatedSessionCardFragment @arguments(projectId: $projectId)
+      query DashboardPageQuery(
+        $projectId: UUID!
+        $resourceGroup: String # TODO: Skip to query if hideAgents is true
+        $hideAgents: Boolean!
+      ) {
+        ...MySessionQueryFragment @arguments(projectId: $projectId)
+        ...RecentlyCreatedSessionFragment @arguments(projectId: $projectId)
+        ...TotalResourceWithinResourceGroupFragment
+          @skip(if: $hideAgents)
+          @arguments(resourceGroup: $resourceGroup)
       }
     `,
     {
       projectId: currentProject.id,
+      resourceGroup: currentResourceGroup || 'default',
+      hideAgents: baiClient?._config?.hideAgents,
     },
     {
-      fetchPolicy: fetchKey === 'first' ? 'store-and-network' : 'network-only',
+      fetchPolicy:
+        fetchKey === 'initial-fetch' ? 'store-and-network' : 'network-only',
       fetchKey,
     },
   );
@@ -42,36 +62,71 @@ const DashboardPage: React.FC = () => {
     });
   }, 15_000);
 
-  const items = filterEmptyItem([
+  const initialBoardItems: Array<BAIBoardItem> = filterEmptyItem([
     {
       id: 'mySession',
-      rowSpan: 3,
-      columnSpan: 1,
-      columnOffset: { 6: 0, 4: 0 },
+      rowSpan: 2,
+      columnSpan: 2,
+      definition: {
+        minRowSpan: 2,
+        minColumnSpan: 2,
+      },
       data: {
         content: (
-          <MySessionCard
-            queryRef={queryRef}
-            isRefetching={isPendingRefetch}
-            style={{ minHeight: lg ? 200 : undefined }}
-          />
+          <Suspense
+            fallback={
+              <Skeleton active style={{ padding: `0px ${token.marginMD}px` }} />
+            }
+          >
+            <MySession queryRef={queryRef} isRefetching={isPendingRefetch} />
+          </Suspense>
         ),
       },
     },
     {
-      id: 'allocatedResources',
-      rowSpan: 3,
-      columnSpan: 1,
-      columnOffset: { 6: 1, 4: 1 },
+      id: 'myResource',
+      rowSpan: 2,
+      columnSpan: 2,
+      definition: {
+        minRowSpan: 2,
+        minColumnSpan: 2,
+      },
       data: {
         content: (
-          <AvailableResourcesCard
-            style={{
-              width: '100%',
-              minHeight: lg ? 200 : undefined,
-            }}
-            isRefetching={isPendingRefetch}
+          <MyResource fetchKey={fetchKey} isRefetching={isPendingRefetch} />
+        ),
+      },
+    },
+    {
+      id: 'myResourceWithinResourceGroup',
+      rowSpan: 2,
+      columnSpan: 2,
+      definition: {
+        minRowSpan: 2,
+        minColumnSpan: 2,
+      },
+      data: {
+        content: (
+          <MyResourceWithinResourceGroup
             fetchKey={fetchKey}
+            isRefetching={isPendingRefetch}
+          />
+        ),
+      },
+    },
+    !baiClient?._config?.hideAgents && {
+      id: 'totalResourceWithinResourceGroup',
+      rowSpan: 2,
+      columnSpan: 2,
+      definition: {
+        minRowSpan: 2,
+        minColumnSpan: 2,
+      },
+      data: {
+        content: (
+          <TotalResourceWithinResourceGroup
+            queryRef={queryRef}
+            isRefetching={isPendingRefetch}
           />
         ),
       },
@@ -79,49 +134,49 @@ const DashboardPage: React.FC = () => {
     {
       id: 'recentlyCreatedSession',
       rowSpan: 3,
-      columnSpan: 2,
-      columnOffset: { 6: 0, 4: 0 },
+      columnSpan: 4,
+      definition: {
+        minRowSpan: 2,
+        minColumnSpan: 2,
+      },
       data: {
         content: (
-          <RecentlyCreatedSessionCard
+          <RecentlyCreatedSession
             queryRef={queryRef}
             isRefetching={isPendingRefetch}
           />
         ),
       },
     },
-    // {
-    //   id: 'mostResourceAllocatedSession',
-    //   rowSpan: 3,
-    //   columnSpan: 2,
-    //   columnOffset: { 6: 0, 4: 0 },
-    //   data: {
-    //     content: <></>,
-    //   },
-    // },
-    // {
-    //   id: 'pipelineStatus',
-    //   rowSpan: 3,
-    //   columnSpan: 2,
-    //   columnOffset: { 6: 0, 4: 0 },
-    //   data: {
-    //     content: <></>,
-    //   },
-    // },
   ]);
 
+  // TODO: Issue occurs when newly added items in new webui version are not saved in localStorage
+  // and thus not displayed on screen.
+  // Opted-out items should also be stored separately in localStorage, and newly added items
+  // should be included in initialBoardItems.
+  const mergedBoardItems = filterEmptyItem(
+    _.map(initialBoardItems, (item) => {
+      const updatedItem = _.find(
+        localStorageBoardItems,
+        (itemInStorage) => itemInStorage.id === item.id,
+      );
+      return { ...item, ...updatedItem };
+    }),
+  );
+
   return (
-    <>
-      <Row gutter={[16, 16]}>
-        {_.map(items, (item) => {
-          return (
-            <Col xs={24} lg={item.columnSpan === 2 ? 24 : 12}>
-              {item.data.content}
-            </Col>
-          );
-        })}
-      </Row>
-    </>
+    <BAIBoard
+      movable
+      resizable
+      bordered
+      items={mergedBoardItems}
+      onItemsChange={(event) => {
+        const changedItems = [...event.detail.items];
+        setLocalStorageBoardItems(
+          _.map(changedItems, (item) => _.omit(item, 'data')),
+        );
+      }}
+    />
   );
 };
 

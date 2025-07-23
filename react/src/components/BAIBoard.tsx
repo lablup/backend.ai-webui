@@ -1,9 +1,7 @@
 import Board, { BoardProps } from '@cloudscape-design/board-components/board';
 import BoardItem from '@cloudscape-design/board-components/board-item';
-import { Skeleton } from 'antd';
 import { createStyles } from 'antd-style';
 import classNames from 'classnames';
-import { Suspense } from 'react';
 
 const useStyles = createStyles(({ css, token }) => {
   return {
@@ -107,10 +105,9 @@ const BAIBoard = <T extends BAIBoardDataType>({
               resizeHandleAriaLabel: '',
               resizeHandleAriaDescription: '',
             }}
+            {...item}
           >
-            <Suspense fallback={<Skeleton active />}>
-              {item.data.content}
-            </Suspense>
+            {item.data.content}
           </BoardItem>
         );
       }}

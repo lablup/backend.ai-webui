@@ -76,7 +76,6 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
           <Input
             placeholder="v1"
             addonBefore={shrinkControlSize ? undefined : endpointUrl}
-            defaultValue={basePath}
           />
         </Form.Item>
         <Form.Item label={t('modelService.Token')} name="token">

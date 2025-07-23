@@ -60,7 +60,7 @@ export const useResourceSlots = () => {
   ] as const;
 };
 
-type ResourceSlotDetail = {
+export type ResourceSlotDetail = {
   slot_name: string;
   description: string;
   human_readable_name: string;

@@ -90,6 +90,8 @@ const FILTER_BY_STATUS_CATEGORY = {
   deleted: 'status in ["DELETE_PENDING", "DELETE_ONGOING", "DELETE_ERROR"]',
 };
 
+const CARD_MIN_HEIGHT = 200;
+
 const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   ...props
 }) => {
@@ -267,76 +269,90 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
 
   return (
     <Flex direction="column" align="stretch" gap={'md'} {...props}>
-      <Flex direction="column" align="stretch">
-        <Row gutter={[16, 16]}>
-          <Col xs={24} lg={8} xl={4}>
-            <BAICard
-              styles={{
-                body: {
-                  padding: 0,
-                },
+      <Row
+        gutter={[16, 16]}
+        align={'stretch'}
+        style={{ minHeight: lg ? CARD_MIN_HEIGHT : undefined }}
+      >
+        <Col xs={24} lg={8} xxl={4} style={{ display: 'flex' }}>
+          <BAICard
+            style={{
+              width: '100%',
+              minHeight: lg ? CARD_MIN_HEIGHT : undefined,
+            }}
+          >
+            <ActionItemContent
+              title={
+                <Typography.Text
+                  style={{
+                    maxWidth: lg ? 120 : undefined,
+                    wordBreak: 'keep-all',
+                  }}
+                >
+                  {t('data.CreateFolderAndUploadFiles')}
+                </Typography.Text>
+              }
+              buttonText={t('data.CreateFolder')}
+              icon={<NewFolderIcon />}
+              type="simple"
+              onClick={() => toggleCreateModal()}
+              style={{
+                height: '100%',
               }}
-              style={{ height: lg ? 200 : undefined }}
-              size={lg ? undefined : 'small'}
-            >
-              <ActionItemContent
-                title={
-                  <Typography.Text
-                    style={{
-                      maxWidth: lg ? 120 : undefined,
-                      wordBreak: 'keep-all',
-                    }}
-                  >
-                    {t('data.CreateFolderAndUploadFiles')}
-                  </Typography.Text>
-                }
-                buttonText={t('data.CreateFolder')}
-                icon={<NewFolderIcon />}
-                type="simple"
-                onClick={() => toggleCreateModal()}
-              />
-            </BAICard>
-          </Col>
-          <Col xs={24} lg={16} xl={8}>
-            <Suspense
-              fallback={
-                <BAICard
-                  style={{ height: 200 }}
-                  title={t('data.StorageStatus')}
-                  loading
-                />
-              }
-            >
-              <StorageStatusPanelCard
-                style={{ height: lg ? 200 : undefined }}
-                fetchKey={deferredFetchKey}
-                onRequestBadgeClick={() => {
-                  webuiNavigate({
-                    search: new URLSearchParams({
-                      invitation: 'true',
-                    }).toString(),
-                  });
+            />
+          </BAICard>
+        </Col>
+        <Col xs={24} lg={16} xxl={8} style={{ display: 'flex' }}>
+          <Suspense
+            fallback={
+              <BAICard
+                style={{
+                  width: '100%',
+                  minHeight: lg ? CARD_MIN_HEIGHT : undefined,
                 }}
+                title={t('data.StorageStatus')}
+                loading
               />
-            </Suspense>
-          </Col>
-          <Col xs={24} xl={12}>
-            <Suspense
-              fallback={
-                <BAICard
-                  style={{ height: 200 }}
-                  title={t('data.QuotaPerStorageVolume')}
-                  loading
-                />
-              }
-            >
-              <QuotaPerStorageVolumePanelCard
-                style={{ height: lg ? 200 : undefined }}
+            }
+          >
+            <StorageStatusPanelCard
+              style={{
+                width: '100%',
+                minHeight: lg ? CARD_MIN_HEIGHT : undefined,
+              }}
+              fetchKey={deferredFetchKey}
+              onRequestBadgeClick={() => {
+                webuiNavigate({
+                  search: new URLSearchParams({
+                    invitation: 'true',
+                  }).toString(),
+                });
+              }}
+            />
+          </Suspense>
+        </Col>
+        <Col xs={24} xxl={12} style={{ display: 'flex' }}>
+          <Suspense
+            fallback={
+              <BAICard
+                style={{
+                  width: '100%',
+                  minHeight: lg ? CARD_MIN_HEIGHT : undefined,
+                }}
+                title={t('data.QuotaPerStorageVolume')}
+                loading
               />
-            </Suspense>
-          </Col>
-        </Row>
-      </Flex>
+            }
+          >
+            <QuotaPerStorageVolumePanelCard
+              style={{
+                width: '100%',
+                minHeight: lg ? CARD_MIN_HEIGHT : undefined,
+              }}
+            />
+          </Suspense>
+        </Col>
+      </Row>
       <BAICard
         variant="borderless"
         title={t('data.Folders')}

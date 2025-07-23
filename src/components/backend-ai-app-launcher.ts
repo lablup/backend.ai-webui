@@ -1063,7 +1063,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           }
         }
       } else {
-        rqstUrl = new URL(resp.redirect_url);
+        rqstUrl = new URL(resp?.redirect_url);
       }
     } else {
       // When there is no redirect_url or encountered an error in fetching the
@@ -1110,7 +1110,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     return {
       appConnectUrl: rqstUrl,
       reused,
-      redirectUrl: resp.redirect_url || null,
+      redirectUrl: resp?.redirect_url || null,
     };
   }
 

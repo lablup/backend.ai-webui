@@ -1,10 +1,12 @@
+import Flex from './Flex';
 import { CloseCircleTwoTone, WarningTwoTone } from '@ant-design/icons';
 import { Button, Card, CardProps, theme } from 'antd';
 import _ from 'lodash';
-import React, { ReactNode } from 'react';
+import React, { cloneElement, isValidElement, ReactNode } from 'react';
 
-export interface BAICardProps extends CardProps {
+export interface BAICardProps extends Omit<CardProps, 'extra'> {
   status?: 'success' | 'error' | 'warning' | 'default';
+  extra?: ReactNode;
   extraButtonTitle?: string | ReactNode;
   showDivider?: boolean;
   onClickExtraButton?: () => void;
@@ -22,8 +24,15 @@ const BAICard: React.FC<BAICardProps> = ({
   ...cardProps
 }) => {
   const { token } = theme.useToken();
+
+  const extraWithoutFontWeight = isValidElement(extra)
+    ? cloneElement(extra as React.ReactElement<any>, {
+        style: { fontWeight: 'normal' },
+      })
+    : extra;
+
   const _extra =
-    extra ||
+    extraWithoutFontWeight ||
     (extraButtonTitle && (
       <Button
         type="link"
@@ -42,7 +51,6 @@ const BAICard: React.FC<BAICardProps> = ({
     undefined;
   return (
     <Card
-      className={status === 'error' ? 'bai-card-error' : ''}
       style={_.extend(style, {
         borderColor:
           status === 'error'
@@ -69,8 +77,13 @@ const BAICard: React.FC<BAICardProps> = ({
             },
         styles,
       )}
-      extra={_extra}
       {...cardProps}
+      title={
+        <Flex justify="between" align="center" wrap="wrap" gap="sm">
+          {cardProps.title}
+          {_extra}
+        </Flex>
+      }
     />
   );
 };

@@ -328,11 +328,23 @@ type Queries {
   """Added in 25.1.0."""
   endpoint_auto_scaling_rule_nodes(endpoint: String!, filter: String, order: String, offset: Int, before: String, after: String, first: Int, last: Int): EndpointAutoScalingRuleConnection
 
-  """Added in 25.5.0."""
+  """Added in 25.6.0."""
   user_utilization_metric(user_id: UUID!, props: UserUtilizationMetricQueryInput!): UserUtilizationMetric
 
-  """Added in 25.5.0."""
+  """Added in 25.6.0."""
   container_utilization_metric_metadata: ContainerUtilizationMetricMetadata
+
+  """Added in 25.8.0."""
+  available_service: AvailableServiceNode
+
+  """Added in 25.8.0."""
+  available_services(filter: String, order: String, offset: Int, before: String, after: String, first: Int, last: Int): AvailableServiceConnection
+
+  """Added in 25.8.0."""
+  service_config(service: String!): ServiceConfigNode
+
+  """Added in 25.8.0."""
+  service_configs(services: [String]!, filter: String, order: String, offset: Int, before: String, after: String, first: Int, last: Int): ServiceConfigConnection
 }
 
 """
@@ -405,32 +417,32 @@ type AuditLogNode implements Node {
   """The ID of the object"""
   id: ID!
 
-  """UUID of the audit log row"""
+  """UUID of the AuditLog row"""
   row_id: UUID!
 
   """Added in 25.6.0. UUID of the action"""
   action_id: UUID!
 
-  """Entity ID of the AuditLog"""
+  """Entity type of the AuditLog"""
   entity_type: String!
 
-  """Entity type of the AuditLog"""
+  """Operation type of the AuditLog"""
   operation: String!
 
-  """Operation type of the AuditLog"""
-  entity_id: String!
+  """Entity ID of the AuditLog"""
+  entity_id: String
 
   """The time the AuditLog was reported"""
   created_at: DateTime!
 
-  """RequestID of the AuditLog"""
-  request_id: UUID!
+  """Request ID of the AuditLog"""
+  request_id: String
 
   """Description of the AuditLog"""
   description: String!
 
   """Duration taken to perform the operation"""
-  duration: String!
+  duration: String
 
   """Status of the AuditLog"""
   status: String!
@@ -586,6 +598,9 @@ type ImageNode implements Node {
   Added in 25.3.0. One of ['read_attribute', 'update_attribute', 'create_container', 'forget_image'].
   """
   permissions: [ImagePermissionValueField]
+
+  """Added in 25.11.0. Indicates if the image is installed on any Agent."""
+  installed: Boolean
 }
 
 type KVPair {
@@ -2041,19 +2056,19 @@ type EndpointAutoScalingRuleEdge {
   cursor: String!
 }
 
-"""Added in 25.5.0."""
+"""Added in 25.6.0."""
 type UserUtilizationMetric {
   user_id: UUID
   metrics: [ContainerUtilizationMetric]
 }
 
-"""Added in 25.5.0."""
+"""Added in 25.6.0."""
 type ContainerUtilizationMetric {
   metric_name: String
 
-  """One of 'current', 'capacity', 'pct'."""
+  """One of 'current', 'capacity'."""
   value_type: String
-  values: [MetircResultValue]
+  values: [MetricResultValue]
 
   """The maximum value of the metric in given time range. null if no data."""
   max_value: String
@@ -2062,16 +2077,16 @@ type ContainerUtilizationMetric {
   avg_value: String
 }
 
-"""Added in 25.5.0. A pair of timestamp and value."""
-type MetircResultValue {
+"""Added in 25.6.0. A pair of timestamp and value."""
+type MetricResultValue {
   timestamp: Float
   value: String
 }
 
-"""Added in 25.5.0."""
+"""Added in 25.6.0."""
 input UserUtilizationMetricQueryInput {
-  """One of 'current', 'capacity', 'pct'. Default value is 'null'."""
-  value_type: String = null
+  """One of 'current', 'capacity'. Default value is 'current'."""
+  value_type: String = "current"
 
   """metric name of container utilization. For example, 'cpu_util', 'mem'."""
   metric_name: String!
@@ -2088,9 +2103,81 @@ input UserUtilizationMetricQueryInput {
   step: String!
 }
 
-"""Added in 25.5.0."""
+"""Added in 25.6.0."""
 type ContainerUtilizationMetricMetadata {
   metric_names: [String]
+}
+
+"""Available services for configuration. Added in 25.8.0."""
+type AvailableServiceNode implements Node {
+  """The ID of the object"""
+  id: ID!
+
+  """Possible values of "Config.service". Added in 25.8.0."""
+  service_variants: [String]!
+}
+
+"""Added in 25.8.0."""
+type AvailableServiceConnection {
+  """Pagination data for this connection."""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection."""
+  edges: [AvailableServiceEdge]!
+
+  """Total count of the GQL nodes of the query."""
+  count: Int
+}
+
+"""
+Added in 25.8.0. A Relay edge containing a `AvailableService` and its cursor.
+"""
+type AvailableServiceEdge {
+  """The item at the end of the edge"""
+  node: AvailableServiceNode
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+"""Configuration data for a specific service. Added in 25.8.0."""
+type ServiceConfigNode implements Node {
+  """The ID of the object"""
+  id: ID!
+
+  """
+  Service name. See AvailableService.service_variants for possible values. Added in 25.8.0.
+  """
+  service: String!
+
+  """Configuration data. Added in 25.8.0."""
+  configuration: JSONString!
+
+  """JSON schema of the configuration. Added in 25.8.0."""
+  schema: JSONString!
+}
+
+"""Added in 25.8.0."""
+type ServiceConfigConnection {
+  """Pagination data for this connection."""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection."""
+  edges: [ServiceConfigEdge]!
+
+  """Total count of the GQL nodes of the query."""
+  count: Int
+}
+
+"""
+Added in 25.8.0. A Relay edge containing a `ServiceConfig` and its cursor.
+"""
+type ServiceConfigEdge {
+  """The item at the end of the edge"""
+  node: ServiceConfigNode
+
+  """A cursor for use in pagination"""
+  cursor: String!
 }
 
 """All available GraphQL mutations."""
@@ -2172,6 +2259,9 @@ type Mutations {
   unload_image(references: [String]!, target_agents: [String]!): UnloadImage
   modify_image(architecture: String = "x86_64", props: ModifyImageInput!, target: String!): ModifyImage
 
+  """Added in 25.6.0"""
+  clear_image_custom_resource_limit(key: ClearImageCustomResourceLimitKey!): ClearImageCustomResourceLimitPayload
+
   """Added in 24.03.0"""
   forget_image_by_id(image_id: String!): ForgetImageById
 
@@ -2179,7 +2269,12 @@ type Mutations {
   forget_image(architecture: String = "x86_64", reference: String!): ForgetImage @deprecated(reason: "Deprecated since 25.4.0. Use `forget_image_by_id` instead.")
 
   """Added in 25.4.0"""
-  purge_image_by_id(image_id: String!): PurgeImageById
+  purge_image_by_id(
+    image_id: String!
+
+    """Added in 25.10.0."""
+    options: PurgeImageOptions = {remove_from_registry: false}
+  ): PurgeImageById
 
   """Added in 24.03.1"""
   untag_image_from_registry(image_id: String!): UntagImageFromRegistry
@@ -2213,6 +2308,12 @@ type Mutations {
     id: UUID = null
     name: String = null @deprecated(reason: "Deprecated since 25.4.0.")
   ): DeleteResourcePreset
+
+  """Updates configuration for a given service. Added in 25.8.0."""
+  modify_service_config(
+    """Added in 25.8.0."""
+    input: ModifyServiceConfigNodeInput!
+  ): ModifyServiceConfigNodePayload
   create_scaling_group(name: String!, props: CreateScalingGroupInput!): CreateScalingGroup
   modify_scaling_group(name: String!, props: ModifyScalingGroupInput!): ModifyScalingGroup
   delete_scaling_group(name: String!): DeleteScalingGroup
@@ -2741,6 +2842,17 @@ input ResourceLimitInput {
   max: String
 }
 
+"""Added in 25.6.0."""
+type ClearImageCustomResourceLimitPayload {
+  image_node: ImageNode
+}
+
+"""Added in 25.6.0."""
+input ClearImageCustomResourceLimitKey {
+  image_canonical: String!
+  architecture: String! = "x86_64"
+}
+
 """Added in 24.03.0."""
 type ForgetImageById {
   ok: Boolean
@@ -2764,7 +2876,17 @@ type PurgeImageById {
   image: ImageNode
 }
 
-"""Added in 24.03.1"""
+"""Added in 25.10.0."""
+input PurgeImageOptions {
+  """
+  Untag the deleted image from the registry. Only available in the HarborV2 registry.
+  """
+  remove_from_registry: Boolean = false
+}
+
+"""
+Deprecated since 25.10.0. Use `purge_image_by_id` with `remove_from_registry` option instead.
+"""
 type UntagImageFromRegistry {
   ok: Boolean
   msg: String
@@ -3034,6 +3156,29 @@ input ModifyResourcePresetInput {
 type DeleteResourcePreset {
   ok: Boolean
   msg: String
+}
+
+"""
+Payload for the ModifyServiceConfigNode mutation.
+Added in 25.8.0.
+"""
+type ModifyServiceConfigNodePayload {
+  """ServiceConfiguration Node. Added in 25.8.0."""
+  service_config: ServiceConfigNode!
+}
+
+"""
+Input data for modifying configuration.
+Added in 25.8.0.
+"""
+input ModifyServiceConfigNodeInput {
+  """
+  Service name. See AvailableService.service_variants for possible values. Added in 25.8.0.
+  """
+  service: String!
+
+  """Service configuration data to mutate. Added in 25.8.0."""
+  configuration: JSONString!
 }
 
 type CreateScalingGroup {

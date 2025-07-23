@@ -360,6 +360,7 @@ export const useSetBAINotification = () => {
           ) {
             _activeNotificationKeys.push(newNotification.key);
           }
+
           if (!skipDesktopNotification && desktopNotification) {
             upsertDesktopNotification(newNotification);
           }
@@ -410,7 +411,12 @@ export const useSetBAINotification = () => {
     },
     // webuiNavigate is not a dependency because it is not used in the callback of useCallback
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [app.notification, setNotifications, destroyNotification],
+    [
+      app.notification,
+      setNotifications,
+      destroyNotification,
+      desktopNotification,
+    ],
   );
 
   const upsertDesktopNotification = useCallback(

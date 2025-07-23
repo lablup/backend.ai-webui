@@ -14,12 +14,11 @@ import { useTranslation } from 'react-i18next';
 
 interface FolderInvitationResponseModalProps extends BAIModalProps {
   onRequestClose?: (success: boolean) => void;
-  fetchKey?: string;
 }
 
 const FolderInvitationResponseModal: React.FC<
   FolderInvitationResponseModalProps
-> = ({ onRequestClose, fetchKey, ...baiModalProps }) => {
+> = ({ onRequestClose, ...baiModalProps }) => {
   const { token } = theme.useToken();
   const { message } = App.useApp();
   const { t } = useTranslation();
@@ -46,8 +45,12 @@ const FolderInvitationResponseModal: React.FC<
                     t('data.invitation.SuccessfullyAcceptedInvitation'),
                   );
                 },
-                onError: (e) => {
+                onError: (e: any) => {
                   onRequestClose?.(false);
+                  if (e?.statusCode === 409) {
+                    message.error(t('data.FolderAlreadyExists'));
+                    return;
+                  }
                   message.error(
                     e.message || t('data.invitation.FailedToAcceptInvitation'),
                   );

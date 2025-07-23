@@ -84,9 +84,13 @@ const SessionLauncherPreview: React.FC<{
             <>
               <Descriptions.Item
                 label={t('session.launcher.StartUpCommand')}
-                labelStyle={{ whiteSpace: 'nowrap' }}
-                contentStyle={{
-                  overflow: 'auto',
+                styles={{
+                  label: {
+                    whiteSpace: 'nowrap',
+                  },
+                  content: {
+                    overflow: 'auto',
+                  },
                 }}
               >
                 {form.getFieldValue(['batch', 'command']) ? (
@@ -522,9 +526,7 @@ const SessionLauncherPreview: React.FC<{
         showDivider
         size="small"
         status={
-          form.getFieldError('vfoldersAliasMap').length > 0
-            ? 'error'
-            : undefined
+          form.getFieldError('mount_id_map').length > 0 ? 'error' : undefined
         }
         extraButtonTitle={t('button.Edit')}
         onClickExtraButton={() => {
@@ -534,7 +536,7 @@ const SessionLauncherPreview: React.FC<{
         {/* {console.log(_.sum([form.getFieldValue('mounts')?.length, form.getFieldValue('autoMountedFolderNames')]))} */}
         {/* {_.sum([form.getFieldValue('mounts')?.length, form.getFieldValue('autoMountedFolderNames').length]) > 0 ? ( */}
         <Flex direction="column" align="stretch" gap={'xs'}>
-          {form.getFieldValue('mounts')?.length > 0 ? (
+          {form.getFieldValue('mount_ids')?.length > 0 ? (
             <Table
               rowKey="name"
               size="small"
@@ -563,10 +565,11 @@ const SessionLauncherPreview: React.FC<{
                   },
                 },
               ]}
-              dataSource={_.map(form.getFieldValue('mounts'), (v) => {
+              dataSource={_.map(form.getFieldValue('mount_ids'), (v) => {
+                const name = form.getFieldValue('vfoldersNameMap')?.[v] || v;
                 return {
-                  name: v,
-                  alias: form.getFieldValue('vfoldersAliasMap')?.[v],
+                  name,
+                  alias: form.getFieldValue('mount_id_map')?.[v],
                 };
               })}
             ></Table>

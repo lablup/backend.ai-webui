@@ -169,7 +169,7 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
               render: (name, record) => {
                 const displayName = name || record.id.split('-')[0];
                 return (
-                  <Typography.Link
+                  <Typography.Text
                     className={styles.fixEditableVerticalAlign}
                     editable={{
                       onChange(value) {
@@ -198,7 +198,7 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
                     >
                       {displayName}
                     </BAILink>
-                  </Typography.Link>
+                  </Typography.Text>
                 );
               },
             },
