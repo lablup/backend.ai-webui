@@ -144,7 +144,7 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
       }}
       {...modalProps}
       footer={null}
-      destroyOnClose
+      destroyOnHidden
     >
       <Flex
         direction="column"

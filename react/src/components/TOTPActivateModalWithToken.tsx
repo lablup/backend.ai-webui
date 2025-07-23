@@ -107,7 +107,7 @@ const TOTPActivateModalWithToken = () => {
       onCancel={() => {
         dispatchEvent('cancel', null);
       }}
-      destroyOnClose
+      destroyOnHidden
       onOk={_onOk}
       loading={!isSuccess}
     >

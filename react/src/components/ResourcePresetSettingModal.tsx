@@ -215,7 +215,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
       }
       onOk={handleOk}
       onCancel={() => onRequestClose(false)}
-      destroyOnClose
+      destroyOnHidden
       confirmLoading={
         isInFlightCommitCreateResourcePreset ||
         isInFlightCommitModifyResourcePresetByName ||

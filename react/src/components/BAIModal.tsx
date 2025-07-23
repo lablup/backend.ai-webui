@@ -112,7 +112,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
             <Draggable
               disabled={disabled}
               bounds={bounds}
-              // @ts-expect-error
+              // @ts-ignore
               nodeRef={draggleRef}
               onStart={(e, uiData) => handleDrag(e, uiData)}
             >

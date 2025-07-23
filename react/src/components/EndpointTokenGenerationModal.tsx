@@ -82,7 +82,7 @@ const EndpointTokenGenerationModal: React.FC<
   return (
     <BAIModal
       {...baiModalProps}
-      destroyOnClose
+      destroyOnHidden
       onOk={handleOk}
       onCancel={handleCancel}
       okText={t('modelService.Generate')}

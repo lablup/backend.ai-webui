@@ -32,7 +32,7 @@ const BAIConfirmModalWithInput: React.FC<BAIConfirmModalWithInputProps> = ({
 
   return (
     <BAIModal
-      destroyOnClose
+      destroyOnHidden
       title={
         <Flex direction="column" justify="start" align="start">
           <Text strong>

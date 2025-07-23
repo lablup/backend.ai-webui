@@ -294,7 +294,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
       title={
         user ? t('credential.ModifyUserDetail') : t('credential.CreateUser')
       }
-      destroyOnClose
+      destroyOnHidden
       onOk={handleOk}
       confirmLoading={
         isInFlightCommitModifyUserSetting || isInFlightCommitCreateUser

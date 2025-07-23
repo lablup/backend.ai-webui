@@ -202,9 +202,8 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
           ? 'selectedLabel'
           : 'label'
       }
-      onDropdownVisibleChange={(open) => {
-        selectProps.onDropdownVisibleChange &&
-          selectProps.onDropdownVisibleChange(open);
+      onOpenChange={(open) => {
+        selectProps.onOpenChange && selectProps.onOpenChange(open);
         if (open) {
           updateFetchKeyUnderTransition();
         }

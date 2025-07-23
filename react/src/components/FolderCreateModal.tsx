@@ -217,7 +217,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
       onCancel={() => {
         onRequestClose();
       }}
-      destroyOnClose
+      destroyOnHidden
       {...modalProps}
     >
       <Form

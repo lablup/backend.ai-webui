@@ -18,7 +18,7 @@ import AppLauncherModal from './AppLauncherModal';
 import ContainerCommitModal from './ContainerCommitModal';
 import ContainerLogModal from './ContainerLogModal';
 import TerminateSessionModal from './TerminateSessionModal';
-import { Tooltip, Button, theme } from 'antd';
+import { Tooltip, Button, theme, Space } from 'antd';
 import _ from 'lodash';
 import { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -98,7 +98,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = (props) => {
 
   return (
     session && (
-      <>
+      <Space.Compact size="large">
         <Tooltip title={t('session.SeeAppDialog')}>
           <Button
             disabled={
@@ -193,7 +193,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = (props) => {
             }}
           />
         </Tooltip>
-      </>
+      </Space.Compact>
     )
   );
 };

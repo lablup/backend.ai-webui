@@ -166,7 +166,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
       title={t('data.explorer.ModifyPermissions')}
       onCancel={onRequestClose}
       style={{ minWidth: 550 }}
-      destroyOnClose
+      destroyOnHidden
       footer={null}
     >
       <Flex direction="column" gap="xl">

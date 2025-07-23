@@ -230,12 +230,10 @@ const SessionDetailContent: React.FC<{
               !['TERMINATED', 'CANCELLED'].includes(session.status || '')
             }
           />
-          <Button.Group size="large">
-            <SessionActionButtons
-              sessionFrgmt={session}
-              legacySessionFrgmt={legacy_session}
-            />
-          </Button.Group>
+          <SessionActionButtons
+            sessionFrgmt={session}
+            legacySessionFrgmt={legacy_session}
+          />
         </Flex>
 
         <Descriptions bordered column={md ? 2 : 1}>
