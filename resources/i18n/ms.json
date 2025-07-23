@@ -1968,6 +1968,8 @@
       "MyEnvironments": "Persekitaran Saya",
       "MyResources": "Sumber saya",
       "MyResourcesDescription": "<p> Panel ini menunjukkan jumlah penggunaan sumber dan kapasiti yang tersedia di semua projek dan kumpulan sumber. </P> <p> Apabila terdapat banyak had (seperti domain, projek, atau keypair), had yang paling ketat digunakan untuk menunjukkan penggunaan dan kapasiti yang tinggal. </P>",
+      "MyResourcesIn": "Sumber saya di",
+      "MyResourcesInResourceGroupDescription": "Panel ini menunjukkan penggunaan sumber anda dan kapasiti yang tersedia dalam kumpulan sumber yang dipilih.",
       "NewPassword": "Kata laluan baharu",
       "NewPasswordAgain": "Kata laluan baru (sekali lagi)",
       "NewPasswordCannotBeSame": "Sila masukkan kata laluan yang berbeza daripada kata laluan semasa anda.",

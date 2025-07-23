@@ -1971,6 +1971,8 @@
       "MyEnvironments": "Môi trường của tôi",
       "MyResources": "Tài nguyên của tôi",
       "MyResourcesDescription": "<p> Bảng điều khiển này hiển thị tổng số sử dụng tài nguyên và khả năng có sẵn của bạn trên tất cả các dự án và nhóm tài nguyên.",
+      "MyResourcesIn": "Tài nguyên của tôi trong",
+      "MyResourcesInResourceGroupDescription": "Bảng điều khiển này hiển thị việc sử dụng tài nguyên của bạn và công suất có sẵn trong nhóm tài nguyên đã chọn.",
       "NewPassword": "Mật khẩu mới",
       "NewPasswordAgain": "Mật khẩu mới (một lần nữa)",
       "NewPasswordCannotBeSame": "Vui lòng nhập mật khẩu khác với mật khẩu hiện tại của bạn.",

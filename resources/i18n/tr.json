@@ -1971,6 +1971,8 @@
       "MyEnvironments": "Ortamlarım",
       "MyResources": "Kaynaklarım",
       "MyResourcesDescription": "<p> Bu panel, tüm projeler ve kaynak gruplarında toplam kaynak kullanımınızı ve mevcut kapasitenizi gösterir.",
+      "MyResourcesIn": "Kaynaklarım",
+      "MyResourcesInResourceGroupDescription": "Bu panel, kaynak kullanımınızı ve seçilen kaynak grubunda mevcut kapasitenizi gösterir.",
       "NewPassword": "Yeni Şifre",
       "NewPasswordAgain": "Yeni Şifre Tekrar)",
       "NewPasswordCannotBeSame": "Lütfen mevcut şifrenizden farklı bir şifre girin.",

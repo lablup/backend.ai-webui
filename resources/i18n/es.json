@@ -1971,6 +1971,8 @@
       "MyEnvironments": "Mis ambientes",
       "MyResources": "Mis recursos",
       "MyResourcesDescription": "<p> Este panel muestra su uso total de recursos y su capacidad disponible en todos los proyectos y grupos de recursos. </p> <p> Cuando hay múltiples límites (como el dominio, el proyecto o el keypair), el límite más restrictivo se aplica para mostrar su uso y capacidad restante. </p>",
+      "MyResourcesIn": "Mis recursos en",
+      "MyResourcesInResourceGroupDescription": "Este panel muestra su uso de recursos y su capacidad disponible dentro del grupo de recursos seleccionado.",
       "NewPassword": "Nueva contraseña",
       "NewPasswordAgain": "Nueva contraseña (otra vez)",
       "NewPasswordCannotBeSame": "Introduzca una contraseña distinta de la actual.",

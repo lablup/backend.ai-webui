@@ -1971,6 +1971,8 @@
       "MyEnvironments": "Meus ambientes",
       "MyResources": "Meus recursos",
       "MyResourcesDescription": "<p> Este painel mostra seu uso total de recursos e capacidade disponível em todos os projetos e grupos de recursos.",
+      "MyResourcesIn": "Meus recursos em",
+      "MyResourcesInResourceGroupDescription": "Este painel mostra seu uso de recursos e capacidade disponível no grupo de recursos selecionados.",
       "NewPassword": "Nova Senha",
       "NewPasswordAgain": "Nova senha (novamente)",
       "NewPasswordCannotBeSame": "Introduza uma palavra-passe diferente da sua palavra-passe atual.",

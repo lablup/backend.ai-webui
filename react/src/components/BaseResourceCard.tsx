@@ -145,8 +145,8 @@ const BaseResourceCard: React.FC<BaseResourceCardProps> = ({
           margin: 0,
         },
         title: {
-          paddingTop: xs ? token.paddingSM : undefined,
-          paddingBottom: xs ? token.paddingSM : undefined,
+          paddingTop: token.paddingSM,
+          paddingBottom: token.paddingSM,
         },
       }}
       extra={

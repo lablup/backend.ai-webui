@@ -1977,6 +1977,8 @@
       "MyEnvironments": "나의 실행 환경",
       "MyResources": "나의 자원",
       "MyResourcesDescription": "<p>이 패널은 모든 프로젝트와 리소스 그룹을 합산한 나의 전체 자원 사용량과 가용량을 보여줍니다.</p><p>여러 제한(도메인, 프로젝트, 키페어 등)이 복합적으로 적용될 경우, 가장 엄격한 제한 기준에 따라 사용량과 남은 용량이 계산됩니다.</p>",
+      "MyResourcesIn": "\n자원 그룹 내 나의 자원",
+      "MyResourcesInResourceGroupDescription": "선택한 자원 그룹에서 내 자원 사용량과 가용량을 보여줍니다.",
       "NewPassword": "새 비밀번호",
       "NewPasswordAgain": "새 비밀번호 (재입력)",
       "NewPasswordCannotBeSame": "기존 비밀번호와 다른 새 비밀번호를 입력해 주세요.",

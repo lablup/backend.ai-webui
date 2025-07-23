@@ -1979,6 +1979,8 @@
       "MyEnvironments": "My Environments",
       "MyResources": "My Resources",
       "MyResourcesDescription": "<p>This panel shows your total resource usage and available capacity across all projects and resource groups.</p><p>When there are multiple limits (such as domain, project, or keypair), the most restrictive limit is applied to show your usage and remaining capacity.</p>\n",
+      "MyResourcesIn": "My Resources in",
+      "MyResourcesInResourceGroupDescription": "This panel shows your current resource usage and available capacity in the selected resource group.",
       "NewPassword": "New password",
       "NewPasswordAgain": "New password (again)",
       "NewPasswordCannotBeSame": "Please enter a password that is different from your current password.",

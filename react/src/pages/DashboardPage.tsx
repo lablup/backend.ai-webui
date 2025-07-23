@@ -1,5 +1,6 @@
 import { DashboardPageQuery } from '../__generated__/DashboardPageQuery.graphql';
 import MyResourceCard from '../components/MyResourceCard';
+import MyResourceWithinResourceGroupCard from '../components/MyResourceWithinResourceGroupCard';
 import MySessionCard from '../components/MySessionCard';
 import RecentlyCreatedSessionCard from '../components/RecentlyCreatedSessionCard';
 import { filterEmptyItem } from '../helper';
@@ -66,6 +67,21 @@ const DashboardPage: React.FC = () => {
       data: {
         content: (
           <MyResourceCard
+            fetchKey={fetchKey}
+            isRefetching={isPendingRefetch}
+            style={{ minHeight: lg ? 200 : undefined }}
+          />
+        ),
+      },
+    },
+    {
+      id: 'myResourceWithinResourceGroup',
+      rowSpan: 3,
+      columnSpan: 1,
+      columnOffset: { 6: 1, 4: 1 },
+      data: {
+        content: (
+          <MyResourceWithinResourceGroupCard
             fetchKey={fetchKey}
             isRefetching={isPendingRefetch}
             style={{ minHeight: lg ? 200 : undefined }}

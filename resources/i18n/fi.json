@@ -1970,6 +1970,8 @@
       "MyEnvironments": "Omat ympäristöt",
       "MyResources": "Resurssini",
       "MyResourcesDescription": "<p> Tämä paneeli näyttää resurssien kokonaiskäytön ja käytettävissä olevan kapasiteetin kaikissa projekteissa ja resurssiryhmissä. </p> <p> Kun rajoja on useita (kuten verkkotunnus, projekti tai näppäimistö), rajoittavinta rajaa sovelletaan käytön ja jäljellä olevan kapasiteetin osoittamiseen. </p>",
+      "MyResourcesIn": "Resurssini",
+      "MyResourcesInResourceGroupDescription": "Tämä paneeli näyttää resurssien käytön ja käytettävissä olevan kapasiteetin valitussa resurssiryhmässä.",
       "NewPassword": "Uusi salasana",
       "NewPasswordAgain": "Uusi salasana (taas)",
       "NewPasswordCannotBeSame": "Kirjoita salasana, joka poikkeaa nykyisestä salasanastasi.",

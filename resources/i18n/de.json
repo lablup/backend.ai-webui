@@ -1969,6 +1969,8 @@
       "MyEnvironments": "Meine Umgebungen",
       "MyResources": "Meine Ressourcen",
       "MyResourcesDescription": "<p> Dieses Panel zeigt Ihre gesamte Ressourcennutzung und die verfügbare Kapazität in allen Projekten und Ressourcengruppen.",
+      "MyResourcesIn": "Meine Ressourcen in",
+      "MyResourcesInResourceGroupDescription": "Dieses Panel zeigt Ihre Ressourcenverwendung und die verfügbare Kapazität in der ausgewählten Ressourcengruppe.",
       "NewPassword": "Neues Kennwort",
       "NewPasswordAgain": "Neues Passwort nochmal)",
       "NewPasswordCannotBeSame": "Bitte geben Sie ein Passwort ein, das sich von Ihrem aktuellen Passwort unterscheidet.",

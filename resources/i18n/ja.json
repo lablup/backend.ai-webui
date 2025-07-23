@@ -1970,6 +1970,8 @@
       "MyEnvironments": "私の環境",
       "MyResources": "私のリソース",
       "MyResourcesDescription": "<p>このパネルは、すべてのプロジェクトとリソースグループにわたって総リソースの使用と利用可能な容量を示しています。</p> <p>複数の制限（ドメイン、プロジェクト、キーペアなど）がある場合、使用容量と残りの容量を示すために最も制限的な制限が適用されます。</p>",
+      "MyResourcesIn": "私のリソース",
+      "MyResourcesInResourceGroupDescription": "このパネルは、選択したリソースグループ内でリソースの使用と利用可能な容量を示しています。",
       "NewPassword": "新しいパスワード",
       "NewPasswordAgain": "新しいパスワードを再入力）",
       "NewPasswordCannotBeSame": "既存のパスワードとは異なる新しいパスワードを入力してください。",

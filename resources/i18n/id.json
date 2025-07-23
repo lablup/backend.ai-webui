@@ -1970,6 +1970,8 @@
       "MyEnvironments": "Lingkungan Saya",
       "MyResources": "Sumber daya saya",
       "MyResourcesDescription": "<p> Panel ini menunjukkan total penggunaan sumber daya Anda dan kapasitas yang tersedia di semua proyek dan kelompok sumber daya. </p> <p> Ketika ada beberapa batasan (seperti domain, proyek, atau keypair), batas yang paling membatasi diterapkan untuk menunjukkan penggunaan dan kapasitas yang tersisa. </p>",
+      "MyResourcesIn": "Sumber daya saya di",
+      "MyResourcesInResourceGroupDescription": "Panel ini menunjukkan penggunaan sumber daya Anda dan kapasitas yang tersedia dalam grup sumber daya yang dipilih.",
       "NewPassword": "Kata sandi baru",
       "NewPasswordAgain": "Kata sandi (konfirmasi)",
       "NewPasswordCannotBeSame": "Masukkan kata sandi yang berbeda dari kata sandi Anda saat ini.",

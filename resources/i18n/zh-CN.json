@@ -1971,6 +1971,8 @@
       "MyEnvironments": "我的环境",
       "MyResources": "我的资源",
       "MyResourcesDescription": "<p>此面板显示了所有项目和资源组中的总资源使用情况和可用容量。</p> <p>当有多个限制（例如域，项目或按键）时，最限制的限制将应用于显示您的用法和剩余容量。</p>。</p>",
+      "MyResourcesIn": "我的资源",
+      "MyResourcesInResourceGroupDescription": "该面板显示了所选资源组中您的资源使用情况和可用容量。",
       "NewPassword": "新密码",
       "NewPasswordAgain": "确认新密码）",
       "NewPasswordCannotBeSame": "请输入与当前密码不同的密码。",
