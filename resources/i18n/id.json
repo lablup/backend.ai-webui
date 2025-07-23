@@ -1418,6 +1418,7 @@
       "InsufficientAllocationOfResourcesWarning": "Sumber daya yang dapat dialokasikan berada di bawah sumber daya minimum yang diperlukan pada gambar yang dipilih.",
       "InteractiveMode": "Interaktif",
       "InteractiveModeDesc": "memungkinkan Anda untuk membuat, menguji, dan menjalankan kode secara interaktif melalui jupyter notebook, kode visual studio, dll.",
+      "InvalidMountsSelectionWarning": "Informasi pemilihan folder tidak valid. Lihat folder yang dipilih.",
       "InvalidPortFormat": "Format nomor port salah.",
       "Launch": "Luncurkan",
       "LaunchConfirmationDialog": "Untuk menyimpan kode dan data Anda, atau membagikannya dengan kolaborator lain, cukup buat folder penyimpanan di bilah sisi Data & Penyimpanan, lalu pasang folder itu saat Anda memulai sumber daya dan simpan di sana.",

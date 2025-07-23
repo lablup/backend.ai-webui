@@ -1423,6 +1423,7 @@
       "InsufficientAllocationOfResourcesWarning": "할당 가능한 자원이 선택된 이미지에서 요구되는 최소 자원보다 부족합니다.",
       "InteractiveMode": "Interactive",
       "InteractiveModeDesc": "주피터 노트북, 비주얼 스튜디오 코드 등을 통해 코드를 인터랙티브하게 생성, 테스트, 실행할 수 있게 해줍니다.",
+      "InvalidMountsSelectionWarning": "폴더 선택 정보가 유효하지 않습니다. 선택한 폴더를 확인하세요.",
       "InvalidPortFormat": "포트 형식이 올바르지 않습니다.",
       "Launch": "시작",
       "LaunchConfirmationDialog": "코드 및 데이터를 계속 유지하거나 다른 공동 작업자들과 공유하기 위해서는 데이터 & 폴더 메뉴에서 스토리지 폴더를 생성하신 후, 자원을 시작할 때 해당 폴더를 마운트하고 그 안에 보관하시면 됩니다.",

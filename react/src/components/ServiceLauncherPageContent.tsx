@@ -855,7 +855,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                               rowKey={'id'}
                               label={t('modelService.AdditionalMounts')}
                               filter={(vf) =>
-                                vf.name !== getFieldValue('vFolderID') &&
+                                vf.id !== getFieldValue('vFolderID') &&
                                 vf.status === 'ready' &&
                                 vf.usage_mode !== 'model' &&
                                 !vf.name?.startsWith('.')

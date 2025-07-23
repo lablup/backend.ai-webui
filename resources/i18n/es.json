@@ -1419,6 +1419,7 @@
       "InsufficientAllocationOfResourcesWarning": "Los recursos asignables están por debajo del recurso mínimo requerido en la imagen seleccionada.",
       "InteractiveMode": "Interactivo",
       "InteractiveModeDesc": "permite crear, probar y ejecutar código de forma interactiva a través de jupyter notebook, visual studio code, etc.",
+      "InvalidMountsSelectionWarning": "La información de selección de carpetas no es válida. Echa un vistazo a la carpeta seleccionada.",
       "InvalidPortFormat": "El formato del número de puerto es incorrecto.",
       "Launch": "Lanzamiento",
       "LaunchConfirmationDialog": "Para guardar tu código y tus datos, o compartirlos con otros colaboradores, sólo tienes que crear una carpeta de almacenamiento en la barra lateral de datos y almacenamiento, montar esa carpeta cuando inicies el recurso y mantenerla ahí.",

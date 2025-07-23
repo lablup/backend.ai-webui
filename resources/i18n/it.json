@@ -1416,6 +1416,7 @@
       "InsufficientAllocationOfResourcesWarning": "Le risorse assegnabili sono inferiori alla risorsa minima richiesta nell'immagine selezionata.",
       "InteractiveMode": "Interattivo",
       "InteractiveModeDesc": "permette di creare, testare ed eseguire codice in modo interattivo tramite jupyter notebook, visual studio code, ecc.",
+      "InvalidMountsSelectionWarning": "Le informazioni sulla selezione delle cartelle non sono valide. Dai un'occhiata alla cartella selezionata.",
       "InvalidPortFormat": "Il formato del numero di porta non è corretto.",
       "Launch": "Lanciare",
       "LaunchConfirmationDialog": "Per conservare il codice e i dati o condividerli con altri collaboratori, è sufficiente creare una cartella di archiviazione nella barra laterale di dati e archiviazione, quindi montare quella cartella all'avvio della risorsa e conservarla lì.",

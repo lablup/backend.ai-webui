@@ -9,7 +9,11 @@ const HiddenFormItem: React.FC<HiddenFormItemProps> = ({ value, ...props }) => {
   useEffect(() => {
     form.setFieldValue(props.name, value);
   }, [value, form, props.name]);
-  return <Form.Item {...props} hidden />;
+  return (
+    <Form.Item {...props} hidden>
+      <div />
+    </Form.Item>
+  );
 };
 
 export default HiddenFormItem;

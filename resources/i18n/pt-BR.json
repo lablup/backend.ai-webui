@@ -1419,6 +1419,7 @@
       "InsufficientAllocationOfResourcesWarning": "Os recursos alocáveis ​​ficam abaixo do recurso mínimo exigido na imagem selecionada.",
       "InteractiveMode": "Interativo",
       "InteractiveModeDesc": "permite-lhe criar, testar e executar código de forma interactiva através do jupyter notebook, visual studio code, etc.",
+      "InvalidMountsSelectionWarning": "As informações de seleção de pastas não são válidas. Confira a pasta selecionada.",
       "InvalidPortFormat": "O formato do número da porta está incorreto.",
       "Launch": "Lançar",
       "LaunchConfirmationDialog": "Para manter seu código e dados, ou compartilhá-los com outros colaboradores, basta criar uma pasta de armazenamento na barra lateral de dados e armazenamento e, em seguida, montar essa pasta quando iniciar o recurso e mantê-la lá.",

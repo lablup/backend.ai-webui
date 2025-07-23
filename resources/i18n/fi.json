@@ -1418,6 +1418,7 @@
       "InsufficientAllocationOfResourcesWarning": "Allokoitavat resurssit jäävät alle valitussa kuvassa vaaditun vähimmäisresurssin.",
       "InteractiveMode": "Interaktiivinen",
       "InteractiveModeDesc": "voit luoda, testata ja ajaa koodia vuorovaikutteisesti jupyter notebookin, visual studio code -ohjelman jne. avulla.",
+      "InvalidMountsSelectionWarning": "Kansioiden valintatiedot eivät ole kelvollisia. Katso valittu kansio.",
       "InvalidPortFormat": "Porttinumeron muoto on virheellinen.",
       "Launch": "Laukaisu",
       "LaunchConfirmationDialog": "Jos haluat säilyttää koodisi ja tietosi tai jakaa ne muiden yhteistyökumppaneiden kanssa, luo tallennuskansio tietojen ja tallennuksen sivupalkissa ja kiinnitä kansio, kun käynnistät resurssin, ja pidä se siellä.",

@@ -1419,6 +1419,7 @@
       "InsufficientAllocationOfResourcesWarning": "Tài nguyên có thể phân bổ giảm xuống dưới mức tài nguyên tối thiểu được yêu cầu trong hình ảnh đã chọn.",
       "InteractiveMode": "Tương tác",
       "InteractiveModeDesc": "cho phép bạn tạo, kiểm tra và chạy mã tương tác thông qua sổ ghi chép jupyter, mã studio trực quan, v.v.",
+      "InvalidMountsSelectionWarning": "Thông tin lựa chọn thư mục không hợp lệ. Kiểm tra thư mục đã chọn.",
       "InvalidPortFormat": "Định dạng số cổng không chính xác.",
       "Launch": "Phóng",
       "LaunchConfirmationDialog": "Để giữ mã và dữ liệu của bạn hoặc chia sẻ nó với các cộng tác viên khác, chỉ cần tạo một thư mục lưu trữ trong thanh bên dữ liệu & lưu trữ, sau đó gắn kết thư mục đó khi bạn khởi động tài nguyên và giữ nó ở đó.",

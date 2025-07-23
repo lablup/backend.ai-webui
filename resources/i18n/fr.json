@@ -1419,6 +1419,7 @@
       "InsufficientAllocationOfResourcesWarning": "Les ressources allouables sont inférieures à la ressource minimale requise dans l'image sélectionnée.",
       "InteractiveMode": "Interactif",
       "InteractiveModeDesc": "vous permet de créer, de tester et d'exécuter du code de manière interactive via jupyter notebook, visual studio code, etc.",
+      "InvalidMountsSelectionWarning": "Les informations de sélection des dossiers ne sont pas valides. Découvrez le dossier sélectionné.",
       "InvalidPortFormat": "Le format du numéro de port est incorrect.",
       "Launch": "Lancer",
       "LaunchConfirmationDialog": "Pour conserver votre code et vos données, ou les partager avec d'autres collaborateurs, créez simplement un dossier de stockage dans la barre latérale Données et stockage, puis montez ce dossier lorsque vous démarrez la ressource et conservez-le.",

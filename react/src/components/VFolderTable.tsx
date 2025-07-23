@@ -69,7 +69,10 @@ type DataIndex = keyof VFolder;
 export interface VFolderTableProps extends Omit<TableProps<VFolder>, 'rowKey'> {
   showAliasInput?: boolean;
   selectedRowKeys?: VFolderKey[];
-  onChangeSelectedRowKeys?: (selectedKeys: VFolderKey[]) => void;
+  onChangeSelectedRowKeys?: (
+    selectedKeys: VFolderKey[],
+    selectedVFolders: VFolder[],
+  ) => void;
   aliasBasePath?: string;
   aliasMap?: AliasMap;
   onChangeAliasMap?: (aliasMap: AliasMap) => void;
@@ -78,6 +81,10 @@ export interface VFolderTableProps extends Omit<TableProps<VFolder>, 'rowKey'> {
   onChangeAutoMountedFolders?: (names: Array<string>) => void;
   showAutoMountedFoldersSection?: boolean;
   ownerEmail?: string;
+  onValidateSelectedRowKeys?: (
+    invalidKeys: VFolderKey[],
+    validVFolders: VFolder[],
+  ) => void;
 }
 
 export const vFolderAliasNameRegExp = /^[a-zA-Z0-9_/.-]*$/;
@@ -94,6 +101,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   onChangeAutoMountedFolders,
   showAutoMountedFoldersSection,
   ownerEmail,
+  onValidateSelectedRowKeys,
   ...tableProps
 }) => {
   const { generateFolderPath } = useFolderExplorerOpener();
@@ -111,7 +119,12 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   >(
     {
       value: controlledSelectedRowKeys,
-      onChange: onChangeSelectedRowKeys,
+      onChange: (selectedKeys: VFolderKey[]) => {
+        const selectedVFolders = _.filter(displayingFolders, (folder) =>
+          _.includes(selectedKeys, getRowKey(folder)),
+        );
+        onChangeSelectedRowKeys?.(selectedKeys, selectedVFolders);
+      },
     },
     {
       defaultValue: [],
@@ -223,20 +236,46 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     const filteredFolderListByPermission = allFolderList?.filter((folder) =>
       mountAllowedVolumes.includes(folder.host),
     );
-    const filteredFolderListByPermissionAndProject = _.filter(
-      filteredFolderListByPermission,
-      (folder) =>
-        folder.ownership_type === 'user' ||
-        !folder.group ||
-        folder.group === currentProject.id,
-    );
-    return filteredFolderListByPermissionAndProject;
+
+    return _.chain(filteredFolderListByPermission)
+      .filter(
+        (folder) =>
+          folder.ownership_type === 'user' ||
+          !folder.group ||
+          folder.group === currentProject.id,
+      )
+      .filter((vf) => (filter ? filter(vf) : true))
+      .value();
   }, [
     domain,
     group,
     keypair_resource_policy,
     allFolderList,
     currentProject.id,
+    filter,
+  ]);
+
+  useEffect(() => {
+    // check selectedRowKeys are valid
+    const invalidKeys = _.difference(
+      selectedRowKeys,
+      filteredFolderList.map((vf) => getRowKey(vf)),
+    );
+
+    onValidateSelectedRowKeys?.(
+      invalidKeys,
+      _.filter(filteredFolderList, (vf) =>
+        _.includes(selectedRowKeys, getRowKey(vf)),
+      ),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    filteredFolderList,
+    getRowKey,
+    onValidateSelectedRowKeys,
+    // Use JSON.stringify to compare array contents rather than reference
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    JSON.stringify(selectedRowKeys),
   ]);
 
   const autoMountedFolderNamesByPermission = useMemo(
@@ -256,14 +295,16 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   }, [autoMountedFolderNamesByPermission]);
 
   useEffect(() => {
-    setSelectedRowKeys([]);
+    // Only reset selectedRowKeys when currentProject changes if there are no controlled selectedRowKeys
+    if (!controlledSelectedRowKeys || controlledSelectedRowKeys.length === 0) {
+      setSelectedRowKeys([]);
+    }
     // Reset selectedRowKeys when currentProject changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentProject.id]);
 
   const [searchKey, setSearchKey] = useState('');
   const displayingFolders = _.chain(filteredFolderList)
-    .filter((vf) => (filter ? filter(vf) : true))
     .filter((vf) => {
       if (selectedRowKeys.includes(getRowKey(vf))) {
         return true;

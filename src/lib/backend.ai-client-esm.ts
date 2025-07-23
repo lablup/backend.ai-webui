@@ -800,6 +800,9 @@ class Client {
     if (this.isManagerVersionCompatibleWith('25.10.0')) {
       this._features['purge_image_by_id'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('25.12.0')) {
+      this._features['mount-by-id'] = true;
+    }
   }
 
   /**

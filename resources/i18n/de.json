@@ -1417,6 +1417,7 @@
       "InsufficientAllocationOfResourcesWarning": "Die zuweisbaren Ressourcen liegen unter der im ausgewählten Bild erforderlichen Mindestressource.",
       "InteractiveMode": "Interaktiv",
       "InteractiveModeDesc": "ermöglicht das interaktive Erstellen, Testen und Ausführen von Code über Jupyter Notebook, Visual Studio Code usw.",
+      "InvalidMountsSelectionWarning": "Ordnerauswahlinformationen sind nicht gültig. Schauen Sie sich den ausgewählten Ordner an.",
       "InvalidPortFormat": "Das Format der Anschlussnummer ist falsch.",
       "Launch": "Starten",
       "LaunchConfirmationDialog": "Um Ihren Code und Ihre Daten zu behalten oder mit anderen Mitarbeitern zu teilen, erstellen Sie einfach einen Speicherordner in der Daten- und Speicherseitenleiste, mounten Sie diesen Ordner, wenn Sie die Ressource starten, und behalten Sie ihn dort bei.",

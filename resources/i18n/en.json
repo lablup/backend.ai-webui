@@ -1424,6 +1424,7 @@
       "InsufficientAllocationOfResourcesWarning": "Allocatable resources falls below the minimum resource required in the selected image.",
       "InteractiveMode": "Interactive",
       "InteractiveModeDesc": "allows you to create, test and run code interactively via jupyter notebook, visual studio code, etc.",
+      "InvalidMountsSelectionWarning": "Folder selection information is not valid. \nCheck out the selected folder.",
       "InvalidPortFormat": "The port number format is incorrect.",
       "Launch": "Launch",
       "LaunchConfirmationDialog": "To keep your code and data, or share it with other collaborators, simply create a storage folder in the data & storage sidebar, then mount that folder when you start the resource and keep it there.",

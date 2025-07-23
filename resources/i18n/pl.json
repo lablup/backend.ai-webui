@@ -1419,6 +1419,7 @@
       "InsufficientAllocationOfResourcesWarning": "Zasoby, które można przydzielić, są mniejsze niż minimalne zasoby wymagane w wybranym obrazie.",
       "InteractiveMode": "Interaktywny",
       "InteractiveModeDesc": "umożliwia interaktywne tworzenie, testowanie i uruchamianie kodu za pomocą notatnika jupyter, kodu visual studio itp.",
+      "InvalidMountsSelectionWarning": "Informacje o wyborze folderu są nieprawidłowe. Sprawdź wybrany folder.",
       "InvalidPortFormat": "Format numeru portu jest nieprawidłowy.",
       "Launch": "Uruchomić",
       "LaunchConfirmationDialog": "Aby zachować swój kod i dane lub udostępnić je innym współpracownikom, po prostu utwórz folder przechowywania na pasku bocznym danych i przechowywania, a następnie zamontuj ten folder po uruchomieniu zasobu i zachowaj go tam.",

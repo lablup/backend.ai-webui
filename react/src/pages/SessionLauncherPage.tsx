@@ -19,6 +19,7 @@ import ResourceAllocationFormItems, {
 } from '../components/ResourceAllocationFormItems';
 import ResourceNumber from '../components/ResourceNumber';
 import SessionLauncherValidationTour from '../components/SessionLauncherErrorTourProps';
+import SessionLauncherFormIncompatibleValueChecker from '../components/SessionLauncherFormIncompatibleValueChecker';
 import SessionLauncherPreview from '../components/SessionLauncherPreview';
 import SessionNameFormItem, {
   SessionNameFormItemValue,
@@ -96,6 +97,11 @@ import {
   withDefault,
 } from 'use-query-params';
 
+type SessionLauncherFormData = Omit<
+  Required<OptionalFieldsOnly<SessionLauncherFormValue>>,
+  'autoMountedFolderNames' | 'mounts'
+>;
+
 export interface SessionResources {
   group_name?: string;
   domain?: string;
@@ -118,8 +124,8 @@ export interface SessionResources {
       shmem?: string;
       allow_fractional_resource_fragmentation?: boolean;
     };
-    mounts?: string[];
-    mount_map?: {
+    mount_ids?: string[];
+    mount_id_map?: {
       [key: string]: string;
     };
     environ?: {
@@ -199,6 +205,7 @@ const SessionLauncherPage = () => {
 
   const mainContentDivRef = useAtomValue(mainContentDivRefState);
   const baiClient = useSuspendedBackendaiClient();
+  const supportsMountById = baiClient.supports('mount-by-id');
   const currentUserRole = useCurrentUserRole();
   const [currentGlobalResourceGroup, setCurrentGlobalResourceGroup] =
     useCurrentResourceGroupState();
@@ -257,6 +264,7 @@ const SessionLauncherPage = () => {
     redirectTo: StringParam,
     appOption: AppOptionParam,
   });
+
   const { search } = useLocation();
 
   // const { moveTo } = useWebComponentInfo();
@@ -276,16 +284,14 @@ const SessionLauncherPage = () => {
       const currentValue = form.getFieldsValue();
       setQuery(
         {
-          // formValues: form.getFieldsValue(),
-          formValues: _.extend(
-            _.omit(
-              form.getFieldsValue(),
-              ['environments.image'],
-              ['environments.customizedTag'],
-              ['autoMountedFolderNames'],
-              ['owner'],
-              ['envvars'],
-            ),
+          formValues: _.assign(
+            _.omit(form.getFieldsValue(), [
+              'environments.image',
+              'environments.customizedTag',
+              'autoMountedFolderNames',
+              'owner',
+              'envvars',
+            ]),
             {
               envvars: sanitizeSensitiveEnv(currentValue.envvars),
             },
@@ -406,7 +412,7 @@ const SessionLauncherPage = () => {
     form
       .validateFields()
       .then(async (values) => {
-        if (_.isEmpty(values.mounts) || values.mounts.length === 0) {
+        if (_.isEmpty(values.mount_ids) || values.mount_ids?.length === 0) {
           const isConformed = await new Promise((resolve) => {
             app.modal.confirm({
               title: t('session.launcher.NoFolderMounted'),
@@ -525,8 +531,9 @@ const SessionLauncherPage = () => {
               },
 
               // Storage configuration
-              mounts: values.mounts,
-              mount_map: values.vfoldersAliasMap,
+              [supportsMountById ? 'mount_ids' : 'mounts']: values.mount_ids,
+              [supportsMountById ? 'mount_id_map' : 'mount_map']:
+                values.mount_id_map,
 
               // Environment variables
               environ: {
@@ -788,6 +795,7 @@ const SessionLauncherPage = () => {
               requiredMark="optional"
               initialValues={mergedInitialValues}
             >
+              <SessionLauncherFormIncompatibleValueChecker form={form} />
               <Flex
                 direction="column"
                 align="stretch"
@@ -1414,6 +1422,7 @@ const SessionLauncherPage = () => {
 
                       return (
                         <VFolderTableFormItem
+                          rowKey={!!supportsMountById ? 'id' : 'name'}
                           filter={(vfolder) => {
                             return (
                               vfolder.status === 'ready' &&
@@ -1429,7 +1438,6 @@ const SessionLauncherPage = () => {
                       );
                     }}
                   </Form.Item>
-                  {/* <VFolderTable /> */}
                 </Card>
 
                 {/* Step Start*/}
@@ -1583,8 +1591,9 @@ const SessionLauncherPage = () => {
                 // reset fields related to optional and nested fields
                 sessionName: '',
                 ports: [],
-                mounts: [],
-                vfoldersAliasMap: {},
+                vfoldersNameMap: {},
+                mount_ids: [],
+                mount_id_map: {},
                 bootstrap_script: '',
                 num_of_sessions: 1,
                 owner: {
@@ -1604,10 +1613,7 @@ const SessionLauncherPage = () => {
                   scheduleDate: undefined,
                 },
                 agent: 'auto', // Add the missing 'agent' property
-              } as Omit<
-                Required<OptionalFieldsOnly<SessionLauncherFormValue>>,
-                'autoMountedFolderNames'
-              >,
+              } as SessionLauncherFormData,
               formValue,
             );
 
@@ -1615,7 +1621,7 @@ const SessionLauncherPage = () => {
               fieldsValue.sessionName =
                 fieldsValue.sessionName + '-' + generateRandomString(4);
             }
-            form.setFieldsValue(fieldsValue);
+            form.setFieldsValue(fieldsValue as SessionLauncherFormData);
             setCurrentStep(steps.length - 1);
             form.validateFields().catch(() => {});
           }

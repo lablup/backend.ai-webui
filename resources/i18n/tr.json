@@ -1419,6 +1419,7 @@
       "InsufficientAllocationOfResourcesWarning": "Tahsis edilebilir kaynaklar, seçilen görüntüde gereken minimum kaynağın altına düşüyor.",
       "InteractiveMode": "İnteraktif",
       "InteractiveModeDesc": "jupyter notebook, visual studio code vb. aracılığıyla etkileşimli olarak kod oluşturmanıza, test etmenize ve çalıştırmanıza olanak tanır.",
+      "InvalidMountsSelectionWarning": "Klasör seçim bilgileri geçerli değil. Seçilen klasöre göz atın.",
       "InvalidPortFormat": "Bağlantı noktası numarası biçimi yanlış.",
       "Launch": "Başlatmak",
       "LaunchConfirmationDialog": "Kodunuzu ve verilerinizi saklamak veya diğer ortak çalışanlarla paylaşmak için, veri ve depolama kenar çubuğunda bir depolama klasörü oluşturmanız, ardından kaynağı başlattığınızda bu klasörü bağlamanız ve orada tutmanız yeterlidir.",

@@ -1418,6 +1418,7 @@
       "InsufficientAllocationOfResourcesWarning": "割り当て可能なリソースが、選択したイメージに必要な最小リソースを下回ります。",
       "InteractiveMode": "インタラクティブ",
       "InteractiveModeDesc": "jupyterノートブックやビジュアル・スタジオ・コードなどを使って、インタラクティブにコードを作成、テスト、実行できる。",
+      "InvalidMountsSelectionWarning": "フォルダーの選択情報は無効です。選択したフォルダーをご覧ください。",
       "InvalidPortFormat": "ポート番号の形式が正しくない。",
       "Launch": "ローンチ",
       "LaunchConfirmationDialog": "コードとデータを保持したり、他の共同編集者と共有したりするには、データとストレージのサイドバーにストレージフォルダーを作成し、リソースの起動時にそのフォルダーをマウントして保持します。",

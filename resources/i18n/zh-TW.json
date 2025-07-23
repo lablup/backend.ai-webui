@@ -1418,6 +1418,7 @@
       "InsufficientAllocationOfResourcesWarning": "可分配資源低於所選映像所需的最低資源。",
       "InteractiveMode": "交互式",
       "InteractiveModeDesc": "允许您通过 jupyter notebook、visual studio code 等交互式创建、测试和运行代码。",
+      "InvalidMountsSelectionWarning": "文件夾選擇信息無效。請再次檢查選定的文件夾。",
       "InvalidPortFormat": "端口号格式不正确。",
       "Launch": "發射",
       "LaunchConfirmationDialog": "要保留您的代碼和數據，或與其他協作者共享，只需在數據和存儲側欄中創建一個存儲文件夾，然後在啟動資源時掛載該文件夾並將其保留在那裡。",
