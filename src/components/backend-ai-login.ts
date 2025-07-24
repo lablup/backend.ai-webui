@@ -1388,6 +1388,10 @@ export default class BackendAILogin extends BackendAIPage {
     if (e.keyCode === 13) this._login();
   }
 
+  private _onChangeEndpoint(e) {
+    this.api_endpoint = e.target.value;
+  }
+
   async _token_login(sToken) {
     // If token is delivered as a querystring, just save it as cookie.
     document.cookie = `sToken=${sToken}; expires=Session; path=/`;
@@ -2303,6 +2307,7 @@ export default class BackendAILogin extends BackendAIPage {
                     validationMessage="${_text('login.EndpointStartWith')}"
                     value="${this.api_endpoint}"
                     @keyup="${this._submitIfEnter}"
+                    @change="${(e) => this._onChangeEndpoint(e)}"
                   ></mwc-textfield>
                   <mwc-icon-button
                     icon="info"
