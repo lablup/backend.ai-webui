@@ -116,7 +116,7 @@ interface ServiceLauncherInput extends ImageEnvironmentFormInput {
   openToPublic: boolean;
   modelMountDestination: string;
   modelDefinitionPath: string;
-  vfoldersAliasMap: Record<string, string>;
+  mount_id_map: Record<string, string>;
   mounts?: Array<string>;
   envvars: EnvVarFormListValue[];
   runtimeVariant: string;
@@ -312,8 +312,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             values.mounts,
             (acc, key: string) => {
               acc[key] = {
-                ...(values.vfoldersAliasMap[key] && {
-                  mount_destination: values.vfoldersAliasMap[key],
+                ...(values.mount_id_map[key] && {
+                  mount_destination: values.mount_id_map[key],
                 }),
                 type: 'bind', // FIXME: hardcoded. change it with option later
               };
@@ -516,8 +516,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                   extra_mounts: _.map(values.mounts, (vfolder) => {
                     return {
                       vfolder_id: vfolder,
-                      ...(values.vfoldersAliasMap[vfolder] && {
-                        mount_destination: values.vfoldersAliasMap[vfolder],
+                      ...(values.mount_id_map[vfolder] && {
+                        mount_destination: values.mount_id_map[vfolder],
                       }),
                     };
                   }),
@@ -737,7 +737,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         label={t('modelService.ServiceName')}
                         name="serviceName"
                         validateDebounce={500}
-                        rules={validationRules}
+                        rules={!!endpoint ? [] : validationRules}
                       >
                         <Input disabled={!!endpoint} />
                       </Form.Item>

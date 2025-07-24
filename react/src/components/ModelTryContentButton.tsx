@@ -256,7 +256,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
       vFolderID: vfolderID, // TODO: add cloned folder result
       modelMountDestination: '/models',
       modelDefinitionPath: '',
-      vfoldersAliasMap: {},
+      mount_id_map: {},
       envvars: modelCardMetadata?.envvars || [],
       enabledAutomaticShmem: false,
     };
