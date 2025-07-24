@@ -84,8 +84,8 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
             values.mounts,
             (acc, key: string) => {
               acc[key] = {
-                ...(values.vfoldersAliasMap[key] && {
-                  mount_destination: values.vfoldersAliasMap[key],
+                ...(values.mount_id_map[key] && {
+                  mount_destination: values.mount_id_map[key],
                 }),
                 type: 'bind', // FIXME: hardcoded. change it with option later
               };
