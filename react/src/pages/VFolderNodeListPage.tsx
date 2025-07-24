@@ -276,7 +276,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
         align={'stretch'}
         style={{ minHeight: lg ? CARD_MIN_HEIGHT : undefined }}
       >
-        <Col xs={24} md={8} xl={4} style={{ display: 'flex' }}>
+        <Col xs={24} md={8} lg={4} style={{ display: 'flex' }}>
           <BAICard
             style={{
               width: '100%',
@@ -304,7 +304,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             />
           </BAICard>
         </Col>
-        <Col xs={24} md={16} xl={8} style={{ display: 'flex' }}>
+        <Col xs={24} md={16} lg={8} style={{ display: 'flex' }}>
           <Suspense
             fallback={
               <BAICard
@@ -333,7 +333,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             />
           </Suspense>
         </Col>
-        <Col xs={24} md={24} xl={12} style={{ display: 'flex' }}>
+        <Col xs={24} lg={12} style={{ display: 'flex' }}>
           <Suspense
             fallback={
               <BAICard
