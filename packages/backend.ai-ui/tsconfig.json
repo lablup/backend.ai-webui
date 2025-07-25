@@ -14,8 +14,9 @@
     "rootDir": "./src",
     "noEmit": true,
     "isolatedModules": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "types": ["vite-plugin-svgr/client"]
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "svg.d.ts"],
   "exclude": ["node_modules"]
 }

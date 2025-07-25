@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import relay from 'vite-plugin-relay-lite';
+import svgr from 'vite-plugin-svgr';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -63,6 +64,7 @@ export default defineConfig(({ mode }) => {
           preserveSymlinks: false,
         },
       }),
+      svgr(),
     ],
     server: {
       watch: {
