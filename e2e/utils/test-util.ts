@@ -1,12 +1,5 @@
 import TOML from '@iarna/toml';
-import {
-  APIRequestContext,
-  Locator,
-  Page,
-  Request,
-  expect,
-  request,
-} from '@playwright/test';
+import { APIRequestContext, Locator, Page, expect } from '@playwright/test';
 
 export const webuiEndpoint = 'http://127.0.0.1:9081';
 export const webServerEndpoint = 'http://127.0.0.1:8090';
