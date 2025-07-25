@@ -1,4 +1,3 @@
-import BAICard from '../components/BAICard';
 import Flex from '../components/Flex';
 import FlexActivityIndicator from '../components/FlexActivityIndicator';
 import UserCredentialList from '../components/UserCredentialList';
@@ -6,6 +5,7 @@ import UserNodeList from '../components/UserNodeList';
 import { theme } from 'antd';
 import { createStyles } from 'antd-style';
 import { CardTabListType } from 'antd/es/card';
+import { BAICard } from 'backend.ai-ui';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';

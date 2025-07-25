@@ -7,9 +7,9 @@ import {
   useSuspenseTanQuery,
   useTanMutation,
 } from '../../hooks/reactQueryAlias';
-import BAICard from '../BAICard';
 import Flex from '../Flex';
 import { App, Button, Descriptions, Empty, Tag, Typography, theme } from 'antd';
+import { BAICard } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 
 const SummaryItemInvitation: React.FC = () => {

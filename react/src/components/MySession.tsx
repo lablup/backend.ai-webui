@@ -100,6 +100,7 @@ const MySession: React.FC<MySessionProps> = ({ queryRef, isRefetching }) => {
           top: 0,
           backgroundColor: token.colorBgContainer,
           zIndex: 1,
+          minHeight: 56, // Match height with other Dashboard components
         }}
         gap="xs"
         wrap="wrap"

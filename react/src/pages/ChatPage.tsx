@@ -1,5 +1,4 @@
 import { ChatPageQuery } from '../__generated__/ChatPageQuery.graphql';
-import BAICard from '../components/BAICard';
 import ChatCard from '../components/Chat/ChatCard';
 import {
   type ChatHistoryData,
@@ -12,6 +11,7 @@ import Flex from '../components/Flex';
 import { useWebUINavigate } from '../hooks';
 import { Badge, Button, Card, Drawer, List, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
+import { BAICard } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
 import _ from 'lodash';

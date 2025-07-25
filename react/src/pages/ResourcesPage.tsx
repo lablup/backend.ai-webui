@@ -1,8 +1,8 @@
 import AgentList from '../components/AgentList';
-import BAICard from '../components/BAICard';
 import ResourceGroupList from '../components/ResourceGroupList';
 import StorageProxyList from '../components/StorageProxyList';
 import { Skeleton, theme } from 'antd';
+import { BAICard } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';

@@ -1,4 +1,3 @@
-import BAICard from './components/BAICard';
 import BAIErrorBoundary, { ErrorView } from './components/BAIErrorBoundary';
 import {
   DefaultProvidersForReactRoot,
@@ -19,6 +18,7 @@ import Page404 from './pages/Page404';
 import ServingPage from './pages/ServingPage';
 import VFolderNodeListPage from './pages/VFolderNodeListPage';
 import { Skeleton, theme } from 'antd';
+import { BAICard } from 'backend.ai-ui';
 import React, { Suspense, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import {

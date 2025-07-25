@@ -51,6 +51,7 @@ const BAICard: React.FC<BAICardProps> = ({
     undefined;
   return (
     <Card
+      className={status === 'error' ? 'bai-card-error' : ''}
       style={_.extend(style, {
         borderColor:
           status === 'error'
@@ -79,10 +80,20 @@ const BAICard: React.FC<BAICardProps> = ({
       )}
       {...cardProps}
       title={
-        <Flex justify="between" align="center" wrap="wrap" gap="sm">
-          {cardProps.title}
-          {_extra}
-        </Flex>
+        cardProps.title || extra ? (
+          <Flex
+            justify={cardProps.title ? 'between' : 'end'}
+            align="center"
+            wrap="wrap"
+            gap="sm"
+            style={{
+              marginBlock: token.marginSM,
+            }}
+          >
+            {cardProps.title}
+            {_extra}
+          </Flex>
+        ) : null
       }
     />
   );
