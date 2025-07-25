@@ -1,4 +1,4 @@
-import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useFetchKey, useSuspendedBackendaiClient } from '../hooks';
 import { useInterval } from '../hooks/useIntervalValue';
 import SessionDetailContent from './SessionDetailContent';
 import { ReloadOutlined } from '@ant-design/icons';
@@ -17,12 +17,11 @@ const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
   ...drawerProps
 }) => {
   const { t } = useTranslation();
-  // const [sessionId, setSessionId] = useQueryParam('sessionDetail', StringParam);
   useSuspendedBackendaiClient();
 
   const [isPendingReload, startReloadTransition] = useTransition();
 
-  const [fetchKey, updateFetchKey] = useUpdatableState('first');
+  const [fetchKey, updateFetchKey] = useFetchKey();
 
   useInterval(() => {
     startReloadTransition(() => {
@@ -34,12 +33,6 @@ const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
       title={t('session.SessionInfo')}
       width={800}
       keyboard={false}
-      {...drawerProps}
-      open={!!sessionId}
-      onClose={(e) => {
-        drawerProps.onClose?.(e);
-        // setSessionId(null, 'pushIn');
-      }}
       extra={
         <Tooltip title={t('button.Refresh')}>
           <Button
@@ -53,6 +46,7 @@ const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
           />
         </Tooltip>
       }
+      {...drawerProps}
     >
       <Suspense fallback={<Skeleton active />}>
         {sessionId && (

@@ -6,7 +6,7 @@ interface UnmountModalAfterCloseProps {
   children: React.ReactElement<BAIModalProps> | React.ReactElement<ModalProps>;
 }
 
-const UnmountModalAfterClose: React.FC<UnmountModalAfterCloseProps> = ({
+const UnmountAfterClose: React.FC<UnmountModalAfterCloseProps> = ({
   children,
 }) => {
   // Ensure there is only one child element
@@ -42,10 +42,17 @@ const UnmountModalAfterClose: React.FC<UnmountModalAfterCloseProps> = ({
 
   // Clone the child element, keeping the open prop and replacing afterClose with the new handler
   const clonedChild = React.cloneElement(modalElement, {
+    // for Modal
     afterClose: handleModalAfterClose,
+    // for Drawer
+    afterOpenChange: (open: boolean) => {
+      if (!open) {
+        handleModalAfterClose();
+      }
+    },
   });
 
   return clonedChild;
 };
 
-export default UnmountModalAfterClose;
+export default UnmountAfterClose;

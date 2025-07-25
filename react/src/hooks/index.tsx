@@ -61,6 +61,11 @@ export const useUpdatableState = (initialValue: string) => {
   return useDateISOState(initialValue);
 };
 
+export const INITIAL_FETCH_KEY = 'first';
+export const useFetchKey = () => {
+  return [...useDateISOState(INITIAL_FETCH_KEY), INITIAL_FETCH_KEY] as const;
+};
+
 export const useCurrentDomainValue = () => {
   const baiClient = useSuspendedBackendaiClient();
   return baiClient._config.domainName;
