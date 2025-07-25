@@ -96,11 +96,14 @@ export const i18n = createInstance({
   resources,
   interpolation: {
     escapeValue: false,
+    prefix: '{{',
+    suffix: '}}',
   },
   react: {
     transSupportBasicHtmlNodes: true,
     transKeepBasicHtmlNodesFor: ['br', 'strong', 'span', 'code', 'p'],
   },
+  nsSeparator: '^',
 });
 
 i18n.use(initReactI18next).init();

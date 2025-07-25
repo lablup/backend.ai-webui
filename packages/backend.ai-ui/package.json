@@ -35,6 +35,20 @@
       "plugin:storybook/recommended",
       "plugin:react/recommended"
     ],
+    "plugins": [
+      "json-schema-validator"
+    ],
+    "overrides": [
+      {
+        "files": [
+          "src/locale/*.json"
+        ],
+        "parser": "jsonc-eslint-parser",
+        "extends": [
+          "plugin:json-schema-validator/recommended"
+        ]
+      }
+    ],
     "rules": {
       "react/react-in-jsx-scope": "off",
       "react/prop-types": "off",
