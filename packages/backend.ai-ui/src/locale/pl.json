@@ -1,5 +1,27 @@
 {
   "BAITestButton": {
     "test": "test"
+  },
+  "general": {
+    "NSelected": "{{count}}",
+    "button": {
+      "Delete": "Usuwać",
+      "Create": "Tworzyć"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "Wybrane pliki i foldery zostały pomyślnie usunięte.",
+    "DeleteSelectedItemsDialog": "Usuń potwierdzenie",
+    "DeleteSelectedItemDesc": "Usuniętych plików i folderów nie można przywrócić. \nChcesz kontynuować?",
+    "FolderCreatedSuccessfully": "Folder utworzony pomyślnie.",
+    "CreateANewFolder": "Utwórz nowy folder",
+    "FolderName": "Nazwa folderu",
+    "PleaseEnterAFolderName": "Wprowadź nazwę folderu.",
+    "MaxFolderNameLength": "Nazwa folderu musi mieć 255 znaków lub mniej.",
+    "Name": "Nazwa",
+    "Size": "Rozmiar",
+    "CreatedAt": "Utworzony w",
+    "ModifiedAt": "Zmodyfikowany przy",
+    "Controls": "Sterownica"
   }
 }

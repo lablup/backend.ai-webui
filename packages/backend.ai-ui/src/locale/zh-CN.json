@@ -1,5 +1,27 @@
 {
   "BAITestButton": {
     "test": "测试"
+  },
+  "general": {
+    "NSelected": "{{count}}选择",
+    "button": {
+      "Delete": "删除",
+      "Create": "创造"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "选定的文件和文件夹已成功删除。",
+    "DeleteSelectedItemsDialog": "删除确认",
+    "DeleteSelectedItemDesc": "删除的文件和文件夹无法恢复。\n你想继续吗？",
+    "FolderCreatedSuccessfully": "文件夹成功创建了。",
+    "CreateANewFolder": "创建一个新文件夹",
+    "FolderName": "文件夹名称",
+    "PleaseEnterAFolderName": "请输入文件夹名称。",
+    "MaxFolderNameLength": "文件夹名称必须为255个字符或更小。",
+    "Name": "姓名",
+    "Size": "尺寸",
+    "CreatedAt": "创建在",
+    "ModifiedAt": "修改为",
+    "Controls": "控件"
   }
 }

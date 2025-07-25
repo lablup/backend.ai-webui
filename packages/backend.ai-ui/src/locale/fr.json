@@ -1,5 +1,27 @@
 {
   "BAITestButton": {
     "test": "test"
+  },
+  "general": {
+    "NSelected": "{{count}} sélectionné",
+    "button": {
+      "Delete": "Supprimer",
+      "Create": "Créer"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "Les fichiers et dossiers sélectionnés ont été supprimés avec succès.",
+    "DeleteSelectedItemsDialog": "Supprimer la confirmation",
+    "DeleteSelectedItemDesc": "Les fichiers et les dossiers supprimés ne peuvent pas être restaurés. \nVoulez-vous continuer?",
+    "FolderCreatedSuccessfully": "Dossier créé avec succès.",
+    "CreateANewFolder": "Créer un nouveau dossier",
+    "FolderName": "Nom du dossier",
+    "PleaseEnterAFolderName": "Veuillez saisir le nom du dossier.",
+    "MaxFolderNameLength": "Le nom du dossier doit comporter 255 caractères ou moins.",
+    "Name": "Nom",
+    "Size": "Taille",
+    "CreatedAt": "Créé à",
+    "ModifiedAt": "Modifié à",
+    "Controls": "Commandes"
   }
 }

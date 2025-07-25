@@ -1,5 +1,27 @@
 {
   "BAITestButton": {
     "test": "ujian"
+  },
+  "general": {
+    "NSelected": "{{count}} dipilih",
+    "button": {
+      "Delete": "Padam",
+      "Create": "Buat"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "Fail dan folder terpilih telah dihapuskan dengan jayanya.",
+    "DeleteSelectedItemsDialog": "Padam pengesahan",
+    "DeleteSelectedItemDesc": "Fail dan folder yang dipadam tidak boleh dipulihkan. \nAdakah anda mahu meneruskan?",
+    "FolderCreatedSuccessfully": "Folder dibuat dengan jayanya.",
+    "CreateANewFolder": "Buat folder baru",
+    "FolderName": "Nama folder",
+    "PleaseEnterAFolderName": "Sila masukkan nama folder.",
+    "MaxFolderNameLength": "Nama folder mestilah 255 aksara atau kurang.",
+    "Name": "Nama",
+    "Size": "Saiz",
+    "CreatedAt": "Dicipta di",
+    "ModifiedAt": "Diubahsuai di",
+    "Controls": "Kawalan"
   }
 }

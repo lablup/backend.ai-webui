@@ -1,5 +1,27 @@
 {
   "BAITestButton": {
     "test": "tes"
+  },
+  "general": {
+    "NSelected": "{{count}} dipilih",
+    "button": {
+      "Delete": "Menghapus",
+      "Create": "Membuat"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "File dan folder yang dipilih telah berhasil dihapus.",
+    "DeleteSelectedItemsDialog": "Hapus Konfirmasi",
+    "DeleteSelectedItemDesc": "File dan folder yang dihapus tidak dapat dipulihkan. \nApakah Anda ingin melanjutkan?",
+    "FolderCreatedSuccessfully": "Folder berhasil dibuat.",
+    "CreateANewFolder": "Buat folder baru",
+    "FolderName": "Nama folder",
+    "PleaseEnterAFolderName": "Harap masukkan nama folder.",
+    "MaxFolderNameLength": "Nama folder harus 255 karakter atau kurang.",
+    "Name": "Nama",
+    "Size": "Ukuran",
+    "CreatedAt": "Dibuat di",
+    "ModifiedAt": "Dimodifikasi di",
+    "Controls": "Kontrol"
   }
 }
