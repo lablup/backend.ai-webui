@@ -15,7 +15,6 @@ import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting'
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import BAIPropertyFilter from './BAIPropertyFilter';
 import BAIRadioGroup from './BAIRadioGroup';
-import BAITable from './BAITable';
 import Flex from './Flex';
 import { ResourceTypeIcon } from './ResourceNumber';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
@@ -29,6 +28,7 @@ import { useToggle } from 'ahooks';
 import { Button, TableProps, theme, Tooltip, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
+import { BAITable } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -412,8 +412,6 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
         </Flex>
       </Flex>
       <BAITable
-        neoStyle
-        size="small"
         bordered
         scroll={{ x: 'max-content' }}
         rowKey={'id'}

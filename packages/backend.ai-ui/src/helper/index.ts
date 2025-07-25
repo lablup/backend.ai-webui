@@ -1,5 +1,24 @@
+import { SorterResult } from 'antd/es/table/interface';
 import Big from 'big.js';
 import _ from 'lodash';
+
+export function transformSorterToOrderString<T = any>(
+  sorter: SorterResult<T> | Array<SorterResult<T>>,
+) {
+  if (Array.isArray(sorter)) {
+    return _.chain(sorter)
+      .map((s) =>
+        s.order ? `${s.order === 'descend' ? '-' : ''}${s.field}` : undefined,
+      )
+      .compact()
+      .join(',')
+      .value();
+  } else {
+    return sorter.order
+      ? `${sorter.order === 'descend' ? '-' : ''}${sorter.field}`
+      : undefined;
+  }
+}
 
 export function parseValueWithUnit(str: string): [number, string | undefined] {
   const match = str?.match(/^(\d+(?:\.\d+)?|\.\d+)\s*([a-zA-Z%]*)$/);
