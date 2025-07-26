@@ -27,6 +27,7 @@ import {
   CloudUploadOutlined,
   ControlOutlined,
   DashboardOutlined,
+  DeploymentUnitOutlined,
   FileDoneOutlined,
   HddOutlined,
   InfoCircleOutlined,
@@ -82,6 +83,7 @@ export type MenuKeys =
   | 'summary'
   | 'job'
   | 'serving'
+  | 'deployment'
   | 'model-store'
   | 'ai-agent'
   | 'chat'
@@ -179,6 +181,14 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       label: <WebUILink to="/serving">{t('webui.menu.Serving')}</WebUILink>,
       icon: <EndpointsIcon style={{ color: token.colorPrimary }} />,
       key: 'serving',
+      group: 'service',
+    },
+    {
+      label: (
+        <WebUILink to="/deployment">{t('webui.menu.Deployment')}</WebUILink>
+      ),
+      icon: <DeploymentUnitOutlined style={{ color: token.colorPrimary }} />,
+      key: 'deployment',
       group: 'service',
     },
     {
