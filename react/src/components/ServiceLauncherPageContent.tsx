@@ -18,7 +18,10 @@ import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentResourceGroupState } from '../hooks/useCurrentProject';
 import { useValidateServiceName } from '../hooks/useValidateServiceName';
 import BAIModal, { DEFAULT_BAI_MODAL_Z_INDEX } from './BAIModal';
-import EnvVarFormList, { EnvVarFormListValue } from './EnvVarFormList';
+import EnvVarFormList, {
+  sanitizeSensitiveEnv,
+  EnvVarFormListValue,
+} from './EnvVarFormList';
 import Flex from './Flex';
 import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
@@ -34,6 +37,7 @@ import VFolderLazyView from './VFolderLazyView';
 import VFolderSelect from './VFolderSelect';
 import VFolderTableFormItem from './VFolderTableFormItem';
 import { MinusOutlined } from '@ant-design/icons';
+import { useDebounceFn } from 'ahooks';
 import {
   App,
   Button,
@@ -56,7 +60,12 @@ import {
   useLazyLoadQuery,
   useMutation,
 } from 'react-relay';
-import { StringParam, useQueryParams } from 'use-query-params';
+import {
+  JsonParam,
+  StringParam,
+  useQueryParams,
+  withDefault,
+} from 'use-query-params';
 
 const ServiceValidationView = React.lazy(
   () => import('./ServiceValidationView'),
@@ -137,9 +146,13 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   const { message } = App.useApp();
   const { t } = useTranslation();
 
-  const [{ model }] = useQueryParams({
-    model: StringParam,
-  });
+  // Setup query parameters for URL synchronization
+  const FormValuesParam = withDefault(JsonParam, {});
+  const [{ model, formValues: formValuesFromQueryParams }, setQuery] =
+    useQueryParams({
+      model: StringParam,
+      formValues: FormValuesParam,
+    });
 
   const webuiNavigate = useWebUINavigate();
   const baiClient = useSuspendedBackendaiClient();
@@ -330,13 +343,13 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           scaling_group: values.resourceGroup,
           resources: {
             // FIXME: manually convert to string since server-side only allows [str,str] tuple
-            cpu: values.resource.cpu.toString(),
+            cpu: values.resource.cpu?.toString(),
             mem: values.resource.mem,
             ...(values.resource.accelerator > 0
               ? {
                   [values.resource.acceleratorType]:
                     // FIXME: manually convert to string since server-side only allows [str,str] tuple
-                    values.resource.accelerator.toString(),
+                    values.resource.accelerator?.toString(),
                 }
               : undefined),
           },
@@ -639,6 +652,35 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     };
   };
 
+  const { run: syncFormToURLWithDebounce } = useDebounceFn(
+    () => {
+      // To sync the latest form values to URL,
+      // 'trailing' is set to true, and get the form values here.
+      const currentValue = form.getFieldsValue();
+      setQuery(
+        {
+          formValues: _.assign(
+            _.omit(currentValue, [
+              'environments.image',
+              'environments.customizedTag',
+              'vfoldersAliasMap',
+              'envvars',
+            ]),
+            {
+              envvars: sanitizeSensitiveEnv(currentValue.envvars),
+            },
+          ),
+        },
+        'replaceIn',
+      );
+    },
+    {
+      leading: false,
+      wait: 500,
+      trailing: true,
+    },
+  );
+
   const INITIAL_FORM_VALUES = endpoint
     ? {
         serviceName: endpoint?.name,
@@ -702,10 +744,18 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             environment: baiClient._config?.default_session_environment,
           },
         }),
-        vFolderID: model ? model : undefined,
+        vFolderID: model
+          ? model
+          : _.get(formValuesFromQueryParams, 'vFolderID') || undefined,
         resourceGroup: currentGlobalResourceGroup,
         allocationPreset: 'auto-select',
       };
+
+  const mergedInitialValues = _.merge(
+    {},
+    INITIAL_FORM_VALUES,
+    formValuesFromQueryParams,
+  );
 
   return (
     <>
@@ -721,300 +771,318 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             style={{ flex: 1, maxWidth: 700 }}
             wrap="nowrap"
           >
-            <Form
-              form={form}
-              disabled={mutationToCreateService.isPending}
-              layout="vertical"
-              labelCol={{ span: 12 }}
-              initialValues={INITIAL_FORM_VALUES}
-              requiredMark="optional"
+            <Form.Provider
+              onFormChange={(name, info) => {
+                // use OnFormChange instead of Form's onValuesChange,
+                // because onValuesChange will not be triggered when form is changed programmatically
+                syncFormToURLWithDebounce();
+              }}
             >
-              <Flex direction="column" gap={'md'} align="stretch">
-                <Card>
-                  {(baiClient.supports('modify-endpoint') || !endpoint) && (
-                    <>
-                      <Form.Item
-                        label={t('modelService.ServiceName')}
-                        name="serviceName"
-                        validateDebounce={500}
-                        rules={!!endpoint ? [] : validationRules}
-                      >
-                        <Input disabled={!!endpoint} />
-                      </Form.Item>
-                      <Form.Item
-                        name="openToPublic"
-                        label={t('modelService.OpenToPublic')}
-                        valuePropName="checked"
-                      >
-                        <Switch disabled={!!endpoint}></Switch>
-                      </Form.Item>
-                      {!endpoint ? (
+              <Form
+                form={form}
+                disabled={mutationToCreateService.isPending}
+                layout="vertical"
+                labelCol={{ span: 12 }}
+                initialValues={mergedInitialValues}
+                requiredMark="optional"
+              >
+                <Flex direction="column" gap={'md'} align="stretch">
+                  <Card>
+                    {(baiClient.supports('modify-endpoint') || !endpoint) && (
+                      <>
                         <Form.Item
-                          name={'vFolderID'}
-                          label={t('session.launcher.ModelStorageToMount')}
+                          label={t('modelService.ServiceName')}
+                          name="serviceName"
+                          validateDebounce={500}
+                          rules={!!endpoint ? [] : validationRules}
+                        >
+                          <Input disabled={!!endpoint} />
+                        </Form.Item>
+                        <Form.Item
+                          name="openToPublic"
+                          label={t('modelService.OpenToPublic')}
+                          valuePropName="checked"
+                        >
+                          <Switch disabled={!!endpoint}></Switch>
+                        </Form.Item>
+                        {!endpoint ? (
+                          <Form.Item
+                            name={'vFolderID'}
+                            label={t('session.launcher.ModelStorageToMount')}
+                            rules={[
+                              {
+                                required: true,
+                              },
+                            ]}
+                          >
+                            <VFolderSelect
+                              filter={(vf) =>
+                                vf.usage_mode === 'model' &&
+                                vf.status === 'ready'
+                              }
+                              valuePropName="id"
+                              autoSelectDefault={
+                                !model && !formValuesFromQueryParams.vFolderID
+                              }
+                              disabled={!!endpoint}
+                              allowFolderExplorer
+                              allowCreateFolder
+                            />
+                          </Form.Item>
+                        ) : (
+                          endpoint?.model && (
+                            <Form.Item
+                              name={'vFolderID'}
+                              label={t('session.launcher.ModelStorageToMount')}
+                              required
+                            >
+                              <Suspense fallback={<Skeleton.Input active />}>
+                                <VFolderLazyView uuid={endpoint?.model} />
+                              </Suspense>
+                            </Form.Item>
+                          )
+                        )}
+                        <Form.Item
+                          name={'runtimeVariant'}
+                          required
+                          label={t('modelService.RuntimeVariant')}
+                        >
+                          <Select
+                            defaultActiveFirstOption
+                            showSearch
+                            options={_.map(
+                              availableRuntimes?.runtimes,
+                              (runtime) => {
+                                return {
+                                  value: runtime.name,
+                                  label: runtime.human_readable_name,
+                                };
+                              },
+                            )}
+                          />
+                        </Form.Item>
+                        <Form.Item dependencies={['runtimeVariant']} noStyle>
+                          {({ getFieldValue }) =>
+                            getFieldValue('runtimeVariant') === 'custom' && (
+                              <Flex
+                                direction="row"
+                                gap={'xxs'}
+                                align="stretch"
+                                justify="between"
+                              >
+                                <Form.Item
+                                  name={'modelMountDestination'}
+                                  label={t(
+                                    'modelService.ModelMountDestination',
+                                  )}
+                                  style={{ width: '50%' }}
+                                  labelCol={{ style: { flex: 1 } }}
+                                >
+                                  <Input
+                                    allowClear
+                                    placeholder={'/models'}
+                                    disabled={!!endpoint}
+                                  />
+                                </Form.Item>
+                                <MinusOutlined
+                                  style={{
+                                    fontSize: token.fontSizeXL,
+                                    color: token.colorTextDisabled,
+                                  }}
+                                  rotate={290}
+                                />
+                                <Form.Item
+                                  name={'modelDefinitionPath'}
+                                  label={t('modelService.ModelDefinitionPath')}
+                                  style={{ width: '50%' }}
+                                  labelCol={{ style: { flex: 1 } }}
+                                >
+                                  <Input
+                                    allowClear
+                                    placeholder={
+                                      endpoint?.model_definition_path
+                                        ? endpoint?.model_definition_path
+                                        : 'model-definition.yaml'
+                                    }
+                                  />
+                                </Form.Item>
+                              </Flex>
+                            )
+                          }
+                        </Form.Item>
+                        <Form.Item noStyle dependencies={['vFolderID']}>
+                          {({ getFieldValue }) => {
+                            return (
+                              <VFolderTableFormItem
+                                rowKey={'id'}
+                                label={t('modelService.AdditionalMounts')}
+                                filter={(vf) =>
+                                  vf.id !== getFieldValue('vFolderID') &&
+                                  vf.status === 'ready' &&
+                                  vf.usage_mode !== 'model' &&
+                                  !vf.name?.startsWith('.')
+                                }
+                                tableProps={{
+                                  size: 'small',
+                                }}
+                              />
+                            );
+                          }}
+                        </Form.Item>
+                      </>
+                    )}
+                  </Card>
+                  <Card>
+                    {(baiClient.supports('modify-endpoint') || !endpoint) && (
+                      <>
+                        <Form.Item
+                          label={t('modelService.NumberOfReplicas')}
+                          name={'replicas'}
                           rules={[
                             {
                               required: true,
                             },
+                            {
+                              type: 'number',
+                              min: 0,
+                            },
+                            {
+                              type: 'number',
+                              max:
+                                user_resource_policy?.max_session_count_per_model_session ??
+                                0,
+                            },
                           ]}
                         >
-                          <VFolderSelect
-                            filter={(vf) =>
-                              vf.usage_mode === 'model' && vf.status === 'ready'
+                          <InputNumberWithSlider
+                            inputContainerMinWidth={190}
+                            min={0}
+                            max={
+                              user_resource_policy?.max_session_count_per_model_session ??
+                              0
                             }
-                            valuePropName="id"
-                            autoSelectDefault={!model}
-                            disabled={!!endpoint}
-                            allowFolderExplorer
-                            allowCreateFolder
+                            inputNumberProps={{
+                              //TODO: change unit based on resource limit
+                              addonAfter: '#',
+                            }}
+                            step={1}
                           />
                         </Form.Item>
-                      ) : (
-                        endpoint?.model && (
-                          <Form.Item
-                            name={'vFolderID'}
-                            label={t('session.launcher.ModelStorageToMount')}
-                            required
-                          >
-                            <Suspense fallback={<Skeleton.Input active />}>
-                              <VFolderLazyView uuid={endpoint?.model} />
-                            </Suspense>
-                          </Form.Item>
-                        )
-                      )}
-                      <Form.Item
-                        name={'runtimeVariant'}
-                        required
-                        label={t('modelService.RuntimeVariant')}
-                      >
-                        <Select
-                          defaultActiveFirstOption
-                          showSearch
-                          options={_.map(
-                            availableRuntimes?.runtimes,
-                            (runtime) => {
-                              return {
-                                value: runtime.name,
-                                label: runtime.human_readable_name,
-                              };
-                            },
-                          )}
+                        <ImageEnvironmentSelectFormItems
+                        // //TODO: test with real inference images
+                        // filter={(image) => {
+                        //   return !!_.find(image?.labels, (label) => {
+                        //     return (
+                        //       label?.key === "ai.backend.role" &&
+                        //       label.value === "INFERENCE" //['COMPUTE', 'INFERENCE', 'SYSTEM']
+                        //     );
+                        //   });
+                        // }}
                         />
-                      </Form.Item>
-                      <Form.Item dependencies={['runtimeVariant']} noStyle>
-                        {({ getFieldValue }) =>
-                          getFieldValue('runtimeVariant') === 'custom' && (
-                            <Flex
-                              direction="row"
-                              gap={'xxs'}
-                              align="stretch"
-                              justify="between"
-                            >
-                              <Form.Item
-                                name={'modelMountDestination'}
-                                label={t('modelService.ModelMountDestination')}
-                                style={{ width: '50%' }}
-                                labelCol={{ style: { flex: 1 } }}
-                              >
-                                <Input
-                                  allowClear
-                                  placeholder={'/models'}
-                                  disabled={!!endpoint}
-                                />
-                              </Form.Item>
-                              <MinusOutlined
-                                style={{
-                                  fontSize: token.fontSizeXL,
-                                  color: token.colorTextDisabled,
-                                }}
-                                rotate={290}
-                              />
-                              <Form.Item
-                                name={'modelDefinitionPath'}
-                                label={t('modelService.ModelDefinitionPath')}
-                                style={{ width: '50%' }}
-                                labelCol={{ style: { flex: 1 } }}
-                              >
-                                <Input
-                                  allowClear
-                                  placeholder={
-                                    endpoint?.model_definition_path
-                                      ? endpoint?.model_definition_path
-                                      : 'model-definition.yaml'
-                                  }
-                                />
-                              </Form.Item>
-                            </Flex>
-                          )
-                        }
-                      </Form.Item>
-                      <Form.Item noStyle dependencies={['vFolderID']}>
-                        {({ getFieldValue }) => {
-                          return (
-                            <VFolderTableFormItem
-                              rowKey={'id'}
-                              label={t('modelService.AdditionalMounts')}
-                              filter={(vf) =>
-                                vf.id !== getFieldValue('vFolderID') &&
-                                vf.status === 'ready' &&
-                                vf.usage_mode !== 'model' &&
-                                !vf.name?.startsWith('.')
+                        {endpoint &&
+                          !wantToChangeResource &&
+                          !baiClient._config.allowCustomResourceAllocation && (
+                            <Form.Item
+                              label={
+                                <>
+                                  {t('modelService.Resources')}
+                                  <Button
+                                    type="link"
+                                    onClick={() => {
+                                      form.setFieldsValue({
+                                        allocationPreset: 'auto-select',
+                                      });
+                                      setWantToChangeResource(true);
+                                    }}
+                                  >
+                                    {t('general.Change')}
+                                  </Button>
+                                </>
                               }
-                              tableProps={{
-                                size: 'small',
-                              }}
-                            />
-                          );
-                        }}
-                      </Form.Item>
-                    </>
-                  )}
-                </Card>
-                <Card>
-                  {(baiClient.supports('modify-endpoint') || !endpoint) && (
-                    <>
-                      <Form.Item
-                        label={t('modelService.NumberOfReplicas')}
-                        name={'replicas'}
-                        rules={[
-                          {
-                            required: true,
-                          },
-                          {
-                            type: 'number',
-                            min: 0,
-                          },
-                          {
-                            type: 'number',
-                            max:
-                              user_resource_policy?.max_session_count_per_model_session ??
-                              0,
-                          },
-                        ]}
-                      >
-                        <InputNumberWithSlider
-                          inputContainerMinWidth={190}
-                          min={0}
-                          max={
-                            user_resource_policy?.max_session_count_per_model_session ??
-                            0
-                          }
-                          inputNumberProps={{
-                            //TODO: change unit based on resource limit
-                            addonAfter: '#',
+                              required
+                            >
+                              <Flex gap={'xs'}>
+                                <Tooltip title={t('session.ResourceGroup')}>
+                                  <Tag>{endpoint?.resource_group}</Tag>
+                                </Tooltip>
+                                {_.map(
+                                  JSON.parse(endpoint?.resource_slots || '{}'),
+                                  (value: string, type) => {
+                                    return (
+                                      <ResourceNumber
+                                        key={type}
+                                        type={type}
+                                        value={value}
+                                        opts={JSON.parse(
+                                          endpoint?.resource_opts || '{}',
+                                        )}
+                                      />
+                                    );
+                                  },
+                                )}
+                              </Flex>
+                            </Form.Item>
+                          )}
+                        <div
+                          style={{
+                            display:
+                              endpoint &&
+                              !wantToChangeResource &&
+                              !baiClient._config.allowCustomResourceAllocation
+                                ? 'none'
+                                : 'block',
                           }}
-                          step={1}
-                        />
-                      </Form.Item>
-                      <ImageEnvironmentSelectFormItems
-                      // //TODO: test with real inference images
-                      // filter={(image) => {
-                      //   return !!_.find(image?.labels, (label) => {
-                      //     return (
-                      //       label?.key === "ai.backend.role" &&
-                      //       label.value === "INFERENCE" //['COMPUTE', 'INFERENCE', 'SYSTEM']
-                      //     );
-                      //   });
-                      // }}
-                      />
-                      {endpoint &&
-                        !wantToChangeResource &&
-                        !baiClient._config.allowCustomResourceAllocation && (
-                          <Form.Item
-                            label={
-                              <>
-                                {t('modelService.Resources')}
-                                <Button
-                                  type="link"
-                                  onClick={() => {
-                                    form.setFieldsValue({
-                                      allocationPreset: 'auto-select',
-                                    });
-                                    setWantToChangeResource(true);
-                                  }}
-                                >
-                                  {t('general.Change')}
-                                </Button>
-                              </>
-                            }
-                            required
-                          >
-                            <Flex gap={'xs'}>
-                              <Tooltip title={t('session.ResourceGroup')}>
-                                <Tag>{endpoint?.resource_group}</Tag>
-                              </Tooltip>
-                              {_.map(
-                                JSON.parse(endpoint?.resource_slots || '{}'),
-                                (value: string, type) => {
-                                  return (
-                                    <ResourceNumber
-                                      key={type}
-                                      type={type}
-                                      value={value}
-                                      opts={JSON.parse(
-                                        endpoint?.resource_opts || '{}',
-                                      )}
-                                    />
-                                  );
-                                },
-                              )}
-                            </Flex>
-                          </Form.Item>
-                        )}
-                      <div
-                        style={{
-                          display:
-                            endpoint &&
-                            !wantToChangeResource &&
-                            !baiClient._config.allowCustomResourceAllocation
-                              ? 'none'
-                              : 'block',
+                        >
+                          <ResourceAllocationFormItems enableResourcePresets />
+                        </div>
+                        <Form.Item
+                          label={t('session.launcher.EnvironmentVariable')}
+                        >
+                          <EnvVarFormList
+                            name={'envvars'}
+                            formItemProps={{
+                              validateTrigger: ['onChange', 'onBlur'],
+                            }}
+                          />
+                        </Form.Item>
+                      </>
+                    )}
+                  </Card>
+                  <Flex
+                    direction="row"
+                    justify="between"
+                    align="end"
+                    gap={'xs'}
+                  >
+                    <Flex>
+                      <Button
+                        onClick={() => {
+                          form
+                            .validateFields()
+                            .then((values) => {
+                              setValidateServiceData(values);
+                              setIsOpenServiceValidationModal(true);
+                            })
+                            .catch((err) => {
+                              console.log(err.message);
+                              message.error(
+                                t('modelService.FormValidationFailed'),
+                              );
+                            });
                         }}
                       >
-                        <ResourceAllocationFormItems enableResourcePresets />
-                      </div>
-                      <Form.Item
-                        label={t('session.launcher.EnvironmentVariable')}
-                      >
-                        <EnvVarFormList
-                          name={'envvars'}
-                          formItemProps={{
-                            validateTrigger: ['onChange', 'onBlur'],
-                          }}
-                        />
-                      </Form.Item>
-                    </>
-                  )}
-                </Card>
-                <Flex direction="row" justify="between" align="end" gap={'xs'}>
-                  <Flex>
-                    <Button
-                      onClick={() => {
-                        form
-                          .validateFields()
-                          .then((values) => {
-                            setValidateServiceData(values);
-                            setIsOpenServiceValidationModal(true);
-                          })
-                          .catch((err) => {
-                            console.log(err.message);
-                            message.error(
-                              t('modelService.FormValidationFailed'),
-                            );
-                          });
-                      }}
-                    >
-                      {t('modelService.Validate')}
-                    </Button>
-                  </Flex>
-                  <Flex gap={'sm'}>
-                    <Button type="primary" onClick={handleOk}>
-                      {endpoint ? t('button.Update') : t('button.Create')}
-                    </Button>
+                        {t('modelService.Validate')}
+                      </Button>
+                    </Flex>
+                    <Flex gap={'sm'}>
+                      <Button type="primary" onClick={handleOk}>
+                        {endpoint ? t('button.Update') : t('button.Create')}
+                      </Button>
+                    </Flex>
                   </Flex>
                 </Flex>
-              </Flex>
-            </Form>
+              </Form>
+            </Form.Provider>
           </Flex>
         </Flex>
       </Flex>
