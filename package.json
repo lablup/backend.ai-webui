@@ -162,7 +162,7 @@
     "pwa-helpers": "^0.9.1",
     "redux": "^5.0.1",
     "redux-thunk": "^3.1.0",
-    "relay-compiler": "^18.1.0",
+    "relay-compiler": "^20.1.0",
     "rollup": "^4.20.0",
     "rollup-plugin-workbox": "^8.1.0",
     "serve": "^14.2.3",

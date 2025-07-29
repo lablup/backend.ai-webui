@@ -41,6 +41,7 @@ const DashboardPage: React.FC = () => {
         ...RecentlyCreatedSessionFragment @arguments(projectId: $projectId)
         ...TotalResourceWithinResourceGroupFragment
           @skip(if: $hideAgents)
+          @alias
           @arguments(resourceGroup: $resourceGroup)
       }
     `,
@@ -123,9 +124,9 @@ const DashboardPage: React.FC = () => {
         minColumnSpan: 2,
       },
       data: {
-        content: (
+        content: queryRef.TotalResourceWithinResourceGroupFragment && (
           <TotalResourceWithinResourceGroup
-            queryRef={queryRef}
+            queryRef={queryRef.TotalResourceWithinResourceGroupFragment}
             isRefetching={isPendingRefetch}
           />
         ),

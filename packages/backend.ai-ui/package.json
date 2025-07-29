@@ -51,8 +51,8 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-i18next": "^15.4.1",
-    "react-relay": "^18.2.0",
-    "relay-runtime": "^18.2.0"
+    "react-relay": "^20.1.0",
+    "relay-runtime": "^20.1.0"
   },
   "devDependencies": {
     "@storybook/addon-docs": "^9.0.0",
@@ -64,7 +64,7 @@
     "@types/lodash": "^4.17.13",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "@types/react-relay": "^18.2.0",
+    "@types/react-relay": "^18.2.1",
     "@types/big.js": "^6.2.2",
     "@vitejs/plugin-react": "^4.5.0",
     "eslint": "^8.57.1",

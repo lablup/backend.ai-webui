@@ -117,7 +117,7 @@ const TotalResourceWithinResourceGroup: React.FC<
 
   const { acceleratorSlotsDetails, totalOccupiedSlots, totalAvailableSlots } =
     useMemo(() => {
-      const agents = data?.agent_summary_list?.items || [];
+      const agents = data.agent_summary_list?.items || [];
 
       const totalOccupiedSlots: Record<string, number> = {};
       const totalAvailableSlots: Record<string, number> = {};
