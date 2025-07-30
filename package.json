@@ -204,6 +204,7 @@
       "prettier --write"
     ],
     "resources/i18n/*.json": [
+      "eslint --max-warnings=0 --cache",
       "prettier --write"
     ]
   },

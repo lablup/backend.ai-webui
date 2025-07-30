@@ -1,5 +1,6 @@
 {
-  "BAITestButton": {
-    "test": "テスト"
+  "$schema": "../../i18n.schema.json",
+  "comp:BAITestButton": {
+    "Test": "テスト"
   }
 }
