@@ -6,7 +6,6 @@ import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useEventNotStable } from '../hooks/useEventNotStable';
-import UserUnionIcon from './BAIIcons/UserUnionIcon';
 import BAILink from './BAILink';
 import Flex from './Flex';
 import FolderCreateModal from './FolderCreateModal';
@@ -32,6 +31,7 @@ import {
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import { BAIUserUnionIcon } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { PlusIcon } from 'lucide-react';
@@ -522,7 +522,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
             ) : (
               <Flex gap={'xs'}>
                 <Typography.Text>{t('data.Project')}</Typography.Text>
-                <UserUnionIcon style={{ color: token.colorTextTertiary }} />
+                <BAIUserUnionIcon style={{ color: token.colorTextTertiary }} />
               </Flex>
             )}
           </Flex>

@@ -6,7 +6,6 @@ import {
 import ActionItemContent from '../components/ActionItemContent';
 import AvailableResourcesCard from '../components/AvailableResourcesCard';
 import BAIFetchKeyButton from '../components/BAIFetchKeyButton';
-import SessionsIcon from '../components/BAIIcons/SessionsIcon';
 import BAILink from '../components/BAILink';
 import BAIPropertyFilter, {
   mergeFilterValues,
@@ -34,7 +33,7 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import { BAICard } from 'backend.ai-ui';
+import { BAICard, BAISessionsIcon } from 'backend.ai-ui';
 import _ from 'lodash';
 import { PowerOffIcon } from 'lucide-react';
 import {
@@ -297,7 +296,7 @@ const ComputeSessionListPage = () => {
                 </Typography.Text>
               }
               buttonText={t('start.button.StartSession')}
-              icon={<SessionsIcon />}
+              icon={<BAISessionsIcon />}
               type="simple"
               to={'/session/start'}
               style={{

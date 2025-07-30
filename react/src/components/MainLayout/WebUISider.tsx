@@ -5,12 +5,6 @@ import { useCurrentUserRole } from '../../hooks/backendai';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import usePrimaryColors from '../../hooks/usePrimaryColors';
 import AboutBackendAIModal from '../AboutBackendAIModal';
-import EndpointsIcon from '../BAIIcons/EndpointsIcon';
-import ExampleStartIcon from '../BAIIcons/ExampleStart';
-import ModelStoreIcon from '../BAIIcons/ModelStoreIcon';
-import MyEnvironmentsIcon from '../BAIIcons/MyEnvironmentsIcon';
-import PipelinesIcon from '../BAIIcons/PipelinesIcon';
-import SessionsIcon from '../BAIIcons/SessionsIcon';
 import BAIMenu from '../BAIMenu';
 import BAISider, { BAISiderProps } from '../BAISider';
 import Flex from '../Flex';
@@ -46,6 +40,14 @@ import {
   Grid,
 } from 'antd';
 import { MenuItemType } from 'antd/lib/menu/interface';
+import {
+  BAIEndpointsIcon,
+  BAIExampleStartIcon,
+  BAIModelStoreIcon,
+  BAIMyEnvironmentsIcon,
+  BAIPipelinesIcon,
+  BAISessionsIcon,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import { BotMessageSquare, ExternalLinkIcon, LinkIcon } from 'lucide-react';
 import React, { ReactNode, useContext, useRef } from 'react';
@@ -171,19 +173,19 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           {t('webui.menu.Sessions')}
         </WebUILink>
       ),
-      icon: <SessionsIcon style={{ color: token.colorPrimary }} />,
+      icon: <BAISessionsIcon style={{ color: token.colorPrimary }} />,
       key: 'job',
       group: 'workload',
     },
     {
       label: <WebUILink to="/serving">{t('webui.menu.Serving')}</WebUILink>,
-      icon: <EndpointsIcon style={{ color: token.colorPrimary }} />,
+      icon: <BAIEndpointsIcon style={{ color: token.colorPrimary }} />,
       key: 'serving',
       group: 'service',
     },
     {
       label: <WebUILink to="/model-store">{t('data.ModelStore')}</WebUILink>,
-      icon: <ModelStoreIcon style={{ color: token.colorPrimary }} />,
+      icon: <BAIModelStoreIcon style={{ color: token.colorPrimary }} />,
       key: 'model-store',
       group: 'service',
     },
@@ -201,7 +203,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     },
     {
       label: <WebUILink to="/import">{t('webui.menu.Import&Run')}</WebUILink>,
-      icon: <ExampleStartIcon style={{ color: token.colorPrimary }} />,
+      icon: <BAIExampleStartIcon style={{ color: token.colorPrimary }} />,
       key: 'import',
       group: 'workload',
     },
@@ -217,7 +219,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           {t('webui.menu.MyEnvironments')}
         </WebUILink>
       ),
-      icon: <MyEnvironmentsIcon style={{ color: token.colorPrimary }} />,
+      icon: <BAIMyEnvironmentsIcon style={{ color: token.colorPrimary }} />,
       key: 'my-environment',
       group: 'workload',
     },
@@ -241,7 +243,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     },
     !!fasttrackEndpoint && {
       label: t('webui.menu.FastTrack'),
-      icon: <PipelinesIcon style={{ color: token.colorPrimary }} />,
+      icon: <BAIPipelinesIcon style={{ color: token.colorPrimary }} />,
       key: 'pipeline',
       onClick: () => {
         window.open(fasttrackEndpoint, '_blank', 'noopener noreferrer');

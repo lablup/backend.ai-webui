@@ -5,9 +5,6 @@ import {
 } from '../__generated__/VFolderNodeListPageQuery.graphql';
 import ActionItemContent from '../components/ActionItemContent';
 import BAIFetchKeyButton from '../components/BAIFetchKeyButton';
-import NewFolderIcon from '../components/BAIIcons/NewFolderIcon';
-import RestoreIcon from '../components/BAIIcons/RestoreIcon';
-import TrashBinIcon from '../components/BAIIcons/TrashBinIcon';
 import BAIPropertyFilter, {
   mergeFilterValues,
 } from '../components/BAIPropertyFilter';
@@ -45,7 +42,12 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import { BAICard } from 'backend.ai-ui';
+import {
+  BAICard,
+  BAINewFolderIcon,
+  BAIRestoreIcon,
+  BAITrashBinIcon,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import React, {
   Suspense,
@@ -293,7 +295,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 </Typography.Text>
               }
               buttonText={t('data.CreateFolder')}
-              icon={<NewFolderIcon />}
+              icon={<BAINewFolderIcon />}
               type="simple"
               onClick={() => toggleCreateModal()}
               style={{
@@ -549,7 +551,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                         }}
                         type="text"
                         variant="outlined"
-                        icon={<TrashBinIcon />}
+                        icon={<BAITrashBinIcon />}
                         onClick={() => {
                           toggleDeleteModal();
                         }}
@@ -571,7 +573,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                         }}
                         type="text"
                         variant="outlined"
-                        icon={<RestoreIcon />}
+                        icon={<BAIRestoreIcon />}
                         onClick={() => {
                           toggleRestoreModal();
                         }}

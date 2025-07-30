@@ -8,7 +8,6 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { usePainKiller } from '../hooks/usePainKiller';
 import { useVirtualFolderPath } from '../hooks/useVirtualFolderNodePath';
-import UserUnionIcon from './BAIIcons/UserUnionIcon';
 import BAISelect from './BAISelect';
 import BAITag from './BAITag';
 import Flex from './Flex';
@@ -22,6 +21,7 @@ import {
   Typography,
   type DescriptionsProps,
 } from 'antd';
+import { BAIUserUnionIcon } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -151,7 +151,7 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
         ) : (
           <Flex gap={'xs'}>
             <Typography.Text>{t('data.Project')}</Typography.Text>
-            <UserUnionIcon style={{ color: token.colorTextTertiary }} />
+            <BAIUserUnionIcon style={{ color: token.colorTextTertiary }} />
           </Flex>
         ),
     },

@@ -78,11 +78,11 @@
     "@storybook/addon-links": "^8.4.5",
     "@storybook/addon-onboarding": "^9.0.0",
     "@storybook/react-vite": "^9.0.0",
+    "@types/big.js": "^6.2.2",
     "@types/lodash": "^4.17.13",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@types/react-relay": "^18.2.1",
-    "@types/big.js": "^6.2.2",
     "@vitejs/plugin-react": "^4.5.0",
     "ahooks": "^3.8.4",
     "dayjs": "^1.11.13",
@@ -98,7 +98,8 @@
     "typescript": "^5.7.2",
     "vite": "^6.3.5",
     "vite-plugin-dts": "^4.5.4",
-    "vite-plugin-relay-lite": "^0.11.0"
+    "vite-plugin-relay-lite": "^0.11.0",
+    "vite-plugin-svgr": "^4.3.0"
   },
   "type": "module"
 }

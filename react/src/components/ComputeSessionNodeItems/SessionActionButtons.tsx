@@ -9,16 +9,18 @@ import {
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useBackendAIAppLauncher } from '../../hooks/useBackendAIAppLauncher';
-import AppIcon from '../BAIIcons/AppIcon';
-import ContainerCommitIcon from '../BAIIcons/ContainerCommitIcon';
-import SessionLogIcon from '../BAIIcons/SessionLogIcon';
-import TerminalAppIcon from '../BAIIcons/TerminalAppIcon';
-import TerminateIcon from '../BAIIcons/TerminateIcon';
 import AppLauncherModal from './AppLauncherModal';
 import ContainerCommitModal from './ContainerCommitModal';
 import ContainerLogModal from './ContainerLogModal';
 import TerminateSessionModal from './TerminateSessionModal';
 import { Tooltip, Button, theme } from 'antd';
+import {
+  BAIAppIcon,
+  BAIContainerCommitIcon,
+  BAISessionLogIcon,
+  BAITerminalAppIcon,
+  BAITerminateIcon,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -106,7 +108,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = (props) => {
               !isActive(session) ||
               !isOwner
             }
-            icon={<AppIcon />}
+            icon={<BAIAppIcon />}
             onClick={() => {
               setOpenAppLauncherModal(true);
             }}
@@ -129,7 +131,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = (props) => {
               !isActive(session) ||
               !isOwner
             }
-            icon={<TerminalAppIcon />}
+            icon={<BAITerminalAppIcon />}
             onClick={() => {
               appLauncher.runTerminal(session?.row_id);
             }}
@@ -146,7 +148,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = (props) => {
 
         <Tooltip title={t('session.SeeContainerLogs')}>
           <Button
-            icon={<SessionLogIcon />}
+            icon={<BAISessionLogIcon />}
             onClick={() => {
               setOpenLogModal(true);
             }}
@@ -167,7 +169,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = (props) => {
               !isActive(session) ||
               !isOwner
             }
-            icon={<ContainerCommitIcon />}
+            icon={<BAIContainerCommitIcon />}
             onClick={() => {
               setOpenContainerCommitModal(true);
             }}
@@ -182,7 +184,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = (props) => {
           <Button
             disabled={!isActive(session)}
             icon={
-              <TerminateIcon
+              <BAITerminateIcon
                 style={{
                   color: isActive(session) ? token.colorError : undefined,
                 }}

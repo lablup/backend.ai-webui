@@ -7,7 +7,6 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { usePainKiller } from '../hooks/usePainKiller';
-import UserUnionIcon from './BAIIcons/UserUnionIcon';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import BAITable from './BAITable';
 import Flex from './Flex';
@@ -23,6 +22,7 @@ import {
   Typography,
   theme,
 } from 'antd';
+import { BAIUserUnionIcon } from 'backend.ai-ui';
 import { LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -97,7 +97,7 @@ const SharedFolderPermissionInfoModal: React.FC<
             ) : (
               <Flex gap={'xs'}>
                 <Typography.Text>{t('data.Project')}</Typography.Text>
-                <UserUnionIcon style={{ color: token.colorTextTertiary }} />
+                <BAIUserUnionIcon style={{ color: token.colorTextTertiary }} />
               </Flex>
             )}
           </Descriptions.Item>

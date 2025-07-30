@@ -8,8 +8,6 @@ import {
 import { useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
-import CephIcon from './BAIIcons/CephIcon';
-import PureStorageIcon from './BAIIcons/PureStorageIcon';
 import BAILink from './BAILink';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import BAITable from './BAITable';
@@ -17,6 +15,7 @@ import DoubleTag from './DoubleTag';
 import Flex from './Flex';
 import { InfoCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import { Button, TableColumnsType, Tag, theme, Typography } from 'antd';
+import { BAICephIcon, BAIPureStorageIcon } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Server } from 'lucide-react';
 import { useDeferredValue, useEffect, useMemo } from 'react';
@@ -30,11 +29,11 @@ const backendType = {
   },
   ceph: {
     color: 'lightblue',
-    icon: <CephIcon />,
+    icon: <BAICephIcon />,
   },
   cephfs: {
     color: 'lightblue',
-    icon: <CephIcon />,
+    icon: <BAICephIcon />,
   },
   vfs: {
     color: 'green',
@@ -46,7 +45,7 @@ const backendType = {
   },
   purestorage: {
     color: 'red',
-    icon: <PureStorageIcon />,
+    icon: <BAIPureStorageIcon />,
   },
   dgx: {
     color: 'green',

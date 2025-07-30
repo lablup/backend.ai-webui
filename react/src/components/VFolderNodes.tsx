@@ -11,10 +11,6 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { usePainKiller } from '../hooks/usePainKiller';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import BAIConfirmModalWithInput from './BAIConfirmModalWithInput';
-import RestoreIcon from './BAIIcons/RestoreIcon';
-import ShareAltIcon from './BAIIcons/ShareAltIcon';
-import TrashBinIcon from './BAIIcons/TrashBinIcon';
-import UserUnionIcon from './BAIIcons/UserUnionIcon';
 import BAILink from './BAILink';
 import BAITable, { BAITableProps } from './BAITable';
 import BAITag from './BAITag';
@@ -35,6 +31,12 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
+import {
+  BAIRestoreIcon,
+  BAIShareAltIcon,
+  BAITrashBinIcon,
+  BAIUserUnionIcon,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -216,7 +218,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                       <Button
                         size="small"
                         type="text"
-                        icon={<ShareAltIcon />}
+                        icon={<BAIShareAltIcon />}
                         style={{
                           color: token.colorInfo,
                           background: token.colorInfoBg,
@@ -242,7 +244,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                       <Button
                         size="small"
                         type="text"
-                        icon={<RestoreIcon />}
+                        icon={<BAIRestoreIcon />}
                         style={{
                           color:
                             vfolder?.status !== 'delete-pending' ||
@@ -319,7 +321,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                         <Button
                           size="small"
                           type="text"
-                          icon={<TrashBinIcon />}
+                          icon={<BAITrashBinIcon />}
                           disabled={!hasDeletePermission || isPipelineFolder}
                           style={{
                             color:
@@ -347,7 +349,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                       <Button
                         size="small"
                         type="text"
-                        icon={<TrashBinIcon />}
+                        icon={<BAITrashBinIcon />}
                         style={{
                           color:
                             vfolder?.status !== 'delete-pending'
@@ -407,7 +409,9 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
               ) : (
                 <Flex gap={'xs'}>
                   <Typography.Text>{t('data.Project')}</Typography.Text>
-                  <UserUnionIcon style={{ color: token.colorTextTertiary }} />
+                  <BAIUserUnionIcon
+                    style={{ color: token.colorTextTertiary }}
+                  />
                 </Flex>
               );
             },
