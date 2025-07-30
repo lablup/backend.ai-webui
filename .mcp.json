@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "Atlassian": {
+      "type": "sse",
+      "url": "https://mcp.atlassian.com/v1/sse"
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"],
+      "env": {}
+    }
+  }
+}
