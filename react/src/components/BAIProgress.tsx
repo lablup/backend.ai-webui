@@ -1,3 +1,4 @@
+import usePrimaryColors from '../hooks/usePrimaryColors';
 import Flex from './Flex';
 import { ProgressProps, theme, Typography } from 'antd';
 import _ from 'lodash';
@@ -18,6 +19,7 @@ const BAIProgress: React.FC<BAIProgressProps> = ({
   ...baiProgressProps
 }) => {
   const { token } = theme.useToken();
+  const primaryColors = usePrimaryColors();
 
   return (
     <Flex direction="column" align="stretch" gap={'xs'}>
@@ -30,7 +32,7 @@ const BAIProgress: React.FC<BAIProgressProps> = ({
             fontSize: token.fontSizeHeading3,
             color: _.isString(baiProgressProps.strokeColor)
               ? baiProgressProps.strokeColor
-              : token.Layout?.headerBg,
+              : primaryColors.primary5,
             alignContent: 'end',
           }}
         >
@@ -60,9 +62,9 @@ const BAIProgress: React.FC<BAIProgressProps> = ({
             top: 0,
             backgroundColor: _.isString(baiProgressProps.strokeColor)
               ? (baiProgressProps.strokeColor ??
-                token.Layout?.headerBg ??
+                primaryColors.primary5 ??
                 token.colorPrimary)
-              : (token.Layout?.headerBg ?? token.colorPrimary),
+              : (primaryColors.primary5 ?? token.colorPrimary),
             zIndex: 0,
             overflow: 'hidden',
           }}
@@ -84,9 +86,9 @@ const BAIProgress: React.FC<BAIProgressProps> = ({
               style={{
                 color: _.isString(baiProgressProps.strokeColor)
                   ? (baiProgressProps.strokeColor ??
-                    token.Layout?.headerBg ??
+                    primaryColors.primary5 ??
                     token.colorPrimary)
-                  : (token.Layout?.headerBg ?? token.colorPrimary),
+                  : (primaryColors.primary5 ?? token.colorPrimary),
               }}
             >
               {used}
@@ -104,9 +106,9 @@ const BAIProgress: React.FC<BAIProgressProps> = ({
               style={{
                 color: _.isString(baiProgressProps.strokeColor)
                   ? (baiProgressProps.strokeColor ??
-                    token.Layout?.headerBg ??
+                    primaryColors.primary5 ??
                     token.colorPrimary)
-                  : (token.Layout?.headerBg ?? token.colorPrimary),
+                  : (primaryColors.primary5 ?? token.colorPrimary),
               }}
             >
               {used}

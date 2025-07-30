@@ -3,6 +3,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useVFolderInvitations } from '../hooks/backendai';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import usePrimaryColors from '../hooks/usePrimaryColors';
 import BAIPanelItem from './BAIPanelItem';
 import { Badge, Col, Row, theme, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
@@ -38,6 +39,7 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { styles } = useStyles();
+  const primaryColors = usePrimaryColors();
   const baiClient = useSuspendedBackendaiClient();
   const currentProject = useCurrentProjectValue();
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -178,7 +180,7 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
                   strong
                   style={{
                     fontSize: token.fontSizeHeading1,
-                    color: token.Layout?.headerBg,
+                    color: primaryColors.primary5,
                   }}
                 >
                   {invitedCount}

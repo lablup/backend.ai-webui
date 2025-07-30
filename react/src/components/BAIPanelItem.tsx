@@ -1,3 +1,4 @@
+import usePrimaryColors from '../hooks/usePrimaryColors';
 import Flex from './Flex';
 import { Progress, ProgressProps, theme, Typography } from 'antd';
 import { createStyles } from 'antd-style';
@@ -32,6 +33,7 @@ const BAIPanelItem: React.FC<BAIPanelItemProps> = ({
 }) => {
   const { token } = theme.useToken();
   const { styles } = useStyles();
+  const primaryColors = usePrimaryColors();
   return (
     <Flex
       {...props}
@@ -64,7 +66,7 @@ const BAIPanelItem: React.FC<BAIPanelItemProps> = ({
             strong
             style={{
               fontSize: token.fontSizeHeading1,
-              color: color ?? token.Layout?.headerBg,
+              color: color ?? primaryColors.primary5,
             }}
           >
             {value}
