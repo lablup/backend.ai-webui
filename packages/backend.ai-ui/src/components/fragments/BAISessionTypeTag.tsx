@@ -10,7 +10,7 @@ const typeTagColor = {
   INFERENCE: 'blue',
 };
 
-interface BAISessionTypeTagProps {
+export interface BAISessionTypeTagProps {
   sessionFrgmt: BAISessionTypeTagFragment$key;
 }
 

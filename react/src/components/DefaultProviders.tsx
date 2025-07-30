@@ -4,6 +4,10 @@ import rawFixAntCss from '../fix_antd.css?raw';
 import { buiLanguages } from '../helper/bui-language';
 import { useCustomThemeConfig } from '../helper/customThemeConfig';
 import { ReactWebComponentProps } from '../helper/react-to-webcomponent';
+import {
+  backendaiClientPromise,
+  createAnonymousBackendaiClient,
+} from '../hooks';
 import { ThemeModeProvider, useThemeMode } from '../hooks/useThemeMode';
 // @ts-ignore
 import indexCss from '../index.css?raw';
@@ -232,6 +236,8 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
                           ? theme.darkAlgorithm
                           : theme.defaultAlgorithm,
                       }}
+                      clientPromise={backendaiClientPromise}
+                      anonymousClientFactory={createAnonymousBackendaiClient}
                     >
                       <App {...commonAppProps}>
                         <StyleProvider container={shadowRoot} cache={cache}>
@@ -329,6 +335,8 @@ export const DefaultProvidersForReactRoot: React.FC<
               }}
               // @ts-ignore
               csp={{ nonce: globalThis.baiNonce }}
+              clientPromise={backendaiClientPromise}
+              anonymousClientFactory={createAnonymousBackendaiClient}
             >
               <App {...commonAppProps}>
                 {/* <StyleProvider container={shadowRoot} cache={cache}> */}

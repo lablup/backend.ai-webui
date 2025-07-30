@@ -86,6 +86,23 @@ export const useAnonymousBackendaiClient = ({
   return client;
 };
 
+export const createAnonymousBackendaiClient = (
+  api_endpoint: string,
+): BackendAIClient => {
+  //@ts-ignore
+  const clientConfig = new globalThis.BackendAIClientConfig(
+    '',
+    '',
+    api_endpoint,
+    'SESSION',
+  );
+  //@ts-ignore
+  return new globalThis.BackendAIClient(
+    clientConfig,
+    'Backend.AI Console.',
+  ) as BackendAIClient;
+};
+
 export type UserStatsDataKey =
   | 'num_sessions'
   | 'cpu_allocated'
@@ -180,31 +197,36 @@ export type BackendAIClient = {
     delete: (key: string, prefix: boolean) => Promise<any>;
   };
   get_resource_slots: () => Promise<any>;
+  current_group_id: () => string;
 };
+
+export const backendaiClientPromise: Promise<BackendAIClient> = new Promise(
+  (resolve) => {
+    if (
+      //@ts-ignore
+      typeof globalThis.backendaiclient === 'undefined' ||
+      //@ts-ignore
+      globalThis.backendaiclient === null ||
+      //@ts-ignore
+      globalThis.backendaiclient.ready === false
+    ) {
+      const listener = () => {
+        // @ts-ignore
+        resolve(globalThis.backendaiclient);
+        document.removeEventListener('backend-ai-connected', listener);
+      };
+      document.addEventListener('backend-ai-connected', listener);
+    } else {
+      //@ts-ignore
+      return resolve(globalThis.backendaiclient);
+    }
+  },
+);
+
 export const useSuspendedBackendaiClient = () => {
   const { data: client } = useSuspenseTanQuery<any>({
     queryKey: ['backendai-client-for-suspense'],
-    queryFn: () =>
-      new Promise((resolve) => {
-        if (
-          //@ts-ignore
-          typeof globalThis.backendaiclient === 'undefined' ||
-          //@ts-ignore
-          globalThis.backendaiclient === null ||
-          //@ts-ignore
-          globalThis.backendaiclient.ready === false
-        ) {
-          const listener = () => {
-            // @ts-ignore
-            resolve(globalThis.backendaiclient);
-            document.removeEventListener('backend-ai-connected', listener);
-          };
-          document.addEventListener('backend-ai-connected', listener);
-        } else {
-          //@ts-ignore
-          return resolve(globalThis.backendaiclient);
-        }
-      }),
+    queryFn: () => backendaiClientPromise,
     retry: false,
     // enabled: false,
   });
