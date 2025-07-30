@@ -1,6 +1,10 @@
 packages:
   - react
   - packages/backend.ai-ui
+
+ignoredBuiltDependencies:
+  - '@vaadin/vaadin-usage-statistics'
+
 onlyBuiltDependencies:
   - bufferutil
   - core-js
@@ -9,8 +13,8 @@ onlyBuiltDependencies:
   - es5-ext
   - esbuild
   - utf-8-validate
-ignoredBuiltDependencies:
-  - "@vaadin/vaadin-usage-statistics"
+
 patchedDependencies:
-  "@cloudscape-design/board-components@3.0.60": "react/patches/@cloudscape-design__board-components@3.0.60.patch"
-  "rc-field-form@2.7.0": "react/patches/rc-field-form.patch"
+  '@cloudscape-design/board-components@3.0.60': react/patches/@cloudscape-design__board-components@3.0.60.patch
+  rc-field-form@2.7.0: react/patches/rc-field-form.patch
+  react-scripts@5.0.1: react/patches/react-scripts@5.0.1.patch

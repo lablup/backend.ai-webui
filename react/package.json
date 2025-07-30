@@ -168,6 +168,5 @@
     "stream-browserify": "^3.0.0",
     "wait-on": "^8.0.3",
     "webpack": "^5.96.1"
-  },
-  "proxy": "http://localhost:3081"
+  }
 }

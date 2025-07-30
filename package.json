@@ -18,9 +18,9 @@
     "build:react-only": "pnpm run --prefix ./react build:only",
     "build:plugin": "rm -rf build/rollup/dist/plugins && mkdir -p build/rollup/dist/plugins && rollup -c rollup.plugins.config.ts --configPlugin typescript",
     "server:p": "serve build/rollup",
-    "server:d": "concurrently -c \"auto\" --names \"backend.ai-ui,webui\" \"pnpm --prefix ./packages/backend.ai-ui run dev\" \"pnpm --prefix ./react run start\"",
-    "server:d-ie11": "web-dev-server --node-resolve --open --watch --port 3081 --hostname 127.0.0.1 --esbuild-target auto --app-index demo/index.html --file-extensions .ts",
-    "build:d": "concurrently -c \"auto\" --names \"webcomponent,react-relay,webdev\" \"./node_modules/typescript/bin/tsc --watch\" \"cd react && pnpm run relay:watch\" \"web-dev-server --node-resolve --port 3081 --hostname 127.0.0.1 --esbuild-target auto --app-index index.html --file-extensions .ts\"",
+    "server:d": "eval \"$(node scripts/dev-config.js env)\" && node scripts/dev-config.js update && concurrently -c \"auto\" --names \"backend.ai-ui,webui\" \"pnpm --prefix ./packages/backend.ai-ui run dev\" \"PORT=$BAI_WEBUI_DEV_REACT_PORT PROXY=http://localhost:$BAI_WEBUI_DEV_WEBDEV_PORT pnpm --prefix ./react run start\"",
+    "server:d-ie11": "web-dev-server --node-resolve --open --watch --port 3081 --hostname $BAI_WEBUI_DEV_HOST --esbuild-target auto --app-index demo/index.html --file-extensions .ts",
+    "build:d": "eval \"$(node scripts/dev-config.js env)\" && node scripts/dev-config.js update && concurrently -c \"auto\" --names \"webcomponent,react-relay,webdev\" \"./node_modules/typescript/bin/tsc --watch\" \"cd react && pnpm run relay:watch\" \"web-dev-server --node-resolve --port $BAI_WEBUI_DEV_WEBDEV_PORT --hostname localhost --esbuild-target auto --app-index index.html --file-extensions .ts\"",
     "electron:d": "electron . --dev",
     "relay": "relay-compiler",
     "copywc": "mkdir -p build/rollup/src/lib && cp -r node_modules/@webcomponents/webcomponentsjs/bundles build/rollup/src/lib && cp -r node_modules/@webcomponents/webcomponentsjs/bundles src/lib && cp node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js build/rollup/src/lib && cp -r node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js src/lib",
@@ -33,7 +33,9 @@
     "postinstall": "concurrently -c \"auto\" --names \"patch-package\"  \"patch-package\"",
     "patch:lit-translate": "unzip -o ./scripts/lit-translate.zip -d ./node_modules/lit-translate && cp -f ./scripts/lit-translate-index.js ./node_modules/lit-translate/index.js",
     "prepare": "husky",
-    "theme-schema:update": "pnpm dlx typescript-json-schema \"./react/node_modules/antd/es/config-provider/context.d.ts\" ThemeConfig -o ./resources/antdThemeConfig.schema.json --esModuleInterop"
+    "theme-schema:update": "pnpm dlx typescript-json-schema \"./react/node_modules/antd/es/config-provider/context.d.ts\" ThemeConfig -o ./resources/antdThemeConfig.schema.json --esModuleInterop",
+    "dev:config": "node scripts/dev-config.js show",
+    "dev:setup": "node scripts/dev-config.js update"
   },
   "dependencies": {
     "@iarna/toml": "^2.2.5",

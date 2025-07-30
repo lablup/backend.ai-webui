@@ -48,6 +48,23 @@ export const loadCustomThemeConfig = () => {
       } else {
         _customTheme = theme;
       }
+      if (
+        _customTheme &&
+        process.env.NODE_ENV === 'development' &&
+        process.env.REACT_APP_THEME_COLOR
+      ) {
+        _.set(
+          _customTheme,
+          'light.components.Layout.headerBg',
+          process.env.REACT_APP_THEME_COLOR,
+        );
+        _.set(
+          _customTheme,
+          'dark.components.Layout.headerBg',
+          process.env.REACT_APP_THEME_COLOR,
+        );
+      }
+
       document.dispatchEvent(new CustomEvent('custom-theme-loaded'));
     });
 };

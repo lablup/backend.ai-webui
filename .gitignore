@@ -61,6 +61,8 @@ typings/
 
 # dotenv environment variables file
 .env
+.env.local
+react/.env.local
 
 # dotenv environment variables file for playwright test
 /e2e/envs/*
@@ -157,3 +159,5 @@ guides-for-ai-temp
 CLAUDE.local.md
 
 .claude/settings.local.json
+
+.env.development.local
