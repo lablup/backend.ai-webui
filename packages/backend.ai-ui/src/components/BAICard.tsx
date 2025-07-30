@@ -91,7 +91,7 @@ const BAICard: React.FC<BAICardProps> = ({
             }}
           >
             {cardProps.title}
-            {_extra}
+            <Flex>{_extra}</Flex>
           </Flex>
         ) : null
       }
