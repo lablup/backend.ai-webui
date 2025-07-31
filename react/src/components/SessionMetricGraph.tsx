@@ -62,14 +62,12 @@ interface PrometheusMetricGraphProps {
     userId: string;
     dayDiff: number;
   };
-  key: string;
   fetchKey: string;
   tooltip?: string | React.ReactNode;
 }
 
 const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
   queryProps: { startDate, endDate, metricName, userId, dayDiff },
-  key,
   fetchKey,
   tooltip,
 }) => {
@@ -185,7 +183,6 @@ const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
 
   return (
     <Flex
-      key={key}
       direction="column"
       align="stretch"
       gap="sm"
