@@ -29,11 +29,6 @@ const ResourcesPage: React.FC<ResourcesPageProps> = (props) => {
           tab: t('webui.menu.AgentSummary'),
         },
       ]}
-      styles={{
-        body: {
-          padding: `${token.paddingSM}px ${token.paddingLG}px ${token.paddingLG}px ${token.paddingLG}px`,
-        },
-      }}
     >
       {curTabKey === 'agent-summary' ? (
         // To remove duplicated border in the bordered table, we need to remove margin of the container.

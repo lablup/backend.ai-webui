@@ -14,8 +14,8 @@ const tabParam = withDefault(StringParam, 'allocation-history');
 
 const ResourcesPage: React.FC<ResourcesPageProps> = (props) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
+  const { token } = theme.useToken();
 
   const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam, {
     updateType: 'replace',
@@ -37,8 +37,6 @@ const ResourcesPage: React.FC<ResourcesPageProps> = (props) => {
       ])}
       styles={{
         body: {
-          padding: 0,
-          paddingTop: 1,
           overflow: 'hidden',
         },
       }}

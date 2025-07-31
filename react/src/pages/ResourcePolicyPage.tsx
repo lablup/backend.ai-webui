@@ -4,7 +4,6 @@ import ProjectResourcePolicyList from '../components/ProjectResourcePolicyList';
 import UserResourcePolicyList from '../components/UserResourcePolicyList';
 import { filterEmptyItem } from '../helper';
 import { useWebUINavigate } from '../hooks';
-import { theme } from 'antd';
 import { BAICard } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +14,6 @@ const tabParam = withDefault(StringParam, 'keypair');
 interface ResourcePolicyPageProps {}
 const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const [curTabKey] = useQueryParam('tab', tabParam);
   const webUINavigate = useWebUINavigate();
 
@@ -51,11 +49,6 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
           label: t('resourcePolicy.Project'),
         },
       ])}
-      styles={{
-        body: {
-          padding: `${token.paddingSM}px ${token.paddingLG}px ${token.paddingLG}px ${token.paddingLG}px`,
-        },
-      }}
     >
       <Suspense fallback={<FlexActivityIndicator />}>
         {curTabKey === 'keypair' && <KeypairResourcePolicyList />}

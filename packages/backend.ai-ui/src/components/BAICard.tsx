@@ -8,9 +8,10 @@ export interface BAICardProps extends Omit<CardProps, 'extra'> {
   status?: 'success' | 'error' | 'warning' | 'default';
   extra?: ReactNode;
   extraButtonTitle?: string | ReactNode;
+  /** Show header divider. Automatically enabled when tabList is specified */
   showDivider?: boolean;
   onClickExtraButton?: () => void;
-  ref?: React.LegacyRef<HTMLDivElement> | undefined;
+  ref?: React.Ref<HTMLDivElement> | undefined;
 }
 
 const BAICard: React.FC<BAICardProps> = ({
@@ -49,6 +50,7 @@ const BAICard: React.FC<BAICardProps> = ({
       </Button>
     )) ||
     undefined;
+
   return (
     <Card
       className={status === 'error' ? 'bai-card-error' : ''}
@@ -63,8 +65,13 @@ const BAICard: React.FC<BAICardProps> = ({
                 : style?.borderColor, // default
       })}
       styles={_.merge(
-        showDivider
-          ? {}
+        // Auto-enable divider when tabList is specified
+        showDivider || cardProps.tabList
+          ? {
+              body: {
+                padding: `${token.padding}px ${token.paddingLG}px ${token.paddingLG}px ${token.paddingLG}px`,
+              },
+            }
           : {
               header: {
                 borderBottom: 'none',

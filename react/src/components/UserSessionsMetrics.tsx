@@ -182,12 +182,7 @@ const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
   }, [initialBoardItems]);
 
   return (
-    <Flex
-      direction="column"
-      align="stretch"
-      gap="md"
-      style={{ padding: token.paddingMD }}
-    >
+    <Flex direction="column" align="stretch" gap="md">
       <Flex align="stretch" justify="between">
         <RangePicker
           allowClear={false}

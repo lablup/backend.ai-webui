@@ -3,7 +3,6 @@ import FlexActivityIndicator from '../components/FlexActivityIndicator';
 import ImageList from '../components/ImageList';
 import ResourcePresetList from '../components/ResourcePresetList';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { theme } from 'antd';
 import { BAICard } from 'backend.ai-ui';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +14,6 @@ const EnvironmentPage = () => {
   const { t } = useTranslation();
   const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
   const baiClient = useSuspendedBackendaiClient();
-  const { token } = theme.useToken();
 
   return (
     <BAICard
@@ -39,11 +37,6 @@ const EnvironmentPage = () => {
             ]
           : []),
       ]}
-      styles={{
-        body: {
-          padding: `${token.paddingSM}px ${token.paddingLG}px ${token.paddingLG}px ${token.paddingLG}px`,
-        },
-      }}
     >
       <Suspense
         fallback={

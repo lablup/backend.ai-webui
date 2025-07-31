@@ -2,7 +2,7 @@ import { useUpdatableState } from '../hooks';
 import AllocationHistoryStatistics from './AllocationHistoryStatistics';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import Flex from './Flex';
-import { Alert, Form, Select, Skeleton, theme } from 'antd';
+import { Alert, Form, Select, Skeleton } from 'antd';
 import { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { createEnumParam, useQueryParam, withDefault } from 'use-query-params';
@@ -16,7 +16,6 @@ const AllocationHistory: React.FC = () => {
     periodParam,
   );
   const { t } = useTranslation();
-  const { token } = theme.useToken();
 
   const [usageFetchKey, updateUsageFetchKey] = useUpdatableState('first');
   const [isPendingUsageTransition, startUsageTransition] = useTransition();
@@ -35,12 +34,7 @@ const AllocationHistory: React.FC = () => {
   ];
 
   return (
-    <Flex
-      direction="column"
-      align="stretch"
-      gap={'md'}
-      style={{ padding: token.paddingMD }}
-    >
+    <Flex direction="column" align="stretch" gap={'md'}>
       <Alert showIcon message={t('statistics.UsageHistoryNote')} type="info" />
       <Flex gap={'sm'} justify="between">
         <Form.Item

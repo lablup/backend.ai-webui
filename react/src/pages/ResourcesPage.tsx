@@ -1,7 +1,7 @@
 import AgentList from '../components/AgentList';
 import ResourceGroupList from '../components/ResourceGroupList';
 import StorageProxyList from '../components/StorageProxyList';
-import { Skeleton, theme } from 'antd';
+import { Skeleton } from 'antd';
 import { BAICard } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -18,8 +18,6 @@ const ResourcesPage: React.FC<ResourcesPageProps> = (props) => {
   const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam, {
     updateType: 'replace',
   });
-
-  const { token } = theme.useToken();
 
   return (
     <BAICard
@@ -39,11 +37,6 @@ const ResourcesPage: React.FC<ResourcesPageProps> = (props) => {
           tab: t('general.ResourceGroup'),
         },
       ]}
-      styles={{
-        body: {
-          padding: `${token.paddingSM}px ${token.paddingLG}px ${token.paddingLG}px ${token.paddingLG}px`,
-        },
-      }}
     >
       {curTabKey === 'agents' ? (
         <Suspense fallback={<Skeleton active />}>

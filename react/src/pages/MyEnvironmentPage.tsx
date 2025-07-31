@@ -1,6 +1,5 @@
 import CustomizedImageList from '../components/CustomizedImageList';
 import FlexActivityIndicator from '../components/FlexActivityIndicator';
-import { theme } from 'antd';
 import { BAICard } from 'backend.ai-ui';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +10,6 @@ const tabParam = withDefault(StringParam, 'image');
 const MyEnvironmentPage = () => {
   const { t } = useTranslation();
   const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
-  const { token } = theme.useToken();
 
   return (
     <BAICard
@@ -23,11 +21,6 @@ const MyEnvironmentPage = () => {
           label: t('environment.Images'),
         },
       ]}
-      styles={{
-        body: {
-          padding: `${token.paddingSM}px ${token.paddingLG}px ${token.paddingLG}px ${token.paddingLG}px`,
-        },
-      }}
     >
       <Suspense
         fallback={
