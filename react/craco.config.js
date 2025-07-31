@@ -11,8 +11,8 @@ const {
 } = require('@craco/craco');
 
 module.exports = {
-  devServer: {
-    watchFiles: {
+  devServer: (devServerConfig, { env, paths }) => {
+    devServerConfig.watchFiles = {
       paths: [
         '../index.html',
         '../config.toml',
@@ -20,16 +20,28 @@ module.exports = {
         '../dist/**/*',
         '../resources/**/*',
       ],
-      // options: {
-      //   ignored: (file) => {
-      //     // console.log(file);
-      //     if (file.includes('__generated__')) {
-      //       return true;
-      //     }
-      //     return false;
-      //   },
-      // },
-    },
+    };
+    
+    // Override deprecated middleware options with setupMiddlewares
+    const originalOnBefore = devServerConfig.onBeforeSetupMiddleware;
+    const originalOnAfter = devServerConfig.onAfterSetupMiddleware;
+    
+    if (originalOnBefore || originalOnAfter) {
+      delete devServerConfig.onBeforeSetupMiddleware;
+      delete devServerConfig.onAfterSetupMiddleware;
+      
+      devServerConfig.setupMiddlewares = (middlewares, devServer) => {
+        if (originalOnBefore) {
+          originalOnBefore(devServer);
+        }
+        if (originalOnAfter) {
+          originalOnAfter(devServer);
+        }
+        return middlewares;
+      };
+    }
+    
+    return devServerConfig;
   },
   babel: {
     plugins: [
