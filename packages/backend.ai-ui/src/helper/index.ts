@@ -76,6 +76,7 @@ export type SizeUnit = InputSizeUnit;
  * // Auto unit selection with custom precision
  * convertUnitValue('1048576', 'auto', { fixed: 1 })
  * // => { number: 1, numberFixed: "1", unit: "m", value: "1m" }
+ *
  */
 export function convertUnitValue(
   inputValue: string | undefined,
