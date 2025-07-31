@@ -14,7 +14,6 @@ import {
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
-import BAITable from './BAITable';
 import Flex from './Flex';
 import ProjectResourcePolicySettingModal from './ProjectResourcePolicySettingModal';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
@@ -27,6 +26,7 @@ import {
 import { useToggle } from 'ahooks';
 import { Button, Dropdown, message, Popconfirm, theme, Tooltip } from 'antd';
 import { ColumnType } from 'antd/es/table';
+import { BAITable } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { EllipsisIcon } from 'lucide-react';
@@ -313,8 +313,6 @@ const ProjectResourcePolicyList: React.FC<
         </Flex>
       </Flex>
       <BAITable
-        neoStyle
-        size="small"
         rowKey="id"
         showSorterTooltip={false}
         columns={_.filter(

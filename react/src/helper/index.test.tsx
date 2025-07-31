@@ -10,7 +10,6 @@ import {
   numberSorterWithInfinityValue,
   parseValueWithUnit,
   toFixedFloorWithoutTrailingZeros,
-  transformSorterToOrderString,
   convertToDecimalUnit,
 } from './index';
 
@@ -283,28 +282,29 @@ describe('isOutsideRangeWithUnits', () => {
   });
 });
 
-describe('transformSorterToOrderString', () => {
-  it('should correctly transform single sorter to order string', () => {
-    const sorter = { order: 'descend' as const, field: 'name' };
-    const result = transformSorterToOrderString(sorter);
-    expect(result).toEqual('-name');
-  });
+// TODO: migrate below test to backend.ai-ui after setting up the test environment
+// describe('transformSorterToOrderString', () => {
+//   it('should correctly transform single sorter to order string', () => {
+//     const sorter = { order: 'descend' as const, field: 'name' };
+//     const result = transformSorterToOrderString(sorter);
+//     expect(result).toEqual('-name');
+//   });
 
-  it('should correctly transform array of sorters to order string', () => {
-    const sorter = [
-      { order: 'descend' as const, field: 'name' },
-      { order: 'ascend' as const, field: 'age' },
-    ];
-    const result = transformSorterToOrderString(sorter);
-    expect(result).toEqual('-name,age');
-  });
+//   it('should correctly transform array of sorters to order string', () => {
+//     const sorter = [
+//       { order: 'descend' as const, field: 'name' },
+//       { order: 'ascend' as const, field: 'age' },
+//     ];
+//     const result = transformSorterToOrderString(sorter);
+//     expect(result).toEqual('-name,age');
+//   });
 
-  it('should return undefined for sorter without order', () => {
-    const sorter = { field: 'name' };
-    const result = transformSorterToOrderString(sorter);
-    expect(result).toBeUndefined();
-  });
-});
+//   it('should return undefined for sorter without order', () => {
+//     const sorter = { field: 'name' };
+//     const result = transformSorterToOrderString(sorter);
+//     expect(result).toBeUndefined();
+//   });
+// });
 
 describe('localeCompare', () => {
   it('should return -1 if first argument is null or undefined', () => {

@@ -2,5 +2,8 @@
   "$schema": "../../i18n.schema.json",
   "comp:BAITestButton": {
     "Test": "test"
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} von {{total}} Elementen"
   }
 }

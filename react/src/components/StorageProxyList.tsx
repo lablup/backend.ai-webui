@@ -10,12 +10,11 @@ import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginati
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import BAILink from './BAILink';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
-import BAITable from './BAITable';
 import DoubleTag from './DoubleTag';
 import Flex from './Flex';
 import { InfoCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import { Button, TableColumnsType, Tag, theme, Typography } from 'antd';
-import { BAICephIcon, BAIPureStorageIcon } from 'backend.ai-ui';
+import { BAICephIcon, BAIPureStorageIcon, BAITable } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Server } from 'lucide-react';
 import { useDeferredValue, useEffect, useMemo } from 'react';
@@ -299,7 +298,6 @@ const StorageProxyList = () => {
       </Flex>
       <BAITable
         resizable
-        neoStyle
         size="small"
         scroll={{ x: 'max-content' }}
         rowKey={'id'}

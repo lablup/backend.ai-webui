@@ -14,10 +14,11 @@ import {
   Input,
   Popconfirm,
   Select,
-  Table,
   Tooltip,
+  Typography,
   theme,
 } from 'antd';
+import { BAITable } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -169,7 +170,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
       destroyOnClose
       footer={null}
     >
-      <Flex direction="column" gap="xl">
+      <Flex direction="column" gap="xl" align="stretch">
         <Form
           ref={inviteFormRef}
           initialValues={{ name: undefined, permission: 'ro' }}
@@ -226,8 +227,12 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
             </Descriptions.Item>
           </Descriptions>
         </Form>
-        <Descriptions
-          title={
+
+        <Flex direction="column" align="stretch">
+          <Typography.Title
+            level={5}
+            style={{ marginTop: 0, marginBottom: token.marginMD }}
+          >
             <Flex gap={'xs'}>
               {t('data.folders.SharedUser')}
               <Tooltip title={t('data.folders.SharedUserDesc')}>
@@ -236,76 +241,73 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
                 />
               </Tooltip>
             </Flex>
-          }
-        >
-          <Descriptions.Item>
-            <Table
-              bordered
-              pagination={false}
-              showSorterTooltip={false}
-              loading={isFetching}
-              dataSource={shared || []}
-              scroll={{ x: 'max-content' }}
-              rowKey={(record) => record.shared_to.uuid}
-              columns={[
-                {
-                  title: t('data.explorer.InviteeEmail'),
-                  dataIndex: ['shared_to', 'email'],
-                  sorter: (a, b) =>
-                    localeCompare(a.shared_to.email, b.shared_to.email),
-                },
-                {
-                  title: t('data.explorer.Permission'),
-                  dataIndex: 'perm',
-                  render: (perm, record) => {
-                    return (
-                      <Flex gap="xxs">
-                        <Select
-                          style={{ minWidth: 130 }}
-                          options={[
-                            { label: t('data.ReadOnly'), value: 'ro' },
-                            { label: t('data.ReadWrite'), value: 'rw' },
-                          ]}
-                          defaultValue={perm}
-                          onChange={(nextPerm) => {
-                            handlePermission(record.shared_to.uuid, nextPerm);
-                          }}
-                        />
-                        <Popconfirm
-                          title={t('data.folders.KickOutConfirm', {
-                            email: record.shared_to.email,
-                          })}
-                          okText={t('button.Confirm')}
-                          okButtonProps={{
-                            danger: true,
-                          }}
-                          onConfirm={() => {
-                            handlePermission(record.shared_to.uuid);
-                          }}
+          </Typography.Title>
+
+          <BAITable<Invitee>
+            bordered
+            pagination={false}
+            showSorterTooltip={false}
+            loading={isFetching}
+            dataSource={shared || []}
+            scroll={{ x: 'max-content' }}
+            rowKey={(record) => record.shared_to.uuid}
+            columns={[
+              {
+                title: t('data.explorer.InviteeEmail'),
+                dataIndex: ['shared_to', 'email'],
+                sorter: (a, b) =>
+                  localeCompare(a.shared_to.email, b.shared_to.email),
+              },
+              {
+                title: t('data.explorer.Permission'),
+                dataIndex: 'perm',
+                render: (perm, record) => {
+                  return (
+                    <Flex gap="xxs">
+                      <Select
+                        style={{ minWidth: 130 }}
+                        options={[
+                          { label: t('data.ReadOnly'), value: 'ro' },
+                          { label: t('data.ReadWrite'), value: 'rw' },
+                        ]}
+                        defaultValue={perm}
+                        onChange={(nextPerm) => {
+                          handlePermission(record.shared_to.uuid, nextPerm);
+                        }}
+                      />
+                      <Popconfirm
+                        title={t('data.folders.KickOutConfirm', {
+                          email: record.shared_to.email,
+                        })}
+                        okText={t('button.Confirm')}
+                        okButtonProps={{
+                          danger: true,
+                        }}
+                        onConfirm={() => {
+                          handlePermission(record.shared_to.uuid);
+                        }}
+                      >
+                        <Tooltip
+                          title={t('data.folders.KickOut')}
+                          placement="right"
+                          trigger={['hover', 'click']}
                         >
-                          <Tooltip
-                            title={t('data.folders.KickOut')}
-                            placement="right"
-                            trigger={['hover', 'click']}
-                          >
-                            <Button
-                              type="text"
-                              style={{
-                                color: token.colorError,
-                              }}
-                              icon={<CloseCircleOutlined />}
-                            />
-                          </Tooltip>
-                        </Popconfirm>
-                      </Flex>
-                    );
-                  },
+                          <Button
+                            type="text"
+                            style={{
+                              color: token.colorError,
+                            }}
+                            icon={<CloseCircleOutlined />}
+                          />
+                        </Tooltip>
+                      </Popconfirm>
+                    </Flex>
+                  );
                 },
-              ]}
-              style={{ width: '100%' }}
-            />
-          </Descriptions.Item>
-        </Descriptions>
+              },
+            ]}
+          />
+        </Flex>
       </Flex>
     </BAIModal>
   );

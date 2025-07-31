@@ -10,12 +10,12 @@ import {
 } from '../pages/SessionLauncherPage';
 import BAILink from './BAILink';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import BAITable from './BAITable';
 import Flex from './Flex';
 import ImageMetaIcon from './ImageMetaIcon';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import { Button, theme, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
+import { BAITable } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { PinIcon } from 'lucide-react';

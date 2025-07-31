@@ -2,5 +2,8 @@
   "$schema": "../../i18n.schema.json",
   "comp:BAITestButton": {
     "Test": "ทดสอบ"
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} ของ {{total}} รายการ"
   }
 }

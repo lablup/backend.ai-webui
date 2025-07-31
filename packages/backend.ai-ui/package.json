@@ -61,6 +61,8 @@
     "antd": "^5.24.5",
     "big.js": "^7.0.1",
     "dayjs": "^1.11.13",
+    "antd-style": "^3.7.1",
+    "classnames": "^2.5.1",
     "graphql": "^16.10.0",
     "i18next": "^24.2.3",
     "lodash": "^4.17.21",
@@ -69,7 +71,8 @@
     "react-dom": "^19.0.0",
     "react-i18next": "^15.4.1",
     "react-relay": "^20.1.0",
-    "relay-runtime": "^20.1.0"
+    "relay-runtime": "^20.1.0",
+    "react-resizable": "^3.0.5"
   },
   "devDependencies": {
     "@storybook/addon-docs": "^9.0.0",
@@ -78,11 +81,12 @@
     "@storybook/addon-links": "^8.4.5",
     "@storybook/addon-onboarding": "^9.0.0",
     "@storybook/react-vite": "^9.0.0",
-    "@types/big.js": "^6.2.2",
     "@types/lodash": "^4.17.13",
     "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
+    "@types/react-dom": "^19.0.3",
     "@types/react-relay": "^18.2.1",
+    "@types/react-resizable": "^3.0.8",
+    "@types/big.js": "^6.2.2",
     "@vitejs/plugin-react": "^4.5.0",
     "ahooks": "^3.8.4",
     "dayjs": "^1.11.13",

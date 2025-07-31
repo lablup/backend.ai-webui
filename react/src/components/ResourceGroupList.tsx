@@ -9,7 +9,6 @@ import { useUpdatableState } from '../hooks';
 import BAIConfirmModalWithInput from './BAIConfirmModalWithInput';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import BAIRadioGroup from './BAIRadioGroup';
-import BAITable from './BAITable';
 import Flex from './Flex';
 import ResourceGroupInfoModal from './ResourceGroupInfoModal';
 import ResourceGroupSettingModal from './ResourceGroupSettingModal';
@@ -32,6 +31,7 @@ import {
   theme,
 } from 'antd';
 import { ColumnsType } from 'antd/es/table';
+import { BAITable } from 'backend.ai-ui';
 import _ from 'lodash';
 import { BanIcon, UndoIcon } from 'lucide-react';
 import { useState, useTransition } from 'react';
@@ -314,7 +314,6 @@ const ResourceGroupList: React.FC = () => {
 
       <BAITable
         rowKey={'name'}
-        neoStyle
         resizable
         size="small"
         scroll={{ x: 'max-content' }}

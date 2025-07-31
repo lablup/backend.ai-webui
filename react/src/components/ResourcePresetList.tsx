@@ -6,7 +6,6 @@ import {
 import { ResourcePresetSettingModalFragment$key } from '../__generated__/ResourcePresetSettingModalFragment.graphql';
 import { filterEmptyItem, filterNonNullItems, localeCompare } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
-import BAITable from './BAITable';
 import Flex from './Flex';
 import NumberWithUnit from './NumberWithUnit';
 import ResourceNumber from './ResourceNumber';
@@ -25,6 +24,7 @@ import {
   Typography,
   TableColumnsType,
 } from 'antd';
+import { BAITable } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -239,8 +239,6 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
         </Flex>
       </Flex>
       <BAITable
-        neoStyle
-        size="small"
         rowKey={'name'}
         dataSource={filterNonNullItems(resource_presets)}
         scroll={{ x: 'max-content' }}

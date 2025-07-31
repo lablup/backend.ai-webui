@@ -12,7 +12,6 @@ import { usePainKiller } from '../hooks/usePainKiller';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import BAIConfirmModalWithInput from './BAIConfirmModalWithInput';
 import BAILink from './BAILink';
-import BAITable, { BAITableProps } from './BAITable';
 import BAITag from './BAITag';
 import EditableVFolderName from './EditableVFolderName';
 import Flex from './Flex';
@@ -36,6 +35,8 @@ import {
   BAIShareAltIcon,
   BAITrashBinIcon,
   BAIUserUnionIcon,
+  BAITable,
+  BAITableProps,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useState } from 'react';
@@ -132,7 +133,6 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
     <>
       <BAITable
         resizable
-        neoStyle
         showSorterTooltip={false}
         rowKey={(record) => record.id}
         size="small"

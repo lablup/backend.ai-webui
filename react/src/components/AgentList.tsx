@@ -22,7 +22,6 @@ import BAIIntervalView from './BAIIntervalView';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import BAIPropertyFilter from './BAIPropertyFilter';
 import BAIRadioGroup from './BAIRadioGroup';
-import BAITable from './BAITable';
 import DoubleTag from './DoubleTag';
 import Flex from './Flex';
 import { ResourceTypeIcon } from './ResourceNumber';
@@ -38,6 +37,7 @@ import { useToggle } from 'ahooks';
 import { Button, TableProps, Tag, theme, Tooltip, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
+import { BAITable } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import React, { useState, useTransition } from 'react';
@@ -827,7 +827,6 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
       </Flex>
       <BAITable
         size="small"
-        neoStyle
         scroll={{ x: 'max-content' }}
         rowKey={'id'}
         dataSource={filterNonNullItems(agent_list?.items)}

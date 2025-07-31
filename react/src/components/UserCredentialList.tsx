@@ -10,7 +10,6 @@ import { useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import BAIPropertyFilter from './BAIPropertyFilter';
 import BAIRadioGroup from './BAIRadioGroup';
-import BAITable from './BAITable';
 import Flex from './Flex';
 import KeypairInfoModal from './KeypairInfoModal';
 import KeypairSettingModal from './KeypairSettingModal';
@@ -21,6 +20,7 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { App, Button, Popconfirm, Tag, Tooltip, Typography, theme } from 'antd';
+import { BAITable } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
@@ -240,9 +240,6 @@ const UserCredentialList: React.FC = () => {
         </Flex>
       </Flex>
       <BAITable<Keypair>
-        neoStyle
-        size="small"
-        // resizable
         rowKey={'id'}
         scroll={{ x: 'max-content' }}
         loading={

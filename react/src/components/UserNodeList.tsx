@@ -2,11 +2,10 @@ import { UserNodeListModifyMutation } from '../__generated__/UserNodeListModifyM
 import { UserNodeListQuery } from '../__generated__/UserNodeListQuery.graphql';
 import BAIPropertyFilter from '../components/BAIPropertyFilter';
 import Flex from '../components/Flex';
-import { filterEmptyItem } from '../helper';
+import { filterEmptyItem, filterNonNullItems } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import BAIRadioGroup from './BAIRadioGroup';
-import BAITable from './BAITable';
 import UserInfoModal from './UserInfoModal';
 import UserSettingModal from './UserSettingModal';
 import {
@@ -15,6 +14,7 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { Tooltip, Button, theme, Popconfirm, App } from 'antd';
+import { BAITable } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
@@ -224,11 +224,9 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
         </Flex>
       </Flex>
       <BAITable
-        neoStyle
-        size="small"
         scroll={{ x: 'max-content' }}
         rowKey={'id'}
-        dataSource={filterEmptyItem(_.map(user_nodes?.edges, (e) => e?.node))}
+        dataSource={filterNonNullItems(_.map(user_nodes?.edges, 'node'))}
         columns={filterEmptyItem([
           {
             key: 'email',
@@ -361,25 +359,25 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
             },
           },
         ])}
-        showSorterTooltip={false}
         pagination={{
           pageSize: tablePaginationOption.pageSize,
           total: user_nodes?.count || 0,
           current: tablePaginationOption.current,
-          onChange(page, pageSize) {
+          style: { marginRight: token.marginXS },
+          onChange: (current, pageSize) => {
             startPageChangeTransition(() => {
-              if (_.isNumber(page) && _.isNumber(pageSize)) {
+              if (_.isNumber(current) && _.isNumber(pageSize)) {
                 setTablePaginationOption({
-                  current: page,
+                  current,
                   pageSize,
                 });
               }
             });
           },
         }}
-        onChangeOrder={(order) => {
+        onChangeOrder={(nextOrder) => {
           startPageChangeTransition(() => {
-            setOrder(order);
+            setOrder(nextOrder);
           });
         }}
         loading={isPendingPageChange || isPendingStatusFetch || isPendingFilter}
