@@ -38,8 +38,22 @@ The associated Jira issue is specified by `$ARGUMENTS`.
 - Ensure PR description includes `Resolves #YYYY ([FR-XXXX](https://lablup.atlassian.net/browse/FR-XXXX))` on top. (YYYY is a number of "GitHub Issue URL" custom filed in related Jira item)
 
 6. **Update Jira issue after PR creation**
-   - If Sprint is empty, assign it to the currently active sprint in the project
+   - If Sprint is empty, find and assign it to the currently active (open) sprint in the FR project
    - If Assignee is empty, assign it to the current Jira MCP connected account
+   - Use Atlassian MCP commands to update the issue:
+     ```
+     # First, get current user info for assignee
+     mcp__Atlassian__atlassianUserInfo
+     
+     # Search for issues in active sprint to find the sprint ID
+     mcp__Atlassian__searchJiraIssuesUsingJql with JQL:
+     "project = FR AND sprint in openSprints() ORDER BY created DESC"
+     
+     # Update the issue with sprint and assignee
+     mcp__Atlassian__editJiraIssue with fields:
+     - customfield_10020: sprint_id (Sprint field - use numeric ID only)
+     - assignee: {accountId: "user_account_id"}
+     ```
 
 ## Example Workflow
 ```bash
