@@ -5,5 +5,34 @@
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}}–{{end}} yhteensä {{total}} kohteesta"
+  },
+  "general": {
+    "NSelected": "{{count}} valittu",
+    "button": {
+      "Delete": "Poistaa",
+      "Create": "Luoda",
+      "Upload": "Ladata"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "Valitut tiedostot ja kansiot on poistettu onnistuneesti.",
+    "DeleteSelectedItemsDialog": "Poista vahvistus",
+    "DeleteSelectedItemDesc": "Poistettuja tiedostoja ja kansioita ei voida palauttaa. \nHaluatko edetä?",
+    "FolderCreatedSuccessfully": "Kansio luotu onnistuneesti.",
+    "CreateANewFolder": "Luo uusi kansio",
+    "FolderName": "Kansionimi",
+    "PleaseEnterAFolderName": "Anna kansionimi.",
+    "MaxFolderNameLength": "Kansion nimen on oltava enintään 255 merkkiä.",
+    "Name": "Nimi",
+    "Size": "Koko",
+    "CreatedAt": "Luotu jhk",
+    "ModifiedAt": "Muutettu",
+    "Controls": "Hallintalaitteet",
+    "UploadFiles": "Lähetä tiedostot",
+    "UploadFolder": "Lataa kansio",
+    "DownloadStarted": "Tiedosto \"{{fileName}}\" lataus on alkanut.",
+    "error": {
+      "FileUploadSizeLimit": "Tiedoston koko ylittää lähetyskoon rajan."
+    }
   }
 }
