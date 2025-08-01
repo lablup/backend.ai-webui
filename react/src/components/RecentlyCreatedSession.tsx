@@ -4,6 +4,7 @@ import BAIFetchKeyButton from './BAIFetchKeyButton';
 import Flex from './Flex';
 import SessionDetailDrawer from './SessionDetailDrawer';
 import SessionNodes from './SessionNodes';
+import UnmountAfterClose from './UnmountAfterClose';
 import { theme, Typography } from 'antd';
 import { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -134,13 +135,15 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
           />
         </Flex>
       </Flex>
-      <SessionDetailDrawer
-        open={!!sessionDetailId}
-        sessionId={sessionDetailId || undefined}
-        onClose={() => {
-          setSessionDetailId(undefined, 'pushIn');
-        }}
-      />
+      <UnmountAfterClose>
+        <SessionDetailDrawer
+          open={!!sessionDetailId}
+          sessionId={sessionDetailId || undefined}
+          onClose={() => {
+            setSessionDetailId(undefined, 'pushIn');
+          }}
+        />
+      </UnmountAfterClose>
     </>
   );
 };

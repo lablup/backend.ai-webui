@@ -19,7 +19,7 @@ import ImageNodeSimpleTag from '../components/ImageNodeSimpleTag';
 import InferenceSessionErrorModal from '../components/InferenceSessionErrorModal';
 import ResourceNumber from '../components/ResourceNumber';
 import SessionDetailDrawer from '../components/SessionDetailDrawer';
-import UnmountModalAfterClose from '../components/UnmountModalAfterClose';
+import UnmountAfterClose from '../components/UnmountAfterClose';
 import VFolderLazyView from '../components/VFolderLazyView';
 import { baiSignedRequestWithPromise, filterNonNullItems } from '../helper';
 import {
@@ -1007,7 +1007,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         endpoint_id={endpoint?.endpoint_id || ''}
       ></EndpointTokenGenerationModal>
       {isSupportAutoScalingRule && (
-        <UnmountModalAfterClose>
+        <UnmountAfterClose>
           <AutoScalingRuleEditorModal
             open={isOpenAutoScalingRuleModal}
             endpoint_id={endpoint?.endpoint_id as string}
@@ -1022,15 +1022,17 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               }
             }}
           />
-        </UnmountModalAfterClose>
+        </UnmountAfterClose>
       )}
-      <SessionDetailDrawer
-        open={!selectedSessionId}
-        sessionId={selectedSessionId}
-        onClose={() => {
-          setSelectedSessionId(undefined);
-        }}
-      />
+      <UnmountAfterClose>
+        <SessionDetailDrawer
+          open={!!selectedSessionId}
+          sessionId={selectedSessionId}
+          onClose={() => {
+            setSelectedSessionId(undefined);
+          }}
+        />
+      </UnmountAfterClose>
       <BAIJSONViewerModal
         open={!!errorDataForJSONModal}
         title={t('modelService.RouteError')}

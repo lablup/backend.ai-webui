@@ -1,13 +1,13 @@
-import { ConnectedKernelListLegacyQuery } from '../../__generated__/ConnectedKernelListLegacyQuery.graphql';
 import {
-  ConnectedKernelListQuery,
-  ConnectedKernelListQuery$data,
-} from '../../__generated__/ConnectedKernelListQuery.graphql';
-import { filterEmptyItem, filterNonNullItems, toGlobalId } from '../../helper';
-import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
+  ConnectedKernelListFragment$data,
+  ConnectedKernelListFragment$key,
+} from '../../__generated__/ConnectedKernelListFragment.graphql';
+import { ContainerLogModalFragment$key } from '../../__generated__/ContainerLogModalFragment.graphql';
+import { filterEmptyItem, filterNonNullItems } from '../../helper';
+// import BAIPropertyFilter from '../BAIPropertyFilter';
 import DoubleTag from '../DoubleTag';
 import Flex from '../Flex';
-import UnmountModalAfterClose from '../UnmountModalAfterClose';
+import UnmountAfterClose from '../UnmountAfterClose';
 import ContainerLogModal from './ContainerLogModal';
 import { Button, Tag, theme, Tooltip, Typography } from 'antd';
 import { ColumnType } from 'antd/lib/table';
@@ -16,19 +16,16 @@ import _ from 'lodash';
 import { ScrollTextIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
-type Kernel = NonNullable<
-  NonNullable<
-    NonNullable<
-      NonNullable<ConnectedKernelListQuery$data['session']>['kernel_nodes']
-    >['edges'][number]
-  >['node']
->;
+type Kernel = NonNullable<ConnectedKernelListFragment$data[number]>;
 
 interface ConnectedKernelListProps {
-  id: string;
-  fetchKey?: string;
+  kernelsFrgmt: ConnectedKernelListFragment$key;
+  sessionFrgmtForLogModal: ContainerLogModalFragment$key;
+  // fetchKey?: string;
+  // get the project id of the session for <= v24.12.0.
+  // projectId?: string | null;
 }
 
 const kernelStatusTagColor = {
@@ -54,64 +51,27 @@ const kernelStatusTagColor = {
 };
 
 const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
-  id,
-  fetchKey,
+  kernelsFrgmt,
+  sessionFrgmtForLogModal,
 }) => {
   const { t } = useTranslation();
-  const currentProject = useCurrentProjectValue();
   const [kernelIdForLogModal, setKernelIdForLogModal] = useState<string>();
   const { token } = theme.useToken();
 
-  // get the project id of the session for <= v24.12.0.
-  const { session_for_project_id } =
-    useLazyLoadQuery<ConnectedKernelListLegacyQuery>(
-      graphql`
-        query ConnectedKernelListLegacyQuery($uuid: UUID!) {
-          session_for_project_id: compute_session(id: $uuid) {
-            group_id
-          }
-        }
-      `,
-      {
-        uuid: id,
-      },
-      {
-        fetchPolicy: 'network-only',
-      },
-    );
-
-  const { session } = useLazyLoadQuery<ConnectedKernelListQuery>(
+  const kernelNodes = useFragment(
     graphql`
-      query ConnectedKernelListQuery($id: GlobalIDField!, $project_id: UUID!) {
-        session: compute_session_node(id: $id, project_id: $project_id) {
-          kernel_nodes {
-            edges {
-              node {
-                id
-                row_id
-                cluster_role
-                status
-                status_info
-                agent_id
-                container_id
-              }
-            }
-            count
-          }
-          ...ContainerLogModalFragment
-        }
+      fragment ConnectedKernelListFragment on KernelNode @relay(plural: true) {
+        id
+        row_id
+        cluster_role
+        status
+        status_info
+        agent_id
+        container_id
       }
     `,
-    {
-      id: toGlobalId('ComputeSessionNode', id),
-      project_id: session_for_project_id?.group_id || currentProject.id,
-    },
-    {
-      fetchPolicy: 'network-only',
-      fetchKey: fetchKey,
-    },
+    kernelsFrgmt,
   );
-  const kernelNodes = session?.kernel_nodes;
 
   const columns = filterEmptyItem<ColumnType<Kernel>>([
     {
@@ -218,24 +178,22 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
         rowKey="id"
         scroll={{ x: 'max-content' }}
         columns={columns}
-        dataSource={filterNonNullItems(
-          kernelNodes?.edges.map((edge) => edge?.node),
-        )}
+        dataSource={filterNonNullItems(kernelNodes)}
         style={{ width: '100%' }}
         // TODO: implement pagination when compute_session_node query supports pagination
         pagination={false}
       />
 
-      <UnmountModalAfterClose>
+      <UnmountAfterClose>
         <ContainerLogModal
           open={!!kernelIdForLogModal}
-          sessionFrgmt={session || null}
+          sessionFrgmt={sessionFrgmtForLogModal || null}
           defaultKernelId={kernelIdForLogModal}
           onCancel={() => {
             setKernelIdForLogModal(undefined);
           }}
         />
-      </UnmountModalAfterClose>
+      </UnmountAfterClose>
     </Flex>
   );
 };

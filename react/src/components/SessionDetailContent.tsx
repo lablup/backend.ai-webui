@@ -1,8 +1,8 @@
 import { SessionDetailContentLegacyQuery } from '../__generated__/SessionDetailContentLegacyQuery.graphql';
 import { SessionDetailContentQuery } from '../__generated__/SessionDetailContentQuery.graphql';
 import SessionKernelTags from '../components/ImageTags';
-import { toGlobalId } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { filterNonNullItems, toGlobalId } from '../helper';
+import { INITIAL_FETCH_KEY, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
@@ -76,7 +76,7 @@ const SessionDetailContent: React.FC<{
         uuid: id,
       },
       {
-        fetchPolicy: 'network-only',
+        fetchPolicy: 'store-or-network',
       },
     );
   const { session, legacy_session, vfolder_invited_list } =
@@ -113,14 +113,22 @@ const SessionDetailContent: React.FC<{
             requested_slots
             idle_checks @since(version: "24.12.0")
 
+            kernel_nodes {
+              edges {
+                node {
+                  ...ConnectedKernelListFragment
+                }
+              }
+            }
+
             ...SessionStatusTagFragment
             ...SessionActionButtonsFragment
             ...BAISessionTypeTagFragment
             ...EditableSessionNameFragment
             ...SessionReservationFragment
+            ...ContainerLogModalFragment
             # fix: This fragment is not used in this component, but it is required by the SessionActionButtonsFragment.
             # It might be a bug in relay
-            ...ContainerLogModalFragment
             ...SessionUsageMonitorFragment
             ...ContainerCommitModalFragment
             ...SessionIdleChecksNodeFragment
@@ -152,7 +160,8 @@ const SessionDetailContent: React.FC<{
         project_id: session_for_project_id?.group_id || currentProject.id,
       },
       {
-        fetchPolicy: 'network-only',
+        fetchPolicy:
+          fetchKey === INITIAL_FETCH_KEY ? 'store-and-network' : 'network-only',
         fetchKey: fetchKey,
       },
     );
@@ -427,7 +436,12 @@ const SessionDetailContent: React.FC<{
           <Typography.Title level={4} style={{ margin: 0 }}>
             {t('kernel.Kernels')}
           </Typography.Title>
-          <ConnectedKernelList id={id} fetchKey={fetchKey} />
+          <ConnectedKernelList
+            kernelsFrgmt={filterNonNullItems(
+              session.kernel_nodes?.edges.map((e) => e?.node),
+            )}
+            sessionFrgmtForLogModal={session}
+          />
         </Flex>
       </Suspense>
       <IdleCheckDescriptionModal
