@@ -636,6 +636,7 @@
     "FolderNotFoundOrNoAccess": "フォルダーが見つかりませんまたはアクセスが拒否されません",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "管理されていないフォルダーは、ファイルエクスプローラーをサポートしていません。",
+    "NoPermissions": "このフォルダーにアクセスする権限はありません",
     "ValueRequired": "ValueRequired"
   },
   "general": {

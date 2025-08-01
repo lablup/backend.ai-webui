@@ -637,6 +637,7 @@
     "FolderNotFoundOrNoAccess": "Thư mục không tìm thấy hoặc truy cập bị từ chối",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Các thư mục không được quản lý không hỗ trợ trình thám hiểm tệp.",
+    "NoPermissions": "Không có quyền truy cập thư mục này",
     "ValueRequired": "Giá trị bắt buộc"
   },
   "general": {

@@ -637,6 +637,7 @@
     "FolderNotFoundOrNoAccess": "Ordner, der nicht gefunden oder zugänglich ist verweigert",
     "InputTooShort": "EingabeTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Nicht verwaltete Ordner unterstützen den Datei -Explorer nicht.",
+    "NoPermissions": "Keine Berechtigungen für den Zugriff auf diesen Ordner",
     "ValueRequired": "WertErforderlich"
   },
   "general": {

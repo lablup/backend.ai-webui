@@ -1,11 +1,14 @@
+import { SessionDetailDrawerFragment$key } from '../__generated__/SessionDetailDrawerFragment.graphql';
 import { useFetchKey, useSuspendedBackendaiClient } from '../hooks';
-import { useInterval } from '../hooks/useIntervalValue';
+import BAIFetchKeyButton from './BAIFetchKeyButton';
 import SessionDetailContent from './SessionDetailContent';
-import { ReloadOutlined } from '@ant-design/icons';
-import { Button, Drawer, Skeleton, Tooltip } from 'antd';
+import { Drawer, Skeleton, Tooltip } from 'antd';
 import { DrawerProps } from 'antd/lib';
-import React, { Suspense, useTransition } from 'react';
+import dayjs from 'dayjs';
+import React, { Suspense, useMemo, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
+import { graphql, useFragment } from 'react-relay';
+import { useLocation } from 'react-router-dom';
 
 // import { StringParam, useQueryParam } from 'use-query-params';
 
@@ -23,24 +26,49 @@ const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
 
   const [fetchKey, updateFetchKey] = useFetchKey();
 
-  useInterval(() => {
-    startReloadTransition(() => {
-      updateFetchKey();
-    });
-  }, 7_000);
+  const location = useLocation();
+  const {
+    sessionDetailDrawerFrgmt: sessionFrgmtFromLocation,
+    createdAt,
+  }: {
+    sessionDetailDrawerFrgmt?: SessionDetailDrawerFragment$key;
+    createdAt?: string;
+  } = location.state || {};
+
+  const session = useFragment(
+    graphql`
+      fragment SessionDetailDrawerFragment on ComputeSessionNode {
+        id
+        project_id
+        ...SessionDetailContentFragment
+      }
+    `,
+    sessionFrgmtFromLocation,
+  );
+
+  const cachedSessionFrgmt = useMemo(() => {
+    // If createdAt is within 1 minute, use sessionDetailDrawerFrgmt; otherwise return null to fetch fresh data in SessionDetailContent.
+    if (createdAt && dayjs().diff(dayjs(createdAt), 'second') < 60) {
+      return session;
+    }
+    return null;
+    // only for the first render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Drawer
       title={t('session.SessionInfo')}
       width={800}
-      keyboard={false}
       extra={
         <Tooltip title={t('button.Refresh')}>
-          <Button
+          <BAIFetchKeyButton
             loading={isPendingReload}
-            icon={<ReloadOutlined />}
-            onClick={() => {
+            autoUpdateDelay={7_000}
+            value={fetchKey}
+            onChange={(newFetchKey) => {
               startReloadTransition(() => {
-                updateFetchKey();
+                updateFetchKey(newFetchKey);
               });
             }}
           />
@@ -50,7 +78,12 @@ const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
     >
       <Suspense fallback={<Skeleton active />}>
         {sessionId && (
-          <SessionDetailContent id={sessionId} fetchKey={fetchKey} />
+          <SessionDetailContent
+            id={sessionId}
+            fetchKey={fetchKey}
+            sessionFrgmt={cachedSessionFrgmt}
+            deprecatedProjectId={session?.project_id}
+          />
         )}
       </Suspense>
     </Drawer>

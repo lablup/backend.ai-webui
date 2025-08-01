@@ -626,6 +626,7 @@
     "FolderNotFoundOrNoAccess": "ไม่พบโฟลเดอร์หรือถูกปฏิเสธการเข้าถึง",
     "InputTooShort": "ข้อมูลที่ป้อนสั้นเกินไป",
     "NoExplorerSupportForUnmanagedFolder": "โฟลเดอร์ที่ไม่มีการจัดการไม่รองรับ File Explorer",
+    "NoPermissions": "ไม่มีสิทธิ์ในการเข้าถึงโฟลเดอร์นี้",
     "ValueRequired": "ต้องระบุค่า"
   },
   "general": {

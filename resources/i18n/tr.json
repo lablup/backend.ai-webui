@@ -637,6 +637,7 @@
     "FolderNotFoundOrNoAccess": "Klasör bulunamadı veya erişim reddedildi",
     "InputTooShort": "GirişÇok Kısa",
     "NoExplorerSupportForUnmanagedFolder": "Yönetilmeyen klasörler Dosya Gezgini'ni desteklemez.",
+    "NoPermissions": "Bu klasöre erişmek için izin yok",
     "ValueRequired": "DeğerGerekli"
   },
   "general": {

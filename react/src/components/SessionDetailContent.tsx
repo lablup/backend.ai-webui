@@ -1,3 +1,4 @@
+import { SessionDetailContentFragment$key } from '../__generated__/SessionDetailContentFragment.graphql';
 import { SessionDetailContentLegacyQuery } from '../__generated__/SessionDetailContentLegacyQuery.graphql';
 import { SessionDetailContentQuery } from '../__generated__/SessionDetailContentQuery.graphql';
 import { filterNonNullItems } from '../helper';
@@ -15,10 +16,10 @@ import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionStatusDetailModal from './ComputeSessionNodeItems/SessionStatusDetailModal';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
 import Flex from './Flex';
-import FolderLink from './FolderLink';
 import IdleCheckDescriptionModal from './IdleCheckDescriptionModal';
 import ImageNodeSimpleTag from './ImageNodeSimpleTag';
 import { UNSAFELazySessionImageTag } from './ImageTags';
+import MountedVFolderLinks from './MountedVFolderLinks';
 import SessionUsageMonitor from './SessionUsageMonitor';
 import { InfoCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import {
@@ -44,12 +45,18 @@ import {
 import _ from 'lodash';
 import { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
 const SessionDetailContent: React.FC<{
   id: string;
+  sessionFrgmt?: SessionDetailContentFragment$key | null;
   fetchKey?: string;
-}> = ({ id, fetchKey }) => {
+  /**
+   * @deprecated This property is unnecessary since sessionFrgmt contains the project id field.
+   * Kept for backward compatibility with versions <= v24.12.0.
+   */
+  deprecatedProjectId?: string | null;
+}> = ({ id, fetchKey, sessionFrgmt, deprecatedProjectId }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { md } = Grid.useBreakpoint();
@@ -68,97 +75,106 @@ const SessionDetailContent: React.FC<{
 
   // TODO: remove and refactor this waterfall request after v24.12.0
   // get the project id of the session for <= v24.12.0.
-  const { session_for_project_id } =
-    useLazyLoadQuery<SessionDetailContentLegacyQuery>(
-      graphql`
-        query SessionDetailContentLegacyQuery($uuid: UUID!) {
-          session_for_project_id: compute_session(id: $uuid) {
-            group_id
-          }
+  const { legacy_session } = useLazyLoadQuery<SessionDetailContentLegacyQuery>(
+    graphql`
+      query SessionDetailContentLegacyQuery($uuid: UUID!) {
+        legacy_session: compute_session(id: $uuid) {
+          group_id
         }
-      `,
-      {
-        uuid: id,
-      },
-      {
-        fetchPolicy: 'store-or-network',
-      },
-    );
-  const { session, legacy_session } =
-    useLazyLoadQuery<SessionDetailContentQuery>(
-      //  In compute_session_node, there are missing fields. We need to use `compute_session` to get the missing fields.
-      graphql`
-        query SessionDetailContentQuery(
-          $id: GlobalIDField!
-          $uuid: UUID!
-          $project_id: UUID!
+      }
+    `,
+    {
+      uuid: id,
+    },
+    {
+      fetchPolicy: deprecatedProjectId ? 'store-only' : 'store-or-network',
+    },
+  );
+
+  // TODO: Remove useLazyLoadQuery and use useRefetchableFragment instead of useFragment to fetch session data when deprecatedProjectId is removed.
+  const { internalLoadedSession } = useLazyLoadQuery<SessionDetailContentQuery>(
+    graphql`
+      query SessionDetailContentQuery($id: GlobalIDField!, $project_id: UUID!) {
+        internalLoadedSession: compute_session_node(
+          id: $id
+          project_id: $project_id
         ) {
-          session: compute_session_node(id: $id, project_id: $project_id) {
-            id
-            row_id
-            name
-            project_id
-            user_id
-            resource_opts
-            status
-            status_data
-            vfolder_mounts
-            vfolder_nodes @since(version: "25.4.0") {
-              edges {
-                node {
-                  ...FolderLink_vfolderNode
-                }
-              }
-              count
-            }
-            created_at @required(action: NONE)
-            terminated_at
-            scaling_group
-            agent_ids
-            requested_slots
-            idle_checks @since(version: "24.12.0")
+          ...SessionDetailContentFragment
+        }
+      }
+    `,
+    {
+      id: toGlobalId('ComputeSessionNode', id),
+      // uuid: id,
+      project_id:
+        legacy_session?.group_id || deprecatedProjectId || currentProject.id,
+    },
+    {
+      fetchPolicy:
+        // Only use network when sessionFrgmt is not provided on initial fetch
+        fetchKey === INITIAL_FETCH_KEY
+          ? sessionFrgmt
+            ? 'store-only'
+            : 'store-and-network' // initial fetch
+          : 'network-only',
+      fetchKey: fetchKey,
+    },
+  );
 
-            kernel_nodes {
-              edges {
-                node {
-                  image {
-                    ...ImageNodeSimpleTagFragment
-                  }
-                  ...ConnectedKernelListFragment
-                }
-              }
+  const session = useFragment(
+    graphql`
+      fragment SessionDetailContentFragment on ComputeSessionNode {
+        id
+        row_id
+        name
+        project_id
+        user_id
+        resource_opts
+        status
+        status_data
+        vfolder_mounts
+        vfolder_nodes @since(version: "25.4.0") {
+          edges {
+            node {
+              ...FolderLink_vfolderNode
             }
-
-            ...SessionStatusTagFragment
-            ...SessionActionButtonsFragment
-            ...BAISessionTypeTagFragment
-            ...EditableSessionNameFragment
-            ...SessionReservationFragment
-            ...ContainerLogModalFragment
-            # fix: This fragment is not used in this component, but it is required by the SessionActionButtonsFragment.
-            # It might be a bug in relay
-            ...SessionUsageMonitorFragment
-            ...ContainerCommitModalFragment
-            ...SessionIdleChecksNodeFragment
-            ...SessionStatusDetailModalFragment
-            ...AppLauncherModalFragment
           }
-          legacy_session: compute_session(id: $uuid) {
-            mounts
+          count
+        }
+        created_at @required(action: NONE)
+        terminated_at
+        scaling_group
+        agent_ids
+        requested_slots
+        idle_checks @since(version: "24.12.0")
+
+        kernel_nodes {
+          edges {
+            node {
+              image {
+                ...ImageNodeSimpleTagFragment
+              }
+              ...ConnectedKernelListFragment
+            }
           }
         }
-      `,
-      {
-        id: toGlobalId('ComputeSessionNode', id),
-        uuid: id,
-        project_id: session_for_project_id?.group_id || currentProject.id,
-      },
-      {
-        fetchPolicy:
-          fetchKey === INITIAL_FETCH_KEY ? 'store-and-network' : 'network-only',
-        fetchKey: fetchKey,
-      },
-    );
+
+        ...SessionStatusTagFragment
+        ...SessionActionButtonsFragment
+        ...BAISessionTypeTagFragment
+        ...EditableSessionNameFragment
+        ...SessionReservationFragment
+        ...ContainerLogModalFragment
+        ...SessionUsageMonitorFragment
+        ...ContainerCommitModalFragment
+        ...SessionIdleChecksNodeFragment
+        ...SessionStatusDetailModalFragment
+        ...AppLauncherModalFragment
+        ...MountedVFolderLinksFragment
+      }
+    `,
+    (internalLoadedSession as SessionDetailContentFragment$key) || sessionFrgmt,
+  );
 
   // The feature to display imminent expiration time as a separate Alert is supported from version 24.12.
   let imminentExpirationTime = _.min(
@@ -171,9 +187,12 @@ const SessionDetailContent: React.FC<{
       .filter(Boolean),
   );
 
+  const resolvedProjectIdOfSession =
+    session?.project_id || legacy_session?.group_id;
+
   return session ? (
     <Flex direction="column" gap={'lg'} align="stretch">
-      {session_for_project_id?.group_id !== currentProject.id && (
+      {resolvedProjectIdOfSession !== currentProject.id && (
         <Alert message={t('session.NotInProject')} type="warning" showIcon />
       )}
       {currentUser.uuid !== session?.user_id && (
@@ -272,37 +291,7 @@ const SessionDetailContent: React.FC<{
           </Descriptions.Item>
           <Descriptions.Item label={t('session.launcher.MountedFolders')}>
             <Flex gap="xs" wrap="wrap">
-              {session.vfolder_nodes
-                ? session.vfolder_nodes.edges.map((vfolder, idx) => {
-                    return (
-                      vfolder?.node && (
-                        <FolderLink
-                          key={`mounted-vfolder-${idx}`}
-                          showIcon
-                          vfolderNodeFragment={vfolder.node}
-                        />
-                      )
-                    );
-                  })
-                : baiClient.supports('vfolder-mounts')
-                  ? _.map(
-                      // compute_session_node query's vfolder_mounts is not include name.
-                      // To provide vfolder name in compute_session_node, schema must be changed.
-                      // legacy_session.mounts (name) and session.vfolder_mounts (id) give vfolder information in same order.
-                      _.zip(legacy_session?.mounts, session?.vfolder_mounts),
-                      (mountInfo) => {
-                        const [name, id] = mountInfo;
-                        return (
-                          <FolderLink
-                            key={id}
-                            folderId={id ?? ''}
-                            folderName={name ?? ''}
-                            showIcon
-                          />
-                        );
-                      },
-                    )
-                  : legacy_session?.mounts?.join(', ')}
+              <MountedVFolderLinks sessionFrgmt={session} />
             </Flex>
           </Descriptions.Item>
           <Descriptions.Item label={t('session.launcher.ResourceAllocation')}>

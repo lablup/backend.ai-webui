@@ -786,12 +786,12 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
     const vfolder = allowedVFolders.find((vfolder) => {
       return vfolder.id === this.vfolderID;
     });
-    this.vfolderName = vfolder.name;
+    this.vfolderName = vfolder?.name;
     this.vfolder = globalThis.backendaiclient.supports('vfolder-id-based')
-      ? vfolder.id
-      : vfolder.name;
-    this.vhost = vfolder.host;
-    this.isWritable = vfolder.permission.includes('w');
+      ? vfolder?.id
+      : vfolder?.name;
+    this.vhost = vfolder?.host;
+    this.isWritable = vfolder?.permission?.includes('w');
 
     document.dispatchEvent(
       new CustomEvent('folderExplorer:connected', { detail: this.isWritable }),

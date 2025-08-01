@@ -41,6 +41,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         ...SessionReservationFragment
         ...SessionSlotCellFragment
         ...SessionUsageMonitorFragment
+        ...SessionDetailDrawerFragment
       }
     `,
     sessionsFrgmt,

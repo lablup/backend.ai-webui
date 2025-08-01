@@ -637,6 +637,7 @@
     "FolderNotFoundOrNoAccess": "未找到或拒绝访问的文件夹",
     "InputTooShort": "输入太短",
     "NoExplorerSupportForUnmanagedFolder": "未管理的文件夹不支持文件资源管理器。",
+    "NoPermissions": "无权访问此文件夹",
     "ValueRequired": "需要值"
   },
   "general": {

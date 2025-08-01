@@ -637,6 +637,7 @@
     "FolderNotFoundOrNoAccess": "Carpeta no encontrada ni de acceso denegada",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Las carpetas no administradas no admiten el explorador de archivos.",
+    "NoPermissions": "No hay permisos para acceder a esta carpeta",
     "ValueRequired": "ValorRequerido"
   },
   "general": {

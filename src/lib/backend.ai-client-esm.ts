@@ -785,6 +785,7 @@ class Client {
     }
     if (this.isManagerVersionCompatibleWith('25.4.0')) {
       this._features['resource-presets-per-resource-group'] = true;
+      this._features['vfolder_nodes_in_session_node'] = true;
     }
     if (this.isManagerVersionCompatibleWith('25.5.0')) {
       this._features['custom-accelerator-quantum-size'] = true;

@@ -636,6 +636,7 @@
     "FolderNotFoundOrNoAccess": "Folder tidak dijumpai atau akses ditolak",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Folder yang tidak dikendalikan tidak menyokong penjelajah fail.",
+    "NoPermissions": "Tiada kebenaran untuk mengakses folder ini",
     "ValueRequired": "Nilai Diperlukan"
   },
   "general": {

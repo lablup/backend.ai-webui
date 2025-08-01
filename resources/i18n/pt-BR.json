@@ -637,6 +637,7 @@
     "FolderNotFoundOrNoAccess": "Pasta não encontrada ou acesso negado",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Pastas não gerenciadas não suportam o File Explorer.",
+    "NoPermissions": "Sem permissões para acessar esta pasta",
     "ValueRequired": "ValueRequired"
   },
   "general": {

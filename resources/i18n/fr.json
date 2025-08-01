@@ -637,6 +637,7 @@
     "FolderNotFoundOrNoAccess": "Dossier non trouvé ou accès refusé",
     "InputTooShort": "Entrée Trop Courte",
     "NoExplorerSupportForUnmanagedFolder": "Les dossiers non gérés ne prennent pas en charge l'explorateur de fichiers.",
+    "NoPermissions": "Aucune autorisation pour accéder à ce dossier",
     "ValueRequired": "ValeurRequis"
   },
   "general": {

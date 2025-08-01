@@ -641,6 +641,7 @@
     "FolderNotFoundOrNoAccess": "Folder not found or access denied",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Unmanaged folders do not support the file explorer.",
+    "NoPermissions": "No permissions to access this folder",
     "ValueRequired": "ValueRequired"
   },
   "general": {

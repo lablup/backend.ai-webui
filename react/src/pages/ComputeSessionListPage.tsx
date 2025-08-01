@@ -16,7 +16,7 @@ import TerminateSessionModal from '../components/ComputeSessionNodeItems/Termina
 import Flex from '../components/Flex';
 import SessionNodes from '../components/SessionNodes';
 import { filterNonNullItems, handleRowSelectionChange } from '../helper';
-import { useUpdatableState } from '../hooks';
+import { useUpdatableState, useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAINotificationState } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -46,7 +46,8 @@ import {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { StringParam, useQueryParam, withDefault } from 'use-query-params';
+import { useLocation } from 'react-router-dom';
+import { StringParam, withDefault } from 'use-query-params';
 
 type TypeFilterType = 'all' | 'interactive' | 'batch' | 'inference' | 'system';
 type SessionNode = NonNullableNodeOnEdges<
@@ -60,6 +61,8 @@ const ComputeSessionListPage = () => {
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const webUINavigate = useWebUINavigate();
+  const location = useLocation();
   const [selectedSessionList, setSelectedSessionList] = useState<
     Array<SessionNode>
   >([]);
@@ -81,7 +84,6 @@ const ComputeSessionListPage = () => {
     statusCategory: withDefault(StringParam, 'running'),
   });
 
-  const [, setSessionDetailId] = useQueryParam('sessionDetail', StringParam);
   const queryMapRef = useRef({
     [queryParams.type]: {
       queryParams,
@@ -486,7 +488,24 @@ const ComputeSessionListPage = () => {
           <SessionNodes
             order={queryParams.order}
             onClickSessionName={(session) => {
-              setSessionDetailId(session.row_id);
+              // Set sessionDetailDrawerFrgmt in location state via webUINavigate
+              // instead of directly setting sessionDetailId query param
+              // to avoid additional fetch in SessionDetailDrawer
+              const newSearchParams = new URLSearchParams(location.search);
+              newSearchParams.set('sessionDetail', session.row_id);
+              webUINavigate(
+                {
+                  pathname: location.pathname,
+                  hash: location.hash,
+                  search: newSearchParams.toString(),
+                },
+                {
+                  state: {
+                    sessionDetailDrawerFrgmt: session,
+                    createdAt: new Date().toISOString(),
+                  },
+                },
+              );
             }}
             loading={deferredQueryVariables !== queryVariables}
             rowSelection={{

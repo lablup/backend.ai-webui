@@ -80,6 +80,7 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
           id
           user
           permission
+          permissions
           unmanaged_path @since(version: "25.04.0")
           ...FolderExplorerHeaderFragment
           ...VFolderNodeDescriptionFragment
@@ -95,6 +96,10 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
     },
   );
 
+  // TODO: Skip permission check due to inaccurate API response. Update when API is fixed.
+  const hasNoPermissions = false;
+  // !vfolder_node || (vfolder_node.permissions?.length || 0) === 0;
+
   const legacyFolderExplorerPane = vfolder_node && (
     <Flex direction="column" align="stretch">
       {vfolder_node?.unmanaged_path ? (
@@ -102,7 +107,7 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
           message={t('explorer.NoExplorerSupportForUnmanagedFolder')}
           showIcon
         />
-      ) : (
+      ) : !hasNoPermissions ? (
         <>
           <FolderExplorerActions
             isSelected={isSelected}
@@ -117,7 +122,7 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
             vfolderID={vfolderID}
           />
         </>
-      )}
+      ) : null}
     </Flex>
   );
 
@@ -150,6 +155,15 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
       }}
       {...modalProps}
     >
+      {!vfolder_node ? (
+        <Alert
+          message={t('explorer.FolderNotFoundOrNoAccess')}
+          type="error"
+          showIcon
+        />
+      ) : hasNoPermissions ? (
+        <Alert message={t('explorer.NoPermissions')} type="error" showIcon />
+      ) : null}
       {vfolder_node ? (
         xl ? (
           <Splitter
@@ -171,13 +185,7 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
             {vfolderDescription}
           </Flex>
         )
-      ) : (
-        <Alert
-          message={t('explorer.FolderNotFoundOrNoAccess')}
-          type="error"
-          showIcon
-        />
-      )}
+      ) : null}
     </BAIModal>
   );
 };
