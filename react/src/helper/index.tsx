@@ -476,14 +476,6 @@ export function formatToUUID(str: string) {
   return `${str.slice(0, 8)}-${str.slice(8, 12)}-${str.slice(12, 16)}-${str.slice(16, 20)}-${str.slice(20)}`;
 }
 
-export const toGlobalId = (type: string, id: string): string => {
-  return btoa(`${type}:${id}`);
-};
-
-export const toLocalId = (globalId: string): string => {
-  return atob(globalId).split(':')?.[1];
-};
-
 export function preserveDotStartCase(str: string = '') {
   // Temporarily replace periods with a unique placeholder
   const placeholder = '<<<DOT>>>';

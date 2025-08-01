@@ -1,11 +1,12 @@
 import { RecentlyCreatedSessionFragment$key } from '../__generated__/RecentlyCreatedSessionFragment.graphql';
-import { filterNonNullItems, toLocalId } from '../helper';
+import { filterNonNullItems } from '../helper';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import Flex from './Flex';
 import SessionDetailDrawer from './SessionDetailDrawer';
 import SessionNodes from './SessionNodes';
 import UnmountAfterClose from './UnmountAfterClose';
 import { theme, Typography } from 'antd';
+import { toLocalId } from 'backend.ai-ui';
 import { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';

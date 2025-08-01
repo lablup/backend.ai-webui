@@ -9,3 +9,4 @@ export * from './Table';
 export * from './fragments';
 export * from './tests';
 export * from './provider';
+export * from './unsafe';

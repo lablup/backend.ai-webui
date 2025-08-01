@@ -1,12 +1,12 @@
 import { RestoreVFolderModalFragment$key } from '../__generated__/RestoreVFolderModalFragment.graphql';
 import { VFolderNodesFragment$data } from '../__generated__/VFolderNodesFragment.graphql';
-import { toLocalId } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { Typography, message } from 'antd';
+import { toLocalId } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

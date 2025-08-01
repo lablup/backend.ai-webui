@@ -293,3 +293,11 @@ export function divideNumberWithUnits(size1: string, size2: string) {
   if (num2 === 0) return undefined; // Avoid division by zero
   return convertToBinaryUnit(num1 / num2, '')?.value;
 }
+
+export const toGlobalId = (type: string, id: string): string => {
+  return btoa(`${type}:${id}`);
+};
+
+export const toLocalId = (globalId: string): string => {
+  return atob(globalId).split(':')?.[1];
+};

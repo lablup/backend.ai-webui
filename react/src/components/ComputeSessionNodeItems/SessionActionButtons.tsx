@@ -2,10 +2,6 @@ import {
   SessionActionButtonsFragment$data,
   SessionActionButtonsFragment$key,
 } from '../../__generated__/SessionActionButtonsFragment.graphql';
-import {
-  SessionActionButtonsLegacyFragment$data,
-  SessionActionButtonsLegacyFragment$key,
-} from '../../__generated__/SessionActionButtonsLegacyFragment.graphql';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useBackendAIAppLauncher } from '../../hooks/useBackendAIAppLauncher';
@@ -28,7 +24,6 @@ import { graphql, useFragment } from 'react-relay';
 
 interface SessionActionButtonsProps {
   sessionFrgmt: SessionActionButtonsFragment$key | null;
-  legacySessionFrgmt?: SessionActionButtonsLegacyFragment$key | null;
 }
 
 const isActive = (session: SessionActionButtonsFragment$data) => {
@@ -36,19 +31,11 @@ const isActive = (session: SessionActionButtonsFragment$data) => {
     session?.status || '',
   );
 };
-const isAppSupported = (
-  session: SessionActionButtonsFragment$data,
-  legacy_session: SessionActionButtonsLegacyFragment$data | null | undefined,
-) => {
+const isAppSupported = (session: SessionActionButtonsFragment$data) => {
   return (
     ['batch', 'interactive', 'inference', 'system', 'running'].includes(
       session?.type || '',
-    ) &&
-    !_.isEmpty(
-      JSON.parse(
-        session?.service_ports ?? legacy_session?.service_ports ?? '{}',
-      ),
-    )
+    ) && !_.isEmpty(JSON.parse(session?.service_ports ?? '{}'))
   );
 };
 
@@ -78,17 +65,6 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = (props) => {
     props.sessionFrgmt,
   );
 
-  const legacySession = useFragment(
-    graphql`
-      fragment SessionActionButtonsLegacyFragment on ComputeSession {
-        id
-        service_ports
-        ...AppLauncherModalLegacyFragment
-      }
-    `,
-    props.legacySessionFrgmt,
-  );
-
   const [openAppLauncherModal, setOpenAppLauncherModal] = useState(false);
   const [openTerminateModal, setOpenTerminateModal] = useState(false);
   const [openLogModal, setOpenLogModal] = useState(false);
@@ -104,9 +80,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = (props) => {
         <Tooltip title={t('session.SeeAppDialog')}>
           <Button
             disabled={
-              !isAppSupported(session, legacySession) ||
-              !isActive(session) ||
-              !isOwner
+              !isAppSupported(session) || !isActive(session) || !isOwner
             }
             icon={<BAIAppIcon />}
             onClick={() => {
@@ -117,7 +91,6 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = (props) => {
         <Suspense fallback={null}>
           <AppLauncherModal
             sessionFrgmt={session}
-            legacySessionFrgmt={legacySession}
             open={openAppLauncherModal}
             onRequestClose={() => {
               setOpenAppLauncherModal(false);
@@ -127,9 +100,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = (props) => {
         <Tooltip title={t('session.ExecuteTerminalApp')}>
           <Button
             disabled={
-              !isAppSupported(session, legacySession) ||
-              !isActive(session) ||
-              !isOwner
+              !isAppSupported(session) || !isActive(session) || !isOwner
             }
             icon={<BAITerminalAppIcon />}
             onClick={() => {

@@ -1,5 +1,4 @@
 import { AppLauncherModalFragment$key } from '../../__generated__/AppLauncherModalFragment.graphql';
-import { AppLauncherModalLegacyFragment$key } from '../../__generated__/AppLauncherModalLegacyFragment.graphql';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import {
   ServicePort,
@@ -31,13 +30,11 @@ import { graphql, useFragment } from 'react-relay';
 interface AppLauncherModalProps extends ModalProps {
   onRequestClose: () => void;
   sessionFrgmt: AppLauncherModalFragment$key | null;
-  legacySessionFrgmt?: AppLauncherModalLegacyFragment$key | null;
 }
 
 const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
   onRequestClose,
   sessionFrgmt,
-  legacySessionFrgmt,
   ...modalProps
 }) => {
   const { t } = useTranslation();
@@ -61,20 +58,8 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
     sessionFrgmt,
   );
 
-  const legacySession = useFragment(
-    graphql`
-      fragment AppLauncherModalLegacyFragment on ComputeSession {
-        id
-        session_id
-        service_ports
-        access_key
-      }
-    `,
-    legacySessionFrgmt,
-  );
-
   const servicePorts: ServicePort[] = JSON.parse(
-    session?.service_ports ?? legacySession?.service_ports ?? '{}',
+    session?.service_ports ?? '{}',
   );
 
   const { preOpenAppTemplate, baseAppTemplate } =

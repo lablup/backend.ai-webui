@@ -1,7 +1,7 @@
 import { SessionDetailContentLegacyQuery } from '../__generated__/SessionDetailContentLegacyQuery.graphql';
 import { SessionDetailContentQuery } from '../__generated__/SessionDetailContentQuery.graphql';
 import SessionKernelTags from '../components/ImageTags';
-import { filterNonNullItems, toGlobalId } from '../helper';
+import { filterNonNullItems } from '../helper';
 import { INITIAL_FETCH_KEY, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -35,7 +35,12 @@ import {
 } from 'antd';
 import Title from 'antd/es/typography/Title';
 // import { graphql } from 'react-relay';
-import { BAISessionTypeTag } from 'backend.ai-ui';
+import {
+  BAISessionTypeTag,
+  toGlobalId,
+  UNSAFELazyUserEmailView,
+  useMemoizedJSONParse,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import { Suspense, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -138,14 +143,7 @@ const SessionDetailContent: React.FC<{
           legacy_session: compute_session(id: $uuid) {
             image
             mounts
-            user_email
             architecture
-            idle_checks @since(version: "24.09.0")
-            ...SessionIdleChecksFragment
-            # fix: This fragment is not used in this component, but it is required by the SessionActionButtonsFragment.
-            # It might be a bug in relay
-            ...SessionActionButtonsLegacyFragment
-            ...AppLauncherModalLegacyFragment
           }
           vfolder_invited_list(limit: 100, offset: 0) {
             items {
@@ -171,11 +169,13 @@ const SessionDetailContent: React.FC<{
     legacy_session?.architecture &&
     legacy_session.image + '@' + legacy_session.architecture;
 
-  const idleChecks: IdleChecks = JSON.parse(
-    session?.idle_checks || legacy_session?.idle_checks || '{}',
-  );
-  const imminentExpirationTime = _.min(
-    _.values(idleChecks)
+  // The feature to display imminent expiration time as a separate Alert is supported from version 24.12.
+  let imminentExpirationTime = _.min(
+    _.values(
+      useMemoizedJSONParse<IdleChecks>(session?.idle_checks, {
+        fallbackValue: {},
+      }),
+    )
       .map((check) => check.remaining)
       .filter(Boolean),
   );
@@ -201,7 +201,7 @@ const SessionDetailContent: React.FC<{
       {session_for_project_id?.group_id !== currentProject.id && (
         <Alert message={t('session.NotInProject')} type="warning" showIcon />
       )}
-      {currentUser.email !== legacy_session?.user_email && (
+      {currentUser.uuid !== session?.user_id && (
         <Alert
           message={t('session.AnotherUserSession')}
           type="warning"
@@ -240,10 +240,7 @@ const SessionDetailContent: React.FC<{
             }
           />
           <Button.Group size="large">
-            <SessionActionButtons
-              sessionFrgmt={session}
-              legacySessionFrgmt={legacy_session}
-            />
+            <SessionActionButtons sessionFrgmt={session} />
           </Button.Group>
         </Flex>
 
@@ -259,9 +256,13 @@ const SessionDetailContent: React.FC<{
           </Descriptions.Item>
           {(userRole === 'admin' || userRole === 'superadmin') && (
             <Descriptions.Item label={t('credential.UserID')} span={md ? 2 : 1}>
-              <Typography.Text copyable>
-                {legacy_session?.user_email}
-              </Typography.Text>
+              {session.user_id ? (
+                <Suspense fallback={<Skeleton.Input size="small" active />}>
+                  <UNSAFELazyUserEmailView uuid={session.user_id} />
+                </Suspense>
+              ) : (
+                '-'
+              )}
             </Descriptions.Item>
           )}
           <Descriptions.Item label={t('session.Status')}>
@@ -307,7 +308,7 @@ const SessionDetailContent: React.FC<{
                           showIcon
                           vfolderNodeFragment={vfolder.node}
                           type={
-                            currentUser.email !== legacy_session?.user_email &&
+                            currentUser.uuid !== session?.user_id &&
                             !isFolderInvited(
                               (session.vfolder_mounts || []).filter(
                                 (id) => typeof id === 'string',
@@ -335,8 +336,7 @@ const SessionDetailContent: React.FC<{
                             folderName={name ?? ''}
                             showIcon
                             type={
-                              currentUser.email !==
-                                legacy_session?.user_email &&
+                              currentUser.uuid !== session?.user_id &&
                               !isFolderInvited(id as string)
                                 ? 'disabled'
                                 : 'hover'
@@ -385,8 +385,8 @@ const SessionDetailContent: React.FC<{
             >
               <SessionIdleChecks
                 sessionNodeFrgmt={session}
-                sessionFrgmt={legacy_session}
                 direction={md ? 'row' : 'column'}
+                fetchKeyForLegacyLoadQuery={fetchKey}
               />
             </Descriptions.Item>
           ) : null}

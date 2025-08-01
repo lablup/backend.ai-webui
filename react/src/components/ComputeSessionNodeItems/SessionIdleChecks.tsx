@@ -1,5 +1,5 @@
-import { SessionIdleChecksFragment$key } from '../../__generated__/SessionIdleChecksFragment.graphql';
 import { SessionIdleChecksNodeFragment$key } from '../../__generated__/SessionIdleChecksNodeFragment.graphql';
+import { SessionIdleChecksQuery } from '../../__generated__/SessionIdleChecksQuery.graphql';
 import {
   formatDurationAsDays,
   toFixedFloorWithoutTrailingZeros,
@@ -11,7 +11,7 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 import { Tooltip, Typography, theme } from 'antd';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment } from 'react-relay';
+import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
 type BaseExtra = null;
 type UtilizationExtra = {
@@ -37,9 +37,9 @@ export type IdleChecks = {
 };
 
 interface SessionIdleChecksProps {
-  sessionNodeFrgmt?: SessionIdleChecksNodeFragment$key | null;
-  sessionFrgmt?: SessionIdleChecksFragment$key | null;
+  sessionNodeFrgmt: SessionIdleChecksNodeFragment$key | null;
   direction?: 'row' | 'column';
+  fetchKeyForLegacyLoadQuery?: string;
 }
 
 export function getUtilizationCheckerColor(
@@ -122,8 +122,8 @@ export function getIdleChecksTagColor(
 
 const SessionIdleChecks: React.FC<SessionIdleChecksProps> = ({
   sessionNodeFrgmt = null,
-  sessionFrgmt = null,
   direction = 'row',
+  fetchKeyForLegacyLoadQuery,
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -138,14 +138,23 @@ const SessionIdleChecks: React.FC<SessionIdleChecksProps> = ({
     `,
     sessionNodeFrgmt,
   );
-  const session = useFragment(
+
+  const { session } = useLazyLoadQuery<SessionIdleChecksQuery>(
     graphql`
-      fragment SessionIdleChecksFragment on ComputeSession {
-        id
-        idle_checks @since(version: "24.09.0")
+      query SessionIdleChecksQuery($sessionID: UUID!) {
+        session: compute_session(id: $sessionID) {
+          id
+          idle_checks @since(version: "24.09.0")
+        }
       }
     `,
-    sessionFrgmt,
+    {
+      sessionID: sessionNode?.id || '',
+    },
+    {
+      fetchKey: fetchKeyForLegacyLoadQuery,
+      fetchPolicy: sessionNode?.idle_checks ? 'store-only' : 'network-only',
+    },
   );
 
   const idleChecks: IdleChecks = JSON.parse(

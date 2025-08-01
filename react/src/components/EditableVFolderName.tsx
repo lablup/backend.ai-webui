@@ -1,6 +1,5 @@
 import { EditableVFolderNameFragment$key } from '../__generated__/EditableVFolderNameFragment.graphql';
 import { EditableVFolderNameRefetchQuery } from '../__generated__/EditableVFolderNameRefetchQuery.graphql';
-import { toLocalId } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -12,6 +11,7 @@ import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { theme, Form, Input, App } from 'antd';
 import Text, { TextProps } from 'antd/es/typography/Text';
 import Title, { TitleProps } from 'antd/es/typography/Title';
+import { toLocalId } from 'backend.ai-ui';
 import _ from 'lodash';
 import { CornerDownLeftIcon } from 'lucide-react';
 import React, { useState } from 'react';
