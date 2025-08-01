@@ -634,6 +634,7 @@
     "Title": "Wystąpił błąd."
   },
   "explorer": {
+    "FolderNotFoundOrNoAccess": "Folder nie został znaleziony ani nie ma dostępu",
     "InputTooShort": "Wejście zbyt krótkie",
     "NoExplorerSupportForUnmanagedFolder": "Foldery niezarządzane nie obsługują eksploratora plików.",
     "ValueRequired": "Wymagana wartość"

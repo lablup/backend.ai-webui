@@ -638,6 +638,7 @@
     "Title": "An error has occurred."
   },
   "explorer": {
+    "FolderNotFoundOrNoAccess": "Folder not found or access denied",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Unmanaged folders do not support the file explorer.",
     "ValueRequired": "ValueRequired"

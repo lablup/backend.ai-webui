@@ -95,7 +95,7 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
     },
   );
 
-  const legacyFolderExplorerPane = (
+  const legacyFolderExplorerPane = vfolder_node && (
     <Flex direction="column" align="stretch">
       {vfolder_node?.unmanaged_path ? (
         <Alert
@@ -120,7 +120,8 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
       )}
     </Flex>
   );
-  const vfolderDescription = (
+
+  const vfolderDescription = vfolder_node && (
     <VFolderNodeDescription
       vfolderNodeFrgmt={vfolder_node}
       onRequestRefresh={() => {
@@ -128,6 +129,7 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
       }}
     />
   );
+
   return (
     <BAIModal
       className={styles.baiModalHeader}
@@ -136,35 +138,45 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
       destroyOnClose
       footer={null}
       title={
-        <FolderExplorerHeader
-          vfolderNodeFrgmt={vfolder_node}
-          folderExplorerRef={folderExplorerRef}
-        />
+        vfolder_node ? (
+          <FolderExplorerHeader
+            vfolderNodeFrgmt={vfolder_node}
+            folderExplorerRef={folderExplorerRef}
+          />
+        ) : null
       }
       onCancel={() => {
         onRequestClose();
       }}
       {...modalProps}
     >
-      {xl ? (
-        <Splitter
-          style={{
-            gap: token.size,
-            alignSelf: 'stretch',
-          }}
-        >
-          <Splitter.Panel resizable={false}>
+      {vfolder_node ? (
+        xl ? (
+          <Splitter
+            style={{
+              gap: token.size,
+              alignSelf: 'stretch',
+            }}
+          >
+            <Splitter.Panel resizable={false}>
+              {legacyFolderExplorerPane}
+            </Splitter.Panel>
+            <Splitter.Panel defaultSize={500} min={300} max={'40%'}>
+              {vfolderDescription}
+            </Splitter.Panel>
+          </Splitter>
+        ) : (
+          <Flex direction="column" align="stretch" gap={'md'}>
             {legacyFolderExplorerPane}
-          </Splitter.Panel>
-          <Splitter.Panel defaultSize={500} min={300} max={'40%'}>
             {vfolderDescription}
-          </Splitter.Panel>
-        </Splitter>
+          </Flex>
+        )
       ) : (
-        <Flex direction="column" align="stretch" gap={'md'}>
-          {legacyFolderExplorerPane}
-          {vfolderDescription}
-        </Flex>
+        <Alert
+          message={t('explorer.FolderNotFoundOrNoAccess')}
+          type="error"
+          showIcon
+        />
       )}
     </BAIModal>
   );

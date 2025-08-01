@@ -623,6 +623,7 @@
     "Title": "เกิดข้อผิดพลาด"
   },
   "explorer": {
+    "FolderNotFoundOrNoAccess": "ไม่พบโฟลเดอร์หรือถูกปฏิเสธการเข้าถึง",
     "InputTooShort": "ข้อมูลที่ป้อนสั้นเกินไป",
     "NoExplorerSupportForUnmanagedFolder": "โฟลเดอร์ที่ไม่มีการจัดการไม่รองรับ File Explorer",
     "ValueRequired": "ต้องระบุค่า"

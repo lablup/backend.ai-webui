@@ -630,6 +630,7 @@
     "Title": "Εμφανίστηκε σφάλμα."
   },
   "explorer": {
+    "FolderNotFoundOrNoAccess": "Ο φάκελος δεν βρέθηκε ή απορρίφθηκε η πρόσβαση",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Οι μη διαχειριζόμενοι φάκελοι δεν υποστηρίζουν τον εξερευνητή αρχείων.",
     "ValueRequired": "Απαιτούμενη τιμή"

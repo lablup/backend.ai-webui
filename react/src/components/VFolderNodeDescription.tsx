@@ -33,7 +33,7 @@ import {
 } from 'react-relay';
 
 interface VFolderNodeDescriptionProps extends DescriptionsProps {
-  vfolderNodeFrgmt?: VFolderNodeDescriptionFragment$key | null;
+  vfolderNodeFrgmt: VFolderNodeDescriptionFragment$key;
   onRequestRefresh?: () => void;
 }
 
@@ -94,11 +94,7 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
     vfolderNode as useVirtualFolderNodePathFragment$key,
   );
 
-  if (!vfolderNode) {
-    return null;
-  }
-
-  const vfolderId = toLocalId(vfolderNode?.id);
+  const vfolderId = toLocalId(vfolderNode.id);
 
   const items: DescriptionsProps['items'] = filterEmptyItem([
     !vfolderNode?.unmanaged_path && {

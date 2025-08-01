@@ -634,6 +634,7 @@
     "Title": "On tapahtunut virhe."
   },
   "explorer": {
+    "FolderNotFoundOrNoAccess": "Kansiota ei löydy tai pääsy kielletty",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Hallitsemattomat kansiot eivät tue tiedostotutkijaa.",
     "ValueRequired": "ValueRequired"

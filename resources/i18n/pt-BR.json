@@ -634,6 +634,7 @@
     "Title": "Ocorreu um erro."
   },
   "explorer": {
+    "FolderNotFoundOrNoAccess": "Pasta não encontrada ou acesso negado",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Pastas não gerenciadas não suportam o File Explorer.",
     "ValueRequired": "ValueRequired"

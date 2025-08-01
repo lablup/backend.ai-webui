@@ -633,6 +633,7 @@
     "Title": "エラーが発生しました。"
   },
   "explorer": {
+    "FolderNotFoundOrNoAccess": "フォルダーが見つかりませんまたはアクセスが拒否されません",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "管理されていないフォルダーは、ファイルエクスプローラーをサポートしていません。",
     "ValueRequired": "ValueRequired"

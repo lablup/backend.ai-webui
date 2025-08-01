@@ -633,6 +633,7 @@
     "Title": "Ralat telah berlaku."
   },
   "explorer": {
+    "FolderNotFoundOrNoAccess": "Folder tidak dijumpai atau akses ditolak",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Folder yang tidak dikendalikan tidak menyokong penjelajah fail.",
     "ValueRequired": "Nilai Diperlukan"

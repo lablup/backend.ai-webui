@@ -634,6 +634,7 @@
     "Title": "Es ist ein Fehler aufgetreten."
   },
   "explorer": {
+    "FolderNotFoundOrNoAccess": "Ordner, der nicht gefunden oder zugänglich ist verweigert",
     "InputTooShort": "EingabeTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Nicht verwaltete Ordner unterstützen den Datei -Explorer nicht.",
     "ValueRequired": "WertErforderlich"

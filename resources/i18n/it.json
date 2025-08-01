@@ -633,6 +633,7 @@
     "Title": "Si è verificato un errore."
   },
   "explorer": {
+    "FolderNotFoundOrNoAccess": "Cartella non trovata o accesso negata",
     "InputTooShort": "Inputtroppo corto",
     "NoExplorerSupportForUnmanagedFolder": "Le cartelle non gestite non supportano l'esploratore dei file.",
     "ValueRequired": "ValoreRichiesto"

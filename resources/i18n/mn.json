@@ -632,6 +632,7 @@
     "Title": "Алдаа гарсан байна."
   },
   "explorer": {
+    "FolderNotFoundOrNoAccess": "Фолдер олдсонгүй эсвэл хандалтыг үгүйсгэв",
     "InputTooShort": "Хэт богино байна",
     "NoExplorerSupportForUnmanagedFolder": "НҮБ-нээгүй хавтас нь файлын Explorer-ийг дэмждэггүй.",
     "ValueRequired": "Утга Шаардлагатай"

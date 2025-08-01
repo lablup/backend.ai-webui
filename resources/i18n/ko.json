@@ -636,6 +636,7 @@
     "Title": "에러가 발생했습니다."
   },
   "explorer": {
+    "FolderNotFoundOrNoAccess": "존재하지 않거나 접근할 수 없는 폴더입니다.",
     "InputTooShort": "입력값이 너무 짧습니다.",
     "NoExplorerSupportForUnmanagedFolder": "Unmanaged 폴더는 파일 탐색기를 지원하지 않습니다.",
     "ValueRequired": "값이 필요합니다."

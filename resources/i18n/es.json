@@ -634,6 +634,7 @@
     "Title": "Se ha producido un error."
   },
   "explorer": {
+    "FolderNotFoundOrNoAccess": "Carpeta no encontrada ni de acceso denegada",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Las carpetas no administradas no admiten el explorador de archivos.",
     "ValueRequired": "ValorRequerido"

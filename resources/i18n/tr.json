@@ -634,6 +634,7 @@
     "Title": "Bir hata oluştu."
   },
   "explorer": {
+    "FolderNotFoundOrNoAccess": "Klasör bulunamadı veya erişim reddedildi",
     "InputTooShort": "GirişÇok Kısa",
     "NoExplorerSupportForUnmanagedFolder": "Yönetilmeyen klasörler Dosya Gezgini'ni desteklemez.",
     "ValueRequired": "DeğerGerekli"

@@ -634,6 +634,7 @@
     "Title": "Một lỗi đã xảy ra."
   },
   "explorer": {
+    "FolderNotFoundOrNoAccess": "Thư mục không tìm thấy hoặc truy cập bị từ chối",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Các thư mục không được quản lý không hỗ trợ trình thám hiểm tệp.",
     "ValueRequired": "Giá trị bắt buộc"
