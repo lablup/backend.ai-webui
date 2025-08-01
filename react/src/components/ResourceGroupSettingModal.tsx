@@ -2,7 +2,7 @@ import { ResourceGroupSettingModalAssociateDomainMutation } from '../__generated
 import { ResourceGroupSettingModalCreateMutation } from '../__generated__/ResourceGroupSettingModalCreateMutation.graphql';
 import { ResourceGroupSettingModalFragment$key } from '../__generated__/ResourceGroupSettingModalFragment.graphql';
 import { ResourceGroupSettingModalUpdateMutation } from '../__generated__/ResourceGroupSettingModalUpdateMutation.graphql';
-import { filterEmptyValues, newLineToBrElement } from '../helper';
+import { omitNullAndUndefinedFields, newLineToBrElement } from '../helper';
 import { useCurrentDomainValue } from '../hooks';
 import BAIModal from './BAIModal';
 import DomainSelector from './DomainSelector';
@@ -118,7 +118,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
     [resourceGroup?.scheduler_opts],
   );
 
-  const INITIAL_FORM_VALUES = filterEmptyValues({
+  const INITIAL_FORM_VALUES = omitNullAndUndefinedFields({
     name: resourceGroup?.name,
     description: resourceGroup?.description,
     domain: currentDomain,

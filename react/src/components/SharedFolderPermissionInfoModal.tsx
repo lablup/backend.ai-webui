@@ -2,7 +2,7 @@ import {
   SharedFolderPermissionInfoModalFragment$data,
   SharedFolderPermissionInfoModalFragment$key,
 } from '../__generated__/SharedFolderPermissionInfoModalFragment.graphql';
-import { filterNonNullItems } from '../helper';
+import { filterOutNullAndUndefined } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -116,7 +116,7 @@ const SharedFolderPermissionInfoModal: React.FC<
             <BAITable<VFolder>
               bordered
               pagination={false}
-              dataSource={filterNonNullItems([vfolder])}
+              dataSource={filterOutNullAndUndefined([vfolder])}
               columns={[
                 {
                   key: 'userName',

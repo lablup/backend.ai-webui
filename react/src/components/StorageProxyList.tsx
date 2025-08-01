@@ -2,7 +2,7 @@ import { StorageProxyListQuery } from '../__generated__/StorageProxyListQuery.gr
 import {
   convertToDecimalUnit,
   convertUnitValue,
-  filterNonNullItems,
+  filterOutNullAndUndefined,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useUpdatableState } from '../hooks';
@@ -301,7 +301,7 @@ const StorageProxyList = () => {
         size="small"
         scroll={{ x: 'max-content' }}
         rowKey={'id'}
-        dataSource={filterNonNullItems(storage_volume_list?.items)}
+        dataSource={filterOutNullAndUndefined(storage_volume_list?.items)}
         columns={columns}
         loading={
           deferredQueryVariables !== queryVariables ||

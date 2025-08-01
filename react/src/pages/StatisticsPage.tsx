@@ -1,6 +1,6 @@
 import AllocationHistory from '../components/AllocationHistory';
 import UserSessionsMetrics from '../components/UserSessionsMetrics';
-import { filterEmptyItem } from '../helper';
+import { filterOutEmpty } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { Skeleton, theme } from 'antd';
 import { BAICard } from 'backend.ai-ui';
@@ -25,7 +25,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = (props) => {
     <BAICard
       activeTabKey={curTabKey}
       onTabChange={(key) => setCurTabKey(key)}
-      tabList={filterEmptyItem([
+      tabList={filterOutEmpty([
         {
           key: 'allocation-history',
           tab: t('webui.menu.UsageHistory'),

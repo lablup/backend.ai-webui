@@ -4,7 +4,7 @@ import {
   ContainerRegistryListQuery,
   ContainerRegistryListQuery$data,
 } from '../__generated__/ContainerRegistryListQuery.graphql';
-import { filterNonNullItems } from '../helper';
+import { filterOutNullAndUndefined } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
@@ -486,7 +486,7 @@ const ContainerRegistryList: React.FC<{
           });
         }}
         loading={isPendingPageChange || isPendingFilter}
-        dataSource={filterNonNullItems(containerRegistries)}
+        dataSource={filterOutNullAndUndefined(containerRegistries)}
         columns={
           _.filter(
             columns,

@@ -1,4 +1,4 @@
-import { filterEmptyItem } from '../../helper';
+import { filterOutEmpty } from '../../helper';
 import { useCustomThemeConfig } from '../../helper/customThemeConfig';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
@@ -148,7 +148,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const [experimentalDashboard] = useBAISettingUserState(
     'experimental_dashboard',
   );
-  const generalMenu = filterEmptyItem<WebUIGeneralMenuItemType>([
+  const generalMenu = filterOutEmpty<WebUIGeneralMenuItemType>([
     {
       label: <WebUILink to="/start">{t('webui.menu.Start')}</WebUILink>,
       icon: <PlayCircleOutlined style={{ color: token.colorPrimary }} />,

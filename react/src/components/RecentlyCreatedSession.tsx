@@ -1,5 +1,5 @@
 import { RecentlyCreatedSessionFragment$key } from '../__generated__/RecentlyCreatedSessionFragment.graphql';
-import { filterNonNullItems } from '../helper';
+import { filterOutNullAndUndefined } from '../helper';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import Flex from './Flex';
 import SessionDetailDrawer from './SessionDetailDrawer';
@@ -125,7 +125,7 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
           }}
         >
           <SessionNodes
-            sessionsFrgmt={filterNonNullItems(
+            sessionsFrgmt={filterOutNullAndUndefined(
               data.compute_session_nodes?.edges.map((e) => e?.node),
             )}
             onClickSessionName={(session) => {

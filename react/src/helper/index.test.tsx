@@ -1,7 +1,7 @@
 import {
   addNumberWithUnits,
   compareNumberWithUnits,
-  filterEmptyItem,
+  filterOutEmpty,
   getImageFullName,
   convertToBinaryUnit,
   isOutsideRange,
@@ -355,19 +355,19 @@ describe('numberSorterWithInfinityValue', () => {
 describe('filterEmptyItem', () => {
   it('should filter out undefined, null, empty string, false, empty array, and empty object', () => {
     const input = [undefined, null, '', false, [], {}, 'item1', 'item2'];
-    const output = filterEmptyItem(input);
+    const output = filterOutEmpty(input);
     expect(output).toEqual(['item1', 'item2']);
   });
 
   it('should return an empty array when all items are empty', () => {
     const input = [undefined, null, '', false, [], {}];
-    const output = filterEmptyItem(input);
+    const output = filterOutEmpty(input);
     expect(output).toEqual([]);
   });
 
   it('should return the same array when no items are empty', () => {
     const input = ['item1', 'item2', 'item3'];
-    const output = filterEmptyItem(input);
+    const output = filterOutEmpty(input);
     expect(output).toEqual(['item1', 'item2', 'item3']);
   });
 });

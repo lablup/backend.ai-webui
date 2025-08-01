@@ -15,7 +15,7 @@ import BAITabs from '../components/BAITabs';
 import TerminateSessionModal from '../components/ComputeSessionNodeItems/TerminateSessionModal';
 import Flex from '../components/Flex';
 import SessionNodes from '../components/SessionNodes';
-import { filterNonNullItems, handleRowSelectionChange } from '../helper';
+import { filterOutNullAndUndefined, handleRowSelectionChange } from '../helper';
 import { useUpdatableState, useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAINotificationState } from '../hooks/useBAINotification';
@@ -521,7 +521,7 @@ const ComputeSessionListPage = () => {
                 // Using selectedRowKeys to retrieve selected rows since selectedRows lack nested fragment types
                 handleRowSelectionChange(
                   selectedRowKeys,
-                  filterNonNullItems(
+                  filterOutNullAndUndefined(
                     compute_session_nodes?.edges.map((e) => e?.node),
                   ),
                   setSelectedSessionList,
@@ -529,7 +529,7 @@ const ComputeSessionListPage = () => {
               },
               selectedRowKeys: _.map(selectedSessionList, (i) => i.id),
             }}
-            sessionsFrgmt={filterNonNullItems(
+            sessionsFrgmt={filterOutNullAndUndefined(
               compute_session_nodes?.edges.map((e) => e?.node),
             )}
             pagination={{

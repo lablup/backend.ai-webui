@@ -4,8 +4,8 @@ import {
 } from '../__generated__/EndpointListFragment.graphql';
 import {
   baiSignedRequestWithPromise,
-  filterEmptyItem,
-  filterNonNullItems,
+  filterOutEmpty,
+  filterOutNullAndUndefined,
 } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
@@ -114,7 +114,7 @@ const EndpointList: React.FC<EndpointListProps> = ({
     },
   });
 
-  const columns = filterEmptyItem<ColumnType<Endpoint>>([
+  const columns = filterOutEmpty<ColumnType<Endpoint>>([
     {
       title: t('modelService.EndpointName'),
       key: 'endpointName',
@@ -317,7 +317,7 @@ const EndpointList: React.FC<EndpointListProps> = ({
       loading={loading}
       scroll={{ x: 'max-content' }}
       rowKey={'endpoint_id'}
-      dataSource={filterNonNullItems(endpoints)}
+      dataSource={filterOutNullAndUndefined(endpoints)}
       columns={columns}
       pagination={pagination}
       {...tableProps}

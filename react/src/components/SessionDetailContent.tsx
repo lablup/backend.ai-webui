@@ -1,7 +1,7 @@
 import { SessionDetailContentFragment$key } from '../__generated__/SessionDetailContentFragment.graphql';
 import { SessionDetailContentLegacyQuery } from '../__generated__/SessionDetailContentLegacyQuery.graphql';
 import { SessionDetailContentQuery } from '../__generated__/SessionDetailContentQuery.graphql';
-import { filterNonNullItems } from '../helper';
+import { filterOutNullAndUndefined } from '../helper';
 import { INITIAL_FETCH_KEY, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -385,7 +385,7 @@ const SessionDetailContent: React.FC<{
             {t('kernel.Kernels')}
           </Typography.Title>
           <ConnectedKernelList
-            kernelsFrgmt={filterNonNullItems(
+            kernelsFrgmt={filterOutNullAndUndefined(
               session.kernel_nodes?.edges.map((e) => e?.node),
             )}
             sessionFrgmtForLogModal={session}

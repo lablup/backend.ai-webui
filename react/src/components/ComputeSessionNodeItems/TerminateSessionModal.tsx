@@ -3,7 +3,7 @@ import {
   TerminateSessionModalFragment$key,
 } from '../../__generated__/TerminateSessionModalFragment.graphql';
 import { TerminateSessionModalRefetchQuery } from '../../__generated__/TerminateSessionModalRefetchQuery.graphql';
-import { filterEmptyItem } from '../../helper';
+import { filterOutEmpty } from '../../helper';
 import { BackendAIClient, useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { useSetBAINotification } from '../../hooks/useBAINotification';
@@ -260,7 +260,7 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
       confirmLoading={pendingCount > 0}
       onOk={() => {
         const promises = _.map(
-          filterEmptyItem(_.castArray(sessions)),
+          filterOutEmpty(_.castArray(sessions)),
           (session) => {
             return terminiateSession(session)
               .catch((err) => {

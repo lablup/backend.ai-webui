@@ -4,8 +4,8 @@ import {
 } from '../__generated__/ImageListQuery.graphql';
 import Flex from '../components/Flex';
 import {
-  filterEmptyItem,
-  filterNonNullItems,
+  filterOutEmpty,
+  filterOutNullAndUndefined,
   getImageFullName,
   localeCompare,
   preserveDotStartCase,
@@ -127,7 +127,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
 
   const columns: Array<ColumnType<EnvironmentImage>> = useMemo(
     () =>
-      filterEmptyItem([
+      filterOutEmpty([
         {
           title: t('environment.Status'),
           dataIndex: 'installed',
@@ -559,7 +559,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
               />
             ),
           }}
-          dataSource={filterNonNullItems(filteredImageData)}
+          dataSource={filterOutNullAndUndefined(filteredImageData)}
           columns={_.filter(
             columns,
             (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),

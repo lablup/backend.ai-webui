@@ -1,7 +1,7 @@
 import { VFolderNodeDescriptionFragment$key } from '../__generated__/VFolderNodeDescriptionFragment.graphql';
 import { VFolderNodeDescriptionPermissionRefreshQuery } from '../__generated__/VFolderNodeDescriptionPermissionRefreshQuery.graphql';
 import { useVirtualFolderNodePathFragment$key } from '../__generated__/useVirtualFolderNodePathFragment.graphql';
-import { convertToDecimalUnit, filterEmptyItem } from '../helper';
+import { convertToDecimalUnit, filterOutEmpty } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -96,7 +96,7 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
 
   const vfolderId = toLocalId(vfolderNode.id);
 
-  const items: DescriptionsProps['items'] = filterEmptyItem([
+  const items: DescriptionsProps['items'] = filterOutEmpty([
     !vfolderNode?.unmanaged_path && {
       key: 'path',
       label: (

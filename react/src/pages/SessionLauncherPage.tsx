@@ -36,7 +36,7 @@ import {
   formatDuration,
   generateRandomString,
   convertToBinaryUnit,
-  filterEmptyItem,
+  filterOutEmpty,
 } from '../helper';
 import {
   useSuspendedBackendaiClient,
@@ -347,7 +347,7 @@ const SessionLauncherPage = () => {
     form.getFieldValue('sessionType') ||
     formValuesFromQueryParams.sessionType;
 
-  const steps: Array<StepPropsWithKey> = filterEmptyItem([
+  const steps: Array<StepPropsWithKey> = filterOutEmpty([
     {
       title: t('session.launcher.SessionType'),
       key: 'sessionType',

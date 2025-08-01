@@ -4,7 +4,7 @@ import {
   ResourceGroupListQuery$data,
 } from '../__generated__/ResourceGroupListQuery.graphql';
 import { ResourceGroupListUpdateMutation } from '../__generated__/ResourceGroupListUpdateMutation.graphql';
-import { filterEmptyItem, filterNonNullItems } from '../helper';
+import { filterOutEmpty, filterOutNullAndUndefined } from '../helper';
 import { useUpdatableState } from '../hooks';
 import BAIConfirmModalWithInput from './BAIConfirmModalWithInput';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
@@ -118,7 +118,7 @@ const ResourceGroupList: React.FC = () => {
       }
     `);
 
-  const columns: ColumnsType<ResourceGroup> = filterEmptyItem([
+  const columns: ColumnsType<ResourceGroup> = filterOutEmpty([
     {
       key: 'name',
       title: t('resourceGroup.Name'),
@@ -318,7 +318,7 @@ const ResourceGroupList: React.FC = () => {
         size="small"
         scroll={{ x: 'max-content' }}
         columns={columns}
-        dataSource={filterNonNullItems(scaling_groups)}
+        dataSource={filterOutNullAndUndefined(scaling_groups)}
         loading={isActiveTypePending}
       />
 

@@ -3,7 +3,7 @@ import {
   ConnectedKernelListFragment$key,
 } from '../../__generated__/ConnectedKernelListFragment.graphql';
 import { ContainerLogModalFragment$key } from '../../__generated__/ContainerLogModalFragment.graphql';
-import { filterEmptyItem, filterNonNullItems } from '../../helper';
+import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
 // import BAIPropertyFilter from '../BAIPropertyFilter';
 import DoubleTag from '../DoubleTag';
 import Flex from '../Flex';
@@ -73,7 +73,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
     kernelsFrgmt,
   );
 
-  const columns = filterEmptyItem<ColumnType<Kernel>>([
+  const columns = filterOutEmpty<ColumnType<Kernel>>([
     {
       title: t('kernel.KernelId'),
       fixed: 'left',
@@ -178,7 +178,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
         rowKey="id"
         scroll={{ x: 'max-content' }}
         columns={columns}
-        dataSource={filterNonNullItems(kernelNodes)}
+        dataSource={filterOutNullAndUndefined(kernelNodes)}
         style={{ width: '100%' }}
         // TODO: implement pagination when compute_session_node query supports pagination
         pagination={false}

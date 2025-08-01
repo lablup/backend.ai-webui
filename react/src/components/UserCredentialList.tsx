@@ -5,7 +5,7 @@ import {
   UserCredentialListQuery,
   UserCredentialListQuery$data,
 } from '../__generated__/UserCredentialListQuery.graphql';
-import { filterEmptyItem, filterNonNullItems } from '../helper';
+import { filterOutEmpty, filterOutNullAndUndefined } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import BAIPropertyFilter from './BAIPropertyFilter';
@@ -248,8 +248,8 @@ const UserCredentialList: React.FC = () => {
           isPendingPageChange ||
           isPendingFilter
         }
-        dataSource={filterNonNullItems(keypair_list?.items)}
-        columns={filterEmptyItem([
+        dataSource={filterOutNullAndUndefined(keypair_list?.items)}
+        columns={filterOutEmpty([
           {
             key: 'userID',
             title: t('credential.UserID'),

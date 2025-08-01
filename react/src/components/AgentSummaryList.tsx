@@ -4,7 +4,7 @@ import {
 } from '../__generated__/AgentSummaryListQuery.graphql';
 import {
   convertToBinaryUnit,
-  filterNonNullItems,
+  filterOutNullAndUndefined,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useUpdatableState } from '../hooks';
@@ -415,7 +415,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
         bordered
         scroll={{ x: 'max-content' }}
         rowKey={'id'}
-        dataSource={filterNonNullItems(filteredAgentSummaryList)}
+        dataSource={filterOutNullAndUndefined(filteredAgentSummaryList)}
         showSorterTooltip={false}
         columns={
           _.filter(

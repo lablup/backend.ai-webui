@@ -6,7 +6,7 @@ import BAIPropertyFilter, {
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import EndpointList from '../components/EndpointList';
 import Flex from '../components/Flex';
-import { filterEmptyItem } from '../helper';
+import { filterOutEmpty } from '../helper';
 import { useUpdatableState, useWebUINavigate } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -161,7 +161,7 @@ const ServingPage: React.FC = () => {
                 ]}
               />
               <BAIPropertyFilter
-                filterProperties={filterEmptyItem([
+                filterProperties={filterOutEmpty([
                   {
                     key: 'name',
                     type: 'string',

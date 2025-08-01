@@ -18,8 +18,8 @@ import RestoreVFolderModal from '../components/RestoreVFolderModal';
 import StorageStatusPanelCard from '../components/StorageStatusPanelCard';
 import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
 import {
-  filterEmptyItem,
-  filterNonNullItems,
+  filterOutEmpty,
+  filterOutNullAndUndefined,
   handleRowSelectionChange,
 } from '../helper';
 import {
@@ -458,7 +458,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                   setTablePaginationOption({ current: 1 });
                   setSelectedFolderList([]);
                 }}
-                options={filterEmptyItem([
+                options={filterOutEmpty([
                   {
                     label: t('data.All'),
                     value: 'all',
@@ -586,7 +586,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           <VFolderNodes
             order={queryParams.order}
             loading={deferredQueryVariables !== queryVariables}
-            vfoldersFrgmt={filterNonNullItems(
+            vfoldersFrgmt={filterOutNullAndUndefined(
               _.map(vfolder_nodes?.edges, 'node'),
             )}
             rowSelection={{
@@ -604,7 +604,9 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 // Using selectedRowKeys to retrieve selected rows since selectedRows lack nested fragment types
                 handleRowSelectionChange(
                   selectedRowKeys,
-                  filterNonNullItems(_.map(vfolder_nodes?.edges, 'node')),
+                  filterOutNullAndUndefined(
+                    _.map(vfolder_nodes?.edges, 'node'),
+                  ),
                   setSelectedFolderList,
                 );
               },

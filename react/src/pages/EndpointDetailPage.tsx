@@ -21,7 +21,10 @@ import ResourceNumber from '../components/ResourceNumber';
 import SessionDetailDrawer from '../components/SessionDetailDrawer';
 import UnmountAfterClose from '../components/UnmountAfterClose';
 import VFolderLazyView from '../components/VFolderLazyView';
-import { baiSignedRequestWithPromise, filterNonNullItems } from '../helper';
+import {
+  baiSignedRequestWithPromise,
+  filterOutNullAndUndefined,
+} from '../helper';
 import {
   useSuspendedBackendaiClient,
   useUpdatableState,
@@ -868,7 +871,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           ]}
           showSorterTooltip={false}
           pagination={false}
-          dataSource={filterNonNullItems(endpoint_token_list?.items)}
+          dataSource={filterOutNullAndUndefined(endpoint_token_list?.items)}
           bordered
         ></Table>
       </Card>

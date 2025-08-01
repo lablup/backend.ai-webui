@@ -1,4 +1,4 @@
-import { filterEmptyItem } from '../helper';
+import { filterOutEmpty } from '../helper';
 import Flex from './Flex';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
@@ -94,7 +94,7 @@ export function mergeFilterValues(
   operator: string = '&',
 ) {
   const mergedFilter = _.join(
-    _.map(filterEmptyItem(filterStrings), (str) => `(${str})`),
+    _.map(filterOutEmpty(filterStrings), (str) => `(${str})`),
     operator,
   );
   return !!mergedFilter ? mergedFilter : undefined;

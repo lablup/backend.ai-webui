@@ -1,5 +1,5 @@
 import { ChatHeader_Endpoint$key } from '../../__generated__/ChatHeader_Endpoint.graphql';
-import { filterEmptyItem } from '../../helper';
+import { filterOutEmpty } from '../../helper';
 import { useWebUINavigate } from '../../hooks';
 import { AIAgent } from '../../hooks/useAIAgent';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
@@ -117,7 +117,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
     endpointFrgmt,
   );
 
-  const items: MenuProps['items'] = filterEmptyItem([
+  const items: MenuProps['items'] = filterOutEmpty([
     showCompareMenuItem && {
       key: 'compare',
       label: t('chatui.CompareWithOtherModels'),

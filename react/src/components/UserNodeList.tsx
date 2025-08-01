@@ -2,7 +2,7 @@ import { UserNodeListModifyMutation } from '../__generated__/UserNodeListModifyM
 import { UserNodeListQuery } from '../__generated__/UserNodeListQuery.graphql';
 import BAIPropertyFilter from '../components/BAIPropertyFilter';
 import Flex from '../components/Flex';
-import { filterEmptyItem, filterNonNullItems } from '../helper';
+import { filterOutEmpty, filterOutNullAndUndefined } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import BAIRadioGroup from './BAIRadioGroup';
@@ -226,8 +226,8 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
       <BAITable
         scroll={{ x: 'max-content' }}
         rowKey={'id'}
-        dataSource={filterNonNullItems(_.map(user_nodes?.edges, 'node'))}
-        columns={filterEmptyItem([
+        dataSource={filterOutNullAndUndefined(_.map(user_nodes?.edges, 'node'))}
+        columns={filterOutEmpty([
           {
             key: 'email',
             title: t('credential.UserID'),

@@ -4,7 +4,11 @@ import {
   ResourcePresetListQuery$data,
 } from '../__generated__/ResourcePresetListQuery.graphql';
 import { ResourcePresetSettingModalFragment$key } from '../__generated__/ResourcePresetSettingModalFragment.graphql';
-import { filterEmptyItem, filterNonNullItems, localeCompare } from '../helper';
+import {
+  filterOutEmpty,
+  filterOutNullAndUndefined,
+  localeCompare,
+} from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import Flex from './Flex';
 import NumberWithUnit from './NumberWithUnit';
@@ -82,7 +86,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
       }
     `);
 
-  const columns: TableColumnsType<ResourcePreset> = filterEmptyItem([
+  const columns: TableColumnsType<ResourcePreset> = filterOutEmpty([
     {
       title: t('resourcePreset.Name'),
       dataIndex: 'name',
@@ -240,7 +244,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
       </Flex>
       <BAITable
         rowKey={'name'}
-        dataSource={filterNonNullItems(resource_presets)}
+        dataSource={filterOutNullAndUndefined(resource_presets)}
         scroll={{ x: 'max-content' }}
         showSorterTooltip={false}
         columns={columns}

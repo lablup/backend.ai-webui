@@ -1,5 +1,5 @@
 import { AgentSelectQuery } from '../__generated__/AgentSelectQuery.graphql';
-import { filterEmptyItem } from '../helper';
+import { filterOutEmpty } from '../helper';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { mergeFilterValues } from './BAIPropertyFilter';
 import Flex from './Flex';
@@ -136,7 +136,7 @@ const AgentSelect: React.FC<Props> = ({
       }}
       {...selectProps}
       value={value}
-      options={filterEmptyItem([autoSelectIfMatch, ...agentOptions])}
+      options={filterOutEmpty([autoSelectIfMatch, ...agentOptions])}
     />
   );
 };

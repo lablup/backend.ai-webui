@@ -2,7 +2,7 @@ import {
   VFolderNodesFragment$data,
   VFolderNodesFragment$key,
 } from '../__generated__/VFolderNodesFragment.graphql';
-import { filterNonNullItems } from '../helper';
+import { filterOutNullAndUndefined } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -110,7 +110,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
     vfoldersFrgmt,
   );
 
-  const filteredVFolders = filterNonNullItems(vfolders);
+  const filteredVFolders = filterOutNullAndUndefined(vfolders);
 
   const deleteMutation = useTanMutation({
     mutationFn: (id: string) => {

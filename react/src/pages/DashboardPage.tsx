@@ -5,7 +5,7 @@ import MyResourceWithinResourceGroup from '../components/MyResourceWithinResourc
 import MySession from '../components/MySession';
 import RecentlyCreatedSession from '../components/RecentlyCreatedSession';
 import TotalResourceWithinResourceGroup from '../components/TotalResourceWithinResourceGroup';
-import { filterEmptyItem } from '../helper';
+import { filterOutEmpty } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import {
@@ -63,7 +63,7 @@ const DashboardPage: React.FC = () => {
     });
   }, 15_000);
 
-  const initialBoardItems: Array<BAIBoardItem> = filterEmptyItem([
+  const initialBoardItems: Array<BAIBoardItem> = filterOutEmpty([
     {
       id: 'mySession',
       rowSpan: 2,
@@ -155,7 +155,7 @@ const DashboardPage: React.FC = () => {
   // and thus not displayed on screen.
   // Opted-out items should also be stored separately in localStorage, and newly added items
   // should be included in initialBoardItems.
-  const mergedBoardItems = filterEmptyItem(
+  const mergedBoardItems = filterOutEmpty(
     _.map(initialBoardItems, (item) => {
       const updatedItem = _.find(
         localStorageBoardItems,

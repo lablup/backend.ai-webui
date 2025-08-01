@@ -2,7 +2,7 @@ import { SessionUsageMonitorFragment$key } from '../__generated__/SessionUsageMo
 import {
   convertToBinaryUnit,
   convertToDecimalUnit,
-  filterEmptyItem,
+  filterOutEmpty,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
@@ -143,7 +143,7 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
     displayTarget === 'current'
       ? 'current'
       : (`stats.${displayTarget}` as const);
-  const utilItems = filterEmptyItem([
+  const utilItems = filterOutEmpty([
     sortedLiveStat?.cpu_util &&
       (() => {
         const displayPercent =

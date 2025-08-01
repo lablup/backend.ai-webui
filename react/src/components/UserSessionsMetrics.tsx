@@ -1,5 +1,5 @@
 import { UserSessionsMetricsQuery } from '../__generated__/UserSessionsMetricsQuery.graphql';
-import { filterEmptyItem, newLineToBrElement } from '../helper';
+import { filterOutEmpty, newLineToBrElement } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -160,7 +160,7 @@ const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
         return initialItem ? { ...item, data: initialItem.data } : null;
       });
 
-      return filterEmptyItem(boardItemsWithContent);
+      return filterOutEmpty(boardItemsWithContent);
     }
 
     return defaultBoardItem;

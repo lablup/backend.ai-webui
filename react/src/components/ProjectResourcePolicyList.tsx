@@ -6,8 +6,8 @@ import {
 import { ProjectResourcePolicySettingModalFragment$key } from '../__generated__/ProjectResourcePolicySettingModalFragment.graphql';
 import {
   bytesToGB,
-  filterEmptyItem,
-  filterNonNullItems,
+  filterOutEmpty,
+  filterOutNullAndUndefined,
   localeCompare,
   numberSorterWithInfinityValue,
 } from '../helper';
@@ -99,7 +99,7 @@ const ProjectResourcePolicyList: React.FC<
       }
     `);
 
-  const columns = filterEmptyItem<ColumnType<ProjectResourcePolicies>>([
+  const columns = filterOutEmpty<ColumnType<ProjectResourcePolicies>>([
     {
       title: t('resourcePolicy.Name'),
       dataIndex: 'name',
@@ -319,7 +319,7 @@ const ProjectResourcePolicyList: React.FC<
           columns,
           (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),
         )}
-        dataSource={filterNonNullItems(project_resource_policies)}
+        dataSource={filterOutNullAndUndefined(project_resource_policies)}
         scroll={{ x: 'max-content' }}
         pagination={{
           extraContent: (

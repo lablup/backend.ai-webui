@@ -2,7 +2,7 @@ import FlexActivityIndicator from '../components/FlexActivityIndicator';
 import KeypairResourcePolicyList from '../components/KeypairResourcePolicyList';
 import ProjectResourcePolicyList from '../components/ProjectResourcePolicyList';
 import UserResourcePolicyList from '../components/UserResourcePolicyList';
-import { filterEmptyItem } from '../helper';
+import { filterOutEmpty } from '../helper';
 import { useWebUINavigate } from '../hooks';
 import { BAICard } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
@@ -35,7 +35,7 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
           },
         );
       }}
-      tabList={filterEmptyItem([
+      tabList={filterOutEmpty([
         {
           key: 'keypair',
           label: t('resourcePolicy.Keypair'),

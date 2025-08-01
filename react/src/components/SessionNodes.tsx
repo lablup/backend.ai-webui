@@ -2,7 +2,7 @@ import {
   SessionNodesFragment$data,
   SessionNodesFragment$key,
 } from '../__generated__/SessionNodesFragment.graphql';
-import { filterEmptyItem, filterNonNullItems } from '../helper';
+import { filterOutEmpty, filterOutNullAndUndefined } from '../helper';
 import BAILink from './BAILink';
 import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionSlotCell from './ComputeSessionNodeItems/SessionSlotCell';
@@ -47,10 +47,10 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
     sessionsFrgmt,
   );
 
-  const filteredSessions = filterNonNullItems(sessions);
+  const filteredSessions = filterOutNullAndUndefined(sessions);
 
   const columns = _.map(
-    filterEmptyItem<ColumnType<SessionNodeInList>>([
+    filterOutEmpty<ColumnType<SessionNodeInList>>([
       {
         key: 'name',
         title: t('session.SessionName'),

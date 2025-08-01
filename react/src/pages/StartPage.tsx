@@ -5,7 +5,7 @@ import BAIBoard, { BAIBoardItem } from '../components/BAIBoard';
 import FolderCreateModal from '../components/FolderCreateModal';
 import { MenuKeys } from '../components/MainLayout/WebUISider';
 import ThemeSecondaryProvider from '../components/ThemeSecondaryProvider';
-import { filterEmptyItem } from '../helper';
+import { filterOutEmpty } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -52,7 +52,7 @@ const StartPage: React.FC = () => {
     });
   }, [count, t, upsertNotification]);
 
-  const defaultBoardItem = filterEmptyItem<StartPageBoardItem>([
+  const defaultBoardItem = filterOutEmpty<StartPageBoardItem>([
     {
       id: 'createFolder',
       requiredMenuKey: 'data',
@@ -144,7 +144,7 @@ const StartPage: React.FC = () => {
     useBAISettingUserState('start_page_board_items');
 
   const initialBoardItems = localStorageBoardItems
-    ? filterEmptyItem<StartPageBoardItem>(
+    ? filterOutEmpty<StartPageBoardItem>(
         _.map(localStorageBoardItems, (item) => {
           const initialItem = _.find(
             defaultBoardItem,

@@ -8,7 +8,7 @@ import { KeypairResourcePolicySettingModalFragment$key } from '../__generated__/
 import {
   localeCompare,
   numberSorterWithInfinityValue,
-  filterEmptyItem,
+  filterOutEmpty,
 } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
@@ -106,7 +106,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
       }
     `);
 
-  const columns: ColumnsType<KeypairResourcePolicies> = filterEmptyItem([
+  const columns: ColumnsType<KeypairResourcePolicies> = filterOutEmpty([
     {
       title: t('resourcePolicy.Name'),
       dataIndex: 'name',

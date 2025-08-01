@@ -8,7 +8,7 @@ import {
   convertToBinaryUnit,
   convertToDecimalUnit,
   convertUnitValue,
-  filterNonNullItems,
+  filterOutNullAndUndefined,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
@@ -829,7 +829,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
         size="small"
         scroll={{ x: 'max-content' }}
         rowKey={'id'}
-        dataSource={filterNonNullItems(agent_list?.items)}
+        dataSource={filterOutNullAndUndefined(agent_list?.items)}
         showSorterTooltip={false}
         columns={
           _.filter(

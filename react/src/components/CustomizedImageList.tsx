@@ -7,8 +7,8 @@ import { CustomizedImageListUntagMutation } from '../__generated__/CustomizedIma
 import Flex from '../components/Flex';
 import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
 import {
-  filterEmptyItem,
-  filterNonNullItems,
+  filterOutEmpty,
+  filterOutNullAndUndefined,
   getImageFullName,
   localeCompare,
 } from '../helper';
@@ -217,7 +217,7 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
     });
   }, [imageSearch, imageFilterValues, defaultSortedImages]);
 
-  const columns: ColumnsType<CommittedImage> = filterEmptyItem([
+  const columns: ColumnsType<CommittedImage> = filterOutEmpty([
     {
       title: t('environment.FullImagePath'),
       key: 'fullImagePath',
@@ -493,7 +493,7 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
                 !_.includes(hiddenColumnKeys, _.toString(column?.key)),
             ) as ColumnType<AnyObject>[]
           }
-          dataSource={filterNonNullItems(filteredImageData)}
+          dataSource={filterOutNullAndUndefined(filteredImageData)}
           rowKey="id"
           scroll={{ x: 'max-content' }}
           pagination={{

@@ -1,5 +1,5 @@
 import { KeypairResourcePolicyInfoModalFragment$key } from '../__generated__/KeypairResourcePolicyInfoModalFragment.graphql';
-import { filterEmptyItem } from '../helper';
+import { filterOutEmpty } from '../helper';
 import AllowedVfolderHostsWithPermission from './AllowedVfolderHostsWithPermission';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
@@ -60,7 +60,7 @@ const KeypairResourcePolicyInfoModal: React.FC<InfoModalProps> = ({
     resourcePolicyFrgmt,
   );
 
-  const descriptionItems: DescriptionsItemType[] = filterEmptyItem([
+  const descriptionItems: DescriptionsItemType[] = filterOutEmpty([
     {
       label: t('resourcePolicy.Name'),
       children: (
