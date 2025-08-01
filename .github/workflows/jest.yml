@@ -1,58 +1,130 @@
-name: Run test and report code coverage on /react
+name: Run test and report code coverage on /react and /backend.ai-ui
 
 on:
   pull_request:
-    branches: [ "main" ]
     paths:
       - react/src/**
       - react/package.json
+      - packages/backend.ai-ui/src/**
+      - packages/backend.ai-ui/package.json
+
+permissions:
+  contents: read
 
 defaults:
   run:
     working-directory: ./react
 jobs:
-  coverage:
-    permissions: 
+  check-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      react-changed: ${{ steps.changes.outputs.react }}
+      backend-ai-ui-changed: ${{ steps.changes.outputs.backend-ai-ui }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            react:
+              - 'react/src/**'
+              - 'react/package.json'
+            backend-ai-ui:
+              - 'packages/backend.ai-ui/src/**'
+              - 'packages/backend.ai-ui/package.json'
+  react-coverage:
+    needs: check-changes
+    if: needs.check-changes.outputs.react-changed == 'true'
+    permissions:
       checks: write
       pull-requests: write
       contents: write
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: jwalton/gh-find-current-pr@v1
-      id: findPr
-    - uses: pnpm/action-setup@v4
-      name: Install pnpm
-      with:
-        version: latest
-        run_install: false
-    - uses: actions/setup-node@v4
-      with:
-        node-version-file: '.nvmrc'
-        cache: 'pnpm'
-    - name: Get pnpm store directory
-      shell: bash
-      run: |
-        echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-    - uses: actions/cache@v4
-      name: Setup pnpm cache
-      with:
-        path: ${{ env.STORE_PATH }}
-        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-        restore-keys: |
-          ${{ runner.os }}-pnpm-store-
-    - name: Install dependencies
-      run: pnpm install
-    - name: Run ESLint on React
-      run: pnpm  eslint ./src --ignore-pattern '*.test.*' --max-warnings=0
-    - name: run relay-compiler
-      run: pnpm run relay
-    - name: Jest report
-      uses: ArtiomTr/jest-coverage-report-action@v2
-      with:
-        skip-step: install
-        working-directory: ./react
-        package-manager: pnpm
-        test-script: pnpm run test
-        prnumber: ${{ steps.findPr.outputs.number }}
-        annotations: failed-tests
+      - uses: actions/checkout@v4
+      - uses: jwalton/gh-find-current-pr@v1
+        id: findPr
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: latest
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - uses: actions/cache@v4
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      - name: Install dependencies
+        run: pnpm install
+      - name: Run ESLint on React
+        run: pnpm  eslint ./src --ignore-pattern '*.test.*' --max-warnings=0
+      - name: run relay-compiler
+        run: pnpm run relay
+      - name: Jest report
+        uses: ArtiomTr/jest-coverage-report-action@v2
+        with:
+          skip-step: install
+          working-directory: ./react
+          package-manager: pnpm
+          test-script: pnpm run test
+          prnumber: ${{ steps.findPr.outputs.number }}
+          annotations: failed-tests
+
+  backend-ai-ui-coverage:
+    needs: check-changes
+    if: needs.check-changes.outputs.backend-ai-ui-changed == 'true'
+    permissions:
+      checks: write
+      pull-requests: write
+      contents: write
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/backend.ai-ui
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jwalton/gh-find-current-pr@v1
+        id: findPr
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: latest
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - uses: actions/cache@v4
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      - name: Install dependencies
+        run: pnpm install
+      - name: Run ESLint on backend.ai-ui
+        run: pnpm run lint
+      - name: Jest report for backend.ai-ui
+        uses: ArtiomTr/jest-coverage-report-action@v2
+        with:
+          skip-step: install
+          working-directory: ./packages/backend.ai-ui
+          package-manager: pnpm
+          test-script: pnpm run test
+          prnumber: ${{ steps.findPr.outputs.number }}
+          annotations: failed-tests

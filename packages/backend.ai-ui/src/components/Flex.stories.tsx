@@ -23,12 +23,12 @@ const renderWithItems = ({ ...props }: FlexProps) => (
 );
 
 export const Default: Story = {
-  name: 'Default',
+  name: 'Default Flex',
   render: renderWithItems,
 };
 
 export const WithBorder: Story = {
-  name: 'With Border',
+  name: 'Flex With Border',
   render: renderWithItems,
   args: {
     style: {
