@@ -177,7 +177,13 @@ const router = createBrowserRouter([
           );
           return experimentalDashboard ? (
             <BAIErrorBoundary>
-              <DashboardPage />
+              <Suspense
+                fallback={
+                  <Skeleton active />
+                }
+              >
+                <DashboardPage />
+              </Suspense>
             </BAIErrorBoundary>
           ) : (
             <WebUINavigate to={'/summary' + location.search} replace />

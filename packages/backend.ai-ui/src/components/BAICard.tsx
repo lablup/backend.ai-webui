@@ -66,23 +66,25 @@ const BAICard: React.FC<BAICardProps> = ({
       })}
       styles={_.merge(
         // Auto-enable divider when tabList is specified
-        showDivider || cardProps.tabList
+        !showDivider && !cardProps.tabList
           ? {
-              body: {
-                padding: `${token.padding}px ${token.paddingLG}px ${token.paddingLG}px ${token.paddingLG}px`,
-              },
-            }
-          : {
               header: {
                 borderBottom: 'none',
                 // Fix: https://app.graphite.dev/github/pr/lablup/backend.ai-webui/3927/feat(FR-878%2C-FR-1228)-My-resource-usage%2Fcapacity?org=lablup#review-PRR_kwDOCRTcws61NwR1
                 // Cover the marginBottom issue
                 marginBottom: 2,
               },
+            }
+          : {},
+        // Reduce padding when tabList is specified
+        cardProps.tabList
+          ? {
               body: {
-                paddingTop: cardProps.tabList ? token.margin : token.marginXS,
+                paddingTop:
+                  cardProps.size === 'small' ? token.paddingSM : token.padding,
               },
-            },
+            }
+          : {},
         styles,
       )}
       {...cardProps}
@@ -93,9 +95,6 @@ const BAICard: React.FC<BAICardProps> = ({
             align="center"
             wrap="wrap"
             gap="sm"
-            style={{
-              marginBlock: token.marginSM,
-            }}
           >
             {cardProps.title}
             <Flex>{_extra}</Flex>
