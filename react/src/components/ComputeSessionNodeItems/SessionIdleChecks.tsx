@@ -9,6 +9,7 @@ import DoubleTag from '../DoubleTag';
 import Flex from '../Flex';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Tooltip, Typography, theme } from 'antd';
+import { useMemoizedJSONParse } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
@@ -157,8 +158,11 @@ const SessionIdleChecks: React.FC<SessionIdleChecksProps> = ({
     },
   );
 
-  const idleChecks: IdleChecks = JSON.parse(
-    sessionNode?.idle_checks || session?.idle_checks || '{}',
+  const idleChecks: IdleChecks = useMemoizedJSONParse(
+    sessionNode?.idle_checks || session?.idle_checks,
+    {
+      fallbackValue: {},
+    },
   );
 
   const getIdleCheckTitle = (key: keyof IdleChecks) => {

@@ -1,17 +1,20 @@
+import { ImageTagsUNSAFELazySessionImageTagQuery } from '../__generated__/ImageTagsUNSAFELazySessionImageTagQuery.graphql';
 import { preserveDotStartCase } from '../helper';
 import { useBackendAIImageMetaData } from '../hooks';
 import DoubleTag, { DoubleTagObjectValue } from './DoubleTag';
 import Flex from './Flex';
+import ImageMetaIcon from './ImageMetaIcon';
 import TextHighlighter from './TextHighlighter';
-import { Tag, TagProps } from 'antd';
+import { Tag, TagProps, theme } from 'antd';
 import _ from 'lodash';
 import React from 'react';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 interface ImageAliasNameAndBaseVersionTagsProps
   extends Omit<DoubleTagObjectValue, 'label'> {
   image: string | null;
 }
-export const ImageAliasNameAndBaseVersionTags: React.FC<
+const ImageAliasNameAndBaseVersionTags: React.FC<
   ImageAliasNameAndBaseVersionTagsProps
 > = ({ image, ...props }) => {
   image = image || '';
@@ -34,29 +37,10 @@ export const ImageAliasNameAndBaseVersionTags: React.FC<
   );
 };
 
-interface BaseVersionTagsProps extends TagProps {
-  image: string | null;
-}
-export const BaseVersionTags: React.FC<BaseVersionTagsProps> = ({
-  image,
-  ...props
-}) => {
-  image = image || '';
-  const [, { getBaseVersion, tagAlias }] = useBackendAIImageMetaData();
-  return _.isEmpty(tagAlias(getBaseVersion(image))) ? null : (
-    <Tag color="green" {...props}>
-      {tagAlias(getBaseVersion(image))}
-    </Tag>
-  );
-};
-
 interface BaseImageTagsProps extends TagProps {
   image: string | null;
 }
-export const BaseImageTags: React.FC<BaseImageTagsProps> = ({
-  image,
-  ...props
-}) => {
+const BaseImageTags: React.FC<BaseImageTagsProps> = ({ image, ...props }) => {
   image = image || '';
   const [, { getBaseImage, tagAlias }] = useBackendAIImageMetaData();
   return _.isEmpty(tagAlias(getBaseImage(image))) ? null : (
@@ -69,7 +53,7 @@ export const BaseImageTags: React.FC<BaseImageTagsProps> = ({
 interface ArchitectureTagsProps extends TagProps {
   image: string | null;
 }
-export const ArchitectureTags: React.FC<ArchitectureTagsProps> = ({
+const ArchitectureTags: React.FC<ArchitectureTagsProps> = ({
   image,
   ...props
 }) => {
@@ -82,67 +66,10 @@ export const ArchitectureTags: React.FC<ArchitectureTagsProps> = ({
   );
 };
 
-interface LangTagsProps extends TagProps {
-  image: string | null;
-}
-export const LangTags: React.FC<LangTagsProps> = ({ image, ...props }) => {
-  image = image || '';
-  const [, { getImageLang, tagAlias }] = useBackendAIImageMetaData();
-  return _.isEmpty(tagAlias(getImageLang(image))) ? null : (
-    <Tag color="green" {...props}>
-      {tagAlias(getImageLang(image))}
-    </Tag>
-  );
-};
-
-interface ConstraintTagsProps extends TagProps {
-  tag: string;
-  labels: { key: string; value: string }[];
-  highlightKeyword?: string;
-}
-export const ConstraintTags: React.FC<ConstraintTagsProps> = ({
-  tag,
-  labels,
-  highlightKeyword,
-  ...props
-}) => {
-  labels = labels || [];
-  const [, { getConstraints }] = useBackendAIImageMetaData();
-  const constraints = getConstraints(tag, labels);
-  return (
-    <Flex direction="row" align="start">
-      {!_.isEmpty(constraints?.[0]) ? (
-        <Tag color="blue" {...props}>
-          <TextHighlighter keyword={highlightKeyword}>
-            {constraints[0]}
-          </TextHighlighter>
-        </Tag>
-      ) : null}
-      {!_.isEmpty(constraints?.[1]) ? (
-        <DoubleTag
-          color="cyan"
-          highlightKeyword={highlightKeyword}
-          values={[
-            {
-              label: 'Customized',
-              color: 'cyan',
-            },
-            {
-              label: constraints[1],
-              color: 'cyan',
-            },
-          ]}
-          {...props}
-        />
-      ) : null}
-    </Flex>
-  );
-};
-
 const SessionKernelTags: React.FC<{
   image: string | null;
   border?: boolean;
-}> = ({ image }) => {
+}> = React.memo(function SessionKernelTags({ image }) {
   image = image || '';
   return (
     <>
@@ -151,9 +78,7 @@ const SessionKernelTags: React.FC<{
       <ArchitectureTags image={image} />
     </>
   );
-};
-
-export default React.memo(SessionKernelTags);
+});
 
 interface ImageTagsProps extends TagProps {
   tag: string;
@@ -202,4 +127,46 @@ export const ImageTags: React.FC<ImageTagsProps> = ({
       })}
     </React.Fragment>
   );
+};
+
+interface UNSAFELazySessionImageTagProps {
+  sessionId: string | null;
+}
+export const UNSAFELazySessionImageTag: React.FC<
+  UNSAFELazySessionImageTagProps
+> = ({ sessionId }) => {
+  const { token } = theme.useToken();
+  const { compute_session } =
+    useLazyLoadQuery<ImageTagsUNSAFELazySessionImageTagQuery>(
+      graphql`
+        query ImageTagsUNSAFELazySessionImageTagQuery($uuid: UUID!) {
+          compute_session(id: $uuid) {
+            image
+            mounts
+            architecture
+          }
+        }
+      `,
+      {
+        uuid: sessionId || '',
+      },
+      {
+        fetchPolicy: sessionId ? 'store-or-network' : 'store-only',
+      },
+    );
+
+  const imageFullName =
+    compute_session?.image &&
+    compute_session?.architecture &&
+    compute_session.image + '@' + compute_session.architecture;
+
+  return imageFullName ? (
+    <Flex gap={['xs', 0]} wrap="wrap">
+      <ImageMetaIcon
+        image={imageFullName}
+        style={{ marginRight: token.marginXS }}
+      />
+      <SessionKernelTags image={imageFullName} />
+    </Flex>
+  ) : null;
 };

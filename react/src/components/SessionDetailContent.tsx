@@ -1,6 +1,5 @@
 import { SessionDetailContentLegacyQuery } from '../__generated__/SessionDetailContentLegacyQuery.graphql';
 import { SessionDetailContentQuery } from '../__generated__/SessionDetailContentQuery.graphql';
-import SessionKernelTags from '../components/ImageTags';
 import { filterNonNullItems } from '../helper';
 import { INITIAL_FETCH_KEY, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
@@ -18,7 +17,8 @@ import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
 import Flex from './Flex';
 import FolderLink from './FolderLink';
 import IdleCheckDescriptionModal from './IdleCheckDescriptionModal';
-import ImageMetaIcon from './ImageMetaIcon';
+import ImageNodeSimpleTag from './ImageNodeSimpleTag';
+import { UNSAFELazySessionImageTag } from './ImageTags';
 import SessionUsageMonitor from './SessionUsageMonitor';
 import { InfoCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import {
@@ -121,6 +121,9 @@ const SessionDetailContent: React.FC<{
             kernel_nodes {
               edges {
                 node {
+                  image {
+                    ...ImageNodeSimpleTagFragment
+                  }
                   ...ConnectedKernelListFragment
                 }
               }
@@ -141,9 +144,7 @@ const SessionDetailContent: React.FC<{
             ...AppLauncherModalFragment
           }
           legacy_session: compute_session(id: $uuid) {
-            image
             mounts
-            architecture
           }
           vfolder_invited_list(limit: 100, offset: 0) {
             items {
@@ -163,11 +164,6 @@ const SessionDetailContent: React.FC<{
         fetchKey: fetchKey,
       },
     );
-
-  const imageFullName =
-    legacy_session?.image &&
-    legacy_session?.architecture &&
-    legacy_session.image + '@' + legacy_session.architecture;
 
   // The feature to display imminent expiration time as a separate Alert is supported from version 24.12.
   let imminentExpirationTime = _.min(
@@ -285,17 +281,15 @@ const SessionDetailContent: React.FC<{
             <BAISessionTypeTag sessionFrgmt={session} />
           </Descriptions.Item>
           <Descriptions.Item label={t('session.launcher.Environments')}>
-            {imageFullName ? (
-              <Flex gap={['xs', 0]} wrap="wrap">
-                <ImageMetaIcon
-                  image={imageFullName}
-                  style={{ marginRight: token.marginXS }}
-                />
-                <SessionKernelTags image={imageFullName} />
-              </Flex>
-            ) : (
-              '-'
-            )}
+            {session.kernel_nodes?.edges[0]?.node?.image ? (
+              <ImageNodeSimpleTag
+                imageFrgmt={session.kernel_nodes?.edges[0]?.node?.image || null}
+              />
+            ) : session.row_id ? (
+              <Suspense fallback={<Skeleton.Input size="small" active />}>
+                <UNSAFELazySessionImageTag sessionId={session.row_id} />
+              </Suspense>
+            ) : null}
           </Descriptions.Item>
           <Descriptions.Item label={t('session.launcher.MountedFolders')}>
             <Flex gap="xs" wrap="wrap">
@@ -383,11 +377,13 @@ const SessionDetailContent: React.FC<{
               }
               span={md ? 2 : 1}
             >
-              <SessionIdleChecks
-                sessionNodeFrgmt={session}
-                direction={md ? 'row' : 'column'}
-                fetchKeyForLegacyLoadQuery={fetchKey}
-              />
+              <Suspense fallback={<Skeleton.Input active size="small" />}>
+                <SessionIdleChecks
+                  sessionNodeFrgmt={session}
+                  direction={md ? 'row' : 'column'}
+                  fetchKeyForLegacyLoadQuery={fetchKey}
+                />
+              </Suspense>
             </Descriptions.Item>
           ) : null}
           <Descriptions.Item

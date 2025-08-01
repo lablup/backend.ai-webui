@@ -75,8 +75,8 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
 
   const { vfolder_node } = useLazyLoadQuery<LegacyFolderExplorerQuery>(
     graphql`
-      query LegacyFolderExplorerQuery($vfolderUUID: String!) {
-        vfolder_node(id: $vfolderUUID) @since(version: "24.03.4") {
+      query LegacyFolderExplorerQuery($vfolderGlobalId: String!) {
+        vfolder_node(id: $vfolderGlobalId) @since(version: "24.03.4") {
           id
           user
           permission
@@ -88,7 +88,7 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
       }
     `,
     {
-      vfolderUUID: toGlobalId('VirtualFolderNode', vfolderID),
+      vfolderGlobalId: toGlobalId('VirtualFolderNode', vfolderID),
     },
     {
       fetchPolicy: modalProps.open ? 'network-only' : 'store-only',
