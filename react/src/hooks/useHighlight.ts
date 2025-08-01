@@ -1,4 +1,4 @@
-import { useThemeMode } from 'antd-style';
+import { useThemeMode } from './useThemeMode';
 import { useMemo } from 'react';
 import { codeToHtml } from 'shiki';
 import useSWR from 'swr';

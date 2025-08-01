@@ -85,10 +85,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
           padding: '1em',
           paddingTop: 0,
           paddingBottom: 0,
-          backgroundColor:
-            message.role !== 'user'
-              ? token.colorBgContainer
-              : token.colorBgContainerDisabled,
+          backgroundColor: token.colorBgElevated,
           maxWidth: '100%',
           width: _.trim(message.reasoning) ? '100%' : 'auto',
         }}
