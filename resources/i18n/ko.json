@@ -1780,7 +1780,7 @@
     "Invitation": "초대",
     "MaintainKeypairs": "키페어 관리",
     "NoAnnouncement": "표시할 안내문이 없습니다.",
-    "NoInvitations": "초대 받은 폴더가 없습니다.",
+    "NoInvitations": "초대받은 폴더가 없습니다.",
     "Permission": "권한",
     "RNGDEnabled": "RNGD NPU 사용 중",
     "ROCMGPUEnabled": "ROCm GPU 사용중",

@@ -547,7 +547,7 @@ export default class BackendAISummary extends BackendAIPage {
               <div
                 class="layout vertical"
                 slot="message"
-                style="padding: 10px; gap: 10px;"
+                style="padding: 10px 20px; gap: 10px;"
               >
                 ${this.invitations.length > 0
                   ? this.invitations.map(
