@@ -20,9 +20,7 @@
       "jsx": true
     },
     "project": "tsconfig.json",
-    "extraFileExtensions": [
-      ".json"
-    ]
+    "extraFileExtensions": [".json"]
   },
   "plugins": [
     "@typescript-eslint",
@@ -63,13 +61,9 @@
   },
   "overrides": [
     {
-      "files": [
-        "*.json"
-      ],
+      "files": ["*.json"],
       "parser": "jsonc-eslint-parser",
-      "extends": [
-        "plugin:json-schema-validator/recommended"
-      ]
+      "extends": ["plugin:json-schema-validator/recommended"]
     }
   ]
 }
