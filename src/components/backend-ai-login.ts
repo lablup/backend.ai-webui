@@ -1401,6 +1401,8 @@ export default class BackendAILogin extends BackendAIPage {
         this.notification.text = _text('eduapi.CannotAuthorizeSessionByToken');
         this.notification.show(true);
       }
+      this.is_connected = true;
+      await this._connectGQL();
       window.location.href = '/';
     } catch (err) {
       console.error(err);
@@ -1532,7 +1534,7 @@ export default class BackendAILogin extends BackendAIPage {
           const urlParams = new URLSearchParams(queryString);
           const sToken = urlParams.get('sToken') || null;
           if (sToken !== null) {
-            this._token_login(sToken);
+            await this._token_login(sToken);
             return;
           }
 
