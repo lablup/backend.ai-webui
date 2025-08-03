@@ -5,5 +5,10 @@
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}}  -  {{end}} {{total}}项目"
+  },
+  "comp:BAITable": {
+    "SettingTable": "表设置",
+    "SelectColumnToDisplay": "选择要显示的列",
+    "SearchTableColumn": "搜索表列"
   }
 }

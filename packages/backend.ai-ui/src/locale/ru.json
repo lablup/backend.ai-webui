@@ -5,5 +5,10 @@
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} of {{total}} элементы"
+  },
+  "comp:BAITable": {
+    "SelectColumnToDisplay": "Выберите столбцы, чтобы отобразить",
+    "SettingTable": "Настройки таблицы",
+    "SearchTableColumn": "Поиск таблицы столбцов"
   }
 }

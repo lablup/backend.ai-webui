@@ -1,5 +1,6 @@
 import { BAIBoardItem } from '../components/BAIBoard';
 import { jotaiStore } from '../components/DefaultProviders';
+import { BAITableColumnOverrideRecord } from 'backend.ai-ui/components/Table/BAITable';
 import { atom, useAtom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 
@@ -29,6 +30,7 @@ interface UserSettings {
     | 'MyResourceWithinResourceGroup'
     | 'TotalResourceWithinResourceGroup';
   [key: `hiddenColumnKeys.${string}`]: Array<string>;
+  [key: `table_column_overrides.${string}`]: BAITableColumnOverrideRecord;
 }
 
 export type SessionHistory = {

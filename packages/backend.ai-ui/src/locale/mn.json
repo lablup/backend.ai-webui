@@ -5,5 +5,10 @@
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{{end}} {{total}}}} зүйл"
+  },
+  "comp:BAITable": {
+    "SettingTable": "Хүснэгтийн тохиргоо",
+    "SelectColumnToDisplay": "Дэлгэцийн баганыг сонгоно уу",
+    "SearchTableColumn": "Хүснэгтийн баганыг хайх"
   }
 }
