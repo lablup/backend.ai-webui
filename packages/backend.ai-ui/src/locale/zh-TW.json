@@ -33,7 +33,9 @@
     "DownloadStarted": "文件“ {{fileName}}”下載已開始。",
     "error": {
       "FileUploadSizeLimit": "文件大小超過上傳大小限制。"
-    }
+    },
+    "DuplicatedFilesDesc": "具有相同名稱的文件或文件夾已經存在。你想覆蓋嗎？",
+    "DuplicatedFiles": "覆蓋確認"
   },
   "comp:BAITable": {
     "SettingTable": "表設置",

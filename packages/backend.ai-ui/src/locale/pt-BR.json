@@ -33,7 +33,9 @@
     "DownloadStarted": "Arquivo \"{{fileName}}\" o download foi iniciado.",
     "error": {
       "FileUploadSizeLimit": "O tamanho do arquivo excede o limite de tamanho de upload."
-    }
+    },
+    "DuplicatedFilesDesc": "O arquivo ou pasta com o mesmo nome já existe. \nVocê quer substituir?",
+    "DuplicatedFiles": "Substituição de substituição"
   },
   "comp:BAITable": {
     "SelectColumnToDisplay": "Selecione colunas para exibir",

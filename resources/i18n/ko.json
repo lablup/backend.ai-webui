@@ -639,10 +639,17 @@
     "Title": "에러가 발생했습니다."
   },
   "explorer": {
+    "FileUploadCancelled": "사용자 요청에 따라 파일 업로드가 취소되었습니다.",
     "FolderNotFoundOrNoAccess": "존재하지 않거나 접근할 수 없는 폴더입니다.",
     "InputTooShort": "입력값이 너무 짧습니다.",
     "NoExplorerSupportForUnmanagedFolder": "Unmanaged 폴더는 파일 탐색기를 지원하지 않습니다.",
     "NoPermissions": "이 폴더에 접근할 권한이 없습니다",
+    "ProcessingUpload": "파일을 업로드하는 중입니다. 잠시만 기다려주세요.",
+    "UploadCompleted": "{{fileName}} 업로드 성공",
+    "UploadCompletedDesc": "파일이 성공적으로 업로드되었습니다.",
+    "UploadFailed": "{{fileName}} 파일 업로드에 실패했습니다.",
+    "UploadFailedDesc": "파일을 업로드하는 중 오류가 발생했습니다.",
+    "UploadingFile": "{{fileName}} 업로드 중...",
     "ValueRequired": "값이 필요합니다."
   },
   "general": {

@@ -33,7 +33,9 @@
     "DownloadStarted": "File \"{{fileName}}\" è stato avviato il download.",
     "error": {
       "FileUploadSizeLimit": "La dimensione del file supera il limite di dimensione del caricamento."
-    }
+    },
+    "DuplicatedFilesDesc": "Il file o la cartella con lo stesso nome esiste già. \nVuoi sovrascrivere?",
+    "DuplicatedFiles": "Sovrascrivere la conferma"
   },
   "comp:BAITable": {
     "SettingTable": "Impostazioni della tabella",
