@@ -634,10 +634,17 @@
     "Title": "Một lỗi đã xảy ra."
   },
   "explorer": {
+    "FileUploadCancelled": "Tải lên tệp đã bị hủy bởi yêu cầu người dùng.",
     "FolderNotFoundOrNoAccess": "Thư mục không tìm thấy hoặc truy cập bị từ chối",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Các thư mục không được quản lý không hỗ trợ trình thám hiểm tệp.",
     "NoPermissions": "Không có quyền truy cập thư mục này",
+    "ProcessingUpload": "Tệp của bạn đang được tải lên. \nVui lòng chờ.",
+    "UploadCompleted": "{{fileName}} Tải lên hoàn chỉnh",
+    "UploadCompletedDesc": "Các tập tin được chọn đã được tải lên thành công.",
+    "UploadFailed": "Không thể tải lên {{fileName}}.",
+    "UploadFailedDesc": "Đã xảy ra lỗi trong khi tải lên tệp.",
+    "UploadingFile": "Tải lên {{fileName}} ...",
     "ValueRequired": "Giá trị bắt buộc"
   },
   "general": {

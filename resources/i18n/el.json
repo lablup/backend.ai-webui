@@ -630,10 +630,17 @@
     "Title": "Εμφανίστηκε σφάλμα."
   },
   "explorer": {
+    "FileUploadCancelled": "Η μεταφόρτωση αρχείων ακυρώθηκε με αίτημα χρήστη.",
     "FolderNotFoundOrNoAccess": "Ο φάκελος δεν βρέθηκε ή απορρίφθηκε η πρόσβαση",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Οι μη διαχειριζόμενοι φάκελοι δεν υποστηρίζουν τον εξερευνητή αρχείων.",
     "NoPermissions": "Δεν υπάρχουν δικαιώματα πρόσβασης σε αυτόν τον φάκελο",
+    "ProcessingUpload": "Το αρχείο σας μεταφορτώνεται. \nΠεριμένετε.",
+    "UploadCompleted": "{{fileName}} μεταφόρτωση ολοκληρωμένη",
+    "UploadCompletedDesc": "Το επιλεγμένο αρχείο μεταφορτώθηκε με επιτυχία.",
+    "UploadFailed": "Αποτυχία μεταφόρτωσης {{fileName}}.",
+    "UploadFailedDesc": "Παρουσιάστηκε σφάλμα κατά τη μεταφόρτωση του αρχείου.",
+    "UploadingFile": "Μεταφόρτωση {{fileName}} ...",
     "ValueRequired": "Απαιτούμενη τιμή"
   },
   "general": {

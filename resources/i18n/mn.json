@@ -632,10 +632,17 @@
     "Title": "Алдаа гарсан байна."
   },
   "explorer": {
+    "FileUploadCancelled": "Файлын байршуулалтыг хэрэглэгчийн хүсэлтээр цуцлагдсан.",
     "FolderNotFoundOrNoAccess": "Фолдер олдсонгүй эсвэл хандалтыг үгүйсгэв",
     "InputTooShort": "Хэт богино байна",
     "NoExplorerSupportForUnmanagedFolder": "НҮБ-нээгүй хавтас нь файлын Explorer-ийг дэмждэггүй.",
     "NoPermissions": "Энэ хавтсанд нэвтрэх зөвшөөрөл байхгүй байна",
+    "ProcessingUpload": "Таны файлыг байршуулж байна. \nТүр хүлээнэ үү",
+    "UploadCompleted": "{{fileName}}} байршуулах бүрэн",
+    "UploadCompletedDesc": "Сонгосон файлыг амжилттай байршуулсан.",
+    "UploadFailed": "{{fileName}} -ийг байршуулж чадсангүй.}.",
+    "UploadFailedDesc": "Файлыг байршуулах үед алдаа гарлаа.",
+    "UploadingFile": "Байршуулж буй {{fileName}} ...",
     "ValueRequired": "Утга Шаардлагатай"
   },
   "general": {

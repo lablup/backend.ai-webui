@@ -634,10 +634,17 @@
     "Title": "On tapahtunut virhe."
   },
   "explorer": {
+    "FileUploadCancelled": "Tiedoston lataus peruutettiin käyttäjäpyynnöllä.",
     "FolderNotFoundOrNoAccess": "Kansiota ei löydy tai pääsy kielletty",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Hallitsemattomat kansiot eivät tue tiedostotutkijaa.",
     "NoPermissions": "Ei oikeuksia käyttää tätä kansiota",
+    "ProcessingUpload": "Tiedostosi ladataan. \nOdota.",
+    "UploadCompleted": "{{fileName}} Lataa täydellinen",
+    "UploadCompletedDesc": "Valittu tiedosto ladattiin onnistuneesti.",
+    "UploadFailed": "{{fileName}} lähettäminen epäonnistui.",
+    "UploadFailedDesc": "Tiedoston lähettämisen yhteydessä tapahtui virhe.",
+    "UploadingFile": "Lataaminen {{fileName}} ...",
     "ValueRequired": "ValueRequired"
   },
   "general": {

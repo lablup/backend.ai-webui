@@ -634,10 +634,17 @@
     "Title": "Bir hata oluştu."
   },
   "explorer": {
+    "FileUploadCancelled": "Dosya yükleme kullanıcı isteği ile iptal edildi.",
     "FolderNotFoundOrNoAccess": "Klasör bulunamadı veya erişim reddedildi",
     "InputTooShort": "GirişÇok Kısa",
     "NoExplorerSupportForUnmanagedFolder": "Yönetilmeyen klasörler Dosya Gezgini'ni desteklemez.",
     "NoPermissions": "Bu klasöre erişmek için izin yok",
+    "ProcessingUpload": "Dosyanız yükleniyor. \nLütfen bekleyin.",
+    "UploadCompleted": "{{fileName}} Yükle Tamam",
+    "UploadCompletedDesc": "Seçilen dosya başarıyla yüklendi.",
+    "UploadFailed": "{{fileName}} yüklenemedi.",
+    "UploadFailedDesc": "Dosya yüklenirken bir hata oluştu.",
+    "UploadingFile": "{{fileName}} ... yükleme ...",
     "ValueRequired": "DeğerGerekli"
   },
   "general": {

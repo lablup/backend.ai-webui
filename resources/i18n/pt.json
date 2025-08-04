@@ -634,10 +634,17 @@
     "Title": "Ocorreu um erro."
   },
   "explorer": {
+    "FileUploadCancelled": "O upload do arquivo foi cancelado por solicitação do usuário.",
     "FolderNotFoundOrNoAccess": "Pasta não encontrada ou acesso negado",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Pastas não gerenciadas não suportam o File Explorer.",
     "NoPermissions": "Sem permissões para acessar esta pasta",
+    "ProcessingUpload": "Seu arquivo está sendo carregado. \nPor favor, aguarde.",
+    "UploadCompleted": "{{fileName}} upload completo",
+    "UploadCompletedDesc": "O arquivo selecionado foi enviado com sucesso.",
+    "UploadFailed": "Falha ao fazer upload {{fileName}}.",
+    "UploadFailedDesc": "Ocorreu um erro ao fazer upload do arquivo.",
+    "UploadingFile": "Upload {{fileName}} ...",
     "ValueRequired": "ValueRequired"
   },
   "general": {

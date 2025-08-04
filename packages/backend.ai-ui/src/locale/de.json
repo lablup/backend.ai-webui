@@ -33,6 +33,8 @@
     "DownloadStarted": "Die Datei \"{{fileName}}\" wurde gestartet.",
     "error": {
       "FileUploadSizeLimit": "Die Dateigröße überschreitet die Hochladungsgrenze."
-    }
+    },
+    "DuplicatedFilesDesc": "Die Datei oder der Ordner mit demselben Namen existieren bereits. \nMöchten Sie überschreiben?",
+    "DuplicatedFiles": "Überschreibung der Bestätigung"
   }
 }

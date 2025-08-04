@@ -638,10 +638,17 @@
     "Title": "An error has occurred."
   },
   "explorer": {
+    "FileUploadCancelled": "The file upload was canceled by user request.",
     "FolderNotFoundOrNoAccess": "Folder not found or access denied",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Unmanaged folders do not support the file explorer.",
     "NoPermissions": "No permissions to access this folder",
+    "ProcessingUpload": "Your file is being uploaded. Please wait.",
+    "UploadCompleted": "{{fileName}} Upload Complete",
+    "UploadCompletedDesc": "The selected file was uploaded successfully.",
+    "UploadFailed": "Failed to upload {{fileName}}.",
+    "UploadFailedDesc": "An error occurred while uploading the file.",
+    "UploadingFile": "Uploading {{fileName}}...",
     "ValueRequired": "ValueRequired"
   },
   "general": {
