@@ -621,13 +621,13 @@
     "SmallerResourceThenImageRequires": "您的资源请求小于图像要求的最小值。尝试更多资源。",
     "TooManyLoginFailures": "短时间内登录失败次数过多。登录被暂时阻止。",
     "UnauthorizedToken": "未经授权的令牌。请检查您的令牌。",
-    "UnexpectedError": "發生意外錯誤。如果問題持續下去，請稍後再試或聯繫支持。",
     "UnknownError": "出现未知错误。请重试。",
     "UpdateError": "更新錯誤",
     "UserHasNoGroup": "用户没有组。请联系管理员修复。",
     "UserNameAlreadyExist": "用户名已存在。不能重复。",
     "VirtualFolderAlreadyExist": "已存在同名的虚拟文件夹。删除自己的文件夹或拒绝邀请。",
-    "WrongAPIServerAddress": "错误的 API 服务器地址。"
+    "WrongAPIServerAddress": "错误的 API 服务器地址。",
+    "UnexpectedError": "發生意外錯誤。如果問題持續下去，請稍後再試或聯繫支持。"
   },
   "errorBoundary": {
     "DisplayOnlyDevEnv": "此错误块仅在 WebUI 开发环境中显示。",
@@ -641,7 +641,14 @@
     "FolderNotFoundOrNoAccess": "未找到或拒絕訪問的文件夾",
     "InputTooShort": "輸入太短",
     "NoExplorerSupportForUnmanagedFolder": "未管理的文件夾不支持文件資源管理器。",
-    "ValueRequired": "需要值"
+    "ValueRequired": "需要值",
+    "UploadingFile": "上傳{{fileName}} ...",
+    "UploadFailedDesc": "上傳文件時發生錯誤。",
+    "UploadFailed": "無法上傳{{fileName}}。",
+    "UploadCompletedDesc": "所選文件已成功上傳。",
+    "UploadCompleted": "{{fileName}}上傳完成",
+    "ProcessingUpload": "您的文件正在上傳。請稍等。",
+    "FileUploadCancelled": "文件上傳已通過用戶請求取消。"
   },
   "general": {
     "AccessKey": "訪問密鑰",

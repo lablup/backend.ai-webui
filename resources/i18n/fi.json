@@ -621,13 +621,13 @@
     "SmallerResourceThenImageRequires": "Resurssipyyntösi on pienempi kuin kuvan edellyttämä minimi. Kokeile lisää resursseja.",
     "TooManyLoginFailures": "Kirjautumishäiriöitä on ollut liian monta lyhyessä ajassa. Sisäänkirjautuminen on estetty jonkin aikaa.",
     "UnauthorizedToken": "Luvaton merkki. Tarkista tunnuksesi.",
-    "UnexpectedError": "Tapahtui odottamaton virhe. \nYritä myöhemmin uudelleen tai ota yhteyttä tukeen, jos ongelma jatkuu.",
     "UnknownError": "Tuntematon virhe tapahtui. Yritä uudelleen.",
     "UpdateError": "Päivitysvirhe",
     "UserHasNoGroup": "Käyttäjällä ei ole ryhmää. Ota yhteyttä ylläpitäjään sen korjaamiseksi.",
     "UserNameAlreadyExist": "Käyttäjätunnus on jo olemassa. Sitä ei voi kopioida.",
     "VirtualFolderAlreadyExist": "Samanniminen virtuaalikansio on jo olemassa. Poista oma kansiosi tai hylkää kutsu.",
-    "WrongAPIServerAddress": "Väärä API-palvelimen osoite."
+    "WrongAPIServerAddress": "Väärä API-palvelimen osoite.",
+    "UnexpectedError": "Tapahtui odottamaton virhe. \nYritä myöhemmin uudelleen tai ota yhteyttä tukeen, jos ongelma jatkuu."
   },
   "errorBoundary": {
     "DisplayOnlyDevEnv": "Tämä virhelohko näytetään vain WebUI-kehitysympäristössä.",
@@ -642,7 +642,14 @@
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Hallitsemattomat kansiot eivät tue tiedostotutkijaa.",
     "NoPermissions": "Ei oikeuksia käyttää tätä kansiota",
-    "ValueRequired": "ValueRequired"
+    "ValueRequired": "ValueRequired",
+    "UploadingFile": "Lataaminen {{fileName}} ...",
+    "UploadFailedDesc": "Tiedoston lähettämisen yhteydessä tapahtui virhe.",
+    "UploadFailed": "{{fileName}} lähettäminen epäonnistui.",
+    "UploadCompletedDesc": "Valittu tiedosto ladattiin onnistuneesti.",
+    "UploadCompleted": "{{fileName}} Lataa täydellinen",
+    "ProcessingUpload": "Tiedostosi ladataan. \nOdota.",
+    "FileUploadCancelled": "Tiedoston lataus peruutettiin käyttäjäpyynnöllä."
   },
   "general": {
     "AccessKey": "Access Key",

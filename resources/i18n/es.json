@@ -621,13 +621,13 @@
     "SmallerResourceThenImageRequires": "Su solicitud de recursos es inferior al mínimo requerido por la imagen. Prueba con más recursos.",
     "TooManyLoginFailures": "Ha habido demasiados fallos de inicio de sesión en poco tiempo. El inicio de sesión está bloqueado durante un tiempo.",
     "UnauthorizedToken": "Token no autorizado. Por favor, compruebe su token.",
-    "UnexpectedError": "Se produjo un error inesperado. \nVuelva a intentarlo más tarde o comuníquese con el soporte si el problema persiste.",
     "UnknownError": "Se ha producido un error desconocido. Por favor, inténtalo de nuevo.",
     "UpdateError": "Error de actualización",
     "UserHasNoGroup": "El usuario no tiene grupo. Póngase en contacto con el administrador para solucionarlo.",
     "UserNameAlreadyExist": "El nombre de usuario ya existe. No se puede duplicar.",
     "VirtualFolderAlreadyExist": "Ya existe una carpeta virtual con el mismo nombre. Elimine su propia carpeta o rechace la invitación.",
-    "WrongAPIServerAddress": "Dirección del servidor API incorrecta."
+    "WrongAPIServerAddress": "Dirección del servidor API incorrecta.",
+    "UnexpectedError": "Se produjo un error inesperado. \nVuelva a intentarlo más tarde o comuníquese con el soporte si el problema persiste."
   },
   "errorBoundary": {
     "DisplayOnlyDevEnv": "Este bloque de error sólo se muestra en el entorno de desarrollo WebUI.",
@@ -642,7 +642,14 @@
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Las carpetas no administradas no admiten el explorador de archivos.",
     "NoPermissions": "No hay permisos para acceder a esta carpeta",
-    "ValueRequired": "ValorRequerido"
+    "ValueRequired": "ValorRequerido",
+    "UploadingFile": "Carga {{fileName}} ...",
+    "UploadFailedDesc": "Se produjo un error al cargar el archivo.",
+    "UploadFailed": "No se pudo cargar {{fileName}}.",
+    "UploadCompletedDesc": "El archivo seleccionado se cargó correctamente.",
+    "UploadCompleted": "{{fileName}} cargar completo",
+    "ProcessingUpload": "Se está cargando su archivo. \nEspere por favor.",
+    "FileUploadCancelled": "La carga de archivo fue cancelada por solicitud del usuario."
   },
   "general": {
     "AccessKey": "Clave de acceso",

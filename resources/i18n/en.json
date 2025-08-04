@@ -625,13 +625,13 @@
     "SmallerResourceThenImageRequires": "Your resource request is smaller than the minimum required by the image. Try more resources.",
     "TooManyLoginFailures": "There have been too many login failures in a short time. Login is blocked for a while.",
     "UnauthorizedToken": "Unauthorized token. Please check your token.",
-    "UnexpectedError": "An unexpected error occurred. Please try again later or contact support if the problem persists.",
     "UnknownError": "An unknown error occurred. Please try again.",
     "UpdateError": "Update error",
     "UserHasNoGroup": "User has no group. Please contact administrator to fix it.",
     "UserNameAlreadyExist": "Username already exists. It cannot be duplicated.",
     "VirtualFolderAlreadyExist": "A virtual folder with the same name already exists. Delete your own folder or decline the invitation.",
-    "WrongAPIServerAddress": "Wrong API server address."
+    "WrongAPIServerAddress": "Wrong API server address.",
+    "UnexpectedError": "An unexpected error occurred. Please try again later or contact support if the problem persists."
   },
   "errorBoundary": {
     "DisplayOnlyDevEnv": "This error block is displayed only in WebUI development environment.",
@@ -646,7 +646,14 @@
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Unmanaged folders do not support the file explorer.",
     "NoPermissions": "No permissions to access this folder",
-    "ValueRequired": "ValueRequired"
+    "ValueRequired": "ValueRequired",
+    "UploadingFile": "Uploading {{fileName}}...",
+    "UploadFailedDesc": "An error occurred while uploading the file.",
+    "UploadFailed": "Failed to upload {{fileName}}.",
+    "UploadCompletedDesc": "The selected file was uploaded successfully.",
+    "UploadCompleted": "{{fileName}} Upload Complete",
+    "ProcessingUpload": "Your file is being uploaded. Please wait.",
+    "FileUploadCancelled": "The file upload was canceled by user request."
   },
   "general": {
     "AccessKey": "Access Key",
