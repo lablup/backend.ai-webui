@@ -640,7 +640,14 @@
     "FolderNotFoundOrNoAccess": "Папка не найдена или доступа отказана",
     "InputTooShort": "ВводОченьКороток",
     "NoExplorerSupportForUnmanagedFolder": "Неуправляемые папки не поддерживают исследователь файлов.",
-    "ValueRequired": "НужноЗначение"
+    "ValueRequired": "НужноЗначение",
+    "UploadingFile": "Загрузка {{fileName}} ...",
+    "UploadFailedDesc": "Произошла ошибка при загрузке файла.",
+    "UploadFailed": "Не удалось загрузить {{fileName}}.",
+    "UploadCompletedDesc": "Выбранный файл был успешно загружен.",
+    "UploadCompleted": "{{fileName}} загрузить заполнен",
+    "ProcessingUpload": "Ваш файл загружается. \nПожалуйста, подождите.",
+    "FileUploadCancelled": "Загрузка файла была отменена пользовательским запросом."
   },
   "general": {
     "AccessKey": "Ключ доступа",

@@ -639,7 +639,14 @@
     "InputTooShort": "Хэт богино байна",
     "NoExplorerSupportForUnmanagedFolder": "НҮБ-нээгүй хавтас нь файлын Explorer-ийг дэмждэггүй.",
     "NoPermissions": "Энэ хавтсанд нэвтрэх зөвшөөрөл байхгүй байна",
-    "ValueRequired": "Утга Шаардлагатай"
+    "ValueRequired": "Утга Шаардлагатай",
+    "UploadingFile": "Байршуулж буй {{fileName}} ...",
+    "UploadFailedDesc": "Файлыг байршуулах үед алдаа гарлаа.",
+    "UploadFailed": "{{fileName}} -ийг байршуулж чадсангүй.}.",
+    "UploadCompletedDesc": "Сонгосон файлыг амжилттай байршуулсан.",
+    "UploadCompleted": "{{fileName}}} байршуулах бүрэн",
+    "ProcessingUpload": "Таны файлыг байршуулж байна. \nТүр хүлээнэ үү",
+    "FileUploadCancelled": "Файлын байршуулалтыг хэрэглэгчийн хүсэлтээр цуцлагдсан."
   },
   "general": {
     "AccessKey": "Нэвтрэх түлхүүр",

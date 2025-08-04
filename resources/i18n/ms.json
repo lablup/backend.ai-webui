@@ -640,7 +640,14 @@
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Folder yang tidak dikendalikan tidak menyokong penjelajah fail.",
     "NoPermissions": "Tiada kebenaran untuk mengakses folder ini",
-    "ValueRequired": "Nilai Diperlukan"
+    "ValueRequired": "Nilai Diperlukan",
+    "UploadingFile": "Memuat naik {{fileName}} ...",
+    "UploadFailedDesc": "Ralat berlaku semasa memuat naik fail.",
+    "UploadFailed": "Gagal memuat naik {{fileName}}.",
+    "UploadCompletedDesc": "Fail yang dipilih telah dimuat naik dengan jayanya.",
+    "UploadCompleted": "{{fileName}} Muat naik lengkap",
+    "ProcessingUpload": "Fail anda sedang dimuat naik. \nTolong tunggu.",
+    "FileUploadCancelled": "Muat naik fail dibatalkan oleh permintaan pengguna."
   },
   "general": {
     "AccessKey": "Kunci akses",

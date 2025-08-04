@@ -641,7 +641,14 @@
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Hallitsemattomat kansiot eivät tue tiedostotutkijaa.",
     "NoPermissions": "Ei oikeuksia käyttää tätä kansiota",
-    "ValueRequired": "ValueRequired"
+    "ValueRequired": "ValueRequired",
+    "UploadingFile": "Lataaminen {{fileName}} ...",
+    "UploadFailedDesc": "Tiedoston lähettämisen yhteydessä tapahtui virhe.",
+    "UploadFailed": "{{fileName}} lähettäminen epäonnistui.",
+    "UploadCompletedDesc": "Valittu tiedosto ladattiin onnistuneesti.",
+    "UploadCompleted": "{{fileName}} Lataa täydellinen",
+    "ProcessingUpload": "Tiedostosi ladataan. \nOdota.",
+    "FileUploadCancelled": "Tiedoston lataus peruutettiin käyttäjäpyynnöllä."
   },
   "general": {
     "AccessKey": "Access Key",

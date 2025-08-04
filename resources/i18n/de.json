@@ -641,7 +641,14 @@
     "InputTooShort": "EingabeTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Nicht verwaltete Ordner unterstützen den Datei -Explorer nicht.",
     "NoPermissions": "Keine Berechtigungen für den Zugriff auf diesen Ordner",
-    "ValueRequired": "WertErforderlich"
+    "ValueRequired": "WertErforderlich",
+    "UploadingFile": "Hochladen {{fileName}} ...",
+    "UploadFailedDesc": "Beim Hochladen der Datei trat ein Fehler auf.",
+    "UploadFailed": "{{fileName}} nicht hochladen.",
+    "UploadCompletedDesc": "Die ausgewählte Datei wurde erfolgreich hochgeladen.",
+    "UploadCompleted": "{{fileName}} Laden Sie fertig hoch",
+    "ProcessingUpload": "Ihre Datei wird hochgeladen. \nBitte warten.",
+    "FileUploadCancelled": "Das Datei -Upload wurde durch Benutzeranforderung storniert."
   },
   "general": {
     "AccessKey": "Zugangsschlüssel",

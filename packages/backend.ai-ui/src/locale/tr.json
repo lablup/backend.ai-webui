@@ -6,11 +6,6 @@
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} öğelerinin {{total}}"
   },
-  "comp:BAITable": {
-    "SettingTable": "Masa Ayarları",
-    "SelectColumnToDisplay": "Görüntülemek için sütunları seçin",
-    "SearchTableColumn": "Arama Tablosu sütunları"
-  },
   "general": {
     "NSelected": "{{count}} seçildi",
     "button": {
@@ -38,7 +33,14 @@
     "DownloadStarted": "Dosya \"{{fileName}}\" indirme başlatıldı.",
     "error": {
       "FileUploadSizeLimit": "Dosya boyutu yükleme boyutu sınırını aşar."
-    }
+    },
+    "DuplicatedFilesDesc": "Aynı ada sahip dosya veya klasör zaten mevcuttur. \nÜzerine yazmak ister misin?",
+    "DuplicatedFiles": "Üzerine Yazın Onay"
+  },
+  "comp:BAITable": {
+    "SettingTable": "Masa Ayarları",
+    "SelectColumnToDisplay": "Görüntülemek için sütunları seçin",
+    "SearchTableColumn": "Arama Tablosu sütunları"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Arama",

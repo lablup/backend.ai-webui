@@ -640,7 +640,14 @@
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "管理されていないフォルダーは、ファイルエクスプローラーをサポートしていません。",
     "NoPermissions": "このフォルダーにアクセスする権限はありません",
-    "ValueRequired": "ValueRequired"
+    "ValueRequired": "ValueRequired",
+    "UploadingFile": "{{fileName}}のアップロード...",
+    "UploadFailedDesc": "ファイルのアップロード中にエラーが発生しました。",
+    "UploadFailed": "{{fileName}}をアップロードできませんでした。",
+    "UploadCompletedDesc": "選択したファイルは正常にアップロードされました。",
+    "UploadCompleted": "{{fileName}}アップロード完了",
+    "ProcessingUpload": "ファイルがアップロードされています。\nお待ちください。",
+    "FileUploadCancelled": "ファイルのアップロードは、ユーザーリクエストによってキャンセルされました。"
   },
   "general": {
     "AccessKey": "アクセスキー",

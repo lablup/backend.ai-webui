@@ -630,7 +630,14 @@
     "InputTooShort": "ข้อมูลที่ป้อนสั้นเกินไป",
     "NoExplorerSupportForUnmanagedFolder": "โฟลเดอร์ที่ไม่มีการจัดการไม่รองรับ File Explorer",
     "NoPermissions": "ไม่มีสิทธิ์ในการเข้าถึงโฟลเดอร์นี้",
-    "ValueRequired": "ต้องระบุค่า"
+    "ValueRequired": "ต้องระบุค่า",
+    "UploadingFile": "การอัปโหลด {{ชื่อfileName}} ...",
+    "UploadFailedDesc": "เกิดข้อผิดพลาดขณะอัปโหลดไฟล์",
+    "UploadFailed": "ไม่สามารถอัปโหลด {{fileName}}",
+    "UploadCompletedDesc": "ไฟล์ที่เลือกถูกอัพโหลดเรียบร้อยแล้ว",
+    "UploadCompleted": "{{fileName}} อัปโหลดเสร็จสมบูรณ์",
+    "ProcessingUpload": "ไฟล์ของคุณกำลังถูกอัปโหลด \nโปรดรอ.",
+    "FileUploadCancelled": "การอัปโหลดไฟล์ถูกยกเลิกโดยคำขอผู้ใช้"
   },
   "general": {
     "AccessKey": "คีย์การเข้าถึง",

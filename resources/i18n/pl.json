@@ -640,7 +640,14 @@
     "FolderNotFoundOrNoAccess": "Folder nie został znaleziony ani nie ma dostępu",
     "InputTooShort": "Wejście zbyt krótkie",
     "NoExplorerSupportForUnmanagedFolder": "Foldery niezarządzane nie obsługują eksploratora plików.",
-    "ValueRequired": "Wymagana wartość"
+    "ValueRequired": "Wymagana wartość",
+    "UploadingFile": "Przesyłanie {{fileName}} ...",
+    "UploadFailedDesc": "Wystąpił błąd podczas przesłania pliku.",
+    "UploadFailed": "Nie udało się przesłać {{fileName}}.",
+    "UploadCompletedDesc": "Wybrany plik został pomyślnie przesłany.",
+    "UploadCompleted": "{{fileName}} prześlij ukończ",
+    "ProcessingUpload": "Twój plik jest przesyłany. \nProszę poczekaj.",
+    "FileUploadCancelled": "Przesłanie pliku zostało anulowane na żądanie użytkownika."
   },
   "general": {
     "AccessKey": "Klucz dostępu",

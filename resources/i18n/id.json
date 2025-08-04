@@ -640,7 +640,14 @@
     "InputTooShort": "MasukanTerlaluPendek",
     "NoExplorerSupportForUnmanagedFolder": "Folder yang tidak dikelola tidak mendukung file explorer.",
     "NoPermissions": "Tidak ada izin untuk mengakses folder ini",
-    "ValueRequired": "NilaiDiperlukan"
+    "ValueRequired": "NilaiDiperlukan",
+    "UploadingFile": "Mengunggah {{fileName}} ...",
+    "UploadFailedDesc": "Terjadi kesalahan saat mengunggah file.",
+    "UploadFailed": "Gagal mengunggah {{fileName}}.",
+    "UploadCompletedDesc": "File yang dipilih berhasil diunggah.",
+    "UploadCompleted": "{{fileName}} Unggah Lengkap",
+    "ProcessingUpload": "File Anda sedang diunggah. \nHarap tunggu.",
+    "FileUploadCancelled": "Unggah file dibatalkan dengan permintaan pengguna."
   },
   "general": {
     "AccessKey": "Kunci Akses",

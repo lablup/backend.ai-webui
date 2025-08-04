@@ -641,7 +641,14 @@
     "InputTooShort": "GirişÇok Kısa",
     "NoExplorerSupportForUnmanagedFolder": "Yönetilmeyen klasörler Dosya Gezgini'ni desteklemez.",
     "NoPermissions": "Bu klasöre erişmek için izin yok",
-    "ValueRequired": "DeğerGerekli"
+    "ValueRequired": "DeğerGerekli",
+    "UploadingFile": "{{fileName}} ... yükleme ...",
+    "UploadFailedDesc": "Dosya yüklenirken bir hata oluştu.",
+    "UploadFailed": "{{fileName}} yüklenemedi.",
+    "UploadCompletedDesc": "Seçilen dosya başarıyla yüklendi.",
+    "UploadCompleted": "{{fileName}} Yükle Tamam",
+    "ProcessingUpload": "Dosyanız yükleniyor. \nLütfen bekleyin.",
+    "FileUploadCancelled": "Dosya yükleme kullanıcı isteği ile iptal edildi."
   },
   "general": {
     "AccessKey": "Erişim anahtarı",
