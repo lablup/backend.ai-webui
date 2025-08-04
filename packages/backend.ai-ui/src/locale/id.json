@@ -6,11 +6,6 @@
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} dari {{total}} item"
   },
-  "comp:BAITable": {
-    "SelectColumnToDisplay": "Pilih kolom untuk ditampilkan",
-    "SettingTable": "Pengaturan Tabel",
-    "SearchTableColumn": "Kolom Tabel Cari"
-  },
   "general": {
     "NSelected": "{{count}} dipilih",
     "button": {
@@ -38,7 +33,14 @@
     "DownloadStarted": "File \"{{fileName}}\" unduhan telah dimulai.",
     "error": {
       "FileUploadSizeLimit": "Ukuran file melebihi batas ukuran unggahan."
-    }
+    },
+    "DuplicatedFilesDesc": "File atau folder dengan nama yang sama sudah ada. \nApakah Anda ingin menimpa?",
+    "DuplicatedFiles": "Timpa konfirmasi"
+  },
+  "comp:BAITable": {
+    "SelectColumnToDisplay": "Pilih kolom untuk ditampilkan",
+    "SettingTable": "Pengaturan Tabel",
+    "SearchTableColumn": "Kolom Tabel Cari"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Pencarian",
