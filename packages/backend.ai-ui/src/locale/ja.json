@@ -6,11 +6,6 @@
   "comp:PaginationInfoText": {
     "Total": "{{start}}  -  {{end}} of {{total}}アイテム"
   },
-  "comp:BAITable": {
-    "SelectColumnToDisplay": "表示する列を選択します",
-    "SettingTable": "テーブル設定",
-    "SearchTableColumn": "テーブル列を検索します"
-  },
   "error": {
     "UnknownError": "不明なエラーが発生しました。\nもう一度やり直してください。"
   },
@@ -42,7 +37,14 @@
     "DownloadStarted": "ファイル \"{{fileName}}\"ダウンロードが開始されました。",
     "error": {
       "FileUploadSizeLimit": "ファイルサイズはアップロードサイズの制限を超えています。"
-    }
+    },
+    "DuplicatedFilesDesc": "同じ名前のファイルまたはフォルダーはすでに存在しています。\n上書きしますか？",
+    "DuplicatedFiles": "確認の上書き"
+  },
+  "comp:BAITable": {
+    "SelectColumnToDisplay": "表示する列を選択します",
+    "SettingTable": "テーブル設定",
+    "SearchTableColumn": "テーブル列を検索します"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "検索",

@@ -635,10 +635,17 @@
     "Title": "Алдаа гарсан байна."
   },
   "explorer": {
+    "FileInProgress": "Файлуудыг '{{fileName}}}' ...",
+    "FileUploadCancelled": "Файлын байршуулалтыг хэрэглэгчийн хүсэлтээр цуцлагдсан.",
+    "FileUploadFailed": "'{{folderName}}' Файлд файл байршуулж чадсангүй.",
     "FolderNotFoundOrNoAccess": "Фолдер олдсонгүй эсвэл хандалтыг үгүйсгэв",
     "InputTooShort": "Хэт богино байна",
     "NoExplorerSupportForUnmanagedFolder": "НҮБ-нээгүй хавтас нь файлын Explorer-ийг дэмждэггүй.",
     "NoPermissions": "Энэ хавтсанд нэвтрэх зөвшөөрөл байхгүй байна",
+    "ProcessingUpload": "Таны файлыг байршуулж байна. \nТүр хүлээнэ үү",
+    "SuccessfullyUploadedToFolder": "Файлууд '{{folderName}}' хавтасанд амжилттай байршуулсан файлууд.",
+    "UploadFailed": "'{{folderName}} -д бүтэлгүйтсэн.",
+    "UploadToFolder": "'{{folderName}}' руу байршуулж байна.",
     "ValueRequired": "Утга Шаардлагатай"
   },
   "general": {
