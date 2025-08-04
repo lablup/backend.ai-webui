@@ -1,5 +1,51 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAITestButton": {
+    "Test": "prueba"
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} de {{total}} elementos"
+  },
+  "comp:BAITable": {
+    "SettingTable": "Configuración de tabla",
+    "SelectColumnToDisplay": "Seleccionar columnas para mostrar",
+    "SearchTableColumn": "Columnas de la tabla de búsqueda"
+  },
+  "error": {
+    "UnknownError": "Ocurrió un error desconocido. \nPor favor intente de nuevo."
+  },
+  "general": {
+    "NSelected": "{{count}} seleccionado",
+    "button": {
+      "Delete": "Borrar",
+      "Create": "Crear",
+      "Upload": "Subir",
+      "CopyAll": "Copiar todo"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "Los archivos y carpetas seleccionados se han eliminado correctamente.",
+    "DeleteSelectedItemsDialog": "Eliminar confirmación",
+    "DeleteSelectedItemDesc": "Los archivos y carpetas eliminados no se pueden restaurar. \n¿Quieres continuar?",
+    "FolderCreatedSuccessfully": "Carpeta creada con éxito.",
+    "CreateANewFolder": "Crea una nueva carpeta",
+    "FolderName": "Nombre de carpeta",
+    "PleaseEnterAFolderName": "Ingrese el nombre de la carpeta.",
+    "MaxFolderNameLength": "El nombre de la carpeta debe ser de 255 caracteres o menos.",
+    "Name": "Nombre",
+    "Size": "Tamaño",
+    "CreatedAt": "Creado a",
+    "ModifiedAt": "Modificado en",
+    "Controls": "Control",
+    "UploadFiles": "Cargar archivos",
+    "UploadFolder": "Carpeta de carga",
+    "DownloadStarted": "El archivo \"{{fileName}}\" ha comenzado.",
+    "error": {
+      "FileUploadSizeLimit": "El tamaño del archivo excede el límite de tamaño de carga."
+    },
+    "DuplicatedFilesDesc": "El archivo o carpeta con el mismo nombre ya existe. \n¿Quieres sobrescribir?",
+    "DuplicatedFiles": "Confirmación de sobrescribencia"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Buscar en",
     "ResetFilter": "Restablecer filtros"
@@ -10,51 +56,7 @@
   "comp:BAIStatistic": {
     "Unlimited": "Ilimitado"
   },
-  "comp:BAITable": {
-    "SearchTableColumn": "Columnas de la tabla de búsqueda",
-    "SelectColumnToDisplay": "Seleccionar columnas para mostrar",
-    "SettingTable": "Configuración de tabla"
-  },
-  "comp:BAITestButton": {
-    "Test": "prueba"
-  },
-  "comp:FileExplorer": {
-    "Controls": "Control",
-    "CreateANewFolder": "Crea una nueva carpeta",
-    "CreatedAt": "Creado a",
-    "DeleteSelectedItemDesc": "Los archivos y carpetas eliminados no se pueden restaurar. \n¿Quieres continuar?",
-    "DeleteSelectedItemsDialog": "Eliminar confirmación",
-    "DownloadStarted": "El archivo \"{{fileName}}\" ha comenzado.",
-    "FolderCreatedSuccessfully": "Carpeta creada con éxito.",
-    "FolderName": "Nombre de carpeta",
-    "MaxFolderNameLength": "El nombre de la carpeta debe ser de 255 caracteres o menos.",
-    "ModifiedAt": "Modificado en",
-    "Name": "Nombre",
-    "PleaseEnterAFolderName": "Ingrese el nombre de la carpeta.",
-    "SelectedItemsDeletedSuccessfully": "Los archivos y carpetas seleccionados se han eliminado correctamente.",
-    "Size": "Tamaño",
-    "UploadFiles": "Cargar archivos",
-    "UploadFolder": "Carpeta de carga",
-    "error": {
-      "FileUploadSizeLimit": "El tamaño del archivo excede el límite de tamaño de carga."
-    }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} de {{total}} elementos"
-  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "No hay datos de recursos disponibles"
-  },
-  "error": {
-    "UnknownError": "Ocurrió un error desconocido. \nPor favor intente de nuevo."
-  },
-  "general": {
-    "NSelected": "{{count}} seleccionado",
-    "button": {
-      "CopyAll": "Copiar todo",
-      "Create": "Crear",
-      "Delete": "Borrar",
-      "Upload": "Subir"
-    }
   }
 }

@@ -1,5 +1,51 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAITestButton": {
+    "Test": "teste"
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} de {{total}} itens"
+  },
+  "comp:BAITable": {
+    "SelectColumnToDisplay": "Selecione colunas para exibir",
+    "SettingTable": "Configurações da tabela",
+    "SearchTableColumn": "Pesquisar colunas da tabela"
+  },
+  "error": {
+    "UnknownError": "Ocorreu um erro desconhecido. \nPor favor, tente novamente."
+  },
+  "general": {
+    "NSelected": "{{count}} selecionado",
+    "button": {
+      "Delete": "Excluir",
+      "Create": "Criar",
+      "Upload": "Carregar",
+      "CopyAll": "Copie tudo"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "Arquivos e pastas selecionados foram excluídos com sucesso.",
+    "DeleteSelectedItemsDialog": "Excluir confirmação",
+    "DeleteSelectedItemDesc": "Arquivos e pastas excluídas não podem ser restauradas. \nVocê quer prosseguir?",
+    "FolderCreatedSuccessfully": "Pasta criada com sucesso.",
+    "CreateANewFolder": "Crie uma nova pasta",
+    "FolderName": "Nome da pasta",
+    "PleaseEnterAFolderName": "Por favor, insira o nome da pasta.",
+    "MaxFolderNameLength": "O nome da pasta deve ter 255 caracteres ou menos.",
+    "Name": "Nome",
+    "Size": "Tamanho",
+    "CreatedAt": "Criado em",
+    "ModifiedAt": "Modificado em",
+    "Controls": "Controles",
+    "UploadFiles": "Faça o upload de arquivos",
+    "UploadFolder": "Faça o upload da pasta",
+    "DownloadStarted": "Arquivo \"{{fileName}}\" o download foi iniciado.",
+    "error": {
+      "FileUploadSizeLimit": "O tamanho do arquivo excede o limite de tamanho de upload."
+    },
+    "DuplicatedFilesDesc": "O arquivo ou pasta com o mesmo nome já existe. \nVocê quer substituir?",
+    "DuplicatedFiles": "Substituição de substituição"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Pesquisar",
     "ResetFilter": "Redefinir filtros"
@@ -10,51 +56,7 @@
   "comp:BAIStatistic": {
     "Unlimited": "Ilimitado"
   },
-  "comp:BAITable": {
-    "SearchTableColumn": "Pesquisar colunas da tabela",
-    "SelectColumnToDisplay": "Selecione colunas para exibir",
-    "SettingTable": "Configurações da tabela"
-  },
-  "comp:BAITestButton": {
-    "Test": "teste"
-  },
-  "comp:FileExplorer": {
-    "Controls": "Controles",
-    "CreateANewFolder": "Crie uma nova pasta",
-    "CreatedAt": "Criado em",
-    "DeleteSelectedItemDesc": "Arquivos e pastas excluídas não podem ser restauradas. \nVocê quer prosseguir?",
-    "DeleteSelectedItemsDialog": "Excluir confirmação",
-    "DownloadStarted": "Arquivo \"{{fileName}}\" o download foi iniciado.",
-    "FolderCreatedSuccessfully": "Pasta criada com sucesso.",
-    "FolderName": "Nome da pasta",
-    "MaxFolderNameLength": "O nome da pasta deve ter 255 caracteres ou menos.",
-    "ModifiedAt": "Modificado em",
-    "Name": "Nome",
-    "PleaseEnterAFolderName": "Por favor, insira o nome da pasta.",
-    "SelectedItemsDeletedSuccessfully": "Arquivos e pastas selecionados foram excluídos com sucesso.",
-    "Size": "Tamanho",
-    "UploadFiles": "Faça o upload de arquivos",
-    "UploadFolder": "Faça o upload da pasta",
-    "error": {
-      "FileUploadSizeLimit": "O tamanho do arquivo excede o limite de tamanho de upload."
-    }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} de {{total}} itens"
-  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Sem dados de recurso disponíveis"
-  },
-  "error": {
-    "UnknownError": "Ocorreu um erro desconhecido. \nPor favor, tente novamente."
-  },
-  "general": {
-    "NSelected": "{{count}} selecionado",
-    "button": {
-      "CopyAll": "Copie tudo",
-      "Create": "Criar",
-      "Delete": "Excluir",
-      "Upload": "Carregar"
-    }
   }
 }

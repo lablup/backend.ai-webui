@@ -1,5 +1,51 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAITestButton": {
+    "Test": "テスト"
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}}  -  {{end}} of {{total}}アイテム"
+  },
+  "comp:BAITable": {
+    "SelectColumnToDisplay": "表示する列を選択します",
+    "SettingTable": "テーブル設定",
+    "SearchTableColumn": "テーブル列を検索します"
+  },
+  "error": {
+    "UnknownError": "不明なエラーが発生しました。\nもう一度やり直してください。"
+  },
+  "general": {
+    "NSelected": "{{count}}選択",
+    "button": {
+      "Delete": "消去",
+      "Create": "作成する",
+      "Upload": "アップロード",
+      "CopyAll": "すべてをコピーします"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "選択したファイルとフォルダーは正常に削除されました。",
+    "DeleteSelectedItemsDialog": "確認を削除します",
+    "DeleteSelectedItemDesc": "削除されたファイルとフォルダーを復元できません。\n先に進みたいですか？",
+    "FolderCreatedSuccessfully": "フォルダーは正常に作成されました。",
+    "CreateANewFolder": "新しいフォルダーを作成します",
+    "FolderName": "フォルダー名",
+    "PleaseEnterAFolderName": "フォルダー名を入力してください。",
+    "MaxFolderNameLength": "フォルダー名は255文字以下でなければなりません。",
+    "Name": "名前",
+    "Size": "サイズ",
+    "CreatedAt": "で作成されました",
+    "ModifiedAt": "で変更されました",
+    "Controls": "コントロール",
+    "UploadFiles": "ファイルをアップロードします",
+    "UploadFolder": "フォルダーをアップロードします",
+    "DownloadStarted": "ファイル \"{{fileName}}\"ダウンロードが開始されました。",
+    "error": {
+      "FileUploadSizeLimit": "ファイルサイズはアップロードサイズの制限を超えています。"
+    },
+    "DuplicatedFilesDesc": "同じ名前のファイルまたはフォルダーはすでに存在しています。\n上書きしますか？",
+    "DuplicatedFiles": "確認の上書き"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "検索",
     "ResetFilter": "フィルターをリセットする"
@@ -10,51 +56,7 @@
   "comp:BAIStatistic": {
     "Unlimited": "無制限"
   },
-  "comp:BAITable": {
-    "SearchTableColumn": "テーブル列を検索します",
-    "SelectColumnToDisplay": "表示する列を選択します",
-    "SettingTable": "テーブル設定"
-  },
-  "comp:BAITestButton": {
-    "Test": "テスト"
-  },
-  "comp:FileExplorer": {
-    "Controls": "コントロール",
-    "CreateANewFolder": "新しいフォルダーを作成します",
-    "CreatedAt": "で作成されました",
-    "DeleteSelectedItemDesc": "削除されたファイルとフォルダーを復元できません。\n先に進みたいですか？",
-    "DeleteSelectedItemsDialog": "確認を削除します",
-    "DownloadStarted": "ファイル \"{{fileName}}\"ダウンロードが開始されました。",
-    "FolderCreatedSuccessfully": "フォルダーは正常に作成されました。",
-    "FolderName": "フォルダー名",
-    "MaxFolderNameLength": "フォルダー名は255文字以下でなければなりません。",
-    "ModifiedAt": "で変更されました",
-    "Name": "名前",
-    "PleaseEnterAFolderName": "フォルダー名を入力してください。",
-    "SelectedItemsDeletedSuccessfully": "選択したファイルとフォルダーは正常に削除されました。",
-    "Size": "サイズ",
-    "UploadFiles": "ファイルをアップロードします",
-    "UploadFolder": "フォルダーをアップロードします",
-    "error": {
-      "FileUploadSizeLimit": "ファイルサイズはアップロードサイズの制限を超えています。"
-    }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}}  -  {{end}} of {{total}}アイテム"
-  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "利用可能なリソースデータはありません"
-  },
-  "error": {
-    "UnknownError": "不明なエラーが発生しました。\nもう一度やり直してください。"
-  },
-  "general": {
-    "NSelected": "{{count}}選択",
-    "button": {
-      "CopyAll": "すべてをコピーします",
-      "Create": "作成する",
-      "Delete": "消去",
-      "Upload": "アップロード"
-    }
   }
 }
