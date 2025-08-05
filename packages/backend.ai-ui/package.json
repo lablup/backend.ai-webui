@@ -62,6 +62,13 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-i18next": "^15.4.1",
+    "antd": "^5.26.7",
+    "antd-style": "^3.7.1",
+    "graphql": "^16.11.0",
+    "i18next": "^25.3.2",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-i18next": "^15.6.1",
     "react-relay": "^20.1.0",
     "relay-runtime": "^20.1.0"
   },

@@ -14,6 +14,7 @@ onlyBuiltDependencies:
   - esbuild
   - unrs-resolver
   - utf-8-validate
+  - unrs-resolver
 
 patchedDependencies:
   '@cloudscape-design/board-components@3.0.60': react/patches/@cloudscape-design__board-components@3.0.60.patch
