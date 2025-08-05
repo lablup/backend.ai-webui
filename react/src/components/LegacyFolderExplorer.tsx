@@ -140,7 +140,7 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
       className={styles.baiModalHeader}
       centered
       width={'90%'}
-      destroyOnClose
+      destroyOnHidden
       footer={null}
       title={
         vfolder_node ? (

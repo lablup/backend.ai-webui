@@ -280,7 +280,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
           </Flex>
         </Flex>
       }
-      destroyOnClose
+      destroyOnHidden
       {...modalProps}
     >
       <Flex direction="column" align="stretch" gap={'sm'}>
