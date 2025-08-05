@@ -12,7 +12,7 @@ import dayjs from 'dayjs';
 import _ from 'lodash';
 import React, { useState, useTransition } from 'react';
 
-interface FileItem {
+export interface FileItem {
   name: string;
   type: string;
   size: number;
