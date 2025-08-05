@@ -63,6 +63,7 @@ export interface NotificationState
     };
     renderDataMessage?: (message?: string) => React.ReactNode;
     promise?: Promise<unknown> | null;
+    cleanup?: () => void;
   };
   extraDescription?: string | null;
   onCancel?: (() => void) | null;
@@ -149,6 +150,7 @@ export const useBAINotificationEffect = () => {
             });
           })
           .finally(() => {
+            notification.backgroundTask?.cleanup?.();
             listeningPromiseKeysRef.current = _.without(
               listeningPromiseKeysRef.current,
               notification.key,
