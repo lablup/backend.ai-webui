@@ -8,7 +8,10 @@ const {
   addBeforeAssetModule,
   getAssetModule,
   assetModuleByName,
+  whenDev,
 } = require('@craco/craco');
+
+const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 
 module.exports = {
   devServer: {
@@ -54,6 +57,13 @@ module.exports = {
       if (isFound) {
         match.rule.oneOf = [
           {
+            test: /\.svg$/i,
+            resourceQuery: /react/,
+
+            issuer: /\.[jt]sx?$/,
+            use: ['@svgr/webpack'],
+          },
+          {
             resourceQuery: /raw/,
             type: 'asset/source',
           },
@@ -61,6 +71,34 @@ module.exports = {
         ];
       } else {
         throw new Error('Cannot find asset module');
+      }
+
+      // Configure TypeScript loader for files in alias directories
+      if (env === 'development') {
+        const { isFound: tsLoaderFound, match: tsMatch } = getLoader(
+          webpackConfig,
+          loaderByName('babel-loader'),
+        );
+
+        if (tsLoaderFound) {
+          // Extend the include path to handle aliased directories
+          const backendAiUiPath = path.resolve(
+            __dirname,
+            '../packages/backend.ai-ui/src',
+          );
+          if (tsMatch.loader.include) {
+            if (Array.isArray(tsMatch.loader.include)) {
+              tsMatch.loader.include.push(backendAiUiPath);
+            } else {
+              tsMatch.loader.include = [
+                tsMatch.loader.include,
+                backendAiUiPath,
+              ];
+            }
+          } else {
+            tsMatch.loader.include = [paths.appSrc, backendAiUiPath];
+          }
+        }
       }
 
       // For development when loading react bundle on other host, you need to set the public path to the dev server address.
@@ -101,12 +139,40 @@ module.exports = {
       });
       paths.appHtml = webuiIndexHtml;
 
+      // Remove ModuleScopePlugin for development environment
+      if (env === 'development') {
+        webpackConfig.resolve.plugins = webpackConfig.resolve.plugins.filter(
+          (plugin) =>
+            !(
+              plugin instanceof ModuleScopePlugin ||
+              plugin.name === 'ModuleScopePlugin'
+            ),
+        );
+      }
+
       return {
         ...webpackConfig,
         resolve: {
           ...webpackConfig.resolve,
           alias: {
             ...webpackConfig.resolve.alias,
+            ...whenDev(
+              () => ({
+                'backend.ai-ui/dist': path.resolve(
+                  __dirname,
+                  '../packages/backend.ai-ui/src',
+                ),
+                'backend.ai-ui': path.resolve(
+                  __dirname,
+                  '../packages/backend.ai-ui/src',
+                ),
+                '../../../../../react/src/__generated__': path.resolve(
+                  __dirname,
+                  '../packages/backend.ai-ui/src/__generated__',
+                ),
+              }),
+              {},
+            ),
           },
           fallback: {
             ...webpackConfig.resolve.fallback,

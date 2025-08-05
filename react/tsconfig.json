@@ -10,11 +10,17 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "backend.ai-ui": ["../packages/backend.ai-ui/src/index.ts"],
+      "backend.ai-ui/*": ["../packages/backend.ai-ui/src/*"],
+      "backend.ai-ui/dist/locale/*": ["../packages/backend.ai-ui/src/locale/*"]
+    }
   },
-  "include": ["src"]
+  "include": ["src", "../packages/backend.ai-ui/src"]
 }

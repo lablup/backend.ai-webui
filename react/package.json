@@ -20,6 +20,7 @@
     "@microsoft/fetch-event-source": "^2.0.1",
     "@react-hook/resize-observer": "^2.0.2",
     "@storybook/test": "^8.6.10",
+    "@svgr/webpack": "^8.1.0",
     "@tanstack/react-query": "^5.69.0",
     "@testing-library/react": "^16.2.0",
     "@uiw/codemirror-extensions-langs": "^4.23.10",
@@ -73,7 +74,7 @@
     "web-vitals": "^3.5.2"
   },
   "scripts": {
-    "start": "wait-on node_modules/backend.ai-ui/dist && craco start",
+    "start": "craco start",
     "build": "pnpm run build:only && cp -r ./build/* ../build/rollup/",
     "build:only": "pnpm run relay && craco build",
     "test": "craco test",
@@ -147,6 +148,7 @@
     "@types/relay-runtime": "^19.0.2",
     "@types/relay-test-utils": "^19.0.0",
     "@types/uuid": "^9.0.8",
+    "react-dev-utils": "^12.0.1",
     "ajv": "^8.17.1",
     "babel-plugin-named-exports-order": "^0.0.2",
     "babel-plugin-relay": "^20.1.0",
@@ -165,7 +167,6 @@
     "relay-test-utils": "^20.1.0",
     "storybook": "^8.4.5",
     "stream-browserify": "^3.0.0",
-    "wait-on": "^8.0.3",
     "webpack": "^5.96.1"
   }
 }
