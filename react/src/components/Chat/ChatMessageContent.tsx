@@ -62,12 +62,18 @@ CodeHead.displayName = 'CodeHead';
 
 const ChatMessageContentBlock = memo<{ block?: string; isStreaming?: boolean }>(
   ({ block, isStreaming }) => {
+    const renderPre = useCallback((props: React.HTMLProps<HTMLPreElement>) => {
+      return <pre {...props} style={{ overflow: 'auto' }} />;
+    }, []);
+
     const renderCode = useCallback(
       (props: any) => {
         const { children, className, node, ref, ...rest } = props;
         const match = /language-(\w+)/.exec(className || '');
         const content = String(children ?? '').replace(/\n$/, '');
         const { token } = theme.useToken();
+
+        const isOneLine = node.position?.start?.line === node.position?.end?.line || false;
 
         return match ? (
           <Flex
@@ -114,24 +120,25 @@ const ChatMessageContentBlock = memo<{ block?: string; isStreaming?: boolean }>(
             </Flex>
           </Flex>
         ) : (
-          <Flex
+          <code
+            {...rest}
             style={{
-              width: '100%',
-              padding: token.paddingSM,
-              borderRadius: `0 0 ${token.borderRadiusLG}px ${token.borderRadiusLG}px`,
-              margin: '-0.5em 0',
-              overflow: 'scroll',
+              whiteSpace: 'pre-wrap',
+              ...(isOneLine
+                ? {
+                    backgroundColor: token.colorBgContainerDisabled,
+                    border: `1px solid ${token.colorBorder}`,
+                    padding: '2px 6px',
+                    borderRadius: token.borderRadiusSM,
+                    fontSize: '0.875em',
+                  }
+                : {}),
             }}
+            className={className}
           >
-            <code
-              {...rest}
-              style={{ whiteSpace: 'pre-wrap' }}
-              className={className}
-            >
-              {/* @ts-ignore */}
-              {children}
-            </code>
-          </Flex>
+            {/* @ts-ignore */}
+            {children}
+          </code>
         );
       },
       [isStreaming],
@@ -145,7 +152,7 @@ const ChatMessageContentBlock = memo<{ block?: string; isStreaming?: boolean }>(
       <Markdown
         remarkPlugins={[remarkGfm, remarkMath]}
         rehypePlugins={[rehypeKatex]}
-        components={{ p: renderParagraph, code: renderCode }}
+        components={{ p: renderParagraph, code: renderCode, pre: renderPre }}
       >
         {block}
       </Markdown>
