@@ -5,7 +5,7 @@ import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import ModelCardChat from './ModelCardChat';
 import ModelCloneModal from './ModelCloneModal';
-// import ModelTryContentButton from './ModelTryContentButton';
+import ModelTryContentButton from './ModelTryContentButton';
 import ResourceNumber from './ResourceNumber';
 import { BankOutlined, FileOutlined, CopyOutlined } from '@ant-design/icons';
 import {
@@ -113,16 +113,15 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
             : '90%'
       }
       footer={[
-        // FIXME: ModelTryContentButton is not working properly
-        // It should be fixed in the future.
         // This button is used to clone-and-create/create the model service with the content of the model card.
-        /*<ModelTryContentButton
-          vfolderNode={model_card?.vfolder_node || null}
-          modelStorageHost={model_card?.vfolder?.host as string}
-          modelCardMetadata={model || null}
-          modelName={model_card?.name as string}
-          key="try"
-        />,*/
+        <Suspense key="model-try-content-button">
+          <ModelTryContentButton
+            vfolderNode={model_card?.vfolder_node || null}
+            modelStorageHost={model_card?.vfolder?.host as string}
+            modelName={model_card?.name as string}
+            key="try"
+          />
+        </Suspense>,
         <Button
           key="clone"
           type="primary"
@@ -339,12 +338,14 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                       style={{
                         width: '100%',
                       }}
-                      bodyStyle={{
-                        padding: token.paddingLG,
-                        overflowBlock: 'scroll',
-                        overflowY: 'auto',
-                        height: '300px',
-                        minHeight: 200,
+                      styles={{
+                        body: {
+                          padding: token.paddingLG,
+                          overflowBlock: 'scroll',
+                          overflowY: 'auto',
+                          height: '300px',
+                          minHeight: 200,
+                        },
                       }}
                     >
                       <Markdown>{model_card?.readme || ''}</Markdown>
