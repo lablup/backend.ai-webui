@@ -104,7 +104,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
       }
       centered
       onCancel={onRequestClose}
-      destroyOnClose
+      destroyOnHidden
       width={
         _.isEmpty(model_card?.readme) || _.isEmpty(model_card?.description)
           ? 800

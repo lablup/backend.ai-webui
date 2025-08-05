@@ -102,7 +102,7 @@ const FolderExplorer: React.FC<Props> = ({
       {...props}
       footer={null}
       width={'80%'}
-      destroyOnClose
+      destroyOnHidden
       onCancel={() => {
         onRequestClose();
       }}

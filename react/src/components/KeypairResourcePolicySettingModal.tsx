@@ -293,7 +293,7 @@ const KeypairResourcePolicySettingModal: React.FC<
       }
       onOk={handleOk}
       onCancel={() => onRequestClose()}
-      destroyOnClose
+      destroyOnHidden
       confirmLoading={
         isInFlightCommitCreateUserSetting || isInFlightCommitModifyUserSetting
       }

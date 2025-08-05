@@ -576,7 +576,7 @@ const ContainerRegistryList: React.FC<{
         onCancel={() => {
           setDeletingRegistry(null);
         }}
-        destroyOnClose
+        destroyOnHidden
         open={!!deletingRegistry}
       >
         <BAIFlex
