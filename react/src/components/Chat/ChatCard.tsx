@@ -260,7 +260,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
             middleware: extractReasoningMiddleware({ tagName: 'think' }),
           }),
           messages: body?.messages,
-          system: agent ? (agent.config.system_prompt ?? '') : '',
+          system: agent?.config.system_prompt || undefined,
           ...(chat.usingParameters ? chat.parameters : {}),
         });
 
