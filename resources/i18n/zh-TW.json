@@ -261,6 +261,7 @@
     "NewFolder": "新建文件夾",
     "NewFolderName": "新文件夹名称",
     "NoStorageDescriptionFound": "沒有說明。",
+    "NotInProject": "該文件夾屬於另一個項目。",
     "NumberOfFolders": "文件夹数量",
     "Permission": "允許",
     "Pipeline": "管道文件夹",
@@ -482,8 +483,7 @@
       "Status": "现状",
       "StatusOfSelectedHost": "选定主机的状态",
       "Used": "用過的"
-    },
-    "NotInProject": "該文件夾屬於另一個項目。"
+    }
   },
   "desktopNotification": {
     "NotSupported": "該瀏覽器不支持通知。",
@@ -912,6 +912,7 @@
     "64chars": "（最多 64 個字符）"
   },
   "modelService": {
+    "AFolderWithSimilarNameExists": "一個具有相似名稱的文件夾已經存在",
     "Active": "積極的",
     "Active/Total": "活动/总数",
     "AddRules": "添加規則",
@@ -922,6 +923,7 @@
     "CannotValidateNow": "現在無法驗證服務。\n請檢查資源分配或其他配置。",
     "Chatting": "聊天",
     "ClearErrors": "清除错误并重试",
+    "CloneModelFolderConfirm": "要運行模型服務，需要克隆文件夾。您想將其克隆為{{folderName}}並啟動服務嗎？",
     "Controls": "控制装置",
     "CreatedAt": "创建于",
     "CurrentTime": "当前时间",
@@ -969,6 +971,7 @@
     "SeeContainerLogs": "查看容器日誌",
     "ServiceAlreadyExists": "服務名稱已經存在",
     "ServiceCreated": "模型服務 {{ name }} 已成功建立。",
+    "ServiceDefinitionNotFound": "服務定義文件找不到。只有克隆可用。",
     "ServiceDelegatedFrom": "模型服务由 {{ createdUser }} 创建，但会话所有权将委托给 {{ sessionOwner }}",
     "ServiceEndpoint": "服务端点",
     "ServiceInfo": "服务信息",
@@ -1002,6 +1005,7 @@
     "TokenGenerationFailed": "令牌生成失败，请重试。",
     "TrafficRatio": "交通比率",
     "UpdateService": "更新服務",
+    "UseExistingFolderConfirm": "您想使用現有{{folderName}}文件夾啟動服務嗎？",
     "Validate": "證實",
     "ValidationInfo": "驗證訊息"
   },
@@ -1010,6 +1014,7 @@
     "Category": "类别",
     "CloneAsFolder": "克隆为文件夹",
     "CloneInfo": "它将被克隆为用户类型文件夹。",
+    "CloneRequired": "需要克隆",
     "CloneSuccess": "克隆请求已成功发送。",
     "CloneToFolder": "克隆到文件夹",
     "Created": "已創建",
