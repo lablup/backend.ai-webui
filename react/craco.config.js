@@ -35,15 +35,7 @@ module.exports = {
     },
   },
   babel: {
-    plugins: [
-      '@babel/plugin-syntax-import-attributes',
-      [
-        'relay',
-        {
-          artifactDirectory: './src/__generated__',
-        },
-      ],
-    ],
+    plugins: ['@babel/plugin-syntax-import-attributes'],
   },
   webpack: {
     // When you change the this value, you might need to clear cache restart the dev server.
@@ -53,6 +45,56 @@ module.exports = {
       const { isFound, match } = getAssetModule(webpackConfig, (rule) => {
         return rule.oneOf;
       });
+
+      const babelLoader = webpackConfig.module.rules
+        .find((rule) => rule.oneOf)
+        .oneOf.find(
+          (rule) => rule.loader && rule.loader.includes('babel-loader'),
+        );
+
+      if (babelLoader && babelLoader.options) {
+        babelLoader.options.plugins = babelLoader.options.plugins || [];
+        babelLoader.options.overrides = [
+          {
+            include: [
+              (filePath) => filePath.includes(path.resolve(__dirname, 'src')),
+            ], // include only react/src folder
+            plugins: [
+              [
+                'relay',
+                {
+                  artifactDirectory: path.resolve(
+                    __dirname,
+                    'src/__generated__',
+                  ),
+                },
+              ],
+            ],
+          },
+          {
+            include: [
+              (filePath) => {
+                const targetDir = path.resolve(
+                  __dirname,
+                  '../packages/backend.ai-ui/src',
+                );
+                return filePath.includes(targetDir);
+              },
+            ], // include only backend.ai-ui/src folder
+            plugins: [
+              [
+                'relay',
+                {
+                  artifactDirectory: path.resolve(
+                    __dirname,
+                    '../packages/backend.ai-ui/src/__generated__',
+                  ),
+                },
+              ],
+            ],
+          },
+        ];
+      }
 
       if (isFound) {
         match.rule.oneOf = [
@@ -165,10 +207,6 @@ module.exports = {
                 'backend.ai-ui': path.resolve(
                   __dirname,
                   '../packages/backend.ai-ui/src',
-                ),
-                '../../../../../react/src/__generated__': path.resolve(
-                  __dirname,
-                  '../packages/backend.ai-ui/src/__generated__',
                 ),
               }),
               {},
