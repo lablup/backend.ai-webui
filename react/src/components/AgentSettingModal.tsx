@@ -52,7 +52,7 @@ const AgentSettingModal: React.FC<AgentSettingModalProps> = ({
       {...modalProps}
       title={`${t('agent.AgentSetting')}: ${agent?.id}`}
       onCancel={() => onRequestClose()}
-      destroyOnClose
+      destroyOnHidden
       width={300}
       confirmLoading={isInFlightCommitModifyAgentSetting}
       onOk={() => {

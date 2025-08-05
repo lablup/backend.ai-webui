@@ -15,7 +15,7 @@ const FolderExplorerOpener = () => {
       onRequestClose={() => {
         setFolderId(null, 'replaceIn');
       }}
-      destroyOnClose
+      destroyOnHidden
     />
   );
 };
