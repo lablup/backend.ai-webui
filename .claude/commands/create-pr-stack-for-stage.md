@@ -49,11 +49,22 @@ The associated Jira issue is specified by `$ARGUMENTS`.
      mcp__Atlassian__searchJiraIssuesUsingJql with JQL:
      "project = FR AND sprint in openSprints() ORDER BY created DESC"
      
-     # Update the issue with sprint and assignee
+     # Get sprint ID from existing issue in active sprint
+     mcp__Atlassian__getJiraIssue with fields: ["customfield_10020"]
+     
+     # Update both assignee and sprint in single call (CORRECT FORMAT)
      mcp__Atlassian__editJiraIssue with fields:
-     - customfield_10020: sprint_id (Sprint field - use numeric ID only)
-     - assignee: {accountId: "user_account_id"}
+     {
+       "assignee": {"accountId": "user_account_id"},
+       "customfield_10020": sprint_id
+     }
      ```
+
+   **CRITICAL Field Format Notes**:
+   - Sprint field (`customfield_10020`): Use **numeric ID directly** (e.g., `1570`)
+   - **NEVER use array format** `[1570]` - this causes Bad Request error
+   - Assignee field: Use object format `{"accountId": "account_id"}`
+   - Both fields can be updated in a single API call with correct formats
 
 ## Example Workflow
 ```bash
