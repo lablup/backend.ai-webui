@@ -480,7 +480,8 @@
       "Status": "Tila",
       "StatusOfSelectedHost": "Valitun isännän tila",
       "Used": "käytetty"
-    }
+    },
+    "NotInProject": "Tämä kansio kuuluu toiseen projektiin."
   },
   "desktopNotification": {
     "NotSupported": "Tämä selain ei tue ilmoituksia.",
@@ -637,18 +638,18 @@
     "Title": "On tapahtunut virhe."
   },
   "explorer": {
+    "FileUploadCancelled": "Tiedoston lataus peruutettiin käyttäjäpyynnöllä.",
     "FolderNotFoundOrNoAccess": "Kansiota ei löydy tai pääsy kielletty",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Hallitsemattomat kansiot eivät tue tiedostotutkijaa.",
     "NoPermissions": "Ei oikeuksia käyttää tätä kansiota",
-    "ValueRequired": "ValueRequired",
-    "UploadingFile": "Lataaminen {{fileName}} ...",
-    "UploadFailedDesc": "Tiedoston lähettämisen yhteydessä tapahtui virhe.",
-    "UploadFailed": "{{fileName}} lähettäminen epäonnistui.",
-    "UploadCompletedDesc": "Valittu tiedosto ladattiin onnistuneesti.",
-    "UploadCompleted": "{{fileName}} Lataa täydellinen",
     "ProcessingUpload": "Tiedostosi ladataan. \nOdota.",
-    "FileUploadCancelled": "Tiedoston lataus peruutettiin käyttäjäpyynnöllä."
+    "UploadCompleted": "{{fileName}} Lataa täydellinen",
+    "UploadCompletedDesc": "Valittu tiedosto ladattiin onnistuneesti.",
+    "UploadFailed": "{{fileName}} lähettäminen epäonnistui.",
+    "UploadFailedDesc": "Tiedoston lähettämisen yhteydessä tapahtui virhe.",
+    "UploadingFile": "Lataaminen {{fileName}} ...",
+    "ValueRequired": "ValueRequired"
   },
   "general": {
     "AccessKey": "Access Key",

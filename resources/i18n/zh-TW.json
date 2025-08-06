@@ -481,7 +481,8 @@
       "Status": "现状",
       "StatusOfSelectedHost": "选定主机的状态",
       "Used": "用過的"
-    }
+    },
+    "NotInProject": "該文件夾屬於另一個項目。"
   },
   "desktopNotification": {
     "NotSupported": "該瀏覽器不支持通知。",
@@ -637,17 +638,17 @@
     "Title": "发生错误。"
   },
   "explorer": {
+    "FileUploadCancelled": "文件上傳已通過用戶請求取消。",
     "FolderNotFoundOrNoAccess": "未找到或拒絕訪問的文件夾",
     "InputTooShort": "輸入太短",
     "NoExplorerSupportForUnmanagedFolder": "未管理的文件夾不支持文件資源管理器。",
-    "ValueRequired": "需要值",
-    "UploadingFile": "上傳{{fileName}} ...",
-    "UploadFailedDesc": "上傳文件時發生錯誤。",
-    "UploadFailed": "無法上傳{{fileName}}。",
-    "UploadCompletedDesc": "所選文件已成功上傳。",
-    "UploadCompleted": "{{fileName}}上傳完成",
     "ProcessingUpload": "您的文件正在上傳。請稍等。",
-    "FileUploadCancelled": "文件上傳已通過用戶請求取消。"
+    "UploadCompleted": "{{fileName}}上傳完成",
+    "UploadCompletedDesc": "所選文件已成功上傳。",
+    "UploadFailed": "無法上傳{{fileName}}。",
+    "UploadFailedDesc": "上傳文件時發生錯誤。",
+    "UploadingFile": "上傳{{fileName}} ...",
+    "ValueRequired": "需要值"
   },
   "general": {
     "AccessKey": "訪問密鑰",

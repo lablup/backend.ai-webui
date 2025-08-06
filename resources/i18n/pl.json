@@ -480,7 +480,8 @@
       "Status": "Status",
       "StatusOfSelectedHost": "Status wybranego hosta",
       "Used": "używany"
-    }
+    },
+    "NotInProject": "Ten folder należy do innego projektu."
   },
   "desktopNotification": {
     "NotSupported": "Ta przeglądarka nie obsługuje powiadomień.",
@@ -637,17 +638,17 @@
     "Title": "Wystąpił błąd."
   },
   "explorer": {
+    "FileUploadCancelled": "Przesłanie pliku zostało anulowane na żądanie użytkownika.",
     "FolderNotFoundOrNoAccess": "Folder nie został znaleziony ani nie ma dostępu",
     "InputTooShort": "Wejście zbyt krótkie",
     "NoExplorerSupportForUnmanagedFolder": "Foldery niezarządzane nie obsługują eksploratora plików.",
-    "ValueRequired": "Wymagana wartość",
-    "UploadingFile": "Przesyłanie {{fileName}} ...",
-    "UploadFailedDesc": "Wystąpił błąd podczas przesłania pliku.",
-    "UploadFailed": "Nie udało się przesłać {{fileName}}.",
-    "UploadCompletedDesc": "Wybrany plik został pomyślnie przesłany.",
-    "UploadCompleted": "{{fileName}} prześlij ukończ",
     "ProcessingUpload": "Twój plik jest przesyłany. \nProszę poczekaj.",
-    "FileUploadCancelled": "Przesłanie pliku zostało anulowane na żądanie użytkownika."
+    "UploadCompleted": "{{fileName}} prześlij ukończ",
+    "UploadCompletedDesc": "Wybrany plik został pomyślnie przesłany.",
+    "UploadFailed": "Nie udało się przesłać {{fileName}}.",
+    "UploadFailedDesc": "Wystąpił błąd podczas przesłania pliku.",
+    "UploadingFile": "Przesyłanie {{fileName}} ...",
+    "ValueRequired": "Wymagana wartość"
   },
   "general": {
     "AccessKey": "Klucz dostępu",

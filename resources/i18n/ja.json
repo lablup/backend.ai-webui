@@ -479,7 +479,8 @@
       "Status": "状態",
       "StatusOfSelectedHost": "選択したホストの状態",
       "Used": "使用中"
-    }
+    },
+    "NotInProject": "このフォルダーは別のプロジェクトに属します。"
   },
   "desktopNotification": {
     "NotSupported": "このブラウザは通知をサポートしていません。",
@@ -636,18 +637,18 @@
     "Title": "エラーが発生しました。"
   },
   "explorer": {
+    "FileUploadCancelled": "ファイルのアップロードは、ユーザーリクエストによってキャンセルされました。",
     "FolderNotFoundOrNoAccess": "フォルダーが見つかりませんまたはアクセスが拒否されません",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "管理されていないフォルダーは、ファイルエクスプローラーをサポートしていません。",
     "NoPermissions": "このフォルダーにアクセスする権限はありません",
-    "ValueRequired": "ValueRequired",
-    "UploadingFile": "{{fileName}}のアップロード...",
-    "UploadFailedDesc": "ファイルのアップロード中にエラーが発生しました。",
-    "UploadFailed": "{{fileName}}をアップロードできませんでした。",
-    "UploadCompletedDesc": "選択したファイルは正常にアップロードされました。",
-    "UploadCompleted": "{{fileName}}アップロード完了",
     "ProcessingUpload": "ファイルがアップロードされています。\nお待ちください。",
-    "FileUploadCancelled": "ファイルのアップロードは、ユーザーリクエストによってキャンセルされました。"
+    "UploadCompleted": "{{fileName}}アップロード完了",
+    "UploadCompletedDesc": "選択したファイルは正常にアップロードされました。",
+    "UploadFailed": "{{fileName}}をアップロードできませんでした。",
+    "UploadFailedDesc": "ファイルのアップロード中にエラーが発生しました。",
+    "UploadingFile": "{{fileName}}のアップロード...",
+    "ValueRequired": "ValueRequired"
   },
   "general": {
     "AccessKey": "アクセスキー",

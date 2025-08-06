@@ -480,7 +480,8 @@
       "Status": "Статус",
       "StatusOfSelectedHost": "Статус выбранного хоста",
       "Used": "используется"
-    }
+    },
+    "NotInProject": "Эта папка принадлежит другому проекту."
   },
   "desktopNotification": {
     "NotSupported": "Этот браузер не поддерживает уведомления.",
@@ -637,17 +638,17 @@
     "Title": "Произошла ошибка."
   },
   "explorer": {
+    "FileUploadCancelled": "Загрузка файла была отменена пользовательским запросом.",
     "FolderNotFoundOrNoAccess": "Папка не найдена или доступа отказана",
     "InputTooShort": "ВводОченьКороток",
     "NoExplorerSupportForUnmanagedFolder": "Неуправляемые папки не поддерживают исследователь файлов.",
-    "ValueRequired": "НужноЗначение",
-    "UploadingFile": "Загрузка {{fileName}} ...",
-    "UploadFailedDesc": "Произошла ошибка при загрузке файла.",
-    "UploadFailed": "Не удалось загрузить {{fileName}}.",
-    "UploadCompletedDesc": "Выбранный файл был успешно загружен.",
-    "UploadCompleted": "{{fileName}} загрузить заполнен",
     "ProcessingUpload": "Ваш файл загружается. \nПожалуйста, подождите.",
-    "FileUploadCancelled": "Загрузка файла была отменена пользовательским запросом."
+    "UploadCompleted": "{{fileName}} загрузить заполнен",
+    "UploadCompletedDesc": "Выбранный файл был успешно загружен.",
+    "UploadFailed": "Не удалось загрузить {{fileName}}.",
+    "UploadFailedDesc": "Произошла ошибка при загрузке файла.",
+    "UploadingFile": "Загрузка {{fileName}} ...",
+    "ValueRequired": "НужноЗначение"
   },
   "general": {
     "AccessKey": "Ключ доступа",
