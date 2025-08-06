@@ -1,6 +1,6 @@
 import { usageIndicatorColor } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
+import { useTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState from '../hooks/useControllableState';
 import BAISelect, { BAISelectProps } from './BAISelect';
 import Flex from './Flex';
@@ -19,6 +19,15 @@ export type VolumeInfo = {
   };
   sftp_scaling_groups: string[];
 };
+
+interface VHostInfo {
+  default: string;
+  allowed: Array<string>;
+  volume_info?: {
+    [key: string]: VolumeInfo;
+  };
+}
+
 interface Props extends Omit<BAISelectProps, 'value' | 'onChange'> {
   autoSelectType?: 'usage' | 'default';
   showUsageStatus?: boolean;
@@ -40,25 +49,24 @@ const StorageSelect: React.FC<Props> = ({
 
   const baiClient = useSuspendedBackendaiClient();
 
+  // Use useTanQuery for non-critical data fetching.
+  // It allows the component to handle errors gracefully without crashing the entire page.
   const { data: vhostInfo, isLoading: isLoadingVhostInfo } =
-    useSuspenseTanQuery<{
-      default: string;
-      allowed: Array<string>;
-      volume_info?: {
-        [key: string]: {
-          backend: string;
-          capabilities: string[];
-          usage: {
-            percentage: number;
-          };
-          sftp_scaling_groups: any[];
-        };
-      };
-    }>({
+    useTanQuery<VHostInfo | null>({
       queryKey: ['vhostInfo'],
-      queryFn: () => {
-        return baiClient.vfolder.list_hosts();
+      queryFn: async () => {
+        try {
+          return await baiClient.vfolder.list_hosts();
+        } catch (error) {
+          console.warn(
+            'Failed to fetch vhost info in StorageSelect. Storage selection may be unavailable:',
+            error,
+          );
+          return null; // Return null on error to prevent crash
+        }
       },
+      retry: false,
+      refetchOnWindowFocus: false,
     });
 
   const [controllableState, setControllableState] = useControllableState({
@@ -69,7 +77,7 @@ const StorageSelect: React.FC<Props> = ({
   const [controllableSearchValue, setControllableSearchValue] =
     useControllableState({ value: searchValue, onChange: onSearch });
   useEffect(() => {
-    if (!autoSelectType) return;
+    if (!autoSelectType || !vhostInfo) return; // Return early if vhostInfo is null
     let nextHost = vhostInfo?.default ?? vhostInfo?.allowed[0] ?? '';
     if (autoSelectType === 'usage') {
       const lowestUsageHost = _.minBy(
@@ -103,7 +111,7 @@ const StorageSelect: React.FC<Props> = ({
       searchValue={controllableSearchValue}
       onSearch={setControllableSearchValue}
       optionLabelProp={showUsageStatus ? 'label' : 'value'}
-      options={_.map(vhostInfo?.allowed, (host) => ({
+      options={_.map(vhostInfo?.allowed || [], (host) => ({
         label: showUsageStatus ? (
           <Flex align="center">
             {vhostInfo?.volume_info?.[host]?.usage && (

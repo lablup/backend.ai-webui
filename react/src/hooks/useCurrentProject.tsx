@@ -4,6 +4,31 @@ import { atomWithDefault } from 'jotai/utils';
 import _ from 'lodash';
 import { useCallback, useEffect } from 'react';
 
+interface ScalingGroupItem {
+  name: string;
+}
+
+interface VHostVolumeInfo {
+  backend: string;
+  capabilities: string[];
+  usage: {
+    percentage: number;
+  };
+  sftp_scaling_groups?: string[];
+}
+
+interface VHostInfo {
+  allowed: string[];
+  default: string;
+  volume_info: {
+    [key: string]: VHostVolumeInfo;
+  };
+}
+
+interface ScalingGroupsResponse {
+  scaling_groups: ScalingGroupItem[];
+}
+
 const currentProjectAtom = atomWithDefault(() => {
   return {
     // @ts-ignore
@@ -66,44 +91,47 @@ export const useCurrentResourceGroupState = () => {
 const resourceGroupsForCurrentProjectAtom = atom(async (get) => {
   // NOTE: cannot use hook inside atom
   const currentProject = get(currentProjectAtom);
-  const [resourceGroups, vhostInfo] = await Promise.all([
-    // @ts-ignore
-    globalThis.backendaiclient.scalingGroup.list(currentProject.name) as {
-      scaling_groups: {
-        name: string;
-      }[];
-    },
-    // @ts-ignore
-    globalThis.backendaiclient.vfolder.list_hosts(currentProject.id) as {
-      allowed: string[];
-      default: string;
-      volume_info: {
-        [key: string]: {
-          backend: string;
-          capabilities: string[];
-          usage: {
-            percentage: number;
-          };
-          sftp_scaling_groups?: string[];
-        };
-      };
-    },
-  ]);
+  try {
+    const [resourceGroups, vhostInfo] = await Promise.all([
+      // @ts-ignore
+      globalThis.backendaiclient.scalingGroup.list(
+        currentProject.name,
+      ) as ScalingGroupsResponse,
+      // @ts-ignore
+      globalThis.backendaiclient.vfolder.list_hosts(
+        currentProject.id,
+      ) as VHostInfo,
+    ]);
 
-  const allSftpScalingGroups = _.uniq(
-    _.flatten(
-      _.map(vhostInfo.volume_info, (volume) => volume.sftp_scaling_groups),
-    ),
-  );
+    const allSftpScalingGroups = _.uniq(
+      _.flatten(
+        _.map(vhostInfo.volume_info, (volume) => volume?.sftp_scaling_groups),
+      ),
+    );
 
-  return {
-    resourceGroups: _.filter(
-      resourceGroups.scaling_groups,
-      (rg) => !allSftpScalingGroups.includes(rg.name),
-    ),
-    vhostInfo,
-    allSftpScalingGroups,
-  };
+    return {
+      resourceGroups: _.filter(
+        resourceGroups.scaling_groups,
+        (rg) => !allSftpScalingGroups.includes(rg.name),
+      ),
+      vhostInfo,
+      allSftpScalingGroups,
+    };
+  } catch (error) {
+    console.warn(
+      'Failed to fetch resource groups and vhost info. Using fallback values. Some features may be limited:',
+      error,
+    );
+    return {
+      resourceGroups: [],
+      vhostInfo: {
+        allowed: [],
+        default: '',
+        volume_info: {},
+      },
+      allSftpScalingGroups: [],
+    };
+  }
 });
 
 export const useResourceGroupsForCurrentProject = () => {

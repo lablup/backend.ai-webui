@@ -4,6 +4,7 @@ import {
   VFolderNodeListPageQuery$variables,
 } from '../__generated__/VFolderNodeListPageQuery.graphql';
 import ActionItemContent from '../components/ActionItemContent';
+import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import BAIFetchKeyButton from '../components/BAIFetchKeyButton';
 import BAIPropertyFilter, {
   mergeFilterValues,
@@ -304,55 +305,67 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             />
           </BAICard>
         </Col>
-        <Col xs={24} md={16} xl={8} style={{ display: 'flex' }}>
-          <Suspense
-            fallback={
-              <BAICard
+        <Col xs={24} lg={16} xxl={8} style={{ display: 'flex' }}>
+          <BAIErrorBoundary
+            onError={(error) => {
+              console.warn('StorageStatusPanelCard error:', error);
+            }}
+          >
+            <Suspense
+              fallback={
+                <BAICard
+                  style={{
+                    width: '100%',
+                    minHeight: lg ? CARD_MIN_HEIGHT : undefined,
+                  }}
+                  title={t('data.StorageStatus')}
+                  loading
+                />
+              }
+            >
+              <StorageStatusPanelCard
                 style={{
                   width: '100%',
                   minHeight: lg ? CARD_MIN_HEIGHT : undefined,
                 }}
-                title={t('data.StorageStatus')}
-                loading
+                fetchKey={deferredFetchKey}
+                onRequestBadgeClick={() => {
+                  webuiNavigate({
+                    search: new URLSearchParams({
+                      invitation: 'true',
+                    }).toString(),
+                  });
+                }}
               />
-            }
-          >
-            <StorageStatusPanelCard
-              style={{
-                width: '100%',
-                minHeight: lg ? CARD_MIN_HEIGHT : undefined,
-              }}
-              fetchKey={deferredFetchKey}
-              onRequestBadgeClick={() => {
-                webuiNavigate({
-                  search: new URLSearchParams({
-                    invitation: 'true',
-                  }).toString(),
-                });
-              }}
-            />
-          </Suspense>
+            </Suspense>
+          </BAIErrorBoundary>
         </Col>
-        <Col xs={24} md={24} xl={12} style={{ display: 'flex' }}>
-          <Suspense
-            fallback={
-              <BAICard
+        <Col xs={24} xxl={12} style={{ display: 'flex' }}>
+          <BAIErrorBoundary
+            onError={(error) => {
+              console.warn('QuotaPerStorageVolumePanelCard error:', error);
+            }}
+          >
+            <Suspense
+              fallback={
+                <BAICard
+                  style={{
+                    width: '100%',
+                    minHeight: lg ? CARD_MIN_HEIGHT : undefined,
+                  }}
+                  title={t('data.QuotaPerStorageVolume')}
+                  loading
+                />
+              }
+            >
+              <QuotaPerStorageVolumePanelCard
                 style={{
                   width: '100%',
                   minHeight: lg ? CARD_MIN_HEIGHT : undefined,
                 }}
-                title={t('data.QuotaPerStorageVolume')}
-                loading
               />
-            }
-          >
-            <QuotaPerStorageVolumePanelCard
-              style={{
-                width: '100%',
-                minHeight: lg ? CARD_MIN_HEIGHT : undefined,
-              }}
-            />
-          </Suspense>
+            </Suspense>
+          </BAIErrorBoundary>
         </Col>
       </Row>
       <BAICard
