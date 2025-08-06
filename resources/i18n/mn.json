@@ -477,7 +477,8 @@
       "Status": "Статус",
       "StatusOfSelectedHost": "Сонгосон хостын төлөв",
       "Used": "ашигласан"
-    }
+    },
+    "NotInProject": "Энэ хавтас нь өөр төсөлд хамаарна."
   },
   "desktopNotification": {
     "NotSupported": "Энэ хөтөч нь мэдэгдлийг дэмждэггүй.",
