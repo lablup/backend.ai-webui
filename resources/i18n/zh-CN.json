@@ -259,6 +259,7 @@
     "NewFolder": "新建文件夹",
     "NewFolderName": "新文件夹名称",
     "NoStorageDescriptionFound": "没有说明。",
+    "NotInProject": "该文件夹属于另一个项目。",
     "NumberOfFolders": "文件夹数量",
     "Permission": "允许",
     "Pipeline": "管道文件夹",

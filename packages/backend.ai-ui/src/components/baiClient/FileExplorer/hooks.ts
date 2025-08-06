@@ -1,10 +1,15 @@
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
+import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 export const useSearchVFolderFiles = (vfolder: string) => {
   const baiClient = useConnectedBAIClient();
   const [currentPath, setCurrentPath] = useState<string>('.');
+  const [, setCurrentPathParam] = useQueryParam(
+    'path',
+    withDefault(StringParam, '.'),
+  );
 
   const {
     data: files,
@@ -23,18 +28,26 @@ export const useSearchVFolderFiles = (vfolder: string) => {
     const newPath =
       currentPath === '.' ? folderName : `${currentPath}/${folderName}`;
     setCurrentPath(newPath);
+    setCurrentPathParam(newPath);
   };
 
   const navigateUp = () => {
     const pathParts = currentPath.split('/');
     if (pathParts.length > 1) {
+      const newPath = pathParts.join('/');
       pathParts.pop();
-      setCurrentPath(pathParts.join('/') || '.');
+      setCurrentPath(newPath || '.');
+      newPath === '.'
+        ? setCurrentPathParam(null, 'replaceIn')
+        : setCurrentPathParam(newPath);
     }
   };
 
   const navigateToPath = (path: string) => {
     setCurrentPath(path);
+    path === '.'
+      ? setCurrentPathParam(null, 'replaceIn')
+      : setCurrentPathParam(path);
   };
 
   return {

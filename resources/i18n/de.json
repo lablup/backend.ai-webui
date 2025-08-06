@@ -259,6 +259,7 @@
     "NewFolder": "Neuer Ordner",
     "NewFolderName": "Neuer Ordnername",
     "NoStorageDescriptionFound": "Keine Beschreibung.",
+    "NotInProject": "Dieser Ordner gehört zu einem anderen Projekt.",
     "NumberOfFolders": "Anzahl von Ordnern",
     "Permission": "Genehmigung",
     "Pipeline": "Pipeline",
