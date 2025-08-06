@@ -480,7 +480,8 @@
       "Status": "Statut",
       "StatusOfSelectedHost": "Statut de l'hôte sélectionné",
       "Used": "utilisé"
-    }
+    },
+    "NotInProject": "Ce dossier appartient à un autre projet."
   },
   "desktopNotification": {
     "NotSupported": "Ce navigateur ne prend pas en charge les notifications.",

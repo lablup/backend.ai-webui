@@ -480,7 +480,8 @@
       "Status": "Durum",
       "StatusOfSelectedHost": "Seçilen Ana Bilgisayarın Durumu",
       "Used": "kullanılmış"
-    }
+    },
+    "NotInProject": "Bu klasör farklı bir projeye aittir."
   },
   "desktopNotification": {
     "NotSupported": "Bu tarayıcı bildirimleri desteklemez.",

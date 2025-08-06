@@ -480,7 +480,8 @@
       "Status": "Статус",
       "StatusOfSelectedHost": "Статус выбранного хоста",
       "Used": "используется"
-    }
+    },
+    "NotInProject": "Эта папка принадлежит другому проекту."
   },
   "desktopNotification": {
     "NotSupported": "Этот браузер не поддерживает уведомления.",

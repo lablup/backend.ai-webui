@@ -480,7 +480,8 @@
       "Status": "Tila",
       "StatusOfSelectedHost": "Valitun isännän tila",
       "Used": "käytetty"
-    }
+    },
+    "NotInProject": "Tämä kansio kuuluu toiseen projektiin."
   },
   "desktopNotification": {
     "NotSupported": "Tämä selain ei tue ilmoituksia.",

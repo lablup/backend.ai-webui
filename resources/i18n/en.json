@@ -482,7 +482,8 @@
       "Status": "Status",
       "StatusOfSelectedHost": "Status Of Selected Host",
       "Used": "used"
-    }
+    },
+    "NotInProject": "This folder belongs to a different project."
   },
   "desktopNotification": {
     "NotSupported": "This browser does not support notifications.",
