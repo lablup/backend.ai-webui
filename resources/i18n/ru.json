@@ -259,6 +259,7 @@
     "NewFolder": "Новая папка",
     "NewFolderName": "Новое имя папки",
     "NoStorageDescriptionFound": "Нет описания.",
+    "NotInProject": "Эта папка принадлежит другому проекту.",
     "NumberOfFolders": "Количество папок",
     "Permission": "Разрешение",
     "Pipeline": "Трубопроводные папки",

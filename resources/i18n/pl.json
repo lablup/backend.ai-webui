@@ -259,6 +259,7 @@
     "NewFolder": "Nowy folder",
     "NewFolderName": "Nowa nazwa folderu",
     "NoStorageDescriptionFound": "Bez opisu.",
+    "NotInProject": "Ten folder należy do innego projektu.",
     "NumberOfFolders": "Liczba folderów",
     "Permission": "Pozwolenie",
     "Pipeline": "Foldery rurociągów",

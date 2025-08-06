@@ -258,6 +258,7 @@
     "NewFolder": "Nuova cartella",
     "NewFolderName": "Nuovo nome della cartella",
     "NoStorageDescriptionFound": "Nessuna descrizione.",
+    "NotInProject": "Questa cartella appartiene a un progetto diverso.",
     "NumberOfFolders": "Numero di cartelle",
     "Permission": "Autorizzazione",
     "Pipeline": "Cartelle della pipeline",

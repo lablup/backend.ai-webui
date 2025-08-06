@@ -258,6 +258,7 @@
     "NewFolder": "Folder baru",
     "NewFolderName": "Nama folder baru",
     "NoStorageDescriptionFound": "Tidak ada deskripsi.",
+    "NotInProject": "Folder ini milik proyek yang berbeda.",
     "NumberOfFolders": "Jumlah folder",
     "Permission": "Izin",
     "Pipeline": "Folder Pipa",

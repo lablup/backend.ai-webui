@@ -259,6 +259,7 @@
     "NewFolder": "Nova pasta",
     "NewFolderName": "Novo nome da pasta",
     "NoStorageDescriptionFound": "Sem descrição.",
+    "NotInProject": "Esta pasta pertence a um projeto diferente.",
     "NumberOfFolders": "Número de pastas",
     "Permission": "Permissão",
     "Pipeline": "Pastas de pipelines",
