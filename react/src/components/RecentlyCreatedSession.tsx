@@ -3,9 +3,8 @@ import { filterOutNullAndUndefined } from '../helper';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import SessionDetailDrawer from './SessionDetailDrawer';
 import SessionNodes from './SessionNodes';
-import UnmountAfterClose from './UnmountAfterClose';
 import { theme, Typography } from 'antd';
-import { toLocalId, BAIFlex } from 'backend.ai-ui';
+import { toLocalId, BAIFlex, BAIUnmountAfterClose } from 'backend.ai-ui';
 import { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
@@ -135,7 +134,7 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
           />
         </BAIFlex>
       </BAIFlex>
-      <UnmountAfterClose>
+      <BAIUnmountAfterClose>
         <SessionDetailDrawer
           open={!!sessionDetailId}
           sessionId={sessionDetailId || undefined}
@@ -143,7 +142,7 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
             setSessionDetailId(undefined, 'pushIn');
           }}
         />
-      </UnmountAfterClose>
+      </BAIUnmountAfterClose>
     </>
   );
 };

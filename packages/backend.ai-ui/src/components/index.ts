@@ -4,6 +4,7 @@ export { default as BAICard } from './BAICard';
 export type { BAICardProps } from './BAICard';
 export { default as BAIResourceWithSteppedProgress } from './BAIResourceWithSteppedProgress';
 export type { BAIResourceWithSteppedProgressProps } from './BAIResourceWithSteppedProgress';
+export { default as BAIUnmountAfterClose } from './BAIUnmountAfterClose';
 export * from './Table';
 export * from './fragments';
 export * from './provider';
