@@ -11,6 +11,7 @@ import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import ActionItems from './ActionItems';
 import ControlItems from './ControlItems';
 import DeleteSelectedItemsModal from './DeleteSelectedItemsModal';
+import DragAndDrop from './DragAndDrop';
 import { useSearchVFolderFiles } from './hooks';
 import { FileOutlined, FolderOutlined, HomeOutlined } from '@ant-design/icons';
 import { Breadcrumb, Button, TableColumnsType, theme, Typography } from 'antd';
@@ -62,15 +63,13 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { styles } = useStyles();
+  const [isDragMode, setIsDragMode] = useState(false);
   const [selectedItems, setSelectedItems] = useState<Array<VFolderFile>>([]);
   const [selectedSingleItem, setSelectedSingleItem] =
     useState<VFolderFile | null>(null);
   const [breadcrumbItems, setBreadcrumbItems] = useState<Array<ItemType>>([
     { title: <HomeOutlined />, onClick: () => navigateToPath('.') },
   ]);
-  const [pathFoldersCache, setPathFoldersCache] = useState<
-    Record<string, Array<VFolderFile>>
-  >({});
   const {
     files,
     isFetching,
@@ -82,12 +81,9 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
   const [cachedFetchedFiles, setCachedFetchedFiles] = useState<
     Array<VFolderFile>
   >([]);
-
-  useEffect(() => {
-    if (!_.isNil(files?.items)) {
-      setCachedFetchedFiles(files.items);
-    }
-  }, [files]);
+  const [pathFoldersCache, setPathFoldersCache] = useState<
+    Record<string, Array<VFolderFile>>
+  >({});
 
   const FileExplorerFragment = useFragment(
     graphql`
@@ -99,8 +95,41 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
   );
 
   useEffect(() => {
+    const handleDragEnter = (e: DragEvent) => {
+      e.preventDefault();
+      setIsDragMode(true);
+    };
+    const handleDragLeave = (e: DragEvent) => {
+      e.preventDefault();
+      if (!e.relatedTarget || !document.contains(e.relatedTarget as Node)) {
+        setIsDragMode(false);
+      }
+    };
+    const handleDragOver = (e: DragEvent) => {
+      e.preventDefault();
+    };
+    const handleDrop = (e: DragEvent) => {
+      e.preventDefault();
+      setIsDragMode(false);
+    };
+
+    document.addEventListener('dragenter', handleDragEnter);
+    document.addEventListener('dragleave', handleDragLeave);
+    document.addEventListener('dragover', handleDragOver);
+    document.addEventListener('drop', handleDrop);
+
+    return () => {
+      document.removeEventListener('dragenter', handleDragEnter);
+      document.removeEventListener('dragleave', handleDragLeave);
+      document.removeEventListener('dragover', handleDragOver);
+      document.removeEventListener('drop', handleDrop);
+    };
+  }, []);
+
+  useEffect(() => {
     if (files?.items) {
       const folders = files.items.filter((item) => item.type === 'DIRECTORY');
+      setCachedFetchedFiles(files.items);
       setPathFoldersCache((prev) => ({ ...prev, [currentPath]: folders }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -261,7 +290,20 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
 
   return (
     <FolderInfoContext.Provider value={{ targetVFolderId, currentPath }}>
-      <BAIFlex direction="column" align="stretch" gap="md">
+      {isDragMode && (
+        <DragAndDrop
+          onUpload={(files, currentPath) =>
+            onUpload(files, currentPath, refetch)
+          }
+        />
+      )}
+      <BAIFlex
+        direction="column"
+        align="stretch"
+        justify="start"
+        gap="md"
+        style={{ height: '100%' }}
+      >
         <BAIFlex align="center" justify="between">
           <Breadcrumb
             items={breadcrumbItems.filter((_, index) => {
