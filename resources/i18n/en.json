@@ -261,6 +261,7 @@
     "NewFolder": "New Folder",
     "NewFolderName": "New folder name",
     "NoStorageDescriptionFound": "No description.",
+    "NotInProject": "This folder belongs to a different project.",
     "NumberOfFolders": "Number of folders",
     "Permission": "Permission",
     "Pipeline": "Pipeline",

@@ -259,6 +259,7 @@
     "NewFolder": "Yeni dosya",
     "NewFolderName": "Yeni klasör adı",
     "NoStorageDescriptionFound": "Açıklama yok.",
+    "NotInProject": "Bu klasör farklı bir projeye aittir.",
     "NumberOfFolders": "Klasör sayısı",
     "Permission": "izin",
     "Pipeline": "Boru Hattı Klasörleri",

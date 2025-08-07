@@ -258,6 +258,7 @@
     "NewFolder": "新しいフォルダ",
     "NewFolderName": "新しいフォルダ名",
     "NoStorageDescriptionFound": "説明はありません。",
+    "NotInProject": "このフォルダーは別のプロジェクトに属します。",
     "NumberOfFolders": "フォルダ数",
     "Permission": "許可",
     "Pipeline": "パイプラインフォルダ",

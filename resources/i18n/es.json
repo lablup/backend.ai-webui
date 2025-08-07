@@ -259,6 +259,7 @@
     "NewFolder": "Nueva carpeta",
     "NewFolderName": "Nuevo nombre de carpeta",
     "NoStorageDescriptionFound": "Sin descripción.",
+    "NotInProject": "Esta carpeta pertenece a un proyecto diferente.",
     "NumberOfFolders": "Número de carpetas",
     "Permission": "Permiso",
     "Pipeline": "Carpetas de tuberías",

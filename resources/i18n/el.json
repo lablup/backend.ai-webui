@@ -257,6 +257,7 @@
     "NewFolder": "Νέος φάκελος",
     "NewFolderName": "Νέο όνομα φακέλου",
     "NoStorageDescriptionFound": "Χωρίς περιγραφή.",
+    "NotInProject": "Αυτός ο φάκελος ανήκει σε ένα διαφορετικό έργο.",
     "NumberOfFolders": "Αριθμός φακέλων",
     "Permission": "Αδεια",
     "Pipeline": "Γραμμή σωλήνων",
