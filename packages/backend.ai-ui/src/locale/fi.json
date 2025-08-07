@@ -6,11 +6,6 @@
   "comp:PaginationInfoText": {
     "Total": "{{start}}–{{end}} yhteensä {{total}} kohteesta"
   },
-  "comp:BAITable": {
-    "SettingTable": "Taulukon asetukset",
-    "SelectColumnToDisplay": "Valitse näytettävä sarakkeet",
-    "SearchTableColumn": "Hakutaulukon sarakkeet"
-  },
   "error": {
     "UnknownError": "Tapahtui tuntematon virhe. \nYritä uudelleen."
   },
@@ -44,7 +39,13 @@
       "FileUploadSizeLimit": "Tiedoston koko ylittää lähetyskoon rajan."
     },
     "DuplicatedFilesDesc": "Tiedosto tai kansio, jolla on sama nimi, on jo olemassa. \nHaluatko korvata?",
-    "DuplicatedFiles": "Korvata vahvistus"
+    "DuplicatedFiles": "Korvata vahvistus",
+    "DragAndDropDesc": "Vedä ja pudota tiedostoja tälle alueelle ladataksesi."
+  },
+  "comp:BAITable": {
+    "SettingTable": "Taulukon asetukset",
+    "SelectColumnToDisplay": "Valitse näytettävä sarakkeet",
+    "SearchTableColumn": "Hakutaulukon sarakkeet"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Etsi",

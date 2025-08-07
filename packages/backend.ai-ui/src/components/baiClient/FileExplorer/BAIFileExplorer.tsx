@@ -6,10 +6,11 @@ import {
 } from '../../../helper';
 import BAIFlex from '../../BAIFlex';
 import BAIUnmountAfterClose from '../../BAIUnmountAfterClose';
-import { BAITable } from '../../Table';
+import { BAITable, BAITableProps } from '../../Table';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import DeleteSelectedItemsModal from './DeleteSelectedItemsModal';
+import DragAndDrop from './DragAndDrop';
 import ExplorerActionControls from './ExplorerActionControls';
 import FileItemControls from './FileItemControls';
 import { useSearchVFolderFiles } from './hooks';
@@ -53,17 +54,24 @@ export const FolderInfoContext = createContext<{
 export interface BAIFileExplorerProps {
   vfolderNodeFrgmt?: BAIFileExplorerFragment$key | null;
   targetVFolderId: string;
+  fetchKey?: string;
   onUpload: (files: Array<RcFile>, currentPath: string) => void;
+  tableProps?: Partial<BAITableProps<VFolderFile>>;
+  style?: React.CSSProperties;
 }
 
 const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
   vfolderNodeFrgmt,
   targetVFolderId,
+  fetchKey,
   onUpload,
+  tableProps,
+  style,
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { styles } = useStyles();
+  const [isDragMode, setIsDragMode] = useState(false);
   const [selectedItems, setSelectedItems] = useState<Array<VFolderFile>>([]);
   const [selectedSingleItem, setSelectedSingleItem] =
     useState<VFolderFile | null>(null);
@@ -78,7 +86,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
     navigateDown,
     navigateToPath,
     refetch,
-  } = useSearchVFolderFiles(targetVFolderId);
+  } = useSearchVFolderFiles(targetVFolderId, fetchKey);
 
   const [fetchedFilesCache, setFetchedFilesCache] = useState<
     Array<VFolderFile>
@@ -98,6 +106,38 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
     `,
     vfolderNodeFrgmt,
   );
+
+  useEffect(() => {
+    const handleDragEnter = (e: DragEvent) => {
+      e.preventDefault();
+      setIsDragMode(true);
+    };
+    const handleDragLeave = (e: DragEvent) => {
+      e.preventDefault();
+      if (!e.relatedTarget || !document.contains(e.relatedTarget as Node)) {
+        setIsDragMode(false);
+      }
+    };
+    const handleDragOver = (e: DragEvent) => {
+      e.preventDefault();
+    };
+    const handleDrop = (e: DragEvent) => {
+      e.preventDefault();
+      setIsDragMode(false);
+    };
+
+    document.addEventListener('dragenter', handleDragEnter);
+    document.addEventListener('dragleave', handleDragLeave);
+    document.addEventListener('dragover', handleDragOver);
+    document.addEventListener('drop', handleDrop);
+
+    return () => {
+      document.removeEventListener('dragenter', handleDragEnter);
+      document.removeEventListener('dragleave', handleDragLeave);
+      document.removeEventListener('dragover', handleDragOver);
+      document.removeEventListener('drop', handleDrop);
+    };
+  }, []);
 
   const breadCrumbItems: Array<ItemType> = useMemo(() => {
     const pathParts = currentPath === '.' ? [] : currentPath.split('/');
@@ -240,7 +280,18 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
 
   return (
     <FolderInfoContext.Provider value={{ targetVFolderId, currentPath }}>
-      <BAIFlex direction="column" align="stretch" gap="md">
+      {isDragMode && (
+        <DragAndDrop
+          onUpload={(files, currentPath) => onUpload(files, currentPath)}
+        />
+      )}
+      <BAIFlex
+        direction="column"
+        align="stretch"
+        justify="start"
+        gap="md"
+        style={{ height: '100%', ...style }}
+      >
         <BAIFlex align="center" justify="between">
           <Breadcrumb
             items={breadCrumbItems}
@@ -280,7 +331,6 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
 
         <BAITable
           rowKey="name"
-          bordered
           scroll={{ x: 'max-content' }}
           dataSource={fetchedFilesCache}
           columns={tableColumns}
@@ -311,6 +361,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
               }
             },
           })}
+          {...tableProps}
         />
       </BAIFlex>
       <BAIUnmountAfterClose>

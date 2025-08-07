@@ -350,13 +350,17 @@ const BAITable = <RecordType extends object = any>({
             }
           }
         }}
-        pagination={{
-          style: {
-            display: 'none', // Hide default pagination as we're using custom Pagination component below
-          },
-          current: currentPage,
-          pageSize: currentPageSize,
-        }}
+        pagination={
+          tableProps.pagination === false
+            ? false
+            : {
+                style: {
+                  display: 'none', // Hide default pagination as we're using custom Pagination component below
+                },
+                current: currentPage,
+                pageSize: currentPageSize,
+              }
+        }
       />
       {tableProps.pagination !== false && (
         <BAIFlex justify="end" gap={'xs'}>

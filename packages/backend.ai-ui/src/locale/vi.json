@@ -6,11 +6,6 @@
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} của {{total}}"
   },
-  "comp:BAITable": {
-    "SettingTable": "Cài đặt bảng",
-    "SelectColumnToDisplay": "Chọn các cột để hiển thị",
-    "SearchTableColumn": "Các cột bảng tìm kiếm"
-  },
   "error": {
     "UnknownError": "Một lỗi không xác định xảy ra. \nHãy thử lại."
   },
@@ -44,7 +39,13 @@
       "FileUploadSizeLimit": "Kích thước tệp vượt quá giới hạn kích thước tải lên."
     },
     "DuplicatedFilesDesc": "Tệp hoặc thư mục có cùng tên đã tồn tại. \nBạn có muốn ghi đè lên?",
-    "DuplicatedFiles": "Ghi đè xác nhận"
+    "DuplicatedFiles": "Ghi đè xác nhận",
+    "DragAndDropDesc": "Kéo và thả các tập tin vào khu vực này để tải lên."
+  },
+  "comp:BAITable": {
+    "SettingTable": "Cài đặt bảng",
+    "SelectColumnToDisplay": "Chọn các cột để hiển thị",
+    "SearchTableColumn": "Các cột bảng tìm kiếm"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Tìm kiếm",

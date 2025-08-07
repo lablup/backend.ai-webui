@@ -6,11 +6,6 @@
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} of {{total}} items"
   },
-  "comp:BAITable": {
-    "SettingTable": "Table Settings",
-    "SelectColumnToDisplay": "Select columns to display",
-    "SearchTableColumn": "Search table columns"
-  },
   "error": {
     "UnknownError": "An unknown error occurred. Please try again."
   },
@@ -44,7 +39,13 @@
       "FileUploadSizeLimit": "File size exceeds upload size limit."
     },
     "DuplicatedFilesDesc": "The file or folder with the same name already exists. Do you want to overwrite?",
-    "DuplicatedFiles": "Overwrite Confirmation"
+    "DuplicatedFiles": "Overwrite Confirmation",
+    "DragAndDropDesc": "Drag and drop files to this area to upload."
+  },
+  "comp:BAITable": {
+    "SettingTable": "Table Settings",
+    "SelectColumnToDisplay": "Select columns to display",
+    "SearchTableColumn": "Search table columns"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Search",

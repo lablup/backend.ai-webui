@@ -6,11 +6,6 @@
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} öğelerinin {{total}}"
   },
-  "comp:BAITable": {
-    "SettingTable": "Masa Ayarları",
-    "SelectColumnToDisplay": "Görüntülemek için sütunları seçin",
-    "SearchTableColumn": "Arama Tablosu sütunları"
-  },
   "error": {
     "UnknownError": "Bilinmeyen bir hata oluştu. \nLütfen tekrar deneyin."
   },
@@ -44,7 +39,13 @@
       "FileUploadSizeLimit": "Dosya boyutu yükleme boyutu sınırını aşar."
     },
     "DuplicatedFilesDesc": "Aynı ada sahip dosya veya klasör zaten mevcuttur. \nÜzerine yazmak ister misin?",
-    "DuplicatedFiles": "Üzerine Yazın Onay"
+    "DuplicatedFiles": "Üzerine Yazın Onay",
+    "DragAndDropDesc": "Yüklemek için dosyaları bu alana sürükleyin ve bırakın."
+  },
+  "comp:BAITable": {
+    "SettingTable": "Masa Ayarları",
+    "SelectColumnToDisplay": "Görüntülemek için sütunları seçin",
+    "SearchTableColumn": "Arama Tablosu sütunları"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Arama",
