@@ -39,7 +39,8 @@
       "FileUploadSizeLimit": "업로드 가능한 단일 파일 사이즈 제한을 초과했습니다."
     },
     "DuplicatedFilesDesc": "업로드 하려는 파일 또는 폴더가 이미 존재합니다. 덮어쓰시겠습니까?",
-    "DuplicatedFiles": "덮어쓰기 확인"
+    "DuplicatedFiles": "덮어쓰기 확인",
+    "DragAndDropDesc": "파일을 이곳에 드래그하여 업로드하세요."
   },
   "comp:BAITable": {
     "SettingTable": "표 설정",

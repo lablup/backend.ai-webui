@@ -39,7 +39,8 @@
       "FileUploadSizeLimit": "Saiz fail melebihi had saiz muat naik."
     },
     "DuplicatedFilesDesc": "Fail atau folder dengan nama yang sama sudah ada. \nAdakah anda mahu menimpa?",
-    "DuplicatedFiles": "Pengesahan Pengesahan"
+    "DuplicatedFiles": "Pengesahan Pengesahan",
+    "DragAndDropDesc": "Seret dan lepaskan fail ke kawasan ini untuk dimuat naik."
   },
   "comp:BAITable": {
     "SettingTable": "Tetapan Jadual",

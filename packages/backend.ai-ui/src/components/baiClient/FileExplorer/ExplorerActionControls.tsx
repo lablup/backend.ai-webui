@@ -5,6 +5,7 @@ import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
 import CreateDirectoryModal from './CreateDirectoryModal';
 import DeleteSelectedItemsModal from './DeleteSelectedItemsModal';
+import { useUploadVFolderFiles } from './hooks';
 import {
   FileAddOutlined,
   FolderAddOutlined,
@@ -12,9 +13,8 @@ import {
 } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import { useToggle } from 'ahooks';
-import { App, Button, Dropdown, Grid, theme, Tooltip, Upload } from 'antd';
+import { Button, Dropdown, Grid, theme, Tooltip, Upload } from 'antd';
 import { RcFile } from 'antd/es/upload';
-import _ from 'lodash';
 import { use, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -36,8 +36,8 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
   const { t } = useTranslation();
   const { lg } = Grid.useBreakpoint();
   const { token } = theme.useToken();
-  const { modal } = App.useApp();
-  const { targetVFolderId, currentPath } = use(FolderInfoContext);
+  const { targetVFolderId } = use(FolderInfoContext);
+  const { uploadFiles } = useUploadVFolderFiles();
   const [openCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
   const [openDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
   const lastFileListRef = useRef<Array<RcFile>>([]);
@@ -50,34 +50,6 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
     staleTime: 5 * 60 * 1000,
     gcTime: 0,
   });
-
-  const handleUpload = async (fileList: RcFile[], path: string) => {
-    // Currently, backend.ai only supports finding existing files by using list_files API.
-    // This API throw an error if the file does not exist in the target vfolder.
-    // So, we need to catch the error and return undefined.
-    const duplicateCheckResult = await baiClient.vfolder
-      .list_files(currentPath, targetVFolderId)
-      .then((files) => {
-        return _.some(
-          files.items,
-          (existFiles) =>
-            existFiles.name ===
-            (fileList[0].webkitRelativePath.split('/')[0] || fileList[0].name),
-        );
-      });
-
-    if (duplicateCheckResult) {
-      modal.confirm({
-        title: t('comp:FileExplorer.DuplicatedFiles'),
-        content: t('comp:FileExplorer.DuplicatedFilesDesc'),
-        onOk: () => {
-          onUpload(fileList, path);
-        },
-      });
-    } else {
-      onUpload(fileList, path);
-    }
-  };
 
   return (
     <BAIFlex gap="xs">
@@ -116,7 +88,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
                 label: (
                   <Upload
                     beforeUpload={(_, fileList) => {
-                      handleUpload(fileList, currentPath);
+                      uploadFiles(fileList, onUpload);
                       return false; // Prevent default upload behavior
                     }}
                     showUploadList={false}
@@ -133,7 +105,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
                     directory
                     beforeUpload={(_, fileList) => {
                       if (fileList !== lastFileListRef.current) {
-                        handleUpload(fileList, currentPath);
+                        uploadFiles(fileList, onUpload);
                       }
                       lastFileListRef.current = fileList;
                       return false;
