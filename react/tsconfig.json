@@ -22,5 +22,10 @@
       "backend.ai-ui/dist/locale/*": ["../packages/backend.ai-ui/src/locale/*"]
     }
   },
-  "include": ["src", "../packages/backend.ai-ui/src"]
+  "include": ["src", "../packages/backend.ai-ui/src"],
+  "exclude": [
+    "../packages/backend.ai-ui/src/**/*.test.*",
+    "../packages/backend.ai-ui/src/**/*.stories.*",
+    "../packages/backend.ai-ui/src/**/*.spec.*"
+  ]
 }

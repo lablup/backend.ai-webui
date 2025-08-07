@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BAIFlex default render 1`] = `
+<body>
+  <div>
+    <div
+      style="align-items: center; border: 0px solid black; box-sizing: border-box; display: flex; flex-basis: auto; flex-direction: row; flex-shrink: 0; list-style: none; margin: 0px; min-height: 0; min-width: 0; padding: 0px; position: relative; text-decoration: none; gap: 0; flex-wrap: nowrap; justify-content: flex-start;"
+    />
+  </div>
+</body>
+`;
+
+exports[`BAIFlex render with children 1`] = `
+<body>
+  <div>
+    <div
+      style="align-items: center; border: 0px solid black; box-sizing: border-box; display: flex; flex-basis: auto; flex-direction: row; flex-shrink: 0; list-style: none; margin: 0px; min-height: 0; min-width: 0; padding: 0px; position: relative; text-decoration: none; gap: 0; flex-wrap: nowrap; justify-content: flex-start;"
+    >
+      <div
+        data-testid="firstChildComponent"
+      >
+        <h1>
+           First Child 
+        </h1>
+        <div
+          data-testid="nestedChildComponent"
+        >
+          <h1>
+             Nested Child 
+          </h1>
+        </div>
+      </div>
+      <div
+        data-testid="secondChildComponent"
+      >
+        <h1>
+           Second Child 
+        </h1>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`BAIFlex render with custom props 1`] = `
+<body>
+  <div>
+    <div
+      style="align-items: flex-start; border: 0px solid black; box-sizing: border-box; display: flex; flex-basis: auto; flex-direction: column; flex-shrink: 0; list-style: none; margin: 0px; min-height: 0; min-width: 0; padding: 0px; position: relative; text-decoration: none; gap: 12px; flex-wrap: wrap-reverse; justify-content: center; background-color: blue;"
+    />
+  </div>
+</body>
+`;
