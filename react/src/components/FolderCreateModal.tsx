@@ -1,11 +1,10 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
-import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import ProjectSelect from './ProjectSelect';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import StorageSelect from './StorageSelect';
 import {
@@ -25,6 +24,11 @@ import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+
+// Constants
+const MODEL_STORE_PROJECT_NAME = 'model-store';
+const FOLDER_NAME_MAX_LENGTH = 64;
+const MODAL_WIDTH = 650;
 
 const useStyles = createStyles(({ css }) => ({
   modal: css`
@@ -94,7 +98,6 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
   const formRef = useRef<FormInstance>(null);
   const baiClient = useSuspendedBackendaiClient();
   const userRole = useCurrentUserRole();
-  const currentDomain = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
 
   const { upsertNotification } = useSetBAINotification();
@@ -136,7 +139,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
   const INITIAL_FORM_VALUES: FolderCreateFormItemsType = {
     name: '',
     host: undefined,
-    group: currentProject.name,
+    group: currentProject.id,
     usage_mode: usageMode ?? 'general',
     type: 'user',
     permission: 'rw',
@@ -147,7 +150,11 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
     formRef.current
       ?.validateFields()
       .then((values) => {
-        mutationToCreateFolder.mutate(values, {
+        const input = {
+          ...values,
+          group: values.type === 'user' ? null : values.group,
+        };
+        mutationToCreateFolder.mutate(input, {
           onSuccess: (result) => {
             upsertNotification({
               key: 'folder-create-success',
@@ -212,7 +219,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
           </BAIFlex>
         </BAIFlex>
       }
-      width={650}
+      width={MODAL_WIDTH}
       okButtonProps={{ loading: mutationToCreateFolder.isPending }}
       onCancel={() => {
         onRequestClose();
@@ -232,6 +239,9 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
               // Only validate name field if it has a value to prevent excessive validation
               if (formRef.current?.getFieldValue('name')) {
                 formRef.current.validateFields(['name']);
+              }
+              if (formRef.current?.getFieldValue('type')) {
+                formRef.current.validateFields(['type']);
               }
             }}
           >
@@ -266,7 +276,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
               message: t('data.AllowsLettersNumbersAnd-_Dot'),
             },
             {
-              max: 64,
+              max: FOLDER_NAME_MAX_LENGTH,
               message: t('data.FolderNameTooLong'),
             },
             ({ getFieldValue }) => ({
@@ -314,50 +324,87 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
           </Suspense>
         </Form.Item>
         <Divider />
+        <Form.Item dependencies={['type', 'usage_mode']} noStyle>
+          {({ getFieldValue, getFieldError }) => {
+            const type = getFieldValue('type');
+            const usageMode = getFieldValue('usage_mode');
+            const hasError = getFieldError('type').length > 0;
 
-        <Form.Item
-          label={t('data.Type')}
-          name={'type'}
-          style={{ flex: 1, marginBottom: 0 }}
-        >
-          <Radio.Group>
-            {/* Both checks are required:
-             * - role check (admin/superadmin): Controls permission to create project folders
-             * - allowedTypes check: Ensures the 'group' type is registered in ETCD
-             * allowedTypes comes from ETCD and contains all registered types regardless of permissions,
-             * so we need both checks for proper access control
-             */}
-            {_.includes(allowedTypes, 'user') ? (
-              <Radio value={'user'} data-testid="user-type">
-                {t('data.User')}
-              </Radio>
-            ) : null}
-            {(userRole === 'admin' || userRole === 'superadmin') &&
-            _.includes(allowedTypes, 'group') ? (
-              <Radio value={'project'} data-testid="project-type">
-                {t('data.Project')}
-              </Radio>
-            ) : null}
-          </Radio.Group>
+            const shouldDisableProject =
+              usageMode === 'model' &&
+              currentProject?.name !== MODEL_STORE_PROJECT_NAME;
+
+            const helpText =
+              type === 'user' || hasError
+                ? undefined
+                : shouldDisableProject
+                  ? // To avoid flickering, we use the same help text as the error message.
+                    t(
+                      'data.folders.ChangeTheCurrentProjectToModelStoreOrSelectUserType',
+                    )
+                  : t('data.folders.ProjectFolderCreationHelp', {
+                      projectName: currentProject?.name,
+                    });
+
+            return (
+              <Form.Item
+                label={t('data.Type')}
+                name={'type'}
+                style={{ flex: 1, marginBottom: 0 }}
+                help={helpText}
+                rules={[
+                  ({ getFieldValue }) => ({
+                    validator(__, value) {
+                      const currentUsageMode = getFieldValue('usage_mode');
+                      const isInvalid =
+                        value === 'project' &&
+                        currentUsageMode === 'model' &&
+                        currentProject?.name !== MODEL_STORE_PROJECT_NAME;
+
+                      if (isInvalid) {
+                        return Promise.reject(
+                          new Error(
+                            t(
+                              'data.folders.ChangeTheCurrentProjectToModelStoreOrSelectUserType',
+                            ),
+                          ),
+                        );
+                      }
+                      return Promise.resolve();
+                    },
+                  }),
+                ]}
+              >
+                <Radio.Group>
+                  {/* Both checks are required:
+                   * - role check (admin/superadmin): Controls permission to create project folders
+                   * - allowedTypes check: Ensures the 'group' type is registered in ETCD
+                   * allowedTypes comes from ETCD and contains all registered types regardless of permissions,
+                   * so we need both checks for proper access control
+                   */}
+                  {_.includes(allowedTypes, 'user') ? (
+                    <Radio value={'user'} data-testid="user-type">
+                      {t('data.User')}
+                    </Radio>
+                  ) : null}
+                  {(userRole === 'admin' || userRole === 'superadmin') &&
+                  _.includes(allowedTypes, 'group') ? (
+                    <Radio
+                      value={'project'}
+                      data-testid="project-type"
+                      disabled={shouldDisableProject}
+                    >
+                      {t('data.Project')}
+                    </Radio>
+                  ) : null}
+                </Radio.Group>
+              </Form.Item>
+            );
+          }}
         </Form.Item>
         <Divider />
 
-        <Suspense>
-          <Form.Item dependencies={['type']} noStyle>
-            {({ getFieldValue }) => {
-              return (
-                getFieldValue('type') === 'project' && (
-                  <>
-                    <Form.Item label={t('data.Project')} name={'group'}>
-                      <ProjectSelect domain={currentDomain} />
-                    </Form.Item>
-                    <Divider />
-                  </>
-                )
-              );
-            }}
-          </Form.Item>
-        </Suspense>
+        <Form.Item hidden name={'group'} />
 
         <Form.Item label={t('data.Permission')} name={'permission'}>
           <Radio.Group>
