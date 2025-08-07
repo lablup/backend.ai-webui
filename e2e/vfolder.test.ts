@@ -87,12 +87,26 @@ test.describe('VFolder ', () => {
       await (await folderCreationModal.getCreateButton()).click();
     });
   });
-  test('User can create and delete, delete forever vFolder', async ({
-    page,
-  }) => {
-    await createVFolderAndVerify(page, folderName);
-    await moveToTrashAndVerify(page, folderName);
-    await deleteForeverAndVerifyFromTrash(page, folderName);
+  test.describe('Auto Mount vFolder Creation', () => {
+    const folderName = '.e2e-test-folder-auto-mount' + new Date().getTime();
+    test.beforeEach(async ({ page }) => {
+      await page.getByRole('link', { name: 'Data' }).click();
+      await page.getByRole('button', { name: 'Create Folder' }).nth(1).click();
+    });
+    test.afterEach(async ({ page }) => {
+      await moveToTrashAndVerify(page, folderName);
+      await deleteForeverAndVerifyFromTrash(page, folderName);
+    });
+    test('User can create Auto Mount vFolder', async ({ page }) => {
+      const folderCreationModal = new FolderCreationModal(page);
+      await folderCreationModal.modalToBeVisible();
+      await folderCreationModal.fillFolderName(folderName);
+      await (await folderCreationModal.getAutoMountUsageModeRadio()).check();
+      await expect(
+        await folderCreationModal.getAutoMountUsageModeRadio(),
+      ).toBeChecked();
+      await (await folderCreationModal.getCreateButton()).click();
+    });
   });
 
   test('User can create, delete(move to trash), restore, delete forever vFolder', async ({
