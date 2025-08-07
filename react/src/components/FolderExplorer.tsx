@@ -121,19 +121,29 @@ const FolderExplorer: React.FC<FolderExplorerProps> = ({
                   showIcon
                 />
               ) : !hasNoPermissions ? (
-                <BAIFileExplorer
-                  vfolderNodeFrgmt={vfolder_node}
-                  targetVFolderId={vfolderID}
-                  onUpload={(
-                    files: RcFile[],
-                    currentPath: string,
-                    refetch: () => void,
-                  ) => {
-                    uploadFiles(files, vfolderID, currentPath, () => {
-                      refetch();
-                    });
-                  }}
-                />
+                <>
+                  <BAIFileExplorer
+                    vfolderNodeFrgmt={vfolder_node}
+                    targetVFolderId={vfolderID}
+                    onUpload={(
+                      files: RcFile[],
+                      currentPath: string,
+                      refetch: () => void,
+                    ) => {
+                      uploadFiles(files, vfolderID, currentPath, () => {
+                        refetch();
+                      });
+                    }}
+                  />
+                  {/* backend-ai-folder-explorer is needed for header actions */}
+                  {/* @ts-ignore */}
+                  <backend-ai-folder-explorer
+                    ref={folderExplorerRef}
+                    active
+                    vfolderID={vfolderID}
+                    style={{ display: 'none' }}
+                  />
+                </>
               ) : null}
             </BAIFlex>
           </Splitter.Panel>

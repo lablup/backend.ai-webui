@@ -1,6 +1,11 @@
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
+import { FolderInfoContext } from './BAIFileExplorer';
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { App } from 'antd';
+import { RcFile } from 'antd/es/upload';
+import _ from 'lodash';
+import { use, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 export const useSearchVFolderFiles = (vfolder: string) => {
@@ -58,5 +63,58 @@ export const useSearchVFolderFiles = (vfolder: string) => {
     navigateToPath,
     refetch,
     isFetching,
+  };
+};
+
+export const useUploadVFolderFiles = () => {
+  const { t } = useTranslation();
+  const { modal } = App.useApp();
+  const { targetVFolderId, currentPath } = use(FolderInfoContext);
+  const baiClient = useConnectedBAIClient();
+
+  const upload = async (
+    fileList: Array<RcFile>,
+    onUpload: (files: Array<RcFile>, currentPath: string) => void,
+    afterUpload?: () => void,
+  ) => {
+    try {
+      const existFilePromises = _.map(fileList, (file) => {
+        // Currently, backend.ai only supports finding existing files by using list_files API.
+        // This API throw an error if the file does not exist in the target vfolder.
+        // So, we need to catch the error and return undefined.
+        const searchPath = [
+          currentPath,
+          file.webkitRelativePath.split('/').slice(0, -1).join('/'),
+        ].join('/');
+        return baiClient.vfolder
+          .list_files(searchPath, targetVFolderId)
+          .then((files) => {
+            return _.find(files.items, { name: file.name });
+          })
+          .catch(() => {
+            return undefined;
+          });
+      });
+
+      await Promise.all(existFilePromises).then((res) => {
+        const result = _.filter(res, (item) => item !== undefined);
+        if (!_.isEmpty(result)) {
+          modal.confirm({
+            title: t('comp:FileExplorer.DuplicatedFiles'),
+            content: t('comp:FileExplorer.DuplicatedFilesDesc'),
+            onOk: () => {
+              onUpload(fileList, currentPath);
+            },
+          });
+        } else {
+          onUpload(fileList, currentPath);
+        }
+        afterUpload?.();
+      });
+    } catch (error) {}
+  };
+
+  return {
+    upload,
   };
 };
