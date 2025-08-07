@@ -243,7 +243,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           align-items: center;
           background-repeat: no-repeat;
           background-size: contain;
-          background-position: top center;
+          background-position: center center;
+          min-height: 200px;
+          box-sizing: border-box;
         }
 
         .slide > p {
@@ -305,6 +307,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         @media screen and (max-width: 810px) {
           #terminal-guide {
             --component-width: calc(100% - 50px);
+          }
+          .slide > span {
+            min-height: 120px;
+            height: 200px;
+            background-position: center center;
+            background-size: contain;
+            width: 100%;
+            max-width: 100vw;
           }
         }
       `,
@@ -1616,26 +1626,24 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <p>${_text('webTerminalUsageGuide.CopyGuideOne')}</p>
         </article>
         <article class="slide vertical layout center">
-          <span style="background-image:url(/resources/images/web-terminal-guide-2.png);"></span>
+          <span class="flex" style="background-image:url(/resources/images/web-terminal-guide-2.png);"></span>
           <p>${_text('webTerminalUsageGuide.CopyGuideTwo')}</p>
         </article>
         <article class="slide vertical layout center">
-          <span style="background-image:url(/resources/images/web-terminal-guide-3.png);"></span>
+          <span class="flex" style="background-image:url(/resources/images/web-terminal-guide-3.png);"></span>
           <p>${_text('webTerminalUsageGuide.CopyGuideThree')}</p>
         </article>
         <article class="slide vertical layout center">
-          <span style="background-image:url(/resources/images/web-terminal-guide-4.png);">
+          <span class="flex" style="background-image:url(/resources/images/web-terminal-guide-4.png);">
             <span class="keyboard">Ctrl</span>
             <span class="keyboard invert">+</span>
             <span class="keyboard one-key">B</span>
           </span>
-          <div class="flex layout center-justified vertical center">
-            <p>${_text('webTerminalUsageGuide.CopyGuideFour')}</p>
+          <p>${_text('webTerminalUsageGuide.CopyGuideFour')}</p>
             <a href="https://webui.docs.backend.ai/${lang}/latest/sessions_all/sessions_all.html#advanced-web-terminal-usage"
                target="_blank" style="width:100%;text-align:right;">
               <p>${_text('webTerminalUsageGuide.LearnMore')}</p>
             </a>
-          </div>
         </article>
       </macro-carousel>`;
     content.appendChild(div);
