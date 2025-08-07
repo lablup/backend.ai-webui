@@ -1,15 +1,15 @@
 import { loginAsAdmin, navigateTo } from './utils/test-util';
-import { findColumnIndex } from './utils/test-util-antd';
+import { findColumnIndex, getMenuItem } from './utils/test-util-antd';
 import { expect, test } from '@playwright/test';
 
 test.describe('environment ', () => {
-  let imageListTable;
   test.beforeEach(async ({ page }) => {
-    imageListTable = await page.locator('.ant-table');
+    await loginAsAdmin(page);
+    await getMenuItem(page, 'Environments').click();
+    await expect(page).toHaveURL(/\/environment/);
+    await page.waitForLoadState('networkidle');
   });
   test('Rendering Image List', async ({ page }) => {
-    await loginAsAdmin(page);
-    await navigateTo(page, 'environment');
     const table = page.locator('.ant-table-content');
     await expect(table).toBeVisible();
   });
@@ -18,6 +18,7 @@ test.describe('environment ', () => {
   test.skip('user can install image', async ({ page }) => {
     await loginAsAdmin(page);
     await navigateTo(page, 'environment');
+    const imageListTable = page.locator('.ant-table-content');
     await expect(imageListTable).toBeVisible();
     // Sort installation status
     await page.locator('.ant-table-cell.ant-table-column-sort').first().click();
@@ -57,72 +58,110 @@ test.describe('environment ', () => {
   });
 
   test('user can modify image resource limit', async ({ page }) => {
-    await loginAsAdmin(page);
-    await navigateTo(page, 'environment');
+    const CPU_CORE = '5';
+    const MEMORY_SIZE = '1';
+    const imageListTable = page.locator('.ant-table-content');
     await expect(imageListTable).toBeVisible();
 
     // Click resource limit button
-    const rows = await imageListTable.locator('.ant-table-row');
-    const firstRow = await rows.first();
+    const rows = imageListTable.locator('.ant-table-row');
+    const firstRow = rows.first();
     const controlColumnIndex = await findColumnIndex(imageListTable, 'Control');
     await firstRow
       .locator('.ant-table-cell')
       .nth(controlColumnIndex)
       .getByRole('button', { name: 'setting' })
       .click();
+    await page.waitForLoadState('networkidle');
+    // get resource limit from control modal
+    const resourceLimitControlModal = page.locator(
+      '.ant-modal-content:has-text("Modify Minimum Image Resource Limit")',
+    );
+    await expect(resourceLimitControlModal).toBeVisible();
 
-    // Modify resource limit
-    const resourceValue = await page
-      .getByRole('slider')
-      .first()
-      .getAttribute('aria-valuenow');
-    let modifiedResourceValue;
-    if (resourceValue === '0') {
-      modifiedResourceValue = Number(resourceValue) + 1;
-      await page.locator('.ant-slider-dot').nth(modifiedResourceValue).click();
-    } else {
-      modifiedResourceValue = Number(resourceValue) - 1;
-      await page
-        .locator('.ant-slider-dot.ant-slider-dot-active')
-        .nth(modifiedResourceValue)
-        .click();
-    }
+    const cpuFormItem = resourceLimitControlModal.locator(
+      '.ant-form-item-row:has-text("CPU")',
+    );
+    const cpuFormItemInput = cpuFormItem.locator('input');
+    const cpuValue = await cpuFormItemInput.getAttribute('value');
 
-    // Click OK Button
-    await page.getByRole('button', { name: 'OK' }).click();
+    const memoryFormItem = resourceLimitControlModal.locator(
+      '.ant-form-item-row:has-text("Memory")',
+    );
+    const memoryFormItemInput = memoryFormItem.locator(
+      '.ant-input-number input',
+    );
+    const memoryValue = await memoryFormItemInput.getAttribute('value');
+    const memorySize = await memoryFormItem
+      .locator('.ant-input-number-group-addon .ant-select-selection-item')
+      .textContent();
+    // modify resource limit
+    await cpuFormItemInput.fill(CPU_CORE);
+    await expect(cpuFormItemInput).toHaveValue(CPU_CORE);
+    await memoryFormItemInput.fill(MEMORY_SIZE + 'g');
+    await expect(memoryFormItemInput).toHaveValue(MEMORY_SIZE);
+    // click ok button
+    await resourceLimitControlModal.getByRole('button', { name: 'OK' }).click();
     const reinstallationText = await page
       .getByText('Image reinstallation required')
       .count();
     if (reinstallationText > 0) {
       await page.getByRole('button', { name: 'OK' }).nth(1).click();
     }
-
-    // Verify image is modified
-    const resourceLimitControlIndex = await findColumnIndex(
-      imageListTable,
-      'Resource limit',
-    );
-    const resource = await firstRow
-      .locator('.ant-table-cell')
-      .nth(resourceLimitControlIndex);
-    await expect(resource.getByText(`${modifiedResourceValue}`)).toBeVisible();
-
-    // Reset resource limit
+    // verify resource limit is modified
     await firstRow
       .locator('.ant-table-cell')
       .nth(controlColumnIndex)
       .getByRole('button', { name: 'setting' })
       .click();
-    await page.locator('.ant-slider-dot').nth(Number(resourceValue)).click();
-    await page.getByRole('button', { name: 'OK' }).click();
-    if (reinstallationText > 0) {
+    await page.waitForLoadState('networkidle');
+    const modifiedResourceLimitControlModal = page.locator(
+      '.ant-modal-content:has-text("Modify Minimum Image Resource Limit")',
+    );
+    await expect(modifiedResourceLimitControlModal).toBeVisible();
+    const modifiedCpuFormItemInput = modifiedResourceLimitControlModal.locator(
+      '.ant-form-item-row:has-text("CPU") input',
+    );
+    const modifiedMemoryFormItemInput =
+      modifiedResourceLimitControlModal.locator(
+        '.ant-form-item-row:has-text("Memory") .ant-input-number input',
+      );
+    await expect(modifiedCpuFormItemInput).toHaveValue(CPU_CORE);
+    await expect(modifiedMemoryFormItemInput).toHaveValue(MEMORY_SIZE);
+    await expect(
+      memoryFormItem.locator(
+        '.ant-input-number-group-addon .ant-select-selection-item',
+      ),
+    ).toHaveText('GiB');
+
+    // reset resource limit
+    modifiedCpuFormItemInput.fill(cpuValue as string);
+    await expect(modifiedCpuFormItemInput).toHaveValue(cpuValue as string);
+    modifiedMemoryFormItemInput.fill(memoryValue as string);
+    await expect(modifiedMemoryFormItemInput).toHaveValue(
+      memoryValue as string,
+    );
+    const memorySizeAddon = modifiedResourceLimitControlModal.locator(
+      '.ant-form-item-row:has-text("Memory") .ant-select-selector',
+    );
+    await memorySizeAddon.click();
+    await page
+      .locator(`.ant-select-item-option-content:has-text("${memorySize}")`)
+      .click();
+    // click ok button
+    await modifiedResourceLimitControlModal
+      .getByRole('button', { name: 'OK' })
+      .click();
+    const reinstallationTextAfterReset = await page
+      .getByText('Image reinstallation required')
+      .count();
+    if (reinstallationTextAfterReset > 0) {
       await page.getByRole('button', { name: 'OK' }).nth(1).click();
     }
   });
 
   test('user can manage apps', async ({ page }) => {
-    await loginAsAdmin(page);
-    await navigateTo(page, 'environment');
+    const imageListTable = page.locator('.ant-table-content');
     await expect(imageListTable).toBeVisible();
     // Click manage apps button
 

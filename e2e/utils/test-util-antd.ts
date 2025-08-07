@@ -37,7 +37,7 @@ export function getNotificationDescriptionBox(page: Page) {
 }
 
 export const getMenuItem = (page: Page, menuName: string) => {
-  return page.getByRole('link', { name: menuName });
+  return page.getByRole('link', { name: menuName, exact: true }).first();
 };
 
 export const getCardItemByCardTitle = (page: Page, title: string) => {
