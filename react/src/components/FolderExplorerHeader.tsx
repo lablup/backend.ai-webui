@@ -1,7 +1,7 @@
 import { FolderExplorerHeaderFragment$key } from '../__generated__/FolderExplorerHeaderFragment.graphql';
-import Flex from './Flex';
 import VFolderNameTitle from './VFolderNameTitle';
 import { Button, Tooltip, Image, Skeleton, Grid, theme } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import React, { LegacyRef, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -33,13 +33,13 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
   );
 
   return (
-    <Flex justify="between" gap={token.marginMD} style={{ width: '100%' }}>
-      <Flex gap={token.marginMD} style={{ flex: 1 }}>
+    <BAIFlex justify="between" gap={token.marginMD} style={{ width: '100%' }}>
+      <BAIFlex gap={token.marginMD} style={{ flex: 1 }}>
         <Suspense fallback={<Skeleton.Input active />}>
           <VFolderNameTitle vfolderNodeFrgmt={vfolderNode} />
         </Suspense>
-      </Flex>
-      <Flex
+      </BAIFlex>
+      <BAIFlex
         justify="end"
         gap={token.marginSM}
         style={{
@@ -86,8 +86,8 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
             </Tooltip>
           </>
         ) : null}
-      </Flex>
-    </Flex>
+      </BAIFlex>
+    </BAIFlex>
   );
 };
 

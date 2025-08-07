@@ -5,9 +5,9 @@ import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import BAIBoard, { BAIBoardItem } from './BAIBoard';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
-import Flex from './Flex';
 import SessionMetricGraph from './SessionMetricGraph';
 import { Alert, DatePicker, Empty, Skeleton, theme } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { Suspense, useEffect, useMemo, useState, useTransition } from 'react';
@@ -182,8 +182,8 @@ const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
   }, [initialBoardItems]);
 
   return (
-    <Flex direction="column" align="stretch" gap="md">
-      <Flex align="stretch" justify="between">
+    <BAIFlex direction="column" align="stretch" gap="md">
+      <BAIFlex align="stretch" justify="between">
         <RangePicker
           allowClear={false}
           showTime={{ format: 'HH:mm' }}
@@ -246,7 +246,7 @@ const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
             });
           }}
         />
-      </Flex>
+      </BAIFlex>
       {dayDiff > 30 && (
         <Alert
           showIcon
@@ -319,7 +319,7 @@ const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
           }}
         />
       )}
-    </Flex>
+    </BAIFlex>
   );
 };
 

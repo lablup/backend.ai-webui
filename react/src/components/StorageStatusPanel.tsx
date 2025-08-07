@@ -5,7 +5,6 @@ import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import Flex from './Flex';
 import FlexActivityIndicator from './FlexActivityIndicator';
 import StorageSelect, { VolumeInfo } from './StorageSelect';
 import UsageProgress from './UsageProgress';
@@ -23,6 +22,7 @@ import {
   Tooltip,
   Button,
 } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -190,7 +190,7 @@ const StorageStatusPanel: React.FC<{
               status={numberOfFolderPercent >= 100 ? 'exception' : 'normal'}
             />
           ) : null}
-          <Flex direction="row" gap={token.marginXXS} wrap="wrap">
+          <BAIFlex direction="row" gap={token.marginXXS} wrap="wrap">
             <Typography.Text type="secondary">
               {t('data.Created')}:
             </Typography.Text>
@@ -204,10 +204,10 @@ const StorageStatusPanel: React.FC<{
                 {maxVfolderCount === 0 ? '∞' : maxVfolderCount}
               </>
             ) : null}
-          </Flex>
+          </BAIFlex>
           <Divider style={{ margin: '12px auto' }} />
-          <Flex direction="row" wrap="wrap" justify="between">
-            <Flex gap={token.marginXXS}>
+          <BAIFlex direction="row" wrap="wrap" justify="between">
+            <BAIFlex gap={token.marginXXS}>
               <Typography.Text type="secondary">
                 {t('data.ProjectFolder')}:
               </Typography.Text>
@@ -225,14 +225,14 @@ const StorageStatusPanel: React.FC<{
                     : project_resource_policy?.max_vfolder_count}
                 </>
               ) : null}
-            </Flex>
-            <Flex gap={token.marginXXS} style={{ marginRight: 30 }}>
+            </BAIFlex>
+            <BAIFlex gap={token.marginXXS} style={{ marginRight: 30 }}>
               <Typography.Text type="secondary">
                 {t('data.Invited')}:
               </Typography.Text>
               {invitedCount}
-            </Flex>
-          </Flex>
+            </BAIFlex>
+          </BAIFlex>
         </>
       ),
     },
@@ -248,7 +248,7 @@ const StorageStatusPanel: React.FC<{
       ),
       children: (
         <>
-          <Flex
+          <BAIFlex
             wrap="wrap"
             justify="between"
             direction="row"
@@ -265,12 +265,12 @@ const StorageStatusPanel: React.FC<{
               showSearch
               allowClear
             />
-          </Flex>
+          </BAIFlex>
           {selectedVolumeInfo !== deferredSelectedVolumeInfo ? (
             <FlexActivityIndicator style={{ minHeight: 120 }} />
           ) : selectedVolumeInfo?.capabilities?.includes('quota') ? (
             <>
-              <Flex
+              <BAIFlex
                 style={{ margin: '15px auto' }}
                 justify="between"
                 wrap="wrap"
@@ -288,8 +288,8 @@ const StorageStatusPanel: React.FC<{
                 <UsageProgress
                   usageProgressFrgmt={project_quota_scope || null}
                 />
-              </Flex>
-              <Flex justify="between" wrap="wrap">
+              </BAIFlex>
+              <BAIFlex justify="between" wrap="wrap">
                 <Typography.Text
                   type="secondary"
                   style={{
@@ -301,7 +301,7 @@ const StorageStatusPanel: React.FC<{
                   <br />({baiClient?.email})
                 </Typography.Text>
                 <UsageProgress usageProgressFrgmt={user_quota_scope || null} />
-              </Flex>
+              </BAIFlex>
             </>
           ) : (
             <Empty

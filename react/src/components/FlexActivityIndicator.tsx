@@ -1,9 +1,9 @@
-import Flex, { FlexProps } from './Flex';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin, SpinProps } from 'antd';
+import { BAIFlex, BAIFlexProps } from 'backend.ai-ui';
 import React from 'react';
 
-interface FlexActivityIndicatorProps extends FlexProps {
+interface FlexActivityIndicatorProps extends BAIFlexProps {
   spinSize?: SpinProps['size'];
 }
 
@@ -13,7 +13,7 @@ const FlexActivityIndicator: React.FC<FlexActivityIndicatorProps> = ({
   spinSize = 'default',
 }) => {
   return (
-    <Flex
+    <BAIFlex
       direction="row"
       justify="center"
       align="center"
@@ -21,7 +21,7 @@ const FlexActivityIndicator: React.FC<FlexActivityIndicatorProps> = ({
     >
       <Spin indicator={<LoadingOutlined spin />} size={spinSize} />
       {children}
-    </Flex>
+    </BAIFlex>
   );
 };
 

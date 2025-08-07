@@ -18,7 +18,6 @@ import AgentSelect from './AgentSelect';
 import BAISelect from './BAISelect';
 import DynamicUnitInputNumber from './DynamicUnitInputNumber';
 import DynamicUnitInputNumberWithSlider from './DynamicUnitInputNumberWithSlider';
-import Flex from './Flex';
 import {
   Image,
   ImageEnvironmentFormInput,
@@ -41,6 +40,7 @@ import {
   Switch,
   theme,
 } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useEffect, useMemo, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -694,12 +694,12 @@ const ResourceAllocationFormItems: React.FC<
                         onClick: (e: any) => e.preventDefault(),
                       },
                       title: (
-                        <Flex
+                        <BAIFlex
                           direction="column"
                           onClick={(e) => e.preventDefault()}
                         >
                           <Trans i18nKey={'session.launcher.DescMemory'} />
-                        </Flex>
+                        </BAIFlex>
                       ),
                     }}
                     required
@@ -882,8 +882,8 @@ const ResourceAllocationFormItems: React.FC<
                         );
 
                         return (
-                          <Flex direction="column" align="stretch" gap="xs">
-                            <Flex direction="row" gap={'sm'}>
+                          <BAIFlex direction="column" align="stretch" gap="xs">
+                            <BAIFlex direction="row" gap={'sm'}>
                               <ConfigProvider
                                 theme={{
                                   components: {
@@ -922,8 +922,8 @@ const ResourceAllocationFormItems: React.FC<
                                   max={memUnitResult?.number || 1}
                                 />
                               </ConfigProvider>
-                            </Flex>
-                            <Flex
+                            </BAIFlex>
+                            <BAIFlex
                               direction="row"
                               gap={'xxs'}
                               justify="between"
@@ -932,7 +932,7 @@ const ResourceAllocationFormItems: React.FC<
                                 minHeight: token.controlHeightSM,
                               }}
                             >
-                              <Flex gap={'xxs'}>
+                              <BAIFlex gap={'xxs'}>
                                 <div
                                   style={{
                                     height: token.fontSize,
@@ -942,8 +942,8 @@ const ResourceAllocationFormItems: React.FC<
                                   }}
                                 ></div>
                                 Application MEM {appMemUnitResult?.value}
-                              </Flex>
-                              <Flex gap={'xxs'}>
+                              </BAIFlex>
+                              <BAIFlex gap={'xxs'}>
                                 <div
                                   style={{
                                     height: token.fontSize,
@@ -1053,7 +1053,7 @@ const ResourceAllocationFormItems: React.FC<
                                     }}
                                   />
                                 </Form.Item>
-                                <Flex direction="row" gap="xs">
+                                <BAIFlex direction="row" gap="xs">
                                   <Form.Item
                                     noStyle
                                     name={'enabledAutomaticShmem'}
@@ -1082,7 +1082,7 @@ const ResourceAllocationFormItems: React.FC<
                                   </Form.Item>
                                   <QuestionIconWithTooltip
                                     title={
-                                      <Flex direction="column">
+                                      <BAIFlex direction="column">
                                         {t(
                                           'session.launcher.AutoSharedMemoryTooltip',
                                         )}
@@ -1106,13 +1106,13 @@ const ResourceAllocationFormItems: React.FC<
                                             'session.launcher.DescSharedMemoryContext'
                                           }
                                         />
-                                      </Flex>
+                                      </BAIFlex>
                                     }
                                   />
-                                </Flex>
-                              </Flex>
-                            </Flex>
-                          </Flex>
+                                </BAIFlex>
+                              </BAIFlex>
+                            </BAIFlex>
+                          </BAIFlex>
                         );
                       }}
                     </Form.Item>
@@ -1473,7 +1473,7 @@ const ResourceAllocationFormItems: React.FC<
           required
           tooltip={<Trans i18nKey={'session.launcher.DescSelectAgent'} />}
         >
-          <Flex gap={'xs'}>
+          <BAIFlex gap={'xs'}>
             <Suspense>
               <Form.Item required noStyle style={{ flex: 1 }} name="agent">
                 <AgentSelect
@@ -1500,19 +1500,19 @@ const ResourceAllocationFormItems: React.FC<
                 icon={<ReloadOutlined />}
               ></Button>
             </Form.Item>
-          </Flex>
+          </BAIFlex>
         </Form.Item>
       )}
       <Form.Item
         label={t('session.launcher.ClusterMode')}
         tooltip={
-          <Flex direction="column" align="start">
+          <BAIFlex direction="column" align="start">
             {t('session.launcher.SingleNode')}
             <Trans i18nKey={'session.launcher.DescSingleNode'} />
             <Divider style={{ backgroundColor: token.colorBorder }} />
             {t('session.launcher.MultiNode')}
             <Trans i18nKey={'session.launcher.DescMultiNode'} />
-          </Flex>
+          </BAIFlex>
         }
         required
         dependencies={['agent']}
@@ -1650,7 +1650,7 @@ const ResourceAllocationFormItems: React.FC<
 const RemainingMark: React.FC<{ title?: string }> = () => {
   const { token } = theme.useToken();
   return (
-    <Flex
+    <BAIFlex
       style={{
         position: 'absolute',
         top: -24,
@@ -1660,7 +1660,7 @@ const RemainingMark: React.FC<{ title?: string }> = () => {
       }}
     >
       <CaretDownOutlined />
-    </Flex>
+    </BAIFlex>
   );
 };
 

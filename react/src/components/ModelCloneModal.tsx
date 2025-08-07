@@ -4,7 +4,6 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
 import StorageSelect from './StorageSelect';
 import {
   Alert,
@@ -16,6 +15,7 @@ import {
   Switch,
   message,
 } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -147,7 +147,7 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
           .catch(() => {});
       }}
     >
-      <Flex direction="column" align="stretch" gap="sm">
+      <BAIFlex direction="column" align="stretch" gap="sm">
         <Alert showIcon type="info" message={t('modelStore.CloneInfo')} />
         <Form
           ref={formRef}
@@ -284,7 +284,7 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
             <Switch checked={false} />
           </Form.Item>
         </Form>
-      </Flex>
+      </BAIFlex>
     </BAIModal>
   );
 };

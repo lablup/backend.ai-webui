@@ -4,7 +4,6 @@ import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
 import {
   CloudUploadOutlined,
   FilterOutlined,
@@ -27,6 +26,7 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { CheckIcon } from 'lucide-react';
 import Markdown from 'markdown-to-jsx';
@@ -63,10 +63,10 @@ const ReadmeFallbackCard = () => {
     <Card
       size="small"
       title={
-        <Flex direction="row" gap="xs">
+        <BAIFlex direction="row" gap="xs">
           <FilterOutlined />
           README.md
-        </Flex>
+        </BAIFlex>
       }
       styles={{
         body: {
@@ -345,10 +345,10 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
               <Card
                 size="small"
                 title={
-                  <Flex direction="row" gap="xs">
+                  <BAIFlex direction="row" gap="xs">
                     <FilterOutlined />
                     README.md
-                  </Flex>
+                  </BAIFlex>
                 }
                 styles={{
                   body: {
@@ -364,7 +364,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
           ) : (
             <ReadmeFallbackCard />
           )}
-          <Flex
+          <BAIFlex
             gap={'xs'}
             style={{ marginTop: token.marginLG, marginBottom: token.marginLG }}
           >
@@ -375,7 +375,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
               }}
             />
             <Typography.Text>{t('data.modelStore.ImportOnly')}</Typography.Text>
-          </Flex>
+          </BAIFlex>
         </Form>
       </BAIModal>
       <Modal
@@ -404,7 +404,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
           }
           extra={
             importAndStartService?.isSuccess && (
-              <Flex gap={'xs'} justify="center" align="center">
+              <BAIFlex gap={'xs'} justify="center" align="center">
                 {importResult?.folder?.id && (
                   <Tooltip
                     title={
@@ -445,7 +445,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
                     {t('data.modelStore.ViewServiceInfo')}
                   </Button>
                 )}
-              </Flex>
+              </BAIFlex>
             )
           }
         >

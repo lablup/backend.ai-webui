@@ -10,7 +10,6 @@ import {
 import { GBToBytes, bytesToGB } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
 import {
   Form,
@@ -21,6 +20,7 @@ import {
   theme,
   FormInstance,
 } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -250,7 +250,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
         >
           <Input disabled={!!userResourcePolicy} />
         </Form.Item>
-        <Flex
+        <BAIFlex
           direction="column"
           align="stretch"
           gap={'md'}
@@ -282,7 +282,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
               style={{ width: '100%' }}
             />
           </FormItemWithUnlimited>
-        </Flex>
+        </BAIFlex>
         <Form.Item
           name={'max_session_count_per_model_session'}
           label={t('resourcePolicy.MaxSessionCountPerModelSession')}

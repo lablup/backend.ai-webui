@@ -14,7 +14,7 @@ import BaseResourceItem, {
 import ResourceGroupSelectForCurrentProject from './ResourceGroupSelectForCurrentProject';
 import { Typography } from 'antd';
 import {
-  Flex,
+  BAIFlex,
   BAICardProps,
   subNumberWithUnits,
   addNumberWithUnits,
@@ -184,7 +184,7 @@ const TotalResourceWithinResourceGroup: React.FC<
   );
 
   const title = (
-    <Flex gap={'xs'}>
+    <BAIFlex gap={'xs'}>
       <Typography.Title level={5} style={{ margin: 0 }}>
         {t('webui.menu.TotalResourcesIn')}
       </Typography.Title>
@@ -196,7 +196,7 @@ const TotalResourceWithinResourceGroup: React.FC<
         popupMatchSelectWidth={false}
         tooltip={t('general.ResourceGroup')}
       />
-    </Flex>
+    </BAIFlex>
   );
 
   const handleRefetch = () => {

@@ -1,13 +1,12 @@
 import { LegacyFolderExplorerQuery } from '../__generated__/LegacyFolderExplorerQuery.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
 import FolderExplorerActions from './FolderExplorerActions';
 import FolderExplorerHeader from './FolderExplorerHeader';
 import VFolderNodeDescription from './VFolderNodeDescription';
 import { Alert, Grid, Splitter, theme } from 'antd';
 import { createStyles } from 'antd-style';
-import { toGlobalId } from 'backend.ai-ui';
+import { toGlobalId, BAIFlex } from 'backend.ai-ui';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -101,7 +100,7 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
   // !vfolder_node || (vfolder_node.permissions?.length || 0) === 0;
 
   const legacyFolderExplorerPane = vfolder_node && (
-    <Flex direction="column" align="stretch">
+    <BAIFlex direction="column" align="stretch">
       {vfolder_node?.unmanaged_path ? (
         <Alert
           message={t('explorer.NoExplorerSupportForUnmanagedFolder')}
@@ -123,7 +122,7 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
           />
         </>
       ) : null}
-    </Flex>
+    </BAIFlex>
   );
 
   const vfolderDescription = vfolder_node && (
@@ -180,10 +179,10 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
             </Splitter.Panel>
           </Splitter>
         ) : (
-          <Flex direction="column" align="stretch" gap={'md'}>
+          <BAIFlex direction="column" align="stretch" gap={'md'}>
             {legacyFolderExplorerPane}
             {vfolderDescription}
-          </Flex>
+          </BAIFlex>
         )
       ) : null}
     </BAIModal>

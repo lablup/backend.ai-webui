@@ -1,5 +1,4 @@
 import BAIModal from './BAIModal';
-import Flex from './Flex';
 import SettingItem, { SettingItemProps } from './SettingItem';
 import { RedoOutlined, SearchOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
@@ -15,6 +14,7 @@ import {
   theme,
 } from 'antd';
 import { createStyles } from 'antd-style';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useState, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -63,14 +63,14 @@ const GroupSettingItems: React.FC<{
   const { token } = theme.useToken();
   if (hideEmpty && group.settingItems.length === 0) return false;
   return (
-    <Flex
+    <BAIFlex
       direction="column"
       align="stretch"
       style={{
         marginBottom: token.marginMD,
       }}
     >
-      <Flex
+      <BAIFlex
         direction="column"
         align="stretch"
         style={{
@@ -96,13 +96,13 @@ const GroupSettingItems: React.FC<{
             {group.description}
           </Typography.Text>
         )}
-      </Flex>
-      <Flex direction="column" align="start" gap={'lg'}>
+      </BAIFlex>
+      <BAIFlex direction="column" align="start" gap={'lg'}>
         {group.settingItems.map((item, idx) => (
           <SettingItem key={item.title + idx} {...item} />
         ))}
-      </Flex>
-    </Flex>
+      </BAIFlex>
+    </BAIFlex>
   );
 };
 
@@ -151,7 +151,7 @@ const SettingList: React.FC<SettingPageProps> = ({
 
   return (
     <>
-      <Flex
+      <BAIFlex
         direction="column"
         gap={'md'}
         align="stretch"
@@ -160,7 +160,7 @@ const SettingList: React.FC<SettingPageProps> = ({
           maxWidth: token.screenLG,
         }}
       >
-        <Flex justify="start" gap={'xs'}>
+        <BAIFlex justify="start" gap={'xs'}>
           {!!showSearchBar && (
             <Input
               prefix={<SearchOutlined />}
@@ -185,7 +185,7 @@ const SettingList: React.FC<SettingPageProps> = ({
               {t('button.Reset')}
             </Button>
           )}
-        </Flex>
+        </BAIFlex>
         <Tabs
           activeKey={activeTabKey}
           onChange={setActiveTabKey}
@@ -205,7 +205,7 @@ const SettingList: React.FC<SettingPageProps> = ({
                 />
               ),
               children: (
-                <Flex direction="column" align="stretch" gap={'xl'}>
+                <BAIFlex direction="column" align="stretch" gap={'xl'}>
                   {_.sumBy(
                     filteredSettingGroups,
                     (group) => group.settingItems.length,
@@ -223,7 +223,7 @@ const SettingList: React.FC<SettingPageProps> = ({
                       description={t('settings.NoChangesToDisplay')}
                     />
                   )}
-                </Flex>
+                </BAIFlex>
               ),
             },
             ..._.map(filteredSettingGroups, (group, idx) => ({
@@ -246,7 +246,7 @@ const SettingList: React.FC<SettingPageProps> = ({
             })),
           ]}
         />
-      </Flex>
+      </BAIFlex>
       <BAIModal
         open={isOpenResetChangesModal}
         title={t('dialog.ask.DoYouWantToResetChanges')}

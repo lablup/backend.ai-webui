@@ -2,10 +2,10 @@ import { ImageTagsUNSAFELazySessionImageTagQuery } from '../__generated__/ImageT
 import { preserveDotStartCase } from '../helper';
 import { useBackendAIImageMetaData } from '../hooks';
 import DoubleTag, { DoubleTagObjectValue } from './DoubleTag';
-import Flex from './Flex';
 import ImageMetaIcon from './ImageMetaIcon';
 import TextHighlighter from './TextHighlighter';
 import { Tag, TagProps, theme } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -161,12 +161,12 @@ export const UNSAFELazySessionImageTag: React.FC<
     compute_session.image + '@' + compute_session.architecture;
 
   return imageFullName ? (
-    <Flex gap={['xs', 0]} wrap="wrap">
+    <BAIFlex gap={['xs', 0]} wrap="wrap">
       <ImageMetaIcon
         image={imageFullName}
         style={{ marginRight: token.marginXS }}
       />
       <SessionKernelTags image={imageFullName} />
-    </Flex>
+    </BAIFlex>
   ) : null;
 };

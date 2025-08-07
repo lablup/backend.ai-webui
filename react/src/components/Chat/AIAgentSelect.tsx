@@ -1,8 +1,8 @@
 import { AIAgent, useAIAgent } from '../../hooks/useAIAgent';
-import Flex from '../Flex';
 import { FluentEmojiIcon } from '../FluentEmojiIcon';
 import { useControllableValue } from 'ahooks';
 import { Select, SelectProps, theme } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import React, { useState, useTransition } from 'react';
 
 interface ChatAgentSelectProps extends Omit<SelectProps, 'options'> {}
@@ -35,7 +35,7 @@ const AIAgentSelect: React.FC<ChatAgentSelectProps> = ({
   return (
     <>
       {selectedAgent && (
-        <Flex gap="xs">
+        <BAIFlex gap="xs">
           <FluentEmojiIcon
             name={selectedAgent.meta.avatar}
             height={token.sizeXL}
@@ -57,7 +57,7 @@ const AIAgentSelect: React.FC<ChatAgentSelectProps> = ({
             }}
             popupMatchSelectWidth={false}
           />
-        </Flex>
+        </BAIFlex>
       )}
     </>
   );

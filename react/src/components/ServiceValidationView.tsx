@@ -6,7 +6,6 @@ import {
 } from '../helper';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import Flex from './Flex';
 import FlexActivityIndicator from './FlexActivityIndicator';
 import {
   MountOptionType,
@@ -16,6 +15,7 @@ import {
 import ValidationStatusTag from './ValidationStatusTag';
 import { AnsiUp } from 'ansi_up';
 import { App, Tag, theme } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import React, { Suspense, useEffect, useRef, useState } from 'react';
@@ -197,16 +197,16 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
 
   return (
     <Suspense fallback={<FlexActivityIndicator />}>
-      <Flex direction="row" justify="between" align="center">
+      <BAIFlex direction="row" justify="between" align="center">
         <h3>{t('modelService.Result')}</h3>
         <ValidationStatusTag status={validationStatus}></ValidationStatusTag>
-      </Flex>
-      <Flex direction="row" justify="between" align="center">
+      </BAIFlex>
+      <BAIFlex direction="row" justify="between" align="center">
         <h3>{t('modelService.TimeStamp')}</h3>
         <Tag>{validationTime}</Tag>
-      </Flex>
+      </BAIFlex>
       <h3>{t('modelService.SeeContainerLogs')}</h3>
-      <Flex
+      <BAIFlex
         direction="column"
         justify="start"
         align="start"
@@ -219,7 +219,7 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
         }}
       >
         <pre dangerouslySetInnerHTML={{ __html: containerLogSummary }} />
-      </Flex>
+      </BAIFlex>
     </Suspense>
   );
 };

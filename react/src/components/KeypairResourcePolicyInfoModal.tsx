@@ -2,11 +2,11 @@ import { KeypairResourcePolicyInfoModalFragment$key } from '../__generated__/Key
 import { filterOutEmpty } from '../helper';
 import AllowedVfolderHostsWithPermission from './AllowedVfolderHostsWithPermission';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
 import ResourceNumber from './ResourceNumber';
 import { Descriptions, theme, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { DescriptionsItemType } from 'antd/es/descriptions';
+import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -81,7 +81,11 @@ const KeypairResourcePolicyInfoModal: React.FC<InfoModalProps> = ({
         !_.isEmpty(JSON.parse(resourcePolicy?.total_resource_slots)) ? (
           <Descriptions className={styles.description} size="small" column={2}>
             <Descriptions.Item>
-              <Flex direction="column" align="start" style={{ width: '100%' }}>
+              <BAIFlex
+                direction="column"
+                align="start"
+                style={{ width: '100%' }}
+              >
                 {_.map(
                   JSON.parse(resourcePolicy?.total_resource_slots),
                   (v, type) => (
@@ -92,7 +96,7 @@ const KeypairResourcePolicyInfoModal: React.FC<InfoModalProps> = ({
                     />
                   ),
                 )}
-              </Flex>
+              </BAIFlex>
             </Descriptions.Item>
           </Descriptions>
         ) : (
@@ -152,7 +156,7 @@ const KeypairResourcePolicyInfoModal: React.FC<InfoModalProps> = ({
         ) ? (
           <Descriptions className={styles.description} size="small" column={2}>
             <Descriptions.Item>
-              <Flex direction="column" align="start">
+              <BAIFlex direction="column" align="start">
                 {_.map(
                   JSON.parse(
                     resourcePolicy?.max_pending_session_resource_slots,
@@ -165,7 +169,7 @@ const KeypairResourcePolicyInfoModal: React.FC<InfoModalProps> = ({
                     />
                   ),
                 )}
-              </Flex>
+              </BAIFlex>
             </Descriptions.Item>
           </Descriptions>
         ) : (

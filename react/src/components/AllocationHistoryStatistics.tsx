@@ -7,11 +7,11 @@ import {
 import { useThemeMode } from '../hooks/useThemeMode';
 import useUserUsageStats from '../hooks/useUserUsageStats';
 import { Period } from './AllocationHistory';
-import Flex from './Flex';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import { Column, ColumnConfig } from '@ant-design/charts';
 import { Card } from 'antd';
 import { createStyles } from 'antd-style';
+import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 
@@ -48,10 +48,10 @@ export const GraphCard = ({ title, tooltipText, children }: GraphCardProps) => (
   <Card
     type="inner"
     title={
-      <Flex gap={'xxs'}>
+      <BAIFlex gap={'xxs'}>
         {title}
         {tooltipText ? <QuestionIconWithTooltip title={tooltipText} /> : null}
-      </Flex>
+      </BAIFlex>
     }
     style={{ width: '100%' }}
   >
@@ -135,7 +135,7 @@ const AllocationHistoryStatistics: React.FC<
   const baiClient = useSuspendedBackendaiClient();
 
   return (
-    <Flex
+    <BAIFlex
       className={styles.graphCard}
       direction="column"
       align="start"
@@ -229,7 +229,7 @@ const AllocationHistoryStatistics: React.FC<
           </GraphCard>
         </>
       ) : null}
-    </Flex>
+    </BAIFlex>
   );
 };
 

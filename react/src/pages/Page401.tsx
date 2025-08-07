@@ -1,6 +1,6 @@
-import Flex from '../components/Flex';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { Button, Typography } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import { Trans, useTranslation } from 'react-i18next';
 
 const Page401 = () => {
@@ -8,7 +8,7 @@ const Page401 = () => {
   const webuiNavigate = useWebUINavigate();
   useSuspendedBackendaiClient(); //monkey patch for flickering
   return (
-    <Flex
+    <BAIFlex
       direction="column"
       justify="center"
       align="center"
@@ -17,7 +17,7 @@ const Page401 = () => {
       }}
       wrap="wrap"
     >
-      <Flex wrap="wrap" justify="center">
+      <BAIFlex wrap="wrap" justify="center">
         <img
           src="/resources/images/401_unauthorized_access.svg"
           style={{
@@ -26,7 +26,7 @@ const Page401 = () => {
           }}
           alt="401 Not Found"
         />
-        <Flex direction="column" align="start" gap={'lg'}>
+        <BAIFlex direction="column" align="start" gap={'lg'}>
           <Typography.Title level={2} style={{ margin: 0 }}>
             {/* t('webui.UnauthorizedAccess') */}
             <Trans i18nKey={'webui.UnauthorizedAccess'} />
@@ -42,9 +42,9 @@ const Page401 = () => {
           >
             {t('button.GoBackToSummaryPage')}
           </Button>
-        </Flex>
-      </Flex>
-    </Flex>
+        </BAIFlex>
+      </BAIFlex>
+    </BAIFlex>
   );
 };
 

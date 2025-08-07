@@ -7,9 +7,8 @@ import {
   useSuspenseTanQuery,
   useTanMutation,
 } from '../../hooks/reactQueryAlias';
-import Flex from '../Flex';
 import { App, Button, Descriptions, Empty, Tag, Typography, theme } from 'antd';
-import { BAICard } from 'backend.ai-ui';
+import { BAICard, BAIFlex } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 
 const SummaryItemInvitation: React.FC = () => {
@@ -77,7 +76,7 @@ const SummaryItemInvitation: React.FC = () => {
   };
 
   return (
-    <Flex
+    <BAIFlex
       direction="column"
       justify="center"
       align="center"
@@ -100,7 +99,7 @@ const SummaryItemInvitation: React.FC = () => {
                   {permissionIndicator(invitation.perm)}
                 </Descriptions.Item>
               </Descriptions>
-              <Flex gap={token.paddingXS} justify="end">
+              <BAIFlex gap={token.paddingXS} justify="end">
                 <Button
                   type="default"
                   onClick={() =>
@@ -152,7 +151,7 @@ const SummaryItemInvitation: React.FC = () => {
                 >
                   {t('summary.Accept')}
                 </Button>
-              </Flex>
+              </BAIFlex>
             </BAICard>
           ))}
         </>
@@ -162,7 +161,7 @@ const SummaryItemInvitation: React.FC = () => {
           description={t('summary.NoInvitations')}
         />
       )}
-    </Flex>
+    </BAIFlex>
   );
 };
 

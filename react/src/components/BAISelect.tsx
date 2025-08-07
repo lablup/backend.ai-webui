@@ -1,8 +1,8 @@
-import Flex from './Flex';
 import { Divider, Select, SelectProps, theme, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { BaseOptionType, DefaultOptionType } from 'antd/es/select';
 import { GetRef } from 'antd/lib';
+import { BAIFlex } from 'backend.ai-ui';
 import classNames from 'classnames';
 import _ from 'lodash';
 import React, { useLayoutEffect, useRef } from 'react';
@@ -142,7 +142,7 @@ function BAISelect<
                 //   : menu;
 
                 return (
-                  <Flex direction="column" align="stretch">
+                  <BAIFlex direction="column" align="stretch">
                     {menu}
                     <Divider
                       style={{
@@ -150,7 +150,7 @@ function BAISelect<
                         marginBottom: token.paddingXS,
                       }}
                     />
-                    <Flex
+                    <BAIFlex
                       direction="column"
                       align="end"
                       gap={'xs'}
@@ -166,8 +166,8 @@ function BAISelect<
                       ) : (
                         footer
                       )}
-                    </Flex>
-                  </Flex>
+                    </BAIFlex>
+                  </BAIFlex>
                 );
               }
             : undefined

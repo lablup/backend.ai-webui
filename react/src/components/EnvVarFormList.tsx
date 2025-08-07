@@ -1,7 +1,7 @@
-import Flex from './Flex';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Form, FormItemProps, Input, InputRef } from 'antd';
 import { FormListProps } from 'antd/lib/form';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -26,9 +26,9 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
     <Form.List {...props}>
       {(fields, { add, remove }) => {
         return (
-          <Flex direction="column" gap="xs" align="stretch">
+          <BAIFlex direction="column" gap="xs" align="stretch">
             {fields.map(({ key, name, ...restField }, index) => (
-              <Flex key={key} direction="row" align="baseline" gap="xs">
+              <BAIFlex key={key} direction="row" align="baseline" gap="xs">
                 <Form.Item
                   {...restField}
                   style={{ marginBottom: 0, flex: 1 }}
@@ -111,7 +111,7 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
                   />
                 </Form.Item>
                 <MinusCircleOutlined onClick={() => remove(name)} />
-              </Flex>
+              </BAIFlex>
             ))}
             <Form.Item noStyle>
               <Button
@@ -130,7 +130,7 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
                 {t('session.launcher.AddEnvironmentVariable')}
               </Button>
             </Form.Item>
-          </Flex>
+          </BAIFlex>
         );
       }}
     </Form.List>

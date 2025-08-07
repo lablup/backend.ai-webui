@@ -1,6 +1,6 @@
 import { VFolderPermissionCellFragment$key } from '../__generated__/VFolderPermissionCellFragment.graphql';
-import Flex from './Flex';
 import { Typography } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -56,16 +56,16 @@ const VFolderPermissionCell: React.FC<VFolderPermissionCellProps> = ({
   }, [permissionProp, vfolderData, t]);
 
   return (
-    <Flex gap={'xs'} {...props}>
+    <BAIFlex gap={'xs'} {...props}>
       <Typography.Text>{permissionInfo?.label}</Typography.Text>
-      <Flex>
+      <BAIFlex>
         {_.map(permissionInfo?.icon, (tag) => (
           <Typography.Text key={tag} code>
             {_.toUpper(tag)}
           </Typography.Text>
         ))}
-      </Flex>
-    </Flex>
+      </BAIFlex>
+    </BAIFlex>
   );
 };
 

@@ -4,9 +4,9 @@ import {
   useSuspendedBackendaiClient,
 } from '../../hooks';
 import { useTanMutation } from '../../hooks/reactQueryAlias';
-import Flex from '../Flex';
 import { EditOutlined } from '@ant-design/icons';
 import { Button, Form, FormInstance, Input, Typography, theme } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -142,7 +142,7 @@ const SessionInfoCell: React.FC<{
           />
         </Form.Item>
       ) : (
-        <Flex style={{ maxWidth: 250 }}>
+        <BAIFlex style={{ maxWidth: 250 }}>
           <Typography.Text
             ellipsis={{
               tooltip: { overlayInnerStyle: { width: 'max-content' } },
@@ -165,7 +165,7 @@ const SessionInfoCell: React.FC<{
               }}
             ></Button>
           )}
-        </Flex>
+        </BAIFlex>
       )}
     </Form>
   );

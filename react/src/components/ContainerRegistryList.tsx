@@ -13,7 +13,6 @@ import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal from './BAIModal';
 import BAIPropertyFilter from './BAIPropertyFilter';
 import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
-import Flex from './Flex';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import {
   DeleteOutlined,
@@ -37,7 +36,7 @@ import {
 } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
-import { BAITable } from 'backend.ai-ui';
+import { BAITable, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -350,7 +349,7 @@ const ContainerRegistryList: React.FC<{
       fixed: 'right',
       render(value, record, index) {
         return (
-          <Flex>
+          <BAIFlex>
             <Tooltip title={t('button.Edit')}>
               <Button
                 style={{
@@ -386,7 +385,7 @@ const ContainerRegistryList: React.FC<{
                 }
               />
             </Tooltip>
-          </Flex>
+          </BAIFlex>
         );
       },
     },
@@ -397,7 +396,7 @@ const ContainerRegistryList: React.FC<{
   );
 
   return (
-    <Flex
+    <BAIFlex
       direction="column"
       align="stretch"
       gap="sm"
@@ -407,7 +406,7 @@ const ContainerRegistryList: React.FC<{
         // height: 'calc(100vh - 183px)',
       }}
     >
-      <Flex
+      <BAIFlex
         direction="row"
         justify="between"
         gap={'sm'}
@@ -429,7 +428,7 @@ const ContainerRegistryList: React.FC<{
             });
           }}
         />
-        <Flex gap="xs">
+        <BAIFlex gap="xs">
           <Tooltip title={t('button.Refresh')}>
             <Button
               loading={isPendingReload}
@@ -450,8 +449,8 @@ const ContainerRegistryList: React.FC<{
           >
             {t('registry.AddRegistry')}
           </Button>
-        </Flex>
-      </Flex>
+        </BAIFlex>
+      </BAIFlex>
       <BAITable
         rowKey={(record) => record.id}
         scroll={{ x: 'max-content' }}
@@ -577,7 +576,7 @@ const ContainerRegistryList: React.FC<{
         destroyOnClose
         open={!!deletingRegistry}
       >
-        <Flex
+        <BAIFlex
           direction="column"
           align="stretch"
           gap="sm"
@@ -616,7 +615,7 @@ const ContainerRegistryList: React.FC<{
               />
             </Form.Item>
           </Form>
-        </Flex>
+        </BAIFlex>
       </BAIModal>
       <TableColumnsSettingModal
         open={visibleColumnSettingModal}
@@ -633,7 +632,7 @@ const ContainerRegistryList: React.FC<{
         columns={columns}
         hiddenColumnKeys={hiddenColumnKeys}
       />
-    </Flex>
+    </BAIFlex>
   );
 };
 

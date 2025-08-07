@@ -1,6 +1,6 @@
-import Flex from '../components/Flex';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { Button, Typography } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import { Trans, useTranslation } from 'react-i18next';
 
 const Page404 = () => {
@@ -8,7 +8,7 @@ const Page404 = () => {
   const webuiNavigate = useWebUINavigate();
   useSuspendedBackendaiClient(); //monkey patch for flickering
   return (
-    <Flex
+    <BAIFlex
       direction="column"
       justify="center"
       align="center"
@@ -17,7 +17,7 @@ const Page404 = () => {
       }}
       wrap="wrap"
     >
-      <Flex wrap="wrap" justify="center">
+      <BAIFlex wrap="wrap" justify="center">
         <img
           src="/resources/images/404_not_found.svg"
           // style="width:500px;margin:20px;"
@@ -27,7 +27,7 @@ const Page404 = () => {
           }}
           alt="404 Not Found"
         />
-        <Flex direction="column" align="start" gap={'lg'}>
+        <BAIFlex direction="column" align="start" gap={'lg'}>
           <Typography.Title level={2} style={{ margin: 0 }}>
             {/* t('webui.NotFound') */}
             <Trans i18nKey={'webui.NotFound'} />
@@ -42,9 +42,9 @@ const Page404 = () => {
           >
             {t('button.GoBackToSummaryPage')}
           </Button>
-        </Flex>
-      </Flex>
-    </Flex>
+        </BAIFlex>
+      </BAIFlex>
+    </BAIFlex>
   );
 };
 

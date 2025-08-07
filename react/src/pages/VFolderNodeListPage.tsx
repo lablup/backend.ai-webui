@@ -11,7 +11,6 @@ import BAIPropertyFilter, {
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import DeleteVFolderModal from '../components/DeleteVFolderModal';
-import Flex from '../components/Flex';
 import FolderCreateModal from '../components/FolderCreateModal';
 import QuotaPerStorageVolumePanelCard from '../components/QuotaPerStorageVolumePanelCard';
 import RestoreVFolderModal from '../components/RestoreVFolderModal';
@@ -43,6 +42,7 @@ import {
   Typography,
 } from 'antd';
 import {
+  BAIFlex,
   BAICard,
   BAINewFolderIcon,
   BAIRestoreIcon,
@@ -270,7 +270,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     );
 
   return (
-    <Flex direction="column" align="stretch" gap={'md'} {...props}>
+    <BAIFlex direction="column" align="stretch" gap={'md'} {...props}>
       <Row
         gutter={[16, 16]}
         align={'stretch'}
@@ -359,7 +359,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
         variant="borderless"
         title={t('data.Folders')}
         extra={
-          <Flex gap={'xs'}>
+          <BAIFlex gap={'xs'}>
             <BAIFetchKeyButton
               loading={
                 deferredQueryVariables !== queryVariables ||
@@ -374,7 +374,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             <Button type="primary" onClick={() => toggleCreateModal()}>
               {t('data.CreateFolder')}
             </Button>
-          </Flex>
+          </BAIFlex>
         }
         styles={{
           header: {
@@ -411,7 +411,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             (label, key) => ({
               key,
               label: (
-                <Flex justify="center" gap={10}>
+                <BAIFlex justify="center" gap={10}>
                   {label}
                   {
                     // display badge only if count is greater than 0
@@ -435,14 +435,14 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                       />
                     )
                   }
-                </Flex>
+                </BAIFlex>
               ),
             }),
           )}
         />
-        <Flex direction="column" align="stretch" gap={'sm'}>
-          <Flex justify="between" wrap="wrap" gap={'sm'}>
-            <Flex
+        <BAIFlex direction="column" align="stretch" gap={'sm'}>
+          <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
+            <BAIFlex
               gap={'sm'}
               align="start"
               style={{
@@ -535,8 +535,8 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                   setSelectedFolderList([]);
                 }}
               />
-            </Flex>
-            <Flex gap={'sm'}>
+            </BAIFlex>
+            <BAIFlex gap={'sm'}>
               {selectedFolderList.length > 0 &&
                 queryParams.statusCategory === 'active' && (
                   <>
@@ -581,8 +581,8 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                     </Tooltip>
                   </>
                 )}
-            </Flex>
-          </Flex>
+            </BAIFlex>
+          </BAIFlex>
           <VFolderNodes
             order={queryParams.order}
             loading={deferredQueryVariables !== queryVariables}
@@ -635,7 +635,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               updateFetchKey();
             }}
           />
-        </Flex>
+        </BAIFlex>
       </BAICard>
       <FolderCreateModal
         open={isOpenCreateModal}
@@ -669,7 +669,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           toggleRestoreModal();
         }}
       />
-    </Flex>
+    </BAIFlex>
   );
 };
 

@@ -1,11 +1,11 @@
 import { NotificationState } from '../hooks/useBAINotification';
-import Flex from './Flex';
 import {
   CheckCircleOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
 } from '@ant-design/icons';
 import { Card, List, Progress, Typography, theme } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { FolderIcon } from 'lucide-react';
@@ -40,8 +40,8 @@ const BAINotificationItem: React.FC<{
     ) : null);
   return (
     <List.Item>
-      <Flex direction="column" align="stretch" gap={'xxs'}>
-        <Flex
+      <BAIFlex direction="column" align="stretch" gap={'xxs'}>
+        <BAIFlex
           direction="row"
           align="start"
           gap={'xs'}
@@ -49,7 +49,7 @@ const BAINotificationItem: React.FC<{
             paddingRight: token.paddingMD,
           }}
         >
-          {icon && <Flex style={{ height: 22 }}>{icon}</Flex>}
+          {icon && <BAIFlex style={{ height: 22 }}>{icon}</BAIFlex>}
           <Typography.Paragraph
             style={{
               fontWeight: 500,
@@ -61,8 +61,8 @@ const BAINotificationItem: React.FC<{
                 })
               : notification.message}
           </Typography.Paragraph>
-        </Flex>
-        <Flex direction="row" align="end" gap={'xxs'} justify="between">
+        </BAIFlex>
+        <BAIFlex direction="row" align="end" gap={'xxs'} justify="between">
           <Typography.Paragraph>
             {_.isString(notification.description)
               ? _.truncate(notification.description, {
@@ -71,7 +71,7 @@ const BAINotificationItem: React.FC<{
               : notification.description}
           </Typography.Paragraph>
           {notification.to ? (
-            <Flex>
+            <BAIFlex>
               <Typography.Link
                 onClick={(e) => {
                   onClickAction && onClickAction(e, notification);
@@ -81,10 +81,10 @@ const BAINotificationItem: React.FC<{
                   notification.toTextKey ??
                   t('notification.SeeDetail')}
               </Typography.Link>
-            </Flex>
+            </BAIFlex>
           ) : null}
           {notification.extraDescription ? (
-            <Flex>
+            <BAIFlex>
               <Typography.Link
                 onClick={(e) => {
                   // onClickAction && onClickAction(e, notification);
@@ -95,9 +95,9 @@ const BAINotificationItem: React.FC<{
                   ? t(notification.toTextKey)
                   : t('notification.SeeDetail')}
               </Typography.Link>
-            </Flex>
+            </BAIFlex>
           ) : null}
-        </Flex>
+        </BAIFlex>
         {notification.extraDescription && showExtraDescription ? (
           <Card size="small">
             <Typography.Text type="secondary" copyable>
@@ -106,7 +106,7 @@ const BAINotificationItem: React.FC<{
           </Card>
         ) : null}
 
-        <Flex direction="row" align="center" justify="end" gap={'sm'}>
+        <BAIFlex direction="row" align="center" justify="end" gap={'sm'}>
           {notification.backgroundTask &&
           _.isNumber(notification.backgroundTask.percent) ? (
             <Progress
@@ -130,14 +130,14 @@ const BAINotificationItem: React.FC<{
             />
           ) : null}
           {showDate ? (
-            <Flex>
+            <BAIFlex>
               <Typography.Text type="secondary">
                 {dayjs(notification.created).format('lll')}
               </Typography.Text>
-            </Flex>
+            </BAIFlex>
           ) : null}
-        </Flex>
-      </Flex>
+        </BAIFlex>
+      </BAIFlex>
     </List.Item>
   );
 };

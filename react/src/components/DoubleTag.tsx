@@ -1,6 +1,6 @@
-import Flex from './Flex';
 import TextHighlighter from './TextHighlighter';
 import { Tag } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 
@@ -32,7 +32,7 @@ const DoubleTag: React.FC<{
   }
 
   return (
-    <Flex direction="row">
+    <BAIFlex direction="row">
       {_.map(objectValues, (objValue, idx) =>
         !_.isEmpty(objValue.label) ? (
           <Tag
@@ -55,7 +55,7 @@ const DoubleTag: React.FC<{
           </Tag>
         ) : null,
       )}
-    </Flex>
+    </BAIFlex>
   );
 };
 

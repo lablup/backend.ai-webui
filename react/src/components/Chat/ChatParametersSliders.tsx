@@ -1,15 +1,8 @@
 import InputNumberWithSlider from '../InputNumberWithSlider';
 import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import { DEFAULT_CHAT_PARAMETERS, type ChatParameters } from './ChatModel';
-import {
-  ConfigProvider,
-  Divider,
-  Flex,
-  Form,
-  Switch,
-  theme,
-  Typography,
-} from 'antd';
+import { ConfigProvider, Divider, Form, Switch, theme, Typography } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import { t } from 'i18next';
 import { useRef } from 'react';
 
@@ -45,8 +38,8 @@ const ChatParameterSliderFormItem = ({
   return (
     <Form.Item
       label={
-        <Flex justify="between" style={{ width: '240px' }}>
-          <Flex gap={'xxs'}>
+        <BAIFlex justify="between" style={{ width: '240px' }}>
+          <BAIFlex gap={'xxs'}>
             <Typography.Text
               style={{
                 fontSize: token.fontSizeSM,
@@ -58,8 +51,8 @@ const ChatParameterSliderFormItem = ({
             {description && (
               <QuestionIconWithTooltip title={description} trigger="hover" />
             )}
-          </Flex>
-        </Flex>
+          </BAIFlex>
+        </BAIFlex>
       }
       name={id}
     >
@@ -164,7 +157,7 @@ export const ChatParametersSliders = ({
           });
         }}
       >
-        <Flex align="center" justify="space-between">
+        <BAIFlex align="center" justify="between">
           <Typography.Text
             style={{ fontSize: token.fontSizeLG, marginLeft: token.marginXXS }}
           >
@@ -178,7 +171,7 @@ export const ChatParametersSliders = ({
               });
             }}
           />
-        </Flex>
+        </BAIFlex>
         <Divider
           style={{
             marginBlock: token.marginSM,

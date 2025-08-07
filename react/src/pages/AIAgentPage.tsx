@@ -1,9 +1,9 @@
-import Flex from '../components/Flex';
 import { FluentEmojiIcon } from '../components/FluentEmojiIcon';
 import { useWebUINavigate } from '../hooks';
 import { AIAgent, useAIAgent } from '../hooks/useAIAgent';
 import { Card, List, Skeleton, Tag, theme } from 'antd';
 import { createStyles } from 'antd-style';
+import { BAIFlex } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
 
 const useStyles = createStyles(({ css, token }) => {
@@ -36,7 +36,7 @@ const AIAgentCard = ({ agent }: { agent: AIAgent }) => {
   const { styles } = useStyles();
   return (
     <Card hoverable>
-      <Flex
+      <BAIFlex
         direction="column"
         align="stretch"
         gap="xs"
@@ -55,7 +55,7 @@ const AIAgentCard = ({ agent }: { agent: AIAgent }) => {
           description={agent.meta.descriptions}
           className={styles.meta}
         />
-        <Flex
+        <BAIFlex
           direction="row"
           justify="start"
           style={{ width: '100%', flexShrink: 1 }}
@@ -68,8 +68,8 @@ const AIAgentCard = ({ agent }: { agent: AIAgent }) => {
           {tags.map((tag, index) => (
             <Tag key={index}>{tag}</Tag>
           ))}
-        </Flex>
-      </Flex>
+        </BAIFlex>
+      </BAIFlex>
     </Card>
   );
 };
@@ -109,7 +109,7 @@ const AIAgentPage: React.FC = () => {
     <Suspense
       fallback={<Skeleton active style={{ padding: token.paddingMD }} />}
     >
-      <Flex direction="column" align="stretch" justify="center" gap="lg">
+      <BAIFlex direction="column" align="stretch" justify="center" gap="lg">
         <AIAgentCardList
           agents={agents}
           onClickAgent={(agent) => {
@@ -122,7 +122,7 @@ const AIAgentPage: React.FC = () => {
             });
           }}
         />
-      </Flex>
+      </BAIFlex>
     </Suspense>
   );
 };

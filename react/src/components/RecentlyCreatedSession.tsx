@@ -1,12 +1,11 @@
 import { RecentlyCreatedSessionFragment$key } from '../__generated__/RecentlyCreatedSessionFragment.graphql';
 import { filterOutNullAndUndefined } from '../helper';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
-import Flex from './Flex';
 import SessionDetailDrawer from './SessionDetailDrawer';
 import SessionNodes from './SessionNodes';
 import UnmountAfterClose from './UnmountAfterClose';
 import { theme, Typography } from 'antd';
-import { toLocalId } from 'backend.ai-ui';
+import { toLocalId, BAIFlex } from 'backend.ai-ui';
 import { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
@@ -56,7 +55,7 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
 
   return (
     <>
-      <Flex
+      <BAIFlex
         direction="column"
         align="stretch"
         style={{
@@ -66,7 +65,7 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
         }}
       >
         {/* Fixed Title Section */}
-        <Flex
+        <BAIFlex
           align="center"
           justify="between"
           style={{
@@ -85,7 +84,7 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
           <Typography.Title level={5} style={{ margin: 0 }}>
             {t('session.RecentlyCreatedSessions')}
           </Typography.Title>
-          <Flex
+          <BAIFlex
             direction="row"
             gap="sm"
             style={{
@@ -110,11 +109,11 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
                 backgroundColor: 'transparent',
               }}
             />
-          </Flex>
-        </Flex>
+          </BAIFlex>
+        </BAIFlex>
 
         {/* Scrollable Content Section */}
-        <Flex
+        <BAIFlex
           direction="column"
           align="stretch"
           style={{
@@ -134,8 +133,8 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
             pagination={false}
             disableSorter
           />
-        </Flex>
-      </Flex>
+        </BAIFlex>
+      </BAIFlex>
       <UnmountAfterClose>
         <SessionDetailDrawer
           open={!!sessionDetailId}

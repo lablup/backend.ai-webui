@@ -9,9 +9,9 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useThemeMode } from '../hooks/useThemeMode';
 import BAICodeEditor from './BAICodeEditor';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
 import HiddenFormItem from './HiddenFormItem';
 import { Form, Input, Select, Checkbox, FormInstance, App, theme } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -406,7 +406,7 @@ const ContainerRegistryEditorModal: React.FC<
         </Form.Item>
         {isSupportExtraField && (
           <Form.Item label={t('registry.ExtraInformation')}>
-            <Flex
+            <BAIFlex
               style={{
                 border: `1px solid ${token.colorBorder}`,
                 borderRadius: token.borderRadius,
@@ -440,7 +440,7 @@ const ContainerRegistryEditorModal: React.FC<
                   style={{ width: '100%' }}
                 />
               </Form.Item>
-            </Flex>
+            </BAIFlex>
           </Form.Item>
         )}
       </Form>

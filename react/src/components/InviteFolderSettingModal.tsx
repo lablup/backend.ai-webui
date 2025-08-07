@@ -3,7 +3,6 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
 import { CloseCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import {
   App,
@@ -18,7 +17,7 @@ import {
   Typography,
   theme,
 } from 'antd';
-import { BAITable } from 'backend.ai-ui';
+import { BAITable, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -170,7 +169,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
       destroyOnClose
       footer={null}
     >
-      <Flex direction="column" gap="xl" align="stretch">
+      <BAIFlex direction="column" gap="xl" align="stretch">
         <Form
           ref={inviteFormRef}
           initialValues={{ name: undefined, permission: 'ro' }}
@@ -178,7 +177,11 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
         >
           <Descriptions title={t('data.folders.InviteUsers')}>
             <Descriptions.Item>
-              <Flex align="start" justify="between" style={{ width: '100%' }}>
+              <BAIFlex
+                align="start"
+                justify="between"
+                style={{ width: '100%' }}
+              >
                 {/* TODO: support multi invitations */}
                 <Form.Item
                   name="email"
@@ -223,24 +226,24 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
                 >
                   {t('general.Add')}
                 </Button>
-              </Flex>
+              </BAIFlex>
             </Descriptions.Item>
           </Descriptions>
         </Form>
 
-        <Flex direction="column" align="stretch">
+        <BAIFlex direction="column" align="stretch">
           <Typography.Title
             level={5}
             style={{ marginTop: 0, marginBottom: token.marginMD }}
           >
-            <Flex gap={'xs'}>
+            <BAIFlex gap={'xs'}>
               {t('data.folders.SharedUser')}
               <Tooltip title={t('data.folders.SharedUserDesc')}>
                 <QuestionCircleOutlined
                   style={{ color: token.colorTextSecondary }}
                 />
               </Tooltip>
-            </Flex>
+            </BAIFlex>
           </Typography.Title>
 
           <BAITable<Invitee>
@@ -263,7 +266,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
                 dataIndex: 'perm',
                 render: (perm, record) => {
                   return (
-                    <Flex gap="xxs">
+                    <BAIFlex gap="xxs">
                       <Select
                         style={{ minWidth: 130 }}
                         options={[
@@ -301,14 +304,14 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
                           />
                         </Tooltip>
                       </Popconfirm>
-                    </Flex>
+                    </BAIFlex>
                   );
                 },
               },
             ]}
           />
-        </Flex>
-      </Flex>
+        </BAIFlex>
+      </BAIFlex>
     </BAIModal>
   );
 };

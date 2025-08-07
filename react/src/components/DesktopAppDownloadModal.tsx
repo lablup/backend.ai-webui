@@ -1,8 +1,8 @@
 import { useAppDownloadMap } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
 import { DownloadOutlined } from '@ant-design/icons';
 import { Select, Button, Descriptions, Tooltip } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import { map, toUpper } from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -41,7 +41,7 @@ const DesktopAppDownloadModal: React.FC<DesktopAppDownloadModalProps> = ({
           </Select>
         </Descriptions.Item>
         <Descriptions.Item label={t('webui.menu.Architecture')}>
-          <Flex gap={'xs'} justify="between">
+          <BAIFlex gap={'xs'} justify="between">
             {map(architectures, (arch: 'arm64' | 'x64') => (
               <Tooltip title={t('webui.menu.ClickToDownload')} key={arch}>
                 <Button
@@ -56,7 +56,7 @@ const DesktopAppDownloadModal: React.FC<DesktopAppDownloadModalProps> = ({
                 </Button>
               </Tooltip>
             ))}
-          </Flex>
+          </BAIFlex>
         </Descriptions.Item>
       </Descriptions>
     </BAIModal>

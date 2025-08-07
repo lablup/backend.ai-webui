@@ -1,7 +1,7 @@
 import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { Form, Input, Typography } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -34,7 +34,7 @@ const BAIConfirmModalWithInput: React.FC<BAIConfirmModalWithInputProps> = ({
     <BAIModal
       destroyOnClose
       title={
-        <Flex direction="column" justify="start" align="start">
+        <BAIFlex direction="column" justify="start" align="start">
           <Text strong>
             {icon ?? (
               <ExclamationCircleFilled
@@ -43,7 +43,7 @@ const BAIConfirmModalWithInput: React.FC<BAIConfirmModalWithInputProps> = ({
             )}
             {title}
           </Text>
-        </Flex>
+        </BAIFlex>
       }
       onOk={(e) => {
         form.resetFields();
@@ -60,7 +60,7 @@ const BAIConfirmModalWithInput: React.FC<BAIConfirmModalWithInputProps> = ({
         danger: true,
       }}
     >
-      <Flex direction="column" justify="start" align="start">
+      <BAIFlex direction="column" justify="start" align="start">
         {content}
         <Form form={form} style={{ width: '100%' }} preserve={false}>
           <Form.Item
@@ -91,7 +91,7 @@ const BAIConfirmModalWithInput: React.FC<BAIConfirmModalWithInputProps> = ({
             />
           </Form.Item>
         </Form>
-      </Flex>
+      </BAIFlex>
     </BAIModal>
   );
 };

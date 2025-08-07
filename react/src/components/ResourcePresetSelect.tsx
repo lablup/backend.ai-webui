@@ -6,12 +6,12 @@ import { localeCompare } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
 import useControllableState from '../hooks/useControllableState';
-import Flex from './Flex';
 import ResourceNumber from './ResourceNumber';
 import { EditOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { useThrottleFn } from 'ahooks';
 import { Select, Tooltip, theme } from 'antd';
 import { SelectProps } from 'antd/lib';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -99,9 +99,9 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
               {
                 value: 'custom',
                 label: (
-                  <Flex gap={'xs'} style={{ display: 'inline-flex' }}>
+                  <BAIFlex gap={'xs'} style={{ display: 'inline-flex' }}>
                     <EditOutlined /> {t('session.launcher.CustomAllocation')}
-                  </Flex>
+                  </BAIFlex>
                 ),
                 selectedLabel: t('session.launcher.CustomAllocation'),
               },
@@ -112,7 +112,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
               {
                 value: 'minimum-required',
                 label: (
-                  <Flex gap={'xs'}>
+                  <BAIFlex gap={'xs'}>
                     {t('session.launcher.MiniumAllocation')}
                     <Tooltip
                       title={t('session.launcher.MiniumAllocationTooltip')}
@@ -123,7 +123,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
                         }}
                       />
                     </Tooltip>
-                  </Flex>
+                  </BAIFlex>
                 ),
                 selectedLabel: t('session.launcher.MiniumAllocation'),
               },
@@ -143,9 +143,9 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
             return {
               value: preset?.name,
               label: (
-                <Flex direction="row" justify="between" gap={'xs'}>
+                <BAIFlex direction="row" justify="between" gap={'xs'}>
                   {preset?.name}
-                  <Flex
+                  <BAIFlex
                     direction="row"
                     gap={'xxs'}
                     style={
@@ -176,8 +176,8 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
                         );
                       },
                     )}
-                  </Flex>
-                </Flex>
+                  </BAIFlex>
+                </BAIFlex>
               ),
               preset,
               disabled: disabled,

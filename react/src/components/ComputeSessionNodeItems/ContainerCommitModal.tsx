@@ -2,7 +2,6 @@ import { ContainerCommitModalFragment$key } from '../../__generated__/ContainerC
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useSetBAINotification } from '../../hooks/useBAINotification';
 import BAIModal, { BAIModalProps } from '../BAIModal';
-import Flex from '../Flex';
 import {
   Descriptions,
   Divider,
@@ -11,6 +10,7 @@ import {
   Input,
   Typography,
 } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -104,7 +104,7 @@ const ContainerCommitModal: React.FC<ContainerCommitModalProps> = ({
       {...modalProps}
       destroyOnClose
     >
-      <Flex
+      <BAIFlex
         direction="column"
         gap={'xs'}
         align="stretch"
@@ -143,7 +143,7 @@ const ContainerCommitModal: React.FC<ContainerCommitModalProps> = ({
             <Input placeholder={t('inputLimit.4to32chars')} />
           </Form.Item>
         </Form>
-      </Flex>
+      </BAIFlex>
     </BAIModal>
   );
 };

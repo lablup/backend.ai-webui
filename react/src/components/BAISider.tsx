@@ -1,6 +1,6 @@
-import Flex from './Flex';
 import { ConfigProvider, Grid, SiderProps, theme } from 'antd';
 import Sider from 'antd/es/layout/Sider';
+import { BAIFlex } from 'backend.ai-ui';
 import classNames from 'classnames';
 import _ from 'lodash';
 import React, { forwardRef } from 'react';
@@ -75,8 +75,12 @@ const BAISider = forwardRef<HTMLDivElement, BAISiderProps>(
                 siderTheme === 'dark' ? theme.darkAlgorithm : undefined,
             }}
           >
-            <Flex direction="column" align="stretch" style={{ height: '100%' }}>
-              <Flex
+            <BAIFlex
+              direction="column"
+              align="stretch"
+              style={{ height: '100%' }}
+            >
+              <BAIFlex
                 direction="column"
                 justify="center"
                 align={otherProps.collapsed ? 'center' : 'start'}
@@ -103,9 +107,9 @@ const BAISider = forwardRef<HTMLDivElement, BAISiderProps>(
                     {logoCollapsed}
                   </div>
                 </div>
-              </Flex>
+              </BAIFlex>
               {children}
-            </Flex>
+            </BAIFlex>
           </ConfigProvider>
         </Sider>
       </>

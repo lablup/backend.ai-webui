@@ -3,7 +3,6 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import DescriptionLabel from './DescriptionLabel';
 import DoubleTag from './DoubleTag';
-import Flex from './Flex';
 import { CheckOutlined, WarningOutlined } from '@ant-design/icons';
 import {
   Descriptions,
@@ -15,6 +14,7 @@ import {
   Row,
   Col,
 } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 
 interface InformationProps {}
@@ -58,7 +58,7 @@ const Information: React.FC<InformationProps> = () => {
   };
 
   return (
-    <Flex direction="column" align="stretch" style={{ gap: token.margin }}>
+    <BAIFlex direction="column" align="stretch" style={{ gap: token.margin }}>
       <Row gutter={[token.margin, token.margin]}>
         <Col xs={24} xxl={12}>
           <Card
@@ -76,7 +76,7 @@ const Information: React.FC<InformationProps> = () => {
                   <DescriptionLabel title={t('information.ManagerVersion')} />
                 }
               >
-                <Flex
+                <BAIFlex
                   direction="column"
                   style={{ gap: token.marginXXS }}
                   align="start"
@@ -93,7 +93,7 @@ const Information: React.FC<InformationProps> = () => {
                 label={t("information.LatestRelease")}
                 value={"manager_version_latest"}
               /> */}
-                </Flex>
+                </BAIFlex>
               </Descriptions.Item>
               <Descriptions.Item
                 label={<DescriptionLabel title={t('information.APIVersion')} />}
@@ -277,7 +277,7 @@ const Information: React.FC<InformationProps> = () => {
           </Descriptions>
         </Spin>
       </Card>
-    </Flex>
+    </BAIFlex>
   );
 };
 

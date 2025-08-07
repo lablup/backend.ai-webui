@@ -14,7 +14,6 @@ import BAIConfirmModalWithInput from './BAIConfirmModalWithInput';
 import BAILink from './BAILink';
 import BAITag from './BAITag';
 import EditableVFolderName from './EditableVFolderName';
-import Flex from './Flex';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import InviteFolderSettingModal from './InviteFolderSettingModal';
 import SharedFolderPermissionInfoModal from './SharedFolderPermissionInfoModal';
@@ -37,6 +36,7 @@ import {
   BAIUserUnionIcon,
   BAITable,
   BAITableProps,
+  BAIFlex,
   toLocalId,
 } from 'backend.ai-ui';
 import _ from 'lodash';
@@ -146,7 +146,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
             dataIndex: 'name',
             render: (name, vfolder) => {
               return (
-                <Flex align="center" gap="xs">
+                <BAIFlex align="center" gap="xs">
                   <VFolderNodeIdenticon
                     vfolderNodeIdenticonFrgmt={vfolder}
                     style={{
@@ -180,7 +180,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                       {vfolder.name}
                     </BAILink>
                   )}
-                </Flex>
+                </BAIFlex>
               );
             },
             onCell: (vfolder) => {
@@ -212,7 +212,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                 'delete_vfolder',
               );
               return (
-                <Flex gap={'xs'}>
+                <BAIFlex gap={'xs'}>
                   {/* Share */}
                   {!isDeletedCategory(vfolder?.status) && (
                     <Tooltip title={t('button.Share')} placement="left">
@@ -368,7 +368,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                       />
                     </Tooltip>
                   )}
-                </Flex>
+                </BAIFlex>
               );
             },
           },
@@ -403,17 +403,17 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
             dataIndex: 'ownership_type',
             render: (type: string) => {
               return type === 'user' ? (
-                <Flex gap={'xs'}>
+                <BAIFlex gap={'xs'}>
                   <Typography.Text>{t('data.User')}</Typography.Text>
                   <UserOutlined style={{ color: token.colorTextTertiary }} />
-                </Flex>
+                </BAIFlex>
               ) : (
-                <Flex gap={'xs'}>
+                <BAIFlex gap={'xs'}>
                   <Typography.Text>{t('data.Project')}</Typography.Text>
                   <BAIUserUnionIcon
                     style={{ color: token.colorTextTertiary }}
                   />
-                </Flex>
+                </BAIFlex>
               );
             },
             sorter: true,
@@ -431,9 +431,9 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
             render: (__, vfolder) =>
               vfolder?.user === currentUser?.uuid ||
               (vfolder?.group === currentProject?.id && baiClient.is_admin) ? (
-                <Flex justify="center">
+                <BAIFlex justify="center">
                   <CheckCircleOutlined />
-                </Flex>
+                </BAIFlex>
               ) : null,
           },
         ]}
@@ -465,7 +465,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         }}
         confirmText={currentVFolder?.name ?? ''}
         content={
-          <Flex
+          <BAIFlex
             direction="column"
             gap="md"
             align="stretch"
@@ -476,13 +476,13 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
               message={t('dialog.warning.DeleteForeverDesc')}
               style={{ width: '100%' }}
             />
-            <Flex>
+            <BAIFlex>
               <Typography.Text style={{ marginRight: token.marginXXS }}>
                 {t('data.folders.TypeFolderNameToDelete')}
               </Typography.Text>
               (<Typography.Text code>{currentVFolder?.name}</Typography.Text>)
-            </Flex>
-          </Flex>
+            </BAIFlex>
+          </BAIFlex>
         }
         title={t('dialog.title.DeleteForever')}
         okText={t('data.folders.DeleteForever')}

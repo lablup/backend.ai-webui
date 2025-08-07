@@ -1,12 +1,12 @@
-import Flex, { FlexProps } from './Flex';
 import WebUILink from './WebUILink';
 import { Breadcrumb, theme } from 'antd';
+import { BAIFlex, BAIFlexProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMatches } from 'react-router-dom';
 
-interface WebUIBreadcrumbProps extends FlexProps {}
+interface WebUIBreadcrumbProps extends BAIFlexProps {}
 const WebUIBreadcrumb: React.FC<WebUIBreadcrumbProps> = (props) => {
   // const location = useLocation();
   const matches = useMatches();
@@ -16,7 +16,7 @@ const WebUIBreadcrumb: React.FC<WebUIBreadcrumbProps> = (props) => {
 
   const { t } = useTranslation();
   return (
-    <Flex
+    <BAIFlex
       direction="column"
       justify="center"
       align="stretch"
@@ -93,7 +93,7 @@ const WebUIBreadcrumb: React.FC<WebUIBreadcrumbProps> = (props) => {
           );
         }}
       />
-    </Flex>
+    </BAIFlex>
   );
 };
 

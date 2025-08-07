@@ -1,6 +1,6 @@
-import Flex from './Flex';
 import { Form, Checkbox, FormItemProps } from 'antd';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
+import { BAIFlex } from 'backend.ai-ui';
 import React, {
   Attributes,
   cloneElement,
@@ -48,7 +48,7 @@ const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
       : undefined;
 
   return (
-    <Flex direction="column" align="start">
+    <BAIFlex direction="column" align="start">
       <Form.Item
         style={{ margin: 0 }}
         name={name}
@@ -80,7 +80,7 @@ const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
       >
         {t('resourcePolicy.Unlimited')}
       </Checkbox>
-    </Flex>
+    </BAIFlex>
   );
 };
 

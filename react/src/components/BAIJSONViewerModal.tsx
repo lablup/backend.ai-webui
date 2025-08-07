@@ -1,8 +1,8 @@
 import { useThemeMode } from '../hooks/useThemeMode';
 import BAICodeEditor from './BAICodeEditor';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
 import { Alert } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -41,7 +41,7 @@ const BAIJSONViewerModal: React.FC<BAIJSONViewerModalProps> = ({
 
   return (
     <BAIModal footer={null} width={800} {...modalProps}>
-      <Flex direction="column" align="stretch" gap={'sm'}>
+      <BAIFlex direction="column" align="stretch" gap={'sm'}>
         {hasError && (
           <Alert
             type="warning"
@@ -56,7 +56,7 @@ const BAIJSONViewerModal: React.FC<BAIJSONViewerModalProps> = ({
           theme={isDarkMode ? 'dark' : 'light'}
           editable={false}
         />
-      </Flex>
+      </BAIFlex>
     </BAIModal>
   );
 };

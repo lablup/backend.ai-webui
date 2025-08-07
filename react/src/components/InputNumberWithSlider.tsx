@@ -1,8 +1,8 @@
 import { useUpdatableState } from '../hooks';
 import useControllableState from '../hooks/useControllableState';
-import Flex from './Flex';
 import { InputNumber, Slider, InputNumberProps, SliderSingleProps } from 'antd';
 import { SliderRangeProps } from 'antd/es/slider';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
 
@@ -57,8 +57,8 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
   }, []);
 
   return (
-    <Flex direction="row" gap={'md'}>
-      <Flex
+    <BAIFlex direction="row" gap={'md'}>
+      <BAIFlex
         style={{ flex: 2, minWidth: inputContainerMinWidth }}
         align="stretch"
         direction="column"
@@ -101,8 +101,8 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
             ...inputNumberProps?.style,
           }}
         />
-      </Flex>
-      <Flex direction="column" align="stretch" style={{ flex: 3 }}>
+      </BAIFlex>
+      <BAIFlex direction="column" align="stretch" style={{ flex: 3 }}>
         <Slider
           max={max}
           min={min}
@@ -122,8 +122,8 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
             return _.isNumber(max) ? _.parseInt(key) > max : false;
           })}
         />
-      </Flex>
-    </Flex>
+      </BAIFlex>
+    </BAIFlex>
   );
 };
 

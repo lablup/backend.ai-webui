@@ -1,6 +1,6 @@
 import BAIModal from './BAIModal';
-import Flex from './Flex';
 import { ModalProps, Typography, theme } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 
 interface IdleCheckDescriptionModalProps extends ModalProps {}
@@ -34,7 +34,7 @@ const IdleCheckDescriptionModal: React.FC<IdleCheckDescriptionModalProps> = ({
         {t('session.UtilizationIdleTimeout')}
       </Typography.Title>
       <p>{t('session.UtilizationIdleTimeoutDesc')}</p>
-      <Flex
+      <BAIFlex
         direction="column"
         align="stretch"
         style={{ marginLeft: token.marginMD }}
@@ -47,7 +47,7 @@ const IdleCheckDescriptionModal: React.FC<IdleCheckDescriptionModalProps> = ({
           {t('session.UtilizationThreshold')}
         </Typography.Title>
         <p>{t('session.UtilizationThresholdDesc')}</p>
-      </Flex>
+      </BAIFlex>
     </BAIModal>
   );
 };

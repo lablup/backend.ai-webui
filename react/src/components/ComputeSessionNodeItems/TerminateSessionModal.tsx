@@ -11,9 +11,9 @@ import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { usePainKiller } from '../../hooks/usePainKiller';
 import { usePromiseTracker } from '../../usePromiseTracker';
 import BAIModal from '../BAIModal';
-import Flex from '../Flex';
 import { Card, Checkbox, ModalProps, Typography } from 'antd';
 import { createStyles } from 'antd-style';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -315,7 +315,7 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
       }}
       {...modalProps}
     >
-      <Flex
+      <BAIFlex
         className={styles.custom}
         direction="column"
         align="stretch"
@@ -376,7 +376,7 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
             )}
           </Card>
         )}
-      </Flex>
+      </BAIFlex>
     </BAIModal>
   );
 };

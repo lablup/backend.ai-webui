@@ -1,7 +1,7 @@
 import usePrimaryColors from '../hooks/usePrimaryColors';
-import Flex from './Flex';
 import { Progress, ProgressProps, theme, Typography } from 'antd';
 import { createStyles } from 'antd-style';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { ReactNode } from 'react';
 
@@ -35,7 +35,7 @@ const BAIPanelItem: React.FC<BAIPanelItemProps> = ({
   const { styles } = useStyles();
   const primaryColors = usePrimaryColors();
   return (
-    <Flex
+    <BAIFlex
       {...props}
       direction="column"
       style={{
@@ -60,7 +60,7 @@ const BAIPanelItem: React.FC<BAIPanelItemProps> = ({
       ) : (
         title
       )}
-      <Flex align="baseline" gap={'xxs'}>
+      <BAIFlex align="baseline" gap={'xxs'}>
         {_.isString(value) || _.isNumber(value) ? (
           <Typography.Text
             strong
@@ -75,7 +75,7 @@ const BAIPanelItem: React.FC<BAIPanelItemProps> = ({
           value
         )}
         {unit && <Typography.Text>{unit}</Typography.Text>}
-      </Flex>
+      </BAIFlex>
       {_.isNumber(percent) && (
         <Progress
           percent={percent}
@@ -87,7 +87,7 @@ const BAIPanelItem: React.FC<BAIPanelItemProps> = ({
           {...progressProps}
         />
       )}
-    </Flex>
+    </BAIFlex>
   );
 };
 

@@ -1,7 +1,7 @@
-import Flex from './Flex';
 import { isLoginSessionExpiredState } from './LoginSessionExtendButton';
 import { ReloadOutlined } from '@ant-design/icons';
 import { Alert, Button, Result, Typography } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import { useAtomValue } from 'jotai';
 import React from 'react';
 import {
@@ -30,7 +30,7 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
           error?.name === 'AuthorizationError' ||
           error?.statusCode === 401;
         return (
-          <Flex
+          <BAIFlex
             style={{ margin: 'auto', ...style }}
             justify="center"
             align="center"
@@ -43,7 +43,7 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
                   : t('errorBoundary.Title')
               }
               extra={
-                <Flex direction="column" gap="md">
+                <BAIFlex direction="column" gap="md">
                   <Button
                     type="primary"
                     key="console"
@@ -64,7 +64,7 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
                       : t('errorBoundary.ReloadPage')}
                   </Button>
                   {process.env.NODE_ENV === 'development' && (
-                    <Flex
+                    <BAIFlex
                       direction="column"
                       gap="sm"
                       align="center"
@@ -74,7 +74,7 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
                         type="info"
                         showIcon
                         description={
-                          <Flex direction="column" align="start" gap={'md'}>
+                          <BAIFlex direction="column" align="start" gap={'md'}>
                             <Button
                               type="default"
                               icon={<ReloadOutlined />}
@@ -85,16 +85,16 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
                               {t('errorBoundary.ResetErrorBoundary')}
                             </Button>
                             <Typography.Text>{error.message}</Typography.Text>
-                          </Flex>
+                          </BAIFlex>
                         }
                         message={t('errorBoundary.DisplayOnlyDevEnv')}
                       />
-                    </Flex>
+                    </BAIFlex>
                   )}
-                </Flex>
+                </BAIFlex>
               }
             ></Result>
-          </Flex>
+          </BAIFlex>
         );
       }}
     />
@@ -109,7 +109,7 @@ export const ErrorView = () => {
       status="warning"
       title={t('errorBoundary.Title')}
       extra={
-        <Flex direction="column" gap="md">
+        <BAIFlex direction="column" gap="md">
           <Button
             type="primary"
             key="console"
@@ -126,7 +126,7 @@ export const ErrorView = () => {
           >
             {t('errorBoundary.ReloadPage')}
           </Button>
-        </Flex>
+        </BAIFlex>
       }
     ></Result>
   );

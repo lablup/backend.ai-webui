@@ -1,9 +1,9 @@
-import Flex from '../Flex';
 import EndpointTokenSelect from './EndpointTokenSelect';
 import { ReloadOutlined } from '@ant-design/icons';
 import useResizeObserver from '@react-hook/resize-observer';
 import { Alert, Button, Form, Input, theme } from 'antd';
 import type { FormInstance } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -42,7 +42,7 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
   });
 
   return (
-    <Flex
+    <BAIFlex
       direction="row"
       style={{
         padding: themeToken.paddingContentVerticalLG,
@@ -100,7 +100,7 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
           {t('button.RefreshModelInformation')}
         </Button>
       </Form>
-    </Flex>
+    </BAIFlex>
   );
 };
 

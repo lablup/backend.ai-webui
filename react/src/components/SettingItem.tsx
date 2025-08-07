@@ -1,6 +1,6 @@
-import Flex from './Flex';
 import { Badge, Checkbox, Select, SelectProps, Typography, theme } from 'antd';
 import { createStyles } from 'antd-style';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { ReactElement, ReactNode } from 'react';
 
@@ -41,8 +41,8 @@ const SettingItem: React.FC<SettingItemProps> = ({
   const { styles } = useStyles();
 
   return (
-    <Flex direction="column" align="start" gap={'xxs'}>
-      <Flex direction="row" gap={'xxs'}>
+    <BAIFlex direction="column" align="start" gap={'xxs'}>
+      <BAIFlex direction="row" gap={'xxs'}>
         <Typography.Text
           strong
           style={{
@@ -55,7 +55,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
           value !== undefined &&
           value !== null &&
           defaultValue !== value && <Badge dot status="warning" />}
-      </Flex>
+      </BAIFlex>
       {type === 'custom' && (
         <>
           {description}
@@ -90,7 +90,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
           ></Select>
         </>
       )}
-    </Flex>
+    </BAIFlex>
   );
 };
 

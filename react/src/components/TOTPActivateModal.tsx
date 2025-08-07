@@ -2,7 +2,6 @@ import { TOTPActivateModalFragment$key } from '../__generated__/TOTPActivateModa
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
 import {
   QRCode,
   Typography,
@@ -13,6 +12,7 @@ import {
   Spin,
   FormInstance,
 } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -96,13 +96,13 @@ const TOTPActivateModal: React.FC<Props> = ({
       {...baiModalProps}
     >
       {initializedTotp.isLoading ? (
-        <Flex justify="center" direction="row">
+        <BAIFlex justify="center" direction="row">
           <Spin />
-        </Flex>
+        </BAIFlex>
       ) : !initializedTotp.data ? (
-        <Flex justify="center" direction="row">
+        <BAIFlex justify="center" direction="row">
           {t('totp.TotpSetupNotAvailable')}
-        </Flex>
+        </BAIFlex>
       ) : (
         <TOTPActivateForm
           ref={formRef}
@@ -129,24 +129,24 @@ export const TOTPActivateForm: React.FC<TOTPActiveFormProps> = ({
   return (
     <>
       {t('totp.ScanQRToEnable')}
-      <Flex
+      <BAIFlex
         justify="center"
         style={{ margin: token.marginSM, gap: token.margin }}
       >
         <QRCode value={totp_uri} />
-      </Flex>
+      </BAIFlex>
       {t('totp.TypeInAuthKey')}
-      <Flex
+      <BAIFlex
         justify="center"
         style={{ margin: token.marginSM, gap: token.margin }}
       >
         <Typography.Text copyable code>
           {totp_key}
         </Typography.Text>
-      </Flex>
+      </BAIFlex>
       {t('totp.EnterConfirmationCode')}
       <Form ref={ref} preserve={false} validateTrigger={['onChange', 'onBlur']}>
-        <Flex
+        <BAIFlex
           justify="center"
           style={{ margin: token.marginSM, gap: token.margin }}
         >
@@ -165,7 +165,7 @@ export const TOTPActivateForm: React.FC<TOTPActiveFormProps> = ({
           >
             <Input.OTP size="large" />
           </Form.Item>
-        </Flex>
+        </BAIFlex>
       </Form>
     </>
   );

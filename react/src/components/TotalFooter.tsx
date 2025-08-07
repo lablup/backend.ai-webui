@@ -1,6 +1,6 @@
-import Flex from './Flex';
 import { LoadingOutlined } from '@ant-design/icons';
 import { theme, Typography } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 
 const TotalFooter: React.FC<{
@@ -10,7 +10,7 @@ const TotalFooter: React.FC<{
   const { token } = theme.useToken();
   const { t } = useTranslation();
   return (
-    <Flex justify="end" gap={'xs'}>
+    <BAIFlex justify="end" gap={'xs'}>
       {loading ? (
         <LoadingOutlined
           spin
@@ -26,7 +26,7 @@ const TotalFooter: React.FC<{
           total: total,
         })}
       </Typography.Text>
-    </Flex>
+    </BAIFlex>
   );
 };
 

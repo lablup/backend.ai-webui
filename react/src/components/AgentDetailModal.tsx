@@ -7,8 +7,8 @@ import {
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
-import Flex from './Flex';
 import { Col, Row, theme, Typography } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -61,16 +61,16 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
       destroyOnClose
       footer={null}
     >
-      <Flex direction="column" align="stretch" gap={'md'}>
+      <BAIFlex direction="column" align="stretch" gap={'md'}>
         <Row gutter={[24, 24]}>
           <Col xs={24} sm={12}>
             {parsedLiveStat?.devices?.cpu_util ? (
-              <Flex direction="column" gap="xxs" align="stretch">
+              <BAIFlex direction="column" gap="xxs" align="stretch">
                 <Typography.Title level={5} style={{ marginTop: 0 }}>
                   {mergedResourceSlots?.cpu?.human_readable_name}
                 </Typography.Title>
                 {_.map(parsedLiveStat?.devices?.cpu_util, (value, key) => (
-                  <Flex justify="between">
+                  <BAIFlex justify="between">
                     <Typography.Text
                       key={key}
                       type="secondary"
@@ -85,14 +85,14 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                         toFixedFloorWithoutTrailingZeros(value?.pct, 1) + '%'
                       }
                     />
-                  </Flex>
+                  </BAIFlex>
                 ))}
-              </Flex>
+              </BAIFlex>
             ) : null}
           </Col>
           <Col xs={24} sm={12}>
             {parsedAvailableSlots?.mem ? (
-              <Flex direction="column" gap="xxs" align="stretch">
+              <BAIFlex direction="column" gap="xxs" align="stretch">
                 <Typography.Title level={5} style={{ marginTop: 0 }}>
                   {mergedResourceSlots?.mem?.human_readable_name}
                 </Typography.Title>
@@ -113,14 +113,14 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                       ?.displayValue
                   } / ${convertToBinaryUnit(parsedAvailableSlots?.mem, 'g')?.displayValue}`}
                 />
-              </Flex>
+              </BAIFlex>
             ) : null}
             {parsedLiveStat?.node ? (
-              <Flex direction="column" gap="xxs" align="start">
+              <BAIFlex direction="column" gap="xxs" align="start">
                 <Typography.Title level={5} style={{ marginTop: 0 }}>
                   {t('session.launcher.Network')}
                 </Typography.Title>
-                <Flex gap="xl">
+                <BAIFlex gap="xl">
                   <Typography.Text>TX:</Typography.Text>
                   <Typography.Text>
                     {
@@ -132,8 +132,8 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                     }
                     B
                   </Typography.Text>
-                </Flex>
-                <Flex gap="xl">
+                </BAIFlex>
+                <BAIFlex gap="xl">
                   <Typography.Text>RX:</Typography.Text>
                   <Typography.Text>
                     {
@@ -145,8 +145,8 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                     }
                     B
                   </Typography.Text>
-                </Flex>
-              </Flex>
+                </BAIFlex>
+              </BAIFlex>
             ) : null}
           </Col>
         </Row>
@@ -158,7 +158,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
               const deviceName = _.split(key, '_')[0] + '.device';
               return (
                 <Col xs={24} sm={12}>
-                  <Flex direction="column" gap="xxs" align="stretch">
+                  <BAIFlex direction="column" gap="xxs" align="stretch">
                     <Typography.Title level={5} style={{ marginTop: 0 }}>
                       {mergedResourceSlots?.[deviceName]?.human_readable_name}{' '}
                       {t('session.Utilization')}
@@ -166,7 +166,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                     {_.map(
                       _.toPairs(parsedLiveStat?.devices[key]),
                       (value, index) => (
-                        <Flex justify="between">
+                        <BAIFlex justify="between">
                           <Typography.Text
                             key={index}
                             type="secondary"
@@ -187,17 +187,17 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                               ) + '%'
                             }
                           />
-                        </Flex>
+                        </BAIFlex>
                       ),
                     )}
-                  </Flex>
+                  </BAIFlex>
                 </Col>
               );
             } else if (_.includes(key, '_mem')) {
               const deviceName = _.split(key, '_')[0] + '.device';
               return (
                 <Col xs={24} sm={12}>
-                  <Flex direction="column" gap="xxs" align="stretch">
+                  <BAIFlex direction="column" gap="xxs" align="stretch">
                     <Typography.Title level={5} style={{ marginTop: 0 }}>
                       {mergedResourceSlots?.[deviceName]?.human_readable_name}{' '}
                       {t('session.launcher.Memory')}
@@ -205,7 +205,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                     {_.map(
                       _.toPairs(parsedLiveStat?.devices[key]),
                       (value, index) => (
-                        <Flex justify="between">
+                        <BAIFlex justify="between">
                           <Typography.Text
                             key={index}
                             type="secondary"
@@ -226,16 +226,16 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                               ) + '%'
                             }
                           />
-                        </Flex>
+                        </BAIFlex>
                       ),
                     )}
-                  </Flex>
+                  </BAIFlex>
                 </Col>
               );
             }
           })}
         </Row>
-      </Flex>
+      </BAIFlex>
     </BAIModal>
   );
 };

@@ -6,7 +6,6 @@ import {
   useSuspendedFilteredAppTemplate,
 } from '../../hooks/useSuspendedFilteredAppTemplate';
 import BAIModal from '../BAIModal';
-import Flex from '../Flex';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import {
   Button,
@@ -22,6 +21,7 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useRef, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -125,7 +125,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
       destroyOnClose
       {...modalProps}
     >
-      <Flex direction="column" gap={'md'} align="stretch">
+      <BAIFlex direction="column" gap={'md'} align="stretch">
         {_.map(baseAppTemplate, (apps, category) => {
           return (
             <div key={category}>
@@ -140,7 +140,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                       span={6}
                       style={{ alignContent: 'center' }}
                     >
-                      <Flex
+                      <BAIFlex
                         direction="column"
                         gap={'xs'}
                         style={{ height: '100%' }}
@@ -162,7 +162,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                         <Typography.Text style={{ textAlign: 'center' }}>
                           {app?.title}
                         </Typography.Text>
-                      </Flex>
+                      </BAIFlex>
                     </Col>
                   );
                 })}
@@ -183,7 +183,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                     span={6}
                     style={{ alignContent: 'center' }}
                   >
-                    <Flex
+                    <BAIFlex
                       direction="column"
                       gap={'xs'}
                       style={{ height: '100%' }}
@@ -205,7 +205,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                       <Typography.Text style={{ textAlign: 'center' }}>
                         {app?.title}
                       </Typography.Text>
-                    </Flex>
+                    </BAIFlex>
                   </Col>
                 );
               })}
@@ -220,7 +220,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                 <Form.Item
                   name={'clientIps'}
                   label={
-                    <Flex gap={'xs'}>
+                    <BAIFlex gap={'xs'}>
                       <Checkbox
                         value={openToPublic}
                         onChange={(value) =>
@@ -233,7 +233,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                       >
                         <QuestionCircleOutlined style={{ cursor: 'pointer' }} />
                       </Tooltip>
-                    </Flex>
+                    </BAIFlex>
                   }
                 >
                   <Input
@@ -248,7 +248,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                 <Form.Item
                   name={'preferredPort'}
                   label={
-                    <Flex gap={'xs'}>
+                    <BAIFlex gap={'xs'}>
                       <Checkbox
                         value={tryPreferredPort}
                         onChange={(value) =>
@@ -256,7 +256,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                         }
                       />
                       {t('session.TryPreferredPort')}
-                    </Flex>
+                    </BAIFlex>
                   }
                   rules={[
                     {
@@ -285,7 +285,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                   <Form.Item
                     name="subDomain"
                     label={
-                      <Flex gap={'xs'}>
+                      <BAIFlex gap={'xs'}>
                         <Checkbox
                           value={useSubDomain}
                           onChange={(value) =>
@@ -293,7 +293,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                           }
                         />
                         {t('session.UseSubdomain')}
-                      </Flex>
+                      </BAIFlex>
                     }
                   >
                     <Input disabled={!useSubDomain} />
@@ -328,7 +328,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
             ) : null}
           </Row>
         </Form>
-      </Flex>
+      </BAIFlex>
     </BAIModal>
   );
 };

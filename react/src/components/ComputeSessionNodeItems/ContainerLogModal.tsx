@@ -6,10 +6,10 @@ import { useTanQuery } from '../../hooks/reactQueryAlias';
 import { useMemoWithPrevious } from '../../hooks/useMemoWithPrevious';
 import BAIModal, { BAIModalProps } from '../BAIModal';
 import BAISelect from '../BAISelect';
-import Flex from '../Flex';
 import { ReloadOutlined } from '@ant-design/icons';
 import { LazyLog, ScrollFollow } from '@melloware/react-logviewer';
 import { Button, Divider, Grid, theme, Tooltip, Typography } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { DownloadIcon } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
@@ -108,7 +108,7 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
   return (
     <BAIModal
       title={
-        <Flex style={{ maxWidth: '100%' }} gap={'sm'}>
+        <BAIFlex style={{ maxWidth: '100%' }} gap={'sm'}>
           <Typography.Title level={4} style={{ margin: 0, flexShrink: 0 }}>
             Logs
           </Typography.Title>
@@ -130,7 +130,7 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
               </Typography.Text>
             </>
           ) : null}
-        </Flex>
+        </BAIFlex>
       }
       width={'100%'}
       styles={{
@@ -146,13 +146,13 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
       footer={null}
       destroyOnClose
     >
-      <Flex
+      <BAIFlex
         direction="column"
         align="start"
         style={{ height: '100%' }}
         gap={'sm'}
       >
-        <Flex gap="sm" wrap="wrap">
+        <BAIFlex gap="sm" wrap="wrap">
           Kernel Role
           <BAISelect
             value={selectedKernelId}
@@ -233,7 +233,7 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
               onClick={() => refetch()}
             />
           </Tooltip>
-        </Flex>
+        </BAIFlex>
 
         <div
           style={{
@@ -269,7 +269,7 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
             )}
           />
         </div>
-      </Flex>
+      </BAIFlex>
     </BAIModal>
   );
 };

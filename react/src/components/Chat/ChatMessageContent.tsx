@@ -1,8 +1,8 @@
-import Flex from '../Flex';
 import CopyButton from './CopyButton';
 import { SyntaxHighlighter } from './SyntaxHighlighter';
 import { theme, Typography } from 'antd';
 import { createStyles } from 'antd-style';
+import { BAIFlex } from 'backend.ai-ui';
 // `rehype-katex` does not import the CSS file, so we need to import it manually.
 import 'katex/dist/katex.min.css';
 import { marked } from 'marked';
@@ -133,7 +133,7 @@ const CodeHead = memo<{ lang: string; extra?: React.ReactNode }>(
     const { token } = theme.useToken();
 
     return (
-      <Flex
+      <BAIFlex
         style={{
           margin: 0,
           minHeight: 38,
@@ -142,7 +142,7 @@ const CodeHead = memo<{ lang: string; extra?: React.ReactNode }>(
           width: '100%',
         }}
       >
-        <Flex
+        <BAIFlex
           style={{
             display: 'inline-block',
             flex: '1',
@@ -154,9 +154,9 @@ const CodeHead = memo<{ lang: string; extra?: React.ReactNode }>(
           <Text style={{ fontWeight: 'normal' }} type="secondary">
             {lang}
           </Text>
-        </Flex>
-        <Flex>{extra}</Flex>
-      </Flex>
+        </BAIFlex>
+        <BAIFlex>{extra}</BAIFlex>
+      </BAIFlex>
     );
   },
 );
@@ -181,7 +181,7 @@ const ChatMessageContentBlock = memo<{ block?: string; isStreaming?: boolean }>(
           node.position?.start?.line === node.position?.end?.line || false;
 
         return match ? (
-          <Flex
+          <BAIFlex
             direction={'column'}
             style={{
               border: `1px solid ${token.colorBorder}`,
@@ -204,7 +204,7 @@ const ChatMessageContentBlock = memo<{ block?: string; isStreaming?: boolean }>(
                 />
               }
             />
-            <Flex
+            <BAIFlex
               className={styles.codeBlock}
               style={{
                 width: '100%',
@@ -222,8 +222,8 @@ const ChatMessageContentBlock = memo<{ block?: string; isStreaming?: boolean }>(
               >
                 {content}
               </SyntaxHighlighter>
-            </Flex>
-          </Flex>
+            </BAIFlex>
+          </BAIFlex>
         ) : (
           <code
             {...rest}

@@ -2,10 +2,9 @@ import { AllowedVfolderHostsWithPermissionFragment$key } from '../__generated__/
 import { AllowedVfolderHostsWithPermissionQuery } from '../__generated__/AllowedVfolderHostsWithPermissionQuery.graphql';
 import BAILink from './BAILink';
 import BAIModal from './BAIModal';
-import Flex from './Flex';
 import { CheckCircleFilled, StopFilled } from '@ant-design/icons';
 import { Badge, theme } from 'antd';
-import { BAITable } from 'backend.ai-ui';
+import { BAITable, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -64,7 +63,7 @@ const AllowedVfolderHostsWithPermission: React.FC<
 
   return (
     <>
-      <Flex gap="xs" wrap="wrap">
+      <BAIFlex gap="xs" wrap="wrap">
         {_.map(_.keys(allowedVfolderHosts), (storageHost) => (
           <BAILink
             key={storageHost}
@@ -77,7 +76,7 @@ const AllowedVfolderHostsWithPermission: React.FC<
             &nbsp;{storageHost}
           </BAILink>
         ))}
-      </Flex>
+      </BAIFlex>
       <BAIModal
         centered
         title={`${storageHost} ${t('data.explorer.Permission')}`}
@@ -97,23 +96,23 @@ const AllowedVfolderHostsWithPermission: React.FC<
                 _.get(allowedVfolderHosts, storageHost || ''),
                 permission,
               ) ? (
-                <Flex justify="center">
+                <BAIFlex justify="center">
                   <CheckCircleFilled
                     style={{
                       color: token.green5,
                       fontSize: token.fontSizeLG,
                     }}
                   />
-                </Flex>
+                </BAIFlex>
               ) : (
-                <Flex justify="center">
+                <BAIFlex justify="center">
                   <StopFilled
                     style={{
                       color: token.red5,
                       fontSize: token.fontSizeLG,
                     }}
                   />
-                </Flex>
+                </BAIFlex>
               ),
             }),
           )}

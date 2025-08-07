@@ -7,7 +7,6 @@ import usePrimaryColors from '../../hooks/usePrimaryColors';
 import AboutBackendAIModal from '../AboutBackendAIModal';
 import BAIMenu from '../BAIMenu';
 import BAISider, { BAISiderProps } from '../BAISider';
-import Flex from '../Flex';
 import PrivacyPolicyModal from '../PrivacyPolicyModal';
 import ThemeReverseProvider from '../ReverseThemeProvider';
 import SiderToggleButton from '../SiderToggleButton';
@@ -47,6 +46,7 @@ import {
   BAIMyEnvironmentsIcon,
   BAIPipelinesIcon,
   BAISessionsIcon,
+  BAIFlex,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { BotMessageSquare, ExternalLinkIcon, LinkIcon } from 'lucide-react';
@@ -372,7 +372,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
         type: 'group',
         name: group,
         label: (
-          <Flex
+          <BAIFlex
             style={{
               borderBottom: `1px solid ${token.colorBorder}`,
             }}
@@ -382,7 +382,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                 {aliasGroupNameMap[group as GroupName]}
               </Typography.Text>
             )}
-          </Flex>
+          </BAIFlex>
         ),
         children: items,
       };
@@ -456,7 +456,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
         }}
         hidden={!gridBreakpoint.sm || !isSiderHover}
       />
-      <Flex
+      <BAIFlex
         direction="column"
         align="stretch"
         justify="start"
@@ -509,7 +509,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                       {
                         type: 'group',
                         label: (
-                          <Flex
+                          <BAIFlex
                             style={{
                               borderBottom: `1px solid ${token.colorBorder}`,
                             }}
@@ -519,7 +519,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                                 {t('webui.menu.Administration')}
                               </Typography.Text>
                             )}
-                          </Flex>
+                          </BAIFlex>
                         ),
                         children: [...adminMenu, ...superAdminMenu],
                       },
@@ -529,7 +529,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                         {
                           type: 'group',
                           label: (
-                            <Flex
+                            <BAIFlex
                               style={{
                                 borderBottom: `1px solid ${token.colorBorder}`,
                               }}
@@ -539,7 +539,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                                   {t('webui.menu.Administration')}
                                 </Typography.Text>
                               )}
-                            </Flex>
+                            </BAIFlex>
                           ),
                           children: [...adminMenu],
                         },
@@ -549,9 +549,9 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             />
           </ConfigProvider>
         )}
-      </Flex>
+      </BAIFlex>
       {props.collapsed ? null : (
-        <Flex
+        <BAIFlex
           justify="center"
           className="sider-footer-wrap"
           direction="column"
@@ -571,7 +571,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           >
             <div className="terms-of-use">
               <Divider style={{ marginTop: 0, marginBottom: token.margin }} />
-              <Flex
+              <BAIFlex
                 wrap="wrap"
                 style={{ fontSize: token.sizeXS }}
                 justify="center"
@@ -621,7 +621,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                     />
                   </>
                 )}
-              </Flex>
+              </BAIFlex>
             </div>
             <address>
               <small className="sidebar-footer">
@@ -637,7 +637,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
               </small>
             </address>
           </Typography.Text>
-        </Flex>
+        </BAIFlex>
       )}
       <TermsOfServiceModal
         open={isOpenTOSModal}

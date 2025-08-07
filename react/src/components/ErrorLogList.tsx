@@ -1,7 +1,6 @@
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import BAIModal from './BAIModal';
-import Flex from './Flex';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import TextHighlighter from './TextHighlighter';
 import {
@@ -14,6 +13,7 @@ import {
 import { useToggle } from 'ahooks';
 import { Button, Typography, Table, Alert, Checkbox, Input, theme } from 'antd';
 import { ColumnsType } from 'antd/es/table';
+import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import React, { useState, useMemo, useTransition } from 'react';
@@ -201,8 +201,8 @@ const ErrorLogList: React.FC<{
   }, [logSearch, storageLogData]);
 
   return (
-    <Flex direction="column" align="stretch">
-      <Flex
+    <BAIFlex direction="column" align="stretch">
+      <BAIFlex
         direction="row"
         justify="between"
         wrap="wrap"
@@ -213,16 +213,21 @@ const ErrorLogList: React.FC<{
           paddingRight: token.paddingContentHorizontalSM,
         }}
       >
-        <Flex direction="column" align="start">
+        <BAIFlex direction="column" align="start">
           <Typography.Title level={4} style={{ margin: 0, padding: 0 }}>
             {t('logs.LogMessages')}
           </Typography.Title>
           <Typography.Text type="secondary">
             {t('logs.UpTo3000Logs')}
           </Typography.Text>
-        </Flex>
-        <Flex direction="row" gap={'xs'} wrap="wrap" style={{ flexShrink: 1 }}>
-          <Flex gap={'xs'}>
+        </BAIFlex>
+        <BAIFlex
+          direction="row"
+          gap={'xs'}
+          wrap="wrap"
+          style={{ flexShrink: 1 }}
+        >
+          <BAIFlex gap={'xs'}>
             <Input
               allowClear
               prefix={<SearchOutlined />}
@@ -239,8 +244,8 @@ const ErrorLogList: React.FC<{
             >
               {t('logs.ShowOnlyError')}
             </Checkbox>
-          </Flex>
-          <Flex gap={'xs'}>
+          </BAIFlex>
+          <BAIFlex gap={'xs'}>
             <Button
               icon={<ReloadOutlined />}
               loading={isPendingRefreshTransition}
@@ -259,9 +264,9 @@ const ErrorLogList: React.FC<{
             >
               {t('button.ClearLogs')}
             </Button>
-          </Flex>
-        </Flex>
-      </Flex>
+          </BAIFlex>
+        </BAIFlex>
+      </BAIFlex>
       <Table
         pagination={{
           showSizeChanger: false,
@@ -300,7 +305,7 @@ const ErrorLogList: React.FC<{
           };
         }}
       />
-      <Flex
+      <BAIFlex
         justify="end"
         style={{
           paddingRight: token.paddingXS,
@@ -314,7 +319,7 @@ const ErrorLogList: React.FC<{
             toggleColumnSettingModal();
           }}
         />
-      </Flex>
+      </BAIFlex>
       <BAIModal
         open={isOpenClearLogsModal}
         title={t('dialog.warning.LogDeletion')}
@@ -348,7 +353,7 @@ const ErrorLogList: React.FC<{
         columns={columns}
         hiddenColumnKeys={hiddenColumnKeys}
       />
-    </Flex>
+    </BAIFlex>
   );
 };
 

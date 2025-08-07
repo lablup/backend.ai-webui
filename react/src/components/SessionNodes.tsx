@@ -85,13 +85,13 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
       //   title: t('session.Utilization'),
       //   render: (__, session) => {
       //     return (
-      //       <Flex
+      //       <BAIFlex
       //         style={{
       //           paddingLeft: token.paddingXS,
       //         }}
       //       >
       //         <SessionUsageMonitor size="small" sessionFrgmt={session} />
-      //       </Flex>
+      //       </BAIFlex>
       //     );
       //   },
       // },

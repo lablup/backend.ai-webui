@@ -2,9 +2,9 @@ import { useAnonymousBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal from './BAIModal';
 import { useWebComponentInfo } from './DefaultProviders';
-import Flex from './Flex';
 import { TOTPActivateForm, TOTPActivateFormData } from './TOTPActivateModal';
 import { FormInstance, message } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -112,7 +112,7 @@ const TOTPActivateModalWithToken = () => {
       loading={!isSuccess}
     >
       {isError || !initializedTotp?.totp_uri || !initializedTotp?.totp_key ? (
-        <Flex>{t('totp.TotpSetupNotAvailable')}</Flex>
+        <BAIFlex>{t('totp.TotpSetupNotAvailable')}</BAIFlex>
       ) : (
         <TOTPActivateForm
           ref={formRef}

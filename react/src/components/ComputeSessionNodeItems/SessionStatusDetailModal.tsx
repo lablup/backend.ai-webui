@@ -3,10 +3,10 @@ import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import BAIModal from '../BAIModal';
 import DoubleTag from '../DoubleTag';
-import Flex from '../Flex';
 import { statusTagColor } from './SessionStatusTag';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { Descriptions, ModalProps, Tag, Typography, theme } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { Fragment } from 'react';
@@ -150,7 +150,7 @@ const SessionStatusDetailModal: React.FC<SessionStatusDetailModalProps> = ({
                 style={{ marginTop: token.marginSM }}
               >
                 <Descriptions.Item>
-                  <Flex
+                  <BAIFlex
                     direction="column"
                     gap="md"
                     style={{ marginLeft: token.marginSM }}
@@ -158,7 +158,7 @@ const SessionStatusDetailModal: React.FC<SessionStatusDetailModalProps> = ({
                   >
                     {_.map(statusData.scheduler?.failed_predicates, (p) => {
                       return (
-                        <Flex gap="xs" align="start">
+                        <BAIFlex gap="xs" align="start">
                           <CloseCircleOutlined
                             style={{
                               color: token.colorError,
@@ -167,7 +167,7 @@ const SessionStatusDetailModal: React.FC<SessionStatusDetailModalProps> = ({
                               flexShrink: 0,
                             }}
                           />
-                          <Flex direction="column" align="stretch">
+                          <BAIFlex direction="column" align="stretch">
                             <Typography.Text>{p.name}</Typography.Text>
                             <Typography.Text
                               type="secondary"
@@ -175,13 +175,13 @@ const SessionStatusDetailModal: React.FC<SessionStatusDetailModalProps> = ({
                             >
                               {p.msg}
                             </Typography.Text>
-                          </Flex>
-                        </Flex>
+                          </BAIFlex>
+                        </BAIFlex>
                       );
                     })}
                     {_.map(statusData.scheduler?.passed_predicates, (p) => {
                       return (
-                        <Flex gap="xs" align="start">
+                        <BAIFlex gap="xs" align="start">
                           <CheckCircleOutlined
                             style={{
                               color: token.colorSuccess,
@@ -190,7 +190,7 @@ const SessionStatusDetailModal: React.FC<SessionStatusDetailModalProps> = ({
                               flexShrink: 0,
                             }}
                           />
-                          <Flex direction="column" align="stretch">
+                          <BAIFlex direction="column" align="stretch">
                             <Typography.Text>{p.name}</Typography.Text>
                             <Typography.Text
                               type="secondary"
@@ -198,11 +198,11 @@ const SessionStatusDetailModal: React.FC<SessionStatusDetailModalProps> = ({
                             >
                               {p.msg}
                             </Typography.Text>
-                          </Flex>
-                        </Flex>
+                          </BAIFlex>
+                        </BAIFlex>
                       );
                     })}
-                  </Flex>
+                  </BAIFlex>
                 </Descriptions.Item>
               </Descriptions>
             </Descriptions.Item>

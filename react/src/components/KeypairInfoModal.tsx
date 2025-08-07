@@ -1,8 +1,8 @@
 import { KeypairInfoModalFragment$key } from '../__generated__/KeypairInfoModalFragment.graphql';
 import { KeypairInfoModalQuery } from '../__generated__/KeypairInfoModalQuery.graphql';
 import BAIModal from './BAIModal';
-import Flex from './Flex';
 import { Descriptions, ModalProps, Tag, Typography, theme } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
@@ -58,14 +58,14 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
   return (
     <BAIModal
       title={
-        <Flex gap={'xs'}>
+        <BAIFlex gap={'xs'}>
           <Typography.Text style={{ fontSize: token.fontSizeHeading5 }}>
             {t('credential.KeypairDetail')}
           </Typography.Text>
           {user?.main_access_key === keypair?.access_key && (
             <Tag color="red">{t('credential.MainAccessKey')}</Tag>
           )}
-        </Flex>
+        </BAIFlex>
       }
       onCancel={() => onRequestClose()}
       footer={null}

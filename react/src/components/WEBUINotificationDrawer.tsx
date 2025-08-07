@@ -9,10 +9,10 @@ import {
   theme,
   Button,
   Segmented,
-  Flex,
   Badge,
   Dropdown,
 } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -100,7 +100,7 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
           selectedCategory === 'all' ? notifications : inProgressNotifications
         }
         header={
-          <Flex justify="end">
+          <BAIFlex justify="end">
             <Segmented
               value={selectedCategory}
               onChange={(value) =>
@@ -122,7 +122,7 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
                 },
               ]}
             />
-          </Flex>
+          </BAIFlex>
         }
         rowKey={(item) => item.key}
         renderItem={(item) => (

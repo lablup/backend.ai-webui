@@ -6,7 +6,6 @@ import { omitNullAndUndefinedFields, newLineToBrElement } from '../helper';
 import { useCurrentDomainValue } from '../hooks';
 import BAIModal from './BAIModal';
 import DomainSelector from './DomainSelector';
-import Flex from './Flex';
 import { ScalingGroupOpts } from './ResourceGroupList';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import {
@@ -24,7 +23,7 @@ import {
   Tooltip,
   theme,
 } from 'antd';
-import { BAICard } from 'backend.ai-ui';
+import { BAICard, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Suspense, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -400,7 +399,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                   <Form.Item
                     labelCol={{ span: 24 }}
                     label={
-                      <Flex gap="xxs">
+                      <BAIFlex gap="xxs">
                         {t('resourceGroup.PendingTimeout')}
                         <Tooltip
                           title={newLineToBrElement(
@@ -411,7 +410,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                             style={{ color: token.colorTextSecondary }}
                           />
                         </Tooltip>
-                      </Flex>
+                      </BAIFlex>
                     }
                     name="pendingTimeout"
                   >
@@ -425,9 +424,9 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                 <Col span={12}>
                   <Form.Item
                     label={
-                      <Flex style={{ whiteSpace: 'pre' }}>
+                      <BAIFlex style={{ whiteSpace: 'pre' }}>
                         {t('resourceGroup.RetriesToSkipDesc')}
-                      </Flex>
+                      </BAIFlex>
                     }
                     name="retriesToSkip"
                   >

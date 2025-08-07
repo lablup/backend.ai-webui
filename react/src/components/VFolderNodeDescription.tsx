@@ -10,7 +10,6 @@ import { usePainKiller } from '../hooks/usePainKiller';
 import { useVirtualFolderPath } from '../hooks/useVirtualFolderNodePath';
 import BAISelect from './BAISelect';
 import BAITag from './BAITag';
-import Flex from './Flex';
 import { statusTagColor } from './VFolderNodes';
 import VirtualFolderPath from './VirtualFolderNodeItems/VirtualFolderPath';
 import { CheckCircleOutlined, UserOutlined } from '@ant-design/icons';
@@ -21,7 +20,7 @@ import {
   Typography,
   type DescriptionsProps,
 } from 'antd';
-import { BAIUserUnionIcon, toLocalId } from 'backend.ai-ui';
+import { BAIUserUnionIcon, toLocalId, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -140,15 +139,15 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
       label: t('data.folders.Ownership'),
       children:
         vfolderNode?.ownership_type === 'user' ? (
-          <Flex gap={'xs'}>
+          <BAIFlex gap={'xs'}>
             <Typography.Text>{t('data.User')}</Typography.Text>
             <UserOutlined style={{ color: token.colorTextTertiary }} />
-          </Flex>
+          </BAIFlex>
         ) : (
-          <Flex gap={'xs'}>
+          <BAIFlex gap={'xs'}>
             <Typography.Text>{t('data.Project')}</Typography.Text>
             <BAIUserUnionIcon style={{ color: token.colorTextTertiary }} />
-          </Flex>
+          </BAIFlex>
         ),
     },
     (vfolderNode?.user === currentUser.uuid ||
@@ -209,9 +208,9 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
       children:
         vfolderNode?.user === currentUser?.uuid ||
         (baiClient.is_admin && vfolderNode?.group === currentProject?.id) ? (
-          <Flex justify="start">
+          <BAIFlex justify="start">
             <CheckCircleOutlined />
-          </Flex>
+          </BAIFlex>
         ) : null,
     },
     vfolderNode.user_email !== null && {
@@ -230,9 +229,9 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
       key: 'cloneable',
       label: t('data.folders.Cloneable'),
       children: vfolderNode.cloneable ? (
-        <Flex justify="start">
+        <BAIFlex justify="start">
           <CheckCircleOutlined />
-        </Flex>
+        </BAIFlex>
       ) : null,
     },
     {

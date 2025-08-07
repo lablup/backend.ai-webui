@@ -4,9 +4,9 @@ import { useSetBAINotification } from '../hooks/useBAINotification';
 import { usePainKiller } from '../hooks/usePainKiller';
 import { SessionResources } from '../pages/SessionLauncherPage';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
 import { EnvironmentImage } from './ImageList';
 import { List, Typography } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -172,9 +172,9 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
       okText={t('environment.Install')}
       onOk={handleClick}
     >
-      <Flex direction="column" gap="md" align="start">
+      <BAIFlex direction="column" gap="md" align="start">
         {hasInstalledImage ? t('environment.InstalledImagesAreExcluded') : null}
-        <Flex
+        <BAIFlex
           direction="column"
           align="start"
           style={{
@@ -200,12 +200,12 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
               showTotal: (total) => t('general.TotalItems', { total }),
             }}
           />
-        </Flex>
+        </BAIFlex>
         <Typography.Text>
           {t('environment.DescSignificantInstallTime')}&nbsp;
           {t('dialog.ask.DoYouWantToProceed')}
         </Typography.Text>
-      </Flex>
+      </BAIFlex>
     </BAIModal>
   );
 };

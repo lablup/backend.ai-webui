@@ -1,7 +1,6 @@
 import { UserNodeListModifyMutation } from '../__generated__/UserNodeListModifyMutation.graphql';
 import { UserNodeListQuery } from '../__generated__/UserNodeListQuery.graphql';
 import BAIPropertyFilter from '../components/BAIPropertyFilter';
-import Flex from '../components/Flex';
 import { filterOutEmpty, filterOutNullAndUndefined } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -14,7 +13,7 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { Tooltip, Button, theme, Popconfirm, App } from 'antd';
-import { BAITable } from 'backend.ai-ui';
+import { BAIFlex, BAITable } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
@@ -121,9 +120,9 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
     `);
 
   return (
-    <Flex direction="column" align="stretch" gap="sm">
-      <Flex justify="between" align="start" gap="xs" wrap="wrap">
-        <Flex direction="row" gap={'sm'} align="start" wrap="wrap">
+    <BAIFlex direction="column" align="stretch" gap="sm">
+      <BAIFlex justify="between" align="start" gap="xs" wrap="wrap">
+        <BAIFlex direction="row" gap={'sm'} align="start" wrap="wrap">
           <BAIRadioGroup
             value={activeFilter}
             onChange={(e) => {
@@ -199,8 +198,8 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
               });
             }}
           />
-        </Flex>
-        <Flex gap="xs">
+        </BAIFlex>
+        <BAIFlex gap="xs">
           <Tooltip title={t('button.Refresh')}>
             <Button
               loading={isPendingRefresh}
@@ -221,8 +220,8 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
           >
             {t('credential.CreateUser')}
           </Button>
-        </Flex>
-      </Flex>
+        </BAIFlex>
+      </BAIFlex>
       <BAITable
         scroll={{ x: 'max-content' }}
         rowKey={'id'}
@@ -269,7 +268,7 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
             render: (record) => {
               const isActive = record?.status === 'active';
               return (
-                <Flex gap={token.marginXS}>
+                <BAIFlex gap={token.marginXS}>
                   <Button
                     type="text"
                     icon={
@@ -354,7 +353,7 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
                       />
                     </Popconfirm>
                   </Tooltip>
-                </Flex>
+                </BAIFlex>
               );
             },
           },
@@ -406,7 +405,7 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
           }
         }}
       />
-    </Flex>
+    </BAIFlex>
   );
 };
 

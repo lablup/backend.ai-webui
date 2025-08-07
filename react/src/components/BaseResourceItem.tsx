@@ -3,7 +3,7 @@ import BAIFetchKeyButton from './BAIFetchKeyButton';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import { Empty, Segmented, theme, Typography } from 'antd';
 import {
-  Flex,
+  BAIFlex,
   BAIResourceWithSteppedProgress,
   BAIResourceWithSteppedProgressProps,
   compareNumberWithUnits,
@@ -97,7 +97,7 @@ const BaseResourceItem: React.FC<BaseResourceItemProps> = ({
     !shouldShowCpu && !shouldShowMemory && visibleAccelerators.length === 0;
 
   return (
-    <Flex
+    <BAIFlex
       direction="column"
       align="stretch"
       style={{
@@ -107,7 +107,7 @@ const BaseResourceItem: React.FC<BaseResourceItemProps> = ({
       }}
     >
       {/* Fixed Title Section */}
-      <Flex
+      <BAIFlex
         align="center"
         justify="between"
         style={{
@@ -123,7 +123,7 @@ const BaseResourceItem: React.FC<BaseResourceItemProps> = ({
         gap="xs"
         wrap="wrap"
       >
-        <Flex gap={'xs'} align="center">
+        <BAIFlex gap={'xs'} align="center">
           {typeof title === 'string' ? (
             <Typography.Title level={5} style={{ margin: 0 }}>
               {title}
@@ -134,14 +134,14 @@ const BaseResourceItem: React.FC<BaseResourceItemProps> = ({
           {tooltip ? (
             <QuestionIconWithTooltip title={<Trans i18nKey={tooltip} />} />
           ) : null}
-        </Flex>
-        <Flex
+        </BAIFlex>
+        <BAIFlex
           gap={'xs'}
           align="center"
           justify="end"
           style={{ marginLeft: 'auto' }}
         >
-          <Flex direction="row" gap="sm">
+          <BAIFlex direction="row" gap="sm">
             <Segmented
               options={[
                 {
@@ -166,12 +166,12 @@ const BaseResourceItem: React.FC<BaseResourceItemProps> = ({
                 margin: -token.marginXS,
               }}
             />
-          </Flex>
-        </Flex>
-      </Flex>
+          </BAIFlex>
+        </BAIFlex>
+      </BAIFlex>
 
       {/* Scrollable Content Section */}
-      <Flex
+      <BAIFlex
         direction="column"
         align="stretch"
         style={{
@@ -186,12 +186,12 @@ const BaseResourceItem: React.FC<BaseResourceItemProps> = ({
             description={t('statistics.prometheus.NoMetricsToDisplay')}
           />
         ) : (
-          <Flex
+          <BAIFlex
             direction="column"
             align="stretch"
             style={{ marginTop: token.marginXS, marginBottom: token.marginMD }}
           >
-            <Flex
+            <BAIFlex
               direction="row"
               wrap="wrap"
               gap={'ms'}
@@ -201,7 +201,7 @@ const BaseResourceItem: React.FC<BaseResourceItemProps> = ({
               }}
             >
               {shouldShowCpu && (
-                <Flex
+                <BAIFlex
                   style={{
                     borderRadius: token.borderRadiusLG,
                     justifyItems: 'center',
@@ -214,11 +214,11 @@ const BaseResourceItem: React.FC<BaseResourceItemProps> = ({
                     cpuValues,
                     resourceSlotsDetails.resourceSlotsInRG['cpu'],
                   )}
-                </Flex>
+                </BAIFlex>
               )}
 
               {shouldShowMemory && (
-                <Flex
+                <BAIFlex
                   style={{
                     borderRadius: token.borderRadiusLG,
                     justifyItems: 'center',
@@ -231,11 +231,11 @@ const BaseResourceItem: React.FC<BaseResourceItemProps> = ({
                     memValues,
                     resourceSlotsDetails.resourceSlotsInRG['mem'],
                   )}
-                </Flex>
+                </BAIFlex>
               )}
 
               {_.map(visibleAccelerators, ({ key, resourceSlot, values }) => (
-                <Flex
+                <BAIFlex
                   key={key}
                   style={{
                     backgroundColor: token.colorSuccessBg,
@@ -246,13 +246,13 @@ const BaseResourceItem: React.FC<BaseResourceItemProps> = ({
                   }}
                 >
                   {renderResourceProgress(values, resourceSlot)}
-                </Flex>
+                </BAIFlex>
               ))}
-            </Flex>
-          </Flex>
+            </BAIFlex>
+          </BAIFlex>
         )}
-      </Flex>
-    </Flex>
+      </BAIFlex>
+    </BAIFlex>
   );
 };
 

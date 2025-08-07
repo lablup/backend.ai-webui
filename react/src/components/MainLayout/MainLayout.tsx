@@ -5,7 +5,6 @@ import { useThemeMode } from '../../hooks/useThemeMode';
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import BAIErrorBoundary from '../BAIErrorBoundary';
 import BAISider from '../BAISider';
-import Flex from '../Flex';
 import ForceTOTPChecker from '../ForceTOTPChecker';
 import NetworkStatusBanner from '../NetworkStatusBanner';
 import NoResourceGroupAlert from '../NoResourceGroupAlert';
@@ -16,6 +15,7 @@ import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
 import { App, Layout, theme } from 'antd';
 import { createStyles } from 'antd-style';
+import { BAIFlex } from 'backend.ai-ui';
 import { atom, useSetAtom } from 'jotai';
 import _ from 'lodash';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -178,7 +178,7 @@ function MainLayout() {
         }}
       >
         <BAIContentWithDrawerArea drawerWidth={DRAWER_WIDTH}>
-          <Flex
+          <BAIFlex
             ref={contentScrollFlexRef}
             direction="column"
             align="stretch"
@@ -220,7 +220,7 @@ function MainLayout() {
               </Suspense>
               {/* Non sticky Alert components */}
               <Suspense>
-                <Flex
+                <BAIFlex
                   direction="column"
                   gap={'sm'}
                   align="stretch"
@@ -233,7 +233,7 @@ function MainLayout() {
                     banner={false}
                     closable
                   />
-                </Flex>
+                </BAIFlex>
               </Suspense>
               <Suspense>
                 {/* ForceTOTPChecker is a component for previous version of manager which don't support TOTP registration before login.  */}
@@ -259,11 +259,11 @@ function MainLayout() {
                 <Outlet />
               </Suspense>
               {/* To match paddig to 16 (2+14) */}
-              {/* </Flex> */}
+              {/* </BAIFlex> */}
               {/* @ts-ignore */}
               <backend-ai-webui id="webui-shell" ref={webUIRef} />
             </BAIErrorBoundary>
-          </Flex>
+          </BAIFlex>
         </BAIContentWithDrawerArea>
       </Layout>
     </Layout>

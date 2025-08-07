@@ -3,13 +3,13 @@ import { StorageHostSettingsPanel_storageVolumeFrgmt$key } from '../__generated_
 import { QuotaScopeType, addQuotaScopeTypePrefix } from '../helper/index';
 import { useCurrentDomainValue, useUpdatableState } from '../hooks';
 import DomainSelector from './DomainSelector';
-import Flex from './Flex';
 import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
 import QuotaScopeCard from './QuotaScopeCard';
 import QuotaSettingModal from './QuotaSettingModal';
 import UserSelector from './UserSelector';
 import { useToggle } from 'ahooks';
 import { Card, Form, Spin } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
@@ -84,7 +84,7 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
   );
 
   return (
-    <Flex direction="column" align="stretch">
+    <BAIFlex direction="column" align="stretch">
       <Card
         title={t('storageHost.QuotaSettings')}
         tabList={[
@@ -106,9 +106,9 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
           });
         }}
       >
-        <Flex justify="between">
+        <BAIFlex justify="between">
           {currentSettingType === 'project' ? (
-            <Flex style={{ marginBottom: 10 }}>
+            <BAIFlex style={{ marginBottom: 10 }}>
               <Form layout="inline">
                 <Form.Item label={t('resourceGroup.Domain')}>
                   <DomainSelector
@@ -135,7 +135,7 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
                   />
                 </Form.Item>
               </Form>
-            </Flex>
+            </BAIFlex>
           ) : (
             <Form layout="inline">
               <Form.Item label={t('data.User')}>
@@ -152,7 +152,7 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
               </Form.Item>
             </Form>
           )}
-        </Flex>
+        </BAIFlex>
         <Spin spinning={isPending}>
           <QuotaScopeCard
             quotaScopeFrgmt={quota_scope || null}
@@ -173,7 +173,7 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
           }}
         />
       </Card>
-    </Flex>
+    </BAIFlex>
   );
 };
 

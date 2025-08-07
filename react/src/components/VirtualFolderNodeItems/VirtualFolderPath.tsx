@@ -1,8 +1,8 @@
 import { useVirtualFolderNodePathFragment$key } from '../../__generated__/useVirtualFolderNodePathFragment.graphql';
 import { useVirtualFolderPath } from '../../hooks/useVirtualFolderNodePath';
 import BAIText from '../BAIText';
-import Flex from '../Flex';
 import { theme } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 
@@ -25,14 +25,14 @@ const VirtualFolderPath: React.FC<VirtualFolderPathProps> = ({
   const { token } = theme.useToken();
 
   return (
-    <Flex direction="row" align="start" justify="start" wrap="wrap" gap={3}>
+    <BAIFlex direction="row" align="start" justify="start" wrap="wrap" gap={3}>
       <BAIText monospace type="secondary" style={{ fontSize: '0.9em' }}>
         (root)
       </BAIText>
       <BAIText monospace type="secondary" style={{ fontSize: '0.9em' }}>
         /
       </BAIText>
-      <Flex direction="column" align="start" justify="start">
+      <BAIFlex direction="column" align="start" justify="start">
         <BAIText
           monospace
           copyable={{
@@ -50,12 +50,12 @@ const VirtualFolderPath: React.FC<VirtualFolderPathProps> = ({
         >
           Quota Scope ID ({_.upperFirst(quotaScopeType)})
         </BAIText>
-      </Flex>
+      </BAIFlex>
       <BAIText monospace type="secondary" style={{ fontSize: '0.9em' }}>
         /
       </BAIText>
-      <Flex direction="column" align="start" justify="start">
-        <Flex gap={3}>
+      <BAIFlex direction="column" align="start" justify="start">
+        <BAIFlex gap={3}>
           <BAIText monospace style={{ fontSize: '0.9em' }}>
             {vfolderIdPrefix1}
           </BAIText>
@@ -77,7 +77,7 @@ const VirtualFolderPath: React.FC<VirtualFolderPathProps> = ({
           >
             {_.truncate(vfolderIdRest.join(''), { length: 7 })}
           </BAIText>
-        </Flex>
+        </BAIFlex>
         <BAIText
           type="secondary"
           style={{
@@ -86,8 +86,8 @@ const VirtualFolderPath: React.FC<VirtualFolderPathProps> = ({
         >
           VFolder ID
         </BAIText>
-      </Flex>
-    </Flex>
+      </BAIFlex>
+    </BAIFlex>
   );
 };
 

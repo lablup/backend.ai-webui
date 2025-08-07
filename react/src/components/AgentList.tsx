@@ -23,7 +23,6 @@ import BAIProgressWithLabel from './BAIProgressWithLabel';
 import BAIPropertyFilter from './BAIPropertyFilter';
 import BAIRadioGroup from './BAIRadioGroup';
 import DoubleTag from './DoubleTag';
-import Flex from './Flex';
 import { ResourceTypeIcon } from './ResourceNumber';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import {
@@ -37,7 +36,7 @@ import { useToggle } from 'ahooks';
 import { Button, TableProps, Tag, theme, Tooltip, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
-import { BAITable } from 'backend.ai-ui';
+import { BAITable, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import React, { useState, useTransition } from 'react';
@@ -150,10 +149,10 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
       fixed: 'left',
       render: (value, record) => {
         return (
-          <Flex direction="column" align="start">
+          <BAIFlex direction="column" align="start">
             <Typography.Text>{value}</Typography.Text>
             <Typography.Text type="secondary">{record?.addr}</Typography.Text>
-          </Flex>
+          </BAIFlex>
         );
       },
       sorter: true,
@@ -186,7 +185,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
           icon: 'local',
         };
         return (
-          <Flex gap={'xxs'}>
+          <BAIFlex gap={'xxs'}>
             <img
               alt={value}
               src={`/resources/icons/${icon}.png`}
@@ -206,7 +205,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
             ) : (
               <Tag color={color}>{platform}</Tag>
             )}
-          </Flex>
+          </BAIFlex>
         );
       },
     },
@@ -221,7 +220,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
       dataIndex: 'first_contact',
       render: (value) => {
         return (
-          <Flex direction="column">
+          <BAIFlex direction="column">
             <Typography.Text>{dayjs(value).format('ll LTS')}</Typography.Text>
             <BAIIntervalView
               callback={() => {
@@ -239,7 +238,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                 />
               )}
             />
-          </Flex>
+          </BAIFlex>
         );
       },
       sorter: true,
@@ -255,7 +254,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
           [key in ResourceSlotName]: string | undefined;
         } = JSON.parse(record?.available_slots || '{}');
         return (
-          <Flex direction="column" gap="xxs">
+          <BAIFlex direction="column" gap="xxs">
             {_.map(
               parsedAvailableSlots,
               (value: string | number, key: ResourceSlotName) => {
@@ -266,8 +265,12 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                       100,
                   );
                   return (
-                    <Flex key={key} justify="between" style={{ minWidth: 220 }}>
-                      <Flex gap="xxs">
+                    <BAIFlex
+                      key={key}
+                      justify="between"
+                      style={{ minWidth: 220 }}
+                    >
+                      <BAIFlex gap="xxs">
                         <ResourceTypeIcon key={key} type={key} />
                         <Typography.Text>
                           {toFixedFloorWithoutTrailingZeros(
@@ -286,7 +289,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                         >
                           {mergedResourceSlots?.cpu?.display_unit}
                         </Typography.Text>
-                      </Flex>
+                      </BAIFlex>
                       <BAIProgressWithLabel
                         percent={cpuPercent}
                         strokeColor={
@@ -299,7 +302,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                           toFixedFloorWithoutTrailingZeros(cpuPercent, 1) + ' %'
                         }
                       />
-                    </Flex>
+                    </BAIFlex>
                   );
                 } else if (key === 'mem') {
                   const memPercent = _.toFinite(
@@ -308,12 +311,12 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                       100,
                   );
                   return (
-                    <Flex
+                    <BAIFlex
                       key={'mem'}
                       justify="between"
                       style={{ minWidth: 220 }}
                     >
-                      <Flex gap="xxs">
+                      <BAIFlex gap="xxs">
                         <ResourceTypeIcon type={'mem'} />
                         <Typography.Text>
                           {convertToBinaryUnit(parsedOccupiedSlots.mem, 'g', 0)
@@ -328,7 +331,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                         >
                           GiB
                         </Typography.Text>
-                      </Flex>
+                      </BAIFlex>
                       <BAIProgressWithLabel
                         percent={memPercent}
                         strokeColor={
@@ -341,7 +344,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                           toFixedFloorWithoutTrailingZeros(memPercent, 1) + ' %'
                         }
                       />
-                    </Flex>
+                    </BAIFlex>
                   );
                 } else if (parsedAvailableSlots[key]) {
                   const percent = _.toFinite(
@@ -350,13 +353,13 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                       100,
                   );
                   return (
-                    <Flex
+                    <BAIFlex
                       key={key}
                       justify="between"
                       style={{ minWidth: 220 }}
                       gap="xxs"
                     >
-                      <Flex gap="xxs">
+                      <BAIFlex gap="xxs">
                         <ResourceTypeIcon key={key} type={key} />
                         <Typography.Text>
                           {toFixedFloorWithoutTrailingZeros(
@@ -375,7 +378,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                         >
                           {mergedResourceSlots?.[key]?.display_unit}
                         </Typography.Text>
-                      </Flex>
+                      </BAIFlex>
                       <BAIProgressWithLabel
                         percent={percent}
                         strokeColor={
@@ -386,12 +389,12 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                           toFixedFloorWithoutTrailingZeros(percent, 1) + ' %'
                         }
                       />
-                    </Flex>
+                    </BAIFlex>
                   );
                 }
               },
             )}
-          </Flex>
+          </BAIFlex>
         );
       },
     },
@@ -456,8 +459,8 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
             convertUnitValue(_.toString(liveStat.mem_util.capacity), 'auto')
               ?.unit || 'g';
           return (
-            <Flex direction="column" gap="xxs">
-              <Flex justify="between" style={{ minWidth: 200 }}>
+            <BAIFlex direction="column" gap="xxs">
+              <BAIFlex justify="between" style={{ minWidth: 200 }}>
                 <Typography.Text>
                   {mergedResourceSlots?.cpu?.human_readable_name}
                 </Typography.Text>
@@ -471,8 +474,8 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                     ) + ' %'
                   }
                 />
-              </Flex>
-              <Flex justify="between" style={{ minWidth: 200 }}>
+              </BAIFlex>
+              <BAIFlex justify="between" style={{ minWidth: 200 }}>
                 <Typography.Text>
                   {mergedResourceSlots?.mem?.human_readable_name}
                 </Typography.Text>
@@ -491,7 +494,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                     )?.displayValue
                   }
                 />
-              </Flex>
+              </BAIFlex>
               {_.map(_.keys(parsedValue?.node), (statKey) => {
                 if (['cpu_util', 'mem'].includes(statKey)) {
                   return;
@@ -499,7 +502,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                 if (_.includes(statKey, '_util')) {
                   const deviceName = _.split(statKey, '_')[0] + '.device';
                   return (
-                    <Flex
+                    <BAIFlex
                       key={statKey}
                       justify="between"
                       style={{ minWidth: 200, width: 'min-content' }}
@@ -527,7 +530,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                           ) + ' %'
                         }
                       />
-                    </Flex>
+                    </BAIFlex>
                   );
                 }
                 if (_.includes(statKey, '_mem')) {
@@ -540,7 +543,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                       'auto',
                     )?.unit || 'g';
                   return (
-                    <Flex
+                    <BAIFlex
                       key={statKey}
                       justify="between"
                       style={{ minWidth: 200, width: 'min-content' }}
@@ -576,11 +579,11 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                           )?.displayValue
                         }
                       />
-                    </Flex>
+                    </BAIFlex>
                   );
                 }
               })}
-            </Flex>
+            </BAIFlex>
           );
         } else {
           return t('agent.NoAvailableLiveStat');
@@ -601,7 +604,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
             base: 1000,
           })?.unit || 'g';
         return (
-          <Flex direction="column">
+          <BAIFlex direction="column">
             <BAIProgressWithLabel
               valueLabel={toFixedFloorWithoutTrailingZeros(pct, 1) + ' %'}
               percent={pct}
@@ -616,7 +619,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                   ?.displayValue
               }
             </Typography.Text>
-          </Flex>
+          </BAIFlex>
         );
       },
     },
@@ -638,7 +641,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
           record?.available_slots || '{}',
         );
         return (
-          <Flex direction="column" gap="xxs" align="start">
+          <BAIFlex direction="column" gap="xxs" align="start">
             <DoubleTag
               values={[
                 { label: 'Agent' },
@@ -682,7 +685,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                 ) : null}
               </>
             ) : null}
-          </Flex>
+          </BAIFlex>
         );
       },
     },
@@ -692,7 +695,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
       dataIndex: 'schedulable',
       render: (value) => {
         return (
-          <Flex justify="center">
+          <BAIFlex justify="center">
             {value === true ? (
               <CheckCircleOutlined
                 style={{
@@ -708,7 +711,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                 }}
               />
             )}
-          </Flex>
+          </BAIFlex>
         );
       },
       sorter: true,
@@ -719,7 +722,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
       fixed: 'right',
       render: (value, record) => {
         return (
-          <Flex>
+          <BAIFlex>
             <Button
               style={{
                 color: token.colorSuccess,
@@ -736,7 +739,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
               icon={<SettingOutlined />}
               onClick={() => setCurrentSettingAgent(record)}
             />
-          </Flex>
+          </BAIFlex>
         );
       },
     },
@@ -746,9 +749,9 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
     useHiddenColumnKeysSetting('AgentList');
 
   return (
-    <Flex direction="column" align="stretch" gap="sm">
-      <Flex justify="between" align="start" wrap="wrap">
-        <Flex
+    <BAIFlex direction="column" align="stretch" gap="sm">
+      <BAIFlex justify="between" align="start" wrap="wrap">
+        <BAIFlex
           direction="row"
           gap={'sm'}
           align="start"
@@ -814,8 +817,8 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
               });
             }}
           />
-        </Flex>
-        <Flex gap="xs">
+        </BAIFlex>
+        <BAIFlex gap="xs">
           <Tooltip title={t('button.Refresh')}>
             <Button
               loading={isPendingRefresh}
@@ -823,8 +826,8 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
               icon={<ReloadOutlined />}
             ></Button>
           </Tooltip>
-        </Flex>
-      </Flex>
+        </BAIFlex>
+      </BAIFlex>
       <BAITable
         size="small"
         scroll={{ x: 'max-content' }}
@@ -899,7 +902,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
         columns={columns}
         hiddenColumnKeys={hiddenColumnKeys}
       />
-    </Flex>
+    </BAIFlex>
   );
 };
 

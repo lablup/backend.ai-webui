@@ -1,9 +1,9 @@
-import Flex from '../Flex';
 import { AssistantChatMessage } from './AssistantChatMesssage';
 import ScrollBottomHandlerButton from './ScrollBottomHandlerButton';
 import { UserChatMessage } from './UserChatMesssage';
 import { Message } from '@ai-sdk/react';
 import { theme } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import React, { useCallback, useRef, useState } from 'react';
 import { Virtuoso, VirtuosoHandle } from 'react-virtuoso';
 
@@ -50,7 +50,7 @@ const VirtualChatMessageList: React.FC<VirtualizedListProps> = ({
   );
 
   return (
-    <Flex
+    <BAIFlex
       direction="column"
       align="stretch"
       style={{ height: '100%', flex: 1 }}
@@ -104,7 +104,7 @@ const VirtualChatMessageList: React.FC<VirtualizedListProps> = ({
           }}
         />
       </div>
-    </Flex>
+    </BAIFlex>
   );
 };
 

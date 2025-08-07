@@ -2,9 +2,9 @@ import { useBaiSignedRequestWithPromise } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import BAIIntervalView from './BAIIntervalView';
-import Flex from './Flex';
 import { ClockCircleOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Grid, Tooltip } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
 import { atom, useAtom } from 'jotai';
 import { Repeat2Icon } from 'lucide-react';
@@ -49,7 +49,7 @@ const LoginSessionExtendButton: React.FC<
   }
 
   return (
-    <Flex direction="row" gap="xs">
+    <BAIFlex direction="row" gap="xs">
       <BAIIntervalView
         callback={() => {
           const diff = dayjs(data?.expires).diff(dayjs(), 'seconds');
@@ -67,10 +67,10 @@ const LoginSessionExtendButton: React.FC<
         render={(text) => {
           return (
             <Tooltip title={t('general.RemainingLoginSessionTime')}>
-              <Flex gap={'xxs'}>
+              <BAIFlex gap={'xxs'}>
                 <ClockCircleOutlined />
                 {text}
-              </Flex>
+              </BAIFlex>
             </Tooltip>
           );
         }}
@@ -93,7 +93,7 @@ const LoginSessionExtendButton: React.FC<
           />
         </Tooltip>
       </ConfigProvider>
-    </Flex>
+    </BAIFlex>
   );
 };
 

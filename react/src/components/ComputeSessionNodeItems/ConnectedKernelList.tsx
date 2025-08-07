@@ -6,12 +6,11 @@ import { ContainerLogModalFragment$key } from '../../__generated__/ContainerLogM
 import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
 // import BAIPropertyFilter from '../BAIPropertyFilter';
 import DoubleTag from '../DoubleTag';
-import Flex from '../Flex';
 import UnmountAfterClose from '../UnmountAfterClose';
 import ContainerLogModal from './ContainerLogModal';
 import { Button, Tag, theme, Tooltip, Typography } from 'antd';
 import { ColumnType } from 'antd/lib/table';
-import { BAITable } from 'backend.ai-ui';
+import { BAITable, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { ScrollTextIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -155,7 +154,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
   ]);
 
   return (
-    <Flex direction="column" align="stretch" gap={'sm'}>
+    <BAIFlex direction="column" align="stretch" gap={'sm'}>
       {/* TODO: implement filter when compute_session_node query supports filter */}
       {/* <BAIPropertyFilter
         filterProperties={[
@@ -194,7 +193,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
           }}
         />
       </UnmountAfterClose>
-    </Flex>
+    </BAIFlex>
   );
 };
 

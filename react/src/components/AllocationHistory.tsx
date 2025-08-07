@@ -1,8 +1,8 @@
 import { useUpdatableState } from '../hooks';
 import AllocationHistoryStatistics from './AllocationHistoryStatistics';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
-import Flex from './Flex';
 import { Alert, Form, Select, Skeleton } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { createEnumParam, useQueryParam, withDefault } from 'use-query-params';
@@ -34,9 +34,9 @@ const AllocationHistory: React.FC = () => {
   ];
 
   return (
-    <Flex direction="column" align="stretch" gap={'md'}>
+    <BAIFlex direction="column" align="stretch" gap={'md'}>
       <Alert showIcon message={t('statistics.UsageHistoryNote')} type="info" />
-      <Flex gap={'sm'} justify="between">
+      <BAIFlex gap={'sm'} justify="between">
         <Form.Item
           label={t('statistics.SelectPeriod')}
           style={{ marginBottom: 0 }}
@@ -57,14 +57,14 @@ const AllocationHistory: React.FC = () => {
             });
           }}
         />
-      </Flex>
+      </BAIFlex>
       <Suspense fallback={<Skeleton active />}>
         <AllocationHistoryStatistics
           period={selectedPeriod || '1D'}
           fetchKey={usageFetchKey}
         />
       </Suspense>
-    </Flex>
+    </BAIFlex>
   );
 };
 

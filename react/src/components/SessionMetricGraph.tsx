@@ -8,10 +8,10 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
-import Flex from './Flex';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import { Empty, Typography, theme } from 'antd';
 import { createStyles } from 'antd-style';
+import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { useMemo } from 'react';
@@ -182,7 +182,7 @@ const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
   };
 
   return (
-    <Flex
+    <BAIFlex
       direction="column"
       align="stretch"
       gap="sm"
@@ -191,12 +191,12 @@ const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
         overflow: 'hidden',
       }}
     >
-      <Flex align="center" style={{ height: 56, marginLeft: 52 }} gap="xs">
+      <BAIFlex align="center" style={{ height: 56, marginLeft: 52 }} gap="xs">
         <Typography.Text style={{ fontSize: token.fontSizeHeading5 }} strong>
           {getMetricTitle()}
         </Typography.Text>
         {tooltip ? <QuestionIconWithTooltip title={tooltip} /> : null}
-      </Flex>
+      </BAIFlex>
       {_.isEmpty(capacity_metric?.metrics) &&
       _.isEmpty(current_metric?.metrics) ? (
         <Empty
@@ -244,7 +244,7 @@ const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
           </LineChart>
         </ResponsiveContainer>
       )}
-    </Flex>
+    </BAIFlex>
   );
 };
 

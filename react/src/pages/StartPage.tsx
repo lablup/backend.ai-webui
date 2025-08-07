@@ -12,7 +12,7 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useVFolderInvitationsValue } from '../hooks/useVFolderInvitations';
 import { SessionLauncherFormValue } from './SessionLauncherPage';
 import { AppstoreAddOutlined, FolderAddOutlined } from '@ant-design/icons';
-import { Flex } from 'backend.ai-ui';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -161,7 +161,7 @@ const StartPage: React.FC = () => {
     );
 
   return (
-    <Flex direction="column" gap={'md'} align="stretch">
+    <BAIFlex direction="column" gap={'md'} align="stretch">
       <AnnouncementAlert showIcon closable />
       <BAIBoard
         movable
@@ -187,7 +187,7 @@ const StartPage: React.FC = () => {
           }
         }}
       />
-    </Flex>
+    </BAIFlex>
   );
 };
 

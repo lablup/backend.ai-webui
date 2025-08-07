@@ -5,7 +5,6 @@ import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
 import ProjectSelect from './ProjectSelect';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import StorageSelect from './StorageSelect';
@@ -22,6 +21,7 @@ import {
 } from 'antd';
 import { createStyles } from 'antd-style';
 import { FormInstance } from 'antd/lib';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -183,7 +183,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
       className={styles.modal}
       title={t('data.CreateANewStorageFolder')}
       footer={
-        <Flex justify="between">
+        <BAIFlex justify="between">
           <Button
             danger
             onClick={() => {
@@ -192,7 +192,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
           >
             {t('button.Reset')}
           </Button>
-          <Flex gap={token.marginSM}>
+          <BAIFlex gap={token.marginSM}>
             <Button
               onClick={() => {
                 onRequestClose();
@@ -209,8 +209,8 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
             >
               {t('data.Create')}
             </Button>
-          </Flex>
-        </Flex>
+          </BAIFlex>
+        </BAIFlex>
       }
       width={650}
       okButtonProps={{ loading: mutationToCreateFolder.isPending }}
@@ -244,12 +244,12 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
               </Radio>
             ) : null}
             <Radio value={'automount'} data-testid="automount-usage-mode">
-              <Flex gap="xxs">
+              <BAIFlex gap="xxs">
                 {t('data.AutoMount')}
                 <QuestionIconWithTooltip
                   title={t('data.AutomountFolderCreationDesc')}
                 />
-              </Flex>
+              </BAIFlex>
             </Radio>
           </Radio.Group>
         </Form.Item>

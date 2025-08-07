@@ -1,4 +1,5 @@
 // EnvVarFormList.test.tsx
+import '../../__test__/matchMedia.mock.js';
 import { sanitizeSensitiveEnv } from './EnvVarFormList';
 
 describe('emptySensitiveEnv', () => {

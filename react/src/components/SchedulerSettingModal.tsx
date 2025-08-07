@@ -1,11 +1,11 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { SchedulerType } from './ConfigurationsSettingList';
-import Flex from './Flex';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import { App, Form, InputNumber, Select, theme, Typography } from 'antd';
 import Checkbox from 'antd/es/checkbox/Checkbox';
 import { FormInstance } from 'antd/lib';
+import { BAIFlex } from 'backend.ai-ui';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -30,12 +30,12 @@ const SchedulerSettingModal = ({
   return (
     <BAIModal
       title={
-        <Flex align="center" gap="xxs">
+        <BAIFlex align="center" gap="xxs">
           {t('settings.ConfigPerJobSchduler')}
           <QuestionIconWithTooltip
             title={t('settings.ConfigPerJobSchdulerDescription')}
           />
-        </Flex>
+        </BAIFlex>
       }
       confirmLoading={isFetchingSchedulerOptions}
       open={open}
@@ -149,7 +149,7 @@ const SchedulerSettingModal = ({
             ]}
           />
         </Form.Item>
-        <Flex direction="column" align="start" style={{ width: '100%' }}>
+        <BAIFlex direction="column" align="start" style={{ width: '100%' }}>
           <Typography.Text strong>
             {t('settings.SchedulerOptions')}
           </Typography.Text>
@@ -160,7 +160,7 @@ const SchedulerSettingModal = ({
               width: '100%',
             }}
           >
-            <Flex
+            <BAIFlex
               gap="sm"
               align="center"
               style={{
@@ -243,9 +243,9 @@ const SchedulerSettingModal = ({
                   </Form.Item>
                 )}
               </Form.Item>
-            </Flex>
+            </BAIFlex>
           </Form.Item>
-        </Flex>
+        </BAIFlex>
       </Form>
     </BAIModal>
   );

@@ -11,10 +11,14 @@ import BAIFetchKeyButton from './BAIFetchKeyButton';
 import BAILink from './BAILink';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import DoubleTag from './DoubleTag';
-import Flex from './Flex';
 import { InfoCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import { Button, TableColumnsType, Tag, theme, Typography } from 'antd';
-import { BAICephIcon, BAIPureStorageIcon, BAITable } from 'backend.ai-ui';
+import {
+  BAICephIcon,
+  BAIFlex,
+  BAIPureStorageIcon,
+  BAITable,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import { Server } from 'lucide-react';
 import { useDeferredValue, useEffect, useMemo } from 'react';
@@ -119,10 +123,10 @@ const StorageProxyList = () => {
       dataIndex: 'id',
       render: (value, record) => {
         return (
-          <Flex direction="column" align="start">
+          <BAIFlex direction="column" align="start">
             <Typography.Text>{value}</Typography.Text>
             <Typography.Text type="secondary">{record.path}</Typography.Text>
-          </Flex>
+          </BAIFlex>
         );
       },
     },
@@ -137,7 +141,7 @@ const StorageProxyList = () => {
         };
 
         return (
-          <Flex gap="xxs">
+          <BAIFlex gap="xxs">
             {platform.icon}
             <DoubleTag
               values={[
@@ -150,7 +154,7 @@ const StorageProxyList = () => {
                 },
               ]}
             />
-          </Flex>
+          </BAIFlex>
         );
       },
     },
@@ -201,13 +205,13 @@ const StorageProxyList = () => {
       width: 150,
       render: (value) => {
         return (
-          <Flex gap="xxs" align="start" wrap="wrap">
+          <BAIFlex gap="xxs" align="start" wrap="wrap">
             {_.map(value, (item) => (
               <Tag key={item} color="blue" style={{ margin: 0 }}>
                 {item}
               </Tag>
             ))}
-          </Flex>
+          </BAIFlex>
         );
       },
     },
@@ -272,8 +276,8 @@ const StorageProxyList = () => {
   }, [storage_volume_list]);
 
   return (
-    <Flex direction="column" align="stretch" gap="sm">
-      <Flex justify="end" wrap="wrap" gap="sm">
+    <BAIFlex direction="column" align="stretch" gap="sm">
+      <BAIFlex justify="end" wrap="wrap" gap="sm">
         {/* // TODO: implement filter when filter and order are supported
           <BAIPropertyFilter
             filterProperties={[
@@ -295,7 +299,7 @@ const StorageProxyList = () => {
             updateFetchKey();
           }}
         />
-      </Flex>
+      </BAIFlex>
       <BAITable
         resizable
         size="small"
@@ -321,7 +325,7 @@ const StorageProxyList = () => {
           },
         }}
       />
-    </Flex>
+    </BAIFlex>
   );
 };
 

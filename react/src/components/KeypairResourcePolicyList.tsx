@@ -15,7 +15,6 @@ import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useUpdatableState } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import AllowedVfolderHostsWithPermission from './AllowedVfolderHostsWithPermission';
-import Flex from './Flex';
 import KeypairResourcePolicyInfoModal from './KeypairResourcePolicyInfoModal';
 import KeypairResourcePolicySettingModal from './KeypairResourcePolicySettingModal';
 import ResourceNumber from './ResourceNumber';
@@ -31,7 +30,7 @@ import { useToggle } from 'ahooks';
 import { App, Button, Dropdown, theme, Tooltip, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
-import { BAITable } from 'backend.ai-ui';
+import { BAITable, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { EllipsisIcon } from 'lucide-react';
 import React, { Suspense, useState, useTransition } from 'react';
@@ -119,7 +118,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
       dataIndex: 'total_resource_slots',
       key: 'total_resource_slots',
       render: (text, row) => (
-        <Flex gap={'xxs'}>
+        <BAIFlex gap={'xxs'}>
           {!_.isEmpty(JSON.parse(row?.total_resource_slots || '{}'))
             ? _.map(
                 JSON.parse(row?.total_resource_slots || '{}'),
@@ -135,7 +134,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
                 },
               )
             : '-'}
-        </Flex>
+        </BAIFlex>
       ),
     },
     {
@@ -227,7 +226,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
       key: 'control',
       fixed: 'right',
       render: (text, row) => (
-        <Flex direction="row" align="stretch">
+        <BAIFlex direction="row" align="stretch">
           <Button
             type="text"
             icon={<InfoCircleOutlined style={{ color: token.colorSuccess }} />}
@@ -270,18 +269,18 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
               modal.confirm({
                 title: t('resourcePolicy.DeletePolicy'),
                 content: (
-                  <Flex direction="column" align="stretch">
-                    <Flex gap={'xxs'}>
+                  <BAIFlex direction="column" align="stretch">
+                    <BAIFlex gap={'xxs'}>
                       <Typography.Text>
                         {t('resourcePolicy.DeletePolicyDescription')}
                       </Typography.Text>
                       <Typography.Text strong>{row?.name}</Typography.Text>
-                    </Flex>
+                    </BAIFlex>
                     <br />
                     <Typography.Text type="danger">
                       {t('dialog.warning.CannotBeUndone')}
                     </Typography.Text>
-                  </Flex>
+                  </BAIFlex>
                 ),
                 okButtonProps: {
                   danger: true,
@@ -329,7 +328,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
               });
             }}
           />
-        </Flex>
+        </BAIFlex>
       ),
     },
   ]);
@@ -373,8 +372,8 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
   };
 
   return (
-    <Flex direction="column" align="stretch" gap="sm" {...props}>
-      <Flex direction="row" justify="end" wrap="wrap" gap={'xs'}>
+    <BAIFlex direction="column" align="stretch" gap="sm" {...props}>
+      <BAIFlex direction="row" justify="end" wrap="wrap" gap={'xs'}>
         <Dropdown
           menu={{
             items: [
@@ -391,8 +390,13 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         >
           <Button icon={<EllipsisIcon />} />
         </Dropdown>
-        <Flex direction="row" gap={'xs'} wrap="wrap" style={{ flexShrink: 1 }}>
-          <Flex gap={'xs'}>
+        <BAIFlex
+          direction="row"
+          gap={'xs'}
+          wrap="wrap"
+          style={{ flexShrink: 1 }}
+        >
+          <BAIFlex gap={'xs'}>
             <Tooltip title={t('button.Refresh')}>
               <Button
                 icon={<ReloadOutlined />}
@@ -413,9 +417,9 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
             >
               {t('button.Create')}
             </Button>
-          </Flex>
-        </Flex>
-      </Flex>
+          </BAIFlex>
+        </BAIFlex>
+      </BAIFlex>
       <BAITable
         columns={
           _.filter(
@@ -483,7 +487,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         loading={isPendingInfoModalOpen}
         resourcePolicyFrgmt={currentResourcePolicy || null}
       />
-    </Flex>
+    </BAIFlex>
   );
 };
 

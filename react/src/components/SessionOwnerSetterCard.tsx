@@ -2,7 +2,6 @@ import { SessionOwnerSetterCardQuery } from '../__generated__/SessionOwnerSetter
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import BAISelect from './BAISelect';
-import Flex from './Flex';
 import HiddenFormItem from './HiddenFormItem';
 import ResourceGroupSelect from './ResourceGroupSelect';
 import {
@@ -18,7 +17,7 @@ import {
   theme,
 } from 'antd';
 import { CardProps } from 'antd/lib';
-import { BAICard, BAICardProps } from 'backend.ai-ui';
+import { BAICard, BAICardProps, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { CheckIcon } from 'lucide-react';
 import React, { Suspense, useState } from 'react';
@@ -119,7 +118,7 @@ const SessionOwnerSetterCard: React.FC<CardProps> = (props) => {
         {({ getFieldValue }) => {
           return (
             <>
-              <Flex>
+              <BAIFlex>
                 <Form.Item
                   name={['owner', 'email']}
                   label={t('session.launcher.OwnerEmail')}
@@ -169,7 +168,7 @@ const SessionOwnerSetterCard: React.FC<CardProps> = (props) => {
                     }
                   />
                 </Form.Item>
-              </Flex>
+              </BAIFlex>
               <Form.Item
                 name={['owner', 'accesskey']}
                 label={t('session.launcher.OwnerAccessKey')}

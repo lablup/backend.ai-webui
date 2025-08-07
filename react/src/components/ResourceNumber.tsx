@@ -1,10 +1,10 @@
 import { convertToBinaryUnit } from '../helper';
 import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
-import Flex from './Flex';
 import ImageWithFallback from './ImageWithFallback';
 import NumberWithUnit from './NumberWithUnit';
 import { Tooltip, Typography, theme } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { CpuIcon, MemoryStickIcon, MicrochipIcon } from 'lucide-react';
 import React, { ReactElement } from 'react';
@@ -46,7 +46,7 @@ const ResourceNumber: React.FC<ResourceNumberProps> = ({
   };
 
   return (
-    <Flex direction="row" gap="xxs">
+    <BAIFlex direction="row" gap="xxs">
       {mergedResourceSlots?.[type] ? (
         <ResourceTypeIcon type={type} showTooltip={!hideTooltip} />
       ) : (
@@ -91,7 +91,7 @@ const ResourceNumber: React.FC<ResourceNumberProps> = ({
         </Typography.Text>
       ) : null}
       {extra}
-    </Flex>
+    </BAIFlex>
   );
 };
 
@@ -116,17 +116,17 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
   const getIconContent = (): ReactElement => {
     if (type === 'cpu') {
       return (
-        <Flex style={{ width: 16, height: 16 }}>
+        <BAIFlex style={{ width: 16, height: 16 }}>
           <CpuIcon />
-        </Flex>
+        </BAIFlex>
       );
     }
 
     if (type === 'mem') {
       return (
-        <Flex style={{ width: 16, height: 16 }}>
+        <BAIFlex style={{ width: 16, height: 16 }}>
           <MemoryStickIcon />
-        </Flex>
+        </BAIFlex>
       );
     }
 
@@ -149,9 +149,9 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
     }
 
     return (
-      <Flex style={{ width: 16, height: 16 }}>
+      <BAIFlex style={{ width: 16, height: 16 }}>
         <MicrochipIcon />
-      </Flex>
+      </BAIFlex>
     );
   };
 
@@ -162,7 +162,7 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
       {content}
     </Tooltip>
   ) : (
-    <Flex style={{ pointerEvents: 'none' }}>{content}</Flex>
+    <BAIFlex style={{ pointerEvents: 'none' }}>{content}</BAIFlex>
   );
 };
 

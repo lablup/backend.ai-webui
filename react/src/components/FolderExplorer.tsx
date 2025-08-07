@@ -1,13 +1,13 @@
 // import { filesState, VirtualFolder } from "../../hooks/backendai";
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
-import Flex from './Flex';
 import FolderDownloadButton from './FolderDownloadButton';
 import { VFolder } from './VFolderSelect';
 import { FileOutlined, FolderOutlined } from '@ant-design/icons';
 import { useDynamicList, useUpdateEffect } from 'ahooks';
 import { Breadcrumb, Button, Modal, ModalProps, Table, Tooltip } from 'antd';
 import { ButtonProps } from 'antd/lib/button';
+import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import React, { useState, useTransition } from 'react';
@@ -109,7 +109,7 @@ const FolderExplorer: React.FC<Props> = ({
       title={<span>{folderName}</span>}
     >
       {/* <span>{selectedRowKeys.length} folder selected</span> */}
-      <Flex>
+      <BAIFlex>
         <Breadcrumb separator=">">
           {_.map(path, (p, i) => {
             return i === 0 ? (
@@ -144,7 +144,7 @@ const FolderExplorer: React.FC<Props> = ({
             tooltips: 'Copy "path" to clipboard',
           }}
         /> */}
-      </Flex>
+      </BAIFlex>
       <Table
         // size="small"
         rowKey={(record) => record.name}
@@ -163,7 +163,7 @@ const FolderExplorer: React.FC<Props> = ({
             align: 'left',
             render: (text, record) => {
               return (
-                <Flex direction="row">
+                <BAIFlex direction="row">
                   {record.type === 'DIRECTORY' ? (
                     <Button
                       type="link"
@@ -182,7 +182,7 @@ const FolderExplorer: React.FC<Props> = ({
                       {text}
                     </>
                   )}
-                </Flex>
+                </BAIFlex>
               );
             },
             sorter: (a, b) => a.name.localeCompare(b.name),

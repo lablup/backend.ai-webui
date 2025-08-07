@@ -10,12 +10,11 @@ import {
 } from '../pages/SessionLauncherPage';
 import BAILink from './BAILink';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
 import ImageMetaIcon from './ImageMetaIcon';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import { Button, theme, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
-import { BAITable } from 'backend.ai-ui';
+import { BAITable, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { PinIcon } from 'lucide-react';
@@ -101,7 +100,7 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
       }}
       {...modalProps}
     >
-      <Flex direction="column" align="stretch" gap="sm">
+      <BAIFlex direction="column" align="stretch" gap="sm">
         <Typography.Text>
           {t('session.launcher.YouCanStartWithHistory')}
         </Typography.Text>
@@ -123,12 +122,12 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
           columns={[
             {
               title: (
-                <Flex gap={'xxs'}>
+                <BAIFlex gap={'xxs'}>
                   <PinIcon />
                   <QuestionIconWithTooltip
                     title={t('session.launcher.PinnedHistoryTooltip')}
                   />
-                </Flex>
+                </BAIFlex>
               ),
               dataIndex: 'pinned',
               width: 40,
@@ -211,13 +210,13 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
                 return (
                   imageStr && (
                     <Tooltip title={imageStr} placement="right">
-                      <Flex gap={'xxs'}>
+                      <BAIFlex gap={'xxs'}>
                         <ImageMetaIcon image={imageStr} />
                         <Typography.Text>
                           {getImageAliasName(imageStr)}{' '}
                           {getBaseVersion(imageStr)}
                         </Typography.Text>
-                      </Flex>
+                      </BAIFlex>
                     </Tooltip>
                   )
                 );
@@ -232,9 +231,9 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
               render: (resource) => {
                 // return JSON.stringify(resource)
                 return (
-                  <Flex gap={'xs'}>
+                  <BAIFlex gap={'xs'}>
                     <ResourceNumbersOfSession resource={resource} />
-                  </Flex>
+                  </BAIFlex>
                 );
               },
             },
@@ -253,7 +252,7 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
             },
           ]}
         />
-      </Flex>
+      </BAIFlex>
       {/* <Tabs
         defaultActiveKey="history"
         items={[

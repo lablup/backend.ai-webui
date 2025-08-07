@@ -13,7 +13,6 @@ import { isEndpointInDestroyingCategory } from '../components/EndpointList';
 import EndpointOwnerInfo from '../components/EndpointOwnerInfo';
 import EndpointStatusTag from '../components/EndpointStatusTag';
 import EndpointTokenGenerationModal from '../components/EndpointTokenGenerationModal';
-import Flex from '../components/Flex';
 import { useFolderExplorerOpener } from '../components/FolderExplorerOpener';
 import ImageNodeSimpleTag from '../components/ImageNodeSimpleTag';
 import InferenceSessionErrorModal from '../components/InferenceSessionErrorModal';
@@ -61,6 +60,7 @@ import {
   theme,
 } from 'antd';
 import { DescriptionsItemType } from 'antd/es/descriptions';
+import { BAIFlex } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
 import _ from 'lodash';
 import {
@@ -405,7 +405,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     {
       label: t('modelService.Resources'),
       children: (
-        <Flex direction="row" wrap="wrap" gap={'md'}>
+        <BAIFlex direction="row" wrap="wrap" gap={'md'}>
           <Tooltip title={t('session.ResourceGroup')}>
             <Tag>{endpoint?.resource_group}</Tag>
           </Tooltip>
@@ -422,7 +422,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               );
             },
           )}
-        </Flex>
+        </BAIFlex>
       ),
       span: {
         xl: 2,
@@ -432,27 +432,27 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       label: t('session.launcher.ModelStorage'),
       children: endpoint?.model ? (
         <Suspense fallback={<Spin indicator={<LoadingOutlined spin />} />}>
-          <Flex direction="column" align="start">
+          <BAIFlex direction="column" align="start">
             <VFolderLazyView uuid={endpoint?.model} clickable={true} />
             {endpoint?.model_mount_destination && (
-              <Flex direction="row" align="center" gap={'xxs'}>
+              <BAIFlex direction="row" align="center" gap={'xxs'}>
                 <ArrowRightOutlined type="secondary" />
                 <Typography.Text type="secondary">
                   {endpoint?.model_mount_destination}
                 </Typography.Text>
-              </Flex>
+              </BAIFlex>
             )}
-          </Flex>
+          </BAIFlex>
         </Suspense>
       ) : null,
     },
     {
       label: t('modelService.AdditionalMounts'),
       children: (
-        <Flex direction="column" align="start">
+        <BAIFlex direction="column" align="start">
           {_.map(endpoint?.extra_mounts, (vfolder) => {
             return (
-              <Flex direction="row" gap={'xxs'} key={vfolder?.row_id}>
+              <BAIFlex direction="row" gap={'xxs'} key={vfolder?.row_id}>
                 <Typography.Link
                   onClick={() => {
                     vfolder?.row_id && open(vfolder?.row_id);
@@ -460,10 +460,10 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                 >
                   <FolderOutlined /> {vfolder?.name}
                 </Typography.Link>
-              </Flex>
+              </BAIFlex>
             );
           })}
-        </Flex>
+        </BAIFlex>
       ),
     },
     {
@@ -505,12 +505,12 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   // });
 
   return (
-    <Flex direction="column" align="stretch" gap="sm">
-      <Flex direction="row" justify="between">
+    <BAIFlex direction="column" align="stretch" gap="sm">
+      <BAIFlex direction="row" justify="between">
         <Typography.Title level={3} style={{ margin: 0 }}>
           {endpoint?.name || ''}
         </Typography.Title>
-        <Flex gap={'xxs'}>
+        <BAIFlex gap={'xxs'}>
           {(endpoint?.retries || 0) > 0 ? (
             <Tooltip title={t('modelService.ClearErrors')}>
               <Button
@@ -543,8 +543,8 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           >
             {t('button.Refresh')}
           </Button>
-        </Flex>
-      </Flex>
+        </BAIFlex>
+      </BAIFlex>
       <Card
         title={t('modelService.ServiceInfo')}
         extra={
@@ -609,7 +609,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                 dataIndex: 'metric_name',
                 fixed: 'left',
                 render: (text, row) => (
-                  <Flex gap={'xs'}>
+                  <BAIFlex gap={'xs'}>
                     <Tag>{row?.metric_name}</Tag>
                     {row?.comparator ? (
                       <Tooltip title={row.comparator}>
@@ -621,7 +621,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                     )}
                     {row?.threshold}
                     {row?.metric_source === 'KERNEL' ? '%' : ''}
-                  </Flex>
+                  </BAIFlex>
                 ),
               },
               {
@@ -629,7 +629,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                 dataIndex: 'controls',
                 key: 'controls',
                 render: (text, row) => (
-                  <Flex direction="row" align="stretch">
+                  <BAIFlex direction="row" align="stretch">
                     <Button
                       type="text"
                       icon={<SettingOutlined />}
@@ -729,7 +729,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                         }}
                       />
                     </Popconfirm>
-                  </Flex>
+                  </BAIFlex>
                 ),
               },
               {
@@ -738,7 +738,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                 render: (text, row) => {
                   if (row?.step_size) {
                     return (
-                      <Flex gap={'xs'}>
+                      <BAIFlex gap={'xs'}>
                         <Typography.Text>
                           {row?.step_size > 0 ? (
                             <CircleArrowUpIcon />
@@ -749,7 +749,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                         <Typography.Text>
                           {Math.abs(row?.step_size)}
                         </Typography.Text>
-                      </Flex>
+                      </BAIFlex>
                     );
                   } else {
                     return '-';
@@ -1044,7 +1044,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           setErrorDataForJSONModal(undefined);
         }}
       />
-    </Flex>
+    </BAIFlex>
   );
 };
 

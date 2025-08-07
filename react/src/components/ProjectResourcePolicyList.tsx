@@ -14,7 +14,6 @@ import {
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
-import Flex from './Flex';
 import ProjectResourcePolicySettingModal from './ProjectResourcePolicySettingModal';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import {
@@ -26,7 +25,7 @@ import {
 import { useToggle } from 'ahooks';
 import { Button, Dropdown, message, Popconfirm, theme, Tooltip } from 'antd';
 import { ColumnType } from 'antd/es/table';
-import { BAITable } from 'backend.ai-ui';
+import { BAITable, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { EllipsisIcon } from 'lucide-react';
@@ -159,7 +158,7 @@ const ProjectResourcePolicyList: React.FC<
       fixed: 'right',
       key: 'control',
       render: (text: any, row: ProjectResourcePolicies) => (
-        <Flex direction="row" align="stretch">
+        <BAIFlex direction="row" align="stretch">
           <Button
             type="text"
             icon={<SettingOutlined />}
@@ -232,7 +231,7 @@ const ProjectResourcePolicyList: React.FC<
               }
             />
           </Popconfirm>
-        </Flex>
+        </BAIFlex>
       ),
     },
   ]);
@@ -269,9 +268,14 @@ const ProjectResourcePolicyList: React.FC<
   };
 
   return (
-    <Flex direction="column" align="stretch" gap="sm">
-      <Flex direction="row" justify="end" wrap="wrap" gap={'xs'}>
-        <Flex direction="row" gap={'xs'} wrap="wrap" style={{ flexShrink: 1 }}>
+    <BAIFlex direction="column" align="stretch" gap="sm">
+      <BAIFlex direction="row" justify="end" wrap="wrap" gap={'xs'}>
+        <BAIFlex
+          direction="row"
+          gap={'xs'}
+          wrap="wrap"
+          style={{ flexShrink: 1 }}
+        >
           <Dropdown
             menu={{
               items: [
@@ -288,7 +292,7 @@ const ProjectResourcePolicyList: React.FC<
           >
             <Button icon={<EllipsisIcon />} />
           </Dropdown>
-          <Flex gap={'xs'}>
+          <BAIFlex gap={'xs'}>
             <Tooltip title={t('button.Refresh')}>
               <Button
                 icon={<ReloadOutlined />}
@@ -309,9 +313,9 @@ const ProjectResourcePolicyList: React.FC<
             >
               {t('button.Create')}
             </Button>
-          </Flex>
-        </Flex>
-      </Flex>
+          </BAIFlex>
+        </BAIFlex>
+      </BAIFlex>
       <BAITable
         rowKey="id"
         showSorterTooltip={false}
@@ -360,7 +364,7 @@ const ProjectResourcePolicyList: React.FC<
           setIsCreatingPolicySetting(false);
         }}
       />
-    </Flex>
+    </BAIFlex>
   );
 };
 

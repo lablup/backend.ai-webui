@@ -1,6 +1,6 @@
-import Flex from './Flex';
 import { useRafInterval } from 'ahooks';
 import { Switch, Typography } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import React, { useState } from 'react';
 
 const { Text } = Typography;
@@ -24,10 +24,10 @@ const AutoRefreshSwitch: React.FC<Props> = ({
     on ? interval : undefined,
   );
   return (
-    <Flex direction="row" gap={'xs'}>
+    <BAIFlex direction="row" gap={'xs'}>
       <Switch size="small" checked={on} onChange={setOn} />
       <Text>{children}</Text>
-    </Flex>
+    </BAIFlex>
   );
 };
 

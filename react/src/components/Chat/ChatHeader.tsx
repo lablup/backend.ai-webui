@@ -3,7 +3,6 @@ import { filterOutEmpty } from '../../helper';
 import { useWebUINavigate } from '../../hooks';
 import { AIAgent } from '../../hooks/useAIAgent';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
-import Flex from '../Flex';
 import AIAgentSelect from './AIAgentSelect';
 import type { ChatModel, ChatParameters } from './ChatModel';
 import { ChatParametersSliders } from './ChatParametersSliders';
@@ -15,6 +14,7 @@ import {
   MoreOutlined,
 } from '@ant-design/icons';
 import { Dropdown, Button, theme, MenuProps, Popover, Tooltip } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import { isEmpty } from 'lodash';
 import {
   ScaleIcon,
@@ -163,7 +163,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   );
 
   return (
-    <Flex
+    <BAIFlex
       direction="row"
       justify="start"
       wrap="wrap"
@@ -175,7 +175,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
         paddingBottom: token.paddingXS,
       }}
     >
-      <Flex
+      <BAIFlex
         wrap="wrap"
         align="start"
         gap="xs"
@@ -218,8 +218,8 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             }}
           />
         )}
-      </Flex>
-      <Flex style={{ zIndex: 1 }}>
+      </BAIFlex>
+      <BAIFlex style={{ zIndex: 1 }}>
         {closable && (
           <SyncSwitch
             sync={sync}
@@ -278,8 +278,8 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             style={{ color: token.colorTextSecondary }}
           />
         </Dropdown>
-      </Flex>
-    </Flex>
+      </BAIFlex>
+    </BAIFlex>
   );
 };
 

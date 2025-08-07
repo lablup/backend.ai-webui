@@ -8,9 +8,9 @@ import useControllableState from '../hooks/useControllableState';
 import DynamicUnitInputNumber, {
   DynamicUnitInputNumberProps,
 } from './DynamicUnitInputNumber';
-import Flex from './Flex';
 import { Slider, theme } from 'antd';
 import { SliderMarks } from 'antd/es/slider';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useEffect, useMemo } from 'react';
 
@@ -81,8 +81,8 @@ const DynamicUnitInputNumberWithSlider: React.FC<
   };
 
   return (
-    <Flex direction="row" gap={'md'}>
-      <Flex
+    <BAIFlex direction="row" gap={'md'}>
+      <BAIFlex
         style={{ flex: 2, minWidth: 190 }}
         direction="column"
         align="stretch"
@@ -104,8 +104,8 @@ const DynamicUnitInputNumberWithSlider: React.FC<
           roundStep={step}
           changeOnBlur={!isMinOversMaxValue}
         />
-      </Flex>
-      <Flex
+      </BAIFlex>
+      <BAIFlex
         direction="column"
         align="stretch"
         style={{
@@ -116,9 +116,9 @@ const DynamicUnitInputNumberWithSlider: React.FC<
           }),
         }}
       >
-        <Flex direction="column" align="stretch">
+        <BAIFlex direction="column" align="stretch">
           {/* {warn && (
-            <Flex
+            <BAIFlex
               direction="row"
               style={{
                 position: 'absolute',
@@ -149,7 +149,7 @@ const DynamicUnitInputNumberWithSlider: React.FC<
                   borderBottom: `7px solid ${token.colorWarning}`,
                 }}
               ></div>
-            </Flex>
+            </BAIFlex>
           )} */}
           <Slider
             max={maxGiB?.number}
@@ -237,9 +237,9 @@ const DynamicUnitInputNumberWithSlider: React.FC<
               }),
             })}
           />
-        </Flex>
-      </Flex>
-    </Flex>
+        </BAIFlex>
+      </BAIFlex>
+    </BAIFlex>
   );
 };
 

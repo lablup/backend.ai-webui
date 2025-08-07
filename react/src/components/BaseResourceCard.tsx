@@ -12,7 +12,7 @@ import {
   Tooltip,
 } from 'antd';
 import {
-  Flex,
+  BAIFlex,
   BAIResourceWithSteppedProgress,
   BAIResourceWithSteppedProgressProps,
   BAICard,
@@ -128,7 +128,7 @@ const BaseResourceCard: React.FC<BaseResourceCardProps> = ({
     <BAICard
       {...props}
       title={
-        <Flex gap={'xs'} align="center" wrap="wrap">
+        <BAIFlex gap={'xs'} align="center" wrap="wrap">
           {title}
           {tooltipKey && (
             <Tooltip title={<Trans i18nKey={tooltipKey} />}>
@@ -137,7 +137,7 @@ const BaseResourceCard: React.FC<BaseResourceCardProps> = ({
               />
             </Tooltip>
           )}
-        </Flex>
+        </BAIFlex>
       }
       styles={{
         body: {
@@ -150,7 +150,7 @@ const BaseResourceCard: React.FC<BaseResourceCardProps> = ({
         },
       }}
       extra={
-        <Flex direction="row" gap="sm" wrap="wrap">
+        <BAIFlex direction="row" gap="sm" wrap="wrap">
           <Segmented
             options={[
               {
@@ -175,7 +175,7 @@ const BaseResourceCard: React.FC<BaseResourceCardProps> = ({
               margin: -token.marginXS,
             }}
           />
-        </Flex>
+        </BAIFlex>
       }
     >
       {isEmpty ? (
@@ -229,7 +229,7 @@ const BaseResourceCard: React.FC<BaseResourceCardProps> = ({
               {_.map(
                 visibleAccelerators,
                 ({ key, resourceSlot, values }, index) => (
-                  <Flex
+                  <BAIFlex
                     key={key}
                     style={{
                       backgroundColor: token.colorSuccessBg,
@@ -247,7 +247,7 @@ const BaseResourceCard: React.FC<BaseResourceCardProps> = ({
                     >
                       {renderResourceProgress(values, resourceSlot)}
                     </Col>
-                  </Flex>
+                  </BAIFlex>
                 ),
               )}
             </>

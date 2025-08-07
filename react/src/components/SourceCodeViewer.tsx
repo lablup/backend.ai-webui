@@ -1,7 +1,7 @@
 import { useThemeMode } from '../hooks/useThemeMode';
-import Flex from './Flex';
 import { CheckOutlined, CopyOutlined } from '@ant-design/icons';
 import { Button, Tooltip, theme } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Highlight, themes } from 'prism-react-renderer';
 import { useRef, useState } from 'react';
@@ -69,7 +69,7 @@ const SourceCodeViewer: React.FC<SourceCodeViewerProps> = ({
   );
 
   return (
-    <Flex
+    <BAIFlex
       onMouseEnter={() => setIsMouseEntered(true)}
       onMouseLeave={() => setIsMouseEntered(false)}
       style={{ width: '100%' }}
@@ -84,7 +84,7 @@ const SourceCodeViewer: React.FC<SourceCodeViewerProps> = ({
           }, 2000);
         }}
       >
-        <Flex style={{ position: 'absolute', top: '10px', right: '10px' }}>
+        <BAIFlex style={{ position: 'absolute', top: '10px', right: '10px' }}>
           <Tooltip
             title={
               isCopied
@@ -103,10 +103,10 @@ const SourceCodeViewer: React.FC<SourceCodeViewerProps> = ({
               }}
             />
           </Tooltip>
-        </Flex>
+        </BAIFlex>
       </CopyToClipboard>
       {HighLightedCode}
-    </Flex>
+    </BAIFlex>
   );
 };
 

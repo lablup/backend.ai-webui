@@ -1,7 +1,6 @@
 import { ManageAppsModalMutation } from '../__generated__/ManageAppsModalMutation.graphql';
 import { ManageAppsModal_image$key } from '../__generated__/ManageAppsModal_image.graphql';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import {
   Input,
@@ -13,6 +12,7 @@ import {
   FormInstance,
   theme,
 } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -185,7 +185,7 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
       title={t('environment.ManageApps')}
       {...baiModalProps}
     >
-      <Flex
+      <BAIFlex
         direction="row"
         style={{ width: '100%', marginBottom: token.marginXS }}
       >
@@ -198,8 +198,8 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
         <Typography.Text strong style={{ width: '32%' }}>
           {t('environment.Port')}
         </Typography.Text>
-        <Flex></Flex>
-      </Flex>
+        <BAIFlex></BAIFlex>
+      </BAIFlex>
       <Form
         ref={formRef}
         layout="vertical"
@@ -207,13 +207,13 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
         initialValues={{ apps: servicePorts }}
         requiredMark={false}
       >
-        <Flex direction="column">
+        <BAIFlex direction="column">
           <Form.List name="apps">
             {(fields, { add, remove }) => (
-              <Flex direction="column" style={{ width: '100%' }}>
+              <BAIFlex direction="column" style={{ width: '100%' }}>
                 {_.map(fields, (field, index) => (
                   <Form.Item>
-                    <Flex direction="row" key={field.key} gap={'xs'}>
+                    <BAIFlex direction="row" key={field.key} gap={'xs'}>
                       <Form.Item
                         {...field}
                         name={[field.name, 'app']}
@@ -308,7 +308,7 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
                         }
                         icon={<DeleteOutlined />}
                       />
-                    </Flex>
+                    </BAIFlex>
                   </Form.Item>
                 ))}
                 <Button
@@ -320,10 +320,10 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
                 >
                   {t('button.Add')}
                 </Button>
-              </Flex>
+              </BAIFlex>
             )}
           </Form.List>
-        </Flex>
+        </BAIFlex>
       </Form>
     </BAIModal>
   );

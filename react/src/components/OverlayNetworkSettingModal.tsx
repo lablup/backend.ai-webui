@@ -1,10 +1,10 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import { App, Checkbox, Form, InputNumber } from 'antd';
 import { FormInstance } from 'antd/lib';
+import { BAIFlex } from 'backend.ai-ui';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -40,12 +40,12 @@ const OverlayNetworkSettingModal = ({
     <BAIModal
       open={open}
       title={
-        <Flex gap="xxs">
+        <BAIFlex gap="xxs">
           {t('settings.OverlayNetworkSettings')}
           <QuestionIconWithTooltip
             title={t('settings.OverlayNetworkSettingsDescription')}
           />
-        </Flex>
+        </BAIFlex>
       }
       onCancel={onRequestClose}
       confirmLoading={isUpdatingNetworkOverlay}
@@ -97,7 +97,7 @@ const OverlayNetworkSettingModal = ({
     >
       <Form ref={formRef} layout="vertical">
         <Form.Item label="MTU" tooltip={t('settings.MTUDescription')} required>
-          <Flex gap="sm" align="center">
+          <BAIFlex gap="sm" align="center">
             <Form.Item noStyle dependencies={['mtu_checkbox']}>
               {() => {
                 return (
@@ -152,7 +152,7 @@ const OverlayNetworkSettingModal = ({
                 {t('settings.Unset')}
               </Checkbox>
             </Form.Item>
-          </Flex>
+          </BAIFlex>
         </Form.Item>
       </Form>
     </BAIModal>

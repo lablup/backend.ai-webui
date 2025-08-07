@@ -3,9 +3,9 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import { ShellScriptType } from '../pages/UserSettingsPage';
 import BAICodeEditor from './BAICodeEditor';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
 import { DeleteOutlined } from '@ant-design/icons';
 import { App, Button, Dropdown, Form, Select, Typography } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -205,8 +205,8 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
       onCancel={() => onRequestClose()}
       okText={t('button.Save')}
       footer={
-        <Flex justify="between" style={{ width: '100%' }}>
-          <Flex>
+        <BAIFlex justify="between" style={{ width: '100%' }}>
+          <BAIFlex>
             <Dropdown.Button
               type="default"
               danger
@@ -249,8 +249,8 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
             >
               <DeleteOutlined />
             </Dropdown.Button>
-          </Flex>
-          <Flex gap={'sm'}>
+          </BAIFlex>
+          <BAIFlex gap={'sm'}>
             <Button
               key="cancel"
               onClick={() => onRequestClose()}
@@ -277,13 +277,13 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
             >
               {t('button.SaveAndClose')}
             </Dropdown.Button>
-          </Flex>
-        </Flex>
+          </BAIFlex>
+        </BAIFlex>
       }
       destroyOnClose
       {...modalProps}
     >
-      <Flex direction="column" align="stretch" gap={'sm'}>
+      <BAIFlex direction="column" align="stretch" gap={'sm'}>
         {shellInfo === 'bootstrap' && (
           <Typography.Text>
             {t('userSettings.BootstrapScriptDescription')}
@@ -322,7 +322,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
           editable
           value={script}
         />
-      </Flex>
+      </BAIFlex>
     </BAIModal>
   );
 };

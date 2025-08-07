@@ -1,5 +1,5 @@
 import { transformSorterToOrderString } from '../../helper';
-import Flex from '../Flex';
+import BAIFlex from '../BAIFlex';
 import PaginationInfoText from './PaginationInfoText';
 import { useControllableValue, useDebounce } from 'ahooks';
 import { Pagination, Table, TablePaginationConfig, TableProps } from 'antd';
@@ -113,7 +113,7 @@ const BAITable = <RecordType extends object = any>({
   }, [resizable, columns, resizedColumnWidths, order]);
 
   return (
-    <Flex direction="column" align="stretch" gap={'sm'}>
+    <BAIFlex direction="column" align="stretch" gap={'sm'}>
       <Table
         size={tableProps.size || 'small'}
         showSorterTooltip={false}
@@ -155,7 +155,7 @@ const BAITable = <RecordType extends object = any>({
         }}
       />
       {tableProps.pagination !== false && (
-        <Flex justify="end" gap={'xs'}>
+        <BAIFlex justify="end" gap={'xs'}>
           <Pagination
             size={tableProps.size === 'small' ? 'small' : 'default'}
             align="end"
@@ -184,9 +184,9 @@ const BAITable = <RecordType extends object = any>({
             pageSize={currentPageSize}
           ></Pagination>
           {tableProps.pagination && tableProps.pagination.extraContent}
-        </Flex>
+        </BAIFlex>
       )}
-    </Flex>
+    </BAIFlex>
   );
 };
 

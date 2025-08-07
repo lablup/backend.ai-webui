@@ -9,7 +9,7 @@ import BAISelect from '../BAISelect';
 import TotalFooter from '../TotalFooter';
 import { useControllableValue } from 'ahooks';
 import { GetRef, SelectProps, Skeleton, Tooltip } from 'antd';
-import { Flex } from 'backend.ai-ui';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { InfoIcon } from 'lucide-react';
 import React, { useDeferredValue, useEffect, useRef, useState } from 'react';
@@ -176,14 +176,14 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
       }}
       labelRender={({ label }: { label: React.ReactNode }) => {
         return label ? (
-          <Flex gap="xxs">
+          <BAIFlex gap="xxs">
             {label}
             <Tooltip title={t('general.NavigateToDetailPage')}>
               <BAILink to={`/serving/${selectedEndpoint?.endpoint_id}`}>
                 <InfoIcon />
               </BAILink>
             </Tooltip>
-          </Flex>
+          </BAIFlex>
         ) : (
           label
         );

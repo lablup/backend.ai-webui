@@ -4,12 +4,11 @@ import { addQuotaScopeTypePrefix, convertToDecimalUnit } from '../helper';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import BAIProgress from './BAIProgress';
-import Flex from './Flex';
 import FlexActivityIndicator from './FlexActivityIndicator';
 import StorageSelect from './StorageSelect';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Col, Empty, Row, theme, Tooltip, Typography } from 'antd';
-import { BAICard, BAICardProps } from 'backend.ai-ui';
+import { BAICard, BAICardProps, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -121,17 +120,17 @@ const QuotaPerStorageVolumePanelCard: React.FC<
     <BAICard
       {...baiCardProps}
       title={
-        <Flex gap={'xs'} align="center">
+        <BAIFlex gap={'xs'} align="center">
           {t('data.QuotaPerStorageVolume')}
           <Tooltip title={t('data.HostDetails')}>
             <QuestionCircleOutlined
               style={{ color: token.colorTextDescription }}
             />
           </Tooltip>
-        </Flex>
+        </BAIFlex>
       }
       extra={
-        <Flex
+        <BAIFlex
           style={{
             marginRight: -8,
           }}
@@ -146,7 +145,7 @@ const QuotaPerStorageVolumePanelCard: React.FC<
             showSearch
             variant="borderless"
           />
-        </Flex>
+        </BAIFlex>
       }
       styles={{
         body: {
@@ -166,7 +165,7 @@ const QuotaPerStorageVolumePanelCard: React.FC<
           >
             <BAIProgress
               title={
-                <Flex direction="column" align="start">
+                <BAIFlex direction="column" align="start">
                   <Typography.Text
                     type="secondary"
                     style={{ fontSize: token.fontSizeSM }}
@@ -176,7 +175,7 @@ const QuotaPerStorageVolumePanelCard: React.FC<
                   <Typography.Text style={{ fontSize: token.fontSize }}>
                     {currentProject?.name}
                   </Typography.Text>
-                </Flex>
+                </BAIFlex>
               }
               percent={projectPercent}
               used={
@@ -195,7 +194,7 @@ const QuotaPerStorageVolumePanelCard: React.FC<
             <BAIProgress
               percent={userPercent}
               title={
-                <Flex direction="column" align="start">
+                <BAIFlex direction="column" align="start">
                   <Typography.Text
                     type="secondary"
                     style={{ fontSize: token.fontSizeSM }}
@@ -205,7 +204,7 @@ const QuotaPerStorageVolumePanelCard: React.FC<
                   <Typography.Text style={{ fontSize: token.fontSize }}>
                     {baiClient?.full_name}
                   </Typography.Text>
-                </Flex>
+                </BAIFlex>
               }
               used={
                 userUsageBytes === 0

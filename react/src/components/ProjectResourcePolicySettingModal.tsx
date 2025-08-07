@@ -11,7 +11,6 @@ import { GBToBytes, bytesToGB } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useSuspendedBackendaiClient } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
 import {
   Form,
@@ -22,6 +21,7 @@ import {
   InputNumber,
   FormInstance,
 } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -255,7 +255,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
         >
           <Input disabled={!!projectResourcePolicy} />
         </Form.Item>
-        <Flex
+        <BAIFlex
           direction="column"
           align="stretch"
           gap={'md'}
@@ -301,7 +301,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
               />
             </FormItemWithUnlimited>
           ) : null}
-        </Flex>
+        </BAIFlex>
       </Form>
     </BAIModal>
   );

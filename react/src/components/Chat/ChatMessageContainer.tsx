@@ -1,5 +1,5 @@
-import Flex, { FlexProps } from '../Flex';
 import { Avatar, theme } from 'antd';
+import { BAIFlex, BAIFlexProps } from 'backend.ai-ui';
 import React, { memo } from 'react';
 
 export type ChatMessagePlacement = {
@@ -9,7 +9,7 @@ export type ChatMessagePlacement = {
   bottom?: boolean;
 };
 
-export interface ChatMessageContainerProps extends FlexProps {
+export interface ChatMessageContainerProps extends BAIFlexProps {
   placement?: ChatMessagePlacement;
   containerStyle?: React.CSSProperties;
   avatar?: React.ReactNode;
@@ -21,7 +21,7 @@ export const ChatMessageContainer: React.FC<ChatMessageContainerProps> = memo(
     const { token } = theme.useToken();
 
     return (
-      <Flex
+      <BAIFlex
         direction={placement.left ? 'row' : 'row-reverse'}
         justify={'start'}
         align="baseline"
@@ -38,7 +38,7 @@ export const ChatMessageContainer: React.FC<ChatMessageContainerProps> = memo(
         onMouseLeave={onMouseLeave}
       >
         <Avatar icon={avatar} style={{ fontSize: token.fontSizeHeading3 }} />
-        <Flex
+        <BAIFlex
           direction="column"
           align={placement.left ? 'start' : 'end'}
           wrap="wrap"
@@ -46,8 +46,8 @@ export const ChatMessageContainer: React.FC<ChatMessageContainerProps> = memo(
           gap={'xs'}
         >
           {children}
-        </Flex>
-      </Flex>
+        </BAIFlex>
+      </BAIFlex>
     );
   },
 );

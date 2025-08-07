@@ -1,6 +1,6 @@
-import Flex from './Flex';
 import { RightOutlined } from '@ant-design/icons';
 import { theme } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 
 interface SummaryItemProps {
@@ -19,8 +19,8 @@ export const SummaryItem: React.FC<SummaryItemProps> = ({
   const { token } = theme.useToken();
 
   return (
-    <Flex direction="column" style={{ width: '100%' }}>
-      <Flex
+    <BAIFlex direction="column" style={{ width: '100%' }}>
+      <BAIFlex
         style={{
           width: '100%',
           height: contents ? 'auto' : '100%',
@@ -47,8 +47,8 @@ export const SummaryItem: React.FC<SummaryItemProps> = ({
             />
           </>
         )}
-      </Flex>
-      <Flex
+      </BAIFlex>
+      <BAIFlex
         className="drag-cancel-component"
         style={{
           width: '100%',
@@ -56,7 +56,7 @@ export const SummaryItem: React.FC<SummaryItemProps> = ({
         }}
       >
         {contents}
-      </Flex>
-    </Flex>
+      </BAIFlex>
+    </BAIFlex>
   );
 };

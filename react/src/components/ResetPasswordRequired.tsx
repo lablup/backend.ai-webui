@@ -2,9 +2,9 @@ import { baiSignedRequestWithPromise } from '../helper';
 import { useAnonymousBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useWebComponentInfo } from './DefaultProviders';
-import Flex from './Flex';
 import { WarningTwoTone } from '@ant-design/icons';
 import { Button, Form, Modal, Typography, Input, theme } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -94,7 +94,7 @@ const ResetPasswordRequired = () => {
       destroyOnClose={true}
       forceRender
     >
-      <Flex
+      <BAIFlex
         direction="column"
         justify="start"
         align="stretch"
@@ -174,7 +174,7 @@ const ResetPasswordRequired = () => {
         <Button type="primary" onClick={onSubmit} loading={mutation.isPending}>
           {t('webui.menu.Update')}
         </Button>
-      </Flex>
+      </BAIFlex>
     </Modal>
   );
 };

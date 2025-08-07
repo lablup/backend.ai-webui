@@ -1,5 +1,5 @@
 import { divideNumberWithUnits, parseValueWithUnit } from '../helper';
-import Flex from './Flex';
+import BAIFlex from './BAIFlex';
 import { theme, Typography, Tooltip } from 'antd';
 import _ from 'lodash';
 
@@ -89,7 +89,7 @@ const BAIResourceWithSteppedProgress: React.FC<
     formatResourceValues(title, current, total, displayUnit, unlimitedValues);
 
   return (
-    <Flex direction="column" align="start">
+    <BAIFlex direction="column" align="start">
       <Typography.Text
         style={{
           fontSize: token.fontSizeLG,
@@ -100,7 +100,7 @@ const BAIResourceWithSteppedProgress: React.FC<
       >
         {title}
       </Typography.Text>
-      <Flex
+      <BAIFlex
         direction="row"
         gap="xxs"
         align="end"
@@ -119,12 +119,12 @@ const BAIResourceWithSteppedProgress: React.FC<
           {formattedCurrent}
         </Typography.Text>
         {!_.isNaN(current) && <Typography.Text>{displayUnit}</Typography.Text>}
-      </Flex>
+      </BAIFlex>
       {showProgress && (
         <Tooltip
           title={`${formattedCurrent} ${currentUnit} / ${formattedTotal} ${totalUnit}`}
         >
-          <Flex direction="row" gap={2}>
+          <BAIFlex direction="row" gap={2}>
             {_.map(_.range(steps), (i) => {
               const currentPosition = calculateCurrentPosition(
                 current,
@@ -133,7 +133,7 @@ const BAIResourceWithSteppedProgress: React.FC<
                 unlimitedValues,
               );
               return (
-                <Flex
+                <BAIFlex
                   key={i}
                   style={{
                     width: 5,
@@ -147,10 +147,10 @@ const BAIResourceWithSteppedProgress: React.FC<
                 />
               );
             })}
-          </Flex>
+          </BAIFlex>
         </Tooltip>
       )}
-    </Flex>
+    </BAIFlex>
   );
 };
 

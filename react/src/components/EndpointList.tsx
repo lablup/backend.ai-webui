@@ -12,7 +12,6 @@ import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import EndpointOwnerInfo from './EndpointOwnerInfo';
 import EndpointStatusTag from './EndpointStatusTag';
-import Flex from './Flex';
 import {
   CheckOutlined,
   CloseOutlined,
@@ -28,7 +27,7 @@ import {
   Tooltip,
 } from 'antd';
 import { ColumnType } from 'antd/lib/table';
-import { BAITable, BAITableProps } from 'backend.ai-ui';
+import { BAITable, BAITableProps, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { InfoIcon } from 'lucide-react';
@@ -152,7 +151,7 @@ const EndpointList: React.FC<EndpointListProps> = ({
       dataIndex: 'controls',
       key: 'controls',
       render: (text, row) => (
-        <Flex direction="row" align="stretch">
+        <BAIFlex direction="row" align="stretch">
           <Button
             type="text"
             icon={<SettingOutlined />}
@@ -235,7 +234,7 @@ const EndpointList: React.FC<EndpointListProps> = ({
               });
             }}
           />
-        </Flex>
+        </BAIFlex>
       ),
     },
     {
@@ -277,7 +276,7 @@ const EndpointList: React.FC<EndpointListProps> = ({
     },
     {
       title: (
-        <Flex direction="row" align="center" gap={'xs'}>
+        <BAIFlex direction="row" align="center" gap={'xs'}>
           {t('modelService.RoutingsCount')}
           <Tooltip title={t('modelService.Active/Total')}>
             <InfoIcon />
@@ -286,7 +285,7 @@ const EndpointList: React.FC<EndpointListProps> = ({
           <Typography.Text type="secondary" style={{ fontWeight: 'normal' }}>
             ({t('modelService.Active/Total')})
           </Typography.Text> */}
-        </Flex>
+        </BAIFlex>
       ),
       // dataIndex: "active_route_count",
       key: 'routingCount',

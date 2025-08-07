@@ -1,8 +1,8 @@
 import { useTokenCount } from '../../hooks/useTokenizer';
-import Flex from '../Flex';
 import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import { Message } from 'ai';
 import { Typography, Tag, Divider } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import { t } from 'i18next';
 import { map, last } from 'lodash';
 import React, { useMemo } from 'react';
@@ -43,7 +43,7 @@ const ChatTokenCounter: React.FC<ChatTokenCounterProps> = ({
   }, [lastAssistantTokenCount, startTime]);
 
   return (
-    <Flex justify="end" align="end">
+    <BAIFlex justify="end" align="end">
       <Tag style={{ margin: 0 }}>
         <span>
           <Typography.Text>{tokenPerSecond.toFixed(1)}</Typography.Text>{' '}
@@ -56,7 +56,7 @@ const ChatTokenCounter: React.FC<ChatTokenCounterProps> = ({
         </span>
         <QuestionIconWithTooltip title={t('chatui.TokenCounterTooltip')} />
       </Tag>
-    </Flex>
+    </BAIFlex>
   );
 };
 

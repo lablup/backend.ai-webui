@@ -2,7 +2,6 @@ import {
   ImageListQuery,
   ImageListQuery$data,
 } from '../__generated__/ImageListQuery.graphql';
-import Flex from '../components/Flex';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -34,7 +33,7 @@ import {
 import { useToggle, useDebounceFn } from 'ahooks';
 import { App, Button, Input, Tag, theme, Tooltip, Typography } from 'antd';
 import { ColumnType } from 'antd/es/table';
-import { BAITable } from 'backend.ai-ui';
+import { BAIFlex, BAITable } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Key, useMemo, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -225,7 +224,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           dataIndex: 'tags',
           render: (text, row) => {
             return (
-              <Flex direction="row" align="start">
+              <BAIFlex direction="row" align="start">
                 {/* TODO: replace this with AliasedImageDoubleTags after image list query with ImageNode is implemented. */}
                 {_.map(text, (tag: { key: string; value: string }) => {
                   const isCustomized = _.includes(tag.key, 'customized_');
@@ -261,7 +260,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
                     </Tag>
                   );
                 })}
-              </Flex>
+              </BAIFlex>
             );
           },
         },
@@ -339,7 +338,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           dataIndex: 'resource_limits',
           key: 'resource_limits',
           render: (text, row) => (
-            <Flex direction="row" gap="xxs">
+            <BAIFlex direction="row" gap="xxs">
               {row?.resource_limits?.map((resource_limit) => (
                 <ResourceNumber
                   key={resource_limit?.key}
@@ -348,7 +347,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
                   max={resource_limit?.max || 'Infinity'}
                 />
               ))}
-            </Flex>
+            </BAIFlex>
           ),
         },
         {
@@ -357,7 +356,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           dataIndex: 'control',
           fixed: 'right',
           render: (text, row) => (
-            <Flex
+            <BAIFlex
               direction="row"
               align="stretch"
               justify="center"
@@ -391,7 +390,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
                   setManagingApp(row);
                 }}
               />
-            </Flex>
+            </BAIFlex>
           ),
         },
       ]),
@@ -485,7 +484,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
 
   return (
     <>
-      <Flex
+      <BAIFlex
         direction="column"
         align="stretch"
         style={{
@@ -494,7 +493,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         }}
         gap="sm"
       >
-        <Flex justify="between">
+        <BAIFlex justify="between">
           <Input
             allowClear
             prefix={<SearchOutlined />}
@@ -506,7 +505,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
               width: 200,
             }}
           />
-          <Flex gap={'xs'}>
+          <BAIFlex gap={'xs'}>
             {selectedRows.length > 0 ? (
               <Typography.Text>
                 {t('general.NSelected', {
@@ -542,8 +541,8 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             >
               {t('environment.Install')}
             </Button>
-          </Flex>
-        </Flex>
+          </BAIFlex>
+        </BAIFlex>
         <BAITable
           resizable
           rowKey="id"
@@ -588,7 +587,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           })}
           showSorterTooltip={false}
         />
-      </Flex>
+      </BAIFlex>
       <ManageImageResourceLimitModal
         open={!!managingResourceLimit}
         onRequestClose={(success) => {

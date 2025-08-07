@@ -3,10 +3,9 @@ import { useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
-import Flex from './Flex';
 import ResourceGroupSelectForCurrentProject from './ResourceGroupSelectForCurrentProject';
 import { Row, Col, Divider, theme, Tooltip, Typography } from 'antd';
-import { BAICard, BAICardProps } from 'backend.ai-ui';
+import { BAICard, BAICardProps, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -51,7 +50,7 @@ const AvailableResourcesCard: React.FC<AvailableResourcesCardProps> = ({
       loading={_.isUndefined(checkPresetInfo?.keypair_using.cpu)}
       // extra={[]}
       extra={
-        <Flex
+        <BAIFlex
           direction="row"
           style={{
             marginRight: -8,
@@ -77,7 +76,7 @@ const AvailableResourcesCard: React.FC<AvailableResourcesCardProps> = ({
               backgroundColor: 'transparent',
             }}
           />
-        </Flex>
+        </BAIFlex>
       }
       {...props}
     >
@@ -169,7 +168,7 @@ const AvailableResourcesCard: React.FC<AvailableResourcesCardProps> = ({
               acceleratorSlotsDetails,
               ({ key, resourceSlot }, index) =>
                 !!resourceSlot && (
-                  <Flex
+                  <BAIFlex
                     key={key}
                     style={{
                       backgroundColor: token.colorSuccessBg,
@@ -216,7 +215,7 @@ const AvailableResourcesCard: React.FC<AvailableResourcesCardProps> = ({
                         steps={12}
                       />
                     </Col>
-                  </Flex>
+                  </BAIFlex>
                 ),
             )}
           </>
@@ -236,7 +235,7 @@ const ResourceWithSteppedProgress: React.FC<{
   const { token } = theme.useToken();
 
   return (
-    <Flex direction="column" align="start">
+    <BAIFlex direction="column" align="start">
       <Typography.Text
         style={{
           fontSize: token.fontSizeLG,
@@ -247,7 +246,7 @@ const ResourceWithSteppedProgress: React.FC<{
       >
         {title}
       </Typography.Text>
-      <Flex
+      <BAIFlex
         direction="row"
         gap="xxs"
         align="end"
@@ -266,13 +265,13 @@ const ResourceWithSteppedProgress: React.FC<{
           {_.isNaN(current) ? '-' : current}
         </Typography.Text>
         {!_.isNaN(current) && <Typography.Text>{unit}</Typography.Text>}
-      </Flex>
+      </BAIFlex>
       <Tooltip title={`${current} ${unit} / ${total} ${unit}`}>
-        <Flex direction="row" gap={2}>
+        <BAIFlex direction="row" gap={2}>
           {_.map(_.range(steps), (i) => {
             const currentPosition = (current / total) * steps;
             return (
-              <Flex
+              <BAIFlex
                 key={i}
                 style={{
                   width: 5,
@@ -286,9 +285,9 @@ const ResourceWithSteppedProgress: React.FC<{
               />
             );
           })}
-        </Flex>
+        </BAIFlex>
       </Tooltip>
-    </Flex>
+    </BAIFlex>
   );
 };
 

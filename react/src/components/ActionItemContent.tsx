@@ -1,7 +1,7 @@
-import Flex from './Flex';
 import WebUILink from './WebUILink';
 // import useResizeObserver from '@react-hook/resize-observer';
 import { Button, Divider, Typography, theme } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import { ReactNode, useRef } from 'react';
 import { To } from 'react-router-dom';
 
@@ -59,7 +59,7 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
     </Button>
   );
   return (
-    <Flex
+    <BAIFlex
       ref={containerRef}
       align="center"
       justify="between"
@@ -71,7 +71,7 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
         ...style,
       }}
     >
-      <Flex
+      <BAIFlex
         direction="column"
         gap={type === 'default' ? 'sm' : 'xxs'}
         style={{
@@ -80,7 +80,7 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
           paddingBottom: 0,
         }}
       >
-        <Flex
+        <BAIFlex
           align="center"
           justify="center"
           style={{
@@ -93,8 +93,8 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
           }}
         >
           {icon}
-        </Flex>
-        <Flex style={{ minHeight: 60 }}>
+        </BAIFlex>
+        <BAIFlex style={{ minHeight: 60 }}>
           {typeof title === 'string' ? (
             <Typography.Text
               strong
@@ -112,15 +112,15 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
           ) : (
             title
           )}
-        </Flex>
+        </BAIFlex>
         <Typography.Text
           type="secondary"
           style={{ fontSize: token.fontSizeSM }}
         >
           {description}
         </Typography.Text>
-      </Flex>
-      <Flex
+      </BAIFlex>
+      <BAIFlex
         direction="column"
         align="stretch"
         style={{
@@ -139,8 +139,8 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
           />
         )}
         {to ? <WebUILink to={to}>{actionButton}</WebUILink> : actionButton}
-      </Flex>
-    </Flex>
+      </BAIFlex>
+    </BAIFlex>
   );
 };
 

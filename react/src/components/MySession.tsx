@@ -1,8 +1,8 @@
 import { MySessionQueryFragment$key } from '../__generated__/MySessionQueryFragment.graphql';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import BAIPanelItem from './BAIPanelItem';
-import Flex from './Flex';
 import { theme, Typography } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
@@ -60,7 +60,7 @@ const MySession: React.FC<MySessionProps> = ({ queryRef, isRefetching }) => {
   const { myInteractive, myBatch, myInference, myUpload } = data || {};
 
   const renderBAIPanelItem = (title: string, value: number) => (
-    <Flex
+    <BAIFlex
       style={{
         borderRadius: token.borderRadiusLG,
         justifyContent: 'center',
@@ -74,11 +74,11 @@ const MySession: React.FC<MySessionProps> = ({ queryRef, isRefetching }) => {
       }}
     >
       <BAIPanelItem title={title} value={value} />
-    </Flex>
+    </BAIFlex>
   );
 
   return (
-    <Flex
+    <BAIFlex
       direction="column"
       align="stretch"
       style={{
@@ -88,7 +88,7 @@ const MySession: React.FC<MySessionProps> = ({ queryRef, isRefetching }) => {
       }}
     >
       {/* Fixed Title Section */}
-      <Flex
+      <BAIFlex
         align="center"
         justify="between"
         style={{
@@ -105,12 +105,12 @@ const MySession: React.FC<MySessionProps> = ({ queryRef, isRefetching }) => {
         gap="xs"
         wrap="wrap"
       >
-        <Flex gap={'xs'} align="center">
+        <BAIFlex gap={'xs'} align="center">
           <Typography.Title level={5} style={{ margin: 0 }}>
             {t('session.MySessions')}
           </Typography.Title>
-        </Flex>
-        <Flex
+        </BAIFlex>
+        <BAIFlex
           gap={'xs'}
           align="center"
           justify="end"
@@ -135,11 +135,11 @@ const MySession: React.FC<MySessionProps> = ({ queryRef, isRefetching }) => {
               margin: -token.marginXS,
             }}
           />
-        </Flex>
-      </Flex>
+        </BAIFlex>
+      </BAIFlex>
 
       {/* Scrollable Content Section */}
-      <Flex
+      <BAIFlex
         direction="column"
         align="stretch"
         style={{
@@ -148,7 +148,7 @@ const MySession: React.FC<MySessionProps> = ({ queryRef, isRefetching }) => {
           overflowX: 'hidden',
         }}
       >
-        <Flex
+        <BAIFlex
           direction="row"
           wrap="wrap"
           gap={token.padding}
@@ -162,9 +162,9 @@ const MySession: React.FC<MySessionProps> = ({ queryRef, isRefetching }) => {
           {renderBAIPanelItem(t('session.Batch'), myBatch?.count || 0)}
           {renderBAIPanelItem(t('session.Inference'), myInference?.count || 0)}
           {renderBAIPanelItem(t('session.System'), myUpload?.count || 0)}
-        </Flex>
-      </Flex>
-    </Flex>
+        </BAIFlex>
+      </BAIFlex>
+    </BAIFlex>
   );
 };
 

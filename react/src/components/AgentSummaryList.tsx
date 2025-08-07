@@ -15,7 +15,6 @@ import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting'
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import BAIPropertyFilter from './BAIPropertyFilter';
 import BAIRadioGroup from './BAIRadioGroup';
-import Flex from './Flex';
 import { ResourceTypeIcon } from './ResourceNumber';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import {
@@ -28,7 +27,7 @@ import { useToggle } from 'ahooks';
 import { Button, TableProps, theme, Tooltip, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
-import { BAITable } from 'backend.ai-ui';
+import { BAITable, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -136,9 +135,9 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
       fixed: 'left',
       render: (value, record) => {
         return (
-          <Flex direction="column" align="start">
+          <BAIFlex direction="column" align="start">
             <Typography.Text>{value}</Typography.Text>
-          </Flex>
+          </BAIFlex>
         );
       },
       sorter: true,
@@ -159,7 +158,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
           [key in ResourceSlotName]: string | undefined;
         } = JSON.parse(record?.available_slots || '{}');
         return (
-          <Flex direction="column" gap="xxs">
+          <BAIFlex direction="column" gap="xxs">
             {_.map(
               parsedAvailableSlots,
               (value: string | number, key: ResourceSlotName) => {
@@ -170,8 +169,12 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
                       100,
                   );
                   return (
-                    <Flex key={key} justify="between" style={{ minWidth: 220 }}>
-                      <Flex gap="xxs">
+                    <BAIFlex
+                      key={key}
+                      justify="between"
+                      style={{ minWidth: 220 }}
+                    >
+                      <BAIFlex gap="xxs">
                         <ResourceTypeIcon key={key} type={key} />
                         <Typography.Text>
                           {toFixedFloorWithoutTrailingZeros(
@@ -190,7 +193,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
                         >
                           {mergedResourceSlots?.cpu?.display_unit}
                         </Typography.Text>
-                      </Flex>
+                      </BAIFlex>
                       <BAIProgressWithLabel
                         percent={cpuPercent}
                         strokeColor={
@@ -203,7 +206,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
                           toFixedFloorWithoutTrailingZeros(cpuPercent, 1) + ' %'
                         }
                       />
-                    </Flex>
+                    </BAIFlex>
                   );
                 } else if (key === 'mem') {
                   const memPercent = _.toFinite(
@@ -212,12 +215,12 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
                       100,
                   );
                   return (
-                    <Flex
+                    <BAIFlex
                       key={'mem'}
                       justify="between"
                       style={{ minWidth: 220 }}
                     >
-                      <Flex gap="xxs">
+                      <BAIFlex gap="xxs">
                         <ResourceTypeIcon type={'mem'} />
                         <Typography.Text>
                           {convertToBinaryUnit(parsedOccupiedSlots.mem, 'g', 0)
@@ -232,7 +235,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
                         >
                           GiB
                         </Typography.Text>
-                      </Flex>
+                      </BAIFlex>
                       <BAIProgressWithLabel
                         percent={memPercent}
                         strokeColor={
@@ -245,7 +248,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
                           toFixedFloorWithoutTrailingZeros(memPercent, 1) + ' %'
                         }
                       />
-                    </Flex>
+                    </BAIFlex>
                   );
                 } else if (parsedAvailableSlots[key]) {
                   const percent = _.toFinite(
@@ -254,13 +257,13 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
                       100,
                   );
                   return (
-                    <Flex
+                    <BAIFlex
                       key={key}
                       justify="between"
                       style={{ minWidth: 220 }}
                       gap="xxs"
                     >
-                      <Flex gap="xxs">
+                      <BAIFlex gap="xxs">
                         <ResourceTypeIcon key={key} type={key} />
                         <Typography.Text>
                           {toFixedFloorWithoutTrailingZeros(
@@ -279,7 +282,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
                         >
                           {mergedResourceSlots?.[key]?.display_unit}
                         </Typography.Text>
-                      </Flex>
+                      </BAIFlex>
                       <BAIProgressWithLabel
                         percent={percent}
                         strokeColor={
@@ -290,12 +293,12 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
                           toFixedFloorWithoutTrailingZeros(percent, 1) + ' %'
                         }
                       />
-                    </Flex>
+                    </BAIFlex>
                   );
                 }
               },
             )}
-          </Flex>
+          </BAIFlex>
         );
       },
     },
@@ -311,7 +314,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
       dataIndex: 'schedulable',
       render: (value) => {
         return (
-          <Flex justify="center">
+          <BAIFlex justify="center">
             {value === true ? (
               <CheckCircleOutlined
                 style={{
@@ -327,7 +330,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
                 }}
               />
             )}
-          </Flex>
+          </BAIFlex>
         );
       },
       sorter: true,
@@ -337,9 +340,9 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
     useHiddenColumnKeysSetting('AgentSummaryList');
 
   return (
-    <Flex direction="column" align="stretch" style={containerStyle} gap="sm">
-      <Flex justify="between" align="start" gap="xs" wrap="wrap">
-        <Flex
+    <BAIFlex direction="column" align="stretch" style={containerStyle} gap="sm">
+      <BAIFlex justify="between" align="start" gap="xs" wrap="wrap">
+        <BAIFlex
           direction="row"
           gap={'sm'}
           align="start"
@@ -400,8 +403,8 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
               });
             }}
           />
-        </Flex>
-        <Flex gap="xs">
+        </BAIFlex>
+        <BAIFlex gap="xs">
           <Tooltip title={t('button.Refresh')}>
             <Button
               loading={isPendingRefresh}
@@ -409,8 +412,8 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
               icon={<ReloadOutlined />}
             ></Button>
           </Tooltip>
-        </Flex>
-      </Flex>
+        </BAIFlex>
+      </BAIFlex>
       <BAITable
         bordered
         scroll={{ x: 'max-content' }}
@@ -470,7 +473,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
         columns={columns}
         hiddenColumnKeys={hiddenColumnKeys}
       />
-    </Flex>
+    </BAIFlex>
   );
 };
 

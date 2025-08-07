@@ -14,7 +14,6 @@ import {
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useUpdatableState } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
-import Flex from './Flex';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import UserResourcePolicySettingModal from './UserResourcePolicySettingModal';
 import {
@@ -26,7 +25,7 @@ import {
 import { useToggle } from 'ahooks';
 import { App, Button, Dropdown, Popconfirm, theme, Tooltip } from 'antd';
 import { ColumnType } from 'antd/es/table';
-import { BAITable } from 'backend.ai-ui';
+import { BAITable, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { EllipsisIcon } from 'lucide-react';
@@ -162,7 +161,7 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
       fixed: 'right',
       key: 'control',
       render: (text: any, row: UserResourcePolicies) => (
-        <Flex direction="row" align="stretch">
+        <BAIFlex direction="row" align="stretch">
           <Button
             type="text"
             icon={<SettingOutlined />}
@@ -232,7 +231,7 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
               }
             />
           </Popconfirm>
-        </Flex>
+        </BAIFlex>
       ),
     },
   ]);
@@ -272,9 +271,14 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
   };
 
   return (
-    <Flex direction="column" align="stretch" gap="sm">
-      <Flex direction="row" justify="end" wrap="wrap" gap={'xs'}>
-        <Flex direction="row" gap={'xs'} wrap="wrap" style={{ flexShrink: 1 }}>
+    <BAIFlex direction="column" align="stretch" gap="sm">
+      <BAIFlex direction="row" justify="end" wrap="wrap" gap={'xs'}>
+        <BAIFlex
+          direction="row"
+          gap={'xs'}
+          wrap="wrap"
+          style={{ flexShrink: 1 }}
+        >
           <Dropdown
             menu={{
               items: [
@@ -291,7 +295,7 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
           >
             <Button icon={<EllipsisIcon />} />
           </Dropdown>
-          <Flex gap={'xs'}>
+          <BAIFlex gap={'xs'}>
             <Tooltip title={t('button.Refresh')}>
               <Button
                 icon={<ReloadOutlined />}
@@ -312,9 +316,9 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
             >
               {t('button.Create')}
             </Button>
-          </Flex>
-        </Flex>
-      </Flex>
+          </BAIFlex>
+        </BAIFlex>
+      </BAIFlex>
       <BAITable
         rowKey="id"
         showSorterTooltip={false}
@@ -363,7 +367,7 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
           setIsCreatingPolicySetting(false);
         }}
       />
-    </Flex>
+    </BAIFlex>
   );
 };
 

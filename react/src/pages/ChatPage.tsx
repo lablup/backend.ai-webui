@@ -7,11 +7,10 @@ import {
   useHistory,
 } from '../components/Chat/ChatHistory';
 import { type ChatProviderData } from '../components/Chat/ChatModel';
-import Flex from '../components/Flex';
 import { useWebUINavigate } from '../hooks';
 import { Badge, Button, Card, Drawer, List, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
-import { BAICard } from 'backend.ai-ui';
+import { BAIFlex, BAICard } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
 import _ from 'lodash';
@@ -224,13 +223,13 @@ const PureChatPage = ({ id }: { id: string }) => {
         }
       >
         {id && (
-          <Flex
+          <BAIFlex
             className={styles.chatViewVertical}
             direction="column"
             align="stretch"
             gap={'xs'}
           >
-            <Flex
+            <BAIFlex
               className={styles.chatViewHorizontal}
               gap={'xs'}
               direction="row"
@@ -263,8 +262,8 @@ const PureChatPage = ({ id }: { id: string }) => {
                   />
                 ))}
               </Suspense>
-            </Flex>
-          </Flex>
+            </BAIFlex>
+          </BAIFlex>
         )}
         <ChatHistoryDrawer
           selectedHistoryId={chat.id}

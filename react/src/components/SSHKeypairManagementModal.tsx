@@ -1,11 +1,11 @@
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
 import SSHKeypairGenerationModal from './SSHKeypairGenerationModal';
 import SSHKeypairManualFormModal from './SSHKeypairManualFormModal';
 import { useToggle } from 'ahooks';
 import { Button, Typography, theme } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import React, { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -70,7 +70,7 @@ const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
           {t('userSettings.CurrentSSHPublicKey')}
         </Typography.Text>
         {data?.ssh_public_key ? (
-          <Flex direction="row" align="start" justify="between">
+          <BAIFlex direction="row" align="start" justify="between">
             <Typography.Paragraph>
               <pre style={{ width: 430, height: 270 }}>
                 {data?.ssh_public_key}
@@ -80,7 +80,7 @@ const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
               copyable={{ text: data?.ssh_public_key }}
               style={{ marginTop: token.margin }}
             />
-          </Flex>
+          </BAIFlex>
         ) : (
           <Typography.Paragraph>
             <pre style={{ height: 270 }}>

@@ -2,10 +2,10 @@ import {
   SessionStatusTagFragment$data,
   SessionStatusTagFragment$key,
 } from '../../__generated__/SessionStatusTagFragment.graphql';
-import Flex from '../Flex';
 import { statusInfoTagColor } from './SessionStatusDetailModal';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Tag, Tooltip, theme } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
@@ -78,7 +78,7 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
         </Tag>
       </Tooltip>
     ) : (
-      <Flex>
+      <BAIFlex>
         <Tag
           style={{
             margin: 0,
@@ -115,7 +115,7 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
         >
           {_.split(session.status_info, ' ')[0]}
         </Tag>
-      </Flex>
+      </BAIFlex>
     )
   ) : null;
 };

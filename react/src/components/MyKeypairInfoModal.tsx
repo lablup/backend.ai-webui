@@ -7,8 +7,8 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
 import { Button, Table, Typography, Tag } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -84,14 +84,14 @@ const MyKeypairInfoModal: React.FC<MyKeypairInfoModalProps> = ({
             dataIndex: 'access_key',
             fixed: 'left',
             render: (value) => (
-              <Flex direction="column" align="start">
+              <BAIFlex direction="column" align="start">
                 <Typography.Text ellipsis copyable>
                   {value}
                 </Typography.Text>
                 {value === user?.main_access_key && (
                   <Tag color={'red'}>{t('credential.MainAccessKey')}</Tag>
                 )}
-              </Flex>
+              </BAIFlex>
             ),
           },
           {

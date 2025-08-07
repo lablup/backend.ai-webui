@@ -14,7 +14,6 @@ import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
 import AllowedHostNamesSelect from './AllowedHostNamesSelect';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import DynamicUnitInputNumber from './DynamicUnitInputNumber';
-import Flex from './Flex';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import {
@@ -31,6 +30,7 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -339,7 +339,7 @@ const KeypairResourcePolicySettingModal: React.FC<
         </Form.Item>
         <Form.Item
           label={
-            <Flex gap="xxs">
+            <BAIFlex gap="xxs">
               <Typography.Text>
                 {t('resourcePolicy.DefaultForUnspecified')}
               </Typography.Text>
@@ -358,7 +358,7 @@ const KeypairResourcePolicySettingModal: React.FC<
                   style={{ color: token.colorTextSecondary, cursor: 'pointer' }}
                 />
               </Tooltip>
-            </Flex>
+            </BAIFlex>
           }
           name="default_for_unspecified"
         >

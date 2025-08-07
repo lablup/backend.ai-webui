@@ -8,7 +8,6 @@ import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
 import VFolderPermissionCell from './VFolderPermissionCell';
 import { UserOutlined } from '@ant-design/icons';
 import {
@@ -21,7 +20,7 @@ import {
   Typography,
   theme,
 } from 'antd';
-import { BAITable, BAIUserUnionIcon } from 'backend.ai-ui';
+import { BAITable, BAIUserUnionIcon, BAIFlex } from 'backend.ai-ui';
 import { LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -73,7 +72,7 @@ const SharedFolderPermissionInfoModal: React.FC<
       footer={null}
       {...modalProps}
     >
-      <Flex direction="column" align="stretch" gap="lg">
+      <BAIFlex direction="column" align="stretch" gap="lg">
         <Alert
           showIcon
           type="info"
@@ -89,15 +88,15 @@ const SharedFolderPermissionInfoModal: React.FC<
           </Descriptions.Item>
           <Descriptions.Item label={t('data.folders.Type')}>
             {vfolder?.ownership_type === 'user' ? (
-              <Flex gap={'xs'}>
+              <BAIFlex gap={'xs'}>
                 <Typography.Text>{t('data.User')}</Typography.Text>
                 <UserOutlined style={{ color: token.colorTextTertiary }} />
-              </Flex>
+              </BAIFlex>
             ) : (
-              <Flex gap={'xs'}>
+              <BAIFlex gap={'xs'}>
                 <Typography.Text>{t('data.Project')}</Typography.Text>
                 <BAIUserUnionIcon style={{ color: token.colorTextTertiary }} />
-              </Flex>
+              </BAIFlex>
             )}
           </Descriptions.Item>
           <Descriptions.Item label={t('data.folders.Owner')}>
@@ -106,7 +105,7 @@ const SharedFolderPermissionInfoModal: React.FC<
         </Descriptions>
 
         {vfolder?.ownership_type === 'user' ? (
-          <Flex direction="column" align="stretch">
+          <BAIFlex direction="column" align="stretch">
             <Typography.Title
               level={5}
               style={{ marginTop: 0, marginBottom: token.marginMD }}
@@ -134,7 +133,7 @@ const SharedFolderPermissionInfoModal: React.FC<
                   key: 'control',
                   title: t('data.folders.Control'),
                   render: (data) => (
-                    <Flex align="stretch" justify="center">
+                    <BAIFlex align="stretch" justify="center">
                       <Popconfirm
                         title={t('data.invitation.LeaveSharedFolderDesc', {
                           folderName: data?.name,
@@ -179,14 +178,14 @@ const SharedFolderPermissionInfoModal: React.FC<
                           />
                         </Tooltip>
                       </Popconfirm>
-                    </Flex>
+                    </BAIFlex>
                   ),
                 },
               ]}
             />
-          </Flex>
+          </BAIFlex>
         ) : null}
-      </Flex>
+      </BAIFlex>
     </BAIModal>
   );
 };

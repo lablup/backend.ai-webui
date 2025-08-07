@@ -2,7 +2,6 @@ import { ModelCardModalFragment$key } from '../__generated__/ModelCardModalFragm
 import { useBackendAIImageMetaData } from '../hooks';
 import { useModelCardMetadata } from '../hooks/useModelCardMetadata';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
 import ModelCardChat from './ModelCardChat';
 import ModelCloneModal from './ModelCloneModal';
 // import ModelTryContentButton from './ModelTryContentButton';
@@ -20,6 +19,7 @@ import {
   theme,
   Skeleton,
 } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { FolderX } from 'lucide-react';
@@ -146,7 +146,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
       ]}
     >
       <Suspense fallback={<Skeleton active />}>
-        <Flex
+        <BAIFlex
           direction="row"
           wrap="wrap"
           align="stretch"
@@ -154,11 +154,11 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
           style={{ width: '100%' }}
         >
           {modelMetadataList.some((item) => item.name === model_card?.name) && (
-            <Flex direction="row" wrap="wrap" align="center" gap={'sm'}>
+            <BAIFlex direction="row" wrap="wrap" align="center" gap={'sm'}>
               <ModelCardChat modelName={model?.serviceName} />
-            </Flex>
+            </BAIFlex>
           )}
-          <Flex
+          <BAIFlex
             direction="column"
             wrap="wrap"
             align="center"
@@ -166,7 +166,12 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
             style={{ flex: 2, width: '100%' }}
           >
             {model_card?.error_msg ? (
-              <Flex direction="column" wrap="wrap" align="stretch" gap={'sm'}>
+              <BAIFlex
+                direction="column"
+                wrap="wrap"
+                align="stretch"
+                gap={'sm'}
+              >
                 <Alert
                   message={model_card?.error_msg}
                   type="error"
@@ -177,10 +182,10 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                   style={{ width: '100%' }}
                   image={Empty.PRESENTED_IMAGE_SIMPLE}
                 />
-              </Flex>
+              </BAIFlex>
             ) : (
               <>
-                <Flex
+                <BAIFlex
                   direction="row"
                   wrap="wrap"
                   align="center"
@@ -222,8 +227,8 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                       {model_card?.license}
                     </Tag>
                   )}
-                </Flex>
-                <Flex
+                </BAIFlex>
+                <BAIFlex
                   direction="column"
                   wrap="wrap"
                   align="center"
@@ -255,7 +260,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                         key: 'frameworks',
                         label: t('modelStore.Framework'),
                         children: (
-                          <Flex direction="row" gap={'xs'}>
+                          <BAIFlex direction="row" gap={'xs'}>
                             {_.map(
                               _.filter(
                                 _.castArray(model_card?.framework),
@@ -273,7 +278,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                                 );
                                 const uniqueKey = `${framework}-${index}`;
                                 return imageInfo?.icon ? (
-                                  <Flex gap={'xxs'} key={uniqueKey}>
+                                  <BAIFlex gap={'xxs'} key={uniqueKey}>
                                     <img
                                       style={{
                                         width: '1em',
@@ -283,7 +288,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                                       alt={framework || ''}
                                     />
                                     {framework}
-                                  </Flex>
+                                  </BAIFlex>
                                 ) : (
                                   <Typography.Text key={uniqueKey}>
                                     {framework}
@@ -291,7 +296,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                                 );
                               },
                             )}
-                          </Flex>
+                          </BAIFlex>
                         ),
                       },
                       {
@@ -308,7 +313,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                         key: 'min_resource',
                         label: t('modelStore.MinResource'),
                         children: (
-                          <Flex gap="xs">
+                          <BAIFlex gap="xs">
                             {model_card?.min_resource &&
                               _.map(
                                 JSON.parse(model_card?.min_resource),
@@ -322,7 +327,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                                   );
                                 },
                               )}
-                          </Flex>
+                          </BAIFlex>
                         ),
                       },
                     ]}
@@ -331,10 +336,10 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                     <Card
                       size="small"
                       title={
-                        <Flex direction="row" gap={'xs'}>
+                        <BAIFlex direction="row" gap={'xs'}>
                           <FileOutlined />
                           README.md
-                        </Flex>
+                        </BAIFlex>
                       }
                       style={{
                         width: '100%',
@@ -350,11 +355,11 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                       <Markdown>{model_card?.readme || ''}</Markdown>
                     </Card>
                   ) : null}
-                </Flex>
+                </BAIFlex>
               </>
             )}
-          </Flex>
-        </Flex>
+          </BAIFlex>
+        </BAIFlex>
       </Suspense>
       <Suspense>
         <ModelCloneModal

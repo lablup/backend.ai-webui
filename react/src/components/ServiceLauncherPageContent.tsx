@@ -22,7 +22,6 @@ import EnvVarFormList, {
   sanitizeSensitiveEnv,
   EnvVarFormListValue,
 } from './EnvVarFormList';
-import Flex from './Flex';
 import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
@@ -51,6 +50,7 @@ import {
   Tooltip,
   Tag,
 } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -759,13 +759,13 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
 
   return (
     <>
-      <Flex
+      <BAIFlex
         direction="column"
         align="stretch"
         style={{ justifyContent: 'revert' }}
       >
-        <Flex direction="row" gap="md" align="start">
-          <Flex
+        <BAIFlex direction="row" gap="md" align="start">
+          <BAIFlex
             direction="column"
             align="stretch"
             style={{ flex: 1, maxWidth: 700 }}
@@ -786,7 +786,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                 initialValues={mergedInitialValues}
                 requiredMark="optional"
               >
-                <Flex direction="column" gap={'md'} align="stretch">
+                <BAIFlex direction="column" gap={'md'} align="stretch">
                   <Card>
                     {(baiClient.supports('modify-endpoint') || !endpoint) && (
                       <>
@@ -864,7 +864,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         <Form.Item dependencies={['runtimeVariant']} noStyle>
                           {({ getFieldValue }) =>
                             getFieldValue('runtimeVariant') === 'custom' && (
-                              <Flex
+                              <BAIFlex
                                 direction="row"
                                 gap={'xxs'}
                                 align="stretch"
@@ -906,7 +906,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                     }
                                   />
                                 </Form.Item>
-                              </Flex>
+                              </BAIFlex>
                             )
                           }
                         </Form.Item>
@@ -1001,7 +1001,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                               }
                               required
                             >
-                              <Flex gap={'xs'}>
+                              <BAIFlex gap={'xs'}>
                                 <Tooltip title={t('session.ResourceGroup')}>
                                   <Tag>{endpoint?.resource_group}</Tag>
                                 </Tooltip>
@@ -1020,7 +1020,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                     );
                                   },
                                 )}
-                              </Flex>
+                              </BAIFlex>
                             </Form.Item>
                           )}
                         <div
@@ -1048,13 +1048,13 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                       </>
                     )}
                   </Card>
-                  <Flex
+                  <BAIFlex
                     direction="row"
                     justify="between"
                     align="end"
                     gap={'xs'}
                   >
-                    <Flex>
+                    <BAIFlex>
                       <Button
                         onClick={() => {
                           form
@@ -1073,19 +1073,19 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                       >
                         {t('modelService.Validate')}
                       </Button>
-                    </Flex>
-                    <Flex gap={'sm'}>
+                    </BAIFlex>
+                    <BAIFlex gap={'sm'}>
                       <Button type="primary" onClick={handleOk}>
                         {endpoint ? t('button.Update') : t('button.Create')}
                       </Button>
-                    </Flex>
-                  </Flex>
-                </Flex>
+                    </BAIFlex>
+                  </BAIFlex>
+                </BAIFlex>
               </Form>
             </Form.Provider>
-          </Flex>
-        </Flex>
-      </Flex>
+          </BAIFlex>
+        </BAIFlex>
+      </BAIFlex>
       <BAIModal
         zIndex={DEFAULT_BAI_MODAL_Z_INDEX + 1}
         width={1000}

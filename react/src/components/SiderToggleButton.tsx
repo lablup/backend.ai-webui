@@ -1,6 +1,6 @@
-import Flex from './Flex';
 import { HEADER_Z_INDEX_IN_MAIN_LAYOUT } from './MainLayout/MainLayout';
 import { Button, ConfigProvider, theme, Tooltip, Typography } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -22,7 +22,7 @@ const SiderToggleButton: React.FC<SiderToggleButtonProps> = ({
 
   const { token } = theme.useToken();
   return (
-    <Flex
+    <BAIFlex
       style={{
         position: 'absolute',
         right: 0,
@@ -82,7 +82,7 @@ const SiderToggleButton: React.FC<SiderToggleButtonProps> = ({
           />
         </Tooltip>
       </ConfigProvider>
-    </Flex>
+    </BAIFlex>
   );
 };
 

@@ -9,7 +9,6 @@ import { useUpdatableState } from '../hooks';
 import BAIConfirmModalWithInput from './BAIConfirmModalWithInput';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import BAIRadioGroup from './BAIRadioGroup';
-import Flex from './Flex';
 import ResourceGroupInfoModal from './ResourceGroupInfoModal';
 import ResourceGroupSettingModal from './ResourceGroupSettingModal';
 import {
@@ -31,7 +30,7 @@ import {
   theme,
 } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import { BAITable } from 'backend.ai-ui';
+import { BAITable, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { BanIcon, UndoIcon } from 'lucide-react';
 import { useState, useTransition } from 'react';
@@ -165,7 +164,7 @@ const ResourceGroupList: React.FC = () => {
       fixed: 'right',
       render: (_, record) => {
         return (
-          <Flex>
+          <BAIFlex>
             <Button
               type="text"
               icon={<InfoCircleOutlined />}
@@ -264,15 +263,15 @@ const ResourceGroupList: React.FC = () => {
                 }}
               />
             </Tooltip>
-          </Flex>
+          </BAIFlex>
         );
       },
     },
   ]);
 
   return (
-    <Flex direction="column" align="stretch" gap="sm">
-      <Flex justify="between">
+    <BAIFlex direction="column" align="stretch" gap="sm">
+      <BAIFlex justify="between">
         <BAIRadioGroup
           value={activeType}
           onChange={(value) => {
@@ -292,7 +291,7 @@ const ResourceGroupList: React.FC = () => {
             },
           ]}
         />
-        <Flex gap="sm">
+        <BAIFlex gap="sm">
           <BAIFetchKeyButton
             loading={isPendingRefetch}
             value={fetchKey}
@@ -309,8 +308,8 @@ const ResourceGroupList: React.FC = () => {
           >
             {t('button.Create')}
           </Button>
-        </Flex>
-      </Flex>
+        </BAIFlex>
+      </BAIFlex>
 
       <BAITable
         rowKey={'name'}
@@ -326,7 +325,7 @@ const ResourceGroupList: React.FC = () => {
         open={!!selectedResourceGroupName}
         title={t('resourceGroup.DeleteResourceGroup')}
         content={
-          <Flex
+          <BAIFlex
             direction="column"
             gap="md"
             align="stretch"
@@ -337,7 +336,7 @@ const ResourceGroupList: React.FC = () => {
               message={t('dialog.warning.DeleteForeverDesc')}
               style={{ width: '100%' }}
             />
-            <Flex>
+            <BAIFlex>
               <Typography.Text style={{ marginRight: token.marginXXS }}>
                 {t('resourceGroup.TypeResourceGroupNameToDelete')}
               </Typography.Text>
@@ -346,8 +345,8 @@ const ResourceGroupList: React.FC = () => {
                 {selectedResourceGroupName}
               </Typography.Text>
               )
-            </Flex>
-          </Flex>
+            </BAIFlex>
+          </BAIFlex>
         }
         confirmText={selectedResourceGroupName ?? ''}
         onOk={() => {
@@ -405,7 +404,7 @@ const ResourceGroupList: React.FC = () => {
           }
         }}
       />
-    </Flex>
+    </BAIFlex>
   );
 };
 

@@ -1,9 +1,9 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Button, Popconfirm, Spin, Typography, theme } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -49,7 +49,7 @@ const SSHKeypairGenerationModal: React.FC<SSHKeypairGenerationModalProps> = ({
     >
       <Spin spinning={isRefreshModalPending} indicator={<LoadingOutlined />}>
         <Typography.Text strong>{t('userSettings.PublicKey')}</Typography.Text>
-        <Flex direction="row" align="start" justify="between">
+        <BAIFlex direction="row" align="start" justify="between">
           <Typography.Paragraph>
             <pre
               style={{
@@ -66,9 +66,9 @@ const SSHKeypairGenerationModal: React.FC<SSHKeypairGenerationModalProps> = ({
             copyable={{ text: data?.ssh_public_key }}
             style={{ marginTop: token.margin }}
           />
-        </Flex>
+        </BAIFlex>
         <Typography.Text strong>{t('userSettings.PrivateKey')}</Typography.Text>
-        <Flex direction="row" align="start" justify="between">
+        <BAIFlex direction="row" align="start" justify="between">
           <Typography.Paragraph>
             <pre
               style={{
@@ -88,7 +88,7 @@ const SSHKeypairGenerationModal: React.FC<SSHKeypairGenerationModalProps> = ({
             copyable={{ text: data?.ssh_private_key }}
             style={{ marginTop: token.margin }}
           />
-        </Flex>
+        </BAIFlex>
       </Spin>
     </BAIModal>
   );

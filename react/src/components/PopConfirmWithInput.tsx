@@ -1,6 +1,6 @@
-import Flex from './Flex';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { Form, Input, Popconfirm, PopconfirmProps, Typography } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 
@@ -27,7 +27,7 @@ const PopConfirmWithInput: React.FC<Props> = ({
   return (
     <Popconfirm
       title={
-        <Flex
+        <BAIFlex
           direction="column"
           justify="start"
           align="start"
@@ -78,7 +78,7 @@ const PopConfirmWithInput: React.FC<Props> = ({
               />
             </Form.Item>
           </Form>
-        </Flex>
+        </BAIFlex>
       }
       icon={null}
       okButtonProps={{ disabled: confirmText !== typedText, danger: true }}

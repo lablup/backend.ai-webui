@@ -1,6 +1,6 @@
 import usePrimaryColors from '../hooks/usePrimaryColors';
-import Flex from './Flex';
 import { ProgressProps, theme, Typography } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { ReactNode } from 'react';
 
@@ -22,8 +22,8 @@ const BAIProgress: React.FC<BAIProgressProps> = ({
   const primaryColors = usePrimaryColors();
 
   return (
-    <Flex direction="column" align="stretch" gap={'xs'}>
-      <Flex align="stretch" justify={title ? 'between' : 'end'}>
+    <BAIFlex direction="column" align="stretch" gap={'xs'}>
+      <BAIFlex align="stretch" justify={title ? 'between' : 'end'}>
         <Typography.Text style={{ alignContent: 'end' }}>
           {title}
         </Typography.Text>
@@ -38,8 +38,8 @@ const BAIProgress: React.FC<BAIProgressProps> = ({
         >
           {baiProgressProps.percent ?? 0}%
         </Typography.Text>
-      </Flex>
-      <Flex
+      </BAIFlex>
+      <BAIFlex
         style={{
           padding: 1,
           backgroundColor: token.colorFill,
@@ -51,7 +51,7 @@ const BAIProgress: React.FC<BAIProgressProps> = ({
         direction="column"
         align="stretch"
       >
-        <Flex
+        <BAIFlex
           style={{
             height: _.isNumber(baiProgressProps.size)
               ? baiProgressProps.size
@@ -68,7 +68,7 @@ const BAIProgress: React.FC<BAIProgressProps> = ({
             zIndex: 0,
             overflow: 'hidden',
           }}
-        ></Flex>
+        ></BAIFlex>
         {/* Hide used text to avoid overlapping */}
         {used && baiProgressProps.percent && baiProgressProps.percent < 70 ? (
           <div
@@ -95,13 +95,13 @@ const BAIProgress: React.FC<BAIProgressProps> = ({
             </Typography.Text>
           </div>
         ) : null}
-      </Flex>
-      <Flex justify="end">
+      </BAIFlex>
+      <BAIFlex justify="end">
         {used &&
         total &&
         baiProgressProps.percent &&
         baiProgressProps.percent >= 70 ? (
-          <Flex gap={'xxs'}>
+          <BAIFlex gap={'xxs'}>
             <Typography.Text
               style={{
                 color: _.isString(baiProgressProps.strokeColor)
@@ -115,12 +115,12 @@ const BAIProgress: React.FC<BAIProgressProps> = ({
             </Typography.Text>
             <Typography.Text>/</Typography.Text>
             <Typography.Text>{total}</Typography.Text>
-          </Flex>
+          </BAIFlex>
         ) : total ? (
           <Typography.Text>{total}</Typography.Text>
         ) : null}
-      </Flex>
-    </Flex>
+      </BAIFlex>
+    </BAIFlex>
   );
 };
 

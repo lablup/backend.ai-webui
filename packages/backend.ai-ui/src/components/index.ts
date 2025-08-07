@@ -1,5 +1,5 @@
-export { default as Flex } from './Flex';
-export type { FlexProps } from './Flex';
+export { default as BAIFlex } from './BAIFlex';
+export type { BAIFlexProps } from './BAIFlex';
 export { default as BAICard } from './BAICard';
 export type { BAICardProps } from './BAICard';
 export { default as BAIResourceWithSteppedProgress } from './BAIResourceWithSteppedProgress';

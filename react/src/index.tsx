@@ -1,7 +1,6 @@
 import App from './App';
 import BAIIntervalView from './components/BAIIntervalView';
 import { jotaiStore, useWebComponentInfo } from './components/DefaultProviders';
-import Flex from './components/Flex';
 import ResourceGroupSelectForCurrentProject from './components/ResourceGroupSelectForCurrentProject';
 import SourceCodeViewer from './components/SourceCodeViewer';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
@@ -13,6 +12,7 @@ import { useCurrentResourceGroupValue } from './hooks/useCurrentProject';
 import { ThemeModeProvider } from './hooks/useThemeMode';
 import '@ant-design/v5-patch-for-react-19';
 import { ConfigProvider, Tag, theme } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { Provider as JotaiProvider } from 'jotai';
 import _ from 'lodash';
@@ -157,7 +157,7 @@ const ResourceGroupSelectInWebComponent = (props: ReactWebComponentProps) => {
     globalThis.resourceBroker.scaling_group,
   ]);
   return (
-    <Flex
+    <BAIFlex
       direction="column"
       gap="sm"
       align="stretch"
@@ -178,7 +178,7 @@ const ResourceGroupSelectInWebComponent = (props: ReactWebComponentProps) => {
         }}
         popupMatchSelectWidth={false}
       />
-    </Flex>
+    </BAIFlex>
   );
 };
 
@@ -251,7 +251,7 @@ const ReservationTimeCounter = (props: ReactWebComponentProps) => {
   if (dayjs(parsedValue.starts_at).isAfter(dayjs())) return null;
 
   return (
-    <Flex>
+    <BAIFlex>
       <Tag
         color={token.colorTextDisabled}
         style={{
@@ -279,6 +279,6 @@ const ReservationTimeCounter = (props: ReactWebComponentProps) => {
           delay={1000}
         />
       </Tag>
-    </Flex>
+    </BAIFlex>
   );
 };

@@ -1,6 +1,5 @@
 import { ModelCardModalFragment$key } from '../__generated__/ModelCardModalFragment.graphql';
 import { ModelStoreListPageQuery } from '../__generated__/ModelStoreListPageQuery.graphql';
-import Flex from '../components/Flex';
 import ModelCardModal from '../components/ModelCardModal';
 import TextHighlighter from '../components/TextHighlighter';
 import { useUpdatableState } from '../hooks';
@@ -19,6 +18,7 @@ import {
   Typography,
 } from 'antd';
 import { createStyles } from 'antd-style';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { FolderX } from 'lucide-react';
 import React, { useMemo, useState, useTransition } from 'react';
@@ -124,14 +124,14 @@ const ModelStoreListPage: React.FC = () => {
     return result;
   }, [model_cards?.edges]);
   return (
-    <Flex direction="column" align="stretch" justify="center" gap="lg">
-      <Flex
+    <BAIFlex direction="column" align="stretch" justify="center" gap="lg">
+      <BAIFlex
         direction="column"
         align="stretch"
         className="filterWrap"
         gap={'xs'}
       >
-        <Flex direction="row" gap={'sm'}>
+        <BAIFlex direction="row" gap={'sm'}>
           <Input
             size="large"
             prefix={<SearchOutlined />}
@@ -152,8 +152,8 @@ const ModelStoreListPage: React.FC = () => {
             }}
             loading={isPendingRefetching}
           />
-        </Flex>
-        <Flex direction="row" gap={'md'} wrap="wrap">
+        </BAIFlex>
+        <BAIFlex direction="row" gap={'md'} wrap="wrap">
           <Select
             style={{ minWidth: 150 }}
             placeholder={t('modelStore.Category')}
@@ -199,8 +199,8 @@ const ModelStoreListPage: React.FC = () => {
             }}
             allowClear
           />
-        </Flex>
-      </Flex>
+        </BAIFlex>
+      </BAIFlex>
       <List
         className={styles.cardList}
         grid={{ gutter: 16, column: 2 }}
@@ -279,8 +279,8 @@ const ModelStoreListPage: React.FC = () => {
                 height: '100%',
               }}
             >
-              <Flex direction="column" align="stretch" gap="xs">
-                <Flex direction="row" align="start" gap="xs">
+              <BAIFlex direction="column" align="stretch" gap="xs">
+                <BAIFlex direction="row" align="start" gap="xs">
                   <Image
                     preview={false}
                     width={150}
@@ -305,8 +305,8 @@ const ModelStoreListPage: React.FC = () => {
                       {item?.description}
                     </TextHighlighter>
                   </Typography.Paragraph>
-                </Flex>
-                <Flex direction="row" wrap="wrap" gap={'xs'}>
+                </BAIFlex>
+                <BAIFlex direction="row" wrap="wrap" gap={'xs'}>
                   {item?.category && (
                     <Tag bordered={false}>
                       <TextHighlighter keyword={search}>
@@ -344,8 +344,8 @@ const ModelStoreListPage: React.FC = () => {
                       showIcon
                     />
                   )}
-                </Flex>
-              </Flex>
+                </BAIFlex>
+              </BAIFlex>
             </Card>
           </List.Item>
         )}
@@ -357,7 +357,7 @@ const ModelStoreListPage: React.FC = () => {
           setCurrentModelInfo(null);
         }}
       />
-    </Flex>
+    </BAIFlex>
   );
 };
 

@@ -1,5 +1,5 @@
 import BAICard from './BAICard';
-import Flex from './Flex';
+import BAIFlex from './BAIFlex';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Button, Space, Typography } from 'antd';
 
@@ -68,7 +68,7 @@ export const WithoutTitle: Story = {
 export const StatusVariants: Story = {
   name: 'StatusTypes',
   render: () => (
-    <Flex direction="column" gap="md">
+    <BAIFlex direction="column" gap="md">
       <BAICard title="Default Status" status="default">
         {sampleContent}
       </BAICard>
@@ -81,7 +81,7 @@ export const StatusVariants: Story = {
       <BAICard title="Error Status" status="error">
         {sampleContent}
       </BAICard>
-    </Flex>
+    </BAIFlex>
   ),
 };
 
@@ -107,7 +107,7 @@ export const WithExtraButton: Story = {
 export const WithExtraButtonAndStatus: Story = {
   name: 'ExtraButtonWithStatus',
   render: () => (
-    <Flex direction="column" gap="md">
+    <BAIFlex direction="column" gap="md">
       <BAICard
         title="Error with Extra Button"
         status="error"
@@ -124,7 +124,7 @@ export const WithExtraButtonAndStatus: Story = {
       >
         {sampleContent}
       </BAICard>
-    </Flex>
+    </BAIFlex>
   ),
 };
 

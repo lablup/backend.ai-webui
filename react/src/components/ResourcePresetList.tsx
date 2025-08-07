@@ -10,7 +10,6 @@ import {
   localeCompare,
 } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
-import Flex from './Flex';
 import NumberWithUnit from './NumberWithUnit';
 import ResourceNumber from './ResourceNumber';
 import ResourcePresetSettingModal from './ResourcePresetSettingModal';
@@ -28,7 +27,7 @@ import {
   Typography,
   TableColumnsType,
 } from 'antd';
-import { BAITable } from 'backend.ai-ui';
+import { BAITable, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -96,13 +95,13 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
       title: t('resourcePreset.Resources'),
       dataIndex: 'resource_slots',
       render: (text) => (
-        <Flex gap="xxs">
+        <BAIFlex gap="xxs">
           {!_.isEmpty(text)
             ? _.map(JSON.parse(text), (value, key) => (
                 <ResourceNumber key={key} type={key} value={value} />
               ))
             : '-'}
-        </Flex>
+        </BAIFlex>
       ),
     },
     {
@@ -129,7 +128,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
       key: 'control',
       fixed: 'right',
       render: (text, record) => (
-        <Flex align="stretch">
+        <BAIFlex align="stretch">
           <Tooltip title={t('button.Edit')}>
             <Button
               type="text"
@@ -211,15 +210,20 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
               }}
             />
           </Tooltip>
-        </Flex>
+        </BAIFlex>
       ),
     },
   ]);
 
   return (
-    <Flex direction="column" align="stretch" gap="sm">
-      <Flex direction="row" gap={'xs'} justify="end" wrap="wrap">
-        <Flex direction="row" gap={'xs'} wrap="wrap" style={{ flexShrink: 1 }}>
+    <BAIFlex direction="column" align="stretch" gap="sm">
+      <BAIFlex direction="row" gap={'xs'} justify="end" wrap="wrap">
+        <BAIFlex
+          direction="row"
+          gap={'xs'}
+          wrap="wrap"
+          style={{ flexShrink: 1 }}
+        >
           <Tooltip title={t('button.Refresh')}>
             <Button
               icon={<ReloadOutlined />}
@@ -240,8 +244,8 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
           >
             {t('resourcePreset.CreatePreset')}
           </Button>
-        </Flex>
-      </Flex>
+        </BAIFlex>
+      </BAIFlex>
       <BAITable
         rowKey={'name'}
         dataSource={filterOutNullAndUndefined(resource_presets)}
@@ -267,7 +271,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
           }
         />
       </Suspense>
-    </Flex>
+    </BAIFlex>
   );
 };
 

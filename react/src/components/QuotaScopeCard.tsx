@@ -1,7 +1,6 @@
 import { QuotaScopeCardFragment$key } from '../__generated__/QuotaScopeCardFragment.graphql';
 import { QuotaScopeCardUnsetMutation } from '../__generated__/QuotaScopeCardUnsetMutation.graphql';
 import { bytesToGB } from '../helper/index';
-import Flex from './Flex';
 import { EditFilled, PlusOutlined, CloseOutlined } from '@ant-design/icons';
 import {
   CardProps,
@@ -12,6 +11,7 @@ import {
   Empty,
   theme,
 } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -122,7 +122,7 @@ const QuotaScopeCard: React.FC<Props> = ({
           title: t('general.Control'),
           key: 'control',
           render: () => (
-            <Flex gap={token.marginSM}>
+            <BAIFlex gap={token.marginSM}>
               <Button
                 icon={<EditFilled />}
                 onClick={() => onClickEdit && onClickEdit()}
@@ -164,7 +164,7 @@ const QuotaScopeCard: React.FC<Props> = ({
                   {t('button.Unset')}
                 </Button>
               </Popconfirm>
-            </Flex>
+            </BAIFlex>
           ),
         },
       ]}

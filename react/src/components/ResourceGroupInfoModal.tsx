@@ -1,9 +1,9 @@
 import { ResourceGroupInfoModalFragment$key } from '../__generated__/ResourceGroupInfoModalFragment.graphql';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
 import { ScalingGroupOpts } from './ResourceGroupList';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { Descriptions, Tag, Typography, theme } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -99,7 +99,7 @@ const ResourceGroupInfoModal: React.FC<ResourceGroupInfoModalProps> = ({
         labelStyle={{ width: '50%' }}
       >
         <Descriptions.Item label={t('resourceGroup.AllowedSessionTypes')}>
-          <Flex
+          <BAIFlex
             wrap="wrap"
             direction="row"
             gap={'xs'}
@@ -119,11 +119,11 @@ const ResourceGroupInfoModal: React.FC<ResourceGroupInfoModalProps> = ({
                 </Tag>
               );
             })}
-          </Flex>
+          </BAIFlex>
         </Descriptions.Item>
         <Descriptions.Item label={t('resourceGroup.PendingTimeout')}>
           {!_.isNil(schedulerOpts?.pending_timeout) ? (
-            <Flex gap={'xxs'} align="end">
+            <BAIFlex gap={'xxs'} align="end">
               <Typography.Text>
                 {`${schedulerOpts.pending_timeout}
                 ${t('resourceGroup.TimeoutSeconds')}`}
@@ -138,7 +138,7 @@ const ResourceGroupInfoModal: React.FC<ResourceGroupInfoModalProps> = ({
                   {`(${t('general.Disabled')})`}
                 </Typography.Text>
               ) : null}
-            </Flex>
+            </BAIFlex>
           ) : (
             '-'
           )}
@@ -162,11 +162,11 @@ const ResourceGroupInfoModal: React.FC<ResourceGroupInfoModalProps> = ({
             return (
               <Descriptions.Item key={key} label={_.startCase(key)}>
                 {_.isArray(value) ? (
-                  <Flex direction="column">
+                  <BAIFlex direction="column">
                     {_.map(value, (item) => {
                       return <Tag key={item}>{item}</Tag>;
                     })}
-                  </Flex>
+                  </BAIFlex>
                 ) : (
                   value
                 )}

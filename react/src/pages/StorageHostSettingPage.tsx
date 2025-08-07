@@ -1,9 +1,9 @@
 import { StorageHostSettingPageQuery } from '../__generated__/StorageHostSettingPageQuery.graphql';
-import Flex from '../components/Flex';
 import StorageHostResourcePanel from '../components/StorageHostResourcePanel';
 import StorageHostSettingsPanel from '../components/StorageHostSettingsPanel';
 import { useWebUINavigate } from '../hooks';
 import { Breadcrumb, Card, Empty, Typography } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -38,7 +38,7 @@ const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = () => {
     storage_volume?.capabilities?.includes('quota') ?? false;
 
   return (
-    <Flex direction="column" align="stretch" gap={'sm'}>
+    <BAIFlex direction="column" align="stretch" gap={'sm'}>
       <Breadcrumb
         items={[
           {
@@ -72,7 +72,7 @@ const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = () => {
           />
         </Card>
       )}
-    </Flex>
+    </BAIFlex>
   );
 };
 

@@ -2,8 +2,8 @@ import { AliasedImageDoubleTagsFragment$key } from '../__generated__/AliasedImag
 import { preserveDotStartCase } from '../helper';
 import { useBackendAIImageMetaData } from '../hooks';
 import DoubleTag, { DoubleTagObjectValue } from './DoubleTag';
-import Flex from './Flex';
 import { Tag } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
@@ -36,7 +36,7 @@ const AliasedImageDoubleTags: React.FC<AliasedImageDoubleTagsProps> = ({
   const [, { tagAlias }] = useBackendAIImageMetaData();
 
   return (
-    <Flex direction="row" align="start" gap={'xxs'}>
+    <BAIFlex direction="row" align="start" gap={'xxs'}>
       {_.map(images?.tags, (tag: { key: string; value: string }) => {
         const isCustomized = _.includes(tag.key, 'customized_');
         // If the tag is customized, we need to find the corresponding label instead of using the tag value (hash).
@@ -74,7 +74,7 @@ const AliasedImageDoubleTags: React.FC<AliasedImageDoubleTagsProps> = ({
           </Tag>
         );
       })}
-    </Flex>
+    </BAIFlex>
   );
 };
 

@@ -11,7 +11,6 @@ import {
   SessionLauncherStepKey,
 } from '../pages/SessionLauncherPage';
 import DoubleTag from './DoubleTag';
-import Flex from './Flex';
 import ImageMetaIcon from './ImageMetaIcon';
 import { ImageTags } from './ImageTags';
 import { PortTag } from './PortSelectFormItem';
@@ -30,7 +29,7 @@ import {
   Form,
   theme,
 } from 'antd';
-import { BAICard } from 'backend.ai-ui';
+import { BAICard, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -180,7 +179,7 @@ const SessionLauncherPreview: React.FC<{
                   />
                 </Col>
                 <Col>
-                  <Flex direction="row" wrap="wrap">
+                  <BAIFlex direction="row" wrap="wrap">
                     {form.getFieldValue('environments')?.manual ? (
                       <Typography.Text
                         code
@@ -267,7 +266,7 @@ const SessionLauncherPreview: React.FC<{
                         />
                       </>
                     )}
-                  </Flex>
+                  </BAIFlex>
                 </Col>
               </Row>
             ) : (
@@ -282,7 +281,7 @@ const SessionLauncherPreview: React.FC<{
                 </Col>
                 <Col>
                   {/* {form.getFieldValue('environments').image} */}
-                  <Flex direction="row" wrap="wrap">
+                  <BAIFlex direction="row" wrap="wrap">
                     {form.getFieldValue('environments')?.manual ? (
                       <Typography.Text
                         code
@@ -341,7 +340,7 @@ const SessionLauncherPreview: React.FC<{
                         />
                       </>
                     )}
-                  </Flex>
+                  </BAIFlex>
                 </Col>
               </Row>
             )}
@@ -407,7 +406,7 @@ const SessionLauncherPreview: React.FC<{
           onClickEditStep('environment');
         }}
       >
-        <Flex direction="column" align="stretch">
+        <BAIFlex direction="column" align="stretch">
           {_.some(
             form.getFieldValue('resource'),
             (v, key: keyof SessionLauncherFormValue['resource']) => {
@@ -436,7 +435,7 @@ const SessionLauncherPreview: React.FC<{
               label={t('session.launcher.ResourceAllocationPerContainer')}
               span={2}
             >
-              <Flex
+              <BAIFlex
                 direction="row"
                 align="start"
                 gap={'sm'}
@@ -483,7 +482,7 @@ const SessionLauncherPreview: React.FC<{
                               })
                               .compact()
                               .value()} */}
-              </Flex>
+              </BAIFlex>
             </Descriptions.Item>
             {baiClient.supports('agent-select') &&
               !baiClient?._config?.hideAgents && (
@@ -508,7 +507,7 @@ const SessionLauncherPreview: React.FC<{
             type="inner"
             title={t('session.launcher.TotalAllocation')}
           >
-            <Flex direction="row" gap="xxs">
+            <BAIFlex direction="row" gap="xxs">
               <ResourceNumbersOfSession
                 resource={form.getFieldValue('resource')}
                 containerCount={
@@ -517,9 +516,9 @@ const SessionLauncherPreview: React.FC<{
                     : form.getFieldValue('cluster_size')
                 }
               />
-            </Flex>
+            </BAIFlex>
           </Card>
-        </Flex>
+        </BAIFlex>
       </BAICard>
       <BAICard
         title={t('webui.menu.Data&Storage')}
@@ -535,7 +534,7 @@ const SessionLauncherPreview: React.FC<{
       >
         {/* {console.log(_.sum([form.getFieldValue('mounts')?.length, form.getFieldValue('autoMountedFolderNames')]))} */}
         {/* {_.sum([form.getFieldValue('mounts')?.length, form.getFieldValue('autoMountedFolderNames').length]) > 0 ? ( */}
-        <Flex direction="column" align="stretch" gap={'xs'}>
+        <BAIFlex direction="column" align="stretch" gap={'xs'}>
           {form.getFieldValue('mount_ids')?.length > 0 ? (
             <Table
               rowKey="name"
@@ -589,7 +588,7 @@ const SessionLauncherPreview: React.FC<{
               </Descriptions.Item>
             </Descriptions>
           ) : null}
-        </Flex>
+        </BAIFlex>
       </BAICard>
       <BAICard
         title="Network"
@@ -603,7 +602,7 @@ const SessionLauncherPreview: React.FC<{
       >
         <Descriptions size="small">
           <Descriptions.Item label={t('session.launcher.PreOpenPortTitle')}>
-            <Flex direction="row" gap="xs" style={{ flex: 1 }} wrap="wrap">
+            <BAIFlex direction="row" gap="xs" style={{ flex: 1 }} wrap="wrap">
               {/* {form.getFieldValue('environments').image} */}
               {_.sortBy(form.getFieldValue('ports'), (v) => parseInt(v)).map(
                 (v, idx) => (
@@ -619,7 +618,7 @@ const SessionLauncherPreview: React.FC<{
                   {t('general.None')}
                 </Typography.Text>
               ) : null}
-            </Flex>
+            </BAIFlex>
           </Descriptions.Item>
         </Descriptions>
       </BAICard>

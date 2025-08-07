@@ -1,8 +1,8 @@
-import Flex from '../Flex';
 import PureChatTokenCounter from './ChatTokenCounter';
 import VirtualChatMessageList from './VirtualChatMessageList';
 import { Message } from '@ai-sdk/react';
 import { theme } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import React, { memo } from 'react';
 
 const ChatMessageList = memo(VirtualChatMessageList);
@@ -24,9 +24,9 @@ const ChatMessages: React.FC<ChatMessageProps> = ({
 }) => {
   const { token } = theme.useToken();
   return (
-    <Flex direction="column" align="stretch" style={{ flex: 1 }}>
+    <BAIFlex direction="column" align="stretch" style={{ flex: 1 }}>
       <ChatMessageList messages={messages} isStreaming={isStreaming} />
-      <Flex
+      <BAIFlex
         direction="column"
         align="end"
         style={{
@@ -41,8 +41,8 @@ const ChatMessages: React.FC<ChatMessageProps> = ({
           input={input}
           startTime={startTime}
         />
-      </Flex>
-    </Flex>
+      </BAIFlex>
+    </BAIFlex>
   );
 };
 

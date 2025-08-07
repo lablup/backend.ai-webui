@@ -2,10 +2,10 @@ import { AgentSelectQuery } from '../__generated__/AgentSelectQuery.graphql';
 import { filterOutEmpty } from '../helper';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { mergeFilterValues } from './BAIPropertyFilter';
-import Flex from './Flex';
 import ResourceNumber from './ResourceNumber';
 import { useControllableValue } from 'ahooks';
 import { Select, SelectProps } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -96,9 +96,9 @@ const AgentSelect: React.FC<Props> = ({
       .value();
     return {
       label: (
-        <Flex direction="row" justify="between">
+        <BAIFlex direction="row" justify="between">
           {agent?.id}
-          <Flex direction="row" gap={'xxs'}>
+          <BAIFlex direction="row" gap={'xxs'}>
             {_.map(remainingSlotsInfo, (slot, key) => {
               return (
                 <ResourceNumber
@@ -110,8 +110,8 @@ const AgentSelect: React.FC<Props> = ({
                 />
               );
             })}
-          </Flex>
-        </Flex>
+          </BAIFlex>
+        </BAIFlex>
       ),
       value: agent?.id,
     };

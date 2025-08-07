@@ -5,10 +5,10 @@ import {
   useVFolderInvitationsValue,
 } from '../hooks/useVFolderInvitations';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
 import VFolderPermissionCell from './VFolderPermissionCell';
 import { FolderOutlined } from '@ant-design/icons';
 import { List, Button, Typography, theme, Descriptions, App } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -90,10 +90,10 @@ const FolderInvitationResponseModal: React.FC<
       >
         <List.Item.Meta
           title={
-            <Flex gap={'xxs'}>
+            <BAIFlex gap={'xxs'}>
               <FolderOutlined />
               <Typography.Text strong>{item.vfolder_name}</Typography.Text>
-            </Flex>
+            </BAIFlex>
           }
           description={
             <Descriptions

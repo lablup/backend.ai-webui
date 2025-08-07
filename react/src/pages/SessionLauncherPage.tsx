@@ -4,7 +4,6 @@ import EnvVarFormList, {
   sanitizeSensitiveEnv,
   EnvVarFormListValue,
 } from '../components/EnvVarFormList';
-import Flex from '../components/Flex';
 import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from '../components/ImageEnvironmentSelectFormItems';
@@ -82,6 +81,7 @@ import {
   Typography,
   theme,
 } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
 import _ from 'lodash';
@@ -747,7 +747,7 @@ const SessionLauncherPage = () => {
   }, [isQueryReset, form]);
 
   return (
-    <Flex
+    <BAIFlex
       direction="column"
       align="stretch"
       style={{
@@ -758,17 +758,17 @@ const SessionLauncherPage = () => {
       gap={'md'}
     >
       <style>{customCSS}</style>
-      <Flex direction="row" gap="md" align="start">
-        <Flex
+      <BAIFlex direction="row" gap="md" align="start">
+        <BAIFlex
           direction="column"
           align="stretch"
           style={{ flex: 1, maxWidth: 700 }}
         >
-          <Flex direction="row" justify="between">
+          <BAIFlex direction="row" justify="between">
             <Typography.Title level={4} style={{ marginTop: 0 }}>
               {t('session.launcher.StartNewSession')}
             </Typography.Title>
-            <Flex direction="row" gap={'sm'}>
+            <BAIFlex direction="row" gap={'sm'}>
               <Button
                 type="link"
                 // icon={<BlockOutlined />}
@@ -778,8 +778,8 @@ const SessionLauncherPage = () => {
               >
                 {t('session.launcher.RecentHistory')}
               </Button>
-            </Flex>
-          </Flex>
+            </BAIFlex>
+          </BAIFlex>
           {/* <Suspense fallback={<FlexActivityIndicator />}> */}
           <Form.Provider
             onFormChange={(name, info) => {
@@ -796,7 +796,7 @@ const SessionLauncherPage = () => {
               initialValues={mergedInitialValues}
             >
               <SessionLauncherFormIncompatibleValueChecker form={form} />
-              <Flex
+              <BAIFlex
                 direction="column"
                 align="stretch"
                 gap="md"
@@ -948,7 +948,7 @@ const SessionLauncherPage = () => {
                                   label={t('session.launcher.SessionStartTime')}
                                   extra={time}
                                 >
-                                  <Flex direction="row" gap={'xs'}>
+                                  <BAIFlex direction="row" gap={'xs'}>
                                     <Form.Item
                                       noStyle
                                       name={['batch', 'enabled']}
@@ -1052,7 +1052,7 @@ const SessionLauncherPage = () => {
                                         );
                                       }}
                                     </Form.Item>
-                                  </Flex>
+                                  </BAIFlex>
                                 </Form.Item>
                               );
                             }}
@@ -1104,7 +1104,7 @@ const SessionLauncherPage = () => {
                               // extra={durationText}
                               help={durationText}
                             >
-                              <Flex direction="row" gap={'xs'}>
+                              <BAIFlex direction="row" gap={'xs'}>
                                 <Form.Item
                                   noStyle
                                   name={['batch', 'timeoutEnabled']}
@@ -1199,7 +1199,7 @@ const SessionLauncherPage = () => {
                                     );
                                   }}
                                 </Form.Item>
-                              </Flex>
+                              </BAIFlex>
                             </Form.Item>
                           );
                         }}
@@ -1288,7 +1288,7 @@ const SessionLauncherPage = () => {
                   }}
                 >
                   <Form.Item noStyle>
-                    <Flex direction="row" gap={'sm'}>
+                    <BAIFlex direction="row" gap={'sm'}>
                       <Typography.Text>
                         {t('session.launcher.SwitchOpenMPoptimization')}
                       </Typography.Text>
@@ -1323,7 +1323,7 @@ const SessionLauncherPage = () => {
                           }}
                         />
                       </Form.Item>
-                    </Flex>
+                    </BAIFlex>
                   </Form.Item>
                   <Form.Item
                     noStyle
@@ -1460,8 +1460,8 @@ const SessionLauncherPage = () => {
                   />
                 )}
 
-                <Flex direction="row" justify="between">
-                  <Flex gap={'sm'}>
+                <BAIFlex direction="row" justify="between">
+                  <BAIFlex gap={'sm'}>
                     <Popconfirm
                       title={t('button.Reset')}
                       description={t('session.launcher.ResetFormConfirm')}
@@ -1500,8 +1500,8 @@ const SessionLauncherPage = () => {
                         Save as a template
                       </Button>
                     )} */}
-                  </Flex>
-                  <Flex
+                  </BAIFlex>
+                  <BAIFlex
                     data-test-id="neo-session-launcher-tour-step-navigation"
                     direction="row"
                     gap="sm"
@@ -1556,15 +1556,15 @@ const SessionLauncherPage = () => {
                         <DoubleRightOutlined />
                       </Button>
                     )}
-                  </Flex>
-                </Flex>
-              </Flex>
+                  </BAIFlex>
+                </BAIFlex>
+              </BAIFlex>
             </Form>
           </Form.Provider>
           {/* </Suspense> */}
-        </Flex>
+        </BAIFlex>
         {screens.lg && (
-          <Flex
+          <BAIFlex
             data-test-id="neo-session-launcher-tour-step"
             style={{ position: 'sticky', top: 80 }}
           >
@@ -1580,9 +1580,9 @@ const SessionLauncherPage = () => {
                 status: idx === currentStep ? 'process' : 'wait',
               }))}
             />
-          </Flex>
+          </BAIFlex>
         )}
-      </Flex>
+      </BAIFlex>
       <SessionTemplateModal
         onRequestClose={(formValue) => {
           if (formValue) {
@@ -1640,7 +1640,7 @@ const SessionLauncherPage = () => {
           />
         </ErrorBoundary>
       ) : undefined}
-    </Flex>
+    </BAIFlex>
   );
 };
 

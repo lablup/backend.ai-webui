@@ -1,5 +1,5 @@
-import Flex from './Flex';
 import { ProgressProps, Typography, theme } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 
@@ -33,7 +33,7 @@ const BAIProgressWithLabel: React.FC<BAIProgressWithLabelProps> = ({
         ? token.fontSize
         : token.fontSizeLG;
   return (
-    <Flex
+    <BAIFlex
       style={{
         padding: 1,
         border: `1px solid ${token.colorBorder}`,
@@ -47,7 +47,7 @@ const BAIProgressWithLabel: React.FC<BAIProgressWithLabelProps> = ({
       direction="column"
       align="stretch"
     >
-      <Flex
+      <BAIFlex
         style={{
           height: '100%',
           width: `${!percent || _.isNaN(percent) ? 0 : _.min([percent, 100])}%`,
@@ -59,8 +59,8 @@ const BAIProgressWithLabel: React.FC<BAIProgressWithLabelProps> = ({
           zIndex: 0,
           overflow: 'hidden',
         }}
-      ></Flex>
-      <Flex direction="row" justify="between">
+      ></BAIFlex>
+      <BAIFlex direction="row" justify="between">
         <Typography.Text style={{ fontSize, ...labelStyle }}>
           {title}
         </Typography.Text>
@@ -76,8 +76,8 @@ const BAIProgressWithLabel: React.FC<BAIProgressWithLabelProps> = ({
         >
           {valueLabel}
         </Typography.Text>
-      </Flex>
-    </Flex>
+      </BAIFlex>
+    </BAIFlex>
   );
 };
 

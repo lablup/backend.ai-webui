@@ -4,7 +4,7 @@ import React, { CSSProperties, PropsWithChildren } from 'react';
 type GapSize = number | 'xxs' | 'xs' | 'sm' | 'ms' | 'md' | 'lg' | 'xl' | 'xxl';
 type GapProp = GapSize | [GapSize, GapSize];
 
-export interface FlexProps
+export interface BAIFlexProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'dir'>,
     PropsWithChildren {
   direction?: 'row' | 'row-reverse' | 'column' | 'column-reverse';
@@ -14,7 +14,7 @@ export interface FlexProps
   gap?: GapProp;
 }
 
-const Flex = React.forwardRef<HTMLDivElement, FlexProps>(
+const BAIFlex = React.forwardRef<HTMLDivElement, BAIFlexProps>(
   (
     {
       direction = 'row',
@@ -102,5 +102,5 @@ const Flex = React.forwardRef<HTMLDivElement, FlexProps>(
   },
 );
 
-Flex.displayName = 'Flex';
-export default Flex;
+BAIFlex.displayName = 'Flex';
+export default BAIFlex;

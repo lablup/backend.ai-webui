@@ -13,7 +13,6 @@ import BAIPropertyFilter, {
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import TerminateSessionModal from '../components/ComputeSessionNodeItems/TerminateSessionModal';
-import Flex from '../components/Flex';
 import SessionNodes from '../components/SessionNodes';
 import { filterOutNullAndUndefined, handleRowSelectionChange } from '../helper';
 import { useUpdatableState, useWebUINavigate } from '../hooks';
@@ -33,7 +32,7 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import { BAICard, BAISessionsIcon } from 'backend.ai-ui';
+import { BAIFlex, BAICard, BAISessionsIcon } from 'backend.ai-ui';
 import _ from 'lodash';
 import { PowerOffIcon } from 'lucide-react';
 import {
@@ -273,7 +272,7 @@ const ComputeSessionListPage = () => {
   }, [resolvedSessionNames.length, updateFetchKey]);
 
   return (
-    <Flex direction="column" align="stretch" gap={'md'}>
+    <BAIFlex direction="column" align="stretch" gap={'md'}>
       <Row
         gutter={[16, 16]}
         align={'stretch'}
@@ -335,7 +334,7 @@ const ComputeSessionListPage = () => {
         variant="borderless"
         title={t('webui.menu.Sessions')}
         extra={
-          <Flex gap={'xs'}>
+          <BAIFlex gap={'xs'}>
             <BAIFetchKeyButton
               loading={
                 deferredQueryVariables !== queryVariables ||
@@ -351,7 +350,7 @@ const ComputeSessionListPage = () => {
             <BAILink to={'/session/start'}>
               <Button type="primary">{t('start.button.StartSession')}</Button>
             </BAILink>
-          </Flex>
+          </BAIFlex>
         }
         styles={{
           header: {
@@ -390,7 +389,7 @@ const ComputeSessionListPage = () => {
             (label, key) => ({
               key,
               label: (
-                <Flex justify="center" gap={10}>
+                <BAIFlex justify="center" gap={10}>
                   {label}
                   {
                     // display badge only if count is greater than 0
@@ -414,14 +413,14 @@ const ComputeSessionListPage = () => {
                       />
                     )
                   }
-                </Flex>
+                </BAIFlex>
               ),
             }),
           )}
         />
-        <Flex direction="column" align="stretch" gap={'sm'}>
-          <Flex justify="between" wrap="wrap" gap={'sm'}>
-            <Flex
+        <BAIFlex direction="column" align="stretch" gap={'sm'}>
+          <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
+            <BAIFlex
               gap={'sm'}
               align="start"
               style={{
@@ -463,8 +462,8 @@ const ComputeSessionListPage = () => {
                   setSelectedSessionList([]);
                 }}
               />
-            </Flex>
-            <Flex gap={'sm'}>
+            </BAIFlex>
+            <BAIFlex gap={'sm'}>
               {selectedSessionList.length > 0 && (
                 <>
                   {t('general.NSelected', {
@@ -483,8 +482,8 @@ const ComputeSessionListPage = () => {
                   </Tooltip>
                 </>
               )}
-            </Flex>
-          </Flex>
+            </BAIFlex>
+          </BAIFlex>
           <SessionNodes
             order={queryParams.order}
             onClickSessionName={(session) => {
@@ -546,7 +545,7 @@ const ComputeSessionListPage = () => {
               setQuery({ order }, 'replaceIn');
             }}
           />
-        </Flex>
+        </BAIFlex>
       </BAICard>
       <TerminateSessionModal
         open={isOpenTerminateModal}
@@ -558,7 +557,7 @@ const ComputeSessionListPage = () => {
           }
         }}
       />
-    </Flex>
+    </BAIFlex>
   );
 };
 

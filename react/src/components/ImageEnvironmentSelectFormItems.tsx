@@ -13,7 +13,6 @@ import {
 } from '../hooks';
 import { useThemeMode } from '../hooks/useThemeMode';
 import DoubleTag from './DoubleTag';
-import Flex from './Flex';
 // @ts-ignore
 import cssRaw from './ImageEnvironmentSelectFormItems.css?raw';
 import ImageMetaIcon from './ImageMetaIcon';
@@ -29,6 +28,7 @@ import {
   theme,
   Typography,
 } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -428,7 +428,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
               }
               filterValue={getImageFullName(fullNameMatchedImage)}
             >
-              <Flex
+              <BAIFlex
                 direction="row"
                 align="center"
                 gap="xs"
@@ -442,7 +442,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                   }}
                 />
                 {getImageFullName(fullNameMatchedImage)}
-              </Flex>
+              </BAIFlex>
             </Select.Option>
           ) : (
             _.map(imageGroups, (group) => {
@@ -506,8 +506,8 @@ const ImageEnvironmentSelectFormItems: React.FC<
                           extraFilterValues.join('\t')
                         }
                       >
-                        <Flex direction="row" justify="between">
-                          <Flex direction="row" align="center" gap="xs">
+                        <BAIFlex direction="row" justify="between">
+                          <BAIFlex direction="row" align="center" gap="xs">
                             <ImageMetaIcon
                               image={getImageFullName(firstImage) || ''}
                               style={{
@@ -518,8 +518,8 @@ const ImageEnvironmentSelectFormItems: React.FC<
                             <TextHighlighter keyword={environmentSearch}>
                               {environmentGroup.displayName}
                             </TextHighlighter>
-                          </Flex>
-                          <Flex
+                          </BAIFlex>
+                          <BAIFlex
                             direction="row"
                             // set specific class name to handle flex wrap using css
                             className={
@@ -533,8 +533,8 @@ const ImageEnvironmentSelectFormItems: React.FC<
                           >
                             {environmentPrefixTag}
                             {tagsFromMetaImageInfoLabel}
-                          </Flex>
-                        </Flex>
+                          </BAIFlex>
+                        </BAIFlex>
                       </Select.Option>
                     );
                   })}
@@ -596,7 +596,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                 // optionLabelProp="label"
                 dropdownRender={(menu) => (
                   <>
-                    <Flex
+                    <BAIFlex
                       style={{
                         fontWeight: token.fontWeightStrong,
                         paddingLeft: token.paddingSM,
@@ -607,7 +607,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                       {t('session.launcher.Architecture')}
                       <Divider type="vertical" />
                       {t('session.launcher.Tags')}
-                    </Flex>
+                    </BAIFlex>
                     <Divider style={{ margin: '8px 0' }} />
                     {menu}
                   </>
@@ -710,7 +710,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                         ].join('\t')}
                       >
                         {supportExtendedImageInfo ? (
-                          <Flex direction="row">
+                          <BAIFlex direction="row">
                             <TextHighlighter keyword={versionSearch}>
                               {image?.version}
                             </TextHighlighter>
@@ -719,7 +719,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                               {image?.architecture}
                             </TextHighlighter>
                             <Divider type="vertical" />
-                            <Flex direction="row" align="start">
+                            <BAIFlex direction="row" align="start">
                               {/* TODO: replace this with AliasedImageDoubleTags after image list query with ImageNode is implemented. */}
                               {_.map(
                                 image?.tags,
@@ -766,11 +766,11 @@ const ImageEnvironmentSelectFormItems: React.FC<
                                   );
                                 },
                               )}
-                            </Flex>
-                          </Flex>
+                            </BAIFlex>
+                          </BAIFlex>
                         ) : (
-                          <Flex direction="row" justify="between">
-                            <Flex direction="row">
+                          <BAIFlex direction="row" justify="between">
+                            <BAIFlex direction="row">
                               <TextHighlighter keyword={versionSearch}>
                                 {getBaseVersion(getImageFullName(image) || '')}
                               </TextHighlighter>
@@ -789,8 +789,8 @@ const ImageEnvironmentSelectFormItems: React.FC<
                                   }>
                                 }
                               />
-                            </Flex>
-                          </Flex>
+                            </BAIFlex>
+                          </BAIFlex>
                         )}
                       </Select.Option>
                     );

@@ -1,6 +1,6 @@
 import { convertToBinaryUnit, convertToDecimalUnit, SizeUnit } from '../helper';
-import Flex from './Flex';
 import { Typography } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 
 interface NumberWithUnitProps {
   numberUnit: string;
@@ -24,7 +24,7 @@ const NumberWithUnit = ({
       ? convertToBinaryUnit(numberUnit, 'auto', 2, true)
       : convertToDecimalUnit(numberUnit, 'auto', 2, true);
   return (
-    <Flex gap="xxs">
+    <BAIFlex gap="xxs">
       <Typography.Text>
         {Number(convertedByTargetUnit?.numberFixed).toString()}
         {postfix && postfix}
@@ -37,7 +37,7 @@ const NumberWithUnit = ({
             convertedByAuto?.displayUnit
           })`}
       </Typography.Text>
-    </Flex>
+    </BAIFlex>
   );
 };
 

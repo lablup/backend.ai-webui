@@ -4,10 +4,10 @@ import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import BAILink from './BAILink';
-import Flex from './Flex';
 import FolderCreateModal from './FolderCreateModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { Button, Select, SelectProps, Tooltip } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { PlusIcon } from 'lucide-react';
 import React, { startTransition, useEffect, useState } from 'react';
@@ -117,7 +117,7 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
   }, [autoSelectDefault]);
 
   return (
-    <Flex gap="xs">
+    <BAIFlex gap="xs">
       <Select
         showSearch
         optionFilterProp={'label'}
@@ -190,7 +190,7 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
           }
         }}
       />
-    </Flex>
+    </BAIFlex>
   );
 };
 

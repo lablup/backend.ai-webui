@@ -10,7 +10,6 @@ import { useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import BAIPropertyFilter from './BAIPropertyFilter';
 import BAIRadioGroup from './BAIRadioGroup';
-import Flex from './Flex';
 import KeypairInfoModal from './KeypairInfoModal';
 import KeypairSettingModal from './KeypairSettingModal';
 import {
@@ -20,7 +19,7 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { App, Button, Popconfirm, Tag, Tooltip, Typography, theme } from 'antd';
-import { BAITable } from 'backend.ai-ui';
+import { BAITable, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
@@ -146,9 +145,9 @@ const UserCredentialList: React.FC = () => {
     `);
 
   return (
-    <Flex direction="column" align="stretch" gap="sm">
-      <Flex justify="between" align="start" gap="xs" wrap="wrap">
-        <Flex gap={'sm'} align="start">
+    <BAIFlex direction="column" align="stretch" gap="sm">
+      <BAIFlex justify="between" align="start" gap="xs" wrap="wrap">
+        <BAIFlex gap={'sm'} align="start">
           <BAIRadioGroup
             value={activeType}
             onChange={(value) => {
@@ -215,8 +214,8 @@ const UserCredentialList: React.FC = () => {
               });
             }}
           />
-        </Flex>
-        <Flex gap={'xs'}>
+        </BAIFlex>
+        <BAIFlex gap={'xs'}>
           <Tooltip title={t('button.Refresh')}>
             <Button
               loading={isPendingRefresh}
@@ -237,8 +236,8 @@ const UserCredentialList: React.FC = () => {
           >
             {t('credential.AddCredential')}
           </Button>
-        </Flex>
-      </Flex>
+        </BAIFlex>
+      </BAIFlex>
       <BAITable<Keypair>
         rowKey={'id'}
         scroll={{ x: 'max-content' }}
@@ -309,7 +308,7 @@ const UserCredentialList: React.FC = () => {
             title: t('credential.Allocation'),
             render: (record) => {
               return (
-                <Flex direction="column" align="start">
+                <BAIFlex direction="column" align="start">
                   <Typography.Text>
                     {record.concurrency_used}
                     <Typography.Text
@@ -354,7 +353,7 @@ const UserCredentialList: React.FC = () => {
                       {t('credential.Queries')}
                     </Typography.Text>
                   </Typography.Text>
-                </Flex>
+                </BAIFlex>
               );
             },
           },
@@ -364,7 +363,7 @@ const UserCredentialList: React.FC = () => {
             fixed: 'right',
             render: (value, record) => {
               return (
-                <Flex gap={token.marginXS}>
+                <BAIFlex gap={token.marginXS}>
                   <Button
                     type="text"
                     icon={
@@ -482,7 +481,7 @@ const UserCredentialList: React.FC = () => {
                         modal.confirm({
                           title: t('credential.DeleteCredential'),
                           content: (
-                            <Flex direction="column" align="stretch">
+                            <BAIFlex direction="column" align="stretch">
                               <Typography.Text>
                                 {t('credential.YouAreAboutToDeleteCredential')}
                               </Typography.Text>
@@ -493,7 +492,7 @@ const UserCredentialList: React.FC = () => {
                               <Typography.Text type="danger">
                                 {t('dialog.warning.CannotBeUndone')}
                               </Typography.Text>
-                            </Flex>
+                            </BAIFlex>
                           ),
                           onOk: () => {
                             commitDeleteKeypair({
@@ -526,7 +525,7 @@ const UserCredentialList: React.FC = () => {
                       }}
                     />
                   )}
-                </Flex>
+                </BAIFlex>
               );
             },
           },
@@ -580,7 +579,7 @@ const UserCredentialList: React.FC = () => {
           }
         }}
       />
-    </Flex>
+    </BAIFlex>
   );
 };
 

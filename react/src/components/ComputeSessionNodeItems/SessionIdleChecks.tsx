@@ -6,10 +6,9 @@ import {
 } from '../../helper';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
 import DoubleTag from '../DoubleTag';
-import Flex from '../Flex';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Tooltip, Typography, theme } from 'antd';
-import { useMemoizedJSONParse } from 'backend.ai-ui';
+import { useMemoizedJSONParse, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
@@ -180,18 +179,18 @@ const SessionIdleChecks: React.FC<SessionIdleChecksProps> = ({
   };
 
   return (
-    <Flex direction={direction} align="stretch" gap="sm">
+    <BAIFlex direction={direction} align="stretch" gap="sm">
       {_.map(idleChecks, (value: IdleCheckItem, key: keyof IdleChecks) => {
         if (!value.remaining) return null;
 
         return (
-          <Flex
+          <BAIFlex
             key={key}
             style={{ flex: 1 }}
             direction="column"
             align="stretch"
           >
-            <Flex gap={'xxs'}>
+            <BAIFlex gap={'xxs'}>
               <Typography.Text>{getIdleCheckTitle(key)}</Typography.Text>
               {key === 'utilization' && (
                 <Tooltip
@@ -205,7 +204,7 @@ const SessionIdleChecks: React.FC<SessionIdleChecksProps> = ({
                           : _.split(key, '_')[0] + '.device';
                         const [utilization, threshold] = resource;
                         return (
-                          <Flex key={key} gap={'xs'}>
+                          <BAIFlex key={key} gap={'xs'}>
                             <Typography.Text
                               style={{ color: token.colorWhite }}
                             >{`${mergedResourceSlots?.[deviceName]?.human_readable_name}:`}</Typography.Text>
@@ -217,7 +216,7 @@ const SessionIdleChecks: React.FC<SessionIdleChecksProps> = ({
                               {`${utilization >= 0 ? toFixedFloorWithoutTrailingZeros(utilization, 1) : '-'} / ${threshold}`}
                             </Typography.Text>
                             <br />
-                          </Flex>
+                          </BAIFlex>
                         );
                       })}
                     </>
@@ -231,7 +230,7 @@ const SessionIdleChecks: React.FC<SessionIdleChecksProps> = ({
                   />
                 </Tooltip>
               )}
-            </Flex>
+            </BAIFlex>
 
             {value.remaining >= 0 ? (
               // TODO: support real-time update by using useIntervalValue when idle_checks returns remaining time as date
@@ -263,10 +262,10 @@ const SessionIdleChecks: React.FC<SessionIdleChecksProps> = ({
                 {t('session.TimeoutExceeded')}
               </Typography.Text>
             )}
-          </Flex>
+          </BAIFlex>
         );
       })}
-    </Flex>
+    </BAIFlex>
   );
 };
 

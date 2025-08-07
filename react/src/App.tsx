@@ -3,7 +3,6 @@ import {
   DefaultProvidersForReactRoot,
   RoutingEventHandler,
 } from './components/DefaultProviders';
-import Flex from './components/Flex';
 import FlexActivityIndicator from './components/FlexActivityIndicator';
 import LocationStateBreadCrumb from './components/LocationStateBreadCrumb';
 import MainLayout from './components/MainLayout/MainLayout';
@@ -18,7 +17,7 @@ import Page404 from './pages/Page404';
 import ServingPage from './pages/ServingPage';
 import VFolderNodeListPage from './pages/VFolderNodeListPage';
 import { Skeleton, theme } from 'antd';
-import { BAICard } from 'backend.ai-ui';
+import { BAIFlex, BAICard } from 'backend.ai-ui';
 import React, { Suspense, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -177,11 +176,7 @@ const router = createBrowserRouter([
           );
           return experimentalDashboard ? (
             <BAIErrorBoundary>
-              <Suspense
-                fallback={
-                  <Skeleton active />
-                }
-              >
+              <Suspense fallback={<Skeleton active />}>
                 <DashboardPage />
               </Suspense>
             </BAIErrorBoundary>
@@ -244,7 +239,7 @@ const router = createBrowserRouter([
             Component: () => {
               const { token } = theme.useToken();
               return (
-                <Flex
+                <BAIFlex
                   direction="column"
                   gap={token.paddingContentVerticalLG}
                   align="stretch"
@@ -253,14 +248,14 @@ const router = createBrowserRouter([
                   <LocationStateBreadCrumb />
                   <Suspense
                     fallback={
-                      <Flex direction="column" style={{ maxWidth: 700 }}>
+                      <BAIFlex direction="column" style={{ maxWidth: 700 }}>
                         <Skeleton active />
-                      </Flex>
+                      </BAIFlex>
                     }
                   >
                     <SessionLauncherPage />
                   </Suspense>
-                </Flex>
+                </BAIFlex>
               );
             },
             handle: { labelKey: 'session.launcher.StartNewSession' },
@@ -318,9 +313,9 @@ const router = createBrowserRouter([
               <BAIErrorBoundary>
                 <Suspense
                   fallback={
-                    <Flex direction="column" style={{ maxWidth: 700 }}>
+                    <BAIFlex direction="column" style={{ maxWidth: 700 }}>
                       <Skeleton active />
-                    </Flex>
+                    </BAIFlex>
                   }
                 >
                   <ServiceLauncherCreatePage />
@@ -335,9 +330,9 @@ const router = createBrowserRouter([
               <BAIErrorBoundary>
                 <Suspense
                   fallback={
-                    <Flex direction="column" style={{ maxWidth: 700 }}>
+                    <BAIFlex direction="column" style={{ maxWidth: 700 }}>
                       <Skeleton active />
-                    </Flex>
+                    </BAIFlex>
                   }
                 >
                   <ServiceLauncherUpdatePage />
@@ -354,9 +349,9 @@ const router = createBrowserRouter([
           <BAIErrorBoundary>
             <Suspense
               fallback={
-                <Flex direction="column" style={{ maxWidth: 700 }}>
+                <BAIFlex direction="column" style={{ maxWidth: 700 }}>
                   <Skeleton active />
-                </Flex>
+                </BAIFlex>
               }
             >
               <ModelStoreListPage />
@@ -415,9 +410,9 @@ const router = createBrowserRouter([
             <BAIErrorBoundary>
               <Suspense
                 fallback={
-                  <Flex direction="column" style={{ maxWidth: 700 }}>
+                  <BAIFlex direction="column" style={{ maxWidth: 700 }}>
                     <Skeleton active />
-                  </Flex>
+                  </BAIFlex>
                 }
               >
                 <StatisticsPage />

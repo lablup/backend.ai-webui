@@ -1,8 +1,8 @@
 // @ts-ignore
 import rawBAIModalCss from './BAIModal.css?raw';
-import Flex from './Flex';
 import { HolderOutlined } from '@ant-design/icons';
 import { Modal, ModalProps, theme } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import React, { useState, useRef } from 'react';
 import type { DraggableData, DraggableEvent } from 'react-draggable';
 import Draggable from 'react-draggable';
@@ -87,7 +87,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
           },
         }}
         title={
-          <Flex gap={'xs'}>
+          <BAIFlex gap={'xs'}>
             <HolderOutlined
               style={{
                 cursor: modalProps.draggable ? 'move' : '',
@@ -105,7 +105,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
               }}
             />
             {modalProps.title}
-          </Flex>
+          </BAIFlex>
         }
         modalRender={(modal) =>
           modalProps.draggable ? (

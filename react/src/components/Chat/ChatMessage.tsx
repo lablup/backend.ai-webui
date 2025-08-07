@@ -1,4 +1,3 @@
-import Flex from '../Flex';
 import {
   ChatMessageContainer,
   ChatMessagePlacement,
@@ -8,6 +7,7 @@ import ChatMessageContent from './ChatMessageContent';
 import { Message } from '@ai-sdk/react';
 import { Attachments } from '@ant-design/x';
 import { theme, Image, Collapse, Typography, Spin } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -44,7 +44,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
     >
       {_.map(message.experimental_attachments, (attachment, index) =>
         _.includes(attachment?.contentType, 'image/') ? (
-          <Flex
+          <BAIFlex
             style={{
               border: 'none',
               textAlign: 'end',
@@ -61,7 +61,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                 borderRadius: token.borderRadius,
               }}
             />
-          </Flex>
+          </BAIFlex>
         ) : (
           <Attachments.FileCard
             key={index}
@@ -75,7 +75,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
           />
         ),
       )}
-      <Flex
+      <BAIFlex
         align="stretch"
         direction="column"
         style={{
@@ -100,10 +100,10 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
               {
                 key: 'reasoning',
                 label: _.isEmpty(content) ? (
-                  <Flex gap="xs">
+                  <BAIFlex gap="xs">
                     <Typography.Text>{t('chatui.Thinking')}</Typography.Text>
                     <Spin size="small" />
-                  </Flex>
+                  </BAIFlex>
                 ) : (
                   <Typography.Text>{t('chatui.ViewReasoning')}</Typography.Text>
                 ),
@@ -119,8 +119,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
         <ChatMessageContent isStreaming={isStreaming}>
           {content + (isStreaming ? '\n' : '')}
         </ChatMessageContent>
-      </Flex>
-      <Flex
+      </BAIFlex>
+      <BAIFlex
         style={{
           fontSize: token.fontSizeSM,
           ...(enableExtraHover
@@ -133,7 +133,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
         }}
       >
         {extra}
-      </Flex>
+      </BAIFlex>
     </ChatMessageContainer>
   );
 };

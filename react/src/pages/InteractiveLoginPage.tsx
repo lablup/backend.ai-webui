@@ -1,4 +1,3 @@
-import Flex from '../components/Flex';
 import {
   CSSTokenVariables,
   NotificationForAnonymous,
@@ -6,6 +5,7 @@ import {
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { Button, Card, Descriptions } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -34,14 +34,14 @@ const Children = () => {
   const { t } = useTranslation();
 
   return (
-    <Flex
+    <BAIFlex
       direction="column"
       align="center"
       justify="center"
       style={{ height: '100vh' }}
     >
       <Card title={t('interactiveLogin.InteractiveLoginWithBackendAI')}>
-        <Flex direction="column" gap={'sm'} align="stretch">
+        <BAIFlex direction="column" gap={'sm'} align="stretch">
           {t('interactiveLogin.ConfirmLoginMessage', {
             username: userInfo.username,
             email: userInfo.email,
@@ -57,10 +57,10 @@ const Children = () => {
               // {
               //   label: '서비스 설명',
               //   children: (
-              //     <Flex style={{ maxWidth: 400 }}>
+              //     <BAIFlex style={{ maxWidth: 400 }}>
               //       Backend.AI FastTrack는 Backend.AI를 이용한 MLOps 서비스
               //       입니다.
-              //     </Flex>
+              //     </BAIFlex>
               //   ),
               // },
               {
@@ -69,7 +69,7 @@ const Children = () => {
               },
             ]}
           />
-          <Flex
+          <BAIFlex
             direction="row"
             justify="between"
             style={{ alignSelf: 'stretch' }}
@@ -108,10 +108,10 @@ const Children = () => {
             >
               {t('login.Login')}
             </Button>
-          </Flex>
-        </Flex>
+          </BAIFlex>
+        </BAIFlex>
       </Card>
-    </Flex>
+    </BAIFlex>
   );
 };
 

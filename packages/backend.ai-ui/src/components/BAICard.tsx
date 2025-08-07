@@ -1,4 +1,4 @@
-import Flex from './Flex';
+import BAIFlex from './BAIFlex';
 import { CloseCircleTwoTone, WarningTwoTone } from '@ant-design/icons';
 import { Button, Card, CardProps, theme } from 'antd';
 import _ from 'lodash';
@@ -90,15 +90,15 @@ const BAICard: React.FC<BAICardProps> = ({
       {...cardProps}
       title={
         cardProps.title || extra ? (
-          <Flex
+          <BAIFlex
             justify={cardProps.title ? 'between' : 'end'}
             align="center"
             wrap="wrap"
             gap="sm"
           >
             {cardProps.title}
-            <Flex>{_extra}</Flex>
-          </Flex>
+            <BAIFlex>{_extra}</BAIFlex>
+          </BAIFlex>
         ) : null
       }
     />

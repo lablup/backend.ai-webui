@@ -1,7 +1,7 @@
 import { UsageProgressFragment_usageFrgmt$key } from '../__generated__/UsageProgressFragment_usageFrgmt.graphql';
 import { bytesToGB, usageIndicatorColor } from '../helper';
-import Flex from './Flex';
 import { Progress, Typography, theme } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -31,14 +31,14 @@ const UsageProgress: React.FC<{
   ) as number;
 
   return (
-    <Flex direction="column">
+    <BAIFlex direction="column">
       <Progress
         size={[180, 15]}
         percent={percent}
         strokeColor={usageIndicatorColor(percent)}
         status={percent >= 100 ? 'exception' : 'normal'}
       />
-      <Flex direction="row" gap={token.marginXXS} style={{ fontSize: 12 }}>
+      <BAIFlex direction="row" gap={token.marginXXS} style={{ fontSize: 12 }}>
         <Typography.Text type="secondary" style={{ fontSize: 12 }}>
           {t('data.Used')}:
         </Typography.Text>
@@ -51,8 +51,8 @@ const UsageProgress: React.FC<{
         </Typography.Text>
         {bytesToGB(usage?.details?.hard_limit_bytes)} GB
         {/* <Typography.Text type="secondary">({percent} %)</Typography.Text> */}
-      </Flex>
-    </Flex>
+      </BAIFlex>
+    </BAIFlex>
   );
 };
 

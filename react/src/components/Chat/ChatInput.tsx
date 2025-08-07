@@ -1,5 +1,4 @@
 import { createDataTransferFiles } from '../../helper';
-import Flex from '../Flex';
 import ChatSender, {
   AttachmentChangeInfo,
   ChatAttachmentsProps,
@@ -8,6 +7,7 @@ import { CreateMessage, Message } from '@ai-sdk/react';
 import type { AttachmentsProps } from '@ant-design/x';
 import { ChatRequestOptions } from 'ai';
 import { theme } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import { atom, useAtom } from 'jotai';
 import { isEmpty, isEqual, isUndefined } from 'lodash';
 import React, {
@@ -202,7 +202,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
 
   return (
     <>
-      <Flex style={ChatInputStyle} direction="column" align="center">
+      <BAIFlex style={ChatInputStyle} direction="column" align="center">
         <ChatSender
           disabled={disabled}
           placeholder="Say something..."
@@ -218,7 +218,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
           onAttachmentChange={handleAttachmentChange}
           onAttachmentOpenChange={handleAttachmentOpenChange}
         />
-      </Flex>
+      </BAIFlex>
     </>
   );
 };

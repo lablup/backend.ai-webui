@@ -1,5 +1,4 @@
 import { filterOutEmpty } from '../helper';
-import Flex from './Flex';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
 import {
@@ -14,6 +13,7 @@ import {
   Tooltip,
   theme,
 } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, {
   ComponentProps,
@@ -41,7 +41,7 @@ export type FilterProperty = {
 };
 
 export interface BAIPropertyFilterProps
-  extends Omit<ComponentProps<typeof Flex>, 'value' | 'onChange'> {
+  extends Omit<ComponentProps<typeof BAIFlex>, 'value' | 'onChange'> {
   value?: string;
   onChange?: (value: string) => void;
   defaultValue?: string;
@@ -244,7 +244,7 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
   };
 
   return (
-    <Flex direction="column" gap={'xs'} align="start" {...containerProps}>
+    <BAIFlex direction="column" gap={'xs'} align="start" {...containerProps}>
       <Space.Compact>
         <Select
           popupMatchSelectWidth={false}
@@ -306,7 +306,7 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
         </Tooltip>
       </Space.Compact>
       {filtersFromValue.length > 0 && (
-        <Flex
+        <BAIFlex
           direction="row"
           gap={'xs'}
           wrap="wrap"
@@ -336,9 +336,9 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
               />
             </Tooltip>
           )}
-        </Flex>
+        </BAIFlex>
       )}
-    </Flex>
+    </BAIFlex>
   );
 };
 

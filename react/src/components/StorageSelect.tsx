@@ -3,9 +3,9 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState from '../hooks/useControllableState';
 import BAISelect, { BAISelectProps } from './BAISelect';
-import Flex from './Flex';
 import TextHighlighter from './TextHighlighter';
 import { Badge, Tooltip } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -105,7 +105,7 @@ const StorageSelect: React.FC<Props> = ({
       optionLabelProp={showUsageStatus ? 'label' : 'value'}
       options={_.map(vhostInfo?.allowed, (host) => ({
         label: showUsageStatus ? (
-          <Flex align="center">
+          <BAIFlex align="center">
             {vhostInfo?.volume_info?.[host]?.usage && (
               <Tooltip
                 title={`${t('data.Host')} ${t('data.usage.Status')}:
@@ -131,7 +131,7 @@ const StorageSelect: React.FC<Props> = ({
             </TextHighlighter>
             {/* TODO: uncomment after implementing click action */}
             {/* <Button type="link" size="small" icon={<InfoCircleOutlined />} /> */}
-          </Flex>
+          </BAIFlex>
         ) : (
           host
         ),

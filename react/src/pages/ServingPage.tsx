@@ -5,7 +5,6 @@ import BAIPropertyFilter, {
 } from '../components/BAIPropertyFilter';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import EndpointList from '../components/EndpointList';
-import Flex from '../components/Flex';
 import { filterOutEmpty } from '../helper';
 import { useUpdatableState, useWebUINavigate } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
@@ -13,7 +12,7 @@ import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginati
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
 import { Button, Skeleton, theme } from 'antd';
-import { BAICard } from 'backend.ai-ui';
+import { BAIFlex, BAICard } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -98,11 +97,11 @@ const ServingPage: React.FC = () => {
   );
 
   return (
-    <Flex direction="column" align="stretch" gap={'md'}>
+    <BAIFlex direction="column" align="stretch" gap={'md'}>
       <BAICard
         title={t('webui.menu.Serving')}
         extra={
-          <Flex gap={'xs'}>
+          <BAIFlex gap={'xs'}>
             <BAIFetchKeyButton
               value={fetchKey}
               onChange={updateFetchKey}
@@ -118,7 +117,7 @@ const ServingPage: React.FC = () => {
             >
               {t('modelService.StartService')}
             </Button>
-          </Flex>
+          </BAIFlex>
         }
         styles={{
           body: {
@@ -128,14 +127,14 @@ const ServingPage: React.FC = () => {
           },
         }}
       >
-        <Flex
+        <BAIFlex
           direction="column"
           align="stretch"
           gap={'sm'}
           style={{ padding: token.paddingMD }}
         >
-          <Flex direction="row" justify="between" wrap="wrap" gap={'sm'}>
-            <Flex
+          <BAIFlex direction="row" justify="between" wrap="wrap" gap={'sm'}>
+            <BAIFlex
               gap={'sm'}
               align="start"
               wrap="wrap"
@@ -185,8 +184,8 @@ const ServingPage: React.FC = () => {
                   setTablePaginationOption({ current: 1 });
                 }}
               />
-            </Flex>
-          </Flex>
+            </BAIFlex>
+          </BAIFlex>
           <Suspense fallback={<Skeleton active />}>
             <EndpointList
               // @ts-ignore
@@ -211,9 +210,9 @@ const ServingPage: React.FC = () => {
               }}
             />
           </Suspense>
-        </Flex>
+        </BAIFlex>
       </BAICard>
-    </Flex>
+    </BAIFlex>
   );
 };
 

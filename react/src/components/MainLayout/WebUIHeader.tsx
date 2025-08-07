@@ -7,7 +7,6 @@ import {
   useSetCurrentProject,
 } from '../../hooks/useCurrentProject';
 import BAINotificationButton from '../BAINotificationButton';
-import Flex, { FlexProps } from '../Flex';
 import LoginSessionExtendButton from '../LoginSessionExtendButton';
 import ProjectSelect from '../ProjectSelect';
 import ReverseThemeProvider from '../ReverseThemeProvider';
@@ -16,6 +15,7 @@ import WEBUIHelpButton from '../WEBUIHelpButton';
 import WebUIThemeToggleButton from '../WebUIThemeToggleButton';
 import { theme, Button, Typography, Grid, Divider } from 'antd';
 import { createStyles } from 'antd-style';
+import { BAIFlex, BAIFlexProps } from 'backend.ai-ui';
 import { MenuIcon } from 'lucide-react';
 import { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -32,7 +32,7 @@ const useStyles = createStyles(({ css, token }) => ({
   `,
 }));
 
-export interface WebUIHeaderProps extends FlexProps {
+export interface WebUIHeaderProps extends BAIFlexProps {
   onClickMenuIcon?: () => void;
   containerElement?: HTMLDivElement | null;
 }
@@ -58,7 +58,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
   const { styles } = useStyles();
 
   return (
-    <Flex
+    <BAIFlex
       align="center"
       justify="between"
       direction="row"
@@ -71,7 +71,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
       }}
       className={styles.webuiHeader}
     >
-      <Flex direction="row" gap={'sm'}>
+      <BAIFlex direction="row" gap={'sm'}>
         <ReverseThemeProvider>
           {!gridBreakpoint.sm && (
             <Button
@@ -121,8 +121,13 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
             }}
           />
         </Suspense>
-      </Flex>
-      <Flex direction="row" className="non-draggable" gap="xxs" align="center">
+      </BAIFlex>
+      <BAIFlex
+        direction="row"
+        className="non-draggable"
+        gap="xxs"
+        align="center"
+      >
         {baiClient.supports('extend-login-session') &&
           baiClient._config.enableExtendLoginSession && (
             <Suspense>
@@ -154,8 +159,8 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
             paddingRight: token.paddingSM,
           }}
         />
-      </Flex>
-    </Flex>
+      </BAIFlex>
+    </BAIFlex>
   );
 };
 

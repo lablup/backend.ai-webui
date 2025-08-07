@@ -5,7 +5,8 @@ import {
   FolderAddOutlined,
   UploadOutlined,
 } from '@ant-design/icons';
-import { Button, Dropdown, Tooltip, Flex, theme } from 'antd';
+import { Button, Dropdown, Tooltip, theme } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import React, { RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -26,7 +27,7 @@ const FolderExplorerActions: React.FC<FolderExplorerActionsProps> = ({
   const { t } = useTranslation();
 
   return (
-    <Flex
+    <BAIFlex
       justify="end"
       gap={token.marginSM}
       style={{
@@ -85,7 +86,7 @@ const FolderExplorerActions: React.FC<FolderExplorerActionsProps> = ({
           </Button>
         </Tooltip>
       </Dropdown>
-    </Flex>
+    </BAIFlex>
   );
 };
 

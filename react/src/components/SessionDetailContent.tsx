@@ -15,7 +15,6 @@ import SessionIdleChecks, {
 import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionStatusDetailModal from './ComputeSessionNodeItems/SessionStatusDetailModal';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
-import Flex from './Flex';
 import IdleCheckDescriptionModal from './IdleCheckDescriptionModal';
 import ImageNodeSimpleTag from './ImageNodeSimpleTag';
 import { UNSAFELazySessionImageTag } from './ImageTags';
@@ -41,6 +40,7 @@ import {
   toGlobalId,
   UNSAFELazyUserEmailView,
   useMemoizedJSONParse,
+  BAIFlex,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Suspense, useState } from 'react';
@@ -191,7 +191,7 @@ const SessionDetailContent: React.FC<{
     session?.project_id || legacy_session?.group_id;
 
   return session ? (
-    <Flex direction="column" gap={'lg'} align="stretch">
+    <BAIFlex direction="column" gap={'lg'} align="stretch">
       {resolvedProjectIdOfSession !== currentProject.id && (
         <Alert message={t('session.NotInProject')} type="warning" showIcon />
       )}
@@ -209,8 +209,8 @@ const SessionDetailContent: React.FC<{
           showIcon
         />
       )}
-      <Flex direction="column" gap={'sm'} align="stretch">
-        <Flex
+      <BAIFlex direction="column" gap={'sm'} align="stretch">
+        <BAIFlex
           direction="row"
           justify="between"
           align="start"
@@ -236,7 +236,7 @@ const SessionDetailContent: React.FC<{
           <Button.Group size="large">
             <SessionActionButtons sessionFrgmt={session} />
           </Button.Group>
-        </Flex>
+        </BAIFlex>
 
         <Descriptions bordered column={md ? 2 : 1}>
           <Descriptions.Item label={t('session.SessionId')} span={md ? 2 : 1}>
@@ -260,7 +260,7 @@ const SessionDetailContent: React.FC<{
             </Descriptions.Item>
           )}
           <Descriptions.Item label={t('session.Status')}>
-            <Flex>
+            <BAIFlex>
               <SessionStatusTag sessionFrgmt={session} showInfo />
               {session?.status_data && session?.status_data !== '{}' ? (
                 <Tooltip title={t('button.ClickForMoreDetails')}>
@@ -273,7 +273,7 @@ const SessionDetailContent: React.FC<{
                   />
                 </Tooltip>
               ) : null}
-            </Flex>
+            </BAIFlex>
           </Descriptions.Item>
           <Descriptions.Item label={t('session.SessionType')}>
             <BAISessionTypeTag sessionFrgmt={session} />
@@ -290,34 +290,34 @@ const SessionDetailContent: React.FC<{
             ) : null}
           </Descriptions.Item>
           <Descriptions.Item label={t('session.launcher.MountedFolders')}>
-            <Flex gap="xs" wrap="wrap">
+            <BAIFlex gap="xs" wrap="wrap">
               <MountedVFolderLinks sessionFrgmt={session} />
-            </Flex>
+            </BAIFlex>
           </Descriptions.Item>
           <Descriptions.Item label={t('session.launcher.ResourceAllocation')}>
-            <Flex gap={'sm'} wrap="wrap">
+            <BAIFlex gap={'sm'} wrap="wrap">
               <Tooltip title={t('session.ResourceGroup')}>
                 <Tag>{session.scaling_group}</Tag>
               </Tooltip>
               <ResourceNumbersOfSession
                 resource={JSON.parse(session.requested_slots || '{}')}
               />
-            </Flex>
+            </BAIFlex>
           </Descriptions.Item>
           <Descriptions.Item label={t('session.Agent')}>
             {_.uniq(session.agent_ids).join(', ') || '-'}
           </Descriptions.Item>
           <Descriptions.Item label={t('session.Reservation')} span={md ? 2 : 1}>
-            <Flex gap={'xs'} wrap={'wrap'}>
+            <BAIFlex gap={'xs'} wrap={'wrap'}>
               <SessionReservation sessionFrgmt={session} />
-            </Flex>
+            </BAIFlex>
           </Descriptions.Item>
           {baiClient.supports('idle-checks-gql') &&
           session.status === 'RUNNING' &&
           imminentExpirationTime ? (
             <Descriptions.Item
               label={
-                <Flex gap="xxs">
+                <BAIFlex gap="xxs">
                   {t('session.IdleChecks')}
                   <Tooltip title={t('button.ClickForMoreDetails')}>
                     <QuestionCircleOutlined
@@ -325,7 +325,7 @@ const SessionDetailContent: React.FC<{
                       onClick={() => setOpenIdleCheckDescriptionModal(true)}
                     />
                   </Tooltip>
-                </Flex>
+                </BAIFlex>
               }
               span={md ? 2 : 1}
             >
@@ -340,7 +340,7 @@ const SessionDetailContent: React.FC<{
           ) : null}
           <Descriptions.Item
             label={
-              <Flex direction="column" align="start" gap={token.marginSM}>
+              <BAIFlex direction="column" align="start" gap={token.marginSM}>
                 <Typography.Text style={{ color: token.colorTextSecondary }}>
                   {t('session.ResourceUsage')}
                 </Typography.Text>
@@ -368,7 +368,7 @@ const SessionDetailContent: React.FC<{
                     setUsageMonitorDisplayTarget(value);
                   }}
                 />
-              </Flex>
+              </BAIFlex>
             }
             span={md ? 2 : 1}
           >
@@ -378,9 +378,9 @@ const SessionDetailContent: React.FC<{
             />
           </Descriptions.Item>
         </Descriptions>
-      </Flex>
+      </BAIFlex>
       <Suspense fallback={<Skeleton active />}>
-        <Flex direction="column" gap={'sm'} align="stretch">
+        <BAIFlex direction="column" gap={'sm'} align="stretch">
           <Typography.Title level={4} style={{ margin: 0 }}>
             {t('kernel.Kernels')}
           </Typography.Title>
@@ -390,7 +390,7 @@ const SessionDetailContent: React.FC<{
             )}
             sessionFrgmtForLogModal={session}
           />
-        </Flex>
+        </BAIFlex>
       </Suspense>
       <IdleCheckDescriptionModal
         open={openIdleCheckDescriptionModal}
@@ -401,7 +401,7 @@ const SessionDetailContent: React.FC<{
         open={openStatusDetailModal}
         onCancel={() => setOpenStatusDetailModal(false)}
       />
-    </Flex>
+    </BAIFlex>
   ) : (
     <Alert
       showIcon

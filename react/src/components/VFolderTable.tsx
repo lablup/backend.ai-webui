@@ -7,7 +7,6 @@ import useControllableState from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useEventNotStable } from '../hooks/useEventNotStable';
 import BAILink from './BAILink';
-import Flex from './Flex';
 import FolderCreateModal from './FolderCreateModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import TextHighlighter from './TextHighlighter';
@@ -31,7 +30,7 @@ import {
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { BAIUserUnionIcon } from 'backend.ai-ui';
+import { BAIUserUnionIcon, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { PlusIcon } from 'lucide-react';
@@ -355,7 +354,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   const columns: ColumnsType<VFolder> = [
     {
       title: (
-        <Flex direction="row" gap="xxs">
+        <BAIFlex direction="row" gap="xxs">
           <Typography.Text>{t('data.folders.Name')}</Typography.Text>
           {showAliasInput && (
             <>
@@ -373,7 +372,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
               </Typography.Text>
             </>
           )}
-        </Flex>
+        </BAIFlex>
       ),
       dataIndex: 'name',
       sorter: (a, b) => a.name.localeCompare(b.name),
@@ -383,7 +382,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
         );
 
         return (
-          <Flex
+          <BAIFlex
             direction="column"
             align="start"
             gap={'xxs'}
@@ -493,7 +492,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                 }}
               </Form.Item>
             )}
-          </Flex>
+          </BAIFlex>
         );
       },
       // ...getColumnSearchProps('name'),
@@ -513,19 +512,19 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
       sorter: (a, b) => a.type.localeCompare(b.type),
       render: (_, record) => {
         return (
-          <Flex direction="column">
+          <BAIFlex direction="column">
             {record.ownership_type === 'user' ? (
-              <Flex gap={'xs'}>
+              <BAIFlex gap={'xs'}>
                 <Typography.Text>{t('data.User')}</Typography.Text>
                 <UserOutlined style={{ color: token.colorTextTertiary }} />
-              </Flex>
+              </BAIFlex>
             ) : (
-              <Flex gap={'xs'}>
+              <BAIFlex gap={'xs'}>
                 <Typography.Text>{t('data.Project')}</Typography.Text>
                 <BAIUserUnionIcon style={{ color: token.colorTextTertiary }} />
-              </Flex>
+              </BAIFlex>
             )}
-          </Flex>
+          </BAIFlex>
         );
       },
       // render: (value) =>
@@ -592,8 +591,8 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     // },
   ];
   return (
-    <Flex direction="column" align="stretch" gap={'xs'}>
-      <Flex direction="row" gap="xs" justify="between">
+    <BAIFlex direction="column" align="stretch" gap={'xs'}>
+      <BAIFlex direction="row" gap="xs" justify="between">
         <Input
           value={searchKey}
           onChange={(e) => setSearchKey(e.target.value)}
@@ -621,7 +620,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
             }}
           />
         </Tooltip>
-      </Flex>
+      </BAIFlex>
       <Form form={internalForm} component={false} preserve={false}>
         <Table
           // size="small"
@@ -687,7 +686,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
           }
         }}
       />
-    </Flex>
+    </BAIFlex>
   );
 };
 

@@ -11,7 +11,7 @@ import BaseResourceItem, {
 } from './BaseResourceItem';
 import ResourceGroupSelectForCurrentProject from './ResourceGroupSelectForCurrentProject';
 import { Typography } from 'antd';
-import { Flex, BAICardProps } from 'backend.ai-ui';
+import { BAIFlex, BAICardProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useCallback, useDeferredValue, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -118,7 +118,7 @@ const MyResourceWithinResourceGroup: React.FC<
   );
 
   const title = (
-    <Flex gap={'xs'}>
+    <BAIFlex gap={'xs'}>
       <Typography.Title level={5} style={{ margin: 0 }}>
         {t('webui.menu.MyResourcesIn')}
       </Typography.Title>
@@ -130,7 +130,7 @@ const MyResourceWithinResourceGroup: React.FC<
         popupMatchSelectWidth={false}
         tooltip={t('general.ResourceGroup')}
       />
-    </Flex>
+    </BAIFlex>
   );
 
   return (

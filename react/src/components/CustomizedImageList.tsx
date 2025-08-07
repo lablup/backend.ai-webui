@@ -4,7 +4,6 @@ import {
   CustomizedImageListQuery$data,
 } from '../__generated__/CustomizedImageListQuery.graphql';
 import { CustomizedImageListUntagMutation } from '../__generated__/CustomizedImageListUntagMutation.graphql';
-import Flex from '../components/Flex';
 import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
 import {
   filterOutEmpty,
@@ -31,7 +30,7 @@ import { useToggle } from 'ahooks';
 import { App, Button, Input, Popconfirm, theme, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
-import { BAITable } from 'backend.ai-ui';
+import { BAIFlex, BAITable } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, {
   PropsWithChildren,
@@ -363,7 +362,7 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
       key: 'control',
       fixed: 'right',
       render: (text, row) => (
-        <Flex direction="row" align="stretch" justify="center" gap="xxs">
+        <BAIFlex direction="row" align="stretch" justify="center" gap="xxs">
           <Popconfirm
             title={t('dialog.ask.DoYouWantToProceed')}
             description={t('dialog.warning.CannotBeUndone')}
@@ -451,7 +450,7 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
               }
             />
           </Popconfirm>
-        </Flex>
+        </BAIFlex>
       ),
     },
   ]);
@@ -461,9 +460,9 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
   );
 
   return (
-    <Flex direction="column" align="stretch">
-      <Flex direction="column" align="stretch" gap="sm">
-        <Flex justify="between" gap="xs" wrap="wrap">
+    <BAIFlex direction="column" align="stretch">
+      <BAIFlex direction="column" align="stretch" gap="sm">
+        <BAIFlex justify="between" gap="xs" wrap="wrap">
           <Input
             allowClear
             prefix={<SearchOutlined />}
@@ -482,7 +481,7 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
               startRefetchTransition(() => updateCustomizedImageListFetchKey());
             }}
           />
-        </Flex>
+        </BAIFlex>
         <BAITable
           resizable
           loading={isPendingSearchTransition}
@@ -508,7 +507,7 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
             ),
           }}
         />
-      </Flex>
+      </BAIFlex>
       <TableColumnsSettingModal
         open={visibleColumnSettingModal}
         onRequestClose={(values) => {
@@ -524,7 +523,7 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
         columns={columns}
         hiddenColumnKeys={hiddenColumnKeys}
       />
-    </Flex>
+    </BAIFlex>
   );
 };
 

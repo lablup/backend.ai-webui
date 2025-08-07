@@ -6,9 +6,9 @@ import {
 } from '../hooks';
 import CopyableCodeText from './CopyableCodeText';
 import DoubleTag from './DoubleTag';
-import Flex from './Flex';
 import ImageMetaIcon from './ImageMetaIcon';
 import { Divider, Tag, Typography, theme } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
@@ -112,10 +112,10 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
       )}
     </>
   ) : (
-    <Flex direction="row" gap={'xs'}>
+    <BAIFlex direction="row" gap={'xs'}>
       <ImageMetaIcon image={legacyFullImageString || null} />
       <CopyableCodeText>{legacyFullImageString}</CopyableCodeText>
-    </Flex>
+    </BAIFlex>
   );
 };
 

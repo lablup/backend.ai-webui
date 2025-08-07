@@ -2,8 +2,8 @@ import { baiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
 import { Alert, DatePicker, Form, FormInstance, message } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -100,13 +100,13 @@ const EndpointTokenGenerationModal: React.FC<
         validateTrigger={['onChange', 'onBlur']}
         style={{ maxWidth: 500 }}
       >
-        <Flex direction="column" gap="sm" align="stretch">
+        <BAIFlex direction="column" gap="sm" align="stretch">
           <Alert
             type="info"
             showIcon
             message={t('modelService.TokenExpiredDateHelp')}
           />
-          <Flex direction="row" align="stretch" justify="around">
+          <BAIFlex direction="row" align="stretch" justify="around">
             <Form.Item
               name="datetime"
               label={t('modelService.ExpiredDate')}
@@ -134,12 +134,12 @@ const EndpointTokenGenerationModal: React.FC<
                 style={{ width: 200 }}
               />
             </Form.Item>
-          </Flex>
-        </Flex>
-        {/* <Flex direction="row" align="stretch" justify="end">
+          </BAIFlex>
+        </BAIFlex>
+        {/* <BAIFlex direction="row" align="stretch" justify="end">
           <Tag style={{height: 30}}>{t('modelService.CurrentTime')}</Tag>
           <TimeContainer></TimeContainer>
-        </Flex> */}
+        </BAIFlex> */}
       </Form>
     </BAIModal>
   );

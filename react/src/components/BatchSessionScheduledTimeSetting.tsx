@@ -1,10 +1,10 @@
 import BAIIntervalView from './BAIIntervalView';
 import DatePickerISO, { DatePickerISOProps } from './DatePickerISO';
 import { useWebComponentInfo } from './DefaultProviders';
-import Flex from './Flex';
 import { useToggle } from 'ahooks';
 import { Typography, Checkbox, theme } from 'antd';
 import { GetRef } from 'antd/lib';
+import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -32,7 +32,7 @@ const BatchSessionScheduledTimeSetting: React.FC<Props> = ({
       <Typography.Text type="secondary" style={{ fontSize: token.fontSizeSM }}>
         {t('session.launcher.SessionStartTime')}
       </Typography.Text>
-      <Flex align="start" gap="sm">
+      <BAIFlex align="start" gap="sm">
         <Checkbox
           checked={isChecked}
           onChange={(v) => {
@@ -45,7 +45,7 @@ const BatchSessionScheduledTimeSetting: React.FC<Props> = ({
         >
           {t('session.launcher.Enable')}
         </Checkbox>
-        <Flex direction="column" align="end">
+        <BAIFlex direction="column" align="end">
           <DatePickerISO
             ref={datePickerRef}
             {...datePickerISOProps}
@@ -113,8 +113,8 @@ const BatchSessionScheduledTimeSetting: React.FC<Props> = ({
                 {t('session.launcher.StartTimeMustBeInTheFuture')}
               </Typography.Text>
             )}
-        </Flex>
-      </Flex>
+        </BAIFlex>
+      </BAIFlex>
     </>
   );
 };

@@ -5,7 +5,6 @@ import {
   useResourceSlotsDetails,
 } from '../../hooks/backendai';
 import { useSessionLiveStat } from '../../hooks/useSessionNodeLiveStat';
-import Flex from '../Flex';
 import { displayMemoryUsage } from '../SessionUsageMonitor';
 import {
   Badge,
@@ -16,6 +15,7 @@ import {
   TooltipProps,
   Typography,
 } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
@@ -108,7 +108,7 @@ const SessionSlotCell: React.FC<OccupiedSlotViewProps> = ({
 
           const percentNumber = memStat?.pct ? parseFloat(memStat.pct) : 0;
           return (
-            <Flex
+            <BAIFlex
               direction="row"
               key={key}
               align="start"
@@ -131,7 +131,7 @@ const SessionSlotCell: React.FC<OccupiedSlotViewProps> = ({
               <Typography.Text>
                 {mergedResourceSlots?.[key]?.display_unit}
               </Typography.Text>
-            </Flex>
+            </BAIFlex>
           );
         });
   }

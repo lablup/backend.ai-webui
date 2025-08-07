@@ -8,7 +8,6 @@ import { AutoScalingRuleEditorModalFragment$key } from '../__generated__/AutoSca
 import { AutoScalingRuleEditorModalModifyMutation } from '../__generated__/AutoScalingRuleEditorModalModifyMutation.graphql';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
 import {
   App,
   AutoComplete,
@@ -21,6 +20,7 @@ import {
   Space,
   Typography,
 } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -278,11 +278,15 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
           <Radio.Group
             options={[
               {
-                label: <Flex gap={'xs'}>{t('autoScalingRule.ScaleUp')}</Flex>,
+                label: (
+                  <BAIFlex gap={'xs'}>{t('autoScalingRule.ScaleUp')}</BAIFlex>
+                ),
                 value: 'up',
               },
               {
-                label: <Flex gap={'xs'}>{t('autoScalingRule.ScaleDown')}</Flex>,
+                label: (
+                  <BAIFlex gap={'xs'}>{t('autoScalingRule.ScaleDown')}</BAIFlex>
+                ),
                 value: 'down',
               },
             ]}
@@ -364,12 +368,12 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
                     style={{ width: 100 }}
                     options={_.map(COMPARATOR_LABELS, (label, value) => ({
                       label: (
-                        <Flex gap={'xs'}>
+                        <BAIFlex gap={'xs'}>
                           {label}
                           <Typography.Text type="secondary">
                             ({value})
                           </Typography.Text>
-                        </Flex>
+                        </BAIFlex>
                       ),
                       value,
                       selectedLabel: label,

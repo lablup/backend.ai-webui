@@ -8,8 +8,8 @@ import {
 import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
 import { useSessionLiveStat } from '../hooks/useSessionNodeLiveStat';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
-import Flex from './Flex';
 import { ProgressProps, Tooltip, Typography, theme, Row, Col } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useMemo } from 'react';
 import { graphql, useFragment } from 'react-relay';
@@ -43,7 +43,7 @@ const SessionUtilItem: React.FC<SessionUtilItemProps> = ({
   if (size === 'default') {
     return (
       <>
-        <Flex justify="between">
+        <BAIFlex justify="between">
           <Typography.Text>{title}</Typography.Text>
           {description && (
             <Typography.Text
@@ -53,7 +53,7 @@ const SessionUtilItem: React.FC<SessionUtilItemProps> = ({
               {description}
             </Typography.Text>
           )}
-        </Flex>
+        </BAIFlex>
         <BAIProgressWithLabel
           percent={_.toNumber(percent)}
           valueLabel={percentLabel}
@@ -66,8 +66,8 @@ const SessionUtilItem: React.FC<SessionUtilItemProps> = ({
 
   return (
     <Tooltip title={tooltipTitle || title} placement="left">
-      <Flex direction="row" gap={'xxs'}>
-        <Flex
+      <BAIFlex direction="row" gap={'xxs'}>
+        <BAIFlex
           style={{
             // Max width is 140px (even if over 100%), min width is 3px
             width: _.min([
@@ -77,7 +77,7 @@ const SessionUtilItem: React.FC<SessionUtilItemProps> = ({
             height: 12,
             backgroundColor: '#BFBFBF',
           }}
-        ></Flex>
+        ></BAIFlex>
         <Typography.Text
           style={{
             fontSize: token.fontSizeSM,
@@ -86,7 +86,7 @@ const SessionUtilItem: React.FC<SessionUtilItemProps> = ({
         >
           {_.toNumber(percent).toFixed(0) + '%'}
         </Typography.Text>
-      </Flex>
+      </BAIFlex>
     </Tooltip>
   );
 };
@@ -186,14 +186,14 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
           occupiedSlots?.mem,
         )}
         tooltipTitle={
-          <Flex direction="column" align="stretch">
+          <BAIFlex direction="column" align="stretch">
             {mergedResourceSlots?.['mem']?.human_readable_name}
             <br />
             {displayMemoryUsage(
               sortedLiveStat?.mem?.[displayTargetName],
               occupiedSlots?.mem,
             )}
-          </Flex>
+          </BAIFlex>
         }
       />
     ),
@@ -243,7 +243,7 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
                 : undefined
             }
             tooltipTitle={
-              <Flex direction="column" align="stretch">
+              <BAIFlex direction="column" align="stretch">
                 {mergedResourceSlots?.[deviceKey]?.human_readable_name}
                 {_.includes(key, 'mem') && (
                   <>
@@ -255,7 +255,7 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
                     )}
                   </>
                 )}
-              </Flex>
+              </BAIFlex>
             }
           />
         ) : null;
@@ -268,23 +268,23 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
       {size === 'default' ? (
         _.map(utilItems, (item, index) => (
           <Col xs={24} sm={12} key={index}>
-            <Flex direction="column" align="stretch">
+            <BAIFlex direction="column" align="stretch">
               {item}
-            </Flex>
+            </BAIFlex>
           </Col>
         ))
       ) : (
-        <Flex direction="column" align="stretch" gap={3}>
+        <BAIFlex direction="column" align="stretch" gap={3}>
           {utilItems}
-        </Flex>
+        </BAIFlex>
       )}
       {size === 'default' && (
         <Col span={24}>
-          <Flex justify="end">
+          <BAIFlex justify="end">
             <Typography.Text>
               {`I/O Read: ${convertToDecimalUnit(sortedLiveStat?.io_read?.current, 'm')?.displayValue ?? '-'} / Write: ${convertToDecimalUnit(sortedLiveStat?.io_write?.current, 'm')?.displayValue ?? '-'}`}
             </Typography.Text>
-          </Flex>
+          </BAIFlex>
         </Col>
       )}
     </Row>
