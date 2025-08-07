@@ -1,10 +1,11 @@
+import { StartPage } from './utils/classes/StartPage';
 import {
   deleteSession,
   loginAsAdmin,
   loginAsUser,
   navigateTo,
 } from './utils/test-util';
-import { getCardItemByCardTitle, getMenuItem } from './utils/test-util-antd';
+import { getMenuItem } from './utils/test-util-antd';
 import { test, expect, Page } from '@playwright/test';
 
 const getStartSessionButton = (page: Page) => {
@@ -119,16 +120,16 @@ test.describe('Session Creation', () => {
   test('User can create interactive session on the Start page', async ({
     page,
   }) => {
-    // move to start page
-    await getMenuItem(page, 'start').click();
+    const startPage = new StartPage(page);
+    await startPage.goto();
     await expect(page).toHaveURL(/\/start/);
-    // click Start Session button and move to session start page
-    const card = getCardItemByCardTitle(page, 'Start Interactive Session');
-    expect(card).toBeVisible();
-    const creationButton = card.getByRole('button', {
-      name: 'Start Session',
-    });
+    const interactiveSessionCard = startPage.getInteractiveSessionCard();
+    await expect(interactiveSessionCard).toBeVisible();
+    const creationButton = startPage.getStartButtonFromCard(
+      interactiveSessionCard,
+    );
     await creationButton.click();
+
     await expect(page).toHaveURL(/\/session\/start/);
     await page.waitForLoadState('networkidle');
     // interactive radio button is selected by default
@@ -150,15 +151,12 @@ test.describe('Session Creation', () => {
   });
 
   test('User can create batch session on the Start page', async ({ page }) => {
-    // move to start page
-    await getMenuItem(page, 'start').click();
+    const startPage = new StartPage(page);
+    await startPage.goto();
     await expect(page).toHaveURL(/\/start/);
-    // click Start Session button and move to session start page
-    const card = getCardItemByCardTitle(page, 'Start Batch Session');
-    expect(card).toBeVisible();
-    const creationButton = card.getByRole('button', {
-      name: 'Start Session',
-    });
+    const batchSessionCard = startPage.getBatchSessionCard();
+    await expect(batchSessionCard).toBeVisible();
+    const creationButton = startPage.getStartButtonFromCard(batchSessionCard);
     await creationButton.click();
     await expect(page).toHaveURL(/\/session\/start/);
     await page.waitForLoadState('networkidle');
