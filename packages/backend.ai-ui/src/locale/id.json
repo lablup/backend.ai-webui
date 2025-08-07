@@ -5,5 +5,10 @@
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} dari {{total}} item"
+  },
+  "comp:BAITable": {
+    "SelectColumnToDisplay": "Pilih kolom untuk ditampilkan",
+    "SettingTable": "Pengaturan Tabel",
+    "SearchTableColumn": "Kolom Tabel Cari"
   }
 }

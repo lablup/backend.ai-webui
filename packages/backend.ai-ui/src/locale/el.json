@@ -5,5 +5,10 @@
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} των στοιχείων {{total}}"
+  },
+  "comp:BAITable": {
+    "SelectColumnToDisplay": "Επιλέξτε στήλες για εμφάνιση",
+    "SearchTableColumn": "Στήλες πίνακα αναζήτησης",
+    "SettingTable": "Ρυθμίσεις πίνακα"
   }
 }

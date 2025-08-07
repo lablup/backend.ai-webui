@@ -59,6 +59,7 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
+import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 import { StringParam, withDefault } from 'use-query-params';
 
 export const isDeletedCategory = (status?: string | null) => {
@@ -104,6 +105,10 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const baiClient = useSuspendedBackendaiClient();
   const webuiNavigate = useWebUINavigate();
   const { count } = useVFolderInvitationsValue();
+
+  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
+    'table_column_overrides.VFolderNodeListPage',
+  );
 
   const [selectedFolderList, setSelectedFolderList] = useState<
     Array<VFolderNodesType>
@@ -633,6 +638,10 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 ),
               );
               updateFetchKey();
+            }}
+            tableSettings={{
+              columnOverrides: columnOverrides,
+              onColumnOverridesChange: setColumnOverrides,
             }}
           />
         </BAIFlex>

@@ -5,5 +5,10 @@
   },
   "comp:PaginationInfoText": {
     "Total": "전체 {{total}}개 중 {{start}} - {{end}}"
+  },
+  "comp:BAITable": {
+    "SettingTable": "표 설정",
+    "SelectColumnToDisplay": "표시할 열 선택",
+    "SearchTableColumn": "표시할 열 검색"
   }
 }
