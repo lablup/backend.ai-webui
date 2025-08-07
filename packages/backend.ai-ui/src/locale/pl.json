@@ -35,7 +35,8 @@
       "FileUploadSizeLimit": "Rozmiar pliku przekracza limit rozmiaru przesyłania."
     },
     "DuplicatedFilesDesc": "Plik lub folder o tej samej nazwie już istnieje. \nChcesz zastąpić?",
-    "DuplicatedFiles": "Nadpisz potwierdzenie"
+    "DuplicatedFiles": "Nadpisz potwierdzenie",
+    "DragAndDropDesc": "Przeciągnij i upuść pliki do tego obszaru, aby przesłać."
   },
   "comp:BAITable": {
     "SettingTable": "Ustawienia tabeli",
