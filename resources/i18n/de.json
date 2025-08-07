@@ -634,10 +634,17 @@
     "Title": "Es ist ein Fehler aufgetreten."
   },
   "explorer": {
+    "FileUploadCancelled": "Das Datei -Upload wurde durch Benutzeranforderung storniert.",
     "FolderNotFoundOrNoAccess": "Ordner, der nicht gefunden oder zugänglich ist verweigert",
     "InputTooShort": "EingabeTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Nicht verwaltete Ordner unterstützen den Datei -Explorer nicht.",
     "NoPermissions": "Keine Berechtigungen für den Zugriff auf diesen Ordner",
+    "ProcessingUpload": "Ihre Datei wird hochgeladen. \nBitte warten.",
+    "UploadCompleted": "{{fileName}} Laden Sie fertig hoch",
+    "UploadCompletedDesc": "Die ausgewählte Datei wurde erfolgreich hochgeladen.",
+    "UploadFailed": "{{fileName}} nicht hochladen.",
+    "UploadFailedDesc": "Beim Hochladen der Datei trat ein Fehler auf.",
+    "UploadingFile": "Hochladen {{fileName}} ...",
     "ValueRequired": "WertErforderlich"
   },
   "general": {

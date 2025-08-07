@@ -634,10 +634,17 @@
     "Title": "发生错误。"
   },
   "explorer": {
+    "FileUploadCancelled": "文件上传已通过用户请求取消。",
     "FolderNotFoundOrNoAccess": "未找到或拒绝访问的文件夹",
     "InputTooShort": "输入太短",
     "NoExplorerSupportForUnmanagedFolder": "未管理的文件夹不支持文件资源管理器。",
     "NoPermissions": "无权访问此文件夹",
+    "ProcessingUpload": "您的文件正在上传。\n请稍等。",
+    "UploadCompleted": "{{fileName}}上传完成",
+    "UploadCompletedDesc": "所选文件已成功上传。",
+    "UploadFailed": "无法上传{{fileName}}。",
+    "UploadFailedDesc": "上传文件时发生错误。",
+    "UploadingFile": "上传{{fileName}} ...",
     "ValueRequired": "需要值"
   },
   "general": {

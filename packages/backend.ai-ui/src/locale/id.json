@@ -33,6 +33,8 @@
     "DownloadStarted": "File \"{{fileName}}\" unduhan telah dimulai.",
     "error": {
       "FileUploadSizeLimit": "Ukuran file melebihi batas ukuran unggahan."
-    }
+    },
+    "DuplicatedFilesDesc": "File atau folder dengan nama yang sama sudah ada. \nApakah Anda ingin menimpa?",
+    "DuplicatedFiles": "Timpa konfirmasi"
   }
 }

@@ -33,6 +33,8 @@
     "DownloadStarted": "文件“ {{fileName}}”下载已开始。",
     "error": {
       "FileUploadSizeLimit": "文件大小超过上传大小限制。"
-    }
+    },
+    "DuplicatedFilesDesc": "具有相同名称的文件或文件夹已经存在。\n你想覆盖吗？",
+    "DuplicatedFiles": "覆盖确认"
   }
 }

@@ -16,6 +16,7 @@ import { FileOutlined, FolderOutlined, HomeOutlined } from '@ant-design/icons';
 import { Breadcrumb, Button, TableColumnsType, theme, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { ItemType } from 'antd/es/breadcrumb/Breadcrumb';
+import { RcFile } from 'antd/es/upload';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { DownloadIcon } from 'lucide-react';
@@ -46,11 +47,17 @@ export const FolderInfoContext = createContext<{
 export interface BAIFileExplorerProps {
   vfolderNodeFrgmt?: BAIFileExplorerFragment$key | null;
   targetVFolderId: string;
+  onUpload: (
+    files: Array<RcFile>,
+    currentPath: string,
+    refetch: () => void,
+  ) => void;
 }
 
 const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
   vfolderNodeFrgmt,
   targetVFolderId,
+  onUpload,
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -268,6 +275,9 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
           />
           <ActionItems
             selectedItems={selectedItems}
+            onUpload={(files, currentPath) =>
+              onUpload(files, currentPath, refetch)
+            }
             onRequestClose={(
               success: boolean,
               modifiedItems?: Array<VFolderFile>,
