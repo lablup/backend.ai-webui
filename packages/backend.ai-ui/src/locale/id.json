@@ -35,6 +35,7 @@
       "FileUploadSizeLimit": "Ukuran file melebihi batas ukuran unggahan."
     },
     "DuplicatedFilesDesc": "File atau folder dengan nama yang sama sudah ada. \nApakah Anda ingin menimpa?",
-    "DuplicatedFiles": "Timpa konfirmasi"
+    "DuplicatedFiles": "Timpa konfirmasi",
+    "DragAndDropDesc": "Seret dan jatuhkan file ke area ini untuk diunggah."
   }
 }

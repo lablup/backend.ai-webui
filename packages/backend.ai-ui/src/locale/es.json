@@ -35,6 +35,7 @@
       "FileUploadSizeLimit": "El tamaño del archivo excede el límite de tamaño de carga."
     },
     "DuplicatedFilesDesc": "El archivo o carpeta con el mismo nombre ya existe. \n¿Quieres sobrescribir?",
-    "DuplicatedFiles": "Confirmación de sobrescribencia"
+    "DuplicatedFiles": "Confirmación de sobrescribencia",
+    "DragAndDropDesc": "Arrastre y suelte archivos a esta área para cargar."
   }
 }
