@@ -5,8 +5,6 @@ export type { BAICardProps } from './BAICard';
 export { default as BAIResourceWithSteppedProgress } from './BAIResourceWithSteppedProgress';
 export type { BAIResourceWithSteppedProgressProps } from './BAIResourceWithSteppedProgress';
 export * from './Table';
-
 export * from './fragments';
-export * from './tests';
 export * from './provider';
 export * from './unsafe';
