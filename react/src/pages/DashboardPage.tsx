@@ -17,6 +17,7 @@ import { Skeleton, theme } from 'antd';
 import _ from 'lodash';
 import { Suspense, useTransition } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
+import { useCurrentUserRole } from 'src/hooks/backendai';
 
 const DashboardPage: React.FC = () => {
   const baiClient = useSuspendedBackendaiClient();
@@ -24,23 +25,28 @@ const DashboardPage: React.FC = () => {
 
   const currentProject = useCurrentProjectValue();
   const currentResourceGroup = useCurrentResourceGroupValue();
+  const userRole = useCurrentUserRole();
+
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
   const [localStorageBoardItems, setLocalStorageBoardItems] =
     useBAISettingUserState('dashboard_board_items');
 
+  const skipTotalResourceWithinResourceGroup =
+    baiClient?._config?.hideAgents && userRole !== 'superadmin';
+
   const queryRef = useLazyLoadQuery<DashboardPageQuery>(
     graphql`
       query DashboardPageQuery(
         $projectId: UUID!
-        $resourceGroup: String # TODO: Skip to query if hideAgents is true
-        $hideAgents: Boolean!
+        $resourceGroup: String
+        $skipTotalResourceWithinResourceGroup: Boolean!
       ) {
         ...MySessionQueryFragment @arguments(projectId: $projectId)
         ...RecentlyCreatedSessionFragment @arguments(projectId: $projectId)
         ...TotalResourceWithinResourceGroupFragment
-          @skip(if: $hideAgents)
+          @skip(if: $skipTotalResourceWithinResourceGroup)
           @alias
           @arguments(resourceGroup: $resourceGroup)
       }
@@ -48,7 +54,7 @@ const DashboardPage: React.FC = () => {
     {
       projectId: currentProject.id,
       resourceGroup: currentResourceGroup || 'default',
-      hideAgents: baiClient?._config?.hideAgents,
+      skipTotalResourceWithinResourceGroup,
     },
     {
       fetchPolicy:
@@ -115,7 +121,7 @@ const DashboardPage: React.FC = () => {
         ),
       },
     },
-    !baiClient?._config?.hideAgents && {
+    !skipTotalResourceWithinResourceGroup && {
       id: 'totalResourceWithinResourceGroup',
       rowSpan: 2,
       columnSpan: 2,

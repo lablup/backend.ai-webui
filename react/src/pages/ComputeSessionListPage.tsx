@@ -4,7 +4,6 @@ import {
   ComputeSessionListPageQuery$variables,
 } from '../__generated__/ComputeSessionListPageQuery.graphql';
 import ActionItemContent from '../components/ActionItemContent';
-import AvailableResourcesCard from '../components/AvailableResourcesCard';
 import BAIFetchKeyButton from '../components/BAIFetchKeyButton';
 import BAILink from '../components/BAILink';
 import BAIPropertyFilter, {
@@ -13,12 +12,21 @@ import BAIPropertyFilter, {
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import TerminateSessionModal from '../components/ComputeSessionNodeItems/TerminateSessionModal';
+import ConfigurableResourceCard from '../components/ConfigurableResourceCard';
 import SessionNodes from '../components/SessionNodes';
 import { filterOutNullAndUndefined, handleRowSelectionChange } from '../helper';
-import { useUpdatableState, useWebUINavigate } from '../hooks';
+import {
+  INITIAL_FETCH_KEY,
+  useSuspendedBackendaiClient,
+  useUpdatableState,
+  useWebUINavigate,
+} from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAINotificationState } from '../hooks/useBAINotification';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import {
+  useCurrentProjectValue,
+  useCurrentResourceGroupState,
+} from '../hooks/useCurrentProject';
 import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
 import { SESSION_LAUNCHER_NOTI_PREFIX } from './SessionLauncherPage';
 import { useUpdateEffect } from 'ahooks';
@@ -46,6 +54,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useLocation } from 'react-router-dom';
+import { useCurrentUserRole } from 'src/hooks/backendai';
 import { StringParam, withDefault } from 'use-query-params';
 
 type TypeFilterType = 'all' | 'interactive' | 'batch' | 'inference' | 'system';
@@ -56,7 +65,12 @@ type SessionNode = NonNullableNodeOnEdges<
 const CARD_MIN_HEIGHT = 200;
 
 const ComputeSessionListPage = () => {
+  const baiClient = useSuspendedBackendaiClient();
   const currentProject = useCurrentProjectValue();
+  const userRole = useCurrentUserRole();
+
+  const [currentResourceGroup, setCurrentResourceGroup] =
+    useCurrentResourceGroupState();
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -119,6 +133,9 @@ const ComputeSessionListPage = () => {
       first: baiPaginationOption.first,
       filter: mergeFilterValues([statusFilter, queryParams.filter, typeFilter]),
       order: queryParams.order,
+      resourceGroup: currentResourceGroup || 'default',
+      skipTotalResourceWithinResourceGroup:
+        baiClient?._config?.hideAgents && userRole !== 'superadmin',
     }),
     [
       currentProject.id,
@@ -128,21 +145,25 @@ const ComputeSessionListPage = () => {
       queryParams.filter,
       typeFilter,
       queryParams.order,
+      currentResourceGroup,
+      baiClient?._config?.hideAgents,
+      userRole,
     ],
   );
 
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  const { compute_session_nodes, ...sessionCounts } =
-    useLazyLoadQuery<ComputeSessionListPageQuery>(
-      graphql`
+  const queryRef = useLazyLoadQuery<ComputeSessionListPageQuery>(
+    graphql`
         query ComputeSessionListPageQuery(
           $projectId: UUID!
           $first: Int = 20
           $offset: Int = 0
           $filter: String
           $order: String
+          $resourceGroup: String
+          $skipTotalResourceWithinResourceGroup: Boolean!
         ) {
           compute_session_nodes(
             project_id: $projectId
@@ -201,22 +222,24 @@ const ComputeSessionListPage = () => {
           ) {
             count
           }
+          ...TotalResourceWithinResourceGroupFragment
+            @skip(if: $skipTotalResourceWithinResourceGroup)
+            @alias
+            @arguments(resourceGroup: $resourceGroup)
         }
       `,
-      deferredQueryVariables,
-      {
-        // fetchPolicy: 'network-only',
-        // fetchKey: deferredFetchKey,
+    deferredQueryVariables,
+    {
+      fetchPolicy:
+        deferredFetchKey === INITIAL_FETCH_KEY
+          ? 'store-and-network'
+          : 'network-only',
+      fetchKey:
+        deferredFetchKey === INITIAL_FETCH_KEY ? undefined : deferredFetchKey,
+    },
+  );
 
-        // fetchPolicy:'store-only',
-        fetchPolicy:
-          deferredFetchKey === 'initial-fetch'
-            ? 'store-and-network'
-            : 'network-only',
-        fetchKey:
-          deferredFetchKey === 'initial-fetch' ? undefined : deferredFetchKey,
-      },
-    );
+  const { compute_session_nodes, ...sessionCounts } = queryRef;
   const { lg } = Grid.useBreakpoint();
 
   const [notifications] = useBAINotificationState();
@@ -314,18 +337,21 @@ const ComputeSessionListPage = () => {
                   width: '100%',
                   minHeight: lg ? CARD_MIN_HEIGHT : undefined,
                 }}
-                title={t('Allocated Resources')}
                 loading
               />
             }
           >
-            <AvailableResourcesCard
+            <ConfigurableResourceCard
               style={{
                 width: '100%',
                 minHeight: lg ? CARD_MIN_HEIGHT : undefined,
               }}
               isRefetching={deferredFetchKey !== fetchKey}
               fetchKey={deferredFetchKey}
+              queryRef={
+                queryRef.TotalResourceWithinResourceGroupFragment ?? undefined
+              }
+              onResourceGroupChange={setCurrentResourceGroup}
             />
           </Suspense>
         </Col>

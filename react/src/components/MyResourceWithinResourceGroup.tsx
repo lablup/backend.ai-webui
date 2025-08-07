@@ -19,6 +19,7 @@ import { useTranslation } from 'react-i18next';
 interface MyResourceWithinResourceGroupProps extends BAICardProps {
   fetchKey?: string;
   isRefetching?: boolean;
+  onResourceGroupChange?: (resourceGroup: string) => void;
 }
 
 const getResourceValue = (
@@ -63,7 +64,7 @@ const getResourceValue = (
 
 const MyResourceWithinResourceGroup: React.FC<
   MyResourceWithinResourceGroupProps
-> = ({ fetchKey, isRefetching, ...props }) => {
+> = ({ fetchKey, isRefetching, onResourceGroupChange, ...props }) => {
   const { t } = useTranslation();
 
   const currentProject = useCurrentProjectValue();
@@ -125,7 +126,10 @@ const MyResourceWithinResourceGroup: React.FC<
       <ResourceGroupSelectForCurrentProject
         showSearch
         style={{ minWidth: 100 }}
-        onChange={(v) => setSelectedResourceGroup(v)}
+        onChange={(v) => {
+          setSelectedResourceGroup(v);
+          onResourceGroupChange?.(v);
+        }}
         loading={selectedResourceGroup !== deferredSelectedResourceGroup}
         popupMatchSelectWidth={false}
         tooltip={t('general.ResourceGroup')}

@@ -34,6 +34,7 @@ import { graphql, useRefetchableFragment } from 'react-relay';
 interface TotalResourceWithinResourceGroupProps extends BAICardProps {
   queryRef: TotalResourceWithinResourceGroupFragment$key;
   isRefetching?: boolean;
+  onResourceGroupChange?: (resourceGroup: string) => void;
 }
 
 type AgentSummary = NonNullable<
@@ -42,7 +43,7 @@ type AgentSummary = NonNullable<
 
 const TotalResourceWithinResourceGroup: React.FC<
   TotalResourceWithinResourceGroupProps
-> = ({ queryRef, isRefetching, ...props }) => {
+> = ({ queryRef, isRefetching, onResourceGroupChange, ...props }) => {
   const { t } = useTranslation();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [selectedResourceGroup, setSelectedResourceGroup] = useState<string>();
@@ -191,7 +192,10 @@ const TotalResourceWithinResourceGroup: React.FC<
       <ResourceGroupSelectForCurrentProject
         showSearch
         style={{ minWidth: 100 }}
-        onChange={(v) => setSelectedResourceGroup(v)}
+        onChange={(v) => {
+          setSelectedResourceGroup(v);
+          onResourceGroupChange?.(v);
+        }}
         loading={selectedResourceGroup !== deferredSelectedResourceGroup}
         popupMatchSelectWidth={false}
         tooltip={t('general.ResourceGroup')}

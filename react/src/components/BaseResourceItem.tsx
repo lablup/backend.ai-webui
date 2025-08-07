@@ -26,6 +26,7 @@ export interface AcceleratorSlotDetail {
 
 export interface BaseResourceItemProps {
   title: ReactNode | string;
+  titleStyle?: React.CSSProperties;
   tooltip?: string;
   isRefetching?: boolean;
   displayType: 'usage' | 'remaining';
@@ -35,10 +36,12 @@ export interface BaseResourceItemProps {
   acceleratorSlotsDetails: AcceleratorSlotDetail[];
   resourceSlotsDetails: any;
   progressProps?: Partial<BAIResourceWithSteppedProgressProps>;
+  extraActions?: ReactNode;
 }
 
 const BaseResourceItem: React.FC<BaseResourceItemProps> = ({
   title,
+  titleStyle,
   tooltip,
   isRefetching,
   displayType,
@@ -48,6 +51,7 @@ const BaseResourceItem: React.FC<BaseResourceItemProps> = ({
   acceleratorSlotsDetails,
   resourceSlotsDetails,
   progressProps,
+  extraActions,
 }) => {
   const { showProgress = true, unlimitedValues, steps } = progressProps || {};
   const { t } = useTranslation();
@@ -119,6 +123,7 @@ const BaseResourceItem: React.FC<BaseResourceItemProps> = ({
           top: 0,
           backgroundColor: token.colorBgContainer,
           zIndex: 1,
+          ...titleStyle,
         }}
         gap="xs"
         wrap="wrap"
@@ -166,6 +171,7 @@ const BaseResourceItem: React.FC<BaseResourceItemProps> = ({
                 margin: -token.marginXS,
               }}
             />
+            {extraActions}
           </BAIFlex>
         </BAIFlex>
       </BAIFlex>
