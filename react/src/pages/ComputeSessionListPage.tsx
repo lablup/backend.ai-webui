@@ -15,12 +15,7 @@ import TerminateSessionModal from '../components/ComputeSessionNodeItems/Termina
 import ConfigurableResourceCard from '../components/ConfigurableResourceCard';
 import SessionNodes from '../components/SessionNodes';
 import { filterOutNullAndUndefined, handleRowSelectionChange } from '../helper';
-import {
-  INITIAL_FETCH_KEY,
-  useFetchKey,
-  useSuspendedBackendaiClient,
-  useWebUINavigate,
-} from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAINotificationState } from '../hooks/useBAINotification';
 import {
@@ -40,7 +35,13 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import { BAIFlex, BAICard, BAISessionsIcon } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAICard,
+  BAISessionsIcon,
+  INITIAL_FETCH_KEY,
+  useFetchKey,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import { PowerOffIcon } from 'lucide-react';
 import {

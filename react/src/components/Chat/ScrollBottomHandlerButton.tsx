@@ -1,5 +1,5 @@
-import { useEventNotStable } from '../../hooks/useEventNotStable';
 import { Button } from 'antd';
+import { useEventNotStable } from 'backend.ai-ui';
 import { ArrowDownIcon } from 'lucide-react';
 import React, { useEffect } from 'react';
 

@@ -3,7 +3,6 @@ import {
   ResourcePresetSelectQuery$data,
 } from '../__generated__/ResourcePresetSelectQuery.graphql';
 import { localeCompare } from '../helper';
-import { useUpdatableState } from '../hooks';
 import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
 import useControllableState from '../hooks/useControllableState';
 import ResourceNumber from './ResourceNumber';
@@ -11,7 +10,7 @@ import { EditOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { useThrottleFn } from 'ahooks';
 import { Select, Tooltip, theme } from 'antd';
 import { SelectProps } from 'antd/lib';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, INITIAL_FETCH_KEY, useFetchKey } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -45,7 +44,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   resourceGroup,
   ...selectProps
 }) => {
-  const [fetchKey, updateFetchKey] = useUpdatableState('first');
+  const [fetchKey, updateFetchKey] = useFetchKey();
   const { run: updateFetchKeyThrottled } = useThrottleFn(updateFetchKey, {
     wait: 3000,
     trailing: false,
@@ -77,7 +76,8 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     {},
     {
       fetchKey: fetchKey,
-      fetchPolicy: fetchKey === 'first' ? 'store-and-network' : 'network-only',
+      fetchPolicy:
+        fetchKey === INITIAL_FETCH_KEY ? 'store-and-network' : 'network-only',
     },
   );
 

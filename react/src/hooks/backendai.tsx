@@ -1,10 +1,11 @@
-import { useSuspendedBackendaiClient, useUpdatableState } from '.';
+import { useSuspendedBackendaiClient } from '.';
 import { maskString, useBaiSignedRequestWithPromise } from '../helper';
 import {
   useSuspenseTanQuery,
   useTanMutation,
   useTanQuery,
 } from './reactQueryAlias';
+import { useFetchKey } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -41,7 +42,7 @@ export interface QuotaScope {
 }
 
 export const useResourceSlots = () => {
-  const [key, checkUpdate] = useUpdatableState('first');
+  const [key, checkUpdate] = useFetchKey();
   const baiClient = useSuspendedBackendaiClient();
   const { data: resourceSlots } = useSuspenseTanQuery<{
     [key in ResourceSlotName]?: string;
@@ -78,7 +79,7 @@ export type ResourceSlotDetail = {
  * @returns An array containing the resource slots and a refresh function.
  */
 export const useResourceSlotsDetails = (resourceGroupName?: string) => {
-  const [key, checkUpdate] = useUpdatableState('first');
+  const [key, checkUpdate] = useFetchKey();
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const { data: resourceSlotsInRG } = useTanQuery<{
     [key: string]: ResourceSlotDetail | undefined;

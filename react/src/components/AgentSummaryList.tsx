@@ -7,7 +7,6 @@ import {
   filterOutNullAndUndefined,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
-import { useUpdatableState } from '../hooks';
 import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useResourceGroupsForCurrentProject } from '../hooks/useCurrentProject';
@@ -27,7 +26,7 @@ import { useToggle } from 'ahooks';
 import { Button, TableProps, theme, Tooltip, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
-import { BAITable, BAIFlex } from 'backend.ai-ui';
+import { BAITable, BAIFlex, useFetchKey } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -71,7 +70,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
   });
   const [order, setOrder] = useState<string>();
 
-  const [fetchKey, updateFetchKey] = useUpdatableState('first');
+  const [fetchKey, updateFetchKey] = useFetchKey();
   const [fetchPolicy] = useState<FetchPolicy>('network-only');
   const updateFetchKeyInTransition = () =>
     startRefreshTransition(() => {

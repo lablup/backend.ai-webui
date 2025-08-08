@@ -5,7 +5,6 @@ import {
 } from '../__generated__/ResourceGroupListQuery.graphql';
 import { ResourceGroupListUpdateMutation } from '../__generated__/ResourceGroupListUpdateMutation.graphql';
 import { filterOutEmpty, filterOutNullAndUndefined } from '../helper';
-import { useUpdatableState } from '../hooks';
 import BAIConfirmModalWithInput from './BAIConfirmModalWithInput';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import BAIRadioGroup from './BAIRadioGroup';
@@ -30,7 +29,7 @@ import {
   theme,
 } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import { BAITable, BAIFlex } from 'backend.ai-ui';
+import { BAITable, BAIFlex, useFetchKey } from 'backend.ai-ui';
 import _ from 'lodash';
 import { BanIcon, UndoIcon } from 'lucide-react';
 import { useState, useTransition } from 'react';
@@ -64,7 +63,7 @@ const ResourceGroupList: React.FC = () => {
     useState<ResourceGroup>();
   const [selectedResourceGroupName, setSelectedResourceGroupName] =
     useState<string>();
-  const [fetchKey, updateFetchKey] = useUpdatableState('first');
+  const [fetchKey, updateFetchKey] = useFetchKey();
   const [isActiveTypePending, startActiveTypeTransition] = useTransition();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 

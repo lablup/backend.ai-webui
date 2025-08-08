@@ -3,14 +3,13 @@ import {
   convertToBinaryUnit,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
-import { useUpdatableState } from '../hooks';
 import useControllableState from '../hooks/useControllableState';
 import DynamicUnitInputNumber, {
   DynamicUnitInputNumberProps,
 } from './DynamicUnitInputNumber';
 import { Slider, theme } from 'antd';
 import { SliderMarks } from 'antd/es/slider';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, useFetchKey } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useEffect, useMemo } from 'react';
 
@@ -56,7 +55,7 @@ const DynamicUnitInputNumberWithSlider: React.FC<
   // console.log('##marks', marks);
 
   // FIXME: this is a workaround to fix the issue that the value is not updated when the value is controlled
-  const [key, updateKey] = useUpdatableState('first');
+  const [key, updateKey] = useFetchKey();
   useEffect(() => {
     setTimeout(() => {
       updateKey(value?.toString());

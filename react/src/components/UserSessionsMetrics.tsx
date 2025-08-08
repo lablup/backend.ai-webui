@@ -1,13 +1,12 @@
 import { UserSessionsMetricsQuery } from '../__generated__/UserSessionsMetricsQuery.graphql';
 import { filterOutEmpty, newLineToBrElement } from '../helper';
-import { useUpdatableState } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import BAIBoard, { BAIBoardItem } from './BAIBoard';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import SessionMetricGraph from './SessionMetricGraph';
 import { Alert, DatePicker, Empty, Skeleton, theme } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, useFetchKey } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { Suspense, useEffect, useMemo, useState, useTransition } from 'react';
@@ -22,7 +21,7 @@ const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
   const { token } = theme.useToken();
   const { RangePicker } = DatePicker;
 
-  const [usageFetchKey, updateUsageFetchKey] = useUpdatableState('first');
+  const [usageFetchKey, updateUsageFetchKey] = useFetchKey();
   const [isPendingUsageTransition, startUsageTransition] = useTransition();
   const [startDate, setStartDate] = useQueryParam(
     'startDate',

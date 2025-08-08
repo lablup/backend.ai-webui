@@ -1,11 +1,10 @@
 import { VFolderTableProjectQuery } from '../__generated__/VFolderTableProjectQuery.graphql';
 import { useBaiSignedRequestWithPromise } from '../helper';
-import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useKeyPairLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { useEventNotStable } from '../hooks/useEventNotStable';
 import BAILink from './BAILink';
 import FolderCreateModal from './FolderCreateModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -30,7 +29,12 @@ import {
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { BAIUserUnionIcon, BAIFlex } from 'backend.ai-ui';
+import {
+  BAIUserUnionIcon,
+  BAIFlex,
+  useFetchKey,
+  useEventNotStable,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { PlusIcon } from 'lucide-react';
@@ -163,7 +167,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   const { token } = theme.useToken();
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const currentProject = useCurrentProjectValue();
-  const [fetchKey, updateFetchKey] = useUpdatableState('first');
+  const [fetchKey, updateFetchKey] = useFetchKey();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const { data: allFolderList } = useSuspenseTanQuery({
     queryKey: ['VFolderSelectQuery', fetchKey, currentProject.id, ownerEmail],

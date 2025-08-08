@@ -1,7 +1,8 @@
-import { useSuspendedBackendaiClient, useUpdatableState } from '.';
+import { useSuspendedBackendaiClient } from '.';
 import { hooksUsingRelay_KeyPairQuery } from '../__generated__/hooksUsingRelay_KeyPairQuery.graphql';
 import { hooksUsingRelay_KeyPairResourcePolicyQuery } from '../__generated__/hooksUsingRelay_KeyPairResourcePolicyQuery.graphql';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
+import { useFetchKey } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useCallback } from 'react';
 import { graphql, FetchPolicy, useLazyLoadQuery } from 'react-relay';
@@ -16,7 +17,7 @@ export const useKeyPairLazyLoadQuery = (
     fetchPolicy: 'store-and-network',
   },
 ) => {
-  const [fetchKey, updateFetchKey] = useUpdatableState('first');
+  const [fetchKey, updateFetchKey] = useFetchKey();
   const { keypair } = useLazyLoadQuery<hooksUsingRelay_KeyPairQuery>(
     graphql`
       query hooksUsingRelay_KeyPairQuery($accessKey: String!) {
@@ -48,7 +49,7 @@ export const useCurrentKeyPairResourcePolicyLazyLoadQuery = (
     fetchPolicy: 'store-and-network',
   },
 ) => {
-  const [fetchKey, updateFetchKey] = useUpdatableState('first');
+  const [fetchKey, updateFetchKey] = useFetchKey();
   const baiClient = useSuspendedBackendaiClient();
   const [keypair] = useKeyPairLazyLoadQuery(baiClient?._config.accessKey);
 

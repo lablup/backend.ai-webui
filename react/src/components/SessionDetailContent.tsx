@@ -2,7 +2,7 @@ import { SessionDetailContentFragment$key } from '../__generated__/SessionDetail
 import { SessionDetailContentLegacyQuery } from '../__generated__/SessionDetailContentLegacyQuery.graphql';
 import { SessionDetailContentQuery } from '../__generated__/SessionDetailContentQuery.graphql';
 import { filterOutNullAndUndefined } from '../helper';
-import { INITIAL_FETCH_KEY, useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
@@ -41,6 +41,7 @@ import {
   UNSAFELazyUserEmailView,
   useMemoizedJSONParse,
   BAIFlex,
+  INITIAL_FETCH_KEY,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Suspense, useState } from 'react';

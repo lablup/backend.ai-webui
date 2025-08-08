@@ -1,8 +1,7 @@
-import { useUpdatableState } from '../hooks';
 import AllocationHistoryStatistics from './AllocationHistoryStatistics';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import { Alert, Form, Select, Skeleton } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, useFetchKey } from 'backend.ai-ui';
 import { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { createEnumParam, useQueryParam, withDefault } from 'use-query-params';
@@ -17,7 +16,7 @@ const AllocationHistory: React.FC = () => {
   );
   const { t } = useTranslation();
 
-  const [usageFetchKey, updateUsageFetchKey] = useUpdatableState('first');
+  const [usageFetchKey, updateUsageFetchKey] = useFetchKey();
   const [isPendingUsageTransition, startUsageTransition] = useTransition();
   let periodOptions: Array<{
     label: string;

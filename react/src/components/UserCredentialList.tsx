@@ -6,7 +6,6 @@ import {
   UserCredentialListQuery$data,
 } from '../__generated__/UserCredentialListQuery.graphql';
 import { filterOutEmpty, filterOutNullAndUndefined } from '../helper';
-import { useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import BAIPropertyFilter from './BAIPropertyFilter';
 import BAIRadioGroup from './BAIRadioGroup';
@@ -19,7 +18,7 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { App, Button, Popconfirm, Tag, Tooltip, Typography, theme } from 'antd';
-import { BAITable, BAIFlex } from 'backend.ai-ui';
+import { BAITable, BAIFlex, useFetchKey } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
@@ -45,7 +44,7 @@ const UserCredentialList: React.FC = () => {
     }
   }, [action, setAction]);
 
-  const [fetchKey, updateFetchKey] = useUpdatableState('first');
+  const [fetchKey, updateFetchKey] = useFetchKey();
   const [activeType, setActiveType] = useState<'active' | 'inactive'>('active');
   const [order, setOrder] = useState<string | undefined>(undefined);
   const [filterString, setFilterString] = useState<string>();

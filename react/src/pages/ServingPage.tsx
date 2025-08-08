@@ -6,13 +6,18 @@ import BAIPropertyFilter, {
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import EndpointList from '../components/EndpointList';
 import { filterOutEmpty } from '../helper';
-import { useUpdatableState, useWebUINavigate } from '../hooks';
+import { useWebUINavigate } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
 import { Button, Skeleton, theme } from 'antd';
-import { BAIFlex, BAICard } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAICard,
+  INITIAL_FETCH_KEY,
+  useFetchKey,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -41,7 +46,7 @@ const ServingPage: React.FC = () => {
     pageSize: 10,
   });
 
-  const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
+  const [fetchKey, updateFetchKey] = useFetchKey();
 
   const lifecycleStageFilter =
     queryParams.lifecycleStage === 'active'
@@ -88,11 +93,11 @@ const ServingPage: React.FC = () => {
     deferredQueryVariables,
     {
       fetchPolicy:
-        deferredFetchKey === 'initial-fetch'
+        deferredFetchKey === INITIAL_FETCH_KEY
           ? 'store-and-network'
           : 'network-only',
       fetchKey:
-        deferredFetchKey === 'initial-fetch' ? undefined : deferredFetchKey,
+        deferredFetchKey === INITIAL_FETCH_KEY ? undefined : deferredFetchKey,
     },
   );
 

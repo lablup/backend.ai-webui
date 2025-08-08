@@ -1,5 +1,4 @@
 import { ChatCardQuery } from '../../__generated__/ChatCardQuery.graphql';
-import { useUpdatableState } from '../../hooks';
 import { useSuspenseTanQuery } from '../../hooks/reactQueryAlias';
 import { useAIAgent } from '../../hooks/useAIAgent';
 import PureChatHeader from './ChatHeader';
@@ -24,6 +23,7 @@ import {
 } from 'ai';
 import { Alert, App, Card, CardProps, theme } from 'antd';
 import { createStyles } from 'antd-style';
+import { INITIAL_FETCH_KEY, useFetchKey } from 'backend.ai-ui';
 import classNames from 'classnames';
 import _ from 'lodash';
 import React, {
@@ -217,7 +217,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   const [isPendingUpdate, startUpdateTransition] = useTransition();
 
   const dropContainerRef = useRef<HTMLDivElement>(null);
-  const [fetchKey, updateFetchKey] = useUpdatableState('first');
+  const [fetchKey, updateFetchKey] = useFetchKey();
   const [startTime, setStartTime] = useState<number | null>(null);
 
   const baseURL = createBaseURL(chat.provider.basePath, endpoint?.url);
@@ -292,7 +292,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
 
   useEffect(() => {
     // prevent to show the error message as failed fetching in the first time
-    if (modelsError && fetchKey !== 'first') {
+    if (modelsError && fetchKey !== INITIAL_FETCH_KEY) {
       appMessage.error(`Error fetching models: ${modelsError}`, 5);
     }
   }, [modelsError, fetchKey, appMessage]);

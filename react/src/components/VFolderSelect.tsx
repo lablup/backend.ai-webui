@@ -1,5 +1,4 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
-import { useUpdatableState } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -7,7 +6,7 @@ import BAILink from './BAILink';
 import FolderCreateModal from './FolderCreateModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { Button, Select, SelectProps, Tooltip } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, useFetchKey } from 'backend.ai-ui';
 import _ from 'lodash';
 import { PlusIcon } from 'lucide-react';
 import React, { startTransition, useEffect, useState } from 'react';
@@ -57,7 +56,7 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
   const { generateFolderPath } = useFolderExplorerOpener();
   const { t } = useTranslation();
   const [value, setValue] = useControllableState(selectProps);
-  const [key, checkUpdate] = useUpdatableState('first');
+  const [key, checkUpdate] = useFetchKey();
   const [isOpenCreateModal, setIsOpenCreateModal] = useState(false);
   // const { vfolder_list } = useLazyLoadQuery<VFolderSelectQuery>(
   //   graphql`

@@ -1,9 +1,10 @@
 import { SessionDetailDrawerFragment$key } from '../__generated__/SessionDetailDrawerFragment.graphql';
-import { useFetchKey, useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import SessionDetailContent from './SessionDetailContent';
 import { Drawer, Skeleton, Tooltip } from 'antd';
 import { DrawerProps } from 'antd/lib';
+import { useFetchKey } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { Suspense, useMemo, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
