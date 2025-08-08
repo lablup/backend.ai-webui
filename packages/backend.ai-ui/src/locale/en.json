@@ -5,5 +5,34 @@
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} of {{total}} items"
+  },
+  "general": {
+    "NSelected": "{{count}} selected",
+    "button": {
+      "Delete": "Delete",
+      "Create": "Create",
+      "Upload": "Upload"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "Selected files and folders have been deleted successfully.",
+    "DeleteSelectedItemsDialog": "Delete Confirmation",
+    "DeleteSelectedItemDesc": "Deleted files and folders cannot be restored. Do you want to proceed?",
+    "FolderCreatedSuccessfully": "Folder created successfully.",
+    "CreateANewFolder": "Create a new folder",
+    "FolderName": "Folder Name",
+    "PleaseEnterAFolderName": "Please enter the folder name.",
+    "MaxFolderNameLength": "Folder name must be 255 characters or less.",
+    "Name": "Name",
+    "Size": "Size",
+    "CreatedAt": "Created At",
+    "ModifiedAt": "Modified At",
+    "Controls": "Controls",
+    "UploadFiles": "Upload Files",
+    "UploadFolder": "Upload Folder",
+    "DownloadStarted": "File \"{{fileName}}\" download has started.",
+    "error": {
+      "FileUploadSizeLimit": "File size exceeds upload size limit."
+    }
   }
 }

@@ -5,5 +5,34 @@
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} ของ {{total}} รายการ"
+  },
+  "general": {
+    "NSelected": "{{count}} เลือก",
+    "button": {
+      "Delete": "ลบ",
+      "Create": "สร้าง",
+      "Upload": "อัพโหลด"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "ไฟล์และโฟลเดอร์ที่เลือกได้ถูกลบไปแล้วสำเร็จ",
+    "DeleteSelectedItemsDialog": "ลบการยืนยัน",
+    "DeleteSelectedItemDesc": "ไม่สามารถกู้คืนไฟล์และโฟลเดอร์ที่ถูกลบได้ \nคุณต้องการดำเนินการต่อหรือไม่?",
+    "FolderCreatedSuccessfully": "โฟลเดอร์สร้างสำเร็จ",
+    "CreateANewFolder": "สร้างโฟลเดอร์ใหม่",
+    "FolderName": "ชื่อโฟลเดอร์",
+    "PleaseEnterAFolderName": "กรุณากรอกชื่อโฟลเดอร์",
+    "MaxFolderNameLength": "ชื่อโฟลเดอร์ต้องเป็น 255 อักขระหรือน้อยกว่า",
+    "Name": "ชื่อ",
+    "Size": "ขนาด",
+    "CreatedAt": "สร้างขึ้นที่",
+    "ModifiedAt": "ดัดแปลงที่",
+    "Controls": "การควบคุม",
+    "UploadFiles": "อัปโหลดไฟล์",
+    "UploadFolder": "โฟลเดอร์อัปโหลด",
+    "DownloadStarted": "การดาวน์โหลดไฟล์ \"{{fileName}}\" เริ่มต้นแล้ว",
+    "error": {
+      "FileUploadSizeLimit": "ขนาดไฟล์เกินขีด จำกัด ขนาดการอัปโหลด"
+    }
   }
 }
