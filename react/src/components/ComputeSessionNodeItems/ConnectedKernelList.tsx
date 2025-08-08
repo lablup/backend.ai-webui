@@ -6,11 +6,10 @@ import { ContainerLogModalFragment$key } from '../../__generated__/ContainerLogM
 import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
 // import BAIPropertyFilter from '../BAIPropertyFilter';
 import DoubleTag from '../DoubleTag';
-import UnmountAfterClose from '../UnmountAfterClose';
 import ContainerLogModal from './ContainerLogModal';
 import { Button, Tag, theme, Tooltip, Typography } from 'antd';
 import { ColumnType } from 'antd/lib/table';
-import { BAITable, BAIFlex } from 'backend.ai-ui';
+import { BAITable, BAIFlex, BAIUnmountAfterClose } from 'backend.ai-ui';
 import _ from 'lodash';
 import { ScrollTextIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -183,7 +182,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
         pagination={false}
       />
 
-      <UnmountAfterClose>
+      <BAIUnmountAfterClose>
         <ContainerLogModal
           open={!!kernelIdForLogModal}
           sessionFrgmt={sessionFrgmtForLogModal || null}
@@ -192,7 +191,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
             setKernelIdForLogModal(undefined);
           }}
         />
-      </UnmountAfterClose>
+      </BAIUnmountAfterClose>
     </BAIFlex>
   );
 };

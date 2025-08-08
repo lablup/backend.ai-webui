@@ -18,7 +18,6 @@ import ImageNodeSimpleTag from '../components/ImageNodeSimpleTag';
 import InferenceSessionErrorModal from '../components/InferenceSessionErrorModal';
 import ResourceNumber from '../components/ResourceNumber';
 import SessionDetailDrawer from '../components/SessionDetailDrawer';
-import UnmountAfterClose from '../components/UnmountAfterClose';
 import VFolderLazyView from '../components/VFolderLazyView';
 import {
   baiSignedRequestWithPromise,
@@ -60,7 +59,7 @@ import {
   theme,
 } from 'antd';
 import { DescriptionsItemType } from 'antd/es/descriptions';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAIUnmountAfterClose } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
 import _ from 'lodash';
 import {
@@ -1010,7 +1009,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         endpoint_id={endpoint?.endpoint_id || ''}
       ></EndpointTokenGenerationModal>
       {isSupportAutoScalingRule && (
-        <UnmountAfterClose>
+        <BAIUnmountAfterClose>
           <AutoScalingRuleEditorModal
             open={isOpenAutoScalingRuleModal}
             endpoint_id={endpoint?.endpoint_id as string}
@@ -1025,9 +1024,9 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               }
             }}
           />
-        </UnmountAfterClose>
+        </BAIUnmountAfterClose>
       )}
-      <UnmountAfterClose>
+      <BAIUnmountAfterClose>
         <SessionDetailDrawer
           open={!!selectedSessionId}
           sessionId={selectedSessionId}
@@ -1035,7 +1034,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             setSelectedSessionId(undefined);
           }}
         />
-      </UnmountAfterClose>
+      </BAIUnmountAfterClose>
       <BAIJSONViewerModal
         open={!!errorDataForJSONModal}
         title={t('modelService.RouteError')}
