@@ -111,6 +111,7 @@ const MyResourceWithinResourceGroup: React.FC<
         {t('webui.menu.MyResourcesIn')}
       </Typography.Title>
       <ResourceGroupSelectForCurrentProject
+        size="small"
         showSearch
         style={{ minWidth: 100 }}
         onChange={(v) => {

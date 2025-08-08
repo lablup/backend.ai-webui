@@ -1,11 +1,11 @@
 import usePrimaryColors from '../hooks/usePrimaryColors';
 import { Progress, ProgressProps, theme, Typography } from 'antd';
 import { createStyles } from 'antd-style';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAIFlexProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { ReactNode } from 'react';
 
-interface BAIPanelItemProps {
+interface BAIPanelItemProps extends Omit<BAIFlexProps, 'title'> {
   title: ReactNode | string;
   value: ReactNode | string | number;
   unit?: string;
@@ -39,12 +39,11 @@ const BAIPanelItem: React.FC<BAIPanelItemProps> = ({
       {...props}
       direction="column"
       style={{
-        maxWidth: 88,
-        textAlign: 'center',
-        height: '100%',
-        alignContent: 'center',
+        minWidth: 80,
+        ...props.style,
       }}
       justify="between"
+      align="start"
       wrap="wrap"
     >
       {_.isString(title) ? (
@@ -53,6 +52,7 @@ const BAIPanelItem: React.FC<BAIPanelItemProps> = ({
           style={{
             fontSize: token.fontSizeHeading5,
             wordBreak: 'keep-all',
+            textAlign: 'left',
           }}
         >
           {title}
@@ -60,7 +60,7 @@ const BAIPanelItem: React.FC<BAIPanelItemProps> = ({
       ) : (
         title
       )}
-      <BAIFlex align="baseline" gap={'xxs'}>
+      <BAIFlex>
         {_.isString(value) || _.isNumber(value) ? (
           <Typography.Text
             strong

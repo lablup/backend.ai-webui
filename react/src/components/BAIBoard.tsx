@@ -18,7 +18,15 @@ const useStyles = createStyles(({ css, token }) => {
         opacity: 0.3;
       }
       .bai_board_handle button span {
-        color: ${token.colorTextTertiary} !important;
+        color: ${token.colorTextQuaternary} !important;
+        padding-left: 5px !important;
+      }
+      .bai_board_header {
+        padding: 0 !important;
+        padding-top: ${token.padding - 1}px !important;
+      }
+      .bai_board_resizer button span {
+        color: ${token.colorTextQuaternary} !important;
       }
       .bai_board_container-override
         > div:first-child
@@ -97,6 +105,7 @@ const BAIBoard = <T extends BAIBoardDataType>({
             className={classNames(
               styles.boardItems,
               !bordered && styles.disableBorder,
+              'jongeun',
             )}
             key={item.id}
             i18nStrings={{
