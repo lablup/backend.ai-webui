@@ -1,8 +1,7 @@
-import { useUpdatableState } from '../hooks';
 import useControllableState from '../hooks/useControllableState';
 import { InputNumber, Slider, InputNumberProps, SliderSingleProps } from 'antd';
 import { SliderRangeProps } from 'antd/es/slider';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, useFetchKey } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
 
@@ -46,7 +45,7 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
   }, [step]);
 
   // FIXME: this is a workaround to fix the issue that the value is not updated when the value is controlled
-  const [key, updateKey] = useUpdatableState('first');
+  const [key, updateKey] = useFetchKey();
   useEffect(() => {
     if (!allowNegative) {
       setTimeout(() => {

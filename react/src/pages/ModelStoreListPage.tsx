@@ -2,7 +2,6 @@ import { ModelCardModalFragment$key } from '../__generated__/ModelCardModalFragm
 import { ModelStoreListPageQuery } from '../__generated__/ModelStoreListPageQuery.graphql';
 import ModelCardModal from '../components/ModelCardModal';
 import TextHighlighter from '../components/TextHighlighter';
-import { useUpdatableState } from '../hooks';
 import { useModelCardMetadata } from '../hooks/useModelCardMetadata';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import {
@@ -18,7 +17,7 @@ import {
   Typography,
 } from 'antd';
 import { createStyles } from 'antd-style';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, useFetchKey } from 'backend.ai-ui';
 import _ from 'lodash';
 import { FolderX } from 'lucide-react';
 import React, { useMemo, useState, useTransition } from 'react';
@@ -42,7 +41,7 @@ type ModelCard = NonNullable<
 >['node'];
 
 const ModelStoreListPage: React.FC = () => {
-  const [fetchKey, updateFetchKey] = useUpdatableState('first');
+  const [fetchKey, updateFetchKey] = useFetchKey();
   const { t } = useTranslation();
   const { token } = theme.useToken();
 

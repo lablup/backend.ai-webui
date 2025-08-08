@@ -1,11 +1,11 @@
-import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import SSHKeypairGenerationModal from './SSHKeypairGenerationModal';
 import SSHKeypairManualFormModal from './SSHKeypairManualFormModal';
 import { useToggle } from 'ahooks';
 import { Button, Typography, theme } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, useFetchKey } from 'backend.ai-ui';
 import React, { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -20,7 +20,7 @@ const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [isPendingRefreshModal, startRefreshModalTransition] = useTransition();
-  const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
+  const [fetchKey, updateFetchKey] = useFetchKey();
   const [
     isOpenSSHKeypairGenerationModal,
     { toggle: toggleSSHKeypairGenerationModal },

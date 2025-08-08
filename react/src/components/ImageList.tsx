@@ -12,7 +12,6 @@ import {
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
-  useUpdatableState,
 } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import DoubleTag from './DoubleTag';
@@ -33,7 +32,7 @@ import {
 import { useToggle, useDebounceFn } from 'ahooks';
 import { App, Button, Input, Tag, theme, Tooltip, Typography } from 'antd';
 import { ColumnType } from 'antd/es/table';
-import { BAIFlex, BAITable } from 'backend.ai-ui';
+import { BAIFlex, BAITable, useFetchKey } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Key, useMemo, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -53,8 +52,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   const [managingResourceLimit, setManagingResourceLimit] =
     useState<EnvironmentImage | null>(null);
   const [isOpenInstallModal, setIsOpenInstallModal] = useState<boolean>(false);
-  const [environmentFetchKey, updateEnvironmentFetchKey] =
-    useUpdatableState('initial-fetch');
+  const [environmentFetchKey, updateEnvironmentFetchKey] = useFetchKey();
   const [, startTransition] = useTransition();
   const [installingImages, setInstallingImages] = useState<string[]>([]);
   const { message } = App.useApp();
@@ -109,7 +107,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
     {},
     {
       // fetchPolicy:
-      //   environmentFetchKey === 'initial-fetch'
+      //   environmentFetchKey === INITIAL_FETCH_KEY
       //     ? 'store-and-network'
       //     : 'network-only',
       fetchPolicy: 'store-and-network',

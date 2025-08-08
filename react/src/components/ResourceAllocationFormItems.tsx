@@ -4,11 +4,10 @@ import {
   compareNumberWithUnits,
   convertToBinaryUnit,
 } from '../helper';
-import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { useEventNotStable } from '../hooks/useEventNotStable';
 import {
   MergedResourceLimits,
   ResourcePreset,
@@ -40,7 +39,7 @@ import {
   Switch,
   theme,
 } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, useFetchKey, useEventNotStable } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useEffect, useMemo, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -112,7 +111,7 @@ const ResourceAllocationFormItems: React.FC<
   const [{ keypairResourcePolicy, sessionLimitAndRemaining }] =
     useCurrentKeyPairResourcePolicyLazyLoadQuery();
 
-  const [agentFetchKey, updateAgentFetchKey] = useUpdatableState('first');
+  const [agentFetchKey, updateAgentFetchKey] = useFetchKey();
   const [isPendingAgentList, startAgentListTransition] = useTransition();
 
   const currentProject = useCurrentProjectValue();

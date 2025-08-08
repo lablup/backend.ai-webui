@@ -7,11 +7,7 @@ import {
   UserSettingModalModifyMutation,
 } from '../__generated__/UserSettingModalModifyMutation.graphql';
 import { UserSettingModalQuery } from '../__generated__/UserSettingModalQuery.graphql';
-import {
-  useCurrentDomainValue,
-  useSuspendedBackendaiClient,
-  useUpdatableState,
-} from '../hooks';
+import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole, useTOTPSupported } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
@@ -30,6 +26,7 @@ import {
   App,
   theme,
 } from 'antd';
+import { useFetchKey } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -75,7 +72,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
     useTOTPSupported();
   const [isOpenTOTPActivateModal, { toggle: toggleTOTPActivateModal }] =
     useToggle(false);
-  const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
+  const [fetchKey, updateFetchKey] = useFetchKey();
 
   const { user } = useLazyLoadQuery<UserSettingModalQuery>(
     graphql`

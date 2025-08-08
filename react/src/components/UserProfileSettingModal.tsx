@@ -59,7 +59,6 @@ const UserProfileSettingModal: React.FC<Props> = ({
   const baiClient = useSuspendedBackendaiClient();
   const userRole = useCurrentUserRole();
   const [userInfo, userMutations] = useCurrentUserInfo();
-  // const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
 
   const { user } = usePreloadedQuery(UserProfileQuery, queryRef);
 

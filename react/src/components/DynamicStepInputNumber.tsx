@@ -1,6 +1,6 @@
-import { useUpdatableState } from '../hooks';
 import useControllableState from '../hooks/useControllableState';
 import { InputNumber, InputNumberProps } from 'antd';
+import { useFetchKey } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
 
@@ -26,7 +26,7 @@ const DynamicInputNumber: React.FC<DynamicInputNumberProps> = ({
   });
 
   // FIXME: this is a workaround to fix the issue that the value is not updated when the value is controlled
-  const [key, updateKey] = useUpdatableState('first');
+  const [key, updateKey] = useFetchKey();
   useEffect(() => {
     setTimeout(() => {
       updateKey(value.toString());

@@ -21,11 +21,7 @@ import {
   filterOutNullAndUndefined,
   handleRowSelectionChange,
 } from '../helper';
-import {
-  useSuspendedBackendaiClient,
-  useUpdatableState,
-  useWebUINavigate,
-} from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
@@ -47,6 +43,8 @@ import {
   BAINewFolderIcon,
   BAIRestoreIcon,
   BAITrashBinIcon,
+  INITIAL_FETCH_KEY,
+  useFetchKey,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, {
@@ -166,7 +164,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   }
   const usageModeFilter = getUsageModeFilter(queryParams.mode);
 
-  const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
+  const [fetchKey, updateFetchKey] = useFetchKey();
   const queryVariables: VFolderNodeListPageQuery$variables = useMemo(
     () => ({
       projectId: currentProject.id,
@@ -261,11 +259,11 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
       },
       {
         fetchPolicy:
-          deferredFetchKey === 'initial-fetch'
+          deferredFetchKey === INITIAL_FETCH_KEY
             ? 'store-and-network'
             : 'network-only',
         fetchKey:
-          deferredFetchKey === 'initial-fetch' ? undefined : deferredFetchKey,
+          deferredFetchKey === INITIAL_FETCH_KEY ? undefined : deferredFetchKey,
       },
     );
 

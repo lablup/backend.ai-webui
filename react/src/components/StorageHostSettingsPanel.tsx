@@ -1,7 +1,7 @@
 import { StorageHostSettingsPanelQuery } from '../__generated__/StorageHostSettingsPanelQuery.graphql';
 import { StorageHostSettingsPanel_storageVolumeFrgmt$key } from '../__generated__/StorageHostSettingsPanel_storageVolumeFrgmt.graphql';
 import { QuotaScopeType, addQuotaScopeTypePrefix } from '../helper/index';
-import { useCurrentDomainValue, useUpdatableState } from '../hooks';
+import { useCurrentDomainValue } from '../hooks';
 import DomainSelector from './DomainSelector';
 import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
 import QuotaScopeCard from './QuotaScopeCard';
@@ -9,7 +9,7 @@ import QuotaSettingModal from './QuotaSettingModal';
 import UserSelector from './UserSelector';
 import { useToggle } from 'ahooks';
 import { Card, Form, Spin } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, useFetchKey } from 'backend.ai-ui';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
@@ -53,7 +53,7 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
 
   const [isOpenQuotaSettingModal, { toggle: toggleQuotaSettingModal }] =
     useToggle(false);
-  const [fetchKey] = useUpdatableState('default');
+  const [fetchKey] = useFetchKey();
 
   const { quota_scope } = useLazyLoadQuery<StorageHostSettingsPanelQuery>(
     graphql`

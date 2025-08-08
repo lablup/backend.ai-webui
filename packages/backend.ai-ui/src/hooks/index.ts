@@ -1,5 +1,8 @@
 import { useMemo } from 'react';
 
+export { useEventNotStable } from './useEventNotStable';
+export { useFetchKey, INITIAL_FETCH_KEY } from './useFetchKey';
+
 type UseMemoizedJsonParseOptions<T> = {
   fallbackValue: T;
 };

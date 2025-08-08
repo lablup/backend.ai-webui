@@ -1,5 +1,5 @@
-import { useUpdatableState } from '.';
 import { useTanQuery } from './reactQueryAlias';
+import { useFetchKey } from 'backend.ai-ui';
 import { useCallback } from 'react';
 
 export interface AIAgentMeta {
@@ -41,7 +41,7 @@ export interface AIAgents {
 const TIMEOUT_24_HOURS = 24 * 60 * 60 * 1000;
 
 export const useAIAgent = () => {
-  const [key, checkUpdate] = useUpdatableState('first');
+  const [key, checkUpdate] = useFetchKey();
 
   const { data: agentsData, isLoading } = useTanQuery<AIAgents>({
     queryKey: ['useAgents', key],

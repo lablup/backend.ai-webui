@@ -24,11 +24,7 @@ import {
   baiSignedRequestWithPromise,
   filterOutNullAndUndefined,
 } from '../helper';
-import {
-  useSuspendedBackendaiClient,
-  useUpdatableState,
-  useWebUINavigate,
-} from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -60,7 +56,7 @@ import {
   theme,
 } from 'antd';
 import { DescriptionsItemType } from 'antd/es/descriptions';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, INITIAL_FETCH_KEY, useFetchKey } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
 import _ from 'lodash';
 import {
@@ -112,7 +108,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   const { serviceId } = useParams<{
     serviceId: string;
   }>();
-  const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
+  const [fetchKey, updateFetchKey] = useFetchKey();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [isPendingClearError, startClearErrorTransition] = useTransition();
   const [selectedSessionErrorForModal, setSelectedSessionErrorForModal] =
@@ -278,7 +274,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       },
       {
         fetchPolicy:
-          fetchKey === 'initial-fetch' ? 'store-and-network' : 'network-only',
+          fetchKey === INITIAL_FETCH_KEY ? 'store-and-network' : 'network-only',
         fetchKey,
       },
     );

@@ -5,7 +5,7 @@ import {
   ContainerRegistryListQuery$data,
 } from '../__generated__/ContainerRegistryListQuery.graphql';
 import { filterOutNullAndUndefined } from '../helper';
-import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
@@ -36,7 +36,12 @@ import {
 } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
-import { BAITable, BAIFlex } from 'backend.ai-ui';
+import {
+  BAITable,
+  BAIFlex,
+  INITIAL_FETCH_KEY,
+  useFetchKey,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -54,7 +59,7 @@ const ContainerRegistryList: React.FC<{
   style?: React.CSSProperties;
 }> = ({ style }) => {
   const baiClient = useSuspendedBackendaiClient();
-  const [fetchKey, updateFetchKey] = useUpdatableState('first');
+  const [fetchKey, updateFetchKey] = useFetchKey();
   const [isPendingReload, startReloadTransition] = useTransition();
   const painKiller = usePainKiller();
   const { message } = App.useApp();
@@ -123,7 +128,7 @@ const ContainerRegistryList: React.FC<{
       },
       {
         fetchPolicy:
-          fetchKey === 'first' ? 'store-and-network' : 'network-only',
+          fetchKey === INITIAL_FETCH_KEY ? 'store-and-network' : 'network-only',
         fetchKey,
       },
     );

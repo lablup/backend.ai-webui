@@ -1,4 +1,4 @@
-import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import BAIModal from './BAIModal';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
@@ -13,7 +13,7 @@ import {
 import { useToggle } from 'ahooks';
 import { Button, Typography, Table, Alert, Checkbox, Input, theme } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, useFetchKey } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import React, { useState, useMemo, useTransition } from 'react';
@@ -42,7 +42,7 @@ const ErrorLogList: React.FC<{
     useToggle();
   const [checkedShowOnlyError, setCheckedShowOnlyError] = useState(false);
   const [logSearch, setLogSearch] = useState('');
-  const [updateKey, checkUpdateKey] = useUpdatableState('first');
+  const [updateKey, checkUpdateKey] = useFetchKey();
   const [isPendingRefreshTransition, startRefreshTransition] = useTransition();
   const [isPendingSearchTransition, startSearchTransition] = useTransition();
   const [isPendingReset, startResetTransition] = useTransition();
