@@ -1,4 +1,3 @@
-import { convertToBinaryUnit } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
@@ -35,11 +34,6 @@ const getResourceValue = (
         resource,
       );
 
-      if (resource === 'mem') {
-        const converted = convertToBinaryUnit(value, 'auto');
-        return _.toNumber(converted?.numberFixed);
-      }
-
       return _.toNumber(value);
     }
 
@@ -48,11 +42,6 @@ const getResourceValue = (
       resource,
     );
     if (remaining === Number.MAX_SAFE_INTEGER) return Number.MAX_SAFE_INTEGER;
-
-    if (resource === 'mem') {
-      const converted = convertToBinaryUnit(remaining, 'auto');
-      return _.toNumber(converted?.numberFixed);
-    }
 
     return _.toNumber(remaining);
   };
