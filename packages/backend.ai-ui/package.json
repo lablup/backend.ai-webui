@@ -82,6 +82,7 @@
     "relay-runtime": "^20.1.0",
     "react-resizable": "^3.0.5",
     "@tanstack/react-query": "^5.69.0",
+    "react-router-dom": "^6.30.0",
     "use-query-params": "^2.2.1"
   },
   "devDependencies": {

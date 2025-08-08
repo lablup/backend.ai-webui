@@ -1,3 +1,4 @@
+import { ExplorerActionControlsFragment$key } from '../../../__generated__/ExplorerActionControlsFragment.graphql';
 import { BAITrashBinIcon } from '../../../icons';
 import BAIFlex from '../../BAIFlex';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
@@ -10,16 +11,17 @@ import {
   FolderAddOutlined,
   UploadOutlined,
 } from '@ant-design/icons';
-import { useQuery } from '@tanstack/react-query';
 import { useToggle } from 'ahooks';
 import { App, Button, Dropdown, Grid, theme, Tooltip, Upload } from 'antd';
 import { RcFile } from 'antd/es/upload';
 import _ from 'lodash';
 import { use, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { graphql, useFragment } from 'react-relay';
 
 interface ExplorerActionControlsProps {
   selectedFiles: Array<VFolderFile>;
+  vFolderNodeFrgmt?: ExplorerActionControlsFragment$key | null;
   onRequestClose: (
     success: boolean,
     modifiedItems?: Array<VFolderFile>,
@@ -29,10 +31,10 @@ interface ExplorerActionControlsProps {
 
 const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
   selectedFiles,
+  vFolderNodeFrgmt,
   onRequestClose,
   onUpload,
 }) => {
-  const baiClient = useConnectedBAIClient();
   const { t } = useTranslation();
   const { lg } = Grid.useBreakpoint();
   const { token } = theme.useToken();
@@ -40,16 +42,19 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
   const { targetVFolderId, currentPath } = use(FolderInfoContext);
   const [openCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
   const [openDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
+  const baiClient = useConnectedBAIClient();
   const lastFileListRef = useRef<Array<RcFile>>([]);
 
-  const { data: vfolderInfo, isFetching } = useQuery({
-    queryKey: ['vfolderInfo', targetVFolderId],
-    queryFn: () => baiClient.vfolder.info(targetVFolderId),
-    enabled: !!targetVFolderId,
-    // not using cache, always refetch
-    staleTime: 5 * 60 * 1000,
-    gcTime: 0,
-  });
+  const virtualFolderNodeFrgmt = useFragment(
+    graphql`
+      fragment ExplorerActionControlsFragment on VirtualFolderNode {
+        permissions
+      }
+    `,
+    vFolderNodeFrgmt,
+  );
+  const hasWritePermission =
+    virtualFolderNodeFrgmt?.permissions?.includes('write_content');
 
   const handleUpload = async (fileList: RcFile[], path: string) => {
     // Currently, backend.ai only supports finding existing files by using list_files API.
@@ -89,6 +94,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
             })}
             <Tooltip title={t('general.button.Delete')} placement="topLeft">
               <Button
+                disabled={!hasWritePermission}
                 icon={<BAITrashBinIcon style={{ color: token.colorError }} />}
                 onClick={() => {
                   toggleDeleteModal();
@@ -99,7 +105,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
         )}
         <Tooltip title={!lg && t('general.button.Create')}>
           <Button
-            disabled={isFetching || !vfolderInfo?.permission.includes('w')}
+            disabled={!hasWritePermission}
             icon={<FolderAddOutlined />}
             onClick={() => {
               toggleCreateModal();
@@ -109,6 +115,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
           </Button>
         </Tooltip>
         <Dropdown
+          disabled={!hasWritePermission}
           menu={{
             items: [
               {

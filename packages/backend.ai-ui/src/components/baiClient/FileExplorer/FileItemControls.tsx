@@ -35,11 +35,14 @@ const FileItemControls: React.FC<FileItemControlsProps> = ({
   const vFolderNode = useFragment(
     graphql`
       fragment FileItemControlsFragment on VirtualFolderNode {
+        permissions
         host @required(action: THROW)
       }
     `,
     vfolderNodeFrgmt,
   );
+  const hasWritePermission =
+    vFolderNode?.permissions?.includes('write_content');
 
   const enableDownload = _.includes(
     unitedAllowedPermissionByVolume[vFolderNode?.host ?? ''],
@@ -113,6 +116,7 @@ const FileItemControls: React.FC<FileItemControlsProps> = ({
         type="text"
         size="small"
         icon={<BAITrashBinIcon style={{ color: token.colorError }} />}
+        disabled={!hasWritePermission}
         onClick={(e) => {
           e.stopPropagation();
           onClickDelete();
