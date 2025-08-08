@@ -5,12 +5,11 @@ import {
 import { filterOutEmpty, filterOutNullAndUndefined } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
-import BAILink from './BAILink';
 import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionSlotCell from './ComputeSessionNodeItems/SessionSlotCell';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
 import ImageNodeSimpleTag from './ImageNodeSimpleTag';
-import { BAIColumnType, BAITable, BAITableProps } from 'backend.ai-ui';
+import { BAIColumnType, BAILink, BAITable, BAITableProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

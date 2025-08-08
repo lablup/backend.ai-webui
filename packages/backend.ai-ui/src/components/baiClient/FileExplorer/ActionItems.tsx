@@ -1,8 +1,7 @@
+import { ActionItemsFragment$key } from '../../../__generated__/ActionItemsFragment.graphql';
 import { BAITrashBinIcon } from '../../../icons';
 import BAIFlex from '../../BAIFlex';
-import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
-import { FolderInfoContext } from './BAIFileExplorer';
 import CreateDirectoryModal from './CreateDirectoryModal';
 import DeleteSelectedItemsModal from './DeleteSelectedItemsModal';
 import { useUploadVFolderFiles } from './hooks';
@@ -11,14 +10,15 @@ import {
   FolderAddOutlined,
   UploadOutlined,
 } from '@ant-design/icons';
-import { useQuery } from '@tanstack/react-query';
 import { useToggle } from 'ahooks';
 import { Button, Dropdown, Grid, theme, Tooltip, Upload } from 'antd';
 import { RcFile } from 'antd/es/upload';
-import { use, useRef } from 'react';
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { graphql, useFragment } from 'react-relay';
 
 interface ActionItemsProps {
+  actionItemsFrgmt?: ActionItemsFragment$key | null;
   selectedItems: Array<VFolderFile>;
   onRequestClose: (
     success: boolean,
@@ -28,29 +28,29 @@ interface ActionItemsProps {
 }
 
 const ActionItems: React.FC<ActionItemsProps> = ({
+  actionItemsFrgmt,
   selectedItems,
   onRequestClose,
   onUpload,
 }) => {
-  const baiClient = useConnectedBAIClient();
   const { t } = useTranslation();
   const { lg } = Grid.useBreakpoint();
   const { token } = theme.useToken();
-  const { targetVFolderId } = use(FolderInfoContext);
   const [openCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
   const [openDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
   const [isUploading, { toggle: toggleUploading }] = useToggle(false);
   const uploadProcessingRef = useRef<string | null>(null);
   const { upload } = useUploadVFolderFiles();
 
-  const { data: vfolderInfo, isFetching } = useQuery({
-    queryKey: ['vfolderInfo', targetVFolderId],
-    queryFn: () => baiClient.vfolder.info(targetVFolderId),
-    enabled: !!targetVFolderId,
-    // not using cache, always refetch
-    staleTime: 5 * 60 * 1000,
-    gcTime: 0,
-  });
+  const virtualFolderNodeFrgmt = useFragment(
+    graphql`
+      fragment ActionItemsFragment on VirtualFolderNode {
+        permission
+      }
+    `,
+    actionItemsFrgmt,
+  );
+  const isEditable = virtualFolderNodeFrgmt?.permission?.includes('w');
 
   const handleUpload = async (fileList: Array<RcFile>) => {
     // When uploading folder, ant design trigger `beforeUpload` for each file in the folder.
@@ -79,6 +79,7 @@ const ActionItems: React.FC<ActionItemsProps> = ({
             })}
             <Tooltip title={t('general.button.Delete')} placement="topLeft">
               <Button
+                disabled={!isEditable}
                 icon={<BAITrashBinIcon style={{ color: token.colorError }} />}
                 onClick={() => {
                   toggleDeleteModal();
@@ -89,7 +90,7 @@ const ActionItems: React.FC<ActionItemsProps> = ({
         )}
         <Tooltip title={!lg && t('general.button.Create')}>
           <Button
-            disabled={isFetching || !vfolderInfo?.permission.includes('w')}
+            disabled={!isEditable}
             icon={<FolderAddOutlined />}
             onClick={() => {
               toggleCreateModal();
@@ -99,6 +100,7 @@ const ActionItems: React.FC<ActionItemsProps> = ({
           </Button>
         </Tooltip>
         <Dropdown
+          disabled={!isEditable}
           menu={{
             items: [
               {
