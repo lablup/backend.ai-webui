@@ -347,6 +347,7 @@
       "CloneFolder": "폴더 클론",
       "Cloneable": "복사 가능 여부",
       "Control": "제어",
+      "CreateModelFolderOnlyInExclusiveProject": "모델 스토어 전용 프로젝트에서만 모델용 프로젝트 폴더 생성이 가능합니다.",
       "CreatedAt": "생성 시간",
       "Delete": "삭제",
       "DeleteAFolder": "폴더 삭제",

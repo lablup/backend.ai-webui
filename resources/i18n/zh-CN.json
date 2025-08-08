@@ -345,6 +345,7 @@
       "CloneFolder": "克隆文件夹",
       "Cloneable": "可克隆",
       "Control": "控制",
+      "CreateModelFolderOnlyInExclusiveProject": "模型项目文件夹只能在模型商店的独家项目中创建。",
       "CreatedAt": "创建在",
       "Delete": "删除",
       "DeleteAFolder": "删除文件夹",

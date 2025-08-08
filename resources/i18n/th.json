@@ -345,6 +345,7 @@
       "CloneFolder": "โคลนโฟลเดอร์",
       "Cloneable": "สามารถโคลนได้",
       "Control": "ควบคุม",
+      "CreateModelFolderOnlyInExclusiveProject": "โมเดลโฟลเดอร์โครงการสามารถสร้างขึ้นได้ในโครงการโมเดล - โครงการพิเศษเท่านั้น",
       "CreatedAt": "สร้างขึ้นที่",
       "Delete": "ลบ",
       "DeleteAFolder": "ลบโฟลเดอร์",

@@ -344,6 +344,7 @@
       "CloneFolder": "Clona la cartella",
       "Cloneable": "Clonabile",
       "Control": "Controllo",
+      "CreateModelFolderOnlyInExclusiveProject": "Le cartelle del progetto di modello possono essere create solo in progetti esclusivi del negozio di modelli.",
       "CreatedAt": "Creato a",
       "Delete": "Elimina",
       "DeleteAFolder": "Elimina una cartella",

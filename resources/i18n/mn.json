@@ -344,6 +344,7 @@
       "CloneFolder": "Фолдерыг хувилах",
       "Cloneable": "Cloneable",
       "Control": "Хяналт",
+      "CreateModelFolderOnlyInExclusiveProject": "Загвар төслийн фолдеруудыг зөвхөн загвар дэлгүүрийн онцгой төсөлд бий болгож болно.",
       "CreatedAt": "Бүтэмж дээр бүтсэн",
       "Delete": "Устгах",
       "DeleteAFolder": "Фолдер устгах",

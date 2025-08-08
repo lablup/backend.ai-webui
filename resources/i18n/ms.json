@@ -344,6 +344,7 @@
       "CloneFolder": "Klon folder",
       "Cloneable": "Boleh diklon",
       "Control": "Kawal",
+      "CreateModelFolderOnlyInExclusiveProject": "Folder projek model hanya boleh dibuat dalam projek eksklusif kedai model.",
       "CreatedAt": "Dicipta di",
       "Delete": "Padam",
       "DeleteAFolder": "Padamkan folder",

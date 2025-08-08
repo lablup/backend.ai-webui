@@ -345,6 +345,7 @@
       "CloneFolder": "Klonowanie folderu",
       "Cloneable": "Możliwość klonowania",
       "Control": "Kontrola",
+      "CreateModelFolderOnlyInExclusiveProject": "Modelowe foldery projektu można tworzyć tylko w projektach ekskluzywnych w magazynie modeli.",
       "CreatedAt": "Utworzony w",
       "Delete": "Kasować",
       "DeleteAFolder": "Usuń folder",

@@ -344,6 +344,7 @@
       "CloneFolder": "フォルダクローン",
       "Cloneable": "クローン可能",
       "Control": "コントロール",
+      "CreateModelFolderOnlyInExclusiveProject": "モデルプロジェクトフォルダーは、モデルストアと独占プロジェクトでのみ作成できます。",
       "CreatedAt": "で作成されました",
       "Delete": "削除",
       "DeleteAFolder": "フォルダを削除する",

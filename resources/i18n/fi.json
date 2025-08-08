@@ -345,6 +345,7 @@
       "CloneFolder": "Kloonattu kansio",
       "Cloneable": "Kloonattavissa",
       "Control": "Valvonta",
+      "CreateModelFolderOnlyInExclusiveProject": "Malliprojektin kansiot voidaan luoda vain Model Store - Exclusive -projekteihin.",
       "CreatedAt": "Luotu jhk",
       "Delete": "Poista",
       "DeleteAFolder": "Poista kansio",

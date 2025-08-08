@@ -345,6 +345,7 @@
       "CloneFolder": "Клонировать папку",
       "Cloneable": "Клонируемый",
       "Control": "Контроль",
+      "CreateModelFolderOnlyInExclusiveProject": "Папки моделей проектов могут быть созданы только в эксклюзивных проектах Model Store.",
       "CreatedAt": "Создан в",
       "Delete": "Удалить",
       "DeleteAFolder": "Удалить папку",

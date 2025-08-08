@@ -345,6 +345,7 @@
       "CloneFolder": "Sao chép thư mục",
       "Cloneable": "Có thể nhân bản",
       "Control": "Điều khiển",
+      "CreateModelFolderOnlyInExclusiveProject": "Các thư mục mô hình dự án chỉ có thể được tạo trong các dự án độc quyền của mô hình lưu trữ.",
       "CreatedAt": "Được tạo ra tại",
       "Delete": "Xóa bỏ",
       "DeleteAFolder": "Xóa một thư mục",

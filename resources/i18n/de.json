@@ -345,6 +345,7 @@
       "CloneFolder": "Ordner klonen",
       "Cloneable": "klonbar",
       "Control": "Steuerung",
+      "CreateModelFolderOnlyInExclusiveProject": "Modellprojektordner können nur in Model Store -Exclusive -Projekten erstellt werden.",
       "CreatedAt": "Erstellt at",
       "Delete": "Löschen",
       "DeleteAFolder": "Einen Ordner löschen",

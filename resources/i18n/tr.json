@@ -345,6 +345,7 @@
       "CloneFolder": "Klasör klonlama",
       "Cloneable": "klonlanabilir",
       "Control": "Kontrol",
+      "CreateModelFolderOnlyInExclusiveProject": "Model proje klasörleri yalnızca model mağaza özel projelerinde oluşturulabilir.",
       "CreatedAt": "Yaratılmış",
       "Delete": "Sil",
       "DeleteAFolder": "Klasörü sil",
