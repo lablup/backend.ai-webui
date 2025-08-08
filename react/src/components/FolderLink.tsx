@@ -1,7 +1,7 @@
 import { FolderLink_vfolderNode$key } from '../__generated__/FolderLink_vfolderNode.graphql';
-import BAILink, { BAILinkProps } from './BAILink';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { FolderOutlined } from '@ant-design/icons';
+import { BAILink, BAILinkProps } from 'backend.ai-ui';
 import { graphql, useFragment } from 'react-relay';
 
 interface FolderLinkBase extends BAILinkProps {
