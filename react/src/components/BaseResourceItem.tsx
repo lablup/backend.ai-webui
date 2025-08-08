@@ -8,6 +8,7 @@ import {
   BAIResourceWithSteppedProgressProps,
   compareNumberWithUnits,
   convertToBinaryUnit,
+  getDisplayUnitToInputSizeUnit,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { ReactNode } from 'react';
@@ -64,15 +65,15 @@ const BaseResourceItem: React.FC<BaseResourceItemProps> = ({
   ) => {
     const convertedBinaryValues =
       resourceSlot.slot_name === 'ram'
-        ? convertToBinaryUnit(values.current, 'auto')
+        ? convertToBinaryUnit(
+            values.current,
+            getDisplayUnitToInputSizeUnit(resourceSlot.display_unit),
+          )
         : undefined;
     const progressProps: BAIResourceWithSteppedProgressProps = {
       current: convertedBinaryValues?.value || values.current,
       title: resourceSlot.human_readable_name,
-      displayUnit:
-        values.displayUnit ||
-        convertedBinaryValues?.displayUnit ||
-        resourceSlot.display_unit,
+      displayUnit: values.displayUnit || resourceSlot.display_unit,
     };
 
     if (showProgress && !_.isUndefined(values.total)) {

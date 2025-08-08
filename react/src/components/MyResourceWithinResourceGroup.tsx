@@ -33,8 +33,7 @@ const getResourceValue = (
         checkPresetInfo?.scaling_groups?.[resourceGroup]?.using,
         resource,
       );
-
-      return _.toNumber(value);
+      return value;
     }
 
     const remaining = _.get(
@@ -42,12 +41,11 @@ const getResourceValue = (
       resource,
     );
     if (remaining === Number.MAX_SAFE_INTEGER) return Number.MAX_SAFE_INTEGER;
-
-    return _.toNumber(remaining);
+    return remaining;
   };
 
   return {
-    current: getCurrentValue(),
+    current: getCurrentValue() || 0,
   };
 };
 
