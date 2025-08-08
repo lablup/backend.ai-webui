@@ -14,7 +14,7 @@ import BaseResourceItem, {
   AcceleratorSlotDetail,
   ResourceValues,
 } from './BaseResourceItem';
-import { BAICardProps, convertToBinaryUnit } from 'backend.ai-ui';
+import { BAICardProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -58,15 +58,9 @@ const getResourceValue = (
   };
   const currentValue = getCurrentValue();
 
-  const displayValue = type === 'usage' ? currentValue : totalValue;
-
   return {
     current: currentValue || 0,
     total: totalValue,
-    displayUnit:
-      resource === 'mem' && displayValue
-        ? convertToBinaryUnit(displayValue, 'auto')?.displayUnit
-        : undefined,
   };
 };
 
