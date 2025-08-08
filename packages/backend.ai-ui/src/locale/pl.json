@@ -32,11 +32,18 @@
     "UploadFolder": "Folder przesyłania",
     "DownloadStarted": "Plik „{{fileName}}” rozpoczęło się pobieranie.",
     "error": {
-      "FileUploadSizeLimit": "Rozmiar pliku przekracza limit rozmiaru przesyłania."
+      "FileUploadSizeLimit": "Rozmiar pliku przekracza limit rozmiaru przesyłania.",
+      "FileNameRequired": "Wprowadź nazwę pliku lub folderu.",
+      "DuplicatedName": "Ta nazwa jest już używana. \nWprowadź inną nazwę."
     },
     "DuplicatedFilesDesc": "Plik lub folder o tej samej nazwie już istnieje. \nChcesz zastąpić?",
     "DuplicatedFiles": "Nadpisz potwierdzenie",
-    "DragAndDropDesc": "Przeciągnij i upuść pliki do tego obszaru, aby przesłać."
+    "DragAndDropDesc": "Przeciągnij i upuść pliki do tego obszaru, aby przesłać.",
+    "MoveFolderIntoAnotherDesc": "Czy na pewno chcesz przesunąć folder „{{fileName}}” do „{{targetName}}”?",
+    "MoveFolderIntoAnother": "Folder trybu",
+    "ChangeFileExtensionDesc": "Zmiana rozszerzenia pliku może spowodować, że plik staje się bezużyteczny lub nieprawidłowo otwierać. \nChcesz kontynuować?",
+    "ChangeFileExtension": "Zmień rozszerzenie pliku",
+    "RenameSuccess": "Nazwa została pomyślnie zmieniona."
   },
   "comp:BAITable": {
     "SettingTable": "Ustawienia tabeli",
