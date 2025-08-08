@@ -36,11 +36,15 @@
     "UploadFolder": "Unggah folder",
     "DownloadStarted": "File \"{{fileName}}\" unduhan telah dimulai.",
     "error": {
-      "FileUploadSizeLimit": "Ukuran file melebihi batas ukuran unggahan."
+      "FileNameRequired": "Harap masukkan file atau nama folder.",
+      "DuplicatedName": "Nama ini sudah digunakan. \nHarap masukkan nama yang berbeda."
     },
     "DuplicatedFilesDesc": "File atau folder dengan nama yang sama sudah ada. \nApakah Anda ingin menimpa?",
     "DuplicatedFiles": "Timpa konfirmasi",
-    "DragAndDropDesc": "Seret dan jatuhkan file ke area ini untuk diunggah."
+    "DragAndDropDesc": "Seret dan jatuhkan file ke area ini untuk diunggah.",
+    "ChangeFileExtensionDesc": "Mengubah ekstensi file dapat menyebabkan file menjadi tidak dapat digunakan atau dibuka secara tidak benar. \nApakah Anda ingin melanjutkan?",
+    "ChangeFileExtension": "Ubah ekstensi file",
+    "RenameSuccess": "Namanya telah berhasil diubah."
   },
   "comp:BAITable": {
     "SelectColumnToDisplay": "Pilih kolom untuk ditampilkan",

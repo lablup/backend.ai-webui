@@ -9,7 +9,6 @@ import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import BAIConfirmModalWithInput from './BAIConfirmModalWithInput';
-import BAILink from './BAILink';
 import BAITag from './BAITag';
 import EditableVFolderName from './EditableVFolderName';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -38,6 +37,7 @@ import {
   BAIFlex,
   toLocalId,
   useErrorMessageResolver,
+  BAILink,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useState } from 'react';

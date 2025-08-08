@@ -36,11 +36,15 @@
     "UploadFolder": "Faça o upload da pasta",
     "DownloadStarted": "Arquivo \"{{fileName}}\" o download foi iniciado.",
     "error": {
-      "FileUploadSizeLimit": "O tamanho do arquivo excede o limite de tamanho de upload."
+      "FileNameRequired": "Por favor, insira um nome de arquivo ou pasta.",
+      "DuplicatedName": "Este nome já está em uso. \nPor favor, insira um nome diferente."
     },
     "DuplicatedFilesDesc": "O arquivo ou pasta com o mesmo nome já existe. \nVocê quer substituir?",
     "DuplicatedFiles": "Substituição de substituição",
-    "DragAndDropDesc": "Arraste e solte arquivos para esta área para fazer upload."
+    "DragAndDropDesc": "Arraste e solte arquivos para esta área para fazer upload.",
+    "ChangeFileExtensionDesc": "Alterar a extensão do arquivo pode fazer com que o arquivo se torne inutilizável ou aberto incorretamente. \nVocê quer prosseguir?",
+    "ChangeFileExtension": "Alterar a extensão do arquivo",
+    "RenameSuccess": "O nome foi alterado com sucesso."
   },
   "comp:BAITable": {
     "SelectColumnToDisplay": "Selecione colunas para exibir",

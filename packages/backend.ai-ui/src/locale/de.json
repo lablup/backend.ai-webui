@@ -36,11 +36,15 @@
     "UploadFolder": "Ordner hochladen",
     "DownloadStarted": "Die Datei \"{{fileName}}\" wurde gestartet.",
     "error": {
-      "FileUploadSizeLimit": "Die Dateigröße überschreitet die Hochladungsgrenze."
+      "FileNameRequired": "Bitte geben Sie einen Datei- oder Ordnernamen ein.",
+      "DuplicatedName": "Dieser Name ist bereits verwendet. \nBitte geben Sie einen anderen Namen ein."
     },
     "DuplicatedFilesDesc": "Die Datei oder der Ordner mit demselben Namen existieren bereits. \nMöchten Sie überschreiben?",
     "DuplicatedFiles": "Überschreibung der Bestätigung",
-    "DragAndDropDesc": "Ziehen Sie Dateien in diesen Bereich zum Hochladen."
+    "DragAndDropDesc": "Ziehen Sie Dateien in diesen Bereich zum Hochladen.",
+    "ChangeFileExtensionDesc": "Das Ändern der Dateierweiterung kann dazu führen, dass die Datei unbrauchbar oder falsch geöffnet wird. \nMöchten Sie fortfahren?",
+    "ChangeFileExtension": "Dateierweiterung ändern",
+    "RenameSuccess": "Der Name wurde erfolgreich geändert."
   },
   "comp:BAITable": {
     "SettingTable": "Tabelleneinstellungen",

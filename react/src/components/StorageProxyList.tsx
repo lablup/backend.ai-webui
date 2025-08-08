@@ -7,7 +7,6 @@ import {
 import { INITIAL_FETCH_KEY, useFetchKey } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
-import BAILink from './BAILink';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import DoubleTag from './DoubleTag';
 import { InfoCircleOutlined, SettingOutlined } from '@ant-design/icons';
@@ -16,6 +15,7 @@ import {
   filterOutNullAndUndefined,
   BAICephIcon,
   BAIFlex,
+  BAILink,
   BAIPureStorageIcon,
   BAITable,
 } from 'backend.ai-ui';
