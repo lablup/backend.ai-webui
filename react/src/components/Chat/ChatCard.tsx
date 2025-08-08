@@ -101,13 +101,13 @@ function useModels(
   }>({
     queryKey: ['models', fetchKey, baseURL, provider.apiKey],
     queryFn: async () => {
-      if (!baseURL) {
-        return { data: [] };
-      }
-
-      const url = createModelsURL(baseURL);
-      const authToken = provider.apiKey;
       try {
+        if (!baseURL) {
+          return { data: [] };
+        }
+
+        const url = createModelsURL(baseURL);
+        const authToken = provider.apiKey;
         const response = await fetch(url, {
           headers: {
             Authorization: authToken ? `Bearer ${authToken}` : '',
