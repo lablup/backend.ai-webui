@@ -2,10 +2,6 @@ import {
   TotalResourceWithinResourceGroupFragment$key,
   TotalResourceWithinResourceGroupFragment$data,
 } from '../__generated__/TotalResourceWithinResourceGroupFragment.graphql';
-import {
-  processResourceValue,
-  UNLIMITED_VALUES,
-} from '../helper/resourceCardUtils';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import BaseResourceItem, {
   AcceleratorSlotDetail,
@@ -96,18 +92,18 @@ const TotalResourceWithinResourceGroup: React.FC<
   ): ResourceValues => {
     const getCurrentValue = () => {
       if (type === 'usage') {
-        return processResourceValue(totalOccupied, resource);
+        return totalOccupied;
       }
       const remaining = subNumberWithUnits(
         _.toString(totalAvailable),
         _.toString(totalOccupied),
         '',
       );
-      return processResourceValue(remaining, resource);
+      return remaining;
     };
 
     const getTotalValue = () => {
-      return processResourceValue(totalAvailable, resource);
+      return totalAvailable;
     };
 
     return {
@@ -230,7 +226,6 @@ const TotalResourceWithinResourceGroup: React.FC<
       resourceSlotsDetails={resourceSlotsDetails}
       progressProps={{
         showProgress: true,
-        unlimitedValues: UNLIMITED_VALUES,
         steps: 12,
       }}
     />
