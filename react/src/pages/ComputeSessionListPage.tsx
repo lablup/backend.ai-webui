@@ -17,8 +17,8 @@ import SessionNodes from '../components/SessionNodes';
 import { filterOutNullAndUndefined, handleRowSelectionChange } from '../helper';
 import {
   INITIAL_FETCH_KEY,
+  useFetchKey,
   useSuspendedBackendaiClient,
-  useUpdatableState,
   useWebUINavigate,
 } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -124,7 +124,7 @@ const ComputeSessionListPage = () => {
     return status === 'TERMINATED' || status === 'CANCELLED';
   };
 
-  const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
+  const [fetchKey, updateFetchKey] = useFetchKey();
 
   const queryVariables: ComputeSessionListPageQuery$variables = useMemo(
     () => ({
