@@ -42,19 +42,21 @@ const DashboardPage: React.FC = () => {
         $projectId: UUID!
         $resourceGroup: String
         $skipTotalResourceWithinResourceGroup: Boolean!
+        $isSuperAdmin: Boolean!
       ) {
         ...MySessionQueryFragment @arguments(projectId: $projectId)
         ...RecentlyCreatedSessionFragment @arguments(projectId: $projectId)
         ...TotalResourceWithinResourceGroupFragment
           @skip(if: $skipTotalResourceWithinResourceGroup)
           @alias
-          @arguments(resourceGroup: $resourceGroup)
+          @arguments(resourceGroup: $resourceGroup, isSuperAdmin: $isSuperAdmin)
       }
     `,
     {
       projectId: currentProject.id,
       resourceGroup: currentResourceGroup || 'default',
       skipTotalResourceWithinResourceGroup,
+      isSuperAdmin: _.isEqual(userRole, 'superadmin'),
     },
     {
       fetchPolicy:

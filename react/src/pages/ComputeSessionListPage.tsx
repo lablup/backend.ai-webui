@@ -136,6 +136,7 @@ const ComputeSessionListPage = () => {
       resourceGroup: currentResourceGroup || 'default',
       skipTotalResourceWithinResourceGroup:
         baiClient?._config?.hideAgents && userRole !== 'superadmin',
+      isSuperAdmin: _.isEqual(userRole, 'superadmin'),
     }),
     [
       currentProject.id,
@@ -164,6 +165,7 @@ const ComputeSessionListPage = () => {
           $order: String
           $resourceGroup: String
           $skipTotalResourceWithinResourceGroup: Boolean!
+          $isSuperAdmin: Boolean!
         ) {
           compute_session_nodes(
             project_id: $projectId
@@ -225,7 +227,7 @@ const ComputeSessionListPage = () => {
           ...TotalResourceWithinResourceGroupFragment
             @skip(if: $skipTotalResourceWithinResourceGroup)
             @alias
-            @arguments(resourceGroup: $resourceGroup)
+            @arguments(resourceGroup: $resourceGroup, isSuperAdmin: $isSuperAdmin)
         }
       `,
     deferredQueryVariables,
