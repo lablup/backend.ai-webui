@@ -1,7 +1,3 @@
-import {
-  processResourceValue,
-  UNLIMITED_VALUES,
-} from '../helper/resourceCardUtils';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
@@ -39,22 +35,20 @@ const getResourceValue = (
         ? [resource, 'max']
         : ['accelerators', resource, 'max'],
     );
-    return processResourceValue(maxValue, resource);
+    return maxValue;
   };
   const totalValue = getTotalValue();
 
   const getCurrentValue = () => {
     if (type === 'usage') {
-      const value = _.get(checkPresetInfo?.keypair_using, resource);
-      return processResourceValue(value, resource);
+      return _.get(checkPresetInfo?.keypair_using, resource);
     }
-    const capacity = _.get(
+    return _.get(
       remainingWithoutResourceGroup,
       _.includes(['cpu', 'mem'], resource)
         ? resource
         : ['accelerators', resource],
     );
-    return processResourceValue(capacity, resource);
   };
   const currentValue = getCurrentValue();
 
@@ -144,7 +138,6 @@ const MyResource: React.FC<MyResourceProps> = ({
       resourceSlotsDetails={resourceSlotsDetails}
       progressProps={{
         showProgress: true,
-        unlimitedValues: UNLIMITED_VALUES,
         steps: 12,
       }}
     />
