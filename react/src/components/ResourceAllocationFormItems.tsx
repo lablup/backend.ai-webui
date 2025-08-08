@@ -1551,10 +1551,9 @@ const ResourceAllocationFormItems: React.FC<
                     }
                   >
                     {() => {
-                      const derivedClusterSizeMaxLimit = _.min([
-                        resourceLimits.cpu?.max,
-                        keypairResourcePolicy.max_containers_per_session,
-                      ]);
+                      const derivedClusterSizeMaxLimit =
+                        keypairResourcePolicy.max_containers_per_session;
+
                       const clusterUnit =
                         form.getFieldValue('cluster_mode') === 'single-node'
                           ? t('session.launcher.Container')
