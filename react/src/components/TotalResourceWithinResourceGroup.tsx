@@ -1,12 +1,12 @@
-import {
-  TotalResourceWithinResourceGroupFragment$key,
-  TotalResourceWithinResourceGroupFragment$data,
-} from '../__generated__/TotalResourceWithinResourceGroupFragment.graphql';
+import { TotalResourceWithinResourceGroupFragment$key } from '../__generated__/TotalResourceWithinResourceGroupFragment.graphql';
 import {
   processResourceValue,
   UNLIMITED_VALUES,
 } from '../helper/resourceCardUtils';
-import { useResourceSlotsDetails } from '../hooks/backendai';
+import {
+  useCurrentUserRole,
+  useResourceSlotsDetails,
+} from '../hooks/backendai';
 import BaseResourceItem, {
   AcceleratorSlotDetail,
   ResourceValues,
@@ -37,10 +37,6 @@ interface TotalResourceWithinResourceGroupProps extends BAICardProps {
   onResourceGroupChange?: (resourceGroup: string) => void;
 }
 
-type AgentSummary = NonNullable<
-  TotalResourceWithinResourceGroupFragment$data['agent_summary_list']
->['items'][number];
-
 const TotalResourceWithinResourceGroup: React.FC<
   TotalResourceWithinResourceGroupProps
 > = ({ queryRef, isRefetching, onResourceGroupChange, ...props }) => {
@@ -48,11 +44,12 @@ const TotalResourceWithinResourceGroup: React.FC<
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [selectedResourceGroup, setSelectedResourceGroup] = useState<string>();
   const deferredSelectedResourceGroup = useDeferredValue(selectedResourceGroup);
+  const userRole = useCurrentUserRole();
 
   const [data, refetch] = useRefetchableFragment(
     graphql`
       fragment TotalResourceWithinResourceGroupFragment on Queries
-      @argumentDefinitions(resourceGroup: { type: "String" })
+      @argumentDefinitions(resourceGroup: { type: "String" }, isSuperAdmin: { type: "Boolean!" })
       @refetchable(
         queryName: "TotalResourceWithinResourceGroupFragmentRefetchQuery"
       ) {
@@ -62,7 +59,7 @@ const TotalResourceWithinResourceGroup: React.FC<
           status: "ALIVE"
           scaling_group: $resourceGroup
           filter: "schedulable == true"
-        ) {
+        ) @skip(if: $isSuperAdmin) {
           items {
             id
             status
@@ -71,6 +68,20 @@ const TotalResourceWithinResourceGroup: React.FC<
             scaling_group
           }
           total_count
+        }
+        agent_nodes(
+          filter: "schedulable == true & status == \"ALIVE\""
+        ) @include(if: $isSuperAdmin) {
+          edges {
+            node {
+              id
+              status
+              available_slots
+              occupied_slots
+              scaling_group
+            }
+          }
+          count
         }
       }
     `,
@@ -84,9 +95,10 @@ const TotalResourceWithinResourceGroup: React.FC<
     if (deferredSelectedResourceGroup) {
       refetch({
         resourceGroup: deferredSelectedResourceGroup,
+        isSuperAdmin: userRole === 'superadmin',
       });
     }
-  }, [deferredSelectedResourceGroup, refetch]);
+  }, [deferredSelectedResourceGroup, refetch, userRole]);
 
   const getResourceValue = (
     type: 'usage' | 'remaining',
@@ -118,20 +130,30 @@ const TotalResourceWithinResourceGroup: React.FC<
 
   const { acceleratorSlotsDetails, totalOccupiedSlots, totalAvailableSlots } =
     useMemo(() => {
-      const agents = data.agent_summary_list?.items || [];
+      // Use agent_nodes data for superadmin, agent_summary_list for others
+      const agents = _.isEqual(userRole, 'superadmin')
+        ? _.map(_.get(data, 'agent_nodes.edges', []), 'node')
+        : _.get(data, 'agent_summary_list.items', []);
 
       const totalOccupiedSlots: Record<string, number> = {};
       const totalAvailableSlots: Record<string, number> = {};
 
-      _.forEach(agents as AgentSummary[], (agent) => {
-        if (!agent) return;
-        const occupiedSlots = JSON.parse(agent.occupied_slots || '{}');
-        const availableSlots = JSON.parse(agent.available_slots || '{}');
+      _.forEach(_.compact(agents), (agent) => {
+        const occupiedSlots = _.attempt(
+          JSON.parse,
+          _.get(agent, 'occupied_slots', '{}'),
+        );
+        const availableSlots = _.attempt(
+          JSON.parse,
+          _.get(agent, 'available_slots', '{}'),
+        );
+
+        if (_.isError(occupiedSlots) || _.isError(availableSlots)) return;
 
         _.forEach(occupiedSlots, (value, key) => {
           totalOccupiedSlots[key] = _.toNumber(
             addNumberWithUnits(
-              _.toString(totalOccupiedSlots[key] || 0),
+              _.toString(_.get(totalOccupiedSlots, key, 0)),
               _.toString(value),
               '',
             ),
@@ -141,7 +163,7 @@ const TotalResourceWithinResourceGroup: React.FC<
         _.forEach(availableSlots, (value, key) => {
           totalAvailableSlots[key] = _.toNumber(
             addNumberWithUnits(
-              _.toString(totalAvailableSlots[key] || 0),
+              _.toString(_.get(totalAvailableSlots, key, 0)),
               _.toString(value),
               '',
             ),
@@ -171,7 +193,7 @@ const TotalResourceWithinResourceGroup: React.FC<
         totalOccupiedSlots,
         totalAvailableSlots,
       };
-    }, [data, type, resourceSlotsDetails]);
+    }, [data, type, resourceSlotsDetails, userRole]);
 
   const getResourceValueForCard = useCallback(
     (resource: string) =>
@@ -208,6 +230,7 @@ const TotalResourceWithinResourceGroup: React.FC<
       refetch(
         {
           resourceGroup: deferredSelectedResourceGroup,
+          isSuperAdmin: _.isEqual(userRole, 'superadmin'),
         },
         {
           fetchPolicy: 'network-only',
