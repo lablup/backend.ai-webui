@@ -54,6 +54,7 @@ interface FilterInput {
   operator: string;
   value: string;
   label?: ReactNode;
+  valueLabel?: string;
   type: FilterProperty['type'];
   propertyLabel: string;
 }
@@ -220,16 +221,25 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
     const filters = value.split('&').map((filter) => filter.trim());
     return filters.map((filter, index) => {
       const { property, operator, value } = parseFilterValue(filter);
+      const filterProperty = _.find(
+        filterProperties,
+        (f) => f.key === property,
+      );
+      const option = _.find(
+        filterProperty?.options,
+        (o) => o.value === trimFilterValue(value),
+      );
       return {
         key: index + value,
         property,
         operator,
         value,
-        propertyLabel:
-          _.find(filterProperties, (f) => f.key === property)?.propertyLabel ||
-          property,
-        type:
-          _.find(filterProperties, (f) => f.key === property)?.type || 'string',
+        valueLabel:
+          _.isString(option?.label) || _.isNumber(option?.label)
+            ? _.toString(option.label)
+            : '',
+        propertyLabel: filterProperty?.propertyLabel || property,
+        type: filterProperty?.type || 'string',
       };
     });
   }, [value, filterProperties]);
@@ -297,12 +307,17 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
       DEFAULT_OPERATOR_OF_TYPES[selectedProperty.type];
     const filterValue =
       operator === 'ilike' || operator === 'like' ? `%${value}%` : `${value}`;
+    const option = _.find(selectedProperty.options, (o) => o.value === value);
     push({
       property: selectedProperty.key,
       propertyLabel: selectedProperty.propertyLabel,
       operator,
       value: filterValue,
-      label: selectedProperty.options?.find((o) => o.value === value)?.label,
+      label: option?.label,
+      valueLabel:
+        _.isString(option?.label) || _.isNumber(option?.label)
+          ? _.toString(option.label)
+          : '',
       type: selectedProperty.type,
     });
   };
@@ -383,7 +398,10 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
               onClose={() => remove(item.key)}
               style={{ margin: 0 }}
             >
-              {item.propertyLabel}: {trimFilterValue(item.value)}
+              {item.propertyLabel}:{' '}
+              {!_.isEmpty(item.valueLabel)
+                ? item.valueLabel
+                : trimFilterValue(item.value)}
             </Tag>
           ))}
           {filtersFromValue.length > 1 && (
