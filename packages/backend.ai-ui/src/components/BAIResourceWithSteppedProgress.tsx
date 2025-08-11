@@ -7,13 +7,13 @@ const calculateCurrentPosition = (
   current: number | string,
   total: number | string | undefined,
   steps: number,
-  unlimitedValues?: Array<number | string | undefined>,
+  unlimitedValue: number | string = '∞',
 ): number => {
-  if (_.includes(unlimitedValues, current) || total === 0) {
+  if (_.isEqual(unlimitedValue, current) || total === 0) {
     return 100;
   } else if (
-    !_.includes(unlimitedValues, current) &&
-    _.includes(unlimitedValues, total)
+    !_.isEqual(unlimitedValue, current) &&
+    _.isEqual(unlimitedValue, total)
   ) {
     return 0;
   } else {
@@ -30,10 +30,10 @@ const formatResourceValues = (
   current: number | string,
   total: number | string | undefined,
   displayUnit: string,
-  unlimitedValues?: Array<number | string | undefined>,
+  unlimitedValue: number | string = '∞',
 ) => {
   const isUnlimited = (val: number | string | undefined) =>
-    _.includes(unlimitedValues, val);
+    _.isEqual(unlimitedValue, val);
   const formatNumber = (val: number | string | undefined) =>
     _.isNaN(val) ? '-' : isUnlimited(val) ? '∞' : _.toString(val);
 
@@ -59,6 +59,7 @@ const formatResourceValues = (
     formattedTotal,
     currentUnit,
     totalUnit,
+    unlimitedValue,
   };
 };
 
@@ -68,7 +69,7 @@ export interface BAIResourceWithSteppedProgressProps {
   total?: number | string;
   displayUnit: string;
   steps?: number;
-  unlimitedValues?: Array<number | string | undefined>;
+  unlimitedValue?: number | string;
   showProgress?: boolean;
 }
 
@@ -80,13 +81,13 @@ const BAIResourceWithSteppedProgress: React.FC<
   total,
   displayUnit,
   steps = 12,
-  unlimitedValues,
+  unlimitedValue = '∞',
   showProgress = true,
 }) => {
   const { token } = theme.useToken();
 
   const { formattedCurrent, formattedTotal, currentUnit, totalUnit } =
-    formatResourceValues(title, current, total, displayUnit, unlimitedValues);
+    formatResourceValues(title, current, total, displayUnit, unlimitedValue);
 
   return (
     <BAIFlex direction="column" align="start">
@@ -130,7 +131,6 @@ const BAIResourceWithSteppedProgress: React.FC<
                 current,
                 total,
                 steps,
-                unlimitedValues,
               );
               return (
                 <BAIFlex

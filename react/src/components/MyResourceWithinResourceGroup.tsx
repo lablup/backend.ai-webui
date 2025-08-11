@@ -29,19 +29,16 @@ const getResourceValue = (
 ): ResourceValues => {
   const getCurrentValue = () => {
     if (type === 'usage') {
-      const value = _.get(
+      return _.get(
         checkPresetInfo?.scaling_groups?.[resourceGroup]?.using,
         resource,
       );
-      return value;
     }
 
-    const remaining = _.get(
+    return _.get(
       checkPresetInfo?.scaling_groups?.[resourceGroup]?.remaining,
       resource,
     );
-    if (remaining === Number.MAX_SAFE_INTEGER) return Number.MAX_SAFE_INTEGER;
-    return remaining;
   };
 
   return {

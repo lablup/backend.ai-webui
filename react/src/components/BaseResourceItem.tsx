@@ -41,6 +41,16 @@ export interface BaseResourceItemProps {
   extraActions?: ReactNode;
 }
 
+const UNLIMITED_VALUES = [NaN, Infinity, Number.MAX_SAFE_INTEGER, undefined];
+const UNLIMITED_VALUE_STRING = '∞';
+
+const replaceUnlimitedValues = (value: string | number | undefined) => {
+  if (_.includes(UNLIMITED_VALUES, value)) {
+    return UNLIMITED_VALUE_STRING;
+  }
+  return value;
+};
+
 const BaseResourceItem: React.FC<BaseResourceItemProps> = ({
   title,
   titleStyle,
@@ -55,7 +65,7 @@ const BaseResourceItem: React.FC<BaseResourceItemProps> = ({
   progressProps,
   extraActions,
 }) => {
-  const { showProgress = true, unlimitedValues, steps } = progressProps || {};
+  const { showProgress = true, steps } = progressProps || {};
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
@@ -63,28 +73,32 @@ const BaseResourceItem: React.FC<BaseResourceItemProps> = ({
     values: ResourceValues,
     resourceSlot: ResourceSlotDetail,
   ) => {
-    const convertedBinaryValues =
-      resourceSlot.slot_name === 'ram'
+    const convertBinaryValue = (v: number | string) =>
+      resourceSlot.slot_name === 'ram' &&
+      !_.isEqual(replaceUnlimitedValues(v), UNLIMITED_VALUE_STRING)
         ? convertToBinaryUnit(
-            values.current,
+            v,
             getDisplayUnitToInputSizeUnit(resourceSlot.display_unit),
           )
         : undefined;
+    const currentValue =
+      convertBinaryValue(values.current)?.value ||
+      replaceUnlimitedValues(values.current) ||
+      0;
     const progressProps: BAIResourceWithSteppedProgressProps = {
-      current: convertedBinaryValues?.value || values.current,
+      current: currentValue,
       title: resourceSlot.human_readable_name,
-      displayUnit:
-        convertedBinaryValues?.displayUnit ||
-        values.displayUnit ||
-        resourceSlot.display_unit,
+      displayUnit: values.displayUnit || resourceSlot.display_unit,
+      showProgress,
     };
 
-    if (showProgress && !_.isUndefined(values.total)) {
-      progressProps.total = values.total;
-      progressProps.unlimitedValues = unlimitedValues;
+    if (showProgress) {
+      progressProps.total =
+        convertBinaryValue(values.total ?? UNLIMITED_VALUE_STRING)?.value ||
+        replaceUnlimitedValues(values.total) ||
+        0;
       progressProps.steps = steps;
-    } else {
-      progressProps.showProgress = false;
+      progressProps.unlimitedValue = UNLIMITED_VALUE_STRING;
     }
 
     return <BAIResourceWithSteppedProgress {...progressProps} />;
@@ -100,7 +114,7 @@ const BaseResourceItem: React.FC<BaseResourceItemProps> = ({
   const shouldShowMemory =
     _.get(resourceSlotsDetails, 'resourceSlotsInRG.mem') &&
     (_.isUndefined(memValues.total) ||
-      compareNumberWithUnits(memValues.total, 0));
+      compareNumberWithUnits(memValues.total, 0) > 0);
 
   const visibleAccelerators = _.filter(
     acceleratorSlotsDetails,
