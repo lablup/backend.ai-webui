@@ -5,7 +5,6 @@ import {
   filterOutNullAndUndefined,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
-import { useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import BAILink from './BAILink';
@@ -18,6 +17,8 @@ import {
   BAIFlex,
   BAIPureStorageIcon,
   BAITable,
+  INITIAL_FETCH_KEY,
+  useFetchKey,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Server } from 'lucide-react';
@@ -81,7 +82,7 @@ const StorageProxyList = () => {
     current: 1,
     pageSize: 10,
   });
-  const [fetchKey, updateFetchKey] = useUpdatableState('first');
+  const [fetchKey, updateFetchKey] = useFetchKey();
   const queryVariables = useMemo(
     () => ({
       offset: baiPaginationOption.offset,
@@ -111,8 +112,11 @@ const StorageProxyList = () => {
     deferredQueryVariables,
     {
       fetchPolicy:
-        deferredFetchKey === 'first' ? 'store-and-network' : 'network-only',
-      fetchKey: deferredFetchKey === 'first' ? undefined : deferredFetchKey,
+        deferredFetchKey === INITIAL_FETCH_KEY
+          ? 'store-and-network'
+          : 'network-only',
+      fetchKey:
+        deferredFetchKey === INITIAL_FETCH_KEY ? undefined : deferredFetchKey,
     },
   );
 

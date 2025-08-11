@@ -2,7 +2,6 @@ import { UserNodeListModifyMutation } from '../__generated__/UserNodeListModifyM
 import { UserNodeListQuery } from '../__generated__/UserNodeListQuery.graphql';
 import BAIPropertyFilter from '../components/BAIPropertyFilter';
 import { filterOutEmpty, filterOutNullAndUndefined } from '../helper';
-import { useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import BAIRadioGroup from './BAIRadioGroup';
 import UserInfoModal from './UserInfoModal';
@@ -13,7 +12,12 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { Tooltip, Button, theme, Popconfirm, App } from 'antd';
-import { BAIFlex, BAITable } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAITable,
+  INITIAL_FETCH_KEY,
+  useFetchKey,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
@@ -28,7 +32,7 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
   const { token } = theme.useToken();
   const [isPendingRefresh, startRefreshTransition] = useTransition();
   const [isPendingFilter, startFilterTransition] = useTransition();
-  const [fetchKey, updateFetchKey] = useUpdatableState('first');
+  const [fetchKey, updateFetchKey] = useFetchKey();
   const [filterString, setFilterString] = useState<string>();
   const [order, setOrder] = useState<string | undefined>('-created_at');
   const [isPendingPageChange, startPageChangeTransition] = useTransition();
@@ -102,7 +106,8 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
     },
     {
       fetchKey,
-      fetchPolicy: fetchKey === 'first' ? 'store-and-network' : 'network-only',
+      fetchPolicy:
+        fetchKey === INITIAL_FETCH_KEY ? 'store-and-network' : 'network-only',
     },
   );
 

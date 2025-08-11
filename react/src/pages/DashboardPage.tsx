@@ -6,7 +6,7 @@ import MySession from '../components/MySession';
 import RecentlyCreatedSession from '../components/RecentlyCreatedSession';
 import TotalResourceWithinResourceGroup from '../components/TotalResourceWithinResourceGroup';
 import { filterOutEmpty } from '../helper';
-import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import {
   useCurrentProjectValue,
@@ -14,6 +14,7 @@ import {
 } from '../hooks/useCurrentProject';
 import { useInterval } from '../hooks/useIntervalValue';
 import { Skeleton, theme } from 'antd';
+import { INITIAL_FETCH_KEY, useFetchKey } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Suspense, useTransition } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -27,7 +28,7 @@ const DashboardPage: React.FC = () => {
   const currentResourceGroup = useCurrentResourceGroupValue();
   const userRole = useCurrentUserRole();
 
-  const [fetchKey, updateFetchKey] = useUpdatableState('first');
+  const [fetchKey, updateFetchKey] = useFetchKey();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
   const [localStorageBoardItems, setLocalStorageBoardItems] =
@@ -58,7 +59,7 @@ const DashboardPage: React.FC = () => {
     },
     {
       fetchPolicy:
-        fetchKey === 'initial-fetch' ? 'store-and-network' : 'network-only',
+        fetchKey === INITIAL_FETCH_KEY ? 'store-and-network' : 'network-only',
       fetchKey,
     },
   );

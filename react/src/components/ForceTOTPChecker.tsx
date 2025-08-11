@@ -1,14 +1,15 @@
 import { ForceTOTPCheckerQuery } from '../__generated__/ForceTOTPCheckerQuery.graphql';
-import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useTOTPSupported } from '../hooks/backendai';
 import TOTPActivateModal from './TOTPActivateModal';
 import { useToggle } from 'ahooks';
+import { useFetchKey } from 'backend.ai-ui';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const ForceTOTPChecker = () => {
   const [, { toggle: toggleTOTPActivateModal }] = useToggle(false);
   const { isTOTPSupported } = useTOTPSupported();
-  const [fetchKey, updateFetchKey] = useUpdatableState('first');
+  const [fetchKey, updateFetchKey] = useFetchKey();
   const baiClient = useSuspendedBackendaiClient();
 
   const { user } = useLazyLoadQuery<ForceTOTPCheckerQuery>(

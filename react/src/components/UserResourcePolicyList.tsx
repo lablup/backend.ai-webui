@@ -12,7 +12,6 @@ import {
   numberSorterWithInfinityValue,
 } from '../helper';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
-import { useUpdatableState } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import UserResourcePolicySettingModal from './UserResourcePolicySettingModal';
@@ -25,7 +24,12 @@ import {
 import { useToggle } from 'ahooks';
 import { App, Button, Dropdown, Popconfirm, theme, Tooltip } from 'antd';
 import { ColumnType } from 'antd/es/table';
-import { BAITable, BAIFlex } from 'backend.ai-ui';
+import {
+  BAITable,
+  BAIFlex,
+  INITIAL_FETCH_KEY,
+  useFetchKey,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { EllipsisIcon } from 'lucide-react';
@@ -48,7 +52,7 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
 
   const [isRefetchPending, startRefetchTransition] = useTransition();
   const [userResourcePolicyFetchKey, updateUserResourcePolicyFetchKey] =
-    useUpdatableState('initial-fetch');
+    useFetchKey();
   const [isCreatingPolicySetting, setIsCreatingPolicySetting] = useState(false);
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
     useToggle();
@@ -79,7 +83,7 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
       {},
       {
         fetchPolicy:
-          userResourcePolicyFetchKey === 'initial-fetch'
+          userResourcePolicyFetchKey === INITIAL_FETCH_KEY
             ? 'store-and-network'
             : 'network-only',
         fetchKey: userResourcePolicyFetchKey,

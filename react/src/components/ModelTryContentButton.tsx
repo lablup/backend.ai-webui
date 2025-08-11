@@ -6,11 +6,7 @@ import {
   generateRandomString,
   useBaiSignedRequestWithPromise,
 } from '../helper';
-import {
-  useCurrentDomainValue,
-  useSuspendedBackendaiClient,
-  useUpdatableState,
-} from '../hooks';
+import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import {
@@ -23,6 +19,7 @@ import {
   ServiceLauncherFormValue,
 } from './ServiceLauncherPageContent';
 import { Button } from 'antd';
+import { useFetchKey } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -50,7 +47,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
   const currentDomain = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
   const currentResourceGroupByProject = useCurrentResourceGroupValue();
-  const [fetchKey] = useUpdatableState('first');
+  const [fetchKey] = useFetchKey();
   const { upsertNotification } = useSetBAINotification();
 
   const { vfolder_nodes } =

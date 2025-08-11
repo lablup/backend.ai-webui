@@ -1,6 +1,6 @@
-import { useUpdatableState } from '.';
 import { ServiceLauncherFormValue } from '../components/ServiceLauncherPageContent';
 import { useTanQuery } from './reactQueryAlias';
+import { useFetchKey } from 'backend.ai-ui';
 import { useCallback } from 'react';
 
 export interface ModelCard extends ServiceLauncherFormValue {
@@ -15,7 +15,7 @@ export interface ModelCardMetadata {
 const TIMEOUT_24_HOURS = 24 * 60 * 60 * 1000;
 
 export const useModelCardMetadata = () => {
-  const [updateKey, checkUpdateKey] = useUpdatableState('first');
+  const [updateKey, checkUpdateKey] = useFetchKey();
 
   const { data: modelCardConfig, isLoading } = useTanQuery<ModelCardMetadata>({
     queryKey: ['use-model-card-metadata', updateKey],

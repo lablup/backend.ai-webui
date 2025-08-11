@@ -37,11 +37,7 @@ import {
   convertToBinaryUnit,
   filterOutEmpty,
 } from '../helper';
-import {
-  useSuspendedBackendaiClient,
-  useUpdatableState,
-  useWebUINavigate,
-} from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import {
@@ -81,7 +77,7 @@ import {
   Typography,
   theme,
 } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, INITIAL_FETCH_KEY, useFetchKey } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
 import _ from 'lodash';
@@ -383,7 +379,7 @@ const SessionLauncherPage = () => {
   );
 
   const [finalStepLastValidateTime, setFinalStepLastValidateTime] =
-    useUpdatableState('first'); // Force re-render after validation in final step.
+    useFetchKey(); // Force re-render after validation in final step.
 
   useEffect(() => {
     if (currentStep === steps.length - 1) {
@@ -396,7 +392,7 @@ const SessionLauncherPage = () => {
   }, [currentStep, form, setFinalStepLastValidateTime, steps.length]);
 
   useEffect(() => {
-    if (finalStepLastValidateTime !== 'first') {
+    if (finalStepLastValidateTime !== INITIAL_FETCH_KEY) {
       if (hasError) {
         setValidationTourOpen(true);
       } else {

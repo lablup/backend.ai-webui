@@ -14,7 +14,6 @@ import {
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
-  useUpdatableState,
 } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import AliasedImageDoubleTags from './AliasedImageDoubleTags';
@@ -30,7 +29,12 @@ import { useToggle } from 'ahooks';
 import { App, Button, Input, Popconfirm, theme, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
-import { BAIFlex, BAITable } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAITable,
+  INITIAL_FETCH_KEY,
+  useFetchKey,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import React, {
   PropsWithChildren,
@@ -57,7 +61,7 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
     useToggle();
   const [isRefetchPending, startRefetchTransition] = useTransition();
   const [customizedImageListFetchKey, updateCustomizedImageListFetchKey] =
-    useUpdatableState('initial-fetch');
+    useFetchKey();
   const [inFlightImageId, setInFlightImageId] = useState<string>();
   const [imageSearch, setImageSearch] = useState('');
   const [isPendingSearchTransition, startSearchTransition] = useTransition();
@@ -94,7 +98,7 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
     {},
     {
       fetchPolicy:
-        customizedImageListFetchKey === 'initial-fetch'
+        customizedImageListFetchKey === INITIAL_FETCH_KEY
           ? 'store-and-network'
           : 'network-only',
       fetchKey: customizedImageListFetchKey,

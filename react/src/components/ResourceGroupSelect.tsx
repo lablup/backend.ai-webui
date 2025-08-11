@@ -1,10 +1,10 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
-import { useUpdatableState } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState from '../hooks/useControllableState';
 import BAISelect, { BAISelectProps } from './BAISelect';
 import TextHighlighter from './TextHighlighter';
 import { SelectProps } from 'antd';
+import { useFetchKey } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useEffect, useState, useTransition } from 'react';
 
@@ -24,7 +24,7 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
   ...selectProps
 }) => {
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
-  const [fetchKey] = useUpdatableState('first');
+  const [fetchKey] = useFetchKey();
   const [controllableSearchValue, setControllableSearchValue] =
     useControllableState<string>({
       value: searchValue,

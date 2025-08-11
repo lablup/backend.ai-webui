@@ -12,7 +12,6 @@ import {
 } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
-import { useUpdatableState } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import AllowedVfolderHostsWithPermission from './AllowedVfolderHostsWithPermission';
 import KeypairResourcePolicyInfoModal from './KeypairResourcePolicyInfoModal';
@@ -30,7 +29,12 @@ import { useToggle } from 'ahooks';
 import { App, Button, Dropdown, theme, Tooltip, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
-import { BAITable, BAIFlex } from 'backend.ai-ui';
+import {
+  BAITable,
+  BAIFlex,
+  INITIAL_FETCH_KEY,
+  useFetchKey,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import { EllipsisIcon } from 'lucide-react';
 import React, { Suspense, useState, useTransition } from 'react';
@@ -51,7 +55,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
   const { message, modal } = App.useApp();
 
   const [keypairResourcePolicyFetchKey, updateKeypairResourcePolicyFetchKey] =
-    useUpdatableState('initial-fetch');
+    useFetchKey();
   const [isRefetchPending, startRefetchTransition] = useTransition();
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
     useToggle();
@@ -88,7 +92,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
       {},
       {
         fetchPolicy:
-          keypairResourcePolicyFetchKey === 'initial-fetch'
+          keypairResourcePolicyFetchKey === INITIAL_FETCH_KEY
             ? 'store-and-network'
             : 'network-only',
         fetchKey: keypairResourcePolicyFetchKey,

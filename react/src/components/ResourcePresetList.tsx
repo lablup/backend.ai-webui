@@ -9,7 +9,7 @@ import {
   filterOutNullAndUndefined,
   localeCompare,
 } from '../helper';
-import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import NumberWithUnit from './NumberWithUnit';
 import ResourceNumber from './ResourceNumber';
 import ResourcePresetSettingModal from './ResourcePresetSettingModal';
@@ -27,7 +27,12 @@ import {
   Typography,
   TableColumnsType,
 } from 'antd';
-import { BAITable, BAIFlex } from 'backend.ai-ui';
+import {
+  BAITable,
+  BAIFlex,
+  INITIAL_FETCH_KEY,
+  useFetchKey,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -45,7 +50,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
   const { modal, message } = App.useApp();
   const [isRefetchPending, startRefetchTransition] = useTransition();
   const [resourcePresetsFetchKey, updateResourcePresetsFetchKey] =
-    useUpdatableState('initial-fetch');
+    useFetchKey();
   const [inFlightResourcePresetName, setInFlightResourcePresetName] =
     useState<string>();
   const [editingResourcePreset, setEditingResourcePreset] =
@@ -68,7 +73,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
     {},
     {
       fetchPolicy:
-        resourcePresetsFetchKey === 'initial-fetch'
+        resourcePresetsFetchKey === INITIAL_FETCH_KEY
           ? 'store-and-network'
           : 'network-only',
       fetchKey: resourcePresetsFetchKey,
