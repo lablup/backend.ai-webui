@@ -10,7 +10,8 @@ import BaseResourceItem, {
   AcceleratorSlotDetail,
   ResourceValues,
 } from './BaseResourceItem';
-import { BAICardProps } from 'backend.ai-ui';
+import { Typography } from 'antd';
+import { BAICardProps, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -127,8 +128,14 @@ const MyResource: React.FC<MyResourceProps> = ({
   return (
     <BaseResourceItem
       {...props}
-      title={t('webui.menu.MyResources')}
-      tooltip="webui.menu.MyResourcesDescription"
+      title={
+        <BAIFlex gap={'xs'}>
+          <Typography.Title level={5} style={{ margin: 0 }}>
+            {t('webui.menu.MyResources')}
+          </Typography.Title>
+        </BAIFlex>
+      }
+      tooltip={t('webui.menu.MyResourcesDescription')}
       isRefetching={isRefetching || internalIsRefetching}
       displayType={type}
       onDisplayTypeChange={setType}

@@ -3,6 +3,16 @@ import BAIFlex from './BAIFlex';
 import { theme, Typography, Tooltip } from 'antd';
 import _ from 'lodash';
 
+// Use Intl.NumberFormat for grouping and up to 2 decimal places (trims trailing zeros)
+const numberFormatter = new Intl.NumberFormat('en-US', {
+  maximumFractionDigits: 2,
+});
+// Format numbers with grouping and up to 2 decimal places, trimming trailing zeros
+const formatCurrentNumber = (val: number): string => {
+  if (!isFinite(val)) return String(val);
+  return numberFormatter.format(val);
+};
+
 const calculateCurrentPosition = (
   current: number | string,
   total: number | string | undefined,
@@ -49,8 +59,19 @@ const formatResourceValues = (
     currentUnit = `${_.toUpper(currUnitRaw || 'g')}iB`;
     totalUnit = `${_.toUpper(totUnitRaw || 'g')}iB`;
   } else {
-    formattedCurrent = formatNumber(current);
-    formattedTotal = formatNumber(total);
+    // Keep numbers as numbers to allow further numeric formatting at render time
+    formattedCurrent = isUnlimited(current)
+      ? '∞'
+      : typeof current === 'number'
+        ? current
+        : formatNumber(current);
+
+    formattedTotal = isUnlimited(total)
+      ? '∞'
+      : typeof total === 'number'
+        ? total
+        : formatNumber(total);
+
     currentUnit = totalUnit = displayUnit;
   }
 
@@ -89,6 +110,12 @@ const BAIResourceWithSteppedProgress: React.FC<
   const { formattedCurrent, formattedTotal, currentUnit, totalUnit } =
     formatResourceValues(title, current, total, displayUnit, unlimitedValue);
 
+  // Apply number formatting only when formattedCurrent is a number
+  const displayFormattedCurrent =
+    typeof formattedCurrent === 'number'
+      ? formatCurrentNumber(formattedCurrent)
+      : formattedCurrent;
+
   return (
     <BAIFlex direction="column" align="start">
       <Typography.Text
@@ -117,13 +144,13 @@ const BAIResourceWithSteppedProgress: React.FC<
             color: token.colorSuccess,
           }}
         >
-          {formattedCurrent}
+          {displayFormattedCurrent}
         </Typography.Text>
         {!_.isNaN(current) && <Typography.Text>{displayUnit}</Typography.Text>}
       </BAIFlex>
       {showProgress && (
         <Tooltip
-          title={`${formattedCurrent} ${currentUnit} / ${formattedTotal} ${totalUnit}`}
+          title={`${displayFormattedCurrent} ${currentUnit} / ${formattedTotal} ${totalUnit}`}
         >
           <BAIFlex direction="row" gap={2}>
             {_.map(_.range(steps), (i) => {

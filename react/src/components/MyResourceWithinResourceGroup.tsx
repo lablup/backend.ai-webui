@@ -108,6 +108,7 @@ const MyResourceWithinResourceGroup: React.FC<
         {t('webui.menu.MyResourcesIn')}
       </Typography.Title>
       <ResourceGroupSelectForCurrentProject
+        size="small"
         showSearch
         style={{ minWidth: 100 }}
         onChange={(v) => {
@@ -125,7 +126,7 @@ const MyResourceWithinResourceGroup: React.FC<
     <BaseResourceItem
       {...props}
       title={title}
-      tooltip="webui.menu.MyResourcesInResourceGroupDescription"
+      tooltip={t('webui.menu.MyResourcesInResourceGroupDescription')}
       isRefetching={isRefetching || internalIsRefetching}
       displayType={displayType}
       onDisplayTypeChange={setDisplayType}

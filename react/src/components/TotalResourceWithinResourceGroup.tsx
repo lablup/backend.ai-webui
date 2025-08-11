@@ -209,6 +209,7 @@ const TotalResourceWithinResourceGroup: React.FC<
         {t('webui.menu.TotalResourcesIn')}
       </Typography.Title>
       <ResourceGroupSelectForCurrentProject
+        size="small"
         showSearch
         style={{ minWidth: 100 }}
         onChange={(v) => {
@@ -240,7 +241,7 @@ const TotalResourceWithinResourceGroup: React.FC<
     <BaseResourceItem
       {...props}
       title={title}
-      tooltip="webui.menu.TotalResourcesInResourceGroupDescription"
+      tooltip={t('webui.menu.TotalResourcesInResourceGroupDescription')}
       isRefetching={isRefetching || isPendingRefetch}
       displayType={type}
       onDisplayTypeChange={setType}

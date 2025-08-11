@@ -4,8 +4,8 @@ import BAIFetchKeyButton from './BAIFetchKeyButton';
 import SessionDetailDrawer from './SessionDetailDrawer';
 import SessionNodes from './SessionNodes';
 import UnmountAfterClose from './UnmountAfterClose';
-import { theme, Typography } from 'antd';
-import { toLocalId, BAIFlex } from 'backend.ai-ui';
+import { theme } from 'antd';
+import { toLocalId, BAIFlex, BAIBoardItemTitle } from 'backend.ai-ui';
 import { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
@@ -36,7 +36,7 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
       )
       @refetchable(queryName: "RecentlyCreatedSessionRefetchQuery") {
         compute_session_nodes(
-          first: 3
+          first: 5
           order: "-created_at"
           filter: "status == \"running\""
           project_id: $projectId
@@ -64,34 +64,12 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
           height: '100%',
         }}
       >
-        {/* Fixed Title Section */}
-        <BAIFlex
-          align="center"
-          justify="between"
-          style={{
-            width: '100%',
-            height: 56,
-            paddingLeft: token.paddingMD,
-            flexShrink: 0,
-            position: 'sticky',
-            top: 0,
-            backgroundColor: token.colorBgContainer,
-            zIndex: 1,
-          }}
-          gap="xs"
-          wrap="wrap"
-        >
-          <Typography.Title level={5} style={{ margin: 0 }}>
-            {t('session.RecentlyCreatedSessions')}
-          </Typography.Title>
-          <BAIFlex
-            direction="row"
-            gap="sm"
-            style={{
-              marginRight: -8,
-            }}
-          >
+        <BAIBoardItemTitle
+          title={t('session.RecentlyCreatedSessions')}
+          tooltip={t('session.RecentlyCreatedSessionsTooltip')}
+          extra={
             <BAIFetchKeyButton
+              size="small"
               loading={isPendingRefetch || isRefetching}
               value=""
               onChange={(newFetchKey) => {
@@ -109,8 +87,8 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
                 backgroundColor: 'transparent',
               }}
             />
-          </BAIFlex>
-        </BAIFlex>
+          }
+        />
 
         {/* Scrollable Content Section */}
         <BAIFlex
@@ -120,7 +98,6 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
             flex: 1,
             overflowY: 'auto',
             overflowX: 'hidden',
-            marginTop: token.marginSM,
           }}
         >
           <SessionNodes
