@@ -184,13 +184,11 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
                     <BAILink
                       type="hover"
                       onClick={() => {
-                        const params = _.find(sessionHistory, {
-                          id: record.id,
-                        })?.params;
                         modalProps.onRequestClose?.(
                           JSON.parse(
-                            new URLSearchParams(params).get('formValues') ||
-                              '{}',
+                            new URLSearchParams(record.params || '').get(
+                              'formValues',
+                            ) || '{}',
                           ),
                         );
                       }}
