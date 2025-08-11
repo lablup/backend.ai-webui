@@ -186,7 +186,7 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
                       onClick={() => {
                         modalProps.onRequestClose?.(
                           JSON.parse(
-                            new URLSearchParams(record.params).get(
+                            new URLSearchParams(record.params || '').get(
                               'formValues',
                             ) || '{}',
                           ),
