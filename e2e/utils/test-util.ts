@@ -1,12 +1,5 @@
 import TOML from '@iarna/toml';
-import {
-  APIRequestContext,
-  Locator,
-  Page,
-  Request,
-  expect,
-  request,
-} from '@playwright/test';
+import { APIRequestContext, Locator, Page, expect } from '@playwright/test';
 
 export const webuiEndpoint = 'http://127.0.0.1:9081';
 export const webServerEndpoint = 'http://127.0.0.1:8090';
@@ -180,7 +173,7 @@ export async function moveToTrashAndVerify(page: Page, folderName: string) {
   await searchInput.fill(folderName);
   await page.getByRole('button', { name: 'search' }).click();
   await page
-    .getByRole('row', { name: 'VFolder Identicon e2e-test-' })
+    .getByRole('row', { name: `VFolder Identicon ${folderName}` })
     .getByRole('button')
     .nth(1)
     .click();
@@ -200,7 +193,7 @@ export async function deleteForeverAndVerifyFromTrash(
   await page.getByRole('button', { name: 'search' }).click();
   // Delete forever
   await page
-    .getByRole('row', { name: 'VFolder Identicon e2e-test-' })
+    .getByRole('row', { name: `VFolder Identicon ${folderName}` })
     .getByRole('button')
     .nth(1)
     .click();
