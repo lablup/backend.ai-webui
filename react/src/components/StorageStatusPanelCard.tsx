@@ -5,9 +5,9 @@ import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import usePrimaryColors from '../hooks/usePrimaryColors';
 import BAIPanelItem from './BAIPanelItem';
-import { Badge, Col, Row, theme, Tooltip, Typography } from 'antd';
+import { Badge, theme, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
-import { BAICard, BAICardProps } from 'backend.ai-ui';
+import { BAICard, BAICardProps, BAIRowWrapWithDividers } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -30,6 +30,8 @@ interface StorageStatusPanelProps extends BAICardProps {
   fetchKey?: string;
   onRequestBadgeClick?: () => void;
 }
+
+const PANEL_ITEM_MAX_WIDTH = 90; // Adjusted max width for panel items
 
 const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
   fetchKey,
@@ -97,98 +99,90 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
   return (
     <>
       <BAICard {...cardProps} title={t('data.StorageStatus')}>
-        <Row gutter={[24, 16]}>
-          <Col
-            span={8}
+        <BAIRowWrapWithDividers
+          rowGap={token.marginXL}
+          columnGap={token.marginXL}
+          dividerColor={token.colorBorder}
+          dividerInset={token.marginXS}
+          dividerWidth={token.lineWidth}
+        >
+          <BAIPanelItem
+            title={t('data.MyFolders')}
+            value={createdCount}
+            unit={
+              user_resource_policy?.max_vfolder_count
+                ? `/ ${user_resource_policy?.max_vfolder_count}`
+                : undefined
+            }
             style={{
-              borderRight: `1px solid ${token.colorBorderSecondary}`,
-              justifyItems: 'center',
+              maxWidth: PANEL_ITEM_MAX_WIDTH,
             }}
-          >
-            <BAIPanelItem
-              title={t('data.MyFolders')}
-              value={createdCount}
-              unit={
-                user_resource_policy?.max_vfolder_count
-                  ? `/ ${user_resource_policy?.max_vfolder_count}`
-                  : undefined
-              }
-            />
-          </Col>
-          <Col
-            span={8}
+          />
+          <BAIPanelItem
+            title={t('data.ProjectFolders')}
+            value={projectCount}
+            unit={
+              project_resource_policy?.max_vfolder_count
+                ? `/ ${project_resource_policy?.max_vfolder_count}`
+                : undefined
+            }
             style={{
-              borderRight: `1px solid ${token.colorBorderSecondary}`,
-              justifyItems: 'center',
+              maxWidth: PANEL_ITEM_MAX_WIDTH,
             }}
-          >
-            <BAIPanelItem
-              title={t('data.ProjectFolders')}
-              value={projectCount}
-              unit={
-                project_resource_policy?.max_vfolder_count
-                  ? `/ ${project_resource_policy?.max_vfolder_count}`
-                  : undefined
-              }
-            />
-          </Col>
-          <Col
-            span={8}
-            style={{
-              justifyItems: 'center',
-            }}
-          >
-            <BAIPanelItem
-              title={
-                count > 0 ? (
-                  // Add <a></a> to make tooltip clickable
-                  // eslint-disable-next-line
-                  <a
-                    onClick={() => {
-                      onRequestBadgeClick?.();
-                    }}
-                  >
-                    <Tooltip
-                      title={
-                        count > 0
-                          ? t('data.InvitedFoldersTooltip', {
-                              count: count,
-                            })
-                          : null
-                      }
-                      rootClassName={styles.invitationTooltip}
-                      placement="topRight"
-                    >
-                      <Badge
-                        count={count > 0 ? `+${count}` : null}
-                        offset={[0, -`${token.sizeXS}`]}
-                      >
-                        <Typography.Title level={5} style={{ margin: 0 }}>
-                          {t('data.InvitedFolders')}
-                        </Typography.Title>
-                      </Badge>
-                    </Tooltip>
-                  </a>
-                ) : (
-                  <Typography.Title level={5} style={{ margin: 0 }}>
-                    {t('data.InvitedFolders')}
-                  </Typography.Title>
-                )
-              }
-              value={
-                <Typography.Text
-                  strong
-                  style={{
-                    fontSize: token.fontSizeHeading1,
-                    color: primaryColors.primary5,
+          />
+          <BAIPanelItem
+            title={
+              count > 0 ? (
+                // Add <a></a> to make tooltip clickable
+                // eslint-disable-next-line
+                <a
+                  onClick={() => {
+                    onRequestBadgeClick?.();
                   }}
                 >
-                  {invitedCount}
-                </Typography.Text>
-              }
-            />
-          </Col>
-        </Row>
+                  <Tooltip
+                    title={
+                      count > 0
+                        ? t('data.InvitedFoldersTooltip', {
+                            count: count,
+                          })
+                        : null
+                    }
+                    rootClassName={styles.invitationTooltip}
+                    placement="topRight"
+                  >
+                    <Badge
+                      count={count > 0 ? `+${count}` : null}
+                      offset={[0, -`${token.sizeXS}`]}
+                    >
+                      <Typography.Title level={5} style={{ margin: 0 }}>
+                        {t('data.InvitedFolders')}
+                      </Typography.Title>
+                    </Badge>
+                  </Tooltip>
+                </a>
+              ) : (
+                <Typography.Title level={5} style={{ margin: 0 }}>
+                  {t('data.InvitedFolders')}
+                </Typography.Title>
+              )
+            }
+            value={
+              <Typography.Text
+                strong
+                style={{
+                  fontSize: token.fontSizeHeading1,
+                  color: primaryColors.primary5,
+                }}
+              >
+                {invitedCount}
+              </Typography.Text>
+            }
+            style={{
+              maxWidth: PANEL_ITEM_MAX_WIDTH,
+            }}
+          />
+        </BAIRowWrapWithDividers>
       </BAICard>
     </>
   );
