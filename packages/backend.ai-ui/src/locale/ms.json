@@ -6,6 +6,35 @@
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} dari {{total}} item"
   },
+  "general": {
+    "NSelected": "{{count}} dipilih",
+    "button": {
+      "Delete": "Padam",
+      "Create": "Buat",
+      "Upload": "Muat naik"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "Fail dan folder terpilih telah dihapuskan dengan jayanya.",
+    "DeleteSelectedItemsDialog": "Padam pengesahan",
+    "DeleteSelectedItemDesc": "Fail dan folder yang dipadam tidak boleh dipulihkan. \nAdakah anda mahu meneruskan?",
+    "FolderCreatedSuccessfully": "Folder dibuat dengan jayanya.",
+    "CreateANewFolder": "Buat folder baru",
+    "FolderName": "Nama folder",
+    "PleaseEnterAFolderName": "Sila masukkan nama folder.",
+    "MaxFolderNameLength": "Nama folder mestilah 255 aksara atau kurang.",
+    "Name": "Nama",
+    "Size": "Saiz",
+    "CreatedAt": "Dicipta di",
+    "ModifiedAt": "Diubahsuai di",
+    "Controls": "Kawalan",
+    "UploadFiles": "Memuat naik fail",
+    "UploadFolder": "Muat naik folder",
+    "DownloadStarted": "Fail \"{{fileName}}\" Muat turun telah bermula.",
+    "error": {
+      "FileUploadSizeLimit": "Saiz fail melebihi had saiz muat naik."
+    }
+  },
   "comp:BAITable": {
     "SettingTable": "Tetapan Jadual",
     "SelectColumnToDisplay": "Pilih lajur untuk dipaparkan",

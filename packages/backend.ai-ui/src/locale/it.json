@@ -6,6 +6,35 @@
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} di {{total}} elementi"
   },
+  "general": {
+    "NSelected": "{{count}} selezionato",
+    "button": {
+      "Delete": "Eliminare",
+      "Create": "Creare",
+      "Upload": "Caricamento"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "I file e le cartelle selezionati sono stati eliminati correttamente.",
+    "DeleteSelectedItemsDialog": "Elimina la conferma",
+    "DeleteSelectedItemDesc": "I file e le cartelle cancellati non possono essere ripristinati. \nVuoi procedere?",
+    "FolderCreatedSuccessfully": "Cartella creata correttamente.",
+    "CreateANewFolder": "Crea una nuova cartella",
+    "FolderName": "Nome della cartella",
+    "PleaseEnterAFolderName": "Immettere il nome della cartella.",
+    "MaxFolderNameLength": "Il nome della cartella deve essere di 255 caratteri o meno.",
+    "Name": "Nome",
+    "Size": "Misurare",
+    "CreatedAt": "Creato a",
+    "ModifiedAt": "Modificato a",
+    "Controls": "Controlli",
+    "UploadFiles": "Carica file",
+    "UploadFolder": "Caricamento Carica",
+    "DownloadStarted": "File \"{{fileName}}\" è stato avviato il download.",
+    "error": {
+      "FileUploadSizeLimit": "La dimensione del file supera il limite di dimensione del caricamento."
+    }
+  },
   "comp:BAITable": {
     "SettingTable": "Impostazioni della tabella",
     "SelectColumnToDisplay": "Seleziona le colonne da visualizzare",

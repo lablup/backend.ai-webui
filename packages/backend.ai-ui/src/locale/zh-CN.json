@@ -6,6 +6,35 @@
   "comp:PaginationInfoText": {
     "Total": "{{start}}  -  {{end}} {{total}}项目"
   },
+  "general": {
+    "NSelected": "{{count}}选择",
+    "button": {
+      "Delete": "删除",
+      "Create": "创造",
+      "Upload": "上传"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "选定的文件和文件夹已成功删除。",
+    "DeleteSelectedItemsDialog": "删除确认",
+    "DeleteSelectedItemDesc": "删除的文件和文件夹无法恢复。\n你想继续吗？",
+    "FolderCreatedSuccessfully": "文件夹成功创建了。",
+    "CreateANewFolder": "创建一个新文件夹",
+    "FolderName": "文件夹名称",
+    "PleaseEnterAFolderName": "请输入文件夹名称。",
+    "MaxFolderNameLength": "文件夹名称必须为255个字符或更小。",
+    "Name": "姓名",
+    "Size": "尺寸",
+    "CreatedAt": "创建在",
+    "ModifiedAt": "修改为",
+    "Controls": "控件",
+    "UploadFiles": "上传文件",
+    "UploadFolder": "上传文件夹",
+    "DownloadStarted": "文件“ {{fileName}}”下载已开始。",
+    "error": {
+      "FileUploadSizeLimit": "文件大小超过上传大小限制。"
+    }
+  },
   "comp:BAITable": {
     "SettingTable": "表设置",
     "SelectColumnToDisplay": "选择要显示的列",
