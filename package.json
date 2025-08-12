@@ -151,6 +151,7 @@
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-wc": "^2.1.0",
     "express": "^4.19.2",
+    "git-json-merge": "^1.0.0",
     "husky": "^9.1.4",
     "i18next-scanner": "^4.5.0",
     "jest": "^30.0.5",
