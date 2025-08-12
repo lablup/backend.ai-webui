@@ -1,7 +1,7 @@
 {
   "name": "backend.ai-webui",
   "productName": "Backend.AI Desktop",
-  "version": "25.13.0-rc.2",
+  "version": "25.13.0",
   "repository": "https://github.com/lablup/backend.ai-webui.git",
   "author": "Lablup Inc. <contact@lablup.com>",
   "license": "LGPL-3.0-or-later",
