@@ -33,7 +33,9 @@
     "DownloadStarted": "Fichier \"{{fileName}}\" Le téléchargement a commencé.",
     "error": {
       "FileUploadSizeLimit": "La taille du fichier dépasse la limite de taille de téléchargement."
-    }
+    },
+    "DuplicatedFilesDesc": "Le fichier ou le dossier avec le même nom existe déjà. \nVoulez-vous écraser?",
+    "DuplicatedFiles": "Écran de confirmation"
   },
   "comp:BAITable": {
     "SelectColumnToDisplay": "Sélectionnez des colonnes à afficher",

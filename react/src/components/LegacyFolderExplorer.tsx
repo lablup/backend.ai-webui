@@ -1,12 +1,13 @@
 import { LegacyFolderExplorerQuery } from '../__generated__/LegacyFolderExplorerQuery.graphql';
-import { useSuspendedBackendaiClient } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
+import { useFileUploadManager } from './FileUploadManager';
 import FolderExplorerHeader from './FolderExplorerHeader';
 import VFolderNodeDescription from './VFolderNodeDescription';
 import { Alert, Grid, Splitter, theme } from 'antd';
 import { createStyles } from 'antd-style';
+import { RcFile } from 'antd/es/upload';
 import { BAIFileExplorer, BAIFlex, toGlobalId } from 'backend.ai-ui';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -38,38 +39,12 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
   const { token } = theme.useToken();
   const { styles } = useStyles();
   const { xl } = Grid.useBreakpoint();
+  const { uploadFiles } = useFileUploadManager();
 
   const { t } = useTranslation();
-  // const [isWritable, setIsWritable] = useState<boolean>(false);
-  // const [isSelected, setIsSelected] = useState<boolean>(false);
   // TODO: Events are sent and received as normal,
   // but the Lit Element is not rendered and the values inside are not available but ref is available.
   const folderExplorerRef = useRef<FolderExplorerElement>(null);
-
-  // ensure the client is connected
-  useSuspendedBackendaiClient();
-  useEffect(() => {
-    const handleConnected = (e: any) => {
-      // setIsWritable(e.detail || false);
-    };
-
-    const handleColumnSelected = (e: any) => {
-      // setIsSelected(e.detail || false);
-    };
-
-    document.addEventListener('folderExplorer:connected', handleConnected);
-    document.addEventListener(
-      'folderExplorer:columnSelected',
-      handleColumnSelected,
-    );
-    return () => {
-      document.removeEventListener('folderExplorer:connected', handleConnected);
-      document.removeEventListener(
-        'folderExplorer:columnSelected',
-        handleColumnSelected,
-      );
-    };
-  }, []);
 
   const { vfolder_node } = useLazyLoadQuery<LegacyFolderExplorerQuery>(
     graphql`
@@ -99,7 +74,6 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
 
   // TODO: Skip permission check due to inaccurate API response. Update when API is fixed.
   const hasNoPermissions = false;
-  // !vfolder_node || (vfolder_node.permissions?.length || 0) === 0;
 
   const legacyFolderExplorerPane = vfolder_node && (
     <BAIFlex direction="column" align="stretch">
@@ -109,24 +83,19 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
           showIcon
         />
       ) : !hasNoPermissions ? (
-        <>
-          <BAIFileExplorer
-            vfolderNodeFrgmt={vfolder_node}
-            targetVFolderId={vfolderID}
-          />
-          {/* <FolderExplorerActions
-            isSelected={isSelected}
-            isWritable={isWritable}
-            folderExplorerRef={folderExplorerRef}
-            size={xl ? 'default' : 'small'}
-          /> */}
-          {/* @ts-ignore */}
-          {/* <backend-ai-folder-explorer
-            ref={folderExplorerRef}
-            active
-            vfolderID={vfolderID}
-          /> */}
-        </>
+        <BAIFileExplorer
+          vfolderNodeFrgmt={vfolder_node}
+          targetVFolderId={vfolderID}
+          onUpload={(
+            files: RcFile[],
+            currentPath: string,
+            refetch: () => void,
+          ) => {
+            uploadFiles(files, vfolderID, currentPath, () => {
+              refetch();
+            });
+          }}
+        />
       ) : null}
     </BAIFlex>
   );

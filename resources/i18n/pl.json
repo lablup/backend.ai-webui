@@ -637,9 +637,16 @@
     "Title": "Wystąpił błąd."
   },
   "explorer": {
+    "FileUploadCancelled": "Przesłanie pliku zostało anulowane na żądanie użytkownika.",
     "FolderNotFoundOrNoAccess": "Folder nie został znaleziony ani nie ma dostępu",
     "InputTooShort": "Wejście zbyt krótkie",
     "NoExplorerSupportForUnmanagedFolder": "Foldery niezarządzane nie obsługują eksploratora plików.",
+    "ProcessingUpload": "Twój plik jest przesyłany. \nProszę poczekaj.",
+    "UploadCompleted": "{{fileName}} prześlij ukończ",
+    "UploadCompletedDesc": "Wybrany plik został pomyślnie przesłany.",
+    "UploadFailed": "Nie udało się przesłać {{fileName}}.",
+    "UploadFailedDesc": "Wystąpił błąd podczas przesłania pliku.",
+    "UploadingFile": "Przesyłanie {{fileName}} ...",
     "ValueRequired": "Wymagana wartość"
   },
   "general": {

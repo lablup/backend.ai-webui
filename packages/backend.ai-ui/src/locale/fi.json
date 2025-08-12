@@ -33,7 +33,9 @@
     "DownloadStarted": "Tiedosto \"{{fileName}}\" lataus on alkanut.",
     "error": {
       "FileUploadSizeLimit": "Tiedoston koko ylittää lähetyskoon rajan."
-    }
+    },
+    "DuplicatedFilesDesc": "Tiedosto tai kansio, jolla on sama nimi, on jo olemassa. \nHaluatko korvata?",
+    "DuplicatedFiles": "Korvata vahvistus"
   },
   "comp:BAITable": {
     "SettingTable": "Taulukon asetukset",

@@ -33,7 +33,9 @@
     "DownloadStarted": "Plik „{{fileName}}” rozpoczęło się pobieranie.",
     "error": {
       "FileUploadSizeLimit": "Rozmiar pliku przekracza limit rozmiaru przesyłania."
-    }
+    },
+    "DuplicatedFilesDesc": "Plik lub folder o tej samej nazwie już istnieje. \nChcesz zastąpić?",
+    "DuplicatedFiles": "Nadpisz potwierdzenie"
   },
   "comp:BAITable": {
     "SettingTable": "Ustawienia tabeli",

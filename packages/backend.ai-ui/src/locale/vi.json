@@ -33,7 +33,9 @@
     "DownloadStarted": "Tệp \"{{fileName}}\" đã bắt đầu.",
     "error": {
       "FileUploadSizeLimit": "Kích thước tệp vượt quá giới hạn kích thước tải lên."
-    }
+    },
+    "DuplicatedFilesDesc": "Tệp hoặc thư mục có cùng tên đã tồn tại. \nBạn có muốn ghi đè lên?",
+    "DuplicatedFiles": "Ghi đè xác nhận"
   },
   "comp:BAITable": {
     "SettingTable": "Cài đặt bảng",
