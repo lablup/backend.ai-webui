@@ -32,11 +32,17 @@
     "UploadFolder": "フォルダーをアップロードします",
     "DownloadStarted": "ファイル \"{{fileName}}\"ダウンロードが開始されました。",
     "error": {
-      "FileUploadSizeLimit": "ファイルサイズはアップロードサイズの制限を超えています。"
+      "FileUploadSizeLimit": "ファイルサイズはアップロードサイズの制限を超えています。",
+      "FileNameRequired": "ファイルまたはフォルダー名を入力してください。",
+      "DuplicatedName": "この名前はすでに使用されています。\n別の名前を入力してください。"
     },
     "DuplicatedFilesDesc": "同じ名前のファイルまたはフォルダーはすでに存在しています。\n上書きしますか？",
     "DuplicatedFiles": "確認の上書き",
-    "DragAndDropDesc": "このエリアにファイルをドラッグアンドドロップしてアップロードします。"
+    "DragAndDropDesc": "このエリアにファイルをドラッグアンドドロップしてアップロードします。",
+    "MoveFolderIntoAnotherDesc": "フォルダー \"{{fileName}}\"を「{{targetName}}}」に移動しますか？",
+    "MoveFolderIntoAnother": "モードフォルダー",
+    "ChangeFileExtensionDesc": "ファイル拡張子を変更すると、ファイルが使用できなくなったり、誤って開いたりすることがあります。\n先に進みたいですか？",
+    "ChangeFileExtension": "ファイル拡張子を変更します"
   },
   "comp:BAITable": {
     "SelectColumnToDisplay": "表示する列を選択します",

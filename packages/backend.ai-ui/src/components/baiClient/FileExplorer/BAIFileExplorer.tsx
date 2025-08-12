@@ -6,16 +6,17 @@ import {
 } from '../../../helper';
 import { BAITrashBinIcon } from '../../../icons';
 import BAIFlex from '../../BAIFlex';
+import BAILink from '../../BAILink';
 import { BAITable } from '../../Table';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import ActionItems from './ActionItems';
 import ControlItems from './ControlItems';
 import DeleteSelectedItemsModal from './DeleteSelectedItemsModal';
 import DragAndDrop from './DragAndDrop';
+import EditableName from './EditableName';
 import { useSearchVFolderFiles } from './hooks';
 import { FileOutlined, FolderOutlined, HomeOutlined } from '@ant-design/icons';
 import { Breadcrumb, Button, TableColumnsType, theme, Typography } from 'antd';
-import { createStyles } from 'antd-style';
 import { ItemType } from 'antd/es/breadcrumb/Breadcrumb';
 import { RcFile } from 'antd/es/upload';
 import dayjs from 'dayjs';
@@ -24,18 +25,6 @@ import { DownloadIcon } from 'lucide-react';
 import { createContext, Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-
-const useStyles = createStyles(({ css, token }) => ({
-  hover: css`
-    text-decoration: none;
-    /* color: ${token.colorLink}; */
-
-    &:hover {
-      /* color: ${token.colorLinkHover}; */
-      text-decoration: underline;
-    }
-  `,
-}));
 
 export const FolderInfoContext = createContext<{
   targetVFolderId: string;
@@ -62,7 +51,6 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { styles } = useStyles();
   const [isDragMode, setIsDragMode] = useState(false);
   const [selectedItems, setSelectedItems] = useState<Array<VFolderFile>>([]);
   const [selectedSingleItem, setSelectedSingleItem] =
@@ -85,10 +73,13 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
     Record<string, Array<VFolderFile>>
   >({});
 
-  const FileExplorerFragment = useFragment(
+  const virtualFolderNodeFrgmt = useFragment(
     graphql`
       fragment BAIFileExplorerFragment on VirtualFolderNode {
+        permission
         ...ControlItemsFragment
+        ...ActionItemsFragment
+        ...EditableNameFragment
       }
     `,
     vfolderNodeFrgmt,
@@ -192,41 +183,43 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
       dataIndex: 'name',
       sorter: (a, b) => localeCompare(a.name, b.name),
       fixed: 'left',
-      render: (name, record) =>
-        record?.type === 'DIRECTORY' ? (
-          // FIXME: need to implement BAILink into backend.ai-ui and use it here
-          <Typography.Link
-            className={styles.hover}
-            onClick={() => {
-              navigateDown(name);
-              setSelectedItems([]);
-            }}
-          >
-            <BAIFlex gap="xs">
-              <FolderOutlined />
+      render: (name, record) => (
+        <EditableName
+          editableNameFrgmt={virtualFolderNodeFrgmt}
+          fileInfo={record}
+          existingFiles={cachedFetchedFiles}
+          afterEdit={() => {
+            refetch();
+          }}
+        >
+          {record?.type === 'DIRECTORY' ? (
+            <BAILink
+              type="hover"
+              onClick={() => {
+                navigateDown(name);
+                setSelectedItems([]);
+              }}
+              style={{ maxWidth: 200 }}
+              icon={<FolderOutlined style={{ color: token.colorLink }} />}
+              ellipsis={{ tooltip: name }}
+            >
+              {name}
+            </BAILink>
+          ) : (
+            <BAIFlex gap="xs" style={{ display: 'inline-flex' }}>
+              <FileOutlined />
               <Typography.Text
                 ellipsis={{
                   tooltip: name,
                 }}
-                style={{ maxWidth: 200, color: token.colorLink }}
+                style={{ maxWidth: 200 }}
               >
                 {name}
               </Typography.Text>
             </BAIFlex>
-          </Typography.Link>
-        ) : (
-          <BAIFlex gap="xs">
-            <FileOutlined />
-            <Typography.Text
-              ellipsis={{
-                tooltip: name,
-              }}
-              style={{ maxWidth: 200 }}
-            >
-              {name}
-            </Typography.Text>
-          </BAIFlex>
-        ),
+          )}
+        </EditableName>
+      ),
     },
     {
       title: t('comp:FileExplorer.Controls'),
@@ -249,12 +242,13 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
                   onClick={() => {
                     setSelectedSingleItem(record);
                   }}
+                  disabled={!isEditable}
                 />
               </BAIFlex>
             }
           >
             <ControlItems
-              ControlItemsFrgmt={FileExplorerFragment}
+              controlItemsFrgmt={virtualFolderNodeFrgmt}
               selectedItem={record}
               onClickDelete={() => {
                 setSelectedSingleItem(record);
@@ -288,6 +282,8 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
     },
   ]);
 
+  const isEditable = virtualFolderNodeFrgmt?.permission?.includes('w');
+
   return (
     <FolderInfoContext.Provider value={{ targetVFolderId, currentPath }}>
       {isDragMode && (
@@ -319,6 +315,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
             )}
           />
           <ActionItems
+            actionItemsFrgmt={virtualFolderNodeFrgmt}
             selectedItems={selectedItems}
             onUpload={(files, currentPath) =>
               onUpload(files, currentPath, refetch)

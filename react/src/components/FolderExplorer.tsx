@@ -57,9 +57,11 @@ const FolderExplorer: React.FC<FolderExplorerProps> = ({
           ...VFolderNodeDescriptionFragment
           # VFolderNameTitleNodeFragment is used in FolderExplorerHeader
           ...VFolderNameTitleNodeFragment
-          # ControlItemsFragment is used in FileExplorer
+          # Used in FileExplorer
           ...BAIFileExplorerFragment
           ...ControlItemsFragment
+          ...ActionItemsFragment
+          ...EditableNameFragment
         }
       }
     `,
@@ -113,7 +115,7 @@ const FolderExplorer: React.FC<FolderExplorerProps> = ({
           }}
           layout={xl ? 'horizontal' : 'vertical'}
         >
-          <Splitter.Panel resizable={false} max={'60%'}>
+          <Splitter.Panel resizable={false} defaultSize={'60%'}>
             <BAIFlex direction="column" align="stretch">
               {vfolder_node?.unmanaged_path ? (
                 <Alert
@@ -147,7 +149,7 @@ const FolderExplorer: React.FC<FolderExplorerProps> = ({
               ) : null}
             </BAIFlex>
           </Splitter.Panel>
-          <Splitter.Panel max={'40%'}>
+          <Splitter.Panel defaultSize={'40%'}>
             {vfolder_node ? (
               <VFolderNodeDescription
                 vfolderNodeFrgmt={vfolder_node}

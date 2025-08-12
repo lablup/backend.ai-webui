@@ -5,7 +5,6 @@ import {
 } from '../__generated__/ComputeSessionListPageQuery.graphql';
 import ActionItemContent from '../components/ActionItemContent';
 import BAIFetchKeyButton from '../components/BAIFetchKeyButton';
-import BAILink from '../components/BAILink';
 import BAIPropertyFilter, {
   mergeFilterValues,
 } from '../components/BAIPropertyFilter';
@@ -40,7 +39,7 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import { BAIFlex, BAICard, BAISessionsIcon } from 'backend.ai-ui';
+import { BAIFlex, BAICard, BAISessionsIcon, BAILink } from 'backend.ai-ui';
 import _ from 'lodash';
 import { PowerOffIcon } from 'lucide-react';
 import {
