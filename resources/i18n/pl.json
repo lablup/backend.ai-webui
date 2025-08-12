@@ -915,6 +915,7 @@
     "EndpointName": "Nazwa punktu końcowego",
     "Error": "Błąd",
     "ExpiredDate": "Data wygaśnięcia",
+    "ExtraMountsWarning": "Podczas edytowania usługi nazwa (alias) dodatkowych zamontowanych folderów nie może zostać zachowana. \nPrzed zapisaniem prosimy o podwójne sprawdzenie nazw folderów.",
     "FailedToStartService": "Nie udało się utworzyć usługi.",
     "FailedToTerminateService": "Żądanie zakończenia usługi nie powiodło się.",
     "FailedToUpdateService": "Nie udało się zaktualizować usługi.",

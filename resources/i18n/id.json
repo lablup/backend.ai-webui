@@ -914,6 +914,7 @@
     "EndpointName": "Nama Titik Akhir",
     "Error": "Kesalahan",
     "ExpiredDate": "Tanggal Kadaluarsa",
+    "ExtraMountsWarning": "Saat mengedit layanan, nama (alias) dari folder yang dipasang tambahan mungkin tidak dipertahankan. \nHarap periksa ulang nama folder sebelum disimpan.",
     "FailedToStartService": "Gagal membuat layanan.",
     "FailedToTerminateService": "Permintaan untuk menghentikan layanan gagal.",
     "FailedToUpdateService": "Gagal memperbarui layanan.",

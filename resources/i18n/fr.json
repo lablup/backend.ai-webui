@@ -916,6 +916,7 @@
     "EndpointName": "Nom du point final",
     "Error": "Erreur",
     "ExpiredDate": "Date d'expiration",
+    "ExtraMountsWarning": "Lors de la modification du service, le nom (alias) des dossiers supplémentaires peut ne pas être conservé. \nVeuillez revérifier les noms de dossiers avant d'enregistrer.",
     "FailedToStartService": "Échec de la création du service.",
     "FailedToTerminateService": "La demande d'arrêt du service a échoué.",
     "FailedToUpdateService": "Échec de la mise à jour du service.",

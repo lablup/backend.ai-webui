@@ -914,6 +914,7 @@
     "EndpointName": "Nome del punto finale",
     "Error": "Errore",
     "ExpiredDate": "Data di scadenza",
+    "ExtraMountsWarning": "Durante la modifica del servizio, il nome (alias) di cartelle montate aggiuntive non può essere mantenuto. \nSi prega di ricontrollare i nomi delle cartelle prima di salvare.",
     "FailedToStartService": "Impossibile creare il servizio.",
     "FailedToTerminateService": "La richiesta di terminare il servizio è fallita.",
     "FailedToUpdateService": "Impossibile aggiornare il servizio.",

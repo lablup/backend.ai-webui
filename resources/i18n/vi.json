@@ -916,6 +916,7 @@
     "EndpointName": "Tên điểm cuối",
     "Error": "Lỗi",
     "ExpiredDate": "Ngày hết hạn",
+    "ExtraMountsWarning": "Khi chỉnh sửa dịch vụ, tên (bí danh) của các thư mục được gắn bổ sung có thể không được giữ lại. \nVui lòng kiểm tra lại tên thư mục trước khi lưu.",
     "FailedToStartService": "Không thể tạo dịch vụ.",
     "FailedToTerminateService": "Yêu cầu chấm dứt dịch vụ không thành công.",
     "FailedToUpdateService": "Không thể cập nhật dịch vụ.",

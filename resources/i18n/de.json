@@ -916,6 +916,7 @@
     "EndpointName": "Endpunkt Name",
     "Error": "Fehler",
     "ExpiredDate": "Abgelaufen Datum",
+    "ExtraMountsWarning": "Bei der Bearbeitung des Dienstes kann der Name (Alias) zusätzlicher montierter Ordner nicht beibehalten werden. \nBitte überprüfen Sie die Ordnernamen vor dem Speichern.",
     "FailedToStartService": "Der Dienst konnte nicht erstellt werden.",
     "FailedToTerminateService": "Die Anfrage zur Beendigung des Dienstes ist fehlgeschlagen.",
     "FailedToUpdateService": "Der Dienst konnte nicht aktualisiert werden.",

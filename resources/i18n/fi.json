@@ -915,6 +915,7 @@
     "EndpointName": "Päätepisteen nimi",
     "Error": "Virhe",
     "ExpiredDate": "Vanhentunut päiväys",
+    "ExtraMountsWarning": "Palvelua muokattaessa ylimääräisten kansioiden nimeä (alias) ei välttämättä säily. \nTarkista kansioiden nimet ennen tallentamista.",
     "FailedToStartService": "Palvelun luominen epäonnistui.",
     "FailedToTerminateService": "Palvelun lopettamispyyntö epäonnistui.",
     "FailedToUpdateService": "Palvelun päivittäminen epäonnistui.",
