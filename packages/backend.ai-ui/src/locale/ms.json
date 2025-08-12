@@ -5,5 +5,10 @@
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} dari {{total}} item"
+  },
+  "comp:BAITable": {
+    "SettingTable": "Tetapan Jadual",
+    "SelectColumnToDisplay": "Pilih lajur untuk dipaparkan",
+    "SearchTableColumn": "Lajur jadual carian"
   }
 }

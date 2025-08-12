@@ -55,6 +55,7 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useLocation } from 'react-router-dom';
 import { useCurrentUserRole } from 'src/hooks/backendai';
+import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 import { StringParam, withDefault } from 'use-query-params';
 
 type TypeFilterType = 'all' | 'interactive' | 'batch' | 'inference' | 'system';
@@ -80,6 +81,10 @@ const ComputeSessionListPage = () => {
     Array<SessionNode>
   >([]);
   const [isOpenTerminateModal, setOpenTerminateModal] = useState(false);
+
+  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
+    'table_column_overrides.ComputeSessionListPage',
+  );
 
   const {
     baiPaginationOption,
@@ -571,6 +576,10 @@ const ComputeSessionListPage = () => {
             }}
             onChangeOrder={(order) => {
               setQuery({ order }, 'replaceIn');
+            }}
+            tableSettings={{
+              columnOverrides: columnOverrides,
+              onColumnOverridesChange: setColumnOverrides,
             }}
           />
         </BAIFlex>

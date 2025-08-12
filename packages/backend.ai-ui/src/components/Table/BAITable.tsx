@@ -1,8 +1,17 @@
 import { transformSorterToOrderString } from '../../helper';
 import BAIFlex from '../BAIFlex';
-import PaginationInfoText from './PaginationInfoText';
+import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
+import BAIPaginationInfoText from './BAIPaginationInfoText';
+import BAITableSettingModal from './BAITableSettingModal';
+import { SettingOutlined } from '@ant-design/icons';
 import { useControllableValue, useDebounce } from 'ahooks';
-import { Pagination, Table, TablePaginationConfig, TableProps } from 'antd';
+import {
+  Button,
+  Pagination,
+  Table,
+  TablePaginationConfig,
+  TableProps,
+} from 'antd';
 import { createStyles } from 'antd-style';
 import { AnyObject, GetProps } from 'antd/es/_util/type';
 import { ColumnType, ColumnsType } from 'antd/es/table';
@@ -11,22 +20,189 @@ import _ from 'lodash';
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { Resizable, ResizeCallbackData } from 'react-resizable';
 
+/**
+ * Configuration interface for BAITable pagination
+ * Extends Ant Design's TablePaginationConfig but omits 'position' property
+ */
 interface BAITablePaginationConfig
   extends Omit<TablePaginationConfig, 'position'> {
+  /** Additional content to display in the pagination area */
   extraContent?: ReactNode;
 }
-type BAITableBaseProps<RecordType> = Omit<TableProps<RecordType>, 'onChange'>;
 
-export interface BAITableProps<RecordType extends AnyObject>
-  extends BAITableBaseProps<RecordType> {
-  // customized
-  pagination?: false | BAITablePaginationConfig;
-  // new
-  resizable?: boolean;
-  order?: string;
-  onChangeOrder?: (order?: string) => void;
+/**
+ * Column override properties that can be customized
+ * Used to override default column behavior like visibility
+ */
+export interface BAITableColumnOverrideItem {
+  /** Override the default visibility of a column */
+  hidden?: boolean;
+  // Future extensibility: width?, pinned?, etc.
+  // order?: number; // Override column order
+}
+/**
+ * Record type mapping column keys to their override configurations
+ */
+export type BAITableColumnOverrideRecord = Record<
+  string,
+  BAITableColumnOverrideItem
+>;
+
+/**
+ * Configuration for table settings including column overrides
+ * Supports controllable column visibility and customization
+ */
+export interface BAITableSettings {
+  /** Current column property overrides that differ from defaults (controllable) */
+  columnOverrides?: Record<string, BAITableColumnOverrideItem>;
+  /** Default column overrides to use initially */
+  defaultColumnOverrides?: Record<string, BAITableColumnOverrideItem>;
+  /** Callback function called when column overrides change */
+  onColumnOverridesChange?: (
+    overrides: Record<string, BAITableColumnOverrideItem>,
+  ) => void;
 }
 
+/**
+ * Extended column type for BAITable with additional properties
+ * Extends Ant Design's ColumnType with custom BAI-specific features
+ */
+export interface BAIColumnType<RecordType = any>
+  extends ColumnType<RecordType> {
+  /** Whether this column should be hidden by default */
+  defaultHidden?: boolean;
+  /** Whether this column is required and cannot be hidden by users */
+  required?: boolean;
+}
+
+/**
+ * Array type for BAI table columns
+ */
+export type BAIColumnsType<RecordType = any> = BAIColumnType<RecordType>[];
+
+/**
+ * Utility function to determine if a column should be visible
+ * Takes into account required columns, overrides, and default visibility
+ *
+ * @param column - The column configuration
+ * @param columnKey - The unique key for the column
+ * @param overrides - Column override settings
+ * @returns Whether the column should be visible
+ */
+export const isColumnVisible = (
+  column: BAIColumnType<any>,
+  columnKey: string,
+  overrides?: Record<string, BAITableColumnOverrideItem>,
+): boolean => {
+  // Required columns are always visible
+  if (column.required) {
+    return true;
+  }
+
+  // Use hidden value from overrides if exists, otherwise use default value (!defaultHidden)
+  const override = overrides?.[columnKey];
+  return override?.hidden !== undefined
+    ? !override.hidden
+    : !column.defaultHidden;
+};
+
+/**
+ * Filters columns to return only visible ones based on overrides
+ *
+ * @param columns - Array of column configurations
+ * @param overrides - Column override settings
+ * @returns Filtered array of visible columns
+ */
+export const getVisibleColumns = (
+  columns: BAIColumnsType,
+  overrides?: Record<string, BAITableColumnOverrideItem>,
+): BAIColumnsType => {
+  return columns.filter((col) => {
+    const key = col.key?.toString();
+    if (!key) return true;
+    return isColumnVisible(col, key, overrides);
+  });
+};
+
+/**
+ * Restores a specific column to its default settings by removing its override
+ *
+ * @param overrides - Current column overrides
+ * @param columnKey - Key of the column to restore
+ * @returns New overrides object without the specified column override
+ */
+export const restoreColumnToDefault = (
+  overrides: Record<string, BAITableColumnOverrideItem>,
+  columnKey: string,
+): Record<string, BAITableColumnOverrideItem> => {
+  const newOverrides = { ...overrides };
+  delete newOverrides[columnKey];
+  return newOverrides;
+};
+
+/**
+ * Restores all columns to their default settings by clearing all overrides
+ *
+ * @returns Empty overrides object
+ */
+export const restoreAllColumnsToDefault = (): Record<
+  string,
+  BAITableColumnOverrideItem
+> => {
+  return {};
+};
+type BAITableBaseProps<RecordType> = Omit<TableProps<RecordType>, 'onChange'>;
+
+/**
+ * Props interface for BAITable component
+ * Extends Ant Design's TableProps with additional BAI-specific features
+ */
+export interface BAITableProps<RecordType extends AnyObject>
+  extends BAITableBaseProps<RecordType> {
+  /** Pagination configuration or false to disable pagination */
+  pagination?: false | BAITablePaginationConfig;
+  /** Whether columns should be resizable */
+  resizable?: boolean;
+  /** Current sort order string (e.g., 'name' or '-name' for descending) */
+  order?: string;
+  /** Callback function called when sort order changes */
+  onChangeOrder?: (order?: string) => void;
+  /** Table settings including column visibility controls */
+  tableSettings?: BAITableSettings;
+  /** Array of column configurations using BAIColumnType */
+  columns?: BAIColumnsType<RecordType>;
+}
+
+/**
+ * BAITable - Enhanced table component with column management and sorting
+ *
+ * A comprehensive table component that extends Ant Design's Table with:
+ * - Column visibility controls with settings modal
+ * - Resizable columns support
+ * - Enhanced sorting with order string support
+ * - Persistent column overrides
+ * - Custom pagination layout
+ *
+ * @param props - BAITableProps configuration
+ * @returns React element
+ *
+ * @example
+ * ```tsx
+ * const columns = [
+ *   { title: 'Name', dataIndex: 'name', key: 'name' },
+ *   { title: 'Age', dataIndex: 'age', key: 'age', defaultHidden: true }
+ * ];
+ *
+ * <BAITable
+ *   columns={columns}
+ *   dataSource={data}
+ *   tableSettings={{
+ *     columnOverrides: {},
+ *     onColumnOverridesChange: setColumnOverrides
+ *   }}
+ * />
+ * ```
+ */
 const BAITable = <RecordType extends object = any>({
   resizable = false,
   columns,
@@ -34,12 +210,24 @@ const BAITable = <RecordType extends object = any>({
   loading,
   order,
   onChangeOrder,
+  tableSettings,
   ...tableProps
 }: BAITableProps<RecordType>): React.ReactElement => {
   const { styles } = useStyles();
   const [resizedColumnWidths, setResizedColumnWidths] = useState<
     Record<string, number>
   >(generateResizedColumnWidths(columns));
+  const [columnOverrides, setColumnOverrides] = useControllableValue(
+    tableSettings || {},
+    {
+      valuePropName: 'columnOverrides',
+      defaultValuePropName: 'defaultColumnOverrides',
+      trigger: 'onColumnOverridesChange',
+      defaultValue: {},
+    },
+  );
+  const [isColumnSettingModalOpen, setIsColumnSettingModalOpen] =
+    useState(false);
   const [currentPage, setCurrentPage] = useControllableValue(
     tableProps.pagination ? tableProps.pagination : {},
     {
@@ -60,9 +248,18 @@ const BAITable = <RecordType extends object = any>({
   const mergedColumns = useMemo(() => {
     let processedColumns = columns;
 
+    // Filter hidden columns based on overrides
+    if (tableSettings) {
+      processedColumns = columns?.filter((column) => {
+        const columnKey = column.key?.toString();
+        if (!columnKey) return true;
+        return isColumnVisible(column, columnKey, columnOverrides);
+      });
+    }
+
     // Apply sort direction based on orderString
-    if (order && columns) {
-      processedColumns = columns.map((column) => {
+    if (order && processedColumns) {
+      processedColumns = processedColumns.map((column) => {
         // Skip column groups (with children) or columns without dataIndex
         if ('children' in column || !column.dataIndex || !column.sorter) {
           return column;
@@ -110,7 +307,14 @@ const BAITable = <RecordType extends object = any>({
               },
             }) as ColumnType<RecordType>,
         );
-  }, [resizable, columns, resizedColumnWidths, order]);
+  }, [
+    resizable,
+    columns,
+    resizedColumnWidths,
+    order,
+    tableSettings,
+    columnOverrides,
+  ]);
 
   return (
     <BAIFlex direction="column" align="stretch" gap={'sm'}>
@@ -162,7 +366,7 @@ const BAITable = <RecordType extends object = any>({
             pageSizeOptions={['10', '20', '50']}
             showSizeChanger={true}
             showTotal={(total, range) => (
-              <PaginationInfoText
+              <BAIPaginationInfoText
                 start={range[0]}
                 end={range[1]}
                 total={total}
@@ -183,8 +387,51 @@ const BAITable = <RecordType extends object = any>({
             current={currentPage}
             pageSize={currentPageSize}
           ></Pagination>
+          {tableSettings && (
+            <Button
+              type="text"
+              icon={<SettingOutlined />}
+              onClick={() => setIsColumnSettingModalOpen(true)}
+              size={tableProps.size}
+            />
+          )}
           {tableProps.pagination && tableProps.pagination.extraContent}
         </BAIFlex>
+      )}
+
+      {tableSettings && (
+        <BAIUnmountAfterClose>
+          <BAITableSettingModal
+            open={isColumnSettingModalOpen}
+            onRequestClose={(formValues) => {
+              setIsColumnSettingModalOpen(false);
+              if (formValues) {
+                const selectedKeys = formValues.selectedColumnKeys || [];
+                const newOverrides: Record<string, BAITableColumnOverrideItem> =
+                  {};
+
+                // Only store in overrides when different from default values
+                columns?.forEach((col) => {
+                  const key = col.key?.toString();
+                  if (key) {
+                    const shouldBeVisible = selectedKeys.includes(key);
+                    const defaultVisible = !col.defaultHidden;
+
+                    // Only store when different from default
+                    if (shouldBeVisible !== defaultVisible) {
+                      newOverrides[key] = { hidden: !shouldBeVisible };
+                    }
+                  }
+                });
+
+                setColumnOverrides(newOverrides);
+              }
+            }}
+            columns={columns || []}
+            columnOverrides={columnOverrides}
+            disableSorter
+          />
+        </BAIUnmountAfterClose>
       )}
     </BAIFlex>
   );

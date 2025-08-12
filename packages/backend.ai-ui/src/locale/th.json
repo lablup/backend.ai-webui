@@ -5,5 +5,10 @@
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} ของ {{total}} รายการ"
+  },
+  "comp:BAITable": {
+    "SettingTable": "การตั้งค่าตาราง",
+    "SelectColumnToDisplay": "เลือกคอลัมน์ที่จะแสดง",
+    "SearchTableColumn": "คอลัมน์ตารางค้นหา"
   }
 }

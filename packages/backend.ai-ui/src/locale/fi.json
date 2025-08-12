@@ -5,5 +5,10 @@
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}}–{{end}} yhteensä {{total}} kohteesta"
+  },
+  "comp:BAITable": {
+    "SettingTable": "Taulukon asetukset",
+    "SelectColumnToDisplay": "Valitse näytettävä sarakkeet",
+    "SearchTableColumn": "Hakutaulukon sarakkeet"
   }
 }

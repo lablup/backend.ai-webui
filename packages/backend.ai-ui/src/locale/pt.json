@@ -5,5 +5,10 @@
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} de {{total}} itens"
+  },
+  "comp:BAITable": {
+    "SelectColumnToDisplay": "Selecione colunas para exibir",
+    "SettingTable": "Configurações da tabela",
+    "SearchTableColumn": "Pesquisar colunas da tabela"
   }
 }

@@ -15,11 +15,13 @@ import { graphql, useFragment } from 'react-relay';
 
 interface ImageNodeSimpleTagProps {
   imageFrgmt: ImageNodeSimpleTagFragment$key | null;
+  withoutTag?: boolean;
   copyable?: boolean;
 }
 
 const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
   imageFrgmt,
+  withoutTag = false,
   copyable = true,
 }) => {
   const [, { tagAlias }] = useBackendAIImageMetaData();
@@ -67,41 +69,50 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
       <Typography.Text>{image.version}</Typography.Text>
       <Divider type="vertical" />
       <Typography.Text>{image.architecture}</Typography.Text>
-      <Divider type="vertical" />
-      {_.map(image.tags, (tag, index) => {
-        if (!tag) return null;
-        const isCustomized = tag.key && _.includes(tag.key, 'customized_');
-        const tagValue =
-          (isCustomized
-            ? _.find(image?.labels, {
-                key: 'ai.backend.customized-image.name',
-              })?.value
-            : tag?.value) || '';
-        const aliasedTag = tag?.key ? tagAlias(tag.key + tagValue) : undefined;
-        return tag?.key &&
-          _.isEqual(aliasedTag, preserveDotStartCase(tag.key + tagValue)) ? (
-          <DoubleTag
-            key={`${tag.key}-${index}`}
-            values={[
-              {
-                label: tagAlias(tag.key),
-                color: isCustomized ? 'cyan' : 'blue',
-              },
-              {
-                label: tagValue,
-                color: isCustomized ? 'cyan' : 'blue',
-              },
-            ]}
-          />
-        ) : (
-          <Tag
-            key={`${tag.key}-${index}`}
-            color={isCustomized ? 'cyan' : 'blue'}
-          >
-            {aliasedTag}
-          </Tag>
-        );
-      })}
+      {withoutTag ? null : (
+        <>
+          <Divider type="vertical" />
+          {_.map(image.tags, (tag, index) => {
+            if (!tag) return null;
+            const isCustomized = tag.key && _.includes(tag.key, 'customized_');
+            const tagValue =
+              (isCustomized
+                ? _.find(image?.labels, {
+                    key: 'ai.backend.customized-image.name',
+                  })?.value
+                : tag?.value) || '';
+            const aliasedTag = tag?.key
+              ? tagAlias(tag.key + tagValue)
+              : undefined;
+            return tag?.key &&
+              _.isEqual(
+                aliasedTag,
+                preserveDotStartCase(tag.key + tagValue),
+              ) ? (
+              <DoubleTag
+                key={`${tag.key}-${index}`}
+                values={[
+                  {
+                    label: tagAlias(tag.key),
+                    color: isCustomized ? 'cyan' : 'blue',
+                  },
+                  {
+                    label: tagValue,
+                    color: isCustomized ? 'cyan' : 'blue',
+                  },
+                ]}
+              />
+            ) : (
+              <Tag
+                key={`${tag.key}-${index}`}
+                color={isCustomized ? 'cyan' : 'blue'}
+              >
+                {aliasedTag}
+              </Tag>
+            );
+          })}
+        </>
+      )}
       {copyable && (
         <Typography.Text
           style={{ color: token.colorLink }}
