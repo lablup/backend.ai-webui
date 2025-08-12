@@ -12,7 +12,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface VFolderTableFormItemProps extends Omit<FormItemProps, 'name'> {
-  filter?: VFolderTableProps['filter'];
+  rowFilter?: VFolderTableProps['rowFilter'];
   rowKey?: keyof VFolder;
   tableProps?: Partial<VFolderTableProps>;
 }
@@ -27,7 +27,7 @@ export interface VFolderTableFormValues {
 }
 
 const VFolderTableFormItem: React.FC<VFolderTableFormItemProps> = ({
-  filter,
+  rowFilter,
   rowKey = 'name',
   tableProps,
   ...formItemProps
@@ -105,7 +105,7 @@ const VFolderTableFormItem: React.FC<VFolderTableFormItemProps> = ({
           })}
           // TODO: implement pagination
           pagination={false}
-          filter={filter}
+          rowFilter={rowFilter}
           showAutoMountedFoldersSection
           onChangeAutoMountedFolders={useEventNotStable((names) => {
             form.setFieldValue('autoMountedFolderNames', names);

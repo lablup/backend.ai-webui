@@ -933,7 +933,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                               <VFolderTableFormItem
                                 rowKey={'id'}
                                 label={t('modelService.AdditionalMounts')}
-                                filter={(vf) =>
+                                rowFilter={(vf) =>
                                   vf.id !== getFieldValue('vFolderID') &&
                                   vf.status === 'ready' &&
                                   vf.usage_mode !== 'model' &&
